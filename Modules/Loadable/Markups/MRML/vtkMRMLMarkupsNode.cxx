@@ -966,13 +966,13 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
   int n = pointIndex;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
   if (oldPositionStatus != PositionDefined && positionStatus == PositionDefined)
-  {
+    {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionDefinedEvent, static_cast<void*>(&n));
-  }
+    }
   else if (oldPositionStatus == PositionDefined && positionStatus != PositionDefined)
-  {
+    {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&n));
-  }
+    }
   this->StorableModifiedTime.Modified();
   if (!this->GetDisableModifiedEvent())
     {

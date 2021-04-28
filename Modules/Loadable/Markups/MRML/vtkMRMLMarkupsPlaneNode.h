@@ -39,10 +39,18 @@
 /// Markups is intended to be used for manual marking/editing of point positions.
 ///
 /// Coordinate systems used:
-///   - Local: Local coordinates
-///   - World: All parent transforms on node applied to local.
-///   - Plane: Plane coordinate space (Origin of plane at 0,0,0, XYZ axis aligned to XYZ unit vectors).
-///            Can have additional offset/rotation compared to local.
+///   - Object: Coordinate system of the plane rectangle. Computed from Base coordiante system by ObjectToBaseMatrix.
+///     Origin of the coordinate system is in the plane rectangle center.
+///     X and Y axes of the coordinate system are parallel to the first and second axes of the plane rectangle.
+///     Z axis of the coordinate system is the plane normal.
+///   - Base: Coordinate system computed from markup control point positions.
+///     Origin of the coordinate system is in the first control point.
+///     X coordinate system is the direction from the first control point to the second.
+///     Y coordinate system is orthogonal to the X coordinate system, in the plane specified by the first 3 control points.
+///     Z axis is the cross product of X and Y coordinate system.
+///   - Node: Coordinate system of the markup node. Coordinates of the control points are stored in this coordinate system.
+///   - World: Patient coordinate system (RAS). Transform between Node and World
+///     coordinate systems are defined by the parent transform of the node.
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneNode : public vtkMRMLMarkupsNode
 {
@@ -109,14 +117,12 @@ public:
   vtkSetVector6Macro(PlaneBounds, double);
 
   /// The normal vector for the plane.
-  /// Calculated as the vector perpendicular to the plane containing the 3 markup points, and transformed by the PlaneToPlaneOffsetMatrix.
   void GetNormal(double normal[3]);
   void SetNormal(const double normal[3]);
   void GetNormalWorld(double normal[3]);
   void SetNormalWorld(const double normal[3]);
 
   /// The origin of the plane.
-  /// Calculated as the location of the 0th markup point, and translated by the PlaneToPlaneOffsetMatrix.
   void GetOrigin(double origin[3]);
   void SetOrigin(const double origin[3]);
   void GetOriginWorld(double origin[3]);
@@ -133,13 +139,13 @@ public:
   void SetAxesWorld(const double x[3], const double y[3], const double z[3]);
 
   // Mapping from XYZ plane coordinates to local coordinates
-  virtual void GetPlaneToLocalMatrix(vtkMatrix4x4* planeToLocalMatrix);
+  virtual void GetObjectToNodeMatrix(vtkMatrix4x4* planeToNodeMatrix);
   // Mapping from XYZ plane coordinates to world coordinates
-  virtual void GetPlaneToWorldMatrix(vtkMatrix4x4* planeToWorldMatrix);
+  virtual void GetObjectToWorldMatrix(vtkMatrix4x4* planeToWorldMatrix);
 
-  /// 4x4 matrix detailing the offset (rotation/translation) of the plane from the plane defined by the markup points.
+  /// 4x4 matrix specifying the relative (rotation/translation) of the plane from the base coordinate system defined by the markup points.
   /// Default is the identity matrix.
-  virtual vtkMatrix4x4* GetPlaneToPlaneOffsetMatrix();
+  virtual vtkMatrix4x4* GetObjectToBaseMatrix();
 
   /// Get the closest position on the plane in world coordinates.
   /// Returns the signed distance from the input point to the plane. Positive distance is in the direction of the plane normal,
@@ -158,7 +164,7 @@ protected:
   int SizeMode;
   double AutoSizeScalingFactor;
   double PlaneBounds[6];
-  vtkSmartPointer<vtkMatrix4x4> PlaneToPlaneOffsetMatrix;
+  vtkSmartPointer<vtkMatrix4x4> ObjectToBaseMatrix;
 
   /// Helper method for ensuring that the plane has enough points and that the points/vectors are not coincident.
   /// Used when calling SetNormal(), SetVectors() to ensure that the plane is valid before transforming to the new

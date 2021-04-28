@@ -1034,11 +1034,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
     }
   else if (markupsROINode)
     {
-    // Make sure the ROI node's inside out flag is on
-    markupsROINode->InsideOutOn();
-
     // Calculate and set clipping planes
-    markupsROINode->GetTransformedPlanes(planes.GetPointer());
+    markupsROINode->GetTransformedPlanes(planes.GetPointer(), true);
     }
   volumeMapper->SetClippingPlanes(planes.GetPointer());
 }

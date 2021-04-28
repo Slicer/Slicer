@@ -80,23 +80,23 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::WriteROIProperties(
   writer.String(roiNode->GetROITypeAsString(roiNode->GetROIType()));
 
   int coordinateSystem = this->External->GetCoordinateSystem();
-  double center_Local[3] = { 0.0, 0.0, 0.0 };
-  roiNode->GetCenter(center_Local);
+  double center_Node[3] = { 0.0, 0.0, 0.0 };
+  roiNode->GetCenter(center_Node);
   if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
     {
-    center_Local[0] = -center_Local[0];
-    center_Local[1] = -center_Local[1];
+    center_Node[0] = -center_Node[0];
+    center_Node[1] = -center_Node[1];
     }
   writer.Key("center");
-  this->WriteVector(writer, center_Local);
+  this->WriteVector(writer, center_Node);
 
   double orientationMatrix[9] = { 0.0 };
-  vtkMatrix4x4* roiToLocalMatrix = roiNode->GetROIToLocalMatrix();
+  vtkMatrix4x4* objectToNodeMatrix = roiNode->GetObjectToNodeMatrix();
   for (int i = 0; i < 3; ++i)
     {
-    orientationMatrix[3 * i]     = roiToLocalMatrix->GetElement(i, 0);
-    orientationMatrix[3 * i + 1] = roiToLocalMatrix->GetElement(i, 1);
-    orientationMatrix[3 * i + 2] = roiToLocalMatrix->GetElement(i, 2);
+    orientationMatrix[3 * i]     = objectToNodeMatrix->GetElement(i, 0);
+    orientationMatrix[3 * i + 1] = objectToNodeMatrix->GetElement(i, 1);
+    orientationMatrix[3 * i + 2] = objectToNodeMatrix->GetElement(i, 2);
     }
   if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
     {
@@ -139,11 +139,11 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::UpdateMarkupsNodeFromJson
     }
 
   int coordinateSystem = this->External->GetCoordinateSystem();
-  double center_Local[3] = { 0.0, 0.0, 0.0 };
+  double center_Node[3] = { 0.0, 0.0, 0.0 };
   if (markupsObject.HasMember("center"))
     {
     rapidjson::Value& centerItem = markupsObject["center"];
-    if (!this->ReadVector(centerItem, center_Local))
+    if (!this->ReadVector(centerItem, center_Node))
       {
       vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
         "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
@@ -152,8 +152,8 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::UpdateMarkupsNodeFromJson
       }
     if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
       {
-      center_Local[0] = -center_Local[0];
-      center_Local[1] = -center_Local[1];
+      center_Node[0] = -center_Node[0];
+      center_Node[1] = -center_Node[1];
       }
     }
 
@@ -184,15 +184,15 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::UpdateMarkupsNodeFromJson
         }
       }
     }
-  vtkNew<vtkMatrix4x4> roiToLocalMatrix;
+  vtkNew<vtkMatrix4x4> objectToNodeMatrix;
   for (int i = 0; i < 3; ++i)
     {
-    roiToLocalMatrix->SetElement(i, 0, orientationMatrix[3*i]);
-    roiToLocalMatrix->SetElement(i, 1, orientationMatrix[3*i + 1]);
-    roiToLocalMatrix->SetElement(i, 2, orientationMatrix[3*i + 2]);
-    roiToLocalMatrix->SetElement(i, 3, center_Local[i]);
+    objectToNodeMatrix->SetElement(i, 0, orientationMatrix[3*i]);
+    objectToNodeMatrix->SetElement(i, 1, orientationMatrix[3*i + 1]);
+    objectToNodeMatrix->SetElement(i, 2, orientationMatrix[3*i + 2]);
+    objectToNodeMatrix->SetElement(i, 3, center_Node[i]);
     }
-  roiNode->GetROIToLocalMatrix()->DeepCopy(roiToLocalMatrix);
+  roiNode->GetObjectToNodeMatrix()->DeepCopy(objectToNodeMatrix);
 
   return vtkInternal::UpdateMarkupsNodeFromJsonValue(markupsNode, markupsObject);
 }

@@ -233,23 +233,23 @@ bool vtkSlicerPlaneWidget::ProcessPlaneTranslate(vtkMRMLInteractionEventData* ev
 
   MRMLNodeModifyBlocker blocker(markupsNode);
 
-  vtkNew<vtkMatrix4x4> worldToPlaneMatrix;
-  markupsNode->GetPlaneToWorldMatrix(worldToPlaneMatrix);
-  worldToPlaneMatrix->Invert();
+  vtkNew<vtkMatrix4x4> worldToObjectMatrix;
+  markupsNode->GetObjectToWorldMatrix(worldToObjectMatrix);
+  worldToObjectMatrix->Invert();
 
-  vtkNew<vtkTransform> worldToPlaneTransform;
-  worldToPlaneTransform->PostMultiply();
-  worldToPlaneTransform->SetMatrix(worldToPlaneMatrix);
-  worldToPlaneTransform->Concatenate(markupsNode->GetPlaneToPlaneOffsetMatrix());
+  vtkNew<vtkTransform> worldToObjectTransform;
+  worldToObjectTransform->PostMultiply();
+  worldToObjectTransform->SetMatrix(worldToObjectMatrix);
+  worldToObjectTransform->Concatenate(markupsNode->GetObjectToBaseMatrix());
 
   double vector_Plane[3] = { 0.0 };
-  worldToPlaneTransform->TransformVector(vector_World, vector_Plane);
+  worldToObjectTransform->TransformVector(vector_World, vector_Plane);
 
-  vtkNew<vtkTransform> planeToPlaneOffsetTransform;
-  planeToPlaneOffsetTransform->PostMultiply();
-  planeToPlaneOffsetTransform->SetMatrix(markupsNode->GetPlaneToPlaneOffsetMatrix());
-  planeToPlaneOffsetTransform->Translate(vector_Plane);
-  markupsNode->GetPlaneToPlaneOffsetMatrix()->DeepCopy(planeToPlaneOffsetTransform->GetMatrix());
+  vtkNew<vtkTransform> objectToBaseTransform;
+  objectToBaseTransform->PostMultiply();
+  objectToBaseTransform->SetMatrix(markupsNode->GetObjectToBaseMatrix());
+  objectToBaseTransform->Translate(vector_Plane);
+  markupsNode->GetObjectToBaseMatrix()->DeepCopy(objectToBaseTransform->GetMatrix());
 
   markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent);
 

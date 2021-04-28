@@ -45,9 +45,12 @@ class vtkPlanes;
 /// \brief MRML node to represent an ROI markup
 ///
 /// Coordinate systems used:
-///   - Local: Coordinate system of the markup node.
-///   - ROI: Coordinate system that the ROI is defined in. ROI is axis aligned with center of ROI at (0,0,0).
-///   - World: Patient coordinate system (RAS)
+///   - Object: Coordinate system that the ROI.
+///     Origin of the coordinate system is in the center of the ROI box.
+///     Axes of the coordinate system are aligned with the axes of the ROI box.
+///   - Node: Coordinate system of the markup node. Coordinates of the control points are stored in this coordinate system.
+///   - World: Patient coordinate system (RAS). Transform between Node and World
+///     coordinate systems are defined by the parent transform of the node.
 ///
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsROINode : public vtkMRMLMarkupsNode
@@ -96,24 +99,34 @@ public:
   void GetCenter(double center[3]);
   void GetCenterWorld(double center[3]);
   void SetCenterWorld(const double center[3]);
+  void SetCenterWorld(double x, double y, double z);
   void SetCenter(const double center[3]);
+  void SetCenter(double x, double y, double z);
 
-  /// The directional axis of the ROI that are defined by ROIToLocalMatrix.
-  /// \sa GetROIToLocalMatrix()
+  /// The directional axis of the ROI that are defined by ObjectToNodeMatrix.
+  /// \sa GetObjectToNodeMatrix()
   void GetXAxisWorld(double axis_World[3]);
   void GetYAxisWorld(double axis_World[3]);
   void GetZAxisWorld(double axis_World[3]);
   void GetAxisWorld(int axisIndex, double axis_World[3]);
-  void GetXAxisLocal(double axis_Local[3]);
-  void GetYAxisLocal(double axis_Local[3]);
-  void GetZAxisLocal(double axis_Local[3]);
-  void GetAxisLocal(int axisIndex, double axis_Local[3]);
+  void GetXAxis(double axis_Node[3]);
+  void GetYAxis(double axis_Node[3]);
+  void GetZAxis(double axis_Node[3]);
+  void GetAxis(int axisIndex, double axis_Node[3]);
 
-  /// 4x4 matrix defining the ROI center and axis directions within the local coordinate system.
-  vtkMatrix4x4* GetROIToLocalMatrix()
-  {
-    return this->ROIToLocalMatrix;
-  };
+  /// 4x4 matrix defining the object center and axis directions within the node coordinate system.
+  vtkMatrix4x4* GetObjectToNodeMatrix()
+    {
+    return this->ObjectToNodeMatrix;
+    };
+  void SetAndObserveObjectToNodeMatrix(vtkMatrix4x4* objectToNodeMatrix);
+
+  /// 4x4 matrix defining the object center and axis directions within the world coordinate system.
+  /// Changes made to the matrix will not be applied.
+  vtkMatrix4x4* GetObjectToWorldMatrix()
+    {
+    return this->ObjectToWorldMatrix;
+    };
 
   /// Get the bounds of the ROI in the ROI coordinate system.
   void GetBoundsROI(double bounds[6]);
@@ -143,33 +156,13 @@ public:
     ROIType_Last
     };
 
-  // Scale handle indexes
-  enum
-  {
-    HandleLFace,
-    HandleRFace,
-    HandlePFace,
-    HandleAFace,
-    HandleIFace,
-    HandleSFace,
-
-    HandleLPICorner,
-    HandleRPICorner,
-    HandleLAICorner,
-    HandleRAICorner,
-    HandleLPSCorner,
-    HandleRPSCorner,
-    HandleLASCorner,
-    HandleRASCorner,
-    };
-
   /// Reimplemented to recalculate InteractionHandleToWorld matrix when parent transform is changed.
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
 
 
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
-  /// Update the InteractionHandleToWorldMatrix based on the ROIToLocal and LocalToWorld transforms.
+  /// Update the InteractionHandleToWorldMatrix based on the ObjectToNode and NodeToWorld transforms.
   void UpdateInteractionHandleToWorldMatrix() override;
 
   /// Create default storage node or nullptr if does not have one
@@ -180,6 +173,12 @@ public:
 
   void GetRASBounds(double bounds[6]) override;
   void GetBounds(double bounds[6]) override;
+
+  void GetPlanes(vtkPlanes* planes, bool insideOut=false);
+  void GetPlanesWorld(vtkPlanes* planes, bool insideOut=false);
+
+  bool IsPointInROI(double point_Node[3]);
+  bool IsPointInROIWorld(double point_World[3]);
 
   ///
   /// Legacy vtkMRMLAnnotationROINode methods
@@ -210,16 +209,16 @@ public:
   void GetRadiusXYZ(double radiusXYZ[3]);
 
   /// Legacy method from vtkMRMLAnnotationROINode
-  void GetTransformedPlanes(vtkPlanes* planes);
+  void GetTransformedPlanes(vtkPlanes* planes, bool insideOut=false);
 
-  /// Legacy method from vtkMRMLAnnotationROINode
-  /// Indicates if the ROI box is inside out
-  vtkSetMacro(InsideOut, bool);
-  vtkGetMacro(InsideOut, bool);
-  vtkBooleanMacro(InsideOut, bool);
+  /// Helper method for generating an orthogonal right handed matrix from axes.
+  /// Transform can optionally be specified to apply an additional transform on the vectors before generating the matrix.
+  static void GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix,
+    vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
+  static void GenerateOrthogonalMatrix(double xAxis[3], double yAxis[3], double zAxis[3], double origin[3],
+    vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
 
 protected:
-  bool InsideOut{false};
   int ROIType{vtkMRMLMarkupsROINode::ROITypeBox};
 
   double Size[3]{ 0.0, 0.0, 0.0 };
@@ -228,10 +227,14 @@ protected:
   bool IsUpdatingROIFromControlPoints{false};
   bool IsUpdatingInteractionHandleToWorldMatrix{false};
 
-  vtkSmartPointer<vtkMatrix4x4> ROIToLocalMatrix;
+  vtkSmartPointer<vtkMatrix4x4> ObjectToNodeMatrix { nullptr };
+  vtkSmartPointer<vtkMatrix4x4> ObjectToWorldMatrix { nullptr };
 
   /// Fills the specified vtkPoints with the points for all of the box ROI corners
   void GenerateBoxBounds(double bounds[6], double xAxis[3], double yAxis[3], double zAxis[3], double center[3], double size[3]);
+
+  /// Calculates the transform from the Object (ROI) to World coordinates.
+  void UpdateObjectToWorldMatrix();
 
   vtkMRMLMarkupsROINode();
   ~vtkMRMLMarkupsROINode() override;

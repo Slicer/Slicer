@@ -51,7 +51,7 @@ vtkMRMLMarkupsPlaneNode::vtkMRMLMarkupsPlaneNode()
     {
     this->PlaneBounds[i] = 0.0;
     }
-  this->PlaneToPlaneOffsetMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  this->ObjectToBaseMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
 
   // Setup measurements calculated for this markup type
   vtkNew<vtkMRMLMeasurementArea> areaMeasurement;
@@ -70,7 +70,7 @@ void vtkMRMLMarkupsPlaneNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of,nIndent);
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLEnumMacro(sizeMode, SizeMode);
-  vtkMRMLWriteXMLMatrix4x4Macro(planeToPlaneOffsetMatrix, PlaneToPlaneOffsetMatrix);
+  vtkMRMLWriteXMLMatrix4x4Macro(objectToBaseMatrix, ObjectToBaseMatrix);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -81,7 +81,8 @@ void vtkMRMLMarkupsPlaneNode::ReadXMLAttributes(const char** atts)
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLEnumMacro(sizeMode, SizeMode);
-  vtkMRMLReadXMLOwnedMatrix4x4Macro(planeToPlaneOffsetMatrix, PlaneToPlaneOffsetMatrix);
+  vtkMRMLReadXMLOwnedMatrix4x4Macro(planeToPlaneOffsetMatrix, ObjectToBaseMatrix); // Backwards compatible with old name
+  vtkMRMLReadXMLOwnedMatrix4x4Macro(objectToBaseMatrix, ObjectToBaseMatrix);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -92,7 +93,7 @@ void vtkMRMLMarkupsPlaneNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   Superclass::CopyContent(anode, deepCopy);
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(SizeMode);
-  vtkMRMLCopyOwnedMatrix4x4Macro(PlaneToPlaneOffsetMatrix);
+  vtkMRMLCopyOwnedMatrix4x4Macro(ObjectToBaseMatrix);
   vtkMRMLCopyEndMacro();
 }
 
@@ -102,7 +103,7 @@ void vtkMRMLMarkupsPlaneNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintEnumMacro(SizeMode);
-  vtkMRMLPrintMatrix4x4Macro(PlaneToPlaneOffsetMatrix);
+  vtkMRMLPrintMatrix4x4Macro(ObjectToBaseMatrix);
   vtkMRMLPrintEndMacro();
 }
 
@@ -192,93 +193,75 @@ void vtkMRMLMarkupsPlaneNode::SetNormal(const double normal[3])
   MRMLNodeModifyBlocker blocker(this);
   this->CreatePlane();
 
-  double newNormal[3] = { normal[0], normal[1], normal[2] };
-  vtkMath::Normalize(newNormal);
+  double newNormal_Node[3] = { normal[0], normal[1], normal[2] };
+  vtkMath::Normalize(newNormal_Node);
 
-  double currentNormal[3] = { 0 };
-  this->GetNormal(currentNormal);
+  double currentNormal_Node[3] = { 0.0, 0.0, 0.0 };
+  this->GetNormal(currentNormal_Node);
 
   double epsilon = 0.0001;
-  if (vtkMath::Dot(newNormal, currentNormal) >= 1.0 - epsilon)
+  if (vtkMath::Dot(newNormal_Node, currentNormal_Node) >= 1.0 - epsilon)
     {
     // Normal vectors are equivalent, no change required.
     return;
     }
 
-  vtkNew<vtkTransform> planeToLocalTransform;
-  //planeToLocalTransform->Concatenate(this->LocalToPlaneTransform); //TODO
-  planeToLocalTransform->Inverse();
+  vtkNew<vtkMatrix4x4> objectToNodeMatrix;
+  this->GetObjectToNodeMatrix(objectToNodeMatrix);
 
-  double currentNormalLocal[3] = { 0 };
-  planeToLocalTransform->TransformVector(currentNormal, currentNormalLocal);
-
-  double newNormalLocal[3] = { 0 };
-  planeToLocalTransform->TransformVector(newNormal, newNormalLocal);
-
-  double angleRadians = vtkMath::AngleBetweenVectors(currentNormalLocal, newNormalLocal);
-  double rotationAxis[3] = { 0 };
-  vtkMath::Cross(currentNormalLocal, newNormalLocal, rotationAxis);
-  if (vtkMath::Norm(rotationAxis) < epsilon)
+  double angleRadians = vtkMath::AngleBetweenVectors(currentNormal_Node, newNormal_Node);
+  double rotationAxis_Node[3] = { 0.0, 0.0, 0.0 };
+  vtkMath::Cross(currentNormal_Node, newNormal_Node, rotationAxis_Node);
+  if (vtkMath::Norm(rotationAxis_Node) < epsilon)
     {
     // New + old normals are facing opposite directions.
     // Find a perpendicular axis to flip around.
-    vtkMath::Perpendiculars(currentNormalLocal, rotationAxis, nullptr, 0);
+    vtkMath::Perpendiculars(currentNormal_Node, rotationAxis_Node, nullptr, 0);
     }
 
-  vtkNew<vtkTransform> transform;
-  double point0[3] = { 0 };
-  this->GetNthControlPointPosition(0, point0);
-  transform->Translate(point0);
-  transform->RotateWXYZ(vtkMath::DegreesFromRadians(angleRadians), rotationAxis);
-  for (int i = 0; i < 3; ++i)
-    {
-    point0[i] = -1 * point0[i];
-    }
-  transform->Translate(point0);
+  vtkNew<vtkTransform> oldToNewNormalTransform;
+  double origin_Node[3] = { 0.0, 0.0, 0.0 };
+  this->GetOrigin(origin_Node);
+  oldToNewNormalTransform->Translate(origin_Node);
+  oldToNewNormalTransform->RotateWXYZ(vtkMath::DegreesFromRadians(angleRadians), rotationAxis_Node);
+  vtkMath::MultiplyScalar(origin_Node, -1.0);
+  oldToNewNormalTransform->Translate(origin_Node);
 
-  double point1[3] = { 0 };
-  this->GetNthControlPointPosition(1, point1);
-  transform->TransformPoint(point1, point1);
-  this->SetNthControlPointPosition(1, point1[0], point1[1], point1[2]);
-
-  double point2[3] = { 0 };
-  this->GetNthControlPointPosition(2, point2);
-  transform->TransformPoint(point2, point2);
-  this->SetNthControlPointPosition(2, point2[0], point2[1], point2[2]);
+  this->ApplyTransform(oldToNewNormalTransform);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::SetNormalWorld(const double inNormal[3])
+void vtkMRMLMarkupsPlaneNode::SetNormalWorld(const double normal_World[3])
 {
-  double normal[3] = { inNormal[0], inNormal[1], inNormal[2] };
+  double normal_Node[3] = { normal_World[0], normal_World[1], normal_World[2] };
 
   vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
   if (transformNode)
     {
     // Get transform
     vtkNew<vtkGeneralTransform> transformToWorld;
-    transformNode->GetTransformFromWorld(transformToWorld.GetPointer());
+    transformNode->GetTransformFromWorld(transformToWorld);
 
     // Convert coordinates
-    double origin[3] = { 0 };
-    this->GetOriginWorld(origin);
-    transformToWorld->TransformVectorAtPoint(origin, normal, normal);
+    double origin_World[3] = { 0 };
+    this->GetOriginWorld(origin_World);
+    transformToWorld->TransformVectorAtPoint(origin_World, normal_World, normal_Node);
     }
-  this->SetNormal(normal);
+  this->SetNormal(normal_Node);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::GetOrigin(double origin_Local[3])
+void vtkMRMLMarkupsPlaneNode::GetOrigin(double origin_Node[3])
 {
-  if (!origin_Local)
+  if (!origin_Node)
     {
     vtkErrorMacro("GetOrigin: Invalid origin argument");
     return;
     }
 
-  origin_Local[0] = 0.0;
-  origin_Local[1] = 0.0;
-  origin_Local[2] = 0.0;
+  origin_Node[0] = 0.0;
+  origin_Node[1] = 0.0;
+  origin_Node[2] = 0.0;
 
   if (this->GetNumberOfControlPoints() < 1)
     {
@@ -286,14 +269,14 @@ void vtkMRMLMarkupsPlaneNode::GetOrigin(double origin_Local[3])
     return;
     }
 
-  double origin_Plane[3] = { 0.0, 0.0, 0.0 };
+  double origin_Object[3] = { 0.0, 0.0, 0.0 };
 
-  vtkNew<vtkMatrix4x4> planeToLocalMatrix;
-  this->GetPlaneToLocalMatrix(planeToLocalMatrix);
+  vtkNew<vtkMatrix4x4> objectToNodeMatrix;
+  this->GetObjectToNodeMatrix(objectToNodeMatrix);
 
-  vtkNew<vtkTransform> planeToLocalTransform;
-  planeToLocalTransform->SetMatrix(planeToLocalMatrix);
-  planeToLocalTransform->TransformPoint(origin_Plane, origin_Local);
+  vtkNew<vtkTransform> objectToNodeTransform;
+  objectToNodeTransform->SetMatrix(objectToNodeMatrix);
+  objectToNodeTransform->TransformPoint(origin_Object, origin_Node);
 }
 
 //----------------------------------------------------------------------------
@@ -315,20 +298,20 @@ void vtkMRMLMarkupsPlaneNode::GetOriginWorld(double origin_World[3])
     return;
     }
 
-  double origin_Plane[3] = { 0.0, 0.0, 0.0 };
+  double origin_Object[3] = { 0.0, 0.0, 0.0 };
 
-  vtkNew<vtkMatrix4x4> planeToWorldMatrix;
-  this->GetPlaneToWorldMatrix(planeToWorldMatrix);
+  vtkNew<vtkMatrix4x4> objectToWorldMatrix;
+  this->GetObjectToWorldMatrix(objectToWorldMatrix);
 
-  vtkNew<vtkTransform> planeToWorldTransform;
-  planeToWorldTransform->SetMatrix(planeToWorldMatrix);
-  planeToWorldTransform->TransformPoint(origin_Plane, origin_World);
+  vtkNew<vtkTransform> objectToWorldTransform;
+  objectToWorldTransform->SetMatrix(objectToWorldMatrix);
+  objectToWorldTransform->TransformPoint(origin_Object, origin_World);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::SetOrigin(const double origin_Local[3])
+void vtkMRMLMarkupsPlaneNode::SetOrigin(const double origin_Node[3])
 {
-  if (!origin_Local)
+  if (!origin_Node)
     {
     vtkWarningMacro("SetOrigin: Invalid origin argument");
     return;
@@ -340,27 +323,23 @@ void vtkMRMLMarkupsPlaneNode::SetOrigin(const double origin_Local[3])
     this->AddNControlPoints(1);
     }
 
-  double previousOrigin_Local[3] = { 0.0, 0.0, 0.0 };
-  this->GetOrigin(previousOrigin_Local);
+  double previousOrigin_Node[3] = { 0.0, 0.0, 0.0 };
+  this->GetOrigin(previousOrigin_Node);
 
-  double displacementVector_Local[3] = { 0.0 };
-  vtkMath::Subtract(origin_Local, previousOrigin_Local, displacementVector_Local);
+  double displacementVector_Node[3] = { 0.0 };
+  vtkMath::Subtract(origin_Node, previousOrigin_Node, displacementVector_Node);
 
-  for (int i = 0; i < this->GetNumberOfControlPoints(); ++i)
-    {
-    double position_Local[3] = { 0.0 };
-    this->GetNthControlPointPosition(i, position_Local);
-    vtkMath::Add(position_Local, displacementVector_Local, position_Local);
-    this->SetNthControlPointPosition(i, position_Local[0], position_Local[1], position_Local[2]);
-    }
+  vtkNew<vtkTransform> oldToNewOriginTransform;
+  oldToNewOriginTransform->Translate(displacementVector_Node);
+  this->ApplyTransform(oldToNewOriginTransform);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::SetOriginWorld(const double origin_World[3])
 {
-  double origin_Local[3] = { 0.0 };
-  this->TransformPointFromWorld(origin_World, origin_Local);
-  this->SetOrigin(origin_Local);
+  double origin_Node[3] = { 0.0 };
+  this->TransformPointFromWorld(origin_World, origin_Node);
+  this->SetOrigin(origin_Node);
 }
 
 //----------------------------------------------------------------------------
@@ -380,9 +359,9 @@ void vtkMRMLMarkupsPlaneNode::CalculateAxesFromPoints(const double point0[3], co
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::GetPlaneToLocalMatrix(vtkMatrix4x4* planeToLocalMatrix)
+void vtkMRMLMarkupsPlaneNode::GetObjectToNodeMatrix(vtkMatrix4x4* objectToNodeMatrix)
 {
-  if (!planeToLocalMatrix)
+  if (!objectToNodeMatrix)
     {
     return;
     }
@@ -392,46 +371,46 @@ void vtkMRMLMarkupsPlaneNode::GetPlaneToLocalMatrix(vtkMatrix4x4* planeToLocalMa
     return;
     }
 
-  double point0_Local[3] = { 0.0 };
-  this->GetNthControlPointPosition(0, point0_Local);
+  double point0_Node[3] = { 0.0 };
+  this->GetNthControlPointPosition(0, point0_Node);
 
-  vtkNew<vtkMatrix4x4> planeOffsetToLocalMatrix;
+  vtkNew<vtkMatrix4x4> baseToNodeMatrix;
   for (int i = 0; i < 3; ++i)
     {
-    planeOffsetToLocalMatrix->SetElement(i, 3, point0_Local[i]);
+    baseToNodeMatrix->SetElement(i, 3, point0_Node[i]);
     }
 
   if (this->GetNumberOfControlPoints() >= 3)
     {
-    double point1_Local[3] = { 0.0 };
-    double point2_Local[3] = { 0.0 };
+    double point1_Node[3] = { 0.0 };
+    double point2_Node[3] = { 0.0 };
 
-    this->GetNthControlPointPosition(1, point1_Local);
-    this->GetNthControlPointPosition(2, point2_Local);
+    this->GetNthControlPointPosition(1, point1_Node);
+    this->GetNthControlPointPosition(2, point2_Node);
 
-    double xAxis_Local[3] = { 0.0 };
-    double yAxis_Local[3] = { 0.0 };
-    double zAxis_Local[3] = { 0.0 };
-    this->CalculateAxesFromPoints(point0_Local, point1_Local, point2_Local, xAxis_Local, yAxis_Local, zAxis_Local);
+    double xAxis_Node[3] = { 0.0 };
+    double yAxis_Node[3] = { 0.0 };
+    double zAxis_Node[3] = { 0.0 };
+    this->CalculateAxesFromPoints(point0_Node, point1_Node, point2_Node, xAxis_Node, yAxis_Node, zAxis_Node);
     for (int i = 0; i < 3; ++i)
       {
-      planeOffsetToLocalMatrix->SetElement(i, 0, xAxis_Local[i]);
-      planeOffsetToLocalMatrix->SetElement(i, 1, yAxis_Local[i]);
-      planeOffsetToLocalMatrix->SetElement(i, 2, zAxis_Local[i]);
+      baseToNodeMatrix->SetElement(i, 0, xAxis_Node[i]);
+      baseToNodeMatrix->SetElement(i, 1, yAxis_Node[i]);
+      baseToNodeMatrix->SetElement(i, 2, zAxis_Node[i]);
       }
     }
 
-  vtkNew<vtkTransform> planeToLocalTransform;
-  planeToLocalTransform->PostMultiply();
-  planeToLocalTransform->Concatenate(this->PlaneToPlaneOffsetMatrix);
-  planeToLocalTransform->Concatenate(planeOffsetToLocalMatrix);
-  planeToLocalMatrix->DeepCopy(planeToLocalTransform->GetMatrix());
+  vtkNew<vtkTransform> objectToNodeTransform;
+  objectToNodeTransform->PostMultiply();
+  objectToNodeTransform->Concatenate(this->ObjectToBaseMatrix);
+  objectToNodeTransform->Concatenate(baseToNodeMatrix);
+  objectToNodeMatrix->DeepCopy(objectToNodeTransform->GetMatrix());
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::GetPlaneToWorldMatrix(vtkMatrix4x4* planeToWorldMatrix)
+void vtkMRMLMarkupsPlaneNode::GetObjectToWorldMatrix(vtkMatrix4x4* objectToWorldMatrix)
 {
-  if (!planeToWorldMatrix)
+  if (!objectToWorldMatrix)
     {
     return;
     }
@@ -470,17 +449,17 @@ void vtkMRMLMarkupsPlaneNode::GetPlaneToWorldMatrix(vtkMatrix4x4* planeToWorldMa
       }
     }
 
-  vtkNew<vtkTransform> planeToLocalTransform;
-  planeToLocalTransform->PostMultiply();
-  planeToLocalTransform->Concatenate(this->PlaneToPlaneOffsetMatrix);
-  planeToLocalTransform->Concatenate(planeOffsetToWorldMatrix);
-  planeToWorldMatrix->DeepCopy(planeToLocalTransform->GetMatrix());
+  vtkNew<vtkTransform> objectToNodeTransform;
+  objectToNodeTransform->PostMultiply();
+  objectToNodeTransform->Concatenate(this->ObjectToBaseMatrix);
+  objectToNodeTransform->Concatenate(planeOffsetToWorldMatrix);
+  objectToWorldMatrix->DeepCopy(objectToNodeTransform->GetMatrix());
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::GetAxes(double xAxis_Local[3], double yAxis_Local[3], double zAxis_Local[3])
+void vtkMRMLMarkupsPlaneNode::GetAxes(double xAxis_Node[3], double yAxis_Node[3], double zAxis_Node[3])
 {
-  if (!xAxis_Local || !yAxis_Local || !zAxis_Local)
+  if (!xAxis_Node || !yAxis_Node || !zAxis_Node)
     {
     vtkErrorMacro("GetAxes: Invalid input argument");
     return;
@@ -494,26 +473,26 @@ void vtkMRMLMarkupsPlaneNode::GetAxes(double xAxis_Local[3], double yAxis_Local[
 
   for (int i = 0; i < 3; ++i)
     {
-    xAxis_Local[i] = 0.0;
-    yAxis_Local[i] = 0.0;
-    zAxis_Local[i] = 0.0;
+    xAxis_Node[i] = 0.0;
+    yAxis_Node[i] = 0.0;
+    zAxis_Node[i] = 0.0;
     }
-  xAxis_Local[0] = 1.0;
-  yAxis_Local[1] = 1.0;
-  zAxis_Local[2] = 1.0;
+  xAxis_Node[0] = 1.0;
+  yAxis_Node[1] = 1.0;
+  zAxis_Node[2] = 1.0;
 
-  double xAxis_Plane[3] = { 1.0, 0.0, 0.0 };
-  double yAxis_Plane[3] = { 0.0, 1.0, 0.0 };
-  double zAxis_Plane[3] = { 0.0, 0.0, 1.0 };
+  double xAxis_Object[3] = { 1.0, 0.0, 0.0 };
+  double yAxis_Object[3] = { 0.0, 1.0, 0.0 };
+  double zAxis_Object[3] = { 0.0, 0.0, 1.0 };
 
-  vtkNew<vtkMatrix4x4> planeToLocalMatrix;
-  this->GetPlaneToLocalMatrix(planeToLocalMatrix);
+  vtkNew<vtkMatrix4x4> objectToNodeMatrix;
+  this->GetObjectToNodeMatrix(objectToNodeMatrix);
 
-  vtkNew<vtkTransform> planeToLocalTransform;
-  planeToLocalTransform->SetMatrix(planeToLocalMatrix);
-  planeToLocalTransform->TransformVector(xAxis_Plane, xAxis_Local);
-  planeToLocalTransform->TransformVector(yAxis_Plane, yAxis_Local);
-  planeToLocalTransform->TransformVector(zAxis_Plane, zAxis_Local);
+  vtkNew<vtkTransform> objectToNodeTransform;
+  objectToNodeTransform->SetMatrix(objectToNodeMatrix);
+  objectToNodeTransform->TransformVector(xAxis_Object, xAxis_Node);
+  objectToNodeTransform->TransformVector(yAxis_Object, yAxis_Node);
+  objectToNodeTransform->TransformVector(zAxis_Object, zAxis_Node);
 }
 
 //----------------------------------------------------------------------------
@@ -541,24 +520,24 @@ void vtkMRMLMarkupsPlaneNode::GetAxesWorld(double xAxis_World[3], double yAxis_W
   yAxis_World[1] = 1.0;
   zAxis_World[2] = 1.0;
 
-  double xAxis_Plane[3] = { 1.0, 0.0, 0.0 };
-  double yAxis_Plane[3] = { 0.0, 1.0, 0.0 };
-  double zAxis_Plane[3] = { 0.0, 0.0, 1.0 };
+  double xAxis_Object[3] = { 1.0, 0.0, 0.0 };
+  double yAxis_Object[3] = { 0.0, 1.0, 0.0 };
+  double zAxis_Object[3] = { 0.0, 0.0, 1.0 };
 
-  vtkNew<vtkMatrix4x4> planeToWorldMatrix;
-  this->GetPlaneToWorldMatrix(planeToWorldMatrix);
+  vtkNew<vtkMatrix4x4> objectToWorldMatrix;
+  this->GetObjectToWorldMatrix(objectToWorldMatrix);
 
-  vtkNew<vtkTransform> planeToWorldTransform;
-  planeToWorldTransform->SetMatrix(planeToWorldMatrix);
-  planeToWorldTransform->TransformVector(xAxis_Plane, xAxis_World);
-  planeToWorldTransform->TransformVector(yAxis_Plane, yAxis_World);
-  planeToWorldTransform->TransformVector(zAxis_Plane, zAxis_World);
+  vtkNew<vtkTransform> objectToWorldTransform;
+  objectToWorldTransform->SetMatrix(objectToWorldMatrix);
+  objectToWorldTransform->TransformVector(xAxis_Object, xAxis_World);
+  objectToWorldTransform->TransformVector(yAxis_Object, yAxis_World);
+  objectToWorldTransform->TransformVector(zAxis_Object, zAxis_World);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Local[3], const double yAxis_Local[3], const double zAxis_Local[3])
+void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double yAxis_Node[3], const double zAxis_Node[3])
 {
-  if (!xAxis_Local || !yAxis_Local || !zAxis_Local)
+  if (!xAxis_Node || !yAxis_Node || !zAxis_Node)
     {
     vtkErrorMacro("SetAxes: Invalid input axes");
     return;
@@ -568,20 +547,20 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Local[3], const double 
   double tempX[3] = { 0.0 };
   double tempY[3] = { 0.0 };
   double tempZ[3] = { 0.0 };
-  vtkMath::Cross(yAxis_Local, zAxis_Local, tempX);
-  vtkMath::Cross(zAxis_Local, xAxis_Local, tempY);
-  vtkMath::Cross(xAxis_Local, yAxis_Local, tempZ);
-  if (vtkMath::Dot(tempX, xAxis_Local) <= 1.0 - epsilon ||
-      vtkMath::Dot(tempY, yAxis_Local) <= 1.0 - epsilon ||
-      vtkMath::Dot(tempZ, zAxis_Local) <= 1.0 - epsilon)
+  vtkMath::Cross(yAxis_Node, zAxis_Node, tempX);
+  vtkMath::Cross(zAxis_Node, xAxis_Node, tempY);
+  vtkMath::Cross(xAxis_Node, yAxis_Node, tempZ);
+  if (vtkMath::Dot(tempX, xAxis_Node) <= 1.0 - epsilon ||
+      vtkMath::Dot(tempY, yAxis_Node) <= 1.0 - epsilon ||
+      vtkMath::Dot(tempZ, zAxis_Node) <= 1.0 - epsilon)
     {
     vtkErrorMacro("SetAxes: Invalid direction vectors!");
     return;
     }
 
-  if (vtkMath::Dot(xAxis_Local, yAxis_Local) >= epsilon ||
-      vtkMath::Dot(yAxis_Local, zAxis_Local) >= epsilon ||
-      vtkMath::Dot(zAxis_Local, xAxis_Local) >= epsilon)
+  if (vtkMath::Dot(xAxis_Node, yAxis_Node) >= epsilon ||
+      vtkMath::Dot(yAxis_Node, zAxis_Node) >= epsilon ||
+      vtkMath::Dot(zAxis_Node, xAxis_Node) >= epsilon)
     {
     vtkErrorMacro("SetAxes: Invalid vectors");
     }
@@ -589,61 +568,49 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Local[3], const double 
   MRMLNodeModifyBlocker blocker(this);
   this->CreatePlane();
 
-  double previousXAxis_Local[3] = { 0.0 };
-  double previousYAxis_Local[3] = { 0.0 };
-  double previousZAxis_Local[3] = { 0.0 };
-  this->GetAxes(previousXAxis_Local, previousYAxis_Local, previousZAxis_Local);
+  double previousXAxis_Node[3] = { 0.0 };
+  double previousYAxis_Node[3] = { 0.0 };
+  double previousZAxis_Node[3] = { 0.0 };
+  this->GetAxes(previousXAxis_Node, previousYAxis_Node, previousZAxis_Node);
 
   vtkNew<vtkMatrix4x4> previousAxisToIdentity;
   for (int i = 0; i < 3; ++i)
     {
-    previousAxisToIdentity->SetElement(i, 0, previousXAxis_Local[i]);
-    previousAxisToIdentity->SetElement(i, 1, previousYAxis_Local[i]);
-    previousAxisToIdentity->SetElement(i, 2, previousZAxis_Local[i]);
+    previousAxisToIdentity->SetElement(i, 0, previousXAxis_Node[i]);
+    previousAxisToIdentity->SetElement(i, 1, previousYAxis_Node[i]);
+    previousAxisToIdentity->SetElement(i, 2, previousZAxis_Node[i]);
     }
   previousAxisToIdentity->Invert();
 
   vtkNew<vtkMatrix4x4> identityToNewAxis;
   for (int i = 0; i < 3; ++i)
     {
-    identityToNewAxis->SetElement(i, 0, xAxis_Local[i]);
-    identityToNewAxis->SetElement(i, 1, yAxis_Local[i]);
-    identityToNewAxis->SetElement(i, 2, zAxis_Local[i]);
+    identityToNewAxis->SetElement(i, 0, xAxis_Node[i]);
+    identityToNewAxis->SetElement(i, 1, yAxis_Node[i]);
+    identityToNewAxis->SetElement(i, 2, zAxis_Node[i]);
     }
 
-  double point0_Local[3] = { 0 };
-  this->GetNthControlPointPosition(0, point0_Local);
+  double origin_Node[3] = { 0 };
+  this->GetOrigin(origin_Node);
 
-  vtkNew<vtkTransform> transform;
-  transform->PostMultiply();
-  for (int i = 0; i < 3; ++i)
-    {
-    point0_Local[i] = -1 * point0_Local[i];
-    }
-  transform->Translate(point0_Local);
-  transform->Concatenate(previousAxisToIdentity);
-  transform->Concatenate(identityToNewAxis);
-  for (int i = 0; i < 3; ++i)
-    {
-    point0_Local[i] = -1 * point0_Local[i];
-    }
-  transform->Translate(point0_Local);
+  vtkNew<vtkTransform> oldToNewAxesTransform;
+  oldToNewAxesTransform->PostMultiply();
+  vtkMath::MultiplyScalar(origin_Node, -1);
+  oldToNewAxesTransform->Translate(origin_Node);
+  oldToNewAxesTransform->Concatenate(previousAxisToIdentity);
+  oldToNewAxesTransform->Concatenate(identityToNewAxis);
+  vtkMath::MultiplyScalar(origin_Node, -1);
+  oldToNewAxesTransform->Translate(origin_Node);
 
-  for (int i = 0; i < 3; ++i)
-    {
-    double point_Local[4] = { 0, 0, 0, 1 };
-    this->GetNthControlPointPosition(i, point_Local);
-    transform->MultiplyPoint(point_Local, point_Local);
-    this->SetNthControlPointPosition(i, point_Local[0], point_Local[1], point_Local[2]);
-    }
+  this->ApplyTransform(oldToNewAxesTransform);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::SetAxesWorld(const double xAxis_World[3], const double yAxis_World[3], const double zAxis_World[3])
 {
-  double xAxis_Local[3] = { xAxis_World[0], xAxis_World[1], xAxis_World[2] };
-  double yAxis_Local[3] = { yAxis_World[0], yAxis_World[1], yAxis_World[2] };
-  double zAxis_Local[3] = { zAxis_World[0], zAxis_World[1], zAxis_World[2] };
+  double xAxis_Node[3] = { xAxis_World[0], xAxis_World[1], xAxis_World[2] };
+  double yAxis_Node[3] = { yAxis_World[0], yAxis_World[1], yAxis_World[2] };
+  double zAxis_Node[3] = { zAxis_World[0], zAxis_World[1], zAxis_World[2] };
 
   MRMLNodeModifyBlocker blocker(this);
   this->CreatePlane();
@@ -652,27 +619,27 @@ void vtkMRMLMarkupsPlaneNode::SetAxesWorld(const double xAxis_World[3], const do
   if (transformNode)
     {
     // Get transform
-    vtkNew<vtkGeneralTransform> worldToLocalTransform;
-    transformNode->GetTransformFromWorld(worldToLocalTransform.GetPointer());
+    vtkNew<vtkGeneralTransform> worldToNodeTransform;
+    transformNode->GetTransformFromWorld(worldToNodeTransform.GetPointer());
 
     // Convert coordinates
     double origin_World[3] = { 0 };
     this->GetOriginWorld(origin_World);
-    worldToLocalTransform->TransformVectorAtPoint(origin_World, xAxis_World, xAxis_Local);
-    worldToLocalTransform->TransformVectorAtPoint(origin_World, yAxis_World, yAxis_Local);
-    worldToLocalTransform->TransformVectorAtPoint(origin_World, zAxis_World, zAxis_Local);
+    worldToNodeTransform->TransformVectorAtPoint(origin_World, xAxis_World, xAxis_Node);
+    worldToNodeTransform->TransformVectorAtPoint(origin_World, yAxis_World, yAxis_Node);
+    worldToNodeTransform->TransformVectorAtPoint(origin_World, zAxis_World, zAxis_Node);
     }
-  this->SetAxes(xAxis_Local, yAxis_Local, zAxis_Local);
+  this->SetAxes(xAxis_Node, yAxis_Node, zAxis_Node);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::GetPlaneBounds(double PlaneBounds[6])
+void vtkMRMLMarkupsPlaneNode::GetPlaneBounds(double planeBounds_Object[6])
 {
   if (this->GetNumberOfControlPoints() < 3)
     {
     for (int i = 0; i < 6; ++i)
       {
-      PlaneBounds[i] = 0.0;
+      planeBounds_Object[i] = 0.0;
       }
     return;
     }
@@ -680,41 +647,29 @@ void vtkMRMLMarkupsPlaneNode::GetPlaneBounds(double PlaneBounds[6])
   // Size mode auto means we need to recalculate the diameter of the plane from the control points.
   if (this->SizeMode == vtkMRMLMarkupsPlaneNode::SizeModeAuto)
     {
-    double point0_Local[3] = { 0.0 };
-    double point1_Local[3] = { 0.0 };
-    double point2_Local[3] = { 0.0 };
-    this->GetNthControlPointPosition(0, point0_Local);
-    this->GetNthControlPointPosition(1, point1_Local);
-    this->GetNthControlPointPosition(2, point2_Local);
+    double point0_Node[3] = { 0.0, 0.0, 0.0 };
+    double point1_Node[3] = { 0.0, 0.0, 0.0 };
+    double point2_Node[3] = { 0.0, 0.0, 0.0 };
+    this->GetNthControlPointPosition(0, point0_Node);
+    this->GetNthControlPointPosition(1, point1_Node);
+    this->GetNthControlPointPosition(2, point2_Node);
 
-    double point0_Plane[3] = { 0.0 };
-    double point1_Plane[3] = { 0.0 };
-    double point2_Plane[3] = { 0.0 };
-    vtkNew<vtkTransform> localToPlaneTransform;
-    localToPlaneTransform->SetMatrix(this->PlaneToPlaneOffsetMatrix); // TODO
-    localToPlaneTransform->TransformPoint(point0_Local, point0_Plane);
-    localToPlaneTransform->TransformPoint(point1_Local, point1_Plane);
-    localToPlaneTransform->TransformPoint(point2_Local, point2_Plane);
+    vtkNew<vtkMatrix4x4> objectToNodeMatrix;
+    this->GetObjectToNodeMatrix(objectToNodeMatrix);
 
-    double xAxis_Local[3] = { 0.0 };
-    double yAxis_Local[3] = { 0.0 };
-    double zAxis_Local[3] = { 0.0 };
-    this->GetAxes(xAxis_Local, yAxis_Local, zAxis_Local);
+    vtkNew<vtkTransform> nodeToObjectTransform;
+    nodeToObjectTransform->SetMatrix(objectToNodeMatrix);
+    nodeToObjectTransform->Inverse();
 
-    // Update the plane
-    double vectorPoint0ToPoint1_Plane[3] = { 0 };
-    vtkMath::Subtract(point1_Plane, point0_Plane, vectorPoint0ToPoint1_Plane);
+    double point0_Object[3] = { 0.0, 0.0, 0.0 };
+    double point1_Object[3] = { 0.0, 0.0, 0.0 };
+    double point2_Object[3] = { 0.0, 0.0, 0.0 };
+    nodeToObjectTransform->TransformPoint(point0_Node, point0_Object);
+    nodeToObjectTransform->TransformPoint(point1_Node, point1_Object);
+    nodeToObjectTransform->TransformPoint(point2_Node, point2_Object);
 
-    double vectorPoint0ToPoint2_Plane[3] = { 0 };
-    vtkMath::Subtract(point2_Plane, point0_Plane, vectorPoint0ToPoint2_Plane);
-
-    double point1X = std::abs(vtkMath::Dot(vectorPoint0ToPoint1_Plane, xAxis_Local));
-    double point2X = std::abs(vtkMath::Dot(vectorPoint0ToPoint2_Plane, xAxis_Local));
-    double xMax = std::max({ 0.0, point1X, point2X });
-
-    double point1Y = std::abs(vtkMath::Dot(vectorPoint0ToPoint1_Plane, yAxis_Local));
-    double point2Y = std::abs(vtkMath::Dot(vectorPoint0ToPoint2_Plane, yAxis_Local));
-    double yMax = std::max({ 0.0, point1Y, point2Y });
+    double xMax = std::max({ std::abs(point0_Object[0]), std::abs(point1_Object[0]), std::abs(point2_Object[0]) });
+    double yMax = std::max({ std::abs(point0_Object[1]), std::abs(point1_Object[1]), std::abs(point2_Object[1]) });
 
     this->PlaneBounds[0] = xMax * this->AutoSizeScalingFactor * -1.0;
     this->PlaneBounds[1] = xMax * this->AutoSizeScalingFactor;
@@ -726,7 +681,7 @@ void vtkMRMLMarkupsPlaneNode::GetPlaneBounds(double PlaneBounds[6])
 
   for (int i = 0; i < 6; ++i)
     {
-    PlaneBounds[i] = this->PlaneBounds[i];
+    planeBounds_Object[i] = this->PlaneBounds[i];
     }
 }
 
@@ -738,61 +693,61 @@ void vtkMRMLMarkupsPlaneNode::CreatePlane()
     this->AddNControlPoints(3 - this->GetNumberOfControlPoints());
     }
 
-  double point0_Local[3] = { 0.0 };
-  double point1_Local[3] = { 0.0 };
-  double point2_Local[3] = { 0.0 };
-  this->GetNthControlPointPosition(0, point0_Local);
-  this->GetNthControlPointPosition(1, point1_Local);
-  this->GetNthControlPointPosition(2, point2_Local);
+  double point0_Node[3] = { 0.0 };
+  double point1_Node[3] = { 0.0 };
+  double point2_Node[3] = { 0.0 };
+  this->GetNthControlPointPosition(0, point0_Node);
+  this->GetNthControlPointPosition(1, point1_Node);
+  this->GetNthControlPointPosition(2, point2_Node);
 
   // Check if existing vectors are unique.
-  double vectorPoint0ToPoint1_Local[3] = { 0.0 };
-  double vectorPoint0ToPoint2_Local[3] = { 0.0 };
-  vtkMath::Subtract(point1_Local, point0_Local, vectorPoint0ToPoint1_Local);
-  vtkMath::Subtract(point2_Local, point0_Local, vectorPoint0ToPoint2_Local);
+  double vectorPoint0ToPoint1_Node[3] = { 0.0 };
+  double vectorPoint0ToPoint2_Node[3] = { 0.0 };
+  vtkMath::Subtract(point1_Node, point0_Node, vectorPoint0ToPoint1_Node);
+  vtkMath::Subtract(point2_Node, point0_Node, vectorPoint0ToPoint2_Node);
 
   bool pointChanged = false;
   double epsilon = 1e-5;
-  if (vtkMath::Norm(vectorPoint0ToPoint1_Local) <= epsilon)
+  if (vtkMath::Norm(vectorPoint0ToPoint1_Node) <= epsilon)
     {
     // Point1 is at same position as point0.
     // Move point1 away in x axis.
     double xVector[3] = { 1,0,0 };
-    vtkMath::Add(point1_Local, xVector, point1_Local);
+    vtkMath::Add(point1_Node, xVector, point1_Node);
     pointChanged = true;
     }
 
-  if (vtkMath::Norm(vectorPoint0ToPoint2_Local) <= epsilon)
+  if (vtkMath::Norm(vectorPoint0ToPoint2_Node) <= epsilon)
     {
     // Point2 is at same position as point0.
     // Move point2 away in y axis.
     double yVector[3] = { 0,1,0 };
-    vtkMath::Add(point2_Local, yVector, point2_Local);
+    vtkMath::Add(point2_Node, yVector, point2_Node);
     pointChanged = true;
     }
 
-  vtkMath::Subtract(point1_Local, point0_Local, vectorPoint0ToPoint1_Local);
-  vtkMath::Subtract(point2_Local, point0_Local, vectorPoint0ToPoint2_Local);
-  if (vtkMath::Dot(vectorPoint0ToPoint1_Local, vectorPoint0ToPoint2_Local) >= 1.0 - epsilon)
+  vtkMath::Subtract(point1_Node, point0_Node, vectorPoint0ToPoint1_Node);
+  vtkMath::Subtract(point2_Node, point0_Node, vectorPoint0ToPoint2_Node);
+  if (vtkMath::Dot(vectorPoint0ToPoint1_Node, vectorPoint0ToPoint2_Node) >= 1.0 - epsilon)
     {
     // Point1 and point2 are along the same vector from point0.
     // Find a perpendicular vector and move point2.
-    double perpendicular_Local[3] = { 0.0 };
-    vtkMath::Perpendiculars(vectorPoint0ToPoint2_Local, perpendicular_Local, nullptr, 0.0);
-    vtkMath::Add(point0_Local, perpendicular_Local, point2_Local);
+    double perpendicular_Node[3] = { 0.0 };
+    vtkMath::Perpendiculars(vectorPoint0ToPoint2_Node, perpendicular_Node, nullptr, 0.0);
+    vtkMath::Add(point0_Node, perpendicular_Node, point2_Node);
     }
 
   if (pointChanged)
     {
-    this->SetNthControlPointPosition(1, point1_Local[0], point1_Local[1], point1_Local[2]);
-    this->SetNthControlPointPosition(2, point2_Local[0], point2_Local[1], point2_Local[2]);
+    this->SetNthControlPointPosition(1, point1_Node[0], point1_Node[1], point1_Node[2]);
+    this->SetNthControlPointPosition(2, point2_Node[0], point2_Node[1], point2_Node[2]);
     }
 }
 
 //----------------------------------------------------------------------------
-vtkMatrix4x4* vtkMRMLMarkupsPlaneNode::GetPlaneToPlaneOffsetMatrix()
+vtkMatrix4x4* vtkMRMLMarkupsPlaneNode::GetObjectToBaseMatrix()
 {
-  return this->PlaneToPlaneOffsetMatrix;
+  return this->ObjectToBaseMatrix;
 }
 
 //---------------------------------------------------------------------------
@@ -836,36 +791,36 @@ double vtkMRMLMarkupsPlaneNode::GetClosestPointOnPlaneWorld(const double posWorl
     return 0.0;
     }
 
-  vtkNew<vtkMatrix4x4> planeToWorldMatrix;
-  this->GetPlaneToWorldMatrix(planeToWorldMatrix);
+  vtkNew<vtkMatrix4x4> objectToWorldMatrix;
+  this->GetObjectToWorldMatrix(objectToWorldMatrix);
 
-  vtkNew<vtkMatrix4x4> worldToPlaneMatrix;
-  worldToPlaneMatrix->DeepCopy(planeToWorldMatrix);
-  worldToPlaneMatrix->Invert();
+  vtkNew<vtkMatrix4x4> worldToObjectMatrix;
+  worldToObjectMatrix->DeepCopy(objectToWorldMatrix);
+  worldToObjectMatrix->Invert();
 
   double posWorld4[4] = { posWorld[0], posWorld[1], posWorld[2], 1.0 };
   double closestPosPlane4[4] = { 0.0, 0.0, 0.0, 0.0 };
-  worldToPlaneMatrix->MultiplyPoint(posWorld4, closestPosPlane4);
+  worldToObjectMatrix->MultiplyPoint(posWorld4, closestPosPlane4);
 
-  double distanceToPlane = closestPosPlane4[2];
+  double distanceToObject = closestPosPlane4[2];
   closestPosPlane4[2] = 0.0; // Project to plane
 
   if (!infinitePlane)
     {
-    double planeBounds[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-    this->GetPlaneBounds(planeBounds);
+    double planeBounds_Object[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    this->GetPlaneBounds(planeBounds_Object);
     for (int i = 0; i < 3; ++i)
       {
-      closestPosPlane4[i] = std::max(closestPosPlane4[i], planeBounds[2 * i]);
-      closestPosPlane4[i] = std::min(closestPosPlane4[i], planeBounds[2 * i + 1]);
+      closestPosPlane4[i] = std::max(closestPosPlane4[i], planeBounds_Object[2 * i]);
+      closestPosPlane4[i] = std::min(closestPosPlane4[i], planeBounds_Object[2 * i + 1]);
       }
     }
 
   double closestPosWorld4[4] = { 0.0, 0.0, 0.0, 0.0 };
-  planeToWorldMatrix->MultiplyPoint(closestPosPlane4, closestPosWorld4);
+  objectToWorldMatrix->MultiplyPoint(closestPosPlane4, closestPosWorld4);
   for (int i = 0; i < 3; ++i)
     {
     closestPosWorld[i] = closestPosWorld4[i];
     }
-  return distanceToPlane;
+  return distanceToObject;
 }

@@ -90,13 +90,13 @@ int vtkMRMLMarkupsNodeTest4(int , char * [] )
 
   /////////////
   std::cout << "Test set axes/origin with plane offset" << std::endl;
-  vtkNew<vtkTransform> planeToPlaneOffset;
-  planeToPlaneOffset->Translate(1.0, 2.0, 3.0);
-  planeToPlaneOffset->RotateX(50.0);
-  planeToPlaneOffset->RotateY(12.0);
-  planeToPlaneOffset->RotateZ(5.0);
-  planeToPlaneOffset->Translate(5.0, 3.0, 10.0);
-  planeNode->GetPlaneToPlaneOffsetMatrix()->DeepCopy(planeToPlaneOffset->GetMatrix());
+  vtkNew<vtkTransform> objectToBase;
+  objectToBase->Translate(1.0, 2.0, 3.0);
+  objectToBase->RotateX(50.0);
+  objectToBase->RotateY(12.0);
+  objectToBase->RotateZ(5.0);
+  objectToBase->Translate(5.0, 3.0, 10.0);
+  planeNode->GetObjectToBaseMatrix()->DeepCopy(objectToBase->GetMatrix());
   planeNode->SetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
   planeNode->SetOriginWorld(origin_World);
   CHECK_BOOL(ComparePlane(xAxis_World, yAxis_World, zAxis_World, origin_World, planeNode, EPSILON), true);
