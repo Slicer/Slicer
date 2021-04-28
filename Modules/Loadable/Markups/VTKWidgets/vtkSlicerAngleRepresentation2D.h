@@ -33,6 +33,8 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
+#include "vtkLookupTable.h"
+
 class vtkArcSource;
 class vtkDiscretizableColorTransferFunction;
 class vtkSampleImplicitFunctionFilter;

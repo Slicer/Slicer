@@ -126,7 +126,7 @@ protected:
   vtkSmartPointer<vtkProperty>                   ROIOutlineOccludedProperty;
   vtkSmartPointer<vtkActor>                      ROIOutlineOccludedActor;
 
-  class MarkupsInteractionPipelineROI : public MarkupsInteractionPipeline
+  class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT MarkupsInteractionPipelineROI : public MarkupsInteractionPipeline
   {
   public:
     MarkupsInteractionPipelineROI(vtkSlicerMarkupsWidgetRepresentation* representation);

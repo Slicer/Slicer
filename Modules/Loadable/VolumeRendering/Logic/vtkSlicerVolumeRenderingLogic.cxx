@@ -826,7 +826,7 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
       xyz[i] *= 0.5;
       }
 
-    markupsROINode->GetROIToLocalMatrix()->Identity();
+    markupsROINode->GetObjectToNodeMatrix()->Identity();
     markupsROINode->SetXYZ(center);
     markupsROINode->SetRadiusXYZ(xyz);
     }

@@ -42,32 +42,32 @@
 #define vtkSlicerMarkupsRepresentation_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
-#include "vtkMRMLAbstractWidgetRepresentation.h"
 
+#include "vtkMRMLAbstractWidgetRepresentation.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
+#include "vtkActor2D.h"
+#include "vtkAppendPolyData.h"
+#include "vtkArcSource.h"
+#include "vtkArrowSource.h"
+#include "vtkGlyph3D.h"
+#include "vtkLookupTable.h"
+#include "vtkMarkupsGlyphSource2D.h"
+#include "vtkPointPlacer.h"
+#include "vtkPointSetToLabelHierarchy.h"
+#include "vtkPolyDataMapper2D.h"
+#include "vtkProperty2D.h"
 #include "vtkSmartPointer.h"
+#include "vtkSphereSource.h"
+#include "vtkTextActor.h"
+#include "vtkTextProperty.h"
+#include "vtkTensorGlyph.h"
+#include "vtkTransform.h"
+#include "vtkTransformPolyDataFilter.h"
+#include "vtkTubeFilter.h"
 
-class vtkActor2D;
-class vtkAppendPolyData;
-class vtkArcSource;
-class vtkArrayCalculator;
-class vtkArrowSource;
-class vtkConeSource;
-class vtkGlyph3D;
-class vtkMarkupsGlyphSource2D;
 class vtkMRMLInteractionEventData;
-class vtkPointPlacer;
-class vtkPointSetToLabelHierarchy;
-class vtkPolyDataMapper2D;
-class vtkProperty2D;
-class vtkRegularPolygonSource;
-class vtkSphereSource;
-class vtkTextActor;
-class vtkTextProperty;
-class vtkTensorGlyph;
-class vtkTubeFilter;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
 {
@@ -185,7 +185,7 @@ protected:
     vtkSmartPointer<vtkTextProperty> TextProperty;
   };
 
-  class MarkupsInteractionPipeline
+  class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT MarkupsInteractionPipeline
   {
   public:
     MarkupsInteractionPipeline(vtkMRMLAbstractWidgetRepresentation* representation);

@@ -599,9 +599,9 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
   else
     {
     // Face does not intersect with the slice. Handle should not be visibile.
-    visibilityArray->SetValue(vtkMRMLMarkupsROINode::HandleLFace, false);
+    visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleLFace, lFacePoint_ROI);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleLFace, lFacePoint_ROI);
 
   // Right face handle
   double rFacePoint_ROI[3] =  { sideLengths[0], -sideLengths[1], -sideLengths[2] };
@@ -618,9 +618,9 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
   else
     {
     // Face does not intersect with the slice. Handle should not be visibile.
-    visibilityArray->SetValue(vtkMRMLMarkupsROINode::HandleRFace, false);
+    visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleRFace, rFacePoint_ROI);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleRFace, rFacePoint_ROI);
 
   // Posterior face handle
   double pFacePoint_ROI[3] =  { -sideLengths[0], -sideLengths[1], -sideLengths[2] };
@@ -637,9 +637,9 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
   else
     {
     // Face does not intersect with the slice. Handle should not be visibile.
-    visibilityArray->SetValue(vtkMRMLMarkupsROINode::HandlePFace, false);
+    visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandlePFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandlePFace, pFacePoint_ROI);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandlePFace, pFacePoint_ROI);
 
   // Anterior face handle
   double aFacePoint_ROI[3] =  { -sideLengths[0],  sideLengths[1], -sideLengths[2] };
@@ -656,9 +656,9 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
   else
     {
     // Face does not intersect with the slice. Handle should not be visibile.
-    visibilityArray->SetValue(vtkMRMLMarkupsROINode::HandleAFace, false);
+    visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleAFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleAFace, aFacePoint_ROI);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleAFace, aFacePoint_ROI);
 
   // Inferior face handle
   double iFacePoint_ROI[3] =  { -sideLengths[0], -sideLengths[1], -sideLengths[2] };
@@ -675,9 +675,9 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
   else
     {
     // Face does not intersect with the slice. Handle should not be visibile.
-    visibilityArray->SetValue(vtkMRMLMarkupsROINode::HandleIFace, false);
+    visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleIFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleIFace, iFacePoint_ROI);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleIFace, iFacePoint_ROI);
 
   // Superior face handle
   double sFacePoint_ROI[3] =  { -sideLengths[0], -sideLengths[1], sideLengths[2] };
@@ -694,9 +694,9 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
   else
     {
     // Face does not intersect with the slice. Handle should not be visibile.
-    visibilityArray->SetValue(vtkMRMLMarkupsROINode::HandleSFace, false);
+    visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleSFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleSFace, sFacePoint_ROI);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleSFace, sFacePoint_ROI);
 
   this->ScaleHandlePoints->SetPoints(roiPoints);
 }

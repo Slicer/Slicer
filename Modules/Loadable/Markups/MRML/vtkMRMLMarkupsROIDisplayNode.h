@@ -54,6 +54,28 @@ public:
     ComponentROI_Last
   };
 
+  // Scale handle indexes
+  enum
+  {
+    HandleLFace,
+    HandleRFace,
+    HandlePFace,
+    HandleAFace,
+    HandleIFace,
+    HandleSFace,
+
+    HandleLPICorner,
+    HandleRPICorner,
+    HandleLAICorner,
+    HandleRAICorner,
+    HandleLPSCorner,
+    HandleRPSCorner,
+    HandleLASCorner,
+    HandleRASCorner,
+
+    HandleROI_Last
+  };
+
 protected:
   vtkMRMLMarkupsROIDisplayNode();
   ~vtkMRMLMarkupsROIDisplayNode() override;

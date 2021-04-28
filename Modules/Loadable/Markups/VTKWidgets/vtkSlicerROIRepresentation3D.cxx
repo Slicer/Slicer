@@ -130,7 +130,7 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
       return;
     }
 
-  this->ROIToWorldTransform->SetMatrix(roiNode->GetInteractionHandleToWorldMatrix());
+  this->ROIToWorldTransform->SetMatrix(roiNode->GetObjectToWorldMatrix());
 
   this->ROIActor->SetVisibility(true);
   this->VisibilityOn();
@@ -207,7 +207,7 @@ void vtkSlicerROIRepresentation3D::UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINod
     }
 
   double sideLengths[3] = { 0.0, 0.0, 0.0 };
-  roiNode->GetSizeWorld(sideLengths);
+  roiNode->GetSize(sideLengths);
   cubeSource->SetXLength(sideLengths[0]);
   cubeSource->SetYLength(sideLengths[1]);
   cubeSource->SetZLength(sideLengths[2]);
@@ -403,8 +403,8 @@ void vtkSlicerROIRepresentation3D::CanInteractWithROI(
     displayPosition3[0] = static_cast<double>(displayPosition[0]);
     displayPosition3[1] = static_cast<double>(displayPosition[1]);
 
-    vtkNew<vtkTransform> roiToLocal;
-    roiToLocal->Concatenate(roiNode->GetROIToLocalMatrix());
+    vtkNew<vtkTransform> objectToNode;
+    objectToNode->Concatenate(roiNode->GetObjectToNodeMatrix());
 
     double distance2Display = VTK_DOUBLE_MAX;
 
@@ -419,7 +419,7 @@ void vtkSlicerROIRepresentation3D::CanInteractWithROI(
 
       double edgePoint0Display[3] = { 0.0, 0.0, 0.0 };
       line->GetPoints()->GetPoint(0, edgePoint0Display);
-      roiToLocal->TransformPoint(edgePoint0Display, edgePoint0Display);
+      objectToNode->TransformPoint(edgePoint0Display, edgePoint0Display);
       roiNode->TransformPointToWorld(edgePoint0Display, edgePoint0Display);
       this->Renderer->SetWorldPoint(edgePoint0Display);
       this->Renderer->WorldToDisplay();
@@ -428,7 +428,7 @@ void vtkSlicerROIRepresentation3D::CanInteractWithROI(
 
       double edgePoint1Display[3] = { 0.0, 0.0, 0.0 };
       line->GetPoints()->GetPoint(1, edgePoint1Display);
-      roiToLocal->TransformPoint(edgePoint1Display, edgePoint1Display);
+      objectToNode->TransformPoint(edgePoint1Display, edgePoint1Display);
       roiNode->TransformPointToWorld(edgePoint1Display, edgePoint1Display);
       this->Renderer->SetWorldPoint(edgePoint1Display);
       this->Renderer->WorldToDisplay();
@@ -591,39 +591,39 @@ vtkSlicerROIRepresentation3D::HandleInfoList vtkSlicerROIRepresentation3D::Marku
  vtkSlicerMarkupsWidgetRepresentation::HandleInfoList handleInfoList;
   for (int i = 0; i < this->RotationHandlePoints->GetNumberOfPoints(); ++i)
     {
-    double handlePositionLocal[3] = { 0.0, 0.0, 0.0 };
+    double handlePositionNode[3] = { 0.0, 0.0, 0.0 };
     double handlePositionWorld[3] = { 0.0, 0.0, 0.0 };
-    this->RotationHandlePoints->GetPoint(i, handlePositionLocal);
-    this->RotationScaleTransform->GetTransform()->TransformPoint(handlePositionLocal, handlePositionWorld);
+    this->RotationHandlePoints->GetPoint(i, handlePositionNode);
+    this->RotationScaleTransform->GetTransform()->TransformPoint(handlePositionNode, handlePositionWorld);
     this->HandleToWorldTransform->TransformPoint(handlePositionWorld, handlePositionWorld);
     double color[4] = { 0.0, 0.0, 0.0 };
     this->GetHandleColor(vtkMRMLMarkupsDisplayNode::ComponentRotationHandle, i, color);
-    HandleInfo info(i, vtkMRMLMarkupsDisplayNode::ComponentRotationHandle, handlePositionWorld, handlePositionLocal, color);
+    HandleInfo info(i, vtkMRMLMarkupsDisplayNode::ComponentRotationHandle, handlePositionWorld, handlePositionNode, color);
     handleInfoList.push_back(info);
     }
 
   for (int i = 0; i < this->TranslationHandlePoints->GetNumberOfPoints(); ++i)
     {
-    double handlePositionLocal[3] = { 0.0, 0.0, 0.0 };
+    double handlePositionNode[3] = { 0.0, 0.0, 0.0 };
     double handlePositionWorld[3] = { 0.0, 0.0, 0.0 };
-    this->TranslationHandlePoints->GetPoint(i, handlePositionLocal);
-    this->TranslationScaleTransform->GetTransform()->TransformPoint(handlePositionLocal, handlePositionWorld);
+    this->TranslationHandlePoints->GetPoint(i, handlePositionNode);
+    this->TranslationScaleTransform->GetTransform()->TransformPoint(handlePositionNode, handlePositionWorld);
     this->HandleToWorldTransform->TransformPoint(handlePositionWorld, handlePositionWorld);
     double color[4] = { 0 };
     this->GetHandleColor(vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle, i, color);
-    HandleInfo info(i, vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle, handlePositionWorld, handlePositionLocal, color);
+    HandleInfo info(i, vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle, handlePositionWorld, handlePositionNode, color);
     handleInfoList.push_back(info);
     }
 
   for (int i = 0; i < this->ScaleHandlePoints->GetNumberOfPoints(); ++i)
     {
-    double handlePositionLocal[3] = { 0.0, 0.0, 0.0 };
+    double handlePositionNode[3] = { 0.0, 0.0, 0.0 };
     double handlePositionWorld[3] = { 0.0, 0.0, 0.0 };
-    this->ScaleHandlePoints->GetPoint(i, handlePositionLocal);
-    this->HandleToWorldTransform->TransformPoint(handlePositionLocal, handlePositionWorld);
+    this->ScaleHandlePoints->GetPoint(i, handlePositionNode);
+    this->HandleToWorldTransform->TransformPoint(handlePositionNode, handlePositionWorld);
     double color[4] = { 0 };
     this->GetHandleColor(vtkMRMLMarkupsDisplayNode::ComponentScaleHandle, i, color);
-    HandleInfo info(i, vtkMRMLMarkupsDisplayNode::ComponentScaleHandle, handlePositionWorld, handlePositionLocal, color);
+    HandleInfo info(i, vtkMRMLMarkupsDisplayNode::ComponentScaleHandle, handlePositionWorld, handlePositionNode, color);
     handleInfoList.push_back(info);
     }
 
@@ -646,20 +646,20 @@ void vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::UpdateScaleHan
 
   vtkNew<vtkPoints> roiPoints;
   roiPoints->SetNumberOfPoints(14);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleLFace,     -sideLengths[0],             0.0,             0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleRFace,      sideLengths[0],             0.0,             0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandlePFace,      0.0,            -sideLengths[1],             0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleAFace,      0.0,             sideLengths[1],             0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleIFace,      0.0,                        0.0, -sideLengths[2]);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleSFace,      0.0,                        0.0,  sideLengths[2]);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleLPICorner, -sideLengths[0], -sideLengths[1], -sideLengths[2]);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleRPICorner, sideLengths[0],  -sideLengths[1], -sideLengths[2]);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleLAICorner, -sideLengths[0],  sideLengths[1], -sideLengths[2]);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleRAICorner, sideLengths[0],   sideLengths[1], -sideLengths[2]);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleLPSCorner, -sideLengths[0], -sideLengths[1],  sideLengths[2]);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleRPSCorner, sideLengths[0],  -sideLengths[1],  sideLengths[2]);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleLASCorner, -sideLengths[0],  sideLengths[1],  sideLengths[2]);
-  roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleRASCorner, sideLengths[0],   sideLengths[1],  sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleLFace,     -sideLengths[0],             0.0,             0.0);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleRFace,      sideLengths[0],             0.0,             0.0);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandlePFace,      0.0,            -sideLengths[1],             0.0);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleAFace,      0.0,             sideLengths[1],             0.0);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleIFace,      0.0,                        0.0, -sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleSFace,      0.0,                        0.0,  sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleLPICorner, -sideLengths[0], -sideLengths[1], -sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleRPICorner, sideLengths[0],  -sideLengths[1], -sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleLAICorner, -sideLengths[0],  sideLengths[1], -sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleRAICorner, sideLengths[0],   sideLengths[1], -sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner, -sideLengths[0], -sideLengths[1],  sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner, sideLengths[0],  -sideLengths[1],  sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleLASCorner, -sideLengths[0],  sideLengths[1],  sideLengths[2]);
+  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleRASCorner, sideLengths[0],   sideLengths[1],  sideLengths[2]);
   this->ScaleHandlePoints->SetPoints(roiPoints);
 
   vtkIdTypeArray* visibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
@@ -718,60 +718,60 @@ void vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::GetInteraction
     {
     switch (index)
       {
-      case vtkMRMLMarkupsROINode::HandleLFace:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLFace:
         axisWorld[0] = -1.0;
         break;
-      case  vtkMRMLMarkupsROINode::HandleRFace:
+      case  vtkMRMLMarkupsROIDisplayNode::HandleRFace:
         axisWorld[0] = 1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandlePFace:
+      case vtkMRMLMarkupsROIDisplayNode::HandlePFace:
         axisWorld[1] = -1.0;
         break;
-      case  vtkMRMLMarkupsROINode::HandleAFace:
+      case  vtkMRMLMarkupsROIDisplayNode::HandleAFace:
         axisWorld[1] = 1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandleIFace:
+      case vtkMRMLMarkupsROIDisplayNode::HandleIFace:
         axisWorld[2] = -1.0;
         break;
-      case  vtkMRMLMarkupsROINode::HandleSFace:
+      case  vtkMRMLMarkupsROIDisplayNode::HandleSFace:
         axisWorld[2] = 1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandleLPICorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPICorner:
         axisWorld[0] = -1.0;
         axisWorld[1] = -1.0;
         axisWorld[2] = -1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandleRPICorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPICorner:
           axisWorld[0] = 1.0;
           axisWorld[1] = -1.0;
           axisWorld[2] = -1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandleLAICorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAICorner:
         axisWorld[0] = -1.0;
         axisWorld[1] = 1.0;
         axisWorld[2] = -1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandleRAICorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner:
         axisWorld[0] = 1.0;
         axisWorld[1] = 1.0;
         axisWorld[2] = -1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandleLPSCorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner:
         axisWorld[0] = -1.0;
         axisWorld[1] = -1.0;
         axisWorld[2] = 1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandleRPSCorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
         axisWorld[0] = 1.0;
         axisWorld[1] = -1.0;
         axisWorld[2] = 1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandleLASCorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner:
         axisWorld[0] = -1.0;
         axisWorld[1] = 1.0;
         axisWorld[2] = 1.0;
         break;
-      case vtkMRMLMarkupsROINode::HandleRASCorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner:
         axisWorld[0] = 1.0;
         axisWorld[1] = 1.0;
         axisWorld[2] = 1.0;
