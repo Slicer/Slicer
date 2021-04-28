@@ -70,9 +70,7 @@ public slots:
   /// Set the MRML node of interest
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
-  /// Utility function that calls setMRMLMarkupsROINode(vtkMRMLMarkupsROINode*)
-  /// It's useful to connect to vtkMRMLNode* signals when you are sure of
-  /// the type
+  /// Sets the vtkMRMLMarkupsNode to operate on.
   void setMRMLMarkupsNode(vtkMRMLNode* node) override;
 
   /// Turn on/off the visibility of the ROI node
