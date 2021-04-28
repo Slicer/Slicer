@@ -499,6 +499,7 @@ Pre-populate the scene with measurements
 
 This code snippet creates a set of predefined line markups (named A, B, C, D) in the scene when the user hits Ctrl+N.
 How to use this:
+
 1. Customize the code (replace A, B, C, D with your measurement names) and copy-paste the code into the Python console. This has to be done only once after Slicer is started. Add it to `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__ so that it persists even if Slicer is restarted.
 2. Load the data set that has to be measured
 3. Hit Ctrl+N to create all the measurements
@@ -527,6 +528,7 @@ Copy all measurements in the scene to Excel
 
 This code snippet creates a set of predefined line markups (named A, B, C, D) in the scene when the user hits Ctrl+N.
 How to use this:
+
 1. Copy-paste the code into the Python console. This has to be done only once after Slicer is started. Add it to `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__ so that it persists even if Slicer is restarted.
 2. Load the data set that has to be measured and place line markups (you can use the "Pre-populate the scene with measurements" script above to help with this)
 3. Hit Ctrl+M to copy all line measurents to the clipboard
