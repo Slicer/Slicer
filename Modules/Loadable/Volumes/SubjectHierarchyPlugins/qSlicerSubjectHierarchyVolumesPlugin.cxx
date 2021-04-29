@@ -536,6 +536,10 @@ void qSlicerSubjectHierarchyVolumesPlugin::hideVolumeFromAllViews(vtkMRMLScalarV
   for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
     {
     vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(displayNodeIndex);
+    if (!displayNode)
+      {
+      continue;
+      }
     if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode))
       {
       // visibility in slice views is managed separately
