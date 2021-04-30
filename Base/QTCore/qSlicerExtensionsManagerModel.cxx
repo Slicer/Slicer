@@ -40,6 +40,7 @@
 
 // qRestAPI includes
 #include <qMidasAPI.h>
+#include <qRestAPI.h>
 #include <qRestResult.h>
 
 // QtCore includes
@@ -224,7 +225,7 @@ public:
 
 
   qSlicerExtensionsManagerModel::ExtensionMetadataType retrieveExtensionMetadata(
-    const qMidasAPI::ParametersType& parameters);
+    const qRestAPI::Parameters& parameters);
 
   void initializeColumnIdToNameMap(int columnIdx, const char* columnName);
   QHash<int, QString> ColumnIdToName;
@@ -952,7 +953,7 @@ QVariantMap qSlicerExtensionsManagerModelPrivate::getExtensionsInfoFromPreviousI
       QString description;
       if (!q->isExtensionInstalled(extensionName))
         {
-        qMidasAPI::ParametersType parameters;
+        qRestAPI::Parameters parameters;
         parameters["productname"] = extensionName;
         parameters["slicer_revision"] = q->slicerRevision();
         parameters["os"] = q->slicerOs();
@@ -994,7 +995,7 @@ void qSlicerExtensionsManagerModelPrivate::initializeColumnIdToNameMap(int colum
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModelPrivate
-::retrieveExtensionMetadata(const qMidasAPI::ParametersType& parameters)
+::retrieveExtensionMetadata(const qRestAPI::Parameters& parameters)
 {
   Q_Q(const qSlicerExtensionsManagerModel);
 
@@ -1343,7 +1344,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     return ExtensionMetadataType();
     }
 
-  qMidasAPI::ParametersType parameters;
+  qRestAPI::Parameters parameters;
   parameters["extension_id"] = extensionId;
 
   return d->retrieveExtensionMetadata(parameters);
@@ -1360,7 +1361,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     return ExtensionMetadataType();
     }
 
-  qMidasAPI::ParametersType parameters;
+  qRestAPI::Parameters parameters;
   parameters["productname"] = extensionName;
   parameters["slicer_revision"] = this->slicerRevision();
   parameters["os"] = this->slicerOs();
@@ -1608,7 +1609,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
         continue;
         }
 
-      qMidasAPI::ParametersType parameters;
+      qRestAPI::Parameters parameters;
       parameters["productname"] = dependencyName;
       parameters["slicer_revision"] = this->slicerRevision();
       parameters["os"] = this->slicerOs();
@@ -1715,7 +1716,7 @@ void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
       extensionMetadata.value("extension_id").toString();
 
     // Build parameters to query server about the extension
-    qMidasAPI::ParametersType parameters;
+    qRestAPI::Parameters parameters;
     if (!extensionId.isEmpty())
       {
       parameters["extension_id"] = extensionId;
