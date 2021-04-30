@@ -1099,14 +1099,6 @@ QUrl qSlicerExtensionsManagerModel::serverUrl()const
 }
 
 // --------------------------------------------------------------------------
-QUrl qSlicerExtensionsManagerModel::serverUrlWithPackagePath()const
-{
-  QUrl url(this->serverUrl());
-  url.setPath(url.path() + "/slicerpackages");
-  return url;
-}
-
-// --------------------------------------------------------------------------
 QUrl qSlicerExtensionsManagerModel::serverUrlWithExtensionsStorePath()const
 {
   QUrl url(this->serverUrl());
