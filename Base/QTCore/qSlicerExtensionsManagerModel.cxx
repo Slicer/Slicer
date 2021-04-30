@@ -254,7 +254,7 @@ public:
 
   // Restore previous extension tab may want to run lots of queries.
   // Results are cached in this variable to improve performance.
-  QMap<QString, ExtensionMetadataType> MidasResponseCache;
+  QMap<QString, ExtensionMetadataType> ServerResponseCache;
 
   QMap<qSlicerExtensionDownloadTask*, QString> ActiveTasks;
 };
@@ -1001,14 +1001,14 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
 
   ExtensionMetadataType result;
 
-  QString midasResponseCacheKey = q->serverUrl().toString();
+  QString serverResponseCacheKey = q->serverUrl().toString();
   foreach(const QString & parametersName, parameters.keys())
     {
-    midasResponseCacheKey += ";" + parameters[parametersName];
+    serverResponseCacheKey += ";" + parameters[parametersName];
     }
-  if (this->MidasResponseCache.contains(midasResponseCacheKey))
+  if (this->ServerResponseCache.contains(serverResponseCacheKey))
     {
-    result = this->MidasResponseCache[midasResponseCacheKey];
+    result = this->ServerResponseCache[serverResponseCacheKey];
     }
   else
     {
@@ -1062,7 +1062,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
         .arg(errorText));
       return ExtensionMetadataType();
       }
-    this->MidasResponseCache[midasResponseCacheKey] = result;
+    this->ServerResponseCache[serverResponseCacheKey] = result;
     }
 
   ExtensionMetadataType updatedExtensionMetadata;
