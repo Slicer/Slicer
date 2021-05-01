@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os, string
 import unittest
 import vtk, qt, ctk, slicer
@@ -7,7 +6,7 @@ import importlib
 
 __all__ = ['ScriptedLoadableModule', 'ScriptedLoadableModuleWidget', 'ScriptedLoadableModuleLogic', 'ScriptedLoadableModuleTest']
 
-class ScriptedLoadableModule(object):
+class ScriptedLoadableModule:
   def __init__(self, parent):
     self.parent = parent
     self.moduleName = self.__class__.__name__
@@ -48,7 +47,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     """
     if not docPage:
       docPage = "Modules/"+self.moduleName
-    linkText = '<p>For more information see the <a href="{0}/Documentation/{1}.{2}/{3}">online documentation</a>.</p>'.format(
+    linkText = '<p>For more information see the <a href="{}/Documentation/{}.{}/{}">online documentation</a>.</p>'.format(
       self.parent.slicerWikiUrl, slicer.app.majorVersion, slicer.app.minorVersion, docPage)
     return linkText
 
@@ -63,13 +62,13 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
       TestCaseClass = getattr(module, className)
     except AttributeError:
       # Treat missing test case class as a failure; provide useful error message
-      raise AssertionError('Test case class not found: %s.%s ' % (self.__module__, className))
+      raise AssertionError(f'Test case class not found: {self.__module__}.{className} ')
 
     testCase = TestCaseClass()
     testCase.messageDelay = msec
     testCase.runTest(**kwargs)
 
-class ScriptedLoadableModuleWidget(object):
+class ScriptedLoadableModuleWidget:
   def __init__(self, parent = None):
     """If parent widget is not specified: a top-level widget is created automatically;
     the application has to delete this widget (by calling widget.parent.deleteLater() to avoid memory leaks.
@@ -212,7 +211,7 @@ class ScriptedLoadableModuleWidget(object):
     filePath = slicer.util.modulePath(self.moduleName)
     qt.QDesktopServices.openUrl(qt.QUrl("file:///"+filePath, qt.QUrl.TolerantMode))
 
-class ScriptedLoadableModuleLogic(object):
+class ScriptedLoadableModuleLogic:
   def __init__(self, parent = None):
     # Get module name by stripping 'Logic' from the class name
     self.moduleName = self.__class__.__name__
@@ -290,7 +289,7 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
   """
 
   def __init__(self, *args, **kwargs):
-    super(ScriptedLoadableModuleTest, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
 
     # takeScreenshot default parameters
     self.enableScreenshots = False

@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 #
 # Testing
 #
@@ -18,7 +16,7 @@ def runUnitTest(path, testname):
   else:
     sys.path.extend(path)
   print("-------------------------------------------")
-  print("path: %s\ntestname: %s" % (path, testname))
+  print(f"path: {path}\ntestname: {testname}")
   print("-------------------------------------------")
   suite = unittest.TestLoader().loadTestsFromName(testname)
   result = unittest.TextTestRunner(verbosity=2).run(suite)

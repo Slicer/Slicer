@@ -1,4 +1,3 @@
-from __future__ import print_function
 import ctk
 import os, copy
 import qt
@@ -254,7 +253,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     modulePath = os.path.dirname(slicer.modules.dicom.path)
     extensionDescriptorPath = os.path.join(modulePath, 'DICOMExtensions.json')
     try:
-      with open(extensionDescriptorPath, 'r') as extensionDescriptorFP:
+      with open(extensionDescriptorPath) as extensionDescriptorFP:
         extensionDescriptor = extensionDescriptorFP.read()
         dicomExtensions = json.loads(extensionDescriptor)
     except:
@@ -467,7 +466,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         isEqual = True
         for pair in zip(inputFileListCopy, loadableFileListCopy):
           if pair[0] != pair[1]:
-            print("{} != {}".format(pair[0], pair[1]))
+            print(f"{pair[0]} != {pair[1]}")
             isEqual = False
             break
         if not isEqual:
@@ -611,7 +610,7 @@ class DICOMReferencesDialog(qt.QMessageBox):
                 "originally selected series, or Cancel to abort loading."
 
   def __init__(self, parent, loadables):
-    super(DICOMReferencesDialog, self).__init__(parent)
+    super().__init__(parent)
     self.loadables = loadables
     self.checkboxes = dict()
     self.setup()
@@ -665,7 +664,7 @@ class DICOMLoadableTable(qt.QTableWidget):
   """
 
   def __init__(self, parent, width=350, height=100):
-    super(DICOMLoadableTable, self).__init__(parent)
+    super().__init__(parent)
     self.setMinimumHeight(height)
     self.setMinimumWidth(width)
     self.loadables = {}

@@ -24,7 +24,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
   """
 
   def __init__(self):
-    super(DICOMEnhancedUSVolumePluginClass,self).__init__()
+    super().__init__()
     self.loadType = "Enhanced US volume"
 
     self.tags['sopClassUID'] = "0008,0016"
@@ -134,7 +134,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
     if reader.GetErrorCode() != vtk.vtkErrorCode.NoError:
       errorString = vtk.vtkErrorCode.GetStringFromErrorCode(reader.GetErrorCode())
       raise ValueError(
-        "Could not read image {0} from file {1}. Error is: {2}".format(loadable.name, filePath, errorString))
+        f"Could not read image {loadable.name} from file {filePath}. Error is: {errorString}")
 
     rasToIjk = reader.GetRasToIjkMatrix()
     ijkToRas = vtk.vtkMatrix4x4()

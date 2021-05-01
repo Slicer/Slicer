@@ -9,7 +9,7 @@ def userTemplatePathKey(category=None):
   if category is None:
     return _userTemplatePathKey
   else:
-    return "%s/%s" % (_userTemplatePathKey, category)
+    return f"{_userTemplatePathKey}/{category}"
 
 #-----------------------------------------------------------------------------
 def builtinTemplatePath():

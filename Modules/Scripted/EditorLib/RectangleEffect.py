@@ -38,13 +38,13 @@ class RectangleEffectOptions(LabelEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(RectangleEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
   def __del__(self):
-    super(RectangleEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(RectangleEffectOptions,self).create()
+    super().create()
 
     HelpButton(self.frame, "Use this tool to draw a rectangle.\n\nLeft Click and Drag: sweep out an outline that will draw when the button is released.")
 
@@ -52,7 +52,7 @@ class RectangleEffectOptions(LabelEffectOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(RectangleEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -66,15 +66,15 @@ class RectangleEffectOptions(LabelEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(RectangleEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(RectangleEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(RectangleEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
@@ -94,7 +94,7 @@ class RectangleEffectTool(LabelEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(RectangleEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
     # create a logic instance to do the non-gui work
     self.logic = RectangleEffectLogic(self.sliceWidget.sliceLogic())
@@ -121,7 +121,7 @@ class RectangleEffectTool(LabelEffectTool):
     """
     call superclass to clean up actor
     """
-    super(RectangleEffectTool,self).cleanup()
+    super().cleanup()
 
 
   def createGlyph(self):
@@ -168,7 +168,7 @@ class RectangleEffectTool(LabelEffectTool):
     handle events from the render window interactor
     """
 
-    if super(RectangleEffectTool,self).processEvent(caller,event):
+    if super().processEvent(caller,event):
       return
 
     if event == "LeftButtonPressEvent":
@@ -216,7 +216,7 @@ class RectangleEffectLogic(LabelEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(RectangleEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
 
 #

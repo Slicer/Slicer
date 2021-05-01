@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import unittest
 import math
@@ -105,7 +104,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
     fidIndex = markupsLogic.AddFiducial(eye[0], eye[1], eye[2])
     fidID = markupsLogic.GetActiveListID()
     fidNode = slicer.mrmlScene.GetNodeByID(fidID)
-    self.delayDisplay("Placed a fiducial at %g, %g, %g" % (eye[0], eye[1], eye[2]))
+    self.delayDisplay(f"Placed a fiducial at {eye[0]:g}, {eye[1]:g}, {eye[2]:g}")
 
     # Pan and zoom
     sliceWidget = slicer.app.layoutManager().sliceWidget('Red')
@@ -166,9 +165,9 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
       print('Checking the difference between fiducial RAS position',seedRAS,
             'and volume RAS as derived from the fiducial display position',volumeRAS,': ',rasDiff)
       if rasDiff > maximumRASDifference:
-        raise Exception("RAS coordinate difference is too large as well!\nExpected < %g but got %g" % (maximumRASDifference, rasDiff))
+        raise Exception(f"RAS coordinate difference is too large as well!\nExpected < {maximumRASDifference:g} but got {rasDiff:g}")
       else:
-        self.delayDisplay("RAS coordinate difference is %g which is < %g, test passes." % (rasDiff, maximumRASDifference))
+        self.delayDisplay(f"RAS coordinate difference is {rasDiff:g} which is < {maximumRASDifference:g}, test passes.")
 
     if enableScreenshots == 1:
       # compare the screen snapshots

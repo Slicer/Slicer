@@ -1,4 +1,3 @@
-from __future__ import print_function
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
@@ -557,14 +556,14 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
           name += ' ['+units+']'
       headerNames.append(name)
     uniqueHeaderNames = list(headerNames)
-    for name in set(name for name in uniqueHeaderNames if uniqueHeaderNames.count(name)>1):
+    for name in {name for name in uniqueHeaderNames if uniqueHeaderNames.count(name)>1}:
       j = 1
       for i in range(len(uniqueHeaderNames)):
         if uniqueHeaderNames[i]==name:
           uniqueHeaderNames[i] = name+' ('+str(j)+')'
           j += 1
-    headerNames = dict((keys[i], headerNames[i]) for i in range(len(keys)))
-    uniqueHeaderNames = dict((keys[i], uniqueHeaderNames[i]) for i in range(len(keys)))
+    headerNames = {keys[i]: headerNames[i] for i in range(len(keys))}
+    uniqueHeaderNames = {keys[i]: uniqueHeaderNames[i] for i in range(len(keys))}
     return headerNames, uniqueHeaderNames
 
   def exportToTable(self, table, nonEmptyKeysOnly = True):
@@ -926,7 +925,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
     self.delayDisplay('test_SegmentStatisticsPlugins passed!')
 
 
-class Slicelet(object):
+class Slicelet:
   """A slicer slicelet is a module widget that comes up in stand alone mode
   implemented as a python class.
   This class provides common wrapper functionality used by all slicer modlets.
@@ -960,7 +959,7 @@ class SegmentStatisticsSlicelet(Slicelet):
   """
 
   def __init__(self):
-    super(SegmentStatisticsSlicelet,self).__init__(SegmentStatisticsWidget)
+    super().__init__(SegmentStatisticsWidget)
 
 
 if __name__ == "__main__":

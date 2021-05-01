@@ -11,7 +11,7 @@ def _dialogIcon(icon):
 # _ui_LoadModulesDialog
 #
 #=============================================================================
-class _ui_LoadModulesDialog(object):
+class _ui_LoadModulesDialog:
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     vLayout = qt.QVBoxLayout(parent)
@@ -51,7 +51,7 @@ class _ui_LoadModulesDialog(object):
 # LoadModulesDialog
 #
 #=============================================================================
-class LoadModulesDialog(object):
+class LoadModulesDialog:
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     self.dialog = qt.QDialog(parent)

@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 #
 # ScriptedExampleDisplayableManager
 #
@@ -50,7 +48,7 @@ from __future__ import print_function
 #     - The list of logic internally used by the qSlicerLayoutManager should be removed and
 #     the list from the MRMLApplicationLogic used instead.
 
-class vtkScriptedExampleDisplayableManager(object):
+class vtkScriptedExampleDisplayableManager:
 
   def __init__(self, parent):
     self.Parent = parent

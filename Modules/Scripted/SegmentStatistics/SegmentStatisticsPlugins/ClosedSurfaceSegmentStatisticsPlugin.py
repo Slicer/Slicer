@@ -7,7 +7,7 @@ class ClosedSurfaceSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
   """Statistical plugin for closed surfaces"""
 
   def __init__(self):
-    super(ClosedSurfaceSegmentStatisticsPlugin,self).__init__()
+    super().__init__()
     self.name = "Closed Surface"
     self.keys = ["surface_mm2", "volume_mm3", "volume_cm3"]
     self.defaultKeys = self.keys # calculate all measurements by default

@@ -1,4 +1,3 @@
-
 import __main__
 
 assert not hasattr(__main__, 'SOMEVAR')

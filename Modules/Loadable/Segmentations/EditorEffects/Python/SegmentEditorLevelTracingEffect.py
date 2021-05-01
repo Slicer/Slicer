@@ -121,7 +121,7 @@ follows the same intensity value back to the starting point within the current s
 #
 # LevelTracingPipeline
 #
-class LevelTracingPipeline(object):
+class LevelTracingPipeline:
   """ Visualization objects and pipeline for each slice view for level tracing
   """
   def __init__(self, effect, sliceWidget):

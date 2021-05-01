@@ -1,6 +1,4 @@
-
-
-class qSlicerScriptedLoadableModuleNewStyleTest(object):
+class qSlicerScriptedLoadableModuleNewStyleTest:
   def __init__(self, parent):
     parent.title = "qSlicerScriptedLoadableModuleNewStyle Test"
     parent.categories = ["Testing"]

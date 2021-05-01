@@ -138,7 +138,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.kernelSizeMMSpinBox.value = self.scriptedEffect.doubleParameter("KernelSizeMm")
     self.kernelSizeMMSpinBox.blockSignals(wasBlocked)
     kernelSizePixel = self.getKernelSizePixel()
-    self.kernelSizePixel.text = "{0}x{1}x{2} pixel".format(kernelSizePixel[0], kernelSizePixel[1], kernelSizePixel[2])
+    self.kernelSizePixel.text = f"{kernelSizePixel[0]}x{kernelSizePixel[1]}x{kernelSizePixel[2]} pixel"
 
     wasBlocked = self.gaussianStandardDeviationMMSpinBox.blockSignals(True)
     self.setWidgetMinMaxStepFromImageSpacing(self.gaussianStandardDeviationMMSpinBox, self.scriptedEffect.selectedSegmentLabelmap())

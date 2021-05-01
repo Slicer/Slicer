@@ -18,7 +18,6 @@
 #  and was partially funded by NIH grant 1U24CA194354-01
 #
 
-from __future__ import print_function
 import os
 import sys
 import tempfile

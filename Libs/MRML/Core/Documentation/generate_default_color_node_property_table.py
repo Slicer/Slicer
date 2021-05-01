@@ -20,7 +20,6 @@
 This script allows to generate the markdown table displayed in doxygen
 documentation of vtkMRMLColorLogic::AddDefaultColorNodes()
 """
-from __future__ import print_function
 
 nodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLColorNode")
 nodes.UnRegister(slicer.mrmlScene)

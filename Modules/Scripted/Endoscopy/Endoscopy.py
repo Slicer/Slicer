@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
@@ -331,7 +330,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     self.cameraNode.EndModify(wasModified)
     self.cameraNode.ResetClippingRange()
 
-class EndoscopyComputePath(object):
+class EndoscopyComputePath:
   """Compute path given a list of fiducials.
   If a point list is received then curve points are generated using Hermite spline interpolation.
   See http://en.wikipedia.org/wiki/Cubic_Hermite_spline
@@ -490,7 +489,7 @@ class EndoscopyComputePath(object):
     return (t1, pguess, remainder)
 
 
-class EndoscopyPathModel(object):
+class EndoscopyPathModel:
   """Create a vtkPolyData for a polyline:
        - Add one point per path point.
        - Add a single polyline
@@ -572,7 +571,7 @@ class EndoscopyPathModel(object):
     import numpy as np
     from numpy.linalg import svd
     points = np.reshape(points, (np.shape(points)[0], -1)) # Collapse trialing dimensions
-    assert points.shape[0] <= points.shape[1], "There are only {} points in {} dimensions.".format(points.shape[1], points.shape[0])
+    assert points.shape[0] <= points.shape[1], f"There are only {points.shape[1]} points in {points.shape[0]} dimensions."
     ctr = points.mean(axis=1)
     x = points - ctr[:,np.newaxis]
     M = np.dot(x, x.T) # Could also use np.cov(x) here.

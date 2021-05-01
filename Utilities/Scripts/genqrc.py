@@ -9,7 +9,7 @@ def writeFile(path, content):
   # Test if file already contains desired content
   if os.path.exists(path):
     try:
-      with open(path, "rt") as f:
+      with open(path) as f:
         if f.read() == content:
           return
 
@@ -23,7 +23,7 @@ def writeFile(path, content):
 #-----------------------------------------------------------------------------
 def addFile(path):
   name = os.path.basename(path)
-  return ["    <file alias=\"%s\">%s</file>" % (name, path)]
+  return [f"    <file alias=\"{name}\">{path}</file>"]
 
 #-----------------------------------------------------------------------------
 def buildContent(root, path):

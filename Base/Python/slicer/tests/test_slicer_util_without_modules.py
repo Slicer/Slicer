@@ -17,7 +17,7 @@ class SlicerUtilWithoutModulesTest(unittest.TestCase):
     with tempfile.TemporaryDirectory() as tmpdirname:
 
       input_file = os.path.join(tmpdirname, 'compute-checksum.txt')
-      with io.open(input_file, 'w', newline='\n') as content:
+      with open(input_file, 'w', newline='\n') as content:
         content.write('This is a text file!\n')
 
       self.assertTrue(os.path.exists(input_file))

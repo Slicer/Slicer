@@ -54,21 +54,21 @@ def loadPatientByUID(patientUID):
     rather than just copying an existing one).
   """
   if not slicer.dicomDatabase.isOpen:
-    raise IOError('DICOM module or database cannot be accessed')
+    raise OSError('DICOM module or database cannot be accessed')
 
   patientUIDstr = str(patientUID)
   if not patientUIDstr in slicer.dicomDatabase.patients():
-    raise IOError('No patient found with DICOM database UID %s' % patientUIDstr)
+    raise OSError('No patient found with DICOM database UID %s' % patientUIDstr)
 
   # Select all series in selected patient
   studies = slicer.dicomDatabase.studiesForPatient(patientUIDstr)
   if len(studies) == 0:
-    raise IOError('No studies found in patient with DICOM database UID ' + patientUIDstr)
+    raise OSError('No studies found in patient with DICOM database UID ' + patientUIDstr)
 
   series = [slicer.dicomDatabase.seriesForStudy(study) for study in studies]
   seriesUIDs = [uid for uidList in series for uid in uidList]
   if len(seriesUIDs) == 0:
-    raise IOError('No series found in patient with DICOM database UID ' + patientUIDstr)
+    raise OSError('No series found in patient with DICOM database UID ' + patientUIDstr)
 
   return loadSeriesByUID(seriesUIDs)
 
@@ -77,7 +77,7 @@ def getDatabasePatientUIDByPatientName(name):
   """ Get patient UID by patient name for easy loading of a patient
   """
   if not slicer.dicomDatabase.isOpen:
-    raise IOError('DICOM module or database cannot be accessed')
+    raise OSError('DICOM module or database cannot be accessed')
 
   patients = slicer.dicomDatabase.patients()
   for patientUID in patients:
@@ -93,7 +93,7 @@ def loadPatientByName(patientName):
   """
   patientUID = getDatabasePatientUIDByPatientName(patientName)
   if patientUID is None:
-    raise IOError('Patient not found by name %s' % patientName)
+    raise OSError('Patient not found by name %s' % patientName)
   return loadPatientByUID(patientUID)
 
 #------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ def getDatabasePatientUIDByPatientID(patientID):
   """ Get database patient UID by DICOM patient ID for easy loading of a patient
   """
   if not slicer.dicomDatabase.isOpen:
-    raise IOError('DICOM module or database cannot be accessed')
+    raise OSError('DICOM module or database cannot be accessed')
 
   patients = slicer.dicomDatabase.patients()
   for patientUID in patients:
@@ -128,7 +128,7 @@ def loadPatientByPatientID(patientID):
   """
   patientUID = getDatabasePatientUIDByPatientID(patientID)
   if patientUID is None:
-    raise IOError('Patient not found by PatientID %s' % patientID)
+    raise OSError('Patient not found by PatientID %s' % patientID)
   return loadPatientByUID(patientUID)
 
 #------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ def loadSeriesByUID(seriesUIDs):
     raise ValueError('No series UIDs given')
 
   if not slicer.dicomDatabase.isOpen:
-    raise IOError('DICOM module or database cannot be accessed')
+    raise OSError('DICOM module or database cannot be accessed')
 
   fileLists = []
   for seriesUID in seriesUIDs:
@@ -183,7 +183,7 @@ def loadByInstanceUID(instanceUID):
   """
 
   if not slicer.dicomDatabase.isOpen:
-    raise IOError('DICOM module or database cannot be accessed')
+    raise OSError('DICOM module or database cannot be accessed')
 
   # get the loadables corresponding to this instance's series
   filePath = slicer.dicomDatabase.fileForInstance(instanceUID)
@@ -361,7 +361,7 @@ def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
   return True
 
 #------------------------------------------------------------------------------
-class TemporaryDICOMDatabase(object):
+class TemporaryDICOMDatabase:
   """Context manager to conveniently use temporary DICOM database.
      It creates a new DICOM database and temporarily sets it as the main
      DICOM database in the application (slicer.dicomDatabase).
@@ -491,7 +491,7 @@ def seriesUIDsForFiles(files):
   return seriesUIDs
 
 #------------------------------------------------------------------------------
-class LoadDICOMFilesToDatabase(object):
+class LoadDICOMFilesToDatabase:
   """Context manager to conveniently load DICOM files downloaded zipped from the internet
   """
   def __init__( self, url, archiveFilePath=None, dicomDataDir=None, \
@@ -619,7 +619,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
       spaceError = spacingN - spacing0
       if abs(spaceError) > epsilon:
         spaceWarnings += 1
-        warningText += "Images are not equally spaced (a difference of %g vs %g in spacings was detected)." % (spaceError, spacing0)
+        warningText += f"Images are not equally spaced (a difference of {spaceError:g} vs {spacing0:g} in spacings was detected)."
         if acquisitionGeometryRegularizationEnabled:
           warningText += "  Slicer will apply a transform to this series trying to regularize the volume. Please use caution.\n"
         else:
@@ -727,7 +727,7 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
         + loadable.name + "' as a '" + plugin.loadType + "'.\n"
         + traceback.format_exc())
     if (not loadSuccess) and (messages is not None):
-      messages.append('Could not load: %s as a %s' % (loadable.name, plugin.loadType))
+      messages.append(f'Could not load: {loadable.name} as a {plugin.loadType}')
 
     cancelled = False
     try:
@@ -736,7 +736,7 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
       for derivedItem in loadable.derivedItems:
         indexer = ctk.ctkDICOMIndexer()
         if progressCallback:
-          cancelled = progressCallback("{0} ({1})".format(loadable.name, derivedItem), step*100/len(selectedLoadables))
+          cancelled = progressCallback(f"{loadable.name} ({derivedItem})", step*100/len(selectedLoadables))
           if cancelled:
             break
         indexer.addFile(slicer.dicomDatabase, derivedItem)
@@ -778,7 +778,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
   else:
     client = DICOMwebClient(
               url = dicomWebEndpoint,
-              headers = { "Authorization": "Bearer {}".format(accessToken) },
+              headers = { "Authorization": f"Bearer {accessToken}" },
               )
 
   seriesList = client.search_for_series(study_instance_uid=studyInstanceUID)

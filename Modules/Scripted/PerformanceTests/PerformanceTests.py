@@ -1,4 +1,3 @@
-from __future__ import print_function
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
@@ -79,7 +78,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
       endTime = time.time()
       elapsedTime += (endTime - startTime)
     fps = int(iters / elapsedTime)
-    result =  "fps = %g (%g ms per frame)" % (fps, 1000./fps)
+    result =  f"fps = {fps:g} ({1000./fps:g} ms per frame)"
     print (result)
     self.log.insertHtml('<i>%s</i>' % result)
     self.log.insertPlainText('\n')
@@ -313,7 +312,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     self.memoryCallback()
 
 
-class sliceLogicTest(object):
+class sliceLogicTest:
   def __init__(self):
     self.step = 0
     self.sliceLogic = slicer.vtkMRMLSliceLayerLogic()

@@ -1,4 +1,3 @@
-
 import slicer
 import unittest
 import vtk

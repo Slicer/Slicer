@@ -1,6 +1,5 @@
 # markups measurements test
 
-from __future__ import print_function
 from slicer.util import TESTING_DATA_URL
 import json
 import os
@@ -39,7 +38,7 @@ if measurement.GetValueWithUnitsAsPrintableString() != '34.12mm':
 markupsFilename = markupsMeasurementsTestDir+'/line.mkp.json'
 slicer.util.saveNode(markupsNode, markupsFilename)
 
-with open(markupsFilename, 'r') as f:
+with open(markupsFilename) as f:
     markupsJson = json.load(f)
 
 result = [{'name': 'length', 'enabled': True, 'value': 34.12, 'units': 'mm', 'printFormat': '%-#4.4gmm'}]
@@ -68,7 +67,7 @@ if measurement.GetValueWithUnitsAsPrintableString() != '117.4deg':
 markupsFilename = markupsMeasurementsTestDir+'/angle.mkp.json'
 slicer.util.saveNode(markupsNode, markupsFilename)
 
-with open(markupsFilename, 'r') as f:
+with open(markupsFilename) as f:
     markupsJson = json.load(f)
 
 result = [{'name': 'angle', 'enabled': True, 'value': 117.36891896165277, 'units': 'deg', 'printFormat': '%3.1f%s'}]
@@ -105,7 +104,7 @@ if measurement.GetValueWithUnitsAsPrintableString() != '32.00cm2':
 markupsFilename = markupsMeasurementsTestDir+'/plane.mkp.json'
 slicer.util.saveNode(markupsNode, markupsFilename)
 
-with open(markupsFilename, 'r') as f:
+with open(markupsFilename) as f:
     markupsJson = json.load(f)
 
 result = [{'name': 'area', 'enabled': True, 'value': 32.00000000000001, 'units': 'cm2', 'printFormat': '%-#4.4gcm2'}]
@@ -131,7 +130,7 @@ if measurement.GetValueWithUnitsAsPrintableString() != '24.000cm3':
 markupsFilename = markupsMeasurementsTestDir+'/roi.mkp.json'
 slicer.util.saveNode(markupsNode, markupsFilename)
 
-with open(markupsFilename, 'r') as f:
+with open(markupsFilename) as f:
     markupsJson = json.load(f)
 
 result = [{'name': 'volume', 'enabled': True, 'value': 24.000000000000007, 'units': 'cm3', 'printFormat': '%-#4.5gcm3'}]

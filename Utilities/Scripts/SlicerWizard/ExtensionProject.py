@@ -16,7 +16,7 @@ def _trimIndent(indent):
   return indent[n:]
 
 #=============================================================================
-class ExtensionProject(object):
+class ExtensionProject:
   """Convenience class for manipulating an extension project.
 
   This class provides an additional layer of convenience for users that wish to
@@ -50,7 +50,7 @@ class ExtensionProject(object):
     """
     cmakeFile = os.path.join(path, filename)
     if not os.path.exists(cmakeFile):
-      raise IOError("%s not found" % filename)
+      raise OSError("%s not found" % filename)
 
     self._scriptContents, self._encoding = self._parse(cmakeFile, encoding=encoding)
     try:

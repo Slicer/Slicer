@@ -17,7 +17,7 @@ comment = """
 #
 #########################################################
 
-class ColorBox(object):
+class ColorBox:
 
   def __init__(self, parent=None, parameterNode=None, parameter=None, colorNode=None, selectCommand=None):
     self.colorNode = colorNode

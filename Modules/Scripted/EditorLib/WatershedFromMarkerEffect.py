@@ -30,14 +30,14 @@ class WatershedFromMarkerEffectOptions(EffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(WatershedFromMarkerEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
 
   def __del__(self):
-    super(WatershedFromMarkerEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(WatershedFromMarkerEffectOptions,self).create()
+    super().create()
 
     try:
       import SimpleITK as sitk
@@ -122,7 +122,7 @@ The "Object Scale" parameter is use to adjust the smoothness of the output image
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(WatershedFromMarkerEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -136,7 +136,7 @@ The "Object Scale" parameter is use to adjust the smoothness of the output image
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(WatershedFromMarkerEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
@@ -154,7 +154,7 @@ The "Object Scale" parameter is use to adjust the smoothness of the output image
 
   def updateGUIFromMRML(self,caller,event):
     self.updatingGUI = True
-    super(WatershedFromMarkerEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.updatingGUI = False
 
   def onApply(self):
@@ -172,7 +172,7 @@ The "Object Scale" parameter is use to adjust the smoothness of the output image
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(WatershedFromMarkerEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
@@ -192,10 +192,10 @@ class WatershedFromMarkerEffectTool(LabelEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(WatershedFromMarkerEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
-    super(WatershedFromMarkerEffectTool,self).cleanup()
+    super().cleanup()
 
   def processEvent(self, caller=None, event=None):
     """

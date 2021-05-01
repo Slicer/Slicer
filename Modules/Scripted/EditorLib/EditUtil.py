@@ -21,7 +21,7 @@ comment = """
 #
 #########################################################
 
-class EditUtil(object):
+class EditUtil:
 
   @staticmethod
   def getParameterNode():
@@ -359,13 +359,13 @@ class EditUtil(object):
         structureVolume.GetImageData().DeepCopy( thresholder.GetOutput() )
         EditUtil.markVolumeNodeAsModified(structureVolume)
 
-class UndoRedo(object):
+class UndoRedo:
   """ Code to manage a list of undo/redo volumes
   stored in a compressed format using the vtkImageStash
   class to compress label maps in a thread
   """
 
-  class checkPoint(object):
+  class checkPoint:
     """Internal class to store one checkpoint
     step consisting of the stashed data
     and the volumeNode it corresponds to

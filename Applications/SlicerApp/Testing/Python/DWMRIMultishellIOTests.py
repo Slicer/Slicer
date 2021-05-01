@@ -25,7 +25,7 @@ def parse_nhdr(path):
     kvdict = {}
     grad_count = 0
 
-    with open(path, "rU") as f:
+    with open(path) as f:
         magic = f.readline().strip()
         assert(magic == "NRRD0005")
 
@@ -121,7 +121,7 @@ def test_nrrd_dwi_load(first_file, second_file=None):
     # 3) check gradients in the node attribute dictionary
     #    gradients must match the value on-disk.
     for i in range(0, slicer_numgrads):
-        grad_key = "DWMRI_gradient_{:04d}".format(i)
+        grad_key = f"DWMRI_gradient_{i:04d}"
         parsed_gradient = np.fromstring(parsed_nrrd.header[grad_key], count=3, sep=' ', dtype=np.float64)
         attr_gradient =   np.fromstring(dw_node.GetAttribute(grad_key), count=3, sep=' ', dtype=np.float64)
 

@@ -1,4 +1,3 @@
-from __future__ import print_function
 import logging
 import numpy
 import os
@@ -178,7 +177,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
           for secondApproachIndex in range(approachIndex+1,len(approachesThatLoaded)):
             secondApproach = approachesThatLoaded[secondApproachIndex]
             secondVolume = volumesByApproach[secondApproach]
-            print('comparing  %s,%s' % (firstApproach, secondApproach))
+            print(f'comparing  {firstApproach},{secondApproach}')
             comparison = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin'].compareVolumeNodes(firstVolume,secondVolume)
             if comparison != "":
               print(('failed: %s', comparison))

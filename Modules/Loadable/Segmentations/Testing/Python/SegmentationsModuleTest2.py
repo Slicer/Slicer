@@ -314,7 +314,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
       self.assertEqual(self.segmentation.GetNumberOfLayers(), 2)
 
   def runMarginEffect(self, segment1, segment2, dataType, overwriteMode):
-    logging.info("Running margin effect with data type: {0}, and overwriteMode {1}".format(dataType, overwriteMode))
+    logging.info(f"Running margin effect with data type: {dataType}, and overwriteMode {overwriteMode}")
     marginEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Margin")
 
     marginEffect.setParameter("MarginSizeMm", 50.0)

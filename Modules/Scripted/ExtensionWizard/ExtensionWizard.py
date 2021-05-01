@@ -34,7 +34,7 @@ def _settingsList(settings, key, convertToAbsolutePaths=False):
 # ExtensionWizard
 #
 #=============================================================================
-class ExtensionWizard(object):
+class ExtensionWizard:
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     parent.title = "Extension Wizard"
@@ -58,7 +58,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 # ExtensionWizardWidget
 #
 #=============================================================================
-class ExtensionWizardWidget(object):
+class ExtensionWizardWidget:
   #---------------------------------------------------------------------------
   def __init__(self, parent = None):
     if not parent:
@@ -222,7 +222,7 @@ class ExtensionWizardWidget(object):
         if repo is None:
           destination = os.path.join(dlg.destination, dlg.componentName)
           if os.path.exists(destination):
-            raise IOError("create extension: refusing to overwrite"
+            raise OSError("create extension: refusing to overwrite"
                           " existing directory '%s'" % destination)
           createInSubdirectory = False
 
@@ -232,7 +232,7 @@ class ExtensionWizardWidget(object):
           createInSubdirectory = False # create the files in the destination directory
           requireEmptyDirectory = False # we only check if no CMakeLists.txt file exists
           if os.path.exists(cmakeFile):
-            raise IOError("create extension: refusing to overwrite"
+            raise OSError("create extension: refusing to overwrite"
                           " directory containing CMakeLists.txt file at '%s'" % dlg.destination)
 
         path = self.templateManager.copyTemplate(

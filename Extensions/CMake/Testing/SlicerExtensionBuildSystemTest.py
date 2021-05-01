@@ -1,4 +1,3 @@
-from __future__ import print_function
 import hashlib
 import io
 import json
@@ -168,7 +167,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
     save_request(request, response_code)
 
 
-class ServerThread(object):
+class ServerThread:
   def __init__(self, port):
     self.port = port
     self.httpd = socketserver.TCPServer(('127.0.0.1', self.port), Handler)

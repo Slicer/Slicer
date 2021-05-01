@@ -779,7 +779,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       self.createdOutputFile = os.path.join(outputDir, self.videoFileNameWidget.text) if videoOutputRequested else outputDir
       self.showCreatedOutputFileButton.enabled = True
     except Exception as e:
-      self.addLog("Error: {0}".format(str(e)))
+      self.addLog(f"Error: {str(e)}")
       import traceback
       traceback.print_exc()
       self.showCreatedOutputFileButton.enabled = False

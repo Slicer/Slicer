@@ -38,13 +38,13 @@ class DrawEffectOptions(LabelEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(DrawEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
   def __del__(self):
-    super(DrawEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(DrawEffectOptions,self).create()
+    super().create()
 
     self.apply = qt.QPushButton("Apply", self.frame)
     self.apply.objectName = self.__class__.__name__ + 'Apply'
@@ -64,7 +64,7 @@ class DrawEffectOptions(LabelEffectOptions):
       tool.apply()
 
   def destroy(self):
-    super(DrawEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -78,15 +78,15 @@ class DrawEffectOptions(LabelEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(DrawEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(DrawEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(DrawEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
@@ -112,7 +112,7 @@ class DrawEffectTool(LabelEffectTool):
     # invoke our processEvents method
     self.initialized = False
 
-    super(DrawEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
     # create a logic instance to do the non-gui work
     self.logic = DrawEffectLogic(self.sliceWidget.sliceLogic())
@@ -143,7 +143,7 @@ class DrawEffectTool(LabelEffectTool):
     """
     call superclass to clean up actor
     """
-    super(DrawEffectTool,self).cleanup()
+    super().cleanup()
 
   def setLineMode(self,mode="solid"):
     property_ = self.actor.GetProperty()
@@ -157,7 +157,7 @@ class DrawEffectTool(LabelEffectTool):
     handle events from the render window interactor
     """
 
-    if super(DrawEffectTool,self).processEvent(caller,event):
+    if super().processEvent(caller,event):
       return
 
     if not self.initialized:
@@ -331,7 +331,7 @@ class DrawEffectLogic(LabelEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(DrawEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
 
 #

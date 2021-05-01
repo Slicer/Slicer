@@ -52,7 +52,7 @@ class MdInclude(rst.Directive):
                               'Cannot encode input file path "%s" '
                               '(wrong locale?).' %
                               (self.name, SafeString(path)))
-        except IOError as error:
+        except OSError as error:
             raise self.severe('Problems with "%s" directive path:\n%s.' %
                               (self.name, ErrorString(error)))
 

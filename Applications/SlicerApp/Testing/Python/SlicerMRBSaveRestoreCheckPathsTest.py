@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import os
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
@@ -180,10 +178,10 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
     slicer.util.delayDisplay('Temp dir = %s ' % tempDir)
     mrmlFilePath = tempDir + '/SlicerMRBSaveRestoreCheckPath.mrml'
     slicer.mrmlScene.SetURL(mrmlFilePath)
-    slicer.util.delayDisplay('Saving mrml file to %s, current url of scene is %s' % (mrmlFilePath, slicer.mrmlScene.GetURL()))
+    slicer.util.delayDisplay(f'Saving mrml file to {mrmlFilePath}, current url of scene is {slicer.mrmlScene.GetURL()}')
     # saveScene just writes out the .mrml file
     self.assertTrue(ioManager.saveScene(mrmlFilePath, screenShot))
-    slicer.util.delayDisplay('Finished saving mrml file %s, mrml url is now %s\n\n\n' % (mrmlFilePath, slicer.mrmlScene.GetURL()))
+    slicer.util.delayDisplay(f'Finished saving mrml file {mrmlFilePath}, mrml url is now {slicer.mrmlScene.GetURL()}\n\n\n')
     slicer.util.delayDisplay('mrml root dir = %s' % slicer.mrmlScene.GetRootDirectory())
     # explicitly save MRHead
     ioManager.addDefaultStorageNodes()

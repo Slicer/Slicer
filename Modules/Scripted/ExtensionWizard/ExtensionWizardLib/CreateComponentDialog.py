@@ -8,7 +8,7 @@ import re
 # _ui_CreateComponentDialog
 #
 #=============================================================================
-class _ui_CreateComponentDialog(object):
+class _ui_CreateComponentDialog:
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     self.vLayout = qt.QVBoxLayout(parent)
@@ -41,7 +41,7 @@ class _ui_CreateComponentDialog(object):
 # CreateComponentDialog
 #
 #=============================================================================
-class CreateComponentDialog(object):
+class CreateComponentDialog:
   #---------------------------------------------------------------------------
   def __init__(self, componenttype, parent):
     self.dialog = qt.QDialog(parent)

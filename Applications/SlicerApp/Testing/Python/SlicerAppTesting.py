@@ -27,7 +27,6 @@
 # We mean it.
 #
 
-from __future__ import print_function
 
 import os
 import pipes
@@ -53,7 +52,7 @@ def run(executable, arguments=[], verbose=True, shell=False, drop_cache=False):
   if drop_cache:
     dropcache()
   if verbose:
-    print("%s %s" % (os.path.basename(executable), " ".join([pipes.quote(arg) for arg in arguments])))
+    print("{} {}".format(os.path.basename(executable), " ".join([pipes.quote(arg) for arg in arguments])))
   arguments.insert(0, executable)
   if shell:
     arguments = " ".join([pipes.quote(arg) for arg in arguments])
@@ -92,9 +91,9 @@ def timecall(method, **kwargs):
       start = time.time()
       result = method(*args, **kwargs)
       durations.append(time.time() - start)
-      print("{:d}/{:d}: {:.2f}s".format(iteration, repeat, durations[-1]))
+      print(f"{iteration:d}/{repeat:d}: {durations[-1]:.2f}s")
     average = sum(durations) / len(durations)
-    print("Average: {:.2f}s\n".format(average))
+    print(f"Average: {average:.2f}s\n")
     duration = average
     return (duration, result)
   return wrapper

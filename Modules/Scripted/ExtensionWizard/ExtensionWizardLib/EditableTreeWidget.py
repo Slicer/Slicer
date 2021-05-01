@@ -139,7 +139,7 @@ class EditableTreeWidget(qt.QTreeWidget):
       self._items.insert(row + delta, item)
       self.insertTopLevelItem(row + delta, item)
 
-    self.setSelectedRows((row + delta for row in rows))
+    self.setSelectedRows(row + delta for row in rows)
     self.setCurrentItem(current)
 
   #---------------------------------------------------------------------------

@@ -17,7 +17,6 @@
 #  This file was originally developed by Johan Andruejol, Kitware Inc.
 #
 
-from __future__ import print_function
 import argparse
 import csv
 import json
@@ -33,7 +32,7 @@ Usage:
     CLISerializationTest.py
       /path/to/Slicer /path/to/CLIExecutables /path/to/data_dir /path/to/temp_dir
 """
-class CLISerializationTest(object):
+class CLISerializationTest:
   def __init__(self):
     self.SlicerExecutable = None
 

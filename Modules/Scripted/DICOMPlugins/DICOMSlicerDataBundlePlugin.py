@@ -18,7 +18,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
   """
 
   def __init__(self):
-    super(DICOMSlicerDataBundlePluginClass, self).__init__()
+    super().__init__()
     self.loadType = "Slicer Data Bundle"
     self.tags['seriesDescription'] = "0008,103e"
     self.tags['candygram'] = "cadb,0010"
@@ -230,7 +230,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
 # DICOMSlicerDataBundlePlugin
 #
 
-class DICOMSlicerDataBundlePlugin(object):
+class DICOMSlicerDataBundlePlugin:
   """
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
@@ -268,7 +268,7 @@ and was partially funded by NIH grant 3P41RR013218.
 # DICOMSlicerDataBundleWidget
 #
 
-class DICOMSlicerDataBundleWidget(object):
+class DICOMSlicerDataBundleWidget:
   def __init__(self, parent=None):
     self.parent = parent
 

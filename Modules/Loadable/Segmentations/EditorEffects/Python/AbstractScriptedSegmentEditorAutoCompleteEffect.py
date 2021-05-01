@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk, qt, ctk, slicer, logging
 from .AbstractScriptedSegmentEditorEffect import *
@@ -259,7 +258,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.scriptedEffect.setParameter("AutoUpdate", autoUpdate)
 
   def onPreview(self):
-    slicer.util.showStatusMessage("Running {0} auto-complete...".format(self.scriptedEffect.name), 2000)
+    slicer.util.showStatusMessage(f"Running {self.scriptedEffect.name} auto-complete...", 2000)
     try:
       # This can be a long operation - indicate it to the user
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
@@ -417,7 +416,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         self.selectedSegmentIds = vtk.vtkStringArray()
         segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(self.selectedSegmentIds)
       if self.selectedSegmentIds.GetNumberOfValues() < self.minimumNumberOfSegments:
-        logging.error("Auto-complete operation skipped: at least {0} visible segments are required".format(self.minimumNumberOfSegments))
+        logging.error(f"Auto-complete operation skipped: at least {self.minimumNumberOfSegments} visible segments are required")
         self.selectedSegmentIds = None
         return
 
@@ -435,7 +434,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       masterImageExtent = masterImageData.GetExtent()
       labelsEffectiveExtent = self.mergedLabelmapGeometryImage.GetExtent()
       # Margin size is relative to combined seed region size, but minimum of 3 voxels
-      print("self.extentGrowthRatio = {0}".format(self.extentGrowthRatio))
+      print(f"self.extentGrowthRatio = {self.extentGrowthRatio}")
       margin = [
         int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[1]-labelsEffectiveExtent[0]))),
         int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[3]-labelsEffectiveExtent[2]))),

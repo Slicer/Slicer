@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
@@ -554,7 +553,7 @@ class LabelStatisticsTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('test_LabelStatisticsBasic passed!')
 
-class Slicelet(object):
+class Slicelet:
   """A slicer slicelet is a module widget that comes up in stand alone mode
   implemented as a python class.
   This class provides common wrapper functionality used by all slicer modlets.
@@ -588,7 +587,7 @@ class LabelStatisticsSlicelet(Slicelet):
   """
 
   def __init__(self):
-    super(LabelStatisticsSlicelet,self).__init__(LabelStatisticsWidget)
+    super().__init__(LabelStatisticsWidget)
 
 
 if __name__ == "__main__":

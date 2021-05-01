@@ -123,6 +123,6 @@ class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
     orientations = [sliceOrientationSelector.itemText(idx) for idx in range(sliceOrientationSelector.count)]
     expectedOrientations = ['Axial', 'Sagittal', 'Coronal', 'Reformat']
     if orientations != expectedOrientations:
-      raise Exception('Problem with orientation selector\norientations: %s\nexpectedOrientations: %s' % (orientations, expectedOrientations))
+      raise Exception(f'Problem with orientation selector\norientations: {orientations}\nexpectedOrientations: {expectedOrientations}')
 
     self.delayDisplay('Test passed!')

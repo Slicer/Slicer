@@ -125,7 +125,7 @@ class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
 
   def onReloadAndTest(self,moduleName="RSNAVisTutorial"):
     self.onReload()
-    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
+    evalString = f'globals()["{moduleName}"].{moduleName}Test()'
     tester = eval(evalString)
     tester.runTest()
 

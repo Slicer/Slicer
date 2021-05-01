@@ -1,4 +1,3 @@
-from __future__ import print_function
 import traceback
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
@@ -11,7 +10,7 @@ import logging
 # framework for slicer as discussed here: http://na-mic.org/Bug/view.php?id=1922
 #
 
-class ExampleSelfTests(object):
+class ExampleSelfTests:
 
   @staticmethod
   def closeScene():
@@ -116,7 +115,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
     return True
 
-class SelfTestsLogic(object):
+class SelfTestsLogic:
   """Logic to handle invoking the tests and reporting the results"""
 
   def __init__(self,selfTests):
@@ -134,7 +133,7 @@ class SelfTestsLogic(object):
         len(self.passed), testsRun )
     s +="\n---\n"
     for test in self.results:
-      s += "%s\t%s\n" % (test, self.results[test])
+      s += f"{test}\t{self.results[test]}\n"
     return s
 
   def run(self,tests=None,continueCheck=None):

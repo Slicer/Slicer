@@ -15,7 +15,7 @@ def _map_property(objfunc, name):
 # _ui_EditExtensionMetadataDialog
 #
 #=============================================================================
-class _ui_EditExtensionMetadataDialog(object):
+class _ui_EditExtensionMetadataDialog:
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     vLayout = qt.QVBoxLayout(parent)
@@ -51,7 +51,7 @@ class _ui_EditExtensionMetadataDialog(object):
 # EditExtensionMetadataDialog
 #
 #=============================================================================
-class EditExtensionMetadataDialog(object):
+class EditExtensionMetadataDialog:
   project = _map_property(lambda self: self.ui.nameEdit, "text")
   category = _map_property(lambda self: self.ui.categoryEdit, "text")
   description = _map_property(lambda self: self.ui.descriptionEdit, "plainText")
@@ -90,7 +90,7 @@ class EditExtensionMetadataDialog(object):
       name = item.text(0)
       organization = item.text(1)
       if len(organization):
-        result.append("%s (%s)" % (name, organization))
+        result.append(f"{name} ({organization})")
       else:
         result.append(name)
     return ", ".join(result)
@@ -99,7 +99,7 @@ class EditExtensionMetadataDialog(object):
   @contributors.setter
   def contributors(self, value):
     self.ui.contributorsList.clear()
-    for c in re.split("(?<=[)])\s*,", value):
+    for c in re.split(r"(?<=[)])\s*,", value):
       c = c.strip()
       item = qt.QTreeWidgetItem()
 

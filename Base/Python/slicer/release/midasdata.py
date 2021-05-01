@@ -4,7 +4,6 @@
     The script does not accept any input arguments. All arguments are to be provided using the option flags. For a list of the option flags, run
         python release.py --help"""
 
-from __future__ import print_function
 
 from optparse import OptionParser
 import re, sys
@@ -202,17 +201,17 @@ def versionDataModulesDirectory(sourceVersion, destVersion, token, communicator,
     # If needed, create a new folder for destination under the module folder
     destIndex = _getFolderIndex(availableVersions, destVersion)
     if destIndex == -1:
-      print("Creating folder %s under %s module directory" % (destVersion, moduleName))
+      print(f"Creating folder {destVersion} under {moduleName} module directory")
       dest_folder = communicator.create_folder(token, destVersion, moduleFolderID)
       destID = dest_folder["folder_id"]
     else:
-      print("Re-using existing folder %s under %s module directory" % (destVersion, moduleName))
+      print(f"Re-using existing folder {destVersion} under {moduleName} module directory")
       destID = _getIDfromIndex(availableVersions, "folder", destIndex)
 
     # Duplicate the child items from source to destination
     duplicateFolderItems(sourceID, destID, token, communicator, overwrite)
 
-    message = "Duplicating subfolders from %s to %s for %s module..." % (sourceVersion, destVersion, moduleName)
+    message = f"Duplicating subfolders from {sourceVersion} to {destVersion} for {moduleName} module..."
     print(message)
     # Duplicate all the sub-folders from source to destination
     duplicateFolderfolders(sourceID, destID, token, communicator, overwrite)
@@ -247,7 +246,7 @@ def printSourceStructure(modulesID, applicationID, sourceVersion, token, communi
       print("Warning:", msg)
       continue
     sourceModuleID = _getIDfromIndex(moduleChildren, "folder", sourceVersionModuleIndex)
-    print("Module:%s( folder_id:%s )" % (module["name"], sourceModuleID))
+    print("Module:{}( folder_id:{} )".format(module["name"], sourceModuleID))
     printFolderStructure(sourceModuleID, token, communicator, 1)
     print("\n")
 

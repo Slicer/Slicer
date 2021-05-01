@@ -7,7 +7,7 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
   """Statistical plugin for segmentations with scalar volumes"""
 
   def __init__(self):
-    super(ScalarVolumeSegmentStatisticsPlugin,self).__init__()
+    super().__init__()
     self.name = "Scalar Volume"
     self.keys = ["voxel_count", "volume_mm3", "volume_cm3", "min", "max", "mean", "median", "stdev"]
     self.defaultKeys = self.keys # calculate all measurements by default

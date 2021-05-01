@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
@@ -170,10 +169,10 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
 
   def reportPerformance(self, action, property, time):
     message = self.displayPerformance(action, property, time)
-    print ( '<DartMeasurement name="%s-%s" type="numeric/integer">%s</DartMeasurement>' % (action, property, time))
+    print ( f'<DartMeasurement name="{action}-{property}" type="numeric/integer">{time}</DartMeasurement>')
     return message
   def displayPerformance(self, action, property, time):
-    message = '%s (%s) took %s msecs ' % (action, property, time)
+    message = f'{action} ({property}) took {time} msecs '
     self.delayDisplay(message)
     return message
 

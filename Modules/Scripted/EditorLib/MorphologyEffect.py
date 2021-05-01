@@ -35,16 +35,16 @@ class MorphologyEffectOptions(EffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(MorphologyEffectOptions,self).__init__(parent)
+    super().__init__(parent)
     # TODO: figure out if Visible scope makes sense for these effects
     #self.scopeOptions = ('All','Visible')
     self.scopeOptions = ('All',)
 
   def __del__(self):
-    super(MorphologyEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(MorphologyEffectOptions,self).create()
+    super().create()
     # TODO: provide an entry for label to replace with (defaults to zero)
     self.eightNeighbors = qt.QRadioButton("Eight Neighbors", self.frame)
     self.eightNeighbors.setToolTip("Treat diagonally adjacent voxels as neighbors.")
@@ -62,7 +62,7 @@ class MorphologyEffectOptions(EffectOptions):
     self.connections.append( (self.fourNeighbors, 'clicked()', self.updateMRMLFromGUI) )
 
   def destroy(self):
-    super(MorphologyEffectOptions,self).destroy()
+    super().destroy()
 
   def updateParameterNode(self, caller, event):
     """
@@ -73,7 +73,7 @@ class MorphologyEffectOptions(EffectOptions):
     pass
 
   def setMRMLDefaults(self):
-    super(MorphologyEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
@@ -98,7 +98,7 @@ class MorphologyEffectOptions(EffectOptions):
       if self.parameterNode.GetParameter("MorphologyEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
-    super(MorphologyEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
     neighborMode = self.parameterNode.GetParameter("MorphologyEffect,neighborMode")
     if neighborMode == '8':
@@ -113,7 +113,7 @@ class MorphologyEffectOptions(EffectOptions):
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(MorphologyEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     if self.eightNeighbors.checked:
       self.parameterNode.SetParameter( "MorphologyEffect,neighborMode", "8" )
     else:
@@ -138,10 +138,10 @@ class MorphologyEffectTool(EffectTool):
   """
 
   def __init__(self,sliceWidget):
-    super(MorphologyEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
-    super(MorphologyEffectTool,self).cleanup()
+    super().cleanup()
 
 #
 # MorphologyEffectLogic
@@ -159,7 +159,7 @@ class MorphologyEffectLogic(EffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(MorphologyEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
 #
 # The MorphologyEffect class definition

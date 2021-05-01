@@ -21,7 +21,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
   """
 
   def __init__(self):
-    super(DICOMGeAbusPluginClass,self).__init__()
+    super().__init__()
     self.loadType = "GE ABUS"
 
     self.tags['sopClassUID'] = "0008,0016"
@@ -80,7 +80,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
       try:
         ds = dicom.read_file(filePath, stop_before_pixels=True)
       except Exception as e:
-        logging.debug("Failed to parse DICOM file: {0}".format(str(e)))
+        logging.debug(f"Failed to parse DICOM file: {str(e)}")
         continue
 
       # check if probeCurvatureRadius is available
@@ -97,13 +97,13 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
       name = ''
       if hasattr(ds, 'SeriesNumber') and ds.SeriesNumber:
-        name = '{0}:'.format(ds.SeriesNumber)
+        name = f'{ds.SeriesNumber}:'
       if hasattr(ds, 'Modality') and ds.Modality:
-        name = '{0} {1}'.format(name, ds.Modality)
+        name = f'{name} {ds.Modality}'
       if hasattr(ds, 'SeriesDescription') and ds.SeriesDescription:
-        name = '{0} {1}'.format(name, ds.SeriesDescription)
+        name = f'{name} {ds.SeriesDescription}'
       if hasattr(ds, 'InstanceNumber') and ds.InstanceNumber:
-        name = '{0} [{1}]'.format(name, ds.InstanceNumber)
+        name = f'{name} [{ds.InstanceNumber}]'
 
       loadable = DICOMLoadable()
       loadable.files = [filePath]
@@ -122,7 +122,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     try:
       ds = dicom.read_file(filePath, stop_before_pixels=True)
     except Exception as e:
-      raise ValueError("Failed to parse DICOM file: {0}".format(str(e)))
+      raise ValueError(f"Failed to parse DICOM file: {str(e)}")
 
     fieldsInfo = {
       'NipplePosition': { 'group': 0x0021, 'element': 0x20, 'private': True, 'required': False},
@@ -182,7 +182,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     if reader.GetErrorCode() != vtk.vtkErrorCode.NoError:
       errorString = vtk.vtkErrorCode.GetStringFromErrorCode(reader.GetErrorCode())
       raise ValueError(
-        "Could not read image {0} from file {1}. Error is: {2}".format(loadable.name, filePath, errorString))
+        f"Could not read image {loadable.name} from file {filePath}. Error is: {errorString}")
 
     # Image origin and spacing is stored in IJK to RAS matrix
     imageData.SetSpacing(1.0, 1.0, 1.0)

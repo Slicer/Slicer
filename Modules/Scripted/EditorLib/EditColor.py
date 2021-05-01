@@ -125,7 +125,7 @@ class EditColor(VTKObservationMixin):
       lut = self.colorNode.GetLookupTable()
       rgb = lut.GetTableValue( label )
       self.colorPatch.setStyleSheet(
-          "background-color: rgb(%s,%s,%s)" % (rgb[0]*255, rgb[1]*255, rgb[2]*255) )
+          f"background-color: rgb({rgb[0]*255},{rgb[1]*255},{rgb[2]*255})" )
       self.colorSpin.setMaximum( self.colorNode.GetNumberOfColors()-1 )
     else:
       self.frame.setDisabled(1)

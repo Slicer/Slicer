@@ -18,7 +18,6 @@
 #  and was partially funded by NIH grant 1U24CA194354-01
 #
 
-from __future__ import print_function
 import os
 import shutil
 import sys
@@ -58,7 +57,7 @@ if __name__ == '__main__':
   moduleNames = ['A', 'B', 'C', 'D']
 
   additional_module_paths = ['--additional-module-paths']
-  additional_module_paths.extend(['%s/Test/%s' % (extension_dir, moduleName) for moduleName in moduleNames])
+  additional_module_paths.extend([f'{extension_dir}/Test/{moduleName}' for moduleName in moduleNames])
 
   args = ['--create', 'Test']
   for moduleName in moduleNames:

@@ -89,7 +89,7 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
     for dirpath, _, filenames, in os.walk(directory):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
-            with open(filepath, "r") as open_file:
+            with open(filepath) as open_file:
                 file_text = open_file.read()
 
             for package_name, updated_line in lines_to_write.items():

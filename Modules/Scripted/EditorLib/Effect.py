@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk
 import qt
@@ -49,7 +48,7 @@ class EffectOptions(EditOptions):
   """
 
   def __init__(self, parent=0):
-    super(EffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
     #
     # options for operating only on a portion of the input volume
@@ -63,10 +62,10 @@ class EffectOptions(EditOptions):
     self.scope = 'All'
 
   def __del__(self):
-    super(EffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(EffectOptions,self).create()
+    super().create()
 
     # interface for the scope options
     self.scopeFrame = qt.QFrame(self.frame)
@@ -88,7 +87,7 @@ class EffectOptions(EditOptions):
     self.connections.append( (self.scopeComboBox, 'currentIndexChanged(int)', self.onScopeChanged) )
 
   def destroy(self):
-    super(EffectOptions,self).destroy()
+    super().destroy()
 
   def updateParameterNode(self, caller, event):
     """
@@ -99,7 +98,7 @@ class EffectOptions(EditOptions):
     pass
 
   def setMRMLDefaults(self):
-    super(EffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
@@ -122,7 +121,7 @@ class EffectOptions(EditOptions):
       if self.parameterNode.GetParameter("Effect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
-    super(EffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
     self.scope = self.parameterNode.GetParameter("Effect,scope")
     scopeIndex = self.availableScopeOptions.index(self.scope)
@@ -134,7 +133,7 @@ class EffectOptions(EditOptions):
 
   def updateMRMLFromGUI(self):
     with NodeModify(self.parameterNode):
-      super(EffectOptions,self).updateMRMLFromGUI()
+      super().updateMRMLFromGUI()
       self.scope = self.availableScopeOptions[self.scopeComboBox.currentIndex]
       self.parameterNode.SetParameter( "Effect,scope", str(self.scope) )
 
@@ -142,7 +141,7 @@ class EffectOptions(EditOptions):
 # EffectTool
 #
 
-class EffectTool(object):
+class EffectTool:
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -261,7 +260,7 @@ class EffectTool(object):
 # EffectLogic
 #
 
-class EffectLogic(object):
+class EffectLogic:
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an EffectTool
@@ -441,7 +440,7 @@ class EffectLogic(object):
 # The Effect class definition
 #
 
-class Effect(object):
+class Effect:
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

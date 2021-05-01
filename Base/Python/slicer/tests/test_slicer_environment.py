@@ -1,4 +1,3 @@
-
 import qt
 import slicer
 import unittest

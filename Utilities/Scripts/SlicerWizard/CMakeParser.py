@@ -24,7 +24,7 @@ import re
 import string
 
 #=============================================================================
-class Token(object):
+class Token:
   """Base class for CMake script tokens.
 
   This is the base class for CMake script tokens. An occurrence of a token
@@ -79,7 +79,7 @@ class String(Token):
 
   #---------------------------------------------------------------------------
   def __init__(self, text, indent="", prefix="", suffix=""):
-    text = super(String, self).__init__(text, indent)
+    text = super().__init__(text, indent)
     self.prefix = prefix
     self.suffix = suffix
 
@@ -113,7 +113,7 @@ class Comment(Token):
 
   #---------------------------------------------------------------------------
   def __init__(self, prefix, text, indent="", suffix=""):
-    text = super(Comment, self).__init__(text, indent)
+    text = super().__init__(text, indent)
     self.prefix = prefix
     self.suffix = suffix
 
@@ -154,7 +154,7 @@ class Command(Token):
 
   #---------------------------------------------------------------------------
   def __init__(self, text, arguments=[], indent="", prefix="(", suffix=")"):
-    text = super(Command, self).__init__(text, indent)
+    text = super().__init__(text, indent)
     self.prefix = prefix
     self.suffix = suffix
     self.arguments = arguments
@@ -171,7 +171,7 @@ class Command(Token):
     return self.indent + self.text + self.prefix + args + self.suffix
 
 #=============================================================================
-class CMakeScript(object):
+class CMakeScript:
   """Tokenized representation of a CMake script.
 
   .. attribute:: tokens

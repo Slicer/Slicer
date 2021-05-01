@@ -38,16 +38,16 @@ class ChangeIslandEffectOptions(IslandEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(ChangeIslandEffectOptions,self).__init__(parent)
+    super().__init__(parent)
     # create a logic instance to do the non-gui work
     # (since this is created from the option gui it has no slice logic)
     self.logic = ChangeIslandEffectLogic(None)
 
   def __del__(self):
-    super(ChangeIslandEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(ChangeIslandEffectOptions,self).create()
+    super().create()
     # don't need minimum size or fully connected options for this
     self.sizeLabel.hide()
     self.minimumSize.hide()
@@ -62,7 +62,7 @@ class ChangeIslandEffectOptions(IslandEffectOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(ChangeIslandEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -76,13 +76,13 @@ class ChangeIslandEffectOptions(IslandEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(ChangeIslandEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(ChangeIslandEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def updateMRMLFromGUI(self):
-    super(ChangeIslandEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
 
 #
 # ChangeIslandEffectTool
@@ -99,7 +99,7 @@ class ChangeIslandEffectTool(IslandEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(ChangeIslandEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
     # create a logic instance to do the non-gui work
     self.logic = ChangeIslandEffectLogic(self.sliceWidget.sliceLogic())
 
@@ -107,14 +107,14 @@ class ChangeIslandEffectTool(IslandEffectTool):
     """
     call superclass to clean up actors
     """
-    super(ChangeIslandEffectTool,self).cleanup()
+    super().cleanup()
 
   def processEvent(self, caller=None, event=None):
     """
     handle events from the render window interactor
     """
 
-    if super(ChangeIslandEffectTool,self).processEvent(caller,event):
+    if super().processEvent(caller,event):
       return
 
     # events from the interactory
@@ -140,7 +140,7 @@ class ChangeIslandEffectLogic(IslandEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(ChangeIslandEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
   def changeIsland(self,xy):
     #

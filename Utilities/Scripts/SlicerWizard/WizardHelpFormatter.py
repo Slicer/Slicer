@@ -13,10 +13,10 @@ class WizardHelpFormatter(argparse.HelpFormatter):
 
   #---------------------------------------------------------------------------
   def _format_action_invocation(self, *args):
-    text = super(WizardHelpFormatter, self)._format_action_invocation(*args)
+    text = super()._format_action_invocation(*args)
     return text.replace("<", "[").replace(">", "]")
 
   #---------------------------------------------------------------------------
   def _format_usage(self, *args):
-    text = super(WizardHelpFormatter, self)._format_usage(*args)
+    text = super()._format_usage(*args)
     return text.replace("<", "[").replace(">", "]")

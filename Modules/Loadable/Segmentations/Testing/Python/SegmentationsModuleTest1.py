@@ -101,12 +101,12 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertIsNotNone(displayNode)
     # If segments are not found then the returned color is the pre-defined invalid color
     bodyColor = self.inputSegmentationNode.GetSegmentation().GetSegment(self.bodySegmentName).GetColor()
-    logging.info("bodyColor: {0}".format(bodyColor))
+    logging.info(f"bodyColor: {bodyColor}")
     self.assertEqual(int(bodyColor[0]*100), 33)
     self.assertEqual(int(bodyColor[1]*100), 66)
     self.assertEqual(int(bodyColor[2]*100), 0)
     tumorColor = self.inputSegmentationNode.GetSegmentation().GetSegment(self.tumorSegmentName).GetColor()
-    logging.info("tumorColor: {0}".format(tumorColor))
+    logging.info(f"tumorColor: {tumorColor}")
     self.assertEqual(int(tumorColor[0]*100), 100)
     self.assertEqual(int(tumorColor[1]*100), 0)
     self.assertEqual(int(tumorColor[2]*100), 0)
@@ -140,7 +140,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStat.Update()
     imageStatResult = imageStat.GetOutput()
     for i in range(4):
-      logging.info("Volume {0}: {1}".format(i, imageStatResult.GetScalarComponentAsDouble(i,0,0,0)))
+      logging.info(f"Volume {i}: {imageStatResult.GetScalarComponentAsDouble(i,0,0,0)}")
     self.assertEqual(imageStat.GetVoxelCount(), 1000)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 786)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 170)
@@ -157,7 +157,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStat.Update()
     imageStatResult = imageStat.GetOutput()
     for i in range(4):
-      logging.info("Volume {0}: {1}".format(i, imageStatResult.GetScalarComponentAsDouble(i,0,0,0)))
+      logging.info(f"Volume {i}: {imageStatResult.GetScalarComponentAsDouble(i,0,0,0)}")
     self.assertEqual(imageStat.GetVoxelCount(), 1000)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 786)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 170)
@@ -218,7 +218,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStat.Update()
     imageStatResult = imageStat.GetOutput()
     for i in range(5):
-      logging.info("Volume {0}: {1}".format(i, imageStatResult.GetScalarComponentAsDouble(i,0,0,0)))
+      logging.info(f"Volume {i}: {imageStatResult.GetScalarComponentAsDouble(i,0,0,0)}")
     self.assertEqual(imageStat.GetVoxelCount(), 226981000)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 178838889)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 39705288)
@@ -277,7 +277,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStat.Update()
     imageStatResult = imageStat.GetOutput()
     for i in range(4):
-      logging.info("Volume {0}: {1}".format(i, imageStatResult.GetScalarComponentAsDouble(i,0,0,0)))
+      logging.info(f"Volume {i}: {imageStatResult.GetScalarComponentAsDouble(i,0,0,0)}")
     self.assertEqual(imageStat.GetVoxelCount(), 127109360)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 78967249)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 39705288)

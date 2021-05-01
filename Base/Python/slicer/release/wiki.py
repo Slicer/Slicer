@@ -102,7 +102,6 @@ Example of update
   skipping Template:Documentation/acknowledgments-versionlist: version is 4.6
   skipping Documentation: version 4.6 already added
 """
-from __future__ import print_function
 
 import argparse
 import logging
@@ -113,7 +112,7 @@ import re
 log = logging.getLogger(__name__)
 
 
-class Wiki(object):
+class Wiki:
 
   def __init__(self, username="UpdateBot", password=None):
     log.info("connecting")
@@ -184,26 +183,26 @@ class Wiki(object):
       # check if update is needed
       current_version = self.version_info(page_name)
       updated_version = updated_version_info[page_short_name]
-      log.debug("%s: current version: %s" % (page_short_name, current_version))
-      log.debug("%s: updated version: %s" % (page_short_name, updated_version))
+      log.debug(f"{page_short_name}: current version: {current_version}")
+      log.debug(f"{page_short_name}: updated version: {updated_version}")
       if current_version == updated_version:
-        log.info("skipping %s: version is %s" % (page_name, updated_version))
+        log.info(f"skipping {page_name}: version is {updated_version}")
         break
       # update page
       content = self.page_content(page_name)
       template = "<includeonly>%s</includeonly>"
-      log.debug("replacing '%s' with '%s'" % (
+      log.debug("replacing '{}' with '{}'".format(
         template % current_version, template % updated_version))
       content = content.replace(
         template % current_version, template % updated_version)
-      summary = "Update %s version from %s to %s" % (
+      summary = "Update {} version from {} to {}".format(
         page_short_name, current_version, updated_version)
       self.set_page_content(page_name, content, summary)
       # sanity check
       current_version = self.version_info(page_name)
       if current_version != updated_version:
         raise RuntimeError(
-          "Failed to update %s: %s version is %s" % (
+          "Failed to update {}: {} version is {}".format(
             page_name, page_short_name, current_version))
 
   def version_list(self):
@@ -216,7 +215,7 @@ class Wiki(object):
     current_list = self.version_list()
     page_name = "Template:Documentation/versionlist"
     if release_version in current_list:
-      log.info("skipping %s: version is %s" % (page_name, release_version))
+      log.info(f"skipping {page_name}: version is {release_version}")
       return
     # update page
     assert current_list[0] == "Nightly"
@@ -225,7 +224,7 @@ class Wiki(object):
     template = "[[Documentation/%s|%s]]"
     current = template % (current_version, current_version)
     updated = template % (release_version, release_version) + " " + current
-    log.debug("replacing '%s' with '%s'" % (current, updated))
+    log.debug(f"replacing '{current}' with '{updated}'")
     content = content.replace(current, updated)
     summary = "Add %s to version list" % current_version
     self.set_page_content(page_name, content, summary)
@@ -233,7 +232,7 @@ class Wiki(object):
     current_list = self.version_list()
     if release_version not in current_list:
       raise RuntimeError(
-        "Failed to update %s: version %s is not in the list" % (
+        "Failed to update {}: version {} is not in the list".format(
           page_name, release_version))
 
   def acknowledgments_main_version(self):
@@ -266,7 +265,7 @@ class Wiki(object):
       # check if update is needed
       current_version = self.redirect_page_version(redirect_page)
       if current_version == release_version:
-        log.info("skipping %s: version is %s" % (redirect_page, release_version))
+        log.info(f"skipping {redirect_page}: version is {release_version}")
         break
       # update page
       content = self.page_content(redirect_page)
@@ -274,14 +273,14 @@ class Wiki(object):
       log.debug("replacing %s" % (template % current_version))
       content = content.replace(
         template % current_version, template % release_version)
-      summary = "Update REDIRECT from Documentation/%s to Documentation/%s" % (
+      summary = "Update REDIRECT from Documentation/{} to Documentation/{}".format(
         current_version, release_version)
       self.set_page_content(redirect_page, content, summary)
       # sanity check
       current_version = self.redirect_page_version(redirect_page)
       if current_version != release_version:
         raise RuntimeError(
-          "Failed to update %s: version is %s" % (
+          "Failed to update {}: version is {}".format(
             redirect_page, current_version))
 
   def update_top_level_documentation_page(self, release_version):
@@ -295,11 +294,11 @@ class Wiki(object):
     content = self.page_content(page_name)
     if marker not in content:
       log.error(
-        "failed to update %s: marker %s not found" % (page_name, marker))
+        f"failed to update {page_name}: marker {marker} not found")
       return
     if template.format(version=release_version) in content:
       log.info(
-        "skipping %s: version %s already added" % (page_name, release_version))
+        f"skipping {page_name}: version {release_version} already added")
       return
     # update page
     content = content.replace(
@@ -320,14 +319,14 @@ def handle_query(wiki, args):
     print("Version info:")
     for page_short_name, page_name in Wiki.VERSION_INFO_PAGES.items():
       method = getattr(wiki, "%s_version" % page_short_name)
-      print("  %s: %s" % (page_name, method()))
+      print(f"  {page_name}: {method()}")
 
   def display_next_version_info():
     print("Next version info:")
     for page_short_name, version in \
             wiki.compute_updated_version_info(wiki.next_version()).items():
       page_name = Wiki.VERSION_INFO_PAGES[page_short_name]
-      print("  %s: %s" % (page_name, version))
+      print(f"  {page_name}: {version}")
 
   def display_version_list():
     print("Versions: %s" % " ".join(wiki.version_list()))
@@ -339,7 +338,7 @@ def handle_query(wiki, args):
   def display_redirect_pages_version():
     print("Redirect pages:")
     for redirect_page, version in wiki.redirect_pages_version():
-      print("  %s: %s" % (redirect_page, version))
+      print(f"  {redirect_page}: {version}")
 
   def display_all():
     display_version_info()

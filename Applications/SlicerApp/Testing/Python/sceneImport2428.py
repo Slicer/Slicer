@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
@@ -231,7 +230,7 @@ verifyModels()
     for n in range(numModels):
       modelNode = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelNode" )
       if polyDataInScene.count(modelNode.GetPolyData()) > 1:
-        self.delayDisplay("Polydata for Model is duplicated! (id: %s and %s)" % (n,modelNode.GetID()))
+        self.delayDisplay(f"Polydata for Model is duplicated! (id: {n} and {modelNode.GetID()})")
         success = False
 
     return success

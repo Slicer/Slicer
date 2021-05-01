@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk
 import vtkITK
@@ -40,16 +39,16 @@ class IdentifyIslandsEffectOptions(IslandEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(IdentifyIslandsEffectOptions,self).__init__(parent)
+    super().__init__(parent)
     # create a logic instance to do the non-gui work
     # (since this is created from the option gui it has no slice logic)
     self.logic = IdentifyIslandsEffectLogic(None)
 
   def __del__(self):
-    super(IdentifyIslandsEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(IdentifyIslandsEffectOptions,self).create()
+    super().create()
 
     self.apply = qt.QPushButton("Apply", self.frame)
     self.apply.objectName = self.__class__.__name__ + 'Apply'
@@ -69,7 +68,7 @@ class IdentifyIslandsEffectOptions(IslandEffectOptions):
     self.logic.removeIslands()
 
   def destroy(self):
-    super(IdentifyIslandsEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -83,13 +82,13 @@ class IdentifyIslandsEffectOptions(IslandEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(IdentifyIslandsEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(IdentifyIslandsEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def updateMRMLFromGUI(self):
-    super(IdentifyIslandsEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
 
 #
 # IdentifyIslandsEffectTool
@@ -106,16 +105,16 @@ class IdentifyIslandsEffectTool(IslandEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(IdentifyIslandsEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
     """
     call superclass to clean up actors
     """
-    super(IdentifyIslandsEffectTool,self).cleanup()
+    super().cleanup()
 
   def processEvent(self, caller=None, event=None):
-    super(IdentifyIslandsEffectTool,self).processEvent()
+    super().processEvent()
 
 #
 # IdentifyIslandsEffectLogic
@@ -133,7 +132,7 @@ class IdentifyIslandsEffectLogic(IslandEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(IdentifyIslandsEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
   def removeIslands(self):
     #

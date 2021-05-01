@@ -1,4 +1,3 @@
-
 import unittest
 import slicer
 import EditorLib
