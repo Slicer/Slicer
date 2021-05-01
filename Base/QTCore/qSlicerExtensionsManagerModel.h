@@ -409,6 +409,8 @@ protected slots:
   void onUpdateDownloadProgress(qSlicerExtensionDownloadTask* task,
                                 qint64 received, qint64 total);
 
+  void onUpdateCheckFinished(const QUuid& requestId);
+
   void onUpdateCheckComplete(const QUuid& requestId,
                              const QList<QVariantMap>& results);
   void onUpdateCheckFailed(const QUuid& requestId);

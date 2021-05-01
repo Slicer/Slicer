@@ -234,10 +234,10 @@ public:
   bool NewExtensionEnabledByDefault;
 
   QNetworkAccessManager NetworkManager;
-  qMidasAPI CheckForUpdatesApi;
+  qRestAPI CheckForUpdatesApi;
   QHash<QUuid, UpdateCheckInformation> CheckForUpdatesRequests;
 
-  qMidasAPI GetExtensionMetadataApi;
+  qRestAPI GetExtensionMetadataApi;
 
   QHash<QString, UpdateDownloadInformation> AvailableUpdates;
 
@@ -314,12 +314,9 @@ void qSlicerExtensionsManagerModelPrivate::init()
                    q, SLOT(identifyIncompatibleExtensions()));
 
   QObject::connect(&this->CheckForUpdatesApi,
-                   SIGNAL(resultReceived(QUuid,QList<QVariantMap>)),
-                   q, SLOT(onUpdateCheckComplete(QUuid,QList<QVariantMap>)));
+                   SIGNAL(finished(QUuid)),
+                   q, SLOT(onUpdateCheckFinished(QUuid)));
 
-  QObject::connect(&this->CheckForUpdatesApi,
-                   SIGNAL(errorReceived(QUuid,QString)),
-                   q, SLOT(onUpdateCheckFailed(QUuid)));
 }
 
 // --------------------------------------------------------------------------
@@ -1012,15 +1009,20 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     }
   else
     {
-    this->GetExtensionMetadataApi.setServerUrl(q->serverUrl().toString());
+    this->GetExtensionMetadataApi.setServerUrl(q->serverUrl().toString() + "/api/json");
     int maxWaitingTimeInMSecs = 2500;
     this->GetExtensionMetadataApi.setTimeOut(maxWaitingTimeInMSecs);
-    QUuid queryUuid = this->GetExtensionMetadataApi.get("midas.slicerpackages.extension.list", parameters);
+    qRestAPI::Parameters queryParameters = parameters;
+    queryParameters["method"] = "midas.slicerpackages.extension.list";
+    QUuid queryUuid = this->GetExtensionMetadataApi.get("", queryParameters);
 
     QScopedPointer<qRestResult> restResult(this->GetExtensionMetadataApi.takeResult(queryUuid));
+
     QString errorText; // if any error occurs then this will be set to non-empty
     if(restResult)
       {
+      qMidasAPI::parseMidasResponse(restResult.data(), restResult->response());
+
       QList<QVariantMap> results = restResult->results();
       // extension manager returned OK
       if (results.count() == 0)
@@ -1697,7 +1699,7 @@ void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
-  d->CheckForUpdatesApi.setServerUrl(this->serverUrl().toString());
+  d->CheckForUpdatesApi.setServerUrl(this->serverUrl().toString() + "/api/json");
 
   // Loop over extensions
   foreach (const QString& extensionName, this->installedExtensions())
@@ -1722,9 +1724,9 @@ void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
       }
 
     // Issue the query
+    parameters["method"] = "midas.slicerpackages.extension.list";
     const QUuid& requestId =
-      d->CheckForUpdatesApi.get("midas.slicerpackages.extension.list",
-                                parameters);
+      d->CheckForUpdatesApi.get("", parameters);
 
     // Store information about the request
     UpdateCheckInformation updateInfo;
@@ -1744,6 +1746,23 @@ bool qSlicerExtensionsManagerModel::isExtensionUpdateAvailable(
 {
   Q_D(const qSlicerExtensionsManagerModel);
   return d->AvailableUpdates.contains(extensionName);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::onUpdateCheckFinished(const QUuid& requestId)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  QScopedPointer<qRestResult> restResult(d->CheckForUpdatesApi.takeResult(requestId));
+  bool success = restResult.isNull() ? false : qMidasAPI::parseMidasResponse(restResult.data(), restResult->response());
+  if (success)
+    {
+    this->onUpdateCheckComplete(requestId, restResult->results());
+    }
+  else
+    {
+    this->onUpdateCheckFailed(requestId);
+    }
 }
 
 // --------------------------------------------------------------------------
