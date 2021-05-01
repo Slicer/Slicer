@@ -1,5 +1,4 @@
 """ This module sets up root logging and loads the Slicer library modules into its namespace."""
-from __future__ import print_function
 
 #-----------------------------------------------------------------------------
 def _createModule(name, globals, docstring):

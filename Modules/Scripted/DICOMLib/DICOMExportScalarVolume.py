@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import glob
 import slicer
@@ -19,7 +18,7 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 #
 #########################################################
 
-class DICOMExportScalarVolume(object):
+class DICOMExportScalarVolume:
   """Code to export slicer data to dicom database
   TODO: delete temp directories and files
   """

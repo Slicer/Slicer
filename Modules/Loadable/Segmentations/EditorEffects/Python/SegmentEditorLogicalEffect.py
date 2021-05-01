@@ -201,7 +201,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
       # Get modifier segment
       modifierSegmentID = self.modifierSegmentID()
       if not modifierSegmentID:
-        logging.error("Operation {0} requires a selected modifier segment".format(operation))
+        logging.error(f"Operation {operation} requires a selected modifier segment")
         return
       modifierSegment = segmentation.GetSegment(modifierSegmentID)
       modifierSegmentLabelmap = slicer.vtkOrientedImageData()
@@ -266,7 +266,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
         selectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, bypassMasking)
 
     else:
-      logging.error("Unknown operation: {0}".format(operation))
+      logging.error(f"Unknown operation: {operation}")
 
 LOGICAL_COPY = 'COPY'
 LOGICAL_UNION = 'UNION'

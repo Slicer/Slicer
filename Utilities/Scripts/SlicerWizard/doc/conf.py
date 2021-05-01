@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # SlicerWizard documentation build configuration file, created by
 # sphinx-quickstart on Mon Feb 10 14:47:54 2014.
@@ -30,7 +29,7 @@ sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 #%%% Site extensions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #===============================================================================
-class WikidocRole(object):
+class WikidocRole:
   wiki_root = 'http://wiki.slicer.org/slicerWiki/index.php'
 
   #-----------------------------------------------------------------------------
@@ -40,7 +39,7 @@ class WikidocRole(object):
     roles.set_classes(options)
 
     parts = utils.unescape(text).split(' ', 1)
-    uri = '%s/Documentation/%s/%s' % (self.wiki_root, self.wiki_doc_version,
+    uri = '{}/Documentation/{}/{}'.format(self.wiki_root, self.wiki_doc_version,
                                       parts[0])
     text = parts[1]
 
@@ -51,7 +50,7 @@ class WikidocRole(object):
 class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
   #-----------------------------------------------------------------------------
   def resolve_name(self, *args):
-    module, attrs = super(ClassModuleClassDocumenter, self).resolve_name(*args)
+    module, attrs = super().resolve_name(*args)
     module = module.split('.')
     if module[-1] == attrs[0]:
       del module[-1]
@@ -109,9 +108,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'SlicerWizard'
-author = u'Kitware'
-copyright = u'2014, Kitware'
+project = 'SlicerWizard'
+author = 'Kitware'
+copyright = '2014, Kitware'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -253,7 +252,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'SlicerWizard.tex', u'SlicerWizard Documentation',
+  ('index', 'SlicerWizard.tex', 'SlicerWizard Documentation',
    author, 'manual'),
 ]
 
@@ -283,7 +282,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'slicerwizard', u'SlicerWizard Documentation',
+    ('index', 'slicerwizard', 'SlicerWizard Documentation',
      [author], 1)
 ]
 
@@ -297,7 +296,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'SlicerWizard', u'SlicerWizard Documentation',
+  ('index', 'SlicerWizard', 'SlicerWizard Documentation',
    author, 'SlicerWizard', 'One line description of project.',
    'Miscellaneous'),
 ]
@@ -315,7 +314,7 @@ texinfo_documents = [
 #%%% Options for Epub output %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # Bibliographic Dublin Core info.
-epub_title = u'SlicerWizard'
+epub_title = 'SlicerWizard'
 epub_author = author
 epub_publisher = author
 epub_copyright = copyright

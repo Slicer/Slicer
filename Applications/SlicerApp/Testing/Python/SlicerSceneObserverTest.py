@@ -1,13 +1,12 @@
-from __future__ import print_function
 import unittest
 import slicer
 import vtk
 
-class testClass(object):
+class testClass:
   """ Check that slicer exits correctly after adding an observer to the mrml scene
   """
   def callback(self, caller, event):
-    print('Got %s from %s' % (event, caller))
+    print(f'Got {event} from {caller}')
 
   def setUp(self):
     print("Adding observer to the scene")

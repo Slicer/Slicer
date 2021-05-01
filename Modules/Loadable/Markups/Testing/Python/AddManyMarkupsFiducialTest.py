@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import time
 import unittest
@@ -100,7 +99,7 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
     """
     Run the actual algorithm
     """
-    print('Running test to add %s fidicuals' % (numToAdd,))
+    print(f'Running test to add {numToAdd} fidicuals')
     print('Index\tTime to add fid\tDelta between adds')
     print("%(index)04s\t" % {'index': "i"}, "t\tdt'")
     r = rOffset

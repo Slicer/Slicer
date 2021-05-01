@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk
 import ctk
@@ -56,7 +55,7 @@ class PaintEffectOptions(LabelEffectOptions):
       self.minimumRadius = 0.01
       self.maximumRadius = 100
 
-    super(PaintEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
     # option to use 'min' or 'diag'
     # - min means pixel radius is min spacing
@@ -65,10 +64,10 @@ class PaintEffectOptions(LabelEffectOptions):
 
 
   def __del__(self):
-    super(PaintEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(PaintEffectOptions,self).create()
+    super().create()
 
     self.radiusFrame = qt.QFrame(self.frame)
     self.radiusFrame.setLayout(qt.QHBoxLayout())
@@ -106,7 +105,7 @@ class PaintEffectOptions(LabelEffectOptions):
                  (10, self.onQuickie10Clicked), (20, self.onQuickie20Clicked) )
     for rad,callback in quickies:
       self.radiusQuickies[rad] = qt.QPushButton(str(rad))
-      self.radiusQuickies[rad].objectName = 'PushButton_QuickRadius_{0}'.format(rad)
+      self.radiusQuickies[rad].objectName = f'PushButton_QuickRadius_{rad}'
       self.radiusFrame.layout().addWidget(self.radiusQuickies[rad])
       self.radiusQuickies[rad].setFixedWidth(25)
       self.radiusQuickies[rad].connect('clicked()', callback)
@@ -154,7 +153,7 @@ class PaintEffectOptions(LabelEffectOptions):
     # self.parameterNode.SetParameter( "PaintEffect,radius", str(self.minimumRadius * 10) )
 
   def destroy(self):
-    super(PaintEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -168,7 +167,7 @@ class PaintEffectOptions(LabelEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(PaintEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
@@ -190,7 +189,7 @@ class PaintEffectOptions(LabelEffectOptions):
       if self.parameterNode.GetParameter("PaintEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
-    super(PaintEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
     sphere = not (0 == int(self.parameterNode.GetParameter("PaintEffect,sphere")))
     self.sphere.setChecked( sphere )
@@ -265,7 +264,7 @@ class PaintEffectOptions(LabelEffectOptions):
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(PaintEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     if self.sphere.checked:
       self.parameterNode.SetParameter( "PaintEffect,sphere", "1" )
     else:
@@ -298,7 +297,7 @@ class PaintEffectTool(LabelEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(PaintEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
     # create a logic instance to do the non-gui work
     self.logic = PaintEffectLogic(self.sliceWidget.sliceLogic())
 
@@ -340,7 +339,7 @@ class PaintEffectTool(LabelEffectTool):
     for a in self.feedbackActors:
       self.renderer.RemoveActor2D(a)
     self.sliceView.scheduleRender()
-    super(PaintEffectTool,self).cleanup()
+    super().cleanup()
 
   def getLabelPixel(self,xy):
     sliceLogic = self.sliceWidget.sliceLogic()
@@ -364,7 +363,7 @@ class PaintEffectTool(LabelEffectTool):
     handle events from the render window interactor
     """
 
-    if super(PaintEffectTool,self).processEvent(caller,event):
+    if super().processEvent(caller,event):
       return
 
     # interactor events
@@ -797,7 +796,7 @@ class PaintEffectLogic(LabelEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(PaintEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
 
 #

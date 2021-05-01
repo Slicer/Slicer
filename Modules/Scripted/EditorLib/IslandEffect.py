@@ -36,13 +36,13 @@ class IslandEffectOptions(EffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(IslandEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
   def __del__(self):
-    super(IslandEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(IslandEffectOptions,self).create()
+    super().create()
     self.fullyConnected = qt.QCheckBox("Fully Connected", self.frame)
     self.fullyConnected.setToolTip("When set, only pixels that share faces (not corners or edges) are considered connected.")
     self.frame.layout().addWidget(self.fullyConnected)
@@ -63,7 +63,7 @@ class IslandEffectOptions(EffectOptions):
     self.connections.append( (self.minimumSize, "valueChanged(int)", self.updateMRMLFromGUI ) )
 
   def destroy(self):
-    super(IslandEffectOptions,self).destroy()
+    super().destroy()
 
   def updateParameterNode(self, caller, event):
     """
@@ -74,7 +74,7 @@ class IslandEffectOptions(EffectOptions):
     pass
 
   def setMRMLDefaults(self):
-    super(IslandEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
@@ -98,7 +98,7 @@ class IslandEffectOptions(EffectOptions):
       if self.parameterNode.GetParameter("IslandEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
-    super(IslandEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
     self.fullyConnected.setChecked(
                 int(self.parameterNode.GetParameter("IslandEffect,fullyConnected")) )
@@ -109,7 +109,7 @@ class IslandEffectOptions(EffectOptions):
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(IslandEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     if self.fullyConnected.checked:
       self.parameterNode.SetParameter( "IslandEffect,fullyConnected", "1" )
     else:
@@ -135,10 +135,10 @@ class IslandEffectTool(EffectTool):
   """
 
   def __init__(self,sliceWidget):
-    super(IslandEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
-    super(IslandEffectTool,self).cleanup()
+    super().cleanup()
 
 
 #
@@ -157,7 +157,7 @@ class IslandEffectLogic(EffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(IslandEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
 #
 # The IslandEffect class definition

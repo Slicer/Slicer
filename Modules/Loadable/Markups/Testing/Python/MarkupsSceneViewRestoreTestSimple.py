@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 # Test that setting a fiducial coordinate is consistent across scene view saves
 # and restores
 

@@ -156,7 +156,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       self.logic.patchDicomDir(self.inputDirSelector.currentPath, self.outputDirSelector.currentPath)
 
     except Exception as e:
-      self.addLog("Unexpected error: {0}".format(str(e)))
+      self.addLog(f"Unexpected error: {str(e)}")
       import traceback
       traceback.print_exc()
     slicer.app.restoreOverrideCursor()
@@ -174,7 +174,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
 # Patcher rules
 #
 
-class DICOMPatcherRule(object):
+class DICOMPatcherRule:
   def __init__(self):
     self.logCallback = None
   def addLog(self, text):
@@ -459,7 +459,7 @@ class NormalizeFileNames(DICOMPatcherRule):
   def getNextItemName(self, prefix, root):
     numberOfFilesInFolder = self.numberOfItemsInFolderMap[root] if root in self.numberOfItemsInFolderMap else 0
     self.numberOfItemsInFolderMap[root] = numberOfFilesInFolder+1
-    return "{0}{1:03d}".format(prefix, numberOfFilesInFolder)
+    return f"{prefix}{numberOfFilesInFolder:03d}"
   def generateOutputFilePath(self, ds, filepath):
     folderName = ""
     patientNameID = str(ds.PatientName)+"*"+ds.PatientID
@@ -560,7 +560,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
 
         try:
           ds = pydicom.read_file(filePath)
-        except (IOError, pydicom.filereader.InvalidDicomError):
+        except (OSError, pydicom.filereader.InvalidDicomError):
           self.addLog('  Not DICOM file. Skipped.')
           continue
 
@@ -584,7 +584,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
         pydicom.write_file(patchedFilePath, ds)
         self.addLog('  Created DICOM file: %s' % patchedFilePath)
 
-    self.addLog('DICOM patching completed. Patched files are written to:\n{0}'.format(outputDirPath))
+    self.addLog(f'DICOM patching completed. Patched files are written to:\n{outputDirPath}')
 
   def importDicomDir(self, outputDirPath):
     """

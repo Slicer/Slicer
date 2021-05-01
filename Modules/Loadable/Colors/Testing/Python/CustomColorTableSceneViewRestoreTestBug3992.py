@@ -1,4 +1,3 @@
-from __future__ import print_function
 import math
 
 # Test that a custom color table is consistent across scene view saves

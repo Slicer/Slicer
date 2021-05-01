@@ -45,7 +45,7 @@ def getLongFlagDefinition(currentNode):
     labelNodeList = currentNode.getElementsByTagName("longflag")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
-        return "{0}{1}{2}".format("[<span style=\"color:orange\">--",
+        return "{}{}{}".format("[<span style=\"color:orange\">--",
             getTextValuesFromNode(labelNode.childNodes), "</span>]")
     return ""
 
@@ -57,7 +57,7 @@ def getFlagDefinition(currentNode):
     labelNodeList = currentNode.getElementsByTagName("flag")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
-        return "{0}{1}{2}".format("[<span style=\"color:pink\">-",
+        return "{}{}{}".format("[<span style=\"color:pink\">-",
             getTextValuesFromNode(labelNode.childNodes), "</span>]")
     return ""
 
@@ -69,7 +69,7 @@ def getLabelDefinition(currentNode):
     labelNodeList = currentNode.getElementsByTagName("label")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
-        return "{0}{1}{2}".format("** <span style=\"color:green\">'''",
+        return "{}{}{}".format("** <span style=\"color:green\">'''",
             getTextValuesFromNode(labelNode.childNodes), "'''</span>")
     return ""
 
@@ -81,7 +81,7 @@ def getDefaultValueDefinition(currentNode):
     labelNodeList = currentNode.getElementsByTagName("default")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
-        return "{0}{1}{2}".format("''Default value: ",
+        return "{}{}{}".format("''Default value: ",
             getTextValuesFromNode(labelNode.childNodes), "''")
     return ""
 
@@ -186,13 +186,13 @@ Examples of the module in use:
 def DumpSEMMediaWikiFeatures(executableNode):
     outRegion = ""
     outRegion += "===Quick Tour of Features and Use===\n\n"
-    outRegion += "{0}{1}".format("A list panels in the interface,",
+    outRegion += "{}{}".format("A list panels in the interface,",
            " their features, what they mean, and how to use them.\n")
     outRegion += "{|\n|\n"
     # Now print all the command line arguments and the labels
     # that showup in the GUI interface
     for parameterNode in executableNode.getElementsByTagName("parameters"):
-        outRegion += "* <span style=\"color:blue\">'''''{0}'''''</span>: {1}\n".format(
+        outRegion += "* <span style=\"color:blue\">'''''{}'''''</span>: {}\n".format(
             getThisNodesInfoAsText(parameterNode, "label"),
             getThisNodesInfoAsText(parameterNode, "description"))
         currentNode = parameterNode.firstChild
@@ -202,7 +202,7 @@ def DumpSEMMediaWikiFeatures(executableNode):
                 if getThisNodesInfoAsText(currentNode, "label") != "":
                     # if this node has a default value -- document it!
                     if getThisNodesInfoAsText(currentNode, "default") != "":
-                        outRegion += "{0} {1} {2}: {3} {4}\n".format(
+                        outRegion += "{} {} {}: {} {}\n".format(
                                 getLabelDefinition(currentNode),
                                 getLongFlagDefinition(currentNode),
                                 getFlagDefinition(currentNode),
@@ -210,7 +210,7 @@ def DumpSEMMediaWikiFeatures(executableNode):
                                     "description"),
                                 getDefaultValueDefinition(currentNode))
                     else:
-                        outRegion += "{0} {1} {2}: {3}\n\n".format(
+                        outRegion += "{} {} {}: {}\n\n".format(
                                 getLabelDefinition(currentNode),
                                 getLongFlagDefinition(currentNode),
                                 getFlagDefinition(currentNode),
@@ -218,7 +218,7 @@ def DumpSEMMediaWikiFeatures(executableNode):
                                     "description"))
             currentNode = currentNode.nextSibling
 
-    outRegion += "{0}{1}\n".format("|[[Image:screenshotBlankNotOptional.png|",
+    outRegion += "{}{}\n".format("|[[Image:screenshotBlankNotOptional.png|",
             "thumb|280px|User Interface]]")
     outRegion += "|}\n\n"
     return outRegion
@@ -318,7 +318,7 @@ def SEMToMediaWikiProg():
             docString += DumpSEMMediaWikiFooter(ExecutableNode)
         else:
             parser.error(
-                "The only valid options are [h|b|f]: Given {0}".format(
+                "The only valid options are [h|b|f]: Given {}".format(
                     stage))
 
     if options.xmlfilename is not None:

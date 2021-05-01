@@ -2,7 +2,6 @@
 """ Unit Test for NA-MIC data tree versioning script.
     This test requires the user to enter the Midas server URL, the authentication email, the authentication API key and folder ID of an empty folder. The test first creates a mock data tree in the empty folder provided and runs tests off of that.
     Usage: python midasdata_test.py"""
-from __future__ import print_function
 
 import midasdata
 import re

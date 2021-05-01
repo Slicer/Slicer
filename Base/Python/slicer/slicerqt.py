@@ -1,4 +1,3 @@
-from __future__ import print_function
 import logging
 import sys
 
@@ -8,7 +7,6 @@ import vtk
 
 import slicer
 from slicer.util import *
-del print_function
 
 # HACK Ideally constant from vtkSlicerConfigure should be wrapped,
 #      that way the following try/except could be avoided.
@@ -52,7 +50,7 @@ class SlicerApplicationLogHandler(logging.Handler):
       context.setFile(record.pathname)
       context.setFunction(record.funcName)
       context.setMessage(msg)
-      threadId = "{0}({1})".format(record.threadName, record.thread)
+      threadId = f"{record.threadName}({record.thread})"
       slicer.app.errorLogModel().addEntry(qt.QDateTime.currentDateTime(), threadId,
         self.pythonToCtkLevelConverter[record.levelno], self.origin, context, msg)
     except:
@@ -135,7 +133,7 @@ def loadSlicerRCFile():
 # Internal
 #
 
-class _Internal(object):
+class _Internal:
 
   def __init__( self ):
     import imp

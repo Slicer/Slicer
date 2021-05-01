@@ -317,7 +317,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
         'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
 
 
-class _ui_DICOMSettingsPanel(object):
+class _ui_DICOMSettingsPanel:
   def __init__(self, parent):
     vBoxLayout = qt.QVBoxLayout(parent)
     # Add generic settings
@@ -378,7 +378,7 @@ class DICOMSettingsPanel(ctk.ctkSettingsPanel):
 #
 # DICOM file dialog
 #
-class DICOMFileDialog(object):
+class DICOMFileDialog:
   """This specially named class is detected by the scripted loadable
   module and is the target for optional drag and drop operations.
   See: Base/QTGUI/qSlicerScriptedFileDialog.h

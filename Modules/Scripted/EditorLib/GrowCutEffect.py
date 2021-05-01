@@ -42,14 +42,14 @@ class GrowCutEffectOptions(EffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(GrowCutEffectOptions,self).__init__(parent)
+    super().__init__(parent)
     self.logic = GrowCutEffectLogic(EditUtil.getSliceLogic())
 
   def __del__(self):
-    super(GrowCutEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(GrowCutEffectOptions,self).create()
+    super().create()
 
     self.helpLabel = qt.QLabel("Run the GrowCut segmentation on the current label map.\nThis will use your current segmentation as an example\nto fill in the rest of the volume.", self.frame)
     self.frame.layout().addWidget(self.helpLabel)
@@ -68,7 +68,7 @@ class GrowCutEffectOptions(EffectOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(GrowCutEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -82,10 +82,10 @@ class GrowCutEffectOptions(EffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(GrowCutEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(GrowCutEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def onApply(self):
 
@@ -94,7 +94,7 @@ class GrowCutEffectOptions(EffectOptions):
       logging.warning(self.logic.getInvalidInputsMessage())
       background = self.logic.getScopedBackground()
       labelInput = self.logic.getScopedLabelInput()
-      if not slicer.util.confirmOkCancelDisplay("Current image type is '{0}' and labelmap type is '{1}'. GrowCut only works "
+      if not slicer.util.confirmOkCancelDisplay("Current image type is '{}' and labelmap type is '{}'. GrowCut only works "
                                          "reliably with 'short' type.\n\nIf the segmentation result is not satisfactory"
                                          ", then cast the image and labelmap to 'short' type (using Cast Scalar Volume "
                                          "module) or install Fast GrowCut extension and use FastGrowCutEffect editor "
@@ -109,7 +109,7 @@ class GrowCutEffectOptions(EffectOptions):
     slicer.util.showStatusMessage("GrowCut Finished", 2000)
 
   def updateMRMLFromGUI(self):
-    super(GrowCutEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
 
 #
 # GrowCutEffectTool
@@ -126,10 +126,10 @@ class GrowCutEffectTool(EffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(GrowCutEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
-    super(GrowCutEffectTool,self).cleanup()
+    super().cleanup()
 
 #
 # GrowCutEffectLogic
@@ -147,13 +147,13 @@ class GrowCutEffectLogic(EffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(GrowCutEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
   def getInvalidInputsMessage(self):
     background = self.getScopedBackground()
     labelInput = self.getScopedLabelInput()
-    return "GrowCut is attempted with image type '{0}' and labelmap " \
-           "type '{1}'. GrowCut only works robustly with 'short' " \
+    return "GrowCut is attempted with image type '{}' and labelmap " \
+           "type '{}'. GrowCut only works robustly with 'short' " \
            "image and labelmap types.".format(
              background.GetScalarTypeAsString(),
              labelInput.GetScalarTypeAsString())

@@ -37,16 +37,16 @@ class ChangeLabelEffectOptions(EffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(ChangeLabelEffectOptions,self).__init__(parent)
+    super().__init__(parent)
     # create a logic instance to do the non-gui work
     # (since this is created from the option gui it has no slice logic)
     self.logic = ChangeLabelEffectLogic(None)
 
   def __del__(self):
-    super(ChangeLabelEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(ChangeLabelEffectOptions,self).create()
+    super().create()
     self.logic.undoRedo = self.undoRedo
     self.inputColor = EditColor(self.frame,'ChangeLabelEffect,inputColor')
     self.inputColor.label.setText("Input Color:")
@@ -70,7 +70,7 @@ class ChangeLabelEffectOptions(EffectOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(ChangeLabelEffectOptions,self).destroy()
+    super().destroy()
 
   def updateParameterNode(self, caller, event):
     """
@@ -92,7 +92,7 @@ class ChangeLabelEffectOptions(EffectOptions):
     self.logic.changeLabel()
 
   def setMRMLDefaults(self):
-    super(ChangeLabelEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
@@ -112,7 +112,7 @@ class ChangeLabelEffectOptions(EffectOptions):
       if self.parameterNode.GetParameter("ChangeLabelEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
-    super(ChangeLabelEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
     self.inputColor.colorSpin.setValue( int(self.parameterNode.GetParameter("ChangeLabelEffect,inputColor")) )
     self.outputColor.colorSpin.setValue( int(self.parameterNode.GetParameter("ChangeLabelEffect,outputColor")) )
@@ -121,7 +121,7 @@ class ChangeLabelEffectOptions(EffectOptions):
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(ChangeLabelEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetParameter( "ChangeLabelEffect,inputColor", str(self.inputColor.colorSpin.value) )
     self.parameterNode.SetParameter( "ChangeLabelEffect,outputColor", str(self.outputColor.colorSpin.value) )
     self.parameterNode.SetDisableModifiedEvent(disableState)
@@ -143,10 +143,10 @@ class ChangeLabelEffectTool(EffectTool):
   """
 
   def __init__(self,sliceWidget):
-    super(ChangeLabelEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
-    super(ChangeLabelEffectTool,self).cleanup()
+    super().cleanup()
 
 #
 # ChangeLabelEffectLogic
@@ -164,7 +164,7 @@ class ChangeLabelEffectLogic(EffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(ChangeLabelEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
   def changeLabel(self):
     #

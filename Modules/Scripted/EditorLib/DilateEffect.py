@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk
 import ctk
@@ -38,13 +37,13 @@ class DilateEffectOptions(MorphologyEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(DilateEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
   def __del__(self):
-    super(DilateEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(DilateEffectOptions,self).create()
+    super().create()
     self.apply = qt.QPushButton("Apply", self.frame)
     self.apply.objectName = self.__class__.__name__ + 'Apply'
     self.apply.setToolTip("Dilate current label")
@@ -59,7 +58,7 @@ class DilateEffectOptions(MorphologyEffectOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(DilateEffectOptions,self).destroy()
+    super().destroy()
 
   def onApply(self):
     logic = DilateEffectLogic(EditUtil.getSliceLogic())
@@ -81,15 +80,15 @@ class DilateEffectOptions(MorphologyEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(DilateEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(DilateEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(DilateEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
@@ -109,13 +108,13 @@ class DilateEffectTool(MorphologyEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(DilateEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
     """
     call superclass to clean up actors
     """
-    super(DilateEffectTool,self).cleanup()
+    super().cleanup()
 
 #
 # DilateEffectLogic
@@ -133,7 +132,7 @@ class DilateEffectLogic(MorphologyEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(DilateEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
   def erode(self,fill,neighborMode,iterations):
 

@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import glob
 import tempfile
@@ -29,7 +28,7 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 #
 #########################################################
 
-class DICOMExportScene(object):
+class DICOMExportScene:
   """Export slicer scene to dicom database
   """
 
@@ -156,7 +155,7 @@ class DICOMExportScene(object):
     argIndex = 6
     for key, value in self.optionalTags.items():
       args.insert(argIndex, '-k')
-      tagNameValue = '%s=%s' % (str(key), str(value))
+      tagNameValue = f'{str(key)}={str(value)}'
       args.insert(argIndex+1, tagNameValue)
       argIndex += 2
     self.progress('Creating DICOM binary file...')

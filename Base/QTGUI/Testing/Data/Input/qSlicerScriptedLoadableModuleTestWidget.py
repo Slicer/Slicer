@@ -1,6 +1,4 @@
-
-
-class qSlicerScriptedLoadableModuleTestWidget(object):
+class qSlicerScriptedLoadableModuleTestWidget:
   def __init__(self, parent=None):
     self.parent = parent
 

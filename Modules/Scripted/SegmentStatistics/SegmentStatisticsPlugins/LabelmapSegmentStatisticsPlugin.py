@@ -9,7 +9,7 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
   """Statistical plugin for Labelmaps"""
 
   def __init__(self):
-    super(LabelmapSegmentStatisticsPlugin,self).__init__()
+    super().__init__()
     self.name = "Labelmap"
     self.obbKeys = ["obb_origin_ras", "obb_diameter_mm", "obb_direction_ras_x", "obb_direction_ras_y", "obb_direction_ras_z"]
     self.principalAxisKeys = ["principal_axis_x", "principal_axis_y", "principal_axis_z"]

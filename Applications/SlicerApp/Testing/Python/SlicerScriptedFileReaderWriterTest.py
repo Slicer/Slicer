@@ -25,7 +25,7 @@ class SlicerScriptedFileReaderWriterTestWidget(ScriptedLoadableModuleWidget):
     # Default reload&test widgets are enough.
     # Note that reader and writer is not reloaded.
 
-class SlicerScriptedFileReaderWriterTestFileReader(object):
+class SlicerScriptedFileReaderWriterTestFileReader:
 
   def __init__(self, parent):
     self.parent = parent
@@ -45,7 +45,7 @@ class SlicerScriptedFileReaderWriterTestFileReader(object):
       return False
 
     firstLine = ''
-    with open(filePath, 'r') as f:
+    with open(filePath) as f:
       firstLine = f.readline()
     validFile = 'magic' in firstLine
     return validFile
@@ -62,7 +62,7 @@ class SlicerScriptedFileReaderWriterTestFileReader(object):
         baseName = slicer.mrmlScene.GenerateUniqueName(baseName)
 
       # Read file content
-      with open (filePath, 'r') as myfile:
+      with open (filePath) as myfile:
         data = myfile.readlines()
 
       # Check if file is valid
@@ -84,7 +84,7 @@ class SlicerScriptedFileReaderWriterTestFileReader(object):
     return True
 
 
-class SlicerScriptedFileReaderWriterTestFileWriter(object):
+class SlicerScriptedFileReaderWriterTestFileWriter:
 
   def __init__(self, parent):
     self.parent = parent

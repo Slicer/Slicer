@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os, copy
 import qt
 import vtk
@@ -19,7 +18,7 @@ class DICOMPluginSelector(qt.QWidget):
   """
 
   def __init__(self, parent, width=50, height=100):
-    super(DICOMPluginSelector, self).__init__(parent)
+    super().__init__(parent)
     self.setMinimumHeight(height)
     self.setMinimumWidth(width)
     verticalBox = qt.QVBoxLayout()

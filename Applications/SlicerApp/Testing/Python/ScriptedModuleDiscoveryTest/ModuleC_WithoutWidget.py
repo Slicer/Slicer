@@ -1,4 +1,3 @@
-
 from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = 'C'

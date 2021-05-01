@@ -1,4 +1,3 @@
-from __future__ import print_function
 import logging
 import os
 import textwrap
@@ -116,7 +115,7 @@ use it for commercial purposes.</p>
 #
 # SampleDataSource
 #
-class SampleDataSource(object):
+class SampleDataSource:
   """Describe a set of sample data associated with one or multiple URIs and filenames.
 
   Example::
@@ -396,7 +395,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 # SampleData logic
 #
 
-class SampleDataLogic(object):
+class SampleDataLogic:
   """Manage the slicer.modules.sampleDataSources dictionary.
   The dictionary keys are categories of sample data sources.
   The BuiltIn category is managed here.  Modules or extensions can
@@ -481,7 +480,7 @@ class SampleDataLogic(object):
       slicer.modules.sampleDataSources = {}
 
     if not isinstance(sampleDataSource, SampleDataSource):
-      raise TypeError("unsupported sampleDataSource type '%s': '%s' is expected" % (type(sampleDataSource), str(SampleDataSource)))
+      raise TypeError(f"unsupported sampleDataSource type '{type(sampleDataSource)}': '{str(SampleDataSource)}' is expected")
 
     return sampleDataSource in slicer.modules.sampleDataSources.get(category, [])
 
@@ -807,9 +806,9 @@ class SampleDataLogic(object):
     """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
     for x in ['bytes','KB','MB','GB']:
       if size < 1024.0 and size > -1024.0:
-        return "%3.1f %s" % (size, x)
+        return f"{size:3.1f} {x}"
       size /= 1024.0
-    return "%3.1f %s" % (size, 'TB')
+    return "{:3.1f} {}".format(size, 'TB')
 
   def reportHook(self,blocksSoFar,blockSize,totalSize):
     # we clamp to 100% because the blockSize might be larger than the file itself
@@ -833,11 +832,11 @@ class SampleDataLogic(object):
     (algo, digest) = extractAlgoAndDigest(checksum)
     if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
       import urllib.request, urllib.parse, urllib.error
-      self.logMessage('<b>Requesting download</b> <i>%s</i> from %s ...' % (name, uri))
+      self.logMessage(f'<b>Requesting download</b> <i>{name}</i> from {uri} ...')
       try:
         urllib.request.urlretrieve(uri, filePath, self.reportHook)
         self.logMessage('<b>Download finished</b>')
-      except IOError as e:
+      except OSError as e:
         self.logMessage('<b>\tDownload failed: %s</b>' % e, logging.ERROR)
         raise ValueError(f"Failed to download {uri} to {filePath}")
 
@@ -845,7 +844,7 @@ class SampleDataLogic(object):
         self.logMessage('<b>Verifying checksum</b>')
         current_digest = computeChecksum(algo, filePath)
         if current_digest != digest:
-          self.logMessage('<b>Checksum verification failed. Computed checksum %s different from expected checksum %s</b>' % (current_digest, digest))
+          self.logMessage(f'<b>Checksum verification failed. Computed checksum {current_digest} different from expected checksum {digest}</b>')
           qt.QFile(filePath).remove()
         else:
           self.downloadPercent = 100
@@ -877,7 +876,7 @@ class SampleDataLogic(object):
     return True
 
   def loadNode(self, uri, name, fileType = 'VolumeFile', fileProperties = {}):
-    self.logMessage('<b>Requesting load</b> <i>%s</i> from %s ...' % (name, uri))
+    self.logMessage(f'<b>Requesting load</b> <i>{name}</i> from {uri} ...')
 
     fileProperties['fileName'] = uri
     fileProperties['name'] = name
@@ -1124,7 +1123,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     self.assertTrue(SampleDataLogic.isSampleDataSourceRegistered("Testing", SampleDataSource(**sourceArguments)))
     self.assertFalse(SampleDataLogic.isSampleDataSourceRegistered("Other", SampleDataSource(**sourceArguments)))
 
-  class CustomDownloader(object):
+  class CustomDownloader:
     def __call__(self, source):
       SampleDataTest.customDownloads.append(source)
 

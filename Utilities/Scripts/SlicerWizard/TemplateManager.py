@@ -51,7 +51,7 @@ def _listSources(directory):
         yield f[len(directory) + 1:] # strip common dir
 
 #=============================================================================
-class TemplateManager(object):
+class TemplateManager:
   """Template collection manager.
 
   This class provides a template collection and operations for managing and
@@ -162,7 +162,7 @@ class TemplateManager(object):
       destination = os.path.join(destination, name)
 
     if requireEmptyDirectory and os.path.exists(destination):
-      raise IOError("create %s: refusing to overwrite"
+      raise OSError("create %s: refusing to overwrite"
                     " existing directory '%s'" % (category, destination))
 
     template = templates[kind]
@@ -301,7 +301,7 @@ class TemplateManager(object):
 
       if len(self._paths[c]):
         for t in sorted(self._paths[c].keys()):
-          logging.info("  '%s' ('%s')" % (t, self._getKey(t)))
+          logging.info(f"  '{t}' ('{self._getKey(t)}')")
 
       else:
         logging.info("  (none)")

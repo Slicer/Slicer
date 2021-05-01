@@ -418,7 +418,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
     outputVolumeNode = getNode(parameterNode.GetParameter("OutputScalarVolume"))
     conversionMethod = parameterNode.GetParameter("ConversionMethod")
     componentToExtract = parameterNode.GetParameter("ComponentToExtract")
-    if componentToExtract is '':
+    if componentToExtract == '':
       componentToExtract = str(self.EXTRACT_COMPONENT_NONE)
     componentToExtract = int(componentToExtract)
 

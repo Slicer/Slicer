@@ -17,7 +17,7 @@ class DICOMRecentActivityWidget(qt.QWidget):
     """If browserWidget is specified (e.g., set to slicer.modules.DICOMInstance.browserWidget)
     then clicking on an item selects the series in that browserWidget.
     """
-    super(DICOMRecentActivityWidget, self).__init__(parent)
+    super().__init__(parent)
     if dicomDatabase:
       self.dicomDatabase = dicomDatabase
     else:
@@ -49,7 +49,7 @@ class DICOMRecentActivityWidget(qt.QWidget):
     self.tags['seriesDescription'] = "0008,103e"
     self.tags['patientName'] = "0010,0010"
 
-  class seriesWithTime(object):
+  class seriesWithTime:
     """helper class to track series and time..."""
 
     def __init__(self, series, elapsedSinceInsert, insertDateTime, text):
@@ -98,7 +98,7 @@ class DICOMRecentActivityWidget(qt.QWidget):
             elif elapsed < 30 * 7 * secondsPerDay:
               timeNote = 'Past Month'
             if timeNote:
-              text = "%s: %s for %s" % (timeNote, seriesDescription, patientName)
+              text = f"{timeNote}: {seriesDescription} for {patientName}"
               recentSeries.append(self.seriesWithTime(series, elapsed, seriesTime, text))
     recentSeries.sort(key=cmp_to_key(self.compareSeriesTimes))
     return recentSeries

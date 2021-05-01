@@ -44,7 +44,7 @@ from .Utilities import *
 from .WizardHelpFormatter import WizardHelpFormatter
 
 #=============================================================================
-class ExtensionWizard(object):
+class ExtensionWizard:
   """Implementation class for the Extension Wizard.
 
   This class provides the entry point and implementation of the Extension
@@ -291,9 +291,9 @@ class ExtensionWizard(object):
 
       # Set extension meta-information
       logging.info("updating extension meta-information")
-      raw_url = "%s/%s" % (ghr.html_url.replace("//", "//raw."), branch)
+      raw_url = "{}/{}".format(ghr.html_url.replace("//", "//raw."), branch)
       self._setExtensionUrl(p, "HOMEPAGE", ghr.html_url)
-      self._setExtensionUrl(p, "ICONURL", "%s/%s.png" % (raw_url, name))
+      self._setExtensionUrl(p, "ICONURL", f"{raw_url}/{name}.png")
       p.save()
 
       # Commit the initial commit or updated meta-information
@@ -493,15 +493,15 @@ class ExtensionWizard(object):
 
       # Ensure that user's fork is up to date
       logging.info("updating target branch (%s) branch on fork", args.target)
-      xiRemote.push("%s:refs/heads/%s" % (xiBase, args.target))
+      xiRemote.push(f"{xiBase}:refs/heads/{args.target}")
 
       # Determine if this is an addition or update to the index
       xdf = name + ".s4ext"
       if xdf in xiBase.commit.tree:
-        branch = 'update-%s-%s' % (name, args.target)
+        branch = f'update-{name}-{args.target}'
         update = True
       else:
-        branch = 'add-%s-%s' % (name, args.target)
+        branch = f'add-{name}-{args.target}'
         update = False
 
       logging.debug("create index branch %s", branch)
@@ -586,7 +586,7 @@ class ExtensionWizard(object):
       if pullRequest is None:
         logging.info("creating pull request")
 
-        pull = "%s:%s" % (forkedRepo.owner.login, branch)
+        pull = f"{forkedRepo.owner.login}:{branch}"
         pullRequest = upstreamRepo.create_pull(
                         title=msg[0], body="\n".join(msg[1:]),
                         head=pull, base=args.target)

@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os, copy
 import qt
 import vtk
@@ -16,7 +15,7 @@ class DICOMSendDialog(qt.QDialog):
   """
 
   def __init__(self, files, parent="mainWindow"):
-    super(DICOMSendDialog, self).__init__(slicer.util.mainWindow() if parent == "mainWindow" else parent)
+    super().__init__(slicer.util.mainWindow() if parent == "mainWindow" else parent)
     self.setWindowTitle('Send DICOM Study')
     self.setWindowModality(1)
     self.setLayout(qt.QVBoxLayout())

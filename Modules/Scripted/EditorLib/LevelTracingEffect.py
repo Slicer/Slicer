@@ -39,13 +39,13 @@ class LevelTracingEffectOptions(LabelEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(LevelTracingEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
   def __del__(self):
-    super(LevelTracingEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(LevelTracingEffectOptions,self).create()
+    super().create()
 
     HelpButton(self.frame, "Use this tool to track around similar intensity levels.\n\nAs you move the mouse, the current background voxel is used to find a closed path that follows the same intensity value back to the starting point within the current slice.  Pressing the left mouse button fills the the path according to the current labeling rules.")
 
@@ -57,7 +57,7 @@ class LevelTracingEffectOptions(LabelEffectOptions):
       tool.apply()
 
   def destroy(self):
-    super(LevelTracingEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -71,15 +71,15 @@ class LevelTracingEffectOptions(LabelEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(LevelTracingEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(LevelTracingEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(LevelTracingEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
@@ -99,7 +99,7 @@ class LevelTracingEffectTool(LabelEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(LevelTracingEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
     # create a logic instance to do the non-gui work
     self.logic = LevelTracingEffectLogic(self.sliceWidget.sliceLogic())
@@ -132,14 +132,14 @@ class LevelTracingEffectTool(LabelEffectTool):
     """
     call superclass to clean up actor
     """
-    super(LevelTracingEffectTool,self).cleanup()
+    super().cleanup()
 
   def processEvent(self, caller=None, event=None):
     """
     handle events from the render window interactor
     """
 
-    if super(LevelTracingEffectTool,self).processEvent(caller,event):
+    if super().processEvent(caller,event):
       return
 
     # events from the interactory
@@ -219,7 +219,7 @@ class LevelTracingEffectLogic(LabelEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(LevelTracingEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
 
 #

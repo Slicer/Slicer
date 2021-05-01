@@ -1,4 +1,3 @@
-from __future__ import print_function
 #Testing against the NRRD reader
 import unittest
 import slicer

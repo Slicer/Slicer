@@ -553,7 +553,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     elif autoThresholdMethod == METHOD_YEN:
       self.autoThresholdCalculator.SetMethodToYen()
     else:
-      logging.error("Unknown AutoThresholdMethod {0}".format(autoThresholdMethod))
+      logging.error(f"Unknown AutoThresholdMethod {autoThresholdMethod}")
 
     masterImageData = self.scriptedEffect.masterVolumeImageData()
     self.autoThresholdCalculator.SetInputData(masterImageData)
@@ -574,7 +574,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       self.scriptedEffect.setParameter("MinimumThreshold", computedThreshold)
       self.scriptedEffect.setParameter("MaximumThreshold", masterVolumeMax)
     else:
-      logging.error("Unknown AutoThresholdMode {0}".format(autoThresholdMode))
+      logging.error(f"Unknown AutoThresholdMode {autoThresholdMode}")
 
   def onApply(self):
     if not self.scriptedEffect.confirmCurrentSegmentVisible():
@@ -918,7 +918,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 #
 # PreviewPipeline
 #
-class PreviewPipeline(object):
+class PreviewPipeline:
   """ Visualization objects and pipeline for each slice view for threshold preview
   """
 
@@ -986,7 +986,7 @@ class HistogramEventFilter(qt.QObject):
     return False
 
 
-class HistogramPipeline(object):
+class HistogramPipeline:
 
   def __init__(self, thresholdEffect, scriptedEffect, sliceWidget, brushMode):
     self.thresholdEffect = thresholdEffect

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
 import sys
 import os
 import fnmatch
@@ -108,7 +107,7 @@ def main(argv):
     usage()
     exit()
 
-  print ("\nWill copy \n\t%s \nto \n\t%s \nreplacing \"%s\" with \"%s\"\n" % (template, target, templateKey, moduleName))
+  print (f"\nWill copy \n\t{template} \nto \n\t{target} \nreplacing \"{templateKey}\" with \"{moduleName}\"\n")
   sources = findSource( template )
   print (sources)
 

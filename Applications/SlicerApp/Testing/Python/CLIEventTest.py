@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import unittest
 from __main__ import vtk, qt, ctk, slicer

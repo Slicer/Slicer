@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk
 import ctk
@@ -38,13 +37,13 @@ class ErodeEffectOptions(MorphologyEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(ErodeEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
   def __del__(self):
-    super(ErodeEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(ErodeEffectOptions,self).create()
+    super().create()
     self.apply = qt.QPushButton("Apply", self.frame)
     self.apply.objectName = self.__class__.__name__ + 'Apply'
     self.apply.setToolTip("Erode current label")
@@ -59,7 +58,7 @@ class ErodeEffectOptions(MorphologyEffectOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(ErodeEffectOptions,self).destroy()
+    super().destroy()
 
   def onApply(self):
     logic = ErodeEffectLogic(EditUtil.getSliceLogic())
@@ -81,15 +80,15 @@ class ErodeEffectOptions(MorphologyEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(ErodeEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(ErodeEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(ErodeEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
@@ -109,13 +108,13 @@ class ErodeEffectTool(MorphologyEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(ErodeEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
     """
     call superclass to clean up actors
     """
-    super(ErodeEffectTool,self).cleanup()
+    super().cleanup()
 
 #
 # ErodeEffectLogic
@@ -133,7 +132,7 @@ class ErodeEffectLogic(MorphologyEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(ErodeEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
   def erode(self,fill,neighborMode,iterations):
 

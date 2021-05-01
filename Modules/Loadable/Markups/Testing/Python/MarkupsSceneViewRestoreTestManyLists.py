@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 # Test restoring a scene with multiple lists with different number
 # of fiducials
 
@@ -82,7 +80,7 @@ for markupsNode in [fid1AfterRestore, fid2AfterRestore]:
   rep = markupsWidget.GetRepresentation()
   controlPointsPoly = rep.GetControlPointsPolyData(rep.Selected)
   numberOfControlPoints = controlPointsPoly.GetNumberOfPoints()
-  print("Markups widget {0} has number of control points = {1}".format(markupsNode.GetName(), numberOfControlPoints))
+  print(f"Markups widget {markupsNode.GetName()} has number of control points = {numberOfControlPoints}")
   if numberOfControlPoints != markupsNode.GetNumberOfControlPoints():
     exceptionMessage = "After restoring " + markupsNode.GetName() + ", expected widget to have "
     exceptionMessage += str(markupsNode.GetNumberOfControlPoints()) + " points, but it has "

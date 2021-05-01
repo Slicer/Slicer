@@ -19,7 +19,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
   """
 
   def __init__(self,epsilon=0.01):
-    super(DICOMScalarVolumePluginClass,self).__init__()
+    super().__init__()
     self.loadType = "Scalar Volume"
     self.epsilon = epsilon
     self.acquisitionModeling = None
@@ -115,7 +115,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     image1 = volumeNode1.GetImageData()
     image2 = volumeNode2.GetImageData()
     if image1.GetScalarType() != image2.GetScalarType():
-      comparison += "First volume is %s, but second is %s" % (image1.GetScalarTypeAsString(), image2.GetScalarTypeAsString())
+      comparison += f"First volume is {image1.GetScalarTypeAsString()}, but second is {image2.GetScalarTypeAsString()}"
     array1 = slicer.util.array(volumeNode1.GetID())
     array2 = slicer.util.array(volumeNode2.GetID())
     if not numpy.all(array1 == array2):
@@ -244,7 +244,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           if tag in subseriesTagsToEnumerateValues:
             loadable.name = seriesName + " - %s %d" % (tag, valueIndex+1)
           else:
-            loadable.name = seriesName + " - %s %s" % (tag, value)
+            loadable.name = seriesName + f" - {tag} {value}"
           loadable.name = self.cleanNodeName(loadable.name)
           loadable.tooltip = "%d files, grouped by %s = %s. First file: %s. %s = %s" % (len(loadable.files), tag, value, loadable.files[0], tag, value)
           loadable.selected = False
@@ -635,7 +635,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # Success
     return ""
 
-  class AcquisitionModeling(object):
+  class AcquisitionModeling:
     """Code for representing and analyzing acquisition properties in slicer
     This is an internal class of the DICOMScalarVolumePluginClass so that
     it can be used here and from within the DICOMReaders test.
@@ -787,7 +787,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       maxError = (abs(self.originalCorners - self.targetCorners)).max()
 
       if maxError > self.cornerEpsilon:
-        warningText = "Irregular volume geometry detected (maximum error of %g mm is above tolerance threshold of %g mm)." % (maxError, self.cornerEpsilon)
+        warningText = f"Irregular volume geometry detected (maximum error of {maxError:g} mm is above tolerance threshold of {self.cornerEpsilon:g} mm)."
         if addAcquisitionTransformIfNeeded:
           logging.warning(warningText + "  Adding acquisition transform to regularize geometry.")
           self.gridTransformFromCorners(volumeNode, self.originalCorners, self.targetCorners)
@@ -798,14 +798,14 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           logging.warning(warningText + "  Regularization transform is not added, as the option is disabled.")
       elif maxError > 0 and maxError > self.zeroEpsilon:
         logging.debug("Irregular volume geometry detected, but maximum error is within tolerance"+
-          " (maximum error of %g mm, tolerance threshold is %g mm)." % (maxError, self.cornerEpsilon))
+          f" (maximum error of {maxError:g} mm, tolerance threshold is {self.cornerEpsilon:g} mm).")
 
 
 #
 # DICOMScalarVolumePlugin
 #
 
-class DICOMScalarVolumePlugin(object):
+class DICOMScalarVolumePlugin:
   """
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module

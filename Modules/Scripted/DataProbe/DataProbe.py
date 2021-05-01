@@ -1,4 +1,3 @@
-from __future__ import print_function
 import logging
 import os
 import unittest
@@ -59,7 +58,7 @@ indicated by the mouse position. For more information see the
     if self.infoWidget:
       self.infoWidget.onShowImage(value)
 
-class DataProbeInfoWidget(object):
+class DataProbeInfoWidget:
 
   def __init__(self, parent=None):
     self.nameSize = 24
@@ -316,7 +315,7 @@ class DataProbeInfoWidget(object):
 
   def generateIJKPixelDescription(self, ijk, slicerLayerLogic):
     volumeNode = slicerLayerLogic.GetVolumeNode()
-    return "({i:3d}, {j:3d}, {k:3d})".format(i=ijk[0], j=ijk[1], k=ijk[2]) if volumeNode else ""
+    return f"({ijk[0]:3d}, {ijk[1]:3d}, {ijk[2]:3d})" if volumeNode else ""
 
   def generateIJKPixelValueDescription(self, ijk, slicerLayerLogic):
     volumeNode = slicerLayerLogic.GetVolumeNode()
@@ -515,7 +514,7 @@ class DataProbeWidget(ScriptedLoadableModuleWidget):
     self.parent.layout().addStretch(1)
 
 
-class CalculateTensorScalars(object):
+class CalculateTensorScalars:
     def __init__(self):
         self.dti_math = vtkTeem.vtkDiffusionTensorMathematics()
 

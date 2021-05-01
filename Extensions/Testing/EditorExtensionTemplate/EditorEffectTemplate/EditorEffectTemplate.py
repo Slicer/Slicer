@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk, qt, ctk, slicer
 import EditorLib
@@ -22,7 +21,7 @@ class EditorEffectTemplateOptions(LabelEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(EditorEffectTemplateOptions,self).__init__(parent)
+    super().__init__(parent)
 
     # self.attributes should be tuple of options:
     # 'MouseTool' - grabs the cursor
@@ -32,10 +31,10 @@ class EditorEffectTemplateOptions(LabelEffectOptions):
     self.displayName = 'EditorEffectTemplate Effect'
 
   def __del__(self):
-    super(EditorEffectTemplateOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(EditorEffectTemplateOptions,self).create()
+    super().create()
     self.apply = qt.QPushButton("Apply", self.frame)
     self.apply.objectName = self.__class__.__name__ + 'Apply'
     self.apply.setToolTip("Apply the extension operation")
@@ -50,7 +49,7 @@ class EditorEffectTemplateOptions(LabelEffectOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(EditorEffectTemplateOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -64,11 +63,11 @@ class EditorEffectTemplateOptions(LabelEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(EditorEffectTemplateOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
     self.disconnectWidgets()
-    super(EditorEffectTemplateOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.connectWidgets()
 
   def onApply(self):
@@ -79,7 +78,7 @@ class EditorEffectTemplateOptions(LabelEffectOptions):
       return
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(EditorEffectTemplateOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
@@ -100,12 +99,12 @@ class EditorEffectTemplateTool(LabelEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(EditorEffectTemplateTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
     # create a logic instance to do the non-gui work
     self.logic = EditorEffectTemplateLogic(self.sliceWidget.sliceLogic())
 
   def cleanup(self):
-    super(EditorEffectTemplateTool,self).cleanup()
+    super().cleanup()
 
   def processEvent(self, caller=None, event=None):
     """
@@ -113,7 +112,7 @@ class EditorEffectTemplateTool(LabelEffectTool):
     """
 
     # let the superclass deal with the event if it wants to
-    if super(EditorEffectTemplateTool,self).processEvent(caller,event):
+    if super().processEvent(caller,event):
       return
 
     if event == "LeftButtonPressEvent":
@@ -186,7 +185,7 @@ pet = EditorLib.EditorEffectTemplateTool(sw)
 # EditorEffectTemplate
 #
 
-class EditorEffectTemplate(object):
+class EditorEffectTemplate:
   """
   This class is the 'hook' for slicer to detect and recognize the extension
   as a loadable scripted module
@@ -225,7 +224,7 @@ class EditorEffectTemplate(object):
 # EditorEffectTemplateWidget
 #
 
-class EditorEffectTemplateWidget(object):
+class EditorEffectTemplateWidget:
   def __init__(self, parent = None):
     self.parent = parent
 

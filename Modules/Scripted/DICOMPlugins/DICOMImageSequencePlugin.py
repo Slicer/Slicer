@@ -31,7 +31,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
   """
 
   def __init__(self):
-    super(DICOMImageSequencePluginClass,self).__init__()
+    super().__init__()
     self.loadType = "Image sequence"
 
     self.tags['sopClassUID'] = "0008,0016"
@@ -134,20 +134,20 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
           photometricInterpretation = slicer.dicomDatabase.fileValue(filePath, self.tags['photometricInterpretation'])
           name = ''
           if seriesNumber:
-            name = '{0}:'.format(seriesNumber)
+            name = f'{seriesNumber}:'
           if modality:
-            name = '{0} {1}'.format(name, modality)
+            name = f'{name} {modality}'
           if seriesDescription:
-            name = '{0} {1}'.format(name, seriesDescription)
+            name = f'{name} {seriesDescription}'
           if instanceNumber:
-            name = '{0} [{1}]'.format(name, instanceNumber)
+            name = f'{name} [{instanceNumber}]'
 
           loadable = DICOMLoadable()
           loadable.singleSequence = False  # put each instance in a separate sequence
           loadable.files = [filePath]
           loadable.name = name.strip()  # remove leading and trailing spaces, if any
           loadable.warning = "Image spacing may need to be calibrated for accurate size measurements."
-          loadable.tooltip = "{0} image sequence".format(modality)
+          loadable.tooltip = f"{modality} image sequence"
           loadable.selected = True
           # Confidence is slightly larger than default scalar volume plugin's (0.5)
           # but still leaving room for more specialized plugins.
@@ -161,25 +161,25 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
           # existing instance number, add this file
           loadableIndex = instanceNumberToLoadableIndex[instanceNumber]
           loadables[loadableIndex].files.append(filePath)
-          loadable.tooltip = "{0} image sequence ({1} planes)".format(modality, len(loadables[loadableIndex].files))
+          loadable.tooltip = f"{modality} image sequence ({len(loadables[loadableIndex].files)} planes)"
 
     if canBeCineMri and len(cineMriInstanceNumberToFilenameIndex) > 1:
       # Get description from first
       ds = dicom.read_file(cineMriInstanceNumberToFilenameIndex[next(iter(cineMriInstanceNumberToFilenameIndex))], stop_before_pixels=True)
       name = ''
       if hasattr(ds, 'SeriesNumber') and ds.SeriesNumber:
-        name = '{0}:'.format(ds.SeriesNumber)
+        name = f'{ds.SeriesNumber}:'
       if hasattr(ds, 'Modality') and ds.Modality:
-        name = '{0} {1}'.format(name, ds.Modality)
+        name = f'{name} {ds.Modality}'
       if hasattr(ds, 'SeriesDescription') and ds.SeriesDescription:
-        name = '{0} {1}'.format(name, ds.SeriesDescription)
+        name = f'{name} {ds.SeriesDescription}'
 
       loadable = DICOMLoadable()
       loadable.singleSequence = True  # put all instances in a single sequence
       loadable.instanceNumbers = sorted(cineMriInstanceNumberToFilenameIndex)
       loadable.files = [cineMriInstanceNumberToFilenameIndex[instanceNumber] for instanceNumber in loadable.instanceNumbers]
       loadable.name = name.strip()  # remove leading and trailing spaces, if any
-      loadable.tooltip = "{0} image sequence".format(ds.Modality)
+      loadable.tooltip = f"{ds.Modality} image sequence"
       loadable.selected = True
       if len(cineMriTriggerTimes)>3:
         if self.detailedLogging:
@@ -218,7 +218,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
     if reader.GetErrorCode() != vtk.vtkErrorCode.NoError:
       errorString = vtk.vtkErrorCode.GetStringFromErrorCode(reader.GetErrorCode())
       raise ValueError(
-        "Could not read image {0} from file {1}. Error is: {2}".format(loadable.name, filePath, errorString))
+        f"Could not read image {loadable.name} from file {filePath}. Error is: {errorString}")
 
     rasToIjk = reader.GetRasToIjkMatrix()
     ijkToRas = vtk.vtkMatrix4x4()
@@ -274,7 +274,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
     else:
       ds = dicom.read_file(filePath, stop_before_pixels=True)
       if hasattr(ds, 'PositionerPrimaryAngle') and hasattr(ds, 'PositionerSecondaryAngle'):
-        outputSequenceNode.SetName('{0} ({1}/{2})'.format(name, ds.PositionerPrimaryAngle,ds.PositionerSecondaryAngle))
+        outputSequenceNode.SetName(f'{name} ({ds.PositionerPrimaryAngle}/{ds.PositionerSecondaryAngle})')
       else:
         outputSequenceNode.SetName(name)
 
@@ -310,7 +310,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
       if type(frameTime) == int:
         timeStampSec = str(frame * frameTime)
       else:
-        timeStampSec = "{:.3f}".format(frame * frameTime)
+        timeStampSec = f"{frame * frameTime:.3f}"
       outputSequenceNode.SetDataNodeAtValue(tempFrameVolume, timeStampSec)
 
     # Create storage node that allows saving node as nrrd

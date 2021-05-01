@@ -35,7 +35,7 @@ class CommandError(Exception):
     self.stderr = stderr
 
 #=============================================================================
-class Client(object):
+class Client:
   """Wrapper for executing the ``svn`` process.
 
   This class provides a convenience wrapping for invoking the ``svn`` process.
@@ -137,7 +137,7 @@ class Client(object):
     return result
 
 #=============================================================================
-class Repository(object):
+class Repository:
   """Abstract representation of a subversion repository.
 
   .. attribute:: url

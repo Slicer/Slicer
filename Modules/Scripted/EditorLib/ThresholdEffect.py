@@ -38,13 +38,13 @@ class ThresholdEffectOptions(EffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(ThresholdEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
   def __del__(self):
-    super(ThresholdEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(ThresholdEffectOptions,self).create()
+    super().create()
 
     self.thresholdLabel = qt.QLabel("Threshold Range:", self.frame)
     self.thresholdLabel.setToolTip("Set the range of the background values that should be labeled.")
@@ -104,7 +104,7 @@ class ThresholdEffectOptions(EffectOptions):
     self.defaultEffect()
 
   def destroy(self):
-    super(ThresholdEffectOptions,self).destroy()
+    super().destroy()
     self.timer.stop()
 
   # note: this method needs to be implemented exactly as-is
@@ -119,7 +119,7 @@ class ThresholdEffectOptions(EffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(ThresholdEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
@@ -157,7 +157,7 @@ class ThresholdEffectOptions(EffectOptions):
       if self.parameterNode.GetParameter("ThresholdEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
-    super(ThresholdEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
     min = float(self.parameterNode.GetParameter("ThresholdEffect,min"))
     max = float(self.parameterNode.GetParameter("ThresholdEffect,max"))
@@ -171,7 +171,7 @@ class ThresholdEffectOptions(EffectOptions):
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(ThresholdEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetParameter( "ThresholdEffect,min", str(self.threshold.minimumValue) )
     self.parameterNode.SetParameter( "ThresholdEffect,max", str(self.threshold.maximumValue) )
     self.parameterNode.SetDisableModifiedEvent(disableState)
@@ -207,7 +207,7 @@ class ThresholdEffectTool(EffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(ThresholdEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
     # create a logic instance to do the non-gui work
     self.logic = ThresholdEffectLogic(self.sliceWidget.sliceLogic())
@@ -241,7 +241,7 @@ class ThresholdEffectTool(EffectTool):
     """
     call superclass to clean up actors
     """
-    super(ThresholdEffectTool,self).cleanup()
+    super().cleanup()
 
   def processEvent(self, caller=None, event=None):
     """
@@ -335,7 +335,7 @@ class ThresholdEffectLogic(EffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(ThresholdEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
 
 #

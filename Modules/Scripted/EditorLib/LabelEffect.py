@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk
 import qt
@@ -38,15 +37,15 @@ class LabelEffectOptions(EffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(LabelEffectOptions,self).__init__(parent)
+    super().__init__(parent)
     self.usesPaintOver = True
     self.usesThreshold = True
 
   def __del__(self):
-    super(LabelEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(LabelEffectOptions,self).create()
+    super().create()
     self.paintOver = qt.QCheckBox("Paint Over", self.frame)
     self.paintOver.setToolTip("Allow effect to overwrite non-zero labels.")
     self.frame.layout().addWidget(self.paintOver)
@@ -80,7 +79,7 @@ class LabelEffectOptions(EffectOptions):
     self.connections.append( (self.threshold, "valuesChanged(double,double)", self.onThresholdValuesChange ) )
 
   def destroy(self):
-    super(LabelEffectOptions,self).destroy()
+    super().destroy()
 
   def updateParameterNode(self, caller, event):
     """
@@ -91,7 +90,7 @@ class LabelEffectOptions(EffectOptions):
     pass
 
   def setMRMLDefaults(self):
-    super(LabelEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
@@ -117,7 +116,7 @@ class LabelEffectOptions(EffectOptions):
       if self.parameterNode.GetParameter("LabelEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
-    super(LabelEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
     self.paintOver.setChecked(
                 int(self.parameterNode.GetParameter("LabelEffect,paintOver")) )
@@ -138,7 +137,7 @@ class LabelEffectOptions(EffectOptions):
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(LabelEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     if self.paintOver.checked:
       self.parameterNode.SetParameter( "LabelEffect,paintOver", "1" )
     else:
@@ -170,15 +169,15 @@ class LabelEffectTool(EffectTool):
   """
 
   def __init__(self,sliceWidget):
-    super(LabelEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
     self.rotateSliceToImage()
 
   def processEvent(self, caller=None, event=None):
     """Default implementation for tools that ignore events"""
-    return super(LabelEffectTool,self).processEvent(caller,event)
+    return super().processEvent(caller,event)
 
   def cleanup(self):
-    super(LabelEffectTool,self).cleanup()
+    super().cleanup()
 
   def rotateSliceToImage(self):
     """adjusts the slice node to align with the
@@ -213,7 +212,7 @@ class LabelEffectLogic(EffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(LabelEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
     self.paintThreshold = 0
     self.paintThresholdMin = 1
     self.paintThresholdMax = 1

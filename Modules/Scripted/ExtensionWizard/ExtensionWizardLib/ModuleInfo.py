@@ -12,7 +12,7 @@ import slicer
 # ModuleInfo
 #
 #=============================================================================
-class ModuleInfo(object):
+class ModuleInfo:
   #---------------------------------------------------------------------------
   def __init__(self, path, key=None):
     self.path = path

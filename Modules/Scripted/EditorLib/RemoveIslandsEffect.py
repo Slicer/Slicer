@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk
 import vtkITK
@@ -40,16 +39,16 @@ class RemoveIslandsEffectOptions(IslandEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(RemoveIslandsEffectOptions,self).__init__(parent)
+    super().__init__(parent)
     # create a logic instance to do the non-gui work
     # (since this is created from the option gui it has no slice logic)
     self.logic = RemoveIslandsEffectLogic(None)
 
   def __del__(self):
-    super(RemoveIslandsEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(RemoveIslandsEffectOptions,self).create()
+    super().create()
 
     self.applyConnectivity = qt.QPushButton("Apply Connectivity Method", self.frame)
     self.applyConnectivity.setToolTip("Remove islands that are not connected at all to the surface.  Islands with thin connections will not be removed.")
@@ -78,7 +77,7 @@ class RemoveIslandsEffectOptions(IslandEffectOptions):
     self.logic.removeIslandsMorphology()
 
   def destroy(self):
-    super(RemoveIslandsEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -92,13 +91,13 @@ class RemoveIslandsEffectOptions(IslandEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(RemoveIslandsEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(RemoveIslandsEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def updateMRMLFromGUI(self):
-    super(RemoveIslandsEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
 
 #
 # RemoveIslandsEffectTool
@@ -115,16 +114,16 @@ class RemoveIslandsEffectTool(IslandEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(RemoveIslandsEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
     """
     call superclass to clean up actors
     """
-    super(RemoveIslandsEffectTool,self).cleanup()
+    super().cleanup()
 
   def processEvent(self, caller=None, event=None):
-    super(RemoveIslandsEffectTool,self).processEvent()
+    super().processEvent()
 
 #
 # RemoveIslandsEffectLogic
@@ -142,7 +141,7 @@ class RemoveIslandsEffectLogic(IslandEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(RemoveIslandsEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
 
   def findNonZeroBorderPixel(self, imageData):

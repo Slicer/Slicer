@@ -121,7 +121,7 @@ The effect uses <a href="http://interactivemedical.org/imic2014/CameraReadyPaper
     self.growCutFilter.SetSeedLabelVolume(mergedImage)
     startTime = time.time()
     self.growCutFilter.Update()
-    logging.info('Grow-cut operation on volume of {0}x{1}x{2} voxels was completed in {3:3.1f} seconds.'.format(
+    logging.info('Grow-cut operation on volume of {}x{}x{} voxels was completed in {:3.1f} seconds.'.format(
       self.clippedMasterImageData.GetDimensions()[0],
       self.clippedMasterImageData.GetDimensions()[1],
       self.clippedMasterImageData.GetDimensions()[2],

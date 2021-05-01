@@ -105,7 +105,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
         self.applyButton.setEnabled(False)
       else:
         marginSizeMM = self.getMarginSizeMM()
-        self.marginSizeLabel.text = "Actual: {0} x {1} x {2} mm ({3}x{4}x{5} pixel)".format(*marginSizeMM, *marginSizePixel)
+        self.marginSizeLabel.text = "Actual: {} x {} x {} mm ({}x{}x{} pixel)".format(*marginSizeMM, *marginSizePixel)
         self.applyButton.setEnabled(True)
     else:
       self.marginSizeLabel.text = "Empty segment"

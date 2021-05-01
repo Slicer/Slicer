@@ -344,7 +344,7 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
     slicer.mrmlScene.RemoveNode(cliNode)
 
     stopTime = time.time()
-    logging.info('Processing completed in {0:.2f} seconds'.format(stopTime-startTime))
+    logging.info(f'Processing completed in {stopTime-startTime:.2f} seconds')
 
 #
 # TemplateKeyTest

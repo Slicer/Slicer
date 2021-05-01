@@ -114,7 +114,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
         self.applyButton.setEnabled(False)
       else:
         thicknessMM = self.getShellThicknessMM()
-        self.shellThicknessLabel.text = "Actual: {0} x {1} x {2} mm ({3}x{4}x{5} pixel)".format(*thicknessMM, *shellThicknessPixel)
+        self.shellThicknessLabel.text = "Actual: {} x {} x {} mm ({}x{}x{} pixel)".format(*thicknessMM, *shellThicknessPixel)
         self.applyButton.setEnabled(True)
     else:
       self.shellThicknessLabel.text = "Empty segment"

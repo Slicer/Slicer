@@ -1,6 +1,3 @@
-
-from __future__ import print_function
-
 #
 # General
 #
@@ -1162,7 +1159,7 @@ def reloadScriptedModule(moduleName):
   p = os.path.dirname(filePath)
   if not p in sys.path:
     sys.path.insert(0,p)
-  with open(filePath, "r") as fp:
+  with open(filePath) as fp:
     reloaded_module = imp.load_module(
         moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
 
@@ -1343,7 +1340,7 @@ def getFirstNodeByName(name, className=None):
   scene = slicer.mrmlScene
   return scene.GetFirstNode(name, className, False, False)
 
-class NodeModify(object):
+class NodeModify:
   """Context manager to conveniently compress mrml node modified event."""
   def __init__(self, node):
     self.node = node
@@ -1504,7 +1501,7 @@ def _vtkArrayFromModelData(modelNode, arrayName, location):
   arrayVtk = modelData.GetArray(arrayName)
   if not arrayVtk:
     availableArrayNames = [modelData.GetArrayName(i) for i in range(modelData.GetNumberOfArrays())]
-    raise ValueError("Input modelNode does not contain {0} data array '{1}'. Available array names: '{2}'".format(
+    raise ValueError("Input modelNode does not contain {} data array '{}'. Available array names: '{}'".format(
       location, arrayName, "', '".join(availableArrayNames)))
   return arrayVtk
 
@@ -2112,9 +2109,9 @@ def dataframeFromMarkups(markupsNode):
 # VTK
 #
 
-class VTKObservationMixin(object):
+class VTKObservationMixin:
   def __init__(self):
-    super(VTKObservationMixin, self).__init__()
+    super().__init__()
     self.Observations = []
 
   def removeObservers(self, method=None):
@@ -2456,7 +2453,7 @@ def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid
     logging.error('Failed to parse checksum: ' + excinfo.message)
     return False
   if not os.path.exists(targetFilePath) or os.stat(targetFilePath).st_size == 0:
-    logging.info('Downloading from\n  %s\nas file\n  %s\nIt may take a few minutes...' % (url,targetFilePath))
+    logging.info(f'Downloading from\n  {url}\nas file\n  {targetFilePath}\nIt may take a few minutes...')
     try:
       import urllib.request, urllib.parse, urllib.error
       urllib.request.urlretrieve(url, targetFilePath)
@@ -2516,16 +2513,16 @@ def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=No
   numOfFilesInOutputDir = len(getFilesInDirectory(outputDir, False))
   if expectedNumberOfExtractedFiles is not None \
       and numOfFilesInOutputDir == expectedNumberOfExtractedFiles:
-    logging.info('File %s already unzipped into %s' % (archiveFilePath, outputDir))
+    logging.info(f'File {archiveFilePath} already unzipped into {outputDir}')
     return True
 
   extractSuccessful = app.applicationLogic().Unzip(archiveFilePath, outputDir)
   numOfFilesInOutputDirTest = len(getFilesInDirectory(outputDir, False))
   if extractSuccessful is False or (expectedNumberOfExtractedFiles is not None \
       and numOfFilesInOutputDirTest != expectedNumberOfExtractedFiles):
-    logging.error('Unzipping %s into %s failed' % (archiveFilePath, outputDir))
+    logging.error(f'Unzipping {archiveFilePath} into {outputDir} failed')
     return False
-  logging.info('Unzipping %s into %s successful' % (archiveFilePath, outputDir))
+  logging.info(f'Unzipping {archiveFilePath} into {outputDir} successful')
   return True
 
 def computeChecksum(algo, filePath):
@@ -2567,7 +2564,7 @@ def extractAlgoAndDigest(checksum):
   (algo, digest) = checksum.split(':')
   expected_algos = ['SHA256', 'SHA512', 'MD5']
   if algo not in expected_algos:
-    raise ValueError("invalid algo '%s'. Algo must be one of %s" % (algo, ", ".join(expected_algos)))
+    raise ValueError("invalid algo '{}'. Algo must be one of {}".format(algo, ", ".join(expected_algos)))
   expected_digest_length = {'SHA256': 64, 'SHA512': 128, 'MD5': 32}
   if len(digest) != expected_digest_length[algo]:
     raise ValueError("invalid digest length %d. Expected digest length for %s is %d" % (len(digest), algo, expected_digest_length[algo]))
@@ -2926,4 +2923,4 @@ def longPath(path):
   # Return path as is if UNC prefix is already applied
   if path[:4] == '\\\\?\\':
     return path
-  return u"\\\\?\\" + path.replace('/', '\\')
+  return "\\\\?\\" + path.replace('/', '\\')

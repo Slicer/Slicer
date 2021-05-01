@@ -18,7 +18,6 @@
 #  and was partially funded by NIH grant 1U24CA194354-01
 #
 
-from __future__ import print_function
 import argparse
 import json
 import os
@@ -40,7 +39,7 @@ def TemporaryPythonScript(code, *args, **kwargs):
   script = tempfile.NamedTemporaryFile(*args, **kwargs)
   script.write(code)
   script.flush()
-  print("Written script %s [%s]" % (script.name, code))
+  print(f"Written script {script.name} [{code}]")
   return script
 
 def collect_startup_times_normal(output_file, drop_cache=False, display_output=False):

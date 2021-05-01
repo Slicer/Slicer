@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import os
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *

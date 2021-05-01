@@ -17,7 +17,7 @@ __all__ = [
 ]
 
 #=============================================================================
-class _CredentialToken(object):
+class _CredentialToken:
   #---------------------------------------------------------------------------
   def __init__(self, text=None, **kwargs):
     # Set attributes from named arguments
@@ -36,7 +36,7 @@ class _CredentialToken(object):
   #---------------------------------------------------------------------------
   def __str__(self):
     # Return string representation suitable for being fed to 'git credential'
-    lines = ["%s=%s" % (k, getattr(self, k)) for k in self._keys]
+    lines = [f"{k}={getattr(self, k)}" for k in self._keys]
     return "%s\n\n" % "\n".join(lines)
 
 #-----------------------------------------------------------------------------

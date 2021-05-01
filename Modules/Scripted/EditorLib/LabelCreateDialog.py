@@ -1,4 +1,3 @@
-
 import qt
 import slicer
 
@@ -16,7 +15,7 @@ def _map_property(objfunc, name):
 # _ui_LabelCreateDialog
 #
 #=============================================================================
-class _ui_LabelCreateDialog(object):
+class _ui_LabelCreateDialog:
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     vLayout = qt.QVBoxLayout(parent)
@@ -58,7 +57,7 @@ class _ui_LabelCreateDialog(object):
 # LabelCreateDialog
 #
 #=============================================================================
-class LabelCreateDialog(object):
+class LabelCreateDialog:
 
   colorNodeID = _map_property(lambda self: self.ui.colorSelector, "currentNodeID")
 

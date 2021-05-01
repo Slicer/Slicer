@@ -6,7 +6,7 @@ import re
 from .ExtensionProject import ExtensionProject
 
 #=============================================================================
-class ExtensionDescription(object):
+class ExtensionDescription:
   """Representation of an extension description.
 
   This class provides a Python object representation of an extension
@@ -232,10 +232,10 @@ class ExtensionDescription(object):
 
     descriptionFiles = glob.glob(os.path.join(path, "*.[Ss]4[Ee][Xx][Tt]"))
     if len(descriptionFiles) < 1:
-      raise IOError("extension description file not found")
+      raise OSError("extension description file not found")
 
     if len(descriptionFiles) > 1:
-      raise IOError("multiple extension description files found")
+      raise OSError("multiple extension description files found")
 
     with open(descriptionFiles[0]) as fp:
       self._read(fp)
@@ -269,16 +269,16 @@ class ExtensionDescription(object):
     dictio["MY_EXTENSION_ENABLED"] = getattr(self, "enabled")
 
     if self.DESCRIPTION_FILE_TEMPLATE is not None:
-      extDescriptFile = open(self.DESCRIPTION_FILE_TEMPLATE,'r')
+      extDescriptFile = open(self.DESCRIPTION_FILE_TEMPLATE)
       for line in extDescriptFile.readlines() :
         if "${" in line:
           variables = self._findOccurences(line, "$")
           temp = line
           for variable in variables:
-            if line[variable] is '$' and line[variable + 1] is '{':
+            if line[variable] == '$' and line[variable + 1] == '{':
               var = ""
               i = variable + 2
-              while line[i] is not '}':
+              while line[i] != '}':
                 var+=line[i]
                 i+=1
               temp = temp.replace("${" + var + "}", dictio[var])
@@ -289,7 +289,7 @@ class ExtensionDescription(object):
       logging.warning("failed to generate description file using template")
       logging.warning("generating description file using fallback method")
       for key in sorted(self.__dict__):
-        fp.write(("%s %s" % (key, getattr(self, key))).strip() + "\n")
+        fp.write((f"{key} {getattr(self, key)}").strip() + "\n")
 
   #---------------------------------------------------------------------------
   def write(self, out):

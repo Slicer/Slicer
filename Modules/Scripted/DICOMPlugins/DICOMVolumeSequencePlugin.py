@@ -21,7 +21,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
   """
 
   def __init__(self):
-    super(DICOMVolumeSequencePluginClass,self).__init__()
+    super().__init__()
     self.loadType = "Volume Sequence"
 
     self.tags['studyID'] = '0020,0010'
@@ -96,7 +96,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
     exportable.confidence = 0.6 # Simple volume has confidence of 0.5, use a slightly higher value here
 
     # Define required tags and default values
-    exportable.setTag('SeriesDescription', 'Volume sequence of {0} frames'.format(sequenceItemCount))
+    exportable.setTag('SeriesDescription', f'Volume sequence of {sequenceItemCount} frames')
     exportable.setTag('Modality', 'CT')
     exportable.setTag('Manufacturer', 'Unknown manufacturer')
     exportable.setTag('Model', 'Unknown model')
@@ -116,7 +116,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
       month = int(dt[4:6])
       day = int(dt[6:8])
     else:
-      raise IOError("Invalid DICOM date string: "+tm+" (failed to parse YYYYMMDD)")
+      raise OSError("Invalid DICOM date string: "+tm+" (failed to parse YYYYMMDD)")
 
     hour = 0
     minute = 0
@@ -141,7 +141,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
       elif len(hhmmss)==2: # HH
         hour = int(hhmmss[0:2])
       else:
-        raise IOError("Invalid DICOM time string: "+tm+" (failed to parse HHMMSS)")
+        raise OSError("Invalid DICOM time string: "+tm+" (failed to parse HHMMSS)")
 
     import datetime
     return datetime.datetime(year, month, day, hour, minute, second, microsecond)
@@ -256,7 +256,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         tags['Content Date'] = contentDatetime.strftime("%Y%m%d")
         tags['Content Time'] = contentDatetime.strftime("%H%M%S.%f")
         # Perform export
-        filenamePrefix = "IMG_{0:04d}_".format(sequenceItemIndex)
+        filenamePrefix = f"IMG_{sequenceItemIndex:04d}_"
         exporter = DICOMExportScalarVolume(tags['Study ID'], volumeNode, tags, directory, filenamePrefix)
         exporter.export()
 

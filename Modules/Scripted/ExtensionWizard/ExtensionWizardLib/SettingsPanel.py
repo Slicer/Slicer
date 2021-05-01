@@ -10,7 +10,7 @@ from .TemplatePathUtilities import *
 # _ui_SettingsPanel
 #
 #=============================================================================
-class _ui_SettingsPanel(object):
+class _ui_SettingsPanel:
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     self.formLayout = qt.QFormLayout(parent)

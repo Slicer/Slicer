@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import vtk, qt, ctk, slicer
 from . import HelpButton
@@ -27,7 +26,7 @@ class FastMarchingEffectOptions(EffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(FastMarchingEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
     # self.attributes should be tuple of options:
     # 'MouseTool' - grabs the cursor
@@ -39,10 +38,10 @@ class FastMarchingEffectOptions(EffectOptions):
     self.logic = FastMarchingEffectLogic(EditUtil.getSliceLogic())
 
   def __del__(self):
-    super(FastMarchingEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(FastMarchingEffectOptions,self).create()
+    super().create()
 
     self.defaultMaxPercent = 30
 
@@ -90,7 +89,7 @@ class FastMarchingEffectOptions(EffectOptions):
     self.percentMaxChanged(self.percentMax.value)
 
   def destroy(self):
-    super(FastMarchingEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -104,10 +103,10 @@ class FastMarchingEffectOptions(EffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(FastMarchingEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(FastMarchingEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
     # TODO: get the march parameter from the node
     # march = float(self.parameterNode.GetParameter
@@ -148,7 +147,7 @@ class FastMarchingEffectOptions(EffectOptions):
       return
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(FastMarchingEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
@@ -169,11 +168,11 @@ class FastMarchingEffectTool(EffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(FastMarchingEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
 
   def cleanup(self):
-    super(FastMarchingEffectTool,self).cleanup()
+    super().cleanup()
 
   def processEvent(self, caller=None, event=None):
     """
@@ -199,7 +198,7 @@ class FastMarchingEffectLogic(EffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(FastMarchingEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
   def fastMarching(self,percentMax):
 

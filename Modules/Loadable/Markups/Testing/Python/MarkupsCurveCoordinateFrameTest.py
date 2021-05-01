@@ -1,4 +1,3 @@
-from __future__ import print_function
 from slicer.util import TESTING_DATA_URL
 import os
 import numpy as np

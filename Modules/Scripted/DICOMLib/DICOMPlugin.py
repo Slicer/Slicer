@@ -19,7 +19,7 @@ comment = """
 # DICOMLoadable
 #
 
-class DICOMLoadable(object):
+class DICOMLoadable:
   """Container class for things that can be
   loaded from dicom files into slicer.
   Each plugin returns a list of instances from its
@@ -65,7 +65,7 @@ class DICOMLoadable(object):
 # DICOMPlugin
 #
 
-class DICOMPlugin(object):
+class DICOMPlugin:
   """ Base class for DICOM plugins
   """
 

@@ -202,7 +202,7 @@ class LabelStructureListWidget(qt.QWidget):
 
       vName = vNode.GetName()
       # match something like "CT-lung-label1"
-      fnmatchExp = "%s-*%s*" % (masterName, self.mergeVolumePostfix)
+      fnmatchExp = f"{masterName}-*{self.mergeVolumePostfix}*"
       if fnmatch.fnmatchcase(vName,fnmatchExp):
         volumeNodes.append(vNode)
 

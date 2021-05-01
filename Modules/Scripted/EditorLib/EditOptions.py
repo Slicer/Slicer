@@ -1,4 +1,3 @@
-from __future__ import print_function
 import slicer
 import qt
 import ctk
@@ -34,7 +33,7 @@ In this file:
 # Helpers
 #########################################################
 
-class HelpButton(object):
+class HelpButton:
   """
   Puts a button on the interface that pops up a message
   dialog for help when pressed

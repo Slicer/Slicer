@@ -5,7 +5,7 @@ import slicer, qt
 # _ui_DirectoryListWidget
 #
 #=============================================================================
-class _ui_DirectoryListWidget(object):
+class _ui_DirectoryListWidget:
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     layout = qt.QGridLayout(parent)

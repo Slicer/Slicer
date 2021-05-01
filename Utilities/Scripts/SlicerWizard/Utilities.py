@@ -57,7 +57,7 @@ _logLevel = None
 class _LogWrapFormatter(logging.Formatter):
   #---------------------------------------------------------------------------
   def __init__(self):
-    super(_LogWrapFormatter, self).__init__()
+    super().__init__()
     try:
       self._width = int(os.environ['COLUMNS']) - 1
     except:
@@ -65,7 +65,7 @@ class _LogWrapFormatter(logging.Formatter):
 
   #---------------------------------------------------------------------------
   def format(self, record):
-    lines = super(_LogWrapFormatter, self).format(record).split("\n")
+    lines = super().format(record).split("\n")
     return "\n".join([textwrap.fill(l, self._width) for l in lines])
 
 #=============================================================================
@@ -159,7 +159,7 @@ def inquire(msg, choices=_yesno):
   """
 
   choiceKeys = list(choices.keys())
-  msg = "%s %s? " % (msg, ",".join(choiceKeys))
+  msg = "{} {}? ".format(msg, ",".join(choiceKeys))
 
   def throw(*args):
     raise ValueError()
@@ -287,7 +287,7 @@ def buildProcessArgs(*args, **kwargs):
     if v is None or v is False:
       continue
 
-    result += ["%s%s" % ("-" if len(k) == 1 else "--", k.replace("_", "-"))]
+    result += ["{}{}".format("-" if len(k) == 1 else "--", k.replace("_", "-"))]
 
     if v is not True:
       result += ["%s" % v]
@@ -334,7 +334,7 @@ def createEmptyRepo(path, tool=None):
   return git.Repo.init(path)
 
 #-----------------------------------------------------------------------------
-class SourceTreeDirectory(object):
+class SourceTreeDirectory:
   """Abstract representation of a source tree directory.
 
   .. attribute:: root
@@ -359,7 +359,7 @@ class SourceTreeDirectory(object):
       .
     """
     if not os.path.exists(os.path.join(root, relative_directory)):
-      raise IOError("'root/relative_directory' does not exist")
+      raise OSError("'root/relative_directory' does not exist")
     self.root = root
     self.relative_directory = relative_directory
 

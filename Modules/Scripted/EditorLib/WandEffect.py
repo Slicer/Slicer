@@ -28,7 +28,7 @@ class WandEffectOptions(LabelEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(WandEffectOptions,self).__init__(parent)
+    super().__init__(parent)
 
     # self.attributes should be tuple of options:
     # 'MouseTool' - grabs the cursor
@@ -38,10 +38,10 @@ class WandEffectOptions(LabelEffectOptions):
     self.displayName = 'Wand Effect'
 
   def __del__(self):
-    super(WandEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(WandEffectOptions,self).create()
+    super().create()
 
     self.toleranceFrame = qt.QFrame(self.frame)
     self.toleranceFrame.setLayout(qt.QHBoxLayout())
@@ -103,7 +103,7 @@ class WandEffectOptions(LabelEffectOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(WandEffectOptions,self).destroy()
+    super().destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -117,7 +117,7 @@ class WandEffectOptions(LabelEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(WandEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
@@ -133,13 +133,13 @@ class WandEffectOptions(LabelEffectOptions):
     self.parameterNode.SetDisableModifiedEvent(disableState)
 
   def updateGUIFromMRML(self,caller,event):
-    super(WandEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     params = ("tolerance", "maxPixels",)
     for p in params:
       if self.parameterNode.GetParameter("WandEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
-    super(WandEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
     self.toleranceSpinBox.setValue( float(self.parameterNode.GetParameter("WandEffect,tolerance")) )
     self.maxPixelsSpinBox.setValue( float(self.parameterNode.GetParameter("WandEffect,maxPixels")) )
@@ -165,7 +165,7 @@ class WandEffectOptions(LabelEffectOptions):
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(WandEffectOptions,self).updateMRMLFromGUI()
+    super().updateMRMLFromGUI()
     self.parameterNode.SetParameter( "WandEffect,tolerance", str(self.toleranceSpinBox.value) )
     self.parameterNode.SetParameter( "WandEffect,maxPixels", str(self.maxPixelsSpinBox.value) )
     fillMode = "Volume" if self.fillModeCheckBox.checked else "Plane"
@@ -190,18 +190,18 @@ class WandEffectTool(LabelEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(WandEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
     self.logic = WandEffectLogic(self.sliceWidget.sliceLogic())
 
   def cleanup(self):
-    super(WandEffectTool,self).cleanup()
+    super().cleanup()
 
   def processEvent(self, caller=None, event=None):
     """
     handle events from the render window interactor
     """
 
-    if super(WandEffectTool,self).processEvent(caller,event):
+    if super().processEvent(caller,event):
       return
 
     if event == "LeftButtonPressEvent":
@@ -231,7 +231,7 @@ class WandEffectLogic(LabelEffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(WandEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
     self.sliceLogic = sliceLogic
     self.fillMode = 'Plane' # can be Plane or Volume
 

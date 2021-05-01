@@ -1,6 +1,4 @@
-
-
-class qSlicerScriptedLoadableModuleTest(object):
+class qSlicerScriptedLoadableModuleTest:
   def __init__(self, parent):
     import string
     parent.title = "qSlicerScriptedLoadableModule Test"
@@ -19,7 +17,7 @@ class qSlicerScriptedLoadableModuleTest(object):
     self.parent.setProperty('setup_called_within_Python', True)
 
 
-class qSlicerScriptedLoadableModuleTestWidget(object):
+class qSlicerScriptedLoadableModuleTestWidget:
   def __init__(self, parent=None):
     self.parent = parent
 

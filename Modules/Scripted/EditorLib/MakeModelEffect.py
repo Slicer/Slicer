@@ -37,16 +37,16 @@ class MakeModelEffectOptions(EffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(MakeModelEffectOptions,self).__init__(parent)
+    super().__init__(parent)
     # create a logic instance to do the non-gui work
     # (since this is created from the option gui it has no slice logic)
     self.logic = MakeModelEffectLogic(None)
 
   def __del__(self):
-    super(MakeModelEffectOptions,self).__del__()
+    super().__del__()
 
   def create(self):
-    super(MakeModelEffectOptions,self).create()
+    super().create()
 
     self.goToModelMaker = qt.QPushButton("Go To Model Maker", self.frame)
     self.goToModelMaker.setToolTip( "The Model Maker interface contains a whole range of options for building sets of models and controlling the parameters." )
@@ -92,7 +92,7 @@ class MakeModelEffectOptions(EffectOptions):
     self.connections.append( (self.goToModelMaker, 'clicked()', self.onGoToModelMaker) )
 
   def destroy(self):
-    super(MakeModelEffectOptions,self).destroy()
+    super().destroy()
 
   def updateParameterNode(self, caller, event):
     """
@@ -133,10 +133,10 @@ class MakeModelEffectOptions(EffectOptions):
       self.logic.makeModel(self.modelName.text,self.smooth.checked)
 
   def setMRMLDefaults(self):
-    super(MakeModelEffectOptions,self).setMRMLDefaults()
+    super().setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    super(MakeModelEffectOptions,self).updateGUIFromMRML(caller,event)
+    super().updateGUIFromMRML(caller,event)
 
   def updateMRMLFromGUI(self):
     disableState = self.parameterNode.GetDisableModifiedEvent()
@@ -170,10 +170,10 @@ class MakeModelEffectTool(EffectTool):
   """
 
   def __init__(self,sliceWidget):
-    super(MakeModelEffectTool,self).__init__(sliceWidget)
+    super().__init__(sliceWidget)
 
   def cleanup(self):
-    super(MakeModelEffectTool,self).cleanup()
+    super().cleanup()
 
 #
 # MakeModelEffectLogic
@@ -191,7 +191,7 @@ class MakeModelEffectLogic(EffectLogic):
   """
 
   def __init__(self,sliceLogic):
-    super(MakeModelEffectLogic,self).__init__(sliceLogic)
+    super().__init__(sliceLogic)
 
   def makeModel(self,modelName='EditorModel',smooth=True):
     #

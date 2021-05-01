@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 
 # try get the path of the ruler scene file from the arguments

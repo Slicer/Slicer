@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 # get the selection node
 selectionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSelectionNodeSingleton")
 
@@ -13,7 +11,7 @@ if selectionNode:
   print(selectionNode)
   print("Start index for ", annotClassName, " = ", startIndex, ", end index after removing it = ", endIndex)
   if endIndex != -1:
-    raise Exception("Failed to remove annotation %s from list, end index = %s should be -1" % (annotClassName, endIndex))
+    raise Exception(f"Failed to remove annotation {annotClassName} from list, end index = {endIndex} should be -1")
 
   # now make one active and remove it
   annotClassName = "vtkMRMLAnnotationFiducialNode"
@@ -24,7 +22,7 @@ if selectionNode:
   selectionNode.RemovePlaceNodeClassNameFromList(annotClassName)
   endIndex = selectionNode.PlaceNodeClassNameInList(annotClassName)
   if endIndex != -1:
-    raise Exception("Failed to remove active annotation %s from list, end index = %s should be -1" % (annotClassName, endIndex))
+    raise Exception(f"Failed to remove active annotation {annotClassName} from list, end index = {endIndex} should be -1")
 
   # re-add the ruler one
   annotClassName = "vtkMRMLAnnotationRulerNode"
@@ -32,5 +30,5 @@ if selectionNode:
   selectionNode.AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png")
   endIndex = selectionNode.PlaceNodeClassNameInList(annotClassName)
   if endIndex == -1:
-    raise Exception("Failed to re-add %s, end index = %s" % (annotClassName, endIndex))
+    raise Exception(f"Failed to re-add {annotClassName}, end index = {endIndex}")
 
