@@ -1003,7 +1003,7 @@ int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
   for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
     {
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetNthDisplayNode(displayNodeIndex));
-    if (displayNode->GetVisibility() && displayNode->GetSegmentVisibility(segmentID))
+    if (displayNode && displayNode->GetVisibility() && displayNode->GetSegmentVisibility(segmentID))
       {
       // segment already visible
       return ConfirmedWithoutDialog;
@@ -1634,7 +1634,7 @@ bool qSlicerSegmentEditorAbstractEffect::segmentationDisplayableInView(vtkMRMLAb
   for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
     {
     vtkMRMLDisplayNode* segmentationDisplayNode = segmentationNode->GetNthDisplayNode(displayNodeIndex);
-    if (segmentationDisplayNode->IsDisplayableInView(viewNodeID))
+    if (segmentationDisplayNode && segmentationDisplayNode->IsDisplayableInView(viewNodeID))
       {
       return true;
       }

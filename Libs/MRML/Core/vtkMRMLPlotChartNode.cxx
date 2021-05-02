@@ -325,7 +325,7 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeIndexFromID(const char *plotSeriesNod
     {
     const char* id = this->GetNthNodeReferenceID(
       this->GetPlotSeriesNodeReferenceRole(), plotIndex);
-    if (!strcmp(plotSeriesNodeID, id))
+    if (id && !strcmp(plotSeriesNodeID, id))
       {
       return plotIndex;
       break;

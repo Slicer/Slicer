@@ -341,9 +341,13 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
   int nnodes = volume->GetNumberOfDisplayNodes();
   std::vector<vtkMRMLDisplayNode*> displayNodes;
   for (int i=0; i<nnodes; i++)
-  {
+    {
+    if (!volume->GetNthDisplayNode(i))
+      {
+      continue;
+      }
     displayNodes.push_back(volume->GetNthDisplayNode(i));
-  }
+    }
   this->SetVolumeDisplayNodes(volume, displayNodes);
 }
 

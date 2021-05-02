@@ -141,7 +141,7 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject *caller, unsigned lon
     for (int i=0; i<displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
       {
       vtkMRMLDisplayNode* currentDisplayNode = displayableReparentedNode->GetNthDisplayNode(i);
-      if (currentDisplayNode->GetFolderDisplayOverrideAllowed())
+      if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
         {
         currentDisplayNode->Modified();
         }
@@ -217,7 +217,7 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
     for (int i=0; i<childDisplayableNode->GetNumberOfDisplayNodes(); ++i)
       {
       vtkMRMLDisplayNode* currentDisplayNode = childDisplayableNode->GetNthDisplayNode(i);
-      if (currentDisplayNode->GetFolderDisplayOverrideAllowed())
+      if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
         {
         currentDisplayNode->Modified();
         }

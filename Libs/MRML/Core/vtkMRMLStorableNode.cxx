@@ -262,7 +262,7 @@ void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     const char * id = this->GetNthNodeReferenceID(this->GetStorageNodeReferenceRole(), i);
     os << indent << "StorageNodeIDs[" << i << "]: " <<
-      id << "\n";
+      (id ? id : "(none)") << "\n";
     }
 }
 
