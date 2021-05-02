@@ -514,21 +514,28 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
     const std::string& referenceRole = it->first;
     int numReferencedNodes = this->GetNumberOfNodeReferences(referenceRole.c_str());
 
-    if (numReferencedNodes > 0)
-      {
-      ssRef << referenceRole << ":";
-      }
-
+    bool referenceFound = false;
     for (int n=0; n < numReferencedNodes; n++)
       {
       const char * id = this->GetNthNodeReferenceID(referenceRole.c_str(), n);
-      ssRef << id;
-      if (n < numReferencedNodes-1)
+      if (!id)
         {
+        continue;
+        }
+      if (referenceFound)
+        {
+        // additional ID
         ssRef << " ";
         }
+      else
+        {
+        // first ID
+        ssRef << referenceRole << ":";
+        referenceFound = true;
+        }
+      ssRef << id;
       }
-    if (numReferencedNodes > 0)
+    if (referenceFound)
       {
       ssRef << ";";
       }
