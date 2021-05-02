@@ -258,14 +258,24 @@ void qSlicerMarkupsROIWidget::setDisplayClippingBox(bool visible)
   std::vector<int> wasModifying(numberOfDisplayNodes);
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
-    wasModifying[index] = d->MarkupsNode->GetNthDisplayNode(index)->StartModify();
+    vtkMRMLDisplayNode* displayNode = d->MarkupsNode->GetNthDisplayNode(index);
+    if (!displayNode)
+      {
+      continue;
+      }
+    wasModifying[index] = displayNode->StartModify();
     }
 
   d->MarkupsNode->SetDisplayVisibility(visible);
 
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
-    d->MarkupsNode->GetNthDisplayNode(index)->EndModify(wasModifying[index]);
+    vtkMRMLDisplayNode* displayNode = d->MarkupsNode->GetNthDisplayNode(index);
+    if (!displayNode)
+      {
+      continue;
+      }
+    displayNode->EndModify(wasModifying[index]);
     }
 }
 

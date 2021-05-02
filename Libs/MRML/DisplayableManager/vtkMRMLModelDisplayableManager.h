@@ -162,7 +162,7 @@ protected:
   vtkAlgorithm *CreateTransformedClipper(vtkMRMLTransformNode *tnode,
                                          vtkMRMLModelNode::MeshTypeHint type);
 
-  void RemoveDispalyedID(std::string &id);
+  void RemoveDisplayedID(std::string &id);
 
 protected:
   vtkMRMLModelDisplayableManager();

@@ -938,6 +938,10 @@ std::string qSlicerSegmentEditorPaintEffectPrivate::segmentAtPosition(qMRMLWidge
   for (int displayNodeIndex = 0; displayNodeIndex < segmentationNode->GetNumberOfDisplayNodes(); displayNodeIndex++)
     {
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetNthDisplayNode(displayNodeIndex));
+    if (!displayNode)
+      {
+      continue;
+      }
     vtkNew<vtkStringArray> segmentIDs;
     segmentationDisplayableManager2D->GetVisibleSegmentsForPosition(ras, displayNode, segmentIDs.GetPointer());
     if (segmentIDs->GetNumberOfValues() == 0)

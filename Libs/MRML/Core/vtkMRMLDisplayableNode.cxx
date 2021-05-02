@@ -132,7 +132,7 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     const char * id = this->GetNthNodeReferenceID(
       this->GetDisplayNodeReferenceRole(), i);
-    os << indent << "DisplayNodeIDs[" << i << "]: " << id << "\n";
+    os << indent << "DisplayNodeIDs[" << i << "]: " << (id ? id : "(none)") << "\n";
     }
 }
 

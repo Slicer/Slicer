@@ -3621,6 +3621,10 @@ void qMRMLSegmentEditorWidget::onSegmentationDisplayModified()
     for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
       {
       vtkMRMLDisplayNode* segmentationDisplayNode = d->SegmentationNode->GetNthDisplayNode(displayNodeIndex);
+      if (!segmentationDisplayNode)
+        {
+        continue;
+        }
       if (!d->ObservedViewNodeIDs.contains(segmentationDisplayNode->GetID()))
         {
         observedNodeIDsChanged = true;

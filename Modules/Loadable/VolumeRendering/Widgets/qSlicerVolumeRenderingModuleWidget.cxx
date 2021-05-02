@@ -835,14 +835,24 @@ void qSlicerVolumeRenderingModuleWidget::onROICropDisplayCheckBoxToggled(bool to
 
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
-    wasModifying[index] = roiNode->GetNthDisplayNode(index)->StartModify();
+    vtkMRMLNode* node = roiNode->GetNthDisplayNode(index);
+    if (!node)
+      {
+      continue;
+      }
+    wasModifying[index] = node->StartModify();
     }
 
   roiNode->SetDisplayVisibility(toggle);
 
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
-    roiNode->GetNthDisplayNode(index)->EndModify(wasModifying[index]);
+    vtkMRMLNode* node = roiNode->GetNthDisplayNode(index);
+    if (!node)
+      {
+      continue;
+      }
+    node->EndModify(wasModifying[index]);
     }
 }
 

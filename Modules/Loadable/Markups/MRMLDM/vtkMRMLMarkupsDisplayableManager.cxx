@@ -649,7 +649,8 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
         vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
         for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
           {
-          if (markupsNode->GetNthDisplayNode(displayNodeIndex)->IsDisplayableInView(viewNode->GetID()))
+          vtkMRMLDisplayNode* displayNode = markupsNode->GetNthDisplayNode(displayNodeIndex);
+          if (displayNode && displayNode->IsDisplayableInView(viewNode->GetID()))
             {
             canPlaceInThisView = true;
             break;
@@ -825,7 +826,8 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement(
     vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
     for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
       {
-      if (activeMarkupsNode->GetNthDisplayNode(displayNodeIndex)->IsDisplayableInView(viewNode->GetID()))
+        vtkMRMLDisplayNode* displayNode = activeMarkupsNode->GetNthDisplayNode(displayNodeIndex);
+        if (displayNode && displayNode->IsDisplayableInView(viewNode->GetID()))
         {
         canPlaceInThisView = true;
         break;

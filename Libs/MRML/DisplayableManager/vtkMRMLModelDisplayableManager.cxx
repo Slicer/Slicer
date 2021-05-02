@@ -1279,7 +1279,7 @@ void vtkMRMLModelDisplayableManager::RemoveModelProps()
     }
   for (unsigned int i=0; i< removedIDs.size(); i++)
     {
-    this->RemoveDispalyedID(removedIDs[i]);
+    this->RemoveDisplayedID(removedIDs[i]);
     }
 }
 
@@ -1295,6 +1295,10 @@ void vtkMRMLModelDisplayableManager::RemoveDisplayable(vtkMRMLDisplayableNode* m
   for (int i=0; i<ndnodes; i++)
     {
     const char* displayNodeIDToRemove = model->GetNthDisplayNodeID(i);
+    if (!displayNodeIDToRemove)
+      {
+      continue;
+      }
     std::map<std::string, vtkProp3D *>::iterator iter =
       this->Internal->DisplayedActors.find(displayNodeIDToRemove);
     if (iter != this->Internal->DisplayedActors.end())
@@ -1306,14 +1310,14 @@ void vtkMRMLModelDisplayableManager::RemoveDisplayable(vtkMRMLDisplayableNode* m
 
   for (unsigned int i=0; i< removedIDs.size(); i++)
     {
-    this->RemoveDispalyedID(removedIDs[i]);
+    this->RemoveDisplayedID(removedIDs[i]);
     }
   this->RemoveDisplayableNodeObservers(model);
   this->Internal->DisplayableNodes.erase(model->GetID());
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::RemoveDispalyedID(std::string &id)
+void vtkMRMLModelDisplayableManager::RemoveDisplayedID(std::string &id)
 {
   std::map<std::string, vtkMRMLDisplayNode *>::iterator modelIter;
   this->Internal->DisplayedActors.erase(id);

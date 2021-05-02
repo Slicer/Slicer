@@ -830,7 +830,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::jumpSlices()
     for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
       {
       vtkMRMLDisplayNode* segmentationDisplayNode = segmentationNode->GetNthDisplayNode(displayNodeIndex);
-      if (segmentationDisplayNode->IsDisplayableInView(sliceNode->GetID()))
+      if (segmentationDisplayNode && segmentationDisplayNode->IsDisplayableInView(sliceNode->GetID()))
         {
         visibleInView = true;
         break;

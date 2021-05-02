@@ -251,6 +251,10 @@ public:
   /// \sa StopRescheduleNodeEvents()
   void StartRescheduleNodeEvents(vtkMRMLNode* node)
   {
+    if (!node)
+      {
+      return;
+      }
     node->AddObserver(vtkCommand::AnyEvent, this->RescheduleCallback,
                       100000000.f);
     vtkMRMLDisplayableNode* displayableNode =
@@ -268,6 +272,10 @@ public:
   /// \sa StartRescheduleNodeEvents()
   void StopRescheduleNodeEvents(vtkMRMLNode* node)
   {
+    if (!node)
+      {
+      return;
+      }
     node->RemoveObserver(this->RescheduleCallback);
     vtkMRMLDisplayableNode* displayableNode =
       vtkMRMLDisplayableNode::SafeDownCast(node);
