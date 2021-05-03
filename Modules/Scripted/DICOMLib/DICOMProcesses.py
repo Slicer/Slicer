@@ -373,16 +373,60 @@ class DICOMSender(DICOMProcess):
 
     if self.protocol == "DICOMweb":
       # DICOMweb
+      # Ensure that correct version of dicomweb-client Python package is installed
+      needRestart = False
+      needInstall = False
+      minimumDicomwebClientVersion = "0.51"
       try:
         import dicomweb_client
+        from packaging import version
+        if version.parse(dicomweb_client.__version__) < version.parse(minimumDicomwebClientVersion):
+          if not slicer.util.confirmOkCancelDisplay(f"DICOMweb sending requires installation of dicomweb-client (version {minimumDicomwebClientVersion} or later).\nClick OK to upgrade dicomweb-client and restart the application."):
+            self.showBrowserOnEnter = False
+            return
+          needRestart = True
+          needInstall = True
       except ModuleNotFoundError:
-        logging.info("Installing dicomweb-client for sending DICOM using DICOMweb protocol")
-        pip_install('dicomweb-client')
+        needInstall = True
+
+      if needInstall:
+        # pythonweb-client 0.50 was broken (https://github.com/MGHComputationalPathology/dicomweb-client/issues/41)
+        progressDialog = slicer.util.createProgressDialog(labelText='Upgrading dicomweb-client. This may take a minute...', maximum=0)
+        slicer.app.processEvents()
+        slicer.util.pip_install(f'dicomweb-client>={minimumDicomwebClientVersion}')
+        import dicomweb_client
+        progressDialog.close()
+      if needRestart:
+        slicer.util.restart() 
+
+      # Establish connection
+      import dicomweb_client.log
+      dicomweb_client.log.configure_logging(2)
+      from dicomweb_client.api import DICOMwebClient
+      effectiveServerUrl = self.destinationUrl.toString()
+      session = None
+      headers = {}
+      # Setting up of the DICOMweb client from various server parameters can be done
+      # in plugins in the future, but for now just hardcode special initialization
+      # steps for a few server types.
+      if "kheops" in effectiveServerUrl:
+        # Kheops DICOMweb API endpoint from browser view URL
+        url = qt.QUrl(effectiveServerUrl)
+        if url.path().startswith('/view/'):
+          # This is a Kheops viewer URL.
+          # Retrieve the token from the viewer URL and use the Kheops API URL to connect to the server.
+          token = url.path().replace('/view/','')
+          effectiveServerUrl = "https://demo.kheops.online/api"
+          from requests.auth import HTTPBasicAuth
+          from dicomweb_client.session_utils import create_session_from_auth
+          auth = HTTPBasicAuth('token', token)
+          session = create_session_from_auth(auth)
+
+      client = DICOMwebClient(url=effectiveServerUrl, session=session, headers=headers)
+
       for file in self.files:
         if not self.progressCallback("Sending %s to %s using %s" % (file, self.destinationUrl.toString(), self.protocol)):
           raise UserWarning("Sending was cancelled, upload is incomplete.")
-        from dicomweb_client.api import DICOMwebClient
-        client = DICOMwebClient(url=self.destinationUrl.toString(), chunk_size=500000)
         import pydicom
         dataset = pydicom.dcmread(file)
         client.store_instances(datasets=[dataset])
