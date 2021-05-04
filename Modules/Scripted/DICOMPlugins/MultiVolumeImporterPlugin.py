@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import re
 import vtk, qt, ctk, slicer
@@ -21,7 +20,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
   """
 
   def __init__(self,epsilon=0.01):
-    super(MultiVolumeImporterPluginClass,self).__init__()
+    super().__init__()
     self.loadType = "MultiVolume"
 
     self.tags['seriesInstanceUID'] = "0020,000E"
@@ -92,7 +91,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     importFormatsComboBox.toolTip = "Preferred format for imported volume sequences. It determines what MRML node type volume sequences will be loaded into."
     importFormatsComboBox.addItem("default (multi-volume)", "default")
     importFormatsComboBox.addItem("volume sequence", "sequence")
-    importFormatsComboBox.addItem("multi-volume", "multivolume") 
+    importFormatsComboBox.addItem("multi-volume", "multivolume")
     importFormatsComboBox.currentIndex = 0
     formLayout.addRow("Preferred multi-volume import format:", importFormatsComboBox)
     panel.registerProperty(
@@ -166,7 +165,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     timer.StopTimer()
     if self.detailedLogging:
-      logging.debug('MultiVolumeImporterPlugin: found {0} loadables in {1} files in {2:.1f}sec.'.format(len(loadables), len(allfiles), timer.GetElapsedTime()))
+      logging.debug(f"MultiVolumeImporterPlugin: found {len(loadables)} loadables in {len(allfiles)} files in {timer.GetElapsedTime():.1f}sec.")
 
     return loadables
 
@@ -185,7 +184,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime','AcquisitionTime','FlipAngle','CardiacCycle'])
 
     if self.detailedLogging:
-      logging.debug('MultiVolumeImporterPlugin: found {0} multivolumes!'.format(len(mvNodes)))
+      logging.debug('MultiVolumeImporterPlugin: found {} multivolumes!'.format(len(mvNodes)))
 
     for mvNode in mvNodes:
       tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
@@ -590,7 +589,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     frames = []
 
     baseName = loadable.name
-    
+
     loadAsVolumeSequence = hasattr(loadable, 'loadAsVolumeSequence') and loadable.loadAsVolumeSequence
     if loadAsVolumeSequence:
       volumeSequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode",
@@ -632,12 +631,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         svLoadables = scalarVolumePlugin.examine([frameFileList])
 
         if len(svLoadables) == 0:
-          raise IOError("volume frame %d is invalid" % frameNumber)
+          raise OSError(f"volume frame {frameNumber} is invalid")
 
         frame = scalarVolumePlugin.load(svLoadables[0])
 
         if frame == None or frame.GetImageData() == None:
-          raise IOError("Volume frame %d is invalid - %s" % (frameNumber, svLoadables[0].warning))
+          raise OSError(f"Volume frame {frameNumber} is invalid - {svLoadables[0].warning}")
         if loadAsVolumeSequence:
           # Load into volume sequence
 
@@ -746,7 +745,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         mvNode.RemoveAttribute('MultiVolume.FrameFileList')
 
     except Exception as e:
-      logging.error("Failed to read a multivolume: {0}".format(str(e)))
+      logging.error(f"Failed to read a multivolume: {str(e)}")
       import traceback
       traceback.print_exc()
       mvNode = None
@@ -778,7 +777,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     elif len(hhmmss)==2: # HH
       sec = float(hhmmss[0:2])*60.*60.
     else:
-      raise IOError("Invalid DICOM time string: "+tm+" (failed to parse HHMMSS)")
+      raise OSError("Invalid DICOM time string: "+tm+" (failed to parse HHMMSS)")
 
     sec = sec+ssfrac
 
@@ -834,7 +833,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
             #  TP10PC0965, PULSTART_P0020PC, PULSEND_P0080PC...
             #  TP30PC0965, PULSTART_P0020PC, PULSEND_P0080PC...
             cardiacPhaseInfo = tagValueStr.split('\\')[0] # TP0PC0965
-            matched = re.search("TP(\d+)PC(\d+)", cardiacPhaseInfo)
+            matched = re.search(r"TP(\d+)PC(\d+)", cardiacPhaseInfo)
             tagValue = float(matched.groups()[0])
           except:
             continue
@@ -880,10 +879,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           seriesNumber = slicer.dicomDatabase.fileValue(file, self.tags['seriesNumber'])
           seriesDescription = slicer.dicomDatabase.fileValue(file, self.tags['seriesDescription'])
           seriesInstanceUid = slicer.dicomDatabase.fileValue(file, self.tags['seriesInstanceUID'])
-          msg = "MultiVolumeImporterPlugin: series {0}: {1} ({2}) is not accepted as multi-volume because number of slices varies across frames.".format(
-            seriesNumber, seriesDescription, seriesInstanceUid)
+          msg = f"MultiVolumeImporterPlugin: series {seriesNumber}: {seriesDescription} ({seriesInstanceUid}) " + \
+                 "is not accepted as multi-volume because number of slices varies across frames."
           for numberOfSlices in slicesPerFrame:
-            msg += " {0} slices are found for {1}={2}.".format(numberOfSlices, frameTag, slicesPerFrame[numberOfSlices])
+            msg += f" {numberOfSlices} slices are found for {frameTag}={slicesPerFrame[numberOfSlices]}."
           logging.debug(msg)
         continue
 
@@ -948,7 +947,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 # MultiVolumeImporterPlugin
 #
 
-class MultiVolumeImporterPlugin(object):
+class MultiVolumeImporterPlugin:
   """
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
@@ -982,7 +981,7 @@ class MultiVolumeImporterPlugin(object):
 #
 #
 
-class MultiVolumeImporterPluginWidget(object):
+class MultiVolumeImporterPluginWidget:
   def __init__(self, parent = None):
     self.parent = parent
 

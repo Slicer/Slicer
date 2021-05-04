@@ -1,7 +1,6 @@
-
 from __main__ import vtk, slicer
 
-class Helper( object ):
+class Helper:
 
   @staticmethod
   def SetBgFgVolumes(bgID, fgID):

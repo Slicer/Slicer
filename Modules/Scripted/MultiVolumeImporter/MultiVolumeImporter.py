@@ -1,4 +1,3 @@
-from __future__ import print_function
 import sys, re, os
 
 from __main__ import vtk, qt, ctk, slicer
@@ -322,7 +321,7 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
       intentName = header.GetIntentName()
       if not intentName:
         intentName = 'Nothing'
-      print('Warning: %s does not have TimeSeries intent, instead it has \"%s\"' % (fileName,intentName))
+      print(f'Warning: {fileName} does not have TimeSeries intent, instead it has \"{intentName}\"')
       print('Trying to read as TimeSeries anyway')
     units = header.GetXYZTUnits()
 

@@ -1,4 +1,3 @@
-from __future__ import print_function
 import dicom, string, os, sys
 
 dirIn = sys.argv[1]
