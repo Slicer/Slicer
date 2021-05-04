@@ -4,7 +4,7 @@ from qt import QSize
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 
 
-class MultiVolumeIntensityChartView(object):
+class MultiVolumeIntensityChartView:
 
   SIGNAL_INTENSITY_MODE = 0
   FIXED_RANGE_INTENSITY_MODE = 1
@@ -390,7 +390,7 @@ class MultiVolumeIntensityChartView(object):
     self.__chart.SetXAxisTitle(title)
 
 
-class LabeledImageChartView(object):
+class LabeledImageChartView:
 
   def __init__(self, labelNode, multiVolumeNode, multiVolumeLabels, baselineFrames, displayPercentageChange=False):
     self.labelNode = labelNode

@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import helpers
 
 import argparse, sys, shutil, os, slicer

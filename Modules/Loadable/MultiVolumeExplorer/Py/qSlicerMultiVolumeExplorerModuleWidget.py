@@ -7,7 +7,7 @@ from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerMod
 from qSlicerMultiVolumeExplorerCharts import LabeledImageChartView, MultiVolumeIntensityChartView
 
 
-class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(object):
+class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
 
   def __init__(self, parent=None):
     logging.debug("qSlicerMultiVolumeExplorerSimplifiedModuleWidget:init() called")
