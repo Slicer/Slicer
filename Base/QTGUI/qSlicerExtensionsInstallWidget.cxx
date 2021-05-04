@@ -60,7 +60,9 @@ qSlicerExtensionsInstallWidgetPrivate::~qSlicerExtensionsInstallWidgetPrivate()
 // --------------------------------------------------------------------------
 QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
 {
-     QUrl url(this->ExtensionsManagerModel->serverUrlWithExtensionsStorePath());
+     QUrl url = this->ExtensionsManagerModel->serverUrl();
+     url.setPath(url.path() + "/slicerappstore");
+
      //HS Uncomment the following line for debugging and comment above
      //QUrl url("http://10.171.2.133:8080/slicerappstore");
      QUrlQuery urlQuery;

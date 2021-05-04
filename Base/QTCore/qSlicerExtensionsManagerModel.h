@@ -74,7 +74,6 @@ public:
   typedef QVariantMap ExtensionMetadataType;
 
   Q_INVOKABLE QUrl serverUrl()const;
-  Q_INVOKABLE QUrl serverUrlWithExtensionsStorePath()const;
 
   Q_INVOKABLE QString extensionsInstallPath()const;
 
