@@ -75,14 +75,16 @@ public:
 
   /// \brief Backend server URL used to perform API calls.
   ///
-  /// It return extensions settings value `Extensions/ServerUrl`.
+  /// If set, it returns the value associated with `SLICER_EXTENSIONS_MANAGER_SERVER_URL`
+  /// enviroment variable. Otherwise, it returns the extensions settings value `Extensions/ServerUrl`.
   ///
   /// \sa extensionsSettingsFilePath()
   Q_INVOKABLE QUrl serverUrl()const;
 
   /// \brief Frontend server URL displaying extension manager web page.
   ///
-  /// It return extensions settings value `Extensions/FrontendServerUrl`.
+  /// If set, it returns the value associated with `SLICER_EXTENSIONS_MANAGER_FRONTEND_SERVER_URL`
+  /// enviroment variable. Otherwise, it returns the extensions settings value `Extensions/FrontendServerUrl`.
   ///
   /// \sa extensionsSettingsFilePath()
   Q_INVOKABLE QUrl frontendServerUrl()const;

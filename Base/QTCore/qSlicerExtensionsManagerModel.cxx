@@ -1096,16 +1096,14 @@ qSlicerExtensionsManagerModel::~qSlicerExtensionsManagerModel() = default;
 QUrl qSlicerExtensionsManagerModel::serverUrl()const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
-  return QUrl(settings.value("Extensions/ServerUrl").toString());
-  //HS Uncomment the following line for debugging and comment above line.
-  //return QUrl("http://10.171.2.133:8080");
+  return QUrl(qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_URL", settings.value("Extensions/ServerUrl").toString()));
 }
 
 // --------------------------------------------------------------------------
 QUrl qSlicerExtensionsManagerModel::frontendServerUrl()const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
-  return QUrl(settings.value("Extensions/FrontendServerUrl").toString());
+  return QUrl(qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_FRONTEND_SERVER_URL", settings.value("Extensions/FrontendServerUrl").toString()));
 }
 
 // --------------------------------------------------------------------------
