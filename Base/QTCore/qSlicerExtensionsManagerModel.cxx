@@ -1102,6 +1102,13 @@ QUrl qSlicerExtensionsManagerModel::serverUrl()const
 }
 
 // --------------------------------------------------------------------------
+QUrl qSlicerExtensionsManagerModel::frontendServerUrl()const
+{
+  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  return QUrl(settings.value("Extensions/FrontendServerUrl").toString());
+}
+
+// --------------------------------------------------------------------------
 QString qSlicerExtensionsManagerModel::extensionsInstallPath()const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);

@@ -906,8 +906,8 @@ void qSlicerExtensionsManageWidget::onLinkActivated(const QString& link)
 {
   Q_D(qSlicerExtensionsManageWidget);
 
-  QUrl url = d->ExtensionsManagerModel->serverUrl();
-  url.setPath(url.path() + "/slicerappstore/extension/view");
+  QUrl url = d->ExtensionsManagerModel->frontendServerUrl();
+  url.setPath(url.path() + "/extension/view");
   QUrlQuery urlQuery;
   urlQuery.addQueryItem("extensionId", link.mid(7)); // remove leading "slicer:"
   urlQuery.addQueryItem("breadcrumbs", "none");

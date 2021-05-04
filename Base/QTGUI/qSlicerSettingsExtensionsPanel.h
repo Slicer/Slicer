@@ -49,6 +49,7 @@ public:
 
 signals:
   void extensionsServerUrlChanged(const QString& url);
+  void extensionsFrontendServerUrlChanged(const QString& url);
 
 protected slots:
   void onExtensionsManagerEnabled(bool value);
