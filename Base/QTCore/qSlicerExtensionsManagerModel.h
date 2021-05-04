@@ -73,7 +73,19 @@ public:
   /// \brief Extension metadata typedef
   typedef QVariantMap ExtensionMetadataType;
 
+  /// \brief Backend server URL used to perform API calls.
+  ///
+  /// It return extensions settings value `Extensions/ServerUrl`.
+  ///
+  /// \sa extensionsSettingsFilePath()
   Q_INVOKABLE QUrl serverUrl()const;
+
+  /// \brief Frontend server URL displaying extension manager web page.
+  ///
+  /// It return extensions settings value `Extensions/FrontendServerUrl`.
+  ///
+  /// \sa extensionsSettingsFilePath()
+  Q_INVOKABLE QUrl frontendServerUrl()const;
 
   Q_INVOKABLE QString extensionsInstallPath()const;
 

@@ -60,8 +60,7 @@ qSlicerExtensionsInstallWidgetPrivate::~qSlicerExtensionsInstallWidgetPrivate()
 // --------------------------------------------------------------------------
 QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
 {
-     QUrl url = this->ExtensionsManagerModel->serverUrl();
-     url.setPath(url.path() + "/slicerappstore");
+     QUrl url = this->ExtensionsManagerModel->frontendServerUrl();
 
      //HS Uncomment the following line for debugging and comment above
      //QUrl url("http://10.171.2.133:8080/slicerappstore");
@@ -376,6 +375,6 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
 bool qSlicerExtensionsInstallWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
 {
   Q_D(qSlicerExtensionsInstallWidget);
-  d->InternalHosts = QStringList() << this->extensionsManagerModel()->serverUrl().host();
+  d->InternalHosts = QStringList() << this->extensionsManagerModel()->frontendServerUrl().host();
   return Superclass::acceptNavigationRequest(url, type, isMainFrame);
 }
