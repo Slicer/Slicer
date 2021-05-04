@@ -385,7 +385,6 @@ void qSlicerExtensionsManagerModelTester::testDefaults()
   // No initialization required
 
   QCOMPARE(model.serverUrl().toString(), QLatin1String(""));
-  QCOMPARE(model.serverUrlWithExtensionsStorePath().toString(), QLatin1String("/slicerappstore"));
   QCOMPARE(model.extensionsInstallPath(), QString(""));
   QCOMPARE(model.extensionInstallPath(""), QString(""));
   QCOMPARE(model.extensionDescriptionFile(""), QString(""));
@@ -408,8 +407,6 @@ void qSlicerExtensionsManagerModelTester::testDefaults()
 void qSlicerExtensionsManagerModelTester::testServerUrl()
 {
   QFETCH(QString, serverUrl);
-  QFETCH(QString, serverUrlWithPackagePath);
-  QFETCH(QString, serverUrlWithExtensionsStorePath);
 
   QSettings().setValue("Extensions/ServerUrl", serverUrl);
   qSlicerExtensionsManagerModel model;
@@ -419,20 +416,16 @@ void qSlicerExtensionsManagerModelTester::testServerUrl()
   QUrl currentServerUrl = model.serverUrl();
   QVERIFY(currentServerUrl.isValid());
   QCOMPARE(currentServerUrl.toString(), serverUrl);
-  QCOMPARE(model.serverUrlWithExtensionsStorePath().toString(), serverUrlWithExtensionsStorePath);
 }
 
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::testServerUrl_data()
 {
   QTest::addColumn<QString>("serverUrl");
-  QTest::addColumn<QString>("serverUrlWithExtensionsStorePath");
 
-  QTest::newRow("localhost") << "http://localhost/midas"
-                             << "http://localhost/midas/slicerappstore";
+  QTest::newRow("localhost") << "http://localhost/midas";
 
-  QTest::newRow("windows-file") << QUrl::fromLocalFile("C:/path/to/foo").toString()
-                                << "file:///C:/path/to/foo/slicerappstore";
+  QTest::newRow("windows-file") << QUrl::fromLocalFile("C:/path/to/foo").toString();
 }
 
 // ----------------------------------------------------------------------------

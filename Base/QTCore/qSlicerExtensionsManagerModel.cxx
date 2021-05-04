@@ -1100,14 +1100,6 @@ QUrl qSlicerExtensionsManagerModel::serverUrl()const
 }
 
 // --------------------------------------------------------------------------
-QUrl qSlicerExtensionsManagerModel::serverUrlWithExtensionsStorePath()const
-{
-  QUrl url(this->serverUrl());
-  url.setPath(url.path() + "/slicerappstore");
-  return url;
-}
-
-// --------------------------------------------------------------------------
 QString qSlicerExtensionsManagerModel::extensionsInstallPath()const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
