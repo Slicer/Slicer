@@ -240,7 +240,7 @@ mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
 
 Slicer_Remote_Add(MultiVolumeExplorer
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/fedorov/MultiVolumeExplorer.git
-  GIT_TAG 5e69562d441962f8ae2d766a59e179ffcb673173
+  GIT_TAG 36102fd0ffae409319c0a0fee71dde1df64fe9e0
   OPTION_NAME Slicer_BUILD_MultiVolumeExplorer
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
@@ -249,7 +249,7 @@ list_conditional_append(Slicer_BUILD_MultiVolumeExplorer Slicer_REMOTE_DEPENDENC
 
 Slicer_Remote_Add(MultiVolumeImporter
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/fedorov/MultiVolumeImporter.git
-  GIT_TAG dbae43021cb3918e8b5cfd01d05ad437ff67e7e1
+  GIT_TAG db805948534563566f0a39c63e8d60fac0b63dcd
   OPTION_NAME Slicer_BUILD_MultiVolumeImporter
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
@@ -258,7 +258,7 @@ list_conditional_append(Slicer_BUILD_MultiVolumeImporter Slicer_REMOTE_DEPENDENC
 
 Slicer_Remote_Add(SimpleFilters
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/SimpleITK/SlicerSimpleFilters.git
-  GIT_TAG 8686bf5722c642cca0b765cb3f8e5b24b0a25422
+  GIT_TAG 92e8db0030f6f9d9ea99dd5d8d1425b6b2189a68
   OPTION_NAME Slicer_BUILD_SimpleFilters
   OPTION_DEPENDS "Slicer_BUILD_QTSCRIPTEDMODULES;Slicer_USE_SimpleITK"
   LABELS REMOTE_MODULE
@@ -339,7 +339,7 @@ list_conditional_append(Slicer_BUILD_DataStore Slicer_REMOTE_DEPENDENCIES DataSt
 
 Slicer_Remote_Add(CompareVolumes
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/pieper/CompareVolumes"
-  GIT_TAG f7537257a0e97cd745b4a95c870ebb0d0d5c97ac
+  GIT_TAG 7e5530930282a5f99c746df331538e431f3609b4
   OPTION_NAME Slicer_BUILD_CompareVolumes
   OPTION_DEPENDS "Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
@@ -348,7 +348,7 @@ list_conditional_append(Slicer_BUILD_CompareVolumes Slicer_REMOTE_DEPENDENCIES C
 
 Slicer_Remote_Add(LandmarkRegistration
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/LandmarkRegistration"
-  GIT_TAG 81089c82858411cea7fe260851ec042433b5c074
+  GIT_TAG 290d481ffc1a378a8756e83d437b150aa6c7e30d
   OPTION_NAME Slicer_BUILD_LandmarkRegistration
   OPTION_DEPENDS "Slicer_BUILD_CompareVolumes;Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
