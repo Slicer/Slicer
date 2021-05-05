@@ -15,12 +15,17 @@
 #  Slicer_BINARY_DIR
 #  Slicer_OS
 #  Slicer_ARCHITECTURE
-#  MIDAS_PACKAGE_URL
+#
+# The following variables can either be defined in the including scope or
+# as environment variables:
+#
+#  CTEST_MODEL (default: Experimental)
+#  MIDAS_PACKAGE_URL (default: http://slicer.kitware.com/midas3)
 #  MIDAS_PACKAGE_EMAIL
 #  MIDAS_PACKAGE_API_KEY
-#
-# Optionally, these variable can also be set:
-#  CTEST_MODEL (default: Experimental)
+#  SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE
+#  SLICER_PACKAGE_MANAGER_URL
+#  SLICER_PACKAGE_MANAGER_API_KEY
 #
 # Then, using  the 'SlicerMacroExtractRepositoryInfo' CMake module, the script
 # will also set the following variables:
@@ -73,11 +78,18 @@ if(NOT PACKAGEUPLOAD)
   _sput_set_if_not_defined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
   _sput_set_if_not_defined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCATE)
 
+  _sput_set_if_not_defined(SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE "SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE-NOTDEFINED")
+  _sput_set_if_not_defined(SLICER_PACKAGE_MANAGER_URL "SLICER_PACKAGE_MANAGER_URL-NOTDEFINED")
+  _sput_set_if_not_defined(SLICER_PACKAGE_MANAGER_API_KEY "SLICER_PACKAGE_MANAGER_API_KEY-NOTDEFINED" OBFUSCATE)
+
   set(script_vars
     Slicer_CMAKE_DIR
     Slicer_BINARY_DIR
     Slicer_OS
     Slicer_ARCHITECTURE
+    SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE
+    SLICER_PACKAGE_MANAGER_URL
+    SLICER_PACKAGE_MANAGER_API_KEY
     CTEST_MODEL
     MIDAS_PACKAGE_URL
     MIDAS_PACKAGE_EMAIL
@@ -238,29 +250,66 @@ foreach(p ${package_list})
   if(package_uploaded)
     message(WARNING "Skipping additional package: ${p}")
   else()
-    get_filename_component(package_name "${p}" NAME)
-    message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
-    midas_api_upload_package(
-      SERVER_URL ${MIDAS_PACKAGE_URL}
-      SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
-      SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
-      SUBMISSION_TYPE ${CTEST_MODEL}
-      SOURCE_REVISION ${Slicer_REVISION}
-      SOURCE_CHECKOUTDATE ${Slicer_WC_LAST_CHANGED_DATE}
-      OPERATING_SYSTEM ${Slicer_OS}
-      ARCHITECTURE ${Slicer_ARCHITECTURE}
-      PACKAGE_FILEPATH ${p}
-      PACKAGE_TYPE "installer"
-      RESULT_VARNAME slicer_midas_upload_status
-      )
     set(package_uploaded 1)
-    if(NOT slicer_midas_upload_status STREQUAL "ok")
-      file(WRITE ${Slicer_BINARY_DIR}/PACKAGES.txt "")
-      message(FATAL_ERROR
+    get_filename_component(package_name "${p}" NAME)
+
+    # Setting the environment variable SLICER_PACKAGE_MANAGER_SKIP_MIDAS_UPLOAD to
+    # any non empty value can be used when testing this module. It skips upload of the
+    # package to Midas.
+    set(upload_to_midas 1)
+    if(NOT "$ENV{SLICER_PACKAGE_MANAGER_SKIP_MIDAS_UPLOAD}" STREQUAL "")
+      set(upload_to_midas 0)
+    endif()
+
+    if(upload_to_midas)
+      message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
+      midas_api_upload_package(
+        SERVER_URL ${MIDAS_PACKAGE_URL}
+        SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
+        SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
+        SUBMISSION_TYPE ${CTEST_MODEL}
+        SOURCE_REVISION ${Slicer_REVISION}
+        SOURCE_CHECKOUTDATE ${Slicer_WC_LAST_CHANGED_DATE}
+        OPERATING_SYSTEM ${Slicer_OS}
+        ARCHITECTURE ${Slicer_ARCHITECTURE}
+        PACKAGE_FILEPATH ${p}
+        PACKAGE_TYPE "installer"
+        RESULT_VARNAME slicer_midas_upload_status
+        )
+      if(NOT slicer_midas_upload_status STREQUAL "ok")
+        file(WRITE ${Slicer_BINARY_DIR}/PACKAGES.txt "")
+        message(FATAL_ERROR
 "Upload of [${package_name}] failed !
 Check that:
 (1) you have been granted permission to upload
 (2) your email and api key are correct")
+      endif()
     endif()
+
+    message("Uploading [${package_name}] to [${SLICER_PACKAGE_MANAGER_URL}]")
+    get_filename_component(package_directory ${p} DIRECTORY)
+    set(error_file ${package_directory}/slicer_package_server_upload_errors.txt)
+    execute_process(COMMAND
+      ${CMAKE_COMMAND} -E env
+        LC_ALL=en_US.UTF-8
+        LANG=en_US.UTF-8
+      ${SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE}
+        --api-url ${SLICER_PACKAGE_MANAGER_URL}/api/v1
+        --api-key ${SLICER_PACKAGE_MANAGER_API_KEY}
+          package upload Slicer ${p}
+            --os ${Slicer_OS}
+            --arch ${Slicer_ARCHITECTURE}
+            --name Slicer
+            --revision ${Slicer_REVISION}
+            --pre_release
+      RESULT_VARIABLE slicer_package_manager_upload_status
+      ERROR_FILE ${error_file}
+      )
+    if(NOT slicer_package_manager_upload_status EQUAL 0)
+      message(STATUS "Failed to upload package using ${SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE}.
+See ${error_file} for more details.")
+    endif()
+    message(STATUS "slicer_package_manager_upload_status: ${slicer_package_manager_upload_status}")
+
   endif()
 endforeach()
