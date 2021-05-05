@@ -31,8 +31,8 @@
 # The following variables can either be defined in the including scope or
 # as environment variables:
 #
-#  CTEST_MODEL
-#  MIDAS_PACKAGE_URL
+#  CTEST_MODEL (default: Experimental)
+#  MIDAS_PACKAGE_URL (default: http://slicer.kitware.com/midas3)
 #  MIDAS_PACKAGE_EMAIL
 #  MIDAS_PACKAGE_API_KEY
 #  SLICER_EXTENSION_MANAGER_CLIENT_EXECUTABLE
