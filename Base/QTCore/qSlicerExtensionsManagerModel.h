@@ -73,6 +73,14 @@ public:
   /// \brief Extension metadata typedef
   typedef QVariantMap ExtensionMetadataType;
 
+  enum ServerAPI
+    {
+    Midas_v1 = 0,
+    Girder_v1
+    };
+
+  int serverAPI() const;
+
   /// \brief Backend server URL used to perform API calls.
   ///
   /// If set, it returns the value associated with `SLICER_EXTENSIONS_MANAGER_SERVER_URL`
@@ -250,11 +258,11 @@ public:
   /// Return the item model used internally
   Q_INVOKABLE const QStandardItemModel * model()const;
 
-  static QHash<QString, QString> serverToExtensionDescriptionKey();
+  static QHash<QString, QString> serverToExtensionDescriptionKey(int serverAPI = Self::Midas_v1);
 
-  static QStringList serverKeysToIgnore();
+  static QStringList serverKeysToIgnore(int serverAPI = Self::Midas_v1);
 
-  static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata);
+  static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI = Self::Midas_v1);
 
   static QStringList readArrayValues(QSettings& settings,
                                      const QString& arrayName, const QString fieldName);

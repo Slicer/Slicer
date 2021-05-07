@@ -466,9 +466,17 @@ void qSlicerExtensionsManagerWidget::processSearchTextChange()
     {
     if (searchText != d->lastInstallWidgetSearchText)
       {
-      d->ExtensionsInstallWidget->webView()->page()->runJavaScript(
-        "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
-        "midas.slicerappstore.applyFilter();");
+      int serverAPI = this->extensionsManagerModel()->serverAPI();
+      if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
+        {
+        d->ExtensionsInstallWidget->webView()->page()->runJavaScript(
+          "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
+          "midas.slicerappstore.applyFilter();");
+        }
+      else
+        {
+        qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
+        }
       d->lastInstallWidgetSearchText = searchText;
       }
     }

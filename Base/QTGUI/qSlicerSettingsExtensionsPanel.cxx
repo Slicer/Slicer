@@ -24,6 +24,7 @@
 
 // QtGUI includes
 #include "qSlicerApplication.h"
+#include "qSlicerExtensionsManagerModel.h"
 #include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerRelativePathMapper.h"
 #include "qSlicerSettingsExtensionsPanel.h"
@@ -64,8 +65,15 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 
   // Default values
   this->ExtensionsManagerEnabledCheckBox->setChecked(true);
-  this->ExtensionsServerUrlLineEdit->setText("http://slicer.kitware.com/midas3");
-  this->ExtensionsFrontendServerUrlLineEdit->setText("http://slicer.kitware.com/midas3/slicerappstore");
+  if (app->extensionsManagerModel()->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
+    {
+    this->ExtensionsServerUrlLineEdit->setText("http://slicer.kitware.com/midas3");
+    this->ExtensionsFrontendServerUrlLineEdit->setText("http://slicer.kitware.com/midas3/slicerappstore");
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << app->extensionsManagerModel()->serverAPI();
+    }
   this->ExtensionsInstallPathButton->setDirectory(app->defaultExtensionsInstallPath());
 #ifdef Q_OS_MAC
   this->ExtensionsInstallPathButton->setDisabled(true);
