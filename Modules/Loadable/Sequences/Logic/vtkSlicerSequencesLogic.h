@@ -118,6 +118,7 @@ protected:
   void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
   bool IsDataConnectorNode(vtkMRMLNode*);
+  void CopyNodeAttributes(vtkMRMLNode* source, vtkMRMLNode* target);
 
   // Time of the last update of each browser node (in universal time)
   std::map< vtkMRMLSequenceBrowserNode*, double > LastSequenceBrowserUpdateTimeSec;

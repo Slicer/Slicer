@@ -386,7 +386,7 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
       }
 
     // Get the current target output node
-    vtkMRMLNode* targetProxyNode=browserNode->GetProxyNode(synchronizedSequenceNode);
+    vtkMRMLNode* targetProxyNode = browserNode->GetProxyNode(synchronizedSequenceNode);
     if (targetProxyNode!=nullptr)
       {
       // a proxy node with the requested role exists already
@@ -410,6 +410,8 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
       // failed to add target output node
       continue;
       }
+
+    this->CopyNodeAttributes(targetProxyNode, sourceDataNode);
 
     // Update the target node with the contents of the source node
 
@@ -475,6 +477,17 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
   timer->StopTimer();
   vtkInfoMacro("UpdateProxyNodesFromSequences: " << timer->GetElapsedTime() << "sec\n");
 #endif
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSequencesLogic::CopyNodeAttributes(vtkMRMLNode* source, vtkMRMLNode* target)
+{
+  std::vector< std::string > attributeNames = source->GetAttributeNames();
+  for (std::vector< std::string >::iterator attributeNamesIt = attributeNames.begin();
+    attributeNamesIt != attributeNames.end(); ++attributeNamesIt)
+    {
+    target->SetAttribute(attributeNamesIt->c_str(), source->GetAttribute(attributeNamesIt->c_str()));
+    }
 }
 
 //---------------------------------------------------------------------------
