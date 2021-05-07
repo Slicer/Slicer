@@ -262,13 +262,13 @@ public:
 
   // --------------------------------------------------------------------------
   qSlicerExtensionsDescriptionLabel(const QString& extensionSlicerVersion, const QString& slicerRevision,
-                                    const QString& extensionId, const QString& extensionName,
+                                    const QString& moreLinkTarget, const QString& extensionName,
                                     const QString& extensionDescription, bool extensionEnabled,
                                     bool extensionCompatible)
     : QLabel(), ExtensionSlicerVersion(extensionSlicerVersion), SlicerRevision(slicerRevision),
       ExtensionIncompatible(!extensionCompatible), WarningColor("#bd8530"),
       ExtensionUpdateAvailable(false), InfoColor("#2c70c8"),
-      ExtensionDisabled(!extensionEnabled), ExtensionId(extensionId),
+      ExtensionDisabled(!extensionEnabled), MoreLinkTarget(moreLinkTarget),
       ExtensionName(extensionName), ExtensionDescription(extensionDescription),
       LastWidth(0), LastElidedDescription(extensionDescription)
   {
@@ -279,7 +279,7 @@ public:
     this->prepareText(extensionDescription); // Ensure reasonable initial height for size hint
     this->setToolTip(extensionDescription);
 
-    this->setMouseTracking(!extensionId.isEmpty());
+    this->setMouseTracking(!moreLinkTarget.isEmpty());
   }
 
   // --------------------------------------------------------------------------
@@ -341,9 +341,9 @@ public:
       {
       warningText += this->extensionUpdateAvailableText();
       }
-    if (!this->ExtensionId.isEmpty())
+    if (!this->MoreLinkTarget.isEmpty())
       {
-      linkText = QString(" <a href=\"slicer:%1\">More</a>").arg(this->ExtensionId);
+      linkText = QString(" <a href=\"%1\">More</a>").arg(this->MoreLinkTarget);
       }
     return format.arg(warningText, this->ExtensionName, enabledText, elidedDescription, linkText);
   }
@@ -373,7 +373,7 @@ public:
     if (this->LastWidth != cr.width())
       {
       int margin = this->margin() * 2;
-      if (!this->ExtensionId.isEmpty())
+      if (!this->MoreLinkTarget.isEmpty())
         {
         margin += this->fontMetrics().width(" More");
         }
@@ -465,7 +465,7 @@ public:
 
   bool ExtensionDisabled;
 
-  QString ExtensionId;
+  QString MoreLinkTarget;
   QString ExtensionName;
   QString ExtensionDescription;
 
@@ -539,9 +539,10 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
   bool isExtensionCompatible =
       q->extensionsManagerModel()->isExtensionCompatible(extensionName).isEmpty();
 
+  QString moreLinkTarget = QString("slicer:%1").arg(extensionId);
   qSlicerExtensionsDescriptionLabel * label = new qSlicerExtensionsDescriptionLabel(
         extensionSlicerRevision, q->extensionsManagerModel()->slicerRevision(),
-        extensionId, extensionName, description, enabled, isExtensionCompatible);
+        moreLinkTarget, extensionName, description, enabled, isExtensionCompatible);
   label->setMargin(6);
   QObject::connect(label, SIGNAL(linkActivated(QString)), q, SLOT(onLinkActivated(QString)));
 
