@@ -356,15 +356,15 @@ void qSlicerExtensionsManagerModelPrivate::log(const QString& text, ctkErrorLogL
     }
   else if (level == ctkErrorLogLevel::Critical)
     {
-    qCritical() << text;
+    qCritical().noquote() << text;
     }
   else if (level == ctkErrorLogLevel::Warning)
     {
-    qWarning() << text;
+    qWarning().noquote() << text;
     }
   else
     {
-    qDebug() << text;
+    qDebug().noquote() << text;
     }
   emit q->messageLogged(text, level);
 }
@@ -1041,7 +1041,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
       else
         {
         // extension manager returned multiple results, this is not expected, do not use the results
-        errorText = QString("expected 1 results, received %1").arg(results.count());
+        errorText = QString("expected 0 or 1 result, received %1").arg(results.count());
         }
       }
     else
