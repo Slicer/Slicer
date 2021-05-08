@@ -606,7 +606,7 @@ vtkSlicerCLIModuleLogic
     // transform is currently always passed via files
 
     // Use default fname construction, tack on extension
-    std::string ext = ".mrml";
+    std::string ext = ".h5";
     if (extensions.size() != 0)
       {
       ext = extensions[0];
