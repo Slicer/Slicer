@@ -786,10 +786,11 @@ Apply a custom volume rendering color/opacity transfer function
    propertyNode->SetColor(colorTransferFunction);
    propertyNode->SetScalarOpacity(opacities);
    // optionally set the gradients opacities with SetGradientOpacity
-   The logic has utility functions to help you create those transfer functions:
-   volumeRenderingLogic->`SetWindowLevelToVolumeProp <http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#ab8dbda38ad81b39b445b01e1bf8c7a86>`__(...)
-   volumeRenderingLogic->`SetThresholdToVolumeProp <http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a1dcbe614493f3cbb9aa50c68a64764ca>`__(...)
-   volumeRenderingLogic->`SetLabelMapToVolumeProp <http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a359314889c2b386fd4c3ffe5414522da>`__(...)
+
+The logic has utility functions to help you create those transfer functions:
+- volumeRenderingLogic->`SetWindowLevelToVolumeProp <http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#ab8dbda38ad81b39b445b01e1bf8c7a86>`__(...)
+- volumeRenderingLogic->`SetThresholdToVolumeProp <http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a1dcbe614493f3cbb9aa50c68a64764ca>`__(...)
+- volumeRenderingLogic->`SetLabelMapToVolumeProp <http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a359314889c2b386fd4c3ffe5414522da>`__(...)
 
 Limit volume rendering to a specific region of the volume
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
