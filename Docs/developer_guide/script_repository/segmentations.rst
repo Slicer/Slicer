@@ -1,6 +1,15 @@
 Segmentations
 ~~~~~~~~~~~~~
 
+Load a 3D image or model file as segmentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   slicer.util.loadSegmentation("c:/tmp/tmp/Segmentation.nrrd")
+   slicer.util.loadSegmentation("c:/tmp/tmp/Segmentation.nii")
+   slicer.util.loadSegmentation("c:/tmp/Segment_1.stl")
+
 Create a segmentation from a labelmap volume and display in 3D
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
