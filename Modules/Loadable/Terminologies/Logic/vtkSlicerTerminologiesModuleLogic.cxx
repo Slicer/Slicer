@@ -1519,6 +1519,12 @@ bool vtkSlicerTerminologiesModuleLogic::GetCategoryInTerminology(std::string ter
   rapidjson::Value& categoryObject = this->Internal->GetCategoryInTerminology(terminologyName, categoryId);
   if (categoryObject.IsNull())
   {
+    if (!categoryId.CodingSchemeDesignator.compare("SRT"))
+      {
+      // Do not report error if it is due to using an old scene with the SRT category codes instead of the SCT ones
+      // that replaced them on 2020.03.17 in Slicer@5ae556436.
+      return false;
+      }
     vtkErrorMacro("GetCategoryInTerminology: Failed to find category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
   }
@@ -2057,6 +2063,12 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
   vtkSmartPointer<vtkSlicerTerminologyCategory> categoryObject = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
   if ( !this->GetCategoryInTerminology(terminologyName, categoryId, categoryObject) )
     {
+    if (!categoryIds[0].compare("SRT"))
+      {
+      // Do not report error if it is due to using an old scene with the SRT category codes instead of the SCT ones
+      // that replaced them on 2020.03.17 in Slicer@5ae556436.
+      return false;
+      }
     vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Failed to get terminology category");
     return false;
    }
