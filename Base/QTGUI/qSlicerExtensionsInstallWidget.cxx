@@ -74,6 +74,10 @@ QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
         << QPair<QString, QString>("revision", this->SlicerRevision));
      url.setQuery(urlQuery);
      }
+   else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+     {
+     url.setPath(url.path() + QString("/catalog/All/%1/%2").arg(this->SlicerRevision).arg(this->SlicerOs));
+     }
    else
      {
      qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
@@ -297,6 +301,10 @@ void qSlicerExtensionsInstallWidget::onExtensionInstalled(const QString& extensi
       {
       this->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'ScheduleUninstall')").arg(extensionName));
       }
+    else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+      {
+      this->evalJS(QString("app.setExtensionButtonState('%1', 'Installed');").arg(extensionName));
+      }
     else
       {
       qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
@@ -314,6 +322,10 @@ void qSlicerExtensionsInstallWidget::onExtensionScheduledForUninstall(const QStr
     if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
       {
       this->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'CancelScheduledForUninstall')").arg(extensionName));
+      }
+    else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+      {
+      this->evalJS(QString("app.setExtensionButtonState('%1', 'ScheduledForUninstall');").arg(extensionName));
       }
     else
       {
@@ -365,6 +377,10 @@ void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErr
   if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
     {
     this->evalJS(QString("midas.createNotice('%1', %2, '%3')").arg(text).arg(delay).arg(state));
+    }
+  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    {
+    this->evalJS(QString("app.createNotice('%1', %2, '%3')").arg(text).arg(delay).arg(state));
     }
   else
     {

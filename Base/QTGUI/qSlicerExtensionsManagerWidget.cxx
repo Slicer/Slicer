@@ -371,7 +371,21 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
       {
       history->goToItem(history->items().first());
       }
-    if (d->lastInstallWidgetUrl.path().endsWith("/slicerappstore"))
+    bool isCatalogPage = false;
+    int serverAPI = this->extensionsManagerModel()->serverAPI();
+    if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
+      {
+      isCatalogPage = d->lastInstallWidgetUrl.path().endsWith("/slicerappstore");
+      }
+    else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+      {
+      isCatalogPage = d->lastInstallWidgetUrl.path().contains("/catalog");
+      }
+    else
+      {
+      qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
+      }
+    if (isCatalogPage)
       {
       d->toolsWidget->SearchBox->setEnabled(true);
       // When URL is changed because user clicked on a link then we want the search text
@@ -416,7 +430,17 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
 {
   Q_D(qSlicerExtensionsManagerWidget);
   // refresh tools widget state (it should be only enabled if browsing the appstore)
-  if (newUrl.path().endsWith("/slicerappstore"))
+  bool isCatalogPage = false;
+  int serverAPI = this->extensionsManagerModel()->serverAPI();
+  if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
+    {
+    isCatalogPage = newUrl.path().endsWith("/slicerappstore");
+    }
+  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    {
+    isCatalogPage = newUrl.path().contains("/catalog");
+    }
+  if (isCatalogPage)
     {
     d->toolsWidget->SearchBox->setEnabled(true);
     // When URL is changed because user clicked on a link then we want the search text
@@ -472,6 +496,11 @@ void qSlicerExtensionsManagerWidget::processSearchTextChange()
         d->ExtensionsInstallWidget->webView()->page()->runJavaScript(
           "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
           "midas.slicerappstore.applyFilter();");
+        }
+      else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+        {
+        d->ExtensionsInstallWidget->webView()->page()->runJavaScript(
+          "app.search(" + jsQuote(searchText) + ");");
         }
       else
         {
