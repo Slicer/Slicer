@@ -70,6 +70,11 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
     this->ExtensionsServerUrlLineEdit->setText("http://slicer.kitware.com/midas3");
     this->ExtensionsFrontendServerUrlLineEdit->setText("http://slicer.kitware.com/midas3/slicerappstore");
     }
+  else if (app->extensionsManagerModel()->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
+    {
+    this->ExtensionsServerUrlLineEdit->setText("https://slicer-packages.kitware.com");
+    this->ExtensionsFrontendServerUrlLineEdit->setText("https://extensions.slicer.org");
+    }
   else
     {
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << app->extensionsManagerModel()->serverAPI();
