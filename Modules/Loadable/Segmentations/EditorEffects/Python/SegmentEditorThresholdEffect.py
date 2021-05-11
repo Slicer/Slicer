@@ -377,10 +377,6 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.setAutoThresholdButton.connect('clicked()', self.onAutoThreshold)
     self.applyButton.connect('clicked()', self.onApply)
 
-  def createCursor(self, widget):
-    # Turn off effect-specific cursor for this effect
-    return slicer.util.mainWindow().cursor
-
   def masterVolumeNodeChanged(self):
     # Set scalar range of master volume image data to threshold slider
     import vtkSegmentationCorePython as vtkSegmentationCore
