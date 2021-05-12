@@ -25,7 +25,7 @@
 # The macro defines the following variables:
 #  <var-prefix>_BITNESS - bitness of the platform: 32 or 64
 #  <var-prefix>_OS - which is on the this value: linux, macosx, win
-#  <var-prefix>_ARCHITECTURE - which is on the this value: i386, amd64, ppc
+#  <var-prefix>_ARCHITECTURE - which is on the this value: i386, amd64, ppc, aarch64
 
 include(${CMAKE_CURRENT_LIST_DIR}/SlicerBlockOperatingSystemNames.cmake)
 
@@ -47,6 +47,10 @@ macro(SlicerMacroGetOperatingSystemArchitectureBitness)
   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(${MY_VAR_PREFIX}_BITNESS 64)
     set(${MY_VAR_PREFIX}_ARCHITECTURE amd64)
+  endif()
+
+  if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "aarch64")
+    set(${MY_VAR_PREFIX}_ARCHITECTURE aarch64)
   endif()
 
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
