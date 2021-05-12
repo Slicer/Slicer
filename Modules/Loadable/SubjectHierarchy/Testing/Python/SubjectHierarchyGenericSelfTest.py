@@ -470,22 +470,22 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       # Check include node attribute name filter
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
       filteredObject.includeNodeAttributeNamesFilter = ['Markups.MovingInSliceView']
-      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 6)
+      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
       filteredObject.addNodeAttributeFilter('Sajt')
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
       filteredObject.includeNodeAttributeNamesFilter = []
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
       # Check attribute value filter
       filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', 3)
-      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
+      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3)
       filteredObject.includeNodeAttributeNamesFilter = []
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
       filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', '3')
-      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
+      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3)
       filteredObject.includeNodeAttributeNamesFilter = []
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
-      # ChecfilteredObjectk exclude node attribute name filter (overrides include node attribute name filter)
+      # Check exclude node attribute name filter (overrides include node attribute name filter)
       filteredObject.excludeNodeAttributeNamesFilter = ['Markups.MovingInSliceView']
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
       filteredObject.excludeNodeAttributeNamesFilter = []
@@ -494,7 +494,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       filteredObject.includeNodeAttributeNamesFilter = ['Markups.MovingMarkupIndex']
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
       filteredObject.excludeNodeAttributeNamesFilter = ['Markups.MovingInSliceView']
-      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
+      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
       filteredObject.includeNodeAttributeNamesFilter = []
       filteredObject.excludeNodeAttributeNamesFilter = []
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
@@ -541,7 +541,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
       # Check attribute filtering with class name and attribute value
       filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', 3, True, 'vtkMRMLMarkupsCurveNode')
-      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
+      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3)
       filteredObject.addNodeAttributeFilter('ParentAttribute', '', True, 'vtkMRMLMarkupsAngleNode')
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
       filteredObject.addNodeAttributeFilter('ChildAttribute', '', True, 'vtkMRMLMarkupsAngleNode')
@@ -550,7 +550,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
       # Check with empty attribute value
       filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', '', True, 'vtkMRMLMarkupsCurveNode')
-      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
+      self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
       filteredObject.includeNodeAttributeNamesFilter = []
       self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
@@ -558,7 +558,6 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     testAttributeFilters(shProxyModel, shProxyModel)
     logging.info('Test attribute filters on tree view')
     testAttributeFilters(shTreeView, shProxyModel)
-
 
   # ------------------------------------------------------------------------------
   # Utility functions

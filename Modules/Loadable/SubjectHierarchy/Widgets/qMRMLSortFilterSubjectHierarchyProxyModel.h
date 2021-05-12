@@ -154,9 +154,6 @@ public:
   /// This method test each item via \a filterAcceptsItem
   bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const override;
 
-  /// Filters items to decide which to display in the view
-  virtual bool filterAcceptsItem(vtkIdType itemID, bool canAcceptIfAnyChildIsAccepted=true)const;
-
   Qt::ItemFlags flags(const QModelIndex & index)const override;
 
 public slots:
@@ -172,6 +169,23 @@ public slots:
   void setExcludeNodeAttributeNamesFilter(QStringList filterList);
 
 protected:
+  /// This enum type is used to describe the behavior of an item with regard to
+  /// filtering:
+  ///   * Reject if the item should not be visible and has no chance of being
+  ///     visible.
+  ///   * Accept if the item should be visible and will always be.
+  ///   * AcceptDueToBeingParentOfAccepted if the item should not be visible
+  ///     based on the applied filters, but it is the parent of an accepted item,
+  ///     so the item needs to be shown to indicate hierarchy.
+  enum AcceptType
+  {
+    Reject = 0,
+    Accept,
+    AcceptDueToBeingParentOfAccepted,
+  };
+
+  /// Filters items to decide which to display in the view
+  virtual AcceptType filterAcceptsItem(vtkIdType itemID, bool canAcceptIfAnyChildIsAccepted=true)const;
 
   QStandardItem* sourceItem(const QModelIndex& index)const;
 
@@ -181,6 +195,7 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLSortFilterSubjectHierarchyProxyModel);
   Q_DISABLE_COPY(qMRMLSortFilterSubjectHierarchyProxyModel);
+  friend class qMRMLSubjectHierarchyTreeView;
 };
 
 #endif
