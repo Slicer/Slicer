@@ -105,6 +105,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.section_LoadScene()
     self.section_TestCircularParenthood()
     self.section_AttributeFilters()
+    self.section_ComboboxFeatures()
 
     logging.info('Test finished')
 
@@ -559,6 +560,44 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     testAttributeFilters(shProxyModel, shProxyModel)
     logging.info('Test attribute filters on tree view')
     testAttributeFilters(shTreeView, shProxyModel)
+
+  # ------------------------------------------------------------------------------
+  def section_ComboboxFeatures(self):
+    self.delayDisplay("Combobox features",self.delayMs)
+
+    comboBox = slicer.qMRMLSubjectHierarchyComboBox()
+    comboBox.setMRMLScene(slicer.mrmlScene)
+    comboBox.show()
+
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
+    self.assertEqual(comboBox.sortFilterProxyModel().acceptedItemCount(shNode.GetSceneItemID()), 9)
+
+    # Enable None item, number of accepted SH items is the same (None does not have a corresponding accepted SH item)
+    comboBox.noneEnabled = True
+    self.assertEqual(comboBox.sortFilterProxyModel().acceptedItemCount(shNode.GetSceneItemID()), 9)
+
+    # Default text
+    self.assertEqual(comboBox.defaultText, 'Select subject hierarchy item')
+
+    # Select node, include parent names in current item text (when collapsed)
+    markupsCurve1ItemID = shNode.GetItemByName('MarkupsCurve_1')
+    comboBox.setCurrentItem(markupsCurve1ItemID)
+    self.assertEqual(comboBox.defaultText, 'NewFolder_1 / MarkupsCurve_1')
+
+    # Select None item
+    comboBox.setCurrentItem(0)
+    self.assertEqual(comboBox.defaultText, comboBox.noneDisplay)
+
+    # Do not show parent names in current item text
+    comboBox.showCurrentItemParents = False
+    comboBox.setCurrentItem(markupsCurve1ItemID)
+    self.assertEqual(comboBox.defaultText, 'MarkupsCurve_1')
+
+    # Change None item name
+    comboBox.noneDisplay = 'No selection'
+    comboBox.setCurrentItem(0)
+    self.assertEqual(comboBox.defaultText, comboBox.noneDisplay)
+
 
   # ------------------------------------------------------------------------------
   # Utility functions

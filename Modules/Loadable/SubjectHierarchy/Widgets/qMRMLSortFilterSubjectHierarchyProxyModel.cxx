@@ -1012,6 +1012,12 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
 Qt::ItemFlags qMRMLSortFilterSubjectHierarchyProxyModel::flags(const QModelIndex & index)const
 {
   vtkIdType itemID = this->subjectHierarchyItemFromIndex(index);
+  if (!itemID)
+    {
+    // Extra item (e.g. None)
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    }
+
   bool isSelectable = (this->filterAcceptsItem(itemID) == Accept);
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(itemID, index.column());
