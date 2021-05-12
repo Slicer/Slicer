@@ -48,8 +48,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
 
   vtkNew<vtkMRMLStaticMeasurement> measurement1;
   measurement1->SetName("Diameter");
-  measurement1->SetValue(15.0);
-  measurement1->SetUnits("mm2");
+  measurement1->SetDisplayValue(15.0, "mm2");
   node1->AddMeasurement(measurement1);
   CHECK_INT(node1->GetNumberOfMeasurements(), 1);
   CHECK_STD_STRING(node1->GetNthMeasurement(0)->GetName(), "Diameter");

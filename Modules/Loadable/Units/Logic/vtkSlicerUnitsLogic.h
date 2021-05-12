@@ -137,6 +137,7 @@ protected:
   /// Reimplemented to save the selection node unit nodes.
   /// \sa SaveDefaultUnits(), RestoreDefaultUnits()
   void OnMRMLSceneStartBatchProcess() override;
+  void UpdateFromMRMLScene() override;
   /// Reimplemented to restore the selection node unit nodes.
   /// \sa SaveDefaultUnits(), RestoreDefaultUnits()
   void OnMRMLNodeModified(vtkMRMLNode* modifiedNode) override;

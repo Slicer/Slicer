@@ -31,6 +31,31 @@ class vtkMRMLUnitNode;
 /// Measurement method, derivation, quantity value, units, etc, can be specified.
 /// This is a commonly used concept in DICOM structured reports.
 ///
+/// The measurement stores value, displayed value, and unit consistently with unit nodes.
+///
+/// DisplayValue is defined in the unit specified in Unit property of the measurement.
+/// Value is defined in the base unit specified in the unit node in the scene.
+/// DisplayCoefficient specifies scaling between Value and DisplayValue:
+///
+/// DisplayValue = Value * DisplayCoefficient.
+///
+/// Example:
+///
+/// In medical image computing, mm is commonly used as a length unit, but volume is most often
+/// specified in cc (cm3). To allow performing all computations without unit conversions (e.g.,
+/// compute volume = width * height * depth) it is useful to specify volume unit as cm3
+/// with volume display coefficient of 0.001:
+/// - Quantity=length, Unit=mm, DisplayCoefficient=1.0
+/// - Quantity=volume, Unit=cm3, DisplayCoefficient=0.001
+///
+/// Measurements can then computed and stored like this:
+///
+/// <code>
+/// // box size in mm: width * height * depth
+/// diameterMeasurement->SetValue(sqrt(width*width+height*heigh+depth*depth), "length");
+/// volumeMeasurement->SetValue(width*height*depth, "volume");
+/// </code>
+///
 /// \sa vtkCodedEntry
 ///
 class VTK_MRML_EXPORT vtkMRMLMeasurement : public vtkObject
@@ -59,8 +84,8 @@ public:
   vtkTypeMacro(vtkMRMLMeasurement, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  /// Reset state of object
-  virtual void Initialize();
+  /// Reset state of object. Removes all content.
+  virtual void Clear();
 
   /// Clear measured value
   /// Note: per-control-point values are not cleared
@@ -69,7 +94,7 @@ public:
   /// Copy one type into another (deep copy)
   virtual void Copy(vtkMRMLMeasurement* aEntry);
 
-  /// Perform calculation on \sa InputMRMLNode and store the result internally.
+  /// Perform calculation on InputMRMLNode and store the result internally.
   /// The subclasses need to implement this function
   virtual void Compute() = 0;
 
@@ -83,15 +108,29 @@ public:
   vtkGetMacro(Name, std::string);
   vtkSetMacro(Name, std::string);
 
-  /// Measured quantity value
-  vtkGetMacro(Value, double);
-  void SetValue(double value);
+  /// Set value and units with a single modified event.
+  /// If a value is set for a quantity that has a corresponding unit node in the scene then the value
+  /// must be consistent with that definition.
+  /// If quantityName is specified then Units, DisplayCoefficient, PrintFormat properties
+  /// is updated from the corresponding unit node's Suffix, DisplayCoefficient, and DisplayStringFormat
+  /// If QuantityName is specified then a valid InputMRMLNode must be set, too, because the scene is accessed
+  /// via the InputMRMLNode.
+  void SetValue(double value, const char* quantityName = nullptr);
 
-  /// Set quantity value and units with a single modified event.
-  /// If unitNode is nullptr then defaultUnits, defaultDisplayCoefficient, defaultPrintFormat is used
-  /// lastComputationResult type is ComputationResult (int type is used for compatibility with Python wrapper)
-  void SetValue(double value, vtkMRMLUnitNode* unitNode, int lastComputationResult,
-    const std::string& defaultUnits, double defaultDisplayCoefficient, const std::string& defaultPrintFormat);
+  /// Get quantity value.
+  vtkGetMacro(Value, double);
+
+  /// Set display value and units with a single modified event.
+  /// This method is useful if there is no unit node corresponding to this quantity in the scene.
+  /// If a unit node is available for the measurement's quantity then it is important to set the correct
+  /// displayCoefficient value for the chosen units.
+  /// If units and/or displayCoefficient is not specified then the current Units and/or DisplayCoefficient values are used.
+  /// The stored value is computed as displayValue / DisplayCoefficient.
+  void SetDisplayValue(double value, const char* units=nullptr, double displayCoefficient=0.0);
+
+  /// Get display value.
+  /// It is computed using this formula: DisplayValue = Value * DisplayCoefficient.
+  double GetDisplayValue();
 
   /// Value defined flag (whether a computed value has been set or not)
   vtkGetMacro(ValueDefined, bool);
@@ -99,6 +138,12 @@ public:
   /// Measurement unit
   vtkGetMacro(Units, std::string);
   virtual void SetUnits(std::string units);
+
+  /// This multiplier will be applied to the value to compute display value:
+  /// It is useful when the unit in the measurement differs from the base unit (e.g., application's length unit is mm
+  /// but volume is displayed as cm3 instead of mm3).
+  vtkGetMacro(DisplayCoefficient, double);
+  vtkSetMacro(DisplayCoefficient, double);
 
   /// Informal description of the measurement
   vtkGetMacro(Description, std::string);
@@ -136,11 +181,11 @@ public:
   void SetControlPointValues(vtkDoubleArray* inputValues);
   vtkGetObjectMacro(ControlPointValues, vtkDoubleArray);
 
-#ifdef USE_POLYDATA_MEASUREMENTS
-  /// Set the per-polydata point measurement values
-  void SetPolyDataValues(vtkPolyData* inputValues);
-  vtkGetObjectMacro(PolyDataValues, vtkPolyData);
-#endif
+  /// Set mesh that can be used to visualize to computed value.
+  /// For example, mesh for a calculated area value is the mesh that was generated
+  /// to compute the surface area.
+  void SetMeshValue(vtkPolyData* meshValue);
+  vtkGetObjectMacro(MeshValue, vtkPolyData);
 
   /// Set input MRML node used for calculating the measurement \sa Execute
   void SetInputMRMLNode(vtkMRMLNode* node);
@@ -153,26 +198,27 @@ protected:
   vtkMRMLMeasurement(const vtkMRMLMeasurement&);
   void operator=(const vtkMRMLMeasurement&);
 
+  /// Helper function to get unit node from the scene based on quantity name.
+  vtkMRMLUnitNode* GetUnitNode(const char* quantityName);
+
 protected:
   bool Enabled{true};
   std::string Name;
   double Value{0.0};
   bool ValueDefined{false};
-  std::string Units;
+  double DisplayCoefficient{1.0};  std::string Units;
   std::string Description;
   std::string PrintFormat; // for value (double), unit (string)
-  vtkCodedEntry* QuantityCode{nullptr};   // volume
-  vtkCodedEntry* DerivationCode{nullptr}; // min/max/mean
-  vtkCodedEntry* UnitsCode{nullptr};      // cubic millimeter
-  vtkCodedEntry* MethodCode{nullptr};     // Sum of segmented voxel volumes
+  vtkSmartPointer<vtkCodedEntry> QuantityCode;   // volume
+  vtkSmartPointer<vtkCodedEntry> DerivationCode; // min/max/mean
+  vtkSmartPointer<vtkCodedEntry> UnitsCode;      // cubic millimeter
+  vtkSmartPointer<vtkCodedEntry> MethodCode;     // Sum of segmented voxel volumes
   ComputationResult LastComputationResult{InsufficientInput};
 
-  /// Per-control point measurements
+  /// Per-control point measurements.
   vtkDoubleArray* ControlPointValues{nullptr};
-#ifdef USE_POLYDATA_MEASUREMENTS
-  /// Measurement or displayed surface element stored in poly data
-  vtkPolyData* PolyDataValues{nullptr};
-#endif
+  /// Surface mesh for displaying computed value.
+  vtkSmartPointer<vtkPolyData> MeshValue;
   /// MRML node used to calculate the measurement \sa Execute
   vtkWeakPointer<vtkMRMLNode> InputMRMLNode;
 };

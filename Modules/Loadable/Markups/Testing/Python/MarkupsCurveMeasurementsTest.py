@@ -219,4 +219,12 @@ if closedCurveNode.GetMeasurement("area").GetValueWithUnitsAsPrintableString() !
   exceptionMessage = "Unexpected curve area value: " + closedCurveNode.GetMeasurement("area").GetValueWithUnitsAsPrintableString()
   raise Exception(exceptionMessage)
 
+# Display surface area as a model.
+# Useful for manual testing of surface quality.
+closedCurveNode.GetDisplayNode().SetSnapMode(slicer.vtkMRMLMarkupsDisplayNode.SnapModeUnconstrained)
+areaMeasurement = closedCurveNode.GetMeasurement("area")
+areaMeasurement.SetEnabled(True)
+areaModelNode = slicer.modules.models.logic().AddModel(areaMeasurement.GetMeshValue())
+areaModelNode.GetDisplayNode().SetEdgeVisibility(True)
+
 print('Radius of curvature computation is verified successfully')

@@ -28,6 +28,8 @@ vtkStandardNewMacro(vtkMRMLMeasurementLength);
 //----------------------------------------------------------------------------
 vtkMRMLMeasurementLength::vtkMRMLMeasurementLength()
 {
+  this->SetUnits("mm");
+  this->SetPrintFormat("%-#4.4g%s");
 }
 
 //----------------------------------------------------------------------------
@@ -51,7 +53,6 @@ void vtkMRMLMeasurementLength::Compute()
   vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->InputMRMLNode);
   vtkMRMLMarkupsLineNode* lineNode = vtkMRMLMarkupsLineNode::SafeDownCast(this->InputMRMLNode);
 
-  vtkMRMLUnitNode* unitNode = nullptr;
   double length = 0.0;
   if (curveNode)
     {
@@ -63,7 +64,6 @@ void vtkMRMLMeasurementLength::Compute()
       return;
       }
     length = curveNode->GetCurveLengthWorld();
-    unitNode = curveNode->GetUnitNode("length");
     }
   else if (lineNode)
     {
@@ -75,14 +75,13 @@ void vtkMRMLMeasurementLength::Compute()
       return;
       }
     length = lineNode->GetLineLengthWorld();
-    unitNode = lineNode->GetUnitNode("length");
     }
   else
     {
     vtkErrorMacro("Compute: Markup type not supported by this measurement: " << this->InputMRMLNode->GetClassName());
-    this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
+    this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
     return;
     }
 
-  this->SetValue(length, unitNode, vtkMRMLMeasurement::OK, "mm", 1.0, "%-#4.4g%s");
+  this->SetValue(length, "length");
 }

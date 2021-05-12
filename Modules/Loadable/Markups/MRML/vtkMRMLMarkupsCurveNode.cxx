@@ -114,24 +114,18 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
 
   // Setup measurements calculated for this markup type
   vtkNew<vtkMRMLMeasurementLength> lengthMeasurement;
-  lengthMeasurement->SetEnabled(false);
-  lengthMeasurement->SetName("length"); // Length measurement is off by default to only show curve name
+  lengthMeasurement->SetEnabled(false); // Length measurement is off by default to only show curve name
+  lengthMeasurement->SetName("length");
   lengthMeasurement->SetInputMRMLNode(this);
   this->Measurements->AddItem(lengthMeasurement);
 
-  vtkMRMLUnitNode* lengthUnitNode = this->GetUnitNode("length");
-  std::string inverseLengthUnit = (lengthUnitNode ? lengthUnitNode->GetSuffix() : "mm");
-  inverseLengthUnit.append("-1");
-
   vtkNew<vtkMRMLStaticMeasurement> curvatureMeanMeasurement;
   curvatureMeanMeasurement->SetName(this->CurveMeasurementsCalculator->GetMeanCurvatureName());
-  curvatureMeanMeasurement->SetUnits(inverseLengthUnit.c_str());
   curvatureMeanMeasurement->SetEnabled(false); // Curvature calculation is off by default
   this->Measurements->AddItem(curvatureMeanMeasurement);
 
   vtkNew<vtkMRMLStaticMeasurement> curvatureMaxMeasurement;
   curvatureMaxMeasurement->SetName(this->CurveMeasurementsCalculator->GetMaxCurvatureName());
-  curvatureMaxMeasurement->SetUnits(inverseLengthUnit.c_str());
   curvatureMaxMeasurement->SetEnabled(false); // Curvature calculation is off by default
   this->Measurements->AddItem(curvatureMaxMeasurement);
 
@@ -1169,6 +1163,20 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
   // and store the results in the curve poly data points as scalars for visualization)
   if (this->CurveMeasurementsCalculator && this->GetNumberOfControlPoints() > 1)
     {
+    // Update curvature unit (only do it if a curve measurement is enabled)
+    vtkMRMLMeasurement* curvatureMeanMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMeanCurvatureName());
+    vtkMRMLMeasurement* curvatureMaxMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMaxCurvatureName());
+    if ( (curvatureMeanMeasurement && curvatureMeanMeasurement->GetEnabled())
+      || (curvatureMaxMeasurement && curvatureMaxMeasurement->GetEnabled()))
+      {
+      std::string inverseLengthUnit = "mm-1";
+      vtkMRMLUnitNode* lengthUnitNode = this->GetUnitNode("length");
+      if (lengthUnitNode && lengthUnitNode->GetSuffix())
+        {
+        inverseLengthUnit = std::string(lengthUnitNode->GetSuffix()) + "-1";
+        }
+      this->CurveMeasurementsCalculator->SetCurvatureUnits(inverseLengthUnit);
+      }
     this->CurveMeasurementsCalculator->Update();
     }
 

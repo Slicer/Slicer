@@ -160,6 +160,16 @@ void vtkSlicerUnitsLogic::ObserveMRMLScene()
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerUnitsLogic::UpdateFromMRMLScene()
+{
+  // called on EndBatchProcessEvent (e.g., scene close).
+  if (this->GetMRMLScene())
+    {
+    this->Modified();
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerUnitsLogic::AddDefaultsUnits()
 {
   vtkMRMLUnitNode* node =

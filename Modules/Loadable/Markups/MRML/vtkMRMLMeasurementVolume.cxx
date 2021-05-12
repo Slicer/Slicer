@@ -27,6 +27,11 @@ vtkStandardNewMacro(vtkMRMLMeasurementVolume);
 //----------------------------------------------------------------------------
 vtkMRMLMeasurementVolume::vtkMRMLMeasurementVolume()
 {
+  // Default unit is cm3 because mm3 would be too small for most clinical values.
+  // Accordingly, since length unit is mm by default, display coefficient for cm3 is 0.001.
+  this->SetUnits("cm3");
+  this->SetDisplayCoefficient(0.001);
+  this->SetPrintFormat("%-#4.4g%s");
 }
 
 //----------------------------------------------------------------------------
@@ -59,7 +64,5 @@ void vtkMRMLMeasurementVolume::Compute()
   roiNode->GetSize(size);
   double volume = size[0] * size[1] * size[2];
 
-  // Default unit is cm3 because mm3 would be too small for most clinical values.
-  // Accordingly, since length unit is mm by default, display coefficient for cm3 is 0.001.
-  this->SetValue(volume, roiNode->GetUnitNode("volume"), vtkMRMLMeasurement::OK, "cm3", 0.001, "%-#4.4g%s");
+  this->SetValue(volume, "volume");
 }

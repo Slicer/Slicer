@@ -2125,8 +2125,7 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
       }
     }
   measurement->SetName(name.c_str());
-  measurement->SetValue(value);
-  measurement->SetUnits(units.c_str());
+  measurement->SetDisplayValue(value, units.c_str());
   if (!printFormat.empty())
     {
     measurement->SetPrintFormat(printFormat.c_str());

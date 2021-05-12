@@ -290,6 +290,7 @@ void qSlicerUnitsSettingsPanel::onUnitsLogicModified()
     }
 
   d->setMRMLScene(d->Logic->GetMRMLScene());
+  this->updateFromSelectionNode();
 }
 
 // --------------------------------------------------------------------------
