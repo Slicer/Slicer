@@ -48,6 +48,8 @@ vtkCurveMeasurementsCalculator::vtkCurveMeasurementsCalculator()
 
   this->ObservedControlPointArrays = vtkCollection::New();
 
+  this->CurvatureUnits = "mm-1";
+
   // timestamps for input and output are the same, initially
   this->Modified();
 }
@@ -296,12 +298,12 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
       }
     if (currentMeasurement->GetName() == this->GetMeanCurvatureName())
       {
-      currentMeasurement->SetValue(meanKappa);
+      currentMeasurement->SetDisplayValue(meanKappa, this->CurvatureUnits.c_str());
       currentMeasurement->Compute(); // Have the measurement set the computation result to OK
       }
     else if (currentMeasurement->GetName() == this->GetMaxCurvatureName())
       {
-      currentMeasurement->SetValue(maxKappa);
+      currentMeasurement->SetDisplayValue(maxKappa, this->CurvatureUnits.c_str());
       currentMeasurement->Compute(); // Have the measurement set the computation result to OK
       }
     }

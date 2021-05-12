@@ -1557,15 +1557,16 @@ double vtkSlicerMarkupsLogic::GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurv
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor)
+bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints,
+  vtkPolyData* surface, double radiusScalingFactor/*=1.0*/, vtkIdType numberOfInternalGridPoints/*=225*/)
 {
   return vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(curvePoints, surface, radiusScalingFactor);
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerMarkupsLogic::IsPolygonClockwise(vtkPoints* points)
+bool vtkSlicerMarkupsLogic::IsPolygonClockwise(vtkPoints* points, vtkIdList* pointIds/*nullptr*/)
 {
-  return vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(points);
+  return vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(points, pointIds);
 }
 
 //---------------------------------------------------------------------------

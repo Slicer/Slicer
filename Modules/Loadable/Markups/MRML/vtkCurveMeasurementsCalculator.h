@@ -68,6 +68,9 @@ public:
 
   vtkMTimeType GetMTime() override;
 
+  vtkGetMacro(CurvatureUnits, std::string);
+  vtkSetMacro(CurvatureUnits, std::string);
+
 protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
   bool InterpolateControlPointMeasurementToPolyData(vtkPolyData* outputPolyData);
@@ -90,6 +93,8 @@ protected:
   vtkCallbackCommand* ControlPointArrayModifiedCallbackCommand;
   /// List of observed control point arrays (for removal of observations)
   vtkCollection* ObservedControlPointArrays;
+
+  std::string CurvatureUnits;
 
 protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;

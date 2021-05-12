@@ -36,6 +36,7 @@
 
 #include "vtkSlicerMarkupsModuleLogicExport.h"
 
+class vtkIdList;
 class vtkMatrix4x4;
 class vtkMRMLMarkupsNode;
 class vtkMRMLMarkupsClosedCurveNode;
@@ -222,6 +223,7 @@ public:
   static double GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode, vtkPolyData* surface = nullptr, bool projectWarp = true);
 
   /// Create a "soap bubble" surface that fits on the provided point list.
+  /// It can fill arbitrarily complex (non-self-intersecting) polygons in a plane or in a slightly curved plane.
   /// First the contour points projected to best fit plane, triangulated in 2D, and warped to the non-planar shape.
   /// Convex surfaces are triangulated correctly. If the contour is self-intersecting after projected to best fit plane
   /// then the surface will be invalid.
@@ -229,10 +231,14 @@ public:
   /// \param radiusScalingFactor size of the surface. Value of 1.0 (default) means the surface edge fits on the points.
   /// Larger values increase the generated soap bubble outer radius, which may be useful to avoid coincident points
   /// when using this surface for cutting another surface.
+  /// \param numberOfInternalGridPoints specifies the number of additional grid points that are added to get a more evenly triangulated
+  /// surface. Default is 225, which corresponds to 15x15 subdivisions for a square shaped region.
   /// \warning Specifying radiusScalingFactor has no effect. Associated feature is not yet implemented.
-  static bool FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
+  static bool FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0, vtkIdType numberOfInternalGridPoints=225);
 
   /// Create a "soap bubble" surface that fits on the provided point list.
+  /// Compared to FitSurfaceProjectWarp, this method can tolerate more if points are not on a plane but it may not be able to
+  /// fill complicated shapes (with sharp edges or many indentations).
   /// A triangulated disk is warped so that its boundary matches the provided curve points using thin-plate spline transform.
   /// The generated surface may go beyond the boundary of the input points if the boundary is highly concave or curved.
   /// \param curvePoints: points to fit the surface to
@@ -241,8 +247,9 @@ public:
   /// when using this surface for cutting another surface.
   static bool FitSurfaceDiskWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
 
-  /// Return tru if the polygon points are oriented clockwise.
-  static bool IsPolygonClockwise(vtkPoints* points);
+  /// Return true if the polygon points are oriented clockwise.
+  /// If pointIds is null then point IDs will be 0, 1, 2, ... n-1.
+  static bool IsPolygonClockwise(vtkPoints* points, vtkIdList* pointIds=nullptr);
 
   /// Get best fit plane for a markup
   static bool GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPlane* plane);

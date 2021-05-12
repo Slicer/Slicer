@@ -28,6 +28,11 @@ vtkStandardNewMacro(vtkMRMLMeasurementArea);
 //----------------------------------------------------------------------------
 vtkMRMLMeasurementArea::vtkMRMLMeasurementArea()
 {
+  // Default unit is "cm2" because mm2 would be too small for most clinical values.
+  // Accordingly, display coefficient is 0.01 because length unit is mm by default.
+  this->SetUnits("cm2");
+  this->SetDisplayCoefficient(0.01);
+  this->SetPrintFormat("%-#4.4g%s");
 }
 
 //----------------------------------------------------------------------------
@@ -50,7 +55,6 @@ void vtkMRMLMeasurementArea::Compute()
 
   // We derive area unit from length unit, but it may be better to introduce
   // an area unit node to be able to specify more human-friendly format.
-  vtkMRMLUnitNode* unitNode = nullptr;
   double area = 0.0;
 
   vtkMRMLMarkupsClosedCurveNode* curveNode = vtkMRMLMarkupsClosedCurveNode::SafeDownCast(this->InputMRMLNode);
@@ -64,15 +68,20 @@ void vtkMRMLMeasurementArea::Compute()
       this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
       return;
       }
-    area = vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(curveNode);
-    unitNode = curveNode->GetUnitNode("area");
+    vtkPolyData* surfaceAreaMesh = this->GetMeshValue();
+    if (!surfaceAreaMesh)
+      {
+      vtkNew<vtkPolyData> newMesh;
+      this->SetMeshValue(newMesh);
+      surfaceAreaMesh = this->GetMeshValue();
+      }
+    area = vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(curveNode, surfaceAreaMesh);
     }
   else if (planeNode)
     {
     double bounds[6] = { 0.0 };
     planeNode->GetPlaneBounds(bounds);
     area = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]);
-    unitNode = planeNode->GetUnitNode("area");
     }
   else
     {
@@ -81,7 +90,5 @@ void vtkMRMLMeasurementArea::Compute()
     return;
     }
 
-  // Default unit is "cm2" because mm2 would be too small for most clinical values.
-  // Accordingly, display coefficient is 0.01 because length unit is mm by default.
-  this->SetValue(area, unitNode, vtkMRMLMeasurement::OK, "cm2", 0.01, "%-#4.4g%s");
+  this->SetValue(area, "area");
 }

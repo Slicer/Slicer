@@ -10,6 +10,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLMeasurement.h"
 
 // MRML include
+#include "vtkMRMLScene.h"
+#include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLUnitNode.h"
 
 // VTK include
@@ -27,7 +29,7 @@ vtkMRMLMeasurement::vtkMRMLMeasurement()
 //----------------------------------------------------------------------------
 vtkMRMLMeasurement::~vtkMRMLMeasurement()
 {
-  this->Initialize();
+  this->Clear();
 }
 
 //----------------------------------------------------------------------------
@@ -42,25 +44,24 @@ std::string vtkMRMLMeasurement::GetValueWithUnitsAsPrintableString()
     return "(undefined)";
     }
   char buf[80] = { 0 };
-  snprintf(buf, sizeof(buf) - 1, this->PrintFormat.c_str(), this->Value, this->Units.c_str());
+  snprintf(buf, sizeof(buf) - 1, this->PrintFormat.c_str(), this->GetDisplayValue(), this->Units.c_str());
   return buf;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurement::Initialize()
+void vtkMRMLMeasurement::Clear()
 {
   this->SetEnabled(true);
-  this->SetValue(0.0);
+  this->ClearValue(InsufficientInput);
   this->ValueDefined = false;
   this->SetPrintFormat("%5.3f %s");
+  this->SetDisplayCoefficient(1.0);
   this->SetQuantityCode(nullptr);
   this->SetDerivationCode(nullptr);
   this->SetUnitsCode(nullptr);
   this->SetMethodCode(nullptr);
   this->SetControlPointValues(nullptr);
-#ifdef USE_POLYDATA_MEASUREMENTS
-  this->SetPolyDataValues(nullptr);
-#endif
+  this->SetMeshValue(nullptr);
   this->SetInputMRMLNode(nullptr);
 }
 
@@ -105,6 +106,7 @@ void vtkMRMLMeasurement::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Name: " << this->Name << "\n";
   os << indent << "PrintableValue: " << this->GetValueWithUnitsAsPrintableString();
   os << indent << "Value: " << this->Value << "\n";
+  os << indent << "DisplayCoefficient: " << this->DisplayCoefficient << "\n";
   os << indent << "ValueDefined: " << (this->ValueDefined ? "true" : "false") << "\n";
   os << indent << "Units: " << this->Units << "\n";
   os << indent << "PrintFormat: " << this->PrintFormat << "\n";
@@ -137,19 +139,85 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
   this->SetEnabled(src->Enabled);
   this->SetName(src->GetName());
   this->SetValue(src->GetValue());
+  this->SetDisplayCoefficient(src->GetDisplayCoefficient());
   this->ValueDefined = src->GetValueDefined();
   this->SetUnits(src->GetUnits());
   this->SetPrintFormat(src->GetPrintFormat());
   this->SetDescription(src->GetDescription());
-  this->SetQuantityCode(src->QuantityCode);
-  this->SetDerivationCode(src->DerivationCode);
-  this->SetUnitsCode(src->UnitsCode);
-  this->SetMethodCode(src->MethodCode);
-  this->SetControlPointValues(src->ControlPointValues);
+  if (src->QuantityCode)
+    {
+    if (!this->QuantityCode)
+      {
+      this->QuantityCode = vtkSmartPointer<vtkCodedEntry>::New();
+      }
+    this->QuantityCode->Copy(src->QuantityCode);
+    }
+  else
+    {
+    this->QuantityCode = nullptr;
+    }
+  if (src->DerivationCode)
+    {
+    if (!this->DerivationCode)
+      {
+      this->DerivationCode = vtkSmartPointer<vtkCodedEntry>::New();
+      }
+    this->DerivationCode->Copy(src->DerivationCode);
+    }
+  else
+    {
+    this->DerivationCode = nullptr;
+    }
+  if (src->UnitsCode)
+    {
+    if (!this->UnitsCode)
+      {
+      this->UnitsCode = vtkSmartPointer<vtkCodedEntry>::New();
+      }
+    this->UnitsCode->Copy(src->UnitsCode);
+    }
+  else
+    {
+    this->UnitsCode = nullptr;
+    }
+  if (src->MethodCode)
+    {
+    if (!this->MethodCode)
+      {
+      this->MethodCode = vtkSmartPointer<vtkCodedEntry>::New();
+      }
+    this->MethodCode->Copy(src->MethodCode);
+    }
+  else
+    {
+    this->MethodCode = nullptr;
+    }
+  if (src->ControlPointValues)
+    {
+    if (!this->ControlPointValues)
+      {
+      this->ControlPointValues = vtkSmartPointer<vtkDoubleArray>::New();
+      }
+    this->ControlPointValues->DeepCopy(src->ControlPointValues);
+    }
+  else
+    {
+    this->ControlPointValues = nullptr;
+    }
+  if (src->MeshValue)
+    {
+    if (!this->MeshValue)
+      {
+      this->MeshValue = vtkSmartPointer<vtkPolyData>::New();
+      }
+    this->MeshValue->DeepCopy(src->MeshValue);
+    }
+  else
+    {
+    this->MeshValue = nullptr;
+    }
+
   this->SetInputMRMLNode(src->InputMRMLNode);
-#ifdef USE_POLYDATA_MEASUREMENTS
-  this->SetPolyDataValues(src->PolyDataValues);
-#endif
 }
 
 //----------------------------------------------------------------------------
@@ -295,26 +363,11 @@ void vtkMRMLMeasurement::SetControlPointValues(vtkDoubleArray* inputValues)
   this->ControlPointValues->DeepCopy(inputValues);
 }
 
-#ifdef USE_POLYDATA_MEASUREMENTS
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurement::SetPolyDataValues(vtkPolyData* inputValues)
+void vtkMRMLMeasurement::SetMeshValue(vtkPolyData* meshValue)
 {
-  if (!inputValues)
-    {
-    if (this->PolyDataValues)
-      {
-      this->PolyDataValues->Delete();
-      this->PolyDataValues = nullptr;
-      }
-    return;
-    }
-  if (!this->PolyDataValues)
-    {
-    this->PolyDataValues = vtkPolyData::New();
-    }
-  this->PolyDataValues->DeepCopy(inputValues);
+  this->MeshValue = meshValue;
 }
-#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurement::SetInputMRMLNode(vtkMRMLNode* node)
@@ -353,10 +406,42 @@ const char* vtkMRMLMeasurement::GetLastComputationResultAsPrintableString()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurement::SetValue(double value)
+void vtkMRMLMeasurement::SetDisplayValue(double displayValue, const char* units/*=nullptr*/, double displayCoefficient/*=0.0*/)
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Value to " << value);
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Value to " << displayValue);
   bool modified = false;
+
+  // Update units and displayCoefficient if they are specified
+  if (units)
+    {
+    if (this->Units != units)
+      {
+      this->Units = units;
+      modified = true;
+      }
+    }
+  if (displayCoefficient != 0.0)
+    {
+    // caller specified a new displayCoefficient
+    if (this->DisplayCoefficient != displayCoefficient)
+      {
+      this->DisplayCoefficient = displayCoefficient;
+      modified = true;
+      }
+    }
+  else
+    {
+    // caller specified a new displayCoefficient
+    displayCoefficient = this->DisplayCoefficient;
+    }
+  // Compute stored value
+  if (displayCoefficient == 0.0)
+    {
+    vtkErrorMacro("vtkMRMLMeasurement::SetDisplayValue: invalid display coefficient == 0.0, using 1.0 instead");
+    displayCoefficient = 1.0;
+    }
+  double value = displayValue / displayCoefficient;
+
   if (this->Value != value)
     {
     this->Value = value;
@@ -374,30 +459,44 @@ void vtkMRMLMeasurement::SetValue(double value)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurement::SetValue(double value, vtkMRMLUnitNode* unitNode, int lastComputationResult,
-  const std::string& defaultUnits, double defaultDisplayCoefficient, const std::string& defaultPrintFormat)
+void vtkMRMLMeasurement::SetValue(double value, const char* quantityName)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Value to " << value);
+  bool modified = false;
 
-  std::string printFormat;
-  std::string units;
+  vtkMRMLUnitNode* unitNode = this->GetUnitNode(quantityName);
   if (unitNode)
     {
+    std::string units;
     if (unitNode->GetSuffix())
       {
       units = unitNode->GetSuffix();
       }
-    value = unitNode->GetDisplayValueFromValue(value);
-    printFormat = unitNode->GetDisplayStringFormat();
-    }
-  else
-    {
-    units = defaultUnits;
-    value *= defaultDisplayCoefficient;
-    printFormat = defaultPrintFormat;
+    if (this->Units != units)
+      {
+      this->Units = units;
+      modified = true;
+      }
+
+    std::string printFormat;
+    if (unitNode->GetDisplayStringFormat())
+      {
+      printFormat = unitNode->GetDisplayStringFormat();
+      }
+    if (this->PrintFormat != printFormat)
+      {
+      this->PrintFormat = printFormat;
+      modified = true;
+      }
+
+    double displayCoefficient = unitNode->GetDisplayCoefficient();
+    if (this->DisplayCoefficient != displayCoefficient)
+      {
+      this->DisplayCoefficient = displayCoefficient;
+      modified = true;
+      }
     }
 
-  bool modified = false;
   if (this->Value != value)
     {
     this->Value = value;
@@ -408,26 +507,52 @@ void vtkMRMLMeasurement::SetValue(double value, vtkMRMLUnitNode* unitNode, int l
     this->ValueDefined = true;
     modified = true;
     }
-  if (this->Units != units)
+  ComputationResult computationResult = vtkMRMLMeasurement::OK;
+  if (this->LastComputationResult != computationResult)
     {
-    this->Units = units;
+    this->LastComputationResult = computationResult;
     modified = true;
-    }
-  if (this->PrintFormat != printFormat)
-    {
-    this->PrintFormat = printFormat;
-    modified = true;
-    }
-  if (lastComputationResult != ComputationResult::NoChange)
-    {
-    if (this->LastComputationResult != static_cast<ComputationResult>(lastComputationResult))
-      {
-      this->LastComputationResult = static_cast<ComputationResult>(lastComputationResult);
-      modified = true;
-      }
     }
   if (modified)
     {
     this->Modified();
     }
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLMeasurement::GetDisplayValue()
+{
+  return this->Value * this->DisplayCoefficient;
+};
+
+//---------------------------------------------------------------------------
+vtkMRMLUnitNode* vtkMRMLMeasurement::GetUnitNode(const char* quantityName)
+{
+  if (!quantityName || strlen(quantityName)==0)
+    {
+    return nullptr;
+    }
+  if (!this->InputMRMLNode || !this->InputMRMLNode->GetScene())
+    {
+    vtkWarningMacro("vtkMRMLMeasurement::GetUnitNode failed: InputMRMLNode is required to get the unit node from the scene");
+    return nullptr;
+    }
+  vtkMRMLScene* scene = this->InputMRMLNode->GetScene();
+  if (!scene)
+  {
+    return nullptr;
+  }
+  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+    scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  if (!selectionNode)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsNode::GetUnitNode failed: selection node not found");
+    return nullptr;
+    }
+  vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(scene->GetNodeByID(
+    selectionNode->GetUnitNodeID(quantityName)));
+
+  // Do not log warning if null, because for example there is no 'angle' unit node, and in
+  // that case hundreds of warnings would be thrown in a non erroneous situation.
+  return unitNode;
 }

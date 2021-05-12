@@ -322,10 +322,6 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
       {
       measurement->SetEnabled(measurementItem["enabled"].GetBool());
       }
-    if (measurementItem.HasMember("value"))
-      {
-      measurement->SetValue(measurementItem["value"].GetDouble());
-      }
     if (measurementItem.HasMember("units"))
       {
       rapidjson::Value& unitsItem = measurementItem["units"];
@@ -355,7 +351,15 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
         {
         unitsValue = unitsItem.GetString();
         }
-      measurement->SetUnits(unitsValue);
+      if (measurementItem.HasMember("value"))
+        {
+        measurement->SetDisplayValue(measurementItem["value"].GetDouble(), unitsValue.c_str());
+        }
+      else
+        {
+        measurement->ClearValue(vtkMRMLMeasurement::InsufficientInput);
+        measurement->SetUnits(unitsValue);
+        }
       measurement->SetUnitsCode(unitsCode);
       }
     if (measurementItem.HasMember("description"))
@@ -918,7 +922,7 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteMeasurements(
     writer.Key("enabled"); writer.Bool(measurement->GetEnabled());
     if (measurement->GetValueDefined())
       {
-      writer.Key("value"); writer.Double(measurement->GetValue());
+      writer.Key("value"); writer.Double(measurement->GetDisplayValue());
       }
     if (measurement->GetUnitsCode())
       {
