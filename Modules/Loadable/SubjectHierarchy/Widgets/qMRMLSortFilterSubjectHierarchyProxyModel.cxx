@@ -616,7 +616,7 @@ int qMRMLSortFilterSubjectHierarchyProxyModel::acceptedItemCount(vtkIdType rootI
   shNode->GetItemChildren(rootItemID, childItemIDs, true);
   for (std::vector<vtkIdType>::iterator childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
     {
-    if (this->filterAcceptsItem(*childIt))
+    if (this->filterAcceptsItem(*childIt) != Reject)
       {
       itemCount++;
       }
@@ -660,28 +660,28 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
     }
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   vtkIdType itemID = model->subjectHierarchyItemFromItem(item);
-  return this->filterAcceptsItem(itemID);
+  return (this->filterAcceptsItem(itemID) != Reject);
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType itemID,
-                                                                  bool canAcceptIfAnyChildIsAccepted/*=true*/)const
+qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(
+  vtkIdType itemID, bool canAcceptIfAnyChildIsAccepted/*=true*/)const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
   if (!itemID)
     {
-    return true;
+    return Accept;
     }
   vtkMRMLSubjectHierarchyNode* shNode = this->subjectHierarchyNode();
   if (!shNode)
     {
-    return true;
+    return Accept;
     }
   if (itemID == shNode->GetSceneItemID())
     {
     // Always accept scene
-    return true;
+    return Accept;
     }
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
 
@@ -696,7 +696,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     {
     if (!model->isAffiliatedItem(itemID, d->HideItemsUnaffiliatedWithItemID))
       {
-      return false;
+      return Reject;
       }
     }
 
@@ -707,13 +707,13 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     // Filter by hide from editor property
     if (dataNode->GetHideFromEditors())
       {
-      return false;
+      return Reject;
       }
 
     // Filter by exclude attribute
     if (dataNode->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str()))
       {
-      return false;
+      return Reject;
       }
 
     // Filter by node type
@@ -752,7 +752,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
         }
       else
         {
-        return false;
+        return Reject;
         }
       }
 
@@ -781,13 +781,13 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
       if (filterIt->AttributeValue.toString().isEmpty())
         {
         // If attribute value is not specified in the filter then reject node
-        return false;
+        return Reject;
         }
       const char* attributeValue = dataNode->GetAttribute(nodeAttrIt->c_str());
       if (!filterIt->AttributeValue.toString().compare(attributeValue))
         {
         // If attribute value is specified and matches the attribute value in the data node then reject node
-        return false;
+        return Reject;
         }
       }
     // Handle include filters second
@@ -834,11 +834,24 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
         }
       else
         {
-        return false;
+        return Reject;
         }
       }
 
     } // If data node
+  else if (this->includeNodeAttributeNamesFilter().size() > 0)
+    {
+    // If there is no data node but there is an active node attribute include filter, then do not show node-less item unless any child is shown
+    if (canAcceptIfAnyChildIsAccepted)
+      {
+      // If level was requested but is different, then only show if any of its children are shown
+      onlyAcceptIfAnyChildIsAccepted = true;
+      }
+    else
+      {
+      return Reject;
+      }
+    }
 
   // Filter by level
   bool itemLevelAccepted = false;
@@ -867,7 +880,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
       }
     else
       {
-      return false;
+      return Reject;
       }
     }
 
@@ -875,9 +888,9 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
   vtkIdType parentItemID = shNode->GetItemParent(itemID);
   if (parentItemID && shNode->IsItemVirtualBranchParent(parentItemID))
     {
-    if (!this->filterAcceptsItem(parentItemID, false))
+    if (this->filterAcceptsItem(parentItemID, false) == Reject)
       {
-      return false;
+      return Reject;
       }
     }
 
@@ -898,13 +911,13 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     if (filterIt->AttributeValue.toString().isEmpty())
       {
       // If attribute value is not specified in the filter then reject item
-      return false;
+      return Reject;
       }
     std::string attributeValue = shNode->GetItemAttribute(itemID, filterIt->AttributeName.toUtf8().constData());
     if (!filterIt->AttributeValue.toString().compare(attributeValue.c_str()))
       {
       // If attribute value is specified and matches the attribute value in the item then reject item
-      return false;
+      return Reject;
       }
     }
   // Handle include filters second
@@ -945,7 +958,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
       }
     else
       {
-      return false;
+      return Reject;
       }
     }
 
@@ -962,7 +975,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
         }
       else
         {
-        return false;
+        return Reject;
         }
       }
     }
@@ -975,27 +988,31 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     shNode->GetItemChildren(itemID, childItemIDs, true);
     for (std::vector<vtkIdType>::iterator childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
       {
-      if (this->filterAcceptsItem(*childIt))
+      if (this->filterAcceptsItem(*childIt) != Reject)
         {
         isChildShown = true;
         break;
         }
       }
-    if (!isChildShown)
+    if (isChildShown)
       {
-      return false;
+      return AcceptDueToBeingParentOfAccepted;
+      }
+    else
+      {
+      return Reject;
       }
     }
 
   // All criteria were met
-  return true;
+  return Accept;
 }
 
 //------------------------------------------------------------------------------
 Qt::ItemFlags qMRMLSortFilterSubjectHierarchyProxyModel::flags(const QModelIndex & index)const
 {
   vtkIdType itemID = this->subjectHierarchyItemFromIndex(index);
-  bool isSelectable = this->filterAcceptsItem(itemID, false);
+  bool isSelectable = (this->filterAcceptsItem(itemID) == Accept);
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(itemID, index.column());
   if (!item)
