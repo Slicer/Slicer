@@ -76,6 +76,14 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
   /// A value of -1 hides it. Hidden by default (value of -1)
   Q_PROPERTY (int idColumn READ idColumn WRITE setIDColumn)
 
+  /// This property controls whether an extra item is added before any subject hierarchy item under
+  /// the scene item for indicating 'None' selection. Especially useful for comboboxes.
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
+  /// This property controls the name that is displayed for the None item.
+  /// "None" by default.
+  /// \sa noneItemEnabled
+  Q_PROPERTY(QString noneDisplay READ noneDisplay WRITE setNoneDisplay)
+
 public:
   typedef QStandardItemModel Superclass;
   qMRMLSubjectHierarchyModel(QObject *parent=nullptr);
@@ -111,6 +119,12 @@ public:
 
   int idColumn()const;
   void setIDColumn(int column);
+
+  bool noneEnabled()const;
+  void setNoneEnabled(bool enable);
+
+  QString noneDisplay()const;
+  void setNoneDisplay(const QString& displayName);
 
   Qt::DropActions supportedDropActions()const override;
   QMimeData* mimeData(const QModelIndexList& indexes)const override;

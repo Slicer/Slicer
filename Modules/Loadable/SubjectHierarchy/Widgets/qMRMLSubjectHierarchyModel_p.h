@@ -79,6 +79,9 @@ public:
   /// Get terminologies module logic. If not found in cache get from module object
   vtkSlicerTerminologiesModuleLogic* terminologiesModuleLogic();
 
+  /// Get extra item identifier
+  const QString extraItemIdentifier() { return QString("ExtraItem"); };
+
 public:
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   int PendingItemModified;
@@ -89,6 +92,9 @@ public:
   int ColorColumn;
   int TransformColumn;
   int DescriptionColumn;
+
+  bool NoneEnabled;
+  QString NoneDisplay;
 
   QIcon VisibleIcon;
   QIcon HiddenIcon;

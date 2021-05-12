@@ -958,6 +958,50 @@ void qMRMLSubjectHierarchyTreeView::setSelectRoleSubMenuVisible(bool visible)
   d->SelectRoleSubMenuVisible = visible;
 }
 
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::noneEnabled()const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  if (!d->Model)
+    {
+    return false;
+    }
+  return d->Model->noneEnabled();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setNoneEnabled(bool enable)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (!d->Model)
+    {
+    return;
+    }
+  d->Model->setNoneEnabled(enable);
+}
+
+//--------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyTreeView::noneDisplay()const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  if (!d->Model)
+    {
+    return QString();
+    }
+  return d->Model->noneDisplay();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setNoneDisplay(const QString& displayName)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (!d->Model)
+    {
+    return;
+    }
+  d->Model->setNoneDisplay(displayName);
+}
+
 //-----------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setIncludeItemAttributeNamesFilter(QStringList filter)
 {
@@ -1398,16 +1442,25 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
       continue;
       }
     vtkIdType itemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(index);
-    if (itemID)
-      {
-      selectedShItems << itemID;
-      }
+    selectedShItems << itemID;
+    }
+  // Make sure None selection is not mixed with valid item selection
+  if (selectedShItems.contains(0) && selectedShItems.size() > 1)
+    {
+    selectedShItems.removeAll(0);
     }
 
-  // If no item was selected, then the scene is considered to be selected
+  // If no item was selected, then the scene is considered to be selected unless None item is enabled
   if (selectedShItems.count() == 0)
     {
-    selectedShItems << d->SubjectHierarchyNode->GetSceneItemID();
+    if (!this->noneEnabled())
+      {
+      selectedShItems << d->SubjectHierarchyNode->GetSceneItemID();
+      }
+    else
+      {
+      selectedShItems << vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+      }
     }
 
   // Set current item(s) to plugin handler
@@ -1425,12 +1478,7 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
     }
 
   // Emit current item changed signal
-  vtkIdType newCurrentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-  if (selectedIndices.count() > 0)
-    {
-    newCurrentItemID = d->SortFilterModel->subjectHierarchyItemFromIndex(selectedIndices[0]);
-    }
-  emit currentItemChanged(newCurrentItemID);
+  emit currentItemChanged(selectedShItems[0]);
   emit currentItemsChanged(selectedShItems);
 }
 
@@ -2013,7 +2061,7 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
   // Go through all given items
   foreach (vtkIdType itemID, itemIDs)
     {
-    if (itemID == d->SubjectHierarchyNode->GetSceneItemID())
+    if (itemID == d->SubjectHierarchyNode->GetSceneItemID() || !itemID)
       {
       continue;
       }

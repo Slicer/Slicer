@@ -58,6 +58,7 @@ public:
 public:
   int MaximumNumberOfShownItems;
   bool AlignPopupVertically;
+  bool ShowCurrentItemParents;
 
   qMRMLSubjectHierarchyTreeView* TreeView;
   QLabel* NoItemLabel;
@@ -68,6 +69,7 @@ qMRMLSubjectHierarchyComboBoxPrivate::qMRMLSubjectHierarchyComboBoxPrivate(qMRML
   : q_ptr(&object)
   , MaximumNumberOfShownItems(20)
   , AlignPopupVertically(true)
+  , ShowCurrentItemParents(true)
   , TreeView(nullptr)
   , NoItemLabel(nullptr)
 {
@@ -469,6 +471,60 @@ void qMRMLSubjectHierarchyComboBox::setAlignPopupVertically(bool align)
   d->AlignPopupVertically = align;
 }
 
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyComboBox::noneEnabled()const
+{
+  if (!this->model())
+    {
+    return false;
+    }
+  return this->model()->noneEnabled();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setNoneEnabled(bool enable)
+{
+  if (!this->model())
+    {
+    return;
+    }
+  this->model()->setNoneEnabled(enable);
+}
+
+//--------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyComboBox::noneDisplay()const
+{
+  if (!this->model())
+    {
+    return QString();
+    }
+  return this->model()->noneDisplay();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setNoneDisplay(const QString& displayName)
+{
+  if (!this->model())
+    {
+    return;
+    }
+  this->model()->setNoneDisplay(displayName);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyComboBox::showCurrentItemParents()const
+{
+  Q_D(const qMRMLSubjectHierarchyComboBox);
+  return d->ShowCurrentItemParents;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setShowCurrentItemParents(bool show)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  d->ShowCurrentItemParents = show;
+}
+
 //-----------------------------------------------------------------------------
 void qMRMLSubjectHierarchyComboBox::showPopup()
 {
@@ -520,8 +576,10 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   else
     {
     // Height based on the number of items
-    const int numberOfRows = qMin(displayedItemCount, d->MaximumNumberOfShownItems);
-    popupHeight = numberOfRows * d->TreeView->sizeHintForRow(0);
+    const int numberOfShownShItems = qMin(displayedItemCount, d->MaximumNumberOfShownItems);
+    const int numberOfRows = (this->noneEnabled() ? numberOfShownShItems + 1 : numberOfShownShItems);
+    const int referenceRowHeight = (this->noneEnabled() ? d->TreeView->sizeHintForRow(1) : d->TreeView->sizeHintForRow(0));
+    popupHeight = numberOfRows * referenceRowHeight;
 
     // Add tree view margins for the height
     // NB: not needed for the width as the item labels will be cropped
@@ -602,6 +660,14 @@ void qMRMLSubjectHierarchyComboBox::mousePressEvent(QMouseEvent* e)
 void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selectedShItemID)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
+
+  // Hide popup
+  QFrame* container = qobject_cast<QFrame*>(this->view()->parentWidget());
+  if (container)
+    {
+    container->hide();
+    }
+
   vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();
   if (!shNode)
     {
@@ -612,29 +678,35 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
     }
   if (!selectedShItemID)
     {
-    this->setDefaultText("Select subject hierarchy item");
+    if (this->noneEnabled())
+      {
+      this->setDefaultText(this->noneDisplay());
+      }
+    else
+      {
+      this->setDefaultText("Select subject hierarchy item");
+      }
     this->setDefaultIcon(QIcon());
     return;
     }
 
-  // Hide popup
-  QFrame* container = qobject_cast<QFrame*>(this->view()->parentWidget());
-  container->hide();
-
   // Assemble title for selected item
   QString titleText(shNode->GetItemName(selectedShItemID).c_str());
-  vtkIdType parentItemID = shNode->GetItemParent(selectedShItemID);
-  while (parentItemID != shNode->GetSceneItemID() && parentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (d->ShowCurrentItemParents)
     {
-    titleText.prepend(" / ");
-    QString parentItemName(shNode->GetItemName(parentItemID).c_str());
-    if (parentItemName.length() > 21)
+    vtkIdType parentItemID = shNode->GetItemParent(selectedShItemID);
+    while (parentItemID != shNode->GetSceneItemID() && parentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
-      // Truncate item name if too long
-      parentItemName = parentItemName.left(9) + "..." + parentItemName.right(9);
+      titleText.prepend(" / ");
+      QString parentItemName(shNode->GetItemName(parentItemID).c_str());
+      if (parentItemName.length() > 21)
+        {
+        // Truncate item name if too long
+        parentItemName = parentItemName.left(9) + "..." + parentItemName.right(9);
+        }
+      titleText.prepend(parentItemName);
+      parentItemID = shNode->GetItemParent(parentItemID);
       }
-    titleText.prepend(parentItemName);
-    parentItemID = shNode->GetItemParent(parentItemID);
     }
   this->setDefaultText(titleText);
 

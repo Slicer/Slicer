@@ -65,10 +65,12 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   , ColorColumn(-1)
   , TransformColumn(-1)
   , DescriptionColumn(-1)
+  , NoneEnabled(false)
   , SubjectHierarchyNode(nullptr)
   , MRMLScene(nullptr)
   , TerminologiesModuleLogic(nullptr)
   , IsDroppedInside(false)
+  , NoneDisplay(qMRMLSubjectHierarchyModel::tr("None"))
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->PendingItemModified = -1; // -1 means not updating
@@ -472,7 +474,12 @@ int qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(vtkIdType itemID)const
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return -1;
     }
-  return d->SubjectHierarchyNode->GetItemPositionUnderParent(itemID);
+  int extraItemCount = 0;
+  if (d->NoneEnabled && d->SubjectHierarchyNode->GetItemParent(itemID) == d->SubjectHierarchyNode->GetSceneItemID())
+    {
+    ++extraItemCount;
+    }
+  return d->SubjectHierarchyNode->GetItemPositionUnderParent(itemID) + extraItemCount;
 }
 
 //------------------------------------------------------------------------------
@@ -680,8 +687,12 @@ bool qMRMLSubjectHierarchyModel::dropMimeData( const QMimeData *data, Qt::DropAc
 {
   Q_D(qMRMLSubjectHierarchyModel);
   Q_UNUSED(column);
-  // We want to do drag&drop only into the first item of a line (and not on a
-  // random column.
+  // Prevent dropping above the None item
+  if (d->NoneEnabled && row == 0 && parent == this->subjectHierarchySceneIndex())
+    {
+    return false;
+    }
+  // We want to do drag&drop only into the first item of a line (and not on a random column)
   d->IsDroppedInside = true;
   bool res = this->Superclass::dropMimeData(
     data, action, row, 0, parent.sibling(parent.row(), 0));
@@ -746,13 +757,36 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
   // Remove rows before populating
   this->subjectHierarchySceneItem()->removeRows(0, this->subjectHierarchySceneItem()->rowCount());
 
+  // Insert None item on top if enabled
+  if (d->NoneEnabled)
+    {
+    QList<QStandardItem*> items;
+    for (int col=0; col<this->columnCount(); ++col)
+      {
+      QStandardItem* newItem = new QStandardItem();
+      newItem->setData(d->extraItemIdentifier(), Qt::WhatsThisRole);
+      if (col == this->nameColumn())
+        {
+        newItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+        newItem->setText(d->NoneDisplay);
+        newItem->setToolTip("Indicate empty selection");
+        }
+      else
+        {
+        newItem->setFlags(nullptr);
+        }
+      items.append(newItem);
+      }
+    this->subjectHierarchySceneItem()->insertRow(0, items);
+    }
+
   // Populate subject hierarchy with the items
   std::vector<vtkIdType> allItemIDs;
   d->SubjectHierarchyNode->GetItemChildren(d->SubjectHierarchyNode->GetSceneItemID(), allItemIDs, true);
   for (std::vector<vtkIdType>::iterator itemIt=allItemIDs.begin(); itemIt!=allItemIDs.end(); ++itemIt)
     {
     vtkIdType itemID = (*itemIt);
-    int index = d->SubjectHierarchyNode->GetItemPositionUnderParent(itemID);
+    int index = this->subjectHierarchyItemIndex(itemID);
     d->insertSubjectHierarchyItem(itemID, index);
     }
 
@@ -852,7 +886,7 @@ QStandardItem* qMRMLSubjectHierarchyModel::insertSubjectHierarchyItem(vtkIdType 
 
   // Insert an invalid item in the cache to indicate that the subject hierarchy item is in the
   // model but we don't know its index yet. This is needed because a custom widget may be notified
-  // abot row insertion before insertRow() returns (and the RowCache entry is added).
+  // about row insertion before insertRow() returns (and the RowCache entry is added).
   d->RowCache[itemID] = QModelIndex();
   parent->insertRow(row, items);
   d->RowCache[itemID] = items[0]->index();
@@ -912,6 +946,12 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
 void qMRMLSubjectHierarchyModel::updateItemFromSubjectHierarchyItem(QStandardItem* item, vtkIdType shItemID, int column)
 {
   Q_D(qMRMLSubjectHierarchyModel);
+
+  if (item->data(Qt::WhatsThisRole).toString() == d->extraItemIdentifier())
+    {
+    return;
+    }
+
   // We are going to make potentially multiple changes to the item. We want to refresh
   // the subject hierarchy item only once, so we "block" the updates in onItemChanged().
   d->PendingItemModified = 0;
@@ -1132,7 +1172,7 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
     {
     if (item->data(Qt::WhatsThisRole).toString().isEmpty())
       {
-      item->setData( "Transform", Qt::WhatsThisRole );
+      item->setData("Transform", Qt::WhatsThisRole);
       }
 
     QIcon icon;
@@ -1745,6 +1785,48 @@ void qMRMLSubjectHierarchyModel::setDescriptionColumn(int column)
   Q_D(qMRMLSubjectHierarchyModel);
   d->DescriptionColumn = column;
   this->updateColumnCount();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModel::setNoneEnabled(bool enable)
+{
+  Q_D(qMRMLSubjectHierarchyModel);
+  if (d->NoneEnabled == enable)
+    {
+    return;
+    }
+  d->NoneEnabled = enable;
+  this->rebuildFromSubjectHierarchy();
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyModel::noneEnabled()const
+{
+  Q_D(const qMRMLSubjectHierarchyModel);
+  return d->NoneEnabled;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModel::setNoneDisplay(const QString& displayName)
+{
+  Q_D(qMRMLSubjectHierarchyModel);
+  if (d->NoneDisplay == displayName)
+    {
+    return;
+    }
+  d->NoneDisplay = displayName;
+
+  if (d->NoneEnabled)
+    {
+    this->subjectHierarchySceneItem()->child(0, this->nameColumn())->setText(d->NoneDisplay);
+    }
+}
+
+//--------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyModel::noneDisplay()const
+{
+  Q_D(const qMRMLSubjectHierarchyModel);
+  return d->NoneDisplay;
 }
 
 //------------------------------------------------------------------------------

@@ -73,6 +73,14 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool transformColumnVisible READ transformColumnVisible WRITE setTransformColumnVisible)
   Q_PROPERTY(bool descriptionColumnVisible READ descriptionColumnVisible WRITE setDescriptionColumnVisible)
 
+  /// This property controls whether an extra item is added before any subject hierarchy item under
+  /// the scene item for indicating 'None' selection.
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
+  /// This property controls the name that is displayed for the None item.
+  /// "None" by default.
+  /// \sa noneItemEnabled
+  Q_PROPERTY(QString noneDisplay READ noneDisplay WRITE setNoneDisplay)
+
   /// Filter to show only items that contain any of the given attributes with this name. Empty by default
   Q_PROPERTY(QStringList includeItemAttributeNamesFilter READ includeItemAttributeNamesFilter WRITE setIncludeItemAttributeNamesFilter)
   /// Filter to show only items for data nodes that contain any of the given attributes with this name. Empty by default
@@ -188,6 +196,8 @@ public:
   bool contextMenuEnabled()const;
   bool editMenuActionVisible()const;
   bool selectRoleSubMenuVisible()const;
+  bool noneEnabled()const;
+  QString noneDisplay()const;
 
   /// Set visibility column visibility
   void setVisibilityColumnVisible(bool visible);
@@ -270,6 +280,8 @@ public slots:
   void setContextMenuEnabled(bool enabled);
   void setEditMenuActionVisible(bool visible);
   void setSelectRoleSubMenuVisible(bool visible);
+  void setNoneEnabled(bool enable);
+  void setNoneDisplay(const QString& displayName);
 
   /// Resets column sizes and size policies to default.
   void resetColumnSizesToDefault();

@@ -56,6 +56,17 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
   /// If aligned, the popup will shift vertically so that the selected item overlays above the combobox.
   /// Else, the popup tree appears below the combobox, like for a qMRMLNodeComboBox.
   Q_PROPERTY(bool alignPopupVertically READ alignPopupVertically WRITE setAlignPopupVertically)
+  /// This property controls whether an extra item is added before any subject hierarchy item under
+  /// the scene item for indicating 'None' selection.
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
+  /// This property controls the name that is displayed for the None item.
+  /// "None" by default.
+  /// \sa noneItemEnabled
+  Q_PROPERTY(QString noneDisplay READ noneDisplay WRITE setNoneDisplay)
+  /// This property controls whether hierarchy information is included in the current item text (showed when collapsed).
+  /// If enabled (which is the default), then the text looks like "[ParentName] / [ParentName] / [SelectedItemName]".
+  /// If disabled, the title will only be "[SelectedItemName]".
+  Q_PROPERTY(bool showCurrentItemParents READ showCurrentItemParents WRITE setShowCurrentItemParents)
 
   /// Filter to show only items that contain any of the given attributes with this name. Empty by default
   Q_PROPERTY(QStringList includeItemAttributeNamesFilter READ includeItemAttributeNamesFilter WRITE setIncludeItemAttributeNamesFilter)
@@ -101,6 +112,15 @@ public:
 
   bool alignPopupVertically()const;
   void setAlignPopupVertically(bool align);
+
+  bool noneEnabled()const;
+  void setNoneEnabled(bool enable);
+
+  QString noneDisplay()const;
+  void setNoneDisplay(const QString& displayName);
+
+  bool showCurrentItemParents()const;
+  void setShowCurrentItemParents(bool enable);
 
   QStringList includeItemAttributeNamesFilter()const;
   QStringList includeNodeAttributeNamesFilter()const;
