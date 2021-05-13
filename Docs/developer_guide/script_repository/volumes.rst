@@ -142,8 +142,9 @@ Show volume rendering using maximum intensity projection
 
 .. code-block:: python
 
-   def showVolumeRenderingMIP(volumeNode):
+   def showVolumeRenderingMIP(volumeNode, useSliceViewColors=True):
        """Render volume using maximum intensity projection
+       :param useSliceViewColors: use the same colors as in slice views.
        """
        # Get/create volume rendering display node
        volRenLogic = slicer.modules.volumerendering.logic()
@@ -151,13 +152,16 @@ Show volume rendering using maximum intensity projection
        if not displayNode:
            displayNode = volRenLogic.CreateDefaultVolumeRenderingNodes(volumeNode)
        # Choose MIP volume rendering preset
-       scalarRange = volumeNode.GetImageData().GetScalarRange()
-       if scalarRange[1]-scalarRange[0] < 1500:
-           # Small dynamic range, probably MRI
-           displayNode.GetVolumePropertyNode().Copy(volRenLogic.GetPresetByName("MR-MIP"))
+       if useSliceViewColors:
+           volRenLogic.CopyDisplayToVolumeRenderingDisplayNode(displayNode)
        else:
-           # Larger dynamic range, probably CT
-           displayNode.GetVolumePropertyNode().Copy(volRenLogic.GetPresetByName("CT-MIP"))
+           scalarRange = volumeNode.GetImageData().GetScalarRange()
+           if scalarRange[1]-scalarRange[0] < 1500:
+               # Small dynamic range, probably MRI
+               displayNode.GetVolumePropertyNode().Copy(volRenLogic.GetPresetByName("MR-MIP"))
+           else:
+               # Larger dynamic range, probably CT
+               displayNode.GetVolumePropertyNode().Copy(volRenLogic.GetPresetByName("CT-MIP"))
        # Switch views to MIP mode
        for viewNode in slicer.util.getNodesByClass("vtkMRMLViewNode"):
            viewNode.SetRaycastTechnique(slicer.vtkMRMLViewNode.MaximumIntensityProjection)
