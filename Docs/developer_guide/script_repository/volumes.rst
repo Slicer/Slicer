@@ -140,61 +140,62 @@ To show volume rendering of a volume automatically when it is loaded, add the li
 Show volume rendering using maximum intensity projection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-```python
-def showVolumeRenderingMIP(volumeNode):
-    """Render volume using maximum intensity projection
-    """
-    # Get/create volume rendering display node
-    volRenLogic = slicer.modules.volumerendering.logic()
-    displayNode = volRenLogic.GetFirstVolumeRenderingDisplayNode(volumeNode)
-    if not displayNode:
-        displayNode = volRenLogic.CreateDefaultVolumeRenderingNodes(volumeNode)
-    # Choose MIP volume rendering preset
-    scalarRange = volumeNode.GetImageData().GetScalarRange()
-    if scalarRange[1]-scalarRange[0] < 1500:
-        # Small dynamic range, probably MRI
-        displayNode.GetVolumePropertyNode().Copy(volRenLogic.GetPresetByName("MR-MIP"))
-    else:
-        # Larger dynamic range, probably CT
-        displayNode.GetVolumePropertyNode().Copy(volRenLogic.GetPresetByName("CT-MIP"))
-    # Switch views to MIP mode
-    for viewNode in slicer.util.getNodesByClass("vtkMRMLViewNode"):
-        viewNode.SetRaycastTechnique(slicer.vtkMRMLViewNode.MaximumIntensityProjection)
-    # Show volume rendering
-    displayNode.SetVisibility(True)
+.. code-block:: python
 
-volumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
-showVolumeRenderingMIP(volumeNode)
-```
+   def showVolumeRenderingMIP(volumeNode):
+       """Render volume using maximum intensity projection
+       """
+       # Get/create volume rendering display node
+       volRenLogic = slicer.modules.volumerendering.logic()
+       displayNode = volRenLogic.GetFirstVolumeRenderingDisplayNode(volumeNode)
+       if not displayNode:
+           displayNode = volRenLogic.CreateDefaultVolumeRenderingNodes(volumeNode)
+       # Choose MIP volume rendering preset
+       scalarRange = volumeNode.GetImageData().GetScalarRange()
+       if scalarRange[1]-scalarRange[0] < 1500:
+           # Small dynamic range, probably MRI
+           displayNode.GetVolumePropertyNode().Copy(volRenLogic.GetPresetByName("MR-MIP"))
+       else:
+           # Larger dynamic range, probably CT
+           displayNode.GetVolumePropertyNode().Copy(volRenLogic.GetPresetByName("CT-MIP"))
+       # Switch views to MIP mode
+       for viewNode in slicer.util.getNodesByClass("vtkMRMLViewNode"):
+           viewNode.SetRaycastTechnique(slicer.vtkMRMLViewNode.MaximumIntensityProjection)
+       # Show volume rendering
+       displayNode.SetVisibility(True)
+
+   volumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
+   showVolumeRenderingMIP(volumeNode)
+
 
 Show volume rendering making soft tissues transparent
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-```python
-def showTransparentRendering(volumeNode, maxOpacity=0.2, gradientThreshold=30.0):
-    """Make constant regions transparent and the entire volume somewhat transparent
-    :param maxOpacity: lower value makes the volume more transparent overall
-      (value is between 0.0 and 1.0)
-    :param gradientThreshold: regions that has gradient value below this threshold will be made transparent
-      (minimum value is 0.0, higher values make more tissues transparent, starting with soft tissues)
-    """
-    # Get/create volume rendering display node
-    volRenLogic = slicer.modules.volumerendering.logic()
-    displayNode = volRenLogic.GetFirstVolumeRenderingDisplayNode(volumeNode)
-    if not displayNode:
-        displayNode = volRenLogic.CreateDefaultVolumeRenderingNodes(volumeNode)
-    # Set up gradient vs opacity transfer function
-    gradientOpacityTransferFunction = displayNode.GetVolumePropertyNode().GetVolumeProperty().GetGradientOpacity()
-    gradientOpacityTransferFunction.RemoveAllPoints()
-    gradientOpacityTransferFunction.AddPoint(0, 0.0)
-    gradientOpacityTransferFunction.AddPoint(gradientThreshold-1, 0.0)
-    gradientOpacityTransferFunction.AddPoint(gradientThreshold+1, maxOpacity)
-    # Show volume rendering
-    displayNode.SetVisibility(True)
+.. code-block:: python
 
-volumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
-showTransparentRendering(volumeNode, 0.2, 30.0)
-```
+   def showTransparentRendering(volumeNode, maxOpacity=0.2, gradientThreshold=30.0):
+       """Make constant regions transparent and the entire volume somewhat transparent
+       :param maxOpacity: lower value makes the volume more transparent overall
+         (value is between 0.0 and 1.0)
+       :param gradientThreshold: regions that has gradient value below this threshold will be made transparent
+         (minimum value is 0.0, higher values make more tissues transparent, starting with soft tissues)
+       """
+       # Get/create volume rendering display node
+       volRenLogic = slicer.modules.volumerendering.logic()
+       displayNode = volRenLogic.GetFirstVolumeRenderingDisplayNode(volumeNode)
+       if not displayNode:
+           displayNode = volRenLogic.CreateDefaultVolumeRenderingNodes(volumeNode)
+       # Set up gradient vs opacity transfer function
+       gradientOpacityTransferFunction = displayNode.GetVolumePropertyNode().GetVolumeProperty().GetGradientOpacity()
+       gradientOpacityTransferFunction.RemoveAllPoints()
+       gradientOpacityTransferFunction.AddPoint(0, 0.0)
+       gradientOpacityTransferFunction.AddPoint(gradientThreshold-1, 0.0)
+       gradientOpacityTransferFunction.AddPoint(gradientThreshold+1, maxOpacity)
+       # Show volume rendering
+       displayNode.SetVisibility(True)
+
+   volumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
+   showTransparentRendering(volumeNode, 0.2, 30.0)
 
 Automatically load volumes that are copied into a folder
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
