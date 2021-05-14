@@ -810,10 +810,11 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
     }
 
   this->TextActorOccluded = false;
-  if (this->TextActor->GetVisibility() && this->MarkupsNode)
+  if (this->TextActor->GetVisibility() && this->MarkupsNode && this->MarkupsDisplayNode)
     {
     // Only show text actor if at least one of the control points are visible
-    if (this->HideTextActorIfAllPointsOccluded)
+    if (this->HideTextActorIfAllPointsOccluded
+      && (!this->MarkupsDisplayNode->GetOccludedVisibility() || this->MarkupsDisplayNode->GetOccludedOpacity() <= 0.0))
     {
       this->TextActorOccluded = true;
       int numberOfControlPoints = this->MarkupsNode->GetNumberOfControlPoints();
