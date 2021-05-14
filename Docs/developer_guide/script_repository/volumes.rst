@@ -27,6 +27,16 @@ Additional options may be specified in ``properties`` argument. For example, loa
    - ``fileNames`` (string list): List of files to be loaded as a volume
    - ``colorNodeID`` (string): ID of the color node used to display the volume. Default is ``vtkMRMLColorTableNodeGrey`` for scalar volume and ``vtkMRMLColorTableNodeFileGenericColors.txt`` for labelmap volume.
 
+Save volume to file
+^^^^^^^^^^^^^^^^^^^
+
+Get the first volume node in the scene and save as .nrrd file. To save in any other supported file format, change the output file name.
+
+.. code-block:: python
+
+   volumeNode = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLScalarVolumeNode')
+   slicer.util.saveNode(volumeNode, "c:/tmp/test.nrrd")
+
 Load volume from .vti file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
