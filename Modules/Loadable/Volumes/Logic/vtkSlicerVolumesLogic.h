@@ -89,11 +89,6 @@ public:
   /// freesurfer volume formats. Used to assign the proper colour node to label maps.
   int IsFreeSurferVolume(const char* filename);
 
-  /// The currently active mrml volume node
-  void SetActiveVolumeNode(vtkMRMLVolumeNode *ActiveVolumeNode);
-  vtkMRMLVolumeNode* GetActiveVolumeNode()const;
-
-
   /// Register a factory method that can create and configure a node
   /// set (ArchetypeVolumeNodeSet) containing a volume node, display
   /// node, and storage node. The nodes are configured within the
@@ -314,7 +309,6 @@ protected:
       vtkStringArray *fileList);
 
 protected:
-  vtkSmartPointer<vtkMRMLVolumeNode> ActiveVolumeNode;
 
   NodeSetFactoryRegistry VolumeRegistry;
 

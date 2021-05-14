@@ -763,12 +763,6 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     scalarDisplayNode->SetUpperThreshold(node["upperThreshold"].toDouble());
     }
 
-  //set logic [$::slicer3::VolumesGUI GetLogic]
-  //$logic SetActiveVolumeNode $volumeNode
-  //volumesLogic()->SetActiveVolumeNode(volumeNode);
-
-  //[[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetActiveVolumeID [$volumeNode GetID]
-  //[$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
   this->ApplicationLogic->GetSelectionNode()
     ->SetActiveVolumeID(volumeNodeID.toUtf8());
   this->ApplicationLogic->PropagateVolumeSelection();
