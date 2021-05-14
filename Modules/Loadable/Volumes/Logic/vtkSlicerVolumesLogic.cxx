@@ -421,18 +421,6 @@ void vtkSlicerVolumesLogic::ProcessMRMLNodesEvents(vtkObject *vtkNotUsed(caller)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
-{
-  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, activeNode);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::GetActiveVolumeNode()const
-{
-  return this->ActiveVolumeNode;
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic
 ::SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode * displayNode,
                                   int labelMap, const char* vtkNotUsed(filename))
@@ -664,8 +652,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
 
     vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
     vtkDebugMacro("Display node "<<displayNode->GetClassName());
-
-    this->SetActiveVolumeNode(volumeNode);
 
     modified = true;
     }
@@ -1237,8 +1223,6 @@ void vtkSlicerVolumesLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "vtkSlicerVolumesLogic:             " << this->GetClassName() << "\n";
 
-  os << indent << "ActiveVolumeNode: " <<
-    (this->ActiveVolumeNode ? this->ActiveVolumeNode->GetName() : "(none)") << "\n";
   os << indent << "CompareVolumeGeometryEpsilon: "
      << this->CompareVolumeGeometryEpsilon << "\n";
   os << indent << "CompareVolumeGeometryPrecision: "
