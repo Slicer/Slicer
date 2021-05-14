@@ -50,7 +50,7 @@ Export labelmap that matches geometry of a chosen reference volume:
    labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
    slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(segmentationNode, labelmapVolumeNode, referenceVolumeNode)
 
-``Export a selection of segments (identified by their names):
+Export a selection of segments (identified by their names):
 
 .. code-block:: python
 
