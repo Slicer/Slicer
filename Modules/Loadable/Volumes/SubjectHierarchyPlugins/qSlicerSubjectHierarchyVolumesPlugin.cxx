@@ -426,7 +426,11 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
   // showing the specified volume
   QSet<vtkIdType> subjectHierarchyItemsToUpdate;
   this->collectShownVolumes(subjectHierarchyItemsToUpdate, layer);
-  subjectHierarchyItemsToUpdate.insert(shNode->GetItemByDataNode(node));
+  vtkIdType shItemId = shNode->GetItemByDataNode(node);
+  subjectHierarchyItemsToUpdate.insert(shItemId);
+
+  bool resetOrientation = d->resetViewOrientationOnShow();
+  bool resetFov = d->resetFieldOfViewOnShow();
 
   vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
@@ -445,8 +449,6 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
       {
       compositeNode->SetLabelVolumeID(node->GetID());
       }
-    bool resetOrientation = d->resetViewOrientationOnShow();
-    bool resetFov = d->resetFieldOfViewOnShow();
     if (resetOrientation || resetFov)
       {
       qMRMLSliceWidget* sliceWidget = d->sliceWidgetForSliceCompositeNode(compositeNode);
@@ -473,20 +475,40 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
     }
 
   // Volume rendering display
-  int numberOfDisplayNodes = node->GetNumberOfDisplayNodes();
-  for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
+  qSlicerSubjectHierarchyAbstractPlugin* volumeRenderingPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("VolumeRendering");
+  vtkNew<vtkIdList> allShItemIds;
+  allShItemIds->InsertNextId(shItemId);
+  if (volumeRenderingPlugin)
     {
-    vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(displayNodeIndex);
-    if (!displayNode)
+    std::vector<vtkMRMLNode*> allViewNodes;
+    scene->GetNodesByClass("vtkMRMLViewNode", allViewNodes);
+    int numberOfDisplayNodes = node->GetNumberOfDisplayNodes();
+    for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
       {
-      continue;
+      vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(displayNodeIndex);
+      if (!displayNode)
+        {
+        continue;
+        }
+      if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode))
+        {
+        // visibility in slice views is managed separately
+        continue;
+        }
+      for (vtkMRMLNode* node : allViewNodes)
+        {
+        vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(node);
+        if (!viewNode)
+          {
+          continue;
+          }
+        if (!displayNode->IsDisplayableInView(viewNode->GetID()))
+          {
+          continue;
+          }
+        volumeRenderingPlugin->showItemInView(shItemId, viewNode, allShItemIds);
+        }
       }
-    if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode))
-      {
-      // visibility in slice views is managed separately
-      continue;
-      }
-    displayNode->SetVisibility(true);
     }
 
   // Update scene model for subject hierarchy nodes that were just shown

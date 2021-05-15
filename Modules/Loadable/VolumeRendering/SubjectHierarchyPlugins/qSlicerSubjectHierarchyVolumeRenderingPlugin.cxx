@@ -220,7 +220,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::resetFieldOfView(vtkMRMLDispl
     {
     // FOV reset in all views is requested - do it in all views where the volume is visible in
     qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
-    if (layoutManager)
+    if (!layoutManager)
       {
       qCritical() << Q_FUNC_INFO << " failed: invalid layout manager";
       return;
