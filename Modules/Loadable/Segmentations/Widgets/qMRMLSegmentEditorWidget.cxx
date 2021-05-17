@@ -1219,7 +1219,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   d->EffectsOptionsFrame->setEnabled(d->SegmentationNode != nullptr);
   d->MasterVolumeNodeComboBox->setEnabled(d->SegmentationNode != nullptr);
 
-  double surfaceSmoothingFactor = 0;
+  double surfaceSmoothingFactor = 0.5;
   if (d->SegmentationNode && d->SegmentationNode->GetSegmentation())
     {
     surfaceSmoothingFactor = QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(
@@ -1228,7 +1228,11 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   bool wasBlocked = d->SurfaceSmoothingEnabledAction->blockSignals(true);
   d->SurfaceSmoothingEnabledAction->setChecked(surfaceSmoothingFactor >= 0.0);
   d->SurfaceSmoothingEnabledAction->blockSignals(wasBlocked);
+
+  wasBlocked = d->SurfaceSmoothingSlider->blockSignals(true);
+  d->SurfaceSmoothingSlider->setValue(surfaceSmoothingFactor);
   d->SurfaceSmoothingSlider->setEnabled(surfaceSmoothingFactor >= 0.0);
+  d->SurfaceSmoothingSlider->blockSignals(wasBlocked);
 
   QString selectedSegmentID;
   if (d->ParameterSetNode->GetSelectedSegmentID())
