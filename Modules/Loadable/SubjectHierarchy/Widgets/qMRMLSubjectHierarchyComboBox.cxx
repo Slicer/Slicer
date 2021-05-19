@@ -525,6 +525,20 @@ void qMRMLSubjectHierarchyComboBox::setShowCurrentItemParents(bool show)
   d->ShowCurrentItemParents = show;
 }
 
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyComboBox::showEmptyHierarchyItems()const
+{
+  Q_D(const qMRMLSubjectHierarchyComboBox);
+  return this->sortFilterProxyModel()->showEmptyHierarchyItems();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setShowEmptyHierarchyItems(bool show)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->setShowEmptyHierarchyItems(show);
+}
+
 //-----------------------------------------------------------------------------
 void qMRMLSubjectHierarchyComboBox::showPopup()
 {
