@@ -100,6 +100,7 @@ public:
     QStringList NodeTypes;
     QStringList HideChildNodeTypes;
     vtkIdType HideItemsUnaffiliatedWithItemID;
+    bool ShowEmptyHierarchyItems;
     QList<AttributeFilter> ItemAttributeFilters;
     QList<AttributeFilter> NodeAttributeFilters;
 };
@@ -113,6 +114,7 @@ qMRMLSortFilterSubjectHierarchyProxyModelPrivate::qMRMLSortFilterSubjectHierarch
   , NodeAttributeFilters(QList<AttributeFilter>())
   , HideChildNodeTypes(QStringList())
   , HideItemsUnaffiliatedWithItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  , ShowEmptyHierarchyItems(true)
 {
 }
 
@@ -558,9 +560,9 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setHideChildNodeTypes(const QStr
 }
 
 //-----------------------------------------------------------------------------
-vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::hideItemsUnaffiliatedWithItemID()
+vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::hideItemsUnaffiliatedWithItemID()const
 {
-  Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
+  Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
   return d->HideItemsUnaffiliatedWithItemID;
 }
 
@@ -573,6 +575,25 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setHideItemsUnaffiliatedWithItem
     return;
     }
   d->HideItemsUnaffiliatedWithItemID = itemID;
+  this->invalidateFilter();
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLSortFilterSubjectHierarchyProxyModel::showEmptyHierarchyItems()const
+{
+  Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
+  return d->ShowEmptyHierarchyItems;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSortFilterSubjectHierarchyProxyModel::setShowEmptyHierarchyItems(bool show)
+{
+  Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
+  if (d->ShowEmptyHierarchyItems == show)
+    {
+    return;
+    }
+  d->ShowEmptyHierarchyItems = show;
   this->invalidateFilter();
 }
 
@@ -978,6 +999,12 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
         return Reject;
         }
       }
+    }
+
+  // Hide hierarchy item if none of its children are accepted and the corresponding filter is turned on
+  if (!d->ShowEmptyHierarchyItems && (!dataNode || dataNode->IsA("vtkMRMLFolderDisplayNode")))
+    {
+    onlyAcceptIfAnyChildIsAccepted = true;
     }
 
   // If the visibility of an item depends on whether any of its children are shown, then evaluate that condition

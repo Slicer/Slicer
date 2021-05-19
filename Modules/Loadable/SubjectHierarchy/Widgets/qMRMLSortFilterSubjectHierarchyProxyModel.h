@@ -49,8 +49,14 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHier
   /// This property controls whether items unaffiliated with a given subject hierarchy item are hidden or not.
   /// All the nodes are visible (invalid item ID - vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) by default
   Q_PROPERTY(vtkIdType hideItemsUnaffiliatedWithItemID READ hideItemsUnaffiliatedWithItemID WRITE setHideItemsUnaffiliatedWithItemID)
+  /// Show hierarchy items (items without data node such as patient/study/folder) that have no children to show
+  /// according to the filters.
+  /// This is most useful to in off state keep combobox content reasonable size for selecting data nodes.
+  /// True by default.
+  Q_PROPERTY(bool showEmptyHierarchyItems READ showEmptyHierarchyItems WRITE setShowEmptyHierarchyItems)
   /// Filter to show only items of a certain level (and their parents). If empty, then show all
   Q_PROPERTY(QStringList levelFilter READ levelFilter WRITE setLevelFilter)
+
   /// This property controls which items are visible. The MRML node class name must be provided.
   /// An empty list means all the nodes are visible (default).
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
@@ -132,8 +138,11 @@ public:
   /// Remove all node attribute filters specifying a given attribute name and include flag
   Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, bool include);
 
-  Q_INVOKABLE vtkIdType hideItemsUnaffiliatedWithItemID();
-  Q_INVOKABLE void setHideItemsUnaffiliatedWithItemID(vtkIdType itemID);
+  vtkIdType hideItemsUnaffiliatedWithItemID()const;
+  void setHideItemsUnaffiliatedWithItemID(vtkIdType itemID);
+
+  bool showEmptyHierarchyItems()const;
+  void setShowEmptyHierarchyItems(bool show);
 
   /// Retrieve the index of the MRML scene (the root item) in the subject hierarchy tree
   Q_INVOKABLE QModelIndex subjectHierarchySceneIndex()const;

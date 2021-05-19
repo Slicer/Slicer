@@ -67,6 +67,11 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
   /// If enabled (which is the default), then the text looks like "[ParentName] / [ParentName] / [SelectedItemName]".
   /// If disabled, the title will only be "[SelectedItemName]".
   Q_PROPERTY(bool showCurrentItemParents READ showCurrentItemParents WRITE setShowCurrentItemParents)
+  /// Show hierarchy items (items without data node such as patient/study/folder) that have no children to show
+  /// according to the filters.
+  /// This is most useful to in off state keep combobox content reasonable size for selecting data nodes.
+  /// True by default.
+  Q_PROPERTY(bool showEmptyHierarchyItems READ showEmptyHierarchyItems WRITE setShowEmptyHierarchyItems)
 
   /// Filter to show only items that contain any of the given attributes with this name. Empty by default
   Q_PROPERTY(QStringList includeItemAttributeNamesFilter READ includeItemAttributeNamesFilter WRITE setIncludeItemAttributeNamesFilter)
@@ -121,6 +126,9 @@ public:
 
   bool showCurrentItemParents()const;
   void setShowCurrentItemParents(bool enable);
+
+  bool showEmptyHierarchyItems()const;
+  void setShowEmptyHierarchyItems(bool show);
 
   QStringList includeItemAttributeNamesFilter()const;
   QStringList includeNodeAttributeNamesFilter()const;
