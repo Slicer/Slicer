@@ -66,6 +66,14 @@ If a view is displayed only in selected views, you can right-click on the item a
 
 If view link is enabled for a slice view then dragging a volume to any of the views will show the volume in all the views in that group.
 
+Display options can be adjusted by right-clicking the eye icon in the display column of the tree. Note that these options are different from options that are offered when right-clicking on the "Node" or "Transform" column in the tree.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_sh_display_menu.png)
+
+For volumes, display options include:
+- Reset field of view on show: if enabled, then showing a volume makes adjust views to show the volume in the center, filling the field of view.
+- Reset view orientation on show: if enabled, then showing a volume makes the slice views aligned with the volume axes.
+
 ## Interacting with views
 
 ### View Cross-Reference
