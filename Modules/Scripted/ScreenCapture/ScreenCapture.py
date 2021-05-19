@@ -910,7 +910,9 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
   def ffmpegDownload(self):
     ffmpegTargetDirectory = self.getDownloadedFfmpegDirectory()
-    filePath = slicer.app.temporaryPath + '/ffmpeg-package.zip'
+    # The number in the filePath can be incremented each time a significantly different ffmpeg version
+    # is to be introduced (it prevents reusing a previously downloaded package).
+    filePath = slicer.app.temporaryPath + '/ffmpeg-package-slicer-01.zip'
     success = self.unzipFfmpeg(filePath, ffmpegTargetDirectory)
     if success:
       # there was a valid downloaded package already
@@ -919,7 +921,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     # List of mirror sites to attempt download ffmpeg pre-built binaries from
     urls = []
     if os.name == 'nt':
-      urls.append('https://github.com/Slicer/SlicerBinaryDependencies/releases/download/ffmpeg/ffmpeg-3.2.4-win64-static.zip')
+      urls.append('https://github.com/Slicer/SlicerBinaryDependencies/releases/download/ffmpeg/ffmpeg-2021-05-16-win64.zip')
     else:
       # TODO: implement downloading for Linux/MacOS?
       pass
