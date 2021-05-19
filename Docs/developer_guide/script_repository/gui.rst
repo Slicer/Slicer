@@ -1108,3 +1108,17 @@ Install a module directly from a git repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This `code snippet <https://gist.github.com/pieper/a9c0ba57de3833c9f5aea68247bda597>`__ can be useful for sharing code in development without requiring a restart of Slicer.
+
+Install a Python package
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Python packages that are optional or would be impractical to bundle into the extension can be installed at runtime. It is recommended to only install a package when it is actually needed (not at startup, not even when the user opens a module, but just before that Python package is used the first time), and ask the user about it (if it is more than just a few megabytes).
+
+.. code-block:: python
+
+   try:
+     import flywheel
+   except ModuleNotFoundError as e:
+     if slicer.util.confirmOkCancelDisplay("This module requires 'flywheel-sdk' Python package. Click OK to install it now."):
+       slicer.util.pip_install("flywheel-sdk")
+       import flywheel
