@@ -69,9 +69,12 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
       '1.2.840.10008.5.1.4.1.1.12.2',  # X-Ray Fluoroscopy Image Storage
       '1.2.840.10008.5.1.4.1.1.3.1',  # Ultrasound Multiframe Image Storage
       '1.2.840.10008.5.1.4.1.1.6.1',  # Ultrasound Image Storage
-      '1.2.840.10008.5.1.4.1.1.7',  # Secondary Capture Image Storage (only accepted if modality is US or XA or RF)
+      '1.2.840.10008.5.1.4.1.1.7',  # Secondary Capture Image Storage (only accepted for modalities that typically acquire 2D image sequences)
       '1.2.840.10008.5.1.4.1.1.4',  # MR Image Storage (will be only accepted if cine-MRI)
       ]
+
+    # Modalities that typically acquire 2D image sequences:
+    suppportedSecondaryCaptureModalities = ['US', 'XA', 'RF', 'ES']
 
     # Each instance will be a loadable, that will result in one sequence browser node
     # and usually one sequence (except simultaneous biplane acquisition, which will
@@ -122,7 +125,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
       else:
         modality = slicer.dicomDatabase.fileValue(filePath, self.tags['modality'])
         if sopClassUID == '1.2.840.10008.5.1.4.1.1.7':  # Secondary Capture Image Storage
-          if modality != 'US' and modality != 'XA' and modality != 'RF':
+          if modality not in suppportedSecondaryCaptureModalities:
             # practice of dumping secondary capture images into the same series
             # is only prevalent in US and XA/RF modalities
             continue
