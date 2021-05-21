@@ -124,6 +124,7 @@ if(NOT PACKAGEUPLOAD)
     # Variables set by SlicerMacroExtractRepositoryInfo
     Slicer_REVISION
     Slicer_WC_LAST_CHANGED_DATE
+    Slicer_WC_URL
     )
     if(NOT DEFINED ${varname})
       message(FATAL_ERROR "Variable ${varname} is expected to be defined.")
@@ -297,6 +298,8 @@ Check that:
         --api-url ${SLICER_PACKAGE_MANAGER_URL}/api/v1
         --api-key ${SLICER_PACKAGE_MANAGER_API_KEY}
           package upload Slicer ${p}
+            --repo_type git
+            --repo_url ${Slicer_WC_URL}
             --os ${Slicer_OS}
             --arch ${Slicer_ARCHITECTURE}
             --name Slicer
