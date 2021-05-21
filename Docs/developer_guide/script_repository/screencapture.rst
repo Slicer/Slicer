@@ -68,8 +68,8 @@ Capture slice view into PNG file with white background
 
    # Set view background to white
    view = slicer.app.layoutManager().sliceWidget(sliceViewName).sliceView()
-   renderer = view.renderWindow().GetRenderers().GetFirstRenderer()
-   renderer.SetBackground(1,1,1)
+   view.setBackgroundColor(qt.QColor.fromRgbF(1,1,1))
+   view.forceRender()
 
    # Capture a screenshot
    import ScreenCapture
