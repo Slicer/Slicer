@@ -556,3 +556,33 @@ vtkMRMLUnitNode* vtkMRMLMeasurement::GetUnitNode(const char* quantityName)
   // that case hundreds of warnings would be thrown in a non erroneous situation.
   return unitNode;
 }
+
+//----------------------------------------------------------------------------
+vtkCodedEntry* vtkMRMLMeasurement::GetQuantityCode()
+{
+  return this->QuantityCode;
+}
+
+//----------------------------------------------------------------------------
+vtkCodedEntry* vtkMRMLMeasurement::GetDerivationCode()
+{
+  return this->DerivationCode;
+}
+
+//----------------------------------------------------------------------------
+vtkCodedEntry* vtkMRMLMeasurement::GetUnitsCode()
+{
+  return this->UnitsCode;
+}
+
+//----------------------------------------------------------------------------
+vtkCodedEntry* vtkMRMLMeasurement::GetMethodCode()
+{
+  return this->MethodCode;
+}
+
+//----------------------------------------------------------------------------
+vtkPolyData* vtkMRMLMeasurement::GetMeshValue()
+{
+  return this->MeshValue;
+}
