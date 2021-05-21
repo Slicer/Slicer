@@ -155,19 +155,19 @@ public:
 
   /// Copy content of coded entry
   void SetQuantityCode(vtkCodedEntry* entry);
-  vtkGetObjectMacro(QuantityCode, vtkCodedEntry);
+  virtual vtkCodedEntry* GetQuantityCode();
 
   /// Copy content of coded entry
   void SetDerivationCode(vtkCodedEntry* entry);
-  vtkGetObjectMacro(DerivationCode, vtkCodedEntry);
+  virtual vtkCodedEntry* GetDerivationCode();
 
   /// Copy content of coded entry
   void SetUnitsCode(vtkCodedEntry* entry);
-  vtkGetObjectMacro(UnitsCode, vtkCodedEntry);
+  virtual vtkCodedEntry* GetUnitsCode();
 
   /// Copy content of coded entry
   void SetMethodCode(vtkCodedEntry* entry);
-  vtkGetObjectMacro(MethodCode, vtkCodedEntry);
+  virtual vtkCodedEntry* GetMethodCode();
 
   /// Get last computation result
   vtkGetMacro(LastComputationResult, int);
@@ -185,7 +185,7 @@ public:
   /// For example, mesh for a calculated area value is the mesh that was generated
   /// to compute the surface area.
   void SetMeshValue(vtkPolyData* meshValue);
-  vtkGetObjectMacro(MeshValue, vtkPolyData);
+  virtual vtkPolyData* GetMeshValue();
 
   /// Set input MRML node used for calculating the measurement \sa Execute
   void SetInputMRMLNode(vtkMRMLNode* node);
