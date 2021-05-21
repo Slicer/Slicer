@@ -58,6 +58,24 @@ Capture 3D view into PNG file with transparent background
    writer.SetInputConnection(wti.GetOutputPort())
    writer.Write()
 
+Capture slice view into PNG file with white background
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   sliceViewName = "Red"
+   filename = "c:/tmp/screenshot.png"
+
+   # Set view background to white
+   view = slicer.app.layoutManager().sliceWidget(sliceViewName).sliceView()
+   renderer = view.renderWindow().GetRenderers().GetFirstRenderer()
+   renderer.SetBackground(1,1,1)
+
+   # Capture a screenshot
+   import ScreenCapture
+   cap = ScreenCapture.ScreenCaptureLogic()
+   cap.captureImageFromView(view, filename)
+
 Save a series of images from a slice view
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
