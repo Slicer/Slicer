@@ -19,6 +19,12 @@ also be used as a logic helper in other code
 #
 #########################################################
 
+
+# Module paths: root folder for DICOMLib, Resources Root
+MODULE_ROOT = os.path.abspath(os.path.dirname(__file__))
+RESOURCE_ROOT = os.path.join(MODULE_ROOT, 'Resources')
+
+
 class DICOMProcess:
   """helper class to run dcmtk's executables
   Code here depends only on python and DCMTK executables
@@ -344,9 +350,10 @@ class DICOMListener(DICOMStoreSCPProcess):
 
 
 class DICOMSender(DICOMProcess):
-  """Code to send files to a remote host
-  (Uses storescu from dcmtk)
+  """ Code to send files to a remote host.
+      (Uses storescu from dcmtk.)
   """
+  dicomseg_altconfig_path = 'DICOM/dcmtk/storescu.cfg'
 
   def __init__(self,files,address,protocol=None,progressCallback=None):
     """protocol: can be DIMSE (default) or DICOMweb
@@ -436,21 +443,50 @@ class DICOMSender(DICOMProcess):
         if not self.progressCallback(f"Sent {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"):
           raise UserWarning("Sending was cancelled, upload is incomplete.")
 
-  def start(self,file):
+  def start(self, file, config=None, config_profile='Default', retry=False):
+    ''' Send DICOM file to the specified modality. If the transfer fails due to
+        an unsupported presentation context, attempt the transfer a second time using
+        a custom configuration that provides.
+    '''
     self.storeSCUExecutable = self.exeDir+'/storescu'+self.exeExtension
+
     # run the process!
     ### TODO: maybe use dcmsend (is smarter about the compress/decompress)
     ### TODO: add option in dialog to set AETitle
-    args = [self.destinationUrl.host(), str(self.destinationUrl.port()), "-aec", "CTK", file]
+    args = []
+
+    # Utilize custom configuration
+    if config and os.path.exists(config):
+      args.extend(('-xf', config, 'Default'))
+
+    # Core arguments: hostname, port, AEC, file
+    args.extend((self.destinationUrl.host(), str(self.destinationUrl.port()), "-aec", "CTK", file))
+
+    # Execute SCU CLI program and wait for termination
     super().start(self.storeSCUExecutable, args)
     self.process.waitForFinished()
+
+    # Process any errors that occurred during script execution
     if self.process.ExitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
       stdout = self.process.readAllStandardOutput()
       stderr = self.process.readAllStandardError()
+
       logging.debug('DICOM process error code is: %d' % self.process.error())
       logging.debug('DICOM process standard out is: %s' % stdout)
       logging.debug('DICOM process standard error is: %s' % stderr)
-      raise UserWarning(f"Could not send {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}")
+      user_msg = f"Could not send {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"
+
+      # For known presentation contexts, retry transfer with alternative configuration.
+      # A common cause of failure is an incomplete set of dcmtk/DCMSCU presentation context UIDS.
+      # Refer to https://book.orthanc-server.com/faq/dcmtk-tricks.html#id2 for additional detail.
+      if not retry:
+        logging.error(user_msg)
+        logging.info('Retry transfer with alternative dicomscu configuration: %s' % self.dicomseg_altconfig_path)
+        self.start(file, config=os.path.join(RESOURCE_ROOT, self.dicomseg_altconfig_path), retry=True)
+
+      # Terminate transfer and notify user of failure
+      else:
+        raise UserWarning(user_msg)
 
 
 class DICOMTestingQRServer:
