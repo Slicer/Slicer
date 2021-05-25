@@ -1662,6 +1662,20 @@ void qSlicerMainWindow::dropEvent(QDropEvent *event)
 }
 
 //---------------------------------------------------------------------------
+void qSlicerMainWindow::readSettings()
+{
+  Q_D(qSlicerMainWindow);
+  d->readSettings();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::writeSettings()
+{
+  Q_D(qSlicerMainWindow);
+  d->writeSettings();
+}
+
+//---------------------------------------------------------------------------
 void qSlicerMainWindow::setHomeModuleCurrent()
 {
   Q_D(qSlicerMainWindow);
