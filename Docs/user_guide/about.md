@@ -18,9 +18,34 @@ Highlights:
 
 ## License
 
-The 3D Slicer software is distributed under a BSD-style open source license that is compatible with the Open Source Definition by [The Open Source Initiative](http://opensource.org/) and contains no restrictions on use of the software.
+The 3D Slicer software is distributed under a BSD-style open source license that is broadly compatible with the Open Source Definition by [The Open Source Initiative](http://opensource.org/) and contains no restrictions on legal uses of the software.
 
 To use Slicer, please read the [3D Slicer Software License Agreement](https://github.com/Slicer/Slicer/blob/master/License.txt) before downloading any binary releases of the Slicer.
+
+### Historical notes about the license
+
+The Slicer License was drafted in 2005 by lawyers working for Brigham and Women's Hospital (BWH), a teaching affiliate of Harvard Medical School, to be BSD-like but with a few extra provisions related to medical software.  It is specific to BWH so it's not directly reusable, but it could serve as a template for projects with similar goals.
+
+It was written in part because BWH was the prime contractor on an NIH-funded development consortium ([NA-MIC](https://www.na-mic.org/)) and wanted all code contributions to be compatible with ultimate use in real-world medical products (that is, commercial FDA-approved medical devices, which are almost universally closed source even if they build on open software).  Compliance with the Slicer License was required for subcontractors, a group that included GE Research, Kitware and several universities (MIT, UNC...) who all reviewed and accepted this license.
+
+The license has been in continuous use since 2005 for the 3D Slicer software package (slicer.org) that as of 2021 has been downloaded more than a million times and has been referenced in about 12,000 academic publications (https://www.slicer.org/wiki/Main_Page/SlicerCommunity). Some of the code is also now being used in several medical products for which this license has been reviewed and accepted by the companies involved.
+
+### License terms and reasons
+
+Here are some of the key points that BWH included in addition to BSD terms to make the license suit the case of a large hospital distributing open source medical software.
+
+For using and redistributing 3D Slicer:
+- The license states that the code is "designed for research" and "CLINICAL APPLICATIONS ARE NEITHER RECOMMENDED NOR ADVISED" to make it extra clear that any commercial clinical uses of the code are solely the responsibility of the user and not BWH or the other developers.  This is a disclaimer rather than a legal restriction.
+
+For making changes or adding any source code or data to 3D Slicer:
+- Contributors explicitly grant royalty free rights if they contribute code covered by a patent they control (i.e. to avoid submarine patents).
+- No GPL or other copyleft code is allowed because that could make it complicated and risky to mix Slicer code with private intellectual property, which is often present in regulated medical products.
+- Contributors affirm that they have de-identified any patient data they contribute to avoid issues with HIPAA or related regulations.
+
+### Status compared to other open source licenses
+
+As of June 2021, the Slicer License has been used for over 15 years without incident. In May of 2021, a discourse user [suggested](https://discourse.slicer.org/t/apply-for-osi-open-source-license-status/17791) submitting the license to [the OSI license review process](https://opensource.org/approval). After some discussion and hearing no objections, the community leadership decided to [submit the license for review](http://lists.opensource.org/pipermail/license-review_lists.opensource.org/2021-May/thread.html). Although the OSI process is not legally binding, the discussion could give potential Slicer users perspective on how provisions of the license compare with other commonly used licenses.
+The discussion concluded that bundling the contribution agreement in the license makes it non-approvable by OSI and the requirement to use the software for legal purposes may not be consistent with the [Open Source Definition](https://opensource.org/osd). Otherwise the license terms appear not to be controversial. Interested parties should review the [full discussion](http://lists.opensource.org/pipermail/license-review_lists.opensource.org/2021-June/thread.html#5166) for details.
 
 ## How to cite
 
