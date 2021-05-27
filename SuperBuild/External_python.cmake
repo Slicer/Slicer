@@ -192,9 +192,9 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   endif()
 
   if(NOT Slicer_USE_SYSTEM_python)
-
     ExternalProject_Add_Step(${proj} configure_python_launcher
       COMMAND ${CMAKE_COMMAND}
+        -DACTION:STRING=default
         -DCMAKE_EXECUTABLE_SUFFIX:STRING=${CMAKE_EXECUTABLE_SUFFIX}
         -DCTKAppLauncher_DIR:PATH=${CTKAppLauncher_DIR}
         -DOPENSSL_EXPORT_LIBRARY_DIR:PATH=${OPENSSL_EXPORT_LIBRARY_DIR}
@@ -210,7 +210,14 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
         -DSlicer_LIB_DIR:PATH=${Slicer_LIB_DIR}
         -DSlicer_SHARE_DIR:PATH=${Slicer_SHARE_DIR}
         -DSlicer_SOURCE_DIR:PATH=${Slicer_SOURCE_DIR}
-
+        -DSlicer_REVISION:STRING=${Slicer_REVISION}
+        -DSlicer_ORGANIZATION_DOMAIN:STRING=${Slicer_ORGANIZATION_DOMAIN}
+        -DSlicer_ORGANIZATION_NAME:STRING=${Slicer_ORGANIZATION_NAME}
+        -DSLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME:STRING=${SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME}
+        -P ${Slicer_SOURCE_DIR}/SuperBuild/python_configure_python_launcher.cmake
+      COMMAND ${CMAKE_COMMAND}
+        -DACTION:STRING=replace_application_name
+        -DPYTHON_REAL_EXECUTABLE:FILEPATH=${slicer_PYTHON_REAL_EXECUTABLE}
         -P ${Slicer_SOURCE_DIR}/SuperBuild/python_configure_python_launcher.cmake
       DEPENDEES install
       )
