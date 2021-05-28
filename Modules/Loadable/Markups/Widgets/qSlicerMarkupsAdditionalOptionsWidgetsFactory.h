@@ -46,9 +46,6 @@ public:
   /// \return Instance object
   Q_INVOKABLE static qSlicerMarkupsAdditionalOptionsWidgetsFactory* instance();
 
-  /// Allows cleanup of the singleton at application exit
-  static void setInstance(qSlicerMarkupsAdditionalOptionsWidgetsFactory* instance);
-
 public:
   /// Registers an additional options widget.
   Q_INVOKABLE bool registerAdditionalOptionsWidget(qSlicerMarkupsAdditionalOptionsWidget* widget);
@@ -67,17 +64,17 @@ signals:
 protected:
   QList<QPointer<qSlicerMarkupsAdditionalOptionsWidget>> AdditionalOptionsWidgets;
 
-public:
-  /// Private constructor made public to enable python wrapping
-  /// IMPORTANT: Should not be used for creating effect handler! Use instance() instead.
-  qSlicerMarkupsAdditionalOptionsWidgetsFactory(QObject* parent=nullptr);
-
-  /// Private destructor made public to enable python wrapping
-  ~qSlicerMarkupsAdditionalOptionsWidgetsFactory() override;
+private:
+  /// Allows cleanup of the singleton at application exit
+  static void cleanup();
 
 private:
+  qSlicerMarkupsAdditionalOptionsWidgetsFactory(QObject* parent=nullptr);
+  ~qSlicerMarkupsAdditionalOptionsWidgetsFactory() override;
+
   Q_DISABLE_COPY(qSlicerMarkupsAdditionalOptionsWidgetsFactory);
   friend class qSlicerMarkupsAdditionalOptionsWidgetsFactoryCleanup;
+  friend class PythonQtWrapper_qSlicerMarkupsAdditionalOptionsWidgetsFactory; // Allow Python wrapping without enabling direct instantiation
 
 private:
   /// Instance of the singleton
