@@ -55,7 +55,7 @@ public:
     {
     if (qSlicerSubjectHierarchyPluginHandler::m_Instance)
       {
-      qSlicerSubjectHierarchyPluginHandler::setInstance(nullptr);
+      qSlicerSubjectHierarchyPluginHandler::cleanup();
       }
     }
 };
@@ -74,21 +74,12 @@ qSlicerSubjectHierarchyPluginHandler* qSlicerSubjectHierarchyPluginHandler::inst
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginHandler::setInstance(qSlicerSubjectHierarchyPluginHandler* instance)
+void qSlicerSubjectHierarchyPluginHandler::cleanup()
 {
-  if (qSlicerSubjectHierarchyPluginHandler::m_Instance==instance)
-    {
-    return;
-    }
-  // Preferably this will be nullptr
   if (qSlicerSubjectHierarchyPluginHandler::m_Instance)
     {
     delete qSlicerSubjectHierarchyPluginHandler::m_Instance;
-    }
-  qSlicerSubjectHierarchyPluginHandler::m_Instance = instance;
-  if (!instance)
-    {
-    return;
+    qSlicerSubjectHierarchyPluginHandler::m_Instance = nullptr;
     }
 }
 

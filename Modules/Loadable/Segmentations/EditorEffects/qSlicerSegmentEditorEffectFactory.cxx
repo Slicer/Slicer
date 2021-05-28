@@ -41,7 +41,7 @@ public:
     {
     if (qSlicerSegmentEditorEffectFactory::m_Instance)
       {
-      qSlicerSegmentEditorEffectFactory::setInstance(nullptr);
+      qSlicerSegmentEditorEffectFactory::cleanup();
       }
     }
 };
@@ -60,21 +60,12 @@ qSlicerSegmentEditorEffectFactory* qSlicerSegmentEditorEffectFactory::instance()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorEffectFactory::setInstance(qSlicerSegmentEditorEffectFactory* instance)
+void qSlicerSegmentEditorEffectFactory::cleanup()
 {
-  if (qSlicerSegmentEditorEffectFactory::m_Instance==instance)
-    {
-    return;
-    }
-  // Preferably this will be nullptr
   if (qSlicerSegmentEditorEffectFactory::m_Instance)
     {
     delete qSlicerSegmentEditorEffectFactory::m_Instance;
-    }
-  qSlicerSegmentEditorEffectFactory::m_Instance = instance;
-  if (!instance)
-    {
-    return;
+    qSlicerSegmentEditorEffectFactory::m_Instance = nullptr;
     }
 }
 

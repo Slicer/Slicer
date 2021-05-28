@@ -64,10 +64,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # Observe editor effect registrations to make sure that any effects that are registered
     # later will show up in the segment editor widget. For example, if Segment Editor is set
     # as startup module, additional effects are registered after the segment editor widget is created.
-    import qSlicerSegmentationsEditorEffectsPythonQt
-    #TODO: For some reason the instance() function cannot be called as a class function although it's static
-    factory = qSlicerSegmentationsEditorEffectsPythonQt.qSlicerSegmentEditorEffectFactory()
-    self.effectFactorySingleton = factory.instance()
+    self.effectFactorySingleton = slicer.qSlicerSegmentEditorEffectFactory.instance()
     self.effectFactorySingleton.connect('effectRegistered(QString)', self.editorEffectRegistered)
 
     # Connect observers to scene events

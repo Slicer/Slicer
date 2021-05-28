@@ -83,9 +83,6 @@ public:
   /// \return Instance object
   Q_INVOKABLE static qSlicerSubjectHierarchyPluginHandler* instance();
 
-  /// Allows cleanup of the singleton at application exit
-  static void setInstance(qSlicerSubjectHierarchyPluginHandler* instance);
-
   /// Get subject hierarchy node
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
   /// Set MRML scene
@@ -226,19 +223,20 @@ protected:
   vtkSmartPointer<vtkCallbackCommand> m_CallBack;
 
 public:
-  /// Private constructor made public to enable python wrapping
-  /// IMPORTANT: Should not be used for creating plugin handler! Use instance() instead.
-  qSlicerSubjectHierarchyPluginHandler(QObject* parent=nullptr);
-
-  /// Private destructor made public to enable python wrapping
-  ~qSlicerSubjectHierarchyPluginHandler() override;
-
   /// Timestamp of the last plugin registration. Used to allow context menus be repopulated if needed.
   QDateTime LastPluginRegistrationTime;
 
 private:
+  /// Allows cleanup of the singleton at application exit
+  static void cleanup();
+
+private:
+  qSlicerSubjectHierarchyPluginHandler(QObject* parent=nullptr);
+  ~qSlicerSubjectHierarchyPluginHandler() override;
+
   Q_DISABLE_COPY(qSlicerSubjectHierarchyPluginHandler);
   friend class qSlicerSubjectHierarchyPluginHandlerCleanup;
+  friend class PythonQtWrapper_qSlicerSubjectHierarchyPluginHandler; // Allow Python wrapping without enabling direct instantiation
 
 private:
   /// Instance of the singleton
