@@ -41,7 +41,7 @@ Release mode:
 ```
 mkdir C:\D\S4R
 cd /d C:\D\S4R
-"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 16 2019 Win64" -DQt5_DIR:PATH=C:\Qt\5.15.0\msvc2019_64\lib\cmake\Qt5 C:\D\S4
+"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 16 2019" -A x64 -DQt5_DIR:PATH=C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5 C:\D\S4
 "C:\Program Files\CMake\bin\cmake.exe" --build . --config Release
 ```
 
@@ -50,7 +50,7 @@ Debug mode:
 ```
 mkdir C:\D\S4D
 cd /d C:\D\S4D
-"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 16 2019 Win64" -DQt5_DIR:PATH=C:\Qt\5.15.0\msvc2019_64\lib\cmake\Qt5 C:\D\S4
+"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 16 2019" -A x64 -DQt5_DIR:PATH=C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5 C:\D\S4
 "C:\Program Files\CMake\bin\cmake.exe" --build . --config Debug
 ```
 
