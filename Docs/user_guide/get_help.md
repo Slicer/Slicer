@@ -1,6 +1,6 @@
 # Get Help
 
-[Contact the Slicer community or commercial partners](about.html#contact-us) if you have any questions, bug reports, or enhancement requests - following the guidelines described below.
+[Contact the Slicer community or commercial partners](about.md#contact-us) if you have any questions, bug reports, or enhancement requests - following the guidelines described below.
 
 ## I need help in using Slicer
 
@@ -36,11 +36,11 @@ Background: Funding for Slicer is provided through competitive mechanisms primar
 
 ### Slicer application does not start
 
-- Your computer CPU or graphics capabilities may not meet [minimum system requirements](getting_started.html#system-requirements). Updating your graphics driver may fix some problems, but if that does not help and you have an old computer then you may need to upgrade to a more recently manufactured computer.
+- Your computer CPU or graphics capabilities may not meet [minimum system requirements](getting_started.md#system-requirements). Updating your graphics driver may fix some problems, but if that does not help and you have an old computer then you may need to upgrade to a more recently manufactured computer.
 - Slicer may not work if it is installed in a folder that has special characters in their name. Try installing Slicer in a path that only contains latin letters and numbers (a-z, 0-9).
 - Your Slicer settings might have become corrupted
   - Try launching slicer using `Slicer.exe --disable-settings` (if it fixes the problem, delete Slicer.ini and Slicer-<yourslicerversion>.ini files from your Slicer settings directory.
-  - Rename or remove your Slicer settings directory (for example, `c:\Users\<yourusername>\AppData\Roaming\NA-MIC`). See instructions for getting the settings directory [here](settings.html#settings-file-location). Try to launch Slicer.
+  - Rename or remove your Slicer settings directory (for example, `c:\Users\<yourusername>\AppData\Roaming\NA-MIC`). See instructions for getting the settings directory [here](settings.md#settings-file-location). Try to launch Slicer.
 - There may be conflicting/incompatible libraries in your system path (most likely caused by installing applications that place libraries in incorrect location on your system). Check your system logs for details and report the problem.
   - On Windows:
     - Start Event Viewer (eventvwr.exe), select Windows Logs / Application, and find the application error. If there is a DLL loading problem a line similar to this will appear: `Faulting module path: <something>.dll`. If you found a line similar to this, then try the following workaround: Start a command window. Enter `set path=` to clear the path variable. Enter Slicer.exe to start Slicer. If Slicer starts successfully then you need to remove remove unnecessary items from the system path (or delete the libraries installed at incorrect locations).

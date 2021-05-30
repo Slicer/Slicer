@@ -52,11 +52,11 @@ If non-linear transform is hardened on a volume then the volume is resampled usi
 - Change translation/rotation:
   - linear transforms can be edited using translation and rotation sliders Transforms module's Edit section. "Translation in global or local reference frame" button controls if translation is performed in the parent coordinate system or the rotated coordinate system.
   - translation and rotation of a linear transform can be interactively edited in 3D by enabling "Visible in 3D view" in Transform's module Display / Interaction section. See this **[short demonstration video](https://youtu.be/bbikx7Edv4g)**.
-- Edit warping transform: to specify/edit a warping transform that translates a set of points to specified positions, you can use [semi-automatic registration methods](../registration.html#semi-automatic-registration)
+- Edit warping transform: to specify/edit a warping transform that translates a set of points to specified positions, you can use [semi-automatic registration methods](../registration.md#semi-automatic-registration)
 
 ### Compute transform
 
-Transforms are usually computed using [spatial registration tools](../registration.html).
+Transforms are usually computed using [spatial registration tools](../registration.md).
 
 ### Save transform
 
@@ -78,7 +78,7 @@ A quick way to import a linear transform from another software or from text file
 
 ### Visualize transform
 
-Transforms can be visualized in both 2D and 3D views, as glyphs representing the displacement vectors as arrows, cones, or spheres; regular grids that are deformed by the transform; or contours that represent lines or surfaces where the displacement magnitude has a specific value. See documentation of [Display section](transforms.html#display] for details.
+Transforms can be visualized in both 2D and 3D views, as glyphs representing the displacement vectors as arrows, cones, or spheres; regular grids that are deformed by the transform; or contours that represent lines or surfaces where the displacement magnitude has a specific value. See documentation of [Display section](transforms.md#display] for details.
 
 ## Panels and their use
 

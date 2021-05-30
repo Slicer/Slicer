@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>General Registration (BRAINS)</title>
+  <description>Register a three-dimensional volume to a reference volume (Mattes Mutual Information by default). Full documentation avalable here: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/BRAINSFit. Method described in BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images, Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007. http://hdl.handle.net/1926/1291</description>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/BRAINSFit</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Hans J. Johnson (hans-johnson -at- uiowa.edu, http://www.psychiatry.uiowa.edu), Ali Ghayoor</contributor>
+  <acknowledgements><![CDATA[Hans Johnson(1,3,4); Kent Williams(1); Gregory Harris(1), Vincent Magnotta(1,2,3);  Andriy Fedorov(5); Ali Ghayoor(4) 1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Radiology, 3=University of Iowa Department of Biomedical Engineering, 4=University of Iowa Department of Electrical and Computer Engineering, 5=Surgical Planning Lab, Harvard]]>  </acknowledgements>
+  <version>5.4.0</version>
+
+  <parameters advanced="false">
+    <label>Input Images</label>
+    <image>
+      <name>fixedVolume</name>
+      <longflag>fixedVolume</longflag>
+      <label>Fixed Image Volume</label>
+      <description>Input fixed image (the moving image will be transformed into this image space).</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    <image>
+      <name>movingVolume</name>
+      <longflag>movingVolume</longflag>
+      <label>Moving Image Volume</label>
+      <description>Input moving image (this image will be transformed into the fixed image space).</description>
+      <default></default>
+      <channel>input</channel>
+      <reference role="parentTransform" parameter="linearTransform"/>
+      <reference role="parentTransform" parameter="strippedOutputTransform"/>
+      <reference role="parentTransform" parameter="bsplineTransform"/>
+    </image>
+
+    <double>
+      <name>samplingPercentage</name>
+      <longflag>samplingPercentage</longflag>
+      <label>Percentage Of Samples</label>
+      <description>Fraction of voxels of the fixed image that will be used for registration. The number has to be larger than zero and less or equal to one. Higher values increase the computation time but may give more accurate results. You can also limit the sampling focus with ROI masks and ROIAUTO mask generation. The default is 0.002 (use approximately 0.2% of voxels, resulting in 100000 samples in a 512x512x192 volume) to provide a very fast registration in most cases. Typical values range from 0.01 (1%) for low detail images to 0.2 (20%) for high detail images.</description>
+      <default>0.002</default>
+    </double>
+    <integer-vector>
+      <name>splineGridSize</name>
+      <longflag>splineGridSize</longflag>
+      <label>B-Spline Grid Size</label>
+      <description>Number of BSpline grid subdivisions along each axis of the fixed image, centered on the image space. Values must be 3 or higher for the BSpline to be correctly computed.</description>
+      <default>14,10,12</default>
+    </integer-vector>
+  </parameters>
+
+  <parameters advanced="false">
+    <label>Output Settings (At least one output must be specified)</label>
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="linear" reference="movingVolume">
+      <name>linearTransform</name>
+      <longflag>linearTransform</longflag>
+      <label>Slicer Linear Transform</label>
+      <description>(optional) Output estimated transform - in case the computed transform is not BSpline. NOTE: You must set at least one output object (transform and/or output volume).</description>
+      <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingVolume"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedVolume"/>
+    </transform>
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="bspline" reference="movingVolume">
+      <name>bsplineTransform</name>
+      <longflag>bsplineTransform</longflag>
+      <label>Slicer BSpline Transform</label>
+      <description>(optional) Output estimated transform - in case the computed transform is BSpline. NOTE: You must set at least one output object (transform and/or output volume).</description>
+      <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingVolume"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedVolume"/>
+    </transform>
+    <image>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <label>Output Image Volume</label>
+      <description>(optional) Output image: the moving image warped to the fixed image space. NOTE: You must set at least one output object (transform and/or output volume).</description>
+      <channel>output</channel>
+      <reference role="source" parameter="movingVolume"/>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Transform Initialization Settings</label>
+    <description>Options for initializing transform parameters.</description>
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
+      <name>initialTransform</name>
+      <longflag>initialTransform</longflag>
+      <label>Initialization transform</label>
+      <description>Transform to be applied to the moving image to initialize the registration.  This can only be used if Initialize Transform Mode is Off.</description>
+      <channel>input</channel>
+    </transform>
+    <string-enumeration>
+      <name>initializeTransformMode</name>
+      <longflag>initializeTransformMode</longflag>
+      <label>Initialize Transform Mode</label>
+      <description>Determine how to initialize the transform center.  useMomentsAlign assumes that the center of mass of the images represent similar structures.  useCenterOfHeadAlign attempts to use the top of head and shape of neck to drive a center of mass estimate. useGeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures.  Off assumes that the physical space of the images are close.  This flag is mutually exclusive with the Initialization transform.</description>
+      <default>Off</default>
+      <element>Off</element>
+      <element>useMomentsAlign</element>
+      <element>useCenterOfHeadAlign</element>
+      <element>useGeometryAlign</element>
+      <element>useCenterOfROIAlign</element>
+    </string-enumeration>
+  </parameters>
+
+  <parameters>
+    <label>Registration Phases (Check one or more, executed in order listed)</label>
+    <description>Each of the registration phases will be used to initialize the next phase</description>
+    <boolean>
+       <name>useRigid</name>
+       <longflag>useRigid</longflag>
+       <label>Rigid (6 DOF)</label>
+       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options overrides the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useScaleVersor3D</name>
+       <longflag>useScaleVersor3D</longflag>
+       <label>Rigid+Scale(7 DOF)</label>
+       <description>Perform a ScaleVersor3D registration as part of the sequential registration steps.  This family of options overrides the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useScaleSkewVersor3D</name>
+       <longflag>useScaleSkewVersor3D</longflag>
+       <label>Rigid+Scale+Skew(10 DOF)</label>
+       <description>Perform a ScaleSkewVersor3D registration as part of the sequential registration steps.  This family of options overrides the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useAffine</name>
+       <longflag>useAffine</longflag>
+       <label>Affine(12 DOF)</label>
+       <description>Perform an Affine registration as part of the sequential registration steps.  This family of options overrides the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useBSpline</name>
+       <longflag>useBSpline</longflag>
+       <label>BSpline (>27 DOF)</label>
+       <description>Perform a BSpline registration as part of the sequential registration steps.  This family of options overrides the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useSyN</name>
+       <longflag>useSyN</longflag>
+       <label>SyN</label>
+       <description>Perform a SyN registration as part of the sequential registration steps.  This family of options overrides the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useComposite</name>
+       <longflag>useComposite</longflag>
+       <label>Composite (many DOF)</label>
+       <description>Perform a Composite registration as part of the sequential registration steps.  This family of options overrides the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Image Mask and Pre-Processing</label>
+    <string-enumeration>
+      <name>maskProcessingMode</name>
+      <longflag>maskProcessingMode</longflag>
+      <description>Specifies a mask to only consider a certain image region for the registration.  If ROIAUTO is chosen, then the mask is computed using Otsu thresholding and hole filling. If ROI is chosen then the mask has to be specified as in input.</description>
+      <label>Masking Option</label>
+      <default>NOMASK</default>
+      <element>NOMASK</element>
+      <element>ROIAUTO</element>
+      <element>ROI</element>
+    </string-enumeration>
+    <image type="label">
+      <name>fixedBinaryVolume</name>
+      <longflag>fixedBinaryVolume</longflag>
+      <label>(ROI) Masking input fixed</label>
+      <description>Fixed Image binary mask volume, required if Masking Option is ROI. Image areas where the mask volume has zero value are ignored during the registration.</description>
+      <channel>input</channel>
+    </image>
+    <image type="label">
+      <name>movingBinaryVolume</name>
+      <longflag>movingBinaryVolume</longflag>
+      <label>(ROI) Masking input moving</label>
+      <description>Moving Image binary mask volume, required if Masking Option is ROI. Image areas where the mask volume has zero value are ignored during the registration.</description>
+      <channel>input</channel>
+    </image>
+    <image type="label">
+      <name>outputFixedVolumeROI</name>
+      <longflag>outputFixedVolumeROI</longflag>
+      <label>(ROIAUTO) Output fixed mask</label>
+      <description>ROI that is automatically computed from the fixed image. Only available if Masking Option is ROIAUTO. Image areas where the mask volume has zero value are ignored during the registration.</description>
+      <channel>output</channel>
+    </image>
+    <image type="label">
+      <name>outputMovingVolumeROI</name>
+      <longflag>outputMovingVolumeROI</longflag>
+      <label>(ROIAUTO) Output moving mask</label>
+      <description>ROI that is automatically computed from the moving image. Only available if Masking Option is ROIAUTO. Image areas where the mask volume has zero value are ignored during the registration.</description>
+      <channel>output</channel>
+    </image>
+    <boolean>
+       <name>useROIBSpline</name>
+       <longflag>useROIBSpline</longflag>
+       <label>Define BSpline grid over the ROI bounding box</label>
+       <description>If enabled then the bounding box of the input ROIs defines the BSpline grid support region. Otherwise the BSpline grid support region is the whole fixed image.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>histogramMatch</name>
+       <flag>e</flag>
+       <longflag deprecatedalias="use_histogram_matching">histogramMatch</longflag>
+       <description>Apply histogram matching operation for the input images to make them more similar.  This is suitable for images of the same modality that may have different brightness or contrast, but the same overall intensity profile. Do NOT use if registering images from different modalities.</description>
+       <label>Histogram Match</label>
+       <default>false</default>
+    </boolean>
+    <integer-vector>
+      <name>medianFilterSize</name>
+      <longflag>medianFilterSize</longflag>
+      <label>Median Filter Size</label>
+      <description>Apply median filtering to reduce noise in the input volumes. The 3 values specify the radius for the optional MedianImageFilter preprocessing in all 3 directions (in voxels).</description>
+      <default>0,0,0</default>
+    </integer-vector>
+    <double>
+      <name>removeIntensityOutliers</name>
+      <longflag>removeIntensityOutliers</longflag>
+      <label>Remove Intensity Outliers value at one tail</label>
+      <description>Remove very high and very low intensity voxels from the input volumes. The parameter specifies the half percentage to decide outliers of image intensities. The default value is zero, which means no outlier removal. If the value of 0.005 is given, the 0.005% of both tails will be thrown away, so 0.01% of intensities in total would be ignored in the statistic calculation.</description>
+      <default>0.0</default>
+    </double>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Advanced Output Settings</label>
+    <image>
+      <name>fixedVolume2</name>
+      <longflag>fixedVolume2</longflag>
+      <label>Fixed Image Volume 2</label>
+      <description>Input fixed image that will be used for multimodal registration. (the moving image will be transformed into this image space).</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    <image>
+      <name>movingVolume2</name>
+      <longflag>movingVolume2</longflag>
+      <label>Moving Image Volume2</label>
+      <description>Input moving image that will be used for multimodal registration(this image will be transformed into the fixed image space).</description>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <string-enumeration>
+      <name>outputVolumePixelType</name>
+      <longflag>outputVolumePixelType</longflag>
+      <label>Output Image Pixel Type</label>
+      <description>Data type for representing a voxel of the Output Volume.</description>
+      <default>float</default>
+      <element>float</element>
+      <element>short</element>
+      <element>ushort</element>
+      <element>int</element>
+      <element>uint</element>
+      <element>uchar</element>
+    </string-enumeration>
+    <double>
+      <name>backgroundFillValue</name>
+      <longflag>backgroundFillValue</longflag>
+      <label>Background Fill Value</label>
+      <description>This value will be used for filling those areas of the output image that have no corresponding voxels in the input moving image.</description>
+      <default>0.0</default>
+    </double>
+    <boolean>
+      <name>scaleOutputValues</name>
+      <longflag>scaleOutputValues</longflag>
+      <label>Scale Output Values</label>
+      <description>If true, and the voxel values do not fit within the minimum and maximum values of the desired outputVolumePixelType, then linearly scale the min/max output image voxel values to fit within the min/max range of the outputVolumePixelType.</description>
+      <default>false</default>
+    </boolean>
+    <string-enumeration>
+      <name>interpolationMode</name>
+      <longflag>interpolationMode</longflag>
+      <label>Interpolation Mode</label>
+      <description>Type of interpolation to be used when applying transform to moving volume.  Options are Linear, NearestNeighbor, BSpline, WindowedSinc, Hamming, Cosine, Welch, Lanczos, or ResampleInPlace.  The ResampleInPlace option will create an image with the same discrete voxel values and will adjust the origin and direction of the physical space interpretation.</description>
+      <default>Linear</default>
+      <element>NearestNeighbor</element>
+      <element>Linear</element>
+      <element>ResampleInPlace</element>
+      <element>BSpline</element>
+      <element>WindowedSinc</element>
+      <element>Hamming</element>
+      <element>Cosine</element>
+      <element>Welch</element>
+      <element>Lanczos</element>
+      <element>Blackman</element>
+    </string-enumeration>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Advanced Optimization Settings</label>
+    <integer-vector>
+      <name>numberOfIterations</name>
+      <longflag>numberOfIterations</longflag>
+      <label>Max Iterations</label>
+      <description>The maximum number of iterations to try before stopping the optimization. When using a lower value (500-1000) then the registration is forced to terminate earlier but there is a higher risk of stopping before an optimal solution is reached.</description>
+      <default>1500</default>
+    </integer-vector>
+    <double>
+      <name>maximumStepLength</name>
+      <longflag deprecatedalias="maximumStepSize">maximumStepLength</longflag>
+      <label>Maximum Step Length</label>
+      <description>Starting step length of the optimizer. In general, higher values allow for recovering larger initial misalignments but there is an increased chance that the registration will not converge.</description>
+      <default>0.05</default>
+    </double>
+    <double-vector>
+      <name>minimumStepLength</name>
+      <longflag deprecatedalias="minimumStepSize">minimumStepLength</longflag>
+      <label>Minimum Step Length</label>
+      <description>Each step in the optimization takes steps at least this big.  When none are possible, registration is complete. Smaller values allows the optimizer to make smaller adjustments, but the registration time may increase.</description>
+      <default>0.001</default>
+    </double-vector>
+    <double>
+      <name>relaxationFactor</name>
+      <longflag>relaxationFactor</longflag>
+      <label>Relaxation Factor</label>
+      <description>Specifies how quickly the optimization step length is decreased during registration. The value must be larger than 0 and smaller than 1. Larger values result in slower step size decrease, which allow for recovering larger initial misalignments but it increases the registration time and the chance that the registration will not converge.</description>
+      <default>0.5</default>
+    </double>
+    <double>
+      <name>translationScale</name>
+      <longflag deprecatedalias="spatialScale,transformScale">translationScale</longflag>
+      <label>Transform Scale</label>
+      <description>How much to scale up changes in position (in mm) compared to unit rotational changes (in radians) -- decrease this to allow for more rotation in the search pattern.</description>
+      <default>1000.0</default>
+    </double>
+    <double>
+      <name>reproportionScale</name>
+      <longflag>reproportionScale</longflag>
+      <label>Reproportion Scale</label>
+      <description>ScaleVersor3D 'Scale' compensation factor.  Increase this to allow for more rescaling in a ScaleVersor3D or ScaleSkewVersor3D search pattern.  1.0 works well with a translationScale of 1000.0</description>
+      <default>1.0</default>
+    </double>
+    <double>
+      <name>skewScale</name>
+      <longflag>skewScale</longflag>
+      <label>Skew Scale</label>
+      <description>ScaleSkewVersor3D Skew compensation factor.  Increase this to allow for more skew in a ScaleSkewVersor3D search pattern.  1.0 works well with a translationScale of 1000.0</description>
+      <default>1.0</default>
+    </double>
+    <double>
+      <name>maxBSplineDisplacement</name>
+      <longflag>maxBSplineDisplacement</longflag>
+      <label>Maximum B-Spline Displacement</label>
+      <description>Maximum allowed displacements in image physical coordinates (mm) for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.
+      </description>
+      <default>0.0</default>
+    </double>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Expert-only Parameters</label>
+    <integer>
+      <name>fixedVolumeTimeIndex</name>
+      <longflag>fixedVolumeTimeIndex</longflag>
+      <label>Fixed Image Time Index</label>
+      <description>The index in the time series for the 3D fixed image to fit. Only allowed if the fixed input volume is 4-dimensional.</description>
+      <default>0</default>
+    </integer>
+    <integer>
+      <name>movingVolumeTimeIndex</name>
+      <longflag>movingVolumeTimeIndex</longflag>
+      <label>Moving Image Time Index</label>
+      <description>The index in the time series for the 3D moving image to fit. Only allowed if the moving input volume is 4-dimensional</description>
+      <default>0</default>
+    </integer>
+    <!-- NOTE numberOfMatchPoints=10, numberOfHistogramBins=50 was a good compromise for speed for synthesized T1 to T1 data set testing-->
+    <integer>
+      <name>numberOfHistogramBins</name>
+      <longflag>numberOfHistogramBins</longflag>
+      <description>The number of histogram levels used for mutual information metric estimation.</description>
+      <label>Histogram bin count</label>
+      <default>50</default>
+    </integer>
+    <integer>
+      <name>numberOfMatchPoints</name>
+      <longflag>numberOfMatchPoints</longflag>
+      <description>Number of histogram match points used for mutual information metric estimation.</description>
+      <label>Histogram match point count</label>
+      <default>10</default>
+    </integer>
+    <string-enumeration>
+        <name>costMetric</name>
+        <longflag>costMetric</longflag>
+        <label>Cost Metric</label>
+        <description>The cost metric to be used during fitting. Defaults to MMI. Options are MMI (Mattes Mutual Information), MSE (Mean Square Error), NC (Normalized Correlation), MC (Match Cardinality for binary images)</description>
+        <default>MMI</default>
+        <element>MMI</element>
+        <element>MSE</element>
+        <element>NC</element>
+        <element>MIH</element>
+    </string-enumeration>
+    <double>
+      <name>maskInferiorCutOffFromCenter</name>
+      <longflag>maskInferiorCutOffFromCenter</longflag>
+      <label>Inferior Cut Off From Center</label>
+      <description>If Initialize Transform Mode is set to useCenterOfHeadAlign or Masking Option is ROIAUTO then this value defines the how much is cut of from the inferior part of the image. The cut-off distance is specified in millimeters, relative to the image center. If the value is 1000 or larger then no cut-off performed.</description>
+      <default>1000.0</default>
+    </double>
+    <double>
+      <name>ROIAutoDilateSize</name>
+      <longflag>ROIAutoDilateSize</longflag>
+      <label>ROIAuto Dilate Size</label>
+      <description>This flag is only relevant when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  A setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.</description>
+      <default>0.0</default>
+    </double>
+    <double>
+      <name>ROIAutoClosingSize</name>
+      <longflag>ROIAutoClosingSize</longflag>
+      <label>ROIAuto Closing Size</label>
+      <description>This flag is only relevant when using ROIAUTO mode for initializing masks.  It defines the hole closing size in mm.  It is rounded up to the nearest whole pixel size in each direction. The default is to use a closing size of 9mm.  For mouse data this value may need to be reset to 0.9 or smaller.</description>
+      <default>9.0</default>
+    </double>
+   <integer>
+      <name>numberOfSamples</name>
+      <longflag>numberOfSamples</longflag>
+      <label>Number Of Samples</label>
+      <description>The number of voxels sampled for mutual information computation.  Increase this for higher accuracy, at the cost of longer computation time.\nNOTE that it is suggested to use samplingPercentage instead of this option. However, if set to non-zero, numberOfSamples overwrites the samplingPercentage option.  </description>
+      <default>0</default>
+    </integer>
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="linear">
+      <name>strippedOutputTransform</name>
+      <longflag>strippedOutputTransform</longflag>
+      <label>Stripped Output Transform</label>
+      <description>Rigid component of the estimated affine transform. Can be used to rigidly register the moving image to the fixed image. NOTE:  This value is overridden if either bsplineTransform or linearTransform is set.</description>
+      <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingVolume"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedVolume"/>
+    </transform>
+    <string-vector>
+      <name>transformType</name>
+      <longflag>transformType</longflag>
+      <label>Transform Type</label>
+      <description>Specifies a list of registration types to be used.  The valid types are, Rigid, ScaleVersor3D, ScaleSkewVersor3D, Affine, BSpline and SyN.  Specifying more than one in a comma separated list will initialize the next stage with the previous results. If registrationClass flag is used, it overrides this parameter setting.</description>
+      <default></default>
+    </string-vector>
+    <!--Note: Due to how transforms are currently read into 3D Slicer, we need a different output parameter for linear and bspline transform and therefore we cannot use this general outputTransform parameter.-->
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" reference="movingVolume">
+      <name>outputTransform</name>
+      <longflag>outputTransform</longflag>
+      <label>Output Transform</label>
+      <description>(optional) Filename to which save the (optional) estimated transform. NOTE: You must select either the outputTransform or the outputVolume option.</description>
+      <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingVolume"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedVolume"/>
+    </transform>
+    <boolean>
+      <name>initializeRegistrationByCurrentGenericTransform</name>
+      <longflag>initializeRegistrationByCurrentGenericTransform</longflag>
+      <label>Pass warped moving image to BSpline registration filter</label>
+      <description>If this flag is ON, the current generic composite transform, resulted from the linear registration stages, is set to initialize the follow nonlinear registration process. However, by the default behaviour, the moving image is first warped based on the existant transform before it is passed to the BSpline registration filter. It is done to speed up the BSpline registration by reducing the computations of composite transform Jacobian.</description>
+      <default>0</default>
+    </boolean>
+    <boolean>
+      <name>writeOutputTransformInFloat</name>
+      <longflag>writeOutputTransformInFloat</longflag>
+      <label>writes the output registration transforms in single precision</label>
+      <description>By default, the output registration transforms (either the output composite transform or each transform component) are written to the disk in double precision. If this flag is ON, the output transforms will be written in single (float) precision. It is especially important if the output transform is a displacement field transform, or it is a composite transform that includes several displacement fields.</description>
+      <default>false</default>
+    </boolean>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Debugging Parameters</label>
+    <integer>
+      <name>failureExitCode</name>
+      <longflag>failureExitCode</longflag>
+      <label>Failure Exit Code</label>
+      <description>If the fit fails, exit with this status code.  (It can be used to force a successfult exit status of (0) if the registration fails due to reaching the maximum number of iterations.</description>
+      <default>-1</default>
+    </integer>
+    <boolean>
+      <name>writeTransformOnFailure</name>
+      <longflag>writeTransformOnFailure</longflag>
+      <label>Write Transform On Failure</label>
+      <description>Flag to save the final transform even if the numberOfIterations are reached without convergence. (Intended for use when --failureExitCode 0 )</description>
+      <default>0</default>
+    </boolean>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use. (default is auto-detected)</description>
+      <default>-1</default>
+    </integer>
+    <integer>
+      <name>debugLevel</name>
+      <label>Debug option</label>
+      <description>Display debug messages, and produce debug intermediate results.  0=OFF, 1=Minimal, 10=Maximum debugging.</description>
+      <longflag deprecatedalias="debuglevel">debugLevel</longflag>
+      <default>0</default>
+    </integer>
+    <double>
+      <name>costFunctionConvergenceFactor</name>
+      <longflag>costFunctionConvergenceFactor</longflag>
+      <description>From itkLBFGSBOptimizer.h: Set/Get the CostFunctionConvergenceFactor. Algorithm terminates when the reduction in cost function is less than (factor * epsmcj) where epsmch is the machine precision. Typical values for factor: 1e+12 for low accuracy; 1e+7 for moderate accuracy and 1e+1 for extremely high accuracy.  1e+9 seems to work well.
+      </description>
+      <default>2e+13</default>
+    </double>
+    <double>
+      <name>projectedGradientTolerance</name>
+      <longflag>projectedGradientTolerance</longflag>
+      <description>From itkLBFGSBOptimizer.h: Set/Get the ProjectedGradientTolerance. Algorithm terminates when the project gradient is below the tolerance. Default lbfgsb value is 1e-5, but 1e-4 seems to work well.
+      </description>
+      <default>1e-5</default>
+    </double>
+    <integer>
+      <name>maximumNumberOfEvaluations</name>
+      <longflag>maximumNumberOfEvaluations</longflag>
+      <description>Maximum number of evaluations for line search in lbfgsb optimizer.</description>
+      <default>900</default>
+    </integer>
+    <integer>
+      <name>maximumNumberOfCorrections</name>
+      <longflag>maximumNumberOfCorrections</longflag>
+      <description>Maximum number of corrections in lbfgsb optimizer.</description>
+      <default>25</default>
+    </integer>
+    <boolean>
+      <name>UseDebugImageViewer</name>
+      <flag>G</flag>
+      <longflag>gui</longflag>
+      <description>Display intermediate image volumes for debugging.  NOTE:  This is not part of the standard build sytem, and probably does nothing on your installation.</description>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>PromptAfterImageSend</name>
+      <flag>p</flag>
+      <longflag>promptUser</longflag>
+      <description>Prompt the user to hit enter each time an image is sent to the DebugImageViewer</description>
+      <default>false</default>
+    </boolean>
+    <string-enumeration>
+      <name>metricSamplingStrategy</name>
+      <longflag>metricSamplingStrategy</longflag>
+      <label>Set Sampling Strategy</label>
+      <description>It defines the method that registration filter uses to sample the input fixed image. Only Random is supported for now.</description>
+      <default>Random</default>
+      <element>Random</element>
+    </string-enumeration>
+    <file>
+      <name>logFileReport</name>
+      <longflag>logFileReport</longflag>
+      <label>Log File Report</label>
+      <description>A file to write out final information report in CSV file: MetricName,MetricValue,FixedImageName,FixedMaskName,MovingImageName,MovingMaskName</description>
+      <channel>output</channel>
+    </file>
+    <boolean>
+      <name>printVersionInfo</name>
+      <flag>v</flag>
+      <default>false</default>
+    </boolean>
+  </parameters>
+
+</executable>

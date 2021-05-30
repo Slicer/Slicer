@@ -38,9 +38,11 @@ part of the *superbuild*:
 ### Debian 10 Stable (Buster)
 
 Install the development tools and the support libraries:
-```
-sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui qt5-default qtmultimedia5-dev
- qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev  qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
+
+```console
+sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui \
+  qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
+  qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
 
 ### Debian Testing (Bullseye) and Debian 9
@@ -48,54 +50,59 @@ sudo apt update && sudo apt install git subversion build-essential cmake cmake-c
 *This option is not suggested since it does not work with standard packages.  Debian 9 Qt 5.7 packages will not work with current Slicer 4.11.  Checked 2020-08-19.  May be possible to build from source or install other packages.  In addition, for Debian 9 you also need to build cmake from source as [described here](https://cmake.org/install/) or otherwise get a newer version than is supplied by the distribution.*
 
 Install the development tools and the support libraries:
-```
-sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
+
+```console
+sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui \
+  qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
+  qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
 
 ### Ubuntu 20.04 (Focal Fossa)
 
 Install the development tools and the support libraries:
+
+```console
+sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui \
+  qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
+  qtbase5-private-dev libqt5x11extras5-dev libxt-dev 
 ```
-sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev qtbase5-private-dev libqt5x11extras5-dev libxt-dev 
-```
+
 ### ArchLinux
 
 Install the development tools and the support libraries:
 
-```
-sudo pacman -S git make patch subversion gcc cmake qt5-base qt5-multimedia qt5-tools qt5-xmlpatterns qt5-svg qt5-webengine qt5-script qt5-x11extras libxt
+```console
+sudo pacman -S git make patch subversion gcc cmake \
+  qt5-base qt5-multimedia qt5-tools qt5-xmlpatterns qt5-svg qt5-webengine qt5-script qt5-x11extras libxt
 ```
 
 ## Checkout Slicer source files
 
 The recommended way to obtain the source code of SLicer is cloning the repository using `git`:
 
-```
+```console
 git clone git://github.com/Slicer/Slicer.git
 ```
 
 This will create a `Slicer` directory contaning the source code of Slicer.
 Hereafter we will call this directory the `source directory`.
 
-<div class="admonition warning">
- 
-  <p class="admonition-title">Warning</p>
+:::{note} Warning
+:class: warning
 
-  <p>It is highly recommended to <b>avoid</b> the use of the <b>space</b>
-  character in the name of the <code class="docutils literal notranslate"><span
-  class="pre">source directory</span></code> or any of its parent
-  directories.</p> </div>
+It is highly recommended to **avoid** the use of the **space** character in the name of the `source directory` or any of its parent directories.
 
+:::
 
 After obtaining the source code, we need to set up the development environment:
 
-```
+```console
 cd Slicer
 ./Utilities/SetupForDevelopment.sh
 cd ..
 ```
 
-[comment]: <> (TODO: Link to the readthedocs equivalent of https://www.slicer.org/wiki/Documentation/Nightly/Developers/DevelopmentWithGit)
+% TODO: Link to the readthedocs equivalent of https://www.slicer.org/wiki/Documentation/Nightly/Developers/DevelopmentWithGit
 
 ## Configure and generate the Slicer build project files
  
@@ -117,84 +124,51 @@ The following folders will be used in the instructions below:
 
 To obtain a default configuration of the Slicer build project, create the **build** folder and use `cmake`:
 
-```
+```console
 mkdir Slicer-SuperBuild-Debug
 cd Slicer-SuperBuild-Debug
 cmake ../Slicer
 ```
+
 It is possible to change variables with `cmake`. In the following example we
 change the built type (Debug as default) to Release:
 
-```
+```console
 cmake -DCMAKE_BUILD_TYPE:STRING=Release ../Slicer
 ```
 
-<div class="admonition tip">
- 
-  <p class="admonition-title">Tip</p>
+:::{admonition} Tip
 
-  <p>Instead of <code class="docutils literal notranslate"><span
-  class="pre">cmake</span></code>, one can use <code class="docutils literal
-  notranslate"><span class="pre">ccmake</span></code>, which provides a
-  text-based interface or <code class="docutils literal notranslate"><span
-  class="pre">cmake-gui</span></code>, which provides a graphical user interface.
-  These applications will also provide a list of variables that can be changed.
-  </p>
+Instead of `cmake`, one can use `ccmake`, which provides a text-based interface or `cmake-gui`, which provides a graphical user interface. These applications will also provide a list of variables that can be changed.
 
-</div>
+:::
 
 ## Build Slicer
 
 Once the Slicer build project files have been generated, the Slicer project can
 be built by running this command in the **build** folder
 
-```
+```console
 make
 ```
 
-<div class="admonition tip">
- 
-  <p class="admonition-title">Tip</p> 
-  
-  <p>Building Slicer will generally take long
-  time, particularly on the first build or upon code/configuration changes. To
-  help speeding up the process one can use <code class="docutils literal
-  notranslate"><span class="pre">make -j&lt;N&gt;</span></code>, where <code
-  class="docutils literal notranslate"><span class="pre">N</span></code> is the
-  number of parallel builds. As a rule of thumb, many uses the <em>number of CPU
-  threads + 1</em> as the number of parallel builds.</p>
-  
+:::{admonition} Tip
 
-</div>
+Building Slicer will generally take long time, particularly on the first build or upon code/configuration changes. To help speeding up the process one can use `make -j<N>`, where `<N>` is the number of parallel builds. As a rule of thumb, many uses the `number of CPU threads + 1` as the number of parallel builds.
 
+:::
 
-<div class="admonition warning">
- 
-  <p class="admonition-title">Warning</p>
+:::{warning}
 
-  <p>Increasing the number of parallel builds generally
-  increases the memory required for the build process. In the event that the
-  required memory exceeds the available memory, the process will either fail or
-  start using swap memory, which will make in practice the system to freeze.</p>
+Increasing the number of parallel builds generally increases the memory required for the build process. In the event that the required memory exceeds the available memory, the process will either fail or start using swap memory, which will make in practice the system to freeze.
 
-</div>
+:::
 
-<div class="admonition tip">
- 
-  <p class="admonition-title">Tip</p> 
-  
-  <p>Using parallel builds makes finding compilation errors difficult due to the
-  fact that all parallel build processes use the same screen otput, as opposed
-  to sequential builds, where the compilation process will stop at the error. A
-  common technique to have parallel builds and easily find errors is launch a
-  parallel build followed by a sequential build. For the parallel build, it is adviced to run <code
-  class="docutils literal notranslate"><span class="pre">make
-  -j&lt;N&gt; -k</span></code> to have the parallel build keep going as far as
-  possible before doing the sequential build with<code class="docutils literal
-  notranslate"><span class="pre">make</span></code></p>
+:::{admonition} Tip
 
-</div>
+Using parallel builds makes finding compilation errors difficult due to the fact that all parallel build processes use the same screen otput, as opposed to sequential builds, where the compilation process will stop at the error. A common technique to have parallel builds and easily find errors is launch a parallel build followed by a sequential build. For the parallel build, it is adviced to run `make -j<N> -k` to have the parallel build keep going as far as possible before doing the sequential build with `make`.
 
+:::
 
 ## Run Slicer
 
@@ -202,7 +176,8 @@ After the building process has successfully completed, the executable file to
 run Slicer will be located in the **inner-build** folder.
 
 The application can be launched by these commands:
-```
+
+```console
 cd Slicer-build
 ./Slicer`
 ```
@@ -212,14 +187,16 @@ cd Slicer-build
 After building, run the tests in the **inner-build** folder.
 
 Type the following (you can replace 4 by the number of processor cores in the computer):
-```
+
+```console
 ctest -j4
 ```
 
 ## Package Slicer
 
 Start a terminal and type the following in the **inner-build** folder:
-```
+
+```console
 make package
 ```
 

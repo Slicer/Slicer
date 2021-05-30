@@ -23,4 +23,4 @@ When a transform node is observed by a transformable node, [vtkMRMLTransformable
 
 ## Examples
 
-Examples for common operations on transform are provided in the [script repository](../script_repository.html#transforms).
+Examples for common operations on transform are provided in the [script repository](../script_repository.md#transforms).

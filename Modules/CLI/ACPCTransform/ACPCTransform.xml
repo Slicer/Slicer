@@ -3,7 +3,7 @@
   <category>Registration.Specialized</category>
   <title>ACPC Transform</title>
   <index>1</index>
-  <description><![CDATA[<p>Calculate a transformation that aligns brain images to standard orientation based on anatomical landmarks.</p><p>The ACPC line extends between two points, one at the anterior commissure and one at the posterior commissure. The resulting transform will bring the line connecting the two points horizontal to the AP axis.</p><p>The midline is a series of points (at least 3) defining the division between the hemispheres of the brain (the mid sagittal plane). The resulting transform will result in the output volume having the mid sagittal plane lined up with the AS plane.</p><p>Use the Filtering module <b>Resample Scalar/Vector/DWI Volume</b> to apply the transformation to a volume.</p>]]></description>
+  <description><![CDATA[<p>Calculate a transformation that aligns brain images to <a href="https://en.wikipedia.org/wiki/Talairach_coordinates">Talairach coordinate system</a> (also known as stereotaxic or ACPC coordinate system) based on anatomical landmarks.</p><p>The ACPC line extends between two points, one at the anterior commissure and one at the posterior commissure. The resulting transform will bring the line connecting the two points horizontal to the AP axis.</p><p>The midline is a series of points (at least 3) defining the division between the hemispheres of the brain (the mid sagittal plane). The resulting transform will result in the output volume having the mid sagittal plane lined up with the AS plane.</p><p>Use <b>Resample Scalar/Vector/DWI Volume</b> to apply the transformation to a volume.</p>]]></description>
   <version>1.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ACPCTransform</documentation-url>
   <license>slicer3</license>
@@ -23,16 +23,16 @@
       <name>Midline</name>
       <label>Midline</label>
       <longflag>--midline</longflag>
-      <description><![CDATA[The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane).]]></description>
+      <description><![CDATA[The midline is a series of points (at least 3) placed on the mid sagittal plane, defining the division between the hemispheres of the brain.]]></description>
       <channel>input</channel>
     </pointfile>
   </parameters>
   <parameters>
     <label>Output transform</label>
-    <description><![CDATA[Parameters of the output transform.]]></description>
+    <description><![CDATA[Computed transformation (rigid translation and rotation) that the module computes from the input landmarks. If this transformation is applied to the volume then it will make the ACPC line "horizontal" (be in AP axis of the patient coordinate system), line up the mid sagittal plane "vertical" (fit on the AS plane of the patient coordinate system), and (if centering is enabled) then make the AC point the origin (the (0,0,0) coordinate in the patient coordinate system).]]></description>
     <boolean>
       <name>centerVolume</name>
-      <description><![CDATA[Output transform will translate AC point to the origin.]]></description>
+      <description><![CDATA[If this option is enabled then the output transform will translate the AC point to the origin. If this option is disabled then the position of the volume will be preserved and transform will only change the orientation.]]></description>
       <label>Center volume</label>
       <longflag>--center</longflag>
       <default>false</default>

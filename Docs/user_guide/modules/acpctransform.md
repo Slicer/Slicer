@@ -1,6 +1,5 @@
-# ACPC Transform
-
-Calculate a transformation that aligns brain images to [Talairach coordinate system](https://en.wikipedia.org/wiki/Talairach_coordinates) (also known as stereotaxic or ACPC coordinate system) based on anatomical landmarks.
+```{include} ../../_moduledescriptions/ACPCTransformOverview.md
+```
 
 ## Tutorial
 
@@ -33,22 +32,7 @@ Calculate a transformation that aligns brain images to [Talairach coordinate sys
   - `Reference volume` -> the original volume (should work well if `Center volume` option is disabled) or a standard Talairach volume (recommended if `Center volume` is enabled). Alternatively, output volume geometry can be specified using `Manual Output Parameters` section.
   - `Transfrom Node` output transform of ACPC module as
 
-## Panels and their use
-
-- ACPC Line: markups line specified by the user, connecting a point at the anterior commissure with a point at the posterior commissure.
-- Midline: series of markups points (at least 3) placed by the user on the mid sagittal plane (the division between the hemispheres of the brain).
-- Center volume: If this option is enabled then the output transform will translate the AC point to the origin. If this option is disabled then the position of the volume will be preserved and transform will only change the orientation.
-- Output transform: transformation matrix (rigid translation and rotation) that the module computes from the input landmarks. If this transformation is applied to the volume then it will make the ACPC line "horizontal" (be in AP axis of the patient coordinate system), line up the mid sagittal plane "vertical" (fit on the AS plane of the patient coordinate system), and (if centering is enabled) then make the AC point the origin (the (0,0,0) coordinate in the patient coordiante system).
-
-## Contributors
-
-Authors:
-- Nicole Aucoin (SPL, BWH)
-- Ron Kikinis (SPL, BWH)
-- Andras Lasso (PerkLab, Queen's University)
-
-## Acknowledgements
-
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+```{include} ../../_moduledescriptions/ACPCTransformParameters.md
+```
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_spl.png)
