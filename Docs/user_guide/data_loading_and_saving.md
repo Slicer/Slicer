@@ -124,7 +124,7 @@ Surface or volumetric meshes.
 
 ### Scenes
 
-- **MRML (Medical Reality Markup Language File)** (.mrml): MRML file is a xml-formatted text file with scene metadata and pointers to externally stored data files. See [MRML overview](mrml_overview). Coordinate system: RAS.
+- **MRML (Medical Reality Markup Language File)** (.mrml): MRML file is a xml-formatted text file with scene metadata and pointers to externally stored data files. See [MRML overview](../developer_guide/mrml_overview.md). Coordinate system: RAS.
 - **MRB (Medical Reality Bundle)** (.mrb, .zip): MRB is a binary format encapsulating all scene data (bulk data and metadata). Internally it uses zip format. Any .zip file that contains a self-contained data tree including a .mrml file can be opened. Coordinate system: RAS. Note: only .mrb file extension can be chosen for writing, but after that the file can be manually renamed to .zip if you need access to internal data.
 - **Data collections in XNAT Catalog format** (.xcat; reading only)
 - **Data collections in XNAT Archive format** (.xar; reading only)
@@ -134,8 +134,8 @@ Surface or volumetric meshes.
 - **Text** (.txt, .xml., json)
 - **Table** (.csv, .tsv)
 - [**Color table**](https://www.slicer.org/wiki/Documentation/Nightly/Modules/Colors#File_format) (.ctbl, .txt)
-- [**Volume rendering properties**](../../developer_guide/modules/volumerendering) (.vp)
-- [**Volume rendering shader properties**](../../developer_guide/modules/volumerendering) (.sp)
+- [**Volume rendering properties**](../developer_guide/modules/volumerendering.md) (.vp)
+- [**Volume rendering shader properties**](../developer_guide/modules/volumerendering.md) (.sp)
 - **Terminology** (.term.json, .json): dictionary of standard DICOM or other terms
 - **Node sequence** (.seq.mrb): sequence of any MRML node (for storage of 4D data)
 

@@ -27,17 +27,17 @@ Volumes module handles a 2D image as a single-slice 3D image. 4D volumes are rep
 
 ### Display volume
 
-Slice views: After loading a volume, it is displayed in slice views by default. If multiple volumes are loaded, `Data` module can be used to choose which one is displayed. [Slice view controls](../user_interface.html#slice-view) allow further customization of which volume is displayed in which view and how.
+Slice views: After loading a volume, it is displayed in slice views by default. If multiple volumes are loaded, `Data` module can be used to choose which one is displayed. [Slice view controls](../user_interface.md#slice-view) allow further customization of which volume is displayed in which view and how.
 
 3D views: Volumes can be displayed in 3D views using [Volume rendering](volumerendering) module. If structures of interest cannot be distinguished from surrounding regions then it may be necessary to segment the image using [Segment Editor](segmenteditor) module and click `Show 3D` button.
 
 ### Overlay two volumes
 
-- [Load](data_loading_and_saving) two volumes
+- [Load](../data_loading_and_saving.md) two volumes
 - Go to `Data` module
 - Left-click on the "eye" icon of one of the volumes to show it as background volume
 - Right-click on "eye" icon of the other volume and choose "Show in slice views as foreground"
-- Adjust transparency of the foreground volume using the vertical slider in [slice view controls](../user_interface.html#slice-view).
+- Adjust transparency of the foreground volume using the vertical slider in [slice view controls](../user_interface.md#slice-view).
   Click `link` button to make all changes applied to all slice views (in the same view group)
 
 ### Load image file as labelmap volume

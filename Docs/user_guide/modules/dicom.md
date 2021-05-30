@@ -53,7 +53,7 @@ Since DICOM files are often located in several folders, they can cross-reference
 
 #### DICOM import
 
-1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM import plugin for importing images, but additional extensions may be needed for other information objects. For example, *SlicerRT extension is needed for importing/exporting radiation therapy information objects (RT structure set, dose, image, plan). Quantitative reporting extension is needed to import export DICOM segmentation objects, structured reports, and parametric maps.* See complete list in [supported data formats section](../data_loading_and_saving.html#supported-data-formats).
+1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM import plugin for importing images, but additional extensions may be needed for other information objects. For example, *SlicerRT extension is needed for importing/exporting radiation therapy information objects (RT structure set, dose, image, plan). Quantitative reporting extension is needed to import export DICOM segmentation objects, structured reports, and parametric maps.* See complete list in [supported data formats section](../data_loading_and_saving.md#supported-data-formats).
 2. Go to DICOM module
 3. Select folders that contain DICOM files
     - Option A: Drag-and-drop the folder that contains DICOM files to the Slicer application window.
@@ -67,7 +67,11 @@ Since DICOM files are often located in several folders, they can cross-reference
 2. Double-click on the patient, study, or series to load.
 3. Click "Show DICOM database" button to toggle between the database browser (to load more data) and the viewer (to see what is loaded into the scene already)
 
-Note: Selected patients/studies/series can be loaded at once by first selecting items to load. Shift-click to select a range, Ctrl-click to select/unselect a single item. If an item in the patient or study list is selected then by default all series that belong to that item will be loaded. Click "Load" button to load selected items.
+:::{admonition} Tip
+
+Selected patients/studies/series can be loaded at once by first selecting items to load. Shift-click to select a range, Ctrl-click to select/unselect a single item. If an item in the patient or study list is selected then by default all series that belong to that item will be loaded. Click "Load" button to load selected items.
+
+:::
 
 Advanced data loading: It is often possible to interpret DICOM data in different ways. If the application loaded data differently than expected then check "Advanced" checkbox, click "Examine" button, select all items in the list in the bottom (containing DICOM data, Reader, Warnings columns), and click "Load".
 
@@ -79,7 +83,7 @@ By right clicking on a Patient, Study, or Series, you can delete the entry from 
 
 Data in the scene can be exported to DICOM format, to be stored in DICOM database or exported to DICOM files:
 
-1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM export plugin for exporting images, but additional extensions may be needed for other information objects. *SlicerRT extension is needed for importing/exporting radiation therapy information objects (RT structure set, dose, image, plan). Quantitative reporting extension is needed to import export DICOM segmentation objects, structured reports, and parametric maps.* See complete list in [Supported data formats page](../supported_data_formats).
+1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM export plugin for exporting images, but additional extensions may be needed for other information objects. *SlicerRT extension is needed for importing/exporting radiation therapy information objects (RT structure set, dose, image, plan). Quantitative reporting extension is needed to import export DICOM segmentation objects, structured reports, and parametric maps.* See complete list in [Supported data formats page](../data_loading_and_saving.md#supported-data-formats).
 2. Go to Data module or DICOM module.
 3. Right-click on a data node in the data tree that will be converted to DICOM format.
 4. Select the export type in the bottom left of the export dialog. This is necessary because there may be several DICOM information objects that can store the same kind of data. For example, segmentation can be stored as DICOM segmentation object (modern DICOM) or RT structure set (legacy representation, mostly used by radiation treatment planning).
@@ -190,7 +194,7 @@ If none of the above helps then check the Slicer error logs and report the error
 DICOM is a complex way to represent data, and often scanners and other software will generate 'non-standard' files that claim to be DICOM but really aren't compliant with the specification.  In addition, the specification itself has many variations and special formats that Slicer is not able to understand.  Slicer is used most often with CT and MR DICOM objects, so these will typically work.
 
 If you have trouble importing DICOM data here are some steps to try:
-- Make sure you are following the [DICOM](Module_DICOM) module documentation.
+- Make sure you are following the [DICOM loading instructions](#dicom-loading).
 - We are constantly improving the application (new preview version is released every day), so there is a chance that the problem you encountered is addressed in a recent version. Try loading the data using the latest stable and the latest nightly versions of Slicer.
 - Make sure the Slicer temporary folder is writeable. Temporary folder can be selected in menu: Edit / Application Settings / Modules / Temporary directory.
 - Try moving the data and the database directory to a path that includes only US English characters (ASCII) to avoid possible parsing errors. No special, international characters are allowed.

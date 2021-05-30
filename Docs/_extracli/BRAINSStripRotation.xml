@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Utilities</category>
+  <title>BRAINS Strip Rotation</title>
+  <description>Read an Image, write out same image with identity rotation matrix plus an ITK transform file</description>
+  <version>5.4.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Kent WIlliams</contributor>
+  <acknowledgements></acknowledgements>
+  <parameters>
+    <image>
+      <name>inputVolume</name>
+      <longflag alias="fixedVolume">inputVolume</longflag>
+      <description>Image To Warp</description>
+      <label>Image To Warp</label>
+      <channel>input</channel>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Resulting deformed image</description>
+      <label>Output Image</label>
+      <channel>output</channel>
+    </image>
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
+      <name>transform</name>
+      <longflag>transform</longflag>
+      <label>Transform file</label>
+      <description>Filename for the transform file</description>
+      <channel>output</channel>
+      <default></default>
+    </transform>
+  </parameters>
+</executable>

@@ -128,8 +128,8 @@ See examples and other developer information in [Developer guide](../../develope
 
 ## Related modules
 
-- This module will replace [Annotations](Annotations) module.
-- [Endoscopy](Endoscopy) module uses fiducials
+- This module will replace [Annotations](annotations.md) module.
+- [Endoscopy](endoscopy.md) module uses fiducials
 
 ## Contributors
 

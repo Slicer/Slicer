@@ -132,7 +132,7 @@ To create a C++ plugin, implement a child class of qSlicerSubjectHierarchyAbstra
 ## References
 
 - Additional information on [Subject hierarchy labs page](https://www.slicer.org/wiki/Documentation/Labs/SubjectHierarchy)
-- Manual editing of segmentations can be done in the [Segment Editor module](SegmentEditor)
+- Manual editing of segmentations can be done in the [Segment Editor module](segmenteditor.md)
 
 ## Contributors
 

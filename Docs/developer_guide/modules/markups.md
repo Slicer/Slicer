@@ -54,4 +54,4 @@ Then comes the fiducials, one per line, for example:
 
 ## Examples
 
-Examples for common operations on transform are provided in the [script repository](../script_repository.html#markups).
+Examples for common operations on transform are provided in the [script repository](../script_repository.md#markups).
