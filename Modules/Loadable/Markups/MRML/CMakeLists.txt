@@ -24,6 +24,7 @@ set(${KIT}_SRCS
   vtkMRML${MODULE_NAME}LineNode.cxx
   vtkMRML${MODULE_NAME}Node.cxx
   vtkMRML${MODULE_NAME}PlaneNode.cxx
+  vtkMRML${MODULE_NAME}PlaneJsonStorageNode.cxx
   vtkMRML${MODULE_NAME}ROINode.cxx
   vtkMRML${MODULE_NAME}ROIDisplayNode.cxx
   vtkMRML${MODULE_NAME}ROIJsonStorageNode.cxx

@@ -52,7 +52,7 @@
 namespace
 {
   const std::string MARKUPS_SCHEMA =
-    "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.1.json#";
+    "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.2.json#";
   const std::string ACCEPTED_MARKUPS_SCHEMA_REGEX =
     "^https://raw\\.githubusercontent\\.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
 }

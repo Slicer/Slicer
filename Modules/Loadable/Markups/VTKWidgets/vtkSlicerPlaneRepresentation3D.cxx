@@ -152,8 +152,8 @@ bool vtkSlicerPlaneRepresentation3D::GetTransformationReferencePoint(double refe
 //----------------------------------------------------------------------
 void vtkSlicerPlaneRepresentation3D::BuildPlane()
 {
-  vtkMRMLMarkupsPlaneNode* markupsNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
-  if (!markupsNode || markupsNode->GetNumberOfControlPoints() != 3)
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
+  if (!planeNode || planeNode->GetNumberOfControlPoints() != 3)
     {
     this->PlaneActor->SetVisibility(false);
     this->PlaneOccludedActor->SetVisibility(false);
@@ -163,7 +163,7 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
   double xAxis_World[3] = { 0.0 };
   double yAxis_World[3] = { 0.0 };
   double zAxis_World[3] = { 0.0 };
-  markupsNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
+  planeNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
 
   double epsilon = 1e-5;
   if (vtkMath::Norm(xAxis_World) <= epsilon ||
@@ -178,7 +178,7 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
   vtkNew<vtkPoints> arrowPoints_World;
 
   double origin_World[3] = { 0.0 };
-  markupsNode->GetOriginWorld(origin_World);
+  planeNode->GetOriginWorld(origin_World);
   arrowPoints_World->InsertNextPoint(origin_World);
 
   vtkNew<vtkDoubleArray> arrowDirectionArray_World;
@@ -193,8 +193,10 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
   this->ArrowGlypher->SetInputData(arrowPositionPolyData_World);
 
   // Update the plane
-  double bounds_Plane[6] = { 0.0 };
-  markupsNode->GetPlaneBounds(bounds_Plane);
+  double size_Object[2] = { 0.0 };
+  planeNode->GetSize(size_Object);
+
+  double bounds_Object[4] = { -0.5 * size_Object[0], 0.5 * size_Object[0] , -0.5 * size_Object[1] , 0.5 * size_Object[1] };
 
   double planePoint1_World[3] = { 0.0 };
   double planePoint2_World[3] = { 0.0 };
@@ -204,20 +206,20 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
   for (int i = 0; i < 3; ++i)
     {
     planePoint1_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Plane[0])
-      + (yAxis_World[i] * bounds_Plane[2]); // Bottom left corner (Plane filter origin)
+      + (xAxis_World[i] * bounds_Object[0])
+      + (yAxis_World[i] * bounds_Object[2]); // Bottom left corner (Plane filter origin)
 
     planePoint2_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Plane[0])
-      + (yAxis_World[i] * bounds_Plane[3]); // Top left corner
+      + (xAxis_World[i] * bounds_Object[0])
+      + (yAxis_World[i] * bounds_Object[3]); // Top left corner
 
     planePoint3_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Plane[1])
-      + (yAxis_World[i] * bounds_Plane[3]); // Top right corner
+      + (xAxis_World[i] * bounds_Object[1])
+      + (yAxis_World[i] * bounds_Object[3]); // Top right corner
 
     planePoint4_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Plane[1])
-      + (yAxis_World[i] * bounds_Plane[2]); // Bottom right corner
+      + (xAxis_World[i] * bounds_Object[1])
+      + (yAxis_World[i] * bounds_Object[2]); // Bottom right corner
 
     planePoint5_World[i] = (planePoint1_World[i] + planePoint4_World[i]) / 2.0; // Between bottom left and bottom right
     }
