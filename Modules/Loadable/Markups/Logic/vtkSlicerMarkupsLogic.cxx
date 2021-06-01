@@ -28,6 +28,7 @@
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsJsonStorageNode.h"
+#include "vtkMRMLMarkupsPlaneJsonStorageNode.h"
 #include "vtkMRMLMarkupsROIDisplayNode.h"
 #include "vtkMRMLMarkupsROIJsonStorageNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
@@ -106,6 +107,7 @@ vtkSlicerMarkupsLogic::vtkSlicerMarkupsLogic()
 {
   this->AutoCreateDisplayNodes = true;
   this->RegisterJsonStorageNodeForMarkupsType("ROI", "vtkMRMLMarkupsROIJsonStorageNode");
+  this->RegisterJsonStorageNodeForMarkupsType("Plane", "vtkMRMLMarkupsPlaneJsonStorageNode");
 }
 
 //----------------------------------------------------------------------------
@@ -280,6 +282,7 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROIJsonStorageNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneJsonStorageNode>::New());
 }
 
 //---------------------------------------------------------------------------

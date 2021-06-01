@@ -79,9 +79,9 @@ void vtkMRMLMeasurementArea::Compute()
     }
   else if (planeNode)
     {
-    double bounds[6] = { 0.0 };
-    planeNode->GetPlaneBounds(bounds);
-    area = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]);
+    double size[2] = { 0.0 };
+    planeNode->GetSize(size);
+    area = size[0] * size[1];
     }
   else
     {

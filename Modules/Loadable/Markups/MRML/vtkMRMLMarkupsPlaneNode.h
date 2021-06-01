@@ -114,19 +114,41 @@ public:
   /// When the size mode is absolute, SetPlaneBounds can be used to specify the size of the plane.
   /// This is only used when the size mode is absolute.
   void GetPlaneBounds(double bounds[6]);
-  vtkSetVector6Macro(PlaneBounds, double);
+  double* GetPlaneBounds() VTK_SIZEHINT(6);
+  void SetPlaneBounds(double bounds[6]);
+  void SetPlaneBounds(double, double, double, double, double, double);
+  void GetSize(double size[2]);
+  double* GetSize() VTK_SIZEHINT(2);
+  vtkSetVector2Macro(Size, double);
 
   /// The normal vector for the plane.
   void GetNormal(double normal[3]);
-  void SetNormal(const double normal[3]);
+  double* GetNormal() VTK_SIZEHINT(3);
   void GetNormalWorld(double normal[3]);
+  double* GetNormalWorld() VTK_SIZEHINT(3);
+  void SetNormal(const double normal[3]);
+  void SetNormal(double x, double y, double z);
   void SetNormalWorld(const double normal[3]);
+  void SetNormalWorld(double x, double y, double z);
 
   /// The origin of the plane.
   void GetOrigin(double origin[3]);
-  void SetOrigin(const double origin[3]);
+  double* GetOrigin() VTK_SIZEHINT(3);
   void GetOriginWorld(double origin[3]);
+  double* GetOriginWorld() VTK_SIZEHINT(3);
+  void SetOrigin(const double origin[3]);
+  void SetOrigin(double x, double y, double z);
   void SetOriginWorld(const double origin[3]);
+  void SetOriginWorld(double x, double y, double z);
+
+  void GetCenter(double origin[3]) { this->GetOrigin(origin); };
+  double* GetCenter() VTK_SIZEHINT(3) { return this->GetOrigin(); };
+  void GetCenterWorld(double origin[3]) { this->GetOriginWorld(origin); };
+  double* GetCenterWorld() VTK_SIZEHINT(3) { return this->GetOriginWorld(); };
+  void SetCenter(const double origin[3]) { this->SetOrigin(origin); };
+  void SetCenter(double x, double y, double z) { this->SetOrigin(x, y, z); };
+  void SetCenterWorld(const double origin[3]) { this->SetOriginWorld(origin); };
+  void SetCenterWorld(double x, double y, double z) { this->SetOriginWorld(x, y, z); };
 
   /// The direction vectors defined by the markup points.
   /// Calculated as follows and then transformed by the offset matrix:
@@ -142,6 +164,8 @@ public:
   virtual void GetObjectToNodeMatrix(vtkMatrix4x4* planeToNodeMatrix);
   // Mapping from XYZ plane coordinates to world coordinates
   virtual void GetObjectToWorldMatrix(vtkMatrix4x4* planeToWorldMatrix);
+  // Mapping from Base plane coordinates to local coordinates
+  virtual void GetBaseToNodeMatrix(vtkMatrix4x4* matrix);
 
   /// 4x4 matrix specifying the relative (rotation/translation) of the plane from the base coordinate system defined by the markup points.
   /// Default is the identity matrix.
@@ -156,15 +180,28 @@ public:
   /// \return Signed distance from the point to the plane. Positive distance is in the direction of the plane normal
   double GetClosestPointOnPlaneWorld(const double posWorld[3], double closestPosWorld[3], bool infinitePlane = true);
 
+  /// Create default storage node or nullptr if does not have one
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+
 protected:
 
   /// Calculates the x y and z axis of the plane from the 3 input points.
   void CalculateAxesFromPoints(const double point0[3], const double point1[3], const double point2[3], double x[3], double y[3], double z[3]);
 
+  // Updates the plane bounds based on SizeMode and AutoSizeScalingFactor.
+  void UpdateSize();
+
   int SizeMode;
   double AutoSizeScalingFactor;
-  double PlaneBounds[6];
+  double Size[2] = { 0.0, 0.0 };
   vtkSmartPointer<vtkMatrix4x4> ObjectToBaseMatrix;
+  double PlaneBounds[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+
+  // Arrays used to return pointers from GetNormal/GetOrigin functions.
+  double Normal[3] = { 0.0, 0.0, 0.0 };
+  double NormalWorld[3] = { 0.0, 0.0, 0.0 };
+  double Origin[3] = { 0.0,0.0,0.0 };
+  double OriginWorld[3] = { 0.0,0.0,0.0 };
 
   /// Helper method for ensuring that the plane has enough points and that the points/vectors are not coincident.
   /// Used when calling SetNormal(), SetVectors() to ensure that the plane is valid before transforming to the new

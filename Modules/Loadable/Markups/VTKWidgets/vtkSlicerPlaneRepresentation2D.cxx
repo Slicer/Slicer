@@ -535,11 +535,11 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
 {
   vtkMRMLMarkupsPlaneNode* markupsNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
   if (!markupsNode || markupsNode->GetNumberOfControlPoints() != 3)
-  {
+    {
     this->PlaneFillMapper->SetInputData(vtkNew<vtkPolyData>());
     this->ArrowMapper->SetInputData(vtkNew<vtkPolyData>());
     return;
-  }
+    }
 
   double xAxis_World[3] = { 0.0 };
   double yAxis_World[3] = { 0.0 };
@@ -550,11 +550,11 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   if (vtkMath::Norm(xAxis_World) <= epsilon ||
       vtkMath::Norm(yAxis_World) <= epsilon ||
       vtkMath::Norm(zAxis_World) <= epsilon)
-  {
+    {
     this->PlaneFillMapper->SetInputData(vtkNew<vtkPolyData>());
     this->ArrowMapper->SetInputData(vtkNew<vtkPolyData>());
     return;
-  }
+    }
 
   this->PlaneFillMapper->SetInputConnection(this->PlaneWorldToSliceTransformer->GetOutputPort());
   this->ArrowMapper->SetInputConnection(this->ArrowGlypher->GetOutputPort());
@@ -563,8 +563,10 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   markupsNode->GetOriginWorld(origin_World);
 
   // Update the plane
-  double bounds_Plane[6] = { 0.0 };
-  markupsNode->GetPlaneBounds(bounds_Plane);
+  double size_Object[2] = { 0.0 };
+  markupsNode->GetSize(size_Object);
+
+  double bounds_Object[4] = { -0.5 * size_Object[0], 0.5 * size_Object[0] , -0.5 * size_Object[1] , 0.5 * size_Object[1] };
 
   double planePoint1_World[3] = { 0.0 };
   double planePoint2_World[3] = { 0.0 };
@@ -572,16 +574,16 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   for (int i = 0; i < 3; ++i)
     {
     planePoint1_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Plane[0])
-      + (yAxis_World[i] * bounds_Plane[2]); // Bottom left corner (Plane filter origin)
+      + (xAxis_World[i] * bounds_Object[0])
+      + (yAxis_World[i] * bounds_Object[2]); // Bottom left corner (Plane filter origin)
 
     planePoint2_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Plane[0])
-      + (yAxis_World[i] * bounds_Plane[3]); // Top left corner
+      + (xAxis_World[i] * bounds_Object[0])
+      + (yAxis_World[i] * bounds_Object[3]); // Top left corner
 
     planePoint3_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Plane[1])
-      + (yAxis_World[i] * bounds_Plane[2]); // Bottom right corner
+      + (xAxis_World[i] * bounds_Object[1])
+      + (yAxis_World[i] * bounds_Object[2]); // Bottom right corner
     }
   this->PlaneFilter->SetOrigin(planePoint1_World);
   this->PlaneFilter->SetPoint1(planePoint2_World);
