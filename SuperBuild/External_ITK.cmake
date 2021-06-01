@@ -147,6 +147,8 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DModule_IOScanco:BOOL=ON
       -DModule_MorphologicalContourInterpolation:BOOL=ON
       -DModule_SimpleITKFilters:BOOL=${Slicer_USE_SimpleITK}
+      -DModule_GenericLabelInterpolator:BOOL=ON
+      -DModule_AdaptiveDenoising:BOOL=ON
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DITK_INSTALL_NO_DEVELOPMENT:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
