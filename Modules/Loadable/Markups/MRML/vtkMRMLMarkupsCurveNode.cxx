@@ -1233,7 +1233,8 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
 {
-  if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0)
+  if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0 ||
+      strcmp(reference->GetReferenceRole(), this->TransformNodeReferenceRole) == 0)
     {
     this->OnSurfaceModelTransformChanged();
     this->OnSurfaceModelNodeChanged();
@@ -1245,7 +1246,8 @@ void vtkMRMLMarkupsCurveNode::OnNodeReferenceAdded(vtkMRMLNodeReference* referen
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 {
-  if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0)
+  if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0 ||
+      strcmp(reference->GetReferenceRole(), this->TransformNodeReferenceRole) == 0)
     {
     this->OnSurfaceModelTransformChanged();
     this->OnSurfaceModelNodeChanged();
@@ -1257,8 +1259,10 @@ void vtkMRMLMarkupsCurveNode::OnNodeReferenceModified(vtkMRMLNodeReference* refe
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* reference)
 {
-  if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0)
+  if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0 ||
+      strcmp(reference->GetReferenceRole(), this->TransformNodeReferenceRole) == 0)
     {
+    this->OnSurfaceModelTransformChanged();
     this->OnSurfaceModelNodeChanged();
     }
   Superclass::OnNodeReferenceRemoved(reference);
