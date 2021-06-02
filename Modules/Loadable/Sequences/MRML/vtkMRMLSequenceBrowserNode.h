@@ -347,6 +347,8 @@ protected:
 private:
   struct SynchronizationProperties;
   std::map< std::string, SynchronizationProperties* > SynchronizationPropertiesMap;
+  SynchronizationProperties* GetSynchronizationPropertiesForSequence(vtkMRMLSequenceNode* sequenceNode);
+  SynchronizationProperties* GetSynchronizationPropertiesForPostfix(const std::string& rolePostfix);
 };
 
 #endif
