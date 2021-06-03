@@ -186,7 +186,12 @@ public:
                                         QFile::Permissions filePermissions);
 
   /// \brief Return an updated \a text where Slicer wiki URL version is replaced
-  /// with the provided one.
+  /// with the provided one. It is now deprecated as the Slicer wiki is no longer
+  /// recommended for storing documentation. Instead Slicer core documentation
+  /// is hosted on ReadTheDocs (and versioning can be implemented using replaceDocumentationUrlVersion)
+  /// and extension documentation is expected to be hosted in each extension's repository
+  /// (and modules in extensions can create versioned links for their documentation using
+  /// qSlicerCoreApplication::documentationVersion()).
   ///
   /// Any URL containing `Documentation/<VERSION>/` will be updated.
   ///
@@ -205,6 +210,26 @@ public:
   /// \snippet qSlicerUtilsTest1.cxx replaceWikiUrlVersion example3
   /// \snippet qSlicerUtilsTest1.cxx replaceWikiUrlVersion example4
   static QString replaceWikiUrlVersion(const QString& text, const QString& version);
+
+  /// \brief Return an updated \a text where Slicer documentation URL version is replaced
+  /// with the provided one.
+  ///
+  /// Any URL that contains `/<VERSION>/` and with URL host name that contains the provided hostname
+  /// sting will be updated.
+  ///
+  /// Following readthedocs versioning conventions, `<VERSION>` can be
+  /// `<major>.<minor>`, `v<major>.<minor>`, `latest`, or `stable`.
+  ///
+  /// Only the first occurrence of version is replaced (to keep file or directory names that have
+  /// a name that matches accepted version patterns unchanged).
+  /// For example, in `https://slicer.readthedocs.io/en/latest/user_guide/schema/1.0/something.html`
+  /// the `1.0` folder name will not be changed (only `latest` will be set to the actual version).
+  ///
+  /// Limitations:
+  /// - language code is not updated (the language specified in the original URL will be used)
+  /// - extensions that have versioned documentation maintained in their own repository have to
+  ///   generate their versioned links (for example, using qSlicerCoreApplication::documentationVersion()).
+  static QString replaceDocumentationUrlVersion(const QString& text, const QString& hostname, const QString& version);
 
 private:
   /// Not implemented

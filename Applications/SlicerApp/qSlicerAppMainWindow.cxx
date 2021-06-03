@@ -203,6 +203,8 @@ void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()
 void qSlicerAppMainWindow::on_HelpBrowseTutorialsAction_triggered()
 {
   QString url;
+
+  // TODO: update these URLs when tutorial main page is moved to ReadTheDocs.
   if (qSlicerApplication::application()->releaseType() == "Stable")
     {
     url = QString("http://www.slicer.org/slicerWiki/index.php/Documentation/%1.%2/Training")
@@ -218,17 +220,7 @@ void qSlicerAppMainWindow::on_HelpBrowseTutorialsAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpInterfaceDocumentationAction_triggered()
 {
-  QString url;
-  if (qSlicerApplication::application()->releaseType() == "Stable")
-    {
-    url = QString("https://slicer.readthedocs.io/en/v%1.%2/")
-                    .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
-    }
-  else
-    {
-    url = QString("https://slicer.readthedocs.io/en/latest/");
-    }
-  QDesktopServices::openUrl(QUrl(url));
+  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl()));
 }
 
 //---------------------------------------------------------------------------

@@ -49,7 +49,6 @@ public slots:
   bool loadRemoteSampleData();
   bool loadDicomData();
   void editApplicationSettings();
-  bool presentTutorials();
   bool exploreLoadedData();
 
 protected:

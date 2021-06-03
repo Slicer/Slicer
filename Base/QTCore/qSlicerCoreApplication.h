@@ -88,6 +88,9 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString revision READ revision CONSTANT)
   Q_PROPERTY(int majorVersion READ majorVersion CONSTANT)
   Q_PROPERTY(int minorVersion READ minorVersion CONSTANT)
+  Q_PROPERTY(QString documentationBaseUrl READ documentationBaseUrl)
+  Q_PROPERTY(QString documentationVersion READ documentationVersion CONSTANT)
+  Q_PROPERTY(QString documentationLanguage READ documentationLanguage)
   Q_PROPERTY(QString platform READ platform CONSTANT)
   Q_PROPERTY(QString arch READ arch CONSTANT)
   Q_PROPERTY(QString os READ os CONSTANT)
@@ -423,6 +426,27 @@ public:
   /// Return the main application's patch version number.
   /// Useful for custom applications.
   int mainApplicationPatchVersion() const;
+
+  /// Return the documentation base URL.
+  /// By default, https://slicer.readthedocs.io/{language}/{version}
+  /// but it can be changed in the application settings (DocumentationBaseURL).
+  /// Use "latest" version for Preview (installed preview release) and Experimental (developer build),
+  /// and use "majorVersion.minorVersion" for Stable release.
+  QString documentationBaseUrl()const;
+
+  /// Return the documentation version that can be used in URLs.
+  /// Returns "latest" version for Preview (installed preview release) and Experimental (developer build),
+  /// and use "majorVersion.minorVersion" for Stable release.
+  QString documentationVersion()const;
+
+  /// Return the documentation language that can be used in URLs.
+  /// Returns "en" if internationalization is disabled.
+  QString documentationLanguage()const;
+
+  /// Return the documentation base URL.
+  /// By default, {documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html
+  /// but it can be changed in the application settings (ModuleDocumentationURL).
+  Q_INVOKABLE QString moduleDocumentationUrl(const QString &moduleName)const;
 
   /// Return the copyrights of Slicer
   virtual QString copyrights()const;

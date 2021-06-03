@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Registration</category>
-  <title>Metric Test</title>
+  <title>Registration Metric Test (BRAINS)</title>
   <description>Compare Mattes/MSQ metric value for two input images and a possible input BSpline transform.</description>
   <version>5.4.0</version>
-  <documentation-url>A utility to compare metric value between two input images.</documentation-url>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/performmetrictest.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Ali Ghayoor</contributor>
   <acknowledgements>

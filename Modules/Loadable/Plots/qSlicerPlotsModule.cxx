@@ -68,10 +68,9 @@ QIcon qSlicerPlotsModule::icon()const
 //-----------------------------------------------------------------------------
 QString qSlicerPlotsModule::helpText()const
 {
-  QString help =
-    "The Plots module allows editing properties of plots.<br>"
-    "For more information see the <a href=\"%1/Documentation/%2.%3/Developers/Plots\">oneline documentation</a>.<br>";
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+  QString help = "The Plots module allows editing properties of plots.<br>";
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

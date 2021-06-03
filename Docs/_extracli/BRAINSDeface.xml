@@ -2,18 +2,12 @@
 <executable>
     <category>Utilities.BRAINS</category>
     <title>Brain Deface from T1/T2 image (BRAINS)</title>
-    <description>
-        This program: 1) will deface images from a set of images.  Inputs must be ACPC aligned, and AC, PC, LE, RE provided.
-    </description>
+    <description>This program: 1) will deface images from a set of images.  Inputs must be ACPC aligned, and AC, PC, LE, RE provided.</description>
     <version>5.4.0</version>
-    <documentation-url></documentation-url>
+    <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsdeface.html</documentation-url>
     <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
-    <contributor>
-        This tool is created by Hans J. Johnson.
-    </contributor>
-    <acknowledgements>
-        This work was developed by the University of Iowa Department of Electrical and Computer Engineering.
-    </acknowledgements>
+    <contributor>This tool is created by Hans J. Johnson.</contributor>
+    <acknowledgements>This work was developed by the University of Iowa Department of Electrical and Computer Engineering.</acknowledgements>
 
     <parameters>
         <label>Input Images</label>

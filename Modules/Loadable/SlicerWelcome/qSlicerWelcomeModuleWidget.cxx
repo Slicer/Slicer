@@ -140,13 +140,9 @@ void qSlicerWelcomeModuleWidget::loadSource(QWidget* widget)
 
     qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 
-    // Update occurrences of wiki URLs
-    QString wikiVersion = "Nightly";
-    if (app->releaseType() == "Stable")
-      {
-      wikiVersion = QString("%1.%2").arg(app->majorVersion()).arg(app->minorVersion());
-      }
-    html = qSlicerUtils::replaceWikiUrlVersion(html, wikiVersion);
+    // Update occurrences of documentation URLs
+    html = qSlicerUtils::replaceDocumentationUrlVersion(html,
+      QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
 
     fittedTextBrowser->setHtml(html);
     }
@@ -254,16 +250,6 @@ bool qSlicerWelcomeModuleWidget::loadRemoteSampleData()
   return d->selectModule("SampleData");
 }
 
-//-----------------------------------------------------------------------------
-bool qSlicerWelcomeModuleWidget::presentTutorials()
-{
-  QDesktopServices::openUrl(QUrl(QString(
-    "%1/Documentation/%2.%3/Training")
-      .arg(QSettings().value("SlicerWikiURL").toString())
-      .arg(Slicer_VERSION_MAJOR)
-      .arg(Slicer_VERSION_MINOR)));
-  return true;
-}
 
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::exploreLoadedData()

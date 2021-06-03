@@ -196,12 +196,8 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     qSlicerCoreApplication* app = qSlicerCoreApplication::application();
     if (app)
       {
-      QString wikiVersion = "Nightly";
-      if (app->releaseType() == "Stable")
-        {
-        wikiVersion = QString("%1.%2").arg(app->majorVersion()).arg(app->minorVersion());
-        }
-      help = qSlicerUtils::replaceWikiUrlVersion(module->helpText(), wikiVersion);
+      help = qSlicerUtils::replaceDocumentationUrlVersion(module->helpText(),
+        QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
       }
     help.replace("\\n", "<br>");
     help = help.trimmed();

@@ -18,10 +18,11 @@ class DataProbe(ScriptedLoadableModule):
     parent.title = "DataProbe"
     parent.categories = ["Quantification"]
     parent.contributors = ["Steve Pieper (Isomics)"]
-    parent.helpText = string.Template("""The DataProbe module is used to get information about the current RAS position being
-indicated by the mouse position. For more information see the
-<a href=\"$a/Documentation/$b.$c/Modules/DataProbe\">online documentation</a>.
-""").substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
+    parent.helpText = """
+The DataProbe module is used to get information about the current RAS position being
+indicated by the mouse position.
+"""
+    self.parent.helpText += self.getDefaultModuleDocumentationLink()
     parent.acknowledgementText = """This work is supported by NA-MIC, NAC, NCIGT, NIH U24 CA180918 (PIs Kikinis and Fedorov) and the Slicer Community."""
     # TODO: need a DataProbe icon
     #parent.icon = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')

@@ -59,11 +59,9 @@ QString qSlicerUnitsModule::helpText()const
 {
   QString help =
     "This module controls the Units of the scene."
-    " It gives the option to create, edit and remove units.<br>"
-    "<a href=%1/Documentation/%2.%3/Modules/Units>"
-    "%1/Documentation/%2.%3/Modules/Units</a>";
-  return help.arg(this->slicerWikiUrl())
-    .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    " It gives the option to create, edit and remove units.<br>";
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

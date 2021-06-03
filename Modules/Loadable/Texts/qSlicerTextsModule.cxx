@@ -86,10 +86,9 @@ vtkMRMLAbstractLogic* qSlicerTextsModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerTextsModule::helpText()const
 {
-  QString help =
-    "A module to create, edit and manage text data in the scene.<br>"
-    "For more information see the <a href=%1/Documentation/%2.%3/Modules/Texts>online documentation</a>.<br>";
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+  QString help = "A module to create, edit and manage text data in the scene.<br>";
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

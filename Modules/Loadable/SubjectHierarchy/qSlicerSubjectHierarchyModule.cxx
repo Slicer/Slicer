@@ -80,9 +80,10 @@ qSlicerSubjectHierarchyModule::~qSlicerSubjectHierarchyModule() = default;
 QString qSlicerSubjectHierarchyModule::helpText()const
 {
   QString help =
-    "The Subject hierarchy module provides a nice and intuitive tree view of the loaded data. It acts as a convenient central organizing point for many of the operations that 3D Slicer and its extensions perform."
-    "For more information see <a href=\"%1/Documentation/%2.%3/Modules/SubjectHierarchy\">%1/Documentation/%2.%3/Modules/SubjectHierarchy</a><br>";
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    "The Subject hierarchy module provides a nice and intuitive tree view of the loaded data."
+    " It acts as a convenient central organizing point for many of the operations that 3D Slicer and its extensions perform.<br>";
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

@@ -2,10 +2,10 @@
 <executable>
   <category>Segmentation.Specialized</category>
   <title>Foreground masking (BRAINS)</title>
-  <description>This program is used to create a mask over the most prominant forground region in an image.  This is accomplished via a combination of otsu thresholding and a closing operation.  More documentation is available here: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/ForegroundMasking.
+  <description>This program is used to create a mask over the most prominant forground region in an image.  This is accomplished via a combination of otsu thresholding and a closing operation.
   </description>
   <version>5.4.0</version>
-  <documentation-url></documentation-url>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsroiauto.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Hans J. Johnson, hans-johnson -at- uiowa.edu, http://www.psychiatry.uiowa.edu</contributor>
   <acknowledgements>Hans Johnson(1,3,4); Kent Williams(1); Gregory Harris(1), Vincent Magnotta(1,2,3);  Andriy Fedorov(5), fedorov -at- bwh.harvard.edu (Slicer integration); (1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Radiology, 3=University of Iowa Department of Biomedical Engineering, 4=University of Iowa Department of Electrical and Computer Engineering, 5=Surgical Planning Lab, Harvard)  </acknowledgements>
@@ -79,7 +79,7 @@
     <double>
       <name>ROIAutoDilateSize</name>
       <longflag>ROIAutoDilateSize</longflag>
-      <label> ROIAuto Dilate Size</label>
+      <label>ROIAuto Dilate Size</label>
       <description>This flag is only relavent when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  At setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.</description>
       <default>0.0</default>
     </double>

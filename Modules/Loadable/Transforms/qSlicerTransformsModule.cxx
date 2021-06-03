@@ -95,10 +95,9 @@ vtkMRMLAbstractLogic* qSlicerTransformsModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerTransformsModule::helpText()const
 {
-  QString help =
-    "The Transforms Module creates and edits transforms.<br>"
-    "For more information see the <a href=%1/Documentation/%2.%3/Modules/Transforms>online documentation</a>.<br>";
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+  QString help = "The Transforms Module creates and edits transforms.<br>";
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

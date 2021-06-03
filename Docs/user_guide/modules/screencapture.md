@@ -78,6 +78,39 @@ This module is for creating videos, image sequences, or lightbox image from 3D a
   - **Size:** Watermark image size, as percentage of the original size.
   - **Opacity:**  Watermark image opacity, larger value makes the watermark more visible (less transparent).
 
+## Setting up ffmpeg
+
+FFmpeg library is not packaged with 3D Slicer due to large package size and licensing requirements for some video compression methods (see https://ffmpeg.org/legal.html). The FFmpeg library has to be downloaded and set up only once and 3D Slicer will remember its location.
+
+### Windows setup instructions
+
+On Windows, Screen Capture model can automatically download and install ffmpeg when needed. Follow these instructions for manual setup:
+
+- Download ffmpeg from here: https://ffmpeg.org/download.html (click Windows icon, select a package, for example `Download FFmpeg64-bit static`)
+- Extract downloaded package (for example, to `C:\Users\Public`)
+- In Advanced section, ffmpeg executable: select path for ffmpeg.exe (for example, `C:\Users\Public\ffmpeg-20160912-bc7066f-win32-static\bin\ffmpeg.exe`)
+
+### MacOS setup instructions
+
+- Install homebrew (from http://brew.sh/)
+- Run:
+  ```console
+  brew install ffmpeg
+  ```
+- In Advanced section, ffmpeg executable: select `/usr/local/bin/ffmpeg`
+
+### Linux setup instructions
+
+- Run these commands from the terminal:
+  ```console
+  git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+  cd ffmpeg
+  sudo apt-get install libx264-dev
+  ./configure --enable-gpl --enable-libx264 --prefix=${HOME}
+  make install
+  ```
+- In Advanced section, ffmpeg executable: select `${HOME}/bin/ffmpeg`
+
 ## Related modules
 
 - [Animator](https://github.com/SlicerMorph/SlicerMorph/tree/master/Docs/Animator#readme) module in [SlicerMorph extension](https://slicermorph.github.io/) allows creating more complex animations, such as cutting through a volume (by changing region of interest), adjusting volume rendering transfer functions, or exploding view of complex model assembly.

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Diffusion.Utilities</category>
-  <title>BRAINSDWICleanup</title>
+  <title>DWI Cleanup (BRAINS)</title>
 
   <description>Remove bad gradients/volumes from DWI NRRD file.</description>
   <acknowledgements></acknowledgements>
   <version>5.4.0</version>
-  <documentation-url></documentation-url>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsdwicleanup.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was developed by Kent Williams.</contributor>
 

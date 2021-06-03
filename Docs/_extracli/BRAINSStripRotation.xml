@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Utilities</category>
-  <title>BRAINS Strip Rotation</title>
+  <title>Strip Rotation (BRAINS)</title>
   <description>Read an Image, write out same image with identity rotation matrix plus an ITK transform file</description>
   <version>5.4.0</version>
-  <documentation-url></documentation-url>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsstriprotation.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
-  <contributor>Kent WIlliams</contributor>
+  <contributor>Kent Williams</contributor>
   <acknowledgements></acknowledgements>
   <parameters>
+    <label>Input Parameters</label>
     <image>
       <name>inputVolume</name>
       <longflag alias="fixedVolume">inputVolume</longflag>

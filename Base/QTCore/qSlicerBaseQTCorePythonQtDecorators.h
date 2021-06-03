@@ -78,10 +78,19 @@ public slots:
   //----------------------------------------------------------------------------
   // static methods
 
+  /// This method is only for documentation stored on the legacy Slicer wiki.
+  /// Instead, use slicer.readthedocs.io and replaceDcumentationUrlVersion.
   QString static_qSlicerUtils_replaceWikiUrlVersion(const QString& text,
                                                     const QString& version)
   {
     return qSlicerUtils::replaceWikiUrlVersion(text, version);
+  }
+
+  QString static_qSlicerUtils_replaceDocumentationUrlVersion(const QString& text,
+                                                             const QString& hostname,
+                                                             const QString& version)
+  {
+    return qSlicerUtils::replaceDocumentationUrlVersion(text, hostname, version);
   }
 };
 

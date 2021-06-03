@@ -78,10 +78,9 @@ QString qSlicerVolumeRenderingModule::helpText()const
     "If supported, hardware accelerated volume rendering is made available."
     "The module permits selection of preset transfer functions to colorize and set opacity "
     "of data in a task-appropriate way, and tools to customize the transfer functions that specify "
-    "these parameters.<br/>"
-    "For more information and tutorials see the <a href=\"%1/Documentation/%2.%3/Modules/VolumeRendering\">"
-    "online documentation</a><br/>");
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    "these parameters.<br/>");
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------
