@@ -716,7 +716,7 @@ void qSlicerExtensionsManagerModelTester::testWriteAndParseExtensionDescriptionF
   metadata.insert("description", "This is an example of CLI module built as an extension");
   metadata.insert("enabled", "true");
   metadata.insert("extensionname", "CLIExtensionTemplate");
-  metadata.insert("homepage", "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting");
+  metadata.insert("homepage", "https://slicer.readthedocs.io/en/latest/developer_guide/extensions.html");
   metadata.insert("md5", "d4726e1fd85b19930e0e8e8e5d6afa62");
   metadata.insert("os", "linux");
   metadata.insert("release", "");

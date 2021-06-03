@@ -4,7 +4,7 @@
   <title>Diffusion-weighted DICOM Import (DWIConvert)</title>
   <description><![CDATA[Converts diffusion weighted MR images in DICOM series into NRRD format for analysis in Slicer. This program has been tested on only a limited subset of DTI DICOM formats available from Siemens, GE, and Philips scanners. Work in progress to support DICOM multi-frame data. The program parses DICOM header to extract necessary information about measurement frame, diffusion weighting directions, b-values, etc, and write out a NRRD image. For non-diffusion weighted DICOM images, it loads in an entire DICOM series and writes out a single dicom volume in a .nhdr/.raw pair.]]></description>
   <version>5.4.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.5/Modules/DWIConverter</documentation-url>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/dwiconvert.html</documentation-url>
   <license>Apache License Version 2.0</license>
   <contributor>Hans Johnson (UIowa), Vince Magnotta (UIowa) Joy Matsui (UIowa), Kent Williams (UIowa), Mark Scully (Uiowa), Xiaodong Tao (GE)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  Additional support for DTI data produced on Philips scanners was contributed by Vincent Magnotta and Hans Johnson at the University of Iowa.]]></acknowledgements>

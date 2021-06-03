@@ -73,9 +73,9 @@ QIcon qSlicerTablesModule::icon()const
 QString qSlicerTablesModule::helpText()const
 {
   QString help =
-    "The Tables module allows displaying and editing of spreadsheets.<br>"
-    "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Tables\">%1/Documentation/%2.%3/Modules/Tables</a><br>";
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR); 
+    "The Tables module allows displaying and editing of spreadsheets.<br>";
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

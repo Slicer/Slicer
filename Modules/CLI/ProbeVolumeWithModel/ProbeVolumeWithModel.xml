@@ -4,7 +4,7 @@
   <title>Probe Volume With Model</title>
   <description><![CDATA[Paint a model by a volume (using vtkProbeFilter).]]></description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ProbeVolumeWithModel</documentation-url>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/probevolumewithmodel.html</documentation-url>
   <license/>
   <contributor>Lauren O'Donnell (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[BWH, NCIGT/LMI]]></acknowledgements>

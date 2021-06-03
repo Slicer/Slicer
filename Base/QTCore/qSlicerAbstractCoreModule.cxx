@@ -335,15 +335,13 @@ QStringList qSlicerAbstractCoreModule::associatedNodeTypes()const
 QString qSlicerAbstractCoreModule::defaultDocumentationLink()const
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-
-  // Use "latest" version for Preview (installed preview release) and Experimental (developer build),
-  // and use "majorVersion.minorVersion" for Stable release.
-  QString version = QLatin1String("latest");
-  if (app->releaseType() == "Stable")
+  if (!app)
     {
-    version = QString("%1.%2").arg(app->majorVersion()).arg(app->minorVersion());
+    // base URL stored in application settings, therefore if there is no
+    // valid application then we cannot get default documentation link
+    return "";
     }
-  QString url = QString("https://slicer.readthedocs.io/en/%1/user_guide/modules/%2.html").arg(version).arg(this->name().toLower());
+  QString url = app->moduleDocumentationUrl(this->name());
   QString linkText = QString("<p>For more information see the <a href=\"%1\">online documentation</a>.</p>").arg(url);
   return linkText;
 }

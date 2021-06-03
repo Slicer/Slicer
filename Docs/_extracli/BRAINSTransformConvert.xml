@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Utilities.BRAINS</category>
-  <title>BRAINS Transform Convert</title>
+  <title>Transform Convert (BRAINS)</title>
   <description>Convert ITK transforms to higher order transforms</description>
   <version>5.4.0</version>
-  <documentation-url>A utility to convert between transform file formats.</documentation-url>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainstransformconvert.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Hans J. Johnson,Kent Williams, Ali Ghayoor</contributor>
   <acknowledgements>

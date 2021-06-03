@@ -704,9 +704,9 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
             'contributors': ['John Doe (AnyWare Corp.)'],
             'description': ['This is an example of a simple extension'],
             'enabled': ['1'],
-            'homepage': ['https://www.slicer.org/wiki/Documentation/Nightly/Extensions/%s' % extensionName],
-            'icon_url': ['http://www.example.com/Slicer/Extensions/%s.png' % extensionName],
-            'screenshots': ['http://www.example.com/Slicer/Extensions/%s/Screenshots/1.png' % extensionName],
+            'homepage': ['https://github.com/username/Slicer%s' % extensionName],
+            'icon_url': ['https://github.com/username/Slicer%s/logo.png' % extensionName],
+            'screenshots': ['https://github.com/username/Slicer%s/screenshot01.png' % extensionName],
           })
         else:
           # XXX We should have a way to get the default value from

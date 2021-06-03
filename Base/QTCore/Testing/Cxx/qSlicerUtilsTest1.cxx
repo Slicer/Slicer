@@ -794,6 +794,63 @@ int isLoadableModuleTest()
     return EXIT_SUCCESS;
     }
 
+  //-----------------------------------------------------------------------------
+  int replaceDocumentationUrlVersionTest()
+    {
+
+    QString hostname = "slicer.readthedocs.io";
+    // Slicer ReadTheDocs -> replacements are done
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://slicer.readthedocs.io/en/latest/user_guide/get_help.html", hostname, "5.0"),
+      "https://slicer.readthedocs.io/en/5.0/user_guide/get_help.html");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://slicer.readthedocs.io/en/stable/user_guide/get_help.html", hostname, "5.0"),
+      "https://slicer.readthedocs.io/en/5.0/user_guide/get_help.html");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://slicer.readthedocs.io/en/4.11/user_guide/get_help.html", hostname, "5.0"),
+      "https://slicer.readthedocs.io/en/5.0/user_guide/get_help.html");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://slicer.readthedocs.io/en/v4.11/user_guide/get_help.html", hostname, "v5.0"),
+      "https://slicer.readthedocs.io/en/v5.0/user_guide/get_help.html");
+
+
+    // GitHub -> no replacements are done
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart#readme", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart#readme");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/tree/4.6#readme", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/tree/4.6#readme");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/tree/v4.6#readme", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/tree/v4.6#readme");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/blob/4.6/README.md", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/blob/4.6/README.md");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/blob/main/README.md", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/blob/main/README.md");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/blob/master/README.md", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/blob/master/README.md");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/blob/latest/data/1.0/README.md", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/blob/latest/data/1.0/README.md");
+
+    return EXIT_SUCCESS;
+    }
+
 
 } // end of anonymous namespace
 
@@ -809,6 +866,7 @@ int qSlicerUtilsTest1(int argc, char *argv [])
     CHECK_EXIT_SUCCESS(isPluginInstalledBuiltinTest());
     CHECK_EXIT_SUCCESS(setPermissionsRecursivelyTest());
     CHECK_EXIT_SUCCESS(replaceWikiUrlVersionTest());
+    CHECK_EXIT_SUCCESS(replaceDocumentationUrlVersionTest());
     }
   catch (std::runtime_error e)
     {

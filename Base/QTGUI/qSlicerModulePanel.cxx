@@ -172,18 +172,13 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (app)
     {
-    QString wikiVersion = "Nightly";
-    if (app->releaseType() == "Stable")
-      {
-      wikiVersion = QString("%1.%2").arg(app->majorVersion()).arg(app->minorVersion());
-      }
-    help = qSlicerUtils::replaceWikiUrlVersion(module->helpText(), wikiVersion);
+    help = qSlicerUtils::replaceDocumentationUrlVersion(module->helpText(),
+      QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
     }
   help.replace("\\n", "<br>");
 
   d->HelpCollapsibleButton->setVisible(this->isHelpAndAcknowledgmentVisible() && !help.isEmpty());
   d->HelpLabel->setHtml(help);
-  //d->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
   d->AcknowledgementLabel->clear();
   qSlicerAbstractModule* guiModule = qobject_cast<qSlicerAbstractModule*>(module);
   if (guiModule && !guiModule->logo().isNull())

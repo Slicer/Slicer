@@ -75,10 +75,9 @@ QString qSlicerCamerasModule::helpText()const
     "all other layouts. The camera pulldown menu below can be used to set the "
     "active camera for the selected view.<br>"
     "WARNING: this is rather experimental at the moment (fiducials, IO/data, "
-    "closing the scene are probably broken for new views).<br>"
-    "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/Cameras\">"
-    "online documentation</a>\n");
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    "closing the scene are probably broken for new views).<br>");
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

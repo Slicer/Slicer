@@ -69,15 +69,8 @@ void qSlicerActionsDialogPrivate::init()
   this->WebView = new QWebEngineView();
   this->WebView->setObjectName("WebView");
   this->gridLayout->addWidget(this->WebView, 0, 0);
-  QString wikiVersion = "Nightly";
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  if (app && app->releaseType() == "Stable")
-    {
-    wikiVersion = QString("%1.%2").arg(app->majorVersion()).arg(app->minorVersion());
-    }
-  QString shortcutsUrl =
-    QString("http://wiki.slicer.org/slicerWiki/index.php/Documentation/%1/").arg(wikiVersion);
-  shortcutsUrl += "SlicerApplication/MouseandKeyboardShortcuts";
+  QString shortcutsUrl = QString(q->tr("{1}/user_guide/user_interface.html#mouse-keyboard-shortcuts")).arg(app->documentationBaseUrl());
   this->WebView->setUrl( shortcutsUrl );
 #else
   this->tabWidget->setTabEnabled(this->tabWidget->indexOf(this->WikiTab), false);
