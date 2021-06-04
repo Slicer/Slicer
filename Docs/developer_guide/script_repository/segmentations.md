@@ -388,7 +388,7 @@ Examples:
 - [segment cranial cavity automatically in dry bone skull CT](https://gist.github.com/lassoan/4d0b94bda52d5b099432e424e03aa2b1)
 - [remove patient table from CT image](https://gist.github.com/lassoan/84d1f9a093dbb6a46c0fcc89279d8088)
 
-Description of effect parameters are available [here](https://slicer.readthedocs.io/en/latest/developer_guide/modules/segmenteditor.md#effect-parameters).
+Description of effect parameters are available [here](modules/segmenteditor.md#effect-parameters).
 
 #### Use logic of effect from a script
 

@@ -34,7 +34,7 @@ This module is for creating videos, image sequences, or lightbox image from 3D a
 
 - **Output type:**
   - **image series:** Save screnshots as separate image files (in jpg or png file format).
-  - **video:** Save animation as a compressed video file. Requires installation of *ffmpeg* video encoder.
+  - **video:** Save animation as a compressed video file. Requires installation of [ffmpeg video encoder](#setting-up-ffmpeg).
   - **lightbox image:** Save screnshots as separate jpg pr png files.
 
     ![lightbox image](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_screencapture_lightbox.png)
@@ -56,8 +56,8 @@ This module is for creating videos, image sequences, or lightbox image from 3D a
 
 - **Forward-backward:** After generating images by animating in forward direction, adds animation in reverse direction as well. It removes the "jump" at the end of the animation when it is played repeatedly in a loop.
 - **Repeat:** Repeat the entire animation the specified number of times. It is useful for making animations longer (e.g., for uploading to YouTube).
-- **ffmpeg executable:** Path to ffmpeg executable. Requires download and installation of [ffmpeg](##setting-up-ffmpeg). Only needed if video export is selected.
-- **Video extra options:** Options for ffmpeg that controls video format and quality. Only needed if video export is selected.
+- **ffmpeg executable:** Path to ffmpeg executable. Only used if video export is selected. Requires installation of [ffmpeg video encoder](#setting-up-ffmpeg).
+- **Video extra options:** Options for ffmpeg that controls video format and quality. Only used if video export is selected.
   - These parameters are already specified by the module and therefore should not be included in the extra options: `-i (input files) -y (overwrite without asking) -r (frame rate) -start_number`.
   - Information about available options:
     - https://trac.ffmpeg.org/wiki/Encode/H.264
