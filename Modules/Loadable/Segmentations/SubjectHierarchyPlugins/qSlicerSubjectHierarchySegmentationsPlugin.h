@@ -160,10 +160,19 @@ protected slots:
   /// Toggle 2D outline visibility for the current segmentation
   void toggle2DOutlineVisibility(bool);
 
+  void createBinaryLabelmapRepresentation();
+  void createClosedSurfaceRepresentation();
+  void removeBinaryLabelmapRepresentation();
+  void removeClosedSurfaceRepresentation();
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchySegmentationsPluginPrivate> d_ptr;
 
   void updateAllSegmentsFromMRML(vtkMRMLSegmentationNode* segmentationNode);
+
+  /// Create or remove representation.
+  /// If create is true then representation is created, if false then the representation is removed.
+  void updateRepresentation(const QString& representationName, bool create);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchySegmentationsPlugin);
