@@ -66,18 +66,15 @@ void vtkMRMLMarkupsFiducialNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMarkupsFiducialNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
-
-  Superclass::Copy(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyIntMacro(MaximumNumberOfControlPoints);
   vtkMRMLCopyIntMacro(RequiredNumberOfControlPoints);
   vtkMRMLCopyEndMacro();
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
