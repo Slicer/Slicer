@@ -348,13 +348,17 @@ class DICOMSender(DICOMProcess):
   (Uses storescu from dcmtk)
   """
 
-  def __init__(self,files,address,protocol=None,progressCallback=None):
+  def __init__(self,files,address,protocol=None,progressCallback=None,aeTitle=None):
     """protocol: can be DIMSE (default) or DICOMweb
     port: optional (if not specified then address URL should contain it)
     """
     super().__init__()
     self.files = files
     self.destinationUrl = qt.QUrl().fromUserInput(address)
+    if aeTitle:
+      self.aeTitle = aeTitle
+    else:
+      self.aeTitle = "CTK"
     self.protocol = protocol if protocol is not None else "DIMSE"
     self.progressCallback = progressCallback
     if not self.progressCallback:
@@ -440,8 +444,7 @@ class DICOMSender(DICOMProcess):
     self.storeSCUExecutable = self.exeDir+'/storescu'+self.exeExtension
     # run the process!
     ### TODO: maybe use dcmsend (is smarter about the compress/decompress)
-    ### TODO: add option in dialog to set AETitle
-    args = [self.destinationUrl.host(), str(self.destinationUrl.port()), "-aec", "CTK", file]
+    args = [self.destinationUrl.host(), str(self.destinationUrl.port()), "-aec", self.aeTitle, file]
     super().start(self.storeSCUExecutable, args)
     self.process.waitForFinished()
     if self.process.ExitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
