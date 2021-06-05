@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>599</width>
-    <height>1133</height>
+    <width>338</width>
+    <height>637</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -31,7 +31,7 @@
      </item>
      <item>
       <widget class="ctkExpandableWidget" name="ResizableFrame">
-       <property name="sizeGripInside" stdset="0">
+       <property name="sizeGripInside">
         <bool>false</bool>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -64,22 +64,22 @@
           <property name="indentation">
            <number>8</number>
           </property>
-          <property name="editMenuActionVisible" stdset="0">
+          <property name="editMenuActionVisible">
            <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="qMRMLCollapsibleButton" name="displayCollapsibleButton" native="true">
-          <property name="text" stdset="0">
+         <widget class="qMRMLCollapsibleButton" name="displayCollapsibleButton">
+          <property name="text">
            <string>Display</string>
           </property>
-          <property name="collapsed" stdset="0">
+          <property name="collapsed">
            <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="qMRMLMarkupsDisplayNodeWidget" name="markupsDisplayWidget" native="true"/>
+            <widget class="qMRMLMarkupsDisplayNodeWidget" name="markupsDisplayWidget"/>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -112,11 +112,11 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="controlPointsCollapsibleButton" native="true">
-       <property name="text" stdset="0">
+      <widget class="ctkCollapsibleButton" name="controlPointsCollapsibleButton">
+       <property name="text">
         <string>Control Points</string>
        </property>
-       <property name="collapsed" stdset="0">
+       <property name="collapsed">
         <bool>true</bool>
        </property>
        <layout class="QFormLayout" name="formLayout">
@@ -485,7 +485,7 @@
           <property name="title">
            <string>Advanced</string>
           </property>
-          <property name="collapsed" stdset="0">
+          <property name="collapsed">
            <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -649,11 +649,11 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="measurementsCollapsibleButton" native="true">
-       <property name="text" stdset="0">
+      <widget class="ctkCollapsibleButton" name="measurementsCollapsibleButton">
+       <property name="text">
         <string>Measurements</string>
        </property>
-       <property name="collapsed" stdset="0">
+       <property name="collapsed">
         <bool>true</bool>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -724,10 +724,131 @@
        </layout>
       </widget>
      </item>
+     <item>
+      <widget class="qMRMLCollapsibleButton" name="exportImportCollapsibleButton">
+       <property name="text">
+        <string>Export/import Table</string>
+       </property>
+       <property name="collapsed">
+        <bool>true</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Operation:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QRadioButton" name="tableExportRadioButton">
+            <property name="text">
+             <string>Export</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="tableImportRadioButton">
+            <property name="text">
+             <string>Import</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="exportImportTableLabel">
+          <property name="text">
+           <string>Table:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="qMRMLNodeComboBox" name="exportedImportedNodeComboBox">
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLTableNode</string>
+           </stringlist>
+          </property>
+          <property name="editEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="renameEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QPushButton" name="exportImportPushButton">
+          <property name="text">
+           <string>Apply</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+          <property name="title">
+           <string>Advanced</string>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QFormLayout" name="formLayout_3">
+           <property name="horizontalSpacing">
+            <number>4</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>4</number>
+           </property>
+           <property name="topMargin">
+            <number>4</number>
+           </property>
+           <property name="rightMargin">
+            <number>4</number>
+           </property>
+           <property name="bottomMargin">
+            <number>4</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Export coordinate system:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QRadioButton" name="rasExportRadioButton">
+               <property name="text">
+                <string>RAS</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="lpsExportRadioButton">
+               <property name="text">
+                <string>LPS</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -740,15 +861,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
+   <class>qMRMLCollapsibleButton</class>
+   <extends>ctkCollapsibleButton</extends>
+   <header>qMRMLCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
+   <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
+   <header>qMRMLNodeComboBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -807,12 +928,6 @@
    <extends>QPushButton</extends>
    <header>ctkMenuButton.h</header>
   </customwidget>
-  <customwidget>
-   <class>qMRMLCollapsibleButton</class>
-   <extends>ctkCollapsibleButton</extends>
-   <header>qMRMLCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources>
   <include location="../qSlicerMarkupsModule.qrc"/>
@@ -845,8 +960,24 @@
      <y>2</y>
     </hint>
     <hint type="destinationlabel">
-     <x>109</x>
-     <y>203</y>
+     <x>128</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerMarkupsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>exportedImportedNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>262</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>387</y>
     </hint>
    </hints>
   </connection>

@@ -27,6 +27,9 @@
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
+// MRML includes
+#include "vtkMRMLStorageNode.h"
+
 // Widgets includes
 #include "vtkSlicerMarkupsWidget.h"
 
@@ -44,6 +47,7 @@ class vtkMRMLMarkupsDisplayNode;
 class vtkMRMLMarkupsJsonStorageNode;
 class vtkMRMLMessageCollection;
 class vtkMRMLSelectionNode;
+class vtkMRMLTableNode;
 class vtkPlane;
 class vtkPoints;
 class vtkPolyData;
@@ -291,6 +295,14 @@ public:
 
   /// This returns the flags that indicates whether the GUI push button should be created.
   bool GetCreateMarkupsPushButton(const char* markupName) const;
+
+  /// Import markups control points from table node
+  /// Column names: label, r, a, s, (or l, p, s), defined, selected, visible, locked, description.
+  static bool ImportControlPointsFromTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode,
+    int startRow = 0, int numberOfRows = -1);
+
+  static bool ExportControlPointsToTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode,
+    int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS);
 
 protected:
 

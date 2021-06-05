@@ -17,6 +17,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QButtonGroup>
 #include <QClipboard>
 #include <QDebug>
 #include <QInputDialog>
@@ -50,6 +51,7 @@
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
+#include "vtkMRMLTableNode.h"
 
 // MRMLDM includes
 #include "vtkMRMLMarkupsDisplayableManager.h"
@@ -144,6 +146,10 @@ private:
   // Dynamic list of create markups push buttons
   QList<QPushButton*> ceateMarkupsPushButtons;
   unsigned int createMarkupsButtonsColumns;
+
+  // Export/import setion
+  QButtonGroup* ImportExportOperationButtonGroup;
+  QButtonGroup* ImportExportCoordinateSystemButtonGroup;
 };
 
 //-----------------------------------------------------------------------------
@@ -172,13 +178,15 @@ qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMark
   this->copyAction = nullptr;
   this->pasteAction = nullptr;
 
-
   this->SlicerLockIcon = QPixmap(":/Icons/Small/SlicerLock.png");
   this->SlicerUnlockIcon = QPixmap(":/Icons/Small/SlicerUnlock.png");
   this->SlicerVisibleIcon = QPixmap(":/Icons/Small/SlicerVisible.png");
   this->SlicerInvisibleIcon = QPixmap(":/Icons/Small/SlicerInvisible.png");
 
   this->createMarkupsButtonsColumns = 0;
+
+  this->ImportExportOperationButtonGroup = nullptr;
+  this->ImportExportCoordinateSystemButtonGroup = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -470,6 +478,29 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // hide measurement settings table until markups node containing measurement is set
   this->measurementSettingsTableWidget->setVisible(false);
+
+  // Export/import
+  this->ImportExportOperationButtonGroup = new QButtonGroup(this->exportImportCollapsibleButton);
+  this->ImportExportOperationButtonGroup->addButton(this->tableExportRadioButton);
+  this->ImportExportOperationButtonGroup->addButton(this->tableImportRadioButton);
+
+  this->ImportExportCoordinateSystemButtonGroup = new QButtonGroup(this->exportImportCollapsibleButton);
+  this->ImportExportCoordinateSystemButtonGroup->addButton(this->lpsExportRadioButton);
+  this->ImportExportCoordinateSystemButtonGroup->addButton(this->rasExportRadioButton);
+
+  this->tableExportRadioButton->setChecked(true);
+  this->rasExportRadioButton->setChecked(true);
+
+  QObject::connect(this->exportedImportedNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+    q, SLOT(updateImportExportWidgets()));
+
+  QObject::connect(this->ImportExportOperationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
+    q, SLOT(updateImportExportWidgets()));
+
+  QObject::connect(this->exportImportPushButton, SIGNAL(clicked()),
+    q, SLOT(onImportExportApply()));
+
+  q->updateImportExportWidgets();
 }
 
 //-----------------------------------------------------------------------------
@@ -2704,6 +2735,56 @@ for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::setCreateMarkupsButtonsColumns(unsigned int columns)
 {
-Q_D(qSlicerMarkupsModuleWidget);
-d->createMarkupsButtonsColumns = columns;
+  Q_D(qSlicerMarkupsModuleWidget);
+  d->createMarkupsButtonsColumns = columns;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::updateImportExportWidgets()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  bool isExport = d->tableExportRadioButton->isChecked();
+  if (isExport)
+    {
+    // Export
+    d->exportImportTableLabel->setText("Output table:");
+    d->exportImportPushButton->setText("Export");
+    d->exportImportPushButton->setToolTip(tr("Export control points coordinates and properties to table."));
+    }
+  else
+    {
+    // Import
+    d->exportImportTableLabel->setText("Input table:");
+    d->exportImportPushButton->setText("Import");
+    d->exportImportPushButton->setToolTip(
+      tr("Import control points coordinates and properties from table node.\n"
+      "Table column names : label, r, a, s, (or l, p, s), defined, selected, visible, locked, description."));
+    }
+  d->lpsExportRadioButton->setEnabled(isExport);
+  d->rasExportRadioButton->setEnabled(isExport);
+  d->exportImportPushButton->setEnabled(d->exportedImportedNodeComboBox->currentNode() != nullptr);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onImportExportApply()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  if (!this->markupsLogic())
+    {
+    return;
+    }
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+  if (d->tableExportRadioButton->isChecked())
+    {
+    // export
+    int coordinateSystem = d->rasExportRadioButton->isChecked() ? vtkMRMLStorageNode::CoordinateSystemRAS : vtkMRMLStorageNode::CoordinateSystemLPS;
+    this->markupsLogic()->ExportControlPointsToTable(d->MarkupsNode,
+      vtkMRMLTableNode::SafeDownCast(d->exportedImportedNodeComboBox->currentNode()), coordinateSystem);
+    }
+  else
+    {
+    this->markupsLogic()->ImportControlPointsFromTable(d->MarkupsNode,
+      vtkMRMLTableNode::SafeDownCast(d->exportedImportedNodeComboBox->currentNode()));
+    }
+  QApplication::restoreOverrideCursor();
 }
