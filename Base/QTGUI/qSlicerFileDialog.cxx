@@ -187,10 +187,6 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   ctkFileDialog* fileDialog = new ctkFileDialog();
 
-  // We don't want the odd dialog in Mac: it shows in gray filenames that
-  // don't match the filter -> we don't want to show files that don't match
-  // the filter.
-  fileDialog->setOption(QFileDialog::DontUseNativeDialog);
   if(ioProperties["fileType"].toBool())
     {
     fileDialog->setNameFilters(

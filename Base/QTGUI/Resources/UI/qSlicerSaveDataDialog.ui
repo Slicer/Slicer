@@ -53,9 +53,6 @@
      <property name="text">
       <string>Change directory for selected files</string>
      </property>
-     <property name="options">
-      <set>ctkDirectoryButton::DontUseNativeDialog</set>
-     </property>
     </widget>
    </item>
    <item row="0" column="6">
