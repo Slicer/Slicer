@@ -19,17 +19,10 @@
   <property name="windowTitle">
    <string>Window Level</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,0,0">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,0">
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="1" column="0" colspan="6">
-    <widget class="ctkDoubleRangeSlider" name="WindowLevelRangeSlider">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="ctkDoubleSpinBox" name="WindowSpinBox">
      <property name="prefix">
@@ -43,10 +36,10 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
-    <widget class="ctkDoubleSpinBox" name="LevelSpinBox">
+   <item row="0" column="1">
+    <widget class="ctkDoubleSpinBox" name="MinSpinBox">
      <property name="prefix">
-      <string>L: </string>
+      <string>Min:</string>
      </property>
      <property name="decimals">
       <number>2</number>
@@ -75,19 +68,6 @@
      </item>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="ctkDoubleSpinBox" name="MinSpinBox">
-     <property name="prefix">
-      <string>Min:</string>
-     </property>
-     <property name="decimals">
-      <number>2</number>
-     </property>
-     <property name="decimalsOption">
-      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="3">
     <widget class="ctkDoubleSpinBox" name="MaxSpinBox">
      <property name="prefix">
@@ -100,6 +80,44 @@
       <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
      </property>
     </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="ctkDoubleSpinBox" name="LevelSpinBox">
+     <property name="prefix">
+      <string>L: </string>
+     </property>
+     <property name="decimals">
+      <number>2</number>
+     </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="5">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="ctkDoubleRangeSlider" name="WindowLevelRangeSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="RangeButton">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>:Icons/SliceMoreOptions.png</normaloff>:Icons/SliceMoreOptions.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

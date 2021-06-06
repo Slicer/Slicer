@@ -15,10 +15,6 @@
 
 ==============================================================================*/
 
-// CTK includes
-#include <ctkDoubleSpinBox.h>
-#include <ctkPopupWidget.h>
-
 // qMRML includes
 #include "qMRMLVolumeThresholdWidget.h"
 #include "qMRMLVolumeWidget_p.h"
@@ -72,6 +68,10 @@ void qMRMLVolumeThresholdWidgetPrivate::init()
 
   this->connect(this->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
                 q, SLOT(setAutoThreshold(int)));
+
+  this->RangeButton->setMenu(this->OptionsMenu);
+  this->RangeButton->setPopupMode(QToolButton::InstantPopup);
+
 }
 
 
@@ -143,17 +143,6 @@ void qMRMLVolumeThresholdWidget::setAutoThreshold(ControlMode autoThreshold)
       d->VolumeDisplayNode->SetApplyThreshold(0);
       }
     d->VolumeDisplayNode->EndModify(disabledModify);
-
-    if (autoThreshold == qMRMLVolumeThresholdWidget::Manual)
-      {
-      d->PopupWidget->setAutoShow(true);
-      d->PopupWidget->showPopup();
-      }
-    else
-      {
-      d->PopupWidget->setAutoShow(false);
-      d->PopupWidget->hidePopup();
-      }
 
     if (oldAuto != d->VolumeDisplayNode->GetAutoThreshold() ||
         oldApply != d->VolumeDisplayNode->GetApplyThreshold())

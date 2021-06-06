@@ -19,17 +19,17 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QMenu>
+#include <QWidgetAction>
 
 // CTK includes
-#include <ctkDoubleSpinBox.h>
-#include <ctkRangeWidget.h>
-#include <ctkPopupWidget.h>
 #include <ctkUtils.h>
 
 // qMRML includes
 #include "qMRMLVolumeWidget.h"
 #include "qMRMLVolumeWidget_p.h"
+#include <qMRMLSpinBox.h>
 
 // MRML includes
 #include "vtkMRMLScalarVolumeNode.h"
@@ -45,8 +45,9 @@ qMRMLVolumeWidgetPrivate
 {
   this->VolumeNode = nullptr;
   this->VolumeDisplayNode = nullptr;
-  this->PopupWidget = nullptr;
-  this->RangeWidget = nullptr;
+  this->OptionsMenu = nullptr;
+  this->MinRangeSpinBox = nullptr;
+  this->MaxRangeSpinBox = nullptr;
   this->DisplayScalarRange[0] = 0;
   this->DisplayScalarRange[1] = 0;
 }
@@ -54,9 +55,10 @@ qMRMLVolumeWidgetPrivate
 // --------------------------------------------------------------------------
 qMRMLVolumeWidgetPrivate::~qMRMLVolumeWidgetPrivate()
 {
-  delete this->PopupWidget;
-  this->PopupWidget = nullptr;
-  this->RangeWidget = nullptr;
+  delete this->OptionsMenu;
+  this->OptionsMenu = nullptr;
+  this->MinRangeSpinBox = nullptr;
+  this->MaxRangeSpinBox = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -68,50 +70,37 @@ void qMRMLVolumeWidgetPrivate::init()
   // disable as there is not MRML Node associated with the widget
   q->setEnabled(this->VolumeDisplayNode != nullptr);
 
-  // we can't use the flag Qt::Popup as it automatically closes when there is
-  // a click outside of the rangewidget
-  this->PopupWidget = new ctkPopupWidget(q);
-  this->PopupWidget->setObjectName("RangeWidgetPopup");
+  QWidget* rangeWidget = new QWidget(q);
+  QHBoxLayout* rangeLayout = new QHBoxLayout;
+  rangeWidget->setLayout(rangeLayout);
+  rangeLayout->setContentsMargins(0,0,0,0);
 
-  QPalette popupPalette = q->palette();
-  QColor windowColor = popupPalette.color(QPalette::Window);
-  windowColor.setAlpha(200);
-  QColor darkColor = popupPalette.color(QPalette::Dark);
-  darkColor.setAlpha(200);
-  /*
-  QLinearGradient gradient(QPointF(0.,0.),QPointF(0.,0.5));
-  gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
-  gradient.setColorAt(0, windowColor);
-  gradient.setColorAt(1, darkColor);
-  popupPalette.setBrush(QPalette::Window, gradient);
-  */
-  popupPalette.setColor(QPalette::Window, darkColor);
-  this->PopupWidget->setPalette(popupPalette);
-  this->PopupWidget->setAttribute(Qt::WA_TranslucentBackground, true);
-
-  this->PopupWidget->setAutoShow(false);
-  this->PopupWidget->setAutoHide(true);
-  //this->PopupWidget->setBaseWidget(q);
-  this->RangeWidget = new ctkRangeWidget;
-  this->RangeWidget->minimumSpinBox()->setDecimalsOption(
-    ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts);
-  this->RangeWidget->maximumSpinBox()->setDecimalsOption(
-    ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts);
-
-  QVBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(this->RangeWidget);
-  this->PopupWidget->setLayout(layout);
-
-  QMargins margins = layout->contentsMargins();
-  margins.setTop(0);
-  layout->setContentsMargins(margins);
-
-  this->RangeWidget->setSpinBoxAlignment(Qt::AlignBottom);
-  this->RangeWidget->setRange(-1000000., 1000000.);
-  QObject::connect(this->RangeWidget, SIGNAL(valuesChanged(double,double)),
-                   this, SLOT(setRange(double,double)));
-  this->RangeWidget->setToolTip(
+  this->MinRangeSpinBox = new qMRMLSpinBox(rangeWidget);
+  this->MinRangeSpinBox->setPrefix("Min: ");
+  this->MinRangeSpinBox->setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
+  this->MinRangeSpinBox->setValue(this->MinRangeSpinBox->minimum());
+  this->MinRangeSpinBox->setToolTip(
         qMRMLVolumeWidget::tr("Set the range boundaries to control large numbers or allow fine tuning"));
+  connect(this->MinRangeSpinBox, SIGNAL(editingFinished()),
+          this, SLOT(updateRange()));
+  rangeLayout->addWidget(this->MinRangeSpinBox);
+
+  this->MaxRangeSpinBox = new qMRMLSpinBox(rangeWidget);
+  this->MaxRangeSpinBox->setPrefix("Max: ");
+  this->MaxRangeSpinBox->setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
+  this->MaxRangeSpinBox->setValue(this->MaxRangeSpinBox->maximum());
+  this->MaxRangeSpinBox->setToolTip(
+        qMRMLVolumeWidget::tr("Set the range boundaries to control large numbers or allow fine tuning"));
+  connect(this->MaxRangeSpinBox, SIGNAL(editingFinished()),
+          this, SLOT(updateRange()));
+  rangeLayout->addWidget(this->MaxRangeSpinBox);
+
+  QWidgetAction* rangeAction = new QWidgetAction(this);
+  rangeAction->setDefaultWidget(rangeWidget);
+
+  this->OptionsMenu = new QMenu(q);
+  this->OptionsMenu->addAction(rangeAction);
+
 }
 
 
@@ -123,9 +112,10 @@ void qMRMLVolumeWidgetPrivate
   this->scalarRange(dNode, range);
   this->DisplayScalarRange[0] = range[0];
   this->DisplayScalarRange[1] = range[1];
-  // we don't want RangeWidget to fire any signal because we don't have
+  // we don't want Range Widgets to fire any signal because we don't have
   // a display node correctly set here (it's done )
-  this->RangeWidget->blockSignals(true);
+  this->MinRangeSpinBox->blockSignals(true);
+  this->MaxRangeSpinBox->blockSignals(true);
   double interval = range[1] - range[0];
   Q_ASSERT(interval >= 0.);
   double min, max;
@@ -141,8 +131,10 @@ void qMRMLVolumeWidgetPrivate
     max = qMax(900., range[1] + 2.*interval);
     }
 
-  this->RangeWidget->setRange(min, max);
-  this->RangeWidget->blockSignals(false);
+  this->MinRangeSpinBox->setValue(min);
+  this->MaxRangeSpinBox->setValue(max);
+  this->MinRangeSpinBox->blockSignals(false);
+  this->MaxRangeSpinBox->blockSignals(false);
 
   if (interval < 10.)
     {
@@ -164,7 +156,7 @@ void qMRMLVolumeWidgetPrivate
 // --------------------------------------------------------------------------
 bool qMRMLVolumeWidgetPrivate::blockSignals(bool block)
 {
-  return this->RangeWidget->blockSignals(block);
+  return this->MinRangeSpinBox->blockSignals(block) && this->MaxRangeSpinBox->blockSignals(block);
 }
 
 // --------------------------------------------------------------------------
@@ -209,8 +201,8 @@ void qMRMLVolumeWidgetPrivate::updateSingleStep(double min, double max)
   singleStep = pow(10., order - ratio);
   decimals = qMax(0, -order + ratio);
 
-  this->RangeWidget->setDecimals(decimals);
-  this->RangeWidget->setSingleStep(singleStep);
+  this->MinRangeSpinBox->setSingleStep(singleStep);
+  this->MaxRangeSpinBox->setSingleStep(singleStep);
 }
 
 // --------------------------------------------------------------------------
@@ -229,7 +221,15 @@ void qMRMLVolumeWidgetPrivate::setSingleStep(double singleStep)
 void qMRMLVolumeWidgetPrivate::setRange(double min, double max)
 {
   this->updateSingleStep(min, max);
-  this->RangeWidget->setValues(min, max);
+  this->MinRangeSpinBox->setValue(min);
+  this->MaxRangeSpinBox->setValue(max);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumeWidgetPrivate::updateRange()
+{
+  this->setRange(this->MinRangeSpinBox->value(),
+                 this->MaxRangeSpinBox->value());
 }
 
 // --------------------------------------------------------------------------

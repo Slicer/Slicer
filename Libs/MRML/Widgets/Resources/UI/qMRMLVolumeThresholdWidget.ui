@@ -50,16 +50,34 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="2">
-    <widget class="ctkRangeWidget" name="VolumeThresholdRangeWidget"/>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="ctkRangeWidget" name="VolumeThresholdRangeWidget"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="RangeButton">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>:Icons/SliceMoreOptions.png</normaloff>:Icons/SliceMoreOptions.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <customwidgets>
-   <customwidget>
-     <class>ctkRangeWidget</class>
-     <extends>QWidget</extends>
-     <header>ctkRangeWidget.h</header>
-   </customwidget>
+  <customwidget>
+   <class>ctkRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkRangeWidget.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections/>
