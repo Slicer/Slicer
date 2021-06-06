@@ -103,6 +103,9 @@ protected:
   /// Update the widget from volume display node properties.
   void updateWidgetFromMRMLDisplayNode() override;
 
+  /// Update the widget from volume properties.
+  void updateWidgetFromMRMLVolumeNode() override;
+
 private:
   Q_DECLARE_PRIVATE(qMRMLWindowLevelWidget);
   Q_DISABLE_COPY(qMRMLWindowLevelWidget);
