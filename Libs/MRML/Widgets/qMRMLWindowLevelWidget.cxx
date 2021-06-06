@@ -15,9 +15,6 @@
 
 ==============================================================================*/
 
-// CTK includes
-#include <ctkPopupWidget.h>
-
 // qMRML includes
 #include "qMRMLVolumeWidget_p.h"
 #include "qMRMLWindowLevelWidget.h"
@@ -83,6 +80,10 @@ void qMRMLWindowLevelWidgetPrivate::init()
 
   QObject::connect(this->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(setAutoWindowLevel(int)));
+
+  this->RangeButton->setMenu(this->OptionsMenu);
+  this->RangeButton->setPopupMode(QToolButton::InstantPopup);
+
 }
 
 // --------------------------------------------------------------------------
@@ -175,16 +176,6 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
       d->WindowSpinBox->setVisible(true);
       d->LevelSpinBox->setVisible(true);
       break;
-    }
-  if (autoWindowLevel != qMRMLWindowLevelWidget::Auto)
-    {
-    d->PopupWidget->setAutoShow(true);
-    d->PopupWidget->showPopup();
-    }
-  else
-    {
-    d->PopupWidget->setAutoShow(false);
-    d->PopupWidget->hidePopup();
     }
 
   if (autoWindowLevel != oldAuto)

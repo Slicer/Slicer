@@ -38,8 +38,8 @@
 // VTK includes
 #include <vtkWeakPointer.h>
 
-class ctkPopupWidget;
-class ctkRangeWidget;
+class QMenu;
+class qMRMLSpinBox;
 
 // -----------------------------------------------------------------------------
 class qMRMLVolumeWidgetPrivate : public QObject
@@ -73,12 +73,14 @@ public slots:
   virtual void setRange(double min, double max);
   virtual void setDecimals(int decimals);
   virtual void setSingleStep(double singleStep);
+  virtual void updateRange();
 
 protected:
   vtkWeakPointer<vtkMRMLScalarVolumeNode> VolumeNode;
   vtkWeakPointer<vtkMRMLScalarVolumeDisplayNode> VolumeDisplayNode;
-  ctkPopupWidget* PopupWidget;
-  ctkRangeWidget* RangeWidget;
+  QMenu* OptionsMenu;
+  qMRMLSpinBox* MinRangeSpinBox;
+  qMRMLSpinBox* MaxRangeSpinBox;
   double DisplayScalarRange[2];
 };
 
