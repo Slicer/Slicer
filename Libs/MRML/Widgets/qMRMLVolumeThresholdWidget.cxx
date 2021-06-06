@@ -16,6 +16,7 @@
 ==============================================================================*/
 
 // qMRML includes
+#include "qMRMLSpinBox.h"
 #include "qMRMLVolumeThresholdWidget.h"
 #include "qMRMLVolumeWidget_p.h"
 #include "ui_qMRMLVolumeThresholdWidget.h"
@@ -249,11 +250,34 @@ void qMRMLVolumeThresholdWidget::setMaximum(double max)
 }
 
 // --------------------------------------------------------------------------
+void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLVolumeNode()
+{
+  Q_D(qMRMLVolumeThresholdWidget);
+  this->Superclass::updateWidgetFromMRMLVolumeNode();
+
+  // When scalar range changes, maintain current threshold values, but update range
+  const double min = d->VolumeDisplayNode->GetLowerThreshold();
+  const double max = d->VolumeDisplayNode->GetUpperThreshold();
+
+  double range[2];
+  d->scalarRange(d->VolumeDisplayNode, range);
+  d->DisplayScalarRange[0] = range[0];
+  d->DisplayScalarRange[1] = range[1];
+  const double minRangeValue = std::min(min, range[0]);
+  const double maxRangeValue = std::max(max, range[1]);
+  d->setRange(minRangeValue, maxRangeValue);
+
+}
+
+// --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLDisplayNode()
 {
   Q_D(qMRMLVolumeThresholdWidget);
 
-  this->Superclass::updateWidgetFromMRMLDisplayNode();
+  // Don't want to call qMRMLVolumeWidget::updateWidgetFromMRMLDisplayNode which would call updateRangeForVolumeDisplayNode
+
+  this->setEnabled(d->VolumeDisplayNode != nullptr &&
+                   d->VolumeNode != nullptr);
 
   if (!d->VolumeDisplayNode)
     {
@@ -275,6 +299,10 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLDisplayNode()
 
   const double min = d->VolumeDisplayNode->GetLowerThreshold();
   const double max = d->VolumeDisplayNode->GetUpperThreshold();
+  const double minRangeValue = std::min(min, d->MinRangeSpinBox->value());
+  const double maxRangeValue = std::max(max, d->MaxRangeSpinBox->value());
+  d->setRange(minRangeValue, maxRangeValue);
+
   d->VolumeThresholdRangeWidget->setValues(min, max );
 
   d->VolumeThresholdRangeWidget->blockSignals(wasBlocking);

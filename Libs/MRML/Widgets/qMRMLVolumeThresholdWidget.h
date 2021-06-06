@@ -85,6 +85,9 @@ protected:
   /// Update the widget from volume display node properties.
   void updateWidgetFromMRMLDisplayNode() override;
 
+  /// Update the widget from volume properties.
+  void updateWidgetFromMRMLVolumeNode() override;
+
   ///
   /// Set sliders range
   void setMinimum(double min);

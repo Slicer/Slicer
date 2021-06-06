@@ -112,45 +112,6 @@ void qMRMLVolumeWidgetPrivate
   this->scalarRange(dNode, range);
   this->DisplayScalarRange[0] = range[0];
   this->DisplayScalarRange[1] = range[1];
-  // we don't want Range Widgets to fire any signal because we don't have
-  // a display node correctly set here (it's done )
-  this->MinRangeSpinBox->blockSignals(true);
-  this->MaxRangeSpinBox->blockSignals(true);
-  double interval = range[1] - range[0];
-  Q_ASSERT(interval >= 0.);
-  double min, max;
-
-  if (interval <= 10.)
-    {
-    min = qMin(-10., range[0] - 2.*interval);
-    max = qMax(10., range[1] + 2.*interval);
-    }
-  else
-    {
-    min = qMin(-1200., range[0] - 2.*interval);
-    max = qMax(900., range[1] + 2.*interval);
-    }
-
-  this->MinRangeSpinBox->setValue(min);
-  this->MaxRangeSpinBox->setValue(max);
-  this->MinRangeSpinBox->blockSignals(false);
-  this->MaxRangeSpinBox->blockSignals(false);
-
-  if (interval < 10.)
-    {
-    //give us some space
-    range[0] = range[0] - interval*0.1;
-    range[1] = range[1] + interval*0.1;
-    }
-  else
-    {
-    //give us some space
-    range[0] = qMin(-600., range[0] - interval*0.1);
-    range[1] = qMax(600., range[1] + interval*0.1);
-    }
-  bool blocked = this->blockSignals(true);
-  this->setRange(range[0], range[1]);
-  this->blockSignals(blocked);
 }
 
 // --------------------------------------------------------------------------
@@ -317,12 +278,7 @@ void qMRMLVolumeWidget::updateWidgetFromMRMLVolumeNode()
   vtkMRMLScalarVolumeDisplayNode* newVolumeDisplayNode = d->VolumeNode ?
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
       d->VolumeNode->GetVolumeDisplayNode()) : nullptr;
-/*
-  if (d->VolumeNode && d->VolumeNode->GetImageData())
-    {
-    this->updateRangeForVolumeDisplayNode(newVolumeDisplayNode);
-    }
-*/
+
   this->setMRMLVolumeDisplayNode( newVolumeDisplayNode );
 }
 
