@@ -843,3 +843,29 @@ void qSlicerSubjectHierarchySegmentsPlugin::jumpSlices()
     sliceNode->JumpSliceByCentering(segmentCenterPosition[0], segmentCenterPosition[1], segmentCenterPosition[2]);
     }
 }
+
+//---------------------------------------------------------------------------
+bool qSlicerSubjectHierarchySegmentsPlugin::showItemInView(
+  vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
+{
+  Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
+
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return false;
+    }
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
+    return false;
+    }
+
+  // Get the segmentation node's itemID and use the segmentation plugin to show it.
+  vtkIdType segmentationItemId = shNode->GetItemParent(currentItemID);
+  qSlicerSubjectHierarchySegmentationsPlugin* segmentationsPlugin = qobject_cast<qSlicerSubjectHierarchySegmentationsPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Segmentations") );
+  return segmentationsPlugin->showItemInView(segmentationItemId, viewNode, allItemsToShow);
+}

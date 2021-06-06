@@ -131,7 +131,7 @@ public:
   ///   object! For example using vtkSmartPointer<vtkSegment>::Take
   static vtkSegment* CreateSegmentFromModelNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode=nullptr);
 
-  /// Utility function for getting the segmentation node for a segment subject hierarchy item
+  /// Utility function for getting the segmentation node for a segmentation or segment subject hierarchy item.
   static vtkMRMLSegmentationNode* GetSegmentationNodeForSegmentSubjectHierarchyItem(vtkIdType segmentShItemID, vtkMRMLScene* scene);
 
   /// Utility function for getting the segment object for a segment subject hierarchy item
