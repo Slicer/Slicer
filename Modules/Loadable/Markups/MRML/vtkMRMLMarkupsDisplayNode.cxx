@@ -467,10 +467,19 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintVectorMacro(SliceProjectionColor, double, 3);
   vtkMRMLPrintFloatMacro(SliceProjectionOpacity);
   {
-  os << indent << "ActiveComponents:   ";
+  os << indent << "ActiveComponents:";
   for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
     {
-    os << it->first << ": " << it->second.Type << ", " << it->second.Index;
+    os << indent << indent;
+    if (it->first.empty())
+      {
+      os << "(default)";
+      }
+    else
+      {
+      os << it->first;
+      }
+    os << ": " << it->second.Type << ", " << it->second.Index;
     }
   os << "\n";
   }
