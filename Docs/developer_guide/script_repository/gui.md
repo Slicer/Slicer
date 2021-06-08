@@ -565,7 +565,7 @@ Get `Red` slice node and rotate around `X` and `Y` axes.
 sliceNode = slicer.app.layoutManager().sliceWidget("Red").mrmlSliceNode()
 sliceToRas = sliceNode.GetSliceToRAS()
 transform=vtk.vtkTransform()
-transform.SetMatrix(SliceToRAS)
+transform.SetMatrix(sliceToRas)
 transform.RotateX(20)
 transform.RotateY(15)
 sliceToRas.DeepCopy(transform.GetMatrix())
