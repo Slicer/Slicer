@@ -508,6 +508,7 @@ void vtkMRMLTableStorageNode::AddColumnToTable(vtkTable* table, vtkMRMLTableStor
         vtkWarningMacro("vtkMRMLTableStorageNode::ReadTable: Failed to read component for column " << columnName);
         // Add an empty default array for components that are not found
         rawComponentArray = vtkSmartPointer<vtkStringArray>::New();
+        rawComponentArray->SetName(columnName.c_str());
         rawComponentArray->SetNumberOfComponents(1);
         rawComponentArray->SetNumberOfTuples(numberOfTuples);
         }
