@@ -33,7 +33,7 @@
 class vtkActor;
 class vtkActor2D;
 class vtkCellPicker;
-class vtkGlyph3D;
+class vtkGlyph3DMapper;
 class vtkLabelPlacementMapper;
 class vtkPolyDataMapper;
 class vtkProperty;
@@ -110,7 +110,7 @@ protected:
     ControlPointsPipeline3D();
     ~ControlPointsPipeline3D() override;
 
-    vtkSmartPointer<vtkGlyph3D> Glypher;
+    vtkSmartPointer<vtkGlyph3DMapper> GlyphMapper;
 
     // Properties used to control the appearance of selected objects and
     // the manipulator in general.
@@ -119,11 +119,12 @@ protected:
     vtkSmartPointer<vtkTextProperty> OccludedTextProperty;
 
     vtkSmartPointer<vtkSelectVisiblePoints>      SelectVisiblePoints;
+
+    vtkSmartPointer<vtkDoubleArray>              CameraDirectionArray;
     vtkSmartPointer<vtkIdTypeArray>              ControlPointIndices;  // store original ID to determine which control point is actually visible
     vtkSmartPointer<vtkPointSetToLabelHierarchy> OccludedPointSetToLabelHierarchyFilter;
 
-    vtkSmartPointer<vtkPolyDataMapper>       Mapper;
-    vtkSmartPointer<vtkPolyDataMapper>       OccludedMapper;
+    vtkSmartPointer<vtkGlyph3DMapper>        OccludedGlyphMapper;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsMapper;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsOccludedMapper;
 
@@ -134,6 +135,8 @@ protected:
   };
 
   ControlPointsPipeline3D* GetControlPointsPipeline(int controlPointType);
+
+  virtual void UpdateControlPointGlyphOrientation();
 
   virtual void UpdateNthPointAndLabelFromMRML(int n);
 
