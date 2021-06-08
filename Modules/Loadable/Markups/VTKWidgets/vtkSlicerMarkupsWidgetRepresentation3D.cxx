@@ -21,7 +21,7 @@
 #include "vtkCellPicker.h"
 #include "vtkLabelPlacementMapper.h"
 #include "vtkLine.h"
-#include "vtkGlyph3D.h"
+#include "vtkGlyph3DMapper.h"
 #include "vtkMarkupsGlyphSource2D.h"
 #include "vtkMath.h"
 #include "vtkMatrix4x4.h"
@@ -48,15 +48,26 @@
 
 vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPipeline3D()
 {
-  this->Glypher = vtkSmartPointer<vtkGlyph3D>::New();
-  this->Glypher->SetInputData(this->ControlPointsPolyData);
-  this->Glypher->SetVectorModeToFollowCameraDirection();
-  this->Glypher->OrientOn();
-  this->Glypher->ScalingOn();
-  this->Glypher->SetScaleModeToDataScalingOff();
-  this->Glypher->SetScaleFactor(1.0);
+  this->CameraDirectionArray = vtkSmartPointer<vtkDoubleArray>::New();
+  this->CameraDirectionArray->SetName("direction");
+  this->CameraDirectionArray->SetNumberOfComponents(4);
+  this->ControlPointsPolyData->GetPointData()->AddArray(this->CameraDirectionArray);
+
+  // This turns on resolve coincident topology for everything
+  // as it is a class static on the mapper
+  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
+
+  this->GlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
+  this->GlyphMapper->SetInputData(this->ControlPointsPolyData);
+  this->GlyphMapper->OrientOn();
+  this->GlyphMapper->SetOrientationModeToQuaternion();
+  this->GlyphMapper->SetOrientationArray("direction");
+  this->GlyphMapper->ScalingOn();
+  this->GlyphMapper->SetScaleModeToNoDataScaling();
+  this->GlyphMapper->SetScaleFactor(1.0);
+  this->GlyphMapper->ScalarVisibilityOff();
   // By default the Points are rendered as spheres
-  this->Glypher->SetSourceConnection(this->GlyphSourceSphere->GetOutputPort());
+  this->GlyphMapper->SetSourceConnection(this->GlyphSourceSphere->GetOutputPort());
 
   // Properties
   this->Property = vtkSmartPointer<vtkProperty>::New();
@@ -105,17 +116,17 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->OccludedPointSetToLabelHierarchyFilter->SetPriorityArrayName("priority");
   this->OccludedPointSetToLabelHierarchyFilter->SetInputData(this->LabelControlPointsPolyData);
 
-  // Mappers
-  this->Mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->Mapper->SetInputConnection(this->Glypher->GetOutputPort());
-  // This turns on resolve coincident topology for everything
-  // as it is a class static on the mapper
-  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
-  this->Mapper->ScalarVisibilityOff();
-
-  this->OccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->OccludedMapper->SetInputConnection(this->Glypher->GetOutputPort());
-  this->OccludedMapper->ScalarVisibilityOff();
+  this->OccludedGlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
+  this->OccludedGlyphMapper->SetInputData(this->ControlPointsPolyData);
+  this->OccludedGlyphMapper->OrientOn();
+  this->OccludedGlyphMapper->SetOrientationModeToQuaternion();
+  this->OccludedGlyphMapper->SetOrientationArray("direction");
+  this->OccludedGlyphMapper->ScalingOn();
+  this->OccludedGlyphMapper->SetScaleModeToNoDataScaling();
+  this->OccludedGlyphMapper->SetScaleFactor(1.0);
+  this->OccludedGlyphMapper->ScalarVisibilityOff();
+  // By default the Points are rendered as spheres
+  this->OccludedGlyphMapper->SetSourceConnection(this->GlyphSourceSphere->GetOutputPort());
 
   this->LabelsMapper = vtkSmartPointer<vtkLabelPlacementMapper>::New();
   this->LabelsMapper->SetInputConnection(this->PointSetToLabelHierarchyFilter->GetOutputPort());
@@ -133,11 +144,11 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
 
   // Actors
   this->Actor = vtkSmartPointer<vtkActor>::New();
-  this->Actor->SetMapper(this->Mapper);
+  this->Actor->SetMapper(this->GlyphMapper);
   this->Actor->SetProperty(this->Property);
 
   this->OccludedActor = vtkSmartPointer<vtkActor>::New();
-  this->OccludedActor->SetMapper(this->OccludedMapper);
+  this->OccludedActor->SetMapper(this->OccludedGlyphMapper);
   this->OccludedActor->SetProperty(this->OccludedProperty);
 
   this->LabelsActor = vtkSmartPointer<vtkActor2D>::New();
@@ -241,9 +252,10 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       continue;
       }
 
-    this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper, controlPoints->OccludedMapper);
+    this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->GlyphMapper, controlPoints->OccludedGlyphMapper);
 
-    controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
+    controlPoints->GlyphMapper->SetScaleFactor(this->ControlPointSize);
+    controlPoints->OccludedGlyphMapper->SetScaleFactor(this->ControlPointSize);
 
     controlPoints->ControlPoints->SetNumberOfPoints(0);
     controlPoints->ControlPointsPolyData->GetPointData()->GetNormals()->SetNumberOfTuples(0);
@@ -718,14 +730,17 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
 
     if (this->MarkupsDisplayNode->GlyphTypeIs3D())
       {
-      this->GetControlPointsPipeline(controlPointType)->Glypher->SetSourceConnection(
+      this->GetControlPointsPipeline(controlPointType)->GlyphMapper->SetSourceConnection(
+        this->GetControlPointsPipeline(controlPointType)->GlyphSourceSphere->GetOutputPort());
+      this->GetControlPointsPipeline(controlPointType)->OccludedGlyphMapper->SetSourceConnection(
         this->GetControlPointsPipeline(controlPointType)->GlyphSourceSphere->GetOutputPort());
       }
     else
       {
       vtkMarkupsGlyphSource2D* glyphSource = this->GetControlPointsPipeline(controlPointType)->GlyphSource2D;
       glyphSource->SetGlyphType(this->GetGlyphTypeSourceFromDisplay(this->MarkupsDisplayNode->GetGlyphType()));
-      this->GetControlPointsPipeline(controlPointType)->Glypher->SetSourceConnection(glyphSource->GetOutputPort());
+      this->GetControlPointsPipeline(controlPointType)->GlyphMapper->SetSourceConnection(glyphSource->GetOutputPort());
+      this->GetControlPointsPipeline(controlPointType)->OccludedGlyphMapper->SetSourceConnection(glyphSource->GetOutputPort());
       }
     }
 
@@ -791,6 +806,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
     controlPoints->SelectVisiblePoints->Update();
+
     if (controlPoints->Actor->GetVisibility())
       {
       count += controlPoints->Actor->RenderOverlay(viewport);
@@ -846,6 +862,85 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
 }
 
 //-----------------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointGlyphOrientation()
+{
+  vtkCamera* cam = this->Renderer->GetActiveCamera();
+  if (!cam)
+    {
+    return;
+    }
+
+  double cameraPosition[3] = { 0.0, 0.0, 0.0 };
+  cam->GetPosition(cameraPosition);
+  if (cam->GetParallelProjection())
+    {
+    // Glyphs face camera position.
+    // In case of parallel projection, glyphs must face the camera plane normal
+    // and not towards the camera position.
+    // Glyph filter can only set direction by specifying a point all glyphs face towards.
+    // To approximate facing the camera plane normal, we report a much farther camera position
+    // to the glypher. This way direction vectors form any points to the far point are
+    // approximately parallel to the camera plane normal.
+    double dop[3] = { 0.0 };
+    cam->GetDirectionOfProjection(dop);
+    double viewportHeight = cam->GetParallelScale();
+    double distance = 100.0 * viewportHeight;
+    cameraPosition[0] -= dop[0] * distance;
+    cameraPosition[1] -= dop[1] * distance;
+    cameraPosition[2] -= dop[2] * distance;
+    }
+
+  double viewUp[3] = { 0.0, 0.0, 0.0 };
+  cam->GetViewUp(viewUp);
+
+  for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; controlPointType++)
+    {
+    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
+    if (!controlPoints->Actor->GetVisibility())
+      {
+      continue;
+      }
+
+    int numPoints = controlPoints->ControlPoints->GetNumberOfPoints();
+
+    controlPoints->CameraDirectionArray->SetNumberOfTuples(numPoints);
+
+    for (int pointIndex = 0; pointIndex < numPoints; ++pointIndex)
+      {
+      double worldPos[3] = { 0.0, 0.0, 0.0 };
+      controlPoints->ControlPoints->GetPoint(pointIndex, worldPos);
+
+      double cameraDirection[3] = { 0.0, 0.0, 0.0 };
+      vtkMath::Subtract(worldPos, cameraPosition, cameraDirection);
+      vtkMath::Normalize(cameraDirection);
+
+      double x[3] = { 0.0,0.0, 0.0 };
+      vtkMath::Cross(viewUp, cameraDirection, x);
+
+      double y[3] = { 0.0, 0.0, 0.0 };
+      vtkMath::Cross(cameraDirection, x, y);
+
+      double z[3] = { cameraDirection[0], cameraDirection[1], cameraDirection[2] };
+
+      double orientation[3][3];
+      for (int i = 0; i < 3; ++i)
+        {
+        orientation[i][0] = x[i];
+        orientation[i][1] = y[i];
+        orientation[i][2] = z[i];
+        }
+
+      double orientationQuaternion[4] = { 0.0 };
+      vtkMath::Matrix3x3ToQuaternion(orientation, orientationQuaternion);
+
+      controlPoints->CameraDirectionArray->SetTuple4(pointIndex,
+        orientationQuaternion[0], orientationQuaternion[1], orientationQuaternion[2], orientationQuaternion[3]);
+      }
+    controlPoints->CameraDirectionArray->Modified();
+    }
+}
+
+//-----------------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
   vtkViewport *viewport)
 {
@@ -872,42 +967,19 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
       }
     }
 
+  this->UpdateControlPointGlyphOrientation();
+
   int count = Superclass::RenderOpaqueGeometry(viewport);
-  vtkCamera* cam = this->Renderer->GetActiveCamera();
-  double cameraPosition[3] = { 0.0, 0.0, 0.0 };
-  double viewUp[3] = { 0.0, 1.0, 0.0 };
-  if (cam)
-    {
-    cam->GetPosition(cameraPosition);
-    cam->GetViewUp(viewUp);
-    if (cam->GetParallelProjection())
-      {
-      // Glyphs face camera position.
-      // In case of parallel projection, glyphs must face the camera plane normal
-      // and not towards the camera position.
-      // Glyph filter can only set direction by specifying a point all glyphs face towards.
-      // To approximate facing the camera plane normal, we report a much farther camera position
-      // to the glypher. This way direction vectors form any points to the far point are
-      // approximately parallel to the camera plane normal.
-      double dop[3] = { 0.0 };
-      cam->GetDirectionOfProjection(dop);
-      double viewportHeight = cam->GetParallelScale();
-      double distance = 100.0 * viewportHeight;
-      cameraPosition[0] -= dop[0] * distance;
-      cameraPosition[1] -= dop[1] * distance;
-      cameraPosition[2] -= dop[2] * distance;
-      }
-    }
+
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
     if (controlPoints->Actor->GetVisibility())
       {
-      controlPoints->Glypher->SetFollowedCameraPosition(cameraPosition);
-      controlPoints->Glypher->SetFollowedCameraViewUp(viewUp);
       if (updateControlPointSize)
         {
-        controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
+        controlPoints->GlyphMapper->SetScaleFactor(this->ControlPointSize);
+        controlPoints->OccludedGlyphMapper->SetScaleFactor(this->ControlPointSize);
         controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize * 0.7);
         }
       count += controlPoints->Actor->RenderOpaqueGeometry(viewport);
