@@ -21,6 +21,7 @@ codespell -q6 --skip="\
 ./CMakeLists.txt.user,\
 ./CMake/CTestCustom.cmake.in,\
 ./License.txt,\
+./COPYRIGHT.txt,\
 ./Resources/*.h,\
 ./Base/Logic/vtkSlicerApplicationLogicRequests.h,\
 ./Base/QTCLI/vtkSlicerCLIModuleLogic.cxx,\
@@ -46,5 +47,7 @@ als,\
 sinc,\
 therefor,\
 extracter,\
-inactivate\
+inactivate,\
+dependees,\
+pullrequest,\
 "
