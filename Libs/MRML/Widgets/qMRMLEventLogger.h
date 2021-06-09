@@ -92,7 +92,7 @@ public slots:
 signals:
   ///
   /// Emitted when the associated MRML scene event is fired
-  void signalNodeAddedEvent(vtkObject* calle, vtkObject* call_data);
+  void signalNodeAddedEvent(vtkObject* caller, vtkObject* call_data);
   void signalNodeRemovedEvent(vtkObject* caller, vtkObject* call_data);
   void signalNewSceneEvent();
   void signalSceneClosedEvent();
