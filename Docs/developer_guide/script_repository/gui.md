@@ -2,17 +2,23 @@
 
 ### Open a file with Slicer at the command line
 
-Open `imagefile.nrrd` file in Slicer:
+Open Slicer to view the `c:\some\folder\MRHead.nrrd` image file:
 
 ```console
-Slicer.exe /full/path/to/imagefile.nrrd
+"c:\Users\myusername\AppData\Local\NA-MIC\Slicer 4.11.20210226\Slicer.exe" c:\some\folder\MRHead.nrrd
 ```
 
 :::{note}
 
-It may be necessary to specify full path to the Slicer executable and to the file that needs to be loaded.
+It is necessary to specify full path to the Slicer executable and to the file that needs to be loaded.
 
 :::
+
+On Windows, the installer registers the `Slicer` application during install. This makes it possible to use `start` command to launch the most recently installed Slicer. For example, this command on the command-line starts Slicer and loads an image:
+
+```console
+start Slicer c:\some\folder\MRHead.nrrd
+```
 
 To load a file with non-default options, you can use `--python-code` option to run `slicer.util.load...` commands.
 
