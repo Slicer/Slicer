@@ -12,6 +12,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(${KIT}_SRCS
   vtk${MODULE_NAME}GlyphSource2D.cxx
   vtk${MODULE_NAME}GlyphSource2D.h
+  vtkFastSelectVisiblePoints.cxx
+  vtkFastSelectVisiblePoints.h
   vtkSlicerMarkupsWidgetRepresentation.cxx
   vtkSlicerMarkupsWidgetRepresentation.h
   vtkSlicerMarkupsWidgetRepresentation3D.cxx
