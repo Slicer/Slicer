@@ -94,7 +94,7 @@ macro(SlicerMacroExtractRepositoryInfo)
     message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT or SVN checkout")
 
   else()
-  
+
     find_package(Git REQUIRED)
 
     # Is <SOURCE_DIR> a git working copy ?

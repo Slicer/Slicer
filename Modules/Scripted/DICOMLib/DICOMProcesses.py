@@ -396,7 +396,7 @@ class DICOMSender(DICOMProcess):
         import dicomweb_client
         progressDialog.close()
       if needRestart:
-        slicer.util.restart() 
+        slicer.util.restart()
 
       # Establish connection
       import dicomweb_client.log

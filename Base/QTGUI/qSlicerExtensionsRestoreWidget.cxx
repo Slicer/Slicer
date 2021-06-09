@@ -65,7 +65,7 @@ public:
     QRect r = option.rect;
 
     QPalette palette = qSlicerApplication::application()->palette();
-    QPen enabledPen(palette.color(QPalette::WindowText), 1, Qt::SolidLine);    
+    QPen enabledPen(palette.color(QPalette::WindowText), 1, Qt::SolidLine);
     QPen disabledPen(palette.color(QPalette::Disabled, QPalette::WindowText), 1, Qt::SolidLine);
     QPen candidatePen(palette.color(QPalette::Highlight), 1, Qt::SolidLine);
     QPen installedPen(palette.color(QPalette::WindowText), 1, Qt::SolidLine);

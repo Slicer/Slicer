@@ -570,7 +570,7 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentSelectionChanged(const QItemSe
 {
   Q_UNUSED(selected);
   Q_UNUSED(deselected);
-  
+
   qMRMLSegmentsTableView* senderSegmentsTable = qobject_cast<qMRMLSegmentsTableView*>(sender());
   if (!senderSegmentsTable)
     {

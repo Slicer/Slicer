@@ -119,7 +119,7 @@ On Windows, Screen Capture model can automatically download and install ffmpeg w
 
 ## Information for developers
 
-- This is a Python scripted module. Source code is available [here](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/ScreenCapture/ScreenCapture.py). 
+- This is a Python scripted module. Source code is available [here](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/ScreenCapture/ScreenCapture.py).
 - Examples of capturing images are available in the [Script Repository](../../developer_guide/script_repository.md#screen-capture)
 
 ## Contributors

@@ -374,7 +374,7 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
              expectedAttributes[i].second);
     ++i;
     }
-  
+
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 
@@ -497,7 +497,7 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
       QVERIFY(inspectedNodeAttributeValue != nullptr);
       }
     }
-  
+
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 

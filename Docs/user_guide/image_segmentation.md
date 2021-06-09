@@ -4,7 +4,7 @@
 
 ## Basic concepts
 
-Segmentation of images (also known as contouring or annotation) is a procedure to delinate regions in the image, typically corresponding to anatomical structures, lesions, and various other object space. 
+Segmentation of images (also known as contouring or annotation) is a procedure to delinate regions in the image, typically corresponding to anatomical structures, lesions, and various other object space.
 It is a very common procedure in medical image computing, as it is required for visualization of certain structures, quantification (measuring volume, surface, shape properties), 3D printing, and masking (restricting processing or analysis to a specific region), etc.
 
 Segmentation may be performed manually, for example by iterating through all the slices of an image and drawing a contour at the boundary; but often semi-automatic or fully automatic methods are used. [Segment Editor](modules/segmenteditor.md) module offers a wide range of segmentation methods.

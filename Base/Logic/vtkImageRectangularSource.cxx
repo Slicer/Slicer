@@ -419,7 +419,7 @@ void vtkImageRectangularSource::ExecuteDataWithInformation(vtkDataObject *output
   vtkImageData *data = this->AllocateOutputData(output, outInfo);
   extent = this->GetUpdateExtent();
   ptr = data->GetScalarPointerForExtent(extent);
-  
+
   if (this->Corners ) {
     switch (data->GetScalarType()) {
       vtkTemplateMacro(vtkImageRectangularSource_GeneralExecute(this, data, extent, this->Corners, (VTK_TT *)ptr));

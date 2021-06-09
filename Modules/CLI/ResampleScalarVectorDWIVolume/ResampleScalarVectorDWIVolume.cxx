@@ -1358,7 +1358,7 @@ int main( int argc, char * argv[] )
   typedef itk::ThinPlateSplineKernelTransform<float,3> ThinPlateSplineTransformFloatType;
   typedef itk::ThinPlateSplineKernelTransform<double,3> ThinPlateSplineTransformDoubleType;
   itk::TransformFactory<ThinPlateSplineTransformFloatType>::RegisterTransform();
-  itk::TransformFactory<ThinPlateSplineTransformDoubleType>::RegisterTransform(); 
+  itk::TransformFactory<ThinPlateSplineTransformDoubleType>::RegisterTransform();
 
   itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;

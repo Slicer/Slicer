@@ -40,7 +40,7 @@ public:
 
 public slots:
 
-  /// Convenient function to execute python code from 
+  /// Convenient function to execute python code from
   /// the JavaScript (when an instance of this class
   /// is registered with the WebChannel).
   ///
@@ -48,7 +48,7 @@ public slots:
   /// the passed code, and the resulting QVariant is returned
   /// as a string.
   ///
-  /// As a precaution, the user is prompted to allow or disallow 
+  /// As a precaution, the user is prompted to allow or disallow
   /// running python code from web pages.
   ///
   /// \sa qSlicerWebWidget::initializeWebEngineProfile

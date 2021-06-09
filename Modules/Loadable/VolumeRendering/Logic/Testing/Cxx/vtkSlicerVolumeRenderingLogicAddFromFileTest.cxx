@@ -47,7 +47,7 @@ int vtkSlicerVolumeRenderingLogicAddFromFileTest(int argc, char* argv[])
   std::string temporaryDirectory(argv[1]);
 
   CHECK_EXIT_SUCCESS(testAddVolumePropertyFromFile(temporaryDirectory));
-  
+
   return EXIT_SUCCESS;
 }
 
@@ -58,7 +58,7 @@ int testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
 
   std::cout << "temporaryDirectory = " << temporaryDirectory.c_str() << std::endl;
 
- 
+
   // write out a defaults file
   vtkNew<vtkMRMLVolumePropertyNode> defaultVolumePropertyNode;
   vtkNew<vtkMRMLVolumePropertyStorageNode> volumePropertyStorageNode;

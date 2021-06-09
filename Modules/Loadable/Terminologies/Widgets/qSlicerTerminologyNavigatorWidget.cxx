@@ -669,7 +669,7 @@ void qSlicerTerminologyNavigatorWidget::setTerminologyInfo(TerminologyInfoBundle
     {
     d->GeneratedColor = terminologyInfo.GeneratedColor;
     }
- 
+
   // Set color
   if (!terminologyInfo.Color.isValid())
     {
@@ -1354,7 +1354,7 @@ void qSlicerTerminologyNavigatorWidget::populateTypeModifierComboBox()
     userData[QString::number(CodingSchemeDesignatorRole)] = QString(addedTypeModifierId.CodingSchemeDesignator.c_str());
     userData[QString::number(CodeValueRole)] = QString(addedTypeModifierId.CodeValue.c_str());
     d->ComboBox_TypeModifier->addItem(addedTypeModifierName, QVariant(userData));
-    
+
     if (selectedIndex == -1 && !addedTypeModifierName.compare(d->CurrentTypeModifierObject->GetCodeMeaning()))
       {
       selectedIndex = index;
@@ -1409,7 +1409,7 @@ void qSlicerTerminologyNavigatorWidget::setCurrentTerminology(QString terminolog
     d->tableWidget_Category->setEnabled(true);
     d->SearchBox_Category->setEnabled(true);
     }
-  
+
   // Selection is valid if there is a valid type object
   emit selectionValidityChanged(d->CurrentTypeObject && d->CurrentTypeObject->GetCodeValue());
 }

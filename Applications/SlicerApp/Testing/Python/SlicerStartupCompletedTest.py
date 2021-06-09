@@ -52,7 +52,7 @@ if __name__ == '__main__':
     from shutil import copyfile
     copyfile(currentDirPath+'/SlicerStartupCompletedTestHelperModule.py',
       temporaryModuleDirPath+'/SlicerStartupCompletedTestHelperModule.py')
-  
+
     slicer_executable = os.path.expanduser(sys.argv[1])
     common_args = [
       '--testing',

@@ -188,7 +188,7 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* cameraNod
   nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode"));
   for (nodes->InitTraversal(it);
       (sNode = vtkMRMLCameraNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
-    {  
+    {
     if (!sNode || sNode == cameraNode)
       {
       continue;

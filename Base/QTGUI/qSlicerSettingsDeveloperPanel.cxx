@@ -24,7 +24,7 @@
 // QtGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerModuleFactoryManager.h"
-#include "qSlicerModuleManager.h" 
+#include "qSlicerModuleManager.h"
 #include "qSlicerSettingsDeveloperPanel.h"
 #include "ui_qSlicerSettingsDeveloperPanel.h"
 

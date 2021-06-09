@@ -6,11 +6,11 @@ The Tables module allows displaying and editing of spreadsheets.
 
 ## Panels and their use
 
-- **Input**: 
+- **Input**:
   - **Active table**: Select the table node to edit/view.
   - **Lock button**: Allows locking the table node to read-only. Only applies to the user interface. The node can eb still modified programmatically.
 
-- **Edit**: 
+- **Edit**:
   - **Copy button**: Copy contents of selected cells to clipboard.
   - **Paste button**: Paste contents of clipboard at the current position. Data that does not fit into the table is ignored.
   - **Add column button**: Add an empty column at the end of the table.

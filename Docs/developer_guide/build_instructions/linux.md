@@ -20,7 +20,7 @@ code of slicer, generating the project files and build the project.
   - (Optional) CMake Qt gui to configure the project through a GUI.
 - GNU Make
 - GNU Patch
-  
+
 In addition, Slicer requires a set of support libraries that are not includes as
 part of the *superbuild*:
 
@@ -34,7 +34,7 @@ part of the *superbuild*:
   - X11Extras
   - Private
 - libXt
-  
+
 ### Debian 10 Stable (Buster)
 
 Install the development tools and the support libraries:
@@ -64,7 +64,7 @@ Install the development tools and the support libraries:
 ```console
 sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui \
   qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
-  qtbase5-private-dev libqt5x11extras5-dev libxt-dev 
+  qtbase5-private-dev libqt5x11extras5-dev libxt-dev
 ```
 
 ### ArchLinux
@@ -105,7 +105,7 @@ cd ..
 % TODO: Link to the readthedocs equivalent of https://www.slicer.org/wiki/Documentation/Nightly/Developers/DevelopmentWithGit
 
 ## Configure and generate the Slicer build project files
- 
+
 Slicer is highly configurable and multi-platform. To support this,
 Slicer needs a configuration of the build parameters before the build process
 takes place. In this configuration stage, it is possible to adjust variables

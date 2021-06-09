@@ -6,16 +6,16 @@ This module is used for changing the appearance of and organizing 3d surface mod
 
 ## Panels and their use
 
-- **Top level**: 
+- **Top level**:
   - **Include Fibers**: Check this box to include fiber bundle nodes in the scene model hierarchy view.
   - **Scroll to...**: Enter a model name to scroll the model hierarchy tree view to the first model matching that name.
   - **Hide All Models**: Turn off the visibility flag on all models in the scene. If any hierarchies have the "Force color to children" checkbox selected, the hierarchy node visibility will override model visibility settings.
   - **Show All Models**: Turn on the visibility flag on all models in the scene. If any hierarchies have the "Force color to children" checkbox selected, the hierarchy node visibility will override model visibility settings.
 
-- **Scene**: 
+- **Scene**:
   - **Scene tree view**: The tree view of all models and model hierarchies in the current MRML scene. You can right click on the Scene element to add hierarchies and drag and drop models into them. Control the Visible property of the model via the eye icon (open/close to show/hide the models). The model color and opacity are also displayed on the same line as the model name. Model hierarchies allow you to group together models. When using the ModelMaker module, multiple models created from one label map are grouped under a model hierarchy node.
 
-- **Information Panel**: 
+- **Information Panel**:
   - **Information**: Information about this surface model
   - **Surface Area**: The calculated surface area of the model, in square millimetres
   - **Volume**: The volume inside the surface model, in cubed millimetres
@@ -60,7 +60,7 @@ This module is used for changing the appearance of and organizing 3d surface mod
     - **Color Table**: Select a color look up table used to map the scalar overlay's values  (usually in the range of 0.0 to 1.0) to colors. There are built in color maps that can be browsed in the Colors module. The most commonly used color map for FreeSurfer scalar overlays is the GreenRed one. Legacy color maps from Slicer2 include Grey, Iron, Rainbow, etc. Those color maps with "labels" in their names are usually discrete and don't work well for the continuous scalar overlay ranges.
     - **Scalar Range Type**: Select which scalar range to use: range in the scalar data array, Color Table range, Display Scalar Range, range of the data type of the scalar array.
     - **Display Scalar Range**: Set the scalar range on the model's display node.
-  - **Clipping Panel**: 
+  - **Clipping Panel**:
     - **Clipping**: Control the clipping properties for this surface model
     - **Clipping Type**: When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model. The parts of the model inside the selected space is kept, parts outside of the selection are clipped away.
     - **Red Slice Clipping**: Use the positive or negative space defined by the Red slice plane to clip the model. Positive side is toward the Superior, negative is toward the Inferior. Keeps the part of the model in the selected space, clips away the rest.

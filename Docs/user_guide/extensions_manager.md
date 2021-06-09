@@ -6,7 +6,7 @@ New features can be added to 3D Slicer by installing "extensions". An extension 
 
 The Slicer community maintains a website referred to as the [Slicer Extensions Catalog](http://slicer.kitware.com/midas3/slicerappstore) for finding and downloading extensions. Extensions manager in Slicer makes the catalog available directly in the application and allows extension install, update, or uninstall extensions by a few clicks.
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extensions_manager.png) 
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extensions_manager.png)
 
 ## How to
 

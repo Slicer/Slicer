@@ -66,7 +66,7 @@ fiducialNode.SetName('Seed Point')
 fiducialNode.Initialize(slicer.mrmlScene)
 fiducialsList = getNode('Fiducials List')
 
-params = {'inputVolume': head.GetID(), 'outputVolume': headLabel.GetID(), 'seed' : fiducialsList.GetID(), 'iterations' : 2} 
+params = {'inputVolume': head.GetID(), 'outputVolume': headLabel.GetID(), 'seed' : fiducialsList.GetID(), 'iterations' : 2}
 
 cliNode = slicer.cli.runSync(slicer.modules.simpleregiongrowingsegmentation, None, params)
 ```
