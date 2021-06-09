@@ -174,7 +174,7 @@ if(NOT license_found)
   message(AUTHOR_WARNING \"${name}: Could not find a license file\")
 endif()
 ")
-  
+
   ExternalProject_Add_Step(${projectname} generate_project_description
     COMMAND ${CMAKE_COMMAND} -P ${script}
     COMMENT "Generate ${generated_version_file} and ${generated_license_file}"

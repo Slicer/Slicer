@@ -148,7 +148,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
         pointData->RemoveArray(0);
       }
     }
-    
+
     if (closedSurfaceRepresentation == nullptr)
       {
       return false;

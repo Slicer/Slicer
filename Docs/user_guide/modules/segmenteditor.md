@@ -67,7 +67,7 @@ Effects operate either by clicking the Apply button in the effect options sectio
 | ----------------------- | ---------------------------- |
 | `Shift` + `mouse wheel` | increase/decrease brush size |
 | `-`                     | shrink brush radius by 20%   |
-| `+`                     | grow brush 
+| `+`                     | grow brush
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_draw.png) Draw
 
@@ -205,7 +205,7 @@ If you want to extend the segmentation to a larger region then you need to modif
 
 If details cannot be accurately depicted during segmentation or the exported surface has non-negligible errors (there are gaps or overlap between segments), then it is necessary to reduce the segmentation's spacing (more accurately: spacing of the internal binary labelmap representation in the segmentation node). *Spacing* is also known as *voxel size* or may be referred to as *resoution* (which is inverse of spacing - higher resolution means smaller spacing).
 
-As a general rule, segmentation's spacing needs to be 2-5x smaller than the size of the smallest relevant detail or the maximum acceptable surface error in the generated surface. 
+As a general rule, segmentation's spacing needs to be 2-5x smaller than the size of the smallest relevant detail or the maximum acceptable surface error in the generated surface.
 
 By default, segmentation's spacing is set from the *master volume that is selected first after the segmentation is created*. If the first selected master volume's resolution is not sufficient or highly anisotropic (spacing value is not the same along the 3 axes) then one of the followings is recommended:
   - Option A. Crop and resample the input volume using *Crop volume* module before starting segmentation. Make spacing smaller (small enough to represent all details but not too small to slow things down and consume too much memory) and isotropic by reducing *Spacing scale* and enabling *Isotropic spacing*. Also adjust the region of interest to crop the volume to minimum necessary size to minimize memory usage and make editing faster.

@@ -106,7 +106,7 @@ public:
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "SegmentEditor"; }
 
-  //@{ 
+  //@{
   /// Convert between constants IDs to/from string
   static int ConvertOverwriteModeFromString(const char* modeStr);
   static const char* ConvertOverwriteModeToString(int mode);
@@ -145,13 +145,13 @@ public:
   //@{
   /// Defines which areas in the segmentation are editable.
   /// Uses PaintAllowed_... constants.
-  /// \sa PaintAllowedEverywhere, PaintAllowedInsideAllSegments, PaintAllowedInsideVisibleSegments,  
+  /// \sa PaintAllowedEverywhere, PaintAllowedInsideAllSegments, PaintAllowedInsideVisibleSegments,
   /// PaintAllowedOutsideAllSegments, PaintAllowedOutsideVisibleSegments, PaintAllowedInsideSingleSegment
   vtkSetMacro(MaskMode, int);
   vtkGetMacro(MaskMode, int);
   //@}
 
-  //@{ 
+  //@{
   /// Get/set mask segment ID.
   /// Painting is only allowed within the area of the mask segment if mask mode is PaintAllowedInsideSingleSegment.
   /// \sa PaintAllowedInsideSingleSegment, SetMaskMode
@@ -159,14 +159,14 @@ public:
   vtkSetStringMacro(MaskSegmentID);
   //@}
 
-  //@{ 
+  //@{
   /// Restrict editable area to regions where master volume intensity is in the specified range.
   vtkBooleanMacro(MasterVolumeIntensityMask, bool);
   vtkGetMacro(MasterVolumeIntensityMask, bool);
   vtkSetMacro(MasterVolumeIntensityMask, bool);
   //@}
 
-  //@{ 
+  //@{
   /// Get/set master volume intensity range for masking.
   /// If MasterVolumeIntensityMask is enabled then only those areas are editable where
   /// master volume voxels are in this intensity range.

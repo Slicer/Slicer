@@ -196,4 +196,4 @@ This Agreement shall be governed by and construed in accordance with
 the laws of The Commonwealth of Massachusetts without regard to
 principles of conflicts of law. This Agreement shall supercede and
 replace any license terms that you may have agreed to previously with
-respect to Slicer. 
+respect to Slicer.

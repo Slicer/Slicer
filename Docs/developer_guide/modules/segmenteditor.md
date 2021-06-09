@@ -4,7 +4,7 @@ See examples of using Segment editor effects from Python scripts in the [script 
 
 ## Effect parameters
 
-Common parameters must be set using `setCommonParameter` method (others can be set using `setParameter` method). Both common and effect-specific parameters can be retrieved using 
+Common parameters must be set using `setCommonParameter` method (others can be set using `setParameter` method). Both common and effect-specific parameters can be retrieved using
 
 ### Fill between slices
 

@@ -27,7 +27,7 @@
 #include "vtkSlicerTerminologiesModuleLogic.h"
 
 // Qt includes
-#include <QDebug> 
+#include <QDebug>
 #include <QDir>
 
 // Slicer includes
@@ -65,7 +65,7 @@ qSlicerTerminologiesModule::~qSlicerTerminologiesModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerTerminologiesModule::helpText()const
 {
-  QString help = 
+  QString help =
     "The Terminologies module enables viewing and editing terminology dictionaries used for segmentation.";
   help += this->defaultDocumentationLink();
   return help;

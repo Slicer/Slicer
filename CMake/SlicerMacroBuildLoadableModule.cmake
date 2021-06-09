@@ -206,7 +206,7 @@ macro(slicerMacroBuildLoadableModule)
   set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 
   target_link_libraries(${lib_name}
-    # The two PUBLIC keywords are not a duplication, they allow developers to 
+    # The two PUBLIC keywords are not a duplication, they allow developers to
     # include PRIVATE/INTERFACE keywords in their library list
     PUBLIC
       ${LOADABLEMODULE_TARGET_LIBRARIES}

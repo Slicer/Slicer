@@ -158,7 +158,7 @@ lps2ras->SetElement(0,0,-1);
 lps2ras->SetElement(1,1,-1);
 vtkMatrix4x4* ras2lps = lps2ras; // lps2ras is diagonal therefore the inverse is identical
 vtkMatrix4x4::Multiply4x4(lps2ras, transformVtk_LPS, transformVtk_LPS);
-vtkMatrix4x4::Multiply4x4(transformVtk_LPS, ras2lps, transformVtk_RAS); 
+vtkMatrix4x4::Multiply4x4(transformVtk_LPS, ras2lps, transformVtk_RAS);
 
 // Convert the sense of the transform (from ITK resampling to Slicer modeling transform)
 vtkMatrix4x4::Invert(transformVtk_RAS);

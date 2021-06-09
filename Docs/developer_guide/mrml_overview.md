@@ -69,8 +69,8 @@ For more details, see [this page](https://www.slicer.org/wiki/Documentation/Nigh
 - Using `AddObserver()`/`RemoveObserver()` methods is tedious and error-prone, therefore it is recommended to use [EventBroker](https://www.slicer.org/wiki/Slicer3:EventBroker) and vtkObserverManager helper class, macros, and callback methods instead.
   - MRML observer macros are defined in Libs/MRML/vtkMRMLNode.h
   - vtkSetMRMLObjectMacro - registers MRML node with another vtk object (another MRML node, Logic or GUI). No observers added.
-  - vtkSetAndObserveMRMLObjectMacro - registers MRML node and adds an observer for vtkCommand::ModifyEvent. 
-  - vtkSetAndObserveMRMLObjectEventsMacro - registers MRML node and adds an observer for a specified set of events. 
+  - vtkSetAndObserveMRMLObjectMacro - registers MRML node and adds an observer for vtkCommand::ModifyEvent.
+  - vtkSetAndObserveMRMLObjectEventsMacro - registers MRML node and adds an observer for a specified set of events.
   - `SetAndObserveMRMLScene()` and `SetAndObserveMRMLSceneEvents()` methods are used in GUI and Logic to observe Modify, NewScene, NodeAdded, etc. events.
   - `ProcessMRMLEvents()` method should be implemented in MRML nodes, Logic, and GUI classes in order to process events from the observed nodes.
 
@@ -81,31 +81,31 @@ For more details, see [this page](https://www.slicer.org/wiki/Documentation/Nigh
 MRML Scene provides Undo/Redo mechanism that restores a previous state of the scene and individual nodes. By default, undo/redo is disabled and not displayed on the user interface, as it increased memory usage and was not tested thoroughly.
 
 Basic mechanism:
-- Undo/redo is based on saving and restoring the state of MRML nodes in the Scene. 
-- MRML scene can save snapshot of all nodes into a special Undo and Redo stacks. 
-- The Undo and Redo stacks store copies of nodes that have changed from the previous snapshot. The node that have not changed are stored by a reference (pointer). 
-- When an Undo is called on the scene, the current state of Undo stack is copied into the current scene and also into Redo stack. 
+- Undo/redo is based on saving and restoring the state of MRML nodes in the Scene.
+- MRML scene can save snapshot of all nodes into a special Undo and Redo stacks.
+- The Undo and Redo stacks store copies of nodes that have changed from the previous snapshot. The node that have not changed are stored by a reference (pointer).
+- When an Undo is called on the scene, the current state of Undo stack is copied into the current scene and also into Redo stack.
 - All Undoable operations must store their data as MRML nodes
 
-Developer controls at what point the snapshot is saved by calling `SaveStateForUndo()` method on the MRML scene. `SaveStateForUndo()` saves the state of all nodes in the scene. Iy should be called in GUI/Logic classes before changing the state of MRML nodes. This is usually done in the ProcessGUIEvents method that processes events from the user interactions with GUI widgets. `SaveStateForUndo()` should not be called while processing transient events such as continuous events sent by KW UI while dragging a slider (for example vtkKWScale::ScaleValueStartChangingEvent). 
+Developer controls at what point the snapshot is saved by calling `SaveStateForUndo()` method on the MRML scene. `SaveStateForUndo()` saves the state of all nodes in the scene. Iy should be called in GUI/Logic classes before changing the state of MRML nodes. This is usually done in the ProcessGUIEvents method that processes events from the user interactions with GUI widgets. `SaveStateForUndo()` should not be called while processing transient events such as continuous events sent by KW UI while dragging a slider (for example vtkKWScale::ScaleValueStartChangingEvent).
 
 The following methods on the MRML scene are used to manage Undo/Redo stacks:
 
 - `vtkMRMLScene::Undo()` restores the previously saved state of the MRML scene.
 - `vtkMRMLScene::Redo()` restores the previously undone state of the MRML scene.
-- `vtkMRMLScene::SetUndoOff()` ignores following SaveStateForUndo calls (usefull when making multiple changes to the scene/nodes that does not need to be undone). 
+- `vtkMRMLScene::SetUndoOff()` ignores following SaveStateForUndo calls (usefull when making multiple changes to the scene/nodes that does not need to be undone).
 - `vtkMRMLScene::SetUndoOn()` enables following SaveStateForUndo calls.
 - `vtkMRMLScene::ClearUndoStack()` clears the undo history.
 - `vtkMRMLScene::ClearRedoStack()` clears the redo history.
 
 ### Creating Custom MRML Node Classes
 
-- Custom MRML nodes provide persistent storage for the module parameters. 
-- Custom MRML nodes should be registered with the MRML scene using `RegisterNodeClass()` so they can be saved and restored from a scene file. 
-- Classes should implement the following methods: 
-  - `CreateNodeInstance()` similar to VTK New() method only not static. 
-  - `GetNodeTagName()` returns a unique XML tag for this node. 
-  - `ReadXMLAttributes()` reads node attributes from XML file as name-value pairs. 
+- Custom MRML nodes provide persistent storage for the module parameters.
+- Custom MRML nodes should be registered with the MRML scene using `RegisterNodeClass()` so they can be saved and restored from a scene file.
+- Classes should implement the following methods:
+  - `CreateNodeInstance()` similar to VTK New() method only not static.
+  - `GetNodeTagName()` returns a unique XML tag for this node.
+  - `ReadXMLAttributes()` reads node attributes from XML file as name-value pairs.
   - `WriteXML()` writes node attributes to output stream.
   - `Copy()` – copies node attributes.
 

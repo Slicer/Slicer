@@ -6,7 +6,7 @@ Create and edit annotations, supplementary information associated with a scene. 
 
 ## Panels and their use
 
-- **Annotations**: 
+- **Annotations**:
   - **Edit**: Edit the properties of all the annotations in the scene
   - **Select All Button**: Select all annotations and hierarchies
   - **Unselect All Button**: Unselect all annotations and hierarchies
@@ -22,7 +22,7 @@ Create and edit annotations, supplementary information associated with a scene. 
   - **Lock Hierarchy Button**: Set all annotations in active list locked
   - **Unlock Hierarchy Button**: Set all annotations in active list to be unlocked
 
-- **Annotation Hierarchy tree view**: 
+- **Annotation Hierarchy tree view**:
   - **Selected**: Selected annotations can be passed to command line modules.
   - **Vis**: Click on this button (eye open or closed) to toggle the visibility of the annotation in the 2D and 3D views
   - **Lock**: Click on this button to make the annotation be locked into place, not responding to mouse events. This is useful if you need to manipulate other things in the scene.
@@ -31,7 +31,7 @@ Create and edit annotations, supplementary information associated with a scene. 
   - **Name**: The name of the annotation, usually kept short, one letter and a number, as it's displayed in the 3D and 2D windows.
   - **Description**: A longer text describing this annotation
 
-- **Modify Annotation Hierarchy Properties**: 
+- **Modify Annotation Hierarchy Properties**:
   - **Type**: The class types for this annotation hierarchy
   - **Color**: Click on this button to bring up a color picker widget to set the color used for all annotations in this hierarchy when the hierarchy is collapsed.
   - **Apply to List**: If this checkbox is ticked, change the color on all the annotations in this hierarchy. Default true.
@@ -42,7 +42,7 @@ Create and edit annotations, supplementary information associated with a scene. 
   - **List Glyph Scale**: Set the annotation glyph scale for all annotations in this hierarchy. This slider is not initialized from the current annotation glyph scales but from the default glyph scale for a single annotation. Use the Default button to reset to this default value.
   - **List Glyph Type**: Set the annotation glyph type for all annotations in this hierarchy. This menu is not initialized from the current annotation glyph types but from the default glyph type for a single annotation. Use the Default button to reset to this default value.
 
-- **Modify Annotation Properties**: 
+- **Modify Annotation Properties**:
   - **Type**: The class type for this annotation. For example, a ruler or a region of interest.
   - **Color**: Click on this button to bring up a color picker widget to set the color for all parts of the annotation (text, glyphs, lines)
   - **Visibility**: Click on this button (eye open or closed) to toggle the visibility of the annotation in the 2D and 3D views.
@@ -52,13 +52,13 @@ Create and edit annotations, supplementary information associated with a scene. 
   - **RAS**: The world coordinates of this annotation in the default Slicer Right-Anterior-Superior coordinate system. Double click to edit the values
   - **Description**: A longer text describing this annotation
 
-- **Modify Annotation Properties: Advanced**: 
+- **Modify Annotation Properties: Advanced**:
   - **Text**: Set the descriptive text, text color, scale, opacity on this panel
   - **Points**: Set the coordinate location of the point(s), glyph color, scale, glyph type, opacity, ambient, diffuse, specular material properites on this panel
   - **Lines**: This panel is only enabled for rulers. Set the line color, label visibility, label position along the line (from 0-1), tick spacing, maximum number of ticks, opacity, ambient, diffuse, specular material properites on this panel
   - **ROI**: This panel is only enabled for regions of interest. Set the ranges for the ROI along it's axes, LR, PA, IS. Toggle the ROI visibility and if it's updated interactively on this panel
 
-- **Toolbar**: 
+- **Toolbar**:
   - **Annotations toolbar**: Create new annotations by selecting them from the drop down menu. Return to rotate mouse mode by clicking on the rotate icon. Toggle persistent placement of annotations by checking and unchecking the Persistent checkbox
 
 ## Contributors

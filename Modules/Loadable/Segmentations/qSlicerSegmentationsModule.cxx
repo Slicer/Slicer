@@ -22,7 +22,7 @@
 #include "qSlicerSegmentationsModule.h"
 #include "qSlicerSegmentationsModuleWidget.h"
 #include "qSlicerSegmentationsReader.h"
-#include "qSlicerSegmentationsSettingsPanel.h"  
+#include "qSlicerSegmentationsSettingsPanel.h"
 #include "qSlicerSubjectHierarchySegmentationsPlugin.h"
 #include "qSlicerSubjectHierarchySegmentsPlugin.h"
 #include "vtkSlicerSegmentationsModuleLogic.h"
@@ -134,7 +134,7 @@ QStringList qSlicerSegmentationsModule::dependencies()const
 {
   return QStringList() << "Terminologies";
 }
- 
+
 //-----------------------------------------------------------------------------
 QIcon qSlicerSegmentationsModule::icon()const
 {

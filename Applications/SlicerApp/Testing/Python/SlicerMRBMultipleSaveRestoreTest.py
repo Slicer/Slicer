@@ -106,7 +106,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
     self.delayDisplay('The MRHead volume is in the background of the Red viewer')
 
-    
+
     # turn off visibility save scene view
     fidNode.SetDisplayVisibility(0)
     self.delayDisplay('Not showing fiducials')
@@ -114,7 +114,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     fidNode.SetDisplayVisibility(1)
     self.delayDisplay('Showing fiducials')
     self.storeSceneView('Visible-view', "Showing fiducials")
- 
+
     #
     # save the mrml scene to a temp directory, then zip it
     #
@@ -155,7 +155,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     fidNode = slicer.util.getNode('F')
     self.assertEqual(fidNode.GetNumberOfFiducials(), 2)
     self.delayDisplay('The fiducial list has 2 points in it')
-     
+
     # Restore the invisible scene view
     self.delayDisplay('About to restore Invisible-view scene')
     sceneView = slicer.util.getNode('Invisible-view')
@@ -203,7 +203,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
     self.delayDisplay('Yes, the MRHead volume is back in the background of the Red viewer')
 
-    
+
     # confirm that the fiducial list exists with two points
     fidNode = slicer.util.getNode('F')
     self.assertEqual(fidNode.GetNumberOfFiducials(), 2)

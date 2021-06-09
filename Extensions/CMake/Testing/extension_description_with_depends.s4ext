@@ -32,7 +32,7 @@ iconurl http://www.slicer.org/slicerWiki/images/6/64/SlicerToKiwiExporterLogo.pn
 
 # Give people an idea what to expect from this code
 #  - Is it just a test or something you stand behind?
-status 
+status
 
 # One line stating what the module does
 description The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.

@@ -210,7 +210,7 @@ class ExtensionWizardWidget:
     dlg.setTemplates(self.templateManager.templates("extensions"))
 
     while dlg.exec_() == qt.QDialog.Accepted:
-        
+
         # If the selected destination is in a repository then use the root of that repository
         # as destination
       try:
@@ -218,7 +218,7 @@ class ExtensionWizardWidget:
 
         createInSubdirectory = True
         requireEmptyDirectory = True
-        
+
         if repo is None:
           destination = os.path.join(dlg.destination, dlg.componentName)
           if os.path.exists(destination):

@@ -70,7 +70,7 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
     {
     return this->Superclass::playEvent(Object, Command, Arguments, EventType, Error);
     }
-    
+
   if(qMRMLTreeView* const treeView =
      qobject_cast<qMRMLTreeView*>(Object))
     {

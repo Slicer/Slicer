@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See COPYRIGHT.txt
@@ -14,7 +14,7 @@
 // .NAME __@MY_EXPORT_HEADER_PREFIX@Export - manage Windows system differences
 // .SECTION Description
 // The __@MY_EXPORT_HEADER_PREFIX@Export captures some system differences between Unix
-// and Windows operating systems. 
+// and Windows operating systems.
 
 #ifndef __@MY_EXPORT_HEADER_PREFIX@Export_h
 #define __@MY_EXPORT_HEADER_PREFIX@Export_h

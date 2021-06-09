@@ -137,7 +137,7 @@ View Controllers module provides an alternate way of displaying these controller
 - **Spacing and field of view** Spacing defines the increment for the slice offset slider. Field of view sets the zoom level for the slice.
 - **Rotate to volume plane** changes the orientation of the slice to match the closest acquisition orientation of the displayed volume.
 - **Orientation Marker** controls display of human, cube, etc in lower right corner.
-- **Ruler** controls display of ruler in slice view. 
+- **Ruler** controls display of ruler in slice view.
 - **View link** button synchronizes properties (which volumes are displayed, zoom factor, position of parallel views, opacities, etc.) between all slice views in the same view group. Long-click on the button exposes **hot-linked** option, which controls when properties are synchronized (immediately or when the mouse button is released).
 - **Layer visibility** "eye" buttons and **Layer opacity** spinboxes control visibility of segmentations and volumes in the slice view.
 - **Foreground volume opacity** slider allows fading between foreground and background volumes.

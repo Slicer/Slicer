@@ -41,7 +41,7 @@
 ///   contain the structure in multiple representations.
 ///   Default representation types include Binary labelmap and Closed surface, but additional
 ///   custom representations can be added (see description of \sa vtkSegmentation).
-///   
+///
 class vtkSegmentationCore_EXPORT vtkSegment : public vtkObject
 {
   typedef std::map<std::string, vtkSmartPointer<vtkDataObject> > RepresentationMap;

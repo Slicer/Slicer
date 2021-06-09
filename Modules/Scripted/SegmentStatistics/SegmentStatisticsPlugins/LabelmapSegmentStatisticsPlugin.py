@@ -320,7 +320,7 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         principalMomentsArray = statTable.GetColumnByName(self.keyToShapeStatisticNames["principal_moments"])
         if principalMomentsArray is None:
           logging.error("Could not calculate principal_moments!")
-        else:    
+        else:
           principalMomentsTuple = principalMomentsArray.GetTuple(0)
         if principalMomentsTuple is not None:
           principalMoments = list(principalMomentsTuple)

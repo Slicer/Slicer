@@ -92,7 +92,7 @@ set(TEST_SOURCES
   qMRMLVolumeThresholdWidgetTest2.cxx
   qMRMLWidgetsExportTest1.cxx
   qMRMLWindowLevelWidgetTest1.cxx
-  EXTRA_INCLUDE qMRMLWidgetCxxTests.h 
+  EXTRA_INCLUDE qMRMLWidgetCxxTests.h
   )
 
 if(Slicer_USE_QtTesting)

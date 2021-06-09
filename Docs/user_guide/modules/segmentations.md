@@ -134,7 +134,7 @@ See Script repository's [Segmentations section](https://www.slicer.org/wiki/Docu
     - Slice intersection thickness
     - Representation in 3D/2D views: The representation to be shown in the 3D and 2D views. Useful if there are multiple representations available, for example if we want to show the closed surface in the 3D view but the labelmap in the slice views
 - Representations
-    - List of supported representations and related operations 
+    - List of supported representations and related operations
     - The already existing representations have a green tick, the master representation (that is the source of all conversions and the representation that can be edited) a gold star
     - The buttons in each row can be used to create, remove, update a representation
         - Advanced conversion is possible (to use the non-default path or conversion parameters) by long-pressing the Create or Update button

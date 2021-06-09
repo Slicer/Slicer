@@ -169,7 +169,7 @@ void qMRMLROIWidget::updateROI()
   d->ISRangeWidget->values(bounds[4],bounds[5]);
 
   int disabledModify = d->ROINode->StartModify();
-  
+
   d->ROINode->SetXYZ(0.5*(bounds[1]+bounds[0]),
                      0.5*(bounds[3]+bounds[2]),
                      0.5*(bounds[5]+bounds[4]));
