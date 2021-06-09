@@ -280,7 +280,7 @@ vtkMRMLSliceIntersectionRepresentation2D::vtkMRMLSliceIntersectionRepresentation
   this->SliceIntersectionPoint[0] = 0.0;
   this->SliceIntersectionPoint[1] = 0.0;
   this->SliceIntersectionPoint[2] = 0.0;
-  this->SliceIntersectionPoint[3] = 1.0; // to allow easy homogeneous tranformations
+  this->SliceIntersectionPoint[3] = 1.0; // to allow easy homogeneous transformations
 }
 
 //----------------------------------------------------------------------

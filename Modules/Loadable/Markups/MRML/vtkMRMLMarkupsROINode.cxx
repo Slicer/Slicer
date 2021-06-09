@@ -778,7 +778,7 @@ void vtkMRMLMarkupsROINode::UpdateBoxROIFromControlPoints()
       minimumSize = 0.0;
       }
 
-    // If the requied control points exist, then we should give the ROI some thickness along the 3rd axis.
+    // If the required control points exist, then we should give the ROI some thickness along the 3rd axis.
     if (newSize[0] == 0.0)
       {
       newSize[0] = minimumSize;

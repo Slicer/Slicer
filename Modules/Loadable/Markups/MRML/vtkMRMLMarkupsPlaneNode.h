@@ -39,7 +39,7 @@
 /// Markups is intended to be used for manual marking/editing of point positions.
 ///
 /// Coordinate systems used:
-///   - Object: Coordinate system of the plane rectangle. Computed from Base coordiante system by ObjectToBaseMatrix.
+///   - Object: Coordinate system of the plane rectangle. Computed from Base coordinate system by ObjectToBaseMatrix.
 ///     Origin of the coordinate system is in the plane rectangle center.
 ///     X and Y axes of the coordinate system are parallel to the first and second axes of the plane rectangle.
 ///     Z axis of the coordinate system is the plane normal.

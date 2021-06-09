@@ -451,7 +451,7 @@
       <name>initializeRegistrationByCurrentGenericTransform</name>
       <longflag>initializeRegistrationByCurrentGenericTransform</longflag>
       <label>Pass warped moving image to BSpline registration filter</label>
-      <description>If this flag is ON, the current generic composite transform, resulted from the linear registration stages, is set to initialize the follow nonlinear registration process. However, by the default behaviour, the moving image is first warped based on the existant transform before it is passed to the BSpline registration filter. It is done to speed up the BSpline registration by reducing the computations of composite transform Jacobian.</description>
+      <description>If this flag is ON, the current generic composite transform, resulted from the linear registration stages, is set to initialize the follow nonlinear registration process. However, by the default behaviour, the moving image is first warped based on the existent transform before it is passed to the BSpline registration filter. It is done to speed up the BSpline registration by reducing the computations of composite transform Jacobian.</description>
       <default>0</default>
     </boolean>
     <boolean>
@@ -523,7 +523,7 @@
       <name>UseDebugImageViewer</name>
       <flag>G</flag>
       <longflag>gui</longflag>
-      <description>Display intermediate image volumes for debugging.  NOTE:  This is not part of the standard build sytem, and probably does nothing on your installation.</description>
+      <description>Display intermediate image volumes for debugging.  NOTE:  This is not part of the standard build system, and probably does nothing on your installation.</description>
       <default>false</default>
     </boolean>
     <boolean>

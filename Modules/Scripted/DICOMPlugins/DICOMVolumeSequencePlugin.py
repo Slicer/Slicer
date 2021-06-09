@@ -59,7 +59,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
     data into DICOM data
     """
 
-    # Check if setting of DICOM UIDs is suported (if not, then we cannot export to sequence)
+    # Check if setting of DICOM UIDs is supported (if not, then we cannot export to sequence)
     dicomUIDSettingSupported = False
     createDicomSeriesParameterNode = slicer.modules.createdicomseries.cliModuleLogic().CreateNode()
     for groupIndex in range(createDicomSeriesParameterNode.GetNumberOfParameterGroups()):

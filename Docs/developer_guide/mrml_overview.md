@@ -18,7 +18,7 @@ Medical Reality Modeling Language (MRML) is a data model developed to represent 
 
 ### Basic MRML node types
 
-- **Data nodes** store basic properties of a data set. Since the same data set can be displayed in different ways (even within the same application, you may want to show the same data set differently in each view), display properties are not stored in the data node. Similarly, the same data set can be stored in various file formats, therefore file storage properties are not stored in a data node. Data nodes are typically thin wrappers over VTK objects, such as vtkPolyData, vtkImageData, vtkTable. Most important Slicer core data nodes are the followings:
+- **Data nodes** store basic properties of a data set. Since the same data set can be displayed in different ways (even within the same application, you may want to show the same data set differently in each view), display properties are not stored in the data node. Similarly, the same data set can be stored in various file formats, therefore file storage properties are not stored in a data node. Data nodes are typically thin wrappers over VTK objects, such as vtkPolyData, vtkImageData, vtkTable. Most important Slicer core data nodes are the following:
   - **Volume** ([vtkMRMLVolume](http://apidocs.slicer.org/master/classvtkMRMLVolumeNode.html) and its subclasses): stores a 3D image. Each voxel of a volume may be a scalar (to store images with continuous grayscale values, such as a CT image), label (to store discrete labels, such as a segmentation result), vector (for storing displacement fields or RGB color images), or tensor (MRI diffusion images). 2D image volumes are represented as single-slice 3D volumes. 4D volumes are stored in sequence nodes (vtkMRMLSequenceNode).
   - **Model** ([vtkMRMLModelNode](http://apidocs.slicer.org/master/classvtkMRMLModelNode.html)): stores a surface mesh (polygonal elements, points, lines, etc.) or volumetric mesh (tetrahedral, wedge elements, unstructured grid, etc.)
   - **Segmentation** ([vtkMRMLSegmentationNode](http://apidocs.slicer.org/master/classvtkMRMLSegmentationNode.html)): complex data node that can store image segmentation (also known as contouring, labeling). It can store multiple representations internally, for example it can store both binary labelmap image and closed surface mesh.
@@ -93,7 +93,7 @@ The following methods on the MRML scene are used to manage Undo/Redo stacks:
 
 - `vtkMRMLScene::Undo()` restores the previously saved state of the MRML scene.
 - `vtkMRMLScene::Redo()` restores the previously undone state of the MRML scene.
-- `vtkMRMLScene::SetUndoOff()` ignores following SaveStateForUndo calls (usefull when making multiple changes to the scene/nodes that does not need to be undone).
+- `vtkMRMLScene::SetUndoOff()` ignores following SaveStateForUndo calls (useful when making multiple changes to the scene/nodes that does not need to be undone).
 - `vtkMRMLScene::SetUndoOn()` enables following SaveStateForUndo calls.
 - `vtkMRMLScene::ClearUndoStack()` clears the undo history.
 - `vtkMRMLScene::ClearRedoStack()` clears the redo history.

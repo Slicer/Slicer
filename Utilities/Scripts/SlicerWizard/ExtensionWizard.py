@@ -636,7 +636,7 @@ class ExtensionWizard:
 
     parser.add_argument("--name", metavar="NAME",
                         help="name of the extension"
-                             " (default: value assocated with 'project()' statement)")
+                             " (default: value associated with 'project()' statement)")
 
     parser.add_argument("--publish", action="store_true",
                         help="publish the extension in the destination"

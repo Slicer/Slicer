@@ -50,7 +50,7 @@ List of modules loaded, ignored or failed to load in Slicer. An unchecked checkb
 -  Gray: module not loaded because it has been ignored (unchecked)
 -  Red: module failed to load. There are multiple reasons why a module can fail to load.
 
-Look at startup [log outputs](https://www.slicer.org/wiki/Documentation/Nightly/SlicerApplication/ErrorLog) to have more informations.
+Look at startup [log outputs](https://www.slicer.org/wiki/Documentation/Nightly/SlicerApplication/ErrorLog) to have more information.
 If a module is not loaded in Slicer (ignored or failed), all dependent modules won't be loaded. You can verify the dependencies of a module in the tooltip of the module.
 
 You can filter the list of modules by untoggling in the advanced (>>) panel the "To Load", "To Ignore", "Loaded", "Ignored" and "Failed" buttons.
@@ -139,7 +139,7 @@ The following environment variables can be set before the application is started
 - `QT_SCALE_FACTOR_ROUNDING_POLICY`: see [Qt documentation](https://doc.qt.io/qt-5/highdpi.html)
 - `QTWEBENGINE_REMOTE_DEBUGGING`: port number for Qt webengine remote debugger. Default value is `1337`.
 - `SLICER_OPENGL_PROFILE`: Requested OpenGL profile. Valid values are `no` (no profile), `core` (core profile),
-  and `compatibility` (compatiblity profile). Default value is `compatibility` on Windows systems.
+  and `compatibility` (compatibility profile). Default value is `compatibility` on Windows systems.
 - `SLICER_BACKGROUND_THREAD_PRIORITY`: Set priority for background processing tasks. On Linux, it may affect the
   entire process priority. An integer value is expected, default = `20` on Linux and macOS, and `-1` on Windows.
 - `SLICERRC`: Custom application startup file path. Contains a full path to a Python script. By default it is `~/.slicerrc.py` (where ~ is the user profile a.k.a user home folder).

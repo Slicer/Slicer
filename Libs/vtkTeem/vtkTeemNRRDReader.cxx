@@ -894,7 +894,7 @@ int vtkTeemNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, doub
 
 
 //----------------------------------------------------------------------------
-// This function reads a data from a file.  The datas extent/axes
+// This function reads a data from a file.  The data extent/axes
 // are assumed to be the same as the file extent/order.
 void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {

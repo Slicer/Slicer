@@ -20,7 +20,7 @@
  * @brief   Show slice intersection lines
  *
  * The vtkMRMLWindowLevelWidget allows moving slices by interacting with
- * displayed slice intersecrion lines.
+ * displayed slice intersection lines.
  *
  *
 */

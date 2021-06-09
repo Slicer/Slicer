@@ -21,7 +21,7 @@ xcode-select --install
 Notes:
 
 - While it is not enforced, we strongly recommend you to *avoid* the use of *spaces* for both the `source directory` and the `build directory`.
-- Due to maximum path length limitations during the build process, build folders must be located in a location with very short total path length. This is expecially critical on Windows and macOS. For example, `/opt/s` has been confirmed to work on macOS.
+- Due to maximum path length limitations during the build process, build folders must be located in a location with very short total path length. This is especially critical on Windows and macOS. For example, `/opt/s` has been confirmed to work on macOS.
 
 Check out the code using `git`:
 

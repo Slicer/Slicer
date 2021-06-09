@@ -49,7 +49,7 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformSequenceStorageNode : public vtkMRML
   int WriteDataInternal(vtkMRMLNode *refNode) override;
 
   ///
-  /// Return a default file extension for writting
+  /// Return a default file extension for writing
   const char* GetDefaultWriteFileExtension() override;
 
   /// Read all the fields in the metaimage file header.

@@ -61,7 +61,7 @@ void vtkITKArchetypeImageSeriesScalarReader::PrintSelf(ostream& os, vtkIndent in
 }
 
 //----------------------------------------------------------------------------
-// This function reads a data from a file.  The datas extent/axes
+// This function reads a data from a file.  The data extent/axes
 // are assumed to be the same as the file extent/order.
 int vtkITKArchetypeImageSeriesScalarReader::RequestData(
   vtkInformation* vtkNotUsed(request),

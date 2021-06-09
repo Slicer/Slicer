@@ -79,7 +79,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public ctkLayoutFactory
   /// This property controls whether the layout manager reacts to layout node
   /// changes or note. When enabled (default), the layout is updated each time
   /// the layout node is modified and when the scene leaves batch-process state.
-  /// It can be useful to temporarilly disable the manager when loading a scene,
+  /// It can be useful to temporarily disable the manager when loading a scene,
   /// it could otherwise change the layout.
   /// \sa isEnabled(), setEnabled(), setMRMLScene()
   Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled)

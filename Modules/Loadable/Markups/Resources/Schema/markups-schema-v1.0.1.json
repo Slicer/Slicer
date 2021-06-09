@@ -439,7 +439,7 @@
                                                         "$id": "#display/measurement/value",
                                                         "type": "number",
                                                         "title": "Measurement value",
-                                                        "description": "Numberic value of the measurement."
+                                                        "description": "Numeric value of the measurement."
                                                     },
                                                     "units": {
                                                         "$id": "#markup/measurement/units",

@@ -9,7 +9,7 @@ class ModuleCleanup(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "Module for cleanup test"
-    self.parent.categories = ["ModuleCleanup"]  # Explicitly add a category to work arround issue #4698
+    self.parent.categories = ["ModuleCleanup"]  # Explicitly add a category to work around issue #4698
     self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)",]
     self.parent.helpText = """
     This module allows to test that exception raised during module cleanup

@@ -1065,7 +1065,7 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
     effectiveExtentLabelmap->GetBounds(bounds);
     double volumeSizeInMm3 = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]) * (bounds[5] - bounds[4]);
 
-    // set spacing to have an approxmately 64^3 volume
+    // set spacing to have an approximately 64^3 volume
     const double preferredVolumeSizeInVoxels = 64 * 64 * 64;
 
     double spacing = std::pow(volumeSizeInMm3 / preferredVolumeSizeInVoxels, 1 / 3.);

@@ -185,7 +185,7 @@ public:
   ///
 
   /// Legacy method from vtkMRMLAnnotationROINode
-  /// Get/Set for ROI Position in RAS cooridnates
+  /// Get/Set for ROI Position in RAS coordinates
   /// Note: The ROI Position is the center of the ROI
   /// Old API:
   /// void SetXYZ(double X, double Y, double Z);
@@ -198,7 +198,7 @@ public:
   bool GetXYZ(double center[3]);
 
   /// Legacy method from vtkMRMLAnnotationROINode
-  /// Get/Set for radius of the ROI in RAS cooridnates
+  /// Get/Set for radius of the ROI in RAS coordinates
   /// Old API:
   /// void SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ);
   /// void SetRadiusXYZ(double* RadiusXYZ);

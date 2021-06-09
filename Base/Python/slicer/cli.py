@@ -61,7 +61,7 @@ def run(module, node = None, parameters = None, wait_for_completion = False, del
   node: existing parameter node (None by default)
   parameters: dictionary of parameters for cli (None by default)
   wait_for_completion: block if True (False by default)
-  delete_temporary_files: remove temp files created during exectuion (True by default)
+  delete_temporary_files: remove temp files created during execution (True by default)
   update_display: show output nodes after completion
   """
   import slicer.util

@@ -186,7 +186,7 @@ This is useful for removing irrelevant details from an image (for example remove
 
 - Fill inside: set all voxels of the selected volume to the specified value inside the selected segment
 - Fill outside: set all voxels of the selected volume to the specified value outside the selected segment
-- Fill inside and outside: create a binary labelmap volume as output. Most image procesing operations require background (outside, ignored) region to be filled with 0 value.
+- Fill inside and outside: create a binary labelmap volume as output. Most image processing operations require background (outside, ignored) region to be filled with 0 value.
 
 ## Tips
 
@@ -203,11 +203,11 @@ If you want to extend the segmentation to a larger region then you need to modif
 
 ### Segmentation is not accurate enough
 
-If details cannot be accurately depicted during segmentation or the exported surface has non-negligible errors (there are gaps or overlap between segments), then it is necessary to reduce the segmentation's spacing (more accurately: spacing of the internal binary labelmap representation in the segmentation node). *Spacing* is also known as *voxel size* or may be referred to as *resoution* (which is inverse of spacing - higher resolution means smaller spacing).
+If details cannot be accurately depicted during segmentation or the exported surface has non-negligible errors (there are gaps or overlap between segments), then it is necessary to reduce the segmentation's spacing (more accurately: spacing of the internal binary labelmap representation in the segmentation node). *Spacing* is also known as *voxel size* or may be referred to as *resolution* (which is inverse of spacing - higher resolution means smaller spacing).
 
 As a general rule, segmentation's spacing needs to be 2-5x smaller than the size of the smallest relevant detail or the maximum acceptable surface error in the generated surface.
 
-By default, segmentation's spacing is set from the *master volume that is selected first after the segmentation is created*. If the first selected master volume's resolution is not sufficient or highly anisotropic (spacing value is not the same along the 3 axes) then one of the followings is recommended:
+By default, segmentation's spacing is set from the *master volume that is selected first after the segmentation is created*. If the first selected master volume's resolution is not sufficient or highly anisotropic (spacing value is not the same along the 3 axes) then one of the following is recommended:
   - Option A. Crop and resample the input volume using *Crop volume* module before starting segmentation. Make spacing smaller (small enough to represent all details but not too small to slow things down and consume too much memory) and isotropic by reducing *Spacing scale* and enabling *Isotropic spacing*. Also adjust the region of interest to crop the volume to minimum necessary size to minimize memory usage and make editing faster.
   - Option B. Click *Specify geometry* button in Segment Editor any time to specify smaller spacing. After this smooth segments using *Smoothing* effect. *Joint smoothing* method is recommended as it can smooth all the segments at once and it preserves boundaries between segments. *Joint smoothing* flattens all the processed segments into one layer, so if the segentation contains overlapping segments then segment in several steps, in each step only show a set of non-overlapping segments (or use any of the other smoothing methods, which only operate on the selected segment).
 

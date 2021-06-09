@@ -473,7 +473,7 @@ class LabelEffectLogic(EffectLogic):
     # - be careful can only call this after when the painter class
     #   is valid (e.g. after an apply but before changing any of the volumes)
     #   it should be crash-proof in any case, but may generated warnings
-    # - if extract image doesn't exist, failes silently
+    # - if extract image doesn't exist, fails silently
     itcl::body Labeler::undoLastApply { } {
       if { [info exists o(extractImage)] } {
         $o(painter) SetReplaceImage $o(extractImage)

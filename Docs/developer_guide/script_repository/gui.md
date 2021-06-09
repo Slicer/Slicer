@@ -824,7 +824,7 @@ viewWidget.show()
 
 #### Access VTK rendering classes
 
-### Accesss VTK views, renderers, and cameras
+### Access VTK views, renderers, and cameras
 
 Iterate through all 3D views in current layout:
 

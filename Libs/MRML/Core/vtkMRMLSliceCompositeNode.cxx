@@ -225,7 +225,7 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyIntMacro(FiducialLabelVisibility);
   vtkMRMLCopyIntMacro(SliceIntersectionVisibility);
   // To avoid breaking current implementation, copy of the "LayoutName" attribute
-  // will be enabled after revisiting the view initilization pipeline.
+  // will be enabled after revisiting the view initialization pipeline.
   //vtkMRMLCopyStringMacro(LayoutName);
   vtkMRMLCopyEnumMacro(AnnotationSpace);
   vtkMRMLCopyEnumMacro(AnnotationMode);

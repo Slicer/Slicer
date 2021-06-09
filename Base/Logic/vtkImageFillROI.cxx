@@ -786,7 +786,7 @@ int vtkImageFillROI::RequestData(
     return 0;
     }
 
-  // Ensure intput is 2D
+  // Ensure input is 2D
   inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
   if (inExt[5] != inExt[4])
     {

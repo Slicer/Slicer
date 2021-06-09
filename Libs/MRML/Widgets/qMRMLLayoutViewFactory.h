@@ -47,7 +47,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutViewFactory : public ctkLayoutViewFactory
   QVTK_OBJECT
   /// This property controls the class name of the view nodes that are
   /// supported by the factory.
-  /// The accesssor MUST BE reimplemented in the derived class.
+  /// The accessor MUST BE reimplemented in the derived class.
   /// \sa viewClassName(), isElementSupported, isViewNodeSupported
   Q_PROPERTY(QString viewClassName READ viewClassName);
 public:

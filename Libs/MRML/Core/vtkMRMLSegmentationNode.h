@@ -227,7 +227,7 @@ public:
   /// This function returns a pointer to the original labelmap representation in the segment.
   /// The binary labelmap can be a shared labelmap containing multiple segments.
   /// To get a list of all segments in a shared labelmap, call vtkSegmentation::GetSegmentIDsSharingRepresentation()
-  /// The label value used for each segment can be retreived using vtkSegment::GetLabelValue().
+  /// The label value used for each segment can be retrieved using vtkSegment::GetLabelValue().
   virtual vtkOrientedImageData* GetBinaryLabelmapInternalRepresentation(const std::string segmentId);
 
   /// Generate closed surface representation for all segments.

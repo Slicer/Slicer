@@ -214,7 +214,7 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     html_theme = 'sphinx_rtd_theme'
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
-# -- Convert CLI module desriptions into markdown files ----------------
+# -- Convert CLI module descriptions into markdown files ----------------
 
 # Each CLI module descriptor XML file is converted to two markdown files
 # in _moduledescriptions subfolder: *Overview.md and *Parameters.md.

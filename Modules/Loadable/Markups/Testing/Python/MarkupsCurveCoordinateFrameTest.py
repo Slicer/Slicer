@@ -27,7 +27,7 @@ def updateCoordinateSystemsModel(updateInfo):
 def createCoordinateSystemsModel(curve, axisLength=5):
   """Add a coordinate system model at each curve point.
   :param curve: input curve
-  :param axisLength: length of normal axis is `axisLength*2`, lenght of binormal and tangent axes are `axisLength`
+  :param axisLength: length of normal axis is `axisLength*2`, length of binormal and tangent axes are `axisLength`
   :return model, coordinateSystemAppender, curvePointToWorldTransform, transform
   """
   # Create coordinate system polydata
@@ -175,7 +175,7 @@ for i in range(centerlinePolyData.GetNumberOfPoints()):
   pointIndex = centerlineCurve.AddControlPoint(vtk.vtkVector3d(centerlinePolyData.GetPoint(i)))
 
 # Spacing between control points is not uniform. Applying b-spline interpolation to it directly would
-# cause discontinuities (overshoots where a larg gap between points is followed by points close to each other).
+# cause discontinuities (overshoots where a large gap between points is followed by points close to each other).
 # To avoid this, we resample the points at equal distances (5mm) and then enable smooth bspline interpolation.
 centerlineCurve.SetCurveTypeToLinear()
 centerlineCurve.ResampleCurveWorld(5)

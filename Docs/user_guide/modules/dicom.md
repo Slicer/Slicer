@@ -155,7 +155,7 @@ Additional options:
 Advanced loading (allows loading DICOM data sets using non-default options):
 
 - **Advanced:** check this checkbox to show advanced loading options
-- **Plugin selector section:** you can choose which plugins will be allowed to examine the selected series for loading. This section is displayed if you click on "DICOM plugins" collapsable button at the bottom of DICOM module panel.
+- **Plugin selector section:** you can choose which plugins will be allowed to examine the selected series for loading. This section is displayed if you click on "DICOM plugins" collapsible button at the bottom of DICOM module panel.
 - **Examine button:** Runs each of the DICOM Plugins on the currently selected series and offers the result in the Loadable items list table.
 - **Loadable items list:** displays all possible interpretations of the selected series by the selected plugins.  The plugin that most likely interprets the series correctly, is selected by default. You can override the defaults if you want to load the data in a different way. There will not always be a one-to-one mapping of selected series to list of loadable items.
 

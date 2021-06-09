@@ -492,7 +492,7 @@ void vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrows
     }
   if (!browserNode)
     {
-    vtkErrorMacro("vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes failed: invlid browser node");
+    vtkErrorMacro("vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes failed: invalid browser node");
     return;
     }
   vtkMRMLSequenceNode *masterNode = browserNode->GetMasterSequenceNode();

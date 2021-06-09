@@ -24,7 +24,7 @@ class vtkMatrix4x4;
 
 /// \brief MRML node for representing diffusion weighted MRI volume.
 ///
-/// Diffusion Weigthed Volume nodes describe data sets that encode diffusion weigthed
+/// Diffusion Weighted Volume nodes describe data sets that encode diffusion weighted
 /// images. These images are the basis for computing the diffusion tensor.
 /// The node is a container for the necessary information to interpert DW images:
 /// 1. Gradient information.

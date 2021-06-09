@@ -38,7 +38,7 @@
 # or 1 indicating whether to include or exclude "system" prerequisites. If
 # <recurse> is set to 1 all prerequisites will be found recursively, if set to
 # 0 only direct prerequisites are listed. <exepath> is the path to the top
-# level executable used for @executable_path replacment on the Mac. <dirs> is
+# level executable used for @executable_path replacement on the Mac. <dirs> is
 # a list of paths where libraries might be found: these paths are searched
 # first when a target without any path info is given. Then standard system
 # locations are also searched: PATH, Framework locations, /usr/lib...

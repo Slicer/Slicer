@@ -65,7 +65,7 @@ Extensions can be downloaded from the Extensions catalog using any web browser t
 
 - Get application revision number from menu: Help / About 3D Slicer. The revision is a number preceded by r character, for example: if the complete version string is 4.13.0-2021-03-05 r29749 / 121ffbd the application revision number is 29749.
 - Start a web browser and open the extensions catalog (app store) website. The default Slicer extensions catalog is available at: [http://slicer.kitware.com/midas3/slicerappstore](http://slicer.kitware.com/midas3/slicerappstore).
-- Select operating system (Windows, Linux, or Mac OSX), bitness (64-bit), and revision (the application revision number retrieved in the first step). If "No extensions found..." message is displayed then check [troubleshooting secion](#extensions-manager-does-not-show-any-extensions).
+- Select operating system (Windows, Linux, or Mac OSX), bitness (64-bit), and revision (the application revision number retrieved in the first step). If "No extensions found..." message is displayed then check [troubleshooting section](#extensions-manager-does-not-show-any-extensions).
 - Click "Download" button of the selected extension(s) to download the extension package.
 
 #### Install downloaded extension packages

@@ -229,7 +229,7 @@ bool TestCopy()
     if (!originalNode->GetColor(i, originalColor))
       {
       std::cerr << "Line " << __LINE__
-                << " - Failed to get color " << i << " from the origianl node." << std::endl;
+                << " - Failed to get color " << i << " from the original node." << std::endl;
       return false;
       }
     if (!copiedNode->GetColor(i, copyColor))

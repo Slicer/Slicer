@@ -110,7 +110,7 @@ protected:
   void CreatePolyData();
 
   // Description:
-  // Initializes control pointes as well as attributes
+  // Initializes control points as well as attributes
   void ResetLines();
 
   // Description:

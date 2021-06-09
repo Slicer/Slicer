@@ -53,12 +53,12 @@ int vtkSlicerMarkupsLogicTest4(int , char*[])
 {
   vtkNew<vtkSlicerMarkupsLogic> logic4;
 
-  // Set a callack for detecting registration events
+  // Set a callback for detecting registration events
   vtkNew<vtkCallbackCommand> registeredCallbackCommand;
   registeredCallbackCommand->SetCallback(RegisteredEventDetectionCallback);
   logic4->AddObserver(vtkSlicerMarkupsLogic::MarkupRegistered, registeredCallbackCommand);
 
-  // Set a callack for detecting unregistration events
+  // Set a callback for detecting unregistration events
   vtkNew<vtkCallbackCommand> unregisteredCallbackCommand;
   unregisteredCallbackCommand->SetCallback(UnregisteredEventDetectionCallback);
   logic4->AddObserver(vtkSlicerMarkupsLogic::MarkupUnregistered, unregisteredCallbackCommand);

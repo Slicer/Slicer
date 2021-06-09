@@ -152,7 +152,7 @@ See Script repository's [Segmentations section](https://www.slicer.org/wiki/Docu
 - Special subject hierarchy features for segmentations
     - Create representation: Create the chosen representation using the default path
 - Special subject hierarchy features for segments
-    - Show only this segment: Useful if only one segment needs to be shown and there are many, so clicking the eye buttons woud take a long time
+    - Show only this segment: Useful if only one segment needs to be shown and there are many, so clicking the eye buttons would take a long time
     - Show all segments
 
 ## Tutorials

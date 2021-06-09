@@ -62,7 +62,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DSQLITE_BUILD_EXAMPLES:BOOL=OFF
       -DSQLITE_BUILD_TESTS:BOOL=OFF
        # recommended options would define SQLITE_OMIT_DEPRECATED and SQLITE_OMIT_DECLTYPE,
-       # which would cause build errors in Python, so go with deafult options instead
+       # which would cause build errors in Python, so go with default options instead
       -DBUILD_RECOMMENDED_OPTS:BOOL=OFF
       -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
     DEPENDS

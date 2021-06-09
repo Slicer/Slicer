@@ -70,7 +70,7 @@
       <item>
        <widget class="QCheckBox" name="LoadLoadableModulesCheckBox">
         <property name="toolTip">
-         <string>To temporarilly disable, pass --disable-loadable-modules on the command line</string>
+         <string>To temporarily disable, pass --disable-loadable-modules on the command line</string>
         </property>
         <property name="text">
          <string>loadable modules</string>
@@ -124,7 +124,7 @@
       <item>
        <widget class="QCheckBox" name="LoadBuiltInLoadableModulesCheckBox">
         <property name="toolTip">
-         <string>To temporarilly disable, pass --disable-builtin-loadable-modules on the command line</string>
+         <string>To temporarily disable, pass --disable-builtin-loadable-modules on the command line</string>
         </property>
         <property name="text">
          <string>loadable modules</string>

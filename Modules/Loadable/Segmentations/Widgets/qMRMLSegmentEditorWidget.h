@@ -396,7 +396,7 @@ protected slots:
   /// Handles threshold values changed event
   void onMasterVolumeIntensityMaskRangeChanged(double low, double high);
 
-  /// Changed selected overwriteable segments
+  /// Changed selected overwritable segments
   void onOverwriteModeChanged(int);
 
   /// Clean up when scene is closed

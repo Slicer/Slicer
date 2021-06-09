@@ -43,7 +43,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStora
 #ifdef NRRD_CHUNK_IO_AVAILABLE
   /// The nrrd file will be formatted such as:
   /// "kinds: domain domain domain list"
-  /// This order is the optimal, best perfomance, choice for streaming
+  /// This order is the optimal, best performance, choice for streaming
   /// 3D+T data to a file using the Teem library.
 #else
   /// The nrrd file will be formatted such as:
@@ -52,7 +52,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStora
   int WriteDataInternal(vtkMRMLNode *refNode) override;
 
   ///
-  /// Return a default file extension for writting
+  /// Return a default file extension for writing
   const char* GetDefaultWriteFileExtension() override;
 
 protected:

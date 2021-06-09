@@ -160,7 +160,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
     return stdout, stderr
 
   def start(self, cmd=None, args=None):
-    # Offer to terminate runnning SCP processes.
+    # Offer to terminate running SCP processes.
     # They may be started by other applications, listening on other ports, so we try to start ours anyway.
     self.killStoreSCPProcesses()
     onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' \

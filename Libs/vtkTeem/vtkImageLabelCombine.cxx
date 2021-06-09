@@ -171,10 +171,10 @@ void vtkImageLabelCombineExecute2(vtkImageLabelCombine *self,
 
 
 //----------------------------------------------------------------------------
-// This method is passed a input and output datas, and executes the filter
+// This method is passed a input and output data, and executes the filter
 // algorithm to fill the output from the inputs.
 // It just executes a switch statement to call the correct function for
-// the datas data types.
+// the data data types.
 void vtkImageLabelCombine::ThreadedRequestData(
   vtkInformation * vtkNotUsed( request ),
   vtkInformationVector ** vtkNotUsed( inputVector ),

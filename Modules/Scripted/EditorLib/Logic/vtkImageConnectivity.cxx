@@ -826,7 +826,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
 // This method is passed a input and output data, and executes the filter
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
-// the datas data types.
+// the data data types.
 void vtkImageConnectivity::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {
   vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());

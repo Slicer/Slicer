@@ -721,7 +721,7 @@ class PaintEffectTool(LabelEffectTool):
         sliceOffsetArray=numpy.concatenate((-1*numpy.arange(1,nNumSlicesInEachDirection+1,),  numpy.arange(1,nNumSlicesInEachDirection+1)))
         for iSliceOffset in sliceOffsetArray:
             # x,y uses slice (canvas) coordinate system and actually has a 3rd z component (index into the slice you're looking at)
-            # hence xyToRAS is really performing xyzToRAS.   RAS is patient world coordinate system. Note the 1 is because the trasform uses homogeneous coordinates
+            # hence xyToRAS is really performing xyzToRAS.   RAS is patient world coordinate system. Note the 1 is because the transform uses homogeneous coordinates
             iBrushCenter = xyToRAS.MultiplyPoint( (x, y, iSliceOffset, 1) )[:3]
             self.painter.SetBrushCenter( iBrushCenter[0], iBrushCenter[1], iBrushCenter[2] )
             # [ ] Need to just continue (pass this loop iteration if the brush center is not within the volume

@@ -60,7 +60,7 @@ vtkMRMLSliceIntersectionWidget::vtkMRMLSliceIntersectionWidget()
   this->StartRotationCenter_RAS[0] = 0.0;
   this->StartRotationCenter_RAS[1] = 0.0;
   this->StartRotationCenter_RAS[2] = 0.0;
-  this->StartRotationCenter_RAS[3] = 1.0; // to allow easy homogeneous tranformations
+  this->StartRotationCenter_RAS[3] = 1.0; // to allow easy homogeneous transformations
 
   this->StartActionFOV[0] = 0.;
   this->StartActionFOV[1] = 0.;

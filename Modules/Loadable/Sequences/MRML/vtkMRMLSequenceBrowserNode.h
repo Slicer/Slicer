@@ -280,7 +280,7 @@ public:
   /// may accidentally change sequence node content by modifying proxy nodes.
   bool GetSaveChanges(vtkMRMLSequenceNode* sequenceNode);
 
-  /// Set the synchrnization properties for the given sequence/proxy tuple
+  /// Set the synchronization properties for the given sequence/proxy tuple
   void SetRecording(vtkMRMLSequenceNode* sequenceNode, bool recording);
   void SetPlayback(vtkMRMLSequenceNode* sequenceNode, bool playback);
   void SetOverwriteProxyName(vtkMRMLSequenceNode* sequenceNode, bool overwrite);

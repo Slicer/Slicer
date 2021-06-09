@@ -183,7 +183,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     """ Perform the actual atlas test.
     This includes: download and load the given data, touch all
     model hierarchies, and restore all scene views.
-    downloads : dictionnary of URIs and fileNames
+    downloads : dictionary of URIs and fileNames
     testVolumePattern : volume name/id that is tested for valid load
     """
 

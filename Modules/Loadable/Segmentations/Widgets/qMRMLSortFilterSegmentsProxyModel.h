@@ -68,7 +68,7 @@ public:
 
   /// Filter to show segments with the specified state
   /// If the flags for all states are false, than no filtering is performed
-  /// The list of availiable status is in vtkSlicerSegmentationsModuleLogic::SegmentStatus
+  /// The list of available status is in vtkSlicerSegmentationsModuleLogic::SegmentStatus
   /// \sa setShowStatus
   Q_INVOKABLE bool showStatus(int status) const;
 
@@ -91,7 +91,7 @@ public:
 
   /// Set filter to show segments with the specified state
   /// If the flags for all states are false, than no filtering is performed
-  /// The list of availiable status is in vtkSlicerSegmentationsModuleLogic::SegmentStatus
+  /// The list of available status is in vtkSlicerSegmentationsModuleLogic::SegmentStatus
   /// \sa showStatus
   Q_INVOKABLE void setShowStatus(int status, bool shown);
 

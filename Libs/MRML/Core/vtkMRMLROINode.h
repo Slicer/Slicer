@@ -60,26 +60,26 @@ public:
   vtkSetMacro(InteractiveMode, int);
 
   ///
-  /// Get/Set for ROI Position in RAS cooridnates
+  /// Get/Set for ROI Position in RAS coordinates
   /// Note: The ROI Position is the center of the ROI
   void SetXYZ(double X, double Y, double Z);
   void SetXYZ(double* XYZ);
   vtkGetVectorMacro(XYZ,double,3);
 
   ///
-  /// Get/Set for radius of the ROI in RAS cooridnates
+  /// Get/Set for radius of the ROI in RAS coordinates
   void SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ);
   void SetRadiusXYZ(double* RadiusXYZ);
   vtkGetVectorMacro(RadiusXYZ,double,3);
 
   ///
-  /// Get/Set for ROI Position in IJK cooridnates
+  /// Get/Set for ROI Position in IJK coordinates
   void SetIJK(double I, double J, double K);
   void SetIJK(double* IJK);
   vtkGetVectorMacro(IJK,double,3);
 
   ///
-  /// Get/Set for radius of the ROI in IJK cooridnates
+  /// Get/Set for radius of the ROI in IJK coordinates
   void SetRadiusIJK(double RadiusI, double RadiusJ, double RadiusK);
   void SetRadiusIJK(double* RadiusIJK);
   vtkGetVectorMacro(RadiusIJK,double,3);

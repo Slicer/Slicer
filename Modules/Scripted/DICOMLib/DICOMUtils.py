@@ -305,7 +305,7 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
   settings = qt.QSettings()
   settings.setValue(slicer.dicomDatabaseDirectorySettingsKey, originalDatabaseDir)
 
-  # Attempt to re-open orginal database only if it exists
+  # Attempt to re-open original database only if it exists
   if os.access(originalDatabaseDir, os.F_OK):
     success = openDatabase(originalDatabaseDir)
     if not success:

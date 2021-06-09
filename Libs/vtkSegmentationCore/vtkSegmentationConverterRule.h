@@ -84,7 +84,7 @@ public:
   virtual vtkDataObject* ConstructRepresentationObjectByClass(std::string className) = 0;
 
   /// Perform pre-conversion steps across the specified segments in the segmentation
-  /// This step should be unneccessary if only converting a single segment
+  /// This step should be unnecessary if only converting a single segment
   virtual bool PreConvert(vtkSegmentation* vtkNotUsed(segmentation)) { return true; };
 
   /// Update the target representation based on the source representation
@@ -93,7 +93,7 @@ public:
   virtual bool Convert(vtkSegment* segment) = 0;
 
   /// Perform post-conversion steps across the specified segments in the segmentation
-  /// This step should be unneccessary if only converting a single segment
+  /// This step should be unnecessary if only converting a single segment
   virtual bool PostConvert(vtkSegmentation* vtkNotUsed(segmentation)) { return true; };
 
   /// Get the cost of the conversion.

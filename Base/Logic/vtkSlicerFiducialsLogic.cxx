@@ -152,7 +152,7 @@ int vtkSlicerFiducialsLogic::AddFiducialPicked (float x, float y, float z, int s
   vtkMRMLFiducialListNode *flist = this->GetSelectedList();
 
   // there wasn't one, just call AddFiducialSelected, it will take care of
-  // makign a new list, and there won't be a transform on it
+  // making a new list, and there won't be a transform on it
   if (flist == nullptr)
     {
     vtkDebugMacro("AddFiducialPicked: no selected list, calling AddFiducialSelected");

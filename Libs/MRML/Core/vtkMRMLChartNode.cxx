@@ -188,7 +188,7 @@ void vtkMRMLChartNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
 
   // Need to manage references to other nodes.  Unregister this node's
-  // current references (done implictly when clearing the arrays and properties).
+  // current references (done implicitly when clearing the arrays and properties).
   this->ClearArrays();
   this->ClearProperties();
 

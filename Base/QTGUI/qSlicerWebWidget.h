@@ -114,7 +114,7 @@ public slots:
   void printToPdf(const QString& filePath);
 
 signals:
-  /// emited with result of evalJS
+  /// emitted with result of evalJS
   void evalResult(QString js, QString result);
 
   /// signal passed through from QWebEngineView
