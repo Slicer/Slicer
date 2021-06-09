@@ -11,7 +11,7 @@ if ! command -v codespell &> /dev/null; then
   exit 1
 fi
 
-codespell -q6 --skip="\
+codespell -w -q6 --skip="\
 .git,\
 *.crt,\
 *.svg,\
