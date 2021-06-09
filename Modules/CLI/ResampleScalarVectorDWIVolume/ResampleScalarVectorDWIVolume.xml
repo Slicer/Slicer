@@ -72,7 +72,7 @@
       <name>interpolationType</name>
       <flag>-i</flag>
       <longflag>--interpolation</longflag>
-      <description><![CDATA[Sampling algorithm (linear or nn (nearest neighborhoor), ws (WindowedSinc), bs (BSpline) )]]></description>
+      <description><![CDATA[Sampling algorithm (linear or nn (nearest neighbor), ws (WindowedSinc), bs (BSpline) )]]></description>
       <label>Interpolation</label>
       <element>linear</element>
       <element>nn</element>

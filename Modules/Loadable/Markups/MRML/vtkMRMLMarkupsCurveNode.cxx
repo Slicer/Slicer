@@ -329,7 +329,7 @@ bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, 
     surfacePolydata = transformPolydataFilter->GetOutput();
     }
 
-  // vtkStaticCellLocator may imporove speed, but FindClosestPoint function is not yet supported
+  // vtkStaticCellLocator may improve speed, but FindClosestPoint function is not yet supported
   vtkNew<vtkPointLocator> pointLocator;
   pointLocator->SetDataSet(surfacePolydata);
   pointLocator->BuildLocator();

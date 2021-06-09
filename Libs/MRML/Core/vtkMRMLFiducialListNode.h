@@ -270,7 +270,7 @@ public:
   /// by default.
   void RenumberFiducials(int startFrom = 0);
 
-  /// Reanme all the fiducials in the active list. It preserves any numbers
+  /// Rename all the fiducials in the active list. It preserves any numbers
   /// already on the ends of the labels.
   void RenameFiducials(const char *newName);
 

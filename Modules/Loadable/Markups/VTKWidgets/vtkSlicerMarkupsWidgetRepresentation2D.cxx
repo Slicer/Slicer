@@ -69,7 +69,7 @@ vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPi
   vtkNew<vtkCoordinate> coordinate;
   //coordinate->SetViewport(this->Renderer); TODO: check this
   // World coordinates of the node can not be used to build the actors of the representation
-  // Because the world coorinate in the node are the 3D ones.
+  // Because the world coordinate in the node are the 3D ones.
   coordinate->SetCoordinateSystemToDisplay();
   this->Mapper->SetTransformCoordinate(coordinate);
 
@@ -92,9 +92,9 @@ vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPi
   this->LabelsMapper->PlaceAllLabelsOn();
 
   this->LabelsMapper->SetInputConnection(this->PointSetToLabelHierarchyFilter->GetOutputPort());
-  // Here it will be the best to use Display coorinate system
-  // in that way we would not need the addtional copy of the polydata in LabelFocalData (in Viewport coordinates)
-  // However the LabelsMapper seems not working with the Display coordiantes.
+  // Here it will be the best to use Display coordinate system
+  // in that way we would not need the additional copy of the polydata in LabelFocalData (in Viewport coordinates)
+  // However the LabelsMapper seems not working with the Display coordinates.
   this->LabelsMapper->GetAnchorTransform()->SetCoordinateSystemToNormalizedViewport();
   this->LabelsActor = vtkSmartPointer<vtkActor2D>::New();
   this->LabelsActor->SetMapper(this->LabelsMapper);

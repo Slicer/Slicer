@@ -372,7 +372,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
       {
       // found an 8 connected neighbor that is background. Move seed
       // a 4 connected neighbor of the original seed (at this point,
-      // said neighbor is implictly foreground) which is also a 4
+      // said neighbor is implicitly foreground) which is also a 4
       // connected neighbor of the background point found.
       int newSeedIndex = (zeroIndex+1)%8;
       seed[0] = pix[0] + neighbors[newSeedIndex][0];

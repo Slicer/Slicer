@@ -1195,7 +1195,7 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
 {
   if (transformVtk_RAS==nullptr)
     {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot set ITK thin-plate spline transform from VTK: the intput vtkThinPlateSplineTransform is invalid");
+    vtkErrorWithObjectMacro(loggerObject, "Cannot set ITK thin-plate spline transform from VTK: the input vtkThinPlateSplineTransform is invalid");
     return false;
     }
 

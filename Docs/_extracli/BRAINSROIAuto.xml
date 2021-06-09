@@ -2,7 +2,7 @@
 <executable>
   <category>Segmentation.Specialized</category>
   <title>Foreground masking (BRAINS)</title>
-  <description>This program is used to create a mask over the most prominant forground region in an image.  This is accomplished via a combination of otsu thresholding and a closing operation.
+  <description>This program is used to create a mask over the most prominent foreground region in an image.  This is accomplished via a combination of otsu thresholding and a closing operation.
   </description>
   <version>5.4.0</version>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsroiauto.html</documentation-url>
@@ -80,7 +80,7 @@
       <name>ROIAutoDilateSize</name>
       <longflag>ROIAutoDilateSize</longflag>
       <label>ROIAuto Dilate Size</label>
-      <description>This flag is only relavent when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  At setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.</description>
+      <description>This flag is only relevant when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  At setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.</description>
       <default>0.0</default>
     </double>
 

@@ -146,7 +146,7 @@ private:
   int dimZ;
   int dimXY; /// dimX*dimY
   int dimXYZ; /// dimX*dimY*dimZ
-  /// coeficients of the RAS2IJK matrix
+  /// coefficients of the RAS2IJK matrix
   float m11;
   float m12;
   float m13;

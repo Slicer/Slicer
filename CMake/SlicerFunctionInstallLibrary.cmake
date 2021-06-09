@@ -115,7 +115,7 @@ endfunction()
 #   )
 #
 #
-# Strip regular symbols from ELF library or exectuable.
+# Strip regular symbols from ELF library or executable.
 #
 #
 #  FILES ......: Relative paths to the libraries or executables in the install tree.

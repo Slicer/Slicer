@@ -75,7 +75,7 @@ endmacro()
 
 function(_slicer_is_module_enabled enabling_var_prefix module_name output_var)
   set(_build_module 1)
-  # Is module expicitly disabled ?
+  # Is module explicitly disabled ?
   if(${enabling_var_prefix}_DISABLED)
     list(FIND ${enabling_var_prefix}_DISABLED ${module_name} _module_disabled)
     if(${_module_disabled} GREATER -1)

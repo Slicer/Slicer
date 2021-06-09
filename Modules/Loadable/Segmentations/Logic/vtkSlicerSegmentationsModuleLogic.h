@@ -265,7 +265,7 @@ public:
   /// \param segmentationNode Segmentation node that has the export color node reference.
   /// \param colorTableNode Color table used to get the label values for the segments.
   /// \param segmentIds List of segment ids to get values for. The order of segmentIds dictates the order of the returned label values.
-  /// \param labelValues Output label values from the color node. Lenght of the array will be the same as the number of segmentIds.
+  /// \param labelValues Output label values from the color node. Length of the array will be the same as the number of segmentIds.
   static void GetLabelValuesFromColorNode(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLColorTableNode* colorTableNode,
     vtkStringArray* segmentIds, vtkIntArray* labelValues);
 

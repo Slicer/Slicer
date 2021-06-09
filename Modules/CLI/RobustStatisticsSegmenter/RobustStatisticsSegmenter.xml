@@ -44,7 +44,7 @@
       <name>curvatureWeight</name>
       <longflag>curvatureWeight</longflag>
       <flag>c</flag>
-      <description><![CDATA[Given sphere 1.0 score and extreme rough bounday/surface 0 score, what is the expected smoothness of the object?]]></description>
+      <description><![CDATA[Given sphere 1.0 score and extreme rough boundary/surface 0 score, what is the expected smoothness of the object?]]></description>
       <label>Boundary Smoothness[0-1.0]</label>
       <default>0.5</default>
       <constraints>

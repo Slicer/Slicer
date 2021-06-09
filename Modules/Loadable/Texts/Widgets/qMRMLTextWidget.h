@@ -85,7 +85,7 @@ public slots:
   void setReadOnly(bool readOnly);
 
   /// Set the continuous update property of the text editor
-  /// If true, the text editor will propogate the text to the vtkMRMLTextNode as it is modified, and vice versa.
+  /// If true, the text editor will propagate the text to the vtkMRMLTextNode as it is modified, and vice versa.
   /// If false, the text editor will only update the node when "Save" is clicked, and changes from the vtkMRMLTextNode will not be propagated
   /// if the text is being edited.
   /// When auto update is enabled, only the text edit will be shown.

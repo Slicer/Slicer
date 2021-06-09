@@ -18,10 +18,10 @@ Other versions:
 
 ## Set up source and build folders
 
-- Create source folder. This folder will be referred to as `<Slicer_SOURCE>` in the followings. Recommended path: `C:\D\S4`
+- Create source folder. This folder will be referred to as `<Slicer_SOURCE>` in the following. Recommended path: `C:\D\S4`
   - Due to maximum path length limitations during build the build process, source and build folders must be located in a folder with very short (couple of characters) total path length.
   - While it is not enforced, we strongly recommend you to avoid the use of spaces for both the source directory and the build directory.
-- Create build folder. This folder will be referred to as `<Slicer_BUILD>` in the followings. Recommended path: `C:\D\S4R` for release-mode build, `C:\D\S4D` for debug-mode build.
+- Create build folder. This folder will be referred to as `<Slicer_BUILD>` in the following. Recommended path: `C:\D\S4R` for release-mode build, `C:\D\S4D` for debug-mode build.
   - You cannot use the same build tree for both release or debug mode builds. If both build types are needed, then the same source directory can be used, but a separate build directory must be created and configured for each build type.
 - Download source code into _Slicer source_ folder from GitHub: https://github.com/Slicer/Slicer.git
   - The following command can be executed in _Slicer source_ folder to achieve this: `git clone https://github.com/Slicer/Slicer.git .`

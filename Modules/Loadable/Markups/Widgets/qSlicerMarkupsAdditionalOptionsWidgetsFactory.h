@@ -14,7 +14,7 @@
 
   This file was originally developed by Rafael Palomar (The Intervention Centre,
   Oslo University Hospital), based on qSlicerMarkupsAdditionalOptionsWidgetsFactory.h by
-  Csaba Pinter (Perklab, Queen's Univeristy), and was supported by The Research
+  Csaba Pinter (Perklab, Queen's University), and was supported by The Research
   Council of Norway through the ALive project (grant nr. 311393).
 
   ==============================================================================*/

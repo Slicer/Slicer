@@ -134,7 +134,7 @@ public:
 
   ///
   /// This method returns the cache to make a connection
-  /// It justs feeds the request to the sub filter.
+  /// It just feeds the request to the sub filter.
   void SetOutput ( vtkDataObject* d ) override { this->vtkImporter->SetOutput ( d ); };
   virtual vtkImageData *GetOutput() { return this->vtkImporter->GetOutput(); };
   virtual vtkImageData *GetOutput(int idx)

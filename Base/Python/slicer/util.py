@@ -1895,7 +1895,7 @@ def updateVolumeFromArray(volumeNode, narray):
   import vtk.util.numpy_support
   vtype = vtk.util.numpy_support.get_vtk_array_type(narray.dtype)
 
-  # Volumes with "long long" scalar type are not rendered corectly.
+  # Volumes with "long long" scalar type are not rendered correctly.
   # Probably this could be fixed in VTK or Slicer but for now just reject it.
   if vtype == vtk.VTK_LONG_LONG:
     raise RuntimeError("Unsupported numpy array type: long long")

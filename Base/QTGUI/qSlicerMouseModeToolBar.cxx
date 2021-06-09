@@ -161,7 +161,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->PlaceModesActionGroup->setExclusive(true);
   // New actions should be added when interaction modes are registered with the scene.
 
-  // popuplate the create and place menu, with persistence first
+  // populate the create and place menu, with persistence first
   this->PlaceWidgetMenu = new QMenu(qSlicerMouseModeToolBar::tr("Create and Place"), q);
   this->PlaceWidgetMenu->setObjectName("PlaceWidgetMenu");
   this->PlaceWidgetMenu->addAction(this->PersistenceAction);

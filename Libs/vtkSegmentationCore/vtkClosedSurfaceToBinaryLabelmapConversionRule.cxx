@@ -414,7 +414,7 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   geometryMatrix->SetElement(1,3,bounds[2]);
   geometryMatrix->SetElement(2,3,bounds[4]);
 
-  // set spacing to have an approxmately 250^3 volume
+  // set spacing to have an approximately 250^3 volume
   // this size is not too large for average computing hardware yet
   // it is sufficiently detailed for many applications
   const double preferredVolumeSizeInVoxels = 250 * 250 * 250;

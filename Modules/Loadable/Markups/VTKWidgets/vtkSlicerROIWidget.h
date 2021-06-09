@@ -59,9 +59,9 @@ public:
   /// Create the default widget representation and initializes the widget and representation.
   void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
 
-  /// Flip the selected index accross the specified axis.
+  /// Flip the selected index across the specified axis.
   /// Ex. Switch between L--R face.
-  /// Used when the user drags an ROI handle accross the ROI origin.
+  /// Used when the user drags an ROI handle across the ROI origin.
   void FlipROIHandles(bool flipLRHandle, bool flipAPHandle, bool flipISHandle);
 
   /// Create instance of the markups widget

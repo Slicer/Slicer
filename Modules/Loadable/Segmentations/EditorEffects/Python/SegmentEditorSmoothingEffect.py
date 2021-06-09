@@ -402,7 +402,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     imageToWorldMatrix = vtk.vtkMatrix4x4()
     mergedImage.GetImageToWorldMatrix(imageToWorldMatrix)
 
-    # TODO: Temporarily setting the overwite mode to OverwriteVisibleSegments is an approach that should be change once additional
+    # TODO: Temporarily setting the overwrite mode to OverwriteVisibleSegments is an approach that should be change once additional
     # layer control options have been implemented. Users may wish to keep segments on separate layers, and not allow them to be separated/merged automatically.
     # This effect could leverage those options once they have been implemented.
     oldOverwriteMode = self.scriptedEffect.parameterSetNode().GetOverwriteMode()

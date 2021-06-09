@@ -66,7 +66,7 @@ public:
   void init();
 
   // Insert a segment into the specified row
-  // If no row is specified, then the index is retreived from the segmentation
+  // If no row is specified, then the index is retrieved from the segmentation
   QStandardItem* insertSegment(QString segmentID, int row=-1);
 
   /// Get string to pass terminology information via table widget item

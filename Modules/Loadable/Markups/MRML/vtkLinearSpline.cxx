@@ -113,7 +113,7 @@ void vtkLinearSpline::Compute()
       double node[4];
       this->PiecewiseFunction->GetNodeValue(pointIndex, node);
       this->Intervals[pointIndex] = node[0]; // independent value
-      values[pointIndex] = node[1]; // dependant value
+      values[pointIndex] = node[1]; // dependent value
       }
 
     // last point interval
@@ -151,7 +151,7 @@ void vtkLinearSpline::Compute()
       double node[4];
       this->PiecewiseFunction->GetNodeValue(pointIndex, node);
       this->Intervals[pointIndex] = node[0]; // independent value
-      values[pointIndex] = node[1]; // dependant value
+      values[pointIndex] = node[1]; // dependent value
       }
 
     // compute coefficients

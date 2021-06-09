@@ -777,7 +777,7 @@ public:
   /// Convert reserved characters into percent notation to avoid issues with filenames
   /// containing things that might be mistaken, for example, for
   /// windows drive letters.  Used internally by SaveSceneToSlicerDataBundleDirectory.
-  /// This is not a general purpose implementation; it preseves commonly used
+  /// This is not a general purpose implementation; it preserves commonly used
   /// characters for filenames but avoids known issue like slashes or colons.
   /// Ideally a version from vtksys
   /// or similar should be used, but nothing seems to be available.

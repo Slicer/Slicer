@@ -84,7 +84,7 @@ The recommended way to obtain the source code of SLicer is cloning the repositor
 git clone git://github.com/Slicer/Slicer.git
 ```
 
-This will create a `Slicer` directory contaning the source code of Slicer.
+This will create a `Slicer` directory containing the source code of Slicer.
 Hereafter we will call this directory the `source directory`.
 
 :::{note} Warning
@@ -166,7 +166,7 @@ Increasing the number of parallel builds generally increases the memory required
 
 :::{admonition} Tip
 
-Using parallel builds makes finding compilation errors difficult due to the fact that all parallel build processes use the same screen otput, as opposed to sequential builds, where the compilation process will stop at the error. A common technique to have parallel builds and easily find errors is launch a parallel build followed by a sequential build. For the parallel build, it is adviced to run `make -j<N> -k` to have the parallel build keep going as far as possible before doing the sequential build with `make`.
+Using parallel builds makes finding compilation errors difficult due to the fact that all parallel build processes use the same screen output, as opposed to sequential builds, where the compilation process will stop at the error. A common technique to have parallel builds and easily find errors is launch a parallel build followed by a sequential build. For the parallel build, it is advised to run `make -j<N> -k` to have the parallel build keep going as far as possible before doing the sequential build with `make`.
 
 :::
 

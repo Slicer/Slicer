@@ -199,7 +199,7 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
 // This method is passed a input and output data, and executes the filter
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
-// the datas data types.
+// the data data types.
 void vtkImageLabelOutline::ThreadedExecute(vtkImageData *inData,
   vtkImageData *outData,
   int outExt[6], int id)

@@ -1317,7 +1317,7 @@ std::vector<std::string> vtkMRMLTableNode::GetComponentNamesFromArray(vtkAbstrac
       }
     else
       {
-      // Default to colum integer name 0, 1, 2, etc.
+      // Default to column integer name 0, 1, 2, etc.
       std::stringstream ss;
       ss << componentIndex;
       componentName = ss.str();

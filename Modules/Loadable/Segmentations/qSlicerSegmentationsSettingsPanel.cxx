@@ -94,7 +94,7 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
                       "Enable closed surface representation smoothing by default", ctkSettingsPanel::OptionNone);
   q->registerProperty("Segmentations/DefaultTerminologyEntry", q,
                       "defaultTerminologyEntry", SIGNAL(defaultTerminologyEntryChanged(QString)),
-                      "Defult terminology entry", ctkSettingsPanel::OptionNone);
+                      "Default terminology entry", ctkSettingsPanel::OptionNone);
 
   this->AllowEditingHiddenSegmentComboBox->addItem("Ask user", QMessageBox::InvalidRole);
   this->AllowEditingHiddenSegmentComboBox->addItem("Always make visible", QMessageBox::Yes);

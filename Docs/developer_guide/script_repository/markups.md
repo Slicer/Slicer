@@ -8,7 +8,7 @@ Markups fiducials can be loaded from file:
 slicer.util.loadMarkupsFiducialList("/path/to/list/F.fcsv")
 ```
 
-### Adding Fiducials Programatically
+### Adding Fiducials Programmatically
 
 Markups fiducials can be added to the currently active list from the python console by using the following module logic command:
 

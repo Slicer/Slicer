@@ -27,7 +27,7 @@
 // STL includes
 #include <vector>
 
-/// \brief Displayable manager that displays orienatation marker in a slice or 3D view
+/// \brief Displayable manager that displays orientation marker in a slice or 3D view
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLRulerDisplayableManager
   : public vtkMRMLAbstractDisplayableManager
 {

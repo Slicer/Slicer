@@ -124,11 +124,11 @@ You can customize views (show orientation marker, ruler, change orientation, tra
 
 #### Process data
 
-3D Slicer is built on a modular architecture. Choose a module to process or analyze your data. Most important modules are the followings (complete list is available in [Modules](modules/index) section):
+3D Slicer is built on a modular architecture. Choose a module to process or analyze your data. Most important modules are the following (complete list is available in [Modules](modules/index) section):
 
 - [Welcome](modules/welcome.md): The default module when 3D Slicer is started. The panel features options for loading data and customizing 3D Slicer. Below those options are drop-down boxes that contain essential information for using 3D Slicer.
 - [Data](modules/data): acts as a central data-organizing hub. Lists all data currently in the scene and allows basic operations such as search, rename, delete and move.
-- [DICOM](modules/dicom): Import and export DICOM objects, such as images, segmentations, strucutre sets, radiation therapy objects, etc.
+- [DICOM](modules/dicom): Import and export DICOM objects, such as images, segmentations, structure sets, radiation therapy objects, etc.
 - [Volumes](modules/volumes): Used for changing the appearance of various volume types.
 - [Volume Rendering](modules/volumerendering): Provides interactive visualization of 3D image data.
 - [Segmentations](modules/segmentations): Edit display properties and import/export segmentations.
@@ -170,7 +170,7 @@ Browse the [User Guide](user_interface) section to find quick overview of the ap
 
 3D Slicer has been around for many years and many questions have been asked and answered about it already. If you have any questions, then you may start with a web search, for example Google `slicer load jpg` to find out how you can import a stack of jpg images.
 
-The application has a large and very friendly and helpful user community. We have poeple who will happy to help with simple questions, such as how to do a specific task in Slicer, and we have a large number of engineering and medical experts who can give you advice with how to solve complex problems.
+The application has a large and very friendly and helpful user community. We have people who will happy to help with simple questions, such as how to do a specific task in Slicer, and we have a large number of engineering and medical experts who can give you advice with how to solve complex problems.
 
 **If you have any questions, go to the [Slicer forum](https://discourse.slicer.org) and ask us!**
 

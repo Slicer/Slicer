@@ -32,7 +32,7 @@ Version:   $Revision: 1.2 $
 
 
 //------------------------------------------------------------------------------
-// Private implementaton of an std::map
+// Private implementation of an std::map
 class ModuleDescriptionMap : public std::map<std::string, ModuleDescription> {};
 
 //------------------------------------------------------------------------------

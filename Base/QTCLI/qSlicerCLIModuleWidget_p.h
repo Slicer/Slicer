@@ -96,7 +96,7 @@ public:
 
 
   ///
-  /// Calling this method will loop trough the structure resulting
+  /// Calling this method will loop through the structure resulting
   /// from the XML parsing and generate the corresponding UI.
   virtual void setupUi(qSlicerWidget* widget);
 

@@ -357,7 +357,7 @@ function(fixup_bundle_with_plugins app)
         )
     endif()
 
-   # Since BundleUtilities module does not know how to install .app directory withing
+   # Since BundleUtilities module does not know how to install .app directory within
    # an existing app, the following explicitly install the designer application as well
    # as the QtDesignerComponents.framework.
    set(Slicer_BUILD_QT_DESIGNER_PLUGINS "@Slicer_BUILD_QT_DESIGNER_PLUGINS@")

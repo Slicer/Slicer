@@ -411,7 +411,7 @@ void vtkParametricPolynomialApproximation::ComputeSafeSampleWidth()
   this->SafeHalfSampleWidthComputedTime.Modified();
   if (this->SampleWidth != this->SafeSampleWidth)
     {
-    vtkWarningMacro("Reqested sample width " << this->SampleWidth << " is too small and will result in singularities. " <<
+    vtkWarningMacro("Requested sample width " << this->SampleWidth << " is too small and will result in singularities. " <<
       "Computations will use the smallest \"safe\" value " << this->SafeSampleWidth << " instead.");
     }
 }

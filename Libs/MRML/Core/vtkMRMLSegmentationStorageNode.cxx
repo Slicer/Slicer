@@ -572,7 +572,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     std::string segmentationExtentString;
     if (this->GetSegmentationMetaDataFromDicitionary(segmentationExtentString, dictionary, KEY_SEGMENTATION_EXTENT))
       {
-      // Legacy format. Return and read using ReadBinaryLabelmapRepresentation4DSpatial if availiable.
+      // Legacy format. Return and read using ReadBinaryLabelmapRepresentation4DSpatial if available.
       return 0;
       }
 
@@ -939,7 +939,7 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
 
   MRMLNodeModifyBlocker blocker(segmentationNode);
 
-  // Read segment poly datas
+  // Read segment poly data
   std::string masterRepresentationName;
   std::string containedRepresentationNames;
   std::string conversionParameters;

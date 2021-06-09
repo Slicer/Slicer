@@ -116,7 +116,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
     return;
     }
 
-  // Scale handles currently not implmented for representations other than ROI
+  // Scale handles currently not implemented for representations other than ROI
   // Disable by default.
   if (!vtkMRMLMarkupsROIDisplayNode::SafeDownCast(d->DisplayNode))
     {

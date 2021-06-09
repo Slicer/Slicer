@@ -49,7 +49,7 @@ To get started, check out these pages:
 
 ## Segment statistics module overview
 
-Computes intensity and geometric properties for each segment, such as volume, surface, mininum/maximum/mean intensity, oriented boudning box, sphericity, etc. See more information in [Segment statistics module documentation](modules/segmentstatistics).
+Computes intensity and geometric properties for each segment, such as volume, surface, minimum/maximum/mean intensity, oriented boudning box, sphericity, etc. See more information in [Segment statistics module documentation](modules/segmentstatistics).
 
 ## Segment comparison module overview
 

@@ -814,7 +814,7 @@ int vtkMRMLScene::Import()
     // Remove node references from the newly added nodes that refer
     // to other than the newly added nodes. We don't want references in
     // the newly loaded created to existing nodes in the main
-    // scene just becase there happens to be node IDs matching these
+    // scene just because there happens to be node IDs matching these
     // invalid references.
     // Invalid references can be present in a saved scene if a referenced node ID
     // is added but no corresponding node exist in the scene.
@@ -1344,13 +1344,13 @@ vtkMRMLNode* vtkMRMLScene::AddNewNodeByClassWithID(std::string className, std::s
 {
   if (className.empty())
     {
-    vtkErrorMacro("AddNewNodeByClassWithID: className is an emptry string");
+    vtkErrorMacro("AddNewNodeByClassWithID: className is an empty string");
     return nullptr;
     }
 
   if (nodeID.empty())
     {
-    vtkErrorMacro("AddNewNodeByClassWithID: nodeID is an emptry string");
+    vtkErrorMacro("AddNewNodeByClassWithID: nodeID is an empty string");
     return nullptr;
     }
 
@@ -3168,7 +3168,7 @@ void vtkMRMLScene::RemoveInvalidNodeReferences(vtkCollection* checkNodes, const 
   // An imported scene may contain orphan references to nodes that did not exist
   // in the imported scene. To prevent these node references to establish connections
   // with nodes that were already in the scene or nodes that are later added to the scene
-  // these node refernces must be removed.
+  // these node references must be removed.
   vtkMRMLNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (checkNodes->InitTraversal(it);
@@ -3827,7 +3827,7 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
     vtkWarningMacro("Error while saving " << filename << ": Could not clean temporary directory " << bundleDir);
     if (userMessages)
       {
-      userMessages->AddMessage(vtkCommand::WarningEvent, "Could not clean temporary direcotry " + bundleDir);
+      userMessages->AddMessage(vtkCommand::WarningEvent, "Could not clean temporary directory " + bundleDir);
       }
     }
 

@@ -52,21 +52,21 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     /// so that the appropriate events can be invoked. Returns 0 on success
 
     ///
-    /// Get/Set for Nth ROI node Position in RAS cooridnates
+    /// Get/Set for Nth ROI node Position in RAS coordinates
     /// Note: The ROI Position is the center of the ROI
     int SetNthROIXYZ(int n, double x, double y, double z);
     double *GetNthROIXYZ(int n);
     ///
-    /// Get/Set for Nth radius of the ROI in RAS cooridnates
+    /// Get/Set for Nth radius of the ROI in RAS coordinates
     int SetNthROIRadiusXYZ(int n, double Radiusx, double Radiusy, double Radiusz);
     double *GetNthROIRadiusXYZ(int n);
     ///
-    /// Get/Set for Nth ROI node Position in IJK cooridnates
+    /// Get/Set for Nth ROI node Position in IJK coordinates
     /// Note: The ROI Position is the center of the ROI
     int SetNthROIIJK(int n, double i, double j, double k);
     double *GetNthROIIJK(int n);
     ///
-    /// Get/Set for Nth radius of the ROI in IJK cooridnates
+    /// Get/Set for Nth radius of the ROI in IJK coordinates
     int SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj, double Radiusk);
     double *GetNthROIRadiusIJK(int n);
 

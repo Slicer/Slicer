@@ -215,7 +215,7 @@ public:
   /// with the provided one.
   ///
   /// Any URL that contains `/<VERSION>/` and with URL host name that contains the provided hostname
-  /// sting will be updated.
+  /// string will be updated.
   ///
   /// Following readthedocs versioning conventions, `<VERSION>` can be
   /// `<major>.<minor>`, `v<major>.<minor>`, `latest`, or `stable`.

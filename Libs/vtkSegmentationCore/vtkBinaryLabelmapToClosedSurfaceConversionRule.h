@@ -71,7 +71,7 @@ public:
   /// Update the target representation based on the source representation
   bool Convert(vtkSegment* segment) override;
 
-  /// Perform postprocesing steps on the output
+  /// Perform postprocessing steps on the output
   /// Clears the joint smoothing cache
   bool PostConvert(vtkSegmentation* segmentation) override;
 

@@ -35,7 +35,7 @@
 # 20161210 - Add note about --force switch when same version
 # 20161126 - Add -D/--destdir switch
 # 20161124 - Add -f/--force switch to bypass version check
-#          - Add multiple switches to allow for alternate localtions
+#          - Add multiple switches to allow for alternate locations
 #          - Add help text
 # 20161118 - Drop make-cert.pl script
 #          - Add support for Java and NSSDB
@@ -315,7 +315,7 @@ unset tempfile
 # Sanity check
 count=$(ls "${TEMPDIR}"/ssl/certs/*.pem | wc -l)
 # Historically there have been between 152 and 165 certs
-# A minimum of 140 should be safe for a rudimentry sanity check
+# A minimum of 140 should be safe for a rudimentary sanity check
 if test "${count}" -lt "140" ; then
     echo "Error! Only ${count} certificates were generated!"
     echo "Exiting without update!"

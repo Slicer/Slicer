@@ -44,7 +44,7 @@ public:
   bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override;
   int WriteDataInternal(vtkMRMLNode* refNode) override;
 
-  /// Return a default file extension for writting
+  /// Return a default file extension for writing
   const char* GetDefaultWriteFileExtension() override;
 
 protected:

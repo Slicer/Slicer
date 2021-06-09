@@ -88,7 +88,7 @@ public:
   bool GetNthControlPointViewVisibility(int n);
 
   /// Relative offset used for rendering occluded actors.
-  /// The range of coincident offset can be betweeen +/- 65000.
+  /// The range of coincident offset can be between +/- 65000.
   /// Positive values move the occluded objects away from the camera, and negative values towards.
   /// Default value is -25000.
   vtkSetMacro(OccludedRelativeOffset, double);
@@ -150,7 +150,7 @@ protected:
 
   /// Update the occluded relative offsets for an occluded mapper
   /// Allows occluded regions to be rendered on top.
-  /// Sets the folowing parameter on the mappers:
+  /// Sets the following parameter on the mappers:
   /// - RelativeCoincidentTopologyLineOffsetParameters
   /// - RelativeCoincidentTopologyPolygonOffsetParameters
   /// - RelativeCoincidentTopologyPointOffsetParameter

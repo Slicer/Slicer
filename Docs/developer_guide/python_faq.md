@@ -134,7 +134,7 @@ sliceNode.SetSliceResolutionMode(slicer.vtkMRMLSliceNode.SliceResolutionMatchVol
 
 ## How to type file paths in Python
 
-New Python users on Windows often suprised when they enter a path that contain backslash character (`\`) and it just does not work. Since backslash (`\`) is an escape character in Python, it requires special attention when used in string literals. For example, this is incorrect:
+New Python users on Windows often surprised when they enter a path that contain backslash character (`\`) and it just does not work. Since backslash (`\`) is an escape character in Python, it requires special attention when used in string literals. For example, this is incorrect:
 
     somePath = "F:\someFolder\myfile.nrrd"  # incorrect (\s and \m are interpreted as special characters)
 

@@ -48,7 +48,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
     std::cerr << "Error: Could not define Fiducial " << std::endl;
     return EXIT_FAILURE;
     }
-  // changing to use the display node visibilty, update this to show the
+  // changing to use the display node visibility, update this to show the
   // control point visibility
   std::cout << "Set annNode visible to 0, GetDisplayVisibility = " << annNode->GetDisplayVisibility() << std::endl;
 

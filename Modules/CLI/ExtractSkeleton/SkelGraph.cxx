@@ -373,7 +373,7 @@ void SkelGraph::FindMaximalPath()
     //     }
     }
 
-  // Get Maximum of all maximal paths (which is double contained, otherweise it would
+  // Get Maximum of all maximal paths (which is double contained, otherwise it would
   // not be maximal )
 
   skel_branch* maximalPathStartBranch = nullptr;

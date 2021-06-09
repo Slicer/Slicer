@@ -94,7 +94,7 @@ filename = slicer.dicomDatabase.fileForInstance(instUids[0])
 print(slicer.dicomDatabase.fileValue(filename, "0018,5100"))
 ```
 
-### Access tag of an item in the Subject Hierachy tree
+### Access tag of an item in the Subject Hierarchy tree
 
 For example, get the content time tag of a structure set:
 

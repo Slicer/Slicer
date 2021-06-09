@@ -135,7 +135,7 @@ public:
 
   /// Set volume rendering properties that seems well suited for the volume.
   /// The function uses heuristics to detect what kind of volume it is (CT, MRI, other),
-  /// based on its intensity range and choses preset accoringly.
+  /// based on its intensity range and choses preset accordingly.
   /// Returns false is volume type could not be detected and so properties are not changed.
   bool SetRecommendedVolumeRenderingProperties(vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode);
 
@@ -287,7 +287,7 @@ public:
   /// If the optional icon image is specified then that will be used to
   /// in preset selector widgets. The icon is stored as a volume node
   /// in the preset scene.
-  /// \param appendToEnd controls if the preset is added befor or after existing presets.
+  /// \param appendToEnd controls if the preset is added before or after existing presets.
   /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()
   void AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon = nullptr, bool appendToEnd=false);
 

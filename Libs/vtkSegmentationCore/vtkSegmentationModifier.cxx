@@ -189,7 +189,7 @@ void vtkSegmentationModifier::SeparateModifiedSegmentFromSharedLabelmap(vtkOrien
     if (foundOverwriteIDIt == segmentIDsToOverwrite.end())
       {
       // TODO: Implement more robust handling of segment separation and layers.
-      //       ex. Rather than a completely new layer, we could move the segment to the next availiable layer
+      //       ex. Rather than a completely new layer, we could move the segment to the next available layer
 
       // We would overwrite a segment that should not be overwritten. Separate the modifier segment to a new layer
       segmentation->SeparateSegmentLabelmap(segmentID);

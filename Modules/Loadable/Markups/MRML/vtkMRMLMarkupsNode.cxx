@@ -1810,7 +1810,7 @@ void vtkMRMLMarkupsNode::GetMarkupPoint(int markupIndex, int pointIndex, double 
     }
   else
     {
-    vtkErrorMacro("vtkMRMLMarkupsNode::GetMarkupPoint failed: only one markup with mutiple control points is supported.");
+    vtkErrorMacro("vtkMRMLMarkupsNode::GetMarkupPoint failed: only one markup with multiple control points is supported.");
     }
 }
 
