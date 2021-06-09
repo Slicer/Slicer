@@ -159,8 +159,8 @@ int main(int argc, char* * argv)
     }
 
   /**
-   * B-spline options -- we place his here o ake care of he case where
-   * he user wans o specify hings in erms of he spline disance.
+   * B-spline options -- we place this here to take care of the case where
+   * the user wants to specify things in terms of the spline distance.
    */
 
   ImageType::IndexType inputImageIndex =
