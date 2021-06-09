@@ -31,7 +31,8 @@ codespell -q6 --skip="\
 ./Libs/vtkITK/itkLevelTracingImageFilter.h,\
 ./Modules/CLI/ExtractSkeleton/tilg_iso_3D.cxx,\
 ./Modules/CLI/ResampleDTIVolume/itkDiffusionTensor3D*,\
-./Modules/Loadable/Reformat/Resources/UI/qSlicerReformatModuleWidget.ui\
+./Modules/Loadable/Reformat/Resources/UI/qSlicerReformatModuleWidget.ui,\
+./Utilities/Scripts/runCodespell.sh\
 " \
 -L "\
 supercede,\
