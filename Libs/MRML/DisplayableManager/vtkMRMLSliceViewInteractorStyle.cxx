@@ -156,7 +156,10 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
 //----------------------------------------------------------------------------
 void vtkMRMLSliceViewInteractorStyle::SetActionEnabled(int actionsMask, bool enable /*=true*/)
 {
-  this->EnableCursorUpdate = ((actionsMask & SetCursorPosition) != 0);
+  if (actionsMask & SetCursorPosition)
+    {
+    this->EnableCursorUpdate = enable;
+    }
 
   vtkMRMLCrosshairDisplayableManager* crosshairDisplayableManager = this->GetCrosshairDisplayableManager();
   if (crosshairDisplayableManager)
