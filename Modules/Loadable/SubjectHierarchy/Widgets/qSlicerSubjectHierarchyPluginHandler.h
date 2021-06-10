@@ -195,7 +195,11 @@ public:
   void observeSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
 
   /// Show a list of items in a selected view (used for drag&drop of items into a view node)
-  void showItemsInView(vtkIdList* itemIDsToShow, vtkMRMLAbstractViewNode* viewNode);
+  Q_INVOKABLE void showItemsInView(vtkIdList* itemIDsToShow, vtkMRMLAbstractViewNode* viewNode);
+
+  /// Return information string describing all context menu actions (name and section value) for all plugins.
+  /// Useful for finding suitable section values for new actions.
+  Q_INVOKABLE QString dumpContextMenuActions();
 
 protected:
   /// Handle subject hierarchy node events

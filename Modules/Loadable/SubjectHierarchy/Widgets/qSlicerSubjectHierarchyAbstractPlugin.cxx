@@ -407,3 +407,14 @@ bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtk
     }
   return true;
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(QAction* action, int section, int weight/*=0*/, double weightAdjustment/*=0.0*/)
+{
+  if (!action)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid action";
+    return;
+    }
+  action->setProperty("section", section + weight * 0.01 + weightAdjustment * 0.0001);
+}

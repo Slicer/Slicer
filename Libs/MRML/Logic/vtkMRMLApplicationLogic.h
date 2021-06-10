@@ -188,7 +188,8 @@ public:
     RequestInvokeEvent = vtkCommand::UserEvent + 1,
     PauseRenderEvent = vtkCommand::UserEvent + 101,
     ResumeRenderEvent,
-    EditNodeEvent
+    EditNodeEvent,
+    ShowViewContextMenuEvent,
   };
   /// Structure passed as calldata pointer in the RequestEvent invoked event.
   struct InvokeRequest{

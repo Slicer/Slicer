@@ -25,6 +25,7 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLInteractionEventData.h>
 #include <vtkMRMLCameraWidget.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
@@ -363,12 +364,24 @@ void vtkMRMLCameraDisplayableManager::SetCameraToInteractor()
 //---------------------------------------------------------------------------
 bool vtkMRMLCameraDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2)
 {
+  // The CameraWidget does not have representation, so it cannot use the usual representation->GetInteractionNode()
+  // method to get the interactor, therefore we make sure here that the view node is passed to it.
+  if (!eventData->GetViewNode())
+    {
+    eventData->SetViewNode(this->GetMRMLViewNode());
+    }
   return this->Internal->CameraWidget->CanProcessInteractionEvent(eventData, closestDistance2);
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLCameraDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
+  // The CameraWidget does not have representation, so it cannot use the usual representation->GetInteractionNode()
+  // method to get the interactor, therefore we make sure here that the view node is passed to it.
+  if (!eventData->GetViewNode())
+    {
+    eventData->SetViewNode(this->GetMRMLViewNode());
+    }
   return this->Internal->CameraWidget->ProcessInteractionEvent(eventData);
 }
 

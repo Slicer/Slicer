@@ -31,6 +31,7 @@
 #include "vtkMRMLCrosshairDisplayableManager.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionEventData.h"
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
 
@@ -139,6 +140,9 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
 
   // Set cursor position
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::ShiftModifier, WidgetEventSetCrosshairPosition);
+
+  // Context menu
+  this->SetEventTranslation(WidgetStateIdle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
 }
 
 //----------------------------------------------------------------------------------
@@ -377,6 +381,9 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
       break;
     case WidgetEventTouchPanTranslate:
       this->ProcessTouchCameraTranslate(eventData);
+      break;
+    case WidgetEventMenu:
+      processedEvent = this->ProcessWidgetMenu(eventData);
       break;
 
     case WidgetEventSetCrosshairPosition:
@@ -998,4 +1005,38 @@ void vtkMRMLCameraWidget::SaveStateForUndo()
     return;
     }
   this->GetCameraNode()->GetScene()->SaveStateForUndo();
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLCameraWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData)
+{
+  if (this->WidgetState != WidgetStateIdle)
+    {
+    return false;
+    }
+  if (!this->GetCameraNode() || !this->GetCameraNode()->GetScene())
+    {
+    return false;
+    }
+  // This widget has no representation, so we cannot use this->GetInteractionNode().
+  vtkMRMLAbstractViewNode* viewNode = eventData->GetViewNode();
+  if (!viewNode)
+    {
+    return false;
+    }
+  vtkMRMLInteractionNode* interactionNode = viewNode->GetInteractionNode();
+  if (!interactionNode)
+    {
+    return false;
+    }
+
+  vtkNew<vtkMRMLInteractionEventData> pickEventData;
+  pickEventData->SetType(vtkMRMLInteractionNode::ShowViewContextMenuEvent);
+  pickEventData->SetViewNode(viewNode);
+  if (pickEventData->IsDisplayPositionValid())
+    {
+    pickEventData->SetDisplayPosition(eventData->GetDisplayPosition());
+    }
+  interactionNode->ShowViewContextMenu(pickEventData);
+  return true;
 }

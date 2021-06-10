@@ -339,3 +339,10 @@ void vtkMRMLInteractionNode::EditNode(vtkMRMLNode* node)
   // Observers in qSlicerCoreApplication listen for this event
   this->InvokeEvent(EditNodeEvent, node);
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::ShowViewContextMenu(vtkMRMLInteractionEventData* eventData)
+{
+  // Observers in qSlicerCoreApplication listen for this event
+  this->InvokeEvent(ShowViewContextMenuEvent, eventData);
+}
