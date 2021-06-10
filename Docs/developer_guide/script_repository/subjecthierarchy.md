@@ -104,6 +104,8 @@ class MyListenerClass(VTKObservationMixin):
 
 If an object that supports view context menus (e.g. markups) is right-clicked in a slice or 3D view, it can offer custom actions. Due to internal limitations these plugins must be set up differently, as explained [here](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Annotations/SubjectHierarchyPlugins/AnnotationsSubjectHierarchyPlugin.py#L96-L107). This example makes it easier to create such a plugin.
 
+This text must be saved as `ViewContextMenu.py` and placed in a folder that is added to "Additional module paths" in Application Settings / Modules section.
+
 ```python
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
@@ -112,44 +114,23 @@ from slicer.util import VTKObservationMixin
 from SubjectHierarchyPlugins import AbstractScriptedSubjectHierarchyPlugin
 
 class ViewContextMenu(ScriptedLoadableModule):
-"""Uses ScriptedLoadableModule base class, available at:
-  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
-  """
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "Markup Editor"
-    self.parent.categories = ["SlicerMorph", "Labs"]
-    self.parent.dependencies = []
+    self.parent.title = "Context menu example"
+    self.parent.categories = ["Examples"]
     self.parent.contributors = ["Steve Pieper (Isomics, Inc.)"]
-    self.parent.helpText = """
-A tool to manipulate Markups using the Segment Editor as a geometry backend
-"""
-    self.parent.helpText += self.getDefaultModuleDocumentationLink()
-    self.parent.acknowledgementText = """
-This module was developed by Steve Pieper, Sara Rolfe and Murat Maga,
-through a NSF ABI Development grant, "An Integrated Platform for Retrieval,
-Visualization and Analysis of 3D Morphology From Digital Biological Collections"
-(Award Numbers: 1759883 (Murat Maga), 1759637 (Adam Summers), 1759839 (Douglas Boyer)).
-This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.,
-Andras Lasso, PerkLab, and Steve Pieper, Isomics, Inc.
-and was partially funded by NIH grant 3P41RR013218-12S1.
-"""
+    slicer.app.connect("startupCompleted()", self.onStartupCompleted)
 
-    #
-    # register subject hierarchy plugin once app is initialized
-    #
-    def onStartupCompleted():
-      import SubjectHierarchyPlugins
-      from ViewContextMenu import ViewContextMenuSubjectHierarchyPlugin
-      scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
-      scriptedPlugin.setPythonSource(ViewContextMenuSubjectHierarchyPlugin.filePath)
-      pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-      pluginHandler.registerPlugin(scriptedPlugin)
-      print("ViewContextMenuSubjectHierarchyPlugin loaded")
-
-    slicer.app.connect("startupCompleted()", onStartupCompleted)
-
+  def onStartupCompleted(self):
+    """register subject hierarchy plugin once app is initialized"""
+    import SubjectHierarchyPlugins
+    from ViewContextMenu import ViewContextMenuSubjectHierarchyPlugin
+    scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
+    scriptedPlugin.setPythonSource(ViewContextMenuSubjectHierarchyPlugin.filePath)
+    pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
+    pluginHandler.registerPlugin(scriptedPlugin)
+    print("ViewContextMenuSubjectHierarchyPlugin loaded")
 
 class ViewContextMenuSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
 
@@ -157,23 +138,24 @@ class ViewContextMenuSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlug
   filePath = __file__
 
   def __init__(self, scriptedPlugin):
-    self.viewAction = qt.QAction(f"CUSTOM VIEW ...", scriptedPlugin)
+    self.viewAction = qt.QAction("CUSTOM VIEW...", scriptedPlugin)
     self.viewAction.objectName = "CustomViewAction"
+    # Set the action's position in the menu: by using `SectionNode+5` we place the action in a new section, after "node actions" section.
+    slicer.qSlicerSubjectHierarchyAbstractPlugin.setActionPosition(self.viewAction, slicer.qSlicerSubjectHierarchyAbstractPlugin.SectionNode+5)
     self.viewAction.connect("triggered()", self.onViewAction)
-
-  def onViewAction(self):
-    print(f"VIEW ACTION")
 
   def viewContextMenuActions(self):
     return [self.viewAction]
 
   def showViewContextMenuActionsForItem(self, itemID, eventData=None):
-    pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-    pluginLogic = pluginHandler.pluginLogic()
-    menuActions = list(pluginLogic.availableViewMenuActionNames())
-    menuActions.append("CustomViewAction")
-    pluginLogic.setDisplayedViewMenuActionNames(menuActions)
-      self.viewAction.visible = True
+    # We can decide here if we want to show this action based on the itemID or eventData (ViewNodeID, ...).
+    print(f"itemID: {itemID}")
+    print(f"eventData: {eventData}")
+    self.viewAction.visible = True
+
+  def onViewAction(self):
+    print("Custom view action is called")
+    slicer.util.messageBox("This works!")
 ```
 
 ### Use whitelist to customize view menu

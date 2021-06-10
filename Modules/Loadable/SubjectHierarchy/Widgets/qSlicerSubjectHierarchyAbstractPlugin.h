@@ -65,6 +65,7 @@ class vtkMRMLAbstractViewNode;
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyAbstractPlugin : public QObject
 {
   Q_OBJECT
+  Q_ENUMS(ActionSectionType)
 
   /// This property stores the name of the plugin
   /// Cannot be empty.
@@ -226,6 +227,28 @@ public:
   /// Set the name of the plugin
   /// NOTE: name must be defined in constructor in C++ plugins, this can only be used in python scripted ones
   virtual void setName(QString name);
+
+  enum ActionSectionType
+    {
+    SectionTop = -400,   ///< Use this section to make items appear at the top of the menu.
+    SectionInteraction = -300, ///< Actions for changing the current interaction mode (in view context menu).
+    SectionComponent = -200,   ///< Actions for the selected node component (e.g., control point within a node).
+    SectionNode = -100,  ///< Actions for the selected node.
+    SectionDefault = 0,  ///< By default (if no position is defined) actions will appear in this section.
+    SectionFolder = 100, ///< Actions for the selected folder.
+    SectionBottom = 200, ///< Use this section to make items appear at the bottom of the menu.
+    };
+
+  /// Set the action position within a subject hierarchy menu by setting section and weight.
+  /// \param section specifies section where the menu item will appear.
+  ///   SectionDefault, SectionNode, SectionFolder, ... constants can be used.
+  ///   A separator is displayed between each menu section.
+  /// \param weight specifies the position of the action within the section.
+  ///   Lighter actions float up (actions that have lower weight appear higher in the menu).
+  ///   Valid range is -49 to 49.
+  /// \param weightAdjustment specifies additional weight that allows inserting an action right above or below
+  ///   another action. Valid range is -49.0 to 49.0 (non-integer values are allowed).
+  Q_INVOKABLE static void setActionPosition(QAction* action, int section, int weight = 0, double weightAdjustment = 0.0);
 
 signals:
   /// Signal requesting expanding of the subject hierarchy tree item belonging to an item

@@ -39,6 +39,7 @@
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class QAction;
+class QMenu;
 class qSlicerSubjectHierarchyPluginLogicPrivate;
 class qSlicerSubjectHierarchyAbstractPlugin;
 
@@ -75,13 +76,20 @@ public:
   ///       of the module!
   void registerCorePlugins();
 
-  /// Get all view menu actions available
+  /// Get all view context menu actions available
   /// \return List of object names of all registered view menu actions
-  Q_INVOKABLE QStringList availableViewMenuActionNames();
+  Q_INVOKABLE QStringList availableViewContextMenuActionNames();
   /// Set desired set of view menu actions
   /// \param actionObjectNames List of view menu actions to consider. Only actions included here by object name
   ///        are shown in the menu if they are accepted by the owner plugin. The order set here is used.
-  Q_INVOKABLE void setDisplayedViewMenuActionNames(QStringList actionObjectNames);
+  Q_INVOKABLE void setDisplayedViewContextMenuActionNames(QStringList actionObjectNames);
+
+  /// Create menu from list of actions.
+  /// Uses "section" property to determine position of the action in the menu:
+  /// each integer section value corresponds to a section and fractional part is used for ordering actions within the secion.
+  /// \param menu will be set by inserting the actions. If it is set to nullptr then a string will be returned that contains
+  /// name and "section" value of each action.
+  static Q_INVOKABLE QString buildMenuFromActions(QMenu* menu, QList< QAction* > actions);
 
 protected:
   /// Add observations for node that was added to subject hierarchy
@@ -94,7 +102,7 @@ protected:
   void addSupportedDataNodesToSubjectHierarchy();
 
   /// Add view menu action. Called by plugin handler when registering a plugin
-  void registerViewMenuAction(QAction* action);
+  void registerViewContextMenuAction(QAction* action);
 
 protected slots:
   /// Called when a node is added to the scene so that a plugin can create an item for it

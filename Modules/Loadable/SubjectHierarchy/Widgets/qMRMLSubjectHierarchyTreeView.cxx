@@ -47,6 +47,7 @@
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
+#include "qSlicerSubjectHierarchyPluginLogic.h"
 
 // Terminologies includes
 #include "qSlicerTerminologyItemDelegate.h"
@@ -106,6 +107,7 @@ public:
   QAction* EditAction;
   QAction* ToggleVisibilityAction;
   QList<QAction*> SelectPluginActions;
+  QAction* SelectPluginAction;
   QMenu* SelectPluginSubMenu;
   QActionGroup* SelectPluginActionGroup;
   QAction* ExpandToDepthAction;
@@ -163,6 +165,7 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   , DeleteAction(nullptr)
   , EditAction(nullptr)
   , ToggleVisibilityAction(nullptr)
+  , SelectPluginAction(nullptr)
   , SelectPluginSubMenu(nullptr)
   , SelectPluginActionGroup(nullptr)
   , ExpandToDepthAction(nullptr)
@@ -214,11 +217,17 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
 
   this->RenameAction = new QAction("Rename", nullptr);
   QObject::connect(this->RenameAction, SIGNAL(triggered()), q, SLOT(renameCurrentItem()));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->RenameAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 0);
 
   this->DeleteAction = new QAction("Delete", nullptr);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->DeleteAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 1);
   QObject::connect(this->DeleteAction, SIGNAL(triggered()), q, SLOT(deleteSelectedItems()));
 
   this->EditAction = new QAction("Edit properties...", nullptr);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->EditAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 2);
   QObject::connect(this->EditAction, SIGNAL(triggered()), q, SLOT(editCurrentItem()));
 
   this->ToggleVisibilityAction = new QAction("Toggle visibility", nullptr);
@@ -324,20 +333,21 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupActions()
 {
   Q_Q(qMRMLSubjectHierarchyTreeView);
 
-  // Clear menus before populating them
-  this->SceneMenu->clear();
-  this->NodeMenu->clear();
-  this->VisibilityMenu->clear();
+  QList< QAction* > sceneMenuActions;
+  QList< QAction* > nodeMenuActions;
+  QList< QAction* > visibilityMenuActions;
 
   // Add default node actions
-  this->NodeMenu->addAction(this->RenameAction);
-  this->NodeMenu->addAction(this->DeleteAction);
-  this->NodeMenu->addAction(this->EditAction);
-  this->NodeMenu->addAction(this->ToggleVisibilityAction);
+  nodeMenuActions.append(this->RenameAction);
+  nodeMenuActions.append(this->DeleteAction);
+  nodeMenuActions.append(this->EditAction);
+  nodeMenuActions.append(this->ToggleVisibilityAction);
 
   // Set up expand to level action and its menu
   this->ExpandToDepthAction = new QAction("Expand tree to level...", this->SceneMenu);
-  this->SceneMenu->addAction(this->ExpandToDepthAction);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ExpandToDepthAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 10);
+  sceneMenuActions.append(this->ExpandToDepthAction);
 
   QMenu* expandToDepthSubMenu = new QMenu();
   this->ExpandToDepthAction->setMenu(expandToDepthSubMenu);
@@ -363,19 +373,19 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupActions()
     // Add node context menu actions
     foreach (QAction* action, plugin->itemContextMenuActions())
       {
-      this->NodeMenu->addAction(action);
+      nodeMenuActions.append(action);
       }
 
     // Add scene context menu actions
     foreach (QAction* action, plugin->sceneContextMenuActions())
       {
-      this->SceneMenu->addAction(action);
+      sceneMenuActions.append(action);
       }
 
     // Add visibility context menu actions
     foreach (QAction* action, plugin->visibilityContextMenuActions())
       {
-      this->VisibilityMenu->addAction(action);
+      visibilityMenuActions.append(action);
       }
 
     // Connect plugin events to be handled by the tree view
@@ -384,7 +394,13 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupActions()
     }
 
   // Create a plugin selection action for each plugin in a sub-menu
-  this->SelectPluginSubMenu = this->NodeMenu->addMenu("Select role");
+  this->SelectPluginAction = new QAction("Select plugin", this->NodeMenu);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->SelectPluginAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 9);
+  nodeMenuActions.append(this->SelectPluginAction);
+
+  this->SelectPluginSubMenu = new QMenu();
+  this->SelectPluginAction->setMenu(this->SelectPluginSubMenu);
   this->SelectPluginActionGroup = new QActionGroup(q);
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, this->enabledPlugins())
     {
@@ -399,6 +415,11 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupActions()
 
   // Update actions in owner plugin sub-menu when opened
   QObject::connect( this->SelectPluginSubMenu, SIGNAL(aboutToShow()), q, SLOT(updateSelectPluginActions()) );
+
+  // Populate menu from actions
+  qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(this->SceneMenu, sceneMenuActions);
+  qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(this->NodeMenu, nodeMenuActions);
+  qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(this->VisibilityMenu, visibilityMenuActions);
 
   this->LastContextMenuUpdateTime = QDateTime::currentDateTimeUtc();
 }

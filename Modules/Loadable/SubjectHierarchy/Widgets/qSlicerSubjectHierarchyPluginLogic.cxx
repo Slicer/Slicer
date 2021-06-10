@@ -35,6 +35,7 @@
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 #include "qSlicerSubjectHierarchyFolderPlugin.h"
 #include "qSlicerSubjectHierarchyOpacityPlugin.h"
+#include "qSlicerSubjectHierarchyViewContextMenuPlugin.h"
 #include "qSlicerSubjectHierarchyVisibilityPlugin.h"
 
 // MRML includes
@@ -45,6 +46,7 @@
 
 // Slicer includes
 #include "qSlicerApplication.h"
+#include "vtkSlicerApplicationLogic.h"
 
 // Qt includes
 #include <QAction>
@@ -65,12 +67,12 @@ public:
   ~qSlicerSubjectHierarchyPluginLogicPrivate();
   void loadApplicationSettings();
 
-  /// Menu shown when right-clicking a supported object in the views
-  QMenu* ViewMenu;
+  /// Menu shown when right-clicking in a slice or 3D view
+  QMenu* ViewContextMenu;
   /// Edit properties action
   QAction* EditPropertiesAction;
   /// Actions from the registered plugins
-  QList<QAction*> ViewMenuActions;
+  QList<QAction*> ViewContextMenuActions;
   /// Item ID for the currently displayed View menu
   vtkIdType CurrentItemID;
 };
@@ -87,18 +89,20 @@ qSlicerSubjectHierarchyPluginLogicPrivate::qSlicerSubjectHierarchyPluginLogicPri
   qRegisterMetaType<vtkIdType>("vtkIdType");
   //qRegisterMetaType<QList<vtkIdType> >("QList<vtkIdType>"); //TODO: Allows returning it but cannot be used (e.g. pluginHandler->currentItems())
 
-  this->ViewMenu = new QMenu();
+  this->ViewContextMenu = new QMenu();
 
   this->EditPropertiesAction = new QAction("Edit properties...");
   this->EditPropertiesAction->setObjectName("EditPropertiesAction");
+  // weight=30 will place it towards the end of node actions section
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->EditPropertiesAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 30);
   QObject::connect(this->EditPropertiesAction, SIGNAL(triggered()), q_ptr, SLOT(editProperties()));
 }
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginLogicPrivate::~qSlicerSubjectHierarchyPluginLogicPrivate()
 {
-  this->ViewMenu->deleteLater();
-  this->ViewMenu = nullptr;
+  this->ViewContextMenu->deleteLater();
+  this->ViewContextMenu = nullptr;
 
   this->EditPropertiesAction->deleteLater();
   this->EditPropertiesAction = nullptr;
@@ -122,6 +126,8 @@ qSlicerSubjectHierarchyPluginLogic::~qSlicerSubjectHierarchyPluginLogic() = defa
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()
 {
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyViewContextMenuPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyFolderPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
@@ -181,6 +187,16 @@ void qSlicerSubjectHierarchyPluginLogic::setMRMLScene(vtkMRMLScene* scene)
   // may be added/removed without individual events.
   // Called with high priority so that it is processed here before the model is updated
   qvtkReconnect( scene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT( onSceneBatchProcessEnded(vtkObject*) ), 10.0 );
+
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (appLogic)
+    {
+    qvtkReconnect(appLogic, vtkMRMLApplicationLogic::ShowViewContextMenuEvent, this, SLOT(onDisplayMenuEvent(vtkObject*, vtkObject*)));
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << " error: application logic is not found. Cannot observe show view context menu event";
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -471,32 +487,79 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayNodeModified(vtkObject* displa
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNodeObject, vtkObject* eventDataObject)
 {
+  Q_D(qSlicerSubjectHierarchyPluginLogic);
+
   vtkMRMLInteractionEventData* eventData = vtkMRMLInteractionEventData::SafeDownCast(eventDataObject);
   if (!eventData)
     {
     qCritical() << Q_FUNC_INFO<< ": Menu event called with invalid event data";
     return;
     }
+
+  vtkMRMLSubjectHierarchyNode* shNode = nullptr;
+  vtkIdType itemID = 0;
+
   vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayNodeObject);
-  if (!displayNode || !displayNode->GetScene())
-    {
-    qCritical() << Q_FUNC_INFO<< ": Invalid object type calling display menu event";
-    return;
+  if (displayNode)
+  {
+    if (!displayNode->GetScene())
+      {
+      qCritical() << Q_FUNC_INFO<< ": Invalid object type calling display menu event";
+      return;
+      }
+    vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+    if (!displayableNode)
+      {
+      qCritical() << Q_FUNC_INFO<< ": Unable to get displayable node from display node " << displayNode->GetID();
+      return;
+      }
+
+    shNode = displayNode->GetScene()->GetSubjectHierarchyNode();
+    if (!shNode)
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+      return;
+      }
+
+    // Get subject hierarchy item ID
+    itemID = shNode->GetItemByDataNode(displayableNode);
+    if (!itemID)
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to find displayable node " << (displayableNode->GetName() ? displayableNode->GetName() : "Unnamed")
+        << " in subject hierarchy";
+      return;
+      }
     }
-  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
-  if (!displayableNode)
+  else
     {
-    qCritical() << Q_FUNC_INFO<< ": Unable to get displayable node from display node " << displayNode->GetID();
-    return;
-    }
-  vtkMRMLSubjectHierarchyNode* shNode = displayNode->GetScene()->GetSubjectHierarchyNode();
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return;
+    vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+    if (!appLogic || !appLogic->GetMRMLScene())
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to access application logic or scene";
+      return;
+      }
+    vtkMRMLScene* scene = appLogic->GetMRMLScene();
+    shNode = scene->GetSubjectHierarchyNode();
+    if (!shNode)
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+      return;
+      }
+    itemID = shNode->GetSceneItemID();
     }
 
-  Q_D(qSlicerSubjectHierarchyPluginLogic);
+  // If menu is empty (when no white-list was set manually), then construct the full menu
+  if (d->ViewContextMenu->isEmpty())
+    {
+    // isEmpty may return true if there are actions in the menu with visibility off
+    QList< QAction* > actions;
+    foreach (QAction* action, d->ViewContextMenuActions)
+      {
+      actions.append(action);
+      }
+    actions.append(d->EditPropertiesAction);
+    qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(d->ViewContextMenu, actions);
+    }
 
   // Package event data
   QVariantMap eventDataMap;
@@ -507,26 +570,6 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
     eventDataMap["ViewNodeID"] = QVariant(eventData->GetViewNode()->GetID());
     }
 
-  // Get subject hierarchy item ID
-  vtkIdType itemID = shNode->GetItemByDataNode(displayableNode);
-  if (!itemID)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to find displayable node " << (displayableNode->GetName() ? displayableNode->GetName() : "Unnamed")
-      << " in subject hierarchy";
-    return;
-    }
-
-  // If menu is empty (when no white-list was set manually), then construct the full menu
-  if (d->ViewMenu->isEmpty())
-    {
-    d->ViewMenu->clear(); // isEmpty may return true if there are actions in the menu with visibility off
-    foreach (QAction* action, d->ViewMenuActions)
-      {
-      d->ViewMenu->addAction(action);
-      }
-    d->ViewMenu->addAction(d->EditPropertiesAction);
-    }
-
   // Have all plugins show context view menu actions for current item
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
     {
@@ -534,12 +577,14 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
     plugin->showViewContextMenuActionsForItem(itemID, eventDataMap);
     }
 
+  d->EditPropertiesAction->setVisible(itemID != shNode->GetSceneItemID());
+
   // Set current item ID for Edit properties action
   d->CurrentItemID = itemID;
 
   // Show menu
-  d->ViewMenu->move(QCursor::pos());
-  d->ViewMenu->exec();
+  d->ViewContextMenu->move(QCursor::pos());
+  d->ViewContextMenu->exec();
 }
 
 //-----------------------------------------------------------------------------
@@ -604,13 +649,13 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginLogic::registerViewMenuAction(QAction* action)
+void qSlicerSubjectHierarchyPluginLogic::registerViewContextMenuAction(QAction* action)
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
 
   if (action)
     {
-    d->ViewMenuActions << action;
+    d->ViewContextMenuActions << action;
     }
 }
 
@@ -625,16 +670,17 @@ void qSlicerSubjectHierarchyPluginLogic::editProperties()
     }
 
   Q_D(qSlicerSubjectHierarchyPluginLogic);
+
   qSlicerApplication::application()->openNodeModule(shNode->GetItemDataNode(d->CurrentItemID));
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSubjectHierarchyPluginLogic::availableViewMenuActionNames()
+QStringList qSlicerSubjectHierarchyPluginLogic::availableViewContextMenuActionNames()
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
 
   QStringList registeredActionNames;
-  foreach (QAction* action, d->ViewMenuActions)
+  foreach (QAction* action, d->ViewContextMenuActions)
     {
     registeredActionNames << action->objectName();
     }
@@ -644,16 +690,17 @@ QStringList qSlicerSubjectHierarchyPluginLogic::availableViewMenuActionNames()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginLogic::setDisplayedViewMenuActionNames(QStringList actionObjectNames)
+void qSlicerSubjectHierarchyPluginLogic::setDisplayedViewContextMenuActionNames(QStringList actionObjectNames)
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
 
+  QList< QAction* > actions;
+
   // Add white-listed actions to menu
-  d->ViewMenu->clear();
   foreach (QString currentActionObjectName, actionObjectNames)
     {
     QAction* foundAction = nullptr;
-    foreach (QAction* action, d->ViewMenuActions)
+    foreach (QAction* action, d->ViewContextMenuActions)
       {
       if (currentActionObjectName == action->objectName())
         {
@@ -667,11 +714,60 @@ void qSlicerSubjectHierarchyPluginLogic::setDisplayedViewMenuActionNames(QString
       }
     if (foundAction)
       {
-      d->ViewMenu->addAction(foundAction);
+      actions.append(foundAction);
       }
     else
       {
       qWarning() << Q_FUNC_INFO << ": Failed to find subject hierarchy view menu action by object name " << currentActionObjectName;
       }
     }
+  qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(d->ViewContextMenu, actions);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(QMenu* menu, QList< QAction* > actions)
+{
+  // Add white-listed actions to menu
+  QString menuInfo;
+  if (menu)
+    {
+    menu->clear();
+    }
+  if (actions.empty())
+    {
+    return menuInfo;
+    }
+
+  std::sort(actions.begin(), actions.end(),
+    [](const QAction* a, const QAction* b) -> bool { return a->property("section").toDouble() < b->property("section").toDouble(); });
+
+  static bool printDebugInformation = true;
+  int lastSection = static_cast<int>(actions.front()->property("section").toDouble() + 0.5);
+  foreach (QAction* action, actions)
+    {
+    double sectionValue = action->property("section").toDouble();
+    int currentSection = static_cast<int>(sectionValue + 0.5);
+    if (currentSection > lastSection)
+      {
+      if (menu)
+        {
+        menu->addSeparator();
+        }
+      else
+        {
+        menuInfo.append(QString("------ (%1)\n").arg(currentSection));
+        }
+      lastSection = currentSection;
+      }
+    if (menu)
+      {
+      menu->addAction(action);
+      }
+    else
+      {
+      menuInfo.append(QString("%1 (%2)\n").arg(action->text()).arg(sectionValue));
+      }
+    }
+
+  return menuInfo;
 }

@@ -17,9 +17,12 @@
 #include <PythonQt.h>
 
 // Slicer includes
+#include "qSlicerSubjectHierarchyAbstractPlugin.h"
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
+
+class QAction;
 
 // NOTE:
 //
@@ -51,6 +54,11 @@ public slots:
   qSlicerSubjectHierarchyPluginHandler* static_qSlicerSubjectHierarchyPluginHandler_instance()
     {
     return qSlicerSubjectHierarchyPluginHandler::instance();
+    }
+
+  void static_qSlicerSubjectHierarchyAbstractPlugin_setActionPosition(QAction* action, int section, int weight = 0, double weightAdjustment = 0.0)
+    {
+    qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(action, section, weight, weightAdjustment);
     }
 
   //----------------------------------------------------------------------------

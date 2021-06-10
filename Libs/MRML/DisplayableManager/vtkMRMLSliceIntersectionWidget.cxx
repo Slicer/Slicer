@@ -19,6 +19,7 @@
 #include "vtkMRMLCrosshairDisplayableManager.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionEventData.h"
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
@@ -179,6 +180,9 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
     this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::PanEvent, vtkEvent::AnyModifier, WidgetEventTouchTranslateSlice);
     this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::EndPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
     }
+
+  // Context menu
+  this->SetEventTranslation(WidgetStateIdle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
 }
 
 //----------------------------------------------------------------------
@@ -432,7 +436,9 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
       this->CycleVolumeLayer(LayerForeground, 1);
       break;
-
+    case WidgetEventMenu:
+      processedEvent = this->ProcessWidgetMenu(eventData);
+      break;
 
     default:
       processedEvent = false;
@@ -1147,4 +1153,31 @@ void vtkMRMLSliceIntersectionWidget::SetActionsEnabled(int actions)
 {
   this->ActionsEnabled = actions;
   this->UpdateInteractionEventMapping();
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData)
+{
+  if (this->WidgetState != WidgetStateIdle)
+    {
+    return false;
+    }
+  if (!this->SliceNode)
+    {
+    return false;
+    }
+  vtkMRMLInteractionNode* interactionNode = this->SliceNode->GetInteractionNode();
+  if (!interactionNode)
+    {
+    return false;
+    }
+  vtkNew<vtkMRMLInteractionEventData> pickEventData;
+  pickEventData->SetType(vtkMRMLInteractionNode::ShowViewContextMenuEvent);
+  pickEventData->SetViewNode(this->SliceNode);
+  if (pickEventData->IsDisplayPositionValid())
+    {
+    pickEventData->SetDisplayPosition(eventData->GetDisplayPosition());
+    }
+  interactionNode->ShowViewContextMenu(pickEventData);
+  return true;
 }

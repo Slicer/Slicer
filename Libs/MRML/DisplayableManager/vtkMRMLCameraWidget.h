@@ -152,6 +152,8 @@ protected:
   bool ProcessTouchCameraZoom(vtkMRMLInteractionEventData* eventData);
   bool ProcessTouchCameraTranslate(vtkMRMLInteractionEventData* eventData);
 
+  bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData);
+
   bool Dolly(double factor);
   vtkCamera* GetCamera();
 

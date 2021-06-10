@@ -432,6 +432,7 @@ void vtkMRMLApplicationLogic::SetInteractionNode(vtkMRMLInteractionNode* interac
 
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLInteractionNode::EditNodeEvent);
+  events->InsertNextValue(vtkMRMLInteractionNode::ShowViewContextMenuEvent);
   vtkSetAndObserveMRMLNodeEventsMacro(this->Internal->InteractionNode, interactionNode, events);
 }
 
@@ -824,6 +825,10 @@ void vtkMRMLApplicationLogic::ProcessMRMLNodesEvents(vtkObject* caller, unsigned
       vtkMRMLNode* nodeToBeEdited = reinterpret_cast<vtkMRMLNode*>(callData);
       this->EditNode(nodeToBeEdited);
       }
+    }
+  else if (vtkMRMLInteractionNode::SafeDownCast(caller) && event == vtkMRMLInteractionNode::ShowViewContextMenuEvent)
+    {
+    this->InvokeEvent(ShowViewContextMenuEvent, callData);
     }
   else
     {

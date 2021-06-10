@@ -105,6 +105,10 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.studyItemID = self.invalidItemID
     self.cloneNodeNamePostfix = slicer.qSlicerSubjectHierarchyCloneNodePlugin().getCloneNodeNamePostfix()
 
+    # Test printing of all context menu actions and their section numbers
+    pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler().instance();
+    print(pluginHandler.dumpContextMenuActions())
+
   # ------------------------------------------------------------------------------
   def section_MarkupRole(self):
     self.delayDisplay("Markup role",self.delayMs)

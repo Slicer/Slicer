@@ -3,6 +3,8 @@
 
 #include "vtkMRMLNode.h"
 
+class vtkMRMLInteractionEventData;
+
 class VTK_MRML_EXPORT vtkMRMLInteractionNode : public vtkMRMLNode
 {
 public:
@@ -61,6 +63,7 @@ public:
       InteractionModePersistenceChangedEvent,
       EndPlacementEvent,
       EditNodeEvent,
+      ShowViewContextMenuEvent,
     };
 
   /// Return a text string describing the mode
@@ -82,6 +85,9 @@ public:
   /// Request the application to display user interface
   /// that allows editing of the node.
   void EditNode(vtkMRMLNode* node);
+
+  /// Request the application to display view menu.
+  void ShowViewContextMenu(vtkMRMLInteractionEventData* eventData);
 
 protected:
   vtkMRMLInteractionNode();
