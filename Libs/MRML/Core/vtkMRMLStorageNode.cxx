@@ -1051,9 +1051,9 @@ std::string vtkMRMLStorageNode::GetSupportedFileExtension(const char* fileName /
 
   const int extCount = supportedFileExtensions->GetNumberOfValues();
   bool wildcardMatchEnabled = false;
-  for (int extIt = 0; extIt < extCount; ++extIt)
+  for (int extIndex = 0; extIndex < extCount; ++extIndex)
     {
-    std::string ext = vtksys::SystemTools::LowerCase(supportedFileExtensions->GetValue(extIt));
+    std::string ext = vtksys::SystemTools::LowerCase(supportedFileExtensions->GetValue(extIndex));
     std::string foundExt;
     if (ext != ".*")
       {

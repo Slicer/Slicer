@@ -399,17 +399,17 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
 
     this->ChartXY->GetAxis(0)->SetTitle("Displacement");
     this->ChartXY->GetAxis(1)->SetTitle("Time");
-    vtkPlot* lineX = this->ChartXY->AddPlot(vtkChart::LINE);
-    vtkPlot* lineY = this->ChartXY->AddPlot(vtkChart::LINE);
-    vtkPlot* lineZ = this->ChartXY->AddPlot(vtkChart::LINE);
+    vtkPlot* line_X = this->ChartXY->AddPlot(vtkChart::LINE);
+    vtkPlot* line_Y = this->ChartXY->AddPlot(vtkChart::LINE);
+    vtkPlot* line_Z = this->ChartXY->AddPlot(vtkChart::LINE);
 
-    lineX->SetInputData(this->ChartTable, 0, 1);
-    lineY->SetInputData(this->ChartTable, 0, 2);
-    lineZ->SetInputData(this->ChartTable, 0, 3);
+    line_X->SetInputData(this->ChartTable, 0, 1);
+    line_Y->SetInputData(this->ChartTable, 0, 2);
+    line_Z->SetInputData(this->ChartTable, 0, 3);
 
-    lineX->SetColor(255,0,0,255);
-    lineY->SetColor(0,255,0,255);
-    lineZ->SetColor(0,0,255,255);
+    line_X->SetColor(255,0,0,255);
+    line_Y->SetColor(0,255,0,255);
+    line_Z->SetColor(0,0,255,255);
     }
 }
 
