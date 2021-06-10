@@ -1138,7 +1138,7 @@ int main(int argc, char * argv[])
         }
       if (debug)
         {
-        std::cout << "\nNumber of polygons = " << (mcubes->GetOutput())->GetNumberOfPolys() << endl;
+        std::cout << "\n" << "Number of polygons = " << (mcubes->GetOutput())->GetNumberOfPolys() << endl;
         }
 
       if ((mcubes->GetOutput())->GetNumberOfPolys()  == 0)
