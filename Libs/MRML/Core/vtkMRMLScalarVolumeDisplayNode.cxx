@@ -53,8 +53,6 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->AutoWindowLevel = 1;
   this->AutoThreshold = 0;
   this->ApplyThreshold = 0;
-  //this->LowerThreshold = VTK_SHORT_MIN;
-  //this->UpperThreshold = VTK_SHORT_MAX;
 
   // try setting a default grayscale color map
   //this->SetDefaultColorMap(0);
@@ -163,6 +161,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
     vtkEventBroker::GetInstance()->AddObservation(
       inputImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
+
 }
 
 //----------------------------------------------------------------------------
