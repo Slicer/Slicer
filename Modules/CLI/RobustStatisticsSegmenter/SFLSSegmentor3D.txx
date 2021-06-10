@@ -537,7 +537,7 @@ CSFLSSegmentor3D<TPixel>
       {
       /*--------------------------------------------------
         No nbhd in inner (closer to zero contour) layer, so
-        should go to Sn2. And the phi shold be further -1
+        should go to Sn2. And the phi should be further -1
       */
       Sn2.push_back(*itn1);
       itn1 = m_ln1.erase(itn1);
@@ -586,7 +586,7 @@ CSFLSSegmentor3D<TPixel>
       {
       /*--------------------------------------------------
         No nbhd in inner (closer to zero contour) layer, so
-        should go to Sp2. And the phi shold be further +1
+        should go to Sp2. And the phi should be further +1
       */
 
       Sp2.push_back(*itp1);

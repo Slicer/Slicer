@@ -126,7 +126,7 @@ To create a C++ plugin, implement a child class of qSlicerSubjectHierarchyAbstra
         - Defines: ownership, icon, tooltip, edit properties, help text (in the yellow question mark popup), visibility icon, set/get display visibility, displayed node name (if different than name of the node object)
         - Existing plugins in Slicer core: Markups, Models, SceneViews, Charts, Folder, Tables, Transforms, LabelMaps, Volumes
     -  **Function** plugins: add feature in right-click context menu for certain types of nodes
-        - Defines: list of contect menu actions for nodes and the scene, types of nodes for which the action shows up, functions handling the defined action
+        - Defines: list of context menu actions for nodes and the scene, types of nodes for which the action shows up, functions handling the defined action
         - Existing plugins in Slicer core: CloneNode, ParseLocalData, Register, Segment, DICOM, Volumes, Markups, Models, Annotations, Segmentations, Segments, etc.
 
 ## References

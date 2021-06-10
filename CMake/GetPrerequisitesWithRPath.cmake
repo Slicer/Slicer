@@ -52,7 +52,7 @@
 # prerequisites are listed. <exclude_system> must be 0 or 1 indicating whether
 # to include or exclude "system" prerequisites. With <verbose> set to 0 only
 # the full path names of the prerequisites are printed, set to 1 extra
-# informatin will be displayed.
+# information will be displayed.
 #
 #  LIST_PREREQUISITES_BY_GLOB(<glob_arg> <glob_exp>)
 # Print the prerequisites of shared library and executable files matching a

@@ -96,12 +96,12 @@ Option B:
     - Scalar Color Mapping: Color transfer function.
     - Gradient Opacity: Gradient opacity transfer function. This controls the opacity according to how large a density gradient next to the voxel is.
     - Advanced:
-      - Interpolation: Linear (default for scalar volumes) or nearest neighboor (default for labelmaps) interpolation.
+      - Interpolation: Linear (default for scalar volumes) or nearest neighbor (default for labelmaps) interpolation.
       - Shade: Enable/Disable shading. Shading uses light and material properties. Disable it to display X-ray-like projection.
       - Material: Material properties of the volume to compute shading effect.
   - ROI: More controls for the cropping box.
     - Display Clipping box: Show hide the bounds of the ROI box.
-    - Interactive mode: Control wether the cropping box is instantaneously updated when dragging the sliders or only when the mouse button is released.
+    - Interactive mode: Control whether the cropping box is instantaneously updated when dragging the sliders or only when the mouse button is released.
 
 ## Contributors
 

@@ -52,7 +52,7 @@ class vtkMRMLUnitNode;
 ///
 /// <code>
 /// // box size in mm: width * height * depth
-/// diameterMeasurement->SetValue(sqrt(width*width+height*heigh+depth*depth), "length");
+/// diameterMeasurement->SetValue(sqrt(width*width+height*height+depth*depth), "length");
 /// volumeMeasurement->SetValue(width*height*depth, "volume");
 /// </code>
 ///

@@ -45,7 +45,7 @@ The following keyboard shortcuts are active when you are in the Editor module.  
 - Undo/Redo: The module saves state of segmentation before each effect is applied. This is useful for experimentation and error correction. By default the last 10 states are remembered.
 - Masking: These options allow you to define the editable areas and whether or not certain segments can be overwritten.
   - Editable area: Changes will be limited to the selected area. This can be used for drawing inside a specific region or split a segment into multiple segments.
-  - Editable intensity range: Changes wil be limited to areas where the master volume's voxels are in the selected intensity range. It is useful when locally an intensity threshold separates well between different regions. Intensity range can be previewed by using Threshold effect.
+  - Editable intensity range: Changes will be limited to areas where the master volume's voxels are in the selected intensity range. It is useful when locally an intensity threshold separates well between different regions. Intensity range can be previewed by using Threshold effect.
   - Modify other segments: Select which segments will be overwritten rather than overlapped.
     - Overwrite all: Segment will not overlap (default).
     - Overwrite visible: Visible segments will not overlap with each other. Hidden segments will not be overwritten by changes done to visible segments.

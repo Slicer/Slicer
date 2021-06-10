@@ -51,12 +51,12 @@ int qMRMLTableViewTest1( int argc, char * argv [] )
 
   // Create a table with some points in it...
   vtkNew<vtkTable> table;
-  vtkNew<vtkDoubleArray> arrX;
-  arrX->SetName("X Axis");
-  table->AddColumn(arrX.GetPointer());
-  vtkNew<vtkDoubleArray> arrY;
-  arrY->SetName("Y Axis");
-  table->AddColumn(arrY.GetPointer());
+  vtkNew<vtkDoubleArray> arrayX;
+  arrayX->SetName("X Axis");
+  table->AddColumn(arrayX.GetPointer());
+  vtkNew<vtkDoubleArray> arrayY;
+  arrayY->SetName("Y Axis");
+  table->AddColumn(arrayY.GetPointer());
   vtkNew<vtkDoubleArray> arrSum;
   arrSum->SetName("Sum");
   table->AddColumn(arrSum.GetPointer());
