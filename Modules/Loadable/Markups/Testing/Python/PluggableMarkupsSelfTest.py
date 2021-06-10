@@ -99,19 +99,19 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
 
   def __checkPushButtonExists(self, widget, name):
     pushButtonObjectName = "Create%sPushButton" % name
-    #slicer.util.delayDisplay("Checking wether '%s' exists" % pushButtonObjectName)
+    #slicer.util.delayDisplay("Checking whether '%s' exists" % pushButtonObjectName)
     if widget.findChild(qt.QPushButton, pushButtonObjectName):
       return True
     return False
 
   def __checkWidgetExists(self, widget, name):
-    #slicer.util.delayDisplay("Checking wether '%s' exists" % name)
+    #slicer.util.delayDisplay("Checking whether '%s' exists" % name)
     if widget.findChild(qt.QWidget, name):
       return True
     return False
 
   def __checkWidgetVisibility(self, widget, name):
-    #slicer.util.delayDisplay("Checking wether '%s' is visible" % pushButtonObjectName)
+    #slicer.util.delayDisplay("Checking whether '%s' is visible" % pushButtonObjectName)
     w = widget.findChild(qt.QWidget, name)
     return w.isVisible()
 

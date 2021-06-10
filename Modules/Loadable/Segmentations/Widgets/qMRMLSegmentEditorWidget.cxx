@@ -3510,7 +3510,7 @@ void qMRMLSegmentEditorWidget::onSurfaceSmoothingFactorChanged(double newSmoothi
 
   // Sign of smoothing factor is used to indicate that smoothing is enabled or not.
   // if smoothing factor is negative then it means smoothing is disabled.
-  // Here we allow changing the absolute value fo the smoothing factor, while maintaining its sign.
+  // Here we allow changing the absolute value of the smoothing factor, while maintaining its sign.
 
   // Set smoothing factor
   if (newSmoothingFactor != fabs(originalSmoothingFactor))

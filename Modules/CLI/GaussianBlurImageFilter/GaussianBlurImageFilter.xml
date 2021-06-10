@@ -3,7 +3,7 @@
   <category>Filtering.Denoising</category>
   <index>3</index>
   <title>Gaussian Blur Image Filter</title>
-  <description><![CDATA[Apply a gaussian blurr to an image]]></description>
+  <description><![CDATA[Apply a gaussian blur to an image]]></description>
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/gaussianblurimagefilter.html</documentation-url>
   <license/>

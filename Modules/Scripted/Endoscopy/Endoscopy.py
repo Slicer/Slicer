@@ -462,7 +462,7 @@ class EndoscopyComputePath:
       return:
       t = new parametric coordinate after step
       p = point after step
-      remainder = if step results in parametic coordinate > 1.0, then
+      remainder = if step results in parametric coordinate > 1.0, then
         this is the amount of world space not covered by step
     """
     import numpy.linalg
