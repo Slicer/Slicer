@@ -148,7 +148,12 @@ void qMRMLVolumeWidgetPrivate
 void qMRMLVolumeWidgetPrivate::updateSingleStep(double min, double max)
 {
   double interval = max - min;
-  int order = interval != 0. ? ctk::orderOfMagnitude(interval) : -2;
+  int order = ctk::orderOfMagnitude(interval);
+  if (order == std::numeric_limits<int>::min())
+    {
+    // the order of magnitude can't be computed (e.g. 0, inf, Nan, denorm)...
+    order = -2;
+    }
 
   int ratio = 2;
   double singleStep = pow(10., order - ratio);

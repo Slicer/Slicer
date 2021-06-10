@@ -127,30 +127,42 @@ void qMRMLVolumeThresholdWidget::setAutoThreshold(ControlMode autoThreshold)
 {
   Q_D(qMRMLVolumeThresholdWidget);
 
-  if (d->VolumeDisplayNode)
+  if (!d->VolumeDisplayNode)
     {
-    int oldAuto = d->VolumeDisplayNode->GetAutoThreshold();
-    int oldApply = d->VolumeDisplayNode->GetApplyThreshold();
+    return;
+    }
+  int oldAuto = d->VolumeDisplayNode->GetAutoThreshold();
+  int oldApply = d->VolumeDisplayNode->GetApplyThreshold();
 
-    int disabledModify = d->VolumeDisplayNode->StartModify();
-    if (autoThreshold != qMRMLVolumeThresholdWidget::Off)
-      {
-      d->VolumeDisplayNode->SetApplyThreshold(1);
-      d->VolumeDisplayNode->SetAutoThreshold(
-        autoThreshold == qMRMLVolumeThresholdWidget::Auto ? 1 : 0);
-      }
-    else
-      {
-      d->VolumeDisplayNode->SetApplyThreshold(0);
-      }
-    d->VolumeDisplayNode->EndModify(disabledModify);
+  int disabledModify = d->VolumeDisplayNode->StartModify();
+  if (autoThreshold == qMRMLVolumeThresholdWidget::Off)
+    {
+    d->VolumeDisplayNode->SetApplyThreshold(0);
+    }
+  else
+    {
+    d->VolumeDisplayNode->SetApplyThreshold(1);
+    d->VolumeDisplayNode->SetAutoThreshold(
+      autoThreshold == qMRMLVolumeThresholdWidget::Auto ? 1 : 0);
+    }
 
-    if (oldAuto != d->VolumeDisplayNode->GetAutoThreshold() ||
-        oldApply != d->VolumeDisplayNode->GetApplyThreshold())
-      {
-      emit this->autoThresholdValueChanged(autoThreshold);
-      }
+  if (!oldApply && autoThreshold == qMRMLVolumeThresholdWidget::Manual)
+    {
+    // Previously the threshold was turned off and now it is set to manual.
+    // Since the default threshold range is VTK_SHORT_MIN to VTK_SHORT_MAX,
+    // we don't want these values to appear on the GUI but instead set
+    // the threshold range to the full scalar range of the volume (because
+    // this corresponds to the previous state of the thresholding: having
+    // the full scalar range of the volume in the threshold range).
+    d->VolumeDisplayNode->SetThreshold(d->DisplayScalarRange[0], d->DisplayScalarRange[1]);
+    }
 
+  d->VolumeDisplayNode->EndModify(disabledModify);
+
+  if (oldAuto != d->VolumeDisplayNode->GetAutoThreshold() ||
+      oldApply != d->VolumeDisplayNode->GetApplyThreshold())
+    {
+    emit this->autoThresholdValueChanged(autoThreshold);
     }
 }
 
@@ -255,18 +267,19 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLVolumeNode()
   Q_D(qMRMLVolumeThresholdWidget);
   this->Superclass::updateWidgetFromMRMLVolumeNode();
 
-  // When scalar range changes, maintain current threshold values, but update range
-  const double min = d->VolumeDisplayNode->GetLowerThreshold();
-  const double max = d->VolumeDisplayNode->GetUpperThreshold();
+  if (!d->VolumeDisplayNode)
+    {
+    return;
+    }
 
-  double range[2];
-  d->scalarRange(d->VolumeDisplayNode, range);
-  d->DisplayScalarRange[0] = range[0];
-  d->DisplayScalarRange[1] = range[1];
-  const double minRangeValue = std::min(min, range[0]);
-  const double maxRangeValue = std::max(max, range[1]);
-  d->setRange(minRangeValue, maxRangeValue);
+  d->scalarRange(d->VolumeDisplayNode, d->DisplayScalarRange);
+  double minRangeValue = d->DisplayScalarRange[0];
+  double maxRangeValue = d->DisplayScalarRange[1];
 
+  // We always need to set the slider values and range at the same time
+  // to make sure that they are consistent. This is implemented in one place,
+  // in updateWidgetFromMRMLDisplayNode().
+  this->updateWidgetFromMRMLDisplayNode();
 }
 
 // --------------------------------------------------------------------------
@@ -297,13 +310,28 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLDisplayNode()
                       qMRMLVolumeThresholdWidget::Manual;
   d->AutoManualComboBox->setCurrentIndex(index);
 
-  const double min = d->VolumeDisplayNode->GetLowerThreshold();
-  const double max = d->VolumeDisplayNode->GetUpperThreshold();
-  const double minRangeValue = std::min(min, d->MinRangeSpinBox->value());
-  const double maxRangeValue = std::max(max, d->MaxRangeSpinBox->value());
-  d->setRange(minRangeValue, maxRangeValue);
-
-  d->VolumeThresholdRangeWidget->setValues(min, max );
-
+  if (applyThresh)
+    {
+    // Thresholding is on.
+    // Show the threshold values (and widen the slider's range if needed).
+    double range[2] = { 0.0, 0.0 };
+    d->VolumeThresholdRangeWidget->range(range);
+    double lower = d->VolumeDisplayNode->GetLowerThreshold();
+    double upper = d->VolumeDisplayNode->GetUpperThreshold();
+    double minRangeValue = std::min(range[0], lower);
+    double maxRangeValue = std::max(range[1], upper);
+    d->setRange(minRangeValue, maxRangeValue);
+    d->VolumeThresholdRangeWidget->setValues(lower, upper);
+    }
+  else
+    {
+    // Thresholding is off.
+    // Instead of showing the threshold values (which may be very large),
+    // show the volume's entire scalar range.
+    double minRangeValue = d->DisplayScalarRange[0];
+    double maxRangeValue = d->DisplayScalarRange[1];
+    d->setRange(minRangeValue, maxRangeValue);
+    d->VolumeThresholdRangeWidget->setValues(minRangeValue, maxRangeValue);
+    }
   d->VolumeThresholdRangeWidget->blockSignals(wasBlocking);
 }
