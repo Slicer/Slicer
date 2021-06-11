@@ -133,8 +133,8 @@ You can find the path to the startup script in Slicer by opening in the menu: Ed
 ### Runtime environment variables
 
 The following environment variables can be set before the application is started to fine-tune its behavior:
-
-- `PYTHONNOUSERSITE`: if it is set to `1` then import of user site packages is disabled.
+- `PYTHONNOUSERSITE`: if it is set to `1` then import of user site packages is disabled. For example, this will prevent Slicer to reuse packages downloaded/built by Anaconda.
+- `QT_SCALE_FACTOR`: see [Qt documentation](https://doc.qt.io/qt-5/highdpi.html). For example, font size can be reduced by running `set QT_SCALE_FACTOR=0.5` in the command console and then starting Slicer in that console.
 - `QT_ENABLE_HIGHDPI_SCALING`: see [Qt documentation](https://doc.qt.io/qt-5/highdpi.html)
 - `QT_SCALE_FACTOR_ROUNDING_POLICY`: see [Qt documentation](https://doc.qt.io/qt-5/highdpi.html)
 - `QTWEBENGINE_REMOTE_DEBUGGING`: port number for Qt webengine remote debugger. Default value is `1337`.
