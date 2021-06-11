@@ -453,6 +453,19 @@ extracted_voxels, extracted_header = slicerio.extract_segments(voxels, header, s
 nrrd.write(output_filename, extracted_voxels, extracted_header)
 ```
 
+### Clone a segment
+
+A copy of the segment can be created by using `CopySegmentFromSegmentation` method:
+
+```python
+segmentationNode = getNode("Segmentation")
+sourceSegmentName = "Segment_1"
+
+segmentation = segmentationNode.GetSegmentation()
+sourceSegmentId = segmentation.GetSegmentIdBySegmentName(sourceSegmentName)
+segmentation.CopySegmentFromSegmentation(segmentation, sourceSegmentId)
+```
+
 ### Quantifying segments
 
 #### Get centroid of each segment
