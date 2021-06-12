@@ -141,6 +141,7 @@ void qSlicerCLIProgressBarPrivate::init()
 
   this->StageProgressBar = new QProgressBar();
   this->StageProgressBar->setObjectName(QString::fromUtf8("StageProgressBar"));
+  this->StageProgressBar->setMaximum(100);
   this->StageProgressBar->setValue(0);
   this->GridLayout->addWidget(StageProgressBar, 4, 0, 1, 3);
 
@@ -327,7 +328,9 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
         {
         d->StatusLabel->setText(QString("%1 (%2)").arg(node->GetStatusString()).arg(info->ElapsedTime));
         }
-      d->StageProgressBar->setMaximum(info->StageProgress != 0.0 ? 100 : 0);
+      // We keep StageProgressBar maximum at 100, because if it was set to 0
+      // then the progress message would not be displayed.
+      d->StageProgressBar->setMaximum(100);
       d->StageProgressBar->setFormat(info->ProgressMessage);
       d->StageProgressBar->setValue(info->StageProgress * 100.);
       break;
