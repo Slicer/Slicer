@@ -59,6 +59,8 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
   this->CachedMatrixTransformFromParent=vtkMatrix4x4::New();
 
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+
+  this->DefaultSequenceStorageNodeClassName = "vtkMRMLLinearTransformSequenceStorageNode";
 }
 
 //----------------------------------------------------------------------------
@@ -1655,12 +1657,6 @@ bool vtkMRMLTransformNode::IsGeneralTransformLinear(vtkAbstractTransform* inputT
       }
     }
   return true;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLStorageNode* vtkMRMLTransformNode::CreateDefaultSequenceStorageNode()
-{
-  return vtkMRMLLinearTransformSequenceStorageNode::New();
 }
 
 //----------------------------------------------------------------------------

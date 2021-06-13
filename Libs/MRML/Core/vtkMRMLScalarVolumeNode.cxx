@@ -32,7 +32,10 @@ vtkCxxSetObjectMacro(vtkMRMLScalarVolumeNode, VoxelValueQuantity, vtkCodedEntry)
 vtkCxxSetObjectMacro(vtkMRMLScalarVolumeNode, VoxelValueUnits, vtkCodedEntry);
 
 //----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode() = default;
+vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
+{
+  this->DefaultSequenceStorageNodeClassName = "vtkMRMLVolumeSequenceStorageNode";
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::~vtkMRMLScalarVolumeNode()
@@ -173,10 +176,4 @@ void vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes()
     dispNode->SetDefaultColorMap();
     }
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLStorageNode* vtkMRMLScalarVolumeNode::CreateDefaultSequenceStorageNode()
-{
-  return vtkMRMLVolumeSequenceStorageNode::New();
 }
