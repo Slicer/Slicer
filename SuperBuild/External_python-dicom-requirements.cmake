@@ -45,17 +45,17 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/pydicom]
   # [Pillow]
   # Hashes correspond to the following packages:
-  #  - Pillow-8.1.2-cp36-cp36m-macosx_10_10_x86_64.whl
-  #  - Pillow-8.1.2-cp36-cp36m-manylinux1_x86_64.whl
-  #  - Pillow-8.1.2-cp36-cp36m-manylinux2014_aarch64.whl
-  #  - Pillow-8.1.2-cp36-cp36m-win_amd64.whl
-  Pillow==8.1.2 --hash=sha256:5cf03b9534aca63b192856aa601c68d0764810857786ea5da652581f3a44c2b0 \
-                --hash=sha256:5762ebb4436f46b566fc6351d67a9b5386b5e5de4e58fdaa18a1c83e0e20f1a8 \
-                --hash=sha256:e2cd8ac157c1e5ae88b6dd790648ee5d2777e76f1e5c7d184eaddb2938594f34 \
-                --hash=sha256:d1d6bca39bb6dd94fba23cdb3eeaea5e30c7717c5343004d900e2a63b132c341
+  #  - Pillow-8.2.0-cp36-cp36m-macosx_10_10_x86_64.whl
+  #  - Pillow-8.2.0-cp36-cp36m-manylinux1_x86_64.whl
+  #  - Pillow-8.2.0-cp36-cp36m-manylinux2014_aarch64.whl
+  #  - Pillow-8.2.0-cp36-cp36m-win_amd64.whl
+  Pillow==8.2.0 --hash=sha256:dc38f57d8f20f06dd7c3161c59ca2c86893632623f33a42d592f097b00f720a9 \
+                --hash=sha256:8bb1e155a74e1bfbacd84555ea62fa21c58e0b4e7e6b20e4447b8d07990ac78b \
+                --hash=sha256:c5236606e8570542ed424849f7852a0ff0bce2c4c8d0ba05cc202a5a9c97dee9 \
+                --hash=sha256:5afe6b237a0b81bd54b53f835a153770802f164c5570bab5e005aad693dab87f
   # [/Pillow]
   # [six]
-  six==1.15.0 --hash=sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced
+  six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
   # [/six]
   # [retrying]
   retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b

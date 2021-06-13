@@ -39,7 +39,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   wrapt==1.12.1 --hash=sha256:b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7
   # [/wrapt]
   # [Deprecated]
-  Deprecated==1.2.11 --hash=sha256:924b6921f822b64ec54f49be6700a126bab0640cfafca78f22c9d429ed590560
+  Deprecated==1.2.12 --hash=sha256:08452d69b6b5bc66e8330adde0a4f8642e969b9e1702904d137eeb29c8ffc771
   # [/Deprecated]
   # [PyGithub]
   PyGithub==1.54.1 --hash=sha256:87afd6a67ea582aa7533afdbf41635725f13d12581faed7e3e04b1579c0c0627
