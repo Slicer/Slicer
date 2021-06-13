@@ -26,7 +26,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [setuptools]
-  setuptools==54.1.1 --hash=sha256:75c5c4479f4961f1ffdb597c98aa4e4077e6813685025e8bdebf7598aa84e859
+  setuptools==57.0.0 --hash=sha256:c8b9f1a457949002e358fea7d3f2a1e1b94ddc0354b2e40afc066bf95d21bf7b
   # [/setuptools]
   ]===])
 
