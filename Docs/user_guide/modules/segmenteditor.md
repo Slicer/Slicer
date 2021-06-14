@@ -2,7 +2,7 @@
 
 This is a module is for specifying segments (structures of interest) in 2D/3D/4D images. Some of the tools mimic a painting interface like photoshop or gimp, but work on 3D arrays of voxels rather than on 2D pixels. The module offers editing of overlapping segments, display in both 2D and 3D views, fine-grained visualization options, editing in 3D views, create segmentation by interpolating or extrapolating segmentation on a few slices, editing on slices in any orientation.
 
-Segment Editor does not edit labelmap volumes or models, but segmentations can be easily converted to/from labelmap volumes and models using the Import/Export section of [Segmentations](Segmentations) module.
+Segment Editor does not edit labelmap volumes or models, but segmentations can be easily converted to/from labelmap volumes and models using the Import/Export section of [Segmentations](segmentations.md) module.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segment_editor_module.png)
 
@@ -255,7 +255,7 @@ Authors:
 ## Acknowledgements
 
 This module is partly funded by an Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health and Long-Term Care and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO) to provide free, open-source toolset for radiotherapy and related image-guided interventions.
-The work is part of the `National Alliance for Medical Image Computing <http://www.na-mic.org/>`_ (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+The work is part of the [National Alliance for Medical Image Computing](http://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)

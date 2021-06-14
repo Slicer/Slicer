@@ -515,7 +515,7 @@
 /// Macro for printing floating-point (float or double) vector node property value.
 #define vtkMRMLPrintVectorMacro(propertyName, vectorType, vectorSize) \
   { \
-  printOutputStream << printOutputIndent << #propertyName " : ["; \
+  printOutputStream << printOutputIndent << #propertyName ": ["; \
   vectorType* vectorValue = this->Get##propertyName(); \
   if (vectorValue) \
     { \

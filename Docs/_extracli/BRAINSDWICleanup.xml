@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Diffusion.Utilities</category>
+  <title>DWI Cleanup (BRAINS)</title>
+
+  <description>Remove bad gradients/volumes from DWI NRRD file.</description>
+  <acknowledgements></acknowledgements>
+  <version>5.4.0</version>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsdwicleanup.html</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>This tool was developed by Kent Williams.</contributor>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description></description>
+
+    <image type="diffusion-weighted">
+      <name>inputVolume</name>
+      <flag>i</flag>
+      <longflag>inputVolume</longflag>
+      <description>Required: input image is a 4D NRRD image.</description>
+      <label>Input Image Volume</label>
+      <channel>input</channel>
+    </image>
+    <image type="diffusion-weighted">
+      <name>outputVolume</name>
+      <flag>o</flag>
+      <longflag>outputVolume</longflag>
+      <description>given a list of </description>
+      <label>NRRD File with bad gradients removed.</label>
+      <channel>output</channel>
+      <default></default>
+    </image>
+    <integer-vector>
+      <name>badGradients</name>
+      <longflag>badGradients</longflag>
+      <flag>b</flag>
+      <default></default>
+      <label>list of bad gradient volumes</label>
+    </integer-vector>
+  </parameters>
+
+</executable>

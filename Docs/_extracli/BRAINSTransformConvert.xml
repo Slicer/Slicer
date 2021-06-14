@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Utilities.BRAINS</category>
+  <title>Transform Convert (BRAINS)</title>
+  <description>Convert ITK transforms to higher order transforms</description>
+  <version>5.4.0</version>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainstransformconvert.html</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Hans J. Johnson,Kent Williams, Ali Ghayoor</contributor>
+  <acknowledgements>
+  </acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <transform>
+      <channel>input</channel>
+      <name>inputTransform</name>
+      <label>Transform File Name To Convert</label>
+      <description></description>
+      <longflag>--inputTransform</longflag>
+    </transform>
+    <image>
+      <channel>input</channel>
+      <name>referenceVolume</name>
+      <label>Reference image</label>
+      <longflag>--referenceVolume</longflag>
+    </image>
+
+    <string-enumeration>
+      <name>outputTransformType</name>
+      <longflag>--outputTransformType</longflag>
+      <description>The target transformation type. Must be conversion-compatible with the input transform type</description>
+      <default>Affine</default>
+      <element>Affine</element>
+      <element>VersorRigid</element>
+      <element>ScaleVersor</element>
+      <element>ScaleSkewVersor</element>
+      <element>DisplacementField</element>
+      <element>Same</element>
+    </string-enumeration>
+
+    <string-enumeration>
+      <name>outputPrecisionType</name>
+      <longflag>--outputPrecisionType</longflag>
+      <description>Precision type of the output transform. It can be either single precision or double precision</description>
+      <default>double</default>
+      <element>double</element>
+      <element>float</element>
+    </string-enumeration>
+
+    <image>
+      <channel>output</channel>
+      <name>displacementVolume</name>
+      <label>Output displacement field</label>
+      <longflag>--displacementVolume</longflag>
+    </image>
+    <transform>
+      <channel>output</channel>
+      <name>outputTransform</name>
+      <label>Transform File Name To Save ConvertedTransform</label>
+      <description></description>
+      <longflag>--outputTransform</longflag>
+    </transform>
+
+  </parameters>
+
+</executable>

@@ -4,7 +4,7 @@
   <title>Model To LabelMap</title>
   <description><![CDATA[Intersects an input model with a reference volume and produces an output label map, filling voxels inside the model with the specified label value.]]></description>
   <version>$Revision: 8643 $</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ModelToLabelMap</documentation-url>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/modeltolabelmap.html</documentation-url>
   <license/>
   <contributor>Andras Lasso (PerkLab), Csaba Pinter (PerkLab), Nicole Aucoin (SPL, BWH), Xiaodong Tao (GE)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>

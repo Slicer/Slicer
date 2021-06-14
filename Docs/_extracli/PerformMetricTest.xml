@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>Registration Metric Test (BRAINS)</title>
+  <description>Compare Mattes/MSQ metric value for two input images and a possible input BSpline transform.</description>
+  <version>5.4.0</version>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/performmetrictest.html</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Ali Ghayoor</contributor>
+  <acknowledgements>
+  </acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input parameters</description>
+
+    <transform>
+      <channel>input</channel>
+      <name>inputBSplineTransform</name>
+      <label>Transform File Name</label>
+      <description>Input transform that is use to warp moving image before metric comparison.</description>
+      <longflag>inputBSplineTransform</longflag>
+    </transform>
+
+    <image>
+      <channel>input</channel>
+      <name>inputFixedImage</name>
+      <label>Fixed image</label>
+      <longflag>inputFixedImage</longflag>
+    </image>
+
+    <image>
+      <channel>input</channel>
+      <name>inputMovingImage</name>
+      <label>Moving image</label>
+      <longflag>inputMovingImage</longflag>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Input variables</label>
+    <description>Metric type and input parameters.</description>
+
+    <string-enumeration>
+      <name>metricType</name>
+      <longflag>metricType</longflag>
+      <label>Metric type</label>
+      <description>Comparison metric type</description>
+      <default>MMI</default>
+      <element>MMI</element>
+      <element>MSE</element>
+    </string-enumeration>
+
+    <integer>
+      <name>numberOfSamples</name>
+      <longflag>numberOfSamples</longflag>
+      <label>Number Of Samples</label>
+      <description>The number of voxels sampled for metric evaluation.</description>
+      <default>0</default>
+    </integer>
+
+    <integer>
+      <name>numberOfHistogramBins</name>
+      <longflag>numberOfHistogramBins</longflag>
+      <label>Number Of Historgram Bins</label>
+      <description>The number of historgram bins when MMI (Mattes) is metric type.</description>
+      <default>50</default>
+    </integer>
+
+  </parameters>
+</executable>

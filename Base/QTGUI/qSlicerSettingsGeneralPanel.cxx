@@ -126,7 +126,8 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   QObject::connect(this->DefaultScenePathButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(setDefaultScenePath(QString)));
 
-  this->SlicerWikiURLLineEdit->setText("http://www.slicer.org/slicerWiki/index.php");
+  this->DocumentationBaseURLLineEdit->setText("https://slicer.readthedocs.io/{language}/{version}");
+  this->ModuleDocumentationURLLineEdit->setText("{documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html");
 
   q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
                       SIGNAL(toggled(bool)));
@@ -149,8 +150,14 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   q->registerProperty("MainWindow/DontConfirmSceneClose",
                       sceneCloseMapper, "valueAsInt", SIGNAL(valueAsIntChanged(int)));
 
-  q->registerProperty("SlicerWikiURL", this->SlicerWikiURLLineEdit, "text",
-                      SIGNAL(textChanged(QString)));
+  q->registerProperty("DocumentationBaseURL", this->DocumentationBaseURLLineEdit, "text",
+                      SIGNAL(textChanged(QString)),
+                      "Documentation location",
+                      ctkSettingsPanel::OptionRequireRestart);
+  q->registerProperty("ModuleDocumentationURL", this->ModuleDocumentationURLLineEdit, "text",
+                      SIGNAL(textChanged(QString)),
+                      "Documentation location",
+                      ctkSettingsPanel::OptionRequireRestart);
   q->registerProperty("language", this->LanguageComboBox, "currentLanguage",
                       SIGNAL(currentLanguageNameChanged(const QString&)),
                       "Enable/Disable languages",

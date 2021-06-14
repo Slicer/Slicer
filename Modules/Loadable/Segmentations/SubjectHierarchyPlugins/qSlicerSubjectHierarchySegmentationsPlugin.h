@@ -114,6 +114,11 @@ public:
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
   void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
+  /// Show a segmentation item in a selected view.
+  /// Overridden here to create closed surface representation for display in 3D views.
+  /// Returns true on success.
+  bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow) override;
+
 public slots:
   /// Called when segment is added in an observed segmentation node
   /// Adds per-segment subject hierarchy node
@@ -160,10 +165,19 @@ protected slots:
   /// Toggle 2D outline visibility for the current segmentation
   void toggle2DOutlineVisibility(bool);
 
+  void createBinaryLabelmapRepresentation();
+  void createClosedSurfaceRepresentation();
+  void removeBinaryLabelmapRepresentation();
+  void removeClosedSurfaceRepresentation();
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchySegmentationsPluginPrivate> d_ptr;
 
   void updateAllSegmentsFromMRML(vtkMRMLSegmentationNode* segmentationNode);
+
+  /// Create or remove representation.
+  /// If create is true then representation is created, if false then the representation is removed.
+  void updateRepresentation(const QString& representationName, bool create);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchySegmentationsPlugin);

@@ -76,10 +76,9 @@ QIcon qSlicerViewControllersModule::icon() const
 //-----------------------------------------------------------------------------
 QString qSlicerViewControllersModule::helpText() const
 {
-  QString help =
-    "The ViewControllers module allows modifying the views options.<br>"
-    "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/ViewControllers\">online documentation</a>.<br>";
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+  QString help = "The ViewControllers module allows modifying the views options.<br>";
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

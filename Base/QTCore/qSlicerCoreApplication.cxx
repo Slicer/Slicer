@@ -1610,7 +1610,7 @@ QString qSlicerCoreApplication::copyrights()const
 {
   QString copyrightsText(
     "<table align=\"center\" border=\"0\" width=\"80%\"><tr>"
-    "<td align=\"center\"><a href=\"https://www.slicer.org/wiki/License\">Licensing Information</a></td>"
+    "<td align=\"center\"><a href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#license\">Licensing Information</a></td>"
     "<td align=\"center\"><a href=\"https://slicer.org/\">Website</a></td>"
     "<td align=\"center\"><a href=\"https://www.slicer.org/wiki/Documentation/4.x/Acknowledgments\">Acknowledgments</a></td>"
     "</tr></table>");
@@ -2068,4 +2068,64 @@ vtkMRMLAbstractLogic* qSlicerCoreApplication::moduleLogic(const QString& moduleN
     return nullptr;
     }
   return applicationLogic->GetModuleLogic(moduleName.toUtf8());
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerCoreApplication::documentationBaseUrl() const
+{
+  QSettings* appSettings = this->userSettings();
+  Q_ASSERT(appSettings);
+  QString url = appSettings->value("DocumentationBaseURL", "https://slicer.readthedocs.io/{language}/{version}").toString();
+  if (url.contains("{version}"))
+    {
+    url.replace("{version}", this->documentationVersion());
+    }
+  if (url.contains("{language}"))
+    {
+    url.replace("{language}", this->documentationLanguage());
+    }
+  return url;
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerCoreApplication::documentationVersion() const
+{
+  QString version = "latest";
+  if (this->releaseType() == "Stable")
+    {
+    version = QString("v%1.%2").arg(this->mainApplicationMajorVersion()).arg(this->mainApplicationMinorVersion());
+    }
+  return version;
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerCoreApplication::documentationLanguage() const
+{
+  QString language = "en";
+  if (this->userSettings()->value("Internationalization/Enabled", false).toBool())
+    {
+    language = this->userSettings()->value("language", language).toString();
+    }
+  return language;
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerCoreApplication::moduleDocumentationUrl(const QString& moduleName) const
+{
+  QSettings* appSettings = this->userSettings();
+  Q_ASSERT(appSettings);
+  QString url = appSettings->value("ModuleDocumentationURL",
+    "{documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html").toString();
+
+  if (url.contains("{documentationbaseurl}"))
+    {
+    url.replace("{documentationbaseurl}", this->documentationBaseUrl());
+    }
+
+  if (url.contains("{lowercasemodulename}"))
+    {
+    url.replace("{lowercasemodulename}", moduleName.toLower());
+    }
+
+  return url;
 }

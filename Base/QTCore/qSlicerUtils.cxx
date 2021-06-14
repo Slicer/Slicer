@@ -24,6 +24,7 @@
 #include <QFileInfo>
 #include <QRegExp>
 #include <QStringList>
+#include <QUrl>
 
 // Slicer includes
 #include "qSlicerUtils.h"
@@ -323,6 +324,42 @@ QString qSlicerUtils::replaceWikiUrlVersion(const QString& text, const QString& 
     QString updatedURL = rx.cap(0).replace(QRegExp("Documentation\\/[a-zA-Z0-9\\.]+"), "Documentation/" +version);
     updatedText.replace(pos, rx.matchedLength(), updatedURL);
     pos += updatedURL.length();
+    }
+
+  return updatedText;
+}
+
+bool replaceFirst(QString& text, const QString& pattern, const QString& replacement)
+{
+  QRegExp rx = QRegExp(pattern);
+  if (!text.contains(rx))
+    {
+    return false;
+    }
+  text = text.replace(rx.pos(0), rx.cap(0).size(), replacement);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text, const QString& hostname, const QString& version)
+{
+  QString updatedText = text;
+  QRegExp rx("http[s]?\\:\\/\\/[a-zA-Z0-9\\-\\._\\?\\,\\'\\/\\\\\\+&amp;%\\$#\\=~]*");
+  int pos = 0;
+  while ((pos = rx.indexIn(updatedText, pos)) != -1)
+    {
+    // Given an URL matching the regular expression reported above, this second
+    // expression will replace the first occurrence of "/<StringWithLetterOrNumberOrDot>/" or "/<StringWithLetterOrNumberOrDot>#"
+    // with "/<version>/" or "/<version>#".
+    QString foundURL = rx.cap(0);
+    if (foundURL.contains(hostname)
+      && (replaceFirst(foundURL, "\\/[0-9\\.]+\\/|/latest\\/|/stable\\/", "/" + version + "/") // replace /5.0/
+      || replaceFirst(foundURL, "\\/v[0-9\\.]+\\/", "/" + version + "/")) // replace /v5.0/
+      )
+      {
+      updatedText.replace(pos, rx.matchedLength(), foundURL);
+      }
+    pos += foundURL.length();
     }
 
   return updatedText;

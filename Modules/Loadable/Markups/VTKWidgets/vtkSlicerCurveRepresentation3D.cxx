@@ -20,7 +20,7 @@
 #include "vtkActor2D.h"
 #include "vtkCellLocator.h"
 #include "vtkCleanPolyData.h"
-#include "vtkGlyph3D.h"
+#include "vtkGlyph3DMapper.h"
 #include "vtkLookupTable.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkPointData.h"
@@ -134,9 +134,9 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     // For backward compatibility, we hide labels if text scale is set to 0.
     controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
       && this->MarkupsDisplayNode->GetTextScale() > 0.0);
-    controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
+    controlPoints->GlyphMapper->SetScaleFactor(this->ControlPointSize);
 
-    this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper, controlPoints->OccludedMapper);
+    this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->GlyphMapper, controlPoints->OccludedGlyphMapper);
     }
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);

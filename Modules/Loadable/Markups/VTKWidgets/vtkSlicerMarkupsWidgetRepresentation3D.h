@@ -30,14 +30,16 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation.h"
 
+#include <map>
+
 class vtkActor;
 class vtkActor2D;
 class vtkCellPicker;
-class vtkGlyph3D;
+class vtkFastSelectVisiblePoints;
+class vtkGlyph3DMapper;
 class vtkLabelPlacementMapper;
 class vtkPolyDataMapper;
 class vtkProperty;
-class vtkSelectVisiblePoints;
 
 class vtkMRMLInteractionEventData;
 
@@ -110,7 +112,10 @@ protected:
     ControlPointsPipeline3D();
     ~ControlPointsPipeline3D() override;
 
-    vtkSmartPointer<vtkGlyph3D> Glypher;
+    /// Orientation of the glyphs, represented as an array of quaternions
+    vtkSmartPointer<vtkDoubleArray>   GlyphOrientationArray;
+
+    vtkSmartPointer<vtkGlyph3DMapper> GlyphMapper;
 
     // Properties used to control the appearance of selected objects and
     // the manipulator in general.
@@ -118,12 +123,14 @@ protected:
     vtkSmartPointer<vtkProperty>     OccludedProperty;
     vtkSmartPointer<vtkTextProperty> OccludedTextProperty;
 
-    vtkSmartPointer<vtkSelectVisiblePoints>      SelectVisiblePoints;
+    vtkSmartPointer<vtkPolyData> VisiblePointsPolyData;
+
+    vtkSmartPointer<vtkFastSelectVisiblePoints>      SelectVisiblePoints;
+
     vtkSmartPointer<vtkIdTypeArray>              ControlPointIndices;  // store original ID to determine which control point is actually visible
     vtkSmartPointer<vtkPointSetToLabelHierarchy> OccludedPointSetToLabelHierarchyFilter;
 
-    vtkSmartPointer<vtkPolyDataMapper>       Mapper;
-    vtkSmartPointer<vtkPolyDataMapper>       OccludedMapper;
+    vtkSmartPointer<vtkGlyph3DMapper>        OccludedGlyphMapper;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsMapper;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsOccludedMapper;
 
@@ -134,6 +141,8 @@ protected:
   };
 
   ControlPointsPipeline3D* GetControlPointsPipeline(int controlPointType);
+
+  virtual void UpdateControlPointGlyphOrientation();
 
   virtual void UpdateNthPointAndLabelFromMRML(int n);
 
@@ -154,6 +163,12 @@ protected:
   bool TextActorOccluded;
   bool HideTextActorIfAllPointsOccluded;
   double OccludedRelativeOffset;
+
+  static std::map<vtkRenderer*, vtkSmartPointer<vtkFloatArray> > CachedZBuffers;
+
+  vtkSmartPointer<vtkCallbackCommand> RenderCompletedCallback;
+  static void OnRenderCompleted(vtkObject* caller, unsigned long event, void* clientData, void* callData);
+  static vtkFloatArray* GetCachedZBuffer(vtkRenderer* renderer);
 
 private:
   vtkSlicerMarkupsWidgetRepresentation3D(const vtkSlicerMarkupsWidgetRepresentation3D&) = delete;

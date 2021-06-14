@@ -43,8 +43,8 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 
 ## Information for developers
 
-See examples for calculating statistics from your own modules in the `Slicer script repository <https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Quantifying_segments>`_.
-Additional plugins for computation of other statistical measurements may be registered by subclassing `SegmentStatisticsPluginBase.py <https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/SegmentStatistics/SegmentStatisticsPlugins/SegmentStatisticsPluginBase.py>`_, and registering the plugin with SegmentStatisticsLogic.
+See examples for calculating statistics from your own modules in the [Slicer script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Quantifying_segments).
+Additional plugins for computation of other statistical measurements may be registered by subclassing [SegmentStatisticsPluginBase.py](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/SegmentStatistics/SegmentStatisticsPlugins/SegmentStatisticsPluginBase.py), and registering the plugin with SegmentStatisticsLogic.
 
 ## Contributors
 
@@ -58,7 +58,7 @@ Authors:
 ## Acknowledgements
 
 This module is partly funded by an Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health and Long-Term Care and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO) to provide free, open-source toolset for radiotherapy and related image-guided interventions.
-The work is part of the `National Alliance for Medical Image Computing <http://www.na-mic.org/>`_ (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+The work is part of the [National Alliance for Medical Image Computing](http://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)

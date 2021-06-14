@@ -116,6 +116,12 @@ public:
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
   void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
+  /// Show a segment item in a selected view.
+  /// Overridden here to create closed surface representation for display in 3D views.
+  /// Returns true on success.
+  /// Implemented by calling the segmentation plugin.
+  bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow) override;
+
 protected slots:
   /// Show only selected segment, hide all others in segmentation
   void showOnlyCurrentSegment();

@@ -25,6 +25,7 @@
 #include <QTime>
 
 // CTK includes
+#include <ctkCoreTestingMacros.h>
 #include <ctkUtils.h>
 
 // Slicer includes
@@ -92,138 +93,101 @@ bool isPluginBuiltInTest(int line, bool expectedResult,
   return res;
 }
 
-} // end of anonymous namespace
 
-int qSlicerUtilsTest1(int, char * [] )
+//-----------------------------------------------------------------------------
+int isExecutableNameTest()
 {
-  try
+  QStringList executableNames;
+  executableNames << "Threshold.bat" << "Threshold.com"
+                  << "Threshold.sh" << "Threshold.csh"
+                  << "Threshold.tcsh" << "Threshold.pl"
+                  << "Threshold.py" << "Threshold.tcl"
+                  << "Threshold.m" << "Threshold.exe";
+
+  foreach(const QString& executableName, executableNames)
     {
-    //-----------------------------------------------------------------------------
-    // Test isExecutableName()
-    //-----------------------------------------------------------------------------
-    QStringList executableNames;
-    executableNames << "Threshold.bat" << "Threshold.com"
-                    << "Threshold.sh" << "Threshold.csh"
-                    << "Threshold.tcsh" << "Threshold.pl"
-                    << "Threshold.py" << "Threshold.tcl"
-                    << "Threshold.m" << "Threshold.exe";
+    CHECK_BOOL(qSlicerUtils::isExecutableName(executableName), true);
+    }
 
-    foreach(const QString& executableName, executableNames)
-      {
-      bool isExecutable = qSlicerUtils::isExecutableName(executableName);
-      if (!isExecutable)
-        {
-        std::cerr << __LINE__ << " - Error in  isExecutableName()" << std::endl
-                              << "[" << qPrintable(executableName)
-                              << "] should be an executable" << std::endl;
-        }
-      }
+  QStringList notExecutableNames;
+  notExecutableNames << "Threshold.ini" << "Threshold.txt" << "Threshold";
+  foreach(const QString& notExecutableName, notExecutableNames)
+    {
+    CHECK_BOOL(qSlicerUtils::isExecutableName(notExecutableName), false);
+    }
+  return EXIT_SUCCESS;
+}
 
-    QStringList notExecutableNames;
-    notExecutableNames << "Threshold.ini" << "Threshold.txt" << "Threshold";
-    foreach(const QString& notExecutableName, notExecutableNames)
-      {
-      bool isExecutable = qSlicerUtils::isExecutableName(notExecutableName);
-      if (isExecutable)
-        {
-        std::cerr << __LINE__ << " - Error in  isExecutableName()" << std::endl
-                              << "[" << qPrintable(notExecutableName)
-                              << "] should *NOT* be an executable" << std::endl;
-        }
-      }
+//-----------------------------------------------------------------------------
+int isCLILoadableModuleTest()
+{
+  QStringList validFilePaths;
+  QStringList invalidFilePaths;
 
-    //-----------------------------------------------------------------------------
-    // Test isCLILoadableModule()
-    //-----------------------------------------------------------------------------
-    QStringList validFilePaths;
-    validFilePaths << "ThresholdLib.dll"
-                   << "ThresholdLib.DLL"
-                   << "libThresholdLib.dylib"
-                   << "libThresholdLib.so";
-    foreach (const QString& filePath, validFilePaths)
-      {
-      if (!qSlicerUtils::isCLILoadableModule(filePath))
-        {
-        std::cerr << __LINE__ << " - Error in  isCLILoadableModule()\n"
-                  << "\tfilePath [" << qPrintable(filePath)
-                  << "] is expected to be valid" << std::endl;
-        return EXIT_FAILURE;
-        }
-      }
-    QStringList invalidFilePaths;
-    invalidFilePaths << "libThresholdLib.dll"
-                     << "ThresholdLib.dylib"
-                     << "ThresholdLib.so"
-                     << "libThresholdLib.xyz"
-                     << "libLib.so"
-                     << "Lib.so"
-                     << "Lib.dll"
-                     << "libThresholdlib.so"
-                     << "Thresholdlib.so";
-    foreach (const QString& filePath, invalidFilePaths)
-      {
-      if (qSlicerUtils::isCLILoadableModule(filePath))
-        {
-        std::cerr << __LINE__ << " - Error in  isCLILoadableModule()\n"
-                  << "\tfilePath [" << qPrintable(filePath)
-                  << "] is expected to be invalid" << std::endl;
-        return EXIT_FAILURE;
-        }
-      }
+  validFilePaths << "ThresholdLib.dll"
+                  << "ThresholdLib.DLL"
+                  << "libThresholdLib.dylib"
+                  << "libThresholdLib.so";
+  foreach (const QString& filePath, validFilePaths)
+    {
+    CHECK_BOOL(qSlicerUtils::isCLILoadableModule(filePath), true);
+    }
+  invalidFilePaths << "libThresholdLib.dll"
+                    << "ThresholdLib.dylib"
+                    << "ThresholdLib.so"
+                    << "libThresholdLib.xyz"
+                    << "libLib.so"
+                    << "Lib.so"
+                    << "Lib.dll"
+                    << "libThresholdlib.so"
+                    << "Thresholdlib.so";
+  foreach (const QString& filePath, invalidFilePaths)
+    {
+    CHECK_BOOL(qSlicerUtils::isCLILoadableModule(filePath), false);
+    }
+  return EXIT_SUCCESS;
+  }
 
-    //-----------------------------------------------------------------------------
-    // Test isLoadableModule()
-    //-----------------------------------------------------------------------------
-    validFilePaths.clear();
-    validFilePaths << "qSlicerThresholdModule.dll"
-                   << "qSlicerThresholdModule.DLL"
-                   << "libqSlicerThresholdModule.dylib"
-                   << "libqSlicerThresholdModule.so";
-    foreach (const QString& filePath, validFilePaths)
-      {
-      if (!qSlicerUtils::isLoadableModule(filePath))
-        {
-        std::cerr << __LINE__ << " - Error in  isLoadableModule()\n"
-                  << "\tfilePath [" << qPrintable(filePath)
-                  << "] is expected to be valid" << std::endl;
-        return EXIT_FAILURE;
-        }
-      }
-    invalidFilePaths.clear();
-    invalidFilePaths << "libqSlicerThresholdModule.dll"
-                     << "qSlicerThresholdModule.dylib"
-                     << "qSlicerThresholdModule.so"
-                     << "libqSlicerThresholdModule.xyz"
-                     << "qSlicerModule.dll"
-                     << "libQSlicerThresholdmodule.so"
-                     << "QSlicerThresholdmodule.so";
-    foreach (const QString& filePath, invalidFilePaths)
-      {
-      if (qSlicerUtils::isLoadableModule(filePath))
-        {
-        std::cerr << __LINE__ << " - Error in  isLoadableModule()\n"
-                  << "\tfilePath [" << qPrintable(filePath)
-                  << "] is expected to be invalid" << std::endl;
-        return EXIT_FAILURE;
-        }
-      }
+//-----------------------------------------------------------------------------
+int isLoadableModuleTest()
+{
+  QStringList validFilePaths;
+  QStringList invalidFilePaths;
 
-    //-----------------------------------------------------------------------------
-    // Test executableExtension()
-    //-----------------------------------------------------------------------------
+  validFilePaths << "qSlicerThresholdModule.dll"
+                  << "qSlicerThresholdModule.DLL"
+                  << "libqSlicerThresholdModule.dylib"
+                  << "libqSlicerThresholdModule.so";
+  foreach (const QString& filePath, validFilePaths)
+    {
+    CHECK_BOOL(qSlicerUtils::isLoadableModule(filePath), true);
+    }
+
+  invalidFilePaths << "libqSlicerThresholdModule.dll"
+                    << "qSlicerThresholdModule.dylib"
+                    << "qSlicerThresholdModule.so"
+                    << "libqSlicerThresholdModule.xyz"
+                    << "qSlicerModule.dll"
+                    << "libQSlicerThresholdmodule.so"
+                    << "QSlicerThresholdmodule.so";
+  foreach (const QString& filePath, invalidFilePaths)
+    {
+    CHECK_BOOL(qSlicerUtils::isLoadableModule(filePath), false);
+    }
+
+  return EXIT_SUCCESS;
+  }
+
+  //-----------------------------------------------------------------------------
+  int executableExtensionTest()
+  {
 #ifdef _WIN32
     QString expectedExecutableExtension = ".exe";
 #else
     QString expectedExecutableExtension = "";
 #endif
     QString executableExtension = qSlicerUtils::executableExtension();
-    if (executableExtension != expectedExecutableExtension)
-      {
-      std::cerr << __LINE__ << " - Error in  executableExtension()" << std::endl
-                            << "executableExtension = " << qPrintable(executableExtension) << std::endl
-                            << "expectedExecutableExtension = " << qPrintable(expectedExecutableExtension) << std::endl;
-      return EXIT_FAILURE;
-      }
+    CHECK_QSTRING(executableExtension, expectedExecutableExtension);
 
     //-----------------------------------------------------------------------------
     // Test extractModuleNameFromLibraryName()
@@ -242,55 +206,23 @@ int qSlicerUtilsTest1(int, char * [] )
     foreach (const QString& libraryName, libraryNames)
       {
       QString moduleName = qSlicerUtils::extractModuleNameFromLibraryName(libraryName);
-      if (moduleName != expectedModuleName)
-        {
-        std::cerr << __LINE__ << " - Error in  extractModuleNameFromLibraryName()" << std::endl
-                              << "moduleName = " << qPrintable(moduleName) << std::endl
-                              << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
-        return EXIT_FAILURE;
-        }
+      CHECK_QSTRING(moduleName, expectedModuleName);
       }
+    return EXIT_SUCCESS;
+  }
 
-    //-----------------------------------------------------------------------------
-    // Test extractModuleNameFromClassName()
-    //-----------------------------------------------------------------------------
-    QString className = "qSlicerThresholdModule";
-    expectedModuleName = "Threshold";
-    QString moduleName = qSlicerUtils::extractModuleNameFromClassName(className);
-    if (moduleName != expectedModuleName)
-      {
-      std::cerr << __LINE__ << " - Error in  extractModuleNameFromClassName()" << std::endl
-                            << "moduleName = " << qPrintable(moduleName) << std::endl
-                            << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
-      return EXIT_FAILURE;
-      }
+  //-----------------------------------------------------------------------------
+  int extractModuleNameFromClassNameTest()
+    {
+    CHECK_QSTRING(qSlicerUtils::extractModuleNameFromClassName("qSlicerThresholdModule"), "Threshold");
+    CHECK_QSTRING(qSlicerUtils::extractModuleNameFromClassName("qSlicerThresholdModuleModule"), "ThresholdModule");
+    CHECK_QSTRING(qSlicerUtils::extractModuleNameFromClassName("qSlicerModuleThresholdModule"), "ModuleThreshold");
+    return EXIT_SUCCESS;
+    }
 
-    className = "qSlicerThresholdModuleModule";
-    expectedModuleName = "ThresholdModule";
-    moduleName = qSlicerUtils::extractModuleNameFromClassName(className);
-    if (moduleName != expectedModuleName)
-      {
-      std::cerr << __LINE__ << " - Error in  extractModuleNameFromClassName()" << std::endl
-                            << "moduleName = " << qPrintable(moduleName) << std::endl
-                            << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
-      return EXIT_FAILURE;
-      }
-
-    className = "qSlicerModuleThresholdModule";
-    expectedModuleName = "ModuleThreshold";
-    moduleName = qSlicerUtils::extractModuleNameFromClassName(className);
-    if (moduleName != expectedModuleName)
-      {
-      std::cerr << __LINE__ << " - Error in  extractModuleNameFromClassName()" << std::endl
-                            << "moduleName = " << qPrintable(moduleName) << std::endl
-                            << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
-      return EXIT_FAILURE;
-      }
-
-    //-----------------------------------------------------------------------------
-    // Test isPluginInstalled() and isPluginBuiltIn()
-    //-----------------------------------------------------------------------------
-
+  //-----------------------------------------------------------------------------
+  int isPluginInstalledBuiltinTest()
+  {
     QStringList directoriesToRemove;
 
     //
@@ -729,224 +661,212 @@ int qSlicerUtilsTest1(int, char * [] )
     //-----------------------------------------------------------------------------
     ctk::removeDirRecursively(tmp.path());
 
+    return EXIT_SUCCESS;
+  }
 
-    //-----------------------------------------------------------------------------
-    // Test setPermissionsRecursively()
-    //-----------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------
+  int setPermissionsRecursivelyTest()
     {
-      tmp = QDir::temp();
-      temporaryDirName =
-          QString("qSlicerUtilsTest1-setPermissionsRecursively.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
-      tmp.mkdir(temporaryDirName);
-      tmp.cd(temporaryDirName);
+    QDir tmp = QDir::temp();
+    QString temporaryDirName = QString("qSlicerUtilsTest1-setPermissionsRecursively.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+    tmp.mkdir(temporaryDirName);
+    tmp.cd(temporaryDirName);
 
-      QString path1 = QLatin1String("fo/foo/bar");
-      QString path2 = QLatin1String("fo/foo/bie");
+    QString path1 = QLatin1String("fo/foo/bar");
+    QString path2 = QLatin1String("fo/foo/bie");
 
-      createFile(__LINE__, tmp, path1, "sol.txt");
-      createFile(__LINE__, tmp, path1, "la.txt");
-      createFile(__LINE__, tmp, path2, "si.txt");
-      createFile(__LINE__, tmp, path2, "sol.txt");
+    createFile(__LINE__, tmp, path1, "sol.txt");
+    createFile(__LINE__, tmp, path1, "la.txt");
+    createFile(__LINE__, tmp, path2, "si.txt");
+    createFile(__LINE__, tmp, path2, "sol.txt");
 
-      // Let's confirm that created file are readable
-      foreach(const QString& relativeFilepath, QStringList()
-              << path1 + "/sol.txt"
-              << path1 + "/la.txt"
-              << path2 + "/si.txt"
-              << path2 + "/sol.txt"
-              )
-        {
-        if (!(QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner))
-          {
-          std::cerr << __LINE__ << " - Error in  createFile() - "
-                    << "File " << qPrintable(tmp.filePath(relativeFilepath))
-                    << " is expected to be readable."<< std::endl;
-          return EXIT_FAILURE;
-          }
-        }
+    // Let's confirm that created file are readable
+    foreach(const QString& relativeFilepath, QStringList()
+            << path1 + "/sol.txt"
+            << path1 + "/la.txt"
+            << path2 + "/si.txt"
+            << path2 + "/sol.txt"
+            )
+      {
+      CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
+      }
 
-      // Make sure directories and files are read-only
-      if (!qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner, QFile::ReadOwner))
-        {
-        std::cerr << __LINE__ << " - Problem with setPermissionsRecursively()" << std::endl;
-        return EXIT_FAILURE;
-        }
+    // Make sure directories and files are read-only
+    CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner, QFile::ReadOwner), true);
 
 #ifndef Q_OS_WIN32
-      // Exe permissions are not supported on windows:
-      //  http://msdn.microsoft.com/en-us/library/1z319a54(v=vs.90).aspx
-      //  https://qt.gitorious.org/qt/qt/blobs/092cd760d5fddf9640a310214fe01929f0fff3a8/src/corelib/io/qfsfileengine_win.cpp#line1781
+    // Exe permissions are not supported on windows:
+    //  http://msdn.microsoft.com/en-us/library/1z319a54(v=vs.90).aspx
+    //  https://qt.gitorious.org/qt/qt/blobs/092cd760d5fddf9640a310214fe01929f0fff3a8/src/corelib/io/qfsfileengine_win.cpp#line1781
 
-       // Since directory are *NOT* executable, files should *NOT* be readable
-      foreach(const QString& relativeFilepath, QStringList()
-             << path1 + "/sol.txt"
-             << path1 + "/la.txt"
-             << path2 + "/si.txt"
-             << path2 + "/sol.txt"
-             )
-       {
-       if (QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner)
-         {
-         std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                   << "File " << qPrintable(tmp.filePath(relativeFilepath))
-                   << " is *NOT* expected to be readable."<< std::endl;
-         return EXIT_FAILURE;
-         }
-       }
-
-      if (!qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner, QFile::ReadOwner))
-       {
-       std::cerr << __LINE__ << " - Problem with setPermissionsRecursively()" << std::endl;
-       return EXIT_FAILURE;
-       }
-
-      // Since directory are executable, files should be readable
-      foreach(const QString& relativeFilepath, QStringList()
-             << path1 + "/sol.txt"
-             << path1 + "/la.txt"
-             << path2 + "/si.txt"
-             << path2 + "/sol.txt"
-             )
+    // Since directory are *NOT* executable, files should *NOT* be readable
+    foreach(const QString& relativeFilepath, QStringList()
+            << path1 + "/sol.txt"
+            << path1 + "/la.txt"
+            << path2 + "/si.txt"
+            << path2 + "/sol.txt"
+            )
         {
-        if (!(QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner))
-          {
-          std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                    << "File " << qPrintable(tmp.filePath(relativeFilepath))
-                    << " is expected to be readable."<< std::endl;
-          return EXIT_FAILURE;
-          }
+      CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
         }
 
-      // Since directories and files are not writable, shouldn't be able to delete
-      if (ctk::removeDirRecursively(tmp.path()))
-        {
-        std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                  << "Should *NOT* be possible to recursively delete "
-                  << qPrintable(tmp.path()) << std::endl;
-        return EXIT_FAILURE;
-        }
+    CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner, QFile::ReadOwner), true);
 
+    // Since directory are executable, files should be readable
+    foreach(const QString& relativeFilepath, QStringList()
+            << path1 + "/sol.txt"
+            << path1 + "/la.txt"
+            << path2 + "/si.txt"
+            << path2 + "/sol.txt"
+            )
+      {
+      CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
+      }
+
+    // Since directories and files are not writable, shouldn't be able to delete
+    CHECK_BOOL(ctk::removeDirRecursively(tmp.path()), false);
 #endif
 
+    foreach(const QString& relativeFilepath, QStringList()
+            << path1 + "/sol.txt"
+            << path1 + "/la.txt"
+            << path2 + "/si.txt"
+            << path2 + "/sol.txt"
+            )
+      {
       // Since files are read-only, they should *NOT* be writable
-      foreach(const QString& relativeFilepath, QStringList()
-             << path1 + "/sol.txt"
-             << path1 + "/la.txt"
-             << path2 + "/si.txt"
-             << path2 + "/sol.txt"
-             )
-        {
-        if (QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner)
-          {
-          std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                    << "File " << qPrintable(tmp.filePath(relativeFilepath))
-                    << " is expected to be read-only."<< std::endl;
-          return EXIT_FAILURE;
-          }
-        }
+      CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner) != 0, false);
+      }
 
-      if (!qSlicerUtils::setPermissionsRecursively(tmp.path(),
-                                                   QFile::ReadOwner | QFile::ExeOwner | QFile::WriteOwner,
-                                                   QFile::ReadOwner | QFile::WriteOwner))
-        {
-        std::cerr << __LINE__ << " - Problem with setPermissionsRecursively()" << std::endl;
-        return EXIT_FAILURE;
-        }
+    CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(),
+      QFile::ReadOwner | QFile::ExeOwner | QFile::WriteOwner, QFile::ReadOwner | QFile::WriteOwner), true);
 
-      // Make sure files are readable and writable
-      foreach(const QString& relativeFilepath, QStringList()
-             << path1 + "/sol.txt"
-             << path1 + "/la.txt"
-             << path2 + "/si.txt"
-             << path2 + "/sol.txt"
-             )
-        {
-        if (!(QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner))
-          {
-          std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                    << "File " << qPrintable(tmp.filePath(relativeFilepath))
-                    << " is expected to have read/write permissions."<< std::endl;
-          return EXIT_FAILURE;
-          }
-        }
+    // Make sure files are readable and writable
+    foreach(const QString& relativeFilepath, QStringList()
+            << path1 + "/sol.txt"
+            << path1 + "/la.txt"
+            << path2 + "/si.txt"
+            << path2 + "/sol.txt"
+            )
+      {
+      CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner) != 0, true);
+      }
 
-      if (!ctk::removeDirRecursively(tmp.path()))
-        {
-        std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                  << "Should be possible to recursively delete "
-                  << qPrintable(tmp.path()) << std::endl;
-        return EXIT_FAILURE;
-        }
+    // Should be possible to recursively delete
+    CHECK_BOOL(ctk::removeDirRecursively(tmp.path()), true);
+
+    return EXIT_SUCCESS;
     }
 
-    //-----------------------------------------------------------------------------
-    // Test replaceWikiUrlVersion()
-    //-----------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------
+  int replaceWikiUrlVersionTest()
     {
-      //! [replaceWikiUrlVersion example1]
-      QString input =
-          "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter";
-      QString output = qSlicerUtils::replaceWikiUrlVersion(input, "4.4");
-      QString expectedOutput =
-          "http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter";
-      //! [replaceWikiUrlVersion example1]
-      if (output != expectedOutput)
-        {
-        std::cerr << __LINE__ << " - Error in  updateWikiUrlVersion()" << std::endl
-                              << "current = " << qPrintable(output) << std::endl
-                              << "expected = " << qPrintable(expectedOutput) << std::endl;
-        return EXIT_FAILURE;
-        }
+    //! [replaceWikiUrlVersion example1]
+    CHECK_QSTRING(
+      qSlicerUtils::replaceWikiUrlVersion("http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter", "4.4"),
+      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter");
+    //! [replaceWikiUrlVersion example1]
 
-      //! [replaceWikiUrlVersion example2]
-      input =
-          "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Foo/Extensions/SlicerToKiwiExporter";
-      output = qSlicerUtils::replaceWikiUrlVersion(input, "Bar");
-      expectedOutput =
-          "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Bar/Extensions/SlicerToKiwiExporter";
-      //! [replaceWikiUrlVersion example2]
-      if (output != expectedOutput)
-        {
-        std::cerr << __LINE__ << " - Error in  updateWikiUrlVersion()" << std::endl
-                              << "current = " << qPrintable(output) << std::endl
-                              << "expected = " << qPrintable(expectedOutput) << std::endl;
-        return EXIT_FAILURE;
-        }
+    //! [replaceWikiUrlVersion example2]
+    CHECK_QSTRING(
+      qSlicerUtils::replaceWikiUrlVersion("http://wiki.slicer.org/slicerWiki/index.php/Documentation/Foo/Extensions/SlicerToKiwiExporter", "Bar"),
+      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Bar/Extensions/SlicerToKiwiExporter");
+    //! [replaceWikiUrlVersion example2]
 
-      //! [replaceWikiUrlVersion example3]
-      input =
-          "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Foo/Extensions/SlicerToKiwiExporter/Foo";
-      output = qSlicerUtils::replaceWikiUrlVersion(input, "Bar");
-      expectedOutput =
-          "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Bar/Extensions/SlicerToKiwiExporter/Foo";
-      //! [replaceWikiUrlVersion example3]
-      if (output != expectedOutput)
-        {
-        std::cerr << __LINE__ << " - Error in  updateWikiUrlVersion()" << std::endl
-                              << "current = " << qPrintable(output) << std::endl
-                              << "expected = " << qPrintable(expectedOutput) << std::endl;
-        return EXIT_FAILURE;
-        }
+    //! [replaceWikiUrlVersion example3]
+    CHECK_QSTRING(
+      qSlicerUtils::replaceWikiUrlVersion("http://wiki.slicer.org/slicerWiki/index.php/Documentation/Foo/Extensions/SlicerToKiwiExporter/Foo", "Bar"),
+      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Bar/Extensions/SlicerToKiwiExporter/Foo");
+    //! [replaceWikiUrlVersion example3]
 
-      //! [replaceWikiUrlVersion example4]
-      input =
-          "Read documentation at "
-          "http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter."
-          "You will learn how to ...";
-      output = qSlicerUtils::replaceWikiUrlVersion(input, "Nightly");
-      expectedOutput =
-          "Read documentation at "
-          "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter."
-          "You will learn how to ...";
-      //! [replaceWikiUrlVersion example4]
-      if (output != expectedOutput)
-        {
-        std::cerr << __LINE__ << " - Error in  updateWikiUrlVersion()" << std::endl
-                              << "current = " << qPrintable(output) << std::endl
-                              << "expected = " << qPrintable(expectedOutput) << std::endl;
-        return EXIT_FAILURE;
-        }
-      }
+    //! [replaceWikiUrlVersion example4]
+    QString input =
+      "Read documentation at "
+      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter."
+      "You will learn how to ...";
+    QString expectedOutput =
+      "Read documentation at "
+      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter."
+      "You will learn how to ...";
+    CHECK_QSTRING(qSlicerUtils::replaceWikiUrlVersion(input, "Nightly"), expectedOutput);
+    //! [replaceWikiUrlVersion example4]
+
+    return EXIT_SUCCESS;
+    }
+
+  //-----------------------------------------------------------------------------
+  int replaceDocumentationUrlVersionTest()
+    {
+
+    QString hostname = "slicer.readthedocs.io";
+    // Slicer ReadTheDocs -> replacements are done
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://slicer.readthedocs.io/en/latest/user_guide/get_help.html", hostname, "5.0"),
+      "https://slicer.readthedocs.io/en/5.0/user_guide/get_help.html");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://slicer.readthedocs.io/en/stable/user_guide/get_help.html", hostname, "5.0"),
+      "https://slicer.readthedocs.io/en/5.0/user_guide/get_help.html");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://slicer.readthedocs.io/en/4.11/user_guide/get_help.html", hostname, "5.0"),
+      "https://slicer.readthedocs.io/en/5.0/user_guide/get_help.html");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://slicer.readthedocs.io/en/v4.11/user_guide/get_help.html", hostname, "v5.0"),
+      "https://slicer.readthedocs.io/en/v5.0/user_guide/get_help.html");
+
+
+    // GitHub -> no replacements are done
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart#readme", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart#readme");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/tree/4.6#readme", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/tree/4.6#readme");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/tree/v4.6#readme", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/tree/v4.6#readme");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/blob/4.6/README.md", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/blob/4.6/README.md");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/blob/main/README.md", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/blob/main/README.md");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/blob/master/README.md", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/blob/master/README.md");
+
+    CHECK_QSTRING(
+      qSlicerUtils::replaceDocumentationUrlVersion("https://github.com/SlicerHeart/SlicerHeart/blob/latest/data/1.0/README.md", hostname, "5.0"),
+      "https://github.com/SlicerHeart/SlicerHeart/blob/latest/data/1.0/README.md");
+
+    return EXIT_SUCCESS;
+    }
+
+
+} // end of anonymous namespace
+
+int qSlicerUtilsTest1(int argc, char *argv [])
+{
+  try
+    {
+    CHECK_EXIT_SUCCESS(isExecutableNameTest());
+    CHECK_EXIT_SUCCESS(isCLILoadableModuleTest());
+    CHECK_EXIT_SUCCESS(isLoadableModuleTest());
+    CHECK_EXIT_SUCCESS(executableExtensionTest());
+    CHECK_EXIT_SUCCESS(extractModuleNameFromClassNameTest());
+    CHECK_EXIT_SUCCESS(isPluginInstalledBuiltinTest());
+    CHECK_EXIT_SUCCESS(setPermissionsRecursivelyTest());
+    CHECK_EXIT_SUCCESS(replaceWikiUrlVersionTest());
+    CHECK_EXIT_SUCCESS(replaceDocumentationUrlVersionTest());
     }
   catch (std::runtime_error e)
     {

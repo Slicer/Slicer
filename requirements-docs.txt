@@ -1,6 +1,8 @@
 docutils
+linkify-it-py
+lxml
+myst-parser
 pygments
-recommonmark
 sphinx
 sphinx-issues
 sphinx-markdown-tables

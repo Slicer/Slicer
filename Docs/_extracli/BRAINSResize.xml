@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>Resize Image (BRAINS)</title>
+
+  <description>
+This program is useful for downsampling an image by a constant scale factor.
+  </description>
+  <version>5.4.0</version>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsresize.html</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>This tool was developed by Hans Johnson.</contributor>
+  <acknowledgements>The development of this tool was supported by funding from grants NS050568 and NS40068 from the National Institute of Neurological Disorders and Stroke and grants MH31593, MH40856, from the National Institute of Mental Health.  </acknowledgements>
+
+  <parameters>
+    <label>Inputs</label>
+    <description>Parameters for specifying the image to warp and resulting image space</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag alias="fixedVolume">inputVolume</longflag>
+      <description>Image To Scale</description>
+      <label>Image To Warp</label>
+      <channel>input</channel>
+    </image>
+
+  </parameters>
+  <parameters>
+    <label>Outputs</label>
+    <description>Resulting scaled image parameters</description>
+
+    <image>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Resulting scaled image</description>
+      <label>Output Image</label>
+      <channel>output</channel>
+    </image>
+
+    <string-enumeration>
+      <name>pixelType</name>
+      <longflag>pixelType</longflag>
+      <label>Pixel Type</label>
+      <description>Specifies the pixel type for the input/output images.  The "binary" pixel type uses a modified algorithm whereby the image is read in as unsigned char, a signed distance map is created, signed distance map is resampled, and then a thresholded image of type unsigned char is written to disk.</description>
+      <default>float</default>
+      <element>float</element>
+      <element>short</element>
+      <element>ushort</element>
+      <element>int</element>
+      <element>uint</element>
+      <element>uchar</element>
+      <element>binary</element>
+    </string-enumeration>
+  </parameters>
+
+  <parameters>
+    <label>Scaling Parameters</label>
+    <description>Parameters used to define the scaling of the output image</description>
+
+    <float>
+      <name>scaleFactor</name>
+      <longflag>scaleFactor</longflag>
+      <label>Scale Factor</label>
+      <description>The scale factor for the image spacing.</description>
+      <default>2.0</default>
+    </float>
+  </parameters>
+</executable>

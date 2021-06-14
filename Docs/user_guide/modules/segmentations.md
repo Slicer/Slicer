@@ -96,7 +96,7 @@ For exporting segmentation as NRRD or NIFTI file for external software that uses
 - Set additional options (destination folder, compression, etc.) as needed
 - Click `Export`
 
-Labelmap volumes can be created in any other formats by [exporting segmentation to labelmap volume](segmentations.html#export-segmentation-to-labelmap-volume) then in application menu, choose `File` / `Save`.
+Labelmap volumes can be created in any other formats by [exporting segmentation to labelmap volume](segmentations.md#export-segmentation-to-labelmap-volume) then in application menu, choose `File` / `Save`.
 
 
 ### Create new representation in segmentation (conversion)
@@ -120,13 +120,13 @@ See Script repository's [Segmentations section](https://www.slicer.org/wiki/Docu
 - The master representation is used when exporting into DICOM, therefore you need to select a master volume, create binary labelmap representation and set it as master
 - DICOM Segmentation Object export if `QuantitativeReporting` extension is installed
 - Legacy DICOM RT structure set export is available if `SlicerRT` extension is installed. RT structure sets are not recommended for storing segmentations, as they cannot store arbitrarily complex 3D shapes.
-- Follow [these instructions](dicom.html#export-data-from-the-scene-to-dicom-database) for exporting data in DICOM format.
+- Follow [these instructions](dicom.md#export-data-from-the-scene-to-dicom-database) for exporting data in DICOM format.
 
 ## Panels and their use
 
 - Segments table
     - Add/remove segments
-    - Edit selected: takes user to [Segment Editor](SegmentEditor) module
+    - Edit selected: takes user to [Segment Editor](segmenteditor.md) module
     - Set visibility and per-segment display settings, opacity, color, segment name
 - Display
     - Segmentations-wide display settings (not per-segment!): visibility, opacity (will be multiplied with per-segment opacity for display)

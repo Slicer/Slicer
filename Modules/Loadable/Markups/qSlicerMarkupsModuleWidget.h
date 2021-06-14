@@ -249,6 +249,10 @@ public slots:
   /// Update set of create markups push buttons
   void onPlaceMarkupsAdditionalOptionsWidgets();
 
+  void updateImportExportWidgets();
+
+  void onImportExportApply();
+
 protected:
   QScopedPointer<qSlicerMarkupsModuleWidgetPrivate> d_ptr;
 

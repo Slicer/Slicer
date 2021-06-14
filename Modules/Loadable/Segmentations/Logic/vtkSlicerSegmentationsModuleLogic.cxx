@@ -668,6 +668,14 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
     return nullptr;
     }
 
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(segmentShItemID));
+  if (segmentationNode)
+    {
+    // a segmentation is selected
+    return segmentationNode;
+    }
+
+  // If a segment is selected then the parent is the segmentation node.
   vtkIdType parentShItem = shNode->GetItemParent(segmentShItemID);
   if (parentShItem == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -675,8 +683,7 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
       << " Segment subject hierarchy item has no segmentation parent");
     return nullptr;
     }
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-    shNode->GetItemDataNode(parentShItem) );
+  segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(parentShItem) );
   if (!segmentationNode)
     {
     vtkErrorWithObjectMacro(scene, "vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem:"

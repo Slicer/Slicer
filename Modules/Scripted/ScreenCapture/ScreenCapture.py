@@ -283,7 +283,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     advancedFormLayout.addRow("ffmpeg executable:", self.ffmpegPathSelector)
 
     self.videoExportFfmpegWarning = qt.QLabel('<qt><b><font color="red">Set valid ffmpeg executable path! '+
-      '<a href="http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ScreenCapture#Setting_up_ffmpeg">Help...</a></font></b></qt>')
+      '<a href="https://slicer.readthedocs.io/en/latest/user_guide/modules/screencapture.html#setting-up-ffmpeg">Help...</a></font></b></qt>')
     self.videoExportFfmpegWarning.connect('linkActivated(QString)', self.openURL)
     self.videoExportFfmpegWarning.setVisible(False)
     advancedFormLayout.addRow("", self.videoExportFfmpegWarning)

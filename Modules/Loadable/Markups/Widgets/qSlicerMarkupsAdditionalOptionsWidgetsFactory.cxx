@@ -38,7 +38,7 @@ public:
   {
     if (qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance)
       {
-      qSlicerMarkupsAdditionalOptionsWidgetsFactory::setInstance(nullptr);
+      qSlicerMarkupsAdditionalOptionsWidgetsFactory::cleanup();
       }
   }
 };
@@ -59,23 +59,12 @@ qSlicerMarkupsAdditionalOptionsWidgetsFactory* qSlicerMarkupsAdditionalOptionsWi
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsAdditionalOptionsWidgetsFactory::setInstance(qSlicerMarkupsAdditionalOptionsWidgetsFactory* instance)
+void qSlicerMarkupsAdditionalOptionsWidgetsFactory::cleanup()
 {
-  if (qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance==instance)
-    {
-    return;
-    }
-
-  // Preferably this will be nullptr
   if (qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance)
     {
     delete qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance;
-    }
-
-  qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance = instance;
-  if (!instance)
-    {
-    return;
+    qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance = nullptr;
     }
 }
 

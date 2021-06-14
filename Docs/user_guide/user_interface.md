@@ -99,7 +99,7 @@ The toolbar icons that switch between these mouse modes are shown from left to r
 
 Medical images typically contain thousands of gray levels, but regular computer displays can display only 256 gray levels, and the human eye also has limitation in what minimum contrast difference it can notice (see [Kimpe 2007](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3043920/) for more specific information). Therefore, medical images are displayed with adjustable brightness/contrast (window/level).
 
-By default 3D Slicer uses window/level setting that is specified in the DICOM file. If it is not available then window/level is set so that the entire intensity range of the image (except top/bottom 0.1%, to not let a very thin tail of the intensity distribution to decrease the image contrast too much).
+By default 3D Slicer uses window/level setting that is specified in the DICOM file. If it is not available then window/level is set to contain the entire intensity range of the image (except top/bottom 0.1%, calculated using percentiles, to not let a very thin tail of the intensity distribution to decrease the image contrast too much).
 
 Window/level can be manually adjusted anytime by clicking on "Adjust window/level" button on the toolbar then left-click-and-drag in any of the slice viewers. Optimal window/level can be computed for a chosen area by lef-click-and-dragging while holding down <kbd>Ctrl</kbd> key.
 

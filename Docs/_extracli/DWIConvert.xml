@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Diffusion.Import and Export</category>
+  <title>Diffusion-weighted DICOM Import (DWIConvert)</title>
+  <description><![CDATA[Converts diffusion weighted MR images in DICOM series into NRRD format for analysis in Slicer. This program has been tested on only a limited subset of DTI DICOM formats available from Siemens, GE, and Philips scanners. Work in progress to support DICOM multi-frame data. The program parses DICOM header to extract necessary information about measurement frame, diffusion weighting directions, b-values, etc, and write out a NRRD image. For non-diffusion weighted DICOM images, it loads in an entire DICOM series and writes out a single dicom volume in a .nhdr/.raw pair.]]></description>
+  <version>5.4.0</version>
+  <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/dwiconvert.html</documentation-url>
+  <license>Apache License Version 2.0</license>
+  <contributor>Hans Johnson (UIowa), Vince Magnotta (UIowa) Joy Matsui (UIowa), Kent Williams (UIowa), Mark Scully (Uiowa), Xiaodong Tao (GE)</contributor>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  Additional support for DTI data produced on Philips scanners was contributed by Vincent Magnotta and Hans Johnson at the University of Iowa.]]></acknowledgements>
+
+  <parameters>
+    <label>Conversion Options</label>
+    <description><![CDATA[Options that are used for all conversion modes]]></description>
+    <string-enumeration>
+      <name>conversionMode</name>
+      <longflag>--conversionMode</longflag>
+      <description><![CDATA[Determine which conversion to perform. DicomToNrrd (default): Convert DICOM series to NRRD DicomToFSL: Convert DICOM series to NIfTI File + gradient/bvalue text files NrrdToFSL: Convert DWI NRRD file to NIfTI File + gradient/bvalue text files FSLToNrrd: Convert NIfTI File + gradient/bvalue text files to NRRD file.]]></description>
+      <default>DicomToNrrd</default>
+      <element>DicomToNrrd</element>
+      <element>DicomToFSL</element>
+      <element>NrrdToFSL</element>
+      <element>FSLToNrrd</element>
+    </string-enumeration>
+    <image type="diffusion-weighted">
+      <name>inputVolume</name>
+      <longflag>--inputVolume</longflag>
+      <label>Input DWI Volume file</label>
+      <channel>input</channel>
+      <description><![CDATA[Input DWI volume -- not used for DicomToNrrd mode.]]>
+      </description>
+    </image>
+    <image type="diffusion-weighted">
+      <name>outputVolume</name>
+      <flag>-o</flag>
+      <longflag>--outputVolume</longflag>
+      <label>Output DWI Volume file</label>
+      <channel>output</channel>
+      <description><![CDATA[Output filename (.nhdr or .nrrd)]]></description>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Dicom To Nrrd Conversion Parameters</label>
+    <description><![CDATA[Parameters for Dicom to NRRD Conversion]]></description>
+    <directory>
+      <name>inputDicomDirectory</name>
+      <flag>-i</flag>
+      <longflag>--inputDicomDirectory</longflag>
+      <label>Input Dicom Data Directory</label>
+      <channel>input</channel>
+      <default></default>
+      <description><![CDATA[Directory holding Dicom series]]></description>
+    </directory>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>NiftiFSL To Nrrd Conversion Parameters</label>
+    <description><![CDATA[NiftiFSL To Nrrd Conversion Parameters]]></description>
+    <file>
+      <name>fslNIFTIFile</name>
+      <longflag>--fslNIFTIFile</longflag>
+      <label>FSL NIfTI File</label>
+      <channel>input</channel>
+      <description><![CDATA[4D NIfTI file containing gradient volumes]]></description>
+    </file>
+    <file fileExtensions=".bval">
+      <name>inputBValues</name>
+      <longflag>--inputBValues</longflag>
+      <label>Input bval file</label>
+      <channel>input</channel>
+      <description><![CDATA[The B Values are stored in FSL .bval text file format]]></description>
+    </file>
+    <file fileExtensions=".bvec">
+      <name>inputBVectors</name>
+      <longflag>--inputBVectors</longflag>
+      <label>Input bvec file</label>
+      <channel>input</channel>
+      <description><![CDATA[The Gradient Vectors are stored in FSL .bvec text file format]]></description>
+    </file>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Nrrd To NiftiFSL Conversion Parameters</label>
+    <description><![CDATA[Nrrd To NiftiFSL (NrrdToFSL) Conversion Parameters]]></description>
+    <file fileExtensions=".nii,.nii.gz">
+      <name>outputNiftiFile</name>
+      <longflag>--outputNiftiFile</longflag>
+      <label>Output nii file</label>
+      <channel>output</channel>
+      <description><![CDATA[Nifti output filename (for Slicer GUI use).]]></description>
+    </file>
+    <file fileExtensions=".bval">
+      <name>outputBValues</name>
+      <longflag>--outputBValues</longflag>
+      <label>Output bval file</label>
+      <channel>output</channel>
+      <default></default>
+      <description><![CDATA[The B Values are stored in FSL .bval text file format (defaults to <outputVolume>.bval)]]></description>
+      <default></default>
+    </file>
+    <file fileExtensions=".bvec">
+      <name>outputBVectors</name>
+      <longflag>--outputBVectors</longflag>
+      <label>Output bvec file</label>
+      <channel>output</channel>
+      <default></default>
+      <description><![CDATA[The Gradient Vectors are stored in FSL .bvec text file format (defaults to <outputVolume>.bvec)]]></description>
+      <default></default>
+    </file>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Advanced Conversion Parameters</label>
+    <description><![CDATA[Options to control the output.]]></description>
+    <boolean>
+      <name>writeProtocolGradientsFile</name>
+      <longflag>--writeProtocolGradientsFile</longflag>
+      <label>Write Protocol Gradients File</label>
+      <description><![CDATA[Write the protocol gradients to a file suffixed by ".txt" as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary.]]></description>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>useIdentityMeaseurementFrame</name>
+      <longflag>--useIdentityMeaseurementFrame</longflag>
+      <label>Use Identity Measurement Frame</label>
+      <description><![CDATA[Adjust all the gradients so that the measurement frame is an identity matrix.]]></description>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>useBMatrixGradientDirections</name>
+      <longflag>--useBMatrixGradientDirections</longflag>
+      <label>Use BMatrix Gradient Directions</label>
+      <description><![CDATA[Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.  In some cases the standard public gradients are not properly computed.  The gradients can emperically computed from the private BMatrix fields.  In some cases the private BMatrix is consistent with the public grandients, but not in all cases, when it exists BMatrix is usually most robust.]]></description>
+      <default>false</default>
+    </boolean>
+    <directory>
+      <name>outputDirectory</name>
+      <longflag>--outputDirectory</longflag>
+      <label>Output Directory</label>
+      <channel>output</channel>
+      <description><![CDATA[Directory holding the output NRRD file]]></description>
+      <default>.</default>
+    </directory>
+    <double>
+      <name>smallGradientThreshold</name>
+      <longflag>--smallGradientThreshold</longflag>
+      <label>Small Gradient Threshold</label>
+      <description><![CDATA[If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DWIConvert will display an error message and quit, unless the useBMatrixGradientDirections option is set.]]></description>
+      <default>0.2</default>
+    </double>
+    <boolean>
+      <name>transpose</name>
+      <longflag>transposeInputBVectors</longflag>
+      <label>Transpose Input BVectors</label>
+      <default>true</default>
+      <description><![CDATA[FSL input BVectors are expected to be encoded in the input file as one vector per line. If it is not the case, use this option to transpose the file as it is read]]></description>
+    </boolean>
+    <boolean>
+      <name>allowLossyConversion</name>
+      <longflag>allowLossyConversion</longflag>
+      <label>Allow lossy image conversion</label>
+      <default>false</default>
+      <description><![CDATA[The only supported output type is 'short'. Conversion from images of a different type may cause data loss due to rounding or truncation. Use with caution!"]]></description>
+    </boolean>
+  </parameters>
+  <parameters advanced="true">
+    <label>DEPRECATED THESE DO NOT WORK</label>
+  <file>
+    <name>gradientVectorFile</name>
+    <longflag>--gradientVectorFile</longflag>
+    <label>Gradient Vector File</label>
+    <channel>output</channel>
+    <description><![CDATA[DEPRECATED:  Use --inputBVector --inputBValue files Text file giving gradient vectors]]></description>
+  </file>
+    <boolean>
+      <name>fMRIOutput</name>
+      <longflag>--fMRI</longflag>
+      <label>Output fMRI file</label>
+      <description>DEPRECATED:  No support or testing.  Output a NRRD file, but without gradients</description>
+      <!-- booleans default to false -->
+    </boolean>
+  </parameters>
+</executable>

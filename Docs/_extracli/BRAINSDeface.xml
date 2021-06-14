@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+    <category>Utilities.BRAINS</category>
+    <title>Brain Deface from T1/T2 image (BRAINS)</title>
+    <description>This program: 1) will deface images from a set of images.  Inputs must be ACPC aligned, and AC, PC, LE, RE provided.</description>
+    <version>5.4.0</version>
+    <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsdeface.html</documentation-url>
+    <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+    <contributor>This tool is created by Hans J. Johnson.</contributor>
+    <acknowledgements>This work was developed by the University of Iowa Department of Electrical and Computer Engineering.</acknowledgements>
+
+    <parameters>
+        <label>Input Images</label>
+        <description>First Image, Second Image and Mask Image</description>
+
+        <file fileExtensions=".fcsv">
+            <name>inputLandmarks</name>
+            <flag>l</flag>
+            <longflag>inputLandmarks</longflag>
+            <description>Input Landmark File with LE, and RE points defined in physical locations</description>
+            <label>Landmarks File</label>
+            <default></default>
+            <channel>input</channel>
+        </file>
+
+        <image multiple="true">>
+            <name>inputVolume</name>
+            <flag>i</flag>
+            <longflag>inputVolume</longflag>
+            <description>Input images, all images must be in the exact same physical space, ACPC aligned and consistent with landmarks.</description>
+            <label>Source Reference Image</label>
+            <channel>input</channel>
+        </image>
+        <image multiple="true">>
+            <name>passiveVolume</name>
+            <flag>p</flag>
+            <longflag>passiveVolume</longflag>
+            <description>Input images not used in generating masks, all images must be in the exact same physical space as inputVolumes, ACPC aligned and consistent with landmarks.</description>
+            <label>Source Passive Images Image</label>
+            <channel>input</channel>
+        </image>
+
+
+        <image>
+            <name>inputMask</name>
+            <longflag>inputMask</longflag>
+            <description>Optional pre-generated mask to use.</description>
+            <label>Optional Mask</label>
+            <channel>input</channel>
+        </image>
+
+        <string-enumeration>
+            <name>defaceMode</name>
+            <longflag>defaceMode</longflag>
+            <element>zero</element>
+            <element>blur</element>
+            <default>blur</default>
+        </string-enumeration>
+    </parameters>
+
+    <parameters>
+        <label>Output Files</label>
+        <description>Outputs from both MUSH generation and brain volume mask creation</description>
+
+        <image fileExtensions=".nii.gz,.nrrd" type="label">
+            <name>outputMask</name>
+            <flag>o</flag>
+            <longflag>outputMask</longflag>
+            <description>The brain volume mask generated from the MUSH image</description>
+            <label>brain volume mask</label>
+            <channel>output</channel>
+            <default>output.nii.gz</default>
+        </image>
+        <directory>
+            <name>outputDirectory</name>
+            <flag>d</flag>
+            <longflag>outputDirectory</longflag>
+            <description>The output directory to writing the defaced input files</description>
+            <label>OutputDirectory</label>
+            <channel>output</channel>
+            <default>/tmp</default>
+        </directory>
+    </parameters>
+
+    <parameters>
+        <label>Run Mode</label>
+        <description>Modify the program to only generate a mask</description>
+
+        <boolean>
+            <name>noMaskApplication</name>
+            <longflag>noMaskApplication</longflag>
+            <description>Do not apply the mask to the input images used to generate the mask</description>
+            <label>No Mask Application</label>
+            <!-- The default for boolean parameters is always set to false.-->
+        </boolean>
+    </parameters>
+
+    <parameters>
+        <label>Output Image Intensity Normalization</label>
+        <description>Parameters for normalizing the output images.</description>
+        <double>
+            <name>upperPercentile</name>
+            <longflag>upperPercentile</longflag>
+            <description>Upper Intensity Percentile (0.99 default)</description>
+            <label>Upper Percentile</label>
+            <default>0.99</default>
+            <constraints>
+                <minimum>0.0</minimum>
+                <maximum>1.0</maximum>
+                <step>.001</step>
+            </constraints>
+        </double>
+
+        <double>
+            <name>lowerPercentile</name>
+            <longflag>lowerPercentile</longflag>
+            <description>Lower Intensity Percentile (0.01 default)</description>
+            <label>Lower Percentile</label>
+            <default>0.01</default>
+            <constraints>
+                <minimum>0.0</minimum>
+                <maximum>1.0</maximum>
+                <step>.001</step>
+            </constraints>
+        </double>
+
+        <double>
+            <name>upperOutputIntensity</name>
+            <longflag>upperOutputIntensity</longflag>
+            <description>Upper Output Intensity</description>
+            <label>Upper Output Intensity</label>
+            <default>255</default>
+            <constraints>
+                <minimum>0</minimum>
+                <maximum>255</maximum>
+                <step>.1</step>
+            </constraints>
+        </double>
+
+        <double>
+            <name>lowerOutputIntensity</name>
+            <longflag>lowerOutputIntensity</longflag>
+            <description>Lower Output Intensity</description>
+            <label>Lower Output Intensity</label>
+            <default>0</default>
+            <constraints>
+                <minimum>0</minimum>
+                <maximum>255</maximum>
+                <step>.1</step>
+            </constraints>
+        </double>
+
+        <boolean>
+            <name>no_clip</name>
+            <longflag>no_clip</longflag>
+            <description>Do not clip Values outside of this range to be the "Outside Value"</description>
+            <label>Upper Output Intensity</label>
+            <!-- The default for boolean parameters is always set to false.-->
+        </boolean>
+
+        <boolean>
+            <name>no_relative</name>
+            <longflag>no_relative</longflag>
+            <description>Do not scale to the relative percentiles of the output scale</description>
+            <label>Relative Scaling</label>
+            <!-- The default for boolean parameters is always set to false.-->
+        </boolean>
+
+        <integer>
+            <name>debugLevel</name>
+            <longflag>debugLevel</longflag>
+            <description>Level of Debugging (0=None)</description>
+            <label>Debug Level</label>
+            <default>0</default>
+            <constraints>
+                <minimum>0</minimum>
+                <maximum>10</maximum>
+                <step>1</step>
+            </constraints>
+        </integer>
+    </parameters>
+</executable>

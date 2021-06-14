@@ -42,13 +42,14 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
   def getDefaultModuleDocumentationLink(self, docPage=None):
     """Return string that can be inserted into the application help text that contains
     link to the module's documentation in current Slicer version's documentation.
-    Currently the text is "See the documentation for more information."
-    If docPage is not specified then the link points to Modules/(ModuleName).
+    The text is "For more information see the online documentation."
+    If docPage is not specified then the link points to URL returned by :func:`slicer.app.moduleDocumentationUrl`.
     """
-    if not docPage:
-      docPage = "Modules/"+self.moduleName
-    linkText = '<p>For more information see the <a href="{}/Documentation/{}.{}/{}">online documentation</a>.</p>'.format(
-      self.parent.slicerWikiUrl, slicer.app.majorVersion, slicer.app.minorVersion, docPage)
+    if docPage:
+      url = slicer.app.documentationBaseUrl + docPage
+    else:
+      url = slicer.app.moduleDocumentationUrl(self.moduleName)
+    linkText = f'<p>For more information see the <a href="{url}">online documentation</a>.</p>'
     return linkText
 
   def runTest(self, msec=100, **kwargs):

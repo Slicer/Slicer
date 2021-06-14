@@ -252,8 +252,9 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
     "run this application. The application most likely will not function properly.");
 
   QString details = tr(
-    "See more information and help at:\nhttps://www.slicer.org/wiki/Documentation/Nightly/FAQ/General#Slicer_does_not_start \n\n"
-    "Graphics capabilities of this computer:\n\n");
+    "See more information and help at:\n{1}/user_guide/get_help.html#slicer-application-does-not-start\n\n"
+    "Graphics capabilities of this computer:\n\n")
+    .arg(qSlicerApplication::application()->documentationBaseUrl());
   details += systemInfo->GetRenderingCapabilitiesDetails().c_str();
 
   ctkMessageBox *messageBox = new ctkMessageBox(nullptr);

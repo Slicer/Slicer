@@ -41,7 +41,7 @@ Release mode:
 ```
 mkdir C:\D\S4R
 cd /d C:\D\S4R
-"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 16 2019 Win64" -DQt5_DIR:PATH=C:\Qt\5.15.0\msvc2019_64\lib\cmake\Qt5 C:\D\S4
+"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 16 2019" -A x64 -DQt5_DIR:PATH=C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5 C:\D\S4
 "C:\Program Files\CMake\bin\cmake.exe" --build . --config Release
 ```
 
@@ -50,7 +50,7 @@ Debug mode:
 ```
 mkdir C:\D\S4D
 cd /d C:\D\S4D
-"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 16 2019 Win64" -DQt5_DIR:PATH=C:\Qt\5.15.0\msvc2019_64\lib\cmake\Qt5 C:\D\S4
+"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 16 2019" -A x64 -DQt5_DIR:PATH=C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5 C:\D\S4
 "C:\Program Files\CMake\bin\cmake.exe" --build . --config Debug
 ```
 
@@ -140,7 +140,7 @@ Once VisualStudio is open with the Slicer environment loaded, it is possible to 
 
 ### Debugging Python scripts
 
-See [Python scripting page](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Python_scripting#How_can_I_use_a_visual_debugger_for_step-by-step_debugging) for detailed instructions.
+See [Python scripting page](https://slicer.readthedocs.io/en/latest/developer_guide/build_instructions/windows.html#debugging-python-scripts) for detailed instructions.
 
 ## Common errors
 

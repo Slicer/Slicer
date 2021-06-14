@@ -44,6 +44,7 @@
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelDisplayNode.h>
+#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -68,6 +69,11 @@ public:
   QAction* ConvertLabelmapToSegmentationAction;
   QAction* ConvertModelToSegmentationAction;
   QAction* ConvertModelsToSegmentationAction;
+  QAction* CreateBinaryLabelmapRepresentationAction;
+  QAction* CreateClosedSurfaceRepresentationAction;
+  QAction* RemoveBinaryLabelmapRepresentationAction;
+  QAction* RemoveClosedSurfaceRepresentationAction;
+
   QAction* Toggle2DFillVisibilityAction;
   QAction* Toggle2DOutlineVisibilityAction;
 
@@ -86,6 +92,10 @@ qSlicerSubjectHierarchySegmentationsPluginPrivate::qSlicerSubjectHierarchySegmen
 , ConvertLabelmapToSegmentationAction(nullptr)
 , ConvertModelToSegmentationAction(nullptr)
 , ConvertModelsToSegmentationAction(nullptr)
+, CreateBinaryLabelmapRepresentationAction(nullptr)
+, CreateClosedSurfaceRepresentationAction(nullptr)
+, RemoveBinaryLabelmapRepresentationAction(nullptr)
+, RemoveClosedSurfaceRepresentationAction(nullptr)
 , Toggle2DFillVisibilityAction(nullptr)
 , Toggle2DOutlineVisibilityAction(nullptr)
 , SegmentSubjectHierarchyItemRemovalInProgress(false)
@@ -111,6 +121,16 @@ void qSlicerSubjectHierarchySegmentationsPluginPrivate::init()
 
   this->ConvertModelsToSegmentationAction = new QAction("Convert models to segmentation node",q);
   QObject::connect(this->ConvertModelsToSegmentationAction, SIGNAL(triggered()), q, SLOT(convertModelsToSegmentation()));
+
+  this->CreateBinaryLabelmapRepresentationAction = new QAction("Create binary labelmap representation", q);
+  QObject::connect(this->CreateBinaryLabelmapRepresentationAction, SIGNAL(triggered()), q, SLOT(createBinaryLabelmapRepresentation()));
+  this->CreateClosedSurfaceRepresentationAction = new QAction("Create closed surface representation", q);
+  QObject::connect(this->CreateClosedSurfaceRepresentationAction, SIGNAL(triggered()), q, SLOT(createClosedSurfaceRepresentation()));
+
+  this->RemoveBinaryLabelmapRepresentationAction = new QAction("Remove binary labelmap representation", q);
+  QObject::connect(this->RemoveBinaryLabelmapRepresentationAction, SIGNAL(triggered()), q, SLOT(removeBinaryLabelmapRepresentation()));
+  this->RemoveClosedSurfaceRepresentationAction = new QAction("Remove closed surface representation", q);
+  QObject::connect(this->RemoveClosedSurfaceRepresentationAction, SIGNAL(triggered()), q, SLOT(removeClosedSurfaceRepresentation()));
 
   this->Toggle2DFillVisibilityAction = new QAction("2D fill visibility",q);
   QObject::connect(this->Toggle2DFillVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle2DFillVisibility(bool)));
@@ -488,7 +508,10 @@ QList<QAction*> qSlicerSubjectHierarchySegmentationsPlugin::itemContextMenuActio
   Q_D(const qSlicerSubjectHierarchySegmentationsPlugin);
 
   QList<QAction*> actions;
-  actions << d->ExportBinaryLabelmapAction << d->ExportClosedSurfaceAction
+  actions
+    << d->ExportBinaryLabelmapAction << d->ExportClosedSurfaceAction
+    << d->CreateBinaryLabelmapRepresentationAction << d->RemoveBinaryLabelmapRepresentationAction
+    << d->CreateClosedSurfaceRepresentationAction << d->RemoveClosedSurfaceRepresentationAction
     << d->ConvertLabelmapToSegmentationAction << d->ConvertModelToSegmentationAction << d->ConvertModelsToSegmentationAction;
   return actions;
 }
@@ -519,6 +542,46 @@ void qSlicerSubjectHierarchySegmentationsPlugin::showContextMenuActionsForItem(v
     {
     d->ExportBinaryLabelmapAction->setVisible(true);
     d->ExportClosedSurfaceAction->setVisible(true);
+
+    // Get segmentation node
+    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    if (!segmentationNode)
+      {
+      // The selected item is not a segmentation node, so the parent should be the segmentation node
+      vtkIdType parentItemID = shNode->GetItemParent(itemID);
+      if (parentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+        {
+        segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
+        }
+      }
+
+    // Add/remove representation actions
+    if (segmentationNode && segmentationNode->GetSegmentation())
+      {
+      vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+      if (segmentation->GetMasterRepresentationName() != vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
+        {
+        if (segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
+          {
+          d->RemoveBinaryLabelmapRepresentationAction->setVisible(true);
+          }
+        else
+          {
+        d->CreateBinaryLabelmapRepresentationAction->setVisible(true);
+          }
+        }
+      if (segmentation->GetMasterRepresentationName() != vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName())
+        {
+        if (segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()))
+          {
+          d->RemoveClosedSurfaceRepresentationAction->setVisible(true);
+          }
+        else
+          {
+        d->CreateClosedSurfaceRepresentationAction->setVisible(true);
+          }
+        }
+      }
     }
   else if (!shNode->GetItemOwnerPluginName(itemID).compare("LabelMaps"))
     {
@@ -912,29 +975,12 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBe
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchySegmentationsPlugin::exportToBinaryLabelmap()
 {
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return;
-    }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item";
-    return;
-    }
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
-
-  // Segmentations plugin provides the functionality for segments too, see if it is a segment
+  vtkMRMLSegmentationNode* segmentationNode = vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem(), qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene());
   if (!segmentationNode)
     {
-    vtkIdType parentItemID = shNode->GetItemParent(currentItemID);
-    if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-      {
-      return;
-      }
-    segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
+    qCritical() << Q_FUNC_INFO << " failed: current subject hierarchy item is invalid.";
+    return;
     }
 
   // Create binary labelmap representation using default parameters
@@ -993,29 +1039,12 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToBinaryLabelmap()
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchySegmentationsPlugin::exportToClosedSurface()
 {
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return;
-    }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item";
-    return;
-    }
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
-
-  // Segmentations plugin provides the functionality for segments too, see if it is a segment
+  vtkMRMLSegmentationNode* segmentationNode = vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem(), qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene());
   if (!segmentationNode)
     {
-    vtkIdType parentItemID = shNode->GetItemParent(currentItemID);
-    if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-      {
-      return;
-      }
-    segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
+    qCritical() << Q_FUNC_INFO << " failed: current subject hierarchy item is invalid.";
+    return;
     }
 
   // Create closed surface representation using default parameters
@@ -1033,6 +1062,9 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToClosedSurface()
 
   // Create new folder item
   std::string newFolderName = std::string(segmentationNode->GetName()) + "-models";
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  // Since segmentationNode is not nullptr, we can be sure that shNode is valid.
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   vtkIdType folderItemID = shNode->CreateFolderItem(
     shNode->GetItemParent(currentItemID),
     shNode->GenerateUniqueItemName(newFolderName) );
@@ -1222,22 +1254,11 @@ void qSlicerSubjectHierarchySegmentationsPlugin::updateAllSegmentsFromMRML(vtkMR
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchySegmentationsPlugin::toggle2DFillVisibility(bool on)
 {
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return;
-    }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item";
-    return;
-    }
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
+  vtkMRMLSegmentationNode* segmentationNode = vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem(), qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene());
   if (!segmentationNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Failed to find segmentation node associated to subject hierarchy item " << currentItemID;
+    qCritical() << Q_FUNC_INFO << " failed: current subject hierarchy item is invalid.";
     return;
     }
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
@@ -1254,22 +1275,11 @@ void qSlicerSubjectHierarchySegmentationsPlugin::toggle2DFillVisibility(bool on)
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchySegmentationsPlugin::toggle2DOutlineVisibility(bool on)
 {
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return;
-    }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item";
-    return;
-    }
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
+  vtkMRMLSegmentationNode* segmentationNode = vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem(), qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene());
   if (!segmentationNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Failed to find segmentation node associated to subject hierarchy item " << currentItemID;
+    qCritical() << Q_FUNC_INFO << " failed: current subject hierarchy item is invalid.";
     return;
     }
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
@@ -1281,4 +1291,85 @@ void qSlicerSubjectHierarchySegmentationsPlugin::toggle2DOutlineVisibility(bool 
 
   // Set 2D outline visibility
   displayNode->SetVisibility2DOutline(on);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentationsPlugin::updateRepresentation(const QString& representationName, bool create)
+{
+  vtkMRMLSegmentationNode* segmentationNode = vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(
+    qSlicerSubjectHierarchyPluginHandler::instance()->currentItem(), qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene());
+  if (!segmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: current subject hierarchy item is invalid.";
+    return;
+    }
+
+  if (create)
+    {
+    // Create representation using default parameters
+    bool success = segmentationNode->GetSegmentation()->CreateRepresentation(representationName.toStdString());
+    if (!success)
+      {
+      QString message = QString("Failed to create %1 representation for segmentation %2 using default"
+        "conversion parameters!\n\nPlease visit the Segmentation module and try the advanced create representation function.")
+       .arg(representationName)
+       .arg(segmentationNode->GetName());
+      qCritical() << Q_FUNC_INFO << ": " << message;
+      QMessageBox::warning(nullptr, tr("Failed to export segmentation to models"), message);
+      return;
+      }
+    }
+  else
+    {
+    // Remove representation using default parameters
+    segmentationNode->GetSegmentation()->RemoveRepresentation(representationName.toStdString());
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentationsPlugin::createBinaryLabelmapRepresentation()
+{
+  this->updateRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(), true);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentationsPlugin::createClosedSurfaceRepresentation()
+{
+  this->updateRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), true);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentationsPlugin::removeBinaryLabelmapRepresentation()
+{
+  this->updateRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(), false);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentationsPlugin::removeClosedSurfaceRepresentation()
+{
+  this->updateRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), false);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchySegmentationsPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
+{
+  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
+  if (threeDViewNode)
+    {
+    // Display in a 3D view is requested - make sure closed surface representation is created.
+    // Otherwise drag-and-drop of a segmentation into a 3D view could just make the segmentation
+    // disappear (as segmentation only shows up in a 3D view if closed surface representation is available).
+    vtkMRMLSegmentationNode* segmentationNode = vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(
+      qSlicerSubjectHierarchyPluginHandler::instance()->currentItem(), qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene());
+    if (segmentationNode)
+      {
+      segmentationNode->CreateClosedSurfaceRepresentation();
+      }
+    else
+      {
+      qWarning() << Q_FUNC_INFO << ": failed to get segmentation node";
+      }
+    }
+
+  return qSlicerSubjectHierarchyAbstractPlugin::showItemInView(itemID, viewNode, allItemsToShow);
 }

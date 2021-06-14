@@ -98,4 +98,4 @@ Common parameters must be set using `setCommonParameter` method (others can be s
 
 ## Examples
 
-Examples for common operations on segmentations are provided in the [script repository](../script_repository.html#segmentations).
+Examples for common operations on segmentations are provided in the [script repository](../script_repository.md#segmentations).

@@ -51,13 +51,16 @@
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSceneViewNode.h"
+#include "vtkMRMLTableNode.h"
 
 // vtkAddon includes
 #include "vtkAddonMathUtilities.h"
 
 // VTK includes
+#include <vtkBitArray.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkTable.h>
 
 // STD includes
 #include <cassert>
@@ -1734,4 +1737,247 @@ bool vtkSlicerMarkupsLogic::GetCreateMarkupsPushButton(const char* markupName) c
 const std::list<std::string>& vtkSlicerMarkupsLogic::GetRegisteredMarkupsTypes() const
 {
   return this->RegisteredMarkupsOrder;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::ImportControlPointsFromTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode,
+  int startRow/*=0*/, int numberOfRows/*=-1*/)
+{
+  if (!markupsNode || !tableNode || !tableNode->GetTable())
+    {
+    vtkGenericWarningMacro("vtkSlicerMarkupsLogic::ImportControlPointsFromTable failed: Invalid markupsNode or tableNode.");
+    return false;
+    }
+  if (numberOfRows < 0)
+    {
+    numberOfRows = tableNode->GetNumberOfRows();
+    }
+
+  MRMLNodeModifyBlocker blocker(markupsNode);
+
+  vtkTable* table = tableNode->GetTable();
+
+  vtkAbstractArray* arrayX = nullptr;
+  vtkAbstractArray* arrayY = nullptr;
+  vtkAbstractArray* arrayZ = nullptr;
+  bool rasCoordinates = true;
+  if (table->GetColumnByName("r") && table->GetColumnByName("a") && table->GetColumnByName("s"))
+    {
+    arrayX = table->GetColumnByName("r");
+    arrayY = table->GetColumnByName("a");
+    arrayZ = table->GetColumnByName("s");
+    }
+  else if (table->GetColumnByName("l") && table->GetColumnByName("p") && table->GetColumnByName("s"))
+    {
+    rasCoordinates = false;
+    arrayX = table->GetColumnByName("l");
+    arrayY = table->GetColumnByName("p");
+    arrayZ = table->GetColumnByName("s");
+    }
+
+  vtkAbstractArray* arrayLabel = table->GetColumnByName("label");
+  vtkAbstractArray* arrayDescription = table->GetColumnByName("description");
+  vtkAbstractArray* arraySelected = table->GetColumnByName("selected");
+  vtkAbstractArray* arrayVisible = table->GetColumnByName("visible");
+  vtkAbstractArray* arrayLocked = table->GetColumnByName("locked");
+  vtkAbstractArray* arrayDefined= table->GetColumnByName("defined");
+
+  for (int row = 0; row < numberOfRows; row++)
+    {
+    // vtkVariant cannot convert values from VTK_BIT type, therefore we need to handle it
+    // as a special case here.
+    int positionStatus = vtkMRMLMarkupsNode::PositionDefined;
+    if (vtkBitArray::SafeDownCast(arrayDefined))
+      {
+      if (vtkBitArray::SafeDownCast(arrayDefined)->GetValue(row) == 0)
+        {
+        positionStatus = vtkMRMLMarkupsNode::PositionUndefined;
+        }
+      }
+    else if (arrayDefined)
+      {
+      if (arrayDefined->GetVariantValue(row).ToInt() == 0)
+        {
+        positionStatus = vtkMRMLMarkupsNode::PositionUndefined;
+        }
+      }
+
+    vtkMRMLMarkupsNode::ControlPoint* controlPoint = new vtkMRMLMarkupsNode::ControlPoint;
+
+    bool validX = false;
+    bool validY = false;
+    bool validZ = false;
+    if (arrayX && arrayY && arrayZ)
+      {
+      controlPoint->Position[0] = arrayX->GetVariantValue(row).ToDouble(&validX);
+      controlPoint->Position[1] = arrayY->GetVariantValue(row).ToDouble(&validY);
+      controlPoint->Position[2] = arrayZ->GetVariantValue(row).ToDouble(&validZ);
+      if (!rasCoordinates)
+        {
+        controlPoint->Position[0] = -controlPoint->Position[0];
+        controlPoint->Position[1] = -controlPoint->Position[1];
+        }
+      }
+    if (!validX || !validY || !validZ)
+      {
+      controlPoint->PositionStatus = vtkMRMLMarkupsNode::PositionUndefined;
+      }
+
+    if (arrayLabel)
+      {
+      controlPoint->Label = arrayLabel->GetVariantValue(row).ToString();
+      }
+    if (arrayDescription)
+      {
+      controlPoint->Description = arrayDescription->GetVariantValue(row).ToString();
+      }
+
+    if (vtkBitArray::SafeDownCast(arraySelected))
+      {
+      controlPoint->Selected = (vtkBitArray::SafeDownCast(arraySelected)->GetValue(row) != 0);
+      }
+    else if (arraySelected)
+      {
+      controlPoint->Selected = (arraySelected->GetVariantValue(row).ToInt() != 0);
+      }
+
+    if (vtkBitArray::SafeDownCast(arrayVisible))
+      {
+      controlPoint->Visibility = (vtkBitArray::SafeDownCast(arrayVisible)->GetValue(row) != 0);
+      }
+    else if (arrayVisible)
+      {
+      controlPoint->Visibility = (arrayVisible->GetVariantValue(row).ToInt() != 0);
+      }
+
+    if (vtkBitArray::SafeDownCast(arrayLocked))
+      {
+      controlPoint->Locked = (vtkBitArray::SafeDownCast(arrayLocked)->GetValue(row) != 0);
+      }
+    else if (arrayLocked)
+      {
+      controlPoint->Locked = (arrayLocked->GetVariantValue(row).ToInt() != 0);
+      }
+
+    controlPoint->PositionStatus = positionStatus;
+
+    markupsNode->AddControlPoint(controlPoint);
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::ExportControlPointsToTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode,
+  int coordinateSystem/*=vtkMRMLStorageNode::CoordinateSystemRAS*/)
+{
+  if (!markupsNode || !tableNode || !tableNode->GetTable())
+    {
+    vtkGenericWarningMacro("vtkSlicerMarkupsLogic::ExportControlPointsToTable failed: Invalid markupsNode or tableNode.");
+    return false;
+    }
+
+  bool rasCoordinates = (coordinateSystem != vtkMRMLStorageNode::CoordinateSystemLPS);
+
+  vtkTable* table = tableNode->GetTable();
+
+  vtkAbstractArray* arrayLabel = table->GetColumnByName("label");
+  if (!arrayLabel)
+    {
+    arrayLabel = vtkStringArray::New();
+    arrayLabel->SetName("label");
+    table->AddColumn(arrayLabel);
+    arrayLabel->UnRegister(nullptr);
+    }
+
+  // Get/create coordinate arrays
+  vtkAbstractArray* arrayCoordinates[3] = { nullptr, nullptr, nullptr };
+  std::string columnNames[3] =
+    {
+    rasCoordinates ? "r" : "l",
+    rasCoordinates ? "a" : "p",
+    "s"
+    };
+  for (int coordIndex = 0; coordIndex < 3; coordIndex++)
+    {
+    arrayCoordinates[coordIndex] = table->GetColumnByName(columnNames[coordIndex].c_str());
+    if (arrayCoordinates[coordIndex])
+      {
+      continue;
+      }
+    arrayCoordinates[coordIndex] = vtkDoubleArray::New();
+    arrayCoordinates[coordIndex]->SetName(columnNames[coordIndex].c_str());
+    tableNode->AddColumn(arrayCoordinates[coordIndex]);
+    arrayCoordinates[coordIndex]->UnRegister(nullptr);
+    }
+
+  vtkAbstractArray* arrayDefined = table->GetColumnByName("defined");
+  if (!arrayDefined)
+    {
+    arrayDefined = vtkBitArray::New();
+    arrayDefined->SetName("defined");
+    table->AddColumn(arrayDefined);
+    arrayDefined->UnRegister(nullptr);
+    }
+
+  vtkAbstractArray* arraySelected = table->GetColumnByName("selected");
+  if (!arraySelected)
+    {
+    arraySelected = vtkBitArray::New();
+    arraySelected->SetName("selected");
+    table->AddColumn(arraySelected);
+    arraySelected->UnRegister(nullptr);
+    }
+
+  vtkAbstractArray* arrayVisible = table->GetColumnByName("visible");
+  if (!arrayVisible)
+    {
+    arrayVisible = vtkBitArray::New();
+    arrayVisible->SetName("visible");
+    table->AddColumn(arrayVisible);
+    arrayVisible->UnRegister(nullptr);
+    }
+
+  vtkAbstractArray* arrayLocked = table->GetColumnByName("locked");
+  if (!arrayLocked)
+    {
+    arrayLocked = vtkBitArray::New();
+    arrayLocked->SetName("locked");
+    table->AddColumn(arrayLocked);
+    arrayLocked->UnRegister(nullptr);
+    }
+
+  vtkAbstractArray* arrayDescription = table->GetColumnByName("description");
+  if (!arrayDescription)
+    {
+    arrayDescription = vtkStringArray::New();
+    arrayDescription->SetName("description");
+    table->AddColumn(arrayDescription);
+    arrayDescription->UnRegister(nullptr);
+    }
+
+  for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
+    {
+    int row = tableNode->AddEmptyRow();
+    vtkMRMLMarkupsNode::ControlPoint* controlPoint = markupsNode->GetNthControlPoint(controlPointIndex);
+    if (rasCoordinates)
+      {
+      arrayCoordinates[0]->SetVariantValue(row, vtkVariant(controlPoint->Position[0]));
+      arrayCoordinates[1]->SetVariantValue(row, vtkVariant(controlPoint->Position[1]));
+      }
+    else
+      {
+      arrayCoordinates[0]->SetVariantValue(row, vtkVariant(-controlPoint->Position[0]));
+      arrayCoordinates[1]->SetVariantValue(row, vtkVariant(-controlPoint->Position[1]));
+      }
+    arrayCoordinates[2]->SetVariantValue(row, vtkVariant(controlPoint->Position[2]));
+
+    arrayLabel->SetVariantValue(row, controlPoint->Label.c_str());
+    arrayDescription->SetVariantValue(row, controlPoint->Description.c_str());
+    arraySelected->SetVariantValue(row, controlPoint->Selected);
+    arrayVisible->SetVariantValue(row, controlPoint->Visibility);
+    arrayLocked->SetVariantValue(row, controlPoint->Locked);
+    arrayDefined->SetVariantValue(row, controlPoint->PositionStatus==vtkMRMLMarkupsNode::PositionDefined);
+    }
+
+  return true;
 }

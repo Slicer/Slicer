@@ -320,17 +320,17 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
       continue;
       }
     os << indent << "Control Point " << controlPointIndex << ":\n";
-    os << indent << "ID = " << controlPoint->ID.c_str() << "\n";
-    os << indent << "Label = " << controlPoint->Label.c_str() << "\n";
-    os << indent << "Description = " << controlPoint->Description.c_str() << "\n";
-    os << indent << "Associated node id = " << controlPoint->AssociatedNodeID.c_str() << "\n";
-    os << indent << "Selected = " << controlPoint->Selected << "\n";
-    os << indent << "Locked = " << controlPoint->Locked << "\n";
-    os << indent << "Visibility = " << controlPoint->Visibility << "\n";
-    os << indent << "PositionStatus : " << controlPoint->PositionStatus << "\n";
-    os << indent << "Position : " << controlPoint->Position[0] << ", " <<
+    os << indent << indent << "ID: " << controlPoint->ID.c_str() << "\n";
+    os << indent << indent << "Label: " << controlPoint->Label.c_str() << "\n";
+    os << indent << indent << "Description: " << controlPoint->Description.c_str() << "\n";
+    os << indent << indent << "Associated node id: " << controlPoint->AssociatedNodeID.c_str() << "\n";
+    os << indent << indent << "Selected: " << controlPoint->Selected << "\n";
+    os << indent << indent << "Locked: " << controlPoint->Locked << "\n";
+    os << indent << indent << "Visibility: " << controlPoint->Visibility << "\n";
+    os << indent << indent << "PositionStatus: " << controlPoint->PositionStatus << "\n";
+    os << indent << indent << "Position: " << controlPoint->Position[0] << ", " <<
           controlPoint->Position[1] << ", " << controlPoint->Position[2] << "\n";
-    os << indent << "Orientation = ";
+    os << indent << indent << "Orientation: ";
     for (int i = 0; i < 9; i++)
       {
       if (i > 0)
@@ -342,20 +342,14 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
     os << "\n";
     }
 
-  os << indent << "Measurements: ";
-
   if  (this->GetNumberOfMeasurements()>0)
     {
-    os << std::endl;
+    os << indent << "Measurements:\n";
     for (int measurementIndex = 0; measurementIndex < this->GetNumberOfMeasurements(); measurementIndex++)
       {
       vtkMRMLMeasurement* m = this->GetNthMeasurement(measurementIndex);
-      os << indent << m->GetName() << ": " << m->GetValueWithUnitsAsPrintableString() << std::endl;
+      os << indent << indent << m->GetName() << ": " << m->GetValueWithUnitsAsPrintableString() << std::endl;
       }
-    }
-  else
-    {
-    os << indent << "None" << std::endl;
     }
 
 }
