@@ -576,6 +576,13 @@ endif()
     Xml XmlPatterns
     Svg Sql
     )
+
+  # Add the Qt5X11Extras component for Linux systems
+  # This component is needed for building VTK
+  if(UNIX AND NOT APPLE)
+    list(APPEND Slicer_REQUIRED_QT_MODULES X11Extras)
+  endif()
+
   find_package(Qt5 COMPONENTS Core QUIET)
   if(Slicer_BUILD_WEBENGINE_SUPPORT)
     list(APPEND Slicer_REQUIRED_QT_MODULES
