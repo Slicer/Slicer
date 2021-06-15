@@ -353,7 +353,7 @@ class DICOMSender(DICOMProcess):
   """ Code to send files to a remote host.
       (Uses storescu from dcmtk.)
   """
-  dicomseg_altconfig_path = 'DICOM/dcmtk/storescu.cfg'
+  extended_dicom_config_path = 'DICOM/dcmtk/storescu-seg.cfg'
 
   def __init__(self,files,address,protocol=None,progressCallback=None):
     """protocol: can be DIMSE (default) or DICOMweb
@@ -443,11 +443,8 @@ class DICOMSender(DICOMProcess):
         if not self.progressCallback(f"Sent {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"):
           raise UserWarning("Sending was cancelled, upload is incomplete.")
 
-  def start(self, file, config=None, config_profile='Default', retry=False):
-    ''' Send DICOM file to the specified modality. If the transfer fails due to
-        an unsupported presentation context, attempt the transfer a second time using
-        a custom configuration that provides.
-    '''
+  def dicomSend(self, file, config=None, config_profile='Default'):
+    '''Send DICOM file to the specified modality.'''
     self.storeSCUExecutable = self.exeDir+'/storescu'+self.exeExtension
 
     # run the process!
@@ -457,17 +454,24 @@ class DICOMSender(DICOMProcess):
 
     # Utilize custom configuration
     if config and os.path.exists(config):
-      args.extend(('-xf', config, 'Default'))
+      args.extend(('-xf', config, config_profile))
 
     # Core arguments: hostname, port, AEC, file
     args.extend((self.destinationUrl.host(), str(self.destinationUrl.port()), "-aec", "CTK", file))
 
-    # Execute SCU CLI program and wait for termination
+    # Execute SCU CLI program and wait for termination. Uses super().start() to access the
+    # to initialize the background process and wait for completion of the transfer.
     super().start(self.storeSCUExecutable, args)
     self.process.waitForFinished()
+    return not (self.process.ExitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0)
 
-    # Process any errors that occurred during script execution
-    if self.process.ExitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
+  def start(self, file):
+    ''' Send DICOM file to the specified modality. If the transfer fails due to
+        an unsupported presentation context, attempt the transfer a second time using
+        a custom configuration that provides.
+    '''
+    # Send file via DICOM
+    if not self.dicomSend(file):
       stdout = self.process.readAllStandardOutput()
       stderr = self.process.readAllStandardError()
 
@@ -476,16 +480,14 @@ class DICOMSender(DICOMProcess):
       logging.debug('DICOM process standard error is: %s' % stderr)
       user_msg = f"Could not send {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"
 
-      # For known presentation contexts, retry transfer with alternative configuration.
+      # Retry transfer with alternative configuration with presentation contexts which support SEG/SR.
       # A common cause of failure is an incomplete set of dcmtk/DCMSCU presentation context UIDS.
       # Refer to https://book.orthanc-server.com/faq/dcmtk-tricks.html#id2 for additional detail.
-      if not retry:
-        logging.error(user_msg)
-        logging.info('Retry transfer with alternative dicomscu configuration: %s' % self.dicomseg_altconfig_path)
-        self.start(file, config=os.path.join(RESOURCE_ROOT, self.dicomseg_altconfig_path), retry=True)
+      logging.error(user_msg)
+      logging.info('Retry transfer with alternative dicomscu configuration: %s' % self.extended_dicom_config_path)
 
       # Terminate transfer and notify user of failure
-      else:
+      if not self.dicomSend(file, config=os.path.join(RESOURCE_ROOT, self.extended_dicom_config_path)):
         raise UserWarning(user_msg)
 
 
