@@ -46,15 +46,40 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
     parametersFormLayout = qt.QFormLayout(parametersCollapsibleButton)
 
     #
+    # node type to add
+    #
+    self.nodeTypeComboBox = qt.QComboBox()
+    self.nodeTypeComboBox.addItem("vtkMRMLMarkupsFiducialNode")
+    self.nodeTypeComboBox.addItem("vtkMRMLMarkupsLineNode")
+    self.nodeTypeComboBox.addItem("vtkMRMLMarkupsAngleNode")
+    self.nodeTypeComboBox.addItem("vtkMRMLMarkupsCurveNode")
+    self.nodeTypeComboBox.addItem("vtkMRMLMarkupsClosedCurveNode")
+    self.nodeTypeComboBox.addItem("vtkMRMLMarkupsROINode")
+    parametersFormLayout.addRow("Node type: ", self.nodeTypeComboBox)
+
+    #
+    # number of nodes to add
+    #
+    self.numberOfNodesSliderWidget = ctk.ctkSliderWidget()
+    self.numberOfNodesSliderWidget.singleStep = 1.0
+    self.numberOfNodesSliderWidget.decimals = 0
+    self.numberOfNodesSliderWidget.minimum = 0.0
+    self.numberOfNodesSliderWidget.maximum = 1000.0
+    self.numberOfNodesSliderWidget.value = 1.0
+    self.numberOfNodesSliderWidget.toolTip = "Set the number of nodes to add."
+    parametersFormLayout.addRow("Number of nodes: ", self.numberOfNodesSliderWidget)
+
+    #
     # number of fiducials to add
     #
-    self.numToAddSliderWidget = ctk.ctkSliderWidget()
-    self.numToAddSliderWidget.singleStep = 1.0
-    self.numToAddSliderWidget.minimum = 0.0
-    self.numToAddSliderWidget.maximum = 10000.0
-    self.numToAddSliderWidget.value = 500.0
-    self.numToAddSliderWidget.toolTip = "Set the number of fiducials to add."
-    parametersFormLayout.addRow("Number of Fiducials to Add", self.numToAddSliderWidget)
+    self.numberOfControlPointsSliderWidget = ctk.ctkSliderWidget()
+    self.numberOfControlPointsSliderWidget.singleStep = 1.0
+    self.numberOfControlPointsSliderWidget.decimals = 0
+    self.numberOfControlPointsSliderWidget.minimum = 0.0
+    self.numberOfControlPointsSliderWidget.maximum = 10000.0
+    self.numberOfControlPointsSliderWidget.value = 500.0
+    self.numberOfControlPointsSliderWidget.toolTip = "Set the number of control points to add per node."
+    parametersFormLayout.addRow("Number of control points: ", self.numberOfControlPointsSliderWidget)
 
     #
     # check box to trigger fewer modify events, adding all the new points
@@ -63,7 +88,23 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
     self.fewerModifyFlagCheckBox = qt.QCheckBox()
     self.fewerModifyFlagCheckBox.checked = 0
     self.fewerModifyFlagCheckBox.toolTip = 'If checked, wrap adding points inside of a StartModify - EndModify block'
-    parametersFormLayout.addRow("Fewer Modify Events", self.fewerModifyFlagCheckBox)
+    parametersFormLayout.addRow("Fewer modify events: ", self.fewerModifyFlagCheckBox)
+
+    #
+    # markups locked
+    #
+    self.lockedFlagCheckBox = qt.QCheckBox()
+    self.lockedFlagCheckBox.checked = 0
+    self.lockedFlagCheckBox.toolTip = 'If checked, markups will be locked for editing'
+    parametersFormLayout.addRow("Locked nodes: ", self.lockedFlagCheckBox)
+
+    #
+    # markups labels hidden
+    #
+    self.labelsHiddenFlagCheckBox = qt.QCheckBox()
+    self.labelsHiddenFlagCheckBox.checked = 0
+    self.labelsHiddenFlagCheckBox.toolTip = 'If checked, markups labels will be forced to be hidden, regardless of default markups properties'
+    parametersFormLayout.addRow("Labels hidden: ", self.labelsHiddenFlagCheckBox)
 
     # Apply Button
     #
@@ -83,10 +124,14 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
 
   def onApplyButton(self):
     logic = AddManyMarkupsFiducialTestLogic()
-    sliderValue = int(self.numToAddSliderWidget.value)
+    nodeType = self.nodeTypeComboBox.currentText
+    numberOfNodes = int(self.numberOfNodesSliderWidget.value)
+    numberOfControlPoints = int(self.numberOfControlPointsSliderWidget.value)
     fewerModifyFlag = self.fewerModifyFlagCheckBox.checked
-    print("Run the logic method to add %s fids" % sliderValue)
-    logic.run(sliderValue,0,fewerModifyFlag)
+    labelsHiddenFlag = self.labelsHiddenFlagCheckBox.checked
+    locked = self.lockedFlagCheckBox.checked
+    print(f"Run the logic method to add {numberOfNodes} nodes with {numberOfControlPoints} control points each")
+    logic.run(nodeType, numberOfNodes, numberOfControlPoints,0, fewerModifyFlag, locked, labelsHiddenFlag)
 
 
 #
@@ -95,11 +140,11 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
 
 class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
 
-  def run(self,numToAdd=100,rOffset=0,usefewerModifyCalls=0):
+  def run(self, nodeType, numberOfNodes = 10, numberOfControlPoints=10, rOffset=0,usefewerModifyCalls=False,locked=False, labelsHidden=False):
     """
     Run the actual algorithm
     """
-    print(f'Running test to add {numToAdd} fidicuals')
+    print(f'Running test to add {numberOfNodes} nodes markups with {numberOfControlPoints} control points')
     print('Index\tTime to add fid\tDelta between adds')
     print("%(index)04s\t" % {'index': "i"}, "t\tdt'")
     r = rOffset
@@ -113,36 +158,51 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
     timeToAddLastFid = 0
 
     testStartTime = time.clock()
-    fidNode = slicer.vtkMRMLMarkupsFiducialNode()
-    slicer.mrmlScene.AddNode(fidNode)
-    fidNode.CreateDefaultDisplayNodes()
-
-    if usefewerModifyCalls == 1:
-      print("Start modify")
-      mod = fidNode.StartModify()
 
     import random
 
-    # iterate over the number of fiducials to add
-    for i in range(numToAdd):
-      #    print "i = ", i, "/", numToAdd, ", r = ", r, ", a = ", a, ", s = ", s
-      t1 = time.clock()
-      fidNode.AddFiducial(r,a,s)
-      t2 = time.clock()
-      timeToAddThisFid = t2 - t1
-      dt = timeToAddThisFid - timeToAddLastFid
-      #print '%(index)04d\t' % {'index': i}, timeToAddThisFid, "\t", dt
-      r = float(i)/numToAdd * 100.0 - 50.0 + random.uniform(-20.0, 20.0)
-      a = float(i)/numToAdd * 100.0 - 50.0 + random.uniform(-20.0, 20.0)
-      s = random.uniform(-20.0, 20.0)
-      timeToAddLastFid = timeToAddThisFid
+    if usefewerModifyCalls:
+      print("Pause render")
+      slicer.app.pauseRender()
 
-    if usefewerModifyCalls == 1:
-      fidNode.EndModify(mod)
+    for nodeIndex in range(numberOfNodes):
+
+      markupsNode = slicer.mrmlScene.AddNewNodeByClass(nodeType)
+      markupsNode.CreateDefaultDisplayNodes()
+      if locked:
+        markupsNode.SetLocked(True)
+
+      if labelsHidden:
+         markupsNode.GetDisplayNode().SetPropertiesLabelVisibility(False)
+         markupsNode.GetDisplayNode().SetPointLabelsVisibility(False)
+
+      if usefewerModifyCalls:
+        print("Start modify")
+        mod = markupsNode.StartModify()
+
+      for controlPointIndex in range(numberOfControlPoints):
+        #    print "controlPointIndex = ", controlPointIndex, "/", numberOfControlPoints, ", r = ", r, ", a = ", a, ", s = ", s
+        t1 = time.clock()
+        markupsNode.AddControlPoint(vtk.vtkVector3d(r,a,s))
+        t2 = time.clock()
+        timeToAddThisFid = t2 - t1
+        dt = timeToAddThisFid - timeToAddLastFid
+        #print '%(index)04d\t' % {'index': controlPointIndex}, timeToAddThisFid, "\t", dt
+        r = float(controlPointIndex)/numberOfControlPoints * 100.0 - 50.0 + random.uniform(-20.0, 20.0)
+        a = float(controlPointIndex)/numberOfControlPoints * 100.0 - 50.0 + random.uniform(-20.0, 20.0)
+        s = random.uniform(-20.0, 20.0)
+        timeToAddLastFid = timeToAddThisFid
+
+      if usefewerModifyCalls:
+        markupsNode.EndModify(mod)
+
+    if usefewerModifyCalls:
+      print("Resume render")
+      slicer.app.resumeRender()
 
     testEndTime = time.clock()
     testTime = testEndTime - testStartTime
-    print("Total time to add ",numToAdd," = ", testTime)
+    print("Total time to add ",numberOfControlPoints," = ", testTime)
 
     return True
 
@@ -174,10 +234,10 @@ class AddManyMarkupsFiducialTestTest(ScriptedLoadableModuleTest):
     m.moduleSelector().selectModule('Welcome')
 
     logic = AddManyMarkupsFiducialTestLogic()
-    logic.run(100)
+    logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes = 1, numberOfControlPoints=100, rOffset=0)
 
     self.delayDisplay("Now running it while the Markups Module is open")
     m.moduleSelector().selectModule('Markups')
-    logic.run(100,100)
+    logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes = 1, numberOfControlPoints=100, rOffset=100)
 
     self.delayDisplay('Test passed!')
