@@ -51,7 +51,7 @@ for groupIndex in range(n.GetNumberOfParameterGroups()):
       n.GetParameterTag(groupIndex, parameterIndex),n.GetParameterLabel(groupIndex, parameterIndex)))
 ```
 
-### Passing markups iducials to CLIs
+### Passing markups fiducials to CLIs
 
 ```python
 import SampleData
