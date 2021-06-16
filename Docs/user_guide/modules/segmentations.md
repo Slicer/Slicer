@@ -114,7 +114,7 @@ To re-convert an existing representation (to use different conversion path or pa
 
 ### Managing segmentations using Python scripts
 
-See Script repository's [Segmentations section](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Segmentations) for examples.
+See Script repository's [Segmentations section](../../developer_guide/script_repository.md#segmentations) for examples.
 
 ### DICOM export
 - The master representation is used when exporting into DICOM, therefore you need to select a master volume, create binary labelmap representation and set it as master
@@ -165,7 +165,7 @@ See Script repository's [Segmentations section](https://www.slicer.org/wiki/Docu
 - [vtkSegmentationCore on GitHub](https://github.com/Slicer/Slicer/tree/master/Libs/vtkSegmentationCore) (within Slicer)
 - [Segmentations Slicer module on GitHub](https://github.com/Slicer/Slicer/tree/master/Modules/Loadable/Segmentations)
 - [Segmentations Labs page](https://www.slicer.org/wiki/Documentation/Labs/Segmentations)
-- [Manipulation of segmentations from Python scripts - examples in script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository)
+- [Manipulation of segmentations from Python scripts - examples in script repository](../../developer_guide/script_repository.md#segmentations)
 
 ## Related modules
 

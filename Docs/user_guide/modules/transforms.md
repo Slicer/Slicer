@@ -193,7 +193,7 @@ This section can sample the active transform on a grid (specified by the selecte
 
 ## Information for developers
 
-See examples and other developer information in [Developer guide](../../developer_guide/modules/transforms) and [Script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository).
+See examples and other developer information in [Developer guide](../../developer_guide/modules/transforms) and [Script repository](../../developer_guide/script_repository.md#transforms).
 
 ## Contributors
 

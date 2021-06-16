@@ -113,7 +113,7 @@ cliNode.AddObserver('ModifiedEvent', onProcessingStatusUpdate)
 
 ## How to find a Python function for any Slicer features
 
-All features of Slicer are available via Python scripts. [Slicer script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository) contains examples for the most commonly used features.
+All features of Slicer are available via Python scripts. [Slicer script repository](../script_repository.md) contains examples for the most commonly used features.
 
 To find out what Python commands correspond to a feature that is visible on the graphical user interface, search in Slicer's source code where that text occurs, find the corresponding widget or action name, then search for that widget or action name in the source code to find out what commands it triggers.
 

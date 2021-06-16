@@ -1,6 +1,6 @@
 # Segment editor
 
-See examples of using Segment editor effects from Python scripts in the [script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#How_to_run_segment_editor_effects_from_a_script).
+See examples of using Segment editor effects from Python scripts in the [script repository](../script_repository.md#how-to-run-segment-editor-effects-from-a-script).
 
 ## Effect parameters
 

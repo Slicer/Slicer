@@ -43,7 +43,7 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 
 ## Information for developers
 
-See examples for calculating statistics from your own modules in the [Slicer script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Quantifying_segments).
+See examples for calculating statistics from your own modules in the [Slicer script repository](../../developer_guide/script_repository.md#quantifying-segments).
 Additional plugins for computation of other statistical measurements may be registered by subclassing [SegmentStatisticsPluginBase.py](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/SegmentStatistics/SegmentStatisticsPlugins/SegmentStatisticsPluginBase.py), and registering the plugin with SegmentStatisticsLogic.
 
 ## Contributors

@@ -4,7 +4,7 @@ The overall DICOM Implementation in 3D Slicer consists of two main bodies of cod
 
 ## Customize table columns in DICOM browser
 
-Columns in the browser can be renamed, reordered, shown/hidden, etc. An example snippet to customize the browser can be found in the [script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Customize_table_columns_in_DICOM_browser).
+Columns in the browser can be renamed, reordered, shown/hidden, etc. An example snippet to customize the browser can be found in the [script repository](../script_repository.md#customize-table-columns-in-dicom-browser).
 
 The changes made like this are written into the database (ColumnDisplayProperties table), so the column customizations can be done only once per database.
 
