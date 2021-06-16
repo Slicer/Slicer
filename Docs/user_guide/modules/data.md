@@ -116,7 +116,7 @@ List of all nodes in the scene. Supports Edit properties, Rename, Delete.
 
 ## Information for developers
 
-- Code snippets accessing and manipulating subject hierarchy items can be found in the [script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Subject_hierarchy)
+- Code snippets accessing and manipulating subject hierarchy items can be found in the [script repository](../../developer_guide/script_repository.md#subject-hierarchy).
 - **Implementing new plugins**: Plugins are the real power of subject hierarchy, as they provide support for data node types, and add functionality to the context menu items.
 To create a C++ plugin, implement a child class of qSlicerSubjectHierarchyAbstractPlugin, for Python plugin see below. Many examples can be found in Slicer core and in the SlicerRT extension, look for folders named SubjectHierarchyPlugins.
     - Writing plugins in **Python**:
