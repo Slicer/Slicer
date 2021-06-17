@@ -124,6 +124,13 @@ void qSlicerSubjectHierarchyCloneNodePlugin::showContextMenuActionsForItem(vtkId
     return;
     }
 
+  vtkIdType parentItemID = shNode->GetItemParent(itemID);
+  if (parentItemID && shNode->IsItemVirtualBranchParent(parentItemID))
+    {
+    // This generic plugin does not know how to clone virtual branch items
+    return;
+    }
+
   // Show clone node for every non-scene items
   d->CloneItemAction->setVisible(true);
 }

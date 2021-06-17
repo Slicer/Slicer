@@ -206,8 +206,10 @@ public:
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
   /// \param name Name of the item. Only used if there is no data node associated
   /// \param level Level of the hierarchy item. It will be stored as attribute (\sa vtkMRMLSubjectHierarchyConstants)
+  /// \param positionUnderParent Position of the item under the parent item. If set to -1 then it will be appended
+  ///   after the last item under the parent.
   /// \return ID of the item in the hierarchy that was assigned automatically when adding
-  vtkIdType CreateHierarchyItem(vtkIdType parentItemID, std::string name, std::string level);
+  vtkIdType CreateHierarchyItem(vtkIdType parentItemID, std::string name, std::string level, int positionUnderParent = -1);
   /// Convenience function to create subject item in the hierarchy under a specified parent.
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
   /// \param name Name of the item. Only used if there is no data node associated
