@@ -41,7 +41,7 @@ protected:
 public:
   qMRMLDisplayNodeViewComboBoxPrivate(qMRMLDisplayNodeViewComboBox& object);
   void init();
-  vtkSmartPointer<vtkMRMLDisplayNode> MRMLDisplayNode;
+  vtkWeakPointer<vtkMRMLDisplayNode> MRMLDisplayNode;
   bool IsUpdatingWidgetFromMRML;
 };
 
