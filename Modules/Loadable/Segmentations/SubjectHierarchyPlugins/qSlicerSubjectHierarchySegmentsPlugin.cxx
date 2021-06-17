@@ -67,9 +67,10 @@ public:
 public:
   QIcon SegmentIcon;
 
-  QAction* ShowOnlyCurrentSegmentAction;
-  QAction* ShowAllSegmentsAction;
-  QAction* JumpSlicesAction;
+  QAction* ShowOnlyCurrentSegmentAction{nullptr};
+  QAction* ShowAllSegmentsAction{nullptr};
+  QAction* JumpSlicesAction{nullptr};
+  QAction* CloneSegmentAction{nullptr};
 };
 
 //-----------------------------------------------------------------------------
@@ -80,9 +81,6 @@ qSlicerSubjectHierarchySegmentsPluginPrivate::qSlicerSubjectHierarchySegmentsPlu
 : q_ptr(&object)
 , SegmentIcon(QIcon(":Icons/Segment.png"))
 {
-  this->ShowOnlyCurrentSegmentAction = nullptr;
-  this->ShowAllSegmentsAction = nullptr;
-  this->JumpSlicesAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -101,6 +99,12 @@ void qSlicerSubjectHierarchySegmentsPluginPrivate::init()
   // Jump slices action
   this->JumpSlicesAction = new QAction("Jump slices",q);
   QObject::connect(this->JumpSlicesAction, SIGNAL(triggered()), q, SLOT(jumpSlices()));
+
+  // Clone segment action
+  this->CloneSegmentAction = new QAction("Clone", q);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CloneSegmentAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 0.5); // put it right after "Rename" action
+  QObject::connect(this->CloneSegmentAction, SIGNAL(triggered()), q, SLOT(cloneSegment()));
 }
 
 //-----------------------------------------------------------------------------
@@ -607,6 +611,33 @@ QColor qSlicerSubjectHierarchySegmentsPlugin::getDisplayColor(vtkIdType itemID, 
 }
 
 //---------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchySegmentsPlugin::itemContextMenuActions()const
+{
+  Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
+  QList<QAction*> actions;
+  actions << d->CloneSegmentAction;
+  return actions;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
+{
+  Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
+
+  qSlicerSubjectHierarchySegmentationsPlugin* segmentationsPlugin = qobject_cast<qSlicerSubjectHierarchySegmentationsPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Segmentations"));
+
+  // Segments plugin shows all segmentations plugin functions in segment context menu
+  segmentationsPlugin->showContextMenuActionsForItem(itemID);
+
+  // Owned Segment
+  if (this->canOwnSubjectHierarchyItem(itemID) && this->isThisPluginOwnerOfItem(itemID))
+    {
+    d->CloneSegmentAction->setVisible(true);
+    }
+}
+
+//---------------------------------------------------------------------------
 QList<QAction*> qSlicerSubjectHierarchySegmentsPlugin::visibilityContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
@@ -844,6 +875,67 @@ void qSlicerSubjectHierarchySegmentsPlugin::jumpSlices()
     }
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentsPlugin::cloneSegment()
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
+    return;
+    }
+
+  // Get segmentation node
+  vtkIdType segmentationShItemID = shNode->GetItemParent(currentItemID);
+  if (segmentationShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to find segmentation subject hierarchy item for segment item " << shNode->GetItemName(currentItemID).c_str();
+    return;
+    }
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(segmentationShItemID));
+  if (!segmentationNode || !segmentationNode->GetSegmentation())
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to find segmentation node for segment subject hierarchy item " << shNode->GetItemName(currentItemID).c_str();
+    return;
+    }
+
+  // Get segment ID
+  std::string segmentId = shNode->GetItemAttribute(currentItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+
+  // Get segment and segmentation object
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  vtkSegment* segment = segmentation->GetSegment(segmentId);
+  if (!segment)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: error getting the segment object";
+    return;
+    }
+
+  // Copy
+  vtkNew<vtkSegment> segmentCopy;
+  segmentCopy->DeepCopy(segment);
+
+  // Find the next segment's ID, because we want to insert the copied segment right below the current segment
+  int segmentIndex = segmentation->GetSegmentIndex(segmentId);
+  std::string insertBeforeSegmentId;
+  if (segmentIndex + 1 < segmentation->GetNumberOfSegments())
+    {
+    insertBeforeSegmentId = segmentation->GetNthSegmentID(segmentIndex + 1);
+    }
+
+  std::string targetSegmentId = segmentation->GenerateUniqueSegmentID(segmentId);
+  if (!segmentation->AddSegment(segmentCopy, targetSegmentId, insertBeforeSegmentId))
+    {
+    qCritical() << Q_FUNC_INFO << " failed: error adding cloned segment '" << segmentId.c_str() << "' to segmentation";
+    return;
+    }
+}
 //---------------------------------------------------------------------------
 bool qSlicerSubjectHierarchySegmentsPlugin::showItemInView(
   vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)

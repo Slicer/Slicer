@@ -120,8 +120,9 @@ public:
   /// \param parent Parent item pointer under which this item is inserted
   /// \param name Name of the item
   /// \param level Level string of the item (\sa vtkMRMLSubjectHierarchyConstants). It will be added as a special attribute
+  /// \param positionUnderParent Position of the item under the parent item. If set to -1 then it will be appended after the last item under the parent.
   /// \return ID of the item in the hierarchy that was assigned automatically when adding
-  vtkIdType AddToTree(vtkSubjectHierarchyItem* parent, std::string name, std::string level);
+  vtkIdType AddToTree(vtkSubjectHierarchyItem* parent, std::string name, std::string level, int positionUnderParent = -1);
 
   /// Get name of the item. If has data node associated then return name of data node, \sa Name member otherwise
   std::string GetName();
@@ -317,7 +318,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, vt
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, std::string name, std::string level)
+vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, std::string name, std::string level, int positionUnderParent/*=-1*/)
 {
   this->ID = vtkSubjectHierarchyItem::NextSubjectHierarchyItemID;
   vtkSubjectHierarchyItem::NextSubjectHierarchyItemID++;
@@ -338,7 +339,14 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, st
     {
     // Add under parent
     vtkSmartPointer<vtkSubjectHierarchyItem> childPointer(this);
-    this->Parent->Children.push_back(childPointer);
+    if (positionUnderParent<0 || positionUnderParent >= this->Parent->Children.size())
+      {
+      this->Parent->Children.push_back(childPointer);
+      }
+    else
+      {
+      this->Parent->Children.insert(this->Parent->Children.begin() + positionUnderParent, childPointer);
+      }
 
     // Add to cache (DataNode is nullptr, so no need to add to node cache)
     vtkSubjectHierarchyItem::ItemCache[this->ID] = this;
@@ -2564,7 +2572,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(vtkIdType parentItemID, vtkMRM
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkMRMLSubjectHierarchyNode::CreateHierarchyItem(vtkIdType parentItemID, std::string name, std::string level)
+vtkIdType vtkMRMLSubjectHierarchyNode::CreateHierarchyItem(vtkIdType parentItemID, std::string name, std::string level, int positionUnderParent/*=-1*/)
 {
   vtkSubjectHierarchyItem* parentItem = this->Internal->FindItemByID(parentItemID);
   if (!parentItem)
@@ -2580,7 +2588,7 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateHierarchyItem(vtkIdType parentItemI
   this->Internal->AddItemObservers(item);
 
   // Add item to the tree
-  vtkIdType itemID = item->AddToTree(parentItem, name, level);
+  vtkIdType itemID = item->AddToTree(parentItem, name, level, positionUnderParent);
 
   // Request owner plugin search (it may depend on the parent etc.)
   this->RequestOwnerPluginSearch(itemID);
