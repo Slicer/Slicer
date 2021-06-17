@@ -840,10 +840,10 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement(
     }
 
   if (activeMarkupsNode && activeMarkupsNode->GetMaximumNumberOfControlPoints() > 0
-    && activeMarkupsNode->GetNumberOfControlPoints() >= activeMarkupsNode->GetMaximumNumberOfControlPoints())
+    && activeMarkupsNode->GetNumberOfDefinedControlPoints() >= activeMarkupsNode->GetMaximumNumberOfControlPoints())
     {
     // maybe reached maximum number of points - if yes, then create a new widget
-    if (activeMarkupsNode->GetNumberOfControlPoints() == activeMarkupsNode->GetMaximumNumberOfControlPoints())
+    if (activeMarkupsNode->GetNumberOfDefinedControlPoints() == activeMarkupsNode->GetMaximumNumberOfControlPoints())
       {
       // one more point than the maximum
       vtkSlicerMarkupsWidget *slicerWidget = this->Helper->GetWidget(activeMarkupsNode);

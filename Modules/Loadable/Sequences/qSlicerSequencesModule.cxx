@@ -376,11 +376,11 @@ bool qSlicerSequencesModule::isToolBarVisible()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSequencesModule::setToolBarActiveBrowserNode(vtkMRMLSequenceBrowserNode* browserNode)
-{
-  Q_D(qSlicerSequencesModule);
-  return d->ToolBar->setActiveBrowserNode(browserNode);
-}
+//void qSlicerSequencesModule::setToolBarActiveBrowserNode(vtkMRMLSequenceBrowserNode* browserNode)
+//{
+ // Q_D(qSlicerSequencesModule);
+ // return d->ToolBar->setActiveBrowserNode(browserNode);
+//}
 
 //-----------------------------------------------------------------------------
 bool qSlicerSequencesModule::autoShowToolBar()
@@ -410,7 +410,6 @@ bool  qSlicerSequencesModule::showSequenceBrowser(vtkMRMLSequenceBrowserNode* br
   qSlicerSequencesModule* sequencesModule = dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences"));
   if (sequencesModule->autoShowToolBar())
     {
-    sequencesModule->setToolBarActiveBrowserNode(browserNode);
     sequencesModule->setToolBarVisible(true);
     }
   return true;

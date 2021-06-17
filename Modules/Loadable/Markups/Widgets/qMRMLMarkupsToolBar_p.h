@@ -17,25 +17,13 @@
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
-
-#ifndef __qSlicerMouseModeToolBar_p_h
-#define __qSlicerMouseModeToolBar_p_h
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Slicer API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef __qMRMLMarkupsToolBar_p_h
+#define __qMRMLMarkupsToolBar_p_h
 
 // Qt includes
-#include <QToolBar>
-#include <QMenu>
+#include <QDebug>
 #include <QToolButton>
+#include <QMenu>
 #include <QCheckBox>
 
 // CTK includes
@@ -45,51 +33,68 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 // Slicer includes
-#include "qSlicerMouseModeToolBar.h"
-
-// MRMLLogic includes
-#include <vtkMRMLApplicationLogic.h>
+#include "qSlicerCoreApplication.h"
+#include "qSlicerApplication.h"
+#include "qSlicerLayoutManager.h"
 
 // MRML includes
+//#include "qMRMLMarkupsToolBar.h"
+#include "qMRMLNodeComboBox.h"
+#include "qMRMLThreeDView.h"
+#include "qMRMLThreeDWidget.h"
+#include "qMRMLSliceView.h"
+#include "qMRMLSliceWidget.h"
 #include <vtkMRMLScene.h>
+// MRMLLogic includes
+//#include <vtkMRMLMarkupsNode.h>
+#include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLLayoutLogic.h>
+#include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLViewNode.h>
+#include <vtkMRMLWindowLevelWidget.h>
+#include <qMRMLMarkupsToolBar.h>
+#include <qSlicerMarkupsPlaceWidget.h>
+
+//Logic includes
+#include <vtkSlicerApplicationLogic.h>
+#include <vtkMRMLApplicationLogic.h>
+#include <vtkSlicerMarkupsLogic.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
+#include <vtkSmartPointer.h>
 
-class qSlicerMouseModeToolBarPrivate;
+#include "qSlicerMouseModeToolBar_p.h"
+
+class qMRMLMarkupsToolBarPrivate;
 class QAction;
 class QActionGroup;
 class QToolButton;
 
-class qSlicerMouseModeToolBarPrivate : public QObject
+//-----------------------------------------------------------------------------
+class qMRMLMarkupsToolBarPrivate : public QObject
 {
 	Q_OBJECT
 		QVTK_OBJECT
-		Q_DECLARE_PUBLIC(qSlicerMouseModeToolBar);
+		Q_DECLARE_PUBLIC(qMRMLMarkupsToolBar);
 
 protected:
-	qSlicerMouseModeToolBar* const q_ptr;
+	qMRMLMarkupsToolBar* const q_ptr;
 
 public:
-	qSlicerMouseModeToolBarPrivate(qSlicerMouseModeToolBar& object);
-
+	qMRMLMarkupsToolBarPrivate(qMRMLMarkupsToolBar& object);
 	void init();
 	void setMRMLScene(vtkMRMLScene* newScene);
-
-	/// update mouse cursor shape according to current interaction mode and selection
-	void updateCursor();
-
-	void updatePlaceWidgetMenuActionList();
-
 	QCursor cursorFromIcon(QIcon& icon);
+	void addCreateNodeActions(vtkSlicerMarkupsLogic* markupsLogic);
+	void addPlaceWidget();
+	void onCreateMarkupByClass(const QString& className);
 
 public slots:
-
 	void onMRMLSceneStartBatchProcess();
 	void onMRMLSceneEndBatchProcess();
 	void updateWidgetFromMRML();
-
 	void onActivePlaceNodeClassNameChangedEvent();
 	void onPlaceNodeClassNameListModifiedEvent();
 
@@ -97,29 +102,21 @@ public:
 	vtkSmartPointer<vtkMRMLScene>            MRMLScene;
 	vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
 	vtkWeakPointer<vtkMRMLInteractionNode>   InteractionNode;
+	vtkWeakPointer<vtkMRMLSelectionNode>     SelectionNode;
+	vtkWeakPointer<vtkMRMLMarkupsNode>       CurrentMarkupsNode;
 
-	QAction* AdjustViewAction;
-	QAction* AdjustWindowLevelAction;
-	QAction* PlaceWidgetAction;
-	QMenu* PlaceWidgetMenu;
-
-	QAction* AdjustWindowLevelAdjustModeAction;
-	QAction* AdjustWindowLevelRegionModeAction;
-	QAction* AdjustWindowLevelCenteredRegionModeAction;
-	QMenu* AdjustWindowLevelMenu;
-
-	ctkSignalMapper* AdjustWindowLevelModeMapper;
-
-	/// Place Persistence
-	QAction* PersistenceAction;
+	//QAction* PlaceWidgetAction;
+	//QMenu* PlaceWidgetMenu;
 
 	/// Group interaction modes together so that they're exclusive
-	QActionGroup* InteractionModesActionGroup;
+	//QActionGroup* InteractionModesActionGroup;
 
 	/// Group the place actions together so that they're exclusive
-	QActionGroup* PlaceModesActionGroup;
-
+	//QActionGroup* PlaceModesActionGroup;
 	QString DefaultPlaceClassName;
+
+	qMRMLNodeComboBox* MarkupsNodeSelector;
+	qSlicerMarkupsPlaceWidget* MarkupsPlaceWidget;
 };
 
 #endif

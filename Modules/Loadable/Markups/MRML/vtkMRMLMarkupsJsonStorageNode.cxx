@@ -217,8 +217,8 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
       }
     if (controlPointItem.HasMember("position"))
       {
-      rapidjson::Value& positionItem = controlPointItem["position"];
-      if (!this->ReadVector(positionItem, cp->Position))
+      if(cp->PositionStatus != vtkMRMLMarkupsNode::PositionUndefined &&
+        cp->PositionStatus != vtkMRMLMarkupsNode::PositionMissing)
         {
         vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
           "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
@@ -595,6 +595,12 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
     {
     markupsNode->SetLocked(markupObject["locked"].GetBool());
     }
+
+	if (markupObject.HasMember("lockedPointNumber"))
+	{
+		markupsNode->SetLockedPointNumber(markupObject["lockedPointNumber"].GetBool());
+	}
+
   if (markupObject.HasMember("labelFormat"))
     {
     markupsNode->SetMarkupLabelFormat(markupObject["labelFormat"].GetString());
@@ -823,6 +829,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteBasicProperties(
   writer.Key("locked");
   writer.Bool(markupsNode->GetLocked());
 
+	writer.Key("lockedPointNumber");
+	writer.Bool(markupsNode->GetLockedPointNumber());
+
   writer.Key("labelFormat");
   writer.String(markupsNode->GetMarkupLabelFormat().c_str());
 
@@ -865,15 +874,21 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteControlPoints(
     writer.Key("description"); writer.String(cp->Description.c_str());
     writer.Key("associatedNodeID"); writer.String(cp->AssociatedNodeID.c_str());
 
-    double xyz[3] = { 0.0, 0.0, 0.0 };
-    markupsNode->GetNthControlPointPosition(controlPointIndex, xyz);
-    if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
+    if(cp->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
       {
-      xyz[0] = -xyz[0];
-      xyz[1] = -xyz[1];
+      double xyz[3] = { 0.0, 0.0, 0.0 };
+      markupsNode->GetNthControlPointPosition(controlPointIndex, xyz);
+      if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
+        {
+        xyz[0] = -xyz[0];
+        xyz[1] = -xyz[1];
+        }
+      writer.Key("position"); this->WriteVector(writer, xyz);
       }
-    writer.Key("position"); this->WriteVector(writer, xyz);
-
+    else
+      {
+      writer.Key("position"); writer.String("");
+      }
     double* orientationMatrix = markupsNode->GetNthControlPointOrientationMatrix(controlPointIndex);
     if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
       {

@@ -218,18 +218,18 @@ vtkSlicerMarkupsWidgetRepresentation3D::~vtkSlicerMarkupsWidgetRepresentation3D(
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateNthPointAndLabelFromMRML(int vtkNotUsed(n))
 {
-  /*
-  TODO: implement this for better performance
-  if (markupsNode->GetNumberOfControlPoints() - 1 >= this->PointsVisibilityOnSlice->GetNumberOfValues())
-    {
-    this->PointsVisibilityOnSlice->InsertValue(markupsNode->GetNumberOfControlPoints() - 1, 1);
-    }
-  else
-    {
-    this->PointsVisibilityOnSlice->InsertNextValue(1);
-    }
-  this->UpdateInterpolatedPoints(markupsNode->GetNumberOfControlPoints() - 1);
-  */
+	/*
+	TODO: implement this for better performance
+	if (markupsNode->GetNumberOfControlPoints() - 1 >= this->PointsVisibilityOnSlice->GetNumberOfValues())
+	  {
+	  this->PointsVisibilityOnSlice->InsertValue(markupsNode->GetNumberOfControlPoints() - 1, 1);
+	  }
+	else
+	  {
+	  this->PointsVisibilityOnSlice->InsertNextValue(1);
+	  }
+	this->UpdateInterpolatedPoints(markupsNode->GetNumberOfControlPoints() - 1);
+	*/
 }
 
 //----------------------------------------------------------------------
@@ -343,8 +343,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+	vtkMRMLInteractionEventData* interactionEventData,
+	int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
@@ -517,169 +517,169 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithHandles(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+	vtkMRMLInteractionEventData* interactionEventData,
+	int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
-  if (!this->InteractionPipeline || !this->InteractionPipeline->Actor->GetVisibility())
-    {
-    return;
-    }
+	if (!this->InteractionPipeline || !this->InteractionPipeline->Actor->GetVisibility())
+	{
+		return;
+	}
 
-  double displayPosition3[3] = { 0.0, 0.0, 0.0 };
-  // Display position is valid in case of desktop interactions. Otherwise it is a 3D only context such as
-  // virtual reality, and then we expect a valid world position in the absence of display position.
-  if (interactionEventData->IsDisplayPositionValid())
-    {
-    const int* displayPosition = interactionEventData->GetDisplayPosition();
-    displayPosition3[0] = static_cast<double>(displayPosition[0]);
-    displayPosition3[1] = static_cast<double>(displayPosition[1]);
-    }
-  else if (!interactionEventData->IsWorldPositionValid())
-    {
-    return;
-    }
+	double displayPosition3[3] = { 0.0, 0.0, 0.0 };
+	// Display position is valid in case of desktop interactions. Otherwise it is a 3D only context such as
+	// virtual reality, and then we expect a valid world position in the absence of display position.
+	if (interactionEventData->IsDisplayPositionValid())
+	{
+		const int* displayPosition = interactionEventData->GetDisplayPosition();
+		displayPosition3[0] = static_cast<double>(displayPosition[0]);
+		displayPosition3[1] = static_cast<double>(displayPosition[1]);
+	}
+	else if (!interactionEventData->IsWorldPositionValid())
+	{
+		return;
+	}
 
-  bool handlePicked = false;
-  vtkSlicerMarkupsWidgetRepresentation::HandleInfoList handleInfoList = this->InteractionPipeline->GetHandleInfoList();
-  for (vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::HandleInfo handleInfo : handleInfoList)
-    {
-    if (!handleInfo.IsVisible())
-      {
-      continue;
-      }
+	bool handlePicked = false;
+	vtkSlicerMarkupsWidgetRepresentation::HandleInfoList handleInfoList = this->InteractionPipeline->GetHandleInfoList();
+	for (vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::HandleInfo handleInfo : handleInfoList)
+	{
+		if (!handleInfo.IsVisible())
+		{
+			continue;
+		}
 
-    double* handleWorldPos = handleInfo.PositionWorld;
-    double handleDisplayPos[3] = { 0 };
+		double* handleWorldPos = handleInfo.PositionWorld;
+		double handleDisplayPos[3] = { 0 };
 
-    if (interactionEventData->IsDisplayPositionValid())
-      {
-      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos)
-        + this->PickingTolerance * this->ScreenScaleFactor;
-      this->Renderer->SetWorldPoint(handleWorldPos);
-      this->Renderer->WorldToDisplay();
-      this->Renderer->GetDisplayPoint(handleDisplayPos);
-      handleDisplayPos[2] = 0.0;
-      double dist2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
-      if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
-        {
-        closestDistance2 = dist2;
-        foundComponentType = handleInfo.ComponentType;
-        foundComponentIndex = handleInfo.Index;
-        handlePicked = true;
-        }
-      }
-    else
-      {
-      const double* worldPosition = interactionEventData->GetWorldPosition();
-      double worldTolerance = this->ControlPointSize / 2.0 +
-        this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
-      double dist2 = vtkMath::Distance2BetweenPoints(handleWorldPos, worldPosition);
-      if (dist2 < worldTolerance * worldTolerance && dist2 < closestDistance2)
-        {
-        closestDistance2 = dist2;
-        foundComponentType = handleInfo.ComponentType;
-        foundComponentIndex = handleInfo.Index;
-        }
-      }
-    }
+		if (interactionEventData->IsDisplayPositionValid())
+		{
+			double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos)
+				+ this->PickingTolerance * this->ScreenScaleFactor;
+			this->Renderer->SetWorldPoint(handleWorldPos);
+			this->Renderer->WorldToDisplay();
+			this->Renderer->GetDisplayPoint(handleDisplayPos);
+			handleDisplayPos[2] = 0.0;
+			double dist2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
+			if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
+			{
+				closestDistance2 = dist2;
+				foundComponentType = handleInfo.ComponentType;
+				foundComponentIndex = handleInfo.Index;
+				handlePicked = true;
+			}
+		}
+		else
+		{
+			const double* worldPosition = interactionEventData->GetWorldPosition();
+			double worldTolerance = this->ControlPointSize / 2.0 +
+				this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
+			double dist2 = vtkMath::Distance2BetweenPoints(handleWorldPos, worldPosition);
+			if (dist2 < worldTolerance * worldTolerance && dist2 < closestDistance2)
+			{
+				closestDistance2 = dist2;
+				foundComponentType = handleInfo.ComponentType;
+				foundComponentIndex = handleInfo.Index;
+			}
+		}
+	}
 
-  if (!handlePicked)
-    {
-    // Detect translation handle shaft
-    for (vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::HandleInfo handleInfo : handleInfoList)
-      {
-      if (!handleInfo.IsVisible() || handleInfo.ComponentType != vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle)
-        {
-        continue;
-        }
-      double* handleWorldPos = handleInfo.PositionWorld;
-      double handleDisplayPos[3] = { 0 };
+	if (!handlePicked)
+	{
+		// Detect translation handle shaft
+		for (vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::HandleInfo handleInfo : handleInfoList)
+		{
+			if (!handleInfo.IsVisible() || handleInfo.ComponentType != vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle)
+			{
+				continue;
+			}
+			double* handleWorldPos = handleInfo.PositionWorld;
+			double handleDisplayPos[3] = { 0 };
 
-      if (interactionEventData->IsDisplayPositionValid())
-        {
-        double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos)
-          + this->PickingTolerance * this->ScreenScaleFactor;
-        this->Renderer->SetWorldPoint(handleWorldPos);
-        this->Renderer->WorldToDisplay();
-        this->Renderer->GetDisplayPoint(handleDisplayPos);
-        handleDisplayPos[2] = 0.0;
+			if (interactionEventData->IsDisplayPositionValid())
+			{
+				double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos)
+					+ this->PickingTolerance * this->ScreenScaleFactor;
+				this->Renderer->SetWorldPoint(handleWorldPos);
+				this->Renderer->WorldToDisplay();
+				this->Renderer->GetDisplayPoint(handleDisplayPos);
+				handleDisplayPos[2] = 0.0;
 
-        double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
-        this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
-        double originDisplayPos[4] = { 0.0 };
-        this->Renderer->SetWorldPoint(originWorldPos);
-        this->Renderer->WorldToDisplay();
-        this->Renderer->GetDisplayPoint(originDisplayPos);
-        originDisplayPos[2] = displayPosition3[2]; // Handles are always projected
-        double t = 0;
-        double lineDistance = vtkLine::DistanceToLine(displayPosition3, originDisplayPos, handleDisplayPos, t);
-        double lineDistance2 = lineDistance * lineDistance;
-        if (lineDistance < pixelTolerance && lineDistance2 < closestDistance2)
-          {
-          closestDistance2 = lineDistance2;
-          foundComponentType = handleInfo.ComponentType;
-          foundComponentIndex = handleInfo.Index;
-          }
-        }
-      else
-        {
-        const double* worldPosition = interactionEventData->GetWorldPosition();
-        double worldTolerance = this->ControlPointSize / 2.0 +
-          this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
-        double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
-        this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
-        double t;
-        double lineDistance = vtkLine::DistanceToLine(worldPosition, originWorldPos, handleWorldPos, t);
-        if (lineDistance < worldTolerance && lineDistance < closestDistance2)
-          {
-          closestDistance2 = lineDistance;
-          foundComponentType = handleInfo.ComponentType;
-          foundComponentIndex = handleInfo.Index;
-          }
-        }
-      }
-    }
+				double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
+				this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
+				double originDisplayPos[4] = { 0.0 };
+				this->Renderer->SetWorldPoint(originWorldPos);
+				this->Renderer->WorldToDisplay();
+				this->Renderer->GetDisplayPoint(originDisplayPos);
+				originDisplayPos[2] = displayPosition3[2]; // Handles are always projected
+				double t = 0;
+				double lineDistance = vtkLine::DistanceToLine(displayPosition3, originDisplayPos, handleDisplayPos, t);
+				double lineDistance2 = lineDistance * lineDistance;
+				if (lineDistance < pixelTolerance && lineDistance2 < closestDistance2)
+				{
+					closestDistance2 = lineDistance2;
+					foundComponentType = handleInfo.ComponentType;
+					foundComponentIndex = handleInfo.Index;
+				}
+			}
+			else
+			{
+				const double* worldPosition = interactionEventData->GetWorldPosition();
+				double worldTolerance = this->ControlPointSize / 2.0 +
+					this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
+				double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
+				this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
+				double t;
+				double lineDistance = vtkLine::DistanceToLine(worldPosition, originWorldPos, handleWorldPos, t);
+				if (lineDistance < worldTolerance && lineDistance < closestDistance2)
+				{
+					closestDistance2 = lineDistance;
+					foundComponentType = handleInfo.ComponentType;
+					foundComponentIndex = handleInfo.Index;
+				}
+			}
+		}
+	}
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+	vtkMRMLInteractionEventData* interactionEventData,
+	int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
-  foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
-  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !this->GetVisibility() || !interactionEventData || !interactionEventData->IsWorldPositionValid() )
-    {
-    return;
-    }
+	foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
+	vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+	if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+		|| !this->GetVisibility() || !interactionEventData || !interactionEventData->IsWorldPositionValid())
+	{
+		return;
+	}
 
-  vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
+	vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
 
-  double pointWorldPos1[4] = { 0.0, 0.0, 0.0, 1.0 };
-  double pointWorldPos2[4] = { 0.0, 0.0, 0.0, 1.0 };
+	double pointWorldPos1[4] = { 0.0, 0.0, 0.0, 1.0 };
+	double pointWorldPos2[4] = { 0.0, 0.0, 0.0, 1.0 };
 
-  double toleranceWorld = this->ControlPointSize * this->ControlPointSize;
+	double toleranceWorld = this->ControlPointSize * this->ControlPointSize;
 
-  for (int i = 0; i < numberOfPoints - 1; i++)
-    {
-    markupsNode->GetNthControlPointPositionWorld(i, pointWorldPos1);
-    markupsNode->GetNthControlPointPositionWorld(i + 1, pointWorldPos2);
+	for (int i = 0; i < numberOfPoints - 1; i++)
+	{
+		markupsNode->GetNthControlPointPositionWorld(i, pointWorldPos1);
+		markupsNode->GetNthControlPointPositionWorld(i + 1, pointWorldPos2);
 
-    double relativePositionAlongLine = -1.0; // between 0.0-1.0 if between the endpoints of the line segment
-    const double* worldPosition = interactionEventData->GetWorldPosition();
-    double distance2 = vtkLine::DistanceToLine(worldPosition, pointWorldPos1, pointWorldPos2, relativePositionAlongLine);
-    if (distance2 < toleranceWorld && distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
-      {
-      closestDistance2 = distance2;
-      foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;
-      foundComponentIndex = i;
-      }
-    }
+		double relativePositionAlongLine = -1.0; // between 0.0-1.0 if between the endpoints of the line segment
+		const double* worldPosition = interactionEventData->GetWorldPosition();
+		double distance2 = vtkLine::DistanceToLine(worldPosition, pointWorldPos1, pointWorldPos2, relativePositionAlongLine);
+		if (distance2 < toleranceWorld && distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
+		{
+			closestDistance2 = distance2;
+			foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;
+			foundComponentIndex = i;
+		}
+	}
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   this->UpdateViewScaleFactor();
   this->UpdateControlPointSize();
@@ -778,38 +778,38 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::GetActors(vtkPropCollection *pc)
+void vtkSlicerMarkupsWidgetRepresentation3D::GetActors(vtkPropCollection* pc)
 {
-  Superclass::GetActors(pc);
-  for (int i = 0; i < NumberOfControlPointTypes; i++)
-   {
-    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
-    controlPoints->Actor->GetActors(pc);
-    controlPoints->OccludedActor->GetActors(pc);
-    controlPoints->LabelsActor->GetActors(pc);
-    controlPoints->LabelsOccludedActor->GetActors(pc);
-    }
-  this->TextActor->GetActors(pc);
+	Superclass::GetActors(pc);
+	for (int i = 0; i < NumberOfControlPointTypes; i++)
+	{
+		ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
+		controlPoints->Actor->GetActors(pc);
+		controlPoints->OccludedActor->GetActors(pc);
+		controlPoints->LabelsActor->GetActors(pc);
+		controlPoints->LabelsOccludedActor->GetActors(pc);
+	}
+	this->TextActor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::ReleaseGraphicsResources(
-  vtkWindow *win)
+	vtkWindow* win)
 {
-  Superclass::ReleaseGraphicsResources(win);
-  for (int i = 0; i < NumberOfControlPointTypes; i++)
-    {
-    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
-    controlPoints->Actor->ReleaseGraphicsResources(win);
-    controlPoints->OccludedActor->ReleaseGraphicsResources(win);
-    controlPoints->LabelsActor->ReleaseGraphicsResources(win);
-    controlPoints->LabelsOccludedActor->ReleaseGraphicsResources(win);
-    }
-  this->TextActor->ReleaseGraphicsResources(win);
+	Superclass::ReleaseGraphicsResources(win);
+	for (int i = 0; i < NumberOfControlPointTypes; i++)
+	{
+		ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
+		controlPoints->Actor->ReleaseGraphicsResources(win);
+		controlPoints->OccludedActor->ReleaseGraphicsResources(win);
+		controlPoints->LabelsActor->ReleaseGraphicsResources(win);
+		controlPoints->LabelsOccludedActor->ReleaseGraphicsResources(win);
+	}
+	this->TextActor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
   vtkFloatArray* zBuffer = vtkSlicerMarkupsWidgetRepresentation3D::GetCachedZBuffer(this->Renderer);
   int count = Superclass::RenderOverlay(viewport);
@@ -970,7 +970,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointGlyphOrientation(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+	vtkViewport* viewport)
 {
   // Recompute glyph size if it is relative to the screen size
   // (it gets smaller/larger as the camera is moved or zoomed)
@@ -1032,133 +1032,133 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation3D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+	vtkViewport* viewport)
 {
-  int count = Superclass::RenderTranslucentPolygonalGeometry(viewport);
-  for (int i = 0; i < NumberOfControlPointTypes; i++)
-    {
-    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
-    // The internal actor needs to share property keys.
-    // This ensures the mapper state is consistent and allows depth peeling to work as expected.
-    controlPoints->Actor->SetPropertyKeys(this->GetPropertyKeys());
-    controlPoints->OccludedActor->SetPropertyKeys(this->GetPropertyKeys());
-    if (controlPoints->Actor->GetVisibility())
-      {
-      count += controlPoints->Actor->RenderTranslucentPolygonalGeometry(viewport);
-      }
-    if (controlPoints->OccludedActor->GetVisibility())
-      {
-      count += controlPoints->OccludedActor->RenderTranslucentPolygonalGeometry(viewport);
-      }
-    if (controlPoints->LabelsActor->GetVisibility())
-      {
-      count += controlPoints->LabelsActor->RenderTranslucentPolygonalGeometry(viewport);
-      }
-    if (controlPoints->LabelsOccludedActor->GetVisibility())
-      {
-      count += controlPoints->LabelsOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
-      }
-    }
-  if (this->TextActor->GetVisibility() && !this->TextActorOccluded)
-    {
-    count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
-  return count;
+	int count = Superclass::RenderTranslucentPolygonalGeometry(viewport);
+	for (int i = 0; i < NumberOfControlPointTypes; i++)
+	{
+		ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
+		// The internal actor needs to share property keys.
+		// This ensures the mapper state is consistent and allows depth peeling to work as expected.
+		controlPoints->Actor->SetPropertyKeys(this->GetPropertyKeys());
+		controlPoints->OccludedActor->SetPropertyKeys(this->GetPropertyKeys());
+		if (controlPoints->Actor->GetVisibility())
+		{
+			count += controlPoints->Actor->RenderTranslucentPolygonalGeometry(viewport);
+		}
+		if (controlPoints->OccludedActor->GetVisibility())
+		{
+			count += controlPoints->OccludedActor->RenderTranslucentPolygonalGeometry(viewport);
+		}
+		if (controlPoints->LabelsActor->GetVisibility())
+		{
+			count += controlPoints->LabelsActor->RenderTranslucentPolygonalGeometry(viewport);
+		}
+		if (controlPoints->LabelsOccludedActor->GetVisibility())
+		{
+			count += controlPoints->LabelsOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
+		}
+	}
+	if (this->TextActor->GetVisibility() && !this->TextActorOccluded)
+	{
+		count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
+	}
+	return count;
 }
 
 //-----------------------------------------------------------------------------
 vtkTypeBool vtkSlicerMarkupsWidgetRepresentation3D::HasTranslucentPolygonalGeometry()
 {
-  if (this->Superclass::HasTranslucentPolygonalGeometry())
-    {
-    return true;
-    }
-  for (int i = 0; i < NumberOfControlPointTypes; i++)
-    {
-    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
-    if (controlPoints->Actor->GetVisibility() && controlPoints->Actor->HasTranslucentPolygonalGeometry())
-      {
-      return true;
-      }
-    if (controlPoints->OccludedActor->GetVisibility() && controlPoints->OccludedActor->HasTranslucentPolygonalGeometry())
-      {
-      return true;
-      }
-    if (controlPoints->LabelsActor->GetVisibility() && controlPoints->LabelsActor->HasTranslucentPolygonalGeometry())
-      {
-      return true;
-      }
-    if (controlPoints->LabelsOccludedActor->GetVisibility() && controlPoints->LabelsOccludedActor->HasTranslucentPolygonalGeometry())
-      {
-      return true;
-      }
-    }
-  if (this->TextActor->GetVisibility() && !this->TextActorOccluded && this->TextActor->HasTranslucentPolygonalGeometry())
-    {
-    return true;
-    }
-  return false;
+	if (this->Superclass::HasTranslucentPolygonalGeometry())
+	{
+		return true;
+	}
+	for (int i = 0; i < NumberOfControlPointTypes; i++)
+	{
+		ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
+		if (controlPoints->Actor->GetVisibility() && controlPoints->Actor->HasTranslucentPolygonalGeometry())
+		{
+			return true;
+		}
+		if (controlPoints->OccludedActor->GetVisibility() && controlPoints->OccludedActor->HasTranslucentPolygonalGeometry())
+		{
+			return true;
+		}
+		if (controlPoints->LabelsActor->GetVisibility() && controlPoints->LabelsActor->HasTranslucentPolygonalGeometry())
+		{
+			return true;
+		}
+		if (controlPoints->LabelsOccludedActor->GetVisibility() && controlPoints->LabelsOccludedActor->HasTranslucentPolygonalGeometry())
+		{
+			return true;
+		}
+	}
+	if (this->TextActor->GetVisibility() && !this->TextActorOccluded && this->TextActor->HasTranslucentPolygonalGeometry())
+	{
+		return true;
+	}
+	return false;
 }
 
 //-----------------------------------------------------------------------------
-double *vtkSlicerMarkupsWidgetRepresentation3D::GetBounds()
+double* vtkSlicerMarkupsWidgetRepresentation3D::GetBounds()
 {
-  vtkBoundingBox boundingBox;
-  const std::vector<vtkProp*> actors(
-  {
-    reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Unselected])->Actor,
-    reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Selected])->Actor,
-    reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor
-  });
-  this->AddActorsBounds(boundingBox, actors, Superclass::GetBounds());
-  boundingBox.GetBounds(this->Bounds);
-  return this->Bounds;
+	vtkBoundingBox boundingBox;
+	const std::vector<vtkProp*> actors(
+		{
+		  reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Unselected])->Actor,
+		  reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Selected])->Actor,
+		  reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor
+		});
+	this->AddActorsBounds(boundingBox, actors, Superclass::GetBounds());
+	boundingBox.GetBounds(this->Bounds);
+	return this->Bounds;
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::PrintSelf(ostream& os,
-                                                      vtkIndent indent)
+	vtkIndent indent)
 {
-  //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
-  this->Superclass::PrintSelf(os, indent);
+	//Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
+	this->Superclass::PrintSelf(os, indent);
 
-  for (int i = 0; i < NumberOfControlPointTypes; i++)
-    {
-    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
-    os << indent << "Pipeline " << i << "\n";
-    if (controlPoints->Actor)
-      {
-       os << indent << "Points Visibility: " << controlPoints->Actor->GetVisibility() << "\n";
-      }
-    else
-      {
-      os << indent << "Points: (none)\n";
-      }
-    if (controlPoints->LabelsActor)
-      {
-      os << indent << "Labels Visibility: " << controlPoints->LabelsActor->GetVisibility() << "\n";
-      }
-    else
-      {
-      os << indent << "Labels Points: (none)\n";
-      }
-    if (controlPoints->Property)
-      {
-      os << indent << "Property: " << controlPoints->Property << "\n";
-      }
-    else
-      {
-      os << indent << "Property: (none)\n";
-      }
-    }
-  if (this->TextActor)
-    {
-    os << indent << "Text Visibility: " << this->TextActor->GetVisibility() << "\n";
-    }
-  else
-    {
-    os << indent << "Text Visibility: (none)\n";
-    }
+	for (int i = 0; i < NumberOfControlPointTypes; i++)
+	{
+		ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
+		os << indent << "Pipeline " << i << "\n";
+		if (controlPoints->Actor)
+		{
+			os << indent << "Points Visibility: " << controlPoints->Actor->GetVisibility() << "\n";
+		}
+		else
+		{
+			os << indent << "Points: (none)\n";
+		}
+		if (controlPoints->LabelsActor)
+		{
+			os << indent << "Labels Visibility: " << controlPoints->LabelsActor->GetVisibility() << "\n";
+		}
+		else
+		{
+			os << indent << "Labels Points: (none)\n";
+		}
+		if (controlPoints->Property)
+		{
+			os << indent << "Property: " << controlPoints->Property << "\n";
+		}
+		else
+		{
+			os << indent << "Property: (none)\n";
+		}
+	}
+	if (this->TextActor)
+	{
+		os << indent << "Text Visibility: " << this->TextActor->GetVisibility() << "\n";
+	}
+	else
+	{
+		os << indent << "Text Visibility: (none)\n";
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -1189,11 +1189,11 @@ void vtkSlicerMarkupsWidgetRepresentation3D::OnRenderCompleted(vtkObject* caller
 //-----------------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D* vtkSlicerMarkupsWidgetRepresentation3D::GetControlPointsPipeline(int controlPointType)
 {
-  return reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
+	return reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::SetRenderer(vtkRenderer *ren)
+void vtkSlicerMarkupsWidgetRepresentation3D::SetRenderer(vtkRenderer* ren)
 {
   if (ren == this->Renderer)
     {
@@ -1221,134 +1221,134 @@ void vtkSlicerMarkupsWidgetRepresentation3D::SetRenderer(vtkRenderer *ren)
 //---------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double pickPoint[3])
 {
-  if (!this->AccuratePicker->Pick(x, y, 0, this->Renderer))
-    {
-    return false;
-    }
+	if (!this->AccuratePicker->Pick(x, y, 0, this->Renderer))
+	{
+		return false;
+	}
 
-  vtkPoints* pickPositions = this->AccuratePicker->GetPickedPositions();
-  vtkIdType numberOfPickedPositions = pickPositions->GetNumberOfPoints();
-  if (numberOfPickedPositions<1)
-    {
-    return false;
-    }
+	vtkPoints* pickPositions = this->AccuratePicker->GetPickedPositions();
+	vtkIdType numberOfPickedPositions = pickPositions->GetNumberOfPoints();
+	if (numberOfPickedPositions < 1)
+	{
+		return false;
+	}
 
-  // There may be multiple picked positions, choose the one closest to the camera
-  double cameraPosition[3] = { 0,0,0 };
-  this->Renderer->GetActiveCamera()->GetPosition(cameraPosition);
-  pickPositions->GetPoint(0, pickPoint);
-  double minDist2 = vtkMath::Distance2BetweenPoints(pickPoint, cameraPosition);
-  for (vtkIdType i = 1; i < numberOfPickedPositions; i++)
-    {
-    double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(i), cameraPosition);
-    if (currentMinDist2<minDist2)
-      {
-      pickPositions->GetPoint(i, pickPoint);
-      minDist2 = currentMinDist2;
-      }
-    }
-  return true;
+	// There may be multiple picked positions, choose the one closest to the camera
+	double cameraPosition[3] = { 0,0,0 };
+	this->Renderer->GetActiveCamera()->GetPosition(cameraPosition);
+	pickPositions->GetPoint(0, pickPoint);
+	double minDist2 = vtkMath::Distance2BetweenPoints(pickPoint, cameraPosition);
+	for (vtkIdType i = 1; i < numberOfPickedPositions; i++)
+	{
+		double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(i), cameraPosition);
+		if (currentMinDist2 < minDist2)
+		{
+			pickPositions->GetPoint(i, pickPoint);
+			minDist2 = currentMinDist2;
+		}
+	}
+	return true;
 }
 
 //----------------------------------------------------------------------
 double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(double positionWorld[3])
 {
-  double viewScaleFactorMmPerPixel = 1.0;
-  if (!this->Renderer || !this->Renderer->GetActiveCamera())
-    {
-    return viewScaleFactorMmPerPixel;
-    }
+	double viewScaleFactorMmPerPixel = 1.0;
+	if (!this->Renderer || !this->Renderer->GetActiveCamera())
+	{
+		return viewScaleFactorMmPerPixel;
+	}
 
-  vtkCamera * cam = this->Renderer->GetActiveCamera();
-  if (cam->GetParallelProjection())
-    {
-    // Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
-    // Determine the available renderer size in pixels
-    double minX = 0;
-    double minY = 0;
-    this->Renderer->NormalizedDisplayToDisplay(minX, minY);
-    double maxX = 1;
-    double maxY = 1;
-    this->Renderer->NormalizedDisplayToDisplay(maxX, maxY);
-    int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
-    // Parallel scale: height of the viewport in world-coordinate distances.
-    // Larger numbers produce smaller images.
-    viewScaleFactorMmPerPixel = (cam->GetParallelScale() * 2.0) / double(rendererSizeInPixels[1]);
-    }
-  else
-    {
-    double cameraFP[4] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0 };
+	vtkCamera* cam = this->Renderer->GetActiveCamera();
+	if (cam->GetParallelProjection())
+	{
+		// Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
+		// Determine the available renderer size in pixels
+		double minX = 0;
+		double minY = 0;
+		this->Renderer->NormalizedDisplayToDisplay(minX, minY);
+		double maxX = 1;
+		double maxY = 1;
+		this->Renderer->NormalizedDisplayToDisplay(maxX, maxY);
+		int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
+		// Parallel scale: height of the viewport in world-coordinate distances.
+		// Larger numbers produce smaller images.
+		viewScaleFactorMmPerPixel = (cam->GetParallelScale() * 2.0) / double(rendererSizeInPixels[1]);
+	}
+	else
+	{
+		double cameraFP[4] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0 };
 
-    double cameraViewUp[3] = { 0 };
-    cam->GetViewUp(cameraViewUp);
-    vtkMath::Normalize(cameraViewUp);
+		double cameraViewUp[3] = { 0 };
+		cam->GetViewUp(cameraViewUp);
+		vtkMath::Normalize(cameraViewUp);
 
-    // Get distance in pixels between two points at unit distance above and below the focal point
-    this->Renderer->SetWorldPoint(cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]);
-    this->Renderer->WorldToDisplay();
-    double topCenter[3] = { 0 };
-    this->Renderer->GetDisplayPoint(topCenter);
-    topCenter[2] = 0.0;
-    this->Renderer->SetWorldPoint(cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]);
-    this->Renderer->WorldToDisplay();
-    double bottomCenter[3] = { 0 };
-    this->Renderer->GetDisplayPoint(bottomCenter);
-    bottomCenter[2] = 0.0;
-    double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenter, bottomCenter));
+		// Get distance in pixels between two points at unit distance above and below the focal point
+		this->Renderer->SetWorldPoint(cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]);
+		this->Renderer->WorldToDisplay();
+		double topCenter[3] = { 0 };
+		this->Renderer->GetDisplayPoint(topCenter);
+		topCenter[2] = 0.0;
+		this->Renderer->SetWorldPoint(cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]);
+		this->Renderer->WorldToDisplay();
+		double bottomCenter[3] = { 0 };
+		this->Renderer->GetDisplayPoint(bottomCenter);
+		bottomCenter[2] = 0.0;
+		double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenter, bottomCenter));
 
-    // if render window is not initialized yet then distInPixels == 0.0,
-    // in that case just leave the default viewScaleFactorMmPerPixel
-    if (distInPixels > 1e-3)
-      {
-      // 2.0 = 2x length of viewUp vector in mm (because viewUp is unit vector)
-      viewScaleFactorMmPerPixel = 2.0 / distInPixels;
-      }
-    }
-  return viewScaleFactorMmPerPixel;
+		// if render window is not initialized yet then distInPixels == 0.0,
+		// in that case just leave the default viewScaleFactorMmPerPixel
+		if (distInPixels > 1e-3)
+		{
+			// 2.0 = 2x length of viewUp vector in mm (because viewUp is unit vector)
+			viewScaleFactorMmPerPixel = 2.0 / distInPixels;
+		}
+	}
+	return viewScaleFactorMmPerPixel;
 }
 
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
 {
-  this->ViewScaleFactorMmPerPixel = 1.0;
-  this->ScreenSizePixel = 1000.0;
-  if (!this->Renderer || !this->Renderer->GetActiveCamera())
-    {
-    return;
-    }
+	this->ViewScaleFactorMmPerPixel = 1.0;
+	this->ScreenSizePixel = 1000.0;
+	if (!this->Renderer || !this->Renderer->GetActiveCamera())
+	{
+		return;
+	}
 
-  int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
-  double screenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
-  if (screenSizePixel < 1.0)
-    {
-    // render window is not fully initialized yet
-    return;
-    }
-  this->ScreenSizePixel = screenSizePixel;
+	int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
+	double screenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
+	if (screenSizePixel < 1.0)
+	{
+		// render window is not fully initialized yet
+		return;
+	}
+	this->ScreenSizePixel = screenSizePixel;
 
-  double cameraFP[3] = { 0.0 };
-  this->Renderer->GetActiveCamera()->GetFocalPoint(cameraFP);
-  this->ViewScaleFactorMmPerPixel = this->GetViewScaleFactorAtPosition(cameraFP);
+	double cameraFP[3] = { 0.0 };
+	this->Renderer->GetActiveCamera()->GetFocalPoint(cameraFP);
+	this->ViewScaleFactorMmPerPixel = this->GetViewScaleFactorAtPosition(cameraFP);
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointSize()
 {
-  if (this->MarkupsDisplayNode->GetUseGlyphScale())
-    {
-    this->ControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor
-      * this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
-    }
-  else
-    {
-    this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphSize();
-    }
-  for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
-    {
-    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
-    controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize * 0.7);
-    }
+	if (this->MarkupsDisplayNode->GetUseGlyphScale())
+	{
+		this->ControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor
+			* this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
+	}
+	else
+	{
+		this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphSize();
+	}
+	for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
+	{
+		ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
+		controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize * 0.7);
+	}
 }
 
 //----------------------------------------------------------------------
@@ -1394,36 +1394,36 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::GetNthControlPointViewVisibility(in
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateInteractionPipeline()
 {
-  vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(this->ViewNode);
-  if (!viewNode)
-    {
-    this->InteractionPipeline->Actor->SetVisibility(false);
-    return;
-    }
-  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
-  Superclass::UpdateInteractionPipeline();
+	vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(this->ViewNode);
+	if (!viewNode)
+	{
+		this->InteractionPipeline->Actor->SetVisibility(false);
+		return;
+	}
+	// Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
+	Superclass::UpdateInteractionPipeline();
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper, vtkMapper* occludedMapper)
 {
-  Superclass::UpdateRelativeCoincidentTopologyOffsets(mapper);
+	Superclass::UpdateRelativeCoincidentTopologyOffsets(mapper);
 
-  if (!occludedMapper)
-    {
-    return;
-    }
+	if (!occludedMapper)
+	{
+		return;
+	}
 
-  Superclass::UpdateRelativeCoincidentTopologyOffsets(occludedMapper);
+	Superclass::UpdateRelativeCoincidentTopologyOffsets(occludedMapper);
 
-  if (!this->MarkupsDisplayNode
-    || !this->MarkupsDisplayNode->GetOccludedVisibility()
-    || this->MarkupsDisplayNode->GetOccludedOpacity() <= 0.0)
-    {
-    return;
-    }
+	if (!this->MarkupsDisplayNode
+		|| !this->MarkupsDisplayNode->GetOccludedVisibility()
+		|| this->MarkupsDisplayNode->GetOccludedOpacity() <= 0.0)
+	{
+		return;
+	}
 
-  occludedMapper->SetRelativeCoincidentTopologyLineOffsetParameters(-1, this->OccludedRelativeOffset);
-  occludedMapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(-1, this->OccludedRelativeOffset);
-  occludedMapper->SetRelativeCoincidentTopologyPointOffsetParameter(this->OccludedRelativeOffset);
+	occludedMapper->SetRelativeCoincidentTopologyLineOffsetParameters(-1, this->OccludedRelativeOffset);
+	occludedMapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(-1, this->OccludedRelativeOffset);
+	occludedMapper->SetRelativeCoincidentTopologyPointOffsetParameter(this->OccludedRelativeOffset);
 }

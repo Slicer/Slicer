@@ -84,6 +84,9 @@ public:
   // Returns true if one of the markup points are just being previewed and not placed yet.
   bool IsPointPreviewed();
 
+  /// Update a the current index of the point preview being previewed.
+  void UpdatePreviewPointIndex(vtkMRMLInteractionEventData* eventData);
+
   /// Add/update a point preview to the current active Markup at the specified position.
   void UpdatePreviewPoint(vtkMRMLInteractionEventData* eventData, const char* associatedNodeID, int positionStatus);
 
@@ -158,6 +161,7 @@ protected:
   virtual bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetAction(vtkMRMLInteractionEventData* eventData);
+  virtual bool ProcessWidgetStopPlace(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointSnapToSlice(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointDelete(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointInsert(vtkMRMLInteractionEventData* eventData);
