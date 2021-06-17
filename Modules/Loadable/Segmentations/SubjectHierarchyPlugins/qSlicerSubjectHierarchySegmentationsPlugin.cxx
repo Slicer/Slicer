@@ -712,10 +712,19 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentAdded(vtkObject* calle
 
   if (segmentShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
+    // Get position of segment under parent
+    int positionUnderParent = -1;
+    vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+    if (segmentation)
+      {
+      positionUnderParent = segmentation->GetSegmentIndex(segmentId);
+      }
+
     // Add the segment in subject hierarchy to allow individual handling (e.g. visibility)
     vtkIdType segmentShItemID = shNode->CreateHierarchyItem(
       segmentationShItemID, (segment->GetName() ? segment->GetName() : ""),
-      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName());
+      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName(),
+      positionUnderParent);
     shNode->SetItemAttribute(segmentShItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName(), segmentId);
     // Set plugin for the new item (automatically selects the segment plugin based on confidence values)
     qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyItem(segmentShItemID);
