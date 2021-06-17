@@ -175,6 +175,14 @@ double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType
     return 0.0;
     }
 
+  if (itemID == shNode->GetSceneItemID())
+    {
+    // Do not allow to assign display properties to the scene item,
+    // because the scene item is not always visible and overall it is not prepared
+    // to be used as a regular folder.
+    return 0.0;
+    }
+
   if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
     {
     // Folder with no hierarchy node

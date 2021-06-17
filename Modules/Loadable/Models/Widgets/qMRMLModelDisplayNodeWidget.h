@@ -76,6 +76,8 @@ signals:
   void clippingConfigurationButtonClicked();
 
 public slots:
+  /// Set the scene.
+  void setMRMLScene(vtkMRMLScene* newScene) override;
   /// Set the model display node
   void setMRMLModelDisplayNode(vtkMRMLModelDisplayNode* node);
   /// Utility function to be connected with generic signals

@@ -239,6 +239,26 @@ qMRMLModelDisplayNodeWidget::qMRMLModelDisplayNodeWidget(QWidget* _parent)
 //------------------------------------------------------------------------------
 qMRMLModelDisplayNodeWidget::~qMRMLModelDisplayNodeWidget() = default;
 
+//---------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setMRMLScene(vtkMRMLScene* newScene)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+
+  if (this->mrmlScene() == newScene)
+    {
+    return;
+    }
+
+  this->Superclass::setMRMLScene(newScene);
+  this->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent,
+    this, SLOT(updateWidgetFromMRML()));
+
+  if (this->mrmlScene())
+    {
+    this->updateWidgetFromMRML();
+    }
+}
+
 //------------------------------------------------------------------------------
 vtkMRMLModelDisplayNode* qMRMLModelDisplayNodeWidget::mrmlModelDisplayNode()const
 {

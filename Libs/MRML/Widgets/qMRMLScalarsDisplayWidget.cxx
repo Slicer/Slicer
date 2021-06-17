@@ -50,7 +50,7 @@ public:
   QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes()const;
 
 public:
-  QList<vtkMRMLDisplayNode*> CurrentDisplayNodes;
+  QList< vtkWeakPointer<vtkMRMLDisplayNode> > CurrentDisplayNodes;
 
   // Store what data range was used to automatically slider range of display range,
   // to prevent resetting slider range when user moves the slider.
@@ -142,7 +142,12 @@ vtkMRMLDisplayNode* qMRMLScalarsDisplayWidget::mrmlDisplayNode()const
 QList<vtkMRMLDisplayNode*> qMRMLScalarsDisplayWidget::mrmlDisplayNodes()const
 {
   Q_D(const qMRMLScalarsDisplayWidget);
-  return d->CurrentDisplayNodes;
+  QList<vtkMRMLDisplayNode*> displayNodes; // this list will only contain valid (non-null) display node pointers
+  for (vtkMRMLDisplayNode* displayNode: d->CurrentDisplayNodes)
+    {
+    displayNodes << displayNode;
+    }
+  return displayNodes;
 }
 
 //------------------------------------------------------------------------------
@@ -158,7 +163,11 @@ void qMRMLScalarsDisplayWidget::setMRMLDisplayNodes(QList<vtkMRMLDisplayNode*> d
     (displayNodes.size() > 0 ? displayNodes[0] : nullptr),
     vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
-  d->CurrentDisplayNodes = displayNodes;
+  d->CurrentDisplayNodes.clear();
+  for (vtkMRMLDisplayNode* displayNode : displayNodes)
+    {
+    d->CurrentDisplayNodes << displayNode;
+    }
 
   if (d->CurrentDisplayNodes.size() > 0)
     {
