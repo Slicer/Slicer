@@ -1630,7 +1630,7 @@ void qSlicerMarkupsModuleWidget::onResetMarkupPushButtonClicked()
       rows << row;
       }
     // sort the list
-    qSort(rows);
+		std::sort(rows.begin(), rows.end());
 
     // unplace from the end
     for (int i = rows.size() - 1; i >= 0; --i)
@@ -1669,7 +1669,7 @@ void qSlicerMarkupsModuleWidget::onRestoreMarkupPushButtonClicked()
       rows << row;
       }
     // sort the list
-    qSort(rows);
+		std::sort(rows.begin(), rows.end());
 
     // unplace from the end
     for (int i = rows.size() - 1; i >= 0; --i)
@@ -1707,7 +1707,7 @@ void qSlicerMarkupsModuleWidget::onUnsetMarkupPushButtonClicked()
       rows << row;
       }
     // sort the list
-    qSort(rows);
+		std::sort(rows.begin(), rows.end());
 
     // unplace from the end
     for (int i = rows.size() - 1; i >= 0; --i)
@@ -1716,7 +1716,7 @@ void qSlicerMarkupsModuleWidget::onUnsetMarkupPushButtonClicked()
       d->MarkupsNode->UnsetNthControlPointPosition(index);
       }
 }
-  //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onMissingMarkupPushButtonClicked()
 {
     Q_D(qSlicerMarkupsModuleWidget);
@@ -1745,7 +1745,7 @@ void qSlicerMarkupsModuleWidget::onMissingMarkupPushButtonClicked()
         rows << row;
     }
     // sort the list
-    qSort(rows);
+		std::sort(rows.begin(), rows.end());
 
     // unplace from the end
     for (int i = rows.size() - 1; i >= 0; --i)
@@ -1868,7 +1868,7 @@ void qSlicerMarkupsModuleWidget::onCreateMarkupByClass(const QString& className)
 
     std::string nodeName =
       this->mrmlScene()->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
-    markupsNode->SetName(nodeName.c_str())
+		markupsNode->SetName(nodeName.c_str());
     this->onActiveMarkupMRMLNodeAdded(markupsNode);
     }
 }
@@ -2086,7 +2086,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
       {
       item->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsUndefined.png"));
       d->MarkupsNode->UnsetNthControlPointPosition(row);
-      if (!persistenceModeEnabled)
+			if (!persistenceModeEnabled)
         {
         d->setPlaceModeEnabled(false);
         }

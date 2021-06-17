@@ -621,7 +621,7 @@ void qSlicerMarkupsModule::setAutoShowToolBar(bool autoShow)
 	d->AutoShowToolBar = autoShow;
 }
 //-----------------------------------------------------------------------------
-bool  qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
+bool  qSlicerMarkupsModule::showMarkups()
 {
 	qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 	if (!app
@@ -636,7 +636,7 @@ bool  qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
 	{
 		markupsModule->setToolBarVisible(true);
 	}
-	return TRUE;
+	return true;
 }
 // --------------------------------------------------------------------------
 void qSlicerMarkupsModule::onNodeAddedEvent(vtkObject*, vtkObject* node)
@@ -691,7 +691,6 @@ void qSlicerMarkupsModule::updateAllVirtualOutputNodes()
 {
 	Q_D(qSlicerMarkupsModule);
 
-	vtkMRMLAbstractLogic* l = this->logic();
 	SlicerRenderBlocker renderBlocker;
 	d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC * 1000.0);
     if (d->MarkupsToShow)

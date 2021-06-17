@@ -88,7 +88,7 @@ public:
 
   /// Utility function for showing the markupsNode in the application user interface (toolbar)
   /// if autoShowToolBar is enabled.
-  Q_INVOKABLE static bool showMarkups(vtkMRMLMarkupsNode* markupsNode);
+  Q_INVOKABLE static bool showMarkups();
 
 protected:
 
