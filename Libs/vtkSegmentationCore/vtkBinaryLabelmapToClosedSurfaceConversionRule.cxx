@@ -220,6 +220,14 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
     this->CreateClosedSurface(orientedBinaryLabelmap, closedSurfacePolyData, labelValue);
     }
 
+  // Remove "ImageScalars" array because having a scalar in a model would get that
+  // scalar array displayed automatically (instead of model node color) when the mesh is loaded.
+  vtkPointData* pointData = closedSurfacePolyData->GetPointData();
+  if (pointData!=nullptr)
+    {
+    pointData->RemoveArray("ImageScalars");
+    }
+
   return true;
 }
 

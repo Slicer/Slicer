@@ -280,6 +280,10 @@ void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID, QCol
     {
     displayNode->SetColor(color.redF(), color.greenF(), color.blueF());
 
+    // Solid color is set, therefore disable scalar visibility
+    // (otherwise color would come from the scalar value and colormap).
+    displayNode->SetScalarVisibility(false);
+
     // Trigger update of color swatch
     shNode->ItemModified(itemID);
     }
