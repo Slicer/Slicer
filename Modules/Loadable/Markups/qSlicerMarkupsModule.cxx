@@ -697,7 +697,7 @@ void qSlicerMarkupsModule::updateAllVirtualOutputNodes()
 	{
 		if (this->mrmlScene() && !this->mrmlScene()->IsImporting())
 		{
-			this->showMarkups(d->MarkupsToShow);
+			this->showMarkups();
 			d->MarkupsToShow = nullptr;
 		}
 	}
