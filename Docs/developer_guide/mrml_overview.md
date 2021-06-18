@@ -181,20 +181,17 @@ action (default|relayout) #REQUIRED >
 
 Notes:
 
-* `layout` element:
-  * `split` attribute applies only to layout of type `horizontal` and `vertical`
-
-* `item` element:
-  * `row`, `column`, `rowspan` and `colspan` attributes applies only to layout of type `grid`
-  * `splitSize` must be specified only for `layout` element with `split` attribute set to `true`
-
-* `view` element:
-  * `class` must correspond to a MRML view node class name (e.g `vtkMRMLViewNode`, `vtkMRMLSliceNode` or `vtkMRMLPlotViewNode`)
-  * `singletontag` must always be specified when `multiple` attribute of `item` element is specified.
-
-* `property` element:
-  * `name` attribute may be set to the following values:
-    * `viewlabel`
-    * `viewcolor`
-    * `viewgroup`
-    * `orientation` (applies only if parent `view` element is associated with `class` (or subclass) of type `vtkMRMLSliceNode`
+- `layout` element:
+  - `split` attribute applies only to layout of type `horizontal` and `vertical`
+- `item` element:
+  - `row`, `column`, `rowspan` and `colspan` attributes applies only to layout of type `grid`
+  - `splitSize` must be specified only for `layout` element with `split` attribute set to `true`
+- `view` element:
+  - `class` must correspond to a MRML view node class name (e.g `vtkMRMLViewNode`, `vtkMRMLSliceNode` or `vtkMRMLPlotViewNode`)
+  - `singletontag` must always be specified when `multiple` attribute of `item` element is specified.
+- `property` element:
+  - `name` attribute may be set to the following values:
+    - `viewlabel`
+    - `viewcolor`
+    - `viewgroup`
+    - `orientation` applies only if parent `view` element is associated with `class` (or subclass) of type `vtkMRMLSliceNode`
