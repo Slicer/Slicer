@@ -47,7 +47,7 @@ class DICOMSendDialog(qt.QDialog):
     self.serverAETitleEdit.text = self.settings.value('DICOM/Send/AETitle', 'CTK')
     self.dicomFormLayout.addRow("AE Title: ", self.serverAETitleEdit)
     # Enable AET only for DIMSE
-    self.serverAETitleEdit.enabled = self.protocolSelectorCombobox.currentIndex == 0
+    self.serverAETitleEdit.enabled = self.protocolSelectorCombobox.currentText == 'DIMSE'
 
     self.serverAddressLineEdit = qt.QLineEdit()
     self.serverAddressLineEdit.setToolTip("Address includes hostname and port number in standard URL format (hostname:port).")
