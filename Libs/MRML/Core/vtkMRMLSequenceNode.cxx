@@ -673,10 +673,11 @@ std::string vtkMRMLSequenceNode::GetDefaultStorageNodeClassName(const char* file
 
   // Use specific sequence storage node, if possible
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetNthDataNode(0));
-  if (storableNode)
+  if (storableNode && this->GetScene())
     {
+    std::string sequenceStorageNodeClassName = storableNode->GetDefaultSequenceStorageNodeClassName();
     vtkSmartPointer<vtkMRMLStorageNode> storageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(
-      storableNode->CreateDefaultSequenceStorageNode());
+      vtkMRMLStorageNode::SafeDownCast(this->GetScene()->CreateNodeByClass(sequenceStorageNodeClassName.c_str())));
     if (storageNode)
       {
       // Filename is not specified or it is specified and there is a supported file extension

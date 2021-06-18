@@ -72,9 +72,6 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   /// Create and observe default display node
   void CreateDefaultDisplayNodes() override;
 
-  /// Creates the most appropriate storage node class for storing a sequence of these nodes.
-  vtkMRMLStorageNode* CreateDefaultSequenceStorageNode() override;
-
   /// Measured quantity of voxel values, specified as a standard coded entry.
   /// For example: (DCM, 112031, "Attenuation Coefficient")
   void SetVoxelValueQuantity(vtkCodedEntry*);

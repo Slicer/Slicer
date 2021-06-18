@@ -250,9 +250,6 @@ public:
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
-  /// Creates the most appropriate storage node class for storing a sequence of these nodes.
-  vtkMRMLStorageNode* CreateDefaultSequenceStorageNode() override;
-
   ///
   /// Create and observe default display node
   void CreateDefaultDisplayNodes() override;

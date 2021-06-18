@@ -57,6 +57,10 @@ public:
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
+  /// \brief Copy node contents from another node of the same type.
+  /// Reimplemented to copy default sequence storage node class.
+  void Copy(vtkMRMLNode* node) override;
+
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLStorableNode);
@@ -118,6 +122,14 @@ public:
   /// storage node is not created and the method returns with true.
   virtual bool AddDefaultStorageNode(const char* filename = nullptr);
 
+  /// Class name of the default sequence storage node that is instantiated by CreateDefaultSequenceStorageNode
+  /// The value is not stored in the scene but it has to be set manually
+  /// (for example, in the corresponding default node in the scene).
+  /// Default value: "vtkMRMLSequenceStorageNode"
+  /// \sa CreateDefaultSequenceStorageNode
+  vtkSetMacro(DefaultSequenceStorageNodeClassName, std::string);
+  vtkGetMacro(DefaultSequenceStorageNodeClassName, std::string);
+
   /// Creates the most appropriate storage node class for storing a sequence of these nodes.
   /// The caller owns the returned object and responsible for deleting it.
   /// If the method is not overwritten by subclass then it creates vtkMRMLSequenceStorageNode,
@@ -162,6 +174,8 @@ public:
   /// SlicerDataType records the kind of storage node that
   /// holds the data. Set in each subclass.
   std::string SlicerDataType;
+
+  std::string DefaultSequenceStorageNodeClassName;
 
   /// Compute when the storable node was read/written for the last time.
   /// This information is used by GetModifiedSinceRead() to know if the node
