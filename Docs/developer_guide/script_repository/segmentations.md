@@ -154,6 +154,26 @@ Segmentation can only be shown in 3D if closed surface representation (or other 
 segmentation.CreateClosedSurfaceRepresentation()
 ```
 
+### Modify segmentation display options
+
+```python
+segmentation = getNode('Segmentation')
+segmentID = 'Segment_1'
+
+displayNode = segmentation.GetDisplayNode()
+displayNode.SetOpacity3D(0.4)  # Set overall opacity of the segmentation
+displayNode.SetSegmentOpacity3D(segmentID, 0.2)  # Set opacity of a single segment
+
+# Segment color is not just a display property, but it is stored in the segment itself (and stored in the segmentation file)
+segment = segmentation.GetSegmentation().GetSegment(segmentID)
+segment.SetColor(1, 0, 0)  # red
+
+# In very special cases (for example, when a segment's color only need to be changed in a specific view)
+# the segment color can be overridden in the display node.
+# This is not recommended for general use.
+displayNode.SetSegmentOverrideColor(segmentID, 0, 0, 1)  # blue
+```
+
 ### Get a representation of a segment
 
 Access binary labelmap stored in a segmentation node (without exporting it to a volume node) - if it does not exist, it will return None:
