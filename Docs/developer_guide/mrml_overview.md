@@ -117,3 +117,75 @@ Another view of [VTK/MRML pipeline for the 2D slice views](https://www.slicer.or
 
 Notes: the MapToWindowLevelColors has no lookup table set, so it maps the scalar volume data to 0,255 with no "color" operation.  This is controlled by the Window/Level settings of the volume display node.  The MapToColors applies the current lookup table to go from 0-255 to full RGBA.
 
+### Layout
+
+A layout manager ([qSlicerLayoutManager][qSlicerLayoutManager-apidoc]) shows or hides layouts:
+
+- It instantiates, shows or hides relevant view widgets.
+- It is associated with a [vtkMRMLLayoutNode][vtkMRMLLayoutNode-apidoc] describing the current layout configuration and ensuring it can be saved and restored.
+- It owns an instance of [vtkMRMLLayoutLogic][vtkMRMLLayoutLogic-apidoc] that controls the layout node and the view nodes in a MRML scene.
+- Pre-defined layouts are described using XML and are registered in `vtkMRMLLayoutLogic::AddDefaultLayouts()`.
+- Developer may register additional layout.
+
+[qSlicerLayoutManager-apidoc]: http://apidocs.slicer.org/master/classqSlicerLayoutManager.html
+[vtkMRMLLayoutNode-apidoc]: http://apidocs.slicer.org/master/classvtkMRMLLayoutNode.html
+[vtkMRMLLayoutLogic-apidoc]: http://apidocs.slicer.org/master/classvtkMRMLLayoutLogic.html
+
+#### Registering a custom layout
+
+See [example in the script repository](script_repository.md#customize-view-layout).
+
+#### Layout XML Format
+
+Layout description may be validated using the following DTD:
+
+```
+<!DOCTYPE layout SYSTEM "https://slicer.org/layout.dtd"
+[
+<!ELEMENT layout (item+)>
+<!ELEMENT item (layout*, view)>
+<!ELEMENT view (property*)>
+<!ELEMENT property (#PCDATA)>
+
+<!ATTLIST layout
+type (horizontal|grid|tab|vertical) #IMPLIED "horizontal"
+split (true|false) #IMPLIED "true" >
+
+<!ATTLIST item
+multiple (true|false) #IMPLIED "false"
+splitSize CDATA #IMPLIED "0"
+row CDATA #IMPLIED "0"
+column CDATA #IMPLIED "0"
+rowspan CDATA #IMPLIED "1"
+colspan CDATA #IMPLIED "1"
+>
+
+<!ATTLIST view
+class CDATA #REQUIRED
+singletontag CDATA #IMPLIED
+horizontalStretch CDATA #IMPLIED "-1"
+verticalStretch CDATA #IMPLIED "-1" >
+
+<!ATTLIST property
+name CDATA #REQUIRED
+action (default|relayout) #REQUIRED >
+
+]>
+```
+
+Notes:
+
+- `layout` element:
+  - `split` attribute applies only to layout of type `horizontal` and `vertical`
+- `item` element:
+  - `row`, `column`, `rowspan` and `colspan` attributes applies only to layout of type `grid`
+  - `splitSize` must be specified only for `layout` element with `split` attribute set to `true`
+- `view` element:
+  - `class` must correspond to a MRML view node class name (e.g `vtkMRMLViewNode`, `vtkMRMLSliceNode` or `vtkMRMLPlotViewNode`)
+  - `singletontag` must always be specified when `multiple` attribute of `item` element is specified.
+- `property` element:
+  - `name` attribute may be set to the following values:
+    - `viewlabel`
+    - `viewcolor`
+    - `viewgroup`
+    - `orientation` applies only if parent `view` element is associated with `class` (or subclass) of type `vtkMRMLSliceNode`
