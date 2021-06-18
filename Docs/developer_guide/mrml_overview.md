@@ -131,7 +131,7 @@ A layout manager ([qSlicerLayoutManager][qSlicerLayoutManager-apidoc]) shows or 
 
 * Pre-defined layouts are described using XML and are registered in `vtkMRMLLayoutLogic::AddDefaultLayouts()`.
 
-* Developer may register additionial layout.
+* Developer may register additional layout.
 
 [qSlicerLayoutManager-apidoc]: http://apidocs.slicer.org/master/classqSlicerLayoutManager.html
 [vtkMRMLLayoutNode-apidoc]: http://apidocs.slicer.org/master/classvtkMRMLLayoutNode.html
