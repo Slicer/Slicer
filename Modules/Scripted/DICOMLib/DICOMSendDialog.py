@@ -39,7 +39,15 @@ class DICOMSendDialog(qt.QDialog):
     self.protocolSelectorCombobox = qt.QComboBox()
     self.protocolSelectorCombobox.addItems(["DIMSE","DICOMweb"])
     self.protocolSelectorCombobox.setCurrentText(self.settings.value('DICOM/Send/Protocol', 'DIMSE'))
+    self.protocolSelectorCombobox.currentIndexChanged.connect(self.onProtocolSelectorChange)
     self.dicomFormLayout.addRow("Protocol: ", self.protocolSelectorCombobox)
+
+    self.serverAETitleEdit = qt.QLineEdit()
+    self.serverAETitleEdit.setToolTip("AE Title")
+    self.serverAETitleEdit.text = self.settings.value('DICOM/Send/AETitle', 'CTK')
+    self.dicomFormLayout.addRow("AE Title: ", self.serverAETitleEdit)
+    # Enable AET only for DIMSE
+    self.serverAETitleEdit.enabled = self.protocolSelectorCombobox.currentText == 'DIMSE'
 
     self.serverAddressLineEdit = qt.QLineEdit()
     self.serverAddressLineEdit.setToolTip("Address includes hostname and port number in standard URL format (hostname:port).")
@@ -62,11 +70,17 @@ class DICOMSendDialog(qt.QDialog):
 
     qt.QDialog.open(self)
 
+  def onProtocolSelectorChange(self):
+    # Enable AET only for DIMSE
+    self.serverAETitleEdit.enabled = self.protocolSelectorCombobox.currentText == 'DIMSE'
+
   def onOk(self):
     self.sendingIsInProgress = True
     address = self.serverAddressLineEdit.text
+    aeTitle = self.serverAETitleEdit.text
     protocol = self.protocolSelectorCombobox.currentText
     self.settings.setValue('DICOM/Send/URL', address)
+    self.settings.setValue('DICOM/Send/AETitle', aeTitle)
     self.settings.setValue('DICOM/Send/Protocol', protocol)
     self.progressBar.value = 0
     self.progressBar.maximum = len(self.files)+1
@@ -77,7 +91,7 @@ class DICOMSendDialog(qt.QDialog):
     try:
       #qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
       okButton.enabled = False
-      DICOMLib.DICOMSender(self.files, address, protocol, progressCallback=self.onProgress)
+      DICOMLib.DICOMSender(self.files, address, protocol, aeTitle=aeTitle, progressCallback=self.onProgress)
       logging.debug("DICOM sending of %s files succeeded" % len(self.files))
       self.close()
     except Exception as result:
