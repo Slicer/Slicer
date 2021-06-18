@@ -139,7 +139,7 @@ A layout manager ([qSlicerLayoutManager][qSlicerLayoutManager-apidoc]) shows or 
 
 #### Registering a custom layout
 
-_TBD_
+See [example in the script repository](script_repository.md#customize-view-layout).
 
 #### Layout XML Format
 
