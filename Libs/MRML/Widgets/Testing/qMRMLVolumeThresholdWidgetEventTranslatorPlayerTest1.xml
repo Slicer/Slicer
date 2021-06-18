@@ -17,7 +17,6 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/Slider" command="set_min_double" arguments="-117"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/Slider" command="set_min_double" arguments="-147"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/Slider" command="set_min_double" arguments="-157"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/RangeWidgetPopup" command="popupOpen" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/Slider" command="set_max_double" arguments="245"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/Slider" command="set_max_double" arguments="255"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/Slider" command="set_max_double" arguments="265"/>
@@ -65,10 +64,6 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/Slider" command="set_max_double" arguments="315"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/Slider" command="set_min_double" arguments="-207"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/Slider" command="set_max_double" arguments="325"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/RangeWidgetPopup/ctkRangeWidget/Slider" command="set_min_double" arguments="-700"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/RangeWidgetPopup/ctkRangeWidget/Slider" command="set_max_double" arguments="500"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/RangeWidgetPopup/ctkRangeWidget/Slider" command="set_max_double" arguments="400"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/AutoManualComboBox" command="set_string" arguments="Off"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/RangeWidgetPopup" command="popupOpen" arguments="false"/>
     </events>
 </QtTesting>
