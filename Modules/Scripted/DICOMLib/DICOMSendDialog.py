@@ -72,7 +72,7 @@ class DICOMSendDialog(qt.QDialog):
 
   def onProtocolSelectorChange(self):
     # Enable AET only for DIMSE
-    self.serverAETitleEdit.enabled = self.protocolSelectorCombobox.currentIndex == 0
+    self.serverAETitleEdit.enabled = self.protocolSelectorCombobox.currentText == 'DIMSE'
 
   def onOk(self):
     self.sendingIsInProgress = True
