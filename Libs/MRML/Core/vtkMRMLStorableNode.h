@@ -123,7 +123,9 @@ public:
   virtual bool AddDefaultStorageNode(const char* filename = nullptr);
 
   /// Class name of the default sequence storage node that is instantiated by CreateDefaultSequenceStorageNode
-  /// Default: "vtkMRMLSequenceStorageNode"
+  /// The value is not stored in the scene but it has to be set manually
+  /// (for example, in the corresponding default node in the scene).
+  /// Default value: "vtkMRMLSequenceStorageNode"
   /// \sa CreateDefaultSequenceStorageNode
   vtkSetMacro(DefaultSequenceStorageNodeClassName, std::string);
   vtkGetMacro(DefaultSequenceStorageNodeClassName, std::string);
