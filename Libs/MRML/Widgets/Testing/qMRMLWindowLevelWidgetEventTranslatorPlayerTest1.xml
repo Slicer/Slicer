@@ -8,7 +8,6 @@
     </settings>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_min_double" arguments="-11"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/RangeWidgetPopup" command="popupOpen" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_min_double" arguments="-21"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_max_double" arguments="99"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_min_double" arguments="-31"/>
@@ -197,8 +196,6 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_max_double" arguments="399"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_min_double" arguments="-331"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_max_double" arguments="409"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/RangeWidgetPopup" command="popupOpen" arguments="false"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/RangeWidgetPopup" command="popupOpen" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="741"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="751"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="761"/>
@@ -232,7 +229,6 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="581"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="571"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="561"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/RangeWidgetPopup" command="popupOpen" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/LevelSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="44"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/LevelSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="54"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/LevelSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="64"/>
@@ -368,6 +364,5 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_max_double" arguments="234"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_min_double" arguments="-276"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/WindowLevelRangeSlider" command="set_max_double" arguments="244"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLWindowLevelWidget/RangeWidgetPopup" command="popupOpen" arguments="false"/>
     </events>
 </QtTesting>
