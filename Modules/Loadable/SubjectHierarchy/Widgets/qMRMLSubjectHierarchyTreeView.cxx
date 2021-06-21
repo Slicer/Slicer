@@ -1583,7 +1583,23 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
     }
   else
     {
-    d->EditAction->setVisible(d->EditActionVisible);
+
+    // Only display "Edit properties..." if the option is enabled and properties can be actually edited
+    bool editActionVisible = false;
+    if (d->EditActionVisible)
+      {
+      if (itemID)
+        {
+        qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
+          qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(currentItemID);
+        if (ownerPlugin)
+          {
+          editActionVisible = ownerPlugin->canEditProperties(currentItemID);
+          }
+        }
+      }
+    d->EditAction->setVisible(editActionVisible);
+
     d->RenameAction->setVisible(true);
     d->ToggleVisibilityAction->setVisible(false);
     d->SelectPluginSubMenu->menuAction()->setVisible(d->SelectRoleSubMenuVisible);
@@ -1923,7 +1939,6 @@ void qMRMLSubjectHierarchyTreeView::editCurrentItem()
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
     }
-
   vtkIdType currentItemID = this->currentItem();
   if (!currentItemID)
     {
@@ -1933,6 +1948,11 @@ void qMRMLSubjectHierarchyTreeView::editCurrentItem()
 
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
     qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(currentItemID);
+  if (!ownerPlugin)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: Invalid owner plugin";
+    return;
+    }
   ownerPlugin->editProperties(currentItemID);
 }
 

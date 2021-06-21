@@ -577,7 +577,18 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
     plugin->showViewContextMenuActionsForItem(itemID, eventDataMap);
     }
 
-  d->EditPropertiesAction->setVisible(itemID != shNode->GetSceneItemID());
+  // Only display "Edit properties..." if properties can be actually edited
+  bool editActionVisible = false;
+  if (itemID)
+    {
+    qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
+      qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(itemID);
+    if (ownerPlugin)
+      {
+      editActionVisible = ownerPlugin->canEditProperties(itemID);
+      }
+    }
+  d->EditPropertiesAction->setVisible(editActionVisible);
 
   // Set current item ID for Edit properties action
   d->CurrentItemID = itemID;
@@ -662,16 +673,27 @@ void qSlicerSubjectHierarchyPluginLogic::registerViewContextMenuAction(QAction* 
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::editProperties()
 {
+  Q_D(qSlicerSubjectHierarchyPluginLogic);
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    qCritical() << Q_FUNC_INFO << " failed: Invalid subject hierarchy node";
+    return;
+    }
+ if (!d->CurrentItemID)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: Invalid current item";
     return;
     }
 
-  Q_D(qSlicerSubjectHierarchyPluginLogic);
-
-  qSlicerApplication::application()->openNodeModule(shNode->GetItemDataNode(d->CurrentItemID));
+  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
+    qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(d->CurrentItemID);
+  if (!ownerPlugin)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: Invalid owner plugin";
+    return;
+    }
+  ownerPlugin->editProperties(d->CurrentItemID);
 }
 
 //-----------------------------------------------------------------------------

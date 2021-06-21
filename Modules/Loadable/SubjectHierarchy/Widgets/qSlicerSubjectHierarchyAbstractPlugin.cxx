@@ -119,6 +119,26 @@ QIcon qSlicerSubjectHierarchyAbstractPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyAbstractPlugin::canEditProperties(vtkIdType itemID)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return false;
+    }
+  vtkMRMLNode* node = shNode->GetItemDataNode(itemID);
+  if (!node)
+    {
+    // default implementation can only edit associated nodes
+    return false;
+    }
+  double confidence = 0.0;
+  QString moduleForEditProperties = qSlicerApplication::application()->nodeModule(node, &confidence);
+  return !moduleForEditProperties.isEmpty() && confidence > 0.0;
+}
+
+//---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyAbstractPlugin::editProperties(vtkIdType itemID)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();

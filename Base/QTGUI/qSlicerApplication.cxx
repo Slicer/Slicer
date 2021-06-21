@@ -636,7 +636,7 @@ void qSlicerApplication::confirmRestart(QString reason)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
+QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=nullptr*/)const
 {
   QString mostSuitableModuleName = "Data";
   double mostSuitableModuleConfidence = 0.0;
@@ -677,9 +677,9 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
       mostSuitableModuleConfidence = nodeEditableConfidence;
       }
     }
-  if (mostSuitableModuleConfidence == 0.0)
+  if (confidence)
     {
-    qWarning() << "Couldn't find a module for node class" << nodeClassName;
+    *confidence = mostSuitableModuleConfidence;
     }
   return mostSuitableModuleName;
 }
