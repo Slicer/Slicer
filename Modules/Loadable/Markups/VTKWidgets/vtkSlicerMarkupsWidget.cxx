@@ -46,8 +46,6 @@
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
 {
-  this->MousePressedSinceMarkupPlace = true;
-
   this->LastEventPosition[0] = 0.0;
   this->LastEventPosition[1] = 0.0;
   this->StartEventOffsetPosition[0] = 0.0;
@@ -57,7 +55,7 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
 
   // Place
   this->SetEventTranslation(WidgetStateDefine, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier, WidgetEventControlPointPlace);
-  this->SetEventTranslation(WidgetStateDefine, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventStopPlace);
+  this->SetEventTranslation(WidgetStateDefine, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventStopPlace);
 
   // Manipulate
   this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
@@ -72,8 +70,6 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->SetEventTranslation(WidgetStateOnWidget, vtkMRMLInteractionEventData::LeftButtonClickEvent, vtkEvent::NoModifier, WidgetEventJumpCursor);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventAction);
 
-  // Must process right button press if want to capture right button click event
-  this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventPick);
   this->SetEventTranslation(WidgetStateOnWidget, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
 
   // Update active component
@@ -91,17 +87,14 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   // Handle interactions
   this->SetEventTranslationClickAndDrag(WidgetStateOnTranslationHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
-  this->SetEventTranslation(WidgetStateOnTranslationHandle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventPick);
   this->SetEventTranslation(WidgetStateOnTranslationHandle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
 
   this->SetEventTranslationClickAndDrag(WidgetStateOnRotationHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
-  this->SetEventTranslation(WidgetStateOnRotationHandle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventPick);
   this->SetEventTranslation(WidgetStateOnRotationHandle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
 
   this->SetEventTranslationClickAndDrag(WidgetStateOnScaleHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
-  this->SetEventTranslation(WidgetStateOnScaleHandle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventPick);
   this->SetEventTranslation(WidgetStateOnScaleHandle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
 
 
@@ -409,7 +402,7 @@ bool vtkSlicerMarkupsWidget::ProcessControlPointDelete(vtkMRMLInteractionEventDa
 //-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessWidgetJumpCursor(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
-  if (this->WidgetState != WidgetStateOnWidget || !this->MousePressedSinceMarkupPlace)
+  if (this->WidgetState != WidgetStateOnWidget)
     {
     return false;
     }
@@ -597,13 +590,6 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
     {
     return false;
     }
-  int eventid = eventData->GetType();
-  if (eventid == vtkCommand::LeftButtonPressEvent
-    || eventid == vtkCommand::MiddleButtonPressEvent
-    || eventid == vtkCommand::RightButtonPressEvent)
-    {
-    this->MousePressedSinceMarkupPlace = true;
-    }
 
   // If we are placing markups or dragging the mouse then we interact everywhere
   if (this->WidgetState == WidgetStateDefine
@@ -631,11 +617,10 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
 //-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData)
 {
-  if ((this->WidgetState != WidgetStateOnWidget &&
+  if (this->WidgetState != WidgetStateOnWidget &&
        this->WidgetState != WidgetStateOnTranslationHandle &&
        this->WidgetState != WidgetStateOnRotationHandle &&
        this->WidgetState != WidgetStateOnScaleHandle)
-    || !this->MousePressedSinceMarkupPlace)
     {
     return false;
     }
@@ -647,23 +632,23 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* even
     return false;
     }
 
-  vtkNew<vtkMRMLInteractionEventData> pickEventData;
-  pickEventData->SetType(vtkMRMLDisplayNode::MenuEvent);
-  pickEventData->SetComponentType(markupsDisplayNode->GetActiveComponentType()); //TODO: This will always pass the active component for the mouse
-  pickEventData->SetComponentIndex(markupsDisplayNode->GetActiveComponentIndex());
-  pickEventData->SetViewNode(this->WidgetRep->GetViewNode());
+  vtkNew<vtkMRMLInteractionEventData> menuEventData;
+  menuEventData->SetType(vtkMRMLDisplayNode::MenuEvent);
+  menuEventData->SetComponentType(markupsDisplayNode->GetActiveComponentType()); //TODO: This will always pass the active component for the mouse
+  menuEventData->SetComponentIndex(markupsDisplayNode->GetActiveComponentIndex());
+  menuEventData->SetViewNode(this->WidgetRep->GetViewNode());
   if (eventData->IsDisplayPositionValid())
     {
-    pickEventData->SetDisplayPosition(eventData->GetDisplayPosition());
+    menuEventData->SetDisplayPosition(eventData->GetDisplayPosition());
     }
-  markupsDisplayNode->InvokeEvent(vtkMRMLDisplayNode::MenuEvent, pickEventData);
+  markupsDisplayNode->InvokeEvent(vtkMRMLDisplayNode::MenuEvent, menuEventData);
   return true;
 }
 
 //-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessWidgetAction(vtkMRMLInteractionEventData* eventData)
 {
-  if (this->WidgetState != WidgetStateOnWidget || !this->MousePressedSinceMarkupPlace)
+  if (this->WidgetState != WidgetStateOnWidget)
     {
     return false;
     }
@@ -1704,11 +1689,6 @@ bool vtkSlicerMarkupsWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
     }
 
   bool success = (controlPointIndex >= 0);
-  if (success)
-    {
-    this->MousePressedSinceMarkupPlace = false;
-    }
-
   return success;
 }
 
