@@ -181,10 +181,6 @@ protected:
   double LastEventPosition[2];
   double StartEventOffsetPosition[2];
 
-  // True if mouse button pressed since a point was placed.
-  // This is used to filter out "click" events that started before the point was placed.
-  bool MousePressedSinceMarkupPlace;
-
 private:
   vtkSlicerMarkupsWidget(const vtkSlicerMarkupsWidget&) = delete;
   void operator=(const vtkSlicerMarkupsWidget&) = delete;
