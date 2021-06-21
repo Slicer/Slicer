@@ -91,6 +91,9 @@ public:
   /// name and "section" value of each action.
   static Q_INVOKABLE QString buildMenuFromActions(QMenu* menu, QList< QAction* > actions);
 
+  /// Returns if properties of the item can be edited (there is a suitable owner plugin that can process a node editing request).
+  bool canEditProperties();
+
 protected:
   /// Add observations for node that was added to subject hierarchy
   void observeNode(vtkMRMLNode* node);

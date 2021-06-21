@@ -102,6 +102,9 @@ public:
   /// Get visibility icon for a visibility state
   Q_INVOKABLE virtual QIcon visibilityIcon(int visible);
 
+  /// Returns true if the module can edit properties of this item using editProperties.
+  Q_INVOKABLE virtual bool canEditProperties(vtkIdType itemID);
+
   /// Open module belonging to item and set inputs in opened module
   Q_INVOKABLE virtual void editProperties(vtkIdType itemID);
 

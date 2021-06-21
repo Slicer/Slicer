@@ -114,7 +114,11 @@ public:
   void setToolTipsEnabled(bool enable);
 
   /// Return the module name that is most suitable for editing the specified node.
-  QString nodeModule(vtkMRMLNode* node)const;
+  /// If a valid pointer is provided for confidence then the confidence value for the
+  /// found module is returned. Confidence value = 0 means that the found module can
+  /// probably not do much with that node, while 1.0 means that the found module is certainly
+  /// the best module to manage than node.
+  QString nodeModule(vtkMRMLNode* node, double *confidence=nullptr)const;
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
 

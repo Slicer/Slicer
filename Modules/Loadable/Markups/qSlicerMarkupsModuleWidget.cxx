@@ -2508,20 +2508,25 @@ return false;
 //-----------------------------------------------------------
 double qSlicerMarkupsModuleWidget::nodeEditable(vtkMRMLNode* node)
 {
-if (vtkMRMLMarkupsNode::SafeDownCast(node)
-  || vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
-  {
-  return 0.5;
-  }
-else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
-  {
-  // The module cannot directly edit this type of node but can convert it
-  return 0.1;
-  }
-else
-  {
-  return 0.0;
-  }
+  if (node != nullptr && node->GetHideFromEditors())
+    {
+    // we only allow editing of visible nodes in this module
+    return 0.0;
+    }
+  if (vtkMRMLMarkupsNode::SafeDownCast(node)
+    || vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
+    {
+    return 0.5;
+    }
+  else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
+    {
+    // The module cannot directly edit this type of node but can convert it
+    return 0.1;
+    }
+  else
+    {
+    return 0.0;
+    }
 }
 
 //-----------------------------------------------------------------------------
