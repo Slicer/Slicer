@@ -1471,14 +1471,14 @@ def arrayFromModelPoints(modelNode):
     See :py:meth:`arrayFromVolume` for details.
   """
   import vtk.util.numpy_support
-  pointData = modelNode.GetPolyData().GetPoints().GetData()
+  pointData = modelNode.GetMesh().GetPoints().GetData()
   narray = vtk.util.numpy_support.vtk_to_numpy(pointData)
   return narray
 
 def arrayFromModelPointsModified(modelNode):
   """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
-  if modelNode.GetPolyData():
-    modelNode.GetPolyData().GetPoints().GetData().Modified()
+  if modelNode.GetMesh():
+    modelNode.GetMesh().GetPoints().GetData().Modified()
   # Trigger re-render
   modelNode.GetDisplayNode().Modified()
 
