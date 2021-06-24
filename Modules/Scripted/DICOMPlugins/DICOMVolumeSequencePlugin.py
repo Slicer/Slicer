@@ -62,6 +62,9 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
     # Check if setting of DICOM UIDs is supported (if not, then we cannot export to sequence)
     dicomUIDSettingSupported = False
     createDicomSeriesParameterNode = slicer.modules.createdicomseries.cliModuleLogic().CreateNode()
+    # CreateNode() factory method incremented the reference count, we decrement now prevent memory leaks
+    # (a reference is still kept by createDicomSeriesParameterNode Python variable).
+    createDicomSeriesParameterNode.UnRegister(None)
     for groupIndex in range(createDicomSeriesParameterNode.GetNumberOfParameterGroups()):
       if createDicomSeriesParameterNode.GetParameterGroupLabel(groupIndex) == "Unique Identifiers (UIDs)":
         dicomUIDSettingSupported = True
