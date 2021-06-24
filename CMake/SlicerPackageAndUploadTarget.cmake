@@ -15,6 +15,7 @@
 #  Slicer_BINARY_DIR
 #  Slicer_OS
 #  Slicer_ARCHITECTURE
+#  Slicer_VERSION_FULL
 #
 # The following variables can either be defined in the including scope or
 # as environment variables:
@@ -87,6 +88,7 @@ if(NOT PACKAGEUPLOAD)
     Slicer_BINARY_DIR
     Slicer_OS
     Slicer_ARCHITECTURE
+    Slicer_VERSION_FULL
     SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE
     SLICER_PACKAGE_MANAGER_URL
     SLICER_PACKAGE_MANAGER_API_KEY
@@ -304,6 +306,7 @@ Check that:
             --arch ${Slicer_ARCHITECTURE}
             --name Slicer
             --revision ${Slicer_REVISION}
+            --version ${Slicer_VERSION_FULL}
             --pre_release
       RESULT_VARIABLE slicer_package_manager_upload_status
       ERROR_FILE ${error_file}
