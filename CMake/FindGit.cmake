@@ -119,7 +119,7 @@ if(GIT_EXECUTABLE)
        WORKING_DIRECTORY ${dir}
        OUTPUT_VARIABLE ${prefix}_show_output
        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(REGEX REPLACE "^([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*"
+    string(REGEX REPLACE "^([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] [-+][0-9][0-9][0-9][0-9]).*"
       "\\1" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_show_output}")
 
     execute_process(COMMAND ${GIT_EXECUTABLE} rev-list HEAD --count
