@@ -109,6 +109,11 @@
         <property name="multiSelection">
          <bool>true</bool>
         </property>
+        <property name="hideChildNodeTypes">
+         <stringlist>
+          <string>vtkMRMLAnnotationNode</string>
+         </stringlist>
+        </property>
        </widget>
       </item>
      </layout>
