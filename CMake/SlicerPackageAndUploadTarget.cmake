@@ -113,11 +113,6 @@ if(NOT PACKAGEUPLOAD)
   include(SlicerMacroExtractRepositoryInfo)
   SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR ${Slicer_SOURCE_DIR})
 
-  # Given a date formatted like "2019-01-15 22:08:54 -0500 (Tue, 15 Jan 2019)", only
-  # keep "2019-01-15 22:08:54".
-  string(REGEX REPLACE "^([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9] [0-9][0-9]\\:[0-9][0-9]\\:[0-9][0-9]).*"
-    "\\1" Slicer_WC_LAST_CHANGED_DATE "${Slicer_WC_LAST_CHANGED_DATE}")
-
   set(script_arg_list)
   foreach(varname
     ${script_vars}
@@ -264,6 +259,11 @@ foreach(p ${package_list})
       set(upload_to_midas 0)
     endif()
 
+    # Given a date formatted like "2019-01-15 22:08:54 -0500 (Tue, 15 Jan 2019)", only
+    # keep "2019-01-15 22:08:54".
+    string(REGEX REPLACE "^([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9] [0-9][0-9]\\:[0-9][0-9]\\:[0-9][0-9]).*"
+      "\\1" MIDAS_SOURCE_CHECKOUTDATE "${Slicer_WC_LAST_CHANGED_DATE}")
+
     if(upload_to_midas)
       message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
       midas_api_upload_package(
@@ -272,7 +272,7 @@ foreach(p ${package_list})
         SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
         SUBMISSION_TYPE ${CTEST_MODEL}
         SOURCE_REVISION ${Slicer_REVISION}
-        SOURCE_CHECKOUTDATE ${Slicer_WC_LAST_CHANGED_DATE}
+        SOURCE_CHECKOUTDATE ${MIDAS_SOURCE_CHECKOUTDATE}
         OPERATING_SYSTEM ${Slicer_OS}
         ARCHITECTURE ${Slicer_ARCHITECTURE}
         PACKAGE_FILEPATH ${p}
