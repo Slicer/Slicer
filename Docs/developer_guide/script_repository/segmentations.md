@@ -268,6 +268,22 @@ segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self()
 print(segmentEditorWidget.availableEffectNames())
 ```
 
+### Read and write a segment as a numpy array
+
+This example shows how to read and write voxels of binary labelmap representation of a segment as a numpy array.
+
+```python
+volumeNode = getNode('MRHead')
+segmentationNode = getNode('Segmentation')
+segmentId = segmentationNode.GetSegmentation().GetSegmentIdBySegmentName('Segment_1')
+
+segmentArray = slicer.util.arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, volumeNode)
+segmentArray[:] = 0  # clear the segmentation
+segmentArray[ slicer.util.arrayFromVolume(volumeNode) > 80 ] = 1  # create segment by simple thresholding of an image
+segmentArray[20:80, 40:90, 30:70] = 1  # fill a rectangular region using numpy indexing
+slicer.util.updateSegmentBinaryLabelmapFromArray(segmentArray, segmentationNode, segmentId, volumeNode)
+```
+
 ### Get centroid of a segment in world (RAS) coordinates
 
 This example shows how to get centroid of a segment in world coordinates and show that position in all slice views.

@@ -1768,29 +1768,79 @@ def arrayFromSegmentInternalBinaryLabelmap(segmentationNode, segmentId):
   narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
   return narray
 
-def arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId):
+def arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, referenceVolumeNode=None):
   """Return voxel array of a segment's binary labelmap representation as numpy array.
 
-  Voxels values are copied.
+  :param segmentationNode: source segmentation node.
+  :param segmentId: ID of the source segment.
+    Can be determined from segment name by calling ``segmentationNode.GetSegmentation().GetSegmentIdBySegmentName(segmentName)``.
+  :param referenceVolumeNode: a volume node that determines geometry (origin, spacing, axis directions, extents) of the array.
+    If not specified then the volume that was used for setting the segmentation's geometry is used as reference volume.
 
-  If binary labelmap is the master representation then voxel values in the volume node can be modified
-  by changing values in the numpy array.
+  :raises RuntimeError: in case of failure
 
-  After all modifications have been completed, call::
+  Voxels values are copied, therefore changing the returned numpy array has no effect on the source segmentation.
+  The modified array can be written back to the segmentation by calling :py:meth:`updateSegmentBinaryLabelmapFromArray`.
 
-    segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()
-
-  .. warning:: Important: memory area of the returned array is managed by VTK,
-    therefore values in the array may be changed, but the array must not be reallocated.
-    See :py:meth:`arrayFromVolume` for details.
+  To get voxels of a segment as a modifiable numpy array, you can use :py:meth:`arrayFromSegmentInternalBinaryLabelmap`.
   """
+
   import slicer
-  vimage = slicer.vtkOrientedImageData()
-  segmentationNode.GetBinaryLabelmapRepresentation(segmentId, vimage)
-  nshape = tuple(reversed(vimage.GetDimensions()))
-  import vtk.util.numpy_support
-  narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
+  import vtk
+
+  # Get reference volume
+  if not referenceVolumeNode:
+    referenceVolumeNode = segmentationNode.GetNodeReference(slicer.vtkMRMLSegmentationNode.GetReferenceImageGeometryReferenceRole())
+    if not referenceVolumeNode:
+      raise RuntimeError("No reference volume is found in the input segmentationNode, therefore a valid referenceVolumeNode input is required.")
+
+  # Export segment as vtkImageData (via temporary labelmap volume node)
+  segmentIds = vtk.vtkStringArray()
+  segmentIds.InsertNextValue(segmentId)
+  labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode", "__temp__")
+  try:
+    if not slicer.modules.segmentations.logic().ExportSegmentsToLabelmapNode(segmentationNode, segmentIds, labelmapVolumeNode, referenceVolumeNode):
+      raise RuntimeError("Export of segment failed.")
+    narray = slicer.util.arrayFromVolume(labelmapVolumeNode)
+  finally:
+    slicer.mrmlScene.RemoveNode(labelmapVolumeNode)
+
   return narray
+
+def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, referenceVolumeNode=None):
+  """Sets binary labelmap representation of a segment from a numpy array.
+
+  :param segmentationNode: segmentation node that will be updated.
+  :param segmentId: ID of the segment that will be updated.
+    Can be determined from segment name by calling ``segmentationNode.GetSegmentation().GetSegmentIdBySegmentName(segmentName)``.
+  :param referenceVolumeNode: a volume node that determines geometry (origin, spacing, axis directions, extents) of the array.
+    If not specified then the volume that was used for setting the segmentation's geometry is used as reference volume.
+
+  :raises RuntimeError: in case of failure
+
+  Voxels values are deep-copied, therefore if the numpy array is modified after calling this method, segmentation node will not change.
+  """
+
+  # Export segment as vtkImageData (via temporary labelmap volume node)
+  import slicer
+  import vtk
+
+  # Get reference volume
+  if not referenceVolumeNode:
+    referenceVolumeNode = segmentationNode.GetNodeReference(slicer.vtkMRMLSegmentationNode.GetReferenceImageGeometryReferenceRole())
+    if not referenceVolumeNode:
+      raise RuntimeError("No reference volume is found in the input segmentationNode, therefore a valid referenceVolumeNode input is required.")
+
+  # Update segment in segmentation
+  labelmapVolumeNode = slicer.modules.volumes.logic().CreateAndAddLabelVolume(referenceVolumeNode, "__temp__")
+  try:
+    updateVolumeFromArray(labelmapVolumeNode, narray)
+    segmentIds = vtk.vtkStringArray()
+    segmentIds.InsertNextValue(segmentId)
+    if not slicer.modules.segmentations.logic().ImportLabelmapToSegmentationNode(labelmapVolumeNode, segmentationNode, segmentIds):
+      raise RuntimeError("Importing of segment failed.")
+  finally:
+    slicer.mrmlScene.RemoveNode(labelmapVolumeNode)
 
 def arrayFromMarkupsControlPoints(markupsNode, world = False):
   """Return control point positions of a markups node as rows in a numpy array (of size Nx3).
