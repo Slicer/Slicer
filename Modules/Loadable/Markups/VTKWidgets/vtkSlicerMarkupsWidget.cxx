@@ -54,7 +54,7 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->PreviewPointIndex = -1;
 
   // Place
-  this->SetEventTranslation(WidgetStateDefine, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier, WidgetEventControlPointPlace);
+  this->SetEventTranslation(WidgetStateDefine, vtkMRMLInteractionEventData::LeftButtonClickEvent, vtkEvent::NoModifier, WidgetEventControlPointPlace);
   this->SetEventTranslation(WidgetStateDefine, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventStopPlace);
 
   // Manipulate
