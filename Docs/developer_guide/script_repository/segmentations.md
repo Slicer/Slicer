@@ -277,11 +277,30 @@ volumeNode = getNode('MRHead')
 segmentationNode = getNode('Segmentation')
 segmentId = segmentationNode.GetSegmentation().GetSegmentIdBySegmentName('Segment_1')
 
+# Get segment as numpy array
 segmentArray = slicer.util.arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, volumeNode)
+
+# Modify the segmentation
 segmentArray[:] = 0  # clear the segmentation
 segmentArray[ slicer.util.arrayFromVolume(volumeNode) > 80 ] = 1  # create segment by simple thresholding of an image
 segmentArray[20:80, 40:90, 30:70] = 1  # fill a rectangular region using numpy indexing
 slicer.util.updateSegmentBinaryLabelmapFromArray(segmentArray, segmentationNode, segmentId, volumeNode)
+```
+
+Segment arrays can also be used in numpy operations to read/write the corresponding region of a volume:
+
+```python
+# Get voxels of a volume within the segmentation and compute some statistics
+volumeArray = slicer.util.arrayFromVolume(volumeNode)
+volumeVoxelsInSegmentArray = volumeArray[ segmentArray > 0 ]
+print(f"Lowest voxel value in segment: {volumeVoxelsInSegmentArray.min()}")
+print(f"Highest voxel value in segment: {volumeVoxelsInSegmentArray.max()}")
+
+# Modify the volume
+# For example, increase the contrast inside the selected segment by a factor of 4x:
+volumeArray[ segmentArray > 0 ] = volumeArray[ segmentArray > 0 ] * 4
+# Indicate that we have completed modifications on the volume array
+slicer.util.arrayFromVolumeModified(volumeNode)
 ```
 
 ### Get centroid of a segment in world (RAS) coordinates
