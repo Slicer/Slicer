@@ -658,7 +658,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     }
 
   bool addNewControlPoint = false;
-  int pointStatus = 0;
+  int pointStatus = vtkMRMLMarkupsNode::PositionUndefined;
   int activePoint = this->GetActiveControlPoint();
 
   if (controlPointIndex < 0 || controlPointIndex >= markupsNode->GetNumberOfControlPoints())
@@ -757,7 +757,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     // Update existing control point
     markupsNode->SetNthControlPointPositionOrientationWorldFromArray(controlPointIndex,
       pointWorld, orientationMatrixWorld, associatedNodeID, positionStatus);
-    if (pointStatus == 0)
+    if (pointStatus == vtkMRMLMarkupsNode::PositionUndefined)
       {
       markupsNode->SetNthControlPointVisibility(controlPointIndex, true);
       markupsNode->SetNthControlPointAutoCreated(controlPointIndex, false);

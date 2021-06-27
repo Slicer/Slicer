@@ -103,7 +103,7 @@ public slots:
   void onNodeRemovedEvent(vtkObject*, vtkObject*);
   void updateAllVirtualOutputNodes();
 
-  //void setToolBarActiveBrowserNode(vtkMRMLSequenceBrowserNode* browserNode);
+  void setToolBarActiveBrowserNode(vtkMRMLSequenceBrowserNode* browserNode);
 
 protected:
   QScopedPointer<qSlicerSequencesModulePrivate> d_ptr;

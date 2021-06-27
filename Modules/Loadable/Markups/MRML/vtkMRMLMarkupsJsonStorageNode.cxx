@@ -217,13 +217,18 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
       }
     if (controlPointItem.HasMember("position"))
       {
-      if(cp->PositionStatus != vtkMRMLMarkupsNode::PositionUndefined &&
-        cp->PositionStatus != vtkMRMLMarkupsNode::PositionMissing)
+      rapidjson::Value& positionItem = controlPointItem["position"];
+      if (!this->ReadVector(positionItem, cp->Position))
         {
-        vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
-          "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
-          "File reading failed: each control point position must be a 3-element numeric array.");
-        return false;
+        // TODO:markups if position is not set then set the positionStatus automatically to undefined
+        if(cp->PositionStatus != vtkMRMLMarkupsNode::PositionUndefined &&
+          cp->PositionStatus != vtkMRMLMarkupsNode::PositionMissing)
+          {
+          vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+            "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
+            "File reading failed: each control point position must be a 3-element numeric array.");
+          return false;
+          }
         }
       if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
         {
@@ -596,10 +601,11 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
     markupsNode->SetLocked(markupObject["locked"].GetBool());
     }
 
-	if (markupObject.HasMember("lockedPointNumber"))
-	{
-		markupsNode->SetLockedPointNumber(markupObject["lockedPointNumber"].GetBool());
-	}
+  // TODO:markups add to json schema
+  if (markupObject.HasMember("lockedPointNumber"))
+    {
+    markupsNode->SetLockedPointNumber(markupObject["lockedPointNumber"].GetBool());
+    }
 
   if (markupObject.HasMember("labelFormat"))
     {
@@ -829,8 +835,8 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteBasicProperties(
   writer.Key("locked");
   writer.Bool(markupsNode->GetLocked());
 
-	writer.Key("lockedPointNumber");
-	writer.Bool(markupsNode->GetLockedPointNumber());
+  writer.Key("lockedPointNumber");
+  writer.Bool(markupsNode->GetLockedPointNumber());
 
   writer.Key("labelFormat");
   writer.String(markupsNode->GetMarkupLabelFormat().c_str());

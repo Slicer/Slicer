@@ -565,6 +565,7 @@ public:
   /// \sa GetMarkupLabelFormat
   void SetMarkupLabelFormat(std::string format);
 
+  // TODO:markups rename to something like FixedNumberOfControlPoints or AddingControlPointsEnabled
 	// Get markup control point number locked status
 	bool GetLockedPointNumber();
 

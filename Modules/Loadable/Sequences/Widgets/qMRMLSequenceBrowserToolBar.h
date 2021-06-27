@@ -15,7 +15,7 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLMarkupsToolBar_h
+#ifndef __qMRMLSequenceBrowserToolBar_h
 #define __qMRMLSequenceBrowserToolBar_h
 
 // Qt includes
@@ -52,7 +52,6 @@ public:
   ~qMRMLSequenceBrowserToolBar() override;
 
   vtkMRMLSequenceBrowserNode* activeBrowserNode();
-  QAction* PersistenceAction;
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* newScene);

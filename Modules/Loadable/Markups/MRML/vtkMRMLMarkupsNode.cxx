@@ -99,8 +99,8 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
 vtkMRMLMarkupsNode::~vtkMRMLMarkupsNode()
 {
   this->CurveGenerator->RemoveObserver(this->MRMLCallbackCommand);
-	this->SetLockedPointNumber(false);
-	this->RemoveAllControlPoints();
+  this->SetLockedPointNumber(false); // remove the control points instead of just unsetting them
+  this->RemoveAllControlPoints();
 
   if (this->Measurements)
     {
@@ -293,8 +293,8 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintMatrix4x4Macro(InteractionHandleToWorldMatrix)
   vtkMRMLPrintEndMacro();
 
-	os << indent << "Control point number locked: ";
-	os << this->GetLockedPointNumber() << "\n";
+  os << indent << "Control point number locked: ";
+  os << this->GetLockedPointNumber() << "\n";
 
   os << indent << "MaximumNumberOfControlPoints: ";
   if (this->MaximumNumberOfControlPoints>0)
@@ -559,13 +559,14 @@ std::vector< vtkMRMLMarkupsNode::ControlPoint* > * vtkMRMLMarkupsNode::GetContro
 //-----------------------------------------------------------
 int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint, bool autoLabel/*=true*/)
 {
-  if (this->MaximumNumberOfControlPoints != 0 && this->GetNumberOfControlPoints() + 1 > this->MaximumNumberOfControlPoints)
+  if (this->MaximumNumberOfControlPoints != 0 &&
+      this->GetNumberOfControlPoints() + 1 > this->MaximumNumberOfControlPoints)
     {
     vtkErrorMacro("AddNControlPoints: number of points major than maximum number of control points allowed.");
     return -1;
     }
 
-  if (this->GetLockedPointNumber() != 0)
+  if (this->GetLockedPointNumber())
       {
       vtkErrorMacro("AddNControlPoints: Markup node control point number is locked.");
       return -1;
@@ -624,11 +625,11 @@ int vtkMRMLMarkupsNode::AddNControlPoints(int n, std::string label /*=std::strin
     return -1;
     }
 
-	if (this->GetLockedPointNumber() != 0)
-	{
-		vtkErrorMacro("AddNControlPoints: Markup node control point number is locked.");
-		return -1;
-	}
+  if (this->GetLockedPointNumber() != 0)
+    {
+    vtkErrorMacro("AddNControlPoints: Markup node control point number is locked.");
+    return -1;
+    }
 
   int controlPointIndex = -1;
   for (int i = 0; i < n; i++)
@@ -1869,11 +1870,6 @@ void vtkMRMLMarkupsNode::GetMarkupPoint(int markupIndex, int pointIndex, double 
 //---------------------------------------------------------------------------
 int vtkMRMLMarkupsNode::GetNthControlPointPositionStatus(int n)
 {
-  if (this->ControlPoints.empty())
-    {
-    // no control points to remove
-    return PositionUndefined;
-    }
   ControlPoint *controlPoint = this->GetNthControlPointCustomLog(n, "GetNthControlPointPositionStatus");
   if (!controlPoint)
     {
@@ -1885,11 +1881,6 @@ int vtkMRMLMarkupsNode::GetNthControlPointPositionStatus(int n)
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::UnsetNthControlPointPosition(int n)
 {
-  if (this->ControlPoints.empty())
-    {
-    // no control points to remove
-    return;
-    }
   ControlPoint *controlPoint = this->GetNthControlPointCustomLog(n, "UnsetNthControlPointPosition");
   if (!controlPoint)
     {
@@ -1901,6 +1892,7 @@ void vtkMRMLMarkupsNode::UnsetNthControlPointPosition(int n)
     return;
     }
   controlPoint->PositionStatus = PositionUndefined;
+  // TODO:markups Why? make the point invisible? unsetting it should hide it anyway
   this->SetNthControlPointVisibility(n, false);
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
   this->StorableModifiedTime.Modified();
@@ -2612,6 +2604,7 @@ int vtkMRMLMarkupsNode::GetNthControlPointIndexByPositionStatus(int pointIndex, 
   return -1;
 }
 
+// TODO:markups remove this from the public API
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::SetMaximumNumberOfControlPoints(int pointNumber)
 {
@@ -2631,7 +2624,7 @@ bool vtkMRMLMarkupsNode::GetLockedPointNumber()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::SetLockedPointNumber(bool locked)
 {
-	this->LockedPointNumber = locked;
-	this->SetMaximumNumberOfControlPoints(locked ? this->GetNumberOfControlPoints() : this->GetRequiredNumberOfControlPoints());
-	this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointNumberLockModifiedEvent);
+  this->LockedPointNumber = locked;
+  this->SetMaximumNumberOfControlPoints(locked ? this->GetNumberOfControlPoints() : this->GetRequiredNumberOfControlPoints());
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointNumberLockModifiedEvent);
 }

@@ -111,7 +111,7 @@ qSlicerMarkupsModulePrivate::qSlicerMarkupsModulePrivate(qSlicerMarkupsModule& o
 	: q_ptr(&object)
 {
 	this->ToolBar = new qMRMLMarkupsToolBar;
-	this->ToolBar->setWindowTitle(QObject::tr("Markups menu"));
+	this->ToolBar->setWindowTitle(QObject::tr("Markups"));
 	this->ToolBar->setObjectName("MarkupsToolbar");
 	this->ToolBar->setVisible(false);
 }
@@ -621,7 +621,7 @@ void qSlicerMarkupsModule::setAutoShowToolBar(bool autoShow)
 	d->AutoShowToolBar = autoShow;
 }
 //-----------------------------------------------------------------------------
-bool  qSlicerMarkupsModule::showMarkups()
+bool  qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
 {
 	qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 	if (!app
@@ -634,6 +634,7 @@ bool  qSlicerMarkupsModule::showMarkups()
 	qSlicerMarkupsModule* markupsModule = dynamic_cast<qSlicerMarkupsModule*>(app->moduleManager()->module("Markups"));
 	if (markupsModule->autoShowToolBar())
 	{
+    // TODO:markups set markups module in the toolbar?
 		markupsModule->setToolBarVisible(true);
 	}
 	return true;
@@ -686,6 +687,8 @@ void qSlicerMarkupsModule::onNodeRemovedEvent(vtkObject*, vtkObject* node)
 	}
 }
 
+// TODO:markups Remove (or at least simplify and rename) this method.
+// It should be executed only once, after scene loading/batch processing finished.
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModule::updateAllVirtualOutputNodes()
 {
@@ -697,7 +700,7 @@ void qSlicerMarkupsModule::updateAllVirtualOutputNodes()
 	{
 		if (this->mrmlScene() && !this->mrmlScene()->IsImporting())
 		{
-			this->showMarkups();
+			this->showMarkups(nullptr);
 			d->MarkupsToShow = nullptr;
 		}
 	}
