@@ -152,6 +152,14 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
     {
     return;
     }
+
+  bool blocked = d->AutoManualComboBox->blockSignals(true);
+  if (d->AutoManualComboBox->currentIndex() != autoWindowLevel)
+  {
+    d->AutoManualComboBox->setCurrentIndex(autoWindowLevel);
+  }
+  d->AutoManualComboBox->blockSignals(blocked);
+
   int oldAuto = d->VolumeDisplayNode->GetAutoWindowLevel();
 
   //int disabledModify = this->VolumeDisplayNode->StartModify();
