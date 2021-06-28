@@ -29,6 +29,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget
   Q_PROPERTY(int  autoThreshold READ autoThreshold WRITE setAutoThreshold)
   Q_PROPERTY(double lowerThreshold READ lowerThreshold WRITE setLowerThreshold)
   Q_PROPERTY(double upperThreshold READ upperThreshold WRITE setUpperThreshold)
+  Q_ENUMS(ControlMode)
 
 public:
   /// Constructors
