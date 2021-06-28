@@ -26,8 +26,8 @@
 #include <vtkNew.h>
 
 // Markups includes
-#include <vtkMRMLMarkupsFiducialNode.h>
-#include <vtkMRMLMarkupsFiducialStorageNode.h>
+#include <vtkMRMLMarkupsCurveNode.h>
+#include <vtkMRMLMarkupsJsonStorageNode.h>
 
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every
@@ -47,6 +47,20 @@ int main(int argc, char * *argv)
 
   try
     {
+
+    if (!OutputCurveFileName.empty())
+      {
+      if (FullTree)
+        {
+        std::cerr << "Output curve can only be computed if fullTree option is disabled" << std::endl;
+        return EXIT_FAILURE;
+        }
+      if (SkeletonType != "1D")
+        {
+        std::cerr << "Output curve can only be computed if skeleton type is 1D" << std::endl;
+        return EXIT_FAILURE;
+        }
+      }
 
     typedef unsigned char                        InputPixelType;
     typedef itk::Image<InputPixelType, 3>        InputImageType;
@@ -96,7 +110,9 @@ int main(int argc, char * *argv)
     std::cout << "Extracted skeleton." << std::endl;
 
     SkelGraph graph;
-    graph.ExtractSkeletalGraph(outputImageBuffer, dim);
+    auto spacingVector = Reader->GetOutput()->GetSpacing();
+    double spacing[3] = { spacingVector[0], spacingVector[1], spacingVector[2] };
+    graph.ExtractSkeletalGraph(outputImageBuffer, dim, spacing);
     graph.FindMaximalPath();
     std::deque<Coord3i> axisPoints;
     graph.SampleAlongMaximalPath(NumberOfPoints, axisPoints);
@@ -108,10 +124,10 @@ int main(int argc, char * *argv)
       writeOutputFile.open(OutputPointsFileName.c_str());
       }
 
-    vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
-    fiducialNode->SetName("C");
+    vtkNew<vtkMRMLMarkupsCurveNode> curveNode;
+    curveNode->SetName("C");
 
-    if( !DontPruneBranches )
+    if (FullTree)
       {
       memset(outputImageBuffer, 0,
              dim[0] * dim[1] * dim[2] * sizeof(OutputPixelType) );
@@ -128,7 +144,7 @@ int main(int argc, char * *argv)
       position_IJK[1] = (*iter)[1];
       position_IJK[2] = (*iter)[2];
 
-      if( !DontPruneBranches )
+      if (FullTree)
         {
         outputImage->SetPixel(position_IJK, 255);
         }
@@ -143,7 +159,7 @@ int main(int argc, char * *argv)
 
       outputImage->TransformIndexToPhysicalPoint(position_IJK, position_LPS);
       // first two coordinates are inverted because MRML is always in RAS coordinate system
-      fiducialNode->AddFiducial(-position_LPS[0], -position_LPS[1], position_LPS[2]);
+      curveNode->AddControlPointWorld(vtkVector3d(-position_LPS[0], -position_LPS[1], position_LPS[2]));
 
       iter++;
       i++;
@@ -154,22 +170,23 @@ int main(int argc, char * *argv)
       std::cout << "Wrote points file." << std::endl;
       }
 
-    if (!OutputFiducialsFileName.empty())
+    if (!OutputCurveFileName.empty())
       {
-      vtkNew<vtkMRMLMarkupsFiducialStorageNode> outputFiducialStorageNode;
-      outputFiducialStorageNode->SetFileName(OutputFiducialsFileName.c_str());
-      // the .xml file specifies that it expects the output file in LPS
-      // coordinate system
-      outputFiducialStorageNode->UseLPSOn();
-      outputFiducialStorageNode->WriteData(fiducialNode.GetPointer());
+      vtkNew<vtkMRMLMarkupsJsonStorageNode> outputCurveStorageNode;
+      outputCurveStorageNode->SetFileName(OutputCurveFileName.c_str());
+      outputCurveStorageNode->UseLPSOn();
+      outputCurveStorageNode->WriteData(curveNode.GetPointer());
+      std::cout << "Wrote output curve." << std::endl;
       }
 
-    WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName(OutputImageFileName.c_str() );
-    writer->SetInput(outputImage);
-    writer->Update();
-
-    std::cout << "Wrote output image." << std::endl;
+    if (!OutputImageFileName.empty())
+      {
+      WriterType::Pointer writer = WriterType::New();
+      writer->SetFileName(OutputImageFileName.c_str());
+      writer->SetInput(outputImage);
+      writer->Update();
+      std::cout << "Wrote output image." << std::endl;
+      }
 
     }
   catch( itk::ExceptionObject & excep )

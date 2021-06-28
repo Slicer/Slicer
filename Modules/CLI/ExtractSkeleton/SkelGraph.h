@@ -57,7 +57,7 @@ public:
   // If image spacing is highly anisotropic then longest path computation
   // may not give optimal results, and sampling distance (when calling
   // SampleAlongMaximalPath) may be uneven.
-  void ExtractSkeletalGraph(const unsigned char *image, const int dim[3]);
+  void ExtractSkeletalGraph(const unsigned char *image, const int dim[3], const double spacing[3]);
 
   // Extract maximal path between 2 points in the m_Graph
   void FindMaximalPath();
@@ -94,7 +94,7 @@ private:
   // List of branch IDs that make up the longest path
   std::deque<int> m_MaximalPath;
   double m_MaximalPathLength;
-
+  double m_Spacing[3];
 
 };
 
