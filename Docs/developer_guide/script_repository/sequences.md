@@ -7,7 +7,7 @@
 import SampleData
 sequenceNode = SampleData.SampleDataLogic().downloadSample("CTPCardioSeq")
 # Alternatively, get the first sequence node in the scene:
-# sequenceNode = slicer.util.getNodesByClass("vtkMRMLSequenceNode")[0]
+# sequenceNode = slicer.util.getNodesByClass("vtkMRMLSequenceNode")
 
 # Get voxels of itemIndex'th volume as numpy array
 itemIndex = 5
@@ -44,6 +44,22 @@ browserNode.SetSelectedItemNumber(5)
 # Get currently displayed volume node voxels as numpy array
 volumeNode = browserNode.GetProxyNode(sequenceNode)
 voxelArray = slicer.util.arrayFromVolume(volumeNode)
+```
+
+### Get a volume sequence as a 4D numpy array
+
+Get all voxels of a 4D volume (3D volume sequence) as a numpy array called `voxelArray`. Dimensions of the array: `k`, `j`, `i`, `t` (first three are voxel coordinates, fourth is the volume index).
+
+```python
+sequenceNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSequenceNode")
+
+# Preallocate a 4D numpy array that will hold the entire sequence
+import numpy as np
+dims = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(0)).shape
+voxelArray = np.zeros([dims[0], dims[1], dims[2], sequenceNode.GetNumberOfDataNodes()])
+# Fill in the 4D array from the sequence node
+for volumeIndex in range(sequenceNode.GetNumberOfDataNodes()):
+    voxelArray[:, :, :, volumeIndex] = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(volumeIndex))
 ```
 
 ### Concatenate all sequences in the scene into a new sequence
