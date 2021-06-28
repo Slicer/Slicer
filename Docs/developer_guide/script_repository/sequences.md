@@ -14,6 +14,22 @@ itemIndex = 5
 voxelArray = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(itemIndex))
 ```
 
+### Access voxels of a 4D volume as a single numpy array
+
+Get all voxels of a 4D volume (3D volume sequence) as a numpy array called `voxelArray`. Dimensions of the array: `k`, `j`, `i`, `t` (first three are voxel coordinates, fourth is the volume index).
+
+```python
+sequenceNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSequenceNode")
+
+# Preallocate a 4D numpy array that will hold the entire sequence
+import numpy as np
+dims = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(0)).shape
+voxelArray = np.zeros([dims[0], dims[1], dims[2], sequenceNode.GetNumberOfDataNodes()])
+# Fill in the 4D array from the sequence node
+for volumeIndex in range(sequenceNode.GetNumberOfDataNodes()):
+    voxelArray[:, :, :, volumeIndex] = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(volumeIndex))
+```
+
 ### Get index value
 
 ```python
@@ -46,22 +62,6 @@ volumeNode = browserNode.GetProxyNode(sequenceNode)
 voxelArray = slicer.util.arrayFromVolume(volumeNode)
 ```
 
-### Get a volume sequence as a 4D numpy array
-
-Get all voxels of a 4D volume (3D volume sequence) as a numpy array called `voxelArray`. Dimensions of the array: `k`, `j`, `i`, `t` (first three are voxel coordinates, fourth is the volume index).
-
-```python
-sequenceNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSequenceNode")
-
-# Preallocate a 4D numpy array that will hold the entire sequence
-import numpy as np
-dims = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(0)).shape
-voxelArray = np.zeros([dims[0], dims[1], dims[2], sequenceNode.GetNumberOfDataNodes()])
-# Fill in the 4D array from the sequence node
-for volumeIndex in range(sequenceNode.GetNumberOfDataNodes()):
-    voxelArray[:, :, :, volumeIndex] = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(volumeIndex))
-```
-
 ### Concatenate all sequences in the scene into a new sequence
 
 ```python
@@ -87,4 +87,29 @@ slicer.modules.sequencebrowser.setToolBarActiveBrowserNode(mergedSequenceBrowser
 # Show proxy node in slice viewers
 mergedProxyNode = mergedSequenceBrowserNode.GetProxyNode(mergedSequenceNode)
 slicer.util.setSliceViewerLayers(background=mergedProxyNode)
+```
+
+### Create a 4D volume in Python - outside Slicer
+
+You can write a seq.nrrd file (that Slicer can load as a volume sequence) from an img numpy array of with dimensions `t`, `i`, `j`, `k` (volume index, followed by voxel coordinates). `space origin` specifies the image origin. `space directions` specify the image axis directions and spacing (spacing is the Euclidean norm of the axis vector). 
+
+Prerequisite: install [pynrrd](https://pypi.org/project/pynrrd/).
+
+```python
+import nrrd
+header = {
+    'type': 'int',
+    'dimension': 4,
+    'space': 'right-anterior-superior',
+    'space directions': [[float('nan'), float('nan'), float('nan')], [1.953125, 0., 0.], [0., 1.953125, 0.], [0., 0., 1.953125]],
+    'kinds': ['list', 'domain', 'domain', 'domain'],
+    'labels': ['frame', '', '', ''], 
+    'endian': 'little',
+    'encoding': 'raw',
+    'space origin': [-137.16099548,  -36.80649948, -309.71899414],
+    'measurement frame': [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+    'axis 0 index type': 'numeric',
+    'axis 0 index values': '0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25'
+}
+nrrd.write("c:/tmp/test.seq.nrrd", img, header)
 ```
