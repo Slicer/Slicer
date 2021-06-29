@@ -4,7 +4,7 @@
 # - the value can be blank
 #
 
-# This is source code manager (i.e. svn)
+# This is source code manager
 scm git
 scmurl git://github.com/jcfr/SlicerToKiwiExporter.git
 scmrevision 9d7341e978df954a2c875240290833d7528ef29c

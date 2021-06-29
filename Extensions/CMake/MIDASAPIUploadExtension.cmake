@@ -183,7 +183,7 @@ if(TEST_midas_api_upload_extension_test)
     set(extension_infos
       "ExtensionA^^git^^git://github.com/jcfr/SimpleVTKPythonWrap.git^^7896b30d82^^Foo^^0"
       "ExtensionB^^git^^git://github.com/jcfr/SimpleVTKPythonWrap.git^^31c6782a1e^^Bar^^1"
-      "ExtensionC^^svn^^https://subversion.assembla.com/svn/plusremote/trunk/PlusRemote/src^^9^^Far^^1")
+      "ExtensionC^^git^^git://github.com/SlicerRt/SlicerRT^^ef3c07d9a0^^Far^^1")
 
     include(SlicerBlockOperatingSystemNames)
 

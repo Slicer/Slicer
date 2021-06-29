@@ -218,7 +218,7 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
     _server = ServerThread(self.port)
 
     # Filter out paths starting with config.Slicer_SUPERBUILD_DIR
-    # This is needed to ensure executables like svn or git installed
+    # This is needed to ensure executables like git installed
     # on the system resolved their expected dependencies (e.g system OpenSSL
     # libraries instead of Slicer OpenSSL libraries)
     env = dict(os.environ)
@@ -337,7 +337,7 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
         # SlicerExtensionDescriptionSpec.cmake CMake module.
         #
         patterns = ['EXTENSION_' + pattern for pattern in [
-          'SVNUSERNAME', 'SVNPASSWORD', 'DEPENDS', 'BUILD_SUBDIRECTORY',
+          'DEPENDS', 'BUILD_SUBDIRECTORY',
           'HOMEPAGE', 'CONTRIBUTORS', 'CATEGORY', 'ICONURL',
           'DESCRIPTION', 'SCREENSHOTURLS', 'ENABLED', 'STATUS'
           ]]
@@ -421,7 +421,6 @@ CMAKE_OSX_SYSROOT={cmake_osx_sysroot}
 ")
 
 set(CTEST_GIT_COMMAND "{git_executable}")
-set(CTEST_SVN_COMMAND "{svn_executable}")
 
 set(EXTENSIONS_TRACK_QUALIFIER "master") # "master", 4.4, ...
 set(EXTENSIONS_INDEX_GIT_TAG "origin/${{EXTENSIONS_TRACK_QUALIFIER}}") # origin/master, origin/4.4, ...
@@ -470,7 +469,6 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
       qt_version=config.QT_VERSION,
       slicer_dir=config.Slicer_BINARY_DIR,
       slicer_source_dir=config.Slicer_SOURCE_DIR,
-      svn_executable=config.Subversion_SVN_EXECUTABLE,
       test_binary_dir=test_binary_dir
     )
 
@@ -511,7 +509,6 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
       '-DCMAKE_C_COMPILER:PATH=' + config.CMAKE_C_COMPILER,
       '-DCMAKE_CXX_COMPILER:PATH=' + config.CMAKE_CXX_COMPILER,
       '-DGIT_EXECUTABLE:PATH=' + config.GIT_EXECUTABLE,
-      '-DSubversion_SVN_EXECUTABLE:PATH=' + config.Subversion_SVN_EXECUTABLE,
       '-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=' + config.CMAKE_OSX_DEPLOYMENT_TARGET,
       cmake_osx_architectures,
       '-DCMAKE_OSX_SYSROOT:PATH=' + config.CMAKE_OSX_SYSROOT

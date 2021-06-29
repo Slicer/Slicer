@@ -39,7 +39,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/ExternalProjectGenerateProjectDescription.cmak
 #!     (
 #!       URL <url> [URL_MD5 md5] |
 #!       GIT_REPOSITORY <url> [GIT_TAG <tag>] |
-#!       SVN_REPOSITORY url [SVN_REVISION -r 123][SVN_USERNAME john][SVN_PASSWORD doe][SVN_TRUST_CERT 1]
 #!     )
 #!     [PROJECTS <projectname> [<projectname> [...]]]
 #!     [LABELS <label1> [<label2> [...]]]
@@ -53,10 +52,10 @@ include(${CMAKE_CURRENT_LIST_DIR}/ExternalProjectGenerateProjectDescription.cmak
 #!
 function(ExternalProject_Add_Source projectname)
   set(options)
-  set(_ep_one_args DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
+  set(_ep_one_args DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG)
   set(_epgpd_one_args VERSION LICENSE_FILES)
   set(oneValueArgs ${_ep_one_args} ${_epgpd_one_args} SOURCE_DIR_VAR)
-  set(_ep_multi_args SVN_REVISION)
+  set(_ep_multi_args)
   set(multiValueArgs ${_ep_multi_args} LABELS PROJECTS VARS)
   cmake_parse_arguments(_ep "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -147,7 +146,6 @@ endfunction()
 #!     (
 #!       URL <url> [URL_MD5 md5] |
 #!       GIT_REPOSITORY <url> [GIT_TAG <tag>] |
-#!       SVN_REPOSITORY url [SVN_REVISION -r 123][SVN_USERNAME john][SVN_PASSWORD doe][SVN_TRUST_CERT 1]
 #!     )
 #!     [OPTION_NAME <option_name>
 #!       [OPTION_DEFAULT ON]
@@ -178,11 +176,11 @@ endfunction()
 macro(Slicer_Remote_Add projectname)
   set(options)
   set(_add_source_args
-    DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT
+    DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG
     VERSION LICENSE_FILES
     )
   set(oneValueArgs OPTION_NAME OPTION_DEFAULT OPTION_FORCE SOURCE_DIR_VAR ${_add_source_args})
-  set(_add_source_multi_args SVN_REVISION LABELS PROJECTS VARS)
+  set(_add_source_multi_args LABELS PROJECTS VARS)
   set(multiValueArgs OPTION_DEPENDS ${_add_source_multi_args})
   cmake_parse_arguments(_ep "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
