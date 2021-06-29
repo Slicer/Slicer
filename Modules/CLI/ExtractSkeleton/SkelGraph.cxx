@@ -33,6 +33,9 @@ Constructors, Destructor
 SkelGraph::SkelGraph()
 {
   m_MaximalPathLength = -1;
+  m_Spacing[0] = 1.0;
+  m_Spacing[1] = 1.0;
+  m_Spacing[2] = 1.0;
 }
 
 SkelGraph::~SkelGraph()
@@ -51,10 +54,13 @@ void SkelGraph::ResetGraph()
 // Public Methods
 // -------------------------------------------------------------------------
 
-void SkelGraph::ExtractSkeletalGraph(const unsigned char *image, const int dim[3])
+void SkelGraph::ExtractSkeletalGraph(const unsigned char *image, const int dim[3], const double spacing[3])
 // Graph compilation of a thinning skeleton
 {
   ResetGraph();
+  m_Spacing[0] = spacing[0];
+  m_Spacing[1] = spacing[1];
+  m_Spacing[2] = spacing[2];
 
   int size_image = dim[0] * dim[1] * dim[2];
 
@@ -88,7 +94,10 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char *image, const int dim[3
     // add new branch
     std::list<skel_branch> branchesToDo;
     skel_branch *branch_elem = AddNewBranchToDo(branchesToDo);
-    branch_elem->end_1_point = *act_endpoint;
+    if (branch_elem->points.empty())
+      {
+      branch_elem->end_1_point = *act_endpoint;
+      }
     branch_elem->end_2_point = *act_endpoint;
     branch_elem->points.push_back(*act_endpoint);
 
@@ -119,7 +128,14 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char *image, const int dim[3
           Coord3i pt = *(neighbors.begin());
           // update length
           // since act_point[0] - pt[0] is either [-1,0,1] -> abs == ^2
-          act_branch->length += pointdistance(act_point, pt);
+
+          if (act_branch->points.empty())
+            {
+            act_branch->end_1_point = act_point;
+            }
+          act_branch->end_2_point = act_point;
+
+          act_branch->length += pointdistance(act_point, pt, m_Spacing);
           act_branch->points.push_back(pt);
           act_point = pt;
           label_image[act_point[0]
@@ -136,7 +152,10 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char *image, const int dim[3
             skel_branch* newElem = AddNewBranchToDo(branchesToDo);
             neighborBranches.push_back(newElem);
             // label start Coord3i
-            newElem->end_1_point = pt;
+            if (newElem->points.empty())
+              {
+              newElem->end_1_point = pt;
+              }
             newElem->end_2_point = pt;
             newElem->points.push_back(pt);
             label_image[pt[0] + dim[0] * (pt[1] + dim[1] * pt[2])] = newElem->branchID;
@@ -319,8 +338,8 @@ void SkelGraph::FindMaximalPath()
           // determine connection costs -> since we do not know which one is the
           // corresponding endpoint of the neighbour, we have to try out and take
           // the one combination that yields the smallest costs
-          double conn_costs1 = pointdistance(act_neighbor->end_1_point, cont_end_point);
-          double conn_costs2 = pointdistance(act_neighbor->end_2_point, cont_end_point);
+          double conn_costs1 = pointdistance(act_neighbor->end_1_point, cont_end_point, m_Spacing);
+          double conn_costs2 = pointdistance(act_neighbor->end_2_point, cont_end_point, m_Spacing);
           act_neighbor->acc_length += (conn_costs1 < conn_costs2 ? conn_costs1 : conn_costs2);
           // copy path
           // initiate with copy of path of preceding branch
@@ -399,7 +418,9 @@ void SkelGraph::FindMaximalPath()
 void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<Coord3i> &axis_points)
 {
   axis_points.clear();
-  double minimumDistance = m_MaximalPathLength / (requestedNumberOfPoints - 1);
+
+  // Put all axis points into a list
+  std::deque<Coord3i> all_axis_points;
   skel_branch* previousBranch = nullptr;
   Coord3i previousPointPosition;
   for (std::deque<int>::iterator branchId = m_MaximalPath.begin(); branchId != m_MaximalPath.end(); ++branchId)
@@ -426,18 +447,14 @@ void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<C
         {
         previousPointPosition = branch.points.front();
         }
-      axis_points.push_back(previousPointPosition);
+      all_axis_points.push_back(previousPointPosition);
       }
     // Append point positions
     if (reversePointOrder)
       {
       for (std::deque<Coord3i>::reverse_iterator point = branch.points.rbegin(); point != branch.points.rend(); ++point)
         {
-        if (pointdistance(previousPointPosition, *point) < minimumDistance)
-          {
-          continue;
-          }
-        axis_points.push_back(*point);
+        all_axis_points.push_back(*point);
         previousPointPosition = *point;
         }
       }
@@ -445,28 +462,55 @@ void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<C
       {
       for (std::deque<Coord3i>::iterator point = branch.points.begin(); point != branch.points.end(); ++point)
         {
-        if (pointdistance(previousPointPosition, *point) < minimumDistance)
-          {
-          continue;
-          }
-        axis_points.push_back(*point);
+        all_axis_points.push_back(*point);
         previousPointPosition = *point;
         }
       }
     previousBranch = &branch;
-
-    // Make sure the last point is included exactly
-    if (branchId + 1 == m_MaximalPath.end())
-      {
-      Coord3i lastPoint = (reversePointOrder ? branch.points.front() : branch.points.back());
-      // Remove one before last point if it is too close to the last point
-      if (pointdistance(previousPointPosition, lastPoint) < minimumDistance)
-        {
-        axis_points.pop_back();
-        }
-      axis_points.push_back(lastPoint);
-      }
     }
+  if (all_axis_points.empty())
+    {
+    return;
+    }
+
+  // Get total length
+  // (for some reason, m_MaximalPathLength is not computed accurately)
+  double totalLength = 0.0;
+  Coord3i previousPoint = all_axis_points.front();
+  for (Coord3i& point : all_axis_points)
+    {
+    totalLength += pointdistance(previousPoint, point, m_Spacing);
+    previousPoint = point;
+    }
+
+  double minimumDistance = totalLength / (requestedNumberOfPoints - 1);
+
+  // Sample the point list
+  previousPoint = all_axis_points.front();
+  Coord3i previousSampledPoint = previousPoint;
+  axis_points.push_back(previousSampledPoint);
+  double distanceFromLastPoint = 0;
+  for (Coord3i& point : all_axis_points)
+    {
+    distanceFromLastPoint += pointdistance(previousPoint, point, m_Spacing);
+    if (distanceFromLastPoint >= minimumDistance)
+      {
+      previousSampledPoint = point;
+      axis_points.push_back(previousSampledPoint);
+      // instead of setting distanceFromLastPoint to 0 we just subtract minmumDistance, this way
+      // we approximately provide as many points as requested, even if minimumDistance is small
+      distanceFromLastPoint -= minimumDistance;
+      }
+    previousPoint = point;
+    }
+
+  // Make sure the last point is included exactly
+  // Remove one before last point if it is too close to the last point
+  if (distanceFromLastPoint < 0.5 * minimumDistance)
+    {
+    axis_points.pop_back();
+    }
+  axis_points.push_back(all_axis_points.back());
 }
 
 

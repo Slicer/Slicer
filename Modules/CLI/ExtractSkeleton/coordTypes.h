@@ -79,9 +79,13 @@ public:
 
 // Euclidean distance between two points
 // TODO: use image pixel spacing
-inline double pointdistance(Coord3i &p1, Coord3i &p2)
+inline double pointdistance(Coord3i &p1, Coord3i &p2, const double spacing[3])
 {
-  return sqrt((double)sqr(p1[0] - p2[0]) + sqr(p1[1] - p2[1]) + sqr(p1[2] - p2[2]));
+  return sqrt(
+      sqr((p1[0] - p2[0]) * spacing[0])
+    + sqr((p1[1] - p2[1]) * spacing[1])
+    + sqr((p1[2] - p2[2]) * spacing[2])
+  );
 }
 
 inline void normcrossprod(double *v1, double *v2, double *norm)

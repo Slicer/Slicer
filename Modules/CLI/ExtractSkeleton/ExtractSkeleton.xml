@@ -11,7 +11,7 @@
   <parameters>
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>
-    <image>
+    <image type="label">
       <name>InputImageFileName</name>
       <label>Input Image</label>
       <channel>input</channel>
@@ -20,10 +20,10 @@
     </image>
     <image type="label" reference="InputImageFileName">
       <name>OutputImageFileName</name>
+      <longflag>outputImage</longflag>
       <label>Output Image</label>
       <channel>output</channel>
-      <index>2</index>
-      <description><![CDATA[Skeleton of the input image]]></description>
+      <description><![CDATA[Skeleton of the input image.]]></description>
     </image>
   </parameters>
   <parameters>
@@ -33,16 +33,16 @@
       <name>SkeletonType</name>
       <longflag>type</longflag>
       <label>Skeleton type</label>
-      <description><![CDATA[Type of skeleton to create]]></description>
+      <description><![CDATA[Type of skeleton to create. 1D extract centerline curve points. 2D extracts medial surface points.]]></description>
       <default>1D</default>
       <element>1D</element>
       <element>2D</element>
     </string-enumeration>
     <boolean>
-      <name>DontPruneBranches</name>
-      <longflag>dontPrune</longflag>
-      <label>Do not prune branches</label>
-      <description><![CDATA[Return the full skeleton, not just the maximal skeleton]]></description>
+      <name>FullTree</name>
+      <longflag>fullTree</longflag>
+      <label>Extract full tree</label>
+      <description><![CDATA[Include the full tree in the output, not just the longest branch.]]></description>
       <default>false</default>
     </boolean>
     <integer>
@@ -52,18 +52,18 @@
       <description><![CDATA[Number of points used to represent the skeleton]]></description>
       <default>100</default>
     </integer>
-    <string>
+    <file fileExtensions=".txt">
       <name>OutputPointsFileName</name>
       <longflag>pointsFile</longflag>
-      <label>Output points file (.txt)</label>
       <description><![CDATA[Name of the file to store the coordinates of the central (1D) skeleton points]]></description>
-      <default>skeleton.txt</default>
-    </string>
-    <pointfile type="curve" fileExtensions=".fcsv" coordinateSystem="lps">
-      <name>OutputFiducialsFileName</name>
+      <label>Output points list</label>
+      <channel>output</channel>
+    </file>
+    <pointfile type="curve" coordinateSystem="lps">
+      <name>OutputCurveFileName</name>
       <label>Output markups curve</label>
       <description><![CDATA[Centerline points as markups curve]]></description>
-      <longflag>fiducialsFile</longflag>
+      <longflag>curveFile</longflag>
       <channel>output</channel>
     </pointfile>
   </parameters>

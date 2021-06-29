@@ -165,8 +165,8 @@ When right-clicking certain types of nodes in the 2D/3D views, a subject hierarc
 ```python
 pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
 pluginLogic = pluginHandler.pluginLogic()
-menuActions = pluginLogic.availableViewMenuActionNames()
+menuActions = pluginLogic.availableViewContextMenuActionNames()
 # Returns ("RenamePointAction", "DeletePointAction", "ToggleSelectPointAction", "EditPropertiesAction")
 newActions = ["RenamePointAction"]
-pluginLogic.setDisplayedViewMenuActionNames(newActions)
+pluginLogic.setDisplayedViewContextMenuActionNames(newActions)
 ```
