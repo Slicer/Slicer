@@ -71,7 +71,7 @@ public:
   vtkMRMLSliceNode* GetSliceNode();
   void UpdateSliceNode();
 
-  // Build the crosshair representation
+  // Build the color scalar bar representation
   void BuildScalarBar();
 
   vtkMRMLScalarBarDisplayableManager*        External;
@@ -89,6 +89,7 @@ vtkMRMLScalarBarDisplayableManager::vtkInternal
 {
   this->External = external;
   this->WindowLevelWidget = vtkSmartPointer<vtkMRMLWindowLevelWidget>::New();
+  vtkWarningWithObjectMacro(this->External, "vtkInternal::Constructor");
 }
 
 //---------------------------------------------------------------------------
@@ -97,18 +98,21 @@ vtkMRMLScalarBarDisplayableManager::vtkInternal::~vtkInternal()
   this->WindowLevelWidget->SetMRMLApplicationLogic(nullptr);
   this->WindowLevelWidget->SetRenderer(nullptr);
   this->WindowLevelWidget->SetSliceNode(nullptr);
+  vtkWarningWithObjectMacro(this->External, "vtkInternal::Destructor");
 }
 
 //---------------------------------------------------------------------------
 vtkObserverManager* vtkMRMLScalarBarDisplayableManager::vtkInternal::GetMRMLNodesObserverManager()
 {
   return this->External->GetMRMLNodesObserverManager();
+  vtkWarningWithObjectMacro(this->External, "vtkInternal::GetMRMLNodesObserverManager");
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLScalarBarDisplayableManager::vtkInternal::Modified()
 {
   return this->External->Modified();
+  vtkWarningWithObjectMacro(this->External, "vtkInternal::Modified");
 }
 
 //---------------------------------------------------------------------------
@@ -116,6 +120,7 @@ vtkMRMLSliceNode* vtkMRMLScalarBarDisplayableManager::vtkInternal
 ::GetSliceNode()
 {
   return this->External->GetMRMLSliceNode();
+  vtkWarningWithObjectMacro(this->External, "vtkInternal::GetSliceNode");
 }
 
 //---------------------------------------------------------------------------
@@ -135,6 +140,7 @@ void vtkMRMLScalarBarDisplayableManager::vtkInternal::UpdateSliceNode()
     this->WindowLevelWidget->SetRenderer(this->External->GetRenderer());
     }
   this->WindowLevelWidget->SetSliceNode(this->GetSliceNode());
+  vtkWarningWithObjectMacro(this->External, "vtkInternal::UpdateSliceNode");
 }
 
 //---------------------------------------------------------------------------
@@ -144,12 +150,14 @@ void vtkMRMLScalarBarDisplayableManager::vtkInternal::UpdateSliceNode()
 vtkMRMLScalarBarDisplayableManager::vtkMRMLScalarBarDisplayableManager()
 {
   this->Internal = new vtkInternal(this);
+  vtkWarningMacro("Constructor");
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLScalarBarDisplayableManager::~vtkMRMLScalarBarDisplayableManager()
 {
   delete this->Internal;
+  vtkWarningMacro("Destructor");
 }
 
 //---------------------------------------------------------------------------
@@ -162,12 +170,14 @@ void vtkMRMLScalarBarDisplayableManager::PrintSelf(ostream& os, vtkIndent indent
 void vtkMRMLScalarBarDisplayableManager::UpdateFromMRMLScene()
 {
   this->Internal->UpdateSliceNode();
+  vtkWarningMacro("UpdateFromMRMLScene");
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLScalarBarDisplayableManager::UnobserveMRMLScene()
 {
   this->Internal->WindowLevelWidget->SetSliceNode(nullptr);
+  vtkWarningMacro("UnobserveMRMLScene");
 }
 
 //---------------------------------------------------------------------------
@@ -175,6 +185,7 @@ void vtkMRMLScalarBarDisplayableManager::Create()
 {
   // Setup the SliceNode, ScalarBarNode
   this->Internal->UpdateSliceNode();
+  vtkWarningMacro("Create");
 }
 
 //---------------------------------------------------------------------------
@@ -182,11 +193,13 @@ void vtkMRMLScalarBarDisplayableManager::AdditionalInitializeStep()
 {
   // Build the initial crosshair representation
   //this->Internal->BuildScalarBar();
+  vtkWarningMacro("AdditionalInitializeStep");
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLScalarBarDisplayableManager::OnMRMLSliceNodeModifiedEvent()
 {
+  vtkWarningMacro("OnMRMLSliceNodeModifiedEvent");
 }
 
 //---------------------------------------------------------------------------
@@ -201,9 +214,9 @@ bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInter
   // Find/create active widget
   if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::AdjustWindowLevel)
     {
-    return this->Internal->WindowLevelWidget->CanProcessInteractionEvent(eventData, closestDistance2);
+//    return this->Internal->WindowLevelWidget->CanProcessInteractionEvent(eventData, closestDistance2);
     }
-
+  vtkWarningMacro("CanProcessInteractionEvent");
   return false;
 }
 
@@ -216,6 +229,7 @@ bool vtkMRMLScalarBarDisplayableManager::ProcessInteractionEvent(vtkMRMLInteract
     this->RequestRender();
     this->Internal->WindowLevelWidget->NeedToRenderOff();
     }
+  vtkWarningMacro("ProcessInteractionEvent");
   return processed;
 }
 
@@ -223,22 +237,26 @@ bool vtkMRMLScalarBarDisplayableManager::ProcessInteractionEvent(vtkMRMLInteract
 void vtkMRMLScalarBarDisplayableManager::SetAdjustForegroundWindowLevelEnabled(bool enabled)
 {
   this->Internal->WindowLevelWidget->SetForegroundVolumeEditable(enabled);
+  vtkWarningMacro("SetAdjustForegroundWindowLevelEnabled: Enable state " << enabled);
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLScalarBarDisplayableManager::GetAdjustForegroundWindowLevelEnabled()
 {
   return this->Internal->WindowLevelWidget->GetForegroundVolumeEditable();
+  vtkWarningMacro("GetAdjustForegroundWindowLevelEnabled");
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLScalarBarDisplayableManager::SetAdjustBackgroundWindowLevelEnabled(bool enabled)
 {
   this->Internal->WindowLevelWidget->SetBackgroundVolumeEditable(enabled);
+  vtkWarningMacro("SetAdjustBackgroundWindowLevelEnabled: Enable state: " << enabled);
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLScalarBarDisplayableManager::GetAdjustBackgroundWindowLevelEnabled()
 {
   return this->Internal->WindowLevelWidget->GetBackgroundVolumeEditable();
+  vtkWarningMacro("GetAdjustBackgroundWindowLevelEnabled");
 }
