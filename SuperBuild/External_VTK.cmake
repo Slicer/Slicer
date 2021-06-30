@@ -177,7 +177,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     set(_git_tag "97904fdcc7e73446b3131f32eac9fc9781b23c2d") # slicer-v8.2.0-2018-10-02-74d9488523
     set(vtk_egg_info_version "8.2.0")
   elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
-    set(_git_tag "fe57670c3e136162713c40964ddf45a733d94532") # slicer-v9.0.20201111-733234c785
+    set(_git_tag "a0125fe2b01270f409bb3c1c32dc4c458ffda33d") # slicer-v9.0.20201111-733234c785
     set(vtk_egg_info_version "9.0.20201111")
   else()
     message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
