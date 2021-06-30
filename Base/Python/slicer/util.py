@@ -1363,6 +1363,7 @@ def getSubjectHierarchyItemChildren(parentItem=None, recursive=False):
   :param bool recursive: Whether the query is recursive. False by default
   :return: List of child item IDs
   """
+  import slicer, vtk
   children = []
   shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
   # Use scene as parent item if not given
