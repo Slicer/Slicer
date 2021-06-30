@@ -235,6 +235,7 @@ bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInter
   {
     return this->Internal->WindowLevelWidget->CanProcessInteractionEvent(eventData, closestDistance2);
   }
+
   vtkWarningMacro("CanProcessInteractionEvent");
   return false;
 }
