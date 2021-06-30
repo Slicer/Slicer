@@ -29,6 +29,7 @@
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLWindowLevelWidget.h>
+#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkActor2D.h>
@@ -49,6 +50,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 #include <vtkVersion.h>
+#include <vtkScalarBarWidget.h>
+#include <vtkScalarBarActor.h>
 
 // STD includes
 #include <algorithm>
@@ -62,7 +65,7 @@ class vtkMRMLScalarBarDisplayableManager::vtkInternal
 {
 public:
   vtkInternal(vtkMRMLScalarBarDisplayableManager * external);
-  ~vtkInternal();
+  virtual ~vtkInternal();
 
   vtkObserverManager* GetMRMLNodesObserverManager();
   void Modified();
@@ -84,8 +87,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLScalarBarDisplayableManager::vtkInternal
-::vtkInternal(vtkMRMLScalarBarDisplayableManager * external)
+vtkMRMLScalarBarDisplayableManager::vtkInternal::vtkInternal(vtkMRMLScalarBarDisplayableManager* external)
 {
   this->External = external;
   this->WindowLevelWidget = vtkSmartPointer<vtkMRMLWindowLevelWidget>::New();
@@ -116,8 +118,7 @@ void vtkMRMLScalarBarDisplayableManager::vtkInternal::Modified()
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* vtkMRMLScalarBarDisplayableManager::vtkInternal
-::GetSliceNode()
+vtkMRMLSliceNode* vtkMRMLScalarBarDisplayableManager::vtkInternal::GetSliceNode()
 {
   return this->External->GetMRMLSliceNode();
   vtkWarningWithObjectMacro(this->External, "vtkInternal::GetSliceNode");
@@ -127,18 +128,18 @@ vtkMRMLSliceNode* vtkMRMLScalarBarDisplayableManager::vtkInternal
 void vtkMRMLScalarBarDisplayableManager::vtkInternal::UpdateSliceNode()
 {
   if (this->External->GetMRMLScene() == nullptr)
-    {
+  {
     this->WindowLevelWidget->SetSliceNode(nullptr);
     return;
-    }
+  }
 
   if (!this->WindowLevelWidget->GetRenderer())
-    {
+  {
     vtkMRMLApplicationLogic *mrmlAppLogic = this->External->GetMRMLApplicationLogic();
     this->WindowLevelWidget->SetMRMLApplicationLogic(mrmlAppLogic);
     this->WindowLevelWidget->CreateDefaultRepresentation();
     this->WindowLevelWidget->SetRenderer(this->External->GetRenderer());
-    }
+  }
   this->WindowLevelWidget->SetSliceNode(this->GetSliceNode());
   vtkWarningWithObjectMacro(this->External, "vtkInternal::UpdateSliceNode");
 }
@@ -200,6 +201,24 @@ void vtkMRMLScalarBarDisplayableManager::AdditionalInitializeStep()
 void vtkMRMLScalarBarDisplayableManager::OnMRMLSliceNodeModifiedEvent()
 {
   vtkWarningMacro("OnMRMLSliceNodeModifiedEvent");
+
+  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
+  if (!viewNode)
+  {
+    vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: view node is invalid");
+    return;
+  }
+
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
+  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
+  if (sliceNode)
+  {
+    vtkWarningMacro("OnMRMLSliceNodeModifiedEvent: Slice 2D Name " << sliceNode->GetName());
+  }
+  else if (threeDViewNode)
+  {
+    vtkWarningMacro("OnMRMLSliceNodeModifiedEvent: 3D Name " << threeDViewNode->GetName());
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -207,15 +226,16 @@ bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInter
 {
   int eventid = eventData->GetType();
   if (eventid == vtkCommand::LeaveEvent)
-    {
+  {
     this->Internal->WindowLevelWidget->Leave(eventData);
-    }
+  }
 
   // Find/create active widget
   if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::AdjustWindowLevel)
-    {
-//    return this->Internal->WindowLevelWidget->CanProcessInteractionEvent(eventData, closestDistance2);
-    }
+  {
+    return this->Internal->WindowLevelWidget->CanProcessInteractionEvent(eventData, closestDistance2);
+  }
+
   vtkWarningMacro("CanProcessInteractionEvent");
   return false;
 }
@@ -225,10 +245,10 @@ bool vtkMRMLScalarBarDisplayableManager::ProcessInteractionEvent(vtkMRMLInteract
 {
   bool processed = this->Internal->WindowLevelWidget->ProcessInteractionEvent(eventData);
   if (this->Internal->WindowLevelWidget->GetNeedToRender())
-    {
+  {
     this->RequestRender();
     this->Internal->WindowLevelWidget->NeedToRenderOff();
-    }
+  }
   vtkWarningMacro("ProcessInteractionEvent");
   return processed;
 }
