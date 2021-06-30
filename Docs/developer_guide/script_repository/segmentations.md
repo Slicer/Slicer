@@ -442,6 +442,7 @@ Examples:
 - [create fat/muscle/bone segment by thresholding and report volume of each segment](https://gist.github.com/lassoan/5ad51c89521d3cd9c5faf65767506b37)
 - [segment cranial cavity automatically in dry bone skull CT](https://gist.github.com/lassoan/4d0b94bda52d5b099432e424e03aa2b1)
 - [remove patient table from CT image](https://gist.github.com/lassoan/84d1f9a093dbb6a46c0fcc89279d8088)
+- [fill holes inside bones](https://gist.github.com/lassoan/0f45db8bae792ea19ccad36ceefbf52d)
 
 Description of effect parameters are available [here](modules/segmenteditor.md#effect-parameters).
 
