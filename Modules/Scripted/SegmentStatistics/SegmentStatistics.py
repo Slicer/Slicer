@@ -182,7 +182,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
     """Calculate the label statistics
     """
 
-    try:
+    with slicer.util.tryWithErrorDisplay("Failed to compute results.", waitCursor=True):
       if not self.outputTableSelector.currentNode():
         newTable = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
         self.outputTableSelector.setCurrentNode(newTable)
@@ -201,14 +201,10 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
       self.logic.computeStatistics()
       self.logic.exportToTable(self.outputTableSelector.currentNode())
       self.logic.showTable(self.outputTableSelector.currentNode())
-    except Exception as e:
-      slicer.util.errorDisplay("Failed to compute statistics: "+str(e))
-      import traceback
-      traceback.print_exc()
-    finally:
-      # Unlock GUI
-      self.applyButton.setEnabled(True)
-      self.applyButton.text = "Apply"
+
+    # Unlock GUI
+    self.applyButton.setEnabled(True)
+    self.applyButton.text = "Apply"
 
   def onEditParameters(self, pluginName=None):
     """Open dialog box to edit plugin's parameters"""
