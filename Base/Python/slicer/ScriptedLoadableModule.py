@@ -200,15 +200,10 @@ class ScriptedLoadableModuleWidget:
     """Reload scripted module widget representation and call :func:`ScriptedLoadableModuleTest.runTest()`
     passing ``kwargs``.
     """
-    try:
+    with slicer.util.tryWithErrorDisplay("Reload and Test failed."):
       self.onReload()
       test = slicer.selfTests[self.moduleName]
       test(msec=int(slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay")), **kwargs)
-    except Exception as e:
-      import traceback
-      traceback.print_exc()
-      errorMessage = "Reload and Test: Exception!\n\n" + str(e) + "\n\nSee Python Console for Stack Trace"
-      slicer.util.errorDisplay(errorMessage)
 
   def onEditSource(self):
     filePath = slicer.util.modulePath(self.moduleName)

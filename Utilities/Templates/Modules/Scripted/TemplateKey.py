@@ -267,7 +267,7 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     """
     Run processing when user clicks "Apply" button.
     """
-    try:
+    with slicer.util.tryWithErrorDisplay("Failed to compute results.", waitCursor=True):
 
       # Compute output
       self.logic.process(self.ui.inputSelector.currentNode(), self.ui.outputSelector.currentNode(),
@@ -278,12 +278,6 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # If additional output volume is selected then result with inverted threshold is written there
         self.logic.process(self.ui.inputSelector.currentNode(), self.ui.invertedOutputSelector.currentNode(),
           self.ui.imageThresholdSliderWidget.value, not self.ui.invertOutputCheckBox.checked, showResult=False)
-
-    except Exception as e:
-      slicer.util.errorDisplay("Failed to compute results: "+str(e))
-      import traceback
-      traceback.print_exc()
-
 
 #
 # TemplateKeyLogic

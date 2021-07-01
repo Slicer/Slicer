@@ -128,8 +128,8 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
     pass
 
   def onPatchButton(self):
-    slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
-    try:
+    with slicer.util.tryWithErrorDisplay("Unexpected error.", waitCursor=True):
+
       import tempfile
       if not self.outputDirSelector.currentPath:
         self.outputDirSelector.currentPath =  tempfile.mkdtemp(prefix="DICOMPatcher-", dir=slicer.app.temporaryPath)
@@ -154,12 +154,6 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       if self.normalizeFileNamesCheckBox.checked:
         self.logic.addRule("NormalizeFileNames")
       self.logic.patchDicomDir(self.inputDirSelector.currentPath, self.outputDirSelector.currentPath)
-
-    except Exception as e:
-      self.addLog(f"Unexpected error: {str(e)}")
-      import traceback
-      traceback.print_exc()
-    slicer.app.restoreOverrideCursor()
 
   def onImportButton(self):
     self.logic.importDicomDir(self.outputDirSelector.currentPath)
