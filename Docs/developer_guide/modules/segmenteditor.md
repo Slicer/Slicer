@@ -83,6 +83,8 @@ Common parameters must be set using `setCommonParameter` method (others can be s
 | KernelSizeMm | float | no | 3.0 | >0.0 |
 | GaussianStandardDeviationMm | float | no | 3.0 | >0.0 |
 | JointTaubinSmoothingFactor | float | no | 0.5 | >0.0 |
+| ApplyToAllVisibleSegments | int | no | 0 | 0 or 1 |
+
 
 ### Threshold
 
