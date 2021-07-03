@@ -148,7 +148,10 @@ Grows or shrinks the selected segment by the specified margin.
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_smoothing.png) Smoothing
 
-Smoothes selected labelmap or all labelmaps (only for Joint smoothing method).
+Smoothes, by default, the currently selected labelmap. 
+By checking `Apply to all segments`, all visible labelmaps in the Segment Editor will be smoothed from top to bottom. This operation may be time consuming. The progress will be shown as a Slicer status message.   
+
+The `Joint smoothing` method always smoothes all visible segments. 
 
 By clicking `Apply` button, the entire segmentation is smoothed.
 
