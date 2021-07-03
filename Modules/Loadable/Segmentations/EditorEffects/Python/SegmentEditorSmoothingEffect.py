@@ -78,6 +78,12 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.jointTaubinSmoothingFactorSlider.pageStep = 0.1
     self.jointTaubinSmoothingFactorLabel = self.scriptedEffect.addLabeledOptionsWidget("Smoothing factor:", self.jointTaubinSmoothingFactorSlider)
 
+    self.applyToAllVisibleSegmentsCheckBox = qt.QCheckBox()
+    self.applyToAllVisibleSegmentsCheckBox.setToolTip("Apply smoothing effect to all visible segments in this segmentation node. \
+                                                      This operation may take a while.")
+    self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
+    self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget("Apply to all segments:", self.applyToAllVisibleSegmentsCheckBox)
+
     self.applyButton = qt.QPushButton("Apply")
     self.applyButton.objectName = self.__class__.__name__ + 'Apply'
     self.applyButton.setToolTip("Apply smoothing to selected segment")
@@ -87,6 +93,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.kernelSizeMMSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
     self.gaussianStandardDeviationMMSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
     self.jointTaubinSmoothingFactorSlider.connect("valueChanged(double)", self.updateMRMLFromGUI)
+    self.applyToAllVisibleSegmentsCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
     self.applyButton.connect('clicked()', self.onApply)
 
     # Customize smoothing brush
@@ -149,6 +156,11 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.jointTaubinSmoothingFactorSlider.value = self.scriptedEffect.doubleParameter("JointTaubinSmoothingFactor")
     self.jointTaubinSmoothingFactorSlider.blockSignals(wasBlocked)
 
+    applyToAllVisibleSegments = qt.Qt.Unchecked if self.scriptedEffect.integerParameter("ApplyToAllVisibleSegments") == 0 else qt.Qt.Checked
+    wasBlocked = self.applyToAllVisibleSegmentsCheckBox.blockSignals(True)
+    self.applyToAllVisibleSegmentsCheckBox.setCheckState(applyToAllVisibleSegments)
+    self.applyToAllVisibleSegmentsCheckBox.blockSignals(wasBlocked)
+
     self.updateParameterWidgetsVisibility()
 
   def updateMRMLFromGUI(self):
@@ -158,17 +170,28 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.scriptedEffect.setParameter("KernelSizeMm", self.kernelSizeMMSpinBox.value)
     self.scriptedEffect.setParameter("GaussianStandardDeviationMm", self.gaussianStandardDeviationMMSpinBox.value)
     self.scriptedEffect.setParameter("JointTaubinSmoothingFactor", self.jointTaubinSmoothingFactorSlider.value)
+    applyToAllVisibleSegments = 1 if self.applyToAllVisibleSegmentsCheckBox.isChecked() else 0
+    self.scriptedEffect.setParameter("ApplyToAllVisibleSegments", applyToAllVisibleSegments)
+
 
     self.updateParameterWidgetsVisibility()
+
 
   #
   # Effect specific methods (the above ones are the API methods to override)
   #
 
+  def showStatusMessage(self, msg, timeoutMsec=500):
+        slicer.util.showStatusMessage(msg, timeoutMsec)
+        slicer.app.processEvents()
+
   def onApply(self, maskImage=None, maskExtent=None):
     """maskImage: contains nonzero where smoothing will be applied
     """
     smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
+    applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) !=0 \
+        if self.scriptedEffect.parameter("ApplyToAllVisibleSegments") else False
+
     if smoothingMethod != JOINT_TAUBIN:
       # Make sure the user wants to do the operation, even if the segment is not visible
       if not self.scriptedEffect.confirmCurrentSegmentVisible():
@@ -178,10 +201,30 @@ If segments overlap, segment higher in the segments table will have priority. <b
       # This can be a long operation - indicate it to the user
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
       self.scriptedEffect.saveStateForUndo()
+
       if smoothingMethod == JOINT_TAUBIN:
         self.smoothMultipleSegments(maskImage, maskExtent)
+      elif applyToAllVisibleSegments:
+        # Smooth all visible segments
+        inputSegmentIDs = vtk.vtkStringArray()
+        segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+        segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(inputSegmentIDs)
+        segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self().editor
+        segmentEditorNode = segmentEditorWidget.mrmlSegmentEditorNode()
+        # store which segment was selected before operation
+        selectedStartSegmentID = segmentEditorNode.GetSelectedSegmentID()
+        if inputSegmentIDs.GetNumberOfValues() == 0:
+          logging.info("Smoothing operation skipped: there are no visible segments.")
+          return
+        for index in range(inputSegmentIDs.GetNumberOfValues()):
+          segmentID = inputSegmentIDs.GetValue(index)
+          self.showStatusMessage(f'Smoothing {segmentID} ...')
+          segmentEditorNode.SetSelectedSegmentID(segmentID)
+          self.smoothSelectedSegment(maskImage, maskExtent)
+        # restore segment selection
+        segmentEditorNode.SetSelectedSegmentID(selectedStartSegmentID)
       else:
-        self.smoothSelectedSegment(maskImage, maskExtent)
+          self.smoothSelectedSegment(maskImage, maskExtent)
     finally:
       qt.QApplication.restoreOverrideCursor()
 
@@ -320,6 +363,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
   def smoothMultipleSegments(self, maskImage=None, maskExtent=None):
     import vtkSegmentationCorePython as vtkSegmentationCore
 
+
+    self.showStatusMessage(f'Joint smoothing ...')
     # Generate merged labelmap of all visible segments
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     visibleSegmentIds = vtk.vtkStringArray()
