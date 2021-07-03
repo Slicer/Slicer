@@ -95,6 +95,7 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
     // set "inaccurate" world position
     ed->SetWorldPosition(worldPosition, false);
     }
+  ed->SetMouseMovedSinceButtonDown(this->MouseMovedSinceButtonDown);
   ed->SetAccuratePicker(this->AccuratePicker);
   ed->SetRenderer(this->CurrentRenderer);
 

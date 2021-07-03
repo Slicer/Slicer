@@ -393,6 +393,11 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
       processedEvent = false;
     }
 
+  if (!processedEvent)
+    {
+    processedEvent = this->ProcessButtonClickEvent(eventData);
+    }
+
   if (processedEvent)
     {
     // invoke interaction event for compatibility with pre-camera-widget
@@ -464,7 +469,7 @@ bool vtkMRMLCameraWidget::ProcessStartMouseDrag(vtkMRMLInteractionEventData* eve
 }
 
 //-------------------------------------------------------------------------
-bool vtkMRMLCameraWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+bool vtkMRMLCameraWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData)
 {
   if (this->Renderer && this->Renderer->GetRenderWindow() && this->Renderer->GetRenderWindow()->GetInteractor())
     {
@@ -483,7 +488,10 @@ bool vtkMRMLCameraWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* vtkNo
     return false;
     }
   this->SetWidgetState(WidgetStateIdle);
-  return true;
+
+  // only claim this as processed if the mouse was moved (this lets the event interpreted as button click)
+  bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
+  return processedEvent;
 }
 
 //----------------------------------------------------------------------------------

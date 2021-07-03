@@ -444,6 +444,11 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       processedEvent = false;
     }
 
+  if (!processedEvent)
+    {
+    processedEvent = this->ProcessButtonClickEvent(eventData);
+    }
+
   return processedEvent;
 }
 
@@ -516,14 +521,17 @@ double vtkMRMLSliceIntersectionWidget::GetSliceRotationAngleRad(double eventPos[
 
 
 //-------------------------------------------------------------------------
-bool vtkMRMLSliceIntersectionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+bool vtkMRMLSliceIntersectionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData)
 {
   if (this->WidgetState == WidgetStateIdle)
     {
     return false;
     }
   this->SetWidgetState(WidgetStateIdle);
-  return true;
+
+  // only claim this as processed if the mouse was moved (this lets the event interpreted as button click)
+  bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
+  return processedEvent;
 }
 
 //-------------------------------------------------------------------------

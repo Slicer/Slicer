@@ -116,6 +116,7 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
   int displayPositionCorrected[2] = { displayPositionInt[0] - pokedRenderer->GetOrigin()[0], displayPositionInt[1] - pokedRenderer->GetOrigin()[1] };
   ed->SetDisplayPosition(displayPositionCorrected);
   ed->SetWorldPosition(worldPosition);
+  ed->SetMouseMovedSinceButtonDown(this->MouseMovedSinceButtonDown);
   ed->SetAttributesFromInteractor(this->GetInteractor());
 
   // Update cursor position
