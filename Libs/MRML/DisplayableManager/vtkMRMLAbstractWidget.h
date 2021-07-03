@@ -194,6 +194,10 @@ protected:
   unsigned long TranslateInteractionEventToWidgetEvent(
     vtkWidgetEventTranslator* translator, vtkMRMLInteractionEventData* eventData);
 
+  /// Generate a button click event and get it processed with ProcessInteractionEvent.
+  /// Returns true if the event was processed.
+  virtual int ProcessButtonClickEvent(vtkMRMLInteractionEventData* eventData);
+
   vtkWeakPointer<vtkRenderer> Renderer;
 
   vtkWeakPointer<vtkMRMLApplicationLogic> ApplicationLogic;

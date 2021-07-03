@@ -78,6 +78,7 @@ public:
     WidgetEventControlPointDelete,
     WidgetEventControlPointInsert,
     WidgetEventControlPointSnapToSlice,
+    WidgetEventReserved,  // this events is only to prevent other widgets from processing an event
     WidgetEventMarkups_Last
   };
 

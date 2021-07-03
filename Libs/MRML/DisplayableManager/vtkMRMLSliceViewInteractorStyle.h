@@ -105,11 +105,6 @@ protected:
 
   vtkMRMLSliceLogic *SliceLogic;
 
-  //bool MouseMovedSinceButtonDown;
-
-  //vtkSmartPointer<vtkTimerLog> ClickTimer;
-  //int NumberOfClicks;
-
   bool EnableCursorUpdate;
 
 private:

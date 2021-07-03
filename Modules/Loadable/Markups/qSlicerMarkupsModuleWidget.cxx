@@ -2187,7 +2187,7 @@ if (clipboardText.contains("\t"))
 
 // SetPointFromString calls various events reporting the id of the point modified.
 // However, already for > 200 points, it gets bad performance. Therefore, we call a simply modified call at the end.
-d->MarkupsNode->DisableModifiedEventOn();
+MRMLNodeModifyBlocker blocker(d->MarkupsNode);
 foreach(QString line, lines)
   {
   line = line.trimmed();
@@ -2196,13 +2196,8 @@ foreach(QString line, lines)
     // empty line or comment line
     continue;
     }
-
   storageNode->SetPointFromString(d->MarkupsNode, d->MarkupsNode->GetNumberOfControlPoints(), line.toUtf8());
   }
-d->MarkupsNode->DisableModifiedEventOff();
-d->MarkupsNode->Modified();
-int n = d->MarkupsNode->GetNumberOfControlPoints() - 1;
-d->MarkupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
 }
 
 //-----------------------------------------------------------------------------

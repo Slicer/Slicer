@@ -85,6 +85,9 @@ public:
   void SetComponentIndex(int componentIndex);
   int GetComponentIndex() const;
 
+  void SetMouseMovedSinceButtonDown(bool moved);
+  bool GetMouseMovedSinceButtonDown() const;
+
   void SetRotation(double v);
   double GetRotation() const;
   void SetLastRotation(double v);
@@ -124,6 +127,7 @@ protected:
   vtkCellPicker* AccuratePicker;
   int ComponentType;
   int ComponentIndex;
+  bool MouseMovedSinceButtonDown;
 
   //@{
   /// For KeyPressEvent

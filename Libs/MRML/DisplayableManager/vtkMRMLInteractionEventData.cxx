@@ -63,6 +63,7 @@ vtkMRMLInteractionEventData::vtkMRMLInteractionEventData()
   this->InteractionContextName = "";
   this->ComponentType = -1;
   this->ComponentIndex = -1;
+  this->MouseMovedSinceButtonDown = true;
 }
 
 //---------------------------------------------------------------------------
@@ -219,6 +220,18 @@ void vtkMRMLInteractionEventData::SetComponentIndex(int componentIndex)
 int vtkMRMLInteractionEventData::GetComponentIndex() const
 {
   return this->ComponentIndex;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLInteractionEventData::SetMouseMovedSinceButtonDown(bool moved)
+{
+  this->MouseMovedSinceButtonDown = moved;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLInteractionEventData::GetMouseMovedSinceButtonDown() const
+{
+  return this->MouseMovedSinceButtonDown;
 }
 
 //---------------------------------------------------------------------------

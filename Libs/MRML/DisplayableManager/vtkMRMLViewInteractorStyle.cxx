@@ -310,6 +310,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(v
   ed->SetType(inputEventData ? inputEventData->GetType() : vtkCommand::NoEvent);
   int displayPositionCorrected[2] = { displayPositionInt[0] - pokedRenderer->GetOrigin()[0], displayPositionInt[1] - pokedRenderer->GetOrigin()[1] };
   ed->SetDisplayPosition(displayPositionCorrected);
+  ed->SetMouseMovedSinceButtonDown(this->MouseMovedSinceButtonDown);
   ed->SetAttributesFromInteractor(this->GetInteractor());
   vtkEventDataDevice3D* inputEventDataDevice3D = inputEventData->GetAsEventDataDevice3D();
   if (inputEventDataDevice3D)
@@ -452,27 +453,6 @@ void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
     {
     // Displayable managers did not processed it
     Superclass::ProcessEvents(object, event, clientdata, calldata);
-    }
-
-  // VTK does not provide click events, detect and invoke them here
-  if (event == vtkCommand::LeftButtonReleaseEvent
-    || event == vtkCommand::MiddleButtonReleaseEvent
-    || event == vtkCommand::RightButtonReleaseEvent)
-    {
-    // invoke a mouse move event to ensure that widget states are updated for the current position when the mouse button is released
-    self->DelegateInteractionEventToDisplayableManagers(vtkCommand::MouseMoveEvent);
-    // invoke click event if mouse did not move since last button down
-    if (!self->MouseMovedSinceButtonDown)
-      {
-      unsigned long clickEvent = 0;
-      switch (event)
-        {
-        case vtkCommand::LeftButtonReleaseEvent: clickEvent = vtkMRMLInteractionEventData::LeftButtonClickEvent; break;
-        case vtkCommand::MiddleButtonReleaseEvent: clickEvent = vtkMRMLInteractionEventData::MiddleButtonClickEvent; break;
-        case vtkCommand::RightButtonReleaseEvent: clickEvent = vtkMRMLInteractionEventData::RightButtonClickEvent; break;
-        };
-      self->DelegateInteractionEventToDisplayableManagers(clickEvent);
-      }
     }
 }
 
