@@ -148,9 +148,9 @@ const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
     "</span>"
     "</p>"
     "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-size:8pt;\">"
-    "Make sure the transform column is shown using the 'Transforms' checkbox. "
-    "To transform a branch, double click on the cell in the transform column of the row in question, and choose a transform."
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+    "Make sure the transform column is shown using the 'Show transforms' checkbox. "
+    "To transform a branch, right-click on the cell in the transform column of the row in question, and choose a transform."
     "</span>"
     "</p>");
 }

@@ -227,7 +227,7 @@ const QString qSlicerSubjectHierarchyDICOMPlugin::helpText()const
     "</p>"
     "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
     "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
-    "Right-click the empty area (or the top-level item 'Scene' if visible) and select 'Create new subject'."
+    "Right-click the top-level item 'Scene' (or the empty area if scene item is not visible) and select 'Create new subject'."
     "</span>"
     "</p>\n"
     "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
