@@ -24,6 +24,7 @@
 #include "vtkOrientedImageData.h"
 #include "vtkOrientedImageDataResample.h"
 #include "vtkMRMLSegmentEditorNode.h"
+#include "vtkMRMLSegmentationDisplayNode.h"
 
 // Qt includes
 #include <QApplication>
@@ -33,6 +34,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QRadioButton>
+#include <QCheckBox>
 
 // VTK includes
 #include <vtkActor2D.h>
@@ -55,6 +57,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkVector.h>
@@ -215,6 +218,7 @@ public:
   QButtonGroup* sliceCutModeGroup;
 
   qMRMLSpinBox* sliceCutDepthSpinBox;
+  QCheckBox*    applyToAllVisibleSegmentsCheckBox;
 };
 
 //-----------------------------------------------------------------------------
@@ -867,6 +871,7 @@ void qSlicerSegmentEditorScissorsEffectPrivate::paintApply(qMRMLWidget* viewWidg
   Q_Q(qSlicerSegmentEditorScissorsEffect);
 
   vtkOrientedImageData* modifierLabelmap = q->defaultModifierLabelmap();
+
   if (!modifierLabelmap)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid segmentationNode";
@@ -892,6 +897,28 @@ void qSlicerSegmentEditorScissorsEffectPrivate::paintApply(qMRMLWidget* viewWidg
     {
     return;
     }
+
+  // Create a list of segment IDs that will be processed.
+  std::string selectedSegmentID = q->parameterSetNode()->GetSelectedSegmentID() ? q->parameterSetNode()->GetSelectedSegmentID() : "";
+  vtkNew<vtkStringArray> allProcessedSegmentIDs;
+  bool applyToAllVisibleSegments = (q->integerParameter("ApplyToAllVisibleSegments") != 0);
+  if (applyToAllVisibleSegments)
+    {
+    // Iterate through visible segments
+    // set each as selected one by one
+    // Paint on modifier labelmap
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+    if (displayNode)
+      {
+      displayNode->GetVisibleSegmentIDs(allProcessedSegmentIDs);
+      }
+    }
+  else
+    {
+    // Paint on current segment
+    allProcessedSegmentIDs->InsertNextValue(selectedSegmentID);
+    }
+
   q->saveStateForUndo();
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
@@ -948,7 +975,19 @@ void qSlicerSegmentEditorScissorsEffectPrivate::paintApply(qMRMLWidget* viewWidg
     {
     modificationMode = qSlicerSegmentEditorAbstractEffect::ModificationModeRemove;
     }
-  q->modifySelectedSegmentByLabelmap(modifierLabelmap, modificationMode);
+
+  // Select input segment and process one by one.
+  // Probably in some cases the performance could ve optimized when when multiple segments are processed,
+  // but it would make the implementation more complicated.
+  for (int segmentIndex = 0; segmentIndex < allProcessedSegmentIDs->GetNumberOfValues(); segmentIndex++)
+    {
+    std::string segmentID = allProcessedSegmentIDs->GetValue(segmentIndex);
+    q->parameterSetNode()->SetSelectedSegmentID(segmentID.c_str());
+    q->modifySelectedSegmentByLabelmap(modifierLabelmap, modificationMode);
+    }
+
+  // restore original segment selection
+  q->parameterSetNode()->SetSelectedSegmentID(selectedSegmentID.c_str());
 
   QApplication::restoreOverrideCursor();
 }
@@ -1165,6 +1204,15 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->gridLayout->addWidget(d->symmetricRadioButton, 2, 4);
   d->gridLayout->addWidget(d->sliceCutDepthSpinBox, 2, 5);
 
+  QLabel* applyToAllVisibleSegmentsLabel = new QLabel(tr("Apply to all segments:"));
+  applyToAllVisibleSegmentsLabel->setToolTip(tr("Apply scissor effect to all visible segments from top to bottom. \
+                                          After pressing 'Apply': Please be patient - this may be time-consuming. \
+                                          Progress will be shown as status message. "));
+  d->gridLayout->addWidget(applyToAllVisibleSegmentsLabel, 3, 0);
+  d->applyToAllVisibleSegmentsCheckBox = new QCheckBox("");
+  d->applyToAllVisibleSegmentsCheckBox->setObjectName(QString::fromUtf8("applyToAllVisibleSegmentsCheckBox"));
+  d->gridLayout->addWidget(d->applyToAllVisibleSegmentsCheckBox, 3, 1);
+
   this->addOptionsWidget(d->gridLayout);
 
   d->sliceCutModeGroup = new QButtonGroup(this);
@@ -1176,6 +1224,7 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
 
   QObject::connect(d->sliceCutModeGroup, SIGNAL(buttonClicked(int)), this, SLOT(setSliceCutMode(int)));
   QObject::connect(d->sliceCutDepthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(onSliceCutDepthChanged(double)));
+  QObject::connect(d->applyToAllVisibleSegmentsCheckBox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
 }
 
 //-----------------------------------------------------------------------------
@@ -1183,6 +1232,7 @@ void qSlicerSegmentEditorScissorsEffect::setMRMLDefaults()
 {
   Q_D(qSlicerSegmentEditorScissorsEffect);
   Superclass::setMRMLDefaults();
+  this->setParameterDefault("ApplyToAllVisibleSegments", 0);
   this->setParameterDefault("Operation", d->ConvertOperationToString(qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseInside));
   this->setParameterDefault("Shape", d->ConvertShapeToString(qSlicerSegmentEditorScissorsEffectPrivate::ShapeFreeForm));
   this->setParameterDefault("SliceCutMode", d->ConvertSliceCutModeToString(qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeUnlimited));
@@ -1236,6 +1286,10 @@ void qSlicerSegmentEditorScissorsEffect::updateGUIFromMRML()
   d->sliceCutDepthSpinBox->setValue(this->doubleParameter("SliceCutDepthMm"));
   d->sliceCutDepthSpinBox->setEnabled(sliceCutModeIndex == qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeSymmetric);
   d->sliceCutDepthSpinBox->blockSignals(wasBlocked);
+
+  d->applyToAllVisibleSegmentsCheckBox->blockSignals(true);
+  d->applyToAllVisibleSegmentsCheckBox->setChecked(this->integerParameter("ApplyToAllVisibleSegments"));
+  d->applyToAllVisibleSegmentsCheckBox->blockSignals(wasBlocked);
 }
 
 //-----------------------------------------------------------------------------
@@ -1275,6 +1329,8 @@ void qSlicerSegmentEditorScissorsEffect::updateMRMLFromGUI()
   QString operation = d->ConvertOperationToString(d->operationGroup->checkedId());
   QString shape = d->ConvertShapeToString(d->shapeGroup->checkedId());
   QString sliceCutMode = d->ConvertSliceCutModeToString(d->sliceCutModeGroup->checkedId());
+  int applyToAllVisibleSegments = d->applyToAllVisibleSegmentsCheckBox->isChecked() ? 1 : 0;
+  this->setParameter("ApplyToAllVisibleSegments", applyToAllVisibleSegments);
   this->setParameter("Operation", operation.toUtf8().constData());
   this->setParameter("Shape", shape.toUtf8().constData());
   this->setParameter("SliceCutMode", sliceCutMode.toUtf8().constData());
@@ -1302,6 +1358,7 @@ bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(
   qMRMLWidget* viewWidget )
 {
   Q_D(qSlicerSegmentEditorScissorsEffect);
+
   bool abortEvent = false;
 
   // This effect only supports interactions in the 2D slice views currently

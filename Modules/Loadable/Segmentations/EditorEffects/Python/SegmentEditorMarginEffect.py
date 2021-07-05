@@ -54,21 +54,30 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     self.marginSizeMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Margin size:", marginSizeFrame)
     self.scriptedEffect.addLabeledOptionsWidget("", self.marginSizeLabel)
 
+    self.applyToAllVisibleSegmentsCheckBox = qt.QCheckBox()
+    self.applyToAllVisibleSegmentsCheckBox.setToolTip("Grow or shrink all visible segments in this segmentation node. \
+                                                      This operation may take a while.")
+    self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
+    self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget("Apply to all segments:", self.applyToAllVisibleSegmentsCheckBox)
+
     self.applyButton = qt.QPushButton("Apply")
     self.applyButton.objectName = self.__class__.__name__ + 'Apply'
-    self.applyButton.setToolTip("Grows or shrinks selected segment by the specified margin.")
+    self.applyButton.setToolTip("Grows or shrinks selected segment /default) or all segments (checkbox) by the specified margin.")
     self.scriptedEffect.addOptionsWidget(self.applyButton)
 
     self.applyButton.connect('clicked()', self.onApply)
     self.marginSizeMMSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
     self.growOptionRadioButton.connect("toggled(bool)", self.growOperationToggled)
     self.shrinkOptionRadioButton.connect("toggled(bool)", self.shrinkOperationToggled)
+    self.applyToAllVisibleSegmentsCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
+
 
   def createCursor(self, widget):
     # Turn off effect-specific cursor for this effect
     return slicer.util.mainWindow().cursor
 
   def setMRMLDefaults(self):
+    self.scriptedEffect.setParameterDefault("ApplyToAllVisibleSegments", 0)
     self.scriptedEffect.setParameterDefault("MarginSizeMm", 3)
 
   def getMarginSizePixel(self):
@@ -110,6 +119,12 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     else:
       self.marginSizeLabel.text = "Empty segment"
 
+    applyToAllVisibleSegments = qt.Qt.Unchecked if self.scriptedEffect.integerParameter("ApplyToAllVisibleSegments") == 0 else qt.Qt.Checked
+    wasBlocked = self.applyToAllVisibleSegmentsCheckBox.blockSignals(True)
+    self.applyToAllVisibleSegmentsCheckBox.setCheckState(applyToAllVisibleSegments)
+    self.applyToAllVisibleSegmentsCheckBox.blockSignals(wasBlocked)
+
+
     self.setWidgetMinMaxStepFromImageSpacing(self.marginSizeMMSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
 
   def growOperationToggled(self, toggled):
@@ -123,6 +138,9 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
   def updateMRMLFromGUI(self):
     marginSizeMM = (self.marginSizeMMSpinBox.value) if self.growOptionRadioButton.checked else (-self.marginSizeMMSpinBox.value)
     self.scriptedEffect.setParameter("MarginSizeMm", marginSizeMM)
+    applyToAllVisibleSegments = 1 if self.applyToAllVisibleSegmentsCheckBox.isChecked() else 0
+    self.scriptedEffect.setParameter("ApplyToAllVisibleSegments", applyToAllVisibleSegments)
+
 
   def getMarginSizeMM(self):
     selectedSegmentLabelmapSpacing = [1.0, 1.0, 1.0]
@@ -137,13 +155,11 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
         marginSizeMM[i] = round(marginSizeMM[i], max(int(-math.floor(math.log10(marginSizeMM[i]))),1))
     return marginSizeMM
 
-  def onApply(self):
-    # Make sure the user wants to do the operation, even if the segment is not visible
-    if not self.scriptedEffect.confirmCurrentSegmentVisible():
-      return
+  def showStatusMessage(self, msg, timeoutMsec=500):
+        slicer.util.showStatusMessage(msg, timeoutMsec)
+        slicer.app.processEvents()
 
-    self.scriptedEffect.saveStateForUndo()
-
+  def processMargin(self):
     # Get modifier labelmap and parameters
     modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
     selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
@@ -189,4 +205,41 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     # Apply changes
     self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
-    qt.QApplication.restoreOverrideCursor()
+  def onApply(self):
+    # Make sure the user wants to do the operation, even if the segment is not visible
+    if not self.scriptedEffect.confirmCurrentSegmentVisible():
+      return
+
+    try:
+      # This can be a long operation - indicate it to the user
+      qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
+      self.scriptedEffect.saveStateForUndo()
+
+      applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) !=0 \
+          if self.scriptedEffect.parameter("ApplyToAllVisibleSegments") else False
+
+      if applyToAllVisibleSegments:
+        # Smooth all visible segments
+        inputSegmentIDs = vtk.vtkStringArray()
+        segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+        segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(inputSegmentIDs)
+        segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self().editor
+        segmentEditorNode = segmentEditorWidget.mrmlSegmentEditorNode()
+        # store which segment was selected before operation
+        selectedStartSegmentID = segmentEditorNode.GetSelectedSegmentID()
+        if inputSegmentIDs.GetNumberOfValues() == 0:
+          logging.info("Margin operation skipped: there are no visible segments.")
+          return
+        # select input segments one by one, process
+        for index in range(inputSegmentIDs.GetNumberOfValues()):
+          segmentID = inputSegmentIDs.GetValue(index)
+          self.showStatusMessage(f'Smoothing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
+          segmentEditorNode.SetSelectedSegmentID(segmentID)
+          self.processMargin()
+        # restore segment selection
+        segmentEditorNode.SetSelectedSegmentID(selectedStartSegmentID)
+      else:
+        self.processMargin()
+
+    finally:
+      qt.QApplication.restoreOverrideCursor()
