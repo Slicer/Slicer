@@ -56,6 +56,12 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     self.shellThicknessMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Shell thickness:", shellThicknessFrame)
     self.scriptedEffect.addLabeledOptionsWidget("", self.shellThicknessLabel)
 
+    self.applyToAllVisibleSegmentsCheckBox = qt.QCheckBox()
+    self.applyToAllVisibleSegmentsCheckBox.setToolTip("Apply hollow effect to all visible segments in this segmentation node. \
+                                                      This operation may take a while.")
+    self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
+    self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget("Apply to all segments:", self.applyToAllVisibleSegmentsCheckBox)
+
     self.applyButton = qt.QPushButton("Apply")
     self.applyButton.objectName = self.__class__.__name__ + 'Apply'
     self.applyButton.setToolTip("Makes the segment hollow by replacing it with a thick shell at the segment boundary.")
@@ -66,12 +72,15 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     self.insideSurfaceOptionRadioButton.connect("toggled(bool)", self.insideSurfaceModeToggled)
     self.medialSurfaceOptionRadioButton.connect("toggled(bool)", self.medialSurfaceModeToggled)
     self.outsideSurfaceOptionRadioButton.connect("toggled(bool)", self.outsideSurfaceModeToggled)
+    self.applyToAllVisibleSegmentsCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
+
 
   def createCursor(self, widget):
     # Turn off effect-specific cursor for this effect
     return slicer.util.mainWindow().cursor
 
   def setMRMLDefaults(self):
+    self.scriptedEffect.setParameterDefault("ApplyToAllVisibleSegments", 0)
     self.scriptedEffect.setParameterDefault("ShellMode", INSIDE_SURFACE)
     self.scriptedEffect.setParameterDefault("ShellThicknessMm", 3.0)
 
@@ -121,9 +130,17 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
 
     self.setWidgetMinMaxStepFromImageSpacing(self.shellThicknessMMSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
 
+    applyToAllVisibleSegments = qt.Qt.Unchecked if self.scriptedEffect.integerParameter("ApplyToAllVisibleSegments") == 0 else qt.Qt.Checked
+    wasBlocked = self.applyToAllVisibleSegmentsCheckBox.blockSignals(True)
+    self.applyToAllVisibleSegmentsCheckBox.setCheckState(applyToAllVisibleSegments)
+    self.applyToAllVisibleSegmentsCheckBox.blockSignals(wasBlocked)
+
+
   def updateMRMLFromGUI(self):
     # Operation is managed separately
     self.scriptedEffect.setParameter("ShellThicknessMm", self.shellThicknessMMSpinBox.value)
+    applyToAllVisibleSegments = 1 if self.applyToAllVisibleSegmentsCheckBox.isChecked() else 0
+    self.scriptedEffect.setParameter("ApplyToAllVisibleSegments", applyToAllVisibleSegments)
 
   def insideSurfaceModeToggled(self, toggled):
     if toggled:
@@ -150,17 +167,14 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
         shellThicknessMM[i] = round(shellThicknessMM[i], max(int(-math.floor(math.log10(shellThicknessMM[i]))),1))
     return shellThicknessMM
 
-  def onApply(self):
-    # Make sure the user wants to do the operation, even if the segment is not visible
-    if not self.scriptedEffect.confirmCurrentSegmentVisible():
-      return
+  def showStatusMessage(self, msg, timeoutMsec=500):
+        slicer.util.showStatusMessage(msg, timeoutMsec)
+        slicer.app.processEvents()
 
-    self.scriptedEffect.saveStateForUndo()
-
+  def processHollowing(self):
     # Get modifier labelmap and parameters
     modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
     selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
-
     # We need to know exactly the value of the segment voxels, apply threshold to make force the selected label value
     labelValue = 1
     backgroundValue = 0
@@ -192,16 +206,51 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
 
     modifierLabelmap.DeepCopy(margin.GetOutput())
 
-    # This can be a long operation - indicate it to the user
-    qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
-
     margin.Update()
     modifierLabelmap.ShallowCopy(margin.GetOutput())
 
     # Apply changes
     self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
-    qt.QApplication.restoreOverrideCursor()
+  def onApply(self):
+    # Make sure the user wants to do the operation, even if the segment is not visible
+    if not self.scriptedEffect.confirmCurrentSegmentVisible():
+      return
+
+    try:
+      # This can be a long operation - indicate it to the user
+      qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
+      self.scriptedEffect.saveStateForUndo()
+
+      applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) !=0 \
+          if self.scriptedEffect.parameter("ApplyToAllVisibleSegments") else False
+
+      if applyToAllVisibleSegments:
+        # Smooth all visible segments
+        inputSegmentIDs = vtk.vtkStringArray()
+        segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+        segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(inputSegmentIDs)
+        segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self().editor
+        segmentEditorNode = segmentEditorWidget.mrmlSegmentEditorNode()
+        # store which segment was selected before operation
+        selectedStartSegmentID = segmentEditorNode.GetSelectedSegmentID()
+        if inputSegmentIDs.GetNumberOfValues() == 0:
+          logging.info("Hollow operation skipped: there are no visible segments.")
+          return
+        # select input segments one by one, process
+        for index in range(inputSegmentIDs.GetNumberOfValues()):
+          segmentID = inputSegmentIDs.GetValue(index)
+          self.showStatusMessage(f'Smoothing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
+          segmentEditorNode.SetSelectedSegmentID(segmentID)
+          self.processHollowing()
+        # restore segment selection
+        segmentEditorNode.SetSelectedSegmentID(selectedStartSegmentID)
+      else:
+        self.processHollowing()
+
+    finally:
+      qt.QApplication.restoreOverrideCursor()
+
 
 INSIDE_SURFACE = 'INSIDE_SURFACE'
 MEDIAL_SURFACE = 'MEDIAL_SURFACE'

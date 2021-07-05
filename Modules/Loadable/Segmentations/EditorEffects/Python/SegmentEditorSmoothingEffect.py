@@ -106,10 +106,11 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.scriptedEffect.addOptionsWidget(self.paintOptionsGroupBox)
 
   def setMRMLDefaults(self):
-    self.scriptedEffect.setParameterDefault("SmoothingMethod", MEDIAN)
-    self.scriptedEffect.setParameterDefault("KernelSizeMm", 3)
+    self.scriptedEffect.setParameterDefault("ApplyToAllVisibleSegments", 0)
     self.scriptedEffect.setParameterDefault("GaussianStandardDeviationMm", 3)
     self.scriptedEffect.setParameterDefault("JointTaubinSmoothingFactor", 0.5)
+    self.scriptedEffect.setParameterDefault("KernelSizeMm", 3)
+    self.scriptedEffect.setParameterDefault("SmoothingMethod", MEDIAN)
 
   def updateParameterWidgetsVisibility(self):
     methodIndex = self.methodSelectorComboBox.currentIndex
@@ -122,6 +123,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.gaussianStandardDeviationMMSpinBox.setVisible(smoothingMethod==GAUSSIAN)
     self.jointTaubinSmoothingFactorLabel.setVisible(smoothingMethod==JOINT_TAUBIN)
     self.jointTaubinSmoothingFactorSlider.setVisible(smoothingMethod==JOINT_TAUBIN)
+    self.applyToAllVisibleSegmentsLabel.setVisible(smoothingMethod!=JOINT_TAUBIN)
+    self.applyToAllVisibleSegmentsCheckBox.setVisible(smoothingMethod!=JOINT_TAUBIN)
 
   def getKernelSizePixel(self):
     selectedSegmentLabelmapSpacing = [1.0, 1.0, 1.0]
@@ -173,7 +176,6 @@ If segments overlap, segment higher in the segments table will have priority. <b
     applyToAllVisibleSegments = 1 if self.applyToAllVisibleSegmentsCheckBox.isChecked() else 0
     self.scriptedEffect.setParameter("ApplyToAllVisibleSegments", applyToAllVisibleSegments)
 
-
     self.updateParameterWidgetsVisibility()
 
 
@@ -218,7 +220,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
           return
         for index in range(inputSegmentIDs.GetNumberOfValues()):
           segmentID = inputSegmentIDs.GetValue(index)
-          self.showStatusMessage(f'Smoothing {segmentID} ...')
+          self.showStatusMessage(f'Smoothing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
           segmentEditorNode.SetSelectedSegmentID(segmentID)
           self.smoothSelectedSegment(maskImage, maskExtent)
         # restore segment selection

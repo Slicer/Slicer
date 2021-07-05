@@ -55,6 +55,10 @@ The following keyboard shortcuts are active when you are in the Editor module.  
 
 Effects operate either by clicking the Apply button in the effect options section or by clicking and/or dragging in slice or 3D views.
 
+### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_threshold.png) Threshold
+
+Use Threshold to determine a threshold range and save results to selected segment or use it as Editable intensity range.
+
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_paint.png) Paint
 
 - Pick the radius (in millimeters) of the brush to apply
@@ -138,24 +142,25 @@ Notes:
 - The method does not use the master volume, only the shape of the specified segments.
 - The method uses ND morphological contour interpolation algorithm. See details here: http://insight-journal.org/browse/publication/977
 
-### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_threshold.png) Threshold
-
-Use Threshold to determine a threshold range and save results to selected segment or use it as Editable intensity range.
-
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_margin.png) Margin
 
 Grows or shrinks the selected segment by the specified margin.
 
+By enabling `Apply to all segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
+
+### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_hollow.png) Hollow
+
+Makes the selected visible segment hollow by replacing the segment with a uniform-thickness shell defined by the segment boundary.
+
+By enabling `Apply to all segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
+
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_smoothing.png) Smoothing
 
-Smoothes, by default, the currently selected labelmap. 
-By checking `Apply to all segments`, all visible labelmaps in the Segment Editor will be smoothed from top to bottom. This operation may be time consuming. The progress will be shown as a Slicer status message.   
+Smoothes segments by filling in holes and/or removing extrusions.
 
-The `Joint smoothing` method always smoothes all visible segments. 
+By default, the current segment will be smoothed. By enabling `Apply to all segments`, all visible segments of the segmentation will be smoothed (in the order of the segment list). This operation may be time-consuming for complex segmentations. The `Joint smoothing` method always smoothes all visible segments.
 
-By clicking `Apply` button, the entire segmentation is smoothed.
-
-To smooth a specific region, left click and drag in any slice or 3D view. Same smoothing method and strength is used as for the whole-segmentation mode (size of the brush does not affect smoothing strength, just makes it easier to designate a larger region).
+By clicking `Apply` button, the entire segmentation is smoothed. To smooth a specific region, left click and drag in any slice or 3D view. Same smoothing method and strength is used as for the whole-segmentation mode (size of the brush does not affect smoothing strength, just makes it easier to designate a larger region).
 
 Available methods:
 - Median: removes small extrusions and fills small gaps while keeps smooth contours mostly unchanged. Applied to selected segment only.</li>
@@ -170,6 +175,8 @@ Clip segments to the specified region or fill regions of a segment (typically us
 
 - Left click to start drawing (free-form or rubber band circle or rectangle)
 - Release button to apply
+
+By enabling `Apply to all segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_islands.png) Islands
 
