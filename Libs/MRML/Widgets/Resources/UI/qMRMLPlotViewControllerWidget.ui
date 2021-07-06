@@ -46,12 +46,12 @@
           </widget>
         </item>
         <item>
-          <widget class="QPushButton" name="savePushButton">
+          <widget class="QPushButton" name="exportPushButton">
            <property name="toolTip">
-            <string>Save plot as SVG file</string>
+            <string>Export plot to SVG file</string>
            </property>
            <property name="text">
-            <string>Save</string>
+            <string>Export...</string>
            </property>
           </widget>
         </item>
