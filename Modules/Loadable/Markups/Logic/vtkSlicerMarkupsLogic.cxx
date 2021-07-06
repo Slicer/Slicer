@@ -1590,67 +1590,6 @@ bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent, vtkMRMLInteractionNo
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerMarkupsLogic::GetSliceIntersectionsVisibility()
-{
-  if (!this->GetMRMLScene())
-    {
-    vtkErrorMacro("GetSliceIntersectionsVisibility: no scene");
-    return -1;
-    }
-  int numVisible = 0;
-  vtkSmartPointer<vtkCollection> nodes;
-  nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode"));
-  if (!nodes.GetPointer())
-    {
-    return -1;
-    }
-  vtkMRMLSliceCompositeNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
-    {
-    if (node->GetSliceIntersectionVisibility())
-      {
-      numVisible++;
-      }
-    }
-  if (numVisible == 0)
-    {
-    return 0;
-    }
-  else if (numVisible == nodes->GetNumberOfItems())
-    {
-    return 1;
-    }
-  else
-    {
-    return 2;
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetSliceIntersectionsVisibility(bool flag)
-{
-  if (!this->GetMRMLScene())
-    {
-    return;
-    }
-  vtkSmartPointer<vtkCollection> nodes;
-  nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode"));
-  if (!nodes.GetPointer())
-    {
-    return;
-    }
-  vtkMRMLSliceCompositeNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
-    {
-    node->SetSliceIntersectionVisibility(flag);
-    }
-}
-
-//---------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNode()
 {
   if (!this->GetMRMLScene())

@@ -56,6 +56,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLSequenceStorageNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSnapshotClipNode.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
@@ -170,7 +171,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelDisplayNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipModelsNode >::New() );
-  this->RegisterNodeClass(vtkSmartPointer< vtkMRMLFolderDisplayNode >::New());
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFolderDisplayNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROINode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROIListNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceCompositeNode >::New() );
@@ -179,6 +180,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSegmentationNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSegmentationStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSelectionNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceDisplayNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLVolumeArchetypeStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLScalarVolumeDisplayNode >::New() );

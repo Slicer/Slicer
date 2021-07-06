@@ -20,7 +20,7 @@
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLInteractionNode.h"
-#include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
@@ -342,6 +342,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::SliceNodeModifiedCallback(
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
   if (sliceNode)
     {
+    // The slice view's node is modified
     self->SliceNodeModified(sliceNode);
     return;
     }
@@ -349,6 +350,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::SliceNodeModifiedCallback(
   vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(caller);
   if (sliceLogic)
     {
+    // One of the intersecting slice views is modified
     self->UpdateSliceIntersectionDisplay(self->GetDisplayPipelineFromSliceLogic(sliceLogic));
     return;
     }
@@ -408,7 +410,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     return;
     }
 
-  vtkMRMLModelDisplayNode* displayNode = nullptr;
+  vtkMRMLSliceDisplayNode* displayNode = nullptr;
   vtkMRMLSliceLogic *sliceLogic = nullptr;
   vtkMRMLApplicationLogic *mrmlAppLogic = this->GetMRMLApplicationLogic();
   if (mrmlAppLogic)
@@ -417,11 +419,13 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     }
   if (sliceLogic)
     {
-    displayNode = sliceLogic->GetSliceModelDisplayNode();
+    displayNode = sliceLogic->GetSliceDisplayNode();
     }
   if (displayNode)
     {
-    if (!displayNode->GetSliceIntersectionVisibility())
+    bool showNonInteractiveSliceIntersection = (displayNode->GetIntersectingSlicesVisibility()
+      && !displayNode->GetIntersectingSlicesInteractive());
+    if (!showNonInteractiveSliceIntersection)
       {
       pipeline->SetVisibility(false);
       return;
@@ -433,8 +437,6 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
 
   vtkMatrix4x4* intersectingXYToRAS = intersectingSliceNode->GetXYToRAS();
   vtkMatrix4x4* xyToRAS = this->Internal->SliceNode->GetXYToRAS();
-
-  //double slicePlaneAngleDifference = vtkMath::AngleBetweenVectors()
 
   vtkNew<vtkMatrix4x4> rasToXY;
   vtkMatrix4x4::Invert(xyToRAS, rasToXY);
@@ -615,11 +617,11 @@ double* vtkMRMLSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
       double v2[3] = {line2Point1[0] - line2Point2[0], line2Point1[1] - line2Point2[1], line2Point1[2] - line2Point2[2]};
       double angleRadBetweenTwoLines = vtkMath::AngleBetweenVectors(v1, v2);
 
-      const double angleThresholdForParallel = vtkMath::Pi()/60; // roughly 3 degree
+      const double angleThresholdForParallel = vtkMath::RadiansFromDegrees(3.0);
       if (angleRadBetweenTwoLines < angleThresholdForParallel || angleThresholdForParallel > vtkMath::Pi() - angleThresholdForParallel)
         {
-        // Two lines intesecting under roughly 3 degree are
-        // considered to be parallel and not considered as intersecting.
+        // Two lines intesecting under the threshold are
+        // considered to be parallel and not as intersecting.
         continue;
         }
 
