@@ -36,6 +36,7 @@
 #include <qMRMLThreeDWidget.h>
 
 // MRMLLogic includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLColorLogic.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLViewLogic.h>
@@ -250,8 +251,9 @@ QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
   qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   sliceWidget->setObjectName(QString("qMRMLSliceWidget%1").arg(viewNode->GetLayoutName()));
-  sliceWidget->setMRMLScene(this->mrmlScene());
+  // set slice node before setting the scene to allow using slice node names in the slice transform, display, and model nodes
   sliceWidget->setMRMLSliceNode(vtkMRMLSliceNode::SafeDownCast(viewNode));
+  sliceWidget->setMRMLScene(this->mrmlScene());
   sliceWidget->setSliceLogics(this->sliceLogics());
   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
   sliceWidget->sliceLogic()->SetMRMLApplicationLogic(applicationLogic);

@@ -35,6 +35,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLStorageNode.h"
@@ -916,4 +917,103 @@ void vtkMRMLApplicationLogic::OnMRMLSceneStartRestore()
 void vtkMRMLApplicationLogic::OnMRMLSceneEndRestore()
 {
   this->ResumeRender();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetSliceIntersectionEnabled(
+  vtkMRMLApplicationLogic::SliceIntersectionOperation operation, bool enabled)
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkWarningMacro("vtkMRMLApplicationLogic::SetSliceIntersectionEnabled failed: invalid scene");
+    return;
+    }
+
+  // The slice intersection options will be stored in the default slice display node as well.
+  // This ensures all new slice nodes will be created with the current slice intersection options.
+  vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode =
+    vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
+  if (!defaultSliceDisplayNode.GetPointer())
+    {
+    defaultSliceDisplayNode = vtkSmartPointer<vtkMRMLSliceDisplayNode>::New();
+    scene->AddDefaultNode(defaultSliceDisplayNode);
+    }
+
+  vtkSmartPointer<vtkCollection> sliceDisplayNodes =
+    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
+  if (sliceDisplayNodes.GetPointer())
+    {
+    vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
+    vtkCollectionSimpleIterator it;
+    for (sliceDisplayNodes->InitTraversal(it);
+      (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+      {
+      switch (operation)
+        {
+        case vtkMRMLApplicationLogic::SliceIntersectionVisibility:
+          sliceDisplayNode->SetSliceIntersectionVisibility(enabled);
+          defaultSliceDisplayNode->SetSliceIntersectionVisibility(enabled);
+          break;
+        case vtkMRMLApplicationLogic::SliceIntersectionInteractive:
+          sliceDisplayNode->SetSliceIntersectionInteractive(enabled);
+          defaultSliceDisplayNode->SetSliceIntersectionInteractive(enabled);
+          break;
+        case vtkMRMLApplicationLogic::SliceIntersectionTranslation:
+          sliceDisplayNode->SetSliceIntersectionTranslationEnabled(enabled);
+          defaultSliceDisplayNode->SetSliceIntersectionTranslationEnabled(enabled);
+          break;
+        case vtkMRMLApplicationLogic::SliceIntersectionRotation:
+          sliceDisplayNode->SetSliceIntersectionRotationEnabled(enabled);
+          defaultSliceDisplayNode->SetSliceIntersectionRotationEnabled(enabled);
+          break;
+        }
+      }
+    }
+
+  // Enable updates of display pipelines in scene by modifying all associated slice nodes
+  vtkSmartPointer<vtkCollection> sliceNodes =
+    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
+  if (sliceNodes.GetPointer())
+    {
+    vtkMRMLSliceNode* sliceNode = nullptr;
+    vtkCollectionSimpleIterator it;
+    for (sliceNodes->InitTraversal(it);
+      (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+      {
+      sliceNode->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLApplicationLogic::GetSliceIntersectionEnabled(
+  vtkMRMLApplicationLogic::SliceIntersectionOperation operation)
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkWarningMacro("vtkMRMLApplicationLogic::GetSliceIntersectionEnabled failed: invalid scene");
+    return false;
+    }
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(
+    scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
+  if (!sliceDisplayNode)
+    {
+    return false;
+    }
+
+  switch (operation)
+    {
+    case vtkMRMLApplicationLogic::SliceIntersectionVisibility:
+      return sliceDisplayNode->GetSliceIntersectionVisibility();
+    case vtkMRMLApplicationLogic::SliceIntersectionInteractive:
+      return sliceDisplayNode->GetSliceIntersectionInteractive();
+    case vtkMRMLApplicationLogic::SliceIntersectionTranslation:
+      return sliceDisplayNode->GetSliceIntersectionTranslationEnabled();
+    case vtkMRMLApplicationLogic::SliceIntersectionRotation:
+      return sliceDisplayNode->GetSliceIntersectionRotationEnabled();
+    }
+
+  return false;
 }

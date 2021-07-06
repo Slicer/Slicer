@@ -27,6 +27,7 @@ class vtkMRMLLinearTransformNode;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLModelNode;
 class vtkMRMLSliceCompositeNode;
+class vtkMRMLSliceDisplayNode;
 class vtkMRMLSliceLayerLogic;
 class vtkMRMLSliceNode;
 class vtkMRMLVolumeNode;
@@ -141,8 +142,13 @@ public:
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
 
   ///
-  /// Model slice plane display props
+  /// Model slice plane display properties.
+  /// The method is deprecated, use SliceDisplayNode instead.
   vtkGetObjectMacro(SliceModelDisplayNode, vtkMRMLModelDisplayNode);
+
+  ///
+  /// Slice plane display properties
+  vtkMRMLSliceDisplayNode* GetSliceDisplayNode();
 
   ///
   /// Model slice plane transform from xy to RAS

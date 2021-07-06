@@ -2816,12 +2816,12 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeTransformModifiedEvent()
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onSliceIntersectionsVisibilityToggled(bool flag)
 {
-  if (!this->markupsLogic())
+  if (!this->appLogic())
     {
-    qWarning() << "Unable to get markups logic";
+    qWarning() << "Unable to get application logic";
     return;
     }
-  this->markupsLogic()->SetSliceIntersectionsVisibility(flag);
+  return this->appLogic()->SetSliceIntersectionEnabled(vtkMRMLApplicationLogic::SliceIntersectionVisibility, flag);
 }
 
 //-----------------------------------------------------------------------------
@@ -2884,21 +2884,12 @@ void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggere
 //-----------------------------------------------------------------------------
 bool qSlicerMarkupsModuleWidget::sliceIntersectionsVisible()
 {
-  if (!this->markupsLogic())
+  if (!this->appLogic())
     {
-    qWarning() << "Unable to get markups logic";
+    qWarning() << "Unable to get application logic";
     return false;
     }
-  int flag = this->markupsLogic()->GetSliceIntersectionsVisibility();
-  if (flag == 0 || flag == -1)
-    {
-    return false;
-    }
-  else
-    {
-    // if all or some are visible, return true
-    return true;
-    }
+  return this->appLogic()->GetSliceIntersectionEnabled(vtkMRMLApplicationLogic::SliceIntersectionVisibility);
 }
 
 //-----------------------------------------------------------------------------

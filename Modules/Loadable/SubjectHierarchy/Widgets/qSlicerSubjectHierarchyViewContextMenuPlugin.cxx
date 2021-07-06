@@ -45,6 +45,7 @@
 
 // Slicer includes
 #include <qSlicerApplication.h>
+#include <vtkSlicerApplicationLogic.h>
 #include <qSlicerLayoutManager.h>
 
 // VTK includes
@@ -81,6 +82,9 @@ public:
   QAction* CopyImageAction = nullptr;
   QAction* ConfigureSliceViewAnnotationsAction = nullptr;
   QAction* ToggleTiltLockAction = nullptr;
+
+  QAction* SliceIntersectionsVisibilityAction = nullptr;
+  QAction* SliceIntersectionsInteractiveAction = nullptr;
 
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
@@ -182,6 +186,26 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 20); // set to 20 to make it the last item in the action group
   QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
 
+  // Slice intersections
+  this->SliceIntersectionsVisibilityAction = new QAction(tr("Slice intersections"), q);
+  this->SliceIntersectionsVisibilityAction->setObjectName("SliceIntersectionsAction");
+  this->SliceIntersectionsVisibilityAction->setToolTip(tr("Show how the other slice planes intersect each slice plane."));
+  this->SliceIntersectionsVisibilityAction->setCheckable(true);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->SliceIntersectionsVisibilityAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 5); // set section to +5 to allow placing other sections above
+  QObject::connect(this->SliceIntersectionsVisibilityAction, SIGNAL(triggered(bool)),
+    q, SLOT(setSliceIntersectionVisible(bool)));
+
+  // Interactive slice intersections
+  this->SliceIntersectionsInteractiveAction = new QAction(tr("Interaction"), q);
+  this->SliceIntersectionsInteractiveAction->setObjectName("SliceIntersectionsHandlesAction");
+  this->SliceIntersectionsInteractiveAction->setToolTip(tr("Show handles for slice interaction."));
+  this->SliceIntersectionsInteractiveAction->setCheckable(true);
+  this->SliceIntersectionsInteractiveAction->setEnabled(false);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->SliceIntersectionsInteractiveAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault+5); // set section to +5 to allow placing other sections above
+  QObject::connect(this->SliceIntersectionsInteractiveAction, SIGNAL(triggered(bool)),
+    q, SLOT(setSliceIntersectionHandlesVisible(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -217,7 +241,9 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
     << d->CenterThreeDViewAction
     << d->CopyImageAction
     << d->ToggleTiltLockAction
-    << d->ConfigureSliceViewAnnotationsAction;
+    << d->ConfigureSliceViewAnnotationsAction
+    << d->SliceIntersectionsVisibilityAction
+    << d->SliceIntersectionsInteractiveAction;
   return actions;
 }
 
@@ -299,6 +325,23 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   d->ConfigureSliceViewAnnotationsAction->setVisible(isSliceViewNode);
   d->FitSliceViewAction->setVisible(isSliceViewNode);
   d->CenterThreeDViewAction->setVisible(!isSliceViewNode);
+
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (isSliceViewNode && appLogic)
+    {
+    d->SliceIntersectionsVisibilityAction->setVisible(true);
+    d->SliceIntersectionsVisibilityAction->setEnabled(true);
+    d->SliceIntersectionsVisibilityAction->setChecked(appLogic->GetSliceIntersectionEnabled(vtkMRMLApplicationLogic::SliceIntersectionVisibility));
+
+    d->SliceIntersectionsInteractiveAction->setVisible(true);
+    d->SliceIntersectionsInteractiveAction->setEnabled(d->SliceIntersectionsVisibilityAction->isChecked());
+    d->SliceIntersectionsInteractiveAction->setChecked(appLogic->GetSliceIntersectionEnabled(vtkMRMLApplicationLogic::SliceIntersectionInteractive));
+    }
+  else
+    {
+    d->SliceIntersectionsVisibilityAction->setVisible(false);
+    d->SliceIntersectionsInteractiveAction->setVisible(false);
+    }
 
   d->ToggleTiltLockAction->setVisible(!isSliceViewNode);
   if (!qSlicerApplication::application()
@@ -429,14 +472,14 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::fitSliceView()
 
   qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(widget);
   if (sliceWidget)
-  {
+    {
     sliceWidget->fitSliceToBackground();
-  }
+    }
   else
-  {
+    {
     qWarning() << Q_FUNC_INFO << " failed: sliceWidget not found";
     return;
-  }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -446,23 +489,23 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::centerThreeDView()
 
   if (!qSlicerApplication::application()
     || !qSlicerApplication::application()->layoutManager())
-  {
+    {
     qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
     return;
-  }
+    }
   QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
 
   qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
   if (threeDWidget)
-  {
+    {
     qMRMLThreeDViewControllerWidget* threeDWidgetController = threeDWidget->threeDController();
     threeDWidgetController->resetFocalPoint();
-  }
+    }
   else
-  {
+    {
     qWarning() << Q_FUNC_INFO << " failed: threeDWidget not found";
     return;
-  }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -470,9 +513,35 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::toggleTiltLock()
 {
   Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
   if (!d->CameraWidget)
-  {
+    {
     qWarning() << Q_FUNC_INFO << " failed: camera widget not found.";
     return;
-  }
+    }
   d->CameraWidget->SetTiltLocked(!d->CameraWidget->GetTiltLocked());
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::setSliceIntersectionVisible(bool visible)
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: cannot get application logic";
+    return;
+    }
+  appLogic->SetSliceIntersectionEnabled(vtkMRMLApplicationLogic::SliceIntersectionVisibility, visible);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::setSliceIntersectionHandlesVisible(bool interaction)
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: cannot get application logic";
+    return;
+    }
+  appLogic->SetSliceIntersectionEnabled(vtkMRMLApplicationLogic::SliceIntersectionInteractive, interaction);
 }

@@ -25,6 +25,7 @@
 #include "vtkMRMLAbstractLogic.h"
 
 #include "vtkMRMLLogicExport.h"
+#include "vtkMRMLSliceCompositeNode.h"
 
 class vtkMRMLColorLogic;
 class vtkMRMLModelDisplayNode;
@@ -249,6 +250,17 @@ public:
   /// \return constant pointer to vtkMRMLAbstractLogic corresponding to the
   /// logic associated to th logic
   vtkMRMLAbstractLogic* GetModuleLogic(const char* moduleName) const;
+
+  enum SliceIntersectionOperation
+  {
+    SliceIntersectionVisibility,
+    SliceIntersectionInteractive,
+    SliceIntersectionTranslation,
+    SliceIntersectionRotation,
+  };
+
+  void SetSliceIntersectionEnabled(SliceIntersectionOperation operation, bool enabled);
+  bool GetSliceIntersectionEnabled(SliceIntersectionOperation operation);
 
 protected:
 

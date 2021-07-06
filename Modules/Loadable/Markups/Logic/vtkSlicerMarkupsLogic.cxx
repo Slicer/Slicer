@@ -1589,6 +1589,7 @@ bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent, vtkMRMLInteractionNo
   return true;
 }
 
+/*
 //---------------------------------------------------------------------------
 int vtkSlicerMarkupsLogic::GetSliceIntersectionsVisibility()
 {
@@ -1649,6 +1650,7 @@ void vtkSlicerMarkupsLogic::SetSliceIntersectionsVisibility(bool flag)
     node->SetSliceIntersectionVisibility(flag);
     }
 }
+*/
 
 //---------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNode()

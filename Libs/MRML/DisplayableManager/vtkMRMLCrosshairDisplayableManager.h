@@ -52,6 +52,11 @@ public:
 
   vtkMRMLSliceIntersectionWidget* GetSliceIntersectionWidget();
 
+  /// Displayable manager returns ID of the mouse cursor shape that should be displayed
+  virtual int GetMouseCursor();
+
+  void SetHasFocus(bool hasFocus) override;
+
 protected:
   vtkMRMLCrosshairDisplayableManager();
   ~vtkMRMLCrosshairDisplayableManager() override;

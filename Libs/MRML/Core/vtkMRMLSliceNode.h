@@ -178,6 +178,22 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// \deprecated Prefer GetOrientation()
   virtual const char* GetOrientationString();
 
+  /// Interactive slice intersection parameters
+  vtkSetMacro(InteractionVisibility, bool);
+  vtkGetMacro(InteractionVisibility, bool);
+  vtkBooleanMacro(InteractionVisibility, bool);
+  vtkSetMacro(InteractionSize, double);
+  vtkGetMacro(InteractionSize, double);
+  vtkSetMacro(InteractionScale, double);
+  vtkGetMacro(InteractionScale, double);
+  vtkSetMacro(InteractionSizeAbsolute, bool);
+  vtkGetMacro(InteractionSizeAbsolute, bool);
+  vtkBooleanMacro(InteractionSizeAbsolute, bool);
+  vtkSetMacro(ActiveInteractionType, int);
+  vtkGetMacro(ActiveInteractionType, int);
+  vtkSetMacro(ActiveInteractionIndex, int);
+  vtkGetMacro(ActiveInteractionIndex, int);
+
 protected:
 
   /// The OrientationReference is a place to store the last orientation
@@ -518,6 +534,14 @@ public:
   /// method for setting UVW space (extents, dimensions and spacing)
   virtual void SetSliceResolutionMode(int mode);
   vtkGetMacro(SliceResolutionMode, int);
+
+  /// Interactive slice intersection parameters
+  bool InteractionVisibility{ false };
+  int ActiveInteractionType{ -1 };
+  int ActiveInteractionIndex{ -1 };
+  bool InteractionSizeAbsolute{ false };
+  double InteractionSize{ 5.0 };
+  double InteractionScale{ 15.0 };
 
 protected:
   vtkMRMLSliceNode();

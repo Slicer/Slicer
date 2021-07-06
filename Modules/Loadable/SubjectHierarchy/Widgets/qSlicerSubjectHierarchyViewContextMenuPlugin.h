@@ -67,6 +67,8 @@ protected slots:
   void fitSliceView();
   void centerThreeDView();
   void toggleTiltLock();
+  void setSliceIntersectionVisible(bool);
+  void setSliceIntersectionHandlesVisible(bool);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyViewContextMenuPluginPrivate> d_ptr;
