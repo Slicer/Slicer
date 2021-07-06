@@ -51,6 +51,7 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLCrosshairNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -74,7 +75,6 @@ public:
 
   void init();
   void setMRMLScene(vtkMRMLScene* newScene);
-  void updateWidgetFromMRML();
 
 public slots:
 
@@ -82,43 +82,52 @@ public slots:
   void OnMRMLSceneEndImport();
   void OnMRMLSceneEndClose();
   void onCrosshairNodeModeChangedEvent();
-  void onSliceCompositeNodeChangedEvent();
+  void onSliceDisplayNodeChangedEvent();
+  void updateWidgetFromMRML();
 
   void setCrosshairMode(int);
   void setCrosshairEnabled(bool); // used to toggle between last style and off
   void setCrosshairThickness(int);
   void setCrosshairJumpSlicesMode(int);
-  void setSliceIntersectionVisible(bool);
+  void setIntersectingSlicesVisibility(bool);
+  void setIntersectingSlicesInteractive(bool);
+  void setIntersectingSlicesRotationEnabled(bool);
+  void setIntersectingSlicesTranslationEnabled(bool);
 
 public:
-  vtkSmartPointer<vtkMRMLScene>            MRMLScene;
+  vtkSmartPointer<vtkMRMLScene> MRMLScene;
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
 
   /// Crosshair
-  QToolButton *CrosshairToolButton;
-  QMenu*        CrosshairMenu;
+  QToolButton* CrosshairToolButton{nullptr};
+  QMenu* CrosshairMenu{nullptr};
 
-  ctkSignalMapper* CrosshairJumpSlicesMapper;
-  QAction*      CrosshairJumpSlicesDisabledAction;
-  QAction*      CrosshairJumpSlicesOffsetAction;
-  QAction*      CrosshairJumpSlicesCenteredAction;
+  ctkSignalMapper* CrosshairJumpSlicesMapper{nullptr};
+  QAction* CrosshairJumpSlicesDisabledAction{nullptr};
+  QAction* CrosshairJumpSlicesOffsetAction{nullptr};
+  QAction* CrosshairJumpSlicesCenteredAction{nullptr};
 
-  ctkSignalMapper* CrosshairMapper;
-  QAction*      CrosshairNoAction;
-  QAction*      CrosshairBasicAction;
-  QAction*      CrosshairBasicIntersectionAction;
-  QAction*      CrosshairSmallBasicAction;
-  QAction*      CrosshairSmallBasicIntersectionAction;
-  QAction*      CrosshairSliceIntersectionsAction;
+  ctkSignalMapper* CrosshairMapper{nullptr};
+  QAction* CrosshairNoAction{nullptr};
+  QAction* CrosshairBasicAction{nullptr};
+  QAction* CrosshairBasicIntersectionAction{nullptr};
+  QAction* CrosshairSmallBasicAction{nullptr};
+  QAction* CrosshairSmallBasicIntersectionAction{nullptr};
 
-  ctkSignalMapper* CrosshairThicknessMapper;
-  QAction*      CrosshairFineAction;
-  QAction*      CrosshairMediumAction;
-  QAction*      CrosshairThickAction;
+  QAction* IntersectingSlicesVisibleAction{nullptr};
+  QAction* IntersectingSlicesInteractiveAction{nullptr};
+  QAction* IntersectingSlicesTranslationEnabledAction{nullptr};
+  QAction* IntersectingSlicesRotationEnabledAction{nullptr};
+  QMenu* IntersectingSlicesInteractionModesMenu{nullptr};
 
-  QAction*      CrosshairToggleAction;
+  ctkSignalMapper* CrosshairThicknessMapper{nullptr};
+  QAction* CrosshairFineAction{nullptr};
+  QAction* CrosshairMediumAction{nullptr};
+  QAction* CrosshairThickAction{nullptr};
 
-  int           CrosshairLastMode;
+  QAction* CrosshairToggleAction{nullptr};
+
+  int CrosshairLastMode{vtkMRMLCrosshairNode::ShowBasic};
 };
 
 #endif

@@ -41,21 +41,6 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->AddNodeReferenceRole(BackgroundVolumeNodeReferenceRole, BackgroundVolumeNodeReferenceMRMLAttributeName);
   this->AddNodeReferenceRole(ForegroundVolumeNodeReferenceRole, ForegroundVolumeNodeReferenceMRMLAttributeName);
   this->AddNodeReferenceRole(LabelVolumeNodeReferenceRole, LabelVolumeNodeReferenceMRMLAttributeName);
-
-  this->Compositing = 0;
-  this->ForegroundOpacity = 0.0; // start by showing only the background volume
-  this->LabelOpacity = 1.0; // Show the label if there is one
-  this->LinkedControl = 0;
-  this->FiducialVisibility = 1;
-  this->FiducialLabelVisibility = 1;
-  this->AnnotationSpace = vtkMRMLSliceCompositeNode::IJKAndRAS;
-  this->AnnotationMode = vtkMRMLSliceCompositeNode::All;
-  this->SliceIntersectionVisibility = 0;
-  this->DoPropagateVolumeSelection = true;
-  this->Interacting = 0;
-  this->InteractionFlags = 0;
-  this->HotLinkedControl = 0;
-  this->InteractionFlagsModifier = (unsigned int) -1;
 }
 
 //----------------------------------------------------------------------------
@@ -76,7 +61,6 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLIntMacro(hotLinkedControl, HotLinkedControl);
   vtkMRMLWriteXMLIntMacro(fiducialVisibility, FiducialVisibility);
   vtkMRMLWriteXMLIntMacro(fiducialLabelVisibility, FiducialLabelVisibility);
-  vtkMRMLWriteXMLIntMacro(sliceIntersectionVisibility, SliceIntersectionVisibility);
   vtkMRMLWriteXMLStringMacro(layoutName, LayoutName);
   vtkMRMLWriteXMLEnumMacro(annotationSpace, AnnotationSpace);
   vtkMRMLWriteXMLEnumMacro(annotationMode, AnnotationMode);
@@ -110,11 +94,11 @@ int vtkMRMLSliceCompositeNode::GetAnnotationSpaceFromString(const char* name)
   for (int i = 0; i < AnnotationSpace_Last; i++)
     {
     if (strcmp(name, this->GetAnnotationSpaceAsString(i)) == 0)
-    {
+      {
       // found a matching name
       return i;
+      }
     }
-  }
   // unknown name
   return -1;
 }
@@ -123,33 +107,33 @@ int vtkMRMLSliceCompositeNode::GetAnnotationSpaceFromString(const char* name)
 const char* vtkMRMLSliceCompositeNode::GetAnnotationModeAsString(int id)
 {
   switch (id)
-  {
-  case vtkMRMLSliceCompositeNode::NoAnnotation: return "NoAnnotation";
-  case vtkMRMLSliceCompositeNode::All: return "All";
-  case vtkMRMLSliceCompositeNode::LabelValuesOnly: return "LabelValuesOnly";
-  case vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly: return "LabelAndVoxelValuesOnly";
-  default:
-    // invalid id
-    return "";
-  }
+    {
+    case vtkMRMLSliceCompositeNode::NoAnnotation: return "NoAnnotation";
+    case vtkMRMLSliceCompositeNode::All: return "All";
+    case vtkMRMLSliceCompositeNode::LabelValuesOnly: return "LabelValuesOnly";
+    case vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly: return "LabelAndVoxelValuesOnly";
+    default:
+      // invalid id
+      return "";
+    }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLSliceCompositeNode::GetAnnotationModeFromString(const char* name)
 {
   if (name == nullptr)
-  {
+    {
     // invalid name
     return -1;
-  }
+    }
   for (int i = 0; i < AnnotationMode_Last; i++)
-  {
-    if (strcmp(name, this->GetAnnotationModeAsString(i)) == 0)
     {
+    if (strcmp(name, this->GetAnnotationModeAsString(i)) == 0)
+      {
       // found a matching name
       return i;
+      }
     }
-  }
   // unknown name
   return -1;
 }
@@ -197,7 +181,6 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLIntMacro(hotLinkedControl, HotLinkedControl);
   vtkMRMLReadXMLIntMacro(fiducialVisibility, FiducialVisibility);
   vtkMRMLReadXMLIntMacro(fiducialLabelVisibility, FiducialLabelVisibility);
-  vtkMRMLReadXMLIntMacro(sliceIntersectionVisibility, SliceIntersectionVisibility);
   vtkMRMLReadXMLStringMacro(layoutName, LayoutName);
   vtkMRMLReadXMLEnumMacro(annotationSpace, AnnotationSpace);
   vtkMRMLReadXMLEnumMacro(annotationMode, AnnotationMode);
@@ -223,7 +206,6 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyIntMacro(HotLinkedControl);
   vtkMRMLCopyIntMacro(FiducialVisibility);
   vtkMRMLCopyIntMacro(FiducialLabelVisibility);
-  vtkMRMLCopyIntMacro(SliceIntersectionVisibility);
   // To avoid breaking current implementation, copy of the "LayoutName" attribute
   // will be enabled after revisiting the view initialization pipeline.
   //vtkMRMLCopyStringMacro(LayoutName);
@@ -249,7 +231,6 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(HotLinkedControl);
   vtkMRMLPrintIntMacro(FiducialVisibility);
   vtkMRMLPrintIntMacro(FiducialLabelVisibility);
-  vtkMRMLPrintIntMacro(SliceIntersectionVisibility);
   vtkMRMLPrintStringMacro(LayoutName);
   vtkMRMLPrintEnumMacro(AnnotationSpace);
   vtkMRMLPrintEnumMacro(AnnotationMode);

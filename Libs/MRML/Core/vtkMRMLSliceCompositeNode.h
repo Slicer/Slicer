@@ -23,7 +23,7 @@
 /// vtkMRMLVolumes into a single display image.
 class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 {
-  public:
+public:
   static vtkMRMLSliceCompositeNode *New();
   vtkTypeMacro(vtkMRMLSliceCompositeNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -103,11 +103,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkSetMacro (FiducialVisibility, int );
   vtkGetMacro (FiducialLabelVisibility, int );
   vtkSetMacro (FiducialLabelVisibility, int );
-
-  ///
-  /// toggles visibility of intersections of other slices in the slice viewer
-  vtkGetMacro (SliceIntersectionVisibility, int );
-  vtkSetMacro (SliceIntersectionVisibility, int );
 
   /// Get annotation space.
   vtkGetMacro ( AnnotationSpace, int );
@@ -239,27 +234,27 @@ protected:
   vtkMRMLSliceCompositeNode(const vtkMRMLSliceCompositeNode&);
   void operator=(const vtkMRMLSliceCompositeNode&);
 
-  double ForegroundOpacity;
+  // start by showing only the background volume
+  double ForegroundOpacity{ 0.0 };
 
-  int Compositing;
+  int Compositing{ Alpha };
 
-  double LabelOpacity;
-  int LinkedControl;
-  int HotLinkedControl;
+  // Show the label if there is one
+  double LabelOpacity{ 1.0 };
+  int LinkedControl{ 0 };
+  int HotLinkedControl{ 0 };
 
-  int FiducialVisibility;
-  int FiducialLabelVisibility;
+  int FiducialVisibility{ 1 };
+  int FiducialLabelVisibility{ 1 };
 
-  int SliceIntersectionVisibility;
+  int AnnotationSpace{ IJKAndRAS };
+  int AnnotationMode{ All };
 
-  int AnnotationSpace;
-  int AnnotationMode;
+  bool DoPropagateVolumeSelection{ true };
 
-  bool DoPropagateVolumeSelection;
-
-  int Interacting;
-  unsigned int InteractionFlags;
-  unsigned int InteractionFlagsModifier;
+  int Interacting{ 0 };
+  unsigned int InteractionFlags{ 0 };
+  unsigned int InteractionFlagsModifier{ (unsigned int)-1 };
 };
 
 #endif

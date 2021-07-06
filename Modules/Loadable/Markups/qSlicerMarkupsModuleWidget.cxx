@@ -408,7 +408,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     this->jumpModeComboBox->setCurrentIndex(JUMP_MODE_COMBOBOX_INDEX_CENTERED);
     }
   // update the checked state of showing the slice intersections
-  // vtkSlicerMarkupsLogic::GetSliceIntersectionsVisibility() cannot be called, as the scene
+  // vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled cannot be called, as the scene
   // is not yet set, so just set to the default value (slice intersections not visible).
   this->sliceIntersectionsVisibilityCheckBox->setChecked(false);
   QObject::connect(this->sliceIntersectionsVisibilityCheckBox,
@@ -2870,12 +2870,12 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeTransformModifiedEvent()
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onSliceIntersectionsVisibilityToggled(bool flag)
 {
-  if (!this->markupsLogic())
+  if (!this->appLogic())
     {
-    qWarning() << "Unable to get markups logic";
+    qWarning() << "Unable to get application logic";
     return;
     }
-  this->markupsLogic()->SetSliceIntersectionsVisibility(flag);
+  return this->appLogic()->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesVisibility, flag);
 }
 
 //-----------------------------------------------------------------------------
@@ -2938,21 +2938,12 @@ void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggere
 //-----------------------------------------------------------------------------
 bool qSlicerMarkupsModuleWidget::sliceIntersectionsVisible()
 {
-  if (!this->markupsLogic())
+  if (!this->appLogic())
     {
-    qWarning() << "Unable to get markups logic";
+    qWarning() << "Unable to get application logic";
     return false;
     }
-  int flag = this->markupsLogic()->GetSliceIntersectionsVisibility();
-  if (flag == 0 || flag == -1)
-    {
-    return false;
-    }
-  else
-    {
-    // if all or some are visible, return true
-    return true;
-    }
+  return this->appLogic()->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesVisibility);
 }
 
 //-----------------------------------------------------------------------------

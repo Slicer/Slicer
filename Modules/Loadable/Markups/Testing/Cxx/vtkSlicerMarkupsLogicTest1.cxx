@@ -49,13 +49,6 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   // should be invalid if scene is not set
   CHECK_INT(fidIndex, -1);
 
-  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  int sliceIntersectionVisibility = logic1->GetSliceIntersectionsVisibility();
-  TESTING_OUTPUT_ASSERT_ERRORS_END();
-  // should be invalid if scene is not set
-  CHECK_INT(sliceIntersectionVisibility, -1);
-  logic1->SetSliceIntersectionsVisibility(true);
-
   // test with a scene
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   logic1->SetMRMLScene(scene);
@@ -198,20 +191,6 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   logic1->SetActiveListID(activeMarkupsNode);
   activeListID = logic1->GetActiveListID();
   CHECK_STD_STRING(activeListID, activeMarkupsNode->GetID());
-
-  sliceIntersectionVisibility = logic1->GetSliceIntersectionsVisibility();
-  CHECK_INT(sliceIntersectionVisibility, 0);
-
-  logic1->SetSliceIntersectionsVisibility(true);
-  sliceIntersectionVisibility = logic1->GetSliceIntersectionsVisibility();
-  CHECK_INT(sliceIntersectionVisibility, 0);
-
-  // now add a slice composite node
-  vtkNew<vtkMRMLSliceCompositeNode> compNode;
-  scene->AddNode(compNode.GetPointer());
-  logic1->SetSliceIntersectionsVisibility(true);
-  sliceIntersectionVisibility = logic1->GetSliceIntersectionsVisibility();
-  CHECK_INT(sliceIntersectionVisibility, 1);
 
   return EXIT_SUCCESS;
 }

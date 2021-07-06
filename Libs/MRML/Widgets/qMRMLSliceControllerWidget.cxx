@@ -440,6 +440,8 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->MoreButton->setChecked(false);
 
   vtkNew<vtkMRMLSliceLogic> defaultLogic;
+  defaultLogic->SetMRMLApplicationLogic(vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic());
+
   q->setSliceLogic(defaultLogic.GetPointer());
 }
 
