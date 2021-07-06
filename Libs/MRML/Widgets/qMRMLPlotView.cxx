@@ -19,6 +19,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDir>
 #include <QEvent>
 #include <QFileInfo>
 #include <QHBoxLayout>
@@ -1118,10 +1119,12 @@ void qMRMLPlotView::updateMRMLChartAxisRangeFromWidget()
 }
 
 // ----------------------------------------------------------------------------
-void qMRMLPlotView::saveAsSVG(const QString &filePathPrefix)
+void qMRMLPlotView::saveAsSVG(const QString & fileName)
 {
-  vtkNew<vtkGL2PSExporter> exporter;
+  QFileInfo fileInfo(fileName);
+  QString filePathPrefix = fileInfo.absoluteDir().filePath(fileInfo.completeBaseName());
 
+  vtkNew<vtkGL2PSExporter> exporter;
   exporter->SetFileFormatToSVG();
   exporter->CompressOff();
   exporter->SetRenderWindow(this->renderWindow());

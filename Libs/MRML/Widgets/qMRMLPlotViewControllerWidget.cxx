@@ -100,7 +100,7 @@ void qMRMLPlotViewControllerWidgetPrivate::setupPopupUi()
   this->connect(this->interactionModeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(onInteractionModeChanged(int)));
   QObject::connect(this->actionFit_to_window, SIGNAL(triggered()), q, SLOT(fitPlotToAxes()));
 
-  QObject::connect(this->savePushButton, SIGNAL(clicked()), q, SLOT(onSaveButton()));
+  QObject::connect(this->exportPushButton, SIGNAL(clicked()), q, SLOT(onExportButton()));
 
   // Connect the scene
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->plotChartComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -319,7 +319,7 @@ void qMRMLPlotViewControllerWidget::fitPlotToAxes()
 }
 
 //---------------------------------------------------------------------------
-void qMRMLPlotViewControllerWidget::onSaveButton()
+void qMRMLPlotViewControllerWidget::onExportButton()
 {
   Q_D(qMRMLPlotViewControllerWidget);
   if(!d->PlotView || !d->PlotViewNode)
@@ -339,9 +339,7 @@ void qMRMLPlotViewControllerWidget::onSaveButton()
     name, tr("Scalable Vector Graphics (*.svg)"));
   if (!fileName.isEmpty())
     {
-    QFileInfo fileInfo(fileName);
-    QString filePathPrefix = fileInfo.absoluteFilePath() + "/" + fileInfo.completeBaseName();
-    d->PlotView->saveAsSVG(filePathPrefix);
+    d->PlotView->saveAsSVG(fileName);
     }
 }
 

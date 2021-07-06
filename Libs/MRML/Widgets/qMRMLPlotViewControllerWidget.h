@@ -72,7 +72,7 @@ public slots:
   void fitPlotToAxes();
 
   /// Save the selected plot to a file
-  void onSaveButton();
+  void onExportButton();
 
 protected slots:
   void updateWidgetFromMRML();

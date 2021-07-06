@@ -58,16 +58,8 @@ slicer.modules.plots.logic().ShowChartInLayout(plotChartNode)
 ### Save a plot as vector graphics (.svg)
 
 ```python
-filename = "c:/tmp/test.svg"
-plotWidgetIndex = 0
-layoutManager = slicer.app.layoutManager()
-renderWindow = layoutManager.plotWidget(plotWidgetIndex).plotView().renderWindow()
-exp = vtk.vtkGL2PSExporter()
-exp.SetRenderWindow(renderWindow)
-exp.CompressOff()
-exp.SetFileFormatToSVG()
-exp.SetFilePrefix(filename[:-4]) # file prefix expects filename without extension
-exp.Write()
+plotView = slicer.app.layoutManager().plotWidget(0).plotView()
+plotView.saveAsSVG("c:/tmp/test.svg")
 ```
 
 ### Using matplotlib
