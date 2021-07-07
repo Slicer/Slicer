@@ -44,3 +44,6 @@ The effect uses  <a href="http://insight-journal.org/browse/publication/977">mor
     interpolator.SetInputData(mergedImage)
     interpolator.Update()
     outputLabelmap.DeepCopy(interpolator.GetOutput())
+    imageToWorld = vtk.vtkMatrix4x4()
+    mergedImage.GetImageToWorldMatrix(imageToWorld)
+    outputLabelmap.SetImageToWorldMatrix(imageToWorld)
