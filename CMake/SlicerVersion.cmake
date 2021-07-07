@@ -26,6 +26,7 @@ set(expected_defined_vars
   Slicer_CMAKE_DIR
   Slicer_MAIN_PROJECT_APPLICATION_NAME
   ${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR
+  Slicer_ORGANIZATION_NAME
   Slicer_RELEASE_TYPE
   Slicer_VERSION_MAJOR
   Slicer_VERSION_MINOR
@@ -149,4 +150,17 @@ endif()
 if(NOT "${Slicer_MAIN_PROJECT_APPLICATION_NAME}" STREQUAL "Slicer")
   message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_MAIN_PROJECT_VERSION_FULL}]")
   message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_MAIN_PROJECT_REVISION}]")
+endif()
+
+#-----------------------------------------------------------------------------
+# Set AppId and UUID for Windows
+#-----------------------------------------------------------------------------
+if(WIN32)
+  # AppID
+  set(Slicer_WIN32_APP_USER_MODEL_ID ${Slicer_ORGANIZATION_NAME}.${Slicer_MAIN_PROJECT_APPLICATION_NAME}.${Slicer_MAIN_PROJECT_VERSION_FULL})
+  # Generate UUID based on fixed root UUID and AppID
+  set(UUID_SLICER_NAMESPACE 066519E1-76BE-4EE0-B1FF-B5650EB23BC9)
+  string(UUID Slicer_MD5_UUID NAMESPACE ${UUID_SLICER_NAMESPACE} NAME Slicer_WIN32_APP_USER_MODEL_ID TYPE MD5 UPPER)
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} AppID for windows [${Slicer_WIN32_APP_USER_MODEL_ID}]")
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} UUID for windows [${Slicer_MD5_UUID}]")
 endif()
