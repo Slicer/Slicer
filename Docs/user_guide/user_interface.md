@@ -117,6 +117,21 @@ Default orientation axes: A = anterior, P = posterior, R = right, L = left, S = 
 
 3D View Controls: The blue bar across any 3D View shows a pushpin icon on its left. When the mouse rolls over this icon, a panel for configuring the 3D View is displayed. The panel is hidden when the mouse moves away. For persistent display of this panel, just click the pushpin icon.
 
+- **Center 3D view** (small square) centers the slice on the currently visible 3D view content and all loaded volumes (even if volumes that are not visible). The field of view (zoom factor) is not adjusted, therefore it may be necessary to zoom in/out to see all objects. To reset the center and field of view at the same time, click in the 3D view and hit <kbd>r</kbd> key.
+- **Viewpoint direction** switches orientation of the view between standard directions. Clicking on **L**eft, **R**ight, **A**nterior, **P**osterior, **S**uperior, **I**nferior button will make the 3D content viewed from that direction.
+- **View link** button synchronizes properties across 3D views (viewpoint position, direction, ruler, orientation marker, etc. settings).
+- **Orthographic/perspective rendering** mode toggle. Orthographic mode (parallel projection) is useful for assessing size, because displayed object size does not depend on distance from the viewpoint. Perspective mode provides better depth perception, because objects that are closer appear larger.
+- **Ruler** controls display of ruler. Only available in orthographic rendering mode.
+- **Stereo viewing** enables stereoscopic display. Red/blue and anaglyph modes just require inexpensive red/blue colored glasses. Other modes require special 3D display hardware. Note that [SlicerVirtualReality extension](https://www.slicervr.org/) offers superior stereo viewing and interaction experience, with fully immersive 3D visualization by a single click of a button, and rich interaction with objects in the scene using 3D controllers.
+- More options (...)
+  - **Use depth peeling** must be enabled for correct rendering of semi-transparent surfaces (in models, markups, etc). It may make rendering updates slightly slower and artifacts when volume rendering is used in the view.
+  - **Show/Hide frames per second (FPS)** displays rendering speed in the corner of the view.
+- **Orientation Marker** controls display of human, cube, etc in lower right corner.
+- **Visibility options** controls visibility of view background color and displayed components.
+- **Spin** continuously spins the view around.
+- **Rock** continuously rocks the view left-to-right.
+- **Zoom in/out** slightly zooms in/out the view. Convenient buttons for touchscreens.
+
 ### Slice View
 
 Three default slice views are provided (with Red, Yellow and Green colored bars) in which Axial, Saggital, Coronal or Oblique 2D slices of volume images can be displayed. Additional generic slice views have a grey colored bar and an identifying number in their upper left corner.
