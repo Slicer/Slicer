@@ -74,6 +74,9 @@ class SlicerScriptedFileReaderWriterTestFileReader:
       loadedNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLTextNode', baseName)
       loadedNode.SetText(''.join(data[1:]))
 
+      # Uncomment the next line to display a warning message to the user.
+      # self.parent.userMessages().AddMessage(vtk.vtkCommand.WarningEvent, "This is a warning message")
+
     except Exception as e:
       logging.error('Failed to load file: '+str(e))
       import traceback

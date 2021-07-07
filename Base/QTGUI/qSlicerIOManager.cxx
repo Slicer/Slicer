@@ -10,7 +10,8 @@
 #include <QTimer>
 
 // CTK includes
-#include "ctkScreenshotDialog.h"
+#include <ctkMessageBox.h>
+#include <ctkScreenshotDialog.h>
 
 /// Slicer includes
 #include "qSlicerIOManager.h"
@@ -553,3 +554,28 @@ void qSlicerIOManager::openSceneViewsDialog()
   QMetaObject::invokeMethod(modulePointer, "showSceneViewDialog");
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMessageCollection* userMessages)
+{
+  if (!overallSuccess)
+    {
+    ctkMessageBox messageBox;
+    messageBox.setIcon(QMessageBox::Critical);
+    messageBox.setWindowTitle(tr("Adding data failed"));
+    messageBox.setText(tr("Error occurred while loading the selected files. ")
+      +tr("Click 'Show details' button and check the application log for more information."));
+    messageBox.setDetailedText(QString::fromStdString(userMessages->GetAllMessagesAsString()));
+    messageBox.exec();
+    }
+  else if (userMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent)>0
+    || userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent)>0)
+    {
+    ctkMessageBox messageBox;
+    messageBox.setIcon(QMessageBox::Information);
+    messageBox.setWindowTitle(tr("Adding data succeeded"));
+    messageBox.setText(tr("The selected files were loaded successfully but errors or warnings were reported. ")
+      +tr("Click 'Show details' button and check the application log for more information."));
+    messageBox.setDetailedText(QString::fromStdString(userMessages->GetAllMessagesAsString()));
+    messageBox.exec();
+    }
+}

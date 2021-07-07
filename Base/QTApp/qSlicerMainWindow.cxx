@@ -78,9 +78,10 @@
 #include <vtkMRMLSliceLayerLogic.h>
 
 // MRML includes
+#include <vtkMRMLLayoutNode.h>
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
-#include <vtkMRMLLayoutNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -1115,7 +1116,10 @@ void qSlicerMainWindow::onFileRecentLoadedActionTriggered()
         fileProperties.find("fileType").value().toString());
 
   qSlicerApplication* app = qSlicerApplication::application();
-  app->coreIOManager()->loadNodes(fileType, fileProperties);
+
+  vtkNew<vtkMRMLMessageCollection> userMessages;
+  bool success = app->coreIOManager()->loadNodes(fileType, fileProperties, nullptr, userMessages);
+  qSlicerIOManager::showLoadNodesResultDialog(success, userMessages);
 }
 
 //-----------------------------------------------------------------------------
