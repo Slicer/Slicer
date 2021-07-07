@@ -48,6 +48,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.extentGrowthRatio = 0.1  # extent of seed region will be grown outside by this much
     self.minimumExtentMargin = 3
 
+    self.previewComputationInProgress = False
+
 
   def __del__(self, scriptedEffect):
     super(SegmentEditorAutoCompleteEffect,self).__del__()
@@ -55,7 +57,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.observeSegmentation(False)
 
   @staticmethod
-  def isBackgroundLabelmap(labelmapOrientedImageData):
+  def isBackgroundLabelmap(labelmapOrientedImageData, label=None):
     if labelmapOrientedImageData is None:
       return False
     # If five or more corner voxels of the image contain non-zero, then it is background
@@ -66,8 +68,13 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     for i in [0,1]:
       for j in [2,3]:
         for k in [4,5]:
-          if labelmapOrientedImageData.GetScalarComponentAsFloat(extent[i],extent[j],extent[k],0) > 0:
-            numberOfFilledCorners += 1
+          voxelValue = labelmapOrientedImageData.GetScalarComponentAsFloat(extent[i],extent[j],extent[k],0)
+          if label is None:
+            if voxelValue > 0:
+              numberOfFilledCorners += 1
+          else:
+            if voxelValue == label:
+              numberOfFilledCorners += 1
           if numberOfFilledCorners > 4:
             return True
     return False
@@ -175,7 +182,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     logging.debug("Segmentation update requested")
     # There could be multiple update events for a single paint operation (e.g., one segment overwrites the other)
     # therefore don't update directly, just set up/reset a timer that will perform the update when it elapses.
-    self.delayedAutoUpdateTimer.start()
+    if not self.previewComputationInProgress:
+      self.delayedAutoUpdateTimer.start()
 
   def observeSegmentation(self, observationEnabled):
     import vtkSegmentationCorePython as vtkSegmentationCore
@@ -258,6 +266,10 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.scriptedEffect.setParameter("AutoUpdate", autoUpdate)
 
   def onPreview(self):
+    if self.previewComputationInProgress:
+      return
+    self.previewComputationInProgress = True
+
     slicer.util.showStatusMessage(f"Running {self.scriptedEffect.name} auto-complete...", 2000)
     try:
       # This can be a long operation - indicate it to the user
@@ -265,6 +277,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       self.preview()
     finally:
       qt.QApplication.restoreOverrideCursor()
+
+    self.previewComputationInProgress = False
 
   def reset(self):
     self.delayedAutoUpdateTimer.stop()
@@ -502,42 +516,30 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, self.mergedLabelmapGeometryImage, self.selectedSegmentIds)
 
     outputLabelmap = slicer.vtkOrientedImageData()
-
     self.computePreviewLabelmap(mergedImage, outputLabelmap)
 
-    # Write output segmentation results in segments
+    if previewNode.GetSegmentation().GetNumberOfSegments() != self.selectedSegmentIds.GetNumberOfValues():
+      # first update (or number of segments changed), need a full reinitialization
+      previewNode.GetSegmentation().RemoveAllSegments()
+
     for index in range(self.selectedSegmentIds.GetNumberOfValues()):
       segmentID = self.selectedSegmentIds.GetValue(index)
-      segment = segmentationNode.GetSegmentation().GetSegment(segmentID)
-      # Disable save with scene?
 
-      # Get only the label of the current segment from the output image
-      thresh = vtk.vtkImageThreshold()
-      thresh.ReplaceInOn()
-      thresh.ReplaceOutOn()
-      thresh.SetInValue(1)
-      thresh.SetOutValue(0)
+      previewSegment = previewNode.GetSegmentation().GetSegment(segmentID)
+      if not previewSegment:
+        inputSegment = segmentationNode.GetSegmentation().GetSegment(segmentID)
+
+        previewSegment = vtkSegmentationCore.vtkSegment()
+        previewSegment.SetName(inputSegment.GetName())
+        previewSegment.SetColor(inputSegment.GetColor())
+        previewNode.GetSegmentation().AddSegment(previewSegment, segmentID)
+
       labelValue = index + 1 # n-th segment label value = n + 1 (background label value is 0)
-      thresh.ThresholdBetween(labelValue, labelValue)
-      thresh.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
-      thresh.SetInputData(outputLabelmap)
-      thresh.Update()
-
-      # Write label to segment
-      newSegmentLabelmap = slicer.vtkOrientedImageData()
-      newSegmentLabelmap.ShallowCopy(thresh.GetOutput())
-      newSegmentLabelmap.CopyDirections(mergedImage)
-      newSegment = previewNode.GetSegmentation().GetSegment(segmentID)
-      if not newSegment:
-        newSegment = vtkSegmentationCore.vtkSegment()
-        newSegment.SetName(segment.GetName())
-        color = segmentationNode.GetSegmentation().GetSegment(segmentID).GetColor()
-        newSegment.SetColor(color)
-        previewNode.GetSegmentation().AddSegment(newSegment, segmentID)
-      self.scriptedEffect.modifySegmentByLabelmap(previewNode, segmentID, newSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
+      previewSegment.AddRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName(), outputLabelmap)
+      previewSegment.SetLabelValue(labelValue)
 
       # Automatically hide result segments that are background (all eight corners are non-zero)
-      previewNode.GetDisplayNode().SetSegmentVisibility3D(segmentID, not self.isBackgroundLabelmap(newSegmentLabelmap))
+      previewNode.GetDisplayNode().SetSegmentVisibility3D(segmentID, not self.isBackgroundLabelmap(outputLabelmap, labelValue))
 
     # If the preview was reset, we need to restore the visibility options
     self.setPreviewOpacity(previewOpacity)

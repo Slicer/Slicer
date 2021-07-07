@@ -127,4 +127,7 @@ The effect uses <a href="http://interactivemedical.org/imic2014/CameraReadyPaper
       self.clippedMasterImageData.GetDimensions()[2],
       time.time() - startTime))
 
-    outputLabelmap.DeepCopy( self.growCutFilter.GetOutput() )
+    outputLabelmap.DeepCopy(self.growCutFilter.GetOutput())
+    imageToWorld = vtk.vtkMatrix4x4()
+    mergedImage.GetImageToWorldMatrix(imageToWorld)
+    outputLabelmap.SetImageToWorldMatrix(imageToWorld)
