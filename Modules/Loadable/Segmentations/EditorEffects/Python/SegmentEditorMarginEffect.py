@@ -233,7 +233,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
         # select input segments one by one, process
         for index in range(inputSegmentIDs.GetNumberOfValues()):
           segmentID = inputSegmentIDs.GetValue(index)
-          self.showStatusMessage(f'Smoothing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
+          self.showStatusMessage(f'Processing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
           segmentEditorNode.SetSelectedSegmentID(segmentID)
           self.processMargin()
         # restore segment selection

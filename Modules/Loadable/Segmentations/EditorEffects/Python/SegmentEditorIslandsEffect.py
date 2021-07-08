@@ -265,7 +265,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     visibleSegmentIds = vtk.vtkStringArray()
     segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(visibleSegmentIds)
     if visibleSegmentIds.GetNumberOfValues() == 0:
-      logging.info("Smoothing operation skipped: there are no visible segments")
+      logging.info("Island operation skipped: there are no visible segments")
       return abortEvent
 
     self.scriptedEffect.saveStateForUndo()
@@ -280,7 +280,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
       if not segmentationNode.GenerateMergedLabelmapForAllSegments(inputLabelImage,
                                                                    vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_SEGMENTS_PADDED,
                                                                    None, visibleSegmentIds):
-        logging.error('Failed to apply smoothing: cannot get list of visible segments')
+        logging.error('Failed to apply island operation: cannot get list of visible segments')
         qt.QApplication.restoreOverrideCursor()
         return abortEvent
     else:

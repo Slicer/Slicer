@@ -226,7 +226,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
           if self.scriptedEffect.parameter("ApplyToAllVisibleSegments") else False
 
       if applyToAllVisibleSegments:
-        # Smooth all visible segments
+        # Process all visible segments
         inputSegmentIDs = vtk.vtkStringArray()
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
         segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(inputSegmentIDs)
@@ -240,7 +240,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
         # select input segments one by one, process
         for index in range(inputSegmentIDs.GetNumberOfValues()):
           segmentID = inputSegmentIDs.GetValue(index)
-          self.showStatusMessage(f'Smoothing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
+          self.showStatusMessage(f'Processing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
           segmentEditorNode.SetSelectedSegmentID(segmentID)
           self.processHollowing()
         # restore segment selection
