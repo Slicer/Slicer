@@ -328,7 +328,7 @@ mark_as_superbuild(Slicer_INSTALL_ITKPython)
 option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter serializer support" OFF)
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
-set(_default_vtk "8")
+set(_default_vtk "9")
 set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "VTK major version (8 or 9)")
 set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "8" "9")
 if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8|9)$")
