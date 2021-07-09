@@ -338,11 +338,14 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
     offsetY = neighbors[zeroIndex][1];
     pixTemp[0] = pix[0] + offsetX;
     pixTemp[1] = pix[1] + offsetY;
-    val = inputImage->GetPixel(pixTemp);
-    if(val < threshold)
+    if(region.IsInside(pixTemp))
       {
-      found = true;
-      break;
+      val = inputImage->GetPixel(pixTemp);
+      if(val < threshold)
+        {
+        found = true;
+        break;
+        }
       }
     }
 
@@ -360,11 +363,14 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
       offsetY = neighbors[zeroIndex][1];
       pixTemp[0] = pix[0] + offsetX;
       pixTemp[1] = pix[1] + offsetY;
-      val = inputImage->GetPixel(pixTemp);
-      if(val < threshold)
+      if(region.IsInside(pixTemp))
         {
-        found = true;
-        break;
+        val = inputImage->GetPixel(pixTemp);
+        if(val < threshold)
+          {
+          found = true;
+          break;
+          }
         }
       }
 
