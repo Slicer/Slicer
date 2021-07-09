@@ -528,9 +528,9 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateRedGreenBlueNode()
   procNode->SetDescription("A color transfer function that maps from -6 to 6, red through green to blue");
   vtkColorTransferFunction *func = procNode->GetColorTransferFunction();
   func->SetColorSpaceToRGB();
-  func->AddRGBPoint(-6.0, 1.0, 0.0, 0.0);
-  func->AddRGBPoint(0.0, 0.0, 1.0, 0.0);
-  func->AddRGBPoint(6.0, 0.0, 0.0, 1.0);
+  func->AddRGBPoint(0.0, 1.0, 0.0, 0.0);
+  func->AddRGBPoint(127.5, 0.0, 1.0, 0.0);
+  func->AddRGBPoint(255.0, 0.0, 0.0, 1.0);
 
   procNode->SetNamesFromColors();
 
