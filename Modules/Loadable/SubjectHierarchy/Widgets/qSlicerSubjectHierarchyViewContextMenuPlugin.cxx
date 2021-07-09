@@ -70,7 +70,7 @@ public:
   QAction* InteractionModeAdjustWindowLevelAction = nullptr;
   QAction* InteractionModePlaceAction = nullptr;
 
-  QAction* SaveScreenshotAction = nullptr;
+  QAction* CopyImageAction = nullptr;
 
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
@@ -93,16 +93,19 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   // Interaction mode
 
   this->InteractionModeViewTransformAction = new QAction("View transform",q);
+  this->InteractionModeViewTransformAction->setObjectName("MouseModeViewTransformAction");
   this->InteractionModeViewTransformAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeViewTransformAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 0);
 
   this->InteractionModeAdjustWindowLevelAction = new QAction("Adjust window/level",q);
+  this->InteractionModeAdjustWindowLevelAction->setObjectName("MouseModeAdjustWindowLevelAction");
   this->InteractionModeAdjustWindowLevelAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeAdjustWindowLevelAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 1);
 
   this->InteractionModePlaceAction = new QAction("Place", q);
+  this->InteractionModePlaceAction->setObjectName("MouseModePlaceAction");
   this->InteractionModePlaceAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModePlaceAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 2);
@@ -123,12 +126,13 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
 
   // Other
 
-  this->SaveScreenshotAction = new QAction(tr("Copy image"), q);
-  this->SaveScreenshotAction->setToolTip(tr("Copy a screenshot of this view to the clipboard"));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->SaveScreenshotAction,
+  this->CopyImageAction = new QAction(tr("Copy image"), q);
+  this->CopyImageAction->setObjectName("CopyImageAction");
+  this->CopyImageAction->setToolTip(tr("Copy a screenshot of this view to the clipboard"));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CopyImageAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
 
-  QObject::connect(this->SaveScreenshotAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
+  QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
 }
 
 //-----------------------------------------------------------------------------
@@ -159,7 +163,7 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
   actions << d->InteractionModeViewTransformAction
     << d->InteractionModeAdjustWindowLevelAction
     << d->InteractionModePlaceAction
-    << d->SaveScreenshotAction;
+    << d->CopyImageAction;
   return actions;
 }
 
@@ -212,7 +216,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   d->InteractionModePlaceAction->setChecked(interactionMode == vtkMRMLInteractionNode::Place);
   d->InteractionModePlaceAction->blockSignals(wasBlocked);
 
-  d->SaveScreenshotAction->setVisible(true);
+  d->CopyImageAction->setVisible(true);
 
   // Cache nodes to have them available for the menu action execution.
   d->InteractionNode = interactionNode;

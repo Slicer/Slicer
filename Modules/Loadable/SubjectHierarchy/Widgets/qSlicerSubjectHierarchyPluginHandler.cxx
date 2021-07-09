@@ -30,6 +30,7 @@
 #include "vtkSlicerSubjectHierarchyModuleLogic.h"
 
 // Qt includes
+#include <QAction>
 #include <QDebug>
 #include <QStringList>
 #include <QInputDialog>
@@ -146,6 +147,11 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
     {
     foreach(QAction* action, pluginToRegister->viewContextMenuActions())
       {
+      if (action != nullptr && action->objectName().isEmpty())
+        {
+        qWarning() << Q_FUNC_INFO << ": view context menu action name is not set for "
+          << action->text() << ", provided subject hierarchy by plugin " << pluginToRegister->name();
+        }
       this->m_PluginLogic->registerViewContextMenuAction(action);
       }
     }
@@ -461,6 +467,11 @@ void qSlicerSubjectHierarchyPluginHandler::setPluginLogic(qSlicerSubjectHierarch
       {
       foreach(QAction * action, pluginToRegister->viewContextMenuActions())
         {
+        if (action != nullptr && action->objectName().isEmpty())
+          {
+          qWarning() << Q_FUNC_INFO << ": action name is not set for menu item "
+            << action->text() << " provided subject hierarchy by plugin " << pluginToRegister->name();
+          }
         this->m_PluginLogic->registerViewContextMenuAction(action);
         }
       }

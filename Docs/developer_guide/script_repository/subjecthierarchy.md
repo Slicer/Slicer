@@ -165,8 +165,11 @@ When right-clicking certain types of nodes in the 2D/3D views, a subject hierarc
 ```python
 pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
 pluginLogic = pluginHandler.pluginLogic()
-menuActions = pluginLogic.availableViewContextMenuActionNames()
-# Returns ("RenamePointAction", "DeletePointAction", "ToggleSelectPointAction", "EditPropertiesAction")
-newActions = ["RenamePointAction"]
-pluginLogic.setDisplayedViewContextMenuActionNames(newActions)
+
+# Display list of all available view context menu action names.
+# This will print something like this: 'EditPropertiesAction', 'MouseModeViewTransformAction', 'MouseModeAdjustWindowLevelAction', 'MouseModePlaceAction', ...).
+print(pluginLogic.registeredViewContextMenuActionNames)
+
+# Hide all the other menu items and show only "Rename point":
+pluginLogic.allowedViewContextMenuActionNames = ["RenamePointAction"]
 ```
