@@ -184,6 +184,7 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->HandleVisibilityMenu->addAction(this->ToggleScaleHandleVisible);
 
   this->HandleVisibilityAction = new QAction("Interaction options");
+  this->HandleVisibilityAction->setObjectName("HandleInteractionOptions");
   q->setActionPosition(this->HandleVisibilityAction, interactionHandlesSection);
   this->HandleVisibilityAction->setMenu(this->HandleVisibilityMenu);
 

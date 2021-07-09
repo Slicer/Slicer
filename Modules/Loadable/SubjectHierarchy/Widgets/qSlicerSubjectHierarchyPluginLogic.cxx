@@ -75,6 +75,9 @@ public:
   QList<QAction*> ViewContextMenuActions;
   /// Item ID for the currently displayed View menu
   vtkIdType CurrentItemID;
+  /// If this list is non-empty then only those actions
+  /// will be displayable in the view context menu that are in this list.
+  QStringList AllowedViewContextMenuActionNames;
 };
 
 //-----------------------------------------------------------------------------
@@ -116,6 +119,10 @@ qSlicerSubjectHierarchyPluginLogic::qSlicerSubjectHierarchyPluginLogic(QObject* 
   : Superclass( _parent )
   , d_ptr( new qSlicerSubjectHierarchyPluginLogicPrivate(*this) )
 {
+  Q_D(qSlicerSubjectHierarchyPluginLogic);
+
+  this->registerViewContextMenuAction(d->EditPropertiesAction);
+
   // Register Subject Hierarchy core plugins
   this->registerCorePlugins();
 }
@@ -548,19 +555,6 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
     itemID = shNode->GetSceneItemID();
     }
 
-  // If menu is empty (when no white-list was set manually), then construct the full menu
-  if (d->ViewContextMenu->isEmpty())
-    {
-    // isEmpty may return true if there are actions in the menu with visibility off
-    QList< QAction* > actions;
-    foreach (QAction* action, d->ViewContextMenuActions)
-      {
-      actions.append(action);
-      }
-    actions.append(d->EditPropertiesAction);
-    qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(d->ViewContextMenu, actions);
-    }
-
   // Package event data
   QVariantMap eventDataMap;
   eventDataMap["ComponentType"] = QVariant(eventData->GetComponentType());
@@ -593,9 +587,12 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
   // Set current item ID for Edit properties action
   d->CurrentItemID = itemID;
 
-  // Show menu
-  d->ViewContextMenu->move(QCursor::pos());
-  d->ViewContextMenu->exec();
+  // Show menu (only if there are visible actions)
+  if (!d->ViewContextMenu->isEmpty())
+    {
+    d->ViewContextMenu->move(QCursor::pos());
+    d->ViewContextMenu->exec();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -663,11 +660,11 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
 void qSlicerSubjectHierarchyPluginLogic::registerViewContextMenuAction(QAction* action)
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
-
   if (action)
     {
     d->ViewContextMenuActions << action;
     }
+  qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(d->ViewContextMenu, d->ViewContextMenuActions, d->AllowedViewContextMenuActionNames);
 }
 
 //-----------------------------------------------------------------------------
@@ -697,7 +694,7 @@ void qSlicerSubjectHierarchyPluginLogic::editProperties()
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSubjectHierarchyPluginLogic::availableViewContextMenuActionNames()
+QStringList qSlicerSubjectHierarchyPluginLogic::registeredViewContextMenuActionNames()
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
 
@@ -706,50 +703,28 @@ QStringList qSlicerSubjectHierarchyPluginLogic::availableViewContextMenuActionNa
     {
     registeredActionNames << action->objectName();
     }
-  registeredActionNames << d->EditPropertiesAction->objectName();
 
   return registeredActionNames;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginLogic::setDisplayedViewContextMenuActionNames(QStringList actionObjectNames)
+void qSlicerSubjectHierarchyPluginLogic::setAllowedViewContextMenuActionNames(QStringList actionObjectNames)
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
-
-  QList< QAction* > actions;
-
-  // Add white-listed actions to menu
-  foreach (QString currentActionObjectName, actionObjectNames)
-    {
-    QAction* foundAction = nullptr;
-    foreach (QAction* action, d->ViewContextMenuActions)
-      {
-      if (currentActionObjectName == action->objectName())
-        {
-        foundAction = action;
-        break;
-        }
-      }
-    if (!foundAction && currentActionObjectName == d->EditPropertiesAction->objectName())
-      {
-      foundAction = d->EditPropertiesAction;
-      }
-    if (foundAction)
-      {
-      actions.append(foundAction);
-      }
-    else
-      {
-      qWarning() << Q_FUNC_INFO << ": Failed to find subject hierarchy view menu action by object name " << currentActionObjectName;
-      }
-    }
-  qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(d->ViewContextMenu, actions);
+  d->AllowedViewContextMenuActionNames = actionObjectNames;
+  qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(d->ViewContextMenu, d->ViewContextMenuActions, d->AllowedViewContextMenuActionNames);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(QMenu* menu, QList< QAction* > actions)
+QStringList qSlicerSubjectHierarchyPluginLogic::allowedViewContextMenuActionNames() const
 {
-  // Add white-listed actions to menu
+  Q_D(const qSlicerSubjectHierarchyPluginLogic);
+  return d->AllowedViewContextMenuActionNames;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(QMenu* menu, QList< QAction* > actions, const QStringList& allowedActions)
+{
   QString menuInfo;
   if (menu)
     {
@@ -767,6 +742,11 @@ QString qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(QMenu* menu, QL
   int lastSection = static_cast<int>(actions.front()->property("section").toDouble() + 0.5);
   foreach (QAction* action, actions)
     {
+    if (!allowedActions.isEmpty() && !allowedActions.contains(action->objectName()))
+      {
+      // the action is not on the allow-list, skip it
+      continue;
+      }
     double sectionValue = action->property("section").toDouble();
     int currentSection = static_cast<int>(sectionValue + 0.5);
     if (currentSection > lastSection)

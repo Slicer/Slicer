@@ -52,6 +52,11 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
   Q_OBJECT
   QVTK_OBJECT
 
+  /// Allow-list for view context menu actions. If empty (by default) then all registered view context menu action names will be displayable.
+  Q_PROPERTY(QStringList allowedViewContextMenuActionNames READ allowedViewContextMenuActionNames WRITE setAllowedViewContextMenuActionNames)
+  /// List of all registered view context menu actions.
+  Q_PROPERTY(QStringList registeredViewContextMenuActionNames READ registeredViewContextMenuActionNames)
+
 public:
   typedef QObject Superclass;
   qSlicerSubjectHierarchyPluginLogic(QObject *parent=nullptr);
@@ -78,21 +83,24 @@ public:
 
   /// Get all view context menu actions available
   /// \return List of object names of all registered view menu actions
-  Q_INVOKABLE QStringList availableViewContextMenuActionNames();
-  /// Set desired set of view menu actions
-  /// \param actionObjectNames List of view menu actions to consider. Only actions included here by object name
-  ///        are shown in the menu if they are accepted by the owner plugin. The order set here is used.
-  Q_INVOKABLE void setDisplayedViewContextMenuActionNames(QStringList actionObjectNames);
+  QStringList registeredViewContextMenuActionNames();
+
+  /// Set list of view conext menu action names that are allowed to be displayed.
+  /// \param actionObjectNames List of view context menu actions to consider for displaying.
+  ///        Only actions that are chosen to be visible by the owner plugin and listed in
+  ///        actionObjectNames will be displayed to the user.
+  void setAllowedViewContextMenuActionNames(QStringList actionObjectNames);
+
+  /// Get desired set of view menu actions
+  QStringList allowedViewContextMenuActionNames() const;
 
   /// Create menu from list of actions.
   /// Uses "section" property to determine position of the action in the menu:
   /// each integer section value corresponds to a section and fractional part is used for ordering actions within the secion.
   /// \param menu will be set by inserting the actions. If it is set to nullptr then a string will be returned that contains
   /// name and "section" value of each action.
-  static Q_INVOKABLE QString buildMenuFromActions(QMenu* menu, QList< QAction* > actions);
-
-  /// Returns if properties of the item can be edited (there is a suitable owner plugin that can process a node editing request).
-  bool canEditProperties();
+  /// \param allowedActions specifies object name of actions may be added to the menu. If the list is empty then it is ignored.
+  static Q_INVOKABLE QString buildMenuFromActions(QMenu* menu, QList< QAction* > actions, const QStringList& allowedActions=QStringList());
 
 protected:
   /// Add observations for node that was added to subject hierarchy
