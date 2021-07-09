@@ -73,7 +73,8 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->MapToWindowLevelColors->SetLevel(128.);
 
   this->MapToColors->SetOutputFormatToRGBA();
-  this->MapToColors->SetInputConnection(this->MapToWindowLevelColors->GetOutputPort() );
+  // This input may be changed later if ScalarRangeFlag is modified.
+  this->MapToColors->SetInputConnection(this->MapToWindowLevelColors->GetOutputPort());
 
   this->ExtractRGB->SetInputConnection(this->MapToColors->GetOutputPort());
   this->ExtractRGB->SetComponents(0,1,2);
@@ -169,6 +170,20 @@ void vtkMRMLScalarVolumeDisplayNode
 ::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
 {
   this->Threshold->SetInputConnection(imageDataConnection);
+
+  if (this->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDirectMapping)
+    {
+    // Bypass window/level to show table scalar range directly
+    this->MapToColors->SetInputConnection(imageDataConnection);
+    }
+  else
+    {
+    // Reconnection is expensive operation, therefore only do it if needed
+    if (this->MapToColors->GetInputConnection(0, 0) != this->MapToWindowLevelColors->GetOutputPort())
+      {
+      this->MapToColors->SetInputConnection(this->MapToWindowLevelColors->GetOutputPort());
+      }
+    }
   this->MapToWindowLevelColors->SetInputConnection(imageDataConnection);
 }
 
@@ -550,7 +565,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* newC
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::UpdateLookupTable(vtkMRMLColorNode* newColorNode)
 {
-  vtkScalarsToColors *lookupTable = nullptr;
+  vtkSmartPointer<vtkScalarsToColors> lookupTable = nullptr;
   if (newColorNode)
     {
     lookupTable = newColorNode->GetLookupTable();
@@ -563,6 +578,17 @@ void vtkMRMLScalarVolumeDisplayNode::UpdateLookupTable(vtkMRMLColorNode* newColo
         }
       }
     }
+
+  if (lookupTable && this->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseDirectMapping
+    && (lookupTable->GetRange()[0] != 0.0 || lookupTable->GetRange()[1] != 255.0))
+    {
+    // Convert table range to 0, 255 to match the output from MapToWindowLevelColors
+    vtkSmartPointer<vtkScalarsToColors> newLookupTable = vtkSmartPointer<vtkScalarsToColors>::Take(lookupTable->NewInstance());
+    newLookupTable->DeepCopy(lookupTable);
+    newLookupTable->SetRange(0, 255);
+    lookupTable = newLookupTable;
+    }
+
   this->MapToColors->SetLookupTable(lookupTable);
 }
 
