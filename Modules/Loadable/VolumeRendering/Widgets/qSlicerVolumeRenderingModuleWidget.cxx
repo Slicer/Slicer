@@ -69,6 +69,9 @@ public:
   QMap<int, int>                     LastTechniques;
   double                             OldPresetPosition;
   QMap<QString, QWidget*>            RenderingMethodWidgets;
+  vtkWeakPointer<vtkMRMLDisplayableNode> CropROINode;
+  vtkWeakPointer<vtkMRMLVolumeRenderingDisplayNode> VolumeRenderingDisplayNode;
+  vtkWeakPointer<vtkMRMLVolumePropertyNode> VolumePropertyNode;
 };
 
 //-----------------------------------------------------------------------------
@@ -304,10 +307,9 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     {
     displayNode = d->createVolumeRenderingDisplayNode(volumeNode);
     }
-  if (displayNode)
-    {
-    this->qvtkReconnect(displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
-    }
+
+  qvtkReconnect(d->VolumeRenderingDisplayNode, displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+  d->VolumeRenderingDisplayNode = displayNode;
 
   d->ViewCheckableNodeComboBox->setMRMLDisplayNode(displayNode);
 
@@ -376,15 +378,32 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->VisibilityCheckBox->setChecked(displayNode ? displayNode->GetVisibility() : false);
 
   // Input section
+
+  // Volume property selector
+  // Update shift slider range and set transfer function extents when volume property node is modified
   vtkMRMLVolumePropertyNode* volumePropertyNode = (displayNode ? displayNode->GetVolumePropertyNode() : nullptr);
+  this->qvtkReconnect(d->VolumePropertyNode, volumePropertyNode, vtkMRMLVolumePropertyNode::EffectiveRangeModified, this, SLOT(onEffectiveRangeModified()));
+  bool volumePropertyNodeChanged = (d->VolumePropertyNode != volumePropertyNode);
+  d->VolumePropertyNode = volumePropertyNode;
+  if (volumePropertyNodeChanged)
+    {
+    // Perform widget updates
+    this->onEffectiveRangeModified();
+    }
   d->VolumePropertyNodeComboBox->setCurrentNode(volumePropertyNode);
+
+  // ROI selector
   vtkMRMLAnnotationROINode* annotationROINode = (displayNode ? displayNode->GetROINode() : nullptr);
   vtkMRMLMarkupsROINode* markupsROINode = (displayNode ? displayNode->GetMarkupsROINode() : nullptr);
-  vtkMRMLNode* roiNode = annotationROINode;
+  vtkMRMLDisplayableNode* roiNode = annotationROINode;
   if (!roiNode)
     {
     roiNode = markupsROINode;
     }
+  this->qvtkReconnect(d->CropROINode, roiNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromROINode()));
+  d->CropROINode = roiNode;
+  this->updateWidgetFromROINode();
+
   bool wasBlocking = d->ROINodeComboBox->blockSignals(true);
   d->ROINodeComboBox->setCurrentNode(roiNode);
   d->ROINodeComboBox->blockSignals(wasBlocking);
@@ -471,16 +490,13 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
 void qSlicerVolumeRenderingModuleWidget::updateWidgetFromROINode()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (d->AnnotationROIWidget->mrmlROINode())
+  bool roiVisible = false;
+  if (d->CropROINode)
     {
-    // ROI visibility
-    d->ROICropDisplayCheckBox->setChecked(d->AnnotationROIWidget->mrmlROINode()->GetDisplayVisibility());
+    roiVisible = d->CropROINode->GetDisplayVisibility();
     }
-  else if (d->MarkupsROIWidget->mrmlROINode())
-    {
-    // ROI visibility
-    d->ROICropDisplayCheckBox->setChecked(d->MarkupsROIWidget->mrmlROINode()->GetDisplayVisibility());
-    }
+  QSignalBlocker blocker(d->ROICropDisplayCheckBox);
+  d->ROICropDisplayCheckBox->setChecked(roiVisible);
 }
 
 // --------------------------------------------------------------------------
@@ -581,22 +597,15 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumePropertyNode(vtkMRMLNode* 
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode* node)
 {
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  Q_D(qSlicerVolumeRenderingModuleWidget);
   vtkMRMLVolumePropertyNode* volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(node);
-  if (!displayNode || !volumePropertyNode)
-    {
-    return;
-    }
-
-  // Update shift slider range and set transfer function extents when volume property node is modified
-  this->qvtkReconnect( displayNode->GetVolumePropertyNode(), volumePropertyNode,
-    vtkMRMLVolumePropertyNode::EffectiveRangeModified, this, SLOT(onEffectiveRangeModified()) );
 
   // Set volume property node to display node
-  displayNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode ? volumePropertyNode->GetID() : nullptr);
-
-  // Perform widget updates
-  this->onEffectiveRangeModified();
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (displayNode)
+    {
+    displayNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode ? volumePropertyNode->GetID() : nullptr);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -623,23 +632,12 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLROINode(vtkMRMLNode* roiNode)
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLROINodeChanged(vtkMRMLNode* node)
 {
+  Q_D(qSlicerVolumeRenderingModuleWidget);
   vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
-  if (!displayNode)
+  if (displayNode)
     {
-    return;
+    displayNode->SetAndObserveROINodeID(node ? node->GetID() : nullptr);
     }
-
-  vtkMRMLNode* oldROINode = displayNode->GetROINode();
-  if (!oldROINode)
-    {
-    displayNode->GetMarkupsROINode();
-    }
-
-  this->qvtkReconnect(oldROINode, node,
-    vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromROINode()) );
-
-  displayNode->SetAndObserveROINodeID(node ? node->GetID() : nullptr);
-  this->updateWidgetFromROINode();
 }
 
 // --------------------------------------------------------------------------
@@ -812,12 +810,6 @@ void qSlicerVolumeRenderingModuleWidget::onROICropDisplayCheckBoxToggled(bool to
     {
     return;
     }
-  // When the display box is visible, it should probably activate the
-  // cropping (to follow the "what you see is what you get" pattern).
-  if (toggle)
-    {
-    displayNode->SetCroppingEnabled(toggle);
-    }
 
   vtkMRMLDisplayableNode* roiNode = d->AnnotationROIWidget->mrmlROINode();
   if (!roiNode)
@@ -844,6 +836,13 @@ void qSlicerVolumeRenderingModuleWidget::onROICropDisplayCheckBoxToggled(bool to
     }
 
   roiNode->SetDisplayVisibility(toggle);
+
+  // When the display box is visible, it activated the cropping
+  // (to follow the "what you see is what you get" pattern).
+  if (toggle)
+    {
+    displayNode->SetCroppingEnabled(toggle);
+    }
 
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
