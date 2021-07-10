@@ -55,6 +55,7 @@ class vtkDataIOManagerLogic;
 class vtkSlicerApplicationLogic;
 class vtkMRMLAbstractLogic;
 class vtkMRMLApplicationLogic;
+class vtkMRMLMessageCollection;
 class vtkMRMLRemoteIOLogic;
 class vtkMRMLScene;
 
@@ -552,6 +553,11 @@ public slots:
   /// Equivalent to setRenderPaused(false)
   /// \sa setRenderPaused
   virtual void resumeRender() {};
+
+  /// Load files into the application.
+  /// \param userMessages if specified then loading errors are returned via this object.
+  /// \return Returns true on success.
+  virtual bool loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages=nullptr);
 
 protected:
 

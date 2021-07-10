@@ -107,6 +107,7 @@
 #include <vtkSystemInformation.h>
 
 // MRML includes
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
@@ -1257,4 +1258,20 @@ void qSlicerApplication::editNode(vtkObject*, void* callData, unsigned long)
     {
     this->openNodeModule(node);
     }
+}
+
+//------------------------------------------------------------------------------
+bool qSlicerApplication::loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessagesInput/*=nullptr*/)
+{
+  // Even if the caller does not need messages, we need the message list so that we can display
+  // messages to the user.
+  vtkSmartPointer<vtkMRMLMessageCollection> userMessages = userMessagesInput;
+  if (!userMessages)
+    {
+    userMessages = vtkSmartPointer<vtkMRMLMessageCollection>::New();
+    }
+
+  bool success = Superclass::loadFiles(filePaths, userMessages);
+  qSlicerIOManager::showLoadNodesResultDialog(success, userMessages);
+  return success;
 }
