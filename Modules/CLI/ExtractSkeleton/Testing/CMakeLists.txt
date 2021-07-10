@@ -30,10 +30,10 @@ ExternalData_add_test(${CLP}Data
   --compare DATA{${BASELINE}/${CLP}Test.mha}
             ${TEMP}/${CLP}Test.mha
   ModuleEntryPoint
+  DATA{${INPUT}/${CLP}.mha}
   --numPoints 100
-  --dontPrune
-   DATA{${INPUT}/${CLP}.mha}
-   ${TEMP}/${CLP}Test.mha
+  --fullTree
+  --outputImage ${TEMP}/${CLP}Test.mha
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
