@@ -8,6 +8,15 @@ To run a Python code snippet automatically at each application startup, add it t
 
 :::
 
+:::{note}
+
+**Fully worked examples**:
+* The [Slicer source code](https://github.com/Slicer/Slicer) is about half written in Python and can be used to find working examples
+* Most [Slicer Extensions](https://github.com/topics/3d-slicer-extension) are written in Python to address specific use cases.  Looking at their source code can be valuable.
+* [The Slicer Discourse forum](https://discourse.slicer.org/) has many code snippets and discussion. 
+
+:::
+
 ```{include} script_repository/gui.md
 ```
 
