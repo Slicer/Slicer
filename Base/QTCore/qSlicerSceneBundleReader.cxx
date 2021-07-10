@@ -92,7 +92,10 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
 
   this->mrmlScene()->SetErrorMessage("");
   bool success = this->mrmlScene()->ReadFromMRB(file.toUtf8(), clear);
-  this->userMessages()->AddMessage(vtkCommand::ErrorEvent, this->mrmlScene()->GetErrorMessage());
+  if (!this->mrmlScene()->GetErrorMessage().empty())
+    {
+    this->userMessages()->AddMessage(vtkCommand::ErrorEvent, this->mrmlScene()->GetErrorMessage());
+    }
   if (success)
     {
     // Set default scene file format to mrb

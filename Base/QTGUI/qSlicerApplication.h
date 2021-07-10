@@ -213,6 +213,9 @@ public slots:
   /// \sa setRenderPaused
   void resumeRender() override;
 
+  /// Override the qSlicerCoreApplication implementation to also show error messages in a popup window.
+  bool loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages = nullptr) override;
+
 signals:
 
   /// Emitted when the startup phase has been completed.

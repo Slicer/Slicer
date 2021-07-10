@@ -73,6 +73,7 @@ public:
   /// If success is set false then an error popup is displayed.
   /// If success is set to true then a popup is only displayed if error or warning messages are logged.
   /// If a popup is displayed then all the user-displayable messages are displayed in a collapsed "Details" section.
+  /// The dialog is not displayed if the application is launched with testing mode enabled.
   Q_INVOKABLE static void showLoadNodesResultDialog(bool success, vtkMRMLMessageCollection* userMessages);
 
   /// dragEnterEvents can be forwarded to the IOManager, if a registered dialog

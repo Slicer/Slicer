@@ -951,6 +951,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 {
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
 
+  QStringList filesToLoad;
   QStringList unparsedArguments = options->unparsedArguments();
   if (unparsedArguments.length() > 0 &&
       options->pythonScript().isEmpty() &&
@@ -970,19 +971,19 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       if (file.exists())
         {
         qDebug() << "Local filepath received via command-line: " << fileName;
-        qSlicerCoreIOManager* ioManager =this->coreIOManager();
-        qSlicerIO::IOFileType fileType = ioManager->fileType(fileName);
-        qSlicerIO::IOProperties fileProperties;
-        // It is important to use absolute file path, as in the scene relative path
-        // always relative to the .mrml scene file (while the user specified the path
-        // relative to the current working directory)
-        fileProperties.insert("fileName", file.absoluteFilePath());
-        ioManager->loadNodes(fileType, fileProperties);
+        // Do not load immediately but just collect the files into a list and load at once
+        // so that all potential loading errors can be also reported at once.
+        filesToLoad << fileName;
         continue;
         }
 
       qDebug() << "Ignore argument received via command-line (not a valid URL or existing local file): " << fileName;
       }
+    }
+
+  if (!filesToLoad.isEmpty())
+    {
+    this->loadFiles(filesToLoad);
     }
 
 #ifndef Slicer_USE_PYTHONQT
@@ -2128,4 +2129,26 @@ QString qSlicerCoreApplication::moduleDocumentationUrl(const QString& moduleName
     }
 
   return url;
+}
+
+//------------------------------------------------------------------------------
+bool qSlicerCoreApplication::loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+{
+  bool success = true;
+  foreach(QString filePath, filePaths)
+    {
+    QFileInfo file(filePath);
+    qSlicerCoreIOManager* ioManager = this->coreIOManager();
+    qSlicerIO::IOFileType fileType = ioManager->fileType(filePath);
+    qSlicerIO::IOProperties fileProperties;
+    // It is important to use absolute file path, as in the scene relative path
+    // always relative to the .mrml scene file (while the user specified the path
+    // relative to the current working directory)
+    fileProperties.insert("fileName", file.absoluteFilePath());
+    if (!ioManager->loadNodes(fileType, fileProperties, nullptr, userMessages))
+      {
+      success = false;
+      }
+    }
+  return success;
 }

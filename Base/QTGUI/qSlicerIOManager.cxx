@@ -557,25 +557,43 @@ void qSlicerIOManager::openSceneViewsDialog()
 //-----------------------------------------------------------------------------
 void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMessageCollection* userMessages)
 {
-  if (!overallSuccess)
+  bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
+  if (isTestingEnabled)
     {
-    ctkMessageBox messageBox;
-    messageBox.setIcon(QMessageBox::Critical);
-    messageBox.setWindowTitle(tr("Adding data failed"));
-    messageBox.setText(tr("Error occurred while loading the selected files. ")
-      +tr("Click 'Show details' button and check the application log for more information."));
-    messageBox.setDetailedText(QString::fromStdString(userMessages->GetAllMessagesAsString()));
-    messageBox.exec();
+    // Do not block the execution with popup windows if testing mode is enabled.
+    return;
     }
-  else if (userMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent)>0
-    || userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent)>0)
+  if (overallSuccess
+    && userMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) == 0
+    && userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0)
     {
-    ctkMessageBox messageBox;
-    messageBox.setIcon(QMessageBox::Information);
+    // Everything is OK, no need to show error popup.
+    return;
+    }
+  ctkMessageBox messageBox;
+  QString text;
+  if (overallSuccess)
+    {
     messageBox.setWindowTitle(tr("Adding data succeeded"));
-    messageBox.setText(tr("The selected files were loaded successfully but errors or warnings were reported. ")
-      +tr("Click 'Show details' button and check the application log for more information."));
-    messageBox.setDetailedText(QString::fromStdString(userMessages->GetAllMessagesAsString()));
-    messageBox.exec();
+    messageBox.setIcon(QMessageBox::Information);
+    text = tr("The selected files were loaded successfully but errors or warnings were reported.");
     }
+  else
+    {
+    messageBox.setWindowTitle(tr("Adding data failed"));
+    messageBox.setIcon(QMessageBox::Critical);
+    text = tr("Error occurred while loading the selected files.");
+    }
+  text += "\n";
+  if (userMessages)
+    {
+    text += tr("Click 'Show details' button and check the application log for more information.");
+    messageBox.setDetailedText(QString::fromStdString(userMessages->GetAllMessagesAsString()));
+    }
+  else
+    {
+    text += tr("Check the application log for more information.");
+    }
+  messageBox.setText(text);
+  messageBox.exec();
 }
