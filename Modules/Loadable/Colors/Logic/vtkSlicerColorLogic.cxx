@@ -128,11 +128,11 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
 {
   std::vector<std::string> filenames;
 
-  // get the list of colour files in these dir
+  // get the list of color files in these dir
   for (unsigned int d = 0; d < directories.size(); d++)
     {
     std::string dirString = directories[d];
-    vtkDebugMacro("FindColorFiles: checking for colour files in dir " << d << " = " << dirString.c_str());
+    vtkDebugMacro("FindColorFiles: checking for color files in dir " << d << " = " << dirString.c_str());
 
     std::vector<std::string> filesVector;
     filesVector.push_back(dirString);
@@ -180,7 +180,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
           if (colorStorageNode->SupportedFileType(fileToCheck.c_str()) ||
               procColorStorageNode->SupportedFileType(fileToCheck.c_str()))
             {
-            vtkDebugMacro("FindColorFiles: Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);
+            vtkDebugMacro("FindColorFiles: Adding " << fileToCheck.c_str() << " to list of potential color files. Type = " << fileType);
               // add it to the list
               this->AddColorFile(fileToCheck.c_str(), &filenames);
             }
@@ -191,7 +191,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
           }
         else
           {
-          vtkDebugMacro("FindColorFiles: Skipping potential colour file " << fileToCheck.c_str() << ", not a text file (file type = " << fileType << ")");
+          vtkDebugMacro("FindColorFiles: Skipping potential color file " << fileToCheck.c_str() << ", not a text file (file type = " << fileType << ")");
           }
         // take this file off so that can build the next file name
         filesVector.pop_back();

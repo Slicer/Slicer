@@ -157,7 +157,7 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
 //----------------------------------------------------------------------------
 void vtkMRMLColorLogic::RemoveDefaultColorNodes()
 {
-  // try to find any of the default colour nodes that are still in the scene
+  // try to find any of the default color nodes that are still in the scene
   if (this->GetMRMLScene() == nullptr)
     {
     // nothing can do, it's gone
@@ -723,7 +723,7 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const ch
 
   if (cpnode->GetStorageNode()->ReadData(cpnode) == 0)
     {
-    vtkErrorMacro("Unable to read procedural colour file " << (cpnode->GetFileName() ? cpnode->GetFileName() : ""));
+    vtkErrorMacro("Unable to read procedural color file " << (cpnode->GetFileName() ? cpnode->GetFileName() : ""));
     if (this->GetMRMLScene())
       {
       cpnode->SetAndObserveStorageNodeID(nullptr);

@@ -130,7 +130,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
       fabs(afterTextColor[1] - textColor[1]) > 0.1 ||
       fabs(afterTextColor[2] - textColor[2]) > 0.1)
     {
-    std::cerr << "Error in retrieving the text display colour after write/read, expected " << textColor[0] << ", " << textColor[1] << ", " << textColor[2] << ", but got " << afterTextColor[0] << ", " << afterTextColor[1] << ", " << afterTextColor[2] << std::endl;
+    std::cerr << "Error in retrieving the text display color after write/read, expected " << textColor[0] << ", " << textColor[1] << ", " << textColor[2] << ", but got " << afterTextColor[0] << ", " << afterTextColor[1] << ", " << afterTextColor[2] << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -145,7 +145,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
       fabs(afterPointColor[1] - pointColor[1]) > 0.1 ||
       fabs(afterPointColor[2] - pointColor[2]) > 0.1)
     {
-    std::cerr << "Error in retrieving the point display colour after write/read, expected " << pointColor[0] << ", " << pointColor[1] << ", " << pointColor[2] << ", but got " << afterPointColor[0] << ", " << afterPointColor[1] << ", " << afterPointColor[2] << std::endl;
+    std::cerr << "Error in retrieving the point display color after write/read, expected " << pointColor[0] << ", " << pointColor[1] << ", " << pointColor[2] << ", but got " << afterPointColor[0] << ", " << afterPointColor[1] << ", " << afterPointColor[2] << std::endl;
     return EXIT_FAILURE;
     }
 

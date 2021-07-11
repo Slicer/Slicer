@@ -37,8 +37,8 @@ public:
   void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
-  /// Get/Set for Type. In SetType, set up the custom colour options for this
-  /// set of colours
+  /// Get/Set for Type. In SetType, set up the custom color options for this
+  /// set of colors
   void SetType(int type) override;
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;

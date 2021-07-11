@@ -142,19 +142,19 @@ public:
   int SetRuler(vtkIdType line1Id, int sel, int vis);
 
   // Description:
-  // get/set the point representation colour
-  double *GetPointColour();
-  void SetPointColour( double initColor[3]);
+  // get/set the point representation color
+  double *GetPointColor();
+  void SetPointColor( double initColor[3]);
 
   // Description:
-  // get/set the line representation colour
-  double *GetLineColour();
-  void SetLineColour(double newColor[3]);
+  // get/set the line representation color
+  double *GetLineColor();
+  void SetLineColor(double newColor[3]);
 
   // Description:
-  // get/set the distance annotation text colour
-  double *GetDistanceAnnotationTextColour();
-  void SetDistanceAnnotationTextColour(double initColor[3]);
+  // get/set the distance annotation text color
+  double *GetDistanceAnnotationTextColor();
+  void SetDistanceAnnotationTextColor(double initColor[3]);
 
   // Description:
   // transform utility functions

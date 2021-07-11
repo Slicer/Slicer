@@ -144,7 +144,7 @@ QString qSlicerColorsModule::helpText()const
 {
   QString help =
     "The <b>Colors Module</b> manages color look up tables.<br>"
-    "Tables are used by mappers to translate between an integer and a colour "
+    "Tables are used by mappers to translate between an integer and a color "
     "value for display of models and volumes.<br>Slicer supports three kinds "
     "of tables:<br>"
     "1. Continuous scales, like the greyscale table.<br>"

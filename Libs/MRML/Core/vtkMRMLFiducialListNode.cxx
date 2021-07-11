@@ -1387,14 +1387,14 @@ void vtkMRMLFiducialListNode::SetSelectedColor(double r, double g, double b)
 //---------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::SetColor(double c[3])
 {
-    // set the colour
+    // set the color
     this->SetColor(c[0], c[1], c[2]);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::SetSelectedColor(double c[3])
 {
-    // set the selected colour
+    // set the selected color
     this->SetSelectedColor(c[0], c[1], c[2]);
 }
 

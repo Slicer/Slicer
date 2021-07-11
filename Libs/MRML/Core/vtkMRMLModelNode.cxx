@@ -603,7 +603,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
         }
       }
 
-    // set up a colour node
+    // set up a color node
     vtkMRMLProceduralColorNode *colorNode = vtkMRMLProceduralColorNode::New();
     colorNode->SetName(composedName.c_str());
     // set the type to avoid error messages when copy it, as the default is -1
@@ -891,7 +891,7 @@ bool vtkMRMLModelNode::ShowDefaultScalarData()
         "on the model - setting them visible and using the first one as the selected overlay");
     displayNode->SetScalarVisibility(1);
     displayNode->SetActiveScalarName(this->GetMesh()->GetPointData()->GetAttribute(0)->GetName());
-    // use the fs red green colour node for now
+    // use the fs red green color node for now
     displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFileViridis.txt");
     }
 

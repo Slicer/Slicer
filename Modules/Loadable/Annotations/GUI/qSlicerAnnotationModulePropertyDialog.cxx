@@ -123,7 +123,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   // customise the all color picker button
   ui.allColorPickerButton->setToolTip(tr("Set unselected color of whole annotation (points, text, lines), use advanced pane to set individual colors"));
   ui.allColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
-  // if all the display nodes are the same colour, update the colour on the
+  // if all the display nodes are the same color, update the color on the
   // button to show it, otherwise will be black
   this->updateAllColorButton();
 
@@ -439,7 +439,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     {
     // enable the lines tab
     ui.tabWidget->setTabEnabled(2, true);
-    // colours
+    // colors
 
     // unselected
     double *lineUnSelColor = lineDisplayNode->GetColor();
@@ -1630,7 +1630,7 @@ void qSlicerAnnotationModulePropertyDialog::onAllColorChanged(QColor qcolor)
             {
             dispHierarchyNode->GetDisplayNode()->SetColor(color);
             }
-          // and associated node colour
+          // and associated node color
           if (allChildren[i]->GetAssociatedNode())
             {
             this->setColorOnAnnotationDisplayNodes(allChildren[i]->GetAssociatedNode()->GetID(), qcolor);
@@ -1642,7 +1642,7 @@ void qSlicerAnnotationModulePropertyDialog::onAllColorChanged(QColor qcolor)
     }
 
   // look for the display nodes on regular annotation nodes
-  // and update the unselected color buttons to reflect the new colour
+  // and update the unselected color buttons to reflect the new color
   this->setColorOnAnnotationDisplayNodes(this->m_id.c_str(), qcolor);
 }
 

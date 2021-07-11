@@ -86,7 +86,7 @@ public:
   typedef ArchetypeVolumeNodeSet (*ArchetypeVolumeNodeSetFactory)(std::string& volumeName, vtkMRMLScene* scene, int options);
 
   /// Examine the file name to see if the extension is one of the supported
-  /// freesurfer volume formats. Used to assign the proper colour node to label maps.
+  /// freesurfer volume formats. Used to assign the proper color node to label maps.
   int IsFreeSurferVolume(const char* filename);
 
   /// Register a factory method that can create and configure a node

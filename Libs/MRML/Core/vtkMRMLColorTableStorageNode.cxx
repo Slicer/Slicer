@@ -132,7 +132,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       }
     fstr.close();
-    // now parse out the valid lines and set up the colour lookup table
+    // now parse out the valid lines and set up the color lookup table
     vtkDebugMacro("The largest id is " << maxID);
     if (maxID > this->MaximumColorID)
       {
@@ -187,7 +187,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         {
         biggerThanOne = true;
         }
-      // the file values are 0-255, colour look up table needs 0-1
+      // the file values are 0-255, color look up table needs 0-1
       // clamp the colors just in case
       r = r > 255.0 ? 255.0 : r;
       r = r < 0.0 ? 0.0 : r;
@@ -214,7 +214,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       if (i < 10)
         {
-        vtkDebugMacro("(first ten) Adding colour at id " << id << ", name = " << name.c_str() << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a);
+        vtkDebugMacro("(first ten) Adding color at id " << id << ", name = " << name.c_str() << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a);
         }
       if (colorNode->SetColor(id, name.c_str(), r, g, b, a) == 0)
         {
@@ -226,13 +226,13 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     if (lines.size() > 0 && !biggerThanOne)
       {
-      vtkWarningMacro("ReadDataInternal: possibly malformed colour table file:\n" << this->FileName << ".\n\tNo RGB values are greater than 1. Valid values are 0-255");
+      vtkWarningMacro("ReadDataInternal: possibly malformed color table file:\n" << this->FileName << ".\n\tNo RGB values are greater than 1. Valid values are 0-255");
       }
     colorNode->EndModify(wasModifying);
     }
   else
     {
-    vtkErrorMacro("ERROR opening colour file " << this->FileName << endl);
+    vtkErrorMacro("ERROR opening color file " << this->FileName << endl);
     return 0;
     }
 
@@ -290,7 +290,7 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
       double *rgba;
       rgba = colorNode->GetLookupTable()->GetTableValue(i);
-      // the colour look up table uses 0-1, file values are 0-255,
+      // the color look up table uses 0-1, file values are 0-255,
       double r = rgba[0] * 255.0;
       double g = rgba[1] * 255.0;
       double b = rgba[2] * 255.0;

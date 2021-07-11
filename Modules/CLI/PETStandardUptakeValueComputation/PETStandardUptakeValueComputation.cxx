@@ -739,7 +739,7 @@ double DecayCorrection(parameters & list, double inVal )
 // ...
 std::string MapLabelIDtoColorName( int id, std::string colorFile )
 {
-  // use the colour table that was passed in with the VOI volume
+  // use the color table that was passed in with the VOI volume
 
   std::string colorName;
 
@@ -749,7 +749,7 @@ std::string MapLabelIDtoColorName( int id, std::string colorFile )
 
   if( !colorStorageNode->ReadData(colorNode.GetPointer()) )
     {
-    std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
+    std::cerr << "Error reading color file " << colorStorageNode->GetFileName() << endl;
     }
   else
     {

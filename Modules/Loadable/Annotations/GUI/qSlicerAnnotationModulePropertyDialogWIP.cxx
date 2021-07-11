@@ -284,7 +284,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     {
     // enable the lines tab
     ui.tabWidget->setTabEnabled(2, true);
-    // colours
+    // colors
 
     // unselected
     double *lineUnSelColor = lineDisplayNode->GetColor();

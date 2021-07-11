@@ -568,7 +568,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
         handleRep->SetLabelTextScale(textscale);
         if (handleRep->GetLabelTextActor())
           {
-          // set the colours
+          // set the colors
           if (fiducialNode->GetSelected())
             {
             handleRep->GetLabelTextActor()->GetProperty()->SetColor(textDisplayNode->GetSelectedColor());

@@ -393,7 +393,7 @@ void vtkMRMLROIListNode::SetSelectedColor(double r, double g, double b)
 //---------------------------------------------------------------------------
 void vtkMRMLROIListNode::SetColor(double c[3])
 {
-  // set the colour
+  // set the color
   this->SetColor(c[0], c[1], c[2]);
   return;
 }
@@ -401,7 +401,7 @@ void vtkMRMLROIListNode::SetColor(double c[3])
 //---------------------------------------------------------------------------
 void vtkMRMLROIListNode::SetSelectedColor(double c[3])
 {
-  // set the selected colour
+  // set the selected color
   this->SetSelectedColor(c[0], c[1], c[2]);
   return;
 }

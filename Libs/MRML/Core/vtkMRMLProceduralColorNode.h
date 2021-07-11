@@ -21,7 +21,7 @@ class vtkColorTransferFunction;
 
 /// \brief MRML node to represent procedurally defined color information.
 ///
-/// Procedural nodes define methods that are used to map colours to scalar
+/// Procedural nodes define methods that are used to map colors to scalar
 /// values. Usually they will incorporate a custom subclass of a
 /// vtkLookupTable, or a vtkColorTransferFunction.
 class VTK_MRML_EXPORT vtkMRMLProceduralColorNode : public vtkMRMLColorNode
@@ -58,7 +58,7 @@ public:
   void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
-  /// return a text string describing the colour look up table type
+  /// return a text string describing the color look up table type
   const char * GetTypeAsString() override;
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
