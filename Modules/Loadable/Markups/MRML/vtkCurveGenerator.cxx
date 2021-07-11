@@ -498,7 +498,7 @@ void vtkCurveGenerator::SetParametricFunctionToPolynomial(vtkPoints* inputPoints
     }
   else
     {
-    vtkWarningMacro("Did not recognize fit method: " << this->PolynomialFitMethod << ". Parametric polynomial will use its default behaviour.");
+    vtkWarningMacro("Did not recognize fit method: " << this->PolynomialFitMethod << ". Parametric polynomial will use its default behavior.");
     }
 
   polynomial->SetSampleWidth(this->PolynomialSampleWidth);
@@ -521,7 +521,7 @@ void vtkCurveGenerator::SetParametricFunctionToPolynomial(vtkPoints* inputPoints
     }
   else
     {
-    vtkWarningMacro("Did not recognize weight function: " << this->PolynomialWeightFunction << ". Parametric polynomial will use its default behaviour.");
+    vtkWarningMacro("Did not recognize weight function: " << this->PolynomialWeightFunction << ". Parametric polynomial will use its default behavior.");
     }
 
   this->ParametricFunction = polynomial;

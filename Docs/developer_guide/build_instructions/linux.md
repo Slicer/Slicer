@@ -109,7 +109,7 @@ cd ..
 Slicer is highly configurable and multi-platform. To support this,
 Slicer needs a configuration of the build parameters before the build process
 takes place. In this configuration stage, it is possible to adjust variables
-that change the nature and behaviour of its components. For instance, the type
+that change the nature and behavior of its components. For instance, the type
 of build (Debug or Release mode), whether to use system-installed libraries,
 let the build process fetch and compile own libraries, or enable/disable some of
 the software components and functionalities of Slicer.

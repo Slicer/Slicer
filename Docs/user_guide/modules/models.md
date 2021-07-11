@@ -17,8 +17,8 @@ This module is used for changing the appearance of and organizing 3d surface mod
 
 - **Information Panel**:
   - **Information**: Information about this surface model
-  - **Surface Area**: The calculated surface area of the model, in square millimetres
-  - **Volume**: The volume inside the surface model, in cubed millimetres
+  - **Surface Area**: The calculated surface area of the model, in square millimeters
+  - **Volume**: The volume inside the surface model, in cubed millimeters
   - **Number of Points**: Number of vertices in the surface model
   - **Number of Cells**: Number of cells in the surface model
   - **Number of Point Scalars**: Shows how many arrays of scalars are associated with the points of the surface model.

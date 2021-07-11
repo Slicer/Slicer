@@ -219,7 +219,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
     self.takeScreenshot('NeurosurgicalPlanning-RedSliceOnly','Set layout to Red Slice only')
 
     #
-    # segmentation of tumour
+    # segmentation of tumor
     #
 
     # Create segmentation

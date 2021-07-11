@@ -1079,7 +1079,7 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
         }
       threshold->SetInputConnection(smoother->GetOutputPort());
-      // In VTK 5.0, this is deprecated - the default behaviour seems to
+      // In VTK 5.0, this is deprecated - the default behavior seems to
       // be okay
       // threshold->SetAttributeModeToUseCellData();
 

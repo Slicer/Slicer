@@ -684,7 +684,7 @@ int vtkDiffusionTensorGlyph::RequestData(
 
         // if the eigenvalue is negative, shift to reverse direction.
         // The && is there to ensure that we do not change the
-        // old behaviour of vtkTensorGlyphs (which only used one dir),
+        // old behavior of vtkTensorGlyphs (which only used one dir),
         // in case there is an oriented glyph, e.g. an arrow.
         if (w[eigen_dir] < 0 && numDirs > 1)
           {
