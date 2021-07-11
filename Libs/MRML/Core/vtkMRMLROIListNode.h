@@ -121,7 +121,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     vtkGetVectorMacro(Color,double,3);
 
     ///
-    /// Get/Set for colour for when an ROI is selected
+    /// Get/Set for color for when an ROI is selected
     void SetSelectedColor(double r, double g, double b);
     void SetSelectedColor(double c[3]);
     vtkGetVectorMacro(SelectedColor,double,3);

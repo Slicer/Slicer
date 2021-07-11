@@ -69,20 +69,20 @@ vtkMRMLAnnotationAngleNode::vtkMRMLAnnotationAngleNode()
 //   this->SetArcVisibility(1);
 //
 //   // the end points of the lines are blue, they're cloned so can't have a
-//   // different colour for each end
+//   // different color for each end
 //   {
 //     double color[3] = { 0.0, 0.0, 1.0};
-//     this->SetPointColour(color);
+//     this->SetPointColor(color);
 //   }
-//   // line colour
+//   // line color
 //   {
 //     double color[3] = { 1.0, 1.0, 1.0};
-//     this->SetLineColour(color);
+//     this->SetLineColor(color);
 //   }
-//   // text colour
+//   // text color
 //   {
 //     double color[3] = { 1.0, 0.0, 0.0 } ;
-//     this->SetLabelTextColour(color);
+//     this->SetLabelTextColor(color);
 //   }
 //
 //   // default taken from vtkLineRepresentation
@@ -212,9 +212,9 @@ void vtkMRMLAnnotationAngleNode::Copy(vtkMRMLNode *anode)
   //this->SetRay2Visibility(node->GetRay2Visibility());
   //this->SetArcVisibility(node->GetArcVisibility());
 
-  //this->SetPointColour(node->GetPointColour());
-  //this->SetLineColour(node->GetLineColour());
-  //this->SetLabelTextColour(node->GetLabelTextColour());
+  //this->SetPointColor(node->GetPointColor());
+  //this->SetLineColor(node->GetLineColor());
+  //this->SetLabelTextColor(node->GetLabelTextColor());
 
   /*
   this->SetResolution(node->GetResolution());
@@ -381,7 +381,7 @@ int vtkMRMLAnnotationAngleNode::SetControlPoint(int id, double newControl[3])
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLAnnotationAngleNode::GetPointColour()
+double* vtkMRMLAnnotationAngleNode::GetPointColor()
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
@@ -392,7 +392,7 @@ double* vtkMRMLAnnotationAngleNode::GetPointColour()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationAngleNode::SetPointColour(double initColor[3])
+void vtkMRMLAnnotationAngleNode::SetPointColor(double initColor[3])
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
@@ -404,7 +404,7 @@ void vtkMRMLAnnotationAngleNode::SetPointColour(double initColor[3])
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLAnnotationAngleNode::GetLabelTextColour()
+double* vtkMRMLAnnotationAngleNode::GetLabelTextColor()
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
@@ -415,7 +415,7 @@ double* vtkMRMLAnnotationAngleNode::GetLabelTextColour()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationAngleNode::SetLabelTextColour(double initColor[3])
+void vtkMRMLAnnotationAngleNode::SetLabelTextColor(double initColor[3])
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
@@ -427,7 +427,7 @@ void vtkMRMLAnnotationAngleNode::SetLabelTextColour(double initColor[3])
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLAnnotationAngleNode::GetLineColour()
+double* vtkMRMLAnnotationAngleNode::GetLineColor()
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
@@ -438,7 +438,7 @@ double* vtkMRMLAnnotationAngleNode::GetLineColour()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationAngleNode::SetLineColour(double initColor[3])
+void vtkMRMLAnnotationAngleNode::SetLineColor(double initColor[3])
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)

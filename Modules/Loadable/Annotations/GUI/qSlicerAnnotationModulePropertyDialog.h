@@ -43,7 +43,7 @@ public:
   static void formatValueToChar(const char* format, std::vector<double> vv, QString &valueString );
 
   /// for the current m_id node, if all display nodes have the same unselected
-  /// colour, return it, otherwise return black.
+  /// color, return it, otherwise return black.
   void getAllColor(QColor &qcolor);
   /// use the GetAllColor method and set the all color button
   void updateAllColorButton();

@@ -64,8 +64,8 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
      // the rgb values are separated by commas
      float r = 0.0, g = 0.0, b = 0.0;
      char *ptr;
-     char *colours = (char *)(str.c_str());
-     ptr = strtok(colours, ",");
+     char *colors = (char *)(str.c_str());
+     ptr = strtok(colors, ",");
      if (ptr != nullptr)
        {
      r = atof(ptr);
@@ -487,10 +487,10 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationDisplayProperties(fstream& of, 
    }
  preposition.insert(0,"# ");
  of << preposition + "Visibility = " << refNode->GetVisibility() << endl;
- double *colour = refNode->GetColor();
- of << preposition + "Color = " << colour[0] << "," << colour[1] << "," << colour[2] << endl;
- colour = refNode->GetSelectedColor();
- of << preposition + "SelectedColor = " << colour[0] << "," << colour[1] << "," << colour[2] << endl;
+ double *color = refNode->GetColor();
+ of << preposition + "Color = " << color[0] << "," << color[1] << "," << color[2] << endl;
+ color = refNode->GetSelectedColor();
+ of << preposition + "SelectedColor = " << color[0] << "," << color[1] << "," << color[2] << endl;
  of << preposition + "Opacity = " << refNode->GetOpacity() << endl;
  of << preposition + "Ambient = " << refNode->GetAmbient() << endl;
  of << preposition + "Diffuse = " << refNode->GetDiffuse() << endl;

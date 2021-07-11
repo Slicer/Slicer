@@ -137,7 +137,7 @@ void vtkMRMLdGEMRICProceduralColorNode::SetType(int type)
   this->ColorTransferFunction->RemoveAllPoints();
   this->ColorTransferFunction->SetColorSpaceToRGB();
 
-  // Set up the custom colours here for this type
+  // Set up the custom colors here for this type
   if (this->Type == this->dGEMRIC15T)
     {
     this->SetDescription("Useful for displaying 1.5 tesla delayed gadolinium-enhanced MRI of cartilage");

@@ -101,7 +101,7 @@ public:
   void SetColor(double c[3]);
   vtkGetVectorMacro(Color,double,3);
 
-  /// Get/Set for colour for when a fiducial is selected
+  /// Get/Set for color for when a fiducial is selected
   void SetSelectedColor(double r, double g, double b);
   void SetSelectedColor(double c[3]);
   vtkGetVectorMacro(SelectedColor,double,3);

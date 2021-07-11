@@ -103,7 +103,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "filename"))
       {
       this->SetFileName(attValue);
-      // don't read in the file with the colours, it's handled by the storage
+      // don't read in the file with the colors, it's handled by the storage
       // node
       if (this->GetStorageNode() == nullptr)
         {
@@ -257,7 +257,7 @@ void vtkMRMLColorNode::SetType(int type)
 
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type);
 
-  // subclass should over ride this and define colours according to the node
+  // subclass should over ride this and define colors according to the node
   // type
 
   // invoke a modified event

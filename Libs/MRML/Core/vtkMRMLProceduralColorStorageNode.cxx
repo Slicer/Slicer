@@ -85,7 +85,7 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
     if (!fstr.is_open())
       {
-      vtkErrorMacro("ERROR opening procedural colour file " << this->FileName << endl);
+      vtkErrorMacro("ERROR opening procedural color file " << this->FileName << endl);
       return 0;
       }
 

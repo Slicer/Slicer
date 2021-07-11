@@ -190,7 +190,7 @@ public:
   /// \sa CreateFileNode, CreateProceduralFileNode
   vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = nullptr);
 
-  /// Get/Set the user defined paths where to look for extra colour files
+  /// Get/Set the user defined paths where to look for extra color files
   vtkGetStringMacro(UserColorFilePaths);
   vtkSetStringMacro(UserColorFilePaths);
 
@@ -252,17 +252,17 @@ protected:
   /// It is the concatenation of the node class name and its type.
   static const char * GetColorNodeID(vtkMRMLColorNode* colorNode);
 
-  /// a vector holding discovered default colour files, found in the
+  /// a vector holding discovered default color files, found in the
   /// Resources/ColorFiles directory, white space separated with:
   /// int name r g b a
   /// with rgba in the range 0-255
   std::vector<std::string> ColorFiles;
 
-  /// a vector holding discovered user defined colour files, found in the
+  /// a vector holding discovered user defined color files, found in the
   /// UserColorFilesPath directories.
   std::vector<std::string> UserColorFiles;
   /// a string holding delimiter separated (; on win32, : else) paths where to
-  /// look for extra colour files, set from the return value of
+  /// look for extra color files, set from the return value of
   /// vtkMRMLApplication::GetColorFilePaths
   char *UserColorFilePaths;
 

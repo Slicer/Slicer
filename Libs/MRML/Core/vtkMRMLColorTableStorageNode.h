@@ -54,7 +54,7 @@ protected:
   /// Write data from a  referenced node
   int WriteDataInternal(vtkMRMLNode *refNode) override;
 
-  /// maximum valid number of colours to read in
+  /// maximum valid number of colors to read in
   int MaximumColorID;
 
 };

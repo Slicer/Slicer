@@ -490,10 +490,10 @@ int main(int argc, char * argv[])
     colorNode = vtkSmartPointer<vtkMRMLColorTableNode>::New();
     modelScene->AddNode(colorNode);
 
-    // read the colour file
+    // read the color file
     if (debug)
       {
-      std::cout << "Colour table file name = " << ColorTable.c_str() << std::endl;
+      std::cout << "color table file name = " << ColorTable.c_str() << std::endl;
       }
     colorStorageNode = vtkSmartPointer<vtkMRMLColorTableStorageNode>::New();
     colorStorageNode->SetFileName(ColorTable.c_str());
@@ -501,20 +501,20 @@ int main(int argc, char * argv[])
 
     if (debug)
       {
-      std::cout << "Setting the colour node's storage node id to " << colorStorageNode->GetID()
+      std::cout << "Setting the color node's storage node id to " << colorStorageNode->GetID()
                 << ", it's file name = " << colorStorageNode->GetFileName() << std::endl;
       }
     colorNode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
     if (!colorStorageNode->ReadData(colorNode))
       {
-      std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
+      std::cerr << "Error reading color file " << colorStorageNode->GetFileName() << endl;
       return EXIT_FAILURE;
       }
     else
       {
       if (debug)
         {
-        std::cout << "Read colour file  " << colorStorageNode->GetFileName() << endl;
+        std::cout << "Read color file  " << colorStorageNode->GetFileName() << endl;
         }
       }
     colorStorageNode = nullptr;
@@ -535,7 +535,7 @@ int main(int argc, char * argv[])
     int extentMax = 0;
     if (useColorNode)
       {
-      // get the max integer that the colour node can map
+      // get the max integer that the color node can map
       extentMax = colorNode->GetNumberOfColors() - 1;
       if (debug)
         {
@@ -914,7 +914,7 @@ int main(int argc, char * argv[])
         }
 
       // name this model
-      // TODO: get the label name from the colour look up table
+      // TODO: get the label name from the color look up table
       std::stringstream stream;
       stream <<    i;
       std::string stringI =    stream.str();
@@ -937,7 +937,7 @@ int main(int argc, char * argv[])
             {
             if (debug)
               {
-              std::cout << "Invalid colour name for " << stringI.c_str() << " = " << colorName.c_str()
+              std::cout << "Invalid color name for " << stringI.c_str() << " = " << colorName.c_str()
                         << ", skipping.\n";
               }
             skippedModels.push_back(i);
@@ -959,7 +959,7 @@ int main(int argc, char * argv[])
             }
           else
             {
-            // colour is out of range
+            // color is out of range
             labelName = Name + std::string("_") + stringI;
             }
           }
@@ -1666,13 +1666,13 @@ int main(int argc, char * argv[])
             {
             if (debug)
               {
-              std::cout << "Got colour: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << endl;
+              std::cout << "Got color: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << endl;
               }
             dnode->SetColor(rgba[0], rgba[1], rgba[2]);
             }
           else
             {
-            std::cerr << "Couldn't get look up table value for " << i << ", display node colour is not set (grey)"
+            std::cerr << "Couldn't get look up table value for " << i << ", display node color is not set (grey)"
                       << endl;
             }
           }
@@ -1779,7 +1779,7 @@ int main(int argc, char * argv[])
       std::cout << "Writing to model scene output file: " << sceneFilename.c_str();
       std::cout << ", to url: " << modelScene->GetURL() << std::endl;
       }
-    // take out the colour nodes first
+    // take out the color nodes first
     if (colorStorageNode != nullptr)
       {
       modelScene->RemoveNode(colorStorageNode);

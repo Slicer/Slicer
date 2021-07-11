@@ -270,7 +270,7 @@ int vtkMRMLAnnotationSplineNode::SetControlPoint(double newControl[3], int id)
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLAnnotationSplineNode::GetPointColour()
+double* vtkMRMLAnnotationSplineNode::GetPointColor()
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
@@ -281,7 +281,7 @@ double* vtkMRMLAnnotationSplineNode::GetPointColour()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationSplineNode::SetPointColour(double initColor[3])
+void vtkMRMLAnnotationSplineNode::SetPointColor(double initColor[3])
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
@@ -293,7 +293,7 @@ void vtkMRMLAnnotationSplineNode::SetPointColour(double initColor[3])
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLAnnotationSplineNode::GetDistanceAnnotationTextColour()
+double* vtkMRMLAnnotationSplineNode::GetDistanceAnnotationTextColor()
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
@@ -304,7 +304,7 @@ double* vtkMRMLAnnotationSplineNode::GetDistanceAnnotationTextColour()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationSplineNode::SetDistanceAnnotationTextColour(double initColor[3])
+void vtkMRMLAnnotationSplineNode::SetDistanceAnnotationTextColor(double initColor[3])
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
@@ -316,7 +316,7 @@ void vtkMRMLAnnotationSplineNode::SetDistanceAnnotationTextColour(double initCol
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLAnnotationSplineNode::GetLineColour()
+double* vtkMRMLAnnotationSplineNode::GetLineColor()
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
@@ -327,7 +327,7 @@ double* vtkMRMLAnnotationSplineNode::GetLineColour()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationSplineNode::SetLineColour(double initColor[3])
+void vtkMRMLAnnotationSplineNode::SetLineColor(double initColor[3])
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)

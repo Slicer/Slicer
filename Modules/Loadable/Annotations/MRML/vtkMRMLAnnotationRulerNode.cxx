@@ -266,7 +266,7 @@ int vtkMRMLAnnotationRulerNode::SetControlPoint(int id, double newControl[3])
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLAnnotationRulerNode::GetPointColour()
+double* vtkMRMLAnnotationRulerNode::GetPointColor()
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
@@ -277,7 +277,7 @@ double* vtkMRMLAnnotationRulerNode::GetPointColour()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationRulerNode::SetPointColour(double initColor[3])
+void vtkMRMLAnnotationRulerNode::SetPointColor(double initColor[3])
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
@@ -289,7 +289,7 @@ void vtkMRMLAnnotationRulerNode::SetPointColour(double initColor[3])
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLAnnotationRulerNode::GetDistanceAnnotationTextColour()
+double* vtkMRMLAnnotationRulerNode::GetDistanceAnnotationTextColor()
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
@@ -300,7 +300,7 @@ double* vtkMRMLAnnotationRulerNode::GetDistanceAnnotationTextColour()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationRulerNode::SetDistanceAnnotationTextColour(double initColor[3])
+void vtkMRMLAnnotationRulerNode::SetDistanceAnnotationTextColor(double initColor[3])
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
@@ -312,7 +312,7 @@ void vtkMRMLAnnotationRulerNode::SetDistanceAnnotationTextColour(double initColo
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLAnnotationRulerNode::GetLineColour()
+double* vtkMRMLAnnotationRulerNode::GetLineColor()
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
@@ -323,7 +323,7 @@ double* vtkMRMLAnnotationRulerNode::GetLineColour()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationRulerNode::SetLineColour(double initColor[3])
+void vtkMRMLAnnotationRulerNode::SetLineColor(double initColor[3])
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)

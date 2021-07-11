@@ -80,7 +80,7 @@ QString qSlicerModelsModule::helpText()const
     "currently active model.<br>You can adjust the display properties of the "
     "models in the Display pane. Select the model you wish to work on from the "
     "model selector drop down menu. Scalar overlays are loaded with a default "
-    "colour look up table, but can be reassigned manually. Once a new scalar "
+    "color look up table, but can be reassigned manually. Once a new scalar "
     "overlay is chosen, currently the old color map is still used, so that "
     "must be adjusted in conjunction with the overlay.<br>"
     "Clipping is turned on for a model in the Display pane, and the slice "

@@ -554,8 +554,8 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //             // the rgb values are separated by commas
 //             float r = 0.0, g = 0.0, b = 0.0;
 //             char *ptr;
-//             char *colours = (char *)(str.c_str());
-//             ptr = strtok(colours, ",");
+//             char *colors = (char *)(str.c_str());
+//             ptr = strtok(colors, ",");
 //             if (ptr != nullptr)
 //               {
 //             r = atof(ptr);

@@ -171,7 +171,7 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
   this->ColorTransferFunction->RemoveAllPoints();
   this->ColorTransferFunction->SetColorSpaceToRGB();
 
-  // Set up the custom colours here for this type
+  // Set up the custom colors here for this type
   if (this->Type == this->PETheat)
     {
     this->SetDescription("Useful for displaying colorized PET data.");

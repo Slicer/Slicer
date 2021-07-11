@@ -189,18 +189,18 @@ const char * vtkMRMLProceduralColorNode::GetTypeAsString()
 //---------------------------------------------------------------------------
 bool vtkMRMLProceduralColorNode::SetNameFromColor(int index)
 {
-  double colour[4];
-  this->GetColor(index, colour);
-  //this->ColorTransferFunction->GetColor(index, colour);
+  double color[4];
+  this->GetColor(index, color);
+  //this->ColorTransferFunction->GetColor(index, color);
   std::stringstream ss;
   ss.precision(3);
   ss.setf(std::ios::fixed, std::ios::floatfield);
   ss << "R=";
-  ss << colour[0];
+  ss << color[0];
   ss << " G=";
-  ss << colour[1];
+  ss << color[1];
   ss << " B=";
-  ss << colour[2];
+  ss << color[2];
   if (this->SetColorName(index, ss.str().c_str()) == 0)
     {
     vtkErrorMacro("SetNamesFromColors: error setting name " <<  ss.str().c_str() << " for color index " << index);
