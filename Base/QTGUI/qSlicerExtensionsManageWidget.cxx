@@ -545,6 +545,10 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
     {
     moreLinkTarget = QString("slicer:%1").arg(extensionId);
     }
+  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    {
+     moreLinkTarget = QString("slicer:%1").arg(extensionName);
+    }
   else
     {
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
@@ -926,6 +930,14 @@ void qSlicerExtensionsManageWidget::onLinkActivated(const QString& link)
     urlQuery.addQueryItem("breadcrumbs", "none");
     urlQuery.addQueryItem("layout", "empty");
     url.setQuery(urlQuery);
+    }
+  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    {
+    QString extensionName = link.mid(7); // remove leading "slicer:"
+    url.setPath(url.path() + QString("/view/%1/%2/%3")
+                .arg(extensionName)
+                .arg(this->extensionsManagerModel()->slicerRevision())
+                .arg(this->extensionsManagerModel()->slicerOs()));
     }
   else
     {
