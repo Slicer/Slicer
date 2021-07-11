@@ -280,7 +280,7 @@ bool vtkMRMLSliceNode::SetOrientation(const char* orientation)
       }
     }
 
-  // SetOrientationReference() behaviour will be maintained for backward compatibility
+  // SetOrientationReference() behavior will be maintained for backward compatibility
   this->SetOrientationReference(orientation);
 
   this->UpdateMatrices();

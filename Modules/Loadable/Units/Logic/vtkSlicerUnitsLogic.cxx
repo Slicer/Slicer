@@ -284,9 +284,9 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
     "TeraHerz", "frequency", "", "THz", 3, -10000., 10000., Self::GetDisplayCoefficient("tera"), 0.);
 
   this->AddUnitNodeToScene(scene,
-    "Metre per second", "velocity", "", "m/s", 3, -10000., 10000., Self::GetDisplayCoefficient(""), 0.);
+    "Meter per second", "velocity", "", "m/s", 3, -10000., 10000., Self::GetDisplayCoefficient(""), 0.);
   this->AddUnitNodeToScene(scene,
-    "Kilometre per second", "velocity", "", "km/s", 3, -10000., 10000., Self::GetDisplayCoefficient("kilo"), 0.);
+    "Kilometer per second", "velocity", "", "km/s", 3, -10000., 10000., Self::GetDisplayCoefficient("kilo"), 0.);
 
   this->AddUnitNodeToScene(scene,
     "Intensity", "intensity", "", "W/m\xB2", 3, -10000., 10000., 1., 0.);

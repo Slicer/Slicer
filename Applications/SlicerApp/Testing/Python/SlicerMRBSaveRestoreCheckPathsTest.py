@@ -50,7 +50,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
     self.strict = strict
     # this flag will need to be updated if the code in
     #  qSlicerSceneBundleReader::load
-    # is changed from the current behaviour (delete expanded
+    # is changed from the current behavior (delete expanded
     # files after loading the MRB into Slicer)
     self.mrbDeleteFilesAfterLoad = 1
 

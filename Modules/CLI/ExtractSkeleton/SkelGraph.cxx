@@ -319,24 +319,24 @@ void SkelGraph::FindMaximalPath()
         // add all neighbors to wait_list that are not yet treated
         for(std::deque<int>::iterator neighbors = cont_end->begin(); neighbors != cont_end->end(); ++neighbors)
           {
-          // get neighbours entry
+          // get neighbors entry
           int distance = *neighbors - act_pos_id;
           std::deque<skel_branch>::iterator act_pos_neigh = act_pos_list;
           advance(act_pos_neigh, distance);
           skel_branch * act_neighbor = &(*(act_pos_neigh) );
           if (!act_neighbor->acc_path.empty())
             {
-            // neighbour already treated
+            // neighbor already treated
             continue;
             }
           wait_list.push_back(act_neighbor);
-          // update entries of neighbour
+          // update entries of neighbor
           // since act_point[0] - pt[0] is either [-1,0,1] -> abs == ^2
           // add distance between branches to length at preceding branch
           Coord3i cont_neigh_point;
           act_neighbor->acc_length = act_node->acc_length;
           // determine connection costs -> since we do not know which one is the
-          // corresponding endpoint of the neighbour, we have to try out and take
+          // corresponding endpoint of the neighbor, we have to try out and take
           // the one combination that yields the smallest costs
           double conn_costs1 = pointdistance(act_neighbor->end_1_point, cont_end_point, m_Spacing);
           double conn_costs2 = pointdistance(act_neighbor->end_2_point, cont_end_point, m_Spacing);
@@ -616,7 +616,7 @@ void SkelGraph::GetValidNeighbors(int* label_image, Coord3i &act_point, std::deq
   //     while (act_neighbor != neighbors->end()) {
   //       i++;
   //       Coord3i * pt = &(*act_neighbor);
-  //       std::cout << i << ".Neighbour: "<< pt[0] << "," << pt[1] << "," << pt[2] << std::endl;
+  //       std::cout << i << ".Neighbor: "<< pt[0] << "," << pt[1] << "," << pt[2] << std::endl;
   //       ++act_neighbor;
   //     }
   //   }

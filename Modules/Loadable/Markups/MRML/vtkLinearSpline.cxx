@@ -121,7 +121,7 @@ void vtkLinearSpline::Compute()
       {
       this->Intervals[numberOfInputPoints] = this->ParametricRange[1];
       }
-    else // use default behaviour for vtkSpline by adding 1.0 to last value
+    else // use default behavior for vtkSpline by adding 1.0 to last value
       {
       this->Intervals[numberOfInputPoints] = this->Intervals[numberOfInputPoints - 1] + 1.0;
       }
