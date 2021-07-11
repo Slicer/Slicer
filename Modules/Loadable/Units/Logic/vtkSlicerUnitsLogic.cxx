@@ -269,19 +269,19 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
     "Microsecond", "time", "", u8"\u00b5s", 3, -10000., 10000., Self::GetDisplayCoefficient("micro"), 0.);
 
   this->AddUnitNodeToScene(scene,
-    "Herz", "frequency", "", "Hz", 3, -10000., 10000., Self::GetDisplayCoefficient(""), 0.);
+    "Hertz", "frequency", "", "Hz", 3, -10000., 10000., Self::GetDisplayCoefficient(""), 0.);
   this->AddUnitNodeToScene(scene,
-    "decahertz", "frequency", "", "daHz", 3, -10000., 10000., Self::GetDisplayCoefficient("deca"), 0.);
+    "Decahertz", "frequency", "", "daHz", 3, -10000., 10000., Self::GetDisplayCoefficient("deca"), 0.);
   this->AddUnitNodeToScene(scene,
-    "HectoHerz", "frequency", "", "hHz", 3, -10000., 10000., Self::GetDisplayCoefficient("hecto"), 0.);
+    "Hectohertz", "frequency", "", "hHz", 3, -10000., 10000., Self::GetDisplayCoefficient("hecto"), 0.);
   this->AddUnitNodeToScene(scene,
-    "KiloHerz", "frequency", "", "kHz", 3, -10000., 10000., Self::GetDisplayCoefficient("kilo"), 0.);
+    "Kilohertz", "frequency", "", "kHz", 3, -10000., 10000., Self::GetDisplayCoefficient("kilo"), 0.);
   this->AddUnitNodeToScene(scene,
-    "MegaHerz", "frequency", "", "MHz", 3, -10000., 10000., Self::GetDisplayCoefficient("mega"), 0.);
+    "Megahertz", "frequency", "", "MHz", 3, -10000., 10000., Self::GetDisplayCoefficient("mega"), 0.);
   this->AddUnitNodeToScene(scene,
-    "GigaHerz", "frequency", "", "GHz", 3, -10000., 10000., Self::GetDisplayCoefficient("giga"), 0.);
+    "Gigahertz", "frequency", "", "GHz", 3, -10000., 10000., Self::GetDisplayCoefficient("giga"), 0.);
   this->AddUnitNodeToScene(scene,
-    "TeraHerz", "frequency", "", "THz", 3, -10000., 10000., Self::GetDisplayCoefficient("tera"), 0.);
+    "Terahertz", "frequency", "", "THz", 3, -10000., 10000., Self::GetDisplayCoefficient("tera"), 0.);
 
   this->AddUnitNodeToScene(scene,
     "Meter per second", "velocity", "", "m/s", 3, -10000., 10000., Self::GetDisplayCoefficient(""), 0.);
