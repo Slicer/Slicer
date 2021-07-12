@@ -27,6 +27,7 @@ It is highly recommended to crop the input images to cover approximately the sam
 
 Recommended modules:
 - [General registration (Elastix) (in SlicerElastix extension)](https://github.com/lassoan/SlicerElastix#slicerelastix): Its default registration presets work without the need for any parameter adjustments.
+- [General Registration (ANTs) (in SlicerANTS extension)](https://github.com/simonoxen/SlicerANTs): Similarly to Elastix, default parameter set should work well for most image registration tasks. The module also exposes many registration parameters that users can tweak.
 - [General registration (BRAINS)](https://www.slicer.org/w/index.php/Documentation/Nightly/Modules/BRAINSFit): recommended for brain MRIs but with parameter tuning it can work on any other imaging modalities and anatomical regions.
 - [Sequence registration](https://github.com/moselhy/SlicerSequenceRegistration#volume-sequence-registration-for-3d-slicer): Automatic 4D image (3D image time sequence) registration using Elastix. Can be used for tracking position and shape changes of structures in time, or for motion compensation (register all time points to a selected time point).
 
