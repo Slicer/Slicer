@@ -1,8 +1,12 @@
 # Modules
 
-Module documentation is still a work in progress.
-You can find more module documentation in the
-[Slicer wiki](https://www.slicer.org/wiki/Documentation/Nightly).
+:::{note}
+
+This documentation is still a work in progress. Additional module documentation is available on the [Slicer wiki](https://www.slicer.org/wiki/Documentation/Nightly).
+
+:::
+
+**Main modules**
 
 ```{toctree}
 :maxdepth: 1
@@ -13,7 +17,6 @@ models.md
 sceneviews.md
 segmentations.md
 segmenteditor.md
-segmentstatistics.md
 transforms.md
 viewcontrollers.md
 volumerendering.md
@@ -28,6 +31,7 @@ colors.md
 sampledata.md
 tables.md
 terminologies.md
+texts.md
 dataprobe.md
 ```
 %comparevolumes.md
@@ -48,6 +52,8 @@ reformat.md
 ## Segmentation
 ```{toctree}
 :maxdepth: 1
+segmentations.md
+segmenteditor.md
 simpleregiongrowingsegmentation.md
 brainsroiauto.md
 robuststatisticssegmenter.md
@@ -56,7 +62,9 @@ robuststatisticssegmenter.md
 ## Quantification
 ```{toctree}
 :maxdepth: 1
+markups.md
 petstandarduptakevaluecomputation.md
+segmentstatistics.md
 ```
 
 ## Sequences
@@ -119,6 +127,7 @@ grayscalemodelmaker.md
 labelmapsmoothing.md
 mergemodels.md
 modelmaker.md
+models.md
 modeltolabelmap.md
 probevolumewithmodel.md
 surfacetoolbox.md
