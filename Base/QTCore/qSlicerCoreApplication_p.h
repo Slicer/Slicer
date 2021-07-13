@@ -126,6 +126,17 @@ public:
   /// Parse arguments
   void parseArguments();
 
+  /// \brief Returns list of translation files contained in given \a dir for the input \a settingsLanguage
+  ///
+  /// If \a settingsLanguage is empty returns an empty list (application default language)
+  /// If \a settingsLanguage is not empty try to find the translation files from specific extension to generic extension
+  /// For example when \a settingsLanguage = "en_US", translation files ending with "en_US.qm" will be searched first
+  /// if no files are found then files ending with "en.qm" will be searched.
+  static QStringList findTranslationFiles(const QString& dir, const QString& settingsLanguage);
+
+  /// \brief Returns list of translation files contained in given \a dir for the input \a languageExtension
+  static QStringList findTranslationFilesWithLanguageExtension(const QString& dir, const QString& languageExtension);
+
 public:
   /// MRMLScene and AppLogic pointers
   vtkSmartPointer<vtkMRMLScene>               MRMLScene;
