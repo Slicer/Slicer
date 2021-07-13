@@ -30,9 +30,6 @@
 // MRML includes
 #include "vtkMRMLStorageNode.h"
 
-// Widgets includes
-#include "vtkSlicerMarkupsWidget.h"
-
 // STD includes
 #include <cstdlib>
 #include <string>
@@ -51,6 +48,7 @@ class vtkMRMLTableNode;
 class vtkPlane;
 class vtkPoints;
 class vtkPolyData;
+class vtkSlicerMarkupsWidget;
 
 /// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_LOGIC_EXPORT vtkSlicerMarkupsLogic :
@@ -306,14 +304,6 @@ public:
 
 protected:
 
-  // This keeps the elements that can be registered to a node type
-  struct MarkupEntry
-  {
-    vtkSmartPointer<vtkSlicerMarkupsWidget> MarkupsWidget;
-    vtkSmartPointer<vtkMRMLMarkupsNode> MarkupsNode;
-    bool CreatePushButton;
-  };
-
   vtkSlicerMarkupsLogic();
   ~vtkSlicerMarkupsLogic() override;
 
@@ -328,21 +318,15 @@ protected:
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
-  std::map<std::string, std::string> MarkupsTypeStorageNodes;
-  vtkMRMLSelectionNode* SelectionNode{nullptr};
-
-  /// Keeps track of the registered nodes and corresponding widgets
-  std::map<std::string, vtkSlicerMarkupsLogic::MarkupEntry> MarkupTypeToMarkupEntry;
-
-  /// Keeps track of the order in which the markups were registered
-  std::list<std::string> RegisteredMarkupsOrder;
-
 private:
 
   vtkSlicerMarkupsLogic(const vtkSlicerMarkupsLogic&) = delete;
   void operator=(const vtkSlicerMarkupsLogic&) = delete;
 
   bool AutoCreateDisplayNodes;
+
+  class vtkInternal;
+  vtkInternal* Internal;
 };
 
 #endif

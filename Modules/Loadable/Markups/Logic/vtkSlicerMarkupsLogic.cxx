@@ -17,6 +17,7 @@
 
 // Markups includes
 #include "vtkSlicerMarkupsLogic.h"
+#include "vtkSlicerMarkupsWidget.h"
 
 // Markups MRML includes
 #include "vtkMRMLInteractionEventData.h"
@@ -68,6 +69,29 @@
 #include <list>
 
 //----------------------------------------------------------------------------
+class vtkSlicerMarkupsLogic::vtkInternal
+{
+public:
+
+  // This keeps the elements that can be registered to a node type
+  struct MarkupEntry
+    {
+    vtkSmartPointer<vtkSlicerMarkupsWidget> MarkupsWidget;
+    vtkSmartPointer<vtkMRMLMarkupsNode> MarkupsNode;
+    bool CreatePushButton;
+    };
+
+  std::map<std::string, std::string> MarkupsTypeStorageNodes;
+  vtkMRMLSelectionNode* SelectionNode{ nullptr };
+
+  /// Keeps track of the registered nodes and corresponding widgets
+  std::map<std::string, MarkupEntry> MarkupTypeToMarkupEntry;
+
+  /// Keeps track of the order in which the markups were registered
+  std::list<std::string> RegisteredMarkupsOrder;
+};
+
+//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerMarkupsLogic);
 
 //----------------------------------------------------------------------------
@@ -105,6 +129,7 @@ public:
 //----------------------------------------------------------------------------
 vtkSlicerMarkupsLogic::vtkSlicerMarkupsLogic()
 {
+  this->Internal = new vtkInternal();
   this->AutoCreateDisplayNodes = true;
   this->RegisterJsonStorageNodeForMarkupsType("ROI", "vtkMRMLMarkupsROIJsonStorageNode");
   this->RegisterJsonStorageNodeForMarkupsType("Plane", "vtkMRMLMarkupsPlaneJsonStorageNode");
@@ -114,7 +139,8 @@ vtkSlicerMarkupsLogic::vtkSlicerMarkupsLogic()
 vtkSlicerMarkupsLogic::~vtkSlicerMarkupsLogic()
 {
   this->SetAndObserveSelectionNode(nullptr);
-  this->MarkupsTypeStorageNodes.clear();
+  this->Internal->MarkupsTypeStorageNodes.clear();
+  delete this->Internal;
 }
 
 //----------------------------------------------------------------------------
@@ -252,7 +278,7 @@ void vtkSlicerMarkupsLogic::SetAndObserveSelectionNode(vtkMRMLSelectionNode* sel
 {
   vtkNew<vtkIntArray> selectionEvents;
   selectionEvents->InsertNextValue(vtkMRMLSelectionNode::UnitModifiedEvent);
-  vtkSetAndObserveMRMLNodeEventsMacro(this->SelectionNode, selectionNode, selectionEvents.GetPointer());
+  vtkSetAndObserveMRMLNodeEventsMacro(this->Internal->SelectionNode, selectionNode, selectionEvents.GetPointer());
 }
 
 //-----------------------------------------------------------------------------
@@ -1600,14 +1626,14 @@ bool vtkSlicerMarkupsLogic::GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPl
 //---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::RegisterJsonStorageNodeForMarkupsType(std::string markupsType, std::string storageNodeClassName)
 {
-  this->MarkupsTypeStorageNodes[markupsType] = storageNodeClassName;
+  this->Internal->MarkupsTypeStorageNodes[markupsType] = storageNodeClassName;
 }
 
 //---------------------------------------------------------------------------
 std::string vtkSlicerMarkupsLogic::GetJsonStorageNodeClassNameForMarkupsType(std::string markupsType)
 {
-  auto markupsStorageNodeIt = this->MarkupsTypeStorageNodes.find(markupsType);
-  if (markupsStorageNodeIt == this->MarkupsTypeStorageNodes.end())
+  auto markupsStorageNodeIt = this->Internal->MarkupsTypeStorageNodes.find(markupsType);
+  if (markupsStorageNodeIt == this->Internal->MarkupsTypeStorageNodes.end())
     {
     return "vtkMRMLMarkupsJsonStorageNode";
     }
@@ -1646,14 +1672,14 @@ void vtkSlicerMarkupsLogic::RegisterMarkupsNode(vtkMRMLMarkupsNode* markupsNode,
     return;
     }
 
-  vtkSlicerMarkupsLogic::MarkupEntry markup;
+  vtkSlicerMarkupsLogic::vtkInternal::MarkupEntry markup;
   markup.MarkupsWidget = markupsWidget;
   markup.MarkupsNode = markupsNode;
   markup.CreatePushButton = createPushButton;
 
   // Register the markup internally
-  this->MarkupTypeToMarkupEntry[markupsNode->GetMarkupType()] = markup;
-  this->RegisteredMarkupsOrder.push_back(markupsNode->GetMarkupType());
+  this->Internal->MarkupTypeToMarkupEntry[markupsNode->GetMarkupType()] = markup;
+  this->Internal->RegisteredMarkupsOrder.push_back(markupsNode->GetMarkupType());
 
   this->InvokeEvent(vtkSlicerMarkupsLogic::MarkupRegistered);
 }
@@ -1676,8 +1702,8 @@ void vtkSlicerMarkupsLogic::UnregisterMarkupsNode(vtkMRMLMarkupsNode* markupsNod
     }
 
   // Remove the markup
-  this->MarkupTypeToMarkupEntry.erase(markupsNode->GetMarkupType());
-  this->RegisteredMarkupsOrder.remove(markupsNode->GetMarkupType());
+  this->Internal->MarkupTypeToMarkupEntry.erase(markupsNode->GetMarkupType());
+  this->Internal->RegisteredMarkupsOrder.remove(markupsNode->GetMarkupType());
 
   this->InvokeEvent(vtkSlicerMarkupsLogic::MarkupUnregistered);
 }
@@ -1691,8 +1717,8 @@ vtkSlicerMarkupsWidget* vtkSlicerMarkupsLogic::GetWidgetByMarkupsType(const char
     return nullptr;
     }
 
-  const auto& markupIt = this->MarkupTypeToMarkupEntry.find(markupName);
-  if (markupIt == this->MarkupTypeToMarkupEntry.end())
+  const auto& markupIt = this->Internal->MarkupTypeToMarkupEntry.find(markupName);
+  if (markupIt == this->Internal->MarkupTypeToMarkupEntry.end())
     {
     return nullptr;
     }
@@ -1709,8 +1735,8 @@ vtkMRMLMarkupsNode* vtkSlicerMarkupsLogic::GetNodeByMarkupsType(const char* mark
     return nullptr;
     }
 
-  const auto& markupIt = this->MarkupTypeToMarkupEntry.find(markupName);
-  if (markupIt == this->MarkupTypeToMarkupEntry.end())
+  const auto& markupIt = this->Internal->MarkupTypeToMarkupEntry.find(markupName);
+  if (markupIt == this->Internal->MarkupTypeToMarkupEntry.end())
     {
     return nullptr;
     }
@@ -1727,8 +1753,8 @@ bool vtkSlicerMarkupsLogic::GetCreateMarkupsPushButton(const char* markupName) c
     return false;
     }
 
-  const auto& markupIt = this->MarkupTypeToMarkupEntry.find(markupName);
-  if (markupIt == this->MarkupTypeToMarkupEntry.end())
+  const auto& markupIt = this->Internal->MarkupTypeToMarkupEntry.find(markupName);
+  if (markupIt == this->Internal->MarkupTypeToMarkupEntry.end())
     {
     return false;
     }
@@ -1739,7 +1765,7 @@ bool vtkSlicerMarkupsLogic::GetCreateMarkupsPushButton(const char* markupName) c
 //----------------------------------------------------------------------------
 const std::list<std::string>& vtkSlicerMarkupsLogic::GetRegisteredMarkupsTypes() const
 {
-  return this->RegisteredMarkupsOrder;
+  return this->Internal->RegisteredMarkupsOrder;
 }
 
 //----------------------------------------------------------------------------
