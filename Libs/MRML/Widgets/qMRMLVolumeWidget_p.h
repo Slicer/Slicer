@@ -55,16 +55,10 @@ public:
 
   virtual void init();
 
-  /// Update the range and single step of the input GUI elements such as
-  /// sliders and spinboxes.
-  void updateRangeForVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode*);
   /// Block all the signals emitted by the widgets that are impacted by the
   /// range.
   /// To be reimplemented in subclasses
   virtual bool blockSignals(bool block);
-  /// Compute the scalar range of the volume display node.
-  /// It can then be used to set the range of the sliders, spinboxes, etc.
-  void scalarRange(vtkMRMLScalarVolumeDisplayNode* displayNode, double range[2]);
   /// Compute the ideal singleStep based on a range.
   /// Set the single step to the widgets such as sliders, spinboxes...
   void updateSingleStep(double min, double max);
@@ -73,7 +67,7 @@ public slots:
   virtual void setRange(double min, double max);
   virtual void setDecimals(int decimals);
   virtual void setSingleStep(double singleStep);
-  virtual void updateRange();
+  virtual void updateRangeFromSpinBox();
 
 protected:
   vtkWeakPointer<vtkMRMLScalarVolumeNode> VolumeNode;

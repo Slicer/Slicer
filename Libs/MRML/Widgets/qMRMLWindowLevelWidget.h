@@ -103,7 +103,7 @@ protected:
   /// Update the widget from volume display node properties.
   void updateWidgetFromMRMLDisplayNode() override;
 
-  /// Update the widget from volume properties.
+  /// Special initial updates that are done only when switching between volumes.
   void updateWidgetFromMRMLVolumeNode() override;
 
 private:
