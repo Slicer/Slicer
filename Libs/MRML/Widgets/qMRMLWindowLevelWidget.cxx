@@ -406,7 +406,7 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLDisplayNode()
   d->WindowSpinBox->setValue(window);
   d->LevelSpinBox->setValue(level);
   d->WindowLevelRangeSlider->setValues(windowLevelMin, windowLevelMax);
-  d->MinSpinBox->setValue(windowLevelMax);
+  d->MinSpinBox->setValue(windowLevelMin);
   d->MaxSpinBox->setValue(windowLevelMax);
 
   d->blockSignals(blocked);
