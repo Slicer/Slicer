@@ -114,18 +114,19 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     if (url.authority().lower() != "viewer"):
       logging.debug("DICOM module ignores non-viewer URL: "+urlString)
       return
-    logging.info("DICOM module received URL: "+urlString)
     query = qt.QUrlQuery(url)
     queryMap = {}
     for key, value in query.queryItems(qt.QUrl.FullyDecoded):
       queryMap[key] = qt.QUrl.fromPercentEncoding(value)
 
     if not "dicomweb_endpoint" in queryMap:
-      logging.error("Missing dicomweb_endpoint")
+      logging.debug("DICOM module ignores URL without dicomweb_endpoint query parameter: "+urlString)
       return
     if not "studyUID" in queryMap:
-      logging.error("Missing studyUID")
+      logging.debug("DICOM module ignores URL without studyUID query parameter: "+urlString)
       return
+
+    logging.info("DICOM module received URL: "+urlString)
 
     accessToken = None
     if "access_token" in queryMap:
