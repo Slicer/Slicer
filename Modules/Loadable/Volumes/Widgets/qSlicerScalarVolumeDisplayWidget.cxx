@@ -179,12 +179,12 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode
 
   vtkMRMLScalarVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
-  d->MRMLWindowLevelWidget->setMRMLVolumeNode(volumeNode);
-  d->MRMLVolumeThresholdWidget->setMRMLVolumeNode(volumeNode);
-
   qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() :nullptr,
                 vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
+
+  d->MRMLWindowLevelWidget->setMRMLVolumeNode(volumeNode);
+  d->MRMLVolumeThresholdWidget->setMRMLVolumeNode(volumeNode);
 
   this->setEnabled(volumeNode != nullptr);
 

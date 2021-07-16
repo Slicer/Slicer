@@ -344,26 +344,39 @@ void qMRMLWindowLevelWidget::setMaximumValue(double max)
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::updateWidgetFromMRMLVolumeNode()
 {
-  Q_D(qMRMLWindowLevelWidget);
+  Q_D(qMRMLVolumeWidget);
   this->Superclass::updateWidgetFromMRMLVolumeNode();
-  double range[2];
-  range[0] = d->DisplayScalarRange[0];
-  range[1] = d->DisplayScalarRange[1];
-  double interval = range[1] - range[0];
-  Q_ASSERT(interval >= 0.);
-  if (interval < 10.)
+
+  vtkMRMLScalarVolumeDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
     {
-    //give us some space
-    range[0] = range[0] - interval*0.1;
-    range[1] = range[1] + interval*0.1;
+    return;
+    }
+
+  double window = displayNode->GetWindow();
+  double windowLevelMin = displayNode->GetWindowLevelMin();
+  double windowLevelMax = displayNode->GetWindowLevelMax();
+
+  // We block here to prevent the widgets to call setWindowLevel which could
+  // change the AutoLevel from Auto into Manual.
+  bool blocked = d->blockSignals(true);
+
+  double sliderRange[2] = { windowLevelMin, windowLevelMax };
+  if (window < 10.)
+    {
+    // unusually small range, make the slider range a bit larger than the current values
+    sliderRange[0] = sliderRange[0] - window * 0.1;
+    sliderRange[1] = sliderRange[1] + window * 0.1;
     }
   else
     {
-    //give us some space
-    range[0] = qMin(-600., range[0] - interval*0.1);
-    range[1] = qMax(600., range[1] + interval*0.1);
+    // usual range for CT, MRI, etc. make the slider range minimum +/- 600
+    sliderRange[0] = qMin(-600., sliderRange[0] - window * 0.1);
+    sliderRange[1] = qMax(600., sliderRange[1] + window * 0.1);
     }
-  d->setRange(range[0], range[1]);
+  d->setRange(sliderRange[0], sliderRange[1]);
+
+  d->blockSignals(blocked);
 }
 
 // --------------------------------------------------------------------------
@@ -378,23 +391,23 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLDisplayNode()
 
   double window = d->VolumeDisplayNode->GetWindow();
   double level = d->VolumeDisplayNode->GetLevel();
-  double min = d->VolumeDisplayNode->GetWindowLevelMin();
-  double max = d->VolumeDisplayNode->GetWindowLevelMax();
+  double windowLevelMin = d->VolumeDisplayNode->GetWindowLevelMin();
+  double windowLevelMax = d->VolumeDisplayNode->GetWindowLevelMax();
 
   // We block here to prevent the widgets to call setWindowLevel which could
   // change the AutoLevel from Auto into Manual.
   bool blocked = d->blockSignals(true);
 
   // WindowLevelMinMax might have been set to values outside the current range
-  const double minRangeValue = std::min(min, d->MinRangeSpinBox->value());
-  const double maxRangeValue = std::max(max, d->MaxRangeSpinBox->value());
+  const double minRangeValue = std::min(windowLevelMin, d->MinRangeSpinBox->value());
+  const double maxRangeValue = std::max(windowLevelMax, d->MaxRangeSpinBox->value());
   d->setRange(minRangeValue, maxRangeValue);
 
   d->WindowSpinBox->setValue(window);
   d->LevelSpinBox->setValue(level);
-  d->WindowLevelRangeSlider->setValues(min, max);
-  d->MinSpinBox->setValue(min);
-  d->MaxSpinBox->setValue(max);
+  d->WindowLevelRangeSlider->setValues(windowLevelMin, windowLevelMax);
+  d->MinSpinBox->setValue(windowLevelMin);
+  d->MaxSpinBox->setValue(windowLevelMax);
 
   d->blockSignals(blocked);
 

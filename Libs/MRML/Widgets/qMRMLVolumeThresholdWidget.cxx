@@ -190,7 +190,7 @@ void qMRMLVolumeThresholdWidget::setThreshold(double lowerThreshold, double uppe
     double oldLowerThreshold = d->VolumeDisplayNode->GetLowerThreshold();
     double oldUpperThreshold  = d->VolumeDisplayNode->GetUpperThreshold();
 
-    int disabledModify = d->VolumeDisplayNode->StartModify();
+    int wasModify = d->VolumeDisplayNode->StartModify();
     d->VolumeDisplayNode->SetLowerThreshold(lowerThreshold);
     d->VolumeDisplayNode->SetUpperThreshold(upperThreshold);
     bool changed =
@@ -201,7 +201,7 @@ void qMRMLVolumeThresholdWidget::setThreshold(double lowerThreshold, double uppe
       this->setAutoThreshold(qMRMLVolumeThresholdWidget::Manual);
       emit this->thresholdValuesChanged(lowerThreshold, upperThreshold);
       }
-    d->VolumeDisplayNode->EndModify(disabledModify);
+    d->VolumeDisplayNode->EndModify(wasModify);
     }
 }
 
@@ -231,20 +231,14 @@ void qMRMLVolumeThresholdWidget::setUpperThreshold(double upperThreshold)
 double qMRMLVolumeThresholdWidget::lowerThreshold() const
 {
   Q_D(const qMRMLVolumeThresholdWidget);
-
-  double min = d->VolumeThresholdRangeWidget->minimumValue();
-
-  return min;
+  return d->VolumeThresholdRangeWidget->minimumValue();
 }
 
 // --------------------------------------------------------------------------
 double qMRMLVolumeThresholdWidget::upperThreshold() const
 {
   Q_D(const qMRMLVolumeThresholdWidget);
-
-  double max = d->VolumeThresholdRangeWidget->maximumValue();
-
-  return max;
+  return d->VolumeThresholdRangeWidget->maximumValue();
 }
 
 // --------------------------------------------------------------------------
@@ -262,35 +256,10 @@ void qMRMLVolumeThresholdWidget::setMaximum(double max)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLVolumeNode()
-{
-  Q_D(qMRMLVolumeThresholdWidget);
-  this->Superclass::updateWidgetFromMRMLVolumeNode();
-
-  if (!d->VolumeDisplayNode)
-    {
-    return;
-    }
-
-  d->scalarRange(d->VolumeDisplayNode, d->DisplayScalarRange);
-  double minRangeValue = d->DisplayScalarRange[0];
-  double maxRangeValue = d->DisplayScalarRange[1];
-
-  // We always need to set the slider values and range at the same time
-  // to make sure that they are consistent. This is implemented in one place,
-  // in updateWidgetFromMRMLDisplayNode().
-  this->updateWidgetFromMRMLDisplayNode();
-}
-
-// --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLDisplayNode()
 {
   Q_D(qMRMLVolumeThresholdWidget);
-
-  // Don't want to call qMRMLVolumeWidget::updateWidgetFromMRMLDisplayNode which would call updateRangeForVolumeDisplayNode
-
-  this->setEnabled(d->VolumeDisplayNode != nullptr &&
-                   d->VolumeNode != nullptr);
+  Superclass::updateWidgetFromMRMLDisplayNode();
 
   if (!d->VolumeDisplayNode)
     {

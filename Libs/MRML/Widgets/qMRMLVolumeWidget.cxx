@@ -82,7 +82,7 @@ void qMRMLVolumeWidgetPrivate::init()
   this->MinRangeSpinBox->setToolTip(
         qMRMLVolumeWidget::tr("Set the range boundaries to control large numbers or allow fine tuning"));
   connect(this->MinRangeSpinBox, SIGNAL(editingFinished()),
-          this, SLOT(updateRange()));
+          this, SLOT(updateRangeFromSpinBox()));
   rangeLayout->addWidget(this->MinRangeSpinBox);
 
   this->MaxRangeSpinBox = new qMRMLSpinBox(rangeWidget);
@@ -92,7 +92,7 @@ void qMRMLVolumeWidgetPrivate::init()
   this->MaxRangeSpinBox->setToolTip(
         qMRMLVolumeWidget::tr("Set the range boundaries to control large numbers or allow fine tuning"));
   connect(this->MaxRangeSpinBox, SIGNAL(editingFinished()),
-          this, SLOT(updateRange()));
+          this, SLOT(updateRangeFromSpinBox()));
   rangeLayout->addWidget(this->MaxRangeSpinBox);
 
   QWidgetAction* rangeAction = new QWidgetAction(this);
@@ -103,45 +103,10 @@ void qMRMLVolumeWidgetPrivate::init()
 
 }
 
-
-//------------------------------------------------------------------------------
-void qMRMLVolumeWidgetPrivate
-::updateRangeForVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* dNode)
-{
-  double range[2];
-  this->scalarRange(dNode, range);
-  this->DisplayScalarRange[0] = range[0];
-  this->DisplayScalarRange[1] = range[1];
-}
-
 // --------------------------------------------------------------------------
 bool qMRMLVolumeWidgetPrivate::blockSignals(bool block)
 {
   return this->MinRangeSpinBox->blockSignals(block) && this->MaxRangeSpinBox->blockSignals(block);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLVolumeWidgetPrivate
-::scalarRange(vtkMRMLScalarVolumeDisplayNode* dNode, double range[2])
-{
-  // vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange() can be a bit
-  // slow if there is no input as it searches the scene for the associated
-  // volume node.
-  // Here we already know the volumenode so we can manually use it to
-  // retrieve the scalar range.
-  if (dNode && dNode->GetInputImageData())
-    {
-    dNode->GetDisplayScalarRange(range);
-    }
-  else if (this->VolumeNode->GetImageData())
-    {
-    this->VolumeNode->GetImageData()->GetScalarRange(range);
-    }
-  else
-    {
-    range[0] = 0.;
-    range[1] = 0.;
-    }
 }
 
 // --------------------------------------------------------------------------
@@ -192,7 +157,7 @@ void qMRMLVolumeWidgetPrivate::setRange(double min, double max)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumeWidgetPrivate::updateRange()
+void qMRMLVolumeWidgetPrivate::updateRangeFromSpinBox()
 {
   this->setRange(this->MinRangeSpinBox->value(),
                  this->MaxRangeSpinBox->value());
@@ -277,32 +242,30 @@ vtkMRMLScalarVolumeDisplayNode* qMRMLVolumeWidget::mrmlDisplayNode()const
 void qMRMLVolumeWidget::updateWidgetFromMRMLVolumeNode()
 {
   Q_D(qMRMLVolumeWidget);
-  this->setEnabled(d->VolumeDisplayNode != nullptr &&
-                   d->VolumeNode != nullptr);
 
+  // Make sure the display node reference is up-to-date
   vtkMRMLScalarVolumeDisplayNode* newVolumeDisplayNode = d->VolumeNode ?
-    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-      d->VolumeNode->GetVolumeDisplayNode()) : nullptr;
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(d->VolumeNode->GetVolumeDisplayNode()) : nullptr;
+  this->setMRMLVolumeDisplayNode(newVolumeDisplayNode);
 
-  this->setMRMLVolumeDisplayNode( newVolumeDisplayNode );
+  // We always need to set the slider values and range at the same time
+  // to make sure that they are consistent. This is implemented in one place,
+  // in updateWidgetFromMRMLDisplayNode().
+  this->updateWidgetFromMRMLDisplayNode();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLVolumeWidget::updateWidgetFromMRMLDisplayNode()
 {
   Q_D(qMRMLVolumeWidget);
-  this->setEnabled(d->VolumeDisplayNode != nullptr &&
-                   d->VolumeNode != nullptr);
-  if (!d->VolumeDisplayNode)
+  this->setEnabled(d->VolumeDisplayNode != nullptr && d->VolumeNode != nullptr);
+  if (d->VolumeDisplayNode && d->VolumeDisplayNode->GetInputImageData())
     {
-    return;
+    d->VolumeDisplayNode->GetDisplayScalarRange(d->DisplayScalarRange);
     }
-
-  double range[2];
-  d->scalarRange(d->VolumeDisplayNode, range);
-  if (range[0] != d->DisplayScalarRange[0] ||
-      range[1] != d->DisplayScalarRange[1])
+  else
     {
-    d->updateRangeForVolumeDisplayNode(d->VolumeDisplayNode);
+    d->DisplayScalarRange[0] = 0.;
+    d->DisplayScalarRange[1] = 0.;
     }
 }
