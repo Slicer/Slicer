@@ -352,10 +352,10 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
   if (node->IsA("vtkMRMLMarkupsNode"))
   {
     this->Helper->AddMarkupsNode(vtkMRMLMarkupsNode::SafeDownCast(node));
-  }
 
-  // and render again
-  this->RequestRender();
+    // and render again
+    this->RequestRender();
+  }
 }
 
 //---------------------------------------------------------------------------

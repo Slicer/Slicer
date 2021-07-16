@@ -298,6 +298,11 @@ bool vtkMRMLFolderDisplayNode::GetHierarchyVisibility(vtkMRMLDisplayableNode* no
   vtkIdType parentItemID = nodeShId;
   while ( (parentItemID = shNode->GetItemParent(parentItemID)) != sceneItemID ) // The double parentheses avoids a Linux build warning
     {
+    if (!parentItemID)
+      {
+      vtkErrorWithObjectMacro(node, "GetHierarchyVisibility: Invalid parent of subject hierarchy item");
+      return false;
+      }
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
     if (displayNode && displayNode->GetVisibility() == 0)
       {
