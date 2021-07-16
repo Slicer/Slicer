@@ -9,7 +9,7 @@ DICOM is a widely used and sophisticated set of standards for digital radiology.
 Data can be loaded from DICOM files into the scene in two steps:
 
 1. Import: add files into the application's DICOM database, by switching to DICOM module and drag-and-dropping files to the application window
-2. Load: get data objects into the scene, by double-clicking on items in the DICOM browser. The DICOM browser is accessible from the toolbar using the DICOM button ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerLoadDICOM.png). More information about DICOM can be found on the [Slicer wiki](https://www.slicer.org/wiki/Documentation/Nightly/Modules/DICOM).
+2. Load: get data objects into the scene, by double-clicking on items in the DICOM browser. The DICOM browser is accessible from the toolbar using the DICOM button ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerLoadDICOM.png).
 
 Data in the scene can be saved to DICOM files in two steps:
 
