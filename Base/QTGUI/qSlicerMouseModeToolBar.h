@@ -39,61 +39,61 @@ class vtkSlicerApplicationLogic;
 /// \note The toolbar expects qSlicerCoreApplication::mrmlApplicationLogic() to return a valid object
 /// qSlicerMouseModeToolBar observes the singletons selection node and
 /// interaction node to control its state.
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerMouseModeToolBar: public QToolBar
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerMouseModeToolBar : public QToolBar
 {
-  Q_OBJECT
-  /// "vtkMRMLAnnotationFiducialNode" by default.
-  Q_PROPERTY(QString defaultPlaceClassName READ defaultPlaceClassName WRITE setDefaultPlaceClassName)
+	Q_OBJECT
+		/// "vtkMRMLAnnotationFiducialNode" by default.
+		Q_PROPERTY(QString defaultPlaceClassName READ defaultPlaceClassName WRITE setDefaultPlaceClassName)
 public:
-  typedef QToolBar Superclass;
+	typedef QToolBar Superclass;
 
-  /// Constructor
-  /// Title is the name of the toolbar (can appear using right click on the toolbar area)
-  qSlicerMouseModeToolBar(const QString& title, QWidget* parent = nullptr);
-  qSlicerMouseModeToolBar(QWidget* parent = nullptr);
-  ~qSlicerMouseModeToolBar() override;
+	/// Constructor
+	/// Title is the name of the toolbar (can appear using right click on the toolbar area)
+	qSlicerMouseModeToolBar(const QString& title, QWidget* parent = nullptr);
+	qSlicerMouseModeToolBar(QWidget* parent = nullptr);
+	~qSlicerMouseModeToolBar() override;
 
-  QString defaultPlaceClassName()const;
-  void setDefaultPlaceClassName(const QString& className);
+	QString defaultPlaceClassName()const;
+	void setDefaultPlaceClassName(const QString& className);
 
-  /// Get interaction node.
-  /// \sa setInteractionNode()
-  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
+	/// Get interaction node.
+	/// \sa setInteractionNode()
+	Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
 
 public slots:
 
-  /// Set the application logic. It is used to retrieve the selection and
-  /// interaction nodes.
-  void setApplicationLogic(vtkSlicerApplicationLogic* logic);
+	/// Set the application logic. It is used to retrieve the selection and
+	/// interaction nodes.
+	void setApplicationLogic(vtkSlicerApplicationLogic* logic);
 
-  /// Observe the mrml scene to prevent updates in batch processing modes.
-  void setMRMLScene(vtkMRMLScene* newScene);
+	/// Observe the mrml scene to prevent updates in batch processing modes.
+	void setMRMLScene(vtkMRMLScene* newScene);
 
-  void switchToViewTransformMode();
+	void switchToViewTransformMode();
 
-  void changeCursorTo(QCursor cursor);
+	void changeCursorTo(QCursor cursor);
 
-  /// Switch to placing items of annotationID type
-  void switchPlaceMode();
+	/// Switch to placing items of annotationID type
+	void switchPlaceMode();
 
-  /// Update the interaction node's persistent place mode from the UI
-  void setPersistence(bool persistent);
+	/// Update the interaction node's persistent place mode from the UI
+	void setPersistence(bool persistent);
 
-  /// Set interaction node used to update the toolbar.
-  /// \sa interactionNode()
-  void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
+	/// Set interaction node used to update the toolbar.
+	/// \sa interactionNode()
+	void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
 
-  void interactionModeActionTriggered(bool);
+	void interactionModeActionTriggered(bool);
 
-  void setAdjustWindowLevelMode(int);
+	void setAdjustWindowLevelMode(int);
 
 protected:
-  QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
+	QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
 
-  QAction* actionFromPlaceNodeClassName(QString placeNodeClassName, QMenu *menu);
+	QAction* actionFromPlaceNodeClassName(QString placeNodeClassName, QMenu* menu);
 private:
-  Q_DECLARE_PRIVATE(qSlicerMouseModeToolBar);
-  Q_DISABLE_COPY(qSlicerMouseModeToolBar);
+	Q_DECLARE_PRIVATE(qSlicerMouseModeToolBar);
+	Q_DISABLE_COPY(qSlicerMouseModeToolBar);
 };
 
 #endif

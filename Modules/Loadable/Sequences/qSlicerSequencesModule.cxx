@@ -379,7 +379,7 @@ bool qSlicerSequencesModule::isToolBarVisible()
 void qSlicerSequencesModule::setToolBarActiveBrowserNode(vtkMRMLSequenceBrowserNode* browserNode)
 {
   Q_D(qSlicerSequencesModule);
-  return d->ToolBar->setActiveBrowserNode(browserNode);
+  d->ToolBar->setActiveBrowserNode(browserNode);
 }
 
 //-----------------------------------------------------------------------------

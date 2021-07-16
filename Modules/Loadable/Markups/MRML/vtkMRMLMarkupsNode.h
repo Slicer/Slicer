@@ -102,6 +102,7 @@ public:
       Locked = false;
       Visibility = true;
       PositionStatus = PositionUndefined;
+      AutoCreated = false;
       }
 
     // Positions and orientation in local coordinates.
@@ -121,6 +122,7 @@ public:
     bool Locked;
     bool Visibility;
     int PositionStatus;
+    bool AutoCreated;
     };
 
   typedef std::vector<ControlPoint*> ControlPointsListType;
@@ -245,17 +247,20 @@ public:
     PointStartInteractionEvent,
     PointEndInteractionEvent,
     CenterPointModifiedEvent,
+		PointNumberLockModifiedEvent,
   };
 
   /// Placement status of a control point.
   /// - Undefined: position is undefined (coordinate values must not be used).
-  /// - Preview: point is being placed, position is tentative.
+  /// - Preview: new point is being placed, position is tentative.
   /// - Defined: position is specified.
+  /// - Missing: point is undefined and placement should not be attempted
   enum
   {
     PositionUndefined,
     PositionPreview,
     PositionDefined,
+    PositionMissing,
     PositionStatus_Last
   };
 
@@ -264,6 +269,7 @@ public:
 
   /// Clear out the node of all control points
   virtual void RemoveAllControlPoints();
+	virtual void UnsetAllControlPoints();
 
   /// \deprecated Use RemoveAllControlPoints instead.
   void RemoveAllMarkups() { this->RemoveAllControlPoints(); };
@@ -294,6 +300,8 @@ public:
   int GetNumberOfControlPoints();
   /// Return the number of control points that are already placed (not being previewed or undefined).
   int GetNumberOfDefinedControlPoints(bool includePreview=false);
+	/// Return the number of control points that have not been placed (not being previewed or skipped).
+	int GetNumberOfUndefinedControlPoints(bool includePreview = false);
   /// \deprecated Use GetNumberOfControlPoints() instead.
   int GetNumberOfMarkups() { return this->GetNumberOfControlPoints(); };
   /// \deprecated Use GetNumberOfControlPoints() instead.
@@ -350,6 +358,21 @@ public:
 
   /// Set control point status to undefined.
   void UnsetNthControlPointPosition(int pointIndex);
+
+  /// Set control point status to ignored.
+  void SetNthControlPointPositionMissing(int pointIndex);
+
+  /// Set control point status to preview
+  void ResetNthControlPointPosition(int n);
+
+  /// Set control point status to defined and return to the previous position
+  void RestoreNthControlPointPosition(int n);
+
+  /// Get control point auto-created status. Set to true if point was generated automatically
+  void SetNthControlPointAutoCreated(int n, bool flag);
+
+  /// Get control point auto-created status. Returns true if point was generated automatically
+  bool GetNthControlPointAutoCreated(int n);
 
   /// Remove Nth Control Point
   void RemoveNthControlPoint(int pointIndex);
@@ -466,6 +489,9 @@ public:
   /// Get the Nth control point based on it's ID
   ControlPoint* GetNthControlPointByID(const char* controlPointID);
 
+	/// Set the maximum number of control points allowed
+	void SetMaximumNumberOfControlPoints(int pointNumber);
+
   /// Get the Selected flag on the Nth control point,
   /// returns false if control point doesn't exist
   bool GetNthControlPointSelected(int n = 0);
@@ -538,6 +564,13 @@ public:
   /// Name-2
   /// \sa GetMarkupLabelFormat
   void SetMarkupLabelFormat(std::string format);
+
+  // TODO:markups rename to something like FixedNumberOfControlPoints or AddingControlPointsEnabled
+	// Get markup control point number locked status
+	bool GetLockedPointNumber();
+
+	// Set markup control point number locked status
+	void SetLockedPointNumber(bool locked);
 
   /// If the MarkupLabelFormat contains the string %N, return a string
   /// in which that has been replaced with the list name. If the list name is
@@ -706,6 +739,9 @@ protected:
 
   /// Locks all the points and GUI
   int Locked{0};
+
+	// Locks number of control points
+	int LockedPointNumber{0};
 
   std::string MarkupLabelFormat{"%N-%d"};
 

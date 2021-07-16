@@ -658,12 +658,39 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     }
 
   bool addNewControlPoint = false;
+  int pointStatus = vtkMRMLMarkupsNode::PositionUndefined;
+  int activePoint = this->GetActiveControlPoint();
+
   if (controlPointIndex < 0 || controlPointIndex >= markupsNode->GetNumberOfControlPoints())
     {
-    // Determine new control point index. Now we assume that new point is added to the end,
-    // but in the future we may place existing points.
-    controlPointIndex = markupsNode->GetNumberOfControlPoints();
-    addNewControlPoint = true;
+    // Determine new control point index. If active point is not undefined, start with first undefined point
+    if (controlPointIndex>=0 && markupsNode->GetNthControlPointPositionStatus(controlPointIndex)== vtkMRMLMarkupsNode::PositionUndefined)
+      {
+      controlPointIndex = controlPointIndex;
+      }
+    else
+      {
+      int undefinedIndex = -1;
+      int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
+      for (int i = 0; i < numberOfControlPoints; i++)
+        {
+        pointStatus = markupsNode->GetNthControlPointPositionStatus(i);
+        if (pointStatus == vtkMRMLMarkupsNode::PositionUndefined)
+          {
+          undefinedIndex = i;
+          break;
+          }
+        }
+      if (undefinedIndex >= 0)
+        {
+        controlPointIndex = undefinedIndex;
+        }
+      else
+        {
+        controlPointIndex = markupsNode->GetNumberOfControlPoints();
+        addNewControlPoint = true;
+        }
+      }
     }
 
   // Update active component but not yet fire modified event because the control
@@ -721,6 +748,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
       controlPoint->AssociatedNodeID = associatedNodeID;
       }
     controlPoint->PositionStatus = positionStatus;
+    controlPoint->AutoCreated = true;
 
     markupsNode->AddControlPoint(controlPoint);
   }
@@ -729,6 +757,11 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     // Update existing control point
     markupsNode->SetNthControlPointPositionOrientationWorldFromArray(controlPointIndex,
       pointWorld, orientationMatrixWorld, associatedNodeID, positionStatus);
+    if (pointStatus == vtkMRMLMarkupsNode::PositionUndefined)
+      {
+      markupsNode->SetNthControlPointVisibility(controlPointIndex, true);
+      markupsNode->SetNthControlPointAutoCreated(controlPointIndex, false);
+      }
     }
 
   if (activeComponentChanged)

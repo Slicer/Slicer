@@ -33,6 +33,7 @@
 
 class qSlicerMarkupsPlaceWidgetPrivate;
 class vtkMRMLInteractionNode;
+class vtkMRMLSelectionNode;
 class vtkMRMLMarkupsFiducialNode;
 class vtkMRMLMarkupsNode;
 
@@ -72,6 +73,7 @@ public:
   /// Get interaction node.
   /// \sa setInteractionNode()
   Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
+	Q_INVOKABLE vtkMRMLSelectionNode* selectionNode()const;
 
   /// Returns true if the current markups node is the active markups node in the scene.
   bool currentNodeActive() const;
@@ -114,6 +116,7 @@ public slots:
   /// Set interaction node used to update the widget.
   /// \sa interactionNode()
   void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
+	void setSelectionNode(vtkMRMLSelectionNode* selectionNode);
 
   void setDefaultNodeColor(QColor color);
 
@@ -146,6 +149,12 @@ public slots:
   /// \deprecated Use deleteLastPoint instead.
   void deleteAllMarkups();
 
+	/// Unset the position status of the last placed markup point.
+	void unsetLastDefinedPoint();
+
+	/// Unset the position of all points from the markups node.
+	void unsetAllPoints();
+
 protected slots:
 
   /// Update the GUI to reflect the currently selected markups node.
@@ -157,8 +166,10 @@ protected slots:
   void onVisibilityButtonClicked();
   /// Toggle whether the current markups node is locked.
   void onLockedButtonClicked();
+	/// Toggle whether the number of points in the current markups node is locked.
+	void onPointNumberLockedButtonClicked();
 
-  void onPlacePersistent(bool enable);
+	void onPlacePersistentPoint(bool enable);
 
 signals:
 

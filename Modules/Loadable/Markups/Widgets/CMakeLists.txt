@@ -16,6 +16,9 @@ set(${KIT}_SRCS
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.h
   qMRML${MODULE_NAME}InteractionHandleWidget.cxx
   qMRML${MODULE_NAME}InteractionHandleWidget.h
+  qMRML${MODULE_NAME}ToolBar.cxx
+  qMRML${MODULE_NAME}ToolBar.h
+  qMRML${MODULE_NAME}ToolBar_p.h
   qSlicer${MODULE_NAME}ROIWidget.cxx
   qSlicer${MODULE_NAME}ROIWidget.h
   qSlicer${MODULE_NAME}AdditionalOptionsWidget_p.h
@@ -37,6 +40,8 @@ set(${KIT}_MOC_SRCS
   qMRML${MODULE_NAME}DisplayNodeWidget.h
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.h
   qMRML${MODULE_NAME}InteractionHandleWidget.h
+  qMRML${MODULE_NAME}ToolBar.h
+  qMRML${MODULE_NAME}ToolBar_p.h
   qSlicer${MODULE_NAME}ROIWidget.h
   qSlicer${MODULE_NAME}AdditionalOptionsWidget.h
   qSlicer${MODULE_NAME}AngleMeasurementsWidget.h

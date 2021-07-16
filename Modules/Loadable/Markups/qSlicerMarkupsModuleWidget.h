@@ -35,6 +35,7 @@ class qSlicerMarkupsModuleWidgetPrivate;
 class vtkMRMLMarkupsNode;
 class vtkMRMLNode;
 class vtkSlicerMarkupsLogic;
+class QSpinBox;
 
 /// \ingroup Slicer_QtModules_Markups
 class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModuleWidget :
@@ -98,6 +99,8 @@ public:
   // Add additional widget
   QList<qSlicerMarkupsAdditionalOptionsWidget*>& additionalWidgets();
 
+  Q_INVOKABLE void updateToolBar(vtkMRMLMarkupsNode* node);
+
 public slots:
 
   /// Respond to the scene events
@@ -144,6 +147,10 @@ public slots:
   void onAddMarkupPushButtonClicked();
   void onMoveMarkupUpPushButtonClicked();
   void onMoveMarkupDownPushButtonClicked();
+  void onRestoreMarkupPushButtonClicked();
+  void onResetMarkupPushButtonClicked();
+  void onUnsetMarkupPushButtonClicked();
+  void onMissingMarkupPushButtonClicked();
   void onDeleteMarkupPushButtonClicked(bool confirm=true);
   void onDeleteAllMarkupsInListPushButtonClicked();
 
@@ -152,6 +159,7 @@ public slots:
   void onActiveMarkupMRMLNodeChanged(vtkMRMLNode *markupsNode);
   /// Update the combo box from the selection node
   void onSelectionNodeActivePlaceNodeIDChanged();
+  //void activeMarkupsNodeChanged(vtkMRMLNode* activeMarkupsNode);
 
   /// When the user clicks in the combo box to create a new markups node,
   /// make sure that a display node is added
@@ -165,6 +173,9 @@ public slots:
 
   /// Toggle the markups node locked flag
   void onListLockedUnlockedPushButtonClicked();
+
+	/// Toggle the markups node point number locked flag
+	void onPointNumberLockedUnlockedPushButtonClicked();
 
   /// Update the markup label from the line edit entry
   void onNameFormatLineEditTextEdited(const QString text);
@@ -249,8 +260,10 @@ public slots:
   /// Update set of create markups push buttons
   void onPlaceMarkupsAdditionalOptionsWidgets();
 
+	// Enable or disable markup table buttons
+	void enableMarkupTableButtons(bool enable);
+  
   void updateImportExportWidgets();
-
   void onImportExportApply();
 
 protected:

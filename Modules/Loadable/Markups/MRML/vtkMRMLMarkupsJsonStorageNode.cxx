@@ -220,10 +220,15 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
       rapidjson::Value& positionItem = controlPointItem["position"];
       if (!this->ReadVector(positionItem, cp->Position))
         {
-        vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
-          "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
-          "File reading failed: each control point position must be a 3-element numeric array.");
-        return false;
+        // TODO:markups if position is not set then set the positionStatus automatically to undefined
+        if(cp->PositionStatus != vtkMRMLMarkupsNode::PositionUndefined &&
+          cp->PositionStatus != vtkMRMLMarkupsNode::PositionMissing)
+          {
+          vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+            "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
+            "File reading failed: each control point position must be a 3-element numeric array.");
+          return false;
+          }
         }
       if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
         {
@@ -595,6 +600,13 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
     {
     markupsNode->SetLocked(markupObject["locked"].GetBool());
     }
+
+  // TODO:markups add to json schema
+  if (markupObject.HasMember("lockedPointNumber"))
+    {
+    markupsNode->SetLockedPointNumber(markupObject["lockedPointNumber"].GetBool());
+    }
+
   if (markupObject.HasMember("labelFormat"))
     {
     markupsNode->SetMarkupLabelFormat(markupObject["labelFormat"].GetString());
@@ -823,6 +835,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteBasicProperties(
   writer.Key("locked");
   writer.Bool(markupsNode->GetLocked());
 
+  writer.Key("lockedPointNumber");
+  writer.Bool(markupsNode->GetLockedPointNumber());
+
   writer.Key("labelFormat");
   writer.String(markupsNode->GetMarkupLabelFormat().c_str());
 
@@ -865,15 +880,21 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteControlPoints(
     writer.Key("description"); writer.String(cp->Description.c_str());
     writer.Key("associatedNodeID"); writer.String(cp->AssociatedNodeID.c_str());
 
-    double xyz[3] = { 0.0, 0.0, 0.0 };
-    markupsNode->GetNthControlPointPosition(controlPointIndex, xyz);
-    if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
+    if(cp->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
       {
-      xyz[0] = -xyz[0];
-      xyz[1] = -xyz[1];
+      double xyz[3] = { 0.0, 0.0, 0.0 };
+      markupsNode->GetNthControlPointPosition(controlPointIndex, xyz);
+      if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
+        {
+        xyz[0] = -xyz[0];
+        xyz[1] = -xyz[1];
+        }
+      writer.Key("position"); this->WriteVector(writer, xyz);
       }
-    writer.Key("position"); this->WriteVector(writer, xyz);
-
+    else
+      {
+      writer.Key("position"); writer.String("");
+      }
     double* orientationMatrix = markupsNode->GetNthControlPointOrientationMatrix(controlPointIndex);
     if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
       {
