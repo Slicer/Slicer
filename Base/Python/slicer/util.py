@@ -2395,6 +2395,136 @@ def createProgressDialog(parent=None, value=0, maximum=100, labelText="", window
       setattr(progressIndicator, key, value)
   return progressIndicator
 
+
+from contextlib import contextmanager
+
+@contextmanager
+def displayPythonShell(display=True):
+  """Show the Python console while the code in the context manager is being run.
+
+  The console stays visible only if it was visible already.
+
+  :param display: If show is False, the context manager has no effect.
+
+  .. code-block:: python
+
+    with slicer.util.displayPythonShell():
+      slicer.util.pip_install('nibabel')
+
+  """
+  import slicer
+
+  def dockableWindowEnabled():
+    import qt
+    return toBool(qt.QSettings().value("Python/DockableWindow"))
+
+  def getConsole():
+    return mainWindow().pythonConsole().parent() if dockableWindowEnabled() else pythonShell()
+
+  if display:
+    console = getConsole()
+    consoleVisible = console.visible
+    console.show()
+    slicer.app.processEvents()
+  try:
+    yield
+  finally:
+    if display:
+      console.setVisible(consoleVisible)
+
+class WaitCursor:
+  def __init__(self, show=True):
+    """Set the cursor to waiting mode while the code in the context manager is being run.
+
+    :param show: If show is False, this context manager has no effect.
+
+    .. code-block:: python
+
+      import time
+
+      with slicer.util.WaitCursor():
+        time.sleep(2)
+    """
+    self.show = show
+
+  def __enter__(self):
+    import qt, slicer
+    if self.show:
+      qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
+      slicer.app.processEvents()
+
+  def __exit__(self, type, value, traceback):
+    if self.show:
+      import qt
+      qt.QApplication.restoreOverrideCursor()
+
+class MessageDialog:
+  def __init__(self, message, show=True, logLevel=logging.INFO):
+    """Log the message and show a message box while the code in the context manager is being run.
+
+    :param message: Text shown in the message box.
+    :param show: If show is False, no dialog is shown.
+    :param logLevel: Log level used to log the message.
+
+    .. code-block:: python
+
+      import time
+
+      n = 2
+      with slicer.util.messageContextManager(f'Sleeping for {n} seconds...'):
+        time.sleep(n)
+    """
+    if not isinstance(logLevel, int):
+      raise ValueError(f'Invalid log level: {logLevel}')
+    import slicer
+    self.message = message
+    self.show = show and not slicer.app.testingEnabled()
+    self.logLevel = logLevel
+    self.box = None
+
+  def __enter__(self):
+    import logging
+    logging.log(logLevel, self.message)
+
+    if self.show:
+      import qt, slicer
+      self.box = qt.QMessageBox()
+      self.box.setStandardButtons(qt.QMessageBox.NoButton)
+      self.box.setText(self.message)
+      self.box.show()
+      slicer.app.processEvents()
+
+  def __exit__(self, type, value, traceback):
+      if self.show:
+        self.box.accept()
+
+@contextmanager
+def tryWithErrorDisplay(message='Error', show=True):
+  """Show an error display with the error details if an exception is raised.
+
+  :param message: Text shown in the message box.
+  :param show: If show is False, the context manager has no effect.
+
+  .. code-block:: python
+
+    import random
+
+    def risky():
+      if random.choice((True, False)):
+        raise Exception('This has randomly failed')
+
+    with slicer.util.tryWithErrorDisplay():
+      risky()
+  """
+  try:
+    yield
+  except Exception as e:
+    import slicer
+    if show and not slicer.app.testingEnabled():
+      import traceback
+      errorDisplay(f'{message}\n\n{e}', detailedText=traceback.format_exc())
+    raise
+
 def toBool(value):
   """Convert any type of value to a boolean.
 
