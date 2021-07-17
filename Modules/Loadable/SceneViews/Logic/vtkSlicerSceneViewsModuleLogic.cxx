@@ -278,12 +278,12 @@ vtkImageData* vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshot(const char*
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::RestoreSceneView(const char* id, bool removeNodes)
+bool vtkSlicerSceneViewsModuleLogic::RestoreSceneView(const char* id, bool removeNodes)
 {
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("No scene set.");
-    return;
+    return true;
     }
 
   vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
@@ -291,10 +291,10 @@ void vtkSlicerSceneViewsModuleLogic::RestoreSceneView(const char* id, bool remov
   if (!viewNode)
     {
     vtkErrorMacro("RestoreSceneView: Could not get sceneView node!");
-    return;
+    return true;
     }
 
-  viewNode->RestoreScene(removeNodes);
+  return viewNode->RestoreScene(removeNodes);
 }
 
 //---------------------------------------------------------------------------

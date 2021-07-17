@@ -624,8 +624,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   vtkStdString savedScene = testHelper->GetTempDirectory();
   savedScene += "/vtkMRMLCameraDisplayableManagerTest1_saved.mrml";
   scene->SetVersion("Slicer4.4.0"); // Force scene version to be the same as in the baseline scene file
-  scene->Commit(savedScene);
-  if (scene->GetErrorCode() != vtkErrorCode::NoError)
+  if (!scene->Commit(savedScene))
     {
     std::cerr << "Failed to save current scene into: " << savedScene << std::endl;
     return EXIT_FAILURE;
@@ -668,8 +667,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     std::cerr << "Failed to set URL: " << baselineScene << std::endl;
     return EXIT_FAILURE;
     }
-  scene->Connect();
-  if (scene->GetErrorCode() != vtkErrorCode::NoError)
+  if (!scene->Connect())
     {
     std::cerr << "Failed to import baseline scene: " << baselineScene << std::endl;
     return EXIT_FAILURE;

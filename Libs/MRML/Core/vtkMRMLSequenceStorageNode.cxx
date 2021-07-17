@@ -111,8 +111,7 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   if (extension == std::string(".mrb"))
     {
     vtkMRMLScene* sequenceScene = sequenceNode->GetSequenceScene();
-    sequenceScene->SetErrorMessage("");
-    success = sequenceScene->ReadFromMRB(fullName.c_str());
+    success = sequenceScene->ReadFromMRB(fullName.c_str(), this->GetUserMessages());
     if (success)
       {
       // Remove scene view nodes, as they would interfere with re-saving of the embedded scene
@@ -135,20 +134,11 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         sequenceScene->RemoveNode(embeddedSequenceNode);
         }
       }
-    else
-      {
-      // Error is already logged but if a user message is set in the scene then
-      // we add it as a user message to show it to the user.
-      std::string errorMessage = sequenceScene->GetErrorMessage();
-      if (!errorMessage.empty())
-        {
-        this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, errorMessage);
-        }
-      }
     }
   else
     {
-    vtkErrorMacro("Cannot read sequence file '" << fullName.c_str() << "' (extension = " << extension.c_str() << ")");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::ReadDataInternal",
+      "Cannot read sequence file '" << fullName.c_str() << "' (extension = " << extension.c_str() << ")");
     }
 
   return success ? 1 : 0;
@@ -167,13 +157,15 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
   else
     {
-    vtkErrorMacro("Cannot register nodes in the sequence node");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::WriteDataInternal",
+      "Writing sequence node failed: cannot register nodes in the sequence node");
     }
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
     {
-    vtkErrorMacro("vtkMRMLSequenceNode: File name not specified");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::WriteDataInternal",
+      "Writing sequence node failed: file name not specified");
     return 0;
     }
 
@@ -199,7 +191,8 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
   else
     {
-    vtkErrorMacro( << "No file extension recognized: " << fullName.c_str() );
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::WriteDataInternal",
+      "No file extension recognized: " << fullName.c_str());
     }
 
   return success ? 1 : 0;

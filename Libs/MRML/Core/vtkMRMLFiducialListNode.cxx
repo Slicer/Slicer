@@ -185,11 +185,15 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
           {
           if (this->GetScene()->GetLastLoadedVersion())
             {
-            const char *lastLoadedVersion = this->GetScene()->GetLastLoadedVersion();
-            int versionNumber = atoi(lastLoadedVersion);
-            if (versionNumber < 12553)
+            std::string loadedApplication;
+            int loadedMajor = 0;
+            int loadedMinor = 0;
+            int loadedPatch = 0;
+            int loadedRevision = 0;
+            if (vtkMRMLScene::ParseVersion(this->GetScene()->GetLastLoadedVersion(), loadedApplication, loadedMajor, loadedMinor, loadedPatch, loadedRevision)
+              && loadedRevision < 12553)
               {
-              vtkDebugMacro("Older mrml file version " << versionNumber << ", increasing the glyph type by 1");
+              vtkDebugMacro("Older mrml file version " << loadedRevision << ", increasing the glyph type by 1");
               adjustment = 1;
               }
             else

@@ -80,9 +80,10 @@ public:
   const char *GetRootDirectory();
 
   /// \brief Create new scene from URL
-  ///
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
   /// Returns nonzero on success.
-  int Connect();
+  int Connect(vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// \brief Add the scene into the existing scene (no clear) from \a URL file
   /// or from \sa SceneXMLString XML string.
@@ -90,11 +91,15 @@ public:
   /// Returns nonzero on success.
   ///
   /// \sa SetURL(), GetLoadFromXMLString(), SetSceneXMLString()
-  int Import();
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
+  int Import(vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Save scene into URL
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
   /// Returns nonzero on success
-  int Commit(const char* url=nullptr);
+  int Commit(const char* url=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Remove nodes and clear undo/redo stacks.
   /// \param removeSingletons If set to true then it removes
@@ -471,9 +476,6 @@ public:
 
   int IsFilePathRelative(const char * filepath);
 
-  vtkSetMacro(ErrorCode,unsigned long);
-  vtkGetMacro(ErrorCode,unsigned long);
-
   /// \brief This property controls whether Import() loads a scene from an XML
   /// string or from an XML file.
   ///
@@ -495,9 +497,6 @@ public:
   vtkSetMacro(ReadDataOnLoad,int);
   vtkGetMacro(ReadDataOnLoad,int);
 
-  void SetErrorMessage(const std::string &error);
-  std::string GetErrorMessage();
-
   /// \brief Set the XML string to read from by Import() if
   /// GetLoadFromXMLString() is true.
   ///
@@ -509,8 +508,6 @@ public:
   ///
   /// \sa Commit(), SetSaveToXMLString()
   const std::string& GetSceneXMLString();
-
-  void SetErrorMessage(const char * message);
 
   vtkMRMLSubjectHierarchyNode* GetSubjectHierarchyNode();
 
@@ -704,9 +701,18 @@ public:
   vtkGetStringMacro(LastLoadedVersion);
   vtkSetStringMacro(LastLoadedVersion);
 
+  /// The extensions used in the last loaded scene file.
+  vtkGetStringMacro(LastLoadedExtensions);
+  vtkSetStringMacro(LastLoadedExtensions);
+
   /// The current software version.
   vtkGetStringMacro(Version);
   vtkSetStringMacro(Version);
+
+  /// The current software extensions (optional software components).
+  /// It is up to the application to define a format, it can be for example a semicolon-separated list of strings.
+  vtkGetStringMacro(Extensions);
+  vtkSetStringMacro(Extensions);
 
   /// Parse version string.
   /// Return true if version is successfully parsed.
@@ -757,12 +763,16 @@ public:
   bool WriteToMRB(const char* filename, vtkImageData* thumbnail=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// \brief Read the scene from a MRML scene bundle (.mrb) file
-  bool ReadFromMRB(const char* fullName, bool clear=false);
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
+  bool ReadFromMRB(const char* fullName, bool clear=false, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// \brief Unpack the file into a temp directory and return the scene file
   /// inside. Note that the first mrml file found in the extracted
   /// directory will be used.
-  static std::string UnpackSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory);
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
+  static std::string UnpackSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// \brief Save the scene into a self contained directory, sdbDir
   /// If thumbnail image is provided then it is saved in the scene's root folder.
@@ -914,8 +924,6 @@ protected:
   // the class. It is useful for overriding default values that are set in a node's constructor.
   std::map< std::string, vtkSmartPointer<vtkMRMLNode> > DefaultNodes;
 
-  std::string ErrorMessage;
-
   std::string SceneXMLString;
 
   int LoadFromXMLString;
@@ -928,8 +936,11 @@ protected:
 
   void RemoveAllNodes(bool removeSingletons);
 
-  char * Version;
-  char * LastLoadedVersion;
+  char* Version;
+  char* Extensions;
+
+  char* LastLoadedVersion;
+  char* LastLoadedExtensions;
 
   vtkCallbackCommand *DeleteEventCallback;
 
@@ -940,10 +951,10 @@ private:
   vtkMRMLScene(const vtkMRMLScene&);   // Not implemented
   void operator=(const vtkMRMLScene&); // Not implemented
 
-  /// Returns nonzero on success
-  int LoadIntoScene(vtkCollection* scene);
-
-  unsigned long ErrorCode;
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
+  /// Returns nonzero on success.
+  int LoadIntoScene(vtkCollection* scene, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Time when the scene was last read or written.
   vtkTimeStamp StoredTime;

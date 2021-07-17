@@ -447,6 +447,11 @@ void qSlicerCoreApplicationPrivate::init()
     qDebug() << "Successfully uninstalled extension" << extensionName;
     }
 
+  // Set the list of installed extensions in the scene so that we can warn the user
+  // if the scene is loaded with some of the extensions not present.
+  QString extensionList = model->installedExtensions().join(";");
+  scene->SetExtensions(extensionList.toStdString().c_str());
+
 #endif
 
   if (q->userSettings()->value("Internationalization/Enabled").toBool())
