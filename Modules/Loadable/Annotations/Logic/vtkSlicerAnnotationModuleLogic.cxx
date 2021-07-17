@@ -740,7 +740,7 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   vtkNew<vtkMRMLAnnotationROINode> annotationROINode;
   scene->RegisterNodeClass(annotationROINode.GetPointer());
   // ROI annotation backwards compatibility
-#if MRML_SUPPORT_VERSION < 0x040000
+#if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 0, 0)
   scene->RegisterNodeClass(annotationROINode.GetPointer(), "ROI");
 #endif
 

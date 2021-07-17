@@ -50,6 +50,10 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
         {
         this->GetMRMLScene()->SetLastLoadedVersion(attValue);
         }
+      if (!strcmp(attName, "extensions"))
+        {
+        this->GetMRMLScene()->SetLastLoadedExtensions(attValue);
+        }
       else if (!strcmp(attName, "userTags"))
         {
         if ( this->MRMLScene->GetUserTagTable() == nullptr )
@@ -147,7 +151,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
   // Slicer3 snap shot nodes were hidden by default, show them so that
   // they show up in the tree views
-#if MRML_SUPPORT_VERSION < 0x040000
+#if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 0, 0)
   if (strcmp(tagName, "SceneSnapshot") == 0)
     {
     node->HideFromEditorsOff();

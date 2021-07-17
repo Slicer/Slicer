@@ -30,6 +30,7 @@
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLVolumeNode.h>
@@ -60,10 +61,11 @@ int qMRMLVolumeThresholdWidgetTest1(int argc, char * argv [] )
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
 
   scene->SetURL(argv[1]);
-  scene->Connect();
+  vtkNew<vtkMRMLMessageCollection> userMessages;
+  scene->Connect(userMessages);
   if (scene->GetNumberOfNodes() == 0)
     {
-    std::cerr << "Can't load scene:" << argv[1] << " error: " <<scene->GetErrorMessage() << std::endl;
+    std::cerr << "Can't load scene:" << argv[1] << " error: " << userMessages->GetAllMessagesAsString() << std::endl;
     return EXIT_FAILURE;
     }
   vtkMRMLNode* node = scene->GetFirstNodeByClass("vtkMRMLScalarVolumeNode");
