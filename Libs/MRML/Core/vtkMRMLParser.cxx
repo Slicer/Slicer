@@ -50,6 +50,10 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
         {
         this->GetMRMLScene()->SetLastLoadedVersion(attValue);
         }
+      if (!strcmp(attName, "extensions"))
+        {
+        this->GetMRMLScene()->SetLastLoadedExtensions(attValue);
+        }
       else if (!strcmp(attName, "userTags"))
         {
         if ( this->MRMLScene->GetUserTagTable() == nullptr )
@@ -132,7 +136,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
   vtkMRMLNode* node = this->MRMLScene->CreateNodeByClass( className.c_str() );
   if (!node)
     {
-    vtkWarningMacro(<< "Failed to CreateNodeByClass: " << className);
+    vtkErrorMacro("Failed to CreateNodeByClass: " << className);
     return;
     }
 

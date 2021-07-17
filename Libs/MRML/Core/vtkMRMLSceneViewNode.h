@@ -81,10 +81,12 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   /// Restore content of the scene from the node.
   /// If removeNodes is true (default), remove nodes from the main Slicer scene that
   /// do no appear in the scene view. If it is false, and nodes are found that will be
-  /// deleted, don't remove them, print a warning, set the scene error code to 1, save
-  /// the warning to the scene error message, and return.
+  /// deleted, don't remove them, then the method returns with false.
+  /// This can be used for asking confirmation from the user to delete nodes
+  /// (if the user decides that nodes can be removed then this method is called again
+  /// with removeNodes=true).
   /// \sa GetStoredScene() StoreScene() AddMissingNodes()
-  void RestoreScene(bool removeNodes = true);
+  bool RestoreScene(bool removeNodes = true);
 
   void SetAbsentStorageFileNames();
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MRML  version="Slicer4.4.0" >
+<MRML version="Slicer4.4.0">
 <Selection
   id="vtkMRMLSelectionNodeSingleton" name="Selection" hideFromEditors="true" selectable="true" selected="false" singletonTag="Singleton"></Selection>
  <Interaction

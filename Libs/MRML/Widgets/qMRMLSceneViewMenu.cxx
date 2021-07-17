@@ -29,7 +29,7 @@
 
 // MRML includes
 #include <vtkMRMLSceneViewNode.h>
-
+#include <vtkMRMLMessageCollection.h>
 
 //--------------------------------------------------------------------------
 // qMRMLSceneViewMenuPrivate methods
@@ -182,13 +182,13 @@ void qMRMLSceneViewMenuPrivate::restoreSceneView(const QString& sceneViewNodeId)
   Q_ASSERT(sceneViewNode);
   this->MRMLScene->SaveStateForUndo();
   // pass false to not delete nodes from the scene
+  vtkNew<vtkMRMLMessageCollection> userMessages;
+  userMessages->SetObservedObject(sceneViewNode);
   sceneViewNode->RestoreScene(false);
-  if (this->MRMLScene->GetErrorCode() != 0)
+  userMessages->SetObservedObject(nullptr);
+  if (userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent)>0)
     {
-    QString errorMsg = QString(this->MRMLScene->GetErrorMessage().c_str());
-    // reset the error state
-    this->MRMLScene->SetErrorCode(0);
-    this->MRMLScene->SetErrorMessage("");
+    QString errorMsg = QString::fromStdString(userMessages->GetAllMessagesAsString());
 
     // ask the user if they wish to continue removing the node(s) or
     // add the missing nodes to the scene view
