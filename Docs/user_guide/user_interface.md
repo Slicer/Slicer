@@ -131,6 +131,7 @@ Default orientation axes: A = anterior, P = posterior, R = right, L = left, S = 
 - **Spin** continuously spins the view around.
 - **Rock** continuously rocks the view left-to-right.
 - **Zoom in/out** slightly zooms in/out the view. Convenient buttons for touchscreens.
+- **Tilt Lock** can be toggled using `Ctrl` + `b` keyboard shortcut. In tilt lock mode 3D view rotation is restricted to the azimuth axis (left-right direction) by disabling rotation around elevation axis (up-down direction).
 
 ### Slice View
 
@@ -224,6 +225,7 @@ view will not activate the view.
 | `Shift` + `Home` or `Shift` + `Keypad 7`| rotate to view from inferior |
 | `right-click` + `drag up/down` | zoom view in/out |
 | `Ctrl` + `mouse wheel` | zoom view in/out |
+| `Ctrl` + `b` | toggle tilt lock |
 | `+` / `-` | zoom view in/out |
 | `middle-click` + `drag` | pan (translate) view |
 | `Shift` + `left-click` + `drag` | pan (translate) view |
