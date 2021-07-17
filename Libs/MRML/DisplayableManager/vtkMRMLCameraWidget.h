@@ -108,6 +108,8 @@ public:
     WidgetEventCameraWheelZoomIn, // same as WidgetEventCameraZoomIn but with using wheel scaling factor
     WidgetEventCameraWheelZoomOut,
 
+    WidgetEventToggleCameraTiltLock,
+
     WidgetEventCameraReset,
     WidgetEventCameraResetTranslation,
     WidgetEventCameraResetRotation,
@@ -164,6 +166,7 @@ protected:
 
   double MotionFactor;
   double MouseWheelMotionFactor;
+  bool CameraTiltLocked;
 
   vtkWeakPointer<vtkMRMLCameraNode> CameraNode;
 

@@ -42,6 +42,7 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
 {
   this->MotionFactor = 10.0;
   this->MouseWheelMotionFactor = 1.0;
+  this->CameraTiltLocked = false;
 
   this->StartEventPosition[0] = 0.0;
   this->StartEventPosition[1] = 0.0;
@@ -94,6 +95,9 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
 
   this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "plus", WidgetEventCameraZoomIn);
   this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "minus", WidgetEventCameraZoomOut);
+
+  // Toggle tiltLock
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ControlModifier, 0, 0, "b", WidgetEventToggleCameraTiltLock);
 
   // Reset camera
 
@@ -300,6 +304,10 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
       this->SaveStateForUndo();
       this->CameraNode->RotateAround(vtkMRMLCameraNode::S, true);
       break;
+
+    case WidgetEventToggleCameraTiltLock:
+        this->CameraTiltLocked = !this->CameraTiltLocked;
+        break;
 
     case WidgetEventCameraReset:
       this->SaveStateForUndo();
@@ -610,8 +618,15 @@ bool vtkMRMLCameraWidget::ProcessRotate(vtkMRMLInteractionEventData* eventData)
 
   bool wasCameraNodeModified = this->CameraModifyStart();
 
-  camera->Azimuth(rxf);
-  camera->Elevation(ryf);
+  if (this->CameraTiltLocked == true)
+    {
+    camera->Azimuth(rxf);
+    }
+  else
+    {
+    camera->Azimuth(rxf);
+    camera->Elevation(ryf);
+    }
   camera->OrthogonalizeViewUp();
 
   this->CameraModifyEnd(wasCameraNodeModified, true, true);
