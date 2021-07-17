@@ -381,9 +381,14 @@ int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     int glyphType = fiducialListNode->GetGlyphType();
     if (this->GetScene() && this->GetScene()->GetLastLoadedVersion())
       {
-      if (this->GetScene()->GetLastLoadedVersion() != std::string(""))
+      std::string loadedApplication;
+      int loadedMajor = 0;
+      int loadedMinor = 0;
+      int loadedPatch = 0;
+      int loadedRevision = 0;
+      if (vtkMRMLScene::ParseVersion(this->GetScene()->GetLastLoadedVersion(), loadedApplication, loadedMajor, loadedMinor, loadedPatch, loadedRevision))
         {
-        if (atoi(this->GetScene()->GetLastLoadedVersion()) < 12553)
+        if (loadedRevision < 12553)
           {
           vtkDebugMacro("ReadData: last loaded version '" << this->GetScene()->GetLastLoadedVersion() << "' is less than 12553, incrementing glyph type from " << glyphType);
           glyphType++;

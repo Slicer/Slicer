@@ -1219,8 +1219,8 @@ void qSlicerSlicer2SceneReaderPrivate::importOptionsNode(NodeType& node)
   Q_Q(qSlicerSlicer2SceneReader);
   //$::slicer3::MRMLScene SetErrorMessage "warning: option nodes cannot be imported"
   //$::slicer3::MRMLScene SetErrorCode 1
-  q->mrmlScene()->SetErrorMessage("Warning: option nodes cannot be imported");
-  q->mrmlScene()->SetErrorCode(1);
+  //q->mrmlScene()->SetErrorMessage("Warning: option nodes cannot be imported");
+  //q->mrmlScene()->SetErrorCode(1);
 }
 
 //-----------------------------------------------------------------------------

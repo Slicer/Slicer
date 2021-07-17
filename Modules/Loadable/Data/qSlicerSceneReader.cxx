@@ -88,12 +88,12 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
   QString file = properties["fileName"].toString();
   this->mrmlScene()->SetURL(file.toUtf8());
   bool clear = properties.value("clear", false).toBool();
-  int res = 0;
+  bool success = false;
   if (clear)
     {
     qDebug("Clear and import into main MRML scene");
-    res = this->mrmlScene()->Connect();
-    if (res)
+    success = this->mrmlScene()->Connect(this->userMessages());
+    if (success)
       {
       // Set default scene file format to .mrml
       qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
@@ -106,11 +106,7 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
       {
       qWarning() << Q_FUNC_INFO << ": copyCameras=false property is ignored, cameras are now always replaced in the scene";
       }
-    res = this->mrmlScene()->Import();
-    }
-  if (!this->mrmlScene()->GetErrorMessage().empty())
-    {
-    this->userMessages()->AddMessage(vtkCommand::ErrorEvent, "\n\n" + this->mrmlScene()->GetErrorMessage());
+    success = this->mrmlScene()->Import(this->userMessages());
     }
 
   // Display warning message if scene file was created with a different application or with a future application version
@@ -151,5 +147,30 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
       }
     }
 
-  return res;
+  // If there were scene loading errors then log the list of extensions that were installed when the scene was saved.
+  // It may provide useful hints for why the extension load failed.
+  if (!success
+    || this->userMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0
+    || this->userMessages()->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
+    {
+    std::string extensions = this->mrmlScene()->GetExtensions() ? this->mrmlScene()->GetExtensions() : "";
+    std::string lastLoadedExtensions = this->mrmlScene()->GetLastLoadedExtensions() ? this->mrmlScene()->GetLastLoadedExtensions() : "";
+    if (extensions != lastLoadedExtensions)
+      {
+      QStringList extensionsList = QString::fromStdString(extensions).split(";");
+      QStringList lastLoadedExtensionsList = QString::fromStdString(lastLoadedExtensions).split(";");
+      QSet<QString> notInstalledExtensions = lastLoadedExtensionsList.toSet().subtract(extensionsList.toSet());
+      if (!notInstalledExtensions.isEmpty())
+        {
+        QStringList notInstalledExtensionsList(notInstalledExtensions.begin(), notInstalledExtensions.end());
+        QString extensionsInformation =
+          tr("These extensions were installed when the scene was saved but not installed now: %1."
+             " These extensions may be required for successful loading of the scene.")
+          .arg(notInstalledExtensionsList.join(", "));
+        this->userMessages()->AddMessage(vtkCommand::MessageEvent, extensionsInformation.toStdString());
+        }
+      }
+    }
+
+  return success;
 }

@@ -254,15 +254,8 @@ void qSlicerSceneViewsModuleWidget::restoreSceneView(const QString& mrmlId)
 
   // by default, make sure no nodes from the current scene are lost, adding them to
   // the scene view about to be restored
-  d->logic()->RestoreSceneView(mrmlId.toUtf8(), false);
-
-  // check if there was a problem restoring
-  if (this->mrmlScene()->GetErrorCode() != 0)
+  if (!d->logic()->RestoreSceneView(mrmlId.toUtf8(), false))
     {
-    // reset the error state
-    this->mrmlScene()->SetErrorCode(0);
-    this->mrmlScene()->SetErrorMessage("");
-
     // ask if the user wishes to save the current scene nodes, restore and delete them or cancel
     ctkMessageBox missingNodesMsgBox;
     missingNodesMsgBox.setWindowTitle("Data missing from Scene View");

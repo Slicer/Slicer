@@ -50,6 +50,10 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
         {
         this->GetMRMLScene()->SetLastLoadedVersion(attValue);
         }
+      if (!strcmp(attName, "extensions"))
+        {
+        this->GetMRMLScene()->SetLastLoadedExtensions(attValue);
+        }
       else if (!strcmp(attName, "userTags"))
         {
         if ( this->MRMLScene->GetUserTagTable() == nullptr )

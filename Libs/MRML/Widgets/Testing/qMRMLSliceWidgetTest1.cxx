@@ -33,6 +33,7 @@
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
@@ -62,10 +63,11 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
   applicationLogic->SetMRMLScene(scene.GetPointer());
   scene->SetURL(argv[1]);
-  scene->Connect();
+  vtkNew<vtkMRMLMessageCollection> userMessages;
+  scene->Connect(userMessages);
   if (scene->GetNumberOfNodes() == 0)
     {
-    std::cerr << "Can't load scene:" << argv[1] << " error: " <<scene->GetErrorMessage() << std::endl;
+    std::cerr << "Can't load scene:" << argv[1] << " error: " <<userMessages->GetAllMessagesAsString() << std::endl;
     return EXIT_FAILURE;
     }
   vtkMRMLSliceNode* redSliceNode = nullptr;

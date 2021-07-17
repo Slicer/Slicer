@@ -77,8 +77,10 @@ public:
 
   /// Restore a sceneView.
   /// If removeNodes flag is false, don't restore the scene if it will remove data.
-  /// removeNodes defaults to true for backward compatibility.
-  void RestoreSceneView(const char* id, bool removeNodes = true);
+  /// The method will return with false if restore failed because nodes were not allowed
+  /// to be removed.
+  /// RemoveNodes defaults to true for backward compatibility.
+  bool RestoreSceneView(const char* id, bool removeNodes = true);
 
   /// Move sceneView up
   const char* MoveSceneViewUp(const char* id);

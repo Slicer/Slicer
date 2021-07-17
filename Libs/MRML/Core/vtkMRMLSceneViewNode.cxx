@@ -14,6 +14,7 @@ Version:   $Revision: 1.14 $
 
 // MRML includes
 #include "vtkMRMLHierarchyNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLSceneViewStorageNode.h"
@@ -498,17 +499,17 @@ void vtkMRMLSceneViewNode::AddMissingNodes()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
+bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
 {
   if (this->Scene == nullptr)
     {
     vtkWarningMacro("No scene to restore onto");
-    return;
+    return true;
     }
   if (this->SnapshotScene == nullptr)
     {
     vtkWarningMacro("No nodes to restore");
-    return;
+    return true;
     }
 
   unsigned int numNodesInSceneView = this->SnapshotScene->GetNodes()->GetNumberOfItems();
@@ -577,13 +578,14 @@ void vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
         }
       else
         {
-        vtkErrorMacro("RestoreScene encountered a node in the scene that needs to be removed to restore the scene view '" << this->GetSceneViewDescription().c_str() << "'.\n\tNot removing node named '" << nodeToRemove->GetName() << "',\n\tReturning without restoring the scene.");
+        vtkDebugMacro("RestoreScene encountered a node in the scene that needs to be removed to restore the scene view '"
+          << this->GetSceneViewDescription().c_str() << "'.\n\tNot removing node named '" << nodeToRemove->GetName()
+          << "',\n\tReturning without restoring the scene.");
         // signal that done trying to restore the scene
         this->Scene->EndState(vtkMRMLScene::RestoreState);
         // signal that there is an error state
-        this->Scene->SetErrorMessage("Unable to restore scene, data in main Slicer scene that is not included in the scene view");
-        this->Scene->SetErrorCode(1);
-        return;
+        vtkErrorMacro("Unable to restore scene, data in main Slicer scene that is not included in the scene view");
+        return false;
         }
       }
     }
@@ -656,6 +658,8 @@ void vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
     assert(node->GetScene() == this->Scene);
     }
 #endif
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
