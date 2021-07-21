@@ -29,6 +29,8 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget
   Q_PROPERTY(int  autoThreshold READ autoThreshold WRITE setAutoThreshold)
   Q_PROPERTY(double lowerThreshold READ lowerThreshold WRITE setLowerThreshold)
   Q_PROPERTY(double upperThreshold READ upperThreshold WRITE setUpperThreshold)
+  Q_PROPERTY(double lowerThresholdBound READ lowerThresholdBound WRITE setLowerThresholdBound)
+  Q_PROPERTY(double upperThresholdBound READ upperThresholdBound WRITE setUpperThresholdBound)
   Q_ENUMS(ControlMode)
 
 public:
@@ -58,6 +60,14 @@ public:
   /// Get upperThreshold
   double upperThreshold()const;
 
+  ///
+  /// Get lower threshold bound
+  double lowerThresholdBound()const;
+
+  ///
+  /// Get upper threshold bound
+  double upperThresholdBound()const;
+
 signals:
   ///
   /// Signal sent if the lowerThreshold/upperThreshold value is updated
@@ -79,8 +89,20 @@ public slots:
   void setUpperThreshold(double upperThreshold);
 
   ///
+  /// Set lowerThreshold
+  void setLowerThresholdBound(double lowerThresholdBound);
+
+  ///
+  /// Set upperThreshold
+  void setUpperThresholdBound(double upperThresholdBound);
+
+  ///
   /// Set lowerThreshold/upperThreshold in once
   void setThreshold(double lowerThreshold, double upperThreshold);
+
+  ///
+  /// Set sliders bounds
+  void setThresholdBounds(double min, double max);
 
 protected:
   /// Update the widget from volume display node properties.

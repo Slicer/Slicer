@@ -117,6 +117,13 @@ qMRMLVolumeThresholdWidget::qMRMLVolumeThresholdWidget(QWidget* parentWidget)
 qMRMLVolumeThresholdWidget::~qMRMLVolumeThresholdWidget() = default;
 
 // --------------------------------------------------------------------------
+void qMRMLVolumeThresholdWidget::setThresholdBounds(double min, double max)
+{
+  Q_D(qMRMLVolumeThresholdWidget);
+  d->setRange(min, max);
+}
+
+// --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setAutoThreshold(int autoThreshold)
 {
   this->setAutoThreshold(static_cast<ControlMode>(autoThreshold));
@@ -239,6 +246,34 @@ double qMRMLVolumeThresholdWidget::upperThreshold() const
 {
   Q_D(const qMRMLVolumeThresholdWidget);
   return d->VolumeThresholdRangeWidget->maximumValue();
+}
+
+// --------------------------------------------------------------------------
+double qMRMLVolumeThresholdWidget::lowerThresholdBound() const
+{
+  Q_D(const qMRMLVolumeThresholdWidget);
+  return d->VolumeThresholdRangeWidget->minimum();
+}
+
+// --------------------------------------------------------------------------
+double qMRMLVolumeThresholdWidget::upperThresholdBound() const
+{
+  Q_D(const qMRMLVolumeThresholdWidget);
+  return d->VolumeThresholdRangeWidget->maximum();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumeThresholdWidget::setLowerThresholdBound(double lowerThresholdBound)
+{
+  double upperThresholdBound = this->upperThresholdBound();
+  this->setThresholdBounds(lowerThresholdBound, upperThresholdBound);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumeThresholdWidget::setUpperThresholdBound(double upperThresholdBound)
+{
+  double lowerThresholdBound = this->lowerThresholdBound();
+  this->setThresholdBounds(lowerThresholdBound, upperThresholdBound);
 }
 
 // --------------------------------------------------------------------------
