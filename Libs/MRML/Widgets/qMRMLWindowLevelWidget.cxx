@@ -319,6 +319,24 @@ double qMRMLWindowLevelWidget::maximumValue() const
 }
 
 // --------------------------------------------------------------------------
+double qMRMLWindowLevelWidget::minimumBound() const
+{
+  Q_D(const qMRMLWindowLevelWidget);
+
+  double min = d->WindowLevelRangeSlider->minimum();
+  return min;
+}
+
+// --------------------------------------------------------------------------
+double qMRMLWindowLevelWidget::maximumBound() const
+{
+  Q_D(const qMRMLWindowLevelWidget);
+
+  double max = d->WindowLevelRangeSlider->maximum();
+  return max;
+}
+
+// --------------------------------------------------------------------------
 double qMRMLWindowLevelWidget::level() const
 {
   Q_D(const qMRMLWindowLevelWidget);
@@ -339,6 +357,25 @@ void qMRMLWindowLevelWidget::setMinimumValue(double min)
 void qMRMLWindowLevelWidget::setMaximumValue(double max)
 {
   this->setMinMaxRangeValue(this->minimumValue(), max);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::setMinimumBound(double min)
+{
+  this->setMinMaxBounds(min, this->maximumBound());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::setMaximumBound(double max)
+{
+  this->setMinMaxBounds(this->minimumBound(), max);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::setMinMaxBounds(double min, double max)
+{
+  Q_D(qMRMLWindowLevelWidget);
+  d->setRange(min, max);
 }
 
 // --------------------------------------------------------------------------
