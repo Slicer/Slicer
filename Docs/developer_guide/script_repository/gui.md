@@ -1,3 +1,10 @@
+## Install Slicer
+
+There are different approaches to install Slicer and extensions programmatically:
+
+- Install Slicer manually and install extensions by using `slicer.app.extensionsManagerModel()`. See example [below](script_repository.md#download-and-install-extension) and in [install-slicer-extension.py](https://github.com/pieper/SlicerDockers/blob/master/slicer-plus/install-slicer-extension.py)
+- Directly interact with the REST API endpoints of https://slicer-packages.kitware.com using `curl` and `jq`. See [slicer-download.sh](https://github.com/Slicer/SlicerDocker/blob/master/scripts/slicer-download.sh)
+
 ## Launch Slicer
 
 ### Open a file with Slicer at the command line
