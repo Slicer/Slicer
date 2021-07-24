@@ -8,7 +8,7 @@
 #  (1) build the standard 'package' target,
 #  (2) extract the list of generated packages from its standard output,
 #  (3) append the list of generated package filepaths to a file named PACKAGES.txt,
-#  (4) upload the first package on midas.
+#  (4) upload the first package.
 #
 # The following variables are expected to be defined in the including scope:
 #  Slicer_SOURCE_DIR
@@ -21,9 +21,6 @@
 # as environment variables:
 #
 #  CTEST_MODEL (default: Experimental)
-#  MIDAS_PACKAGE_URL (default: http://slicer.kitware.com/midas3)
-#  MIDAS_PACKAGE_EMAIL
-#  MIDAS_PACKAGE_API_KEY
 #  SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE
 #  SLICER_PACKAGE_MANAGER_URL
 #  SLICER_PACKAGE_MANAGER_API_KEY
@@ -75,9 +72,6 @@ endif()
 if(NOT PACKAGEUPLOAD)
 
   _sput_set_if_not_defined(CTEST_MODEL "Experimental")
-  _sput_set_if_not_defined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
-  _sput_set_if_not_defined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
-  _sput_set_if_not_defined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCATE)
 
   _sput_set_if_not_defined(SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE "SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE-NOTDEFINED")
   _sput_set_if_not_defined(SLICER_PACKAGE_MANAGER_URL "SLICER_PACKAGE_MANAGER_URL-NOTDEFINED")
@@ -93,9 +87,6 @@ if(NOT PACKAGEUPLOAD)
     SLICER_PACKAGE_MANAGER_URL
     SLICER_PACKAGE_MANAGER_API_KEY
     CTEST_MODEL
-    MIDAS_PACKAGE_URL
-    MIDAS_PACKAGE_EMAIL
-    MIDAS_PACKAGE_API_KEY
     )
 
   # Sanity checks
@@ -130,7 +121,7 @@ if(NOT PACKAGEUPLOAD)
 set(${varname} \"${${varname}}\")")
   endforeach()
 
-  set(script_args_file ${CMAKE_CURRENT_BINARY_DIR}/midas_api_upload_package-command-args.cmake)
+  set(script_args_file ${CMAKE_CURRENT_BINARY_DIR}/packageupload-command-args.cmake)
   file(WRITE ${script_args_file} ${script_arg_list})
 
   set(_cpack_output_file ${Slicer_BINARY_DIR}/packageupload_cpack_output.txt)
@@ -223,7 +214,7 @@ endforeach()
 
 #-----------------------------------------------------------------------------
 # The following code will read the list of created packages from PACKAGES.txt
-# file and upload the first one to midas.
+# file and upload the first one.
 
 # Current assumption: Exactly one Slicer package is expected. If this
 # ever changes. The following code would have to be updated.
@@ -240,9 +231,6 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
   )
 
-include(MIDASAPIUploadPackage)
-
-# Upload generated extension packages to midas
 set(package_uploaded 0)
 foreach(p ${package_list})
   if(package_uploaded)
@@ -250,44 +238,6 @@ foreach(p ${package_list})
   else()
     set(package_uploaded 1)
     get_filename_component(package_name "${p}" NAME)
-
-    # Setting the environment variable SLICER_PACKAGE_MANAGER_SKIP_MIDAS_UPLOAD to
-    # any non empty value can be used when testing this module. It skips upload of the
-    # package to Midas.
-    set(upload_to_midas 1)
-    if(NOT "$ENV{SLICER_PACKAGE_MANAGER_SKIP_MIDAS_UPLOAD}" STREQUAL "")
-      set(upload_to_midas 0)
-    endif()
-
-    # Given a date formatted like "2019-01-15 22:08:54 -0500 (Tue, 15 Jan 2019)", only
-    # keep "2019-01-15 22:08:54".
-    string(REGEX REPLACE "^([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9] [0-9][0-9]\\:[0-9][0-9]\\:[0-9][0-9]).*"
-      "\\1" MIDAS_SOURCE_CHECKOUTDATE "${Slicer_WC_LAST_CHANGED_DATE}")
-
-    if(upload_to_midas)
-      message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
-      midas_api_upload_package(
-        SERVER_URL ${MIDAS_PACKAGE_URL}
-        SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
-        SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
-        SUBMISSION_TYPE ${CTEST_MODEL}
-        SOURCE_REVISION ${Slicer_REVISION}
-        SOURCE_CHECKOUTDATE ${MIDAS_SOURCE_CHECKOUTDATE}
-        OPERATING_SYSTEM ${Slicer_OS}
-        ARCHITECTURE ${Slicer_ARCHITECTURE}
-        PACKAGE_FILEPATH ${p}
-        PACKAGE_TYPE "installer"
-        RESULT_VARNAME slicer_midas_upload_status
-        )
-      if(NOT slicer_midas_upload_status STREQUAL "ok")
-        file(WRITE ${Slicer_BINARY_DIR}/PACKAGES.txt "")
-        message(FATAL_ERROR
-"Upload of [${package_name}] failed !
-Check that:
-(1) you have been granted permission to upload
-(2) your email and api key are correct")
-      endif()
-    endif()
 
     message("Uploading [${package_name}] to [${SLICER_PACKAGE_MANAGER_URL}]")
     get_filename_component(package_directory ${p} DIRECTORY)
@@ -311,11 +261,10 @@ Check that:
       RESULT_VARIABLE slicer_package_manager_upload_status
       ERROR_FILE ${error_file}
       )
+    message(STATUS "slicer_package_manager_upload_status: ${slicer_package_manager_upload_status}")
     if(NOT slicer_package_manager_upload_status EQUAL 0)
-      message(STATUS "Failed to upload package using ${SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE}.
+      message(FATAL_ERROR "Failed to upload package ${package_name} using ${SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE}.
 See ${error_file} for more details.")
     endif()
-    message(STATUS "slicer_package_manager_upload_status: ${slicer_package_manager_upload_status}")
-
   endif()
 endforeach()
