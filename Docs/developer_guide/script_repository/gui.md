@@ -48,6 +48,25 @@ Slicer.exe --python-script "/full/path/to/myscript.py" --no-splash --no-main-win
 
 To make Slicer exit when the script execution is completed, call `sys.exit(errorCode)` (where `errorCode` is set 0 for success and other value to indicate error).
 
+### Launch Slicer directly from a web browser
+
+Slicer can be associated with the `slicer:` custom URL protocol in the operating system or web browser. This is done automatically in the Windows installer and can be set up on other operating systems manually. After this when the user clicks on a `slicer://...` URL in the web browser, Slicer will start and the `slicer.app` object emits a signal with the URL that modules can process. The DICOM module processes DICOMweb URLs, but any module can specify additional actions.
+
+For example, [this module](https://gist.github.com/lassoan/534298ee567000a37b3cb89de01750b8) will download and view any image if the user clicks on an URL like this in the web browser:
+
+```
+slicer://viewer/?download=https%3A%2F%2Fgithub.com%2Frbumm%2FSlicerLungCTAnalyzer%2Freleases%2Fdownload%2FSampleData%2FLungCTAnalyzerChestCT.nrrd
+```
+
+For reference, the DICOM module downloads a study from a DICOMweb server and shows it when providing a URL like this (which is used for example in the [Kheops DICOM data sharing platform](https://kheops.online/)):
+
+```
+slicer://viewer/?studyUID=2.16.840.1.113669.632.20.121711.10000158860
+    &access_token=k0zR6WAPpNbVguQ8gGUHp6
+    &dicomweb_endpoint=http%3A%2F%2Fdemo.kheops.online%2Fapi
+    &dicomweb_uri_endpoint=%20http%3A%2F%2Fdemo.kheops.online%2Fapi%2Fwado
+```
+
 #### MRML scene
 
 ### Get MRML node from the scene
