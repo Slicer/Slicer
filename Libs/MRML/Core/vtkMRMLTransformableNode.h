@@ -89,6 +89,9 @@ public:
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
   /// Utility function to convert a point position in the node's coordinate system to world coordinate system.
+  /// Note for transform nodes: the node coordinate system is transformed by all the parent transforms, but not by the
+  /// transform that is stored in the current node. To get all the transform, including that is stored in the current
+  /// transform node, vtkMRMLTransformNode::GetTransformBetweenNodes() method can be used.
   /// \sa TransformPointFromWorld, SetAndObserveTransformNodeID
   virtual void TransformPointToWorld(const double inLocal[3], double outWorld[3]);
 
