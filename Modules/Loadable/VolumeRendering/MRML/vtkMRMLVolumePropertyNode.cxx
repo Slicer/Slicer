@@ -151,7 +151,8 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
   vtkMRMLCopyEndMacro();
 
   // VolumeProperty
-  this->VolumeProperty->SetIndependentComponents(node->VolumeProperty->GetIndependentComponents());
+  // VolumeProperty->IndependentComponents is determined automatically from the input volume,
+  // therefore it is not necessary to copy its.
   this->VolumeProperty->SetInterpolationType(node->VolumeProperty->GetInterpolationType());
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   this->VolumeProperty->SetUseClippedVoxelIntensity(node->VolumeProperty->GetUseClippedVoxelIntensity());
