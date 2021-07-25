@@ -3759,12 +3759,26 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   std::string mrbFileName = vtksys::SystemTools::GetFilenameName(mrbFilePath);
   std::string mrbBaseName = vtksys::SystemTools::GetFilenameWithoutLastExtension(mrbFilePath);
 
-  // Use the output directory as temporary directory.
-  // This may not be ideal if the output directory has limited storage space (e.g., USB stick).
+  std::string tempBaseDir;
+  if (this->GetDataIOManager()
+    && this->GetDataIOManager()->GetCacheManager()
+    && this->GetDataIOManager()->GetCacheManager()->GetRemoteCacheDirectory())
+    {
+    tempBaseDir = this->GetDataIOManager()->GetCacheManager()->GetRemoteCacheDirectory();
+    }
+  else
+    {
+    // Cannot retrieve remote cache directory from DataIOManager.
+    // Fall back to using the output directory as temporary directory.
+    // This may not be ideal if the output directory has limited storage space (e.g., USB stick)
+    // or the output path is a network/virtual drive (writing/accessing/removing files in quick succession
+    // may fail on such file systems).
+    tempBaseDir = mrbDir;
+    }
   std::stringstream tempDirStr;
-  tempDirStr << mrbDir<< "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleSaveTemp-%F_%H%M%S_") << (this->RandomGenerator() % 1000);
+  tempDirStr << tempBaseDir << "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleSaveTemp-%F_%H%M%S_") << (this->RandomGenerator() % 1000);
   std::string tempDir = tempDirStr.str();
-  vtkDebugMacro("Packing to " << tempDir);
+  vtkDebugMacro("Packing bundle to " << unpackDir);
 
   // make a subdirectory with the name the user has chosen
   std::string bundleDir = tempDir + "/" + mrbBaseName;

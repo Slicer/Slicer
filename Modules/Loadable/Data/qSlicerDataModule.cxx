@@ -33,7 +33,6 @@
 #include "qSlicerSceneBundleReader.h"
 #include "qSlicerSceneReader.h"
 #include "qSlicerSceneWriter.h"
-#include "qSlicerSlicer2SceneReader.h"
 
 // SlicerLogic includes
 #include <vtkSlicerApplicationLogic.h>
@@ -105,7 +104,6 @@ void qSlicerDataModule::setup()
   // Readers
   ioManager->registerIO(new qSlicerSceneReader(camerasLogic, this));
   ioManager->registerIO(new qSlicerSceneBundleReader(this));
-  ioManager->registerIO(new qSlicerSlicer2SceneReader(this->appLogic(), this));
 
   // Writers
   ioManager->registerIO(new qSlicerSceneWriter(this));
