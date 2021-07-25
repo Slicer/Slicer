@@ -101,8 +101,6 @@ set(KIT_SRCS
   qSlicerRelativePathMapper.h
   qSlicerSceneBundleReader.cxx
   qSlicerSceneBundleReader.h
-  qSlicerSlicer2SceneReader.cxx
-  qSlicerSlicer2SceneReader.h
   qSlicerUtils.cxx
   qSlicerUtils.h
   )
@@ -149,7 +147,6 @@ set(KIT_MOC_SRCS
   qSlicerModuleManager.h
   qSlicerRelativePathMapper.h
   qSlicerSceneBundleReader.h
-  qSlicerSlicer2SceneReader.h
   )
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
