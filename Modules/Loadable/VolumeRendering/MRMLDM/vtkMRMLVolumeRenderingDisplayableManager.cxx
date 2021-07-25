@@ -48,7 +48,9 @@
 #include <vtkCallbackCommand.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
 #include <vtkGPUVolumeRayCastMapper.h>
+#include <vtkImageAppendComponents.h>
 #include <vtkImageChangeInformation.h>
+#include <vtkImageLuminance.h>
 #include <vtkInteractorStyle.h>
 #include <vtkMatrix4x4.h>
 #include <vtkPlane.h>
@@ -99,12 +101,20 @@ public:
     {
       this->VolumeActor = vtkSmartPointer<vtkVolume>::New();
       this->IJKToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+
+      // Only RGBA volumes can be rendered using direct color mapping.
+      // To render RGB volumes, the alpha channel is generated from luminance
+      // of the colors and appended to the volume before it is passed to the mapper.
+      this->ComputeAlphaChannel = vtkSmartPointer<vtkImageLuminance>::New();
+      this->MergeAlphaChannelToRGB = vtkSmartPointer<vtkImageAppendComponents>::New();
     }
     virtual ~Pipeline()  = default;
 
     vtkWeakPointer<vtkMRMLVolumeRenderingDisplayNode> DisplayNode;
     vtkSmartPointer<vtkVolume> VolumeActor;
     vtkSmartPointer<vtkMatrix4x4> IJKToWorldMatrix;
+    vtkSmartPointer<vtkImageLuminance> ComputeAlphaChannel;
+    vtkSmartPointer<vtkImageAppendComponents> MergeAlphaChannelToRGB;
   };
 
   //-------------------------------------------------------------------------
@@ -800,6 +810,28 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 
   bool displayNodeVisible = this->IsVisible(displayNode);
 
+  vtkAlgorithmOutput* imageConnection = volumeNode->GetImageDataConnection();
+  vtkImageData* imageData = volumeNode->GetImageData();
+  int numberOfChannels = (imageData == nullptr ? 1 : imageData->GetNumberOfScalarComponents());
+  if (numberOfChannels == 3)
+    {
+    // RGB volume, generate alpha channel
+    pipeline->ComputeAlphaChannel->SetInputConnection(volumeNode->GetImageDataConnection());
+    pipeline->MergeAlphaChannelToRGB->RemoveAllInputs();
+    pipeline->MergeAlphaChannelToRGB->AddInputConnection(volumeNode->GetImageDataConnection());
+    pipeline->MergeAlphaChannelToRGB->AddInputConnection(pipeline->ComputeAlphaChannel->GetOutputPort());
+    imageConnection = pipeline->MergeAlphaChannelToRGB->GetOutputPort();
+    }
+  else
+    {
+    // Scalar or RGBA volume, no need for generating alpha channel
+    pipeline->ComputeAlphaChannel->RemoveAllInputConnections(0);
+    pipeline->MergeAlphaChannelToRGB->RemoveAllInputConnections(0);
+    }
+  // Independent component means that the scalar components of the volume
+  // are rendered independently (not as a colored voxel).
+  bool independentComponents = (numberOfChannels != 3 && numberOfChannels != 4);
+
   // Set volume visibility, return if hidden
   pipeline->VolumeActor->SetVisibility(displayNodeVisible);
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
@@ -812,7 +844,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
       {
       if (displayNodeVisible)
         {
-        this->MultiVolumeMapper->SetInputConnection(pipelineMulti->ActorPortIndex, volumeNode->GetImageDataConnection());
+        this->MultiVolumeMapper->SetInputConnection(pipelineMulti->ActorPortIndex, imageConnection);
         this->MultiVolumeActor->SetVolume(pipelineMulti->VolumeActor, pipelineMulti->ActorPortIndex);
         }
       else
@@ -884,9 +916,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     if (pipelineCpu)
       {
       // Reconnection is expensive operation, therefore only do it if needed
-      if (pipelineCpu->VolumeScaling->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
+      if (pipelineCpu->VolumeScaling->GetInputConnection(0, 0) != imageConnection)
         {
-        pipelineCpu->VolumeScaling->SetInputConnection(0, volumeNode->GetImageDataConnection());
+        pipelineCpu->VolumeScaling->SetInputConnection(0, imageConnection);
         }
       }
     }
@@ -922,9 +954,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     pipeline->VolumeActor->SetMapper(mapper);
     // Make sure the correct volume is set to the mapper
     // Reconnection is expensive operation, therefore only do it if needed
-    if (mapper->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
+    if (mapper->GetInputConnection(0, 0) != imageConnection)
       {
-      mapper->SetInputConnection(0, volumeNode->GetImageDataConnection());
+      mapper->SetInputConnection(0, imageConnection);
       }
     }
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
@@ -980,6 +1012,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 
   // Set volume property
   vtkVolumeProperty* volumeProperty = displayNode->GetVolumePropertyNode() ? displayNode->GetVolumePropertyNode()->GetVolumeProperty() : nullptr;
+  if (volumeProperty)
+    {
+    volumeProperty->SetIndependentComponents(independentComponents);
+    }
   pipeline->VolumeActor->SetProperty(volumeProperty);
   // vtkMultiVolume's GetProperty returns the volume property from the first volume actor, and that is used when assembling the
   // shader, so need to set the volume property to the the first volume actor (in this case dummy actor, see above TODO)
