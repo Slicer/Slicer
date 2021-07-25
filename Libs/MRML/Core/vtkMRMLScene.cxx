@@ -3778,7 +3778,7 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   std::stringstream tempDirStr;
   tempDirStr << tempBaseDir << "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleSaveTemp-%F_%H%M%S_") << (this->RandomGenerator() % 1000);
   std::string tempDir = tempDirStr.str();
-  vtkDebugMacro("Packing bundle to " << unpackDir);
+  vtkDebugMacro("Packing bundle to " << tempDir);
 
   // make a subdirectory with the name the user has chosen
   std::string bundleDir = tempDir + "/" + mrbBaseName;
