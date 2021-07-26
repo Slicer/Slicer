@@ -786,6 +786,16 @@ bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData
 void vtkSlicerMarkupsWidget::Leave(vtkMRMLInteractionEventData* eventData)
 {
   this->RemovePreviewPoint();
+
+  // Ensure that EndInteractionEvent is invoked, even if interrupted by an unexpected event
+  if (this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateTranslateControlPoint
+    || this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateTranslate
+    || this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateScale
+    || this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateRotate)
+    {
+    this->EndWidgetInteraction();
+    }
+
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetMarkupsDisplayNode();
   if (markupsDisplayNode)
     {
