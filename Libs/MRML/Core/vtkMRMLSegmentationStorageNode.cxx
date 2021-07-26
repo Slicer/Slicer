@@ -677,6 +677,8 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
 
     if (numberOfSegments == 0)
       {
+      // No segment metadata. We are loading from a plain volume (not seg.nrrd).
+
       currentBinaryLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
       extractComponents->SetComponents(frameIndex);
       padder->SetOutputWholeExtent(imageExtentInFile);
@@ -714,6 +716,10 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
         currentSegment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), currentBinaryLabelmap);
         segments.push_back(currentSegment);
         }
+
+      // Set segmentation geometry from loaded image
+      std::string imageGeometryString = vtkSegmentationConverter::SerializeImageGeometry(currentBinaryLabelmap);
+      segmentation->SetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), imageGeometryString);
       }
     else
       {
