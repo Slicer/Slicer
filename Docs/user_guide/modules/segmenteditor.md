@@ -77,12 +77,13 @@ Use Threshold to determine a threshold range and save results to selected segmen
 
 - Left click to lay individual points of an outline
 - Left drag to lay down a continuous line of points
-- Right click to apply segment
+- Left double-click to add a point and fill the contour. Alternatively, right click to fill the current contour without adding any more points.
 
 | Key               | Operation                               |
 | ----------------- | --------------------------------------- |
 | `x`               | delete the last point added             |
 | `a`               | apply segment                           |
+| `Enter`           | apply segment                           |
 
 :::{note}
 

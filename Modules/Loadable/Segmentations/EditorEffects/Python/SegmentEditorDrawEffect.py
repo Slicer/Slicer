@@ -31,7 +31,7 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
 <li><b>Left-click:</b> add point.</li>
 <li><b>Left-button drag-and-drop:</b> add multiple points.</li>
 <li><b>x:</b> delete last point.</li>
-<li><b>Right-click</b> or <b>a</b> or <b>enter:</b> apply outline.</li>
+<li><b>Double-left-click</b> or <b>right-click</b> or <b>a</b> or <b>enter</b>: apply outline.</li>
 </ul><p></html>"""
 
   def deactivate(self):
@@ -74,11 +74,13 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
     elif eventId == vtk.vtkCommand.RightButtonPressEvent:
       sliceNode = viewWidget.sliceLogic().GetSliceNode()
       pipeline.lastInsertSliceNodeMTime = sliceNode.GetMTime()
-    elif eventId == vtk.vtkCommand.RightButtonReleaseEvent:
+      abortEvent = True
+    elif eventId == vtk.vtkCommand.RightButtonReleaseEvent or eventId==vtk.vtkCommand.LeftButtonDoubleClickEvent:
       sliceNode = viewWidget.sliceLogic().GetSliceNode()
       if abs(pipeline.lastInsertSliceNodeMTime - sliceNode.GetMTime()) < 2:
         pipeline.apply()
         pipeline.actionState = None
+      abortEvent = True
     elif eventId == vtk.vtkCommand.MouseMoveEvent:
       if pipeline.actionState == "drawing":
         xy = callerInteractor.GetEventPosition()
