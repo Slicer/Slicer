@@ -2443,17 +2443,21 @@ std::string vtkSlicerSegmentationsModuleLogic::GetSafeFileName(std::string origi
 {
   // Remove characters from node name that cannot be used in file names
   // (same method as in qSlicerFileNameItemDelegate::fixupFileName)
-  std::string safeName("");
+  std::string safeName;
   vtksys::RegularExpression regExp("[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]");
   for (size_t i=0; i<originalName.size(); ++i)
     {
-    std::string currentCharStr("");
+    std::string currentCharStr;
     currentCharStr += originalName[i];
     if (regExp.find(currentCharStr))
       {
       safeName += currentCharStr;
       }
     }
+
+  // trim whitespaces
+  safeName.erase(safeName.find_last_not_of(" \t\r\n") + 1);
+  safeName.erase(0, safeName.find_first_not_of(" \t\r\n"));
 
   return safeName;
 }

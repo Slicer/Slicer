@@ -90,6 +90,8 @@ QString qSlicerFileNameItemDelegate::forceFileNameValidCharacters(const QString&
       sanitizedFilename += filename[i];
       }
     }
+  // Remove leading and trailing spaces
+  sanitizedFilename = sanitizedFilename.trimmed();
   return sanitizedFilename;
 }
 
