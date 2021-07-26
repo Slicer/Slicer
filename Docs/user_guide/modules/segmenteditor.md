@@ -84,6 +84,12 @@ Use Threshold to determine a threshold range and save results to selected segmen
 | `x`               | delete the last point added             |
 | `a`               | apply segment                           |
 
+:::{note}
+
+Scissors effect can be also used for drawing. Scissors effect works both in slice and 3D views, can be set to draw on more than one slice at a time, can erase as well, can be constrained to draw horizontal/vertical lines (using rectangle mode), etc.
+
+:::
+
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_erase.png) Erase
 
 Same as the Paint effect, but the highlighted regions are removed from the selected segment instead of added.
