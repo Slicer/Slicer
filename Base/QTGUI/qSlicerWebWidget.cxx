@@ -384,10 +384,10 @@ void qSlicerWebWidget::onDownloadFinished(QNetworkReply* reply)
 }
 
 // --------------------------------------------------------------------------
-void qSlicerWebWidget::printToPdf(const QString& filePath)
+void qSlicerWebWidget::printToPdf(const QString& filePath, const QPageLayout& pageLayout)
 {
   Q_D(qSlicerWebWidget);
-  d->WebEnginePage->printToPdf(filePath);
+  d->WebEnginePage->printToPdf(filePath, pageLayout);
 }
 
 // --------------------------------------------------------------------------
