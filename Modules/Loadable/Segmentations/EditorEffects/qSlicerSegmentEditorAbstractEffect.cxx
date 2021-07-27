@@ -457,19 +457,6 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     segmentIDsToOverwrite.clear();
     }
 
-  std::vector<std::string> sharedSegmentIDs;
-  segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentID, sharedSegmentIDs, false);
-
-  std::vector<std::string> segmentsToErase;
-  for (std::string segmentIDToOverwrite : segmentIDsToOverwrite)
-    {
-    std::vector<std::string>::iterator foundSegmentIDIt = std::find(sharedSegmentIDs.begin(), sharedSegmentIDs.end(), segmentIDToOverwrite);
-    if (foundSegmentIDIt == sharedSegmentIDs.end())
-      {
-      segmentsToErase.push_back(segmentIDToOverwrite);
-      }
-    }
-
   // Create inverted binary labelmap
   vtkSmartPointer<vtkImageThreshold> inverter = vtkSmartPointer<vtkImageThreshold>::New();
   inverter->SetInputData(modifierLabelmap);
@@ -535,6 +522,19 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     if (vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment) == vtkSlicerSegmentationsModuleLogic::NotStarted)
       {
       vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, vtkSlicerSegmentationsModuleLogic::InProgress);
+      }
+    }
+
+  std::vector<std::string> sharedSegmentIDs;
+  segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentID, sharedSegmentIDs, false);
+
+  std::vector<std::string> segmentsToErase;
+  for (std::string segmentIDToOverwrite : segmentIDsToOverwrite)
+    {
+    std::vector<std::string>::iterator foundSegmentIDIt = std::find(sharedSegmentIDs.begin(), sharedSegmentIDs.end(), segmentIDToOverwrite);
+    if (foundSegmentIDIt == sharedSegmentIDs.end())
+      {
+      segmentsToErase.push_back(segmentIDToOverwrite);
       }
     }
 
