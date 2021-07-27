@@ -384,10 +384,17 @@ void qSlicerWebWidget::onDownloadFinished(QNetworkReply* reply)
 }
 
 // --------------------------------------------------------------------------
-void qSlicerWebWidget::printToPdf(const QString& filePath, const QPageLayout& pageLayout)
+void qSlicerWebWidget::printToPdf(const QString& filePath)
 {
   Q_D(qSlicerWebWidget);
-  d->WebEnginePage->printToPdf(filePath, pageLayout);
+  d->WebEnginePage->printToPdf(filePath);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerWebWidget::printToPdf(const QString& filePath, const QPageLayout& pageLayout)
+{
+    Q_D(qSlicerWebWidget);
+    d->WebEnginePage->printToPdf(filePath, pageLayout);
 }
 
 // --------------------------------------------------------------------------

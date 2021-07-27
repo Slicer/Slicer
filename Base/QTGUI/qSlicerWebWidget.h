@@ -111,7 +111,8 @@ public slots:
   ///
   /// If a file already exists at the provided file path, it will be overwritten.
   /// \sa QWebEnginePage::printToPdf
-  void printToPdf(const QString& filePath, const QPageLayout& pageLayout = QPageLayout(QPageSize(QPageSize::A4), QPageLayout::Portrait, QMarginsF()));
+  void printToPdf(const QString& filePath);
+  void printToPdf(const QString& filePath, const QPageLayout& pageLayout);
 
 signals:
   /// emitted with result of evalJS
