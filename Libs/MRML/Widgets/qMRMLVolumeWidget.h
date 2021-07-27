@@ -48,7 +48,7 @@ public:
 
   ///
   /// Return the current MRML node of interest
-  vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
+  Q_INVOKABLE vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
 
 public slots:
   /// Set the volume to observe
