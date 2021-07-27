@@ -471,3 +471,57 @@ void vtkSlicerSegmentationGeometryLogic::ComputeSourceAxisIndexForInputAxis()
     this->SourceAxisIndexForInputAxis[this->InputAxisIndexForSourceAxis[i]] = i;
     }
 }
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode()
+{
+  if (!this->InputSegmentationNode || !this->InputSegmentationNode->GetSegmentation())
+    {
+    vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode: invalid input segmentation node");
+    return false;
+    }
+
+  // Check if master representation is binary or fractional labelmap (those are the only supported representations in segment editor)
+  std::string masterRepresentationName = this->InputSegmentationNode->GetSegmentation()->GetMasterRepresentationName();
+  if ( masterRepresentationName != vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()
+    && masterRepresentationName != vtkSegmentationConverter::GetFractionalLabelmapRepresentationName() )
+    {
+    vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode: "
+      << "Master representation needs to be a labelmap type, but '" << masterRepresentationName.c_str() << "' found");
+    return false;
+    }
+
+  bool success = true;
+
+  MRMLNodeModifyBlocker blocker(this->InputSegmentationNode);
+  vtkOrientedImageData* geometryImageData = this->GetOutputGeometryImageData();
+  std::vector< std::string > segmentIDs;
+  this->InputSegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
+  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    {
+    std::string currentSegmentID = *segmentIdIt;
+    vtkSegment* currentSegment = this->InputSegmentationNode->GetSegmentation()->GetSegment(*segmentIdIt);
+
+    // Get master labelmap from segment
+    vtkOrientedImageData* currentLabelmap = vtkOrientedImageData::SafeDownCast(
+      currentSegment->GetRepresentation(masterRepresentationName) );
+    if (!currentLabelmap)
+      {
+      vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode: "
+        << "Failed to retrieve master representation from segment " << currentSegmentID.c_str());
+      continue;
+      }
+
+    // Resample
+    if (!vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(currentLabelmap, geometryImageData, currentLabelmap, false, true))
+      {
+      vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode: "
+        << "Segment " << this->InputSegmentationNode->GetName() << "/" << currentSegmentID.c_str() << " failed to be resampled");
+      success = false;
+      continue;
+      }
+    }
+
+  this->InputSegmentationNode->Modified();
+  return success;
+}

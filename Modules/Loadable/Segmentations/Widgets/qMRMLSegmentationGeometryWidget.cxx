@@ -472,60 +472,7 @@ void qMRMLSegmentationGeometryWidget::setReferenceImageGeometryForSegmentationNo
 void qMRMLSegmentationGeometryWidget::resampleLabelmapsInSegmentationNode()
 {
   Q_D(qMRMLSegmentationGeometryWidget);
-  if (!d->SegmentationNode.GetPointer())
-    {
-    qCritical() << Q_FUNC_INFO << "No input segmentation specified";
-    return;
-    }
-  bool success = true;
-
-  // Check if master representation is binary or fractional labelmap (those are the only supported representations in segment editor)
-  std::string masterRepresentationName = d->SegmentationNode->GetSegmentation()->GetMasterRepresentationName();
-  if ( masterRepresentationName != vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()
-    && masterRepresentationName != vtkSegmentationConverter::GetFractionalLabelmapRepresentationName() )
-    {
-    qCritical() << Q_FUNC_INFO << "Master representation needs to be a labelmap type, but '"
-      << masterRepresentationName.c_str() << "' found";
-    return;
-    }
-
-  int wasModified = d->SegmentationNode->StartModify();
-  std::vector< std::string > segmentIDs;
-  d->SegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
-    {
-    std::string currentSegmentID = *segmentIdIt;
-    vtkSegment* currentSegment = d->SegmentationNode->GetSegmentation()->GetSegment(*segmentIdIt);
-
-    // Get master labelmap from segment
-    vtkOrientedImageData* currentLabelmap = vtkOrientedImageData::SafeDownCast(
-      currentSegment->GetRepresentation(masterRepresentationName) );
-    if (!currentLabelmap)
-      {
-      qCritical() << Q_FUNC_INFO << "Failed to retrieve master representation from segment " << currentSegmentID.c_str();
-      continue;
-      }
-
-    // Resample
-    vtkOrientedImageData* geometryImageData = d->Logic->GetOutputGeometryImageData();
-    if (!vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(currentLabelmap, geometryImageData, currentLabelmap, false, true))
-      {
-      qCritical() << Q_FUNC_INFO << "Segment " << d->SegmentationNode->GetName() << "/" << currentSegmentID.c_str() << " failed to be resampled";
-      success = false;
-      continue;
-      }
-    }
-
-  if (success)
-    {
-    qDebug() << Q_FUNC_INFO << "Master representation '" << masterRepresentationName.c_str() << "' in each segment of segmentation "
-      << d->SegmentationNode->GetName() << " has been resampled to specified geometry";
-    }
-
-  // Trigger display update
-  d->SegmentationNode->Modified();
-
-  d->SegmentationNode->EndModify(wasModified);
+  d->Logic->ResampleLabelmapsInSegmentationNode();
 }
 
 //-----------------------------------------------------------------------------

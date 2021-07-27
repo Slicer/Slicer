@@ -58,6 +58,10 @@ public:
   /// Use this calculated permutation for updating spacing widget from geometry and interpreting spacing input
   void ComputeSourceAxisIndexForInputAxis();
 
+  /// Resample labelmap representation the input segmentation node according to the current
+  /// output geometry setting.
+  bool ResampleLabelmapsInSegmentationNode();
+
   vtkGetObjectMacro(OutputGeometryImageData, vtkOrientedImageData);
 
   /// Reset geometry image data \sa GeometryImageData

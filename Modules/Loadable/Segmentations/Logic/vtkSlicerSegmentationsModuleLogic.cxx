@@ -1239,13 +1239,20 @@ bool vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToLabelmapNode(vtkM
 {
   if (!segmentationNode)
     {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToLabelmapNode: Invalid segmentation node");
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToLabelmapNode failed: Invalid segmentation node");
     return false;
     }
 
   std::vector<std::string> visibleSegmentIDs;
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
-  displayNode->GetVisibleSegmentIDs(visibleSegmentIDs);
+  if (displayNode)
+    {
+    displayNode->GetVisibleSegmentIDs(visibleSegmentIDs);
+    }
+  else
+    {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToLabelmapNode: display node not found, exporting all segments.");
+    }
 
   return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(segmentationNode, visibleSegmentIDs, labelmapNode,
     referenceVolumeNode, extentComputationMode);
