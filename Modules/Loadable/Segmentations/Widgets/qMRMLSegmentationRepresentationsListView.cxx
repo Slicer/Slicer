@@ -29,10 +29,13 @@
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkSegmentation.h"
 
+#include "ctkMenuButton.h"
+
 // Qt includes
 #include <QAction>
 #include <QDebug>
 #include <QDialog>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSettings>
@@ -157,14 +160,13 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
   d->setMessage(QString());
 
   // Block signals so that onMasterRepresentationChanged function is not called when populating
-  bool wasBlocked = d->RepresentationsList->blockSignals(true);
+  QSignalBlocker blocker(d->RepresentationsList);
 
   d->RepresentationsList->clear();
 
   if (!d->SegmentationNode)
     {
     d->setMessage(tr("No node is selected"));
-    d->RepresentationsList->blockSignals(wasBlocked);
     return;
     }
 
@@ -227,17 +229,17 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
         if (present)
           {
           // Existing representations get an update button
-          QToolButton* updateButton = new QToolButton(representationWidget);
-          updateButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+          ctkMenuButton* updateButton = new ctkMenuButton(representationWidget);
           updateButton->setText("Update");
           QString updateButtonTooltip = QString("Update %1 representation using custom conversion parameters.\n\n"
-            "Press and hold button to access removal option.").arg(name);
+            "Click the down-arrow button for additional operations.").arg(name);
           updateButton->setToolTip(updateButtonTooltip);
           updateButton->setProperty(REPRESENTATION_NAME_PROPERTY, QVariant(name));
           updateButton->setMinimumWidth(updateButton->sizeHint().width() + 10);
-          updateButton->setMinimumHeight(22);
-          representationItem->setSizeHint(QSize(-1, qMax(24, qMax(updateButton->sizeHint().height(), representationItem->sizeHint().height()))));
           QObject::connect(updateButton, SIGNAL(clicked()), this, SLOT(createRepresentationAdvanced()));
+
+          QMenu* updateMenu = new QMenu(updateButton);
+          updateButton->setMenu(updateMenu);
 
           // Set up actions for the update button
           QAction* removeAction = new QAction("Remove", updateButton);
@@ -245,7 +247,7 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
           removeAction->setToolTip(removeActionTooltip);
           removeAction->setProperty(REPRESENTATION_NAME_PROPERTY, QVariant(name));
           QObject::connect(removeAction, SIGNAL(triggered()), this, SLOT(removeRepresentation()));
-          updateButton->addAction(removeAction);
+          updateMenu->addAction(removeAction);
 
           representationLayout->addWidget(updateButton);
           }
@@ -253,7 +255,6 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
         QPushButton* makeMasterButton = new QPushButton(representationWidget);
         makeMasterButton->setText("Make master");
         makeMasterButton->setProperty(REPRESENTATION_NAME_PROPERTY, QVariant(name));
-        makeMasterButton->setMinimumHeight(22);
         QObject::connect(makeMasterButton, SIGNAL(clicked()), this, SLOT(makeMaster()));
 
         representationLayout->addWidget(makeMasterButton);
@@ -261,48 +262,33 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
       else
         {
         // Missing representations get a create button
-        QToolButton* createButton = new QToolButton(representationWidget);
-        createButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        ctkMenuButton* createButton = new ctkMenuButton(representationWidget);
         createButton->setText("Create");
         QString convertButtonTooltip = QString("Create %1 representation using default conversion parameters.\n\nPress and hold button to access advanced conversion and removal options.").arg(name);
         createButton->setToolTip(convertButtonTooltip);
         createButton->setProperty(REPRESENTATION_NAME_PROPERTY, QVariant(name));
         createButton->setMinimumWidth(createButton->sizeHint().width() + 10);
-        createButton->setMinimumHeight(22);
-        representationItem->setSizeHint(QSize(-1, qMax(24, qMax(createButton->sizeHint().height(), representationItem->sizeHint().height()))));
         QObject::connect(createButton, SIGNAL(clicked()), this, SLOT(createRepresentationDefault()));
 
+        QMenu* createMenu = new QMenu(createButton);
+        createButton->setMenu(createMenu);
+
         // Set up actions for the create button
-        QAction* advancedAction = new QAction("Advanced create...", createButton);
+        QAction* advancedAction = new QAction("Advanced create...", createMenu);
         QString advancedActionTooltip = QString("Create %1 representation using custom conversion parameters").arg(name);
         advancedAction->setToolTip(advancedActionTooltip);
         advancedAction->setProperty(REPRESENTATION_NAME_PROPERTY, QVariant(name));
         QObject::connect(advancedAction, SIGNAL(triggered()), this, SLOT(createRepresentationAdvanced()));
-        createButton->addAction(advancedAction);
-
-        QAction* removeAction = new QAction("Remove", createButton);
-        QString removeActionTooltip = QString("Remove %1 representation from segmentation").arg(name);
-        removeAction->setToolTip(removeActionTooltip);
-        removeAction->setProperty(REPRESENTATION_NAME_PROPERTY, QVariant(name));
-        QObject::connect(removeAction, SIGNAL(triggered()), this, SLOT(removeRepresentation()));
-        createButton->addAction(removeAction);
+        createMenu->addAction(advancedAction);
 
         representationLayout->addWidget(createButton);
         }
-      }
-    else
-      {
-      // Master representation row is set the height of the name label
-      representationItem->setSizeHint(QSize(-1, qMax(24, nameLabel->sizeHint().height())));
       }
 
     representationLayout->addStretch();
     d->RepresentationsList->addItem(representationItem);
     d->RepresentationsList->setItemWidget(representationItem, representationWidget);
     }
-
-  // Unblock signals
-  d->RepresentationsList->blockSignals(wasBlocked);
 }
 
 //-----------------------------------------------------------------------------

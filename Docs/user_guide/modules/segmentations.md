@@ -101,11 +101,11 @@ Labelmap volumes can be created in any other formats by [exporting segmentation 
 
 ### Create new representation in segmentation (conversion)
 
-The supported representations are listed as rows in the Representations section. The already existing representations have a green tick, the master representation (that is the source of all conversions and the representation that can be edited) a gold star.
+The supported representations are listed in the Representations section. Existing representations are marked with a green tick, the master representation is marked with a gold star. The master representation is the editable (for example, in Segment Editor module) and it is the source of all conversions.
 
-To create a representation that is missing, click on the Create button in its row. If custom conversion path or parameters are to be used (reference grid for labelmaps, smoothing for surfaces, etc.), long-press the button and choose "Advanced create...". In the appearing window the available conversion paths are listed in a list, ordered by estimated time cost. After selecting the desired path, the involved parameters are listed in the bottom section of the window
-
-To re-convert an existing representation (to use different conversion path or parameters), click the Update button in their row.
+- To create a representation, click on the Create button in the corresponding row. To specify a custom conversion path or parameters (reference geometry for labelmaps, smoothing for surfaces, etc.), click the down-arrow button in the "Create" button and choose "Advanced create...", then choose a conversion path from the list at the top, and adjust the conversion parameters in the section at the bottom.
+- To update a representation (re-create from the master representation) using custom conversion path or parameters, click the "Update" button in the corresponding row.
+- To remove a representation, click the down-arrow button in the "Update" button then choose "Remove".
 
 ### Adjust how segments are displayed
 
