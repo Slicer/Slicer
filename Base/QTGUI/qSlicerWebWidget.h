@@ -103,6 +103,7 @@ public slots:
 
   void onDownloadFinished(QNetworkReply* reply);
 
+  ///@{
   /// Renders the current content of the page into a PDF document and saves it in the location specified in filePath.
   ///
   /// The page size and orientation of the produced PDF document are taken from the values specified in pageLayout.
@@ -112,6 +113,8 @@ public slots:
   /// If a file already exists at the provided file path, it will be overwritten.
   /// \sa QWebEnginePage::printToPdf
   void printToPdf(const QString& filePath);
+  void printToPdf(const QString& filePath, const QPageLayout& pageLayout);
+  ///@}
 
 signals:
   /// emitted with result of evalJS
