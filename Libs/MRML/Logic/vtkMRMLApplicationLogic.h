@@ -127,7 +127,8 @@ public:
   /// Fit all the volumes into their views
   /// If onlyIfPropagateVolumeSelectionAllowed is true then field of view will be reset on
   /// only those slices where propagate volume selection is allowed
-  void FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed=false);
+  /// If resetOrientation is true then slice orientation can be modified during function call
+  void FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed=false, bool resetOrientation=true);
 
   /// Propagate selected table in the SelectionNode to table view nodes.
   void PropagateTableSelection();
