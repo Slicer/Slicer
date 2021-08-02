@@ -349,14 +349,13 @@ def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
   dicomDatabase.closeDatabase()
 
   if cleanup:
-    dicomDatabase.initializeDatabase()
-    # TODO: The database files cannot be deleted even if the database is closed.
-    #       Not critical, as it will be empty, so will not take measurable disk space.
-    # import shutil
-    # databaseDir = os.path.split(dicomDatabase.databaseFilename)[0]
-    # shutil.rmtree(databaseDir)
-    # if os.access(databaseDir, os.F_OK):
-      # logging.error('Failed to delete DICOM database ' + databaseDir)
+    import shutil
+    databaseDir = os.path.split(dicomDatabase.databaseFilename)[0]
+    shutil.rmtree(databaseDir)
+    if os.access(databaseDir, os.F_OK):
+      logging.error('Failed to delete DICOM database ' + databaseDir)
+      # Database is still in use, at least clear its content
+      dicomDatabase.initializeDatabase()
 
   return True
 
