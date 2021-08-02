@@ -89,6 +89,51 @@ mergedProxyNode = mergedSequenceBrowserNode.GetProxyNode(mergedSequenceNode)
 slicer.util.setSliceViewerLayers(background=mergedProxyNode)
 ```
 
+### Plot segments average intensity over time
+
+This code snippet can be used to plot average intensity in speficic regions (designated using segments in a segmentation node) of a volume sequence over time.
+
+```python
+# inputs
+volumeSequenceProxyNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
+segmentationNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSegmentationNode")
+
+# get volume sequence as numpy array
+volumeSequenceBrowserNode = slicer.modules.sequences.logic().GetFirstBrowserNodeForProxyNode(volumeSequenceProxyNode)
+volumeSequenceNode = volumeSequenceBrowserNode.GetSequenceNode(volumeSequenceProxyNode)
+
+# get voxels of visible segments as numpy arrays
+segmentNames = []
+segmentArrays = []
+visibleSegmentIds = vtk.vtkStringArray()
+segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(visibleSegmentIds)
+for segmentIdIndex in range(visibleSegmentIds.GetNumberOfValues()):
+    segmentId = visibleSegmentIds.GetValue(segmentIdIndex)
+    segmentArrays.append(slicer.util.arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, volumeSequenceProxyNode))
+    segmentNames.append(segmentationNode.GetSegmentation().GetSegment(segmentId).GetName())
+
+# Create table that will contain time values and mean intensity value for each segment for each time point
+import numpy as np
+intensityTable = np.zeros([volumeSequenceNode.GetNumberOfDataNodes(), len(segmentArrays)+1])
+intensityTableTimeColumn = 0
+intensityTableColumnNames = [volumeSequenceNode.GetIndexName()] + segmentNames
+for volumeIndex in range(volumeSequenceNode.GetNumberOfDataNodes()):
+    intensityTable[volumeIndex, intensityTableTimeColumn] = volumeSequenceNode.GetNthIndexValue(volumeIndex)
+    for segmentIndex, segmentArray in enumerate(segmentArrays):
+        voxelArray = slicer.util.arrayFromVolume(volumeSequenceNode.GetNthDataNode(volumeIndex))
+        intensityTable[volumeIndex, segmentIndex+1] = voxelArray[segmentArray>0].mean()
+
+# Plot results
+plotNodes = {}
+slicer.util.plot(intensityTable, intensityTableTimeColumn, intensityTableColumnNames, "Intensity", nodes=plotNodes)
+# Set color and name of plots to match segment names and colors
+for segmentIdIndex in range(visibleSegmentIds.GetNumberOfValues()):
+    segment = segmentationNode.GetSegmentation().GetSegment(visibleSegmentIds.GetValue(segmentIdIndex))
+    seriesNode = plotNodes['series'][segmentIdIndex]
+    seriesNode.SetColor(segment.GetColor())
+    seriesNode.SetName(segment.GetName())
+```
+
 ### Create a 4D volume in Python - outside Slicer
 
 You can write a seq.nrrd file (that Slicer can load as a volume sequence) from an img numpy array of with dimensions `t`, `i`, `j`, `k` (volume index, followed by voxel coordinates). `space origin` specifies the image origin. `space directions` specify the image axis directions and spacing (spacing is the Euclidean norm of the axis vector). 
