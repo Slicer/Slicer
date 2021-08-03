@@ -390,27 +390,16 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
 
   // Plot series selector
   bool plotBlockSignals = d->plotSeriesComboBox->blockSignals(true);
-
   for (int idx = 0; idx < d->plotSeriesComboBox->nodeCount(); idx++)
     {
-    vtkMRMLNode* node = d->plotSeriesComboBox->nodeFromIndex(idx);
-    d->plotSeriesComboBox->setCheckState(node, Qt::Unchecked);
-    }
-
-  std::vector<std::string> plotSeriesNodesIDs;
-  mrmlPlotChartNode->GetPlotSeriesNodeIDs(plotSeriesNodesIDs);
-  for (std::vector<std::string>::iterator it = plotSeriesNodesIDs.begin();
-    it != plotSeriesNodesIDs.end(); ++it)
-    {
-    vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast
-      (this->mrmlScene()->GetNodeByID((*it).c_str()));
-    if (plotSeriesNode == nullptr)
+    vtkMRMLNode* plotSeriesNode = d->plotSeriesComboBox->nodeFromIndex(idx);
+    Qt::CheckState checkState = Qt::Unchecked;
+    if (plotSeriesNode && mrmlPlotChartNode->HasPlotSeriesNodeID(plotSeriesNode->GetID()))
       {
-      continue;
+      checkState = Qt::Checked;
       }
-    d->plotSeriesComboBox->setCheckState(plotSeriesNode, Qt::Checked);
+    d->plotSeriesComboBox->setCheckState(plotSeriesNode, checkState);
     }
-
   d->plotSeriesComboBox->blockSignals(plotBlockSignals);
 
   d->actionShow_Grid->setChecked(mrmlPlotChartNode->GetGridVisibility());
