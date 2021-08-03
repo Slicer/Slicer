@@ -524,6 +524,25 @@ segmentation.CopySegmentFromSegmentation(segmentation, sourceSegmentId)
 
 ### Quantifying segments
 
+#### Get volume of each segment
+
+```python
+segmentationNode = getNode("Segmentation")
+
+# Compute segment statistics
+import SegmentStatistics
+segStatLogic = SegmentStatistics.SegmentStatisticsLogic()
+segStatLogic.getParameterNode().SetParameter("Segmentation", segmentationNode.GetID())
+segStatLogic.computeStatistics()
+stats = segStatLogic.getStatistics()
+
+# Display volume of each segment
+for segmentId in stats["SegmentIDs"]:
+  volume_cm3 = stats[segmentId,"LabelmapSegmentStatisticsPlugin.volume_cm3"]
+  segmentName = segmentationNode.GetSegmentation().GetSegment(segmentId).GetName()
+  print(f"{segmentName} volume = {volume_cm3} cm3")
+```
+
 #### Get centroid of each segment
 
 Place a markups fiducial point at the centroid of each segment.
