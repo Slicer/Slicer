@@ -6,6 +6,10 @@ Segment Editor does not edit labelmap volumes or models, but segmentations can b
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segment_editor_module.png)
 
+## How to cite
+
+To cite the Segment Editor in scientific publications, you can cite [3D Slicer](../about.html#how-to-cite) and the Segment Editor paper: *Cs. Pinter, A. Lasso, G. Fichtinger, "Polymorph segmentation representation for medical image computing", Computer Methods and Programs in Biomedicine, Volume 171, p19-26, 2019* ([pdf](http://perk.cs.queensu.ca/sites/perkd7.cs.queensu.ca/files/Pinter2019_Manuscript.pdf), [DOI](https://doi.org/10.1016/j.cmpb.2019.02.011)). Additional references to non-trivial algorithms used in Segment Editor effects are provided below, in the documentation of each effect.
+
 ## Keyboard shortcuts
 
 The following keyboard shortcuts are active when you are in the Editor module.  They are intended to allow two-handed editing, where on hand is on the mouse and the other hand uses the keyboard to switch modes.
@@ -126,7 +130,7 @@ Notes:
 - Only visible segments are used by this effect.
 - At least two segments are required.
 - If a part of a segment is erased or painting is removed using Undo (and not overwritten by another segment) then it is recommended to cancel and initialize. The reason is that effect of adding more information (painting more seeds) can be propagated to the complete segmentation, but removing information (removing some seed regions) will not change the complete segmentation.
-- The method uses grow-cut algorithm: Liangjia Zhu, Ivan Kolesov, Yi Gao, Ron Kikinis, Allen Tannenbaum. An Effective Interactive Medical Image Segmentation Method Using Fast GrowCut, International Conference on Medical Image Computing and Computer Assisted Intervention (MICCAI), Interactive Medical Image Computing Workshop, 2014.
+- The method uses an improved version of the grow-cut algorithm described in *Liangjia Zhu, Ivan Kolesov, Yi Gao, Ron Kikinis, Allen Tannenbaum. An Effective Interactive Medical Image Segmentation Method Using Fast GrowCut, International Conference on Medical Image Computing and Computer Assisted Intervention (MICCAI), Interactive Medical Image Computing Workshop, 2014.*
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_fill_between_slices.png) Fill between slices
 
@@ -147,7 +151,7 @@ Notes:
 
 - Only visible segments are used by this effect.
 - The method does not use the master volume, only the shape of the specified segments.
-- The method uses ND morphological contour interpolation algorithm. See details here: http://insight-journal.org/browse/publication/977
+- The method uses *ND morphological contour interpolation algorithm* described in this paper: <http://insight-journal.org/browse/publication/977>
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_margin.png) Margin
 
