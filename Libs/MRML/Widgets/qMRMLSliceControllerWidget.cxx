@@ -78,7 +78,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   qMRMLOrientation axialOrientation = {qMRMLSliceControllerWidget::tr("S: "), qMRMLSliceControllerWidget::tr("I <-----> S")};
   qMRMLOrientation sagittalOrientation = {qMRMLSliceControllerWidget::tr("R: "), qMRMLSliceControllerWidget::tr("L <-----> R")};
   qMRMLOrientation coronalOrientation = {qMRMLSliceControllerWidget::tr("A: "), qMRMLSliceControllerWidget::tr("P <-----> A")};
-  qMRMLOrientation obliqueOrientation = {"", qMRMLSliceControllerWidget::tr("Oblique")};
+  qMRMLOrientation obliqueOrientation = {qMRMLSliceControllerWidget::tr("O: "), qMRMLSliceControllerWidget::tr("Oblique")};
 
   this->SliceOrientationToDescription["Axial"] = axialOrientation;
   this->SliceOrientationToDescription["Sagittal"] = sagittalOrientation;
@@ -1572,7 +1572,7 @@ qMRMLOrientation qMRMLSliceControllerWidgetPrivate::mrmlOrientation(const QStrin
     {
     return it.value();
     }
-  qMRMLOrientation obliqueOrientation = {"", qMRMLSliceControllerWidget::tr("Oblique")};
+  qMRMLOrientation obliqueOrientation = {qMRMLSliceControllerWidget::tr("O: "), qMRMLSliceControllerWidget::tr("Oblique")};
   return obliqueOrientation;
 }
 
