@@ -171,11 +171,11 @@ void qMRMLCheckableNodeComboBox::setCheckState(vtkMRMLNode* node, Qt::CheckState
     qobject_cast<ctkCheckableComboBox*>(d->ComboBox);
   QModelIndexList indexes =
     d->indexesFromMRMLNodeID(node ? node->GetID(): QString());
-  if (indexes.count() == 0)
+  if (indexes.count() < 1)
     {
     return;
     }
-  return checkableComboBox->setCheckState(indexes[0], check);
+  checkableComboBox->setCheckState(indexes[0], check);
 }
 
 // --------------------------------------------------------------------------
