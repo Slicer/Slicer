@@ -162,11 +162,10 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
       QSet<QString> notInstalledExtensions = lastLoadedExtensionsList.toSet().subtract(extensionsList.toSet());
       if (!notInstalledExtensions.isEmpty())
         {
-        QStringList notInstalledExtensionsList(notInstalledExtensions.begin(), notInstalledExtensions.end());
         QString extensionsInformation =
           tr("These extensions were installed when the scene was saved but not installed now: %1."
              " These extensions may be required for successful loading of the scene.")
-          .arg(notInstalledExtensionsList.join(", "));
+          .arg(QStringList::fromSet(notInstalledExtensions).join(", "));
         this->userMessages()->AddMessage(vtkCommand::MessageEvent, extensionsInformation.toStdString());
         }
       }
