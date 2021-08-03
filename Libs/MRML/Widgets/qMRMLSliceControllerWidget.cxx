@@ -406,9 +406,12 @@ void qMRMLSliceControllerWidgetPrivate::init()
 
   //this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
   ctkDoubleSpinBox* spinBox = this->SliceOffsetSlider->spinBox();
+  // Fix the size of the sliceOffset spinbox to avoid flickering when its value changes
+  spinBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+  spinBox->setMaximumWidth(60);
+  spinBox->setMinimumWidth(60);
   spinBox->setFrame(false);
   spinBox->spinBox()->setButtonSymbols(QAbstractSpinBox::NoButtons);
-  spinBox->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
   int targetHeight = spinBox->parentWidget()->layout()->sizeHint().height();//setSizeConstraint(QLayout::SetMinimumSize);
   int fontHeight = spinBox->fontMetrics().height();
   qreal heightRatio = static_cast<qreal>(targetHeight - 2) / fontHeight;
