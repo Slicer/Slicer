@@ -24,7 +24,7 @@ code of slicer, generating the project files and build the project.
 In addition, Slicer requires a set of support libraries that are not includes as
 part of the *superbuild*:
 
-- Qt5 with the following components:
+- Qt5 with the following components (5.15.x recommended):
   - Multimedia
   - UiTools
   - XMLPatterns
