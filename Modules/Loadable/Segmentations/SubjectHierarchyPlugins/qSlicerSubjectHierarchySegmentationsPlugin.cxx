@@ -660,7 +660,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentAdded(vtkObject* calle
     {
     return;
     }
-  if (segmentationNode->GetScene()->IsImporting())
+  if (segmentationNode->GetScene() && segmentationNode->GetScene()->IsImporting())
     {
     // During scene import SH may not exist yet (if the scene was created without automatic SH creation)
     return;
@@ -804,9 +804,9 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentModified(vtkObject* ca
     {
     return;
     }
-  if (segmentationNode->GetScene()->IsImporting())
+  if (segmentationNode->GetScene() && segmentationNode->GetScene()->IsImporting())
     {
-    // during scene import SH may not exist yet (if the scene was created without automatic SH creation)
+    // During scene import SH may not exist yet (if the scene was created without automatic SH creation)
     return;
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
@@ -1205,6 +1205,11 @@ void qSlicerSubjectHierarchySegmentationsPlugin::updateAllSegmentsFromMRML(vtkMR
   if (!segmentationNode)
     {
     qWarning() << Q_FUNC_INFO << ": invalid segmentation node";
+    return;
+    }
+  if (segmentationNode->GetScene() && segmentationNode->GetScene()->IsImporting())
+    {
+    // During scene import SH may not exist yet (if the scene was created without automatic SH creation)
     return;
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
