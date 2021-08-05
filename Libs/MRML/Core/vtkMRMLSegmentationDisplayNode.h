@@ -257,6 +257,9 @@ public:
   /// Get all visible segment IDs.
   void GetVisibleSegmentIDs(std::vector<std::string>& segmentIDs);
 
+  /// Get all visible segment IDs.
+  std::vector<std::string> GetVisibleSegmentIDs();
+
 protected:
   /// Convenience function for getting all segment IDs.
   void GetSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly);
