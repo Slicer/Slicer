@@ -28,7 +28,6 @@
 
 // CTK includes
 #include <ctkAxesWidget.h>
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 
 // qMRML includes
@@ -46,11 +45,6 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLChartView");
-//--------------------------------------------------------------------------
-
 
 const char *plotPreamble =
   "<!DOCTYPE html>"
@@ -140,7 +134,6 @@ void qMRMLChartViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 // --------------------------------------------------------------------------
 void qMRMLChartViewPrivate::startProcessing()
 {
-//  logger.trace("startProcessing");
 //  Q_Q(qMRMLChartView);
 }
 
@@ -148,7 +141,6 @@ void qMRMLChartViewPrivate::startProcessing()
 // --------------------------------------------------------------------------
 void qMRMLChartViewPrivate::endProcessing()
 {
-//  logger.trace("endProcessing");
 //  Q_Q(qMRMLChartView);
   this->updateWidgetFromMRML();
 }

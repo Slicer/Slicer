@@ -1835,7 +1835,7 @@ void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLa
   Q_D(qMRMLSliceControllerWidget);
   if (!d->MRMLSliceNode)
     {
-    qCritical() << "qMRMLSliceControllerWidget::setSliceViewLabel failed: MRMLSliceNode is invalid";
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
     }
   d->MRMLSliceNode->SetLayoutLabel(newSliceViewLabel.toUtf8());
@@ -1845,7 +1845,12 @@ void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLa
 QString qMRMLSliceControllerWidget::sliceViewLabel()const
 {
   Q_D(const qMRMLSliceControllerWidget);
-  return d->ViewLabel->text();
+  if (!d->MRMLSliceNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
+    return QString();
+    }
+  return d->MRMLSliceNode->GetLayoutLabel();
 }
 
 //---------------------------------------------------------------------------

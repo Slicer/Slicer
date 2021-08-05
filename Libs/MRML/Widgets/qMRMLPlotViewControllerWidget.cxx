@@ -37,7 +37,6 @@
 #include <vtkTable.h>
 
 // CTK includes
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 
 // qMRML includes
@@ -59,10 +58,6 @@
 
 // STD include
 #include <string>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLPlotViewControllerWidget");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLPlotViewControllerWidgetPrivate methods
@@ -281,19 +276,25 @@ void qMRMLPlotViewControllerWidget::setPlotView(qMRMLPlotView* view)
 void qMRMLPlotViewControllerWidget::setViewLabel(const QString& newViewLabel)
 {
   Q_D(qMRMLPlotViewControllerWidget);
-
-  if (d->PlotViewNode)
+  if (!d->PlotViewNode)
     {
-    logger.error("setViewLabel should be called before setViewNode !");
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
     }
-
-  d->PlotViewLabel = newViewLabel;
-  d->ViewLabel->setText(d->PlotViewLabel);
+  d->PlotViewNode->SetLayoutLabel(newViewLabel.toUtf8());
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CPP(qMRMLPlotViewControllerWidget, QString, viewLabel, PlotViewLabel);
+QString qMRMLPlotViewControllerWidget::viewLabel()const
+{
+  Q_D(const qMRMLPlotViewControllerWidget);
+  if (!d->PlotViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
+    return QString();
+    }
+  return d->PlotViewNode->GetLayoutLabel();
+}
 
 
 //---------------------------------------------------------------------------
@@ -353,7 +354,7 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
     return;
     }
 
-  this->setViewLabel(d->PlotViewNode->GetLayoutLabel());
+  d->ViewLabel->setText(d->PlotViewNode->GetLayoutLabel());
 
   // PlotChartNode selector
   vtkMRMLPlotChartNode* mrmlPlotChartNode = d->GetPlotChartNodeFromView();

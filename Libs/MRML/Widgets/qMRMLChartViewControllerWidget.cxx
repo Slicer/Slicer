@@ -27,7 +27,6 @@
 #include <vtkStringArray.h>
 
 // CTK includes
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 
 // qMRML includes
@@ -46,10 +45,6 @@
 
 // STD include
 #include <string>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLChartViewControllerWidget");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLChartViewControllerWidgetPrivate methods
@@ -286,20 +281,25 @@ void qMRMLChartViewControllerWidget::setChartView(qMRMLChartView* view)
 void qMRMLChartViewControllerWidget::setViewLabel(const QString& newViewLabel)
 {
   Q_D(qMRMLChartViewControllerWidget);
-
-  if (d->ChartViewNode)
+  if (!d->ChartViewNode)
     {
-    logger.error("setViewLabel should be called before setViewNode !");
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
     }
-
-  d->ChartViewLabel = newViewLabel;
-  d->ViewLabel->setText(d->ChartViewLabel);
+  d->ChartViewNode->SetLayoutLabel(newViewLabel.toUtf8());
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CPP(qMRMLChartViewControllerWidget, QString, viewLabel, ChartViewLabel);
-
+QString qMRMLChartViewControllerWidget::viewLabel()const
+{
+  Q_D(const qMRMLChartViewControllerWidget);
+  if (!d->ChartViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
+    return QString();
+    }
+  return d->ChartViewNode->GetLayoutLabel();
+}
 
 // --------------------------------------------------------------------------
 void qMRMLChartViewControllerWidget::setMRMLChartViewNode(
@@ -312,7 +312,7 @@ void qMRMLChartViewControllerWidget::setMRMLChartViewNode(
   this->updateWidgetFromMRML();
 }
 
-// --------------------------------------------------------------------chart------
+// --------------------------------------------------------------------------
 void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLChartViewControllerWidget);
@@ -324,7 +324,7 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
     return;
     }
 
-  this->setViewLabel(d->ChartViewNode->GetLayoutLabel());
+  d->ViewLabel->setText(d->ChartViewNode->GetLayoutLabel());
 
   vtkMRMLChartNode *chartNode = d->chartNode();
   if (!chartNode)

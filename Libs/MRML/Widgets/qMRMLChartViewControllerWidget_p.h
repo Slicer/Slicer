@@ -62,8 +62,6 @@ public:
   vtkWeakPointer<vtkMRMLChartViewNode>  ChartViewNode;
   qMRMLChartView*                       ChartView;
 
-  QString                          ChartViewLabel;
-
   vtkMRMLChartNode* chartNode();
 
 public slots:
