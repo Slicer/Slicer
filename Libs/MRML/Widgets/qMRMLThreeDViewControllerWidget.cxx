@@ -369,6 +369,30 @@ void qMRMLThreeDViewControllerWidget::setViewLink(bool linked)
   viewNodes->Delete();
 }
 
+//---------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setViewLabel(const QString& newViewLabel)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!d->ViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
+    return;
+    }
+  d->ViewNode->SetLayoutLabel(newViewLabel.toUtf8());
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLThreeDViewControllerWidget::viewLabel()const
+{
+  Q_D(const qMRMLThreeDViewControllerWidget);
+  if (d->ViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
+    return QString();
+    }
+  return d->ViewNode->GetLayoutLabel();
+}
+
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLViewLogic()
 {

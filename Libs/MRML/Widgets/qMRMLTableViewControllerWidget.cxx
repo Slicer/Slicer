@@ -32,7 +32,6 @@
 #include <vtkStringArray.h>
 
 // CTK includes
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 
 // qMRML includes
@@ -51,10 +50,6 @@
 
 // STD include
 #include <string>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLTableViewControllerWidget");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLTableViewControllerWidgetPrivate methods
@@ -311,20 +306,25 @@ void qMRMLTableViewControllerWidget::setTableView(qMRMLTableView* view)
 void qMRMLTableViewControllerWidget::setViewLabel(const QString& newViewLabel)
 {
   Q_D(qMRMLTableViewControllerWidget);
-
-  if (d->TableViewNode)
+  if (!d->TableViewNode)
     {
-    logger.error("setViewLabel should be called before setViewNode !");
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
     }
-
-  d->TableViewLabel = newViewLabel;
-  d->ViewLabel->setText(d->TableViewLabel);
+  d->TableViewNode->SetLayoutLabel(newViewLabel.toUtf8());
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CPP(qMRMLTableViewControllerWidget, QString, viewLabel, TableViewLabel);
-
+QString qMRMLTableViewControllerWidget::viewLabel()const
+{
+  Q_D(const qMRMLTableViewControllerWidget);
+  if (d->TableViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: must set view node first";
+    return QString();
+    }
+  return d->TableViewNode->GetLayoutLabel();
+}
 
 // --------------------------------------------------------------------------
 void qMRMLTableViewControllerWidget::setMRMLTableViewNode(
@@ -349,7 +349,7 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
     return;
     }
 
-  this->setViewLabel(d->TableViewNode->GetLayoutLabel());
+  d->ViewLabel->setText(d->TableViewNode->GetLayoutLabel());
 
   vtkMRMLTableNode *tableNode
     = vtkMRMLTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(d->TableViewNode->GetTableNodeID()));

@@ -25,17 +25,12 @@
 #include <QToolButton>
 
 // CTK includes
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 
 // qMRML includes
 #include "qMRMLChartViewControllerWidget.h"
 #include "qMRMLChartView.h"
 #include "qMRMLChartWidget.h"
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLChartWidget");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate

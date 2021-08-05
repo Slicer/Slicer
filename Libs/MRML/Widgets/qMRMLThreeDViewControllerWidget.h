@@ -60,6 +60,12 @@ public:
   /// Use if two instances of the controller need to observe the same logic.
   void setViewLogic(vtkMRMLViewLogic* newViewLogic);
 
+  /// Set the label for the table view (abbreviation for the view name)
+  void setViewLabel(const QString& newViewLabel);
+
+  /// Get the label for the view (abbreviation for the view name)
+  QString viewLabel()const;
+
 public slots:
 
   void setMRMLScene(vtkMRMLScene* newScene) override;

@@ -21,9 +21,6 @@
 #include <QFileInfo>
 #include <QHBoxLayout>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // qMRML includes
 #include "qMRMLExpandingWebView_p.h"
 
@@ -32,11 +29,6 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLExpandingWebView");
-//--------------------------------------------------------------------------
-
 
 const char *htmlPreamble =
   "<!DOCTYPE html>"
@@ -101,7 +93,6 @@ void qMRMLExpandingWebViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 // --------------------------------------------------------------------------
 void qMRMLExpandingWebViewPrivate::startProcessing()
 {
-//  logger.trace("startProcessing");
 //  Q_Q(qMRMLExpandingWebView);
 }
 
@@ -109,7 +100,6 @@ void qMRMLExpandingWebViewPrivate::startProcessing()
 // --------------------------------------------------------------------------
 void qMRMLExpandingWebViewPrivate::endProcessing()
 {
-//  logger.trace("endProcessing");
   Q_Q(qMRMLExpandingWebView);
   q->updateWidgetFromMRML();
 }

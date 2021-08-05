@@ -53,8 +53,7 @@ public:
   explicit qMRMLTableViewControllerWidget(QWidget* parent = nullptr);
   ~qMRMLTableViewControllerWidget() override;
 
-  /// Set the label for the table view (abbreviation for the view
-  /// name)
+  /// Set the label for the table view (abbreviation for the view name)
   void setViewLabel(const QString& newViewLabel);
 
   /// Get the label for the view (abbreviation for the view name)

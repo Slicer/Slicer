@@ -68,8 +68,6 @@ public:
   vtkWeakPointer<vtkMRMLTableViewNode> TableViewNode;
   qMRMLTableView* TableView;
 
-  QString TableViewLabel;
-
   QAction* CopyAction;
   QAction* PasteAction;
   QAction* PlotAction;

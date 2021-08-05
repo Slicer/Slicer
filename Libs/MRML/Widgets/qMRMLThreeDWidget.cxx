@@ -171,24 +171,14 @@ qMRMLThreeDViewControllerWidget* qMRMLThreeDWidget::threeDController() const
 void qMRMLThreeDWidget::setViewLabel(const QString& newViewLabel)
 {
   Q_D(qMRMLThreeDWidget);
-  if (!this->viewLogic() || !this->viewLogic()->GetViewNode())
-    {
-    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
-    return;
-    }
-  this->viewLogic()->GetViewNode()->SetLayoutLabel(newViewLabel.toLatin1().constData());
+  d->ThreeDController->setViewLabel(newViewLabel);
 }
 
 //---------------------------------------------------------------------------
 QString qMRMLThreeDWidget::viewLabel()const
 {
   Q_D(const qMRMLThreeDWidget);
-  if (!this->viewLogic() || !this->viewLogic()->GetViewNode())
-    {
-    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
-    return QString();
-    }
-  return this->viewLogic()->GetViewNode()->GetLayoutLabel();
+  return d->ThreeDController->viewLabel();
 }
 
 //---------------------------------------------------------------------------

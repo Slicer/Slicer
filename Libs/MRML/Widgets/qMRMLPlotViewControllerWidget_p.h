@@ -65,7 +65,6 @@ public:
   vtkWeakPointer<vtkMRMLPlotViewNode>    PlotViewNode;
   qMRMLPlotView*                         PlotView;
 
-  QString                                PlotViewLabel;
   QToolButton*                           FitToWindowToolButton;
 
   vtkMRMLPlotChartNode* GetPlotChartNodeFromView();
