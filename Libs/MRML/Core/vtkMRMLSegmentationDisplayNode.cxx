@@ -1065,6 +1065,14 @@ void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(std::vector<std::strin
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::string> vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs()
+{
+  std::vector<std::string> visibleSegmentIDs;
+  this->GetVisibleSegmentIDs(visibleSegmentIDs);
+  return visibleSegmentIDs;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLSegmentationDisplayNode::GetSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly)
 {
   segmentIDs.clear();

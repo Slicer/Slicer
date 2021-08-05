@@ -230,6 +230,9 @@ public:
   /// Get IDs for all contained segments, for python compatibility
   void GetSegmentIDs(vtkStringArray* segmentIds);
 
+  /// Get IDs for all contained segments, for python compatibility
+  std::vector<std::string> GetSegmentIDs();
+
   /// Request the total number of segments, primarily used for iterating over all segments
   int GetNumberOfSegments() const;
 

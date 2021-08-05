@@ -901,6 +901,14 @@ void vtkSegmentation::GetSegmentIDs(vtkStringArray* segmentIds)
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::string> vtkSegmentation::GetSegmentIDs()
+{
+  std::vector<std::string> segmentIds;
+  this->GetSegmentIDs(segmentIds);
+  return segmentIds;
+}
+
+//---------------------------------------------------------------------------
 void vtkSegmentation::ApplyLinearTransform(vtkAbstractTransform* transform)
 {
   // Check if input transform is indeed linear
