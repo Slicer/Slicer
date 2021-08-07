@@ -107,6 +107,7 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
   this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Clear", WidgetEventCameraResetRotation);
   this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_5", WidgetEventCameraResetTranslation);
   this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Clear", WidgetEventCameraResetTranslation);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "r", WidgetEventCameraResetFieldOfView);
 
   // Rotate
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
@@ -321,7 +322,13 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
       this->SaveStateForUndo();
       this->CameraNode->Reset(false, true, false, this->Renderer);
       break;
-
+    case WidgetEventCameraResetFieldOfView:
+      this->SaveStateForUndo();
+      if (this->Renderer != nullptr)
+        {
+        this->Renderer->ResetCamera();
+        }
+      break;
     case WidgetEventCameraZoomIn:
       this->SaveStateForUndo();
       this->Dolly(1.2);

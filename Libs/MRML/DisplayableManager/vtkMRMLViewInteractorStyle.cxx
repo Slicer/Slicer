@@ -81,7 +81,9 @@ void vtkMRMLViewInteractorStyle::OnChar()
     {
     return;
     }
-  this->Superclass::OnChar();
+  // Do not call this->Superclass::OnChar(), because char OnChar events perform various
+  // low-level operations on the actors (change their rendering style to wireframe, pick them,
+  // change rendering mode to stereo, etc.), which would interfere with displayable managers.
 }
 
 //----------------------------------------------------------------------------
