@@ -113,6 +113,7 @@ public:
     WidgetEventCameraReset,
     WidgetEventCameraResetTranslation,
     WidgetEventCameraResetRotation,
+    WidgetEventCameraResetFieldOfView, // VTK's standard camera reset (centers and resets field of view)
 
     WidgetEventCameraRotate,
     WidgetEventCameraPan,
