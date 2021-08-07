@@ -332,6 +332,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
     if loadable.singleSequence:
       outputSequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode")
+      outputSequenceNode.SetName(loadable.name)
       outputSequenceNode.SetIndexName("instance number")
       outputSequenceNode.SetIndexUnit("")
       playbackRateFps = 10

@@ -312,41 +312,6 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     self.dicomBrowser.dicomTableManager().tableOrientation = qt.Qt.Horizontal if horizontal else qt.Qt.Vertical
     self.settings.setValue('DICOM/horizontalTables', int(horizontal))
 
-  def organizeLoadables(self):
-    """Review the selected state and confidence of the loadables
-    across plugins so that the options the user is most likely
-    to want are listed at the top of the table and are selected
-    by default. Only offer one pre-selected loadable per series
-    unless both plugins mark it as selected and they have equal
-    confidence."""
-
-    # first, get all loadables corresponding to a series
-    seriesUIDTag = "0020,000E"
-    loadablesBySeries = {}
-    for plugin in self.loadablesByPlugin:
-      for loadable in self.loadablesByPlugin[plugin]:
-        seriesUID = slicer.dicomDatabase.fileValue(loadable.files[0], seriesUIDTag)
-        if seriesUID not in loadablesBySeries:
-          loadablesBySeries[seriesUID] = [loadable]
-        else:
-          loadablesBySeries[seriesUID].append(loadable)
-
-    # now for each series, find the highest confidence selected loadables
-    # and set all others to be unselected.
-    # If there are several loadables that tie for the
-    # highest confidence value, select them all
-    # on the assumption that they represent alternate interpretations
-    # of the data or subparts of it.  The user can either use
-    # advanced mode to deselect, or simply delete the
-    # unwanted interpretations.
-    for series in loadablesBySeries:
-      highestConfidenceValue = -1
-      for loadable in loadablesBySeries[series]:
-        if loadable.confidence > highestConfidenceValue:
-          highestConfidenceValue = loadable.confidence
-      for loadable in loadablesBySeries[series]:
-        loadable.selected = loadable.confidence == highestConfidenceValue
-
   def onSeriesSelected(self, seriesUIDList):
     self.loadableTable.setLoadables([])
     self.fileLists = self.getFileListsForRole(seriesUIDList, "SeriesUIDList")
@@ -384,7 +349,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     of what to load"""
 
     (self.loadablesByPlugin, loadEnabled) = self.getLoadablesFromFileLists(self.fileLists)
-    self.organizeLoadables()
+    DICOMLib.selectHighestConfidenceLoadables(self.loadablesByPlugin)
     self.loadableTable.setLoadables(self.loadablesByPlugin)
     self.updateButtonStates()
 
