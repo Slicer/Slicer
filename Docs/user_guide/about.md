@@ -113,10 +113,10 @@ _Listed in alphabetical order._
 
 Many companies prefer not to disclose what software components they use in their products, therefore here we can only list a few commercial products that are based on 3D Slicer:
 
-- Allen Institute for Brain Science: [Cell Locator](https://github.com/BICCN/cell-locator/#readme), Desktop application for manually aligning specimens to annotated 3D spaces.
+- Allen Institute for Brain Science: Allen Institute for Brain Science is developing Cell Locator, a Desktop application for manually aligning specimens to annotated 3D spaces. See more information on this [Kitware blog](https://blog.kitware.com/cell-locator-a-3d-slicer-based-desktop-application-that-manually-aligns-specimens-to-annotated-3d-spaces-developed-for-the-allen-institute-for-brain-science/).
 - Radiopharmaceutical Imaging and Dosimetry: RPTDose, a 3D Slicer-based application that streamlines and integrates quantitative imaging analysis and dose estimation techniques to guide and optimize the use of radiopharmaceutical therapy agents in clinical trials. See more information on this [Kitware blog](https://blog.kitware.com/kitware-customer-highlight-radiopharmaceutical-imaging-and-dosimetry-llc-rapid/).
 - [SonoVol](http://sonovol.com/) is developing a whole-body ultrasound imaging system for small animals. This start-up company arose from research in the Department of Biomedical Engineering at the University of North Carolina at Chapel Hill. See more information on this [Kitware blog](https://blog.kitware.com/kitware-customer-highlight-sonovol/).
-- Xoran Technologies: Image-guided Platform for Deep Brain Stimulation Surgery 1. See more information on this [Kitware blog](https://blog.kitware.com/xoran-technologies-and-kitware-collaborate-on-image-guided-platform-for-deep-brain-stimulation-surgery/).
+- Xoran Technologies: Image-guided Platform for Deep Brain Stimulation Surgery. See more information on this [Kitware blog](https://blog.kitware.com/xoran-technologies-and-kitware-collaborate-on-image-guided-platform-for-deep-brain-stimulation-surgery/).
 - [Xstrahl](http://www.xstrahl.com/) is developing a Small Animal Radiation Research Platform (SARRP) that uses 3D Slicer as its front-end application for radiation therapy beam placement and system control. See more information on this [Kitware blog](https://blog.kitware.com/kitware-customer-highlight-muriplan-from-xstrahl-a-3d-slicer-based-radiotherapy-treatment-planning-system/).
 
 _Listed in alphabetical order._
