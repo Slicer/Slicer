@@ -983,7 +983,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportAllSegmentsToModels(vtkMRMLSegment
 
 //-----------------------------------------------------------------------------
 void vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometry(vtkMRMLSegmentationNode* segmentationNode,
-  vtkMRMLVolumeNode* referenceVolumeNode, vtkStringArray* segmentIDs, int extentComputationMode, vtkOrientedImageData* mergedLabelmap_Reference)
+  vtkMRMLVolumeNode* referenceVolumeNode, vtkStringArray* segmentIDs, int extentComputationMode, vtkOrientedImageData* mergedLabelmap_Reference,
+  vtkIntArray* labelValues/*=nullptr*/)
 {
   // Get reference geometry in the segmentation node's coordinate system
   vtkSmartPointer<vtkOrientedImageData> referenceGeometry_Reference; // reference geometry in reference node coordinate system
@@ -1015,7 +1016,7 @@ void vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometr
   // Generate shared labelmap for the exported segments in segmentation coordinates
   vtkSmartPointer<vtkOrientedImageData> sharedImage_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
   if (!segmentationNode->GenerateMergedLabelmapForAllSegments(sharedImage_Segmentation, extentComputationMode,
-    referenceGeometry_Segmentation, segmentIDs))
+    referenceGeometry_Segmentation, segmentIDs, labelValues))
     {
     vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to generate shared labelmap");
     return;
@@ -2355,10 +2356,9 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsBinaryLabelmapRepresentati
     vtkSlicerSegmentationsModuleLogic::GetLabelValuesFromColorNode(segmentationNode, colorTableNode, segmentIds, labelValues);
     }
 
-
   vtkNew<vtkOrientedImageData> mergedLabelmap_Reference;
   vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometry(segmentationNode, referenceVolumeNode,
-    segmentIds, extentComputationMode, mergedLabelmap_Reference);
+    segmentIds, extentComputationMode, mergedLabelmap_Reference, labelValues);
 
   vtkNew<vtkMatrix4x4> rasToIJKMatrix;
   mergedLabelmap_Reference->GetWorldToImageMatrix(rasToIJKMatrix);

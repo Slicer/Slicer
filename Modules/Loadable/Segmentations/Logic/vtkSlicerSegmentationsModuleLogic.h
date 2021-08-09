@@ -277,7 +277,9 @@ public:
   /// \param useCompression If compression should be applied to the output file.
   /// \param referenceVolumeNode If specified, then the saved segmentation will match the geometry of referenceVolumeNode
   /// \param extentComputationMode If referenceVolumeNode is not specified then the saved segmentation extents will be determined based on this value.
-  /// \param colorTableNode Color table node used to set the exported labelmap values for the segments.
+  /// \param colorTableNode Optional color table node used to set the exported labelmap values for the segments.
+  ///   Segment names are matched to color names to determine the label values.
+  ///   If a segment name is not found in the color node, then the first unused value outside of the color table range will be used.
   static bool ExportSegmentsBinaryLabelmapRepresentationToFiles(std::string destinationFolder,
     vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds = nullptr, std::string extension = "nrrd", bool useCompression = false,
     vtkMRMLVolumeNode* referenceVolumeNode = nullptr, int extentComputationMode = vtkSegmentation::EXTENT_REFERENCE_GEOMETRY,
@@ -424,8 +426,15 @@ public:
   /// \return True if the representation was created, False otherwise
   static void CollapseBinaryLabelmaps(vtkMRMLSegmentationNode* segmentationNode, bool forceToSingleLayer);
 
+  /// Generate a merged labelmap from the binary labelmap representations of the specified segments
+  /// \param segmentationNode Node containing the segmentation
+  /// \param referenceVolumeNode Determines geometry of merged labelmap if not nullptr, automatically determined otherwise
+  /// \param segmentIDs Segment IDs to be converted. If empty, all segments will be converted.
+  /// \param extentComputationMode If referenceVolumeNode is not specified then the saved segmentation extents will be determined based on this value.
+  /// \param mergedLabelmap_Reference Output merged labelmap in the reference volume coordinate system
+  /// \param labelValues Output label values from the color node. Length of the array must be the same as the number of segmentIds.
   static void GenerateMergedLabelmapInReferenceGeometry(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLVolumeNode* referenceVolumeNode,
-    vtkStringArray* segmentIDs, int extentComputationMode, vtkOrientedImageData* mergedLabelmap_Reference);
+    vtkStringArray* segmentIDs, int extentComputationMode, vtkOrientedImageData* mergedLabelmap_Reference, vtkIntArray* labelValues=nullptr);
 
 protected:
   void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
