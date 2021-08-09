@@ -380,6 +380,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     return;
     }
 
+  const auto viewScaleFactorAtPositionInitCache = this->ViewScaleFactorAtPositionCalculationDataCache.InitCache();
   if (markupsNode->GetNumberOfControlPoints() > 2 && this->CurveClosed)
     {
     // Check if center is selected
@@ -1208,6 +1209,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::SetRenderer(vtkRenderer *ren)
     }
 
   Superclass::SetRenderer(ren);
+  this->ViewScaleFactorAtPositionCalculationDataCache.SetRenderer(ren);
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
@@ -1253,6 +1255,42 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double p
 }
 
 //----------------------------------------------------------------------
+vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::InitCacheObject
+vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::InitCache()
+{
+  InitCacheObject result;
+  result.cache = this->NewCache();
+  this->CurrentCache = result.cache;
+  return result;
+}
+
+//----------------------------------------------------------------------
+std::shared_ptr<vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::Cache>
+vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::GetCache()
+{
+  if (std::shared_ptr<Cache> locked = this->CurrentCache.lock()) {
+    return locked;
+  }
+  return this->NewCache();
+}
+
+//----------------------------------------------------------------------
+std::shared_ptr<vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::Cache>
+vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::NewCache()
+{
+  std::shared_ptr<Cache> cache = std::make_shared<Cache>();
+  // the following was taken from vtkRenderer::WorldToView
+  if (this->Renderer && this->Renderer->GetActiveCamera())
+    {
+    vtkMatrix4x4::DeepCopy(cache->worldToViewTransform,
+      this->Renderer->GetActiveCamera()->
+      GetCompositeProjectionTransformMatrix(
+        this->Renderer->GetTiledAspectRatio(),0,1));
+    }
+  return cache;
+}
+
+//----------------------------------------------------------------------
 double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(double positionWorld[3])
 {
   double viewScaleFactorMmPerPixel = 1.0;
@@ -1279,24 +1317,55 @@ double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(doub
     }
   else
     {
-    double cameraFP[4] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0 };
+    using PointType = std::array<double, 4>;
+    // this will only recompute the renderer's CompositeProjectionTransformMatrix
+    // if it is not cached
+    const auto dataCache = this->ViewScaleFactorAtPositionCalculationDataCache.GetCache();
+    if (!dataCache)
+      {
+      return viewScaleFactorMmPerPixel;
+      }
 
+    //get view to display scaling and put in 4x4 matrix
+    const double* viewport = this->Renderer->GetViewport();
+    const int* displaySize = this->Renderer->GetVTKWindow()->GetSize();
+
+    // This is essentially a reimplementation of vtkRenderer::WorldToDisplay.
+    // We don't use vtkRenderer::WorldToDisplay because it recomputes the
+    // CompositeProjectionTransformMatrix each time it is called, with no option
+    // for caching for multiple computations.
+    const auto worldToDisplay = [&](const PointType& worldPoint) {
+      PointType result;
+      // world to view
+      vtkMatrix4x4::MultiplyPoint(dataCache->worldToViewTransform, worldPoint.data(), result.data());
+      if (result[3] != 0.0)
+        {
+        result[0] /= result[3];
+        result[1] /= result[3];
+        result[2] /= result[3];
+        result[3] = 1.0;
+        }
+
+      // view to display
+      result[0] = (result[0] + 1.0) * (displaySize[0] * (viewport[2] - viewport[0])) / 2.0
+        + displaySize[0] * viewport[0];
+      result[1] = (result[1] + 1.0) * (displaySize[1] * (viewport[3] - viewport[1])) / 2.0
+        + displaySize[1] * viewport[1];
+      result[2] = 0.0;
+      return result;
+    };
+
+    const double cameraFP[4] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0 };
     double cameraViewUp[3] = { 0 };
     cam->GetViewUp(cameraViewUp);
     vtkMath::Normalize(cameraViewUp);
 
     // Get distance in pixels between two points at unit distance above and below the focal point
-    this->Renderer->SetWorldPoint(cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]);
-    this->Renderer->WorldToDisplay();
-    double topCenter[3] = { 0 };
-    this->Renderer->GetDisplayPoint(topCenter);
-    topCenter[2] = 0.0;
-    this->Renderer->SetWorldPoint(cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]);
-    this->Renderer->WorldToDisplay();
-    double bottomCenter[3] = { 0 };
-    this->Renderer->GetDisplayPoint(bottomCenter);
-    bottomCenter[2] = 0.0;
-    double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenter, bottomCenter));
+    PointType topCenterPoint{cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]};
+    const PointType myTopCenter = worldToDisplay(topCenterPoint);
+    PointType bottomCenterPoint{cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]};
+    const PointType myBottomCenter = worldToDisplay(bottomCenterPoint);
+    const double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(myTopCenter.data(), myBottomCenter.data()));
 
     // if render window is not initialized yet then distInPixels == 0.0,
     // in that case just leave the default viewScaleFactorMmPerPixel
