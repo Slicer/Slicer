@@ -343,6 +343,7 @@ foreach(p ${package_list})
             --icon_url ${EXTENSION_ICONURL}
             --homepage ${EXTENSION_HOMEPAGE}
             --screenshots ${EXTENSION_SCREENSHOTURLS}
+            --contributors ${EXTENSION_CONTRIBUTORS}
       RESULT_VARIABLE slicer_extension_manager_upload_status
       ERROR_FILE ${error_file}
       )
