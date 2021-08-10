@@ -47,6 +47,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget
   Q_OBJECT
   Q_PROPERTY(bool handleExternalUrlWithDesktopService READ handleExternalUrlWithDesktopService WRITE setHandleExternalUrlWithDesktopService)
   Q_PROPERTY(QStringList internalHosts READ internalHosts WRITE setInternalHosts)
+  Q_PROPERTY(bool javaScriptConsoleMessageLoggingEnabled READ javaScriptConsoleMessageLoggingEnabled WRITE setJavaScriptConsoleMessageLoggingEnabled)
   Q_PROPERTY(QString url READ url WRITE setUrl)
   friend class qSlicerWebEnginePage;
 public:
@@ -75,6 +76,15 @@ public:
   /// \sa setHandleExternalUrlWithDesktopService(bool)
   QStringList internalHosts() const;
   void setInternalHosts(const QStringList& hosts);
+
+  /// \brief Return true if javascript console messages should be logged.
+  ///
+  /// Default value initialized based on the "Developer/DeveloperMode" setting.
+  ///
+  /// \sa setJavaScriptConsoleMessageLoggingEnabled(bool)
+  /// \sa QWebEnginePage::javaScriptConsoleMessage
+  bool javaScriptConsoleMessageLoggingEnabled() const;
+  void setJavaScriptConsoleMessageLoggingEnabled(bool enable);
 
 //  QWebEngineProfile* profile()const;
 //  void setProfile(QWebEngineProfile* profile);
