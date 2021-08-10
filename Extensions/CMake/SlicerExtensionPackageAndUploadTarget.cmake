@@ -109,6 +109,7 @@ if(NOT PACKAGEUPLOAD)
     EXTENSION_CATEGORY
     EXTENSION_ICONURL
     EXTENSION_CONTRIBUTORS
+    EXTENSION_DEPENDS
     EXTENSION_DESCRIPTION
     EXTENSION_HOMEPAGE
     EXTENSION_SCREENSHOTURLS
@@ -155,7 +156,7 @@ set(${varname} \"${${varname}}\")")
   endforeach()
 
   set(script_args_file ${CMAKE_CURRENT_BINARY_DIR}/midas_api_upload_extension-command-args.cmake)
-  file(WRITE ${script_args_file} ${script_arg_list})
+  file(WRITE ${script_args_file} "${script_arg_list}")
 
   set(_cpack_output_file ${EXTENSION_BINARY_DIR}/packageupload_cpack_output.txt)
 
@@ -320,6 +321,9 @@ foreach(p ${package_list})
       endif()
     endif()
 
+    # Convert to space separated list
+    list(JOIN EXTENSION_DEPENDS " " dependency)
+
     message("Uploading [${package_name}] to [${SLICER_EXTENSION_MANAGER_URL}]")
     get_filename_component(package_directory ${p} DIRECTORY)
     set(error_file ${package_directory}/slicer_extension_server_upload_errors.txt)
@@ -340,6 +344,7 @@ foreach(p ${package_list})
             --app_revision ${Slicer_REVISION}
             --category ${EXTENSION_CATEGORY}
             --desc ${EXTENSION_DESCRIPTION}
+            --dependency ${dependency}
             --icon_url ${EXTENSION_ICONURL}
             --homepage ${EXTENSION_HOMEPAGE}
             --screenshots ${EXTENSION_SCREENSHOTURLS}
