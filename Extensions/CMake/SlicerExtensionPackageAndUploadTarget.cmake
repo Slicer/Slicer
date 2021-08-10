@@ -343,7 +343,7 @@ foreach(p ${package_list})
             --revision ${EXTENSION_WC_REVISION}
             --app_revision ${Slicer_REVISION}
             --category ${EXTENSION_CATEGORY}
-            --desc ${EXTENSION_DESCRIPTION}
+            --desc "${EXTENSION_DESCRIPTION}"
             --dependency ${dependency}
             --icon_url ${EXTENSION_ICONURL}
             --homepage ${EXTENSION_HOMEPAGE}
