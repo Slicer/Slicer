@@ -2690,6 +2690,7 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
   else if (serverAPI == Self::Girder_v1)
     {
     serverToExtensionDescriptionKey.insert("_id", "extension_id");
+    serverToExtensionDescriptionKey.insert("meta.app_revision", "slicer_revision");
     serverToExtensionDescriptionKey.insert("meta.baseName", "extensionname");
     serverToExtensionDescriptionKey.insert("meta.repository_type", "scm");
     serverToExtensionDescriptionKey.insert("meta.repository_url", "scmurl");
