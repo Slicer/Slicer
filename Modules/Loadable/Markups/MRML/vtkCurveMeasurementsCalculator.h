@@ -71,6 +71,13 @@ public:
   vtkGetMacro(CurvatureUnits, std::string);
   vtkSetMacro(CurvatureUnits, std::string);
 
+  /// Store interpolated values of inputValues in interpolatedValues,
+  /// using indices pedigreeIdsArray.
+  /// pedigreeIdsValueScale is applied to values of pedigreeIdsArray, which can be used
+  /// for converting between indices of curve points and curve control points.
+  static bool InterpolateArray(vtkDoubleArray* inputValues, vtkDoubleArray* interpolatedValues,
+    vtkDoubleArray* pedigreeIdsArray, double pedigreeIdsValueScale=1.0);
+
 protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
   bool InterpolateControlPointMeasurementToPolyData(vtkPolyData* outputPolyData);

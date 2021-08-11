@@ -371,36 +371,76 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
     vtkNew<vtkDoubleArray> interpolatedMeasurement;
     std::string arrayName = !currentMeasurement->GetName().empty() ? currentMeasurement->GetName() : "Unnamed";
     interpolatedMeasurement->SetName(arrayName.c_str());
-    interpolatedMeasurement->SetNumberOfComponents(1);
-    interpolatedMeasurement->SetNumberOfTuples(numberOfPoints);
-    interpolatedMeasurement->Reset();
-    interpolatedMeasurement->FillComponent(0,0.0);
 
-    // Perform interpolation on the control points measurement values in each enabled measurement
-    for (vtkIdType pointIdx = 0; pointIdx < numberOfPoints; ++pointIdx)
+    if (!vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues, interpolatedMeasurement, pedigreeIdsArray))
       {
-      // Based on the pedigree IDs calculate the interpolated value for each point in the polydata
-      double pedigreeID = pedigreeIdsArray->GetValue(pointIdx);
-      vtkIdType controlPointIndex = vtkIdType(pedigreeID);
-      double fractionValue = pedigreeID - controlPointIndex;
-      double currentControlPointValue = controlPointValues->GetValue(controlPointIndex);
-      if (fractionValue < VTK_DBL_EPSILON)
-        {
-        // Point corresponds to a control point
-        interpolatedMeasurement->InsertValue(pointIdx, currentControlPointValue);
-        }
-      else
-        {
-        // Need to interpolate
-        double nextControlPointValue = controlPointValues->GetValue(controlPointIndex+1);
-        double interpolatedValue = currentControlPointValue + fractionValue * (nextControlPointValue-currentControlPointValue);
-        interpolatedMeasurement->InsertValue(pointIdx, interpolatedValue);
-        }
+      vtkErrorMacro("Failed to add " + arrayName + " measurement array to curve");
+      continue;
       }
 
     outputPolyData->GetPointData()->AddArray(interpolatedMeasurement);
     }
 
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValues, vtkDoubleArray* interpolatedValues,
+  vtkDoubleArray* pedigreeIdsArray, double pedigreeIdsValueScale/*=1.0*/)
+{
+  if (!inputValues || !interpolatedValues || !pedigreeIdsArray)
+    {
+    vtkGenericWarningMacro("vtkCurveMeasurementsCalculator::InterpolateArray: invalid input array");
+    return false;
+    }
+  vtkIdType numberOfValues = pedigreeIdsArray->GetNumberOfValues();
+  if (inputValues->GetNumberOfComponents() != 1)
+    {
+    //TODO: Add support for more components
+    vtkGenericWarningMacro("vtkCurveMeasurementsCalculator::InterpolateArray: Only the interpolation of single component values is implemented");
+    return false;
+    }
+  interpolatedValues->Reset(); // empty without reallocating memory
+  if (numberOfValues < 1)
+    {
+    return true;
+    }
+  double pedigreeRange[2] = { 0.0, 0.0 };
+  pedigreeIdsArray->GetValueRange(pedigreeRange);
+  if (pedigreeRange[0] * pedigreeIdsValueScale < -VTK_DBL_EPSILON
+    || pedigreeRange[1] * pedigreeIdsValueScale > inputValues->GetNumberOfTuples() - 1 + VTK_DBL_EPSILON)
+    {
+    vtkGenericWarningMacro("vtkCurveMeasurementsCalculator::InterpolateArray: pedigreeIdsArray contain values between "
+      << pedigreeRange[0] * pedigreeIdsValueScale << " and " << pedigreeRange[1] * pedigreeIdsValueScale << ", but there are only "
+      << inputValues->GetNumberOfTuples() << " values in the input array");
+    return false;
+    }
+  if (numberOfValues == 1)
+    {
+    interpolatedValues->InsertNextValue(inputValues->GetValue(0));
+    return true;
+    }
+  // Perform interpolation on the control points measurement values in each enabled measurement
+  for (vtkIdType pointIdx = 0; pointIdx < numberOfValues; ++pointIdx)
+    {
+    // Based on the pedigree IDs calculate the interpolated value for each point in the polydata
+    double pedigreeID = pedigreeIdsArray->GetValue(pointIdx) * pedigreeIdsValueScale;
+    vtkIdType controlPointIndex = vtkIdType(pedigreeID);
+    double fractionValue = pedigreeID - controlPointIndex;
+    double currentControlPointValue = inputValues->GetValue(controlPointIndex);
+    if (fractionValue < VTK_DBL_EPSILON)
+      {
+      // Point corresponds to a control point
+      interpolatedValues->InsertValue(pointIdx, currentControlPointValue);
+      }
+    else
+      {
+      // Need to interpolate
+      double nextControlPointValue = inputValues->GetValue(controlPointIndex+1);
+      double interpolatedValue = currentControlPointValue + fractionValue * (nextControlPointValue-currentControlPointValue);
+      interpolatedValues->InsertValue(pointIdx, interpolatedValue);
+      }
+    }
   return true;
 }
 

@@ -160,9 +160,18 @@ public:
   static bool ConstrainPointsToSurface(vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
     vtkPoints* surfacePoints, double maximumSearchRadius=.25);
 
+  /// Resample control points to have equal distances in the world coordinate system.
   void ResampleCurveWorld(double controlPointDistance);
 
-  static bool ResamplePoints(vtkPoints* originalPoints, vtkPoints* interpolatedPoints, double samplingDistance, bool closedCurve);
+  /// Resample control points to have equal distances in the node's coordinate system.
+  // If pedigreeIdsArray is specified then the method returns the fractional point index of the original point for each new point.\
+  // Fractional point index is a value between the point indices of the two original points it was between, the fractional part
+  // specifies the distance from those two points. It can be used for interpolating point data.
+  static bool ResamplePoints(vtkPoints* originalPoints, vtkPoints* interpolatedPoints,
+    double samplingDistance, bool closedCurve, vtkDoubleArray* pedigreeIdsArray=nullptr);
+
+  /// Resample static control point measurements using linear interpolation, based on fractional pedigreeIds.
+  static bool ResampleStaticControlPointMeasurements(vtkCollection* measurements, vtkDoubleArray* curvePointsPedigreeIdsArray, int curvePointsPerControlPoint);
 
   /// Samples points along the curve at equal distances.
   /// If endPointIndex < startPointIndex then after the last point, the curve is assumed to continue at the first point.

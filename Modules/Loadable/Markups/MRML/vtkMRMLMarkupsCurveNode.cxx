@@ -308,7 +308,10 @@ bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, 
   this->GetControlPointLabels(originalLabels);
 
   vtkNew<vtkPoints> interpolatedPoints;
-  vtkMRMLMarkupsCurveNode::ResamplePoints(originalPoints, interpolatedPoints, controlPointDistance, this->CurveClosed);
+  vtkNew<vtkDoubleArray> pedigreeIdsArray;
+  vtkMRMLMarkupsCurveNode::ResamplePoints(originalPoints, interpolatedPoints, controlPointDistance, this->CurveClosed, pedigreeIdsArray);
+  vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(this->Measurements, pedigreeIdsArray,
+    this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment());
 
   vtkSmartPointer<vtkPolyData> surfacePolydata = modelNode->GetPolyData();
   if(!surfacePolydata)
@@ -512,7 +515,10 @@ void vtkMRMLMarkupsCurveNode::ResampleCurveWorld(double controlPointDistance)
     }
 
   vtkNew<vtkPoints> interpolatedPoints;
-  vtkMRMLMarkupsCurveNode::ResamplePoints(points, interpolatedPoints, controlPointDistance, this->CurveClosed);
+  vtkNew<vtkDoubleArray> pedigreeIdsArray;
+  vtkMRMLMarkupsCurveNode::ResamplePoints(points, interpolatedPoints, controlPointDistance, this->CurveClosed, pedigreeIdsArray);
+  vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(this->Measurements, pedigreeIdsArray,
+    this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment());
 
   vtkNew<vtkPoints> originalPoints;
   this->GetControlPointPositionsWorld(originalPoints);
@@ -524,8 +530,48 @@ void vtkMRMLMarkupsCurveNode::ResampleCurveWorld(double controlPointDistance)
 }
 
 //---------------------------------------------------------------------------
+bool vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(vtkCollection* measurements,
+  vtkDoubleArray* curvePointsPedigreeIdsArray, int curvePointsPerControlPoint)
+{
+  if (!measurements || !curvePointsPedigreeIdsArray)
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::ResampleCurveWorld: Invalid inputs");
+    return false;
+    }
+
+  bool success = true;
+  for (int index = 0; index < measurements->GetNumberOfItems(); ++index)
+    {
+    vtkMRMLStaticMeasurement* currentMeasurement = vtkMRMLStaticMeasurement::SafeDownCast(measurements->GetItemAsObject(index));
+    if (!currentMeasurement)
+      {
+      continue;
+      }
+    vtkDoubleArray* controlPointValues = currentMeasurement->GetControlPointValues();
+    if (!controlPointValues || controlPointValues->GetNumberOfTuples() < 2)
+      {
+      // no need to interpolate
+      continue;
+      }
+    if (controlPointValues->GetNumberOfComponents() != 1)
+      {
+      vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::ResampleCurveWorld: "
+        << "Only the interpolation of single component control point measurements is implemented");
+      success = false;
+      continue;
+      }
+    vtkNew<vtkDoubleArray> interpolatedMeasurement;
+    interpolatedMeasurement->SetName(controlPointValues->GetName());
+    vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues, interpolatedMeasurement, curvePointsPedigreeIdsArray, 1.0/curvePointsPerControlPoint);
+    controlPointValues->DeepCopy(interpolatedMeasurement);
+    }
+
+  return success;
+}
+
+//---------------------------------------------------------------------------
 bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoints* sampledPoints,
-  double samplingDistance, bool closedCurve)
+  double samplingDistance, bool closedCurve, vtkDoubleArray* pedigreeIdsArray/*=nullptr*/)
 {
   if (!originalPoints || !sampledPoints || samplingDistance <= 0)
     {
@@ -533,9 +579,19 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
     return false;
     }
 
+  if (pedigreeIdsArray)
+    {
+    pedigreeIdsArray->Initialize();
+    }
+
   if (originalPoints->GetNumberOfPoints() < 2)
     {
     sampledPoints->DeepCopy(originalPoints);
+    if (pedigreeIdsArray)
+      {
+      pedigreeIdsArray->InsertNextValue(0.0);
+      pedigreeIdsArray->InsertNextValue(1.0);
+      }
     return true;
     }
 
@@ -545,6 +601,11 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
   originalPoints->GetPoint(0, previousCurvePoint);
   sampledPoints->Reset();
   sampledPoints->InsertNextPoint(previousCurvePoint);
+  if (pedigreeIdsArray)
+    {
+    pedigreeIdsArray->Initialize();
+    pedigreeIdsArray->InsertNextValue(0.0);
+    }
   vtkIdType numberOfOriginalPoints = originalPoints->GetNumberOfPoints();
   bool addClosingSegment = closedCurve; // for closed curves, add a closing segment that connects last and first points
   double* currentCurvePoint = nullptr;
@@ -588,6 +649,10 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
         sampledPoints->InsertNextPoint(newSampledPoint);
         distanceFromLastSampledPoint = 0;
         distanceFromLastInterpolatedPoint += samplingDistance;
+        if (pedigreeIdsArray)
+          {
+          pedigreeIdsArray->InsertNextValue(originalPointIndex + distanceFromLastInterpolatedPoint/samplingDistance);
+          }
         remainingSegmentLength -= samplingDistance;
         }
       distanceFromLastSampledPoint = remainingSegmentLength;
@@ -604,24 +669,33 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
   // Make sure the resampled curve has the same size as the original
   // but avoid having very long or very short line segments at the end.
   if (closedCurve)
-  {
+    {
     // Closed curve
     // Ideally, remainingSegmentLength would be equal to samplingDistance.
     if (remainingSegmentLength < samplingDistance * 0.5)
       {
       // last segment would be too short, so remove the last point and adjust position of second last point
       double lastPointPosition[3] = { 0.0 };
-      vtkIdType foundClosestPointIndex = -1; // not used
-      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(lastPointPosition, foundClosestPointIndex,
+      vtkIdType lastPointOriginalPointIndex = 0;
+      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(lastPointPosition, lastPointOriginalPointIndex,
         0, -(2.0*samplingDistance+remainingSegmentLength)/2.0, originalPoints, closedCurve))
         {
         sampledPoints->SetNumberOfPoints(sampledPoints->GetNumberOfPoints() - 1);
         sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, lastPointPosition);
+        if (pedigreeIdsArray)
+          {
+          pedigreeIdsArray->SetNumberOfValues(pedigreeIdsArray->GetNumberOfValues() - 1);
+          pedigreeIdsArray->SetValue(pedigreeIdsArray->GetNumberOfValues() - 1, lastPointOriginalPointIndex);
+          }
         }
       else
         {
         // something went wrong, we could not add a point, therefore just remove the last point
         sampledPoints->SetNumberOfPoints(sampledPoints->GetNumberOfPoints() - 1);
+        if (pedigreeIdsArray)
+          {
+          pedigreeIdsArray->SetNumberOfValues(pedigreeIdsArray->GetNumberOfValues() - 1);
+          }
         }
       }
     else
@@ -629,14 +703,18 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
       // last segment is only slightly shorter than the sampling distance
       // so just adjust the position of the last point
       double lastPointPosition[3] = { 0.0 };
-      vtkIdType foundClosestPointIndex = -1; // not used
-      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(lastPointPosition, foundClosestPointIndex,
+      vtkIdType lastPointOriginalPointIndex = 0;
+      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(lastPointPosition, lastPointOriginalPointIndex,
         0, -(samplingDistance+remainingSegmentLength)/2.0, originalPoints, closedCurve))
         {
         sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, lastPointPosition);
+        if (pedigreeIdsArray)
+          {
+          pedigreeIdsArray->SetValue(pedigreeIdsArray->GetNumberOfValues() - 1, lastPointOriginalPointIndex);
+          }
         }
       }
-  }
+    }
   else
     {
     // Open curve
@@ -645,18 +723,27 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
       {
       // last segment would be much longer than the sampling distance, so add an extra point
       double secondLastPointPosition[3] = { 0.0 };
-      vtkIdType foundClosestPointIndex = -1; // not used
-      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(secondLastPointPosition, foundClosestPointIndex,
+      vtkIdType secondLastPointOriginalPointIndex = 0;
+      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(secondLastPointPosition, secondLastPointOriginalPointIndex,
         originalPoints->GetNumberOfPoints() - 1, -(samplingDistance+remainingSegmentLength) / 2.0, originalPoints, closedCurve))
         {
         sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, secondLastPointPosition);
         sampledPoints->InsertNextPoint(originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
+        if (pedigreeIdsArray)
+          {
+          pedigreeIdsArray->SetValue(pedigreeIdsArray->GetNumberOfValues() - 1, secondLastPointOriginalPointIndex);
+          pedigreeIdsArray->InsertNextValue(originalPoints->GetNumberOfPoints() - 1);
+          }
         }
       else
         {
         // something went wrong, we could not add a point, therefore just adjust the last point position
         sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1,
           originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
+        if (pedigreeIdsArray)
+          {
+          pedigreeIdsArray->SetValue(pedigreeIdsArray->GetNumberOfValues() - 1, originalPoints->GetNumberOfPoints() - 1);
+          }
         }
       }
     else
@@ -665,6 +752,10 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
       // so we just adjust the position of last point
       sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1,
         originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
+      if (pedigreeIdsArray)
+        {
+        pedigreeIdsArray->SetValue(pedigreeIdsArray->GetNumberOfValues() - 1, originalPoints->GetNumberOfPoints() - 1);
+        }
       }
     }
 
@@ -1092,6 +1183,11 @@ int vtkMRMLMarkupsCurveNode::GetNumberOfPointsPerInterpolatingSegment()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::SetNumberOfPointsPerInterpolatingSegment(int pointsPerSegment)
 {
+  if (pointsPerSegment < 1)
+    {
+    vtkErrorMacro("vtkMRMLMarkupsCurveNode::SetNumberOfPointsPerInterpolatingSegment failed: minimum value is 1, attempted to set value " << pointsPerSegment);
+    return;
+    }
   this->CurveGenerator->SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment);
 }
 
