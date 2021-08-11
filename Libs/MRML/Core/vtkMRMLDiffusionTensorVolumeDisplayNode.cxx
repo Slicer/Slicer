@@ -32,6 +32,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageShiftScale.h>
 #include <vtkImageThreshold.h>
+#include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkSphereSource.h>
 #include <vtkVersion.h>
@@ -224,6 +225,14 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
 
   Superclass::UpdateImageDataPipeline();
 
+}
+
+//----------------------------------------------------------------------------
+void
+vtkMRMLDiffusionTensorVolumeDisplayNode::SetTensorRotationMatrix(vtkMatrix4x4 *rotationMatrix)
+{
+  this->DTIMathematics->SetTensorRotationMatrix(rotationMatrix);
+  this->DTIMathematicsAlpha->SetTensorRotationMatrix(rotationMatrix);
 }
 
 //----------------------------------------------------------------------------

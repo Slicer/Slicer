@@ -27,6 +27,7 @@ class vtkImageData;
 class vtkImageExtractComponents;
 class vtkImageShiftScale;
 class vtkImageMathematics;
+class vtkMatrix4x4;
 
 /// \brief MRML node for representing a volume (image stack).
 ///
@@ -153,6 +154,12 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection() override;
 
   void UpdateImageDataPipeline() override;
+
+  ///
+  /// Set the measurement frame for the tensors so that any
+  /// rotation-dependent calculations, such as ColorByOrientation
+  /// can take it into account when rendering.
+  void SetTensorRotationMatrix(vtkMatrix4x4 *);
 
   vtkGetObjectMacro(DTIMathematics, vtkDiffusionTensorMathematics);
   vtkGetObjectMacro(DTIMathematicsAlpha, vtkDiffusionTensorMathematics);
