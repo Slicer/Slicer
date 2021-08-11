@@ -1166,7 +1166,7 @@ qSlicerExtensionsManagerModel::~qSlicerExtensionsManagerModel() = default;
 // --------------------------------------------------------------------------
 int qSlicerExtensionsManagerModel::serverAPI() const
 {
-  QString serverApi = qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_API", "Midas_v1");
+  QString serverApi = qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_API", "Girder_v1");
   if (serverApi == "Midas_v1")
     {
     return Self::Midas_v1;
