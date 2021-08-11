@@ -339,6 +339,7 @@ class DICOMListener(DICOMStoreSCPProcess):
       if self.fileToBeAddedCallback:
         self.fileToBeAddedCallback()
       self.indexer.addFile(self.dicomDatabase, dicomFilePath, True)
+      os.remove(dicomFilePath)
       logging.debug("done indexing")
       self.lastFileAdded = dicomFilePath
       if self.fileAddedCallback:
