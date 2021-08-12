@@ -62,6 +62,7 @@ public:
 protected slots:
   void setInteractionMode(int mode);
   void saveScreenshot();
+  void configureSliceViewAnnotationsAction();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyViewContextMenuPluginPrivate> d_ptr;

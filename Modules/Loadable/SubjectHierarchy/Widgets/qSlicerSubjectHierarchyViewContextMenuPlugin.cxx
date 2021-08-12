@@ -39,6 +39,7 @@
 #include <vtkMRMLAbstractViewNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSliceNode.h>
 
 // Slicer includes
 #include <qSlicerApplication.h>
@@ -71,6 +72,7 @@ public:
   QAction* InteractionModePlaceAction = nullptr;
 
   QAction* CopyImageAction = nullptr;
+  QAction* ConfigureSliceViewAnnotationsAction = nullptr;
 
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
@@ -131,8 +133,14 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->CopyImageAction->setToolTip(tr("Copy a screenshot of this view to the clipboard"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CopyImageAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
-
   QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
+
+  this->ConfigureSliceViewAnnotationsAction = new QAction(tr("Configure slice view annotations..."), q);
+  this->ConfigureSliceViewAnnotationsAction->setObjectName("ConfigureSliceViewAnnotationsAction");
+  this->ConfigureSliceViewAnnotationsAction->setToolTip(tr("Configures display of corner annotations and color bar."));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
+  QObject::connect(this->ConfigureSliceViewAnnotationsAction, SIGNAL(triggered()), q, SLOT(configureSliceViewAnnotationsAction()));
 }
 
 //-----------------------------------------------------------------------------
@@ -163,7 +171,8 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
   actions << d->InteractionModeViewTransformAction
     << d->InteractionModeAdjustWindowLevelAction
     << d->InteractionModePlaceAction
-    << d->CopyImageAction;
+    << d->CopyImageAction
+    << d->ConfigureSliceViewAnnotationsAction;
   return actions;
 }
 
@@ -217,6 +226,9 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   d->InteractionModePlaceAction->blockSignals(wasBlocked);
 
   d->CopyImageAction->setVisible(true);
+
+  bool isSliceViewNode = (vtkMRMLSliceNode::SafeDownCast(viewNode) != nullptr);
+  d->ConfigureSliceViewAnnotationsAction->setVisible(isSliceViewNode);
 
   // Cache nodes to have them available for the menu action execution.
   d->InteractionNode = interactionNode;
@@ -275,4 +287,16 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::saveScreenshot()
     return;
     }
   clipboard->setImage(screenshot);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::configureSliceViewAnnotationsAction()
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    return;
+    }
+  layoutManager->setCurrentModule("DataProbe");
 }
