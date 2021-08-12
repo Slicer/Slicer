@@ -313,7 +313,7 @@ foreach(p ${package_list})
         )
       if(NOT slicer_midas_upload_status STREQUAL "ok")
         file(WRITE ${EXTENSION_BINARY_DIR}/PACKAGES.txt "")
-        message(FATAL_ERROR
+        message(WARNING
   "Upload of [${package_name}] failed !
   Check that:
   (1) you have been granted permission to upload
