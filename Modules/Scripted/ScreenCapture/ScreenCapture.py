@@ -1007,7 +1007,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     return sliceOffsetResolution
 
-  def captureImageFromView(self, view, filename=None, transparentBackground=False, volumeNode=None):
+  def captureImageFromView(self, view, filename=None, transparentBackground=False, volumeNode=None, processEvents=True):
     """
     Capture an image of the specified view and store in the specified object.
 
@@ -1015,8 +1015,10 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     :param filename: Filename of the desired output file. If none, no file will be written.
     :param transparentBackground: Set the background to be transparent for single-view captures.
     :param volumeNode: Vector volume node to store the capture image. If none, no vector volume node will be updated.
+    :param processEvents: Whether to process events before capturing the image. If true the view will visibly update before capture.
     """
-    slicer.app.processEvents()
+    if processEvents:
+      slicer.app.processEvents()
     if view:
       if type(view)==slicer.qMRMLSliceView or type(view)==slicer.qMRMLThreeDView:
         view.forceRender()
