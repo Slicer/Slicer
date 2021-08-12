@@ -54,7 +54,7 @@ private:
 
   QString slicerVersion(const QString& operatingSystem, int extensionId);
 
-  bool prepareJson(const QString& jsonFile);
+  bool prepareJson(const QString& jsonFile, const QString& apiPath);
 
   void installHelper(qSlicerExtensionsManagerModel *model, const QString &os, int extensionId, const QString &tmp);
 
@@ -198,7 +198,7 @@ QString qSlicerExtensionsManagerModelTester::slicerVersion(const QString& operat
 }
 
 // ----------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile)
+bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile, const QString& apiPath)
 {
   bool success = true;
   QDir tmp = QDir::temp();
@@ -207,14 +207,23 @@ bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile)
     success = tmp.mkdir(this->TemporaryDirName);
     }
   success = tmp.cd(this->TemporaryDirName);
-  if (tmp.exists("api"))
+
+  QStringList apiPathSegments = apiPath.split("/");
+  QString firstApiPathSegment = apiPath.at(0); // e.g. "api"
+  QString lastApiPathSegment = apiPathSegments.takeLast(); // e.g. "json" or "extensions"
+
+  if (tmp.exists(firstApiPathSegment))
     {
-    success = success && ctk::removeDirRecursively(tmp.filePath("api"));
+    success = success && ctk::removeDirRecursively(tmp.filePath(firstApiPathSegment));
     }
-  success = success && tmp.mkdir("api");
-  success = success && tmp.cd("api");
-  success = success && QFile::copy(jsonFile,  tmp.filePath("json"));
-  success = success && QFile::setPermissions(tmp.filePath("json"), QFile::ReadOwner | QFile::WriteOwner);
+
+  foreach(const QString& segment, apiPathSegments)
+    {
+    success = success && tmp.mkdir(segment);
+    success = success && tmp.cd(segment);
+    }
+  success = success && QFile::copy(jsonFile,  tmp.filePath(lastApiPathSegment));
+  success = success && QFile::setPermissions(tmp.filePath(lastApiPathSegment), QFile::ReadOwner | QFile::WriteOwner);
   return success;
 }
 
@@ -236,7 +245,11 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
     QFile::setPermissions(copiedArchiveFile, QFile::ReadOwner | QFile::WriteOwner);
     }
 
-  QVERIFY2(this->prepareJson(QString(":/extension-%1-%2.json").arg(os).arg(extensionId)),
+  // Value hard-coded in qSlicerExtensionsManagerModel
+  QString appID = "5f4474d0e1d8c75dfc705482";
+  QString apiPath = QString("api/v1/app/%1/extension").arg(appID);
+
+  QVERIFY2(this->prepareJson(QString(":/extension-%1-%2.json").arg(os).arg(extensionId), apiPath),
            QString("Failed to prepare json for extensionId: %1-%2").arg(os).arg(extensionId).toUtf8());
   ExtensionMetadataType metadata = model->retrieveExtensionMetadata(QString("%1").arg(extensionId));
   QVERIFY(metadata.count() > 0);
@@ -543,8 +556,9 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
   QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
 
   QFETCH(QString, extensionId);
+  QFETCH(QString, apiPath);
   QFETCH(QString, jsonFile);
-  QVERIFY2(this->prepareJson(jsonFile),
+  QVERIFY2(this->prepareJson(jsonFile, apiPath),
            QString("Failed to prepare json for extensionId: %1").arg(extensionId).toUtf8());
 
   QFETCH(QString, slicerVersion);
@@ -561,11 +575,17 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
 void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata_data()
 {
   QTest::addColumn<QString>("extensionId");
+  QTest::addColumn<QString>("apiPath");
   QTest::addColumn<QString>("jsonFile");
   QTest::addColumn<QString>("slicerVersion");
   QTest::addColumn<QVariantMap>("expectedResult");
 
-  QTest::newRow("0") << "0" << QString(":/extension-%1-0.json").arg(Slicer_OS_LINUX_NAME)
+  // Value hard-coded in qSlicerExtensionsManagerModel
+  QString appID = "5f4474d0e1d8c75dfc705482";
+
+  QTest::newRow("0") << "0"
+                     << QString("api/v1/app/%1/extension").arg(appID)
+                     << QString(":/extension-%1-0.json").arg(Slicer_OS_LINUX_NAME)
                      << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
                      << Self::extensionMetadata(Slicer_OS_LINUX_NAME, 0);
 }

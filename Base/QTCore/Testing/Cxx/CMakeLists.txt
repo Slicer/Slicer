@@ -8,6 +8,7 @@ if(BUILD_TESTING)
 
   # Download pre-built test extensions into build directory
   foreach(hash_and_filename IN ITEMS
+      # Midas_v1
       "01fd0b39e96da9e85b841273173001958a5feb219875deee0719a74e36b02652:19354-linux-amd64-CLIExtensionTemplate-svn19354-2012-02-23.tar.gz"
       "87105840a5b6a5efee1e682df07957d880e23e131791c3b53746e0a4e6c2dfc8:19354-linux-amd64-LoadableExtensionTemplate-svn19354-2012-02-23.tar.gz"
       "dd619c9bbd8f058f85c124d775fe5fec1883f05ce4c1025c0f245db1ec088b51:19354-linux-amd64-ScriptedLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz"
@@ -16,6 +17,7 @@ if(BUILD_TESTING)
       "3ce4a2f0485c9f5db56fb48727421fbe9ccef213c345175e8defb573ce2113da:19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.tar.gz"
       "d0d9ee8477a9e29c7b2823c2b7ece97183209e14375aa44ae4cc1f2f3a18b8c1:19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz"
       "15b83e8e00f530f2fea3ed436587ad248b5b008ca04d0af13ef595e5574ac36f:19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz"
+      # Girder_v1
       )
     string(REPLACE ":" ";" hash_and_filename ${hash_and_filename})
     list(GET hash_and_filename 0 _hash)
@@ -29,6 +31,7 @@ if(BUILD_TESTING)
 
   # Copy json files into build directory
   foreach(filename IN ITEMS
+      # Midas_v1
       "19354-linux-amd64-CLIExtensionTemplate-svn19354-2012-02-23.json"
       "19354-linux-amd64-LoadableExtensionTemplate-svn19354-2012-02-23.json"
       "19354-linux-amd64-ScriptedLoadableExtensionTemplate-svn19354-2012-02-23.json"
@@ -37,6 +40,7 @@ if(BUILD_TESTING)
       "19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.json"
       "19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.json"
       "19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.json"
+      # Girder_v1
       )
     configure_file(
       ../Data/Input/${filename}
