@@ -445,6 +445,8 @@ private:
   Q_DISABLE_COPY(qSlicerExtensionsManagerModel);
 };
 
+Q_DECLARE_METATYPE(qSlicerExtensionsManagerModel::ServerAPI);
+
 // Metatype already declared in qSlicerIO.h
 //Q_DECLARE_METATYPE(qSlicerExtensionsManagerModel::ExtensionMetadataType)
 

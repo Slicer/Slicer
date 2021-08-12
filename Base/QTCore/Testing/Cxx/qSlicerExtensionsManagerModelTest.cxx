@@ -432,25 +432,44 @@ void qSlicerExtensionsManagerModelTester::testServerUrl_data()
 void qSlicerExtensionsManagerModelTester::testServerKeysToIgnore()
 {
   QFETCH(QStringList, expectedServerKeysToIgnore);
-  QCOMPARE(qSlicerExtensionsManagerModel::serverKeysToIgnore(), expectedServerKeysToIgnore);
+  QFETCH(qSlicerExtensionsManagerModel::ServerAPI, serverAPI);
+  QCOMPARE(qSlicerExtensionsManagerModel::serverKeysToIgnore(serverAPI), expectedServerKeysToIgnore);
 }
 
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::testServerKeysToIgnore_data()
 {
   QTest::addColumn<QStringList>("expectedServerKeysToIgnore");
+  QTest::addColumn<qSlicerExtensionsManagerModel::ServerAPI>("serverAPI");
 
   QTest::newRow("0") << (QStringList()
                          << "item_id" << "bitstream_id"
                          << "submissiontype" << "codebase" << "package"
-                         << "size" << "date_creation");
+                         << "size" << "date_creation")
+                     << qSlicerExtensionsManagerModel::Midas_v1;
+
+  QTest::newRow("1") << (QStringList()
+                         << "baseParentId"
+                         << "baseParentType"
+                         << "created"
+                         << "creatorId"
+                         << "description"
+                         << "folderId"
+                         << "lowerName"
+                         << "meta.app_id"
+                         << "name"
+                         << "size"
+                         << "updated")
+                     << qSlicerExtensionsManagerModel::Girder_v1;
 }
 
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey()
 {
+  QFETCH(qSlicerExtensionsManagerModel::ServerAPI, serverAPI);
+
   QHash<QString, QString> serverToExtensionDescriptionKey =
-      qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey();
+      qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI);
 
   QFETCH(QList<QString>, expectedServerKeys);
   QCOMPARE(serverToExtensionDescriptionKey.keys(), expectedServerKeys);
@@ -464,16 +483,56 @@ void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey_da
 {
   QTest::addColumn<QList<QString> >("expectedServerKeys");
   QTest::addColumn<QList<QString> >("expectedExtensionDescriptionKeys");
+  QTest::addColumn<qSlicerExtensionsManagerModel::ServerAPI>("serverAPI");
 
+  {
   QHash<QString, QString> expected;
+  expected.insert("extension_id", "extension_id");
   expected.insert("productname", "extensionname");
-  expected.insert("name", "archivename");
   expected.insert("repository_type", "scm");
   expected.insert("repository_url", "scmurl");
-  expected.insert("development_status", "status");
+  expected.insert("slicer_revision", "slicer_revision");
+  expected.insert("revision", "revision");
+  expected.insert("release", "release");
+  expected.insert("arch", "arch");
+  expected.insert("os", "os");
+  // depends
+  expected.insert("homepage", "homepage");
   expected.insert("icon_url", "iconurl");
+  expected.insert("category", "category");
+  expected.insert("development_status", "status");
+  expected.insert("contributors", "contributors");
+  expected.insert("description", "description");
+  expected.insert("screenshots", "screenshots");
+  expected.insert("enabled", "enabled");
+  expected.insert("name", "archivename");
+  expected.insert("md5", "md5");
+  QTest::newRow("0") << expected.keys() << expected.values() << qSlicerExtensionsManagerModel::Midas_v1;
+  }
 
-  QTest::newRow("0") << expected.keys() << expected.values();
+  {
+  QHash<QString, QString> expected;
+  expected.insert("_id", "extension_id");
+  expected.insert("meta.baseName", "extensionname");
+  expected.insert("meta.repository_type", "scm");
+  expected.insert("meta.repository_url", "scmurl");
+  expected.insert("meta.app_revision", "slicer_revision");
+  expected.insert("meta.revision", "revision");
+  // release
+  expected.insert("meta.arch", "arch");
+  expected.insert("meta.os", "os");
+  expected.insert("meta.dependency", "depends");
+  expected.insert("meta.homepage", "homepage");
+  expected.insert("meta.icon_url", "iconurl");
+  expected.insert("meta.category", "category");
+  // status
+  // contributors
+  expected.insert("meta.description", "description");
+  expected.insert("meta.screenshots", "screenshots");
+  // enabled
+  expected.insert("name", "archivename");
+  QTest::newRow("1") << expected.keys() << expected.values() << qSlicerExtensionsManagerModel::Girder_v1;
+  }
 }
 
 // ----------------------------------------------------------------------------
