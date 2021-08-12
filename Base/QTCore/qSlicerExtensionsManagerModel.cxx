@@ -2695,6 +2695,8 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
     serverToExtensionDescriptionKey.insert("meta.repository_type", "scm");
     serverToExtensionDescriptionKey.insert("meta.repository_url", "scmurl");
     //serverToExtensionDescriptionKey.insert("development_status", "status");
+    serverToExtensionDescriptionKey.insert("meta.arch", "arch");
+    serverToExtensionDescriptionKey.insert("meta.os", "os");
     serverToExtensionDescriptionKey.insert("meta.icon_url", "iconurl");
     serverToExtensionDescriptionKey.insert("name", "archivename");
     }
