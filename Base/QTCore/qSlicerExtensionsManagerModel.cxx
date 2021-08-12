@@ -990,7 +990,7 @@ QVariantMap qSlicerExtensionsManagerModelPrivate::getExtensionsInfoFromPreviousI
           }
         else if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
           {
-          parameters["extension_name"] = extensionName;
+          parameters["baseName"] = extensionName;
           parameters["app_revision"] = q->slicerRevision();
           parameters["os"] = q->slicerOs();
           parameters["arch"] = q->slicerArch();
@@ -1465,7 +1465,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     }
   else if (this->serverAPI() == Self::Girder_v1)
     {
-    parameters["extension_name"] = extensionName;
+    parameters["baseName"] = extensionName;
     parameters["app_revision"] = this->slicerRevision();
     parameters["os"] = this->slicerOs();
     parameters["arch"] = this->slicerArch();
@@ -1777,7 +1777,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
         }
       else if (this->serverAPI() == Self::Girder_v1)
         {
-        parameters["extension_name"] = dependencyName;
+        parameters["baseName"] = dependencyName;
         parameters["app_revision"] = this->slicerRevision();
         parameters["os"] = this->slicerOs();
         parameters["arch"] = this->slicerArch();
@@ -1918,7 +1918,7 @@ void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
         }
       else if (this->serverAPI() == Self::Girder_v1)
         {
-        parameters["extension_name"] = extensionName;
+        parameters["baseName"] = extensionName;
         parameters["app_revision"] = this->slicerRevision();
         parameters["os"] = this->slicerOs();
         parameters["arch"] = this->slicerArch();
