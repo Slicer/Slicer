@@ -1720,11 +1720,16 @@ bool qSlicerExtensionsManagerModel::installExtension(
   const ExtensionMetadataType& extensionIndexMetadata =
     Self::parseExtensionDescriptionFile(extensionIndexDescriptionFile);
 
+  // Enable or disable the extension if state was not already set
+  if (!extensionMetadata.contains("enabled"))
+    {
+    extensionMetadata.insert("enabled", d->NewExtensionEnabledByDefault);
+    }
+
   // Copy metadata if not provided from server (e.g. installing from file)
   if (extensionMetadata.isEmpty())
     {
     extensionMetadata.insert("archivename", QFileInfo(archiveFile).fileName());
-    extensionMetadata.insert("enabled", d->NewExtensionEnabledByDefault);
 
     // Copy expected keys from archive description
     QStringList expectedKeys;
