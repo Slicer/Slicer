@@ -335,20 +335,20 @@ foreach(p ${package_list})
         --api-url ${SLICER_EXTENSION_MANAGER_URL}/api/v1
         --api-key ${SLICER_EXTENSION_MANAGER_API_KEY}
           extension upload Slicer ${p}
-            --os ${EXTENSION_OPERATING_SYSTEM}
-            --arch ${EXTENSION_ARCHITECTURE}
-            --name ${EXTENSION_NAME}
-            --repo_type ${EXTENSION_WC_TYPE}
-            --repo_url ${EXTENSION_WC_URL}
-            --revision ${EXTENSION_WC_REVISION}
-            --app_revision ${Slicer_REVISION}
-            --category ${EXTENSION_CATEGORY}
+            --os "${EXTENSION_OPERATING_SYSTEM}"
+            --arch "${EXTENSION_ARCHITECTURE}"
+            --name "${EXTENSION_NAME}"
+            --repo_type "${EXTENSION_WC_TYPE}"
+            --repo_url "${EXTENSION_WC_URL}"
+            --revision "${EXTENSION_WC_REVISION}"
+            --app_revision "${Slicer_REVISION}"
+            --category "${EXTENSION_CATEGORY}"
             --desc "${EXTENSION_DESCRIPTION}"
-            --dependency ${dependency}
-            --icon_url ${EXTENSION_ICONURL}
-            --homepage ${EXTENSION_HOMEPAGE}
-            --screenshots ${EXTENSION_SCREENSHOTURLS}
-            --contributors ${EXTENSION_CONTRIBUTORS}
+            --dependency "${dependency}"
+            --icon_url "${EXTENSION_ICONURL}"
+            --homepage "${EXTENSION_HOMEPAGE}"
+            --screenshots "${EXTENSION_SCREENSHOTURLS}"
+            --contributors "${EXTENSION_CONTRIBUTORS}"
       RESULT_VARIABLE slicer_extension_manager_upload_status
       ERROR_FILE ${error_file}
       )
