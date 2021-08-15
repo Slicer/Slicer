@@ -432,12 +432,15 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
   // refresh tools widget state (it should be only enabled if browsing the appstore)
   bool isCatalogPage = false;
   int serverAPI = this->extensionsManagerModel()->serverAPI();
+  QString lastSearchTextLoaded;
   if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
     {
+    lastSearchTextLoaded = QUrlQuery(newUrl).queryItemValue("search");
     isCatalogPage = newUrl.path().endsWith("/slicerappstore");
     }
   else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
+    lastSearchTextLoaded = QUrlQuery(newUrl).queryItemValue("q");
     isCatalogPage = newUrl.path().contains("/catalog");
     }
   if (isCatalogPage)
@@ -448,7 +451,6 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
     // then we must not overwrite the search text.
     if (!d->toolsWidget->SearchBox->hasFocus())
       {
-      QString lastSearchTextLoaded = QUrlQuery(newUrl).queryItemValue("search");
       d->toolsWidget->SearchBox->setText(lastSearchTextLoaded);
       }
     }
