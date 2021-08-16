@@ -380,7 +380,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     return;
     }
 
-  const auto viewScaleFactorAtPositionInitCache = this->ViewScaleFactorAtPositionCalculationDataCache.InitCache();
   if (markupsNode->GetNumberOfControlPoints() > 2 && this->CurveClosed)
     {
     // Check if center is selected
@@ -388,12 +387,9 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     markupsNode->GetCenterPosition(centerPosWorld);
     if (interactionEventData->IsDisplayPositionValid())
       {
-      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
+      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld, interactionEventData)
         + this->PickingTolerance * this->ScreenScaleFactor;
-      this->Renderer->SetWorldPoint(centerPosWorld);
-      this->Renderer->WorldToDisplay();
-      this->Renderer->GetDisplayPoint(centerPosDisplay);
-      centerPosDisplay[2] = 0.0;
+      interactionEventData->WorldToDisplay(centerPosWorld, centerPosDisplay);
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
       if (dist2 < pixelTolerance * pixelTolerance)
         {
@@ -472,12 +468,9 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
       }
     if (interactionEventData->IsDisplayPositionValid())
       {
-      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
+      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld, interactionEventData)
         + this->PickingTolerance * this->ScreenScaleFactor;
-      this->Renderer->SetWorldPoint(centerPosWorld);
-      this->Renderer->WorldToDisplay();
-      this->Renderer->GetDisplayPoint(centerPosDisplay);
-      centerPosDisplay[2] = 0.0;
+      interactionEventData->WorldToDisplay(centerPosWorld, centerPosDisplay);
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
       if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
         {
@@ -556,12 +549,9 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithHandles(
 
     if (interactionEventData->IsDisplayPositionValid())
       {
-      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos)
+      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos, interactionEventData)
         + this->PickingTolerance * this->ScreenScaleFactor;
-      this->Renderer->SetWorldPoint(handleWorldPos);
-      this->Renderer->WorldToDisplay();
-      this->Renderer->GetDisplayPoint(handleDisplayPos);
-      handleDisplayPos[2] = 0.0;
+      interactionEventData->WorldToDisplay(handleWorldPos, handleDisplayPos);
       double dist2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
       if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
         {
@@ -600,19 +590,14 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithHandles(
 
       if (interactionEventData->IsDisplayPositionValid())
         {
-        double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos)
+        double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos, interactionEventData)
           + this->PickingTolerance * this->ScreenScaleFactor;
-        this->Renderer->SetWorldPoint(handleWorldPos);
-        this->Renderer->WorldToDisplay();
-        this->Renderer->GetDisplayPoint(handleDisplayPos);
-        handleDisplayPos[2] = 0.0;
+        interactionEventData->WorldToDisplay(handleWorldPos, handleDisplayPos);
 
         double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
         this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
         double originDisplayPos[4] = { 0.0 };
-        this->Renderer->SetWorldPoint(originWorldPos);
-        this->Renderer->WorldToDisplay();
-        this->Renderer->GetDisplayPoint(originDisplayPos);
+        interactionEventData->WorldToDisplay(originWorldPos, originDisplayPos);
         originDisplayPos[2] = displayPosition3[2]; // Handles are always projected
         double t = 0;
         double lineDistance = vtkLine::DistanceToLine(displayPosition3, originDisplayPos, handleDisplayPos, t);
@@ -1209,7 +1194,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::SetRenderer(vtkRenderer *ren)
     }
 
   Superclass::SetRenderer(ren);
-  this->ViewScaleFactorAtPositionCalculationDataCache.SetRenderer(ren);
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
@@ -1254,44 +1238,10 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double p
   return true;
 }
 
-//----------------------------------------------------------------------
-vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::InitCacheObject
-vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::InitCache()
-{
-  InitCacheObject result;
-  result.cache = this->NewCache();
-  this->CurrentCache = result.cache;
-  return result;
-}
+
 
 //----------------------------------------------------------------------
-std::shared_ptr<vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::Cache>
-vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::GetCache()
-{
-  if (std::shared_ptr<Cache> locked = this->CurrentCache.lock()) {
-    return locked;
-  }
-  return this->NewCache();
-}
-
-//----------------------------------------------------------------------
-std::shared_ptr<vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::Cache>
-vtkSlicerMarkupsWidgetRepresentation3D::ViewScaleFactorAtPositionCalculationDataCacheObject::NewCache()
-{
-  std::shared_ptr<Cache> cache = std::make_shared<Cache>();
-  // the following was taken from vtkRenderer::WorldToView
-  if (this->Renderer && this->Renderer->GetActiveCamera())
-    {
-    vtkMatrix4x4::DeepCopy(cache->worldToViewTransform,
-      this->Renderer->GetActiveCamera()->
-      GetCompositeProjectionTransformMatrix(
-        this->Renderer->GetTiledAspectRatio(),0,1));
-    }
-  return cache;
-}
-
-//----------------------------------------------------------------------
-double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(double positionWorld[3])
+double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(double positionWorld[3], vtkMRMLInteractionEventData* interactionEventData)
 {
   double viewScaleFactorMmPerPixel = 1.0;
   if (!this->Renderer || !this->Renderer->GetActiveCamera())
@@ -1317,56 +1267,35 @@ double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(doub
     }
   else
     {
-    using PointType = std::array<double, 4>;
-    // this will only recompute the renderer's CompositeProjectionTransformMatrix
-    // if it is not cached
-    const auto dataCache = this->ViewScaleFactorAtPositionCalculationDataCache.GetCache();
-    if (!dataCache)
-      {
-      return viewScaleFactorMmPerPixel;
-      }
-
-    //get view to display scaling and put in 4x4 matrix
-    const double* viewport = this->Renderer->GetViewport();
-    const int* displaySize = this->Renderer->GetVTKWindow()->GetSize();
-
-    // This is essentially a reimplementation of vtkRenderer::WorldToDisplay.
-    // We don't use vtkRenderer::WorldToDisplay because it recomputes the
-    // CompositeProjectionTransformMatrix each time it is called, with no option
-    // for caching for multiple computations.
-    const auto worldToDisplay = [&](const PointType& worldPoint) {
-      PointType result;
-      // world to view
-      vtkMatrix4x4::MultiplyPoint(dataCache->worldToViewTransform, worldPoint.data(), result.data());
-      if (result[3] != 0.0)
-        {
-        result[0] /= result[3];
-        result[1] /= result[3];
-        result[2] /= result[3];
-        result[3] = 1.0;
-        }
-
-      // view to display
-      result[0] = (result[0] + 1.0) * (displaySize[0] * (viewport[2] - viewport[0])) / 2.0
-        + displaySize[0] * viewport[0];
-      result[1] = (result[1] + 1.0) * (displaySize[1] * (viewport[3] - viewport[1])) / 2.0
-        + displaySize[1] * viewport[1];
-      result[2] = 0.0;
-      return result;
-    };
-
-    const double cameraFP[4] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0 };
+    const double cameraFP[] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0};
     double cameraViewUp[3] = { 0 };
     cam->GetViewUp(cameraViewUp);
     vtkMath::Normalize(cameraViewUp);
 
-    // Get distance in pixels between two points at unit distance above and below the focal point
-    PointType topCenterPoint{cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]};
-    const PointType myTopCenter = worldToDisplay(topCenterPoint);
-    PointType bottomCenterPoint{cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]};
-    const PointType myBottomCenter = worldToDisplay(bottomCenterPoint);
-    const double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(myTopCenter.data(), myBottomCenter.data()));
+    const double topCenterWorld[] = {cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]};
+    double topCenterDisplay[4];
+    const double bottomCenterWorld[] = {cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]};
+    double bottomCenterDisplay[4];
 
+    // the WorldToDisplay in interactionEventData is faster if someone has already
+    // called it once
+    if (interactionEventData)
+      {
+      interactionEventData->WorldToDisplay(topCenterWorld, topCenterDisplay);
+      interactionEventData->WorldToDisplay(bottomCenterWorld, bottomCenterDisplay);
+      }
+    else
+      {
+      std::copy(std::begin(topCenterWorld), std::end(topCenterWorld), std::begin(topCenterDisplay));
+      this->Renderer->WorldToDisplay(topCenterDisplay[0], topCenterDisplay[1], topCenterDisplay[2]);
+      topCenterDisplay[2] = 0.0;
+
+      std::copy(std::begin(bottomCenterWorld), std::end(bottomCenterWorld), std::begin(bottomCenterDisplay));
+      this->Renderer->WorldToDisplay(bottomCenterDisplay[0], bottomCenterDisplay[1], bottomCenterDisplay[2]);
+      bottomCenterDisplay[2] = 0.0;
+      }
+
+    const double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenterDisplay, bottomCenterDisplay));
     // if render window is not initialized yet then distInPixels == 0.0,
     // in that case just leave the default viewScaleFactorMmPerPixel
     if (distInPixels > 1e-3)
