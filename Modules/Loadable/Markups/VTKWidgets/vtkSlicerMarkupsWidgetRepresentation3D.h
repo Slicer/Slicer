@@ -30,7 +30,6 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation.h"
 
-#include <memory>
 #include <map>
 
 class vtkActor;
@@ -99,36 +98,7 @@ protected:
   vtkSlicerMarkupsWidgetRepresentation3D();
   ~vtkSlicerMarkupsWidgetRepresentation3D() override;
 
-  double GetViewScaleFactorAtPosition(double positionWorld[3]);
-
-  class ViewScaleFactorAtPositionCalculationDataCacheObject {
-  public:
-    inline void SetRenderer(vtkRenderer* renderer)
-    {
-      this->Renderer = renderer;
-    }
-    struct Cache {
-      double worldToViewTransform[16]; // matrix for the World to View transformation
-    };
-    struct InitCacheObject {
-      std::shared_ptr<Cache> cache;
-    };
-
-    /// Initializes the cache, doing needed computations. As long the returned object is
-    /// alive, GetCache will not redo any computations.
-    InitCacheObject InitCache();
-
-    /// Gets the cache, if exists, or computes the data
-    /// \returns A cache to the data needed by GetViewScaleFactorAtPosition
-    std::shared_ptr<Cache> GetCache();
-  private:
-    /// Creates a new cache object, doing needed computations
-    std::shared_ptr<Cache> NewCache();
-
-    vtkRenderer* Renderer;
-    std::weak_ptr<Cache> CurrentCache;
-  };
-  ViewScaleFactorAtPositionCalculationDataCacheObject ViewScaleFactorAtPositionCalculationDataCache;
+  double GetViewScaleFactorAtPosition(double positionWorld[3], vtkMRMLInteractionEventData* interactionEventData = nullptr);
 
   void UpdateViewScaleFactor() override;
 

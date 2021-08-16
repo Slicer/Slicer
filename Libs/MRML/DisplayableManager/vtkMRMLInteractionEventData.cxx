@@ -21,9 +21,13 @@
 #include "vtkCamera.h"
 #include "vtkCellPicker.h"
 #include "vtkEvent.h"
+#include "vtkMatrix4x4.h"
 #include "vtkPoints.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkWindow.h"
+
+#include <algorithm>
 
 //---------------------------------------------------------------------------
 vtkMRMLInteractionEventData::vtkMRMLInteractionEventData()
@@ -64,6 +68,8 @@ vtkMRMLInteractionEventData::vtkMRMLInteractionEventData()
   this->ComponentType = -1;
   this->ComponentIndex = -1;
   this->MouseMovedSinceButtonDown = true;
+  this->WorldToViewTransformMatrixValid = false;
+  std::fill(std::begin(this->WorldToViewTransformMatrix), std::end(this->WorldToViewTransformMatrix), 0.0);
 }
 
 //---------------------------------------------------------------------------
@@ -444,4 +450,44 @@ void vtkMRMLInteractionEventData::SetLastTranslation(const double lastTranslatio
 const double* vtkMRMLInteractionEventData::GetLastTranslation() const
 {
   return this->LastTranslation;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLInteractionEventData::WorldToDisplay(const double worldPosition[3], double displayPosition[3])
+{
+  if (!this->Renderer)
+    {
+    return;
+    }
+  if (!this->WorldToViewTransformMatrixValid)
+    {
+    vtkMatrix4x4::DeepCopy(this->WorldToViewTransformMatrix,
+      this->Renderer->GetActiveCamera()->
+      GetCompositeProjectionTransformMatrix(
+        this->Renderer->GetTiledAspectRatio(),0,1));
+    this->WorldToViewTransformMatrixValid = true;
+    }
+
+  //get view to display scaling and put in 4x4 matrix
+  const double* viewport = this->Renderer->GetViewport();
+  const int* displaySize = this->Renderer->GetVTKWindow()->GetSize();
+
+  const double homogeneousWorldPosition[] = {worldPosition[0], worldPosition[1], worldPosition[2], 1.0};
+  double viewPosition[4];
+
+  vtkMatrix4x4::MultiplyPoint(this->WorldToViewTransformMatrix, homogeneousWorldPosition, viewPosition);
+  if (viewPosition[3] != 0.0)
+    {
+    viewPosition[0] /= viewPosition[3];
+    viewPosition[1] /= viewPosition[3];
+    viewPosition[2] /= viewPosition[3];
+    viewPosition[3] = 1.0;
+    }
+
+  // view to display
+  displayPosition[0] = (viewPosition[0] + 1.0) * (displaySize[0] * (viewport[2] - viewport[0])) / 2.0
+    + displaySize[0] * viewport[0];
+  displayPosition[1] = (viewPosition[1] + 1.0) * (displaySize[1] * (viewport[3] - viewport[1])) / 2.0
+    + displaySize[1] * viewport[1];
+  displayPosition[2] = 0.0;
 }
