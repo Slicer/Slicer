@@ -98,6 +98,8 @@
 #include <QAction>
 #include <QButtonGroup>
 #include <QDebug>
+#include <QFrame>
+#include <QFormLayout>
 #include <QInputDialog>
 #include <QMainWindow>
 #include <QMenu>
@@ -504,13 +506,26 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   // Instantiate and expose effects
 
   // Setup effect button group layout
-  ctkFlowLayout* effectsGroupLayout = new ctkFlowLayout();
-  effectsGroupLayout->setContentsMargins(4, 4, 4, 4);
-  effectsGroupLayout->setSpacing(4);
-  effectsGroupLayout->setAlignItems(false);
-  effectsGroupLayout->setAlignment(Qt::AlignJustify);
-  effectsGroupLayout->setPreferredExpandingDirections(Qt::Vertical);
-  this->EffectsGroupBox->setLayout(effectsGroupLayout);
+  QStringList effectCategories = {"Manual", "Semi-Automatic", "Global", "Volumes", "Uncategorized"};
+  for (int i = 0; i < effectCategories.length(); ++i)
+    {
+      ctkFlowLayout* effectsGroupLayout = new ctkFlowLayout();
+      effectsGroupLayout->setContentsMargins(4, 4, 4, 4);
+      effectsGroupLayout->setSpacing(4);
+      effectsGroupLayout->setAlignItems(false);
+      effectsGroupLayout->setAlignment(Qt::AlignJustify);
+      effectsGroupLayout->setPreferredExpandingDirections(Qt::Vertical);
+      effectsGroupLayout->setObjectName("layout_" + effectCategories[i]);
+      QFormLayout* formLayout = qobject_cast<QFormLayout*>(this->EffectsGroupBox->layout());
+      QLabel* label=new QLabel(effectCategories[i]);
+      label->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding));
+      label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+      formLayout->addRow(label, effectsGroupLayout);
+      QFrame* line = new QFrame();
+      line->setFrameShape(QFrame::HLine);
+      line->setFrameShadow(QFrame::Sunken);
+      formLayout->addRow(line);
+    }
 
   // Update effect buttons
   q->updateEffectList();
@@ -1093,7 +1108,6 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setToolTip("No editing");
     effectButton->setToolButtonStyle(d->EffectButtonStyle);
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(nullptr));
-    effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
     d->EffectButtonGroup.addButton(effectButton);
     }
 
@@ -1131,7 +1145,6 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setIcon(effect->icon());
     effectButton->setText(effect->name());
     effectButton->setToolTip(effect->name());
-    effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
     d->EffectButtonGroup.addButton(effectButton);
 
@@ -1184,7 +1197,29 @@ void qMRMLSegmentEditorWidget::updateEffectList()
       continue;
       }
     effectButton->show();
-    d->EffectsGroupBox->layout()->addWidget(effectButton);
+    if(effectButton->text() == "None" || effectButton->text() == "Paint" || effectButton->text() == "Draw" ||
+      effectButton->text() == "Erase" || effectButton->text() == "Scissors")
+    {
+      d->EffectsGroupBox->findChild<QLayout*>("layout_Manual")->addWidget(effectButton);
+    }
+    else if(effectButton->text() == "Threshold" || effectButton->text() == "Level tracing" || effectButton->text() == "Grow from seeds" ||
+      effectButton->text() == "Fill between slices" || effectButton->text() == "Islands")
+    {
+      d->EffectsGroupBox->findChild<QLayout*>("layout_Semi-Automatic")->addWidget(effectButton);
+    }
+    else if(effectButton->text() == "Margin" || effectButton->text() == "Smoothing" || effectButton->text() == "Logical operators" ||
+      effectButton->text() == "Hollow")
+    {
+      d->EffectsGroupBox->findChild<QLayout*>("layout_Global")->addWidget(effectButton);
+    }
+    else if(effectButton->text() == "Mask volume")
+    {
+      d->EffectsGroupBox->findChild<QLayout*>("layout_Volumes")->addWidget(effectButton);
+    }
+    else
+    {
+      d->EffectsGroupBox->findChild<QLayout*>("layout_Uncategorized")->addWidget(effectButton);
+    }
     }
 }
 

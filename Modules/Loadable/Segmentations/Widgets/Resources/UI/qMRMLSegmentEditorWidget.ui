@@ -272,6 +272,7 @@
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
      </property>
+     <layout class="QFormLayout" name="formLayout_2"/>
     </widget>
    </item>
    <item>
