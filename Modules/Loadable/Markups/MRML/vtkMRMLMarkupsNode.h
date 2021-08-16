@@ -334,7 +334,7 @@ public:
   /// Get the position of the Nth control point
   /// setting the elements of point
   void GetNthControlPointPosition(int pointIndex, double point[3]);
-  double* GetNthControlPointPosition(int pointIndex);
+  double* GetNthControlPointPosition(int pointIndex) VTK_SIZEHINT(3);
   /// Get the position of the Nth control point in World coordinate system
   /// Returns 0 on failure, 1 on success.
   int GetNthControlPointPositionWorld(int pointIndex, double worldxyz[3]);
@@ -429,7 +429,7 @@ public:
   /// Get the WXYZ orientation for the Nth control point
   void GetNthControlPointOrientation(int n, double orientationWXYZ[4]);
   /// Get orientation as 9 values: x, y, and z axis directions, respectively.
-  double* GetNthControlPointOrientationMatrix(int n);
+  double* GetNthControlPointOrientationMatrix(int n) VTK_SIZEHINT(9);
   /// Set orientation as 9 values: x, y, and z axis directions, respectively.
   void SetNthControlPointOrientationMatrix(int n, double orientationMatrix[9]);
   /// Set orientation as 9 values: x, y, and z axis directions, respectively.
@@ -437,7 +437,7 @@ public:
   /// does not convert from world coordinate yet.
   void SetNthControlPointOrientationMatrixWorld(int n, double orientationMatrix[9]);
   /// Get normal direction (orientation of z axis) in local coordinate system.
-  double* GetNthControlPointNormal(int n);
+  double* GetNthControlPointNormal(int n) VTK_SIZEHINT(3);
   /// Get normal direction (orientation of z axis) in world coordinate system.
   void GetNthControlPointNormalWorld(int n, double normalWorld[3]);
   /// Get the WXYZ orientation for the Nth control point
