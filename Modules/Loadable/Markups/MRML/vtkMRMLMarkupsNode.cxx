@@ -1417,6 +1417,8 @@ bool vtkMRMLMarkupsNode::CanApplyNonLinearTransforms()const
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::ApplyTransform(vtkAbstractTransform* transform)
 {
+  MRMLNodeModifyBlocker blocker(this);
+
   int numControlPoints = this->GetNumberOfControlPoints();
   double xyzIn[3];
   double xyzOut[3];
@@ -1871,6 +1873,7 @@ void vtkMRMLMarkupsNode::OnTransformNodeReferenceChanged(vtkMRMLTransformNode* t
 {
   vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, this->CurvePolyToWorldTransform);
   Superclass::OnTransformNodeReferenceChanged(transformNode);
+  this->UpdateInteractionHandleToWorldMatrix();
 }
 
 //---------------------------------------------------------------------------
