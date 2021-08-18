@@ -46,6 +46,11 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+// PythonQt includes
+#ifdef Slicer_USE_PYTHONQT
+#include "PythonQt.h"
+#endif
+
 //-----------------------------------------------------------------------------
 class qSlicerDataModulePrivate
 {
@@ -111,6 +116,20 @@ void qSlicerDataModule::setup()
   // Dialogs
   ioManager->registerDialog(new qSlicerDataDialog(this));
   ioManager->registerDialog(new qSlicerSaveDataDialog(this));
+
+  // Initialize subject hierarchy plugin
+#ifdef Slicer_USE_PYTHONQT
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    PythonQt::init();
+    PythonQtObjectPtr context = PythonQt::self()->getMainModule();
+    context.evalScript( QString(
+      "from SubjectHierarchyPlugins import DataSubjectHierarchyPlugin \n"
+      "scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None) \n"
+      "scriptedPlugin.setPythonSource(DataSubjectHierarchyPlugin.filePath) \n"
+      ) );
+    }
+#endif
 }
 
 //-----------------------------------------------------------------------------
