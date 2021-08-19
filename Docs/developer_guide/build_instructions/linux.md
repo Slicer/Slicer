@@ -1,4 +1,4 @@
-# GNU/Linux Systems
+# GNU/Linux systems
 
 The instructions to build Slicer for GNU/Linux systems are slightly different
 depending on the linux distribution and the specific configuration of the

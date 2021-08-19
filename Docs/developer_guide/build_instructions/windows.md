@@ -95,52 +95,8 @@ Slicer.exe --VisualStudioProject
 
 ## Debug Slicer
 
-1. To run Slicer, the launcher needs to set certain environment variables. The easiest is to use the launcher to set these and start Visual Studio in this environment. All these can be accomplished by running the following command in `<Slicer_BUILD>/c:\D\S4R\Slicer-build` folder:
-
-```
-Slicer.exe --VisualStudioProject
-```
-
-Notes:
-- If you just want to start VisualStudio with the launcher (and then load project file manually), run: `Slicer.exe --VisualStudio`
-- To debug an extension that builds third-party DLLs, also specify `--launcher-additional-settings` option.
-- While you can launch debugger using Slicer's solution file, it is usually more convenient to load your extension's solution file (because your extension solution is smaller and most likely you want to have that solution open anyway for making changes in your code). For example, you can launch Visual Studio to debug your extension like this:
-
-```
-.\S4D\Slicer-build\Slicer.exe --VisualStudio --launcher-no-splash --launcher-additional-settings ./SlicerRT_D/inner-build/AdditionalLauncherSettings.ini c:\d\_Extensions\SlicerRT_D\inner-build\SlicerRT.sln
-```
-
-2. In Solution Explorer window in Visual Studio, expand `App-Slicer`, right-click on `SlicerApp` (NOT qSlicerApp) and select "Set as Startup Project"
-
-To debug in an extension's solution: set `ALL_BUILD` project as startup project and in project settings, set `Debugging` / `Command` field to the full path of `SlicerApp-real.exe` - something like `.../Slicer-build/bin/Debug/SlicerApp-real.exe`
-
-3. Run Slicer in debug mode by Start Debugging command (in Debug menu).
-
-Note that because CMake re-creates the solution file from within the build process, Visual Studio will sometimes need to stop and reload the project, requiring manual button pressing on your part (just press Yes or OK whenever you are asked). To avoid this, you can use a script to complete the build process and then re-start the Visual Studio.
-
-For more debugging tips and tricks, check out [this page](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Tutorials/Troubleshooting).
-
-### Debug a test
-
-Once VisualStudio is open with the Slicer environment loaded, it is possible to run and debug tests. To run all tests, build the `RUN_TESTS` project.
-
-- To debug a test, find its project:
-  - `Libs/MRML/Core` tests are in the `MRMLCoreCxxTests` project
-  - CLI module tests are in `<CLI_NAME>Test` project (e.g. `ThresholdScalarVolumeTest`)
-  Loadable module tests are in `qSlicer<LOADABLE_NAME>CxxTests` project (e.g. `qSlicerVolumeRenderingCxxTests`)
-  - Module logic tests are in `<MODULE_NAME>LogicCxxTests` project (e.g. `VolumeRenderingLogicCxxTests`)
-  - Module widgets tests are in `<MODULE_NAME>WidgetsCxxTests` project (e.g. `VolumesWidgetsCxxTests`)
-- Go to the project debugging properties (right click -> Properties, then Configuration Properties/Debugging)
-- In `Command Arguments`, type the name of the test (e.g. `vtkMRMLSceneImportTest` for project `MRMLCoreCxxTests`)
-- If the test takes argument(s), enter the argument(s) after the test name in `Command Arguments` (e.g. `vtkMRMLSceneImportTest C:\Path\To\Slicer4\Libs\MRML\Core\Testing\vol_and_cube.mrml`)
-  - You can see what arguments are passed by the dashboards by looking at the test details in CDash.
-  - Most VTK and Qt tests support the `-I` argument, it allows the test to be run in "interactive" mode. It doesn't exit at the end of the test.
-- Make the project Set As Startup Project
-- Start Debugging (F5)
-
-### Debugging Python scripts
-
-See [Python scripting page](https://slicer.readthedocs.io/en/latest/developer_guide/build_instructions/windows.html#debugging-python-scripts) for detailed instructions.
+- C++ debugging: Visual Studio is recommended on Windows, see [instructions](../debugging/windowscpp).
+- Python debugging: multiple development environments can be used, see [instructions](../debugging/overview.md#python-debugging).
 
 ## Common errors
 
