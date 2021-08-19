@@ -98,6 +98,7 @@
 #include <QAction>
 #include <QButtonGroup>
 #include <QDebug>
+#include <QGridLayout>
 #include <QInputDialog>
 #include <QMainWindow>
 #include <QMenu>
@@ -112,7 +113,6 @@
 #include <QWidgetAction>
 
 // CTK includes
-#include <ctkFlowLayout.h>
 #include <ctkSliderWidget.h>
 #include <ctkCollapsibleButton.h>
 
@@ -230,6 +230,7 @@ public:
   /// Ordering of effects
   QStringList EffectNameOrder;
   bool UnorderedEffectsVisible;
+  int EffectColumnCount;
 
   /// List of registered effect instances
   QList<qSlicerSegmentEditorAbstractEffect*> RegisteredEffects;
@@ -319,7 +320,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   , AlignedMasterVolumeUpdateMasterVolumeNodeTransform(nullptr)
   , AlignedMasterVolumeUpdateSegmentationNodeTransform(nullptr)
   , MaskModeComboBoxFixedItemsCount(0)
-  , EffectButtonStyle(Qt::ToolButtonTextUnderIcon)
+  , EffectButtonStyle(Qt::ToolButtonIconOnly)
   , RotateWarningInNodeSelectorLayout(true)
 {
   this->AlignedMasterVolume = vtkOrientedImageData::New();
@@ -344,6 +345,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
     << "Mask volume";
   this->UnorderedEffectsVisible = true;
   this->DefaultTerminologyEntrySettingsKey = "Segmentations/DefaultTerminologyEntry";
+  this->EffectColumnCount = 2;
 }
 
 //-----------------------------------------------------------------------------
@@ -475,8 +477,6 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   QObject::connect( this->UndoButton, SIGNAL(clicked()), q, SLOT(undo()) );
   QObject::connect( this->RedoButton, SIGNAL(clicked()), q, SLOT(redo()) );
 
-  QObject::connect( this->EffectHelpBrowser, SIGNAL(anchorClicked(QUrl)), q, SLOT(anchorClicked(QUrl)), Qt::QueuedConnection );
-
   q->qvtkConnect(this->SegmentationHistory, vtkCommand::ModifiedEvent,
     q, SLOT(onSegmentationHistoryChanged()));
 
@@ -493,6 +493,8 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->EffectsGroupBox->setEnabled(false);
   this->OptionsGroupBox->setEnabled(false);
 
+  this->EffectsGroupBox->setLayout(new QGridLayout(this->EffectsGroupBox));
+
   this->EffectButtonGroup.setExclusive(true);
   QObject::connect(&this->EffectButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), q, SLOT(onEffectButtonClicked(QAbstractButton*) ) );
 
@@ -500,17 +502,6 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   QVBoxLayout* layout = new QVBoxLayout(this->EffectsOptionsFrame);
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
-
-  // Instantiate and expose effects
-
-  // Setup effect button group layout
-  ctkFlowLayout* effectsGroupLayout = new ctkFlowLayout();
-  effectsGroupLayout->setContentsMargins(4, 4, 4, 4);
-  effectsGroupLayout->setSpacing(4);
-  effectsGroupLayout->setAlignItems(false);
-  effectsGroupLayout->setAlignment(Qt::AlignJustify);
-  effectsGroupLayout->setPreferredExpandingDirections(Qt::Vertical);
-  this->EffectsGroupBox->setLayout(effectsGroupLayout);
 
   // Update effect buttons
   q->updateEffectList();
@@ -1093,7 +1084,6 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setToolTip("No editing");
     effectButton->setToolButtonStyle(d->EffectButtonStyle);
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(nullptr));
-    effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
     d->EffectButtonGroup.addButton(effectButton);
     }
 
@@ -1131,7 +1121,6 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setIcon(effect->icon());
     effectButton->setText(effect->name());
     effectButton->setToolTip(effect->name());
-    effectButton->setSizePolicy(QSizePolicy::MinimumExpanding, effectButton->sizePolicy().verticalPolicy());
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
     d->EffectButtonGroup.addButton(effectButton);
 
@@ -1149,7 +1138,8 @@ void qMRMLSegmentEditorWidget::updateEffectList()
   foreach (QAbstractButton* button, effectButtons)
     {
     button->hide();
-    d->EffectsGroupBox->layout()->removeWidget(button);
+    QLayoutItem *child;
+    while ((child = d->EffectsGroupBox->layout()->takeAt(0)) != 0);
     }
 
   QList<qSlicerSegmentEditorAbstractEffect*> displayedEffects; // list of effect buttons to be displayed
@@ -1175,6 +1165,8 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     }
 
   // Add buttons of displayed effect to layout
+  int rowIndex = 0;
+  int columnIndex = 0;
   foreach(qSlicerSegmentEditorAbstractEffect* effect, displayedEffects)
     {
     QToolButton* effectButton = d->toolButton(effect);
@@ -1184,7 +1176,17 @@ void qMRMLSegmentEditorWidget::updateEffectList()
       continue;
       }
     effectButton->show();
-    d->EffectsGroupBox->layout()->addWidget(effectButton);
+    auto gridLayout = dynamic_cast<QGridLayout*>(d->EffectsGroupBox->layout());
+    gridLayout->addWidget(effectButton, rowIndex, columnIndex);
+    if(columnIndex == d->EffectColumnCount - 1)
+    {
+      columnIndex = 0;
+      ++rowIndex;
+    }
+    else
+    {
+      ++columnIndex;
+    }
     }
 }
 
@@ -1709,16 +1711,6 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
     d->OptionsGroupBox->setTitle(activeEffect->name());
     d->EffectHelpBrowser->setCollapsibleText(activeEffect->helpText());
     d->MaskingGroupBox->show();
-
-    // Perform updates to prevent layout collapse
-    d->EffectHelpBrowser->setMinimumHeight(d->EffectHelpBrowser->sizeHint().height());
-    if (d->EffectHelpBrowser->layout())
-      {
-      d->EffectHelpBrowser->layout()->update();
-      }
-    activeEffect->optionsFrame()->setMinimumHeight(activeEffect->optionsFrame()->sizeHint().height());
-    activeEffect->optionsLayout()->activate();
-    this->setMinimumHeight(this->sizeHint().height());
     }
   else
     {
@@ -2543,6 +2535,21 @@ void qMRMLSegmentEditorWidget::setEffectNameOrder(const QStringList& effectNames
     return;
     }
   d->EffectNameOrder = effectNames;
+  this->updateEffectList();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSegmentEditorWidget::effectColumnCount() const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->EffectColumnCount;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setEffectColumnCount(int columnCount)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->EffectColumnCount = columnCount;
   this->updateEffectList();
 }
 
@@ -3408,39 +3415,6 @@ void qMRMLSegmentEditorWidget::masterVolumeNodeSelectorRemoveAttribute(const QSt
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->MasterVolumeNodeComboBox->removeAttribute(nodeType, attributeName);
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::anchorClicked(const QUrl &url)
-{
-  if (url.path().isEmpty())
-    {
-    this->updateEffectLayouts();
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::updateEffectLayouts()
-{
-  Q_D(qMRMLSegmentEditorWidget);
-
-  if (d->ActiveEffect)
-    {
-    d->EffectHelpBrowser->setMinimumHeight(d->EffectHelpBrowser->sizeHint().height());
-    if (d->EffectHelpBrowser->layout())
-      {
-      d->EffectHelpBrowser->layout()->update();
-      }
-    d->ActiveEffect->optionsFrame()->setMinimumHeight(d->ActiveEffect->optionsFrame()->sizeHint().height());
-    d->ActiveEffect->optionsLayout()->activate();
-    }
-  else
-    {
-    d->OptionsGroupBox->setMinimumHeight(d->OptionsGroupBox->sizeHint().height());
-    d->OptionsGroupBox->layout()->activate();
-    }
-
-  this->setMinimumHeight(this->sizeHint().height());
 }
 
 //-----------------------------------------------------------------------------
