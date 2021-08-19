@@ -124,6 +124,13 @@ public:
   /// \return List of effect names to be shown in the widget.
   Q_INVOKABLE QStringList effectNameOrder() const;
 
+  /// Request displaying effects in the grid layout with the specified column count
+  Q_INVOKABLE void setEffectColumnCount(int columnCount);
+
+  /// Get number of columns being used by the effects.
+  /// \return Number of columns being used for effects.
+  Q_INVOKABLE int effectColumnCount() const;
+
   /// Show/hide effect names that are not listed in \sa effectNameOrder().
   /// True by default to make effects registered by extensions show up by default.
   /// This can be used to simplify the editor widget to show only a limited number of effects.
@@ -297,9 +304,6 @@ public slots:
   /// to find an effect but uses more space.
   void setEffectButtonStyle(Qt::ToolButtonStyle toolButtonStyle);
 
-  /// Perform updates to prevent layout collapse
-  void updateEffectLayouts();
-
   /// Update list of effect buttons.
   /// It adds all effects registered with the effect factory
   /// (and not filtered by unorderedEffectsVisible).
@@ -410,9 +414,6 @@ protected slots:
 
   /// Update GUI if segmentation history is changed (e.g., undo/redo button states)
   void onSegmentationHistoryChanged();
-
-  /// Update layout after expanding/collapsing the help text browser
-  void anchorClicked(const QUrl &url);
 
   /// Enable/disable surface smoothing
   void onEnableSurfaceSmoothingToggled(bool enabled);
