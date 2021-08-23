@@ -37,6 +37,8 @@ class vtkMRMLScene;
 class vtkMRMLSliceCompositeNode;
 class vtkMRMLSliceLogic;
 class vtkMRMLSliceNode;
+class qMRMLLayoutManager;
+
 
 /// qMRMLSliceControllerWidget offers controls to a slice view (vtkMRMLSliceNode
 ///  and vtkMRMLSliceCompositeNode). It internally creates a slice logic that
@@ -166,6 +168,8 @@ public slots:
   /// Fit slices to background. A No-op if no SliceView has been set.
   /// \sa setSliceView();
   void fitSliceToBackground();
+
+  void MaximizeLayout();
 
   /// Set slice orientation.
   /// \note Orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".
@@ -300,6 +304,9 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLSliceControllerWidget);
   Q_DISABLE_COPY(qMRMLSliceControllerWidget);
+
+public:
+   bool                     maximumView;
 };
 
 #endif

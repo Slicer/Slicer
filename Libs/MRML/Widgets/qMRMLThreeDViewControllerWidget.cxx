@@ -47,6 +47,7 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkRenderWindow.h>
+#include <vtkMRMLLayoutNode.h>
 
 //--------------------------------------------------------------------------
 // qMRMLThreeDViewControllerWidgetPrivate methods
@@ -104,6 +105,9 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   this->CenterButton->setDefaultAction(this->actionCenter);
   QObject::connect(this->actionCenter, SIGNAL(triggered()),
                    q, SLOT(resetFocalPoint()));
+
+  QObject::connect(this->actionMaximize3DButton, SIGNAL(triggered()),
+                   q, SLOT(Maximize3D()));
 
   // StereoType actions
   this->StereoTypesMapper = new ctkSignalMapper(this->PopupWidget);
@@ -276,6 +280,13 @@ void qMRMLThreeDViewControllerWidgetPrivate::init()
   this->CenterToolButton->setDefaultAction(this->actionCenter);
   this->CenterToolButton->setFixedSize(15, 15);
   this->BarLayout->insertWidget(2, this->CenterToolButton);
+
+  q->Maximized3D = false;
+  this->Maximize3DButton = new QToolButton(q);
+  this->Maximize3DButton->setAutoRaise(true);
+  this->Maximize3DButton->setDefaultAction(this->actionMaximize3DButton);
+  this->Maximize3DButton->setFixedSize(15, 15);
+  this->BarLayout->addWidget(this->Maximize3DButton);
 
   this->ViewLabel->setText(qMRMLThreeDViewControllerWidget::tr("1"));
   this->BarLayout->addStretch(1);
@@ -712,6 +723,22 @@ void qMRMLThreeDViewControllerWidget::resetFocalPoint()
   d->ViewLogic->StartCameraNodeInteraction(vtkMRMLCameraNode::CenterFlag);
   d->ThreeDView->resetFocalPoint();
   d->ViewLogic->EndCameraNodeInteraction();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::Maximize3D()
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->mrmlScene()->GetSingletonNode("vtkMRMLLayoutNode", "vtkMRMLLayoutNode"));
+  if (layoutNode){
+    if (!this->Maximized3D) {
+        layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
+        this->Maximized3D = true;
+    } else {
+        layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+        this->Maximized3D = false;
+    }
+  }
 }
 
 // --------------------------------------------------------------------------

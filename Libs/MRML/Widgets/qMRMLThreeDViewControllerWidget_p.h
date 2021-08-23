@@ -81,7 +81,7 @@ public:
   ctkSignalMapper*                    RulerColorMapper;
 
   QToolButton*                        CenterToolButton;
-
+  QToolButton*                        Maximize3DButton;
 protected:
   void setupPopupUi() override;
 };

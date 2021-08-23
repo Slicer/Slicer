@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
+    <width>345</width>
     <height>138</height>
    </rect>
   </property>
@@ -14,7 +14,16 @@
    <string>Slice Controller</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -34,7 +43,7 @@
     </widget>
    </item>
    <item row="2" column="4">
-    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox">
+    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -50,24 +59,24 @@
      <property name="toolTip">
       <string>Select the label map</string>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLLabelMapVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled">
+     <property name="noneEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="editEnabled">
+     <property name="editEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -112,7 +121,7 @@
     </widget>
    </item>
    <item row="3" column="1" rowspan="2">
-    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider">
+    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -122,25 +131,25 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider">
+     <property name="popupSlider" stdset="0">
       <bool>false</bool>
      </property>
     </widget>
    </item>
    <item row="2" column="2">
-    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider">
+    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -150,19 +159,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
    <item row="3" column="4">
-    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox">
+    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -178,24 +187,24 @@
      <property name="toolTip">
       <string>Select the foreground</string>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled">
+     <property name="noneEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="editEnabled">
+     <property name="editEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -211,7 +220,7 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="ctkSliderWidget" name="SegmentationOpacitySlider">
+    <widget class="ctkSliderWidget" name="SegmentationOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -221,19 +230,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
    <item row="1" column="4">
-    <widget class="qMRMLSegmentSelectorWidget" name="SegmentSelectorWidget">
+    <widget class="qMRMLSegmentSelectorWidget" name="SegmentSelectorWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -261,7 +270,7 @@
     </widget>
    </item>
    <item row="4" column="2">
-    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider">
+    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -271,19 +280,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider">
+     <property name="popupSlider" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -302,7 +311,7 @@
     </widget>
    </item>
    <item row="4" column="4">
-    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox">
+    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -318,24 +327,24 @@
      <property name="toolTip">
       <string>Select the background</string>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled">
+     <property name="noneEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="editEnabled">
+     <property name="editEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -411,9 +420,9 @@
         </sizepolicy>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
-       <property name="mirrorOnExpand">
+       <property name="mirrorOnExpand" stdset="0">
         <bool>true</bool>
        </property>
       </widget>
@@ -424,7 +433,16 @@
         <property name="spacing">
          <number>0</number>
         </property>
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -644,20 +662,20 @@
          </widget>
         </item>
         <item>
-         <widget class="ctkDynamicSpacer" name="DynamicSpacer">
-          <property name="activeSizePolicy">
+         <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+          <property name="activeSizePolicy" stdset="0">
            <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="inactiveSizePolicy">
+          <property name="inactiveSizePolicy" stdset="0">
            <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="active">
+          <property name="active" stdset="0">
            <bool>true</bool>
           </property>
          </widget>
@@ -1199,6 +1217,18 @@
     <string>Toggle segmentation visibility</string>
    </property>
   </action>
+  <action name="action_Max_Min">
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
+   </property>
+   <property name="text">
+    <string>maximize button</string>
+   </property>
+   <property name="toolTip">
+    <string>maximize/minimize button</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1216,6 +1246,7 @@
    <class>qMRMLSegmentSelectorWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLSegmentSelectorWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkComboBox</class>

@@ -32,6 +32,8 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->CurrentLayoutDescription = nullptr;
   this->LayoutRootElement = nullptr;
 
+  this->MaximizedLayoutName = nullptr;
+
   // Synchronize the view description with the layout
   this->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutNone, "");
 }
@@ -50,6 +52,7 @@ vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
     this->LayoutRootElement = nullptr;
     }
   this->SetCurrentLayoutDescription(nullptr);
+  this->SetMaximizedLayoutName(nullptr);
 }
 
 

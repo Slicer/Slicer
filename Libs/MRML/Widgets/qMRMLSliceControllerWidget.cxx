@@ -195,6 +195,8 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(setSliceVisible(bool)));
   QObject::connect(this->actionFit_to_window, SIGNAL(triggered()),
                    q, SLOT(fitSliceToBackground()));
+  QObject::connect(this->action_Max_Min, SIGNAL(triggered()), 
+                   q, SLOT(MaximizeLayout()));                 
   QObject::connect(this->actionRotate_to_volume_plane, SIGNAL(triggered()),
                    q, SLOT(rotateSliceToLowestVolumeAxes()));
   QObject::connect(this->actionShow_reformat_widget, SIGNAL(triggered(bool)),
@@ -382,6 +384,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
   //   </property>
   //  </widget>
   // </item>
+  q->maximumView = false;
   this->FitToWindowToolButton = new QToolButton(q);
   this->FitToWindowToolButton->setObjectName("FitToWindowToolButton");
   //this->FitToWindowToolButton->setToolTip(tr("Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label)."));
@@ -391,6 +394,13 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->FitToWindowToolButton->setDefaultAction(this->actionFit_to_window);
   this->FitToWindowToolButton->setFixedSize(15, 15);
   this->BarLayout->insertWidget(2, this->FitToWindowToolButton);
+
+  this->MaximizeButton = new QToolButton(q);
+  this->MaximizeButton->setObjectName("MaximizeButton");
+  this->MaximizeButton->setAutoRaise(true);
+  this->MaximizeButton->setDefaultAction(this->action_Max_Min);
+  this->MaximizeButton->setFixedSize(15, 15);
+  this->BarLayout->addWidget(this->MaximizeButton);
 
   this->SliceOffsetSlider = new qMRMLSliderWidget(q);
   this->SliceOffsetSlider->setObjectName("SliceOffsetSlider");
@@ -1995,6 +2005,40 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
   d->SliceLogic->FitSliceToAll();
   d->MRMLSliceNode->UpdateMatrices();
   d->SliceLogic->EndSliceNodeInteraction();
+}
+
+void qMRMLSliceControllerWidget::MaximizeLayout() {
+  Q_D(qMRMLSliceControllerWidget);
+  const char* MaxLayoutName = d->MRMLSliceNode->GetLayoutName();
+  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->mrmlScene()->GetSingletonNode("vtkMRMLLayoutNode", "vtkMRMLLayoutNode"));
+  if(QString::fromUtf8(MaxLayoutName).contains("Red")) {
+    if(!this->maximumView) {
+      layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
+      this->maximumView = true;
+    }
+    else{
+      layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+      this->maximumView = false;
+    }
+  } else if(QString::fromUtf8(MaxLayoutName).contains("Green")) {
+    if(!this->maximumView) {
+      layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
+      this->maximumView = true;
+    }
+    else{
+      layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+      this->maximumView = false;
+    }
+  } else if(QString::fromUtf8(MaxLayoutName).contains("Yellow")) {
+    if(!this->maximumView) {
+      layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
+      this->maximumView = true;
+    }
+    else{
+      layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+      this->maximumView = false;
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
