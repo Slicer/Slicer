@@ -33,14 +33,14 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ctkAxesWidget" name="AxesWidget">
+    <widget class="ctkAxesWidget" name="AxesWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="autoReset">
+     <property name="autoReset" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -589,6 +589,18 @@
    </property>
    <property name="text">
     <string>Yellow ruler</string>
+   </property>
+  </action>
+  <action name="actionMaximize3DButton">
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
+   </property>
+   <property name="text">
+    <string>Maximize3DButton</string>
+   </property>
+   <property name="toolTip">
+    <string>Maximize view</string>
    </property>
   </action>
  </widget>

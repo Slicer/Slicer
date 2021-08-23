@@ -181,6 +181,7 @@ public:
   QButtonGroup*                       ControllerButtonGroup;
 
   QToolButton*                        FitToWindowToolButton;
+  QToolButton*                        MaximizeButton;
   qMRMLSliderWidget*                  SliceOffsetSlider;
   /// Slicer offset resolution without applying display scaling.
   double                              SliceOffsetResolution{1.0};

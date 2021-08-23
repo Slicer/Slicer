@@ -72,6 +72,10 @@ public:
   vtkGetStringMacro(SelectedModule);
   vtkSetStringMacro(SelectedModule);
 
+  // Set/Get the Maximized Layout Name
+  vtkGetStringMacro(MaximizedLayoutName);
+  vtkSetStringMacro(MaximizedLayoutName);
+
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Layout";}
 
@@ -185,6 +189,9 @@ protected:
   std::map<int, std::string> Layouts;
   char*                      CurrentLayoutDescription;
   vtkXMLDataElement*         LayoutRootElement;
+  
+public:
+  char*                      MaximizedLayoutName;
 };
 
 #endif

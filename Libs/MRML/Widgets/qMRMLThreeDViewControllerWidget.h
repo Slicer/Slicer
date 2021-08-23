@@ -117,6 +117,9 @@ public slots:
   void setRulerType(int type);
   void setRulerColor(int color);
 
+  void Maximize3D();
+
+
 protected slots:
   void updateWidgetFromMRMLViewLogic();
   void updateWidgetFromMRMLView();
@@ -128,6 +131,9 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLThreeDViewControllerWidget);
   Q_DISABLE_COPY(qMRMLThreeDViewControllerWidget);
+
+public:
+  bool  Maximized3D;
 };
 
 #endif
