@@ -46,6 +46,7 @@ class vtkMRMLScene;
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
 // qMRMLSceneModelPrivate
@@ -93,7 +94,7 @@ public:
   QIcon HiddenIcon;
   QIcon PartiallyVisibleIcon;
 
-  vtkMRMLScene* MRMLScene;
+  vtkWeakPointer<vtkMRMLScene> MRMLScene;
   QStandardItem* DraggedItem;
   mutable QList<vtkMRMLNode*>  DraggedNodes;
   QList<vtkMRMLNode*> MisplacedNodes;

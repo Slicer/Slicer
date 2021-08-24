@@ -59,7 +59,6 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
   this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
   this->PartiallyVisibleIcon = QIcon(":Icons/VisiblePartially.png");
 
-  this->MRMLScene = nullptr;
   this->DraggedItem = nullptr;
 
   qRegisterMetaType<QStandardItem* >("QStandardItem*");
@@ -747,7 +746,7 @@ void qMRMLSceneModel::updateScene()
 
   // Update the scene pointer in case d->MRMLScene has changed
   this->mrmlSceneItem()->setData(
-    QVariant::fromValue(reinterpret_cast<long long>(d->MRMLScene)),
+    QVariant::fromValue(reinterpret_cast<long long>(d->MRMLScene.GetPointer())),
     qMRMLSceneModel::PointerRole);
 
   const int preNodesItemCount = this->preItems(this->mrmlSceneItem()).count();
