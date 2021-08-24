@@ -279,6 +279,8 @@ public slots:
   void setForegroundInterpolation(bool nearestNeighbor);
   void setBackgroundInterpolation(bool nearestNeighbor);
 
+  void updateWidgetFromMRMLView() override;
+
 signals:
   /// This signal is emitted when the given \a imageData is modified.
   void imageDataConnectionChanged(vtkAlgorithmOutput * imageDataConnection);

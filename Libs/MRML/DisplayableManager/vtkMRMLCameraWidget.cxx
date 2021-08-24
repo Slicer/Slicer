@@ -32,6 +32,7 @@
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
 
@@ -50,7 +51,7 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
   this->PreviousEventPosition[0] = 0;
   this->PreviousEventPosition[1] = 0;
 
-  this->ModifierKeyPressedSinceLastMouseButtonRelease = true;
+  this->ModifierKeyPressedSinceLastClickAndDrag = true;
 
   // Rotate camera to anatomic directions
 
@@ -148,6 +149,9 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
 
   // Context menu
   this->SetEventTranslation(WidgetStateIdle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
+
+  // Maximize/restore view
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventMaximizeView);
 }
 
 //----------------------------------------------------------------------------------
@@ -166,24 +170,18 @@ void vtkMRMLCameraWidget::CreateDefaultRepresentation()
 //-----------------------------------------------------------------------------
 bool vtkMRMLCameraWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
 {
-  if (eventData->GetType() == vtkCommand::LeftButtonReleaseEvent
-    || eventData->GetType() == vtkCommand::MiddleButtonReleaseEvent
-    || eventData->GetType() == vtkCommand::RightButtonReleaseEvent)
-    {
-    this->ModifierKeyPressedSinceLastMouseButtonRelease = false;
-    }
   if (eventData->GetType() == vtkCommand::LeaveEvent)
     {
     // We cannot capture keypress events until the user clicks in the view
     // so when we are outside then we should assume that modifier
     // is not just "stuck".
-    this->ModifierKeyPressedSinceLastMouseButtonRelease = true;
+    this->ModifierKeyPressedSinceLastClickAndDrag = true;
     }
   if (eventData->GetType() == vtkCommand::KeyPressEvent)
     {
     if (eventData->GetKeySym().find("Shift") != std::string::npos)
       {
-      this->ModifierKeyPressedSinceLastMouseButtonRelease = true;
+      this->ModifierKeyPressedSinceLastClickAndDrag = true;
       }
     }
 
@@ -404,6 +402,11 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
     case WidgetEventSetCrosshairPosition:
       // Event is handled in CanProcessInteractionEvent
       break;
+
+    case WidgetEventMaximizeView:
+      processedEvent = this->ProcessMaximizeView(eventData);
+      break;
+
     default:
       processedEvent = false;
     }
@@ -504,6 +507,9 @@ bool vtkMRMLCameraWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* event
     }
   this->SetWidgetState(WidgetStateIdle);
 
+  // Prevent shift+mousemove events after click-and-drag (until shift is pressed again)
+  this->ModifierKeyPressedSinceLastClickAndDrag = false;
+
   // only claim this as processed if the mouse was moved (this lets the event interpreted as button click)
   bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
   return processedEvent;
@@ -535,7 +541,7 @@ vtkMRMLCameraNode* vtkMRMLCameraWidget::GetCameraNode()
 //----------------------------------------------------------------------------
 bool vtkMRMLCameraWidget::ProcessSetCrosshair(vtkMRMLInteractionEventData* eventData)
 {
-  if (!this->ModifierKeyPressedSinceLastMouseButtonRelease)
+  if (!this->ModifierKeyPressedSinceLastClickAndDrag)
     {
     // this event was caused by a "stuck" modifier key
     return false;
@@ -1068,5 +1074,42 @@ bool vtkMRMLCameraWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* eventDa
     pickEventData->SetDisplayPosition(eventData->GetDisplayPosition());
     }
   interactionNode->ShowViewContextMenu(pickEventData);
+  return true;
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLCameraWidget::ProcessMaximizeView(vtkMRMLInteractionEventData* eventData)
+{
+  if (this->WidgetState != WidgetStateIdle)
+    {
+    return false;
+    }
+  vtkMRMLAbstractViewNode* viewNode = eventData->GetViewNode();
+  if (!viewNode)
+    {
+    return false;
+    }
+
+  bool isMaximized = false;
+  bool canBeMaximized = false;
+  vtkMRMLLayoutNode* layoutNode = viewNode->GetMaximizedState(isMaximized, canBeMaximized);
+  if (!layoutNode || !canBeMaximized)
+    {
+    return false;
+    }
+  if (isMaximized)
+    {
+    layoutNode->SetMaximizedViewNode(nullptr);
+    }
+  else
+    {
+    layoutNode->SetMaximizedViewNode(viewNode);
+    }
+
+  // Maximize/restore takes away the focus without resetting
+  // this->ModifierKeyPressedSinceLastMouseButtonRelease
+  // therefore we need to reset the flag here.
+  this->ModifierKeyPressedSinceLastClickAndDrag = true;
+
   return true;
 }

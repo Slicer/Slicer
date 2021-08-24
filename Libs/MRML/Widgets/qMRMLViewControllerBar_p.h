@@ -33,17 +33,25 @@
 //
 
 // Qt includes
+#include <QIcon>
 #include <QObject>
+
+// qMRML includes
+#include "qMRMLViewControllerBar.h"
+
+// MRML includes
+#include "vtkMRMLAbstractViewNode.h"
+#include "vtkMRMLLayoutNode.h"
+
+// VTK includes
+#include "vtkWeakPointer.h"
+
+class ctkPopupWidget;
 class QLabel;
 class QToolButton;
 class QHBoxLayout;
 class QVBoxLayout;
-
-// CTK includes
-class ctkPopupWidget;
-
-// qMRML includes
-#include "qMRMLViewControllerBar.h"
+class vtkMRMLLayoutNode;
 
 //-----------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLViewControllerBarPrivate: public QObject
@@ -63,14 +71,21 @@ public:
   virtual void setColor(QColor color);
   virtual QColor color()const;
 
+  // Need to observe the view and layout nodes to update maximize/restore button state.
+  vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
+  vtkWeakPointer<vtkMRMLLayoutNode> LayoutNode;
+
   QToolButton*                     PinButton;
   QLabel*                          ViewLabel;
+  QToolButton*                     MaximizeViewButton;
   ctkPopupWidget*                  PopupWidget;
   QWidget*                         BarWidget;
   QHBoxLayout*                     BarLayout;
   QVBoxLayout*                     ControllerLayout;
   qMRMLViewControllerBar::LayoutBehavior  LayoutBehavior;
   QColor                           BarColor;
+  QIcon                            ViewMaximizeIcon;
+  QIcon                            ViewRestoreIcon;
 
   bool eventFilter(QObject* object, QEvent* event) override;
 

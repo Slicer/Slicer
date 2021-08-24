@@ -28,6 +28,7 @@
 #include "vtkMRMLNode.h"
 
 class vtkMRMLInteractionNode;
+class vtkMRMLLayoutNode;
 class vtkMRMLModelNode;
 class vtkStringArray;
 
@@ -276,6 +277,12 @@ public:
 
   /// Total number of coordinate system axis labels
   static const int AxisLabelsCount;
+
+  /// Get maximized state of the view.
+  /// \param maximized is true if the view is temporarily maximized to fill the view layout.
+  /// \param canBeMaximized is true if the view is in a view layout (not a standalone widget).
+  /// \returns layout node that this view belongs to.
+  vtkMRMLLayoutNode* GetMaximizedState(bool& maximized, bool& canBeMaximized);
 
 protected:
   vtkMRMLAbstractViewNode();

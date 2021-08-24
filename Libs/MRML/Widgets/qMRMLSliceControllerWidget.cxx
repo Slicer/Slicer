@@ -69,7 +69,6 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   : Superclass(object)
 {
   this->SliceLogic = nullptr;
-  this->MRMLSliceNode = nullptr;
   this->MRMLSliceCompositeNode = nullptr;
   this->SliceLogics = nullptr;
 
@@ -619,11 +618,12 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   double UVWExtents[] = {256,256,256};
   double UVWOrigin[] = {0,0,0};
   int UVWDimensions[] = {256,256,256};
-  if (this->MRMLSliceNode)
+  vtkMRMLSliceNode* sliceNode = q->mrmlSliceNode();
+  if (sliceNode)
   {
-    this->MRMLSliceNode->GetUVWExtents(UVWExtents);
-    this->MRMLSliceNode->GetUVWOrigin(UVWOrigin);
-    this->MRMLSliceNode->GetUVWDimensions(UVWDimensions);
+    sliceNode->GetUVWExtents(UVWExtents);
+    sliceNode->GetUVWOrigin(UVWOrigin);
+    sliceNode->GetUVWDimensions(UVWDimensions);
   }
 
   QMenu* fovSliceModelMenu = new QMenu(tr("Manual FOV"), this->SliceModelMenu);
@@ -731,28 +731,6 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   advancedMenu->addMenu(this->SliceModelMenu);
 
   this->SliceMoreOptionButton->setMenu(advancedMenu);
-}
-
-//---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::setMRMLSliceNodeInternal(vtkMRMLSliceNode* newSliceNode)
-{
-  Q_Q(qMRMLSliceControllerWidget);
-
-  if (newSliceNode == this->MRMLSliceNode)
-    {
-    return;
-    }
-
-  this->qvtkReconnect(this->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRMLSliceNode()));
-
-  this->MRMLSliceNode = newSliceNode;
-
-  // Update widget state given the new slice node
-  this->updateWidgetFromMRMLSliceNode();
-
-  // Enable/disable widget
-  q->setDisabled(newSliceNode == nullptr);
 }
 
 // --------------------------------------------------------------------------
@@ -872,63 +850,64 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
   Q_Q(qMRMLSliceControllerWidget);
 
-  if (!this->MRMLSliceNode)
+  vtkMRMLSliceNode* sliceNode = q->mrmlSliceNode();
+  if (!sliceNode)
     {
     return;
     }
 
-  double* layoutColorVtk = this->MRMLSliceNode->GetLayoutColor();
+  double* layoutColorVtk = sliceNode->GetLayoutColor();
   QColor layoutColor = QColor::fromRgbF(layoutColorVtk[0], layoutColorVtk[1], layoutColorVtk[2]);
   this->setColor(layoutColor);
 
   bool wasBlocked;
 
   // Update abbreviated slice view name
-  this->ViewLabel->setText(this->MRMLSliceNode->GetLayoutLabel());
+  this->ViewLabel->setText(sliceNode->GetLayoutLabel());
 
-  Self::updateSliceOrientationSelector(this->MRMLSliceNode, this->SliceOrientationSelector);
+  Self::updateSliceOrientationSelector(sliceNode, this->SliceOrientationSelector);
 
   // Update slice offset slider tooltip
   qMRMLOrientation orientation = this->mrmlOrientation(
-      QString::fromStdString(this->MRMLSliceNode->GetOrientation().c_str()));
+      QString::fromStdString(sliceNode->GetOrientation().c_str()));
   this->SliceOffsetSlider->setToolTip(orientation.ToolTip);
   this->SliceOffsetSlider->setPrefix(orientation.Prefix);
 
   // Update slice visibility toggle
-  this->actionShow_in_3D->setChecked(this->MRMLSliceNode->GetSliceVisible());
+  this->actionShow_in_3D->setChecked(sliceNode->GetSliceVisible());
   this->actionLockNormalToCamera->setChecked(
-    this->MRMLSliceNode->GetWidgetNormalLockedToCamera());
+    sliceNode->GetWidgetNormalLockedToCamera());
 
   // Label Outline
-  bool showOutline = this->MRMLSliceNode->GetUseLabelOutline();
+  bool showOutline = sliceNode->GetUseLabelOutline();
   this->actionLabelMapOutline->setChecked(showOutline);
   this->actionLabelMapOutline->setText(showOutline ?
     tr("Hide label volume outlines") : tr("Show label volume outlines"));
   // Reformat
-  bool showReformat = this->MRMLSliceNode->GetWidgetVisible();
+  bool showReformat = sliceNode->GetWidgetVisible();
   this->actionShow_reformat_widget->setChecked(showReformat);
   this->actionShow_reformat_widget->setText(
     showReformat ? tr("Hide reformat widget"): tr("Show reformat widget"));
   // Slice spacing mode
   this->SliceSpacingButton->setIcon(
-    this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode ?
+    sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode ?
       QIcon(":/Icons/SlicerAutomaticSliceSpacing.png") :
       QIcon(":/Icons/SlicerManualSliceSpacing.png"));
   this->actionSliceSpacingModeAutomatic->setChecked(
-    this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode);
+    sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode);
   // Prescribed slice spacing
   double spacing[3] = {0.0, 0.0, 0.0};
-  this->MRMLSliceNode->GetPrescribedSliceSpacing(spacing);
+  sliceNode->GetPrescribedSliceSpacing(spacing);
   this->SliceSpacingSpinBox->setValue(spacing[2]);
   // Field of view
   double fov[3]  = {0.0, 0.0, 0.0};
-  this->MRMLSliceNode->GetFieldOfView(fov);
+  sliceNode->GetFieldOfView(fov);
   wasBlocked = this->SliceFOVSpinBox->blockSignals(true);
   this->SliceFOVSpinBox->setValue(fov[0] < fov[1] ? fov[0] : fov[1]);
   this->SliceFOVSpinBox->blockSignals(wasBlocked);
   // Lightbox
-  int rows = this->MRMLSliceNode->GetLayoutGridRows();
-  int columns = this->MRMLSliceNode->GetLayoutGridColumns();
+  int rows = sliceNode->GetLayoutGridRows();
+  int columns = sliceNode->GetLayoutGridColumns();
   this->actionLightbox1x1_view->setChecked(rows == 1 && columns == 1);
   this->actionLightbox1x2_view->setChecked(rows == 1 && columns == 2);
   this->actionLightbox1x3_view->setChecked(rows == 1 && columns == 3);
@@ -939,24 +918,24 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->actionLightbox3x3_view->setChecked(rows == 3 && columns == 3);
   this->actionLightbox6x6_view->setChecked(rows == 6 && columns == 6);
 
-  this->actionSliceModelModeVolumes->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
+  this->actionSliceModelModeVolumes->setChecked(sliceNode->GetSliceResolutionMode() ==
                                                 vtkMRMLSliceNode::SliceResolutionMatchVolumes);
-  this->actionSliceModelMode2D->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
+  this->actionSliceModelMode2D->setChecked(sliceNode->GetSliceResolutionMode() ==
                                                 vtkMRMLSliceNode::SliceResolutionMatch2DView);
-  this->actionSliceModelMode2D_Volumes->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
+  this->actionSliceModelMode2D_Volumes->setChecked(sliceNode->GetSliceResolutionMode() ==
                                                 vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes);
-  this->actionSliceModelModeVolumes_2D->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
+  this->actionSliceModelModeVolumes_2D->setChecked(sliceNode->GetSliceResolutionMode() ==
                                                 vtkMRMLSliceNode::SliceFOVMatchVolumesSpacingMatch2DView);
-  //this->actionSliceModelModeCustom->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
+  //this->actionSliceModelModeCustom->setChecked(sliceNode->GetSliceResolutionMode() ==
   //                                              vtkMRMLSliceNode::SliceResolutionCustom);
 
   double UVWExtents[] = {256,256,256};
   double UVWOrigin[] = {0,0,0};
   int UVWDimensions[] = {256,256,256};
 
-  this->MRMLSliceNode->GetUVWExtents(UVWExtents);
-  this->MRMLSliceNode->GetUVWOrigin(UVWOrigin);
-  this->MRMLSliceNode->GetUVWDimensions(UVWDimensions);
+  sliceNode->GetUVWExtents(UVWExtents);
+  sliceNode->GetUVWOrigin(UVWOrigin);
+  sliceNode->GetUVWDimensions(UVWDimensions);
 
   wasBlocked = this->SliceModelFOVXSpinBox->blockSignals(true);
   this->SliceModelFOVXSpinBox->setValue(UVWExtents[0]);
@@ -983,26 +962,26 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->SliceModelOriginYSpinBox->blockSignals(wasBlocked);
 
   // OrientationMarker (check the selected option)
-  QAction* action = qobject_cast<QAction*>(this->OrientationMarkerTypesMapper->mapping(this->MRMLSliceNode->GetOrientationMarkerType()));
+  QAction* action = qobject_cast<QAction*>(this->OrientationMarkerTypesMapper->mapping(sliceNode->GetOrientationMarkerType()));
   if (action)
     {
     action->setChecked(true);
     }
-  action = qobject_cast<QAction*>(this->OrientationMarkerSizesMapper->mapping(this->MRMLSliceNode->GetOrientationMarkerSize()));
+  action = qobject_cast<QAction*>(this->OrientationMarkerSizesMapper->mapping(sliceNode->GetOrientationMarkerSize()));
   if (action)
     {
     action->setChecked(true);
     }
 
   // Ruler (check the selected option)
-  action = qobject_cast<QAction*>(this->RulerTypesMapper->mapping(this->MRMLSliceNode->GetRulerType()));
+  action = qobject_cast<QAction*>(this->RulerTypesMapper->mapping(sliceNode->GetRulerType()));
   if (action)
     {
     action->setChecked(true);
     }
 
   // Ruler Color (check the selected option)
-  action = qobject_cast<QAction*>(this->RulerColorMapper->mapping(this->MRMLSliceNode->GetRulerColor()));
+  action = qobject_cast<QAction*>(this->RulerColorMapper->mapping(sliceNode->GetRulerColor()));
   if (action)
     {
     action->setChecked(true);
@@ -1273,8 +1252,14 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 {
   Q_Q(qMRMLSliceControllerWidget);
 
-  this->setMRMLSliceNodeInternal(
-    this->SliceLogic ? this->SliceLogic->GetSliceNode() : nullptr);
+  vtkMRMLSliceNode* newSliceNode = this->SliceLogic ? this->SliceLogic->GetSliceNode() : nullptr;
+  if (newSliceNode != q->mrmlSliceNode())
+    {
+    q->setMRMLViewNode(newSliceNode);
+    }
+  // Enable/disable widget
+  q->setDisabled(newSliceNode == nullptr);
+
   this->setMRMLSliceCompositeNodeInternal(
     this->SliceLogic ? this->SliceLogic->GetSliceCompositeNode() : nullptr);
 
@@ -1651,13 +1636,6 @@ qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(
 qMRMLSliceControllerWidget::~qMRMLSliceControllerWidget() = default;
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* qMRMLSliceControllerWidget::mrmlSliceNode()const
-{
-  Q_D(const qMRMLSliceControllerWidget);
-  return d->MRMLSliceNode;
-}
-
-//---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLSliceControllerWidget);
@@ -1709,6 +1687,13 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
     {
     this->setMRMLScene(newSliceNode->GetScene());
     }
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLSliceNode* qMRMLSliceControllerWidget::mrmlSliceNode()const
+{
+  Q_D(const qMRMLSliceControllerWidget);
+  return vtkMRMLSliceNode::SafeDownCast(this->mrmlViewNode());
 }
 
 //---------------------------------------------------------------------------
@@ -1807,12 +1792,12 @@ QString qMRMLSliceControllerWidget::sliceViewName() const
 {
   Q_D(const qMRMLSliceControllerWidget);
 
-  if (!d->MRMLSliceNode)
+  if (!this->mrmlSliceNode())
     {
     qCritical() << "qMRMLSliceControllerWidget::setSliceViewName failed: MRMLSliceNode is invalid";
     return QString();
     }
-  return QString::fromUtf8(d->MRMLSliceNode->GetLayoutName());
+  return QString::fromUtf8(this->mrmlSliceNode()->GetLayoutName());
 }
 
 //---------------------------------------------------------------------------
@@ -1820,50 +1805,50 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
 {
   Q_D(qMRMLSliceControllerWidget);
 
-  if (!d->MRMLSliceNode)
+  if (!this->mrmlSliceNode())
     {
     qCritical() << "qMRMLSliceControllerWidget::setSliceViewName failed: MRMLSliceNode is invalid";
     return;
     }
 
-  d->MRMLSliceNode->SetLayoutName(newSliceViewName.toUtf8().constData());
+  this->mrmlSliceNode()->SetLayoutName(newSliceViewName.toUtf8().constData());
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLabel)
 {
   Q_D(qMRMLSliceControllerWidget);
-  if (!d->MRMLSliceNode)
+  if (!this->mrmlSliceNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
     }
-  d->MRMLSliceNode->SetLayoutLabel(newSliceViewLabel.toUtf8());
+  this->mrmlSliceNode()->SetLayoutLabel(newSliceViewLabel.toUtf8());
 }
 
 //---------------------------------------------------------------------------
 QString qMRMLSliceControllerWidget::sliceViewLabel()const
 {
   Q_D(const qMRMLSliceControllerWidget);
-  if (!d->MRMLSliceNode)
+  if (!this->mrmlSliceNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return QString();
     }
-  return d->MRMLSliceNode->GetLayoutLabel();
+  return this->mrmlSliceNode()->GetLayoutLabel();
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceViewColor(const QColor& newSliceViewColor)
 {
   Q_D(qMRMLSliceControllerWidget);
-  if (!d->MRMLSliceNode)
+  if (!this->mrmlSliceNode())
     {
     qCritical() << "qMRMLSliceControllerWidget::setSliceViewName failed: MRMLSliceNode is invalid";
     return;
     }
   // this will update the widget color
-  d->MRMLSliceNode->SetLayoutColor(newSliceViewColor.redF(), newSliceViewColor.greenF(), newSliceViewColor.blueF());
+  this->mrmlSliceNode()->SetLayoutColor(newSliceViewColor.redF(), newSliceViewColor.greenF(), newSliceViewColor.blueF());
 }
 
 //---------------------------------------------------------------------------
@@ -1993,7 +1978,7 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
   // vtkMRMLSliceNode::FieldOfViewFlag
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::ResetFieldOfViewFlag);
   d->SliceLogic->FitSliceToAll();
-  d->MRMLSliceNode->UpdateMatrices();
+  this->mrmlSliceNode()->UpdateMatrices();
   d->SliceLogic->EndSliceNodeInteraction();
 }
 
@@ -2009,13 +1994,13 @@ void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
 {
   Q_D(qMRMLSliceControllerWidget);
 
-  if (!d->MRMLSliceNode || !d->MRMLSliceCompositeNode)
+  if (!this->mrmlSliceNode() || !d->MRMLSliceCompositeNode)
     {
     return;
     }
 
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::OrientationFlag);
-  d->MRMLSliceNode->SetOrientation(orientation.toUtf8());
+  this->mrmlSliceNode()->SetOrientation(orientation.toUtf8());
   d->SliceLogic->EndSliceNodeInteraction();
 }
 
@@ -2024,13 +2009,13 @@ void qMRMLSliceControllerWidget::setSliceVisible(bool visible)
 {
   Q_D(qMRMLSliceControllerWidget);
 
-  if (!d->MRMLSliceNode  || !d->MRMLSliceCompositeNode || !this->mrmlScene())
+  if (!this->mrmlSliceNode() || !d->MRMLSliceCompositeNode || !this->mrmlScene())
     {
     return;
     }
 
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceVisibleFlag);
-  d->MRMLSliceNode->SetSliceVisible(visible);
+  this->mrmlSliceNode()->SetSliceVisible(visible);
   d->SliceLogic->EndSliceNodeInteraction();
 }
 
@@ -2052,7 +2037,7 @@ bool qMRMLSliceControllerWidget::isLinked()const
 bool qMRMLSliceControllerWidget::isCompareView()const
 {
   Q_D(const qMRMLSliceControllerWidget);
-  return d->MRMLSliceNode && QString(d->MRMLSliceNode->GetLayoutName()).startsWith("Compare");
+  return this->mrmlSliceNode() && QString(this->mrmlSliceNode()->GetLayoutName()).startsWith("Compare");
 }
 
 //---------------------------------------------------------------------------
@@ -2295,13 +2280,13 @@ void qMRMLSliceControllerWidget::showLabelOutline(bool show)
     return;
     }
 
-  if (!d->MRMLSliceNode)
+  if (!this->mrmlSliceNode())
     {
     return;
     }
 
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::LabelOutlineFlag);
-  d->MRMLSliceNode->SetUseLabelOutline(show);
+  this->mrmlSliceNode()->SetUseLabelOutline(show);
   d->SliceLogic->EndSliceNodeInteraction();
 }
 
@@ -2323,7 +2308,7 @@ void qMRMLSliceControllerWidget::showReformatWidget(bool show)
     // When slice nodes are linked, only allow one slice node's reformat widget to be on at a time
     // If slice node's reformat widget was on, just turn all of them off
     // If slice node's reformat widget was off, turn it on and turn all the other ones off
-    if (node == d->MRMLSliceNode || this->isLinked())
+    if (node == this->mrmlSliceNode() || this->isLinked())
       {
       node->SetWidgetVisible(show);
       }
@@ -2348,7 +2333,7 @@ void qMRMLSliceControllerWidget::lockReformatWidgetToCamera(bool lock)
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(
                                    nodes->GetNextItemAsObject(it)));)
     {
-    if (node == d->MRMLSliceNode)
+    if (node == this->mrmlSliceNode())
       {
       node->SetWidgetNormalLockedToCamera(lock);
       }
@@ -2407,18 +2392,18 @@ void qMRMLSliceControllerWidget::setCompositingToSubtract()
 void qMRMLSliceControllerWidget::setSliceSpacingMode(bool automatic)
 {
   Q_D(qMRMLSliceControllerWidget);
-  if (!d->MRMLSliceNode || !d->MRMLSliceCompositeNode)
+  if (!this->mrmlSliceNode() || !d->MRMLSliceCompositeNode)
     {
     return;
     }
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceSpacingFlag);
   if (automatic)
     {
-    d->MRMLSliceNode->SetSliceSpacingModeToAutomatic();
+    this->mrmlSliceNode()->SetSliceSpacingModeToAutomatic();
     }
   else
     {
-    d->MRMLSliceNode->SetSliceSpacingModeToPrescribed();
+    this->mrmlSliceNode()->SetSliceSpacingModeToPrescribed();
     }
   d->SliceLogic->EndSliceNodeInteraction();
 }
@@ -2427,16 +2412,16 @@ void qMRMLSliceControllerWidget::setSliceSpacingMode(bool automatic)
 void qMRMLSliceControllerWidget::setSliceSpacing(double sliceSpacing)
 {
   Q_D(qMRMLSliceControllerWidget);
-  if (!d->MRMLSliceNode || !d->MRMLSliceCompositeNode)
+  if (!this->mrmlSliceNode() || !d->MRMLSliceCompositeNode)
     {
     return;
     }
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceSpacingFlag);
-  d->MRMLSliceNode->SetSliceSpacingModeToPrescribed();
+  this->mrmlSliceNode()->SetSliceSpacingModeToPrescribed();
   double spacing[3] = {0.0, 0.0, 0.0};
-  d->MRMLSliceNode->GetPrescribedSliceSpacing(spacing);
+  this->mrmlSliceNode()->GetPrescribedSliceSpacing(spacing);
   spacing[2] = sliceSpacing;
-  d->MRMLSliceNode->SetPrescribedSliceSpacing(spacing);
+  this->mrmlSliceNode()->SetPrescribedSliceSpacing(spacing);
   d->SliceLogic->EndSliceNodeInteraction();
 }
 
@@ -2445,7 +2430,7 @@ void qMRMLSliceControllerWidget::setSliceFOV(double fov)
 {
   Q_D(qMRMLSliceControllerWidget);
   double oldFov[3];
-  d->MRMLSliceNode->GetFieldOfView(oldFov);
+  this->mrmlSliceNode()->GetFieldOfView(oldFov);
   if (qAbs(qMin(oldFov[0], oldFov[1])- fov) < 0.01)
     {
     return;
@@ -2473,7 +2458,7 @@ void qMRMLSliceControllerWidget::setSliceModelFOV(int index, double fov)
 {
   Q_D(qMRMLSliceControllerWidget);
   double oldFov[3];
-  d->MRMLSliceNode->GetUVWExtents(oldFov);
+  this->mrmlSliceNode()->GetUVWExtents(oldFov);
   if (qAbs(oldFov[index] - fov) < 0.01)
     {
     return;
@@ -2499,7 +2484,7 @@ void qMRMLSliceControllerWidget::setSliceModelDimension(int index, int dimension
 {
   Q_D(qMRMLSliceControllerWidget);
   int oldDimension[3];
-  d->MRMLSliceNode->GetUVWDimensions(oldDimension);
+  this->mrmlSliceNode()->GetUVWDimensions(oldDimension);
   if (qAbs(oldDimension[index] - dimension) < 0.01)
     {
     return;
@@ -2525,7 +2510,7 @@ void qMRMLSliceControllerWidget::setSliceModelOrigin(int index, double origin)
 {
   Q_D(qMRMLSliceControllerWidget);
   double oldOrigin[3];
-  d->MRMLSliceNode->GetUVWOrigin(oldOrigin);
+  this->mrmlSliceNode()->GetUVWOrigin(oldOrigin);
   if (qAbs(oldOrigin[index] - origin) < 0.01)
     {
     return;
@@ -2581,7 +2566,7 @@ void qMRMLSliceControllerWidget::setSliceModelModeCustom()
 void qMRMLSliceControllerWidget::setSliceModelMode(int mode)
 {
   Q_D(qMRMLSliceControllerWidget);
-  d->MRMLSliceNode->SetSliceResolutionMode(mode);
+  this->mrmlSliceNode()->SetSliceResolutionMode(mode);
 }
 
 //---------------------------------------------------------------------------
@@ -2623,7 +2608,7 @@ void qMRMLSliceControllerWidget::setLightbox(int rows, int columns)
                                    nodes->GetNextItemAsObject(it)));)
     {
     // only coronal layouts can be lightboxes ?
-    if (node == d->MRMLSliceNode ||
+    if (node == this->mrmlSliceNode() ||
         (this->isLinked() && this->isCompareView() &&
          QString(node->GetLayoutName()).startsWith("Compare")))
       {
@@ -2748,7 +2733,7 @@ void qMRMLSliceControllerWidget::setOrientationMarkerType(int newOrientationMark
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
     {
-    if (node == d->MRMLSliceNode || this->isLinked())
+    if (node == this->mrmlSliceNode() || this->isLinked())
       {
       node->SetOrientationMarkerType(newOrientationMarkerType);
       }
@@ -2768,7 +2753,7 @@ void qMRMLSliceControllerWidget::setOrientationMarkerSize(int newOrientationMark
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
     {
-    if (node == d->MRMLSliceNode || this->isLinked())
+    if (node == this->mrmlSliceNode() || this->isLinked())
       {
       node->SetOrientationMarkerSize(newOrientationMarkerSize);
       }
@@ -2788,7 +2773,7 @@ void qMRMLSliceControllerWidget::setRulerType(int newRulerType)
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
     {
-    if (node == d->MRMLSliceNode || this->isLinked())
+    if (node == this->mrmlSliceNode() || this->isLinked())
       {
       node->SetRulerType(newRulerType);
       }
@@ -2808,7 +2793,7 @@ void qMRMLSliceControllerWidget::setRulerColor(int newRulerColor)
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
     {
-    if (node == d->MRMLSliceNode || this->isLinked())
+    if (node == this->mrmlSliceNode() || this->isLinked())
       {
       node->SetRulerColor(newRulerColor);
       }
@@ -2860,4 +2845,12 @@ QToolButton* qMRMLSliceControllerWidget::fitToWindowToolButton()
 {
   Q_D(qMRMLSliceControllerWidget);
   return d->FitToWindowToolButton;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::updateWidgetFromMRMLView()
+{
+  Q_D(qMRMLSliceControllerWidget);
+  Superclass::updateWidgetFromMRMLView();
+  d->updateWidgetFromMRMLSliceNode();
 }

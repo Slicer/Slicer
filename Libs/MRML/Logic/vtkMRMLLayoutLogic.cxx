@@ -1815,23 +1815,30 @@ void vtkMRMLLayoutLogic
     {
     vtkErrorMacro( << "No layout node");
     }
+  std::string layoutDescription = this->GetMaximizedViewLayoutDescription(viewToMaximize);
+  if (layoutNode->IsLayoutDescription(layout))
+    {
+    layoutNode->SetLayoutDescription(layout, layoutDescription.c_str());
+    }
+  else
+    {
+    layoutNode->AddLayoutDescription(layout, layoutDescription.c_str());
+    }
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLLayoutLogic::GetMaximizedViewLayoutDescription(vtkMRMLAbstractViewNode* viewToMaximize)
+{
   std::stringstream layoutDescription;
   layoutDescription <<
     "<layout type=\"horizontal\">"
     " <item>"
     "  <view class=\"" << viewToMaximize->GetClassName() << "\" "
-    "singletontag=\""<< viewToMaximize->GetSingletonTag() << "\">"
+    "singletontag=\"" << viewToMaximize->GetSingletonTag() << "\">"
     "  </view>"
     " </item>"
     "</layout>";
-  if (layoutNode->IsLayoutDescription(layout))
-    {
-    layoutNode->SetLayoutDescription(layout, layoutDescription.str().c_str());
-    }
-  else
-    {
-    layoutNode->AddLayoutDescription(layout, layoutDescription.str().c_str());
-    }
+  return layoutDescription.str();
 }
 
 //----------------------------------------------------------------------------

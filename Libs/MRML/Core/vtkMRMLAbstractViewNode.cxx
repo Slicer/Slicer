@@ -24,6 +24,7 @@
 // MRML includes
 #include "vtkMRMLAbstractViewNode.h"
 #include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
@@ -636,4 +637,30 @@ double* vtkMRMLAbstractViewNode::GetThreeDViewBlueColor()
                                 131. / 255.,
                                 233. / 255.};
   return blueColor;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLLayoutNode* vtkMRMLAbstractViewNode::GetMaximizedState(bool& maximized, bool& canBeMaximized)
+{
+  canBeMaximized = true;
+  maximized = false;
+  vtkMRMLLayoutNode* layoutNode = nullptr;
+  if (this->GetParentLayoutNode())
+    {
+    layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->GetParentLayoutNode());
+    if (!layoutNode)
+      {
+      // the owner is not a real layout node, it means it is a standalone view, cannot be maximized
+      canBeMaximized = false;
+      }
+    }
+  if (!layoutNode && this->GetScene())
+    {
+   layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->GetScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
+    }
+  if (layoutNode)
+    {
+    maximized = (layoutNode->GetMaximizedViewNode() == this);
+    }
+  return layoutNode;
 }

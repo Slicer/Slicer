@@ -65,7 +65,6 @@ public:
   void init() override;
 
   vtkWeakPointer<vtkMRMLTableNode> TableNode;
-  vtkWeakPointer<vtkMRMLTableViewNode> TableViewNode;
   qMRMLTableView* TableView;
 
   QAction* CopyAction;

@@ -66,6 +66,9 @@ public:
   /// Get the label for the view (abbreviation for the view name)
   QString viewLabel()const;
 
+  /// Get 3D view node associated with this ThreeDViewController.
+  Q_INVOKABLE vtkMRMLViewNode* mrmlThreeDViewNode() const;
+
 public slots:
 
   void setMRMLScene(vtkMRMLScene* newScene) override;
@@ -119,7 +122,7 @@ public slots:
 
 protected slots:
   void updateWidgetFromMRMLViewLogic();
-  void updateWidgetFromMRMLView();
+  void updateWidgetFromMRMLView() override;
   void updateViewFromMRMLCamera();
 
 protected:

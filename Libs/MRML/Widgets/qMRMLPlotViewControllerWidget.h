@@ -56,6 +56,9 @@ public:
   /// Get the label for the view (abbreviation for the view name).
   QString viewLabel()const;
 
+  /// Get PlotViewNode associated with this PlotViewController.
+  Q_INVOKABLE vtkMRMLPlotViewNode* mrmlPlotViewNode() const;
+
 public slots:
   /// Set the scene.
   void setMRMLScene(vtkMRMLScene* newScene) override;
@@ -75,6 +78,7 @@ public slots:
   void onExportButton();
 
 protected slots:
+  void updateWidgetFromMRMLView() override;
   void updateWidgetFromMRML();
 
 private:

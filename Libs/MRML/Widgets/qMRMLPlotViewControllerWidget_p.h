@@ -62,7 +62,6 @@ public:
   void init() override;
 
   vtkWeakPointer<vtkMRMLPlotChartNode>   PlotChartNode;
-  vtkWeakPointer<vtkMRMLPlotViewNode>    PlotViewNode;
   qMRMLPlotView*                         PlotView;
 
   QToolButton*                           FitToWindowToolButton;

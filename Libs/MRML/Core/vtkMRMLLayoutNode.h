@@ -5,6 +5,7 @@
 #include "vtkMRMLAbstractLayoutNode.h"
 
 class vtkXMLDataElement;
+class vtkMRMLAbstractViewNode;
 
 /// \brief Node that describes the view layout of the application.
 ///
@@ -71,6 +72,10 @@ public:
   /// Set/Get the size of the last selected module
   vtkGetStringMacro(SelectedModule);
   vtkSetStringMacro(SelectedModule);
+
+  /// Set/Get the layout name of the view that is temporarily shown maximized.
+  vtkMRMLAbstractViewNode* GetMaximizedViewNode();
+  void SetMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedViewNode);
 
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Layout";}

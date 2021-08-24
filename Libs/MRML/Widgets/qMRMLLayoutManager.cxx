@@ -447,7 +447,7 @@ vtkMRMLNode* qMRMLLayoutManagerPrivate::viewNode(QWidget* widget)const
 QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode)const
 {
   Q_Q(const qMRMLLayoutManager);
-  if (!viewNode)
+  if (!vtkMRMLAbstractViewNode::SafeDownCast(viewNode))
     {
     return nullptr;
     }
@@ -767,13 +767,25 @@ void qMRMLLayoutManagerPrivate::updateLayoutInternal()
     return;
     }
 
-  // TBD: modify the dom doc manually, don't create a new one
   QDomDocument newLayout;
-  newLayout.setContent(QString(
-    this->MRMLLayoutNode ?
-    this->MRMLLayoutNode->GetCurrentLayoutDescription() : ""));
-  q->setLayout(newLayout);
 
+  vtkMRMLAbstractViewNode* maximizedViewNode = (this->MRMLLayoutNode ? this->MRMLLayoutNode->GetMaximizedViewNode() : nullptr);
+  if (maximizedViewNode)
+    {
+    // Maximized view
+    std::string maximizedLayoutDescription = this->MRMLLayoutLogic->GetMaximizedViewLayoutDescription(maximizedViewNode);
+    newLayout.setContent(QString::fromStdString(maximizedLayoutDescription));
+    }
+  else
+    {
+    // Normal (non-maximized view)
+    // TBD: modify the dom doc manually, don't create a new one
+    newLayout.setContent(QString(
+      this->MRMLLayoutNode ?
+      this->MRMLLayoutNode->GetCurrentLayoutDescription() : ""));
+    }
+
+  q->setLayout(newLayout);
   emit q->layoutChanged(layout);
 }
 
@@ -1245,6 +1257,7 @@ void qMRMLLayoutManager::setLayout(int layout)
       {
       layout = vtkMRMLLayoutNode::SlicerLayoutConventionalView;
       }
+    d->MRMLLayoutNode->SetMaximizedViewNode(nullptr);
     d->MRMLLayoutNode->SetViewArrangement(layout);
     }
 }

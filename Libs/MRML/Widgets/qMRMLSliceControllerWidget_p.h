@@ -166,12 +166,10 @@ public slots:
 
 protected:
   void setupPopupUi() override;
-  virtual void setMRMLSliceNodeInternal(vtkMRMLSliceNode* sliceNode);
   void setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite);
   void setAndObserveSelectionNode();
 
 public:
-  vtkMRMLSliceNode*                   MRMLSliceNode;
   vtkMRMLSliceCompositeNode*          MRMLSliceCompositeNode;
   vtkMRMLSelectionNode*               SelectionNode{nullptr};
   vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;

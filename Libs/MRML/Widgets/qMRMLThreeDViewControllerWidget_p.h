@@ -67,7 +67,6 @@ public:
 
   vtkMRMLViewLogic* viewNodeLogic(vtkMRMLViewNode* node);
 
-  vtkWeakPointer<vtkMRMLViewNode>     ViewNode;
   vtkWeakPointer<vtkMRMLCameraNode>   CameraNode;
   qMRMLThreeDView*                    ThreeDView;
 

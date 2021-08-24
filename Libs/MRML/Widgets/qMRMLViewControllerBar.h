@@ -26,10 +26,14 @@ class QLabel;
 class QLayout;
 class QToolButton;
 
+// CTK includes
+#include <ctkVTKObject.h>
+
 // qMRMLWidget includes
 #include "qMRMLWidget.h"
 #include "qMRMLWidgetsExport.h"
 class qMRMLViewControllerBarPrivate;
+class vtkMRMLAbstractViewNode;
 
 /// qMRMLViewControllerBar is the base class of all the bars over views.
 /// A controller bar typically contains a pin button, a view label to uniquely
@@ -52,6 +56,8 @@ class QMRML_WIDGETS_EXPORT qMRMLViewControllerBar
   : public qMRMLWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
+
 public:
   /// Superclass typedef
   typedef qMRMLWidget Superclass;
@@ -86,9 +92,18 @@ public:
   /// Label that displays the view's name.
   Q_INVOKABLE QLabel* viewLabel();
 
+public slots:
+  void maximizeView();
+
+protected slots:
+  virtual void updateWidgetFromMRMLView();
+
 protected:
   QScopedPointer<qMRMLViewControllerBarPrivate> d_ptr;
   qMRMLViewControllerBar(qMRMLViewControllerBarPrivate* pimpl, QWidget* parent = nullptr);
+
+  virtual void setMRMLViewNode(vtkMRMLAbstractViewNode* viewNode);
+  virtual vtkMRMLAbstractViewNode* mrmlViewNode() const;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLViewControllerBar);

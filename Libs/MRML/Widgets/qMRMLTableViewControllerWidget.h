@@ -59,6 +59,9 @@ public:
   /// Get the label for the view (abbreviation for the view name)
   QString viewLabel()const;
 
+  /// Get ChartViewNode associated with this ChartViewController.
+  Q_INVOKABLE vtkMRMLTableViewNode* mrmlTableViewNode() const;
+
 public slots:
   /// Set the scene
   void setMRMLScene(vtkMRMLScene* newScene) override;
@@ -71,6 +74,7 @@ public slots:
   void setMRMLTableViewNode(vtkMRMLTableViewNode* tableViewNode);
 
 protected slots:
+  void updateWidgetFromMRMLView() override;
   void updateWidgetFromMRML();
 
 private:

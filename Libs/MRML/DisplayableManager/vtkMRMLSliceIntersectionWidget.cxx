@@ -20,6 +20,7 @@
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
@@ -73,7 +74,7 @@ vtkMRMLSliceIntersectionWidget::vtkMRMLSliceIntersectionWidget()
   this->LastLabelOpacity = 0.;
   this->StartActionSegmentationDisplayNode = nullptr;
 
-  this->ModifierKeyPressedSinceLastMouseButtonRelease = true;
+  this->ModifierKeyPressedSinceLastClickAndDrag = true;
 
   this->TouchRotationThreshold = 10.0;
   this->TouchZoomThreshold = 0.1;
@@ -183,6 +184,9 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
 
   // Context menu
   this->SetEventTranslation(WidgetStateIdle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
+
+  // Maximize/restore view
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventMaximizeView);
 }
 
 //----------------------------------------------------------------------
@@ -213,24 +217,18 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
     return false;
     }
 
-  if (eventData->GetType() == vtkCommand::LeftButtonReleaseEvent
-    || eventData->GetType() == vtkCommand::MiddleButtonReleaseEvent
-    || eventData->GetType() == vtkCommand::RightButtonReleaseEvent)
-    {
-    this->ModifierKeyPressedSinceLastMouseButtonRelease = false;
-    }
   if (eventData->GetType() == vtkCommand::LeaveEvent)
     {
     // We cannot capture keypress events until the user clicks in the view
     // so when we are outside then we should assume that modifier
     // is not just "stuck".
-    this->ModifierKeyPressedSinceLastMouseButtonRelease = true;
+    this->ModifierKeyPressedSinceLastClickAndDrag = true;
     }
   if (eventData->GetType() == vtkCommand::KeyPressEvent)
     {
     if (eventData->GetKeySym().find("Shift") != std::string::npos)
       {
-      this->ModifierKeyPressedSinceLastMouseButtonRelease = true;
+      this->ModifierKeyPressedSinceLastClickAndDrag = true;
       }
     }
 
@@ -439,6 +437,9 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
     case WidgetEventMenu:
       processedEvent = this->ProcessWidgetMenu(eventData);
       break;
+    case WidgetEventMaximizeView:
+      processedEvent = this->ProcessMaximizeView(eventData);
+      break;
 
     default:
       processedEvent = false;
@@ -528,6 +529,9 @@ bool vtkMRMLSliceIntersectionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEvent
     return false;
     }
   this->SetWidgetState(WidgetStateIdle);
+
+  // Prevent shift+mousemove events after click-and-drag (until shift is pressed again)
+  this->ModifierKeyPressedSinceLastClickAndDrag = false;
 
   // only claim this as processed if the mouse was moved (this lets the event interpreted as button click)
   bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
@@ -1066,7 +1070,7 @@ void vtkMRMLSliceIntersectionWidget::ScaleZoom(double zoomScaleFactor, vtkMRMLIn
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessSetCrosshair(vtkMRMLInteractionEventData* eventData)
 {
-  if (!this->ModifierKeyPressedSinceLastMouseButtonRelease)
+  if (!this->ModifierKeyPressedSinceLastClickAndDrag)
     {
     // this event was caused by a "stuck" modifier key
     return false;
@@ -1187,5 +1191,42 @@ bool vtkMRMLSliceIntersectionWidget::ProcessWidgetMenu(vtkMRMLInteractionEventDa
     pickEventData->SetDisplayPosition(eventData->GetDisplayPosition());
     }
   interactionNode->ShowViewContextMenu(pickEventData);
+  return true;
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionWidget::ProcessMaximizeView(vtkMRMLInteractionEventData* eventData)
+{
+  if (this->WidgetState != WidgetStateIdle)
+    {
+    return false;
+    }
+  if (!this->SliceNode)
+    {
+    return false;
+    }
+
+  bool isMaximized = false;
+  bool canBeMaximized = false;
+  vtkMRMLLayoutNode* layoutNode = this->SliceNode->GetMaximizedState(isMaximized, canBeMaximized);
+  if (!layoutNode || !canBeMaximized)
+    {
+    return false;
+    }
+
+  if (isMaximized)
+    {
+    layoutNode->SetMaximizedViewNode(nullptr);
+    }
+  else
+    {
+    layoutNode->SetMaximizedViewNode(this->SliceNode);
+    }
+
+  // Maximize/restore takes away the focus without resetting
+  // this->ModifierKeyPressedSinceLastMouseButtonRelease
+  // therefore we need to reset the flag here.
+  this->ModifierKeyPressedSinceLastClickAndDrag = true;
+
   return true;
 }
