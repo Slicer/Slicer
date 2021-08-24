@@ -929,47 +929,14 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexFromControlPointIndex(int c
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsCurveNode::GetCurveDirectionAtPointIndexWorld(vtkIdType curvePointIndex, double directionVectorWorld[3])
 {
-  vtkPoints* points = this->GetCurvePointsWorld();
-  if (!points)
+  vtkNew<vtkMatrix4x4> curvePointToWorld;
+  if (!this->GetCurvePointToWorldTransformAtPointIndex(curvePointIndex, curvePointToWorld))
     {
     return false;
     }
-  vtkIdType numberOfPoints = points->GetNumberOfPoints();
-  if (numberOfPoints<2 || curvePointIndex < 0 || curvePointIndex >= numberOfPoints)
-    {
-    return false;
-    }
-
-  if (curvePointIndex == 0 || curvePointIndex == numberOfPoints - 1 || numberOfPoints < 3)
-    {
-    // Point is at the start or end of the line
-    double pointPos[3] = { 0.0 };
-    double pointPosAfter[3] = { 0.0 };
-    points->GetPoint(curvePointIndex == 0 ? 0 : numberOfPoints - 2, pointPos);
-    points->GetPoint(curvePointIndex == 0 ? 1 : numberOfPoints - 1, pointPosAfter);
-    directionVectorWorld[0] = pointPosAfter[0] - pointPos[0];
-    directionVectorWorld[1] = pointPosAfter[1] - pointPos[1];
-    directionVectorWorld[2] = pointPosAfter[2] - pointPos[2];
-    }
-  else
-    {
-    // point is along the line, compute direction as the average of
-    // direction before and after the line
-    double pointPosBefore[3] = { 0.0 };
-    double pointPos[3] = { 0.0 };
-    double pointPosAfter[3] = { 0.0 };
-    points->GetPoint(curvePointIndex - 1, pointPosBefore);
-    points->GetPoint(curvePointIndex, pointPos);
-    points->GetPoint(curvePointIndex + 1, pointPosAfter);
-    double directionVectorBefore[3] = { pointPos[0] - pointPosBefore[0], pointPos[1] - pointPosBefore[1], pointPos[2] - pointPosBefore[2] };
-    double directionVectorAfter[3] = { pointPosAfter[0] - pointPos[0], pointPosAfter[1] - pointPos[1], pointPosAfter[2] - pointPos[2] };
-    vtkMath::Normalize(directionVectorBefore);
-    vtkMath::Normalize(directionVectorAfter);
-    directionVectorWorld[0] = directionVectorBefore[0] - directionVectorAfter[0];
-    directionVectorWorld[1] = directionVectorBefore[1] - directionVectorAfter[1];
-    directionVectorWorld[2] = directionVectorBefore[2] - directionVectorAfter[2];
-    }
-  vtkMath::Normalize(directionVectorWorld);
+  directionVectorWorld[0] = curvePointToWorld->GetElement(0, 2);
+  directionVectorWorld[1] = curvePointToWorld->GetElement(1, 2);
+  directionVectorWorld[2] = curvePointToWorld->GetElement(2, 2);
   return true;
 }
 
