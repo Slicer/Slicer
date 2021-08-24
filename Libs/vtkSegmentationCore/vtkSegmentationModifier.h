@@ -87,6 +87,10 @@ protected:
   /// \param extentIntersection computed intersection of the two input extents
   static void GetExtentIntersection(const int extentA[6], const int extentB[6], int extentIntersection[6]);
 
+  /// Returns true if the extent is valid, false otherwise
+  /// \param Extent to be validated
+  static bool IsExtentValid(int extent[6]);
+
 protected:
   vtkSegmentationModifier();
   ~vtkSegmentationModifier() override;
