@@ -159,7 +159,17 @@ mark_as_superbuild(Patch_EXECUTABLE)
 # Qt requirements
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_REQUIRED_QT_VERSION)
-  set(_required_qt_version "5.15.1")
+  # Official builds and tests are performed with Qt-5.15 on all platforms,
+  # but since it is not easy to get latest Qt versions on Linux, the version
+  # requirement is relaxed on Linux so that it builds on Ubuntu-20.04.
+  # See https://github.com/Slicer/Slicer/issues/5804 for more details.
+  if(UNIX AND NOT APPLE)
+    # Linux
+    set(_required_qt_version "5.12")
+  else()
+    # Windows and macOS
+    set(_required_qt_version "5.15")
+  endif()
   set(Slicer_REQUIRED_QT_VERSION ${_required_qt_version} CACHE STRING "Minimum required Qt version" FORCE)
 endif()
 mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
