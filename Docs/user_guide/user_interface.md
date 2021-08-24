@@ -6,7 +6,7 @@ Slicer stores all loaded data in a data repository, called the "scene" (or Slice
 
 Slicer provides a large number "modules", each implementing a specific set of functions for creating or manipulating data in the scene. Modules typically do not interact with each other directly: they just all operate on the data nodes in the scene. Slicer package contains over 100 built-in modules and additional modules can be installed by using the Extensions Manager.
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_main_window.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_main_window_rev02.png)
 
 ### Module Panel
 
@@ -118,6 +118,7 @@ Default orientation axes: A = anterior, P = posterior, R = right, L = left, S = 
 3D View Controls: The blue bar across any 3D View shows a pushpin icon on its left. When the mouse rolls over this icon, a panel for configuring the 3D View is displayed. The panel is hidden when the mouse moves away. For persistent display of this panel, just click the pushpin icon.
 
 - **Center 3D view** (small square) centers the slice on the currently visible 3D view content and all loaded volumes (even if volumes that are not visible). The field of view (zoom factor) is not adjusted, therefore it may be necessary to zoom in/out to see all objects. To reset the center and field of view at the same time, click in the 3D view and hit <kbd>r</kbd> key.
+- **Maximize view** / **Restore view layout** temporarily maximizes the selected view / restores the full view layout.
 - **Viewpoint direction** switches orientation of the view between standard directions. Clicking on **L**eft, **R**ight, **A**nterior, **P**osterior, **S**uperior, **I**nferior button will make the 3D content viewed from that direction.
 - **View link** button synchronizes properties across 3D views (viewpoint position, direction, ruler, orientation marker, etc. settings).
 - **Orthographic/perspective rendering** mode toggle. Orthographic mode (parallel projection) is useful for assessing size, because displayed object size does not depend on distance from the viewpoint. Perspective mode provides better depth perception, because objects that are closer appear larger.
@@ -201,7 +202,8 @@ view will not activate the view.
 | `g` | toggle segmentation or labelmap volume | | | visibility |
 | `t` | toggle foreground volume visibility |
 | `[` / `]` | use previous/next volume as background |
-| `{` / `}` | use previous/next volume as foreeround |
+| `{` / `}` | use previous/next volume as foreground |
+| `left-double-click` | maximize view/restore view layout |
 
 ### 3D views
 
@@ -234,6 +236,7 @@ view will not activate the view.
 | `Shift` + `Keypad 2` / `Shift` + `Keypad 4` | pan (translate) view |
 | `Shift` + `Keypad 6` / `Shift` + `Keypad 8` | pan (translate) view |
 | `Keypad 0` or `Insert` | reset zoom and pan, rotate to nearest standard view |
+| `left-double-click` | maximize view/restore view layout |
 
 > **Note:** Simulation if shortcuts not available on your device:
 > - One-button mouse: instead of `right-click` do `Ctrl` + `click`

@@ -54,7 +54,6 @@ qMRMLChartViewControllerWidgetPrivate::qMRMLChartViewControllerWidgetPrivate(
   qMRMLChartViewControllerWidget& object)
   : Superclass(object)
 {
-  this->ChartViewNode = nullptr;
   this->ChartView = nullptr;
 }
 
@@ -146,7 +145,7 @@ vtkMRMLChartNode* qMRMLChartViewControllerWidgetPrivate::chartNode()
 {
   Q_Q(qMRMLChartViewControllerWidget);
 
-  if (!this->ChartViewNode || !q->mrmlScene())
+  if (!q->mrmlChartViewNode() || !q->mrmlScene())
     {
     // qDebug() << "No ChartViewNode or no Scene";
     return nullptr;
@@ -154,7 +153,7 @@ vtkMRMLChartNode* qMRMLChartViewControllerWidgetPrivate::chartNode()
 
   // Get the current chart node
   vtkMRMLChartNode *chartNode
-    = vtkMRMLChartNode::SafeDownCast(q->mrmlScene()->GetNodeByID(this->ChartViewNode->GetChartNodeID()));
+    = vtkMRMLChartNode::SafeDownCast(q->mrmlScene()->GetNodeByID(q->mrmlChartViewNode()->GetChartNodeID()));
 
   return chartNode;
 }
@@ -164,7 +163,7 @@ void qMRMLChartViewControllerWidgetPrivate::onChartNodeSelected(vtkMRMLNode * no
 {
   Q_Q(qMRMLChartViewControllerWidget);
 
-  if (!this->ChartViewNode)
+  if (!q->mrmlChartViewNode())
     {
     return;
     }
@@ -177,7 +176,7 @@ void qMRMLChartViewControllerWidgetPrivate::onChartNodeSelected(vtkMRMLNode * no
   this->qvtkReconnect(this->chartNode(), node, vtkCommand::ModifiedEvent,
                       q, SLOT(updateWidgetFromMRML()));
 
-  this->ChartViewNode->SetChartNodeID(node ? node->GetID() : nullptr);
+  q->mrmlChartViewNode()->SetChartNodeID(node ? node->GetID() : nullptr);
 
   q->updateWidgetFromMRML();
 }
@@ -185,9 +184,9 @@ void qMRMLChartViewControllerWidgetPrivate::onChartNodeSelected(vtkMRMLNode * no
 // --------------------------------------------------------------------------
 void qMRMLChartViewControllerWidgetPrivate::onArrayNodesSelected()
 {
-  //Q_Q(qMRMLChartViewControllerWidget);
+  Q_Q(qMRMLChartViewControllerWidget);
 
-  if (!this->ChartViewNode)
+  if (!q->mrmlChartViewNode())
     {
     return;
     }
@@ -238,9 +237,9 @@ void qMRMLChartViewControllerWidgetPrivate::onArrayNodesSelected()
 // --------------------------------------------------------------------------
 void qMRMLChartViewControllerWidgetPrivate::onChartTypeSelected(const QString& type)
 {
-  //Q_Q(qMRMLChartViewControllerWidget);
+  Q_Q(qMRMLChartViewControllerWidget);
 
-  if (!this->ChartViewNode)
+  if (!q->mrmlChartViewNode())
     {
     return;
     }
@@ -281,24 +280,24 @@ void qMRMLChartViewControllerWidget::setChartView(qMRMLChartView* view)
 void qMRMLChartViewControllerWidget::setViewLabel(const QString& newViewLabel)
 {
   Q_D(qMRMLChartViewControllerWidget);
-  if (!d->ChartViewNode)
+  if (!this->mrmlChartViewNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
     }
-  d->ChartViewNode->SetLayoutLabel(newViewLabel.toUtf8());
+  this->mrmlChartViewNode()->SetLayoutLabel(newViewLabel.toUtf8());
 }
 
 //---------------------------------------------------------------------------
 QString qMRMLChartViewControllerWidget::viewLabel()const
 {
   Q_D(const qMRMLChartViewControllerWidget);
-  if (!d->ChartViewNode)
+  if (!this->mrmlChartViewNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return QString();
     }
-  return d->ChartViewNode->GetLayoutLabel();
+  return this->mrmlChartViewNode()->GetLayoutLabel();
 }
 
 // --------------------------------------------------------------------------
@@ -306,10 +305,14 @@ void qMRMLChartViewControllerWidget::setMRMLChartViewNode(
     vtkMRMLChartViewNode * viewNode)
 {
   Q_D(qMRMLChartViewControllerWidget);
-  this->qvtkReconnect(d->ChartViewNode, viewNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRML()));
-  d->ChartViewNode = viewNode;
-  this->updateWidgetFromMRML();
+  this->setMRMLViewNode(viewNode);
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLChartViewNode* qMRMLChartViewControllerWidget::mrmlChartViewNode()const
+{
+  Q_D(const qMRMLChartViewControllerWidget);
+  return vtkMRMLChartViewNode::SafeDownCast(this->mrmlViewNode());
 }
 
 // --------------------------------------------------------------------------
@@ -319,12 +322,12 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
 
   //qDebug() << "qMRMLChartViewControllerWidget::updateWidgetFromMRML()";
 
-  if (!d->ChartViewNode || !this->mrmlScene())
+  if (!this->mrmlChartViewNode() || !this->mrmlScene())
     {
     return;
     }
 
-  d->ViewLabel->setText(d->ChartViewNode->GetLayoutLabel());
+  d->ViewLabel->setText(this->mrmlChartViewNode()->GetLayoutLabel());
 
   vtkMRMLChartNode *chartNode = d->chartNode();
   if (!chartNode)
@@ -751,3 +754,9 @@ void qMRMLChartViewControllerWidget::editYAxisLabel()
   this->setYAxisLabel(newYAxisLabel);
 }
 
+// --------------------------------------------------------------------------
+void qMRMLChartViewControllerWidget::updateWidgetFromMRMLView()
+{
+  Superclass::updateWidgetFromMRMLView();
+  this->updateWidgetFromMRML();
+}

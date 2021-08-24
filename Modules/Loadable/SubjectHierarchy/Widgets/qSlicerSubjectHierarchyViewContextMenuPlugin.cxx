@@ -38,6 +38,7 @@
 #include <qMRMLThreeDWidget.h>
 #include <vtkMRMLAbstractViewNode.h>
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 
@@ -71,11 +72,13 @@ public:
   QAction* InteractionModeAdjustWindowLevelAction = nullptr;
   QAction* InteractionModePlaceAction = nullptr;
 
+  QAction* MaximizeViewAction = nullptr;
   QAction* CopyImageAction = nullptr;
   QAction* ConfigureSliceViewAnnotationsAction = nullptr;
 
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
+  vtkWeakPointer<vtkMRMLLayoutNode> LayoutNode;
 };
 
 //-----------------------------------------------------------------------------
@@ -128,18 +131,25 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
 
   // Other
 
+  this->MaximizeViewAction = new QAction(tr("Maximize view"), q);
+  this->MaximizeViewAction->setObjectName("MaximizeViewAction");
+  this->MaximizeViewAction->setToolTip(tr("Show this view maximized in the view layout"));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->MaximizeViewAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
+  QObject::connect(this->MaximizeViewAction, SIGNAL(triggered()), q, SLOT(maximizeView()));
+
   this->CopyImageAction = new QAction(tr("Copy image"), q);
   this->CopyImageAction->setObjectName("CopyImageAction");
   this->CopyImageAction->setToolTip(tr("Copy a screenshot of this view to the clipboard"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CopyImageAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
   QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
 
   this->ConfigureSliceViewAnnotationsAction = new QAction(tr("Configure slice view annotations..."), q);
   this->ConfigureSliceViewAnnotationsAction->setObjectName("ConfigureSliceViewAnnotationsAction");
   this->ConfigureSliceViewAnnotationsAction->setToolTip(tr("Configures display of corner annotations and color bar."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
   QObject::connect(this->ConfigureSliceViewAnnotationsAction, SIGNAL(triggered()), q, SLOT(configureSliceViewAnnotationsAction()));
 }
 
@@ -171,6 +181,7 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
   actions << d->InteractionModeViewTransformAction
     << d->InteractionModeAdjustWindowLevelAction
     << d->InteractionModePlaceAction
+    << d->MaximizeViewAction
     << d->CopyImageAction
     << d->ConfigureSliceViewAnnotationsAction;
   return actions;
@@ -224,6 +235,24 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   wasBlocked = d->InteractionModePlaceAction->blockSignals(true);
   d->InteractionModePlaceAction->setChecked(interactionMode == vtkMRMLInteractionNode::Place);
   d->InteractionModePlaceAction->blockSignals(wasBlocked);
+
+  // Update view/restore view action
+  bool isMaximized = false;
+  bool canBeMaximized = false;
+  d->LayoutNode = viewNode->GetMaximizedState(isMaximized, canBeMaximized);
+  d->MaximizeViewAction->setVisible(canBeMaximized);
+  if (canBeMaximized)
+    {
+    d->MaximizeViewAction->setProperty("maximize", QVariant(!isMaximized));
+    if (isMaximized)
+      {
+      d->MaximizeViewAction->setText(tr("Restore view layout"));
+      }
+    else
+      {
+      d->MaximizeViewAction->setText(tr("Maximize view"));
+      }
+    }
 
   d->CopyImageAction->setVisible(true);
 
@@ -299,4 +328,23 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::configureSliceViewAnnotations
     return;
     }
   layoutManager->setCurrentModule("DataProbe");
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::maximizeView()
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+  if (!d->LayoutNode)
+    {
+    return;
+    }
+  bool maximizeView = d->MaximizeViewAction->property("maximize").toBool();
+  if (maximizeView)
+    {
+    d->LayoutNode->SetMaximizedViewNode(d->ViewNode);
+    }
+  else
+    {
+    d->LayoutNode->SetMaximizedViewNode(nullptr);
+    }
 }

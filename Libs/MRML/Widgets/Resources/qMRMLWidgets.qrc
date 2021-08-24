@@ -156,5 +156,7 @@
         <file>Icons/LayoutThreeOverThreeQuantitativeView.png</file>
         <file>Icons/LayoutConvetionalQuantitativeView.png</file>
         <file>Icons/LayoutFourUpQuantitativeTableView.png</file>
+        <file>Icons/ViewMaximize.png</file>
+        <file>Icons/ViewRestore.png</file>
     </qresource>
 </RCC>

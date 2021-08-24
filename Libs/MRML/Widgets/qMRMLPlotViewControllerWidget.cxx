@@ -70,7 +70,6 @@ qMRMLPlotViewControllerWidgetPrivate::qMRMLPlotViewControllerWidgetPrivate(
   this->FitToWindowToolButton = nullptr;
 
   this->PlotChartNode = nullptr;
-  this->PlotViewNode = nullptr;
   this->PlotView = nullptr;
 }
 
@@ -126,7 +125,7 @@ vtkMRMLPlotChartNode* qMRMLPlotViewControllerWidgetPrivate::GetPlotChartNodeFrom
 {
   Q_Q(qMRMLPlotViewControllerWidget);
 
-  if (!this->PlotViewNode || !q->mrmlScene())
+  if (!q->mrmlPlotViewNode() || !q->mrmlScene())
     {
     // qDebug() << "No PlotViewNode or no Scene";
     return nullptr;
@@ -134,7 +133,7 @@ vtkMRMLPlotChartNode* qMRMLPlotViewControllerWidgetPrivate::GetPlotChartNodeFrom
 
   // Get the current PlotChart node
   vtkMRMLPlotChartNode *PlotChartNodeFromViewNode
-    = vtkMRMLPlotChartNode::SafeDownCast(q->mrmlScene()->GetNodeByID(this->PlotViewNode->GetPlotChartNodeID()));
+    = vtkMRMLPlotChartNode::SafeDownCast(q->mrmlScene()->GetNodeByID(q->mrmlPlotViewNode()->GetPlotChartNodeID()));
 
   return PlotChartNodeFromViewNode;
 }
@@ -146,12 +145,12 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotChartNodeSelected(vtkMRMLNode *
 
   vtkMRMLPlotChartNode *mrmlPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(node);
 
-  if (!this->PlotViewNode || this->PlotChartNode == mrmlPlotChartNode)
+  if (!q->mrmlPlotViewNode() || this->PlotChartNode == mrmlPlotChartNode)
     {
     return;
     }
 
-  this->PlotViewNode->SetPlotChartNodeID(mrmlPlotChartNode ? mrmlPlotChartNode->GetID() : nullptr);
+  q->mrmlPlotViewNode()->SetPlotChartNodeID(mrmlPlotChartNode ? mrmlPlotChartNode->GetID() : nullptr);
 
   vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
     q->mrmlScene() ? q->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton") : nullptr);
@@ -167,7 +166,8 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotChartNodeSelected(vtkMRMLNode *
 // --------------------------------------------------------------------------
 void qMRMLPlotViewControllerWidgetPrivate::onPlotSeriesNodesSelected()
 {
-  if (!this->PlotViewNode || !this->PlotChartNode)
+  Q_Q(qMRMLPlotViewControllerWidget);
+  if (!q->mrmlPlotViewNode() || !this->PlotChartNode)
     {
     return;
     }
@@ -241,11 +241,12 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotTypeChanged(int plotType)
 // --------------------------------------------------------------------------
 void qMRMLPlotViewControllerWidgetPrivate::onInteractionModeChanged(int interactionMode)
 {
-  if (!this->PlotViewNode)
+  Q_Q(qMRMLPlotViewControllerWidget);
+  if (!q->mrmlPlotViewNode())
     {
     return;
     }
-  this->PlotViewNode->SetInteractionMode(interactionMode);
+  q->mrmlPlotViewNode()->SetInteractionMode(interactionMode);
 }
 
 // --------------------------------------------------------------------------
@@ -275,37 +276,38 @@ void qMRMLPlotViewControllerWidget::setPlotView(qMRMLPlotView* view)
 //---------------------------------------------------------------------------
 void qMRMLPlotViewControllerWidget::setViewLabel(const QString& newViewLabel)
 {
-  Q_D(qMRMLPlotViewControllerWidget);
-  if (!d->PlotViewNode)
+  if (!this->mrmlPlotViewNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
     }
-  d->PlotViewNode->SetLayoutLabel(newViewLabel.toUtf8());
+  this->mrmlPlotViewNode()->SetLayoutLabel(newViewLabel.toUtf8());
 }
 
 //---------------------------------------------------------------------------
 QString qMRMLPlotViewControllerWidget::viewLabel()const
 {
-  Q_D(const qMRMLPlotViewControllerWidget);
-  if (!d->PlotViewNode)
+  if (!this->mrmlPlotViewNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return QString();
     }
-  return d->PlotViewNode->GetLayoutLabel();
+  return this->mrmlPlotViewNode()->GetLayoutLabel();
 }
-
 
 //---------------------------------------------------------------------------
 void qMRMLPlotViewControllerWidget::setMRMLPlotViewNode(
     vtkMRMLPlotViewNode * viewNode)
 {
   Q_D(qMRMLPlotViewControllerWidget);
-  this->qvtkReconnect(d->PlotViewNode, viewNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRML()));
-  d->PlotViewNode = viewNode;
-  this->updateWidgetFromMRML();
+  this->setMRMLViewNode(viewNode);
+}
+
+//---------------------------------------------------------------------------
+ vtkMRMLPlotViewNode* qMRMLPlotViewControllerWidget::mrmlPlotViewNode()const
+{
+  Q_D(const qMRMLPlotViewControllerWidget);
+  return vtkMRMLPlotViewNode::SafeDownCast(this->mrmlViewNode());
 }
 
 //---------------------------------------------------------------------------
@@ -323,7 +325,7 @@ void qMRMLPlotViewControllerWidget::fitPlotToAxes()
 void qMRMLPlotViewControllerWidget::onExportButton()
 {
   Q_D(qMRMLPlotViewControllerWidget);
-  if(!d->PlotView || !d->PlotViewNode)
+  if(!d->PlotView || !this->mrmlPlotViewNode())
     {
     return;
     }
@@ -349,12 +351,12 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLPlotViewControllerWidget);
 
-  if (!d->PlotViewNode || !this->mrmlScene())
+  if (!this->mrmlPlotViewNode() || !this->mrmlScene())
     {
     return;
     }
 
-  d->ViewLabel->setText(d->PlotViewNode->GetLayoutLabel());
+  d->ViewLabel->setText(this->mrmlPlotViewNode()->GetLayoutLabel());
 
   // PlotChartNode selector
   vtkMRMLPlotChartNode* mrmlPlotChartNode = d->GetPlotChartNodeFromView();
@@ -407,7 +409,7 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
   d->actionShow_Legend->setChecked(mrmlPlotChartNode->GetLegendVisibility());
 
   wasBlocked = d->interactionModeComboBox->blockSignals(true);
-  d->interactionModeComboBox->setCurrentIndex(d->PlotViewNode->GetInteractionMode());
+  d->interactionModeComboBox->setCurrentIndex(this->mrmlPlotViewNode()->GetInteractionMode());
   d->interactionModeComboBox->blockSignals(wasBlocked);
 
   // Show plot type if they are the same in all selected plot nodes.
@@ -452,4 +454,11 @@ void qMRMLPlotViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
     {
     this->updateWidgetFromMRML();
     }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLPlotViewControllerWidget::updateWidgetFromMRMLView()
+{
+  Superclass::updateWidgetFromMRMLView();
+  this->updateWidgetFromMRML();
 }

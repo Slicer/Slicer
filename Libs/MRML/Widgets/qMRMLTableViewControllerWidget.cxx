@@ -60,7 +60,6 @@ qMRMLTableViewControllerWidgetPrivate::qMRMLTableViewControllerWidgetPrivate(
   : Superclass(object)
 {
   this->TableNode = nullptr;
-  this->TableViewNode = nullptr;
   this->TableView = nullptr;
   this->CopyAction = nullptr;
   this->PasteAction = nullptr;
@@ -145,7 +144,7 @@ void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode * no
 {
   Q_Q(qMRMLTableViewControllerWidget);
 
-  if (!this->TableViewNode)
+  if (!q->mrmlTableViewNode())
     {
     return;
     }
@@ -159,7 +158,7 @@ void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode * no
                       q, SLOT(updateWidgetFromMRML()));
   this->TableNode = vtkMRMLTableNode::SafeDownCast(node);
 
-  this->TableViewNode->SetTableNodeID(this->TableNode ? this->TableNode->GetID() : nullptr);
+  q->mrmlTableViewNode()->SetTableNodeID(this->TableNode ? this->TableNode->GetID() : nullptr);
 
   q->updateWidgetFromMRML();
 }
@@ -306,24 +305,24 @@ void qMRMLTableViewControllerWidget::setTableView(qMRMLTableView* view)
 void qMRMLTableViewControllerWidget::setViewLabel(const QString& newViewLabel)
 {
   Q_D(qMRMLTableViewControllerWidget);
-  if (!d->TableViewNode)
+  if (!this->mrmlTableViewNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
     }
-  d->TableViewNode->SetLayoutLabel(newViewLabel.toUtf8());
+  this->mrmlTableViewNode()->SetLayoutLabel(newViewLabel.toUtf8());
 }
 
 //---------------------------------------------------------------------------
 QString qMRMLTableViewControllerWidget::viewLabel()const
 {
   Q_D(const qMRMLTableViewControllerWidget);
-  if (d->TableViewNode)
+  if (this->mrmlTableViewNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return QString();
     }
-  return d->TableViewNode->GetLayoutLabel();
+  return this->mrmlTableViewNode()->GetLayoutLabel();
 }
 
 // --------------------------------------------------------------------------
@@ -331,10 +330,14 @@ void qMRMLTableViewControllerWidget::setMRMLTableViewNode(
     vtkMRMLTableViewNode * viewNode)
 {
   Q_D(qMRMLTableViewControllerWidget);
-  this->qvtkReconnect(d->TableViewNode, viewNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRML()));
-  d->TableViewNode = viewNode;
-  this->updateWidgetFromMRML();
+  this->setMRMLViewNode(viewNode);
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLTableViewNode* qMRMLTableViewControllerWidget::mrmlTableViewNode()const
+{
+  Q_D(const qMRMLTableViewControllerWidget);
+  return vtkMRMLTableViewNode::SafeDownCast(this->mrmlViewNode());
 }
 
 // --------------------------------------------------------------------------
@@ -344,15 +347,15 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
 
   //qDebug() << "qMRMLTableViewControllerWidget::updateWidgetFromMRML()";
 
-  if (!d->TableViewNode || !this->mrmlScene())
+  if (!this->mrmlTableViewNode() || !this->mrmlScene())
     {
     return;
     }
 
-  d->ViewLabel->setText(d->TableViewNode->GetLayoutLabel());
+  d->ViewLabel->setText(this->mrmlTableViewNode()->GetLayoutLabel());
 
   vtkMRMLTableNode *tableNode
-    = vtkMRMLTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(d->TableViewNode->GetTableNodeID()));
+    = vtkMRMLTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(this->mrmlTableViewNode()->GetTableNodeID()));
 
   // TableNode selector
   d->tableComboBox->setCurrentNodeID(tableNode ? tableNode->GetID() : nullptr);
@@ -424,4 +427,11 @@ void qMRMLTableViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
     {
     this->updateWidgetFromMRML();
     }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTableViewControllerWidget::updateWidgetFromMRMLView()
+{
+  Superclass::updateWidgetFromMRMLView();
+  this->updateWidgetFromMRML();
 }

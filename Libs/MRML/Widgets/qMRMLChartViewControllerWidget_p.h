@@ -59,7 +59,6 @@ public:
 
   void init() override;
 
-  vtkWeakPointer<vtkMRMLChartViewNode>  ChartViewNode;
   qMRMLChartView*                       ChartView;
 
   vtkMRMLChartNode* chartNode();

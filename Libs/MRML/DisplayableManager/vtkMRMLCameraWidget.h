@@ -125,6 +125,7 @@ public:
     WidgetEventTouchPanTranslate,
 
     WidgetEventSetCrosshairPosition,
+    WidgetEventMaximizeView,
     };
 
   /// Defines speed of rotation actions by mouse click-and-drag.
@@ -157,6 +158,8 @@ protected:
 
   bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData);
 
+  bool ProcessMaximizeView(vtkMRMLInteractionEventData* eventData);
+
   bool Dolly(double factor);
   vtkCamera* GetCamera();
 
@@ -175,8 +178,8 @@ protected:
   int PreviousEventPosition[2];
 
   /// Indicates whether the shift key was used during the previous action.
-  /// This is used to require shift-up before returning to default mode.
-  bool ModifierKeyPressedSinceLastMouseButtonRelease;
+  /// This is used to require shift-up after a click-and-drag before accepting shift+mousemove.
+  bool ModifierKeyPressedSinceLastClickAndDrag;
 
 
 private:

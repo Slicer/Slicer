@@ -120,6 +120,9 @@ public:
   void CreateMaximizedViewLayoutDescription(int layout,
                                             vtkMRMLAbstractViewNode* viewToMaximize);
 
+  /// Returns layout description that shows the specified view maximized.
+  std::string GetMaximizedViewLayoutDescription(vtkMRMLAbstractViewNode* viewToMaximize);
+
 protected:
   /// Logic constructor
   vtkMRMLLayoutLogic();

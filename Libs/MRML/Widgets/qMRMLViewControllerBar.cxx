@@ -29,8 +29,16 @@
 // CTK includes
 #include <ctkPopupWidget.h>
 
+// VTK includes
+#include <vtkCommand.h>
+
 // qMRML includes
 #include "qMRMLViewControllerBar_p.h"
+
+// MRML includes
+#include "vtkMRMLLayoutNode.h"
+#include "vtkMRMLAbstractViewNode.h"
+#include "vtkMRMLScene.h"
 
 //--------------------------------------------------------------------------
 // qMRMLViewControllerBarPrivate methods
@@ -118,6 +126,18 @@ void qMRMLViewControllerBarPrivate::init()
   this->ViewLabel->setMinimumWidth(this->ViewLabel->fontMetrics().width("XX"));
   this->ViewLabel->setAutoFillBackground(true);
   this->BarLayout->addWidget(this->ViewLabel);
+
+  this->ViewMaximizeIcon = QIcon(":Icons/ViewMaximize.png");
+  this->ViewRestoreIcon = QIcon(":Icons/ViewRestore.png");
+
+  this->MaximizeViewButton = new QToolButton(q);
+  this->MaximizeViewButton->setObjectName("MaximizeViewButton");
+  this->MaximizeViewButton->setToolTip(tr("Maximize/restore view"));
+  this->MaximizeViewButton->setAutoRaise(true);
+  this->MaximizeViewButton->setFixedSize(15, 15);
+  this->MaximizeViewButton->setIcon(this->ViewMaximizeIcon);
+  this->BarLayout->addWidget(this->MaximizeViewButton);
+  QObject::connect(this->MaximizeViewButton, SIGNAL(clicked()), q, SLOT(maximizeView()));
 
   this->BarLayout->addSpacing(5);
 
@@ -276,4 +296,89 @@ QLabel* qMRMLViewControllerBar::viewLabel()
 {
   Q_D(qMRMLViewControllerBar);
   return d->ViewLabel;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLViewControllerBar::maximizeView()
+{
+  Q_D(qMRMLViewControllerBar);
+  if (!this->mrmlViewNode())
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid view node.";
+    return;
+    }
+  vtkMRMLLayoutNode* layoutNode = nullptr;
+  if (this->mrmlViewNode()->GetParentLayoutNode())
+    {
+    layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->mrmlViewNode()->GetParentLayoutNode());
+    if (!layoutNode)
+      {
+      // the owner is not a real layout node, it means it is a standalone view, cannot be maximized
+      return;
+      }
+    }
+  if (!layoutNode)
+    {
+    layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->mrmlScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
+    }
+  if (!layoutNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to get layout node.";
+    return;
+    }
+  if (layoutNode->GetMaximizedViewNode() == this->mrmlViewNode())
+    {
+    layoutNode->SetMaximizedViewNode(nullptr);
+    }
+  else
+    {
+    layoutNode->SetMaximizedViewNode(this->mrmlViewNode());
+    }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLViewControllerBar::setMRMLViewNode(vtkMRMLAbstractViewNode* viewNode)
+{
+  Q_D(qMRMLViewControllerBar);
+  this->qvtkReconnect(d->ViewNode, viewNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRMLView()));
+  d->ViewNode = viewNode;
+  this->updateWidgetFromMRMLView();
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLAbstractViewNode* qMRMLViewControllerBar::mrmlViewNode() const
+{
+  Q_D(const qMRMLViewControllerBar);
+  return d->ViewNode;
+}
+
+//---------------------------------------------------------------------------
+void qMRMLViewControllerBar::updateWidgetFromMRMLView()
+{
+  Q_D(qMRMLViewControllerBar);
+
+  // The view node gets modified whenever it is added/remoeved from the layout
+  // therefore we can update the maximize button status here (there is no need
+  // to observe the layout).
+  bool isMaximized = false;
+  bool canBeMaximized = false;
+  if (d->ViewNode)
+    {
+    d->ViewNode->GetMaximizedState(isMaximized, canBeMaximized);
+    }
+
+  d->MaximizeViewButton->setVisible(canBeMaximized);
+  if (canBeMaximized)
+    {
+    if (isMaximized)
+      {
+      d->MaximizeViewButton->setToolTip(tr("Restore view layout"));
+      d->MaximizeViewButton->setIcon(d->ViewRestoreIcon);
+      }
+    else
+      {
+      d->MaximizeViewButton->setToolTip(tr("Maximize view"));
+      d->MaximizeViewButton->setIcon(d->ViewMaximizeIcon);
+      }
+    }
 }

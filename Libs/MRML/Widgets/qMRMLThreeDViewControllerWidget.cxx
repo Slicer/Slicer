@@ -55,7 +55,6 @@
 qMRMLThreeDViewControllerWidgetPrivate::qMRMLThreeDViewControllerWidgetPrivate(
   qMRMLThreeDViewControllerWidget& object)
   : Superclass(object)
-  , ViewNode(nullptr)
   , CameraNode(nullptr)
   , ThreeDView(nullptr)
   , ViewLogic(nullptr)
@@ -324,25 +323,32 @@ void qMRMLThreeDViewControllerWidget::setMRMLViewNode(
     vtkMRMLViewNode * viewNode)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  this->qvtkReconnect(d->ViewNode, viewNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRMLView()));
-  d->ViewNode = viewNode;
-  this->updateWidgetFromMRMLView();
+  Superclass::setMRMLViewNode(viewNode);
 
   std::string layoutName;
-  if (d->ViewNode && d->ViewNode->GetLayoutName())
+  if (this->mrmlThreeDViewNode())
     {
-    layoutName = d->ViewNode->GetLayoutName();
-    }
-  else
-    {
-    qCritical() << "qMRMLThreeDViewControllerWidget::setMRMLViewNode failed: invalid layout name";
+    if (this->mrmlThreeDViewNode()->GetLayoutName())
+      {
+      layoutName = this->mrmlThreeDViewNode()->GetLayoutName();
+      }
+    else
+      {
+      qCritical() << "qMRMLThreeDViewControllerWidget::setMRMLViewNode failed: invalid layout name";
+      }
     }
   d->CameraNode = d->ViewLogic->GetCameraNode(this->mrmlScene(), layoutName.c_str());
   this->qvtkReconnect(d->CameraNode, vtkMRMLCameraNode::CameraInteractionEvent,
                       this, SLOT(updateViewFromMRMLCamera()));
 
   this->updateViewFromMRMLCamera();
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLViewNode* qMRMLThreeDViewControllerWidget::mrmlThreeDViewNode()const
+{
+  Q_D(const qMRMLThreeDViewControllerWidget);
+  return vtkMRMLViewNode::SafeDownCast(this->mrmlViewNode());
 }
 
 // --------------------------------------------------------------------------
@@ -373,24 +379,24 @@ void qMRMLThreeDViewControllerWidget::setViewLink(bool linked)
 void qMRMLThreeDViewControllerWidget::setViewLabel(const QString& newViewLabel)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
     }
-  d->ViewNode->SetLayoutLabel(newViewLabel.toUtf8());
+  this->mrmlThreeDViewNode()->SetLayoutLabel(newViewLabel.toUtf8());
 }
 
 //---------------------------------------------------------------------------
 QString qMRMLThreeDViewControllerWidget::viewLabel()const
 {
   Q_D(const qMRMLThreeDViewControllerWidget);
-  if (d->ViewNode)
+  if (this->mrmlThreeDViewNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return QString();
     }
-  return d->ViewNode->GetLayoutLabel();
+  return this->mrmlThreeDViewNode()->GetLayoutLabel();
 }
 
 // --------------------------------------------------------------------------
@@ -415,12 +421,9 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLViewLogic()
 
   // Update view node connection
   vtkMRMLViewNode* viewNode = (d->ViewLogic ? d->ViewLogic->GetViewNode() : nullptr);
-  if (viewNode != d->ViewNode)
+  if (viewNode != this->mrmlThreeDViewNode())
     {
-    this->qvtkReconnect(d->ViewNode, viewNode, vtkCommand::ModifiedEvent,
-      this, SLOT(updateWidgetFromMRMLView()));
-    d->ViewNode = viewNode;
-    this->updateWidgetFromMRMLView();
+    this->setMRMLViewNode(viewNode);
     }
 }
 
@@ -428,7 +431,9 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLViewLogic()
 void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
 {
   Q_D(qMRMLThreeDViewControllerWidget);
+  Superclass::updateWidgetFromMRMLView();
   // Enable buttons
+  vtkMRMLViewNode* viewNode = this->mrmlThreeDViewNode();
   QList<QWidget*> widgets;
   widgets << d->AxesWidget
     << d->CenterButton << d->OrthoButton << d->VisibilityButton
@@ -437,10 +442,10 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
     << d->OrientationMarkerButton; // RulerButton enable state is not set here (it depends on render mode)
   foreach(QWidget* w, widgets)
     {
-    w->setEnabled(d->ViewNode != nullptr);
+    w->setEnabled(viewNode != nullptr);
     }
 
-  if (!d->ViewNode)
+  if (!viewNode)
     {
     return;
     }
@@ -448,18 +453,18 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
   // In the axes widget the order of labels is: +X, -X, +Z, -Z, +Y, -Y
   // and in the view node axis labels order is: -X, +X, -Y, +Y, -Z, +Z.
   QStringList axesLabels;
-  axesLabels <<  d->ViewNode->GetAxisLabel(1); // +X
-  axesLabels <<  d->ViewNode->GetAxisLabel(0); // -X
-  axesLabels <<  d->ViewNode->GetAxisLabel(5); // +Z
-  axesLabels <<  d->ViewNode->GetAxisLabel(4); // -Z
-  axesLabels <<  d->ViewNode->GetAxisLabel(3); // +Y
-  axesLabels <<  d->ViewNode->GetAxisLabel(2); // -Y
+  axesLabels << viewNode->GetAxisLabel(1); // +X
+  axesLabels << viewNode->GetAxisLabel(0); // -X
+  axesLabels << viewNode->GetAxisLabel(5); // +Z
+  axesLabels << viewNode->GetAxisLabel(4); // -Z
+  axesLabels << viewNode->GetAxisLabel(3); // +Y
+  axesLabels << viewNode->GetAxisLabel(2); // -Y
   d->AxesWidget->setAxesLabels(axesLabels);
 
   // Update view link toggle. Must be done first as its state controls
   // different behaviors when properties are set.
-  d->ViewLinkButton->setChecked(d->ViewNode->GetLinkedControl());
-  if (d->ViewNode->GetLinkedControl())
+  d->ViewLinkButton->setChecked(viewNode->GetLinkedControl());
+  if (viewNode->GetLinkedControl())
     {
     d->ViewLinkButton->setIcon(QIcon(":Icons/LinkOn.png"));
     }
@@ -468,14 +473,14 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
     d->ViewLinkButton->setIcon(QIcon(":Icons/LinkOff.png"));
     }
 
-  d->actionSet3DAxisVisible->setChecked(d->ViewNode->GetBoxVisible());
+  d->actionSet3DAxisVisible->setChecked(viewNode->GetBoxVisible());
   d->actionSet3DAxisLabelVisible->setChecked(
-    d->ViewNode->GetAxisLabelsVisible());
+    viewNode->GetAxisLabelsVisible());
 
-  d->actionUseDepthPeeling->setChecked(d->ViewNode->GetUseDepthPeeling());
-  d->actionSetFPSVisible->setChecked(d->ViewNode->GetFPSVisible());
+  d->actionUseDepthPeeling->setChecked(viewNode->GetUseDepthPeeling());
+  d->actionSetFPSVisible->setChecked(viewNode->GetFPSVisible());
 
-  double* color = d->ViewNode->GetBackgroundColor();
+  double* color = viewNode->GetBackgroundColor();
   QColor backgroundColor = QColor::fromRgbF(color[0], color[1], color[2]);
   d->actionSetBlackBackground->setChecked(backgroundColor == Qt::black);
   d->actionSetWhiteBackground->setChecked(backgroundColor == Qt::white);
@@ -483,36 +488,36 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
     !d->actionSetBlackBackground->isChecked() &&
     !d->actionSetWhiteBackground->isChecked());
 
-  d->OrthoButton->setChecked(d->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
+  d->OrthoButton->setChecked(viewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
 
-  QAction* action = qobject_cast<QAction*>(d->StereoTypesMapper->mapping(d->ViewNode->GetStereoType()));
+  QAction* action = qobject_cast<QAction*>(d->StereoTypesMapper->mapping(viewNode->GetStereoType()));
   if (action)
     {
     action->setChecked(true);
     }
-  action = qobject_cast<QAction*>(d->OrientationMarkerTypesMapper->mapping(d->ViewNode->GetOrientationMarkerType()));
+  action = qobject_cast<QAction*>(d->OrientationMarkerTypesMapper->mapping(viewNode->GetOrientationMarkerType()));
   if (action)
     {
     action->setChecked(true);
     }
-  action = qobject_cast<QAction*>(d->OrientationMarkerSizesMapper->mapping(d->ViewNode->GetOrientationMarkerSize()));
+  action = qobject_cast<QAction*>(d->OrientationMarkerSizesMapper->mapping(viewNode->GetOrientationMarkerSize()));
   if (action)
     {
     action->setChecked(true);
     }
-  action = qobject_cast<QAction*>(d->RulerTypesMapper->mapping(d->ViewNode->GetRulerType()));
+  action = qobject_cast<QAction*>(d->RulerTypesMapper->mapping(viewNode->GetRulerType()));
   if (action)
     {
     action->setChecked(true);
     }
-  d->RulerButton->setEnabled(d->ViewNode->GetRenderMode()==vtkMRMLViewNode::Orthographic);
+  d->RulerButton->setEnabled(viewNode->GetRenderMode()==vtkMRMLViewNode::Orthographic);
 
-  d->SpinButton->setChecked(d->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin);
-  d->RockButton->setChecked(d->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock);
+  d->SpinButton->setChecked(viewNode->GetAnimationMode() == vtkMRMLViewNode::Spin);
+  d->RockButton->setChecked(viewNode->GetAnimationMode() == vtkMRMLViewNode::Rock);
 
-  d->ViewLabel->setText(d->ViewNode->GetLayoutLabel());
+  d->ViewLabel->setText(viewNode->GetLayoutLabel());
 
-  double* layoutColorVtk = d->ViewNode->GetLayoutColor();
+  double* layoutColorVtk = viewNode->GetLayoutColor();
   QColor layoutColor = QColor::fromRgbF(layoutColorVtk[0], layoutColorVtk[1], layoutColorVtk[2]);
   d->setColor(layoutColor);
 }
@@ -594,7 +599,7 @@ void qMRMLThreeDViewControllerWidget::setOrthographicModeEnabled(bool enabled)
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::RenderModeFlag);
-  d->ViewNode->SetRenderMode(
+  this->mrmlThreeDViewNode()->SetRenderMode(
     enabled ? vtkMRMLViewNode::Orthographic : vtkMRMLViewNode::Perspective);
   d->ViewLogic->EndViewNodeInteraction();
 }
@@ -650,7 +655,7 @@ void qMRMLThreeDViewControllerWidget::yawView()
 void qMRMLThreeDViewControllerWidget::zoomIn()
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
@@ -664,7 +669,7 @@ void qMRMLThreeDViewControllerWidget::zoomIn()
 void qMRMLThreeDViewControllerWidget::zoomOut()
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
@@ -690,13 +695,13 @@ void qMRMLThreeDViewControllerWidget::rockView(bool enabled)
 void qMRMLThreeDViewControllerWidget::setAnimationMode(int newAnimationMode)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::AnimationModeFlag);
-  d->ViewNode->SetAnimationMode(newAnimationMode);
+  this->mrmlThreeDViewNode()->SetAnimationMode(newAnimationMode);
   d->ViewLogic->EndViewNodeInteraction();
 }
 
@@ -718,13 +723,13 @@ void qMRMLThreeDViewControllerWidget::resetFocalPoint()
 void qMRMLThreeDViewControllerWidget::set3DAxisVisible(bool visible)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::BoxVisibleFlag);
-  d->ViewNode->SetBoxVisible(visible);
+  this->mrmlThreeDViewNode()->SetBoxVisible(visible);
   d->ViewLogic->EndViewNodeInteraction();
 }
 
@@ -732,13 +737,13 @@ void qMRMLThreeDViewControllerWidget::set3DAxisVisible(bool visible)
 void qMRMLThreeDViewControllerWidget::set3DAxisLabelVisible(bool visible)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::BoxLabelVisibileFlag);
-  d->ViewNode->SetAxisLabelsVisible(visible);
+  this->mrmlThreeDViewNode()->SetAxisLabelsVisible(visible);
   d->ViewLogic->EndViewNodeInteraction();
 }
 
@@ -746,13 +751,13 @@ void qMRMLThreeDViewControllerWidget::set3DAxisLabelVisible(bool visible)
 void qMRMLThreeDViewControllerWidget::setUseDepthPeeling(bool use)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::UseDepthPeelingFlag);
-  d->ViewNode->SetUseDepthPeeling(use ? 1 : 0);
+  this->mrmlThreeDViewNode()->SetUseDepthPeeling(use ? 1 : 0);
   d->ViewLogic->EndViewNodeInteraction();
 }
 
@@ -760,13 +765,13 @@ void qMRMLThreeDViewControllerWidget::setUseDepthPeeling(bool use)
 void qMRMLThreeDViewControllerWidget::setFPSVisible(bool visible)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::FPSVisibleFlag);
-  d->ViewNode->SetFPSVisible(visible ? 1 : 0);
+  this->mrmlThreeDViewNode()->SetFPSVisible(visible ? 1 : 0);
   d->ViewLogic->EndViewNodeInteraction();
 }
 
@@ -800,23 +805,23 @@ void qMRMLThreeDViewControllerWidget::setBackgroundColor(
   const QColor& newColor, QColor newColor2)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::BackgroundColorFlag);
 
-  int wasModifying = d->ViewNode->StartModify();
+  int wasModifying = this->mrmlThreeDViewNode()->StartModify();
   // The ThreeDView displayable manager will change the background color of
   // the renderer.
-  d->ViewNode->SetBackgroundColor(newColor.redF(), newColor.greenF(), newColor.blueF());
+  this->mrmlThreeDViewNode()->SetBackgroundColor(newColor.redF(), newColor.greenF(), newColor.blueF());
   if (!newColor2.isValid())
     {
     newColor2 = newColor;
     }
-  d->ViewNode->SetBackgroundColor2(newColor2.redF(), newColor2.greenF(), newColor2.blueF());
-  d->ViewNode->EndModify(wasModifying);
+  this->mrmlThreeDViewNode()->SetBackgroundColor2(newColor2.redF(), newColor2.greenF(), newColor2.blueF());
+  this->mrmlThreeDViewNode()->EndModify(wasModifying);
 
   d->ViewLogic->EndViewNodeInteraction();
 }
@@ -825,13 +830,13 @@ void qMRMLThreeDViewControllerWidget::setBackgroundColor(
 void qMRMLThreeDViewControllerWidget::setStereoType(int newStereoType)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::StereoTypeFlag);
-  d->ViewNode->SetStereoType(newStereoType);
+  this->mrmlThreeDViewNode()->SetStereoType(newStereoType);
   d->ViewLogic->EndViewNodeInteraction();
 }
 
@@ -839,13 +844,13 @@ void qMRMLThreeDViewControllerWidget::setStereoType(int newStereoType)
 void qMRMLThreeDViewControllerWidget::setOrientationMarkerType(int newOrientationMarkerType)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::OrientationMarkerTypeFlag);
-  d->ViewNode->SetOrientationMarkerType(newOrientationMarkerType);
+  this->mrmlThreeDViewNode()->SetOrientationMarkerType(newOrientationMarkerType);
   d->ViewLogic->EndViewNodeInteraction();
 }
 
@@ -853,13 +858,13 @@ void qMRMLThreeDViewControllerWidget::setOrientationMarkerType(int newOrientatio
 void qMRMLThreeDViewControllerWidget::setOrientationMarkerSize(int newOrientationMarkerSize)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::OrientationMarkerSizeFlag);
-  d->ViewNode->SetOrientationMarkerSize(newOrientationMarkerSize);
+  this->mrmlThreeDViewNode()->SetOrientationMarkerSize(newOrientationMarkerSize);
   d->ViewLogic->EndViewNodeInteraction();
 }
 
@@ -867,21 +872,21 @@ void qMRMLThreeDViewControllerWidget::setOrientationMarkerSize(int newOrientatio
 void qMRMLThreeDViewControllerWidget::setRulerType(int newRulerType)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::RulerTypeFlag);
-  d->ViewNode->SetRulerType(newRulerType);
+  this->mrmlThreeDViewNode()->SetRulerType(newRulerType);
   d->ViewLogic->EndViewNodeInteraction();
 
   // Switch to orthographic render mode automatically if ruler is enabled
   if (newRulerType!=vtkMRMLViewNode::RulerTypeNone &&
-      d->ViewNode->GetRenderMode()!=vtkMRMLViewNode::Orthographic)
+    this->mrmlThreeDViewNode()->GetRenderMode()!=vtkMRMLViewNode::Orthographic)
     {
     d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::RenderModeFlag);
-    d->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic);
+    this->mrmlThreeDViewNode()->SetRenderMode(vtkMRMLViewNode::Orthographic);
     d->ViewLogic->EndViewNodeInteraction();
     }
 }
@@ -890,12 +895,12 @@ void qMRMLThreeDViewControllerWidget::setRulerType(int newRulerType)
 void qMRMLThreeDViewControllerWidget::setRulerColor(int newRulerColor)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  if (!d->ViewNode)
+  if (!this->mrmlThreeDViewNode())
     {
     return;
     }
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::RulerColorFlag);
-  d->ViewNode->SetRulerColor(newRulerColor);
+  this->mrmlThreeDViewNode()->SetRulerColor(newRulerColor);
   d->ViewLogic->EndViewNodeInteraction();
 }
