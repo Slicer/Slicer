@@ -46,13 +46,6 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="LogoLabel">
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="qSlicerModulePanel" name="ModulePanel"/>
      </item>
      <item>
@@ -66,7 +59,15 @@
        <property name="text">
         <string>Data Probe</string>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout"/>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="LogoLabel">
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignBottom</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>

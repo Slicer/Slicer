@@ -52,7 +52,7 @@ indicated by the mouse position.
       print("No Data Probe frame - cannot create DataProbe")
       return
     self.infoWidget = DataProbeInfoWidget(parent)
-    parent.layout().insertWidget(0,self.infoWidget.frame)
+    parent.layout().addWidget(self.infoWidget.frame)
 
   def showZoomedSlice(self, value=False):
     self.showZoomedSlice = value
@@ -68,6 +68,7 @@ class DataProbeInfoWidget:
     self.CrosshairNodeObserverTag = None
 
     self.frame = qt.QFrame(parent)
+    self.frame.hide()  # have hidden by default until event triggered to show
     self.frame.setLayout(qt.QVBoxLayout())
 
     modulePath = slicer.modules.dataprobe.path.replace("DataProbe.py","")
@@ -206,11 +207,15 @@ class DataProbeInfoWidget:
       self.viewerColor.hide()
       self.viewInfo.hide()
       self.viewerFrame.hide()
+      self.frame.hide()
+      slicer.util.setApplicationLogoVisible(True)
       return
 
     self.viewerColor.show()
     self.viewInfo.show()
     self.viewerFrame.show()
+    self.frame.show()
+    slicer.util.setApplicationLogoVisible(False)
 
     # populate the widgets
     self.viewerColor.setText( " " )
