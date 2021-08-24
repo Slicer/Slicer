@@ -675,6 +675,8 @@ void qSlicerSegmentationsModuleWidget::updateImportExportWidgets()
 void qSlicerSegmentationsModuleWidget::updateExportColorWidgets()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
+
+  QSignalBlocker blocker1(d->ColorTableNodeSelector);
   d->ColorTableNodeSelector->setEnabled(d->UseColorTableValuesCheckBox->isChecked());
 
   vtkMRMLColorTableNode* exportColorTableNode = nullptr;
@@ -682,6 +684,8 @@ void qSlicerSegmentationsModuleWidget::updateExportColorWidgets()
     {
     exportColorTableNode = d->SegmentationNode->GetLabelmapConversionColorTableNode();
     }
+
+  QSignalBlocker blocker2(d->ColorTableNodeSelector);
   d->ColorTableNodeSelector->setCurrentNode(exportColorTableNode);
 }
 
@@ -1143,23 +1147,31 @@ void qSlicerSegmentationsModuleWidget::onSegmentationNodeReferenceChanged()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
 
-  if ( !d->SegmentationNode
-    || !d->SegmentationNode->GetNodeReference(vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str()) )
+  this->updateExportColorWidgets();
+
+  vtkMRMLNode* referenceVolumeNode = nullptr;
+  if (d->SegmentationNode)
+    {
+    referenceVolumeNode = d->SegmentationNode->GetNodeReference(vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str());
+    }
+  if (referenceVolumeNode)
+    {
+    // Reference volume is available
+    // Get reference volume node
+    vtkMRMLNode* referenceVolumeNode = d->SegmentationNode->GetNodeReference(
+      vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str());
+
+    // If there is a reference volume, then show labels
+    d->label_ReferenceVolumeText->setVisible(true);
+    d->label_ReferenceVolumeName->setVisible(true);
+    d->label_ReferenceVolumeName->setText(referenceVolumeNode->GetName());
+
+    d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setCurrentNode(referenceVolumeNode);
+    }
+  else
     {
     d->label_ReferenceVolumeText->setVisible(false);
     d->label_ReferenceVolumeName->setVisible(false);
     d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setCurrentNode(nullptr);
-    return;
     }
-
-  // Get reference volume node
-  vtkMRMLNode* referenceVolumeNode = d->SegmentationNode->GetNodeReference(
-    vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str() );
-
-  // If there is a reference volume, then show labels
-  d->label_ReferenceVolumeText->setVisible(true);
-  d->label_ReferenceVolumeName->setVisible(true);
-  d->label_ReferenceVolumeName->setText(referenceVolumeNode->GetName());
-
-  d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setCurrentNode(referenceVolumeNode);
 }
