@@ -1079,20 +1079,14 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     {
     segmentIDsArray->InsertNextValue(segmentID);
     }
-  vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometry(segmentationNode, referenceVolumeNode,
-    segmentIDsArray, extentComputationMode, mergedLabelmap_Reference);
-
   vtkSmartPointer<vtkIntArray> labelValues = nullptr;
   if (exportColorTable)
     {
-    vtkNew<vtkStringArray> segmentIdsArray;
-    for (auto segmentIt = segmentIDs.begin(); segmentIt != segmentIDs.end(); ++segmentIt)
-      {
-      segmentIdsArray->InsertNextValue(*segmentIt);
-      }
     labelValues = vtkSmartPointer<vtkIntArray>::New();
-    vtkSlicerSegmentationsModuleLogic::GetLabelValuesFromColorNode(segmentationNode, exportColorTable, segmentIdsArray, labelValues);
+    vtkSlicerSegmentationsModuleLogic::GetLabelValuesFromColorNode(segmentationNode, exportColorTable, segmentIDsArray, labelValues);
     }
+  vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometry(segmentationNode, referenceVolumeNode,
+    segmentIDsArray, extentComputationMode, mergedLabelmap_Reference, labelValues);
 
   // Export shared labelmap to the output node
   if (!vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(mergedLabelmap_Reference, labelmapNode))
