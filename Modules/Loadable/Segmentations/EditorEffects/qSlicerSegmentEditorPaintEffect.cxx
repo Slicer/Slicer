@@ -1260,25 +1260,27 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     }
   else if (eid == vtkCommand::LeftButtonReleaseEvent)
     {
-    if (worldPositionValid && d->IsPainting)
+    if (d->IsPainting)
       {
-      d->paintAddPoint(viewWidget, brushPosition_World, d->LastBrushPositionValid ? d->LastBrushPosition_World : nullptr);
+      if (worldPositionValid)
+        {
+        d->paintAddPoint(viewWidget, brushPosition_World, d->LastBrushPositionValid ? d->LastBrushPosition_World : nullptr);
+        }
+
+      // Schedule rendering of all views.
+      // Cleaning up pipelines schedules re-rendering as well, but on some Intel video cards, and especially in debug mode,
+      // this additional rendering request is necessary for showing the filled segment after paint stroke is completed.
+      QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
+      foreach(qMRMLWidget* aViewWidget, viewWidgets)
+        {
+        d->BrushPipelines[aViewWidget]->SetFeedbackVisibility(false);
+        d->BrushPipelines[aViewWidget]->SetBrushVisibility(worldPositionValid);
+        qSlicerSegmentEditorAbstractEffect::scheduleRender(aViewWidget);
+        }
+
+      this->paintApply(viewWidget);
+      d->IsPainting = false;
       }
-
-    // Schedule rendering of all views.
-    // Cleaning up pipelines schedules re-rendering as well, but on some Intel video cards, and especially in debug mode,
-    // this additional rendering request is necessary for showing the filled segment after paint stroke is completed.
-    QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
-    foreach(qMRMLWidget* aViewWidget, viewWidgets)
-      {
-      d->BrushPipelines[aViewWidget]->SetFeedbackVisibility(false);
-      d->BrushPipelines[aViewWidget]->SetBrushVisibility(worldPositionValid);
-      qSlicerSegmentEditorAbstractEffect::scheduleRender(aViewWidget);
-      }
-
-    this->paintApply(viewWidget);
-    d->IsPainting = false;
-
     //this->cursorOn(sliceWidget);
     }
   else if (eid == vtkCommand::MouseMoveEvent)
