@@ -457,6 +457,12 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     segmentIDsToOverwrite.clear();
     }
 
+  if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll)
+    {
+    // If we want to erase all segments, then mark all segments as overwritable
+    segmentIDsToOverwrite = allSegmentIDs;
+    }
+
   // Create inverted binary labelmap
   vtkSmartPointer<vtkImageThreshold> inverter = vtkSmartPointer<vtkImageThreshold>::New();
   inverter->SetInputData(modifierLabelmap);
@@ -509,9 +515,10 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     vtkNew<vtkMatrix4x4> imageToWorldMatrix;
     modifierLabelmap->GetImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     invertedModifierLabelmap->SetGeometryFromImageToWorldMatrix(imageToWorldMatrix.GetPointer());
+    bool minimumOfAllSegments = modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll;
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
       invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN,
-      extent, false, segmentIDsToOverwrite))
+      extent, minimumOfAllSegments, segmentIDsToOverwrite))
       {
       qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from selected segment";
       }
