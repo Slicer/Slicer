@@ -78,12 +78,12 @@ To create a Slicer package including python libraries, you can *NOT* provide you
     install(FILES "${PYTHON_LIBRARY_PATH}/${PYTHON_LIB_BASE}.dll"
       DESTINATION bin
       COMPONENT Runtime)
-    # Copy Python3.dll
+    # Copy python3.dll
     # The file name is always exactly this, as this file is guaranteed
     # to be ABI compatible across all Python3 versions
     # (see https://www.python.org/dev/peps/pep-0384/#linkage
     # and https://github.com/Slicer/Slicer/issues/5816 for details).
-    install(FILES "${PYTHON_LIBRARY_PATH}/Python3.dll"
+    install(FILES "${PYTHON_LIBRARY_PATH}/python3.dll"
       DESTINATION bin
       COMPONENT Runtime)
   endif()
