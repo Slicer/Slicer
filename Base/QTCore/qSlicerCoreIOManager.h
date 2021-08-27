@@ -27,6 +27,7 @@
 #include <QList>
 #include <QMap>
 #include <QObject>
+#include <QString>
 #include <QVariantMap>
 
 // CTK includes
@@ -88,6 +89,25 @@ public:
   /// Always includes the leading dot.
   Q_INVOKABLE QString completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode *node)const;
 
+  /// Generate a regular expression that can ensure a filename has a valid
+  /// extension. Example of supported extensions:
+  /// "", "*", ".*", ".jpg", ".png" ".tar.gz"...
+  /// An empty extension or "*" means any filename (or directory) is valid
+  static QRegExp fileNameRegExp(const QString& extension = QString());
+
+  /// Remove characters that are likely to cause problems in a filename
+  static QString forceFileNameValidCharacters(const QString& filename);
+
+  /// If \a fileName ends with an extension that is associated with \a object,
+  /// then return that extension. Otherwise return an empty string.
+  QString extractKnownExtension(const QString& fileName, vtkObject* object);
+
+  /// If \a fileName ends with an extension that is associated with \a object,
+  /// then return a stripped version of \a fileName, where that extension
+  /// has been chopped off. If the extension is duplicated in the
+  /// tail of \a fileName, then all duplicates are stripped away.
+  QString stripKnownExtension(const QString& fileName, vtkObject* object);
+
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.
   /// A map of qvariant allows to specify which \a parameters should be passed to the reader.
@@ -136,12 +156,34 @@ public:
   /// Attributes are typically:
   /// For all: QString fileName (or QStringList fileNames)
   /// For nodes: QString nodeID, bool useCompression
-  /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
+  /// If a valid pointer is passed to \a userMessages additional error or warning information may be returned in it.
+  /// If a valid pointer is passed to \a scene, writers will be told to use that scene instead of the current scene.
   /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType,
-  /// loadNodes()
+  /// loadNodes(), exportNodes()
   Q_INVOKABLE bool saveNodes(qSlicerIO::IOFileType fileType,
                              const qSlicerIO::IOProperties& parameters,
-                              vtkMRMLMessageCollection* userMessages=nullptr);
+                              vtkMRMLMessageCollection* userMessages=nullptr,
+                              vtkMRMLScene* scene=nullptr);
+
+  /// Export nodes using the registered writers. Return true on success, false otherwise.
+  /// Unlike saveNodes(), this function creates a temporary scene while saving,
+  /// in order to to avoid modifying storage nodes in the current scene.
+  /// Saving parameters like fileFormat should be in \a parameters, just like for saveNodes(),
+  /// except that the nodes to be saved are specified in the list \a nodeIDs
+  /// and that the absolute file paths to save them to are specified in \a filePaths.
+  /// The boolean parameter 'hardenTransforms' may also be included in \a parameters to temporarily apply transform hardening before export.
+  /// Any error messages that would normally be found in a storage node will instead be added to \a userMessages.
+  /// \param nodeIDs A list of IDs of nodes to be exported
+  /// \param filePaths A list of absolute file paths corresponding to \a nodeIDs. These are the export destinations.
+  /// \param parameters A dictionary/map of parameters that will get passed to qSlicerCoreIOManager::saveNodes.
+  /// \param userMessages If a valid pointer is passed, then error messages may be returned in it.
+  /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType, vtkMRMLStorageNode, saveNodes().
+  Q_INVOKABLE bool exportNodes(
+    const QList<QString>& nodeIDs,
+    const QList<QString>& filePaths,
+    const qSlicerIO::IOProperties& parameters,
+    vtkMRMLMessageCollection* userMessages=nullptr
+  );
 
   /// Save a scene corresponding to \a fileName
   /// This function is provided for convenience and is equivalent to call

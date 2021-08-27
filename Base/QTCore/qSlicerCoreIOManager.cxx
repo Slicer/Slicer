@@ -36,6 +36,8 @@
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLNode.h>
+#include <vtkMRMLTransformableNode.h>
+#include <vtkMRMLTransformNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>
@@ -45,6 +47,7 @@
 #include <vtkDataFileFormatHelper.h> // for GetFileExtensionFromFormatString()
 #include <vtkNew.h>
 #include <vtkStringArray.h>
+#include <vtkGeneralTransform.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerCoreIOManagerPrivate
@@ -376,6 +379,75 @@ QStringList qSlicerCoreIOManager::allReadableFileExtensions()const
 }
 
 //-----------------------------------------------------------------------------
+QRegExp qSlicerCoreIOManager::fileNameRegExp(const QString& extension /*= QString()*/)
+{
+  QRegExp regExp("[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]{1,255}");
+
+  if (!extension.isEmpty())
+    {
+    regExp.setPattern(regExp.pattern() + extension);
+    }
+  return regExp;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreIOManager::forceFileNameValidCharacters(const QString& filename)
+{
+  // Remove characters that are likely to cause problems in filename
+  QString sanitizedFilename;
+  QRegExp regExp = fileNameRegExp();
+
+  for (int i = 0; i < filename.size(); ++i)
+    {
+    if (regExp.exactMatch(QString(filename[i])))
+      {
+      sanitizedFilename += filename[i];
+      }
+    }
+
+  // Remove leading and trailing spaces
+  sanitizedFilename = sanitizedFilename.trimmed();
+
+  return sanitizedFilename;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreIOManager::extractKnownExtension(const QString& fileName, vtkObject* object)
+{
+  foreach(const QString& nameFilter, this->fileWriterExtensions(object))
+    {
+    QString extension = QString::fromStdString(
+      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
+    if (!extension.isEmpty() && fileName.endsWith(extension))
+      {
+      return extension;
+      }
+    }
+  return QString();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreIOManager::stripKnownExtension(const QString& fileName, vtkObject* object)
+{
+  QString strippedFileName(fileName);
+
+  QString knownExtension = extractKnownExtension(fileName, object);
+  if (!knownExtension.isEmpty())
+    {
+    strippedFileName.chop(knownExtension.length());
+
+    // recursively chop any further copies of the extension,
+    // which sometimes appear when the filename+extension is
+    // constructed from a filename that already had an extension
+    if (strippedFileName.endsWith(knownExtension))
+      {
+      return stripKnownExtension(strippedFileName, object);
+      }
+    }
+  return strippedFileName;
+}
+
+//-----------------------------------------------------------------------------
 qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& readerDescription)const
 {
   Q_D(const qSlicerCoreIOManager);
@@ -649,9 +721,16 @@ void qSlicerCoreIOManager::addDefaultStorageNodes()
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
-  const qSlicerIO::IOProperties& parameters, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+  const qSlicerIO::IOProperties& parameters,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/,
+  vtkMRMLScene* scene/*=nullptr*/)
 {
   Q_D(qSlicerCoreIOManager);
+
+  if (!scene)
+    {
+    scene = d->currentScene();
+    }
 
   Q_ASSERT(parameters.contains("fileName"));
 
@@ -669,7 +748,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
   bool writeSuccess=false;
   foreach (qSlicerFileWriter* writer, writers)
     {
-    writer->setMRMLScene(d->currentScene());
+    writer->setMRMLScene(scene);
     writer->userMessages()->ClearMessages();
     bool currentWriterSuccess = writer->write(parameters);
     if (userMessages)
@@ -700,6 +779,149 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     }
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreIOManager::exportNodes(
+  const QList<QString>& nodeIDs,
+  const QList<QString>& filePaths,
+  const qSlicerIO::IOProperties& parameters,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/
+)
+{
+  Q_D(qSlicerCoreIOManager);
+
+  // Validate parameters
+  if (!parameters.contains("fileFormat"))
+    {
+    qCritical() << Q_FUNC_INFO << " failed: fileFormat must be included as a parameter to exportNodes";
+    return false;
+    }
+  if (nodeIDs.size() != filePaths.size())
+    {
+    qCritical() << Q_FUNC_INFO << " failed: nodeIDs and filePaths must have the same size.";
+    return false;
+    }
+
+  // Create a temporary scene to use for exporting only and to be destroyed when done exporting
+  vtkNew<vtkMRMLScene> temporaryScene;
+  d->currentScene()->CopyDefaultNodesToScene(temporaryScene);
+  d->currentScene()->CopyRegisteredNodesToScene(temporaryScene);
+  d->currentScene()->CopySingletonNodesToScene(temporaryScene);
+  temporaryScene->SetDataIOManager(d->currentScene()->GetDataIOManager());
+
+  // Copy parameters map; we will need to set the nodeID parameter to correspond to nodes in the temporary scene
+  qSlicerIO::IOProperties temporarySceneParameters = parameters;
+
+  bool success = true;
+  for (int i = 0; i<nodeIDs.size(); ++i)
+    {
+
+    // Copy over each node to be exported
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(d->currentScene()->GetNodeByID(nodeIDs[i].toUtf8()));
+    if (!storableNode)
+      {
+      if (userMessages)
+        {
+        userMessages->AddMessage(vtkCommand::ErrorEvent,
+          (tr("Unable to find a storable node with ID %1").arg(nodeIDs[i])).toStdString()
+        );
+        }
+      success = false;
+      continue;
+      }
+    vtkMRMLStorableNode* temporaryStorableNode = vtkMRMLStorableNode::SafeDownCast(temporaryScene->AddNewNodeByClass(storableNode->GetClassName()));
+    if (!temporaryStorableNode)
+      {
+      qCritical() << Q_FUNC_INFO << "Unable to add node to temporary scene";
+      if (userMessages)
+        {
+        userMessages->AddMessage(vtkCommand::ErrorEvent,
+          (tr("Error encountered while exporting %1").arg(storableNode->GetName())).toStdString()
+        );
+        }
+      success = false;
+      continue;
+      }
+    // We will do a shallow copy, unless tranform hardening was requested. Transform hardening
+    // can sometimes affect the underlying data of the transformable node, so it's worth doing
+    // a deep copy to be certain that the original node is not modified during export.
+    bool hardenTransforms = parameters.contains("hardenTransforms") && parameters["hardenTransforms"].toBool();
+    temporaryStorableNode->CopyContent(storableNode, /*deepCopy=*/hardenTransforms);
+
+
+    // Put transforms in the temporaryScene, if transform hardening was requested. Then apply hardening
+    if (hardenTransforms)
+      {
+
+      vtkMRMLTransformableNode* nodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(storableNode);
+      vtkMRMLTransformableNode* temporaryNodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(temporaryStorableNode);
+
+      if (!nodeAsTransformable)
+        {
+        continue;
+        }
+      if (!temporaryNodeAsTransformable)
+        {
+        qCritical() << Q_FUNC_INFO << " failed: Node is tranformable but its copy is not... this should never happen.";
+        return false;
+        }
+
+      vtkMRMLTransformNode* parentTransform = nodeAsTransformable->GetParentTransformNode();
+      if (parentTransform)
+        {
+        vtkSmartPointer<vtkGeneralTransform> generalTransform =  vtkSmartPointer<vtkGeneralTransform>::New();
+        parentTransform->GetTransformFromWorld(generalTransform);
+        vtkMRMLTransformNode* compositeTransformNode =
+          vtkMRMLTransformNode::SafeDownCast(temporaryScene->AddNewNodeByClass("vtkMRMLTransformNode"));
+        if (!compositeTransformNode)
+          {
+          qCritical() << Q_FUNC_INFO << "Unable to add a transform node to temporary scene";
+          if (userMessages)
+            {
+            userMessages->AddMessage(vtkCommand::ErrorEvent,
+              (tr("Error encountered while exporting %1").arg(storableNode->GetName())).toStdString()
+            );
+            }
+          success = false;
+          continue;
+          }
+        compositeTransformNode->SetAndObserveTransformFromParent(generalTransform);
+        temporaryNodeAsTransformable->SetAndObserveTransformNodeID(compositeTransformNode->GetID());
+        }
+
+      temporaryNodeAsTransformable->HardenTransform();
+      }
+
+
+    // Prepare temporary scene node ID and prepare filename for saving
+    temporarySceneParameters["nodeID"] = temporaryStorableNode->GetID();
+    temporarySceneParameters["fileName"] = filePaths[i];
+
+    // Deduce "fileType" from "fileFormat" parameter; saveNodes will want both
+    qSlicerIO::IOFileType fileType = this->fileWriterFileType(storableNode, parameters.value("fileFormat").toString());
+
+    // Finally, applying saving logic to the the temporary scene
+    if ( ! this->saveNodes(fileType, temporarySceneParameters, userMessages, temporaryScene) )
+      {
+      if (userMessages)
+        {
+        userMessages->AddMessage(vtkCommand::ErrorEvent,
+          (tr("Error encountered while exporting %1").arg(storableNode->GetName())).toStdString()
+        );
+        }
+      success = false;
+      }
+
+      // Pick up any user messages that were saved to temporaryStorableNode's storage node
+      if (temporaryStorableNode->GetStorageNode()
+          && temporaryStorableNode->GetStorageNode()->GetUserMessages())
+        {
+        userMessages->AddMessages(temporaryStorableNode->GetStorageNode()->GetUserMessages());
+        }
+
+    }
+  return success;
 }
 
 //-----------------------------------------------------------------------------

@@ -115,9 +115,6 @@ protected:
   ctkPathLineEdit*  createFileDirectoryWidget(const QFileInfo& fileInfo);
   void              clearUserMessagesInStorageNodes();
 
-  static QString extractKnownExtension(const QString& fileName, vtkObject* object);
-  static QString stripKnownExtension(const QString& fileName, vtkObject* object);
-
   QFileInfo         file(int row)const;
   vtkObject*        object(int row)const;
   QString           format(int row)const;
@@ -151,14 +148,6 @@ public:
   qSlicerFileNameItemDelegate( QObject * parent = nullptr );
   static QString forceFileNameExtension(const QString& fileName, const QString& extension,
                                vtkMRMLScene *mrmlScene, const QString &nodeID);
-  static QString forceFileNameValidCharacters(const QString& filename);
-
-  /// Generate a regular expression that can ensure a filename has a valid
-  /// extension.
-  /// Example of supported extensions:
-  /// "", "*", ".*", ".jpg", ".png" ".tar.gz"...
-  /// An empty extension or "*" means any filename (or directory) is valid
-  static QRegExp fileNameRegExp(const QString& extension = QString());
 
   vtkMRMLScene* MRMLScene;
 };

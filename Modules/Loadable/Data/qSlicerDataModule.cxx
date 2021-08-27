@@ -30,6 +30,7 @@
 #include "qSlicerDataModule.h"
 #include "qSlicerDataModuleWidget.h"
 #include "qSlicerSaveDataDialog.h"
+#include "qSlicerExportNodeDialog.h"
 #include "qSlicerSceneBundleReader.h"
 #include "qSlicerSceneReader.h"
 #include "qSlicerSceneWriter.h"
@@ -111,6 +112,7 @@ void qSlicerDataModule::setup()
   // Dialogs
   ioManager->registerDialog(new qSlicerDataDialog(this));
   ioManager->registerDialog(new qSlicerSaveDataDialog(this));
+  ioManager->registerDialog(new qSlicerExportNodeDialog(this));
 }
 
 //-----------------------------------------------------------------------------
