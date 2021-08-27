@@ -818,7 +818,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   if (!vtksys::SystemTools::MakeDirectory(tempDir.c_str()))
     {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-      "Failed to create directory" << tempDir);
+      "Failed to create directory " << tempDir);
     return "";
     }
   // make a new name,

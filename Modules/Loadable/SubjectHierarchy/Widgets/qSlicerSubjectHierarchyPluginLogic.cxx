@@ -36,6 +36,7 @@
 #include "qSlicerSubjectHierarchyOpacityPlugin.h"
 #include "qSlicerSubjectHierarchyViewContextMenuPlugin.h"
 #include "qSlicerSubjectHierarchyVisibilityPlugin.h"
+#include "qSlicerSubjectHierarchyExportPlugin.h"
 
 // MRML includes
 #include "vtkMRMLAbstractViewNode.h"
@@ -146,6 +147,8 @@ void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()
     new qSlicerSubjectHierarchyOpacityPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyVisibilityPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyExportPlugin());
 }
 
 //-----------------------------------------------------------------------------
