@@ -24,6 +24,9 @@
 // CTK includes
 #include <ctkColorDialog.h>
 
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+
 // Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
@@ -40,6 +43,10 @@
 // Slicer Logic includes
 #include <vtkSlicerApplicationLogic.h>
 #include "vtkSlicerColorLogic.h"
+
+// DisplayableManager initialization
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkSlicerColorsModuleMRMLDisplayableManager)
 
 //-----------------------------------------------------------------------------
 class qSlicerColorsModulePrivate
@@ -82,6 +89,14 @@ QIcon qSlicerColorsModule::icon()const
 void qSlicerColorsModule::setup()
 {
   Q_D(qSlicerColorsModule);
+
+  // DisplayableManager initialization
+  // Register color bar displayable manager for slice and 3D views
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLColorBarDisplayableManager");
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLColorBarDisplayableManager");
+
   qSlicerApplication * app = qSlicerApplication::application();
   if (!app)
     {
