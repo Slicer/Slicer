@@ -2677,7 +2677,8 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
   :param narray: input numpy array containing data series in columns.
   :param xColumnIndex: index of column that will be used as x axis.
     If it is set to negative number (by default) then row index will be used as x coordinate.
-  :param columnNames: names of each column of the input array.
+  :param columnNames: names of each column of the input array. If title is specified for the plot
+    then title+columnName will be used as series name.
   :param title: title of the chart. Plot node names are set based on this value.
   :param nodes: plot chart, table, and list of plot series nodes.
     Specified in a dictionary, with keys: 'chart', 'table', 'series'.
