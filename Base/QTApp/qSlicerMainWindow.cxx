@@ -1611,10 +1611,16 @@ void qSlicerMainWindow::onLayoutCompareGridActionTriggered(QAction* action)
 void qSlicerMainWindow::onLayoutChanged(int layout)
 {
   Q_D(qSlicerMainWindow);
+
   // Trigger the action associated with the new layout
+
+  // Actions with a menu are ignored, because they are just submenus without
+  // data assigned, so they should never be triggered (they could be triggered
+  // at startup, when layout is set to SlicerLayoutInitialView = 0).
+
   foreach(QAction* action, d->LayoutMenu->actions())
     {
-    if (action->data().toInt() == layout)
+    if (!action->menu() && action->data().toInt() == layout)
       {
       action->trigger();
       }
@@ -1622,7 +1628,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
 
   foreach(QAction* action, d->menuConventionalQuantitative->actions())
     {
-    if (action->data().toInt() == layout)
+    if (!action->menu() && action->data().toInt() == layout)
       {
       action->trigger();
       }
@@ -1630,7 +1636,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
 
   foreach(QAction* action, d->menuFourUpQuantitative->actions())
     {
-    if (action->data().toInt() == layout)
+    if (!action->menu() && action->data().toInt() == layout)
       {
       action->trigger();
       }
@@ -1638,7 +1644,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
 
   foreach(QAction* action, d->menuOneUpQuantitative->actions())
     {
-    if (action->data().toInt() == layout)
+    if (!action->menu() && action->data().toInt() == layout)
       {
       action->trigger();
       }
@@ -1646,7 +1652,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
 
   foreach(QAction* action, d->menuThreeOverThreeQuantitative->actions())
     {
-    if (action->data().toInt() == layout)
+    if (!action->menu() && action->data().toInt() == layout)
       {
       action->trigger();
       }
