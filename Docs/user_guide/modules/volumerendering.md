@@ -42,6 +42,18 @@ Option B:
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_volumerendering_multiview.png)
 
+### Hide certain regions of the volume
+
+It may be necessary to hide certain regions of a volume, for example remove patient table, or remove ribs that would occlude the view of the heart or lungs. If the regions cannot be hidden by adjusting the cropping box (ROI) then an arbitrarily shaped regions can be blanked out from the volume by following these steps:
+
+- Go to the Segment Editor module
+- Use Paint or Scissors effect to specify the region that will be blanked out
+- Use Mask volume effect to fill the region with "empty" values. In CT volume, intensity value is typically set to -1000 (corresponding to HU of air).
+- Hide the volume rendering of the original volume and set up volume rendering for the masked volume
+- If adjusting the rendered region is needed, go back to Segment Editor module, modify the segmentation using Paint, Scissors, or other effects; and update the masked volume using Mask volume effect
+
+See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for details. It is created on an older Slicer version, so some details may be different but the high-level workflow main workflow is still very similar.
+
 ## Limitations
 
 - Only single-component scalar volumes can be used for volume rendering. [Vector to Scalar Volume](vectortoscalarvolume.md) module can convert vector volume to scalar volume.
