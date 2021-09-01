@@ -203,17 +203,14 @@ class DataProbeInfoWidget:
         self.layerNames[layer].setText( "" )
         self.layerIJKs[layer].setText( "" )
         self.layerValues[layer].setText( "" )
-      self.imageLabel.hide()
       self.viewerColor.hide()
       self.viewInfo.hide()
       self.viewerFrame.hide()
-      self.showImageFrame.show()
       return
 
     self.viewerColor.show()
     self.viewInfo.show()
     self.viewerFrame.show()
-    self.showImageFrame.hide()
 
     # populate the widgets
     self.viewerColor.setText( " " )
@@ -266,14 +263,6 @@ class DataProbeInfoWidget:
       self.displayableManagerInfo.show()
     else:
       self.displayableManagerInfo.hide()
-
-    # set image
-    if (not slicer.mrmlScene.IsBatchProcessing()) and sliceLogic and hasVolume and self.showImage:
-      pixmap = self._createMagnifiedPixmap(
-        xyz, sliceLogic.GetBlend().GetOutputPort(), self.imageLabel.size, color)
-      if pixmap:
-        self.imageLabel.setPixmap(pixmap)
-        self.onShowImage(self.showImage)
 
     if hasattr(self.frame.parent(), 'text'):
       sceneName = slicer.mrmlScene.GetURL()
@@ -382,31 +371,6 @@ class DataProbeInfoWidget:
     # hide this for now - there's not much to see in the module itself
     self.goToModule.hide()
 
-    # image view: To ensure the height of the checkbox matches the height of the
-    # viewerFrame, it is added to a frame setting the layout and hard-coding the
-    # content margins.
-    # TODO: Revisit the approach and avoid hard-coding content margins
-    self.showImageFrame = qt.QFrame(self.frame)
-    self.frame.layout().addWidget(self.showImageFrame)
-    self.showImageFrame.setLayout(qt.QHBoxLayout())
-    self.showImageFrame.layout().setContentsMargins(0, 3, 0, 3)
-    self.showImageBox = qt.QCheckBox('Show Zoomed Slice', self.showImageFrame)
-    self.showImageFrame.layout().addWidget(self.showImageBox)
-    self.showImageBox.connect("toggled(bool)", self.onShowImage)
-    self.showImageBox.setChecked(False)
-
-    self.imageLabel = qt.QLabel()
-
-    # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
-    # fails on some systems, therefore set the policies using separate method calls
-    qSize = qt.QSizePolicy()
-    qSize.setHorizontalPolicy(qt.QSizePolicy.Expanding)
-    qSize.setVerticalPolicy(qt.QSizePolicy.Expanding)
-    self.imageLabel.setSizePolicy(qSize)
-    #self.imageLabel.setScaledContents(True)
-    self.frame.layout().addWidget(self.imageLabel)
-    self.onShowImage(False)
-
     # top row - things about the viewer itself
     self.viewerFrame = qt.QFrame(self.frame)
     self.viewerFrame.setLayout(qt.QHBoxLayout())
@@ -474,15 +438,6 @@ class DataProbeInfoWidget:
   def onGoToModule(self):
     m = slicer.util.mainWindow()
     m.moduleSelector().selectModule('DataProbe')
-
-  def onShowImage(self, value=False):
-    self.showImage = value
-    if value:
-      self.imageLabel.show()
-    else:
-      self.imageLabel.hide()
-      pixmap = qt.QPixmap()
-      self.imageLabel.setPixmap(pixmap)
 
 #
 # DataProbe widget
