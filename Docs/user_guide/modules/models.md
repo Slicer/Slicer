@@ -40,7 +40,7 @@ Folder nodes can be created by right-clicking on a folder and choosing "Create c
     - **Opacity**: Control the opacity of the model. 1.0 is totally opaque and 0.0 is completely transparent. 1.0 by default.
     - **View**: Specifies which views this modelis visible in. If none are checked, the model is visible in all 2D and 3D views.
     - **Color**: Control the color of the model. Note that the lighting can alter the color. Gray by default.
-- **3D Display**: 
+- **3D Display**:
     - **Representation**: Control the surface geometry representation (points, wireframe, surface, or surface with edges).
     - **Visible sides**: This option can be used to only show front-facing elements, which may make rendering slightly faster, but the inside of the model will be no longer visible (when the viewpoint is inside the model or when the model is clipped). when it is clipped). Showing of backface elements only allows seeing inside the model.
     - **Clipping**: Enable clipped display of the model. Slice planes are used as clipping planes, according to options defined in the "Clipping planes" section at the bottom.
@@ -57,7 +57,7 @@ Folder nodes can be created by right-clicking on a folder and choosing "Create c
       - **Specular**: Control specular reflection ("shininess") of the model surface.
       - **Power**: The specular power.
       - **Preview**: A rendering of a sphere using the current material properties.
-- **Slice Display**: 
+- **Slice Display**:
     - **Visibility**: Control visibility of the model in slice views.
     - **Opacity**: Opacity of the model in slice views.
     - **Mode**: Intersection shows intersection lines of the model with the slice plane. Projection projects the entire model into the slice plane. Distance encoded projection makes the projected model colored based on the distance from the slice plane.
