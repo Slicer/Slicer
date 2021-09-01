@@ -103,6 +103,9 @@
         <property name="indentation">
          <number>12</number>
         </property>
+        <property name="showRootItem">
+         <bool>true</bool>
+        </property>
         <property name="editMenuActionVisible">
          <bool>false</bool>
         </property>
