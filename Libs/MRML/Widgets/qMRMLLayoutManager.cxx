@@ -1263,6 +1263,28 @@ void qMRMLLayoutManager::setLayout(int layout)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLLayoutManager::setMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
+{
+  Q_D(qMRMLLayoutManager);
+  if (!d->MRMLLayoutNode)
+    {
+    return;
+    }
+  d->MRMLLayoutNode->SetMaximizedViewNode(viewNode);
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLAbstractViewNode* qMRMLLayoutManager::maximizedViewNode()
+{
+  Q_D(qMRMLLayoutManager);
+  if (!d->MRMLLayoutNode)
+    {
+    return nullptr;
+    }
+  return d->MRMLLayoutNode->GetMaximizedViewNode();
+}
+
+//------------------------------------------------------------------------------
 void qMRMLLayoutManager::setLayoutNumberOfCompareViewRows(int num)
 {
   Q_D(qMRMLLayoutManager);

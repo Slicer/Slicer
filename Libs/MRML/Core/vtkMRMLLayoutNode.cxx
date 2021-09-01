@@ -179,6 +179,14 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLLayoutNode::Reset(vtkMRMLNode* defaultNode)
+{
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::Reset(defaultNode);
+  this->SetMaximizedViewNode(nullptr);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::SetViewArrangement(int arrNew)
 {
   // if the view arrangement definition has not been changed, return

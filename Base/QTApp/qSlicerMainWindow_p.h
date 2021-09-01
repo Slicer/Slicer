@@ -75,6 +75,7 @@ public:
 #endif
   ctkErrorLogWidget*              ErrorLogWidget;
   QToolButton*                    ErrorLogToolButton;
+  QToolButton*                    LayoutButton;
   qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar;
   QStringList                     FavoriteModules;
   qSlicerLayoutManager*           LayoutManager;

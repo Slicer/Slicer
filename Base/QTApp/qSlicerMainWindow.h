@@ -27,18 +27,17 @@
 
 // CTK includes
 #include <ctkErrorLogModel.h>
-class ctkErrorLogWidget;
-class ctkPythonConsole;
 
 // Slicer includes
 #include "qSlicerBaseQTAppExport.h"
 #include "qSlicerIO.h"
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_DICOM_SUPPORT, Slicer_USE_PYTHONQT, Slicer_USE_QtTesting
 
+class ctkErrorLogWidget;
+class ctkPythonConsole;
 class qSlicerModuleSelectorToolBar;
 class qSlicerMainWindowPrivate;
-
-// VTK includes
+class vtkMRMLAbstractViewNode;
 class vtkObject;
 
 class Q_SLICER_BASE_QTAPP_EXPORT qSlicerMainWindow : public QMainWindow
@@ -63,6 +62,9 @@ public:
   /// Return a pointer to the error log widget.
   /// \sa moduleSelector(), pythonConsole()
   Q_INVOKABLE ctkErrorLogWidget* errorLogWidget()const;
+
+  /// Return the view node that is temporarily shown maximized in the view layout.
+  Q_INVOKABLE vtkMRMLAbstractViewNode* layoutMaximizedViewNode();
 
 public slots:
   virtual void setHomeModuleCurrent();
@@ -94,7 +96,13 @@ public slots:
   virtual void onLayoutCompareWidescreenActionTriggered(QAction* action);
   virtual void onLayoutCompareGridActionTriggered(QAction* action);
 
+  /// Set the view layout.
   virtual void setLayout(int);
+
+  /// Makes a view displayed maximized (taking the entire area) of the view layout.
+  /// Setting the value to nullptr restores the original view layout.
+  virtual void setLayoutMaximizedViewNode(vtkMRMLAbstractViewNode*);
+
   virtual void setLayoutNumberOfCompareViewRows(int);
   virtual void setLayoutNumberOfCompareViewColumns(int);
 

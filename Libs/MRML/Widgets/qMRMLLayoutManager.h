@@ -39,6 +39,7 @@ class qMRMLSliceWidget;
 class qMRMLLayoutManagerPrivate;
 class qMRMLLayoutViewFactory;
 
+class vtkMRMLAbstractViewNode;
 class vtkMRMLColorLogic;
 class vtkMRMLLayoutLogic;
 class vtkMRMLScene;
@@ -171,6 +172,9 @@ public:
   /// \sa vtkMRMLLayoutNode::SlicerLayout, layoutLogic()
   int layout()const;
 
+  /// Return the view node that is temporarily shown maximized in the view layout.
+  Q_INVOKABLE vtkMRMLAbstractViewNode* maximizedViewNode();
+
   /// Return the layout logic instantiated and used by the manager.
   /// \sa setLayout(), layout()
   Q_INVOKABLE vtkMRMLLayoutLogic* layoutLogic()const;
@@ -229,6 +233,10 @@ public slots:
   /// Change the current layout (see vtkMRMLLayoutNode::SlicerLayout)
   /// It creates views if needed.
   void setLayout(int newLayout);
+
+  /// Makes a view displayed maximized (taking the entire area) of the view layout.
+  /// Setting the value to nullptr restores the original view layout.
+  void setMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode);
 
   /// Change the number of viewers in comparison modes
   /// It creates views if needed.

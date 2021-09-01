@@ -368,42 +368,32 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // View Toolbar
   //----------------------------------------------------------------------------
   // Populate the View ToolBar with all the layouts of the layout manager
-  QToolButton* layoutButton = new QToolButton(q);
-  layoutButton->setText(qSlicerMainWindow::tr("Layout"));
-  layoutButton->setMenu(this->LayoutMenu);
-  layoutButton->setPopupMode(QToolButton::InstantPopup);
+  this->LayoutButton = new QToolButton(q);
+  this->LayoutButton->setText(qSlicerMainWindow::tr("Layout"));
+  this->LayoutButton->setMenu(this->LayoutMenu);
+  this->LayoutButton->setPopupMode(QToolButton::InstantPopup);
 
-  layoutButton->setDefaultAction(this->ViewLayoutConventionalAction);
+  this->LayoutButton->setDefaultAction(this->ViewLayoutConventionalAction);
 
-  QObject::connect(this->LayoutMenu, SIGNAL(triggered(QAction*)),
-                   layoutButton, SLOT(setDefaultAction(QAction*)));
   QObject::connect(this->LayoutMenu, SIGNAL(triggered(QAction*)),
                    q, SLOT(onLayoutActionTriggered(QAction*)));
 
   QObject::connect(this->menuConventionalQuantitative, SIGNAL(triggered(QAction*)),
-                   layoutButton, SLOT(setDefaultAction(QAction*)));
-  QObject::connect(this->menuConventionalQuantitative, SIGNAL(triggered(QAction*)),
                    q, SLOT(onLayoutActionTriggered(QAction*)));
 
-  QObject::connect(this->menuFourUpQuantitative, SIGNAL(triggered(QAction*)),
-                   layoutButton, SLOT(setDefaultAction(QAction*)));
   QObject::connect(this->menuFourUpQuantitative, SIGNAL(triggered(QAction*)),
                    q, SLOT(onLayoutActionTriggered(QAction*)));
 
   QObject::connect(this->menuOneUpQuantitative, SIGNAL(triggered(QAction*)),
-                   layoutButton, SLOT(setDefaultAction(QAction*)));
-  QObject::connect(this->menuOneUpQuantitative, SIGNAL(triggered(QAction*)),
                    q, SLOT(onLayoutActionTriggered(QAction*)));
 
   QObject::connect(this->menuThreeOverThreeQuantitative, SIGNAL(triggered(QAction*)),
-                   layoutButton, SLOT(setDefaultAction(QAction*)));
-  QObject::connect(this->menuThreeOverThreeQuantitative, SIGNAL(triggered(QAction*)),
                    q, SLOT(onLayoutActionTriggered(QAction*)));
 
-  this->ViewToolBar->addWidget(layoutButton);
+  this->ViewToolBar->addWidget(this->LayoutButton);
   QObject::connect(this->ViewToolBar,
                    SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
-                   layoutButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
+                   this->LayoutButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 
   //----------------------------------------------------------------------------
   // Viewers Toolbar
@@ -1021,6 +1011,18 @@ void qSlicerMainWindow::setLayout(int layout)
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLAbstractViewNode* qSlicerMainWindow::layoutMaximizedViewNode()
+{
+  return qSlicerApplication::application()->layoutManager()->maximizedViewNode();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::setLayoutMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
+{
+  qSlicerApplication::application()->layoutManager()->setMaximizedViewNode(viewNode);
+}
+
+//---------------------------------------------------------------------------
 void qSlicerMainWindow::setLayoutNumberOfCompareViewRows(int num)
 {
   qSlicerApplication::application()->layoutManager()->setLayoutNumberOfCompareViewRows(num);
@@ -1566,6 +1568,7 @@ void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
   if (found && !action->data().isNull())
     {
     this->setLayout(action->data().toInt());
+    this->setLayoutMaximizedViewNode(nullptr);
     }
 }
 
@@ -1578,6 +1581,7 @@ void qSlicerMainWindow::onLayoutCompareActionTriggered(QAction* action)
 
   // we need to communicate both the layout change and the number of viewers.
   this->setLayout(d->ViewLayoutCompareAction->data().toInt());
+  this->setLayoutMaximizedViewNode(nullptr);
   this->setLayoutNumberOfCompareViewRows(action->data().toInt());
 }
 
@@ -1590,6 +1594,7 @@ void qSlicerMainWindow::onLayoutCompareWidescreenActionTriggered(QAction* action
 
   // we need to communicate both the layout change and the number of viewers.
   this->setLayout(d->ViewLayoutCompareWidescreenAction->data().toInt());
+  this->setLayoutMaximizedViewNode(nullptr);
   this->setLayoutNumberOfCompareViewColumns(action->data().toInt());
 }
 
@@ -1602,6 +1607,7 @@ void qSlicerMainWindow::onLayoutCompareGridActionTriggered(QAction* action)
 
   // we need to communicate both the layout change and the number of viewers.
   this->setLayout(d->ViewLayoutCompareGridAction->data().toInt());
+  this->setLayoutMaximizedViewNode(nullptr);
   this->setLayoutNumberOfCompareViewRows(action->data().toInt());
   this->setLayoutNumberOfCompareViewColumns(action->data().toInt());
 }
@@ -1612,7 +1618,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
 {
   Q_D(qSlicerMainWindow);
 
-  // Trigger the action associated with the new layout
+  // Update the layout button icon with the current view layout.
 
   // Actions with a menu are ignored, because they are just submenus without
   // data assigned, so they should never be triggered (they could be triggered
@@ -1622,7 +1628,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
     {
     if (!action->menu() && action->data().toInt() == layout)
       {
-      action->trigger();
+      d->LayoutButton->setDefaultAction(action);
       }
     }
 
@@ -1630,7 +1636,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
     {
     if (!action->menu() && action->data().toInt() == layout)
       {
-      action->trigger();
+      d->LayoutButton->setDefaultAction(action);
       }
     }
 
@@ -1638,7 +1644,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
     {
     if (!action->menu() && action->data().toInt() == layout)
       {
-      action->trigger();
+      d->LayoutButton->setDefaultAction(action);
       }
     }
 
@@ -1646,7 +1652,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
     {
     if (!action->menu() && action->data().toInt() == layout)
       {
-      action->trigger();
+      d->LayoutButton->setDefaultAction(action);
       }
     }
 
@@ -1654,7 +1660,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
     {
     if (!action->menu() && action->data().toInt() == layout)
       {
-      action->trigger();
+      d->LayoutButton->setDefaultAction(action);
       }
     }
 }

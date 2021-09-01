@@ -32,6 +32,9 @@ public:
   /// Copy the node's attributes to this object
   void Copy(vtkMRMLNode *node) override;
 
+  /// \brief Reimplemented to reset maximized view node.
+  void Reset(vtkMRMLNode* defaultNode) override;
+
   /// Get/Set for Current layout
   vtkGetMacro(ViewArrangement, int);
   virtual void SetViewArrangement(int);
