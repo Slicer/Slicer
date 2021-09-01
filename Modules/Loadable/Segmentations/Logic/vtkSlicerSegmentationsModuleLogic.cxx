@@ -855,7 +855,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode,
-  std::vector<std::string>& segmentIDs, vtkIdType folderItemId)
+  const std::vector<std::string>& segmentIDs, vtkIdType folderItemId)
 {
   if (!segmentationNode || !segmentationNode->GetScene())
     {
@@ -1038,7 +1038,7 @@ void vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometr
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-  std::vector<std::string>& segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/,
+  std::vector<std::string> segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/,
   int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/, vtkMRMLColorTableNode* exportColorTable/*=nullptr*/)
 {
   if (!segmentationNode)
@@ -1875,7 +1875,7 @@ bool vtkSlicerSegmentationsModuleLogic::GetSegmentClosedSurfaceRepresentation(vt
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
   vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID, int mergeMode/*=MODE_REPLACE*/, const int extent[6]/*=0*/,
-    bool minimumOfAllSegments/*=false*/, std::vector<std::string> segmentIdsToOverwrite/*={}*/)
+    bool minimumOfAllSegments/*=false*/, const std::vector<std::string>& segmentIdsToOverwrite/*={}*/)
 {
   if (!segmentationNode)
     {
@@ -2078,7 +2078,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToStlFiles(std::string destinationFolder,
-  vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale, bool merge)
+  vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentIDs, bool lps, double sizeScale, bool merge)
 {
   if (!segmentationNode)
     {
@@ -2108,7 +2108,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
     {
     vtkNew<vtkAppendPolyData> appendPolyData;
 
-    for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
       {
       vtkNew<vtkPolyData> segmentPolyData;
       bool polyDataAvailable = vtkSlicerSegmentationsModuleLogic::GetSegmentClosedSurfaceRepresentation(
@@ -2150,7 +2150,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
     }
   else
     {
-    for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
       {
       vtkNew<vtkPolyData> segmentPolyData;
       bool polyDataAvailable = vtkSlicerSegmentationsModuleLogic::GetSegmentClosedSurfaceRepresentation(
@@ -2195,7 +2195,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToObjFile(std::string destinationFolder,
-  vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale)
+  vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentIDs, bool lps, double sizeScale)
 {
   if (!segmentationNode)
     {
@@ -2209,7 +2209,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentatio
   vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer.GetPointer());
 
-  for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
     vtkNew<vtkPolyData> segmentPolyData;
     bool polyDataAvailable = vtkSlicerSegmentationsModuleLogic::GetSegmentClosedSurfaceRepresentation(
@@ -2602,7 +2602,7 @@ bool vtkSlicerSegmentationsModuleLogic::GetSharedSegmentIDsInMask(
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ReconvertAllRepresentations(vtkMRMLSegmentationNode* segmentationNode, const
-  std::vector<std::string>& segmentIDs/*={}*/)
+  const std::vector<std::string>& segmentIDs/*={}*/)
 {
   if (!segmentationNode)
     {

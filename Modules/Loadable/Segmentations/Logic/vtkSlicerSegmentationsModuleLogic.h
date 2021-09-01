@@ -149,7 +149,7 @@ public:
   /// \param segmentIds List of segment IDs to export
   /// \param folderItemId Subject hierarchy folder item ID to export the segments to
   static bool ExportSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode,
-    std::vector<std::string>& segmentIDs, vtkIdType folderItemId);
+    const std::vector<std::string>& segmentIDs, vtkIdType folderItemId);
 
   /// Export multiple segments into a folder, a model node from each segment
   /// \param segmentationNode Segmentation node from which the the segments are exported
@@ -175,7 +175,7 @@ public:
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
   /// \param extentComputationMode If referenceVolumeNode is not specified then labelmap extents will be determined based on this value.
   ///   By default, the minimum necessary size is used. Set value to vtkSegmentation::EXTENT_REFERENCE_GEOMETRY to use reference geometry extent.
-  static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs,
+  static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentIDs,
     vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr,
     int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, vtkMRMLColorTableNode* colorTableNode = nullptr);
 
@@ -364,7 +364,7 @@ public:
     MODE_MERGE_MASK
     };
   static bool SetBinaryLabelmapToSegment(vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID,
-    int mergeMode=MODE_REPLACE, const int extent[6]=nullptr, bool minimumOfAllSegments=false, std::vector<std::string> segmentIdsToOverwrite={});
+    int mergeMode=MODE_REPLACE, const int extent[6]=nullptr, bool minimumOfAllSegments=false, const std::vector<std::string>& segmentIdsToOverwrite={});
 
   /// Assign terminology to segments in a segmentation node based on the labels of a labelmap node. Match is made based on the
   /// 3dSlicerLabel terminology type attribute. If the terminology context does not contain that attribute, match cannot be made.
@@ -453,9 +453,9 @@ protected:
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
 
   static bool ExportSegmentsClosedSurfaceRepresentationToStlFiles(std::string destinationFolder,
-    vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale, bool merge);
+    vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentIDs, bool lps, double sizeScale, bool merge);
   static bool ExportSegmentsClosedSurfaceRepresentationToObjFile(std::string destinationFolder,
-    vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale);
+    vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentIDs, bool lps, double sizeScale);
 
   /// Generate a safe file name from a given string.
   /// The method is in this logic so that it does not cause confusion throughout Slicer
