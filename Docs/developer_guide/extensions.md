@@ -161,6 +161,16 @@ The extension server is built so that organizations can set up and maintain thei
 
 Until August 2021, a Midas-based server at `http://slicer.kitware.com/midas3` was used. This server is not online anymore, as it was not feasible to perform all software updates that would have kept it secure.
 
+## Extensions Index
+
+The ExtensionsIndex is a repository containing a list of [extension description files](#extension-description-file) `*.s4ext` used by the Slicer [Extensions build system](#extensions-build-system) to build, test, package and upload extensions on the [extensions server](#extensions-server).
+
+The ExtensionsIndex is hosted on GitHub: <https://github.com/Slicer/ExtensionsIndex>
+
+Each branch of the repository contains extension descrtiption files that corresponds to the same branch in the Slicer repository. For example, `master` branch contains descriptions for Slicer `master` branch, and `4.11` branch contains extension descripions for Slicer's `4.11` branch.
+
+Extension developers have to make sure that the extension description in each branch of the Extensions index is compatible with the corresponding Slicer version. Extension developers often create the same branches (`master`, `4.11`, `4.13`, ...) in their repository and they specify this branch name in the extensions descriptor file.
+
 ## Frequently asked questions
 
 ### Can an extension contain different types of modules?
@@ -172,16 +182,6 @@ Yes. Extensions are used to package together all types of Slicer modules.
 Assuming your extension is named `AwesomeTool`, generally, we suggest to name the extension repository `SlicerAwesomeTool`. Doing so will minimize confusion by clearly stating that the code base is associated with Slicer.
 
 We suggest to use the `Slicer` prefix in the extension name, too, when the extension is a Slicer interface to some third-party library (such as SlicerOpenIGTLink, SlicerElastix, SlicerANTs SlicerOpenCV).
-
-### What is the Extensions Index?
-
-The ExtensionsIndex is a repository containing a list of [extension description files](#extension-description-file) `*.s4ext` used by the Slicer [Extensions build system](#extensions-build-system) to build, test, package and upload extensions on the [extensions server](#extensions-server).
-
-The ExtensionsIndex is hosted on GitHub: <https://github.com/Slicer/ExtensionsIndex>
-
-Each branch of the repository contains extension descrtiption files that corresponds to the same branch in the Slicer repository. For example, `master` branch contains descriptions for Slicer `master` branch, and `4.11` branch contains extension descripions for Slicer's `4.11` branch.
-
-Extension developers have to make sure that the extension description in each branch of the Extensions index is compatible with the corresponding Slicer version. Extension developers often create the same branches (`master`, `4.11`, `4.13`, ...) in their repository and they specify this branch name in the extensions descriptor file.
 
 ### Where can I find the extension templates?
 
