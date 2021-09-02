@@ -164,7 +164,7 @@ public:
   void ResampleCurveWorld(double controlPointDistance);
 
   /// Resample control points to have equal distances in the node's coordinate system.
-  // If pedigreeIdsArray is specified then the method returns the fractional point index of the original point for each new point.\
+  // If pedigreeIdsArray is specified then the method returns the fractional point index of the original point for each new point.
   // Fractional point index is a value between the point indices of the two original points it was between, the fractional part
   // specifies the distance from those two points. It can be used for interpolating point data.
   static bool ResamplePoints(vtkPoints* originalPoints, vtkPoints* interpolatedPoints,

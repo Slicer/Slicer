@@ -1038,7 +1038,7 @@ void vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometr
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-  std::vector<std::string> segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/,
+  const std::vector<std::string> &segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/,
   int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/, vtkMRMLColorTableNode* exportColorTable/*=nullptr*/)
 {
   if (!segmentationNode)
@@ -2601,7 +2601,7 @@ bool vtkSlicerSegmentationsModuleLogic::GetSharedSegmentIDsInMask(
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ReconvertAllRepresentations(vtkMRMLSegmentationNode* segmentationNode, const
+bool vtkSlicerSegmentationsModuleLogic::ReconvertAllRepresentations(vtkMRMLSegmentationNode* segmentationNode,
   const std::vector<std::string>& segmentIDs/*={}*/)
 {
   if (!segmentationNode)
