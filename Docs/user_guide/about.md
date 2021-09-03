@@ -85,14 +85,17 @@ If you find Slicer is helpful like the community please get involved. You don't 
 
 ### Funding Sources
 
-Many of the activities around the Slicer effort are made possible through funding from public and private sources. The National Institutes of Health of the USA is a major contributor through a variety of competitive grants and contracts.
+Many of the activities around the Slicer effort are made possible through funding from public and private sources. The National Institutes of Health of the USA is a major contributor through a variety of competitive grants and contracts. Funding sources that contribute to development of Slicer core or extensions include:
 
 |Grant Number|Project Name|Grant PIs|Start Date|End Date|Title|
 |------------|------------|---------|----------|--------|-----|
+|[1R01HL153166-01](https://projectreporter.nih.gov/project_info_description.cfm?aid=10029738&icde=51006191)|Computer Modeling of the Tricuspid Valve in HLHS|Matthew Jolley|2021-06-30|2025-06-30|Computer Modeling of the Tricuspid Valve in Hypoplastic Left Heart Syndrome|
 |[CZI EOSS 4](https://chanzuckerberg.com/eoss/proposals/3d-slicer-in-my-language-internationalization-and-usability-improvements/)   |Slicer internationalization and usability|Pujol, Sonia|2021-09-01|2023-09-01   |3D Slicer in My Language: Internationalization and Usability Improvements|
+|CANARIE RS3-036|SlicerAIGT|Fichtinger, Gabor|2020-10-01|2023-03-31|Develop free open source research software for AI-powered image guided therapy on Slicer platform|
 |[R44DK115332](https://www.sbir.gov/sbirsearch/detail/1683213)|Renal Biopsy            |Enquobahrie, Andinet A.|2019-08-13|2021-07-31|Advanced virtual simulator for real-time ultrasound-guided renal biopsy training|
 |[R01EB025212](https://govtribe.com/award/federal-grant-award/project-grant-r01eb025212)|Software annotation     |Enquobahrie, Andinet A.|2019-07-02|2021-03-31|Software for Practical Annotation and Exchange of Virtual Anatomy|
-|[1R01HL153166-01](https://projectreporter.nih.gov/project_info_description.cfm?aid=10029738&icde=51006191)|Computer Modeling of the Tricuspid Valve in HLHS|Matthew Jolley|2021-06-30|2025-06-30|Computer Modeling of the Tricuspid Valve in Hypoplastic Left Heart Syndrome|
+|CANARIE RS319|SlicerIGT|Fichtinger, Gabor|2019-10-01|2020-09-30|Canadian Research Software Infrastructure|
+|CANARIE RS214|SlicerRT|Fichtinger, Gabor|2017-07-01|2020-09-30|Canadian Research Software Infrastructure|
 |NA                       |PediatricValveModeling-SlicerHeart|Matthew Jolley|2015-08-15|2020-08-15|PediatricValveModeling|
 |[2P41EB015898](https://projectreporter.nih.gov/project_info_details.cfm?aid=8855115&icde=27026518)|DiffusionMRI            |Tempany, Clare M|2004-04-01|2020-06-30|Image Guided Therapy Center|
 |[5P41EB015898](https://projectreporter.nih.gov/project_info_description.cfm?aid=9125821&icde=31485478&ddparam=&ddvalue=&ddsub=&cr=2&csb=default&cs=ASC)|National Center for Image Guided Therapy|Clare Tempany|2004-04-01|2020-06-30|Use of Slicer in a wide array of image-guided therapy research for prostate cancer, neurosurgery, and image naviation|
@@ -116,8 +119,8 @@ Many of the activities around the Slicer effort are made possible through fundin
 |[2R42CA167907](https://projectreporter.nih.gov/project_info_description.cfm?aid=8979242&icde=27036988&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|PET/CT Calibration Phantom|Kinahan, Paul E|2012-05-01|2017-07-31|Calibrated Methods For Quantitative Pet/Ct Imaging Phase Ii|
 |[R42CA167907](https://projectreporter.nih.gov/project_info_description.cfm?aid=8979242&icde=27036988&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|PET/CT Calibration Phantom|Kinahan, Paul E.|2012-05-01|2017-07-01|Calibrated Methods For Quantitative Pet/Ct Imaging Phase Ii|
 |NA                       |HD_TRACKON              |Tabrizi, Sarah|2012-01-01|2016-12-31|TRACK-ON HD|
-|NA                       |Slicer-RT               |Fichtinger, Gabor|2011-01-01|2016-12-31|Cancer Care Ontario Applied Cancer Research Unit, Canada|
-|NA                       |Slicer-RT               |Jaffray, David|2011-01-01|2016-12-31|Ontario Consortium for Adaptive Interventions in Radiation Oncology, Canada|
+|NA                       |SlicerRT                |Fichtinger, Gabor|2011-01-01|2016-12-31|Cancer Care Ontario Applied Cancer Research Unit, Canada|
+|NA                       |SlicerRT                |Jaffray, David|2011-01-01|2016-12-31|Ontario Consortium for Adaptive Interventions in Radiation Oncology, Canada|
 |NA                       |HD_TRAJECTORY           |Kim, Eun Young|2014-11-01|2016-10-31|Developing a Robust Segmentation Pipeline That Allows for Consistent Trajectory Estimation of HD Gene Positive Individuals Across Multiple Longitudinal MRI Sites|
 |[1R41HD081712](https://projectreporter.nih.gov/project_info_description.cfm?aid=8778815&icde=27036063&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASCIMAGE-GUIDED)|Craniosynostosis        |Linguraru, Marius George|2014-09-26|2016-08-31|Image-Guided Planning System For Skull Correction In Children With Craniosynostos|
 |[5R01NS040068](https://projectreporter.nih.gov/project_info_description.cfm?aid=8338456&icde=27164778&ddparam=&ddvalue=&ddsub=&cr=4&csb=default&cs=ASC)|HD_PREDICT              |Paulsen, Jane|2000-08-01|2016-08-31|Neurobiological Predictors of Huntington's Disease (PREDICT-HD)|
@@ -130,7 +133,7 @@ Many of the activities around the Slicer effort are made possible through fundin
 |[1U01NS083173](https://projectreporter.nih.gov/project_info_description.cfm?aid=8529927&icde=27164835&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|HD_PET                  |Feigin, Andrew|2013-07-01|2016-06-30|Brain Network Imaging: A Novel Biomarker for Preclinical Huntington’s Disease|
 |[1R01CA170665](https://projectreporter.nih.gov/project_info_description.cfm?aid=8384153&icde=27037397&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|[TubeTK](http://tubetk.org)|Dayton, Paul A.|2012-09-01|2016-06-01|Micro-Tumor Detection By Quantifying Tumor-Induced Vascular Abnormalities|
 |[1U01NS083223](https://projectreporter.nih.gov/project_info_description.cfm?aid=8652000&icde=27164795&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|HD_WHITEMATTER          |Westin, Carl-Fredrik|2014-01-01|2015-12-31|Characterization of White Matter in Huntington’s Disease Using Diffusion MRI|
-|NA                       |Slicer-RT               |Fichtinger, Gabor|2010-01-01|2015-12-31|Cancer Care Ontario Research Chair, Canada|
+|NA                       |SlicerRT               |Fichtinger, Gabor|2010-01-01|2015-12-31|Cancer Care Ontario Research Chair, Canada|
 |[1U01NS082083](https://projectreporter.nih.gov/project_info_description.cfm?aid=8462829&icde=27164863&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|HD_FMRI_DWI             |Rao, Stephen Mark|2012-09-26|2015-08-31|Functional Connectivity in Premanifest Huntington’s Disease|
 |[R41CA196565](https://projectreporter.nih.gov/project_info_description.cfm?aid=8905274&icde=27036277&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|Duke Prostate Registration|Palmeri, Mark L. & McCormick, Matthew M.|2015-04-01|2015-04-01|Prostate Cancer Assessment Via Integrated 3D Arfi Elasticity Imaging And Multi-Parametric Mri|
 |[1R43EB016621](https://projectreporter.nih.gov/project_info_description.cfm?aid=8472102&icde=27037328&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|[TubeTK](http://tubetk.org)|Aylward, Stephen R.|2013-05-01|2015-04-01|In-Field Fast Procedure Support And Automation|
