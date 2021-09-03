@@ -15,7 +15,7 @@
   - Create VTK transforms from ITK transforms: VTK transforms can compute their inverse, transform can be changed dynamically, the inverse will be always updated automatically in real-time (this approach is used by Slicer)
   - Invert transform in ITK statically: by converting to displacement field and inverting the displacement field; whenever the forward transform changes, the complete inverse transform has to be computed again (which is typically very time consuming)
   - Avoid inverse non-linear transforms: make sure that non-linear transforms are only set as FromParent
-- Transforms module in Slicer shows linear transform matrix values "to parent" (modeling convention) in RAS coordinate system. Therefore to retrieve the same values from an ITK transforms as shown in Slicer GUI, one has switch between RAS/LPS and modeling/resampling. See example [here](../script_repository/script_repository.md#convert-between-itk-and-slicer-linear-transforms).
+- Transforms module in Slicer shows linear transform matrix values "to parent" (modeling convention) in RAS coordinate system. Therefore to retrieve the same values from an ITK transforms as shown in Slicer GUI, one has switch between RAS/LPS and modeling/resampling. See example [here](../script_repository.md#convert-between-itk-and-slicer-linear-transforms).
 
 ## Events
 
