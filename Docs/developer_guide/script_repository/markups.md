@@ -279,6 +279,25 @@ for lineNodeName in lineNodeNames:
 ShowAngle()
 ```
 
+### Measure distances of points from a line
+
+Draw a markups line (`L`) and drop markups fiducial points (`F`) in a view then run the following code snippet to compute distances of the points from the line.
+
+```python
+pointsNode = getNode("F")
+lineNode = getNode("L")
+
+# Get fiducial point positions and line endpoints as numpy arrays
+points = slicer.util.arrayFromMarkupsControlPoints(pointsNode)
+line = slicer.util.arrayFromMarkupsControlPoints(lineNode)
+# Compute distance of points from the line
+from numpy import cross
+from numpy.linalg import norm
+for i, point in enumerate(points):
+    d = norm(cross(line[1]-line[0],point-line[0])/norm(line[1]-line[0]))
+    print(f"Point {i}: Position = {point}. Distance from line = {d}.")
+```
+
 ### Set slice position and orientation from 3 markup fiducials
 
 Drop 3 markup points in the scene and copy-paste the code below into the Python console. After this, as you move the markups you’ll see the red slice view position and orientation will be set to make it fit to the 3 points.
