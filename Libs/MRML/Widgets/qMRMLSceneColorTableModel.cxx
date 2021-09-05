@@ -88,7 +88,7 @@ void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
   vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(node);
   if (colorNode && column == 0)
     {
-    if (this->updateGradientFromNode(colorNode))
+    if (this->updateGradientFromNode(colorNode) || item->icon().isNull())
       {
       qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient =
         d->GradientCache[colorNode->GetID()];
@@ -105,10 +105,12 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)co
   Q_ASSERT(node);
   /// TODO: Improve the cache of the pixmaps, right now, they are not shared
   /// between the different qMRMLSceneColorTableModels.
+  bool cached = d->GradientCache.contains(node->GetID());
   qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[node->GetID()];
   if (!node->GetScalarsToColors() ||
-      colorGradient.MTime >= node->GetScalarsToColors()->GetMTime())
+      (cached && colorGradient.MTime >= node->GetScalarsToColors()->GetMTime()))
     {
+    // pixmap is already up-to-date
     return false;
     }
   /// HACK: The node UserDefined is currently garbage and makes the icon
