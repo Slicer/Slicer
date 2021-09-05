@@ -1628,7 +1628,7 @@ QString qSlicerCoreApplication::copyrights()const
     "<table align=\"center\" border=\"0\" width=\"80%\"><tr>"
     "<td align=\"center\"><a href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#license\">Licensing Information</a></td>"
     "<td align=\"center\"><a href=\"https://slicer.org/\">Website</a></td>"
-    "<td align=\"center\"><a href=\"https://www.slicer.org/wiki/Documentation/4.x/Acknowledgments\">Acknowledgments</a></td>"
+    "<td align=\"center\"><a href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#acknowledgments\">Acknowledgments</a></td>"
     "</tr></table>");
   return copyrightsText;
 }
