@@ -505,6 +505,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // usual left/right dockable widget. Since the module panel is typically not a
   // majority of the width dimension, this means the python interactor in the
   // bottom widget area still has a wide aspect ratio.
+  // If application window is narrow then the Python interactor can be docked to the top
+  // to use the full width of the application window.
   q->setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   q->setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 }
