@@ -1295,7 +1295,7 @@ void qMRMLSceneModel::onMRMLSceneDeleted(vtkObject* scene)
   Q_UNUSED(scene);
 #ifndef QT_NO_DEBUG
   Q_D(qMRMLSceneModel);
-  Q_ASSERT(scene == d->MRMLScene);
+  Q_ASSERT(scene == d->MRMLScene.GetPointer());  // GetPointer() is needed because on certain compilers (scene == d->MRMLScene) comparison is ambiguous
 #endif
   this->setMRMLScene(nullptr);
 }
