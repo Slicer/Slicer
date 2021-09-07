@@ -192,6 +192,8 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::toggleVolumeRenderingForCurre
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
     }
+  // Whenever the volume is shown/hidden, volume rendering should be shown as requested by this method.
+  this->setAutoShowIn3DViewsAsVolumeRendering(currentItemID, on);
   this->showVolumeRendering(on, currentItemID, nullptr);
 }
 
@@ -354,6 +356,10 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRendering(bool show
       {
       this->resetFieldOfView(displayNode, viewNode);
       }
+
+    // If the volume is shown using any method (toggle volume rendering option in visibility menu,
+    // drag-and-drop to 3D view, etc.) then we enable the automatic showing of volume rendering.
+    this->setAutoShowIn3DViewsAsVolumeRendering(itemID, true);
     }
 
   return true;
@@ -410,4 +416,29 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showItemInView(vtkIdType item
       }
     return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
     }
+}
+
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyVolumeRenderingPlugin::autoShowIn3DViewsAsVolumeRendering(vtkIdType itemID)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
+    return false;
+    }
+  return (QString::fromStdString(shNode->GetItemAttribute(itemID, "VolumeRendering.AutoShowIn3DViewsAsVolumeRendering")).toUpper() != QString("FALSE"));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumeRenderingPlugin::setAutoShowIn3DViewsAsVolumeRendering(vtkIdType itemID, bool autoShow)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
+    return;
+    }
+  shNode->SetItemAttribute(itemID, "VolumeRendering.AutoShowIn3DViewsAsVolumeRendering", autoShow ? "true" : "false");
 }

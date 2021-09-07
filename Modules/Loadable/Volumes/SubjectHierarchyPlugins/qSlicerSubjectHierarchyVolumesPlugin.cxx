@@ -33,6 +33,7 @@
 
 // MRML includes
 #include <vtkMRMLLabelMapVolumeNode.h>
+#include <vtkMRMLLabelMapVolumeDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
@@ -478,7 +479,12 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
   qSlicerSubjectHierarchyAbstractPlugin* volumeRenderingPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("VolumeRendering");
   vtkNew<vtkIdList> allShItemIds;
   allShItemIds->InsertNextId(shItemId);
-  if (volumeRenderingPlugin)
+  // By default we do not show volume rendering, only if it is explicitly enabled, because it is resource-intensive and may require non-trivial setup.
+  // Since this module has no access to volumeRenderingPlugin->autoShowIn3DViewsAsVolumeRendering() method,
+  // we need to access the flag by directly reading the subject hierarchy item attribute.
+  bool autoShowVolumeRendering = QString::fromStdString(
+    shNode->GetItemAttribute(shItemId, "VolumeRendering.AutoShowIn3DViewsAsVolumeRendering")).toUpper() != QString("FALSE");
+  if (volumeRenderingPlugin && autoShowVolumeRendering)
     {
     std::vector<vtkMRMLNode*> allViewNodes;
     scene->GetNodesByClass("vtkMRMLViewNode", allViewNodes);
@@ -490,9 +496,10 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
         {
         continue;
         }
-      if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode))
+      if (vtkMRMLVolumeDisplayNode::SafeDownCast(displayNode))
         {
-        // visibility in slice views is managed separately
+        // we only manage existing volume rendering display nodes here
+        // (we don't want to show volume rendering until volume rendering has been explicitly enabled)
         continue;
         }
       for (vtkMRMLNode* node : allViewNodes)
