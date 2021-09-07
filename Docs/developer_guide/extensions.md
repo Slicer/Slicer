@@ -9,13 +9,129 @@ If you have developed a script or module that you would like to share with other
 - Scan through the [user](../user_guide/extensions_manager) and [developer](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ/Extensions) extension FAQs
 - Inform a community about your plans on the [Slicer forum](https://discourse.slicer.org) to get information about potential parallel efforts (other developers may already work on a similar idea and you could join or build on each other's work), past efforts (related tools might have been available in earlier Slicer versions or in other software that you may reuse), and get early feedback from prospective users. You may also seek advice on the name of your extension and how to organize features into modules. All these can save you a lot of time in the long term.
 - If you have not done already, use the [Extension Wizard module](https://www.slicer.org/wiki/Documentation/Nightly/Developers/ExtensionWizard) in Slicer to create an extension that will contain your module(s).
-- If developing [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python): [build Slicer application](build_instructions/index.md) in "Release" mode.
-- Upload source code of your extension to a publicly available repository. It is recommended to start the repository name with "Slicer" (to make Slicer extensions easier to identify) followed by your extension name (for example, "Sequences" extension is stored in "SlicerSequences" repository). However, this is not a mandatory requirement. If you have a compelling reason not to use Slicer prefix, please make a note while making the pull request. See more requirements in the [new extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
-  - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://help.github.com/articles/set-up-git#set-up-git).
-- If developing an extension that contains [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python):
-  - [Build your extension](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ/Extensions#How_to_build_an_extension_.3F)
-  - Build the `PACKAGE` target to create a package file.
-  - Test your extension by installing the created package file using the Extensions Manager.
+- If developing [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python):
+  - [build Slicer application](build_instructions/index.md).
+  - [build your extension](#build-an-extension)
+
+### Build an extension
+
+:::{note}
+
+To build extensions that contain modules implemented in C++, you need to [build Slicer from source](build_instructions/index.md) on your machine; they cannot be built against a binary download.
+If developing modules in Python only, then it is not necessary to build the extension.
+
+:::
+
+Assuming that the source code of your extension is located in folder `MyExtension`, an extension can be built by the following steps.
+
+#### Linux and macOS
+
+Start a terminal.
+
+```bash
+$ cd ~/D
+$ mkdir MyExtension-debug
+$ cd MyExtension-debug
+$ cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DSlicer_DIR:PATH=/path/to/Slicer-SuperBuild-Debug/Slicer-build ../MyExtension
+$ make
+```
+
+##### CMAKE_OSX_ variables
+
+On macOS, the extension must be configured specifying `CMAKE_OSX_*` variables matching the one used to configure Slicer: `-DCMAKE_OSX_ARCHITECTURES:STRING=x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=/same/as/Slicer -DCMAKE_OSX_SYSROOT:PATH=SameAsSlicer`
+
+Instead of manually setting these variables, within your extension, including the <code>ConfigurePrerequisites</code> component before the project statement should ensure it uses the same CMAKE_OSX_* variables as Slicer:
+
+```txt
+find_package(Slicer COMPONENTS ConfigurePrerequisites REQUIRED)
+
+project(Foo)
+
+[...]
+
+find_package(Slicer REQUIRED)
+include(${Slicer_USE_FILE})
+
+[...]
+```
+
+For more details, see [here](https://github.com/Slicer/Slicer/blob/75fc96bf05e65659eb5204f47b5205442cc6fd8e/CMake/SlicerConfig.cmake.in#L10-L38).
+
+#### Windows
+
+Run `CMake (cmake-gui)` from the Windows Start menu.
+
+- Select source and build directory
+- Click `Configure`
+- Select generator (just accept the default if you only have one compiler toolset installed)
+- Choose to create build directory if asked
+- The configuration is expected to display an error message due to `Slicer_DIR` variable not specified yet.
+- Specify `Slicer_DIR` by replacing `Slicer_DIR-NOTFOUND` by the Slicer inner-build folder (for example `c:/D/S4D/Slicer-build`).
+- Click `Configure`. No errors should be displayed.
+- Click `Generate` button.
+- Click `Open project` button to open `MyExtension.sln` in Visual Studio.
+- Select build configuration (Debug, Release, ...) that matches the build configuration of the chosen Slicer build.
+- In the menu choose Build / Build Solution.
+
+### Test an extension
+
+If the extension is not built, then all source code folders that contain module .py files must be added to the additional module paths.
+
+If the extension is built, then (assuming your extension has been built into folder `MyExtension-debug`), modules in an extension can be tested by adding the module folders to the additional module paths in Slicer:
+- `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-scripted-modules`
+- `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules`
+- `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules`
+
+Automatic tests of your extension can be launched by following the instructions below.
+
+#### Linux and macOS
+
+Start a terminal.
+
+```bash
+$ ctest -j<NUMBEROFCORES>
+```
+
+#### Windows
+
+##### Run all tests
+
+Open a command prompt.
+
+```text
+cd C:\path\to\MyExtension-debug
+"c:\Program Files\CMake\bin\ctest.exe" -C Release -V
+```
+
+Replace `Release` with the build mode of your extension build (`Debug`, `Release`, ...).
+
+##### To debug a test
+
+- Launch Visual Studio from the Command Line Prompt: `C:\D\S4D\Slicer-build\Slicer.exe --VisualStudio --launcher-no-splash --launcher-additional-settings C:\path\to\MyExtension-debug\AdditionalLauncherSettings.ini C:\path\to\MyExtension-debug\MyExtension.sln`
+- Find the project of the test you want to debug (e.g., `qSlicerMODULE_NAMEModuleGenericCxxTests`).
+- Go to the project debugging properties (right-click -> Properties, then Configuration Properties / Debugging).
+- In `Command Arguments`, type the name of the test you want to run (e.g., `qSlicerMODULE_NAMEModuleGenericTest`).
+- If the test takes arguments, enter the arguments after the test name in `Command Arguments`.
+- Set the project as the StartUp Project (right-click -> Set As StartUp Project).
+- Start debugging (F5).
+
+### Create an extension package
+
+Assuming your extension has been built into folder `MyExtension-release` (redistributable packages must be built in release mode), this could be achieved doing:
+
+#### Linux and macOS
+
+Start a terminal.
+
+```bash
+$ make package
+```
+
+#### Windows
+
+- Open `MyExtension.sln` in Visual Studio.
+- Right-click on `PACKAGES` project, then select `Build`.
+
 
 ## Documentation
 
@@ -33,17 +149,22 @@ Thumbnails to YouTube videos can be generated by downloading the image from [her
 
 ## Distributing an extension
 
-If your extension is ready for distribution (you have completed [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension)) then submit it to the Slicer Extensions Index:
+- Upload source code of your extension to a publicly available repository. It is recommended to start the repository name with "Slicer" (to make Slicer extensions easier to identify) followed by your extension name (for example, "Sequences" extension is stored in "SlicerSequences" repository). However, this is not a mandatory requirement. If you have a compelling reason not to use Slicer prefix, please make a note while making the pull request. See more requirements in the [new extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
+  - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://help.github.com/articles/set-up-git#set-up-git).
+- If developing an extension that contains [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python):
+  - Build the `PACKAGE` target to create a package file.
+  - Test your extension by installing the created package file using the Extensions Manager.
+- Complete the [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension)) then submit it to the Slicer Extensions Index:
+- Submit the extension to the Extensions Index:
+  - Fork ExtensionIndex repository on GitHub by clicking ''Fork'' button on the [Slicer Extensions Index](https://github.com/Slicer/ExtensionsIndex) page
+  - Create an [extension description (s4ext) file](#extension-description-file)
+    - If the extension was built then you can find the automatically generated extension description in the build folder
+    - If the extension was not built then create the extension description file manually, using a text editor
+  - Add your .s4ext file to your forked repository: it can be done using a git client or simply by clicking ''Upload files'' button
+  - Create a pull request: by clicking ''Create pull request'' button
+  - Follow the instructions in the pull request template
 
-- Fork ExtensionIndex repository on GitHub by clicking ''Fork'' button on the [Slicer Extensions Index](https://github.com/Slicer/ExtensionsIndex) page
-- Create an [extension description (s4ext) file](#extension-description-file)
-  - If the extension was built then you can find the automatically generated extension description in the build folder
-  - If the extension was not built then create the extension description file manually, using a text editor
-- Add your .s4ext file to your forked repository: it can be done using a git client or simply by clicking ''Upload files'' button
-- Create a pull request: by clicking ''Create pull request'' button
-- Follow the instructions in the pull request template
-
-## Continuous Integration
+## Continuous integration
 
 If you shared your extension by using the ExtensionWizard, make sure you know about the Slicer testing dashboard:
 - [Dashboard for Slicer Stable Releases](http://slicer.cdash.org/index.php?project=Slicer4)
@@ -188,118 +309,6 @@ We suggest to use the `Slicer` prefix in the extension name, too, when the exten
 The module and extension templates are available in the Slicer source tree: <https://github.com/Slicer/Slicer/tree/master/Utilities/Templates/>
 
 Using the [Extension Wizard module](https://www.slicer.org/wiki/Documentation/Nightly/Developers/ExtensionWizard), developers can easily create a new extension without having to copy, rename and update manually every files.
-
-### How to build an extension?
-
-:::{note}
-
-To build extensions that contain modules implemented in C++, you need to [build Slicer from source](build_instructions/index.md) on your machine; they cannot be built against a binary download.
-If developing modules in Python only, then it is not necessary to build the extension.
-
-:::
-
-Assuming that the source code of your extension is located in folder `MyExtension`, an extension can be built by the following steps.
-
-#### Linux and macOS
-
-Start a terminal.
-
-```bash
-$ mkdir MyExtension-build
-$ cd MyExtension-build
-$ cmake -DCMAKE_BUILD_TYPE:STRING=Release -DSlicer_DIR:PATH=/path/to/Slicer-Superbuild/Slicer-build ../MyExtension
-$ make
-```
-
-##### CMAKE_OSX_ variables
-
-On macOS, the extension must be configured specifying `CMAKE_OSX_*` variables matching the one used to configure Slicer: `-DCMAKE_OSX_ARCHITECTURES:STRING=x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=/same/as/Slicer -DCMAKE_OSX_SYSROOT:PATH=SameAsSlicer`
-
-Instead of manually setting these variables, within your extension, including the <code>ConfigurePrerequisites</code> component before the project statement should ensure it uses the same CMAKE_OSX_* variables as Slicer:
-
-```txt
-find_package(Slicer COMPONENTS ConfigurePrerequisites REQUIRED)
-
-project(Foo)
-
-[...]
-
-find_package(Slicer REQUIRED)
-include(${Slicer_USE_FILE})
-
-[...]
-```
-
-For more details, see [https://github.com/Slicer/Slicer/blob/75fc96bf05e65659eb5204f47b5205442cc6fd8e/CMake/SlicerConfig.cmake.in#L10-L38 here].
-
-#### Windows
-
-Run `CMake (cmake-gui)` from the Windows Start menu.
-
-- Select source and build directory
-- Click `Configure`
-- Select generator (just accept the default if you only have one compiler toolset installed)
-- Choose to create build directory if asked
-- The configuration is expected to display an error message due to `Slicer_DIR` variable not specified yet.
-- Specify `Slicer_DIR` by replacing `Slicer_DIR-NOTFOUND` by the Slicer inner-build folder (for example `c:/D/S4D/Slicer-build`).
-- Click `Configure`. No errors should be displayed.
-- Click `Generate` button.
-- Click `Open project` button to open `MyExtension.sln` in Visual Studio.
-- Select build configuration (Debug, Release, ...) that matches the build configuration of the chosen Slicer build.
-- In the menu choose Build / Build Solution.
-
-### How to run extension tests?
-
-Assuming your extension has been built into folder `MyExtension-build`, your extension can be tested by following the instructions below.
-
-#### Linux and macOS
-
-Start a terminal.
-
-```bash
-$ ctest -j<NUMBEROFCORES>
-```
-
-#### Windows
-
-
-##### Run all tests
-
-Open a command prompt.
-
-```text
-cd C:\path\to\MyExtension-build
-"c:\Program Files\CMake\bin\ctest.exe" -C Release -V
-```
-
-Replace `Release` with the build mode of your extension build (`Debug`, `Release`, ...).
-
-##### To debug a test
-
-- Launch Visual Studio from the Command Line Prompt: `C:\D\S4D\Slicer-build\Slicer.exe --VisualStudio --launcher-no-splash --launcher-additional-settings C:\path\to\MyExtension-build\AdditionalLauncherSettings.ini C:\path\to\MyExtension-build\MyExtension.sln`
-- Find the project of the test you want to debug (e.g., `qSlicerMODULE_NAMEModuleGenericCxxTests`).
-- Go to the project debugging properties (right-click -> Properties, then Configuration Properties / Debugging).
-- In `Command Arguments`, type the name of the test you want to run (e.g., `qSlicerMODULE_NAMEModuleGenericTest`).
-- If the test takes arguments, enter the arguments after the test name in `Command Arguments`.
-- Set the project as the StartUp Project (right-click -> Set As StartUp Project).
-- Start debugging (F5).
-
-### How to package an extension?
-
-Assuming your extension has been built into folder `MyExtension-build`, this could be achieved doing:
-
-#### Linux and macOS
-
-Start a terminal.
-
-```bash
-$ make package
-```
-
-#### Windows
-
-- Open `MyExtension.sln` in Visual Studio.
-- Right-click on `PACKAGES` project, then select `Build`.
 
 ### How are Superbuild extension packaged?
 
