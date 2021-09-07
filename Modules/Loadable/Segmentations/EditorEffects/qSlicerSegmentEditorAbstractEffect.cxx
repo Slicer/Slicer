@@ -356,15 +356,14 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     vtkNew<vtkOrientedImageData> maskWithCurrentSegment;
     maskWithCurrentSegment->DeepCopy(maskImage);
 
-    bool paintInsideSegments = this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideAllSegments ||
-      this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments ||
-      this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment;
     vtkSmartPointer<vtkOrientedImageData> segmentLayerLabelmap =
       vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetMasterRepresentationName()));
-    if (segmentLayerLabelmap && paintInsideSegments)
+    if (segmentLayerLabelmap
+      && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
+      && modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove)
       {
-      // If we are painting inside a segment, some effects can modify the current segment outside the masking region (ex. erase effect can add-back regions)
-      // Add the current segment to the editable area
+      // If we are painting inside a segment, the erase effect can modify the current segment outside the masking region by adding back regions
+      // in the current segment. Add the current segment to the editable area
       vtkNew<vtkImageThreshold> segmentInverter;
       segmentInverter->SetInputData(segmentLayerLabelmap);
       segmentInverter->SetInValue(m_EraseValue);
