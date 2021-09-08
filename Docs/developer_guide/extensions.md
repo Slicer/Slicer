@@ -2,7 +2,7 @@
 
 Developers can create extensions to provide additional features to users. See an overview of extensions in the [Extensions manager page](../user_guide/extensions_manager).
 
-## How to create an extension?
+## Create an extension
 
 If you have developed a script or module that you would like to share with others then it is recommended to submit it to the Slicer Extensions Index. Indexed extensions get listed in the Extensions Manager in Slicer and user can install them by a few mouse clicks.
 
@@ -13,7 +13,7 @@ If you have developed a script or module that you would like to share with other
   - [build Slicer application](build_instructions/index.md).
   - [build your extension](#build-an-extension)
 
-### Build an extension
+## Build an extension
 
 :::{note}
 
@@ -24,19 +24,18 @@ If developing modules in Python only, then it is not necessary to build the exte
 
 Assuming that the source code of your extension is located in folder `MyExtension`, an extension can be built by the following steps.
 
-#### Linux and macOS
+### Linux and macOS
 
 Start a terminal.
 
 ```bash
-$ cd ~/D
 $ mkdir MyExtension-debug
 $ cd MyExtension-debug
 $ cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DSlicer_DIR:PATH=/path/to/Slicer-SuperBuild-Debug/Slicer-build ../MyExtension
 $ make
 ```
 
-##### CMAKE_OSX_ variables
+#### CMAKE_OSX_ variables
 
 On macOS, the extension must be configured specifying `CMAKE_OSX_*` variables matching the one used to configure Slicer: `-DCMAKE_OSX_ARCHITECTURES:STRING=x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=/same/as/Slicer -DCMAKE_OSX_SYSROOT:PATH=SameAsSlicer`
 
@@ -57,7 +56,7 @@ include(${Slicer_USE_FILE})
 
 For more details, see [here](https://github.com/Slicer/Slicer/blob/75fc96bf05e65659eb5204f47b5205442cc6fd8e/CMake/SlicerConfig.cmake.in#L10-L38).
 
-#### Windows
+### Windows
 
 Run `CMake (cmake-gui)` from the Windows Start menu.
 
@@ -73,14 +72,21 @@ Run `CMake (cmake-gui)` from the Windows Start menu.
 - Select build configuration (Debug, Release, ...) that matches the build configuration of the chosen Slicer build.
 - In the menu choose Build / Build Solution.
 
-### Test an extension
+## Test an extension
 
-If the extension is not built, then all source code folders that contain module .py files must be added to the additional module paths.
+### Run Slicer with your custom modules
 
-If the extension is built, then (assuming your extension has been built into folder `MyExtension-debug`), modules in an extension can be tested by adding the module folders to the additional module paths in Slicer:
-- `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-scripted-modules`
-- `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules`
-- `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules`
+To test an extension, you need to specify location(s) where Slicer should look for additional modules.
+
+- If the extension is not built: add all source code folders that contain module .py files to "additional module paths" in modules section in application settings.
+- If the extension is built:
+  - Option A: start the application using the `SlicerWithMyExtension` executable in your build directory. This starts Slicer, specifying additional module paths via command-line arguments.
+  - Option B: specify additional module paths manually in application settings. Assuming your extension has been built into folder `MyExtension-debug`, add these module folders (if they exist) to the additional module paths in Slicer's application settings:
+    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-scripted-modules`
+    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules`
+    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules`
+
+### Run automatic tests
 
 Automatic tests of your extension can be launched by following the instructions below.
 
@@ -115,56 +121,7 @@ Replace `Release` with the build mode of your extension build (`Debug`, `Release
 - Set the project as the StartUp Project (right-click -> Set As StartUp Project).
 - Start debugging (F5).
 
-### Create an extension package
-
-Assuming your extension has been built into folder `MyExtension-release` (redistributable packages must be built in release mode), this could be achieved doing:
-
-#### Linux and macOS
-
-Start a terminal.
-
-```bash
-$ make package
-```
-
-#### Windows
-
-- Open `MyExtension.sln` in Visual Studio.
-- Right-click on `PACKAGES` project, then select `Build`.
-
-
-## Documentation
-
-Keep documentation with your extension's source code and keep it up-to-date whenever the software changes.
-
-Add at least a README.md file in the root of the source code repository, which describes what the extension is for and how it works. Minimum information that is needed to make your extension usable is described in the [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
-
-Extension documentation examples:
-- [SegmentMesher](https://github.com/lassoan/SlicerSegmentMesher)
-- [SequenceRegistration](https://github.com/moselhy/SlicerSequenceRegistration)
-- [AI-assisted annotation client](https://github.com/NVIDIA/ai-assisted-annotation-client/tree/master/slicer-plugin)
-- [SlicerDMRI](http://dmri.slicer.org/) - large extension documented using Github pages
-
-Thumbnails to YouTube videos can be generated by downloading the image from [here](https://img.youtube.com/vi/your-youtube-video-id/0.jpg) and adding a playback button using [this free service](http://addplaybuttontoimage.way4info.net/) (the second red arrow is recommended).
-
-## Distributing an extension
-
-- Upload source code of your extension to a publicly available repository. It is recommended to start the repository name with "Slicer" (to make Slicer extensions easier to identify) followed by your extension name (for example, "Sequences" extension is stored in "SlicerSequences" repository). However, this is not a mandatory requirement. If you have a compelling reason not to use Slicer prefix, please make a note while making the pull request. See more requirements in the [new extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
-  - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://help.github.com/articles/set-up-git#set-up-git).
-- If developing an extension that contains [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python):
-  - Build the `PACKAGE` target to create a package file.
-  - Test your extension by installing the created package file using the Extensions Manager.
-- Complete the [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension)) then submit it to the Slicer Extensions Index:
-- Submit the extension to the Extensions Index:
-  - Fork ExtensionIndex repository on GitHub by clicking ''Fork'' button on the [Slicer Extensions Index](https://github.com/Slicer/ExtensionsIndex) page
-  - Create an [extension description (s4ext) file](#extension-description-file)
-    - If the extension was built then you can find the automatically generated extension description in the build folder
-    - If the extension was not built then create the extension description file manually, using a text editor
-  - Add your .s4ext file to your forked repository: it can be done using a git client or simply by clicking ''Upload files'' button
-  - Create a pull request: by clicking ''Create pull request'' button
-  - Follow the instructions in the pull request template
-
-## Continuous integration
+### Continuous integration
 
 If you shared your extension by using the ExtensionWizard, make sure you know about the Slicer testing dashboard:
 - [Dashboard for Slicer Stable Releases](http://slicer.cdash.org/index.php?project=Slicer4)
@@ -183,6 +140,55 @@ For example, here is the link to check the status of the `SlicerDMRI` extension:
 If you see red in any of the columns for your extension, click on the hyperlinked number of errors to see the details.
 
 Always check the dashboard after you first introduce your extension, or after you make any changes to the code.
+
+## Create an extension package
+
+Assuming your extension has been built into folder `MyExtension-release` (redistributable packages must be built in release mode), this could be achieved doing:
+
+### Linux and macOS
+
+Start a terminal.
+
+```bash
+$ make package
+```
+
+### Windows
+
+- Open `MyExtension.sln` in Visual Studio.
+- Right-click on `PACKAGES` project, then select `Build`.
+
+
+## Write documentation for an extension
+
+Keep documentation with your extension's source code and keep it up-to-date whenever the software changes.
+
+Add at least a README.md file in the root of the source code repository, which describes what the extension is for and how it works. Minimum information that is needed to make your extension usable is described in the [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
+
+Extension documentation examples:
+- [SegmentMesher](https://github.com/lassoan/SlicerSegmentMesher)
+- [SequenceRegistration](https://github.com/moselhy/SlicerSequenceRegistration)
+- [AI-assisted annotation client](https://github.com/NVIDIA/ai-assisted-annotation-client/tree/master/slicer-plugin)
+- [SlicerDMRI](http://dmri.slicer.org/) - large extension documented using Github pages
+
+Thumbnails to YouTube videos can be generated by downloading the image from [here](https://img.youtube.com/vi/your-youtube-video-id/0.jpg) and adding a playback button using [this free service](http://addplaybuttontoimage.way4info.net/) (the second red arrow is recommended).
+
+## Distribute an extension
+
+- Upload source code of your extension to a publicly available repository. It is recommended to start the repository name with "Slicer" (to make Slicer extensions easier to identify) followed by your extension name (for example, "Sequences" extension is stored in "SlicerSequences" repository). However, this is not a mandatory requirement. If you have a compelling reason not to use Slicer prefix, please make a note while making the pull request. See more requirements in the [new extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
+  - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://help.github.com/articles/set-up-git#set-up-git).
+- If developing an extension that contains [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python):
+  - Build the `PACKAGE` target to create a package file.
+  - Test your extension by installing the created package file using the Extensions Manager.
+- Complete the [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension)) then submit it to the Slicer Extensions Index:
+- Submit the extension to the Extensions Index:
+  - Fork ExtensionIndex repository on GitHub by clicking ''Fork'' button on the [Slicer Extensions Index](https://github.com/Slicer/ExtensionsIndex) page
+  - Create an [extension description (s4ext) file](#extension-description-file)
+    - If the extension was built then you can find the automatically generated extension description in the build folder
+    - If the extension was not built then create the extension description file manually, using a text editor
+  - Add your .s4ext file to your forked repository: it can be done using a git client or simply by clicking ''Upload files'' button
+  - Create a pull request: by clicking ''Create pull request'' button
+  - Follow the instructions in the pull request template
 
 ## Application settings
 
