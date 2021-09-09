@@ -584,6 +584,19 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
     }
   d->EditPropertiesAction->setVisible(editActionVisible);
 
+  // View context menu actions are filtered by enabledViewContextMenuActions for this item.
+  QStringList allowedViewContextMenuActionListForItem = this->allowedViewContextMenuActionNamesForItem(itemID);
+  if (!allowedViewContextMenuActionListForItem.empty())
+    {
+    for (QAction* action : d->ViewContextMenuActions)
+      {
+      if (!allowedViewContextMenuActionListForItem.contains(action->objectName()))
+        {
+        action->setVisible(false);
+        }
+      }
+    }
+
   // Set current item ID for Edit properties action
   d->CurrentItemID = itemID;
 
@@ -772,4 +785,35 @@ QString qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(QMenu* menu, QL
     }
 
   return menuInfo;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginLogic::setAllowedViewContextMenuActionNamesForItem(vtkIdType itemID, const QStringList& actionObjectNames)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->mrmlScene());
+  if (!shNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
+    return;
+    }
+  std::string allowedViewContextMenuActions = actionObjectNames.join(";").toStdString();
+  shNode->SetItemAttribute(itemID, "allowedViewContextMenuActions", allowedViewContextMenuActions);
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerSubjectHierarchyPluginLogic::allowedViewContextMenuActionNamesForItem(vtkIdType itemID)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->mrmlScene());
+  if (!shNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
+    return QStringList();
+    }
+  std::string shNodeEnabledViewContextMenuActions = shNode->GetItemAttribute(itemID, "allowedViewContextMenuActions");
+  if (shNodeEnabledViewContextMenuActions.empty())
+    {
+    return QStringList();
+    }
+  QStringList allowedViewContextMenuActionListForItem = QString::fromStdString(shNodeEnabledViewContextMenuActions).split(";");
+  return allowedViewContextMenuActionListForItem;
 }
