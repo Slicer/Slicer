@@ -41,6 +41,11 @@ if(Slicer_SOURCE_DIR)
   return()
 endif()
 
+if(NOT "${EXTENSION_NAME}" STREQUAL "${PROJECT_NAME}")
+  message(STATUS "Skipping extension packaging: ${PROJECT_NAME} - EXTENSION_NAME [${EXTENSION_NAME}] different from PROJECT_NAME [${PROJECT_NAME}]")
+  return()
+endif()
+
 set(expected_existing_vars EXTENSION_README_FILE EXTENSION_LICENSE_FILE)
 foreach(var ${expected_existing_vars})
   if(NOT EXISTS ${${var}})
