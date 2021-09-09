@@ -87,18 +87,20 @@ If you find Slicer is helpful like the community please get involved. You don't 
 
 Many of the activities around the Slicer effort are made possible through funding from public and private sources. The National Institutes of Health of the USA is a major contributor through a variety of competitive grants and contracts. Funding sources that contribute to development of Slicer core or extensions include:
 
-|Grant Number|Project Name|Grant PIs|Start Date|End Date|Title|
-|------------|------------|---------|----------|--------|-----|
+|Grant Number|Description|Grant PIs|Start Date|End Date|Title|
+|------------|-----------|---------|----------|--------|-----|
 |[NIH 1R01HL153166-01](https://projectreporter.nih.gov/project_info_description.cfm?aid=10029738&icde=51006191)|Computer Modeling of the Tricuspid Valve in HLHS|Matthew Jolley|2021-06-30|2025-06-30|Computer Modeling of the Tricuspid Valve in Hypoplastic Left Heart Syndrome|
 |[CZI EOSS 4](https://chanzuckerberg.com/eoss/proposals/3d-slicer-in-my-language-internationalization-and-usability-improvements/)   |Slicer internationalization and usability|Pujol, Sonia|2021-09-01|2023-09-01   |3D Slicer in My Language: Internationalization and Usability Improvements|
 |[NIH 4P41EB015902](https://projectreporter.nih.gov/project_info_description.cfm?aid=9115586&icde=31485398&ddparam=&ddvalue=&ddsub=&cr=3&csb=default&cs=ASC)|Neuroimage Analysis Center|Ron Kikinis|2013-08-01|2023-08-31|Application of Slicer to image-guided neurosurgery and other applications through steered computatiton and image navigation databases|
 |CANARIE RS3-036|SlicerAIGT|Fichtinger, Gabor|2020-10-01|2023-03-31|Develop free open source research software for AI-powered image guided therapy on Slicer platform|
 |[NIH R01MH112748](https://reporter.nih.gov/search/-oPV-FDakki3bPslkjMUwg/project-details/10053340)|High-accuracy brain segmentation tools|Bouix, Sylvain|2017-12-01|2022-10-31|High Resolution, Comprehensive Atlases of the Human Brain Morphology|
 |[NIH R44DK115332](https://www.sbir.gov/sbirsearch/detail/1683213)|Renal Biopsy            |Enquobahrie, Andinet A.|2019-08-13|2021-07-31|Advanced virtual simulator for real-time ultrasound-guided renal biopsy training|
+|ICEX 0202101723|SlicerVR Collaboration|Juan Ruiz Alzola|2021-01-16|2021-12-31|Sistema Virtual Colaborativa Aplicación Médicas|
 |[NIH R01EB025212](https://govtribe.com/award/federal-grant-award/project-grant-r01eb025212)|Software annotation     |Enquobahrie, Andinet A.|2019-07-02|2021-03-31|Software for Practical Annotation and Exchange of Virtual Anatomy|
 |CANARIE RS319|SlicerIGT|Fichtinger, Gabor|2019-10-01|2020-09-30|Canadian Research Software Infrastructure|
 |CANARIE RS214|SlicerRT|Fichtinger, Gabor|2017-07-01|2020-09-30|Canadian Research Software Infrastructure|
 |CHOP                      |SlicerHeart|Matthew Jolley|2015-08-15|2020-08-15|Pediatric cardiac valve modeling, Children Hospital of Philadelphia|
+|[MAC/1.1b/098](https://mt4sd.ulpgc.es/en/macbioidi-project/)|MACBIOLDI|Juan Ruiz Alzola|2017-01-01|2020-09-30|Medical Technology for Sustainable Development (MedTec4SusDev)|
 |[NIH 2P41EB015898](https://projectreporter.nih.gov/project_info_details.cfm?aid=8855115&icde=27026518)|DiffusionMRI            |Tempany, Clare M|2004-04-01|2020-06-30|Image Guided Therapy Center|
 |[NIH 5P41EB015898](https://projectreporter.nih.gov/project_info_description.cfm?aid=9125821&icde=31485478&ddparam=&ddvalue=&ddsub=&cr=2&csb=default&cs=ASC)|National Center for Image Guided Therapy|Clare Tempany|2004-04-01|2020-06-30|Use of Slicer in a wide array of image-guided therapy research for prostate cancer, neurosurgery, and image naviation|
 |[NIH 1R01EB021391](https://projectreporter.nih.gov/project_info_description.cfm?aid=9123966&icde=31459429&ddparam=&ddvalue=&ddsub=&cr=2&csb=default&cs=ASC)|Shape                   |Paniagua, Beatriz|2016-09-19|2020-06-30|SHAPE ANALYSIS TOOLBOX FOR MEDICAL IMAGE COMPUTING PROJECTS|
