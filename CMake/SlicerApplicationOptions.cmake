@@ -44,11 +44,14 @@ endforeach()
 # Terminal support
 #-----------------------------------------------------------------------------
 if(WIN32)
-  option(Slicer_BUILD_WIN32_CONSOLE "Build ${PROJECT_NAME} executable as a console app on windows (allows debug output)" ON)
+  option(Slicer_BUILD_WIN32_CONSOLE "Build ${PROJECT_NAME} executable as a console app on windows (allows capturing console output)" ON)
+  option(Slicer_BUILD_WIN32_CONSOLE_LAUNCHER "Build ${PROJECT_NAME} launcher executable as a console app on windows (displays console at application start)" ON)
 else()
   set(Slicer_BUILD_WIN32_CONSOLE OFF)
+  set(Slicer_BUILD_WIN32_CONSOLE_LAUNCHER OFF)
 endif()
 mark_as_superbuild(Slicer_BUILD_WIN32_CONSOLE:BOOL)
+mark_as_superbuild(Slicer_BUILD_WIN32_CONSOLE_LAUNCHER:BOOL)
 
 #-----------------------------------------------------------------------------
 # Organization name

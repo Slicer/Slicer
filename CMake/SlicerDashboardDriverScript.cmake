@@ -59,14 +59,21 @@ else()
 endif()
 
 if(WIN32)
+  # By default, build a console application so that console output can be capture
+  # by the launcher; but make the launcher a non-console application application
+  # when creating packages to avoid popping up a console window when running Slicer.
   if(NOT DEFINED Slicer_BUILD_WIN32_CONSOLE)
-    if(WITH_PACKAGES)
-      set(Slicer_BUILD_WIN32_CONSOLE OFF)
-    else()
-      set(Slicer_BUILD_WIN32_CONSOLE ON)
-    endif()
+    set(Slicer_BUILD_WIN32_CONSOLE ON)
   endif()
   list(APPEND expected_variables Slicer_BUILD_WIN32_CONSOLE)
+  if(NOT DEFINED Slicer_BUILD_WIN32_CONSOLE_LAUNCHER)
+    if(WITH_PACKAGES)
+      set(Slicer_BUILD_WIN32_CONSOLE_LAUNCHER OFF)
+    else()
+      set(Slicer_BUILD_WIN32_CONSOLE_LAUNCHER ON)
+    endif()
+  endif()
+  list(APPEND expected_variables Slicer_BUILD_WIN32_CONSOLE_LAUNCHER)
 endif()
 
 if(NOT DEFINED Slicer_USE_VTK_DEBUG_LEAKS)
@@ -104,7 +111,7 @@ if(NOT DEFINED CTEST_BUILD_NAME)
     set(name "${name}-NoCLI")
   endif()
   if(WIN32)
-    if(NOT Slicer_BUILD_WIN32_CONSOLE)
+    if(NOT Slicer_BUILD_WIN32_CONSOLE_LAUNCHER)
       set(name "${name}-NoConsole")
     endif()
   endif()
@@ -466,6 +473,11 @@ CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
       set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
 Slicer_BUILD_WIN32_CONSOLE:BOOL=${Slicer_BUILD_WIN32_CONSOLE}")
     endif()
+
+    if(DEFINED Slicer_BUILD_WIN32_CONSOLE_LAUNCHER)
+    set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
+Slicer_BUILD_WIN32_CONSOLE_LAUNCHER:BOOL=${Slicer_BUILD_WIN32_CONSOLE_LAUNCHER}")
+  endif()
 
     if(DEFINED Slicer_USE_PYTHONQT)
       set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
