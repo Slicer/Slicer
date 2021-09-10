@@ -1143,10 +1143,10 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->fillOutsideRadioButton = new QRadioButton("Fill outside");
 
   d->gridLayout->addWidget(new QLabel("Operation:"), 0, 0);
-  d->gridLayout->addWidget(d->eraseInsideRadioButton, 0, 1);
-  d->gridLayout->addWidget(d->eraseOutsideRadioButton, 0, 2);
-  d->gridLayout->addWidget(d->fillInsideRadioButton, 0, 3);
-  d->gridLayout->addWidget(d->fillOutsideRadioButton, 0, 4);
+  d->gridLayout->addWidget(d->eraseInsideRadioButton, 1, 0);
+  d->gridLayout->addWidget(d->eraseOutsideRadioButton, 2, 0);
+  d->gridLayout->addWidget(d->fillInsideRadioButton, 3, 0);
+  d->gridLayout->addWidget(d->fillOutsideRadioButton, 4, 0);
 
   d->operationGroup = new QButtonGroup(this);
   d->operationGroup->setExclusive(true);
@@ -1163,10 +1163,10 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->circleRadioButton= new QRadioButton("Circle");
   d->rectangleRadioButton= new QRadioButton("Rectangle");
 
-  d->gridLayout->addWidget(new QLabel("Shape:"), 1, 0);
+  d->gridLayout->addWidget(new QLabel("Shape:"), 0, 1);
   d->gridLayout->addWidget(d->freeFormRadioButton, 1, 1);
-  d->gridLayout->addWidget(d->circleRadioButton, 1, 2);
-  d->gridLayout->addWidget(d->rectangleRadioButton, 1, 3);
+  d->gridLayout->addWidget(d->circleRadioButton, 2, 1);
+  d->gridLayout->addWidget(d->rectangleRadioButton, 3, 1);
 
   d->shapeGroup = new QButtonGroup(this);
   d->shapeGroup->setExclusive(true);
@@ -1197,21 +1197,21 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
 
   QLabel* sliceCutModeLabel = new QLabel(tr("Slice cut:"));
   sliceCutModeLabel->setToolTip(tr("Restrict cut region in slice views."));
-  d->gridLayout->addWidget(sliceCutModeLabel, 2, 0);
-  d->gridLayout->addWidget(d->unlimitedRadioButton, 2, 1);
+  d->gridLayout->addWidget(sliceCutModeLabel, 0, 2);
+  d->gridLayout->addWidget(d->unlimitedRadioButton, 1, 2);
   d->gridLayout->addWidget(d->positiveRadioButton, 2, 2);
-  d->gridLayout->addWidget(d->negativeRadioButton, 2, 3);
-  d->gridLayout->addWidget(d->symmetricRadioButton, 2, 4);
-  d->gridLayout->addWidget(d->sliceCutDepthSpinBox, 2, 5);
+  d->gridLayout->addWidget(d->negativeRadioButton, 3, 2);
+  d->gridLayout->addWidget(d->symmetricRadioButton, 4, 2);
+  d->gridLayout->addWidget(d->sliceCutDepthSpinBox, 5, 2);
 
   QLabel* applyToAllVisibleSegmentsLabel = new QLabel(tr("Apply to all segments:"));
   applyToAllVisibleSegmentsLabel->setToolTip(tr("Apply scissor effect to all visible segments from top to bottom. \
                                           After pressing 'Apply': Please be patient - this may be time-consuming. \
                                           Progress will be shown as status message. "));
-  d->gridLayout->addWidget(applyToAllVisibleSegmentsLabel, 3, 0);
-  d->applyToAllVisibleSegmentsCheckBox = new QCheckBox("");
+  d->gridLayout->addWidget(applyToAllVisibleSegmentsLabel, 5, 0);
+  d->applyToAllVisibleSegmentsCheckBox = new QCheckBox(" ");
   d->applyToAllVisibleSegmentsCheckBox->setObjectName(QString::fromUtf8("applyToAllVisibleSegmentsCheckBox"));
-  d->gridLayout->addWidget(d->applyToAllVisibleSegmentsCheckBox, 3, 1);
+  d->gridLayout->addWidget(d->applyToAllVisibleSegmentsCheckBox, 5, 1);
 
   this->addOptionsWidget(d->gridLayout);
 

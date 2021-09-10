@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
+    <width>413</width>
     <height>579</height>
    </rect>
   </property>
@@ -109,12 +109,6 @@
      </property>
      <item>
       <widget class="QPushButton" name="AddSegmentButton">
-       <property name="minimumSize">
-        <size>
-         <width>96</width>
-         <height>0</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Add new empty segment</string>
        </property>
@@ -129,12 +123,6 @@
      </item>
      <item>
       <widget class="QPushButton" name="RemoveSegmentButton">
-       <property name="minimumSize">
-        <size>
-         <width>96</width>
-         <height>0</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Remove selected segment(s)</string>
        </property>
@@ -149,12 +137,6 @@
      </item>
      <item>
       <widget class="ctkMenuButton" name="Show3DButton">
-       <property name="minimumSize">
-        <size>
-         <width>96</width>
-         <height>0</height>
-        </size>
-       </property>
        <property name="text">
         <string> Show 3D</string>
        </property>
@@ -168,18 +150,15 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkMenuButton" name="SwitchToSegmentationsButton">
-       <property name="minimumSize">
-        <size>
-         <width>104</width>
-         <height>0</height>
-        </size>
-       </property>
+      <widget class="QToolButton" name="SwitchToSegmentationsButton">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Edit segmentation properties in Segmentations module:&lt;br/&gt;- Import from volume/models (e.g. from nrrd)&lt;br/&gt;- Export to volume/models (e.g. save to STL)&lt;br/&gt;- Advanced visibility options&lt;br/&gt;- Conversion: representations, converter options (e.g. smoothing)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>Go to Segmentations module</string>
        </property>
        <property name="text">
-        <string> Segmentations...</string>
+        <string>Segmentations</string>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::MenuButtonPopup</enum>
        </property>
       </widget>
      </item>
