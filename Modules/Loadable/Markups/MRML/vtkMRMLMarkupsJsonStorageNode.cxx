@@ -248,10 +248,13 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
         }
       if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
         {
-        for (int i = 0; i < 6; i++)
-          {
-          cp->OrientationMatrix[i] = -cp->OrientationMatrix[i];
-          }
+        cp->OrientationMatrix[0] = -cp->OrientationMatrix[0];
+        cp->OrientationMatrix[3] = -cp->OrientationMatrix[3];
+        cp->OrientationMatrix[6] = -cp->OrientationMatrix[6];
+
+        cp->OrientationMatrix[1] = -cp->OrientationMatrix[1];
+        cp->OrientationMatrix[4] = -cp->OrientationMatrix[4];
+        cp->OrientationMatrix[7] = -cp->OrientationMatrix[7];
         }
       }
 
@@ -879,9 +882,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteControlPoints(
       {
       double orientationMatrixLPS[9] =
         {
-        -orientationMatrix[0], -orientationMatrix[1], -orientationMatrix[2],
-        -orientationMatrix[3], -orientationMatrix[4], -orientationMatrix[5],
-        orientationMatrix[6], orientationMatrix[7], orientationMatrix[8]
+        -orientationMatrix[0], -orientationMatrix[1], orientationMatrix[2],
+        -orientationMatrix[3], -orientationMatrix[4], orientationMatrix[5],
+        -orientationMatrix[6], -orientationMatrix[7], orientationMatrix[8]
         };
       writer.Key("orientation"); this->WriteVector(writer, orientationMatrixLPS, 9);
       }

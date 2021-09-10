@@ -40,6 +40,7 @@
 #include <vtkCollection.h>
 #include <vtkParallelTransportFrame.h>
 #include <vtkGeneralTransform.h>
+#include <vtkMatrix3x3.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -924,8 +925,61 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionWorldFromArray(
 }
 
 //-----------------------------------------------------------
+void vtkMRMLMarkupsNode::TransformOrientationMatrixFromNodeToWorld(
+  const double position_Node[3], const double orientationMatrix_Node[9], double orientationMatrix_World[9])
+{
+  double xAxis_World[3] = { orientationMatrix_Node[0], orientationMatrix_Node[3], orientationMatrix_Node[6] };
+  double yAxis_World[3] = { orientationMatrix_Node[1], orientationMatrix_Node[4], orientationMatrix_Node[7] };
+  double zAxis_World[3] = { orientationMatrix_Node[2], orientationMatrix_Node[5], orientationMatrix_Node[8] };
+  if (this->GetParentTransformNode())
+    {
+    // Transform orientation matrix from world
+    vtkNew<vtkGeneralTransform> nodeToWorldTransform;
+    this->GetParentTransformNode()->GetTransformToWorld(nodeToWorldTransform);
+
+    double xAxis_Node[3] = { orientationMatrix_Node[0], orientationMatrix_Node[3], orientationMatrix_Node[6] };
+    double yAxis_Node[3] = { orientationMatrix_Node[1], orientationMatrix_Node[4], orientationMatrix_Node[7] };
+    double zAxis_Node[3] = { orientationMatrix_Node[2], orientationMatrix_Node[5], orientationMatrix_Node[8] };
+
+    nodeToWorldTransform->TransformVectorAtPoint(position_Node, xAxis_Node, xAxis_World);
+    nodeToWorldTransform->TransformVectorAtPoint(position_Node, yAxis_Node, yAxis_World);
+    nodeToWorldTransform->TransformVectorAtPoint(position_Node, zAxis_Node, zAxis_World);
+    }
+
+  for (int i = 0; i < 3; ++i)
+    {
+    orientationMatrix_World[3*i]   = xAxis_World[i];
+    orientationMatrix_World[3*i+1] = yAxis_World[i];
+    orientationMatrix_World[3*i+2] = zAxis_World[i];
+    }
+}
+
+//-----------------------------------------------------------
+void vtkMRMLMarkupsNode::TransformOrientationMatrixFromWorldToNode(
+  const double position_World[3], const double orientationMatrix_World[9], double orientationMatrix_Node[9])
+{
+  double xAxis_Node[3] = { orientationMatrix_World[0], orientationMatrix_World[3], orientationMatrix_World[6] };
+  double yAxis_Node[3] = { orientationMatrix_World[1], orientationMatrix_World[4], orientationMatrix_World[7] };
+  double zAxis_Node[3] = { orientationMatrix_World[2], orientationMatrix_World[5], orientationMatrix_World[8] };
+  if (this->GetParentTransformNode())
+    {
+    // Transform orientation matrix from world
+    vtkNew<vtkGeneralTransform> worldToNodeTransform;
+    this->GetParentTransformNode()->GetTransformFromWorld(worldToNodeTransform);
+
+    double xAxis_World[3] = { orientationMatrix_Node[0], orientationMatrix_Node[3], orientationMatrix_Node[6] };
+    double yAxis_World[3] = { orientationMatrix_Node[1], orientationMatrix_Node[4], orientationMatrix_Node[7] };
+    double zAxis_World[3] = { orientationMatrix_Node[2], orientationMatrix_Node[5], orientationMatrix_Node[8] };
+
+    worldToNodeTransform->TransformVectorAtPoint(position_World, xAxis_World, xAxis_Node);
+    worldToNodeTransform->TransformVectorAtPoint(position_World, yAxis_World, yAxis_Node);
+    worldToNodeTransform->TransformVectorAtPoint(position_World, zAxis_World, zAxis_Node);
+    }
+}
+
+//-----------------------------------------------------------
 void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
-  const int pointIndex, const double pos[3], const double orientationMatrix[9],
+  const int pointIndex, const double pos[3], const double orientationMatrix_World[9],
   const char* associatedNodeID, int positionStatus/*=PositionDefined*/)
 {
   ControlPoint *controlPoint = this->GetNthControlPointCustomLog(pointIndex, "SetNthControlPointPositionOrientationWorldFromArray");
@@ -937,8 +991,10 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
   this->TransformPointFromWorld(pos, controlPoint->Position);
   int oldPositionStatus = controlPoint->PositionStatus;
   controlPoint->PositionStatus = positionStatus;
-  // TODO: transform orientation matrix to world
-  std::copy_n(orientationMatrix, 9, controlPoint->OrientationMatrix);
+
+  // Transform orientation matrix to world
+  this->TransformOrientationMatrixFromWorldToNode(pos, orientationMatrix_World, controlPoint->OrientationMatrix);
+
   if (associatedNodeID)
     {
     controlPoint->AssociatedNodeID = associatedNodeID;
@@ -1095,6 +1151,17 @@ double* vtkMRMLMarkupsNode::GetNthControlPointOrientationMatrix(int n)
 }
 
 //-----------------------------------------------------------
+void vtkMRMLMarkupsNode::GetNthControlPointOrientationMatrix(int n, vtkMatrix3x3* orientationMatrix)
+{
+  if (!orientationMatrix)
+    {
+    vtkErrorMacro("vtkMRMLMarkupsNode::GetNthControlPointOrientationMatrix failed: invalid output matrix.");
+    return;
+    }
+  std::copy_n(this->GetNthControlPointOrientationMatrix(n), 9, orientationMatrix->GetData());
+}
+
+//-----------------------------------------------------------
 void vtkMRMLMarkupsNode::SetNthControlPointOrientationMatrix(int n, double orientationMatrix[9])
 {
   ControlPoint *controlPoint = this->GetNthControlPointCustomLog(n, "SetNthControlPointOrientationMatrix");
@@ -1102,21 +1169,75 @@ void vtkMRMLMarkupsNode::SetNthControlPointOrientationMatrix(int n, double orien
     {
     return;
     }
-  double* controlPointOrientationMatrix = controlPoint->OrientationMatrix;
-  for (int i = 0; i < 9; i++)
+  std::copy_n(orientationMatrix, 9, controlPoint->OrientationMatrix);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLMarkupsNode::SetNthControlPointOrientationMatrix(int n, vtkMatrix3x3* orientationMatrix)
+{
+  if (!orientationMatrix)
     {
-    controlPointOrientationMatrix[i] = orientationMatrix[i];
+    vtkErrorMacro("vtkMRMLMarkupsNode::SetNthControlPointOrientationMatrix failed: invalid input matrix.");
+    return;
     }
+
+  this->SetNthControlPointOrientationMatrix(n, orientationMatrix->GetData());
+}
+
+//-----------------------------------------------------------
+void vtkMRMLMarkupsNode::GetNthControlPointOrientationMatrixWorld(int n, double orientationMatrix_World[9])
+{
+  ControlPoint *controlPoint = this->GetNthControlPointCustomLog(n, "GetNthControlPointOrientationMatrixWorld");
+  if (!controlPoint)
+    {
+    static double identity[9] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
+    std::copy_n(identity, 9, orientationMatrix_World);
+    return;
+    }
+
+  this->TransformOrientationMatrixFromNodeToWorld(controlPoint->Position, controlPoint->OrientationMatrix, orientationMatrix_World);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLMarkupsNode::GetNthControlPointOrientationMatrixWorld(int n, vtkMatrix3x3* orientationMatrix_World)
+{
+  if (!orientationMatrix_World)
+    {
+    vtkErrorMacro("vtkMRMLMarkupsNode::GetNthControlPointOrientationMatrixWorld failed: invalid output matrix.");
+    return;
+    }
+  this->GetNthControlPointOrientationMatrixWorld(n, orientationMatrix_World->GetData());
 }
 
 //-----------------------------------------------------------
 void vtkMRMLMarkupsNode::SetNthControlPointOrientationMatrixWorld(int n, double orientationMatrix[9])
 {
-  this->SetNthControlPointOrientationMatrix(n, orientationMatrix);
+  ControlPoint *controlPoint = this->GetNthControlPointCustomLog(n, "SetNthControlPointOrientationMatrixWorld");
+  if (!controlPoint)
+    {
+    return;
+    }
+
+  double orientationMatrix_Node[9] = { 0.0 };
+  double controlPointPosition_World[3] = { 0.0 };
+  this->TransformPointToWorld(controlPoint->Position, controlPointPosition_World);
+  this->TransformOrientationMatrixFromWorldToNode(controlPointPosition_World, orientationMatrix, orientationMatrix_Node);
+  this->SetNthControlPointOrientationMatrix(n, orientationMatrix_Node);
 }
 
 //-----------------------------------------------------------
-double* vtkMRMLMarkupsNode::GetNthControlPointNormal(int n)
+void vtkMRMLMarkupsNode::SetNthControlPointOrientationMatrixWorld(int n, vtkMatrix3x3* orientationMatrix_World)
+{
+  if (!orientationMatrix_World)
+    {
+    vtkErrorMacro("vtkMRMLMarkupsNode::SetNthControlPointOrientationMatrixWorld failed: invalid input matrix.");
+    return;
+    }
+  this->SetNthControlPointOrientationMatrixWorld(n, orientationMatrix_World->GetData());
+}
+
+//-----------------------------------------------------------
+double* vtkMRMLMarkupsNode::GetNthControlPointNormal(int n, double normal[3])
 {
   ControlPoint *controlPoint = this->GetNthControlPointCustomLog(n, "GetNthControlPointNormal");
   if (!controlPoint)
@@ -1125,8 +1246,9 @@ double* vtkMRMLMarkupsNode::GetNthControlPointNormal(int n)
     return identity;
     }
   double* orientationMatrix = this->GetNthControlPoint(n)->OrientationMatrix;
-  // OrientationMatrix contains z axis direction from index 6
-  return orientationMatrix + 6;
+  normal[0] = orientationMatrix[2];
+  normal[1] = orientationMatrix[5];
+  normal[2] = orientationMatrix[8];
 }
 
 //-----------------------------------------------------------
@@ -1137,9 +1259,12 @@ void vtkMRMLMarkupsNode::GetNthControlPointNormalWorld(int n, double normalWorld
     {
     return;
     }
-  this->CurvePolyToWorldTransform->TransformNormalAtPoint(
+
+  double normalNode[3] = { 0.0 };
+  this->GetNthControlPointNormal(n, normalNode);
+  this->CurvePolyToWorldTransform->TransformVectorAtPoint(
     &(controlPoint->Position[0]),
-    &(controlPoint->OrientationMatrix[0])+6,
+    normalNode,
     normalWorld);
 }
 
@@ -1152,7 +1277,7 @@ vtkVector4d vtkMRMLMarkupsNode::GetNthControlPointOrientationVector(int n)
     return vtkVector4d(0, 0, 0, 0);
     }
 
-  double orientationWXYZ[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double orientationWXYZ[4] = { 1.0, 0.0, 0.0, 0.0 };
   vtkMRMLMarkupsNode::ConvertOrientationMatrixToWXYZ(controlPoint->OrientationMatrix, orientationWXYZ);
 
   vtkVector4d orientationXYZW;
@@ -1665,10 +1790,6 @@ void vtkMRMLMarkupsNode::ConvertOrientationWXYZToMatrix(double orientationWXYZ[4
   x *= f;
   y *= f;
   z *= f;
-
-  // convert the quaternion to a matrix
-  double matrix[4][4];
-  vtkMatrix4x4::Identity(*matrix);
 
   double ww = w * w;
   double wx = w * x;
