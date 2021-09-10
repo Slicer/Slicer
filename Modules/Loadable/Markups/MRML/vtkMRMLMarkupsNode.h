@@ -31,8 +31,9 @@
 #include <vtkSmartPointer.h>
 #include <vtkVector.h>
 
-class vtkParallelTransportFrame;
+class vtkMatrix3x3;
 class vtkMRMLUnitNode;
+class vtkParallelTransportFrame;
 
 /// \brief MRML node to represent an interactive widget.
 /// MarkupsNodes contains a list of points (ControlPoint).
@@ -108,8 +109,8 @@ public:
     // If transform is applied to the markup node then world
     // coordinates may be obtained by applying "to world" transform.
     double Position[3];
-    // Orientation of x axis (0, 1, 2), y axis (3, 4, 5), and z axis (6, 7, 8).
-    // This memory layout is chosen so that the normal (z axis) can be retrieved quickly.
+    // Orientation of control point in 3x3  matrix.
+    // x axis (0, 3, 6), y axis (1, 4, 7), and z axis (2, 5, 8).
     double OrientationMatrix[9];
 
     std::string ID;
@@ -393,6 +394,7 @@ public:
   /// \sa SetNthControlPointPosition
   void SetNthControlPointPositionWorldFromArray(const int pointIndex, const double pos[3], int positionStatus = PositionDefined);
   /// Set of the Nth control point position and orientation from an array using World coordinate system.
+  /// Orientation: x (0, 3, 6), y (1, 4, 7), z (2, 5, 8)
   /// \sa SetNthControlPointPosition
   void SetNthControlPointPositionOrientationWorldFromArray(const int pointIndex,
     const double pos[3], const double orientationMatrix[9], const char* associatedNodeID, int positionStatus = PositionDefined);
@@ -420,24 +422,35 @@ public:
   /// \sa SetCenterPosition
   void SetCenterPositionWorld(const double x, const double y, const double z);
 
-  /// Set the orientation for the Nth control point from a pointer to a double array WXYZ
+  /// Set the orientation for the Nth control point from a WXYZ orientation.
+  /// The value W is in degrees.
   void SetNthControlPointOrientationFromPointer(int n, const double *orientationWXYZ);
-  /// Set the orientation for the Nth control point from a double array WXYZ
   void SetNthControlPointOrientationFromArray(int n, const double orientationWXYZ[4]);
-  /// Set the orientation for the Nth control point from passed parameters
   void SetNthControlPointOrientation(int n, double w, double x, double y, double z);
   /// Get the WXYZ orientation for the Nth control point
+  /// The value W is in degrees.
   void GetNthControlPointOrientation(int n, double orientationWXYZ[4]);
-  /// Get orientation as 9 values: x, y, and z axis directions, respectively.
+  /// Get orientation as 9 values: x, y, and z axis directions, respectively:
+  /// x (0, 3, 6), y (1, 4, 7), z (2, 5, 8)
   double* GetNthControlPointOrientationMatrix(int n) VTK_SIZEHINT(9);
+  void GetNthControlPointOrientationMatrix(int n, vtkMatrix3x3* matrix);
   /// Set orientation as 9 values: x, y, and z axis directions, respectively.
+  /// x (0, 3, 6), y (1, 4, 7), z (2, 5, 8)
   void SetNthControlPointOrientationMatrix(int n, double orientationMatrix[9]);
-  /// Set orientation as 9 values: x, y, and z axis directions, respectively.
-  /// Important: this method just calls SetNthControlPointOrientationMatrix and
-  /// does not convert from world coordinate yet.
+  /// Set orientation from a vtkMatrix3x3
+  void SetNthControlPointOrientationMatrix(int n, vtkMatrix3x3* matrix);
+  /// Set orientation as 9 values: x, y, and z axis directions, respectively, in world coordinates.
+  /// x (0, 3, 6), y (1, 4, 7), z (2, 5, 8)
   void SetNthControlPointOrientationMatrixWorld(int n, double orientationMatrix[9]);
+  /// Set orientation from a vtkMatrix3x3 in world coordinates
+  void SetNthControlPointOrientationMatrixWorld(int n, vtkMatrix3x3* matrix);
+  /// Get orientation as 9 values: x, y, and z axis directions, respectively.
+  /// x (0, 3, 6), y (1, 4, 7), z (2, 5, 8)
+  void GetNthControlPointOrientationMatrixWorld(int n, double orientationMatrix[9]);
+  /// Get orientation as a vtkMatrix3x3
+  void GetNthControlPointOrientationMatrixWorld(int n, vtkMatrix3x3* matrix);
   /// Get normal direction (orientation of z axis) in local coordinate system.
-  double* GetNthControlPointNormal(int n) VTK_SIZEHINT(3);
+  double* GetNthControlPointNormal(int n, double normal[3]);
   /// Get normal direction (orientation of z axis) in world coordinate system.
   void GetNthControlPointNormalWorld(int n, double normalWorld[3]);
   /// Get the WXYZ orientation for the Nth control point
@@ -671,6 +684,14 @@ protected:
 
   /// Calculates the handle to world matrix based on the current control points
   virtual void UpdateInteractionHandleToWorldMatrix();
+
+  /// Transform the orientation matrix from node to world coordinates
+  virtual void TransformOrientationMatrixFromNodeToWorld(
+    const double position_Node[3], const double orientationMatrix_Node[9], double orientationMatrix_World[9]);
+
+  /// Transform the orientation matrix from world to node coordinates
+  virtual void TransformOrientationMatrixFromWorldToNode(
+    const double position_World[3], const double orientationMatrix_World[9], double orientationMatrix_Node[9]);
 
   /// Used for limiting number of control points that may be placed.
   /// This is a soft limit at which automatic placement stops.
