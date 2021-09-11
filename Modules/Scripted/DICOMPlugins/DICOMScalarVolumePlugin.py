@@ -434,6 +434,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       instanceUIDs = instanceUIDs[:-1]  # strip last space
       volumeNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
 
+      # Choose a file in the middle of the series as representative frame,
+      # because that is more likely to contain the object of interest than the first or last frame.
+      # This is important for example for getting a relevant window/center value for the series.
+      file = loadable.files[int(len(loadable.files)/2)]
+
       #
       # automatically select the volume to display
       #
