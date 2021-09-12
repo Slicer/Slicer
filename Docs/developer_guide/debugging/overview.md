@@ -369,28 +369,9 @@ It may help pinpointing issues if Slicer is started with as few features as poss
 
 ## Console output on Windows
 
-On Windows, by default the application launcher is built as a Windows GUI application (as opposed to a console application) to avoid opening a console window when starting the application.
+On Windows, the application is built with no console output. A workaround for this issue is described in the following bug reports:
 
-If the launcher is a Windows GUI application, it is still possible to show the console output by using one of these options:
+- <https://github.com/Slicer/Slicer/issues/2376>
+- <https://github.com/Slicer/Slicer/issues/2917>
 
-Option A. Run the application with capturing and displaying the output using the `more` command (this captures the output of both the launcher and the launched application):
-
-```shell
-Slicer.exe --help 2>&1 | more
-```
-
-The `2>&1` argument redirects the error output to the standard output, making error messages visible on the console, too.
-
-Option B. Instead of `more` command (that requires pressing space key after the console window is full), `tee` command can be used (that continuously displays the output on screen and also writes it to a file). Unfortunately, `tee` is not a standard command on Windows, therefore either a third-party implementation can be used (such as [`wtee`](https://github.com/gvalkov/wtee/releases/tag/v1.0.1)) or the built-in `tee` command in Windows powershell:
-
-```shell
-powershell ".\Slicer.exe 2>&1 | tee out.txt"
-```
-
-Option C. Run the application with a new console (the launcher sets up the environment, creates a new console, and starts the SlicerApp-real executable directly, which can access this console):
-
-```shell
-Slicer.exe --launch %comspec% /c start SlicerApp-real.exe
-```
-
-To add console output permanently, the application launcher can be switched to a console application by setting `Slicer_BUILD_WIN32_CONSOLE_LAUNCHER` CMake variable to ON when configuring the application build.
+To add console output, you need to compile Slicer application with `Slicer_BUILD_WIN32_CONSOLE` set to ON at the configure time (uninitialized/OFF by default).
