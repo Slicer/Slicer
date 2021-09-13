@@ -1166,20 +1166,41 @@ qSlicerExtensionsManagerModel::~qSlicerExtensionsManagerModel() = default;
 // --------------------------------------------------------------------------
 int qSlicerExtensionsManagerModel::serverAPI() const
 {
-  QString serverApi = qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_API", "Girder_v1");
-  if (serverApi == "Midas_v1")
+  int defaultServerAPI = Self::Girder_v1;
+  QString serverApiStr = qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_API", Self::serverAPIToString(defaultServerAPI));
+  int serverAPI = Self::serverAPIFromString(serverApiStr);
+  if (serverAPI == -1)
     {
-    return Self::Midas_v1;
+    qWarning()
+        << "Unknown value" << serverApiStr << "associated with SLICER_EXTENSIONS_MANAGER_SERVER_API env. variable. "
+        << "Defaulting to" << Self::serverAPIToString(defaultServerAPI);
+    return defaultServerAPI;
     }
-  else if (serverApi == "Girder_v1")
+  return serverAPI;
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerExtensionsManagerModel::serverAPIToString(int serverAPI)
+{
+  switch (serverAPI)
     {
-    return Self::Girder_v1;
+    case Girder_v1: return "Girder_v1";
+    case Midas_v1: return "Midas_v1";
+    default: return "";
     }
-  else
+}
+
+// --------------------------------------------------------------------------
+int qSlicerExtensionsManagerModel::serverAPIFromString(const QString& str)
+{
+  for (int idx = 0; idx < ServerAPI_Last; ++idx)
     {
-    qWarning().noquote() << "Unknown value '" << serverApi << "' associated with SLICER_EXTENSIONS_MANAGER_SERVER_API env. variable. Using 'Midas_v1'";
-    return Self::Midas_v1;
+    if (str == Self::serverAPIToString(idx))
+      {
+      return idx;
+      }
     }
+  return -1;
 }
 
 // --------------------------------------------------------------------------

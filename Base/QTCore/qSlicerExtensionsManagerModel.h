@@ -76,10 +76,24 @@ public:
   enum ServerAPI
     {
     Midas_v1 = 0,
-    Girder_v1
+    Girder_v1,
+    ServerAPI_Last
     };
 
+  /// Return current serverAPI.
+  ///
+  /// \sa serverAPIFromString()
   int serverAPI() const;
+
+  /// Return a string representation of the \a serverAPI.
+  ///
+  /// \sa serverAPIFromString()
+  static QString serverAPIToString(int serverAPI);
+
+  /// Return ServerAPI from the string \a str.
+  ///
+  /// \sa serverAPIToString()
+  static int serverAPIFromString(const QString& str);
 
   /// \brief Backend server URL used to perform API calls.
   ///
