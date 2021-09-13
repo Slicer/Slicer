@@ -149,7 +149,7 @@ void vtkMRMLCrosshairDisplayableManager3D::vtkInternal::BuildCrosshair()
   this->CrosshairWidget->SetInteractor(interactor);
   this->CrosshairWidget->EnabledOn();
 
-  int *screenSize = interactor->GetRenderWindow()->GetScreenSize();
+  const int *screenSize = interactor->GetRenderWindow()->GetScreenSize();
 
   // Handle size is defined a percentage of screen size to accommodate high-DPI screens
   double handleSizeInScreenSizePercent = 5;
