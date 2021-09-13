@@ -425,13 +425,13 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Clear extension server settings with requested serverAPI changed
   QSettings extensionsSettings(model->extensionsSettingsFilePath(), QSettings::IniFormat);
-  int savedServerAPI = extensionsSettings.value("Extensions/ServerAPI").toInt();
-  if (savedServerAPI != model->serverAPI())
+  int lastServerAPI = extensionsSettings.value("Extensions/LastServerAPI").toInt();
+  if (lastServerAPI != model->serverAPI())
     {
     extensionsSettings.remove("Extensions/ServerUrl");
     extensionsSettings.remove("Extensions/FrontendServerUrl");
     }
-  extensionsSettings.setValue("Extensions/ServerAPI", model->serverAPI());
+  extensionsSettings.setValue("Extensions/LastServerAPI", model->serverAPI());
 
 # ifdef Q_OS_MAC
   this->createDirectory(this->defaultExtensionsInstallPathForMacOSX(), "extensions"); // Make sure the path exists
