@@ -361,6 +361,7 @@ void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErr
     {
     return;
     }
+  QString escapedText = QString(text).replace("'", "\\'");
   QString delay = "2500";
   QString state;
   if (level == ctkErrorLogLevel::Warning)
@@ -376,11 +377,11 @@ void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErr
   int serverAPI = d->ExtensionsManagerModel->serverAPI();
   if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
     {
-    this->evalJS(QString("midas.createNotice('%1', %2, '%3')").arg(text).arg(delay).arg(state));
+    this->evalJS(QString("midas.createNotice('%1', %2, '%3')").arg(escapedText).arg(delay).arg(state));
     }
   else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
-    this->evalJS(QString("app.createNotice('%1', %2, '%3')").arg(text).arg(delay).arg(state));
+    this->evalJS(QString("app.createNotice('%1', %2, '%3')").arg(escapedText).arg(delay).arg(state));
     }
   else
     {
