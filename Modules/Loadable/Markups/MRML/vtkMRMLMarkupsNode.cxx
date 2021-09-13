@@ -732,7 +732,7 @@ bool vtkMRMLMarkupsNode::InsertControlPoint(ControlPoint *controlPoint, int targ
     }
 
   std::vector < ControlPoint* >::iterator pos = this->ControlPoints.begin() + destIndex;
-  std::vector < ControlPoint* >::iterator result = this->ControlPoints.insert(pos, controlPoint);
+  this->ControlPoints.insert(pos, controlPoint);
 
   if (!this->GetDisableModifiedEvent())
     {
