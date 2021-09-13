@@ -393,7 +393,15 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
       // then we must not overwrite the search text.
       if (!d->toolsWidget->SearchBox->hasFocus())
         {
-        QString lastSearchTextLoaded = QUrlQuery(d->lastInstallWidgetUrl).queryItemValue("search");
+        QString lastSearchTextLoaded;
+        if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
+          {
+          lastSearchTextLoaded = QUrlQuery(d->lastInstallWidgetUrl).queryItemValue("search");
+          }
+        else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+          {
+          lastSearchTextLoaded = QUrlQuery(d->lastInstallWidgetUrl).queryItemValue("q");
+          }
         d->toolsWidget->SearchBox->setText(lastSearchTextLoaded);
         }
       }
