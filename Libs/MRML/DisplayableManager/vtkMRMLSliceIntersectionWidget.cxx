@@ -787,7 +787,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessBlend(vtkMRMLInteractionEventData* e
 {
   const int* eventPosition = eventData->GetDisplayPosition();
 
-  int* windowSize = this->Renderer->GetRenderWindow()->GetSize();
+  const int* windowSize = this->Renderer->GetRenderWindow()->GetSize();
   double windowMinSize = std::min(windowSize[0], windowSize[1]);
 
   int deltaY = eventPosition[1] - this->PreviousEventPosition[1];
@@ -1004,7 +1004,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessZoomSlice(vtkMRMLInteractionEventDat
 {
   const int* eventPosition = eventData->GetDisplayPosition();
 
-  int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
+  const int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
 
   int deltaY = eventPosition[1] - this->StartEventPosition[1];
   double percent = (windowSize[1] + deltaY) / (1.0 * windowSize[1]);
@@ -1039,7 +1039,7 @@ void vtkMRMLSliceIntersectionWidget::ScaleZoom(double zoomScaleFactor, vtkMRMLIn
 
   // Get distance of event position from slice center
   const int* eventPosition = eventData->GetDisplayPosition();
-  int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
+  const int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
   vtkMatrix4x4* xyToSlice = sliceNode->GetXYToSlice();
   double evenPositionDistanceFromOrigin[2] =
     {

@@ -1228,7 +1228,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateViewScaleFactor()
     return;
     }
 
-  int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
+  const int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
   this->ScreenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
 
   vtkMatrix4x4* xyToSlice = this->GetSliceNode()->GetXYToSlice();

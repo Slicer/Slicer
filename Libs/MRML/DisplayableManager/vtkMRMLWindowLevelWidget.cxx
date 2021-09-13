@@ -349,7 +349,7 @@ void vtkMRMLWindowLevelWidget::ProcessAdjustWindowLevel(vtkMRMLInteractionEventD
   double rangeLow = this->VolumeScalarRange[0];
   double rangeHigh = this->VolumeScalarRange[1];
 
-  int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
+  const int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
   double windowMinSize = std::min(windowSize[0], windowSize[1]);
 
   double gain = (rangeHigh - rangeLow) / windowMinSize;

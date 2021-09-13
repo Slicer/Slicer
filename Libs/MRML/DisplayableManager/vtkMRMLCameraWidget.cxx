@@ -615,7 +615,7 @@ bool vtkMRMLCameraWidget::ProcessRotate(vtkMRMLInteractionEventData* eventData)
     return true;
     }
 
-  int *size = this->Renderer->GetRenderWindow()->GetSize();
+  const int *size = this->Renderer->GetRenderWindow()->GetSize();
 
   double delta_elevation = -20.0 / size[1];
   double delta_azimuth = -20.0 / size[0];

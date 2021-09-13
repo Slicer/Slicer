@@ -691,7 +691,7 @@ double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(d
     {
     return defaultHandleRadius;
     }
-  int* windowSize = this->Renderer->GetRenderWindow()->GetSize();
+  const int* windowSize = this->Renderer->GetRenderWindow()->GetSize();
   if (!windowSize)
     {
     return defaultHandleRadius;

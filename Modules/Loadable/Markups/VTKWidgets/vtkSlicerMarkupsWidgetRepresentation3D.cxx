@@ -1316,7 +1316,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
     return;
     }
 
-  int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
+  const int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
   double screenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
   if (screenSizePixel < 1.0)
     {
