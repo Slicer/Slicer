@@ -425,7 +425,7 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Clear extension server settings with requested serverAPI changed
   QSettings extensionsSettings(model->extensionsSettingsFilePath(), QSettings::IniFormat);
-  QString savedServerAPI = extensionsSettings.value("Extensions/ServerAPI").toString();
+  int savedServerAPI = extensionsSettings.value("Extensions/ServerAPI").toInt();
   if (savedServerAPI != model->serverAPI())
     {
     extensionsSettings.remove("Extensions/ServerUrl");
