@@ -2541,6 +2541,18 @@ void vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(vtkSegment* segment, in
     vtkErrorWithObjectMacro(nullptr, "Invalid segment");
     return;
     }
+  std::string currentStatusStr;
+  if (status == vtkSlicerSegmentationsModuleLogic::NotStarted)
+    {
+    if (!segment->GetTag(vtkSlicerSegmentationsModuleLogic::GetStatusTagName(), currentStatusStr)
+      || currentStatusStr.empty())
+      {
+      // Status information is not stored in the segment (which means that the segmentation is not started).
+      // Avoid changing the tag, as it would trigger a modified event, which for example could interfere with undo/redo history
+      // (a modified event on a segment clears all future undo/redo states).
+      return;
+      }
+    }
   segment->SetTag(vtkSlicerSegmentationsModuleLogic::GetStatusTagName(), vtkSlicerSegmentationsModuleLogic::GetSegmentStatusAsMachineReadableString(status));
 }
 

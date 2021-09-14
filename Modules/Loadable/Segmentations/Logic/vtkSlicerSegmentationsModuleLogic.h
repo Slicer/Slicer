@@ -396,9 +396,12 @@ public:
 
   /// Returns the name of the status tag
   static const char* GetStatusTagName();
-  /// Returns the value of the status tag for the given segment
+  /// Returns the value of the status tag for the given segment.
+  /// If status tag is not specified then vtkSlicerSegmentationsModuleLogic::NotStarted is returned.
   static int GetSegmentStatus(vtkSegment* segment);
-  /// Returns the value of the status tag for the given segment
+  /// Set the value of the status tag for the given segment.
+  /// If setting of vtkSlicerSegmentationsModuleLogic::NotStarted is requested and the
+  /// status tag does not exist or it is empty then the status tag is not modified.
   static void SetSegmentStatus(vtkSegment* segment, int status);
   /// Clear the contents of a single segment
   static bool ClearSegment(vtkMRMLSegmentationNode* segmentationNode, std::string segmentID);
