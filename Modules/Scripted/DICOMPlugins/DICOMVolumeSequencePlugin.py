@@ -127,11 +127,11 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
     microsecond = 0
     if len(tm)>=6:
       try:
-        hhmmss = string.split(tm,'.')[0]
+        hhmmss = str.split(tm,'.')[0]
       except:
         hhmmss = tm
       try:
-        microsecond = int(float('0.'+string.split(tm,'.')[1]) * 1e6)
+        microsecond = int(float('0.'+str.split(tm,'.')[1]) * 1e6)
       except:
         microsecond = 0
       if len(hhmmss)==6: # HHMMSS
@@ -197,6 +197,8 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         tags['Study Instance UID'] = pydicom.uid.generate_uid()
       else:
         tags['Study Instance UID'] = dicom.UID.generate_uid()
+      tags['Patient Birth Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateTagName())
+      tags['Patient Sex'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexTagName())
       tags['Study ID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName())
       tags['Study Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
       tags['Study Time'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeTagName())
