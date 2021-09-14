@@ -23,6 +23,7 @@
 #include <QDesktopServices>
 #include <QNetworkCookieJar>
 #include <QNetworkReply>
+#include <QPalette>
 #include <QSettings>
 #include <QTime>
 #include <QUrl>
@@ -151,6 +152,9 @@ void qSlicerWebWidgetPrivate::init()
                    q, SIGNAL(pdfPrintingFinished(QString, bool)));
 
   this->ProgressBar->setVisible(false);
+
+  // Set background color behind the document's body to match current theme
+  this->WebEnginePage->setBackgroundColor(q->palette().color(QPalette::Window));
 }
 
 // --------------------------------------------------------------------------
