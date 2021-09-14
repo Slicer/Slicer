@@ -1745,6 +1745,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
   if (extensionMetadata.isEmpty())
     {
     extensionMetadata.insert("archivename", QFileInfo(archiveFile).fileName());
+    extensionMetadata.insert("extensionname", extensionName);
 
     // Copy expected keys from archive description
     QStringList expectedKeys;
