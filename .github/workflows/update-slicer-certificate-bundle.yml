@@ -1,0 +1,47 @@
+name: Update Slicer.crt certificate bundle
+
+on:
+  schedule:
+    # Every tuesday at 11.30am UTC (7.30am ET)
+    - cron: "30 11 * * 2"
+  workflow_dispatch:
+
+jobs:
+  update-slicer-certificate-bundle:
+    name: Update Slicer.crt certificate bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download certdata.txt from https://github.com/mozilla/gecko-dev
+        run: |
+          cd Base/QTCore/Resources/Certs                           &&
+          certhost='https://github.com/mozilla/gecko-dev'          &&
+          certdir='/blob/master/security/nss/lib/ckfw/builtins'    &&
+          url="$certhost$certdir/certdata.txt?raw=true"            &&
+          curl -L# -o certdata.txt $url
+
+      - name: Generate Slicer.crt
+        run: |
+          cd Base/QTCore/Resources/Certs                           &&
+          ./make-ca.sh
+
+      - name: Cleanup
+        run: |
+          cd Base/QTCore/Resources/Certs                           &&
+          rm certdata.txt
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.SLICERBOT_GITHUB_TOKEN }}
+          commit-message: "ENH: Update Slicer.crt CA bundle"
+          committer: Slicer Bot <slicerbot@slicer.org>
+          author: Slicer Bot <slicerbot@slicer.org>
+          signoff: false
+          branch: slicerbot/update-slicer-certificate-bundle
+          delete-branch: true
+          title: "Update Slicer.crt CA bundle"
+          body: ""
+          draft: false
