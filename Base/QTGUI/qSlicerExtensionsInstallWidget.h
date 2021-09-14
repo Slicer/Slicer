@@ -80,6 +80,7 @@ public slots:
 
 protected:
   bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame) override;
+  void changeEvent(QEvent *e) override;
 
 protected slots:
   void initJavascript() override;

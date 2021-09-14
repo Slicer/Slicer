@@ -62,6 +62,9 @@ public:
 
   void setFailurePage(const QStringList &errors);
 
+  void updateTheme();
+  void setDarkThemeEnabled(bool enabled);
+
   void initializeWebChannel(QWebChannel* webChannel) override;
   void initializeWebChannelTransport(QByteArray& webChannelScript) override;
   void registerExtensionsManagerModel(qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel);

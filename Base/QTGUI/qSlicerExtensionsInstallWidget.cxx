@@ -155,6 +155,36 @@ void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QStringList& er
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidgetPrivate::updateTheme()
+{
+  Q_Q(qSlicerExtensionsInstallWidget);
+  this->setDarkThemeEnabled(q->style()->objectName().compare("Dark Slicer", Qt::CaseInsensitive) == 0);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidgetPrivate::setDarkThemeEnabled(bool enabled)
+{
+  Q_Q(qSlicerExtensionsInstallWidget);
+  if(!this->BrowsingEnabled)
+    {
+    return;
+    }
+  int serverAPI = this->ExtensionsManagerModel->serverAPI();
+  if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
+    {
+    // Not supported
+    }
+  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    {
+    q->evalJS(QString("app.$vuetify.theme.dark = %1;").arg(enabled ? "true" : "false"));
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
+    }
+}
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannelTransport(QByteArray& webChannelScript)
 {
   this->Superclass::initializeWebChannelTransport(webChannelScript);
@@ -415,6 +445,10 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
     d->setFailurePage(QStringList() << QString("Failed to load extension page using this URL: <strong>%1</strong>")
                       .arg(d->extensionsListUrl().toString()));
     }
+  if (ok)
+    {
+    d->updateTheme();
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -423,4 +457,19 @@ bool qSlicerExtensionsInstallWidget::acceptNavigationRequest(const QUrl & url, Q
   Q_D(qSlicerExtensionsInstallWidget);
   d->InternalHosts = QStringList() << this->extensionsManagerModel()->frontendServerUrl().host();
   return Superclass::acceptNavigationRequest(url, type, isMainFrame);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidget::changeEvent(QEvent *e)
+{
+  Q_D(qSlicerExtensionsInstallWidget);
+  switch (e->type())
+    {
+    case QEvent::StyleChange:
+      d->updateTheme();
+    break;
+    default:
+    break;
+    }
+  this->Superclass::changeEvent(e);
 }
