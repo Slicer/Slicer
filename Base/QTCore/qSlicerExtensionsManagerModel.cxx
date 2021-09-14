@@ -1741,12 +1741,6 @@ bool qSlicerExtensionsManagerModel::installExtension(
   const ExtensionMetadataType& extensionIndexMetadata =
     Self::parseExtensionDescriptionFile(extensionIndexDescriptionFile);
 
-  // Enable or disable the extension if state was not already set
-  if (!extensionMetadata.contains("enabled"))
-    {
-    extensionMetadata.insert("enabled", d->NewExtensionEnabledByDefault);
-    }
-
   // Copy metadata if not provided from server (e.g. installing from file)
   if (extensionMetadata.isEmpty())
     {
@@ -1777,6 +1771,12 @@ bool qSlicerExtensionsManagerModel::installExtension(
     extensionMetadata.insert("os", this->slicerOs());
     extensionMetadata.insert("arch", this->slicerArch());
     extensionMetadata.insert("slicer_revision", this->slicerRevision());
+    }
+
+  // Enable or disable the extension if state was not already set
+  if (!extensionMetadata.contains("enabled"))
+    {
+    extensionMetadata.insert("enabled", d->NewExtensionEnabledByDefault);
     }
 
   // Gather information on dependency extensions
