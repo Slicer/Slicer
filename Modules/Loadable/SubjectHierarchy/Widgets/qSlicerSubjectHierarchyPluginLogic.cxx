@@ -751,7 +751,6 @@ QString qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(QMenu* menu, QL
   std::sort(actions.begin(), actions.end(),
     [](const QAction* a, const QAction* b) -> bool { return a->property("section").toDouble() < b->property("section").toDouble(); });
 
-  static bool printDebugInformation = true;
   int lastSection = static_cast<int>(actions.front()->property("section").toDouble() + 0.5);
   foreach (QAction* action, actions)
     {
