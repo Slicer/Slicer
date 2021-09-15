@@ -126,7 +126,7 @@ protected slots:
   void updateViewFromMRMLCamera();
 
 protected:
-  void setMRMLViewNode(vtkMRMLViewNode* viewNode);
+  void setMRMLViewNode(vtkMRMLAbstractViewNode* viewNode) override;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLThreeDViewControllerWidget);
