@@ -74,6 +74,7 @@ void qSlicerMarkupsCurveSettingsWidgetPrivate::setupUi(qSlicerMarkupsCurveSettin
 
   this->Ui_qSlicerMarkupsCurveSettingsWidget::setupUi(widget);
 
+  this->modelNodeSelector->setNoneEnabled(true);
   this->curveSettingsCollapseButton->setVisible(false);
   this->resampleCurveCollapsibleButton->setVisible(false);
 

@@ -21,6 +21,7 @@
 #define __vtkCurveGenerator_h
 
 // vtk includes
+#include <vtkCellLocator.h>
 #include <vtkParametricFunction.h>
 #include <vtkPointLocator.h>
 #include <vtkPolyData.h>
@@ -245,7 +246,8 @@ protected:
   void SetParametricFunctionToKochanekSpline(vtkPoints* inputPoints);
   void SetParametricFunctionToPolynomial(vtkPoints* inputPoints);
   int GeneratePoints(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPolyData* outputPolyData);
-  int GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray);
+  // if inputSurface is nullptr for GeneratePointsFromFunction, it will not constrain to a surface
+  int GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray);
   int GeneratePointsFromSurface(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray);
   int GenerateLines(vtkPolyData* polyData);
 
@@ -257,6 +259,9 @@ protected:
   ~vtkCurveGenerator() override;
   vtkCurveGenerator(const vtkCurveGenerator&) = delete;
   void operator=(const vtkCurveGenerator&) = delete;
+
+private:
+    vtkSmartPointer<vtkCellLocator> SurfaceCellLocator;
 };
 
 #endif
