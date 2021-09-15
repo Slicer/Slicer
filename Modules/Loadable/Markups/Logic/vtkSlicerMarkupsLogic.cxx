@@ -1772,16 +1772,15 @@ const std::list<std::string>& vtkSlicerMarkupsLogic::GetRegisteredMarkupsTypes()
 bool vtkSlicerMarkupsLogic::ImportControlPointsFromTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode,
   int startRow/*=0*/, int numberOfRows/*=-1*/)
 {
-  if (!markupsNode || !tableNode || !tableNode->GetTable())
+  if (!markupsNode || !tableNode || !tableNode->GetTable() || startRow < 0)
     {
-    vtkGenericWarningMacro("vtkSlicerMarkupsLogic::ImportControlPointsFromTable failed: Invalid markupsNode or tableNode.");
+    vtkGenericWarningMacro("vtkSlicerMarkupsLogic::ImportControlPointsFromTable failed: Invalid markupsNode or tableNode or startRow.");
     return false;
     }
-  if (numberOfRows < 0)
+  if (numberOfRows < 0 || numberOfRows > tableNode->GetNumberOfRows() - startRow)
     {
-    numberOfRows = tableNode->GetNumberOfRows();
+    numberOfRows = tableNode->GetNumberOfRows() - startRow;
     }
-
   MRMLNodeModifyBlocker blocker(markupsNode);
 
   vtkTable* table = tableNode->GetTable();
@@ -1811,7 +1810,7 @@ bool vtkSlicerMarkupsLogic::ImportControlPointsFromTable(vtkMRMLMarkupsNode* mar
   vtkAbstractArray* arrayLocked = table->GetColumnByName("locked");
   vtkAbstractArray* arrayDefined= table->GetColumnByName("defined");
 
-  for (int row = 0; row < numberOfRows; row++)
+  for (int row = startRow; row < startRow + numberOfRows; row++)
     {
     // vtkVariant cannot convert values from VTK_BIT type, therefore we need to handle it
     // as a special case here.
