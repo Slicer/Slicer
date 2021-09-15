@@ -320,7 +320,7 @@ void qMRMLThreeDViewControllerWidget::setThreeDView(qMRMLThreeDView* view)
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidget::setMRMLViewNode(
-    vtkMRMLViewNode * viewNode)
+    vtkMRMLAbstractViewNode * viewNode)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
   Superclass::setMRMLViewNode(viewNode);
