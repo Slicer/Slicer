@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDesktopServices>
+#include <QStyle>
 #include <QUrlQuery>
 #include <QWebEngineView>
 
