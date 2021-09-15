@@ -940,8 +940,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::cloneSegment()
 bool qSlicerSubjectHierarchySegmentsPlugin::showItemInView(
   vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
 {
-  Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
-
+  Q_UNUSED(itemID);
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
