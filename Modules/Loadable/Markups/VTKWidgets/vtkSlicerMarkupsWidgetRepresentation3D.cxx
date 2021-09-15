@@ -1177,7 +1177,7 @@ vtkFloatArray* vtkSlicerMarkupsWidgetRepresentation3D::GetCachedZBuffer(vtkRende
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::OnRenderCompleted(vtkObject* caller, unsigned long event, void* clientData, void* callData)
+void vtkSlicerMarkupsWidgetRepresentation3D::OnRenderCompleted(vtkObject* caller, unsigned long vtkNotUsed(event), void* vtkNotUsed(clientData), void* vtkNotUsed(callData))
 {
   vtkRenderer* renderer = vtkRenderer::SafeDownCast(caller);
   if (renderer && vtkSlicerMarkupsWidgetRepresentation3D::GetCachedZBuffer(renderer))
