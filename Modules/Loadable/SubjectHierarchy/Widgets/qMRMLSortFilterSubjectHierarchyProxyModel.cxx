@@ -110,11 +110,11 @@ qMRMLSortFilterSubjectHierarchyProxyModelPrivate::qMRMLSortFilterSubjectHierarch
   : NameFilter(QString())
   , LevelFilter(QStringList())
   , NodeTypes(QStringList())
-  , ItemAttributeFilters(QList<AttributeFilter>())
-  , NodeAttributeFilters(QList<AttributeFilter>())
   , HideChildNodeTypes(QStringList())
   , HideItemsUnaffiliatedWithItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   , ShowEmptyHierarchyItems(true)
+  , ItemAttributeFilters(QList<AttributeFilter>())
+  , NodeAttributeFilters(QList<AttributeFilter>())
 {
 }
 

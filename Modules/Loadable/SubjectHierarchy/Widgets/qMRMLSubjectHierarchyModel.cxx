@@ -68,9 +68,9 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   , NoneEnabled(false)
   , SubjectHierarchyNode(nullptr)
   , MRMLScene(nullptr)
+  , NoneDisplay(qMRMLSubjectHierarchyModel::tr("None"))
   , TerminologiesModuleLogic(nullptr)
   , IsDroppedInside(false)
-  , NoneDisplay(qMRMLSubjectHierarchyModel::tr("None"))
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->PendingItemModified = -1; // -1 means not updating
