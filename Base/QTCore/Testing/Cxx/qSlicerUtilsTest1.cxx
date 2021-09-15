@@ -854,7 +854,7 @@ int isLoadableModuleTest()
 
 } // end of anonymous namespace
 
-int qSlicerUtilsTest1(int argc, char *argv [])
+int qSlicerUtilsTest1(int, char *[])
 {
   try
     {
