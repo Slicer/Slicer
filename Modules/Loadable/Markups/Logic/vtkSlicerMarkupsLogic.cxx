@@ -1592,7 +1592,7 @@ double vtkSlicerMarkupsLogic::GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurv
 bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints,
   vtkPolyData* surface, double radiusScalingFactor/*=1.0*/, vtkIdType numberOfInternalGridPoints/*=225*/)
 {
-  return vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(curvePoints, surface, radiusScalingFactor);
+  return vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(curvePoints, surface, radiusScalingFactor, numberOfInternalGridPoints);
 }
 
 //---------------------------------------------------------------------------
