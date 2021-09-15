@@ -22,6 +22,7 @@
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkCurveGenerator.h"
 #include "vtkMRMLMeasurement.h"
+#include "vtkMRMLSelectionNode.h"
 
 // Markups includes
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
@@ -103,6 +104,7 @@ public:
       Locked = false;
       Visibility = true;
       PositionStatus = PositionUndefined;
+      AutoCreated = false;
       }
 
     // Positions and orientation in local coordinates.
@@ -122,6 +124,7 @@ public:
     bool Locked;
     bool Visibility;
     int PositionStatus;
+    bool AutoCreated;
     };
 
   typedef std::vector<ControlPoint*> ControlPointsListType;
@@ -134,6 +137,9 @@ public:
   virtual const char* GetIcon() {return ":/Icons/MarkupsGeneric.png";}
   virtual const char* GetAddIcon() {return ":/Icons/MarkupsGenericMouseModePlace.png";}
   virtual const char* GetPlaceAddIcon() {return ":/Icons/MarkupsGenericMouseModePlaceAdd.png";}
+
+  // active table row
+  int activeTableRow;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -246,17 +252,20 @@ public:
     PointStartInteractionEvent,
     PointEndInteractionEvent,
     CenterPointModifiedEvent,
+    FixedNumberOfControlPointsModifiedEvent,
   };
 
   /// Placement status of a control point.
   /// - Undefined: position is undefined (coordinate values must not be used).
-  /// - Preview: point is being placed, position is tentative.
+  /// - Preview: new point is being placed, position is tentative.
   /// - Defined: position is specified.
+  /// - Missing: point is undefined and placement should not be attempted
   enum
   {
     PositionUndefined,
     PositionPreview,
     PositionDefined,
+    PositionMissing,
     PositionStatus_Last
   };
 
@@ -265,6 +274,7 @@ public:
 
   /// Clear out the node of all control points
   virtual void RemoveAllControlPoints();
+  virtual void UnsetAllControlPoints();
 
   /// \deprecated Use RemoveAllControlPoints instead.
   void RemoveAllMarkups() { this->RemoveAllControlPoints(); };
@@ -295,6 +305,8 @@ public:
   int GetNumberOfControlPoints();
   /// Return the number of control points that are already placed (not being previewed or undefined).
   int GetNumberOfDefinedControlPoints(bool includePreview=false);
+  /// Return the number of control points that have not been placed (not being previewed or skipped).
+  int GetNumberOfUndefinedControlPoints(bool includePreview = false);
   /// \deprecated Use GetNumberOfControlPoints() instead.
   int GetNumberOfMarkups() { return this->GetNumberOfControlPoints(); };
   /// \deprecated Use GetNumberOfControlPoints() instead.
@@ -351,6 +363,21 @@ public:
 
   /// Set control point status to undefined.
   void UnsetNthControlPointPosition(int pointIndex);
+
+  /// Set control point status to ignored.
+  void SetNthControlPointPositionMissing(int pointIndex);
+
+  /// Set control point status to preview
+  void ResetNthControlPointPosition(int n);
+
+  /// Set control point status to defined and return to the previous position
+  void RestoreNthControlPointPosition(int n);
+
+  /// Get control point auto-created status. Set to true if point was generated automatically
+  void SetNthControlPointAutoCreated(int n, bool flag);
+
+  /// Get control point auto-created status. Returns true if point was generated automatically
+  bool GetNthControlPointAutoCreated(int n);
 
   /// Remove Nth Control Point
   void RemoveNthControlPoint(int pointIndex);
@@ -505,6 +532,12 @@ public:
   /// Get the Visibility flag on the Nth control point,
   /// returns false if control point doesn't exist
   bool GetNthControlPointVisibility(int n = 0);
+
+  /// Get point visibility and visibility of point position status
+  /// returns true if point visibility is enabled and the position is defined or
+  /// in preview mode.
+  bool GetNthControlPointPositionVisibility(int n = 0);
+
   /// Set Visibility property on Nth control point. If the visibility is set to
   /// true on the node/list as a whole, the Nth control point visibility is used to
   /// determine if it is visible. If the visibility is set to false on the node
@@ -551,6 +584,12 @@ public:
   /// Name-2
   /// \sa GetMarkupLabelFormat
   void SetMarkupLabelFormat(std::string format);
+
+  // Get markup control point number locked status
+  bool GetFixedNumberOfControlPoints();
+
+  // Set markup control point number locked status
+  void SetFixedNumberOfControlPoints(bool fixed);
 
   /// If the MarkupLabelFormat contains the string %N, return a string
   /// in which that has been replaced with the list name. If the list name is
@@ -638,6 +677,10 @@ public:
   /// Update the AssignAttribute filter based on its ActiveScalarName and its ActiveAttributeLocation
   /// To be re-implemented in subclasses
   virtual void UpdateAssignedAttribute() {};
+
+  // Utilities to access the highlighted row in the control point table
+  int GetActiveTableRow();
+  bool SetActiveTableRow(int);
 
 protected:
   vtkMRMLMarkupsNode();
@@ -728,6 +771,9 @@ protected:
 
   /// Locks all the points and GUI
   int Locked{0};
+
+  // Locks number of control points
+  int FixedPointNumber{0};
 
   std::string MarkupLabelFormat{"%N-%d"};
 

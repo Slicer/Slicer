@@ -279,7 +279,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
 
     for (int pointIndex = 0; pointIndex < numPoints; ++pointIndex)
       {
-      if (!markupsNode->GetNthControlPointVisibility(pointIndex))
+      if (!(markupsNode->GetNthControlPointPositionVisibility(pointIndex)
+        && markupsNode->GetNthControlPointVisibility(pointIndex)))
         {
         continue;
         }
@@ -418,7 +419,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
   vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
   for (int i = 0; i < numberOfPoints; i++)
     {
-    if (!markupsNode->GetNthControlPointVisibility(i))
+    if (!(markupsNode->GetNthControlPointPositionVisibility(i)
+      && markupsNode->GetNthControlPointVisibility(i)))
       {
       continue;
       }
@@ -782,7 +784,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::GetActors(vtkPropCollection *pc)
 {
   Superclass::GetActors(pc);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
-   {
+    {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
     controlPoints->Actor->GetActors(pc);
     controlPoints->OccludedActor->GetActors(pc);
@@ -859,18 +861,18 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
     // Only show text actor if at least one of the control points are visible
     if (this->HideTextActorIfAllPointsOccluded
       && (!this->MarkupsDisplayNode->GetOccludedVisibility() || this->MarkupsDisplayNode->GetOccludedOpacity() <= 0.0))
-    {
+      {
       this->TextActorOccluded = true;
       int numberOfControlPoints = this->MarkupsNode->GetNumberOfControlPoints();
       for (int i = 0; i < numberOfControlPoints; i++)
-      {
-        if (this->GetNthControlPointViewVisibility(i))
         {
+        if (this->GetNthControlPointViewVisibility(i))
+          {
           this->TextActorOccluded = false;
           break;
+          }
         }
       }
-    }
 
     // Update displayed properties text position from 3D position
     this->Renderer->SetWorldPoint(this->TextActorPositionWorld);

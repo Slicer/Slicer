@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QToolButton>
+#include <QMainWindow>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
@@ -42,6 +43,7 @@
 // SlicerLogic includes
 #include <vtkSlicerApplicationLogic.h>
 
+
 //---------------------------------------------------------------------------
 // qSlicerMouseModeToolBarPrivate methods
 
@@ -58,11 +60,7 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeT
   this->AdjustWindowLevelMenu = nullptr;
 
   this->PlaceWidgetAction = nullptr;
-  this->PlaceWidgetMenu = nullptr;
 
-  this->PersistenceAction = nullptr;
-
-  this->PlaceModesActionGroup = nullptr;
   this->InteractionModesActionGroup = nullptr;
   this->DefaultPlaceClassName = "vtkMRMLMarkupsFiducialNode";
 }
@@ -144,43 +142,34 @@ void qSlicerMouseModeToolBarPrivate::init()
   q->addAction(this->AdjustWindowLevelAction);
   this->InteractionModesActionGroup->addAction(this->AdjustWindowLevelAction);
 
-
-
   // Place mode
+  this->ToolBarAction = new QAction(this);
+  this->ToolBarAction->setObjectName("ToolBarAction");
+  this->ToolBarAction->setToolTip(qSlicerMouseModeToolBar::tr("Display Markups Toolbar"));
+  this->ToolBarAction->setText(qSlicerMouseModeToolBar::tr("Display Markups Toolbar"));
+  this->ToolBarAction->setEnabled(true);
+  this->ToolBarAction->setIcon(QIcon(":/Icons/MarkupsDisplayToolBar.png"));
 
-  // persistence
-  this->PersistenceAction = new QAction(q);
-  this->PersistenceAction->setText(qSlicerMouseModeToolBar::tr("Persistent"));
-  this->PersistenceAction->setToolTip(qSlicerMouseModeToolBar::tr("Switch between single place and persistent place modes."));
-  this->PersistenceAction->setCheckable(true);
-  this->PersistenceAction->setChecked(false);
-  connect(this->PersistenceAction, SIGNAL(triggered(bool)),
-          q, SLOT(setPersistence(bool)));
+  QObject::connect(this->ToolBarAction, SIGNAL(triggered()),
+    q, SLOT(toggleMarkupsToolBar()));
+  q->addAction(this->ToolBarAction);
 
-  this->PlaceModesActionGroup = new QActionGroup(q);
-  this->PlaceModesActionGroup->setExclusive(true);
-  // New actions should be added when interaction modes are registered with the scene.
-
-  // populate the create and place menu, with persistence first
-  this->PlaceWidgetMenu = new QMenu(qSlicerMouseModeToolBar::tr("Create and Place"), q);
+  this->PlaceWidgetMenu = new QMenu(qSlicerMouseModeToolBar::tr("Place Menu"), q);
   this->PlaceWidgetMenu->setObjectName("PlaceWidgetMenu");
-  this->PlaceWidgetMenu->addAction(this->PersistenceAction);
-  this->PlaceWidgetMenu->addSeparator();
-  this->PlaceWidgetMenu->addActions(this->PlaceModesActionGroup->actions());
-  this->PlaceWidgetMenu->addSeparator();
+  this->PlaceWidgetMenu->addAction(this->ToolBarAction);
 
   this->PlaceWidgetAction = new QAction(this);
   this->PlaceWidgetAction->setObjectName("PlaceWidgetAction");
   this->PlaceWidgetAction->setData(vtkMRMLInteractionNode::Place);
   this->PlaceWidgetAction->setToolTip(qSlicerMouseModeToolBar::tr("Create and Place"));
   this->PlaceWidgetAction->setText(qSlicerMouseModeToolBar::tr("Place"));
-  this->PlaceWidgetAction->setMenu(this->PlaceWidgetMenu);
   this->PlaceWidgetAction->setCheckable(true);
+  this->PlaceWidgetAction->setEnabled(true);
+  this->PlaceWidgetAction->setMenu(this->PlaceWidgetMenu);
 
-  QObject::connect(this->PlaceWidgetAction, SIGNAL(toggled(bool)),
-    q, SLOT(interactionModeActionTriggered(bool)));
-  q->addAction(this->PlaceWidgetAction);
+  connect(this->PlaceWidgetAction, SIGNAL(triggered()), q, SLOT(switchPlaceMode()));
   this->InteractionModesActionGroup->addAction(this->PlaceWidgetAction);
+
 }
 
 //---------------------------------------------------------------------------
@@ -211,6 +200,10 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
                       this, SLOT(updateWidgetFromMRML()));
   this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::PlaceNodeClassNameListModifiedEvent,
                       this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::ActivePlaceNodeIDChangedEvent,
+    this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::ActivePlaceNodePlacementValidEvent,
+    this, SLOT(updateWidgetFromMRML()));
 
   // Update UI
   q->setEnabled(this->MRMLScene != nullptr);
@@ -274,11 +267,10 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
 
   // Update place widget action
 
-  this->updatePlaceWidgetMenuActionList();
+  this->updatePlaceWidget();
 
   // Update persistence checkbox
   int persistence = interactionNode->GetPlaceModePersistence();
-  this->PersistenceAction->setChecked(persistence != 0);
 
   // find the active place node class name and set it's corresponding action to be checked
   QString activePlaceNodeClassName;
@@ -291,23 +283,6 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
   if (activePlaceNodeClassName.isEmpty())
     {
     activePlaceNodeClassName = this->DefaultPlaceClassName;
-    }
-  foreach(QAction* action, this->PlaceModesActionGroup->actions())
-    {
-    if (action->data().toString() == activePlaceNodeClassName)
-      {
-      action->setChecked(true);
-      this->PlaceWidgetAction->setIcon(action->icon());
-      if (action->text().isEmpty())
-        {
-        this->PlaceWidgetAction->setText(qSlicerMouseModeToolBar::tr("Place"));
-        }
-      else
-        {
-        this->PlaceWidgetAction->setText(qSlicerMouseModeToolBar::tr("Place %1").arg(action->text()));
-        }
-      break;
-      }
     }
 
   int adjustWindowLevelMode = vtkMRMLWindowLevelWidget::GetAdjustWindowLevelModeFromString(
@@ -326,11 +301,10 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
       break;
     }
 
-  this->updateCursor();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMouseModeToolBarPrivate::updatePlaceWidgetMenuActionList()
+void qSlicerMouseModeToolBarPrivate::updatePlaceWidget()
 {
   Q_Q(qSlicerMouseModeToolBar);
   vtkMRMLInteractionNode* interactionNode = q->interactionNode();
@@ -342,76 +316,50 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidgetMenuActionList()
     this->MRMLAppLogic ? this->MRMLAppLogic->GetSelectionNode() : nullptr;
   if (!selectionNode)
     {
+
+    return;
+    }
+  QString activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
+  bool validNodeForPlacement = selectionNode->GetActivePlaceNodePlacementValid();
+  if (!validNodeForPlacement || activePlaceNodeClassName == NULL)
+    {
+    q->removeAction(this->PlaceWidgetAction);
+    q->addAction(this->ToolBarAction);
     return;
     }
 
-  // make sure that all the elements in the selection node have actions in the
-  // create and place menu
+  QString activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
+  if (activePlaceNodeID == NULL)
+    {
+    q->removeAction(this->PlaceWidgetAction);
+    q->addAction(this->ToolBarAction);
+    return;
+    }
+
   const int numClassNames = selectionNode->GetNumberOfPlaceNodeClassNamesInList();
-
-  // if some were removed, clear out those actions first
-  QList<QAction*> actionList = this->PlaceModesActionGroup->actions();
-  int numActions = actionList.size();
-  if (numClassNames < numActions)
-    {
-    // iterate over the action list and remove ones that aren't in the
-    // selection node
-    foreach(QAction *action, actionList)
-      {
-      if (selectionNode->PlaceNodeClassNameInList(
-            action->data().toString().toStdString()) == -1)
-        {
-        // place node type not found, remove corresponding action
-        this->PlaceModesActionGroup->removeAction(action);
-        this->PlaceWidgetMenu->removeAction(action);
-        }
-      }
-    // update the tool button from the updated action list
-    actionList = this->PlaceWidgetMenu->actions();
-    }
-
-  // select the active one
-  QString activePlace(selectionNode->GetActivePlaceNodeClassName());
-  if (activePlace.isEmpty())
-    {
-    activePlace = this->DefaultPlaceClassName;
-    }
-
+  QString placeNodeResource;
+  QString placeNodeIconName;
   for (int i = 0; i < numClassNames; ++i)
     {
-    QString placeNodeClassName = QString(selectionNode->GetPlaceNodeClassNameByIndex(i).c_str());
-    QString placeNodeResource = QString(selectionNode->GetPlaceNodeResourceByIndex(i).c_str());
-    QString placeNodeIconName = QString(selectionNode->GetPlaceNodeIconNameByIndex(i).c_str());
-
-    QAction* action = q->actionFromPlaceNodeClassName(placeNodeClassName, this->PlaceWidgetMenu);
-    if (!action)
+    if (activePlaceNodeClassName == QString(selectionNode->GetPlaceNodeClassNameByIndex(i).c_str()))
       {
-      // add it
-      action = new QAction(this->PlaceWidgetMenu);
-      connect(action, SIGNAL(triggered()),
-        q, SLOT(switchPlaceMode()));
-      this->PlaceWidgetAction->menu()->addAction(action);
-      this->PlaceModesActionGroup->addAction(action);
+      placeNodeResource = QString(selectionNode->GetPlaceNodeResourceByIndex(i).c_str());
+      placeNodeIconName = QString(selectionNode->GetPlaceNodeIconNameByIndex(i).c_str());
+      break;
       }
-    // update it
-    action->setObjectName(placeNodeClassName);
-    action->setIcon(QIcon(placeNodeResource));
-    if (action->icon().isNull())
-      {
-      qCritical() << "qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode - "
-                  << "New action icon for class name " << placeNodeClassName << "is null. "
-                  << "Resource:" << placeNodeResource;
-      }
-    action->setText(placeNodeIconName);
-    action->setIconText(placeNodeIconName);
-    QString tooltip = QString("Use mouse to Create-and-Place ") + placeNodeIconName;
-    action->setToolTip(tooltip);
-    // save the class name as data on the action
-    action->setData(placeNodeClassName);
-    action->setCheckable(true);
     }
-}
+  q->removeAction(this->ToolBarAction);
 
+  this->PlaceWidgetAction->setIcon(QIcon(placeNodeResource));
+  this->PlaceWidgetAction->setText(placeNodeIconName);
+  this->PlaceWidgetAction->setData(vtkMRMLInteractionNode::Place);
+  QString tooltip = QString("Use mouse to place a ") + placeNodeIconName;
+  this->PlaceWidgetAction->setToolTip(tooltip);
+  this->PlaceWidgetAction->setCheckable(true);
+
+  connect(this->PlaceWidgetAction, SIGNAL(triggered()), q, SLOT(switchPlaceMode()));
+  q->addAction(this->PlaceWidgetAction);
+}
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::updateCursor()
@@ -435,61 +383,8 @@ void qSlicerMouseModeToolBarPrivate::updateCursor()
   int currentInteractionMode = interactionNode->GetCurrentInteractionMode();
   if (currentInteractionMode != vtkMRMLInteractionNode::Place)
     {
-    if (interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform)
-      {
-      q->changeCursorTo(QCursor());
-      }
-    else
-      {
-      // Find action corresponding to current interaction mode
-      foreach(QAction* action, this->InteractionModesActionGroup->actions())
-        {
-        if (action->data().toInt() == currentInteractionMode)
-          {
-          QIcon icon = action->icon();
-          q->changeCursorTo(this->cursorFromIcon(icon));
-          break;
-          }
-        }
-      }
+    interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
     return;
-    }
-
-  const char* placeNodeClassName = nullptr;
-  vtkMRMLSelectionNode *selectionNode =
-    this->MRMLAppLogic ? this->MRMLAppLogic->GetSelectionNode() : nullptr;
-  if (selectionNode)
-    {
-    placeNodeClassName = selectionNode->GetActivePlaceNodeClassName();
-    }
-  if (!placeNodeClassName)
-    {
-    q->changeCursorTo(QCursor());
-    return;
-    }
-
-  // get the actions and check their data for the place node class name
-  QList<QAction *> actions = this->PlaceModesActionGroup->actions();
-  for (int i = 0; i < actions.size(); ++i)
-    {
-    QString thisClassName = actions.at(i)->data().toString();
-    if (thisClassName.compare(placeNodeClassName) == 0)
-      {
-      // set this action checked
-      actions.at(i)->setChecked(true);
-      // update the cursor from the place node resource
-      std::string resource = selectionNode->GetPlaceNodeResourceByClassName(std::string(placeNodeClassName));
-      if (!resource.empty())
-        {
-        q->changeCursorTo(QCursor(QPixmap(resource.c_str()),-1,0));
-        }
-      else
-        {
-        QIcon icon = actions.at(i)->icon();
-        q->changeCursorTo(this->cursorFromIcon(icon));
-        }
-      break;
-      }
     }
 }
 
@@ -644,58 +539,8 @@ void qSlicerMouseModeToolBar::switchPlaceMode()
     qWarning() << "Mouse Mode Tool Bar not set up with application logic";
     return;
     }
-
-  // get the currently checked action
-  QString placeNodeClassName;
-  QAction *thisAction = qobject_cast<QAction*>(sender());
-  if (thisAction)
-    {
-    placeNodeClassName = thisAction->data().toString();
-    }
-  else
-    {
-    thisAction = d->PlaceModesActionGroup->checkedAction();
-    if (thisAction)
-      {
-      placeNodeClassName = thisAction->data().toString();
-      }
-    }
-  if (placeNodeClassName.isEmpty())
-    {
-    placeNodeClassName = this->defaultPlaceClassName();
-    }
-  // get selection node
-  vtkMRMLSelectionNode *selectionNode = d->MRMLAppLogic->GetSelectionNode();
-  if ( selectionNode )
-    {
-    QString previousPlaceNodeClassName = QString(selectionNode->GetActivePlaceNodeClassName());
-    selectionNode->SetReferenceActivePlaceNodeClassName(placeNodeClassName.toUtf8());
-    // update the interaction mode, which will trigger an update of the cursor
-    vtkMRMLInteractionNode * interactionNode = this->interactionNode();
-    if (interactionNode)
-      {
-      // is this a click on top of a single or persistent place mode?
-      if (interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place &&
-          placeNodeClassName.compare(previousPlaceNodeClassName) == 0)
-        {
-        this->switchToViewTransformMode();
-        return;
-        }
-      if (d->PersistenceAction->isChecked())
-        {
-        interactionNode->SwitchToPersistentPlaceMode();
-        }
-      else
-        {
-        interactionNode->SwitchToSinglePlaceMode();
-        }
-      }
-    else { qCritical() << "qSlicerMouseModeToolBar::switchPlaceMode: unable to get interaction node"; }
-    }
-  else
-    {
-    qCritical() << "qSlicerMouseModeToolBar::switchPlaceMode: unable to get selection node";
-    }
+  vtkMRMLInteractionNode* interactionNode = this->interactionNode();
+  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
 }
 
 //---------------------------------------------------------------------------
@@ -794,6 +639,7 @@ void qSlicerMouseModeToolBar::interactionModeActionTriggered(bool toggled)
         }
       }
     }
+  d->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
@@ -809,3 +655,22 @@ void qSlicerMouseModeToolBar::setAdjustWindowLevelMode(int adjustWindowLevelMode
   interactionNode->SetAttribute(vtkMRMLWindowLevelWidget::GetInteractionNodeAdjustWindowLevelModeAttributeName(),
     vtkMRMLWindowLevelWidget::GetAdjustWindowLevelModeAsString(adjustWindowLevelMode));
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerMouseModeToolBar::toggleMarkupsToolBar()
+  {
+  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  if (mainWindow == nullptr)
+    {
+    qDebug("qSlicerSequencesModulePrivate::addToolBar: no main window is available, toolbar is not added");
+    return;
+    }
+  foreach(QToolBar * toolBar, mainWindow->findChildren<QToolBar*>())
+    {
+    if (toolBar->objectName() == QString("MarkupsToolBar"))
+      {
+      bool visibility = toolBar->isVisible();
+      toolBar->setVisible(!visibility);
+      }
+    }
+  }

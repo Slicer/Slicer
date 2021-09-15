@@ -33,6 +33,7 @@
 
 class qSlicerMarkupsPlaceWidgetPrivate;
 class vtkMRMLInteractionNode;
+class vtkMRMLSelectionNode;
 class vtkMRMLMarkupsFiducialNode;
 class vtkMRMLMarkupsNode;
 
@@ -72,6 +73,7 @@ public:
   /// Get interaction node.
   /// \sa setInteractionNode()
   Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
+  Q_INVOKABLE vtkMRMLSelectionNode* selectionNode()const;
 
   /// Returns true if the current markups node is the active markups node in the scene.
   bool currentNodeActive() const;
@@ -97,8 +99,12 @@ public:
   /// Get the default node color that is shown when no node is selected.
   QColor defaultNodeColor() const;
 
+  // Returns true if additional points are allowed in the current markup node, false when point number is fixed
+  bool currentMarkupPointPlacementValid();
+
   Q_INVOKABLE QToolButton* placeButton() const;
 
+  // Button to delete control point(s) or unset their position
   Q_INVOKABLE QToolButton* deleteButton() const;
 
 public slots:
@@ -114,6 +120,7 @@ public slots:
   /// Set interaction node used to update the widget.
   /// \sa interactionNode()
   void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
+  void setSelectionNode(vtkMRMLSelectionNode* selectionNode);
 
   void setDefaultNodeColor(QColor color);
 
@@ -134,6 +141,11 @@ public slots:
   /// Set place mode to persistent (remains active until deactivated). Does not enable or disable placement mode.
   void setPlaceModePersistency(bool);
 
+  /// Delete or unset position of the last placed markup point.
+  /// If the number of points is locked, the last point will be unset, otherwise
+  /// it will be deleted
+  void modifyLastPoint();
+
   /// Delete last placed markup point.
   void deleteLastPoint();
 
@@ -146,6 +158,12 @@ public slots:
   /// \deprecated Use deleteLastPoint instead.
   void deleteAllMarkups();
 
+  /// Unset the position status of the last placed markup point.
+  void unsetLastDefinedPoint();
+
+  /// Unset the position of all points from the markups node.
+  void unsetAllPoints();
+
 protected slots:
 
   /// Update the GUI to reflect the currently selected markups node.
@@ -157,8 +175,10 @@ protected slots:
   void onVisibilityButtonClicked();
   /// Toggle whether the current markups node is locked.
   void onLockedButtonClicked();
+  /// Toggle whether the number of points in the current markups node is locked.
+  void onFixedNumberOfControlPointsButtonClicked();
 
-  void onPlacePersistent(bool enable);
+  void onPlacePersistentPoint(bool enable);
 
 signals:
 

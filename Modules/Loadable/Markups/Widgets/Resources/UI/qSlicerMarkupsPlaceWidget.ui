@@ -50,7 +50,10 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="toolTip">
+      <property name="popupMode">
+        <enum>QToolButton::MenuButtonPopup</enum>
+      </property>
+      <property name="toolTip">
       <string>Place a markup point</string>
      </property>
      <property name="text">
@@ -73,6 +76,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="popupMode">
+      <enum>QToolButton::MenuButtonPopup</enum>
+     </property>
      <property name="toolTip">
       <string>Delete last added markup point</string>
      </property>
@@ -93,6 +99,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="toolTip">
+      <string>Click for more options</string>
+     </property>
      <property name="text">
       <string>...</string>
      </property>
@@ -106,15 +115,15 @@
     </widget>
    </item>
   </layout>
-  <action name="ActionPersistent">
+  <action name="ActionPlacePersistentPoint">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Place multiple markups</string>
+    <string>Place multiple control points</string>
    </property>
    <property name="toolTip">
-    <string>Place multiple markups</string>
+    <string>Place multiple control points</string>
    </property>
   </action>
   <action name="ActionDeleteAll">
@@ -127,6 +136,31 @@
    </property>
    <property name="toolTip">
     <string>Delete all markups in the list</string>
+   </property>
+  </action>
+  <action name="ActionUnsetLast">
+   <property name="icon">
+    <iconset resource="../../../Resources/qSlicerMarkupsModule.qrc">
+     <normaloff>:/Icons/MarkupsUnset.png</normaloff>:/Icons/MarkupsUnset.png</iconset>
+   </property>
+    <property name="text">
+    <string>Unset last point</string>
+   </property>
+   <property name="toolTip">
+    <string>Unset position of the last point placed without deletion</string>
+   </property>
+  </action>
+  <action name="ActionUnsetAll">
+   <property name="icon">
+    <iconset resource="../../../Resources/qSlicerMarkupsModule.qrc">
+     <normaloff>:/Icons/MarkupsUnsetAll.png</normaloff>:/Icons/MarkupsUnsetAll.png
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Unset all points</string>
+   </property>
+   <property name="toolTip">
+    <string>Unset position of all points in the list without deletion</string>
    </property>
   </action>
   <action name="ActionVisibility">
@@ -153,6 +187,19 @@
    </property>
    <property name="toolTip">
     <string>Toggle markup point positions lock</string>
+   </property>
+  </action>
+  <action name="ActionFixedNumberOfControlPoints">
+   <property name="icon">
+    <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerPointNumberUnlock.png</normaloff>
+     <normalon>:/Icons/Small/SlicerPointNumberLock.png</normalon>:/Icons/Small/SlicerPointNumberUnlock.png</iconset>
+   </property>
+   <property name="text">
+    <string>Point Number Locked</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle markup point number lock</string>
    </property>
   </action>
  </widget>

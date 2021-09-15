@@ -87,6 +87,8 @@ public slots:
 
   void setAdjustWindowLevelMode(int);
 
+  void toggleMarkupsToolBar();
+
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
 

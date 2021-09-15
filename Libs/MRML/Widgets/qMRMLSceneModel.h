@@ -231,7 +231,7 @@ protected slots:
   virtual void onMRMLSceneStartBatchProcess(vtkMRMLScene* scene);
   virtual void onMRMLSceneEndBatchProcess(vtkMRMLScene* scene);
 
-  void onMRMLSceneDeleted(vtkObject* scene);
+  void onMRMLSceneDeleted(vtkMRMLScene* scene);
 
   void onMRMLNodeModified(vtkObject* node);
   /// The node has its ID changed. The scene model needs to update the UIDRole

@@ -1290,7 +1290,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::onMRMLSceneDeleted(vtkObject* scene)
+void qMRMLSceneModel::onMRMLSceneDeleted(vtkMRMLScene* scene)
 {
   Q_UNUSED(scene);
 #ifndef QT_NO_DEBUG

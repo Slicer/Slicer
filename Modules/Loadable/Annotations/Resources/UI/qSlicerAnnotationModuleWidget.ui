@@ -42,7 +42,91 @@
         </property>
        </widget>
       </item>
-      <item>
+       <item>
+         <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_Create">
+           <property name="title">
+             <string>Create-and-place</string>
+           </property>
+           <layout class="QGridLayout" name="createLayout">
+             <item row="0" column="1" >
+               <widget class="QLabel" name="createNodeLabel">
+                 <property name="toolTip">
+                   <string>Select node types to create and place annotations.</string>
+                 </property>
+                 <property name="text">
+                   <string>Select node type: </string>
+                 </property>
+               </widget>
+             </item>
+             <item row="0" column="3" colspan="2">
+               <widget class="QPushButton" name="createLineButton">
+                 <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                   <size>
+                     <width>30</width>
+                     <height>0</height>
+                   </size>
+                 </property>
+                 <property name="maximumSize">
+                   <size>
+                     <width>32</width>
+                     <height>32</height>
+                   </size>
+                 </property>
+                 <property name="toolTip">
+                   <string>Create-and-place a line annotation node.</string>
+                 </property>
+                 <property name="text">
+                   <string/>
+                 </property>
+                 <property name="icon">
+                   <iconset>
+                     <normaloff>:/Icons/XSmall/MarkupsLine.png</normaloff>:/Icons/XSmall/MarkupsLine.png
+                   </iconset>
+                 </property>
+               </widget>
+             </item>
+             <item row="0" column="5" colspan="2">
+               <widget class="QPushButton" name="createROIButton">
+                 <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                   <size>
+                     <width>30</width>
+                     <height>0</height>
+                   </size>
+                 </property>
+                 <property name="maximumSize">
+                   <size>
+                     <width>32</width>
+                     <height>32</height>
+                   </size>
+                 </property>
+                 <property name="toolTip"><string>Create-and-place a line annotation node.</string>
+                 </property>
+                 <property name="text">
+                   <string/>
+                 </property>
+                 <property name="icon">
+                   <iconset>
+                     <normaloff>:/Icons/XSmall/MarkupsROI.png</normaloff>:/Icons/XSmall/MarkupsROI.png
+                   </iconset>
+                 </property>
+               </widget>
+             </item>
+           </layout>
+         </widget>
+       </item>
+       <item>
        <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_3">
         <property name="title">
          <string>Edit</string>
@@ -396,7 +480,7 @@
            <property name="uniformRowHeights">
             <bool>true</bool>
            </property>
-	   <property name="listenNodeModifiedEvent" stdset="0">
+           <property name="listenNodeModifiedEvent" stdset="0">
             <bool>true</bool>
            </property>
           </widget>

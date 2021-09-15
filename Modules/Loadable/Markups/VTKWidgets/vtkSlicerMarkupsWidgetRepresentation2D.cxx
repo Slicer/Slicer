@@ -219,7 +219,8 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
     if (controlPointType == Active)
       {
       if (activeControlPointIndex >= 0 && activeControlPointIndex < numPoints &&
-          markupsNode->GetNthControlPointVisibility(activeControlPointIndex) &&
+          markupsNode->GetNthControlPointPositionVisibility(activeControlPointIndex) &&
+          markupsNode->GetNthControlPointPositionVisibility(activeControlPointIndex) &&
           ((this->PointsVisibilityOnSlice->GetValue(activeControlPointIndex) &&
            !this->MarkupsDisplayNode->GetSliceProjection()) ||
             this->MarkupsDisplayNode->GetSliceProjection())  )
@@ -249,7 +250,8 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
 
     for (int pointIndex = startIndex; pointIndex <= stopIndex; pointIndex++)
       {
-      if (!markupsNode->GetNthControlPointVisibility(pointIndex) ||
+      if (!(markupsNode->GetNthControlPointPositionVisibility(pointIndex)
+        && markupsNode->GetNthControlPointVisibility(pointIndex)) ||
           (controlPointType < Active &&
            !this->PointsVisibilityOnSlice->GetValue(pointIndex)) ||
           (controlPointType > Active &&
@@ -391,7 +393,8 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::GetNthControlPointViewVisibility(in
     {
     return false;
     }
-  if (!markupsNode->GetNthControlPointVisibility(n))
+  if (!(markupsNode->GetNthControlPointPositionVisibility(n)
+    && (markupsNode->GetNthControlPointVisibility(n))))
     {
     return false;
     }
@@ -1124,7 +1127,8 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::GetAllControlPointsVisible()
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
     {
     if (!this->PointsVisibilityOnSlice->GetValue(controlPointIndex) ||
-      !markupsNode->GetNthControlPointVisibility(controlPointIndex))
+      !(markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
+        && (markupsNode->GetNthControlPointVisibility(controlPointIndex))))
       {
       return false;
       }
