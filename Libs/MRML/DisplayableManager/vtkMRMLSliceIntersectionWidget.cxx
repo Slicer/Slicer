@@ -1195,7 +1195,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessWidgetMenu(vtkMRMLInteractionEventDa
 }
 
 //-------------------------------------------------------------------------
-bool vtkMRMLSliceIntersectionWidget::ProcessMaximizeView(vtkMRMLInteractionEventData* eventData)
+bool vtkMRMLSliceIntersectionWidget::ProcessMaximizeView(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
   if (this->WidgetState != WidgetStateIdle)
     {
