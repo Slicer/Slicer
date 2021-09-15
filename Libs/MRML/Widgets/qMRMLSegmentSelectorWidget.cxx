@@ -364,7 +364,6 @@ QStringList qMRMLSegmentSelectorWidget::segmentIDs()
   // Update checkbox states in checkable combobox
   for (int row = 0; row < d->CheckableComboBox_Segment->model()->rowCount(); ++row)
     {
-    QModelIndex index = d->CheckableComboBox_Segment->model()->index(row, 0);
     QString segmentID = d->CheckableComboBox_Segment->itemData(row).toString();
     allSegmentIDs << segmentID;
     }
