@@ -43,6 +43,8 @@ static const int FIELD_LOCKED = 10;
 static const int FIELD_LABEL = 11;
 static const int FIELD_DESCRIPTION = 12;
 static const int FIELD_ASSOCIATED_NODE_ID = 13;
+static const int FIELD_POSITION_STATUS = 14;
+static const int FIELD_AUTOCREATED = 15;
 
 //------------------------------------------------------------------------------
 
@@ -369,6 +371,20 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
       " numeric values expected for locked field, got instead: " << parser.GetField(FIELD_LOCKED));
     return false;
     }
+  int positionStatus = 2;
+  if (!parser.GetIntField(FIELD_POSITION_STATUS, positionStatus, positionStatus))
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
+      " numeric values expected for position status field, got instead: " << parser.GetField(FIELD_POSITION_STATUS));
+    return false;
+    }
+  int autoCreated = 0;
+  if (!parser.GetIntField(FIELD_AUTOCREATED, autoCreated, autoCreated))
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
+      " numeric values expected for autocreated field, got instead: " << parser.GetField(FIELD_AUTOCREATED));
+    return false;
+    }
 
   std::string label;
   parser.GetStringField(FIELD_LABEL, label);
@@ -403,13 +419,14 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
     }
 
   markupsNode->SetNthControlPointOrientation(pointIndex, wxyz[0], wxyz[1], wxyz[2], wxyz[3]);
-
   markupsNode->SetNthControlPointVisibility(pointIndex, visibility);
   markupsNode->SetNthControlPointSelected(pointIndex, selected);
   markupsNode->SetNthControlPointLocked(pointIndex, locked);
   markupsNode->SetNthControlPointLabel(pointIndex, label);
   markupsNode->SetNthControlPointDescription(pointIndex, description);
   markupsNode->SetNthControlPointAssociatedNodeID(pointIndex, associatedNodeID);
+  markupsNode->GetNthControlPoint(pointIndex)->PositionStatus = positionStatus;
+  markupsNode->SetNthControlPointAutoCreated(pointIndex, autoCreated);
 
   return true;
 }
@@ -450,6 +467,8 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNo
   bool vis = markupsNode->GetNthControlPointVisibility(pointIndex);
   bool sel = markupsNode->GetNthControlPointSelected(pointIndex);
   bool lock = markupsNode->GetNthControlPointLocked(pointIndex);
+  int positionStatus = markupsNode->GetNthControlPoint(pointIndex)->PositionStatus;
+  bool autoCreated = markupsNode->GetNthControlPointAutoCreated(pointIndex);
 
   std::string label = this->ConvertStringToStorageFormat(markupsNode->GetNthControlPointLabel(pointIndex));
   std::string desc = this->ConvertStringToStorageFormat(markupsNode->GetNthControlPointDescription(pointIndex));
@@ -470,6 +489,8 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNo
   of << separator << label;
   of << separator << desc;
   of << separator << associatedNodeID;
+  of << separator << positionStatus;
+  of << separator << autoCreated;
 
   return of.str();
 }

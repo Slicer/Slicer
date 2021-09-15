@@ -21,6 +21,7 @@
     <file>Icons/MarkupsFiducialMouseModePlaceAdd.png</file>
     <file>Icons/MarkupsGenericMouseModePlace.png</file>
     <file>Icons/MarkupsGenericMouseModePlaceAdd.png</file>
+    <file>Icons/MarkupsMissing.png</file>
     <file>Icons/MarkupsMoveDown.png</file>
     <file>Icons/MarkupsMoveUp.png</file>
     <file>Icons/MarkupsSelected.png</file>
@@ -38,5 +39,9 @@
     <file>Icons/MarkupsPlaneMouseModePlaceAdd.png</file>
     <file>Icons/MarkupsROIMouseModePlace.png</file>
     <file>Icons/MarkupsROIMouseModePlaceAdd.png</file>
+    <file>Icons/MarkupsUnset.png</file>
+    <file>Icons/MarkupsUnsetAll.png</file>
+    <file>Icons/Annotations.png</file>
+    <file>Icons/MarkupsDisplayToolBar.png</file>
   </qresource>
 </RCC>

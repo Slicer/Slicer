@@ -86,10 +86,17 @@ public:
   /// Get the widget of a node.
   vtkSlicerMarkupsWidget* GetWidget(vtkMRMLMarkupsDisplayNode * node);
 
+  // Utilities for changing markup color
+  void UpdateCurrentColorTableIndex();
+  bool GetNewMarkupsColor(double currentColor[3]);
+
 protected:
 
   vtkMRMLMarkupsDisplayableManager();
   ~vtkMRMLMarkupsDisplayableManager() override;
+
+  // stores index for generating new markup colors
+  int currentColorTableIndex;
 
   vtkSlicerMarkupsWidget* FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2);
 

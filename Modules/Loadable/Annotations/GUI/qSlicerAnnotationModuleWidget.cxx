@@ -2,8 +2,6 @@
 #include "ui_qSlicerAnnotationModuleWidget.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
-
-
 // CTK includes
 #include "ctkCollapsibleButton.h"
 // Qt includes
@@ -45,6 +43,9 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
+
+// SlicerLogic includes
+#include "qSlicerApplication.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotation
@@ -93,6 +94,8 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->Ui_qSlicerAnnotationModuleWidget::setupUi(widget);
 
+  // Get application logic node
+  q->MRMLAppLogic = qSlicerApplication::application()->applicationLogic();
 
   // setup the hierarchy treeWidget
   this->hierarchyTreeView->setLogic(this->logic());
@@ -105,6 +108,12 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // connect the tree's edit property button to the widget's slot
   QObject::connect(this->hierarchyTreeView, SIGNAL(onPropertyEditButtonClicked(QString)),
                    q, SLOT(propertyEditButtonClicked(QString)));
+
+  // create node panel
+  q->connect(this->createLineButton, SIGNAL(clicked()),
+    SLOT(onCreateLineButtonClicked()));
+  q->connect(this->createROIButton, SIGNAL(clicked()),
+    SLOT(onCreateROIButtonClicked()));
 
   // edit panel
   q->connect(this->selectAllButton, SIGNAL(clicked()),
@@ -362,6 +371,36 @@ void qSlicerAnnotationModuleWidget::propertyAccepted()
 
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onCreateLineButtonClicked()
+{
+
+  vtkWeakPointer <vtkMRMLSelectionNode> selectionNode = (this->MRMLAppLogic && this->mrmlScene())
+    ? this->MRMLAppLogic->GetSelectionNode() : nullptr;
+  vtkWeakPointer <vtkMRMLInteractionNode> interactionNode = (this->MRMLAppLogic && this->mrmlScene())
+    ? this->MRMLAppLogic->GetInteractionNode() : nullptr;
+
+  if (this->mrmlScene() && selectionNode && interactionNode)
+    {
+    selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationRulerNode");
+    interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onCreateROIButtonClicked()
+{
+  vtkWeakPointer <vtkMRMLSelectionNode> selectionNode = (this->MRMLAppLogic && this->mrmlScene())
+    ? this->MRMLAppLogic->GetSelectionNode() : nullptr;
+  vtkWeakPointer <vtkMRMLInteractionNode> interactionNode = (this->MRMLAppLogic && this->mrmlScene())
+    ? this->MRMLAppLogic->GetInteractionNode() : nullptr;
+
+  if (this->mrmlScene() && selectionNode && interactionNode)
+    {
+    selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationROINode");
+    interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+    }
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()

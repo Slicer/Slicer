@@ -100,7 +100,7 @@ void qSlicerMarkupsWriter::setStorageNodeClass(vtkMRMLStorableNode* storableNode
   vtkMRMLStorageNode* newStorageNode = vtkMRMLStorageNode::SafeDownCast(scene->AddNewNodeByClass(storageNodeClassNameStr));
   if (!newStorageNode)
     {
-    qCritical() << Q_FUNC_INFO << " failed: cannot create new storage noed of class " << storageNodeClassName;
+    qCritical() << Q_FUNC_INFO << " failed: cannot create new storage node of class " << storageNodeClassName;
     return;
     }
   storableNode->SetAndObserveStorageNodeID(newStorageNode->GetID());

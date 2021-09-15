@@ -21,6 +21,7 @@
         <file alias="ExtensionError.svg">Icons/ExtensionError.svg</file>
         <file alias="MousePickMode.png">Icons/MousePickMode.png</file>
         <file alias="ModuleHistory.png">Icons/ModuleHistory.png</file>
+        <file alias="MarkupsGenericMouseModePlace.png">Icons/MarkupsGenericMouseModePlace.png</file>
     </qresource>
     <qresource prefix="/Icons/Large">
         <file alias="SlicerVisible.png">Icons/Large/SlicerVisible.png</file>
@@ -50,6 +51,7 @@
         <file alias="SlicerAddScene.png">Icons/Large/SlicerAddScene.png</file>
         <file alias="SlicerAddFiducialList.png">Icons/Large/SlicerAddFiducialList.png</file>
         <file alias="SlicerInteractivePlotting.png">Icons/Large/SlicerInteractivePlotting.png</file>
+        <file alias="MarkupsPositionStatus.png">Icons/Large/MarkupsPositionStatus.png</file>
     </qresource>
     <qresource prefix="/Icons/Medium">
         <file alias="SlicerVisible.png">Icons/Medium/SlicerVisible.png</file>
@@ -87,6 +89,8 @@
         <file alias="SlicerInteractivePlotting.png">Icons/Medium/SlicerInteractivePlotting.png</file>
         <file alias="SlicerDatabase.png">Icons/Medium/SlicerDatabase.png</file>
         <file alias="SlicerImportDICOM.png">Icons/Medium/SlicerImportDICOM.png</file>
+        <file alias="SlicerPointNumberLock.png">Icons/Medium/SlicerPointNumberLock.png</file>
+        <file alias="SlicerPointNumberUnlock.png">Icons/Medium/SlicerPointNumberUnlock.png</file>
     </qresource>
     <qresource prefix="/Icons/Scalable">
         <file alias="SlicerConfigure.svg">Icons/Scalable/SlicerConfigure.svg</file>
@@ -131,6 +135,12 @@
         <file alias="SlicerHome.png">Icons/XSmall/SlicerHome.png</file>
         <file alias="SlicerConfigure.png">Icons/XSmall/SlicerConfigure.png</file>
         <file alias="SlicerInteractivePlotting.png">Icons/XSmall/SlicerInteractivePlotting.png</file>
+        <file alias="MarkupsDefined.png">Icons/XSmall/MarkupsDefined.png</file>
+        <file alias="MarkupsInProgress.png">Icons/XSmall/MarkupsInProgress.png</file>
+        <file alias="MarkupsMissing.png">Icons/XSmall/MarkupsMissing.png</file>
+        <file alias="MarkupsUndefined.png">Icons/XSmall/MarkupsUndefined.png</file>
+        <file alias="MarkupsLine.png">Icons/XSmall/MarkupsLine.png</file>
+        <file alias="MarkupsROI.png">Icons/XSmall/MarkupsROI.png</file>
     </qresource>
     <qresource prefix="/Icons/Small">
         <file alias="SlicerVisible.png">Icons/Small/SlicerVisible.png</file>
@@ -166,5 +176,7 @@
         <file alias="SlicerAddFiducialList.png">Icons/Small/SlicerAddFiducialList.png</file>
         <file alias="SlicerDataBundle.png">Icons/Small/SlicerDataBundle.png</file>
         <file alias="SlicerInteractivePlotting.png">Icons/Small/SlicerInteractivePlotting.png</file>
+        <file alias="SlicerPointNumberLock.png">Icons/Small/SlicerPointNumberLock.png</file>
+        <file alias="SlicerPointNumberUnlock.png">Icons/Small/SlicerPointNumberUnlock.png</file>
     </qresource>
 </RCC>

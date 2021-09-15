@@ -1886,7 +1886,7 @@ bool vtkSlicerMarkupsLogic::ImportControlPointsFromTable(vtkMRMLMarkupsNode* mar
       }
 
     controlPoint->PositionStatus = positionStatus;
-
+    controlPoint->AutoCreated = false;
     markupsNode->AddControlPoint(controlPoint);
     }
   return true;

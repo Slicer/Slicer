@@ -605,7 +605,8 @@ bool vtkSlicerMarkupsWidgetRepresentation::GetAllControlPointsVisible()
 
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
     {
-    if (!markupsNode->GetNthControlPointVisibility(controlPointIndex))
+    if (!(markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
+      && (markupsNode->GetNthControlPointVisibility(controlPointIndex))))
       {
       return false;
       }

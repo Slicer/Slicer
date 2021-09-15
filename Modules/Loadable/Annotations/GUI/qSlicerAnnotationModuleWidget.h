@@ -7,6 +7,9 @@
 // Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 #include "../qSlicerAnnotationsModuleExport.h"
+#include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLLayoutLogic.h"
+#include "vtkMRMLSelectionNode.h"
 
 class qSlicerAnnotationModulePropertyDialog;
 class qSlicerAnnotationModuleReportDialog;
@@ -24,6 +27,7 @@ public:
     typedef qSlicerAbstractModuleWidget Superclass;
     qSlicerAnnotationModuleWidget(QWidget *parent=nullptr);
     ~qSlicerAnnotationModuleWidget() override;
+    vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
 
     /// Different Annotation Types
     enum
@@ -74,6 +78,10 @@ protected slots:
 
   //------------------------------------------------------------------
   // Daniel's approved code starting here
+
+  /// Create new annotation nodes
+  void onCreateLineButtonClicked();
+  void onCreateROIButtonClicked();
 
   /// Add a new hierarchy.
   void onAddHierarchyButtonClicked();

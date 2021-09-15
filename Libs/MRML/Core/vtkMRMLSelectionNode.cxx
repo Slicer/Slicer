@@ -46,6 +46,8 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 
   this->SetSingletonTag("Singleton");
   this->ActivePlaceNodeClassName = nullptr;
+  this->ActivePlaceNodePlacementValid = false;
+
 
   vtkNew<vtkIntArray> unitNodeModifiedEvents;
   unitNodeModifiedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -494,6 +496,7 @@ const char* vtkMRMLSelectionNode::GetActivePlaceNodeID()
 void vtkMRMLSelectionNode::SetActivePlaceNodeID(const char* id)
 {
   this->SetNodeReferenceID(ACTIVE_PLACE_NODE_REFERENCE_ROLE, id);
+  this->InvokeEvent(vtkMRMLSelectionNode::ActivePlaceNodeIDChangedEvent);
 }
 
 //----------------------------------------------------------------------------
@@ -561,3 +564,16 @@ void vtkMRMLSelectionNode::SetActivePlotChartID(const char* id)
 {
   this->SetNodeReferenceID(ACTIVE_PLOT_CHART_REFERENCE_ROLE, id);
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActivePlaceNodePlacementValid(bool valid)
+{
+  this->ActivePlaceNodePlacementValid = valid;
+  this->InvokeEvent(vtkMRMLSelectionNode::ActivePlaceNodePlacementValidEvent);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSelectionNode::GetActivePlaceNodePlacementValid()
+  {
+  return this->ActivePlaceNodePlacementValid;
+  }

@@ -98,6 +98,8 @@ public:
   // Add additional widget
   QList<qSlicerMarkupsAdditionalOptionsWidget*>& additionalWidgets();
 
+  Q_INVOKABLE void updateToolBar(vtkMRMLMarkupsNode* node);
+
 public slots:
 
   /// Respond to the scene events
@@ -144,6 +146,10 @@ public slots:
   void onAddMarkupPushButtonClicked();
   void onMoveMarkupUpPushButtonClicked();
   void onMoveMarkupDownPushButtonClicked();
+  void onRestoreMarkupPushButtonClicked();
+  void onResetMarkupPushButtonClicked();
+  void onUnsetMarkupPushButtonClicked();
+  void onMissingMarkupPushButtonClicked();
   void onDeleteMarkupPushButtonClicked(bool confirm=true);
   void onDeleteAllMarkupsInListPushButtonClicked();
 
@@ -165,6 +171,9 @@ public slots:
 
   /// Toggle the markups node locked flag
   void onListLockedUnlockedPushButtonClicked();
+
+  /// Toggle the markups node point number locked flag
+  void onFixedNumberOfControlPointsPushButtonClicked();
 
   /// Update the markup label from the line edit entry
   void onNameFormatLineEditTextEdited(const QString text);
@@ -225,7 +234,7 @@ public slots:
   void onSliceIntersectionsVisibilityToggled(bool checked);
 
   /// update visibility of the coordinate columns in the table
-  void onHideCoordinateColumnsToggled(bool checked);
+  void onHideCoordinateColumnsToggled(int index);
 
   /// update the coordinates shown in the table to be either the transformed coordinates (checked) or the untransformed coordinates (unchecked)
   void onTransformedCoordinatesToggled(bool checked);
@@ -249,8 +258,10 @@ public slots:
   /// Update set of create markups push buttons
   void onPlaceMarkupsAdditionalOptionsWidgets();
 
-  void updateImportExportWidgets();
+  // Enable or disable markup table buttons
+  void enableMarkupTableButtons(bool enable);
 
+  void updateImportExportWidgets();
   void onImportExportApply();
 
 protected:

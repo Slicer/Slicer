@@ -18,6 +18,9 @@
 // Qt includes
 #include <QDebug>
 #include <QSettings>
+#include <QMainWindow>
+#include <QMenu>
+#include <QTimer>
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
@@ -25,8 +28,12 @@
 
 // QTGUI includes
 #include <qSlicerApplication.h>
+#include "qSlicerCoreApplication.h"
 #include <qSlicerIOManager.h>
 #include <qSlicerNodeWriter.h>
+#include "qSlicerModuleManager.h"
+
+#include "vtkMRMLScene.h"
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
@@ -64,32 +71,125 @@
 #include "qSlicerMarkupsAngleMeasurementsWidget.h"
 #include "qSlicerMarkupsCurveSettingsWidget.h"
 #include "qSlicerMarkupsAdditionalOptionsWidgetsFactory.h"
+#include "qMRMLMarkupsToolBar.h"
 
 // DisplayableManager initialization
 #include <vtkAutoInit.h>
+
 VTK_MODULE_INIT(vtkSlicerMarkupsModuleMRMLDisplayableManager);
+
+static const double UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC = 0.020; // refresh output with a maximum of 50FPS
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Markups
 class qSlicerMarkupsModulePrivate
 {
+QVTK_OBJECT
+Q_DECLARE_PUBLIC(qSlicerMarkupsModule);
+protected:
+  qSlicerMarkupsModule* const q_ptr;
 public:
-  qSlicerMarkupsModulePrivate();
+  qSlicerMarkupsModulePrivate(qSlicerMarkupsModule& object);
+
+  /// Adds Markups toolbar to the application GUI
+  virtual void addToolBar();
+
+  virtual ~qSlicerMarkupsModulePrivate();
+  QTimer UpdateAllVirtualOutputNodesTimer;
+  qMRMLMarkupsToolBar* ToolBar;
+  bool MarkupsModuleOwnsToolBar{ true };
+  bool AutoShowToolBar{ true };
+  vtkWeakPointer<vtkMRMLMarkupsNode> MarkupsToShow;
+
 };
 
 //-----------------------------------------------------------------------------
 // qSlicerMarkupsModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerMarkupsModulePrivate::qSlicerMarkupsModulePrivate() = default;
+qSlicerMarkupsModulePrivate::qSlicerMarkupsModulePrivate(qSlicerMarkupsModule& object)
+  : q_ptr(&object)
+{
+  this->ToolBar = new qMRMLMarkupsToolBar;
+  this->ToolBar->setWindowTitle(QObject::tr("Markups"));
+  this->ToolBar->setObjectName("MarkupsToolbar");
+  this->ToolBar->setVisible(false);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerMarkupsModulePrivate::~qSlicerMarkupsModulePrivate()
+{
+  if (this->MarkupsModuleOwnsToolBar)
+    {
+    // the toolbar has not been added to the main window
+    // so it is still owned by this class, therefore
+    // we are responsible for deleting it
+    delete this->ToolBar;
+    this->ToolBar = nullptr;
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModulePrivate::addToolBar()
+{
+  Q_Q(qSlicerMarkupsModule);
+
+  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  if (mainWindow == nullptr)
+    {
+    qDebug("qSlicerMarkupsModulePrivate::addToolBar: no main window is available, toolbar is not added");
+    return;
+    }
+
+  this->ToolBar->setWindowTitle("Markups");
+  this->ToolBar->setObjectName("MarkupsToolBar");
+  //// Add a toolbar break to make the sequence toolbar appear in a separate row
+  //// (it is a long toolbar and would make many toolbar buttons disappear from
+  //// all the standard toolbars if they are all displayed in a single row).
+  mainWindow->addToolBarBreak();
+  mainWindow->addToolBar(this->ToolBar);
+  this->MarkupsModuleOwnsToolBar = false;
+  foreach(QMenu * toolBarMenu, mainWindow->findChildren<QMenu*>())
+    {
+    if (toolBarMenu->objectName() == QString("WindowToolBarsMenu"))
+      {
+      toolBarMenu->addAction(this->ToolBar->toggleViewAction());
+      break;
+      }
+    }
+
+  //// Main window takes care of saving and restoring toolbar geometry and state.
+  //// However, when state is restored the markups toolbar was not created yet.
+  //// We need to restore the main window state again, now, that the Markups toolbar is available.
+  QSettings settings;
+  settings.beginGroup("MainWindow");
+  bool restore = settings.value("RestoreGeometry", false).toBool();
+  if (restore)
+    {
+    mainWindow->restoreState(settings.value("windowState").toByteArray());
+    }
+  vtkSlicerMarkupsLogic* logic = vtkSlicerMarkupsLogic::SafeDownCast(q->logic());
+  this->ToolBar->addNodeActions(logic);
+}
 
 //-----------------------------------------------------------------------------
 // qSlicerMarkupsModule methods
 
 //-----------------------------------------------------------------------------
 qSlicerMarkupsModule::qSlicerMarkupsModule(QObject* _parent)
-  : Superclass(_parent), d_ptr(new qSlicerMarkupsModulePrivate)
+  : Superclass(_parent), d_ptr(new qSlicerMarkupsModulePrivate(*this))
 {
+  Q_D(qSlicerMarkupsModule);
+
+  d->UpdateAllVirtualOutputNodesTimer.setSingleShot(true);
+
+  vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+  if (scene)
+    {
+    // Need to listen for any new sequence browser nodes being added to start/stop timer
+    this->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
+    this->qvtkConnect(scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -134,6 +234,7 @@ QIcon qSlicerMarkupsModule::icon()const
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModule::setup()
 {
+  Q_D(qSlicerMarkupsModule);
   this->Superclass::setup();
 
   vtkSlicerMarkupsLogic *logic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
@@ -184,17 +285,8 @@ void qSlicerMarkupsModule::setup()
   ioManager->registerIO(markupsReader);
   ioManager->registerIO(new qSlicerMarkupsWriter(this));
 
-  // settings
-  /*
-    if (qSlicerApplication::application())
-    {
-    qSlicerMarkupsSettingsPanel* panel =
-    new qSlicerMarkupsSettingsPanel;
-    qSlicerApplication::application()->settingsDialog()->addPanel(
-    "Markups", panel);
-    panel->setMarkupsLogic(vtkSlicerMarkupsLogic::SafeDownCast(this->logic()));
-    }
-  */
+  // Add toolbar
+  d->addToolBar();
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyMarkupsPlugin());
@@ -245,6 +337,7 @@ QStringList qSlicerMarkupsModule::associatedNodeTypes() const
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModule::setMRMLScene(vtkMRMLScene* scene)
 {
+  Q_D(qSlicerMarkupsModule);
   this->Superclass::setMRMLScene(scene);
   vtkSlicerMarkupsLogic* logic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
   if (!logic)
@@ -457,4 +550,103 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
   color = markupsDisplayNode->GetActiveColor();
   settings.setValue("Markups/ActiveColor", QColor::fromRgbF(color[0], color[1], color[2]));
   settings.setValue("Markups/Opacity", markupsDisplayNode->GetOpacity());
+}
+
+//-----------------------------------------------------------------------------
+qMRMLMarkupsToolBar* qSlicerMarkupsModule::toolBar()
+{
+  Q_D(qSlicerMarkupsModule);
+  return d->ToolBar;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModule::setToolBarVisible(bool visible)
+{
+  Q_D(qSlicerMarkupsModule);
+  d->ToolBar->setVisible(visible);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMarkupsModule::isToolBarVisible()
+{
+  Q_D(qSlicerMarkupsModule);
+  return d->ToolBar->isVisible();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMarkupsModule::autoShowToolBar()
+{
+  Q_D(qSlicerMarkupsModule);
+  return d->AutoShowToolBar;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModule::setAutoShowToolBar(bool autoShow)
+{
+  Q_D(qSlicerMarkupsModule);
+  d->AutoShowToolBar = autoShow;
+}
+//-----------------------------------------------------------------------------
+bool  qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
+{
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (!app
+      || !app->moduleManager()
+      || !dynamic_cast<qSlicerMarkupsModule*>(app->moduleManager()->module("Markups")))
+    {
+      qCritical("Markups module is not available");
+      return false;
+    }
+  qSlicerMarkupsModule* markupsModule = dynamic_cast<qSlicerMarkupsModule*>(app->moduleManager()->module("Markups"));
+  if (markupsModule->autoShowToolBar())
+    {
+    markupsModule->setToolBarVisible(true);
+    }
+  return true;
+}
+// --------------------------------------------------------------------------
+void qSlicerMarkupsModule::onNodeAddedEvent(vtkObject*, vtkObject* node)
+{
+  Q_D(qSlicerMarkupsModule);
+
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+
+  if (!markupsNode)
+    {
+    return;
+    }
+  // If the timer is not active, so it should be turned on
+  if (!d->UpdateAllVirtualOutputNodesTimer.isActive())
+    {
+    d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC * 1000.0);
+    }
+
+  // If toolbar does not show a valid browser node already then queue the newly added markups node to be
+  // shown in the toolbar.
+  this->setToolBarVisible(true);
+  d->ToolBar->setActiveMarkupsNode(markupsNode);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerMarkupsModule::onNodeRemovedEvent(vtkObject*, vtkObject* node)
+{
+  Q_D(qSlicerMarkupsModule);
+
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (markupsNode)
+    {
+    // Check if there is any other markups node left in the Scene
+    vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+    if (scene)
+      {
+      vtkMRMLNode* node;
+      node = this->mrmlScene()->GetFirstNodeByClass("vtkMRMLMarkupsNode");
+      if (!node)
+        {
+        // The last sequence browser was removed, so
+        // turn off timer refresh and stop any pending timers
+        d->UpdateAllVirtualOutputNodesTimer.stop();
+        }
+      }
+    }
 }

@@ -44,6 +44,7 @@
 #include <vtkSphereSource.h>
 #include <vtkTextProperty.h>
 #include <vtkWidgetRepresentation.h>
+#include <vtkMRMLColorTableNode.h>
 
 // STD includes
 #include <algorithm>
@@ -73,6 +74,8 @@ vtkMRMLMarkupsDisplayableManager::vtkMRMLMarkupsDisplayableManager()
   this->LastClickWorldCoordinates[1]=0.0;
   this->LastClickWorldCoordinates[2]=0.0;
   this->LastClickWorldCoordinates[3]=1.0;
+
+  this->currentColorTableIndex = 3;
 }
 
 //---------------------------------------------------------------------------
@@ -573,13 +576,18 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayableManager::CreateNewMarkupsNode(
 {
   vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass(markupsNodeClassName));
-
   std::string nodeName =
     this->GetMRMLScene()->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
   markupsNode->SetName(nodeName.c_str());
   markupsNode->AddDefaultStorageNode();
   markupsNode->CreateDefaultDisplayNodes();
 
+  if (markupsNodeClassName == "vtkMRMLMarkupsROINode")
+    {
+    double currentColor[3];
+    this->GetNewMarkupsColor(currentColor);
+    markupsNode->GetDisplayNode()->SetSelectedColor(currentColor);
+    }
   return markupsNode;
 }
 
@@ -617,7 +625,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   // New point can be placed anywhere
   int eventid = eventData->GetType();
   // We allow mouse move with the shift modifier to be processed while in place mode so that we can continue to update the
-  // preview positionm, even when using shift + mouse-move to adjust the crosshair position.
+  // preview position, even when using shift + mouse-move to adjust the crosshair position.
   if ((eventid == vtkCommand::MouseMoveEvent
        && (eventData->GetModifiers() == vtkEvent::NoModifier ||
           (eventData->GetModifiers() & vtkEvent::ShiftModifier &&
@@ -840,10 +848,10 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement(
     }
 
   if (activeMarkupsNode && activeMarkupsNode->GetMaximumNumberOfControlPoints() > 0
-    && activeMarkupsNode->GetNumberOfControlPoints() >= activeMarkupsNode->GetMaximumNumberOfControlPoints())
+    && activeMarkupsNode->GetNumberOfDefinedControlPoints() >= activeMarkupsNode->GetMaximumNumberOfControlPoints())
     {
     // maybe reached maximum number of points - if yes, then create a new widget
-    if (activeMarkupsNode->GetNumberOfControlPoints() == activeMarkupsNode->GetMaximumNumberOfControlPoints())
+    if (activeMarkupsNode->GetNumberOfDefinedControlPoints() == activeMarkupsNode->GetMaximumNumberOfControlPoints())
       {
       // one more point than the maximum
       vtkSlicerMarkupsWidget *slicerWidget = this->Helper->GetWidget(activeMarkupsNode);
@@ -948,3 +956,37 @@ void vtkMRMLMarkupsDisplayableManager::ConvertDeviceToXYZ(double x, double y, do
 {
   vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetInteractor(), this->GetMRMLSliceNode(), x, y, xyz);
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayableManager::UpdateCurrentColorTableIndex()
+  {
+
+  if (this->currentColorTableIndex < 255)
+    {
+    this->currentColorTableIndex += 1;
+    }
+  else
+    {
+    this->currentColorTableIndex = 0;
+    }
+  }
+//-----------------------------------------------------------------------------
+bool vtkMRMLMarkupsDisplayableManager::GetNewMarkupsColor(double currentColor[3])
+  {
+  vtkMRMLColorTableNode* randomIntegers = vtkMRMLColorTableNode::SafeDownCast(
+    this->GetMRMLScene()->GetNodeByID("vtkMRMLColorTableNodeRandom"));
+  double currentColorArray[4];
+  bool success = randomIntegers->GetColor(this->currentColorTableIndex, currentColorArray);
+  if (success)
+    {
+    currentColor[0] = currentColorArray[0];
+    currentColor[1] = currentColorArray[1];
+    currentColor[2] = currentColorArray[2];
+    this->UpdateCurrentColorTableIndex();
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+  }
