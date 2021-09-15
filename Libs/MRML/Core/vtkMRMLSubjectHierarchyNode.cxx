@@ -339,7 +339,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, st
     {
     // Add under parent
     vtkSmartPointer<vtkSubjectHierarchyItem> childPointer(this);
-    if (positionUnderParent<0 || positionUnderParent >= this->Parent->Children.size())
+    if (positionUnderParent < 0 || positionUnderParent >= static_cast<int>(this->Parent->Children.size()))
       {
       this->Parent->Children.push_back(childPointer);
       }
