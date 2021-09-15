@@ -252,7 +252,6 @@ int vtkMRMLMarkupsNodeTest5(int , char * [])
   std::cout << "Test b-spline transform" << std::endl;
 
   vtkNew<vtkOrientedBSplineTransform> bSplineTransform;
-  double bSplineOrigin[3] = { -100, -100, -100 };
   double bSplineSpacing[3] = { 100, 100, 100 };
   double bSplineDirection[3][3] = { {0.92128500, -0.36017075, -0.146666625}, {0.31722386, 0.91417248, -0.25230478}, {0.22495105, 0.18591857, 0.95646814} };
   double bSplineDims[3] = { 7,8,7 };
