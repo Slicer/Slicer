@@ -3190,7 +3190,7 @@ void vtkMRMLScene::RemoveInvalidNodeReferences(vtkCollection* checkNodes, const 
   for (checkNodes->InitTraversal(it);
     (node = vtkMRMLNode::SafeDownCast(checkNodes->GetNextItemAsObject(it)));)
     {
-    node->RemoveInvalidReferences(this->ReservedIDs);
+    node->RemoveInvalidReferences(validNodeIDs);
     }
 }
 
