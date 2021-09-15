@@ -292,7 +292,6 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
     return;
     }
 
-  bool success = true;
   std::string errorMessages;
 
   int numStorageNodes = this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
@@ -317,7 +316,6 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
       pnode->GetUserMessages()->ClearMessages();
       if (pnode->ReadData(this) == 0)
         {
-        success = false;
         std::string msg = std::string("Failed to read node ") + (this->GetName() ? this->GetName() : "(null)")
           + " (" + (this->GetID() ? this->GetID() : "(null)") + ") using storage node "
           + (pnode->GetID() ? pnode->GetID() : "(null)") + ".";
