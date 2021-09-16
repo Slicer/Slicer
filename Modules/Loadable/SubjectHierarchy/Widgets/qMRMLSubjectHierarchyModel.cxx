@@ -66,9 +66,9 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   , TransformColumn(-1)
   , DescriptionColumn(-1)
   , NoneEnabled(false)
+  , NoneDisplay(qMRMLSubjectHierarchyModel::tr("None"))
   , SubjectHierarchyNode(nullptr)
   , MRMLScene(nullptr)
-  , NoneDisplay(qMRMLSubjectHierarchyModel::tr("None"))
   , TerminologiesModuleLogic(nullptr)
   , IsDroppedInside(false)
 {
