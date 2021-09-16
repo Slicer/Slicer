@@ -16,6 +16,7 @@ set(MODULE_PYTHON_RESOURCES
   Resources/Icons/DTIBrain.png
   Resources/Icons/DTIVolume.png
   Resources/Icons/dwi.png
+  Resources/Icons/DZ-CBCT.png
   Resources/Icons/MRBrainTumor1.png
   Resources/Icons/MRBrainTumor2.png
   Resources/Icons/MRHead.png
