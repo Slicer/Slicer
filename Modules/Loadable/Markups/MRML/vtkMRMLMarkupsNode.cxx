@@ -1237,13 +1237,12 @@ void vtkMRMLMarkupsNode::SetNthControlPointOrientationMatrixWorld(int n, vtkMatr
 }
 
 //-----------------------------------------------------------
-double* vtkMRMLMarkupsNode::GetNthControlPointNormal(int n, double normal[3])
+void vtkMRMLMarkupsNode::GetNthControlPointNormal(int n, double normal[3])
 {
   ControlPoint *controlPoint = this->GetNthControlPointCustomLog(n, "GetNthControlPointNormal");
   if (!controlPoint)
     {
-    static double identity[3] = { 0.0, 0.0, 1.0 };
-    return identity;
+    return;
     }
   double* orientationMatrix = this->GetNthControlPoint(n)->OrientationMatrix;
   normal[0] = orientationMatrix[2];
