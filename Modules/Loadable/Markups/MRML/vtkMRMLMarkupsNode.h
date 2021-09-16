@@ -450,7 +450,7 @@ public:
   /// Get orientation as a vtkMatrix3x3
   void GetNthControlPointOrientationMatrixWorld(int n, vtkMatrix3x3* matrix);
   /// Get normal direction (orientation of z axis) in local coordinate system.
-  double* GetNthControlPointNormal(int n, double normal[3]);
+  void GetNthControlPointNormal(int n, double normal[3]);
   /// Get normal direction (orientation of z axis) in world coordinate system.
   void GetNthControlPointNormalWorld(int n, double normalWorld[3]);
   /// Get the WXYZ orientation for the Nth control point
