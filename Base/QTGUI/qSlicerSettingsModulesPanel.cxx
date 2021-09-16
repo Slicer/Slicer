@@ -120,7 +120,6 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->FavoritesMoreButton->setChecked(false);
 
   // Default values
-  this->PreferExecutableCLICheckBox->setChecked(Slicer_CLI_PREFER_EXECUTABLE_DEFAULT);
   this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
   this->DisableModulesListView->setFactoryManager( factoryManager );
   this->FavoritesModulesListView->setFactoryManager( factoryManager );
@@ -153,8 +152,6 @@ void qSlicerSettingsModulesPanelPrivate::init()
   q->registerProperty("disable-builtin-cli-modules", this->LoadBuiltInCommandLineModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
 
-  q->registerProperty("Modules/PreferExecutableCLI", this->PreferExecutableCLICheckBox,
-                      "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/HomeModule", this->ModulesMenu,
                       "currentModule", SIGNAL(currentModuleChanged(QString)));
   q->registerProperty("Modules/FavoriteModules", this->FavoritesModulesListView->filterModel(),

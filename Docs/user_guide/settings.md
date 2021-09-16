@@ -20,10 +20,6 @@ For example, this command will start Slicer without any CLI loaded:
 
     Slicer.exe --disable-cli-modules
 
-#### Prefer Executable CLIs
-
-Use the executable version of a CLI instead of its shared version. CLI modules typically come in 2 forms, as shared (dll)and as executable (exe). By default, if there is a shared version, it is the one loaded by Slicer, ignoring the executable version. Loading a shared runs the module faster but increases the memory consumption. For some configurations (e.g. Windows 32b), memory is critical. Toggling this option to ON skips the loading of shared CLIs and loads executable version of CLIs instead. If there is no executable for a given CLI, the shared version is used.
-
 #### Show hidden modules
 
 Some modules don't have a user interface, they are hidden from the module's list. For debugging purpose, it is possible to force their display
