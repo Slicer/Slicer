@@ -258,8 +258,9 @@ else()
     foreach(p ${package_list})
       get_filename_component(package_name "${p}" NAME)
       message("Uploading URL to [${package_name}] on CDash")
-      midas_ctest_upload_url(
-        API_URL ${MIDAS_PACKAGE_URL}
+      slicer_ctest_upload_url(
+        ALGO "SHA512"
+        DOWNLOAD_URL_TEMPLATE "${SLICER_PACKAGE_MANAGER_URL}/api/v1/file/hashsum/%(algo)/%(hash)/download"
         FILEPATH ${p}
         )
       if(RUN_CTEST_SUBMIT)

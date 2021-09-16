@@ -312,7 +312,6 @@ foreach(p ${package_list})
         RESULT_VARNAME slicer_midas_upload_status
         )
       if(NOT slicer_midas_upload_status STREQUAL "ok")
-        file(WRITE ${EXTENSION_BINARY_DIR}/PACKAGES.txt "")
         message(WARNING
   "Upload of [${package_name}] failed !
   Check that:
