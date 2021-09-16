@@ -63,7 +63,7 @@ set(CMAKE_MODULE_PATH
   )
 
 include(CMakeParseArguments)
-include(MIDASCTestUploadURL)
+include(SlicerCTestUploadURL)
 include(UseSlicerMacros) # for slicer_setting_variable_message
 
 #-----------------------------------------------------------------------------

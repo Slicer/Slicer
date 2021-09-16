@@ -560,9 +560,9 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         # Update CMake module path so that our custom macros/functions can be included.
         set(CMAKE_MODULE_PATH ${CTEST_SOURCE_DIRECTORY}/CMake ${CMAKE_MODULE_PATH})
 
-        include(MIDASCTestUploadURL)
+        include(SlicerCTestUploadURL)
 
-        message(STATUS "Packaging and uploading Slicer to midas ...")
+        message(STATUS "Packaging and uploading Slicer to packages server ...")
         set(package_list)
         if(run_ctest_with_packages)
           ctest_build(
