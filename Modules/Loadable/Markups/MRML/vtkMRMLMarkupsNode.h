@@ -613,8 +613,9 @@ public:
   void GetRASBounds(double bounds[6]) override;
   void GetBounds(double bounds[6]) override;
 
-  /// Get the index of the closest control point to the world coordinates
-  int GetClosestControlPointIndexToPositionWorld(double pos[3]);
+  /// Get the index of the closest control point to the world coordinates.
+  /// If visibleOnly is set to true then index of the closest visible control point will be returned.
+  int GetClosestControlPointIndexToPositionWorld(double pos[3], bool visibleOnly=false);
 
   /// Set all control point positions from a point list.
   /// If points is nullptr then all control points are removed.

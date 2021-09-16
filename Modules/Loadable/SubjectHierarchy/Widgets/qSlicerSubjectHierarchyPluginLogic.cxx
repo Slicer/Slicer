@@ -563,6 +563,16 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
     {
     eventDataMap["ViewNodeID"] = QVariant(eventData->GetViewNode()->GetID());
     }
+  if (eventData->IsWorldPositionValid())
+    {
+    double worldPos[3] = { 0.0 };
+    eventData->GetWorldPosition(worldPos);
+    QVariantList worldPosVector;
+    worldPosVector.push_back(worldPos[0]);
+    worldPosVector.push_back(worldPos[1]);
+    worldPosVector.push_back(worldPos[2]);
+    eventDataMap["WorldPosition"] = QVariant(worldPosVector);
+    }
 
   // Have all plugins show context view menu actions for current item
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())

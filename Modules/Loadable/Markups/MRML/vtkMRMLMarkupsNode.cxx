@@ -1997,7 +1997,7 @@ void vtkMRMLMarkupsNode::OnTransformNodeReferenceChanged(vtkMRMLTransformNode* t
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLMarkupsNode::GetClosestControlPointIndexToPositionWorld(double pos[3])
+int vtkMRMLMarkupsNode::GetClosestControlPointIndexToPositionWorld(double pos[3], bool visibleOnly/*=false*/)
 {
   int numberOfControlPoints = this->GetNumberOfControlPoints();
   if (numberOfControlPoints <= 0)
@@ -2013,6 +2013,11 @@ int vtkMRMLMarkupsNode::GetClosestControlPointIndexToPositionWorld(double pos[3]
   double closestDistanceSquare = 0;
   for (vtkIdType pointIndex = 0; pointIndex < numberOfControlPoints; pointIndex++)
     {
+    if (visibleOnly && !this->GetNthControlPointVisibility(pointIndex))
+      {
+      // we need to find closest visible point but this one is not visible
+      continue;
+      }
     double currentPos[4] = { 0.0, 0.0, 0.0, 1.0 };
     this->GetNthControlPointPositionWorld(pointIndex, currentPos);
     double distanceSquare = vtkMath::Distance2BetweenPoints(pos, currentPos);

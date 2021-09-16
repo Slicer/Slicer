@@ -118,6 +118,12 @@ protected slots:
   void removeNodesToBeDeleted();
   /// Called when clicking on toggle select point action
   void toggleSelectPoint();
+  /// Called when clicking on jump to previous point action
+  void jumpToPreviousPoint();
+  /// Called when clicking on jump to next point action
+  void jumpToNextPoint();
+  /// Called when clicking on jump to closest point action
+  void jumpToClosestPoint();
   /// Called when clicking on edit terminology action
   void editNodeTerminology();
   /// Called when clicking on handle interactive action in view

@@ -648,10 +648,31 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* even
   menuEventData->SetComponentType(markupsDisplayNode->GetActiveComponentType()); //TODO: This will always pass the active component for the mouse
   menuEventData->SetComponentIndex(markupsDisplayNode->GetActiveComponentIndex());
   menuEventData->SetViewNode(this->WidgetRep->GetViewNode());
+
+  // Copy display position
   if (eventData->IsDisplayPositionValid())
     {
     menuEventData->SetDisplayPosition(eventData->GetDisplayPosition());
     }
+
+  // Copy/compute world position
+  double worldPos[3] = { 0.0 };
+  if (eventData->IsWorldPositionValid())
+    {
+    eventData->GetWorldPosition(worldPos);
+    menuEventData->SetWorldPosition(worldPos, eventData->IsWorldPositionAccurate());
+    }
+  else if (eventData->IsDisplayPositionValid())
+    {
+    double worldOrientationMatrix[9] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
+    int displayPos[2] = { 0 };
+    eventData->GetDisplayPosition(displayPos);
+    if (this->ConvertDisplayPositionToWorld(displayPos, worldPos, worldOrientationMatrix))
+      {
+      menuEventData->SetWorldPosition(worldPos);
+      }
+    }
+
   markupsDisplayNode->InvokeEvent(vtkMRMLDisplayNode::MenuEvent, menuEventData);
   return true;
 }
