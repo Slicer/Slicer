@@ -148,7 +148,7 @@ int TestMarkupOrientation(std::vector<PointOrientation> originalOrientations, vt
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsNodeTest6(int argc, char* argv[])
+int vtkMRMLMarkupsNodeTest6(int, char* [])
 {
 
   std::cout << "Testing vtkMarkupsNode orientation transformation" << std::endl;
