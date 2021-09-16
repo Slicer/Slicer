@@ -17,6 +17,12 @@ endif()
 project(SlicerExtensions)
 
 #-----------------------------------------------------------------------------
+set(SLICER_PACKAGE_MANAGER_URL $ENV{SLICER_PACKAGE_MANAGER_URL})
+if("${SLICER_PACKAGE_MANAGER_URL}" STREQUAL "")
+  set(SLICER_PACKAGE_MANAGER_URL "https://slicer-packages.kitware.com")
+endif()
+
+#-----------------------------------------------------------------------------
 set(_url $ENV{MIDAS_PACKAGE_URL})
 if("${_url}" STREQUAL "")
   set(_url "http://slicer.kitware.com/midas3")

@@ -237,6 +237,7 @@ endmacro()
 setIfNotDefined(CTEST_TEST_TIMEOUT 900) # 15mins
 setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
 setIfNotDefined(CTEST_CONTINUOUS_DURATION 46800) # Lasts 13 hours (Assuming it starts at 9am, it will end around 10pm)
+setIfNotDefined(SLICER_PACKAGE_MANAGER_URL "https://slicer-packages.kitware.com")
 setIfNotDefined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
 setIfNotDefined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
 setIfNotDefined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCATE)
@@ -581,8 +582,9 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
           foreach(p ${package_list})
             get_filename_component(package_name "${p}" NAME)
             message(STATUS "Uploading URL to [${package_name}] on CDash")
-            midas_ctest_upload_url(
-              API_URL ${MIDAS_PACKAGE_URL}
+            slicer_ctest_upload_url(
+              ALGO "SHA512"
+              DOWNLOAD_URL_TEMPLATE "${SLICER_PACKAGE_MANAGER_URL}/api/v1/file/hashsum/%(algo)/%(hash)/download"
               FILEPATH ${p}
               )
             if(run_ctest_submit)
