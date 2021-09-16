@@ -132,7 +132,6 @@ public:
   ///   - Memory
   ///   - CPU
   ///   - Developer mode enabled
-  ///   - Prefer executable CLI
   ///   - Additional module paths
   ///
   /// \note Starting the application with `--application-information` will

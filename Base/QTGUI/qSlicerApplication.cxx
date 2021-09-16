@@ -944,7 +944,6 @@ void qSlicerApplication::logApplicationInformation() const
       << "VTK configuration "
       << "Qt configuration "
       << "Developer mode enabled "
-      << "Prefer executable CLI "
       << "Application path "
       << "Additional module paths ";
 
@@ -1114,12 +1113,6 @@ void qSlicerApplication::logApplicationInformation() const
   qDebug("%s: %s",
          qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          developerModeEnabled ? "yes" : "no");
-
-  // Prefer executable CLI
-  bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", Slicer_CLI_PREFER_EXECUTABLE_DEFAULT).toBool();
-  qDebug("%s: %s",
-         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-         preferExecutableCli ? "yes" : "no");
 
   // Additional module paths
   // These paths are not converted to absolute path, because the raw values are moreuseful for troubleshooting.

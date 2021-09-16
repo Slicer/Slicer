@@ -175,9 +175,12 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     QString tempDirectory =
       qSlicerCoreApplication::application()->temporaryPath();
 
-    // Option to prefer executable CLIs to limit memory consumption.
-    bool preferExecutableCLIs =
-      app->userSettings()->value("Modules/PreferExecutableCLI", Slicer_CLI_PREFER_EXECUTABLE_DEFAULT).toBool();
+    // Always prefer executable CLIs. While launching a new process and transfer data via files may take slightly
+    // longer, the file transfer is more robust, the CLI module can be stopped at any time (while a thread may be
+    // requested to stop, but there is no way to force it to stop cleanly), errors in the CLI module cannot crash
+    // the application, and startup time and memory usage is reduced by avoiding loading all CLI modules into the
+    // main process. See more information in https://github.com/Slicer/Slicer/issues/4893.
+    const bool preferExecutableCLIs = true;
 
     qSlicerCLILoadableModuleFactory* cliLoadableFactory = new qSlicerCLILoadableModuleFactory();
     cliLoadableFactory->setTempDirectory(tempDirectory);
