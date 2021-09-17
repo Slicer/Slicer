@@ -743,7 +743,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       assignScalarsToTensorOutput->GetPointData()->Print(std::cerr);
       }
 
-    vtkMRMLDiffusionTensorVolumeDisplayNode *tensorDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->VolumeNode);
+    vtkMRMLDiffusionTensorVolumeDisplayNode *tensorDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
     vtkMRMLDiffusionTensorVolumeNode *tensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeNode);
     if (tensorDisplayNode && tensorNode)
       {
