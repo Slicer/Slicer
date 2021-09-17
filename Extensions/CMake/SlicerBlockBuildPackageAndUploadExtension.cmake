@@ -82,7 +82,12 @@ endforeach()
 
 #-----------------------------------------------------------------------------
 # Set site name and force to lower case
-site_name(CTEST_SITE)
+if("${CTEST_SITE}" STREQUAL "")
+  site_name(default_ctest_site)
+  string(TOLOWER "${default_ctest_site}" default_ctest_site)
+  message(STATUS "CTEST_SITE is an empty string. Defaulting to '${default_ctest_site}'")
+  set(CTEST_SITE "${default_ctest_site}")
+endif()
 string(TOLOWER "${CTEST_SITE}" ctest_site_lowercase)
 set(CTEST_SITE ${ctest_site_lowercase} CACHE STRING "Name of the computer/site where compile is being run" FORCE)
 
