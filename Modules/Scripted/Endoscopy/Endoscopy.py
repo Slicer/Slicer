@@ -501,7 +501,7 @@ class EndoscopyPathModel:
       :param fiducialListNode: input node, just used for naming the output node.
       :param outputPathNode: output model node that stores the path points.
       :param cursorType: can be 'markups' or 'model'. Markups has a number of advantages (radius it is easier to change the size,
-        can jump to views by clicking on it, has more visualization options, can be scaled to fixed displat size),
+        can jump to views by clicking on it, has more visualization options, can be scaled to fixed display size),
         but if some applications relied on having a model node as cursor then this argument can be used to achieve that.
     """
 
