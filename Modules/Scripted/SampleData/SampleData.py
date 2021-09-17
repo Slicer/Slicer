@@ -75,6 +75,11 @@ The SampleData module can be used to download data for working with in slicer.  
 <p>This work was was funded by Cancer Care Ontario
 and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)</p>
 
+<p>MRHead, CBCT-MR Head, and CT-MR Brain data sets were donated to 3D Slicer project by the persons visible in the images, to be used without any restrictions.</p>
+
+<p>CTLiver dataset comes from <a href="http://medicaldecathlon.com/">Medical Decathlon project</a> (imagesTr/liver_100.nii.gz in Task03_Liver collection)
+with a permissive copyright-license (<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA 4.0</a>), allowing for data to be shared, distributed and improved upon.</p>
+
 <p>CTA abdomen (Panoramix) dataset comes from <a href="http://www.osirix-viewer.com/resources/dicom-image-library/">Osirix DICOM image library</a>
 and is exclusively available for research and teaching. You are not authorized to redistribute or sell it, or
 use it for commercial purposes.</p>
@@ -561,6 +566,8 @@ class SampleDataLogic:
           ('DZ-CBCT', 'DZ-MR'),
           ('SHA256:4ce7aa75278b5a7b757ed0c8d7a6b3caccfc3e2973b020532456dbc8f3def7db',
            'SHA256:b5e9f8afac58d6eb0e0d63d059616c25a98e0beb80f3108410b15260a6817842')),
+        ('CTLiver', None, TESTING_DATA_URL + 'SHA256/e16eae0ae6fefa858c5c11e58f0f1bb81834d81b7102e021571056324ef6f37e',
+          'CTLiver.nrrd', 'CTLiver', 'SHA256:e16eae0ae6fefa858c5c11e58f0f1bb81834d81b7102e021571056324ef6f37e'),
         ('CTPCardioSeq', "CTP Cardio Sequence",
           'https://github.com/Slicer/SlicerDataStore/releases/download/SHA256/7fbb6ad0aed9c00820d66e143c2f037568025ed63db0a8db05ae7f26affeb1c2',
           'CTP-cardio.seq.nrrd', 'CTPCardioSeq',
