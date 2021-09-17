@@ -332,6 +332,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
 class EndoscopyComputePath:
   """Compute path given a list of fiducials.
+  Path is stored in 'path' member variable as a numpy array.
   If a point list is received then curve points are generated using Hermite spline interpolation.
   See http://en.wikipedia.org/wiki/Cubic_Hermite_spline
 
@@ -494,10 +495,20 @@ class EndoscopyPathModel:
        - Add one point per path point.
        - Add a single polyline
   """
-  def __init__(self, path, fiducialListNode, outputPathNode=None):
+  def __init__(self, path, fiducialListNode, outputPathNode=None, cursorType=None):
+    """
+      :param path: path points as numpy array.
+      :param fiducialListNode: input node, just used for naming the output node.
+      :param outputPathNode: output model node that stores the path points.
+      :param cursorType: can be 'markups' or 'model'. Markups has a number of advantages (radius it is easier to change the size,
+        can jump to views by clicking on it, has more visualization options, can be scaled to fixed displat size),
+        but if some applications relied on having a model node as cursor then this argument can be used to achieve that.
+    """
 
     fids = fiducialListNode
     scene = slicer.mrmlScene
+
+    self.cursorType = "markups" if cursorType is None else cursorType
 
     points = vtk.vtkPoints()
     polyData = vtk.vtkPolyData()
@@ -537,16 +548,27 @@ class EndoscopyPathModel:
     # Camera cursor
     cursor = model.GetNodeReference("CameraCursor")
     if not cursor:
-      # Create model node
-      cursor = scene.AddNewNodeByClass("vtkMRMLModelNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
+
+      if self.cursorType == "markups":
+        # Markups cursor
+        cursor = scene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
+        cursor.CreateDefaultDisplayNodes()
+        cursor.GetDisplayNode().SetSelectedColor(1,0,0)  # red
+        cursor.GetDisplayNode().SetSliceProjection(True)
+        cursor.AddControlPoint(vtk.vtkVector3d(0,0,0)," ")  # do not show any visible label
+        cursor.SetNthControlPointLocked(0, True)
+      else:
+        # Model cursor
+        cursor = scene.AddNewNodeByClass("vtkMRMLMarkupsModelNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
+        cursor.CreateDefaultDisplayNodes()
+        cursor.GetDisplayNode().SetColor(1,0,0)  # red
+        cursor.GetDisplayNode().BackfaceCullingOn()  # so that the camera can see through the cursor from inside
+        # Add a sphere as cursor
+        sphere = vtk.vtkSphereSource()
+        sphere.Update()
+        cursor.SetPolyDataConnection(sphere.GetOutputPort())
+
       model.SetNodeReferenceID("CameraCursor", cursor.GetID())
-      cursor.CreateDefaultDisplayNodes()
-      cursor.GetDisplayNode().SetColor(1,0,0)  # red
-      cursor.GetDisplayNode().BackfaceCullingOn()  # so that the camera can see through the cursor from inside
-      # Add a sphere as cursor
-      sphere = vtk.vtkSphereSource()
-      sphere.Update()
-      cursor.SetPolyDataConnection(sphere.GetOutputPort())
 
     # Transform node
     transform = model.GetNodeReference("CameraTransform")
