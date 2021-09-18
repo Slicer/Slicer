@@ -442,7 +442,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
 */
   // Get absolute filename and create storage node if needed
   QFileInfo fileInfo = this->nodeFileInfo(storableNode);
-  if (fileInfo == QFileInfo())
+  if (fileInfo.filePath().isEmpty())
     {
     return;
     }
