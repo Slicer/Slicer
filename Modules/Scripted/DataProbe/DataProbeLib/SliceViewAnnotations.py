@@ -102,7 +102,7 @@ class SliceAnnotations(VTKObservationMixin):
     self.scalarBarSelectedLayer = settingsValue('DataProbe/sliceViewAnnotations.scalarBarSelectedLayer', 'background')
     self.rangeLabelFormat = settingsValue('DataProbe/sliceViewAnnotations.rangeLabelFormat', '%G')
 
-    self.parameter = 'sliceViewAnnotationsEnabled'
+    self.sliceViewAnnotationsEnabledparameter = 'sliceViewAnnotationsEnabled'
     self.parameterNode = self.dataProbeUtil.getParameterNode()
     self.addObserver(self.parameterNode, vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
@@ -326,10 +326,10 @@ class SliceAnnotations(VTKObservationMixin):
     self.updateSliceViewFromGUI()
 
   def updateGUIFromMRML(self,caller,event):
-    if self.parameterNode.GetParameter(self.parameter) == '':
+    if self.parameterNode.GetParameter(self.sliceViewAnnotationsEnabledparameter) == '':
       # parameter does not exist - probably initializing
       return
-    self.sliceViewAnnotationsEnabled = int(self.parameterNode.GetParameter(self.parameter))
+    self.sliceViewAnnotationsEnabled = int(self.parameterNode.GetParameter(self.sliceViewAnnotationsEnabledparameter))
     self.updateSliceViewFromGUI()
 
   def updateEnabledButtons(self):
@@ -344,6 +344,11 @@ class SliceAnnotations(VTKObservationMixin):
     self.restoreDefaultsButton.enabled = enabled
 
   def updateSliceViewFromGUI(self):
+    if not self.sliceViewAnnotationsEnabled:
+      self.removeObservers(method=self.updateViewAnnotations)
+      self.removeObservers(method=self.updateGUIFromMRML)
+      return
+
     # Create corner annotations if have not created already
     if len(self.sliceViewNames) == 0:
       self.createCornerAnnotations()
