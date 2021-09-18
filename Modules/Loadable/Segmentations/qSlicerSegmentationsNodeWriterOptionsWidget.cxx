@@ -34,21 +34,21 @@ class qSlicerSegmentationsNodeWriterOptionsWidgetPrivate
 {
 public:
   void setupUi(QWidget* widget) override;
-  QCheckBox* UseReferenceGeometryCheckBox;
+  QCheckBox* CropToMinimumExtentCheckbox;
 };
 
 //------------------------------------------------------------------------------
 void qSlicerSegmentationsNodeWriterOptionsWidgetPrivate::setupUi(QWidget* widget)
 {
   this->qSlicerNodeWriterOptionsWidgetPrivate::setupUi(widget);
-  this->UseReferenceGeometryCheckBox = new QCheckBox(widget);
-  this->UseReferenceGeometryCheckBox->setObjectName(QStringLiteral("CropToMinimumExtentCheckBox"));
-  this->UseReferenceGeometryCheckBox->setText("Crop to minimum extent");
-  this->UseReferenceGeometryCheckBox->setToolTip("If enabled then segmentation labelmap representation is"
+  this->CropToMinimumExtentCheckbox = new QCheckBox(widget);
+  this->CropToMinimumExtentCheckbox->setObjectName(QStringLiteral("CropToMinimumExtentCheckBox"));
+  this->CropToMinimumExtentCheckbox->setText("Crop to minimum extent");
+  this->CropToMinimumExtentCheckbox->setToolTip("If enabled then segmentation labelmap representation is"
     " cropped to the minimum necessary size. This saves storage space but changes voxel coordinate system"
     " (physical coordinate system is not affected).");
-  horizontalLayout->addWidget(UseReferenceGeometryCheckBox);
-  QObject::connect(this->UseReferenceGeometryCheckBox, SIGNAL(toggled(bool)),
+  horizontalLayout->addWidget(CropToMinimumExtentCheckbox);
+  QObject::connect(this->CropToMinimumExtentCheckbox, SIGNAL(toggled(bool)),
     widget, SLOT(setCropToMinimumExtent(bool)));
 }
 
@@ -74,7 +74,7 @@ void qSlicerSegmentationsNodeWriterOptionsWidget::setObject(vtkObject* object)
       storableNode->GetStorageNode());
     if (storageNode)
       {
-      d->UseReferenceGeometryCheckBox->setChecked(storageNode->GetCropToMinimumExtent());
+      d->CropToMinimumExtentCheckbox->setChecked(storageNode->GetCropToMinimumExtent());
       }
     }
   Superclass::setObject(object);
