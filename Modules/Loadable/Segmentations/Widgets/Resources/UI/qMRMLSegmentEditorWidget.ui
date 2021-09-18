@@ -168,6 +168,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>7</number>
+       </property>
        <item>
         <widget class="QFrame" name="EffectsGroupBox">
          <property name="frameShape">
@@ -176,6 +179,46 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="UndoRedoGroupBox">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QGridLayout" name="UndoRedoLayout">
+          <item row="0" column="0">
+           <widget class="QToolButton" name="UndoButton">
+            <property name="toolTip">
+             <string>Undo last editing operation</string>
+            </property>
+            <property name="text">
+             <string>Undo</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+              <normaloff>:/Icons/Medium/SlicerUndo.png</normaloff>:/Icons/Medium/SlicerUndo.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QToolButton" name="RedoButton">
+            <property name="toolTip">
+             <string>Redo last editing operation</string>
+            </property>
+            <property name="text">
+             <string>Redo</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+              <normaloff>:/Icons/Medium/SlicerRedo.png</normaloff>:/Icons/Medium/SlicerRedo.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -295,38 +338,6 @@
           </item>
          </layout>
         </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="UndoRedoLayout">
-         <item>
-          <widget class="QPushButton" name="UndoButton">
-           <property name="toolTip">
-            <string>Undo last editing operation</string>
-           </property>
-           <property name="text">
-            <string>Undo</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-             <normaloff>:/Icons/Medium/SlicerUndo.png</normaloff>:/Icons/Medium/SlicerUndo.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="RedoButton">
-           <property name="toolTip">
-            <string>Redo last editing operation</string>
-           </property>
-           <property name="text">
-            <string>Redo</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-             <normaloff>:/Icons/Medium/SlicerRedo.png</normaloff>:/Icons/Medium/SlicerRedo.png</iconset>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
        <item>
         <widget class="ctkCollapsibleGroupBox" name="MaskingGroupBox">
