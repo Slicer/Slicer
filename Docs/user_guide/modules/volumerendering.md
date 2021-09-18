@@ -4,7 +4,7 @@
 
 Volume rendering (also known as volume ray casting) is a visualization technique for displaying image volumes as 3D objects directly - without requiring segmentation.
 
-This is accomplished by specifying color and opacity for each voxel, based on its image intensity. Several presets are available for this mapping, for displaying bones,soft tissues, air, fat, etc. on CT and MR images. Users can fine-tune these presets for each image.
+This is accomplished by specifying color and opacity for each voxel, based on its image intensity. Several presets are available for this mapping, for displaying bones, soft tissues, air, fat, etc. on CT and MR images. Users can fine-tune these presets for each image.
 
 ## Use cases
 
@@ -105,7 +105,7 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
       - Backspace key : Delete the current point and set the previous point as current
       - ESC key: Unselect all points.
     - Scalar Opacity Mapping: Opacity transfer function. Threshold mode: enabling threshold controls the transfer function using range sliders in addition to control points.
-    - Scalar Color Mapping: Color transfer function.
+    - Scalar Color Mapping: Color transfer function. This section is not displayed for color (RGB or RGBA) volumes, as no scalar to color mapping is performed in this case (but each voxel's color is used directly).
     - Gradient Opacity: Gradient opacity transfer function. This controls the opacity according to how large a density gradient next to the voxel is.
     - Advanced:
       - Interpolation: Linear (default for scalar volumes) or nearest neighbor (default for labelmaps) interpolation.
