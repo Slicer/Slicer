@@ -260,6 +260,9 @@ public:
   /// Button group for the effects
   QButtonGroup EffectButtonGroup;
 
+  /// Button group for the UndoRedoGroupBox
+  QButtonGroup UndoRedoButtonGroup;
+
   /// These volumes are owned by this widget and a pointer is given to each effect
   /// so that they can access and modify it
   vtkOrientedImageData* AlignedMasterVolume;
@@ -497,6 +500,9 @@ void qMRMLSegmentEditorWidgetPrivate::init()
 
   this->EffectButtonGroup.setExclusive(true);
   QObject::connect(&this->EffectButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), q, SLOT(onEffectButtonClicked(QAbstractButton*) ) );
+
+  this->UndoRedoButtonGroup.addButton(this->UndoButton);
+  this->UndoRedoButtonGroup.addButton(this->RedoButton);
 
   // Create layout for effect options
   QVBoxLayout* layout = new QVBoxLayout(this->EffectsOptionsFrame);
@@ -1179,14 +1185,33 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     auto gridLayout = dynamic_cast<QGridLayout*>(d->EffectsGroupBox->layout());
     gridLayout->addWidget(effectButton, rowIndex, columnIndex);
     if(columnIndex == d->EffectColumnCount - 1)
-    {
+      {
       columnIndex = 0;
       ++rowIndex;
-    }
+      }
     else
-    {
+      {
       ++columnIndex;
+      }
     }
+
+  // Set UndoRedoGroupBox buttons with same column count as EffectsGroupBox
+  rowIndex = 0;
+  columnIndex = 0;
+  QList<QAbstractButton*> undoRedoButtons = d->UndoRedoButtonGroup.buttons();
+  foreach(QAbstractButton* button, undoRedoButtons)
+    {
+    auto undoRedoGridLayout = dynamic_cast<QGridLayout*>(d->UndoRedoGroupBox->layout());
+    undoRedoGridLayout->addWidget(button, rowIndex, columnIndex);
+    if(columnIndex == d->EffectColumnCount - 1)
+      {
+      columnIndex = 0;
+      ++rowIndex;
+      }
+    else
+      {
+      ++columnIndex;
+      }
     }
 }
 
@@ -3038,7 +3063,7 @@ void qMRMLSegmentEditorWidget::setSwitchToSegmentationsButtonVisible(bool visibl
 bool qMRMLSegmentEditorWidget::undoEnabled() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return (d->UndoButton->isVisible() || d->RedoButton->isVisible());
+  return d->UndoRedoGroupBox->isVisible();
 }
 
 //-----------------------------------------------------------------------------
@@ -3049,8 +3074,7 @@ void qMRMLSegmentEditorWidget::setUndoEnabled(bool enabled)
     {
     d->SegmentationHistory->RemoveAllStates();
     }
-  d->UndoButton->setVisible(enabled);
-  d->RedoButton->setVisible(enabled);
+  d->UndoRedoGroupBox->setVisible(enabled);
 }
 
 //-----------------------------------------------------------------------------
