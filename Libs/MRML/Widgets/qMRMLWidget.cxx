@@ -130,6 +130,15 @@ void qMRMLWidget::preInitializeApplication()
   // Enable automatic scaling based on the pixel density of the monitor
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+  // Enable QIcon to provide higher-resolution pixmaps than the size in device independent units.
+  // These pixmaps render sharply on a high-dpi display.
+  // If Qt::AA_UseHighDpiPixmaps is enabled then when an icon is loaded by the filename "base.png" then the icon
+  // class will also look for higher-resolution variants of this image by the names base@2x.png, base@3x.png, etc.
+  // On a high-DPI monitor (with DevicePixelRatio > 1) QIcon will actually load a higher-resolution pixmap
+  // that best matches the DevicePixelRatio of the display, resulting in crisp rendering of the icon.
+  // See https://doc.qt.io/qt-5/qicon.html#pixmap for more details.
+  QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
   // Enables resource sharing between the OpenGL contexts used by classes like QOpenGLWidget and QQuickWidget
   QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 }

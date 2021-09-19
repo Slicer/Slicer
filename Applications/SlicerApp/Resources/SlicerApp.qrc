@@ -8,5 +8,6 @@
     <file alias="SplashScreen.png">Images/Slicer-SplashScreen.png</file>
     <file alias="Logo.png">Images/Slicer-Logo.png</file>
     <file alias="ModulePanelLogo.png">Images/Slicer-ModulePanelLogo.png</file>
+    <file alias="ModulePanelLogo@2x.png">Images/Slicer-ModulePanelLogo@2x.png</file>
   </qresource>
 </RCC>
