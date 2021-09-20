@@ -20,8 +20,8 @@ For debugging on Windows, Visual Studio is recommended as it has much better per
 Visual Studio Code uses GDB for debugging on Linux, which requires Python. However, Python that is linked into GDB is not the same as Slicer's Python, which may cause issues. If GDB does not start because `_sysconfigdata__linux_x86_64-linux-gnu.py` file is missing then Slicer's sysconfigdata file must be copied to the expected filename. For example:
 
 ```bash
-cp ~/D/Slicer-SuperBuild-Debug/python-install/lib/python3.6/_sysconfigdata_m_linux2_.py \
-~/D/Slicer-SuperBuild-Debug/python-install/lib/python3.6/_sysconfigdata__linux_x86_64-linux-gnu.py
+cd ~/D/Slicer-SuperBuild-Debug/python-install/lib/python3.6/
+cp _sysconfigdata_m_linux2_.py _sysconfigdata__linux_x86_64-linux-gnu.py
 ```
 
 ````

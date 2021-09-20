@@ -239,6 +239,8 @@ exec "$@"
 
 ## Analyze a segmentation fault
 
+In the build tree:
+
 ```bash
 $ ulimit -c unlimited
 $ ./Slicer
@@ -248,6 +250,30 @@ $ ./Slicer --gdb ./bin/SlicerApp-real
 (gdb) backtrace
 ...
 ```
+
+For an installed Slicer:
+
+```bash
+$ ulimit -c unlimited
+$ ./Slicer
+... make it crash
+$ ./Slicer --launch bash
+$ gdb ./bin/SlicerApp-real
+(gdb) core core
+(gdb) backtrace
+...
+```
+
+````{note}
+
+GDB requires Python. However, Python that is linked into GDB is not the same as Slicer's Python, which may cause issues. If GDB does not start because `_sysconfigdata__linux_x86_64-linux-gnu.py` file is missing then Slicer's sysconfigdata file must be copied to the expected filename. For example:
+
+```bash
+cd ~/Slicer-4.13.0-2021-09-10-linux-amd64/lib/Python/lib/python3.6
+cp _sysconfigdata_m_linux2_.py _sysconfigdata__linux_x86_64-linux-gnu.py
+```
+
+````
 
 ### With systemd
 
