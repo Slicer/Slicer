@@ -54,7 +54,7 @@ include(${Slicer_USE_FILE})
 [...]
 ```
 
-For more details, see [here](https://github.com/Slicer/Slicer/blob/75fc96bf05e65659eb5204f47b5205442cc6fd8e/CMake/SlicerConfig.cmake.in#L10-L38).
+For more details, see [here](https://github.com/Slicer/Slicer/blob/6f4e2946bb129d317dfdb1116f06f5308b449044/CMake/SlicerConfig.cmake.in#L10-L38).
 
 ### Windows
 
