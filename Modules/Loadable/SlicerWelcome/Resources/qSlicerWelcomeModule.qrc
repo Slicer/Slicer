@@ -1,6 +1,7 @@
 <RCC>
   <qresource>
-    <file>Icons/Chat.png</file> <!-- Adapted from http://openclipart.org/detail/170274/chat-button-by-scyg -->
+    <file>Icons/Chat.png</file> <!-- Adapted from Google material icons (https://fonts.google.com/icons)  -->
+    <file>Icons/Chat@2x.png</file> <!-- Adapted from Google material icons (https://fonts.google.com/icons)  -->
     <file>Icons/SlicerWelcome.png</file>
   </qresource>
   <qresource>
@@ -10,10 +11,14 @@
     <file>Images/WelcomeLogo@2x.png</file>
     <file>HTML/OtherUsefulHints.html</file>
     <file>HTML/Feedback.html</file>
-    <file>Images/SlicerLoadDicom-Original.png</file>
-    <file>Images/SlicerLoadData-Original.png</file>
-    <file>Images/SlicerWWW-Original.png</file>
-    <file>Images/SlicerAdvancedGear-Original.png</file>
+    <file>Images/SlicerLoadDicom-Wide.png</file>
+    <file>Images/SlicerLoadDicom-Wide@2x.png</file>
+    <file>Images/SlicerLoadData-Wide.png</file>
+    <file>Images/SlicerLoadData-Wide@2x.png</file>
+    <file>Images/SlicerWWW.png</file>
+    <file>Images/SlicerWWW@2x.png</file>
+    <file>Images/SlicerAdvancedGear.png</file>
+    <file>Images/SlicerAdvancedGear@2x.png</file>
     <file>Images/WelcomeSubjectHierarchy.png</file>
     <file>HTML/Acknowledgment.html</file>
   </qresource>

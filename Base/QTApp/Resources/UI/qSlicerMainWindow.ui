@@ -369,7 +369,7 @@
   <action name="FileLoadDataAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
+     <normaloff>:/Icons/SlicerLoadData.png</normaloff>:/Icons/SlicerLoadData.png</iconset>
    </property>
    <property name="text">
     <string>Load Data</string>
@@ -381,7 +381,7 @@
   <action name="LoadDICOMAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerLoadDICOM.png</normaloff>:/Icons/Small/SlicerLoadDICOM.png</iconset>
+     <normaloff>:/Icons/SlicerLoadDICOM.png</normaloff>:/Icons/SlicerLoadDICOM.png</iconset>
    </property>
    <property name="text">
     <string>Load DICOM</string>
@@ -405,7 +405,7 @@
   <action name="FileAddDataAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
+     <normaloff>:/Icons/SlicerLoadData.png</normaloff>:/Icons/SlicerLoadData.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Add Data</string>
@@ -444,7 +444,7 @@
   <action name="FileSaveSceneAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
+     <normaloff>:/Icons/SlicerSave.png</normaloff>:/Icons/SlicerSave.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -459,7 +459,7 @@
   <action name="SDBSaveToDirectoryAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
+     <normaloff>:/Icons/SlicerSave.png</normaloff>:/Icons/SlicerSave.png</iconset>
    </property>
    <property name="text">
     <string>Save Scene To Directory</string>
@@ -471,7 +471,7 @@
   <action name="SDBSaveToMRBAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
+     <normaloff>:/Icons/SlicerSave.png</normaloff>:/Icons/SlicerSave.png</iconset>
    </property>
    <property name="text">
     <string>Save Scene to MRB File</string>
