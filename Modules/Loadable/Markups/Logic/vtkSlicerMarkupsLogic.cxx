@@ -1012,8 +1012,6 @@ void vtkSlicerMarkupsLogic::CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode
     }
   MRMLNodeModifyBlocker blocker(targetDisplayNode);
   targetDisplayNode->SetSnapMode(sourceDisplayNode->GetSnapMode());
-  targetDisplayNode->SetPropertiesLabelVisibility(sourceDisplayNode->GetPropertiesLabelVisibility());
-  targetDisplayNode->SetPointLabelsVisibility(sourceDisplayNode->GetPointLabelsVisibility());
   targetDisplayNode->SetFillVisibility(sourceDisplayNode->GetFillVisibility());
   targetDisplayNode->SetOutlineVisibility(sourceDisplayNode->GetOutlineVisibility());
   targetDisplayNode->SetFillOpacity(sourceDisplayNode->GetFillOpacity());

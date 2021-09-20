@@ -68,7 +68,7 @@ Display section:
     - Outlined Behind Slice Plane: Fiducial projection is displayed filled (opacity = Projection Opacity) when on top of slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).
     - Projection Opacity: A value between 0 (invisible) and 1 (fully visible) for displaying the fiducial projection.
     - Reset to Defaults: Reset the display properties of this markups node to the system defaults.
-    - Save to Defaults: Save the display properties of this markups node to be the new system defaults.
+    - Save to Defaults: Save the display properties of this markups node to be the new system defaults. Point labels visibility and properties label visibility setting is not saved to defaults, as typically it is better to initialize these based on the node type (point labels are more useful for fiducials, while properties label is more useful for other markups).
 - Scalars: Color markup according to a scalar, e.g. a per-control-point measurement (see Measurements section below)
   - Visible: Whether scalar coloring should be shown or the original color of the markup
   - Active Scalar: Which scalar array to use for coloring

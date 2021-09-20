@@ -272,14 +272,6 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     markupsDisplayNode->SetSnapMode(vtkMRMLMarkupsDisplayNode::GetSnapModeFromString(
       settings.value("Markups/SnapMode").toString().toUtf8()));
     }
-  if (settings.contains("Markups/PropertiesLabelVisibility"))
-    {
-    markupsDisplayNode->SetPropertiesLabelVisibility(settings.value("Markups/PropertiesLabelVisibility").toBool());
-    }
-  if (settings.contains("Markups/PointLabelsVisibility"))
-    {
-    markupsDisplayNode->SetPointLabelsVisibility(settings.value("Markups/PointLabelsVisibility").toBool());
-    }
   if (settings.contains("Markups/FillVisibility"))
     {
     markupsDisplayNode->SetFillVisibility(settings.value("Markups/FillVisibility").toBool());
@@ -425,9 +417,6 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
 
   settings.setValue("Markups/SnapMode", vtkMRMLMarkupsDisplayNode::GetSnapModeAsString(
     markupsDisplayNode->GetSnapMode()));
-  settings.setValue("Markups/PropertiesLabelVisibility", markupsDisplayNode->GetPropertiesLabelVisibility());
-
-  settings.setValue("Markups/PointLabelsVisibility", markupsDisplayNode->GetPointLabelsVisibility());
   settings.setValue("Markups/FillVisibility", markupsDisplayNode->GetFillVisibility());
   settings.setValue("Markups/OutlineVisibility", markupsDisplayNode->GetOutlineVisibility());
   settings.setValue("Markups/FillOpacity", markupsDisplayNode->GetFillOpacity());

@@ -140,7 +140,10 @@ public:
   void SetAllMarkupsSelected(vtkMRMLMarkupsNode *node, bool flag);
   void ToggleAllMarkupsSelected(vtkMRMLMarkupsNode *node);
 
-  /// utility method to set up a display node from the defaults
+  /// Utility method to set up a display node from the defaults.
+  /// Point labels visibility and properties label visibility setting is not saved to defaults,
+  /// as typically it is better to initialize these based on the node type (point labels are more
+  /// useful for fiducials, while properties label is more useful for other markups).
   void SetDisplayNodeToDefaults(vtkMRMLMarkupsDisplayNode *displayNode);
 
   /// utility method to set defaults from display node
