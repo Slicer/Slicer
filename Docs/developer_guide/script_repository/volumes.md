@@ -36,6 +36,12 @@ volumeNode = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLScalarVolumeNode')
 slicer.util.saveNode(volumeNode, "c:/tmp/test.nrrd")
 ```
 
+If you are saving to a format with optional compression, like nrrd, compression is on by default.  Saving is much faster with compression turned off but the files may be much larger (about 3x for medical images).
+
+```python
+slicer.util.saveNode(volumeNode, imagePath, {"useCompression": 0})
+```
+
 ### Load volume from .vti file
 
 Slicer does not provide reader for VTK XML image data file format (as they are not commonly used for storing medical images and they cannot store image axis directions) but such files can be read by using this script:
