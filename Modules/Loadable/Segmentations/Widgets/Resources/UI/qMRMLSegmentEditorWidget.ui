@@ -192,6 +192,12 @@
          <layout class="QGridLayout" name="UndoRedoLayout">
           <item row="0" column="0">
            <widget class="QToolButton" name="UndoButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Undo last editing operation</string>
             </property>
@@ -206,6 +212,12 @@
           </item>
           <item row="0" column="1">
            <widget class="QToolButton" name="RedoButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Redo last editing operation</string>
             </property>

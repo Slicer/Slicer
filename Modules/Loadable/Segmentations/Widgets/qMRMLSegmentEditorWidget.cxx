@@ -1090,7 +1090,8 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setToolTip("No editing");
     effectButton->setToolButtonStyle(d->EffectButtonStyle);
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(nullptr));
-    d->EffectButtonGroup.addButton(effectButton);
+    effectButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred); // make all effect buttons the same width
+    d->EffectButtonGroup.addButton(effectButton);;
     }
 
 
@@ -1128,6 +1129,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setText(effect->name());
     effectButton->setToolTip(effect->name());
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
+    effectButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);  // make all effect buttons the same width
     d->EffectButtonGroup.addButton(effectButton);
 
     // Add effect options frame to the options widget and hide them
@@ -1203,6 +1205,12 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     {
     auto undoRedoGridLayout = dynamic_cast<QGridLayout*>(d->UndoRedoGroupBox->layout());
     undoRedoGridLayout->addWidget(button, rowIndex, columnIndex);
+    QToolButton* toolButton = qobject_cast<QToolButton*>(button);
+    if (toolButton)
+      {
+      toolButton->setToolButtonStyle(d->EffectButtonStyle);
+      }
+
     if(columnIndex == d->EffectColumnCount - 1)
       {
       columnIndex = 0;
@@ -3406,6 +3414,15 @@ void qMRMLSegmentEditorWidget::setEffectButtonStyle(Qt::ToolButtonStyle toolButt
     {
     QToolButton* toolButton = dynamic_cast<QToolButton*>(button);
     toolButton->setToolButtonStyle(d->EffectButtonStyle);
+    }
+  QList<QAbstractButton*> undoRedoButtons = d->UndoRedoButtonGroup.buttons();
+  foreach(QAbstractButton* button, undoRedoButtons)
+    {
+    QToolButton* toolButton = qobject_cast<QToolButton*>(button);
+    if (toolButton)
+      {
+      toolButton->setToolButtonStyle(d->EffectButtonStyle);
+      }
     }
 }
 

@@ -74,6 +74,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates)
   Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
   Q_PROPERTY(Qt::ToolButtonStyle effectButtonStyle READ effectButtonStyle WRITE setEffectButtonStyle)
+  Q_PROPERTY(int effectColumnCount READ effectColumnCount WRITE setEffectColumnCount)
   Q_PROPERTY(bool unorderedEffectsVisible READ unorderedEffectsVisible WRITE setUnorderedEffectsVisible)
   Q_PROPERTY(QString defaultTerminologyEntrySettingsKey READ defaultTerminologyEntrySettingsKey WRITE setDefaultTerminologyEntrySettingsKey)
   Q_PROPERTY(QString defaultTerminologyEntry READ defaultTerminologyEntry WRITE setDefaultTerminologyEntry)
@@ -124,13 +125,6 @@ public:
   /// \return List of effect names to be shown in the widget.
   Q_INVOKABLE QStringList effectNameOrder() const;
 
-  /// Request displaying effects in the grid layout with the specified column count
-  Q_INVOKABLE void setEffectColumnCount(int columnCount);
-
-  /// Get number of columns being used by the effects.
-  /// \return Number of columns being used for effects.
-  Q_INVOKABLE int effectColumnCount() const;
-
   /// Show/hide effect names that are not listed in \sa effectNameOrder().
   /// True by default to make effects registered by extensions show up by default.
   /// This can be used to simplify the editor widget to show only a limited number of effects.
@@ -179,6 +173,10 @@ public:
   /// Get appearance of effect buttons. Showing text may make it easier
   /// to find an effect but uses more space.
   Qt::ToolButtonStyle effectButtonStyle() const;
+
+  /// Get number of columns being used by the effects.
+  /// \return Number of columns being used for effects.
+  int effectColumnCount() const;
 
   /// Add node type attribute that filter the segmentation nodes to display.
   /// \sa qMRMLNodeComboBox::addAttribute
@@ -303,6 +301,9 @@ public slots:
   /// Set appearance of effect buttons. Showing text may make it easier
   /// to find an effect but uses more space.
   void setEffectButtonStyle(Qt::ToolButtonStyle toolButtonStyle);
+
+  /// Request displaying effects in the grid layout with the specified column count
+  void setEffectColumnCount(int columnCount);
 
   /// Update list of effect buttons.
   /// It adds all effects registered with the effect factory
