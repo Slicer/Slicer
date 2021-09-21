@@ -377,7 +377,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     # qSlicerSegmentEditorAbstractEffect should be improved so that it triggers a cursor update
     # self.scriptedEffect.showEffectCursorInSliceView = segmentSelectionRequired
 
-    showMinimumSizeOption = (operationName in [REMOVE_SMALL_ISLANDS, SPLIT_ISLANDS_TO_SEGMENTS])
+    showMinimumSizeOption = (operationName in [KEEP_LARGEST_ISLAND, REMOVE_SMALL_ISLANDS, SPLIT_ISLANDS_TO_SEGMENTS])
     self.minimumSizeSpinBox.setEnabled(showMinimumSizeOption)
     self.minimumSizeLabel.setEnabled(showMinimumSizeOption)
 
