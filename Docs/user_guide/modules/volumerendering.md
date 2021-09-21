@@ -56,7 +56,6 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
 
 ## Limitations
 
-- Only single-component scalar volumes can be used for volume rendering. [Vector to Scalar Volume](vectortoscalarvolume.md) module can convert vector volume to scalar volume.
 - To render multiple overlapping volumes, select "VTK Multi-Volume" rendering in "Display" section. Currently, no cropping can be applied in this mode.
 - To reduce staircase artifacts during rendering, choose enable "Surface smoothing" in Advanced/Techniques/Advanced rendering properties section, or choose "Normal" or "Maximum" as quality.
 
