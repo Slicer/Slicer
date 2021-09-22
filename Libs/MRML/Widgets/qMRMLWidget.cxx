@@ -30,6 +30,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QIcon>
 #include <QSurfaceFormat>
 
 #ifdef _WIN32
@@ -149,4 +150,20 @@ void qMRMLWidget::postInitializeApplication()
   // Currently there is no initialization steps to be performed after
   // application creation right now, but we still keep this method
   // as a placeholder to make it easier to add steps later.
+}
+
+//-----------------------------------------------------------------------------
+QPixmap qMRMLWidget::pixmapFromIcon(const QIcon& icon)
+{
+  // QIcon stores multiple versions of the image (in different sizes) and uses the
+  // most suitable one (depending on DevicePixelRatio).
+  // In cases where a QIcon cannot be used (such as in QLabel), we need to get the best
+  // QPixmap from the QIcon (base.png, base@2x, ...) manually.
+
+  // To achieve this, we first determine the pixmap size in device independent units,
+  // which is the size of the base image (icon.availableSizes().first(), because for that
+  // DevicePixelRatio=1.0), and then we retieve the pixmap for this size.
+
+  QPixmap pixmap = icon.pixmap(icon.availableSizes().first());
+  return pixmap;
 }

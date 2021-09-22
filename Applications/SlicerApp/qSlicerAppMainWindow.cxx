@@ -120,16 +120,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   QLabel* logoLabel = new QLabel();
   logoLabel->setObjectName("LogoLabel");
-  // QIcon stores multiple versions of the image (in different sizes)
-  // and uses the most suitable one (depending on DevicePixelRatio).
-  // QLabel cannot take a QIcon, therefore we need to get the most suitable
-  // QPixmap from the QIcon (base.png, base@2x, ...).
-  // To achieve this, we first determine the pixmap size in device independent units,
-  // which is the size of the base image (icon.availableSizes().first(), because for that
-  // DevicePixelRatio=1.0), and then we retieve the pixmap for this size.
-  QIcon icon = QIcon(":/ModulePanelLogo.png");
-  QPixmap logo = icon.pixmap(icon.availableSizes().first());
-  logoLabel->setPixmap(logo);
+  logoLabel->setPixmap(qMRMLWidget::pixmapFromIcon(QIcon(":/ModulePanelLogo.png")));
   this->PanelDockWidget->setTitleBarWidget(logoLabel);
 
   this->HelpMenu->addAction(helpKeyboardShortcutsAction);

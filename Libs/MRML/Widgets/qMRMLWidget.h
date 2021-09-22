@@ -51,6 +51,10 @@ public:
   /// Initialization that needs to be performed after application object is created.
   Q_INVOKABLE static void postInitializeApplication();
 
+  // Get the pixmap from the icon that is the most suitable for current screen resolution.
+  // Useful for cases when a widget cannot take a QIcon as input only as QPixmap.
+  Q_INVOKABLE static QPixmap pixmapFromIcon(const QIcon& icon);
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   virtual void setMRMLScene(vtkMRMLScene* newScene);

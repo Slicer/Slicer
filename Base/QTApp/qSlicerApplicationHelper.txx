@@ -111,6 +111,16 @@ int qSlicerApplicationHelper::postInitializeApplication(
   if (showSplashScreen)
     {
     QPixmap pixmap(":/SplashScreen.png");
+
+    // The application launcher shows the splash screen without DPI scaling (if the screen resolution is higher
+    // then the splashscreen icon appears smaller).
+    // To match this behavior, we set the same device pixel ratio in the pixmap as the window's device pixel ratio.
+    QGuiApplication* guiApp = qobject_cast<QGuiApplication*>(&app);
+    if (guiApp)
+      {
+      pixmap.setDevicePixelRatio(guiApp->devicePixelRatio());
+      }
+
     splashScreen.reset(new QSplashScreen(pixmap));
     splashMessage(splashScreen, "Initializing...");
     splashScreen->show();

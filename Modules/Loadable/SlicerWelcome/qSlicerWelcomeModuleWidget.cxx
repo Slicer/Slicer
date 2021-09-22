@@ -46,6 +46,9 @@
 // CTK includes
 #include "ctkButtonGroup.h"
 
+// qMRML includes
+#include "qMRMLWidget.h"
+
 class qSlicerAppMainWindow;
 
 //-----------------------------------------------------------------------------
@@ -79,6 +82,10 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   Q_Q(qSlicerWelcomeModuleWidget);
 
   this->Ui_qSlicerWelcomeModuleWidget::setupUi(widget);
+
+  // QLabel's pixmap property loads the base image (ignores high-resolution @2x versions),
+  // therefore we need to retrieve and set the best icon version manually.
+  this->label->setPixmap(qMRMLWidget::pixmapFromIcon(QIcon(":/Images/WelcomeLogo.png")));
 
   // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
   ctkButtonGroup * group = new ctkButtonGroup(widget);
