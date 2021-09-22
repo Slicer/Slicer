@@ -45,10 +45,9 @@
 class qSlicerSegmentationsNodeWriterPrivate
 {
 public:
-  QString Description;
+  QString Description; // These member variables don't get used anywhere.
   qSlicerIO::IOFileType FileType;
   QStringList NodeClassNames;
-  bool SupportUseCompression;
 };
 
 //----------------------------------------------------------------------------
@@ -90,6 +89,6 @@ qSlicerIOOptions* qSlicerSegmentationsNodeWriter::options() const
 {
   Q_D(const qSlicerSegmentationsNodeWriter);
   qSlicerSegmentationsNodeWriterOptionsWidget* options = new qSlicerSegmentationsNodeWriterOptionsWidget;
-  options->setShowUseCompression(d->SupportUseCompression);
+  options->setShowUseCompression(this->supportUseCompression());
   return options;
 }
