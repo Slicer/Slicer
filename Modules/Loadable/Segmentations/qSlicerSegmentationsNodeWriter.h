@@ -38,7 +38,7 @@ public:
   qSlicerSegmentationsNodeWriter(QObject* parent);
   ~qSlicerSegmentationsNodeWriter() override;
 
-  /// Return a qSlicerIOSegmentationNodeWriterOptionsWidget
+  /// Return a new qSlicerSegmentationsNodeWriterOptionsWidget
   qSlicerIOOptions* options()const override;
 
   /// Write the node referenced by "nodeID" into the "fileName" file.
