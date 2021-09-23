@@ -44,9 +44,6 @@ if(RUN_CTEST_UPLOAD)
     EXTENSION_ARCHITECTURE
     EXTENSION_BITNESS
     EXTENSION_OPERATING_SYSTEM
-    MIDAS_PACKAGE_API_KEY
-    MIDAS_PACKAGE_EMAIL
-    MIDAS_PACKAGE_URL
     )
 endif()
 foreach(var ${expected_defined_vars})
@@ -157,9 +154,6 @@ GIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
 Subversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE}
 Slicer_DIR:PATH=${Slicer_DIR}
 Slicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${Slicer_EXTENSIONS_TRACK_QUALIFIER}
-MIDAS_PACKAGE_URL:STRING=${MIDAS_PACKAGE_URL}
-MIDAS_PACKAGE_EMAIL:STRING=${MIDAS_PACKAGE_EMAIL}
-MIDAS_PACKAGE_API_KEY:STRING=${MIDAS_PACKAGE_API_KEY}
 EXTENSION_DEPENDS:STRING=${EXTENSION_DEPENDS}
 ")
 
@@ -238,7 +232,7 @@ endif()
 if(build_errors GREATER "0")
   message(WARNING "Skip extension packaging: ${build_errors} build error(s) occurred !")
 else()
-  message("Packaging and uploading extension ${EXTENSION_NAME} to midas ...")
+  message("Packaging and uploading extension ${EXTENSION_NAME} ...")
   set(package_list)
   set(package_target "package")
   if(RUN_CTEST_UPLOAD)
