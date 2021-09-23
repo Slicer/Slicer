@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="24"
+   viewBox="0 0 48 24"
+   width="48"
+   version="1.1"
+   id="svg22664"
+   sodipodi:docname="SlicerLoadData-Wide.svg"
+   style="fill:#000000"
+   inkscape:export-filename="c:\D\S4\Modules\Loadable\SlicerWelcome\Resources\Images\SlicerLoadData-Wide.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+  <metadata
+     id="metadata22670">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs22668" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2256"
+     inkscape:window-height="1410"
+     id="namedview22666"
+     showgrid="true"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="18.305085"
+     inkscape:cy="-0.3379825"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg22664"
+     inkscape:pagecheckerboard="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid23219" />
+  </sodipodi:namedview>
+  <path
+     d="M 0,0 H 24 V 24 H 0 Z"
+     id="path22658"
+     inkscape:connector-curvature="0"
+     style="fill:none" />
+  <path
+     d="M 4,8 H 40 V 18 H 4 Z"
+     id="path22660"
+     inkscape:connector-curvature="0"
+     style="opacity:1;stroke-width:1.5;fill:#f7eed5;fill-opacity:1" />
+  <path
+     d="M 39.983051,6.0508475 12,6 10,4 3.9661017,4.0508475 C 3.000028,4.0589885 2.02,4.9 2.02,6 L 2,18 c 0,1.1 1.0000025,1.946719 1.8644068,1.949153 L 39.983051,20.050847 C 41,20.053711 42,19.1 42,18 V 8 C 42,6.9 41,6.0526953 39.983051,6.0508475 Z M 40,18 H 4 V 8 h 36 z"
+     id="path22662"
+     inkscape:connector-curvature="0"
+     style="stroke-width:1.41421354;fill:#eeb308;fill-opacity:1"
+     sodipodi:nodetypes="sccsccsssssccccc" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     x="5.8983049"
+     y="12.915254"
+     id="text23217"><tspan
+       sodipodi:role="line"
+       id="tspan23215"
+       x="5.8983049"
+       y="49.408466"></tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     x="9.1694918"
+     y="16.898306"
+     id="text23223"><tspan
+       sodipodi:role="line"
+       id="tspan23221"
+       x="9.1694918"
+       y="16.898306"
+       style="font-size:9.33333302px">DATA</tspan></text>
+</svg>
