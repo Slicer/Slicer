@@ -1270,9 +1270,12 @@ double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(doub
     cam->GetViewUp(cameraViewUp);
     vtkMath::Normalize(cameraViewUp);
 
-    const double topCenterWorld[] = {cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]};
+
+    //these should be const but that doesn't compile under VTK 8
+    double topCenterWorld[] = {cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]};
+    double bottomCenterWorld[] = {cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]};
+    
     double topCenterDisplay[4];
-    const double bottomCenterWorld[] = {cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]};
     double bottomCenterDisplay[4];
 
     // the WorldToDisplay in interactionEventData is faster if someone has already
@@ -1284,6 +1287,7 @@ double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(doub
       }
     else
       {
+#if VTK_MAJOR_VERSION >= 9
       std::copy(std::begin(topCenterWorld), std::end(topCenterWorld), std::begin(topCenterDisplay));
       this->Renderer->WorldToDisplay(topCenterDisplay[0], topCenterDisplay[1], topCenterDisplay[2]);
       topCenterDisplay[2] = 0.0;
@@ -1291,6 +1295,17 @@ double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(doub
       std::copy(std::begin(bottomCenterWorld), std::end(bottomCenterWorld), std::begin(bottomCenterDisplay));
       this->Renderer->WorldToDisplay(bottomCenterDisplay[0], bottomCenterDisplay[1], bottomCenterDisplay[2]);
       bottomCenterDisplay[2] = 0.0;
+#else
+      this->Renderer->SetWorldPoint(topCenterWorld);
+      this->Renderer->WorldToDisplay();
+      this->Renderer->GetDisplayPoint(topCenterDisplay);
+      topCenterDisplay[2] = 0.0;
+
+      this->Renderer->SetWorldPoint(bottomCenterWorld);
+      this->Renderer->WorldToDisplay();
+      this->Renderer->GetDisplayPoint(bottomCenterDisplay);
+      bottomCenterDisplay[2] = 0.0;
+#endif
       }
 
     const double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenterDisplay, bottomCenterDisplay));
