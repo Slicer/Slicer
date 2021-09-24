@@ -108,6 +108,8 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
   // Make connections
   QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
                    q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
+                   q, SLOT(hidePopup()));
   QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)),
                    q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
   QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
@@ -658,6 +660,17 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   container->update();
 }
 
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::hidePopup()
+{
+  // Hide popup
+  QFrame* container = qobject_cast<QFrame*>(this->view()->parentWidget());
+  if (container)
+    {
+    container->hide();
+    }
+}
+
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyComboBox::mousePressEvent(QMouseEvent* e)
 {
@@ -675,13 +688,6 @@ void qMRMLSubjectHierarchyComboBox::mousePressEvent(QMouseEvent* e)
 void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selectedShItemID)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
-
-  // Hide popup
-  QFrame* container = qobject_cast<QFrame*>(this->view()->parentWidget());
-  if (container)
-    {
-    container->hide();
-    }
 
   vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();
   if (!shNode)
