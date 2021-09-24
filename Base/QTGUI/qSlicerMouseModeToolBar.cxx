@@ -145,8 +145,8 @@ void qSlicerMouseModeToolBarPrivate::init()
   // Place mode
   this->ToolBarAction = new QAction(this);
   this->ToolBarAction->setObjectName("ToolBarAction");
-  this->ToolBarAction->setToolTip(qSlicerMouseModeToolBar::tr("Display Markups Toolbar"));
-  this->ToolBarAction->setText(qSlicerMouseModeToolBar::tr("Display Markups Toolbar"));
+  this->ToolBarAction->setToolTip(qSlicerMouseModeToolBar::tr("Toggle Markups Toolbar"));
+  this->ToolBarAction->setText(qSlicerMouseModeToolBar::tr("Toggle Markups Toolbar"));
   this->ToolBarAction->setEnabled(true);
   this->ToolBarAction->setIcon(QIcon(":/Icons/MarkupsDisplayToolBar.png"));
 

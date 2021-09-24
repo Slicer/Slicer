@@ -607,11 +607,6 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
     markupsNode->SetLocked(markupObject["locked"].GetBool());
     }
 
-  if (markupObject.HasMember("fixedNumberOfControlPoints"))
-    {
-    markupsNode->SetFixedNumberOfControlPoints(markupObject["fixedPointNumber"].GetBool());
-    }
-
   if (markupObject.HasMember("labelFormat"))
     {
     markupsNode->SetMarkupLabelFormat(markupObject["labelFormat"].GetString());
@@ -637,6 +632,11 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
         "Markups reading failed: invalid measurements item.");
       return  false;
       }
+    }
+
+  if (markupObject.HasMember("fixedPointNumber"))
+    {
+    markupsNode->SetFixedNumberOfControlPoints(markupObject["fixedPointNumber"].GetBool());
     }
 
   return true;
