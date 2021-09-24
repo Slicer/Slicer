@@ -90,6 +90,7 @@ void qMRMLMarkupsToolBarPrivate::init()
   this->MarkupsNodeSelector->setEditEnabled(true);
   this->MarkupsNodeSelector->setMaximumWidth(150);
   this->MarkupsNodeSelector->setEnabled(true);
+  this->MarkupsNodeSelector->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
   connect(this->MarkupsNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SIGNAL(activeMarkupsNodeChanged(vtkMRMLNode*)) );
   connect(this->MarkupsNodeSelector, SIGNAL(nodeActivated(vtkMRMLNode*)), q, SLOT(onMarkupsNodeChanged(vtkMRMLNode*)));
