@@ -44,7 +44,9 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserPlayWidget
   Q_OBJECT
   QVTK_OBJECT
 
-  /// Enable or disable recording control buttons when recording
+  /// Enable displaying recording control buttons (record and snapshot).
+  /// The buttons are only visible if this flag is enabled and there is at least one sequence that
+  /// has recording enabled.
   Q_PROPERTY(bool RecordingControlsVisible READ recordingControlsVisible WRITE setRecordingControlsVisible)
 
 
