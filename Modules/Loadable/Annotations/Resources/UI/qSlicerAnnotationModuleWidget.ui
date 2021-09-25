@@ -48,7 +48,7 @@
              <string>Create-and-place</string>
            </property>
            <layout class="QGridLayout" name="createLayout">
-             <item row="0" column="1" >
+             <item row="0" column="0" >
                <widget class="QLabel" name="createNodeLabel">
                  <property name="toolTip">
                    <string>Select node types to create and place annotations.</string>
@@ -58,7 +58,7 @@
                  </property>
                </widget>
              </item>
-             <item row="0" column="3" colspan="2">
+             <item row="0" column="1">
                <widget class="QPushButton" name="createLineButton">
                  <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -91,7 +91,7 @@
                  </property>
                </widget>
              </item>
-             <item row="0" column="5" colspan="2">
+             <item row="0" column="2">
                <widget class="QPushButton" name="createROIButton">
                  <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -122,6 +122,19 @@
                    </iconset>
                  </property>
                </widget>
+             </item>
+             <item row="0" column="3">
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
            </layout>
          </widget>
