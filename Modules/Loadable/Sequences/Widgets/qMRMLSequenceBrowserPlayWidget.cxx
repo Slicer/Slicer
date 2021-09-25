@@ -37,6 +37,7 @@ protected:
   qMRMLSequenceBrowserPlayWidget* const q_ptr;
 public:
   qMRMLSequenceBrowserPlayWidgetPrivate(qMRMLSequenceBrowserPlayWidget& object);
+  bool RecordingControlsVisible;
   void init();
 
   vtkWeakPointer<vtkMRMLSequenceBrowserNode> SequenceBrowserNode;
@@ -147,9 +148,10 @@ void qMRMLSequenceBrowserPlayWidget::updateWidgetFromMRML()
   bool recordingAllowed = d->SequenceBrowserNode->IsAnySequenceNodeRecording();
   bool playbackActive = d->SequenceBrowserNode->GetPlaybackActive();
   bool recordingActive = d->SequenceBrowserNode->GetRecordingActive();
-  d->pushButton_VcrRecord->setVisible(recordingAllowed);
+
+  d->pushButton_VcrRecord->setVisible(recordingAllowed && this->RecordingControlsVisible);
   d->pushButton_VcrRecord->setEnabled(!playbackActive);
-  d->pushButton_Snapshot->setVisible(recordingAllowed);
+  d->pushButton_Snapshot->setVisible(recordingAllowed && this->RecordingControlsVisible);
   d->pushButton_Snapshot->setEnabled(!playbackActive && !recordingActive);
 
   foreach( QObject*w, vcrPlaybackControls ) { w->setProperty( "enabled", vcrControlsEnabled ); }
@@ -324,3 +326,19 @@ void qMRMLSequenceBrowserPlayWidget::setNextFrameShortcut(QString keySequence)
   QObject::connect(new QShortcut(QKeySequence(keySequence), this), SIGNAL(activated()), SLOT(onVcrNext()));
   d->pushButton_VcrNext->setToolTip(d->pushButton_VcrNext->toolTip() + " (" + keySequence + ")");
 }
+
+//---------------------------------------------------------------------------
+void qMRMLSequenceBrowserPlayWidget::setRecordingControlsVisible(bool show)
+{
+  Q_D(qMRMLSequenceBrowserPlayWidget);
+  d->RecordingControlsVisible = show;
+  this->updateWidgetFromMRML();
+}
+
+//---------------------------------------------------------------------------
+bool qMRMLSequenceBrowserPlayWidget::recordingControlsVisible() const
+{
+  Q_D(const qMRMLSequenceBrowserPlayWidget);
+  return d->RecordingControlsVisible;
+}
+
