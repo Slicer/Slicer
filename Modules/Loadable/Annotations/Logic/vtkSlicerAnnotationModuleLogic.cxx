@@ -463,22 +463,26 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
       this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (selectionNode)
     {
-    // got into batch mode
-    this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+    if (selectionNode->PlaceNodeClassNameInList("vtkMRMLAnnotationRulerNode") < 0
+      || selectionNode->PlaceNodeClassNameInList("vtkMRMLAnnotationROINode") < 0)
+      {
+      // got into batch mode
+      this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
-    vtkDebugMacro("vtkSlicerAnnotationModuleLogic::ObserveMRMLScene(): adding new annotation class names to selection node place list");
-    /// Markups handle placement of new fiducials
-    // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png", "Fiducial");
-//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationTextNode",  ":/Icons/AnnotationTextWithArrow.png", "Text");
-    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
-//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensionalWithArrow.png", "Bidimensional");
-    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png", "ROI");
-//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png", "Angle");
-//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationStickyNode", "", "Sticky");
-//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationSplineNode", ":/Icons/AnnotationSpline.png", "Spline");
+      vtkDebugMacro("vtkSlicerAnnotationModuleLogic::ObserveMRMLScene(): adding new annotation class names to selection node place list");
+      /// Markups handle placement of new fiducials
+      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png", "Fiducial");
+      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationTextNode",  ":/Icons/AnnotationTextWithArrow.png", "Text");
+      selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
+      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensionalWithArrow.png", "Bidimensional");
+      selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png", "ROI");
+      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png", "Angle");
+      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationStickyNode", "", "Sticky");
+      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationSplineNode", ":/Icons/AnnotationSpline.png", "Spline");
 
-    // stop batch add
-    this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+      // stop batch add
+      this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+      }
     }
   // Superclass::ObserveMRMLScene calls UpdateFromMRMLScene();
   this->Superclass::ObserveMRMLScene();

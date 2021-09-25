@@ -87,22 +87,22 @@ public slots:
   void setSelectionNode(vtkMRMLSelectionNode* selectionNode);
 
     /// Create markup by class.
-  void onCreateMarkupByClass(const QString& className);
-  void onCreateAnnotationByClass(const QString& className);
-
-  /// Update the widget when a different markups node is selected by the combo box.
-  void onMarkupsNodeChanged();
+  void onAddNewMarkupsNodeByClass(const QString& className);
+  void onAddNewAnnotationNodeByClass(const QString& className);
 
   // Keyboard shortcuts for Markups node interactions
   void onCreateNodeShortcut();
   void onTogglePersistenceShortcut();
   void onPlacePointShortcut();
 
-
 signals:
   void mrmlSceneChanged(vtkMRMLScene*);
   void activeMarkupsNodeChanged(vtkMRMLNode* activeMarkupsNode);
   void activeMarkupsPlaceModeChanged(bool enabled);
+
+protected slots:
+  /// Update the widget when a different markups node is selected by the combo box.
+  void onMarkupsNodeChanged(vtkMRMLNode*);
 
 protected:
   QScopedPointer<qMRMLMarkupsToolBarPrivate> d_ptr;

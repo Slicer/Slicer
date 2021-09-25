@@ -48,7 +48,6 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->ActivePlaceNodeClassName = nullptr;
   this->ActivePlaceNodePlacementValid = false;
 
-
   vtkNew<vtkIntArray> unitNodeModifiedEvents;
   unitNodeModifiedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   this->AddNodeReferenceRole(UNIT_NODE_REFERENCE_ROLE, "UnitNodeRef", unitNodeModifiedEvents);
@@ -439,6 +438,20 @@ std::string vtkMRMLSelectionNode::GetPlaceNodeResourceByClassName(std::string cl
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::SetReferenceActivePlaceNodeClassName (const char *className)
 {
+  if (className == this->ActivePlaceNodeClassName)
+    {
+    // no change (probably both nullptr)
+    return;
+    }
+  if (className != nullptr && this->ActivePlaceNodeClassName != nullptr)
+    {
+    if (strcmp(className, this->ActivePlaceNodeClassName) == 0)
+      {
+      // no change
+      return;
+      }
+    }
+
   this->SetActivePlaceNodeClassName(className);
   this->InvokeEvent(vtkMRMLSelectionNode::ActivePlaceNodeClassNameChangedEvent);
 }
@@ -495,6 +508,20 @@ const char* vtkMRMLSelectionNode::GetActivePlaceNodeID()
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::SetActivePlaceNodeID(const char* id)
 {
+  const char* oldId = this->GetNodeReferenceID(ACTIVE_PLACE_NODE_REFERENCE_ROLE);
+  if (id == oldId)
+    {
+    // no change (probably both nullptr)
+    return;
+    }
+  if (id != nullptr && oldId != nullptr)
+    {
+    if (strcmp(id, oldId) == 0)
+      {
+      // no change
+      return;
+      }
+    }
   this->SetNodeReferenceID(ACTIVE_PLACE_NODE_REFERENCE_ROLE, id);
   this->InvokeEvent(vtkMRMLSelectionNode::ActivePlaceNodeIDChangedEvent);
 }
@@ -568,12 +595,17 @@ void vtkMRMLSelectionNode::SetActivePlotChartID(const char* id)
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::SetActivePlaceNodePlacementValid(bool valid)
 {
+  if (this->ActivePlaceNodePlacementValid == valid)
+    {
+    // no change
+    return;
+    }
   this->ActivePlaceNodePlacementValid = valid;
   this->InvokeEvent(vtkMRMLSelectionNode::ActivePlaceNodePlacementValidEvent);
 }
 
 //----------------------------------------------------------------------------
 bool vtkMRMLSelectionNode::GetActivePlaceNodePlacementValid()
-  {
+{
   return this->ActivePlaceNodePlacementValid;
-  }
+}

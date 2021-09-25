@@ -678,6 +678,9 @@ public:
   /// To be re-implemented in subclasses
   virtual void UpdateAssignedAttribute() {};
 
+  /// Returns true if no additional control points can be added to this node.
+  virtual bool GetControlPointPlacementComplete();
+
   // Utilities to access the highlighted row in the control point table
   int GetActiveTableRow();
   bool SetActiveTableRow(int);

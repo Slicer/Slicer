@@ -2800,13 +2800,27 @@ void vtkMRMLMarkupsNode::SetFixedNumberOfControlPoints(bool fixed)
 
 //---------------------------------------------------------------------------
 int vtkMRMLMarkupsNode::GetActiveTableRow()
-  {
+{
   return this->activeTableRow;
-  }
+}
 
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsNode::SetActiveTableRow(int row)
-  {
+{
   this->activeTableRow = row;
   return true;
-  }
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsNode::GetControlPointPlacementComplete()
+{
+  bool hasRequiredPoints = this->GetRequiredNumberOfControlPoints() > 0;
+  bool hasRequiredPointNumber = this->GetNumberOfControlPoints() >= this->GetRequiredNumberOfControlPoints();
+  bool requiredPointsReached = hasRequiredPoints && hasRequiredPointNumber && !(this->GetNumberOfUndefinedControlPoints() > 0);
+  bool lockedPointsReached = this->GetFixedNumberOfControlPoints() && !(this->GetNumberOfUndefinedControlPoints() > 0);
+  if (requiredPointsReached || lockedPointsReached)
+    {
+    return true;
+   }
+  return false;
+}

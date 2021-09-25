@@ -84,9 +84,7 @@ public:
   void init();
   void setMRMLScene(vtkMRMLScene* newScene);
   QCursor cursorFromIcon(QIcon& icon);
-  void addCreateNodeActions(vtkSlicerMarkupsLogic* markupsLogic);
   void addSetModuleButton(vtkSlicerMarkupsLogic* markupsLogic, const QString& moduleName);
-  void addPlaceWidget();
 
 public slots:
   void onMRMLSceneStartBatchProcess();
@@ -95,14 +93,13 @@ public slots:
   void onActivePlaceNodeClassNameChangedEvent();
   void onPlaceNodeClassNameListModifiedEvent();
   void onSetModule(const QString& moduleName);
-  void onCreateMarkupByClass(const QString& className);
+  void onAddNewMarkupsNodeByClass(const QString& className);
 
 public:
   vtkSmartPointer<vtkMRMLScene>            MRMLScene;
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
   vtkWeakPointer<vtkMRMLInteractionNode>   InteractionNode;
   vtkWeakPointer<vtkMRMLSelectionNode>     SelectionNode;
-  vtkWeakPointer<vtkMRMLMarkupsNode>       CurrentMarkupsNode;
 
   QString DefaultPlaceClassName;
 

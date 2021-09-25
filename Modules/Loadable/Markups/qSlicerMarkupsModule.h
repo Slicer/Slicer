@@ -102,10 +102,9 @@ protected:
 
 public slots:
   void setToolBarVisible(bool visible);
-  /// Enables automatic showing markups toolbar when a new sequence is loaded
+  /// Enables automatic showing markups toolbar when a new markups node is loaded
   void setAutoShowToolBar(bool autoShow);
-  void onNodeAddedEvent(vtkObject*, vtkObject*);
-  void onNodeRemovedEvent(vtkObject*, vtkObject*);
+  //void onNodeAddedEvent(vtkObject*, vtkObject*);
 
 protected:
   QScopedPointer<qSlicerMarkupsModulePrivate> d_ptr;

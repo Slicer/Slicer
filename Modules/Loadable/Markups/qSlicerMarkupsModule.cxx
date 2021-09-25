@@ -20,7 +20,6 @@
 #include <QSettings>
 #include <QMainWindow>
 #include <QMenu>
-#include <QTimer>
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
@@ -95,7 +94,6 @@ public:
   virtual void addToolBar();
 
   virtual ~qSlicerMarkupsModulePrivate();
-  QTimer UpdateAllVirtualOutputNodesTimer;
   qMRMLMarkupsToolBar* ToolBar;
   bool MarkupsModuleOwnsToolBar{ true };
   bool AutoShowToolBar{ true };
@@ -180,16 +178,14 @@ qSlicerMarkupsModule::qSlicerMarkupsModule(QObject* _parent)
   : Superclass(_parent), d_ptr(new qSlicerMarkupsModulePrivate(*this))
 {
   Q_D(qSlicerMarkupsModule);
-
-  d->UpdateAllVirtualOutputNodesTimer.setSingleShot(true);
-
+  /*
   vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
   if (scene)
     {
-    // Need to listen for any new sequence browser nodes being added to start/stop timer
+    // Need to listen for any new makrups nodes being added to show toolbar
     this->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
-    this->qvtkConnect(scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
     }
+    */
 }
 
 //-----------------------------------------------------------------------------
@@ -587,15 +583,15 @@ void qSlicerMarkupsModule::setAutoShowToolBar(bool autoShow)
   d->AutoShowToolBar = autoShow;
 }
 //-----------------------------------------------------------------------------
-bool  qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
+bool qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app
       || !app->moduleManager()
       || !dynamic_cast<qSlicerMarkupsModule*>(app->moduleManager()->module("Markups")))
     {
-      qCritical("Markups module is not available");
-      return false;
+    qCritical("Markups module is not available");
+    return false;
     }
   qSlicerMarkupsModule* markupsModule = dynamic_cast<qSlicerMarkupsModule*>(app->moduleManager()->module("Markups"));
   if (markupsModule->autoShowToolBar())
@@ -604,49 +600,19 @@ bool  qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
     }
   return true;
 }
+
+/*
 // --------------------------------------------------------------------------
 void qSlicerMarkupsModule::onNodeAddedEvent(vtkObject*, vtkObject* node)
 {
   Q_D(qSlicerMarkupsModule);
 
   vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
-
   if (!markupsNode)
     {
     return;
     }
-  // If the timer is not active, so it should be turned on
-  if (!d->UpdateAllVirtualOutputNodesTimer.isActive())
-    {
-    d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC * 1000.0);
-    }
 
-  // If toolbar does not show a valid browser node already then queue the newly added markups node to be
-  // shown in the toolbar.
-  this->setToolBarVisible(true);
-  d->ToolBar->setActiveMarkupsNode(markupsNode);
+  qSlicerMarkupsModule::showMarkups(markupsNode);
 }
-
-// --------------------------------------------------------------------------
-void qSlicerMarkupsModule::onNodeRemovedEvent(vtkObject*, vtkObject* node)
-{
-  Q_D(qSlicerMarkupsModule);
-
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
-  if (markupsNode)
-    {
-    // Check if there is any other markups node left in the Scene
-    vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
-    if (scene)
-      {
-      vtkMRMLNode* node;
-      node = this->mrmlScene()->GetFirstNodeByClass("vtkMRMLMarkupsNode");
-      if (!node)
-        {
-        // The last sequence browser was removed, so
-        // turn off timer refresh and stop any pending timers
-        d->UpdateAllVirtualOutputNodesTimer.stop();
-        }
-      }
-    }
-}
+*/

@@ -491,22 +491,11 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   d->IsUpdatingWidgetFromMRML = true;
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
 
-  // update selection node
-  bool activePlaceNodePlacementValid = false;
-  if (d->SelectionNode)
-    {
-    this->selectionNode()->SetActivePlaceNodeID(currentMarkupsNode ? currentMarkupsNode->GetID() : nullptr);
-    activePlaceNodePlacementValid = this->currentMarkupPointPlacementValid();
-    this->selectionNode()->SetActivePlaceNodePlacementValid(activePlaceNodePlacementValid);
-    this->selectionNode()->SetReferenceActivePlaceNodeClassName(currentMarkupsNode ? currentMarkupsNode->GetClassName() : nullptr);
-    }
-
   if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
     d->InteractionNode == nullptr || currentMarkupsNode == nullptr)
     {
     d->ColorButton->setEnabled(false);
     d->PlaceButton->setEnabled(false);
-    d->PlaceButton->setIcon(QIcon(":/Icons/MarkupsGenericMouseModePlace.png"));
     d->DeleteButton->setEnabled(false);
     d->MoreButton->setEnabled(false);
     bool wasBlockedColorButton = d->ColorButton->blockSignals(true);
@@ -521,21 +510,19 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     d->IsUpdatingWidgetFromMRML = false;
     return;
     }
-  if (!activePlaceNodePlacementValid)
+
+  bool activePlaceNodePlacementValid = false;
+  if (d->SelectionNode)
     {
-    d->PlaceButton->setEnabled(false);
-    d->PlaceButton->setIcon(QIcon(":/Icons/MarkupsGenericMouseModePlace.png"));
+    activePlaceNodePlacementValid = d->SelectionNode->GetActivePlaceNodePlacementValid();
     }
-  else
-    {
-    d->PlaceButton->setEnabled(true);
-    }
+  d->PlaceButton->setEnabled(activePlaceNodePlacementValid);
 
   d->ColorButton->setEnabled(true);
   d->DeleteButton->setEnabled(currentMarkupsNode->GetNumberOfControlPoints() > 0);
   d->MoreButton->setEnabled(true);
 
-    // Set the button indicating if this list is active
+  // Set the button indicating if this list is active
   bool wasBlockedColorButton = d->ColorButton->blockSignals( true );
   bool wasBlockedVisibilityButton = d->ActionVisibility->blockSignals( true );
   bool wasBlockedLockButton = d->ActionLocked->blockSignals( true );
@@ -835,23 +822,3 @@ void qSlicerMarkupsPlaceWidget::onFixedNumberOfControlPointsButtonClicked()
   d->InteractionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
   this->updateWidget();
 }
-
-//-----------------------------------------------------------------------------
-bool qSlicerMarkupsPlaceWidget::currentMarkupPointPlacementValid()
-  {
-  Q_D(qSlicerMarkupsPlaceWidget);
-  vtkMRMLMarkupsNode* markupsNode = d->CurrentMarkupsNode;
-  if (!markupsNode)
-    {
-    return false;
-    }
-  bool hasRequiredPoints = markupsNode->GetRequiredNumberOfControlPoints() > 0;
-  bool hasRequiredPointNumber = markupsNode->GetNumberOfControlPoints() >= markupsNode->GetRequiredNumberOfControlPoints();
-  bool requiredPointsReached = hasRequiredPoints && hasRequiredPointNumber && !bool(markupsNode->GetNumberOfUndefinedControlPoints() > 0);
-  bool lockedPointsReached = markupsNode->GetFixedNumberOfControlPoints() && !bool(markupsNode->GetNumberOfUndefinedControlPoints() > 0);
-  if (requiredPointsReached || lockedPointsReached)
-    {
-    return false;
-    }
-  return true;
-  }

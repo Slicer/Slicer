@@ -73,6 +73,20 @@ class vtkSlicerMarkupsLogic::vtkInternal
 {
 public:
 
+  void UpdatePlacementValidInSelectionNode()
+    {
+    if (!this->SelectionNode)
+      {
+      return;
+      }
+    bool activePlaceNodePlacementValid = false;
+    if (this->ActiveMarkupsNode)
+      {
+      activePlaceNodePlacementValid = !this->ActiveMarkupsNode->GetControlPointPlacementComplete();
+      }
+    this->SelectionNode->SetActivePlaceNodePlacementValid(activePlaceNodePlacementValid);
+    }
+
   // This keeps the elements that can be registered to a node type
   struct MarkupEntry
     {
@@ -83,6 +97,8 @@ public:
 
   std::map<std::string, std::string> MarkupsTypeStorageNodes;
   vtkMRMLSelectionNode* SelectionNode{ nullptr };
+
+  vtkWeakPointer<vtkMRMLMarkupsNode> ActiveMarkupsNode;
 
   /// Keeps track of the registered nodes and corresponding widgets
   std::map<std::string, MarkupEntry> MarkupTypeToMarkupEntry;
@@ -216,6 +232,34 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject *caller,
       markupsNode->UpdateAllMeasurements();
       }
     }
+
+  // Update the observer to the active place node.
+  if (caller == this->Internal->SelectionNode && event == vtkMRMLSelectionNode::ActivePlaceNodeIDChangedEvent && this->GetMRMLScene())
+    {
+    vtkMRMLMarkupsNode* activeMarkupsNode = nullptr;
+    std::string activeMarkupsNodeID = this->GetActiveListID();
+    if (!activeMarkupsNodeID.empty())
+      {
+      activeMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(activeMarkupsNodeID.c_str()));
+      }
+    if (this->Internal->ActiveMarkupsNode != activeMarkupsNode)
+      {
+      // active placement mode changed, add an observer
+      vtkUnObserveMRMLNodeMacro(this->Internal->ActiveMarkupsNode);
+      vtkNew<vtkIntArray> events;
+      events->InsertNextValue(vtkCommand::ModifiedEvent);
+      vtkObserveMRMLNodeEventsMacro(activeMarkupsNode, events.GetPointer());
+      this->Internal->ActiveMarkupsNode = activeMarkupsNode;
+
+      this->Internal->UpdatePlacementValidInSelectionNode();
+      }
+    }
+
+  if (caller == this->Internal->ActiveMarkupsNode && this->GetMRMLScene())
+    {
+    // Markup control points are placed, update the selection node to indicate if placement of more control points is allowed.
+    this->Internal->UpdatePlacementValidInSelectionNode();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -246,28 +290,45 @@ void vtkSlicerMarkupsLogic::ObserveMRMLScene()
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID().c_str()));
   if (selectionNode)
     {
-    // got into batch process mode so that an update on the mouse mode tool
-    // bar is triggered when leave it
-    this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
-    vtkNew<vtkMRMLMarkupsFiducialNode> fiducial;
-    vtkNew<vtkMRMLMarkupsLineNode> line;
-    vtkNew<vtkMRMLMarkupsAngleNode> angle;
-    vtkNew<vtkMRMLMarkupsCurveNode> curve;
-    vtkNew<vtkMRMLMarkupsClosedCurveNode> closedCurve;
-    vtkNew<vtkMRMLMarkupsPlaneNode> plane;
-    vtkNew<vtkMRMLMarkupsROINode> roi;
+    std::vector<std::string> markupsClassNames;
+    markupsClassNames.push_back("vtkMRMLMarkupsFiducialNode");
+    markupsClassNames.push_back("vtkMRMLMarkupsLineNode");
+    markupsClassNames.push_back("vtkMRMLMarkupsAngleNode");
+    markupsClassNames.push_back("vtkMRMLMarkupsCurveNode");
+    markupsClassNames.push_back("vtkMRMLMarkupsClosedCurveNode");
+    markupsClassNames.push_back("vtkMRMLMarkupsPlaneNode");
+    markupsClassNames.push_back("vtkMRMLMarkupsROINode");
 
-    selectionNode->AddNewPlaceNodeClassNameToList(fiducial->GetClassName(), fiducial->GetAddIcon(), fiducial->GetMarkupType());
-    selectionNode->AddNewPlaceNodeClassNameToList(line->GetClassName(), line->GetAddIcon(), line->GetMarkupType());
-    selectionNode->AddNewPlaceNodeClassNameToList(angle->GetClassName(), angle->GetAddIcon(), angle->GetMarkupType());
-    selectionNode->AddNewPlaceNodeClassNameToList(curve->GetClassName(), curve->GetAddIcon(), curve->GetMarkupType());
-    selectionNode->AddNewPlaceNodeClassNameToList(closedCurve->GetClassName(), closedCurve->GetAddIcon(), closedCurve->GetMarkupType());
-    selectionNode->AddNewPlaceNodeClassNameToList(plane->GetClassName(), plane->GetAddIcon(), plane->GetMarkupType());
-    selectionNode->AddNewPlaceNodeClassNameToList(roi->GetClassName(), roi->GetAddIcon(), roi->GetMarkupType());
+    bool inBatchUpdate = false;
+    for (const std::string& markupsClassName : markupsClassNames)
+      {
+      if (selectionNode->PlaceNodeClassNameInList(markupsClassName) < 0)
+        {
+        if (!inBatchUpdate)
+          {
+          // got into batch process mode so that an update on the mouse mode tool
+          // bar is triggered when leave it
+          this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+          inBatchUpdate = true;
+          }
+        vtkSmartPointer<vtkMRMLMarkupsNode> markupsNode = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(
+          vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass(markupsClassName.c_str())));
+        if (!markupsNode)
+          {
+          vtkErrorMacro("vtkSlicerMarkupsLogic::ObserveMRMLScene: Failed to create markups node by class " << markupsClassName);
+          continue;
+          }
+        selectionNode->AddNewPlaceNodeClassNameToList(markupsNode->GetClassName(), markupsNode->GetAddIcon(), markupsNode->GetMarkupType());
+        }
+      }
 
-    // trigger an update on the mouse mode toolbar
-    this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+    if (inBatchUpdate)
+      {
+      // trigger an update on the mouse mode toolbar
+      this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+      }
+
     }
 
   this->Superclass::ObserveMRMLScene();
@@ -278,6 +339,7 @@ void vtkSlicerMarkupsLogic::SetAndObserveSelectionNode(vtkMRMLSelectionNode* sel
 {
   vtkNew<vtkIntArray> selectionEvents;
   selectionEvents->InsertNextValue(vtkMRMLSelectionNode::UnitModifiedEvent);
+  selectionEvents->InsertNextValue(vtkMRMLSelectionNode::ActivePlaceNodeIDChangedEvent);
   vtkSetAndObserveMRMLNodeEventsMacro(this->Internal->SelectionNode, selectionNode, selectionEvents.GetPointer());
 }
 

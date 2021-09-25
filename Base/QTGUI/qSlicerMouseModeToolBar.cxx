@@ -321,7 +321,7 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidget()
     }
   QString activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
   bool validNodeForPlacement = selectionNode->GetActivePlaceNodePlacementValid();
-  if (!validNodeForPlacement || activePlaceNodeClassName == NULL)
+  if (!validNodeForPlacement || activePlaceNodeClassName.isEmpty())
     {
     q->removeAction(this->PlaceWidgetAction);
     q->addAction(this->ToolBarAction);
@@ -329,7 +329,7 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidget()
     }
 
   QString activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
-  if (activePlaceNodeID == NULL)
+  if (activePlaceNodeID.isEmpty())
     {
     q->removeAction(this->PlaceWidgetAction);
     q->addAction(this->ToolBarAction);

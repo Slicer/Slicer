@@ -1796,12 +1796,6 @@ bool vtkSlicerMarkupsWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
         this->GetMarkupsDisplayNode()->SetActiveControlPoint(controlPointIndex);
         }
       this->WidgetState = WidgetStateOnWidget;
-
-      // Check if the selected node is valid for further point placement and update
-      if (hasRequiredPoints && requiredPointsReached || lockedPointsReached)
-        {
-        this->selectionNode()->SetActivePlaceNodePlacementValid(false);
-        }
       }
     }
 
