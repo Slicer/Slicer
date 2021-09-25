@@ -40,6 +40,7 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
 
+  /// Read a markups node from a file.
   vtkMRMLMarkupsNode* AddNewMarkupsNodeFromFile(const char* filePath, const char* nodeName=nullptr, int markupIndex=0);
 
   ///

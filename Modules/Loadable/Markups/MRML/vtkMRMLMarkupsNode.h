@@ -138,9 +138,6 @@ public:
   virtual const char* GetAddIcon() {return ":/Icons/MarkupsGenericMouseModePlace.png";}
   virtual const char* GetPlaceAddIcon() {return ":/Icons/MarkupsGenericMouseModePlaceAdd.png";}
 
-  // active table row
-  int activeTableRow;
-
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
@@ -246,8 +243,10 @@ public:
     LabelFormatModifiedEvent,
     PointAddedEvent,
     PointRemovedEvent,
-    PointPositionDefinedEvent, // point was not defined (undefined, preview position status, or non-existent point) before but now it is defined
-    PointPositionUndefinedEvent, // point position was defined and now it is not defined anymore (point deleted or position is not defined)
+    PointPositionDefinedEvent,    // point was not defined (undefined, preview position status, or non-existent point) before but now it is defined
+    PointPositionUndefinedEvent,  // point position was defined and now it is not defined anymore (point deleted or position is not defined)
+    PointPositionMissingEvent,    // point was not not missing before and now it is missing
+    PointPositionNonMissingEvent, // point missing before and now it is not missing
     PointModifiedEvent,
     PointStartInteractionEvent,
     PointEndInteractionEvent,
@@ -681,9 +680,14 @@ public:
   /// Returns true if no additional control points can be added to this node.
   virtual bool GetControlPointPlacementComplete();
 
-  // Utilities to access the highlighted row in the control point table
-  int GetActiveTableRow();
-  bool SetActiveTableRow(int);
+  /// Set the index of the control point that will be placed next.
+  ///
+  /// Currently, this property is not stored persistently in the scene and modifying it does not trigger
+  /// a node modification event, because it is considered to be a temporary value. For example, it would
+  /// not be desirable to store this value for each item in a markups node sequence, or include it in
+  /// undo/redo.
+  int GetControlPointPlacementStartIndex();
+  void SetControlPointPlacementStartIndex(int);
 
 protected:
   vtkMRMLMarkupsNode();
@@ -775,8 +779,9 @@ protected:
   /// Locks all the points and GUI
   int Locked{0};
 
-  // Locks number of control points
-  int FixedPointNumber{0};
+  /// Locks number of control points. If enabled then points cannot be added or removed.
+  /// Point position can be unset instead of deleting the point.
+  bool FixedNumberOfControlPoints{false};
 
   std::string MarkupLabelFormat{"%N-%d"};
 
@@ -784,6 +789,9 @@ protected:
   /// incrementing, not decreasing when they're removed. Used to help create
   /// unique names and ids. Reset to 0 when \sa RemoveAllControlPoints called
   int LastUsedControlPointNumber{0};
+
+  /// Index of the control point index that placement is started from (if no other point is requested specifically).
+  int ControlPointPlacementStartIndex{ -1 };
 
   /// Markup centerpoint (in local coordinates).
   /// It may be used as rotation center or as a handle to grab the widget by.

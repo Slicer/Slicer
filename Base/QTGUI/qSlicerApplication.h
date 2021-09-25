@@ -165,7 +165,7 @@ public slots:
   /// \note qSlicerApplication is a temporary host for the function as it should be
   /// moved into a DataManager where module can register new node
   /// types/modules
-  void openNodeModule(vtkMRMLNode* node);
+  void openNodeModule(vtkMRMLNode* node, QString role=QString(), QString context=QString());
 
   /// Popup a dialog asking the user if the application should be restarted.
   /// If no \a reason is given, the text will default to ""Are you sure you want to restart?"

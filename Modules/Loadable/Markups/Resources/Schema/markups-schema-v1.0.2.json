@@ -81,12 +81,12 @@
                                     "description": "Markup can be interacted with on the user interface.",
                                     "default": true
                                 },
-                                "fixedPointNumber": {
-                                    "$id": "#markup/fixedPointNumber",
+                                "fixedNumberOfControlPoints": {
+                                    "$id": "#markup/fixedNumberOfControlPoints",
                                     "type": "boolean",
-                                    "title": "Fixed point number",
-                                    "description": "Number of markup points is fixed at the current value. Points may not be added or removed",
-                                    "default": true
+                                    "title": "Fixed number of control points",
+                                    "description": "Number of control points is fixed at the current value. Control points may not be added or removed (point positions can be unset instead of deleting).",
+                                    "default": false
                                 },
                                 "labelFormat": {
                                     "$id": "#markup/labelFormat",

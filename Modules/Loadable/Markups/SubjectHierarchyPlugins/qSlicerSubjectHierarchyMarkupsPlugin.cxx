@@ -615,7 +615,8 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()co
 void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
 {
   Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
-
+  // make sure we don't use metadata from some previous view context menu calls
+  d->ViewContextMenuEventData.clear();
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
@@ -648,6 +649,17 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
 
   d->RenamePointAction->setVisible(!pointActionsDisabled);
   d->DeletePointAction->setVisible(!pointActionsDisabled);
+  if (!pointActionsDisabled)
+    {
+    if (associatedNode->GetFixedNumberOfControlPoints())
+      {
+      d->DeletePointAction->setText("Unset point position");
+      }
+    else
+      {
+      d->DeletePointAction->setText("Delete point");
+      }
+    }
   d->DeleteNodeAction->setVisible(true);
   d->ToggleSelectPointAction->setVisible(!pointActionsDisabled);
 
@@ -719,6 +731,8 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::visibilityContextMenuActio
 void qSlicerSubjectHierarchyMarkupsPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+  // make sure we don't use metadata from some previous view context menu calls
+  d->ViewContextMenuEventData.clear();
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
@@ -748,6 +762,14 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showVisibilityContextMenuActionsForIt
       d->ToggleCurrentItemScaleHandleVisible->setChecked(displayNode->GetScaleHandleVisibility());
       }
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::showContextMenuActionsForItem(vtkIdType)
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+  // make sure we don't use metadata from some previous view context menu calls
+  d->ViewContextMenuEventData.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -793,7 +815,14 @@ void qSlicerSubjectHierarchyMarkupsPlugin::deletePoint()
   // Get point index
   int componentIndex = d->ViewContextMenuEventData["ComponentIndex"].toInt();
 
-  markupsNode->RemoveNthControlPoint(componentIndex);
+  if (markupsNode->GetFixedNumberOfControlPoints())
+    {
+    markupsNode->UnsetNthControlPointPosition(componentIndex);
+    }
+  else
+    {
+    markupsNode->RemoveNthControlPoint(componentIndex);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1101,4 +1130,25 @@ void qSlicerSubjectHierarchyMarkupsPlugin::toggleHandleTypeVisibility()
 
   int componentType = sender->property(INTERACTION_HANDLE_TYPE_PROPERTY).toInt();
   displayNode->SetHandleVisibility(componentType, !displayNode->GetHandleVisibility(componentType));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::editProperties(vtkIdType itemID)
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  if (d->ViewContextMenuEventData.contains("ComponentIndex"))
+    {
+    int componentIndex = d->ViewContextMenuEventData["ComponentIndex"].toInt();
+    qSlicerApplication::application()->openNodeModule(shNode->GetItemDataNode(itemID), "ControlPointIndex", QString::number(componentIndex));
+    }
+  else
+    {
+    qSlicerApplication::application()->openNodeModule(shNode->GetItemDataNode(itemID));
+    }  
 }

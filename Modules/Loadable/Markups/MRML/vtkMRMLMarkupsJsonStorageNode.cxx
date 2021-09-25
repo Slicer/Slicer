@@ -634,9 +634,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
       }
     }
 
-  if (markupObject.HasMember("fixedPointNumber"))
+  if (markupObject.HasMember("fixedNumberOfControlPoints"))
     {
-    markupsNode->SetFixedNumberOfControlPoints(markupObject["fixedPointNumber"].GetBool());
+    markupsNode->SetFixedNumberOfControlPoints(markupObject["fixedNumberOfControlPoints"].GetBool());
     }
 
   return true;
@@ -840,7 +840,7 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteBasicProperties(
   writer.Key("locked");
   writer.Bool(markupsNode->GetLocked());
 
-  writer.Key("fixedPointNumber");
+  writer.Key("fixedNumberOfControlPoints");
   writer.Bool(markupsNode->GetFixedNumberOfControlPoints());
 
   writer.Key("labelFormat");
@@ -1267,6 +1267,7 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
     return nullptr;
     }
 
+  this->StoredTime->Modified();
   markupsNode->SetAndObserveStorageNodeID(this->GetID());
   return markupsNode;
 }

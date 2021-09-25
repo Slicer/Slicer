@@ -658,15 +658,21 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     }
 
   bool addNewControlPoint = false;
-  // Get index of point to update. If active index is not valid, use first undefined point,
-  //if none, create new point.
-  if (controlPointIndex < 0 || controlPointIndex >= markupsNode->GetNumberOfControlPoints()
+  // Get index of point to update. If active index is not valid, use the next undefined point,
+  // if none, create new point.
+  int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
+  if (controlPointIndex < 0 || controlPointIndex >= numberOfControlPoints
     || (markupsNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionDefined)
     || (markupsNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionMissing))
     {
-    int undefinedIndex = -1;
-    for (int i = 0; i < markupsNode->GetNumberOfControlPoints(); i++)
+    if (controlPointIndex < 0 || controlPointIndex >= numberOfControlPoints)
       {
+      controlPointIndex = 0;
+      }
+    int undefinedIndex = -1;
+    for (int offset = 0; offset < markupsNode->GetNumberOfControlPoints(); offset++)
+      {
+      int i = (controlPointIndex + offset) % numberOfControlPoints; // check all points, starting from controlPointIndex and wrap around
       int pointStatus = markupsNode->GetNthControlPointPositionStatus(i);
       if (pointStatus == vtkMRMLMarkupsNode::PositionUndefined)
         {
@@ -674,7 +680,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
         break;
         }
       }
-     if (undefinedIndex >= 0)
+    if (undefinedIndex >= 0)
       {
       controlPointIndex = undefinedIndex;
       }

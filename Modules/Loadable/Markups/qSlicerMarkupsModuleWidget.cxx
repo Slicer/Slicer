@@ -2172,7 +2172,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellClicked(QTableWidgetItem
         item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionDefined));
         }
     }
-  d->MarkupsNode->SetActiveTableRow(row);
+  d->MarkupsNode->SetControlPointPlacementStartIndex(row);
 }
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onActiveMarkupTableCurrentCellChanged(
@@ -2891,31 +2891,48 @@ this->updateWidgetFromMRML();
 
 //-----------------------------------------------------------
 bool qSlicerMarkupsModuleWidget::setEditedNode(vtkMRMLNode* node,
-                                              QString role /* = QString()*/,
-                                              QString context /* = QString()*/)
+                                              QString role /*=QString()*/,
+                                              QString context /*=QString()*/)
 {
-Q_D(qSlicerMarkupsModuleWidget);
-Q_UNUSED(role);
-Q_UNUSED(context);
-if (vtkMRMLMarkupsNode::SafeDownCast(node))
-  {
-  d->setSelectionNodeActivePlaceNode(node);
-  return true;
-  }
+  Q_D(qSlicerMarkupsModuleWidget);
 
-if (vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
-  {
-  vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(node);
-  vtkMRMLMarkupsNode* displayableNode = vtkMRMLMarkupsNode::SafeDownCast(displayNode->GetDisplayableNode());
-    if (!displayableNode)
+  int controlPointIndex = -1; // <0 means control point index is not specified
+  if (role == "ControlPointIndex")
     {
-    return false;
+    bool ok = false;
+    controlPointIndex = context.toInt(&ok);
+    if (!ok)
+      {
+      controlPointIndex = -1;
+      }
     }
-  d->setSelectionNodeActivePlaceNode(displayableNode);
-  return true;
-  }
 
-return false;
+  if (vtkMRMLMarkupsNode::SafeDownCast(node))
+    {
+    d->setSelectionNodeActivePlaceNode(node);
+    if (controlPointIndex>=0)
+      {
+      d->activeMarkupTableWidget->setCurrentCell(controlPointIndex, 0);
+      }
+    return true;
+    }
+
+  if (vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
+    {
+    vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(node);
+    vtkMRMLMarkupsNode* displayableNode = vtkMRMLMarkupsNode::SafeDownCast(displayNode->GetDisplayableNode());
+    if (!displayableNode)
+      {
+      return false;
+      }
+    if (controlPointIndex>=0)
+      {
+      d->activeMarkupTableWidget->setCurrentCell(controlPointIndex, 0);
+      }
+    return true;
+    }
+
+  return false;
 }
 
 //-----------------------------------------------------------

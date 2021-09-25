@@ -244,10 +244,16 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject *caller,
       }
     if (this->Internal->ActiveMarkupsNode != activeMarkupsNode)
       {
-      // active placement mode changed, add an observer
+      // Active placement mode changed, add an observer to the markups node so that
+      // we get notified about any control point number or state changes,
+      // so that we can update the PlacementValid value in the selection node.
       vtkUnObserveMRMLNodeMacro(this->Internal->ActiveMarkupsNode);
       vtkNew<vtkIntArray> events;
       events->InsertNextValue(vtkCommand::ModifiedEvent);
+      events->InsertNextValue(vtkMRMLMarkupsNode::PointPositionDefinedEvent);
+      events->InsertNextValue(vtkMRMLMarkupsNode::PointPositionUndefinedEvent);
+      events->InsertNextValue(vtkMRMLMarkupsNode::PointPositionMissingEvent);
+      events->InsertNextValue(vtkMRMLMarkupsNode::PointPositionNonMissingEvent);
       vtkObserveMRMLNodeEventsMacro(activeMarkupsNode, events.GetPointer());
       this->Internal->ActiveMarkupsNode = activeMarkupsNode;
 
@@ -886,6 +892,14 @@ char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const cha
       {
       vtkErrorMacro("LoadMarkupsFromJson: Could not create storage node for markup type: " << markupsType);
       continue;
+      }
+
+    if (markupsTypes.size() == 1)
+      {
+      // If a single markups node is stored in this file then save the filename in the storage node.
+      // (If multiple markups node are loaded from the same file then the filename should not be saved
+      // because that would make multiple nodes overwrite the same file during saving.)
+      storageNode->SetFileName(fileName);
       }
 
     vtkMRMLMarkupsNode* markupsNode = storageNode->AddNewMarkupsNodeFromFile(fileName, nodeName, markupsIndex);

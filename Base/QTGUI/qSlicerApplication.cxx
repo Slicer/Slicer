@@ -686,7 +686,7 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=n
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerApplication::openNodeModule(vtkMRMLNode* node)
+void qSlicerApplication::openNodeModule(vtkMRMLNode* node, QString role /*=QString()*/, QString context /*=QString()*/)
 {
   if (!node)
     {
@@ -709,7 +709,7 @@ void qSlicerApplication::openNodeModule(vtkMRMLNode* node)
     qWarning() << Q_FUNC_INFO << " failed: suitable module widget was not found";
     return;
     }
-  if (!widget->setEditedNode(node))
+  if (!widget->setEditedNode(node, role, context))
     {
     qWarning() << Q_FUNC_INFO << " failed: setEditedNode failed for node type " << node->GetClassName();
     }

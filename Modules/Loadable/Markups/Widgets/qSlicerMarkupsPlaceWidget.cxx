@@ -226,6 +226,7 @@ void qSlicerMarkupsPlaceWidget::setSelectionNode(vtkMRMLSelectionNode* selection
     }
 
   this->qvtkReconnect(d->SelectionNode, selectionNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidget()));
+  this->qvtkReconnect(d->SelectionNode, selectionNode, vtkMRMLSelectionNode::ActivePlaceNodePlacementValidEvent, this, SLOT(updateWidget()));
   d->SelectionNode = selectionNode;
 }
 

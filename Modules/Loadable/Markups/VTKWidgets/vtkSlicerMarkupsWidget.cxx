@@ -588,7 +588,7 @@ void vtkSlicerMarkupsWidget::UpdatePreviewPoint(vtkMRMLInteractionEventData* eve
   int updatePointID = this->PreviewPointIndex;
   if (updatePointID < 0)
     {
-    updatePointID = markupsNode->GetActiveTableRow();
+    updatePointID = markupsNode->GetControlPointPlacementStartIndex();
     }
 
   this->PreviewPointIndex = this->GetMarkupsDisplayNode()->UpdateActiveControlPointWorld(
