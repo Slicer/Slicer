@@ -79,7 +79,7 @@
                    </size>
                  </property>
                  <property name="toolTip">
-                   <string>Create-and-place a line annotation node.</string>
+                   <string>Create-and-place an annotation ruler node.</string>
                  </property>
                  <property name="text">
                    <string/>
@@ -111,7 +111,7 @@
                      <height>32</height>
                    </size>
                  </property>
-                 <property name="toolTip"><string>Create-and-place a line annotation node.</string>
+                 <property name="toolTip"><string>Create-and-place an annotation ROI node.</string>
                  </property>
                  <property name="text">
                    <string/>
