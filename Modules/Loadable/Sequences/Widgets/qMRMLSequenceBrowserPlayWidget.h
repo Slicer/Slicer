@@ -64,7 +64,10 @@ public:
   /// Add a keyboard shortcut for next frame button
   void setNextFrameShortcut(QString keySequence);
 
-  /// Get RecordingControlsVisible value
+  /// Returns true if recording controls (record and snapshot buttons) are allowed to be shown.
+  ///
+  /// \note Regardless of this flag, recording controls are not shown if recording is not enabled
+  /// for any of the browsed sequences.
   bool recordingControlsVisible() const;
 
 public slots:
