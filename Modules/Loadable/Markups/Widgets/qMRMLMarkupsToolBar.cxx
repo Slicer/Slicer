@@ -27,7 +27,6 @@
 #include <QSplitter>
 #include <QShortcut>
 #include <QKeySequence>
-#include <QTest>
 
 // Slicer includes
 #include "qSlicerCoreApplication.h"
