@@ -1219,6 +1219,28 @@ if(Slicer_USE_PYTHONQT)
     ${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}
     DEPENDS SlicerPythonResources
     )
+
+  set(_python_dir ${Slicer_SUPERBUILD_DIR}/python-install)
+  if(NOT Slicer_USE_SYSTEM_python OR NOT EXISTS ${_python_dir})
+    # Custom target to ensure there are cached byte-code files for all the python
+    # standard library and site-packages modules.
+    #
+    # Considering (1) some of the tests purposefully include invalid code
+    # that would lead the compilation to fail and (2) test directories are
+    # explicitly excluded from packages in "CMake/SlicerBlockInstallPython.cmake",
+    # the corresponding files are excluded from the compilation passing the "-x"
+    # argument.
+    add_custom_command(
+      COMMAND ${PYTHON_EXECUTABLE} -m compileall -q -x "[\/\\\\]test[s]?[\/\\\\]" ${_python_dir}/${PYTHON_STDLIB_SUBDIR}
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/python_compile_stdlib_and_sitepackages_complete
+      COMMENT "Compiling python stdlib and site-packages modules: ${_python_dir}/${PYTHON_STDLIB_SUBDIR}"
+      VERBATIM
+      )
+    add_custom_target(CompileStdLibAndSitePackagesPythonFiles ALL
+      DEPENDS
+        ${CMAKE_CURRENT_BINARY_DIR}/python_compile_stdlib_and_sitepackages_complete
+      )
+  endif()
 endif()
 
 #-----------------------------------------------------------------------------
