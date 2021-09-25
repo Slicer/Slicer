@@ -149,9 +149,9 @@ void qMRMLSequenceBrowserPlayWidget::updateWidgetFromMRML()
   bool playbackActive = d->SequenceBrowserNode->GetPlaybackActive();
   bool recordingActive = d->SequenceBrowserNode->GetRecordingActive();
 
-  d->pushButton_VcrRecord->setVisible(recordingAllowed && this->RecordingControlsVisible);
+  d->pushButton_VcrRecord->setVisible(recordingAllowed && d->RecordingControlsVisible);
   d->pushButton_VcrRecord->setEnabled(!playbackActive);
-  d->pushButton_Snapshot->setVisible(recordingAllowed && this->RecordingControlsVisible);
+  d->pushButton_Snapshot->setVisible(recordingAllowed && d->RecordingControlsVisible);
   d->pushButton_Snapshot->setEnabled(!playbackActive && !recordingActive);
 
   foreach( QObject*w, vcrPlaybackControls ) { w->setProperty( "enabled", vcrControlsEnabled ); }
