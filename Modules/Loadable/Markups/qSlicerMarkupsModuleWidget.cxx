@@ -462,25 +462,25 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QTableWidgetItem *selectedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Selected"));
   selectedHeader->setText("");
   selectedHeader->setIcon(QIcon(":/Icons/MarkupsSelected.png"));
-  selectedHeader->setToolTip(QString("Click in this column to select/deselect markups for passing to CLI modules"));
+  selectedHeader->setToolTip(QString("Click in this column to select/deselect control points for passing to CLI modules"));
   this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Selected"), 30);
   // locked is an open and closed lock
   QTableWidgetItem *lockedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Locked"));
   lockedHeader->setText("");
   lockedHeader->setIcon(QIcon(":/Icons/Small/SlicerLockUnlock.png"));
-  lockedHeader->setToolTip(QString("Click in this column to lock/unlock markups to prevent them from being moved by mistake"));
+  lockedHeader->setToolTip(QString("Click in this column to lock/unlock control points to prevent them from being moved by mistake"));
   this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Locked"), 30);
   // visible is an open and closed eye
   QTableWidgetItem *visibleHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Visible"));
   visibleHeader->setText("");
   visibleHeader->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
-  visibleHeader->setToolTip(QString("Click in this column to show/hide markups in 2D and 3D"));
+  visibleHeader->setToolTip(QString("Click in this column to show/hide control points in 2D and 3D"));
   this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Visible"), 30);
   // position is a location bubble
   QTableWidgetItem *positionHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Position"));
   positionHeader->setText("");
   positionHeader->setIcon(QIcon(":/Icons/Large/MarkupsPositionStatus.png"));
-  positionHeader->setToolTip(QString("Position status of point. Click in this column to toggle."));
+  positionHeader->setToolTip(QString("Click in this column to set/unset control points."));
   this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Position"), 10);
 
   // listen for changes so can update mrml node
@@ -996,12 +996,12 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
   if (d->MarkupsNode->GetLocked())
     {
     d->listLockedUnlockedPushButton->setIcon(QIcon(":Icons/Medium/SlicerLock.png"));
-    d->listLockedUnlockedPushButton->setToolTip(QString("Click to unlock this markup list so that the markups can be moved by the mouse"));
+    d->listLockedUnlockedPushButton->setToolTip(QString("Click to unlock this control point list so points can be moved by the mouse"));
     }
   else
     {
     d->listLockedUnlockedPushButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
-    d->listLockedUnlockedPushButton->setToolTip(QString("Click to lock this markup list so that the markups cannot be moved by the mouse"));
+    d->listLockedUnlockedPushButton->setToolTip(QString("Click to lock this control point list so points cannot be moved by the mouse"));
     }
 
   if (d->MarkupsNode->GetFixedNumberOfControlPoints())

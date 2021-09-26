@@ -142,7 +142,7 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
   node1->SliceProjectionUseFiducialColorOn();
   if (node1->GetSliceProjectionUseFiducialColor() != true)
     {
-    std::cerr << "Failed to turn use fiducial color on with slice projections"
+    std::cerr << "Failed to turn use markup color on with slice projections"
               << ", slice projection = " << node1->GetSliceProjection()
               << std::endl;
     return EXIT_FAILURE;

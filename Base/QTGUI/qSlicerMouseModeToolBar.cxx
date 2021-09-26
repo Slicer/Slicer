@@ -353,7 +353,7 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidget()
   this->PlaceWidgetAction->setIcon(QIcon(placeNodeResource));
   this->PlaceWidgetAction->setText(placeNodeIconName);
   this->PlaceWidgetAction->setData(vtkMRMLInteractionNode::Place);
-  QString tooltip = QString("Use mouse to place a ") + placeNodeIconName;
+  QString tooltip = QString("Place a control point");
   this->PlaceWidgetAction->setToolTip(tooltip);
   this->PlaceWidgetAction->setCheckable(true);
 

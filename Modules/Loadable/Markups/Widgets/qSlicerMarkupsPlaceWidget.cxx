@@ -549,7 +549,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberLock.png"));
     d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsUnset.png"));
-    d->DeleteButton->setToolTip("Unset position of the last point placed without deletion");
+    d->DeleteButton->setToolTip("Unset position of the last control point placed (the control point will not be deleted).");
     d->DeleteMenu->removeAction(d->ActionUnsetLast);
     d->DeleteMenu->removeAction(d->ActionDeleteAll);
     }
@@ -557,7 +557,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberUnlock.png"));
     d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsDelete.png"));
-    d->DeleteButton->setToolTip("Delete last added markup point");
+    d->DeleteButton->setToolTip("Delete last added control point");
     d->DeleteMenu->addAction(d->ActionUnsetLast);
     d->DeleteMenu->addAction(d->ActionDeleteAll);
     }
