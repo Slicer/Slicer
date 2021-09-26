@@ -662,7 +662,7 @@ void qSlicerMouseModeToolBar::toggleMarkupsToolBar()
   QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
   if (mainWindow == nullptr)
     {
-    qDebug("qSlicerSequencesModulePrivate::addToolBar: no main window is available, toolbar is not added");
+    qDebug("qSlicerMouseModeToolBar::toggleMarkupsToolBar: no main window is available, toolbar is not added");
     return;
     }
   foreach(QToolBar * toolBar, mainWindow->findChildren<QToolBar*>())
