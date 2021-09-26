@@ -977,7 +977,7 @@ for (shortcutKey, callback) in shortcuts:
 
 ### Customize keyboard/mouse gestures in viewers
 
-Example for making the 3D view rotate using right-click-and-drag:
+#### Make the 3D view rotate using right-click-and-drag
 
 ```python
 threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
@@ -991,6 +991,20 @@ cameraWidget.SetEventTranslationClickAndDrag(cameraWidget.WidgetStateIdle, vtk.v
 # Make right-click-and-drag rotate the view
 cameraWidget.SetEventTranslationClickAndDrag(cameraWidget.WidgetStateIdle, vtk.vtkCommand.RightButtonPressEvent, vtk.vtkEvent.NoModifier,
   cameraWidget.WidgetStateRotate, cameraWidget.WidgetEventRotateStart, cameraWidget.WidgetEventRotateEnd)
+```
+
+#### Add shortcut to adjust window/level in any mouse mode
+
+Makes Ctrl + Right-click-and-drag gesture adjust window/level in red slice view. This gesture works even when not in "Adjust window/level" mouse mode.
+
+```python
+sliceViewLabel = "Red"
+sliceViewWidget = slicer.app.layoutManager().sliceWidget(sliceViewLabel)
+displayableManager = sliceViewWidget.sliceView().displayableManagerByClassName("vtkMRMLScalarBarDisplayableManager")
+w = displayableManager.GetWindowLevelWidget()
+w.SetEventTranslationClickAndDrag(w.WidgetStateIdle,
+  vtk.vtkCommand.RightButtonPressEvent, vtk.vtkEvent.ControlModifier,
+  w.WidgetStateAdjustWindowLevel, w.WidgetEventAlwaysOnAdjustWindowLevelStart, w.WidgetEventAlwaysOnAdjustWindowLevelEnd)
 ```
 
 ### Disable certain user interactions in slice views

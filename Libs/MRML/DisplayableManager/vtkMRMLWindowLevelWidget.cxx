@@ -137,6 +137,13 @@ bool vtkMRMLWindowLevelWidget::CanProcessInteractionEvent(vtkMRMLInteractionEven
     return true;
     }
 
+  if (this->GetInteractionNode()->GetCurrentInteractionMode() != vtkMRMLInteractionNode::AdjustWindowLevel
+    && (widgetEvent < WidgetEventAlwaysOnResetWindowLevel || widgetEvent > WidgetEventAlwaysOnAdjustWindowLevelAlternativeCancel))
+    {
+    // if we are not in adjust window/level mouse mode then only always-on widget events are processed
+    return false;
+    }
+
   // We can process this event but we let more specific widgets to claim it (if they are closer).
   // View adjust actions are set at 1e10, set a lower value in order to override them.
   distance2 = 1e9;
@@ -164,7 +171,9 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
       break;
     case WidgetEventAdjustWindowLevelStart:
     case WidgetEventAdjustWindowLevelAlternativeStart:
-      {
+    case WidgetEventAlwaysOnAdjustWindowLevelStart:
+    case WidgetEventAlwaysOnAdjustWindowLevelAlternativeStart:
+    {
       vtkMRMLInteractionNode * interactionNode = this->GetInteractionNode();
       this->AdjustMode = -1;
       if (interactionNode)
@@ -178,7 +187,8 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
         this->AdjustMode = ModeAdjust;
         }
       // Control modifier indicates to use the alternative adjustment mode
-      if (widgetEvent == WidgetEventAdjustWindowLevelAlternativeStart)
+      if (widgetEvent == WidgetEventAdjustWindowLevelAlternativeStart
+        || widgetEvent == WidgetEventAlwaysOnAdjustWindowLevelAlternativeStart)
         {
         if (this->AdjustMode == ModeAdjust)
           {
@@ -202,6 +212,8 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
       break;
     case WidgetEventAdjustWindowLevelEnd:
     case WidgetEventAdjustWindowLevelAlternativeEnd:
+    case WidgetEventAlwaysOnAdjustWindowLevelEnd:
+    case WidgetEventAlwaysOnAdjustWindowLevelAlternativeEnd:
       if (this->AdjustMode == ModeAdjust)
         {
         processedEvent = this->ProcessEndMouseDrag(eventData);
@@ -212,13 +224,16 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
         }
       break;
     case WidgetEventAdjustWindowLevelCancel:
+    case WidgetEventAlwaysOnAdjustWindowLevelCancel:
       processedEvent = this->ProcessEndMouseDrag(eventData);
       this->SetVolumeWindowLevel(this->StartVolumeWindowLevel[0], this->StartVolumeWindowLevel[1], this->IsStartVolumeAutoWindowLevel);
       break;
     case WidgetEventResetWindowLevel:
+    case WidgetEventAlwaysOnResetWindowLevel:
       processedEvent = this->ProcessResetWindowLevel(eventData);
       break;
     case WidgetEventAdjustWindowLevelAlternativeCancel:
+    case WidgetEventAlwaysOnAdjustWindowLevelAlternativeCancel:
       processedEvent = this->ProcessSetWindowLevelFromRegionEnd(eventData, false);
       break;
     default:

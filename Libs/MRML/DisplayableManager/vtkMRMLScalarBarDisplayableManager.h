@@ -24,6 +24,7 @@
 
 class vtkMRMLScalarBarNode;
 class vtkMRMLScene;
+class vtkMRMLWindowLevelWidget;
 
 /// \brief Displayable manager for the scalar bars and window/level adjustment.
 ///
@@ -45,6 +46,8 @@ public:
   bool GetAdjustForegroundWindowLevelEnabled();
   void SetAdjustBackgroundWindowLevelEnabled(bool enabled);
   bool GetAdjustBackgroundWindowLevelEnabled();
+
+  vtkMRMLWindowLevelWidget* GetWindowLevelWidget();
 
 protected:
   vtkMRMLScalarBarDisplayableManager();

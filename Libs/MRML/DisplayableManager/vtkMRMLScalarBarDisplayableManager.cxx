@@ -198,13 +198,7 @@ bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInter
     this->Internal->WindowLevelWidget->Leave(eventData);
     }
 
-  // Find/create active widget
-  if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::AdjustWindowLevel)
-    {
-    return this->Internal->WindowLevelWidget->CanProcessInteractionEvent(eventData, closestDistance2);
-    }
-
-  return false;
+  return this->Internal->WindowLevelWidget->CanProcessInteractionEvent(eventData, closestDistance2);
 }
 
 //---------------------------------------------------------------------------
@@ -241,4 +235,11 @@ void vtkMRMLScalarBarDisplayableManager::SetAdjustBackgroundWindowLevelEnabled(b
 bool vtkMRMLScalarBarDisplayableManager::GetAdjustBackgroundWindowLevelEnabled()
 {
   return this->Internal->WindowLevelWidget->GetBackgroundVolumeEditable();
+}
+
+
+//---------------------------------------------------------------------------
+vtkMRMLWindowLevelWidget* vtkMRMLScalarBarDisplayableManager::GetWindowLevelWidget()
+{
+  return this->Internal->WindowLevelWidget;
 }

@@ -115,6 +115,13 @@ public:
     WidgetEventAdjustWindowLevelAlternativeStart,
     WidgetEventAdjustWindowLevelAlternativeEnd,
     WidgetEventAdjustWindowLevelAlternativeCancel,
+    WidgetEventAlwaysOnResetWindowLevel,
+    WidgetEventAlwaysOnAdjustWindowLevelStart,
+    WidgetEventAlwaysOnAdjustWindowLevelEnd,
+    WidgetEventAlwaysOnAdjustWindowLevelCancel,
+    WidgetEventAlwaysOnAdjustWindowLevelAlternativeStart,
+    WidgetEventAlwaysOnAdjustWindowLevelAlternativeEnd,
+    WidgetEventAlwaysOnAdjustWindowLevelAlternativeCancel,
     };
 
   bool UpdateWindowLevelFromRectangle(int layer, int cornerPoint1[2], int cornerPoint2[2]);
