@@ -104,6 +104,7 @@ public:
   QString DefaultPlaceClassName;
 
   qMRMLNodeComboBox* MarkupsNodeSelector;
+  QToolButton* CreateMarkupToolButton;
   qSlicerMarkupsPlaceWidget* MarkupsPlaceWidget;
 };
 

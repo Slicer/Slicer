@@ -106,6 +106,11 @@ void qMRMLMarkupsToolBarPrivate::init()
   q->setMRMLScene(qSlicerApplication::application()->mrmlScene());
 
   this->MarkupsNodeSelector->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+
+  this->CreateMarkupToolButton = new QToolButton();
+  this->CreateMarkupToolButton->setObjectName("CreateToolButton");
+  this->CreateMarkupToolButton->setPopupMode(QToolButton::MenuButtonPopup);
+  QObject::connect(this->CreateMarkupToolButton, SIGNAL(triggered(QAction*)), this->CreateMarkupToolButton, SLOT(setDefaultAction(QAction*)));
 }
 
 // --------------------------------------------------------------------------
@@ -462,18 +467,23 @@ void qMRMLMarkupsToolBar::addNodeActions(vtkSlicerMarkupsLogic* markupsLogic)
       markupsLogic->GetNodeByMarkupsType(markupName.c_str());
     if (markupsNode && markupsLogic->GetCreateMarkupsPushButton(markupName.c_str()))
       {
+      QAction* markupCreateAction = new QAction();
+      markupCreateAction->setObjectName(QString("Create") + QString(markupsNode->GetMarkupType()) + QString("Action"));
+      markupCreateAction->setText("Create " + QString(markupsNode->GetMarkupTypeDisplayName()));
+      markupCreateAction->setToolTip("Create " + QString(markupsNode->GetMarkupTypeDisplayName()));
+      markupCreateAction->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
+      d->CreateMarkupToolButton->addAction(markupCreateAction);
+      if (markupName == "Fiducial")
+      {
+        d->CreateMarkupToolButton->setDefaultAction(markupCreateAction);
+      }
       QSignalMapper* mapper = new QSignalMapper(this);
-      QPushButton* markupCreateButton = new QPushButton();
-      markupCreateButton->setObjectName(QString("Create") + QString(markupsNode->GetMarkupType()) + QString("PushButton"));
-      markupCreateButton->setToolTip("Create " + QString(markupsNode->GetMarkupTypeDisplayName()));
-      markupCreateButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
-      this->addWidget(markupCreateButton);
-      QObject::connect(markupCreateButton, SIGNAL(clicked()), mapper, SLOT(map()));
-      mapper->setMapping(markupCreateButton, markupsNode->GetClassName());
+      QObject::connect(markupCreateAction, SIGNAL(triggered()), mapper, SLOT(map()));
+      mapper->setMapping(markupCreateAction, markupsNode->GetClassName());
       QObject::connect(mapper, SIGNAL(mapped(const QString&)), this, SLOT(onAddNewMarkupsNodeByClass(const QString&)));
       }
     }
-
+  this->addWidget(d->CreateMarkupToolButton);
   this->addSeparator();
   this->addWidget(d->MarkupsNodeSelector);
 
