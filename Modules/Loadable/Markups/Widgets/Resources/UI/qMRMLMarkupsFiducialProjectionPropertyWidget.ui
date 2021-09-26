@@ -38,7 +38,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="point2DProjectionLabel">
      <property name="toolTip">
-      <string>Turn on/off visualization of projected fiducial on 2D viewers</string>
+      <string>If enabled then all control points will be displayed in 2D viewers, by projecting them to the slice plane.</string>
      </property>
      <property name="text">
       <string>Projection Visibility:</string>
@@ -48,7 +48,7 @@
    <item row="3" column="0">
     <widget class="QLabel" name="pointProjectionColorLabel">
      <property name="toolTip">
-      <string>Color of the projected fiducial on 2D viewers</string>
+      <string>Color of the projected control points on 2D viewers</string>
      </property>
      <property name="text">
       <string>Projection Color:</string>
@@ -64,7 +64,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Color of the projected fiducial on 2D viewers. Only used if Use Fiducial Color is not checked, otherwise the projection uses the selected or unselected fiducial color.</string>
+      <string>Color of the projected control points on 2D viewers. Only used if "Use Markup Color" is not checked, otherwise the projection uses the selected or unselected markup color.</string>
      </property>
      <property name="color">
       <color>
@@ -84,7 +84,7 @@
    <item row="5" column="0">
     <widget class="QLabel" name="pointOutlinedBehindSlicePlaneLabel">
      <property name="toolTip">
-      <string>Fiducial projection is displayed filled (opacity = Projection Opacity) when on top of slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).</string>
+      <string>Projected control points are displayed filled (opacity = Projection Opacity) when above the slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).</string>
      </property>
      <property name="text">
       <string>Outlined Behind Slice Plane:</string>
@@ -94,7 +94,7 @@
    <item row="5" column="1">
     <widget class="QCheckBox" name="pointOutlinedBehindSlicePlaneCheckBox">
      <property name="toolTip">
-      <string>Fiducial projection is displayed filled (opacity = Projection Opacity) when on top of slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).</string>
+      <string>Projected control points are displayed filled (opacity = Projection Opacity) when above the slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).</string>
      </property>
      <property name="text">
       <string/>
@@ -107,17 +107,17 @@
    <item row="2" column="0">
     <widget class="QLabel" name="pointUseFiducialColorLabel">
      <property name="toolTip">
-      <string>Use the same color as fiducial</string>
+      <string>Use the same color as the markup</string>
      </property>
      <property name="text">
-      <string>Use Fiducial Color:</string>
+      <string>Use Markup Color:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
     <widget class="QCheckBox" name="pointUseFiducialColorCheckBox">
      <property name="toolTip">
-      <string>Use the same color as fiducial</string>
+      <string>Use the same color as the markup</string>
      </property>
      <property name="text">
       <string/>
@@ -132,7 +132,7 @@
      <item>
       <widget class="ctkCheckBox" name="point2DProjectionCheckBox">
        <property name="toolTip">
-        <string>Turn on/off visualization of projected fiducial on 2D viewers</string>
+        <string>If enabled then all control points will be displayed in 2D viewers, by projecting them to the slice plane.</string>
        </property>
        <property name="indicatorIconSize">
         <size>

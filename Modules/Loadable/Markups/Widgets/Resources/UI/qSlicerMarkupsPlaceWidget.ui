@@ -54,7 +54,7 @@
         <enum>QToolButton::MenuButtonPopup</enum>
       </property>
       <property name="toolTip">
-      <string>Place a markup point</string>
+      <string>Place a control point</string>
      </property>
      <property name="text">
       <string>...</string>
@@ -80,7 +80,7 @@
       <enum>QToolButton::MenuButtonPopup</enum>
      </property>
      <property name="toolTip">
-      <string>Delete last added markup point</string>
+      <string>Delete last added control point</string>
      </property>
      <property name="text">
       <string>...</string>
@@ -132,10 +132,10 @@
      <normaloff>:/Icons/MarkupsDeleteAllRows.png</normaloff>:/Icons/MarkupsDeleteAllRows.png</iconset>
    </property>
    <property name="text">
-    <string>Delete all markups</string>
+    <string>Delete all control points</string>
    </property>
    <property name="toolTip">
-    <string>Delete all markups in the list</string>
+    <string>Delete all control points in the list</string>
    </property>
   </action>
   <action name="ActionUnsetLast">
@@ -144,10 +144,10 @@
      <normaloff>:/Icons/MarkupsUnset.png</normaloff>:/Icons/MarkupsUnset.png</iconset>
    </property>
     <property name="text">
-    <string>Unset last point</string>
+    <string>Unset last control point</string>
    </property>
    <property name="toolTip">
-    <string>Unset position of the last point placed without deletion</string>
+    <string>Unset position of the last control point placed (the control point will not be deleted).</string>
    </property>
   </action>
   <action name="ActionUnsetAll">
@@ -157,10 +157,10 @@
     </iconset>
    </property>
    <property name="text">
-    <string>Unset all points</string>
+    <string>Unset all control points</string>
    </property>
    <property name="toolTip">
-    <string>Unset position of all points in the list without deletion</string>
+    <string>Unset position of all control points in the list (the control points will not be deleted).</string>
    </property>
   </action>
   <action name="ActionVisibility">
@@ -173,7 +173,7 @@
     <string>Visibility</string>
    </property>
    <property name="toolTip">
-    <string>Toggle markups visibility</string>
+    <string>Toggle markup visibility</string>
    </property>
   </action>
   <action name="ActionLocked">
@@ -186,7 +186,7 @@
     <string>Locked</string>
    </property>
    <property name="toolTip">
-    <string>Toggle markup point positions lock</string>
+    <string>Toggle control point positions lock</string>
    </property>
   </action>
   <action name="ActionFixedNumberOfControlPoints">
@@ -196,10 +196,10 @@
      <normalon>:/Icons/Small/SlicerPointNumberLock.png</normalon>:/Icons/Small/SlicerPointNumberUnlock.png</iconset>
    </property>
    <property name="text">
-    <string>Point Number Locked</string>
+    <string>Control point number locked</string>
    </property>
    <property name="toolTip">
-    <string>Toggle markup point number lock</string>
+    <string>Toggle control point number lock. If locked then it is not possible to add or delete control points. Instead of deleting, position control points can be unset.</string>
    </property>
   </action>
  </widget>

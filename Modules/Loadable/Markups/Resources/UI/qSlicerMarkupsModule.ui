@@ -278,7 +278,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Toggle visibility flag on all markups in list, use drop down menu to set all to visible or invisible.</string>
+             <string>Toggle visibility flag on all control points in the list. Use the drop down menu to set all to visible or invisible.</string>
             </property>
            </widget>
           </item>
@@ -303,7 +303,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Toggle selected flag on all markups in list, use drop down menu to set all to selected or deselected.</string>
+             <string>Toggle selected flag on all control points in the list. Use the drop down menu to set all to selected or deselected.</string>
             </property>
            </widget>
           </item>
@@ -328,7 +328,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Toggle lock flag on all markups in list, use drop down menu to set all to locked or unlocked.</string>
+             <string>Toggle lock flag on all control points in the list. Use the drop down menu to set all to locked or unlocked.</string>
             </property>
            </widget>
           </item>
@@ -356,7 +356,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Always skip highlighted markup(s) from the active list (missing position status).</string>
+             <string>Always skip highlighted control point(s) from the active list (missing position status).</string>
             </property>
             <property name="text">
              <string/>
@@ -391,7 +391,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Undefine position of highlighted markup(s) from the active list</string>
+             <string>Undefine position of highlighted control point(s) from the active list</string>
             </property>
             <property name="text">
              <string/>
@@ -426,7 +426,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Delete the highlighted markup(s) from the active list</string>
+             <string>Delete the highlighted control point(s) from the active list</string>
             </property>
             <property name="text">
              <string/>
@@ -461,7 +461,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Remove all markups from the active list</string>
+             <string>Remove all control points from the active list</string>
             </property>
             <property name="icon">
              <iconset resource="../qSlicerMarkupsModule.qrc">
@@ -551,10 +551,10 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>The markups in the currently active markups node. Right click in a row for delete, jump, copy, move.</string>
+         <string>The control points in the currently active markups node. Right click in a row for delete, jump, copy, move.</string>
         </property>
         <property name="accessibleName">
-         <string>active markup table</string>
+         <string>active markup control point table</string>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -599,7 +599,7 @@
                 </size>
                </property>
                <property name="toolTip">
-                <string>Move a highlighted markup up one spot in the list</string>
+                <string>Move a highlighted control point up one spot in the list</string>
                </property>
                <property name="text">
                 <string/>
@@ -631,7 +631,7 @@
                 </size>
                </property>
                <property name="toolTip">
-                <string>Move a highlighted markup down one spot in the list</string>
+                <string>Move a highlighted control point down one spot in the list</string>
                </property>
                <property name="text">
                 <string/>
@@ -663,7 +663,7 @@
                 </size>
                </property>
                <property name="toolTip">
-                <string>Add a new markup to the active list, at origin</string>
+                <string>Add a new control point to the active list, at origin</string>
                </property>
                <property name="icon">
                 <iconset resource="../qSlicerMarkupsModule.qrc">
@@ -692,7 +692,7 @@
               <item row="2" column="1">
                <widget class="QLineEdit" name="nameFormatLineEdit">
                 <property name="toolTip">
-                 <string>Format for creating names of new markups, using sprintf format style. %N is replaced by the list name, %S is replaced by the markup's short name and %d by an integer.</string>
+                 <string>Format for creating names of new control points, using sprintf format style. %N is replaced by the list name, %S is replaced by the markup's short name and %d by an integer.</string>
                 </property>
                </widget>
               </item>
@@ -709,7 +709,7 @@
               <item row="2" column="2">
                <widget class="QPushButton" name="renameAllWithCurrentNameFormatPushButton">
                 <property name="toolTip">
-                 <string>Rename all markups in this list according to the current name format, trying to preserve numbers.</string>
+                 <string>Rename all control points in this list according to the current name format, trying to preserve numbers.</string>
                 </property>
                 <property name="text">
                  <string>Apply</string>

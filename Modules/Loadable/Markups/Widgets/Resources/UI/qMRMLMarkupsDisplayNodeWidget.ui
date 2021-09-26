@@ -443,7 +443,7 @@
       <item row="11" column="0">
        <widget class="QLabel" name="PointLabelsVisibilityLabel">
         <property name="text">
-         <string>Point Labels:</string>
+         <string>Control Point Labels:</string>
         </property>
        </widget>
       </item>

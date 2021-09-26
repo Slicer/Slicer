@@ -245,10 +245,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Place multiple markups</string>
+    <string>Place multiple control points</string>
    </property>
    <property name="toolTip">
-    <string>Place multiple markups</string>
+    <string>Place multiple control points</string>
    </property>
   </action>
   <action name="ActionDeleteAll">
@@ -257,10 +257,10 @@
      <normaloff>:/Icons/MarkupsDeleteAllRows.png</normaloff>:/Icons/MarkupsDeleteAllRows.png</iconset>
    </property>
    <property name="text">
-    <string>Delete all markups</string>
+    <string>Delete all control points</string>
    </property>
    <property name="toolTip">
-    <string>Delete all markups in the list</string>
+    <string>Delete all control points in the list</string>
    </property>
   </action>
   <action name="ActionVisibility">
@@ -273,7 +273,7 @@
     <string>Visibility</string>
    </property>
    <property name="toolTip">
-    <string>Toggle markups visibility</string>
+    <string>Toggle control point visibility</string>
    </property>
   </action>
   <action name="ActionLocked">
@@ -286,7 +286,7 @@
     <string>Locked</string>
    </property>
    <property name="toolTip">
-    <string>Toggle markup point positions lock</string>
+    <string>Toggle control point positions lock</string>
    </property>
   </action>
  </widget>

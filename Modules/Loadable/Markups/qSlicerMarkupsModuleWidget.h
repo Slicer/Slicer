@@ -163,7 +163,7 @@ public slots:
   /// make sure that a display node is added
   void onActiveMarkupMRMLNodeAdded(vtkMRMLNode *markupsNode);
 
-  /// Create markup by class.
+  /// Create markups node by class.
   void onCreateMarkupByClass(const QString& className);
 
   /// Toggle the markups node visibility flag
@@ -172,7 +172,7 @@ public slots:
   /// Toggle the markups node locked flag
   void onListLockedUnlockedPushButtonClicked();
 
-  /// Toggle the markups node point number locked flag
+  /// Toggle the markups node control point number locked flag
   void onFixedNumberOfControlPointsPushButtonClicked();
 
   /// Update the markup label from the line edit entry
