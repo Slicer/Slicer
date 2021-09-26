@@ -559,6 +559,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsDelete.png"));
     d->DeleteButton->setToolTip("Delete last added control point");
     d->DeleteMenu->addAction(d->ActionUnsetLast);
+    d->DeleteMenu->addAction(d->ActionUnsetAll);
     d->DeleteMenu->addAction(d->ActionDeleteAll);
     }
 
