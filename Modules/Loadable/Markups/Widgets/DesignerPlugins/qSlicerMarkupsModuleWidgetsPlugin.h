@@ -28,7 +28,7 @@
 #include "qMRMLMarkupsDisplayNodeWidgetPlugin.h"
 #include "qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin.h"
 #include "qMRMLMarkupsInteractionHandleWidgetPlugin.h"
-#include "qSlicerMarkupsROIWidgetPlugin.h"
+#include "qMRMLMarkupsROIWidgetPlugin.h"
 #include "qSlicerMarkupsPlaceWidgetPlugin.h"
 #include "qSlicerSimpleMarkupsWidgetPlugin.h"
 
@@ -48,7 +48,7 @@ public:
     plugins << new qMRMLMarkupsDisplayNodeWidgetPlugin;
     plugins << new qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin;
     plugins << new qMRMLMarkupsInteractionHandleWidgetPlugin;
-    plugins << new qSlicerMarkupsROIWidgetPlugin;
+    plugins << new qMRMLMarkupsROIWidgetPlugin;
     plugins << new qSlicerMarkupsPlaceWidgetPlugin;
     plugins << new qSlicerSimpleMarkupsWidgetPlugin;
     plugins << new qSlicerSimpleMarkupsWidgetPlugin;

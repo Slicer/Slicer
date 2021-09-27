@@ -19,44 +19,44 @@
 
 ==============================================================================*/
 
-#include "qSlicerMarkupsROIWidgetPlugin.h"
-#include "qSlicerMarkupsROIWidget.h"
+#include "qMRMLMarkupsROIWidgetPlugin.h"
+#include "qMRMLMarkupsROIWidget.h"
 
 //-----------------------------------------------------------------------------
-qSlicerMarkupsROIWidgetPlugin::qSlicerMarkupsROIWidgetPlugin(QObject *_parent)
+qMRMLMarkupsROIWidgetPlugin::qMRMLMarkupsROIWidgetPlugin(QObject *_parent)
   : QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qSlicerMarkupsROIWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *qMRMLMarkupsROIWidgetPlugin::createWidget(QWidget *_parent)
 {
-  qSlicerMarkupsROIWidget* _widget = new qSlicerMarkupsROIWidget(_parent);
+  qMRMLMarkupsROIWidget* _widget = new qMRMLMarkupsROIWidget(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsROIWidgetPlugin::domXml() const
+QString qMRMLMarkupsROIWidgetPlugin::domXml() const
 {
-  return "<widget class=\"qSlicerMarkupsROIWidget\" \
+  return "<widget class=\"qMRMLMarkupsROIWidget\" \
           name=\"MRMLMarkupsROIWidget\">\n"
           "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsROIWidgetPlugin::includeFile() const
+QString qMRMLMarkupsROIWidgetPlugin::includeFile() const
 {
-  return "qSlicerMarkupsROIWidget.h";
+  return "qMRMLMarkupsROIWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerMarkupsROIWidgetPlugin::isContainer() const
+bool qMRMLMarkupsROIWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsROIWidgetPlugin::name() const
+QString qMRMLMarkupsROIWidgetPlugin::name() const
 {
-  return "qSlicerMarkupsROIWidget";
+  return "qMRMLMarkupsROIWidget";
 }

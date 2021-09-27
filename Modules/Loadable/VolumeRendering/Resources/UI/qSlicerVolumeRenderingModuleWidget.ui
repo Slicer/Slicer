@@ -492,7 +492,7 @@
            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
           </property>
           <item row="1" column="0" colspan="2">
-           <widget class="qSlicerMarkupsROIWidget" name="MarkupsROIWidget"/>
+           <widget class="qMRMLMarkupsROIWidget" name="MarkupsROIWidget"/>
           </item>
           <item row="0" column="0" colspan="2">
            <widget class="qMRMLAnnotationROIWidget" name="AnnotationROIWidget"/>
@@ -534,9 +534,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qSlicerMarkupsROIWidget</class>
+   <class>qMRMLMarkupsROIWidget</class>
    <extends>QWidget</extends>
-   <header>qSlicerMarkupsROIWidget.h</header>
+   <header>qMRMLMarkupsROIWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLVolumePropertyNodeWidget</class>

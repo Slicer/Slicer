@@ -19,72 +19,71 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerMarkupsROIWidget_h
-#define __qSlicerMarkupsROIWidget_h
-
-// Qt includes
-#include <QWidget>
+#ifndef __qMRMLMarkupsROIWidget_h
+#define __qMRMLMarkupsROIWidget_h
 
 // Markups widgets includes
-#include "qSlicerMarkupsAdditionalOptionsWidget.h"
+#include "qMRMLMarkupsAbstractOptionsWidget.h"
 #include "qSlicerMarkupsModuleWidgetsExport.h"
 
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
+// ------------------------------------------------------------------------------
 class vtkMRMLAnnotationROINode;
 class vtkMRMLNode;
 class vtkMRMLMarkupsROINode;
-class qSlicerMarkupsROIWidgetPrivate;
+class qMRMLMarkupsROIWidgetPrivate;
 
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qSlicerMarkupsROIWidget : public qSlicerMarkupsAdditionalOptionsWidget
+// ------------------------------------------------------------------------------
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsROIWidget
+: public qMRMLMarkupsAbstractOptionsWidget
 {
   Q_OBJECT
   QVTK_OBJECT
 
 public:
-  typedef qSlicerMarkupsAdditionalOptionsWidget Superclass;
-  qSlicerMarkupsROIWidget(QWidget* parent=nullptr);
-  ~qSlicerMarkupsROIWidget() override;
+  typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
+  qMRMLMarkupsROIWidget(QWidget* parent=nullptr);
+  ~qMRMLMarkupsROIWidget() override;
 
   /// Returns the current MRML ROI node
   vtkMRMLMarkupsROINode* mrmlROINode()const;
-
-  /// Gets the name of the additional options widget type
-  const QString getAdditionalOptionsWidgetTypeName() override { return "ROI"; }
 
   void setExtent(double min, double max);
   void setExtent(double minLR, double maxLR,
                  double minPA, double maxPA,
                  double minIS, double maxIS);
 
-  /// Updates the widget based on information from MRML.
-  void updateWidgetFromMRML() override;
+  /// Gets the name of the additional options widget type
+  const QString className() const override {return "qMRMLMarkupsROIWidget";}
 
   /// Checks whether a given node can be handled by the widget
   bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
 
 public slots:
-
-  /// Set the MRML node of interest
-  void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
-
-  /// Sets the vtkMRMLMarkupsNode to operate on.
-  void setMRMLMarkupsNode(vtkMRMLNode* node) override;
-
   /// Turn on/off the visibility of the ROI node
   void setDisplayClippingBox(bool visible);
 
   /// Turn on/off the tracking mode of the sliders.
   /// The ROI node will be updated only when the slider handles are released.
   void setInteractiveMode(bool interactive);
+
+  /// Updates the widget on MRML changes
+  void updateWidgetFromMRML() override;
+
+  /// Set the MRML node of interest
+  void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
+
+  /// Returns an instance of the widget
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
+  { return new qMRMLMarkupsROIWidget(); }
+
 signals:
   void displayClippingBoxChanged(bool);
 
 protected slots:
-  /// Internal function to update the widgets based on the ROI node
-  void onMRMLNodeModified();
   /// Internal function to update the ROI node based on the sliders
   void updateROI();
   /// Internal function to update the ROIDisplay node
@@ -93,13 +92,14 @@ protected slots:
   void onROITypeParameterChanged();
 
 protected:
-  qSlicerMarkupsROIWidget(qSlicerMarkupsROIWidgetPrivate &d, QWidget* parent=nullptr);
   void setup();
 
-private:
-  Q_DECLARE_PRIVATE(qSlicerMarkupsROIWidget);
-  Q_DISABLE_COPY(qSlicerMarkupsROIWidget);
+protected:
+  QScopedPointer<qMRMLMarkupsROIWidgetPrivate> d_ptr;
 
+private:
+  Q_DECLARE_PRIVATE(qMRMLMarkupsROIWidget);
+  Q_DISABLE_COPY(qMRMLMarkupsROIWidget);
 };
 
 #endif
