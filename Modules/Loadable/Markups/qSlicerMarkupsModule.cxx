@@ -302,7 +302,7 @@ qSlicerAbstractModuleRepresentation* qSlicerMarkupsModule::createWidgetRepresent
   // Set the number of columns for the grid of "add markups buttons" to the number of markups
   // registered in this module.
 
-  moduleWidget->setCreateMarkupsButtonsColumns(7);
+  moduleWidget->setCreateMarkupsButtonsColumns(4);
 
   return moduleWidget;
 }
