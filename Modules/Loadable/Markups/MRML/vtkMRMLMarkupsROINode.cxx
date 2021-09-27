@@ -703,18 +703,6 @@ void vtkMRMLMarkupsROINode::SetSizeWorld(double x_World, double y_World, double 
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsROINode::GetBoundsROI(double bounds_Object[6])
-{
-  double size_Object[3] = { 0.0, 0.0, 0.0 };
-  this->GetSize(size_Object);
-  for (int i = 0; i < 3; ++i)
-    {
-    bounds_Object[2 * i] = -size_Object[i] * 0.5;
-    bounds_Object[2*i+1] =  size_Object[i] * 0.5;
-    }
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLMarkupsROINode::UpdateROIFromControlPoints()
 {
   if (this->IsUpdatingControlPointsFromROI || this->IsUpdatingROIFromControlPoints)

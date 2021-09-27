@@ -280,8 +280,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
     double scaleVector_ROI[3] = { 0.0, 0.0, 0.0 };
     worldToObjectTransform->TransformVector(scaleVector_World, scaleVector_ROI);
 
-    double bounds_ROI[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-    markupsNode->GetBoundsROI(bounds_ROI);
+    double radius_ROI[3] = { 0.0, 0.0, 0.0 };
+    markupsNode->GetSize(radius_ROI);
+    vtkMath::MultiplyScalar(radius_ROI, 0.5);
+    double bounds_ROI[6] = { -radius_ROI[0], radius_ROI[0], -radius_ROI[1], radius_ROI[1], -radius_ROI[2], radius_ROI[2] };
 
     switch (index)
       {

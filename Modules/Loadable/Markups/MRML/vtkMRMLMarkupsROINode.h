@@ -128,9 +128,6 @@ public:
     return this->ObjectToWorldMatrix;
     };
 
-  /// Get the bounds of the ROI in the ROI coordinate system.
-  void GetBoundsROI(double bounds[6]);
-
   /// ROIType represents the method that is used to calculate the size of the ROI.
   /// BOX ROI does not require control points to define a region, while the size of a BOUNDING_BOX ROI will be defined by the control points.
   vtkGetMacro(ROIType, int);
@@ -159,7 +156,6 @@ public:
   /// Reimplemented to recalculate InteractionHandleToWorld matrix when parent transform is changed.
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
 
-
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Update the InteractionHandleToWorldMatrix based on the ObjectToNode and NodeToWorld transforms.
@@ -168,15 +164,26 @@ public:
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
-  /// Create default storage node or nullptr if does not have one
+  /// Create default display node or nullptr if does not have one
   void CreateDefaultDisplayNodes() override;
 
+  /// Reimplemented to recalculate the axis-aligned bounds of the ROI.
+  /// If the ROI is rotated, this function will not reflect the oriented bounds defined by the ROI.
+  /// To get the planes that define the oriented bounding box, use GetPlanes()/GetPlanesWorld().
+  /// GetBounds/GetRASBounds will return the axis-aligned bounding box in node/world coordinates, while GetPlanes/GetPlanesWorld()
+  /// will return the 6 planes that define the faces of the oriented bounding box.
+  /// \sa GetPlanes(), GetPlanesWorld()
   void GetRASBounds(double bounds[6]) override;
   void GetBounds(double bounds[6]) override;
 
+  /// Returns the planes that define each of the 6 faces of the ROI.
+  /// \param planes: Output planes object
+  /// \param insideOut: If false the normals of the planes will face outward so that the inside is "in"
+  ///   if true the normals of the plane will face inward so that the inside is "out".
   void GetPlanes(vtkPlanes* planes, bool insideOut=false);
   void GetPlanesWorld(vtkPlanes* planes, bool insideOut=false);
 
+  /// Returns true if the specified point is within the ROI.
   bool IsPointInROI(double point_Node[3]);
   bool IsPointInROIWorld(double point_World[3]);
 
@@ -209,6 +216,7 @@ public:
   void GetRadiusXYZ(double radiusXYZ[3]);
 
   /// Legacy method from vtkMRMLAnnotationROINode
+  /// \sa GetPlanes(), GetPlanesWorld(), vtkMRMLAnnotationROINode::GetTransformedPlanes()
   void GetTransformedPlanes(vtkPlanes* planes, bool insideOut=false);
 
   /// Helper method for generating an orthogonal right handed matrix from axes.
