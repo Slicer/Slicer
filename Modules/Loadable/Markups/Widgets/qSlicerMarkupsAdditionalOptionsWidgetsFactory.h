@@ -48,6 +48,9 @@ public:
 
 public:
   /// Registers an additional options widget.
+  /// This factory object takes ownership of the widget (even if it fails to register it
+  /// due to for example a widget already existing for that markup type), therefore the
+  /// caller must not delete the widget.
   Q_INVOKABLE bool registerAdditionalOptionsWidget(qSlicerMarkupsAdditionalOptionsWidget* widget);
 
   /// Unregisters an additional options widget.

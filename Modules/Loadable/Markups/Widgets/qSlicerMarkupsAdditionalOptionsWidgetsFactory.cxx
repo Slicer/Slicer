@@ -109,6 +109,7 @@ bool qSlicerMarkupsAdditionalOptionsWidgetsFactory::registerAdditionalOptionsWid
   if (widget->getAdditionalOptionsWidgetTypeName().isEmpty())
     {
     qCritical() << Q_FUNC_INFO << ": Additional options widget has no tpye name.";
+    delete widget;
     return false;
     }
 
@@ -121,6 +122,7 @@ bool qSlicerMarkupsAdditionalOptionsWidgetsFactory::registerAdditionalOptionsWid
       qWarning() << Q_FUNC_INFO << ": Additional options widget type "
                  << QString(widget->getAdditionalOptionsWidgetTypeName())
                  << " already registered.";
+      delete widget;
       return false;
       }
     }
