@@ -803,7 +803,8 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
       wasBlocked = self.ui.toggleListener.blockSignals(True)
       self.ui.toggleListener.checked = False
       self.ui.toggleListener.blockSignals(wasBlocked)
-      slicer.modules.DICOMInstance.stopListener()
+      if hasattr(slicer.modules, 'DICOMInstance'):
+        slicer.modules.DICOMInstance.stopListener()
     if newState == 1:
       self.ui.listenerStateLabel.text = "starting"
     if newState == 2:
