@@ -16,37 +16,27 @@
   Oslo University Hospital) and was supported by The Research Council of Norway
   through the ALive project (grant nr. 311393).
 
-==============================================================================*/
+  ==============================================================================*/
 
-#ifndef __qslicermarkupsadditionalwidget_p_h_
-#define __qslicermarkupsadditionalwidget_p_h_
+#include "qMRMLMarkupsAbstractOptionsWidget.h"
 
 // Qt includes
-#include <QObject>
+#include <QDebug>
 
-// Markups Widgets includes
-#include "qSlicerMarkupsModuleWidgetsExport.h"
-
-// VTK includes
-#include <vtkWeakPointer.h>
+// MRML includes
+#include "vtkMRMLMarkupsNode.h"
 
 //-----------------------------------------------------------------------------
-class QStringList;
-class qSlicerMarkupsAdditionalOptionsWidget;
-class vtkMRMLMarkupsNode;
-
-//-----------------------------------------------------------------------------
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qSlicerMarkupsAdditionalOptionsWidgetPrivate
-  : public QObject
+qMRMLMarkupsAbstractOptionsWidget::
+qMRMLMarkupsAbstractOptionsWidget(QWidget* parent)
+  : Superclass(parent), MarkupsNode(nullptr), MRMLScene(nullptr)
 {
 
-public:
-  typedef QObject Superclass;
-  qSlicerMarkupsAdditionalOptionsWidgetPrivate();
-  ~qSlicerMarkupsAdditionalOptionsWidgetPrivate()=default;
+}
 
-  // Internal reference to node to operate on
-  vtkWeakPointer<vtkMRMLMarkupsNode> MarkupsNode;
-};
+// --------------------------------------------------------------------------
+void qMRMLMarkupsAbstractOptionsWidget::setMRMLMarkupsNode(vtkMRMLNode* node)
+{
+  this->setMRMLMarkupsNode(vtkMRMLMarkupsNode::SafeDownCast(node));
+}
 
-#endif // __qslicermarkupsadditionalwidget_p_h_

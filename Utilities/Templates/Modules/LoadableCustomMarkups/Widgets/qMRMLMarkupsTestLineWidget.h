@@ -18,28 +18,31 @@
 
 ==============================================================================*/
 
-#ifndef __qslicercurvesettingswidget_h_
-#define __qslicercurvesettingswidget_h_
+#ifndef __qSlicerTestLineWidget_h_
+#define __qSlicerTestLineWidget_h_
 
 // Markups widgets includes
-#include "qSlicerMarkupsAdditionalOptionsWidget.h"
-#include "qSlicerMarkupsModuleWidgetsExport.h"
+#include "qMRMLMarkupsAbstractOptionsWidget.h"
+#include "qSlicerTemplateKeyModuleWidgetsExport.h"
 
-class qSlicerMarkupsCurveSettingsWidgetPrivate;
+class qMRMLMarkupsTestLineWidgetPrivate;
 class vtkMRMLMarkupsNode;
 
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
-qSlicerMarkupsCurveSettingsWidget : public qSlicerMarkupsAdditionalOptionsWidget
+class Q_SLICER_MODULE_TEMPLATEKEY_WIDGETS_EXPORT
+qMRMLMarkupsTestLineWidget : public qMRMLMarkupsAbstractOptionsWidget
 {
   Q_OBJECT
 
+  Q_PROPERTY(QString className READ className CONSTANT);
+
 public:
-  typedef qSlicerMarkupsAdditionalOptionsWidget Superclass;
-  qSlicerMarkupsCurveSettingsWidget(QWidget* parent=nullptr);
-  ~qSlicerMarkupsCurveSettingsWidget() override;
+
+  typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
+  qMRMLMarkupsTestLineWidget(QWidget* parent=nullptr);
+  ~qMRMLMarkupsTestLineWidget() override;
 
   /// Gets the name of the additional options widget type
-  const QString getAdditionalOptionsWidgetTypeName() override { return "CurveSettings"; }
+  const QString className() const override {return "qMRMLMarkupsTestLineWidget";}
 
   /// Updates the widget based on information from MRML.
   void updateWidgetFromMRML() override;
@@ -47,17 +50,23 @@ public:
   /// Checks whether a given node can be handled by the widget
   bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
 
+  /// Returns an instance of the widget
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
+  { return new qMRMLMarkupsTestLineWidget(); }
+
 public slots:
-  void onCurveTypeParameterChanged();
-  void onApplyCurveResamplingPushButtonClicked();
+/// Set the MRML node of interest
+  void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
 protected:
-  qSlicerMarkupsCurveSettingsWidget(qSlicerMarkupsCurveSettingsWidgetPrivate &d, QWidget* parent=nullptr);
   void setup();
 
+protected:
+  QScopedPointer<qMRMLMarkupsTestLineWidgetPrivate> d_ptr;
+
 private:
-  Q_DECLARE_PRIVATE(qSlicerMarkupsCurveSettingsWidget);
-  Q_DISABLE_COPY(qSlicerMarkupsCurveSettingsWidget);
+  Q_DECLARE_PRIVATE(qMRMLMarkupsTestLineWidget);
+  Q_DISABLE_COPY(qMRMLMarkupsTestLineWidget);
 };
 
-#endif // __qslicercurvesettingswidget_h_
+#endif // __qSlicerTestLineWidget_h_

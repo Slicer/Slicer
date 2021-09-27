@@ -18,84 +18,72 @@
 
   ==============================================================================*/
 
-#include "qSlicerMarkupsTestLineWidget.h"
-#include "ui_qSlicerMarkupsTestLineWidget.h"
+#include "qMRMLMarkupsTestLineWidget.h"
+#include "ui_qMRMLMarkupsTestLineWidget.h"
 
-// MRML Markups includes
-#include <vtkMRMLMarkupsNode.h>
-
+// MRML Nodes includes
 #include "vtkMRMLMarkupsTestLineNode.h"
 
+// VTK includes
+#include <vtkWeakPointer.h>
+
 // --------------------------------------------------------------------------
-class qSlicerMarkupsTestLineWidgetPrivate:
-  public qSlicerMarkupsAdditionalOptionsWidgetPrivate,
-  public Ui_qSlicerMarkupsTestLineWidget
+class qMRMLMarkupsTestLineWidgetPrivate:
+  public Ui_qMRMLMarkupsTestLineWidget
 {
-  Q_DECLARE_PUBLIC(qSlicerMarkupsTestLineWidget);
+  Q_DECLARE_PUBLIC(qMRMLMarkupsTestLineWidget);
 
 protected:
-  qSlicerMarkupsTestLineWidget* const q_ptr;
+  qMRMLMarkupsTestLineWidget* const q_ptr;
 
 public:
-  qSlicerMarkupsTestLineWidgetPrivate(qSlicerMarkupsTestLineWidget* object);
-  ~qSlicerMarkupsTestLineWidgetPrivate();
+  qMRMLMarkupsTestLineWidgetPrivate(qMRMLMarkupsTestLineWidget* object);
+  void setupUi(qMRMLMarkupsTestLineWidget*);
 
-  void setupUi(qSlicerWidget* widget);
-
-  virtual void setupUi(qSlicerMarkupsTestLineWidget*);
+  vtkWeakPointer<vtkMRMLMarkupsTestLineNode> MarkupsTestLineNode;
 };
 
 // --------------------------------------------------------------------------
-qSlicerMarkupsTestLineWidgetPrivate::
-qSlicerMarkupsTestLineWidgetPrivate(qSlicerMarkupsTestLineWidget* object)
+qMRMLMarkupsTestLineWidgetPrivate::
+qMRMLMarkupsTestLineWidgetPrivate(qMRMLMarkupsTestLineWidget* object)
   : q_ptr(object)
 {
 
 }
 
 // --------------------------------------------------------------------------
-qSlicerMarkupsTestLineWidgetPrivate::~qSlicerMarkupsTestLineWidgetPrivate() = default;
-
-// --------------------------------------------------------------------------
-void qSlicerMarkupsTestLineWidgetPrivate::setupUi(qSlicerMarkupsTestLineWidget* widget)
+void qMRMLMarkupsTestLineWidgetPrivate::setupUi(qMRMLMarkupsTestLineWidget* widget)
 {
-  Q_Q(qSlicerMarkupsTestLineWidget);
+  Q_Q(qMRMLMarkupsTestLineWidget);
 
-  this->Ui_qSlicerMarkupsTestLineWidget::setupUi(widget);
+  this->Ui_qMRMLMarkupsTestLineWidget::setupUi(widget);
   this->lineTestCollapsibleButton->setVisible(false);
 }
 
 // --------------------------------------------------------------------------
-qSlicerMarkupsTestLineWidget::
-qSlicerMarkupsTestLineWidget(QWidget *parent)
-  : Superclass(* new qSlicerMarkupsTestLineWidgetPrivate(this), parent)
+qMRMLMarkupsTestLineWidget::
+qMRMLMarkupsTestLineWidget(QWidget *parent)
+  : Superclass(parent),
+    d_ptr(new qMRMLMarkupsTestLineWidgetPrivate(this))
 {
   this->setup();
 }
 
 // --------------------------------------------------------------------------
-qSlicerMarkupsTestLineWidget::
-qSlicerMarkupsTestLineWidget(qSlicerMarkupsTestLineWidgetPrivate &d, QWidget *parent)
-  : Superclass(d, parent)
-{
-  this->setup();
-}
+qMRMLMarkupsTestLineWidget::~qMRMLMarkupsTestLineWidget() = default;
 
 // --------------------------------------------------------------------------
-qSlicerMarkupsTestLineWidget::~qSlicerMarkupsTestLineWidget() = default;
-
-// --------------------------------------------------------------------------
-void qSlicerMarkupsTestLineWidget::setup()
+void qMRMLMarkupsTestLineWidget::setup()
 {
-  Q_D(qSlicerMarkupsTestLineWidget);
+  Q_D(qMRMLMarkupsTestLineWidget);
   d->setupUi(this);
 }
 // --------------------------------------------------------------------------
-void qSlicerMarkupsTestLineWidget::updateWidgetFromMRML()
+void qMRMLMarkupsTestLineWidget::updateWidgetFromMRML()
 {
-  Q_D(qSlicerMarkupsTestLineWidget);
+  Q_D(qMRMLMarkupsTestLineWidget);
 
-  if (!this->canManageMRMLMarkupsNode(d->MarkupsNode))
+  if (!this->canManageMRMLMarkupsNode(d->MarkupsTestLineNode))
     {
     d->lineTestCollapsibleButton->setVisible(false);
     return;
@@ -106,9 +94,9 @@ void qSlicerMarkupsTestLineWidget::updateWidgetFromMRML()
 
 
 //-----------------------------------------------------------------------------
-bool qSlicerMarkupsTestLineWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qMRMLMarkupsTestLineWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
 {
-  Q_D(const qSlicerMarkupsTestLineWidget);
+  Q_D(const qMRMLMarkupsTestLineWidget);
 
   vtkMRMLMarkupsTestLineNode* testLineNode= vtkMRMLMarkupsTestLineNode::SafeDownCast(markupsNode);
   if (!testLineNode)
@@ -117,4 +105,13 @@ bool qSlicerMarkupsTestLineWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *
     }
 
   return true;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLMarkupsTestLineWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
+{
+  Q_D(qMRMLMarkupsTestLineWidget);
+
+  d->MarkupsTestLineNode = vtkMRMLMarkupsTestLineNode::SafeDownCast(markupsNode);
+  this->setEnabled(markupsNode != nullptr);
 }

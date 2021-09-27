@@ -17,7 +17,7 @@
 #include <PythonQt.h>
 
 // Slicer includes
-#include "qSlicerMarkupsAdditionalOptionsWidgetsFactory.h"
+#include "qMRMLMarkupsOptionsWidgetsFactory.h"
 
 #include "qSlicerMarkupsModuleWidgetsExport.h"
 
@@ -35,32 +35,32 @@ public:
 
   qSlicerMarkupsModuleWidgetsPythonQtDecorators()
     {
-    //PythonQt::self()->registerClass(&qSlicerMarkupsAdditionalOptionsWidgetsFactory::staticMetaObject);
+    //PythonQt::self()->registerClass(&qMRMLMarkupsOptionsWidgetsFactory::staticMetaObject);
     // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
     }
 
 public slots:
 
   //----------------------------------------------------------------------------
-  // qSlicerMarkupsAdditionalOptionsWidgetsFactory
+  // qMRMLMarkupsOptionsWidgetsFactory
 
   //----------------------------------------------------------------------------
   // static methods
 
   //----------------------------------------------------------------------------
-  qSlicerMarkupsAdditionalOptionsWidgetsFactory* static_qSlicerMarkupsAdditionalOptionsWidgetsFactory_instance()
+  qMRMLMarkupsOptionsWidgetsFactory* static_qMRMLMarkupsOptionsWidgetsFactory_instance()
     {
-    return qSlicerMarkupsAdditionalOptionsWidgetsFactory::instance();
+    return qMRMLMarkupsOptionsWidgetsFactory::instance();
     }
 
   //----------------------------------------------------------------------------
   // instance methods
 
   //----------------------------------------------------------------------------
-  bool registerAdditionalOptionsWidget(qSlicerMarkupsAdditionalOptionsWidgetsFactory* factory,
-                                       PythonQtPassOwnershipToCPP<qSlicerMarkupsAdditionalOptionsWidget*> plugin)
+  bool registerOptionsWidget(qMRMLMarkupsOptionsWidgetsFactory* factory,
+                                       PythonQtPassOwnershipToCPP<qMRMLMarkupsAbstractOptionsWidget*> plugin)
     {
-    return factory->registerAdditionalOptionsWidget(plugin);
+    return factory->registerOptionsWidget(plugin);
     }
 };
 

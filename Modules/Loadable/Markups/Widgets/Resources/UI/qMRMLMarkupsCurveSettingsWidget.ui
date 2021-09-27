@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerMarkupsCurveSettingsWidget</class>
- <widget class="QWidget" name="qSlicerMarkupsCurveSettingsWidget">
+ <class>qMRMLMarkupsCurveSettingsWidget</class>
+ <widget class="QWidget" name="qMRMLMarkupsCurveSettingsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -402,53 +402,5 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>qSlicerMarkupsCurveSettingsWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>resampleCurveOutputNodeSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>219</x>
-     <y>393</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>268</x>
-     <y>480</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerMarkupsCurveSettingsWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>resampleCurveConstraintNodeSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>219</x>
-     <y>393</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>268</x>
-     <y>480</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerMarkupsCurveSettingsWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>modelNodeSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>219</x>
-     <y>393</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>268</x>
-     <y>480</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

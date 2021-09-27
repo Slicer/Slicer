@@ -21,8 +21,8 @@
 #include "qSlicerTemplateKeyModule.h"
 
 #include "vtkMRMLMarkupsTestLineNode.h"
-#include "qSlicerMarkupsTestLineWidget.h"
-#include "qSlicerMarkupsAdditionalOptionsWidgetsFactory.h"
+#include "qMRMLMarkupsTestLineWidget.h"
+#include "qMRMLMarkupsOptionsWidgetsFactory.h"
 
 // Qt includes
 #include <QDebug>
@@ -141,8 +141,8 @@ void qSlicerTemplateKeyModule::setup()
     markupsLogic->RegisterMarkupsNode(markupsTestLineNode, testLineWidget);
     }
 
-  auto optionsWidgetFactory = qSlicerMarkupsAdditionalOptionsWidgetsFactory::instance();
-  optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsTestLineWidget());
+  auto optionsWidgetFactory = qMRMLMarkupsOptionsWidgetsFactory::instance();
+  optionsWidgetFactory->registerOptionsWidget(new qMRMLMarkupsTestLineWidget());
 }
 
 //-----------------------------------------------------------------------------

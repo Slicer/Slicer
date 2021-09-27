@@ -66,11 +66,12 @@
 #include "vtkSlicerROIWidget.h"
 
 // Markups widgets
-#include "qSlicerMarkupsROIWidget.h"
-#include "qSlicerMarkupsAngleMeasurementsWidget.h"
-#include "qSlicerMarkupsCurveSettingsWidget.h"
-#include "qSlicerMarkupsAdditionalOptionsWidgetsFactory.h"
+#include "qMRMLMarkupsROIWidget.h"
+#include "qMRMLMarkupsCurveSettingsWidget.h"
+#include "qMRMLMarkupsAngleMeasurementsWidget.h"
 #include "qMRMLMarkupsToolBar.h"
+#include "qMRMLMarkupsOptionsWidgetsFactory.h"
+#include "qMRMLNodeComboBox.h"
 
 // DisplayableManager initialization
 #include <vtkAutoInit.h>
@@ -125,6 +126,12 @@ qSlicerMarkupsModulePrivate::~qSlicerMarkupsModulePrivate()
     delete this->ToolBar;
     this->ToolBar = nullptr;
     }
+
+  /// NOTE: This prevents deletion of QWidgets by the destructor of the factory,
+  /// which produces a segmentation fault. Though I can't confirm, I believe
+  /// this behaviour is due to deletion of QWidgets in global scope destructors
+  /// and how this conflicts with the lifecycle of QWidgets.
+  qMRMLMarkupsOptionsWidgetsFactory::instance()->unregisterAll();
 }
 
 //-----------------------------------------------------------------------------
@@ -292,10 +299,10 @@ void qSlicerMarkupsModule::setup()
 qSlicerAbstractModuleRepresentation* qSlicerMarkupsModule::createWidgetRepresentation()
 {
   // Create and configure the additional widgets
-  auto optionsWidgetFactory = qSlicerMarkupsAdditionalOptionsWidgetsFactory::instance();
-  optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsAngleMeasurementsWidget());
-  optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsCurveSettingsWidget());
-  optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsROIWidget());
+  auto optionsWidgetFactory = qMRMLMarkupsOptionsWidgetsFactory::instance();
+  optionsWidgetFactory->registerOptionsWidget(new qMRMLMarkupsAngleMeasurementsWidget());
+  optionsWidgetFactory->registerOptionsWidget(new qMRMLMarkupsCurveSettingsWidget());
+  optionsWidgetFactory->registerOptionsWidget(new qMRMLMarkupsROIWidget());
 
   // Create and configure module widget.
   auto moduleWidget = new qSlicerMarkupsModuleWidget();

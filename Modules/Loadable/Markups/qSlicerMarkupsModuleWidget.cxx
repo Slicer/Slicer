@@ -59,8 +59,8 @@
 #include "vtkMRMLMarkupsDisplayableManagerHelper.h"
 
 // Markups includes
-#include "qSlicerMarkupsAdditionalOptionsWidget.h"
-#include "qSlicerMarkupsAdditionalOptionsWidgetsFactory.h"
+#include "qMRMLMarkupsAbstractOptionsWidget.h"
+#include "qMRMLMarkupsOptionsWidgetsFactory.h"
 #include "qSlicerMarkupsModule.h"
 #include "qSlicerMarkupsModuleWidget.h"
 #include "ui_qSlicerMarkupsModule.h"
@@ -87,7 +87,7 @@ static const int COORDINATE_COMBOBOX_INDEX_LOCAL = 1;
 static const int COORDINATE_COMBOBOX_INDEX_HIDE = 2;
 
 
-//extern qSlicerMarkupsAdditionalOptionsWidgetsFactory* qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance = nullptr;
+//extern qSlicerMarkupsOptionsWidgetsFactory* qSlicerMarkupsOptionsWidgetsFactory::Instance = nullptr;
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Markups
 class qSlicerMarkupsModuleWidgetPrivate: public Ui_qSlicerMarkupsModule
@@ -123,8 +123,11 @@ public:
   // update the markups creation buttons.
   void createMarkupsPushButtons();
 
-  // place the markups additional options widgets.
-  void placeMarkupsAdditionalOptionsWidgets();
+  // update the list of markups widgets from qMRMLMarkupsOptionsWidgetsFactory
+  void updateMarkupsOptionsWidgets();
+
+  // place the markups options widgets.
+  void placeMarkupsOptionsWidgets();
 
 private:
   vtkWeakPointer<vtkMRMLMarkupsNode> MarkupsNode;
@@ -161,6 +164,9 @@ private:
   // Export/import section
   QButtonGroup* ImportExportOperationButtonGroup;
   QButtonGroup* ImportExportCoordinateSystemButtonGroup;
+
+  // Markups options widgets
+  QList<qMRMLMarkupsAbstractOptionsWidget*> MarkupsOptionsWidgets;
 };
 
 //-----------------------------------------------------------------------------
@@ -198,6 +204,8 @@ qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMark
 
   this->ImportExportOperationButtonGroup = nullptr;
   this->ImportExportCoordinateSystemButtonGroup = nullptr;
+
+  this->updateMarkupsOptionsWidgets();
 }
 
 //-----------------------------------------------------------------------------
@@ -508,10 +516,12 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->saveToDefaultDisplayPropertiesPushButton, SIGNAL(clicked()),
     q, SLOT(onSaveToDefaultDisplayPropertiesPushButtonClicked()));
 
-  // Place the additional options widgets
-  this->placeMarkupsAdditionalOptionsWidgets();
-  QObject::connect(qSlicerMarkupsAdditionalOptionsWidgetsFactory::instance(), SIGNAL(additionalOptionsWidgetRegistered()),
-                   q, SLOT(onPlaceMarkupsAdditionalOptionsWidgets()));
+  // Place the options widgets
+  this->placeMarkupsOptionsWidgets();
+  QObject::connect(qMRMLMarkupsOptionsWidgetsFactory::instance(), SIGNAL(optionsWidgetRegistered()),
+                   q, SLOT(onUpdateMarkupsOptionsWidgets()));
+  QObject::connect(qMRMLMarkupsOptionsWidgetsFactory::instance(), SIGNAL(optionsWidgetUnregistered()),
+                   q, SLOT(onUpdateMarkupsOptionsWidgets()));
 
   // hide measurement settings table until markups node containing measurement is set
   this->measurementSettingsTableWidget->setVisible(false);
@@ -692,42 +702,60 @@ void qSlicerMarkupsModuleWidgetPrivate::setPlaceModeEnabled(bool placeEnable)
 //-----------------------------------------------------------
 bool qSlicerMarkupsModuleWidgetPrivate::getPersistanceModeEnabled()
 {
-    Q_Q(qSlicerMarkupsModuleWidget);
-    vtkMRMLInteractionNode* interactionNode = nullptr;
-    if (q->mrmlScene())
-      {
-        interactionNode = vtkMRMLInteractionNode::SafeDownCast(q->mrmlScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
-      }
-    if (interactionNode && interactionNode->GetPlaceModePersistence())
-      {
-      return true;
-      }
-    else
-      {
-      return false;
-      }
+  Q_Q(qSlicerMarkupsModuleWidget);
+  vtkMRMLInteractionNode* interactionNode = nullptr;
+  if (q->mrmlScene())
+    {
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(q->mrmlScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+    }
+  if (interactionNode && interactionNode->GetPlaceModePersistence())
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
 }
 
 //-----------------------------------------------------------
-void qSlicerMarkupsModuleWidgetPrivate::placeMarkupsAdditionalOptionsWidgets()
+void qSlicerMarkupsModuleWidgetPrivate::updateMarkupsOptionsWidgets()
+{
+  foreach(auto widget, this->MarkupsOptionsWidgets)
+    {
+    widget->setParent(nullptr);
+    }
+
+  this->MarkupsOptionsWidgets.clear();
+
+  // Create the markups options widgets registered in qMRMLMarkupsOptionsWidgetsFactory.
+  auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
+  foreach(const auto& widgetClassName, factory->registeredOptionsWidgetsClassNames())
+    {
+    this->MarkupsOptionsWidgets.append(factory->createWidget(widgetClassName));
+    }
+}
+
+//-----------------------------------------------------------
+void qSlicerMarkupsModuleWidgetPrivate::placeMarkupsOptionsWidgets()
 {
   Q_Q(qSlicerMarkupsModuleWidget);
 
-  // Add the additional widgets
-  foreach(const auto& widget, qSlicerMarkupsAdditionalOptionsWidgetsFactory::instance()->additionalOptionsWidgets())
+  // Add the options widgets
+  foreach(const auto& widget, this->MarkupsOptionsWidgets)
     {
     // If the parent is different from the qSlicerMarkupsModule widget, then add the widget.
     if (widget->parentWidget() != q)
       {
       this->markupsModuleVerticalLayout->addWidget(widget);
+      widget->setVisible(false);
+      }
 
       // Forward the mrmlSceneChanged signal
       QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                        widget, SLOT(setMRMLScene(vtkMRMLScene*)));
-      }
     }
 }
-
 
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
@@ -1040,8 +1068,8 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     {
     this->updateRow(m);
     }
-  // Update additional widgets
-  foreach(const auto& widget, qSlicerMarkupsAdditionalOptionsWidgetsFactory::instance()->additionalOptionsWidgets())
+  // Update options widgets
+  foreach(const auto& widget, d->MarkupsOptionsWidgets)
     {
     widget->updateWidgetFromMRML();
     }
@@ -1820,8 +1848,6 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeAdded(vtkMRMLNode * node)
   // it by making it active in the selection node
   d->setSelectionNodeActivePlaceNode(node);
   d->setPlaceModeEnabled(true);
-
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
 }
 
 //-----------------------------------------------------------------------------
@@ -2158,7 +2184,6 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellClicked(QTableWidgetItem
     }
   else if (column == d->columnIndex("Position"))
     {
-      bool persistenceModeEnabled = d->getPersistanceModeEnabled();
       if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionDefined))
         {
         item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionUndefined));
@@ -2460,11 +2485,12 @@ void qSlicerMarkupsModuleWidget::onCreateMarkupsPushButtons()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onPlaceMarkupsAdditionalOptionsWidgets()
+void qSlicerMarkupsModuleWidget::onUpdateMarkupsOptionsWidgets()
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
-  d->placeMarkupsAdditionalOptionsWidgets();
+  d->updateMarkupsOptionsWidgets();
+  d->placeMarkupsOptionsWidgets();
 }
 //-----------------------------------------------------------------------------
 QStringList qSlicerMarkupsModuleWidget::getOtherMarkupNames(vtkMRMLNode *thisMarkup)
@@ -2659,9 +2685,10 @@ if (markupsNode)
 // Setting the internal Markups node
 d->MarkupsNode = markupsNode;
 
-foreach(const auto& widget, qSlicerMarkupsAdditionalOptionsWidgetsFactory::instance()->additionalOptionsWidgets())
+foreach(const auto& widget, d->MarkupsOptionsWidgets)
   {
   widget->setMRMLMarkupsNode(markupsNode);
+  widget->setVisible(widget->canManageMRMLMarkupsNode(markupsNode));
   }
 
 this->observeMeasurementsInCurrentMarkupsNode();

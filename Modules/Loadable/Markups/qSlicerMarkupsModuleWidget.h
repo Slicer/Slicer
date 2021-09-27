@@ -30,7 +30,7 @@ class QModelIndex;
 class QStringList;
 class QTableWidgetItem;
 class QShortcut;
-class qSlicerMarkupsAdditionalOptionsWidget;
+class qMRMLMarkupsOptionsWidget;
 class qSlicerMarkupsModuleWidgetPrivate;
 class vtkMRMLMarkupsNode;
 class vtkMRMLNode;
@@ -96,7 +96,7 @@ public:
   QStringList& associatedMarkups();
 
   // Add additional widget
-  QList<qSlicerMarkupsAdditionalOptionsWidget*>& additionalWidgets();
+  QList<qMRMLMarkupsOptionsWidget*>& additionalWidgets();
 
   Q_INVOKABLE void updateToolBar(vtkMRMLMarkupsNode* node);
 
@@ -255,8 +255,8 @@ public slots:
   /// Update set of create markups push buttons
   void onCreateMarkupsPushButtons();
 
-  /// Update set of create markups push buttons
-  void onPlaceMarkupsAdditionalOptionsWidgets();
+  /// Update internal list of markups options widgets from qMRMLMarkupsOptionsWidgetsFactory
+  void onUpdateMarkupsOptionsWidgets();
 
   // Enable or disable markup table buttons
   void enableMarkupTableButtons(bool enable);
