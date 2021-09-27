@@ -81,7 +81,9 @@ void qMRMLMarkupsToolBarPrivate::init()
   Q_Q(qMRMLMarkupsToolBar);
 
   // Markups node selector
-  this->MarkupsNodeSelector = new qMRMLNodeComboBox();
+  // Set the toolbar (q) as parent to ensure that the MarkupsNodeSelector is deleted
+  // even if is not added to the layout.
+  this->MarkupsNodeSelector = new qMRMLNodeComboBox(q);
   this->MarkupsNodeSelector->setNodeTypes(QStringList(QString("vtkMRMLMarkupsNode")));
   this->MarkupsNodeSelector->setNoneEnabled(false);
   this->MarkupsNodeSelector->setAddEnabled(false);
