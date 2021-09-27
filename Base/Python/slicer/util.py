@@ -1350,6 +1350,31 @@ class NodeModify:
   def __exit__(self, type, value, traceback):
     self.node.EndModify(self.wasModifying)
 
+class RenderBlocker:
+  """
+  Context manager to conveniently pause and resume view rendering. This makes sure that we are not displaying incomplete states to the user.
+  Pausing the views can be useful to improve performance and ensure consistency by skiping all rendering calls until the current code block has completed.
+
+  Code blocks such as::
+
+    try:
+      slicer.app.pauseRender()
+      # Do things
+    finally:
+      slicer.app.resumeRender()
+
+  Can be written as::
+
+    with slicer.util.RenderBlocker():
+      # Do things
+
+"""
+  def __enter__(self):
+    import slicer
+    slicer.app.pauseRender()
+  def __exit__(self, type, value, traceback):
+    import slicer
+    slicer.app.resumeRender()
 
 
 #
