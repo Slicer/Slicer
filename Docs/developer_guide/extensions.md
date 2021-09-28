@@ -274,12 +274,6 @@ anothermetadata This is the value associated with 'anothermetadata'
 
 Note: Parameters in URLS (such as `&foo=bar`) are not supported. URL shortener services can be used if necessary.
 
-## Extensions build system
-
-The extensions build system allows to drive the build, test, packaging and upload of slicer extensions.
-
-Using the [extensions build system source code](https://github.com/Slicer/Slicer/tree/master/Extensions/CMake) living in the Slicer source tree, it is possible to build extensions using either manual build or dashboard-driven automatic build.
-
 ## Extensions server
 
 The official Slicer extensions server is <https://extensions.slicer.org/>. To get a list of extensions, specify the Slicer revision and platform in the URL, for example: <https://extensions.slicer.org/catalog/All/30117/win>
@@ -297,6 +291,111 @@ The ExtensionsIndex is hosted on GitHub: <https://github.com/Slicer/ExtensionsIn
 Each branch of the repository contains extension descrtiption files that corresponds to the same branch in the Slicer repository. For example, `master` branch contains descriptions for Slicer `master` branch, and `4.11` branch contains extension descripions for Slicer's `4.11` branch.
 
 Extension developers have to make sure that the extension description in each branch of the Extensions index is compatible with the corresponding Slicer version. Extension developers often create the same branches (`master`, `4.11`, `4.13`, ...) in their repository and they specify this branch name in the extensions descriptor file.
+
+## Extensions build system
+
+The extensions build system allows to drive the build, test, packaging and upload of slicer extensions.
+
+Using the [extensions build system source code](https://github.com/Slicer/Slicer/tree/master/Extensions/CMake), it is possible to build extensions using either manual build or dashboard-driven automatic build. The extension description files must be simply placed in a folder, the same way as they are in the Extensions Index repository.
+
+### Build list of extensions manually
+
+Locally building a list of extensions is a convenient way to test building of extensions and get extension packages for a custom-build Slicer application.
+
+Given a directory containing one or more extension description files, with the help of the extensions build system it is possible to configure and build the associated extensions specifying the following CMake options:
+
+```{list-table}
+:header-rows: 1
+
+* - CMake variable
+  - Description
+* - Slicer_DIR
+  - Path to Slicer build tree. Required.
+* - Slicer_EXTENSION_DESCRIPTION_DIR
+  - Path to folder containing extension description files. Required.
+* - [CMAKE_BUILD_TYPE](http://www.cmake.org/cmake/help/v2.8.8/cmake.html#variable:CMAKE_BUILD_TYPE)
+  - Build type of the associated Slicer build directory
+* - CTEST_MODEL
+  - By default set to `Experimental`.
+    Allow to choose on which CDash track results are submitted as well as setting the submission type associated with the uploaded extension.
+* - Slicer_UPLOAD_EXTENSIONS
+  - By default set to `OFF`.
+    If enabled, extension builds will be submitted to Slicer dashboard and associated packages will be uploaded to extensions server.
+* - MIDAS_PACKAGE_URL
+  - MIDAS extensions server URL specifying where the extension should be uploaded. For example `http://slicer.kitware.com/midas3`.
+    Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source code.
+* - MIDAS_PACKAGE_EMAIL
+  - Email allowing to authenticate to the extensions server.
+    Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source code.
+* - MIDAS_PACKAGE_API_KEY
+  - Token allowing to authenticate to the extensions server.
+    Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source code.
+```
+
+The following folders will be used in the examples below:
+
+| Folder                                                                               | Linux/macOS                                      | Windows  |
+|--------------------------------------------------------------------------------------|--------------------------------------------------|----------|
+| Slicer source code tree (checked out from https://github.com/Slicer/Slicer.git)      | `~/Slicer`                                       | `C:\D\S4`               |
+| Slicer build tree (built by following Slicer build instructions)                     |  `~/Slicer-SuperBuild-Release`                   | `C:\D\S4R`              |
+| List of extension description files (for example checked out from https://github.com/Slicer/ExtensionsIndex.git) |  `~/ExtensionsIndex` | `C:\D\ExtensionsIndex`  |
+| Folder to store built extensions (new empty folder)                                  |  `~/ExtensionsIndex-Release`                     | `C:\D\ExtensionsIndexR` |
+
+#### Build, test, and package
+
+Linux and macOS:
+
+```
+cd ~/ExtensionsIndex-Release
+
+cmake -DSlicer_DIR:PATH=~/Slicer-SuperBuild-Release/Slicer-build \
+ -DSlicer_EXTENSION_DESCRIPTION_DIR:PATH=~/ExtensionsIndex \
+ -DCMAKE_BUILD_TYPE:STRING=Release \
+ ~/Slicer/Extensions/CMake
+
+make
+```
+
+Windows:
+
+```
+cd /d C:\D\ExtensionsIndexR
+
+"c:\Program Files\CMake\bin\cmake.exe" -DSlicer_DIR:PATH=C:/D/S4R/Slicer-build ^
+ -DSlicer_EXTENSION_DESCRIPTION_DIR:PATH=C:/D/ExtensionsIndex ^
+ -DCMAKE_BUILD_TYPE:STRING=Release ^
+ C:/D/S4/Extensions/CMake
+
+"c:\Program Files\CMake\bin\cmake.exe" --build . --config Release
+```
+
+#### Build, test, package, and upload to extensions server
+
+Submit the configure/build/test results to the Slicer Dashboard `Extensions-Experimental` track and upload the extension to a custom Extensions Server.
+
+Linux and macOS:
+
+```
+cd ~/ExtensionsIndex-Release
+cmake -DSlicer_DIR:PATH=~/Slicer-SuperBuild-Release/Slicer-build \
+ -DSlicer_EXTENSION_DESCRIPTION_DIR:PATH=~/ExtensionsIndex \
+ -DCMAKE_BUILD_TYPE:STRING=Release \
+ -DCTEST_MODEL:STRING=Experimental \
+ -DSlicer_UPLOAD_EXTENSIONS:BOOL=ON \
+ -DMIDAS_PACKAGE_URL:STRING=http://slicer.kitware.com/midas3 \
+ -DMIDAS_PACKAGE_EMAIL:STRING=jchris.fillionr@kitware.com \
+ -DMIDAS_PACKAGE_API_KEY:STRING=a0b012c0123d012abc01234a012345a0 \
+ ~/Slicer/Extensions/CMake
+make
+```
+
+Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source 
+
+### Build complete Extensions Index with dashboard submission
+
+Continuous and nightly extension dashboards are setup on the slicer factory machine maintained by [http://www.kitware.com Kitware]. Developers can set up similar infrastructure privately for their custom applications.
+
+By customizing the [extension template dashboard script](https://github.com/Slicer/Slicer/blob/master/Extensions/CMake/SlicerExtensionsDashboardScript.TEMPLATE.cmake), it is possible to easily setup dashboard client submitting to [CDash](http://slicer.cdash.org/index.php?project=SlicerPreview). See example dashboard scripts that are used on official Slicer build machines [here](https://github.com/Slicer/DashboardScripts). Note that these scripts are more complex than the template to allow code reuse between different configurations, but they are tested regularly and so guaranteed to work.
 
 ## Frequently asked questions
 
