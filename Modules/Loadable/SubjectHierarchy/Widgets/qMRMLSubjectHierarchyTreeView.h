@@ -286,6 +286,13 @@ public slots:
   /// Resets column sizes and size policies to default.
   void resetColumnSizesToDefault();
 
+  void setIncludeItemAttributeNamesFilter(QStringList filter);
+  void setIncludeNodeAttributeNamesFilter(QStringList filter);
+  void setExcludeItemAttributeNamesFilter(QStringList filter);
+  void setExcludeNodeAttributeNamesFilter(QStringList filter);
+  void setAttributeNameFilter(QString& filter);
+  void setAttributeValueFilter(QString& filter);
+
 signals:
   void currentItemChanged(vtkIdType);
   void currentItemsChanged(QList<vtkIdType>);
@@ -324,13 +331,6 @@ protected slots:
   virtual void onTransformInteractionInViewToggled(bool show);
   virtual void onTransformEditProperties();
   virtual void onCreateNewTransform();
-
-  void setIncludeItemAttributeNamesFilter(QStringList filter);
-  void setIncludeNodeAttributeNamesFilter(QStringList filter);
-  void setExcludeItemAttributeNamesFilter(QStringList filter);
-  void setExcludeNodeAttributeNamesFilter(QStringList filter);
-  void setAttributeNameFilter(QString& filter);
-  void setAttributeValueFilter(QString& filter);
 
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
