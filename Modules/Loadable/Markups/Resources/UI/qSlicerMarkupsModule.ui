@@ -356,7 +356,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Always skip highlighted control point(s) from the active list (missing position status).</string>
+             <string>Skip placement of highlighted control point(s) from the active list (will clear current position).</string>
             </property>
             <property name="text">
              <string/>
@@ -391,7 +391,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Undefine position of highlighted control point(s) from the active list</string>
+             <string>Clear the position of highlighted control point(s) from the active list (the control points will not be deleted).</string>
             </property>
             <property name="text">
              <string/>

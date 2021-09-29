@@ -144,10 +144,10 @@
      <normaloff>:/Icons/MarkupsUnset.png</normaloff>:/Icons/MarkupsUnset.png</iconset>
    </property>
     <property name="text">
-    <string>Unset last control point</string>
+    <string>Clear last control point position</string>
    </property>
    <property name="toolTip">
-    <string>Unset position of the last control point placed (the control point will not be deleted).</string>
+    <string>Clear the position of the last control point placed (the control point will not be deleted).</string>
    </property>
   </action>
   <action name="ActionUnsetAll">
@@ -157,10 +157,10 @@
     </iconset>
    </property>
    <property name="text">
-    <string>Unset all control points</string>
+    <string>Clear all control point positions</string>
    </property>
    <property name="toolTip">
-    <string>Unset position of all control points in the list (the control points will not be deleted).</string>
+    <string>Clear the position of all control points in the list (the control points will not be deleted).</string>
    </property>
   </action>
   <action name="ActionVisibility">

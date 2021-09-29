@@ -480,7 +480,11 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QTableWidgetItem *positionHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Position"));
   positionHeader->setText("");
   positionHeader->setIcon(QIcon(":/Icons/Large/MarkupsPositionStatus.png"));
-  positionHeader->setToolTip(QString("Click in this column to set/unset control points."));
+  positionHeader->setToolTip(QString("Click in this column to modify the control point position state.\n\n"
+                                     "- Edit: Enter place mode to modify the control point position in the slice views\n"
+                                     "- Skip: 'Place multiple control points' mode skips over the control point entry\n"
+                                     "- Restore: Set the control point position to its last known set position\n"
+                                     "- Clear: Clear the defined control point position, but do not delete the control point"));
   this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Position"), 10);
 
   // listen for changes so can update mrml node
@@ -2253,27 +2257,28 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
   menu.addSeparator();
   // Change position status
   QAction* resetFiducialAction =
-      new QAction(QString("Edit position of highlighted fiducial(s)"), &menu);
+      new QAction(QIcon(":/Icons/XSmall/MarkupsInProgress.png"), QString("Edit position of highlighted fiducial(s)"), &menu);
   menu.addAction(resetFiducialAction);
   QObject::connect(resetFiducialAction, SIGNAL(triggered()),
       this, SLOT(onResetMarkupPushButtonClicked()));
-  QAction* unsetFiducialAction =
-      new QAction(QString("Unset position of highlighted fiducial(s)"), &menu);
-  menu.addAction(unsetFiducialAction);
-  QObject::connect(unsetFiducialAction, SIGNAL(triggered()),
-      this, SLOT(onUnsetMarkupPushButtonClicked()));
 
   QAction* missingFiducialAction =
-      new QAction(QString("Set position missing for highlighted fiducial(s)"), &menu);
+      new QAction(QIcon(":/Icons/XSmall/MarkupsMissing.png"), QString("Skip placement of highlighted fiducial(s)"), &menu);
   menu.addAction(missingFiducialAction);
   QObject::connect(missingFiducialAction, SIGNAL(triggered()),
       this, SLOT(onMissingMarkupPushButtonClicked()));
 
   QAction* restoreFiducialAction =
-      new QAction(QString("Restore position of highlighted fiducial(s)"), &menu);
+      new QAction(QIcon(":/Icons/XSmall/MarkupsDefined.png"), QString("Restore position of highlighted fiducial(s)"), &menu);
   menu.addAction(restoreFiducialAction);
   QObject::connect(restoreFiducialAction, SIGNAL(triggered()),
       this, SLOT(onRestoreMarkupPushButtonClicked()));
+
+  QAction* unsetFiducialAction =
+      new QAction(QIcon(":/Icons/XSmall/MarkupsUndefined.png"), QString("Clear position of highlighted fiducial(s)"), &menu);
+  menu.addAction(unsetFiducialAction);
+  QObject::connect(unsetFiducialAction, SIGNAL(triggered()),
+      this, SLOT(onUnsetMarkupPushButtonClicked()));
 
   menu.addSeparator();
   this->addSelectedCoordinatesToMenu(&menu);
