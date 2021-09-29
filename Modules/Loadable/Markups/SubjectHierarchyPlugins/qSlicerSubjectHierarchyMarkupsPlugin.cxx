@@ -653,7 +653,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     {
     if (associatedNode->GetFixedNumberOfControlPoints())
       {
-      d->DeletePointAction->setText("Unset point position");
+      d->DeletePointAction->setText("Clear control point position");
       }
     else
       {
