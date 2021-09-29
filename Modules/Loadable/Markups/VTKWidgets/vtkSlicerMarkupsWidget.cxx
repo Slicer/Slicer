@@ -611,14 +611,17 @@ bool vtkSlicerMarkupsWidget::RemovePreviewPoint()
     }
   int previewIndex = this->PreviewPointIndex;
   int status = markupsNode->GetNthControlPointPositionStatus(previewIndex);
-  if (status == vtkMRMLMarkupsNode::PositionPreview && markupsNode->GetNthControlPointAutoCreated(previewIndex))
+  if (status == vtkMRMLMarkupsNode::PositionPreview)
     {
-    markupsNode->RemoveNthControlPoint(previewIndex);
-    markupsNode->GetMarkupsDisplayNode()->SetActiveControlPoint(-1);
-    }
-  else
-    {
-    markupsNode->UnsetNthControlPointPosition(previewIndex);
+    if (markupsNode->GetNthControlPointAutoCreated(previewIndex))
+      {
+      markupsNode->RemoveNthControlPoint(previewIndex);
+      markupsNode->GetMarkupsDisplayNode()->SetActiveControlPoint(-1);
+      }
+    else
+      {
+      markupsNode->UnsetNthControlPointPosition(previewIndex);
+      }
     }
   this->PreviewPointIndex = -1;
   return true;
