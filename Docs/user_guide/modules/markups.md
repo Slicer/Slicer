@@ -18,9 +18,9 @@ Click the down-arrow icon on the button to choose markups type.
 
 Click "Place multiple control points" checkbox to keep placing control points continuously, without the need to click the place button after each point.
 
-2. Left-click in the slice or 3D views to place points
+2. Left-click in the slice or 3D views to place points.
 
-3. Right-click to finish point placement
+3. Double-left-click or right-click to finish point placement.
 
 ### Edit point positions in existing markups
 

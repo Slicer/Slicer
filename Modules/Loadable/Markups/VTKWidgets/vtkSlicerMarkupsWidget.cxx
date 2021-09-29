@@ -59,6 +59,7 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->SetEventTranslation(WidgetStateDefine, vtkCommand::LeftButtonReleaseEvent, vtkEvent::NoModifier, WidgetEventControlPointPlace);
   this->SetEventTranslation(WidgetStateDefine, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventReserved);
   this->SetEventTranslation(WidgetStateDefine, vtkCommand::RightButtonReleaseEvent, vtkEvent::NoModifier, WidgetEventStopPlace);
+  this->SetEventTranslation(WidgetStateDefine, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventStopPlace);
 
   // Manipulate
   this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
