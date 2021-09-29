@@ -136,35 +136,35 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
 
   // View context menu
 
-  this->RenamePointAction = new QAction("Rename point...", q);
+  this->RenamePointAction = new QAction("Rename control point...", q);
   this->RenamePointAction->setObjectName("RenamePointAction");
   q->setActionPosition(this->RenamePointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->RenamePointAction, SIGNAL(triggered()), q, SLOT(renamePoint()));
 
-  this->ToggleSelectPointAction = new QAction("Toggle select point", q);
+  this->ToggleSelectPointAction = new QAction("Toggle select control point", q);
   this->ToggleSelectPointAction->setObjectName("ToggleSelectPointAction");
   q->setActionPosition(this->ToggleSelectPointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->ToggleSelectPointAction, SIGNAL(triggered()), q, SLOT(toggleSelectPoint()));
 
-  this->JumpToPreviousPointAction = new QAction("Jump to previous point", q);
+  this->JumpToPreviousPointAction = new QAction("Jump to previous control point", q);
   this->JumpToPreviousPointAction->setToolTip("Jump slice views to the previous control point");
   this->JumpToPreviousPointAction->setObjectName("JumpToPreviousPointAction");
   q->setActionPosition(this->JumpToPreviousPointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->JumpToPreviousPointAction, SIGNAL(triggered()), q, SLOT(jumpToPreviousPoint()));
 
-  this->JumpToNextPointAction = new QAction("Jump to next point", q);
+  this->JumpToNextPointAction = new QAction("Jump to next control point", q);
   this->JumpToNextPointAction->setToolTip("Jump slice views to the next control point");
   this->JumpToNextPointAction->setObjectName("JumpToNextPointAction");
   q->setActionPosition(this->JumpToNextPointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->JumpToNextPointAction, SIGNAL(triggered()), q, SLOT(jumpToNextPoint()));
 
-  this->JumpToClosestPointAction = new QAction("Jump to closest point", q);
+  this->JumpToClosestPointAction = new QAction("Jump to closest control point", q);
   this->JumpToClosestPointAction->setToolTip("Jump slice views to the closest control point");
   this->JumpToClosestPointAction->setObjectName("JumpToClosestPointAction");
   q->setActionPosition(this->JumpToClosestPointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->JumpToClosestPointAction, SIGNAL(triggered()), q, SLOT(jumpToClosestPoint()));
 
-  this->DeletePointAction = new QAction("Delete point", q);
+  this->DeletePointAction = new QAction("Delete control point", q);
   this->DeletePointAction->setObjectName("DeletePointAction");
   q->setActionPosition(this->DeletePointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->DeletePointAction, SIGNAL(triggered()), q, SLOT(deletePoint()));
@@ -657,7 +657,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
       }
     else
       {
-      d->DeletePointAction->setText("Delete point");
+      d->DeletePointAction->setText("Delete control point");
       }
     }
   d->DeleteNodeAction->setVisible(true);
@@ -1150,5 +1150,5 @@ void qSlicerSubjectHierarchyMarkupsPlugin::editProperties(vtkIdType itemID)
   else
     {
     qSlicerApplication::application()->openNodeModule(shNode->GetItemDataNode(itemID));
-    }  
+    }
 }
