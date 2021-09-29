@@ -1159,7 +1159,7 @@ def reloadScriptedModule(moduleName):
   p = os.path.dirname(filePath)
   if not p in sys.path:
     sys.path.insert(0,p)
-  with open(filePath) as fp:
+  with open(filePath, encoding='utf8') as fp:
     reloaded_module = imp.load_module(
         moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
 
