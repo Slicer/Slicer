@@ -1078,8 +1078,8 @@ extensionName = 'SlicerIGT'
 em = slicer.app.extensionsManagerModel()
 if not em.isExtensionInstalled(extensionName):
   extensionMetaData = em.retrieveExtensionMetadataByName(extensionName)
-  url = em.serverUrl().toString()+'/download/item/'+extensionMetaData['item_id']
-  extensionPackageFilename = slicer.app.temporaryPath+'/'+extensionMetaData['md5']
+  url = f"{em.serverUrl().toString()}/api/v1/item/{extensionMetaData['_id']}/download"
+  extensionPackageFilename = slicer.app.temporaryPath+'/'+extensionMetaData['_id']
   slicer.util.downloadFile(url, extensionPackageFilename)
   em.installExtension(extensionPackageFilename)
   slicer.util.restart()
