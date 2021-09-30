@@ -1569,10 +1569,10 @@ void qSlicerMarkupsModuleWidget::onDeleteMarkupPushButtonClicked(bool confirm /*
   if (confirm)
     {
     ctkMessageBox deleteAllMsgBox;
-    deleteAllMsgBox.setWindowTitle("Delete Markups in this list?");
+    deleteAllMsgBox.setWindowTitle("Delete control points in this list?");
     QString labelText = QString("Delete ")
       + QString::number(rows.size())
-        + QString(" Markups from this list?");
+        + QString(" control points from this list?");
     // don't show again check box conflicts with informative text, so use
     // a long text
     deleteAllMsgBox.setText(labelText);
