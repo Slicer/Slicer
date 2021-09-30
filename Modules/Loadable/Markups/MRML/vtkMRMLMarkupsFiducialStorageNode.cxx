@@ -304,6 +304,12 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
     return false;
     }
 
+  if (pointIndex >= markupsNode->GetMaximumNumberOfControlPoints())
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: index beyond control point maximum");
+    return false;
+    }
+
   if (this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemRAS
     && this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemLPS)
     {
@@ -397,6 +403,12 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
     {
     vtkVector3d point(0, 0, 0);
     markupsNode->AddControlPoint(point);
+    }
+
+  if (markupsNode->GetNthControlPoint(pointIndex) == nullptr)
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: could not get/add control point");
+    return false;
     }
 
   if (id.empty())
