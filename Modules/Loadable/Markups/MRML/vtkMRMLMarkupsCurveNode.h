@@ -38,8 +38,10 @@ class vtkAssignAttribute;
 class vtkCallbackCommand;
 class vtkCleanPolyData;
 class vtkCurveMeasurementsCalculator;
+class vtkOBBTree;
 class vtkPassThroughFilter;
 class vtkPlane;
+class vtkProjectMarkupsCurvePointsFilter;
 class vtkTransformPolyDataFilter;
 class vtkTriangleFilter;
 
@@ -158,7 +160,7 @@ public:
   /// maximumSearchRadius is valid in the range between 0 and 1.
   /// returns true if successful, false in case of error
   static bool ConstrainPointsToSurface(vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
-    vtkPoints* surfacePoints, double maximumSearchRadius=.25);
+      vtkPoints* surfacePoints, double maximumSearchRadius=.25);
 
   /// Resample control points to have equal distances in the world coordinate system.
   void ResampleCurveWorld(double controlPointDistance);
@@ -242,22 +244,36 @@ public:
   void SetCurveTypeToShortestDistanceOnSurface(vtkMRMLModelNode* modelNode=nullptr);
 
   /// Node reference role for the surface that is used in the shortest surface distance curve type
-  const char* GetShortestDistanceSurfaceNodeReferenceRole() { return "shortestDistanceSurface"; };
-  const char* GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName() { return "shortestDistanceSurfaceRef"; };
+  /// \deprecated GetShortestDistanceSurfaceNodeReferenceRole
+  /// \sa GetSurfaceConstraintNodeReferenceRole
+  const char* GetShortestDistanceSurfaceNodeReferenceRole() { return this->GetSurfaceConstraintNodeReferenceRole(); }
+  /// \deprecated GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName
+  /// \sa GetSurfaceConstraintNodeReferenceMRMLAttributeName
+  const char* GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName() { return this->GetSurfaceConstraintNodeReferenceMRMLAttributeName(); }
+
+  const char* GetSurfaceConstraintNodeReferenceRole() { return "shortestDistanceSurface"; }
+  const char* GetSurfaceConstraintNodeReferenceMRMLAttributeName() { return "shortestDistanceSurfaceRef"; };
 
   /// The model node that is used as the surface mesh for finding the shortest distance path on the surface mesh.
   /// Used by the ShortestDistanceOnSurface curve type.
-  void SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode* modelNode);
-  vtkMRMLModelNode* GetShortestDistanceSurfaceNode();
+  /// \deprecated SetAndObserveShortestDistanceSurfaceNode
+  /// \sa SetAndObserveSurfaceNode
+  void SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode* modelNode) { this->SetAndObserveSurfaceNode(modelNode); }
+  /// \deprecated GetShortestDistanceSurfaceNode
+  /// \sa GetSurfaceNode
+  vtkMRMLModelNode* GetShortestDistanceSurfaceNode() { return this->GetSurfaceNode(); }
 
-  /// The method that should be used to combine the distance with the scalar value.
+  void SetAndObserveSurfaceNode(vtkMRMLModelNode* modelNode);
+  vtkMRMLModelNode* GetSurfaceNode();
+
+  /// The method that should be used to combine the distance with the scalar value for ShortestDistanceOnSurface curve type.
   /// Uses the COST_FUNCTION_X enums from vtkSlicerDijkstraGraphGeodesicPath.
   int GetSurfaceCostFunctionType();
   void SetSurfaceCostFunctionType(int surfaceCostFunctionType);
   static const char* GetSurfaceCostFunctionTypeAsString(int surfaceCostFunctionType);
   static int GetSurfaceCostFunctionTypeFromString(const char* name);
 
-  /// The scalar weight function that is used for modifying the weight on each vertex.
+  /// The scalar weight function that is used for modifying the weight on each vertex for ShortestDistanceOnSurface curve type.
   /// The the currently active point scalar array is available as the "activeScalar" variable.
   const char* GetSurfaceDistanceWeightingFunction();
   void SetSurfaceDistanceWeightingFunction(const char* function);
@@ -308,6 +324,49 @@ protected:
 
   /// Callback function observing curvature measurement modified events to propagate enabled state
   static void OnCurvatureMeasurementModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+
+private:
+  bool ProjectPointsToSurface(vtkMRMLModelNode* modelNode, double maximumSearchRadiusTolerance, vtkPoints* interpolatedPoints, vtkPoints* outputPoints, bool resampling = false);
+
+  static bool ConstrainPointsToSurfaceImpl(vtkOBBTree* surfaceObbTree, vtkPointLocator* pointLocator,
+      vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
+      vtkPoints* surfacePoints, double maximumSearchRadius=.25);
+
+  friend class vtkProjectMarkupsCurvePointsFilter;
+  vtkSmartPointer<vtkProjectMarkupsCurvePointsFilter> ProjectPointsFilter;
+
+  class PointProjectionHelper
+  {
+  public:
+    void SetModel(vtkMRMLModelNode* model);
+    vtkSmartPointer<vtkPoints> GetPointNormals(vtkPoints* points, vtkPoints* controlPoints);
+    vtkSmartPointer<vtkPointLocator> GetPointLocator();
+    vtkSmartPointer<vtkOBBTree> GetObbTree();
+    vtkSmartPointer<vtkPolyData> GetSurfacePolyData();
+
+  private:
+    struct CacheItem
+    {
+      // double point[3];
+      double normal[3];
+      double segmentStartPoint[3];
+      double segmentEndPoint[3];
+    };
+
+    using MappablePoint = std::array<double, 3>;
+    std::map<MappablePoint, CacheItem> Cache;
+    vtkMRMLModelNode* Model;
+    vtkMTimeType LastModelModifiedTime;
+    vtkMTimeType LastTransformModifiedTime;
+    vtkSmartPointer<vtkDataArray> ModelNormalVectorArray;
+    vtkSmartPointer<vtkPointLocator> ModelPointLocator;
+    vtkSmartPointer<vtkOBBTree> ModelObbTree;
+    vtkSmartPointer<vtkPolyData> SurfacePolyData;
+
+    bool UpdateAll();
+  };
+
+  PointProjectionHelper PointProjection;
 };
 
 #endif

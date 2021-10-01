@@ -68,7 +68,6 @@ vtkCurveGenerator::vtkCurveGenerator()
   this->Modified();
 
   // local storage variables
-  this->SurfaceCellLocator = vtkSmartPointer<vtkCellLocator>::New();
   this->SurfacePointLocator = vtkSmartPointer<vtkPointLocator>::New();
   this->SurfacePathFilter = vtkSmartPointer<vtkSlicerDijkstraGraphGeodesicPath>::New();
   this->SurfacePathFilter->StopWhenEndReachedOn();
@@ -547,7 +546,7 @@ int vtkCurveGenerator::GeneratePoints(vtkPoints* inputPoints, vtkPolyData* input
   case vtkCurveGenerator::CURVE_TYPE_KOCHANEK_SPLINE:
   case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
     {
-    if (!this->GeneratePointsFromFunction(inputPoints, inputSurface, outputPoints, outputPedigreeIdArray))
+    if (!this->GeneratePointsFromFunction(inputPoints, outputPoints, outputPedigreeIdArray))
       {
       return 0;
       }
@@ -572,7 +571,7 @@ int vtkCurveGenerator::GeneratePoints(vtkPoints* inputPoints, vtkPolyData* input
 }
 
 //------------------------------------------------------------------------------
-int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray)
+int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray)
 {
   int numberOfInputPoints = inputPoints->GetNumberOfPoints();
   int numberOfSegments = 0;
@@ -628,34 +627,13 @@ int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPol
   outputPedigreeIdArray->Reset();
   outputPedigreeIdArray->FillComponent(0, 0.0);
 
-  if (inputSurface)
-    {
-    this->SurfaceCellLocator->SetDataSet(inputSurface);
-    this->SurfaceCellLocator->BuildLocator();
-    }
-
   double previousPoint[3] = { 0.0 };
   for (int pointIndex = 0; pointIndex < totalNumberOfPoints; pointIndex++)
     {
     double sampleParameter = double(pointIndex) / ((double)(totalNumberOfPoints - 1));
     double curvePoint[3];
     this->ParametricFunction->Evaluate(&sampleParameter, curvePoint, nullptr);
-
-    if (inputSurface)
-      {
-      vtkIdType cellId = -1;
-      double closestCurvePointDist2 = VTK_DOUBLE_MAX;
-      int subId = -1;
-      double closestCurvePoint[3] = { 0.0 };
-      // adjust curvePoint to be on the surface
-      this->SurfaceCellLocator->FindClosestPoint(curvePoint, closestCurvePoint, cellId, subId, closestCurvePointDist2);
-      outputPoints->InsertNextPoint(closestCurvePoint);
-      }
-    else
-      {
-      outputPoints->InsertNextPoint(curvePoint);
-      }
-
+    outputPoints->InsertNextPoint(curvePoint);
     if (pointIndex > 0)
       {
       double segmentLength = sqrt(vtkMath::Distance2BetweenPoints(previousPoint, curvePoint));

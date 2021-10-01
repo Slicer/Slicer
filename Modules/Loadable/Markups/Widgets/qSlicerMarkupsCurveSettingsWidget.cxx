@@ -230,7 +230,7 @@ void qSlicerMarkupsCurveSettingsWidget::updateWidgetFromMRML()
     d->curveTypeComboBox->setCurrentIndex(d->curveTypeComboBox->findData(markupsCurveNode->GetCurveType()));
     d->curveTypeComboBox->blockSignals(wasBlocked);
 
-    vtkMRMLModelNode* modelNode = markupsCurveNode->GetShortestDistanceSurfaceNode();
+    vtkMRMLModelNode* modelNode = markupsCurveNode->GetSurfaceNode();
     wasBlocked = d->modelNodeSelector->blockSignals(true);
     d->modelNodeSelector->setCurrentNode(modelNode);
     d->modelNodeSelector->blockSignals(wasBlocked);
@@ -301,7 +301,7 @@ void qSlicerMarkupsCurveSettingsWidget::onCurveTypeParameterChanged()
 
   MRMLNodeModifyBlocker blocker(curveNode);
   curveNode->SetCurveType(d->curveTypeComboBox->currentData().toInt());
-  curveNode->SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode::SafeDownCast(d->modelNodeSelector->currentNode()));
+  curveNode->SetAndObserveSurfaceNode(vtkMRMLModelNode::SafeDownCast(d->modelNodeSelector->currentNode()));
   std::string functionString = d->scalarFunctionLineEdit->text().toStdString();
   curveNode->SetSurfaceCostFunctionType(d->costFunctionComboBox->currentData().toInt());
   curveNode->SetSurfaceDistanceWeightingFunction(functionString.c_str());
@@ -339,7 +339,7 @@ void qSlicerMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked(
     outputNode->SetControlPointLabels(originalLabels, originalControlPoints);
     outputNode->SetCurveType(inputNode->GetCurveType());
     outputNode->SetNumberOfPointsPerInterpolatingSegment(inputNode->GetNumberOfPointsPerInterpolatingSegment());
-    outputNode->SetAndObserveShortestDistanceSurfaceNode(inputNode->GetShortestDistanceSurfaceNode());
+    outputNode->SetAndObserveSurfaceNode(inputNode->GetSurfaceNode());
     outputNode->SetSurfaceCostFunctionType(inputNode->GetSurfaceCostFunctionType());
     outputNode->SetSurfaceDistanceWeightingFunction(inputNode->GetSurfaceDistanceWeightingFunction());
     }
