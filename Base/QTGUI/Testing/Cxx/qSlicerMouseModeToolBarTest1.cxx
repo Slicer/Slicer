@@ -9,6 +9,7 @@
 #include "qSlicerMouseModeToolBar.h"
 
 // MRML includes
+#include <vtkMRMLCoreTestingMacros.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
@@ -20,18 +21,55 @@
 
 // STD includes
 
+#define CHECK_PLACE_ACTION_TEXT(expected, mouseToolBar) \
+  { \
+  QString activeActionText; \
+  activeActionText = activePlaceActionText(mouseToolBar); \
+  std::cout << "Line " << __LINE__ << " Active place action text = " << qPrintable(activeActionText) << std::endl; \
+  if (activeActionText.compare(QString(expected)) != 0) \
+    { \
+    std::cerr << "Line " << __LINE__ << " Error: Expected active action text of '" << #expected << "', got '" \
+      << qPrintable(activeActionText) << "'" << std::endl; \
+    return EXIT_FAILURE; \
+    } \
+  };
+
 QString activePlaceActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 {
+  QAction* placeAction = mouseModeToolBar.actions()[2];
+  if (!placeAction->isEnabled())
+    {
+    return QString();
+    }
+  return placeAction->text();
+  /*
+  return mouseModeToolBar.actions()[2]->text();
   foreach(QAction* action, mouseModeToolBar.actions())
     {
-    if (action->objectName() == QString("PlaceWidgetAction"))
+    if (action->objectName() == QString("ToolBarAction"))
       {
       return action->text();
       break;
       }
     }
   return QString();
+  */
 }
+
+QString getActiveActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
+  {
+  foreach(QAction * action, mouseModeToolBar.actions())
+    {
+    std::cout << "action name: " << qPrintable(action->objectName()) << std::endl;;
+    if (action->isChecked())
+      {
+      return action->text();
+      break;
+      }
+
+    }
+  return QString();
+  }
 
 int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
 {
@@ -40,11 +78,15 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
 
   // set the scene without the app logic
   vtkMRMLScene* scene = vtkMRMLScene::New();
+
+  // Check that setting a scene without interaction node does not cause any problem
+  // (it may log messages that interaction node is not found)
   mouseToolBar.setMRMLScene(scene);
 
-  // now reset it to null and set with app logic
-  vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New();
+  // Now reset scene in the toolbar to null and set the scene again now after app logic
+  // adds interaction and selection nodes.
   mouseToolBar.setMRMLScene(nullptr);
+  vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New();
   appLogic->SetMRMLScene(scene);
   mouseToolBar.setApplicationLogic(appLogic);
   mouseToolBar.setMRMLScene(scene);
@@ -58,113 +100,60 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
   // without a qSlicerApplication, setting the cursor is a noop
   mouseToolBar.changeCursorTo(QCursor(Qt::BusyCursor));
 
-  QString activeActionText;
-  activeActionText = activePlaceActionText(mouseToolBar);
-  std::cout << "Active action text = " << qPrintable(activeActionText) << std::endl;
+  CHECK_PLACE_ACTION_TEXT("Toggle Markups Toolbar", mouseToolBar);
 
   // get the selection and interaction nodes that the mouse mode tool bar
   // listens to
-  vtkMRMLNode *mrmlNode;
-  vtkMRMLSelectionNode *selectionNode = nullptr;
-  //QString activeActionText;
-  mrmlNode = scene->GetNodeByID("vtkMRMLSelectionNodeSingleton");
-  if (mrmlNode)
-    {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(mrmlNode);
-    }
-  if (selectionNode)
-    {
-    std::cout << "Got selection node" << std::endl;
-    // add the new annotation types to it
-    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png", "Fiducial");
-    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
-    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsFiducialNode", ":/Icons/MarkupsFiducialMouseModePlace.png");
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+    scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  CHECK_NOT_NULL(selectionNode);
 
-    selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationFiducialNode");
-    activeActionText = activePlaceActionText(mouseToolBar);
-    std::cout << "After setting selection node activeplace node class name to "
-              << selectionNode->GetActivePlaceNodeClassName()
-              << ", mouse tool bar active action text = "
-              << qPrintable(activeActionText) << std::endl;
-    if (activeActionText.compare(QString("Place Fiducial")) != 0)
-      {
-      std::cerr << "Error! Expected active action text of 'Fiducial', got '"
-                << qPrintable(activeActionText) << "'" << std::endl;
-      return EXIT_FAILURE;
-      }
+  // add markups/annotation
+  selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsFiducialNode", ":/Icons/MarkupsFiducialMouseModePlace.png", "Point List");
+  selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsCurveNode", ":/Icons/MarkupsCurveMouseModePlace.png", "Curve");
+  selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png", "ROI");
+  selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
 
-    selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationRulerNode");
-    activeActionText = activePlaceActionText(mouseToolBar);
-    std::cout << "After setting selection node active place node class name to "
-              << selectionNode->GetActivePlaceNodeClassName()
-              << ", mouse tool bar active action text = "
-              << qPrintable(activeActionText) << std::endl;
-    if (activeActionText.compare(QString("Place Ruler")) != 0)
-        {
-        std::cerr << "Error! Expected active action text of 'Ruler', got '"
-                  << qPrintable(activeActionText) << "'" << std::endl;
-        return EXIT_FAILURE;
-        }
+  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
+  selectionNode->SetActivePlaceNodeID("vtkMRMLMarkupsFiducialNode1");
+  selectionNode->SetActivePlaceNodePlacementValid(true);
+  CHECK_PLACE_ACTION_TEXT("Point List", mouseToolBar);
 
-    // test with no action text
-    selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
-    activeActionText = activePlaceActionText(mouseToolBar);
-    std::cout << __LINE__ << ": After setting selection node active place node class name to "
-              << selectionNode->GetActivePlaceNodeClassName()
-              << ", mouse tool bar active action text = '"
-              << qPrintable(activeActionText) << "'" << std::endl;
-    if (activeActionText.compare(QString("Place")) != 0)
-      {
-      std::cerr << "Error! Expected active action text of '', got '"
-                << qPrintable(activeActionText) << "'" << std::endl;
-      return EXIT_FAILURE;
-      }
-    }
+  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsCurveNode");
+  selectionNode->SetActivePlaceNodeID("vtkMRMLMarkupsCurveNode1");
+  selectionNode->SetActivePlaceNodePlacementValid(true);
+  CHECK_PLACE_ACTION_TEXT("Curve", mouseToolBar);
 
-  vtkMRMLInteractionNode *interactionNode = nullptr;
-  mrmlNode = scene->GetNodeByID("vtkMRMLInteractionNodeSingleton");
-  if (mrmlNode)
-    {
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast(mrmlNode);
-    }
-  if (interactionNode)
-    {
-    std::cout << "Got interaction node" << std::endl;
-    interactionNode->SetPlaceModePersistence(1);
-    interactionNode->SetPlaceModePersistence(0);
-    interactionNode->SwitchToSinglePlaceMode();
-    if (selectionNode)
-      {
-      selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationFiducialNode");
-      activeActionText = activePlaceActionText(mouseToolBar);
-      std::cout << __LINE__ << ": After setting selection node active place node class name to "
-                << selectionNode->GetActivePlaceNodeClassName()
-                << ", mouse tool bar active action text = "
-                << qPrintable(activeActionText) << std::endl;
-      if (activeActionText.compare(QString("Place Fiducial")) != 0)
-        {
-        std::cerr << "Error! Expected active action text of 'Fiducial', got '"
-                  << qPrintable(activeActionText) << "'" << std::endl;
-        return EXIT_FAILURE;
-        }
-      }
-    interactionNode->SwitchToViewTransformMode();
-    activeActionText = activePlaceActionText(mouseToolBar);
-    std::cout << __LINE__ << ": After switching interaction node to view transform, active action text = " << qPrintable(activeActionText) << std::endl;
-    // after a change in the tool bar (removed the Rotate action), this should still
-    // be fiducial.
-    if (activeActionText.compare(QString("Place Fiducial")) != 0)
-      {
-      std::cerr << "Error! Expected active action text of 'Fiducial', got '" << qPrintable(activeActionText) << "'" << std::endl;
-      return EXIT_FAILURE;
-      }
-    }
+  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationROINode");
+  selectionNode->SetActivePlaceNodeID("vtkMRMLAnnotationROINode1");
+  selectionNode->SetActivePlaceNodePlacementValid(true);
+  CHECK_PLACE_ACTION_TEXT("ROI", mouseToolBar);
 
+  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationRulerNode");
+  selectionNode->SetActivePlaceNodeID("vtkMRMLAnnotationRulerNode1");
+  selectionNode->SetActivePlaceNodePlacementValid(true);
+  CHECK_PLACE_ACTION_TEXT("Ruler", mouseToolBar);
+
+  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
+  selectionNode->SetActivePlaceNodeID("vtkMRMLMarkupsFiducialNode1");
+  selectionNode->SetActivePlaceNodePlacementValid(true);
+  CHECK_PLACE_ACTION_TEXT("Point List", mouseToolBar);
+
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+    scene->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+  CHECK_NOT_NULL(interactionNode);
+
+  interactionNode->SetPlaceModePersistence(1);
+  interactionNode->SetPlaceModePersistence(0);
+  interactionNode->SwitchToSinglePlaceMode();
+  CHECK_PLACE_ACTION_TEXT("Point List", mouseToolBar);
+
+  interactionNode->SwitchToViewTransformMode();
+  CHECK_PLACE_ACTION_TEXT("Point List", mouseToolBar);
 
   // clean up
   appLogic->Delete();
   scene->Delete();
-
 
   return EXIT_SUCCESS;
 }
