@@ -41,18 +41,20 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [pydicom]
-  pydicom==2.1.2 --hash=sha256:d97f53a7b269dbd7414d18342f1b70f80d7d35dc4e479316bab146daac0e0c15
+  pydicom==2.2.1 --hash=sha256:444b5b7289135ff5ea76dfc69d3597dcfde1cd050ca387f709d777f35701242d
   # [/pydicom]
   # [Pillow]
   # Hashes correspond to the following packages:
-  #  - Pillow-8.2.0-cp36-cp36m-macosx_10_10_x86_64.whl
-  #  - Pillow-8.2.0-cp36-cp36m-manylinux1_x86_64.whl
-  #  - Pillow-8.2.0-cp36-cp36m-manylinux2014_aarch64.whl
-  #  - Pillow-8.2.0-cp36-cp36m-win_amd64.whl
-  Pillow==8.2.0 --hash=sha256:dc38f57d8f20f06dd7c3161c59ca2c86893632623f33a42d592f097b00f720a9 \
-                --hash=sha256:8bb1e155a74e1bfbacd84555ea62fa21c58e0b4e7e6b20e4447b8d07990ac78b \
-                --hash=sha256:c5236606e8570542ed424849f7852a0ff0bce2c4c8d0ba05cc202a5a9c97dee9 \
-                --hash=sha256:5afe6b237a0b81bd54b53f835a153770802f164c5570bab5e005aad693dab87f
+  #  - Pillow-8.3.2-cp36-cp36m-macosx_10_10_x86_64.whl
+  #  - Pillow-8.3.2-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - Pillow-8.3.2-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - Pillow-8.3.2-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl
+  #  - Pillow-8.3.2-cp36-cp36m-win_amd64.whl
+  Pillow==8.3.2 --hash=sha256:11eb7f98165d56042545c9e6db3ce394ed8b45089a67124298f0473b29cb60b2 \
+                --hash=sha256:2f23b2d3079522fdf3c09de6517f625f7a964f916c956527bed805ac043799b8 \
+                --hash=sha256:e5a31c07cea5edbaeb4bdba6f2b87db7d3dc0f446f379d907e51cc70ea375629 \
+                --hash=sha256:8f284dc1695caf71a74f24993b7c7473d77bc760be45f776a2c2f4e04c170550 \
+                --hash=sha256:a048dad5ed6ad1fad338c02c609b862dfaa921fcd065d747194a6805f91f2196
   # [/Pillow]
   # [six]
   six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
@@ -61,7 +63,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
   # [/retrying]
   # [dicomweb-client]
-  dicomweb-client==0.52.0 --hash=sha256:2fd1e6f599198246ca082f25561dce406d9ec32fda0bcec757910c79481e54c9
+  dicomweb-client==0.53.0 --hash=sha256:f68434122d1ec02fdb35e37ce355d8c511183d79f1752b50cf53517c6d9be1d0
   # [/dicomweb-client]
   ]===])
 

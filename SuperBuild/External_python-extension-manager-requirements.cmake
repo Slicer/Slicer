@@ -46,10 +46,10 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   smmap==4.0.0 --hash=sha256:a9a7479e4c572e2e775c404dcd3080c8dc49f39918c2cf74913d30c4c478e3c2
   # [/smmap]
   # [typing-extensions]
-  typing-extensions==3.10.0.0 --hash=sha256:779383f6086d90c99ae41cf0ff39aac8a7937a9283ce0a414e5dd782f4c94a84
+  typing-extensions==3.10.0.2 --hash=sha256:f1d25edafde516b146ecd0613dabcc61409817af4766fbbcfb8d1ad4ec441a34
   # [/typing-extensions]
   # [GitPython]
-  GitPython==3.1.17 --hash=sha256:29fe82050709760081f588dd50ce83504feddbebdc4da6956d02351552b1c135
+  GitPython==3.1.18 --hash=sha256:fce760879cd2aebd2991b3542876dc5c4a909b30c9d69dfc488e504a8db37ee8
   # [/GitPython]
   # [six]
   six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
