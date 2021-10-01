@@ -253,6 +253,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
   // Set action for current interaction mode checked
   if (currentAction)
     {
+    const QSignalBlocker blocker(currentAction);
     currentAction->setChecked(true);
     }
   else
@@ -261,6 +262,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
     QAction* checkedAction = this->InteractionModesActionGroup->checkedAction();
     if (checkedAction)
       {
+      const QSignalBlocker blocker(checkedAction);
       checkedAction->setChecked(false);
       }
     }
@@ -287,20 +289,29 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
 
   int adjustWindowLevelMode = vtkMRMLWindowLevelWidget::GetAdjustWindowLevelModeFromString(
     interactionNode->GetAttribute(vtkMRMLWindowLevelWidget::GetInteractionNodeAdjustWindowLevelModeAttributeName()));
-  switch (adjustWindowLevelMode)
+    switch (adjustWindowLevelMode)
     {
     case vtkMRMLWindowLevelWidget::ModeRectangle:
+      {
+      const QSignalBlocker blocker(this->AdjustWindowLevelRegionModeAction);
       this->AdjustWindowLevelRegionModeAction->setChecked(true);
+      }
       break;
     case vtkMRMLWindowLevelWidget::ModeRectangleCentered:
+      {
+      const QSignalBlocker blocker(this->AdjustWindowLevelCenteredRegionModeAction);
       this->AdjustWindowLevelCenteredRegionModeAction->setChecked(true);
+      }
       break;
     case vtkMRMLWindowLevelWidget::ModeAdjust:
     default:
+      {
+      const QSignalBlocker blocker(this->AdjustWindowLevelAdjustModeAction);
       this->AdjustWindowLevelAdjustModeAction->setChecked(true);
+      }
       break;
     }
-
+  this->updateCursor();
 }
 
 //---------------------------------------------------------------------------
@@ -316,7 +327,6 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidget()
     this->MRMLAppLogic ? this->MRMLAppLogic->GetSelectionNode() : nullptr;
   if (!selectionNode)
     {
-
     return;
     }
   QString activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
@@ -350,7 +360,12 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidget()
     }
   q->removeAction(this->ToolBarAction);
 
-  this->PlaceWidgetAction->setIcon(QIcon(placeNodeResource));
+  QIcon icon(placeNodeResource);
+  if (icon.availableSizes().empty())
+    {
+    qWarning() << "Failed to load icon from resource " << placeNodeResource;
+    }
+  this->PlaceWidgetAction->setIcon(icon);
   this->PlaceWidgetAction->setText(placeNodeIconName);
   this->PlaceWidgetAction->setData(vtkMRMLInteractionNode::Place);
   QString tooltip = QString("Place a control point");
@@ -383,8 +398,43 @@ void qSlicerMouseModeToolBarPrivate::updateCursor()
   int currentInteractionMode = interactionNode->GetCurrentInteractionMode();
   if (currentInteractionMode != vtkMRMLInteractionNode::Place)
     {
-    interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+    if (interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform)
+      {
+      q->changeCursorTo(QCursor());
+      }
+    else
+      {
+      // Find action corresponding to current interaction mode
+      foreach(QAction * action, this->InteractionModesActionGroup->actions())
+        {
+        if (action->data().toInt() == currentInteractionMode)
+          {
+          QIcon icon = action->icon();
+          q->changeCursorTo(this->cursorFromIcon(icon));
+          break;
+          }
+        }
+      }
     return;
+    }
+
+  const char* placeNodeClassName = nullptr;
+  vtkMRMLSelectionNode* selectionNode =
+    this->MRMLAppLogic ? this->MRMLAppLogic->GetSelectionNode() : nullptr;
+  if (selectionNode)
+    {
+    placeNodeClassName = selectionNode->GetActivePlaceNodeClassName();
+    }
+  if (!placeNodeClassName)
+    {
+    q->changeCursorTo(QCursor());
+    return;
+    }
+
+  std::string resource = selectionNode->GetPlaceNodeResourceByClassName(std::string(placeNodeClassName));
+  if (!resource.empty())
+    {
+    q->changeCursorTo(QCursor(QPixmap(resource.c_str()), -1, 0));
     }
 }
 
@@ -658,7 +708,7 @@ void qSlicerMouseModeToolBar::setAdjustWindowLevelMode(int adjustWindowLevelMode
 
 //-----------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::toggleMarkupsToolBar()
-  {
+{
   QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
   if (mainWindow == nullptr)
     {
@@ -673,4 +723,4 @@ void qSlicerMouseModeToolBar::toggleMarkupsToolBar()
       toolBar->setVisible(!visibility);
       }
     }
-  }
+}
