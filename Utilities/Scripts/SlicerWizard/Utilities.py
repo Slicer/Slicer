@@ -25,7 +25,7 @@ def haveGit():
   return _haveGit
 
 try:
-  import chardet
+  from charset_normalizer import detect
   _haveCharDet = True
 
 except ImportError:
@@ -239,7 +239,7 @@ def detectEncoding(data):
   """
 
   if _haveCharDet:
-    result = chardet.detect(data)
+    result = detect(data)
     return result["encoding"], result["confidence"]
 
   else:
