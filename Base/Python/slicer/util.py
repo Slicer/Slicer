@@ -1213,16 +1213,31 @@ def setModulePanelTitleVisible(visible):
     import qt
     modulePanelDockWidget.setTitleBarWidget(qt.QWidget(modulePanelDockWidget))
 
-def setApplicationLogoVisible(visible):
-  """Show/hide application logo at the top of module panel.
+def setApplicationLogoVisible(visible=True, scaleFactor=None, icon=None):
+  """Customize appearance of the application logo at the top of module panel.
+
+  :param visible: if True then the logo is displayed, otherwise the area is left empty.
+  :param scaleFactor: specifies the displayed size of the icon. 1.0 means original size, larger value means larger displayed size.
+  :param icon: a qt.QIcon oject specifying what icon to display as application logo.
 
   If there is no main window then the function has no effect.
   """
+
   mw = mainWindow()
   if mw is None:
     return
-  widget = findChild(mw, "LogoLabel")
-  widget.setVisible(visible)
+  logoLabel = findChild(mw, "LogoLabel")
+
+  if icon is not None or scaleFactor is not None:
+    if icon is None:
+      import qt
+      icon = qt.QIcon(":/ModulePanelLogo.png")
+    if scaleFactor is None:
+      scaleFactor = 1.0
+    logo = icon.pixmap(icon.availableSizes()[0] * scaleFactor)
+    logoLabel.setPixmap(logo)
+
+  logoLabel.setVisible(visible)
 
 def setModuleHelpSectionVisible(visible):
   """Show/hide Help section at the top of module panel.
