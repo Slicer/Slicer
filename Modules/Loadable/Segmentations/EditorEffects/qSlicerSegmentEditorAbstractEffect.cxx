@@ -660,7 +660,7 @@ QCursor qSlicerSegmentEditorAbstractEffect::createCursor(qMRMLWidget* viewWidget
 {
   Q_UNUSED(viewWidget); // The default cursor is not view-specific, but this method can be overridden
 
-  QImage baseImage(":Icons/CursorBaseArrow.png");
+  QImage baseImage(":Icons/NullEffect.png");
   QIcon effectIcon(this->icon());
   if (effectIcon.isNull())
     {
@@ -670,8 +670,7 @@ QCursor qSlicerSegmentEditorAbstractEffect::createCursor(qMRMLWidget* viewWidget
 
   QImage effectImage(effectIcon.pixmap(effectIcon.availableSizes()[0]).toImage());
   int width = qMax(baseImage.width(), effectImage.width());
-  int pad = -9;
-  int height = pad + baseImage.height() + effectImage.height();
+  int height = baseImage.height() + effectImage.height();
   width = height = qMax(width,height);
   int center = width/2;
   QImage cursorImage(width, height, QImage::Format_ARGB32);
@@ -680,13 +679,21 @@ QCursor qSlicerSegmentEditorAbstractEffect::createCursor(qMRMLWidget* viewWidget
   painter.begin(&cursorImage);
   QPoint point(center - (baseImage.width()/2), 0);
   painter.drawImage(point, baseImage);
-  point.setX(center - (effectImage.width()/2));
-  point.setY(cursorImage.height() - effectImage.height());
+  int draw_x_start = center - (effectImage.width()/2);
+  int draw_y_start = cursorImage.height() - effectImage.height();
+  point.setX(draw_x_start);
+  point.setY(draw_y_start);
   painter.drawImage(point, effectImage);
+  QRectF rectangle(draw_x_start, draw_y_start, effectImage.width(), effectImage.height() - 1);
+  painter.setPen(QColor("white"));
+  painter.drawRect(rectangle);
   painter.end();
 
   QPixmap cursorPixmap = QPixmap::fromImage(cursorImage);
-  return QCursor(cursorPixmap, center, 0);
+  // NullEffect.png arrow point at 5 pixels right and 2 pixels down from upper left (0,0) location
+  int hotX = center - (baseImage.width()/2) + 5;
+  int hotY = 2;
+  return QCursor(cursorPixmap, hotX, hotY);
 }
 
 //-----------------------------------------------------------------------------

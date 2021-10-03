@@ -1,6 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file>Icons/CursorBaseArrow.png</file>
     <file>Icons/NullEffect.png</file>
     <file>Icons/Erase.png</file>
     <file>Icons/Paint.png</file>
