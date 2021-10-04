@@ -1174,7 +1174,21 @@ bool vtkSubjectHierarchyItem::RemoveChild(vtkIdType itemID)
 
   // Remove child
   this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, removedItem.GetPointer());
-  this->Children.erase(childIt);
+
+  // The iterator may be invalidated by operations in callback functions (for example, a module may
+  // delete some related items when this item is deleted), therefore we need to retrieve the item again.
+  for (childIt = this->Children.begin(); childIt != this->Children.end(); ++childIt)
+    {
+    if (itemID == (*childIt)->ID)
+      {
+      // item found
+      break;
+      }
+    }
+  if (childIt != this->Children.end())
+    {
+    this->Children.erase(childIt);
+    }
 
   // Reparent children to parent node (to avoid them becoming orphans and thus lost to the hierarchy)
   removedItem->ReparentChildrenToParent();
