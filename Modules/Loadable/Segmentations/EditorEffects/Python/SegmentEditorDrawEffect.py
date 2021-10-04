@@ -54,7 +54,9 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
     if pipeline is None:
       return abortEvent
 
-    if eventId == vtk.vtkCommand.LeftButtonPressEvent:
+    anyModifierKeyPressed = callerInteractor.GetShiftKey() or callerInteractor.GetControlKey() or callerInteractor.GetAltKey()
+
+    if eventId == vtk.vtkCommand.LeftButtonPressEvent and not anyModifierKeyPressed:
       # Make sure the user wants to do the operation, even if the segment is not visible
       confirmedEditingAllowed = self.scriptedEffect.confirmCurrentSegmentVisible()
       if confirmedEditingAllowed == self.scriptedEffect.NotConfirmed or confirmedEditingAllowed == self.scriptedEffect.ConfirmedWithDialog:
@@ -69,18 +71,22 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
       pipeline.addPoint(ras)
       abortEvent = True
     elif eventId == vtk.vtkCommand.LeftButtonReleaseEvent:
-      pipeline.actionState = ""
-      self.scriptedEffect.cursorOn(viewWidget)
-    elif eventId == vtk.vtkCommand.RightButtonPressEvent:
+      if pipeline.actionState == "drawing":
+        pipeline.actionState = "moving"
+        self.scriptedEffect.cursorOn(viewWidget)
+        abortEvent = True
+    elif eventId == vtk.vtkCommand.RightButtonPressEvent and not anyModifierKeyPressed:
+      pipeline.actionState = "finishing"
       sliceNode = viewWidget.sliceLogic().GetSliceNode()
       pipeline.lastInsertSliceNodeMTime = sliceNode.GetMTime()
       abortEvent = True
-    elif eventId == vtk.vtkCommand.RightButtonReleaseEvent or eventId==vtk.vtkCommand.LeftButtonDoubleClickEvent:
-      sliceNode = viewWidget.sliceLogic().GetSliceNode()
-      if abs(pipeline.lastInsertSliceNodeMTime - sliceNode.GetMTime()) < 2:
-        pipeline.apply()
-        pipeline.actionState = None
-      abortEvent = True
+    elif eventId == vtk.vtkCommand.RightButtonReleaseEvent or (eventId==vtk.vtkCommand.LeftButtonDoubleClickEvent and not anyModifierKeyPressed):
+      if pipeline.actionState:
+        abortEvent = (pipeline.rasPoints.GetNumberOfPoints() > 1)
+        sliceNode = viewWidget.sliceLogic().GetSliceNode()
+        if abs(pipeline.lastInsertSliceNodeMTime - sliceNode.GetMTime()) < 2:
+          pipeline.apply()
+          pipeline.actionState = ""
     elif eventId == vtk.vtkCommand.MouseMoveEvent:
       if pipeline.actionState == "drawing":
         xy = callerInteractor.GetEventPosition()

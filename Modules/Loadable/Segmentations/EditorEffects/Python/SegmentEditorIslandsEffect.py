@@ -251,7 +251,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     if viewWidget.className() != "qMRMLSliceWidget":
       return abortEvent
 
-    if eventId != vtk.vtkCommand.LeftButtonPressEvent:
+    if eventId != vtk.vtkCommand.LeftButtonPressEvent or callerInteractor.GetShiftKey() or callerInteractor.GetControlKey() or callerInteractor.GetAltKey():
       return abortEvent
 
     # Make sure the user wants to do the operation, even if the segment is not visible

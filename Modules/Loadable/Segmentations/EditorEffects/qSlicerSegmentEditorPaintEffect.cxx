@@ -1103,6 +1103,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     }
 
   bool shiftKeyPressed = callerInteractor->GetShiftKey();
+  bool anyModifierKeyPressed = (callerInteractor->GetShiftKey() || callerInteractor->GetControlKey() || callerInteractor->GetAltKey());
 
   // Process events that do not provide event position (or we don't need event position)
   double scaleDiameterRequested = -1.0; // <0 means no scale change is requested
@@ -1195,7 +1196,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
 
   bool abortEvent = false;
 
-  if (worldPositionValid && eid == vtkCommand::LeftButtonPressEvent && !shiftKeyPressed)
+  if (worldPositionValid && eid == vtkCommand::LeftButtonPressEvent && !anyModifierKeyPressed)
     {
     if (this->m_AlwaysErase)
       {
@@ -1280,6 +1281,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
 
       this->paintApply(viewWidget);
       d->IsPainting = false;
+      abortEvent = true;
       }
     //this->cursorOn(sliceWidget);
     }

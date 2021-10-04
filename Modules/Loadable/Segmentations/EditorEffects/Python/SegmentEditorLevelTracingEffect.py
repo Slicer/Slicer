@@ -55,7 +55,9 @@ follows the same intensity value back to the starting point within the current s
     if pipeline is None:
       return abortEvent
 
-    if eventId == vtk.vtkCommand.LeftButtonPressEvent:
+    anyModifierKeyPressed = callerInteractor.GetShiftKey() or callerInteractor.GetControlKey() or callerInteractor.GetAltKey()
+
+    if eventId == vtk.vtkCommand.LeftButtonPressEvent and not anyModifierKeyPressed:
       # Make sure the user wants to do the operation, even if the segment is not visible
       if not self.scriptedEffect.confirmCurrentSegmentVisible():
         return abortEvent
@@ -77,10 +79,6 @@ follows the same intensity value back to the starting point within the current s
         pipeline.preview(xy)
         abortEvent = True
         self.lastXY = xy
-    elif eventId == vtk.vtkCommand.RightButtonPressEvent or eventId == vtk.vtkCommand.MiddleButtonPressEvent:
-      pipeline.actionState = 'interacting'
-    elif eventId == vtk.vtkCommand.RightButtonReleaseEvent or eventId == vtk.vtkCommand.MiddleButtonReleaseEvent:
-      pipeline.actionState = ''
     elif eventId == vtk.vtkCommand.EnterEvent:
       pipeline.actor.VisibilityOn()
     elif eventId == vtk.vtkCommand.LeaveEvent:

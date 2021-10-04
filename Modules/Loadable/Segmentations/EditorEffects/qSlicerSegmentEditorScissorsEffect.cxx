@@ -1375,7 +1375,9 @@ bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(
     return abortEvent;
     }
 
-  if (eid == vtkCommand::LeftButtonPressEvent)
+  bool anyModifierKeyPressed = (callerInteractor->GetShiftKey() || callerInteractor->GetControlKey() || callerInteractor->GetAltKey());
+
+  if (eid == vtkCommand::LeftButtonPressEvent && !anyModifierKeyPressed)
     {
     // Warn the user if current segment is not visible
     int confirmedEditingAllowed = this->confirmCurrentSegmentVisible();
@@ -1407,21 +1409,24 @@ bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(
     }
   else if (eid == vtkCommand::LeftButtonReleaseEvent)
     {
-    pipeline->IsDragging = false;
-    vtkVector2i eventPosition;
-    callerInteractor->GetEventPosition(eventPosition[0], eventPosition[1]);
-    d->updateGlyphWithNewPosition(pipeline, eventPosition, true);
-    //this->cursorOn(viewWidget);
-
-    // Paint on modifier labelmap
-    vtkCellArray* lines = pipeline->PolyData->GetLines();
-    vtkOrientedImageData* modifierLabelmap = defaultModifierLabelmap();
-    if (lines->GetNumberOfCells() > 0 && modifierLabelmap)
+    if (pipeline->IsDragging)
       {
-      d->paintApply(viewWidget);
-      qSlicerSegmentEditorAbstractEffect::scheduleRender(viewWidget);
+      pipeline->IsDragging = false;
+      vtkVector2i eventPosition;
+      callerInteractor->GetEventPosition(eventPosition[0], eventPosition[1]);
+      d->updateGlyphWithNewPosition(pipeline, eventPosition, true);
+      //this->cursorOn(viewWidget);
+
+      // Paint on modifier labelmap
+      vtkCellArray* lines = pipeline->PolyData->GetLines();
+      vtkOrientedImageData* modifierLabelmap = defaultModifierLabelmap();
+      if (lines->GetNumberOfCells() > 0 && modifierLabelmap)
+        {
+        d->paintApply(viewWidget);
+        qSlicerSegmentEditorAbstractEffect::scheduleRender(viewWidget);
+        }
+      abortEvent = true;
       }
-    abortEvent = true;
     }
   return abortEvent;
 }
