@@ -242,7 +242,7 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject *caller,
       {
       activeMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(activeMarkupsNodeID.c_str()));
       }
-    if (this->Internal->ActiveMarkupsNode != activeMarkupsNode)
+    if (this->Internal->ActiveMarkupsNode.GetPointer() != activeMarkupsNode)
       {
       // Active placement mode changed, add an observer to the markups node so that
       // we get notified about any control point number or state changes,
@@ -261,7 +261,7 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject *caller,
       }
     }
 
-  if (caller == this->Internal->ActiveMarkupsNode && this->GetMRMLScene())
+  if (caller == this->Internal->ActiveMarkupsNode.GetPointer() && this->GetMRMLScene())
     {
     // Markup control points are placed, update the selection node to indicate if placement of more control points is allowed.
     this->Internal->UpdatePlacementValidInSelectionNode();
