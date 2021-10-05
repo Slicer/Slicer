@@ -749,7 +749,7 @@ protected:
   int RequiredNumberOfControlPoints{0};
   /// Used for limiting number of control points that may be placed.
   /// This is a hard limit at which new control points cannot be added.
-  int MaximumNumberOfControlPoints{0};
+  int MaximumNumberOfControlPoints{-1};
 
   bool CurveClosed{false};
 

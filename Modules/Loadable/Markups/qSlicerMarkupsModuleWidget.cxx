@@ -1477,8 +1477,8 @@ void qSlicerMarkupsModuleWidget::onAddMarkupPushButtonClicked()
     return;
     }
   // get the active node
-  bool definedStatus = d->MarkupsNode->GetMaximumNumberOfControlPoints() != 0;
-  if ((d->MarkupsNode->GetNumberOfControlPoints() >= d->MarkupsNode->GetMaximumNumberOfControlPoints()) && definedStatus)
+  if ((d->MarkupsNode->GetNumberOfControlPoints() >= d->MarkupsNode->GetMaximumNumberOfControlPoints()) &&
+       d->MarkupsNode->GetMaximumNumberOfControlPoints() >= 0)
     {
     return;
     }

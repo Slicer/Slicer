@@ -53,7 +53,7 @@ void vtkMRMLMarkupsFiducialNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -62,7 +62,12 @@ void vtkMRMLMarkupsFiducialNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLIntMacro(requiredNumberOfControlPoints, RequiredNumberOfControlPoints);
   vtkMRMLReadXMLEndMacro();
 
-  this->EndModify(disabledModify);
+  // In scenes created by Slicer version version 4.13.0 revision 30287 (built 2021 - 10 - 05).
+  // The value used to represent unlimited control points has been changed to -1.
+  if (this->MaximumNumberOfControlPoints == 0)
+    {
+    this->MaximumNumberOfControlPoints = -1;
+    }
 }
 
 //----------------------------------------------------------------------------
