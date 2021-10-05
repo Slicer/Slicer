@@ -44,7 +44,7 @@
 #include <vtkTransformPolyDataFilter.h>
 
 const int NUMBER_OF_BOX_CONTROL_POINTS = 2; // 2 points used for initial ROI definition, then removed
-const int NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS = 1e6; // Any number of points
+const int NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS = -1; // Any number of points
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsROINode);
@@ -55,7 +55,7 @@ vtkMRMLMarkupsROINode::vtkMRMLMarkupsROINode()
   this->PropertiesLabelText = "";
 
   this->RequiredNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
-  this->MaximumNumberOfControlPoints = 0;
+  this->MaximumNumberOfControlPoints = -1;
   this->IsUpdatingControlPointsFromROI = false;
   this->IsUpdatingROIFromControlPoints = false;
 
@@ -517,7 +517,7 @@ void vtkMRMLMarkupsROINode::SetROIType(int roiType)
     {
     case vtkMRMLMarkupsROINode::ROITypeBox:
       this->RequiredNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
-      this->MaximumNumberOfControlPoints = 0;
+      this->MaximumNumberOfControlPoints = -1;
       break;
     case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
       this->RequiredNumberOfControlPoints = NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS;

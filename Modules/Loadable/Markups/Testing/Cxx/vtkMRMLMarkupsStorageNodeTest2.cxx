@@ -94,7 +94,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   int emptyLabelIndex = -1;
   int commaIndex = -1;
   int quotesIndex = -1;
-  bool testManyPoints = markupsNode->GetMaximumNumberOfControlPoints() <= 0 || markupsNode->GetMaximumNumberOfControlPoints() > 5;
+  bool testManyPoints = markupsNode->GetMaximumNumberOfControlPoints() < 0 || markupsNode->GetMaximumNumberOfControlPoints() > 5;
   if (testManyPoints)
     {
     // and another one unsetting the label

@@ -304,7 +304,7 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
     return false;
     }
 
-  if (pointIndex >= markupsNode->GetMaximumNumberOfControlPoints())
+  if (markupsNode->GetMaximumNumberOfControlPoints() >= 0 && pointIndex >= markupsNode->GetMaximumNumberOfControlPoints())
     {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: index beyond control point maximum");
     return false;
