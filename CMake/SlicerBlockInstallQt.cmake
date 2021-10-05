@@ -7,6 +7,17 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
     "Qt5::Gui"
     )
 
+  # Multimedia Dependencies
+  if("Qt5::Multimedia" IN_LIST QT_LIBRARIES)
+    find_package(Qt5 REQUIRED
+      COMPONENTS
+        MultimediaWidgets
+      )
+    list(APPEND QT_LIBRARIES
+      "Qt5::MultimediaWidgets"
+      )
+  endif()
+
   # WebEngine Dependencies
   if("Qt5::WebEngine" IN_LIST QT_LIBRARIES)
     find_package(Qt5 REQUIRED
