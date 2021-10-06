@@ -632,8 +632,8 @@ double* vtkMRMLSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
     // No slice intersections, use slice centerpoint
     int* sliceDimension = this->Internal->SliceNode->GetDimensions();
     this->SliceIntersectionPoint[0] = sliceDimension[0] / 2.0;
-    this->SliceIntersectionPoint[0] = sliceDimension[1] / 2.0;
-    this->SliceIntersectionPoint[0] = 0.0;
+    this->SliceIntersectionPoint[1] = sliceDimension[1] / 2.0;
+    this->SliceIntersectionPoint[2] = 0.0;
     }
   return this->SliceIntersectionPoint;
 }
