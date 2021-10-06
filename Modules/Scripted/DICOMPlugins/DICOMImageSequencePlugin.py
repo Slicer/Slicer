@@ -41,6 +41,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
     self.tags['triggerTime'] = "0018,1060"
     self.tags['modality'] = "0008,0060"
     self.tags['photometricInterpretation'] = "0028,0004"
+    self.tags['orientation'] = "0020,0037"
 
     self.detailedLogging = False
 
@@ -90,6 +91,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
     canBeCineMri = True
     cineMriTriggerTimes = set()
+    cineMriImageOrientations = set()
     cineMriInstanceNumberToFilenameIndex = {}
 
     for filePath in files:
@@ -112,7 +114,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         pass
 
       instanceNumber = slicer.dicomDatabase.fileValue(filePath, self.tags['instanceNumber'])
-      if sopClassUID == '1.2.840.10008.5.1.4.1.1.4':  # MR Image Storage
+      if canBeCineMri and sopClassUID == '1.2.840.10008.5.1.4.1.1.4':  # MR Image Storage
         if not instanceNumber:
           # no instance number, probably not cine-MRI
           canBeCineMri = False
@@ -121,6 +123,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
           continue
         cineMriInstanceNumberToFilenameIndex[int(instanceNumber)] = filePath
         cineMriTriggerTimes.add(slicer.dicomDatabase.fileValue(filePath, self.tags['triggerTime']))
+        cineMriImageOrientations.add(slicer.dicomDatabase.fileValue(filePath, self.tags['orientation']))
 
       else:
         modality = slicer.dicomDatabase.fileValue(filePath, self.tags['modality'])
@@ -188,8 +191,16 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         if self.detailedLogging:
           logging.debug("Several different trigger times found ("+repr(cineMriTriggerTimes)+") - assuming this series is a cine MRI")
         # This is likely a cardiac cine acquisition.
-        # Multivolume importer sets confidence=1.0, so we need to set a bit higher confidence to be selected by default
-        loadable.confidence = 1.05
+        if len(cineMriImageOrientations) > 1:
+          if self.detailedLogging:
+            logging.debug("Several different image orientations found ("+repr(cineMriImageOrientations)+") - assuming this series is a rotational cine MRI")
+          # Multivolume importer sets confidence=0.9-1.0, so we need to set a bit higher confidence to be selected by default
+          loadable.confidence = 1.05
+        else:
+          if self.detailedLogging:
+            logging.debug("All image orientations are the same ("+repr(cineMriImageOrientations)+") - probably the MultiVolume plugin should load this")
+          # Multivolume importer sets confidence=0.9-1.0, so we need to set a bit lower confidence to allow multivolume selected by default
+          loadable.confidence = 0.85
       else:
         # This may be a 3D acquisition,so set lower confidence than scalar volume's default (0.5)
         if self.detailedLogging:
