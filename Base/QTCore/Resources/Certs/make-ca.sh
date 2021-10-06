@@ -288,6 +288,13 @@ for tempfile in ${TEMPDIR}/certs/*.tmp; do
   echo "Certificate:  ${certname}"
   echo "Keyhash:      ${keyhash}"
 
+  if [[ "${certname}" == "DST Root CA X3" ]]; then
+    echo "*************************************"
+    echo "* Skipping ${certname}"
+    echo "*************************************"
+    continue
+  fi
+
   # Import certificates trusted for SSL/TLS into
   # GnuTLS certificate bundle
   if test "${satrust}x" == "Cx"; then

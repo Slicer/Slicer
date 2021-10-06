@@ -267,6 +267,9 @@ mark_as_superbuild(Slicer_BUILD_QT_DESIGNER_PLUGINS)
 option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extensions manager" ON)
 mark_as_superbuild(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
 
+option(Slicer_BUILD_MULTIMEDIA_SUPPORT "Build Slicer with Multimedia support" ON)
+mark_as_superbuild(Slicer_BUILD_MULTIMEDIA_SUPPORT)
+
 CMAKE_DEPENDENT_OPTION(Slicer_UPDATE_TRANSLATION "update translation" OFF "Slicer_BUILD_I18N_SUPPORT" OFF)
 mark_as_advanced(Slicer_UPDATE_TRANSLATION)
 mark_as_superbuild(Slicer_UPDATE_TRANSLATION)
@@ -579,13 +582,19 @@ endif()
 # Note that the modules will be installed when packaging.
   set(Slicer_REQUIRED_QT_MODULES
     Core Widgets
-    Multimedia
     Network OpenGL
     PrintSupport # Required by "Annotations" module
     UiTools #no dll
     Xml XmlPatterns
     Svg Sql
     )
+
+  if(Slicer_BUILD_MULTIMEDIA_SUPPORT)
+    list(APPEND Slicer_REQUIRED_QT_MODULES
+      Multimedia
+      MultimediaWidgets
+      )
+  endif()
 
   # Add the Qt5X11Extras component for Linux systems
   # This component is needed for building VTK
