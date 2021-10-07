@@ -27,10 +27,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.tags['seriesDescription'] = "0008,103E"
     self.tags['instanceUID'] = "0008,0018"
     self.tags['position'] = "0020,0032"
+    self.tags['orientation'] = "0020,0037"
     self.tags['studyDescription'] = "0008,1030"
     self.tags['seriesNumber'] = "0020,0011"
     self.tags['instanceNumber'] = "0020,0013"
     self.tags['repetitionTime'] = "0018,0080"
+    self.tags['modality'] = "0008,0060"
 
     # tags used to identify multivolumes
     self.multiVolumeTags = {}
@@ -114,21 +116,18 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     allfiles = []
     for files in fileLists:
       loadables += self.examineFiles(files)
-
-      # this strategy sorts the files into groups
       loadables += self.examineFilesIPPAcqTime(files)
-
+      loadables += self.examineFilesIPPInstanceNumber(files)
       allfiles += files
 
-    # here all files are lumped into one list for the situations when
-    # individual frames should be parsed from series
-    loadables += self.examineFilesMultiseries(allfiles)
-    if len(allfiles)>len(files):
-      # only examineFilesIPPAcqTime again if there are multiple file groups
+    # Here all files are lumped into one list for the situations when
+    # individual frames should be parsed from series.
+    # Only examine again if there are multiple file groups and no loadables were found
+    # when tried loading each series separately.
+    if (not loadables) and len(allfiles)>len(files):
+      loadables += self.examineFilesMultiseries(allfiles)
       loadables += self.examineFilesIPPAcqTime(allfiles)
-
-    # this strategy sorts the files into groups
-    loadables += self.examineFilesIPPInstanceNumber(allfiles)
+      loadables += self.examineFilesIPPInstanceNumber(allfiles)
 
     # If Sequences module is available then duplicate all the loadables
     # for loading them as volume sequence.
@@ -141,8 +140,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       for loadable in loadables:
         seqLoadable = DICOMLib.DICOMLoadable()
         seqLoadable.files = loadable.files
-        seqLoadable.tooltip = loadable.tooltip.replace(' frames MultiVolume by ', ' frames Volume Sequence by ')
-        seqLoadable.name = loadable.name.replace(' frames MultiVolume by ', ' frames Volume Sequence by ')
+        seqLoadable.tooltip = loadable.tooltip.replace(' frames MultiVolume', ' frames Volume Sequence')
+        seqLoadable.name = loadable.name.replace(' frames MultiVolume', ' frames Volume Sequence')
         seqLoadable.multivolume = loadable.multivolume
         seqLoadable.selected = loadable.selected
 
@@ -169,6 +168,37 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     return loadables
 
+  def nameTooltipFromFile(self, dicomFilePath, nFrames, tagName, longTagName=None, descriptionLevel=None):
+    """
+    Get loadable name and tooltip.
+    :param descriptionLevel: 'series' (default) or 'study'
+    :return: name and tooltip text
+    """
+    seriesNumber = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags['seriesNumber'])
+    modality = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags['modality'])
+    if descriptionLevel=="study":
+      description = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags['studyDescription'])
+    else:
+      description = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags['seriesDescription'])
+
+    name = ''
+    if seriesNumber:
+      name = f'{seriesNumber}:'
+    if modality:
+      name = f'{name} {modality}'
+    if description:
+      name = f'{name} {description}'
+
+    name = f'{name} - {nFrames} frames MultiVolume by'
+
+    if longTagName is None:
+      longTagName = tagName
+
+    tooltip = f'{name} {longTagName}'
+    name = f'{name} {tagName}'
+
+    return name, tooltip
+
   def examineFilesMultiseries(self,files):
     """
     This strategy is similar to examineFiles(), but
@@ -188,23 +218,16 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     for mvNode in mvNodes:
       tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
-      nFrames = mvNode.GetNumberOfFrames()
       orderedFiles = mvNode.GetAttribute('MultiVolume.FrameFileList').split(',')
-
-      desc = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['studyDescription']) # SeriesDescription
-      num = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['seriesNumber'])
-      if num != "":
-        name = num+": "+desc
-      else:
-        name = desc
 
       if self.isFrameOriginConsistent(orderedFiles, mvNode) == False:
         continue
 
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = orderedFiles
-      loadable.tooltip =  name+' - '+str(nFrames) + ' frames MultiVolume by ' + tagName
-      loadable.name = name
+      loadable.name, loadable.tooltip = self.nameTooltipFromFile(loadable.files[0], mvNode.GetNumberOfFrames(), tagName, descriptionLevel='study')
+      desc = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['studyDescription'])
+      num = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['seriesNumber'])
       loadable.selected = True
       loadable.multivolume = mvNode
       if tagName == 'TemporalPositionIdentifier':
@@ -231,7 +254,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     frames are indexed by InstanceNumber + RepetitionTime, and files within each
     frame are ordered by IPP.
     This strategy was required to handle DSC MRI data collected on
-    some GE platforms.
+    some GE platforms, and for loading some Philips 4D cardiac cine-MRI.
     """
 
     if self.emptyTagValueFound(files,['instanceNumber','position','repetitionTime']):
@@ -240,8 +263,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     loadables = []
     subseriesLists = {}
     orderedFiles = []
-
-    desc = slicer.dicomDatabase.fileValue(files[0],self.tags['seriesDescription']) # SeriesDescription
 
     minTime = int(slicer.dicomDatabase.fileValue(files[0],self.tags['instanceNumber']))
     for file in files:
@@ -288,6 +309,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
       for f in range(nFrames):
         frameFileList = orderedFiles[f*nSlices:(f+1)*nSlices]
+        if len(frameFileList) < 2:
+          # multivolume importer does not deal with single-slice volumes (that is left to DICOMImageSequencePlugin)
+          return []
         svs = scalarVolumePlugin.examine([frameFileList])
         if len(svs)==0:
           print('Failed to parse one of the multivolume frames as scalar volume!')
@@ -327,9 +351,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = orderedFiles
-      loadable.name = desc + ' - as a ' + str(nFrames) + ' frames MultiVolume by ImagePositionPatient+InstanceNumber'
-      mvNode.SetName(desc)
-      loadable.tooltip = loadable.name
+      loadable.name, loadable.tooltip = self.nameTooltipFromFile(loadable.files[0], mvNode.GetNumberOfFrames(), 'InstanceNumber', 'ImagePositionPatient+InstanceNumber')
+      mvNode.SetName(loadable.name)
       loadable.selected = True
       loadable.multivolume = mvNode
       loadable.confidence = 1.
@@ -442,9 +465,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = orderedFiles
-      loadable.name = desc + ' - as a ' + str(nFrames) + ' frames MultiVolume by ImagePositionPatient+AcquisitionTime'
-      mvNode.SetName(desc)
-      loadable.tooltip = loadable.name
+      loadable.name, loadable.tooltip = self.nameTooltipFromFile(loadable.files[0], mvNode.GetNumberOfFrames(), 'AcquisitionTime', 'ImagePositionPatient+AcquisitionTime')
+      mvNode.SetName(loadable.name)
       loadable.selected = True
       loadable.multivolume = mvNode
       loadable.confidence = 1.
@@ -482,27 +504,17 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # first separate individual series, then try to find multivolume in each
     # of the series (code from DICOMScalarVolumePlugin)
     subseriesLists = {}
-    subseriesDescriptions = {}
 
     for file in files:
-
       value = slicer.dicomDatabase.fileValue(file,self.tags['seriesInstanceUID']) # SeriesInstanceUID
-      desc = slicer.dicomDatabase.fileValue(file,self.tags['seriesDescription']) # SeriesDescription
-
       if value == "":
         value = "Unknown"
-
-      if desc == "":
-        desc = "Unknown"
-
       if value not in subseriesLists:
         subseriesLists[value] = []
       subseriesLists[value].append(file)
-      subseriesDescriptions[value] = desc
 
     # now iterate over all subseries file lists and try to parse the
     # multivolumes
-
 
     for key in subseriesLists.keys():
 
@@ -513,7 +525,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       for mvNode in mvNodes:
         tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
-        nFrames = mvNode.GetNumberOfFrames()
         orderedFiles = mvNode.GetAttribute('MultiVolume.FrameFileList').split(',')
 
         if self.isFrameOriginConsistent(orderedFiles, mvNode) == False:
@@ -521,9 +532,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
         loadable = DICOMLib.DICOMLoadable()
         loadable.files = files
-        loadable.name = subseriesDescriptions[key] + ' - as a ' + str(nFrames) + ' frames MultiVolume by ' + tagName
-        mvNode.SetName(subseriesDescriptions[key])
-        loadable.tooltip = loadable.name
+        loadable.name, loadable.tooltip = self.nameTooltipFromFile(loadable.files[0], mvNode.GetNumberOfFrames(), tagName)
+        mvNode.SetName(loadable.name)
         loadable.selected = True
         loadable.multivolume = mvNode
         if tagName == 'TemporalPositionIdentifier':
@@ -637,6 +647,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           raise OSError(f"volume frame {frameNumber} is invalid")
 
         frame = scalarVolumePlugin.load(svLoadables[0])
+
+        # Harden the acquisition transform if there is any
+        # (for example due to varying slice spacing)
+        # and then remove the transform from the scene
+        parentTransformNode = frame.GetParentTransformNode()
+        if parentTransformNode:
+          frame.HardenTransform()
+          slicer.mrmlScene.RemoveNode(parentTransformNode)
 
         if frame == None or frame.GetImageData() == None:
           raise OSError(f"Volume frame {frameNumber} is invalid - {svLoadables[0].warning}")
@@ -875,22 +893,49 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         else:
           slicesPerFrame[numberOfSlices] = [tagValue]
 
+      if self.detailedLogging:
+        seriesNumber = slicer.dicomDatabase.fileValue(file, self.tags['seriesNumber'])
+        seriesDescription = slicer.dicomDatabase.fileValue(file, self.tags['seriesDescription'])
+        seriesInstanceUid = slicer.dicomDatabase.fileValue(file, self.tags['seriesInstanceUID'])
+        msg = f"MultiVolumeImporterPlugin: series {seriesNumber}: {seriesDescription} ({seriesInstanceUid})"
+        msg += f" is not accepted as multi-volume grouped by {frameTag} because "
+
       if len(slicesPerFrame) > 1:
         # We only accept volumes that has the same number of slices per frame.
         # There are multiple different slicesPerFrame values, therefore it is rejected.
         if self.detailedLogging:
-          seriesNumber = slicer.dicomDatabase.fileValue(file, self.tags['seriesNumber'])
-          seriesDescription = slicer.dicomDatabase.fileValue(file, self.tags['seriesDescription'])
-          seriesInstanceUid = slicer.dicomDatabase.fileValue(file, self.tags['seriesInstanceUID'])
-          msg = f"MultiVolumeImporterPlugin: series {seriesNumber}: {seriesDescription} ({seriesInstanceUid}) " + \
-                 "is not accepted as multi-volume because number of slices varies across frames."
+          msg +="number of slices varies across frames."
           for numberOfSlices in slicesPerFrame:
-            msg += f" {numberOfSlices} slices are found for {frameTag}={slicesPerFrame[numberOfSlices]}."
+            msg += f"{numberOfSlices} slices are found for {frameTag}={slicesPerFrame[numberOfSlices]}."
           logging.debug(msg)
         continue
 
-      # TODO: add a check to confirm individual frames have the same geometry
-      # (check pixel dimensions, orientation, position)
+      # Do basic check: same orientation, not repeated slice positions
+      geometryValid = True
+      for tagValue in tagValues:
+        imagePositions = set()  # must be different for each slice
+        imageOrientations = set()  # must be the same for each slice
+        frameFileList = tagValue2FileList[tagValue]
+        for file in frameFileList:
+          imagePositions.add(slicer.dicomDatabase.fileValue(file, self.tags['position']))
+          imageOrientations.add(slicer.dicomDatabase.fileValue(file, self.tags['orientation']))
+        if len(imagePositions) != len(frameFileList):
+          if self.detailedLogging:
+            msg +=  "there are multiple frames at the same position within a frame."
+            logging.debug(msg)
+          geometryValid = False
+          break
+        if len(imageOrientations) != 1:
+          if self.detailedLogging:
+            msg +=  "orientation of slices are not the same within a frame."
+            logging.debug(msg)
+          geometryValid = False
+          break
+      if not geometryValid:
+        continue
+
+      # TODO: We could do some more checks here and if acquisition geometry is complicated (varying slice spacing,
+      # dimensions, etc.) then reduce the confidence value or do not offer a loadable at all.
 
       # now this looks like a serious mv!
 
