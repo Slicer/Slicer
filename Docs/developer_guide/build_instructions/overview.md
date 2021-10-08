@@ -8,6 +8,16 @@ Slicer is based on a *superbuild* architecture. This means that the in the build
 
 As Slicer is continuously developed, build instructions may change, too. Therefore, it is recommended to use build instructions that have the same version as the source code.
 
+## Extensions for developer builds of Slicer
+
+In general, Slicer versions that a developer builds on his own computer are not expected to work with extensions in the Extensions Server.
+
+Often the Extensions Manager does not show any extensions for a developer build. The reason is that extensions are only built for one Slicer version a day, and so there are many Slicer versions for that no extensions are available.
+
+Even if the Extensions Manager is not empty, the listed extensions are not expected to be compatible with developer builds, created on a different computer, in a different build environment or build options, due to porential ABI incompatibility issues.
+
+If a developer builds the Slicer application then it is expcted that the developer will also build all the extension he needs. Building all the extensions after Slicer build is completed [is a simple one-line command](../extensions.html#build-test-and-package). It is also possible to just [build selected extensions](../extensions.md#build-an-extension).
+
 ## Custom builds
 
 Customized editions of Slicer can be generated without changing Slicer source code, just by modifying CMake variables:
