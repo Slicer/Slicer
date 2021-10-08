@@ -423,6 +423,7 @@ bool vtkMRMLMarkupsCurveNode::ConstrainPointsToSurfaceImpl(vtkOBBTree* surfaceOb
   double polydataDiagonalLength = modelBoundingBox.GetDiagonalLength();
   double rayLength = maximumSearchRadiusTolerance*sqrt(polydataDiagonalLength);
 
+  size_t noIntersectionCount = 0;
   for (vtkIdType controlPointIndex = 0; controlPointIndex < originalPoints->GetNumberOfPoints(); controlPointIndex++)
     {
     originalPoints->GetPoint(controlPointIndex, originalPoint);
@@ -451,11 +452,14 @@ bool vtkMRMLMarkupsCurveNode::ConstrainPointsToSurfaceImpl(vtkOBBTree* surfaceOb
         //if no intersection in either direction, use closest mesh point
         vtkIdType closestPointId = pointLocator->FindClosestPoint(originalPoint);
         surfacePolydata->GetPoint(closestPointId, exteriorPoint);
-        vtkGenericWarningMacro("No intersections found");
+        ++noIntersectionCount;
         }
       }
     surfacePoints->InsertNextPoint(exteriorPoint);
     }
+  if (noIntersectionCount > 0) {
+    vtkGenericWarningMacro("No intersections found for " << noIntersectionCount << " points for curve ");
+  }
   return true;
 }
 
@@ -1576,14 +1580,14 @@ bool vtkMRMLMarkupsCurveNode::PointProjectionHelper::UpdateAll()
   // and if a different model was set
   vtkMRMLTransformNode* parentTransformNode = this->Model->GetParentTransformNode();
   if (this->Model->GetMTime() != this->LastModelModifiedTime
-    || (parentTransformNode && parentTransformNode->GetMTime() != this->LastTransformModifiedTime)
+    || (parentTransformNode && parentTransformNode->GetTransformToWorldMTime() != this->LastTransformModifiedTime)
     || !this->ModelNormalVectorArray)
     {
     this->LastModelModifiedTime = this->Model->GetMTime();
     this->SurfacePolyData = this->Model->GetPolyData();
     if (parentTransformNode)
       {
-      this->LastTransformModifiedTime = parentTransformNode->GetMTime();
+      this->LastTransformModifiedTime = parentTransformNode->GetTransformToWorldMTime();
       vtkNew<vtkGeneralTransform> modelToWorldTransform;
       parentTransformNode->GetTransformToWorld(modelToWorldTransform);
       vtkNew<vtkTransformPolyDataFilter> transformPolydataFilter;
