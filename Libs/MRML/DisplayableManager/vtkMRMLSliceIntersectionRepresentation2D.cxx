@@ -608,12 +608,27 @@ double* vtkMRMLSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
         continue;
         }
       vtkLineSource* line2 = this->Internal->SliceIntersectionDisplayPipelines[slice2Index]->LineSource;
+      double* line2Point1 = line2->GetPoint1();
+      double* line2Point2 = line2->GetPoint2();
+
       double line1ParametricPosition = 0;
       double line2ParametricPosition = 0;
       if (vtkLine::Intersection(line1Point1, line1Point2,
-        line2->GetPoint1(), line2->GetPoint2(),
+        line2Point1, line2Point2,
         line1ParametricPosition, line2ParametricPosition))
         {
+        double v1[3] = {line1Point1[0] - line1Point2[0], line1Point1[1] - line1Point2[1], line1Point1[2] - line1Point2[2]};
+        double v2[3] = {line2Point1[0] - line2Point2[0], line2Point1[1] - line2Point2[1], line2Point1[2] - line2Point2[2]};
+        double angleRadBetweenTwoLines = vtkMath::AngleBetweenVectors(v1, v2);
+
+        const double angleThresholdForParallel = 3.14/60; // roughly 3 degree
+        if (angleRadBetweenTwoLines < angleThresholdForParallel)
+          {
+          // Two lines intesecting under roughly 3 degree are
+          // considered to be parallel and not counted
+          continue;
+          }
+
         this->SliceIntersectionPoint[0] += line1Point1[0] + line1ParametricPosition * (line1Point2[0] - line1Point1[0]);
         this->SliceIntersectionPoint[1] += line1Point1[1] + line1ParametricPosition * (line1Point2[1] - line1Point1[1]);
         this->SliceIntersectionPoint[2] += line1Point1[2] + line1ParametricPosition * (line1Point2[2] - line1Point1[2]);
