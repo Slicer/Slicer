@@ -233,6 +233,7 @@ public:
   QStringList ColumnNames;
 
   bool NewExtensionEnabledByDefault;
+  bool Interactive;
 
   QNetworkAccessManager NetworkManager;
   qRestAPI CheckForUpdatesApi;
@@ -264,6 +265,7 @@ public:
 qSlicerExtensionsManagerModelPrivate::qSlicerExtensionsManagerModelPrivate(qSlicerExtensionsManagerModel& object)
   : q_ptr(&object)
   , NewExtensionEnabledByDefault(true)
+  , Interactive(true)
 {
 }
 
@@ -1151,6 +1153,9 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
 // --------------------------------------------------------------------------
 // qSlicerExtensionsManagerModel methods
 
+CTK_GET_CPP(qSlicerExtensionsManagerModel, bool, interactive, Interactive);
+CTK_SET_CPP(qSlicerExtensionsManagerModel, bool, setInteractive, Interactive);
+
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModel::qSlicerExtensionsManagerModel(QObject* _parent)
   : Superclass(_parent)
@@ -1628,7 +1633,7 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
 
   QNetworkReply* const reply = task->reply();
   QUrl downloadUrl = reply->url();
-  Q_ASSERT(QUrlQuery(downloadUrl).hasQueryItem("items"));
+  Q_ASSERT(downloadUrl.path().contains("/download"));
 
   emit this->downloadFinished(reply);
 
@@ -1827,35 +1832,53 @@ bool qSlicerExtensionsManagerModel::installExtension(
       }
     }
 
+  bool success = true;
+
   // Warn about unresolved dependencies
   if (!unresolvedDependencies.isEmpty())
     {
-    QString msg = QString("<p>%1 depends on the following extensions, which could not be found:</p><ul>").arg(extensionName);
-    foreach (const QString& dependencyName, unresolvedDependencies)
+    success = false;
+    qWarning() << QString("%1 extension depends on the following extensions, which could not be found: %2")
+      .arg(extensionName)
+      .arg(unresolvedDependencies.join(", "));
+    if (d->Interactive)
       {
-      msg += QString("<li>%1</li>").arg(dependencyName);
+      QString msg = QString("<p>%1 depends on the following extensions, which could not be found:</p><ul>").arg(extensionName);
+      foreach(const QString& dependencyName, unresolvedDependencies)
+        {
+        msg += QString("<li>%1</li>").arg(dependencyName);
+        }
+      msg += "</ul><p>The extension may not function properly.</p>";
+      QMessageBox::warning(nullptr, "Unresolved dependencies", msg);
       }
-    msg += "</ul><p>The extension may not function properly.</p>";
-    QMessageBox::warning(nullptr, "Unresolved dependencies", msg);
     }
 
   // Prompt to install dependencies (if any)
   if (!dependenciesMetadata.isEmpty())
     {
-    QString msg = QString("<p>%1 depends on the following extensions:</p><ul>").arg(extensionName);
-    foreach (const QString& dependencyName, dependenciesMetadata.keys())
+    QMessageBox::StandardButton result = QMessageBox::Yes;
+    if (d->Interactive)
       {
-      msg += QString("<li>%1</li>").arg(dependencyName);
+      QString msg = QString("<p>%1 depends on the following extensions:</p><ul>").arg(extensionName);
+      foreach (const QString& dependencyName, dependenciesMetadata.keys())
+        {
+        msg += QString("<li>%1</li>").arg(dependencyName);
+        }
+      msg += "</ul><p>Would you like to install them now?</p>";
+      result = QMessageBox::question(nullptr, "Install dependencies", msg, QMessageBox::Yes | QMessageBox::No);
       }
-    msg += "</ul><p>Would you like to install them now?</p>";
-    const QMessageBox::StandardButton result =
-      QMessageBox::question(nullptr, "Install dependencies", msg,
-                            QMessageBox::Yes | QMessageBox::No);
+    else
+      {
+      QString msg = QString("The following extensions are required by %1 extension therefore they will be installed now: %2")
+        .arg(extensionName)
+        .arg(dependenciesMetadata.keys().join(", "));
+      qDebug() << msg;
+      }
 
     if (result == QMessageBox::Yes)
       {
       // Install dependencies
-      msg.clear();
+      QString msg;
       foreach (const ExtensionMetadataType& dependency, dependenciesMetadata)
         {
         bool res = this->downloadAndInstallExtension(
@@ -1863,12 +1886,20 @@ bool qSlicerExtensionsManagerModel::installExtension(
         if (!res)
           {
           msg += QString("<li>%1</li>").arg(dependency.value("extensionname").toString());
+          success = false;
           }
         }
       if (!msg.isEmpty())
         {
         d->critical(QString("Error while installing dependent extensions:<ul>%1<ul>").arg(msg));
         }
+      }
+    else
+      {
+      qWarning() << QString("%1 extension requires extensions %2 but the user chose not to install them.")
+        .arg(extensionName)
+        .arg(dependenciesMetadata.keys().join(", "));
+      success = false;
       }
     }
 
@@ -1896,7 +1927,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
     }
   d->info(msg);
 
-  return true;
+  return success;
 }
 
 // --------------------------------------------------------------------------
@@ -2108,7 +2139,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
   // Get network reply
   QNetworkReply* const reply = task->reply();
   QUrl downloadUrl = reply->url();
-  Q_ASSERT(QUrlQuery(downloadUrl).hasQueryItem("items"));
+  Q_ASSERT(downloadUrl.path().contains("/download"));
 
   // Notify observers of event
   emit this->downloadFinished(reply);
