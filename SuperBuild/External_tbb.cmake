@@ -50,6 +50,9 @@ if (WIN32)
   elseif (NOT MSVC_VERSION VERSION_GREATER 1929)
     # VS2019 is expected to be binary compatible with VS2015
     set(tbb_vsdir vc14)
+  elseif (NOT MSVC_VERSION VERSION_GREATER 1939)
+    # VS2022 is expected to be binary compatible with VS2015
+    set(tbb_vsdir vc14)
   elseif (tbb_enabled)
     message(FATAL_ERROR "TBB does not support your Visual Studio compiler. [MSVC_VERSION: ${MSVC_VERSION}]")
   endif ()
