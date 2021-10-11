@@ -243,11 +243,6 @@ void vtkMRMLAbstractViewNode::Reset(vtkMRMLNode* defaultNode)
   this->DisableModifiedEventOn();
   this->SetLayoutLabel(layoutLabel.c_str());
   this->SetViewGroup(viewGroup);
-  this->AxisLabels->Reset();
-  for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
-    {
-    this->AxisLabels->InsertNextValue(DEFAULT_AXIS_LABELS[i]);
-    }
   this->DisableModifiedEventOff();
 }
 
