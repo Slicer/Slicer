@@ -70,7 +70,7 @@ public:
   Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
   Q_INVOKABLE vtkMRMLSelectionNode* selectionNode()const;
 
-  void addNodeActions(vtkSlicerMarkupsLogic* markupsLogic);
+  void initializeToolBarLayout();
   void addCreateNodeShortcut(QString keySequence);
   void addTogglePersistenceShortcut(QString keySequence);
   void addPlacePointShortcut(QString keySequence);
@@ -78,6 +78,7 @@ public:
 public slots:
   void setApplicationLogic(vtkSlicerApplicationLogic* logic);
   virtual void setMRMLScene(vtkMRMLScene* newScene);
+  void updateToolBarLayout();
 
   /// Set the currently selected markups node.
   void setActiveMarkupsNode(vtkMRMLMarkupsNode* newActiveMarkupsNode);
