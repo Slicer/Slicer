@@ -22,6 +22,7 @@
 
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkInformation.h>
+#include <vtkWeakPointer.h>
 
 class vtkMRMLMarkupsCurveNode;
 
@@ -31,15 +32,16 @@ public:
   vtkTypeMacro(vtkProjectMarkupsCurvePointsFilter, vtkPolyDataAlgorithm);
   static vtkProjectMarkupsCurvePointsFilter* New();
 
-  inline void SetParent(vtkMRMLMarkupsCurveNode* parent)
-  {
-    this->Parent = parent;
-  }
+  /// Sets the input curve node. It does not take ownership of the node and will not extend its lifetime
+  /// If the inputCurveNode is deleted during this object's lifetime it will as if nullptr was passed
+  /// into this function.
+  void SetInputCurveNode(vtkMRMLMarkupsCurveNode* inputCurveNode);
+
 protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
   int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
 private:
-  vtkMRMLMarkupsCurveNode* Parent;
+  vtkWeakPointer<vtkMRMLMarkupsCurveNode> InputCurveNode;
 };
 
 #endif

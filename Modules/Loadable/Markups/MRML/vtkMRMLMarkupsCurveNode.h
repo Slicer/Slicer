@@ -124,7 +124,9 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsCurveNode);
 
   /// Get curve points positions in world coordinate system.
-  vtkPoints* GetCurvePointsWorld();
+  vtkPoints* GetCurvePointsWorld() override;
+  vtkPolyData* GetCurveWorld() override;
+  vtkAlgorithmOutput* GetCurveWorldConnection() override;
 
   /// Get length of the curve or a section of the curve.
   /// \param startCurvePointIndex length computation starts from this curve point index
@@ -326,10 +328,10 @@ protected:
   static void OnCurvatureMeasurementModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
 private:
-  bool ProjectPointsToSurface(vtkMRMLModelNode* modelNode, double maximumSearchRadiusTolerance, vtkPoints* interpolatedPoints, vtkPoints* outputPoints, bool resampling = false);
+  bool ProjectPointsToSurface(vtkMRMLModelNode* modelNode, double maximumSearchRadiusTolerance, vtkPoints* interpolatedPoints, vtkPoints* outputPoints);
 
   static bool ConstrainPointsToSurfaceImpl(vtkOBBTree* surfaceObbTree, vtkPointLocator* pointLocator,
-      vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
+      vtkPoints* originalPoints, vtkDoubleArray* normalVectors, vtkPolyData* surfacePolydata,
       vtkPoints* surfacePoints, double maximumSearchRadius=.25);
 
   friend class vtkProjectMarkupsCurvePointsFilter;
@@ -339,22 +341,14 @@ private:
   {
   public:
     void SetModel(vtkMRMLModelNode* model);
-    vtkSmartPointer<vtkPoints> GetPointNormals(vtkPoints* points, vtkPoints* controlPoints);
-    vtkSmartPointer<vtkPointLocator> GetPointLocator();
-    vtkSmartPointer<vtkOBBTree> GetObbTree();
-    vtkSmartPointer<vtkPolyData> GetSurfacePolyData();
+    /// Gets the point normals on the model at the points with the given controlPoints.
+    /// Both points and control points must have no outstanding transformations.
+    vtkSmartPointer<vtkDoubleArray> GetPointNormals(vtkPoints* points, vtkPoints* controlPoints);
+    vtkPointLocator* GetPointLocator();
+    vtkOBBTree* GetObbTree();
+    vtkPolyData* GetSurfacePolyData();
 
   private:
-    struct CacheItem
-    {
-      // double point[3];
-      double normal[3];
-      double segmentStartPoint[3];
-      double segmentEndPoint[3];
-    };
-
-    using MappablePoint = std::array<double, 3>;
-    std::map<MappablePoint, CacheItem> Cache;
     vtkMRMLModelNode* Model;
     vtkMTimeType LastModelModifiedTime;
     vtkMTimeType LastTransformModifiedTime;
@@ -364,6 +358,7 @@ private:
     vtkSmartPointer<vtkPolyData> SurfacePolyData;
 
     bool UpdateAll();
+    static vtkIdType GetClosestControlPointIndex(const double point[3], vtkPoints* controlPoints);
   };
 
   PointProjectionHelper PointProjection;

@@ -117,7 +117,8 @@ Curve settings section:
   - linear: control points are connected with straight line
   - spline, Kochanek spline: smooth interpolating curve
   - polynomial: smooth approximating curve
-  - shortest distance on surface: curve points are forced to be on the selected model's surface, connected with a minimal-cost path
+  - shortest distance on surface: curve points are forced to be on the selected model's surface points, connected with a minimal-cost path across the model mesh's edges
+- Constrain to Model: Model to constrain the curve to. For curve types linear, spline, Kochanek spline, and polynomial the curves will be generated from the control points and then projected onto the surface. For `shortest distance on surface` curve type the curve is generated directly on this model.
 - Surface: surface used for `shortest distance on surface` curve type and cost function that is minimized to find path connecting two control points
 
 Resample section: Replace control points by curve points sampled at equal distances. If a model node is selected for `Constrain points to surface` then the resampled points will be projected to the chosen model surface.

@@ -22,6 +22,13 @@
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkProjectMarkupsCurvePointsFilter);
 
+//------------------------------------------------------------------------------
+void vtkProjectMarkupsCurvePointsFilter::SetInputCurveNode(vtkMRMLMarkupsCurveNode* inputCurveNode)
+{
+  this->InputCurveNode = inputCurveNode;
+  this->Modified();
+}
+
 //---------------------------------------------------------------------------
 int vtkProjectMarkupsCurvePointsFilter::FillInputPortInformation(int port, vtkInformation* info)
 {
@@ -58,7 +65,7 @@ int vtkProjectMarkupsCurvePointsFilter::RequestData(
     return 1;
     }
 
-  if (!this->Parent)
+  if (!this->InputCurveNode)
     {
     return 1;
     }
@@ -74,9 +81,9 @@ int vtkProjectMarkupsCurvePointsFilter::RequestData(
   vtkNew<vtkPoints> outputPoints;
 
   //if we have a surface node, project, otherwise the copy was enough
-  if (this->Parent->GetSurfaceNode())
+  if (this->InputCurveNode->GetSurfaceNode())
     {
-    if(!this->Parent->ProjectPointsToSurface(this->Parent->GetSurfaceNode(), 1, inputPoints, outputPoints))
+    if(!this->InputCurveNode->ProjectPointsToSurface(this->InputCurveNode->GetSurfaceNode(), 1, inputPoints, outputPoints))
       {
       return 0;
       }
