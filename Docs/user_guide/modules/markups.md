@@ -54,6 +54,16 @@ To pick a markups node in a viewer so that its properties can be edited in Marku
 - Left-click-and-drag on interaction handles to change the ROI size.
 - Alt + Left-click-and-drag to symmetrically adjust the ROI size without changing the position of the center.
 
+## Keyboard shortcuts
+
+The following keyboard shortcuts are active when the markups toolbar is displayed.
+
+| Key                        | Operation                              |
+| -------------------------- | -------------------------------------- |
+| `Ctrl` + `Shift` + `A`     | create new markup                      |
+| `Ctrl` + `Shift` + `T`     | toggle placing multiple control points |
+| `Ctrl` + `Shift` + `space` | place new control point                |
+
 ## Panels and their use
 
 - Create: click on any of the buttons to create a new markup. Click in any of the viewers to place control points.

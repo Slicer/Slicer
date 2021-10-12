@@ -552,6 +552,12 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     q, SLOT(onImportExportApply()));
 
   q->updateImportExportWidgets();
+
+  // Add event observers for registration/unregistration of markups
+  q->qvtkConnect(q->markupsLogic(), vtkSlicerMarkupsLogic::MarkupRegistered,
+    q, SLOT(onCreateMarkupsPushButtons()));
+  q->qvtkConnect(q->markupsLogic(), vtkSlicerMarkupsLogic::MarkupUnregistered,
+    q, SLOT(onCreateMarkupsPushButtons()));
 }
 
 //-----------------------------------------------------------------------------
@@ -908,12 +914,6 @@ void qSlicerMarkupsModuleWidget::enter()
       d->activeMarkupTreeView->setCurrentNode(markupsNode);
       }
     }
-
-  // Add event observers for registration/unregistration of markups
-  this->qvtkConnect(this->markupsLogic(), vtkSlicerMarkupsLogic::MarkupRegistered,
-                    this, SLOT(onCreateMarkupsPushButtons()));
-  this->qvtkConnect(this->markupsLogic(), vtkSlicerMarkupsLogic::MarkupUnregistered,
-                    this, SLOT(onCreateMarkupsPushButtons()));
 
   // check the max scales against volume spacing, they might need to be updated
   this->updateMaximumScaleFromVolumes();

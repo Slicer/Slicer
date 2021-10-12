@@ -149,10 +149,6 @@ public:
   /// chosen application language and should not be displayed to end users.
   virtual const char* GetMarkupType() {return "Markup";};
 
-  /// Get markup type GUI display name. This name can be shown to the user
-  /// (and may be translated to different language in the application).
-  virtual const char* GetMarkupTypeDisplayName() {return GetMarkupType();};
-
   /// Get markup short name
   virtual const char* GetDefaultNodeNamePrefix() {return "M";};
 

@@ -174,8 +174,7 @@ void qSlicerMarkupsModulePrivate::addToolBar()
     {
     mainWindow->restoreState(settings.value("windowState").toByteArray());
     }
-  vtkSlicerMarkupsLogic* logic = vtkSlicerMarkupsLogic::SafeDownCast(q->logic());
-  this->ToolBar->addNodeActions(logic);
+  this->ToolBar->initializeToolBarLayout();
 }
 
 //-----------------------------------------------------------------------------
