@@ -116,13 +116,15 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/SimpleITK/SimpleITK.git"
+     # Use the Slicer fork until https://github.com/SimpleITK/SimpleITK/pull/1471 is integrated into SimpleITK.
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/SimpleITK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "v2.1.1"
+    # SimpleITK v2.1.1 + fix of https://github.com/Slicer/Slicer/issues/5498
+    "slicer-v2.1.1-2021-09-08-d28b31ed"
     QUIET
     )
 
@@ -172,6 +174,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
       -DSimpleITK_USE_SYSTEM_SWIG:BOOL=ON
       -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
       -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
+      -DPython3_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DBUILD_TESTING:BOOL=OFF
