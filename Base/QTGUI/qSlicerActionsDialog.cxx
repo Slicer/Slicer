@@ -70,7 +70,7 @@ void qSlicerActionsDialogPrivate::init()
   this->WebView->setObjectName("WebView");
   this->gridLayout->addWidget(this->WebView, 0, 0);
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  QString shortcutsUrl = QString(q->tr("{1}/user_guide/user_interface.html#mouse-keyboard-shortcuts")).arg(app->documentationBaseUrl());
+  QString shortcutsUrl = QString(q->tr("%1/user_guide/user_interface.html#mouse-keyboard-shortcuts")).arg(app->documentationBaseUrl());
   this->WebView->setUrl( shortcutsUrl );
 #else
   this->tabWidget->setTabEnabled(this->tabWidget->indexOf(this->WikiTab), false);

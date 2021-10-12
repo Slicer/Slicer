@@ -36,7 +36,28 @@ Background: Funding for Slicer is provided through competitive mechanisms primar
 
 ### Slicer application does not start
 
-- Your computer CPU or graphics capabilities may not meet [minimum system requirements](getting_started.md#system-requirements). Updating your graphics driver may fix some problems, but if that does not help and you have an old computer then you may need to upgrade to a more recently manufactured computer.
+- Your computer CPU or graphics capabilities may not meet [minimum system requirements](getting_started.md#system-requirements).
+  - Updating your graphics driver may fix some problems, but if that does not help and you have an old computer then you may need to upgrade to a more recently manufactured computer or switch to a software renderer.
+    A software renderer is particularly useful for running Slicer on a headless machine, such as a virtual machine at a cloud computing provider with strong CPU but no GPU, using Remote Desktop Protocol.
+
+    ````{note}
+
+    **Setting up software renderer on Windows:**
+
+    - Download Mesa OpenGL driver from <https://github.com/pal1000/mesa-dist-win/releases> (MSVC version - mesa3d-X.Y.Z-release-msvc.7z).
+    - Extract the archive and copy files from the x64 folder into the bin subfolder in the Slicer install tree.
+    - Configure the rendere by setting environment variables then launch Slicer:
+
+        ```txt
+        set GALLIUM_DRIVER=swr
+        set MESA_GL_VERSION_OVERRIDE=3.3COMPAT
+        Slicer.exe
+        ```
+
+    This software renderer has been tested to work well on Windows virtual machines on Microsoft Azure.
+
+    ````
+
 - Slicer may not work if it is installed in a folder that has special characters in their name. Try installing Slicer in a path that only contains latin letters and numbers (a-z, 0-9).
 - Your Slicer settings might have become corrupted
   - Try launching slicer using `Slicer.exe --disable-settings` (if it fixes the problem, delete Slicer.ini and Slicer-<yourslicerversion>.ini files from your Slicer settings directory.
