@@ -24,7 +24,14 @@
 #include <vtkInformation.h>
 #include <vtkWeakPointer.h>
 
+class vtkDoubleArray;
+class vtkOBBTree;
+class vtkPointLocator;
+class vtkPoints;
+class vtkPolyData;
+
 class vtkMRMLMarkupsCurveNode;
+class vtkMRMLModelNode;
 
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkProjectMarkupsCurvePointsFilter : public vtkPolyDataAlgorithm
 {
@@ -37,11 +44,52 @@ public:
   /// into this function.
   void SetInputCurveNode(vtkMRMLMarkupsCurveNode* inputCurveNode);
 
+  static bool ConstrainPointsToSurface(vtkPoints* originalPoints, vtkDoubleArray* normalVectors, vtkPolyData* surfacePolydata,
+    vtkPoints* surfacePoints, double maximumSearchRadiusTolerance);
+
+  void SetMaximumSearchRadiusTolerance(double maximumSearchRadiusTolerance);
+  double GetMaximumSearchRadiusTolerance() const;
+
 protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
   int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
+
+  vtkProjectMarkupsCurvePointsFilter();
 private:
   vtkWeakPointer<vtkMRMLMarkupsCurveNode> InputCurveNode;
+  double MaximumSearchRadiusTolerance;
+
+  bool ProjectPointsToSurface(vtkMRMLModelNode* modelNode, double maximumSearchRadiusTolerance, vtkPoints* interpolatedPoints, vtkPoints* outputPoints);
+  static bool ConstrainPointsToSurfaceImpl(vtkOBBTree* surfaceObbTree, vtkPointLocator* pointLocator,
+      vtkPoints* originalPoints, vtkDoubleArray* normalVectors, vtkPolyData* surfacePolydata,
+      vtkPoints* surfacePoints, double maximumSearchRadius=.25);
+
+  class PointProjectionHelper
+  {
+  public:
+    PointProjectionHelper();
+    void SetModel(vtkMRMLModelNode* model);
+    /// Gets the point normals on the model at the points with the given controlPoints.
+    /// Both points and control points must have no outstanding transformations.
+    vtkSmartPointer<vtkDoubleArray> GetPointNormals(vtkPoints* points, vtkPoints* controlPoints);
+    vtkPointLocator* GetPointLocator();
+    vtkOBBTree* GetObbTree();
+    vtkPolyData* GetSurfacePolyData();
+
+  private:
+    vtkMRMLModelNode* Model;
+    vtkMTimeType LastModelModifiedTime;
+    vtkMTimeType LastTransformModifiedTime;
+    vtkSmartPointer<vtkDataArray> ModelNormalVectorArray;
+    vtkSmartPointer<vtkPointLocator> ModelPointLocator;
+    vtkSmartPointer<vtkOBBTree> ModelObbTree;
+    vtkSmartPointer<vtkPolyData> SurfacePolyData;
+
+    bool UpdateAll();
+    static vtkIdType GetClosestControlPointIndex(const double point[3], vtkPoints* controlPoints);
+  };
+
+  PointProjectionHelper PointProjection;
 };
 
 #endif

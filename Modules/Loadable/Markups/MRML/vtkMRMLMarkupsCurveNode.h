@@ -328,40 +328,7 @@ protected:
   static void OnCurvatureMeasurementModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
 private:
-  bool ProjectPointsToSurface(vtkMRMLModelNode* modelNode, double maximumSearchRadiusTolerance, vtkPoints* interpolatedPoints, vtkPoints* outputPoints);
-
-  static bool ConstrainPointsToSurfaceImpl(vtkOBBTree* surfaceObbTree, vtkPointLocator* pointLocator,
-      vtkPoints* originalPoints, vtkDoubleArray* normalVectors, vtkPolyData* surfacePolydata,
-      vtkPoints* surfacePoints, double maximumSearchRadius=.25);
-
-  friend class vtkProjectMarkupsCurvePointsFilter;
   vtkSmartPointer<vtkProjectMarkupsCurvePointsFilter> ProjectPointsFilter;
-
-  class PointProjectionHelper
-  {
-  public:
-    void SetModel(vtkMRMLModelNode* model);
-    /// Gets the point normals on the model at the points with the given controlPoints.
-    /// Both points and control points must have no outstanding transformations.
-    vtkSmartPointer<vtkDoubleArray> GetPointNormals(vtkPoints* points, vtkPoints* controlPoints);
-    vtkPointLocator* GetPointLocator();
-    vtkOBBTree* GetObbTree();
-    vtkPolyData* GetSurfacePolyData();
-
-  private:
-    vtkMRMLModelNode* Model;
-    vtkMTimeType LastModelModifiedTime;
-    vtkMTimeType LastTransformModifiedTime;
-    vtkSmartPointer<vtkDataArray> ModelNormalVectorArray;
-    vtkSmartPointer<vtkPointLocator> ModelPointLocator;
-    vtkSmartPointer<vtkOBBTree> ModelObbTree;
-    vtkSmartPointer<vtkPolyData> SurfacePolyData;
-
-    bool UpdateAll();
-    static vtkIdType GetClosestControlPointIndex(const double point[3], vtkPoints* controlPoints);
-  };
-
-  PointProjectionHelper PointProjection;
 };
 
 #endif
