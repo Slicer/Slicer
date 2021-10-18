@@ -546,7 +546,7 @@ vtkMRMLUnitNode* vtkMRMLMeasurement::GetUnitNode(const char* quantityName)
     scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (!selectionNode)
     {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetUnitNode failed: selection node not found");
+    vtkWarningMacro("vtkMRMLMeasurement::GetUnitNode failed: selection node not found");
     return nullptr;
     }
   vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(scene->GetNodeByID(
