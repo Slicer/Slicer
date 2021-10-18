@@ -38,7 +38,7 @@ static int removeFile(char *fileName)
   int removed = 1;
   if (itksys::SystemTools::FileExists(fileName))
   {
-    removed = itksys::SystemTools::RemoveFile(fileName);
+    removed = static_cast<bool>(itksys::SystemTools::RemoveFile(fileName));
   }
   return removed;
 }
