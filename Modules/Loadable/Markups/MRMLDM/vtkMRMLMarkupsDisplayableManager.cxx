@@ -729,7 +729,7 @@ bool vtkMRMLMarkupsDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractio
   // Find/create active widget. Using smart pointer instead of raw pointer to ensure activeWidget
   // object does not get fully deleted until we are done using it if the user deletes it as part
   // of an EndPlacementEvent
-  vtkSmartPointer<vtkSlicerMarkupsWidget> activeWidget = nullptr;
+  vtkSmartPointer<vtkSlicerMarkupsWidget> activeWidget;
   if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
     {
     activeWidget = this->GetWidgetForPlacement();
