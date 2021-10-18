@@ -337,13 +337,13 @@ int ImportIDModelHierarchyParentIDConflictTestFile()
   CHECK_STRING_ADD_REPORT(hierarchyNode2->GetParentNodeID(), "vtkMRMLModelHierarchyNode6", PrintModelHierarchyNodes(__LINE__, scene3.GetPointer()));
 
   // clean up
-  int removed1 = itksys::SystemTools::RemoveFile(filename1.c_str());
+  int removed1 = static_cast<bool>(itksys::SystemTools::RemoveFile(filename1.c_str()));
   if (!removed1)
     {
     std::cerr << "Unable to remove file " << filename1.c_str() << std::endl;
     return EXIT_FAILURE;
     }
-  int removed2 = itksys::SystemTools::RemoveFile(filename2.c_str());
+  int removed2 = static_cast<bool>(itksys::SystemTools::RemoveFile(filename2.c_str()));
   if (!removed2)
     {
     std::cerr << "Unable to remove file " << filename2.c_str() << std::endl;
