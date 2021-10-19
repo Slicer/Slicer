@@ -49,7 +49,7 @@
 ///     Y coordinate system is orthogonal to the X coordinate system, in the plane specified by the first 3 control points.
 ///     Z axis is the cross product of X and Y coordinate system.
 ///   - Node: Coordinate system of the markup node. Coordinates of the control points are stored in this coordinate system.
-///   - World: Patient coordinate system (RAS). Transform between Node and World
+///   - World: Patient coordinate system (RAS). Transform between Node and World.
 ///     coordinate systems are defined by the parent transform of the node.
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneNode : public vtkMRMLMarkupsNode
@@ -95,6 +95,7 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsPlaneNode);
 
+  //@{
   /// Method for calculating the size of the plane along the direction vectors.
   /// With size mode auto, the size of the plane is automatically calculated so that it ecompasses all of the points.
   /// Size mode absolute will never be recalculated.
@@ -103,25 +104,38 @@ public:
   vtkGetMacro(SizeMode, int);
   const char* GetSizeModeAsString(int sizeMode);
   int GetSizeModeFromString(const char* sizeMode);
+  //@}
 
   /// The plane size multiplier used to calculate the size of the plane.
   /// This is only used when the size mode is auto.
   /// Default is 1.0.
   vtkGetMacro(AutoSizeScalingFactor, double);
   vtkSetMacro(AutoSizeScalingFactor, double);
+  //@}
 
-  /// The bounds of the plane in the plane coordinate system.
-  /// When the size mode is absolute, SetPlaneBounds can be used to specify the size of the plane.
-  /// This is only used when the size mode is absolute.
+  //@{
+  /// Get/Set bounds of the plane in the object coordinate system.
+  /// The size is defined in world coordinate system units.
+  /// When the size mode is auto, plane bounds are updated automatically
+  /// from the input control points.
   void GetPlaneBounds(double bounds[6]);
   double* GetPlaneBounds() VTK_SIZEHINT(6);
   void SetPlaneBounds(double bounds[6]);
   void SetPlaneBounds(double, double, double, double, double, double);
+  //@}
+
+  //@{
+  /// Get/Set size of the plane in the object coordinate system.
+  /// The size is defined in world coordinate system units.
+  /// When the size mode is auto, plane size is updated automatically
+  /// from the input control points.
   void GetSize(double size[2]);
   double* GetSize() VTK_SIZEHINT(2);
   vtkSetVector2Macro(Size, double);
+  //@}
 
-  /// The normal vector for the plane.
+  //@{
+  /// Get/Set the normal vector for the plane in object or world coordinate system.
   void GetNormal(double normal[3]);
   double* GetNormal() VTK_SIZEHINT(3);
   void GetNormalWorld(double normal[3]);
@@ -130,8 +144,10 @@ public:
   void SetNormal(double x, double y, double z);
   void SetNormalWorld(const double normal[3]);
   void SetNormalWorld(double x, double y, double z);
+  //@}
 
-  /// The origin of the plane.
+  //@{
+  /// Get/Set the origin of the plane in object or world coordinate system.
   void GetOrigin(double origin[3]);
   double* GetOrigin() VTK_SIZEHINT(3);
   void GetOriginWorld(double origin[3]);
@@ -140,7 +156,10 @@ public:
   void SetOrigin(double x, double y, double z);
   void SetOriginWorld(const double origin[3]);
   void SetOriginWorld(double x, double y, double z);
+  //@}
 
+  //@{
+  /// Get/Set geometric center of the plane. Currently, it is always the same as the origin of the plane.
   void GetCenter(double origin[3]) { this->GetOrigin(origin); };
   double* GetCenter() VTK_SIZEHINT(3) { return this->GetOrigin(); };
   void GetCenterWorld(double origin[3]) { this->GetOriginWorld(origin); };
@@ -149,8 +168,10 @@ public:
   void SetCenter(double x, double y, double z) { this->SetOrigin(x, y, z); };
   void SetCenterWorld(const double origin[3]) { this->SetOriginWorld(origin); };
   void SetCenterWorld(double x, double y, double z) { this->SetOriginWorld(x, y, z); };
+  //@}
 
-  /// The direction vectors defined by the markup points.
+  //@{
+  /// Get/Set the direction vectors defined by the markup points in object or world coordinate system.
   /// Calculated as follows and then transformed by the offset matrix:
   /// X: Vector from 1st to 0th point.
   /// Y: Cross product of the Z vector and X vectors.
@@ -159,6 +180,7 @@ public:
   void SetAxes(const double x[3], const double y[3], const double z[3]);
   void GetAxesWorld(double x[3], double y[3], double z[3]);
   void SetAxesWorld(const double x[3], const double y[3], const double z[3]);
+  //@}
 
   // Mapping from XYZ plane coordinates to local coordinates
   virtual void GetObjectToNodeMatrix(vtkMatrix4x4* planeToNodeMatrix);
