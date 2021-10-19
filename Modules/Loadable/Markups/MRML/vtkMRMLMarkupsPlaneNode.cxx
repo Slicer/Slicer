@@ -718,32 +718,40 @@ void vtkMRMLMarkupsPlaneNode::UpdateSize()
   // Size mode auto means we need to recalculate the diameter of the plane from the control points.
   if (this->SizeMode == vtkMRMLMarkupsPlaneNode::SizeModeAuto)
     {
-    double point0_Node[3] = { 0.0, 0.0, 0.0 };
-    double point1_Node[3] = { 0.0, 0.0, 0.0 };
-    double point2_Node[3] = { 0.0, 0.0, 0.0 };
-    this->GetNthControlPointPosition(0, point0_Node);
-    this->GetNthControlPointPosition(1, point1_Node);
-    this->GetNthControlPointPosition(2, point2_Node);
+    if (this->GetNumberOfControlPoints() >= 3)
+      {
+      double point0_Node[3] = { 0.0, 0.0, 0.0 };
+      double point1_Node[3] = { 0.0, 0.0, 0.0 };
+      double point2_Node[3] = { 0.0, 0.0, 0.0 };
+      this->GetNthControlPointPosition(0, point0_Node);
+      this->GetNthControlPointPosition(1, point1_Node);
+      this->GetNthControlPointPosition(2, point2_Node);
 
-    vtkNew<vtkMatrix4x4> baseToNodeMatrix;
-     this->GetBaseToNodeMatrix(baseToNodeMatrix);
+      vtkNew<vtkMatrix4x4> baseToNodeMatrix;
+      this->GetBaseToNodeMatrix(baseToNodeMatrix);
 
-    vtkNew<vtkTransform> nodeToBaseTransform;
-    nodeToBaseTransform->SetMatrix(baseToNodeMatrix);
-    nodeToBaseTransform->Inverse();
+      vtkNew<vtkTransform> nodeToBaseTransform;
+      nodeToBaseTransform->SetMatrix(baseToNodeMatrix);
+      nodeToBaseTransform->Inverse();
 
-    double point0_Base[3] = { 0.0, 0.0, 0.0 };
-    double point1_Base[3] = { 0.0, 0.0, 0.0 };
-    double point2_Base[3] = { 0.0, 0.0, 0.0 };
-    nodeToBaseTransform->TransformPoint(point0_Node, point0_Base);
-    nodeToBaseTransform->TransformPoint(point1_Node, point1_Base);
-    nodeToBaseTransform->TransformPoint(point2_Node, point2_Base);
+      double point0_Base[3] = { 0.0, 0.0, 0.0 };
+      double point1_Base[3] = { 0.0, 0.0, 0.0 };
+      double point2_Base[3] = { 0.0, 0.0, 0.0 };
+      nodeToBaseTransform->TransformPoint(point0_Node, point0_Base);
+      nodeToBaseTransform->TransformPoint(point1_Node, point1_Base);
+      nodeToBaseTransform->TransformPoint(point2_Node, point2_Base);
 
-    double xMax = std::max({ std::abs(point0_Base[0]), std::abs(point1_Base[0]), std::abs(point2_Base[0]) });
-    double yMax = std::max({ std::abs(point0_Base[1]), std::abs(point1_Base[1]), std::abs(point2_Base[1]) });
+      double xMax = std::max({ std::abs(point0_Base[0]), std::abs(point1_Base[0]), std::abs(point2_Base[0]) });
+      double yMax = std::max({ std::abs(point0_Base[1]), std::abs(point1_Base[1]), std::abs(point2_Base[1]) });
 
-    this->Size[0] = 2* xMax * this->AutoSizeScalingFactor;
-    this->Size[1] = 2* yMax * this->AutoSizeScalingFactor;
+      this->Size[0] = 2* xMax * this->AutoSizeScalingFactor;
+      this->Size[1] = 2* yMax * this->AutoSizeScalingFactor;
+      }
+    else
+      {
+      this->Size[0] = 0.0;
+      this->Size[1] = 0.0;
+      }
     }
 
   this->PlaneBounds[0] = -0.5 * this->Size[0];
@@ -757,15 +765,6 @@ void vtkMRMLMarkupsPlaneNode::UpdateSize()
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::GetSize(double planeSize_Object[2])
 {
-  if (this->GetNumberOfControlPoints() < 3)
-    {
-    for (int i = 0; i < 6; ++i)
-      {
-      planeSize_Object[i] = 0.0;
-      }
-    return;
-    }
-
   this->UpdateSize();
 
   planeSize_Object[0] = this->Size[0];
