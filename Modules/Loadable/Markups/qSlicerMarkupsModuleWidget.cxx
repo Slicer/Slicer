@@ -1206,7 +1206,7 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
 
    // point
    double point[3] = {0.0, 0.0, 0.0};
-   if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_LOCAL)
+   if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
      {
      double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
      markupsNode->GetNthControlPointPositionWorld(m, worldPoint);
@@ -2056,7 +2056,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
 
     // get the old value
     double point[3] = {0.0, 0.0, 0.0};
-    if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_LOCAL)
+    if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
       {
       double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
       d->MarkupsNode->GetNthControlPointPositionWorld(n, worldPoint);
@@ -2076,7 +2076,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
         fabs(newPoint[1] - point[1]) > minChange ||
         fabs(newPoint[2] - point[2]) > minChange)
       {
-      if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_LOCAL)
+      if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
         {
         d->MarkupsNode->SetNthControlPointPositionWorld(n, newPoint[0], newPoint[1], newPoint[2]);
         }
@@ -2349,7 +2349,7 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
       }
 
     double point[3] = {0.0, 0.0, 0.0};
-    if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_LOCAL)
+    if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
       {
       double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
       d->MarkupsNode->GetNthControlPointPositionWorld(row, worldPoint);
