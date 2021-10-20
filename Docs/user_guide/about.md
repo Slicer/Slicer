@@ -55,6 +55,10 @@ To acknowledge 3D Slicer as a platform, please cite the [Slicer web site](http:/
 
 **Fedorov A., Beichel R., Kalpathy-Cramer J., Finet J., Fillion-Robin J-C., Pujol S., Bauer C., Jennings D., Fennessy F.M., Sonka M., Buatti J., Aylward S.R., Miller J.V., Pieper S., Kikinis R. [3D Slicer as an Image Computing Platform for the Quantitative Imaging Network](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3466397/pdf/nihms383480.pdf). Magnetic Resonance Imaging. 2012 Nov;30(9):1323-41. PMID: 22770690. PMCID: PMC3466397.**
 
+## The 3D Slicer name and logo
+
+3D Slicer and the logo are trademarks of Brigham and Women's Hospital (BWH) and may not be used without permission.  Such permission is broadly granted for academic or commerial uses, such as documenting the use of Slicer in your project or promoting the use of Slicer by others.  Please use the original Slicer logo colors and do not alter the shape or text.  Using Slicer to imply that BWH or the Slicer community endorses your product or project is not permitted without permission.  For other uses please contact Ron Kikinis (kikinis@bwh.harvard.edu) and Steve Pieper (pieper@bwh.harvard.edu).
+
 ### Individual modules
 
 To acknowledge individual modules: each module has an acknowledgment tab in the top section. Information about contributors and funding source can be found there:
