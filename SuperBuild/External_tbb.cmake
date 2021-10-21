@@ -1,6 +1,12 @@
 
 set(proj tbb)
 
+# Set dependency list
+set(${proj}_DEPENDENCIES "")
+
+# Include dependent projects if any
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
+
 if(Slicer_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported!")
 endif()
@@ -19,7 +25,6 @@ endif ()
 
 #------------------------------------------------------------------------------
 set(TBB_INSTALL_DIR "${CMAKE_BINARY_DIR}/${proj}-install")
-ExternalProject_Message(${proj} "TBB_INSTALL_DIR:${TBB_INSTALL_DIR}")
 
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
@@ -88,6 +93,7 @@ endif ()
 
 #------------------------------------------------------------------------------
 
+# Variables used to configure VTK8
 set(TBB_INCLUDE_DIR "${TBB_INSTALL_DIR}/tbb${tbb_ver}/include")
 set(TBB_LIBRARY_DEBUG "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbb_debug${tbb_libsuffix}")
 set(TBB_LIBRARY_RELEASE "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbb${tbb_libsuffix}")
@@ -100,6 +106,7 @@ set(TBB_MALLOC_PROXY_INCLUDE_DIR "${TBB_INSTALL_DIR}/tbb${tbb_ver}/include/tbb")
 set(TBB_MALLOC_PROXY_LIBRARY_DEBUG "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbbmalloc_proxy_debug${tbb_libsuffix}")
 set(TBB_MALLOC_PROXY_LIBRARY_RELEASE "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbbmalloc_proxy${tbb_libsuffix}")
 
+# Variables used to install TBB and configure launcher
 set(TBB_BIN_DIR "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_bindir}")
 set(TBB_LIB_DIR "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}")
 mark_as_superbuild(
@@ -118,8 +125,15 @@ ExternalProject_GenerateProjectDescription_Step(${proj}
 #-----------------------------------------------------------------------------
 # Launcher setting specific to build tree
 
-set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_bindir}")
+set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD "${TBB_BIN_DIR}")
 mark_as_superbuild(
   VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
   LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+  )
+
+set(TBB_DIR ${TBB_INSTALL_DIR}/tbb${tbb_ver}/cmake)
+ExternalProject_Message(${proj} "TBB_DIR:${TBB_DIR}")
+mark_as_superbuild(
+  VARS TBB_DIR:PATH
+  LABELS "FIND_PACKAGE"
   )
