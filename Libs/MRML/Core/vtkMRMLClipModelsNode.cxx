@@ -152,15 +152,17 @@ int vtkMRMLClipModelsNode::GetClippingMethodFromString(const char* name)
     // invalid name
     return -1;
     }
-  if (strcmp(name, "Straight"))
+  if (!strcmp(name, "Straight"))
     {
     return (int)Straight;
     }
-  else if (strcmp(name, "Whole Cells"))
+  else if (!strcmp(name, "WholeCells")
+    || !strcmp(name, "Whole Cells"))  // for backward compatibility
     {
     return (int)WholeCells;
     }
-  else if (strcmp(name, "Whole Cells With Boundary"))
+  else if (!strcmp(name, "WholeCellsWithBoundary")
+    || !strcmp(name, "Whole Cells With Boundary"))  // for backward compatibility
     {
     return (int)WholeCellsWithBoundary;
     }
@@ -174,8 +176,8 @@ const char* vtkMRMLClipModelsNode::GetClippingMethodAsString(ClippingMethodType 
  switch (id)
     {
     case Straight: return "Straight";
-    case WholeCells: return "Whole Cells";
-    case WholeCellsWithBoundary: return "Whole Cells With Boundary";
+    case WholeCells: return "WholeCells";
+    case WholeCellsWithBoundary: return "WholeCellsWithBoundary";
     default:
       // invalid id
       return "";
