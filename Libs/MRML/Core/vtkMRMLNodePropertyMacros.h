@@ -225,7 +225,7 @@
       } \
     else \
       { \
-      vtkErrorMacro("Failed to read #xmlAttributeName attribute value from string '" << xmlReadAttValue << "'"); \
+      vtkErrorMacro("Failed to read " #xmlAttributeName " attribute value from string '" << xmlReadAttValue << "'"); \
       } \
     }
 
@@ -242,7 +242,7 @@
       } \
     else \
       { \
-      vtkErrorMacro("Failed to read #xmlAttributeName attribute value from string '" << xmlReadAttValue << "': integer expected"); \
+      vtkErrorMacro("Failed to read " #xmlAttributeName " attribute value from string '" << xmlReadAttValue << "': integer expected"); \
       } \
     }
 
@@ -259,7 +259,7 @@
       } \
     else \
       { \
-      vtkErrorMacro("Failed to read #xmlAttributeName attribute value from string '" << xmlReadAttValue << "': float expected"); \
+      vtkErrorMacro("Failed to read " #xmlAttributeName " attribute value from string '" << xmlReadAttValue << "': float expected"); \
       } \
     }
 
@@ -444,7 +444,7 @@
       } \
     else \
       { \
-      vtkErrorMacro("Failed to copy #xmlAttributeName attribute value: source node returned NULL"); \
+      vtkErrorMacro("Failed to copy " #propertyName " attribute value: source node returned NULL"); \
       } \
     }
 

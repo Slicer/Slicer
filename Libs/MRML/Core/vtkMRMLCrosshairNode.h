@@ -154,9 +154,9 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
     {
       NoAction = 0,
       OffsetJumpSlice = 1,
-      CenteredJumpSlice = 2,
       Normal = 1,   ///< \deprecated Use OffsetJumpSlice instead
-      JumpSlice = 1, ///< \deprecated Use CenterdJumpSlice instead
+      CenteredJumpSlice = 2,
+      JumpSlice = 2, ///< \deprecated Use CenteredJumpSlice instead
       CrosshairBehavior_Last
     };
 
