@@ -68,6 +68,8 @@ void qSlicerTerminologySelectorDialogPrivate::init()
   Q_Q(qSlicerTerminologySelectorDialog);
 
   // Set up UI
+  this->setWindowTitle("Terminology");
+
   QVBoxLayout* layout = new QVBoxLayout(this);
   layout->setSpacing(4);
   layout->setContentsMargins(0, 0, 0, 0);
