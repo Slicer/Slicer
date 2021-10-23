@@ -666,10 +666,14 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
   d->JumpToClosestPointAction->setVisible(componentType == vtkMRMLMarkupsDisplayNode::ComponentLine
     && d->ViewContextMenuEventData.find("WorldPosition") != d->ViewContextMenuEventData.end());
 
-  if (componentType == vtkMRMLMarkupsDisplayNode::ComponentControlPoint)
+  bool isControlPoint = componentType == vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
+  d->RenamePointAction->setVisible(isControlPoint);
+  d->ToggleSelectPointAction->setVisible(isControlPoint);
+  d->DeletePointAction->setVisible(isControlPoint);
+  d->JumpToPreviousPointAction->setVisible(isControlPoint);
+  d->JumpToNextPointAction->setVisible(isControlPoint);
+  if (isControlPoint)
     {
-    d->JumpToPreviousPointAction->setVisible(true);
-    d->JumpToNextPointAction->setVisible(true);
     d->JumpToPreviousPointAction->setEnabled(false);
     d->JumpToNextPointAction->setEnabled(false);
     int currentControlPointIndex = d->ViewContextMenuEventData["ComponentIndex"].toInt();
@@ -695,11 +699,6 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
         break;
         }
       }
-    }
-  else
-    {
-    d->JumpToPreviousPointAction->setVisible(false);
-    d->JumpToNextPointAction->setVisible(false);
     }
 
   d->EditNodeTerminologyAction->setVisible(!pointActionsDisabled);
