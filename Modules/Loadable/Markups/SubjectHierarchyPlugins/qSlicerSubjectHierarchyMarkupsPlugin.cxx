@@ -704,6 +704,11 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
 
   d->EditNodeTerminologyAction->setVisible(!pointActionsDisabled);
 
+  // Update action text with relevant markup type
+  QString markup_type = associatedNode->GetMarkupType();
+  d->DeleteNodeAction->setText("Delete " + markup_type);
+  d->EditNodeTerminologyAction->setText("Edit " + markup_type + " terminology...");
+
   vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
   d->ToggleHandleInteractive->setVisible(displayNode != nullptr);
   d->HandleVisibilityAction->setVisible(displayNode != nullptr);
