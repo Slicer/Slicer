@@ -19,6 +19,7 @@
 // SubjectHierarchy MRML includes
 #include "vtkMRMLSubjectHierarchyConstants.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
+#include "vtkSlicerVolumesLogic.h"
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
@@ -27,6 +28,7 @@
 
 // Qt includes
 #include <QAction>
+#include <QMenu>
 #include <QClipboard>
 #include <QDebug>
 #include <QVariant>
@@ -41,14 +43,19 @@
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLWindowLevelWidget.h>
+#include <vtkMRMLSliceCompositeNode.h>
 
 // Slicer includes
 #include <qSlicerApplication.h>
 #include <qSlicerLayoutManager.h>
+#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerModuleManager.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+
 
 // CTK includes
 #include "ctkSignalMapper.h"
@@ -66,8 +73,9 @@ public:
   ~qSlicerSubjectHierarchyViewContextMenuPluginPrivate() override;
   void init();
 public:
-
   ctkSignalMapper* InteractionModeMapper;
+  ctkSignalMapper* PresetModeMapper;
+  QMenu*   PresetSubmenu = nullptr;
   QAction* InteractionModeViewTransformAction = nullptr;
   QAction* InteractionModeAdjustWindowLevelAction = nullptr;
   QAction* InteractionModePlaceAction = nullptr;
@@ -76,9 +84,20 @@ public:
   QAction* CopyImageAction = nullptr;
   QAction* ConfigureSliceViewAnnotationsAction = nullptr;
 
+  QAction* Separator =  nullptr;
+  QAction* CTBonePresetAction = nullptr;
+  QAction* CTAirPresetAction = nullptr;
+  QAction* PETPresetAction = nullptr;
+  QAction* CTAbdomenPresetAction = nullptr;
+  QAction* CTBrainPresetAction = nullptr;
+  QAction* CTLungPresetAction = nullptr;
+  QAction* DTIPresetAction = nullptr;
+  QAction* HandlePresetAction = nullptr;
+
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
   vtkWeakPointer<vtkMRMLLayoutNode> LayoutNode;
+  vtkMRMLNode*  BackgroundVolumeNode;
 };
 
 //-----------------------------------------------------------------------------
@@ -90,6 +109,7 @@ qSlicerSubjectHierarchyViewContextMenuPluginPrivate::qSlicerSubjectHierarchyView
 {
 }
 
+
 //------------------------------------------------------------------------------
 void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
 {
@@ -97,23 +117,23 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
 
   // Interaction mode
 
-  this->InteractionModeViewTransformAction = new QAction("View transform",q);
+  this->InteractionModeViewTransformAction = new QAction("View transform", q);
   this->InteractionModeViewTransformAction->setObjectName("MouseModeViewTransformAction");
   this->InteractionModeViewTransformAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeViewTransformAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 0);
+  qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 0);
 
-  this->InteractionModeAdjustWindowLevelAction = new QAction("Adjust window/level",q);
+  this->InteractionModeAdjustWindowLevelAction = new QAction("Adjust window/level", q);
   this->InteractionModeAdjustWindowLevelAction->setObjectName("MouseModeAdjustWindowLevelAction");
   this->InteractionModeAdjustWindowLevelAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeAdjustWindowLevelAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 1);
+  qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 1);
 
   this->InteractionModePlaceAction = new QAction("Place", q);
   this->InteractionModePlaceAction->setObjectName("MouseModePlaceAction");
   this->InteractionModePlaceAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModePlaceAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 2);
+  qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 2);
 
   QActionGroup* interactionModeActions = new QActionGroup(q);
   interactionModeActions->setExclusive(true);
@@ -129,28 +149,102 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   QObject::connect(interactionModeActions, SIGNAL(triggered(QAction*)), this->InteractionModeMapper, SLOT(map(QAction*)));
   QObject::connect(this->InteractionModeMapper, SIGNAL(mapped(int)), q, SLOT(setInteractionMode(int)));
 
-  // Other
+    // Other
 
   this->MaximizeViewAction = new QAction(tr("Maximize view"), q);
   this->MaximizeViewAction->setObjectName("MaximizeViewAction");
   this->MaximizeViewAction->setToolTip(tr("Show this view maximized in the view layout"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->MaximizeViewAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
+  qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
   QObject::connect(this->MaximizeViewAction, SIGNAL(triggered()), q, SLOT(maximizeView()));
 
   this->CopyImageAction = new QAction(tr("Copy image"), q);
   this->CopyImageAction->setObjectName("CopyImageAction");
   this->CopyImageAction->setToolTip(tr("Copy a screenshot of this view to the clipboard"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CopyImageAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
+  qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
   QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
 
   this->ConfigureSliceViewAnnotationsAction = new QAction(tr("Configure slice view annotations..."), q);
   this->ConfigureSliceViewAnnotationsAction->setObjectName("ConfigureSliceViewAnnotationsAction");
   this->ConfigureSliceViewAnnotationsAction->setToolTip(tr("Configures display of corner annotations and color bar."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
+  qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
   QObject::connect(this->ConfigureSliceViewAnnotationsAction, SIGNAL(triggered()), q, SLOT(configureSliceViewAnnotationsAction()));
+
+
+    // add volume presets
+
+  this->Separator = new QAction(tr(""), q);
+  this->Separator->setObjectName("Separator");
+  this->Separator->setToolTip(tr(""));
+  this->Separator->setSeparator(true);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->Separator,
+        qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
+
+  this->CTBonePresetAction = new QAction(tr("CT Bone"));
+  this->CTBonePresetAction->setObjectName("CTBonePresetAction");
+  this->CTBonePresetAction->setToolTip(tr("Display slices with CT bone preset"));
+
+  this->CTAirPresetAction = new QAction(tr("CT Air"));
+  this->CTAirPresetAction->setObjectName("CTAirPresetAction");
+  this->CTAirPresetAction->setToolTip(tr("Display slices with CT air preset"));
+
+  this->PETPresetAction = new QAction(tr("PET"));
+  this->PETPresetAction->setObjectName("CTPETPresetAction");
+  this->PETPresetAction->setToolTip(tr("Display slices with PET preset"));
+
+  this->CTAbdomenPresetAction = new QAction(tr("CT Abdomen"));
+  this->CTAbdomenPresetAction->setObjectName("CTAbdomenPresetAction");
+  this->CTAbdomenPresetAction->setToolTip(tr("Display slices with CT abdomen preset"));
+
+  this->CTBrainPresetAction = new QAction(tr("CT Brain"));
+  this->CTBrainPresetAction->setObjectName("CTBrainPresetAction");
+  this->CTBrainPresetAction->setToolTip(tr("Display slices with CT brain preset"));
+
+  this->CTLungPresetAction = new QAction(tr("CT Lung"));
+  this->CTLungPresetAction->setObjectName("CTLungPresetAction");
+  this->CTLungPresetAction->setToolTip(tr("Display slices with CT lung preset"));
+
+  this->DTIPresetAction = new QAction(tr("DTI"), q);
+  this->DTIPresetAction->setObjectName("DTIPresetAction");
+  this->DTIPresetAction->setToolTip(tr("Display slices with DTI preset"));
+
+  this->PresetSubmenu = new QMenu();
+  this->PresetSubmenu->addAction(this->CTBonePresetAction);
+  this->PresetSubmenu->addAction(this->CTAirPresetAction);
+  this->PresetSubmenu->addAction(this->PETPresetAction);
+  this->PresetSubmenu->addAction(this->CTAbdomenPresetAction);
+  this->PresetSubmenu->addAction(this->CTBrainPresetAction);
+  this->PresetSubmenu->addAction(this->CTLungPresetAction);
+  this->PresetSubmenu->addAction(this->DTIPresetAction);
+
+  this->HandlePresetAction = new QAction("Window/level presets");
+  this->HandlePresetAction->setObjectName("HandlePresetOptions");
+  q->setActionPosition(this->HandlePresetAction, 4);
+  this->HandlePresetAction->setMenu(this->PresetSubmenu);
+
+  QActionGroup* presetModeActions = new QActionGroup(q);
+  presetModeActions->setExclusive(true);
+
+  presetModeActions->addAction(this->CTBonePresetAction);
+  presetModeActions->addAction(this->CTAirPresetAction);
+  presetModeActions->addAction(this->PETPresetAction);
+  presetModeActions->addAction(this->CTAbdomenPresetAction);
+  presetModeActions->addAction(this->CTBrainPresetAction);
+  presetModeActions->addAction(this->CTLungPresetAction);
+  presetModeActions->addAction(this->DTIPresetAction);
+
+  this->PresetModeMapper = new ctkSignalMapper(q);
+  this->PresetModeMapper->setMapping(this->CTBonePresetAction, q->ID_CTBone);
+  this->PresetModeMapper->setMapping(this->CTAirPresetAction, q->ID_CTAir);
+  this->PresetModeMapper->setMapping(this->PETPresetAction, q->ID_PET);
+  this->PresetModeMapper->setMapping(this->CTAbdomenPresetAction, q->ID_CTAbdomen);
+  this->PresetModeMapper->setMapping(this->CTLungPresetAction, q->ID_CTLung);
+  this->PresetModeMapper->setMapping(this->CTBrainPresetAction, q->ID_CTBrain);
+  this->PresetModeMapper->setMapping(this->DTIPresetAction, q->ID_DTI);
+  QObject::connect(presetModeActions, SIGNAL(triggered(QAction*)), this->PresetModeMapper, SLOT(map(QAction*)));
+  QObject::connect(this->PresetModeMapper, SIGNAL(mapped(int)), q, SLOT(setVolumePreset(int)));
 }
 
 //-----------------------------------------------------------------------------
@@ -183,7 +277,10 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
     << d->InteractionModePlaceAction
     << d->MaximizeViewAction
     << d->CopyImageAction
-    << d->ConfigureSliceViewAnnotationsAction;
+    << d->ConfigureSliceViewAnnotationsAction
+    << d->Separator
+    << d->HandlePresetAction;
+  ;
   return actions;
 }
 
@@ -236,6 +333,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   d->InteractionModePlaceAction->setChecked(interactionMode == vtkMRMLInteractionNode::Place);
   d->InteractionModePlaceAction->blockSignals(wasBlocked);
 
+
   // Update view/restore view action
   bool isMaximized = false;
   bool canBeMaximized = false;
@@ -259,9 +357,41 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   bool isSliceViewNode = (vtkMRMLSliceNode::SafeDownCast(viewNode) != nullptr);
   d->ConfigureSliceViewAnnotationsAction->setVisible(isSliceViewNode);
 
+
+  // Enable preset menus if backround volume node is vtkMRMLScalarVolumeNode
+  if (!qSlicerApplication::application()
+      || !qSlicerApplication::application()->layoutManager())
+  {
+      qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
+      return;
+  }
+
+  qMRMLSliceWidget* sliceViewWidget = qSlicerApplication::application()->layoutManager()->sliceWidget(viewNode->GetName());
+  if (!sliceViewWidget)
+  {
+      qWarning() << Q_FUNC_INFO << " failed: cannot get slice view widget";
+      return;
+  }
+
+  QString backgroundVolumeID = QString(sliceViewWidget->sliceLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID());
+  vtkMRMLScene* scene = viewNode->GetScene();
+  vtkMRMLNode* backgroundVolumeNodePtr = scene->GetNodeByID(backgroundVolumeID.toUtf8());
+  if (backgroundVolumeNodePtr) {
+      if (backgroundVolumeNodePtr->IsA("vtkMRMLScalarVolumeNode")) {
+          d->Separator->setVisible(isSliceViewNode);
+          d->HandlePresetAction->setVisible(isSliceViewNode);
+      }
+      else {
+          d->Separator->setVisible(false);
+          d->HandlePresetAction->setVisible(false);
+
+      }
+  }
+
   // Cache nodes to have them available for the menu action execution.
   d->InteractionNode = interactionNode;
   d->ViewNode = viewNode;
+  d->BackgroundVolumeNode = backgroundVolumeNodePtr;
 }
 
 //---------------------------------------------------------------------------
@@ -346,5 +476,71 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::maximizeView()
   else
     {
     d->LayoutNode->SetMaximizedViewNode(nullptr);
+    }
+}
+
+
+// --------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::setVolumePreset(int which)
+{
+    // call setPreset function from qSlicerScalarVolumeDisplayWidget
+    Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+    // try opening the Volume module
+    qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+
+    qSlicerAbstractCoreModule* volumeModulePointer = nullptr;
+
+    vtkSlicerVolumesLogic* volumeModulePointerLogic = nullptr;
+
+    if (moduleManager)
+    {
+        volumeModulePointer = moduleManager->module("Volumes");
+        if (!volumeModulePointer)
+        {
+            QString message = QString("Volume module not found.");
+            qWarning() << Q_FUNC_INFO << ": " << message;
+            return;
+        }
+    }
+    if (volumeModulePointer)
+    {
+        volumeModulePointerLogic =
+            vtkSlicerVolumesLogic::SafeDownCast(volumeModulePointer->logic());
+        if (!volumeModulePointerLogic)
+        {
+            QString message = QString("Volume module logic not found.");
+            qWarning() << Q_FUNC_INFO << ": " << message;
+            return;
+        }
+    }
+    if (volumeModulePointerLogic)
+    {
+        switch(which) {
+            case this->ID_CTBone:
+                volumeModulePointerLogic->setWindowLevelPreset((vtkMRMLScalarVolumeNode*) d->BackgroundVolumeNode, "CT-Bone");
+                break;
+            case this->ID_CTAir:
+                volumeModulePointerLogic->setWindowLevelPreset((vtkMRMLScalarVolumeNode*)d->BackgroundVolumeNode,"CT-Air");
+                break;
+            case this->ID_PET:
+                volumeModulePointerLogic->setWindowLevelPreset((vtkMRMLScalarVolumeNode*)d->BackgroundVolumeNode, "CT-PET");
+                break;
+            case this->ID_CTAbdomen:
+                volumeModulePointerLogic->setWindowLevelPreset((vtkMRMLScalarVolumeNode*)d->BackgroundVolumeNode, "CT-Abdomen");
+                break;
+            case this->ID_CTBrain:
+                volumeModulePointerLogic->setWindowLevelPreset((vtkMRMLScalarVolumeNode*)d->BackgroundVolumeNode, "CT-Brain");
+                break;
+            case this->ID_CTLung:
+                volumeModulePointerLogic->setWindowLevelPreset((vtkMRMLScalarVolumeNode*)d->BackgroundVolumeNode, "CT-Lung");
+                break;
+            case this->ID_DTI:
+                volumeModulePointerLogic->setWindowLevelPreset((vtkMRMLScalarVolumeNode*)d->BackgroundVolumeNode, "CT-DTI");
+                break;
+            default:
+                QString message = QString("No valid preset ID.");
+                qWarning() << Q_FUNC_INFO << ": " << message;
+                break;
+        }
     }
 }

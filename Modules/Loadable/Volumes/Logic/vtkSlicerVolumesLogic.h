@@ -35,6 +35,9 @@
 #include <cstdlib>
 #include <list>
 
+// QT includes
+#include <QString>
+
 #include "vtkSlicerVolumesModuleLogicExport.h"
 
 class vtkMRMLLabelMapVolumeNode;
@@ -279,6 +282,13 @@ public:
   /// value is set when setting the compare volume geometry epsilon.
   /// \sa SetCompareVolumeGeometryEpsilon
   vtkGetMacro(CompareVolumeGeometryPrecision, int);
+
+  ///  Method to set Window/level
+  bool SetVolumeWindowLevel(vtkMRMLScalarVolumeNode* volumeNode, double window, double level, bool isAutoWindowLevel);
+  ///  Method to set Window/level presets according to predefined strings
+  void setWindowLevelPreset(vtkMRMLScalarVolumeNode* volumeNode, const QString& presetName);
+  ///  Method to set color node
+  void setColorNode(vtkMRMLNode* colorNode);
 
 protected:
   vtkSlicerVolumesLogic();

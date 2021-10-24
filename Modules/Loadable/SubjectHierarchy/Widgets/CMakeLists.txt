@@ -7,6 +7,7 @@ set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT
 set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerSubjectHierarchyModuleLogic_INCLUDE_DIRS}
   ${qSlicerTerminologiesModuleWidgets_INCLUDE_DIRS}
+  ${vtkSlicerVolumesModuleLogic_INCLUDE_DIRS}
   ${MRMLCore_INCLUDE_DIRS}
   )
 if(Slicer_BUILD_CLI_SUPPORT)
@@ -95,6 +96,7 @@ set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleLogic
   qSlicerTerminologiesModuleWidgets
   MRMLCore
+  vtkSlicerVolumesModuleLogic
   )
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND ${KIT}_TARGET_LIBRARIES

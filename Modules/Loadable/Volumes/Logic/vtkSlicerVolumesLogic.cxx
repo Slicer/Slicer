@@ -58,6 +58,10 @@
 #include <vtkImageReslice.h>
 #include <vtkTransform.h>
 
+// QT includes
+#include <QString>
+#include <QDebug>
+
 /// CTK includes
 /// to avoid CTK includes which pull in a dependency on Qt, rehome some CTK
 /// core utility methods here in the anonymous namespace until they get ported
@@ -1544,4 +1548,125 @@ vtkSlicerVolumesLogic
   outputVolumeNode->SetAndObserveImageData(resliceFilter->GetOutput());
 
   return outputVolumeNode;
+}
+
+
+// --------------------------------------------------------------------------
+void vtkSlicerVolumesLogic::setColorNode(vtkMRMLNode* colorNode)
+{
+    vtkMRMLScene* scene = this->GetMRMLScene();
+    vtkSmartPointer<vtkMRMLScalarVolumeNode> volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLScalarVolumeNode"));
+
+    if (!volumeNode)
+    {
+        QString message = QString("No volume node.");
+        qWarning() << Q_FUNC_INFO << ": " << message;
+        return;
+    }
+    vtkMRMLScalarVolumeDisplayNode* displayNode = volumeNode->GetScalarVolumeDisplayNode();
+    if (!displayNode)
+    {
+        QString message = QString("No display node.");
+        qWarning() << Q_FUNC_INFO << ": " << message;
+        return;
+    }
+    if (!displayNode || !colorNode)
+    {
+        QString message = QString("No display and color node.");
+        qWarning() << Q_FUNC_INFO << ": " << message;
+        return;
+    }
+    Q_ASSERT(vtkMRMLColorNode::SafeDownCast(colorNode));
+    displayNode->SetAndObserveColorNodeID(colorNode->GetID());
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerVolumesLogic::SetVolumeWindowLevel(vtkMRMLScalarVolumeNode* volumeNode, double window, double level, bool isAutoWindowLevel)
+{
+    vtkMRMLScene* scene = this->GetMRMLScene();
+    if (!volumeNode)
+    {
+        QString message = QString("No volume node.");
+        qWarning() << Q_FUNC_INFO << ": " << message;
+        return false;
+    }
+    vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = volumeNode->GetScalarVolumeDisplayNode();
+    if (!volumeDisplayNode)
+    {
+        QString message = QString("No display node.");
+        qWarning() << Q_FUNC_INFO << ": " << message;
+        return false;
+    }
+    if (isAutoWindowLevel)
+    {
+        int disabledModify = volumeDisplayNode->StartModify();
+        volumeDisplayNode->SetWindowLevel(window, level);
+        volumeDisplayNode->SetAutoWindowLevel(1);
+        volumeDisplayNode->EndModify(disabledModify);
+    }
+    else
+    {
+        int disabledModify = volumeDisplayNode->StartModify();
+        volumeDisplayNode->SetAutoWindowLevel(0);
+        volumeDisplayNode->SetWindowLevel(window, level);
+        volumeDisplayNode->EndModify(disabledModify);
+    }
+    return true;
+}
+
+// --------------------------------------------------------------------------
+void vtkSlicerVolumesLogic::setWindowLevelPreset(vtkMRMLScalarVolumeNode* volumeNode, const QString& presetName)
+{
+    QString colorNodeID;
+    double window = -1.;
+    double level = std::numeric_limits<double>::max();
+    if (presetName == "CT-Bone")
+    {
+        colorNodeID = "vtkMRMLColorTableNodeGrey";
+        window = 1000.;
+        level = 400.;
+    }
+    else if (presetName == "CT-Air")
+    {
+        colorNodeID = "vtkMRMLColorTableNodeGrey";
+        window = 1000.;
+        level = -426.;
+    }
+    else if (presetName == "PET")
+    {
+        colorNodeID = "vtkMRMLColorTableNodeRainbow";
+        window = 10000.;
+        level = 6000.;
+    }
+    else if (presetName == "CT-Abdomen")
+    {
+        colorNodeID = "vtkMRMLColorTableNodeGrey";
+        window = 350.;
+        level = 40.;
+    }
+    else if (presetName == "CT-Brain")
+    {
+        colorNodeID = "vtkMRMLColorTableNodeGrey";
+        window = 100.;
+        level = 50.;
+    }
+    else if (presetName == "CT-Lung")
+    {
+        colorNodeID = "vtkMRMLColorTableNodeGrey";
+        window = 1400.;
+        level = -500.;
+    }
+    else if (presetName == "DTI")
+    {
+        colorNodeID = "vtkMRMLColorTableNodeRainbow";
+        window = 1.0;
+        level = 0.5;
+    }
+    vtkMRMLNode* colorNode = this->GetMRMLScene()->GetNodeByID(colorNodeID.toUtf8());
+    if (colorNode)
+    {
+        //qDebug() << "You have obtained" << presetName << "apples and I am setting the color!";
+        this->setColorNode(colorNode);
+    }
+    this->SetVolumeWindowLevel(volumeNode, window, level, false);
 }

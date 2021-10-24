@@ -50,6 +50,15 @@ public:
 
 public:
 
+  enum {
+       ID_CTBone,
+       ID_CTAir,
+       ID_PET,
+       ID_CTAbdomen,
+       ID_CTBrain,
+       ID_CTLung,
+       ID_DTI,
+  };
   /// Get view context menu item actions that are available when right-clicking an object in the views.
   /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
   QList<QAction*> viewContextMenuActions()const override;
@@ -64,6 +73,7 @@ protected slots:
   void saveScreenshot();
   void configureSliceViewAnnotationsAction();
   void maximizeView();
+  void setVolumePreset(int which);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyViewContextMenuPluginPrivate> d_ptr;
