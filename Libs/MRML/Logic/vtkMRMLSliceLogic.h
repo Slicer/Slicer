@@ -370,6 +370,12 @@ public:
   /// is present and not equal to zero
   static bool IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayNode);
 
+  /// Get volume at the specified world position that should be used
+  /// for interactions, such as window/level adjustments.
+  /// backgroundVolumeEditable and foregroundVolumeEditable can be used specify that
+  /// a volume is not editable (even if it is visible at the given position).
+  int GetEditableLayerAtWorldPosition(double worldPos[3], bool backgroundVolumeEditable = true, bool foregroundVolumeEditable = true);
+
 protected:
 
   vtkMRMLSliceLogic();
@@ -409,6 +415,13 @@ protected:
   /// re-add an input if it is not changed) because rebuilding of the pipeline
   /// is a relatively expensive operation.
   bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers);
+
+  /// Returns true if position is inside the selected layer volume.
+  /// Use background flag to choose between foreground/background layer.
+  bool IsEventInsideVolume(bool background, double worldPos[3]);
+
+  /// Returns true if the volume's window/level values are editable on the GUI.
+  bool VolumeWindowLevelEditable(const char* volumeNodeID);
 
   bool                        AddingSliceModelNodes;
 

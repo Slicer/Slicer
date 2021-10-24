@@ -532,7 +532,6 @@ void vtkSlicerMarkupsWidget::UpdatePreviewPointIndex(vtkMRMLInteractionEventData
       {
       return;
       }
-    int previewIndex = this->PreviewPointIndex;
     int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
     for (int i = 0; i < numberOfControlPoints; i++)
       {

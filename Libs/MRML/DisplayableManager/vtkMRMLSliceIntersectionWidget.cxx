@@ -1186,9 +1186,13 @@ bool vtkMRMLSliceIntersectionWidget::ProcessWidgetMenu(vtkMRMLInteractionEventDa
   vtkNew<vtkMRMLInteractionEventData> pickEventData;
   pickEventData->SetType(vtkMRMLInteractionNode::ShowViewContextMenuEvent);
   pickEventData->SetViewNode(this->SliceNode);
-  if (pickEventData->IsDisplayPositionValid())
+  if (eventData->IsDisplayPositionValid())
     {
     pickEventData->SetDisplayPosition(eventData->GetDisplayPosition());
+    }
+  if (eventData->IsWorldPositionValid())
+    {
+    pickEventData->SetWorldPosition(eventData->GetWorldPosition(), eventData->IsWorldPositionAccurate());
     }
   interactionNode->ShowViewContextMenu(pickEventData);
   return true;
