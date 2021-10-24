@@ -151,14 +151,6 @@ protected:
 
   int GetEditableLayerAtEventPosition(vtkMRMLInteractionEventData* eventData);
 
-  /// Returns true if mouse is inside the selected layer volume.
-  /// Use background flag to choose between foreground/background layer.
-  bool IsEventInsideVolume(bool background, vtkMRMLInteractionEventData* eventData);
-
-  /// Returns true if the volume's window/level values are editable
-  /// on the GUI
-  bool VolumeWindowLevelEditable(const char* volumeNodeID);
-
   vtkMRMLVolumeNode* GetVolumeNodeFromSliceLayer(int editedLayer);
 
   bool SetVolumeWindowLevel(double window, double level, bool isAutoWindowLevel);

@@ -124,7 +124,7 @@ void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeNode::GetScalarVolumeDisplayNode()
 {
-  return vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  return vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
 }
 
 //----------------------------------------------------------------------------

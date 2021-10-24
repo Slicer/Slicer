@@ -24,6 +24,13 @@
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 
+// Qt includes
+#include <QDebug>
+
+// Slicer includes
+#include "qSlicerApplication.h"
+#include "vtkSlicerVolumesLogic.h"
+
 // STD includes
 #include <limits>
 
@@ -400,77 +407,18 @@ void qSlicerScalarVolumeDisplayWidget::onLockWindowLevelButtonClicked()
 void qSlicerScalarVolumeDisplayWidget::onPresetButtonClicked()
 {
   QToolButton* preset = qobject_cast<QToolButton*>(this->sender());
-  this->setPreset(preset->accessibleName());
+  this->setPreset(preset->objectName());
 }
 
 // --------------------------------------------------------------------------
-void qSlicerScalarVolumeDisplayWidget::setPreset(const QString& presetName)
+void qSlicerScalarVolumeDisplayWidget::setPreset(const QString& presetId)
 {
   Q_D(qSlicerScalarVolumeDisplayWidget);
-  QString colorNodeID;
-  double window = -1.;
-  double level = std::numeric_limits<double>::max();
-  if (presetName == "CT-Bone")
+  vtkSlicerVolumesLogic* volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(qSlicerApplication::application()->moduleLogic("Volumes"));
+  if (!volumesModuleLogic)
     {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 1000.;
-    level = 400.;
+    qCritical() << Q_FUNC_INFO << " failed: volumes module logic is not available";
+    return;
     }
-  else if (presetName == "CT-Air")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 1000.;
-    level = -426.;
-    }
-  else if (presetName == "PET")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeRainbow";
-    window = 10000.;
-    level = 6000.;
-    }
-  else if (presetName == "CT-Abdomen")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 350.;
-    level = 40.;
-    }
-  else if (presetName == "CT-Brain")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 100.;
-    level = 50.;
-    }
-  else if (presetName == "CT-Lung")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 1400.;
-    level = -500.;
-    }
-  else if (presetName == "DTI")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeRainbow";
-    window = 1.0;
-    level = 0.5;
-    }
-  vtkMRMLNode* colorNode = this->mrmlScene()->GetNodeByID(colorNodeID.toUtf8());
-  if (colorNode)
-    {
-    this->setColorNode(colorNode);
-    }
-  if (window != -1 || level!= std::numeric_limits<double>::max())
-    {
-    d->MRMLWindowLevelWidget->setAutoWindowLevel(qMRMLWindowLevelWidget::Manual);
-    }
-  if (window != -1 && level != std::numeric_limits<double>::max())
-    {
-    d->MRMLWindowLevelWidget->setWindowLevel(window, level);
-    }
-  else if (window != -1)
-    {
-    d->MRMLWindowLevelWidget->setWindow(window);
-    }
-  else if (level != std::numeric_limits<double>::max())
-    {
-    d->MRMLWindowLevelWidget->setLevel(level);
-    }
+  volumesModuleLogic->ApplyVolumeDisplayPreset(this->volumeDisplayNode(), presetId.toStdString());
 }

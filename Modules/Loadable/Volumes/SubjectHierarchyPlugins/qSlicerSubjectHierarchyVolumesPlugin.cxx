@@ -30,6 +30,9 @@
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "qSlicerModuleManager.h"
+#include "vtkSlicerVolumesLogic.h"
+#include "qSlicerAbstractCoreModule.h"
 
 // MRML includes
 #include <vtkMRMLLabelMapVolumeNode.h>
@@ -55,6 +58,17 @@
 #include <QSettings>
 #include <QStandardItem>
 #include <QTimer>
+#include <QMenu>
+
+// CTK includes
+#include "ctkSignalMapper.h"
+
+namespace
+{
+  const std::string PRESET_AUTO = "_AUTO";
+  const std::string DISPLAY_NODE_PRESET_PREFIX = "_DISPLAY_NODE_";
+  const int MAX_NUMBER_OF_DISPLAY_NODE_PRESETS = 4;
+}
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
@@ -82,6 +96,12 @@ public:
   QAction* ShowVolumeInForegroundAction{nullptr};
   QAction* ResetFieldOfViewOnShowAction{nullptr};
   QAction* ResetViewOrientationOnShowAction{nullptr};
+
+  QAction* VolumeDisplayPresetAction{nullptr};
+  QMenu* PresetSubmenu{nullptr};
+  ctkSignalMapper* PresetModeMapper{nullptr};
+
+  vtkWeakPointer<vtkMRMLVolumeNode> SelectedVolumeNode;
 };
 
 //-----------------------------------------------------------------------------
@@ -124,6 +144,68 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
   QObject::connect(this->ResetViewOrientationOnShowAction, SIGNAL(toggled(bool)), q, SLOT(toggleResetViewOrientationOnShowAction(bool)));
   this->ResetViewOrientationOnShowAction->setCheckable(true);
   this->ResetViewOrientationOnShowAction->setChecked(false);
+
+  // Add volume preset actions
+
+  this->VolumeDisplayPresetAction = new QAction("Window/level presets");
+  this->VolumeDisplayPresetAction->setObjectName("VolumeDisplayPresetAction");
+  q->setActionPosition(this->VolumeDisplayPresetAction, qSlicerSubjectHierarchyAbstractPlugin::SectionBottom);
+
+  vtkSlicerVolumesLogic* volumesModuleLogic = nullptr;
+
+  // read volume preset names from volumes logic
+  volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(
+    qSlicerApplication::application()->moduleManager()->module("Volumes")->logic());
+  if (!volumesModuleLogic)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: Module logic 'Volumes' not found.";
+    return;
+    }
+
+  this->PresetSubmenu = new QMenu();
+  QActionGroup* presetModeActions = new QActionGroup(this);
+  presetModeActions->setExclusive(true);
+  this->PresetModeMapper = new ctkSignalMapper(this);
+
+  for (int displayNodePresetIndex = 0; displayNodePresetIndex < MAX_NUMBER_OF_DISPLAY_NODE_PRESETS; displayNodePresetIndex++)
+    {
+    QString presetIdStr = QString("%1%2").arg(QString::fromStdString(DISPLAY_NODE_PRESET_PREFIX)).arg(displayNodePresetIndex);
+    QAction* presetAction = new QAction();
+    presetAction->setObjectName(presetIdStr);
+    presetAction->setToolTip(tr("Default preset for the selected volume"));
+    presetAction->setCheckable(true);
+    this->PresetSubmenu->addAction(presetAction);
+    presetModeActions->addAction(presetAction);
+    this->PresetModeMapper->setMapping(presetAction, presetIdStr);
+    }
+
+  // Add Automatic preset
+  QAction* autoAction = new QAction(tr("Automatic"));
+  autoAction->setObjectName(QString::fromStdString(PRESET_AUTO));
+  autoAction->setToolTip(tr("Display the full intensity range of the volume."));
+  autoAction->setCheckable(true);
+  this->PresetSubmenu->addAction(autoAction);
+  presetModeActions->addAction(autoAction);
+  this->PresetModeMapper->setMapping(autoAction, QString::fromStdString(PRESET_AUTO));
+
+  std::vector<std::string> presetIds = volumesModuleLogic->GetVolumeDisplayPresetIDs();
+  for (const auto& presetId : presetIds)
+    {
+    vtkSlicerVolumesLogic::VolumeDisplayPreset preset = volumesModuleLogic->GetVolumeDisplayPreset(presetId);
+    QString presetName = tr(preset.PresetName.c_str());
+    QString presetIdStr = QString::fromStdString(presetId);
+    QAction* presetAction = new QAction(presetName);
+    presetAction->setObjectName(presetIdStr);
+    presetAction->setToolTip(tr("Display volume in slice views with %1 preset.").arg(presetName));
+    presetAction->setCheckable(true);
+    this->PresetSubmenu->addAction(presetAction);
+    presetModeActions->addAction(presetAction);
+    this->PresetModeMapper->setMapping(presetAction, presetIdStr);
+    }
+
+  this->VolumeDisplayPresetAction->setMenu(this->PresetSubmenu);
+  QObject::connect(presetModeActions, SIGNAL(triggered(QAction*)), this->PresetModeMapper, SLOT(map(QAction*)));
+  QObject::connect(this->PresetModeMapper, SIGNAL(mapped(QString)), q, SLOT(setVolumePreset(QString)));
 }
 
 //-----------------------------------------------------------------------------
@@ -181,6 +263,112 @@ qSlicerSubjectHierarchyVolumesPlugin::qSlicerSubjectHierarchyVolumesPlugin(QObje
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumesPlugin::~qSlicerSubjectHierarchyVolumesPlugin() = default;
+
+//---------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::viewContextMenuActions()const
+{
+  Q_D(const qSlicerSubjectHierarchyVolumesPlugin);
+  QList<QAction*> actions;
+  actions << d->VolumeDisplayPresetAction;
+  return actions;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumesPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
+{
+  Q_D(qSlicerSubjectHierarchyVolumesPlugin);
+
+  d->VolumeDisplayPresetAction->setVisible(false);
+
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode || !shNode->GetScene())
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  if (itemID != shNode->GetSceneItemID())
+    {
+    return;
+    }
+  if (!eventData.contains("ViewNodeID"))
+    {
+    return;
+    }
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(
+    shNode->GetScene()->GetNodeByID(eventData["ViewNodeID"].toString().toStdString()));
+  if (!sliceNode)
+    {
+    return;
+    }
+  vtkMRMLSliceLogic* sliceLogic = qSlicerApplication::application()->applicationLogic()->GetSliceLogic(sliceNode);
+  if (!sliceLogic)
+    {
+    return;
+    }
+
+  QVariantList worldPosVector = eventData["WorldPosition"].toList();
+  if (worldPosVector.size() != 3)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid world position";
+    return;
+    }
+  double worldPos[3] = { worldPosVector[0].toDouble(), worldPosVector[1].toDouble(), worldPosVector[2].toDouble() };
+  int volumeLayer = sliceLogic->GetEditableLayerAtWorldPosition(worldPos);
+
+  // Cache nodes to have them available for the menu action execution.
+  d->SelectedVolumeNode = sliceLogic->GetLayerVolumeNode(volumeLayer);
+
+  if (d->SelectedVolumeNode)
+    {
+    // Check the checkbox of the current display preset
+    vtkSlicerVolumesLogic* volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(
+      qSlicerApplication::application()->moduleManager()->module("Volumes")->logic());
+    if (volumesModuleLogic)
+      {
+      // For presets in display node
+      vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(d->SelectedVolumeNode->GetVolumeDisplayNode());
+      double currentWindowWidth = scalarVolumeDisplayNode ? scalarVolumeDisplayNode->GetWindow() : 0;
+      double currentWindowLevel = scalarVolumeDisplayNode ? scalarVolumeDisplayNode->GetLevel() : 0;
+      int numberOfDisplayNodePresets = scalarVolumeDisplayNode->GetNumberOfWindowLevelPresets();
+      // For presets in volumes module logic
+      QString appliedPresetId = QString::fromStdString(volumesModuleLogic->GetAppliedVolumeDisplayPresetId(d->SelectedVolumeNode->GetVolumeDisplayNode()));
+      for (QAction* presetAction : d->PresetSubmenu->actions())
+        {
+        QString presetId = presetAction->objectName();
+        if (presetId.startsWith(QString::fromStdString(DISPLAY_NODE_PRESET_PREFIX)))
+          {
+          // Preset stored in display node
+          int displayNodePresetIndex = presetId.right(presetId.length() - DISPLAY_NODE_PRESET_PREFIX.length()).toInt();
+          if (scalarVolumeDisplayNode && displayNodePresetIndex < numberOfDisplayNodePresets)
+            {
+            // existing display node preset
+            double presetWindowWidth = scalarVolumeDisplayNode->GetWindowPreset(displayNodePresetIndex);
+            double presetWindowLevel = scalarVolumeDisplayNode->GetLevelPreset(displayNodePresetIndex);
+            presetAction->setText(tr("Default (WW=%1, WL=%2)").arg(presetWindowWidth).arg(presetWindowLevel));
+            presetAction->setChecked(!scalarVolumeDisplayNode->GetAutoWindowLevel()
+                && currentWindowWidth == presetWindowWidth && currentWindowLevel == presetWindowLevel);
+            presetAction->setVisible(true);
+            }
+          else
+            {
+            // don't display this action, no corresponding display node preset
+            presetAction->setVisible(false);
+            }
+          }
+        else if (presetId == QString::fromStdString(PRESET_AUTO))
+          {
+          presetAction->setChecked(scalarVolumeDisplayNode->GetAutoWindowLevel());
+          }
+        else
+          {
+          // Preset storedin volume logic
+          presetAction->setChecked(presetAction->objectName() == appliedPresetId);
+          }
+        }
+      }
+    }
+  d->VolumeDisplayPresetAction->setVisible(d->SelectedVolumeNode.GetPointer() != nullptr);
+}
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(
@@ -1049,4 +1237,50 @@ bool qSlicerSubjectHierarchyVolumesPlugin::showItemInView(vtkIdType itemID, vtkM
   shNode->ItemModified(itemID);
 
   return true;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumesPlugin::setVolumePreset(const QString& presetId)
+{
+  Q_D(qSlicerSubjectHierarchyVolumesPlugin);
+
+  if (d->SelectedVolumeNode == nullptr)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: invalid volume";
+    return;
+    }
+
+  if (presetId.startsWith(QString::fromStdString(DISPLAY_NODE_PRESET_PREFIX)))
+    {
+    // Preset stored in display node
+    int displayNodePresetIndex = presetId.right(presetId.length() - DISPLAY_NODE_PRESET_PREFIX.length()).toInt();
+    vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(d->SelectedVolumeNode->GetVolumeDisplayNode());
+    if (!scalarVolumeDisplayNode)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: volume display node is invalid";
+      return;
+      }
+    scalarVolumeDisplayNode->SetWindowLevelFromPreset(displayNodePresetIndex);
+    }
+  else if (presetId == QString::fromStdString(PRESET_AUTO))
+    {
+    vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(d->SelectedVolumeNode->GetVolumeDisplayNode());
+    if (!scalarVolumeDisplayNode)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: volume display node is invalid";
+      return;
+      }
+    scalarVolumeDisplayNode->SetAutoWindowLevel(true);
+    }
+  else
+    {
+    // Preset stored in volumes logic
+    vtkSlicerVolumesLogic* volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(qSlicerApplication::application()->moduleLogic("Volumes"));
+    if (!volumesModuleLogic)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: volumes module logic is not available";
+      return;
+      }
+    volumesModuleLogic->ApplyVolumeDisplayPreset(d->SelectedVolumeNode->GetVolumeDisplayNode(), presetId.toStdString());
+    }
 }

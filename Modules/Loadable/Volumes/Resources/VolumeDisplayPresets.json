@@ -1,0 +1,54 @@
+{
+    "@schema": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#",
+    "volumeDisplayPresets": [
+        {
+            "name": "CT-Bone",
+            "id": "CT-Bone",
+            "window": 1000.0,
+            "level": 400.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "name": "CT-Air",
+            "id": "CT-Air",
+            "window": 1000.0,
+            "level": -426.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "name": "CT-Abdomen",
+            "id": "CT-Abdomen",
+            "window": 350.0,
+            "level": 40.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "name": "CT-Brain",
+            "id": "CT-Brain",
+            "window": 100.0,
+            "level": 50.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "name": "CT-Lung",
+            "id": "CT-Lung",
+            "window": 1400.0,
+            "level": -500.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "name": "PET",
+            "id": "PET",
+            "window": 10000.0,
+            "level": 6000.0,
+            "color": "vtkMRMLColorTableNodeRainbow"
+        },
+        {
+            "name": "DTI",
+            "id": "DTI",
+            "window": 1.0,
+            "level": 0.5,
+            "color": "vtkMRMLColorTableNodeRainbow"
+        }
+    ]
+}
