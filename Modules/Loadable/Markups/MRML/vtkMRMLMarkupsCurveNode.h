@@ -259,14 +259,14 @@ public:
   /// The model node that is used as the surface mesh for finding the shortest distance path on the surface mesh.
   /// Used by the ShortestDistanceOnSurface curve type.
   /// \deprecated SetAndObserveShortestDistanceSurfaceNode
-  /// \sa SetAndObserveSurfaceNode
-  void SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode* modelNode) { this->SetAndObserveSurfaceNode(modelNode); }
+  /// \sa SetAndObserveSurfaceConstraintNode
+  void SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode* modelNode) { this->SetAndObserveSurfaceConstraintNode(modelNode); }
   /// \deprecated GetShortestDistanceSurfaceNode
-  /// \sa GetSurfaceNode
-  vtkMRMLModelNode* GetShortestDistanceSurfaceNode() { return this->GetSurfaceNode(); }
+  /// \sa GetSurfaceConstraintNode
+  vtkMRMLModelNode* GetShortestDistanceSurfaceNode() { return this->GetSurfaceConstraintNode(); }
 
-  void SetAndObserveSurfaceNode(vtkMRMLModelNode* modelNode);
-  vtkMRMLModelNode* GetSurfaceNode();
+  void SetAndObserveSurfaceConstraintNode(vtkMRMLModelNode* modelNode);
+  vtkMRMLModelNode* GetSurfaceConstraintNode();
 
   /// The method that should be used to combine the distance with the scalar value for ShortestDistanceOnSurface curve type.
   /// Uses the COST_FUNCTION_X enums from vtkSlicerDijkstraGraphGeodesicPath.

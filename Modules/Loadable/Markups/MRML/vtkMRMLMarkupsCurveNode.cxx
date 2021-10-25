@@ -1012,7 +1012,7 @@ void vtkMRMLMarkupsCurveNode::SetCurveTypeToShortestDistanceOnSurface(vtkMRMLMod
   this->SetCurveType(vtkCurveGenerator::CURVE_TYPE_SHORTEST_DISTANCE_ON_SURFACE);
   if (modelNode)
     {
-    this->SetAndObserveSurfaceNode(modelNode);
+    this->SetAndObserveSurfaceConstraintNode(modelNode);
     }
 }
 
@@ -1207,13 +1207,13 @@ void vtkMRMLMarkupsCurveNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* refer
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::SetAndObserveSurfaceNode(vtkMRMLModelNode* modelNode)
+void vtkMRMLMarkupsCurveNode::SetAndObserveSurfaceConstraintNode(vtkMRMLModelNode* modelNode)
 {
   this->SetAndObserveNodeReferenceID(this->GetSurfaceConstraintNodeReferenceRole(), modelNode ? modelNode->GetID() : nullptr);
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLModelNode* vtkMRMLMarkupsCurveNode::GetSurfaceNode()
+vtkMRMLModelNode* vtkMRMLMarkupsCurveNode::GetSurfaceConstraintNode()
 {
   return vtkMRMLModelNode::SafeDownCast(this->GetNodeReference(this->GetSurfaceConstraintNodeReferenceRole()));
 }
@@ -1268,7 +1268,7 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelNodeChanged()
 {
   this->UpdateSurfaceScalarVariables();
 
-  vtkMRMLModelNode* modelNode = this->GetSurfaceNode();
+  vtkMRMLModelNode* modelNode = this->GetSurfaceConstraintNode();
   if (modelNode)
     {
     this->CleanFilter->SetInputConnection(modelNode->GetPolyDataConnection());
@@ -1284,7 +1284,7 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelNodeChanged()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::OnSurfaceModelTransformChanged()
 {
-  vtkMRMLModelNode* modelNode = this->GetSurfaceNode();
+  vtkMRMLModelNode* modelNode = this->GetSurfaceConstraintNode();
   if (!modelNode)
     {
     return;
@@ -1304,7 +1304,7 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelTransformChanged()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::UpdateSurfaceScalarVariables()
 {
-  vtkMRMLModelNode* modelNode = this->GetSurfaceNode();
+  vtkMRMLModelNode* modelNode = this->GetSurfaceConstraintNode();
   if (!modelNode)
     {
     return;
