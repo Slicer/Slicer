@@ -57,7 +57,7 @@ To acknowledge 3D Slicer as a platform, please cite the [Slicer web site](http:/
 
 ## The 3D Slicer name and logo
 
-3D Slicer and the logo are trademarks of Brigham and Women's Hospital (BWH) and may not be used without permission.  Such permission is broadly granted for academic or commerial uses, such as documenting the use of Slicer in your project or promoting the use of Slicer by others.  Please use the original Slicer logo colors and do not alter the shape or text.  Using Slicer to imply that BWH or the Slicer community endorses your product or project is not permitted without permission.  For other uses please contact Ron Kikinis (kikinis@bwh.harvard.edu) and Steve Pieper (pieper@bwh.harvard.edu).
+3D Slicer and the logo are trademarks of Brigham and Women's Hospital (BWH) and may not be used without permission.  Such permission is broadly granted for academic or commercial uses, such as documenting the use of Slicer in your project or promoting the use of Slicer by others.  Please use the original Slicer logo colors and do not alter the shape or text.  Using Slicer to imply that BWH or the Slicer community endorses your product or project is not permitted without permission.  For other uses please contact Ron Kikinis (kikinis@bwh.harvard.edu) and Steve Pieper (pieper@bwh.harvard.edu).
 
 ### Individual modules
 
