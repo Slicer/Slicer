@@ -117,7 +117,9 @@ int vtkProjectMarkupsCurvePointsFilter::RequestData(
   // If we have a surface node, project, otherwise the copy was enough
   if (this->InputCurveNode->GetSurfaceConstraintNode())
     {
-    if(!this->ProjectPointsToSurface(this->InputCurveNode->GetSurfaceConstraintNode(), 1, inputPoints, outputPoints))
+    if(!this->ProjectPointsToSurface(
+         this->InputCurveNode->GetSurfaceConstraintNode(), this->GetMaximumSearchRadiusTolerance(), inputPoints,
+         outputPoints))
       {
       return 0;
       }
