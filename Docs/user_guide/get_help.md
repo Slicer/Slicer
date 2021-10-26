@@ -71,3 +71,5 @@ Background: Funding for Slicer is provided through competitive mechanisms primar
         - Run depends.exe using the Slicer launcher: `Slicer.exe --launch path\to\depends.exe "bin\SlicerApp-real.exe"`
         - In dependency walker: Make sure the full path of DLLs are shown (click View / Full paths if you only see the DLL names). Use File / Save as... => Comma Separated Values (*.csv) to save logs to a file.
       - Enable process loading logging using the sxstrace tool, start Slicer, and save the log file (see instructions [here](https://technet.microsoft.com/en-ca/library/hh875651.aspx))
+  - On Linux:
+    - Some linux versions require building your own kerberos and openssl as [described and tracked in this issue](https://github.com/Slicer/Slicer/issues/5663).
