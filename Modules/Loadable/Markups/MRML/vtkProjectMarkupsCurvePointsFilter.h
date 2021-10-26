@@ -66,8 +66,16 @@ public:
   static bool ConstrainPointsToSurface(vtkPoints* originalPoints, vtkDoubleArray* normalVectors, vtkPolyData* surfacePolydata,
     vtkPoints* surfacePoints, double maximumSearchRadiusTolerance);
 
+  ///@{
+  /// Set/Get maximumSearchRadiusTolerance defining the allowable projection distance.
+  ///
+  /// It is specified as a percentage of the model's bounding box diagonal in world coordinate system.
+  ///
+  /// \sa ConstrainPointsToSurface()
+  /// \sa vtkBoundingBox::GetDiagonalLength()
   void SetMaximumSearchRadiusTolerance(double maximumSearchRadiusTolerance);
   double GetMaximumSearchRadiusTolerance() const;
+  ///@}
 
 protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
