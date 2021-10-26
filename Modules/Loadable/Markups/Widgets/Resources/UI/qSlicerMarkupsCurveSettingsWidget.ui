@@ -27,11 +27,11 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ctkCollapsibleButton" name="curveSettingsCollapseButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="curveSettingsCollapseButton">
+     <property name="text">
       <string>Curve Settings</string>
      </property>
-     <property name="collapsed" stdset="0">
+     <property name="collapsed">
       <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -70,8 +70,8 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="qMRMLNodeComboBox" name="modelNodeSelector" native="true">
-             <property name="nodeTypes" stdset="0">
+            <widget class="qMRMLNodeComboBox" name="modelNodeSelector">
+             <property name="nodeTypes">
               <stringlist>
                <string>vtkMRMLModelNode</string>
               </stringlist>
@@ -85,7 +85,7 @@
            <property name="title">
             <string>Surface</string>
            </property>
-           <property name="collapsed" stdset="0">
+           <property name="collapsed">
             <bool>false</bool>
            </property>
            <layout class="QFormLayout" name="formLayout_2">
@@ -194,35 +194,69 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="resampleCurveCollapsibleButton" native="true">
+    <widget class="ctkCollapsibleButton" name="resampleCurveCollapsibleButton">
      <property name="toolTip">
       <string>Resample a curve and optionally constrain the points to a node</string>
      </property>
-     <property name="text" stdset="0">
+     <property name="text">
       <string>Resample</string>
      </property>
-     <property name="collapsed" stdset="0">
+     <property name="collapsed">
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout1">
-      <item row="2" column="1">
-       <widget class="qMRMLNodeComboBox" name="resampleCurveConstraintNodeSelector" native="true">
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="resampleCurveOutputNodeSelector">
         <property name="toolTip">
-         <string>Fiducials will be constrained to the surface if a node is selected</string>
+         <string>Select a node to store the resampled curve </string>
         </property>
-        <property name="nodeTypes" stdset="0">
+        <property name="nodeTypes">
          <stringlist>
-          <string>vtkMRMLModelNode</string>
+          <string>vtkMRMLMarkupsCurveNode</string>
          </stringlist>
         </property>
-        <property name="noneEnabled" stdset="0">
+        <property name="noneEnabled">
          <bool>true</bool>
         </property>
-        <property name="addEnabled" stdset="0">
-         <bool>false</bool>
+        <property name="addEnabled">
+         <bool>true</bool>
         </property>
-        <property name="removeEnabled" stdset="0">
-         <bool>false</bool>
+        <property name="removeEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="selectNodeUponCreation">
+         <bool>true</bool>
+        </property>
+        <property name="noneDisplay">
+         <string>(Overwrite current node)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="ctkDoubleSpinBox" name="resampleCurveNumerOfOutputPointsSpinBox">
+        <property name="focusPolicy">
+         <enum>Qt::TabFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string>The active curve will be resamples with the number of points specified.</string>
+        </property>
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>20.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -230,6 +264,27 @@
        <widget class="QLabel" name="resampleCurveOutputNodeLabel">
         <property name="text">
          <string>Output node: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLNodeComboBox" name="resampleCurveConstraintNodeSelector">
+        <property name="toolTip">
+         <string>Fiducials will be constrained to the surface if a node is selected</string>
+        </property>
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLModelNode</string>
+         </stringlist>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -243,62 +298,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="ctkDoubleSpinBox" name="resampleCurveNumerOfOutputPointsSpinBox" native="true">
-        <property name="focusPolicy">
-         <enum>Qt::TabFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>The active curve will be resamples with the number of points specified.</string>
-        </property>
-        <property name="decimals" stdset="0">
-         <number>0</number>
-        </property>
-        <property name="minimum" stdset="0">
-         <double>0.000000000000000</double>
-        </property>
-        <property name="maximum" stdset="0">
-         <double>1000000.000000000000000</double>
-        </property>
-        <property name="singleStep" stdset="0">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="value" stdset="0">
-         <double>20.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="resampleCurveOutputNodeSelector" native="true">
-        <property name="toolTip">
-         <string>Select a node to store the resampled curve </string>
-        </property>
-        <property name="nodeTypes" stdset="0">
-         <stringlist>
-          <string>vtkMRMLMarkupsCurveNode</string>
-         </stringlist>
-        </property>
-        <property name="noneEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="addEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="removeEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="renameEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="selectNodeUponCreation" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="noneDisplay" stdset="0">
-         <string>(Overwrite current node)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" colspan="3">
+      <item row="4" column="0" colspan="3">
        <widget class="QPushButton" name="resampleCurveButton">
         <property name="toolTip">
          <string>Resamples the active curve with the number of fiducials spcified. Can be constrained to a node surface.</string>
@@ -318,51 +318,48 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0" colspan="3">
-       <widget class="ctkCollapsibleGroupBox" name="AdvancedOptionCollapsibleGroupBox">
-        <property name="title">
-         <string>Advanced</string>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="advancedCollapseButton">
+     <property name="text">
+      <string>Advanced</string>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="curveMaxSearchRadiusLabel">
+        <property name="text">
+         <string>Maximum projection distance:</string>
         </property>
-        <property name="checked">
-         <bool>false</bool>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="ctkSliderWidget" name="curveMaxSearchRadiusSliderWidget">
+        <property name="toolTip">
+         <string>Select the maximum projection distance as percentage of bounding box size.</string>
         </property>
-        <property name="collapsed" stdset="0">
-         <bool>true</bool>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
         </property>
-        <property name="collapsedHeight" stdset="0">
-         <number>7</number>
+        <property name="minimum">
+         <double>0.000000000000000</double>
         </property>
-        <layout class="QGridLayout" name="gridLayout2">
-         <item row="0" column="0">
-          <widget class="QLabel" name="resampleCurveMaxSearchRadiusLabel">
-           <property name="text">
-            <string>Maximum projection distance:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="ctkSliderWidget" name="resampleCurveMaxSearchRadiusSliderWidget" native="true">
-           <property name="toolTip">
-            <string>Select the maximum projection distance as percentage of bounding box size.</string>
-           </property>
-           <property name="singleStep" stdset="0">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="minimum" stdset="0">
-            <double>0.000000000000000</double>
-           </property>
-           <property name="maximum" stdset="0">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="value" stdset="0">
-            <double>25.000000000000000</double>
-           </property>
-           <property name="suffix" stdset="0">
-            <string> %</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <property name="maximum">
+         <double>100.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>25.000000000000000</double>
+        </property>
+        <property name="suffix">
+         <string> %</string>
+        </property>
+        <property name="tickInterval">
+         <double>0.000000000000000</double>
+        </property>
        </widget>
       </item>
      </layout>
@@ -371,6 +368,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
@@ -384,20 +387,14 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLNodeComboBox</class>
+   <class>ctkDoubleSpinBox</class>
    <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-   <container>1</container>
+   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkDoubleSpinBox</class>
-   <extends>QWidget</extends>
-   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

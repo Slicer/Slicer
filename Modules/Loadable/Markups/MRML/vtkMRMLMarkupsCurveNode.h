@@ -269,6 +269,15 @@ public:
   void SetAndObserveSurfaceConstraintNode(vtkMRMLModelNode* modelNode);
   vtkMRMLModelNode* GetSurfaceConstraintNode();
 
+  ///@{
+  /// Set/Get maximumSearchRadiusTolerance defining the allowable projection distance when projecting
+  /// curve to surface.
+  ///
+  /// It is specified as a percentage of the model's bounding box diagonal in world coordinate system.
+  void SetSurfaceConstraintMaximumSearchRadiusTolerance(double tolerance);
+  double GetSurfaceConstraintMaximumSearchRadiusTolerance() const;
+  ///@}
+
   /// The method that should be used to combine the distance with the scalar value for ShortestDistanceOnSurface curve type.
   /// Uses the COST_FUNCTION_X enums from vtkSlicerDijkstraGraphGeodesicPath.
   int GetSurfaceCostFunctionType();

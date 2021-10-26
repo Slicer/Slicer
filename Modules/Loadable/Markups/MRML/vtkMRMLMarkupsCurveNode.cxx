@@ -1458,3 +1458,19 @@ void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified(
   self->CurveMeasurementsCalculator->SetCalculateCurvature(true);
   self->CurveMeasurementsCalculator->Update();
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetSurfaceConstraintMaximumSearchRadiusTolerance(double tolerance)
+{
+  if (tolerance != this->GetSurfaceConstraintMaximumSearchRadiusTolerance())
+    {
+    this->ProjectPointsFilter->SetMaximumSearchRadiusTolerance(tolerance);
+    this->Modified();
+    }
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLMarkupsCurveNode::GetSurfaceConstraintMaximumSearchRadiusTolerance() const
+{
+  return this->ProjectPointsFilter->GetMaximumSearchRadiusTolerance();
+}

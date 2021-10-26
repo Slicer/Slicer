@@ -123,6 +123,8 @@ Curve settings section:
 
 Resample section: Replace control points by curve points sampled at equal distances. If a model node is selected for `Constrain points to surface` then the resampled points will be projected to the chosen model surface.
 
+Advanced section: Set the maximum search radius tolerance defining the allowable projection distance for projecting curve points and for projecting resampled control points. It is specified as a percentage of the model's bounding box diagonal in world coordinate system.
+
 ## Information for developers
 
 See examples and other developer information in [Developer guide](../../developer_guide/modules/markups.md) and [Script repository](../../developer_guide/script_repository.md#markups).
