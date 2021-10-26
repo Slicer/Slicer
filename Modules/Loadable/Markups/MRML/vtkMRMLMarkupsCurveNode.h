@@ -161,6 +161,7 @@ public:
   /// bounding box diagonal in world coordinate system.
   /// maximumSearchRadius is valid in the range between 0 and 1.
   /// returns true if successful, false in case of error
+  /// \sa vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurface
   static bool ConstrainPointsToSurface(vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
       vtkPoints* surfacePoints, double maximumSearchRadius=.25);
 
