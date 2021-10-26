@@ -222,6 +222,7 @@ vtkPoints* vtkMRMLMarkupsCurveNode::GetCurvePointsWorld()
   return curvePoly->GetPoints();
 }
 
+//---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLMarkupsCurveNode::GetCurveWorld()
 {
   if (this->GetNumberOfControlPoints() < 1)
@@ -340,7 +341,7 @@ bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, 
     this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment());
   vtkNew<vtkPoints> snappedToSurfaceControlPoints;
 
-  //snap all the interpolated points to the curve as it stands before projecting
+  // Snap all the interpolated points to the curve as it stands before projecting
   auto interpolatedPointsOnCurve = vtkSmartPointer<vtkPoints>::New();
   for (vtkIdType i = 0; i < interpolatedPoints->GetNumberOfPoints(); ++i)
     {
@@ -368,7 +369,7 @@ bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, 
 bool vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface(vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
   vtkPoints* surfacePoints, double maximumSearchRadiusTolerance)
 {
-  //convert normals from vtkPoints (the legacy interface) to vtkDoubleArray
+  // Convert normals from vtkPoints (the legacy interface) to vtkDoubleArray
   vtkNew<vtkDoubleArray> normalVectorsAsArray;
   normalVectorsAsArray->SetNumberOfComponents(3);
   for (vtkIdType i = 0; i < normalVectors->GetNumberOfPoints(); ++i)

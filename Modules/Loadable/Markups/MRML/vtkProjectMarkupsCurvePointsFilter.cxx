@@ -114,7 +114,7 @@ int vtkProjectMarkupsCurvePointsFilter::RequestData(
   outputPolyData->DeepCopy(inputPolyData);
   vtkNew<vtkPoints> outputPoints;
 
-  //if we have a surface node, project, otherwise the copy was enough
+  // If we have a surface node, project, otherwise the copy was enough
   if (this->InputCurveNode->GetSurfaceConstraintNode())
     {
     if(!this->ProjectPointsToSurface(this->InputCurveNode->GetSurfaceConstraintNode(), 1, inputPoints, outputPoints))
@@ -165,7 +165,7 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
     {
     originalPoints->GetPoint(controlPointIndex, originalPoint);
     normalVectors->GetTuple(controlPointIndex, rayDirection);
-    //cast ray and find model intersection point
+    // Cast ray and find model intersection point
     double rayEndPoint[3] = { 0.0 };
     rayEndPoint[0] = originalPoint[0] + rayDirection[0] * rayLength;
     rayEndPoint[1] = originalPoint[1] + rayDirection[1] * rayLength;
@@ -179,14 +179,14 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
     int foundIntersection = surfaceObbTree->IntersectWithLine(rayEndPoint, originalPoint, tolerance, t, exteriorPoint, pcoords, subId, cellId, cell);
     if(foundIntersection == 0)
       {
-      //if no intersection, reverse direction of normal vector ray
+      // If no intersection, reverse direction of normal vector ray
       rayEndPoint[0] = originalPoint[0] + rayDirection[0] * -rayLength;
       rayEndPoint[1] = originalPoint[1] + rayDirection[1] * -rayLength;
       rayEndPoint[2] = originalPoint[2] + rayDirection[2] * -rayLength;
       int foundIntersection = surfaceObbTree->IntersectWithLine(originalPoint, rayEndPoint, tolerance, t, exteriorPoint, pcoords, subId, cellId, cell);
       if(foundIntersection == 0)
         {
-        //if no intersection in either direction, use closest mesh point
+        // If no intersection in either direction, use closest mesh point
         vtkIdType closestPointId = pointLocator->FindClosestPoint(originalPoint);
         surfacePolydata->GetPoint(closestPointId, exteriorPoint);
         ++noIntersectionCount;
@@ -194,9 +194,10 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
       }
     surfacePoints->InsertNextPoint(exteriorPoint);
     }
-  if (noIntersectionCount > 0) {
+  if (noIntersectionCount > 0)
+    {
     vtkGenericWarningMacro("No intersections found for " << noIntersectionCount << " points for curve ");
-  }
+    }
   return true;
 }
 
@@ -425,9 +426,9 @@ vtkSmartPointer<vtkDoubleArray> vtkProjectMarkupsCurvePointsFilter::PointProject
     const double startWeight = distance2ToEnd / (distance2ToStart + distance2ToEnd);
     const double endWeight = distance2ToStart / (distance2ToStart + distance2ToEnd);
     double rayDirection[3] = { 0.0 };
-    rayDirection[0] = (startWeight*startNormal[0]) + (endWeight*endNormal[0]);
-    rayDirection[1] = (startWeight*startNormal[1]) + (endWeight*endNormal[1]);
-    rayDirection[2] = (startWeight*startNormal[2]) + (endWeight*endNormal[2]);
+    rayDirection[0] = (startWeight * startNormal[0]) + (endWeight * endNormal[0]);
+    rayDirection[1] = (startWeight * startNormal[1]) + (endWeight * endNormal[1]);
+    rayDirection[2] = (startWeight * startNormal[2]) + (endWeight * endNormal[2]);
     vtkMath::Normalize(rayDirection);
     normals->InsertNextTuple(rayDirection);
     }
