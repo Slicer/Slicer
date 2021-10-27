@@ -25,6 +25,7 @@
 #include <vtkDoubleArray.h>
 #include <vtkGeneralTransform.h>
 #include <vtkInformationVector.h>
+#include <vtkMathUtilities.h>
 #include <vtkOBBTree.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkPointData.h>
@@ -44,6 +45,10 @@ vtkProjectMarkupsCurvePointsFilter::vtkProjectMarkupsCurvePointsFilter()
 //------------------------------------------------------------------------------
 void vtkProjectMarkupsCurvePointsFilter::SetInputCurveNode(vtkMRMLMarkupsCurveNode* inputCurveNode)
 {
+  if (this->InputCurveNode == inputCurveNode)
+    {
+    return;
+    }
   this->InputCurveNode = inputCurveNode;
   this->Modified();
 }
@@ -51,11 +56,12 @@ void vtkProjectMarkupsCurvePointsFilter::SetInputCurveNode(vtkMRMLMarkupsCurveNo
 //------------------------------------------------------------------------------
 void vtkProjectMarkupsCurvePointsFilter::SetMaximumSearchRadiusTolerance(double maximumSearchRadiusTolerance)
 {
-  if (this->MaximumSearchRadiusTolerance != maximumSearchRadiusTolerance)
+  if (vtkMathUtilities::FuzzyCompare<double>(this->MaximumSearchRadiusTolerance, maximumSearchRadiusTolerance))
     {
-    this->MaximumSearchRadiusTolerance = maximumSearchRadiusTolerance;
-    this->Modified();
+    return;
     }
+  this->MaximumSearchRadiusTolerance = maximumSearchRadiusTolerance;
+  this->Modified();
 }
 //------------------------------------------------------------------------------
 double vtkProjectMarkupsCurvePointsFilter::GetMaximumSearchRadiusTolerance() const
