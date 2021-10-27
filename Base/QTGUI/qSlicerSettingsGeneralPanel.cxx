@@ -163,7 +163,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                       ctkSettingsPanel::OptionRequireRestart);
   q->registerProperty("RecentlyLoadedFiles/NumberToKeep", this->NumOfRecentlyLoadedFiles, "value",
                       SIGNAL(valueChanged(int)),
-                      "Max. number of 'Recently Loaded' menu items",
+                      "Max. number of 'Recent' menu items",
                       ctkSettingsPanel::OptionRequireRestart);
 }
 

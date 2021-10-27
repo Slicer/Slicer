@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMainWindow>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QStyleOptionButton>
@@ -105,15 +106,32 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   // Module finder
   this->ModuleFinderButton = new QToolButton(q);
   const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png"));
-  this->ModuleFinderButton->setIcon(searchIcon);
-  this->ModuleFinderButton->setText(qSlicerModuleSelectorToolBar::tr("Find"));
-  this->ModuleFinderButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Find module"));
-  QObject::connect(this->ModuleFinderButton, SIGNAL(clicked(bool)),
-    q, SLOT(showModuleFinder()));
+  QAction* ViewFindModuleAction = new QAction(searchIcon, qSlicerModuleSelectorToolBar::tr("Module Finder"));
+  ViewFindModuleAction->setObjectName("ViewFindModuleAction");
+  ViewFindModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Find module"));
+  ViewFindModuleAction->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_F));
+  QObject::connect(ViewFindModuleAction, SIGNAL(triggered()),
+                   q, SLOT(showModuleFinder()));
+  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  foreach(QMenu * toolBarMenu, mainWindow->findChildren<QMenu*>())
+    {
+    if (toolBarMenu->objectName() == QString("ViewMenu"))
+      {
+      foreach(QAction * action, toolBarMenu->actions())
+      {
+        if (action->objectName() == QString("ViewExtensionsManagerAction"))
+          {
+          toolBarMenu->insertAction(action, ViewFindModuleAction);
+          break;
+          }
+      }
+      break;
+      }
+    }
+  this->ModuleFinderButton->setDefaultAction(ViewFindModuleAction);
   q->addWidget(this->ModuleFinderButton);
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
     this->ModuleFinderButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
-  this->ModuleFinderButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_F));
 
   // Modules comboBox
   this->ModulesComboBox = new ctkMenuComboBox(q);
