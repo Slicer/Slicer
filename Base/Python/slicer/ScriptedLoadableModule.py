@@ -26,9 +26,11 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
 
     # Set module icon from Resources/Icons/<ModuleName>.png
     moduleDir = os.path.dirname(self.parent.path)
-    iconPath = os.path.join(moduleDir, 'Resources/Icons', self.moduleName+'.png')
-    if os.path.isfile(iconPath):
-      parent.icon = qt.QIcon(iconPath)
+    for iconExtension in ['.svg', '.png']:
+      iconPath = os.path.join(moduleDir, 'Resources/Icons', self.moduleName+iconExtension)
+      if os.path.isfile(iconPath):
+        parent.icon = qt.QIcon(iconPath)
+        break
 
     # Add this test to the SelfTest module's list for discovery when the module
     # is created.  Since this module may be discovered before SelfTests itself,
