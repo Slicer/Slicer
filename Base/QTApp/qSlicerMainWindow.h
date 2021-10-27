@@ -70,6 +70,7 @@ public slots:
   virtual void setHomeModuleCurrent();
   virtual void restoreToolbars();
 
+  virtual void on_FileFavoriteModulesAction_triggered();
   virtual void on_FileAddDataAction_triggered();
   virtual void on_FileLoadDataAction_triggered();
   virtual void on_FileImportSceneAction_triggered();
@@ -116,6 +117,8 @@ public slots:
   virtual void on_CopyAction_triggered();
   virtual void on_PasteAction_triggered();
   virtual void on_ViewExtensionsManagerAction_triggered();
+
+  virtual void on_ShowStatusBarAction_triggered(bool);
 
   /// Write GUI state to application settings.
   ///

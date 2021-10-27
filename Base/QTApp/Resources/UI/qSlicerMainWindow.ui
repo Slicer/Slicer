@@ -222,8 +222,10 @@
      </property>
     </widget>
     <addaction name="FileAddDataAction"/>
-    <addaction name="FileSaveSceneAction"/>
     <addaction name="RecentlyLoadedMenu"/>
+    <addaction name="separator"/>
+    <addaction name="FileSaveSceneAction"/>
+    <addaction name="separator"/>
     <addaction name="FileCloseSceneAction"/>
     <addaction name="separator"/>
     <addaction name="FileExitAction"/>
@@ -232,13 +234,14 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="EditApplicationSettingsAction"/>
     <addaction name="CutAction"/>
     <addaction name="CopyAction"/>
     <addaction name="PasteAction"/>
     <addaction name="separator"/>
     <addaction name="EditRecordMacroAction"/>
     <addaction name="EditPlayMacroAction"/>
+    <addaction name="separator"/>
+    <addaction name="EditApplicationSettingsAction"/>
    </widget>
    <widget class="QMenu" name="ViewMenu">
     <property name="title">
@@ -286,11 +289,19 @@
       <string>&amp;Toolbars</string>
      </property>
     </widget>
-    <addaction name="ViewExtensionsManagerAction"/>
-    <addaction name="separator"/>
-    <addaction name="WindowToolBarsMenu"/>
+    <widget class="QMenu" name="AppearanceMenu">
+     <property name="title">
+      <string>&amp;Appearance</string>
+     </property>
+     <addaction name="ShowStatusBarAction"/>
+     <addaction name="separator"/>
+     <addaction name="WindowToolbarsResetToDefaultAction"/>
+    </widget>
     <addaction name="LayoutMenu"/>
-    <addaction name="WindowToolbarsResetToDefaultAction"/>
+    <addaction name="WindowToolBarsMenu"/>
+    <addaction name="AppearanceMenu"/>
+    <addaction name="separator"/>
+    <addaction name="ViewExtensionsManagerAction"/>
     <addaction name="ModuleHomeAction"/>
     <addaction name="separator"/>
     <addaction name="WindowErrorLogAction"/>
@@ -399,7 +410,7 @@
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
-    <string>Save</string>
+    <string>Save Data</string>
    </property>
    <property name="toolTip">
     <string>Display the &quot;Save Data&quot; widget, which offers many options for saving a scene and/or individual datasets.</string>
@@ -519,7 +530,19 @@
     <string>The Cache and Remote Data Handling interface provides status and information about all remote data transfers, and allows some control over the local cache.</string>
    </property>
   </action>
+  <action name="FileFavoriteModulesAction">
+   <property name="text">
+    <string>Favorite Modules</string>
+   </property>
+   <property name="toolTip">
+    <string>Open settings to the Modules panel where Favorite Modules can be defined.</string>
+   </property>
+  </action>
   <action name="EditApplicationSettingsAction">
+   <property name="icon">
+    <iconset resource="../../../../Modules/Loadable/SlicerWelcome/Resources/UI/qSlicerWelcomeModule.qrc">
+    <normaloff>:/Images/SlicerAdvancedGear-Original.png</normaloff>:/Images/SlicerAdvancedGear-Original.png</iconset>
+   </property>
    <property name="text">
     <string>Application Settings</string>
    </property>
@@ -1156,6 +1179,17 @@
   <action name="WindowToolbarsResetToDefaultAction">
    <property name="text">
     <string>Reset to default</string>
+   </property>
+  </action>
+  <action name="ShowStatusBarAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Status Bar</string>
    </property>
   </action>
  </widget>

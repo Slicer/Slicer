@@ -224,12 +224,12 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     connection is made that will also cause the instance-created
     DICOM browser to be raised by this menu action"""
     a = self.parent.action()
+    a.setText("Add DICOM Data")
     fileMenu = slicer.util.lookupTopLevelWidget('FileMenu')
     if fileMenu:
-      for action in fileMenu.actions():
-        if action.name == 'FileSaveSceneAction':
-          fileMenu.insertAction(action,a)
-
+      for child in fileMenu.children():
+        if child.objectName == "RecentlyLoadedMenu":
+          fileMenu.insertAction(child.menuAction(), a)  # insert action before RecentlyLoadedMenu
 
   def setBrowserWidgetInDICOMLayout(self, browserWidget):
     """Set DICOM browser widget in the custom view layout"""

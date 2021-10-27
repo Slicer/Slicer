@@ -121,6 +121,7 @@ public:
   QString nodeModule(vtkMRMLNode* node, double *confidence=nullptr)const;
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
+  Q_INVOKABLE void openSettingsDialog(const QString& settingsPanel=QString());
 
   /// Log application information.
   ///
