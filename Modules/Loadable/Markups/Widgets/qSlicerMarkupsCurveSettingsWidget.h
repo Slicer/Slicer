@@ -49,8 +49,8 @@ public:
 
 public slots:
   void onCurveTypeParameterChanged();
+  void onProjectCurveMaximumSearchRadiusChanged();
   void onApplyCurveResamplingPushButtonClicked();
-  void onMaxSearchRadiusChanged();
 
 protected:
   qSlicerMarkupsCurveSettingsWidget(qSlicerMarkupsCurveSettingsWidgetPrivate &d, QWidget* parent=nullptr);

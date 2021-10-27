@@ -74,10 +74,8 @@ void qSlicerMarkupsCurveSettingsWidgetPrivate::setupUi(qSlicerMarkupsCurveSettin
 
   this->Ui_qSlicerMarkupsCurveSettingsWidget::setupUi(widget);
 
-  this->modelNodeSelector->setNoneEnabled(true);
   this->curveSettingsCollapseButton->setVisible(false);
   this->resampleCurveCollapsibleButton->setVisible(false);
-  this->advancedCollapseButton->setVisible(false);
 
   this->curveTypeComboBox->clear();
   for (int curveType = 0; curveType < vtkCurveGenerator::CURVE_TYPE_LAST; ++curveType)
@@ -105,10 +103,10 @@ void qSlicerMarkupsCurveSettingsWidgetPrivate::setupUi(qSlicerMarkupsCurveSettin
                    q, SLOT(onCurveTypeParameterChanged()));
   QObject::connect(this->scalarFunctionLineEdit, SIGNAL(textChanged(QString)),
                    this->editScalarFunctionDelay, SLOT(start()));
+  QObject::connect(this->projectCurveMaxSearchRadiusSliderWidget, SIGNAL(valueChanged(double)),
+                   q, SLOT(onProjectCurveMaximumSearchRadiusChanged()));
   QObject::connect(this->resampleCurveButton, SIGNAL(clicked()),
                    q, SLOT(onApplyCurveResamplingPushButtonClicked()));
-  QObject::connect(this->curveMaxSearchRadiusSliderWidget, SIGNAL(valueChanged(double)),
-                   q, SLOT(onMaxSearchRadiusChanged()));
 }
 
 //------------------------------------------------------------------------------
@@ -206,13 +204,11 @@ void qSlicerMarkupsCurveSettingsWidget::updateWidgetFromMRML()
     {
     d->curveSettingsCollapseButton->setVisible(false);
     d->resampleCurveCollapsibleButton->setVisible(false);
-    d->advancedCollapseButton->setVisible(false);
     return;
     }
 
   d->curveSettingsCollapseButton->setVisible(true);
   d->resampleCurveCollapsibleButton->setVisible(true);
-  d->advancedCollapseButton->setVisible(true);
 
   vtkMRMLMarkupsCurveNode* markupsCurveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->MarkupsNode);
   if (markupsCurveNode)
@@ -251,9 +247,9 @@ void qSlicerMarkupsCurveSettingsWidget::updateWidgetFromMRML()
     d->scalarFunctionLineEdit->setCursorPosition(currentCursorPosition);
     d->scalarFunctionLineEdit->blockSignals(wasBlocked);
 
-    wasBlocked = d->curveMaxSearchRadiusSliderWidget->blockSignals(true);
-    d->curveMaxSearchRadiusSliderWidget->setValue(markupsCurveNode->GetSurfaceConstraintMaximumSearchRadiusTolerance() * 100.);
-    d->curveMaxSearchRadiusSliderWidget->blockSignals(wasBlocked);
+    wasBlocked = d->projectCurveMaxSearchRadiusSliderWidget->blockSignals(true);
+    d->projectCurveMaxSearchRadiusSliderWidget->setValue(markupsCurveNode->GetSurfaceConstraintMaximumSearchRadiusTolerance() * 100.);
+    d->projectCurveMaxSearchRadiusSliderWidget->blockSignals(wasBlocked);
 
     if (costFunction == vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE)
       {
@@ -356,7 +352,7 @@ void qSlicerMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked(
   vtkMRMLModelNode* constraintNode = vtkMRMLModelNode::SafeDownCast(d->resampleCurveConstraintNodeSelector->currentNode());
   if (constraintNode)
     {
-    double maximumSearchRadius = 0.01*d->curveMaxSearchRadiusSliderWidget->value();
+    double maximumSearchRadius = 0.01*d->resampleCurveMaxSearchRadiusSliderWidget->value();
     bool success = outputNode->ResampleCurveSurface(sampleDist, constraintNode, maximumSearchRadius);
     if (!success)
       {
@@ -370,7 +366,7 @@ void qSlicerMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsCurveSettingsWidget::onMaxSearchRadiusChanged()
+void qSlicerMarkupsCurveSettingsWidget::onProjectCurveMaximumSearchRadiusChanged()
 {
   Q_D(qSlicerMarkupsCurveSettingsWidget);
   vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->MarkupsNode);
@@ -378,7 +374,7 @@ void qSlicerMarkupsCurveSettingsWidget::onMaxSearchRadiusChanged()
     {
     return;
     }
-  const double maximumSearchRadius = 0.01*d->curveMaxSearchRadiusSliderWidget->value();
+  const double maximumSearchRadius = 0.01*d->projectCurveMaxSearchRadiusSliderWidget->value();
   curveNode->SetSurfaceConstraintMaximumSearchRadiusTolerance(maximumSearchRadius);
 }
 

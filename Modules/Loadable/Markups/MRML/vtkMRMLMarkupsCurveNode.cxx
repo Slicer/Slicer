@@ -41,8 +41,6 @@
 #include <vtkDoubleArray.h>
 #include <vtkGeneralTransform.h>
 #include <vtkGenericCell.h>
-#include <vtkInformation.h>
-#include <vtkInformationVector.h>
 #include <vtkLine.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
