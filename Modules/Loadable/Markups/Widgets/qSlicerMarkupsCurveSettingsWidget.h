@@ -49,6 +49,7 @@ public:
 
 public slots:
   void onCurveTypeParameterChanged();
+  void onProjectCurveMaximumSearchRadiusChanged();
   void onApplyCurveResamplingPushButtonClicked();
 
 protected:

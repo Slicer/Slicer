@@ -103,6 +103,8 @@ void qSlicerMarkupsCurveSettingsWidgetPrivate::setupUi(qSlicerMarkupsCurveSettin
                    q, SLOT(onCurveTypeParameterChanged()));
   QObject::connect(this->scalarFunctionLineEdit, SIGNAL(textChanged(QString)),
                    this->editScalarFunctionDelay, SLOT(start()));
+  QObject::connect(this->projectCurveMaxSearchRadiusSliderWidget, SIGNAL(valueChanged(double)),
+                   q, SLOT(onProjectCurveMaximumSearchRadiusChanged()));
   QObject::connect(this->resampleCurveButton, SIGNAL(clicked()),
                    q, SLOT(onApplyCurveResamplingPushButtonClicked()));
 }
@@ -229,7 +231,7 @@ void qSlicerMarkupsCurveSettingsWidget::updateWidgetFromMRML()
     d->curveTypeComboBox->setCurrentIndex(d->curveTypeComboBox->findData(markupsCurveNode->GetCurveType()));
     d->curveTypeComboBox->blockSignals(wasBlocked);
 
-    vtkMRMLModelNode* modelNode = markupsCurveNode->GetShortestDistanceSurfaceNode();
+    vtkMRMLModelNode* modelNode = markupsCurveNode->GetSurfaceConstraintNode();
     wasBlocked = d->modelNodeSelector->blockSignals(true);
     d->modelNodeSelector->setCurrentNode(modelNode);
     d->modelNodeSelector->blockSignals(wasBlocked);
@@ -244,6 +246,10 @@ void qSlicerMarkupsCurveSettingsWidget::updateWidgetFromMRML()
     d->scalarFunctionLineEdit->setText(markupsCurveNode->GetSurfaceDistanceWeightingFunction());
     d->scalarFunctionLineEdit->setCursorPosition(currentCursorPosition);
     d->scalarFunctionLineEdit->blockSignals(wasBlocked);
+
+    wasBlocked = d->projectCurveMaxSearchRadiusSliderWidget->blockSignals(true);
+    d->projectCurveMaxSearchRadiusSliderWidget->setValue(markupsCurveNode->GetSurfaceConstraintMaximumSearchRadiusTolerance() * 100.);
+    d->projectCurveMaxSearchRadiusSliderWidget->blockSignals(wasBlocked);
 
     if (costFunction == vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE)
       {
@@ -300,7 +306,7 @@ void qSlicerMarkupsCurveSettingsWidget::onCurveTypeParameterChanged()
 
   MRMLNodeModifyBlocker blocker(curveNode);
   curveNode->SetCurveType(d->curveTypeComboBox->currentData().toInt());
-  curveNode->SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode::SafeDownCast(d->modelNodeSelector->currentNode()));
+  curveNode->SetAndObserveSurfaceConstraintNode(vtkMRMLModelNode::SafeDownCast(d->modelNodeSelector->currentNode()));
   std::string functionString = d->scalarFunctionLineEdit->text().toStdString();
   curveNode->SetSurfaceCostFunctionType(d->costFunctionComboBox->currentData().toInt());
   curveNode->SetSurfaceDistanceWeightingFunction(functionString.c_str());
@@ -338,7 +344,7 @@ void qSlicerMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked(
     outputNode->SetControlPointLabels(originalLabels, originalControlPoints);
     outputNode->SetCurveType(inputNode->GetCurveType());
     outputNode->SetNumberOfPointsPerInterpolatingSegment(inputNode->GetNumberOfPointsPerInterpolatingSegment());
-    outputNode->SetAndObserveShortestDistanceSurfaceNode(inputNode->GetShortestDistanceSurfaceNode());
+    outputNode->SetAndObserveSurfaceConstraintNode(inputNode->GetSurfaceConstraintNode());
     outputNode->SetSurfaceCostFunctionType(inputNode->GetSurfaceCostFunctionType());
     outputNode->SetSurfaceDistanceWeightingFunction(inputNode->GetSurfaceDistanceWeightingFunction());
     }
@@ -357,6 +363,19 @@ void qSlicerMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked(
     {
     outputNode->ResampleCurveWorld(sampleDist);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsCurveSettingsWidget::onProjectCurveMaximumSearchRadiusChanged()
+{
+  Q_D(qSlicerMarkupsCurveSettingsWidget);
+  vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->MarkupsNode);
+  if (!curveNode)
+    {
+    return;
+    }
+  const double maximumSearchRadius = 0.01*d->projectCurveMaxSearchRadiusSliderWidget->value();
+  curveNode->SetSurfaceConstraintMaximumSearchRadiusTolerance(maximumSearchRadius);
 }
 
 //-----------------------------------------------------------------------------

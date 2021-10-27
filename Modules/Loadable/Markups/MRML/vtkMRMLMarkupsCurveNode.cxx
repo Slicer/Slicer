@@ -26,6 +26,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLUnitNode.h"
+#include "vtkProjectMarkupsCurvePointsFilter.h"
 #include "vtkSlicerDijkstraGraphGeodesicPath.h"
 
 // VTK includes
@@ -38,14 +39,15 @@
 #include <vtkCommand.h>
 #include <vtkCutter.h>
 #include <vtkDoubleArray.h>
-#include <vtkParallelTransportFrame.h>
 #include <vtkGeneralTransform.h>
 #include <vtkGenericCell.h>
 #include <vtkLine.h>
+#include <vtkMathUtilities.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkOBBTree.h>
 #include <vtkObjectFactory.h>
+#include <vtkParallelTransportFrame.h>
 #include <vtkPassThroughFilter.h>
 #include <vtkPlane.h>
 #include <vtkPointData.h>
@@ -94,21 +96,27 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->CurveGenerator->SetNumberOfPointsPerInterpolatingSegment(10);
   this->CurveGenerator->SetSurfaceCostFunctionType(vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE);
 
+  this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveGenerator->GetOutputPort());
+
+  this->ProjectPointsFilter = vtkSmartPointer<vtkProjectMarkupsCurvePointsFilter>::New();
+  this->ProjectPointsFilter->SetInputCurveNode(this);
+  this->ProjectPointsFilter->SetInputConnection(this->CurvePolyToWorldTransformer->GetOutputPort());
+
   vtkNew<vtkIntArray> events;
   events->InsertNextTuple1(vtkCommand::ModifiedEvent);
   events->InsertNextTuple1(vtkMRMLModelNode::MeshModifiedEvent);
   events->InsertNextTuple1(vtkMRMLTransformableNode::TransformModifiedEvent);
-  this->AddNodeReferenceRole(this->GetShortestDistanceSurfaceNodeReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName(), events);
+  this->AddNodeReferenceRole(this->GetSurfaceConstraintNodeReferenceRole(), this->GetSurfaceConstraintNodeReferenceMRMLAttributeName(), events);
 
   // Insert curve measurements calculator between curve generator and world transformer filters
   this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
   this->CurveMeasurementsCalculator->SetMeasurements(this->Measurements);
-  this->CurveMeasurementsCalculator->SetInputConnection(this->CurveGenerator->GetOutputPort());
+  this->CurveMeasurementsCalculator->SetInputConnection(this->ProjectPointsFilter->GetOutputPort());
   this->CurveMeasurementsCalculator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 
-  this->ScalarDisplayAssignAttribute = vtkSmartPointer<vtkAssignAttribute>::New();
+  this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
 
-  this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
+  this->ScalarDisplayAssignAttribute = vtkSmartPointer<vtkAssignAttribute>::New();
 
   this->ShortestDistanceSurfaceActiveScalar = "";
 
@@ -157,6 +165,7 @@ void vtkMRMLMarkupsCurveNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLIntMacro(numberOfPointsPerInterpolatingSegment, NumberOfPointsPerInterpolatingSegment);
   vtkMRMLWriteXMLEnumMacro(surfaceCostFunctionType, SurfaceCostFunctionType);
   vtkMRMLWriteXMLStringMacro(surfaceDistanceWeightingFunction, SurfaceDistanceWeightingFunction);
+  vtkMRMLWriteXMLFloatMacro(surfaceConstraintMaximumSearchRadiusTolerance, SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -172,6 +181,7 @@ void vtkMRMLMarkupsCurveNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLIntMacro(numberOfPointsPerInterpolatingSegment, NumberOfPointsPerInterpolatingSegment);
   vtkMRMLReadXMLEnumMacro(surfaceCostFunctionType, SurfaceCostFunctionType);
   vtkMRMLReadXMLStringMacro(surfaceDistanceWeightingFunction, SurfaceDistanceWeightingFunction);
+  vtkMRMLReadXMLFloatMacro(surfaceConstraintMaximumSearchRadiusTolerance, SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -186,6 +196,7 @@ void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   vtkMRMLCopyIntMacro(NumberOfPointsPerInterpolatingSegment);
   vtkMRMLCopyEnumMacro(SurfaceCostFunctionType);
   vtkMRMLCopyStringMacro(SurfaceDistanceWeightingFunction);
+  vtkMRMLCopyFloatMacro(SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLCopyEndMacro();
 }
 
@@ -199,19 +210,38 @@ void vtkMRMLMarkupsCurveNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(NumberOfPointsPerInterpolatingSegment);
   vtkMRMLPrintEnumMacro(SurfaceCostFunctionType);
   vtkMRMLPrintStringMacro(SurfaceDistanceWeightingFunction);
+  vtkMRMLPrintFloatMacro(SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLPrintEndMacro();
 }
 
 //---------------------------------------------------------------------------
 vtkPoints* vtkMRMLMarkupsCurveNode::GetCurvePointsWorld()
 {
-  this->CurveGenerator->Update();
   vtkPolyData* curvePoly = this->GetCurveWorld();
   if (!curvePoly)
     {
     return nullptr;
     }
   return curvePoly->GetPoints();
+}
+
+//---------------------------------------------------------------------------
+vtkPolyData* vtkMRMLMarkupsCurveNode::GetCurveWorld()
+{
+  if (this->GetNumberOfControlPoints() < 1)
+    {
+    return nullptr;
+    }
+  this->ProjectPointsFilter->Update();
+  auto* curvePolyDataWorld = this->ProjectPointsFilter->GetOutput();
+  this->TransformedCurvePolyLocator->SetDataSet(curvePolyDataWorld);
+  return curvePolyDataWorld;
+}
+
+//----------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLMarkupsCurveNode::GetCurveWorldConnection()
+{
+  return this->ProjectPointsFilter->GetOutputPort();
 }
 
 //---------------------------------------------------------------------------
@@ -312,122 +342,28 @@ bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, 
   vtkMRMLMarkupsCurveNode::ResamplePoints(originalPoints, interpolatedPoints, controlPointDistance, this->CurveClosed, pedigreeIdsArray);
   vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(this->Measurements, pedigreeIdsArray,
     this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment());
-
-  vtkSmartPointer<vtkPolyData> surfacePolydata = modelNode->GetPolyData();
-  if(!surfacePolydata)
-    {
-    vtkErrorMacro("vtkMRMLMarkupsCurveNode::ResampleCurveSurface failed: Constraint surface polydata is not valid");
-    return false;
-    }
-
-  vtkMRMLTransformNode* parentTransformNode = modelNode->GetParentTransformNode();
-  if (parentTransformNode)
-    {
-    vtkNew<vtkGeneralTransform> modelToWorldTransform;
-    parentTransformNode->GetTransformToWorld(modelToWorldTransform);
-    vtkNew<vtkTransformPolyDataFilter> transformPolydataFilter;
-    transformPolydataFilter->SetInputData(surfacePolydata);
-    transformPolydataFilter->SetTransform(modelToWorldTransform);
-    transformPolydataFilter->Update();
-    surfacePolydata = transformPolydataFilter->GetOutput();
-    }
-
-  // vtkStaticCellLocator may improve speed, but FindClosestPoint function is not yet supported
-  vtkNew<vtkPointLocator> pointLocator;
-  pointLocator->SetDataSet(surfacePolydata);
-  pointLocator->BuildLocator();
-
-  vtkSmartPointer<vtkDataArray> normalVectorArray = vtkArrayDownCast<vtkDataArray>(surfacePolydata->GetPointData()->GetArray("Normals"));
-  if(!normalVectorArray)
-    {
-    vtkNew<vtkPolyDataNormals> normalFilter;
-    normalFilter->SetInputData(surfacePolydata);
-    normalFilter->ComputePointNormalsOn();
-    normalFilter->Update();
-    vtkPolyData* normalPolydata = normalFilter->GetOutput();
-    normalVectorArray = vtkArrayDownCast<vtkDataArray>(normalPolydata->GetPointData()->GetNormals());
-    if (!normalVectorArray)
-      {
-      vtkErrorMacro("vtkMRMLMarkupsCurveNode::ResamplePoints failed: Unable to find or calculate normals");
-      return false;
-      }
-    }
-
-  double interpolatedPoint[3] = { 0.0 };
-  double projectedPoint[3] = { 0.0 };
-  double segmentStartPoint[3] = { 0.0 };
-  double segmentEndPoint[3] = { 0.0 };
-  double distanceToStart = 0.0;
-  double distanceToEnd = 0.0;
-  vtkNew<vtkPoints> pointNormalArray;
-  // Project each mesh point onto the most external model surface point along a normal vector ray. The normal vector
-  // for each resampled point is estimated from normal vectors at the closest control points on either side.
-  // If there is no intersection between the model and normal vector ray, use the closest model point.
-  for (vtkIdType controlPointIndex = 0; controlPointIndex < interpolatedPoints->GetNumberOfPoints(); controlPointIndex++)
-    {
-    interpolatedPoints->GetPoint(controlPointIndex, interpolatedPoint);
-    vtkIdType segmentStartIndex = vtkMRMLMarkupsNode::GetClosestControlPointIndexToPositionWorld(interpolatedPoint);
-    // get nearest control point
-    originalControlPoints->GetPoint(segmentStartIndex, segmentStartPoint);
-    // get projection of point to curve
-    this->GetClosestPointPositionAlongCurveWorld(interpolatedPoint, projectedPoint);
-    distanceToStart = vtkMath::Distance2BetweenPoints(segmentStartPoint, projectedPoint);
-    if (segmentStartIndex == 0)
-      {
-      originalControlPoints->GetPoint(segmentStartIndex + 1, segmentEndPoint);
-      distanceToEnd = vtkMath::Distance2BetweenPoints(segmentEndPoint, projectedPoint);
-      }
-    else if (segmentStartIndex == (originalControlPoints->GetNumberOfPoints() - 1))
-      {
-      originalControlPoints->GetPoint(segmentStartIndex - 1, segmentEndPoint);
-      distanceToEnd = vtkMath::Distance2BetweenPoints(segmentEndPoint, projectedPoint);
-      }
-    else
-      {
-      double* segmentEndPoint1 = originalControlPoints->GetPoint(segmentStartIndex - 1);
-      double dist1 = vtkMath::Distance2BetweenPoints(segmentEndPoint1, projectedPoint);
-      double* segmentEndPoint2 = originalControlPoints->GetPoint(segmentStartIndex + 1);
-      double dist2 = vtkMath::Distance2BetweenPoints(segmentEndPoint2, projectedPoint);
-
-      if ((dist1 < dist2) && dist1 < vtkMath::Distance2BetweenPoints(segmentEndPoint1, segmentStartPoint))
-        {
-        segmentEndPoint[0] = segmentEndPoint1[0];
-        segmentEndPoint[1] = segmentEndPoint1[1];
-        segmentEndPoint[2] = segmentEndPoint1[2];
-        distanceToEnd = dist1;
-        }
-      else
-        {
-        segmentEndPoint[0] = segmentEndPoint2[0];
-        segmentEndPoint[1] = segmentEndPoint2[1];
-        segmentEndPoint[2] = segmentEndPoint2[2];
-        distanceToEnd = dist2;
-        }
-      }
-
-    // estimate normal vector from control points on either side of projected point
-    vtkIdType pointIdStart = pointLocator->FindClosestPoint(segmentStartPoint);
-    double startNormal[3] = { 0.0 };
-    normalVectorArray->GetTuple(pointIdStart, startNormal);
-    vtkIdType pointIdEnd = pointLocator->FindClosestPoint(segmentEndPoint);
-    double endNormal[3] = { 0.0 };
-    normalVectorArray->GetTuple(pointIdEnd, endNormal);
-
-    double startWeight = distanceToEnd / (distanceToStart + distanceToEnd);
-    double endWeight = distanceToStart / (distanceToStart + distanceToEnd);
-    double rayDirection[3] = { 0.0 };
-    rayDirection[0] = (startWeight*startNormal[0]) + (endWeight*endNormal[0]);
-    rayDirection[1] = (startWeight*startNormal[1]) + (endWeight*endNormal[1]);
-    rayDirection[2] = (startWeight*startNormal[2]) + (endWeight*endNormal[2]);
-    vtkMath::Normalize(rayDirection);
-    pointNormalArray->InsertNextPoint(rayDirection);
-    }
-
   vtkNew<vtkPoints> snappedToSurfaceControlPoints;
-  vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface(interpolatedPoints, pointNormalArray, surfacePolydata,
-    snappedToSurfaceControlPoints, maximumSearchRadiusTolerance);
 
-  this->SetControlPointPositionsWorld(snappedToSurfaceControlPoints);
+  // Snap all the interpolated points to the curve as it stands before projecting
+  auto interpolatedPointsOnCurve = vtkSmartPointer<vtkPoints>::New();
+  for (vtkIdType i = 0; i < interpolatedPoints->GetNumberOfPoints(); ++i)
+    {
+    double p[3];
+    this->GetClosestPointPositionAlongCurveWorld(interpolatedPoints->GetPoint(i), p);
+    interpolatedPointsOnCurve->InsertNextPoint(p);
+    }
+
+  vtkNew<vtkPolyData> toBeProjected;
+  toBeProjected->SetPoints(interpolatedPointsOnCurve);
+
+  vtkNew<vtkProjectMarkupsCurvePointsFilter> projectMarkupsCurvePointsFilter;
+  projectMarkupsCurvePointsFilter->SetInputData(toBeProjected);
+  projectMarkupsCurvePointsFilter->SetInputCurveNode(this);
+  projectMarkupsCurvePointsFilter->SetMaximumSearchRadiusTolerance(maximumSearchRadiusTolerance);
+  projectMarkupsCurvePointsFilter->Update();
+  auto projectedPoly = projectMarkupsCurvePointsFilter->GetOutput();
+
+  this->SetControlPointPositionsWorld(projectedPoly->GetPoints());
   this->SetControlPointLabelsWorld(originalLabels, originalControlPoints);
   return true;
 }
@@ -436,73 +372,16 @@ bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, 
 bool vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface(vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
   vtkPoints* surfacePoints, double maximumSearchRadiusTolerance)
 {
-  if (originalPoints->GetNumberOfPoints()!= normalVectors->GetNumberOfPoints())
+  // Convert normals from vtkPoints (the legacy interface) to vtkDoubleArray
+  vtkNew<vtkDoubleArray> normalVectorsAsArray;
+  normalVectorsAsArray->SetNumberOfComponents(3);
+  for (vtkIdType i = 0; i < normalVectors->GetNumberOfPoints(); ++i)
     {
-    vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface failed: invalid inputs");
-    return false;
+    normalVectorsAsArray->InsertNextTuple(normalVectors->GetPoint(i));
     }
-  if (maximumSearchRadiusTolerance <= 0.0 || maximumSearchRadiusTolerance > 1.0)
-    {
-    vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface failed: Invalid search radius");
-    return false;
-    }
-  vtkNew<vtkOBBTree> surfaceObbTree;
-  surfaceObbTree->SetDataSet(surfacePolydata);
-  surfaceObbTree->BuildLocator();
-  double tolerance = surfaceObbTree->GetTolerance();
 
-  vtkNew<vtkPointLocator> pointLocator;
-  pointLocator->SetDataSet(surfacePolydata);
-  pointLocator->BuildLocator();
-
-  double originalPoint[3] = { 0.0 };
-  double rayDirection[3] = { 0.0 };
-  double exteriorPoint[3] = { 0.0 };
-
-  // Curves are expected to be close to surface. The maximumSearchRadiusTolerance
-  // sets the allowable projection distance as a percentage of the model's
-  // bounding box diagonal in world coordinate system.
-  double polydataBounds[6] = { 0.0 };
-  surfacePolydata->GetBounds(polydataBounds);
-  vtkBoundingBox modelBoundingBox;
-  modelBoundingBox.AddBounds(polydataBounds);
-  double polydataDiagonalLength = modelBoundingBox.GetDiagonalLength();
-  double rayLength = maximumSearchRadiusTolerance*sqrt(polydataDiagonalLength);
-
-  for (vtkIdType controlPointIndex = 0; controlPointIndex < originalPoints->GetNumberOfPoints(); controlPointIndex++)
-    {
-    originalPoints->GetPoint(controlPointIndex, originalPoint);
-    normalVectors->GetPoint(controlPointIndex, rayDirection);
-    //cast ray and find model intersection point
-    double rayEndPoint[3] = { 0.0 };
-    rayEndPoint[0] = originalPoint[0] + rayDirection[0] * rayLength;
-    rayEndPoint[1] = originalPoint[1] + rayDirection[1] * rayLength;
-    rayEndPoint[2] = originalPoint[2] + rayDirection[2] * rayLength;
-
-    double t = 0.0;
-    double pcoords[3] = { 0.0 };
-    int subId = 0;
-    vtkIdType cellId = 0;
-    vtkNew <vtkGenericCell> cell;
-    int foundIntersection = surfaceObbTree->IntersectWithLine(rayEndPoint, originalPoint, tolerance, t, exteriorPoint, pcoords, subId, cellId, cell);
-    if(foundIntersection == 0)
-      {
-      //if no intersection, reverse direction of normal vector ray
-      rayEndPoint[0] = originalPoint[0] + rayDirection[0] * -rayLength;
-      rayEndPoint[1] = originalPoint[1] + rayDirection[1] * -rayLength;
-      rayEndPoint[2] = originalPoint[2] + rayDirection[2] * -rayLength;
-      int foundIntersection = surfaceObbTree->IntersectWithLine(originalPoint, rayEndPoint, tolerance, t, exteriorPoint, pcoords, subId, cellId, cell);
-      if(foundIntersection == 0)
-        {
-        //if no intersection in either direction, use closest mesh point
-        vtkIdType closestPointId = pointLocator->FindClosestPoint(originalPoint);
-        surfacePolydata->GetPoint(closestPointId, exteriorPoint);
-        vtkGenericWarningMacro("No intersections found");
-        }
-      }
-    surfacePoints->InsertNextPoint(exteriorPoint);
-    }
-  return true;
+  return vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurface(originalPoints, normalVectorsAsArray, surfacePolydata,
+    surfacePoints, maximumSearchRadiusTolerance);
 }
 
 //---------------------------------------------------------------------------
@@ -1137,7 +1016,7 @@ void vtkMRMLMarkupsCurveNode::SetCurveTypeToShortestDistanceOnSurface(vtkMRMLMod
   this->SetCurveType(vtkCurveGenerator::CURVE_TYPE_SHORTEST_DISTANCE_ON_SURFACE);
   if (modelNode)
     {
-    this->SetAndObserveShortestDistanceSurfaceNode(modelNode);
+    this->SetAndObserveSurfaceConstraintNode(modelNode);
     }
 }
 
@@ -1285,7 +1164,7 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
       }
     }
 
-  if (caller == this->GetNodeReference(this->GetShortestDistanceSurfaceNodeReferenceRole()))
+  if (caller == this->GetNodeReference(this->GetSurfaceConstraintNodeReferenceRole()))
     {
     this->OnSurfaceModelNodeChanged();
     }
@@ -1296,7 +1175,7 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
 {
-  if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0 ||
+  if (strcmp(reference->GetReferenceRole(), this->GetSurfaceConstraintNodeReferenceRole()) == 0 ||
       strcmp(reference->GetReferenceRole(), this->TransformNodeReferenceRole) == 0)
     {
     this->OnSurfaceModelTransformChanged();
@@ -1309,7 +1188,7 @@ void vtkMRMLMarkupsCurveNode::OnNodeReferenceAdded(vtkMRMLNodeReference* referen
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 {
-  if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0 ||
+  if (strcmp(reference->GetReferenceRole(), this->GetSurfaceConstraintNodeReferenceRole()) == 0 ||
       strcmp(reference->GetReferenceRole(), this->TransformNodeReferenceRole) == 0)
     {
     this->OnSurfaceModelTransformChanged();
@@ -1322,7 +1201,7 @@ void vtkMRMLMarkupsCurveNode::OnNodeReferenceModified(vtkMRMLNodeReference* refe
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* reference)
 {
-  if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0 ||
+  if (strcmp(reference->GetReferenceRole(), this->GetSurfaceConstraintNodeReferenceRole()) == 0 ||
       strcmp(reference->GetReferenceRole(), this->TransformNodeReferenceRole) == 0)
     {
     this->OnSurfaceModelTransformChanged();
@@ -1332,15 +1211,15 @@ void vtkMRMLMarkupsCurveNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* refer
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode* modelNode)
+void vtkMRMLMarkupsCurveNode::SetAndObserveSurfaceConstraintNode(vtkMRMLModelNode* modelNode)
 {
-  this->SetAndObserveNodeReferenceID(this->GetShortestDistanceSurfaceNodeReferenceRole(), modelNode ? modelNode->GetID() : nullptr);
+  this->SetAndObserveNodeReferenceID(this->GetSurfaceConstraintNodeReferenceRole(), modelNode ? modelNode->GetID() : nullptr);
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLModelNode* vtkMRMLMarkupsCurveNode::GetShortestDistanceSurfaceNode()
+vtkMRMLModelNode* vtkMRMLMarkupsCurveNode::GetSurfaceConstraintNode()
 {
-  return vtkMRMLModelNode::SafeDownCast(this->GetNodeReference(this->GetShortestDistanceSurfaceNodeReferenceRole()));
+  return vtkMRMLModelNode::SafeDownCast(this->GetNodeReference(this->GetSurfaceConstraintNodeReferenceRole()));
 }
 
 //---------------------------------------------------------------------------
@@ -1393,7 +1272,7 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelNodeChanged()
 {
   this->UpdateSurfaceScalarVariables();
 
-  vtkMRMLModelNode* modelNode = this->GetShortestDistanceSurfaceNode();
+  vtkMRMLModelNode* modelNode = this->GetSurfaceConstraintNode();
   if (modelNode)
     {
     this->CleanFilter->SetInputConnection(modelNode->GetPolyDataConnection());
@@ -1409,7 +1288,7 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelNodeChanged()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::OnSurfaceModelTransformChanged()
 {
-  vtkMRMLModelNode* modelNode = this->GetShortestDistanceSurfaceNode();
+  vtkMRMLModelNode* modelNode = this->GetSurfaceConstraintNode();
   if (!modelNode)
     {
     return;
@@ -1429,7 +1308,7 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelTransformChanged()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::UpdateSurfaceScalarVariables()
 {
-  vtkMRMLModelNode* modelNode = this->GetShortestDistanceSurfaceNode();
+  vtkMRMLModelNode* modelNode = this->GetSurfaceConstraintNode();
   if (!modelNode)
     {
     return;
@@ -1520,13 +1399,13 @@ void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
   // Connect assign attributes filter if scalar visibility is on
   if (displayNode->GetScalarVisibility())
     {
-    this->ScalarDisplayAssignAttribute->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
+    this->ScalarDisplayAssignAttribute->SetInputConnection(this->CurveGenerator->GetOutputPort());
     this->CurvePolyToWorldTransformer->SetInputConnection(this->ScalarDisplayAssignAttribute->GetOutputPort());
     }
   else
     {
     this->ScalarDisplayAssignAttribute->RemoveAllInputConnections(0);
-    this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
+    this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveGenerator->GetOutputPort());
     }
 }
 
@@ -1581,4 +1460,21 @@ void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified(
   // trigger a recompute
   self->CurveMeasurementsCalculator->SetCalculateCurvature(true);
   self->CurveMeasurementsCalculator->Update();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetSurfaceConstraintMaximumSearchRadiusTolerance(double tolerance)
+{
+  if (vtkMathUtilities::FuzzyCompare<double>(this->GetSurfaceConstraintMaximumSearchRadiusTolerance(), tolerance))
+    {
+    return;
+    }
+  this->ProjectPointsFilter->SetMaximumSearchRadiusTolerance(tolerance);
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLMarkupsCurveNode::GetSurfaceConstraintMaximumSearchRadiusTolerance() const
+{
+  return this->ProjectPointsFilter->GetMaximumSearchRadiusTolerance();
 }

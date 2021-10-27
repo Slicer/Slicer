@@ -44,6 +44,8 @@ set(${KIT}_SRCS
   vtkMRMLMeasurementVolume.h
   vtkParametricPolynomialApproximation.cxx
   vtkParametricPolynomialApproximation.h
+  vtkProjectMarkupsCurvePointsFilter.cxx
+  vtkProjectMarkupsCurvePointsFilter.h
   vtkSlicerDijkstraGraphGeodesicPath.cxx
   vtkSlicerDijkstraGraphGeodesicPath.h
   )

@@ -40,6 +40,7 @@ class vtkCleanPolyData;
 class vtkCurveMeasurementsCalculator;
 class vtkPassThroughFilter;
 class vtkPlane;
+class vtkProjectMarkupsCurvePointsFilter;
 class vtkTransformPolyDataFilter;
 class vtkTriangleFilter;
 
@@ -121,8 +122,12 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsCurveNode);
 
+  ///@{
   /// Get curve points positions in world coordinate system.
-  vtkPoints* GetCurvePointsWorld();
+  vtkPoints* GetCurvePointsWorld() override;
+  vtkPolyData* GetCurveWorld() override;
+  vtkAlgorithmOutput* GetCurveWorldConnection() override;
+  ///@}
 
   /// Get length of the curve or a section of the curve.
   /// \param startCurvePointIndex length computation starts from this curve point index
@@ -157,6 +162,8 @@ public:
   /// bounding box diagonal in world coordinate system.
   /// maximumSearchRadius is valid in the range between 0 and 1.
   /// returns true if successful, false in case of error
+  ///
+  /// \sa vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurface
   static bool ConstrainPointsToSurface(vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
     vtkPoints* surfacePoints, double maximumSearchRadius=.25);
 
@@ -241,23 +248,49 @@ public:
   void SetCurveTypeToPolynomial();
   void SetCurveTypeToShortestDistanceOnSurface(vtkMRMLModelNode* modelNode=nullptr);
 
-  /// Node reference role for the surface that is used in the shortest surface distance curve type
-  const char* GetShortestDistanceSurfaceNodeReferenceRole() { return "shortestDistanceSurface"; };
-  const char* GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName() { return "shortestDistanceSurfaceRef"; };
+  /// \deprecated GetShortestDistanceSurfaceNodeReferenceRole
+  /// \sa GetSurfaceConstraintNodeReferenceRole
+  const char* GetShortestDistanceSurfaceNodeReferenceRole() { return this->GetSurfaceConstraintNodeReferenceRole(); }
+  /// \deprecated GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName
+  /// \sa GetSurfaceConstraintNodeReferenceMRMLAttributeName
+  const char* GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName() { return this->GetSurfaceConstraintNodeReferenceMRMLAttributeName(); }
+
+  /// Node reference role for the surface that is used to project the curve onto
+  const char* GetSurfaceConstraintNodeReferenceRole() { return "shortestDistanceSurface"; }
+  const char* GetSurfaceConstraintNodeReferenceMRMLAttributeName() { return "shortestDistanceSurfaceRef"; };
 
   /// The model node that is used as the surface mesh for finding the shortest distance path on the surface mesh.
   /// Used by the ShortestDistanceOnSurface curve type.
-  void SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode* modelNode);
-  vtkMRMLModelNode* GetShortestDistanceSurfaceNode();
+  /// \deprecated SetAndObserveShortestDistanceSurfaceNode
+  /// \sa SetAndObserveSurfaceConstraintNode
+  void SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode* modelNode) { this->SetAndObserveSurfaceConstraintNode(modelNode); }
+  /// \deprecated GetShortestDistanceSurfaceNode
+  /// \sa GetSurfaceConstraintNode
+  vtkMRMLModelNode* GetShortestDistanceSurfaceNode() { return this->GetSurfaceConstraintNode(); }
 
-  /// The method that should be used to combine the distance with the scalar value.
+  ///@{
+  /// Set/Get the model node that is used as the surface mesh for finding the shortest distance path on the surface mesh.
+  void SetAndObserveSurfaceConstraintNode(vtkMRMLModelNode* modelNode);
+  vtkMRMLModelNode* GetSurfaceConstraintNode();
+  ///@}
+
+  ///@{
+  /// Set/Get maximumSearchRadiusTolerance defining the allowable projection distance when projecting
+  /// curve to surface.
+  ///
+  /// It is specified as a percentage of the model's bounding box diagonal in world coordinate system.
+  void SetSurfaceConstraintMaximumSearchRadiusTolerance(double tolerance);
+  double GetSurfaceConstraintMaximumSearchRadiusTolerance() const;
+  ///@}
+
+  /// The method that should be used to combine the distance with the scalar value for ShortestDistanceOnSurface curve type.
   /// Uses the COST_FUNCTION_X enums from vtkSlicerDijkstraGraphGeodesicPath.
   int GetSurfaceCostFunctionType();
   void SetSurfaceCostFunctionType(int surfaceCostFunctionType);
   static const char* GetSurfaceCostFunctionTypeAsString(int surfaceCostFunctionType);
   static int GetSurfaceCostFunctionTypeFromString(const char* name);
 
-  /// The scalar weight function that is used for modifying the weight on each vertex.
+  /// The scalar weight function that is used for modifying the weight on each vertex for ShortestDistanceOnSurface curve type.
   /// The the currently active point scalar array is available as the "activeScalar" variable.
   const char* GetSurfaceDistanceWeightingFunction();
   void SetSurfaceDistanceWeightingFunction(const char* function);
@@ -308,6 +341,9 @@ protected:
 
   /// Callback function observing curvature measurement modified events to propagate enabled state
   static void OnCurvatureMeasurementModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+
+private:
+  vtkSmartPointer<vtkProjectMarkupsCurvePointsFilter> ProjectPointsFilter;
 };
 
 #endif

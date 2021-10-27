@@ -631,13 +631,13 @@ public:
 
   void GetControlPointLabels(vtkStringArray* labels);
 
-  vtkPoints* GetCurvePoints();
-  vtkPoints* GetCurvePointsWorld();
+  virtual vtkPoints* GetCurvePoints();
+  virtual vtkPoints* GetCurvePointsWorld();
 
-  vtkPolyData* GetCurve();
-  vtkPolyData* GetCurveWorld();
+  virtual vtkPolyData* GetCurve();
+  virtual vtkPolyData* GetCurveWorld();
 
-  vtkAlgorithmOutput* GetCurveWorldConnection();
+  virtual vtkAlgorithmOutput* GetCurveWorldConnection();
 
   vtkGetMacro(CurveClosed, bool);
 
