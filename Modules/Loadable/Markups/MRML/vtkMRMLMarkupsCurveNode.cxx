@@ -165,6 +165,7 @@ void vtkMRMLMarkupsCurveNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLIntMacro(numberOfPointsPerInterpolatingSegment, NumberOfPointsPerInterpolatingSegment);
   vtkMRMLWriteXMLEnumMacro(surfaceCostFunctionType, SurfaceCostFunctionType);
   vtkMRMLWriteXMLStringMacro(surfaceDistanceWeightingFunction, SurfaceDistanceWeightingFunction);
+  vtkMRMLWriteXMLFloatMacro(surfaceConstraintMaximumSearchRadiusTolerance, SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -180,6 +181,7 @@ void vtkMRMLMarkupsCurveNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLIntMacro(numberOfPointsPerInterpolatingSegment, NumberOfPointsPerInterpolatingSegment);
   vtkMRMLReadXMLEnumMacro(surfaceCostFunctionType, SurfaceCostFunctionType);
   vtkMRMLReadXMLStringMacro(surfaceDistanceWeightingFunction, SurfaceDistanceWeightingFunction);
+  vtkMRMLReadXMLFloatMacro(surfaceConstraintMaximumSearchRadiusTolerance, SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -194,6 +196,7 @@ void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   vtkMRMLCopyIntMacro(NumberOfPointsPerInterpolatingSegment);
   vtkMRMLCopyEnumMacro(SurfaceCostFunctionType);
   vtkMRMLCopyStringMacro(SurfaceDistanceWeightingFunction);
+  vtkMRMLCopyFloatMacro(SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLCopyEndMacro();
 }
 
@@ -207,6 +210,7 @@ void vtkMRMLMarkupsCurveNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(NumberOfPointsPerInterpolatingSegment);
   vtkMRMLPrintEnumMacro(SurfaceCostFunctionType);
   vtkMRMLPrintStringMacro(SurfaceDistanceWeightingFunction);
+  vtkMRMLPrintFloatMacro(SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLPrintEndMacro();
 }
 
