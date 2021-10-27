@@ -49,7 +49,6 @@
 #ifdef Slicer_USE_QtTesting
 #include <ctkQtTestingUtility.h>
 #endif
-#include <ctkSettingsDialog.h>
 #include <ctkVTKSliceView.h>
 #include <ctkVTKWidgetsUtils.h>
 
@@ -158,13 +157,13 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // ModulePanel
   //----------------------------------------------------------------------------
-  this->PanelDockWidget->toggleViewAction()->setText(qSlicerMainWindow::tr("&Module Panel"));
+  this->PanelDockWidget->toggleViewAction()->setText(qSlicerMainWindow::tr("Show &Module Panel"));
   this->PanelDockWidget->toggleViewAction()->setToolTip(
     qSlicerMainWindow::tr("Collapse/Expand the GUI panel and allows Slicer's viewers to occupy "
           "the entire application window"));
   this->PanelDockWidget->toggleViewAction()->setShortcut(QKeySequence("Ctrl+5"));
-  this->ViewMenu->insertAction(this->WindowToolBarsMenu->menuAction(),
-                               this->PanelDockWidget->toggleViewAction());
+  this->AppearanceMenu->insertAction(this->ShowStatusBarAction,
+                                     this->PanelDockWidget->toggleViewAction());
 
   //----------------------------------------------------------------------------
   // ModuleManager
@@ -465,7 +464,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     this->PythonConsoleToggleViewAction->setShortcut(QKeySequence("Ctrl+3"));
     QObject::connect(this->PythonConsoleToggleViewAction, SIGNAL(toggled(bool)),
       q, SLOT(onPythonConsoleToggled(bool)));
-    this->ViewMenu->insertAction(this->WindowToolBarsMenu->menuAction(), this->PythonConsoleToggleViewAction);
+    this->ViewMenu->insertAction(this->ModuleHomeAction, this->PythonConsoleToggleViewAction);
     this->PythonConsoleToggleViewAction->setIcon(QIcon(":/python-icon.png"));
     this->DialogToolBar->addAction(this->PythonConsoleToggleViewAction);
     }
@@ -811,6 +810,18 @@ ctkErrorLogWidget* qSlicerMainWindow::errorLogWidget()const
 {
   Q_D(const qSlicerMainWindow);
   return d->ErrorLogWidget;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::on_ShowStatusBarAction_triggered(bool toggled)
+{
+  this->statusBar()->setVisible(toggled);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::on_FileFavoriteModulesAction_triggered()
+{
+  qSlicerApplication::application()->openSettingsDialog("Modules");
 }
 
 //---------------------------------------------------------------------------
@@ -1299,16 +1310,7 @@ void qSlicerMainWindow::onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel lo
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::on_EditApplicationSettingsAction_triggered()
 {
-  ctkSettingsDialog* const settingsDialog =
-    qSlicerApplication::application()->settingsDialog();
-
-  // Reload settings to apply any changes that have been made outside of the
-  // dialog (e.g. changes to module paths due to installing extensions). See
-  // https://github.com/Slicer/Slicer/issues/3658.
-  settingsDialog->reloadSettings();
-
-  // Now show the dialog
-  settingsDialog->exec();
+  qSlicerApplication::application()->openSettingsDialog();
 }
 
 //---------------------------------------------------------------------------
