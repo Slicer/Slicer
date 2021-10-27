@@ -42,6 +42,7 @@
 #include <vtkGeneralTransform.h>
 #include <vtkGenericCell.h>
 #include <vtkLine.h>
+#include <vtkMathUtilities.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkOBBTree.h>
@@ -1460,11 +1461,12 @@ void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified(
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::SetSurfaceConstraintMaximumSearchRadiusTolerance(double tolerance)
 {
-  if (tolerance != this->GetSurfaceConstraintMaximumSearchRadiusTolerance())
+  if (vtkMathUtilities::FuzzyCompare<double>(this->GetSurfaceConstraintMaximumSearchRadiusTolerance(), tolerance))
     {
-    this->ProjectPointsFilter->SetMaximumSearchRadiusTolerance(tolerance);
-    this->Modified();
+    return;
     }
+  this->ProjectPointsFilter->SetMaximumSearchRadiusTolerance(tolerance);
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
