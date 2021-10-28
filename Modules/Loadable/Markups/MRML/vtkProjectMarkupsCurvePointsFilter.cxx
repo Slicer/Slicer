@@ -154,14 +154,14 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
 
   double tolerance = surfaceObbTree->GetTolerance();
 
-  double originalPoint[3] = { 0.0 };
-  double rayDirection[3] = { 0.0 };
-  double exteriorPoint[3] = { 0.0 };
+  double originalPoint[3] = { 0.0, 0.0, 0.0 };
+  double rayDirection[3] = { 0.0, 0.0, 0.0 };
+  double exteriorPoint[3] = { 0.0, 0.0, 0.0 };
 
   // Curves are expected to be close to surface. The maximumSearchRadiusTolerance
   // sets the allowable projection distance as a percentage of the model's
   // bounding box diagonal in world coordinate system.
-  double polydataBounds[6] = { 0.0 };
+  double polydataBounds[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   surfacePolydata->GetBounds(polydataBounds);
   vtkBoundingBox modelBoundingBox;
   modelBoundingBox.AddBounds(polydataBounds);
@@ -174,13 +174,13 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
     originalPoints->GetPoint(controlPointIndex, originalPoint);
     normalVectors->GetTuple(controlPointIndex, rayDirection);
     // Cast ray and find model intersection point
-    double rayEndPoint[3] = { 0.0 };
+    double rayEndPoint[3] = { 0.0, 0.0, 0.0 };
     rayEndPoint[0] = originalPoint[0] + rayDirection[0] * rayLength;
     rayEndPoint[1] = originalPoint[1] + rayDirection[1] * rayLength;
     rayEndPoint[2] = originalPoint[2] + rayDirection[2] * rayLength;
 
     double t = 0.0;
-    double pcoords[3] = { 0.0 };
+    double pcoords[3] = { 0.0, 0.0, 0.0 };
     int subId = 0;
     vtkIdType cellId = 0;
     vtkNew <vtkGenericCell> cell;
@@ -392,7 +392,8 @@ vtkSmartPointer<vtkDoubleArray> vtkProjectMarkupsCurvePointsFilter::PointProject
     {
     const double* point = points->GetPoint(i);
     const auto segmentStartIndex = GetClosestControlPointIndex(point, controlPoints);
-    const double* segmentStartPoint = controlPoints->GetPoint(segmentStartIndex);
+    double segmentStartPoint[3] = { 0.0, 0.0, 0.0 };
+    controlPoints->GetPoint(segmentStartIndex, segmentStartPoint);
     const auto segmentEndIndex = [&]() -> vtkIdType {
       if (segmentStartIndex == 0)
         {
@@ -404,9 +405,11 @@ vtkSmartPointer<vtkDoubleArray> vtkProjectMarkupsCurvePointsFilter::PointProject
         }
       else
         {
-        double* segmentEndPoint1 = controlPoints->GetPoint(segmentStartIndex - 1);
+        double segmentEndPoint1[3] = { 0.0, 0.0, 0.0 };
+        controlPoints->GetPoint(segmentStartIndex - 1, segmentEndPoint1);
         double dist1 = vtkMath::Distance2BetweenPoints(segmentEndPoint1, point);
-        double* segmentEndPoint2 = controlPoints->GetPoint(segmentStartIndex + 1);
+        double segmentEndPoint2[3];
+        controlPoints->GetPoint(segmentStartIndex + 1, segmentEndPoint2);
         double dist2 = vtkMath::Distance2BetweenPoints(segmentEndPoint2, point);
 
         if ((dist1 < dist2) && dist1 < vtkMath::Distance2BetweenPoints(segmentEndPoint1, segmentStartPoint))
@@ -419,24 +422,27 @@ vtkSmartPointer<vtkDoubleArray> vtkProjectMarkupsCurvePointsFilter::PointProject
           }
         }
       }();
-    const double* segmentEndPoint = controlPoints->GetPoint(segmentEndIndex);
+    double segmentEndPoint[3] = { 0.0, 0.0, 0.0 };
+    controlPoints->GetPoint(segmentEndIndex, segmentEndPoint);
 
     const auto distance2ToStart = vtkMath::Distance2BetweenPoints(point, segmentStartPoint);
     const auto distance2ToEnd = vtkMath::Distance2BetweenPoints(point, segmentEndPoint);
 
     vtkIdType pointIdStart = this->ModelPointLocator->FindClosestPoint(segmentStartPoint);
-    double startNormal[3] = { 0.0 };
+    double startNormal[3] = { 0.0, 0.0, 0.0 };
     this->ModelNormalVectorArray->GetTuple(pointIdStart, startNormal);
     vtkIdType pointIdEnd = this->ModelPointLocator->FindClosestPoint(segmentEndPoint);
-    double endNormal[3] = { 0.0 };
+    double endNormal[3] = { 0.0, 0.0, 0.0 };
     this->ModelNormalVectorArray->GetTuple(pointIdEnd, endNormal);
 
     const double startWeight = distance2ToEnd / (distance2ToStart + distance2ToEnd);
     const double endWeight = distance2ToStart / (distance2ToStart + distance2ToEnd);
-    double rayDirection[3] = { 0.0 };
-    rayDirection[0] = (startWeight * startNormal[0]) + (endWeight * endNormal[0]);
-    rayDirection[1] = (startWeight * startNormal[1]) + (endWeight * endNormal[1]);
-    rayDirection[2] = (startWeight * startNormal[2]) + (endWeight * endNormal[2]);
+    double rayDirection[3] =
+      {
+      (startWeight * startNormal[0]) + (endWeight * endNormal[0]),
+      (startWeight * startNormal[1]) + (endWeight * endNormal[1]),
+      (startWeight * startNormal[2]) + (endWeight * endNormal[2])
+      };
     vtkMath::Normalize(rayDirection);
     normals->InsertNextTuple(rayDirection);
     }
