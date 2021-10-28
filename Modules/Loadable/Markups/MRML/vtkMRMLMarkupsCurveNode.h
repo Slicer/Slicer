@@ -312,6 +312,7 @@ protected:
   vtkSmartPointer<vtkArrayCalculator> SurfaceScalarCalculator;
   vtkSmartPointer<vtkPassThroughFilter> SurfaceScalarPassThroughFilter;
   vtkSmartPointer<vtkCurveMeasurementsCalculator> CurveMeasurementsCalculator;
+  vtkSmartPointer<vtkPassThroughFilter> WorldOutput;
   const char* ShortestDistanceSurfaceActiveScalar;
 
   /// Filter that changes the active scalar of the input mesh using the ActiveScalarName

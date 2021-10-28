@@ -108,13 +108,15 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   events->InsertNextTuple1(vtkMRMLTransformableNode::TransformModifiedEvent);
   this->AddNodeReferenceRole(this->GetSurfaceConstraintNodeReferenceRole(), this->GetSurfaceConstraintNodeReferenceMRMLAttributeName(), events);
 
-  // Insert curve measurements calculator between curve generator and world transformer filters
   this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
   this->CurveMeasurementsCalculator->SetMeasurements(this->Measurements);
   this->CurveMeasurementsCalculator->SetInputConnection(this->ProjectPointsFilter->GetOutputPort());
   this->CurveMeasurementsCalculator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 
-  this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
+  this->WorldOutput = vtkSmartPointer<vtkPassThroughFilter>::New();
+  this->WorldOutput->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
+
+  this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->WorldOutput->GetOutputPort());
 
   this->ScalarDisplayAssignAttribute = vtkSmartPointer<vtkAssignAttribute>::New();
 
@@ -232,8 +234,8 @@ vtkPolyData* vtkMRMLMarkupsCurveNode::GetCurveWorld()
     {
     return nullptr;
     }
-  this->ProjectPointsFilter->Update();
-  auto* curvePolyDataWorld = this->ProjectPointsFilter->GetOutput();
+  this->WorldOutput->Update();
+  auto* curvePolyDataWorld = vtkPolyData::SafeDownCast(this->WorldOutput->GetOutput());
   this->TransformedCurvePolyLocator->SetDataSet(curvePolyDataWorld);
   return curvePolyDataWorld;
 }
@@ -241,7 +243,7 @@ vtkPolyData* vtkMRMLMarkupsCurveNode::GetCurveWorld()
 //----------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLMarkupsCurveNode::GetCurveWorldConnection()
 {
-  return this->ProjectPointsFilter->GetOutputPort();
+  return this->WorldOutput->GetOutputPort();
 }
 
 //---------------------------------------------------------------------------
@@ -1399,13 +1401,13 @@ void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
   // Connect assign attributes filter if scalar visibility is on
   if (displayNode->GetScalarVisibility())
     {
-    this->ScalarDisplayAssignAttribute->SetInputConnection(this->CurveGenerator->GetOutputPort());
-    this->CurvePolyToWorldTransformer->SetInputConnection(this->ScalarDisplayAssignAttribute->GetOutputPort());
+    this->ScalarDisplayAssignAttribute->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
+    this->WorldOutput->SetInputConnection(this->ScalarDisplayAssignAttribute->GetOutputPort());
     }
   else
     {
     this->ScalarDisplayAssignAttribute->RemoveAllInputConnections(0);
-    this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveGenerator->GetOutputPort());
+    this->WorldOutput->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
     }
 }
 
