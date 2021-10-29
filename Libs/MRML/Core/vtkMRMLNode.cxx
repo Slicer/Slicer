@@ -1014,11 +1014,19 @@ const char * vtkMRMLNode::URLDecodeString(const char *inString)
 std::string vtkMRMLNode::XMLAttributeEncodeString(const std::string& inString)
 {
   std::string outString = inString;
+
   vtksys::SystemTools::ReplaceString(outString, "&", "&amp;");
   vtksys::SystemTools::ReplaceString(outString, "\"", "&quot;");
   vtksys::SystemTools::ReplaceString(outString, "'", "&apos;");
   vtksys::SystemTools::ReplaceString(outString, "<", "&lt;");
   vtksys::SystemTools::ReplaceString(outString, ">", "&gt;");
+
+  // It is valid to have newline character in attribute string, but
+  // the XML parser is allowed to replace them by newline characters
+  // therefore we encode CR and LF to ensure they are preserved verbatim.
+  vtksys::SystemTools::ReplaceString(outString, "\n", "&#10;");
+  vtksys::SystemTools::ReplaceString(outString, "\r", "&#13;");
+
   return outString;
 }
 
