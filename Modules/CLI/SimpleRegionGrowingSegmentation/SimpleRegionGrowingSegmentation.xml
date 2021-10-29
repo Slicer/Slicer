@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <executable>
-  <category>Segmentation</category>
+  <category>Legacy.Segmentation</category>
   <title>Simple Region Growing Segmentation</title>
   <description><![CDATA[A simple region growing segmentation algorithm based on intensity statistics. To create a list of fiducials (Seeds) for this algorithm, click on the tool bar icon of an arrow pointing to a sphere fiducial to enter the 'place a new object mode' and then use the Markups module. This module uses the Slicer Command Line Interface (CLI) and the ITK filters CurvatureFlowImageFilter and ConfidenceConnectedImageFilter.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>

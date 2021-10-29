@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <executable>
-  <category>Segmentation.Specialized</category>
+  <category>Legacy.Segmentation</category>
   <title>Robust Statistics Segmenter</title>
   <description><![CDATA[Active contour segmentation using robust statistic.]]></description>
   <version>1.0</version>
