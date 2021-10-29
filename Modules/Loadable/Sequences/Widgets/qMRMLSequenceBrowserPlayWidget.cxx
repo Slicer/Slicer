@@ -37,7 +37,7 @@ protected:
   qMRMLSequenceBrowserPlayWidget* const q_ptr;
 public:
   qMRMLSequenceBrowserPlayWidgetPrivate(qMRMLSequenceBrowserPlayWidget& object);
-  bool RecordingControlsVisible;
+  bool RecordingControlsVisible{ true };
   void init();
 
   vtkWeakPointer<vtkMRMLSequenceBrowserNode> SequenceBrowserNode;
