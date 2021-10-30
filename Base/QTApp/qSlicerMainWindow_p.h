@@ -65,6 +65,8 @@ public:
   void setErrorLogIconHighlighted(bool);
 
   void updatePythonConsolePalette();
+  void updateIconPalette();
+  static QIcon getColorizedIcon(const QString& hexColor, const QString& resourcePath);
 
 #ifdef Slicer_USE_PYTHONQT
   QDockWidget*                    PythonConsoleDockWidget;

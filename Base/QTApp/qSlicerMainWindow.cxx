@@ -36,6 +36,7 @@
 #include <QShowEvent>
 #include <QSignalMapper>
 #include <QStyle>
+#include <QStyleFactory>
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolButton>
@@ -410,6 +411,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->CutAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->CopyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->PasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  this->updateIconPalette();
 
   setThemeIcon(this->FileExitAction, "application-exit");
   setThemeIcon(this->EditUndoAction, "edit-undo");
@@ -486,6 +488,53 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // to use the full width of the application window.
   q->setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   q->setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindowPrivate::updateIconPalette()
+{
+  QPalette palette = qSlicerApplication::application()->palette();
+  QStyle* lightStyle = QStyleFactory::create("Light Slicer");
+  QString hexColor;
+  if (palette == lightStyle->standardPalette())
+  {
+    hexColor = lightStyle->standardPalette().color(QPalette::Text).name();
+  }
+  else
+  {
+    QStyle* darkStyle = QStyleFactory::create("Dark Slicer");
+    hexColor = darkStyle->standardPalette().color(QPalette::Text).name();
+  }
+  this->CutAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/Cut.svg"));
+  this->CopyAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/Copy.svg"));
+  this->PasteAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/Paste.svg"));
+  this->EditApplicationSettingsAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/ApplicationSettings.svg"));
+  this->ModuleHomeAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/Home.svg"));
+}
+
+//-----------------------------------------------------------------------------
+QIcon qSlicerMainWindowPrivate::getColorizedIcon(const QString& hexColor, const QString& resourcePath)
+{
+  QIcon icon;
+  if (hexColor == "#000000")
+  {
+    // resource icons are already colored black by default
+    icon = QIcon(resourcePath);
+  }
+  else
+  {
+    QFile file(resourcePath);
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
+    QString newHexString = "fill=\"" + hexColor;
+    QByteArray newByteArray = newHexString.toLocal8Bit();
+    const char *newHexChar = newByteArray.data();
+    data.replace("fill=\"#000000", newHexChar);
+    QPixmap pixmap;
+    pixmap.loadFromData(data);
+    icon = QIcon(pixmap);
+  }
+  return icon;
 }
 
 //-----------------------------------------------------------------------------
@@ -1660,6 +1709,7 @@ void qSlicerMainWindow::changeEvent(QEvent* event)
     case QEvent::PaletteChange:
       {
       d->updatePythonConsolePalette();
+      d->updateIconPalette();
       break;
       }
     default:

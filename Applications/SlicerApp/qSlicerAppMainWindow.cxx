@@ -23,9 +23,11 @@
 
 // Qt includes
 #include <QDesktopServices>
+#include <QFile>
 #include <QLabel>
 #include <QPixmap>
 #include <QStyle>
+#include <QStyleFactory>
 #include <QUrl>
 
 // Slicer includes
@@ -72,15 +74,15 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // Add actions
   //----------------------------------------------------------------------------
-  QAction* helpKeyboardShortcutsAction = new QAction(mainWindow);
-  helpKeyboardShortcutsAction->setObjectName("HelpKeyboardShortcutsAction");
-  helpKeyboardShortcutsAction->setText(qSlicerAppMainWindow::tr("&Keyboard Shortcuts Reference"));
-  helpKeyboardShortcutsAction->setToolTip(qSlicerAppMainWindow::tr("Raise a window that lists commonly-used keyboard shortcuts."));
+  this->HelpKeyboardShortcutsAction = new QAction(mainWindow);
+  this->HelpKeyboardShortcutsAction->setObjectName("HelpKeyboardShortcutsAction");
+  this->HelpKeyboardShortcutsAction->setText(qSlicerAppMainWindow::tr("&Keyboard Shortcuts Reference"));
+  this->HelpKeyboardShortcutsAction->setToolTip(qSlicerAppMainWindow::tr("Raise a window that lists commonly-used keyboard shortcuts."));
 
-  QAction* helpDocumentationAction = new QAction(mainWindow);
-  helpDocumentationAction->setObjectName("HelpDocumentationAction");
-  helpDocumentationAction->setText(qSlicerAppMainWindow::tr("Documentation"));
-  helpDocumentationAction->setShortcut(QKeySequence(qSlicerAppMainWindow::tr("Ctrl+1", "Documentation")));
+  this->HelpDocumentationAction = new QAction(mainWindow);
+  this->HelpDocumentationAction->setObjectName("HelpDocumentationAction");
+  this->HelpDocumentationAction->setText(qSlicerAppMainWindow::tr("Documentation"));
+  this->HelpDocumentationAction->setShortcut(QKeySequence(qSlicerAppMainWindow::tr("Ctrl+1", "Documentation")));
 
   QAction* helpQuickStartAction = new QAction(mainWindow);
   helpQuickStartAction->setObjectName("HelpQuickStartAction");
@@ -94,9 +96,9 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   helpUserInterfaceAction->setObjectName("HelpUserInterfaceAction");
   helpUserInterfaceAction->setText(qSlicerAppMainWindow::tr("User Interface"));
 
-  QAction* helpDiscourseForumAction = new QAction(mainWindow);
-  helpDiscourseForumAction->setObjectName("HelpDiscourseForumAction");
-  helpDiscourseForumAction->setText(qSlicerAppMainWindow::tr("Discourse Forum"));
+  this->HelpDiscourseForumAction = new QAction(mainWindow);
+  this->HelpDiscourseForumAction->setObjectName("HelpDiscourseForumAction");
+  this->HelpDiscourseForumAction->setText(qSlicerAppMainWindow::tr("Discourse Forum"));
 
   QAction* helpBrowseTutorialsAction = new QAction(mainWindow);
   helpBrowseTutorialsAction->setObjectName("HelpBrowseTutorialsAction");
@@ -127,15 +129,15 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   helpAcknowledgmentsAction->setObjectName("HelpAcknowledgmentsAction");
   helpAcknowledgmentsAction->setText(qSlicerAppMainWindow::tr("Acknowledgments"));
 
-  QAction* helpReportBugOrFeatureRequestAction = new QAction(mainWindow);
-  helpReportBugOrFeatureRequestAction->setObjectName("HelpReportBugOrFeatureRequestAction");
-  helpReportBugOrFeatureRequestAction->setText(qSlicerAppMainWindow::tr("Report a Bug"));
-  helpReportBugOrFeatureRequestAction->setToolTip(qSlicerAppMainWindow::tr("Report error or request enhancement or new feature."));
+  this->HelpReportBugOrFeatureRequestAction = new QAction(mainWindow);
+  this->HelpReportBugOrFeatureRequestAction->setObjectName("HelpReportBugOrFeatureRequestAction");
+  this->HelpReportBugOrFeatureRequestAction->setText(qSlicerAppMainWindow::tr("Report a Bug"));
+  this->HelpReportBugOrFeatureRequestAction->setToolTip(qSlicerAppMainWindow::tr("Report error or request enhancement or new feature."));
 
-  QAction* helpAboutSlicerAppAction = new QAction(mainWindow);
-  helpAboutSlicerAppAction->setObjectName("HelpAboutSlicerAppAction");
-  helpAboutSlicerAppAction->setText(qSlicerAppMainWindow::tr("About 3D Slicer"));
-  helpAboutSlicerAppAction->setToolTip(qSlicerAppMainWindow::tr("Provides a description of the Slicer effort and its support."));
+  this->HelpAboutSlicerAppAction = new QAction(mainWindow);
+  this->HelpAboutSlicerAppAction->setObjectName("HelpAboutSlicerAppAction");
+  this->HelpAboutSlicerAppAction->setText(qSlicerAppMainWindow::tr("About 3D Slicer"));
+  this->HelpAboutSlicerAppAction->setToolTip(qSlicerAppMainWindow::tr("Provides a description of the Slicer effort and its support."));
 
   //----------------------------------------------------------------------------
   // Calling "setupUi()" after adding the actions above allows the call
@@ -154,41 +156,80 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   logoLabel->setPixmap(qMRMLWidget::pixmapFromIcon(QIcon(":/ModulePanelLogo.png")));
   this->PanelDockWidget->setTitleBarWidget(logoLabel);
 
-  this->HelpMenu->addAction(helpDocumentationAction);
+  this->HelpMenu->addAction(this->HelpDocumentationAction);
   this->HelpMenu->addAction(helpQuickStartAction);
   this->HelpMenu->addAction(helpGetHelpAction);
   this->HelpMenu->addAction(helpUserInterfaceAction);
   this->HelpMenu->addSeparator();
-  this->HelpMenu->addAction(helpKeyboardShortcutsAction);
+  this->HelpMenu->addAction(this->HelpKeyboardShortcutsAction);
   this->HelpMenu->addAction(helpBrowseTutorialsAction);
   this->HelpMenu->addSeparator();
   this->HelpMenu->addAction(helpJoinUsOnTwitterAction);
-  this->HelpMenu->addAction(helpDiscourseForumAction);
+  this->HelpMenu->addAction(this->HelpDiscourseForumAction);
   this->HelpMenu->addAction(helpSearchFeatureRequestsAction);
-  this->HelpMenu->addAction(helpReportBugOrFeatureRequestAction);
+  this->HelpMenu->addAction(this->HelpReportBugOrFeatureRequestAction);
   this->HelpMenu->addSeparator();
   this->HelpMenu->addAction(helpViewLicenseAction);
   this->HelpMenu->addAction(helpHowToCiteAction);
   this->HelpMenu->addAction(helpSlicerPublicationsAction);
   this->HelpMenu->addAction(helpAcknowledgmentsAction);
   this->HelpMenu->addSeparator();
-  this->HelpMenu->addAction(helpAboutSlicerAppAction);
+  this->HelpMenu->addAction(this->HelpAboutSlicerAppAction);
 
   //----------------------------------------------------------------------------
   // Icons in the menu
   //----------------------------------------------------------------------------
   // Customize QAction icons with standard pixmaps
-  QIcon networkIcon = mainWindow->style()->standardIcon(QStyle::SP_DriveNetIcon);
-  QIcon informationIcon = mainWindow->style()->standardIcon(QStyle::SP_MessageBoxInformation);
-  QIcon questionIcon = mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion);
+  this->updateIconPalette();
+  setThemeIcon(this->HelpAboutSlicerAppAction, "help-about");
+  setThemeIcon(this->HelpReportBugOrFeatureRequestAction, "tools-report-bug");
+}
 
-  helpDocumentationAction->setIcon(networkIcon);  // change to open in new
-  helpDiscourseForumAction->setIcon(networkIcon);  // change to forum
-  helpAboutSlicerAppAction->setIcon(informationIcon);
-  helpReportBugOrFeatureRequestAction->setIcon(questionIcon);
+//-----------------------------------------------------------------------------
+void qSlicerAppMainWindowPrivate::updateIconPalette()
+{
+  QPalette palette = qSlicerApplication::application()->palette();
+  QStyle* lightStyle = QStyleFactory::create("Light Slicer");
+  QString hexColor;
+  if (palette == lightStyle->standardPalette())
+  {
+    hexColor = lightStyle->standardPalette().color(QPalette::Text).name();
+  }
+  else
+  {
+    QStyle* darkStyle = QStyleFactory::create("Dark Slicer");
+    hexColor = darkStyle->standardPalette().color(QPalette::Text).name();
+  }
+  this->HelpDocumentationAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/OpenExternal.svg"));
+  this->HelpKeyboardShortcutsAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/Keyboard.svg"));
+  this->HelpDiscourseForumAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/Forum.svg"));
+  this->HelpReportBugOrFeatureRequestAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/Warning.svg"));
+  this->HelpAboutSlicerAppAction->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/Info.svg"));
+}
 
-  setThemeIcon(helpAboutSlicerAppAction, "help-about");
-  setThemeIcon(helpReportBugOrFeatureRequestAction, "tools-report-bug");
+//-----------------------------------------------------------------------------
+QIcon qSlicerAppMainWindowPrivate::getColorizedIcon(const QString& hexColor, const QString& resourcePath)
+{
+  QIcon icon;
+  if (hexColor == "#000000")
+  {
+    // resource icons are already colored black by default
+    icon = QIcon(resourcePath);
+  }
+  else
+  {
+    QFile file(resourcePath);
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
+    QString newHexString = "fill=\"" + hexColor;
+    QByteArray newByteArray = newHexString.toLocal8Bit();
+    const char *newHexChar = newByteArray.data();
+    data.replace("fill=\"#000000", newHexChar);
+    QPixmap pixmap;
+    pixmap.loadFromData(data);
+    icon = QIcon(pixmap);
+  }
+  return icon;
 }
 
 //-----------------------------------------------------------------------------
@@ -338,4 +379,21 @@ void qSlicerAppMainWindow::on_HelpReportBugOrFeatureRequestAction_triggered()
 {
   qSlicerErrorReportDialog errorReport(this);
   errorReport.exec();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::changeEvent(QEvent* event)
+{
+  Q_D(qSlicerAppMainWindow);
+  this->Superclass::changeEvent(event);
+  switch (event->type())
+    {
+    case QEvent::PaletteChange:
+      {
+      d->updateIconPalette();
+      break;
+      }
+    default:
+      break;
+    }
 }

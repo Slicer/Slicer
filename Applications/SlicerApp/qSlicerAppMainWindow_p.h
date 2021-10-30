@@ -21,6 +21,9 @@
 #ifndef __qSlicerAppMainWindow_p_h
 #define __qSlicerAppMainWindow_p_h
 
+// Qt includes
+class QAction;
+
 // Slicer includes
 #include "qSlicerAppMainWindow.h"
 #include "qSlicerMainWindow_p.h"
@@ -42,6 +45,14 @@ public:
   void init() override;
   /// Reimplemented for custom behavior
   void setupUi(QMainWindow * mainWindow) override;
+  void updateIconPalette();
+  static QIcon getColorizedIcon(const QString& hexColor, const QString& resourcePath);
+
+  QAction* HelpDocumentationAction;
+  QAction* HelpKeyboardShortcutsAction;
+  QAction* HelpDiscourseForumAction;
+  QAction* HelpReportBugOrFeatureRequestAction;
+  QAction* HelpAboutSlicerAppAction;
 };
 
 #endif

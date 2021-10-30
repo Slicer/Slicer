@@ -56,6 +56,7 @@ public slots:
 
 protected:
   qSlicerAppMainWindow(qSlicerAppMainWindowPrivate* pimpl, QWidget* parent);
+  void changeEvent(QEvent* event) override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerAppMainWindow);

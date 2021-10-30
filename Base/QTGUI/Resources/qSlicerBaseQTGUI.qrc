@@ -94,6 +94,17 @@
     </qresource>
     <qresource prefix="/Icons/Scalable">
         <file alias="SlicerConfigure.svg">Icons/Scalable/SlicerConfigure.svg</file>
+        <file alias="ApplicationSettings.svg">Icons/settings_black_24dp.svg</file>
+        <file alias="Search.svg">Icons/search_black_24dp.svg</file>
+        <file alias="Home.svg">Icons/home_black_24dp.svg</file>
+        <file alias="Cut.svg">Icons/content_cut_black_24dp.svg</file>
+        <file alias="Copy.svg">Icons/content_copy_black_24dp.svg</file>
+        <file alias="Paste.svg">Icons/content_paste_black_24dp.svg</file>
+        <file alias="OpenExternal.svg">Icons/open_in_new_black_24dp.svg</file>
+        <file alias="Forum.svg">Icons/forum_black_24dp.svg</file>
+        <file alias="Info.svg">Icons/info_black_24dp.svg</file>
+        <file alias="Warning.svg">Icons/report_problem_black_24dp.svg</file>
+        <file alias="Keyboard.svg">Icons/keyboard_black_24dp.svg</file>
     </qresource>
     <qresource prefix="/Icons/XLarge">
         <file alias="SlicerVisible.png">Icons/XLarge/SlicerVisible.png</file>

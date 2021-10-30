@@ -26,6 +26,8 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QStyle>
+#include <QStyleFactory>
 #include <QStyleOptionButton>
 #include <QToolButton>
 
@@ -53,6 +55,9 @@ public:
 
   void insertActionOnTop(QAction* action, QMenu* menu);
   QAction* lastSelectedAction()const;
+
+  void updateIconPalette();
+  QIcon getColorizedIcon(const QString& hexColor, const QString& resourcePath);
 
   qSlicerModuleFinderDialog* ModuleFinder;
 #ifdef Q_OS_WIN32
@@ -105,8 +110,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
 
   // Module finder
   this->ModuleFinderButton = new QToolButton(q);
-  const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png"));
-  QAction* ViewFindModuleAction = new QAction(searchIcon, qSlicerModuleSelectorToolBar::tr("Module Finder"));
+  QAction* ViewFindModuleAction = new QAction(qSlicerModuleSelectorToolBar::tr("Module Finder"));
   ViewFindModuleAction->setObjectName("ViewFindModuleAction");
   ViewFindModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Find module"));
   ViewFindModuleAction->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_F));
@@ -193,6 +197,52 @@ void qSlicerModuleSelectorToolBarPrivate::init()
                    this->NextButton,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
   this->NextButton->setEnabled(this->NextHistoryMenu->actions().size() > 0);
   this->NextButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Right));
+
+  this->updateIconPalette();  // sets ViewFindModuleAction icon
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleSelectorToolBarPrivate::updateIconPalette()
+{
+  QPalette palette = qSlicerApplication::application()->palette();
+  QStyle* lightStyle = QStyleFactory::create("Light Slicer");
+  QString hexColor;
+  if (palette == lightStyle->standardPalette())
+  {
+    hexColor = lightStyle->standardPalette().color(QPalette::Text).name();
+  }
+  else
+  {
+    QStyle* darkStyle = QStyleFactory::create("Dark Slicer");
+    hexColor = darkStyle->standardPalette().color(QPalette::Text).name();
+  }
+  QAction* ViewFindModuleAction = this->ModuleFinderButton->defaultAction();
+  ViewFindModuleAction->setIcon(QIcon::fromTheme("edit-find", this->getColorizedIcon(hexColor, ":/Icons/Scalable/Search.svg")));
+}
+
+//-----------------------------------------------------------------------------
+QIcon qSlicerModuleSelectorToolBarPrivate::getColorizedIcon(const QString& hexColor, const QString& resourcePath)
+{
+  QIcon icon;
+  if (hexColor == "#000000")
+  {
+    // resource icons are already colored black by default
+    icon = QIcon(resourcePath);
+  }
+  else
+  {
+    QFile file(resourcePath);
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
+    QString newHexString = "fill=\"" + hexColor;
+    QByteArray newByteArray = newHexString.toLocal8Bit();
+    const char *newHexChar = newByteArray.data();
+    data.replace("fill=\"#000000", newHexChar);
+    QPixmap pixmap;
+    pixmap.loadFromData(data);
+    icon = QIcon(pixmap);
+  }
+  return icon;
 }
 
 //---------------------------------------------------------------------------
@@ -447,5 +497,21 @@ void qSlicerModuleSelectorToolBar::selectPreviousModule()
       }
     // triggering the action will eventually call actionSelected()
     previousAction->trigger();
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorToolBar::changeEvent(QEvent* event)
+{
+  Q_D(qSlicerModuleSelectorToolBar);
+  switch (event->type())
+    {
+    case QEvent::PaletteChange:
+      {
+      d->updateIconPalette();
+      break;
+      }
+    default:
+      break;
     }
 }
