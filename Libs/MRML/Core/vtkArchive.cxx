@@ -532,7 +532,11 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
 
   std::string cwd = vtksys::SystemTools::GetCurrentWorkingDirectory();
 
+#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0 && VTK_BUILD_VERSION >= 20210806)
+  if ( !vtksys::SystemTools::ChangeDirectory(destinationDirectory) )
+#else
   if ( vtksys::SystemTools::ChangeDirectory(destinationDirectory) )
+#endif
     {
     vtkArchiveTools::Error("Unzip:", "could not change to destination directory");
     return false;
@@ -641,8 +645,11 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
     return false;
     }
 
-
+#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0 && VTK_BUILD_VERSION >= 20210806)
+  if ( !vtksys::SystemTools::ChangeDirectory(cwd.c_str()) )
+#else
   if ( vtksys::SystemTools::ChangeDirectory(cwd.c_str()) )
+#endif
     {
     vtkArchiveTools::Error("Unzip:", "could not change back to working directory");
     return false;
