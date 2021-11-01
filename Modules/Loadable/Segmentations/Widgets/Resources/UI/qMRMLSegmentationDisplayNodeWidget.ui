@@ -59,10 +59,10 @@
    <item row="0" column="3">
     <widget class="ctkSliderWidget" name="SliderWidget_Opacity">
      <property name="singleStep">
-      <double>0.100000000000000</double>
+      <double>0.050000000000000</double>
      </property>
      <property name="pageStep">
-      <double>1.000000000000000</double>
+      <double>0.100000000000000</double>
      </property>
      <property name="maximum">
       <double>1.000000000000000</double>
@@ -145,10 +145,10 @@
       <item row="3" column="3">
        <widget class="ctkSliderWidget" name="SliderWidget_OpacitySliceOutline">
         <property name="singleStep">
-         <double>0.100000000000000</double>
+         <double>0.050000000000000</double>
         </property>
         <property name="pageStep">
-         <double>1.000000000000000</double>
+         <double>0.100000000000000</double>
         </property>
         <property name="maximum">
          <double>1.000000000000000</double>
@@ -161,10 +161,10 @@
       <item row="2" column="3">
        <widget class="ctkSliderWidget" name="SliderWidget_OpacitySliceFill">
         <property name="singleStep">
-         <double>0.100000000000000</double>
+         <double>0.050000000000000</double>
         </property>
         <property name="pageStep">
-         <double>1.000000000000000</double>
+         <double>0.100000000000000</double>
         </property>
         <property name="maximum">
          <double>1.000000000000000</double>
@@ -177,10 +177,10 @@
       <item row="4" column="3">
        <widget class="ctkSliderWidget" name="SliderWidget_Opacity3D">
         <property name="singleStep">
-         <double>0.100000000000000</double>
+         <double>0.050000000000000</double>
         </property>
         <property name="pageStep">
-         <double>1.000000000000000</double>
+         <double>0.100000000000000</double>
         </property>
         <property name="maximum">
          <double>1.000000000000000</double>
@@ -432,10 +432,10 @@
             <string>Value relative to other segments. The final opacity depends both on the per-segment opacity and the overall opacity (above)</string>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.050000000000000</double>
            </property>
            <property name="pageStep">
-            <double>1.000000000000000</double>
+            <double>0.100000000000000</double>
            </property>
            <property name="maximum">
             <double>1.000000000000000</double>
@@ -451,10 +451,10 @@
             <string>Value relative to other segments. The final opacity depends both on the per-segment opacity and the overall opacity (above)</string>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.050000000000000</double>
            </property>
            <property name="pageStep">
-            <double>1.000000000000000</double>
+            <double>0.100000000000000</double>
            </property>
            <property name="maximum">
             <double>1.000000000000000</double>
@@ -470,10 +470,10 @@
             <string>Value relative to other segments. The final opacity depends both on the per-segment opacity and the overall opacity (above)</string>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.050000000000000</double>
            </property>
            <property name="pageStep">
-            <double>1.000000000000000</double>
+            <double>0.100000000000000</double>
            </property>
            <property name="maximum">
             <double>1.000000000000000</double>
