@@ -513,7 +513,7 @@ Independently of the extension test results, if the extension could be successfu
 - Associate the remote URL with your local git source tree
 
     ```bash
-    git remote add origin git://github.com/<username>/MyExtension
+    git remote add origin https://github.com/<username>/MyExtension
     ```
 
 ### Which remote name is expected for extension git checkout?

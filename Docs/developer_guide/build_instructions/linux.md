@@ -81,7 +81,7 @@ sudo pacman -S git make patch subversion gcc cmake \
 The recommended way to obtain the source code of SLicer is cloning the repository using `git`:
 
 ```console
-git clone git://github.com/Slicer/Slicer.git
+git clone https://github.com/Slicer/Slicer.git
 ```
 
 This will create a `Slicer` directory containing the source code of Slicer.

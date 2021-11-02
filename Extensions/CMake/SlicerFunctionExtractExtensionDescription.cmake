@@ -139,7 +139,7 @@ function(slicer_extract_extension_description_test)
   set(expected_ICONURL "http://www.slicer.org/slicerWiki/images/6/64/SlicerToKiwiExporterLogo.png")
   set(expected_SCM "git")
   set(expected_SCMREVISION "9d7341e978df954a2c875240290833d7528ef29c")
-  set(expected_SCMURL "git://github.com/jcfr/SlicerToKiwiExporter.git")
+  set(expected_SCMURL "https://github.com/jcfr/SlicerToKiwiExporter.git")
   set(expected_SCREENSHOTURLS "http://www.slicer.org/slicerWiki/images/9/9e/SlicerToKiwiExporter_Kiwiviewer_8.PNG http://www.slicer.org/slicerWiki/images/a/ab/SlicerToKiwiExporter_Kiwiviewer_9.PNG http://www.slicer.org/slicerWiki/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png")
   set(expected_STATUS "")
 

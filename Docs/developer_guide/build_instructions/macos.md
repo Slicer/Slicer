@@ -28,7 +28,7 @@ Check out the code using `git`:
 - Clone the github repository
 
 ```console
-git clone git://github.com/Slicer/Slicer.git
+git clone https://github.com/Slicer/Slicer.git
 ```
 
 The `Slicer` directory is automatically created after cloning Slicer.
