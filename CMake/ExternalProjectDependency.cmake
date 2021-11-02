@@ -109,11 +109,23 @@ endif()
 #     [...]
 #     )
 #
-option(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use https instead." ON)
-set(EP_GIT_PROTOCOL "git")
-if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
-  set(EP_GIT_PROTOCOL "https")
-endif()
+
+# NOTE: Slicer used to have an option to choose the protocol for git (either git or
+# https). Github removed unauthenticated access trough the git protocol
+# (see https://github.blog/2021-09-01-improving-git-protocol-security-github/ ), leaving
+# the git protocol not practical for its use in Slicer. Below, there is the commented snippet
+# enabling the protocol selection. The EP_GIT_PROTOCOL variable is kept to allow
+# configuration of the protocol, in case new protocols come into play (for now,
+# it is set to "https").
+# --
+# option(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use https instead." OFF)
+# set(EP_GIT_PROTOCOL "git")
+# if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
+#   set(EP_GIT_PROTOCOL "https")
+# endif()
+# --
+
+set(EP_GIT_PROTOCOL "https")
 
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
