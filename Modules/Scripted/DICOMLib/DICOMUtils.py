@@ -809,7 +809,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
   slicer.app.processEvents()
 
   if accessToken is None:
-    client = DICOMwebClient(url = dicomWebEndpoint, callback=progressCallback)
+    client = DICOMwebClient(url = dicomWebEndpoint)
   else:
     client = DICOMwebClient(
               url = dicomWebEndpoint,
