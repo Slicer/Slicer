@@ -137,9 +137,9 @@ function(slicer_generate_extension_description_test)
     EXTENSION_NAME "SlicerToKiwiExporter"
     EXTENSION_SCREENSHOTURLS "http://www.slicer.org/slicerWiki/images/9/9e/SlicerToKiwiExporter_Kiwiviewer_8.PNG http://www.slicer.org/slicerWiki/images/a/ab/SlicerToKiwiExporter_Kiwiviewer_9.PNG http://www.slicer.org/slicerWiki/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png"
     EXTENSION_WC_REVISION "9d7341e978df954a2c875240290833d7528ef29c"
-    EXTENSION_WC_ROOT "git://github.com/jcfr/SlicerToKiwiExporter.git"
+    EXTENSION_WC_ROOT "https://github.com/jcfr/SlicerToKiwiExporter.git"
     EXTENSION_WC_TYPE "git"
-    EXTENSION_WC_URL "git://github.com/jcfr/SlicerToKiwiExporter.git"
+    EXTENSION_WC_URL "https://github.com/jcfr/SlicerToKiwiExporter.git"
     SLICER_REVISION "21510"
     SLICER_WC_ROOT "http://svn.slicer.org/Slicer4"
     )
