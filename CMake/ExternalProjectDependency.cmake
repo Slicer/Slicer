@@ -97,7 +97,9 @@ endif()
 # ``EP_GIT_PROTOCOL`` variable.
 #
 # If enabled, the variable ``EP_GIT_PROTOCOL`` is set to ``git``. Otherwise, it is set to ``https``.
-# The option is enabled by default.
+# Since GitHub removed unauthenticated access trough the git protocol
+# (see https://github.blog/2021-09-01-improving-git-protocol-security-github/ ),
+# and most projects are hosted on GitHub the option is disabled (https is used) by default.
 #
 # The variable ``EP_GIT_PROTOCOL`` can be used when adding external project. For example:
 #
@@ -109,10 +111,10 @@ endif()
 #     [...]
 #     )
 #
-option(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use https instead." ON)
-set(EP_GIT_PROTOCOL "git")
-if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
-  set(EP_GIT_PROTOCOL "https")
+option(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL "Turn off if using GitHub or behind a firewall." OFF)
+set(EP_GIT_PROTOCOL "https")
+if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
+  set(EP_GIT_PROTOCOL "git")
 endif()
 
 # Compute -G arg for configuring external projects with the same CMake generator:
