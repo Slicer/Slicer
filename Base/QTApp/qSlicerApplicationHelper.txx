@@ -36,6 +36,7 @@
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
 #endif
+#include <ctkUtils.h>
 
 #ifdef Slicer_BUILD_CLI_SUPPORT
 # include "qSlicerCLIExecutableModuleFactory.h"
@@ -166,8 +167,8 @@ int qSlicerApplicationHelper::postInitializeApplication(
              << moduleFactoryManager->instantiatedModuleNames().count();
     }
 
-  QStringList failedToBeInstantiatedModuleNames = QStringList::fromSet(
-        moduleFactoryManager->registeredModuleNames().toSet() - moduleFactoryManager->instantiatedModuleNames().toSet());
+  QStringList failedToBeInstantiatedModuleNames = ctk::qSetToQStringList(
+        ctk::qStringListToQSet(moduleFactoryManager->registeredModuleNames()) - ctk::qStringListToQSet(moduleFactoryManager->instantiatedModuleNames()));
   if (!failedToBeInstantiatedModuleNames.isEmpty())
     {
     qCritical() << "The following modules failed to be instantiated:";
