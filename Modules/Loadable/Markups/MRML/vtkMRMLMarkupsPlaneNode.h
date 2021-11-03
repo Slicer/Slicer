@@ -79,8 +79,11 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "MarkupsPlane";}
 
-  /// Get markup name
+  /// Get markup type internal name
   const char* GetMarkupType() override {return "Plane";};
+
+  // Get markup type GUI display name
+  const char* GetMarkupTypeDisplayName() override {return "Plane";};
 
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "P";};
