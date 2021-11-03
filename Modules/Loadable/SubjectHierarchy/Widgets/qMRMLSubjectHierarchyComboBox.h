@@ -214,7 +214,7 @@ signals:
 protected slots:
   void updateComboBoxTitleAndIcon(vtkIdType selectedShItemID);
 
-  void hidePopup();
+  void hidePopup() override;
 
 protected:
   /// Handle mouse press event (disable context menu)
