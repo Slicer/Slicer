@@ -55,7 +55,7 @@ if(BUILD_TESTING)
   set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
   set(KIT_TEST_SRCS
-    qSlicerAbstractCoreModuleTest1
+    qSlicerAbstractCoreModuleTest1.cxx
     qSlicerCoreApplicationTest1.cxx
     qSlicerCoreIOManagerTest1.cxx
     qSlicerLoadableModuleFactoryTest1.cxx

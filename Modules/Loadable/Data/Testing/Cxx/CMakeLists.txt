@@ -5,7 +5,7 @@ set(MODEL_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/cube.vtk")
 
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
-  vtkSlicerDataLogicAutoRemoveTest
+  vtkSlicerDataLogicAutoRemoveTest.cxx
   )
 
 #-----------------------------------------------------------------------------
