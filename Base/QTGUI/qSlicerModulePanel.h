@@ -49,7 +49,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel
 
 public:
   typedef qSlicerAbstractModulePanel Superclass;
-  qSlicerModulePanel(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
+  qSlicerModulePanel(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
   ~qSlicerModulePanel() override;
 
   /// Get the helpAndAcknowledgmentVisible property value.
