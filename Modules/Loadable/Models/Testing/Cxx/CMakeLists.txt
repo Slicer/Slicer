@@ -6,10 +6,10 @@ set(MODEL_SCENE "${MRMLCore_SOURCE_DIR}/Testing/modelHierarchy.mrml")
 
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
-  qSlicerModelsModuleWidgetTest
-  qSlicerModelsModuleWidgetTest1
-  qSlicerModelsModuleWidgetTestScene
-  vtkSlicerModelsLogicAddFileTest
+  qSlicerModelsModuleWidgetTest.cxx
+  qSlicerModelsModuleWidgetTest1.cxx
+  qSlicerModelsModuleWidgetTestScene.cxx
+  vtkSlicerModelsLogicAddFileTest.cxx
   )
 
 #-----------------------------------------------------------------------------
