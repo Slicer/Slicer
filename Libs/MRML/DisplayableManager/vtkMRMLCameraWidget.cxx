@@ -747,6 +747,12 @@ bool vtkMRMLCameraWidget::ProcessTranslate(vtkMRMLInteractionEventData* eventDat
     oldPickPoint[1] - newPickPoint[1],
     oldPickPoint[2] - newPickPoint[2]
     };
+    
+  // If model transform is applied to the camera (scale, shear, rotations and translations)
+  // then we need to take that into account otherwise we will get 
+  // under/over estimated translations if camera is scaled for example
+  camera->GetModelTransformMatrix()->MultiplyPoint(motionVector, motionVector);
+
   camera->GetFocalPoint(viewFocus);
 
   double viewPoint[3] = { 0.0 };
