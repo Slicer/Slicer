@@ -198,7 +198,7 @@ private:
 
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
 #define vtkSlicerMarkupsWidgetCreateInstanceMacro(type) \
-vtkSlicerMarkupsWidget* CreateInstance() const \
+vtkSlicerMarkupsWidget* CreateInstance() const override\
 { \
   vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
   if(ret) \
@@ -211,7 +211,7 @@ vtkSlicerMarkupsWidget* CreateInstance() const \
 }
 #else
 #define vtkSlicerMarkupsWidgetCreateInstanceMacro(type) \
-vtkSlicerMarkupsWidget* CreateInstance() const \
+vtkSlicerMarkupsWidget* CreateInstance() const override\
 { \
   vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
   if(ret) \
