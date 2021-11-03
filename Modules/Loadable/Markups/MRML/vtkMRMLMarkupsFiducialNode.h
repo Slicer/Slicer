@@ -56,8 +56,11 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "MarkupsFiducial";}
 
-  /// Get markup name
+  /// Get markup type internal name
   const char* GetMarkupType() override {return "Fiducial";};
+
+  // Get markup type GUI display name
+  const char* GetMarkupTypeDisplayName() override {return "Fiducial";};
 
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "F";};
