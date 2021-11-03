@@ -203,9 +203,23 @@ markupsNodeObserverTag = markupsNode.AddObserver(slicer.vtkMRMLMarkupsFiducialNo
 # markupsNode.RemoveObserver(markupsNodeObserverTag)
 ```
 
+### Export entire scene as glTF
+
+glTF is a modern and very efficient file format for surface meshes, which is supported by many web viewers, such as:
+- https://3dviewer.net/ (requires a single zip file that contains all the exported files)
+- https://gltf-viewer.donmccurdy.com/ (the exported folder can be drag-and-dropped to the webpage)
+
+```python
+exporter = vtk.vtkGLTFExporter()
+exporter.SetRenderWindow(slicer.app.layoutManager().threeDWidget(0).threeDView().renderWindow())
+exporter.SetFileName("c:/tmp/newfolder/mymodel.gltf")
+exporter.Write()
+```
+
 ### Export entire scene as VRML
 
 Save all surface meshes displayed in the scene (models, markups, etc). Solid colors and coloring by scalar is preserved. Textures are not supported.
+VRML is a very old general-purpose scene file format, which is still supported by some software.
 
 ```python
 exporter = vtk.vtkVRMLExporter()
