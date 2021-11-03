@@ -35,7 +35,7 @@ public:
 
   static vtkMRMLAnnotationAngleDisplayableManager *New();
   vtkTypeMacro(vtkMRMLAnnotationAngleDisplayableManager, vtkMRMLAnnotationDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // the following functions must be public to be accessible by the callback
   /// Propagate properties of MRML node to widget.

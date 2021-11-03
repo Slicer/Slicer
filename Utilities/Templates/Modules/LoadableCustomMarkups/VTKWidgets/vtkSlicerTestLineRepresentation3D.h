@@ -50,7 +50,7 @@ class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineRepresent
 public:
   static vtkSlicerTestLineRepresentation3D* New();
   vtkTypeMacro(vtkSlicerTestLineRepresentation3D, vtkSlicerLineRepresentation3D);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData=nullptr);
 

@@ -43,7 +43,7 @@ public:
 
   static vtkSlicerSuperLoadableModuleTemplateLogic *New();
   vtkTypeMacro(vtkSlicerSuperLoadableModuleTemplateLogic, vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
   vtkSlicerSuperLoadableModuleTemplateLogic();
