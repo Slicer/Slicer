@@ -141,10 +141,13 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     slicer.util.selectModule("DICOM")
     slicer.app.processEvents()
     from DICOMLib import DICOMUtils
-    DICOMUtils.importFromDICOMWeb(
+    importedSeriesInstanceUIDs = DICOMUtils.importFromDICOMWeb(
       dicomWebEndpoint=queryMap["dicomweb_endpoint"],
       studyInstanceUID=queryMap["studyUID"],
       accessToken=accessToken)
+
+    # Select newly loaded items to make it easier to load them
+    self.browserWidget.dicomBrowser.setSelectedItems(ctk.ctkDICOMModel.SeriesType, importedSeriesInstanceUIDs)
 
   def initializeDICOMDatabase(self):
     #  Create alias for convenience

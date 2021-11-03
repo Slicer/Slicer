@@ -788,77 +788,130 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
 def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=None, accessToken=None):
   """
   Downloads and imports DICOM series from a DICOMweb instance.
-  Example usage:
-    from DICOMLib import DICOMUtils
+  Progress is displayed and if errors occur then they are displayed in a popup window in the end.
+  If all the instances in a series are already imported then the series will not be retrieved and imported again.
 
-    loadedUIDs = DICOMUtils.importFromDICOMWeb(dicomWebEndpoint="https://yourdicomweburl/dicomWebEndpoint",
-                                             studyInstanceUID="2.16.840.1.113669.632.20.1211.10000509338")
-                                             accessToken="YOUR_ACCESS_TOKEN")
   :param dicomWebEndpoint: Endpoint URL for retrieving the study/series from DICOMweb
   :param studyInstanceUID: UID for the study to be downloaded
   :param seriesInstanceUID: UID for the series to be downloaded. If not specified, all series will be downloaded from the study
   :param accessToken: Optional access token for the query
   :return: List of imported study UIDs
+
+  Example: calling from PythonSlicer console
+
+  .. code-block:: python
+
+    from DICOMLib import DICOMUtils
+    loadedUIDs = DICOMUtils.importFromDICOMWeb(dicomWebEndpoint="https://yourdicomweburl/dicomWebEndpoint",
+                                             studyInstanceUID="2.16.840.1.113669.632.20.1211.10000509338")
+                                             accessToken="YOUR_ACCESS_TOKEN")
+
   """
 
   from dicomweb_client.api import DICOMwebClient
   import random
 
+  seriesImported = []
+  errors = []
+
   progressDialog = slicer.util.createProgressDialog(parent=slicer.util.mainWindow(), value=0, maximum=100)
-  progressDialog.labelText = f'Retrieving series list...'
-  slicer.app.processEvents()
-
-  if accessToken is None:
-    client = DICOMwebClient(url = dicomWebEndpoint)
-  else:
-    client = DICOMwebClient(
-              url = dicomWebEndpoint,
-              headers = { "Authorization": f"Bearer {accessToken}" },
-              )
-
-  seriesList = client.search_for_series(study_instance_uid=studyInstanceUID)
-  seriesInstanceUIDs = []
-  if not seriesInstanceUID is None:
-    seriesInstanceUIDs = [seriesInstanceUID]
-  else:
-    for series in seriesList:
-      currentSeriesInstanceUID = series['0020000E']['Value'][0]
-      seriesInstanceUIDs.append(currentSeriesInstanceUID)
-
-  fileNumber = 0
-  cancelled = False
-  for seriesIndex, currentSeriesInstanceUID in enumerate(seriesInstanceUIDs):
-    progressDialog.labelText = f'Retrieving series {seriesIndex+1} of {len(seriesInstanceUIDs)}...'
+  try:
+    progressDialog.labelText = f'Retrieving series list...'
     slicer.app.processEvents()
-    instances = client.retrieve_series(
-      study_instance_uid=studyInstanceUID,
-      series_instance_uid=currentSeriesInstanceUID)
 
-    progressDialog.setValue(int(100*seriesIndex/len(seriesInstanceUIDs)))
-    slicer.app.processEvents()
-    cancelled = progressDialog.wasCanceled
-    if cancelled:
-      break
+    if accessToken is None:
+      client = DICOMwebClient(url = dicomWebEndpoint)
+    else:
+      client = DICOMwebClient(
+                url = dicomWebEndpoint,
+                headers = { "Authorization": f"Bearer {accessToken}" },
+                )
 
-    outputDirectoryBase = slicer.dicomDatabase.databaseDirectory + "/DICOMweb"
-    if not os.access(outputDirectoryBase, os.F_OK):
-      os.makedirs(outputDirectoryBase)
-    outputDirectoryBase += "/" + qt.QDateTime.currentDateTime().toString("yyyyMMdd-hhmmss")
-    outputDirectory = qt.QTemporaryDir(outputDirectoryBase)  # Add unique substring to directory
-    outputDirectory.setAutoRemove(False)
-    outputDirectoryPath = outputDirectory.path()
+    seriesList = client.search_for_series(study_instance_uid=studyInstanceUID)
+    seriesInstanceUIDs = []
+    if not seriesInstanceUID is None:
+      seriesInstanceUIDs = [seriesInstanceUID]
+    else:
+      for series in seriesList:
+        currentSeriesInstanceUID = series['0020000E']['Value'][0]
+        seriesInstanceUIDs.append(currentSeriesInstanceUID)
 
-    for instanceIndex, instance in enumerate(instances):
-      filename = outputDirectoryPath + "/" + str(fileNumber) + ".dcm"
-      instance.save_as(filename)
-      fileNumber += 1
+    fileNumber = 0
+    cancelled = False
+    for seriesIndex, currentSeriesInstanceUID in enumerate(seriesInstanceUIDs):
+      progressDialog.labelText = f'Retrieving series {seriesIndex+1} of {len(seriesInstanceUIDs)}...'
+      slicer.app.processEvents()
 
-    importDicom(outputDirectoryPath)
-    if cancelled:
-      break
+      try:
+        seriesInfo = client.retrieve_series_metadata(
+          study_instance_uid=studyInstanceUID,
+          series_instance_uid=currentSeriesInstanceUID)
+        numberOfInstances = len(seriesInfo)
 
-  progressDialog.close()
-  return seriesInstanceUIDs
+        # Skip retrieve and import of this series if it is already imported
+        alreadyImportedInstances = slicer.dicomDatabase.instancesForSeries(currentSeriesInstanceUID)
+        seriesAlreadyImported = True
+        for serieInfo in seriesInfo:
+          sopInstanceUID = serieInfo['00080018']['Value'][0]
+          if sopInstanceUID not in alreadyImportedInstances:
+            seriesAlreadyImported = False
+            break
+        if seriesAlreadyImported:
+          seriesImported.append(currentSeriesInstanceUID)
+          continue
+
+        instances = client.iter_series(
+          study_instance_uid=studyInstanceUID,
+          series_instance_uid=currentSeriesInstanceUID)
+
+        slicer.app.processEvents()
+        cancelled = progressDialog.wasCanceled
+        if cancelled:
+          break
+
+        outputDirectoryBase = slicer.dicomDatabase.databaseDirectory + "/DICOMweb"
+        if not os.access(outputDirectoryBase, os.F_OK):
+          os.makedirs(outputDirectoryBase)
+        outputDirectoryBase += "/" + qt.QDateTime.currentDateTime().toString("yyyyMMdd-hhmmss")
+        outputDirectory = qt.QTemporaryDir(outputDirectoryBase)  # Add unique substring to directory
+        outputDirectory.setAutoRemove(False)
+        outputDirectoryPath = outputDirectory.path()
+
+        for instanceIndex, instance in enumerate(instances):
+          progressDialog.setValue(int(100*instanceIndex/numberOfInstances))
+          slicer.app.processEvents()
+          cancelled = progressDialog.wasCanceled
+          if cancelled:
+            break
+          filename = outputDirectoryPath + "/" + str(fileNumber) + ".dcm"
+          instance.save_as(filename)
+          fileNumber += 1
+
+        if cancelled:
+          # cancel was requested in instance retrieve loop,
+          # stop the entire import process
+          break
+
+        importDicom(outputDirectoryPath)
+        seriesImported.append(currentSeriesInstanceUID)
+
+      except Exception as e:
+        import traceback
+        errors.append(f"Error importing series {currentSeriesInstanceUID}: {str(e)} ({traceback.format_exc()})")
+
+  except Exception as e:
+    import traceback
+    errors.append(f"{str(e)} ({traceback.format_exc()})")
+
+  finally:
+    progressDialog.close()
+
+  if errors:
+    slicer.util.errorDisplay(f"Errors occurred during DICOMweb import of {len(errors)} series.", detailedText="\n\n".join(errors))
+  elif cancelled and (len(seriesImported) < len(seriesInstanceUIDs)):
+    slicer.util.infoDisplay(f"DICOMweb import has been interrupted after completing {len(seriesImported)} out of {len(seriesInstanceUIDs)} series.")
+
+  return seriesImported
 
 def registerSlicerURLHandler():
   """
