@@ -23,6 +23,7 @@
 
 #include <vtkBoundingBox.h>
 #include <vtkDoubleArray.h>
+#include <vtkGenericCell.h>
 #include <vtkGeneralTransform.h>
 #include <vtkInformationVector.h>
 #include <vtkMathUtilities.h>
