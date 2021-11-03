@@ -153,25 +153,25 @@ void qSlicerDICOMTagEditorWidgetPrivate::initializeTagsTable()
 
   // Populate patient and study headers
   QTableWidgetItem* patientHeaderNameItem = new QTableWidgetItem("Patient tag name", 1);
-  patientHeaderNameItem->setBackgroundColor(this->HeaderItemColor);
+  patientHeaderNameItem->setBackground(this->HeaderItemColor);
   patientHeaderNameItem->setFont(this->HeaderItemFont);
   patientHeaderNameItem->setFlags(Qt::ItemIsEnabled); // Non-editable
   this->TagsTable->setItem(0,0,patientHeaderNameItem);
 
   QTableWidgetItem* patientHeaderValueItem = new QTableWidgetItem("Value", 1);
-  patientHeaderValueItem->setBackgroundColor(this->HeaderItemColor);
+  patientHeaderValueItem->setBackground(this->HeaderItemColor);
   patientHeaderValueItem->setFont(this->HeaderItemFont);
   patientHeaderValueItem->setFlags(Qt::ItemIsEnabled); // Non-editable
   this->TagsTable->setItem(0,1,patientHeaderValueItem);
 
   QTableWidgetItem* studyHeaderNameItem = new QTableWidgetItem("Study tag name", 1);
-  studyHeaderNameItem->setBackgroundColor(this->HeaderItemColor);
+  studyHeaderNameItem->setBackground(this->HeaderItemColor);
   studyHeaderNameItem->setFont(this->HeaderItemFont);
   studyHeaderNameItem->setFlags(Qt::ItemIsEnabled); // Non-editable
   this->TagsTable->setItem(1,0,studyHeaderNameItem);
 
   QTableWidgetItem* studyHeaderValueItem = new QTableWidgetItem("Value", 1);
-  studyHeaderValueItem->setBackgroundColor(this->HeaderItemColor);
+  studyHeaderValueItem->setBackground(this->HeaderItemColor);
   studyHeaderValueItem->setFont(this->HeaderItemFont);
   studyHeaderValueItem->setFlags(Qt::ItemIsEnabled); // Non-editable
   this->TagsTable->setItem(1,1,studyHeaderValueItem);
@@ -479,12 +479,12 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
     d->insertTagsTableRow(row);
     QTableWidgetItem* seriesHeaderNameItem = new QTableWidgetItem(
       QString("'%1' series tag name").arg(shNode->GetItemName(seriesItemID).c_str()), 1 );
-    seriesHeaderNameItem->setBackgroundColor(d->HeaderItemColor);
+    seriesHeaderNameItem->setBackground(d->HeaderItemColor);
     seriesHeaderNameItem->setFont(d->HeaderItemFont);
     seriesHeaderNameItem->setFlags(Qt::ItemIsEnabled); // Non-editable
     d->TagsTable->setItem(row,0,seriesHeaderNameItem);
     QTableWidgetItem* seriesHeaderValueItem = new QTableWidgetItem("Value", 1);
-    seriesHeaderValueItem->setBackgroundColor(d->HeaderItemColor);
+    seriesHeaderValueItem->setBackground(d->HeaderItemColor);
     seriesHeaderValueItem->setFont(d->HeaderItemFont);
     seriesHeaderValueItem->setFlags(Qt::ItemIsEnabled); // Non-editable
     d->TagsTable->setItem(row,1,seriesHeaderValueItem);
