@@ -43,7 +43,7 @@ public:
 
   static vtkSlicerTemplateKeyLogic *New();
   vtkTypeMacro(vtkSlicerTemplateKeyLogic, vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
   vtkSlicerTemplateKeyLogic();

@@ -35,7 +35,7 @@ public:
 
   static vtkMRMLAnnotationStickyDisplayableManager *New();
   vtkTypeMacro(vtkMRMLAnnotationStickyDisplayableManager, vtkMRMLAnnotationDisplayableManager);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
 
