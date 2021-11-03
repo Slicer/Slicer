@@ -60,7 +60,7 @@ public:
   const char* GetMarkupType() override {return "Fiducial";};
 
   // Get markup type GUI display name
-  const char* GetMarkupTypeDisplayName() override {return "Fiducial";};
+  const char* GetMarkupTypeDisplayName() override {return "Point List";};
 
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "F";};
