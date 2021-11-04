@@ -46,6 +46,8 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     # hide the data probe (and so we need to restore its visibility).
     self.dataProbeHasBeenTemporarilyHidden = False
 
+    self.postModuleDiscoveryTasksPerformed = False
+
   def setup(self):
     # Tasks to execute after the application has started up
     slicer.app.connect("startupCompleted()", self.performPostModuleDiscoveryTasks)
@@ -64,8 +66,12 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     """Since dicom plugins are discovered while the application
     is initialized, they may be found after the DICOM module
     itself if initialized.  This method is tied to a singleShot
-    that will be called once the event loop is read to start.
+    that will be called once the event loop is ready to start.
     """
+
+    if self.postModuleDiscoveryTasksPerformed:
+      return
+    self.postModuleDiscoveryTasksPerformed = True
 
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
@@ -562,6 +568,11 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
   # sets up the widget
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
+    # If DICOM module is the startup module then this widget will be shown
+    # before startup completes, therefore we need to ensure here that
+    # module discovery happens before proceeding.
+    slicer.modules.DICOMInstance.performPostModuleDiscoveryTasks()
 
     # This module is often used in developer mode, therefore
     # collapse reload & test section by default.
