@@ -44,7 +44,7 @@ public slots:
 protected:
   QScopedPointer<qSlicerLoadableModuleTemplateModuleWidgetPrivate> d_ptr;
 
-  virtual void setup();
+  void setup() override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerLoadableModuleTemplateModuleWidget);
