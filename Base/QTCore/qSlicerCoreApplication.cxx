@@ -1777,9 +1777,9 @@ void qSlicerCoreApplication
 {
   QTimer* timer = new QTimer(this);
   timer->setSingleShot(true);
-  timer->setProperty("caller", qVariantFromValue(caller));
-  timer->setProperty("eventID", qVariantFromValue(eventID));
-  timer->setProperty("callData", qVariantFromValue(callData));
+  timer->setProperty("caller", QVariant::fromValue(caller));
+  timer->setProperty("eventID", QVariant::fromValue(eventID));
+  timer->setProperty("callData", QVariant::fromValue(callData));
   timer->connect(timer, SIGNAL(timeout()),this, SLOT(invokeEvent()));
   timer->start(delay);
 }
