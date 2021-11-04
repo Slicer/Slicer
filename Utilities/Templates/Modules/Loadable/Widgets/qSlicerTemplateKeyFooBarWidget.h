@@ -37,7 +37,7 @@ class Q_SLICER_MODULE_TEMPLATEKEY_WIDGETS_EXPORT qSlicerTemplateKeyFooBarWidget
 public:
   typedef QWidget Superclass;
   qSlicerTemplateKeyFooBarWidget(QWidget *parent=0);
-  virtual ~qSlicerTemplateKeyFooBarWidget();
+  ~qSlicerTemplateKeyFooBarWidget() override;
 
 protected slots:
 

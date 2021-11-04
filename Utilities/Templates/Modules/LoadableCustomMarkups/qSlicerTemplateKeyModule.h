@@ -37,34 +37,34 @@ class Q_SLICER_QTMODULES_TEMPLATEKEY_EXPORT qSlicerTemplateKeyModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerTemplateKeyModule(QObject *parent=0);
-  virtual ~qSlicerTemplateKeyModule();
+  explicit qSlicerTemplateKeyModule(QObject *parent=nullptr);
+  ~qSlicerTemplateKeyModule() override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
-  virtual QString helpText()const;
-  virtual QString acknowledgementText()const;
-  virtual QStringList contributors()const;
+  QString helpText()const override;
+  QString acknowledgementText()const override;
+  QStringList contributors()const override;
 
-  virtual QIcon icon()const;
+  QIcon icon()const override;
 
-  virtual QStringList categories()const;
-  virtual QStringList dependencies() const;
-  virtual QStringList associatedNodeTypes() const;
+  QStringList categories()const override;
+  QStringList dependencies() const override;
+  QStringList associatedNodeTypes() const override;
 
   // Sets the MRML Scene
-  virtual void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
 protected:
 
   /// Initialize the module. Register the volumes reader/writer
-  virtual void setup();
+  void setup() override;
 
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 protected:
   QScopedPointer<qSlicerTemplateKeyModulePrivate> d_ptr;
