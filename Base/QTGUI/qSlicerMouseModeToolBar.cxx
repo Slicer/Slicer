@@ -253,7 +253,6 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
   // Set action for current interaction mode checked
   if (currentAction)
     {
-    const QSignalBlocker blocker(currentAction);
     currentAction->setChecked(true);
     }
   else
@@ -262,13 +261,11 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
     QAction* checkedAction = this->InteractionModesActionGroup->checkedAction();
     if (checkedAction)
       {
-      const QSignalBlocker blocker(checkedAction);
       checkedAction->setChecked(false);
       }
     }
 
   // Update place widget action
-
   this->updatePlaceWidget();
 
   // Update persistence checkbox
@@ -293,20 +290,17 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
     {
     case vtkMRMLWindowLevelWidget::ModeRectangle:
       {
-      const QSignalBlocker blocker(this->AdjustWindowLevelRegionModeAction);
       this->AdjustWindowLevelRegionModeAction->setChecked(true);
       }
       break;
     case vtkMRMLWindowLevelWidget::ModeRectangleCentered:
       {
-      const QSignalBlocker blocker(this->AdjustWindowLevelCenteredRegionModeAction);
       this->AdjustWindowLevelCenteredRegionModeAction->setChecked(true);
       }
       break;
     case vtkMRMLWindowLevelWidget::ModeAdjust:
     default:
       {
-      const QSignalBlocker blocker(this->AdjustWindowLevelAdjustModeAction);
       this->AdjustWindowLevelAdjustModeAction->setChecked(true);
       }
       break;
