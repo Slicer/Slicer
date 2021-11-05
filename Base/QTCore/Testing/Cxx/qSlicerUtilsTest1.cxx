@@ -707,7 +707,7 @@ int isLoadableModuleTest()
             << path2 + "/sol.txt"
             )
         {
-      CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
+        CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, false);
         }
 
     CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner, QFile::ReadOwner), true);
