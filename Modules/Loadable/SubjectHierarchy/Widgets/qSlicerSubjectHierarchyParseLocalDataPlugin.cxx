@@ -187,7 +187,11 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
       if ( storageNode->GetNumberOfFileNames() == 0 && storageNode->GetFileName() )
         {
         QString filePath(storageNode->GetFileName());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        loadedFilePaths << filePath.split('/', Qt::SkipEmptyParts);
+#else
         loadedFilePaths << filePath.split('/', QString::SkipEmptyParts);
+#endif
         loadedNodes << storableNode;
         vtkIdTypes << shItemID;
         }
