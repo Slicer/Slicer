@@ -1,0 +1,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ee3a3277..e0f5b8f8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -18,6 +18,16 @@ endforeach()
+ # Include extra CMake files
+ list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+ 
++#-----------------------------------------------------------------------------
++# CCache block
++
++if(SimpleITK_USE_CCACHE)
++  find_program(CCACHE_PROGRAM ccache)
++  if(CCACHE_PROGRAM)
++    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
++  endif()
++endif()
++
+ #-----------------------------------------------------------------------------
+ # Version information
+ include(Version.cmake)

@@ -143,6 +143,13 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
     NAME ${proj}
     )
 
+  # Add ccache patch and activation
+  if(UNIX)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DUSE_CCACHE:BOOL=${Slicer_USE_CCACHE}
+      )
+  endif()
+
   ExternalProject_add(SimpleITK
     ${${proj}_EP_ARGS}
     SOURCE_DIR ${EP_SOURCE_DIR}/SuperBuild
