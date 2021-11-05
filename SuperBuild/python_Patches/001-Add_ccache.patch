@@ -1,0 +1,17 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4118010..f082442 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,12 @@
+ cmake_minimum_required(VERSION 2.8.6)
+ 
++if(python_USE_CCACHE)
++  find_program(CCACHE_PROGRAM ccache)
++  if(CCACHE_PROGRAM)
++    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
++  endif()
++endif()
++
+ set(PYTHON_VERSION "3.6.7" CACHE STRING "The version of Python to build.")
+ 
+ string(REPLACE "." ";" VERSION_LIST ${PYTHON_VERSION})
