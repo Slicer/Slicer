@@ -1,0 +1,33 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f3075ed9..e7605d6e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,6 +29,16 @@ foreach(p
+   endif()
+ endforeach()
+ 
++#-----------------------------------------------------------------------------
++# CCache block
++#
++if(CTK_USE_CCACHE)
++  find_program(CCACHE_PROGRAM ccache)
++  if(CCACHE_PROGRAM)
++    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
++  endif()
++endif()
++
+ #-----------------------------------------------------------------------------
+ # Superbuild
+ #
+diff --git a/SuperBuild.cmake b/SuperBuild.cmake
+index d9216b83..54582ecb 100644
+--- a/SuperBuild.cmake
++++ b/SuperBuild.cmake
+@@ -51,6 +51,7 @@ ExternalProject_Add(${proj}
+     -DCMAKE_C_FLAGS_INIT:STRING=${CMAKE_C_FLAGS_INIT}
+     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+     -DCMAKE_MACOSX_RPATH:BOOL=${CMAKE_MACOSX_RPATH}
++    -DCTK_USE_CCACHE:BOOL=${CTK_USE_CCACHE}
+     ${ep_cxx_standard_arg}
+   SOURCE_DIR ${CTK_SOURCE_DIR}
+   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
