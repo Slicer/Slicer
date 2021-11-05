@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 3.13.4)
 
 #-----------------------------------------------------------------------------
+# CCache
+#-----------------------------------------------------------------------------
+option(Slicer_USE_CCACHE "Build ${PROJECT_NAME} using CCache." OFF)
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
+#-----------------------------------------------------------------------------
 # Enable C++11
 #-----------------------------------------------------------------------------
 set(_msg "Setting C++ standard")
