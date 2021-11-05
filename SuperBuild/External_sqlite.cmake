@@ -42,6 +42,20 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     set(${proj}_CMAKE_C_FLAGS "${ep_common_c_flags} -fPIC")
   endif()
 
+  # Add ccache patch and activation
+  if(UNIX)
+    list(APPEND ${proj}_PATCHES
+      ${CMAKE_SOURCE_DIR}/SuperBuild/${proj}_Patches/001-Add_ccache.patch
+      )
+
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+      -sqlite_USE_CCACHE:BOOL=${Slicer_USE_CCACHE}
+      )
+  endif()
+
+  #Generate Patch Step
+  ExternalProject_GeneratePatch_Step(${proj})
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
@@ -49,6 +63,8 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
+    PATCH_COMMAND
+      ${${proj}_PATCH_STEP} # Apply patches
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
