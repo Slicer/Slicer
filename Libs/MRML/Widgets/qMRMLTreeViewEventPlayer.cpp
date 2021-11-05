@@ -34,7 +34,11 @@
 QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index,
   QTreeView* treeView, bool &error)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList indices = str_index.split(".", Qt::SkipEmptyParts);
+#else
   QStringList indices = str_index.split(".",QString::SkipEmptyParts);
+#endif
   QModelIndex index;
   for (int cc=0; (cc+1) < indices.size(); cc+=2)
     {
