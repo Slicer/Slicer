@@ -169,6 +169,7 @@ endif()
 
 #------------------------------------------------------------------------------
 include(ExternalProjectAddSource)
+include(ExternalProjectGeneratePatchStep)
 
 macro(list_conditional_append cond list)
   if(${cond})
