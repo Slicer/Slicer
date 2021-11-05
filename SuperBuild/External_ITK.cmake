@@ -1,6 +1,7 @@
 
 set(proj ITK)
 
+
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib" "VTK")
 if(Slicer_BUILD_DICOM_SUPPORT)
@@ -118,6 +119,19 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     endforeach()
   endif()
 
+  # Add ccache patch
+  if(UNIX)
+    list(APPEND ${proj}_PATCHES
+      ${CMAKE_SOURCE_DIR}/SuperBuild/${proj}_Patches/001-Add_ccache.patch
+      )
+
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DITK_USE_CCACHE:BOOL=${Slicer_USE_CCACHE}
+      )
+  endif()
+
+  #Generate Patch Step
+  ExternalProject_GeneratePatch_Step(${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -125,6 +139,8 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
+    PATCH_COMMAND
+      ${${proj}_PATCH_STEP} # Apply patches
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}

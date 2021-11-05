@@ -1,0 +1,17 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c3ab6d8014..a9ef99e65d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,3 +1,12 @@
++# ==== CCache block
++#
++if(ITK_USE_CCACHE)
++  find_program(CCACHE_PROGRAM ccache)
++  if(CCACHE_PROGRAM)
++    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
++  endif()
++endif()
++
+ # ==== Define cmake build policies that affect compilation and linkage default behaviors
+ #
+ # Set the ITK_NEWEST_VALIDATED_POLICIES_VERSION string to the newest cmake version
