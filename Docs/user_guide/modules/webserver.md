@@ -50,6 +50,8 @@ curl -v http://localhost:2016/slicer/volume\&id='MRHead' -o /tmp/local.nrrd
 
 Currently only limited forms are supported (scalar volumes and grid transforms).
 
+Other endpoints allow get/set of transforms and fiducials.
+
 ## Panels and their use
 
 Currently there is only the logging console and the demo buttons.  Further controls may be added depending on needs.
