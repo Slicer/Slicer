@@ -1,0 +1,22 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 028e1d171..f6afa0f36 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,6 +1,17 @@
+ # Minimum CMake version required
+ cmake_minimum_required(VERSION 2.8.5 FATAL_ERROR)
+ 
++#-----------------------------------------------------------------------------
++# CCache block
++#-----------------------------------------------------------------------------
++
++if(DCMTK_USE_CCACHE)
++  find_program(CCACHE_PROGRAM ccache)
++  if(CCACHE_PROGRAM)
++    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
++  endif()
++endif()
++
+ # As of 2018-12-26 DCMTK has been validated to build with CMake 3.13.2 policies.
+ set(DCMTK_MAX_CMAKE_POLICY_VERSION 3.13.2)
+ 
