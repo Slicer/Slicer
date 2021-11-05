@@ -1,0 +1,18 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b8061d14d..25a2c836b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -40,6 +40,13 @@
+ # (From Daniel Stenberg) The gcc command line use neither -g nor any -O options. As a developer, I also treasure our configure scripts's --enable-debug option that sets a long range of "picky" compiler options.
+ cmake_minimum_required(VERSION 3.0...3.16 FATAL_ERROR)
+ 
++if(curl_USE_CCACHE)
++  find_program(CCACHE_PROGRAM ccache)
++  if(CCACHE_PROGRAM)
++    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
++  endif()
++endif()
++
+ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
+ include(Utilities)
+ include(Macros)

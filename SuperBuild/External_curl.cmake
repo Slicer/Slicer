@@ -73,12 +73,28 @@ if((NOT DEFINED CURL_INCLUDE_DIR
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS})
   endif()
 
+  # Add ccache patch and activation
+  if(UNIX)
+    list(APPEND ${proj}_PATCHES
+      ${CMAKE_SOURCE_DIR}/SuperBuild/${proj}_Patches/001-Add_ccache.patch
+      )
+
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+      -Dcurl_USE_CCACHE:BOOL=${Slicer_USE_CCACHE}
+      )
+  endif()
+
+  #Generate Patch Step
+  ExternalProject_GeneratePatch_Step(${proj})
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
     GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
+    PATCH_COMMAND
+      ${${proj}_PATCH_STEP} # Apply patches
     CMAKE_CACHE_ARGS
     #Not needed -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     #Not needed -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
