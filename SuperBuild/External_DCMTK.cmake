@@ -56,11 +56,18 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    # Official DCMTK release DCMTK-3.6.6
-    # https://git.dcmtk.org/?p=dcmtk.git;a=commit;h=6cb30bd7fb42190e0188afbd8cb961c62a6fb9c9
-    # with an extra backported patch
-    # https://git.dcmtk.org/?p=dcmtk.git;a=commit;h=b665e2ec2d5ce435e28da6c938736dcfa84d0da6
-    "patched-DCMTK-3.6.6_20210115"
+    # Based of the official DCMTK release DCMTK-3.6.6
+    # * https://github.com/DCMTK/dcmtk/commit/6cb30bd7fb42190e0188afbd8cb961c62a6fb9c9
+    # * https://github.com/DCMTK/dcmtk/releases/tag/DCMTK-3.6.6
+    #
+    # with these backported patches:
+    # * Fixed extra padding created for some segmentations.
+    #   https://github.com/DCMTK/dcmtk/commit/b665e2ec2d5ce435e28da6c938736dcfa84d0da6
+    #
+    # * Made file extensions explicit for CMake CMP0115
+    #   https://github.com/DCMTK/dcmtk/commit/d090b6d7c65e52e01e436a2473dc8ba3f384efbb
+    #
+    "0f9bf4d9e9a778c11fdddafca691b451c2b621bc" # patched-DCMTK-3.6.6_20210115
     QUIET
     )
 
