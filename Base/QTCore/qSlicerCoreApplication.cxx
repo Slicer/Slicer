@@ -2166,3 +2166,9 @@ bool qSlicerCoreApplication::loadFiles(const QStringList& filePaths, vtkMRMLMess
     }
   return success;
 }
+
+//------------------------------------------------------------------------------
+void qSlicerCoreApplication::openUrl(const QString& url)
+{
+  emit urlReceived(url);
+}

@@ -559,6 +559,11 @@ public slots:
   /// \return Returns true on success.
   virtual bool loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages=nullptr);
 
+  /// Open URL in the the application.
+  /// Emits urlReceived signal that modules (such as DICOM module) can handle.
+  /// \param url URL string to open
+  virtual void openUrl(const QString& url);
+
 protected:
 
   /// Process command line arguments **before** the application event loop is started.
