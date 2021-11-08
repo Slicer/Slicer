@@ -485,17 +485,6 @@
     <string>Ctrl+Y</string>
    </property>
   </action>
-  <action name="EditEditBoxAction">
-   <property name="text">
-    <string>Edit Box</string>
-   </property>
-   <property name="toolTip">
-    <string>Raise the Edit-box, a lightweight image editing tool.</string>
-   </property>
-   <property name="shortcut">
-    <string>Space</string>
-   </property>
-  </action>
   <action name="EditNewFiducialListAction">
    <property name="text">
     <string>New Fiducial List</string>
