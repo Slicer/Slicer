@@ -51,7 +51,7 @@ for groupIndex in range(n.GetNumberOfParameterGroups()):
       n.GetParameterTag(groupIndex, parameterIndex),n.GetParameterLabel(groupIndex, parameterIndex)))
 ```
 
-### Passing markups fiducials to CLIs
+### Passing markups point list to CLIs
 
 ```python
 import SampleData
@@ -60,13 +60,11 @@ head = sampleDataLogic.downloadMRHead()
 volumesLogic = slicer.modules.volumes.logic()
 headLabel = volumesLogic.CreateLabelVolume(slicer.mrmlScene, head, 'head-label')
 
-fiducialNode = slicer.vtkMRMLAnnotationFiducialNode()
-fiducialNode.SetFiducialWorldCoordinates((1,0,5))
-fiducialNode.SetName('Seed Point')
-fiducialNode.Initialize(slicer.mrmlScene)
-fiducialsList = getNode('Fiducials List')
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode.AddControlPoint(vtk.vtkVector3d(1,0,5))
+pointListNode.SetName('Seed Point')
 
-params = {'inputVolume': head.GetID(), 'outputVolume': headLabel.GetID(), 'seed' : fiducialsList.GetID(), 'iterations' : 2}
+params = {'inputVolume': head.GetID(), 'outputVolume': headLabel.GetID(), 'seed' : pointListNode.GetID(), 'iterations' : 2}
 
 cliNode = slicer.cli.runSync(slicer.modules.simpleregiongrowingsegmentation, None, params)
 ```

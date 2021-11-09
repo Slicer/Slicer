@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module is used to create and edit markups (fiducial list, line, angle, curve, plane, etc.) and adjust their display properties.
+This module is used to create and edit markups (point list, line, angle, curve, plane, etc.) and adjust their display properties.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_types.png)
 
@@ -68,7 +68,7 @@ Display section:
     - Outlined Behind Slice Plane: Control point projection is displayed filled (opacity = Projection Opacity) when on top of slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).
     - Projection Opacity: A value between 0 (invisible) and 1 (fully visible) for displaying the control point projection.
     - Reset to Defaults: Reset the display properties of this markups node to the system defaults.
-    - Save to Defaults: Save the display properties of this markups node to be the new system defaults. Control point labels visibility and properties label visibility settings are not saved to defaults, as typically it is better to initialize these based on the node type (control point labels are more useful for markups fiducial nodes, while properties label is more useful for other markups nodes).
+    - Save to Defaults: Save the display properties of this markups node to be the new system defaults. Control point labels visibility and properties label visibility settings are not saved to defaults, as typically it is better to initialize these based on the node type (control point labels are more useful for markups point list nodes, while properties label is more useful for other markups nodes).
 - Scalars: Color markup according to a scalar, e.g. a per-control-point measurement (see Measurements section below)
   - Visible: Whether scalar coloring should be shown or the original color of the markup
   - Active Scalar: Which scalar array to use for coloring
@@ -136,7 +136,7 @@ See examples and other developer information in [Developer guide](../../develope
 ## Related modules
 
 - This module will replace [Annotations](annotations.md) module.
-- [Endoscopy](endoscopy.md) module uses fiducials
+- [Endoscopy](endoscopy.md) module uses control points
 
 ## Contributors
 
