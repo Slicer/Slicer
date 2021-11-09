@@ -391,11 +391,11 @@ slicer.util.plot(histogram, xColumnIndex = 1)
 
 ### Get segments visible at a selected position
 
-Show in the console names of segments visible at a markups fiducial position:
+Show in the console names of segments visible at a markups control point position:
 
 ```python
 segmentationNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSegmentationNode")
-markupsFiducialNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLMarkupsFiducialNode")
 sliceViewLabel = "Red"  # any slice view where segmentation node is visible works
 
 def printSegmentNames(unused1=None, unused2=None):
@@ -403,7 +403,7 @@ def printSegmentNames(unused1=None, unused2=None):
   sliceViewWidget = slicer.app.layoutManager().sliceWidget(sliceViewLabel)
   segmentationsDisplayableManager = sliceViewWidget.sliceView().displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D")
   ras = [0,0,0]
-  markupsFiducialNode.GetNthControlPointPositionWorld(0, ras)
+  pointListNode.GetNthControlPointPositionWorld(0, ras)
   segmentIds = vtk.vtkStringArray()
   segmentationsDisplayableManager.GetVisibleSegmentsForPosition(ras, segmentationNode.GetDisplayNode(), segmentIds)
   for idIndex in range(segmentIds.GetNumberOfValues()):
@@ -411,7 +411,7 @@ def printSegmentNames(unused1=None, unused2=None):
     print("Segment found at position {0}: {1}".format(ras, segment.GetName()))
 
 # Observe markup node changes
-markupsFiducialNode.AddObserver(slicer.vtkMRMLMarkupsPlaneNode.PointModifiedEvent, printSegmentNames)
+pointListNode.AddObserver(slicer.vtkMRMLMarkupsPlaneNode.PointModifiedEvent, printSegmentNames)
 printSegmentNames()
 ```
 
@@ -545,7 +545,7 @@ for segmentId in stats["SegmentIDs"]:
 
 #### Get centroid of each segment
 
-Place a markups fiducial point at the centroid of each segment.
+Place a markups control point at the centroid of each segment.
 
 ```python
 segmentationNode = getNode("Segmentation")
@@ -559,12 +559,12 @@ segStatLogic.computeStatistics()
 stats = segStatLogic.getStatistics()
 
 # Place a markup point in each centroid
-markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
-markupsNode.CreateDefaultDisplayNodes()
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode.CreateDefaultDisplayNodes()
 for segmentId in stats["SegmentIDs"]:
   centroid_ras = stats[segmentId,"LabelmapSegmentStatisticsPlugin.centroid_ras"]
   segmentName = segmentationNode.GetSegmentation().GetSegment(segmentId).GetName()
-  markupsNode.AddFiducialFromArray(centroid_ras, segmentName)
+  pointListNode.AddFiducialFromArray(centroid_ras, segmentName)
 ```
 
 #### Get size, position, and orientation of each segment

@@ -71,12 +71,12 @@ slicer://viewer/?studyUID=2.16.840.1.113669.632.20.121711.10000158860
 
 ### Get MRML node from the scene
 
-Get markups fiducial node named `F` (useful for quickly getting access to a MRML node in the Python console):
+Get markups point list node named `F` (useful for quickly getting access to a MRML node in the Python console):
 
 ```python
-fidsNode = getNode('F')
+pointListNode = getNode('F')
 # do something with the node... let's remove the first control point in it
-fidsNode.RemoveNthControlPoint(0)
+pointListNode.RemoveNthControlPoint(0)
 ```
 
 Getting the first volume node without knowing its name (useful if there is only one volume loaded):

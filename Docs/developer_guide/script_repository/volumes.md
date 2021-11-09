@@ -388,19 +388,19 @@ for k in range(extent[4], extent[5]+1):
 imageData.Modified()
 ```
 
-### Get volume voxel coordinates from markup fiducial RAS coordinates
+### Get volume voxel coordinates from markup control point RAS coordinates
 
-This example shows how to get voxel coordinate of a volume corresponding to a markup fiducial point position.
+This example shows how to get voxel coordinate of a volume corresponding to a markup control point position.
 
 ```python
 # Inputs
 volumeNode = getNode("MRHead")
-markupsNode = getNode("F")
+pointListNode = getNode("F")
 markupsIndex = 0
 
 # Get point coordinate in RAS
 point_Ras = [0, 0, 0, 1]
-markupsNode.GetNthFiducialWorldCoordinates(markupsIndex, point_Ras)
+pointListNode.GetNthFiducialWorldCoordinates(markupsIndex, point_Ras)
 
 # If volume node is transformed, apply that transform to get volume's RAS coordinates
 transformRasToVolumeRas = vtk.vtkGeneralTransform()
@@ -418,14 +418,14 @@ point_Ijk = [ int(round(c)) for c in point_Ijk[0:3] ]
 print(point_Ijk)
 ```
 
-### Get markup fiducial RAS coordinates from volume voxel coordinates
+### Get markup control point RAS coordinates from volume voxel coordinates
 
-This example shows how to get position of maximum intensity voxel of a volume (determined by numpy, in IJK coordinates) in RAS coordinates so that it can be marked with a markup fiducial.
+This example shows how to get position of maximum intensity voxel of a volume (determined by numpy, in IJK coordinates) in RAS coordinates so that it can be marked with a markup control point.
 
 ```python
 # Inputs
 volumeNode = getNode("MRHead")
-markupsNode = getNode("F")
+pointListNode = getNode("F")
 
 # Get voxel position in IJK coordinate system
 import numpy as np
@@ -446,7 +446,7 @@ slicer.vtkMRMLTransformNode.GetTransformBetweenNodes(volumeNode.GetParentTransfo
 point_Ras = transformVolumeRasToRas.TransformPoint(point_VolumeRas[0:3])
 
 # Add a markup at the computed position and print its coordinates
-markupsNode.AddFiducial(point_Ras[0], point_Ras[1], point_Ras[2], "max")
+pointListNode.AddFiducial(point_Ras[0], point_Ras[1], point_Ras[2], "max")
 print(point_Ras)
 ```
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are rulers and regions of interest (ROIs). Use the Markups module for fiducials.
+Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are rulers and regions of interest (ROIs). Use the Markups module for point lists.
 
 ## Panels and their use
 

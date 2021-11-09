@@ -16,14 +16,14 @@ transformNode.AddObserver(slicer.vtkMRMLTransformNode.TransformModifiedEvent, on
 
 Set up the scene:
 
-- Add a markup fiducial node (centerOfRotationMarkupsNode) with a single point to specify center of rotation.
+- Add a markup point list node (centerOfRotationMarkupsNode) with a single point to specify center of rotation.
 - Add a rotation transform (rotationTransformNode) that will be edited in Transforms module to specify rotation angles.
 - Add a transform (finalTransformNode) and apply it (not harden) to those nodes (images, models, etc.) that you want to rotate around the center of rotation point.
 
 Then run the script below, go to Transforms module, select rotationTransformNode, and move rotation sliders.
 
 ```python
-# This markups fiducial node specifies the center of rotation
+# This markups point list node specifies the center of rotation
 centerOfRotationMarkupsNode = getNode("F")
 # This transform can be  edited in Transforms module
 rotationTransformNode = getNode("LinearTransform_3")
@@ -64,7 +64,7 @@ Set up the scene:
 Then run the script below, go to Transforms module, select rotationTransformNode, and move Edit / Rotation / IS slider.
 
 ```python
-# This markups fiducial node specifies the center of rotation
+# This markups point list node specifies the center of rotation
 rotationAxisMarkupsNode = getNode("L")
 # This transform can be edited in Transforms module (Edit / Rotation / IS slider)
 rotationTransformNode = getNode("LinearTransform_3")

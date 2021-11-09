@@ -123,9 +123,9 @@ Surface or volumetric meshes.
 
 ### Markups
 
-- **Markups JSON** (.mkp.json): fiducial list, line, curve, closed curve, plane, etc. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in image header. JSON schema is available [here](https://github.com/Slicer/Slicer/tree/master/Modules/Loadable/Markups/Resources/Schema).
-- **Markups CSV** (.fcsv): fiducial list points legacy file format. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in image header.
-- **Annotation CSV** (.acsv): annotation ruler, ROI
+- **Markups JSON** (.mkp.json): point list, line, curve, closed curve, plane, etc. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in image header. JSON schema is available [here](https://github.com/Slicer/Slicer/tree/master/Modules/Loadable/Markups/Resources/Schema).
+- **Markups CSV** (.fcsv): legacy file format for storing point list. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in image header.
+- **Annotation CSV** (.acsv): legacy file format for storing annotation ruler, ROI.
 
 ### Scenes
 

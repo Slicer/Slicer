@@ -133,7 +133,7 @@ You can customize views (show orientation marker, ruler, change orientation, tra
 - [Volume Rendering](modules/volumerendering): Provides interactive visualization of 3D image data.
 - [Segmentations](modules/segmentations): Edit display properties and import/export segmentations.
 - [Segment Editor](modules/segmenteditor): Segment 3D volumes using various manual, semi-automatic, and automatic tools.
-- [Markups](modules/markups): Allows the creation and editing of markups associated with a scene. Currently, lists of fiducially are supported as markups.
+- [Markups](modules/markups): Allows the creation and editing of markups associated with a scene.
 - [Models](modules/models.md): Loads and adjusts display parameters of models. Allows the user to change the appearance of and organize 3D surface models.
 - [Transforms](modules/transforms): This module is used for creating and editing transformation matrices. You can establish these relations by moving nodes from the Transformable list to the Transformed list or by dragging the nodes under the Transformation nodes in the Data module.
 
@@ -196,7 +196,7 @@ Terms used in various fields of medical and biomedical image computing and clini
 - **ITK**: [Insight Toolkit](https://itk.org/). Software library that Slicer uses for most image processing operations.
 - **Labelmap** (or labelmap volume, labelmap volume node): Volume node that has discrete (integer) voxel values. Typically each value corresponds to a specific structure or region. This allows compact representation of non-overlapping regions in a single 3D array. Most software use a single labelmap to store an image segmentation, but Slicer uses a dedicated segmentation node, which can contain multiple representations (multiple labelmaps to allow storing overlapping segments; closed surface representation for quick 3D visualization, etc.).
 - **LPS**: Left-posterior-superior anatomical coordinate system. Most commonly used coordinate system in medical image computing. Slicer stores all data in LPS coordinate system on disk (and converts to/from RAS when writing to or reading from disk).
-- **Markups**: Simple geometric objects and measurements that the user can place in viewers. [Markups module](modules/markups) can be used to create such objects. There are several types, such as fiducial list, line, curve, plane, ROI.
+- **Markups**: Simple geometric objects and measurements that the user can place in viewers. [Markups module](modules/markups) can be used to create such objects. There are several types, such as point list, line, curve, plane, ROI.
 - **Master volume**: Voxel values of this volume is used during segmentation by those effects that rely on intensity of an underlying volume.
 - **MRML**: [Medical Reality Markup Language](https://en.wikipedia.org/wiki/Medical_Reality_Markup_Language): Software library for storage, visualization, and processing of information objects that may be used in medical applications. The library is designed to be reusable in various software applications, but 3D Slicer is the only major application that is known to use it.
 - **Model** (or model node): MRML node storing surface mesh (consists of triangle, polygon, or other 2D cells) or volumetric mesh (consists of tetrahedral, wedge, or other 3D cells)
