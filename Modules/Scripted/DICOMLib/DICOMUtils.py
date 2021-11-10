@@ -813,6 +813,8 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
 
   seriesImported = []
   errors = []
+  clientLogger = logging.getLogger('dicomweb_client.api')
+  originalClientLogLevel = clientLogger.level
 
   progressDialog = slicer.util.createProgressDialog(parent=slicer.util.mainWindow(), value=0, maximum=100)
   try:
@@ -835,6 +837,9 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
       for series in seriesList:
         currentSeriesInstanceUID = series['0020000E']['Value'][0]
         seriesInstanceUIDs.append(currentSeriesInstanceUID)
+
+    # Turn off detailed logging, because it would slow down the file transfer
+    clientLogger.setLevel(logging.WARNING)
 
     fileNumber = 0
     cancelled = False
@@ -905,6 +910,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
 
   finally:
     progressDialog.close()
+    clientLogger.setLevel(originalClientLogLevel)
 
   if errors:
     slicer.util.errorDisplay(f"Errors occurred during DICOMweb import of {len(errors)} series.", detailedText="\n\n".join(errors))
