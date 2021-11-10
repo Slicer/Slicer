@@ -93,7 +93,7 @@ std::string vtkMRMLMarkupsJsonStorageNode::vtkInternal::GetCoordinateUnitsFromSc
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Document* vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocumentFromFile(const char* filePath)
+std::unique_ptr<rapidjson::Document> vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocumentFromFile(const char* filePath)
 {
   // Read document from file
   FILE* fp = fopen(filePath, "r");
@@ -103,14 +103,13 @@ rapidjson::Document* vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocum
       "Error opening the file '" << filePath << "'");
     return nullptr;
     }
-  rapidjson::Document* jsonRoot = new rapidjson::Document;
+  std::unique_ptr<rapidjson::Document> jsonRoot = std::unique_ptr<rapidjson::Document>(new rapidjson::Document);
   char buffer[4096];
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
   if (jsonRoot->ParseStream(fs).HasParseError())
   {
     vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
       "Error parsing the file'" << filePath << "'");
-    delete jsonRoot;
     fclose(fp);
     return nullptr;
   }
@@ -121,7 +120,6 @@ rapidjson::Document* vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocum
     {
     vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
       "File reading failed. File '" << filePath << "' does not contain schema information");
-    delete jsonRoot;
     return nullptr;
     }
   rapidjson::Value& schema = (*jsonRoot)["@schema"];
@@ -132,7 +130,6 @@ rapidjson::Document* vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocum
     vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
       "File reading failed. File '" << filePath << "' is expected to contain @schema: "
       << MARKUPS_SCHEMA << " (different minor and patch version numbers are accepted).");
-    delete jsonRoot;
     return nullptr;
     }
 
@@ -1140,7 +1137,7 @@ bool vtkMRMLMarkupsJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsJsonStorageNode::GetMarkupsTypesInFile(const char* filePath, std::vector<std::string>& outputMarkupsTypes)
 {
-  rapidjson::Document* jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
+  std::unique_ptr<rapidjson::Document> jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
   if (!jsonRoot)
     {
     // error is already logged
@@ -1177,7 +1174,7 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
       "Adding markups node from file failed: invalid filename.");
     return nullptr;
     }
-  rapidjson::Document* jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
+  std::unique_ptr<rapidjson::Document> jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
   if (!jsonRoot)
     {
     // error is already logged
@@ -1191,7 +1188,6 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
       "vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile",
       "Adding markups node from file failed: no valid valid 'markups' array is found"
       << " in file '" << filePath << "'.");
-    delete jsonRoot;
     return nullptr;
     }
   if (markupIndex >= static_cast<int>(markups.GetArray().Size()))
@@ -1201,7 +1197,6 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
       "Adding markups node from file failed: requested markup index" << markupIndex << " not found"
       << " (number of available markups: " << markups.GetArray().Size()
       << " in file '" << filePath << "'.");
-    delete jsonRoot;
     return nullptr;
     }
 
@@ -1213,7 +1208,6 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
       "vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile",
       "Adding markups node from file failed: required 'type' value is not found"
       << " in file '" << filePath << "'.");
-    delete jsonRoot;
     return nullptr;
     }
   std::string markupsType = markup["type"].GetString();
@@ -1234,7 +1228,6 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
       "vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile",
       "Adding markups node from file failed: cannot instantiate class '" << className
       << " in file '" << filePath << "'.");
-    delete jsonRoot;
     return nullptr;
     }
 
@@ -1251,8 +1244,6 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
       success = success && this->Internal->UpdateMarkupsDisplayNodeFromJsonValue(displayNode, markup);
       }
     }
-
-  delete jsonRoot;
 
   if (!success)
     {
@@ -1289,7 +1280,7 @@ int vtkMRMLMarkupsJsonStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       "Reading markups node file failed: invalid filename.");
     return 0;
     }
-  rapidjson::Document* jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
+  std::unique_ptr<rapidjson::Document> jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
   if (!jsonRoot)
     {
     // error is already logged
@@ -1319,7 +1310,6 @@ int vtkMRMLMarkupsJsonStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   bool success = this->Internal->UpdateMarkupsNodeFromJsonValue(markupsNode, markup);
 
   this->Modified();
-  delete jsonRoot;
   return success ? 1 : 0;
 }
 
