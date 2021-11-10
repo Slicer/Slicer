@@ -18,6 +18,7 @@
 #include <vtkCodedEntry.h>
 #include "vtkMRMLMarkupsJsonStorageNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsPlaneNode.h"
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLStaticMeasurement.h"
@@ -52,7 +53,7 @@
 namespace
 {
   const std::string MARKUPS_SCHEMA =
-    "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.2.json#";
+    "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.3.json#";
   const std::string ACCEPTED_MARKUPS_SCHEMA_REGEX =
     "^https://raw\\.githubusercontent\\.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
 }
@@ -253,13 +254,10 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
         }
       if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
         {
-        cp->OrientationMatrix[0] = -cp->OrientationMatrix[0];
-        cp->OrientationMatrix[3] = -cp->OrientationMatrix[3];
-        cp->OrientationMatrix[6] = -cp->OrientationMatrix[6];
-
-        cp->OrientationMatrix[1] = -cp->OrientationMatrix[1];
-        cp->OrientationMatrix[4] = -cp->OrientationMatrix[4];
-        cp->OrientationMatrix[7] = -cp->OrientationMatrix[7];
+        for (int i = 0; i < 6; ++i)
+          {
+          cp->OrientationMatrix[i] *= -1.0;
+          }
         }
       }
 
@@ -543,6 +541,16 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
   // clear out the list
   markupsNode->RemoveAllControlPoints();
 
+  /// Added for backwards compatibility with storage nodes created before vtkMRMLMarkupsPlaneStorageNode or additional plane types were implemented.
+  /// This check must be done here to preserve compatibility with scenes saved before vtkMRMLMarkupsPlaneJsonStorageNode was added.
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode);
+  if (planeNode && !markupObject.HasMember("planeType"))
+    {
+    // If planeType is not defined, then the json file was written before the additional plane types were implemented.
+    // Previously the only plane type used was PlaneType3Points.
+    planeNode->SetPlaneType(vtkMRMLMarkupsPlaneNode::PlaneType3Points);
+    }
+
   std::string coordinateSystemStr = "LPS";
   if (markupObject.HasMember("coordinateSystem"))
     {
@@ -773,6 +781,18 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsDisplayNodeFromJso
     {
     displayNode->SetHandlesInteractive(displayItem["handlesInteractive"].GetBool());
     }
+  if (displayItem.HasMember("translationHandleVisibility"))
+    {
+    displayNode->SetTranslationHandleVisibility(displayItem["translationHandleVisibility"].GetBool());
+    }
+  if (displayItem.HasMember("rotationHandleVisibility"))
+    {
+    displayNode->SetRotationHandleVisibility(displayItem["rotationHandleVisibility"].GetBool());
+    }
+  if (displayItem.HasMember("scaleHandleVisibility"))
+    {
+    displayNode->SetScaleHandleVisibility(displayItem["scaleHandleVisibility"].GetBool());
+    }
   if (displayItem.HasMember("snapMode"))
     {
     int snapMode = vtkMRMLMarkupsDisplayNode::GetSnapModeFromString(displayItem["snapMode"].GetString());
@@ -900,11 +920,10 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteControlPoints(
     double* orientationMatrix = markupsNode->GetNthControlPointOrientationMatrix(controlPointIndex);
     if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
       {
-      double orientationMatrixLPS[9] =
-        {
-        -orientationMatrix[0], -orientationMatrix[1], orientationMatrix[2],
-        -orientationMatrix[3], -orientationMatrix[4], orientationMatrix[5],
-        -orientationMatrix[6], -orientationMatrix[7], orientationMatrix[8]
+      double orientationMatrixLPS[9] = {
+        -orientationMatrix[0], -orientationMatrix[1], -orientationMatrix[2],
+        -orientationMatrix[3], -orientationMatrix[4], -orientationMatrix[5],
+         orientationMatrix[6],  orientationMatrix[7],  orientationMatrix[8]
         };
       writer.Key("orientation"); this->WriteVector(writer, orientationMatrixLPS, 9);
       }
@@ -1056,6 +1075,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteDisplayProperties(
   writer.Key("lineColorFadingHueOffset"); writer.Double(markupsDisplayNode->GetLineColorFadingHueOffset());
 
   writer.Key("handlesInteractive"); writer.Bool(markupsDisplayNode->GetHandlesInteractive());
+  writer.Key("translationHandleVisibility"); writer.Bool(markupsDisplayNode->GetTranslationHandleVisibility());
+  writer.Key("rotationHandleVisibility"); writer.Bool(markupsDisplayNode->GetRotationHandleVisibility());
+  writer.Key("scaleHandleVisibility"); writer.Bool(markupsDisplayNode->GetScaleHandleVisibility());
   writer.Key("snapMode"); writer.String(markupsDisplayNode->GetSnapModeAsString(markupsDisplayNode->GetSnapMode()));
 
   writer.EndObject();

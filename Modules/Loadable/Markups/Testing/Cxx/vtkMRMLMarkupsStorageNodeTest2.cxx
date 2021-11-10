@@ -25,7 +25,12 @@
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLMarkupsJsonStorageNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
+#include "vtkMRMLMarkupsPlaneDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
+#include "vtkMRMLMarkupsPlaneJsonStorageNode.h"
+#include "vtkMRMLMarkupsROIDisplayNode.h"
+#include "vtkMRMLMarkupsROINode.h"
+#include "vtkMRMLMarkupsROIJsonStorageNode.h"
 #include "vtkURIHandler.h"
 #include "vtkMRMLScene.h"
 #include "vtkPolyData.h"
@@ -88,8 +93,11 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   markupsNode->SetNthControlPointPositionFromArray(modifiedPointIndex, inputPoint);
 
   // and add a markup with 1 point, default values
-  int defaultPointIndex = markupsNode->AddNControlPoints(1);
-  CHECK_INT(defaultPointIndex, 1);
+  if (markupsNode->GetMaximumNumberOfControlPoints() != 1)
+    {
+    int defaultPointIndex = markupsNode->AddNControlPoints(1);
+    CHECK_INT(defaultPointIndex, 1);
+    }
 
   int emptyLabelIndex = -1;
   int commaIndex = -1;
@@ -288,7 +296,10 @@ int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
     vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-closedcurve-temp.mrk.json"));
   CHECK_EXIT_SUCCESS(TestStoragNode(
     vtkSmartPointer<vtkMRMLMarkupsPlaneNode>::New(),
-    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-plane-temp.mrk.json"));
+    vtkSmartPointer<vtkMRMLMarkupsPlaneJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-plane-temp.mrk.json"));
+  CHECK_EXIT_SUCCESS(TestStoragNode(
+    vtkSmartPointer<vtkMRMLMarkupsROINode>::New(),
+    vtkSmartPointer<vtkMRMLMarkupsROIJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-roi-temp.mrk.json"));
 
   // Test if markups node can be instantiated correctly
   vtkNew<vtkMRMLScene> scene;
@@ -300,9 +311,14 @@ int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsCurveNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsClosedCurveNode>::New());
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneDisplayNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneJsonStorageNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialDisplayNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROIDisplayNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROINode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROIJsonStorageNode>::New());
 
   scene->AddNode(storageNodeJson);
 
@@ -335,6 +351,12 @@ int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
     std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-plane-temp.mrk.json").c_str());
   CHECK_NOT_NULL(planeNode);
   CHECK_STRING(planeNode->GetClassName(), "vtkMRMLMarkupsPlaneNode");
+
+  vtkMRMLMarkupsNode* roiNode = storageNodeJson->AddNewMarkupsNodeFromFile(
+    std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-roi-temp.mrk.json").c_str());
+  CHECK_NOT_NULL(roiNode);
+  CHECK_STRING(roiNode->GetClassName(), "vtkMRMLMarkupsROINode");
+
 
   return EXIT_SUCCESS;
 }

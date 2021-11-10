@@ -47,6 +47,7 @@
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLMarkupsDisplayNode.h>
+#include <vtkMRMLMarkupsPlaneDisplayNode.h>
 #include <vtkMRMLMarkupsROIDisplayNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLScene.h>
@@ -711,7 +712,9 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
   vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
   d->ToggleHandleInteractive->setVisible(displayNode != nullptr);
   d->HandleVisibilityAction->setVisible(displayNode != nullptr);
-  d->ToggleScaleHandleVisible->setVisible(vtkMRMLMarkupsROIDisplayNode::SafeDownCast(displayNode) != nullptr);
+  vtkMRMLMarkupsROIDisplayNode* roiDisplayNode = vtkMRMLMarkupsROIDisplayNode::SafeDownCast(displayNode);
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(displayNode);
+  d->ToggleScaleHandleVisible->setVisible(roiDisplayNode != nullptr || planeDisplayNode != nullptr);
   if (displayNode)
     {
     d->ToggleHandleInteractive->setChecked(displayNode->GetHandlesInteractive());

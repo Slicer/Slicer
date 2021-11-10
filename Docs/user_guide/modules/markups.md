@@ -37,6 +37,16 @@ To pick a markups node in a viewer so that its properties can be edited in Marku
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_context_menu_properties.png)
 
+### Edit Plane markups
+
+- Planes can be defined using 3 "plane types": Point normal (default, place one or two points defining the origin and normal), 3 points (place 3 points to define the origin and plane axes), and plane fit (place any number of points that will be fit to a plane).
+- When placing a plane with the "point normal" plane type, Alt + Left-click will allow the placement of 2 points. Placing the first point will define the origin of the plane, while the second point will define the normal vector.
+- If the handles are not visible, right-click on the plane outline, or on a control point, and check "Interaction handles visible".
+- Plane size can be changed using handles on the corners and edges of the plane.
+- Left-click-and-drag on interaction handles to change the plane size.
+- Resizing a plane will change the size mode to "absolute", preventing changes in the control points from affecting the plane size.
+- Plane type and size mode can be changed from the "Plane settings" section of the markups module.
+
 ### Edit ROI markups
 
 - ROI size can be changed using handles on the corners and faces of the ROI.
