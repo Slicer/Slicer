@@ -51,31 +51,53 @@ public:
   /// Widget states
   enum
   {
-    WidgetStateDefine = WidgetStateUser + 50, // click in empty area will place a new point
-    WidgetStateTranslatePlane, // translating the plane
+    WidgetStateTranslatePlane = WidgetStateMarkups_Last, // translating the plane
+    WidgetStateSymmetricScale, // Scaling the plane without moving the center
+    WidgetStateMarkupsPlane_Last
   };
 
   /// Widget events
   enum
   {
-    WidgetEventControlPointPlace = WidgetEventUser + 50,
+    WidgetEventControlPointPlace = WidgetEventMarkups_Last,
+    WidgetEventControlPointPlacePlaneNormal,
     WidgetEventPlaneMoveStart,
     WidgetEventPlaneMoveEnd,
+    WidgetEventSymmetricScaleStart,
+    WidgetEventSymmetricScaleEnd,
+    WidgetEventMarkupsPlane_Last
   };
 
   /// Create the default widget representation and initializes the widget and representation.
   void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
 
-protected:
-  vtkSlicerPlaneWidget();
-  ~vtkSlicerPlaneWidget() override;
+  bool PlacePoint(vtkMRMLInteractionEventData* eventData) override;
+  virtual bool PlacePlaneNormal(vtkMRMLInteractionEventData* eventData);
 
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
+  bool ProcessUpdatePlaneFromViewNormal(vtkMRMLInteractionEventData* event);
   bool ProcessPlaneMoveStart(vtkMRMLInteractionEventData* event);
   bool ProcessPlaneMoveEnd(vtkMRMLInteractionEventData* event);
   bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData) override;
   bool ProcessPlaneTranslate(vtkMRMLInteractionEventData* event);
+  bool ProcessWidgetSymmetricScaleStart(vtkMRMLInteractionEventData* eventData);
+  bool ProcessPlaneSymmetricScale(vtkMRMLInteractionEventData* event);
+  bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData) override;
+  bool ProcessWidgetStopPlace(vtkMRMLInteractionEventData* eventData) override;
+
+protected:
+  vtkSlicerPlaneWidget();
+  ~vtkSlicerPlaneWidget() override;
+
+  void ScaleWidget(double eventPos[2]) override;
+  virtual void ScaleWidget(double eventPos[2], bool symmetricScale);
+  void RotateWidget(double eventPos[2]) override;
+
+  /// Flip the selected index across the specified axis.
+  /// Ex. Switch between L--R face.
+  /// Used when the user drags an ROI handle across the ROI origin.
+  void FlipPlaneHandles(bool flipLRHandle, bool flipAPHandle);
 
 private:
   vtkSlicerPlaneWidget(const vtkSlicerPlaneWidget&) = delete;

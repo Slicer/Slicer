@@ -1212,9 +1212,14 @@ void vtkSlicerMarkupsWidgetRepresentation3D::SetRenderer(vtkRenderer *ren)
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double pickPoint[3])
+bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double pickPoint[3], double pickNormal[3]/*=nullptr*/)
 {
-  if (!this->AccuratePicker->Pick(x, y, 0, this->Renderer))
+  bool success = this->AccuratePicker->Pick(x, y, 0, this->Renderer);
+  if (pickNormal)
+    {
+    this->AccuratePicker->GetPickNormal(pickNormal);
+    }
+  if (!success)
     {
     return false;
     }

@@ -1,6 +1,6 @@
     {
         "$schema": "http://json-schema.org/draft-07/schema",
-        "$id": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-v1.0.2-schema.json#",
+        "$id": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-v1.0.3-schema.json#",
         "type": "object",
         "title": "Schema for storing one or more markups",
         "description": "Stores points, lines, curves, etc.",
@@ -102,6 +102,13 @@
                                     "description": "Method used to determine ROI bounds from control points. Ex. 'Box', 'BoundingBox'.",
                                     "default": "Box"
                                 },
+                                "planeType": {
+                                    "$id": "#markup/planeType",
+                                    "type": "string",
+                                    "title": "Plane type",
+                                    "description": "Method used to determine dimensions from control points. Ex. 'PointNormal', '3Points'.",
+                                    "default": "Box"
+                                },
                                 "sizeMode": {
                                     "$id": "#markup/sizeMode",
                                     "type": "string",
@@ -149,11 +156,36 @@
                                     "minItems": 3,
                                     "maxItems": 3
                                 },
+                                "planeBounds": {
+                                    "$id": "#markup/planeBounds",
+                                    "type": "array",
+                                    "title": "Plane bounds",
+                                    "description": "The bounds of the plane representation.",
+                                    "examples": [[-50, 50, -50, 50]],
+                                    "additionalItems": false,
+                                    "items": { "type": "number" },
+                                    "minItems": 4,
+                                    "maxItems": 4
+                                },
                                 "objectToBase": {
                                     "$id": "#markup/objectToBase",
                                     "type": "array",
                                     "title": "Object to Base matrix",
                                     "description": "4x4 transform matrix from the object representation to the coordinate system defined by the control points.",
+                                    "examples": [[-0.9744254538021788, -0.15660098593235834, -0.16115572030626558, 26.459385388492746,
+                                                  -0.08525118065879463, -0.4059244688892957, 0.9099217338613386, -48.04154530201596,
+                                                  -0.20791169081775938, 0.9003896138683279, 0.3821927158637956, -53.35829266424462,
+                                                  0.0, 0.0, 0.0, 1.0]],
+                                    "additionalItems": false,
+                                    "items": { "type": "number" },
+                                    "minItems": 16,
+                                    "maxItems": 16
+                                },
+                                "baseToNode": {
+                                    "$id": "#markup/baseToNode",
+                                    "type": "array",
+                                    "title": "Base to Node matrix",
+                                    "description": "4x4 transform matrix from the base representation to the node coordinate system.",
                                     "examples": [[-0.9744254538021788, -0.15660098593235834, -0.16115572030626558, 26.459385388492746,
                                                   -0.08525118065879463, -0.4059244688892957, 0.9099217338613386, -48.04154530201596,
                                                   -0.20791169081775938, 0.9003896138683279, 0.3821927158637956, -53.35829266424462,
@@ -190,7 +222,7 @@
                                                 "$id": "#markup/controlPoint",
                                                 "type": "object",
                                                 "title": "The first anyOf schema",
-                                                "description": "An explanation about the purpose of this instance.",
+                                                "description": "Object containing the properties of a single control point.",
                                                 "default": {},
                                                 "required": [],
                                                 "additionalProperties": true,
@@ -266,14 +298,14 @@
                                                         "$id": "#markup/controlPoint/visibility",
                                                         "type": "boolean",
                                                         "title": "The visibility schema",
-                                                        "description": "An explanation about the purpose of this instance.",
+                                                        "description": "Visibility of the control point.",
                                                         "default": true
                                                     },
                                                     "positionStatus": {
                                                         "$id": "#markup/controlPoint/positionStatus",
                                                         "type": "string",
                                                         "title": "The positionStatus schema",
-                                                        "description": "An explanation about the purpose of this instance.",
+                                                        "description": "Status of the control point position.",
                                                         "enum": ["undefined", "preview", "defined"],
                                                         "default": "defined"
                                                     }
@@ -286,7 +318,7 @@
                                     "$id": "#display",
                                     "type": "object",
                                     "title": "The display schema",
-                                    "description": "An explanation about the purpose of this instance.",
+                                    "description": "Object holding markups display properties.",
                                     "default": {},
                                     "required": [],
                                     "additionalProperties": true,
@@ -364,7 +396,7 @@
                                             "$id": "#display/glyphType",
                                             "type": "string",
                                             "title": "The glyphType schema",
-                                            "description": "An explanation about the purpose of this instance.",
+                                            "description": "Enum representing the displayed glyph type.",
                                             "default": "Sphere3D",
                                             "enum": ["Vertex2D", "Dash2D", "Cross2D", "ThickCross2D", "Triangle2D", "Square2D",
                                                 "Circle2D", "Diamond2D", "Arrow2D", "ThickArrow2D", "HookedArrow2D", "StarBurst2D",
@@ -477,6 +509,27 @@
                                             "type": "boolean",
                                             "title": "Handles interactive",
                                             "description": "Show interactive handles to transform this markup.",
+                                            "default": false
+                                        },
+                                        "translationHandleVisibility": {
+                                            "$id": "#display/translationHandleVisibility",
+                                            "type": "boolean",
+                                            "title": "Translation handle visibility",
+                                            "description": "Visibility of the translation interaction handles",
+                                            "default": false
+                                        },
+                                        "rotationHandleVisibility": {
+                                            "$id": "#display/rotationHandleVisibility",
+                                            "type": "boolean",
+                                            "title": "Rotation handle visibility",
+                                            "description": "Visibility of the rotation interaction handles",
+                                            "default": false
+                                        },
+                                        "scaleHandleVisibility": {
+                                            "$id": "#display/scaleHandleVisibility",
+                                            "type": "boolean",
+                                            "title": "Scale handle visibility",
+                                            "description": "Visibility of the scale interaction handles",
                                             "default": false
                                         },
                                         "snapMode": {

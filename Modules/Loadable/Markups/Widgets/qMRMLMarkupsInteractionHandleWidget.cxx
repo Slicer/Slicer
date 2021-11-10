@@ -97,12 +97,6 @@ void qMRMLMarkupsInteractionHandleWidget::setMRMLDisplayNode(vtkMRMLMarkupsDispl
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsInteractionHandleWidget::setMRMLDisplayNode(vtkMRMLNode* roiNode)
-{
-  this->setMRMLDisplayNode(vtkMRMLMarkupsNode::SafeDownCast(roiNode));
-}
-
-// --------------------------------------------------------------------------
 void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLMarkupsInteractionHandleWidget);

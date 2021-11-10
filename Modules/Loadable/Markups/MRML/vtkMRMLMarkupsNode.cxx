@@ -1664,14 +1664,27 @@ void vtkMRMLMarkupsNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   MRMLNodeModifyBlocker blocker(this);
 
+  vtkLinearTransform* linearTransform = vtkLinearTransform::SafeDownCast(transform);
+  if (linearTransform)
+    {
+    // The orientation of some markup types are not fully defined by their control points (line, etc.).
+    // For these cases, we need to manually apply a rotation to the interaction handles.
+    vtkNew<vtkTransform> handleToWorldTransform;
+    handleToWorldTransform->PostMultiply();
+    handleToWorldTransform->Concatenate(this->InteractionHandleToWorldMatrix);
+    handleToWorldTransform->Concatenate(linearTransform);
+    this->InteractionHandleToWorldMatrix->DeepCopy(handleToWorldTransform->GetMatrix());
+    }
+
   int numControlPoints = this->GetNumberOfControlPoints();
   double xyzIn[3];
   double xyzOut[3];
-  for (int controlpointIndex = 0; controlpointIndex < numControlPoints; controlpointIndex++)
+  for (int controlPointIndex = 0; controlPointIndex < numControlPoints; controlPointIndex++)
     {
-    this->GetNthControlPointPosition(controlpointIndex, xyzIn);
+    this->GetNthControlPointPosition(controlPointIndex, xyzIn);
     transform->TransformPoint(xyzIn,xyzOut);
-    this->SetNthControlPointPositionFromArray(controlpointIndex, xyzOut);
+    int status = this->GetNthControlPointPositionStatus(controlPointIndex);
+    this->SetNthControlPointPositionFromArray(controlPointIndex, xyzOut, status);
     }
   this->StorableModifiedTime.Modified();
   this->Modified();
@@ -2752,6 +2765,7 @@ void vtkMRMLMarkupsNode::UpdateInteractionHandleToWorldMatrix()
     return;
     }
   vtkMath::Cross(handleZ_World, normal_World, rotationVector_World);
+  vtkMath::Normalize(rotationVector_World);
 
   vtkNew<vtkTransform> handleToWorldMatrix;
   handleToWorldMatrix->PostMultiply();

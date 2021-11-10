@@ -98,7 +98,7 @@ public:
   // Places a new markup point.
   // Reuses current preview point, if possible.
   // Returns true if the event is processed.
-  bool PlacePoint(vtkMRMLInteractionEventData* eventData);
+  virtual bool PlacePoint(vtkMRMLInteractionEventData* eventData);
 
   /// Add a point to the current active Markup at input World coordinates.
   virtual int AddPointFromWorldCoordinate(const double worldCoordinates[3]);

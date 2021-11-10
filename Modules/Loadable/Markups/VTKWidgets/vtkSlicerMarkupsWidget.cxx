@@ -18,7 +18,6 @@
 
 #include "vtkSlicerMarkupsWidget.h"
 
-#include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
@@ -545,6 +544,7 @@ void vtkSlicerMarkupsWidget::UpdatePreviewPointIndex(vtkMRMLInteractionEventData
     // if no preview points found, set to -1
     this->PreviewPointIndex = -1;
 }
+
 //-------------------------------------------------------------------------
 void vtkSlicerMarkupsWidget::UpdatePreviewPoint(vtkMRMLInteractionEventData* eventData, const char* associatedNodeID, int positionStatus)
 {
@@ -793,6 +793,12 @@ bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData
 {
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
 
+  if (this->ApplicationLogic)
+    {
+    this->ApplicationLogic->PauseRender();
+    }
+
+
   bool processedEvent = false;
   switch (widgetEvent)
     {
@@ -860,6 +866,11 @@ bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData
   if (!processedEvent)
     {
     processedEvent = this->ProcessButtonClickEvent(eventData);
+    }
+
+  if (this->ApplicationLogic)
+    {
+    this->ApplicationLogic->ResumeRender();
     }
 
   return processedEvent;
