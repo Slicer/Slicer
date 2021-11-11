@@ -29,6 +29,7 @@
 
 // CTK includes
 #include <ctkComboBox.h>
+#include <ctkUtils.h>
 
 // MRMLWidgets includes
 #include "qMRMLNodeComboBoxDelegate.h"
@@ -853,7 +854,7 @@ void qMRMLNodeComboBox::setCurrentNodeID(const QString& nodeID)
     // it (in popup()), however we want the view to be always synchronized
     // with the currentIndex as we use it to know if it has changed. This is
     // why we set it here.
-    QModelIndex noneIndex = sceneIndex.child(0, d->ComboBox->modelColumn());
+    QModelIndex noneIndex = ctk::modelChildIndex(d->ComboBox->model(), sceneIndex, 0, d->ComboBox->modelColumn());
     d->ComboBox->view()->setCurrentIndex(
       d->NoneEnabled ? noneIndex : sceneIndex);
     d->ComboBox->setCurrentIndex(d->NoneEnabled ? 0 : -1);
