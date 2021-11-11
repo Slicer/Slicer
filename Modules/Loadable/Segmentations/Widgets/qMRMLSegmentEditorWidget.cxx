@@ -1781,8 +1781,13 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
       }
     }
 
-  // Set cursor for active effect
-  d->setEffectCursor(activeEffect);
+  // Set cursor for active effect, but only when in view/transform node.
+  // In other mouse modes, the application sets a custom cursor and the Segment Editor must not override that.
+  if (!d->InteractionNode
+    || d->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform)
+    {
+    d->setEffectCursor(activeEffect);
+    }
 
   // Set active effect
   d->LastActiveEffect = d->ActiveEffect;
