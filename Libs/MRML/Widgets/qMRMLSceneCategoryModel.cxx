@@ -20,6 +20,9 @@
 
 // Qt includes
 
+// CTK includes
+#include <ctkUtils.h>
+
 // qMRML includes
 #include "qMRMLSceneCategoryModel.h"
 #include "qMRMLSceneModel_p.h"
@@ -85,7 +88,7 @@ QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category
 //------------------------------------------------------------------------------
 int qMRMLSceneCategoryModel::categoryCount()const
 {
-  return this->match(this->mrmlSceneIndex().child(0,0),
+  return this->match(ctk::modelChildIndex(const_cast<qMRMLSceneCategoryModel*>(this), this->mrmlSceneIndex(), 0, 0),
                      qMRMLSceneModel::UIDRole,
                      QString("category"),
                      -1,

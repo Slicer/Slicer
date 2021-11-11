@@ -22,6 +22,9 @@
 #include <QDebug>
 #include <QTimer>
 
+// CTK includes
+#include <ctkUtils.h>
+
 // qMRML includes
 #include "qMRMLSceneModel_p.h"
 
@@ -125,7 +128,7 @@ void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
   const int count = q->rowCount(sceneIndex);
   for (int i = 0; i < count; ++i)
     {
-    vtkMRMLNode* node = q->mrmlNodeFromIndex(sceneIndex.child(i,0));
+    vtkMRMLNode* node = q->mrmlNodeFromIndex(ctk::modelChildIndex(q, sceneIndex, i, 0));
     q->qvtkDisconnect(node, vtkCommand::NoEvent, q, nullptr);
     if (this->ListenNodeModifiedEvent == qMRMLSceneModel::AllNodes)
       {
@@ -217,7 +220,7 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
     {
     return;
     }
-  QModelIndex start = parent ? parent->index().child(0,0) : QModelIndex().child(0,0);
+  QModelIndex start = parent ? ctk::modelChildIndex(q, parent->index(), 0, 0) : ctk::modelChildIndex(q, QModelIndex(), 0, 0);
   QModelIndexList indexes =
     q->match(start, qMRMLSceneModel::UIDRole, extraType, 1, Qt::MatchExactly);
   while (start != QModelIndex() && indexes.size())
@@ -226,7 +229,7 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
     int row = indexes[0].row();
     q->removeRow(row, parentIndex);
     // don't start the whole search from scratch, only from where we ended it
-    start = parentIndex.child(row,0);
+    start = ctk::modelChildIndex(q, parentIndex, row, 0);
     indexes = q->match(start, qMRMLSceneModel::UIDRole, extraType, 1, Qt::MatchExactly);
     }
   extraItems[extraType] = QStringList();
@@ -491,7 +494,7 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column)const
   const int row = nodeIndex.row();
   QModelIndex nodeParentIndex = nodeIndex.parent();
   Q_ASSERT( column < this->columnCount(nodeParentIndex) );
-  return nodeParentIndex.child(row, column);
+  return ctk::modelChildIndex(const_cast<qMRMLSceneModel*>(this), nodeParentIndex, row, column);
 }
 
 //------------------------------------------------------------------------------
