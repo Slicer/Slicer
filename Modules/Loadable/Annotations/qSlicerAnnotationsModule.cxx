@@ -161,7 +161,7 @@ QIcon qSlicerAnnotationsModule::icon() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerAnnotationsModule::categories() const
 {
-  return QStringList() << "" << "Informatics";
+  return QStringList() << "Legacy";
 }
 
 //-----------------------------------------------------------------------------
