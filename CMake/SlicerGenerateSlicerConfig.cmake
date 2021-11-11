@@ -166,6 +166,10 @@ if(Slicer_USE_SimpleITK)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG SWIG)
   list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG SWIG)
 endif()
+if (Slicer_VTK_VERSION_MAJOR VERSION_GREATER_EQUAL "9")
+  # Prevent VTK displaying the warning "The `VTK_USE_FILE` is no longer used starting with 8.90."
+  list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG VTK)
+endif()
 
 # Configure Slicer_USE_SYSTEM_* variables
 set(Slicer_EP_USE_SYSTEM_VARS_CONFIG "")
