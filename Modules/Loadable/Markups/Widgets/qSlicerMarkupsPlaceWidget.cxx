@@ -663,6 +663,8 @@ void qSlicerMarkupsPlaceWidget::setPlaceMultipleMarkups(PlaceMultipleMarkupsType
   if (d->PlaceButton)
     {
     d->PlaceButton->setMenu(d->PlaceMultipleMarkups == ShowPlaceMultipleMarkupsOption ? d->PlaceMenu : nullptr);
+    // Changing to DelayedPopup mode will hide menu button to avoid confusion of empty menu
+    d->PlaceButton->setPopupMode(d->PlaceMultipleMarkups == ShowPlaceMultipleMarkupsOption ? QToolButton::MenuButtonPopup : QToolButton::DelayedPopup);
     }
   if (this->placeModeEnabled())
     {
