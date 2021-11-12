@@ -479,6 +479,8 @@ void qMRMLMarkupsToolBar::addNodeActions(vtkSlicerMarkupsLogic* markupsLogic)
 
   d->MarkupsPlaceWidget = new qSlicerMarkupsPlaceWidget;
   d->MarkupsPlaceWidget->setDeleteAllMarkupsOptionVisible(true);
+  d->MarkupsPlaceWidget->setUnsetLastControlPointOptionVisible(true);
+  d->MarkupsPlaceWidget->setUnsetAllControlPointsOptionVisible(true);
   d->MarkupsPlaceWidget->setPlaceMultipleMarkups(qSlicerMarkupsPlaceWidget::ShowPlaceMultipleMarkupsOption);
   connect(d->MarkupsPlaceWidget, SIGNAL(activeMarkupsPlaceModeChanged(bool)), this, SIGNAL(activeMarkupsPlaceModeChanged(bool)));
   connect(d->MarkupsNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), d->MarkupsPlaceWidget, SLOT(setCurrentNode(vtkMRMLNode*)));
