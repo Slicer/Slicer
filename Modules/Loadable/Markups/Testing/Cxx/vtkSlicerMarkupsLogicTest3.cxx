@@ -142,8 +142,8 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
                   << assocNodeID.c_str() << std::endl;
         return EXIT_FAILURE;
         }
-      double pos[3];
-      markupsFid->GetNthFiducialPosition(0, pos);
+      vtkVector3d posVector = markupsFid->GetNthControlPointPositionVector(0);
+      double* pos = posVector.GetData();
       double expectedPos[3] = {5.5, -6.6, 0.0};
       if (vtkMath::Distance2BetweenPoints(pos, expectedPos) > 0.01)
         {

@@ -2697,7 +2697,7 @@ void vtkMRMLMarkupsNode::UpdateInteractionHandleToWorldMatrix()
 {
   // The origin of the coordinate system is at the center of mass of the control points
   double origin_World[3] = { 0 };
-  int numberOfControlPoints = this->GetNumberOfMarkups();
+  int numberOfControlPoints = this->GetNumberOfControlPoints();
   vtkNew<vtkPoints> controlPoints_World;
   for (int i = 0; i < numberOfControlPoints; ++i)
     {
