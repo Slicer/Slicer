@@ -67,6 +67,8 @@ public:
   QColor DefaultNodeColor;
   bool DeleteMarkupsButtonVisible;
   bool DeleteAllMarkupsOptionVisible;
+  bool UnsetLastControlPointOptionVisible;
+  bool UnsetAllControlPointsOptionVisible;
   bool LastSignaledPlaceModeEnabled; // if placeModeEnabled changes compared to this value then a activeMarkupsPlaceModeChanged signal will be emitted
   bool IsUpdatingWidgetFromMRML;
 
@@ -78,6 +80,8 @@ qSlicerMarkupsPlaceWidgetPrivate::qSlicerMarkupsPlaceWidgetPrivate( qSlicerMarku
 {
   this->DeleteMarkupsButtonVisible = true;
   this->DeleteAllMarkupsOptionVisible = true;
+  this->UnsetLastControlPointOptionVisible = true;
+  this->UnsetAllControlPointsOptionVisible = true;
   this->PlaceMultipleMarkups = qSlicerMarkupsPlaceWidget::ShowPlaceMultipleMarkupsOption;
   this->PlaceMenu = nullptr;
   this->DeleteMenu = nullptr;
@@ -143,16 +147,18 @@ void qSlicerMarkupsPlaceWidget::setup()
 
   d->DeleteMenu = new QMenu(tr("Delete options"), d->DeleteButton);
   d->DeleteMenu->setObjectName("DeleteMenu");
-  d->DeleteMenu->addAction(d->ActionDeleteAll);
-  QObject::connect(d->ActionDeleteAll, SIGNAL(triggered()), this, SLOT(deleteAllPoints()));
   d->DeleteMenu->addAction(d->ActionUnsetLast);
   QObject::connect(d->ActionUnsetLast, SIGNAL(triggered()), this, SLOT(unsetLastDefinedPoint()));
   d->DeleteMenu->addAction(d->ActionUnsetAll);
   QObject::connect(d->ActionUnsetAll, SIGNAL(triggered()), this, SLOT(unsetAllPoints()));
-  if (d->DeleteAllMarkupsOptionVisible)
-    {
-    d->DeleteButton->setMenu(d->DeleteMenu);
-    }
+  d->DeleteMenu->addAction(d->ActionDeleteAll);
+  QObject::connect(d->ActionDeleteAll, SIGNAL(triggered()), this, SLOT(deleteAllPoints()));
+
+  d->ActionDeleteAll->setVisible(d->DeleteAllMarkupsOptionVisible);
+  d->ActionUnsetLast->setVisible(d->UnsetLastControlPointOptionVisible);
+  d->ActionUnsetAll->setVisible(d->UnsetAllControlPointsOptionVisible);
+  updateDeleteButton();
+
   d->DeleteButton->setVisible(d->DeleteMarkupsButtonVisible);
   connect( d->DeleteButton, SIGNAL(clicked()), this, SLOT(modifyLastPoint()) );
 
@@ -545,23 +551,22 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     d->ActionLocked->setIcon( QIcon( ":/Icons/Small/SlicerUnlock.png" ) );
     }
 
-  if (currentMarkupsNode->GetFixedNumberOfControlPoints())
+  bool fixedNumberControlPoints = currentMarkupsNode->GetFixedNumberOfControlPoints();
+  if (fixedNumberControlPoints)
     {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberLock.png"));
     d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsUnset.png"));
     d->DeleteButton->setToolTip("Unset position of the last control point placed (the control point will not be deleted).");
-    d->DeleteMenu->removeAction(d->ActionUnsetLast);
-    d->DeleteMenu->removeAction(d->ActionDeleteAll);
     }
   else
     {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberUnlock.png"));
     d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsDelete.png"));
     d->DeleteButton->setToolTip("Delete last added control point");
-    d->DeleteMenu->addAction(d->ActionUnsetLast);
-    d->DeleteMenu->addAction(d->ActionUnsetAll);
-    d->DeleteMenu->addAction(d->ActionDeleteAll);
     }
+  d->ActionUnsetLast->setVisible(!fixedNumberControlPoints && d->UnsetLastControlPointOptionVisible); // QToolButton button action does this so don't also have in menu
+  d->ActionDeleteAll->setVisible(!fixedNumberControlPoints && d->DeleteAllMarkupsOptionVisible);
+  this->updateDeleteButton();
 
   d->ActionVisibility->setEnabled(currentMarkupsNode->GetDisplayNode() != nullptr);
   if (currentMarkupsNode->GetDisplayNode() != nullptr)
@@ -599,6 +604,21 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
 
   d->IsUpdatingWidgetFromMRML = false;
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsPlaceWidget::updateDeleteButton()
+  {
+  Q_D(qSlicerMarkupsPlaceWidget);
+  if (d->DeleteButton)
+    {
+    bool showMenu = (d->ActionDeleteAll->isVisible() || d->ActionUnsetLast->isVisible() || d->ActionUnsetAll->isVisible());
+    d->DeleteButton->setMenu(showMenu ? d->DeleteMenu : nullptr);
+    d->DeleteButton->setPopupMode(showMenu ? QToolButton::MenuButtonPopup : QToolButton::DelayedPopup);
+
+    vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
+    d->DeleteButton->setVisible(showMenu || !currentMarkupsNode->GetFixedNumberOfControlPoints()); // hide when no options to show
+    }
+  }
 
 //------------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::setMRMLScene(vtkMRMLScene* scene)
@@ -671,7 +691,46 @@ void qSlicerMarkupsPlaceWidget::setDeleteAllMarkupsOptionVisible(bool visible)
   d->DeleteAllMarkupsOptionVisible = visible;
   if (d->DeleteButton)
     {
-    d->DeleteButton->setMenu(visible ? d->DeleteMenu : nullptr);
+    d->ActionDeleteAll->setVisible(visible);
+    this->updateDeleteButton();
+    }
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMarkupsPlaceWidget::unsetLastControlPointOptionVisible() const
+{
+  Q_D(const qSlicerMarkupsPlaceWidget);
+  return d->UnsetLastControlPointOptionVisible;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerMarkupsPlaceWidget::setUnsetLastControlPointOptionVisible(bool visible)
+{
+  Q_D(qSlicerMarkupsPlaceWidget);
+  d->UnsetLastControlPointOptionVisible = visible;
+  if (d->DeleteButton)
+    {
+    d->ActionUnsetLast->setVisible(visible);
+    this->updateDeleteButton();
+    }
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMarkupsPlaceWidget::unsetAllControlPointsOptionVisible() const
+{
+  Q_D(const qSlicerMarkupsPlaceWidget);
+  return d->UnsetAllControlPointsOptionVisible;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerMarkupsPlaceWidget::setUnsetAllControlPointsOptionVisible(bool visible)
+{
+  Q_D(qSlicerMarkupsPlaceWidget);
+  d->UnsetAllControlPointsOptionVisible = visible;
+  if (d->DeleteButton)
+    {
+    d->ActionUnsetAll->setVisible(visible);
+    this->updateDeleteButton();
     }
 }
 

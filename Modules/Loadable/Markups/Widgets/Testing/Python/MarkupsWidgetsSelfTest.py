@@ -171,10 +171,15 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
     placeWidget.deleteAllMarkupsOptionVisible = True
     self.assertTrue(placeWidget.deleteAllMarkupsOptionVisible)
 
-    placeWidget.deleteAllMarkupsOptionVisible = False
-    self.assertFalse(placeWidget.deleteAllMarkupsOptionVisible)
-    placeWidget.deleteAllMarkupsOptionVisible = True
-    self.assertTrue(placeWidget.deleteAllMarkupsOptionVisible)
+    placeWidget.unsetLastControlPointOptionVisible = False
+    self.assertFalse(placeWidget.unsetLastControlPointOptionVisible)
+    placeWidget.unsetLastControlPointOptionVisible = True
+    self.assertTrue(placeWidget.unsetLastControlPointOptionVisible)
+
+    placeWidget.unsetAllControlPointsOptionVisible = False
+    self.assertFalse(placeWidget.unsetAllControlPointsOptionVisible)
+    placeWidget.unsetAllControlPointsOptionVisible = True
+    self.assertTrue(placeWidget.unsetAllControlPointsOptionVisible)
 
     placeWidget.placeMultipleMarkups = slicer.qSlicerMarkupsPlaceWidget.ForcePlaceSingleMarkup
     placeWidget.placeModeEnabled = True
