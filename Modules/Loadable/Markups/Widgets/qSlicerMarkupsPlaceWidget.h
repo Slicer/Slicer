@@ -45,6 +45,8 @@ qSlicerMarkupsPlaceWidget : public qSlicerWidget
   Q_ENUMS(PlaceMultipleMarkupsType)
   Q_PROPERTY(bool buttonsVisible READ buttonsVisible WRITE setButtonsVisible)
   Q_PROPERTY(bool deleteAllMarkupsOptionVisible READ deleteAllMarkupsOptionVisible WRITE setDeleteAllMarkupsOptionVisible)
+  Q_PROPERTY(bool unsetLastControlPointOptionVisible READ unsetLastControlPointOptionVisible WRITE setUnsetLastControlPointOptionVisible)
+  Q_PROPERTY(bool unsetAllControlPointsOptionVisible READ unsetAllControlPointsOptionVisible WRITE setUnsetAllControlPointsOptionVisible)
   Q_PROPERTY(PlaceMultipleMarkupsType placeMultipleMarkups READ placeMultipleMarkups WRITE setPlaceMultipleMarkups)
   Q_PROPERTY(QColor nodeColor READ nodeColor WRITE setNodeColor)
   Q_PROPERTY(QColor defaultNodeColor READ defaultNodeColor WRITE setDefaultNodeColor)
@@ -93,6 +95,12 @@ public:
   /// Returns true if the Delete all option on the Delete button is visible.
   bool deleteAllMarkupsOptionVisible() const;
 
+  /// Returns true if the Unset last control point option on the Delete button is visible.
+  bool unsetLastControlPointOptionVisible() const;
+
+  /// Returns true if the Unset all control points option on the Delete button is visible.
+  bool unsetAllControlPointsOptionVisible() const;
+
   /// Get the selected color of the currently selected markups node.
   QColor nodeColor() const;
 
@@ -138,6 +146,12 @@ public slots:
   /// Set visibility of Delete all markups option.
   void setDeleteAllMarkupsOptionVisible(bool visible);
 
+  /// Set visibility of Unset last control point option.
+  void setUnsetLastControlPointOptionVisible(bool visible);
+
+  /// Set visibility of Unset all control point option
+  void setUnsetAllControlPointsOptionVisible(bool visible);
+
   /// Set place mode to persistent (remains active until deactivated). Does not enable or disable placement mode.
   void setPlaceModePersistency(bool);
 
@@ -168,6 +182,9 @@ protected slots:
 
   /// Update the GUI to reflect the currently selected markups node.
   void updateWidget();
+
+  /// Update the Delete Button to reflect the currently visible delete button options.
+  void updateDeleteButton();
 
   /// Update the currently selected markups node to have its selected color changed.
   void onColorButtonChanged(QColor);
