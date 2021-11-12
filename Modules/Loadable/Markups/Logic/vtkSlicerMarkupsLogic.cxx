@@ -667,21 +667,21 @@ int vtkSlicerMarkupsLogic::AddFiducial(double r, double a, double s)
   // get the active list id
   std::string listID = this->GetActiveListID();
 
-  // is there no active fiducial list?
+  // is there no active point list?
   if (listID.size() == 0)
     {
-    vtkDebugMacro("AddFiducial: no list is active, adding one first!");
+    vtkDebugMacro("AddFiducial: no point list is active, adding one first!");
     std::string newListID = this->AddNewFiducialNode();
     if (newListID.size() == 0)
       {
-      vtkErrorMacro("AddFiducial: failed to add a new fiducial list to the scene.");
+      vtkErrorMacro("AddFiducial: failed to add a new point list to the scene.");
       return -1;
       }
     // try to get the id again
     listID = this->GetActiveListID();
     if (listID.size() == 0)
       {
-      vtkErrorMacro("AddFiducial: failed to create a new list to add to!");
+      vtkErrorMacro("AddFiducial: failed to create a new point list to add to!");
       return -1;
       }
     }
@@ -690,18 +690,18 @@ int vtkSlicerMarkupsLogic::AddFiducial(double r, double a, double s)
   vtkMRMLNode *listNode = this->GetMRMLScene()->GetNodeByID(listID.c_str());
   if (!listNode)
     {
-    vtkErrorMacro("AddFiducial: failed to get the active list with id " << listID);
+    vtkErrorMacro("AddFiducial: failed to get the active point list with id " << listID);
     return -1;
     }
   vtkMRMLMarkupsFiducialNode *fiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(listNode);
   if (!fiducialNode)
     {
-    vtkErrorMacro("AddFiducial: active list is not a fiducial list: " << listNode->GetClassName());
+    vtkErrorMacro("AddFiducial: active list is not a point list: " << listNode->GetClassName());
     return -1;
     }
-  vtkDebugMacro("AddFiducial: adding a fiducial to the list " << listID);
-  // add the point to the active fiducial list
-  return fiducialNode->AddFiducial(r,a,s);
+  vtkDebugMacro("AddFiducial: adding a control point to the list " << listID);
+  // add a control point to the active point list
+  return fiducialNode->AddControlPoint(vtkVector3d(r,a,s), std::string());
 }
 
 //---------------------------------------------------------------------------
@@ -1357,9 +1357,8 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
           }
         double coord[3];
         annotNode->GetFiducialCoordinates(coord);
-        int fidIndex = markupsNode->AddFiducial(coord[0], coord[1], coord[2]);
-        vtkDebugMacro("Added a fiducial at index " << fidIndex);
-        markupsNode->SetNthControlPointLabel(fidIndex, std::string(annotNode->GetName()));
+        int fidIndex = markupsNode->AddControlPoint(vtkVector3d(coord), std::string(annotNode->GetName()));
+        vtkDebugMacro("Added a control point at index " << fidIndex);
         char *desc = annotNode->GetDescription();
         if (desc)
           {

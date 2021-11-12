@@ -99,9 +99,7 @@ int vtkMRMLMarkupsFiducialNode::AddFiducial(double x, double y, double z,
                                             std::string label)
 {
   vtkWarningMacro("AddFiducial method is deprecated, please use AddControlPoint instead");
-  vtkVector3d point;
-  point.Set(x, y, z);
-  return this->AddControlPoint(point, label);
+  return this->AddControlPoint(vtkVector3d(x, y, z), label);
 }
 
 //-------------------------------------------------------------------------

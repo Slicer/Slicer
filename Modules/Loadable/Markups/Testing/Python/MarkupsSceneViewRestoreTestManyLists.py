@@ -48,7 +48,7 @@ if numFidNodesAfterRestore != numFidNodesBeforeStore:
   raise Exception(exceptionMessage)
 
 fid1AfterRestore = slicer.mrmlScene.GetFirstNodeByName("FidNode1")
-numFidsInList1AfterRestore = fid1AfterRestore.GetNumberOfMarkups()
+numFidsInList1AfterRestore = fid1AfterRestore.GetNumberOfControlPoints()
 print("After restore, list with name FidNode1 has id ", fid1AfterRestore.GetID(), " and num fids = ", numFidsInList1AfterRestore)
 if numFidsInList1AfterRestore != numFidsInList1:
   exceptionMessage = "After restoring list 1, id = " + fid1AfterRestore.GetID()
@@ -57,7 +57,7 @@ if numFidsInList1AfterRestore != numFidsInList1:
   raise Exception(exceptionMessage)
 
 fid2AfterRestore = slicer.mrmlScene.GetFirstNodeByName("FidNode2")
-numFidsInList2AfterRestore = fid2AfterRestore.GetNumberOfMarkups()
+numFidsInList2AfterRestore = fid2AfterRestore.GetNumberOfControlPoints()
 print("After restore, list with name FidNode2 has id ", fid2AfterRestore.GetID(), " and num fids = ", numFidsInList2AfterRestore)
 if numFidsInList2AfterRestore != numFidsInList2:
   exceptionMessage = "After restoring list 2,  id = " + fid2AfterRestore.GetID()
