@@ -533,7 +533,7 @@ viewToolBar = mainWindow().findChild("QToolBar", "ViewToolBar")
 layoutMenu = viewToolBar.widgetForAction(viewToolBar.actions()[0]).menu()
 layoutSwitchActionParent = layoutMenu  # use `layoutMenu` to add inside layout list, use `viewToolBar` to add next the standard layout list
 layoutSwitchAction = layoutSwitchActionParent.addAction("My view") # add inside layout list
-layoutSwitchAction.setData(layoutId)
+layoutSwitchAction.setData(customLayoutId)
 layoutSwitchAction.setIcon(qt.QIcon(":Icons/Go.png"))
 layoutSwitchAction.setToolTip("3D and slice view")
 ```
