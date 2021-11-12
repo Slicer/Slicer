@@ -80,8 +80,8 @@ qSlicerMarkupsPlaceWidgetPrivate::qSlicerMarkupsPlaceWidgetPrivate( qSlicerMarku
 {
   this->DeleteMarkupsButtonVisible = true;
   this->DeleteAllMarkupsOptionVisible = true;
-  this->UnsetLastControlPointOptionVisible = true;
-  this->UnsetAllControlPointsOptionVisible = true;
+  this->UnsetLastControlPointOptionVisible = false;
+  this->UnsetAllControlPointsOptionVisible = false;
   this->PlaceMultipleMarkups = qSlicerMarkupsPlaceWidget::ShowPlaceMultipleMarkupsOption;
   this->PlaceMenu = nullptr;
   this->DeleteMenu = nullptr;
