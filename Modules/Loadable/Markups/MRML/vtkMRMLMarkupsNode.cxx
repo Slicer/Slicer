@@ -2043,6 +2043,7 @@ void vtkMRMLMarkupsNode::GetBounds(double bounds[6])
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::GetMarkupPoint(int markupIndex, int pointIndex, double point[3])
 {
+  vtkWarningMacro("GetMarkupPoint method is deprecated, please use GetNthControlPointPosition instead");
   if (markupIndex == 0)
     {
     this->GetNthControlPointPosition(pointIndex, point);

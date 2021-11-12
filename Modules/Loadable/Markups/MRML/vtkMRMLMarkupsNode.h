@@ -281,7 +281,9 @@ public:
   virtual void UnsetAllControlPoints();
 
   /// \deprecated Use RemoveAllControlPoints instead.
-  void RemoveAllMarkups() { this->RemoveAllControlPoints(); };
+  void RemoveAllMarkups() {
+    vtkWarningMacro("RemoveAllMarkups method is deprecated, please use RemoveAllControlPoints instead");
+    this->RemoveAllControlPoints();};
 
   /// Get the Locked property on the markupNode/list of control points.
   vtkGetMacro(Locked, int);
@@ -303,8 +305,10 @@ public:
   /// Return true if n is a valid control point, false otherwise.
   bool ControlPointExists(int n);
 
-  /// Deprecated. Use ControlPointExists instead.
-  bool MarkupExists(int n) { return this->ControlPointExists(n); }
+  /// \deprecated Use ControlPointExists instead.
+  bool MarkupExists(int n) {
+    vtkWarningMacro("MarkupExists method is deprecated, please use ControlPointExists instead");
+    return this->ControlPointExists(n);};
   /// Return the number of control points that are stored in this node
   int GetNumberOfControlPoints();
   /// Return the number of control points that are already placed (not being previewed or undefined).
@@ -312,9 +316,13 @@ public:
   /// Return the number of control points that have not been placed (not being previewed or skipped).
   int GetNumberOfUndefinedControlPoints(bool includePreview = false);
   /// \deprecated Use GetNumberOfControlPoints() instead.
-  int GetNumberOfMarkups() { return this->GetNumberOfControlPoints(); };
+  int GetNumberOfMarkups() {
+    vtkWarningMacro("GetNumberOfMarkups method is deprecated, please use GetNumberOfControlPoints instead");
+    return this->GetNumberOfControlPoints();};
   /// \deprecated Use GetNumberOfControlPoints() instead.
-  int GetNumberOfPointsInNthMarkup(int) { return this->GetNumberOfControlPoints(); };
+  int GetNumberOfPointsInNthMarkup(int) {
+    vtkWarningMacro("GetNumberOfPointsInNthMarkup method is deprecated, please use GetNumberOfControlPoints instead");
+    return this->GetNumberOfControlPoints();};
   /// Return a pointer to the Nth control point stored in this node, null if n is out of bounds
   ControlPoint* GetNthControlPoint(int n);
   /// Return a pointer to the std::vector of control points stored in this node
@@ -343,7 +351,9 @@ public:
   vtkVector3d GetNthControlPointPositionVector(int pointIndex);
 
   /// \deprecated Use GetNthControlPointPositionVector() method instead.
-  vtkVector3d GetMarkupPointVector(int markupIndex, int) { return this->GetNthControlPointPositionVector(markupIndex); };
+  vtkVector3d GetMarkupPointVector(int markupIndex, int) {
+    vtkWarningMacro("GetMarkupPointVector method is deprecated, please use GetNthControlPointPositionVector instead");
+    return this->GetNthControlPointPositionVector(markupIndex);};
 
   /// \deprecated Use GetNthControlPointPosition method instead.
   void GetMarkupPoint(int markupIndex, int pointIndex, double point[3]);
@@ -387,7 +397,9 @@ public:
   void RemoveNthControlPoint(int pointIndex);
 
   /// \deprecated Use RemoveNthControlPoint instead.
-  void RemoveMarkup(int pointIndex) { this->RemoveNthControlPoint(pointIndex); };
+  void RemoveMarkup(int pointIndex) {
+    vtkWarningMacro("RemoveMarkup method is deprecated, please use RemoveNthControlPoint instead");
+    this->RemoveNthControlPoint(pointIndex);};
 
   /// Insert a control point in this list at targetIndex.
   /// If targetIndex is < 0, insert at the start of the list.
@@ -495,15 +507,21 @@ public:
   void SetNthControlPointAssociatedNodeID(int n, std::string id);
 
   /// \deprecated Use GetNthControlPointAssociatedNodeID instead.
-  std::string GetNthMarkupAssociatedNodeID(int n = 0) { return this->GetNthControlPointAssociatedNodeID(n); }
+  std::string GetNthMarkupAssociatedNodeID(int n = 0) {
+    vtkWarningMacro("GetNthMarkupAssociatedNodeID method is deprecated, please use GetNthControlPointAssociatedNodeID instead");
+    return this->GetNthControlPointAssociatedNodeID(n);};
   /// \deprecated Use SetNthControlPointAssociatedNodeID instead.
-  void SetNthMarkupAssociatedNodeID(int n, std::string id) { this->SetNthControlPointAssociatedNodeID(n,id); }
+  void SetNthMarkupAssociatedNodeID(int n, std::string id) {
+    vtkWarningMacro("SetNthMarkupAssociatedNodeID method is deprecated, please use SetNthControlPointAssociatedNodeID instead");
+    this->SetNthControlPointAssociatedNodeID(n,id);};
 
   /// Get the id for the Nth control point
   std::string GetNthControlPointID(int n);
 
   /// \deprecated Use GetNthControlPointID instead.
-  std::string GetNthMarkupID(int n = 0) { return this->GetNthControlPointID(n); }
+  std::string GetNthMarkupID(int n = 0) {
+    vtkWarningMacro("GetNthMarkupID method is deprecated, please use GetNthControlPointID instead");
+    return this->GetNthControlPointID(n);};
 
   /// Get the Nth control point index based on it's ID
   int GetNthControlPointIndexByID(const char* controlPointID);
@@ -529,9 +547,13 @@ public:
   void SetNthControlPointLocked(int n, bool flag);
 
   /// \deprecated Use GetNthControlPointLocked instead.
-  bool GetNthMarkupLocked(int n = 0) { return this->GetNthControlPointLocked(n); };
+  bool GetNthMarkupLocked(int n = 0) {
+    vtkWarningMacro("GetNthMarkupLocked method is deprecated, please use GetNthControlPointLocked instead");
+    return this->GetNthControlPointLocked(n);};
   /// \deprecated Use SetNthControlPointLocked instead.
-  void SetNthMarkupLocked(int n, bool flag) { this->SetNthControlPointLocked(n, flag);  }
+  void SetNthMarkupLocked(int n, bool flag) {
+    vtkWarningMacro("SetNthMarkupLocked method is deprecated, please use SetNthControlPointLocked instead");
+    this->SetNthControlPointLocked(n, flag);};
 
   /// Get the Visibility flag on the Nth control point,
   /// returns false if control point doesn't exist
@@ -558,9 +580,13 @@ public:
   void SetNthControlPointLabel(int n, std::string label);
 
   /// \deprecated Use GetNthControlPointLabel instead.
-  std::string GetNthMarkupLabel(int n = 0) { return this->GetNthControlPointLabel(n); }
+  std::string GetNthMarkupLabel(int n = 0) {
+    vtkWarningMacro("GetNthMarkupLabel method is deprecated, please use GetNthControlPointLabel instead");
+    return this->GetNthControlPointLabel(n);};
   /// \deprecated Use SetNthControlPointLabel instead.
-  void SetNthMarkupLabel(int n, std::string label) { this->SetNthControlPointLabel(n, label); }
+  void SetNthMarkupLabel(int n, std::string label) {
+    vtkWarningMacro("SetNthMarkupLabel method is deprecated, please use SetNthControlPointLabel instead");
+    this->SetNthControlPointLabel(n, label);};
 
   /// Get the Description flag on the Nth control point,
   /// returns false if control point doesn't exist

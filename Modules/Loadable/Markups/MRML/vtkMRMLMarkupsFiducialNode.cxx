@@ -98,6 +98,7 @@ int vtkMRMLMarkupsFiducialNode::AddFiducial(double x, double y, double z)
 int vtkMRMLMarkupsFiducialNode::AddFiducial(double x, double y, double z,
                                             std::string label)
 {
+  vtkWarningMacro("AddFiducial method is deprecated, please use AddControlPoint instead");
   vtkVector3d point;
   point.Set(x, y, z);
   return this->AddControlPoint(point, label);
@@ -114,94 +115,11 @@ int vtkMRMLMarkupsFiducialNode::AddFiducialFromArray(double pos[3], std::string 
 //-------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::GetNthFiducialPosition(int n, double pos[3])
 {
+  vtkWarningMacro("GetNthFiducialPosition method is deprecated, please use GetNthControlPointPositionVector instead");
   vtkVector3d point= this->GetNthControlPointPositionVector(n);
   pos[0] = point.GetX();
   pos[1] = point.GetY();
   pos[2] = point.GetZ();
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::SetNthFiducialPositionFromArray(int n, double pos[3])
-{
-  this->SetNthControlPointPositionFromArray(n, pos);
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::SetNthFiducialPosition(int n, double x, double y, double z)
-{
-  this->SetNthControlPointPosition(n, x, y, z);
-}
-
-//-------------------------------------------------------------------------
-bool vtkMRMLMarkupsFiducialNode::GetNthFiducialSelected(int n)
-{
-  return this->GetNthControlPointSelected(n);
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::SetNthFiducialSelected(int n, bool flag)
-{
-  this->SetNthControlPointSelected(n, flag);
-}
-
-//-------------------------------------------------------------------------
-bool vtkMRMLMarkupsFiducialNode::GetNthFiducialLocked(int n)
-{
-  return this->GetNthControlPointLocked(n);
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::SetNthFiducialLocked(int n, bool flag)
-{
-  this->SetNthControlPointLocked(n, flag);
-}
-
-//-------------------------------------------------------------------------
-bool vtkMRMLMarkupsFiducialNode::GetNthFiducialVisibility(int n)
-{
-  return this->GetNthControlPointVisibility(n);
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::SetNthFiducialVisibility(int n, bool flag)
-{
-  this->SetNthControlPointVisibility(n, flag);
-}
-
-//-------------------------------------------------------------------------
-std::string vtkMRMLMarkupsFiducialNode::GetNthFiducialLabel(int n)
-{
-  return this->GetNthControlPointLabel(n);
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::SetNthFiducialLabel(int n, std::string label)
-{
-  this->SetNthControlPointLabel(n, label);
-}
-
-//-------------------------------------------------------------------------
-std::string vtkMRMLMarkupsFiducialNode::GetNthFiducialAssociatedNodeID(int n)
-{
-  return this->GetNthControlPointAssociatedNodeID(n);
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::SetNthFiducialAssociatedNodeID(int n, const char* id)
-{
-  this->SetNthControlPointAssociatedNodeID(n, (id ? std::string(id) : ""));
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::SetNthFiducialWorldCoordinates(int n, double coords[4])
-{
-  this->SetNthControlPointPositionWorld(n, coords[0], coords[1], coords[2]);
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::GetNthFiducialWorldCoordinates(int n, double coords[4])
-{
-  this->GetNthControlPointPositionWorld(n, coords);
 }
 
 //-------------------------------------------------------------------------
