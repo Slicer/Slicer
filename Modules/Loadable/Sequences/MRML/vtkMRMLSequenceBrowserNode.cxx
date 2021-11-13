@@ -1549,14 +1549,13 @@ std::string vtkMRMLSequenceBrowserNode::GetFormattedIndexValue(int index)
   return formattedString;
 }
 
-
 //-----------------------------------------------------------------------------
 bool vtkMRMLSequenceBrowserNode::ValidateFormatString(std::string& validatedFormat, std::string& prefix, std::string& suffix,
                                                              const std::string& requestedFormat, const std::string& typeString)
 {
   // This regex finds sprintf specifications. Only the first is used to format the index value
   // Regex from: https://stackoverflow.com/a/8915445
-  std::string regexString = "%([0-9]\$)?[+-]?([ 0]|'.{1})?-?[0-9]*(\.[0-9]+)?[" + typeString + "]";
+  std::string regexString = "%([0-9]\\$)?[+-]?([ 0]|'.{1})?-?[0-9]*(\\.[0-9]+)?[" + typeString + "]";
   vtksys::RegularExpression specifierRegex = vtksys::RegularExpression(regexString);
   vtksys::RegularExpressionMatch specifierMatch;
   if (!specifierRegex.find(requestedFormat.c_str(), specifierMatch))
