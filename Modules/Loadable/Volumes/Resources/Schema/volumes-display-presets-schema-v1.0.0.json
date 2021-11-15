@@ -35,13 +35,29 @@
                                 "$id": "#preset/id",
                                 "type": "string",
                                 "title": "Id",
-                                "description": "Unique identifier of the preset. Must not start with underscore character (those are reserved for internal use)."
+                                "description": "Unique identifier of the preset. Must not start with underscore character (those are reserved for internal use).",
+                                "examples": ["CT_BONE", "CT_ABDOMEN"]
                             },
                             "name": {
                                 "$id": "#preset/name",
                                 "type": "string",
                                 "title": "Name",
-                                "description": "Human-readable name of the preset."
+                                "description": "Human-readable name of the preset.",
+                                "examples": ["CT-Bone"]
+                            },
+                            "description": {
+                                "$id": "#preset/description",
+                                "type": "string",
+                                "title": "Description",
+                                "description": "Human-readable description of the preset.",
+                                "examples": ["Emphasize bone in a CT volume."]
+                            },
+                            "icon": {
+                                "$id": "#preset/icon",
+                                "type": "string",
+                                "title": "Icon",
+                                "description": "Illustrative image filename or resource path.",
+                                "examples": [":/Icons/WindowLevelPreset-CT-bone.png"]
                             },
                             "window": {
                                 "$id": "#preset/window",

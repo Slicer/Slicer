@@ -155,7 +155,7 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
 
   // read volume preset names from volumes logic
   volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(
-    qSlicerApplication::application()->moduleManager()->module("Volumes")->logic());
+    qSlicerApplication::application()->moduleLogic("Volumes"));
   if (!volumesModuleLogic)
     {
     qWarning() << Q_FUNC_INFO << " failed: Module logic 'Volumes' not found.";
@@ -163,6 +163,7 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
     }
 
   this->PresetSubmenu = new QMenu();
+  this->PresetSubmenu->setToolTipsVisible(true);
   QActionGroup* presetModeActions = new QActionGroup(this);
   presetModeActions->setExclusive(true);
   this->PresetModeMapper = new ctkSignalMapper(this);
@@ -192,11 +193,15 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
   for (const auto& presetId : presetIds)
     {
     vtkSlicerVolumesLogic::VolumeDisplayPreset preset = volumesModuleLogic->GetVolumeDisplayPreset(presetId);
-    QString presetName = tr(preset.PresetName.c_str());
+    QString presetName = tr(preset.name.c_str());
     QString presetIdStr = QString::fromStdString(presetId);
     QAction* presetAction = new QAction(presetName);
     presetAction->setObjectName(presetIdStr);
-    presetAction->setToolTip(tr("Display volume in slice views with %1 preset.").arg(presetName));
+    presetAction->setToolTip(tr(preset.description.c_str()));
+    if (!preset.icon.empty())
+      {
+      presetAction->setIcon(QIcon(QString::fromStdString(preset.icon)));
+      }
     presetAction->setCheckable(true);
     this->PresetSubmenu->addAction(presetAction);
     presetModeActions->addAction(presetAction);
@@ -322,7 +327,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showViewContextMenuActionsForItem(vtk
     {
     // Check the checkbox of the current display preset
     vtkSlicerVolumesLogic* volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(
-      qSlicerApplication::application()->moduleManager()->module("Volumes")->logic());
+      qSlicerApplication::application()->moduleLogic("Volumes"));
     if (volumesModuleLogic)
       {
       // For presets in display node

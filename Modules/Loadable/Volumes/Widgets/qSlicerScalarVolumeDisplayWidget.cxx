@@ -2,6 +2,7 @@
 #include "ui_qSlicerScalarVolumeDisplayWidget.h"
 
 // Qt includes
+#include <QToolButton>
 
 // CTK includes
 #include <ctkVTKColorTransferFunction.h>
@@ -28,7 +29,9 @@
 #include <QDebug>
 
 // Slicer includes
+#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerApplication.h"
+#include "qSlicerModuleManager.h"
 #include "vtkSlicerVolumesLogic.h"
 
 // STD includes
@@ -89,27 +92,50 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
   barsItem->setBarWidth(1.);
   scene->addItem(barsItem);
 
+  // Add mapping from presets defined in the Volumes module logic (VolumeDisplayPresets.json)
+
+    // read volume preset names from volumes logic
+  vtkSlicerVolumesLogic* volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(
+    qSlicerApplication::application()->moduleLogic("Volumes"));
+  if (volumesModuleLogic)
+  {
+    QLayout* volumeDisplayPresetsLayout = this->PresetsWidget->layout();
+    if (!volumeDisplayPresetsLayout)
+      {
+      volumeDisplayPresetsLayout = new QHBoxLayout;
+      this->PresetsWidget->setLayout(volumeDisplayPresetsLayout);
+      }
+    std::vector<std::string> presetIds = volumesModuleLogic->GetVolumeDisplayPresetIDs();
+    for (const auto& presetId : presetIds)
+      {
+      vtkSlicerVolumesLogic::VolumeDisplayPreset preset = volumesModuleLogic->GetVolumeDisplayPreset(presetId);
+      QString presetIdStr = QString::fromStdString(presetId);
+      QString presetName = q->tr(preset.name.c_str());
+      QToolButton* presetButton = new QToolButton();
+      presetButton->setObjectName(presetIdStr);
+      presetButton->setToolTip(q->tr(preset.name.c_str()) + "\n" + q->tr(preset.description.c_str()));
+      if (!preset.icon.empty())
+        {
+        presetButton->setIcon(QIcon(QString::fromStdString(preset.icon)));
+        presetButton->setIconSize(QSize(45, 45));
+        }
+      volumeDisplayPresetsLayout->addWidget(presetButton);
+      QObject::connect(presetButton, SIGNAL(clicked()),
+        q, SLOT(onPresetButtonClicked()));
+      }
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << " failed: Module logic 'Volumes' not found. No volume display presets will be added.";
+    return;
+    }
+
   QObject::connect(this->InterpolateCheckbox, SIGNAL(toggled(bool)),
                    q, SLOT(setInterpolate(bool)));
   QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(setColorNode(vtkMRMLNode*)));
-
   QObject::connect(this->LockWindowLevelButton, SIGNAL(clicked()),
                    q, SLOT(onLockWindowLevelButtonClicked()));
-  QObject::connect(this->CTBonePresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->CTAirPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->PETPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->CTAbdomenPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->CTBrainPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->CTLungPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->DTIPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
   QObject::connect(this->HistogramGroupBox, SIGNAL(toggled(bool)),
                    q, SLOT(onHistogramSectionExpanded(bool)));
 }
@@ -220,13 +246,7 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
       d->LockWindowLevelButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
       d->LockWindowLevelButton->setToolTip(QString("Click to prevent modification of Window/Level values"));
       }
-    d->CTBonePresetToolButton->setEnabled(!lockedWindowLevel);
-    d->CTAirPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->PETPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->CTAbdomenPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->CTBrainPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->CTLungPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->DTIPresetToolButton->setEnabled(!lockedWindowLevel);
+    d->PresetsWidget->setEnabled(!lockedWindowLevel);
     d->MRMLWindowLevelWidget->setEnabled(!lockedWindowLevel);
     }
   this->updateHistogram();

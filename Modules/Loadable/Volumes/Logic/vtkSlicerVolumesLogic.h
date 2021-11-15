@@ -72,28 +72,14 @@ public:
 
   struct VolumeDisplayPreset
     {
-    std::string PresetName;
-    std::string PresetID;
-    double Window{0.0};
-    double Level{0.0};
-    std::string ColorNodeID;
-    bool Valid{false};
-
-    VolumeDisplayPreset()
-      {
-      this->Valid = false;
-      }
-
-    VolumeDisplayPreset(std::string presetName, std::string presetID, double window, double level, std::string colorNodeID)
-      {
-      this->PresetName = presetName;
-      this->PresetID = presetID;
-      this->Window = window;
-      this->Level = level;
-      this->ColorNodeID = colorNodeID;
-      this->Valid = true;
-      }
-
+    std::string id;
+    std::string name;
+    std::string description;
+    std::string icon;
+    double window{0.0};
+    double level{0.0};
+    std::string colorNodeID;
+    bool valid{false};
     };
   std::vector<VolumeDisplayPreset> VolumeDisplayPresets;
 
