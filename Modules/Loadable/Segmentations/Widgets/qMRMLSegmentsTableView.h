@@ -210,6 +210,10 @@ protected slots:
   /// Update the filter parameters in the vtkMRMLSegmentationNode
   void updateMRMLFromFilterParameters();
 
+  /// Signals to save/restore segment ID selection when the model is reset
+  void modelAboutToBeReset();
+  void modelReset();
+
 protected:
   /// Convenience function to set segment visibility options from event handlers
   /// \sa onVisibilityButtonToggled \sa onVisibility3DActionToggled \sa onVisibility2DFillActionToggled \sa onVisibility2DOutlineActionToggled
