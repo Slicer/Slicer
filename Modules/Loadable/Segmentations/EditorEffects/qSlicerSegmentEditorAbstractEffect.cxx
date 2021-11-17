@@ -353,9 +353,6 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       vtkOrientedImageDataResample::ModifyImage(maskImage, thresholdMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
       }
 
-    vtkNew<vtkOrientedImageData> maskWithCurrentSegment;
-    maskWithCurrentSegment->DeepCopy(maskImage);
-
     vtkSmartPointer<vtkOrientedImageData> segmentLayerLabelmap =
       vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetMasterRepresentationName()));
     if (segmentLayerLabelmap
@@ -376,11 +373,13 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       vtkNew<vtkOrientedImageData> invertedSegment;
       invertedSegment->ShallowCopy(segmentInverter->GetOutput());
       invertedSegment->CopyDirections(segmentLayerLabelmap);
-      vtkOrientedImageDataResample::ModifyImage(maskWithCurrentSegment, invertedSegment, vtkOrientedImageDataResample::OPERATION_MINIMUM);
+      vtkOrientedImageDataResample::ModifyImage(maskImage, invertedSegment, vtkOrientedImageDataResample::OPERATION_MINIMUM);
       }
 
-    // If we need to the modifier labelmap, make a copy to not modify the input
-    vtkOrientedImageDataResample::ApplyImageMask(modifierLabelmap, maskWithCurrentSegment, m_EraseValue, true);
+    // Apply the mask to the modifier labelmap. Make a copy so that we don't modify the original.
+    modifierLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
+    modifierLabelmap->DeepCopy(modifierLabelmapInput);
+    vtkOrientedImageDataResample::ApplyImageMask(modifierLabelmap, maskImage, m_EraseValue, true);
 
     if (segmentLayerLabelmap && modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet)
       {
@@ -404,7 +403,6 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
         vtkNew<vtkOrientedImageData> segmentOutsideMask;
         segmentOutsideMask->ShallowCopy(segmentThreshold->GetOutput());
         segmentOutsideMask->CopyDirections(segmentLayerLabelmap);
-        vtkOrientedImageDataResample::ModifyImage(segmentOutsideMask, maskImage, vtkOrientedImageDataResample::OPERATION_MINIMUM);
         vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, segmentOutsideMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
         }
       }
@@ -610,20 +608,19 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
         }
       }
     }
-  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove)
+  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove
+    && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentEditorNode::PaintAllowedInsideSingleSegment
+    && this->parameterSetNode()->GetMaskSegmentID()
+    && strcmp(this->parameterSetNode()->GetMaskSegmentID(), segmentID) != 0)
     {
     // In general, we don't try to "add back" areas to other segments when an area is removed from the selected segment.
     // The only exception is when we draw inside one specific segment. In that case erasing adds to the mask segment. It is useful
     // for splitting a segment into two by painting.
-    if (this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentEditorNode::PaintAllowedInsideSingleSegment
-      && this->parameterSetNode()->GetMaskSegmentID())
+    if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
+      modifierLabelmap, segmentationNode, this->parameterSetNode()->GetMaskSegmentID(), vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK,
+      extent, false, segmentIDsToOverwrite))
       {
-      if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-        modifierLabelmap, segmentationNode, this->parameterSetNode()->GetMaskSegmentID(), vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK,
-        extent, false, segmentIDsToOverwrite))
-        {
-        qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from segment " << this->parameterSetNode()->GetMaskSegmentID();
-        }
+      qCritical() << Q_FUNC_INFO << ": Failed to add back modifier labelmap to segment " << this->parameterSetNode()->GetMaskSegmentID();
       }
     }
 

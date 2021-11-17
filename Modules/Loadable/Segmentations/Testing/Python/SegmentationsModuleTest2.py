@@ -42,6 +42,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
     self.TestSection_SharedLabelmapMultipleLayerEditing()
     self.TestSection_IslandEffects()
     self.TestSection_MarginEffects()
+    self.TestSection_MaskingSettings()
     logging.info('Test finished')
 
   #------------------------------------------------------------------------------
@@ -87,7 +88,9 @@ class SegmentationsModuleTest2(unittest.TestCase):
   def TestSection_SetupScene(self):
 
     self.paintEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Paint")
+    self.eraseEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Erase")
     self.islandEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Islands")
+    self.thresholdEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Threshold")
 
     self.segmentEditorNode = slicer.util.getNode("SegmentEditor")
     self.assertIsNotNone(self.segmentEditorNode)
@@ -359,3 +362,115 @@ class SegmentationsModuleTest2(unittest.TestCase):
       self.checkSegmentVoxelCount(1, 1) # Not overwritten
 
     self.segmentEditorNode.SetOverwriteMode(oldOverwriteMode)
+
+  def TestSection_MaskingSettings(self):
+
+    self.segmentation.RemoveAllSegments()
+    segment1Id = self.segmentation.AddEmptySegment("Segment_1")
+    segment2Id = self.segmentation.AddEmptySegment("Segment_2")
+    segment3Id = self.segmentation.AddEmptySegment("Segment_3")
+
+    oldOverwriteMode = self.segmentEditorNode.GetOverwriteMode()
+
+    #-------------------
+    # Test applying threshold with no masking
+    self.segmentEditorNode.SetSelectedSegmentID(segment1Id)
+    self.thresholdEffect.setParameter("MinimumThreshold","-17")
+    self.thresholdEffect.setParameter("MaximumThreshold","848")
+    self.thresholdEffect.self().onApply()
+    self.checkSegmentVoxelCount(0, 204) # Segment_1
+    self.checkSegmentVoxelCount(1, 0) # Segment_2
+
+    #-------------------
+    # Add paint to segment 2. No overwrite
+    paintModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    paintModifierLabelmap.SetImageToWorldMatrix(self.ijkToRas)
+    paintModifierLabelmap.SetExtent(2, 5, 2, 5, 2, 5)
+    paintModifierLabelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+    paintModifierLabelmap.GetPointData().GetScalars().Fill(1)
+
+    self.segmentEditorNode.SetOverwriteMode(self.segmentEditorNode.OverwriteNone)
+    self.segmentEditorNode.SetSelectedSegmentID(segment2Id)
+    self.paintEffect.modifySelectedSegmentByLabelmap(paintModifierLabelmap, self.paintEffect.ModificationModeAdd)
+
+    self.checkSegmentVoxelCount(0, 204) # Segment_1
+    self.checkSegmentVoxelCount(1, 64) # Segment_2
+
+    #-------------------
+    # Test erasing with no masking
+    eraseModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    eraseModifierLabelmap.SetImageToWorldMatrix(self.ijkToRas)
+    eraseModifierLabelmap.SetExtent(2, 5, 2, 5, 2, 5)
+    eraseModifierLabelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+    eraseModifierLabelmap.GetPointData().GetScalars().Fill(1)
+
+    self.segmentEditorNode.SetSelectedSegmentID(segment1Id)
+    self.eraseEffect.modifySelectedSegmentByLabelmap(eraseModifierLabelmap, self.paintEffect.ModificationModeRemove)
+    self.checkSegmentVoxelCount(0, 177) # Segment_1
+    self.checkSegmentVoxelCount(1, 64) # Segment_2
+
+    #-------------------
+    # Test erasing with masking on empty segment
+    self.segmentEditorNode.SetSelectedSegmentID(segment1Id)
+    self.thresholdEffect.self().onApply() # Reset Segment_1
+    self.checkSegmentVoxelCount(0, 204) # Segment_1
+    self.segmentEditorNode.SetMaskMode(slicer.vtkMRMLSegmentationNode.EditAllowedInsideSingleSegment)
+    self.segmentEditorNode.SetMaskSegmentID(segment2Id)
+    self.eraseEffect.modifySelectedSegmentByLabelmap(eraseModifierLabelmap, self.paintEffect.ModificationModeRemove)
+    self.checkSegmentVoxelCount(0, 177) # We expect to be able to erase the current segment regardless of masking
+    self.checkSegmentVoxelCount(1, 64) # Segment_2
+
+    #-------------------
+    # Test erasing with masking on the same segment
+    self.segmentEditorNode.SetSelectedSegmentID(segment1Id)
+    self.thresholdEffect.self().onApply() # Reset Segment_1
+    self.checkSegmentVoxelCount(0, 204) # Segment_1
+    self.segmentEditorNode.SetMaskSegmentID(segment1Id)
+    self.eraseEffect.modifySelectedSegmentByLabelmap(eraseModifierLabelmap, self.paintEffect.ModificationModeRemove)
+    self.checkSegmentVoxelCount(0, 177) # Segment_1
+    self.checkSegmentVoxelCount(1, 64) # Segment_2
+
+    #-------------------
+    # Test erasing all segments
+    self.segmentEditorNode.SetMaskMode(slicer.vtkMRMLSegmentationNode.EditAllowedEverywhere)
+    self.thresholdEffect.self().onApply() # Reset Segment_1
+    self.checkSegmentVoxelCount(0, 204) # Segment_1
+    self.segmentEditorNode.SetSelectedSegmentID(segment1Id)
+    self.eraseEffect.modifySelectedSegmentByLabelmap(eraseModifierLabelmap, self.paintEffect.ModificationModeRemoveAll)
+    self.checkSegmentVoxelCount(0, 177) # Segment_1
+    self.checkSegmentVoxelCount(1, 0) # Segment_2
+
+    #-------------------
+    # Test adding back segments
+    self.thresholdEffect.self().onApply() # Reset Segment_1
+    self.checkSegmentVoxelCount(0, 204) # Segment_1
+    self.segmentEditorNode.SetMaskMode(slicer.vtkMRMLSegmentationNode.EditAllowedInsideSingleSegment)
+    self.segmentEditorNode.SetMaskSegmentID(segment2Id)
+    self.eraseEffect.modifySelectedSegmentByLabelmap(eraseModifierLabelmap, self.paintEffect.ModificationModeRemove)
+    self.checkSegmentVoxelCount(0, 177) # Segment_1
+    self.checkSegmentVoxelCount(1, 27) # Segment_2
+
+    #-------------------
+    # Test threshold effect segment mask
+    self.segmentEditorNode.SetMaskSegmentID(segment2Id) # Erase Segment_2
+    self.segmentEditorNode.SetSelectedSegmentID(segment2Id)
+    self.eraseEffect.modifySelectedSegmentByLabelmap(eraseModifierLabelmap, self.paintEffect.ModificationModeRemove)
+    self.segmentEditorNode.SetMaskSegmentID(segment1Id)
+    self.segmentEditorNode.SetSelectedSegmentID(segment2Id)
+    self.thresholdEffect.self().onApply() # Threshold Segment_2 within Segment_1
+    self.checkSegmentVoxelCount(0, 177) # Segment_1
+    self.checkSegmentVoxelCount(1, 177) # Segment_2
+
+    #-------------------
+    # Test intensity masking with segment mask
+    self.segmentEditorNode.MasterVolumeIntensityMaskOn()
+    self.segmentEditorNode.SetMasterVolumeIntensityMaskRange(-17, 848)
+    self.thresholdEffect.setParameter("MinimumThreshold","-99999")
+    self.thresholdEffect.setParameter("MaximumThreshold","99999")
+    self.segmentEditorNode.SetSelectedSegmentID(segment3Id)
+    self.thresholdEffect.self().onApply() # Threshold Segment_3
+    self.checkSegmentVoxelCount(2, 177) # Segment_3
+
+    # Restore old overwrite setting
+    self.segmentEditorNode.SetOverwriteMode(oldOverwriteMode)
+    self.segmentEditorNode.MasterVolumeIntensityMaskOff()
