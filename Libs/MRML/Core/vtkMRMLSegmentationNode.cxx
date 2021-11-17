@@ -235,7 +235,9 @@ void vtkMRMLSegmentationNode::SetAndObserveSegmentation(vtkSegmentation* segment
       this->Segmentation, vtkSegmentation::RepresentationModified, this, this->SegmentationModifiedCallbackCommand);
     vtkEventBroker::GetInstance()->AddObservation(
       this->Segmentation, vtkSegmentation::SegmentsOrderModified, this, this->SegmentationModifiedCallbackCommand);
-  }
+    }
+
+  this->InvokeCustomModifiedEvent(vtkMRMLSegmentationNode::SegmentationChangedEvent);
 }
 
 //---------------------------------------------------------------------------

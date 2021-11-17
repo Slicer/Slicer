@@ -241,6 +241,7 @@ void qMRMLSegmentsModel::setSegmentationNode(vtkMRMLSegmentationNode* segmentati
     d->SegmentationNode->AddObserver(vtkSegmentation::SegmentModified, d->CallBack, -10.0);
     d->SegmentationNode->AddObserver(vtkSegmentation::SegmentsOrderModified, d->CallBack, -15.0);
     d->SegmentationNode->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent, d->CallBack, -15.0);
+    d->SegmentationNode->AddObserver(vtkMRMLSegmentationNode::SegmentationChangedEvent, d->CallBack);
     }
 }
 
@@ -344,6 +345,8 @@ void qMRMLSegmentsModel::rebuildFromSegments()
 {
   Q_D(qMRMLSegmentsModel);
 
+  this->beginResetModel();
+
   // Enabled so it can be interacted with
   this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
 
@@ -362,6 +365,8 @@ void qMRMLSegmentsModel::rebuildFromSegments()
     {
     d->insertSegment(QString::fromStdString(segmentID));
     }
+
+  this->endResetModel();
 }
 
 //------------------------------------------------------------------------------
@@ -774,6 +779,9 @@ void qMRMLSegmentsModel::onEvent(
       break;
     case vtkMRMLDisplayableNode::DisplayModifiedEvent:
       model->onDisplayNodeModified();
+      break;
+    case vtkMRMLSegmentationNode::SegmentationChangedEvent:
+      model->rebuildFromSegments();
       break;
     }
 }

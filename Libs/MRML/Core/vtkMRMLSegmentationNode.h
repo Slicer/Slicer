@@ -291,9 +291,11 @@ public:
   vtkMRMLColorTableNode* GetLabelmapConversionColorTableNode();
 
   /// ReferenceImageGeometryChangedEvent is fired when the ReferenceImageGeometry node reference is Added, Modified, or Removed
+  /// SegmentationChangedEvent is fired when a different vtkSegmentation object is set into the node.
   enum
   {
-    ReferenceImageGeometryChangedEvent = 23000
+    ReferenceImageGeometryChangedEvent = 23000,
+    SegmentationChangedEvent
   };
 
 protected:

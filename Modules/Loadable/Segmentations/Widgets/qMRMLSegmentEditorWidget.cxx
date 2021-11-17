@@ -1270,9 +1270,16 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   d->SurfaceSmoothingSlider->blockSignals(wasBlocked);
 
   QString selectedSegmentID;
-  if (d->ParameterSetNode->GetSelectedSegmentID())
+  if (d->ParameterSetNode->GetSelectedSegmentID() && strcmp(d->ParameterSetNode->GetSelectedSegmentID(), "") != 0)
     {
     selectedSegmentID = QString(d->ParameterSetNode->GetSelectedSegmentID());
+
+    // Check if selected segment ID is invalid.
+    if (!d->SegmentationNode->GetSegmentation()
+      || d->SegmentationNode->GetSegmentation()->GetSegmentIndex(d->ParameterSetNode->GetSelectedSegmentID()) < 0)
+      {
+      selectedSegmentID.clear();
+      }
     }
 
   // Disable adding new segments until master volume is set (or reference geometry is specified for the segmentation).
