@@ -355,6 +355,7 @@ void qMRMLSegmentsModel::rebuildFromSegments()
 
   if (!d->SegmentationNode)
     {
+    this->endResetModel();
     return;
     }
 
