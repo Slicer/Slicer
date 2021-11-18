@@ -35,10 +35,9 @@
 #include "vtkCalculateOversamplingFactor.h"
 
 // MRML includes
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLTransformNode.h"
-#include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLModelNode.h"
 
 // VTK includes
 #include <vtkAddonMathUtilities.h>
