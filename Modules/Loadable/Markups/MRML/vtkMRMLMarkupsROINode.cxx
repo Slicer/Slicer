@@ -517,7 +517,7 @@ void vtkMRMLMarkupsROINode::SetROIType(int roiType)
     {
     case vtkMRMLMarkupsROINode::ROITypeBox:
       this->RequiredNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
-      this->MaximumNumberOfControlPoints = -1;
+      this->MaximumNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
       break;
     case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
       this->RequiredNumberOfControlPoints = NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS;
@@ -738,6 +738,7 @@ void vtkMRMLMarkupsROINode::UpdateBoxROIFromControlPoints()
   int numberOfControlPoints = this->GetNumberOfControlPoints();
   if (numberOfControlPoints == 0)
     {
+    this->SetSize(0.0,  0.0, 0.0);
     return;
     }
 
@@ -793,6 +794,7 @@ void vtkMRMLMarkupsROINode::UpdateBoxROIFromControlPoints()
     }
   else if (this->GetNumberOfDefinedControlPoints() == 0)
     {
+    this->RequiredNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
     this->MaximumNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
     }
 }
