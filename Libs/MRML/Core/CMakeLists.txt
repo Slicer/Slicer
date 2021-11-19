@@ -151,9 +151,6 @@ set(MRMLCore_SRCS
   vtkMRMLDiffusionWeightedVolumeNode.cxx
   vtkMRMLDisplayNode.cxx
   vtkMRMLDisplayableNode.cxx
-  vtkMRMLFiducial.cxx
-  vtkMRMLFiducialListNode.cxx
-  vtkMRMLFiducialListStorageNode.cxx
   vtkMRMLFolderDisplayNode.cxx
   vtkMRMLHierarchyNode.cxx
   vtkMRMLHierarchyStorageNode.cxx
