@@ -250,10 +250,6 @@ public:
   /// it doesn't already have one, return the ID, nullptr on failure
   const char* AddDisplayNodeForHierarchyNode(vtkMRMLAnnotationHierarchyNode *hnode);
 
-  /// Legacy support: load a Slicer3 fiducial list from file. Uses FiducialsLogic to load into a legacy node first, then translates into annotation nodes
-  /// returns a comma separated list of the annot nodes loaded
-  char *LoadFiducialList(const char *filename);
-
   /// Load an annotation from file, return nullptr on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene
   /// as well. fileType is from this class's enum

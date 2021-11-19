@@ -114,7 +114,6 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerApplicationLogic.cxx
   vtkSlicerModuleLogic.cxx
   vtkSlicerTask.cxx
-  vtkSlicerFiducialsLogic.cxx
   vtkDataIOManagerLogic.cxx
   # slicer's vtk extensions (filters)
   vtkSlicerGlyphSource2D.cxx

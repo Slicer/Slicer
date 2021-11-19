@@ -68,10 +68,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
                           vtkDataIOManagerLogic *dataIOManagerLogic);
 
 
-  /// Perform the default behavior related to selecting a fiducial list
-  /// (display it in the Fiducials GUI)
-  void PropagateFiducialListSelection();
-
   /// Create a thread for processing
   void CreateProcessingThread();
 

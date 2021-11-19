@@ -27,8 +27,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLFiducialListNode.h"
-#include "vtkMRMLFiducialListStorageNode.h"
 #include "vtkMRMLFolderDisplayNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLHierarchyStorageNode.h"
@@ -179,8 +177,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelDisplayNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipModelsNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFiducialListNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFiducialListStorageNode >::New() );
   this->RegisterNodeClass(vtkSmartPointer< vtkMRMLFolderDisplayNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROINode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROIListNode >::New() );

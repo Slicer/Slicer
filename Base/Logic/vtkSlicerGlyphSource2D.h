@@ -131,8 +131,6 @@ public:
   void SetGlyphTypeToHookedArrow() {this->SetGlyphType(VTK_HOOKEDARROW_GLYPH);}
   void SetGlyphTypeToStarBurst() {this->SetGlyphType(VTK_STARBURST_GLYPH);}
 
-  void SetGlyphTypeAsString(const char* type);
-
 protected:
   vtkSlicerGlyphSource2D();
   ~vtkSlicerGlyphSource2D() override  = default;

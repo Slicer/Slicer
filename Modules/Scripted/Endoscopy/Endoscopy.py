@@ -86,7 +86,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
     inputFiducialsNodeSelector.toolTip = "Select a fiducial list to define control points for the path."
     inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLMarkupsCurveNode',
-      'vtkMRMLAnnotationHierarchyNode', 'vtkMRMLFiducialListNode']
+      'vtkMRMLAnnotationHierarchyNode']
     inputFiducialsNodeSelector.noneEnabled = False
     inputFiducialsNodeSelector.addEnabled = False
     inputFiducialsNodeSelector.removeEnabled = False

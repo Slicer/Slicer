@@ -691,16 +691,6 @@ def loadFiberBundle(filename, returnNode=False):
   """
   return loadNodeFromFile(filename, 'FiberBundleFile', {}, returnNode)
 
-def loadFiducialList(filename, returnNode=False):
-  """Load node from file.
-
-  :param filename: full path of the file to load.
-  :param returnNode: Deprecated.
-  :return: loaded node (if multiple nodes are loaded then a list of nodes).
-    If returnNode is True then a status flag and loaded node are returned.
-  """
-  return loadNodeFromFile(filename, 'FiducialListFile', {}, returnNode)
-
 def loadAnnotationFiducial(filename, returnNode=False):
   """Load node from file.
 

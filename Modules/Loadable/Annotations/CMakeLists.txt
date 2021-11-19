@@ -49,15 +49,12 @@ set(MODULE_SRCS
   qSlicerAnnotationsModule.h
   qSlicerAnnotationsReader.cxx
   qSlicerAnnotationsReader.h
-  qSlicerFiducialsReader.cxx
-  qSlicerFiducialsReader.h
   )
 
 set(MODULE_MOC_SRCS
   qSlicerAnnotationsIOOptionsWidget.h
   qSlicerAnnotationsModule.h
   qSlicerAnnotationsReader.h
-  qSlicerFiducialsReader.h
   GUI/qSlicerAnnotationModuleWidget.h
   GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.h

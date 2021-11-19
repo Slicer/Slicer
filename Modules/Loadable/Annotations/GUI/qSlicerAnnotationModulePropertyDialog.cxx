@@ -26,7 +26,6 @@
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLFiducialListNode.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
 
 // MRML includes

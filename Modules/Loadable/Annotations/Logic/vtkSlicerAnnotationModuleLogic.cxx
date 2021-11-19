@@ -22,15 +22,11 @@
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 
 // MRML includes
-#include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLUnitNode.h>
-
-// Logic includes
-#include <vtkSlicerFiducialsLogic.h>
 
 // VTK includes
 #include <vtkImageData.h>
@@ -106,104 +102,6 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
     }
 }
 
-//-----------------------------------------------------------------------------
-// Load a fiducial list from file and make it into a set of fiducial annotations
-//-----------------------------------------------------------------------------
-char *vtkSlicerAnnotationModuleLogic::LoadFiducialList(const char *filename)
-{
-  char *nodeID = nullptr;
-  std::string idList;
-  if (!filename)
-    {
-    vtkErrorMacro("LoadFiducialList: null file name, cannot load");
-    return nodeID;
-    }
-
-  // turn on batch processing
-  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
-
-  // first off, load it as a fiducial list
-  vtkSlicerFiducialsLogic* fiducialsLogic = vtkSlicerFiducialsLogic::New();
-  fiducialsLogic->SetMRMLScene(this->GetMRMLScene());
-  vtkMRMLFiducialListNode* node = fiducialsLogic->LoadFiducialList(filename);
-  if (!node)
-    {
-    vtkErrorMacro("Unable to load fiducial list from : " << filename);
-    return nodeID;
-    }
-  // get the list name and make a hierarchy node with that name to add the
-  // fids to
-  char *fidListName = node->GetName();
-  vtkMRMLAnnotationHierarchyNode* fidListHierarchyNode =
-      vtkMRMLAnnotationHierarchyNode::New();
-  fidListHierarchyNode->HideFromEditorsOff();
-  if (fidListName)
-    {
-    fidListHierarchyNode->SetName(fidListName);
-    }
-  this->GetMRMLScene()->AddNode(fidListHierarchyNode);
-  // make it a child of the top level node
-  fidListHierarchyNode->SetParentNodeID(this->GetTopLevelHierarchyNodeID());
-  // and make it active so that the fids will be added to it
-  this->SetActiveHierarchyNodeID(fidListHierarchyNode->GetID());
-
-  // now iterate through the list and make fiducials
-  int numFids = node->GetNumberOfFiducials();
-  double *color = node->GetColor();
-  double *selColor = node->GetSelectedColor();
-  double symbolScale = node->GetSymbolScale();
-  double textScale = node->GetTextScale();
-  int locked = node->GetLocked();
-  int glyphType = node->GetGlyphType();
-  for (int n = 0; n < numFids; n++)
-    {
-    float *xyz = node->GetNthFiducialXYZ(n);
-    int sel = node->GetNthFiducialSelected(n);
-    int vis = node->GetNthFiducialVisibility(n);
-    const char *labelText = node->GetNthFiducialLabelText(n);
-
-    // now make an annotation
-    vtkMRMLAnnotationFiducialNode * fnode = vtkMRMLAnnotationFiducialNode::New();
-    fnode->SetName(labelText);
-    double coord[3] = {(double)xyz[0], (double)xyz[1], (double)xyz[2]};
-    fnode->AddControlPoint(coord, sel, vis);
-    fnode->SetSelected(sel);
-    fnode->SetLocked(locked);
-
-    this->GetMRMLScene()->AddNode(fnode);
-    if (n != 0)
-      {
-      idList += std::string(",");
-      }
-    idList += std::string(fnode->GetID());
-    fnode->CreateAnnotationTextDisplayNode();
-    fnode->CreateAnnotationPointDisplayNode();
-    fnode->SetTextScale(textScale);
-    fnode->GetAnnotationPointDisplayNode()->SetGlyphScale(symbolScale);
-    fnode->GetAnnotationPointDisplayNode()->SetGlyphType(glyphType);
-    fnode->GetAnnotationPointDisplayNode()->SetColor(color);
-    fnode->GetAnnotationPointDisplayNode()->SetSelectedColor(selColor);
-    fnode->GetAnnotationTextDisplayNode()->SetColor(color);
-    fnode->GetAnnotationTextDisplayNode()->SetSelectedColor(selColor);
-    fnode->SetDisplayVisibility(vis);
-    fnode->Delete();
-    }
-  // clean up
-  fidListHierarchyNode->Delete();
-  // remove the legacy node
-  this->GetMRMLScene()->RemoveNode(node->GetStorageNode());
-  this->GetMRMLScene()->RemoveNode(node);
-
-  // turn off batch processing
-  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
-
-  if (idList.length())
-    {
-    nodeID = (char *)malloc(sizeof(char) * (idList.length() + 1));
-    strcpy(nodeID, idList.c_str());
-    }
-  return nodeID;
-}
 
 //-----------------------------------------------------------------------------
 // Load an annotation from file

@@ -27,7 +27,6 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
   TEST_SET_GET_STRING( node1.GetPointer(), ActiveVolumeID);
   TEST_SET_GET_STRING( node1.GetPointer(), SecondaryVolumeID);
   TEST_SET_GET_STRING( node1.GetPointer(), ActiveLabelVolumeID);
-  TEST_SET_GET_STRING( node1.GetPointer(), ActiveFiducialListID);
   TEST_SET_GET_STRING( node1.GetPointer(), ActivePlaceNodeID);
   TEST_SET_GET_STRING( node1.GetPointer(), ActivePlaceNodeClassName);
   TEST_SET_GET_STRING( node1.GetPointer(), ActiveROIListID);
