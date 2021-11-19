@@ -390,8 +390,13 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     }
   if (settings.contains("Markups/GlyphType"))
     {
-    markupsDisplayNode->SetGlyphType(vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(
-      settings.value("Markups/GlyphType").toString().toUtf8()));
+    int glyphType = vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(settings.value("Markups/GlyphType").toString().toUtf8());
+    // If application settings is old then it may contain invalid GlyphType. In this case use Sphere3D glyph instead.
+    if (glyphType == vtkMRMLMarkupsDisplayNode::GlyphTypeInvalid)
+      {
+      glyphType = vtkMRMLMarkupsDisplayNode::Sphere3D;
+      }
+    markupsDisplayNode->SetGlyphType(glyphType);
     }
   if (settings.contains("Markups/GlyphScale"))
     {
