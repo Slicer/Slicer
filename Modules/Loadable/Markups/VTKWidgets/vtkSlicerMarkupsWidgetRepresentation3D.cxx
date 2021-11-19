@@ -804,43 +804,48 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
-    if (!this->MarkupsDisplayNode->GetOccludedVisibility())
+    if (controlPoints->ControlPoints->GetNumberOfPoints() > 0)
       {
-      if (!zBuffer)
+      if (!this->MarkupsDisplayNode->GetOccludedVisibility())
         {
-        controlPoints->SelectVisiblePoints->UpdateZBuffer();
-        zBuffer = controlPoints->SelectVisiblePoints->GetZBuffer();
-        vtkSlicerMarkupsWidgetRepresentation3D::CachedZBuffers[this->Renderer] = zBuffer;
+        if (!zBuffer)
+          {
+          controlPoints->SelectVisiblePoints->UpdateZBuffer();
+          zBuffer = controlPoints->SelectVisiblePoints->GetZBuffer();
+          vtkSlicerMarkupsWidgetRepresentation3D::CachedZBuffers[this->Renderer] = zBuffer;
+          }
+        else
+          {
+          controlPoints->SelectVisiblePoints->SetZBuffer(zBuffer);
+          }
+        controlPoints->SelectVisiblePoints->Update();
         }
       else
         {
-        controlPoints->SelectVisiblePoints->SetZBuffer(zBuffer);
+        if (controlPoints->VisiblePointsPolyData->GetMTime() < controlPoints->LabelControlPointsPolyData->GetMTime())
+          {
+          controlPoints->VisiblePointsPolyData->DeepCopy(controlPoints->LabelControlPointsPolyData);
+          }
         }
-      controlPoints->SelectVisiblePoints->Update();
-      }
-    else
-      {
-      controlPoints->VisiblePointsPolyData->DeepCopy(controlPoints->LabelControlPointsPolyData);
-      }
 
-    if (controlPoints->Actor->GetVisibility())
-      {
-      count += controlPoints->Actor->RenderOverlay(viewport);
-      }
-    if (controlPoints->OccludedActor->GetVisibility())
-      {
-      count += controlPoints->OccludedActor->RenderOverlay(viewport);
-      }
-    if (controlPoints->LabelsActor->GetVisibility())
-      {
-      count += controlPoints->LabelsActor->RenderOverlay(viewport);
-      }
-    if (controlPoints->LabelsOccludedActor->GetVisibility())
-      {
-      count += controlPoints->LabelsOccludedActor->RenderOverlay(viewport);
+      if (controlPoints->Actor->GetVisibility())
+        {
+        count += controlPoints->Actor->RenderOverlay(viewport);
+        }
+      if (controlPoints->OccludedActor->GetVisibility())
+        {
+        count += controlPoints->OccludedActor->RenderOverlay(viewport);
+        }
+      if (controlPoints->LabelsActor->GetVisibility())
+        {
+        count += controlPoints->LabelsActor->RenderOverlay(viewport);
+        }
+      if (controlPoints->LabelsOccludedActor->GetVisibility())
+        {
+        count += controlPoints->LabelsOccludedActor->RenderOverlay(viewport);
+        }
       }
     }
-
   this->TextActorOccluded = false;
   if (this->TextActor->GetVisibility() && this->MarkupsNode && this->MarkupsDisplayNode)
     {

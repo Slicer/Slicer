@@ -2580,6 +2580,7 @@ void vtkMRMLMarkupsNode::UpdateAllMeasurements()
 void vtkMRMLMarkupsNode::UpdateMeasurementsInternal()
 {
   // Calculate enabled measurements
+  bool wasModify = this->StartModify();
   for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
     {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
@@ -2591,6 +2592,7 @@ void vtkMRMLMarkupsNode::UpdateMeasurementsInternal()
     }
 
   this->WriteMeasurementsToDescription();
+  this->EndModify(wasModify);
 }
 
 //---------------------------------------------------------------------------
@@ -2678,12 +2680,14 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
       }
     }
 
+  bool wasModify = this->StartModify();
   this->SetDescription(description.c_str());
   if (properties != this->PropertiesLabelText)
     {
     this->PropertiesLabelText = properties;
     this->Modified();
     }
+  this->EndModify(wasModify);
 }
 
 //---------------------------------------------------------------------------
