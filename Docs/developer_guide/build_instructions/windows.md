@@ -106,4 +106,10 @@ Slicer.exe --VisualStudioProject
 
 ## Common errors
 
+### Errors related to Python
+
+Errors due to missing Python libraries (or other Python related errors) may be caused by the build system detecting Python installations somewhere on the system, instead of Slicer's own Python environment. To resolve such issues, remove all references to Python in the environment variables (PATH, PYTHONPATH, PYTHONHOME) and maybe even temporarily rename or remove other Python installations. Other Python installations must be removed/renamed before starting to build Slicer and can be restored after Slicer build completes.
+
+### Other problems
+
 See list of issues common to all operating systems on [Common errors](common_errors.md) page.
