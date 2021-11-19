@@ -124,7 +124,6 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
     case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
       this->UpdateCubeSourceFromMRML(roiNode);
       break;
-      break;
     default:
       this->ROIActor->SetVisibility(false);
       return;
@@ -132,7 +131,12 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
 
   this->ROIToWorldTransform->SetMatrix(roiNode->GetObjectToWorldMatrix());
 
-  this->ROIActor->SetVisibility(true);
+  this->ROIActor->SetVisibility(roiNode->GetNumberOfControlPoints() > 0 && displayNode->GetFillVisibility());
+  this->ROIOccludedActor->SetVisibility(this->ROIActor->GetVisibility() && displayNode->GetOccludedVisibility());
+
+  this->ROIOutlineActor->SetVisibility(roiNode->GetNumberOfControlPoints() > 0 && displayNode->GetOutlineVisibility());
+  this->ROIOutlineOccludedActor->SetVisibility(this->ROIOutlineActor->GetVisibility() && displayNode->GetOccludedVisibility());
+
   this->VisibilityOn();
   this->PickableOn();
 
@@ -156,7 +160,7 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
     }
 
   double opacity = displayNode->GetOpacity();
-  double fillOpacity = this->MarkupsDisplayNode->GetFillVisibility() ? displayNode->GetFillOpacity() : 0.0;
+  double fillOpacity = displayNode->GetFillOpacity();
   this->ROIProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIProperty->SetOpacity(opacity * fillOpacity);
 
@@ -166,8 +170,7 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->ROIMapper, this->ROIOccludedMapper);
 
-  double outlineOpacity = this->MarkupsDisplayNode->GetOutlineVisibility()
-    ? opacity * this->MarkupsDisplayNode->GetOutlineOpacity() : 0.0;
+  double outlineOpacity = opacity * this->MarkupsDisplayNode->GetOutlineOpacity();
   this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIOutlineProperty->SetOpacity(outlineOpacity);
 
@@ -473,6 +476,7 @@ void vtkSlicerROIRepresentation3D::UpdateInteractionPipeline()
     }
 
   this->InteractionPipeline->Actor->SetVisibility(this->MarkupsDisplayNode->GetVisibility()
+    && roiNode->GetNumberOfControlPoints() > 0
     && this->MarkupsDisplayNode->GetVisibility3D()
     && this->MarkupsDisplayNode->GetHandlesInteractive());
 
