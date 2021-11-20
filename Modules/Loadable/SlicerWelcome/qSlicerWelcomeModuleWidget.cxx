@@ -25,6 +25,8 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSignalMapper>
+#include <QStyle>
+#include <QStyleFactory>
 #include <QTextStream>
 
 // Slicer includes
@@ -65,6 +67,9 @@ public:
   bool selectModule(const QString& moduleName);
 
   QSignalMapper CollapsibleButtonMapper;
+
+  void updateIconPalette();
+  static QIcon getColorizedIcon(const QString& hexColor, const QString& resourcePath);
 };
 
 //-----------------------------------------------------------------------------
@@ -122,6 +127,51 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   QObject::connect(&this->CollapsibleButtonMapper, SIGNAL(mapped(QWidget*)),
                    q, SLOT(loadSource(QWidget*)));
+
+  this->updateIconPalette();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidgetPrivate::updateIconPalette()
+{
+  QPalette palette = qSlicerApplication::application()->palette();
+  QStyle* lightStyle = QStyleFactory::create("Light Slicer");
+  QString hexColor;
+  if (palette == lightStyle->standardPalette())
+  {
+    hexColor = lightStyle->standardPalette().color(QPalette::Text).name();
+  }
+  else
+  {
+    QStyle* darkStyle = QStyleFactory::create("Dark Slicer");
+    hexColor = darkStyle->standardPalette().color(QPalette::Text).name();
+  }
+  this->EditApplicationSettingsButton->setIcon(this->getColorizedIcon(hexColor, ":/Icons/Scalable/ApplicationSettings.svg"));
+}
+
+//-----------------------------------------------------------------------------
+QIcon qSlicerWelcomeModuleWidgetPrivate::getColorizedIcon(const QString& hexColor, const QString& resourcePath)
+{
+  QIcon icon;
+  if (hexColor == "#000000")
+  {
+    // resource icons are already colored black by default
+    icon = QIcon(resourcePath);
+  }
+  else
+  {
+    QFile file(resourcePath);
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
+    QString newHexString = "fill=\"" + hexColor;
+    QByteArray newByteArray = newHexString.toLocal8Bit();
+    const char *newHexChar = newByteArray.data();
+    data.replace("fill=\"#000000", newHexChar);
+    QPixmap pixmap;
+    pixmap.loadFromData(data);
+    icon = QIcon(pixmap);
+  }
+  return icon;
 }
 
 //-----------------------------------------------------------------------------
@@ -263,4 +313,20 @@ bool qSlicerWelcomeModuleWidget::exploreLoadedData()
 {
   Q_D(qSlicerWelcomeModuleWidget);
   return d->selectModule("Data");
+}
+
+//---------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::changeEvent(QEvent* event)
+{
+  Q_D(qSlicerWelcomeModuleWidget);
+  switch (event->type())
+    {
+    case QEvent::PaletteChange:
+      {
+      d->updateIconPalette();
+      break;
+      }
+    default:
+      break;
+    }
 }

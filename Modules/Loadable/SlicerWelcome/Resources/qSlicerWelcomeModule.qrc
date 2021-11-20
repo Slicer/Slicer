@@ -10,11 +10,11 @@
     <file>Images/WelcomeLogo@2x.png</file>
     <file>HTML/OtherUsefulHints.html</file>
     <file>HTML/Feedback.html</file>
-    <file>Images/SlicerLoadDicom-Original.png</file>
-    <file>Images/SlicerLoadData-Original.png</file>
     <file>Images/SlicerWWW-Original.png</file>
-    <file>Images/SlicerAdvancedGear-Original.png</file>
     <file>Images/WelcomeSubjectHierarchy.png</file>
     <file>HTML/Acknowledgment.html</file>
+  </qresource>
+  <qresource prefix="/Icons/Scalable">
+    <file alias="ApplicationSettings.svg">../../../../Base/QTGUI/Resources/Icons/settings_black_24dp.svg</file>
   </qresource>
 </RCC>

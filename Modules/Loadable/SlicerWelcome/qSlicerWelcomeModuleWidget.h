@@ -53,6 +53,7 @@ public slots:
 
 protected:
   void setup() override;
+  void changeEvent(QEvent* event) override;
 
 protected slots:
   void loadSource(QWidget*);
