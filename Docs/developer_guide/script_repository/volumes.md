@@ -452,7 +452,7 @@ print(point_Ras)
 
 ### Get the values of all voxels for a label value
 
-If you have a background image called ‘Volume’ and a mask called ‘Volume-label’ created with the Editor you could do something like this:
+If you have a background image called ‘Volume’ and a mask called ‘Volume-label’ created with the Segment Editor you could do something like this:
 
 ```python
 import numpy
