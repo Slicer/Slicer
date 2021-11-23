@@ -170,7 +170,6 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
 ## Related modules
 
 - [Segment Editor](segmenteditor) module is for editing segments of a segmentation node
-- Editor module: the legacy Editor module has been replaced by Segment Editor module.
 
 ## References
 

@@ -76,7 +76,7 @@ Operations (accessible in the context menu of the nodes by right-clicking them):
 - Operations for specific node types:
     - **Volumes**: icon, Edit properties and additional information in tooltip
         - **'Register this...'** action to select fixed image for registration. Right-click the moving image to initiate registration
-        - **'Segment this...'** action allows segmenting the volume, for example, in the Editor module
+        - **'Segment this...'** action allows segmenting the volume, for example, in the Segment Editor module
         - **'Toggle labelmap outline display'** for labelmaps
     - **Models**: icon, Edit properties and additional information in tooltip
     - **SceneViews**: icon, Edit properties and Restore scene view

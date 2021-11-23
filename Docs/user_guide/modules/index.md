@@ -159,7 +159,6 @@ extensionwizard.md
 :maxdepth: 1
 annotations.md
 datastore.md
-editor.md
 expertautomatedregistration.md
 labelstatistics.md
 brainslabelstats.md

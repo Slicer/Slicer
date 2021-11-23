@@ -12,7 +12,7 @@ To cite the Segment Editor in scientific publications, you can cite [3D Slicer](
 
 ## Keyboard shortcuts
 
-The following keyboard shortcuts are active when you are in the Editor module.  They are intended to allow two-handed editing, where on hand is on the mouse and the other hand uses the keyboard to switch modes.
+The following keyboard shortcuts are active when you are in the Segment Editor module.  They are intended to allow two-handed editing, where on hand is on the mouse and the other hand uses the keyboard to switch modes.
 
 | Key                       | Operation                              |
 | ------------------------- | -------------------------------------- |
@@ -256,7 +256,6 @@ Segment Editor allows editing of segmentation on slices of arbitrary orientation
 - [Segment Statistics](segmentstatistics) module computes volume, surface, mean intensity, and various other metrics for each segment.
 - [Segmentations](segmentations) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
 - [Data](data) module shows all segmentations and segments in a tree structure. Commonly used operations are available by right-clicking on an item in the tree.
-- Editor module is the predecessor of this module. Segment Editor provides all its features and many more.
 
 ## Information for Developers
 
