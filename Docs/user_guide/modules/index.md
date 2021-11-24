@@ -54,9 +54,7 @@ reformat.md
 :maxdepth: 1
 segmentations.md
 segmenteditor.md
-simpleregiongrowingsegmentation.md
 brainsroiauto.md
-robuststatisticssegmenter.md
 ```
 
 ## Quantification
@@ -142,7 +140,6 @@ orientscalarvolume.md
 vectortoscalarvolume.md
 resampledtivolume.md
 resamplescalarvectordwivolume.md
-resamplescalarvolume.md
 ```
 
 ## Developer Tools
@@ -162,6 +159,9 @@ datastore.md
 expertautomatedregistration.md
 labelstatistics.md
 brainslabelstats.md
+resamplescalarvolume.md
+robuststatisticssegmenter.md
+simpleregiongrowingsegmentation.md
 ```
 
 ## Testing
