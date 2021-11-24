@@ -170,3 +170,7 @@ brainslabelstats.md
 performancetests.md
 selftests.md
 ```
+
+## Retired Modules
+
+See the list of [retired modules](retiredmodules.md).
