@@ -292,6 +292,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
       case vtkMRMLMarkupsROIDisplayNode::HandleLAICorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLIEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLSEdge:
         bounds_ROI[0] += scaleVector_ROI[0];
         if (symmetricScale)
           {
@@ -303,6 +307,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
       case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRIEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRSEdge:
         bounds_ROI[1] += scaleVector_ROI[0];
         if (symmetricScale)
           {
@@ -320,6 +328,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
       case vtkMRMLMarkupsROIDisplayNode::HandleRPICorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandlePIEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandlePSEdge:
         bounds_ROI[2] += scaleVector_ROI[1];
         if (symmetricScale)
           {
@@ -331,6 +343,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
       case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleAIEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleASEdge:
         bounds_ROI[3] += scaleVector_ROI[1];
         if (symmetricScale)
           {
@@ -348,6 +364,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
       case vtkMRMLMarkupsROIDisplayNode::HandleRPICorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleLAICorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLIEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRIEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleAIEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandlePIEdge:
         bounds_ROI[4] += scaleVector_ROI[2];
         if (symmetricScale)
           {
@@ -359,6 +379,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
       case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner:
       case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner:
+      case vtkMRMLMarkupsROIDisplayNode::HandleLSEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleRSEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandleASEdge:
+      case vtkMRMLMarkupsROIDisplayNode::HandlePSEdge:
         bounds_ROI[5] += scaleVector_ROI[2];
         if (symmetricScale)
           {
@@ -439,6 +463,30 @@ void vtkSlicerROIWidget::FlipROIHandles(bool flipLRHandle, bool flipPAHandle, bo
       case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
         index = vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner;
         break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleRAEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleRPEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLIEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleRIEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLSEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleRSEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleLAEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleLPEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRIEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleLIEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRSEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleLSEdge;
+        break;
       default:
         break;
       }
@@ -478,6 +526,30 @@ void vtkSlicerROIWidget::FlipROIHandles(bool flipLRHandle, bool flipPAHandle, bo
       case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
         index = vtkMRMLMarkupsROIDisplayNode::HandleRASCorner;
         break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleLAEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleRAEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandlePIEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleAIEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandlePSEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleASEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleLPEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleRPEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleAIEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandlePIEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleASEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandlePSEdge;
+        break;
       default:
         break;
       }
@@ -516,6 +588,30 @@ void vtkSlicerROIWidget::FlipROIHandles(bool flipLRHandle, bool flipPAHandle, bo
         break;
       case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
         index = vtkMRMLMarkupsROIDisplayNode::HandleRPICorner;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLIEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleLSEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRIEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleRSEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleAIEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleASEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandlePIEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandlePSEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLSEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleLIEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRSEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleRIEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleASEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandleAIEdge;
+        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandlePSEdge:
+        index = vtkMRMLMarkupsROIDisplayNode::HandlePIEdge;
         break;
       default:
         break;
