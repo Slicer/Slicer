@@ -640,6 +640,8 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
   if returnNode:
     import logging
     logging.warning("loadNodeFromFile `returnNode` argument is deprecated. Loaded node is now returned directly if `returnNode` is not specified.")
+    import traceback
+    logging.debug("loadNodeFromFile was called from " + ("".join(traceback.format_stack())))
     return success, loadedNode
 
   if not success:
@@ -2246,6 +2248,8 @@ def toVTKString(text):
   """
   import logging
   logging.warning("toVTKString is deprecated! Conversion is no longer necessary.")
+  import traceback
+  logging.debug("toVTKString was called from " + ("".join(traceback.format_stack())))
   return text
 
 def toLatin1String(text):
