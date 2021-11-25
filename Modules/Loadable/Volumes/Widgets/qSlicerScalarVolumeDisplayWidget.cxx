@@ -95,8 +95,8 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
   // Add mapping from presets defined in the Volumes module logic (VolumeDisplayPresets.json)
 
     // read volume preset names from volumes logic
-  vtkSlicerVolumesLogic* volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(
-    qSlicerApplication::application()->moduleLogic("Volumes"));
+  vtkSlicerVolumesLogic* volumesModuleLogic = (qSlicerCoreApplication::application() ? vtkSlicerVolumesLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleLogic("Volumes")) : nullptr);
   if (volumesModuleLogic)
   {
     QLayout* volumeDisplayPresetsLayout = this->PresetsWidget->layout();

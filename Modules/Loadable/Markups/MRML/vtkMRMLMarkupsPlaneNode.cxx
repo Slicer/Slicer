@@ -780,9 +780,9 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double y
     }
 
   double epsilon = 1e-5;
-  double tempX[3] = { 0.0 };
-  double tempY[3] = { 0.0 };
-  double tempZ[3] = { 0.0 };
+  double tempX[3] = { 0.0, 0.0, 0.0 };
+  double tempY[3] = { 0.0, 0.0, 0.0 };
+  double tempZ[3] = { 0.0, 0.0, 0.0 };
   vtkMath::Cross(yAxis_Node, zAxis_Node, tempX);
   vtkMath::Cross(zAxis_Node, xAxis_Node, tempY);
   vtkMath::Cross(xAxis_Node, yAxis_Node, tempZ);
@@ -794,9 +794,9 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double y
     return;
     }
 
-  if (vtkMath::Dot(xAxis_Node, yAxis_Node) >= epsilon ||
-      vtkMath::Dot(yAxis_Node, zAxis_Node) >= epsilon ||
-      vtkMath::Dot(zAxis_Node, xAxis_Node) >= epsilon)
+  if (fabs(vtkMath::Dot(xAxis_Node, yAxis_Node)) >= epsilon ||
+      fabs(vtkMath::Dot(yAxis_Node, zAxis_Node)) >= epsilon ||
+      fabs(vtkMath::Dot(zAxis_Node, xAxis_Node)) >= epsilon)
     {
     vtkErrorMacro("SetAxes: Invalid vectors");
     }
@@ -810,9 +810,9 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double y
     this->SetIsPlaneValid(true);
     }
 
-  double previousXAxis_Node[3] = { 0.0 };
-  double previousYAxis_Node[3] = { 0.0 };
-  double previousZAxis_Node[3] = { 0.0 };
+  double previousXAxis_Node[3] = { 0.0, 0.0, 0.0 };
+  double previousYAxis_Node[3] = { 0.0, 0.0, 0.0 };
+  double previousZAxis_Node[3] = { 0.0, 0.0, 0.0 };
   this->GetAxes(previousXAxis_Node, previousYAxis_Node, previousZAxis_Node);
 
   vtkNew<vtkMatrix4x4> previousAxisToIdentity;
@@ -832,16 +832,14 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double y
     identityToNewAxis->SetElement(i, 2, zAxis_Node[i]);
     }
 
-  double origin_Node[3] = { 0 };
+  double origin_Node[3] = { 0.0, 0.0, 0.0 };
   this->GetOrigin(origin_Node);
 
   vtkNew<vtkTransform> oldToNewAxesTransform;
   oldToNewAxesTransform->PostMultiply();
-  vtkMath::MultiplyScalar(origin_Node, -1);
-  oldToNewAxesTransform->Translate(origin_Node);
+  oldToNewAxesTransform->Translate(-origin_Node[0], -origin_Node[1], -origin_Node[2]);
   oldToNewAxesTransform->Concatenate(previousAxisToIdentity);
   oldToNewAxesTransform->Concatenate(identityToNewAxis);
-  vtkMath::MultiplyScalar(origin_Node, -1);
   oldToNewAxesTransform->Translate(origin_Node);
 
   this->ApplyTransform(oldToNewAxesTransform);
@@ -1520,7 +1518,7 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFromPointNormal()
     double origin_World[3] = { 0,0,0 };
     baseToWorldTransform->TransformPoint(origin_World, origin_World);
 
-    this->SetNthControlPointPositionWorldFromArray(0, origin_World, this->GetNthControlPointPositionStatus(0));
+    this->SetNthControlPointPositionWorld(0, origin_World, this->GetNthControlPointPositionStatus(0));
     }
 }
 
@@ -1575,9 +1573,9 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFrom3Points()
     vtkMath::MultiplyScalar(yAxis_World, this->Size[1] * 0.5);
     vtkMath::Add(origin_World, yAxis_World, point2_World);
 
-    this->SetNthControlPointPositionWorldFromArray(0, origin_World);
-    this->SetNthControlPointPositionWorldFromArray(1, point1_World);
-    this->SetNthControlPointPositionWorldFromArray(2, point2_World);
+    this->SetNthControlPointPositionWorld(0, origin_World);
+    this->SetNthControlPointPositionWorld(1, point1_World);
+    this->SetNthControlPointPositionWorld(2, point2_World);
     }
 
   double point0_World[3] = { 0.0, 0.0, 0.0 };
@@ -1625,9 +1623,9 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFrom3Points()
 
   if (pointChanged)
     {
-    this->SetNthControlPointPositionWorldFromArray(0, point0_World);
-    this->SetNthControlPointPositionWorldFromArray(1, point1_World);
-    this->SetNthControlPointPositionWorldFromArray(2, point2_World);
+    this->SetNthControlPointPositionWorld(0, point0_World);
+    this->SetNthControlPointPositionWorld(1, point1_World);
+    this->SetNthControlPointPositionWorld(2, point2_World);
     }
 }
 

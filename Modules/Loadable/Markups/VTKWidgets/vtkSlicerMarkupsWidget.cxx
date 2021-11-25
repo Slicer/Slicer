@@ -1052,7 +1052,7 @@ void vtkSlicerMarkupsWidget::TranslatePoint(double eventPos[2], bool snapToSlice
     worldPos[2] += worldPosProjDiff[2];
     }
 
-  markupsNode->SetNthControlPointPositionWorldFromArray(activeControlPointIndex, worldPos);
+  markupsNode->SetNthControlPointPositionWorld(activeControlPointIndex, worldPos);
 }
 
 //----------------------------------------------------------------------
@@ -1675,7 +1675,7 @@ int vtkSlicerMarkupsWidget::AddPointFromWorldCoordinate(const double worldCoordi
     {
     // convert point preview to final point
     addedControlPoint = this->PreviewPointIndex;
-    markupsNode->SetNthControlPointPositionWorldFromArray(addedControlPoint, worldCoordinates);
+    markupsNode->SetNthControlPointPositionWorld(addedControlPoint, worldCoordinates);
     this->PreviewPointIndex = -1;
     }
   else

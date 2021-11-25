@@ -592,7 +592,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLDisplayableNode* roi, vtkM
 
   vtkNew<vtkMRMLMarkupsFiducialNode> originMarkupNode;
   // Markups are transformed from RAS to LPS by the CLI infrastructure, so we pass them in RAS
-  originMarkupNode->AddFiducial(outputOrigin_RAS[0], outputOrigin_RAS[1], outputOrigin_RAS[2]);
+  originMarkupNode->AddControlPoint(outputOrigin_RAS);
   this->GetMRMLScene()->AddNode(originMarkupNode.GetPointer());
   cmdNode->SetParameterAsString("outputImageOrigin", originMarkupNode->GetID());
 

@@ -75,7 +75,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   // add a markup with one point with non default values
   int modifiedPointIndex =  markupsNode->AddNControlPoints(1);
   double orientation[4] = {0.2, 1.0, 0.0, 0.0};
-  markupsNode->SetNthControlPointOrientationFromArray(modifiedPointIndex, orientation);
+  markupsNode->SetNthControlPointOrientation(modifiedPointIndex, orientation);
   markupsNode->ResetNthControlPointID(modifiedPointIndex);
   std::string associatedNodeID = std::string("testingAssociatedID");
   markupsNode->SetNthControlPointAssociatedNodeID(modifiedPointIndex,associatedNodeID);
@@ -90,7 +90,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   // NAN should not be present, but we test this case anyway
   // to make sure that having a NAN does not break reading or writing.
   double inputPoint[3] = {-9.9, 1.1, NAN};
-  markupsNode->SetNthControlPointPositionFromArray(modifiedPointIndex, inputPoint);
+  markupsNode->SetNthControlPointPosition(modifiedPointIndex, inputPoint);
 
   // and add a markup with 1 point, default values
   if (markupsNode->GetMaximumNumberOfControlPoints() != 1)

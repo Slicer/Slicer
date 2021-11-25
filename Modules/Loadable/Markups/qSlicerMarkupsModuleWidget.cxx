@@ -2112,7 +2112,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
         }
       else
         {
-        d->MarkupsNode->SetNthControlPointPositionFromArray(n, newPoint);
+        d->MarkupsNode->SetNthControlPointPosition(n, newPoint);
         }
       }
     else

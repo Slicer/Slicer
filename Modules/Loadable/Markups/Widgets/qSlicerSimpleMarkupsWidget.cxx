@@ -541,7 +541,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column
     currentControlPointPosition[ 2 ] = newControlPointPosition;
     }
 
-  currentMarkupsNode->SetNthControlPointPositionFromArray( row, currentControlPointPosition );
+  currentMarkupsNode->SetNthControlPointPosition( row, currentControlPointPosition );
 
   this->updateWidget(); // This may not be necessary the widget is updated whenever a control point is changed
 }

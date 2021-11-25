@@ -103,7 +103,7 @@ int vtkMRMLMarkupsFiducialNodeTest1(int , char * [] )
   p0[0] = 0.99;
   p0[1] = 1.33;
   p0[2] = -9.0;
-  node1->SetNthControlPointPositionFromArray(fidIndex2, p0);
+  node1->SetNthControlPointPosition(fidIndex2, p0);
   vtkVector3d posVector2 = node1->GetNthControlPointPositionVector(fidIndex2);
   diff = sqrt(vtkMath::Distance2BetweenPoints(p0, posVector2.GetData()));
   std::cout << "Diff between set nth control point position array and get = " << diff << std::endl;
