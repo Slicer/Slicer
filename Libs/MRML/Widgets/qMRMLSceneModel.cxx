@@ -667,7 +667,7 @@ QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
     d->DraggedNodes << this->mrmlNodeFromIndex(index);
     }
   // Remove duplicates
-  allColumnsIndexes = allColumnsIndexes.toSet().toList();
+  allColumnsIndexes = allColumnsIndexes.toSet().values();
   return this->QStandardItemModel::mimeData(allColumnsIndexes);
 }
 
