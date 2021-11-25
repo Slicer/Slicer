@@ -164,7 +164,11 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   // need to add the LabelMap attribute for them.
   // Note: the min width is currently set in the UI file directly
   //// Set the slice controller widgets a min width.
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+  //int volumeSelectorMinWidth = this->LabelMapComboBox->fontMetrics().horizontalAdvance("Xxxxxxxx") + 20;
+//#else
   //int volumeSelectorMinWidth = this->LabelMapComboBox->fontMetrics().width("Xxxxxxxx") + 20;
+//#endif
   //this->SliceOrientationSelector->setMinimumWidth(volumeSelectorMinWidth);
   //this->LabelMapComboBox->setMinimumWidth(volumeSelectorMinWidth);
   //this->BackgroundComboBox->setMinimumWidth(volumeSelectorMinWidth);
