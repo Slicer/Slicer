@@ -601,7 +601,11 @@ class DICOMReferencesDialog(qt.QMessageBox):
     self.layout().setSpacing(9)
     self.setWindowTitle(self.WINDOW_TITLE)
     fontMetrics = qt.QFontMetrics(qt.QApplication.font(self))
-    self.setMinimumWidth(fontMetrics.width(self.WINDOW_TITLE))
+    try:
+      self.setMinimumWidth(fontMetrics.horizontalAdvance(self.WINDOW_TITLE))
+    except AttributeError:
+      # Support Qt < 5.11 lacking QFontMetrics::horizontalAdvance()
+      self.setMinimumWidth(fontMetrics.width(self.WINDOW_TITLE))
 
   def _addTextLabel(self):
     label = qt.QLabel(self.WINDOW_TEXT)
