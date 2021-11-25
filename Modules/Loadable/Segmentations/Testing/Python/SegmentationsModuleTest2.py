@@ -292,6 +292,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
       initialLabelmap = slicer.vtkOrientedImageData()
       initialLabelmap.SetImageToWorldMatrix(self.ijkToRas)
       initialLabelmap.SetExtent(0, 10, 0, 10, 0, 10)
+      initialLabelmap.AllocateScalars(dataType, 1)
+      initialLabelmap.GetPointData().GetScalars().Fill(0)
       segment1.AddRepresentation(binaryLabelmapRepresentationName, initialLabelmap)
       segment2.AddRepresentation(binaryLabelmapRepresentationName, initialLabelmap)
 
@@ -305,6 +307,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
       segment1Labelmap = slicer.vtkOrientedImageData()
       segment1Labelmap.SetImageToWorldMatrix(self.ijkToRas)
       segment1Labelmap.SetExtent(0, 10, 0, 10, 0, 10)
+      segment1Labelmap.AllocateScalars(dataType, 1)
+      segment1Labelmap.GetPointData().GetScalars().Fill(0)
       segment1.AddRepresentation(binaryLabelmapRepresentationName, segment1Labelmap)
 
       segment2Labelmap = slicer.vtkOrientedImageData()
@@ -369,6 +373,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
     segment1Id = self.segmentation.AddEmptySegment("Segment_1")
     segment2Id = self.segmentation.AddEmptySegment("Segment_2")
     segment3Id = self.segmentation.AddEmptySegment("Segment_3")
+    segment4Id = self.segmentation.AddEmptySegment("Segment_4")
 
     oldOverwriteMode = self.segmentEditorNode.GetOverwriteMode()
 
@@ -470,6 +475,44 @@ class SegmentationsModuleTest2(unittest.TestCase):
     self.segmentEditorNode.SetSelectedSegmentID(segment3Id)
     self.thresholdEffect.self().onApply() # Threshold Segment_3
     self.checkSegmentVoxelCount(2, 177) # Segment_3
+
+    #-------------------
+    # Test intensity masking with islands
+    self.segmentEditorNode.SetMaskMode(slicer.vtkMRMLSegmentationNode.EditAllowedEverywhere)
+    self.segmentEditorNode.MasterVolumeIntensityMaskOff()
+    self.segmentEditorNode.SetSelectedSegmentID(segment4Id)
+
+    island1ModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    island1ModifierLabelmap.SetImageToWorldMatrix(self.ijkToRas)
+    island1ModifierLabelmap.SetExtent(2, 5, 2, 5, 2, 5)
+    island1ModifierLabelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+    island1ModifierLabelmap.GetPointData().GetScalars().Fill(1)
+    self.paintEffect.modifySelectedSegmentByLabelmap(island1ModifierLabelmap, self.paintEffect.ModificationModeAdd)
+
+    island2ModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    island2ModifierLabelmap.SetImageToWorldMatrix(self.ijkToRas)
+    island2ModifierLabelmap.SetExtent(7, 9, 7, 9, 7, 9)
+    island2ModifierLabelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+    island2ModifierLabelmap.GetPointData().GetScalars().Fill(1)
+    self.paintEffect.modifySelectedSegmentByLabelmap(island2ModifierLabelmap, self.paintEffect.ModificationModeAdd)
+    self.checkSegmentVoxelCount(3, 91) # Segment_4
+
+    # Test that no masking works as expected
+    minimumSize = 3
+    self.islandEffect.setParameter('MinimumSize', minimumSize)
+    self.islandEffect.setParameter('Operation','KEEP_LARGEST_ISLAND')
+    self.islandEffect.self().onApply()
+    self.checkSegmentVoxelCount(3, 64) # Segment_4
+
+    # Reset Segment_4 islands
+    self.paintEffect.modifySelectedSegmentByLabelmap(island1ModifierLabelmap, self.paintEffect.ModificationModeAdd)
+    self.paintEffect.modifySelectedSegmentByLabelmap(island2ModifierLabelmap, self.paintEffect.ModificationModeAdd)
+
+    # Test intensity masking
+    self.segmentEditorNode.MasterVolumeIntensityMaskOn()
+    self.segmentEditorNode.SetMasterVolumeIntensityMaskRange(-17, 848)
+    self.islandEffect.self().onApply()
+    self.checkSegmentVoxelCount(3, 87) # Segment_4
 
     # Restore old overwrite setting
     self.segmentEditorNode.SetOverwriteMode(oldOverwriteMode)
