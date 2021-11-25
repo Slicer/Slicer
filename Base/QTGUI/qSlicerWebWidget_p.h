@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QtGlobal>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QWebEngineCertificateError>
 #include <QWebEnginePage>
 class QWebEngineProfile;
@@ -153,7 +153,7 @@ protected slots:
 
 public:
 
-  QTime DownloadTime;
+  QElapsedTimer DownloadTime;
   bool HandleExternalUrlWithDesktopService;
   bool NavigationRequestAccepted;
   QStringList InternalHosts;
