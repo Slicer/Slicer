@@ -417,15 +417,15 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     #self.delayDisplay('Starting test_3D_parentTransform')
     #
     # Setup:
-    #  - Use a markup fiducial node
+    #  - Use a markup control points list node
     #  - Create a parent transform
     #  - Create another transform under the parent transform
     #
 
-    markupNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLMarkupsFiducialNode())
-    markupNode.AddFiducial(500.0, -1000.0, 0.0)
-    markupNode.AddFiducial(1000.0, 1000.0, 200.0)
-    markupNode.AddFiducial(-1500.0, -200.0, -100.0)
+    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+    markupNode.AddControlPoint([500.0, -1000.0, 0.0])
+    markupNode.AddControlPoint([1000.0, 1000.0, 200.0])
+    markupNode.AddControlPoint([-1500.0, -200.0, -100.0])
 
     logic = SlicerTransformInteractionTest1Logic()
     parentNode, parendDisplayNode = logic.addTransform()

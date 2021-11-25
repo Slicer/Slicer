@@ -119,7 +119,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     slicer.mrmlScene.AddNode(markupsNode)
     markupsNode.SetName(self.sampleMarkupName)
     fiducialPosition = [100.0, 0.0, 0.0]
-    markupsNode.AddFiducialFromArray(fiducialPosition)
+    markupsNode.AddControlPoint(fiducialPosition)
     markupsShItemID = shNode.GetItemByDataNode(markupsNode)
     self.assertIsNotNone( markupsShItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )

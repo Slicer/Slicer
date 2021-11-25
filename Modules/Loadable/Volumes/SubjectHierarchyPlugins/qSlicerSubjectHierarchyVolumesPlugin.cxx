@@ -151,11 +151,9 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
   this->VolumeDisplayPresetAction->setObjectName("VolumeDisplayPresetAction");
   q->setActionPosition(this->VolumeDisplayPresetAction, qSlicerSubjectHierarchyAbstractPlugin::SectionBottom);
 
-  vtkSlicerVolumesLogic* volumesModuleLogic = nullptr;
-
   // read volume preset names from volumes logic
-  volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(
-    qSlicerApplication::application()->moduleLogic("Volumes"));
+  vtkSlicerVolumesLogic* volumesModuleLogic = (qSlicerCoreApplication::application() ? vtkSlicerVolumesLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleLogic("Volumes")) : nullptr);
   if (!volumesModuleLogic)
     {
     qWarning() << Q_FUNC_INFO << " failed: Module logic 'Volumes' not found.";

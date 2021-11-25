@@ -1275,7 +1275,8 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
     selectedSegmentID = QString(d->ParameterSetNode->GetSelectedSegmentID());
 
     // Check if selected segment ID is invalid.
-    if (!d->SegmentationNode->GetSegmentation()
+    if (!d->SegmentationNode
+      || !d->SegmentationNode->GetSegmentation()
       || d->SegmentationNode->GetSegmentation()->GetSegmentIndex(d->ParameterSetNode->GetSelectedSegmentID()) < 0)
       {
       selectedSegmentID.clear();

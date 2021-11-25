@@ -88,37 +88,6 @@ void vtkMRMLMarkupsFiducialNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 }
 
-//-------------------------------------------------------------------------
-int vtkMRMLMarkupsFiducialNode::AddFiducial(double x, double y, double z)
-{
-  return this->AddFiducial(x, y, z, std::string());
-}
-
-//-------------------------------------------------------------------------
-int vtkMRMLMarkupsFiducialNode::AddFiducial(double x, double y, double z,
-                                            std::string label)
-{
-  vtkWarningMacro("AddFiducial method is deprecated, please use AddControlPoint instead");
-  return this->AddControlPoint(vtkVector3d(x, y, z), label);
-}
-
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
-int vtkMRMLMarkupsFiducialNode::AddFiducialFromArray(double pos[3], std::string label)
-{
-  return this->AddFiducial(pos[0], pos[1], pos[2], label);
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::GetNthFiducialPosition(int n, double pos[3])
-{
-  vtkWarningMacro("GetNthFiducialPosition method is deprecated, please use GetNthControlPointPositionVector instead");
-  vtkVector3d point= this->GetNthControlPointPositionVector(n);
-  pos[0] = point.GetX();
-  pos[1] = point.GetY();
-  pos[2] = point.GetZ();
-}
 
 //-------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()

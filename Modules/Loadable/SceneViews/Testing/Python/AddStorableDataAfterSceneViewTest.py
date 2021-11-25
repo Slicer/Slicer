@@ -138,9 +138,11 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     slicer.util.delayDisplay("Starting the test")
 
     #
-    # add a fiducial
+    # add a markups control point list
     #
-    slicer.modules.markups.logic().AddFiducial()
+
+    pointList = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsFiducialNode')
+    pointList.AddControlPoint([10,20,15])
 
     #
     # save a scene view

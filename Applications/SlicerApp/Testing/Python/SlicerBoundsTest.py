@@ -202,12 +202,11 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
     """ Test the GetRASBounds & GetBounds method on a markup.
     """
     #self.delayDisplay("Starting test_Markup")
-    markupNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLMarkupsFiducialNode())
-
-    markupNode.AddFiducial(1.0, 0.0, 0.0)
-    markupNode.AddFiducial(-45.0, -90.0, -180.0)
-    markupNode.AddFiducial(-200.0, 500.0, -0.23)
-    markupNode.AddFiducial(1.0, 1003.01, 0.0)
+    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+    markupNode.AddControlPoint([1.0, 0.0, 0.0])
+    markupNode.AddControlPoint([-45.0, -90.0, -180.0])
+    markupNode.AddControlPoint([-200.0, 500.0, -0.23])
+    markupNode.AddControlPoint([1.0, 1003.01, 0.0])
 
     bounds = list(range(6))
     markupNode.GetRASBounds(bounds)

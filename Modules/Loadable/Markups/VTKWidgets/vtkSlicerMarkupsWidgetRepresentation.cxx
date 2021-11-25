@@ -382,7 +382,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateCenter()
   centerWorldPos[1] *= inv_N;
   centerWorldPos[2] *= inv_N;
 
-  markupsNode->SetCenterPositionFromPointer(centerWorldPos);
+  markupsNode->SetCenterPosition(centerWorldPos);
 }
 
 //----------------------------------------------------------------------

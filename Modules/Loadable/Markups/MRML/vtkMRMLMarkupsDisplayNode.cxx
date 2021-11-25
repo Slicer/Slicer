@@ -752,7 +752,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
   else
     {
     // Update existing control point
-    markupsNode->SetNthControlPointPositionOrientationWorldFromArray(controlPointIndex,
+    markupsNode->SetNthControlPointPositionOrientationWorld(controlPointIndex,
       pointWorld, orientationMatrixWorld, associatedNodeID, positionStatus);
     if (positionStatus == vtkMRMLMarkupsNode::PositionUndefined)
       {

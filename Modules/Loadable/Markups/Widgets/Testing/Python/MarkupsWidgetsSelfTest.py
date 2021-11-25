@@ -139,7 +139,7 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
 
     numberOfFiducialsAdded = 5
     for i in range(numberOfFiducialsAdded):
-      self.markupsLogic.AddFiducial()
+      self.markupsNode3.AddControlPoint([i*20, i*15, i*5])
 
     tableWidget = simpleMarkupsWidget.tableWidget()
     self.assertEqual(tableWidget.rowCount, numberOfFiducialsAdded)
