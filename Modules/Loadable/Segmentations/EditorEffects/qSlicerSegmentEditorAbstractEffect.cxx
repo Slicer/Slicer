@@ -403,6 +403,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
         vtkNew<vtkOrientedImageData> segmentOutsideMask;
         segmentOutsideMask->ShallowCopy(segmentThreshold->GetOutput());
         segmentOutsideMask->CopyDirections(segmentLayerLabelmap);
+        vtkOrientedImageDataResample::ModifyImage(segmentOutsideMask, maskImage, vtkOrientedImageDataResample::OPERATION_MINIMUM);
         vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, segmentOutsideMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
         }
       }
