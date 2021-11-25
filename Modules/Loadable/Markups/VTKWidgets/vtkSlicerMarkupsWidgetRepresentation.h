@@ -196,9 +196,11 @@ protected:
     vtkSmartPointer<vtkSphereSource>                    AxisRotationHandleSource;
     vtkSmartPointer<vtkArcSource>                       AxisRotationArcSource;
     vtkSmartPointer<vtkTubeFilter>                      AxisRotationTubeFilter;
-    vtkSmartPointer<vtkAppendPolyData>                  AxisRotationGlyphSource;
+    vtkSmartPointer<vtkPolyData>                        AxisRotationInteriorAnglePolyData;
+    vtkSmartPointer<vtkTubeFilter>                      AxisRotationInterorAngleTubeFilter;
     vtkSmartPointer<vtkPolyData>                        RotationHandlePoints;
     vtkSmartPointer<vtkTransformPolyDataFilter>         RotationScaleTransform;
+    vtkSmartPointer<vtkAppendPolyData>                  AxisRotationGlyphSource;
     vtkSmartPointer<vtkTensorGlyph>                     AxisRotationGlypher;
 
     vtkSmartPointer<vtkArrowSource>                     AxisTranslationGlyphSource;

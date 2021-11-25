@@ -959,6 +959,27 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateRot
   this->AxisRotationTubeFilter->SetNumberOfSides(16);
   this->AxisRotationTubeFilter->SetCapping(true);
 
+  vtkNew<vtkPoints> rotationGlyphInteriorAnglePoints;
+  rotationGlyphInteriorAnglePoints->InsertNextPoint(this->AxisRotationArcSource->GetPoint1());
+  rotationGlyphInteriorAnglePoints->InsertNextPoint(-INTERACTION_HANDLE_ROTATION_ARC_RADIUS, 0, 0);
+  rotationGlyphInteriorAnglePoints->InsertNextPoint(this->AxisRotationArcSource->GetPoint2());
+
+  vtkNew<vtkIdList> rotationGlyphInteriorAngleLine;
+  rotationGlyphInteriorAngleLine->SetNumberOfIds(3);
+  rotationGlyphInteriorAngleLine->SetId(0, 0);
+  rotationGlyphInteriorAngleLine->SetId(1, 1);
+  rotationGlyphInteriorAngleLine->SetId(2, 2);
+
+  this->AxisRotationInteriorAnglePolyData = vtkSmartPointer<vtkPolyData>::New();
+  this->AxisRotationInteriorAnglePolyData->SetPoints(rotationGlyphInteriorAnglePoints);
+  this->AxisRotationInteriorAnglePolyData->SetLines(vtkNew<vtkCellArray>());
+  this->AxisRotationInteriorAnglePolyData->InsertNextCell(VTK_LINE, rotationGlyphInteriorAngleLine);
+
+  this->AxisRotationInterorAngleTubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
+  this->AxisRotationInterorAngleTubeFilter->SetInputData(this->AxisRotationInteriorAnglePolyData);
+  this->AxisRotationInterorAngleTubeFilter->SetRadius(INTERACTION_HANDLE_ROTATION_ARC_TUBE_RADIUS);
+  this->AxisRotationInterorAngleTubeFilter->SetNumberOfSides(16);
+
   this->RotationHandlePoints = vtkSmartPointer<vtkPolyData>::New();
 
   this->RotationScaleTransform = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
@@ -968,6 +989,7 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateRot
   this->AxisRotationGlyphSource = vtkSmartPointer <vtkAppendPolyData>::New();
   this->AxisRotationGlyphSource->AddInputConnection(this->AxisRotationHandleSource->GetOutputPort());
   this->AxisRotationGlyphSource->AddInputConnection(this->AxisRotationTubeFilter->GetOutputPort());
+  this->AxisRotationGlyphSource->AddInputConnection(this->AxisRotationInterorAngleTubeFilter->GetOutputPort());
   this->AxisRotationGlypher = vtkSmartPointer<vtkTensorGlyph>::New();
   this->AxisRotationGlypher->SetInputConnection(this->RotationScaleTransform->GetOutputPort());
   this->AxisRotationGlypher->SetSourceConnection(this->AxisRotationGlyphSource->GetOutputPort());
