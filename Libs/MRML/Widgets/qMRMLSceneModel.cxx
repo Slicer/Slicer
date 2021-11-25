@@ -165,7 +165,7 @@ void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
       }
     else
       {
-      extraItem->setFlags(nullptr);
+      extraItem->setFlags(Qt::NoItemFlags);
       }
     items << extraItem;
     }
@@ -721,7 +721,7 @@ void qMRMLSceneModel::updateScene()
     for (int i = 1; i < this->columnCount(); ++i)
       {
       QStandardItem* sceneOtherColumn = new QStandardItem;
-      sceneOtherColumn->setFlags(nullptr);
+      sceneOtherColumn->setFlags(Qt::NoItemFlags);
       sceneItems << sceneOtherColumn;
       }
     // We need to set the column count in case there extra items,
