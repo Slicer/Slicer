@@ -135,6 +135,7 @@ function(slicer_generate_extension_description_test)
     EXTENSION_ICONURL "http://www.slicer.org/slicerWiki/images/6/64/SlicerToKiwiExporterLogo.png"
     EXTENSION_NAME "SlicerToKiwiExporter"
     EXTENSION_SCREENSHOTURLS "http://www.slicer.org/slicerWiki/images/9/9e/SlicerToKiwiExporter_Kiwiviewer_8.PNG http://www.slicer.org/slicerWiki/images/a/ab/SlicerToKiwiExporter_Kiwiviewer_9.PNG http://www.slicer.org/slicerWiki/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png"
+    EXTENSION_STATUS "Development"
     EXTENSION_WC_REVISION "9d7341e978df954a2c875240290833d7528ef29c"
     EXTENSION_WC_ROOT "https://github.com/jcfr/SlicerToKiwiExporter.git"
     EXTENSION_WC_TYPE "git"
@@ -149,7 +150,6 @@ function(slicer_generate_extension_description_test)
     #EXTENSION_BUILD_SUBDIRECTORY
     #EXTENSION_DEPENDS
     #EXTENSION_ENABLED
-    EXTENSION_STATUS "Development"
     )
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
@@ -169,7 +169,6 @@ function(slicer_generate_extension_description_test)
     EXTENSION_BUILD_SUBDIRECTORY "inner/inner-inner-build"
     EXTENSION_DEPENDS "Foo Bar"
     EXTENSION_ENABLED 0
-    EXTENSION_STATUS ""
     )
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
