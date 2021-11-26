@@ -29,7 +29,7 @@ Volumes module handles a 2D image as a single-slice 3D image. 4D volumes are rep
 
 Slice views: After loading a volume, it is displayed in slice views by default. If multiple volumes are loaded, `Data` module can be used to choose which one is displayed. [Slice view controls](../user_interface.md#slice-view) allow further customization of which volume is displayed in which view and how.
 
-3D views: Volumes can be displayed in 3D views using [Volume rendering](volumerendering) module. If structures of interest cannot be distinguished from surrounding regions then it may be necessary to segment the image using [Segment Editor](segmenteditor) module and click `Show 3D` button.
+3D views: Volumes can be displayed in 3D views using [Volume rendering](volumerendering.md) module. If structures of interest cannot be distinguished from surrounding regions then it may be necessary to segment the image using [Segment Editor](segmenteditor.md) module and click `Show 3D` button.
 
 ### Overlay two volumes
 
@@ -120,8 +120,8 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
 
 ## Related modules
 
-- [Volume rendering](volumerendering): visualize volume in 3D views without segmentation
-- [Segment editor](segmenteditor): delineate structures in the volume for analysis and 3D visualization
+- [Volume rendering](volumerendering.md): visualize volume in 3D views without segmentation
+- [Segment editor](segmenteditor.md): delineate structures in the volume for analysis and 3D visualization
 - Vector to scalar volume: convert vector volume to scalar volume
 - Extensions:
   -  Image Maker: create a volume from scratch

@@ -204,7 +204,7 @@ If you have trouble importing DICOM data here are some steps to try:
 - To confirm that your installation of Sicer is reading data correctly, try loading other data, such as [this anonymized sample DICOM series (CT scan)](https://s3.amazonaws.com/IsomicsPublic/SampleData/QIN-HEADNECK-01-0024-CT.zip)
 - Try import using different DICOM readers: in Application settings / DICOM / DICOMScalarVolumePlugin / DICOM reader approach: switch from DCMTK to GDCM (or GDCM to DCMTK), restart Slicer, and attempt to load the data set again.
 - See if the SlicerDcm2nii extension will convert your images. You can install this module using the Extension manager. Once installed you will be able to use the Dcm2niixGUI module from slicer.
-- Try the [DICOM Patcher](dicompatcher) module.
+- Try the [DICOM Patcher](dicompatcher.md) module.
 - Review the Error Log (menu: View / Error log) for information.
 - Try loading the data by selecting one of the files in the [Add data](../data_loading_and_saving).  *Note: be sure to turn on Show Options and then turn off the Single File option in order to load the selected series as a volume*. In general, this is not recommended, as the loaded data may be incomplete or distorted, but it might work in some cases when proper DICOM loading fails.
 - If you are still unable to load the data, you may need to find a utility that converts the data into something Slicer can read.  Sometimes tools like [FreeSurfer](http://surfer.nmr.mgh.harvard.edu/), [FSL](http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/) or [MRIcron](https://www.nitrc.org/projects/mricron ) can understand special formats that Slicer does not handle natively.  These systems typically export [NIfTI](http://nifti.nimh.nih.gov/nifti-1/) files that slicer can read.
@@ -225,7 +225,7 @@ If none of the data sets seems to be correct then follow the steps described in 
 
 #### Image is stretched or compressed along one axis
 
-Some non-clinical (industrial or pre-clinical) imaging systems do not generate valid DICOM data sets. For example, they may incorrectly assume that slice thickness tag defines image geometry, while according to DICOM standard, image slice position must be used for determining image geometry. [DICOM Patcher](dicompatcher) module can fix some of these images: remove the images from Slicer's DICOM database, process the image files with DICOM Patcher module, and re-import the processed file into Slicer's DICOM database. If image is still distorted, go to *Volumes* module, open *Volume information* section, and adjust *Image spacing* values.
+Some non-clinical (industrial or pre-clinical) imaging systems do not generate valid DICOM data sets. For example, they may incorrectly assume that slice thickness tag defines image geometry, while according to DICOM standard, image slice position must be used for determining image geometry. [DICOM Patcher](dicompatcher.md) module can fix some of these images: remove the images from Slicer's DICOM database, process the image files with DICOM Patcher module, and re-import the processed file into Slicer's DICOM database. If image is still distorted, go to *Volumes* module, open *Volume information* section, and adjust *Image spacing* values.
 
 Scanners may create image volumes with varying image slice spacing. Slicer can represent such images in the scene by apply a non-linear transform. To enable this feature, go to menu: Edit / Application settings / DICOM and set *Acquisition geometry regularization* to *apply regularization transform*. Slice view, segmentation, and many other features work directly on non-linearly transformed volumes. For some other features, such as volume rendering, you need to harden the transform on the volume: go to Data module, in the row of the volume node, double-click on the transform column, and choose *Harden transform*.
 
@@ -237,7 +237,7 @@ Note that if Slicer displays a warning about non-uniform slice spacing then it m
 - [Quantitative Reporting](https://github.com/QIICR/QuantitativeReporting#summary) extension reads and writes DICOM Segmentation Objects (label maps), structured reports, and parametric maps.
 - [SlicerRT](http://www.slicerrt.org/) extension reads and write DICOM Radiation Therapy objects (RT structure set, dose, image, plan, etc.) and provides tools for visualizing and analyzing them.
 - [LongitudinalPETCT](https://github.com/QIICR/LongitudinalPETCT#longitudinalpetct) extension reads all PET/CT studies for a selected patient and provides tools for tracking metabolic activity detected by PET tracers.
-- [DICOM Patcher](dicompatcher) module can be used before importing to fix common DICOM non-compliance errors.
+- [DICOM Patcher](dicompatcher.md) module can be used before importing to fix common DICOM non-compliance errors.
 
 ## Contributors
 
