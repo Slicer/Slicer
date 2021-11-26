@@ -45,8 +45,8 @@ qSlicerCropVolumeModule::~qSlicerCropVolumeModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerCropVolumeModule::helpText()const
 {
-  return "CropVolume module extracts subvolume of the image described "
-         "by Region of Interest widget.";
+  return "CropVolume module extracts the subvolume of the image described "
+         "by the Region of Interest widget and can also be used to resample the volume.";
 }
 
 //-----------------------------------------------------------------------------
