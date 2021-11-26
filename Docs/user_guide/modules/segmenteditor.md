@@ -253,9 +253,9 @@ Segment Editor allows editing of segmentation on slices of arbitrary orientation
 
 ## Related Modules
 
-- [Segment Statistics](segmentstatistics) module computes volume, surface, mean intensity, and various other metrics for each segment.
-- [Segmentations](segmentations) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
-- [Data](data) module shows all segmentations and segments in a tree structure. Commonly used operations are available by right-clicking on an item in the tree.
+- [Segment Statistics](segmentstatistics.md) module computes volume, surface, mean intensity, and various other metrics for each segment.
+- [Segmentations](segmentations.md) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
+- [Data](data.md) module shows all segmentations and segments in a tree structure. Commonly used operations are available by right-clicking on an item in the tree.
 
 ## Information for Developers
 

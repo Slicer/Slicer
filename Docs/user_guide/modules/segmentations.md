@@ -15,7 +15,7 @@ Motivation, features, and details of the infrastructure are explained in paper *
 
 ### Edit segmentation
 
-Segmentation can be edited using [Segment Editor](segmenteditor) module.
+Segmentation can be edited using [Segment Editor](segmenteditor.md) module.
 
 ### Import an existing segmentation from volume file
 
@@ -169,7 +169,7 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
 
 ## Related modules
 
-- [Segment Editor](segmenteditor) module is for editing segments of a segmentation node
+- [Segment Editor](segmenteditor.md) module is for editing segments of a segmentation node
 
 ## References
 

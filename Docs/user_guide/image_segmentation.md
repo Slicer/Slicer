@@ -33,7 +33,7 @@ There are many modules in 3D Slicer for manipulating segmentations. Overview of 
 
 Adjust display properties of segmentations, manage segment representations and layers, copy/move segments between segmentation nodes, convert between segmentation and models and labelmap volumes, export to files.
 
-See more information in [Segmentations module documentation](modules/segmentations).
+See more information in [Segmentations module documentation](modules/segmentations.md).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segmentations_module.png)
 
@@ -43,13 +43,13 @@ Create and edit segmentations from volumes using manual (paint, draw, ...), semi
 
 To get started, check out these pages:
 - [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation): step by step slide and video tutorials
-- [Segment Editor module documentation](modules/segmenteditor): detailed description of Segment Editor user interface and effects
+- [Segment Editor module documentation](modules/segmenteditor.md): detailed description of Segment Editor user interface and effects
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segment_editor_module.png)
 
 ## Segment statistics module overview
 
-Computes intensity and geometric properties for each segment, such as volume, surface, minimum/maximum/mean intensity, oriented boudning box, sphericity, etc. See more information in [Segment statistics module documentation](modules/segmentstatistics).
+Computes intensity and geometric properties for each segment, such as volume, surface, minimum/maximum/mean intensity, oriented boudning box, sphericity, etc. See more information in [Segment statistics module documentation](modules/segmentstatistics.md).
 
 ## Segment comparison module overview
 
