@@ -2,7 +2,7 @@
 
 The modules listed below have been retired and are no longer present in 3D Slicer. This page exists as a convenient marker for historical details about retired modules.
 
-Retiring modules reduces burden on slicer developers.
+Retiring modules reduces burden on Slicer developers.
 
 A short list of reasons why a module may have been retired:
 
