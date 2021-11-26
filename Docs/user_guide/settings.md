@@ -14,7 +14,7 @@ Application startup script can be used to launch any custom Python code when Sli
 
 #### Skip loading
 
-Select which [type of modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) to not load at startup. It is also possible to start slicer by temporarily disabling those modules (not saved in settings) by passing the arguments in the command line.
+Select which [type of modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) to not load at startup. It is also possible to start Slicer by temporarily disabling those modules (not saved in settings) by passing the arguments in the command line.
 
 For example, this command will start Slicer without any CLI loaded:
 
@@ -32,7 +32,7 @@ Directory where modules can store their temporary outputs if needed.
 
 List of directories scanned at startup to load additional modules. Any CLI, Loadable or scripted modules located in these paths will be loaded. Extensions are listed in the list, to remove an extension, use the [Extensions Manager](extensions_manager) instead.
 
-It is also possible to start slicer by temporarily adding module paths (not saved in settings) by passing the arguments in the command line.
+It is also possible to start Slicer by temporarily adding module paths (not saved in settings) by passing the arguments in the command line.
 
 For example this command will start Slicer trying to load CLIs found in the specified directory:
 

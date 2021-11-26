@@ -76,7 +76,7 @@ cap.captureImageFromView(view, filename)
 
 ### Save a series of images from a slice view
 
-You can use ScreenCapture module to capture series of images. To do it programmatically, save the following into a file such as ``/tmp/record.py`` and then in the slicer python console type ``execfile("/tmp/record.py")``
+You can use ScreenCapture module to capture series of images. To do it programmatically, save the following into a file such as ``/tmp/record.py`` and then in the Slicer python console type ``execfile("/tmp/record.py")``
 
 ```python
 layoutName = "Green"

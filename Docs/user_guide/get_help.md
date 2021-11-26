@@ -60,7 +60,7 @@ Background: Funding for Slicer is provided through competitive mechanisms primar
 
 - Slicer may not work if it is installed in a folder that has special characters in their name. Try installing Slicer in a path that only contains latin letters and numbers (a-z, 0-9).
 - Your Slicer settings might have become corrupted
-  - Try launching slicer using `Slicer.exe --disable-settings` (if it fixes the problem, delete Slicer.ini and Slicer-<yourslicerversion>.ini files from your Slicer settings directory.
+  - Try launching Slicer using `Slicer.exe --disable-settings` (if it fixes the problem, delete Slicer.ini and Slicer-<yourslicerversion>.ini files from your Slicer settings directory.
   - Rename or remove your Slicer settings directory (for example, `c:\Users\<yourusername>\AppData\Roaming\NA-MIC`). See instructions for getting the settings directory [here](settings.md#settings-file-location). Try to launch Slicer.
 - There may be conflicting/incompatible libraries in your system path (most likely caused by installing applications that place libraries in incorrect location on your system). Check your system logs for details and report the problem.
   - On Windows:

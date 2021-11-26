@@ -557,7 +557,7 @@ for viewNode in viewNodes:
 
 How to find code corresponding to a user interface widget?
 
-For this one I searched for "slice intersections" text in the whole slicer source code, found that the function is implemented in `Base\QTGUI\qSlicerViewersToolBar.cxx`, then translated the `qSlicerViewersToolBarPrivate::setSliceIntersectionVisible(bool visible)` method to Python.
+For this one I searched for "slice intersections" text in the whole Slicer source code, found that the function is implemented in `Base\QTGUI\qSlicerViewersToolBar.cxx`, then translated the `qSlicerViewersToolBarPrivate::setSliceIntersectionVisible(bool visible)` method to Python.
 
 :::
 

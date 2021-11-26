@@ -294,7 +294,7 @@ Extension developers have to make sure that the extension description in each br
 
 ## Extensions build system
 
-The extensions build system allows to drive the build, test, packaging and upload of slicer extensions.
+The extensions build system allows to drive the build, test, packaging and upload of Slicer extensions.
 
 Using the [extensions build system source code](https://github.com/Slicer/Slicer/tree/master/Extensions/CMake), it is possible to build extensions using either manual build or dashboard-driven automatic build. The extension description files must be simply placed in a folder, the same way as they are in the Extensions Index repository.
 
@@ -393,7 +393,7 @@ Note: MIDAS server has been replaced by Girder. To upload to a custom Girder ser
 
 ### Build complete Extensions Index with dashboard submission
 
-Continuous and nightly extension dashboards are setup on the slicer factory machine maintained by [http://www.kitware.com Kitware]. Developers can set up similar infrastructure privately for their custom applications.
+Continuous and nightly extension dashboards are setup on the Slicer factory machine maintained by [http://www.kitware.com Kitware]. Developers can set up similar infrastructure privately for their custom applications.
 
 By customizing the [extension template dashboard script](https://github.com/Slicer/Slicer/blob/master/Extensions/CMake/SlicerExtensionsDashboardScript.TEMPLATE.cmake), it is possible to easily setup dashboard client submitting to [CDash](http://slicer.cdash.org/index.php?project=SlicerPreview). See example dashboard scripts that are used on official Slicer build machines [here](https://github.com/Slicer/DashboardScripts). Note that these scripts are more complex than the template to allow code reuse between different configurations, but they are tested regularly and so guaranteed to work.
 
