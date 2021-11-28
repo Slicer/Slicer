@@ -1113,3 +1113,15 @@ bool vtkMRMLCameraWidget::ProcessMaximizeView(vtkMRMLInteractionEventData* event
 
   return true;
 }
+
+//----------------------------------------------------------------------------
+bool vtkMRMLCameraWidget::GetTiltLocked()
+{
+  return this->CameraTiltLocked;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCameraWidget::SetTiltLocked(bool lockState)
+{
+  this->CameraTiltLocked = lockState;
+}

@@ -41,6 +41,7 @@
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
+#include <qMRMLThreeDViewControllerWidget.h>
 
 // Slicer includes
 #include <qSlicerApplication.h>
@@ -49,6 +50,8 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkMRMLCameraDisplayableManager.h>
+#include <vtkMRMLCameraWidget.h>
 
 // CTK includes
 #include "ctkSignalMapper.h"
@@ -73,12 +76,16 @@ public:
   QAction* InteractionModePlaceAction = nullptr;
 
   QAction* MaximizeViewAction = nullptr;
+  QAction* FitSliceViewAction = nullptr;
+  QAction* CenterThreeDViewAction = nullptr;
   QAction* CopyImageAction = nullptr;
   QAction* ConfigureSliceViewAnnotationsAction = nullptr;
+  QAction* ToggleTiltLockAction = nullptr;
 
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
   vtkWeakPointer<vtkMRMLLayoutNode> LayoutNode;
+  vtkWeakPointer<vtkMRMLCameraWidget> CameraWidget;
 };
 
 //-----------------------------------------------------------------------------
@@ -131,26 +138,50 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
 
   // Other
 
+  this->CenterThreeDViewAction = new QAction(tr("Center view"), q);
+  this->CenterThreeDViewAction->setObjectName("CenterViewAction");
+  this->CenterThreeDViewAction->setToolTip(tr("Center the slice on the currently visible 3D view content and all loaded volumes."));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CenterThreeDViewAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
+  QObject::connect(this->CenterThreeDViewAction, SIGNAL(triggered()), q, SLOT(centerThreeDView()));
+
+  this->FitSliceViewAction = new QAction(tr("Reset field of view"), q);
+  this->FitSliceViewAction->setObjectName("FitViewAction");
+  this->FitSliceViewAction->setToolTip(tr("Center the slice view on the currently displayed volume."));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FitSliceViewAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
+  QObject::connect(this->FitSliceViewAction, SIGNAL(triggered()), q, SLOT(fitSliceView()));
+
   this->MaximizeViewAction = new QAction(tr("Maximize view"), q);
   this->MaximizeViewAction->setObjectName("MaximizeViewAction");
   this->MaximizeViewAction->setToolTip(tr("Show this view maximized in the view layout"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->MaximizeViewAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
   QObject::connect(this->MaximizeViewAction, SIGNAL(triggered()), q, SLOT(maximizeView()));
 
-  this->CopyImageAction = new QAction(tr("Copy image"), q);
-  this->CopyImageAction->setObjectName("CopyImageAction");
-  this->CopyImageAction->setToolTip(tr("Copy a screenshot of this view to the clipboard"));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CopyImageAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
-  QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
+  this->ToggleTiltLockAction = new QAction(tr("Tilt lock"), q);
+  this->ToggleTiltLockAction->setObjectName("TiltLockAction");
+  this->ToggleTiltLockAction->setToolTip(tr("Prevent rotation around the horizontal axis when rotating this view."));
+  this->ToggleTiltLockAction->setShortcut(QKeySequence(tr("Ctrl+b")));
+  this->ToggleTiltLockAction->setCheckable(true);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ToggleTiltLockAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
+  QObject::connect(this->ToggleTiltLockAction, SIGNAL(triggered()), q, SLOT(toggleTiltLock()));
 
   this->ConfigureSliceViewAnnotationsAction = new QAction(tr("Configure slice view annotations..."), q);
   this->ConfigureSliceViewAnnotationsAction->setObjectName("ConfigureSliceViewAnnotationsAction");
   this->ConfigureSliceViewAnnotationsAction->setToolTip(tr("Configures display of corner annotations and color bar."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
   QObject::connect(this->ConfigureSliceViewAnnotationsAction, SIGNAL(triggered()), q, SLOT(configureSliceViewAnnotationsAction()));
+
+  this->CopyImageAction = new QAction(tr("Copy image"), q);
+  this->CopyImageAction->setObjectName("CopyImageAction");
+  this->CopyImageAction->setToolTip(tr("Copy a screenshot of this view to the clipboard"));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CopyImageAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 20); // set to 20 to make it the last item in the action group
+  QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -182,7 +213,10 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
     << d->InteractionModeAdjustWindowLevelAction
     << d->InteractionModePlaceAction
     << d->MaximizeViewAction
+    << d->FitSliceViewAction
+    << d->CenterThreeDViewAction
     << d->CopyImageAction
+    << d->ToggleTiltLockAction
     << d->ConfigureSliceViewAnnotationsAction;
   return actions;
 }
@@ -256,12 +290,44 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
 
   d->CopyImageAction->setVisible(true);
 
-  bool isSliceViewNode = (vtkMRMLSliceNode::SafeDownCast(viewNode) != nullptr);
-  d->ConfigureSliceViewAnnotationsAction->setVisible(isSliceViewNode);
-
   // Cache nodes to have them available for the menu action execution.
   d->InteractionNode = interactionNode;
   d->ViewNode = viewNode;
+
+  // Check tilt lock in camera widget and set menu item accordingly
+  bool isSliceViewNode = (vtkMRMLSliceNode::SafeDownCast(viewNode) != nullptr);
+  d->ConfigureSliceViewAnnotationsAction->setVisible(isSliceViewNode);
+  d->FitSliceViewAction->setVisible(isSliceViewNode);
+  d->CenterThreeDViewAction->setVisible(!isSliceViewNode);
+
+  d->ToggleTiltLockAction->setVisible(!isSliceViewNode);
+  if (!qSlicerApplication::application()
+    || !qSlicerApplication::application()->layoutManager())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
+    return;
+    }
+  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
+
+  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
+  vtkMRMLCameraWidget* cameraWidget = nullptr;
+  if (threeDWidget)
+    {
+    vtkMRMLCameraDisplayableManager* cameraDisplayableManager = vtkMRMLCameraDisplayableManager::SafeDownCast(threeDWidget->
+      threeDView()->displayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
+    if (!cameraDisplayableManager)
+      {
+      qWarning() << Q_FUNC_INFO << " failed: cannot get cameraDisplayableManager";
+      return;
+      }
+    else
+      {
+      cameraWidget = cameraDisplayableManager->GetCameraWidget();
+      d->ToggleTiltLockAction->setChecked(cameraWidget->GetTiltLocked());
+      // Cache camera widget pointer to have it available for the menu action execution.
+      d->CameraWidget = cameraWidget;
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -347,4 +413,66 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::maximizeView()
     {
     d->LayoutNode->SetMaximizedViewNode(nullptr);
     }
+}
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::fitSliceView()
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+
+  if (!qSlicerApplication::application()
+    || !qSlicerApplication::application()->layoutManager())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
+    return;
+    }
+  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
+
+  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(widget);
+  if (sliceWidget)
+  {
+    sliceWidget->fitSliceToBackground();
+  }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << " failed: sliceWidget not found";
+    return;
+  }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::centerThreeDView()
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+
+  if (!qSlicerApplication::application()
+    || !qSlicerApplication::application()->layoutManager())
+  {
+    qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
+    return;
+  }
+  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
+
+  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
+  if (threeDWidget)
+  {
+    qMRMLThreeDViewControllerWidget* threeDWidgetController = threeDWidget->threeDController();
+    threeDWidgetController->resetFocalPoint();
+  }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << " failed: threeDWidget not found";
+    return;
+  }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::toggleTiltLock()
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+  if (!d->CameraWidget)
+  {
+    qWarning() << Q_FUNC_INFO << " failed: camera widget not found.";
+    return;
+  }
+  d->CameraWidget->SetTiltLocked(!d->CameraWidget->GetTiltLocked());
 }
