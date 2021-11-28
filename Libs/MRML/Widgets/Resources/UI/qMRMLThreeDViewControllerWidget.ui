@@ -254,14 +254,14 @@
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string>Center the 3D view on the scene.</string>
+        <string>Center view</string>
        </property>
       </widget>
      </item>
      <item row="0" column="0">
       <widget class="QToolButton" name="ViewLinkButton">
        <property name="toolTip">
-        <string>Link/Unlink the view controls across all 3D Viewers.</string>
+        <string>Link 3D views. Synchronizes properties of all 3D views in the same view group.</string>
        </property>
        <property name="text">
         <string/>
@@ -398,7 +398,7 @@
     <string>Center</string>
    </property>
    <property name="toolTip">
-    <string>Center the 3D view on the scene</string>
+    <string>Center view</string>
    </property>
   </action>
   <action name="actionUseDepthPeeling">
