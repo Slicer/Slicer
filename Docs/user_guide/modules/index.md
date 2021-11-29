@@ -143,6 +143,9 @@ resamplescalarvectordwivolume.md
 ```
 
 ## Developer Tools
+
+These modules are intended for module developers.
+
 ```{toctree}
 :maxdepth: 1
 cameras.md
@@ -151,25 +154,33 @@ executionmodeltour.md
 extensionwizard.md
 ```
 
-## Legacy
-```{toctree}
-:maxdepth: 1
-annotations.md
-datastore.md
-expertautomatedregistration.md
-labelstatistics.md
-resamplescalarvolume.md
-robuststatisticssegmenter.md
-simpleregiongrowingsegmentation.md
-```
-
 ## Testing
+
+These modules are for testing correctness and performance of the application.
+
 ```{toctree}
 :maxdepth: 1
 performancetests.md
 selftests.md
 ```
 
-## Retired Modules
+## Legacy and retired modules
 
-See the list of [retired modules](retiredmodules.md).
+Deprecated modules are not recommended to be used anymore, typically because other modules have replaced them, and they are planned to be removed in the future.
+
+```{toctree}
+:maxdepth: 1
+annotations.md
+datastore.md
+expertautomatedregistration.md
+resamplescalarvolume.md
+robuststatisticssegmenter.md
+simpleregiongrowingsegmentation.md
+```
+
+Retired modules have been already removed from the application.
+
+```{toctree}
+:maxdepth: 1
+retiredmodules.md
+```
