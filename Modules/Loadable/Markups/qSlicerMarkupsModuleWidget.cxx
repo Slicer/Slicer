@@ -801,8 +801,8 @@ void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
                                             QString("PushButton"));
       markupCreatePushButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
       markupCreatePushButton->setToolTip(QString("Create ") +
-                                         QString(markupsNode->GetMarkupTypeDisplayName()));
-      markupCreatePushButton->setText(QString(markupsNode->GetMarkupTypeDisplayName()));
+                                         QString(markupsNode->GetTypeDisplayName()));
+      markupCreatePushButton->setText(QString(markupsNode->GetTypeDisplayName()));
       layout->addWidget(markupCreatePushButton,
                         i / this->createMarkupsButtonsColumns,
                         i % this->createMarkupsButtonsColumns);

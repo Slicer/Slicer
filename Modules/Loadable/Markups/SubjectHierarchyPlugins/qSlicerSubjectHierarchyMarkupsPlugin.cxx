@@ -705,7 +705,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
   d->EditNodeTerminologyAction->setVisible(!pointActionsDisabled);
 
   // Update action text with relevant markup type
-  QString markup_type = associatedNode->GetMarkupTypeDisplayName();
+  QString markup_type = associatedNode->GetTypeDisplayName();
   d->DeleteNodeAction->setText("Delete " + markup_type);
   d->EditNodeTerminologyAction->setText("Edit " + markup_type + " terminology...");
 

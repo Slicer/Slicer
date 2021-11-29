@@ -78,7 +78,7 @@ public:
   const char* GetMarkupType() override {return "ROI";};
 
   // Get markup type GUI display name
-  const char* GetMarkupTypeDisplayName() override {return "ROI";};
+  const char* GetTypeDisplayName() override {return "ROI";};
 
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "R";};

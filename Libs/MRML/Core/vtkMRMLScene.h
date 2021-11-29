@@ -164,6 +164,9 @@ public:
   /// Add a path to the list.
   const char* GetTagByClassName(const char *className);
 
+  /// Get type display name which is shown in the GUI.
+  const char* GetTypeDisplayNameByClassName(const char *className);
+
   /// Set a default node for node creation and reset.
   /// One default node can be specified for each node class.
   /// It is useful for overriding default values that are set in a node's constructor.
