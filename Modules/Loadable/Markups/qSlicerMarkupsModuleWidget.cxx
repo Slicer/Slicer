@@ -1253,7 +1253,8 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
   int rColumnIndex = d->columnIndex("R");
   int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(m);
   if (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined ||
-      mPositionStatus == vtkMRMLMarkupsNode::PositionPreview)
+      mPositionStatus == vtkMRMLMarkupsNode::PositionPreview ||
+      mPositionStatus == vtkMRMLMarkupsNode::PositionMissing)
     {
     for (int p = 0; p < 3; p++)
       {
@@ -1262,7 +1263,12 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
       if (d->activeMarkupTableWidget->item(m, rColumnIndex + p) == nullptr ||
           d->activeMarkupTableWidget->item(m, rColumnIndex + p)->text() != coordinate)
         {
-        d->activeMarkupTableWidget->setItem(m, rColumnIndex + p, new QTableWidgetItem(coordinate));
+        QTableWidgetItem* coordinateItem = new QTableWidgetItem(coordinate);
+        d->activeMarkupTableWidget->setItem(m, rColumnIndex + p, coordinateItem);
+        if (mPositionStatus == vtkMRMLMarkupsNode::PositionMissing)
+          {
+          coordinateItem->setFlags(coordinateItem->flags() & ~Qt::ItemIsEnabled);
+          }
         }
       }
     }
@@ -1710,6 +1716,16 @@ void qSlicerMarkupsModuleWidget::onRestoreMarkupPushButtonClicked()
     {
     int index = rows.at(i);
     d->MarkupsNode->RestoreNthControlPointPosition(index);
+
+    int rColumnIndex = d->columnIndex("R");
+    for (int p = 0; p < 3; p++)
+      {
+      QTableWidgetItem *item = d->activeMarkupTableWidget->item(index, rColumnIndex + p);
+      if (item)
+        {
+        item->setFlags(item->flags() | Qt::ItemIsEnabled);
+        }
+      }
     }
 }
 //-----------------------------------------------------------------------------
@@ -1787,13 +1803,29 @@ void qSlicerMarkupsModuleWidget::onMissingMarkupPushButtonClicked()
     int index = rows.at(i);
     if (d->MarkupsNode->GetNthControlPointPositionStatus(index) == vtkMRMLMarkupsNode::PositionMissing)
       {
-      d->MarkupsNode->UnsetNthControlPointPosition(index);
+      d->MarkupsNode->RestoreNthControlPointPosition(index);
       }
     else
       {
       d->MarkupsNode->SetNthControlPointPositionMissing(index);
       }
-  }
+    int rColumnIndex = d->columnIndex("R");
+    for (int p = 0; p < 3; p++)
+      {
+      QTableWidgetItem *item = d->activeMarkupTableWidget->item(index, rColumnIndex + p);
+      if (item)
+        {
+        if (d->MarkupsNode->GetNthControlPointPositionStatus(index) == vtkMRMLMarkupsNode::PositionMissing)
+          {
+          item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+          }
+        else
+          {
+          item->setFlags(item->flags() | Qt::ItemIsEnabled);
+          }
+        }
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
