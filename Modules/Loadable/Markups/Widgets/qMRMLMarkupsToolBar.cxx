@@ -465,7 +465,7 @@ void qMRMLMarkupsToolBar::addNodeActions(vtkSlicerMarkupsLogic* markupsLogic)
       QSignalMapper* mapper = new QSignalMapper(this);
       QPushButton* markupCreateButton = new QPushButton();
       markupCreateButton->setObjectName(QString("Create") + QString(markupsNode->GetMarkupType()) + QString("PushButton"));
-      markupCreateButton->setToolTip("Create " + QString(markupsNode->GetMarkupTypeDisplayName()));
+      markupCreateButton->setToolTip("Create " + QString(markupsNode->GetTypeDisplayName()));
       markupCreateButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
       this->addWidget(markupCreateButton);
       QObject::connect(markupCreateButton, SIGNAL(clicked()), mapper, SLOT(map()));

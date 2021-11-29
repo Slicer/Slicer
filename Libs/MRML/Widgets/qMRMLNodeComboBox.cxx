@@ -562,7 +562,7 @@ QString qMRMLNodeComboBox::nodeTypeLabel(const QString& nodeType)const
   // Otherwise use the node tag
   if (this->mrmlScene())
     {
-    QString label = this->mrmlScene()->GetTagByClassName(nodeType.toUtf8());
+    QString label = this->mrmlScene()->GetTypeDisplayNameByClassName(nodeType.toUtf8());
     if (!label.isEmpty())
       {
       return label;

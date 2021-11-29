@@ -640,6 +640,24 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
 }
 
 //------------------------------------------------------------------------------
+const char* vtkMRMLScene::GetTypeDisplayNameByClassName(const char *className)
+{
+  if ( !className )
+    {
+    vtkErrorMacro("GetTypeDisplayNameByClassName: className is null");
+    return nullptr;
+    }
+  for (unsigned int i=0; i<this->RegisteredNodeClasses.size(); i++)
+    {
+    if (!strcmp(this->RegisteredNodeClasses[i]->GetClassName(), className))
+      {
+      return (this->RegisteredNodeClasses[i])->GetTypeDisplayName();
+      }
+    }
+  return nullptr;
+}
+
+//------------------------------------------------------------------------------
 vtkCollection* vtkMRMLScene::GetNodes()
 {
   return this->Nodes;

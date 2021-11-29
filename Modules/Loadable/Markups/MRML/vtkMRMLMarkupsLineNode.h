@@ -57,7 +57,7 @@ public:
   const char* GetMarkupType() override {return "Line";};
 
   // Get markup type GUI display name
-  const char* GetMarkupTypeDisplayName() override {return "Line";};
+  const char* GetTypeDisplayName() override {return "Line";};
 
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "L";};

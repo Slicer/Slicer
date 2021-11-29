@@ -110,7 +110,7 @@ public:
   const char* GetMarkupType() override {return "Curve";};
 
   // Get markup type GUI display name
-  const char* GetMarkupTypeDisplayName() override {return "Curve";};
+  const char* GetTypeDisplayName() override {return "Curve";};
 
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "OC";};

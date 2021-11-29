@@ -92,7 +92,7 @@ public:
   const char* GetMarkupType() override {return "Plane";};
 
   // Get markup type GUI display name
-  const char* GetMarkupTypeDisplayName() override {return "Plane";};
+  const char* GetTypeDisplayName() override {return "Plane";};
 
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "P";};

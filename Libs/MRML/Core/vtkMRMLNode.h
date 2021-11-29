@@ -325,6 +325,14 @@ public:
   /// \note Subclasses should implement this method.
   virtual const char* GetNodeTagName() = 0;
 
+  /// Get node type display name (like "Closed Curve", "Markup", etc).
+  ///
+  /// \note Subclasses should override this method to provide a more appropriate and translatable name.
+  virtual const char* GetTypeDisplayName()
+  {
+    return this->GetNodeTagName();
+  }
+
   /// \brief Set a name value pair attribute.
   ///
   /// Fires a vtkCommand::ModifiedEvent.
