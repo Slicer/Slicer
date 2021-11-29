@@ -69,6 +69,10 @@ class DataProbeInfoWidget:
 
     self.frame = qt.QFrame(parent)
     self.frame.setLayout(qt.QVBoxLayout())
+    qSize = qt.QSizePolicy()
+    qSize.setHorizontalPolicy(qt.QSizePolicy.Ignored)
+    qSize.setVerticalPolicy(qt.QSizePolicy.Preferred)
+    self.frame.setSizePolicy(qSize)
 
     modulePath = slicer.modules.dataprobe.path.replace("DataProbe.py","")
     self.iconsDIR = modulePath + '/Resources/Icons'
