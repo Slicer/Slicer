@@ -874,8 +874,8 @@ vtkMRMLSegmentationDisplayNode* vtkMRMLSliceIntersectionWidget::GetVisibleSegmen
   {
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(displayNodes[i]);
     if (displayNode
-      && displayNode->GetVisibility(sliceNode->GetID())
-      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill()))
+      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill())
+      && displayNode->IsDisplayableInView(sliceNode->GetID()))
     {
       return displayNode;
     }

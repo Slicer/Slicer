@@ -383,9 +383,8 @@ bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtk
     }
   displayableNode->CreateDefaultDisplayNodes();
   vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayableNode->GetDisplayNode());
-  if (!displayNode)
+  if (!displayNode || !displayNode->IsShowModeDefault())
     {
-    // This method can only handle displayable nodes
     return false;
     }
   if (viewNode)

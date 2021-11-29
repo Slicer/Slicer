@@ -22,6 +22,11 @@
 #include <QDebug>
 #include <QScrollArea>
 
+// SlicerQt includes
+#include <qSlicerCoreApplication.h>
+#include <qSlicerModuleManager.h>
+#include <qSlicerAbstractCoreModule.h>
+
 // Subject hierarchy widgets
 #include "qMRMLSubjectHierarchyTreeView.h"
 #include "qMRMLSubjectHierarchyModel.h"
@@ -34,6 +39,10 @@
 // Logic includes
 #include "vtkMRMLDisplayableHierarchyLogic.h"
 #include "vtkSlicerModelsLogic.h"
+
+// Colors MRML and Logic includes
+#include <vtkSlicerColorLogic.h>
+#include <vtkMRMLColorLegendDisplayNode.h>
 
 // MRML includes
 #include "vtkMRMLFolderDisplayNode.h"
@@ -54,6 +63,7 @@ class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModuleWidget
 {
 public:
   qSlicerModelsModuleWidgetPrivate();
+
   QStringList HideChildNodeTypes;
   QString FiberDisplayClass;
   vtkSmartPointer<vtkCallbackCommand> CallBack;
@@ -136,6 +146,9 @@ void qSlicerModelsModuleWidget::setup()
 
   connect(d->ClipSelectedModelCheckBox, SIGNAL(toggled(bool)),
     this, SLOT(onClipSelectedModelToggled(bool)) );
+
+  connect(d->ColorLegendCollapsibleGroupBox, SIGNAL(toggled(bool)),
+    this, SLOT(onColorLegendCollapsibleGroupBoxToggled(bool)));
 
   this->Superclass::setup();
 }
@@ -323,7 +336,17 @@ void qSlicerModelsModuleWidget::onDisplayNodeChanged()
   d->ClipSelectedModelCheckBox->setEnabled(displayNode != nullptr);
   d->ClipSelectedModelCheckBox->setChecked(displayNode != nullptr && displayNode->GetClipping());
   d->ClipSelectedModelCheckBox->blockSignals(wasBlocked);
-}
+
+  // Color legend
+  vtkMRMLColorLegendDisplayNode* colorLegendNode = nullptr;
+  colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
+  d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
+
+  if (!colorLegendNode)
+    {
+    d->ColorLegendCollapsibleGroupBox->setCollapsed(true);
+    }
+  d->ColorLegendCollapsibleGroupBox->setEnabled(displayNode && displayNode->GetColorNode());}
 
 //-----------------------------------------------------------
 void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
@@ -398,4 +421,37 @@ void qSlicerModelsModuleWidget::onInformationSectionCollapsed(bool collapsed)
     QList<vtkIdType> currentItemIDs = d->SubjectHierarchyTreeView->currentItems();
     this->setDisplaySelectionFromSubjectHierarchyItems(currentItemIDs);
     }
+}
+
+//------------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::onColorLegendCollapsibleGroupBoxToggled(bool toggled)
+{
+  Q_D(qSlicerModelsModuleWidget);
+
+  // Make sure a legend display node exists if the color legend section is opened
+  if (!toggled)
+    {
+    return;
+    }
+
+  vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
+  vtkMRMLColorLegendDisplayNode* colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
+  if (!colorLegendNode)
+    {
+    // color legend node does not exist, we need to create it now
+
+    // Pause render to prevent the new Color legend displayed for a moment before it is hidden.
+    vtkMRMLApplicationLogic* mrmlAppLogic = this->logic()->GetMRMLApplicationLogic();
+    if (mrmlAppLogic)
+      {
+      mrmlAppLogic->PauseRender();
+      }
+    colorLegendNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(displayNode);
+    colorLegendNode->SetVisibility(false); // just because the groupbox is opened, don't show color legend yet
+    if (mrmlAppLogic)
+      {
+      mrmlAppLogic->ResumeRender();
+      }
+    }
+  d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
 }

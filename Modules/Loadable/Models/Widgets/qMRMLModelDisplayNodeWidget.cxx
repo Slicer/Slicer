@@ -33,10 +33,10 @@
 #include <qSlicerSubjectHierarchyPluginHandler.h>
 
 // MRML include
-#include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
@@ -149,10 +149,10 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
     q, SIGNAL(displayNodeChanged()));
 
   if (this->CurrentModelDisplayNode.GetPointer())
-  {
+    {
     q->setEnabled(true);
     q->setMRMLModelDisplayNode(this->CurrentModelDisplayNode);
-  }
+    }
 }
 
 //------------------------------------------------------------------------------

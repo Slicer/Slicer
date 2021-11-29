@@ -414,7 +414,7 @@ public:
 
   /// Text property object that controls the display properties of text actors in 2D and 3D.
   /// The text object property controls background color/opacity, frame size/color, font, etc.
-  /// This function should always return a valid vtkTextProperty pointer.
+  /// This function always returns a valid vtkTextProperty pointer.
   vtkGetObjectMacro(TextProperty, vtkTextProperty);
 
   /// Set the active color of the markup. This color is used when the mouse pointer hovers over a markup.
@@ -452,14 +452,6 @@ public:
   /// Update scalar range and update markups pipeline when the active scalar array is changed
   virtual void UpdateAssignedAttribute() override;
 
-  // Returns a string containing the text style of the vtkTextProperty.
-  // String format follows html-style CSS conventions.
-  static std::string GetTextPropertyAsString(vtkTextProperty* property);
-
-  // Update the style of a vtkTextProperty from a string.
-  // String format follows html-style CSS conventions.
-  static void UpdateTextPropertyFromString(std::string inputString, vtkTextProperty* property);
-
 protected:
   vtkMRMLMarkupsDisplayNode();
   ~vtkMRMLMarkupsDisplayNode() override;
@@ -473,9 +465,6 @@ protected:
   // Return a string representing the text style
   // String format follows html-style conventions
   std::string GetTextPropertyAsString();
-
-  // Get the color from a string of the form: rgba(0,0,0,0)
-  static void GetColorFromString(const std::string& colorString, double color[4]);
 
   /// Current active point or widget component type and index (hovered by the mouse or other interaction context)
   /// Map interaction context identifier (empty string for mouse) to component type enum

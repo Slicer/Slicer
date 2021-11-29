@@ -15,7 +15,12 @@
 
 // MRML
 #include "vtkMRMLColorTableStorageNode.h"
+#include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLProceduralColorStorageNode.h"
+#include "vtkMRMLColorLegendDisplayNode.h"
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -29,6 +34,9 @@
 #include <cerrno>
 #endif
 
+#include <sstream>
+#include <cstring>
+
 vtkStandardNewMacro(vtkSlicerColorLogic);
 
 //----------------------------------------------------------------------------
@@ -36,6 +44,21 @@ vtkSlicerColorLogic::vtkSlicerColorLogic() = default;
 
 //----------------------------------------------------------------------------
 vtkSlicerColorLogic::~vtkSlicerColorLogic() = default;
+
+//-----------------------------------------------------------------------------
+void vtkSlicerColorLogic::RegisterNodes()
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkErrorMacro("RegisterNodes: Invalid MRML scene");
+    return;
+    }
+  if (!scene->IsNodeClassRegistered("vtkMRMLColorLegendDisplayNode"))
+    {
+    scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorLegendDisplayNode>::New());
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerColorLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -208,4 +231,205 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
 #endif
     } // end of looping over dirs
   return filenames;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(vtkMRMLDisplayableNode* displayableNode)
+{
+  vtkMRMLDisplayNode* displayNode = vtkSlicerColorLogic::GetFirstNonColorLegendDisplayNode(displayableNode);
+  if (!displayNode)
+    {
+    vtkGenericWarningMacro("AddDefaultColorLegendDisplayNode failed: no valid display node is found.");
+    return nullptr;
+    }
+  return vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(displayNode);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(vtkMRMLDisplayNode* displayNode)
+{
+  if (!displayNode)
+    {
+    vtkGenericWarningMacro("AddDefaultColorLegendDisplayNode: Display node is invalid");
+    return nullptr;
+    }
+  vtkMRMLScene* mrmlScene = displayNode->GetScene();
+  if (!mrmlScene)
+    {
+    vtkErrorWithObjectMacro(displayNode, "vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode: Invalid MRML scene");
+    return nullptr;
+    }
+
+  vtkMRMLColorLegendDisplayNode* colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
+  if (colorLegendNode)
+    {
+    // Found already existing color legend node
+    return colorLegendNode;
+    }
+
+  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+  if (!displayNode)
+    {
+    vtkErrorWithObjectMacro(displayNode, "vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode: Displayable node is invalid");
+    return nullptr;
+    }
+
+  std::string title = displayableNode->GetName() ? displayableNode->GetName() : "";
+
+  // Create color legend and observe color legend by displayable node
+  colorLegendNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(
+    mrmlScene->AddNewNodeByClass("vtkMRMLColorLegendDisplayNode", title + " color legend"));
+  if (!colorLegendNode)
+    {
+    vtkErrorWithObjectMacro(displayNode, "vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode: Failed to create vtkMRMLColorLegendDisplayNode");
+    return nullptr;
+    }
+  colorLegendNode->SetTitleText(title);
+  colorLegendNode->SetAndObservePrimaryDisplayNode(displayNode);
+
+  // If the color node is a color table containing only a handful of colors then most likely it is a
+  // list of named colors, tehrefore use the color names for labels.
+  vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(displayNode->GetColorNode());
+  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(colorNode);
+  if (colorTableNode && (colorTableNode->GetNumberOfColors() < 20))
+    {
+    // it looks like a discrete color table, use color names instead of labels by default
+    colorLegendNode->SetMaxNumberOfColors(colorNode->GetNumberOfColors());
+    colorLegendNode->SetUseColorNamesForLabels(true);
+    colorLegendNode->SetLabelFormat(colorLegendNode->GetDefaultTextLabelFormat());
+    }
+
+  // Add color legend to displayable node
+  // observe primary display node to get current scalar range
+  displayableNode->AddAndObserveDisplayNodeID(colorLegendNode->GetID());
+  // Adding as display node to displayableNode does not trigger an update in vtkMRMLColorLegendDisplayableManager.
+  // We trigger an update manually as a workaround.
+  colorLegendNode->Modified();
+
+  return colorLegendNode;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::GetNthColorLegendDisplayNode(
+  vtkMRMLDisplayableNode* displayableNode, int n)
+{
+  if (!displayableNode)
+   {
+   vtkGenericWarningMacro("vtkSlicerColorLogic::GetNthColorLegendDisplayNode: Displayable node is invalid");
+   return nullptr;
+   }
+
+  int colorLegendIndex = 0;
+  int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  for (int i = 0; i < numberOfDisplayNodes; ++i)
+    {
+    vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(
+      displayableNode->GetNthDisplayNode(i));
+    if (!colorLegendDisplayNode)
+      {
+      continue;
+      }
+    if (colorLegendIndex == n)
+      {
+      return colorLegendDisplayNode;
+      }
+    colorLegendIndex++;
+    }
+
+  return nullptr;
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerColorLogic::GetNumberOfColorLegendDisplayNodes(vtkMRMLDisplayableNode* displayableNode)
+{
+  if (!displayableNode)
+   {
+   vtkGenericWarningMacro("vtkSlicerColorLogic::GetNumberOfColorLegendDisplayNodes: Displayable node is invalid");
+   return 0;
+   }
+  int numberOfColorLegendDIsplayNodes = 0;
+  int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  for (int i = 0; i < numberOfDisplayNodes; ++i)
+    {
+    vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(
+      displayableNode->GetNthDisplayNode(i));
+    if (colorLegendDisplayNode)
+      {
+      numberOfColorLegendDIsplayNodes++;
+      }
+    }
+  return numberOfColorLegendDIsplayNodes;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::GetColorLegendDisplayNode(vtkMRMLDisplayableNode* displayableNode)
+{
+  vtkMRMLDisplayNode* displayNode = vtkSlicerColorLogic::GetFirstNonColorLegendDisplayNode(displayableNode);
+  return vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::GetColorLegendDisplayNode(vtkMRMLDisplayNode* displayNode)
+{
+  if (!displayNode)
+    {
+    return nullptr;
+    }
+  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+  if (!displayableNode)
+    {
+    return nullptr;
+    }
+  vtkMRMLColorLegendDisplayNode* colorLegendNode = nullptr;
+  int nofDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  for (int i = 0; i < nofDisplayNodes; ++i)
+    {
+    vtkMRMLColorLegendDisplayNode* foundColorLegendNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(
+      displayableNode->GetNthDisplayNode(i));
+    if (!foundColorLegendNode)
+      {
+      continue;
+      }
+    if (foundColorLegendNode->GetPrimaryDisplayNode() == displayNode)
+      {
+      // found an exact match
+      return foundColorLegendNode;
+      }
+    if (!colorLegendNode && !foundColorLegendNode->GetPrimaryDisplayNode())
+      {
+      // found a color legend node that is not bound to a specific display node,
+      // use it if more specific match is not found
+      colorLegendNode = foundColorLegendNode;
+      }
+    }
+
+  return colorLegendNode;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLDisplayNode* vtkSlicerColorLogic::GetFirstNonColorLegendDisplayNode(
+  vtkMRMLDisplayableNode* displayableNode)
+{
+  if (!displayableNode)
+    {
+    return nullptr;
+    }
+  int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  for (int i = 0; i < numberOfDisplayNodes; ++i)
+    {
+    vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
+    vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(displayNode);
+    if (colorLegendDisplayNode)
+      {
+      // it is a color legend display node, ignore it
+      // (because color legend display node must refer to a non-color-legend display node)
+      continue;
+      }
+    if (displayNode)
+      {
+      // first valid display node
+      return displayNode;
+      }
+    }
+  return nullptr;
 }

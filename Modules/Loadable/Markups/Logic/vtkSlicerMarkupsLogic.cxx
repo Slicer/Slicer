@@ -1143,7 +1143,7 @@ void vtkSlicerMarkupsLogic::CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode
 
   targetDisplayNode->SetOccludedVisibility(sourceDisplayNode->GetOccludedVisibility());
   targetDisplayNode->SetOccludedOpacity(sourceDisplayNode->GetOccludedOpacity());
-  std::string textPropertyStr = vtkMRMLMarkupsDisplayNode::GetTextPropertyAsString(sourceDisplayNode->GetTextProperty());
+  std::string textPropertyStr = vtkMRMLDisplayNode::GetTextPropertyAsString(sourceDisplayNode->GetTextProperty());
   vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(textPropertyStr, targetDisplayNode->GetTextProperty());
 
   targetDisplayNode->SetSelectedColor(sourceDisplayNode->GetSelectedColor());

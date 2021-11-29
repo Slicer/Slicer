@@ -5,8 +5,8 @@ set(qtmodules
   Cameras
   Units
   Terminologies
-  Colors
   SubjectHierarchy
+  Colors # Colors depends of SubjectHierarchy
   Annotations
   Markups
   Transforms

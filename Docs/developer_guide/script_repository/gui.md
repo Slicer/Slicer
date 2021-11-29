@@ -450,25 +450,22 @@ for i in range(0,255):
 slicer.mrmlScene.AddNode(invertedocean)
 ```
 
-### Show color scalar bar in slice views
+### Show color legend for a volume node
 
-Display color bar for background volume in slice views (managed by DataProbe):
+Display color legend for a volume node in slice views:
 
 ```python
-sliceAnnotations = slicer.modules.DataProbeInstance.infoWidget.sliceAnnotations
-sliceAnnotations.sliceViewAnnotationsEnabled = True
-sliceAnnotations.scalarBarEnabled = 1
-sliceAnnotations.scalarBarSelectedLayer = "background"  # alternative is "foreground"
-sliceAnnotations.rangeLabelFormat = "test %G"
-sliceAnnotations.updateSliceViewFromGUI()
+volumeNode = getNode('MRHead')
+colorLegendDisplayNode = slicer.modules.colors.logic().AddDefaultColorLegendDisplayNode(volumeNode)
 ```
 
-### Display color scalar bar in 3D views
+### Create custom color map and display color legend
 
 ```python
+modelNode = getNode('MyModel')  # color legend requires a displayable node
 colorTableRangeMm = 40
 title ="Radial\nCompression\n"
-labelsFormat = "%4.1f mm"
+labelFormat = "%4.1f mm"
 
 # Create color node
 colorNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLProceduralColorNode")
@@ -489,14 +486,11 @@ colorMap.AddRGBPoint(colorTableRangeMm * 0.2, 0.0, 1.0, 1.0)
 colorMap.AddRGBPoint(colorTableRangeMm * 0.5, 1.0, 1.0, 0.0)
 colorMap.AddRGBPoint(colorTableRangeMm * 1.0, 1.0, 0.0, 0.0)
 
-# Display color scalar bar
-colorWidget = slicer.modules.colors.widgetRepresentation()
-colorWidget.setCurrentColorNode(colorNode)
-ctkScalarBarWidget = slicer.util.findChildren(colorWidget, name="VTKScalarBar")[0]
-ctkScalarBarWidget.setDisplay(1)
-ctkScalarBarWidget.setTitle(title)
-ctkScalarBarWidget.setMaxNumberOfColors(256)
-ctkScalarBarWidget.setLabelsFormat(labelsFormat)
+# Display color legend
+modelNode.GetDisplayNode().SetAndObserveColorNodeID(colorNode.GetID())
+colorLegendDisplayNode = slicer.modules.colors.logic().AddDefaultColorLegendDisplayNode(modelNode)
+colorLegendDisplayNode.SetTitleText(title)
+colorLegendDisplayNode.SetLabelFormat(labelFormat)
 ```
 
 ### Customize view layout

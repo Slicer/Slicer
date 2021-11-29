@@ -34,6 +34,11 @@
 #include <QSharedPointer>
 #include <QSpinBox>
 
+// SlicerQt includes
+#include <qSlicerCoreApplication.h>
+#include <qSlicerModuleManager.h>
+#include <qSlicerAbstractCoreModule.h>
+
 // CTK includes
 #include "ctkMessageBox.h"
 
@@ -46,6 +51,7 @@
 #include "qSlicerApplication.h"
 
 // MRML includes
+#include "vtkMRMLColorLegendDisplayNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
@@ -57,6 +63,9 @@
 // MRMLDM includes
 #include "vtkMRMLMarkupsDisplayableManager.h"
 #include "vtkMRMLMarkupsDisplayableManagerHelper.h"
+
+// Module logic includes
+#include <vtkSlicerColorLogic.h>
 
 // Markups includes
 #include "qMRMLMarkupsAbstractOptionsWidget.h"
@@ -553,6 +562,9 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   q->updateImportExportWidgets();
 
+  QObject::connect(this->ColorLegendCollapsibleGroupBox, SIGNAL(toggled(bool)),
+    q, SLOT(onColorLegendCollapsibleGroupBoxToggled(bool)));
+
   // Add event observers for registration/unregistration of markups
   q->qvtkConnect(q->markupsLogic(), vtkSlicerMarkupsLogic::MarkupRegistered,
     q, SLOT(onCreateMarkupsPushButtons()));
@@ -1024,6 +1036,15 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
 
     d->activeMarkupTreeView->setCurrentNode(d->MarkupsNode);
     }
+
+  // Color legend
+  vtkMRMLColorLegendDisplayNode* colorLegendNode = nullptr;
+  vtkMRMLDisplayNode* displayNode = d->markupsDisplayWidget->mrmlMarkupsDisplayNode();
+  colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
+  d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
+
+  d->ColorLegendCollapsibleGroupBox->setCollapsed(!colorLegendNode);
+  d->ColorLegendCollapsibleGroupBox->setEnabled(displayNode && displayNode->GetColorNode());
 
   if (!d->MarkupsNode)
     {
@@ -1879,6 +1900,39 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeChanged(vtkMRMLNode* node
     }
   this->enableMarkupTableButtons(markupsNode ? 1 : 0);
   this->setMRMLMarkupsNode(markupsNode);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onColorLegendCollapsibleGroupBoxToggled(bool toggled)
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+
+  // Make sure a legend display node exists if the color legend section is opened
+  if (!toggled)
+    {
+    return;
+    }
+
+  vtkMRMLDisplayNode* displayNode = d->markupsDisplayWidget->mrmlMarkupsDisplayNode();
+  vtkMRMLColorLegendDisplayNode* colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
+  if (!colorLegendNode)
+    {
+    // color legend node does not exist, we need to create it now
+
+    // Pause render to prevent the new Color legend displayed for a moment before it is hidden.
+    vtkMRMLApplicationLogic* mrmlAppLogic = this->logic()->GetMRMLApplicationLogic();
+    if (mrmlAppLogic)
+      {
+      mrmlAppLogic->PauseRender();
+      }
+    colorLegendNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(displayNode);
+    colorLegendNode->SetVisibility(false); // just because the groupbox is opened, don't show color legend yet
+    if (mrmlAppLogic)
+      {
+      mrmlAppLogic->ResumeRender();
+      }
+    }
+  d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
 }
 
 //-----------------------------------------------------------------------------

@@ -31,6 +31,7 @@
 #include <qSlicerSubjectHierarchyAbstractPlugin.h>
 #include <qSlicerSubjectHierarchyPluginLogic.h>
 #include <qSlicerSubjectHierarchyPluginHandler.h>
+#include <vtkSlicerColorLogic.h>
 #include <vtkSlicerSubjectHierarchyModuleLogic.h>
 #include <vtkSlicerTerminologiesModuleLogic.h>
 
@@ -63,6 +64,12 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
 
   vtkSlicerApplicationLogic* appLogic = app.applicationLogic();
   vtkNew<vtkMRMLScene> scene;
+
+  // Add Color logic (used by Models logic)
+  vtkNew<vtkSlicerColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+  colorLogic->SetMRMLApplicationLogic(appLogic);
+  appLogic->SetModuleLogic("Colors", colorLogic);
 
   // Set up Models module
   qSlicerModelsModule module;
