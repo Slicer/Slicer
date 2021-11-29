@@ -158,7 +158,6 @@ annotations.md
 datastore.md
 expertautomatedregistration.md
 labelstatistics.md
-brainslabelstats.md
 resamplescalarvolume.md
 robuststatisticssegmenter.md
 simpleregiongrowingsegmentation.md
