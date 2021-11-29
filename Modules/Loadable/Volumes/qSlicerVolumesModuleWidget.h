@@ -50,6 +50,7 @@ protected slots:
   void nodeSelectionChanged(vtkMRMLNode*);
   void updateWidgetFromMRML();
   void convertVolume();
+  void colorLegendCollapsibleButtonCollapsed(bool state);
 
 protected:
   QScopedPointer<qSlicerVolumesModuleWidgetPrivate> d_ptr;

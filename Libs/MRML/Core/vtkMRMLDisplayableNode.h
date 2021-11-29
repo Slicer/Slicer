@@ -190,11 +190,13 @@ public:
   /// Utility to return the visibility of all the display nodes.
   /// Return 0 if they are all hidden, 1 if all are visible and 2 if some are
   /// visible and some are hidden.
+  /// It ignores display nodes that have ShowMode other than vtkMRMLDisplayNode::ShowDefault.
   virtual int GetDisplayVisibility();
   virtual void SetDisplayVisibility(int visible);
 
   /// Get/Set visibility of display nodes of certain class
   /// if nodeClass is 0, get/set visibility of all display nodes
+  /// It ignores display nodes that have ShowMode other than vtkMRMLDisplayNode::ShowDefault.
   virtual int GetDisplayClassVisibility(const char* nodeClass);
   virtual void SetDisplayClassVisibility(const char* nodeClass, int visible);
 

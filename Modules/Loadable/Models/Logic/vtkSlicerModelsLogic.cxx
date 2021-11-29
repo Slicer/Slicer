@@ -467,7 +467,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
       for (int i=0; i<ndnodes; i++)
         {
         vtkMRMLDisplayNode *displayNode = modelNode->GetNthDisplayNode(i);
-        if (displayNode)
+        if (displayNode && displayNode->IsShowModeDefault())
           {
           displayNode->SetVisibility(flag);
           }

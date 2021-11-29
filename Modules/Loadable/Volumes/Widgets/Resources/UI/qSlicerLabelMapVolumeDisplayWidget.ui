@@ -6,21 +6,45 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>284</width>
-    <height>33</height>
+    <width>231</width>
+    <height>50</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QLabel" name="LookupTableLabel">
-     <property name="text">
-      <string>Lookup Table:</string>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="1" column="1">
+    <widget class="QSpinBox" name="SliceIntersectionThicknessSpinBox">
+     <property name="toolTip">
+      <string>When displaying the label map with the outline/not filled option, this controls the width of the outline.</string>
+     </property>
+     <property name="suffix">
+      <string> px</string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>20</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>3</number>
      </property>
     </widget>
    </item>
@@ -34,50 +58,22 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="LookupTableLabel">
+     <property name="text">
+      <string>Lookup Table:</string>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
-     <widget class="QLabel" name="SliceIntersectionThicknessLabel">
-       <property name="text">
-         <string>Label Outline &amp;Thickness:</string>
-       </property>
-       <property name="buddy">
-         <cstring>SliceIntersectionThicknessSpinBox</cstring>
-       </property>
-     </widget>
-   </item>
-   <item row="1" column="1">
-     <widget class="QSpinBox" name="SliceIntersectionThicknessSpinBox">
-       <property name="suffix">
-         <string> px</string>
-       </property>
-       <property name="minimum">
-         <number>1</number>
-       </property>
-       <property name="maximum">
-         <number>20</number>
-       </property>
-       <property name="value">
-         <number>3</number>
-       </property>
-       <property name="singleStep">
-         <number>1</number>
-       </property>
-       <property name="toolTip">
-         <string>When displaying the label map with the outline/not filled option, this controls the width of the outline.</string>
-       </property>
-     </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+    <widget class="QLabel" name="SliceIntersectionThicknessLabel">
+     <property name="text">
+      <string>Label Outline &amp;Thickness:</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
+     <property name="buddy">
+      <cstring>SliceIntersectionThicknessSpinBox</cstring>
      </property>
-    </spacer>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -91,6 +87,7 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>

@@ -173,7 +173,7 @@ bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UseDisplayNode(vtkMR
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::IsVisible(vtkMRMLSegmentationDisplayNode* displayNode)
 {
-  return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D()
+  return displayNode
     && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID())
     && displayNode->GetOpacity3D() > 0;
 }

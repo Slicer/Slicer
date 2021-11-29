@@ -354,3 +354,61 @@ void vtkSlicerScalarBarActor::ConfigureTicks()
     }
   }
 }
+
+//------------------------------------------------------------------------------
+void vtkSlicerScalarBarActor::PrepareTitleText()
+{
+  // Update actor with the latest title/subtitle
+  if (this->ComponentTitle && strlen(this->ComponentTitle) > 0)
+  {
+    // need to account for a space between title & component and null term
+    char* combinedTitle = new char[strlen(this->Title) + strlen(this->ComponentTitle) + 2];
+    strcpy(combinedTitle, this->Title);
+    strcat(combinedTitle, " ");
+    strcat(combinedTitle, this->ComponentTitle);
+    this->TitleActor->SetInput(combinedTitle);
+    delete[] combinedTitle;
+  }
+  else
+  {
+    this->TitleActor->SetInput(this->Title);
+  }
+
+  if (this->TitleTextProperty->GetMTime() > this->BuildTime)
+  {
+    // Shallow copy here so that the size of the title prop is not affected
+    // by the automatic adjustment of its text mapper's size (i.e. its
+    // mapper's text property is identical except for the font size
+    // which will be modified later). This allows text actors to
+    // share the same text property, and in that case specifically allows
+    // the title and label text prop to be the same.
+    this->TitleActor->GetTextProperty()->ShallowCopy(this->TitleTextProperty);
+    // Do not override justification, just use what was received
+    // this->TitleActor->GetTextProperty()->SetJustificationToCentered();
+    this->TitleActor->GetTextProperty()->SetVerticalJustification(
+      this->TextPosition == PrecedeScalarBar ? VTK_TEXT_BOTTOM : VTK_TEXT_TOP);
+  }
+}
+
+//------------------------------------------------------------------------------
+void vtkSlicerScalarBarActor::ConfigureTitle()
+{
+  double xPosition = this->P->TitleBox.Posn[0] + this->P->TitleBox.Size[this->P->TL[0]] / 2; // centered by default
+  if (this->Orientation == VTK_ORIENT_VERTICAL)
+    {
+    if (this->TitleTextProperty->GetJustification() == VTK_TEXT_LEFT)
+      {
+      xPosition = this->P->Frame.Posn[0];
+      }
+    else if (this->TitleTextProperty->GetJustification() == VTK_TEXT_RIGHT)
+      {
+      xPosition = this->P->Frame.Posn[0] + this->P->Frame.Size[0];
+      }
+    }
+
+  this->TitleActor->SetPosition(
+    xPosition,
+    this->TitleActor->GetTextProperty()->GetVerticalJustification() == VTK_TEXT_BOTTOM
+    ? this->P->TitleBox.Posn[1]
+    : this->P->TitleBox.Posn[1] + this->P->TitleBox.Size[this->P->TL[1]]);
+}

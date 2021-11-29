@@ -47,7 +47,7 @@ public:
 
   // Description:
   // The bar aspect ratio (length/width).  Defaults to 20.  Note that this
-  // the aspect ratio of the color bar only, not including labels.
+  // the aspect ratio of the color legend only, not including labels.
   vtkGetMacro(AspectRatio, double);
   vtkSetMacro(AspectRatio, double);
 

@@ -60,6 +60,8 @@ public slots:
   void onClippingConfigurationButtonClicked();
   void onDisplayNodeChanged();
   void onClipSelectedModelToggled(bool);
+  /// Create or get first color legend if group box is expanded
+  void onColorLegendCollapsibleGroupBoxToggled(bool);
 
   static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
                                void* client_data, void* call_data);

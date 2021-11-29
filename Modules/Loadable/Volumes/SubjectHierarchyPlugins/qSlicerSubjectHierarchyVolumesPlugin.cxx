@@ -560,7 +560,7 @@ int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkIdType itemID)
   for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
     {
     vtkMRMLDisplayNode* displayNode = volumeNode->GetNthDisplayNode(displayNodeIndex);
-    if (!displayNode)
+    if (!displayNode || !displayNode->IsShowModeDefault())
       {
       continue;
       }
@@ -670,12 +670,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
   qSlicerSubjectHierarchyAbstractPlugin* volumeRenderingPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("VolumeRendering");
   vtkNew<vtkIdList> allShItemIds;
   allShItemIds->InsertNextId(shItemId);
-  // By default we do not show volume rendering, only if it is explicitly enabled, because it is resource-intensive and may require non-trivial setup.
-  // Since this module has no access to volumeRenderingPlugin->autoShowIn3DViewsAsVolumeRendering() method,
-  // we need to access the flag by directly reading the subject hierarchy item attribute.
-  bool autoShowVolumeRendering = QString::fromStdString(
-    shNode->GetItemAttribute(shItemId, "VolumeRendering.AutoShowIn3DViewsAsVolumeRendering")).toUpper() != QString("FALSE");
-  if (volumeRenderingPlugin && autoShowVolumeRendering)
+  if (volumeRenderingPlugin)
     {
     std::vector<vtkMRMLNode*> allViewNodes;
     scene->GetNodesByClass("vtkMRMLViewNode", allViewNodes);
@@ -683,11 +678,12 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
     for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
       {
       vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(displayNodeIndex);
-      if (!displayNode)
+      // By default we do not show volume rendering, only if it is explicitly enabled.
+      if (!displayNode || !displayNode->IsShowModeDefault())
         {
         continue;
         }
-      if (vtkMRMLVolumeDisplayNode::SafeDownCast(displayNode))
+      if (!displayNode->IsA("vtkMRMLVolumeRenderingDisplayNode")) // ignore everything except VolumeRendering
         {
         // we only manage existing volume rendering display nodes here
         // (we don't want to show volume rendering until volume rendering has been explicitly enabled)
@@ -706,6 +702,21 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
           }
         volumeRenderingPlugin->showItemInView(shItemId, viewNode, allShItemIds);
         }
+      }
+    }
+
+  // Show color legend display node
+  int numberOfDisplayNodes = node->GetNumberOfDisplayNodes();
+  for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
+    {
+    vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(displayNodeIndex);
+    // ignore everything except vtkMRMLColorLegendDisplayNOde
+    // we only manage existing color legend display nodes here
+    // (we don't want to show color legend until color legend has been explicitly enabled)
+    if (displayNode && displayNode->IsShowModeDefault()
+      && displayNode->IsA("vtkMRMLColorLegendDisplayNode"))
+      {
+      displayNode->VisibilityOn();
       }
     }
 
@@ -755,12 +766,12 @@ void qSlicerSubjectHierarchyVolumesPlugin::hideVolumeFromAllViews(vtkMRMLScalarV
       }
     }
 
-  // Volume rendering display
+  // Color legend display, volume rendering display node
   int numberOfDisplayNodes = node->GetNumberOfDisplayNodes();
   for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
     {
     vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(displayNodeIndex);
-    if (!displayNode)
+    if (!displayNode || !displayNode->IsShowModeDefault())
       {
       continue;
       }

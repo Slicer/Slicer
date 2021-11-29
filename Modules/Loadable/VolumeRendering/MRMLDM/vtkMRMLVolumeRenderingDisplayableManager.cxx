@@ -369,8 +369,8 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::IsVisible(vtkMRMLVol
     }
 
   return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D()
-    && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID())
-    && displayNode->GetOpacity() > 0;
+    && displayNode->GetOpacity() > 0
+    && displayNode->IsDisplayableInView(this->External->GetMRMLViewNode()->GetID());
 }
 
 //---------------------------------------------------------------------------

@@ -38,20 +38,21 @@ public:
   // Constant strings (std::string types for easy concatenation)
   //----------------------------------------------------------------------------
 
-  // Data node subject hierarchy attribute
+  /// Data node subject hierarchy attribute
   static const std::string GetSubjectHierarchyAttributePrefix()
     { return "SubjectHierarchy."; };
   static const std::string GetSubjectHierarchyExcludeFromTreeAttributeName()
     { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "ExcludeFromPotentialNodesList"; };
 
-  // Subject hierarchy item attributes
+  //@{
+  /// Subject hierarchy item attributes
   static const std::string GetSubjectHierarchyVirtualBranchAttributeName()
     { return "VirtualBranch"; };
   static const std::string GetSubjectHierarchyLevelAttributeName()
     { return "Level"; };
   static const std::string GetSubjectHierarchyNewItemNamePrefix()
     { return "New"; };
-
+  //@}
   // Non-DICOM levels
   static const char* GetSubjectHierarchyLevelFolder()
     { return "Folder"; };

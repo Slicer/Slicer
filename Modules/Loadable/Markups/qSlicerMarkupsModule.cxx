@@ -506,7 +506,7 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
   settings.setValue("Markups/OccludedOpacity", markupsDisplayNode->GetOccludedOpacity());
 
   settings.setValue("Markups/TextProperty", QString::fromStdString(
-    vtkMRMLMarkupsDisplayNode::GetTextPropertyAsString(markupsDisplayNode->GetTextProperty())));
+    vtkMRMLDisplayNode::GetTextPropertyAsString(markupsDisplayNode->GetTextProperty())));
 
   color = markupsDisplayNode->GetSelectedColor();
   settings.setValue("Markups/SelectedColor", QColor::fromRgbF(color[0], color[1], color[2]));

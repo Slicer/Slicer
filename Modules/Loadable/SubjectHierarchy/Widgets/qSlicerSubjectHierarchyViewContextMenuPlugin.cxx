@@ -170,7 +170,7 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
 
   this->ConfigureSliceViewAnnotationsAction = new QAction(tr("Configure slice view annotations..."), q);
   this->ConfigureSliceViewAnnotationsAction->setObjectName("ConfigureSliceViewAnnotationsAction");
-  this->ConfigureSliceViewAnnotationsAction->setToolTip(tr("Configures display of corner annotations and color bar."));
+  this->ConfigureSliceViewAnnotationsAction->setToolTip(tr("Configures display of corner annotations and color legend."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
   QObject::connect(this->ConfigureSliceViewAnnotationsAction, SIGNAL(triggered()), q, SLOT(configureSliceViewAnnotationsAction()));

@@ -264,6 +264,9 @@ public slots:
   void updateImportExportWidgets();
   void onImportExportApply();
 
+  /// Create or get first color legend if group box is expanded
+  void onColorLegendCollapsibleGroupBoxToggled(bool);
+
   //-----------------------------------------------------------
   // All public methods below are deprecated
   //
