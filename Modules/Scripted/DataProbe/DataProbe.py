@@ -69,6 +69,14 @@ class DataProbeInfoWidget:
 
     self.frame = qt.QFrame(parent)
     self.frame.setLayout(qt.QVBoxLayout())
+    # Set horizontal policy to Ignored to prevent a long segment or volume name making the widget wider.
+    # If the module panel made larger then the image viewers would move and the mouse pointer position
+    # would change in the image, potentially pointing outside the node with the long name, resulting in the
+    # module panel collapsing to the original size, causing an infinite oscillation.
+    qSize = qt.QSizePolicy()
+    qSize.setHorizontalPolicy(qt.QSizePolicy.Ignored)
+    qSize.setVerticalPolicy(qt.QSizePolicy.Preferred)
+    self.frame.setSizePolicy(qSize)
 
     modulePath = slicer.modules.dataprobe.path.replace("DataProbe.py","")
     self.iconsDIR = modulePath + '/Resources/Icons'
