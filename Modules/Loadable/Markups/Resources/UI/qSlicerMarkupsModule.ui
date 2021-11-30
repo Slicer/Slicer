@@ -115,11 +115,8 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="controlPointsCollapsibleButton" native="true">
-        <property name="enabled">
-          <bool>false</bool>
-        </property>
-       <property name="text" stdset="0">
+      <widget class="ctkCollapsibleButton" name="controlPointsCollapsibleButton">
+       <property name="text">
         <string>Control Points</string>
        </property>
        <property name="collapsed">

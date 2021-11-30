@@ -238,6 +238,10 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->activeMarkupTreeView->setColumnHidden(this->activeMarkupTreeView->model()->transformColumn(), true);
   this->activeMarkupTreeView->setColumnHidden(this->activeMarkupTreeView->model()->descriptionColumn(), false);
 
+  // We need to disable the controlPointsCollapsibleButton here because doing so in the .ui file would lead to
+  // "child widget is not accessible" warning in debug mode whenever a point is selected in the control point list.
+  this->controlPointsCollapsibleButton->setEnabled(false);
+
   // set up the list buttons
   // visibility
   // first add actions to the menu, then hook them up
