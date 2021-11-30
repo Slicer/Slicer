@@ -2,7 +2,7 @@
 
 ## Markups json file format (.mrk.json)
 
-All markups node types (point list, line, angle, curve, etc.) can be saved to and loaded from json files.
+All markups node types (point list, line, angle, curve, etc.) can be saved to and loaded from json files. Detailed specification of all elements of the file is available in the [JSON schema](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Markups/Resources/Schema).
 
 A simple example that specifies a markups point list with 3 points that can be saved to a `myexample.mrk.json` file and loaded into Slicer:
 
@@ -14,9 +14,6 @@ A simple example that specifies a markups point list with 3 points that can be s
     { "label": "F-3", "position": [-25.22749042145594, 59.255268199233729, 0.0] }
 ]}]}
 ```
-
-All elements and properties are specified in this [JSON schema](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.0.json).
-
 
 ## Markups fiducial point list file format (.fcsv)
 
