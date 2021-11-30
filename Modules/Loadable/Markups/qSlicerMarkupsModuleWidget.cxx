@@ -1151,91 +1151,90 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
     }
 
   // selected
-  QTableWidgetItem* selectedItem = new QTableWidgetItem();
-  if (markupsNode->GetNthControlPointSelected(m))
-    {
-    selectedItem->setCheckState(Qt::Checked);
-    }
-  else
-    {
-    selectedItem->setCheckState(Qt::Unchecked);
-    }
-  // disable editing so that a double click won't bring up an entry box
-  selectedItem->setFlags(selectedItem->flags() & ~Qt::ItemIsEditable);
+  bool selected = markupsNode->GetNthControlPointSelected(m);
   int selectedIndex = d->columnIndex("Selected");
-  if (d->activeMarkupTableWidget->item(m,selectedIndex) == nullptr ||
-      (d->activeMarkupTableWidget->item(m,selectedIndex)->checkState() != selectedItem->checkState()))
+  QTableWidgetItem* selectedItem = d->activeMarkupTableWidget->item(m, selectedIndex);
+  if (!selectedItem)
     {
-    d->activeMarkupTableWidget->setItem(m,selectedIndex,selectedItem);
+    selectedItem = new QTableWidgetItem();
+    // disable editing so that a double click won't bring up an entry box
+    selectedItem->setFlags(selectedItem->flags() & ~Qt::ItemIsEditable);
+    d->activeMarkupTableWidget->setItem(m, selectedIndex, selectedItem);
+    }
+  if ((selectedItem->checkState() == Qt::Checked) != selected)
+    {
+    selectedItem->setCheckState(selected ? Qt::Checked : Qt::Unchecked);
     }
 
   // locked
-  QTableWidgetItem* lockedItem = new QTableWidgetItem();
-  // disable checkable
-  lockedItem->setData(Qt::CheckStateRole, QVariant());
-  lockedItem->setFlags(lockedItem->flags() & ~Qt::ItemIsUserCheckable);
-  // disable editing so that a double click won't bring up an entry box
-  lockedItem->setFlags(lockedItem->flags() & ~Qt::ItemIsEditable);
-  if (markupsNode->GetNthControlPointLocked(m))
-    {
-    lockedItem->setData(Qt::UserRole, QVariant(true));
-    lockedItem->setData(Qt::DecorationRole, d->SlicerLockIcon);
-    }
-  else
-    {
-    lockedItem->setData(Qt::UserRole, QVariant(false));
-    lockedItem->setData(Qt::DecorationRole, d->SlicerUnlockIcon);
-    }
   int lockedIndex = d->columnIndex("Locked");
-  if (d->activeMarkupTableWidget->item(m,lockedIndex) == nullptr ||
-      d->activeMarkupTableWidget->item(m,lockedIndex)->data(Qt::UserRole) != lockedItem->data(Qt::UserRole))
+  QTableWidgetItem* lockedItem = d->activeMarkupTableWidget->item(m, lockedIndex);
+  if (!lockedItem)
     {
-    d->activeMarkupTableWidget->setItem(m,lockedIndex,lockedItem);
+    lockedItem = new QTableWidgetItem();
+    // disable checkable
+    lockedItem->setData(Qt::CheckStateRole, QVariant());
+    lockedItem->setFlags(lockedItem->flags() & ~Qt::ItemIsUserCheckable);
+    // disable editing so that a double click won't bring up an entry box
+    lockedItem->setFlags(lockedItem->flags() & ~Qt::ItemIsEditable);
+    d->activeMarkupTableWidget->setItem(m, lockedIndex, lockedItem);
+    }
+  bool locked = markupsNode->GetNthControlPointLocked(m);
+  if (lockedItem->data(Qt::UserRole).toBool() != locked)
+    {
+    lockedItem->setData(Qt::UserRole, QVariant(locked));
+    lockedItem->setData(Qt::DecorationRole, locked ? d->SlicerLockIcon : d->SlicerUnlockIcon);
     }
 
   // visible
-  QTableWidgetItem* visibleItem = new QTableWidgetItem();
-  // disable checkable
-  visibleItem->setData(Qt::CheckStateRole, QVariant());
-  visibleItem->setFlags(visibleItem->flags() & ~Qt::ItemIsUserCheckable);
-  // disable editing so that a double click won't bring up an entry box
-  visibleItem->setFlags(visibleItem->flags() & ~Qt::ItemIsEditable);
-  if (markupsNode->GetNthControlPointVisibility(m))
+  int visibleIndex = d->columnIndex("Visible");
+  QTableWidgetItem* visibleItem = d->activeMarkupTableWidget->item(m, visibleIndex);
+  if (!visibleItem)
     {
-    visibleItem->setData(Qt::UserRole, QVariant(true));
-    visibleItem->setData(Qt::DecorationRole, d->SlicerVisibleIcon);
+    visibleItem = new QTableWidgetItem();
+    // disable checkable
+    visibleItem->setData(Qt::CheckStateRole, QVariant());
+    visibleItem->setFlags(visibleItem->flags() & ~Qt::ItemIsUserCheckable);
+    // disable editing so that a double click won't bring up an entry box
+    visibleItem->setFlags(visibleItem->flags() & ~Qt::ItemIsEditable);
+    d->activeMarkupTableWidget->setItem(m, visibleIndex, visibleItem);
     }
-  else
+  bool visible = markupsNode->GetNthControlPointVisibility(m);
+  if (visibleItem->data(Qt::UserRole).toBool() != visible)
     {
-    visibleItem->setData(Qt::UserRole, QVariant(false));
-    visibleItem->setData(Qt::DecorationRole, d->SlicerInvisibleIcon);
+    visibleItem->setData(Qt::UserRole, QVariant(visible));
+    visibleItem->setData(Qt::DecorationRole, visible ? d->SlicerVisibleIcon : d->SlicerInvisibleIcon);
     }
-    int visibleIndex = d->columnIndex("Visible");
-   if (d->activeMarkupTableWidget->item(m,visibleIndex) == nullptr ||
-       d->activeMarkupTableWidget->item(m,visibleIndex)->data(Qt::UserRole) != visibleItem->data(Qt::UserRole))
-     {
-     d->activeMarkupTableWidget->setItem(m,visibleIndex,visibleItem);
-     }
 
    // name
    int nameIndex = d->columnIndex("Name");
-   QString markupLabel = QString(markupsNode->GetNthControlPointLabel(m).c_str());
-   if (d->activeMarkupTableWidget->item(m,nameIndex) == nullptr ||
-       d->activeMarkupTableWidget->item(m,nameIndex)->text() != markupLabel)
+   QTableWidgetItem* nameItem = d->activeMarkupTableWidget->item(m, nameIndex);
+   if (!nameItem)
      {
-     d->activeMarkupTableWidget->setItem(m,nameIndex,new QTableWidgetItem(markupLabel));
+     nameItem = new QTableWidgetItem();
+     d->activeMarkupTableWidget->setItem(m, nameIndex, nameItem);
      }
+  QString markupLabel = QString::fromStdString(markupsNode->GetNthControlPointLabel(m));
+  if (nameItem->text() != markupLabel)
+    {
+    nameItem->setText(markupLabel);
+    }
 
    // description
    int descriptionIndex = d->columnIndex("Description");
-   QString markupDescription = QString(markupsNode->GetNthControlPointDescription(m).c_str());
-   if (d->activeMarkupTableWidget->item(m,descriptionIndex) == nullptr ||
-       d->activeMarkupTableWidget->item(m,descriptionIndex)->text() != markupLabel)
+   QTableWidgetItem* descriptionItem = d->activeMarkupTableWidget->item(m, descriptionIndex);
+   if (!descriptionItem)
      {
-     d->activeMarkupTableWidget->setItem(m,descriptionIndex,new QTableWidgetItem(markupDescription));
+     descriptionItem = new QTableWidgetItem();
+     d->activeMarkupTableWidget->setItem(m, descriptionIndex, descriptionItem);
+     }
+   QString markupDescription = QString(markupsNode->GetNthControlPointDescription(m).c_str());
+   if (descriptionItem->text() != markupDescription)
+     {
+     descriptionItem->setText(markupDescription);
      }
 
-   // point
+   // coordinates
    double point[3] = {0.0, 0.0, 0.0};
    if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
      {
@@ -1252,62 +1251,64 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
      }
   int rColumnIndex = d->columnIndex("R");
   int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(m);
-  if (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined ||
-      mPositionStatus == vtkMRMLMarkupsNode::PositionPreview ||
-      mPositionStatus == vtkMRMLMarkupsNode::PositionMissing)
+  for (int p = 0; p < 3; p++)
     {
-    for (int p = 0; p < 3; p++)
+    // last argument to number sets the precision
+    QString coordinate = QString::number(point[p], 'f', 3);
+    QTableWidgetItem* coordinateItem = d->activeMarkupTableWidget->item(m, rColumnIndex + p);
+    if (!coordinateItem)
       {
-      // last argument to number sets the precision
-      QString coordinate = QString::number(point[p], 'f', 3);
-      if (d->activeMarkupTableWidget->item(m, rColumnIndex + p) == nullptr ||
-          d->activeMarkupTableWidget->item(m, rColumnIndex + p)->text() != coordinate)
+      coordinateItem = new QTableWidgetItem();
+      d->activeMarkupTableWidget->setItem(m, rColumnIndex + p, coordinateItem);
+      }
+    if (coordinateItem->text() != coordinate)
+      {
+      coordinateItem->setText(coordinate);
+      }
+    bool enabled = mPositionStatus == vtkMRMLMarkupsNode::PositionDefined;
+    if (((coordinateItem->flags() & Qt::ItemIsEnabled) != 0) != enabled)
+      {
+      if (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined)
         {
-        QTableWidgetItem* coordinateItem = new QTableWidgetItem(coordinate);
-        d->activeMarkupTableWidget->setItem(m, rColumnIndex + p, coordinateItem);
-        if (mPositionStatus == vtkMRMLMarkupsNode::PositionMissing)
-          {
-          coordinateItem->setFlags(coordinateItem->flags() & ~Qt::ItemIsEnabled);
-          }
+        coordinateItem->setFlags(coordinateItem->flags() | Qt::ItemIsEnabled);
+        }
+      else
+        {
+        coordinateItem->setFlags(coordinateItem->flags() & ~Qt::ItemIsEnabled);
         }
       }
     }
-  else
-  {
-    for (int p = 0; p < 3; p++)
-      {
-      d->activeMarkupTableWidget->setItem(m, rColumnIndex + p, new QTableWidgetItem(""));
-      }
-  }
+
   // position
-  QTableWidgetItem* positionItem = new QTableWidgetItem();
-  // disable editing so that a double click won't bring up an entry box
-  positionItem->setFlags(positionItem->flags() & ~Qt::ItemIsEditable);
-  if (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined)
-    {
-    positionItem->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionDefined));
-    positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsDefined.png"));
-    }
-  else if (mPositionStatus == vtkMRMLMarkupsNode::PositionPreview)
-    {
-    positionItem->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionPreview));
-    positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsInProgress.png"));
-    }
-  else if (mPositionStatus == vtkMRMLMarkupsNode::PositionMissing)
-    {
-    positionItem->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionMissing));
-    positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsMissing.png"));
-    }
-  else if (mPositionStatus == vtkMRMLMarkupsNode::PositionUndefined)
-    {
-    positionItem->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionUndefined));
-    positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsUndefined.png"));
-    }
   int positionIndex = d->columnIndex("Position");
-  if (d->activeMarkupTableWidget->item(m, positionIndex) == nullptr ||
-      d->activeMarkupTableWidget->item(m, positionIndex)->data(Qt::UserRole) != positionItem->data(Qt::UserRole))
+  QTableWidgetItem* positionItem = d->activeMarkupTableWidget->item(m, positionIndex);
+  if (!positionItem)
     {
+    positionItem = new QTableWidgetItem();
+    // disable editing so that a double click won't bring up an entry box
+    positionItem->setFlags(positionItem->flags() & ~Qt::ItemIsEditable);
+    // set invalid value t make sure the item is updated
+    positionItem->setData(Qt::UserRole, QVariant::fromValue<int>(-1));
     d->activeMarkupTableWidget->setItem(m, positionIndex, positionItem);
+    }
+  if (positionItem->data(Qt::UserRole).toInt() != mPositionStatus)
+    {
+    positionItem->setData(Qt::UserRole, QVariant(mPositionStatus));
+    switch (mPositionStatus)
+      {
+      case vtkMRMLMarkupsNode::PositionDefined:
+        positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsDefined.png"));
+        break;
+      case vtkMRMLMarkupsNode::PositionPreview:
+        positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsInProgress.png"));
+        break;
+      case vtkMRMLMarkupsNode::PositionMissing:
+        positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsMissing.png"));
+        break;
+      case vtkMRMLMarkupsNode::PositionUndefined:
+        positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsUndefined.png"));
+        break;
+      }
     }
 
   // unblock so that changes to the table will propagate to MRML
@@ -1815,13 +1816,13 @@ void qSlicerMarkupsModuleWidget::onMissingMarkupPushButtonClicked()
       QTableWidgetItem *item = d->activeMarkupTableWidget->item(index, rColumnIndex + p);
       if (item)
         {
-        if (d->MarkupsNode->GetNthControlPointPositionStatus(index) == vtkMRMLMarkupsNode::PositionMissing)
+        if (d->MarkupsNode->GetNthControlPointPositionStatus(index) == vtkMRMLMarkupsNode::PositionDefined)
           {
-          item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+          item->setFlags(item->flags() | Qt::ItemIsEnabled);
           }
         else
           {
-          item->setFlags(item->flags() | Qt::ItemIsEnabled);
+          item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
           }
         }
       }
