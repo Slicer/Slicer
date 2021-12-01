@@ -137,16 +137,16 @@ private:
   QAction*    newMarkupWithCurrentDisplayPropertiesAction;
 
   QMenu*      visibilityMenu;
-  QAction*    visibilityOnAllMarkupsInListAction;
-  QAction*    visibilityOffAllMarkupsInListAction;
+  QAction*    visibilityOnAllControlPointsInListAction;
+  QAction*    visibilityOffAllControlPointsInListAction;
 
   QMenu*      selectedMenu;
-  QAction*    selectedOnAllMarkupsInListAction;
-  QAction*    selectedOffAllMarkupsInListAction;
+  QAction*    selectedOnAllControlPointsInListAction;
+  QAction*    selectedOffAllControlPointsInListAction;
 
   QMenu*      lockMenu;
-  QAction*    lockAllMarkupsInListAction;
-  QAction*    unlockAllMarkupsInListAction;
+  QAction*    lockAllControlPointsInListAction;
+  QAction*    unlockAllControlPointsInListAction;
 
   QAction*    cutAction;
   QAction*    copyAction;
@@ -180,16 +180,16 @@ qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMark
 
   this->newMarkupWithCurrentDisplayPropertiesAction = nullptr;
   this->visibilityMenu = nullptr;
-  this->visibilityOnAllMarkupsInListAction = nullptr;
-  this->visibilityOffAllMarkupsInListAction = nullptr;
+  this->visibilityOnAllControlPointsInListAction = nullptr;
+  this->visibilityOffAllControlPointsInListAction = nullptr;
 
   this->selectedMenu = nullptr;
-  this->selectedOnAllMarkupsInListAction = nullptr;
-  this->selectedOffAllMarkupsInListAction = nullptr;
+  this->selectedOnAllControlPointsInListAction = nullptr;
+  this->selectedOffAllControlPointsInListAction = nullptr;
 
   this->lockMenu = nullptr;
-  this->lockAllMarkupsInListAction = nullptr;
-  this->unlockAllMarkupsInListAction = nullptr;
+  this->lockAllControlPointsInListAction = nullptr;
+  this->unlockAllControlPointsInListAction = nullptr;
 
   this->cutAction = nullptr;
   this->copyAction = nullptr;
@@ -247,104 +247,104 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // first add actions to the menu, then hook them up
   visibilityMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Visibility"), this->visibilityAllMarkupsInListMenuButton);
   // visibility on
-  this->visibilityOnAllMarkupsInListAction =
+  this->visibilityOnAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/Small/SlicerVisible.png"), "Visibility On", visibilityMenu);
-  this->visibilityOnAllMarkupsInListAction->setToolTip("Set visibility flag to on for all markups in active list");
-  this->visibilityOnAllMarkupsInListAction->setCheckable(false);
-  QObject::connect(this->visibilityOnAllMarkupsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onVisibilityOnAllMarkupsInListPushButtonClicked()));
+  this->visibilityOnAllControlPointsInListAction->setToolTip("Set visibility flag to on for all control points in the active markup");
+  this->visibilityOnAllControlPointsInListAction->setCheckable(false);
+  QObject::connect(this->visibilityOnAllControlPointsInListAction, SIGNAL(triggered()),
+                   q, SLOT(onVisibilityOnAllControlPointsInListPushButtonClicked()));
 
   // visibility off
-  this->visibilityOffAllMarkupsInListAction =
+  this->visibilityOffAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/Small/SlicerInvisible.png"), "Visibility Off", visibilityMenu);
-  this->visibilityOffAllMarkupsInListAction->setToolTip("Set visibility flag to off for all markups in active list");
-  this->visibilityOffAllMarkupsInListAction->setCheckable(false);
-  QObject::connect(this->visibilityOffAllMarkupsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onVisibilityOffAllMarkupsInListPushButtonClicked()));
+  this->visibilityOffAllControlPointsInListAction->setToolTip("Set visibility flag to off for all control points in the active markup");
+  this->visibilityOffAllControlPointsInListAction->setCheckable(false);
+  QObject::connect(this->visibilityOffAllControlPointsInListAction, SIGNAL(triggered()),
+                   q, SLOT(onVisibilityOffAllControlPointsInListPushButtonClicked()));
 
-  this->visibilityMenu->addAction(this->visibilityOnAllMarkupsInListAction);
-  this->visibilityMenu->addAction(this->visibilityOffAllMarkupsInListAction);
+  this->visibilityMenu->addAction(this->visibilityOnAllControlPointsInListAction);
+  this->visibilityMenu->addAction(this->visibilityOffAllControlPointsInListAction);
   this->visibilityAllMarkupsInListMenuButton->setMenu(this->visibilityMenu);
   this->visibilityAllMarkupsInListMenuButton->setIcon(QIcon(":/Icons/VisibleOrInvisible.png"));
 
   // visibility toggle
   QObject::connect(this->visibilityAllMarkupsInListMenuButton, SIGNAL(clicked()),
-                   q, SLOT(onVisibilityAllMarkupsInListToggled()));
+                   q, SLOT(onVisibilityAllControlPointsInListToggled()));
 
   // lock
   // first add actions to the menu, then hook them up
   lockMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Lock"), this->lockAllMarkupsInListMenuButton);
   // lock
-  this->lockAllMarkupsInListAction =
+  this->lockAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/Small/SlicerLock.png"), "Lock", lockMenu);
-  this->lockAllMarkupsInListAction->setToolTip("Set lock flag to on for all markups in active list");
-  this->lockAllMarkupsInListAction->setCheckable(false);
-  QObject::connect(this->lockAllMarkupsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onLockAllMarkupsInListPushButtonClicked()));
+  this->lockAllControlPointsInListAction->setToolTip("Set lock flag to on for all control points in the active markup");
+  this->lockAllControlPointsInListAction->setCheckable(false);
+  QObject::connect(this->lockAllControlPointsInListAction, SIGNAL(triggered()),
+                   q, SLOT(onLockAllControlPointsInListPushButtonClicked()));
 
   // lock off
-  this->unlockAllMarkupsInListAction =
+  this->unlockAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/Small/SlicerUnlock.png"), "Unlock", lockMenu);
-  this->unlockAllMarkupsInListAction->setToolTip("Set lock flag to off for all markups in active list");
-  this->unlockAllMarkupsInListAction->setCheckable(false);
-  QObject::connect(this->unlockAllMarkupsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onUnlockAllMarkupsInListPushButtonClicked()));
+  this->unlockAllControlPointsInListAction->setToolTip("Set lock flag to off for all control points in the active markup");
+  this->unlockAllControlPointsInListAction->setCheckable(false);
+  QObject::connect(this->unlockAllControlPointsInListAction, SIGNAL(triggered()),
+                   q, SLOT(onUnlockAllControlPointsInListPushButtonClicked()));
 
-  this->lockMenu->addAction(this->lockAllMarkupsInListAction);
-  this->lockMenu->addAction(this->unlockAllMarkupsInListAction);
+  this->lockMenu->addAction(this->lockAllControlPointsInListAction);
+  this->lockMenu->addAction(this->unlockAllControlPointsInListAction);
   this->lockAllMarkupsInListMenuButton->setMenu(this->lockMenu);
   this->lockAllMarkupsInListMenuButton->setIcon(QIcon(":/Icons/Small/SlicerLockUnlock.png"));
 
   // lock toggle
   QObject::connect(this->lockAllMarkupsInListMenuButton, SIGNAL(clicked()),
-                   q, SLOT(onLockAllMarkupsInListToggled()));
+                   q, SLOT(onLockAllControlPointsInListToggled()));
 
   // selected
   // first add actions to the menu, then hook them up
   selectedMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Selected"), this->selectedAllMarkupsInListMenuButton);
   // selected on
-  this->selectedOnAllMarkupsInListAction =
+  this->selectedOnAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/MarkupsSelected.png"), "Selected On", selectedMenu);
-  this->selectedOnAllMarkupsInListAction->setToolTip("Set selected flag to on for all markups in active list");
-  this->selectedOnAllMarkupsInListAction->setCheckable(false);
-  QObject::connect(this->selectedOnAllMarkupsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onSelectAllMarkupsInListPushButtonClicked()));
+  this->selectedOnAllControlPointsInListAction->setToolTip("Set selected flag to on for all control points in the active markup");
+  this->selectedOnAllControlPointsInListAction->setCheckable(false);
+  QObject::connect(this->selectedOnAllControlPointsInListAction, SIGNAL(triggered()),
+                   q, SLOT(onSelectAllControlPointsInListPushButtonClicked()));
 
   // selected off
-  this->selectedOffAllMarkupsInListAction =
+  this->selectedOffAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/MarkupsUnselected.png"), "Selected Off", selectedMenu);
-  this->selectedOffAllMarkupsInListAction->setToolTip("Set selected flag to off for all markups in active list");
-  this->selectedOffAllMarkupsInListAction->setCheckable(false);
-  QObject::connect(this->selectedOffAllMarkupsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onDeselectAllMarkupsInListPushButtonClicked()));
+  this->selectedOffAllControlPointsInListAction->setToolTip("Set selected flag to off for all control points in the active markup");
+  this->selectedOffAllControlPointsInListAction->setCheckable(false);
+  QObject::connect(this->selectedOffAllControlPointsInListAction, SIGNAL(triggered()),
+                   q, SLOT(onDeselectAllControlPointsInListPushButtonClicked()));
 
-  this->selectedMenu->addAction(this->selectedOnAllMarkupsInListAction);
-  this->selectedMenu->addAction(this->selectedOffAllMarkupsInListAction);
+  this->selectedMenu->addAction(this->selectedOnAllControlPointsInListAction);
+  this->selectedMenu->addAction(this->selectedOffAllControlPointsInListAction);
   this->selectedAllMarkupsInListMenuButton->setMenu(this->selectedMenu);
   this->selectedAllMarkupsInListMenuButton->setIcon(QIcon(":/Icons/MarkupsSelectedOrUnselected.png"));
 
   // selected toggle
   QObject::connect(this->selectedAllMarkupsInListMenuButton, SIGNAL(clicked()),
-                   q, SLOT(onSelectedAllMarkupsInListToggled()));
+                   q, SLOT(onSelectedAllControlPointsInListToggled()));
 
   // add
   QObject::connect(this->addMarkupPushButton, SIGNAL(clicked()),
-                   q, SLOT(onAddMarkupPushButtonClicked()));
+                   q, SLOT(onAddControlPointPushButtonClicked()));
   // move
   QObject::connect(this->moveMarkupUpPushButton, SIGNAL(clicked()),
-                   q, SLOT(onMoveMarkupUpPushButtonClicked()));
+                   q, SLOT(onMoveControlPointUpPushButtonClicked()));
   QObject::connect(this->moveMarkupDownPushButton, SIGNAL(clicked()),
-                   q, SLOT(onMoveMarkupDownPushButtonClicked()));
+                   q, SLOT(onMoveControlPointDownPushButtonClicked()));
   // position status
   QObject::connect(this->missingMarkupPushButton, SIGNAL(clicked()),
-      q, SLOT(onMissingMarkupPushButtonClicked()));
+      q, SLOT(onMissingControlPointPushButtonClicked()));
   QObject::connect(this->unsetMarkupPushButton, SIGNAL(clicked()),
-      q, SLOT(onUnsetMarkupPushButtonClicked()));
+      q, SLOT(onUnsetControlPointPushButtonClicked()));
   // delete
   QObject::connect(this->deleteMarkupPushButton, SIGNAL(clicked()),
-                   q, SLOT(onDeleteMarkupPushButtonClicked()));
+                   q, SLOT(onDeleteControlPointPushButtonClicked()));
   QObject::connect(this->deleteAllMarkupsInListPushButton, SIGNAL(clicked()),
-      q, SLOT(onDeleteAllMarkupsInListPushButtonClicked()));
+      q, SLOT(onDeleteAllControlPointsInListPushButtonClicked()));
 
   this->cutAction = new QAction(q);
   this->cutAction->setText(qSlicerMarkupsModuleWidget::tr("Cut"));
@@ -924,26 +924,26 @@ void qSlicerMarkupsModuleWidget::enter()
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::checkForAnnotationFiducialConversion()
 {
-  // check to see if there are any annotation fiducial nodes
+  // check to see if there are any annotation fiducial list nodes
   // and offer to import them as markups
   int numFids = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode");
   int numSceneViews = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
   if (numFids > 0)
     {
     ctkMessageBox convertMsgBox;
-    convertMsgBox.setWindowTitle("Convert Annotation hierarchies to Markups list nodes?");
+    convertMsgBox.setWindowTitle("Convert Annotation hierarchies to Markups point list nodes?");
     QString labelText = QString("Convert ")
       + QString::number(numFids)
-      + QString(" Annotation fiducials to Markups list nodes?")
-      + QString(" Moves all Annotation fiducials out of hierarchies (deletes")
+      + QString(" Annotation fiducial lists to Markups point list nodes?")
+      + QString(" Moves all Annotation fiducial lists out of hierarchies (deletes")
       + QString(" the nodes, but leaves the hierarchies in case rulers or")
-      + QString(" ROIs are mixed in) and into Markups fiducial list nodes.");
+      + QString(" ROIs are mixed in) and into Markups point list nodes.");
     if (numSceneViews > 0)
       {
       labelText += QString(" Iterates through ")
         + QString::number(numSceneViews)
-        + QString(" Scene Views and converts any fiducials saved in those")
-        + QString(" scenes into Markups as well.");
+        + QString(" Scene Views and converts any fiducial lists saved in those")
+        + QString(" scenes into Markups point list nodes as well.");
       }
     // don't show again check box conflicts with informative text, so use
     // a long text
@@ -1403,7 +1403,7 @@ void qSlicerMarkupsModuleWidget::onPKeyActivated()
 
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onVisibilityOnAllMarkupsInListPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onVisibilityOnAllControlPointsInListPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic() || !d->MarkupsNode)
@@ -1415,7 +1415,7 @@ void qSlicerMarkupsModuleWidget::onVisibilityOnAllMarkupsInListPushButtonClicked
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onVisibilityOffAllMarkupsInListPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onVisibilityOffAllControlPointsInListPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic() || !d->MarkupsNode)
@@ -1427,7 +1427,7 @@ void qSlicerMarkupsModuleWidget::onVisibilityOffAllMarkupsInListPushButtonClicke
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onVisibilityAllMarkupsInListToggled()
+void qSlicerMarkupsModuleWidget::onVisibilityAllControlPointsInListToggled()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic() || !d->MarkupsNode)
@@ -1438,7 +1438,7 @@ void qSlicerMarkupsModuleWidget::onVisibilityAllMarkupsInListToggled()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onLockAllMarkupsInListPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onLockAllControlPointsInListPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic() || !d->MarkupsNode)
@@ -1449,7 +1449,7 @@ void qSlicerMarkupsModuleWidget::onLockAllMarkupsInListPushButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onUnlockAllMarkupsInListPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onUnlockAllControlPointsInListPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic() || !d->MarkupsNode)
@@ -1460,7 +1460,7 @@ void qSlicerMarkupsModuleWidget::onUnlockAllMarkupsInListPushButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onLockAllMarkupsInListToggled()
+void qSlicerMarkupsModuleWidget::onLockAllControlPointsInListToggled()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic() || !d->MarkupsNode)
@@ -1471,7 +1471,7 @@ void qSlicerMarkupsModuleWidget::onLockAllMarkupsInListToggled()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onSelectAllMarkupsInListPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onSelectAllControlPointsInListPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic() || !d->MarkupsNode)
@@ -1482,7 +1482,7 @@ void qSlicerMarkupsModuleWidget::onSelectAllMarkupsInListPushButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onDeselectAllMarkupsInListPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onDeselectAllControlPointsInListPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic() || !d->MarkupsNode)
@@ -1493,7 +1493,7 @@ void qSlicerMarkupsModuleWidget::onDeselectAllMarkupsInListPushButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onSelectedAllMarkupsInListToggled()
+void qSlicerMarkupsModuleWidget::onSelectedAllControlPointsInListToggled()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic() || !d->MarkupsNode)
@@ -1504,7 +1504,7 @@ void qSlicerMarkupsModuleWidget::onSelectedAllMarkupsInListToggled()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onAddMarkupPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onAddControlPointPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -1523,7 +1523,7 @@ void qSlicerMarkupsModuleWidget::onAddMarkupPushButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onMoveMarkupUpPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onMoveControlPointUpPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -1548,7 +1548,7 @@ void qSlicerMarkupsModuleWidget::onMoveMarkupUpPushButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onMoveMarkupDownPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onMoveControlPointDownPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -1571,7 +1571,7 @@ void qSlicerMarkupsModuleWidget::onMoveMarkupDownPushButtonClicked()
   d->activeMarkupTableWidget->selectRow(thisIndex + 1);
 }
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onDeleteMarkupPushButtonClicked(bool confirm /*=true*/)
+void qSlicerMarkupsModuleWidget::onDeleteControlPointPushButtonClicked(bool confirm /*=true*/)
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -1639,7 +1639,7 @@ void qSlicerMarkupsModuleWidget::onDeleteMarkupPushButtonClicked(bool confirm /*
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onResetMarkupPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onResetControlPointPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -1679,7 +1679,7 @@ void qSlicerMarkupsModuleWidget::onResetMarkupPushButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onRestoreMarkupPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onRestoreControlPointPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -1717,7 +1717,7 @@ void qSlicerMarkupsModuleWidget::onRestoreMarkupPushButtonClicked()
     }
 }
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onUnsetMarkupPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onUnsetControlPointPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -1755,7 +1755,7 @@ void qSlicerMarkupsModuleWidget::onUnsetMarkupPushButtonClicked()
     }
 }
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onMissingMarkupPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onMissingControlPointPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -1801,7 +1801,7 @@ void qSlicerMarkupsModuleWidget::onMissingMarkupPushButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onDeleteAllMarkupsInListPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onDeleteAllControlPointsInListPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -2258,11 +2258,11 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
   QMenu menu;
 
   // Delete
-  QAction *deleteFiducialAction =
-    new QAction(QString("Delete highlighted fiducial(s)"), &menu);
-  menu.addAction(deleteFiducialAction);
-  QObject::connect(deleteFiducialAction, SIGNAL(triggered()),
-                   this, SLOT(onDeleteMarkupPushButtonClicked()));
+  QAction *deletePointAction =
+    new QAction(QString("Delete highlighted control point(s)"), &menu);
+  menu.addAction(deletePointAction);
+  QObject::connect(deletePointAction, SIGNAL(triggered()),
+                   this, SLOT(onDeleteControlPointPushButtonClicked()));
 
   // Jump slices
   QAction *jumpSlicesAction =
@@ -2290,29 +2290,29 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
 
   menu.addSeparator();
   // Change position status
-  QAction* resetFiducialAction =
-      new QAction(QIcon(":/Icons/XSmall/MarkupsInProgress.png"), QString("Edit position of highlighted fiducial(s)"), &menu);
-  menu.addAction(resetFiducialAction);
-  QObject::connect(resetFiducialAction, SIGNAL(triggered()),
-      this, SLOT(onResetMarkupPushButtonClicked()));
+  QAction* resetPointAction =
+      new QAction(QIcon(":/Icons/XSmall/MarkupsInProgress.png"), QString("Edit position of highlighted control point(s)"), &menu);
+  menu.addAction(resetPointAction);
+  QObject::connect(resetPointAction, SIGNAL(triggered()),
+      this, SLOT(onResetControlPointPushButtonClicked()));
 
-  QAction* missingFiducialAction =
-      new QAction(QIcon(":/Icons/XSmall/MarkupsMissing.png"), QString("Skip placement of highlighted fiducial(s)"), &menu);
-  menu.addAction(missingFiducialAction);
-  QObject::connect(missingFiducialAction, SIGNAL(triggered()),
-      this, SLOT(onMissingMarkupPushButtonClicked()));
+  QAction* missingPointAction =
+      new QAction(QIcon(":/Icons/XSmall/MarkupsMissing.png"), QString("Skip placement of highlighted control point(s)"), &menu);
+  menu.addAction(missingPointAction);
+  QObject::connect(missingPointAction, SIGNAL(triggered()),
+      this, SLOT(onMissingControlPointPushButtonClicked()));
 
-  QAction* restoreFiducialAction =
-      new QAction(QIcon(":/Icons/XSmall/MarkupsDefined.png"), QString("Restore position of highlighted fiducial(s)"), &menu);
-  menu.addAction(restoreFiducialAction);
-  QObject::connect(restoreFiducialAction, SIGNAL(triggered()),
-      this, SLOT(onRestoreMarkupPushButtonClicked()));
+  QAction* restorePointAction =
+      new QAction(QIcon(":/Icons/XSmall/MarkupsDefined.png"), QString("Restore position of highlighted control point(s)"), &menu);
+  menu.addAction(restorePointAction);
+  QObject::connect(restorePointAction, SIGNAL(triggered()),
+      this, SLOT(onRestoreControlPointPushButtonClicked()));
 
-  QAction* unsetFiducialAction =
-      new QAction(QIcon(":/Icons/XSmall/MarkupsUndefined.png"), QString("Clear position of highlighted fiducial(s)"), &menu);
-  menu.addAction(unsetFiducialAction);
-  QObject::connect(unsetFiducialAction, SIGNAL(triggered()),
-      this, SLOT(onUnsetMarkupPushButtonClicked()));
+  QAction* unsetPointAction =
+      new QAction(QIcon(":/Icons/XSmall/MarkupsUndefined.png"), QString("Clear position of highlighted control point(s)"), &menu);
+  menu.addAction(unsetPointAction);
+  QObject::connect(unsetPointAction, SIGNAL(triggered()),
+      this, SLOT(onUnsetControlPointPushButtonClicked()));
 
   menu.addSeparator();
   this->addSelectedCoordinatesToMenu(&menu);
@@ -2404,7 +2404,7 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
     QString menuString = indexString + coordinate;
     menu->addAction(menuString);
 
-    // calculate the point to point accumulated distance for fiducials
+    // calculate the point to point accumulated distance for control points
     if (rows.size() > 1)
       {
       if (i > 0)
@@ -2540,7 +2540,7 @@ QStringList qSlicerMarkupsModuleWidget::getOtherMarkupNames(vtkMRMLNode *thisMar
 void qSlicerMarkupsModuleWidget::cutSelectedToClipboard()
 {
   this->copySelectedToClipboard();
-  this->onDeleteMarkupPushButtonClicked(false); // no confirmation message
+  this->onDeleteControlPointPushButtonClicked(false); // no confirmation message
 }
 
 //-----------------------------------------------------------------------------
@@ -2606,8 +2606,8 @@ void qSlicerMarkupsModuleWidget::pasteSelectedFromClipboard()
 
   if (!d->MarkupsNode)
     {
-    // No fiducial list is selected - create a new one
-    // Assume a fiducial markups
+    // No point list is selected - create a new one
+    // Assume a markups point list
     this->onCreateMarkupByClass("vtkMRMLMarkupsFiducialNode");
     if (!d->MarkupsNode)
       {
