@@ -152,7 +152,7 @@ public:
 
   /// Get markup type GUI display name. This name can be shown to the user
   /// (and may be translated to different language in the application).
-  virtual const char* GetMarkupTypeDisplayName() {return "Markup";};
+  virtual const char* GetMarkupTypeDisplayName() {return GetMarkupType();};
 
   /// Get markup short name
   virtual const char* GetDefaultNodeNamePrefix() {return "M";};
