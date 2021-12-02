@@ -117,7 +117,7 @@ public slots:
   virtual void on_PasteAction_triggered();
   virtual void on_ViewExtensionsManagerAction_triggered();
 
-  /// Read GUI state from application settings and update the user interface accordingly.
+  /// Write GUI state to application settings.
   ///
   /// GUI state includes:
   /// - main window state and geometry (only if MainWindow/geometry application setting is
@@ -129,7 +129,7 @@ public slots:
   /// \sa restoreGUIState()
   virtual void saveGUIState(bool force=false);
 
-  /// Write GUI state to application settings.
+  /// Read GUI state from application settings and update the user interface accordingly.
   /// \sa saveGUIState()
   virtual void restoreGUIState(bool force=false);
 
