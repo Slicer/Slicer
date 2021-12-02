@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>462</width>
-    <height>38</height>
+    <width>233</width>
+    <height>66</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,10 +32,10 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="overallVisibilityCheckBox">
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string/>
+      <string>Size:</string>
      </property>
     </widget>
    </item>
@@ -52,7 +52,20 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1" colspan="2">
+    <widget class="ctkSliderWidget" name="interactionHandleScaleSlider">
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>20.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> %</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QCheckBox" name="translateVisibilityCheckBox">
@@ -77,6 +90,13 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QCheckBox" name="overallVisibilityCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -85,6 +105,11 @@
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

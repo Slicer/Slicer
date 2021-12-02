@@ -1125,6 +1125,8 @@ void vtkSlicerMarkupsLogic::CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode
   targetDisplayNode->SetColor(sourceDisplayNode->GetColor());
   targetDisplayNode->SetActiveColor(sourceDisplayNode->GetActiveColor());
   targetDisplayNode->SetOpacity(sourceDisplayNode->GetOpacity());
+
+  targetDisplayNode->SetInteractionHandleScale(sourceDisplayNode->GetInteractionHandleScale());
 }
 
 //---------------------------------------------------------------------------

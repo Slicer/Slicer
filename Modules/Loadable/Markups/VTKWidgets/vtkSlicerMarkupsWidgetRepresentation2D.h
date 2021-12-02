@@ -118,6 +118,9 @@ protected:
   // Return squared distance of maximum distance for picking a control point,
   // in pixels.
   double GetMaximumControlPointPickingDistance2();
+  // Return squared distance of maximum distance for picking an interaction handle,
+  // in pixels.
+  double GetMaximumInteractionHandlePickingDistance2();
 
   bool GetAllControlPointsVisible() override;
 

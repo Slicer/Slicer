@@ -52,13 +52,17 @@
 #include <vtkMRMLTransformNode.h>
 
 //----------------------------------------------------------------------
-static const double INTERACTION_HANDLE_RADIUS = 0.0625;
-static const double INTERACTION_HANDLE_DIAMETER = INTERACTION_HANDLE_RADIUS * 2.0;
-static const double INTERACTION_HANDLE_ROTATION_ARC_TUBE_RADIUS = INTERACTION_HANDLE_RADIUS * 0.4;
-static const double INTERACTION_HANDLE_ROTATION_ARC_RADIUS = 0.80;
-static const double INTERACTION_TRANSLATION_HANDLE_RADIUS = INTERACTION_HANDLE_RADIUS * 0.75;
-static const double INTERACTION_TRANSLATION_HANDLE_DIAMETER = INTERACTION_TRANSLATION_HANDLE_RADIUS * 2.0;
-static const double INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS = INTERACTION_TRANSLATION_HANDLE_RADIUS * 0.5;
+static const double INTERACTION_HANDLE_RADIUS = 0.5; // Size of the sphere models used for handles
+static const double INTERACTION_ROTATION_ARC_TUBE_RADIUS = INTERACTION_HANDLE_RADIUS * 0.4; // Radius of the tube connecting the rotation arc.
+
+static const double INTERACTION_WIDGET_RADIUS = INTERACTION_HANDLE_RADIUS * 12.8; // Radius of the entire interaction handle widget.
+
+static const double INTERACTION_ROTATION_ARC_RADIUS = INTERACTION_WIDGET_RADIUS * 0.8; // Radius of the rotation arc.
+
+static const double INTERACTION_TRANSLATION_TIP_RADIUS = INTERACTION_HANDLE_RADIUS * 0.75; // Radius of the arrow tip of the translation handle.
+static const double INTERACTION_TRANSLATION_TIP_LENGTH = INTERACTION_TRANSLATION_TIP_RADIUS * 2.0;
+static const double INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS = INTERACTION_TRANSLATION_TIP_RADIUS * 0.5; // Size of the tube
+static const double INTERACTION_TRANSLATION_HANDLE_SHAFT_LENGTH = INTERACTION_HANDLE_RADIUS * 12.8; // Length of the translation handle
 
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
@@ -842,8 +846,11 @@ int vtkSlicerMarkupsWidgetRepresentation::RenderOpaqueGeometry(vtkViewport* view
   if (this->InteractionPipeline && this->InteractionPipeline->Actor->GetVisibility())
     {
     this->InteractionPipeline->UpdateHandleColors();
-    double interactionWidgetScale = this->InteractionPipeline->InteractionHandleScaleFactor * this->ControlPointSize;
-    this->InteractionPipeline->SetWidgetScale(interactionWidgetScale);
+    if (this->GetMarkupsDisplayNode())
+      {
+      this->UpdateInteractionHandleSize();
+      this->InteractionPipeline->SetWidgetScale(this->InteractionPipeline->InteractionHandleSize);
+      }
     count += this->InteractionPipeline->Actor->RenderOpaqueGeometry(viewport);
     }
   return count;
@@ -882,6 +889,16 @@ void vtkSlicerMarkupsWidgetRepresentation::GetInteractionHandleAxisWorld(int typ
 void vtkSlicerMarkupsWidgetRepresentation::GetInteractionHandleOriginWorld(double origin[3])
 {
   this->InteractionPipeline->GetInteractionHandleOriginWorld(origin);
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation::UpdateInteractionHandleSize()
+{
+  if (this->InteractionPipeline)
+    {
+    this->InteractionPipeline->InteractionHandleSize = this->ScreenSizePixel * this->ScreenScaleFactor
+      * this->MarkupsDisplayNode->GetInteractionHandleScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
+    }
 }
 
 //----------------------------------------------------------------------
@@ -944,24 +961,24 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateRot
 
   this->AxisRotationArcSource = vtkSmartPointer<vtkArcSource>::New();
   this->AxisRotationArcSource->SetAngle(90);
-  this->AxisRotationArcSource->SetCenter(-INTERACTION_HANDLE_ROTATION_ARC_RADIUS, 0, 0);
+  this->AxisRotationArcSource->SetCenter(-INTERACTION_ROTATION_ARC_RADIUS, 0, 0);
   this->AxisRotationArcSource->SetPoint1(
-    INTERACTION_HANDLE_ROTATION_ARC_RADIUS / sqrt(2) - INTERACTION_HANDLE_ROTATION_ARC_RADIUS,
-    -INTERACTION_HANDLE_ROTATION_ARC_RADIUS / sqrt(2), 0);
+    INTERACTION_ROTATION_ARC_RADIUS / sqrt(2) - INTERACTION_ROTATION_ARC_RADIUS,
+    -INTERACTION_ROTATION_ARC_RADIUS / sqrt(2), 0);
   this->AxisRotationArcSource->SetPoint2(
-    INTERACTION_HANDLE_ROTATION_ARC_RADIUS / sqrt(2) - INTERACTION_HANDLE_ROTATION_ARC_RADIUS,
-    INTERACTION_HANDLE_ROTATION_ARC_RADIUS / sqrt(2), 0);
+    INTERACTION_ROTATION_ARC_RADIUS / sqrt(2) - INTERACTION_ROTATION_ARC_RADIUS,
+    INTERACTION_ROTATION_ARC_RADIUS / sqrt(2), 0);
   this->AxisRotationArcSource->SetResolution(16);
 
   this->AxisRotationTubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
   this->AxisRotationTubeFilter->SetInputConnection(this->AxisRotationArcSource->GetOutputPort());
-  this->AxisRotationTubeFilter->SetRadius(INTERACTION_HANDLE_ROTATION_ARC_TUBE_RADIUS);
+  this->AxisRotationTubeFilter->SetRadius(INTERACTION_ROTATION_ARC_TUBE_RADIUS);
   this->AxisRotationTubeFilter->SetNumberOfSides(16);
   this->AxisRotationTubeFilter->SetCapping(true);
 
   vtkNew<vtkPoints> rotationGlyphInteriorAnglePoints;
   rotationGlyphInteriorAnglePoints->InsertNextPoint(this->AxisRotationArcSource->GetPoint1());
-  rotationGlyphInteriorAnglePoints->InsertNextPoint(-INTERACTION_HANDLE_ROTATION_ARC_RADIUS, 0, 0);
+  rotationGlyphInteriorAnglePoints->InsertNextPoint(-INTERACTION_ROTATION_ARC_RADIUS, 0, 0);
   rotationGlyphInteriorAnglePoints->InsertNextPoint(this->AxisRotationArcSource->GetPoint2());
 
   vtkNew<vtkIdList> rotationGlyphInteriorAngleLine;
@@ -977,7 +994,7 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateRot
 
   this->AxisRotationInterorAngleTubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
   this->AxisRotationInterorAngleTubeFilter->SetInputData(this->AxisRotationInteriorAnglePolyData);
-  this->AxisRotationInterorAngleTubeFilter->SetRadius(INTERACTION_HANDLE_ROTATION_ARC_TUBE_RADIUS);
+  this->AxisRotationInterorAngleTubeFilter->SetRadius(INTERACTION_ROTATION_ARC_TUBE_RADIUS);
   this->AxisRotationInterorAngleTubeFilter->SetNumberOfSides(16);
 
   this->RotationHandlePoints = vtkSmartPointer<vtkPolyData>::New();
@@ -1001,12 +1018,15 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateRot
 
   double xRotationHandle[3] = { 0, 1, 1 }; // X-axis
   vtkMath::Normalize(xRotationHandle);
+  vtkMath::MultiplyScalar(xRotationHandle, INTERACTION_WIDGET_RADIUS);
   points->InsertNextPoint(xRotationHandle);
   double yRotationHandle[3] = { 1, 0, 1 }; // Y-axis
   vtkMath::Normalize(yRotationHandle);
+  vtkMath::MultiplyScalar(yRotationHandle, INTERACTION_WIDGET_RADIUS);
   points->InsertNextPoint(yRotationHandle);
   double zRotationHandle[3] = { 1, 1, 0 }; // Z-axis
   vtkMath::Normalize(zRotationHandle);
+  vtkMath::MultiplyScalar(zRotationHandle, INTERACTION_WIDGET_RADIUS);
   points->InsertNextPoint(zRotationHandle);
   this->RotationHandlePoints->SetPoints(points);
 
@@ -1043,19 +1063,20 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateRot
 void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateTranslationHandles()
 {
   this->AxisTranslationGlyphSource = vtkSmartPointer<vtkArrowSource>::New();
-  this->AxisTranslationGlyphSource->SetTipRadius(INTERACTION_TRANSLATION_HANDLE_RADIUS);
-  this->AxisTranslationGlyphSource->SetTipLength(INTERACTION_TRANSLATION_HANDLE_DIAMETER);
+  this->AxisTranslationGlyphSource->SetTipRadius(INTERACTION_TRANSLATION_TIP_RADIUS);
+  this->AxisTranslationGlyphSource->SetTipLength(INTERACTION_TRANSLATION_TIP_LENGTH / INTERACTION_WIDGET_RADIUS); // Scaled by INTERACTION_WIDGET_RADIUS later
   this->AxisTranslationGlyphSource->SetShaftRadius(INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS);
   this->AxisTranslationGlyphSource->SetTipResolution(16);
   this->AxisTranslationGlyphSource->SetShaftResolution(16);
   this->AxisTranslationGlyphSource->InvertOn();
 
-  vtkNew<vtkTransform> translationGlyphTransformer;
-  translationGlyphTransformer->Translate(INTERACTION_HANDLE_RADIUS, 0, 0);
-  translationGlyphTransformer->RotateY(180);
+  vtkNew<vtkTransform> translationArrowGlyphTransform;
+  translationArrowGlyphTransform->Translate(INTERACTION_HANDLE_RADIUS, 0, 0); // Move away from the origin so that it doesn't overlap with the center handle
+  translationArrowGlyphTransform->Scale(INTERACTION_WIDGET_RADIUS, 1.0, 1.0); // Increase arrow length to INTERACTION_WIDGET_RADIUS
+  translationArrowGlyphTransform->RotateY(180); // Flip so that the arrow is facing in the +ve X direction.
 
   this->AxisTranslationGlyphTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  this->AxisTranslationGlyphTransformer->SetTransform(translationGlyphTransformer);
+  this->AxisTranslationGlyphTransformer->SetTransform(translationArrowGlyphTransform);
   this->AxisTranslationGlyphTransformer->SetInputConnection(this->AxisTranslationGlyphSource->GetOutputPort());
 
   this->TranslationHandlePoints = vtkSmartPointer<vtkPolyData>::New();
@@ -1077,9 +1098,9 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateTra
   this->AxisTranslationGlypher->SetInputArrayToProcess(1, 0, 0, 0, "orientation"); // Orientation direction array
 
   vtkNew<vtkPoints> points;
-  points->InsertNextPoint(1, 0, 0); // X-axis
-  points->InsertNextPoint(0, 1, 0); // Y-axis
-  points->InsertNextPoint(0, 0, 1); // Z-axis
+  points->InsertNextPoint(INTERACTION_WIDGET_RADIUS, 0, 0); // X-axis
+  points->InsertNextPoint(0, INTERACTION_WIDGET_RADIUS, 0); // Y-axis
+  points->InsertNextPoint(0, 0, INTERACTION_WIDGET_RADIUS); // Z-axis
   points->InsertNextPoint(0, 0, 0); // Free translation
   this->TranslationHandlePoints->SetPoints(points);
 

@@ -532,6 +532,13 @@
                                             "description": "Visibility of the scale interaction handles",
                                             "default": false
                                         },
+                                        "interactionHandleScale": {
+                                            "$id": "#display/interactionHandleScale",
+                                            "type": "number",
+                                            "title": "Interaction handle glyph scale",
+                                            "description": "Interaction handle size as percentage of window size.",
+                                            "default": 3.0
+                                        },
                                         "snapMode": {
                                             "$id": "#display/snapMode",
                                             "type": "string",
