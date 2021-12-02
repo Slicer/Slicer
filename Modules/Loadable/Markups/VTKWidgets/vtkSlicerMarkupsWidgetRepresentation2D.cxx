@@ -466,6 +466,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
     }
 
   this->UpdateControlPointSize();
+  this->UpdateInteractionHandleSize();
 
   // Points widgets have only one Markup/Representation
   this->AnyPointVisibilityOnSlice = false;
@@ -586,7 +587,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithHandles(
     return;
     }
 
-  double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
+  double maxPickingDistanceFromInteractionHandle2 = this->GetMaximumInteractionHandlePickingDistance2();
 
   const int* displayPosition = interactionEventData->GetDisplayPosition();
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
@@ -609,7 +610,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithHandles(
     rasToxyMatrix->MultiplyPoint(handleWorldPos, handleDisplayPos);
     handleDisplayPos[2] = displayPosition3[2]; // Handles are always projected
     double dist2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
-    if (dist2 < maxPickingDistanceFromControlPoint2 && dist2 < closestDistance2)
+    if (dist2 < maxPickingDistanceFromInteractionHandle2 && dist2 < closestDistance2)
       {
       closestDistance2 = dist2;
       foundComponentType = handleInfo.ComponentType;
@@ -641,7 +642,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithHandles(
       double t = 0;
       double lineDistance = vtkLine::DistanceToLine(displayPosition3, originDisplayPos, handleDisplayPos, t);
       double lineDistance2 = lineDistance * lineDistance;
-      if (lineDistance2 < maxPickingDistanceFromControlPoint2 / 2.0 && lineDistance2 < closestDistance2)
+      if (lineDistance2 < maxPickingDistanceFromInteractionHandle2 / 2.0 && lineDistance2 < closestDistance2)
         {
         closestDistance2 = lineDistance2;
         foundComponentType = handleInfo.ComponentType;
@@ -764,9 +765,8 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(
   if (this->InteractionPipeline && this->InteractionPipeline->Actor->GetVisibility())
     {
     this->InteractionPipeline->UpdateHandleColors();
-    double interactionWidgetScale = this->InteractionPipeline->InteractionHandleScaleFactor *
-      this->ControlPointSize * this->ViewScaleFactorMmPerPixel;
-    this->InteractionPipeline->SetWidgetScale(interactionWidgetScale);
+    this->UpdateInteractionHandleSize();
+    this->InteractionPipeline->SetWidgetScale(this->InteractionPipeline->InteractionHandleSize);
     count += this->InteractionPipeline->Actor->RenderOpaqueGeometry(viewport);
     }
   if (this->TextActor->GetVisibility())
@@ -1257,11 +1257,23 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateControlPointSize()
     this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphSize() / this->ViewScaleFactorMmPerPixel;
     }
 }
+
 //----------------------------------------------------------------------
 double vtkSlicerMarkupsWidgetRepresentation2D::GetMaximumControlPointPickingDistance2()
 {
   double maximumControlPointPickingDistance = this->ControlPointSize / 2.0 + this->PickingTolerance * this->ScreenScaleFactor;
   return maximumControlPointPickingDistance * maximumControlPointPickingDistance;
+}
+
+//----------------------------------------------------------------------
+double vtkSlicerMarkupsWidgetRepresentation2D::GetMaximumInteractionHandlePickingDistance2()
+{
+  if (!this->InteractionPipeline)
+    {
+    return 0.0;
+    }
+  double maximumInteractionHandlePickingDistance = this->InteractionPipeline->InteractionHandleSize / 2.0 + this->PickingTolerance * this->ScreenScaleFactor;
+  return maximumInteractionHandlePickingDistance * maximumInteractionHandlePickingDistance;
 }
 
 //----------------------------------------------------------------------

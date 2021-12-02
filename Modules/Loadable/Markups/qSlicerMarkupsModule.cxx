@@ -506,6 +506,11 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     {
     markupsDisplayNode->SetOpacity(settings.value("Markups/Opacity").toDouble());
     }
+  if (settings.contains("Markups/InteractionHandleScale"))
+    {
+    markupsDisplayNode->SetInteractionHandleScale(settings.value("Markups/InteractionHandleScale").toDouble());
+    }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -560,6 +565,8 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
   color = markupsDisplayNode->GetActiveColor();
   settings.setValue("Markups/ActiveColor", QColor::fromRgbF(color[0], color[1], color[2]));
   settings.setValue("Markups/Opacity", markupsDisplayNode->GetOpacity());
+
+  settings.setValue("Markups/InteractionHandleScale", markupsDisplayNode->GetInteractionHandleScale());
 }
 
 //-----------------------------------------------------------------------------

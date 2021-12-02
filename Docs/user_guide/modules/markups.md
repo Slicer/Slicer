@@ -64,7 +64,10 @@ Display section:
 - Opacity: overall opacity of the selected markup.
 - Glyph Size: Set control point glyph size relative to the screen size (if `absolute` button is not pressed) or as an absolute size (if `absolute` button is depressed).
 - Text Scale: Label size relative to screen size.
-- Interaction: check `Visible` to enable translation of the entire markups in slice and 3D views with an interactive widget.
+- Interaction handles:
+  - Visibilty: check `Visible` to enable translation/rotation/scaling of the entire markups in slice and 3D views with an interactive widget.
+  - Translate, Rotate, Scale: enable/disable adjustment types.
+  - Size: size of the handles (relative to the application window size).
 - Advanced:
   - View: Select which views the markup is displayed in
   - Selected Color: Select the color that will be used to display the glyph and text when the markup is marked as selected.

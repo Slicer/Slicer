@@ -545,15 +545,24 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithHandles(
       }
 
     double* handleWorldPos = handleInfo.PositionWorld;
+
+    double maxPickingDistanceFromInteractionHandle = this->InteractionPipeline->InteractionHandleSize / 2.0 +
+      this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
+    if (interactionEventData->IsDisplayPositionValid())
+      {
+      maxPickingDistanceFromInteractionHandle = this->InteractionPipeline->InteractionHandleSize / 2.0
+        / this->GetViewScaleFactorAtPosition(handleWorldPos, interactionEventData)
+        + this->PickingTolerance * this->ScreenScaleFactor;
+      }
+    double maxPickingDistanceFromInteractionHandle2 = maxPickingDistanceFromInteractionHandle * maxPickingDistanceFromInteractionHandle;
+
     double handleDisplayPos[3] = { 0 };
 
     if (interactionEventData->IsDisplayPositionValid())
       {
-      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos, interactionEventData)
-        + this->PickingTolerance * this->ScreenScaleFactor;
       interactionEventData->WorldToDisplay(handleWorldPos, handleDisplayPos);
       double dist2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
-      if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
+      if (dist2 < maxPickingDistanceFromInteractionHandle2 && dist2 < closestDistance2)
         {
         closestDistance2 = dist2;
         foundComponentType = handleInfo.ComponentType;
@@ -564,10 +573,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithHandles(
     else
       {
       const double* worldPosition = interactionEventData->GetWorldPosition();
-      double worldTolerance = this->ControlPointSize / 2.0 +
-        this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
       double dist2 = vtkMath::Distance2BetweenPoints(handleWorldPos, worldPosition);
-      if (dist2 < worldTolerance * worldTolerance && dist2 < closestDistance2)
+      if (dist2 < maxPickingDistanceFromInteractionHandle2 && dist2 < closestDistance2)
         {
         closestDistance2 = dist2;
         foundComponentType = handleInfo.ComponentType;
@@ -588,10 +595,17 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithHandles(
       double* handleWorldPos = handleInfo.PositionWorld;
       double handleDisplayPos[3] = { 0 };
 
+      double maxPickingDistanceFromInteractionHandle = this->InteractionPipeline->InteractionHandleSize / 2.0 +
+        this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
       if (interactionEventData->IsDisplayPositionValid())
         {
-        double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos, interactionEventData)
+        maxPickingDistanceFromInteractionHandle = this->InteractionPipeline->InteractionHandleSize / 2.0
+          / this->GetViewScaleFactorAtPosition(handleWorldPos, interactionEventData)
           + this->PickingTolerance * this->ScreenScaleFactor;
+        }
+
+      if (interactionEventData->IsDisplayPositionValid())
+        {
         interactionEventData->WorldToDisplay(handleWorldPos, handleDisplayPos);
 
         double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
@@ -602,7 +616,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithHandles(
         double t = 0;
         double lineDistance = vtkLine::DistanceToLine(displayPosition3, originDisplayPos, handleDisplayPos, t);
         double lineDistance2 = lineDistance * lineDistance;
-        if (lineDistance < pixelTolerance && lineDistance2 < closestDistance2)
+        if (lineDistance < maxPickingDistanceFromInteractionHandle && lineDistance2 < closestDistance2)
           {
           closestDistance2 = lineDistance2;
           foundComponentType = handleInfo.ComponentType;
@@ -612,13 +626,11 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithHandles(
       else
         {
         const double* worldPosition = interactionEventData->GetWorldPosition();
-        double worldTolerance = this->ControlPointSize / 2.0 +
-          this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
         double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
         this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
         double t;
         double lineDistance = vtkLine::DistanceToLine(worldPosition, originWorldPos, handleWorldPos, t);
-        if (lineDistance < worldTolerance && lineDistance < closestDistance2)
+        if (lineDistance < maxPickingDistanceFromInteractionHandle && lineDistance < closestDistance2)
           {
           closestDistance2 = lineDistance;
           foundComponentType = handleInfo.ComponentType;
@@ -1286,7 +1298,7 @@ double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(doub
     //these should be const but that doesn't compile under VTK 8
     double topCenterWorld[] = {cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]};
     double bottomCenterWorld[] = {cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]};
-    
+
     double topCenterDisplay[4];
     double bottomCenterDisplay[4];
 

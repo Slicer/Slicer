@@ -60,6 +60,7 @@ void qMRMLMarkupsInteractionHandleWidgetPrivate::init()
   QObject::connect(this->translateVisibilityCheckBox, SIGNAL(clicked()), q, SLOT(updateMRMLFromWidget()));
   QObject::connect(this->rotateVisibilityCheckBox, SIGNAL(clicked()), q, SLOT(updateMRMLFromWidget()));
   QObject::connect(this->scaleVisibilityCheckBox, SIGNAL(clicked()), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->interactionHandleScaleSlider, SIGNAL(valueChanged(double)), q, SLOT(updateMRMLFromWidget()));
 }
 
 // --------------------------------------------------------------------------
@@ -105,6 +106,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   d->translateVisibilityCheckBox->setEnabled(d->DisplayNode != nullptr);
   d->rotateVisibilityCheckBox->setEnabled(d->DisplayNode != nullptr);
   d->scaleVisibilityCheckBox->setEnabled(d->DisplayNode != nullptr);
+  d->interactionHandleScaleSlider->setEnabled(d->DisplayNode != nullptr);
   if (!d->DisplayNode)
     {
     return;
@@ -141,6 +143,14 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   wasBlocking = d->scaleVisibilityCheckBox->blockSignals(true);
   d->scaleVisibilityCheckBox->setChecked(d->DisplayNode->GetScaleHandleVisibility());
   d->scaleVisibilityCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->interactionHandleScaleSlider->blockSignals(true);
+  if (d->DisplayNode->GetInteractionHandleScale() > d->interactionHandleScaleSlider->maximum())
+    {
+    d->interactionHandleScaleSlider->setMaximum(d->DisplayNode->GetInteractionHandleScale());
+    }
+  d->interactionHandleScaleSlider->setValue(d->DisplayNode->GetInteractionHandleScale());
+  wasBlocking = d->interactionHandleScaleSlider->blockSignals(wasBlocking);
 }
 
 // --------------------------------------------------------------------------
@@ -157,4 +167,5 @@ void qMRMLMarkupsInteractionHandleWidget::updateMRMLFromWidget()
   d->DisplayNode->SetTranslationHandleVisibility(d->translateVisibilityCheckBox->isChecked());
   d->DisplayNode->SetRotationHandleVisibility(d->rotateVisibilityCheckBox->isChecked());
   d->DisplayNode->SetScaleHandleVisibility(d->scaleVisibilityCheckBox->isChecked());
+  d->DisplayNode->SetInteractionHandleScale(d->interactionHandleScaleSlider->value());
 }

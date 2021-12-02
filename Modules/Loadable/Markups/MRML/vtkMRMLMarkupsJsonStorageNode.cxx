@@ -793,6 +793,10 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsDisplayNodeFromJso
     {
     displayNode->SetScaleHandleVisibility(displayItem["scaleHandleVisibility"].GetBool());
     }
+  if (displayItem.HasMember("interactionHandleScale"))
+    {
+    displayNode->SetInteractionHandleScale(displayItem["interactionHandleScale"].GetDouble());
+    }
   if (displayItem.HasMember("snapMode"))
     {
     int snapMode = vtkMRMLMarkupsDisplayNode::GetSnapModeFromString(displayItem["snapMode"].GetString());
@@ -1078,6 +1082,8 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteDisplayProperties(
   writer.Key("translationHandleVisibility"); writer.Bool(markupsDisplayNode->GetTranslationHandleVisibility());
   writer.Key("rotationHandleVisibility"); writer.Bool(markupsDisplayNode->GetRotationHandleVisibility());
   writer.Key("scaleHandleVisibility"); writer.Bool(markupsDisplayNode->GetScaleHandleVisibility());
+  writer.Key("interactionHandleScale"); writer.Double(markupsDisplayNode->GetInteractionHandleScale());
+
   writer.Key("snapMode"); writer.String(markupsDisplayNode->GetSnapModeAsString(markupsDisplayNode->GetSnapMode()));
 
   writer.EndObject();

@@ -224,7 +224,7 @@ protected:
 
     double                                              StartFadeAngle{30};
     double                                              EndFadeAngle{20};
-    double                                              InteractionHandleScaleFactor{7.0};
+    double                                              InteractionHandleSize{1.0};
 
     virtual void InitializePipeline();
     virtual void CreateRotationHandles();
@@ -296,6 +296,9 @@ protected:
   virtual void UpdateViewScaleFactor() = 0;
 
   virtual void UpdateControlPointSize() = 0;
+
+  // Update the size of the interaction handle based on screen size + vtkMRMLMarkupsDisplayNode::InteractionHandleScale parameter.
+  virtual void UpdateInteractionHandleSize();
 
   double ViewScaleFactorMmPerPixel;
   double ScreenSizePixel; // diagonal size of the screen

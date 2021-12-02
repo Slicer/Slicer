@@ -438,6 +438,11 @@ public:
   void SetHandleVisibility(int handleType, bool visibility);
   bool GetHandleVisibility(int handleType);
 
+  /// Get/Set interaction handle size relative to the window size.
+  /// Diameter of the interaction handle points is defined as "scale" percentage of diagonal size of the window.
+  vtkSetMacro(InteractionHandleScale, double);
+  vtkGetMacro(InteractionHandleScale, double);
+
   /// Get data set containing the scalar arrays for this node type.
   /// For markups it is the curve poly data
   virtual vtkDataSet* GetScalarDataSet() override;
@@ -521,5 +526,6 @@ protected:
   bool TranslationHandleVisibility;
   bool RotationHandleVisibility;
   bool ScaleHandleVisibility;
+  double InteractionHandleScale;
 };
 #endif
