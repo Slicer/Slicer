@@ -630,7 +630,7 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
   bool close = false;
   if (!question.isEmpty())
     {
-    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning, qSlicerMainWindow::tr("Save before exit?"), question, QMessageBox::NoButton);
+    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning, qSlicerMainWindow::tr("Save before exit?"), question, QMessageBox::NoButton, q);
     QAbstractButton* saveButton =
        messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
     QAbstractButton* exitButton =
