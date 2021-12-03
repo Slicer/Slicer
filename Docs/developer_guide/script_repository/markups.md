@@ -13,13 +13,13 @@ slicer.util.loadMarkupsFiducialList("/path/to/list/F.fcsv")
 Markups control points can be added to the currently active point list from the python console by using the following module logic command:
 
 ```python
-slicer.modules.markups.logic().AddFiducial()
+slicer.modules.markups.logic().AddControlPoint()
 ```
 
 The command with no arguments will place a new control point at the origin. You can also pass it an initial location:
 
 ```python
-slicer.modules.markups.logic().AddFiducial(1.0, -2.0, 3.3)
+slicer.modules.markups.logic().AddControlPoint(1.0, -2.0, 3.3)
 ```
 
 ### How to draw a curve using control points stored in a numpy array
@@ -87,7 +87,7 @@ Each vtkMRMLMarkupsFiducialNode has a vector of control points in it which can b
 
 ```python
 pointListNode = getNode("vtkMRMLMarkupsFiducialNode1")
-n = pointListNode.AddControlPoint(vtk.vtkVector3d(4.0, 5.5, -6.0))
+n = pointListNode.AddControlPoint([4.0, 5.5, -6.0])
 pointListNode.SetNthControlPointLabel(n, "new label")
 # each control point is given a unique id which can be accessed from the superclass level
 id1 = pointListNode.GetNthControlPointID(n)
@@ -418,7 +418,7 @@ def onMarkupEndInteraction(caller, event):
   logging.info("End interaction: point ID = {0}, slice view = {1}".format(movingMarkupIndex, sliceView))
 
 pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
-pointListNode.AddFiducial(0,0,0)
+pointListNode.AddControlPoint([0,0,0])
 pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, onMarkupChanged)
 pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointStartInteractionEvent, onMarkupStartInteraction)
 pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointEndInteractionEvent, onMarkupEndInteraction)
@@ -538,7 +538,7 @@ def copyLineMeasurementsToClipboard():
   for lineNode in lineNodes:
     # Get node filename that the length was measured on
     try:
-      volumeNode = slicer.mrmlScene.GetNodeByID(lineNode.GetNthMarkupAssociatedNodeID(0))
+      volumeNode = slicer.mrmlScene.GetNodeByID(lineNode.GetNthControlPointAssociatedNodeID(0))
       imagePath = volumeNode.GetStorageNode().GetFileName()
     except:
       imagePath = ''

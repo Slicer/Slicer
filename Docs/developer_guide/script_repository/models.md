@@ -119,7 +119,7 @@ def onMouseMoved(observer,eventid):
   ras=[0,0,0]
   crosshairNode.GetCursorPositionRAS(ras)
   if pointListNode.GetNumberOfControlPoints() == 0:
-    pointListNode.AddFiducial(*ras)
+    pointListNode.AddControlPoint(ras)
   else:
     pointListNode.SetNthContorlPointPosition(0,*ras)
   closestPointId = pointsLocator.FindClosestPoint(ras)

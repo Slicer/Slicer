@@ -253,7 +253,7 @@
         <item row="3" column="0" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <widget class="ctkMenuButton" name="visibilityAllMarkupsInListMenuButton">
+           <widget class="ctkMenuButton" name="visibilityAllControlPointsInListMenuButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -278,7 +278,7 @@
            </widget>
           </item>
           <item>
-           <widget class="ctkMenuButton" name="selectedAllMarkupsInListMenuButton">
+           <widget class="ctkMenuButton" name="selectedAllControlPointsInListMenuButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -303,7 +303,7 @@
            </widget>
           </item>
           <item>
-           <widget class="ctkMenuButton" name="lockAllMarkupsInListMenuButton">
+           <widget class="ctkMenuButton" name="lockAllControlPointsInListMenuButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -328,7 +328,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="missingMarkupPushButton">
+           <widget class="QPushButton" name="missingControlPointPushButton">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -363,7 +363,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="unsetMarkupPushButton">
+           <widget class="QPushButton" name="unsetControlPointPushButton">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -398,7 +398,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="deleteMarkupPushButton">
+           <widget class="QPushButton" name="deleteControlPointPushButton">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -433,7 +433,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="deleteAllMarkupsInListPushButton">
+           <widget class="QPushButton" name="deleteAllControlPointsInListPushButton">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -465,7 +465,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="CutMarkupsToolButton">
+           <widget class="QToolButton" name="CutControlPointsToolButton">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -475,7 +475,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="CopyMarkupsToolButton">
+           <widget class="QToolButton" name="CopyControlPointsToolButton">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -485,7 +485,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="PasteMarkupsToolButton">
+           <widget class="QToolButton" name="PasteControlPointsToolButton">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -574,7 +574,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
-              <widget class="QPushButton" name="moveMarkupUpPushButton">
+              <widget class="QPushButton" name="moveControlPointUpPushButton">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -606,7 +606,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="moveMarkupDownPushButton">
+              <widget class="QPushButton" name="moveControlPointDownPushButton">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -638,7 +638,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="addMarkupPushButton">
+              <widget class="QPushButton" name="addControlPointPushButton">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>

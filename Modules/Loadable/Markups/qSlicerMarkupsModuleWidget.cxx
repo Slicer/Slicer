@@ -245,7 +245,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // set up the list buttons
   // visibility
   // first add actions to the menu, then hook them up
-  visibilityMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Visibility"), this->visibilityAllMarkupsInListMenuButton);
+  visibilityMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Visibility"), this->visibilityAllControlPointsInListMenuButton);
   // visibility on
   this->visibilityOnAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/Small/SlicerVisible.png"), "Visibility On", visibilityMenu);
@@ -264,16 +264,16 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->visibilityMenu->addAction(this->visibilityOnAllControlPointsInListAction);
   this->visibilityMenu->addAction(this->visibilityOffAllControlPointsInListAction);
-  this->visibilityAllMarkupsInListMenuButton->setMenu(this->visibilityMenu);
-  this->visibilityAllMarkupsInListMenuButton->setIcon(QIcon(":/Icons/VisibleOrInvisible.png"));
+  this->visibilityAllControlPointsInListMenuButton->setMenu(this->visibilityMenu);
+  this->visibilityAllControlPointsInListMenuButton->setIcon(QIcon(":/Icons/VisibleOrInvisible.png"));
 
   // visibility toggle
-  QObject::connect(this->visibilityAllMarkupsInListMenuButton, SIGNAL(clicked()),
+  QObject::connect(this->visibilityAllControlPointsInListMenuButton, SIGNAL(clicked()),
                    q, SLOT(onVisibilityAllControlPointsInListToggled()));
 
   // lock
   // first add actions to the menu, then hook them up
-  lockMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Lock"), this->lockAllMarkupsInListMenuButton);
+  lockMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Lock"), this->lockAllControlPointsInListMenuButton);
   // lock
   this->lockAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/Small/SlicerLock.png"), "Lock", lockMenu);
@@ -292,16 +292,16 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->lockMenu->addAction(this->lockAllControlPointsInListAction);
   this->lockMenu->addAction(this->unlockAllControlPointsInListAction);
-  this->lockAllMarkupsInListMenuButton->setMenu(this->lockMenu);
-  this->lockAllMarkupsInListMenuButton->setIcon(QIcon(":/Icons/Small/SlicerLockUnlock.png"));
+  this->lockAllControlPointsInListMenuButton->setMenu(this->lockMenu);
+  this->lockAllControlPointsInListMenuButton->setIcon(QIcon(":/Icons/Small/SlicerLockUnlock.png"));
 
   // lock toggle
-  QObject::connect(this->lockAllMarkupsInListMenuButton, SIGNAL(clicked()),
+  QObject::connect(this->lockAllControlPointsInListMenuButton, SIGNAL(clicked()),
                    q, SLOT(onLockAllControlPointsInListToggled()));
 
   // selected
   // first add actions to the menu, then hook them up
-  selectedMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Selected"), this->selectedAllMarkupsInListMenuButton);
+  selectedMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Selected"), this->selectedAllControlPointsInListMenuButton);
   // selected on
   this->selectedOnAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/MarkupsSelected.png"), "Selected On", selectedMenu);
@@ -320,30 +320,30 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->selectedMenu->addAction(this->selectedOnAllControlPointsInListAction);
   this->selectedMenu->addAction(this->selectedOffAllControlPointsInListAction);
-  this->selectedAllMarkupsInListMenuButton->setMenu(this->selectedMenu);
-  this->selectedAllMarkupsInListMenuButton->setIcon(QIcon(":/Icons/MarkupsSelectedOrUnselected.png"));
+  this->selectedAllControlPointsInListMenuButton->setMenu(this->selectedMenu);
+  this->selectedAllControlPointsInListMenuButton->setIcon(QIcon(":/Icons/MarkupsSelectedOrUnselected.png"));
 
   // selected toggle
-  QObject::connect(this->selectedAllMarkupsInListMenuButton, SIGNAL(clicked()),
+  QObject::connect(this->selectedAllControlPointsInListMenuButton, SIGNAL(clicked()),
                    q, SLOT(onSelectedAllControlPointsInListToggled()));
 
   // add
-  QObject::connect(this->addMarkupPushButton, SIGNAL(clicked()),
+  QObject::connect(this->addControlPointPushButton, SIGNAL(clicked()),
                    q, SLOT(onAddControlPointPushButtonClicked()));
   // move
-  QObject::connect(this->moveMarkupUpPushButton, SIGNAL(clicked()),
+  QObject::connect(this->moveControlPointUpPushButton, SIGNAL(clicked()),
                    q, SLOT(onMoveControlPointUpPushButtonClicked()));
-  QObject::connect(this->moveMarkupDownPushButton, SIGNAL(clicked()),
+  QObject::connect(this->moveControlPointDownPushButton, SIGNAL(clicked()),
                    q, SLOT(onMoveControlPointDownPushButtonClicked()));
   // position status
-  QObject::connect(this->missingMarkupPushButton, SIGNAL(clicked()),
+  QObject::connect(this->missingControlPointPushButton, SIGNAL(clicked()),
       q, SLOT(onMissingControlPointPushButtonClicked()));
-  QObject::connect(this->unsetMarkupPushButton, SIGNAL(clicked()),
+  QObject::connect(this->unsetControlPointPushButton, SIGNAL(clicked()),
       q, SLOT(onUnsetControlPointPushButtonClicked()));
   // delete
-  QObject::connect(this->deleteMarkupPushButton, SIGNAL(clicked()),
+  QObject::connect(this->deleteControlPointPushButton, SIGNAL(clicked()),
                    q, SLOT(onDeleteControlPointPushButtonClicked()));
-  QObject::connect(this->deleteAllMarkupsInListPushButton, SIGNAL(clicked()),
+  QObject::connect(this->deleteAllControlPointsInListPushButton, SIGNAL(clicked()),
       q, SLOT(onDeleteAllControlPointsInListPushButtonClicked()));
 
   this->cutAction = new QAction(q);
@@ -353,7 +353,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->cutAction->setShortcuts(QKeySequence::Cut);
   this->cutAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Cut"));
   q->addAction(this->cutAction);
-  this->CutMarkupsToolButton->setDefaultAction(this->cutAction);
+  this->CutControlPointsToolButton->setDefaultAction(this->cutAction);
   QObject::connect(this->cutAction, SIGNAL(triggered()), q, SLOT(cutSelectedToClipboard()));
 
   this->copyAction = new QAction(q);
@@ -363,7 +363,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->copyAction->setShortcuts(QKeySequence::Copy);
   this->copyAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Copy"));
   q->addAction(this->copyAction);
-  this->CopyMarkupsToolButton->setDefaultAction(this->copyAction);
+  this->CopyControlPointsToolButton->setDefaultAction(this->copyAction);
   QObject::connect(this->copyAction, SIGNAL(triggered()), q, SLOT(copySelectedToClipboard()));
 
   this->pasteAction = new QAction(q);
@@ -373,7 +373,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->pasteAction->setShortcuts(QKeySequence::Paste);
   this->pasteAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Paste"));
   q->addAction(this->pasteAction);
-  this->PasteMarkupsToolButton->setDefaultAction(this->pasteAction);
+  this->PasteControlPointsToolButton->setDefaultAction(this->pasteAction);
   QObject::connect(this->pasteAction, SIGNAL(triggered()), q, SLOT(pasteSelectedFromClipboard()));
 
   // set up the active markups node selector
@@ -1047,21 +1047,21 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     {
     d->fixedNumberOfControlPointsPushButton->setIcon(QIcon(":Icons/Medium/SlicerPointNumberLock.png"));
     d->fixedNumberOfControlPointsPushButton->setToolTip(QString("Click to unlock the number of control points so points can be added or deleted"));
-    d->deleteMarkupPushButton->setEnabled(false);
-    d->deleteAllMarkupsInListPushButton->setEnabled(false);
+    d->deleteControlPointPushButton->setEnabled(false);
+    d->deleteAllControlPointsInListPushButton->setEnabled(false);
     }
   else
     {
     d->fixedNumberOfControlPointsPushButton->setIcon(QIcon(":Icons/Medium/SlicerPointNumberUnlock.png"));
     d->fixedNumberOfControlPointsPushButton->setToolTip(QString("Click to lock the number of control points so no points can be added or deleted"));
-    d->deleteMarkupPushButton->setEnabled(true);
-    d->deleteAllMarkupsInListPushButton->setEnabled(true);
+    d->deleteControlPointPushButton->setEnabled(true);
+    d->deleteAllControlPointsInListPushButton->setEnabled(true);
     }
   // update slice intersections
   d->sliceIntersectionsVisibilityCheckBox->setChecked(this->sliceIntersectionsVisible());
 
   // update the list name format
-  QString nameFormat = QString(d->MarkupsNode->GetMarkupLabelFormat().c_str());
+  QString nameFormat = QString(d->MarkupsNode->GetControlPointLabelFormat().c_str());
   d->nameFormatLineEdit->setText(nameFormat);
 
    // update the table
@@ -1410,7 +1410,7 @@ void qSlicerMarkupsModuleWidget::onVisibilityOnAllControlPointsInListPushButtonC
     {
     return;
     }
-  this->markupsLogic()->SetAllMarkupsVisibility(d->MarkupsNode, true);
+  this->markupsLogic()->SetAllControlPointsVisibility(d->MarkupsNode, true);
   d->MarkupsNode->SetDisplayVisibility(true);
 }
 
@@ -1422,7 +1422,7 @@ void qSlicerMarkupsModuleWidget::onVisibilityOffAllControlPointsInListPushButton
     {
     return;
     }
-  this->markupsLogic()->SetAllMarkupsVisibility(d->MarkupsNode, false);
+  this->markupsLogic()->SetAllControlPointsVisibility(d->MarkupsNode, false);
   d->MarkupsNode->SetDisplayVisibility(false);
 }
 
@@ -1434,7 +1434,7 @@ void qSlicerMarkupsModuleWidget::onVisibilityAllControlPointsInListToggled()
     {
     return;
     }
-  this->markupsLogic()->ToggleAllMarkupsVisibility(d->MarkupsNode);
+  this->markupsLogic()->ToggleAllControlPointsVisibility(d->MarkupsNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -1445,7 +1445,7 @@ void qSlicerMarkupsModuleWidget::onLockAllControlPointsInListPushButtonClicked()
     {
     return;
     }
-  this->markupsLogic()->SetAllMarkupsLocked(d->MarkupsNode, true);
+  this->markupsLogic()->SetAllControlPointsLocked(d->MarkupsNode, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -1456,7 +1456,7 @@ void qSlicerMarkupsModuleWidget::onUnlockAllControlPointsInListPushButtonClicked
     {
     return;
     }
-  this->markupsLogic()->SetAllMarkupsLocked(d->MarkupsNode, false);
+  this->markupsLogic()->SetAllControlPointsLocked(d->MarkupsNode, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -1467,7 +1467,7 @@ void qSlicerMarkupsModuleWidget::onLockAllControlPointsInListToggled()
     {
     return;
     }
-  this->markupsLogic()->ToggleAllMarkupsLocked(d->MarkupsNode);
+  this->markupsLogic()->ToggleAllControlPointsLocked(d->MarkupsNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -1478,7 +1478,7 @@ void qSlicerMarkupsModuleWidget::onSelectAllControlPointsInListPushButtonClicked
     {
     return;
     }
-  this->markupsLogic()->SetAllMarkupsSelected(d->MarkupsNode, true);
+  this->markupsLogic()->SetAllControlPointsSelected(d->MarkupsNode, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -1489,7 +1489,7 @@ void qSlicerMarkupsModuleWidget::onDeselectAllControlPointsInListPushButtonClick
     {
     return;
     }
-  this->markupsLogic()->SetAllMarkupsSelected(d->MarkupsNode, false);
+  this->markupsLogic()->SetAllControlPointsSelected(d->MarkupsNode, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -1500,7 +1500,7 @@ void qSlicerMarkupsModuleWidget::onSelectedAllControlPointsInListToggled()
     {
     return;
     }
-  this->markupsLogic()->ToggleAllMarkupsSelected(d->MarkupsNode);
+  this->markupsLogic()->ToggleAllControlPointsSelected(d->MarkupsNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -1810,10 +1810,10 @@ void qSlicerMarkupsModuleWidget::onDeleteAllControlPointsInListPushButtonClicked
     }
 
   ctkMessageBox deleteAllMsgBox;
-  deleteAllMsgBox.setWindowTitle("Delete All Markups in this list?");
+  deleteAllMsgBox.setWindowTitle("Delete all control points in this list?");
   QString labelText = QString("Delete all ")
     + QString::number(d->MarkupsNode->GetNumberOfControlPoints())
-    + QString(" Markups in this list?");
+    + QString(" control points in this list?");
   // don't show again check box conflicts with informative text, so use
   // a long text
   deleteAllMsgBox.setText(labelText);
@@ -1938,7 +1938,7 @@ void qSlicerMarkupsModuleWidget::onListVisibileInvisiblePushButtonClicked()
 
   if (this->markupsLogic())
     {
-    this->markupsLogic()->SetAllMarkupsVisibility(d->MarkupsNode, visibleFlag);
+    this->markupsLogic()->SetAllControlPointsVisibility(d->MarkupsNode, visibleFlag);
     }
 }
 
@@ -1977,7 +1977,7 @@ void qSlicerMarkupsModuleWidget::onNameFormatLineEditTextEdited(const QString te
     {
     return;
     }
-  d->MarkupsNode->SetMarkupLabelFormat(std::string(text.toUtf8()));
+  d->MarkupsNode->SetControlPointLabelFormat(std::string(text.toUtf8()));
 }
 
 //-----------------------------------------------------------------------------
@@ -2000,7 +2000,7 @@ void qSlicerMarkupsModuleWidget::onResetNameFormatToDefaultPushButtonClicked()
     {
     qCritical() << Q_FUNC_INFO << " failed: invalid default markups node";
     }
-  d->MarkupsNode->SetMarkupLabelFormat(defaultNode->GetMarkupLabelFormat());
+  d->MarkupsNode->SetControlPointLabelFormat(defaultNode->GetControlPointLabelFormat());
 }
 
 //-----------------------------------------------------------------------------
@@ -2011,7 +2011,7 @@ void qSlicerMarkupsModuleWidget::onRenameAllWithCurrentNameFormatPushButtonClick
      {
      return;
      }
-   this->markupsLogic()->RenameAllMarkupsFromCurrentFormat(d->MarkupsNode);
+   this->markupsLogic()->RenameAllControlPointsFromCurrentFormat(d->MarkupsNode);
 }
 
 //-----------------------------------------------------------------------------

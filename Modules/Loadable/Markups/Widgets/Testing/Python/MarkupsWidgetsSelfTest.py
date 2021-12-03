@@ -166,10 +166,10 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
     placeWidget.buttonsVisible = True
     self.assertTrue(placeWidget.buttonsVisible)
 
-    placeWidget.deleteAllMarkupsOptionVisible = False
-    self.assertFalse(placeWidget.deleteAllMarkupsOptionVisible)
-    placeWidget.deleteAllMarkupsOptionVisible = True
-    self.assertTrue(placeWidget.deleteAllMarkupsOptionVisible)
+    placeWidget.deleteAllControlPointsOptionVisible = False
+    self.assertFalse(placeWidget.deleteAllControlPointsOptionVisible)
+    placeWidget.deleteAllControlPointsOptionVisible = True
+    self.assertTrue(placeWidget.deleteAllControlPointsOptionVisible)
 
     placeWidget.unsetLastControlPointOptionVisible = False
     self.assertFalse(placeWidget.unsetLastControlPointOptionVisible)

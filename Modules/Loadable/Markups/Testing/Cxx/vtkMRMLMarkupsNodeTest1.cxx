@@ -41,9 +41,9 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
 
   TEST_SET_GET_BOOLEAN(node1, Locked);
 
-  node1->SetMarkupLabelFormat(std::string("%N-%d"));
+  node1->SetControlPointLabelFormat(std::string("%N-%d"));
   node1->SetName("testingname");
-  std::string formatTest = node1->ReplaceListNameInMarkupLabelFormat();
+  std::string formatTest = node1->ReplaceListNameInControlPointLabelFormat();
   CHECK_STD_STRING(formatTest, "testingname-%d");
 
   vtkNew<vtkMRMLStaticMeasurement> measurement1;
