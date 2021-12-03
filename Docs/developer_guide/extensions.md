@@ -124,18 +124,18 @@ Replace `Release` with the build mode of your extension build (`Debug`, `Release
 ### Continuous integration
 
 If you shared your extension by using the ExtensionWizard, make sure you know about the Slicer testing dashboard:
-- [Dashboard for Slicer Stable Releases](http://slicer.cdash.org/index.php?project=Slicer4)
+- [Dashboard for Slicer Stable Releases](http://slicer.cdash.org/index.php?project=SlicerStable)
 - [Dashboard for Slicer Preview Releases](http://slicer.cdash.org/index.php?project=SlicerPreview)
 
 The dashboard will attempt to check out the source code of your extension, build, test and package it on Linux, macOS and Windows platforms.
 
 To find your extension, use the following link replacing `SlicerMyExtension` with the name of your extension:
 
-`http://slicer.cdash.org/index.php?project=Slicer4&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerMyExtension`
+`http://slicer.cdash.org/index.php?project=SlicerStable&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerMyExtension`
 
 For example, here is the link to check the status of the `SlicerDMRI` extension:
 
-`http://slicer.cdash.org/index.php?project=Slicer4&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerDMRI`
+`http://slicer.cdash.org/index.php?project=SlicerStable&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerDMRI`
 
 If you see red in any of the columns for your extension, click on the hyperlinked number of errors to see the details.
 
@@ -389,7 +389,7 @@ cmake -DSlicer_DIR:PATH=~/Slicer-SuperBuild-Release/Slicer-build \
 make
 ```
 
-Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source 
+Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source
 
 ### Build complete Extensions Index with dashboard submission
 
@@ -497,7 +497,7 @@ Sometimes it is desirable to build the same source code in two different modes: 
 
 Slicer extensions are built and uploaded to the extensions server every day.
 
-- Packages for Slicer stable release are rebuilt and uploaded during the day (Eastern time). Results are available at <https://slicer.cdash.org/index.php?project=Slicer4>
+- Packages for Slicer stable release are rebuilt and uploaded during the day (Eastern time). Results are available at <https://slicer.cdash.org/index.php?project=SlicerStable>
 - Packages for the latest Slicer Preview Release is built every night (Eastern time). Results are available at <https://slicer.cdash.org/index.php?project=SlicerPreview>
 
 Note that packages are not updated for previous Slicer Preview Releases. To get latest extensions for a Slicer Preview Release, install the latest Slicer Preview Release.
