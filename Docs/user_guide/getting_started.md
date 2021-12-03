@@ -185,7 +185,7 @@ Terms used in various fields of medical and biomedical image computing and clini
 - **Color bar** (or scalar bar): a widget overlaid on slice or 3D views that displays a color bar, indicating mapping between color and data value.
 - **Coordinate system** (or coordinate frame, reference frame, space): Specified by position of origin, axis directions, and distance unit. All coordinate systems in 3D Slicer are right-handed.
 - **Extension** (or Slicer extension): A collection of modules that is not bundled with the core application but can be downloaded and installed using the Extensions manager.
-- [**Extensions manager**](extensions_manager): A software component of Slicer that allows browsing, installing, uninstalling extensions in the [Extensions catalog (also known as the Slicer app store)](http://slicer.kitware.com/midas3/slicerappstore) directly from the application.
+- [**Extensions manager**](extensions_manager): A software component of Slicer that allows browsing, installing, uninstalling extensions in the [Extensions catalog (also known as the Slicer app store)](https://extensions.slicer.org) directly from the application.
 - [**Extensions index**](https://github.com/Slicer/ExtensionsIndex): A repository that contains description of each extension that the Extension catalog is built from.
 - **Extent**: Range of integer coordinates along 3 axes. Defined in VTK by 6 values, for IJK axes: `I_min`, `I_max`, `J_min`, `J_max`, `K_min`, `K_max`. Both minimum and maximum values are inclusive, therefore size of an array is `(I_max - I_min + 1)` x `(J_max - J_min + 1)` x `(K_max - K_min + 1)`.
 - **Fiducial**: Represents a point in 3D space. The term originates from image-guided surgery, where "fiducial markers" are used to mark point positions.
