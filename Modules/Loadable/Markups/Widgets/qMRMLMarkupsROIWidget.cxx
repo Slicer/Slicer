@@ -80,6 +80,8 @@ void qMRMLMarkupsROIWidgetPrivate::setupUi(qMRMLMarkupsROIWidget* widget)
 
   QObject::connect(this->roiTypeComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onROITypeParameterChanged()));
+  QObject::connect(this->insideOutCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setInsideOut(bool)));
   QObject::connect(this->DisplayClippingBoxButton, SIGNAL(toggled(bool)),
                    q, SLOT(setDisplayClippingBox(bool)));
   QObject::connect(this->InteractiveModeCheckBox, SIGNAL(toggled(bool)),
@@ -275,6 +277,34 @@ void qMRMLMarkupsROIWidget::onROITypeParameterChanged()
 }
 
 //-----------------------------------------------------------------------------
+bool qMRMLMarkupsROIWidget::insideOut()
+{
+  Q_D(qMRMLMarkupsROIWidget);
+
+  auto roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
+  if (!roiNode)
+    {
+    return false;
+    }
+  return roiNode->GetInsideOut();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsROIWidget::setInsideOut(bool insideOut)
+{
+  Q_D(qMRMLMarkupsROIWidget);
+
+  auto roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
+  if (!roiNode)
+    {
+    return;
+    }
+
+  MRMLNodeModifyBlocker blocker(roiNode);
+  roiNode->SetInsideOut(insideOut);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLMarkupsROIWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLMarkupsROIWidget);
@@ -335,6 +365,10 @@ void qMRMLMarkupsROIWidget::updateWidgetFromMRML()
   bool wasBlocked = d->roiTypeComboBox->blockSignals(true);
   d->roiTypeComboBox->setCurrentIndex(d->roiTypeComboBox->findData(roiNode->GetROIType()));
   d->roiTypeComboBox->blockSignals(wasBlocked);
+
+  wasBlocked = d->insideOutCheckBox->blockSignals(true);
+  d->insideOutCheckBox->setChecked(roiNode->GetInsideOut());
+  d->insideOutCheckBox->blockSignals(wasBlocked);
 }
 
 //-----------------------------------------------------------------------------
