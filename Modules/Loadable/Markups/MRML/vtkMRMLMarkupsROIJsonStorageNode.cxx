@@ -113,6 +113,9 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::WriteROIProperties(
   writer.Key("size");
   this->WriteVector(writer, size);
 
+  writer.Key("insideOut");
+  writer.Bool(roiNode->GetInsideOut());
+
   return true;
 }
 
@@ -193,6 +196,13 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::UpdateMarkupsNodeFromJson
     objectToNodeMatrix->SetElement(i, 3, center_Node[i]);
     }
   roiNode->GetObjectToNodeMatrix()->DeepCopy(objectToNodeMatrix);
+
+  if (markupsObject.HasMember("insideOut"))
+    {
+    rapidjson::Value& insideOutItem = markupsObject["insideOut"];
+    bool insideOut = insideOutItem.GetBool();
+    roiNode->SetInsideOut(insideOut);
+    }
 
   return vtkInternal::UpdateMarkupsNodeFromJsonValue(markupsNode, markupsObject);
 }

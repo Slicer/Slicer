@@ -142,6 +142,15 @@ Resample section:
 - Advanced:
   - Maximum projection distance: The maximum search radius tolerance defining the allowable projection distance for projecting resampled control points. It is specified as a percentage of the model's bounding box diagonal in world coordinate system.
 
+ROI settings section:
+- ROI type:
+  - Box: ROI is specified by a single control point in the center, axis directions, and size along each axis direction.
+  - BoundingBox: ROI is specified as the bounding box of all the control points.
+- Inside out: If enabled then the selected region is outside the ROI boundary. It is up to each module to decide if this information is used. For example, if ROI is used for cropping a volume then this flag is ignored, as an image cannot have a hole in it; but for example inside out can make sense for blanking out region of a volume.
+- L-R, P-A, I-S Range: Extents of the ROI box along the ROI axes.
+- Display ROI: show/hide the ROI in all views.
+- Interactive mode: allow changing the ROI position, orientation, and size in views using interaction handles. If interaction handles are disabled, the ROI may still be changed by moving control points (unless control points are locked, too).
+
 ## Information for developers
 
 See examples and other developer information in [Developer guide](../../developer_guide/modules/markups.md) and [Script repository](../../developer_guide/script_repository.md#markups).

@@ -102,12 +102,19 @@
                                     "description": "Method used to determine ROI bounds from control points. Ex. 'Box', 'BoundingBox'.",
                                     "default": "Box"
                                 },
+                               "insideOut": {
+                                    "$id": "#markup/insideOut",
+                                    "type": "boolean",
+                                    "title": "Inside out",
+                                    "description": "ROI is inside out. Objects that would normally be inside are considered outside and vice versa.",
+                                    "default": false
+                                },
                                 "planeType": {
                                     "$id": "#markup/planeType",
                                     "type": "string",
                                     "title": "Plane type",
                                     "description": "Method used to determine dimensions from control points. Ex. 'PointNormal', '3Points'.",
-                                    "default": "Box"
+                                    "default": "PointNormal"
                                 },
                                 "sizeMode": {
                                     "$id": "#markup/sizeMode",
