@@ -115,7 +115,7 @@ void vtkMRMLMarkupsNode::WriteXML(ostream& of, int nIndent)
 
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLBooleanMacro(locked, Locked);
-  vtkMRMLWriteXMLStdStringMacro(markupLabelFormat, MarkupLabelFormat);
+  vtkMRMLWriteXMLStdStringMacro(controlPointLabelFormat, ControlPointLabelFormat);
   vtkMRMLWriteXMLMatrix4x4Macro(interactionHandleToWorldMatrix, InteractionHandleToWorldMatrix);
   vtkMRMLWriteXMLEndMacro();
 
@@ -139,6 +139,7 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLBooleanMacro(locked, Locked);
   vtkMRMLReadXMLStdStringMacro(markupLabelFormat, MarkupLabelFormat);
+  vtkMRMLReadXMLStdStringMacro(controlPointLabelFormat, ControlPointLabelFormat);
   vtkMRMLReadXMLOwnedMatrix4x4Macro(interactionHandleToWorldMatrix, InteractionHandleToWorldMatrix);
   vtkMRMLReadXMLEndMacro();
 
@@ -174,7 +175,7 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyBooleanMacro(Locked);
-  vtkMRMLCopyStdStringMacro(MarkupLabelFormat);
+  vtkMRMLCopyStdStringMacro(ControlPointLabelFormat);
   vtkMRMLCopyOwnedMatrix4x4Macro(InteractionHandleToWorldMatrix);
   vtkMRMLCopyEndMacro();
 
@@ -291,7 +292,7 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(Locked);
-  vtkMRMLPrintStdStringMacro(MarkupLabelFormat);
+  vtkMRMLPrintStdStringMacro(ControlPointLabelFormat);
   vtkMRMLPrintMatrix4x4Macro(InteractionHandleToWorldMatrix)
   vtkMRMLPrintEndMacro();
 
@@ -1838,7 +1839,7 @@ std::string vtkMRMLMarkupsNode::GenerateUniqueControlPointID()
 //---------------------------------------------------------------------------
 std::string vtkMRMLMarkupsNode::GenerateControlPointLabel(int controlPointIndex)
 {
-  std::string formatString = this->ReplaceListNameInMarkupLabelFormat();
+  std::string formatString = this->ReplaceListNameInControlPointLabelFormat();
   char buf[128];
   buf[sizeof(buf) - 1] = 0; // make sure the string is zero-terminated
   snprintf(buf, sizeof(buf) - 1, formatString.c_str(), controlPointIndex);
@@ -1846,28 +1847,28 @@ std::string vtkMRMLMarkupsNode::GenerateControlPointLabel(int controlPointIndex)
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLMarkupsNode::GetMarkupLabelFormat()
+std::string vtkMRMLMarkupsNode::GetControlPointLabelFormat()
 {
-  return this->MarkupLabelFormat;
+  return this->ControlPointLabelFormat;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::SetMarkupLabelFormat(std::string format)
+void vtkMRMLMarkupsNode::SetControlPointLabelFormat(std::string format)
 {
-  if (this->MarkupLabelFormat.compare(format) == 0)
+  if (this->ControlPointLabelFormat.compare(format) == 0)
     {
     return;
     }
-  this->MarkupLabelFormat = format;
+  this->ControlPointLabelFormat = format;
 
   this->Modified();
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::LabelFormatModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLMarkupsNode::ReplaceListNameInMarkupLabelFormat()
+std::string vtkMRMLMarkupsNode::ReplaceListNameInControlPointLabelFormat()
 {
-  std::string newFormatString = this->MarkupLabelFormat;
+  std::string newFormatString = this->ControlPointLabelFormat;
 
   // Long-name replacement
   size_t replacePos = newFormatString.find("%N");

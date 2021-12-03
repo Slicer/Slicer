@@ -454,7 +454,7 @@ void qMRMLMarkupsToolBar::initializeToolBarLayout()
   // Markups place widget
   d->MarkupsPlaceWidget = new qSlicerMarkupsPlaceWidget(this);
   d->MarkupsPlaceWidget->setObjectName(QString("MarkupsPlaceWidget"));
-  d->MarkupsPlaceWidget->setDeleteAllMarkupsOptionVisible(true);
+  d->MarkupsPlaceWidget->setDeleteAllControlPointsOptionVisible(true);
   d->MarkupsPlaceWidget->setPlaceMultipleMarkups(qSlicerMarkupsPlaceWidget::ShowPlaceMultipleMarkupsOption);
   d->MarkupsPlaceWidget->setMRMLScene(qSlicerApplication::application()->mrmlScene());
   this->addWidget(d->MarkupsPlaceWidget);

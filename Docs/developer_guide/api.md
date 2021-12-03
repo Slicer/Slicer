@@ -48,10 +48,10 @@ This documentation is generated using the Doxygen tool, which uses C++ syntax. T
 
   ```python
   >>> w = slicer.qSlicerMarkupsPlaceWidget()
-  >>> w.deleteAllMarkupsOptionVisible
+  >>> w.deleteAllControlPointsOptionVisible
   True
-  >>> w.deleteAllMarkupsOptionVisible=False
-  >>> w.deleteAllMarkupsOptionVisible
+  >>> w.deleteAllControlPointsOptionVisible=False
+  >>> w.deleteAllControlPointsOptionVisible
   False
   ```
 

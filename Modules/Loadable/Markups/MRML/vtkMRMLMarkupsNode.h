@@ -585,22 +585,22 @@ public:
   void ApplyTransform(vtkAbstractTransform* transform) override;
 
   ///@{
-  /// Get/Set the markup node label format string that defines the markup names.
+  /// Get/Set the ControlPointLabelFormat string that defines the control point names.
   /// In standard printf notation, with the addition of %N being replaced
   /// by the list name.
   /// %d will resolve to the highest not yet used list index integer.
   /// Character strings will otherwise pass through
-  /// Defaults to %N-%d which will yield markup names of Name-0, Name-1, Name-2.
+  /// Defaults to %N-%d which will yield control point names of Name-0, Name-1, Name-2.
   /// If format string is changed then LabelFormatModifedEvent event is invoked.
-  std::string GetMarkupLabelFormat();
-  void SetMarkupLabelFormat(std::string format);
+  std::string GetControlPointLabelFormat();
+  void SetControlPointLabelFormat(std::string format);
   ///@}
 
-  /// If the MarkupLabelFormat contains the string %N, return a string
+  /// If the ControlPointLabelFormat contains the string %N, return a string
   /// in which that has been replaced with the list name. If the list name is
-  /// nullptr, replace it with an empty string. If the MarkupLabelFormat doesn't
-  /// contain %N, return MarkupLabelFormat
-  std::string ReplaceListNameInMarkupLabelFormat();
+  /// nullptr, replace it with an empty string. If the ControlPointLabelFormat doesn't
+  /// contain %N, return ControlPointLabelFormat
+  std::string ReplaceListNameInControlPointLabelFormat();
 
   /// Reimplemented to take into account the modified time of the markups
   /// Returns true if the node (default behavior) or the markups are modified
@@ -879,6 +879,25 @@ public:
     vtkWarningMacro("vtkMRMLMarkupsNode::SetNthMarkupLabel method is deprecated, please use SetNthControlPointLabel instead");
     this->SetNthControlPointLabel(n, label);
   };
+  /// \deprecated Use GetControlPointLabelFormat instead.
+  std::string GetMarkupLabelFormat()
+  {
+    vtkWarningMacro("vtkMRMLMarkupsNode::GetMarkupLabelFormat method is deprecated, please use GetControlPointLabelFormat instead");
+    return this->GetControlPointLabelFormat();
+  };
+  /// \deprecated Use SetControlPointLabelFormat instead.
+  void SetMarkupLabelFormat(std::string format)
+  {
+    // Not warning this at the moment as existing scene files will contain the markupLabelFormat attribute name and would warn on load
+    // vtkWarningMacro("vtkMRMLMarkupsNode::SetMarkupLabelFormat method is deprecated, please use SetControlPointLabelFormat instead");
+    return this->SetControlPointLabelFormat(format);
+  };
+  /// \deprecated Use ReplaceListNameInControlPointLabelFormat instead.
+  std::string ReplaceListNameInMarkupLabelFormat()
+  {
+    vtkWarningMacro("vtkMRMLMarkupsNode::ReplaceListNameInMarkupLabelFormat method is deprecated, please use ReplaceListNameInControlPointLabelFormat instead");
+    return this->ReplaceListNameInControlPointLabelFormat();
+  };
 
 protected:
   vtkMRMLMarkupsNode();
@@ -974,7 +993,7 @@ protected:
   /// Point position can be unset instead of deleting the point.
   bool FixedNumberOfControlPoints{false};
 
-  std::string MarkupLabelFormat{"%N-%d"};
+  std::string ControlPointLabelFormat{"%N-%d"};
 
   /// Keep track of the number of markups that were added to the list, always
   /// incrementing, not decreasing when they're removed. Used to help create

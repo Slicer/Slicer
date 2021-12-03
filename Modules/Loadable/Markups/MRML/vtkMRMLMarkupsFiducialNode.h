@@ -118,7 +118,7 @@ public:
   int AddFiducialFromArray(double pos[3], std::string label = std::string())
     {
     vtkWarningMacro("vtkMRMLMarkupsFiducialNode::AddFiducialFromArray method is deprecated, please use AddControlPoint instead");
-    return this->AddFiducial(pos[0], pos[1], pos[2], label);
+    return this->AddControlPoint(pos, label);
     }
   /// \deprecated Use GetNthControlPointPositionVector instead.
   void GetNthFiducialPosition(int n, double pos[3])

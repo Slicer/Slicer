@@ -446,7 +446,7 @@ slicer.vtkMRMLTransformNode.GetTransformBetweenNodes(volumeNode.GetParentTransfo
 point_Ras = transformVolumeRasToRas.TransformPoint(point_VolumeRas[0:3])
 
 # Add a markup at the computed position and print its coordinates
-pointListNode.AddFiducial(point_Ras[0], point_Ras[1], point_Ras[2], "max")
+pointListNode.AddControlPoint((point_Ras[0], point_Ras[1], point_Ras[2]), "max")
 print(point_Ras)
 ```
 

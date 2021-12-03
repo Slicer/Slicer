@@ -100,11 +100,11 @@ public:
   /// On success, return the id, on failure return an empty string.
   std::string AddNewFiducialNode(const char *name = "F", vtkMRMLScene *scene = nullptr);
 
-  /// Add a new fiducial to the currently active list at the given RAS
-  /// coordinates (default 0,0,0). Will create a list is one is not active.
-  /// Returns -1 on failure, index of the added fiducial
+  /// Add a new control point to the currently active markups fiducial node at the given RAS
+  /// coordinates (default 0,0,0). Will create a markups fiducial node if one is not active.
+  /// Returns -1 on failure, index of the added control point
   /// on success.
-  int AddFiducial(double r=0.0, double a=0.0, double s=0.0);
+  int AddControlPoint(double r=0.0, double a=0.0, double s=0.0);
 
   /// jump the slice windows to the given coordinate
   /// If viewGroup is -1 then all all slice views are updated, otherwise only those views
@@ -121,7 +121,7 @@ public:
   /// \sa FocusCamerasOnNthPointInMarkup
   void FocusCameraOnNthPointInMarkup(const char *cameraNodeID, const char *markupNodeID, int n);
 
-  /// Load a markups fiducial list from fileName, return nullptr on error, node ID string
+  /// Load a markups node from fileName, return nullptr on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene
   /// as well.
   char* LoadMarkups(const char* fileName, const char* fidsName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
@@ -132,13 +132,15 @@ public:
   char* LoadMarkupsFromFcsv(const char* fileName, const char* nodeName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
   char* LoadMarkupsFromJson(const char* fileName, const char* nodeName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
-  /// Utility methods to operate on all markups in a markups node
-  void SetAllMarkupsVisibility(vtkMRMLMarkupsNode *node, bool flag);
-  void ToggleAllMarkupsVisibility(vtkMRMLMarkupsNode *node);
-  void SetAllMarkupsLocked(vtkMRMLMarkupsNode *node, bool flag);
-  void ToggleAllMarkupsLocked(vtkMRMLMarkupsNode *node);
-  void SetAllMarkupsSelected(vtkMRMLMarkupsNode *node, bool flag);
-  void ToggleAllMarkupsSelected(vtkMRMLMarkupsNode *node);
+  /// Utility methods to operate on all control points in a markups node
+  /// @{
+  void SetAllControlPointsVisibility(vtkMRMLMarkupsNode *node, bool flag);
+  void ToggleAllControlPointsVisibility(vtkMRMLMarkupsNode *node);
+  void SetAllControlPointsLocked(vtkMRMLMarkupsNode *node, bool flag);
+  void ToggleAllControlPointsLocked(vtkMRMLMarkupsNode *node);
+  void SetAllControlPointsSelected(vtkMRMLMarkupsNode *node, bool flag);
+  void ToggleAllControlPointsSelected(vtkMRMLMarkupsNode *node);
+  /// @}
 
   /// Utility method to set up a display node from the defaults.
   /// Point labels visibility and properties label visibility setting is not saved to defaults,
@@ -156,13 +158,6 @@ public:
   bool CopyNthControlPointToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
                               vtkMRMLMarkupsNode *newMarkupsNode);
 
-  /// \deprecated Use CopyNthControlPointToNewList instead.
-  bool CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
-                              vtkMRMLMarkupsNode *newMarkupsNode)
-    {
-    return this->CopyNthControlPointToNewList(n, markupsNode, newMarkupsNode);
-    }
-
   /// utility method to move a control point from one list to another, trying to
   /// insert it at the given new index. If the new index is larger than the
   /// number of control points in the list, adds it to the end. If new index is
@@ -173,13 +168,6 @@ public:
   bool MoveNthControlPointToNewListAtIndex(int n, vtkMRMLMarkupsNode *markupsNode,
                                    vtkMRMLMarkupsNode *newMarkupsNode, int newIndex);
 
-  /// \deprecated Use MoveNthControlPointToNewList instead.
-  bool MoveNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
-                              vtkMRMLMarkupsNode *newMarkupsNode, int newIndex)
-    {
-    return this->MoveNthControlPointToNewListAtIndex(n, markupsNode, newMarkupsNode, newIndex);
-    }
-
   /// Searches the scene for annotation fidicual nodes, collecting a list
   /// of annotation hierarchy nodes. Then iterates through those hierarchy nodes
   /// and moves the fiducials that are under them into new markups nodes. Leaves
@@ -187,11 +175,11 @@ public:
   /// ROIs but deletes the 1:1 hierarchy nodes.
   void ConvertAnnotationFiducialsToMarkups();
 
-  /// Iterate over the markups in the list and reset the markup labels using
-  /// the current MarkupLabelFormat setting. Try to keep current numbering.
+  /// Iterate over the control points in the list and reset the control point labels using
+  /// the current ControlPointLabelFormat setting. Try to keep current numbering.
   /// Will work if there's a %d, %g or %f in the format string, but precision
   /// is not handled.
-  void RenameAllMarkupsFromCurrentFormat(vtkMRMLMarkupsNode *markupsNode);
+  void RenameAllControlPointsFromCurrentFormat(vtkMRMLMarkupsNode *markupsNode);
 
   /// Put the interaction node into place mode, and set the persistence of
   /// place mode according to the persistent flag.
@@ -305,6 +293,74 @@ public:
 
   static bool ExportControlPointsToTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode,
     int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS);
+
+  //-----------------------------------------------------------
+  // All public methods below are deprecated
+  //
+  // These methods are deprecated because they use old terms (markup instead of control point),
+
+  /// \deprecated Use CopyNthControlPointToNewList instead.
+  bool CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
+                              vtkMRMLMarkupsNode *newMarkupsNode)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::CopyNthMarkupToNewList method is deprecated, please use CopyNthControlPointToNewList instead");
+    return this->CopyNthControlPointToNewList(n, markupsNode, newMarkupsNode);
+    }
+  /// \deprecated Use MoveNthControlPointToNewList instead.
+  bool MoveNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
+                              vtkMRMLMarkupsNode *newMarkupsNode, int newIndex)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::MoveNthMarkupToNewList method is deprecated, please use MoveNthControlPointToNewListAtIndex instead");
+    return this->MoveNthControlPointToNewListAtIndex(n, markupsNode, newMarkupsNode, newIndex);
+    }
+  /// \deprecated Use AddControlPoint instead.
+  int AddFiducial(double r=0.0, double a=0.0, double s=0.0)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::AddFiducial method is deprecated, please use AddControlPoint instead");
+    return this->AddControlPoint(r, a, s);
+    };
+  /// \deprecated Use SetAllControlPointsVisibility instead.
+  void SetAllMarkupsVisibility(vtkMRMLMarkupsNode *node, bool flag)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::SetAllMarkupsVisibility method is deprecated, please use SetAllControlPointsVisibility instead");
+    this->SetAllControlPointsVisibility(node, flag);
+    };
+  /// \deprecated Use ToggleAllControlPointsVisibility instead.
+  void ToggleAllMarkupsVisibility(vtkMRMLMarkupsNode *node)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::ToggleAllMarkupsVisibility method is deprecated, please use ToggleAllControlPointsVisibility instead");
+    this->ToggleAllControlPointsVisibility(node);
+    };
+  /// \deprecated Use SetAllControlPointsLocked instead.
+  void SetAllMarkupsLocked(vtkMRMLMarkupsNode *node, bool flag)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::SetAllMarkupsLocked method is deprecated, please use SetAllControlPointsLocked instead");
+    this->SetAllControlPointsLocked(node, flag);
+    };
+  /// \deprecated Use ToggleAllControlPointsLocked instead.
+  void ToggleAllMarkupsLocked(vtkMRMLMarkupsNode *node)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::ToggleAllMarkupsLocked method is deprecated, please use ToggleAllControlPointsLocked instead");
+    this->ToggleAllControlPointsLocked(node);
+    };
+  /// \deprecated Use SetAllControlPointsSelected instead.
+  void SetAllMarkupsSelected(vtkMRMLMarkupsNode *node, bool flag)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::SetAllMarkupsSelected method is deprecated, please use SetAllControlPointsSelected instead");
+    this->SetAllControlPointsSelected(node, flag);
+    };
+  /// \deprecated Use ToggleAllControlPointsSelected instead.
+  void ToggleAllMarkupsSelected(vtkMRMLMarkupsNode *node)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::ToggleAllMarkupsSelected method is deprecated, please use ToggleAllControlPointsSelected instead");
+    this->ToggleAllControlPointsSelected(node);
+    };
+  /// \deprecated Use RenameAllControlPointsFromCurrentFormat instead.
+  void RenameAllMarkupsFromCurrentFormat(vtkMRMLMarkupsNode *markupsNode)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::RenameAllMarkupsFromCurrentFormat method is deprecated, please use RenameAllControlPointsFromCurrentFormat instead");
+    this->RenameAllControlPointsFromCurrentFormat(markupsNode);
+    };
 
 protected:
 

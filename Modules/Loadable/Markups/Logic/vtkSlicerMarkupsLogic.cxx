@@ -683,11 +683,11 @@ std::string vtkSlicerMarkupsLogic::AddNewFiducialNode(const char *name, vtkMRMLS
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerMarkupsLogic::AddFiducial(double r, double a, double s)
+int vtkSlicerMarkupsLogic::AddControlPoint(double r, double a, double s)
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("AddFiducial: no scene defined!");
+    vtkErrorMacro("AddControlPoint: no scene defined!");
     return -1;
     }
 
@@ -697,18 +697,18 @@ int vtkSlicerMarkupsLogic::AddFiducial(double r, double a, double s)
   // is there no active point list?
   if (listID.size() == 0)
     {
-    vtkDebugMacro("AddFiducial: no point list is active, adding one first!");
+    vtkDebugMacro("AddControlPoint: no point list is active, adding one first!");
     std::string newListID = this->AddNewFiducialNode();
     if (newListID.size() == 0)
       {
-      vtkErrorMacro("AddFiducial: failed to add a new point list to the scene.");
+      vtkErrorMacro("AddControlPoint: failed to add a new point list to the scene.");
       return -1;
       }
     // try to get the id again
     listID = this->GetActiveListID();
     if (listID.size() == 0)
       {
-      vtkErrorMacro("AddFiducial: failed to create a new point list to add to!");
+      vtkErrorMacro("AddControlPoint: failed to create a new point list to add to!");
       return -1;
       }
     }
@@ -717,16 +717,16 @@ int vtkSlicerMarkupsLogic::AddFiducial(double r, double a, double s)
   vtkMRMLNode *listNode = this->GetMRMLScene()->GetNodeByID(listID.c_str());
   if (!listNode)
     {
-    vtkErrorMacro("AddFiducial: failed to get the active point list with id " << listID);
+    vtkErrorMacro("AddControlPoint: failed to get the active point list with id " << listID);
     return -1;
     }
   vtkMRMLMarkupsFiducialNode *fiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(listNode);
   if (!fiducialNode)
     {
-    vtkErrorMacro("AddFiducial: active list is not a point list: " << listNode->GetClassName());
+    vtkErrorMacro("AddControlPoint: active list is not a point list: " << listNode->GetClassName());
     return -1;
     }
-  vtkDebugMacro("AddFiducial: adding a control point to the list " << listID);
+  vtkDebugMacro("AddControlPoint: adding a control point to the list " << listID);
   // add a control point to the active point list
   return fiducialNode->AddControlPoint(vtkVector3d(r,a,s), std::string());
 }
@@ -1015,11 +1015,11 @@ char * vtkSlicerMarkupsLogic::LoadMarkupsFromFcsv(const char* fileName, const ch
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetAllMarkupsVisibility(vtkMRMLMarkupsNode *node, bool flag)
+void vtkSlicerMarkupsLogic::SetAllControlPointsVisibility(vtkMRMLMarkupsNode *node, bool flag)
 {
   if (!node)
     {
-    vtkDebugMacro("SetAllMarkupsVisibility: No list");
+    vtkDebugMacro("SetAllControlPointsVisibility: No list");
     return;
     }
 
@@ -1030,11 +1030,11 @@ void vtkSlicerMarkupsLogic::SetAllMarkupsVisibility(vtkMRMLMarkupsNode *node, bo
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::ToggleAllMarkupsVisibility(vtkMRMLMarkupsNode *node)
+void vtkSlicerMarkupsLogic::ToggleAllControlPointsVisibility(vtkMRMLMarkupsNode *node)
 {
   if (!node)
     {
-    vtkDebugMacro("ToggleAllMarkupsVisibility: No list");
+    vtkDebugMacro("ToggleAllControlPointsVisibility: No list");
     return;
     }
 
@@ -1045,11 +1045,11 @@ void vtkSlicerMarkupsLogic::ToggleAllMarkupsVisibility(vtkMRMLMarkupsNode *node)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetAllMarkupsLocked(vtkMRMLMarkupsNode *node, bool flag)
+void vtkSlicerMarkupsLogic::SetAllControlPointsLocked(vtkMRMLMarkupsNode *node, bool flag)
 {
   if (!node)
     {
-    vtkDebugMacro("SetAllMarkupsLocked: No list");
+    vtkDebugMacro("SetAllControlPointsLocked: No list");
     return;
     }
 
@@ -1060,11 +1060,11 @@ void vtkSlicerMarkupsLogic::SetAllMarkupsLocked(vtkMRMLMarkupsNode *node, bool f
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::ToggleAllMarkupsLocked(vtkMRMLMarkupsNode *node)
+void vtkSlicerMarkupsLogic::ToggleAllControlPointsLocked(vtkMRMLMarkupsNode *node)
 {
   if (!node)
     {
-    vtkDebugMacro("ToggleAllMarkupsLocked: No list");
+    vtkDebugMacro("ToggleAllControlPointsLocked: No list");
     return;
     }
 
@@ -1075,11 +1075,11 @@ void vtkSlicerMarkupsLogic::ToggleAllMarkupsLocked(vtkMRMLMarkupsNode *node)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetAllMarkupsSelected(vtkMRMLMarkupsNode *node, bool flag)
+void vtkSlicerMarkupsLogic::SetAllControlPointsSelected(vtkMRMLMarkupsNode *node, bool flag)
 {
   if (!node)
     {
-    vtkDebugMacro("SetAllMarkupsSelected: No list");
+    vtkDebugMacro("SetAllControlPointsSelected: No list");
     return;
     }
 
@@ -1090,11 +1090,11 @@ void vtkSlicerMarkupsLogic::SetAllMarkupsSelected(vtkMRMLMarkupsNode *node, bool
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::ToggleAllMarkupsSelected(vtkMRMLMarkupsNode *node)
+void vtkSlicerMarkupsLogic::ToggleAllControlPointsSelected(vtkMRMLMarkupsNode *node)
 {
   if (!node)
     {
-    vtkDebugMacro("ToggleAllMarkupsSelected: No list");
+    vtkDebugMacro("ToggleAllControlPointsSelected: No list");
     return;
     }
 
@@ -1198,13 +1198,13 @@ bool vtkSlicerMarkupsLogic::MoveNthControlPointToNewListAtIndex(int n, vtkMRMLMa
 {
   if (!markupsNode || !newMarkupsNode)
     {
-    vtkErrorMacro("MoveNthMarkupToNewListAtIndex: at least one of the markup list nodes are null!");
+    vtkErrorMacro("MoveNthControlPointToNewListAtIndex: at least one of the markup list nodes are null!");
     return false;
     }
 
   if (!markupsNode->ControlPointExists(n))
     {
-    vtkErrorMacro("MoveNthMarkupToNewListAtIndex: source index n " << n
+    vtkErrorMacro("MoveNthControlPointToNewListAtIndex: source index n " << n
                   << " is not in list of size " << markupsNode->GetNumberOfControlPoints());
     return false;
     }
@@ -1217,7 +1217,7 @@ bool vtkSlicerMarkupsLogic::MoveNthControlPointToNewListAtIndex(int n, vtkMRMLMa
   bool insertVal = newMarkupsNode->InsertControlPoint(newControlPoint, newIndex);
   if (!insertVal)
     {
-    vtkErrorMacro("MoveNthMarkupToNewListAtIndex: failed to insert new control point at " << newIndex <<
+    vtkErrorMacro("MoveNthControlPointToNewListAtIndex: failed to insert new control point at " << newIndex <<
                   ", control point is still on source list.");
     return false;
     }
@@ -1234,7 +1234,7 @@ bool vtkSlicerMarkupsLogic::CopyNthControlPointToNewList(int n, vtkMRMLMarkupsNo
 {
   if (!markupsNode || !newMarkupsNode)
     {
-    vtkErrorMacro("CopyNthMarkupToNewList: at least one of the markup list nodes are null!");
+    vtkErrorMacro("CopyNthControlPointToNewList: at least one of the markup list nodes are null!");
     return false;
     }
 
@@ -1460,7 +1460,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::RenameAllMarkupsFromCurrentFormat(vtkMRMLMarkupsNode *markupsNode)
+void vtkSlicerMarkupsLogic::RenameAllControlPointsFromCurrentFormat(vtkMRMLMarkupsNode *markupsNode)
 {
   if (!markupsNode)
     {
@@ -1469,7 +1469,7 @@ void vtkSlicerMarkupsLogic::RenameAllMarkupsFromCurrentFormat(vtkMRMLMarkupsNode
 
   int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
   // get the format string with the list name replaced
-  std::string formatString = markupsNode->ReplaceListNameInMarkupLabelFormat();
+  std::string formatString = markupsNode->ReplaceListNameInControlPointLabelFormat();
   bool numberInFormat = false;
   std::vector<char> buffVector(vtkMRMLMarkupsFiducialStorageNode::GetMaximumLineLength());
   char* buff = &(buffVector[0]);
@@ -1501,7 +1501,7 @@ void vtkSlicerMarkupsLogic::RenameAllMarkupsFromCurrentFormat(vtkMRMLMarkupsNode
         }
       if (secondNumber != std::string::npos)
         {
-        vtkWarningMacro("RenameAllMarkupsFromCurrentFormat: more than one number in markup " << n << ", keeping second one: " << oldLabel.c_str());
+        vtkWarningMacro("RenameAllControlPointsFromCurrentFormat: more than one number in markup " << n << ", keeping second one: " << oldLabel.c_str());
         keepNumberStart = secondNumber;
         keepNumberEnd = oldLabel.find_first_not_of(numbers, keepNumberStart);
         }
