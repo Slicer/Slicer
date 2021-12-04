@@ -10,7 +10,11 @@ This module is used for changing the appearance of and organizing 3d surface mod
 
 Models can be organized into folders and display properties (visibility, color, opacity) can be overridden for an entire branch.
 
-Folder nodes can be created by right-clicking on a folder and choosing "Create child folder"
+Folder nodes can be created by right-clicking on a folder and choosing "Create child folder".
+
+### Edit models
+
+Models can be edited using Surface toolbox or Dynamic modeler module, or by converting to segmentation and [editing with Segment Editor module](segmentations.md#editing-a-segmentation-imported-from-model-surface-mesh-file).
 
 ## Panels and their use
 
