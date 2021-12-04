@@ -9,7 +9,7 @@
  * \subsection implinks Important Links
  * - <a href="https://slicer.readthedocs.io/en/latest/developer_guide/index.html">Developer Guide</a>
  * - <a href="https://github.com/Slicer/Slicer/issues">Issue tracker</a>
- * - <a href="http://slicer.cdash.org/index.php?project=SlicerPreview">CDash quality dashboard</a>
+ * - <a href="https://slicer.cdash.org/index.php?project=SlicerPreview">CDash quality dashboard</a>
  *
  * \subsection other Other
  * For more information on using Slicer browse to https://www.slicer.org
