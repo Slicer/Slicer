@@ -55,10 +55,23 @@ Other mesh file formats can be loaded as model and then converted to segmentatio
 - Go to `Data` module, `Subject hierarchy` tab
 - Right-click on the name of the imported volume and choose `Convert model to segmentation node`
 
-Tip: Selection of a `master volume` is required for editing a segmentation. If no volume is available then it can be created by:
-- Go to `Segmend editor` module
+### Editing a segmentation imported from model (surface mesh) file
+
+Selection of a `master volume` is required for editing a segmentation. The master volume specifies the geometry (origin, spacing, axis directions, and extents) of the voxel grid that is used during editing.
+
+If no volume is available then it can be created by the following steps:
+- Go to `Segment editor` module
 - Click `Specify geometry` button (on the right side of `Master volume` node selector)
-- In the displayed `Segmentation geometry` window click `OK`
+- For `Source geometry` choose the segmentation (this specifies the extents, i.e., the bounding box so that the complete object is included)
+- Adjust `Spacing` values as needed. It is recommended to set the same value for all three axes. Using smaller values preserve more details but at the cost of increased memory usage and computation time.
+- Click `OK`
+- When an editing operation is started then the Segment Editor will ask if the master representation should be changed to binary labelmap. Answer `Yes`, because binary labelmap representation is required for editing.
+
+:::{note}
+
+Certain editing operations are available directly on models, without converting to segmentation. For example, using Surface Toolbox and Dynamic Modeler modules.
+
+:::
 
 ### Export segmentation to model (surface mesh) file
 
