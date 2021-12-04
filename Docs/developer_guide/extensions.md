@@ -124,18 +124,18 @@ Replace `Release` with the build mode of your extension build (`Debug`, `Release
 ### Continuous integration
 
 If you shared your extension by using the ExtensionWizard, make sure you know about the Slicer testing dashboard:
-- [Dashboard for Slicer Stable Releases](http://slicer.cdash.org/index.php?project=SlicerStable)
-- [Dashboard for Slicer Preview Releases](http://slicer.cdash.org/index.php?project=SlicerPreview)
+- [Dashboard for Slicer Stable Releases](https://slicer.cdash.org/index.php?project=SlicerStable)
+- [Dashboard for Slicer Preview Releases](https://slicer.cdash.org/index.php?project=SlicerPreview)
 
 The dashboard will attempt to check out the source code of your extension, build, test and package it on Linux, macOS and Windows platforms.
 
 To find your extension, use the following link replacing `SlicerMyExtension` with the name of your extension:
 
-`http://slicer.cdash.org/index.php?project=SlicerStable&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerMyExtension`
+`https://slicer.cdash.org/index.php?project=SlicerStable&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerMyExtension`
 
 For example, here is the link to check the status of the `SlicerDMRI` extension:
 
-`http://slicer.cdash.org/index.php?project=SlicerStable&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerDMRI`
+`https://slicer.cdash.org/index.php?project=SlicerStable&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerDMRI`
 
 If you see red in any of the columns for your extension, click on the hyperlinked number of errors to see the details.
 
@@ -395,7 +395,7 @@ Note: MIDAS server has been replaced by Girder. To upload to a custom Girder ser
 
 Continuous and nightly extension dashboards are setup on the Slicer factory machine maintained by [http://www.kitware.com Kitware]. Developers can set up similar infrastructure privately for their custom applications.
 
-By customizing the [extension template dashboard script](https://github.com/Slicer/Slicer/blob/master/Extensions/CMake/SlicerExtensionsDashboardScript.TEMPLATE.cmake), it is possible to easily setup dashboard client submitting to [CDash](http://slicer.cdash.org/index.php?project=SlicerPreview). See example dashboard scripts that are used on official Slicer build machines [here](https://github.com/Slicer/DashboardScripts). Note that these scripts are more complex than the template to allow code reuse between different configurations, but they are tested regularly and so guaranteed to work.
+By customizing the [extension template dashboard script](https://github.com/Slicer/Slicer/blob/master/Extensions/CMake/SlicerExtensionsDashboardScript.TEMPLATE.cmake), it is possible to easily setup dashboard client submitting to [CDash](https://slicer.cdash.org/index.php?project=SlicerPreview). See example dashboard scripts that are used on official Slicer build machines [here](https://github.com/Slicer/DashboardScripts). Note that these scripts are more complex than the template to allow code reuse between different configurations, but they are tested regularly and so guaranteed to work.
 
 ## Frequently asked questions
 
