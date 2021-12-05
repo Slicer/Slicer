@@ -2133,10 +2133,10 @@ void qMRMLSegmentEditorWidget::onMasterVolumeNodeChanged(vtkMRMLNode* node)
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::onEffectButtonClicked(QAbstractButton* button)
 {
+  Q_D(qMRMLSegmentEditorWidget);
   // Get effect that was just clicked
   qSlicerSegmentEditorAbstractEffect* clickedEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
     button->property("Effect").value<QObject*>() );
-
   this->setActiveEffect(clickedEffect);
 }
 
@@ -3144,6 +3144,23 @@ void qMRMLSegmentEditorWidget::toggleMasterVolumeIntensityMaskEnabled()
     !d->ParameterSetNode->GetMasterVolumeIntensityMask());
 }
 
+//------------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::toggleEffectButtonLabelVisibility()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+
+  if (d->EffectButtonStyle == Qt::ToolButtonIconOnly)
+    {
+    this->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    this->setEffectButtonStyle(Qt::ToolButtonTextUnderIcon);
+    }
+  else
+    {
+    this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    this->setEffectButtonStyle(Qt::ToolButtonIconOnly);
+    }
+}
+
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::undo()
 {
@@ -3264,9 +3281,15 @@ void qMRMLSegmentEditorWidget::installKeyboardShortcuts(QWidget* parent /*=nullp
     QObject::connect(nextShortcut, SIGNAL(activated()), this, SLOT(onSelectSegmentShortcut()));
     }
 
+  // Key i
   QShortcut* toggleMasterVolumeIntensityMaskShortcut = new QShortcut(QKeySequence(Qt::Key_I), parent);
   d->KeyboardShortcuts.push_back(toggleMasterVolumeIntensityMaskShortcut);
   QObject::connect(toggleMasterVolumeIntensityMaskShortcut, SIGNAL(activated()), this, SLOT(toggleMasterVolumeIntensityMaskEnabled()));
+
+  // Key t
+  QShortcut* toggleToolButtonStyleShortcut = new QShortcut(QKeySequence(Qt::Key_L), parent);
+  d->KeyboardShortcuts.push_back(toggleToolButtonStyleShortcut);
+  QObject::connect(toggleToolButtonStyleShortcut, SIGNAL(activated()), this, SLOT(toggleEffectButtonLabelVisibility()));
 }
 
 //-----------------------------------------------------------------------------

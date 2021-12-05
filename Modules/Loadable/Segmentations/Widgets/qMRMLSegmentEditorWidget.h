@@ -276,6 +276,9 @@ public slots:
   /// Enable/disable masking using master volume intensity
   void toggleMasterVolumeIntensityMaskEnabled();
 
+  /// Toggle style of effect buttons to see button labels if needed.
+  void  toggleEffectButtonLabelVisibility();
+
   /// Restores previous saved state of the segmentation
   void undo();
 
