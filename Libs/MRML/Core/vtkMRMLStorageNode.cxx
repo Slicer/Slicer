@@ -1313,15 +1313,23 @@ int vtkMRMLStorageNode::WriteData(vtkMRMLNode* refNode)
     return 0;
     }
 
-  int res = this->WriteDataInternal(refNode);
+  int success = this->WriteDataInternal(refNode);
 
-  if (res)
+  // If there were error messages, then do not return that we were successful
+  if (success
+      && this->GetUserMessages()
+      && this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent)>0)
+    {
+    success = 0;
+    }
+
+  if (success)
     {
     this->StageWriteData(refNode);
     this->StoredTime->Modified();
     }
 
-  return res;
+  return success;
 }
 
 //------------------------------------------------------------------------------

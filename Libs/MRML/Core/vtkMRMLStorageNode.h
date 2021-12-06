@@ -62,7 +62,8 @@ public:
   ///
   /// Write data from a  referenced node
   /// Return 1 on success, 0 on failure.
-  /// NOTE: Subclasses should implement this method
+  /// NOTE: Subclasses should implement WriteDataInternal(), not this method.
+  /// \sa WriteDataInternal()
   virtual int WriteData(vtkMRMLNode *refNode);
 
   ///
