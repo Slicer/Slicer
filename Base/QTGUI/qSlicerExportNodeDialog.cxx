@@ -362,7 +362,9 @@ bool qSlicerExportNodeDialogPrivate::exportNode()
     if (errorFound)
       {
       QMessageBox::critical(this, tr("Export error"), messagesStr);
-      success = false; // If there was an error, this should never have been considered a success.
+      // If there was an error, this should never have been considered a success.
+      success = false;
+      qWarning() << Q_FUNC_INFO << " warning: node write returned success, while there were error messages during write.";
       }
     else if (warningFound)
       {
