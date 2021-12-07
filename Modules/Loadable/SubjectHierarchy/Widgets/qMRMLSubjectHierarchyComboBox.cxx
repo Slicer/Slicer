@@ -572,7 +572,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
     shNode->GetItemChildren(rootItem, childItemIDs, false);
     if (childItemIDs.empty())
       {
-      if (rootItem!= shNode->GetSceneItemID())
+      if (rootItem != shNode->GetSceneItemID())
         {
         std::string rootName = shNode->GetItemName(rootItem);
         QString label = QString("No items in branch: ") + QString::fromStdString(rootName);
@@ -758,5 +758,6 @@ void qMRMLSubjectHierarchyComboBox::onMRMLSceneCloseEnded(vtkObject* sceneObject
     return;
     }
 
-  this->updateComboBoxTitleAndIcon(0);
+  // Make sure the title generated from previous selection is cleared when closing the scene.
+  this->updateComboBoxTitleAndIcon(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
 }

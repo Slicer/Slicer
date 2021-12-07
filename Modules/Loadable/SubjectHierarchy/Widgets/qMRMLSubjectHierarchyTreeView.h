@@ -318,8 +318,10 @@ protected slots:
   /// Propagate item transform modified event
   virtual void onSubjectHierarchyItemTransformModified(vtkObject *caller, void *callData);
 
-  /// Called when scene end is finished. Hierarchy is cleared in that case.
-  virtual void onMRMLSceneCloseEnded(vtkObject* sceneObject);
+  /// Called when scene close is started.
+  virtual void onMRMLSceneStartClose(vtkObject* sceneObject);
+  /// Called when scene close is finished. Hierarchy is cleared in that case.
+  virtual void onMRMLSceneEndClose(vtkObject* sceneObject);
   /// Called when batch processing starts. Makes sure stored selection does not get emptied before restoring
   virtual void onMRMLSceneStartBatchProcess(vtkObject* sceneObject);
   /// Called when batch processing ends. Restores selection, which is lost when the hierarchy is rebuilt

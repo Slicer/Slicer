@@ -645,7 +645,8 @@ void qMRMLSubjectHierarchyTreeView::setMRMLScene(vtkMRMLScene* scene)
   this->setSubjectHierarchyNode(scene ? vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene) : nullptr);
 
   // Connect scene close ended event so that subject hierarchy can be cleared
-  qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onMRMLSceneCloseEnded(vtkObject*) ) );
+  qvtkReconnect( scene, vtkMRMLScene::StartCloseEvent, this, SLOT( onMRMLSceneStartClose(vtkObject*) ) );
+  qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onMRMLSceneEndClose(vtkObject*) ) );
   qvtkReconnect( scene, vtkMRMLScene::StartBatchProcessEvent, this, SLOT( onMRMLSceneStartBatchProcess(vtkObject*) ) );
   qvtkReconnect( scene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT( onMRMLSceneEndBatchProcess(vtkObject*) ) );
 }
@@ -1939,6 +1940,7 @@ void qMRMLSubjectHierarchyTreeView::editCurrentItem()
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
     }
+
   vtkIdType currentItemID = this->currentItem();
   if (!currentItemID)
     {
@@ -2354,14 +2356,9 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemTransformModified(vtkO
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::onMRMLSceneCloseEnded(vtkObject* sceneObject)
+void qMRMLSubjectHierarchyTreeView::onMRMLSceneStartClose(vtkObject* sceneObject)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
-  if (!scene)
-    {
-    return;
-    }
-
+  Q_UNUSED(sceneObject);
   Q_D(qMRMLSubjectHierarchyTreeView);
 
   // Remove selection
@@ -2370,6 +2367,18 @@ void qMRMLSubjectHierarchyTreeView::onMRMLSceneCloseEnded(vtkObject* sceneObject
   d->SelectedItems.clear();
   d->HighlightedItems.clear();
 
+  // Do not restore selection after closing the scene
+  d->SelectedItemsToRestore.clear();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onMRMLSceneEndClose(vtkObject* sceneObject)
+{
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  if (!scene)
+    {
+    return;
+    }
 
   // Get new subject hierarchy node (or if not created yet then trigger creating it, because
   // scene close removed the pseudo-singleton subject hierarchy node), and set it to the tree view
@@ -2382,6 +2391,11 @@ void qMRMLSubjectHierarchyTreeView::onMRMLSceneStartBatchProcess(vtkObject* scen
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
     {
+    return;
+    }
+  if (scene->IsClosing())
+    {
+    // Do not restore items after closing the scene
     return;
     }
 
@@ -2399,8 +2413,12 @@ void qMRMLSubjectHierarchyTreeView::onMRMLSceneEndBatchProcess(vtkObject* sceneO
     }
 
   Q_D(qMRMLSubjectHierarchyTreeView);
-  this->setCurrentItems(d->SelectedItemsToRestore);
-  d->SelectedItemsToRestore.clear();
+
+  if (!d->SelectedItemsToRestore.empty())
+    {
+    this->setCurrentItems(d->SelectedItemsToRestore);
+    d->SelectedItemsToRestore.clear();
+    }
 }
 
 //------------------------------------------------------------------------------
