@@ -166,6 +166,9 @@ void qMRMLSubjectHierarchyComboBox::setMRMLScene(vtkMRMLScene* scene)
     return;
     }
 
+  // Connect scene events so that title can be updated
+  qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onMRMLSceneCloseEnded(vtkObject*) ) );
+
   // Set tree root item to be the new scene, and disable showing it
   d->TreeView->setRootItem(shNode->GetSceneItemID());
 }
@@ -744,4 +747,16 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
     qCritical() << Q_FUNC_INFO << ": No owner plugin for subject hierarchy item " << shNode->GetItemName(selectedShItemID).c_str();
     this->setDefaultIcon(QIcon());
     }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::onMRMLSceneCloseEnded(vtkObject* sceneObject)
+{
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  if (!scene)
+    {
+    return;
+    }
+
+  this->updateComboBoxTitleAndIcon(0);
 }
