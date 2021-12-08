@@ -23,6 +23,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
@@ -516,6 +517,10 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   std::cout << "Is relative file path relative? " << node->IsFilePathRelative("tmp/file.txt") << std::endl;
   node->RemoveObserver(errorObserverTag);
   node->RemoveObserver(warningObserverTag);
+
+  // Remove any error/warning messages, just in case the storage node is later used in some more tests
+  node->GetUserMessages()->ClearMessages();
+
   return EXIT_SUCCESS;
   }
 
