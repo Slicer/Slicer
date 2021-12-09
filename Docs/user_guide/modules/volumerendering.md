@@ -6,6 +6,10 @@ Volume rendering (also known as volume ray casting) is a visualization technique
 
 This is accomplished by specifying color and opacity for each voxel, based on its image intensity. Several presets are available for this mapping, for displaying bones, soft tissues, air, fat, etc. on CT and MR images. Users can fine-tune these presets for each image.
 
+## Limitations
+
+The volume must not be under a warping (affine or non-linear) transformation. The transform must be hardened on the volume to take effect.
+
 ## Use cases
 
 ### Display a CT or MRI volume
