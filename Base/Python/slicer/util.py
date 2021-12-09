@@ -2144,10 +2144,10 @@ def dataframeFromTable(tableNode):
   return dataframe
 
 def dataframeFromMarkups(markupsNode):
-  """Convert table node content to pandas dataframe.
+  """Convert markups node content to pandas dataframe.
 
-  Table content is copied. Therefore, changes in table node do not affect the dataframe,
-  and dataframe changes do not affect the original table node.
+  Markups content is copied. Therefore, changes in markups node do not affect the dataframe,
+  and dataframe changes do not affect the original markups node.
   """
   try:
     # Suppress "lzma compression not available" UserWarning when loading pandas
