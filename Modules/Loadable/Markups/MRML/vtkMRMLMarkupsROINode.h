@@ -31,7 +31,7 @@
 #include "vtkMRMLMarkupsNode.h"
 
 // VTK includes
-#include <vtkImplicitFunction.h>;
+#include <vtkImplicitFunction.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
