@@ -323,7 +323,13 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
       extraItems.append(action->text());
       }
     }
+
+  // setPostItems inserts rows, which changes selection if selection was previously invalid (-1).
+  // Since NoneDisplay is only shown if selection is -1, we save and restore the current index.
+  int currentIndex = this->ComboBox->currentIndex();
   this->MRMLSceneModel->setPostItems(extraItems, this->MRMLSceneModel->mrmlSceneItem());
+  this->ComboBox->setCurrentIndex(currentIndex);
+
   QObject::connect(this->ComboBox->view(), SIGNAL(clicked(QModelIndex)),
                    q, SLOT(activateExtraItem(QModelIndex)),
                    Qt::UniqueConnection);
@@ -800,8 +806,6 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
     {
     scene->AddObserver(vtkMRMLScene::NodeClassRegisteredEvent, d->CallBack);
     }
-
-  d->updateDefaultText();
   d->updateNoneItem(false);
   d->updateActionItems(false);
 
@@ -838,6 +842,10 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
     }
   d->RequestedNodeID.clear();
   d->RequestedNode = nullptr;
+
+  // Need to update the default text after currentIndex is restored
+  // (the text is only displayed if current index is set to -1).
+  d->updateDefaultText();
 
   this->setEnabled(scene != nullptr);
 }
