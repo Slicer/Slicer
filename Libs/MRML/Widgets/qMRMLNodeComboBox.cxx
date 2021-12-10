@@ -61,10 +61,18 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   this->SelectNodeUponCreation = true;
   this->NoneDisplay = qMRMLNodeComboBox::tr("None");
   this->AutoDefaultText = true;
+
+  this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
 }
 
 // --------------------------------------------------------------------------
-qMRMLNodeComboBoxPrivate::~qMRMLNodeComboBoxPrivate() = default;
+qMRMLNodeComboBoxPrivate::~qMRMLNodeComboBoxPrivate()
+{
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->RemoveObserver(this->CallBack);
+    }
+}
 
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
@@ -112,7 +120,28 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
   // nodeTypeLabel() works only when the model is set.
   this->updateDefaultText();
 
+  this->CallBack->SetClientData(this);
+  this->CallBack->SetCallback(qMRMLNodeComboBoxPrivate::onMRMLSceneEvent);
+
   q->setEnabled(q->mrmlScene() != nullptr);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeComboBoxPrivate::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
+  void* client_data, void* call_data)
+{
+  vtkMRMLScene* scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
+  qMRMLNodeComboBoxPrivate* self = reinterpret_cast<qMRMLNodeComboBoxPrivate*>(client_data);
+  if (!self)
+    {
+    return;
+    }
+  if (event == vtkMRMLScene::NodeClassRegisteredEvent)
+    {
+    self->updateDefaultText();
+    self->updateNoneItem(false);
+    self->updateActionItems(false);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -562,17 +591,12 @@ QString qMRMLNodeComboBox::nodeTypeLabel(const QString& nodeType)const
   // Otherwise use the node tag
   if (this->mrmlScene())
     {
-    QString label = this->mrmlScene()->GetTypeDisplayNameByClassName(nodeType.toUtf8());
+    QString label = QString::fromStdString(this->mrmlScene()->GetTypeDisplayNameByClassName(nodeType.toStdString()));
     if (!label.isEmpty())
       {
       return label;
       }
     }
-  // Special case: for volumes, use "Volume" as label
-  if (nodeType == "vtkMRMLVolumeNode")
-      {
-      return tr("Volume");
-      }
   // Otherwise just label the node as "node"
   return tr("node");
 }
@@ -766,6 +790,17 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
   d->MRMLSceneModel->setMRMLScene(scene);
+
+  if (d->MRMLScene)
+    {
+    d->MRMLScene->RemoveObserver(d->CallBack);
+    }
+  d->MRMLScene = scene;
+  if (scene)
+    {
+    scene->AddObserver(vtkMRMLScene::NodeClassRegisteredEvent, d->CallBack);
+    }
+
   d->updateDefaultText();
   d->updateNoneItem(false);
   d->updateActionItems(false);

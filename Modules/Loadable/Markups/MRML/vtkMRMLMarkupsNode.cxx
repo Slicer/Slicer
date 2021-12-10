@@ -59,9 +59,6 @@
 #include <algorithm>
 
 //----------------------------------------------------------------------------
-vtkMRMLNodeNewMacro(vtkMRMLMarkupsNode);
-
-//----------------------------------------------------------------------------
 vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
 {
   this->TextList = vtkSmartPointer<vtkStringArray>::New();

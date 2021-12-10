@@ -358,7 +358,7 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   vtkMRMLScene *scene = this->GetMRMLScene();
 
   // Nodes
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsNode>::New());
+  scene->RegisterAbstractNodeClass("vtkMRMLMarkupsNode", "Markup");
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsLineNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New());

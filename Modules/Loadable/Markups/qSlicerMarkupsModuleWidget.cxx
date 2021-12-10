@@ -1993,7 +1993,12 @@ void qSlicerMarkupsModuleWidget::onResetNameFormatToDefaultPushButtonClicked()
     this->mrmlScene()->GetDefaultNodeByClass(d->MarkupsNode->GetClassName()));
   if (!defaultNode)
     {
-    defaultNode = vtkSmartPointer<vtkMRMLMarkupsNode>::New();
+    defaultNode = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(vtkMRMLMarkupsNode::SafeDownCast(
+      this->mrmlScene()->CreateNodeByClass(d->MarkupsNode->GetClassName())));
+    }
+  if (!defaultNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: invalid default markups node";
     }
   d->MarkupsNode->SetMarkupLabelFormat(defaultNode->GetMarkupLabelFormat());
 }

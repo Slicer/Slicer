@@ -17,7 +17,7 @@
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-#include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLStaticMeasurement.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
@@ -34,7 +34,7 @@
 
 int vtkMRMLMarkupsNodeTest1(int , char * [] )
 {
-  vtkNew<vtkMRMLMarkupsNode> node1;
+  vtkNew<vtkMRMLMarkupsFiducialNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

@@ -17,7 +17,7 @@
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-#include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkSlicerMarkupsLogic.h"
 
 // VTK includes
@@ -41,8 +41,8 @@ int vtkSlicerMarkupsLogicTest2(int , char * [] )
   vtkNew<vtkSlicerMarkupsLogic> logic1;
 
   // Test moving markups between lists
-  vtkSmartPointer<vtkMRMLMarkupsNode> source = vtkSmartPointer<vtkMRMLMarkupsNode>::New();
-  vtkSmartPointer<vtkMRMLMarkupsNode> dest = vtkSmartPointer<vtkMRMLMarkupsNode>::New();
+  vtkSmartPointer<vtkMRMLMarkupsFiducialNode> source = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
+  vtkSmartPointer<vtkMRMLMarkupsFiducialNode> dest = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
 
   // null cases
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
