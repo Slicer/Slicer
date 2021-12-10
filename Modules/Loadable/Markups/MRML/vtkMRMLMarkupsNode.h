@@ -36,27 +36,31 @@ class vtkMatrix3x3;
 class vtkMRMLUnitNode;
 class vtkParallelTransportFrame;
 
-/// \brief MRML node to represent an interactive widget.
-/// MarkupsNodes contains a list of points (ControlPoint).
-/// Each markupNode is defined by a certain number of control points:
-/// N for fiducials, 2 for rulers, 3 for angles and N for curves.
-/// MarkupNodes are strictly connected with the VTKWidget representations. For each
-/// MarkupNode there is a representation in each view. The representations are handled
-/// by the VTKWidget (there is one widget for each MRMLMarkupsNode per view).
+/// \brief Abstract base class to represent an interactive widget.
+///
+/// Markups nodes contains a list of points (ControlPoint).
+/// Each markups node is defined by a certain number of control points:
+/// N for fiducials (point lists) and curves, 2 for rulers, 3 for angles.
+/// Each ControlPoint has a unique ID, position, orientation, .
+/// an associated node id (set when the ControlPoint is placed to the node that was visible
+/// at that position). Position of a control point may be undefined, because it is not placed
+/// yet or because it cannot be placed (e.g., an anatomical landmark point is not visible),
+/// in which cases the position and orientation values of the control point must be ignored.
+///
+/// Each ControlPoint can also be individually un/selected, un/locked, in/visible,
+/// and have a label (short, shown in the viewers) and description (longer, shown in the GUI).
+///
+/// Each markups node is associated with a vtkSlicerMarkupsWidget, which is responsible for
+/// displaying an interactive widget in each view. The representations are handled
+/// by the VTKWidget (there is one widget for each markups node per view).
+///
 /// Visualization parameters for these nodes are controlled by the
 /// vtkMRMLMarkupsDisplayNode class.
-/// Each ControlPoint has a unique ID.
-/// Each ControlPoint has an orientation defined by a by a 4 element vector:
-/// [0] = the angle of rotation in degrees, [1,2,3] = the axis of rotation.
-/// Default is 0.0, 0.0, 0.0, 1.0.
-/// Each ControlPoint also has an associated node id, set when the ControlPoint
-/// is placed on a data set to link the ControlPoint to the volume or model.
-/// Each ControlPoint can also be individually un/selected, un/locked, in/visible,
-/// and have a label (short, shown in the viewers) and description (longer,
-/// shown in the GUI).
+///
 /// Coordinate systems used:
 ///   - Local: Local coordinates
 ///   - World: All parent transforms on node applied to local.
+///
 /// \sa vtkMRMLMarkupsDisplayNode
 /// \ingroup Slicer_QtModules_Markups
 
@@ -129,7 +133,6 @@ public:
 
   typedef std::vector<ControlPoint*> ControlPointsListType;
 
-  static vtkMRMLMarkupsNode *New();
   vtkTypeMacro(vtkMRMLMarkupsNode,vtkMRMLDisplayableNode);
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -141,10 +144,6 @@ public:
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
-
-  vtkMRMLNode* CreateNodeInstance() override;
-  /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Markups";};
 
   /// Get markup type internal name. This type name is the same regardless of the
   /// chosen application language and should not be displayed to end users.

@@ -117,16 +117,9 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->NodeIDsMTime = 0;
 
-  this->RegisteredNodeClasses.clear();
-  this->UniqueIDs.clear();
-  this->UniqueNames.clear();
-
   this->Nodes = vtkCollection::New();
   this->MaximumNumberOfSavedUndoStates = 20;
   this->UndoFlag = false;
-
-  this->NodeReferences.clear();
-  this->ReferencedIDChanges.clear();
 
   this->CacheManager = nullptr;
   this->DataIOManager = nullptr;
@@ -237,6 +230,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformSequenceStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode>::New());
 
+  this->RegisterAbstractNodeClass("vtkMRMLVolumeNode", "Volume");
 }
 
 //------------------------------------------------------------------------------
@@ -560,6 +554,24 @@ void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
   node->Register(this);
   this->RegisteredNodeClasses.push_back(node);
   this->RegisteredNodeTags.push_back(xmlTag);
+  this->InvokeEvent(vtkMRMLScene::NodeClassRegisteredEvent);
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::RegisterAbstractNodeClass(std::string className, std::string typeDisplayName)
+{
+  auto classNameTypeDisplayNameIt = this->RegisteredAbstractNodeClassTypeDisplayNames.find(className);
+  if (classNameTypeDisplayNameIt != this->RegisteredAbstractNodeClassTypeDisplayNames.end())
+    {
+    // class already registered
+    if (classNameTypeDisplayNameIt->second == typeDisplayName)
+      {
+      // no change
+      return;
+      }
+    }
+  this->RegisteredAbstractNodeClassTypeDisplayNames[className] = typeDisplayName;
+  this->InvokeEvent(vtkMRMLScene::NodeClassRegisteredEvent);
 }
 
 //------------------------------------------------------------------------------
@@ -567,6 +579,9 @@ void vtkMRMLScene::CopyRegisteredNodesToScene(vtkMRMLScene *scene)
 {
   if (scene)
     {
+    scene->RegisteredAbstractNodeClassTypeDisplayNames.insert(
+      this->RegisteredAbstractNodeClassTypeDisplayNames.begin(),
+      this->RegisteredAbstractNodeClassTypeDisplayNames.end());
     vtkMRMLNode* node = nullptr;
     for (unsigned int i=0; i<this->RegisteredNodeClasses.size(); i++)
       {
@@ -640,21 +655,22 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
 }
 
 //------------------------------------------------------------------------------
-const char* vtkMRMLScene::GetTypeDisplayNameByClassName(const char *className)
+std::string vtkMRMLScene::GetTypeDisplayNameByClassName(std::string className)
 {
-  if ( !className )
-    {
-    vtkErrorMacro("GetTypeDisplayNameByClassName: className is null");
-    return nullptr;
-    }
   for (unsigned int i=0; i<this->RegisteredNodeClasses.size(); i++)
     {
-    if (!strcmp(this->RegisteredNodeClasses[i]->GetClassName(), className))
+    if (className.compare(this->RegisteredNodeClasses[i]->GetClassName())==0)
       {
+      // found
       return (this->RegisteredNodeClasses[i])->GetTypeDisplayName();
       }
     }
-  return nullptr;
+  auto classNameTypeDisplayNameIt = this->RegisteredAbstractNodeClassTypeDisplayNames.find(className);
+  if (classNameTypeDisplayNameIt != this->RegisteredAbstractNodeClassTypeDisplayNames.end())
+    {
+    return classNameTypeDisplayNameIt->second;
+    }
+  return "";
 }
 
 //------------------------------------------------------------------------------
@@ -2250,6 +2266,12 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
       os << indent.GetNextIndent().GetNextIndent() << "Default write extension = " << (exts != nullptr ? exts : "NULL") << endl;
       }
    }
+
+  os << indent << "Registered abstract node classes:\n";
+  for (auto nodeClassNameTypeDisplayNameIt : this->RegisteredAbstractNodeClassTypeDisplayNames)
+    {
+    os << indent.GetNextIndent() << nodeClassNameTypeDisplayNameIt.first << ": " << nodeClassNameTypeDisplayNameIt.second << endl;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -2293,6 +2315,44 @@ vtkMRMLNode *vtkMRMLScene::GetNthRegisteredNodeClass(int n)
     {
     vtkErrorMacro("GetNthRegisteredNodeClass: index " << n << " out of bounds 0 - " << this->GetNumberOfRegisteredNodeClasses());
     return nullptr;
+    }
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLScene::GetNumberOfRegisteredAbstractNodeClasses()
+{
+  return static_cast<int>(this->RegisteredAbstractNodeClassTypeDisplayNames.size());
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLScene::GetNthRegisteredAbstractNodeClassName(int n)
+{
+  if (n >= 0 && n < this->GetNumberOfRegisteredAbstractNodeClasses())
+    {
+    auto classNameTypeDisplayNameIt = this->RegisteredAbstractNodeClassTypeDisplayNames.begin();
+    std::advance(classNameTypeDisplayNameIt, n);
+    return classNameTypeDisplayNameIt->first;
+    }
+  else
+    {
+    vtkErrorMacro("GetNthRegisteredAbstractNodeClassName: index " << n << " out of bounds 0 - " << this->GetNumberOfRegisteredAbstractNodeClasses());
+    return "";
+    }
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLScene::GetNthRegisteredAbstractNodeTypeDisplayName(int n)
+{
+  if (n >= 0 && n < this->GetNumberOfRegisteredAbstractNodeClasses())
+    {
+    auto classNameTypeDisplayNameIt = this->RegisteredAbstractNodeClassTypeDisplayNames.begin();
+    std::advance(classNameTypeDisplayNameIt, n);
+    return classNameTypeDisplayNameIt->second;
+    }
+  else
+    {
+    vtkErrorMacro("GetNthRegisteredAbstractNodeTypeDisplayName: index " << n << " out of bounds 0 - " << this->GetNumberOfRegisteredAbstractNodeClasses());
+    return "";
     }
 }
 

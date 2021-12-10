@@ -89,7 +89,7 @@ void qMRMLMarkupsToolBarPrivate::init()
   this->MarkupsNodeSelector->setAddEnabled(false);
   this->MarkupsNodeSelector->setRenameEnabled(true);
   this->MarkupsNodeSelector->setEditEnabled(true);
-  this->MarkupsNodeSelector->setMaximumWidth(150);
+  this->MarkupsNodeSelector->setMaximumWidth(165);
   this->MarkupsNodeSelector->setEnabled(true);
   this->MarkupsNodeSelector->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   this->MarkupsNodeSelector->setToolTip("Select active markup");

@@ -16,7 +16,7 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsFiducialNode.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -25,7 +25,7 @@
 // test copy and swap
 int vtkMRMLMarkupsNodeTest2(int , char * [] )
 {
-  vtkNew<vtkMRMLMarkupsNode> node1;
+  vtkNew<vtkMRMLMarkupsFiducialNode> node1;
   vtkIndent indent;
 
   // now try with some data
