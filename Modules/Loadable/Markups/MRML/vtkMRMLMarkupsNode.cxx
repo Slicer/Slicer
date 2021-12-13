@@ -1182,7 +1182,7 @@ bool vtkMRMLMarkupsNode::GetCenterPosition(double point[3])
 bool vtkMRMLMarkupsNode::GetCenterPositionWorld(double worldxyz[3])
 {
   vtkVector3d world;
-  this->TransformPointToWorld(this->GetCenterPositionVector(), world);
+  this->TransformPointToWorld(this->GetCenterPosition(), world);
   worldxyz[0] = world[0];
   worldxyz[1] = world[1];
   worldxyz[2] = world[2];
