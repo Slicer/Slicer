@@ -2,7 +2,7 @@
 
 ## Install prerequisites
 
-- [CMake](http://www.cmake.org/cmake/resources/software.html) >= 3.15.1
+- [CMake](http://www.cmake.org/cmake/resources/software.html) >= 3.21.1
 - [Git](https://git-scm.com/download/win) >= 1.7.10
   - Note: CMake must be able to find `git.exe` and `patch.exe`. If git is installed in the default location then they may be found there, but if they are not found then either add the folder that contains them to `PATH` environment variable; or set `GIT_EXECUTABLE` and `Patch_EXECUTABLE` as environment variables or as CMake variables at configure time.
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/)
