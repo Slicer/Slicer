@@ -6,10 +6,6 @@ Volume rendering (also known as volume ray casting) is a visualization technique
 
 This is accomplished by specifying color and opacity for each voxel, based on its image intensity. Several presets are available for this mapping, for displaying bones, soft tissues, air, fat, etc. on CT and MR images. Users can fine-tune these presets for each image.
 
-## Limitations
-
-The volume must not be under a warping (affine or non-linear) transformation. The transform must be hardened on the volume to take effect.
-
 ## Use cases
 
 ### Display a CT or MRI volume
@@ -58,11 +54,6 @@ It may be necessary to hide certain regions of a volume, for example remove pati
 
 See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for details. It is created on an older Slicer version, so some details may be different but the high-level workflow main workflow is still very similar.
 
-## Limitations
-
-- To render multiple overlapping volumes, select "VTK Multi-Volume" rendering in "Display" section. Currently, no cropping can be applied in this mode.
-- To reduce staircase artifacts during rendering, choose enable "Surface smoothing" in Advanced/Techniques/Advanced rendering properties section, or choose "Normal" or "Maximum" as quality.
-
 ## Panels and their use
 
 - **Inputs:** Contains the list of nodes required for VolumeRendering. It is unlikely that you need to interact with controllers.
@@ -82,8 +73,8 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
 - Advanced: More controls to control the volume rendering. Contains 3 tabs: "Techniques", "Volume Properties" and "ROI"
   - Techniques: Advanced properties of the current volume rendering method.
     - Quality:
-      - Adaptive: quality is reduced while interacting with the view (rotating, changing volume rendering settings, etc.).
-        - Interactive speed: Ensure the given frame per second (FPS) is enforced in the views during interaction. The higher the FPS, the lower the resolution of the volume rendering
+      - Adaptive: quality is reduced while interacting with the view (rotating, changing volume rendering settings, etc.). This mechanism relies on measuring the current rendering time and adjusting quality (number of casted rays, sampling distances, etc.) for the next rendering request to achieve the requested frame rate. This works very well for CPUs because the computation time is very predictable, but for GPU volume rendering fixed quality ("Normal" setting) may be more suitable.
+        - Interactive speed: Ensure the given frame per second (FPS) is enforced in the views during interaction. The higher the FPS, the lower the resolution of the volume rendering.
       - Normal (default): fixed rendering quality, should work well for volumes that the renderer can handle without difficulties.
       - Maximum: oversamples the image to achieve higher image quality, at the cost of slowing down the rendering.
     - Auto-release resources: When a volume is shown using volume rendering then graphics resources are allocated (GPU memory, precomputed gradient and space leaping volumes, etc.). This flag controls if these resources are automatically released when the volume is hidden. Releasing the resources reduces memory usage, but it increases the time required to show the volume again. Default value can be set in application settings Volume Rendering panel.
@@ -117,6 +108,12 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
   - ROI: More controls for the cropping box.
     - Display Clipping box: Show hide the bounds of the ROI box.
     - Interactive mode: Control whether the cropping box is instantaneously updated when dragging the sliders or only when the mouse button is released.
+
+## Limitations
+
+- To render multiple overlapping volumes, select "VTK Multi-Volume" rendering in "Display" section. Currently, no cropping can be applied in this mode.
+- To reduce staircase artifacts during rendering, choose enable "Surface smoothing" in Advanced/Techniques/Advanced rendering properties section, or choose "Normal" or "Maximum" as quality.
+- The volume must not be under a warping (affine or non-linear) transformation. The transform must be hardened on the volume to take effect.
 
 ## Contributors
 
