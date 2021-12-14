@@ -1699,7 +1699,7 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
   file.write(reply->readAll());
   file.close();
   const ExtensionMetadataType& extensionMetadata =
-    this->filterExtensionMetadata(task->metadata());
+    this->filterExtensionMetadata(task->metadata(), this->serverAPI());
   this->installExtension(extensionName, extensionMetadata, file.fileName());
   d->ActiveTasks.remove(task);
 }
