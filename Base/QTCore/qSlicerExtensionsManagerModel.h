@@ -76,8 +76,7 @@ public:
 
   enum ServerAPI
     {
-    Midas_v1 = 0,
-    Girder_v1,
+    Girder_v1 = 1,
     ServerAPI_Last
     };
 
@@ -142,7 +141,7 @@ public:
   /// \sa installExtension, isExtensionInstalled, installedExtensions, extensionInstalled
   int numberOfInstalledExtensions()const;
 
-  /// \brief Return names of all installed extensions
+  /// \brief Return names of all installed extensions sorted in alphabetical order.
   /// \sa installExtension, installedExtensionsCount, isExtensionInstalled, extensionInstalled
   QStringList installedExtensions()const;
 
@@ -179,7 +178,7 @@ public:
   /// \sa uninstallScheduledExtensions();
   Q_INVOKABLE bool isExtensionScheduledForUninstall(const QString& extensionName)const;
 
-  /// \brief Return names of all enabled extensions
+  /// \brief Return names of all enabled extensions sorted in alphabetical order.
   /// \sa setExtensionEnabled, extensionEnabledChanged, isExtensionEnabled
   QStringList enabledExtensions()const;
 
@@ -278,11 +277,19 @@ public:
   /// Return the item model used internally
   Q_INVOKABLE const QStandardItemModel * model()const;
 
-  static QHash<QString, QString> serverToExtensionDescriptionKey(int serverAPI = Self::Midas_v1);
+  /// \sa convertExtensionMetadata()
+  static QHash<QString, QString> serverToExtensionDescriptionKey(int serverAPI);
 
-  static QStringList serverKeysToIgnore(int serverAPI = Self::Midas_v1);
+  /// Convert server keys to description keys.
+  /// \sa serverToExtensionDescriptionKey()
+  static ExtensionMetadataType convertExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI);
 
-  static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI = Self::Midas_v1);
+  /// \sa filterExtensionMetadata()
+  static QStringList serverKeysToIgnore(int serverAPI);
+
+  /// Exclude irrelevant server metadata.
+  /// \sa serverKeysToIgnore()
+  static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI);
 
   static QStringList readArrayValues(QSettings& settings,
                                      const QString& arrayName, const QString fieldName);

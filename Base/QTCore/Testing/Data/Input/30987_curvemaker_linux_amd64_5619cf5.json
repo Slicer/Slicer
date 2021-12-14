@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "62984de3e8408647b3b7f9df",
+    "baseParentId": "5f4474d0e1d8c75dfc70547e",
+    "baseParentType": "collection",
+    "created": "2022-06-02T05:42:59.077000+00:00",
+    "creatorId": "5f446e46e1d8c75dfc705450",
+    "description": "This is a module to generate a curve based on a list of fiducial points.",
+    "folderId": "629842e1e8408647b3b7ebaf",
+    "lowerName": "30987_curvemaker_linux_amd64_5619cf5",
+    "meta": {
+      "app_id": "5f4474d0e1d8c75dfc705482",
+      "app_revision": "30987",
+      "arch": "amd64",
+      "baseName": "CurveMaker",
+      "category": "Informatics",
+      "contributors": "Junichi Tokuda (BWH)",
+      "dependency": "NA",
+      "description": "This is a module to generate a curve based on a list of fiducial points.",
+      "homepage": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/CurveMaker",
+      "icon_url": "http://www.slicer.org/slicerWiki/images/b/b7/CurveMakerIcon.png",
+      "os": "linux",
+      "repository_type": "git",
+      "repository_url": "https://github.com/tokjun/CurveMaker",
+      "revision": "5619cf5",
+      "screenshots": "http://www.slicer.org/slicerWiki/images/0/0b/Slicer4-CurveMaker-GUI.png"
+    },
+    "name": "30987_CurveMaker_linux_amd64_5619cf5",
+    "size": 20157,
+    "updated": "2022-06-02T05:42:59.186000+00:00"
+  }
+]

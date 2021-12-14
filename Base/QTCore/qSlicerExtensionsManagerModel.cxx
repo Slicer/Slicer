@@ -40,7 +40,6 @@
 
 // qRestAPI includes
 #include <qGirderAPI.h>
-#include <qMidasAPI.h>
 #include <qRestAPI.h>
 #include <qRestResult.h>
 
@@ -787,14 +786,7 @@ bool qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(
   bool valid = true;
   QStringList requiredNonEmptyKeys; // essential keys, return with failure if not found
   QStringList expectedNonEmptyKeys; // log warning if not found (but return with success)
-  if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-    {
-    requiredNonEmptyKeys
-        << "item_id"
-        << "name"
-        << "productname";
-    }
-  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+  if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
     requiredNonEmptyKeys
         << "_id"
@@ -1019,14 +1011,7 @@ QVariantMap qSlicerExtensionsManagerModelPrivate::getExtensionsInfoFromPreviousI
       if (!isInstalled)
         {
         qRestAPI::Parameters parameters;
-        if (q->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
-          {
-          parameters["productname"] = extensionName;
-          parameters["slicer_revision"] = q->slicerRevision();
-          parameters["os"] = q->slicerOs();
-          parameters["arch"] = q->slicerArch();
-          }
-        else if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
+        if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
           {
           parameters["baseName"] = extensionName;
           parameters["app_revision"] = q->slicerRevision();
@@ -1101,12 +1086,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     int maxWaitingTimeInMSecs = 2500;
     this->GetExtensionMetadataApi.setTimeOut(maxWaitingTimeInMSecs);
     qRestAPI::Parameters queryParameters = parameters;
-    if (q->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
-      {
-      this->GetExtensionMetadataApi.setServerUrl(q->serverUrl().toString() + "/api/json");
-      queryParameters["method"] = "midas.slicerpackages.extension.list";
-      }
-    else if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
+    if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
       {
       QUrl url = q->serverUrl().toString();
       QString appID = "5f4474d0e1d8c75dfc705482";
@@ -1125,11 +1105,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     QString errorText; // if any error occurs then this will be set to non-empty
     if(restResult)
       {
-      if (q->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
-        {
-        qMidasAPI::parseMidasResponse(restResult.data(), restResult->response());
-        }
-      else if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
+      if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
         {
         qGirderAPI::parseGirderAPIv1Response(restResult.data(), restResult->response());
         }
@@ -1182,15 +1158,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     this->ServerResponseCache[serverResponseCacheKey] = result;
     }
 
-  ExtensionMetadataType updatedExtensionMetadata = result;
-  QHash<QString, QString> serverToExtensionDescriptionKey = q->serverToExtensionDescriptionKey(q->serverAPI());
-  foreach(const QString& key, result.keys())
-    {
-    updatedExtensionMetadata.insert(
-      serverToExtensionDescriptionKey.value(key, key), result.value(key));
-    }
-
-  return updatedExtensionMetadata;
+  return qSlicerExtensionsManagerModel::convertExtensionMetadata(result, q->serverAPI());
 }
 
 // --------------------------------------------------------------------------
@@ -1233,7 +1201,6 @@ QString qSlicerExtensionsManagerModel::serverAPIToString(int serverAPI)
   switch (serverAPI)
     {
     case Girder_v1: return "Girder_v1";
-    case Midas_v1: return "Midas_v1";
     default: return "";
     }
 }
@@ -1346,11 +1313,6 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
 
   foreach(const QString& columnName, d->columnNames())
     {
-    // TODO Server should provide us with depends. In the mean time, let's not export it.
-    if (columnName == "depends")
-      {
-      continue;
-      }
     metadata.insert(columnName, d->Model.data(
           d->Model.index(row, d->columnNames().indexOf(columnName)), Qt::DisplayRole).toString());
     }
@@ -1392,6 +1354,7 @@ QStringList qSlicerExtensionsManagerModel::installedExtensions()const
     {
     names << d->Model.item(rowIdx, qSlicerExtensionsManagerModelPrivate::NameColumn)->text();
     }
+  std::sort(names.begin(), names.end());
   return names;
 }
 
@@ -1493,6 +1456,7 @@ QStringList qSlicerExtensionsManagerModel::enabledExtensions()const
       names << d->Model.item(rowIdx, qSlicerExtensionsManagerModelPrivate::NameColumn)->text();
       }
     }
+  std::sort(names.begin(), names.end());
   return names;
 }
 
@@ -1525,14 +1489,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     }
 
   qRestAPI::Parameters parameters;
-  if (this->serverAPI() == Self::Midas_v1)
-    {
-    parameters["productname"] = extensionName;
-    parameters["slicer_revision"] = this->slicerRevision();
-    parameters["os"] = this->slicerOs();
-    parameters["arch"] = this->slicerArch();
-    }
-  else if (this->serverAPI() == Self::Girder_v1)
+  if (this->serverAPI() == Self::Girder_v1)
     {
     parameters["baseName"] = extensionName;
     parameters["app_revision"] = this->slicerRevision();
@@ -1563,18 +1520,7 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
 
   QUrl downloadUrl(q->serverUrl());
 
-  if (q->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
-    {
-    QString itemId = extensionMetadata["item_id"].toString();
-
-    this->debug(QString("Downloading extension [ itemId: %1]").arg(itemId));
-    downloadUrl.setPath(downloadUrl.path() + "/download");
-    QUrlQuery urlQuery;
-    urlQuery.setQueryItems(
-          QList<QPair<QString, QString> >() << QPair<QString, QString>("items", itemId));
-    downloadUrl.setQuery(urlQuery);
-    }
-  else if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
+  if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
     {
     QString item_id = extensionMetadata["_id"].toString();
 
@@ -1699,7 +1645,7 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
   file.write(reply->readAll());
   file.close();
   const ExtensionMetadataType& extensionMetadata =
-    this->filterExtensionMetadata(task->metadata());
+    this->filterExtensionMetadata(task->metadata(), this->serverAPI());
   this->installExtension(extensionName, extensionMetadata, file.fileName());
   d->ActiveTasks.remove(task);
 }
@@ -1843,14 +1789,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
         }
 
       qRestAPI::Parameters parameters;
-      if (this->serverAPI() == Self::Midas_v1)
-        {
-        parameters["productname"] = dependencyName;
-        parameters["slicer_revision"] = this->slicerRevision();
-        parameters["os"] = this->slicerOs();
-        parameters["arch"] = this->slicerArch();
-        }
-      else if (this->serverAPI() == Self::Girder_v1)
+      if (this->serverAPI() == Self::Girder_v1)
         {
         parameters["baseName"] = dependencyName;
         parameters["app_revision"] = this->slicerRevision();
@@ -1978,11 +1917,7 @@ void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
-  if (this->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
-    {
-    d->CheckForUpdatesApi.setServerUrl(this->serverUrl().toString() + "/api/json");
-    }
-  else if (this->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
+  if (this->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
     {
     QString appID = "5f4474d0e1d8c75dfc705482";
     d->CheckForUpdatesApi.setServerUrl(this->serverUrl().toString() + QString("/api/v1/app/%1/extension").arg(appID));
@@ -2009,14 +1944,7 @@ void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
       }
     else
       {
-      if (this->serverAPI() == Self::Midas_v1)
-        {
-        parameters["productname"] = extensionName;
-        parameters["slicer_revision"] = this->slicerRevision();
-        parameters["os"] = this->slicerOs();
-        parameters["arch"] = this->slicerArch();
-        }
-      else if (this->serverAPI() == Self::Girder_v1)
+      if (this->serverAPI() == Self::Girder_v1)
         {
         parameters["baseName"] = extensionName;
         parameters["app_revision"] = this->slicerRevision();
@@ -2031,10 +1959,6 @@ void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
       }
 
     // Issue the query
-    if (this->serverAPI() == Self::Midas_v1)
-      {
-      parameters["method"] = "midas.slicerpackages.extension.list";
-      }
     const QUuid& requestId =
       d->CheckForUpdatesApi.get("", parameters);
 
@@ -2068,11 +1992,7 @@ void qSlicerExtensionsManagerModel::onUpdateCheckFinished(const QUuid& requestId
   bool success = false;
   if (!restResult.isNull())
     {
-    if (this->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
-      {
-      success = qMidasAPI::parseMidasResponse(restResult.data(), restResult->response());
-      }
-    else if (this->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
+    if (this->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
       {
       success = qGirderAPI::parseGirderAPIv1Response(restResult.data(), restResult->response());
       }
@@ -2792,72 +2712,49 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
 {
   QHash<QString, QString> serverToExtensionDescriptionKey;
 
-  //  | Model Columns Id     | Model Column Name | s4ext Key          | Midas_v1 key       | Girder_v1 key        |
-  //  |----------------------|-------------------|--------------------|--------------------|----------------------|
-  //  | IdColumn             | extension_id      |                    | extension_id       | _id                  |
-  //  | NameColumn           | extensionname     |                    | productname        | meta.baseName        |
-  //  | ScmColumn            | scm               | scm                | repository_type    | meta.repository_type |
-  //  | ScmUrlColumn         | scmurl            | scmurl             | repository_url     | meta.repository_url  |
-  //  | SlicerRevisionColumn | slicer_revision   |                    | slicer_revision    | meta.app_revision    |
-  //  | RevisionColumn       | revision          | scmrevision        | revision           | meta.revision        |
-  //  | ReleaseColumn        | release           |                    | release            |                      |
-  //  | ArchColumn           | arch              |                    | arch               | meta.arch            |
-  //  | OsColumn             | os                |                    | os                 | meta.os              |
-  //  | DependsColumn        | depends           | depends            |                    | meta.dependency      |
-  //  | HomepageColumn       | homepage          | homepage           | homepage           | meta.homepage        |
-  //  | IconUrlColumn        | iconurl           | iconurl            | icon_url           | meta.icon_url        |
-  //  | CategoryColumn       | category          | category           | category           | meta.category        |
-  //  | StatusColumn         | status            | status             | development_status |                      |
-  //  | ContributorsColumn   | contributors      | contributors       | contributors       | meta.contributors    |
-  //  | DescriptionColumn    | description       | description        | description        | meta.description     |
-  //  | ScreenshotsColumn    | screenshots       | screenshoturls     | screenshots        | meta.screenshots     |
-  //  | EnabledColumn        | enabled           | enabled            | enabled            |                      |
-  //  | ArchiveNameColumn    | archivename       |                    | name               | name                 |
-  //  | MD5Column            | md5               |                    | md5                |                      |
-  //  |                      |                   |                    |                    |                      |
-  //  |                      |                   | build_subdirectory |                    |                      |
-  //  |                      |                   |                    | item_id            |                      |
-  //  |                      |                   |                    | submissiontype     |                      |
-  //  |                      |                   |                    | package            |                      |
-  //  |                      |                   |                    | codebase           |                      |
-  //  |                      |                   |                    | date_creation      | created              |
-  //  |                      |                   |                    | bitstream_id       |                      |
-  //  |                      |                   |                    | size               |                      |
-  //  |                      |                   |                    |                    | baseParentId         |
-  //  |                      |                   |                    |                    | baseParentType       |
-  //  |                      |                   |                    |                    | creatorId            |
-  //  |                      |                   |                    |                    | description          |
-  //  |                      |                   |                    |                    | folderId             |
-  //  |                      |                   |                    |                    | lowerName            |
-  //  |                      |                   |                    |                    | meta.app_id          |
-  //  |                      |                   |                    |                    | name                 |
-  //  |                      |                   |                    |                    | size                 |
-  //  |                      |                   |                    |                    | updated              |
+  //  | Model Columns Id     | Model Column Name | s4ext Key          | Girder_v1 key        |
+  //  |----------------------|-------------------|--------------------|----------------------|
+  //  | IdColumn             | extension_id      |                    | _id                  |
+  //  | NameColumn           | extensionname     |                    | meta.baseName        |
+  //  | ScmColumn            | scm               | scm                | meta.repository_type |
+  //  | ScmUrlColumn         | scmurl            | scmurl             | meta.repository_url  |
+  //  | SlicerRevisionColumn | slicer_revision   |                    | meta.app_revision    |
+  //  | RevisionColumn       | revision          | scmrevision        | meta.revision        |
+  //  | ReleaseColumn        | release           |                    |                      |
+  //  | ArchColumn           | arch              |                    | meta.arch            |
+  //  | OsColumn             | os                |                    | meta.os              |
+  //  | DependsColumn        | depends           | depends            | meta.dependency      |
+  //  | HomepageColumn       | homepage          | homepage           | meta.homepage        |
+  //  | IconUrlColumn        | iconurl           | iconurl            | meta.icon_url        |
+  //  | CategoryColumn       | category          | category           | meta.category        |
+  //  | StatusColumn         | status            | status             |                      |
+  //  | ContributorsColumn   | contributors      | contributors       | meta.contributors    |
+  //  | DescriptionColumn    | description       | description        | meta.description     |
+  //  | ScreenshotsColumn    | screenshots       | screenshoturls     | meta.screenshots     |
+  //  | EnabledColumn        | enabled           | enabled            |                      |
+  //  | ArchiveNameColumn    | archivename       |                    |                      |
+  //  | MD5Column            | md5               |                    |                      |
+  //  |                      |                   |                    |                      |
+  //  |                      |                   | build_subdirectory |                      |
+  //  |                      |                   |                    |                      |
+  //  |                      |                   |                    |                      |
+  //  |                      |                   |                    |                      |
+  //  |                      |                   |                    |                      |
+  //  |                      |                   |                    | created              |
+  //  |                      |                   |                    |                      |
+  //  |                      |                   |                    |                      |
+  //  |                      |                   |                    | baseParentId         |
+  //  |                      |                   |                    | baseParentType       |
+  //  |                      |                   |                    | creatorId            |
+  //  |                      |                   |                    | description          |
+  //  |                      |                   |                    | folderId             |
+  //  |                      |                   |                    | lowerName            |
+  //  |                      |                   |                    | meta.app_id          |
+  //  |                      |                   |                    | name                 |
+  //  |                      |                   |                    | size                 |
+  //  |                      |                   |                    | updated              |
 
-  if (serverAPI == Self::Midas_v1)
-    {
-    serverToExtensionDescriptionKey.insert("extension_id", "extension_id");
-    serverToExtensionDescriptionKey.insert("productname", "extensionname");
-    serverToExtensionDescriptionKey.insert("repository_type", "scm");
-    serverToExtensionDescriptionKey.insert("repository_url", "scmurl");
-    serverToExtensionDescriptionKey.insert("slicer_revision", "slicer_revision");
-    serverToExtensionDescriptionKey.insert("revision", "revision");
-    serverToExtensionDescriptionKey.insert("release", "release");
-    serverToExtensionDescriptionKey.insert("arch", "arch");
-    serverToExtensionDescriptionKey.insert("os", "os");
-    // depends
-    serverToExtensionDescriptionKey.insert("homepage", "homepage");
-    serverToExtensionDescriptionKey.insert("icon_url", "iconurl");
-    serverToExtensionDescriptionKey.insert("category", "category");
-    serverToExtensionDescriptionKey.insert("development_status", "status");
-    serverToExtensionDescriptionKey.insert("contributors", "contributors");
-    serverToExtensionDescriptionKey.insert("description", "description");
-    serverToExtensionDescriptionKey.insert("screenshots", "screenshots");
-    serverToExtensionDescriptionKey.insert("enabled", "enabled");
-    serverToExtensionDescriptionKey.insert("name", "archivename");
-    serverToExtensionDescriptionKey.insert("md5", "md5");
-    }
-  else if (serverAPI == Self::Girder_v1)
+  if (serverAPI == Self::Girder_v1)
     {
     serverToExtensionDescriptionKey.insert("_id", "extension_id");
     serverToExtensionDescriptionKey.insert("meta.baseName", "extensionname");
@@ -2873,11 +2770,11 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
     serverToExtensionDescriptionKey.insert("meta.icon_url", "iconurl");
     serverToExtensionDescriptionKey.insert("meta.category", "category");
     // status
-    // contributors
+    serverToExtensionDescriptionKey.insert("meta.contributors", "contributors");
     serverToExtensionDescriptionKey.insert("meta.description", "description");
     serverToExtensionDescriptionKey.insert("meta.screenshots", "screenshots");
     // enabled
-    serverToExtensionDescriptionKey.insert("name", "archivename");
+    // archivename
     // md5
     }
   else
@@ -2888,16 +2785,23 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
 }
 
 // --------------------------------------------------------------------------
+qSlicerExtensionsManagerModel::ExtensionMetadataType
+qSlicerExtensionsManagerModel::convertExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI)
+{
+  ExtensionMetadataType updatedExtensionMetadata;
+  QHash<QString, QString> serverToExtensionDescriptionKey = Self::serverToExtensionDescriptionKey(serverAPI);
+  foreach(const QString& key, extensionMetadata.keys())
+    {
+    updatedExtensionMetadata.insert(
+      serverToExtensionDescriptionKey.value(key, key), extensionMetadata.value(key));
+    }
+  return updatedExtensionMetadata;
+}
+
+// --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModel::serverKeysToIgnore(int serverAPI)
 {
-  if (serverAPI == Self::Midas_v1)
-    {
-    return QStringList()
-        << "item_id" << "bitstream_id"
-        << "submissiontype" << "codebase" << "package"
-        << "size" << "date_creation";
-    }
-  else if (serverAPI == Self::Girder_v1)
+  if (serverAPI == Self::Girder_v1)
     {
     return QStringList()
         << "baseParentId"
@@ -2923,9 +2827,17 @@ QStringList qSlicerExtensionsManagerModel::serverKeysToIgnore(int serverAPI)
 qSlicerExtensionsManagerModel::ExtensionMetadataType
 qSlicerExtensionsManagerModel::filterExtensionMetadata(const ExtensionMetadataType& extensionMetadata, int serverAPI)
 {
+  QStringList extensionMetadataKeys = serverToExtensionDescriptionKey(serverAPI).values();
+
   ExtensionMetadataType filteredExtensionMetadata = extensionMetadata;
   foreach(const QString& key, Self::serverKeysToIgnore(serverAPI))
     {
+    // Do not remove entry if the corresponding key may be returned
+    // by "convertExtensionMetadata()".
+    if (extensionMetadataKeys.contains(key))
+      {
+      continue;
+      }
     filteredExtensionMetadata.remove(key);
     }
   return filteredExtensionMetadata;
