@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkslicerlivermarkupslogic_h_
-#define __vtkslicerlivermarkupslogic_h_
+#ifndef __vtkSlicerTemplateKeyMarkupslogic_h_
+#define __vtkSlicerTemplateKeyMarkupslogic_h_
 
 #include <vtkSlicerMarkupsLogic.h>
 
@@ -37,14 +37,11 @@ protected:
   vtkSlicerTemplateKeyLogic();
   ~vtkSlicerTemplateKeyLogic() override;
 
-  void ObserveMRMLScene() override;
   void RegisterNodes() override;
-
-  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
 
 private:
   vtkSlicerTemplateKeyLogic(const vtkSlicerTemplateKeyLogic&) = delete;
   void operator=(const vtkSlicerTemplateKeyLogic&) = delete;
 };
 
-#endif // __vtkslicerlivermarkupslogic_h_
+#endif // __vtkSlicerTemplateKeyMarkupslogic_h_

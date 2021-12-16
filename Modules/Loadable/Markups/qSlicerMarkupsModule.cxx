@@ -57,14 +57,6 @@
 // Markups logic includes
 #include "vtkSlicerMarkupsLogic.h"
 
-// Makrups vtk widgets includes
-#include "vtkSlicerAngleWidget.h"
-#include "vtkSlicerCurveWidget.h"
-#include "vtkSlicerLineWidget.h"
-#include "vtkSlicerPlaneWidget.h"
-#include "vtkSlicerPointsWidget.h"
-#include "vtkSlicerROIWidget.h"
-
 // Markups widgets
 #include "qMRMLMarkupsAngleMeasurementsWidget.h"
 #include "qMRMLMarkupsCurveSettingsWidget.h"
@@ -247,44 +239,13 @@ void qSlicerMarkupsModule::setup()
     return;
     }
 
-  // Register markups
-  // NOTE: the order of registration determines the order of the create push buttons in the GUI
-
-  vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
-  vtkNew<vtkSlicerPointsWidget> pointsWidget;
-  logic->RegisterMarkupsNode(fiducialNode, pointsWidget);
-
-  vtkNew<vtkMRMLMarkupsLineNode> lineNode;
-  vtkNew<vtkSlicerLineWidget> lineWidget;
-  logic->RegisterMarkupsNode(lineNode, lineWidget);
-
-  vtkNew<vtkMRMLMarkupsAngleNode> angleNode;
-  vtkNew<vtkSlicerAngleWidget> angleWidget;
-  logic->RegisterMarkupsNode(angleNode, angleWidget);
-
-  vtkNew<vtkMRMLMarkupsCurveNode> curveNode;
-  vtkNew<vtkSlicerCurveWidget> curveWidget;
-  logic->RegisterMarkupsNode(curveNode, curveWidget);
-
-  vtkNew<vtkMRMLMarkupsClosedCurveNode> closedCurveNode;
-  vtkNew<vtkSlicerCurveWidget> closedCurveWidget;
-  logic->RegisterMarkupsNode(closedCurveNode, closedCurveWidget);
-
-  vtkNew<vtkMRMLMarkupsPlaneNode> planeNode;
-  vtkNew<vtkSlicerPlaneWidget> planeWidget;
-  logic->RegisterMarkupsNode(planeNode, planeWidget);
-
-  vtkNew<vtkMRMLMarkupsROINode> roiNode;
-  vtkNew<vtkSlicerROIWidget> roiWidget;
-  logic->RegisterMarkupsNode(roiNode, roiWidget);
-
   // Register displayable managers (same displayable manager handles both slice and 3D views)
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLMarkupsDisplayableManager");
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLMarkupsDisplayableManager");
 
   // Register IO
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  qSlicerMarkupsReader *markupsReader = new qSlicerMarkupsReader(vtkSlicerMarkupsLogic::SafeDownCast(this->logic()), this);
+  qSlicerMarkupsReader *markupsReader = new qSlicerMarkupsReader(logic, this);
   ioManager->registerIO(markupsReader);
   ioManager->registerIO(new qSlicerMarkupsWriter(this));
 
@@ -324,18 +285,8 @@ vtkMRMLAbstractLogic* qSlicerMarkupsModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerMarkupsModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLAnnotationFiducialNode"
-    << "vtkMRMLMarkupsDisplayNode"
-    << "vtkMRMLMarkupsFiducialNode"
-    << "vtkMRMLMarkupsLineNode"
-    << "vtkMRMLMarkupsAngleNode"
-    << "vtkMRMLMarkupsCurveNode"
-    << "vtkMRMLMarkupsClosedCurveNode"
-    << "vtkMRMLMarkupsPlaneNode"
-    << "vtkMRMLMarkupsROINode"
-    << "vtkMRMLMarkupsFiducialStorageNode"
-    << "vtkMRMLMarkupsJsonStorageNode";
+  // This module can edit properties
+  return QStringList() << "vtkMRMLMarkupsNode";
 }
 
 //-----------------------------------------------------------------------------

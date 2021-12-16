@@ -42,6 +42,7 @@ public:
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
+  bool isHidden() const override;
   QString helpText()const override;
   QString acknowledgementText()const override;
   QStringList contributors()const override;
@@ -50,10 +51,6 @@ public:
 
   QStringList categories()const override;
   QStringList dependencies() const override;
-  QStringList associatedNodeTypes() const override;
-
-  // Sets the MRML Scene
-  void setMRMLScene(vtkMRMLScene* scene) override;
 
 protected:
 
@@ -61,7 +58,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

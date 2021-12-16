@@ -935,21 +935,19 @@ vtkSlicerMarkupsWidget * vtkMRMLMarkupsDisplayableManager::CreateWidget(vtkMRMLM
     }
 
   // Create a widget of the associated type if the node matches the registered nodes
-  vtkSlicerMarkupsWidget* widget =
-    vtkSlicerMarkupsWidget::SafeDownCast(
-      markupsLogic->GetWidgetByMarkupsType(markupsNode->GetMarkupType())
-    )->CreateInstance();
-
-
-  // If the widget was successfully created
-  if (widget)
+  vtkSlicerMarkupsWidget* widgetForMarkup = vtkSlicerMarkupsWidget::SafeDownCast(
+    markupsLogic->GetWidgetByMarkupsType(markupsNode->GetMarkupType()));
+  vtkSlicerMarkupsWidget* widget = widgetForMarkup ? widgetForMarkup->CreateInstance() : nullptr;
+  if (!widget)
     {
-    vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
-    vtkRenderer* renderer = this->GetRenderer();
-    widget->SetMRMLApplicationLogic(this->GetMRMLApplicationLogic());
-    widget->CreateDefaultRepresentation(markupsDisplayNode, viewNode, renderer);
+    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager::CreateWidget failed: cannot instantiate widget for markup " << markupsNode->GetMarkupType());
+    return nullptr;
     }
 
+  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
+  vtkRenderer* renderer = this->GetRenderer();
+  widget->SetMRMLApplicationLogic(this->GetMRMLApplicationLogic());
+  widget->CreateDefaultRepresentation(markupsDisplayNode, viewNode, renderer);
   return widget;
 }
 

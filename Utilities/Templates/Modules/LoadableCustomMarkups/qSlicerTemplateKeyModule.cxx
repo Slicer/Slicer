@@ -20,24 +20,18 @@
 
 #include "qSlicerTemplateKeyModule.h"
 
-#include "vtkMRMLMarkupsTestLineNode.h"
-#include "qMRMLMarkupsTestLineWidget.h"
-#include "qMRMLMarkupsOptionsWidgetsFactory.h"
 
 // Qt includes
 #include <QDebug>
 
-// Liver Markups Logic includes
+// TemplateKey Logic includes
 #include "vtkSlicerTemplateKeyLogic.h"
 
-// Markups Logic includes
-#include <vtkSlicerMarkupsLogic.h>
+// TemplateKey Widgets includes
+#include "qMRMLMarkupsTestLineWidget.h"
 
-// Markups VTKWidgets includes
-#include <vtkSlicerLineWidget.h>
-
-// Liver Markups VTKWidgets includes
-#include <vtkSlicerTestLineWidget.h>
+// Markups Widgets includes
+#include "qMRMLMarkupsOptionsWidgetsFactory.h"
 
 #include <qSlicerModuleManager.h>
 #include <qSlicerApplication.h>
@@ -71,6 +65,14 @@ qSlicerTemplateKeyModule::qSlicerTemplateKeyModule(QObject* _parent)
 //-----------------------------------------------------------------------------
 qSlicerTemplateKeyModule::~qSlicerTemplateKeyModule()
 {
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerTemplateKeyModule::isHidden() const
+{
+  // The module has no GUI.
+  // Widget options will be shown in Markups module.
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -116,63 +118,35 @@ void qSlicerTemplateKeyModule::setup()
 {
   this->Superclass::setup();
 
- vtkSlicerApplicationLogic* appLogic = this->appLogic();
- if (!appLogic)
-   {
-   qCritical() << Q_FUNC_INFO << " : invalid application logic.";
-   return;
-   }
-
- vtkSlicerMarkupsLogic* markupsLogic =
-   vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
- if (!markupsLogic)
-   {
-   qCritical() << Q_FUNC_INFO << " : invalid markups logic.";
-   return;
-   }
-
-  // If testing is enabled then we register the new markup
+  // This is a test class, therefore we do not register anything if
+  // not in testing mode (to avoid cluttering the markups module).
   bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
-  if (isTestingEnabled)
+  if (!isTestingEnabled)
     {
-    // Register markups
-    vtkNew<vtkMRMLMarkupsTestLineNode> markupsTestLineNode;
-    vtkNew<vtkSlicerTestLineWidget> testLineWidget;
-    markupsLogic->RegisterMarkupsNode(markupsTestLineNode, testLineWidget);
+    return;
     }
 
+  // Create and configure the options widgets
   auto optionsWidgetFactory = qMRMLMarkupsOptionsWidgetsFactory::instance();
   optionsWidgetFactory->registerOptionsWidget(new qMRMLMarkupsTestLineWidget());
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerTemplateKeyModule
-::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerTemplateKeyModule::createWidgetRepresentation()
 {
-    return nullptr;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerTemplateKeyModule::createLogic()
 {
-  return vtkSlicerTemplateKeyLogic::New();
-}
-
-//-----------------------------------------------------------------------------
-QStringList qSlicerTemplateKeyModule::associatedNodeTypes() const
-{
- return QStringList() << "vtkMRMLMarkupsTestLineNode";
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTemplateKeyModule::setMRMLScene(vtkMRMLScene* scene)
-{
-  this->Superclass::setMRMLScene(scene);
-  vtkSlicerTemplateKeyLogic* logic =
-    vtkSlicerTemplateKeyLogic::SafeDownCast(this->logic());
-  if (!logic)
+  // This is a test class, therefore we do not register anything (to avoid cluttering the markups module)
+  // unless the application is in testing mode.
+  bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
+  if (!isTestingEnabled)
     {
-    qCritical() << Q_FUNC_INFO << " failed: logic is invalid";
-    return;
+    return nullptr;
     }
+
+  return vtkSlicerTemplateKeyLogic::New();
 }

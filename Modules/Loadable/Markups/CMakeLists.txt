@@ -57,7 +57,6 @@ set(MODULE_UI_SRCS
 
 set(MODULE_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
-  vtkSlicer${MODULE_NAME}ModuleVTKWidgets
   vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager
   vtkSlicer${MODULE_NAME}ModuleLogic
   qSlicer${MODULE_NAME}ModuleWidgets

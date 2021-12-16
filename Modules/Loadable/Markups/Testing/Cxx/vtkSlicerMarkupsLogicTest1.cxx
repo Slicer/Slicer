@@ -16,12 +16,10 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLCoreTestingMacros.h"
-#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLMarkupsNode.h"
-#include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkSlicerMarkupsLogic.h"
@@ -32,10 +30,11 @@
 int vtkSlicerMarkupsLogicTest1(int , char * [] )
 {
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-/*vtkNew<vtkMRMLInteractionNode> interactionNode;
-  scene->AddNode(interactionNode.GetPointer());*/
 
   vtkNew<vtkSlicerMarkupsLogic> logic1;
+
+  // First test without an application logic creating selection and interaction nodes.
+  // Errors are expected but there should be no crash.
 
   // test without a scene
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -60,7 +59,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   // test with a scene
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   logic1->SetMRMLScene(scene);
-  TESTING_OUTPUT_ASSERT_ERRORS(2); // one error is expected to be reported due to lack of selection node
+  TESTING_OUTPUT_ASSERT_ERRORS(17); // error messages are expected to be reported due to lack of selection node
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   const char *testName = "Test node 2";
@@ -145,7 +144,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   CHECK_BOOL(logic1->StartPlaceMode(0), false);
   TESTING_OUTPUT_ASSERT_ERRORS_END(); // error is expected to be reported due to lack of selection node
 
-  // add a selection node
+  // Application logic - Creates vtkMRMLSelectionNode and vtkMRMLInteractionNode
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   applicationLogic->SetMRMLScene(scene);
 

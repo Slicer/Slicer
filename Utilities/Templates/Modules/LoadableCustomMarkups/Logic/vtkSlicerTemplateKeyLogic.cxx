@@ -20,15 +20,14 @@
 
 #include "vtkSlicerTemplateKeyLogic.h"
 
-// Liver Markups MRML includes
+// TemplateKey MRML includes
 #include "vtkMRMLMarkupsTestLineNode.h"
 
-// QTGUI includes
-#include <qSlicerApplication.h>
+// TemplateKey VTKWidgets includes
+#include "vtkSlicerTestLineWidget.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLSelectionNode.h>
 
 // Markups logic includes
 #include <vtkSlicerMarkupsLogic.h>
@@ -45,7 +44,6 @@ vtkStandardNewMacro(vtkSlicerTemplateKeyLogic);
 //---------------------------------------------------------------------------
 vtkSlicerTemplateKeyLogic::vtkSlicerTemplateKeyLogic()
 {
-
 }
 
 //---------------------------------------------------------------------------
@@ -60,67 +58,21 @@ void vtkSlicerTemplateKeyLogic::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 void vtkSlicerTemplateKeyLogic::RegisterNodes()
 {
-  assert(this->GetMRMLScene() != nullptr);
-
   vtkMRMLScene *scene = this->GetMRMLScene();
-
-  // Nodes
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsTestLineNode>::New());
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerTemplateKeyLogic::ObserveMRMLScene()
-{
-  if (!this->GetMRMLScene())
+  if (!scene)
     {
+    vtkErrorMacro("RegisterNodes failed: invalid scene");
     return;
     }
 
-  vtkMRMLApplicationLogic *mrmlAppLogic = this->GetMRMLApplicationLogic();
-  if (!mrmlAppLogic)
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->GetModuleLogic("Markups"));
+  if (!markupsLogic)
     {
-    vtkErrorMacro("ObserveMRMLScene: invalid MRML Application Logic.") ;
+    vtkErrorMacro("RegisterNodes failed: invalid markups module logic");
     return;
     }
 
-  vtkMRMLNode* node =
-    this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID().c_str());
-  if (!node)
-    {
-    vtkErrorMacro("Observe MRMLScene: invalid Selection Node");
-    return;
-    }
-
-  // If testing is enabled then we register the new markup
-  bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
-  if (isTestingEnabled)
-    {
-
-    // add known markup types to the selection node
-    vtkMRMLSelectionNode *selectionNode =
-      vtkMRMLSelectionNode::SafeDownCast(node);
-    if (selectionNode)
-      {
-      // got into batch process mode so that an update on the mouse mode tool
-      // bar is triggered when leave it
-      this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
-
-      vtkNew<vtkMRMLMarkupsTestLineNode> testLineNode;
-
-      selectionNode->AddNewPlaceNodeClassNameToList(testLineNode->GetClassName(),
-                                                    testLineNode->GetAddIcon(),
-                                                    testLineNode->GetMarkupType());
-
-      // trigger an update on the mouse mode toolbar
-      this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
-      }
-    }
-
-    this->Superclass::ObserveMRMLScene();
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerTemplateKeyLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
-{
-  Superclass::OnMRMLSceneNodeAdded(node);
+  vtkNew<vtkMRMLMarkupsTestLineNode> markupsTestLineNode;
+  vtkNew<vtkSlicerTestLineWidget> testLineWidget;
+  markupsLogic->RegisterMarkupsNode(markupsTestLineNode, testLineWidget);
 }

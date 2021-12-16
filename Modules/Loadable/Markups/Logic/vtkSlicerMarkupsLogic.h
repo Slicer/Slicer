@@ -263,9 +263,10 @@ public:
   void RegisterJsonStorageNodeForMarkupsType(std::string markupsType, std::string storageNodeClassName);
   vtkMRMLMarkupsJsonStorageNode* AddNewJsonStorageNodeForMarkupsType(std::string markupsType);
 
-  /// Registers a markup and its corresponding widget to be handled by the Markups module
+  /// Registers a markup and its corresponding widget to be handled by the Markups module.
   /// For a markup to be handled by this module (processed by the displayable
-  /// manager, UI and subject hierarchy) it needs to be registered using this function.
+  /// manager, UI and subject hierarchy) it needs to be registered using this method.
+  /// The method also registers the markupsNode class in the scene.
   /// \param markupsNode MRMLMarkups node to be registered.
   /// \param markupsWidget vtkSlicerWidget associated to the MRMLMarkups node registered.
   void RegisterMarkupsNode(vtkMRMLMarkupsNode* markupsNode,
@@ -314,6 +315,9 @@ protected:
   void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
   void ObserveMRMLScene() override;
   void SetAndObserveSelectionNode(vtkMRMLSelectionNode* selectionNode);
+
+  /// Update list of place node class names in selection node based on currently registered markups.
+  void UpdatePlaceNodeClassNamesInSelectionNode();
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   void RegisterNodes() override;
