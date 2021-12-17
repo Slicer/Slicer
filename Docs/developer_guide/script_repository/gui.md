@@ -386,6 +386,8 @@ crosshairNode = slicer.util.getNode("Crosshair")
 crosshairNode.SetCrosshairRAS(position_RAS)
 # Center the position in all slice views
 slicer.vtkMRMLSliceNode.JumpAllSlices(slicer.mrmlScene, *position_RAS, slicer.vtkMRMLSliceNode.CenteredJumpSlice)
+# Make the crosshair visible
+crosshairNode.SetCrosshairMode(slicer.vtkMRMLCrosshairNode.ShowBasic)
 ```
 
 :::{note}
