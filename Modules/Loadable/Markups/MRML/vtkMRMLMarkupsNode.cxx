@@ -258,6 +258,8 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
 //---------------------------------------------------------------------------
 int vtkMRMLMarkupsNode::EndModify(int previousDisableModifiedEventState)
 {
+  // Event PointAboutToBeRemovedEvent is not listed below because the event does
+  // not indicate an actual modification yet.
   bool processPendingPointModifiedEvents = !previousDisableModifiedEventState &&
     (this->GetModifiedEventPending() > 0
     || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointModifiedEvent) > 0
@@ -799,6 +801,8 @@ void vtkMRMLMarkupsNode::RemoveNthControlPoint(int pointIndex)
 
   bool positionWasDefined = (this->ControlPoints[static_cast<unsigned int>(pointIndex)]->PositionStatus == vtkMRMLMarkupsNode::PositionDefined);
   bool positionWasMissing = (this->ControlPoints[static_cast<unsigned int>(pointIndex)]->PositionStatus == vtkMRMLMarkupsNode::PositionMissing);
+
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAboutToBeRemovedEvent, static_cast<void*>(&pointIndex));
 
   delete this->ControlPoints[static_cast<unsigned int> (pointIndex)];
   this->ControlPoints.erase(this->ControlPoints.begin() + pointIndex);
