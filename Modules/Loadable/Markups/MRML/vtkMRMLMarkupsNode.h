@@ -244,6 +244,7 @@ public:
     PointEndInteractionEvent,                   ///< PointEndInteractionEvent: when an interaction with a control point process finishes.
     CenterPointModifiedEvent,                   ///< CenterPointModifiedEvent: when position of the centerpoint is changed (displayed for example for closed curves).
     FixedNumberOfControlPointsModifiedEvent,    ///< FixedNumberOfControlPointsModifiedEvent: when fixed number of points set/unset.
+    PointAboutToBeRemovedEvent,                 ///< PointAboutToBeRemovedEvent: point is about to be deleted. Thus it is alive when event is called.
   };
 
   /// Placement status of a control point.
