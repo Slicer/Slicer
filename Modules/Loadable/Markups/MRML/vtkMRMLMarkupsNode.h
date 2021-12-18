@@ -223,14 +223,6 @@ public:
   //@}
 
   /// Invoke events when control points change, passing the control point index if applicable.
-  /// - LockModifiedEvent: markups node lock status is changed. Modified event is invoked, too.
-  /// - LabelFormatModifiedEvent: markups node label format changed. Modified event is invoked, too.
-  /// - PointAddedEvent: new control point(s) added. Modified event is NOT invoked.
-  /// - PointRemovedEvent: control point(s) deleted. Modified event is NOT invoked.
-  /// - PointModifiedEvent: existing control point(s) modified, added, or removed. Modified event is NOT invoked.
-  /// - PointStartInteractionEvent when starting interacting with a control point.
-  /// - PointEndInteractionEvent when an interaction with a control point process finishes.
-  /// - CenterPointModifiedEvent when position of the centerpoint is changed (displayed for example for closed curves)
   ///
   /// Event data for Point* events: Event callData is control point index address (int*). If the pointer is nullptr
   /// then one or more points are added/removed/modified.
@@ -239,33 +231,29 @@ public:
   ///
   enum
   {
-    LockModifiedEvent = 19000,
-    LabelFormatModifiedEvent,
-    PointAddedEvent,
-    PointRemovedEvent,
-    PointPositionDefinedEvent,    // point was not defined (undefined, preview position status, or non-existent point) before but now it is defined
-    PointPositionUndefinedEvent,  // point position was defined and now it is not defined anymore (point deleted or position is not defined)
-    PointPositionMissingEvent,    // point was not not missing before and now it is missing
-    PointPositionNonMissingEvent, // point missing before and now it is not missing
-    PointModifiedEvent,
-    PointStartInteractionEvent,
-    PointEndInteractionEvent,
-    CenterPointModifiedEvent,
-    FixedNumberOfControlPointsModifiedEvent,
+    LockModifiedEvent = 19000,                  ///< LockModifiedEvent: markups node lock status is changed. Modified event is invoked, too.
+    LabelFormatModifiedEvent,                   ///< LabelFormatModifiedEvent: markups node label format changed. Modified event is invoked, too.
+    PointAddedEvent,                            ///< PointAddedEvent: new control point(s) added. Modified event is NOT invoked.
+    PointRemovedEvent,                          ///< PointRemovedEvent: control point(s) deleted. Modified event is NOT invoked.
+    PointPositionDefinedEvent,                  ///< PointPositionDefinedEvent: point was not defined (undefined, preview position status, or non-existent point) before but now it is defined.
+    PointPositionUndefinedEvent,                ///< PointPositionUndefinedEvent: point position was defined and now it is not defined anymore (point deleted or position is not defined).
+    PointPositionMissingEvent,                  ///< PointPositionMissingEvent: point was not not missing before and now it is missing.
+    PointPositionNonMissingEvent,               ///< PointPositionNonMissingEvent: point missing before and now it is not missing.
+    PointModifiedEvent,                         ///< PointModifiedEvent: existing control point(s) modified, added, or removed. Modified event is NOT invoked.
+    PointStartInteractionEvent,                 ///< PointStartInteractionEvent: when starting interacting with a control point.
+    PointEndInteractionEvent,                   ///< PointEndInteractionEvent: when an interaction with a control point process finishes.
+    CenterPointModifiedEvent,                   ///< CenterPointModifiedEvent: when position of the centerpoint is changed (displayed for example for closed curves).
+    FixedNumberOfControlPointsModifiedEvent,    ///< FixedNumberOfControlPointsModifiedEvent: when fixed number of points set/unset.
   };
 
   /// Placement status of a control point.
-  /// - Undefined: position is undefined (coordinate values must not be used).
-  /// - Preview: new point is being placed, position is tentative.
-  /// - Defined: position is specified.
-  /// - Missing: point is undefined and placement should not be attempted
   enum
   {
-    PositionUndefined,
-    PositionPreview,
-    PositionDefined,
-    PositionMissing,
-    PositionStatus_Last
+    PositionUndefined,      ///< PositionUndefined: position is undefined (coordinate values must not be used).
+    PositionPreview,        ///< PositionPreview: new point is being placed, position is tentative.
+    PositionDefined,        ///< PositionDefined: position is specified.
+    PositionMissing,        ///< PositionMissing: point is undefined and placement should not be attempted.
+    PositionStatus_Last     ///< PositionStatus_Last: indicates the end of the enum (int first = 0, int last = PositionStatus_Last)
   };
 
   static const char* GetPositionStatusAsString(int id);
