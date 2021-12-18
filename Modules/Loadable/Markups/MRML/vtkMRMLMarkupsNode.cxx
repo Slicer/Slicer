@@ -611,7 +611,7 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint, bool autoLab
     }
 
   int controlPointIndex = this->GetNumberOfControlPoints() - 1;
-  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent,  static_cast<void*>(&controlPointIndex));
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent, static_cast<void*>(&controlPointIndex));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&controlPointIndex));
   if (controlPoint->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
     {
