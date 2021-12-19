@@ -16,7 +16,6 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLScene.h"
 
@@ -138,7 +137,6 @@ int vtkMRMLMarkupsNodeEventsTest(int , char * [] )
   addEventsToObserver(node, observer);
 
   scene->AddNode(node.GetPointer());
-  EXERCISE_ALL_BASIC_MRML_METHODS(node.GetPointer());
 
   // Default settings
   vtkVector3d point1, point2;
