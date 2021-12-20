@@ -35,7 +35,8 @@ Detailed instructions for setting up debuggers are available for [Windows](windo
 
 See some background information in [VTK leak debugging in Slicer3](https://www.slicer.org/wiki/Slicer3:VTK_Leak_Debugging) and [Strategies for Writing and Debugging Code in Slicer3](https://www.slicer.org/wiki/Strategies_for_Writing_and_Debugging_Code_in_Slicer_3) pages.
 
-1. Turn ON the VTK_DEBUG_LEAKS CMake variable and build Slicer.
+1. If you build the application from source, make sure VTK_DEBUG_LEAKS CMake flag is set to ON. Slicer Preview Releases are built with this flag is ON, while in Slicer Stable Releases the flag is OFF.
+
 2. Create a test that reproduces the memory leak systematically.
 
     After execution, the memory leaks are printed automatically by VTK on the standard output:
@@ -125,7 +126,15 @@ See some background information in [VTK leak debugging in Slicer3](https://www.s
         - Open the "Output" tab and copy paste the contents into an advanced file editor (not Visual Studio)
 
       - With GDB
-        - Start gdb using the launcher (`./Slicer --gdb`) or sometimes the following works as well: `gdb ./bin/SlicerApp-real`
+        - Start gdb using the launcher:
+          - In the build tree: `./Slicer --gdb`
+          - For an installed Slicer:
+
+              ```txt
+              ./Slicer --launch bash
+              gdb ./bin/SlicerApp-real
+              ```
+
         - Place breakpoints in the functions
 
             ```txt
