@@ -1100,6 +1100,12 @@ void vtkMRMLMarkupsNode::TransformOrientationMatrixFromWorldToNode(
     worldToNodeTransform->TransformVectorAtPoint(position_World, yAxis_World, yAxis_Node);
     worldToNodeTransform->TransformVectorAtPoint(position_World, zAxis_World, zAxis_Node);
     }
+  for (int i = 0; i < 3; ++i)
+    {
+    orientationMatrix_Node[3 * i] = xAxis_Node[i];
+    orientationMatrix_Node[3 * i + 1] = yAxis_Node[i];
+    orientationMatrix_Node[3 * i + 2] = zAxis_Node[i];
+    }
 }
 
 //-----------------------------------------------------------
@@ -1372,8 +1378,8 @@ void vtkMRMLMarkupsNode::SetNthControlPointOrientationMatrixWorld(int n, const d
     return;
     }
 
-  double orientationMatrix_Node[9] = { 0.0 };
-  double controlPointPosition_World[3] = { 0.0 };
+  double orientationMatrix_Node[9] = { 1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0 };
+  double controlPointPosition_World[3] = { 0.0, 0.0, 0.0 };
   this->TransformPointToWorld(controlPoint->Position, controlPointPosition_World);
   this->TransformOrientationMatrixFromWorldToNode(controlPointPosition_World, orientationMatrix, orientationMatrix_Node);
   this->SetNthControlPointOrientationMatrix(n, orientationMatrix_Node);
@@ -1429,7 +1435,7 @@ void vtkMRMLMarkupsNode::GetNthControlPointNormalWorld(int n, double normalWorld
     return;
     }
 
-  double normalNode[3] = { 0.0 };
+  double normalNode[3] = { 0.0, 0.0, 1.0 };
   this->GetNthControlPointNormal(n, normalNode);
   this->CurvePolyToWorldTransform->TransformVectorAtPoint(
     &(controlPoint->Position[0]),
@@ -2424,7 +2430,7 @@ void vtkMRMLMarkupsNode::GetControlPointPositionsWorld(vtkPoints* points)
     }
   int numberOfControlPoints = this->GetNumberOfControlPoints();
   points->SetNumberOfPoints(numberOfControlPoints);
-  double posWorld[3] = { 0.0 };
+  double posWorld[3] = { 0.0, 0.0, 0.0 };
   for (int controlPointIndex = 0; controlPointIndex < numberOfControlPoints; controlPointIndex++)
     {
     this->GetNthControlPointPositionWorld(controlPointIndex, posWorld);
@@ -2760,7 +2766,7 @@ void vtkMRMLMarkupsNode::UpdateInteractionHandleToWorldMatrix()
   vtkNew<vtkPoints> controlPoints_World;
   for (int i = 0; i < numberOfControlPoints; ++i)
     {
-    double controlPointPosition_World[3] = { 0.0 };
+    double controlPointPosition_World[3] = { 0.0, 0.0, 0.0 };
     this->GetNthControlPointPositionWorld(i, controlPointPosition_World);
 
     origin_World[0] += controlPointPosition_World[0] / numberOfControlPoints;
@@ -2786,7 +2792,7 @@ void vtkMRMLMarkupsNode::UpdateInteractionHandleToWorldMatrix()
   vtkNew<vtkPlane> bestFitPlane_World;
   vtkAddonMathUtilities::FitPlaneToPoints(controlPoints_World, bestFitPlane_World);
 
-  double normal_World[3] = { 0.0 };
+  double normal_World[3] = { 0.0, 0.0, 1.0 };
   bestFitPlane_World->GetNormal(normal_World);
 
   double handleZ_World[4] = { 0.0, 0.0, 1.0, 0.0 };
@@ -2799,7 +2805,7 @@ void vtkMRMLMarkupsNode::UpdateInteractionHandleToWorldMatrix()
     handleZ_World[2] = -handleZ_World[2];
     }
 
-  double rotationVector_World[3] = { 0.0 };
+  double rotationVector_World[3] = { 0.0, 0.0, 1.0 };
   double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(handleZ_World, normal_World));
   double epsilon = 0.001;
   if (angle < epsilon)
@@ -2958,7 +2964,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionWorldFromArray(
     {
     return;
     }
-  double markupxyz[3] = { 0.0 };
+  double markupxyz[3] = { 0.0, 0.0, 0.0 };
   this->TransformPointFromWorld(pos, markupxyz);
   this->SetNthControlPointPositionFromArray(pointIndex, markupxyz, positionStatus);
 }
