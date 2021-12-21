@@ -691,7 +691,6 @@ ctkPathLineEdit* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(const Q
 {
   ctkPathLineEdit* directoryEdit = new ctkPathLineEdit("Output folder", QStringList(), ctkPathLineEdit::Dirs, this->FileWidget);
   directoryEdit->setCurrentPath(fileInfo.absolutePath());
-  directoryEdit->setSizeAdjustPolicy(ctkPathLineEdit::AdjustToMinimumContentsLength);
   directoryEdit->setShowHistoryButton(false);
   return directoryEdit;
 }

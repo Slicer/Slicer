@@ -462,6 +462,11 @@ If unchecked, the exported dataset will be added to the DICOM database.</string>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkPathLineEdit</class>
+   <extends>QWidget</extends>
+   <header>ctkPathLineEdit.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerDICOMTagEditorWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerDICOMTagEditorWidget.h</header>
@@ -470,11 +475,6 @@ If unchecked, the exported dataset will be added to the DICOM database.</string>
    <class>qMRMLSubjectHierarchyTreeView</class>
    <extends>QTreeView</extends>
    <header>qMRMLSubjectHierarchyTreeView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkPathLineEdit</class>
-   <extends>QWidget</extends>
-   <header>ctkPathLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

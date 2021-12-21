@@ -588,7 +588,6 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
 
     self.testingServer = None
     self.browserWidget = None
-    self.directoryButton = None
 
     # Load widget from .ui file (created by Qt Designer)
     uiWidget = slicer.util.loadUI(self.resourcePath('UI/DICOM.ui'))
@@ -653,6 +652,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     self.updateDatabaseDirectoryFromBrowser(self.browserWidget.dicomBrowser.databaseDirectory)
     # Synchronize database selection between browser and this widget
     self.ui.directoryButton.directoryChanged.connect(self.updateDatabaseDirectoryFromWidget)
+    self.ui.directoryButton.sizePolicy = qt.QSizePolicy(qt.QSizePolicy.Ignored, qt.QSizePolicy.Fixed)
     self.browserWidget.dicomBrowser.databaseDirectoryChanged.connect(self.updateDatabaseDirectoryFromBrowser)
 
     self.ui.browserAutoHideCheckBox.checked = not settingsValue('DICOM/BrowserPersistent', False, converter=toBool)

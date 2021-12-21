@@ -197,7 +197,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     # Output directory selector
     self.outputDirSelector = ctk.ctkPathLineEdit()
-    self.outputDirSelector.sizeAdjustPolicy = ctk.ctkPathLineEdit.AdjustToMinimumContentsLength
     self.outputDirSelector.filters = ctk.ctkPathLineEdit.Dirs
     self.outputDirSelector.settingKey = 'ScreenCaptureOutputDir'
     outputFormLayout.addRow("Output directory:", self.outputDirSelector)
