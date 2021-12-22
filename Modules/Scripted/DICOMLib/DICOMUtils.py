@@ -586,7 +586,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
 
   seriesUID = slicer.dicomDatabase.fileValue(filePaths[0], tags['seriesUID'])
 
-  if slicer.dicomDatabase.fileValue(filePaths[0], tags['numberOfFrames']) != "":
+  if slicer.dicomDatabase.fileValue(filePaths[0], tags['numberOfFrames']) not in ["", "1"]:
     warningText += "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution.\n"
 
   # Make sure first file contains valid geometry
