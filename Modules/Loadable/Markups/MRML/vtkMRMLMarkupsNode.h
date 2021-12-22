@@ -697,6 +697,14 @@ public:
   void SetControlPointPlacementStartIndex(int);
   ///@}
 
+  ///@{
+  /// This value is used for generating number in the control point's name when a new point is added.
+  /// The value is not decremented when a control point is deleted to keep the control point names unique.
+  /// The value is reset to 0 when \sa RemoveAllControlPoints is called.
+  vtkGetMacro(LastUsedControlPointNumber, int);
+  vtkSetMacro(LastUsedControlPointNumber, int);
+  ///@}
+
   //-----------------------------------------------------------
   // All public methods below are deprecated
   //

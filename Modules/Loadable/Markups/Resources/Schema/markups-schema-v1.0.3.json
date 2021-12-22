@@ -95,6 +95,13 @@
                                     "description": "Format of generation new labels. %N refers to node name, %d refers to point index.",
                                     "default": "%N-%d"
                                 },
+                                "lastUsedControlPointNumber": {
+                                    "$id": "#markup/lastUsedControlPointNumber",
+                                    "type": "integer",
+                                    "title": "Last used control point number",
+                                    "description": "This value is used for generating number in the control point's name when a new point is added.",
+                                    "default": 0
+                                },
                                 "roiType": {
                                     "$id": "#markup/roiType",
                                     "type": "string",

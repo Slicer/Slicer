@@ -617,6 +617,11 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
     markupsNode->SetMarkupLabelFormat(markupObject["labelFormat"].GetString());
     }
 
+  if (markupObject.HasMember("lastUsedControlPointNumber"))
+    {
+    markupsNode->SetLastUsedControlPointNumber(markupObject["lastUsedControlPointNumber"].GetInt());
+    }
+
   if (markupObject.HasMember("controlPoints"))
     {
     if (!this->ReadControlPoints(markupObject["controlPoints"], coordinateSystem, markupsNode))
@@ -866,6 +871,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteBasicProperties(
 
   writer.Key("labelFormat");
   writer.String(markupsNode->GetMarkupLabelFormat().c_str());
+
+  writer.Key("lastUsedControlPointNumber");
+  writer.Int(markupsNode->GetLastUsedControlPointNumber());
 
   /*
   if (markupsNode->GetName())
