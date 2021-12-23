@@ -160,10 +160,10 @@ public:
 
   /// Write this node's information to a vector of strings for passing to a CLI,
   /// precede each datum with the prefix if not an empty string
-  /// coordinateSystemFlag = 0 for RAS, 1 for LPS
+  /// coordinateSystemFlag = vtkMRMLStorageNode::CoordinateSystemRAS or vtkMRMLStorageNode::CoordinateSystemLPS
   /// multipleFlag = 1 for the whole list, 1 for the first selected control point
   void WriteCLI(std::vector<std::string>& commandLine,
-                        std::string prefix, int coordinateSystem = 0,
+                        std::string prefix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS,
                         int multipleFlag = 1) override;
 
   /// Copy node content (excludes basic data, such as name and node references).

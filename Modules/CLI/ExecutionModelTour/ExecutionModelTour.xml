@@ -259,7 +259,7 @@
     <label>Regions of interest</label>
     <region multiple="true">
       <name>regions</name>
-      <label>Region list</label>
+      <label>Input region list</label>
       <longflag>region</longflag>
       <description><![CDATA[List of regions to process]]></description>
     </region>

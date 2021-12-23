@@ -279,6 +279,14 @@ public:
     vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
   //@}
 
+  /// Write this node's information to a vector of strings for passing to a CLI,
+  /// precede each datum with the prefix if not an empty string
+  /// coordinateSystemFlag = vtkMRMLStorageNode::CoordinateSystemRAS or vtkMRMLStorageNode::CoordinateSystemLPS
+  /// multipleFlag = 1 for the whole list, 1 for the first selected control point
+  void WriteCLI(std::vector<std::string>& commandLine,
+                        std::string prefix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS,
+                        int multipleFlag = 1) override;
+
 protected:
   int ROIType{vtkMRMLMarkupsROINode::ROITypeBox};
 
@@ -288,6 +296,7 @@ protected:
   bool IsUpdatingROIFromControlPoints{false};
   bool IsUpdatingInteractionHandleToWorldMatrix{false};
   bool InsideOut{false};
+  bool GetObjectToNodeMatrixRotated();
 
   vtkSmartPointer<vtkMatrix4x4> ObjectToNodeMatrix { nullptr };
   vtkSmartPointer<vtkMatrix4x4> ObjectToWorldMatrix { nullptr };

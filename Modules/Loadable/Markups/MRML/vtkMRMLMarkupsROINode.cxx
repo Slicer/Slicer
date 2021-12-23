@@ -28,6 +28,7 @@
 #include "vtkMRMLTransformNode.h"
 
 // VTK includes
+#include "vtkAddonMathUtilities.h"
 #include <vtkBoundingBox.h>
 #include <vtkBox.h>
 #include <vtkCallbackCommand.h>
@@ -1379,4 +1380,85 @@ void vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(double xAxis[3], double yAx
     outputMatrix->SetElement(i, 2, zAxisTransformed[i]);
     outputMatrix->SetElement(i, 3, originTransformed[i]);
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
+         int coordinateSystem, int multipleFlag)
+{
+  int numControlPoints = this->GetNumberOfControlPoints();
+
+  // check if the coordinate system flag is set to LPS, otherwise assume RAS
+  bool useLPS = (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS);
+
+  if (!prefix.empty())
+    {
+    commandLine.push_back(prefix);
+    }
+
+  std::stringstream ss;
+
+  // Note: CLI interface uses node coordinate system (not World).
+  // This means that parent transforms are ignored.
+
+  // ROI center
+  double centerPosition[3] = { 0.0, 0.0, 0.0 };
+  this->GetCenter(centerPosition);
+  if (useLPS)
+    {
+    centerPosition[0] = -centerPosition[0];
+    centerPosition[1] = -centerPosition[1];
+    }
+  ss << centerPosition[0] << "," << centerPosition[1] << "," << centerPosition[2];
+
+  // ROI radius
+  double roiDiameter[3] = { 0.0, 0.0, 0.0 };
+  this->GetSize(roiDiameter);
+  ss << "," << roiDiameter[0] / 2.0 << "," << roiDiameter[1] / 2.0 << "," << roiDiameter[2] / 2.0;
+
+  // ROI orientation (for backward compatibility, only write it out if rotated)
+  if (this->GetObjectToNodeMatrixRotated())
+    {
+    // Get axis directions in the requested coordinate system
+    double axes[3][3];
+    for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
+      {
+      this->GetAxis(axisIndex, axes[axisIndex]);
+      if (useLPS)
+        {
+        axes[axisIndex][0] = -axes[axisIndex][0];
+        axes[axisIndex][1] = -axes[axisIndex][1];
+        }
+      }
+    // To conform with the usual matrix element ordering, the order is:
+    // x0, y0, z0, x1, y1, z1, x2, y2, z2.
+    for (int row = 0; row < 3; ++row)
+      {
+      ss << "," << axes[0][row] << "," << axes[1][row] << "," << axes[2][row];
+      }
+  }
+
+  commandLine.push_back(ss.str());
+}
+
+
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsROINode::GetObjectToNodeMatrixRotated()
+{
+  vtkMatrix4x4* objectToNode = this->GetObjectToNodeMatrix();
+  const double tolerance = 1e-3;
+  for (int row = 0; row < 3; row++)
+    {
+    for (int col = 0; col < 3; col++)
+      {
+      double expectedValue = (row == col ? 1.0 : 0.0);
+      if (fabs(objectToNode->GetElement(row, col)-expectedValue) > tolerance)
+        {
+        // rotated
+        return true;
+        }
+      }
+    }
+  // not rotated
+  return false;
 }
