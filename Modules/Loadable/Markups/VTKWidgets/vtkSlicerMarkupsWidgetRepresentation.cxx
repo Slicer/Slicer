@@ -364,7 +364,7 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::UpdateCenter()
+void vtkSlicerMarkupsWidgetRepresentation::UpdateCenterOfRotation()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetNumberOfControlPoints() < 1)
@@ -386,7 +386,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateCenter()
   centerWorldPos[1] *= inv_N;
   centerWorldPos[2] *= inv_N;
 
-  markupsNode->SetCenterPosition(centerWorldPos);
+  markupsNode->SetCenterOfRotationWorld(centerWorldPos);
 }
 
 //----------------------------------------------------------------------
@@ -454,8 +454,8 @@ bool vtkSlicerMarkupsWidgetRepresentation::GetTransformationReferencePoint(doubl
     {
     return false;
     }
-  this->UpdateCenter();
-  markupsNode->GetCenterPosition(referencePointWorld);
+  this->UpdateCenterOfRotation();
+  markupsNode->GetCenterOfRotationWorld(referencePointWorld);
   return true;
 }
 

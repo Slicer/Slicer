@@ -283,7 +283,7 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
 
     if (markupsNode->GetCurveClosed())
       {
-      rep->UpdateCenter();
+      rep->UpdateCenterOfRotation();
       }
 
     this->LastEventPosition[0] = eventPos[0];

@@ -384,7 +384,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     {
     // Check if center is selected
     double centerPosWorld[3], centerPosDisplay[3];
-    markupsNode->GetCenterPosition(centerPosWorld);
+    markupsNode->GetCenterOfRotationWorld(centerPosWorld);
     if (interactionEventData->IsDisplayPositionValid())
       {
       double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld, interactionEventData)

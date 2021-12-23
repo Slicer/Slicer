@@ -231,20 +231,21 @@ public:
   ///
   enum
   {
-    LockModifiedEvent = 19000,                  ///< LockModifiedEvent: markups node lock status is changed. Modified event is invoked, too.
-    LabelFormatModifiedEvent,                   ///< LabelFormatModifiedEvent: markups node label format changed. Modified event is invoked, too.
-    PointAddedEvent,                            ///< PointAddedEvent: new control point(s) added. Modified event is NOT invoked.
-    PointRemovedEvent,                          ///< PointRemovedEvent: control point(s) deleted. Modified event is NOT invoked.
-    PointPositionDefinedEvent,                  ///< PointPositionDefinedEvent: point was not defined (undefined, preview position status, or non-existent point) before but now it is defined.
-    PointPositionUndefinedEvent,                ///< PointPositionUndefinedEvent: point position was defined and now it is not defined anymore (point deleted or position is not defined).
-    PointPositionMissingEvent,                  ///< PointPositionMissingEvent: point was not not missing before and now it is missing.
-    PointPositionNonMissingEvent,               ///< PointPositionNonMissingEvent: point missing before and now it is not missing.
-    PointModifiedEvent,                         ///< PointModifiedEvent: existing control point(s) modified, added, or removed. Modified event is NOT invoked.
-    PointStartInteractionEvent,                 ///< PointStartInteractionEvent: when starting interacting with a control point.
-    PointEndInteractionEvent,                   ///< PointEndInteractionEvent: when an interaction with a control point process finishes.
-    CenterPointModifiedEvent,                   ///< CenterPointModifiedEvent: when position of the centerpoint is changed (displayed for example for closed curves).
-    FixedNumberOfControlPointsModifiedEvent,    ///< FixedNumberOfControlPointsModifiedEvent: when fixed number of points set/unset.
-    PointAboutToBeRemovedEvent,                 ///< PointAboutToBeRemovedEvent: point is about to be deleted. Thus it is alive when event is called.
+    LockModifiedEvent = 19000,                  ///< Markups node lock status is changed. Modified event is invoked, too.
+    LabelFormatModifiedEvent,                   ///< Markups node label format changed. Modified event is invoked, too.
+    PointAddedEvent,                            ///< New control point(s) added. Modified event is NOT invoked.
+    PointRemovedEvent,                          ///< Control point(s) deleted. Modified event is NOT invoked.
+    PointPositionDefinedEvent,                  ///< Point was not defined (undefined, preview position status,
+                                                ///  or non-existent point) before but now it is defined.
+    PointPositionUndefinedEvent,                ///< Point position was defined and now it is not defined anymore (point deleted or position is not defined).
+    PointPositionMissingEvent,                  ///< Point was not not missing before and now it is missing.
+    PointPositionNonMissingEvent,               ///< Point missing before and now it is not missing.
+    PointModifiedEvent,                         ///< Existing control point(s) modified, added, or removed. Modified event is NOT invoked.
+    PointStartInteractionEvent,                 ///< When starting interacting with a control point.
+    PointEndInteractionEvent,                   ///< When an interaction with a control point process finishes.
+    CenterOfRotationModifiedEvent,              ///< When position of the center of rotation is changed (used for example for rotating closed curves).
+    FixedNumberOfControlPointsModifiedEvent,    ///< When fixed number of points set/unset.
+    PointAboutToBeRemovedEvent,                 ///< Point is about to be deleted. Thus it is alive when event is called.
   };
 
   /// Placement status of a control point.
@@ -467,31 +468,34 @@ public:
   /// Set control point status to defined and return to the previous position
   void RestoreNthControlPointPosition(int n);
 
-  /// Get the position of the center.
-  /// Return (0,0,0) if not found.
-  vtkVector3d GetCenterPosition();
+  /// Get the center position of the transformations, such as rotation and scaling.
+  /// Return (0,0,0) if undefined.
+  /// \sa GetCenterOfRotationWorld
+  vtkVector3d GetCenterOfRotation();
 
-  /// Get the position of the center.
-  /// setting the elements of point
+  /// Get the center position of the transformations, such as rotation and scaling.
   /// Returns false if center position is undefined.
-  bool GetCenterPosition(double point[3]);
+  /// \sa GetCenterOfRotationWorld
+  bool GetCenterOfRotation(double point[3]);
 
-  /// Get the position of the center in World coordinate system
+  /// Get the center position of the transformations, such as rotation and scaling,
+  /// in World coordinate system.
   /// Returns true on success.
-  bool GetCenterPositionWorld(double worldxyz[3]);
+  // \sa GetCenterOfRotation
+  bool GetCenterOfRotationWorld(double worldxyz[3]);
 
   ///@{
-  /// Set the center position position from coordinates
-  void SetCenterPosition(const double x, const double y, const double z);
-  void SetCenterPosition(const double position[3]);
+  /// Set the center position of the transformations, such as rotation and scaling.
+  /// \sa SetCenterOfRotationWorld
+  void SetCenterOfRotation(const double x, const double y, const double z);
+  void SetCenterOfRotation(const double position[3]);
   ///@}
 
   ///@{
-  /// Set the center position position using World coordinate system
-  /// Calls SetCenterPosition after transforming the passed in coordinate
-  /// \sa SetCenterPosition
-  void SetCenterPositionWorld(const double x, const double y, const double z);
-  void SetCenterPositionWorld(const double positionWorld[3]);
+  /// Set the center position of the transformations, such as rotation and scaling.
+  /// \sa SetCenterOfRotation
+  void SetCenterOfRotationWorld(const double x, const double y, const double z);
+  void SetCenterOfRotationWorld(const double positionWorld[3]);
   ///@}
 
   ///@{
@@ -797,25 +801,25 @@ public:
   vtkVector4d GetNthControlPointOrientationVector(int pointIndex);
 
   /// Get the position of the center.
-  /// \deprecated Use GetCenterPosition instead.
+  /// \deprecated Use GetCenterOfRotation instead.
   /// Return (0,0,0) if center position is undefined.
-  vtkVector3d GetCenterPositionVector()
+  vtkVector3d GetCenterOfRotationVector()
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetCenterPositionVector method is deprecated, please use GetCenterPosition instead");
-    return this->GetCenterPosition();
+    vtkWarningMacro("vtkMRMLMarkupsNode::GetCenterOfRotationVector method is deprecated, please use GetCenterOfRotation instead");
+    return this->GetCenterOfRotation();
   }
 
   /// Set the center position from a pointer to an array
-  /// \deprecated Use SetCenterPosition instead.
-  /// \sa SetCenterPosition
-  void SetCenterPositionFromPointer(const double* pos);
+  /// \deprecated Use SetCenterOfRotation instead.
+  /// \sa SetCenterOfRotation
+  void SetCenterOfRotationFromPointer(const double* pos);
   /// Set the center position position from an array
-  /// \deprecated Use SetCenterPosition instead.
-  /// \sa SetCenterPosition
-  void SetCenterPositionFromArray(const double pos[3])
+  /// \deprecated Use SetCenterOfRotation instead.
+  /// \sa SetCenterOfRotation
+  void SetCenterOfRotationFromArray(const double pos[3])
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::SetCenterPositionFromArray method is deprecated, please use SetCenterPosition instead");
-    this->SetCenterPosition(pos[0], pos[1], pos[2]);
+    vtkWarningMacro("vtkMRMLMarkupsNode::SetCenterOfRotationFromArray method is deprecated, please use SetCenterOfRotation instead");
+    this->SetCenterOfRotation(pos[0], pos[1], pos[2]);
   }
 
   ///@{
@@ -982,7 +986,7 @@ protected:
 
   /// Markup centerpoint (in local coordinates).
   /// It may be used as rotation center or as a handle to grab the widget by.
-  vtkVector3d CenterPos;
+  vtkVector3d CenterOfRotation;
 
   /// List of measurements stored for the markup
   vtkCollection* Measurements;

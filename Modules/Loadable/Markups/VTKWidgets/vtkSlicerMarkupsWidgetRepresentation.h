@@ -113,10 +113,8 @@ public:
   virtual vtkMRMLMarkupsDisplayNode* GetMarkupsDisplayNode();
   virtual vtkMRMLMarkupsNode* GetMarkupsNode();
 
-  /// Compute the center by sampling the points along
-  /// the polyline of the widget at equal distances.
-  /// and it also updates automatically the center pos stored in the Markups node
-  virtual void UpdateCenter();
+  /// Compute the center of rotation and update it in the Markups node.
+  virtual void UpdateCenterOfRotation();
 
   /// Translation, rotation, scaling will happen around this position
   virtual bool GetTransformationReferencePoint(double referencePointWorld[3]);
