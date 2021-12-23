@@ -1761,8 +1761,6 @@ void vtkMRMLMarkupsNode::
 WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
          int coordinateSystem, int multipleFlag)
 {
-  Superclass::WriteCLI(commandLine, prefix, coordinateSystem, multipleFlag);
-
   int numControlPoints = this->GetNumberOfControlPoints();
 
   // check if the coordinate system flag is set to LPS, otherwise assume RAS

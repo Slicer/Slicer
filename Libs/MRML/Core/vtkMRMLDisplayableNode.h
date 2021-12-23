@@ -16,6 +16,7 @@
 #define __vtkMRMLDisplayableNode_h
 
 // MRML includes
+#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLTransformableNode.h"
 class vtkMRMLDisplayNode;
 
@@ -69,7 +70,7 @@ public:
   /// multipleFlag = 1 for the whole list, 0 for the first in the list
   virtual void WriteCLI(std::vector<std::string>& vtkNotUsed(commandLine),
                         std::string vtkNotUsed(prefix),
-                        int vtkNotUsed(coordinateSystemFlag) = 0,
+                        int vtkNotUsed(coordinateSystemFlag) = vtkMRMLStorageNode::CoordinateSystemRAS,
                         int vtkNotUsed(multipleFlag) = 1) {};
 
   ///
