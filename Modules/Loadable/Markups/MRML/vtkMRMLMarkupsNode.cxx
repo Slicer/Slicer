@@ -63,7 +63,7 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
 {
   this->TextList = vtkSmartPointer<vtkStringArray>::New();
 
-  this->CenterPos.Set(0,0,0);
+  this->CenterOfRotation.Set(0,0,0);
 
   this->CurveInputPoly = vtkSmartPointer<vtkPolyData>::New();
   vtkNew<vtkPoints> curveInputPoints;
@@ -1174,25 +1174,25 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorld(
 }
 
 //-----------------------------------------------------------
-vtkVector3d vtkMRMLMarkupsNode::GetCenterPosition()
+vtkVector3d vtkMRMLMarkupsNode::GetCenterOfRotation()
 {
-  return this->CenterPos;
+  return this->CenterOfRotation;
 }
 
 //-----------------------------------------------------------
-bool vtkMRMLMarkupsNode::GetCenterPosition(double point[3])
+bool vtkMRMLMarkupsNode::GetCenterOfRotation(double point[3])
 {
-  point[0] = this->CenterPos.GetX();
-  point[1] = this->CenterPos.GetY();
-  point[2] = this->CenterPos.GetZ();
+  point[0] = this->CenterOfRotation.GetX();
+  point[1] = this->CenterOfRotation.GetY();
+  point[2] = this->CenterOfRotation.GetZ();
   return 1;
 }
 
 //-----------------------------------------------------------
-bool vtkMRMLMarkupsNode::GetCenterPositionWorld(double worldxyz[3])
+bool vtkMRMLMarkupsNode::GetCenterOfRotationWorld(double worldxyz[3])
 {
   vtkVector3d world;
-  this->TransformPointToWorld(this->GetCenterPosition(), world);
+  this->TransformPointToWorld(this->GetCenterOfRotation(), world);
   worldxyz[0] = world[0];
   worldxyz[1] = world[1];
   worldxyz[2] = world[2];
@@ -1200,34 +1200,34 @@ bool vtkMRMLMarkupsNode::GetCenterPositionWorld(double worldxyz[3])
 }
 
 //-----------------------------------------------------------
-void vtkMRMLMarkupsNode::SetCenterPosition(const double pos[3])
+void vtkMRMLMarkupsNode::SetCenterOfRotation(const double pos[3])
 {
-  this->CenterPos = vtkVector3d(pos);
-  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::CenterPointModifiedEvent);
+  this->CenterOfRotation = vtkVector3d(pos);
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::CenterOfRotationModifiedEvent);
   this->StorableModifiedTime.Modified();
 }
 
 //-----------------------------------------------------------
-void vtkMRMLMarkupsNode::SetCenterPosition(const double x, const double y, const double z)
+void vtkMRMLMarkupsNode::SetCenterOfRotation(const double x, const double y, const double z)
 {
   double pos[3] = { x, y, z };
-  this->SetCenterPosition(pos);
+  this->SetCenterOfRotation(pos);
 }
 
 //-----------------------------------------------------------
-void vtkMRMLMarkupsNode::SetCenterPositionWorld(const double x, const double y, const double z)
+void vtkMRMLMarkupsNode::SetCenterOfRotationWorld(const double x, const double y, const double z)
 {
   vtkVector3d centerxyz;
   TransformPointFromWorld(vtkVector3d(x,y,z), centerxyz);
-  this->SetCenterPosition(centerxyz[0], centerxyz[1], centerxyz[2]);
+  this->SetCenterOfRotation(centerxyz[0], centerxyz[1], centerxyz[2]);
 }
 
 //-----------------------------------------------------------
-void vtkMRMLMarkupsNode::SetCenterPositionWorld(const double positionWorld[3])
+void vtkMRMLMarkupsNode::SetCenterOfRotationWorld(const double positionWorld[3])
 {
   double centerxyz[3]={0.0, 0.0, 0.0};
   TransformPointFromWorld(positionWorld, centerxyz);
-  this->SetCenterPosition(centerxyz);
+  this->SetCenterOfRotation(centerxyz);
 }
 
 //-----------------------------------------------------------
@@ -2984,16 +2984,16 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionFromPointer(const int pointIn
 }
 
 //-----------------------------------------------------------
-void vtkMRMLMarkupsNode::SetCenterPositionFromPointer(const double *pos)
+void vtkMRMLMarkupsNode::SetCenterOfRotationFromPointer(const double *pos)
 {
-  vtkWarningMacro("vtkMRMLMarkupsNode::SetCenterPositionFromPointer method is deprecated, please use SetCenterPosition instead");
+  vtkWarningMacro("vtkMRMLMarkupsNode::SetCenterOfRotationFromPointer method is deprecated, please use SetCenterOfRotation instead");
   if (!pos)
     {
-    vtkErrorMacro("SetCenterPositionFromPointer: invalid position pointer!");
+    vtkErrorMacro("SetCenterOfRotationFromPointer: invalid position pointer!");
     return;
     }
 
-  this->SetCenterPosition(pos[0], pos[1], pos[2]);
+  this->SetCenterOfRotation(pos[0], pos[1], pos[2]);
 }
 
 //-----------------------------------------------------------

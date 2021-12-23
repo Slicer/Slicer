@@ -536,7 +536,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
     {
     // Check if center is selected
     double centerPosWorld[3], centerPosDisplay[3];
-    markupsNode->GetCenterPositionWorld(centerPosWorld);
+    markupsNode->GetCenterOfRotationWorld(centerPosWorld);
     this->GetWorldToSliceCoordinates(centerPosWorld, centerPosDisplay);
 
     double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
@@ -1045,7 +1045,7 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsCenterDisplayableOnSlice(vtkMRMLM
 
   // down cast the node as a controlpoints node to get the coordinates
   double transformedWorldCoordinates[4];
-  markupsNode->GetCenterPositionWorld(transformedWorldCoordinates);
+  markupsNode->GetCenterOfRotationWorld(transformedWorldCoordinates);
 
   // now get the displayCoordinates for the transformed worldCoordinates
   double displayCoordinates[4];
