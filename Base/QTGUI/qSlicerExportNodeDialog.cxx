@@ -22,6 +22,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QToolButton>
 
 /// CTK includes
 #include <ctkPathLineEdit.h>
@@ -50,61 +51,88 @@ static QString forceFileNameExtension(const QString& fileName, const QString& ex
   return strippedFileName;
 }
 
-
 //-----------------------------------------------------------------------------
-qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWidget)
-  : QDialog(parentWidget),
-    lastUsedDirectory{},
-    lastUsedFormats{},
-    lastUsedHardenTransform{false},
-    formatToOptionsWidget{}
+static QString defaultFilename(vtkMRMLNode* node, QString extension)
 {
-  this->setupUi(this);
-
-  connect(this->FilenameLineEdit, SIGNAL(editingFinished()),
-          this, SLOT(onFilenameEditingFinished()));
-
-  QObject::connect(this->ExportFormatComboBox, &QComboBox::currentTextChanged,
-                   this, &qSlicerExportNodeDialogPrivate::formatChangedSlot);
-
-  // Set up DirectoryPathLineEdit widget to be a directory selector
-  this->DirectoryPathLineEdit->setLabel("Output folder");
-  this->DirectoryPathLineEdit->setFilters(ctkPathLineEdit::Dirs);
+  const QString unsafeNodeName(node->GetName() ? node->GetName() : "");
+  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+  if (!coreIOManager)
+    {
+    qCritical() << Q_FUNC_INFO << "failed: Core IO manager not found.";
+    return QString();
+    }
+  const QString safeNodeName = qSlicerCoreIOManager::forceFileNameValidCharacters(unsafeNodeName);
+  return forceFileNameExtension(safeNodeName, extension, node);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerExportNodeDialogPrivate::~qSlicerExportNodeDialogPrivate() = default;
+// Return whether list a has any elements that list b doesn't have.
+template <typename T>
+static bool setDifferenceIsNonempty(const QList<T>& a, const QList<T>& b)
+{
+  for (const T & item : a)
+    {
+    if (!b.contains(item))
+      {
+      return true;
+      }
+    }
+  return false;
+}
 
 //-----------------------------------------------------------------------------
-bool qSlicerExportNodeDialogPrivate::setup(vtkMRMLScene* scene, vtkMRMLNode* node)
+// Return whether all widgets that are part of the given layout are invisible
+// Visibility is considered relative to the given widget relativeTo
+static bool layoutWidgetsAllInvisible(const QLayout* layout, const QWidget* relativeTo)
 {
+  for (int i = 0; i < layout->count(); ++i)
+    {
+    QWidget* widget = layout->itemAt(i)->widget();
+    if (widget && widget->isVisibleTo(relativeTo))
+      {
+      return false;
+      }
+    }
+  return true;
+}
 
-  this->MRMLScene = scene;
-  this->MRMLNode = node;
+//-----------------------------------------------------------------------------
+// Set up the given ctkPathLineEdit to make it easier to use in a tabbing order.
+// ctkPathLineEdit has a default focus policy of NoFocus. It will usable for tab ordering
+// if it has TabFocus and sets one of its member widgets as the focus proxy.
+// Really this should probably be a fix in the implementation of ctkPathLineEdit, but this is fine for now.
+static void fixCtkPathLineEditTabbing(ctkPathLineEdit* w)
+{
+  // Unfortunately, ctkPathLineEdit does not give direct access to its underlying widgets,
+  // so we have to do this fiddly thing with QObject::findChildren.
+  auto lineEdits = w->findChildren<QLineEdit*>();
+  if (lineEdits.size()!=1)
+    { // This might happen if ctkPathLineWidget ever changes its internals.
+    qWarning() << "Export dialog warning: unable to set up ctkPathLineEdit keyboard focus rules. Tabbing might be weird.";
+    return;
+    }
 
-  this->DirectoryPathLineEdit->setCurrentPath(
-    this->lastUsedDirectory.isEmpty() ? this->MRMLScene->GetRootDirectory() : this->lastUsedDirectory
-  );
+  w->setFocusPolicy(Qt::TabFocus);
+  w->setFocusProxy(lineEdits[0]);
+}
+
+//-----------------------------------------------------------------------------
+NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* storableNode, vtkMRMLScene* scene)
+  : prototypeNode{storableNode}
+{
+  this->nodeType = storableNode->GetClassName();
+  this->exportFormatComboBox = new QComboBox(parent);
+  this->optionsStackedWidget = new QStackedWidget(parent);
+  this->optionsStackedWidget->addWidget(new QWidget()); // Add a blank widget in the 0 position (see makeOptionsStackedWidgetBlank)
+
+  // --------------------
+  // Fill up the export formats dropdown box with the various choices and initialize a choice
+  // --------------------
 
   qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
   if (!coreIOManager)
     {
-    qCritical() << Q_FUNC_INFO << " failed: Core IO manager not found.";
-    return false;
-    }
-
-  this->setWindowTitle(QString("Export ")+QString(this->MRMLNode->GetName()));
-
-  // Now we will work on filling up the export formats dropdown box
-  // with the various choices and initializaing a choice
-
-  this->ExportFormatComboBox->clear();
-
-  vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(this->MRMLNode);
-  if (!storableNode)
-    {
-    qCritical() << Q_FUNC_INFO << " failed: Node is not storable.";
-    return false;
+    throw std::runtime_error("NodeTypeWidgetSet: Core IO manager not found.");
     }
 
   // Get the favored extension according to the storage node (if there is one)
@@ -117,21 +145,22 @@ bool qSlicerExportNodeDialogPrivate::setup(vtkMRMLScene* scene, vtkMRMLNode* nod
       extensionInStorageNode = storageNode->GetDefaultWriteFileExtension();
       }
     }
-  else { // If there wasn't a storage node, we make a temporary one just to get default extension information from it
+  else // If there wasn't a storage node, we make a temporary one just to get default extension information from it
+    {
     const std::string defaultStorageNodeClassName = storableNode->GetDefaultStorageNodeClassName();
     if (!defaultStorageNodeClassName.empty())
       {
       vtkSmartPointer<vtkMRMLNode> defaultStorageNodeAsNode = vtkSmartPointer<vtkMRMLNode>::Take(
-        this->MRMLScene->CreateNodeByClass(defaultStorageNodeClassName.c_str())
+        scene->CreateNodeByClass(defaultStorageNodeClassName.c_str())
       );
       vtkMRMLStorageNode* defaultStorageNode = vtkMRMLStorageNode::SafeDownCast(defaultStorageNodeAsNode);
       extensionInStorageNode = defaultStorageNode->GetDefaultWriteFileExtension();
       }
-  }
+    }
 
+  // (Checking that storageNode is not null allows us to dodge a warning from completeSlicerWritableFileNameSuffix)
   QString currentExtension = storageNode ?
     coreIOManager->completeSlicerWritableFileNameSuffix(storableNode) : QString(".");
-  // (Checking that storageNode is not null allows us to dodge a warning from completeSlicerWritableFileNameSuffix)
   int suggestedFormatIndex = -1; // will be index corresponding to format corresponding to currentExtension
   foreach(QString nameFilter, coreIOManager->fileWriterExtensions(storableNode))
   {
@@ -140,12 +169,12 @@ bool qSlicerExportNodeDialogPrivate::setup(vtkMRMLScene* scene, vtkMRMLNode* nod
       vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
 
     // add the entry to the dropdown menu
-    this->ExportFormatComboBox->addItem(nameFilter, extension);
+    this->exportFormatComboBox->addItem(nameFilter, extension);
 
     // if it was the current extension, remember the index
     if (extension == currentExtension)
       {
-      suggestedFormatIndex = this->ExportFormatComboBox->count() - 1;
+      suggestedFormatIndex = this->exportFormatComboBox->count() - 1;
       }
   }
 
@@ -153,9 +182,9 @@ bool qSlicerExportNodeDialogPrivate::setup(vtkMRMLScene* scene, vtkMRMLNode* nod
   // then look for extensionInStorageNode
   if (suggestedFormatIndex == -1 && !extensionInStorageNode.isEmpty())
     {
-    for (int i = 0; i < this->ExportFormatComboBox->count(); ++i)
+    for (int i = 0; i < this->exportFormatComboBox->count(); ++i)
       {
-      if (this->ExportFormatComboBox->itemData(i).toString() ==  QString('.') + extensionInStorageNode)
+      if (this->exportFormatComboBox->itemData(i).toString() ==  QString('.') + extensionInStorageNode)
         {
         suggestedFormatIndex = i;
         break;
@@ -163,55 +192,318 @@ bool qSlicerExportNodeDialogPrivate::setup(vtkMRMLScene* scene, vtkMRMLNode* nod
       }
     }
 
-  // Look for the most recently used extension that is part of the dropdown list
-  int previouslyUsedFormatIndex = -1;
-  for (const QString & format : this->lastUsedFormats)
+  // Prefer to use suggested extension found above, otherwise just leave a prompt for the user to select a format.
+  if (suggestedFormatIndex != -1)
     {
-    int formatIndex = this->ExportFormatComboBox->findText(format);
-    if (formatIndex != -1)
-      {
-      previouslyUsedFormatIndex = formatIndex;
-      break;
-      }
-    }
-
-  // Prefer to use last used extension, then suggested extension found above,
-  // then if all else fails just leave a prompt for the user to select a format
-  if (previouslyUsedFormatIndex != -1)
-    {
-    this->ExportFormatComboBox->setCurrentIndex(previouslyUsedFormatIndex);
-    }
-  else if (suggestedFormatIndex != -1)
-    {
-    this->ExportFormatComboBox->setCurrentIndex(suggestedFormatIndex);
+    this->exportFormatComboBox->setCurrentIndex(suggestedFormatIndex);
     }
   else
     {
-    this->ExportFormatComboBox->blockSignals(true); // avoid triggering a formatChanged here
-    this->ExportFormatComboBox->setCurrentIndex(-1);
-    this->ExportFormatComboBox->setEditable(true); // so we can set custom text below
-    this->ExportFormatComboBox->lineEdit()->setReadOnly(true);
-    this->ExportFormatComboBox->setEditText("Select a format");
-    this->ExportFormatComboBox->blockSignals(false);
+    this->exportFormatComboBox->setCurrentIndex(-1);
+    this->exportFormatComboBox->setEditable(true); // so we can set custom text below
+    this->exportFormatComboBox->lineEdit()->setReadOnly(true);
+    this->exportFormatComboBox->setEditText("Select a format");
     }
 
-  // Initialize filename
-  const QString unsafeNodeName(this->MRMLNode->GetName() ? this->MRMLNode->GetName() : "");
-  const QString safeNodeName = qSlicerCoreIOManager::forceFileNameValidCharacters(unsafeNodeName);
-  this->FilenameLineEdit->setText(
-    forceFileNameExtension(safeNodeName, this->extension(), this->MRMLNode)
-  );
+  // We make this connection now, not earlier, so that we don't trigger the signal with the above initialization.
+  QObject::connect(this->exportFormatComboBox, &QComboBox::currentTextChanged,
+                    this, &NodeTypeWidgetSet::formatChangedSlot);
 
-  // Now that we have initialized the ExportFormatComboBox with a format,
-  // we can initialize the options widget
+  // --------------------
+  // Setup optionsWidget, now that exportFormatComboBox is initialized
+  // --------------------
+
+  if (!this->updateOptionsWidget())
+    {
+    throw std::runtime_error(std::string("NodeTypeWidgetSet: Unable to initialize options widget for ")+storableNode->GetName());
+    }
+
+  // --------------------
+  // Setup the QLabels
+  // --------------------
+
+  this->exportFormatLabel = new QLabel("", parent);
+  this->optionsLabel = new QLabel("", parent);
+  this->setLabelText("");
+}
+
+void NodeTypeWidgetSet::makeOptionsStackedWidgetBlank()
+{
+  // We added a blank QWidget to the stacked widget before adding anything else, so 0 is the correct index.
+  this->optionsStackedWidget->setCurrentIndex(0);
+}
+
+//-----------------------------------------------------------------------------
+void NodeTypeWidgetSet::setLabelText(QString nodeTypeDisplayName)
+{
+  QString tail = nodeTypeDisplayName.isEmpty() ? "" : QString(" (") + nodeTypeDisplayName + ")";
+  this->exportFormatLabel->setText(QString("Export Format") + tail);
+  this->optionsLabel->setText(QString("Options") + tail);
+}
+
+//-----------------------------------------------------------------------------
+bool NodeTypeWidgetSet::updateOptionsWidget()
+{
+  auto iterator = this->formatToOptionsWidget.find(this->formatText());
+  if (iterator != this->formatToOptionsWidget.end())
+    {
+    this->changeCurrentOptionsWidget(*iterator);
+    }
+  else
+    {
+    // Create new options widget for the present node type
+    qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+    if (!coreIOManager)
+      {
+      qCritical() << Q_FUNC_INFO << "failed: Core IO manager not found.";
+      return false;
+      }
+    qSlicerIOOptions* options = coreIOManager->fileWriterOptions(this->prototypeNode, this->formatText());
+
+    if (!options)
+      {
+      this->changeCurrentOptionsWidget(nullptr); // It's okay if there's no options widget. We just don't show one.
+      return true;
+      }
+
+    // We can only use options that are also widgets. If the following cast succeeds, we pass ownership
+    // of the options widget to the QStackedWidget, and if it fails we immediatly delete and give up.
+    qSlicerFileWriterOptionsWidget* newOptionsWidget = dynamic_cast<qSlicerFileWriterOptionsWidget*>(options);
+    if (!newOptionsWidget)
+      {
+      delete options;
+      qCritical() << Q_FUNC_INFO << "failed: Unable to get options widget for" << prototypeNode->GetName();
+      this->changeCurrentOptionsWidget(nullptr);
+      return false;
+      }
+    this->optionsStackedWidget->addWidget(newOptionsWidget);
+
+    // Assumption: setObject below can initialize reasonable options for the widget using prototypeNode as a prototype object,
+    // even when the options widget is perhaps going to be used for saving other unrelated nodes of the same type
+    newOptionsWidget->setObject(this->prototypeNode);
+
+    // optionsWidgets are not always wide enough to show the full label for each option
+    newOptionsWidget->setMinimumSize(newOptionsWidget->sizeHint());
+
+    // Set first item in options widget as its focus proxy
+    QWidget* firstTabbableOptionChild = newOptionsWidget->nextInFocusChain();
+    if (firstTabbableOptionChild) // unclear whether this can be null; check just in case
+      {
+      newOptionsWidget->setFocusPolicy(Qt::TabFocus);
+      newOptionsWidget->setFocusProxy(firstTabbableOptionChild);
+      }
+    else
+      {
+      newOptionsWidget->setFocusPolicy(Qt::NoFocus);
+      }
+
+    this->changeCurrentOptionsWidget(newOptionsWidget);
+
+    this->formatToOptionsWidget.insert(this->formatText(), newOptionsWidget);
+    }
+
+  return true; //success
+}
+
+//-----------------------------------------------------------------------------
+void NodeTypeWidgetSet::changeCurrentOptionsWidget(qSlicerFileWriterOptionsWidget* newOptionsWidget)
+{
+  this->optionsWidget = newOptionsWidget;
+
+  // Null indicates there is no options widget, so we will not show one.
+  if (!newOptionsWidget)
+    {
+    this->makeOptionsStackedWidgetBlank();
+    this->optionsStackedWidget->setFocusPolicy(Qt::NoFocus);
+    }
+  else
+    {
+    int index = this->optionsStackedWidget->indexOf(newOptionsWidget);
+
+    if (index == -1)
+      { // There's a possibility of memory issues if we run into this error, because newOptionsWidget may never have been given a parent
+      qCritical() << Q_FUNC_INFO << "has detected an error: options widget is not part of its associated stacked widget.";
+
+      // Go to the "no options widget" state
+      this->optionsWidget = nullptr;
+      this->makeOptionsStackedWidgetBlank();
+      }
+    else
+      {
+      this->optionsStackedWidget->setCurrentIndex(index);
+      this->optionsStackedWidget->setFocusPolicy(Qt::TabFocus);
+      this->optionsStackedWidget->setFocusProxy(newOptionsWidget);
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+QString NodeTypeWidgetSet::getTypeDisplayName() const
+{
+  return this->prototypeNode->GetTypeDisplayName();
+}
+
+//-----------------------------------------------------------------------------
+QString NodeTypeWidgetSet::extension() const
+{
+  return this->exportFormatComboBox->itemData(this->exportFormatComboBox->currentIndex()).toString();
+}
+
+
+QString NodeTypeWidgetSet::formatText() const
+{
+  return this->exportFormatComboBox->currentText();
+}
+//-----------------------------------------------------------------------------
+void NodeTypeWidgetSet::formatChangedSlot()
+{
+  this->exportFormatComboBox->setEditable(false); // In case we had set the format dropdown as editable to set our custom text, it's now not needed.
   this->updateOptionsWidget();
+}
 
-  // Set keyboard focus to the filename textbox
-  this->FilenameLineEdit->setFocus(Qt::ActiveWindowFocusReason);
+//-----------------------------------------------------------------------------
+void NodeTypeWidgetSet::setMemberWidgetVisibility(bool visible)
+{
+  if (!this->exportFormatComboBox || !this->optionsStackedWidget || !this->exportFormatLabel || !this->optionsLabel)
+    {
+    qCritical() << Q_FUNC_INFO << "failed: Member widgets are invalid!";
+    return;
+    }
+  this->exportFormatComboBox->setVisible(visible);
+  this->exportFormatLabel->setVisible(visible);
+  this->optionsLabel->setVisible(visible);
+  this->optionsStackedWidget->setVisible(visible);
+}
 
-  // Set coordinate system option visibility and initial state
-  vtkMRMLTransformableNode* nodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(this->MRMLNode);
-  if (nodeAsTransformable && nodeAsTransformable->GetParentTransformNode())
+//-----------------------------------------------------------------------------
+void NodeTypeWidgetSet::insertWidgetsAtRow(int row, QFormLayout* formLayout)
+{
+  formLayout->insertRow(row, this->exportFormatLabel, this->exportFormatComboBox);
+  formLayout->insertRow(row+1, this->optionsLabel, this->optionsStackedWidget);
+  this->setMemberWidgetVisibility(true);
+}
+
+//-----------------------------------------------------------------------------
+void NodeTypeWidgetSet::notifyRemovedFromDialog()
+{
+  this->setMemberWidgetVisibility(false);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWidget)
+  : QDialog(parentWidget),
+    lastUsedHardenTransform{false},
+    lastUsedRecursiveChildren{true},
+    lastUsedIncludeChildren{true},
+    protectFilenameLineEdit{false}
+{
+  this->setupUi(this);
+
+  connect(this->FilenameLineEdit, SIGNAL(editingFinished()), this, SLOT(onFilenameEditingFinished()));
+  connect(this->RecursiveChildrenCheckBox, &QCheckBox::stateChanged, this, &qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged);
+  connect(this->IncludeChildrenCheckBox, &QCheckBox::stateChanged, this, &qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged);
+
+  // Set up DirectoryPathLineEdit widget to be a directory selector
+  this->DirectoryPathLineEdit->setLabel("Output folder");
+  this->DirectoryPathLineEdit->setFilters(ctkPathLineEdit::Dirs);
+  this->DirectoryPathLineEdit->setMinimumSize(this->DirectoryPathLineEdit->sizeHint());
+  fixCtkPathLineEditTabbing(this->DirectoryPathLineEdit);
+
+  // Find the row of the QFormLayout at which NodeTypeWidgetSet should start getting populated, and delete the placeholder
+  this->formLayout->getWidgetPosition(this->Placeholder, &(this->nodeTypeWidgetSetStartRow), nullptr); // (returns to second parameter)
+  if (this->nodeTypeWidgetSetStartRow >= 0)
+    {
+    this->formLayout->removeRow(this->nodeTypeWidgetSetStartRow);
+    }
+  else
+    {
+    qCritical() << Q_FUNC_INFO << "error: Could not find the expected placeholder widget for building the UI.";
+    }
+
+}
+
+//-----------------------------------------------------------------------------
+qSlicerExportNodeDialogPrivate::~qSlicerExportNodeDialogPrivate() = default;
+
+//-----------------------------------------------------------------------------
+const QList<vtkMRMLStorableNode*> & qSlicerExportNodeDialogPrivate::nodeList() const
+{
+  if (!this->IncludeChildrenCheckBox->isChecked())
+    {
+    return this->nodesSelectedOnly;
+    }
+  else
+    {
+    return this->RecursiveChildrenCheckBox->isChecked() ? this->nodesRecursive : this->nodesNonrecursive;
+    }
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerExportNodeDialogPrivate::setup(
+  vtkMRMLScene* scene,
+  const QList<vtkMRMLStorableNode*> & nodesNonrecursive,
+  const QList<vtkMRMLStorableNode*> & nodesRecursive,
+  vtkMRMLStorableNode* selectedNode /*=nullptr*/
+)
+{
+  this->MRMLScene = scene;
+  this->nodesRecursive = nodesRecursive;
+  this->nodesNonrecursive = nodesNonrecursive;
+  this->nodesSelectedOnly.clear();
+  if (selectedNode)
+    {
+    this->nodesSelectedOnly.push_back(selectedNode);
+    }
+
+  // Initialize children inclusion checkbox visibility and state
+  this->IncludeChildrenCheckBox->blockSignals(true); // don't trigger onNodeInclusionCheckboxStateChanged
+  if (this->nodesSelectedOnly.empty())
+    {
+    // There would be nothing to export if didn't include children, so force checked and hide
+    this->IncludeChildrenCheckBox->setChecked(true);
+    this->IncludeChildrenCheckBox->hide();
+    }
+  else if (this->nodesRecursive.size()==1)
+    {
+    // There are no children so it makes no difference-- force unchecked and hide
+    this->IncludeChildrenCheckBox->setChecked(false);
+    this->IncludeChildrenCheckBox->hide();
+    }
+  else
+    {
+    // There are children to include and it makes a difference whether we include them-- show checkbox
+    this->IncludeChildrenCheckBox->setChecked(this->lastUsedIncludeChildren);
+    this->IncludeChildrenCheckBox->show();
+    }
+  this->IncludeChildrenCheckBox->blockSignals(false);
+
+  // Initialize recursive checkbox visibility and state
+  this->RecursiveChildrenCheckBox->blockSignals(true); // don't trigger onNodeInclusionCheckboxStateChanged
+  if (this->IncludeChildrenCheckBox->isChecked())
+    {
+    this->RecursiveChildrenCheckBox->setChecked(this->lastUsedRecursiveChildren);
+    this->RecursiveChildrenCheckBox->setEnabled(true);
+    }
+  else
+    {
+    this->RecursiveChildrenCheckBox->setChecked(false);
+    this->RecursiveChildrenCheckBox->setEnabled(false);
+    }
+  this->RecursiveChildrenCheckBox->setVisible(setDifferenceIsNonempty(nodesRecursive, nodesNonrecursive));
+  this->RecursiveChildrenCheckBox->blockSignals(false);
+
+  // Initialize coordinate system option visibility and state
+  bool someNodeHasTransform = false;
+  for (vtkMRMLStorableNode* node : this->nodeList())
+    {
+    vtkMRMLTransformableNode* nodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(node);
+    if (nodeAsTransformable && nodeAsTransformable->GetParentTransformNode())
+      {
+      someNodeHasTransform = true;
+      break;
+      }
+    }
+  if (someNodeHasTransform)
     {
     this->HardenTransformCheckBox->show();
     this->HardenTransformCheckBox->setChecked(this->lastUsedHardenTransform);
@@ -222,8 +514,266 @@ bool qSlicerExportNodeDialogPrivate::setup(vtkMRMLScene* scene, vtkMRMLNode* nod
     this->HardenTransformCheckBox->setChecked(false);
     }
 
+  // Intitialize directory input widget
+  this->DirectoryPathLineEdit->setCurrentPath(
+    this->lastUsedDirectory.isEmpty() ? this->MRMLScene->GetRootDirectory() : this->lastUsedDirectory
+  );
+
+  if (this->nodeTypeWidgetSetStartRow < 0)
+    {
+    qCritical() << Q_FUNC_INFO << "failed: No row index available for the expected placeholder widget.";
+    return false;
+    }
+
+  if (!this->populateNodeTypeWidgetSets())
+    {
+    qCritical() << Q_FUNC_INFO << "failed: Unable to populate node-type-specific widgets.";
+    return false;
+    }
 
   return true; // success
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged(int state)
+{
+  Q_UNUSED(state);
+
+  // Enable/disable recursive checkbox based on children inclusion checkbox
+  this->RecursiveChildrenCheckBox->blockSignals(true); // prevent signal recursion
+  if (this->IncludeChildrenCheckBox->isChecked())
+    {
+    this->RecursiveChildrenCheckBox->setEnabled(true);
+    }
+  else
+    {
+    this->RecursiveChildrenCheckBox->setChecked(false);
+    this->RecursiveChildrenCheckBox->setEnabled(false);
+    }
+  this->RecursiveChildrenCheckBox->blockSignals(false);
+
+  // Repopulate widgets based on the now possibly different node types occuring among the nodes slated for export
+  this->populateNodeTypeWidgetSets();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
+{
+  // Clear the form layout of node-type-specific rows before we start filling it with new ones.
+  // We use takeRow, not removeRow, so that widgets are removed from the layout without being deleted.
+  if (this->nodeTypeWidgetSetStartRow + 2*this->nodeTypesInDialog.size() > this->formLayout->rowCount())
+    {
+    qCritical() << Q_FUNC_INFO << "failed: The list that tracks node-type-specific widgets is too long; it cannot be valid.";
+    return false;
+    }
+  for (int i = this->nodeTypesInDialog.size()-1; i >= 0; --i)
+    {
+    NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->nodeTypesInDialog[i], true);
+    if (!nodeTypeWidgetSet)
+      {
+      return false;
+      }
+
+    nodeTypeWidgetSet->notifyRemovedFromDialog();
+
+    // The order of these two lines matters
+    this->formLayout->takeRow(this->nodeTypeWidgetSetStartRow + 2*i + 1);
+    this->formLayout->takeRow(this->nodeTypeWidgetSetStartRow + 2*i);
+    }
+  this->nodeTypesInDialog.clear();
+
+  // Go through the list of nodes to export, and look at each node type that shows up.
+  // For each unique node type, get the associated NodeTypeWidgetSet, or construct one if there isn't one yet.
+  // Mark the NodeTypeWidgetSet for insertion into the form layout by adding its node type to nodeTypesToAddToDialog.
+  QStringList nodeTypesToAddToDialog;
+  for (vtkMRMLStorableNode* node : this->nodeList())
+    {
+    NodeTypeWidgetSet::NodeType nodeType = node->GetClassName();
+    if (nodeTypesToAddToDialog.contains(nodeType))
+      {
+      continue;
+      }
+
+    if (!this->nodeTypeToNodeTypeWidgetSet.contains(nodeType))
+      {
+      try
+        {
+        NodeTypeWidgetSet* nodeTypeWidgetSet = new NodeTypeWidgetSet(this, node, this->MRMLScene);
+        this->nodeTypeToNodeTypeWidgetSet[nodeType] = nodeTypeWidgetSet;
+        connect(nodeTypeWidgetSet->exportFormatComboBox, &QComboBox::currentTextChanged, this, &qSlicerExportNodeDialogPrivate::formatChangedSlot);
+        }
+      catch(std::runtime_error & error)
+        {
+        qCritical() << Q_FUNC_INFO << "failed: Encountered NodeTypeWidgetSet constructor error:" << error.what();
+        return false;
+        }
+      }
+    else
+      {
+      // The old prototype node pointer may have become invalid since the export dialog was last raised, so we must update it here.
+      this->nodeTypeToNodeTypeWidgetSet[nodeType]->prototypeNode = node;
+      }
+
+    nodeTypesToAddToDialog.push_back(nodeType);
+    }
+
+  // Get the list into a standard order. Not doing this can result in some odd-looking behavior when
+  // different calls to populateNodeTypeWidgetSets work with the same set of node types but in different orders.
+  // The node-type-specific widgets in the dialog would shuffle around in the dialog as the user triggers
+  // populateNodeTypeWidgetSets, without any widgets being added or removed.
+  nodeTypesToAddToDialog.sort(Qt::CaseInsensitive);
+
+  // Go through the NodeTypeWidgetSets that have been marked for insertion and insert their member widgets
+  // into the form layout. Update the list nodeTypesInDialog.
+  for (const auto& nodeType : nodeTypesToAddToDialog)
+    {
+    NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(nodeType, true);
+    if (!nodeTypeWidgetSet)
+      {
+      return false;
+      }
+    nodeTypeWidgetSet->insertWidgetsAtRow(this->nodeTypeWidgetSetStartRow + 2*this->nodeTypesInDialog.size(), this->formLayout);
+    this->nodeTypesInDialog.push_back(nodeType);
+    }
+
+  // Set the label text for each nodeTypeWidgetSet. When there are multiple, we include the type display name in the label text.
+  if (this->nodeTypesInDialog.size() == 1)
+    {
+    this->theOnlyNodeTypeWidgetSet()->setLabelText("");
+    }
+  else
+    {
+    for (const auto& nodeType : this->nodeTypesInDialog)
+      {
+      NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(nodeType, true);
+      if (!nodeTypeWidgetSet)
+        {
+        return false;
+        }
+      // Check if a type display name is shared with any other NodeTypeWidgetSet currently in the dialog.
+      // Hopefully not, so we can use type display names in the label text.
+      // If there's a collsion, resort to using node type identifier (i.e. class name) in the label text.
+      bool typeDisplayNameCollison = false;
+      for (const auto& otherNodeType : this->nodeTypesInDialog)
+        {
+        if (nodeType==otherNodeType)
+          {
+          continue;
+          }
+        NodeTypeWidgetSet* otherNodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(otherNodeType, true);
+        if (!otherNodeTypeWidgetSet)
+          {
+          return false;
+          }
+        if (nodeTypeWidgetSet->getTypeDisplayName() == otherNodeTypeWidgetSet->getTypeDisplayName())
+          {
+          typeDisplayNameCollison = true;
+          break;
+          }
+        }
+      if (!typeDisplayNameCollison)
+        {
+        nodeTypeWidgetSet->setLabelText(nodeTypeWidgetSet->getTypeDisplayName());
+        }
+      else
+        {
+        nodeTypeWidgetSet->setLabelText(nodeTypeWidgetSet->nodeType);
+        }
+      }
+    }
+
+  // If there is more than one node to export, we disable the filename text entry box.
+  // If there is exactly one node to export, we allow filename entry and initialize a default filename.
+  if (this->nodeList().size()>1)
+    {
+    this->FilenameLineEdit->setEnabled(false);
+    this->FilenameLineEdit->setToolTip("When exporting multiple nodes, filenames are automatically set");
+
+    this->FilenameLineEdit->setText("<automatic>");
+
+    this->ButtonBox->setFocus(Qt::ActiveWindowFocusReason);
+
+    this->setWindowTitle(QString("Export Multiple Nodes"));
+    }
+  else if (this->nodeList().size()==1)
+    {
+    this->FilenameLineEdit->setEnabled(true);
+    this->FilenameLineEdit->setToolTip("");
+
+    this->FilenameLineEdit->setText(defaultFilename(this->theOnlyNode(), this->theOnlyNodeTypeWidgetSet()->extension()));
+
+    this->FilenameLineEdit->setFocus(Qt::ActiveWindowFocusReason);
+
+    this->setWindowTitle(QString("Export ")+QString(this->theOnlyNode()->GetName()));
+    }
+  else
+    {
+    qCritical() << Q_FUNC_INFO << "failed: There is nothing to export.";
+    return false;
+    }
+
+  // Depending on whether there are multiple node types, make a few aesthetic touchups to the dialog
+  if (this->nodeTypesInDialog.size() > 1)
+    {
+    this->GeneralOptionsLabel->setVisible(!layoutWidgetsAllInvisible(this->GeneralOptionsLayout, this));
+    const int padding = 15; // Padding to put between general widgets and node-type-specific widgets
+    this->verticalSpacer1->changeSize(0,padding);
+    this->verticalSpacer2->changeSize(0,padding);
+    this->formLayout->invalidate();
+    }
+  else if (this->nodeTypesInDialog.size() == 1)
+    {
+    this->GeneralOptionsLabel->hide();
+    this->verticalSpacer1->changeSize(0,0);
+    this->verticalSpacer2->changeSize(0,0);
+    this->formLayout->invalidate();
+    }
+  else
+    { // This should really never happen, because we have already caught the case of no nodes to export.
+    qCritical() << Q_FUNC_INFO << "failed: Somehow, the list of detected node types is empty!";
+    return false;
+    }
+
+  this->adjustTabbingOrder();
+  this->adjustSize();
+
+  return true; // success
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerExportNodeDialogPrivate::adjustTabbingOrder()
+{
+  // For all this to work, it is important that focus policies and focus proxies have been
+  // properly set up for DirectoryPathLineEdit and for each optionsStackedWidget
+
+  setTabOrder(this->FilenameLineEdit, this->DirectoryPathLineEdit);
+
+  for (int i = 0; i < this->nodeTypesInDialog.size(); ++i)
+    {
+    NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->nodeTypesInDialog[i], true);
+    if (!nodeTypeWidgetSet)
+      {
+      qWarning() << Q_FUNC_INFO << "error: could not find widgets while setting tabbing order.";
+      return;
+      }
+    if (i==0)
+      {
+      setTabOrder(this->DirectoryPathLineEdit, nodeTypeWidgetSet->exportFormatComboBox);
+      }
+    else
+      {
+      NodeTypeWidgetSet* previousNodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->nodeTypesInDialog[i-1], true);
+      setTabOrder(previousNodeTypeWidgetSet->optionsStackedWidget, nodeTypeWidgetSet->exportFormatComboBox);
+      }
+    setTabOrder(nodeTypeWidgetSet->exportFormatComboBox, nodeTypeWidgetSet->optionsStackedWidget);
+    if (i == this->nodeTypesInDialog.size()-1)
+      {
+    setTabOrder(nodeTypeWidgetSet->optionsStackedWidget, this->IncludeChildrenCheckBox);
+      }
+    }
+  setTabOrder(this->IncludeChildrenCheckBox,this->RecursiveChildrenCheckBox);
+  setTabOrder(this->RecursiveChildrenCheckBox, this->HardenTransformCheckBox);
+  setTabOrder(this->HardenTransformCheckBox,ButtonBox);
 }
 
 //-----------------------------------------------------------------------------
@@ -231,7 +781,7 @@ void qSlicerExportNodeDialogPrivate::accept()
 {
   this->saveWidgetStates();
 
-  if (!this->exportNode())
+  if (!this->exportNodes())
     {
     return;
     }
@@ -248,109 +798,200 @@ void qSlicerExportNodeDialogPrivate::saveWidgetStates()
     this->lastUsedHardenTransform = this->HardenTransformCheckBox->isChecked();
     }
 
-  // Save export format dropdown data into front of lastUsedFormats,
-  // and pop the back if the list is long
-  this->lastUsedFormats.push_front(this->formatText());
-  if (this->lastUsedFormats.size()>20)
+  if (this->IncludeChildrenCheckBox->isVisible())
     {
-    this->lastUsedFormats.pop_back();
+    this->lastUsedIncludeChildren = this->IncludeChildrenCheckBox->isChecked();
     }
-  // QList is similar to std::deque, prepend and append are fast:
-  // https://doc.qt.io/qt-5/containers.html#algorithmic-complexity
+
+  if (this->RecursiveChildrenCheckBox->isVisible())
+    {
+    this->lastUsedRecursiveChildren = this->RecursiveChildrenCheckBox->isChecked();
+    }
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerExportNodeDialogPrivate::exportNode()
+bool qSlicerExportNodeDialogPrivate::exportNodes()
 {
-  // If the current filename isn't the suggested one, give a prompt that suggests changing it
-  // The user can either proceed without change
-  // or the user can accept the change (in which case we make the change and proceed normally)
-  // or the user can cancel the export (in which case we return false here, so they can return to the export dialog)
-  QString betterFilename = this->recommendedFilename();
-  if (this->FilenameLineEdit->text() != betterFilename)
+  // Validate user-chosen filename in the single node case
+  if (this->nodeList().size()==1 && this->FilenameLineEdit->isEnabled())
     {
-    QMessageBox messageBox(
-      QMessageBox::Warning, // icon
-      tr("Filename not standard"), // title
-      tr("The following filename is recommended:\n")+betterFilename, // message text
-      QMessageBox::NoButton, // buttons; they will be added after
-      this // parent
-    );
-    QAbstractButton* acceptButton = messageBox.addButton("Accept recommended", QMessageBox::YesRole);
-    messageBox.addButton("Keep my filename", QMessageBox::NoRole);
-    QAbstractButton* cancelButton = messageBox.addButton(QMessageBox::Cancel);
-    messageBox.exec();
+    // If the current filename isn't the suggested one, give a prompt that suggests changing it
+    // The user can either proceed without change
+    // or the user can accept the change (in which case we make the change and proceed normally)
+    // or the user can cancel the export (in which case we return false here, so they can return to the export dialog)
+    QString betterFilename = this->recommendedFilename(this->theOnlyNode());
+    if (this->FilenameLineEdit->text() != betterFilename)
+      {
+      QMessageBox messageBox(
+        QMessageBox::Warning, // icon
+        tr("Filename not standard"), // title
+        tr("The following filename is recommended:\n")+betterFilename, // message text
+        QMessageBox::NoButton, // buttons; they will be added after
+        this // parent
+      );
+      QAbstractButton* acceptButton = messageBox.addButton("Accept recommended", QMessageBox::YesRole);
+      messageBox.addButton("Keep my filename", QMessageBox::NoRole);
+      QAbstractButton* cancelButton = messageBox.addButton(QMessageBox::Cancel);
+      messageBox.exec();
 
-    if (messageBox.clickedButton() == acceptButton)
-      {
-      this->FilenameLineEdit->setText(betterFilename);
-      }
-    else if (messageBox.clickedButton() == cancelButton)
-      {
-      return false;
+      if (messageBox.clickedButton() == acceptButton)
+        {
+        this->FilenameLineEdit->setText(betterFilename);
+        }
+      else if (messageBox.clickedButton() == cancelButton)
+        {
+        return false;
+        }
       }
     }
 
-  // file properties
-  QFileInfo file = this->file();
-  QString formatText = this->formatText();
-  qSlicerFileWriterOptionsWidget* options = this->getOptionsWidget();
-
-  if (file.fileName().isEmpty())
+  // Build lists that can be passed to qSlicerCoreIOManager::exportNodes
+  QList<QString> filePaths;
+  QList<QString> formatTexts;
+  QList<qSlicerIO::IOProperties> savingParameterMaps;
+  bool replaceYesToAll = false;
+  bool replaceNoToAll = false;
+  for (vtkMRMLStorableNode* node : this->nodeList())
     {
-    QMessageBox::critical(this, tr("Export error"),
-        tr("Failed to export node %1; filename is empty.")
-          .arg(this->MRMLNode->GetName())
-    );
+    // Get NodeTypeWidgetSet associated to node
+    NodeTypeWidgetSet::NodeType nodeType = node->GetClassName();
+    NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(nodeType);
+    if (!nodeTypeWidgetSet)
+      {
+      qCritical() << Q_FUNC_INFO << "error: Map of NodeTypeWidgetSet was not properly populated. Skipping" << node->GetName();
+      continue;
+      }
+    if (!this->nodeTypesInDialog.contains(nodeType))
+      { // (validation step-- we don't want wrongly invisible widgets to influence the export outcome)
+      qCritical() << Q_FUNC_INFO << "error: Failed to add NodeTypeWidgetSet for" << nodeTypeWidgetSet->nodeType << "into dialog. Skipping" << node->GetName();
+      }
+
+    // Construct file path for node
+    QDir directory = this->DirectoryPathLineEdit->currentPath();
+    QString filename;
+    if (this->FilenameLineEdit->isEnabled())
+      {
+      if (this->nodeList().size()==1)
+        {
+        filename = this->FilenameLineEdit->text();
+        }
+      else
+        {
+        // This should never happen, but if it does we ignore what was in the filename textbox
+        qCritical() << Q_FUNC_INFO << "error: The filename text box should not have been editable when multiple nodes are being exported.";
+        filename = defaultFilename(node, nodeTypeWidgetSet->extension());
+        }
+      }
+    else
+      {
+      filename = defaultFilename(node, nodeTypeWidgetSet->extension());
+      }
+    QFileInfo fileInfo(directory, filename);
+
+    // This can happen if there is one node to export and the user insists on leaving the filename box empty (user error)
+    // It can also happen if defaultFilename for some reason reutrns empty (program error)
+    if (fileInfo.fileName().isEmpty())
+      {
+      if (this->FilenameLineEdit->isEnabled()) // user error
+        {
+        QMessageBox::critical(this, tr("Export Error"), tr("Failed to export node %1; filename is empty.").arg(node->GetName()));
+        return false;
+        }
+      else // program error
+        {
+        qCritical() << Q_FUNC_INFO << "error: Failed to generate a filename for" << node->GetName();
+        continue;
+        }
+      }
+
+    // If file already exists, ask whether to replace.
+    if (fileInfo.exists() && !replaceYesToAll)
+      {
+      if (replaceNoToAll)
+        {
+        continue;
+        }
+      QMessageBox::StandardButtons replaceQuestionButtons;
+      QMessageBox::StandardButton answer = QMessageBox::question(this, tr("File Exists"),
+        tr("The file %1 already exists. Do you want to replace it?").arg(fileInfo.absoluteFilePath()),
+        this->nodeList().size()>1
+          ? QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel
+          : QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+        QMessageBox::Yes
+      );
+      if (answer == QMessageBox::Cancel)
+        {
+        return false;
+        }
+      else if (answer == QMessageBox::No)
+        {
+        continue;
+        }
+      else if (answer == QMessageBox::YesToAll)
+        {
+        replaceYesToAll = true;
+        }
+      else if (answer == QMessageBox::NoToAll)
+        {
+        replaceNoToAll = true;
+        continue;
+        }
+      }
+
+      // Get additional saving parameters from options widget
+      qSlicerFileWriterOptionsWidget* options = nodeTypeWidgetSet->optionsWidget;
+      qSlicerIO::IOProperties savingParameters;
+      if (options)
+        {
+        savingParameters = options->properties();
+        if (!options->isVisibleTo(this))
+          {
+          qCritical() << Q_FUNC_INFO << "error: attempted to use options from an invisible widget.";
+          return false;
+          }
+        }
+
+      // Fill saving parameters with the gathered information
+      savingParameters["nodeID"] = node->GetID();
+      savingParameters["fileName"] = fileInfo.absoluteFilePath();
+      savingParameters["fileFormat"] = nodeTypeWidgetSet->formatText();
+
+      // sadly, this copies; if we move to Qt6 then this should be emplace_back with a move
+      savingParameterMaps.push_back(savingParameters);
+    }
+
+  if (savingParameterMaps.isEmpty())
+    {
+    QMessageBox::information(this, tr("Export Information"), tr("Nothing was exported."));
     return false;
     }
 
-  if (file.exists())
-    {
-    QMessageBox::StandardButton answer = QMessageBox::question(this, tr("Exporting node..."),
-      tr("The file %1 already exists. Do you want to replace it?").arg(file.absoluteFilePath()),
-      QMessageBox::Yes | QMessageBox::No,
-      QMessageBox::Yes
-    );
-    if (answer != QMessageBox::Yes)
-      {
-      return false;
-      }
-    }
-
-  // export the node
   qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-
-  QList<QString> nodesToExport;
-  nodesToExport.push_back(QString(this->MRMLNode->GetID()));
-
-  QList<QString> filePaths;
-  filePaths.push_back(file.absoluteFilePath());
-
-  qSlicerIO::IOProperties savingParameters;
-  if (options)
+  if (!coreIOManager)
     {
-    savingParameters = options->properties();
+    qCritical() << Q_FUNC_INFO << "failed: Core IO manager not found.";
+    return false;
     }
-  savingParameters["fileFormat"] = formatText;
-  savingParameters["hardenTransforms"] = this->HardenTransformCheckBox->isChecked();
 
   vtkNew<vtkMRMLMessageCollection> userMessages;
 
+  // Actual exporting is here
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  bool success = coreIOManager->exportNodes(nodesToExport, filePaths, savingParameters, userMessages);
+  bool success = coreIOManager->exportNodes(savingParameterMaps, this->HardenTransformCheckBox->isChecked(), userMessages);
   QApplication::restoreOverrideCursor();
 
   if (!success)
     {
-    // Make sure an error message is added if saving returns with error
-    userMessages->AddMessage(vtkCommand::ErrorEvent,
-      (tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
+    // Make sure at least one error message is in userMessages if saving returns with error
+    if (userMessages->GetNumberOfMessages() == 0)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent, tr("Error encountered while exporting.").toStdString());
+      }
 
     QString messagesStr = QString::fromStdString(userMessages->GetAllMessagesAsString());
 
     // display messagesStr as an error message
-    QMessageBox::critical(this, tr("Export error"), messagesStr);
+    QMessageBox::critical(this, tr("Export Error"), messagesStr);
     }
   // In case there are any errors or warnings in storage node, make sure to alert even in case of success:
   else if (userMessages->GetNumberOfMessages() > 0)
@@ -361,18 +1002,18 @@ bool qSlicerExportNodeDialogPrivate::exportNode()
 
     if (errorFound)
       {
-      QMessageBox::critical(this, tr("Export error"), messagesStr);
+      QMessageBox::critical(this, tr("Export Error"), messagesStr);
       // If there was an error, this should never have been considered a success.
       success = false;
       qWarning() << Q_FUNC_INFO << " warning: node write returned success, while there were error messages during write.";
       }
     else if (warningFound)
       {
-      QMessageBox::warning(this, tr("Export warning"), messagesStr);
+      QMessageBox::warning(this, tr("Export Warning"), messagesStr);
       }
     else
       {
-      QMessageBox::information(this, tr("Export information"), messagesStr);
+      QMessageBox::information(this, tr("Export Information"), messagesStr);
       }
     }
 
@@ -380,192 +1021,106 @@ bool qSlicerExportNodeDialogPrivate::exportNode()
 }
 
 //-----------------------------------------------------------------------------
-QFileInfo qSlicerExportNodeDialogPrivate::file() const
-{
-  QDir directory = this->DirectoryPathLineEdit->currentPath();
-  QString filename = this->FilenameLineEdit->text();
-  return QFileInfo(directory, filename);
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerExportNodeDialogPrivate::formatText() const
-{
-  return this->ExportFormatComboBox->currentText();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerExportNodeDialogPrivate::extension() const
-{
-  return this->ExportFormatComboBox->itemData(
-    this->ExportFormatComboBox->currentIndex()
-  ).toString();
-}
-
-//-----------------------------------------------------------------------------
-qSlicerFileWriterOptionsWidget* qSlicerExportNodeDialogPrivate::getOptionsWidget() const
-{
-  if (this->OptionsContainer->findChildren<QWidget*>(QString(),Qt::FindDirectChildrenOnly).size() > 1)
-    {
-    qCritical() << Q_FUNC_INFO << " failed: OptionsContainer should always have at most one child.";
-    return nullptr;
-    }
-
-  QWidget* optionsContainerChild = this->OptionsContainer->findChild<QWidget*>(QString(), Qt::FindDirectChildrenOnly);
-  if (!optionsContainerChild)
-    {
-    return nullptr;
-    }
-
-  qSlicerFileWriterOptionsWidget* options = dynamic_cast<qSlicerFileWriterOptionsWidget*>(optionsContainerChild);
-  if (!options)
-    {
-    qCritical() << Q_FUNC_INFO << " failed: child of OptionsContainer should always be a qSlicerFileWriterOptionsWidget";
-    }
-
-  return options;
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerExportNodeDialogPrivate::formatChangedSlot()
 {
-  this->formatChanged(true);
+  if (this->nodeList().size()==1 && !this->protectFilenameLineEdit)
+    {
+    this->FilenameLineEdit->setText(this->recommendedFilename(this->theOnlyNode()));
+    }
+  this->adjustTabbingOrder(); // Tabbing order may need to be updated if options widgets have changed.
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerExportNodeDialogPrivate::formatChanged(bool updateFilename)
+QString qSlicerExportNodeDialogPrivate::recommendedFilename(vtkMRMLStorableNode* node) const
 {
-  // In case the combobox was editable (hack to display custom text), we now
-  // don't need this property anymore.
-  this->ExportFormatComboBox->setEditable(false);
-
-  if (updateFilename)
+  if (!this->FilenameLineEdit->isEnabled())
     {
-    this->FilenameLineEdit->setText(this->recommendedFilename());
+    qWarning() << Q_FUNC_INFO << "should not be used when the filename text box is disabled.";
+    return QString();
     }
 
-  this->updateOptionsWidget();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerExportNodeDialogPrivate::recommendedFilename() const
-{
   // Get the extension associated with the currently selected format
   QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-    this->formatText().toUtf8()));
+    this->theOnlyNodeTypeWidgetSet()->formatText().toUtf8()));
   if (extension == "*")
     {
     extension = QString();
     }
 
-  return forceFileNameExtension(this->FilenameLineEdit->text(), extension, this->MRMLNode);
+  return forceFileNameExtension(this->FilenameLineEdit->text(), extension, node);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerExportNodeDialogPrivate::updateOptionsWidget()
+vtkMRMLStorableNode* qSlicerExportNodeDialogPrivate::theOnlyNode() const
 {
-  // If there is already an options widget corresponding to the format currently being used,
-  // then just use that. Otherwise we go ahead and create a new options widget.
-  auto iterator = this->formatToOptionsWidget.find(this->formatText());
-  if (iterator != this->formatToOptionsWidget.end())
+  if (this->nodeList().size()!=1)
     {
-    this->setOptionsWidget(*iterator);
-    return;
+    qCritical() << Q_FUNC_INFO << "failed: Expected there to be exactly one node to be exported.";
+    return nullptr;
     }
-
-
-  // Create new options widget for the present node type
-  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-  qSlicerIOOptions* options = coreIOManager->fileWriterOptions(this->MRMLNode, this->formatText());
-
-  // We can only use options that are also widgets. If the following cast succeeds, we pass ownership
-  // of the options widget to the export dialog, and if it fails we immediatly delete and give up.
-  qSlicerFileWriterOptionsWidget* optionsWidget = dynamic_cast<qSlicerFileWriterOptionsWidget*>(options);
-  if (!optionsWidget)
-    {
-    delete options;
-    return;
-    }
-
-  // The optionsWidget can use the filename to initialize some options.
-  optionsWidget->setFileName(this->file().absoluteFilePath());
-  optionsWidget->setObject(this->MRMLNode);
-
-  this->setOptionsWidget(optionsWidget); // pass ownership of optionsWidget to the qSlicerExportNodeDialog widget
-
-  this->formatToOptionsWidget.insert(this->formatText(),optionsWidget);
+  return this->nodeList()[0];
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerExportNodeDialogPrivate::setOptionsWidget(qSlicerFileWriterOptionsWidget* optionsWidget)
+NodeTypeWidgetSet* qSlicerExportNodeDialogPrivate::getNodeTypeWidgetSetSafe(NodeTypeWidgetSet::NodeType nodeType, bool logError) const
 {
-  if (!optionsWidget)
+  if (logError && !this->nodeTypeToNodeTypeWidgetSet.contains(nodeType))
     {
-    qCritical() << Q_FUNC_INFO << " failed: optionsWidget is null";
-    return;
+    qCritical() << Q_FUNC_INFO << "failed: Map of node-type-specific widgets is missing the node type" << nodeType;
     }
+  return this->nodeTypeToNodeTypeWidgetSet.value(nodeType, nullptr);
+}
 
-  // If there's already a widget in the container, set it aside
-  QWidget* optionsContainerChild = this->OptionsContainer->findChild<QWidget*>(QString(), Qt::FindDirectChildrenOnly);
-  if (optionsContainerChild)
+//-----------------------------------------------------------------------------
+NodeTypeWidgetSet* qSlicerExportNodeDialogPrivate::theOnlyNodeTypeWidgetSet() const
+{
+  if (this->nodeTypesInDialog.size()!=1)
     {
-    // This "stows away" the options widget. It still has its memory managed by Qt.
-    optionsContainerChild->hide();
-    optionsContainerChild->setParent(this);
+    qCritical() << Q_FUNC_INFO << "failed: Expected exactly one node type.";
+    return nullptr;
     }
+  return this->getNodeTypeWidgetSetSafe(this->nodeTypesInDialog[0], true);
+}
 
-  // Container should be empty now; it should never contain more than one widget
-  if ( ! this->OptionsContainer->findChildren<QWidget*>().isEmpty())
+//-----------------------------------------------------------------------------
+QComboBox* qSlicerExportNodeDialogPrivate::theOnlyExportFormatComboBox() const
+{
+  if (this->nodeTypesInDialog.size()!=1)
     {
-    qWarning() << Q_FUNC_INFO << " assumption failing: OptionsContainer should now have no children.";
+    qCritical() << Q_FUNC_INFO << "failed: Expected exactly one node type.";
+    return nullptr;
     }
-
-  // Now ready to inject the new optionsWidget into the container
-  optionsWidget->setParent(this->OptionsContainer); // passes ownership of optionsWidget
-  optionsWidget->show(); // setting parent made it invisible
-
-  // Make it so that tabbing into OptionsContainer sets focus to the first item in optionsWidget
-  this->OptionsContainer->setFocusProxy(optionsWidget);
-  QWidget* firstTabbableOptionChild = optionsWidget->nextInFocusChain();
-  if (firstTabbableOptionChild) // unclear whether this can be null; check just in case
-    {
-    this->OptionsContainer->setFocusPolicy(Qt::TabFocus);
-    optionsWidget->setFocusProxy(firstTabbableOptionChild);
-    }
-  else
-    {
-    this->OptionsContainer->setFocusPolicy(Qt::NoFocus);
-    }
-
-  // Sometimes optionsWidget isn't wide enough to show the full label for each option:
-  optionsWidget->setMinimumSize(optionsWidget->sizeHint());
-  OptionsContainer->setMinimumSize(optionsWidget->sizeHint());
+  return this->theOnlyNodeTypeWidgetSet()->exportFormatComboBox;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerExportNodeDialogPrivate::onFilenameEditingFinished()
 {
-  // When the filename in the text box is changed, we check whether it matches a supported
-  // file extension. If so, we update the file format selector.
-  // If not, then the current file extension will be added
-  // (this way when the user just enters extensionless filename,
-  // the extension is added automatically).
+  // This slot should only be activated when there is one node to export, because otherwise the filename entry box should be disabled
+  if (this->nodeList().size()!=1 || this->nodeTypesInDialog.size()!=1)
+    {
+    qCritical() << Q_FUNC_INFO << "detected an error: This should not be called when there are multiple nodes to export.";
+    return;
+    }
+
+  // When the filename in the text box is changed, we check whether it matches a supported file extension.
+  // If so, we update the file format selector. If not, then the current file extension will be added
+  // (this way when the user just enters extensionless filename, the extension is added automatically).
   QString strippedFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(this->FilenameLineEdit->text());
 
   // Determine current file extension
   // (switch to lowercase because the data in the ExportFormatComboBox entries are all lowercase)
   qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-  QString currentExtensionLower = coreIOManager->extractKnownExtension(strippedFileName.toLower(), this->MRMLNode);
+  QString currentExtensionLower = coreIOManager->extractKnownExtension(strippedFileName.toLower(), this->theOnlyNode());
 
   // Update file format selector according to current extension
-  int newFormat = this->ExportFormatComboBox->findData(currentExtensionLower);
+  int newFormat = this->theOnlyExportFormatComboBox()->findData(currentExtensionLower);
   if (newFormat >= 0)
     {
-    // current extension matches a supported format, update the format selector widget accordingly
-    this->ExportFormatComboBox->blockSignals(true);
-    this->ExportFormatComboBox->setCurrentIndex(newFormat);
-    this->formatChanged(false); // We blocked signals so we can manually call formatChanged
-    // with updateFilename set to false. This way the filename that the user just typed is not rudely changed.
-    this->ExportFormatComboBox->blockSignals(false);
+    // Current extension matches a supported format, update the format selector widget accordingly
+    this->protectFilenameLineEdit = true; // Block formatChangedSlot from rudely changing the filename the user just typed in
+    this->theOnlyExportFormatComboBox()->setCurrentIndex(newFormat);
+    this->protectFilenameLineEdit = false;
     }
 }
 
@@ -598,28 +1153,87 @@ qSlicerFileDialog::IOAction qSlicerExportNodeDialog::action()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& readerProperties)
+bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
 {
   Q_D(qSlicerExportNodeDialog);
 
   vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
 
-  QString nodeID;
-  if (readerProperties.contains("nodeID"))
+  // The following case occurs for example when trying to export a folder item that has children,
+  // but none of its descendant items are storable nodes.
+  if (!properties.contains("childIdsNonrecursive") &&
+      !properties.contains("childIdsRecursive") &&
+      !properties.contains("selectedNodeID"))
     {
-    nodeID = readerProperties["nodeID"].toString();
-    }
-
-
-  if (nodeID.isEmpty())
-    {
-    qCritical() << Q_FUNC_INFO << " failed: No nodeID property found.";
+    QMessageBox::critical(d, tr("Export error"), tr("There is nothing to export."));
     return false;
     }
 
-  vtkMRMLNode * node = scene->GetNodeByID(nodeID.toUtf8().constData());
+  QVariantList childIdsNonrecursive, childIdsRecursive;
 
-  if (!d->setup(scene, node))
+  if (properties.contains("childIdsNonrecursive"))
+    {
+    childIdsNonrecursive = properties["childIdsNonrecursive"].toList();
+    }
+  if (properties.contains("childIdsRecursive"))
+    {
+    childIdsRecursive = properties["childIdsRecursive"].toList();
+    }
+
+  // This will remain null if there is no "selectedNodeID", or it will become a pointer to the selected node
+  vtkMRMLStorableNode* selectedNode = nullptr;
+
+  // Construct list of all nodes to be exported, one list for each potential value of the "recursive" checkbox
+  QList<vtkMRMLStorableNode*> nodesNonrecursive, nodesRecursive;
+  if (properties.contains("selectedNodeID"))
+    {
+    QString selectedNodeID = properties["selectedNodeID"].toString();
+    selectedNode = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(selectedNodeID.toUtf8().constData()));
+    if (selectedNode)
+      {
+      nodesNonrecursive.push_back(selectedNode);
+      nodesRecursive.push_back(selectedNode);
+      }
+    else
+      {
+      qCritical() << Q_FUNC_INFO << ": Received node ID " << selectedNodeID << ", but unable to get an associated storable node.";
+      }
+    }
+  for (const QVariant & childID : childIdsNonrecursive)
+    {
+    QString childIDString = childID.toString();
+    vtkMRMLStorableNode* n = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(childIDString.toUtf8().constData()));
+    if (n)
+      {
+      nodesNonrecursive.push_back(n);
+      }
+    else
+      {
+      qCritical() << Q_FUNC_INFO << ": Received node ID " << childIDString << ", but unable to get an associated storable node.";
+      }
+    }
+  for (const QVariant & childID : childIdsRecursive)
+    {
+    QString childIDString = childID.toString();
+    vtkMRMLStorableNode* n = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(childIDString.toUtf8().constData()));
+    if (n)
+      {
+      nodesRecursive.push_back(n);
+      }
+    else
+      {
+      qCritical() << Q_FUNC_INFO << ": Received node ID " << childIDString << ", but unable to get an associated storable node.";
+      }
+    }
+
+  // It is again possible for there to be "nothing to export," if there are errors retreiving storable nodes above.
+  if (nodesNonrecursive.isEmpty() && nodesRecursive.isEmpty())
+    {
+    qCritical() << Q_FUNC_INFO << "failed: There is nothing left to export.";
+    return false;
+    }
+
+  if (!d->setup(scene, nodesNonrecursive, nodesRecursive, selectedNode))
     {
     return false;
     }
