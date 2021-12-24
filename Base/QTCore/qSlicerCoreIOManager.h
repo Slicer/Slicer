@@ -161,27 +161,22 @@ public:
   /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType,
   /// loadNodes(), exportNodes()
   Q_INVOKABLE bool saveNodes(qSlicerIO::IOFileType fileType,
-                             const qSlicerIO::IOProperties& parameters,
-                              vtkMRMLMessageCollection* userMessages=nullptr,
-                              vtkMRMLScene* scene=nullptr);
+    const qSlicerIO::IOProperties& parameters,
+    vtkMRMLMessageCollection* userMessages=nullptr,
+    vtkMRMLScene* scene=nullptr
+  );
 
   /// Export nodes using the registered writers. Return true on success, false otherwise.
-  /// Unlike saveNodes(), this function creates a temporary scene while saving,
-  /// in order to to avoid modifying storage nodes in the current scene.
-  /// Saving parameters like fileFormat should be in \a parameters, just like for saveNodes(),
-  /// except that the nodes to be saved are specified in the list \a nodeIDs
-  /// and that the absolute file paths to save them to are specified in \a filePaths.
-  /// The boolean parameter 'hardenTransforms' may also be included in \a parameters to temporarily apply transform hardening before export.
-  /// Any error messages that would normally be found in a storage node will instead be added to \a userMessages.
-  /// \param nodeIDs A list of IDs of nodes to be exported
-  /// \param filePaths A list of absolute file paths corresponding to \a nodeIDs. These are the export destinations.
-  /// \param parameters A dictionary/map of parameters that will get passed to qSlicerCoreIOManager::saveNodes.
+  /// Unlike saveNodes(), this function creates a temporary scene while saving, in order to to avoid modifying storage nodes in the current scene.
+  /// The list \a parameterMaps should consist of maps that each specify a "nodeID" (ID of a node in the main scene),
+  /// a "fileName" (an absolute file path), a "fileFormat" (e.g. "NRRD (.nrrd)"), and any other options that the associated writer may end up using.
+  /// \param parameterMaps For each node to exported, a map of parameters that will get passed to qSlicerCoreIOManager::saveNodes.
+  /// \param hardenTransforms Whether to temporarily apply transform hardening before export.
   /// \param userMessages If a valid pointer is passed, then error messages may be returned in it.
   /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType, vtkMRMLStorageNode, saveNodes().
   Q_INVOKABLE bool exportNodes(
-    const QList<QString>& nodeIDs,
-    const QList<QString>& filePaths,
-    const qSlicerIO::IOProperties& parameters,
+    const QList<qSlicerIO::IOProperties>& parameterMaps,
+    bool hardenTransforms,
     vtkMRMLMessageCollection* userMessages=nullptr
   );
 

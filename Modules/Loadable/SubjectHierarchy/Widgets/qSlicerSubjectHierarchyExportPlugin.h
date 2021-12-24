@@ -43,16 +43,15 @@ public:
 
 
 public:
-  /// Get item context menu item actions to add to tree view
-  QList<QAction*> itemContextMenuActions()const override;
+  /// Get context menu actions to add to tree view
+  QList<QAction*> itemContextMenuActions() const override;
 
-  /// Show context menu actions valid for  given subject hierarchy node.
-  /// \param node Subject Hierarchy node to show the context menu items for. If nullptr, then shows menu items for the scene
+  /// Show context menu actions valid for given subject hierarchy item
   void showContextMenuActionsForItem(vtkIdType itemID) override;
 
 protected slots:
-  /// Export currently selected subject hierarchy item
-  void exportCurrentItem();
+  /// Export currently selected subject hierarchy item and/or its children
+  void exportItems();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyExportPluginPrivate> d_ptr;

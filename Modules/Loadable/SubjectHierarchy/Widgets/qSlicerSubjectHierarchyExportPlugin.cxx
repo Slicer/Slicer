@@ -78,7 +78,7 @@ void qSlicerSubjectHierarchyExportPluginPrivate::init()
   // Put towards end of the list, where export features typically would go
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ExportItemAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
-  QObject::connect(this->ExportItemAction, SIGNAL(triggered()), q, SLOT(exportCurrentItem()));
+  QObject::connect(this->ExportItemAction, SIGNAL(triggered()), q, SLOT(exportItems()));
 }
 
 //-----------------------------------------------------------------------------
@@ -137,42 +137,72 @@ void qSlicerSubjectHierarchyExportPlugin::showContextMenuActionsForItem(vtkIdTyp
   vtkMRMLNode* node = shNode->GetItemDataNode(itemID);
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
 
-  if (!storableNode)
+  std::vector<vtkIdType> children;
+  shNode->GetItemChildren(itemID, children);
+
+  // Show export action if the selection is a storable node or if it has children
+  if (storableNode || children.size() > 0)
     {
-    return; // only export storable nodes
+    d->ExportItemAction->setVisible(true);
     }
-
-
-  d->ExportItemAction->setVisible(true);
-
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyExportPlugin::exportCurrentItem()
+void qSlicerSubjectHierarchyExportPlugin::exportItems()
 {
-  // Get currently selected node and scene
+  // Get currently selected item in the subject hierarchy
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (!currentItemID)
+  vtkIdType selectedItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (!selectedItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item!";
     return;
     }
 
-  vtkMRMLNode* node = shNode->GetItemDataNode(currentItemID);
-  if (!node)
+  QList<QString> childIdsToExportNonrecursive;
+  QList<QString> childIdsToExportRecursive;
+
+  std::vector<vtkIdType> childrenNonrecursive;
+  std::vector<vtkIdType> childrenRecursive;
+  shNode->GetItemChildren(selectedItemID, childrenNonrecursive, false);
+  shNode->GetItemChildren(selectedItemID, childrenRecursive, true);
+  for (vtkIdType childItemID : childrenNonrecursive)
     {
-    qCritical() << Q_FUNC_INFO << ": No node associated to current subject hierarchy item ID!";
-    return;
+    vtkMRMLStorableNode* childStorableNode = vtkMRMLStorableNode::SafeDownCast(shNode->GetItemDataNode(childItemID));
+    if (childStorableNode)
+      {
+      childIdsToExportNonrecursive.push_back(childStorableNode->GetID());
+      }
+    }
+  for (vtkIdType childItemID : childrenRecursive)
+    {
+    vtkMRMLStorableNode* childStorableNode = vtkMRMLStorableNode::SafeDownCast(shNode->GetItemDataNode(childItemID));
+    if (childStorableNode)
+      {
+      childIdsToExportRecursive.push_back(childStorableNode->GetID());
+      }
     }
 
+  vtkMRMLStorableNode* selectedStorableNode = vtkMRMLStorableNode::SafeDownCast(shNode->GetItemDataNode(selectedItemID));
+
   qSlicerIO::IOProperties properties{};
-  properties["nodeID"] = QString(node->GetID());
+  if (selectedStorableNode)
+    {
+    properties["selectedNodeID"] = QString(selectedStorableNode->GetID());
+    }
+  if (!childIdsToExportNonrecursive.isEmpty())
+    {
+    properties["childIdsNonrecursive"] = QVariant(childIdsToExportNonrecursive);
+    }
+  if (!childIdsToExportRecursive.isEmpty())
+    {
+    properties["childIdsRecursive"] = QVariant(childIdsToExportRecursive);
+    }
 
   qSlicerApplication::application()->ioManager()->openDialog(
     QString("GenericNodeExport"),

@@ -783,25 +783,12 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::exportNodes(
-  const QList<QString>& nodeIDs,
-  const QList<QString>& filePaths,
-  const qSlicerIO::IOProperties& parameters,
+  const QList<qSlicerIO::IOProperties>& parameterMaps,
+  bool hardenTransforms,
   vtkMRMLMessageCollection* userMessages/*=nullptr*/
 )
 {
   Q_D(qSlicerCoreIOManager);
-
-  // Validate parameters
-  if (!parameters.contains("fileFormat"))
-    {
-    qCritical() << Q_FUNC_INFO << " failed: fileFormat must be included as a parameter to exportNodes";
-    return false;
-    }
-  if (nodeIDs.size() != filePaths.size())
-    {
-    qCritical() << Q_FUNC_INFO << " failed: nodeIDs and filePaths must have the same size.";
-    return false;
-    }
 
   // Create a temporary scene to use for exporting only and to be destroyed when done exporting
   vtkNew<vtkMRMLScene> temporaryScene;
@@ -810,21 +797,28 @@ bool qSlicerCoreIOManager::exportNodes(
   d->currentScene()->CopySingletonNodesToScene(temporaryScene);
   temporaryScene->SetDataIOManager(d->currentScene()->GetDataIOManager());
 
-  // Copy parameters map; we will need to set the nodeID parameter to correspond to nodes in the temporary scene
-  qSlicerIO::IOProperties temporarySceneParameters = parameters;
-
   bool success = true;
-  for (int i = 0; i<nodeIDs.size(); ++i)
+  for (const auto& parameters : parameterMaps)
     {
+    // Validate parameters
+    for (const char* requiredKey : {"nodeID", "fileName", "fileFormat"})
+      {
+      if (!parameters.contains(requiredKey) || !parameters[requiredKey].canConvert<QString>())
+        {
+        qCritical() << Q_FUNC_INFO << "failed:" << requiredKey << "must be included as a string parameter.";
+        return false;
+        }
+      }
+    QString nodeID = parameters["nodeID"].toString();
 
     // Copy over each node to be exported
-    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(d->currentScene()->GetNodeByID(nodeIDs[i].toUtf8()));
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(d->currentScene()->GetNodeByID(nodeID.toUtf8()));
     if (!storableNode)
       {
       if (userMessages)
         {
         userMessages->AddMessage(vtkCommand::ErrorEvent,
-          (tr("Unable to find a storable node with ID %1").arg(nodeIDs[i])).toStdString()
+          (tr("Unable to find a storable node with ID %1").arg(nodeID)).toStdString()
         );
         }
       success = false;
@@ -833,11 +827,11 @@ bool qSlicerCoreIOManager::exportNodes(
     vtkMRMLStorableNode* temporaryStorableNode = vtkMRMLStorableNode::SafeDownCast(temporaryScene->AddNewNodeByClass(storableNode->GetClassName()));
     if (!temporaryStorableNode)
       {
-      qCritical() << Q_FUNC_INFO << "Unable to add node to temporary scene";
+      qCritical() << Q_FUNC_INFO << "error: Unable to add node to temporary scene";
       if (userMessages)
         {
         userMessages->AddMessage(vtkCommand::ErrorEvent,
-          (tr("Error encountered while exporting %1").arg(storableNode->GetName())).toStdString()
+          (tr("Error encountered while exporting %1.").arg(storableNode->GetName())).toStdString()
         );
         }
       success = false;
@@ -846,21 +840,14 @@ bool qSlicerCoreIOManager::exportNodes(
     // We will do a shallow copy, unless tranform hardening was requested. Transform hardening
     // can sometimes affect the underlying data of the transformable node, so it's worth doing
     // a deep copy to be certain that the original node is not modified during export.
-    bool hardenTransforms = parameters.contains("hardenTransforms") && parameters["hardenTransforms"].toBool();
     temporaryStorableNode->CopyContent(storableNode, /*deepCopy=*/hardenTransforms);
 
-
-    // Put transforms in the temporaryScene, if transform hardening was requested. Then apply hardening
-    if (hardenTransforms)
+    // If transform hardening was requested and node is transformable, then put transforms in the temporaryScene and apply hardening.
+    vtkMRMLTransformableNode* nodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(storableNode);
+    if (hardenTransforms && nodeAsTransformable)
       {
-
-      vtkMRMLTransformableNode* nodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(storableNode);
       vtkMRMLTransformableNode* temporaryNodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(temporaryStorableNode);
 
-      if (!nodeAsTransformable)
-        {
-        continue;
-        }
       if (!temporaryNodeAsTransformable)
         {
         qCritical() << Q_FUNC_INFO << " failed: Node is tranformable but its copy is not... this should never happen.";
@@ -880,7 +867,7 @@ bool qSlicerCoreIOManager::exportNodes(
           if (userMessages)
             {
             userMessages->AddMessage(vtkCommand::ErrorEvent,
-              (tr("Error encountered while exporting %1").arg(storableNode->GetName())).toStdString()
+              (tr("Error encountered while exporting %1.").arg(storableNode->GetName())).toStdString()
             );
             }
           success = false;
@@ -888,18 +875,30 @@ bool qSlicerCoreIOManager::exportNodes(
           }
         compositeTransformNode->SetAndObserveTransformFromParent(generalTransform);
         temporaryNodeAsTransformable->SetAndObserveTransformNodeID(compositeTransformNode->GetID());
+        temporaryNodeAsTransformable->HardenTransform();
         }
-
-      temporaryNodeAsTransformable->HardenTransform();
       }
 
-
-    // Prepare temporary scene node ID and prepare filename for saving
+    // Copy parameters map; we will need to set the nodeID parameter to correspond to the node in the temporary scene
+    qSlicerIO::IOProperties temporarySceneParameters = parameters;
     temporarySceneParameters["nodeID"] = temporaryStorableNode->GetID();
-    temporarySceneParameters["fileName"] = filePaths[i];
 
     // Deduce "fileType" from "fileFormat" parameter; saveNodes will want both
-    qSlicerIO::IOFileType fileType = this->fileWriterFileType(storableNode, parameters.value("fileFormat").toString());
+    qSlicerIO::IOFileType fileType = this->fileWriterFileType(storableNode, parameters["fileFormat"].toString());
+
+    // Add default storage node into the temporary scene. This is sometimes needed.
+    if (!temporaryStorableNode->AddDefaultStorageNode())
+      {
+      qCritical() << Q_FUNC_INFO << "error: Unable to create default storage in temporary scene";
+      if (userMessages)
+        {
+        userMessages->AddMessage(vtkCommand::ErrorEvent,
+          (tr("Unable to create default storage node for %1 in temporary scene.").arg(storableNode->GetName())).toStdString()
+        );
+        }
+      success = false;
+      continue;
+      }
 
     // Finally, applying saving logic to the the temporary scene
     if ( ! this->saveNodes(fileType, temporarySceneParameters, userMessages, temporaryScene) )
@@ -907,7 +906,7 @@ bool qSlicerCoreIOManager::exportNodes(
       if (userMessages)
         {
         userMessages->AddMessage(vtkCommand::ErrorEvent,
-          (tr("Error encountered while exporting %1").arg(storableNode->GetName())).toStdString()
+          (tr("Error encountered while exporting %1.").arg(storableNode->GetName())).toStdString()
         );
         }
       success = false;
