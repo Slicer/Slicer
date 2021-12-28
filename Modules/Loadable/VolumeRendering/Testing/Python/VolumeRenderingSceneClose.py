@@ -114,8 +114,7 @@ class VolumeRenderingSceneCloseLogic(ScriptedLoadableModuleLogic):
 
     # set up a cropping ROI
     volumeRenderingNode.SetCroppingEnabled(1)
-    annotationROI = slicer.mrmlScene.GetFirstNodeByName('AnnotationROI')
-    annotationROI.SetDisplayVisibility(1)
+    markupsROI = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLMarkupsROINode')
     slicer.util.delayDisplay('Cropping')
 
     # close the scene

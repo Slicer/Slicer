@@ -227,7 +227,13 @@ const char* vtkMRMLVolumeRenderingDisplayNode::GetROINodeID()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationROINode* vtkMRMLVolumeRenderingDisplayNode::GetROINode()
+vtkMRMLDisplayableNode* vtkMRMLVolumeRenderingDisplayNode::GetROINode()
+{
+  return vtkMRMLDisplayableNode::SafeDownCast(this->GetNodeReference(ROINodeReferenceRole));
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLAnnotationROINode* vtkMRMLVolumeRenderingDisplayNode::GetAnnotationROINode()
 {
   return vtkMRMLAnnotationROINode::SafeDownCast(this->GetNodeReference(ROINodeReferenceRole));
 }
@@ -306,7 +312,7 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject *caller,
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
     }
-  vtkMRMLAnnotationROINode* roiNode = this->GetROINode();
+  vtkMRMLAnnotationROINode* roiNode = this->GetAnnotationROINode();
   if (roiNode != nullptr &&
       roiNode == vtkMRMLAnnotationROINode::SafeDownCast(caller) &&
       event == vtkCommand::ModifiedEvent)

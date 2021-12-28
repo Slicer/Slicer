@@ -540,6 +540,29 @@ void vtkMRMLMarkupsROINode::SetROIType(int roiType)
   this->Modified();
 }
 
+;
+vtkVector3d GetCenterWorld();
+
+//----------------------------------------------------------------------------
+vtkVector3d vtkMRMLMarkupsROINode::GetCenter()
+{
+  vtkVector3d center(
+    this->ObjectToNodeMatrix->GetElement(0, 3),
+    this->ObjectToNodeMatrix->GetElement(1, 3),
+    this->ObjectToNodeMatrix->GetElement(2, 3));
+  return center;
+}
+
+//----------------------------------------------------------------------------
+vtkVector3d vtkMRMLMarkupsROINode::GetCenterWorld()
+{
+  vtkVector3d centerWorld(
+    this->ObjectToWorldMatrix->GetElement(0, 3),
+    this->ObjectToWorldMatrix->GetElement(1, 3),
+    this->ObjectToWorldMatrix->GetElement(2, 3));
+  return centerWorld;
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsROINode::GetCenter(double center_Node[3])
 {
@@ -548,9 +571,10 @@ void vtkMRMLMarkupsROINode::GetCenter(double center_Node[3])
     vtkErrorMacro("GetCenter: Invalid origin argument");
     return;
     }
-  center_Node[0] = this->ObjectToNodeMatrix->GetElement(0, 3);
-  center_Node[1] = this->ObjectToNodeMatrix->GetElement(1, 3);
-  center_Node[2] = this->ObjectToNodeMatrix->GetElement(2, 3);
+  vtkVector3d center = this->GetCenter();
+  center_Node[0] = center.GetX();
+  center_Node[1] = center.GetY();
+  center_Node[2] = center.GetZ();
 }
 
 //----------------------------------------------------------------------------
@@ -561,10 +585,10 @@ void vtkMRMLMarkupsROINode::GetCenterWorld(double center_World[3])
     vtkErrorMacro("GetCenterWorld: Invalid origin argument");
     return;
     }
-
-  center_World[0] = this->ObjectToWorldMatrix->GetElement(0, 3);
-  center_World[1] = this->ObjectToWorldMatrix->GetElement(1, 3);
-  center_World[2] = this->ObjectToWorldMatrix->GetElement(2, 3);
+  vtkVector3d center = this->GetCenterWorld();
+  center_World[0] = center.GetX();
+  center_World[1] = center.GetY();
+  center_World[2] = center.GetZ();
 }
 
 //----------------------------------------------------------------------------

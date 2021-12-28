@@ -313,7 +313,7 @@ class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
     volumeNode = sequenceBrowserNode.GetProxyNode(sequenceNode)
 
     # Set cropping region
-    roiNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLAnnotationROINode')
+    roiNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsROINode')
     cropVolumeNode.SetROINodeID(roiNode.GetID())
     cropVolumeNode.SetInputVolumeNodeID(volumeNode.GetID())
     slicer.modules.cropvolume.logic().FitROIToInputVolume(cropVolumeNode)

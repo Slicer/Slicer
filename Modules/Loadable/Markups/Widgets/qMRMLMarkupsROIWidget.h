@@ -31,7 +31,6 @@
 #include <ctkVTKObject.h>
 
 // ------------------------------------------------------------------------------
-class vtkMRMLAnnotationROINode;
 class vtkMRMLNode;
 class vtkMRMLMarkupsROINode;
 class qMRMLMarkupsROIWidgetPrivate;
