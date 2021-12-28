@@ -23,15 +23,16 @@ class vtkMRMLVolumeRenderingDisplayNode;
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
+class vtkMRMLDisplayableNode;
 class vtkMRMLLabelMapVolumeDisplayNode;
 class vtkMRMLNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLScalarVolumeNode;
+class vtkMRMLShaderPropertyNode;
 class vtkMRMLViewNode;
 class vtkMRMLVolumeDisplayNode;
 class vtkMRMLVolumeNode;
 class vtkMRMLVolumePropertyNode;
-class vtkMRMLShaderPropertyNode;
 
 // VTK includes
 class vtkColorTransferFunction;
@@ -229,13 +230,17 @@ public:
     vtkScalarsToColors* lut, vtkVolumeProperty* node);
 
   /// Update DisplayNode from VolumeNode,
-  /// Can pass a VolumePropertyNode and a AnnotationROINode to be the display node.
+  /// Can pass a VolumePropertyNode and an ROI node to be the display node.
   /// If they are nullptr and the display node does not already have any, new ones
   /// will be created then set and observed to the display node.
   void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *displayNode,
                                        vtkMRMLVolumeNode *volumeNode,
                                        vtkMRMLVolumePropertyNode *propNode = nullptr,
-                                       vtkMRMLNode *roiNode = nullptr);
+                                       vtkMRMLNode *roiNode = nullptr,
+                                       bool createROI=true);
+
+  ///  Create cropping ROI node, if does not exist yet
+  vtkMRMLDisplayableNode* CreateROINode(vtkMRMLVolumeRenderingDisplayNode* displayNode);
 
   /// Remove ViewNode from VolumeRenderingDisplayNode for a VolumeNode,
   void RemoveViewFromVolumeDisplayNodes(vtkMRMLVolumeNode *volumeNode,

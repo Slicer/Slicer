@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>456</width>
-    <height>689</height>
+    <height>691</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -120,8 +120,8 @@
        <widget class="qMRMLNodeComboBox" name="ROINodeComboBox">
         <property name="nodeTypes">
          <stringlist>
-          <string>vtkMRMLAnnotationROINode</string>
           <string>vtkMRMLMarkupsROINode</string>
+          <string>vtkMRMLAnnotationROINode</string>
          </stringlist>
         </property>
         <property name="noneEnabled">
@@ -727,14 +727,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>ROINodeComboBox</sender>
+   <sender>VolumeNodeComboBox</sender>
    <signal>currentNodeChanged(bool)</signal>
    <receiver>ROICropCheckBox</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>63</y>
+     <x>268</x>
+     <y>15</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -775,14 +775,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>ROINodeComboBox</sender>
+   <sender>VolumeNodeComboBox</sender>
    <signal>currentNodeChanged(bool)</signal>
    <receiver>ROICropDisplayCheckBox</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>63</y>
+     <x>268</x>
+     <y>15</y>
     </hint>
     <hint type="destinationlabel">
      <x>319</x>

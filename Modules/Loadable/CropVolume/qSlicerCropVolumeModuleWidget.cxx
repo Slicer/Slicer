@@ -230,7 +230,7 @@ void qSlicerCropVolumeModuleWidget::setup()
 
   connect(d->InputROIComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(setInputROI(vtkMRMLNode*)));
-  connect(d->InputROIComboBox->nodeFactory(), SIGNAL(nodeInitialized(vtkMRMLNode*)),
+  connect(d->InputROIComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
           this, SLOT(initializeInputROI(vtkMRMLNode*)));
   connect(d->InputROIComboBox, SIGNAL(nodeAdded(vtkMRMLNode*)),
           this, SLOT(onInputROIAdded(vtkMRMLNode*)));
@@ -315,10 +315,11 @@ void qSlicerCropVolumeModuleWidget::enter()
     vtkMRMLDisplayableNode* foundROINode = nullptr;
     bool foundROINodeVisible = false;
     std::vector<vtkMRMLNode *> roiNodes;
-    scene->GetNodesByClass("vtkMRMLAnnotationROINode", roiNodes);
+
+    scene->GetNodesByClass("vtkMRMLMarkupsROINode", roiNodes);
     for (unsigned int i = 0; i < roiNodes.size(); ++i)
       {
-      vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(roiNodes[i]);
+      vtkMRMLDisplayableNode* roiNode = vtkMRMLDisplayableNode::SafeDownCast(roiNodes[i]);
       if (!roiNode)
         {
         continue;
@@ -330,13 +331,14 @@ void qSlicerCropVolumeModuleWidget::enter()
         break;
         }
       }
+
     if (!foundROINodeVisible)
       {
       roiNodes.clear();
-      scene->GetNodesByClass("vtkMRMLMarkupsROINode", roiNodes);
+      scene->GetNodesByClass("vtkMRMLAnnotationROINode", roiNodes);
       for (unsigned int i = 0; i < roiNodes.size(); ++i)
         {
-        vtkMRMLDisplayableNode* roiNode = vtkMRMLDisplayableNode::SafeDownCast(roiNodes[i]);
+        vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(roiNodes[i]);
         if (!roiNode)
           {
           continue;
@@ -383,21 +385,17 @@ void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCropVolumeModuleWidget::initializeInputROI(vtkMRMLNode *n)
+void qSlicerCropVolumeModuleWidget::initializeInputROI(vtkMRMLNode *roiNode)
 {
   Q_D(const qSlicerCropVolumeModuleWidget);
-  vtkMRMLScene* scene = qobject_cast<qMRMLNodeFactory*>(this->sender())->mrmlScene();
-  vtkMRMLAnnotationROINode* annotationROI = vtkMRMLAnnotationROINode::SafeDownCast(n);
-  if (annotationROI)
+  if (!d->ParametersNode || !d->ParametersNode->GetInputVolumeNode())
     {
-    annotationROI->Initialize(scene);
+    return;
     }
-  if (d->ParametersNode && d->ParametersNode->GetInputVolumeNode())
-    {
-    this->setInputROI(n);
-    this->onROIFit();
-    this->updateWidgetFromMRML();
-    }
+
+  this->setInputROI(roiNode);
+  this->onROIFit();
+  this->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
@@ -512,6 +510,20 @@ void qSlicerCropVolumeModuleWidget::onInputROIAdded(vtkMRMLNode* node)
     // There was no ROI selected and the user just added one
     // use that for cropping.
     d->ParametersNode->SetROINodeID(node->GetID());
+    }
+
+  // Turn off filling and enable interactive resizing. Semi-transparent actors may introduce volume rendering artifacts in certain
+  // configurations and the filling also makes the views a bit more complex.
+  vtkMRMLMarkupsROINode* markupsRoi = vtkMRMLMarkupsROINode::SafeDownCast(node);
+  if (markupsRoi)
+    {
+    markupsRoi->CreateDefaultDisplayNodes();
+    vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsRoi->GetDisplayNode());
+    if (displayNode)
+      {
+      displayNode->SetHandlesInteractive(true);
+      displayNode->SetFillVisibility(false);
+      }
     }
 }
 

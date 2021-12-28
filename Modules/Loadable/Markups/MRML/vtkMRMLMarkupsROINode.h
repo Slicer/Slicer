@@ -104,6 +104,8 @@ public:
   /// Center of the ROI
   void GetCenter(double center[3]);
   void GetCenterWorld(double center[3]);
+  vtkVector3d GetCenter();
+  vtkVector3d GetCenterWorld();
   void SetCenterWorld(const double center[3]);
   void SetCenterWorld(double x, double y, double z);
   void SetCenter(const double center[3]);

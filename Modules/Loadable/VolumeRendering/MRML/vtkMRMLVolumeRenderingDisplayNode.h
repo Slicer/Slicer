@@ -61,7 +61,8 @@ public:
 
   const char* GetROINodeID();
   void SetAndObserveROINodeID(const char *roiNodeID);
-  vtkMRMLAnnotationROINode* GetROINode();
+  vtkMRMLDisplayableNode* GetROINode();
+  vtkMRMLAnnotationROINode* GetAnnotationROINode();
   vtkMRMLMarkupsROINode* GetMarkupsROINode();
 
   vtkMRMLViewNode* GetFirstViewNode();
@@ -119,4 +120,3 @@ protected:
 };
 
 #endif
-
