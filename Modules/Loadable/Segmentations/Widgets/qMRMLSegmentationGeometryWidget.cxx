@@ -82,6 +82,7 @@ qMRMLSegmentationGeometryWidgetPrivate::qMRMLSegmentationGeometryWidgetPrivate(q
   , EditEnabled(false)
 {
   this->Logic = vtkSlicerSegmentationGeometryLogic::New();
+  this->Logic->PadOutputGeometryOff();
 }
 
 //-----------------------------------------------------------------------------

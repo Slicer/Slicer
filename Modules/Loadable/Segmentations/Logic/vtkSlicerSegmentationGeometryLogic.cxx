@@ -52,11 +52,6 @@ vtkStandardNewMacro(vtkSlicerSegmentationGeometryLogic);
 //----------------------------------------------------------------------------
 vtkSlicerSegmentationGeometryLogic::vtkSlicerSegmentationGeometryLogic()
 {
-  this->InputSegmentationNode = nullptr;
-  this->SourceGeometryNode = nullptr;
-  this->OversamplingFactor = 1.0;
-  this->IsotropicSpacing = false;
-
   this->OutputGeometryImageData = vtkOrientedImageData::New();
 }
 
@@ -539,7 +534,8 @@ bool vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode()
       }
 
     // Resample
-    if (!vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(currentLabelmap, geometryImageData, currentLabelmap, false, true))
+    if (!vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(
+      currentLabelmap, geometryImageData, currentLabelmap, false, this->PadOutputGeometry))
       {
       vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode: "
         << "Segment " << this->InputSegmentationNode->GetName() << "/" << currentSegmentID.c_str() << " failed to be resampled");

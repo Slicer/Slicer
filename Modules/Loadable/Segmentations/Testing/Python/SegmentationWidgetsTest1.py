@@ -305,6 +305,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
     self.assertEqual(self.getForegroundVoxelCount(geometryImageData), 5223040)
+    slicer.util.delayDisplay('Model source - OK')
 
     # Transformed model source
     rotationTransform = vtk.vtkTransform()
@@ -325,24 +326,27 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
     self.assertEqual(self.getForegroundVoxelCount(geometryImageData), 5229164)
+    slicer.util.delayDisplay('Transformed model source - OK')
 
     # ROI source
-    roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLAnnotationROINode", 'SourceROI')
-    xyz = [0.0, 0.0, 0.0]
-    center = [0.0, 0.0, 0.0]
-    slicer.vtkMRMLSliceLogic.GetVolumeRASBox(tinyVolumeNode, xyz, center)
-    radius = [x/2.0 for x in xyz]
-    roiNode.SetXYZ(center)
-    roiNode.SetRadiusXYZ(radius)
+    roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode", 'SourceROI')
+    rasDimensions = [0.0, 0.0, 0.0]
+    rasCenter = [0.0, 0.0, 0.0]
+    slicer.vtkMRMLSliceLogic.GetVolumeRASBox(tinyVolumeNode, rasDimensions, rasCenter)
+    print(f"rasDimensions={rasDimensions}, rasCenter={rasCenter}")
+    rasRadius = [x/2.0 for x in rasDimensions]
+    roiNode.SetCenter(rasCenter)
+    roiNode.SetRadiusXYZ(rasRadius)
     geometryWidget.setSourceNode(roiNode)
     geometryWidget.geometryImageData(geometryImageData)
+    print(f"geometryImageData: {geometryImageData}")
     self.assertTrue(self.compareOutputGeometry(geometryImageData,
-        (1,1,1), (0.0, 0.0, 0.0),
+        (1,1,1), (28.344, 27.789, -20.25),
         [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]))
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
-    self.assertEqual(self.getForegroundVoxelCount(geometryImageData), 5224232)
-    slicer.util.delayDisplay('Model and ROI source cases - OK')
+    self.assertEqual(self.getForegroundVoxelCount(geometryImageData), 5223040)
+    slicer.util.delayDisplay('ROI source - OK')
 
     slicer.util.delayDisplay('Segmentation geometry widget test passed')
 
