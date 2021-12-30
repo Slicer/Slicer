@@ -132,6 +132,7 @@
 //-----------------------------------------------------------------------------
 // Helper function
 
+#ifdef Slicer_USE_PYTHONQT
 namespace
 {
 wchar_t* QStringToPythonWCharPointer(QString str)
@@ -142,6 +143,7 @@ wchar_t* QStringToPythonWCharPointer(QString str)
   return res;
   }
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods
