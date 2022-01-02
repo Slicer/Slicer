@@ -220,6 +220,29 @@ model.GetDisplayNode().SetSliceIntersectionThickness(3)
 model.GetDisplayNode().SetColor(1,1,0)
 ```
 
+### Fit markups plane to model
+
+This code snippet fits a plane to points of `InputModel` node and creates a new markups plane node to display it.
+
+```python
+points = arrayFromModelPoints(getNode('InputModel'))
+planeNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsPlaneNode')
+
+# source: http://stackoverflow.com/questions/12299540/plane-fitting-to-4-or-more-xyz-points
+def planeFit(points):
+    import numpy as np
+    from numpy.linalg import svd
+    points = np.reshape(points, (np.shape(points)[0], -1))
+    ctr = points.mean(axis=1)
+    x = points - ctr[:,np.newaxis]
+    M = np.dot(x, x.T)
+    return ctr, svd(M)[0][:,-1]  
+
+center, normal = planeFit(points.T)
+planeNode.SetCenter(center)
+planeNode.SetNormal(normal)
+```
+
 ### Measure angle between two markup planes
 
 Measure angle between two markup plane nodes. Whenever any of the plane nodes are moved, the updated angle is printed on the console.
