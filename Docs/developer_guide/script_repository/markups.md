@@ -222,23 +222,18 @@ model.GetDisplayNode().SetColor(1,1,0)
 
 ### Fit markups plane to model
 
-This code snippet fits a plane to points of `InputModel` node and creates a new markups plane node to display it.
+This code snippet fits a plane a model node named `InputModel` and creates a new markups plane node to display this best fit plane.
 
 ```python
-points = arrayFromModelPoints(getNode('InputModel'))
+inputModel = getNode('InputModel')
+
+# Compute best fit plane
+center = [0.0, 0.0, 0.0]
+normal = [0.0, 0.0, 1.0]
+vtk.vtkPlane.ComputeBestFittingPlane(inputModel.GetPolyData().GetPoints(), center, normal)
+
+# Display best fit plane as a markups plane
 planeNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsPlaneNode')
-
-# source: http://stackoverflow.com/questions/12299540/plane-fitting-to-4-or-more-xyz-points
-def planeFit(points):
-    import numpy as np
-    from numpy.linalg import svd
-    points = np.reshape(points, (np.shape(points)[0], -1))
-    ctr = points.mean(axis=1)
-    x = points - ctr[:,np.newaxis]
-    M = np.dot(x, x.T)
-    return ctr, svd(M)[0][:,-1]  
-
-center, normal = planeFit(points.T)
 planeNode.SetCenter(center)
 planeNode.SetNormal(normal)
 ```
