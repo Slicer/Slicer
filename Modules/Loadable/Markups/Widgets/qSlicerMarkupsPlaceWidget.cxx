@@ -507,9 +507,9 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     }
 
   bool activePlaceNodePlacementValid = false;
-  if (d->SelectionNode)
+  if (currentMarkupsNode)
     {
-    activePlaceNodePlacementValid = d->SelectionNode->GetActivePlaceNodePlacementValid();
+    activePlaceNodePlacementValid = !currentMarkupsNode->GetControlPointPlacementComplete();
     }
   d->PlaceButton->setEnabled(activePlaceNodePlacementValid);
 
