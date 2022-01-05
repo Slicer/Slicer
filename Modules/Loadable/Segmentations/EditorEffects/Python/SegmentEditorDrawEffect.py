@@ -80,13 +80,12 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
       sliceNode = viewWidget.sliceLogic().GetSliceNode()
       pipeline.lastInsertSliceNodeMTime = sliceNode.GetMTime()
       abortEvent = True
-    elif eventId == vtk.vtkCommand.RightButtonReleaseEvent or (eventId==vtk.vtkCommand.LeftButtonDoubleClickEvent and not anyModifierKeyPressed):
-      if pipeline.actionState == "finishing":
-        abortEvent = (pipeline.rasPoints.GetNumberOfPoints() > 1)
-        sliceNode = viewWidget.sliceLogic().GetSliceNode()
-        if abs(pipeline.lastInsertSliceNodeMTime - sliceNode.GetMTime()) < 2:
-          pipeline.apply()
-          pipeline.actionState = ""
+    elif (eventId == vtk.vtkCommand.RightButtonReleaseEvent and pipeline.actionState == "finishing") or (eventId==vtk.vtkCommand.LeftButtonDoubleClickEvent and not anyModifierKeyPressed):
+      abortEvent = (pipeline.rasPoints.GetNumberOfPoints() > 1)
+      sliceNode = viewWidget.sliceLogic().GetSliceNode()
+      if abs(pipeline.lastInsertSliceNodeMTime - sliceNode.GetMTime()) < 2:
+        pipeline.apply()
+        pipeline.actionState = ""
     elif eventId == vtk.vtkCommand.MouseMoveEvent:
       if pipeline.actionState == "drawing":
         xy = callerInteractor.GetEventPosition()
