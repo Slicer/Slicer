@@ -1181,7 +1181,8 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   if (segmentation->GetNumberOfSegments() > 0)
     {
     std::string commonGeometryString = segmentation->DetermineCommonLabelmapGeometry(
-      this->CropToMinimumExtent ? vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS : vtkSegmentation::EXTENT_REFERENCE_GEOMETRY);
+      this->CropToMinimumExtent ?
+        vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS : vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY);
     vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, commonGeometryImage, true, scalarType, 1);
     commonGeometryImage->GetExtent(commonGeometryExtent);
     }
