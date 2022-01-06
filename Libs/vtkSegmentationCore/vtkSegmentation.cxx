@@ -1997,7 +1997,7 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
 
     // We were supposed to use the extent from the reference geometry string, however it did  not exist.
     // Instead, calculate extent from effective extent of segments.
-    if (extentComputationMode == EXTENT_REFERENCE_GEOMETRY)
+    if (extentComputationMode == EXTENT_REFERENCE_GEOMETRY || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
       {
       extentComputationMode = EXTENT_UNION_OF_EFFECTIVE_SEGMENTS;
       }
@@ -2007,13 +2007,25 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
   vtkSegmentationConverter::DeserializeImageGeometry(referenceGeometryString, commonGeometryImage, false);
 
   if (extentComputationMode == EXTENT_UNION_OF_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS
-    || extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED)
+    || extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED
+    || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
     {
     // Determine extent that contains all segments
     int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
     this->DetermineCommonLabelmapExtent(commonGeometryExtent, commonGeometryImage, sharedSegmentIDs,
       extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED,
       extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED);
+    if (extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
+      {
+      // Expand the common geometry extent to include the reference image geometry.
+      int referenceGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
+      commonGeometryImage->GetExtent(referenceGeometryExtent);
+      for (int i = 0; i < 3; ++i)
+        {
+        commonGeometryExtent[2*i]   = std::min(commonGeometryExtent[2*i],   referenceGeometryExtent[2*i]);
+        commonGeometryExtent[2*i+1] = std::max(commonGeometryExtent[2*i+1], referenceGeometryExtent[2*i+1]);
+        }
+      }
     commonGeometryImage->SetExtent(commonGeometryExtent);
     }
 
