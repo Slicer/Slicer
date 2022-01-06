@@ -60,7 +60,11 @@ public:
   qSlicerFileReader* reader(const QString& fileName)const;
   QList<qSlicerFileReader*> readers(const QString& fileName)const;
 
-  QList<qSlicerFileWriter*> writers(const qSlicerIO::IOFileType &fileType, const qSlicerIO::IOProperties& parameters)const;
+  QList<qSlicerFileWriter*> writers(
+    const qSlicerIO::IOFileType &fileType,
+    const qSlicerIO::IOProperties& parameters,
+    vtkMRMLScene* scene = nullptr
+  ) const;
 
   QSettings*        ExtensionFileType;
   QList<qSlicerFileReader*> Readers;
@@ -121,12 +125,24 @@ QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fi
 
 //-----------------------------------------------------------------------------
 QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(
-    const qSlicerIO::IOFileType& fileType, const qSlicerIO::IOProperties& parameters)const
+  const qSlicerIO::IOFileType& fileType,
+  const qSlicerIO::IOProperties& parameters,
+  vtkMRMLScene* scene /*=nullptr*/
+) const
 {
   QString fileName = parameters.value("fileName").toString();
   QString nodeID = parameters.value("nodeID").toString();
 
-  vtkObject * object = this->currentScene()->GetNodeByID(nodeID.toUtf8());
+  if (!scene)
+    {
+    scene = this->currentScene();
+    }
+
+  vtkObject * object = scene->GetNodeByID(nodeID.toUtf8());
+  if (!object)
+    {
+    qWarning() << Q_FUNC_INFO << "warning: Unable to find node with ID" << nodeID << "in the given scene.";
+    }
   QFileInfo file(fileName);
 
   QList<qSlicerFileWriter*> matchingWriters;
@@ -736,7 +752,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
 
   // HACK - See https://github.com/Slicer/Slicer/issues/3322
   //        Sort writers to ensure generic ones are last.
-  const QList<qSlicerFileWriter*> writers = d->writers(fileType, parameters);
+  const QList<qSlicerFileWriter*> writers = d->writers(fileType, parameters, scene);
   if (writers.isEmpty())
     {
     qWarning() << "No writer found to write file" << parameters.value("fileName")
