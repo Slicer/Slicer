@@ -78,6 +78,8 @@ public slots:
   void setGlyphSizeIsAbsolute(bool absolute);
   void setCurveLineSizeIsAbsolute(bool absolute);
 
+  void setCurveLineVariantThickness(bool val);
+
   void setPropertiesLabelVisibility(bool visible);
   void setPointLabelsVisibility(bool visible);
 
@@ -103,6 +105,7 @@ protected slots:
   void onGlyphSizeSliderWidgetChanged(double value);
   void onCurveLineThicknessSliderWidgetChanged(double percentValue);
   void onCurveLineDiameterSliderWidgetChanged(double value);
+  void onCurveLineMaxThicknessSliderWidgetChanged(double radiusFactor);
   void onTextScaleSliderWidgetChanged(double value);
   void onOpacitySliderWidgetChanged(double value);
   void onSnapModeWidgetChanged();

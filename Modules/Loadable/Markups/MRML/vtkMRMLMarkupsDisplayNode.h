@@ -351,6 +351,14 @@ public:
   static const char* GetCurveLineSizeModeAsString(int mode);
   static int GetCurveLineSizeModeFromString(const char*);
 
+  /// Set variant radius for tube filter.
+  /// Values are given from 'VTK_VARY_RADIUS_' macro
+  vtkSetMacro(VaryRadius, int);
+  vtkGetMacro(VaryRadius, int);
+
+  vtkSetMacro(RadiusFactor, double);
+  vtkGetMacro(RadiusFactor, double);
+
   /// Configure line thickness
   /// Thickness is specified relative to markup point size
   /// (1.0 means line diameter is the same as diameter of point glyphs).
@@ -509,6 +517,9 @@ protected:
   int CurveLineSizeMode;
   double LineThickness;
   double LineDiameter;
+
+  int VaryRadius;
+  double RadiusFactor;
 
   double LineColorFadingStart;
   double LineColorFadingEnd;

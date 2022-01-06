@@ -98,6 +98,10 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
     q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
   QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
+  QObject::connect(this->variantLineThicknessCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(setCurveLineVariantThickness(bool)));
+  QObject::connect(this->curveLineMaxThicknessSliderWidget, SIGNAL(valueChanged(double)),
+    q, SLOT(onCurveLineMaxThicknessSliderWidgetChanged(double)));
   QObject::connect(this->PropertiesLabelVisibilityCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setPropertiesLabelVisibility(bool)));
   QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)),
@@ -509,6 +513,17 @@ void qMRMLMarkupsDisplayNodeWidget::setCurveLineSizeIsAbsolute(bool absolute)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setCurveLineVariantThickness(bool val)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetVaryRadius(val);
+}
+
+//------------------------------------------------------------------------------
 bool qMRMLMarkupsDisplayNodeWidget::curveLineSizeIsAbsolute()const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
@@ -605,6 +620,17 @@ void qMRMLMarkupsDisplayNodeWidget::onCurveLineDiameterSliderWidgetChanged(doubl
     return;
     }
   d->MarkupsDisplayNode->SetLineDiameter(value);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onCurveLineMaxThicknessSliderWidgetChanged(double radiusFactor)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetRadiusFactor(radiusFactor);
 }
 
 //-----------------------------------------------------------------------------
