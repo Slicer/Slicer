@@ -11,8 +11,8 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 message(STATUS "${_msg} - C++${CMAKE_CXX_STANDARD}")
-if(NOT CMAKE_CXX_STANDARD MATCHES "^(14|17)$")
-  message(FATAL_ERROR "CMAKE_CXX_STANDARD must be set to 14 or 17")
+if(NOT CMAKE_CXX_STANDARD MATCHES "^(14|17|20)$")
+  message(FATAL_ERROR "CMAKE_CXX_STANDARD must be set to 14, 17 or 20")
 endif()
 
 #-----------------------------------------------------------------------------
