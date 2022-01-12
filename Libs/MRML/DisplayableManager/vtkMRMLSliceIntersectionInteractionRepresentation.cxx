@@ -83,17 +83,9 @@ enum
   Circles = 1,
   };
 
-enum
-{
-  NeverVisible = 0,
-  NearbyVisible = 0,
-  AlwaysVisible =2
-} ;
-
 // Settings
 static const int VISUALIZATION_MODE = HideIntersection;
 static const int HANDLES_TYPE = Arrows;
-static const int HANDLES_VISIBILITY = NeverVisible;
 static const double OPACITY_RANGE = 1000.0;
 static const double FOV_HANDLES_MARGIN = 0.03; // 3% margin
 static const double HIDE_INTERSECTION_GAP_SIZE = 0.05; // 5.0% of the slice view width
@@ -191,6 +183,9 @@ class SliceIntersectionInteractionDisplayPipeline
       // Handles visibility
       this->RotationHandlesVisible = true;
       this->TranslationHandlesVisible = true;
+
+      // Handle visibility mode
+      this->HandlesVisibilityMode = 0;
 
       // Handle points
       this->RotationHandlePoints = vtkSmartPointer<vtkPolyData>::New();
@@ -718,11 +713,11 @@ class SliceIntersectionInteractionDisplayPipeline
       {
       this->IntersectionLine1Actor->SetVisibility(visibility);
       this->IntersectionLine2Actor->SetVisibility(visibility);
-      if (HANDLES_VISIBILITY == AlwaysVisible)
+      if (this->HandlesVisibilityMode == vtkMRMLSliceDisplayNode::AlwaysVisible)
         {
         visibility = true;
         }
-      else if (HANDLES_VISIBILITY == NeverVisible)
+      else if (this->HandlesVisibilityMode == vtkMRMLSliceDisplayNode::NeverVisible)
         {
         visibility = false;
         }
@@ -849,6 +844,7 @@ class SliceIntersectionInteractionDisplayPipeline
     bool RotationHandle2Visible;
     bool RotationHandlesVisible;
     bool TranslationHandlesVisible;
+    int  HandlesVisibilityMode;
   };
 
 class vtkMRMLSliceIntersectionInteractionRepresentation::vtkInternal
@@ -1059,6 +1055,8 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
       }
     pipeline->TranslationHandlesVisible = displayNode->GetSliceIntersectionTranslationEnabled();
     pipeline->RotationHandlesVisible = displayNode->GetSliceIntersectionRotationEnabled();
+
+    pipeline->HandlesVisibilityMode = displayNode->GetSliceIntersectionInteractiveHandlesVisibilityMode();
 
     pipeline->IntersectionLine1Property->SetLineWidth(displayNode->GetLineWidth() + INTERSECTION_LINE_EXTRA_THICKNESS);
     pipeline->IntersectionLine2Property->SetLineWidth(displayNode->GetLineWidth() + INTERSECTION_LINE_EXTRA_THICKNESS);
@@ -2013,20 +2011,19 @@ double vtkMRMLSliceIntersectionInteractionRepresentation::GetViewScaleFactorAtPo
 //----------------------------------------------------------------------
 void vtkMRMLSliceIntersectionInteractionRepresentation::SetPipelinesHandlesVisibility(bool visible)
 {
-  if (HANDLES_VISIBILITY == AlwaysVisible)
-    {
-    visible = true;
-    }
-  else if (HANDLES_VISIBILITY == NeverVisible)
-    {
-    visible = false;
-    }
-
   // Update handles visibility in all display pipelines
   for (std::deque<SliceIntersectionInteractionDisplayPipeline*>::iterator
     sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
     {
+    if ((*sliceIntersectionIt)->HandlesVisibilityMode == vtkMRMLSliceDisplayNode::AlwaysVisible)
+      {
+      visible = true;
+      }
+    else if ((*sliceIntersectionIt)->HandlesVisibilityMode == vtkMRMLSliceDisplayNode::NeverVisible)
+      {
+      visible = false;
+      }
     (*sliceIntersectionIt)->SetHandlesVisibility(visible);
     }
 }
@@ -2034,17 +2031,17 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SetPipelinesHandlesVisib
 //----------------------------------------------------------------------
 void vtkMRMLSliceIntersectionInteractionRepresentation::SetPipelinesHandlesOpacity(double opacity)
 {
-  // Force visible handles in the "handles always visible" mode is activated
-  if (HANDLES_VISIBILITY == AlwaysVisible)
-    {
-    opacity = 1.0;
-    }
-
   // Update handles visibility in all display pipelines
   for (std::deque<SliceIntersectionInteractionDisplayPipeline*>::iterator
     sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
     {
+    // Force visible handles in the "handles always visible" mode is activated
+    if ((*sliceIntersectionIt)->HandlesVisibilityMode == vtkMRMLSliceDisplayNode::AlwaysVisible)
+      {
+      opacity = 1.0;
+      }
+
     (*sliceIntersectionIt)->SetHandlesOpacity(opacity);
     }
 }

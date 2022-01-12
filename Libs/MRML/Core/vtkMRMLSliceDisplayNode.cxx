@@ -35,6 +35,7 @@ void vtkMRMLSliceDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(SliceIntersectionInteractive);
   vtkMRMLPrintBooleanMacro(SliceIntersectionTranslationEnabled);
   vtkMRMLPrintBooleanMacro(SliceIntersectionRotationEnabled);
+  vtkMRMLPrintIntMacro(SliceIntersectionInteractiveHandlesVisibilityMode);
   {
   os << indent << "ActiveComponents:";
   for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
@@ -65,6 +66,7 @@ void vtkMRMLSliceDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(sliceIntersectionInteractive, SliceIntersectionInteractive);
   vtkMRMLWriteXMLBooleanMacro(sliceIntersectionTranslationEnabled, SliceIntersectionTranslationEnabled);
   vtkMRMLWriteXMLBooleanMacro(sliceIntersectionRotationEnabled, SliceIntersectionRotationEnabled);
+  vtkMRMLWriteXMLIntMacro(sliceIntersectionInteractiveHandlesVisibilityMode, SliceIntersectionInteractiveHandlesVisibilityMode);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -78,6 +80,7 @@ void vtkMRMLSliceDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(sliceIntersectionInteractive, SliceIntersectionInteractive);
   vtkMRMLReadXMLBooleanMacro(sliceIntersectionTranslationEnabled, SliceIntersectionTranslationEnabled);
   vtkMRMLReadXMLBooleanMacro(sliceIntersectionRotationEnabled, SliceIntersectionRotationEnabled);
+  vtkMRMLReadXMLIntMacro(sliceIntersectionInteractiveHandlesVisibilityMode, SliceIntersectionInteractiveHandlesVisibilityMode);
   vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
@@ -99,6 +102,7 @@ void vtkMRMLSliceDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   vtkMRMLCopyBooleanMacro(SliceIntersectionInteractive);
   vtkMRMLCopyBooleanMacro(SliceIntersectionTranslationEnabled);
   vtkMRMLCopyBooleanMacro(SliceIntersectionRotationEnabled);
+  vtkMRMLCopyIntMacro(SliceIntersectionInteractiveHandlesVisibilityMode);
   vtkMRMLCopyEndMacro();
 }
 
@@ -135,6 +139,54 @@ bool vtkMRMLSliceDisplayNode::GetSliceIntersectionInteractiveModeEnabled(
     }
   return false;
 }
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSliceDisplayNode::GetSliceIntersectionInteractiveHandlesVisibilityModeAsString()
+  {
+  return vtkMRMLSliceDisplayNode::GetSliceIntersectionInteractiveHandlesVisibilityModeAsString(this->SliceIntersectionInteractiveHandlesVisibilityMode);
+  }
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceDisplayNode::SetSliceIntersectionInteractiveHandlesVisibilityModeFromString(const char* handlesVisibilityModeString)
+  {
+  this->SetSliceIntersectionInteractiveHandlesVisibilityMode(
+    vtkMRMLSliceDisplayNode::GetSliceIntersectionInteractiveHandlesVisibilityModeFromString(handlesVisibilityModeString));
+  }
+
+//-----------------------------------------------------------
+int vtkMRMLSliceDisplayNode::GetSliceIntersectionInteractiveHandlesVisibilityModeFromString(const char* name)
+  {
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < HandlesVisibilityMode_Last; ii++)
+    {
+    if (strcmp(name, GetSliceIntersectionInteractiveHandlesVisibilityModeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+  }
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLSliceDisplayNode::GetSliceIntersectionInteractiveHandlesVisibilityModeAsString(int id)
+  {
+  switch (id)
+    {
+    case NeverVisible: return "NeverVisible";
+    case NearbyVisible: return "NearbyVisible";
+    case AlwaysVisible: return "AlwaysVisible";
+    case FadingVisible: return "FadingVisible";
+    default:
+      // invalid id
+      return "Invalid";
+    }
+  }
 
 //---------------------------------------------------------------------------
 int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context/*=GetDefaultContextName()*/)

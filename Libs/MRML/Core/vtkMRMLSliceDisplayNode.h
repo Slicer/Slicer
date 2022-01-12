@@ -66,6 +66,25 @@ public:
   void SetSliceIntersectionInteractiveModeEnabled(SliceIntersectionInteractiveMode mode, bool enabled);
   bool GetSliceIntersectionInteractiveModeEnabled(SliceIntersectionInteractiveMode mode);
 
+  // Interaction handles visibility mode
+  enum HandlesVisibilityMode
+    {
+    NeverVisible = 0,
+    NearbyVisible,
+    AlwaysVisible,
+    FadingVisible,
+    HandlesVisibilityMode_Last // insert new types above this line
+    };
+  vtkGetMacro(SliceIntersectionInteractiveHandlesVisibilityMode, int);
+  vtkSetMacro(SliceIntersectionInteractiveHandlesVisibilityMode, int);
+
+  /// Return a string representing the handles visibility mode, set it from a string
+  const char* GetSliceIntersectionInteractiveHandlesVisibilityModeAsString();
+  void SetSliceIntersectionInteractiveHandlesVisibilityModeFromString(const char* handlesVisibilityModeString);
+
+  static const char* GetSliceIntersectionInteractiveHandlesVisibilityModeAsString(int id);
+  static int GetSliceIntersectionInteractiveHandlesVisibilityModeFromString(const char*);
+
   /// Get name of the default interaction context (typically the mouse)
   static const std::string GetDefaultContextName() { return ""; };
 
@@ -121,6 +140,8 @@ protected:
   bool SliceIntersectionInteractive{ false };
   bool SliceIntersectionTranslationEnabled{ true };
   bool SliceIntersectionRotationEnabled{ true };
+
+  int SliceIntersectionInteractiveHandlesVisibilityMode{ NeverVisible };
 
   /// Current active point or widget component type and index (hovered by the mouse or other interaction context)
   /// Map interaction context identifier (empty string for mouse) to component type enum
