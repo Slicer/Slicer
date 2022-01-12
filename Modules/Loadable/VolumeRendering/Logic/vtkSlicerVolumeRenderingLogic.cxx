@@ -1151,6 +1151,8 @@ vtkMRMLDisplayableNode* vtkSlicerVolumeRenderingLogic::CreateROINode(vtkMRMLVolu
     }
   displayNode->SetAndObserveROINodeID(roiNode->GetID());
   this->FitROIToVolume(displayNode);
+
+  return displayNode->GetROINode();
 }
 
 //----------------------------------------------------------------------------
