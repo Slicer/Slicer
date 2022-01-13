@@ -18,6 +18,7 @@
 #include <QHash>
 #include <QList>
 #include <QStackedWidget>
+#include <QVBoxLayout>
 
 // Slicer includes
 #include "qSlicerExportNodeDialog.h"
@@ -42,8 +43,8 @@ public:
   // storableNode is a prototype node used to determine node type and used to help initialize some parameters
   NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* storableNode, vtkMRMLScene* scene);
 
-  // Set text on the QLabel member widgets to show the given node type display name in parentheses
-  // Passing an empty string results in no parenthetical
+  // Set text on the QLabel member widget to show the given node type display name
+  // Passing an empty string results sets appropriate label text that doesn't mention node type
   void setLabelText(QString nodeTypeDisplayName);
 
   // Return extension corresponding to format selected in dropdown, e.g. ".nrrd"
@@ -81,15 +82,21 @@ public:
   // WARNING: This pointer is not always reliable. User of this class is responsible for updating this pointer.
   vtkMRMLStorableNode* prototypeNode;
 
+  // Set different display style and margin for the frame that contains the widgets
+  enum class FrameStyle {NoFrame, Frame};
+  void setFrameStyle(FrameStyle);
+
   // Node type that the member widgets will be configured for.
   NodeType nodeType;
 
   // Member widgets
-  QComboBox* exportFormatComboBox = nullptr;
-  qSlicerFileWriterOptionsWidget* optionsWidget = nullptr;
-  QStackedWidget* optionsStackedWidget;
-  QLabel* exportFormatLabel = nullptr;
-  QLabel* optionsLabel = nullptr;
+  QLabel* label = nullptr; // The label in front of our frame in the form layout
+  QFrame* frame = nullptr; // The widget that will go into the form layout
+  QVBoxLayout* frameLayout = nullptr; // The layout that frame will have
+  QComboBox* exportFormatComboBox = nullptr; // Goes into frameLayout
+  QStackedWidget* optionsStackedWidget; // Goes into frameLayout
+  qSlicerFileWriterOptionsWidget* optionsWidget = nullptr; // The current options widget, if any, that should be on display by optionsStackedWidget
+
 
   // Mapping from formats to options widgets, to keep track of and reuse options widgets as they get created
   QHash<QString,qSlicerFileWriterOptionsWidget*> formatToOptionsWidget;
@@ -193,9 +200,8 @@ protected:
 
   // List of node types (in the sense of NodeTypeWidgetSet::NodeType) that correspond to node-type-specific widget sets
   // that are currently visible in the dialog. The i^th item in this list has widgets that are meant to go into
-  // row numbers (nodeTypeWidgetSetStartRow + 2*i) and (nodeTypeWidgetSetStartRow + 2*i + 1)
-  // of the QFormLayout associated to this dialog. This dialog class manages the insertion and removal of the rows,
-  // and while doing so it keeps the following list up to date.
+  // row number (nodeTypeWidgetSetStartRow + i) of the QFormLayout associated to this dialog. This dialog class manages
+  // the insertion and removal of the rows, and while doing so it keeps the following list up to date.
   QList<NodeTypeWidgetSet::NodeType> nodeTypesInDialog;
 
   // Used to prevent a signal feedback loop coming from the fact that
