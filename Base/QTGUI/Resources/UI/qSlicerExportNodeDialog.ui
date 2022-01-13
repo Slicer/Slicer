@@ -42,16 +42,6 @@
    <property name="rightMargin">
     <number>10</number>
    </property>
-   <item row="6" column="1">
-    <widget class="QDialogButtonBox" name="ButtonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="FilenameLabel">
      <property name="text">
@@ -86,62 +76,21 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <spacer name="verticalSpacer1">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Minimum</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="PlaceholderText">
+   <item row="2" column="0">
+    <widget class="QLabel" name="ExportFormatsLabel">
      <property name="text">
-      <string>This is a dummy label indicating the row of
-this QFormLayout at which additional widgets will be
-inserted from code.</string>
+      <string>Export Formats</string>
      </property>
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="Placeholder">
-     <property name="text">
-      <string>PLACEHOLDER</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <spacer name="verticalSpacer2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Minimum</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="5" column="0">
     <widget class="QLabel" name="GeneralOptionsLabel">
      <property name="text">
-      <string>General options</string>
+      <string>Options</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="3" column="1">
     <widget class="QWidget" name="GeneralOptionsWidget" native="true">
      <property name="focusPolicy">
       <enum>Qt::NoFocus</enum>
@@ -190,6 +139,16 @@ inserted from code.</string>
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QDialogButtonBox" name="ButtonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+     </property>
     </widget>
    </item>
   </layout>

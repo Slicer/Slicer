@@ -121,9 +121,14 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
   : prototypeNode{storableNode}
 {
   this->nodeType = storableNode->GetClassName();
-  this->exportFormatComboBox = new QComboBox(parent);
-  this->optionsStackedWidget = new QStackedWidget(parent);
+  this->frame = new QFrame(parent);
+  this->frameLayout = new QVBoxLayout(this->frame);
+  this->frame->setLayout(this->frameLayout);
+  this->exportFormatComboBox = new QComboBox(this->frame);
+  this->optionsStackedWidget = new QStackedWidget(this->frame);
   this->optionsStackedWidget->addWidget(new QWidget()); // Add a blank widget in the 0 position (see makeOptionsStackedWidgetBlank)
+  this->frameLayout->addWidget(this->exportFormatComboBox);
+  this->frameLayout->addWidget(this->optionsStackedWidget);
 
   // --------------------
   // Fill up the export formats dropdown box with the various choices and initialize a choice
@@ -222,8 +227,7 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
   // Setup the QLabels
   // --------------------
 
-  this->exportFormatLabel = new QLabel("", parent);
-  this->optionsLabel = new QLabel("", parent);
+  this->label = new QLabel("", parent);
   this->setLabelText("");
 }
 
@@ -236,9 +240,16 @@ void NodeTypeWidgetSet::makeOptionsStackedWidgetBlank()
 //-----------------------------------------------------------------------------
 void NodeTypeWidgetSet::setLabelText(QString nodeTypeDisplayName)
 {
-  QString tail = nodeTypeDisplayName.isEmpty() ? "" : QString(" (") + nodeTypeDisplayName + ")";
-  this->exportFormatLabel->setText(QString("Export Format") + tail);
-  this->optionsLabel->setText(QString("Options") + tail);
+  if (nodeTypeDisplayName.isEmpty())
+    {
+    this->label->setText("Export Format");
+    this->label->setIndent(0);
+    }
+  else
+    {
+    this->label->setText(nodeTypeDisplayName);
+    this->label->setIndent(17);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -364,22 +375,19 @@ void NodeTypeWidgetSet::formatChangedSlot()
 //-----------------------------------------------------------------------------
 void NodeTypeWidgetSet::setMemberWidgetVisibility(bool visible)
 {
-  if (!this->exportFormatComboBox || !this->optionsStackedWidget || !this->exportFormatLabel || !this->optionsLabel)
+  if (!this->frame || !this->label)
     {
     qCritical() << Q_FUNC_INFO << "failed: Member widgets are invalid!";
     return;
     }
-  this->exportFormatComboBox->setVisible(visible);
-  this->exportFormatLabel->setVisible(visible);
-  this->optionsLabel->setVisible(visible);
-  this->optionsStackedWidget->setVisible(visible);
+  this->frame->setVisible(visible);
+  this->label->setVisible(visible);
 }
 
 //-----------------------------------------------------------------------------
 void NodeTypeWidgetSet::insertWidgetsAtRow(int row, QFormLayout* formLayout)
 {
-  formLayout->insertRow(row, this->exportFormatLabel, this->exportFormatComboBox);
-  formLayout->insertRow(row+1, this->optionsLabel, this->optionsStackedWidget);
+  formLayout->insertRow(row, this->label, this->frame);
   this->setMemberWidgetVisibility(true);
 }
 
@@ -387,6 +395,21 @@ void NodeTypeWidgetSet::insertWidgetsAtRow(int row, QFormLayout* formLayout)
 void NodeTypeWidgetSet::notifyRemovedFromDialog()
 {
   this->setMemberWidgetVisibility(false);
+}
+
+//-----------------------------------------------------------------------------
+void NodeTypeWidgetSet::setFrameStyle(NodeTypeWidgetSet::FrameStyle frameStyle)
+{
+  if (frameStyle == NodeTypeWidgetSet::FrameStyle::Frame)
+    {
+    this->frame->setFrameShape(QFrame::StyledPanel);
+    this->frameLayout->setContentsMargins(9,9,9,9);
+    }
+  else
+    {
+    this->frame->setFrameShape(QFrame::NoFrame);
+    this->frameLayout->setContentsMargins(0,0,0,0);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -409,11 +432,12 @@ qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWi
   this->DirectoryPathLineEdit->setMinimumSize(this->DirectoryPathLineEdit->sizeHint());
   fixCtkPathLineEditTabbing(this->DirectoryPathLineEdit);
 
-  // Find the row of the QFormLayout at which NodeTypeWidgetSet should start getting populated, and delete the placeholder
-  this->formLayout->getWidgetPosition(this->Placeholder, &(this->nodeTypeWidgetSetStartRow), nullptr); // (returns to second parameter)
-  if (this->nodeTypeWidgetSetStartRow >= 0)
+  // Find the row of the QFormLayout after which NodeTypeWidgetSets should start getting populated
+  int exportFormatsLabelRow;
+  this->formLayout->getWidgetPosition(this->ExportFormatsLabel, &exportFormatsLabelRow, nullptr); // (returns to second parameter)
+  if (exportFormatsLabelRow >= 0)
     {
-    this->formLayout->removeRow(this->nodeTypeWidgetSetStartRow);
+    this->nodeTypeWidgetSetStartRow = exportFormatsLabelRow+1;
     }
   else
     {
@@ -561,7 +585,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
 {
   // Clear the form layout of node-type-specific rows before we start filling it with new ones.
   // We use takeRow, not removeRow, so that widgets are removed from the layout without being deleted.
-  if (this->nodeTypeWidgetSetStartRow + 2*this->nodeTypesInDialog.size() > this->formLayout->rowCount())
+  if (this->nodeTypeWidgetSetStartRow + this->nodeTypesInDialog.size() > this->formLayout->rowCount())
     {
     qCritical() << Q_FUNC_INFO << "failed: The list that tracks node-type-specific widgets is too long; it cannot be valid.";
     return false;
@@ -577,8 +601,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
     nodeTypeWidgetSet->notifyRemovedFromDialog();
 
     // The order of these two lines matters
-    this->formLayout->takeRow(this->nodeTypeWidgetSetStartRow + 2*i + 1);
-    this->formLayout->takeRow(this->nodeTypeWidgetSetStartRow + 2*i);
+    this->formLayout->takeRow(this->nodeTypeWidgetSetStartRow + i);
     }
   this->nodeTypesInDialog.clear();
 
@@ -632,13 +655,14 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
       {
       return false;
       }
-    nodeTypeWidgetSet->insertWidgetsAtRow(this->nodeTypeWidgetSetStartRow + 2*this->nodeTypesInDialog.size(), this->formLayout);
+    nodeTypeWidgetSet->insertWidgetsAtRow(this->nodeTypeWidgetSetStartRow + this->nodeTypesInDialog.size(), this->formLayout);
     this->nodeTypesInDialog.push_back(nodeType);
     }
 
-  // Set the label text for each nodeTypeWidgetSet. When there are multiple, we include the type display name in the label text.
+  // Set the label text and frame style for each nodeTypeWidgetSet. When there are multiple, we include the type display name in the label text.
   if (this->nodeTypesInDialog.size() == 1)
     {
+    this->theOnlyNodeTypeWidgetSet()->setFrameStyle(NodeTypeWidgetSet::FrameStyle::NoFrame);
     this->theOnlyNodeTypeWidgetSet()->setLabelText("");
     }
   else
@@ -650,6 +674,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
         {
         return false;
         }
+      nodeTypeWidgetSet->setFrameStyle(NodeTypeWidgetSet::FrameStyle::Frame);
       // Check if a type display name is shared with any other NodeTypeWidgetSet currently in the dialog.
       // Hopefully not, so we can use type display names in the label text.
       // If there's a collsion, resort to using node type identifier (i.e. class name) in the label text.
@@ -715,17 +740,12 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
   // Depending on whether there are multiple node types, make a few aesthetic touchups to the dialog
   if (this->nodeTypesInDialog.size() > 1)
     {
-    this->GeneralOptionsLabel->setVisible(!layoutWidgetsAllInvisible(this->GeneralOptionsLayout, this));
-    const int padding = 15; // Padding to put between general widgets and node-type-specific widgets
-    this->verticalSpacer1->changeSize(0,padding);
-    this->verticalSpacer2->changeSize(0,padding);
+    this->ExportFormatsLabel->show();
     this->formLayout->invalidate();
     }
   else if (this->nodeTypesInDialog.size() == 1)
     {
-    this->GeneralOptionsLabel->hide();
-    this->verticalSpacer1->changeSize(0,0);
-    this->verticalSpacer2->changeSize(0,0);
+    this->ExportFormatsLabel->hide();
     this->formLayout->invalidate();
     }
   else
@@ -734,6 +754,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
     return false;
     }
 
+  this->GeneralOptionsLabel->setVisible(!layoutWidgetsAllInvisible(this->GeneralOptionsLayout, this));
   this->adjustTabbingOrder();
   this->adjustSize();
 
