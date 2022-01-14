@@ -2675,3 +2675,67 @@ void vtkSlicerSegmentationsModuleLogic::CollapseBinaryLabelmaps(vtkMRMLSegmentat
   segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
   vtkSlicerSegmentationsModuleLogic::ReconvertAllRepresentations(segmentationNode);
 }
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::IsEffectiveExentOutsideReferenceVolume(
+  vtkMRMLVolumeNode* referenceVolumeNode, vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIDs/*=nullptr*/)
+{
+  if (!referenceVolumeNode)
+    {
+    vtkGenericWarningMacro("Invalid reference volume node");
+    return false;
+    }
+
+  if (!segmentationNode)
+    {
+    vtkGenericWarningMacro("Invalid segmentation node");
+    return false;
+    }
+
+  std::string segmentationGeometryString = segmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry(
+    vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, segmentIDs);
+  vtkNew<vtkOrientedImageData> segmentationGeometry;
+  vtkSegmentationConverter::DeserializeImageGeometry(segmentationGeometryString, segmentationGeometry, false/*don't allocate*/);
+
+  vtkNew<vtkMatrix4x4> ijkToRASMatrix;
+  referenceVolumeNode->GetIJKToRASMatrix(ijkToRASMatrix);
+
+  vtkNew<vtkOrientedImageData> referenceGeometry;
+  referenceGeometry->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
+  referenceGeometry->SetGeometryFromImageToWorldMatrix(ijkToRASMatrix);
+
+  if (segmentationNode->GetParentTransformNode() != referenceVolumeNode->GetParentTransformNode())
+    {
+    vtkNew<vtkGeneralTransform> segmentationToReferenceTransform;
+    vtkMRMLTransformNode::GetTransformBetweenNodes(segmentationNode->GetParentTransformNode(),
+      referenceVolumeNode->GetParentTransformNode(), segmentationToReferenceTransform);
+    vtkOrientedImageDataResample::TransformOrientedImage(segmentationGeometry, segmentationToReferenceTransform, true/*geometry only*/);
+    }
+
+  return vtkSlicerSegmentationsModuleLogic::IsSegmentationExentOutsideReferenceGeometry(referenceGeometry, segmentationGeometry);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::IsSegmentationExentOutsideReferenceGeometry(
+  vtkOrientedImageData* referenceGeometry, vtkOrientedImageData* segmentationGeometry)
+{
+  vtkNew<vtkTransform> segmentationGeometryToReferenceGeometryTransform;
+  vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(segmentationGeometry, referenceGeometry, segmentationGeometryToReferenceGeometryTransform);
+
+  int transformedSegmentationExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  vtkOrientedImageDataResample::TransformExtent(segmentationGeometry->GetExtent(),
+    segmentationGeometryToReferenceGeometryTransform, transformedSegmentationExtent);
+
+  int referenceExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  referenceGeometry->GetExtent(referenceExtent);
+
+  for (int i = 0; i < 3; ++i)
+    {
+    if (transformedSegmentationExtent[2 * i] < referenceExtent[2 * i]
+      || transformedSegmentationExtent[2 * i + 1] > referenceExtent[2 * i + 1])
+      {
+      return true;
+      }
+    }
+  return false;
+}

@@ -142,6 +142,37 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
 }
 
 //-----------------------------------------------------------------------------
+void vtkSlicerSegmentationGeometryLogic::CalculatePaddedOutputGeometry()
+{
+  if (!this->InputSegmentationNode || !this->PadOutputGeometry)
+    {
+    return;
+    }
+
+  std::string segmentationGeometryString = this->InputSegmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry(
+    vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+  vtkNew<vtkOrientedImageData> inputGeometryImageData;
+  vtkSegmentationConverter::DeserializeImageGeometry(segmentationGeometryString, inputGeometryImageData, false/*don't allocate*/);
+  vtkNew<vtkTransform> segmentationGeometryToReferenceGeometryTransform;
+  vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(inputGeometryImageData,
+    this->OutputGeometryImageData, segmentationGeometryToReferenceGeometryTransform);
+
+  int transformedSegmentationExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  vtkOrientedImageDataResample::TransformExtent(inputGeometryImageData->GetExtent(),
+    segmentationGeometryToReferenceGeometryTransform, transformedSegmentationExtent);
+
+  int outputGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  this->OutputGeometryImageData->GetExtent(outputGeometryExtent);
+
+  for (int i = 0; i < 3; ++i)
+    {
+    outputGeometryExtent[2*i] = std::min(outputGeometryExtent[2*i], transformedSegmentationExtent[2*i]);
+    outputGeometryExtent[2*i+1] = std::max(outputGeometryExtent[2*i+1], transformedSegmentationExtent[2*i+1]);
+    }
+  this->OutputGeometryImageData->SetExtent(outputGeometryExtent);
+}
+
+//-----------------------------------------------------------------------------
 std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometryFromImage()
 {
   if (!this->InputSegmentationNode)
@@ -218,6 +249,8 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometryFromImage
     {
     vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(this->OutputGeometryImageData, this->OversamplingFactor);
     }
+
+  this->CalculatePaddedOutputGeometry();
 
   // success
   return "";
@@ -353,6 +386,8 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometryFromBound
     vtkMath::Round(std::max(corner1_OutputGeometryImage[2], corner2_OutputGeometryImage[2]))
     };
   this->OutputGeometryImageData->SetExtent(outputExtent);
+
+  this->CalculatePaddedOutputGeometry();
 
   // success
   return"";

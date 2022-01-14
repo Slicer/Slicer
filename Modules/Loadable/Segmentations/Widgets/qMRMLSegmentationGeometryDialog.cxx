@@ -23,6 +23,15 @@
 
 #include "vtkMRMLSegmentationNode.h"
 
+// Segmentations logic includes
+#include "vtkSlicerSegmentationsModuleLogic.h"
+
+// CTK includes
+#include <ctkMessageBox.h>
+
+// Segmentation core includes
+#include <vtkOrientedImageData.h>
+
 // Qt includes
 #include <QDialog>
 #include <QVBoxLayout>
@@ -49,6 +58,7 @@ private:
   qMRMLSegmentationGeometryWidget* GeometryWidget;
   QPushButton* OKButton;
   QPushButton* CancelButton;
+
 };
 
 //-----------------------------------------------------------------------------

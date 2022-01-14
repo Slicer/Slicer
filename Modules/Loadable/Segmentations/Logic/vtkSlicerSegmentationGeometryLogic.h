@@ -133,6 +133,8 @@ protected:
   /// \return Error message. Empty when successful
   std::string CalculateOutputGeometryFromBounds(bool keepCurrentAxisDirections);
 
+  void CalculatePaddedOutputGeometry();
+
   vtkMRMLSegmentationNode* InputSegmentationNode{ nullptr };
   vtkMRMLDisplayableNode* SourceGeometryNode{ nullptr };
   bool IsotropicSpacing{ false };
