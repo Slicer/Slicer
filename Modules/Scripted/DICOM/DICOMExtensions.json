@@ -57,7 +57,7 @@
     },
     {
       "name": "SlicerRT",
-      "repository": "https://subversion.assembla.com/svn/slicerrt/trunk/SlicerRt/src",
+      "repository": "https://github.com/SlicerRt/SlicerRT",
       "typeDescription": "Radiation therapy data",
       "tagValues": {
         "Modality": [
