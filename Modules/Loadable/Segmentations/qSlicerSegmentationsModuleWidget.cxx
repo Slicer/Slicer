@@ -51,6 +51,10 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
+
+// CTK includes
+#include <ctkMessageBox.h>
 
 // Qt includes
 #include <QAbstractItemView>
@@ -706,7 +710,6 @@ void qSlicerSegmentationsModuleWidget::onExportColorTableChanged()
 void qSlicerSegmentationsModuleWidget::onImportExportApply()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   if (d->radioButton_Export->isChecked())
     {
     this->exportFromCurrentSegmentation();
@@ -715,7 +718,6 @@ void qSlicerSegmentationsModuleWidget::onImportExportApply()
     {
     this->importToCurrentSegmentation();
     }
-  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -890,6 +892,36 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     displayNode->GetVisibleSegmentIDs(segmentIDs);
     }
 
+  vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->currentNode());
+  if (referenceVolumeNode)
+    {
+    vtkNew<vtkStringArray> segmentIDsArray;
+    segmentIDsArray->SetNumberOfValues(segmentIDs.size());
+    for (int i = 0; i < segmentIDs.size(); ++i)
+      {
+      segmentIDsArray->SetValue(i, segmentIDs[i]);
+      }
+
+    if (vtkSlicerSegmentationsModuleLogic::IsEffectiveExentOutsideReferenceVolume(
+      referenceVolumeNode, d->SegmentationNode, segmentIDsArray))
+      {
+      ctkMessageBox* exportWarningMesssgeBox = new ctkMessageBox(this);
+      exportWarningMesssgeBox->setAttribute(Qt::WA_DeleteOnClose);
+      exportWarningMesssgeBox->setWindowTitle("Export may erase data");
+      exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Ok);
+      exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Cancel);
+      exportWarningMesssgeBox->setDontShowAgainVisible(true);
+      exportWarningMesssgeBox->setIcon(QMessageBox::Warning);
+      exportWarningMesssgeBox->setDontShowAgainSettingsKey("Segmentations/AlwaysCropDuringSegmentationNodeExport");
+      exportWarningMesssgeBox->setText("The current segmentation does not completely fit into the new geometry.\n"
+                                       "Do you want to crop the segmentation?\n");
+      if (exportWarningMesssgeBox->exec() != QMessageBox::StandardButton::Ok)
+        {
+        return false;
+        }
+      }
+    }
+
   // Get selected item
   vtkIdType selectedItem = d->SubjectHierarchyComboBox_ImportExport->currentItem();
   vtkIdType folderItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID; // Often exporting into a folder
@@ -951,11 +983,9 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
   if (labelmapNode)
     {
     // Export selected segments into a multi-label labelmap volume
-    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     bool success = vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(currentSegmentationNode, segmentIDs, labelmapNode,
-      vtkMRMLVolumeNode::SafeDownCast(d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->currentNode()),
-        vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY,
-      colorTableNode);
+      referenceVolumeNode, vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY, colorTableNode);
     QApplication::restoreOverrideCursor();
     if (!success)
       {
@@ -970,7 +1000,7 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
   else if (folderItem)
     {
     // Export selected segments into a models, a model node from each segment
-    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     bool success = vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(currentSegmentationNode, segmentIDs, folderItem);
     QApplication::restoreOverrideCursor();
     if (!success)
@@ -1025,7 +1055,7 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
     shNode->GetItemDataNode(selectedItem) );
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   if (labelmapNode)
     {
     std::string currentTerminologyContextName(

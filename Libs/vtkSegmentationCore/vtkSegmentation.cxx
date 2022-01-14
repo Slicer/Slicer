@@ -2013,7 +2013,8 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
     // Determine extent that contains all segments
     int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
     this->DetermineCommonLabelmapExtent(commonGeometryExtent, commonGeometryImage, sharedSegmentIDs,
-      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED,
+      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED ||
+      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY,
       extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED);
     if (extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
       {

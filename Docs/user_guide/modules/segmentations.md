@@ -94,7 +94,7 @@ If segments in a segmentation do not overlap each other then segmentation is sav
 
 To force saving segmentation as a 3D volume, export it to a labelmap volume by right-clicking on the segmentation in Data module.
 
-For advanced export options, `Segmentations` module's `Export/import models and labelmaps` section can be used. If exported segmentation geometry (origin, spacing, axis directions, extents) must exactly match another volume's then then choose that volume as `Reference volume` in `Advanced` section.
+For advanced export options, `Segmentations` module's `Export/import models and labelmaps` section can be used. If exported segmentation geometry (origin, spacing, axis directions, extents) must exactly match another volume's then then choose that volume as `Reference volume` in `Advanced` section. Using a reference volume for labelmap export may result in the segmentation being cropped if some regions are outside of the new geometry. A confirmation popup will be displayed before the segmentation is cropped.
 
 ### Export segmentation to labelmap volume file
 
@@ -111,6 +111,7 @@ For exporting segmentation as NRRD or NIFTI file for external software that uses
 
 Labelmap volumes can be created in any other formats by [exporting segmentation to labelmap volume](segmentations.md#export-segmentation-to-labelmap-volume) then in application menu, choose `File` / `Save`.
 
+Using a reference volume for labelmap export may result in the segmentation being cropped if some regions are outside of the new geometry. A confirmation popup will be displayed before the segmentation is cropped.
 
 ### Create new representation in segmentation (conversion)
 
