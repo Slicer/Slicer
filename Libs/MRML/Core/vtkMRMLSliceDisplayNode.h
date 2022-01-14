@@ -72,7 +72,7 @@ public:
     NeverVisible = 0,
     NearbyVisible,
     AlwaysVisible,
-    FadingVisible,
+    //FadingVisible, // Handles' opacity increases as the mouse gets closer to them
     HandlesVisibilityMode_Last // insert new types above this line
     };
   vtkGetMacro(SliceIntersectionInteractiveHandlesVisibilityMode, int);

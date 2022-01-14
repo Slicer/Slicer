@@ -367,24 +367,6 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
     double handleOpacity = 0.0;
     std::string intersectingSliceNodeID = rep->CanInteract(eventData, foundComponentType, foundComponentIndex, closestDistance2, handleOpacity);
 
-    // Update handle visibility and opacity of handles only for FadingVisible mode
-    int handlesVisibilityMode = this->GetSliceDisplayNode()->GetSliceIntersectionInteractiveHandlesVisibilityMode();
-    if (handlesVisibilityMode == vtkMRMLSliceDisplayNode::FadingVisible)
-      {
-      rep->SetPipelinesHandlesVisibility(true);
-      rep->SetPipelinesHandlesOpacity(handleOpacity);
-      }
-
-    // Enable updates of display pipelines in scene by modifying all associated slice nodes
-    vtkMRMLScene* scene = this->SliceNode->GetScene();
-    std::vector<vtkMRMLNode*> sliceNodes;
-    int nnodes = scene ? scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes) : 0;
-    for (int i = 0; i < nnodes; i++)
-      {
-      vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
-      sliceNode->Modified();
-      }
-
     if (foundComponentType != vtkMRMLSliceDisplayNode::ComponentNone)
       {
       // Store closest squared distance

@@ -181,7 +181,7 @@ const char* vtkMRMLSliceDisplayNode::GetSliceIntersectionInteractiveHandlesVisib
     case NeverVisible: return "NeverVisible";
     case NearbyVisible: return "NearbyVisible";
     case AlwaysVisible: return "AlwaysVisible";
-    case FadingVisible: return "FadingVisible";
+    //case FadingVisible: return "FadingVisible";
     default:
       // invalid id
       return "Invalid";

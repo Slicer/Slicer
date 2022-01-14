@@ -1741,7 +1741,7 @@ std::string vtkMRMLSliceIntersectionInteractionRepresentation::CanInteract(vtkMR
   foundComponentType = vtkMRMLSliceDisplayNode::ComponentNone;
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
   foundComponentIndex = -1;
-  handleOpacity = 0.0;
+  handleOpacity = 0.0; // Value to encode handles opacity value as a function of the distance of the mouse cursor to the handle position
   std::string intersectingSliceNodeID;
   double maxPickingDistanceFromControlPoint2 = this->GetMaximumHandlePickingDistance2();
   double extendedPickingDistanceFromControlPoint2 = maxPickingDistanceFromControlPoint2 + OPACITY_RANGE;
