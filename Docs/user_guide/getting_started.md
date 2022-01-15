@@ -164,7 +164,7 @@ For more tutorials, visit the [Tutorial page](https://www.slicer.org/wiki/Docume
 
 ### User manual
 
-Browse the [User Guide](user_interface) section to find quick overview of the application user interface or [Modules](modules/index.md) section for detailed description of each module.
+Browse the [User Interface](user_interface) section to find quick overview of the application user interface or [Modules](modules/index.md) section for detailed description of each module.
 
 ### Ask for help
 
