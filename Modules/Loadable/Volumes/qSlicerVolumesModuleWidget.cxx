@@ -84,11 +84,6 @@ void qSlicerVolumesModuleWidget::setup()
   d->ConvertVolumeFrame->setVisible(false);
   QObject::connect(d->ConvertVolumeButton, SIGNAL(clicked()),
                    this, SLOT(convertVolume()));
-  /*QObject::connect(d->ConvertVolumeTargetSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   this, SLOT(nodeSelectionChanged(vtkMRMLNode*)));*/
-
-  //ctkModelTester* tester = new ctkModelTester(this);
-  //tester->setModel(d->ActiveVolumeNodeSelector->model());
 }
 
 //------------------------------------------------------------------------------
@@ -117,6 +112,10 @@ void qSlicerVolumesModuleWidget::updateWidgetFromMRML()
     {
     d->ColorLegendCollapsibleButton->setCollapsed(true);
     }
+
+  d->InfoCollapsibleButton->setEnabled(currentVolumeNode);
+  d->DisplayCollapsibleButton->setEnabled(currentVolumeNode);
+  d->ColorLegendCollapsibleButton->setEnabled(currentVolumeNode);
 
   // Convert to volume section
   bool convertVolumeSectionVisible = false;
@@ -256,7 +255,7 @@ void qSlicerVolumesModuleWidget::colorLegendCollapsibleButtonCollapsed(bool coll
 
   vtkMRMLVolumeNode* currentVolume = vtkMRMLVolumeNode::SafeDownCast(d->ActiveVolumeNodeSelector->currentNode());
   vtkMRMLColorLegendDisplayNode* colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(currentVolume);
-  if (!colorLegendNode)
+  if (!colorLegendNode && currentVolume)
     {
     // color legend node does not exist, we need to create it now
 
@@ -267,7 +266,10 @@ void qSlicerVolumesModuleWidget::colorLegendCollapsibleButtonCollapsed(bool coll
       mrmlAppLogic->PauseRender();
       }
     colorLegendNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(currentVolume);
-    colorLegendNode->SetVisibility(false); // just because the groupbox is opened, don't show color legend yet
+    if (colorLegendNode)
+      {
+      colorLegendNode->SetVisibility(false); // just because the groupbox is opened, don't show color legend yet
+      }
     if (mrmlAppLogic)
       {
       mrmlAppLogic->ResumeRender();
