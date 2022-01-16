@@ -287,25 +287,23 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
     {
     case vtkMRMLColorLegendDisplayNode::Vertical:
       actor->SetOrientationToVertical();
-      actor->SetPosition(position[0] * (1 - size[0]), position[1] * (1 - size[1]));
+      actor->SetPosition(position[0] * (1. - size[0]), position[1] * (1. - size[1]));
       actor->SetWidth(size[0]);
       actor->SetHeight(size[1]);
       if (position[0] < 0.5)
         {
         actor->SetTextPositionToSucceedScalarBar();
-        actor->SetTextPad(2); // make some space between the bar and labels
         actor->GetTitleTextProperty()->SetJustificationToLeft();
         }
       else
         {
         actor->SetTextPositionToPrecedeScalarBar();
-        actor->SetTextPad(-2); // make some space between the bar and labels
         actor->GetTitleTextProperty()->SetJustificationToRight();
         }
       break;
     case vtkMRMLColorLegendDisplayNode::Horizontal:
       actor->SetOrientationToHorizontal();
-      actor->SetPosition(position[0] * (1 - size[1]), position[1] * (1 - size[0]));
+      actor->SetPosition(position[0] * (1. - size[1]), position[1] * (1. - size[0]));
       actor->SetWidth(size[1]);
       actor->SetHeight(size[0]);
       actor->SetTextPad(0);
