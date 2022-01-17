@@ -232,8 +232,18 @@ void vtkSlicerScalarBarActor::LayoutTicks()
       // Tick height could be adjusted if title text is
       // lowered by box constraints, but we won't bother:
       this->P->TickBox.Size[1] = this->P->Frame.Size[1] -
-        this->P->TitleBox.Size[1] - 3 * this->TextPad -
-        this->VerticalTitleSeparation;
+        this->P->TitleBox.Size[1] - this->VerticalTitleSeparation;
+
+      // Tick box height for labels that precede scalar bar in vertical orientation
+      if (this->TextPosition == vtkScalarBarActor::PrecedeScalarBar && this->TextPad < 0)
+        {
+        this->P->TickBox.Size[1] += 3 * this->TextPad;
+        }
+      else // all other states
+        {
+        this->P->TickBox.Size[1] -= 3 * this->TextPad;
+        }
+
       // Tick box height also reduced by NaN swatch size, if present:
       if (this->DrawNanAnnotation)
         {
