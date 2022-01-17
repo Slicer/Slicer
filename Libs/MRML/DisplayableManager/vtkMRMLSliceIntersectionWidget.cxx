@@ -804,6 +804,14 @@ bool vtkMRMLSliceIntersectionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEvent
 
   this->SliceLogic->EndSliceNodeInteraction();
 
+  // Simulate a mousemove event to update the widget state according to the current position.
+  // Without this, handles would always disappear at the end of drag-and-drop, even if the mouse pointer is over the widget
+  // (which would break Nearby handle visible mode).
+  int originalEventType = eventData->GetType();
+  eventData->SetType(vtkCommand::MouseMoveEvent);
+  this->ProcessMouseMove(eventData);
+  eventData->SetType(originalEventType);
+
   return processedEvent;
 }
 

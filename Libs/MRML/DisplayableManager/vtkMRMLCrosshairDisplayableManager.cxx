@@ -582,7 +582,13 @@ bool vtkMRMLCrosshairDisplayableManager::ProcessInteractionEvent(vtkMRMLInteract
     {
     return false;
     }
-  return this->Internal->SliceIntersectionWidget->ProcessInteractionEvent(eventData);
+  bool processed = this->Internal->SliceIntersectionWidget->ProcessInteractionEvent(eventData);
+  if (this->Internal->SliceIntersectionWidget && this->Internal->SliceIntersectionWidget->GetNeedToRender())
+    {
+    this->Internal->SliceIntersectionWidget->NeedToRenderOff();
+    this->RequestRender();
+    }
+  return processed;
 }
 
 //---------------------------------------------------------------------------

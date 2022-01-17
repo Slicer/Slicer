@@ -84,7 +84,7 @@ enum
   };
 
 // Settings
-static const int VISUALIZATION_MODE = HideIntersection;
+static const int INTERSECTION_VISUALIZATION_MODE = HideIntersection;
 static const int HANDLES_TYPE = Arrows;
 static const double OPACITY_RANGE = 1000.0;
 static const double FOV_HANDLES_MARGIN = 0.03; // 3% margin
@@ -174,18 +174,11 @@ class SliceIntersectionInteractionDisplayPipeline
       this->TranslationInnerHandleActor->SetMapper(this->TranslationInnerHandleMapper);
       this->TranslationInnerHandleActor->SetProperty(this->TranslationInnerHandleProperty);
 
-      // Rotation handles
+      // Initialize handles
       this->CreateRotationHandles();
-
-      // Slice offset handles
       this->CreateSliceOffsetHandles();
-
-      // Handles visibility
-      this->RotationHandlesVisible = true;
-      this->TranslationHandlesVisible = true;
-
-      // Handle visibility mode
-      this->HandlesVisibilityMode = 0;
+      this->SetHandlesVisibility(false);
+      this->NeedToRender = true;
 
       // Handle points
       this->RotationHandlePoints = vtkSmartPointer<vtkPolyData>::New();
@@ -206,9 +199,9 @@ class SliceIntersectionInteractionDisplayPipeline
       this->RotationHandle1Points = vtkSmartPointer<vtkPoints>::New();
       this->RotationHandle2Points = vtkSmartPointer<vtkPoints>::New();
 
-      // Set visibility flag
-      this->RotationHandle1Visible = true;
-      this->RotationHandle2Visible = true;
+      // We don't know if there is enough space, will set it later.
+      this->RotationHandle1Displayable = false;
+      this->RotationHandle2Displayable = false;
 
       // Handle default position and orientation
       double handleOriginDefault[3] = { ROTATION_HANDLE_DEFAULT_POSITION[0],
@@ -436,9 +429,9 @@ class SliceIntersectionInteractionDisplayPipeline
       this->SliceOffsetHandle1Points = vtkSmartPointer<vtkPoints>::New();
       this->SliceOffsetHandle2Points = vtkSmartPointer<vtkPoints>::New();
 
-      // Set visibility flag
-      this->SliceOffsetHandle1Visible = true;
-      this->SliceOffsetHandle2Visible = true;
+      // We don't know if there is enough space, will set it later.
+      this->SliceOffsetHandle1Displayable = false;
+      this->SliceOffsetHandle2Displayable = false;
 
       // Handle default position and orientation
       double handleOriginDefault[3] = { SLICEOFSSET_HANDLE_DEFAULT_POSITION[0],
@@ -681,17 +674,6 @@ class SliceIntersectionInteractionDisplayPipeline
     }
 
     //----------------------------------------------------------------------
-    int RenderOverlay(vtkViewport* viewport)
-    {
-      int count = 0;
-      if (this->TranslationInnerHandleActor->GetVisibility())
-        {
-        count += this->TranslationInnerHandleActor->RenderOverlay(viewport);
-        }
-      return count;
-    }
-
-    //----------------------------------------------------------------------
     void RemoveActors(vtkRenderer* renderer)
     {
       if (!renderer)
@@ -709,57 +691,86 @@ class SliceIntersectionInteractionDisplayPipeline
     }
 
     //----------------------------------------------------------------------
-    void SetVisibility(bool visibility)
+    int RenderOverlay(vtkViewport* viewport)
+    {
+      int count = 0;
+      if (this->IntersectionLine1Actor->GetVisibility())
+        {
+        this->IntersectionLine1Actor->RenderOverlay(viewport);
+        }
+      if (this->IntersectionLine2Actor->GetVisibility())
+        {
+      this->IntersectionLine2Actor->RenderOverlay(viewport);
+        }
+      if (this->TranslationOuterHandleActor->GetVisibility())
+        {
+        this->TranslationOuterHandleActor->RenderOverlay(viewport);
+        }
+      if (this->TranslationInnerHandleActor->GetVisibility())
+        {
+        this->TranslationInnerHandleActor->RenderOverlay(viewport);
+        }
+      if (this->RotationHandle1Actor->GetVisibility())
+        {
+        this->RotationHandle1Actor->RenderOverlay(viewport);
+        }
+      if (this->RotationHandle2Actor->GetVisibility())
+        {
+        this->RotationHandle2Actor->RenderOverlay(viewport);
+        }
+      if (this->SliceOffsetHandle1Actor->GetVisibility())
+        {
+        this->SliceOffsetHandle1Actor->RenderOverlay(viewport);
+        }
+      if (this->SliceOffsetHandle2Actor->GetVisibility())
+        {
+        this->SliceOffsetHandle2Actor->RenderOverlay(viewport);
+        }
+      this->NeedToRender = false;
+      return count;
+    }
+
+    //----------------------------------------------------------------------
+    void SetIntersectionsVisibility(bool visibility)
       {
+      if (static_cast<bool>(this->IntersectionLine1Actor->GetVisibility()) != visibility
+        || static_cast<bool>(this->IntersectionLine2Actor->GetVisibility()) != visibility)
+        {
+        this->NeedToRender = true;
+        }
       this->IntersectionLine1Actor->SetVisibility(visibility);
       this->IntersectionLine2Actor->SetVisibility(visibility);
-      if (this->HandlesVisibilityMode == vtkMRMLSliceDisplayNode::AlwaysVisible)
-        {
-        visibility = true;
-        }
-      else if (this->HandlesVisibilityMode == vtkMRMLSliceDisplayNode::NeverVisible)
-        {
-        visibility = false;
-        }
-      this->TranslationOuterHandleActor->SetVisibility(visibility);
-      this->TranslationInnerHandleActor->SetVisibility(visibility);
-      this->RotationHandle1Actor->SetVisibility(visibility);
-      this->RotationHandle2Actor->SetVisibility(visibility);
-      this->SliceOffsetHandle1Actor->SetVisibility(visibility);
-      this->SliceOffsetHandle2Actor->SetVisibility(visibility);
       }
 
     //----------------------------------------------------------------------
     void SetHandlesVisibility(bool visibility)
       {
-      if (VISUALIZATION_MODE == ShowIntersection)
+      bool rotationHandle1Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+        && this->RotationHandlesVisible && this->RotationHandle1Displayable;
+      bool rotationHandle2Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+        && this->RotationHandlesVisible && this->RotationHandle2Displayable;
+      bool sliceOffsetHandle1Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+        && this->TranslationHandlesVisible && this->SliceOffsetHandle1Displayable;
+      bool sliceOffsetHandle2Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+        && this->TranslationHandlesVisible && this->SliceOffsetHandle2Displayable;
+      bool translationHandleVisible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+        && this->TranslationHandlesVisible && INTERSECTION_VISUALIZATION_MODE == ShowIntersection;
+
+      if (static_cast<bool>(this->RotationHandle1Actor->GetVisibility()) != rotationHandle1Visible
+        || static_cast<bool>(this->RotationHandle2Actor->GetVisibility()) != rotationHandle2Visible
+        || static_cast<bool>(this->SliceOffsetHandle1Actor->GetVisibility()) != sliceOffsetHandle1Visible
+        || static_cast<bool>(this->SliceOffsetHandle2Actor->GetVisibility()) != sliceOffsetHandle2Visible
+        || static_cast<bool>(this->TranslationOuterHandleActor->GetVisibility()) != translationHandleVisible
+        || static_cast<bool>(this->TranslationInnerHandleActor->GetVisibility()) != translationHandleVisible)
         {
-        if (this->TranslationHandlesVisible)
-          {
-          this->TranslationOuterHandleActor->SetVisibility(visibility);
-          this->TranslationInnerHandleActor->SetVisibility(visibility);
-          }
+        this->NeedToRender = true;
         }
-      if (visibility)
-        {
-        if (this->RotationHandlesVisible)
-          {
-          this->RotationHandle1Actor->SetVisibility(this->RotationHandle1Visible);
-          this->RotationHandle2Actor->SetVisibility(this->RotationHandle2Visible);
-          }
-        if (this->TranslationHandlesVisible)
-          {
-          this->SliceOffsetHandle1Actor->SetVisibility(this->SliceOffsetHandle1Visible);
-          this->SliceOffsetHandle2Actor->SetVisibility(this->SliceOffsetHandle2Visible);
-          }
-        }
-      else
-        {
-        this->RotationHandle1Actor->SetVisibility(visibility);
-        this->RotationHandle2Actor->SetVisibility(visibility);
-        this->SliceOffsetHandle1Actor->SetVisibility(visibility);
-        this->SliceOffsetHandle2Actor->SetVisibility(visibility);
-        }
+      this->RotationHandle1Actor->SetVisibility(rotationHandle1Visible);
+      this->RotationHandle2Actor->SetVisibility(rotationHandle2Visible);
+      this->SliceOffsetHandle1Actor->SetVisibility(sliceOffsetHandle1Visible);
+      this->SliceOffsetHandle2Actor->SetVisibility(sliceOffsetHandle2Visible);
+      this->TranslationOuterHandleActor->SetVisibility(translationHandleVisible);
+      this->TranslationInnerHandleActor->SetVisibility(translationHandleVisible);
       }
 
     //----------------------------------------------------------------------
@@ -838,13 +849,15 @@ class SliceIntersectionInteractionDisplayPipeline
     vtkSmartPointer<vtkPoints> RotationHandle1Points;
     vtkSmartPointer<vtkPoints> RotationHandle2Points;
 
-    bool SliceOffsetHandle1Visible;
-    bool SliceOffsetHandle2Visible;
-    bool RotationHandle1Visible;
-    bool RotationHandle2Visible;
-    bool RotationHandlesVisible;
-    bool TranslationHandlesVisible;
-    int  HandlesVisibilityMode;
+    bool SliceOffsetHandle1Displayable = false;
+    bool SliceOffsetHandle2Displayable = false;
+    bool RotationHandle1Displayable = false;
+    bool RotationHandle2Displayable = false;
+    bool RotationHandlesVisible = false;
+    bool TranslationHandlesVisible = false;
+    int  HandlesVisibilityMode = vtkMRMLSliceDisplayNode::NeverVisible;
+    // Indicates that this representation has changed and thus re-rendering is needed
+    bool NeedToRender = true;
   };
 
 class vtkMRMLSliceIntersectionInteractionRepresentation::vtkInternal
@@ -1036,8 +1049,12 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
     || this->Internal->SliceNode->GetViewGroup() != intersectingSliceNode->GetViewGroup()
     || !intersectingSliceNode->IsMappedInLayout())
     {
-    pipeline->SetVisibility(false);
+    pipeline->SetIntersectionsVisibility(false);
     pipeline->SetHandlesVisibility(false);
+    if (pipeline->NeedToRender)
+      {
+      this->NeedToRenderOn();
+      }
     return;
     }
 
@@ -1049,8 +1066,12 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
       (displayNode->GetSliceIntersectionVisibility() && displayNode->GetSliceIntersectionInteractive());
     if (!sliceInteractionHandlesInteractive)
       {
-      pipeline->SetVisibility(false);
+      pipeline->SetIntersectionsVisibility(false);
       pipeline->SetHandlesVisibility(false);
+      if (pipeline->NeedToRender)
+        {
+        this->NeedToRenderOn();
+        }
       return;
       }
     pipeline->TranslationHandlesVisible = displayNode->GetSliceIntersectionTranslationEnabled();
@@ -1091,8 +1112,12 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
     intersectionLineTip1, intersectionLineTip2);
   if (!intersectionFound) // Pipelines not visible if no intersection is found
     {
-    pipeline->SetVisibility(false);
+    pipeline->SetIntersectionsVisibility(false);
     pipeline->SetHandlesVisibility(false);
+    if (pipeline->NeedToRender)
+      {
+      this->NeedToRenderOn();
+      }
     return;
     }
 
@@ -1137,14 +1162,14 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   // Get inner intersection line tips
   double intersectionInnerLineTip1[3] = { 0.0, 0.0, 0.0 };
   double intersectionInnerLineTip2[3] = { 0.0, 0.0, 0.0 };
-  if (VISUALIZATION_MODE == ShowIntersection)
+  if (INTERSECTION_VISUALIZATION_MODE == ShowIntersection)
     {
     intersectionInnerLineTip1[0] = sliceIntersectionPoint[0];
     intersectionInnerLineTip1[1] = sliceIntersectionPoint[1];
     intersectionInnerLineTip2[0] = sliceIntersectionPoint[0];
     intersectionInnerLineTip2[1] = sliceIntersectionPoint[1];
     }
-  else if (VISUALIZATION_MODE == HideIntersection)
+  else if (INTERSECTION_VISUALIZATION_MODE == HideIntersection)
     {
     double intersectionPointToOuterLineTip1[3] = { intersectionOuterLineTip1[0] - sliceIntersectionPoint[0],
                                                    intersectionOuterLineTip1[1] - sliceIntersectionPoint[1], 0.0 };
@@ -1179,6 +1204,10 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   else
     {
     vtkWarningMacro("vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionDisplay failed: unknown visualization mode.");
+    if (pipeline->NeedToRender)
+      {
+      this->NeedToRenderOn();
+      }
     return;
     }
 
@@ -1200,23 +1229,23 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   double dotProduct = vtkMath::Dot2D(line1Vector, line2Vector);
   if (line1VectorNorm > HANDLES_MIN_LINE_LENGTH)
     {
-    pipeline->RotationHandle1Visible = true;
-    pipeline->SliceOffsetHandle1Visible = true;
+    pipeline->RotationHandle1Displayable = true;
+    pipeline->SliceOffsetHandle1Displayable = true;
     }
   else // hide handles if there is no sufficient space in line
     {
-    pipeline->RotationHandle1Visible = false;
-    pipeline->SliceOffsetHandle1Visible = false;
+    pipeline->RotationHandle1Displayable = false;
+    pipeline->SliceOffsetHandle1Displayable = false;
     }
   if (line2VectorNorm > HANDLES_MIN_LINE_LENGTH)
     {
-    pipeline->RotationHandle2Visible = true;
-    pipeline->SliceOffsetHandle2Visible = true;
+    pipeline->RotationHandle2Displayable = true;
+    pipeline->SliceOffsetHandle2Displayable = true;
     }
   else // hide handles if there is no sufficient space in line
     {
-    pipeline->RotationHandle2Visible = false;
-    pipeline->SliceOffsetHandle2Visible = false;
+    pipeline->RotationHandle2Displayable = false;
+    pipeline->SliceOffsetHandle2Displayable = false;
     }
   if (dotProduct > 0.0)
   // this means vectors are oriented towards the same direction
@@ -1225,14 +1254,14 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
     if (line1VectorNorm < line2VectorNorm)
     // hide handles closer to intersection point
       {
-      pipeline->RotationHandle1Visible = false;
-      pipeline->SliceOffsetHandle1Visible = false;
+      pipeline->RotationHandle1Displayable = false;
+      pipeline->SliceOffsetHandle1Displayable = false;
       }
     else
     // hide handles closer to intersection point
       {
-      pipeline->RotationHandle2Visible = false;
-      pipeline->SliceOffsetHandle2Visible = false;
+      pipeline->RotationHandle2Displayable = false;
+      pipeline->SliceOffsetHandle2Displayable = false;
       }
     }
 
@@ -1261,7 +1290,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
 
   // Update rotation handle interaction points
   vtkNew<vtkPoints> rotationHandlePoints;
-  if (pipeline->RotationHandle1Visible) // Handle 1
+  if (pipeline->RotationHandle1Displayable) // Handle 1
     {
     double rotationHandle1Point[3] = { 0.0, 0.0, 0.0 };
     double rotationHandle1Point_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
@@ -1278,7 +1307,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
       rotationHandlePoints->InsertNextPoint(rotationHandle1Point);
       }
     }
-  if (pipeline->RotationHandle2Visible) // Handle 2
+  if (pipeline->RotationHandle2Displayable) // Handle 2
     {
     double rotationHandle2Point[3] = { 0.0, 0.0, 0.0 };
     double rotationHandle2Point_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
@@ -1315,7 +1344,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   vtkNew<vtkPoints> sliceOffsetHandlePoints;
   double sliceOffsetHandlePoint[3] = { 0.0, 0.0, 0.0 };
   double sliceOffsetHandlePoint_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
-  if (pipeline->SliceOffsetHandle1Visible) // Handle 1
+  if (pipeline->SliceOffsetHandle1Displayable) // Handle 1
     {
     for (int i = 0; i < pipeline->SliceOffsetHandle1Points->GetNumberOfPoints(); i++)
       {
@@ -1330,7 +1359,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
       sliceOffsetHandlePoints->InsertNextPoint(sliceOffsetHandlePoint);
       }
     }
-  if (pipeline->SliceOffsetHandle2Visible) // Handle 2
+  if (pipeline->SliceOffsetHandle2Displayable) // Handle 2
     {
     for (int j = 0; j < pipeline->SliceOffsetHandle2Points->GetNumberOfPoints(); j++)
       {
@@ -1417,7 +1446,9 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   pipeline->SliceOffsetHandlePoints->SetPoints(sliceOffsetHandlePoints);
 
   // Visibility
-  pipeline->SetVisibility(true);
+  pipeline->SetIntersectionsVisibility(true);
+  pipeline->SetHandlesVisibility(true);
+  this->NeedToRenderOn();
 }
 
 
@@ -1522,6 +1553,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::AddIntersectingSliceLogi
   pipeline->AddActors(this->Renderer);
   this->Internal->SliceIntersectionInteractionDisplayPipelines.push_back(pipeline);
   this->UpdateSliceIntersectionDisplay(pipeline);
+  this->SliceNodeModified(this->Internal->SliceNode);
 }
 
 //----------------------------------------------------------------------
@@ -2025,6 +2057,10 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SetPipelinesHandlesVisib
       visible = false;
       }
     (*sliceIntersectionIt)->SetHandlesVisibility(visible);
+    if ((*sliceIntersectionIt)->NeedToRender)
+      {
+      this->NeedToRenderOn();
+      }
     }
 }
 
@@ -2043,6 +2079,10 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SetPipelinesHandlesOpaci
       }
 
     (*sliceIntersectionIt)->SetHandlesOpacity(opacity);
+    if ((*sliceIntersectionIt)->NeedToRender)
+      {
+      this->NeedToRenderOn();
+      }
     }
 }
 
