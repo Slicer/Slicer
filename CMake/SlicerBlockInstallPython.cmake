@@ -139,11 +139,19 @@ To create a Slicer package including python libraries, you can *NOT* provide you
 
   # Install headers
   set(python_include_subdir /Include/)
+
   if(UNIX)
-    set(python_include_subdir /include/python3.6m/)
+    set(python_include_subdir /include/python${Slicer_PYTHON_VERSION_DOT}${Slicer_PYTHON_ABIFLAGS}/)
+  elseif(WIN32)
+    # installing dev libs to enable package compiling via pip source install
+    install(DIRECTORY "${PYTHON_DIR}/libs/"
+    DESTINATION ${Slicer_INSTALL_ROOT}lib/Python/libs
+    COMPONENT Runtime
+    )
   endif()
 
-  install(FILES "${PYTHON_DIR}${python_include_subdir}/pyconfig.h"
+  # installing all includes to enable package compiling via pip source install
+  install(DIRECTORY "${PYTHON_DIR}${python_include_subdir}/"
     DESTINATION ${Slicer_INSTALL_ROOT}lib/Python${python_include_subdir}
     COMPONENT Runtime
     )
