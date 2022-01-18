@@ -859,8 +859,33 @@ vtkDataArray* vtkMRMLMarkupsDisplayNode::GetActiveScalarArray()
 void vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute()
 {
   this->UpdateScalarRange();
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute() failed: invalid markupsNode");
+    return;
+    }
+  markupsNode->UpdateAssignedAttribute();
+}
 
-  this->GetMarkupsNode()->UpdateAssignedAttribute();
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayNode::SetScalarVisibility(int visibility)
+{
+  if (visibility == this->GetScalarVisibility())
+    {
+    return;
+    }
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::SetScalarVisibility(visibility);
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute() failed: invalid markupsNode");
+    return;
+    }
+  // Markups uses a different filter output when scalar visibility is enabled therefore
+  // we need to update assigned attribute each time the scalar visibility is changed.
+  markupsNode->UpdateAssignedAttribute();
 }
 
 //---------------------------------------------------------------------------

@@ -452,6 +452,8 @@ public:
   /// Update scalar range and update markups pipeline when the active scalar array is changed
   virtual void UpdateAssignedAttribute() override;
 
+  virtual void SetScalarVisibility(int visibility) override;
+
 protected:
   vtkMRMLMarkupsDisplayNode();
   ~vtkMRMLMarkupsDisplayNode() override;
