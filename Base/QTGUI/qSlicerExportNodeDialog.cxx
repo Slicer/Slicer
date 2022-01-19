@@ -718,7 +718,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
 
     this->ButtonBox->setFocus(Qt::ActiveWindowFocusReason);
 
-    this->setWindowTitle(QString("Export Multiple Nodes"));
+    this->setWindowTitle(QString("Export ") + QString::number(this->nodeList().size()) + QString(" Nodes"));
     }
   else if (this->nodeList().size()==1)
     {
