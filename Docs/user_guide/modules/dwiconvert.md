@@ -8,8 +8,7 @@
 
 ## Tutorials
 
-- Tutorial: http://slicerdmri.github.io/docs/tutorials/DWIConverterTutorial.pdf
-- Test data: http://slicer.kitware.com/midas3/download/item/93008/SiemensTrioTim2.tar.gz
+- Tutorials: https://dmri.slicer.org/docs/
 
 ```{include} ../../_moduledescriptions/DWIConvertParameters.md
 ```
