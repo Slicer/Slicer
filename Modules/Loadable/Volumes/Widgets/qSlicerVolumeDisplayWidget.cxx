@@ -94,21 +94,23 @@ void qSlicerVolumeDisplayWidgetPrivate::setCurrentDisplayWidget(qSlicerWidget* d
 // --------------------------------------------------------------------------
 qSlicerWidget* qSlicerVolumeDisplayWidgetPrivate::widgetForVolume(vtkMRMLNode* volumeNode)
 {
-  if (vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode))
+  // We must check first the most specific volume type and if there is no match
+  // then try scalar volume.
+  if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(volumeNode))
     {
-    return this->ScalarVolumeDisplayWidget;
+    return this->DTVolumeDisplayWidget;
     }
-  else if (vtkMRMLLabelMapVolumeNode::SafeDownCast(volumeNode))
-     {
-     return this->LabelMapVolumeDisplayWidget;
-     }
   else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(volumeNode))
     {
     return this->DWVolumeDisplayWidget;
     }
-  else if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(volumeNode))
+  else if (vtkMRMLLabelMapVolumeNode::SafeDownCast(volumeNode))
     {
-    return this->DTVolumeDisplayWidget;
+    return this->LabelMapVolumeDisplayWidget;
+    }
+  else if (vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode))
+    {
+    return this->ScalarVolumeDisplayWidget;
     }
   return nullptr;
 }
