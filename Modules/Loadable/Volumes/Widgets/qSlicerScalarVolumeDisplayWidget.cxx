@@ -282,7 +282,7 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   // Screen resolution is limited, therefore it does not make sense to compute
   // many bin counts.
   const int maxBinCount = 1000;
-  if (voxelValues->GetArrayType() == VTK_FLOAT || voxelValues->GetArrayType() == VTK_DOUBLE)
+  if (voxelValues->GetDataType() == VTK_FLOAT || voxelValues->GetDataType() == VTK_DOUBLE)
     {
     d->Histogram->setNumberOfBins(maxBinCount);
     }
