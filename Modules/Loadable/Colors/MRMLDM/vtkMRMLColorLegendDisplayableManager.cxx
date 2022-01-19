@@ -164,14 +164,14 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::IsVolumeVisibleInSliceVi
       return true;
       }
     }
-  else if (this->SliceCompositeNode->GetForegroundVolumeID())
+  if (this->SliceCompositeNode->GetForegroundVolumeID())
     {
     if (strcmp(this->SliceCompositeNode->GetForegroundVolumeID(), volumeNodeID) == 0)
       {
       return true;
       }
     }
-  else if (this->SliceCompositeNode->GetLabelVolumeID())
+  if (this->SliceCompositeNode->GetLabelVolumeID())
     {
     if (strcmp(this->SliceCompositeNode->GetLabelVolumeID(), volumeNodeID) == 0)
       {
