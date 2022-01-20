@@ -1941,25 +1941,43 @@ void qSlicerCoreApplication::loadTranslations(const QString& dir)
 }
 
 //----------------------------------------------------------------------------
+QStringList qSlicerCoreApplication::translationFolders()
+{
+#ifdef Slicer_BUILD_I18N_SUPPORT
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (!app)
+    {
+    return QStringList();
+    }
+
+  QStringList qmDirs;
+  qmDirs << qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(QString(Slicer_QM_DIR));
+
+  // we check if the application is installed or not.
+  if (!app->isInstalled())
+    {
+    qmDirs << QString(Slicer_QM_OUTPUT_DIRS).split(";");
+    }
+
+  return qmDirs;
+#else
+  return QStringList();
+#endif
+}
+
+//----------------------------------------------------------------------------
 void qSlicerCoreApplication::loadLanguage()
 {
 #ifdef Slicer_BUILD_I18N_SUPPORT
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  Q_ASSERT(app);
-
-  // we check if the application is installed or not.
-  if (app->isInstalled())
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (!app)
     {
-    QString qmDir = QString(Slicer_QM_DIR);
-    app->loadTranslations(qmDir);
+    return;
     }
-  else
+  QStringList qmDirs = qSlicerCoreApplication::translationFolders();
+  foreach(QString qmDir, qmDirs)
     {
-    QStringList qmDirs = QString(Slicer_QM_OUTPUT_DIRS).split(";");
-    foreach(QString qmDir, qmDirs)
-      {
-      app->loadTranslations(qmDir);
-      }
+    app->loadTranslations(qmDir);
     }
 #endif
 }
