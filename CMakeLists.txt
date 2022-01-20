@@ -172,6 +172,29 @@ endif()
 mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
 
 #-----------------------------------------------------------------------------
+# Python requirements
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_REQUIRED_PYTHON_VERSION)
+  set(Slicer_REQUIRED_PYTHON_VERSION "3.6.7")
+endif()
+mark_as_superbuild(Slicer_REQUIRED_PYTHON_VERSION)
+
+if(NOT Slicer_REQUIRED_PYTHON_VERSION MATCHES "([0-9]+)\\.([0-9]+)\\.([0-9]+)")
+  message(FATAL_ERROR "Slicer_REQUIRED_PYTHON_VERSION [${Slicer_REQUIRED_PYTHON_VERSION}] is invalid. Value expected to be formatted as X.Y.Z")
+endif()
+
+set(Slicer_REQUIRED_PYTHON_VERSION_MAJOR ${CMAKE_MATCH_1})
+set(Slicer_REQUIRED_PYTHON_VERSION_MINOR ${CMAKE_MATCH_2})
+set(Slicer_REQUIRED_PYTHON_VERSION_PATCH ${CMAKE_MATCH_3})
+
+set(Slicer_REQUIRED_PYTHON_VERSION_DOT ${Slicer_REQUIRED_PYTHON_VERSION_MAJOR}.${Slicer_REQUIRED_PYTHON_VERSION_MINOR})
+
+set(Slicer_REQUIRED_PYTHON_ABIFLAGS "")
+if(Slicer_REQUIRED_PYTHON_VERSION_DOT VERSION_LESS "3.8")
+  set(Slicer_REQUIRED_PYTHON_ABIFLAGS "m")
+endif()
+
+#-----------------------------------------------------------------------------
 # Build shared lib by default
 #------------------------------------------------------------------------------
 # option(BUILD_SHARED_LIBS "Build Slicer with shared libraries." ON)
@@ -866,8 +889,8 @@ include(ctkFunctionAddExecutableUtf8)
 # Set Slicer_PYTHON_VERSION and Slicer_PYTHON_VERSION_DOT
 #-----------------------------------------------------------------------------
 if(Slicer_USE_PYTHONQT)
-  find_package(PythonLibs REQUIRED)
-  find_package(PythonInterp REQUIRED)
+  find_package(PythonLibs ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
+  find_package(PythonInterp ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
 
   # Extract python lib path
   get_filename_component(PYTHON_DIR_PATH ${PYTHON_EXECUTABLE} PATH)
