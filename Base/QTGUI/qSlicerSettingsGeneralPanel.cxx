@@ -76,18 +76,17 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 
 #ifdef Slicer_BUILD_I18N_SUPPORT
   bool internationalizationEnabled =
-      qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled").toBool();
+      qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled", true).toBool();
 
   this->LanguageLabel->setVisible(internationalizationEnabled);
   this->LanguageComboBox->setVisible(internationalizationEnabled);
 
   if (internationalizationEnabled)
     {
-    /// Default values
+    // Disable showing country flags because not all regions have a flag (e.g., Latin America)
+    this->LanguageComboBox->setCountryFlagsVisible(false);
     this->LanguageComboBox->setDefaultLanguage("en");
-    /// set the directory where all the translations files are.
-    this->LanguageComboBox->setDirectory(
-        QString(Slicer_QM_OUTPUT_DIRS).split(";").at(0));
+    this->LanguageComboBox->setDirectories(qSlicerCoreApplication::translationFolders());
     }
 #else
   this->LanguageLabel->setVisible(false);

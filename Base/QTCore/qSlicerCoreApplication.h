@@ -500,15 +500,22 @@ public:
   QSharedPointer<ctkDICOMDatabase> dicomDatabaseShared() const;
 #endif
 
-  static void loadTranslations(const QString& dir);
+  /// Return list of folders where the application looks for translations (*.qm files)
+  Q_INVOKABLE static QStringList translationFolders();
 
-  static void loadLanguage();
+  /// Load translations from all *.qm files in the specified folders.
+  /// \sa loadLanguage()
+  Q_INVOKABLE static void loadTranslations(const QString& dir);
+
+  /// Load translations from all *.qm files in translation folders.
+  /// \sa translationFolders(), loadTranslations
+  Q_INVOKABLE static void loadLanguage();
 
   /// Load certificates bundled into '<slicerHome>/<SLICER_SHARE_DIR>/Slicer.crt'.
   /// For more details, see Slicer/Base/QTCore/Resources/Certs/README
   /// Returns \a False if 'Slicer.crt' failed to be loaded.
   /// \sa QSslSocket::defaultCaCertificates()
-  static bool loadCaCertificates(const QString& slicerHome);
+  Q_INVOKABLE static bool loadCaCertificates(const QString& slicerHome);
 
   Q_INVOKABLE int registerResource(const QByteArray& data);
 
