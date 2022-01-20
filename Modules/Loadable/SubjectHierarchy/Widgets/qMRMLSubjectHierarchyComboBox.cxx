@@ -178,6 +178,9 @@ void qMRMLSubjectHierarchyComboBox::clearSelection()
 {
   Q_D(const qMRMLSubjectHierarchyComboBox);
   d->TreeView->clearSelection();
+
+  // Clear title and icon
+  this->updateComboBoxTitleAndIcon(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
 }
 
 //------------------------------------------------------------------------------
