@@ -129,8 +129,13 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  // Mousewheel zooms direction is chosen to be consistent with other applications (Ctrl-MouseWheelForward zooms in in PowerPoint),
+  // and with Windows touchpad pinch-to-zoom (pinch to zoom in generates MouseWheelForward event).
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::NoModifier, WidgetEventCameraWheelZoomIn);
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::NoModifier, WidgetEventCameraWheelZoomOut);
+  // Ctrl-mousewheel (Windows touchpad pinch-to-zoom)
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::ControlModifier, WidgetEventCameraWheelZoomIn);
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::ControlModifier, WidgetEventCameraWheelZoomOut);
   // Touch zoom
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartPinchEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
   this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::PinchEvent, vtkEvent::AnyModifier, WidgetEventTouchPinchZoom);
@@ -338,13 +343,11 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
 
     case WidgetEventCameraWheelZoomIn:
       this->SaveStateForUndo();
-      // Slicer; invert direction to match right button drag
-      this->Dolly(pow((double)1.1, -0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
+      this->Dolly(pow((double)1.1, 0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
       break;
     case WidgetEventCameraWheelZoomOut:
       this->SaveStateForUndo();
-      // Slicer; invert direction to match right button drag
-      this->Dolly(pow((double)1.1, 0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
+      this->Dolly(pow((double)1.1, -0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
       break;
 
     case WidgetEventMouseMove:
