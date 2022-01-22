@@ -943,7 +943,8 @@ void qSlicerApplication::logApplicationInformation() const
       << "CPU "
       << "VTK configuration "
       << "Qt configuration "
-      << "Developer mode enabled "
+      << "Internationalization "
+      << "Developer mode "
       << "Application path "
       << "Additional module paths ";
 
@@ -1108,11 +1109,25 @@ void qSlicerApplication::logApplicationInformation() const
 
   QSettings settings;
 
+  // Internationalization
+#ifdef Slicer_BUILD_I18N_SUPPORT
+  bool internationalizationEnabled =
+    qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled", true).toBool();
+  QString language = qSlicerApplication::application()->userSettings()->value("language").toString();
+  qDebug("%s: %s, language=%s",
+    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+    internationalizationEnabled ? "enabled" : "disabled",
+    qPrintable(language));
+#else
+  qDebug("%s: not supported",
+    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')));
+#endif
+
   // Developer mode enabled
   bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
   qDebug("%s: %s",
          qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-         developerModeEnabled ? "yes" : "no");
+         developerModeEnabled ? "enabled" : "disabled");
 
   // Additional module paths
   // These paths are not converted to absolute path, because the raw values are moreuseful for troubleshooting.
