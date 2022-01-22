@@ -175,7 +175,7 @@ mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
 # Python requirements
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_REQUIRED_PYTHON_VERSION)
-  set(Slicer_REQUIRED_PYTHON_VERSION "3.6.7")
+  set(Slicer_REQUIRED_PYTHON_VERSION "3.9.10")
 endif()
 mark_as_superbuild(Slicer_REQUIRED_PYTHON_VERSION)
 
