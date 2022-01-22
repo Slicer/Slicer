@@ -31,14 +31,14 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   # [scipy]
   # Hashes correspond to the following packages:
-  #  - scipy-1.5.4-cp36-cp36m-macosx_10_9_x86_64.whl
-  #  - scipy-1.5.4-cp36-cp36m-manylinux1_x86_64.whl
-  #  - scipy-1.5.4-cp36-cp36m-manylinux2014_aarch64.whl
-  #  - scipy-1.5.4-cp36-cp36m-win_amd64.whl
-  scipy==1.5.4 --hash=sha256:4f12d13ffbc16e988fa40809cbbd7a8b45bc05ff6ea0ba8e3e41f6f4db3a9e47 \
-               --hash=sha256:368c0f69f93186309e1b4beb8e26d51dd6f5010b79264c0f1e9ca00cd92ea8c9 \
-               --hash=sha256:4598cf03136067000855d6b44d7a1f4f46994164bcd450fb2c3d481afc25dd06 \
-               --hash=sha256:65923bc3809524e46fb7eb4d6346552cbb6a1ffc41be748535aa502a2e3d3389
+  #  - scipy-1.7.2-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - scipy-1.7.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - scipy-1.7.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - scipy-1.7.2-cp39-cp39-win_amd64.whl
+  scipy==1.7.2 --hash=sha256:1ea6233f5a365cb7945b4304bd06323ece3ece85d6a3fa8598d2f53e513467c9 \
+               --hash=sha256:2d25272c03ee3c0fe5e0dff1bb7889280bb6c9e1766fa9c7bde81ad8a5f78694 \
+               --hash=sha256:5273d832fb9cd5724ee0d335c16a903b923441107dd973d27fc4293075a9f4e3 \
+               --hash=sha256:a80eb01c43fd98257ec7a49ff5cec0edba32031b5f86503f55399a48cb2c5379
   # [/scipy]
   ]===])
 

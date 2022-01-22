@@ -9,6 +9,7 @@ if(NOT Slicer_USE_SYSTEM_python)
   list(APPEND ${proj}_DEPENDENCIES
     bzip2
     CTKAPPLAUNCHER
+    LibFFI
     LZMA
     zlib
     sqlite
@@ -50,8 +51,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-${Slicer_REQUIRED_PYTHON_VERSION}")
 
-  set(_download_3.6.7_url "https://www.python.org/ftp/python/3.6.7/Python-3.6.7.tgz")
-  set(_download_3.6.7_md5 "c83551d83bf015134b4b2249213f3f85")
+  set(_download_3.9.10_url "https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz")
+  set(_download_3.9.10_md5 "1440acb71471e2394befdb30b1a958d1")
 
   ExternalProject_Add(python-source
     URL ${_download_${Slicer_REQUIRED_PYTHON_VERSION}_url}
@@ -122,7 +123,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "1feb43e4bb2f3461747487a85234bdd9839d44e3"
+    "bb45aa7a4cfc7a5a93bc490c6158f702d1a2226f"
     QUIET
     )
 
@@ -161,6 +162,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       -DLZMA_LIBRARY:FILEPATH=${LZMA_LIBRARY}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+      -DLibFFI_INCLUDE_DIR:PATH=${LibFFI_INCLUDE_DIR}
+      -DLibFFI_LIBRARY:FILEPATH=${LibFFI_LIBRARY}
       -DSQLite3_INCLUDE_DIR:PATH=${sqlite_INCLUDE_DIR}
       -DSQLite3_LIBRARY:FILEPATH=${sqlite_LIBRARY}
       -DENABLE_SSL:BOOL=${PYTHON_ENABLE_SSL}

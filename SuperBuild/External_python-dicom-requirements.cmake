@@ -41,24 +41,24 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [pydicom]
-  pydicom==2.2.1 --hash=sha256:444b5b7289135ff5ea76dfc69d3597dcfde1cd050ca387f709d777f35701242d
+  pydicom==2.2.2 --hash=sha256:6ecb9c6d56a20b2104099b8ef8fe0f3664d797b08a0e0548fe0311b515b32308
   # [/pydicom]
-  # [Pillow]
-  # Hashes correspond to the following packages:
-  #  - Pillow-8.3.2-cp36-cp36m-macosx_10_10_x86_64.whl
-  #  - Pillow-8.3.2-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - Pillow-8.3.2-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - Pillow-8.3.2-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl
-  #  - Pillow-8.3.2-cp36-cp36m-win_amd64.whl
-  Pillow==8.3.2 --hash=sha256:11eb7f98165d56042545c9e6db3ce394ed8b45089a67124298f0473b29cb60b2 \
-                --hash=sha256:2f23b2d3079522fdf3c09de6517f625f7a964f916c956527bed805ac043799b8 \
-                --hash=sha256:e5a31c07cea5edbaeb4bdba6f2b87db7d3dc0f446f379d907e51cc70ea375629 \
-                --hash=sha256:8f284dc1695caf71a74f24993b7c7473d77bc760be45f776a2c2f4e04c170550 \
-                --hash=sha256:a048dad5ed6ad1fad338c02c609b862dfaa921fcd065d747194a6805f91f2196
-  # [/Pillow]
   # [six]
   six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
   # [/six]
+  # [Pillow]
+  # Hashes correspond to the following packages:
+  #  - Pillow-8.4.0-cp39-cp39-macosx_10_10_x86_64.whl
+  #  - Pillow-8.4.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - Pillow-8.4.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - Pillow-8.4.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - Pillow-8.4.0-cp39-cp39-win_amd64.whl
+  Pillow==8.4.0 --hash=sha256:5503c86916d27c2e101b7f71c2ae2cddba01a2cf55b8395b0255fd33fa4d1f1a \
+                --hash=sha256:4acc0985ddf39d1bc969a9220b51d94ed51695d455c228d8ac29fcdb25810e6e \
+                --hash=sha256:0b052a619a8bfcf26bd8b3f48f45283f9e977890263e4571f2393ed8898d331b \
+                --hash=sha256:b8831cb7332eda5dc89b21a7bce7ef6ad305548820595033a4b03cf3091235ed \
+                --hash=sha256:3eb1ce5f65908556c2d8685a8f0a6e989d887ec4057326f6c22b24e8a172c66b
+  # [/Pillow]
   # [retrying]
   retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
   # [/retrying]

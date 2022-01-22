@@ -33,17 +33,16 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   nose==1.3.7 --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac  # needed for NumPy unit tests
   # [/nose]
   # [numpy]
-  # Hashes correspond to the following packages:
-  #  - numpy-1.19.5-cp36-cp36m-macosx_10_9_x86_64.whl
-  #  - numpy-1.19.5-cp36-cp36m-manylinux1_x86_64.whl
-  #  - numpy-1.19.5-cp36-cp36m-manylinux2010_x86_64.whl
-  #  - numpy-1.19.5-cp36-cp36m-manylinux2014_aarch64.whl
-  #  - numpy-1.19.5-cp36-cp36m-win_amd64.whl
-  numpy==1.19.5 --hash=sha256:cc6bd4fd593cb261332568485e20a0712883cf631f6f5e8e86a52caa8b2b50ff \
-                --hash=sha256:8b5e972b43c8fc27d56550b4120fe6257fdc15f9301914380b27f74856299fea \
-                --hash=sha256:a4646724fba402aa7504cd48b4b50e783296b5e10a524c7a6da62e4a8ac9698d \
-                --hash=sha256:2e55195bc1c6b705bfd8ad6f288b38b11b1af32f3c8289d6c50d47f950c12e76 \
-                --hash=sha256:dbd18bcf4889b720ba13a27ec2f2aac1981bd41203b3a3b27ba7a33f88ae4827
+  #  - numpy-1.21.4-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - numpy-1.21.4-cp39-cp39-macosx_11_0_arm64.whl
+  #  - numpy-1.21.4-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl
+  #  - numpy-1.21.4-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - numpy-1.21.4-cp39-cp39-win_amd64.whl
+  numpy==1.21.4 --hash=sha256:c885bfc07f77e8fee3dc879152ba993732601f1f11de248d4f357f0ffea6a6d4 \
+                --hash=sha256:9e6f5f50d1eff2f2f752b3089a118aee1ea0da63d56c44f3865681009b0af162 \
+                --hash=sha256:c74c699b122918a6c4611285cc2cad4a3aafdb135c22a16ec483340ef97d573c \
+                --hash=sha256:9864424631775b0c052f3bd98bc2712d131b3e2cd95d1c0c68b91709170890b0 \
+                --hash=sha256:e3c3e990274444031482a31280bf48674441e0a5b55ddb168f3a6db3e0c38ec8
   # [/numpy]
   ]===])
 

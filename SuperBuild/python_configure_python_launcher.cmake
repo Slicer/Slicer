@@ -85,6 +85,47 @@ find_package(CTKAppLauncher REQUIRED)
 
 set(PYTHONHOME "${python_DIR}")
 
+# slicer_dll_directories
+#
+# Helper module for providing additional search paths for native dependencies
+# when importing extension modules or loading DLLs using ctypes.
+#
+# See https://docs.python.org/3/library/os.html#os.add_dll_directory
+#
+file(WRITE "${PYTHONHOME}/${PYTHON_STDLIB_SUBDIR}/slicer_dll_directories.py" [==[
+import os
+import sys
+
+
+def add(library_paths=None):
+    if library_paths is None:
+        library_paths = [os.path.abspath(path) for path in os.getenv("LibraryPaths", "").split(os.pathsep)]
+
+    if sys.version_info < (3, 8) or sys.platform != 'win32':
+        return
+
+    for path in library_paths:
+        if not os.path.exists(path):
+            continue
+        os.add_dll_directory(path)
+
+
+if __name__ == "__main__":
+    add()
+]==])
+
+# sitecustomize
+#
+# Ensures additional search paths are systmatically added when using PythonSlicer
+#
+# See https://docs.python.org/3/library/site.html
+#
+file(WRITE "${PYTHONHOME}/${PYTHON_STDLIB_SUBDIR}/sitecustomize.py" [==[
+import slicer_dll_directories
+
+slicer_dll_directories.add()
+]==])
+
 # PATHS
 set(PYTHONLAUNCHER_PATHS_BUILD
   <APPLAUNCHER_DIR>
@@ -120,7 +161,7 @@ endif()
 
 # PATH ENVVARS
 set(PYTHONLAUNCHER_ADDITIONAL_PATH_ENVVARS_BUILD
-  "PYTHONPATH"
+  "PYTHONPATH,LibraryPaths"
   )
 set(PYTHONLAUNCHER_PYTHONPATH_BUILD
   "${PYTHONHOME}/${PYTHON_STDLIB_SUBDIR}"
@@ -167,7 +208,7 @@ endif()
 
 # PATH ENVVARS
 set(PYTHONLAUNCHER_ADDITIONAL_PATH_ENVVARS_INSTALLED
-  "PYTHONPATH"
+  "PYTHONPATH,LibraryPaths"
   )
 set(PYTHONLAUNCHER_PYTHONPATH_INSTALLED
   "${PYTHONHOME}/lib/Python/${PYTHON_STDLIB_SUBDIR}"
