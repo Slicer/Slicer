@@ -8,6 +8,7 @@ Modules usually interact with each other only indirectly, by making changes and 
 colors
 dicom
 markups
+segmentations
 segmenteditor
 transforms
 volumerendering
