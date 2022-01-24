@@ -1763,7 +1763,7 @@ def arrayFromSegment(segmentationNode, segmentId):
 
   .. deprecated:: 4.13.0
     Use arrayFromSegmentBinaryLabelmap to access a copy of the binary labelmap that will not modify the original labelmap."
-    Use arrayFromSegmentInternalBinaryLabelmap to access a modifiable internal lablemap representation that may be shared"
+    Use arrayFromSegmentInternalBinaryLabelmap to access a modifiable internal labelmap representation that may be shared"
     between multiple segments.
   """
   import logging

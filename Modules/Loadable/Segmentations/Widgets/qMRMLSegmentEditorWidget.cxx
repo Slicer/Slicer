@@ -428,7 +428,7 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   QMenu* show3DButtonMenu = new QMenu(qMRMLSegmentEditorWidget::tr("Show 3D"), this->Show3DButton);
 
   this->SurfaceSmoothingEnabledAction = new QAction(qMRMLSegmentEditorWidget::tr("Surface smoothing"), show3DButtonMenu);
-  this->SurfaceSmoothingEnabledAction->setToolTip(qMRMLSegmentEditorWidget::tr("Apply smoothing when converting binary lablemap to closed surface representation."));
+  this->SurfaceSmoothingEnabledAction->setToolTip(qMRMLSegmentEditorWidget::tr("Apply smoothing when converting binary labelmap to closed surface representation."));
   this->SurfaceSmoothingEnabledAction->setCheckable(true);
   show3DButtonMenu->addAction(this->SurfaceSmoothingEnabledAction);
   QObject::connect(this->SurfaceSmoothingEnabledAction, SIGNAL(toggled(bool)), q, SLOT(onEnableSurfaceSmoothingToggled(bool)));

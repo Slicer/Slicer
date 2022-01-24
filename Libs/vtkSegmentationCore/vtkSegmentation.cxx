@@ -1605,17 +1605,17 @@ void vtkSegmentation::ClearSegment(std::string segmentId)
   this->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentId, sharedSegmentIDs, false);
   if (this->GetMasterRepresentationName() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() && !sharedSegmentIDs.empty())
     {
-    vtkOrientedImageData* binaryLablemap = vtkOrientedImageData::SafeDownCast(masterRepresentation);
-    if (binaryLablemap)
+    vtkOrientedImageData* binaryLabelmap = vtkOrientedImageData::SafeDownCast(masterRepresentation);
+    if (binaryLabelmap)
       {
       vtkNew<vtkImageThreshold> threshold;
-      threshold->SetInputData(binaryLablemap);
+      threshold->SetInputData(binaryLabelmap);
       threshold->ThresholdBetween(segment->GetLabelValue(), segment->GetLabelValue());
       threshold->SetInValue(0);
       threshold->ReplaceOutOff();
       threshold->Update();
-      binaryLablemap->ShallowCopy(threshold->GetOutput());
-      binaryLablemap->Modified();
+      binaryLabelmap->ShallowCopy(threshold->GetOutput());
+      binaryLabelmap->Modified();
       }
     }
   else if (masterRepresentation)
