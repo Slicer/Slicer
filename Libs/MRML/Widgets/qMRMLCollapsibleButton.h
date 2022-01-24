@@ -27,6 +27,9 @@
 // qMRMLWidget includes
 #include "qMRMLWidgetsExport.h"
 
+class qMRMLCollapsibleButtonPrivate;
+class vtkMRMLScene;
+
 /// This class is intended to improve visual appearance of ctkCollapsibleButton,
 /// but currently it works exactly as its base class ctkCollapsibleButton.
 class QMRML_WIDGETS_EXPORT qMRMLCollapsibleButton : public ctkCollapsibleButton
@@ -38,7 +41,23 @@ public:
 
   /// Constructors
   explicit qMRMLCollapsibleButton(QWidget* parent = nullptr);
-  ~qMRMLCollapsibleButton() override = default;
+  ~qMRMLCollapsibleButton() override;
+
+  /// Return a pointer on the MRML scene
+  vtkMRMLScene* mrmlScene() const;
+
+public slots:
+  void setMRMLScene(vtkMRMLScene* scene);
+
+signals:
+  void mrmlSceneChanged(vtkMRMLScene*);
+
+protected:
+  QScopedPointer<qMRMLCollapsibleButtonPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qMRMLCollapsibleButton);
+  Q_DISABLE_COPY(qMRMLCollapsibleButton);
 };
 
 #endif
