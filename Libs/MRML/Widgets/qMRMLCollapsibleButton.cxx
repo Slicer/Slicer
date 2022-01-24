@@ -22,14 +22,51 @@
 #include <QEvent>
 #include <QStyle>
 
+// VTK includes
+#include <vtkSmartPointer.h>
+
+// MRML includes
+#include "vtkMRMLScene.h"
+
 // qMRML includes
 #include "qMRMLCollapsibleButton.h"
+
+
+// --------------------------------------------------------------------------
+class qMRMLCollapsibleButtonPrivate
+{
+public:
+  vtkSmartPointer<vtkMRMLScene> MRMLScene;
+};
 
 // --------------------------------------------------------------------------
 // qMRMLCollapsibleButton methods
 
 // --------------------------------------------------------------------------
 qMRMLCollapsibleButton::qMRMLCollapsibleButton(QWidget* parentWidget)
-  :Superclass(parentWidget)
+  :Superclass(parentWidget), d_ptr(new qMRMLCollapsibleButtonPrivate)
 {
+}
+
+//-----------------------------------------------------------------------------
+qMRMLCollapsibleButton::~qMRMLCollapsibleButton() = default;
+
+//-----------------------------------------------------------------------------
+void qMRMLCollapsibleButton::setMRMLScene(vtkMRMLScene* scene)
+{
+  Q_D(qMRMLCollapsibleButton);
+  if (scene == d->MRMLScene)
+    {
+    return;
+    }
+  d->MRMLScene = scene;
+
+  emit mrmlSceneChanged(scene);
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLScene* qMRMLCollapsibleButton::mrmlScene()const
+{
+  Q_D(const qMRMLCollapsibleButton);
+  return d->MRMLScene;
 }
