@@ -86,9 +86,9 @@
 #include "vtkPoints.h"
 #include <math.h>
 
-static const int JUMP_MODE_COMBOBOX_INDEX_DEFAULT = -1;
-static const int JUMP_MODE_COMBOBOX_INDEX_OFFSET = 0;
-static const int JUMP_MODE_COMBOBOX_INDEX_CENTERED = 1;
+static const int JUMP_MODE_COMBOBOX_INDEX_IGNORE = 0;
+static const int JUMP_MODE_COMBOBOX_INDEX_OFFSET = 1;
+static const int JUMP_MODE_COMBOBOX_INDEX_CENTERED = 2;
 static const char* NAME_PROPERTY = "name";
 
 static const int COORDINATE_COMBOBOX_INDEX_WORLD = 0;
@@ -392,21 +392,6 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // Create the layout for the create markups group box.
   this->createMarkupsPushButtons();
 
-  // Make sure that the Jump to Slices radio buttons match the default of the
-  // MRML slice node
-  vtkNew<vtkMRMLSliceNode> sliceNode;
-  if (sliceNode->GetJumpMode() == vtkMRMLSliceNode::DefaultJumpSlice)
-    {
-    this->jumpModeComboBox->setCurrentIndex(JUMP_MODE_COMBOBOX_INDEX_DEFAULT);
-    }
-  else if (sliceNode->GetJumpMode() == vtkMRMLSliceNode::OffsetJumpSlice)
-    {
-    this->jumpModeComboBox->setCurrentIndex(JUMP_MODE_COMBOBOX_INDEX_OFFSET);
-    }
-  else if (sliceNode->GetJumpMode() == vtkMRMLSliceNode::CenteredJumpSlice)
-    {
-    this->jumpModeComboBox->setCurrentIndex(JUMP_MODE_COMBOBOX_INDEX_CENTERED);
-    }
   // update the checked state of showing the slice intersections
   // vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled cannot be called, as the scene
   // is not yet set, so just set to the default value (slice intersections not visible).
@@ -2273,31 +2258,18 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCurrentCellChanged(
   Q_UNUSED(currentColumn);
   Q_UNUSED(previousRow);
   Q_UNUSED(previousColumn);
-
-  // get the active list
-  if (!d->MarkupsNode)
+  if (!d->MarkupsNode || !this->markupsLogic())
     {
     return;
     }
-
-  // is jumping disabled?
-  if (!(d->jumpModeComboBox->currentIndex() == JUMP_MODE_COMBOBOX_INDEX_DEFAULT))
+  if ((d->jumpModeComboBox->currentIndex() == JUMP_MODE_COMBOBOX_INDEX_IGNORE))
     {
+    // Jump slices is disabled
     return;
     }
-  // otherwise jump to that slice
-
-  // offset or center?
-  bool jumpCentered = false;
-  if (d->jumpModeComboBox->currentIndex() == JUMP_MODE_COMBOBOX_INDEX_CENTERED)
-    {
-    jumpCentered = true;
-    }
-  // jump to it
-  if (this->markupsLogic())
-    {
-    this->markupsLogic()->JumpSlicesToNthPointInMarkup(d->MarkupsNode->GetID(), currentRow, jumpCentered);
-    }
+  // Jump slices
+  bool jumpCentered = (d->jumpModeComboBox->currentIndex() == JUMP_MODE_COMBOBOX_INDEX_CENTERED);
+  this->markupsLogic()->JumpSlicesToNthPointInMarkup(d->MarkupsNode->GetID(), currentRow, jumpCentered);
 }
 
 //-----------------------------------------------------------------------------
@@ -2777,14 +2749,17 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject
   if (n>=0)
     {
     this->updateRow(n);
-    if (!(d->jumpModeComboBox->currentIndex() == JUMP_MODE_COMBOBOX_INDEX_DEFAULT))
+    if (d->jumpModeComboBox->currentIndex() != JUMP_MODE_COMBOBOX_INDEX_IGNORE)
       {
+      // Get markups node, make sure the node is still in the scene and convert to markups
       vtkMRMLMarkupsNode* markupsNode = nullptr;
       vtkMRMLNode* node = d->activeMarkupTreeView->currentNode();
       if (node)
         {
-        // make sure the node is still in the scene and convert to markups
         markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->GetNodeByID(node->GetID()));
+        }
+      if (markupsNode)
+        {
         int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(n);
         if (mPositionStatus == vtkMRMLMarkupsNode::PositionPreview)
           {
@@ -2814,7 +2789,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointAddedEvent()
   // (if jump slices on click in table is selected, selecting the new
   // row before the point coordinates are updated will cause the slices
   // to jump to 0,0,0)
-  if (!(d->jumpModeComboBox->currentIndex() == JUMP_MODE_COMBOBOX_INDEX_DEFAULT))
+  if (d->jumpModeComboBox->currentIndex() == JUMP_MODE_COMBOBOX_INDEX_IGNORE)
     {
     d->activeMarkupTableWidget->setCurrentCell(newRow, 0);
     }
