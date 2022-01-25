@@ -251,6 +251,32 @@ shortcut.setKey(qt.QKeySequence("s"))
 shortcut.connect("activated()", toggleSphereBrush)
 ```
 
+### Create keyboard shortcut for toggling a set of segments
+
+This script toggles visibility of "completed" segments if Ctrl-k keyboard shortcut is pressed:
+
+```python
+slicer.segmentationNode = getNode('Segmentation')
+slicer.toggledSegmentState="completed"  # it could be "inprogress", "completed", "flagged"
+slicer.visibility = True
+
+def toggleSegmentVisibility():
+    slicer.visibility = not slicer.visibility
+    segmentation = slicer.segmentationNode.GetSegmentation()
+    for segmentIndex in range(segmentation.GetNumberOfSegments()):
+        segmentId = segmentation.GetNthSegmentID(segmentIndex)
+        segmentationStatus = vtk.mutable("")
+        if not segmentation.GetSegment(segmentId).GetTag("Segmentation.Status", segmentationStatus):
+            continue
+        if segmentationStatus != slicer.toggledSegmentState:
+            continue
+        slicer.segmentationNode.GetDisplayNode().SetSegmentVisibility(segmentId, slicer.visibility)
+
+shortcut = qt.QShortcut(slicer.util.mainWindow())
+shortcut.setKey(qt.QKeySequence("Ctrl+k"))
+shortcut.connect( "activated()", toggleSegmentVisibility)
+```
+
 ### Customize list of displayed Segment editor effects
 
 Only show Paint and Erase effects:
