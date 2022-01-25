@@ -251,7 +251,7 @@ shortcut.setKey(qt.QKeySequence("s"))
 shortcut.connect("activated()", toggleSphereBrush)
 ```
 
-### Create keyboard shortcut for toggling a set of segments
+### Create keyboard shortcut for toggling visibility of a set of segments
 
 This script toggles visibility of "completed" segments if Ctrl-k keyboard shortcut is pressed:
 
