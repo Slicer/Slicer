@@ -35,7 +35,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="VisibilityLabel">
         <property name="text">
-         <string>&amp;Visible:</string>
+         <string>&amp;Visibility:</string>
         </property>
         <property name="buddy">
          <cstring>VisibilityCheckBox</cstring>
@@ -86,7 +86,7 @@
       <item row="5" column="0">
        <widget class="QLabel" name="SliceIntersectionVisibilityLabel">
         <property name="text">
-         <string>Slice &amp;Intersections Visible:</string>
+         <string>Slice &amp;Intersections Visibility:</string>
         </property>
         <property name="buddy">
          <cstring>SliceIntersectionVisibilityCheckBox</cstring>
@@ -172,7 +172,7 @@
       <item row="4" column="0">
        <widget class="QLabel" name="ThreeDVisibilityLabel">
         <property name="text">
-         <string>3D Visible:</string>
+         <string>3D Visibility:</string>
         </property>
        </widget>
       </item>
