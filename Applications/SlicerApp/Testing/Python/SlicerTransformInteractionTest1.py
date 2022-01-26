@@ -537,7 +537,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
     tdNode = tNode.GetDisplayNode()
     self.assertIsNotNone(tdNode)
-    self.assertEquals(tdNode.GetEditorVisibility(), 1)
+    self.assertEqual(tdNode.GetEditorVisibility(), 1)
 
     manager = logic.getModel3DDisplayableManager()
     self.assertIsNotNone(manager)
