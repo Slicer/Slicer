@@ -36,7 +36,7 @@ def parse_nhdr(path):
                 break
 
             # careful about precedence -- ":=" must match first
-            key, val = [x.strip() for x in re.split(":=|=|:", line)]
+            key, val = (x.strip() for x in re.split(":=|=|:", line))
             assert(key not in kvdict)
             kvdict[key] = val
 
