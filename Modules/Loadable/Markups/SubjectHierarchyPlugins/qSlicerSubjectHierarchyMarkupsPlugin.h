@@ -113,6 +113,8 @@ public:
 protected slots:
   /// Called when clicking on rename point action
   void renamePoint();
+  /// Called when clicking on refocus camera action
+  void refocusCamera();
   /// Called when clicking on delete point action
   void deletePoint();
   /// Called when clicking on delete node action
