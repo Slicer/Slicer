@@ -31,14 +31,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   # [scipy]
   # Hashes correspond to the following packages:
-  #  - scipy-1.7.2-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - scipy-1.7.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - scipy-1.7.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - scipy-1.7.2-cp39-cp39-win_amd64.whl
-  scipy==1.7.2 --hash=sha256:1ea6233f5a365cb7945b4304bd06323ece3ece85d6a3fa8598d2f53e513467c9 \
-               --hash=sha256:2d25272c03ee3c0fe5e0dff1bb7889280bb6c9e1766fa9c7bde81ad8a5f78694 \
-               --hash=sha256:5273d832fb9cd5724ee0d335c16a903b923441107dd973d27fc4293075a9f4e3 \
-               --hash=sha256:a80eb01c43fd98257ec7a49ff5cec0edba32031b5f86503f55399a48cb2c5379
+  #  - scipy-1.7.3-1-cp39-cp39-macosx_12_0_arm64.whl
+  #  - scipy-1.7.3-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - scipy-1.7.3-cp39-cp39-macosx_12_0_arm64.whl
+  #  - scipy-1.7.3-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - scipy-1.7.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - scipy-1.7.3-cp39-cp39-win_amd64.whl
+  scipy==1.7.3 --hash=sha256:b78a35c5c74d336f42f44106174b9851c783184a85a3fe3e68857259b37b9ffb \
+               --hash=sha256:eef93a446114ac0193a7b714ce67659db80caf940f3232bad63f4c7a81bc18df \
+               --hash=sha256:eb326658f9b73c07081300daba90a8746543b5ea177184daed26528273157294 \
+               --hash=sha256:edad1cf5b2ce1912c4d8ddad20e11d333165552aba262c882e28c78bbc09dbf6 \
+               --hash=sha256:5d1cc2c19afe3b5a546ede7e6a44ce1ff52e443d12b231823268019f608b9b12 \
+               --hash=sha256:3f78181a153fa21c018d346f595edd648344751d7f03ab94b398be2ad083ed3e
   # [/scipy]
   ]===])
 

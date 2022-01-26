@@ -48,22 +48,22 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/six]
   # [Pillow]
   # Hashes correspond to the following packages:
-  #  - Pillow-8.4.0-cp39-cp39-macosx_10_10_x86_64.whl
-  #  - Pillow-8.4.0-cp39-cp39-macosx_11_0_arm64.whl
-  #  - Pillow-8.4.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - Pillow-8.4.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - Pillow-8.4.0-cp39-cp39-win_amd64.whl
-  Pillow==8.4.0 --hash=sha256:5503c86916d27c2e101b7f71c2ae2cddba01a2cf55b8395b0255fd33fa4d1f1a \
-                --hash=sha256:4acc0985ddf39d1bc969a9220b51d94ed51695d455c228d8ac29fcdb25810e6e \
-                --hash=sha256:0b052a619a8bfcf26bd8b3f48f45283f9e977890263e4571f2393ed8898d331b \
-                --hash=sha256:b8831cb7332eda5dc89b21a7bce7ef6ad305548820595033a4b03cf3091235ed \
-                --hash=sha256:3eb1ce5f65908556c2d8685a8f0a6e989d887ec4057326f6c22b24e8a172c66b
+  #  - Pillow-9.0.0-cp39-cp39-macosx_10_10_x86_64.whl
+  #  - Pillow-9.0.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - Pillow-9.0.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - Pillow-9.0.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - Pillow-9.0.0-cp39-cp39-win_amd64.whl
+  Pillow==9.0.0 --hash=sha256:c2067b3bb0781f14059b112c9da5a91c80a600a97915b4f48b37f197895dd925 \
+                --hash=sha256:2d16b6196fb7a54aff6b5e3ecd00f7c0bab1b56eee39214b2b223a9d938c50af \
+                --hash=sha256:98cb63ca63cb61f594511c06218ab4394bf80388b3d66cd61d0b1f63ee0ea69f \
+                --hash=sha256:3586e12d874ce2f1bc875a3ffba98732ebb12e18fb6d97be482bd62b56803281 \
+                --hash=sha256:6579f9ba84a3d4f1807c4aab4be06f373017fc65fff43498885ac50a9b47a553
   # [/Pillow]
   # [retrying]
   retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
   # [/retrying]
   # [dicomweb-client]
-  dicomweb-client==0.53.0 --hash=sha256:f68434122d1ec02fdb35e37ce355d8c511183d79f1752b50cf53517c6d9be1d0
+  dicomweb-client==0.54.4 --hash=sha256:397cb05982258fde33bd059efecd74893350826f9fe71f36a9500e98baf6f96d
   # [/dicomweb-client]
   ]===])
 
