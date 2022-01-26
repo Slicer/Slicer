@@ -94,6 +94,7 @@ public:
 
 public:
   QAction* RenamePointAction{nullptr};
+  QAction* RefocusCameraAction{nullptr};
   QAction* DeletePointAction{nullptr};
   QAction* DeleteNodeAction{nullptr};
   QAction* ToggleSelectPointAction{nullptr};
@@ -141,6 +142,11 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->RenamePointAction->setObjectName("RenamePointAction");
   q->setActionPosition(this->RenamePointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->RenamePointAction, SIGNAL(triggered()), q, SLOT(renamePoint()));
+
+  this->RefocusCameraAction = new QAction("Refocus camera on this point", q);
+  this->RefocusCameraAction->setObjectName("RefocusCameraAction");
+  q->setActionPosition(this->RefocusCameraAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
+  QObject::connect(this->RefocusCameraAction, SIGNAL(triggered()), q, SLOT(refocusCamera()));
 
   this->ToggleSelectPointAction = new QAction("Toggle select control point", q);
   this->ToggleSelectPointAction->setObjectName("ToggleSelectPointAction");
@@ -605,7 +611,7 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()co
   Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
 
   QList<QAction*> actions;
-  actions << d->RenamePointAction << d->ToggleSelectPointAction
+  actions << d->RenamePointAction << d->RefocusCameraAction << d->ToggleSelectPointAction
     << d->JumpToPreviousPointAction << d->JumpToNextPointAction << d->JumpToClosestPointAction
     << d->DeletePointAction << d->DeleteNodeAction << d->EditNodeTerminologyAction
     << d->ToggleHandleInteractive << d->HandleVisibilityAction;
@@ -669,6 +675,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
 
   bool isControlPoint = componentType == vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
   d->RenamePointAction->setVisible(isControlPoint);
+  d->RefocusCameraAction->setVisible(isControlPoint);
   d->ToggleSelectPointAction->setVisible(isControlPoint);
   d->DeletePointAction->setVisible(isControlPoint);
   d->JumpToPreviousPointAction->setVisible(isControlPoint);
@@ -805,6 +812,38 @@ void qSlicerSubjectHierarchyMarkupsPlugin::renamePoint()
     }
 
   markupsNode->SetNthControlPointLabel(componentIndex, newName.toUtf8().constData());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::refocusCamera()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  vtkMRMLMarkupsNode* markupsNode = d->markupsNodeFromViewContextMenuEventData();
+  if (!markupsNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get markups node";
+    return;
+    }
+
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
+    {
+    qCritical() << Q_FUNC_INFO << ": cannot get application logic";
+    return;
+    }
+
+  // Get point index
+  int componentIndex = d->ViewContextMenuEventData["ComponentIndex"].toInt();
+
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
+  if (!markupsLogic)
+    {
+    qCritical() << Q_FUNC_INFO << ": could not get the Markups module logic.";
+    return;
+    }
+
+  markupsLogic->FocusCamerasOnNthPointInMarkup(markupsNode->GetID(), componentIndex);
 }
 
 //-----------------------------------------------------------------------------
