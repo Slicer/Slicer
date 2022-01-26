@@ -1,6 +1,7 @@
 #include "vtkImageGrowCutSegment.h"
 
 #include <iostream>
+#include <limits>
 #include <vector>
 
 #include <vtkInformation.h>
