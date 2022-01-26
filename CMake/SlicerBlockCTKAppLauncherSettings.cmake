@@ -193,6 +193,9 @@ if(Slicer_USE_PYTHONQT)
   # External projects - path environment variables
   list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_BUILD
     "PYTHONPATH"
+    # Ensures "slicer_dll_directories.add()" can add relevant directories.
+    # See SuperBuild/python_configure_python_launcher.cmake
+    "LibraryPaths"
     )
 
 endif()
@@ -307,6 +310,9 @@ if(Slicer_USE_PYTHONQT)
   # External projects - path environment variables
   list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
     "PYTHONPATH"
+    # Ensures "slicer_dll_directories.add()" can add relevant directories.
+    # See SuperBuild/python_configure_python_launcher.cmake
+    "LibraryPaths"
     )
 
 endif()
