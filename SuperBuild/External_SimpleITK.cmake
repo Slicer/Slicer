@@ -94,6 +94,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
 # Added by '${CMAKE_CURRENT_LIST_FILE}'
 set(ENV{${_varname}} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
 ")
+  if(WIN32)
+    file(APPEND ${_env_script}
+"#------------------------------------------------------------------------------
+# Added by '${CMAKE_CURRENT_LIST_FILE}' to ensure the function 'slicer_dll_directories.add()'
+# called from sitecustomize can add all the directories associated with the SimpleITK
+# dependencies.
+#
+# This is required when executing the SimpleITK external project install command below to
+# ensure the _SimpleITK module can resolve its dependencies.
+set(ENV{LibraryPaths} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
+")
+  endif()
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
