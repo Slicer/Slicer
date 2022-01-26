@@ -94,6 +94,7 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
   this->TreeView->setColumnHidden(this->TreeView->model()->idColumn(), true);
   this->TreeView->setHeaderHidden(true);
   this->TreeView->setContextMenuEnabled(false);
+  this->TreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
   this->TreeView->setDragDropMode(QAbstractItemView::NoDragDrop);
 
   // No item label
