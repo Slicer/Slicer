@@ -157,7 +157,7 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
     timeToAddThisFid = 0
     timeToAddLastFid = 0
 
-    testStartTime = time.clock()
+    testStartTime = time.process_time()
 
     import random
 
@@ -182,9 +182,9 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
 
       for controlPointIndex in range(numberOfControlPoints):
         #    print "controlPointIndex = ", controlPointIndex, "/", numberOfControlPoints, ", r = ", r, ", a = ", a, ", s = ", s
-        t1 = time.clock()
+        t1 = time.process_time()
         markupsNode.AddControlPoint(vtk.vtkVector3d(r,a,s))
-        t2 = time.clock()
+        t2 = time.process_time()
         timeToAddThisFid = t2 - t1
         dt = timeToAddThisFid - timeToAddLastFid
         #print '%(index)04d\t' % {'index': controlPointIndex}, timeToAddThisFid, "\t", dt
@@ -200,7 +200,7 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
       print("Resume render")
       slicer.app.resumeRender()
 
-    testEndTime = time.clock()
+    testEndTime = time.process_time()
     testTime = testEndTime - testStartTime
     print("Total time to add ",numberOfControlPoints," = ", testTime)
 
