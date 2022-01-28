@@ -45,9 +45,9 @@ indicated by the mouse position.
     Do this in a startupCompleted callback so the rest of the interface is already
     built.
     """
-    # TODO - the parent name will likely change
     try:
-      parent = slicer.util.findChildren(text='Data Probe')[0]
+      mw = slicer.util.mainWindow()
+      parent = slicer.util.findChild(mw, "DataProbeCollapsibleWidget")
     except IndexError:
       print("No Data Probe frame - cannot create DataProbe")
       return
