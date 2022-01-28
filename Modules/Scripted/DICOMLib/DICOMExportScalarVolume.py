@@ -142,8 +142,11 @@ class DICOMExportScalarVolume:
     # UIDs
     cliparameters['studyInstanceUID'] = self.tags['Study Instance UID']
     cliparameters['seriesInstanceUID'] = self.tags['Series Instance UID']
-    cliparameters['frameOfReferenceInstanceUID'] = self.tags['Frame of Reference Instance UID']
-
+    if 'Frame of Reference UID' in self.tags:
+      cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
+    elif 'Frame of Reference Instance UID' in self.tags:
+      logging.warning('Usage of "Frame of Reference Instance UID" is deprecated, use "Frame of Reference UID" instead.')
+      cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
     cliparameters['inputVolume'] = self.volumeNode.GetID()
 
     cliparameters['dicomDirectory'] = self.directory

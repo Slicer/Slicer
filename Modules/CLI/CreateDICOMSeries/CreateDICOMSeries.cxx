@@ -345,7 +345,7 @@ int DoIt( int argc, char * argv[])
     }
 
   // Set study, series, and frame of reference UIDs
-  if (studyInstanceUID.empty() && seriesInstanceUID.empty() && frameOfReferenceInstanceUID.empty())
+  if (studyInstanceUID.empty() && seriesInstanceUID.empty() && frameOfReferenceUID.empty())
     {
     // no UIDs are specified, so we ask ITK DICOM IO to generate them.
     gdcmIO->SetKeepOriginalUID(false);
@@ -353,16 +353,16 @@ int DoIt( int argc, char * argv[])
   else
     {
     // ITK DICOM IO either sets all UIDs or none of them, so we return with error if not all UIDs are specified
-    if (studyInstanceUID.empty() || seriesInstanceUID.empty() || frameOfReferenceInstanceUID.empty())
+    if (studyInstanceUID.empty() || seriesInstanceUID.empty() || frameOfReferenceUID.empty())
       {
-      std::cerr << "If any of UIDs (studyInstanceUID, seriesInstanceUID, and frameOfReferenceInstanceUID)"
+      std::cerr << "If any of UIDs (studyInstanceUID, seriesInstanceUID, and frameOfReferenceUID)"
         << " are specified then all of them must be specified." << std::endl;
       return EXIT_FAILURE;
       }
     gdcmIO->SetKeepOriginalUID(true);
     itk::EncapsulateMetaData<std::string>(dictionary, "0020|000d", studyInstanceUID);
     itk::EncapsulateMetaData<std::string>(dictionary, "0020|000e", seriesInstanceUID);
-    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0052", frameOfReferenceInstanceUID);
+    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0052", frameOfReferenceUID);
     }
 
   // -----------------------------------------

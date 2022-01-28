@@ -84,6 +84,7 @@ class DICOMPlugin:
     self.tags = {}
     self.tags['seriesDescription'] = "0008,103E"
     self.tags['seriesNumber'] = "0020,0011"
+    self.tags['frameOfReferenceUID'] = "0020,0052"
 
   def findPrivateTag(self, ds, group, element, privateCreator):
     """Helper function to get private tag from private creator name.
@@ -198,6 +199,7 @@ class DICOMPlugin:
     tags['seriesInstanceUID'] = "0020,000E"
     tags['seriesModality'] = "0008,0060"
     tags['seriesNumber'] = "0020,0011"
+    tags['frameOfReferenceUID'] = "0020,0052"
     tags['studyInstanceUID'] = "0020,000D"
     tags['studyID'] = "0020,0010"
     tags['studyDescription'] = "0008,1030"
@@ -242,6 +244,8 @@ class DICOMPlugin:
                           slicer.dicomDatabase.fileValue(firstFile, tags['seriesModality']) )
     shn.SetItemAttribute( seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(),
                           slicer.dicomDatabase.fileValue(firstFile, tags['seriesNumber']) )
+    shn.SetItemAttribute( seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMFrameOfReferenceUIDAttributeName(),
+                          slicer.dicomDatabase.fileValue(firstFile, tags['frameOfReferenceUID']) )
     # Set instance UIDs
     instanceUIDs = ""
     for file in loadable.files:
@@ -313,9 +317,9 @@ class DICOMPlugin:
         shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionAttributeName(),
                               studyDescription )
         studyDate = slicer.dicomDatabase.fileValue(firstFile,tags['studyDate'])
-        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDTagName(),
+        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDAttributeName(),
                               studyInstanceUid )
-        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName(),
+        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDAttributeName(),
                               studyId )
         shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateAttributeName(),
                               studyDate )

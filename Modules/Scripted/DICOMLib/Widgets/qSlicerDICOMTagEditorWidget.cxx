@@ -137,6 +137,7 @@ void qSlicerDICOMTagEditorWidgetPrivate::setupUi(QWidget *qSlicerDICOMTagEditorW
   this->TagsTable->horizontalHeader()->setStretchLastSection(true);
   this->TagsTable->setSelectionMode(QAbstractItemView::NoSelection);
   this->TagsTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  this->TagsTable->setEditTriggers(QAbstractItemView::AllEditTriggers);
   mainLayout->addWidget(this->TagsTable);
 }
 
