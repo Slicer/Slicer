@@ -44,7 +44,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "34940ef6ea0b21d77cb501d235164ad88f19d40c"  # master (v3.4.3) with fix-enum-cases
+    "1b2c437b99b361c7692538fa373e99955e9b93ae" # master v3.5.2
     QUIET
     )
 
