@@ -145,26 +145,6 @@ void qMRMLMarkupsToolBarPrivate::onSetModule(const QString& moduleName)
   layoutManager->setCurrentModule(moduleName);
 }
 
-//-----------------------------------------------------------------------------
-void qMRMLMarkupsToolBarPrivate::onAddNewMarkupsNodeByClass(const QString& className)
-{
-  if (this->MRMLScene)
-    {
-    vtkMRMLNode* node = this->MRMLScene->AddNewNodeByClass(className.toStdString().c_str());
-    vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
-
-    if (!markupsNode)
-      {
-      qCritical() << Q_FUNC_INFO << ": node added is not a vtkMRMLMarkupsNode.";
-      return;
-      }
-
-    std::string nodeName =
-      this->MRMLScene->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
-    markupsNode->SetName(nodeName.c_str());
-    }
-}
-
 // --------------------------------------------------------------------------
 void qMRMLMarkupsToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
@@ -451,6 +431,11 @@ void qMRMLMarkupsToolBar::initializeToolBarLayout()
 
   vtkSlicerMarkupsLogic* markupsLogic =
     vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic("Markups"));
+  if (!markupsLogic)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
+    return;
+    }
   // Markups place widget
   d->MarkupsPlaceWidget = new qSlicerMarkupsPlaceWidget(this);
   d->MarkupsPlaceWidget->setObjectName(QString("MarkupsPlaceWidget"));
@@ -482,6 +467,11 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
 
   vtkSlicerMarkupsLogic* markupsLogic =
     vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic("Markups"));
+  if (!markupsLogic)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
+    return;
+    }
 
   for (const auto markupName : markupsLogic->GetRegisteredMarkupsTypes())
     {
@@ -550,21 +540,20 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
 void qMRMLMarkupsToolBar::onAddNewMarkupsNodeByClass(const QString& className)
 {
   Q_D(qMRMLMarkupsToolBar);
-
-  if (!d->MRMLScene)
+  // Add new markups node to the scene
+  vtkMRMLMarkupsNode* markupsNode = nullptr;
+  vtkSlicerMarkupsLogic* markupsLogic =
+    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic("Markups"));
+  if (markupsLogic)
     {
-    qCritical() << Q_FUNC_INFO << " failed: invalid scene";
-    return;
+    markupsNode = markupsLogic->AddNewMarkupsNode(className.toStdString());
     }
-
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(d->MRMLScene->AddNewNodeByClass(className.toStdString().c_str()));
   if (!markupsNode)
     {
-    qCritical() << Q_FUNC_INFO << ": could not create markups node.";
+    qCritical() << Q_FUNC_INFO << ": failed to create new markups node by class " << className;
     return;
     }
-  std::string nodeName = d->MRMLScene->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
-  markupsNode->SetName(nodeName.c_str());
+  // Update GUI
   d->updateWidgetFromMRML();
   if (d->MarkupsPlaceWidget)
     {

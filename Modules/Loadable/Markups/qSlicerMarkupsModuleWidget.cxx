@@ -1950,20 +1950,14 @@ void qSlicerMarkupsModuleWidget::enableMarkupTableButtons(bool enable)
 void qSlicerMarkupsModuleWidget::onCreateMarkupByClass(const QString& className)
 {
   Q_D(qSlicerMarkupsModuleWidget);
-  if (this->mrmlScene())
+  if (!this->markupsLogic())
     {
-    vtkMRMLNode* node = this->mrmlScene()->AddNewNodeByClass(className.toStdString().c_str());
-    vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
-
-    if (!markupsNode)
-      {
-      qCritical() << Q_FUNC_INFO << ": node added is not a vtkMRMLMarkupsNode.";
-      return;
-      }
-
-    std::string nodeName =
-      this->mrmlScene()->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
-    markupsNode->SetName(nodeName.c_str());
+    qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
+    return;
+    }
+  vtkMRMLMarkupsNode* markupsNode = this->markupsLogic()->AddNewMarkupsNode(className.toStdString());
+  if (markupsNode)
+    {
     this->onActiveMarkupMRMLNodeAdded(markupsNode);
     }
 }

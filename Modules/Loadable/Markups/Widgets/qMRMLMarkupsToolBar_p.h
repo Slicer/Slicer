@@ -93,7 +93,6 @@ public slots:
   void onActivePlaceNodeClassNameChangedEvent();
   void onPlaceNodeClassNameListModifiedEvent();
   void onSetModule(const QString& moduleName);
-  void onAddNewMarkupsNodeByClass(const QString& className);
 
 public:
   vtkSmartPointer<vtkMRMLScene>            MRMLScene;

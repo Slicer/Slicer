@@ -54,6 +54,7 @@
 
 // MRML includes
 #include "vtkMRMLCameraNode.h"
+#include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLMessageCollection.h"
@@ -114,6 +115,9 @@ public:
 
   /// Keeps track of the order in which the markups were registered
   std::list<std::string> RegisteredMarkupsOrder;
+
+  /// Counter used by GenerateUniqueColor for creating new colors from a color table.
+  int UniqueColorNextColorTableIndex{ 0 };
 };
 
 //----------------------------------------------------------------------------
@@ -647,51 +651,65 @@ std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *
 //---------------------------------------------------------------------------
 std::string vtkSlicerMarkupsLogic::AddNewFiducialNode(const char *name, vtkMRMLScene *scene)
 {
-  std::string id;
-
-  if (!scene && !this->GetMRMLScene())
+  vtkMRMLMarkupsNode* markupsNode = this->AddNewMarkupsNode("vtkMRMLFiducialNode", name ? name : "", scene);
+  if (!markupsNode)
     {
-    vtkErrorMacro("AddNewMarkupsNode: no scene to add a markups node to!");
-    return id;
+    return "";
     }
 
-  vtkMRMLScene *addToThisScene;
-  if (scene)
+  // If adding to this scene (could be adding to a scene view during conversion)
+  // make it active so mouse mode tool bar clicks will add new fids to this list.
+  if (scene == nullptr || scene == this->GetMRMLScene())
     {
-    addToThisScene = scene;
-    }
-  else
-    {
-    addToThisScene = this->GetMRMLScene();
+    this->SetActiveListID(markupsNode);
     }
 
-  // create and add the node
-  vtkMRMLMarkupsFiducialNode *mnode = vtkMRMLMarkupsFiducialNode::New();
-  addToThisScene->AddNode(mnode);
+  const char* nodeId = markupsNode->GetID();
+  return (nodeId ? nodeId : "");
+}
 
-  // add a display node
-  std::string displayID = this->AddNewDisplayNodeForMarkupsNode(mnode);
-
-  if (displayID.compare("") != 0)
+//---------------------------------------------------------------------------
+vtkMRMLMarkupsNode* vtkSlicerMarkupsLogic::AddNewMarkupsNode(
+  std::string className, std::string nodeName/*=std::string()*/, vtkMRMLScene* scene/*=nullptr*/)
+{
+  if (!scene)
     {
-    // get the node id to return
-    id = std::string(mnode->GetID());
-    if (name != nullptr)
-      {
-      mnode->SetName(name);
-      }
-    // if adding to this scene (could be adding to a scene view during conversion)
-    // make it active so mouse mode tool bar clicks will add new fids to
-    // this list
-    if (addToThisScene == this->GetMRMLScene())
-      {
-      this->SetActiveListID(mnode);
-      }
+    scene = this->GetMRMLScene();
     }
-  // clean up
-  mnode->Delete();
+  if (!scene)
+    {
+    vtkErrorMacro("AddNewMarkupsNode: no scene to add a markups node to");
+    return nullptr;
+    }
 
-  return id;
+  vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(
+    scene->CreateNodeByClass(className.c_str()));
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (!markupsNode)
+    {
+    vtkErrorMacro("AddNewMarkupsNode: failed to instantiate class " << className);
+    return nullptr;
+    }
+
+  // Set node name
+  if (nodeName.empty())
+    {
+    nodeName = scene->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
+    }
+  markupsNode->SetName(nodeName.c_str());
+
+  // Add the new node and display node to the scene
+  scene->AddNode(markupsNode);
+  markupsNode->CreateDefaultDisplayNodes();
+
+  // Special case: for ROI nodes, we create alternating colors.
+  // If it turns out to be a well-liked feature then we can enable this for all markup types
+  if (className == "vtkMRMLMarkupsROINode")
+    {
+    markupsNode->GetDisplayNode()->SetSelectedColor(this->GenerateUniqueColor().GetData());
+    }
+
+  return markupsNode;
 }
 
 //---------------------------------------------------------------------------
@@ -2067,4 +2085,39 @@ bool vtkSlicerMarkupsLogic::ExportControlPointsToTable(vtkMRMLMarkupsNode* marku
     }
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+vtkVector3d vtkSlicerMarkupsLogic::GenerateUniqueColor()
+{
+  double color[3] = { 0.5, 0.5, 0.5 };
+  this->GenerateUniqueColor(color);
+  return vtkVector3d(color[0], color[1], color[2]);
+}
+
+//------------------------------------------------------------------------------
+void vtkSlicerMarkupsLogic::GenerateUniqueColor(double color[3])
+{
+  double rgba[4] = { 1.0, 1.0, 0.0, 1.0 }; // default is yellow
+  vtkMRMLColorTableNode* colorTable = nullptr;
+  vtkMRMLScene* scene = this->GetMRMLScene();
+    {
+    colorTable = vtkMRMLColorTableNode::SafeDownCast(
+      scene->GetNodeByID("vtkMRMLColorTableNodeFileMediumChartColors.txt"));
+    }
+  if (colorTable)
+    {
+    colorTable->GetColor(this->Internal->UniqueColorNextColorTableIndex, rgba);
+    this->Internal->UniqueColorNextColorTableIndex++;
+    if (this->Internal->UniqueColorNextColorTableIndex >= colorTable->GetNumberOfColors())
+      {
+      // reached the end of the color table, start from the beginning
+      // (the result is not completely unique colors, but at least enough variety that is
+      // sufficient for most cases)
+      this->Internal->UniqueColorNextColorTableIndex = 0;
+      }
+    }
+  color[0] = rgba[0];
+  color[1] = rgba[1];
+  color[2] = rgba[2];
 }

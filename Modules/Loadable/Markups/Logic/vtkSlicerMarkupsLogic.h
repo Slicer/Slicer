@@ -30,6 +30,9 @@
 // MRML includes
 #include "vtkMRMLStorageNode.h"
 
+// VTK includes
+#include "vtkVector.h"
+
 // STD includes
 #include <cstdlib>
 #include <string>
@@ -99,6 +102,10 @@ public:
   /// add to the passed scene.
   /// On success, return the id, on failure return an empty string.
   std::string AddNewFiducialNode(const char *name = "F", vtkMRMLScene *scene = nullptr);
+
+  /// Create a new markups node and associated display node, adding both to the scene.
+  /// For ROI nodes, each new node will have a unique color.
+  vtkMRMLMarkupsNode* AddNewMarkupsNode(std::string className, std::string nodeName=std::string(), vtkMRMLScene* scene = nullptr);
 
   /// Add a new control point to the currently active markups fiducial node at the given RAS
   /// coordinates (default 0,0,0). Will create a markups fiducial node if one is not active.
@@ -353,6 +360,14 @@ public:
     vtkWarningMacro("vtkSlicerMarkupsLogic::RenameAllMarkupsFromCurrentFormat method is deprecated, please use RenameAllControlPointsFromCurrentFormat instead");
     this->RenameAllControlPointsFromCurrentFormat(markupsNode);
     };
+
+  //@{
+  /// Generate a unique color for a markup node.
+  /// In the current implementaiton, the color is not globally unique, but colors are generated
+  /// by iterating through the items in "MediumChart" color table.
+  vtkVector3d GenerateUniqueColor();
+  void GenerateUniqueColor(double color[3]);
+  //@}
 
 protected:
 
