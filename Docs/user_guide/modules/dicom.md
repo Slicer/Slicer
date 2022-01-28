@@ -84,24 +84,24 @@ By right clicking on a Patient, Study, or Series, you can delete the entry from 
 Data in the scene can be exported to DICOM format, to be stored in DICOM database or exported to DICOM files:
 
 1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM export plugin for exporting images, but additional extensions may be needed for other information objects.
-  - `SlicerRT` extension is needed for importing/exporting radiation therapy information objects: RT structure set, RT dose, RT image, RT plan.
-  - `Quantitative reporting` extension is needed for importing/exporting DICOM segmentation objects, structured reports, and parametric maps.
-  - See complete list in [Supported data formats page](../data_loading_and_saving.md#supported-data-formats).
+    - `SlicerRT` extension is needed for importing/exporting radiation therapy information objects: RT structure set, RT dose, RT image, RT plan.
+    - `Quantitative reporting` extension is needed for importing/exporting DICOM segmentation objects, structured reports, and parametric maps.
+    - See complete list in [Supported data formats page](../data_loading_and_saving.md#supported-data-formats).
 2. Go to Data module or DICOM module.
 3. Right-click on a data node in the data tree that will be converted to DICOM format.
 4. Select the export type in the bottom left of the export dialog. This is necessary because there may be several DICOM information objects that can store the same kind of data. For example, segmentation can be stored as DICOM segmentation object (modern DICOM) or RT structure set (legacy representation, mostly used by radiation treatment planning).
-  - "Slicer data bundle" export type writes the entire scene to DICOM format by encapsulating the scene MRB package inside a DICOM file. The result as a DICOM secondary capture object, which can be stored in any DICOM archival system. This secondary capture information stores all details of the scene but only 3D Slicer can interpret the data.
-  - Export type: Once the user selected a node, the DICOM plugins generate exportables for the series they can export. The list of the results appear in this section, grouped by plugin. The confidence number will be the average of the confidence numbers for the individual series for that plugin.
+    - "Slicer data bundle" export type writes the entire scene to DICOM format by encapsulating the scene MRB package inside a DICOM file. The result as a DICOM secondary capture object, which can be stored in any DICOM archival system. This secondary capture information stores all details of the scene but only 3D Slicer can interpret the data.
+    - Export type: Once the user selected a node, the DICOM plugins generate exportables for the series they can export. The list of the results appear in this section, grouped by plugin. The confidence number will be the average of the confidence numbers for the individual series for that plugin.
 5. Optional: Edit DICOM tags that will be used in the exported data sets. The metadata from the select study will be automatically filled in to the Export dialog and you can select a Slicer volume to export.
-  - DICOM tag editor consists of a list of tables. Tables for the common tags for the patient and study on the top, and the tags for the individual series below them.
-  - "Tags" in the displayed table are not always written directly to DICOM tags, they are just used by the DICOM plugins to fill DICOM tags in the exported files. This allows much more flexibility and DICOM plugins can auto-populate some information and plugins can expose other export options in this list (e.g. compression, naming convention).
-    Save modified tags: check this checkbox to save the new tag values in the scene persistently.
-    Important tags:
-    - `StudyInstanceUID` tag specifies which patient and study the new series will be added to. If the value is set to empty then a new study will be created. It is recommended to keep all patient and study values (`PatientName`, `PatientID`, `StudyID`, etc.) the same among series in the same study.
-    - `SeriesInstanceUID` tag identifies an image series. Its value is set to empty by default, which will result in creation of a new UID and thereby a new series. In very rare cases users may want to specify a UID, but the UID cannot be any of the existing UIDs because that would result in the exported image slices being mixed into another series. Therefore, the UID is only accepted if it is not used for any of the images that are already in the database.
-    - `FrameOfReferenceUID` tag specifies a spatial reference. If two images have the same frame of reference UID value then it means that they are spatially aligned. By default, the value is empty, which means that a new frame of reference UID is created and so the exported image is not associated with any other image. If an image is spatially registered to another then it is advisable to copy the frame of reference UID value from the other image, because this may be required for fused display of the images in some image review software.
+    - DICOM tag editor consists of a list of tables. Tables for the common tags for the patient and study on the top, and the tags for the individual series below them.
+    - "Tags" in the displayed table are not always written directly to DICOM tags, they are just used by the DICOM plugins to fill DICOM tags in the exported files. This allows much more flexibility and DICOM plugins can auto-populate some information and plugins can expose other export options in this list (e.g. compression, naming convention).
+    - Save modified tags: check this checkbox to save the new tag values in the scene persistently.
+    - How to set unique identifier tags:
+        - `StudyInstanceUID` tag specifies which patient and study the new series will be added to. If the value is set to empty then a new study will be created. It is recommended to keep all patient and study values (`PatientName`, `PatientID`, `StudyID`, etc.) the same among series in the same study.
+        - `SeriesInstanceUID` tag identifies an image series. Its value is set to empty by default, which will result in creation of a new UID and thereby a new series. In very rare cases users may want to specify a UID, but the UID cannot be any of the existing UIDs because that would result in the exported image slices being mixed into another series. Therefore, the UID is only accepted if it is not used for any of the images that are already in the database.
+        - `FrameOfReferenceUID` tag specifies a spatial reference. If two images have the same frame of reference UID value then it means that they are spatially aligned. By default, the value is empty, which means that a new frame of reference UID is created and so the exported image is not associated with any other image. If an image is spatially registered to another then it is advisable to copy the frame of reference UID value from the other image, because this may be required for fused display of the images in some image review software.
 6. Click Export
-  - In case of any error, a short message is displayed. More details about the error are provided in the application log.
+    - In case of any error, a short message is displayed. More details about the error are provided in the application log.
 
 *Notes:*
 - To create DICOM files without adding them to the DICOM database, check "Export to folder" option and choose an output folder.
