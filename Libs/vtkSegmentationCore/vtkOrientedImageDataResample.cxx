@@ -1877,36 +1877,24 @@ void vtkOrientedImageDataResample::CastImageForValue(vtkOrientedImageData* image
 
   if (typeIsSigned)
     {
-    if (value > VTK_FLOAT_MAX || value < VTK_FLOAT_MIN)
+    if (value > VTK_INT_MAX || value < VTK_INT_MIN)
       {
       scalarType = VTK_DOUBLE;
       }
-    else if (value > VTK_LONG_MAX || value < VTK_LONG_MIN)
-      {
-      scalarType = VTK_FLOAT;
-      }
-    else if (value > VTK_INT_MAX || value < VTK_INT_MIN)
-      {
-      scalarType = VTK_LONG;
-      }
     else if (value > VTK_SHORT_MAX || value < VTK_SHORT_MIN)
+      {
+      scalarType = VTK_INT;
+      }
+    else if (value > VTK_SIGNED_CHAR_MAX || value < VTK_SIGNED_CHAR_MIN)
       {
       scalarType = VTK_SHORT;
       }
     }
   else
     {
-    if (value > VTK_FLOAT_MAX)
+    if (value > VTK_UNSIGNED_INT_MAX)
       {
       scalarType = VTK_DOUBLE;
-      }
-    else if (value > static_cast<double>(VTK_UNSIGNED_LONG_MAX))
-      {
-      scalarType = VTK_FLOAT;
-      }
-    else if (value > VTK_UNSIGNED_INT_MAX)
-      {
-      scalarType = VTK_UNSIGNED_LONG;
       }
     else if (value > VTK_UNSIGNED_SHORT_MAX)
       {

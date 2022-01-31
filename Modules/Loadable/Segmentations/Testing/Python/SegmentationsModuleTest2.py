@@ -280,9 +280,9 @@ class SegmentationsModuleTest2(unittest.TestCase):
       vtk.VTK_UNSIGNED_SHORT,
       vtk.VTK_INT,
       vtk.VTK_UNSIGNED_INT,
-      vtk.VTK_LONG,
-      vtk.VTK_UNSIGNED_LONG,
-      vtk.VTK_FLOAT,
+      #vtk.VTK_LONG, # On linux, VTK_LONG has the same size as VTK_LONG_LONG. This causes issues in vtkImageThreshold.
+      #vtk.VTK_UNSIGNED_LONG, See https://github.com/Slicer/Slicer/issues/5427
+      #vtk.VTK_FLOAT, # Since float can't represent all int, we jump straight to double.
       vtk.VTK_DOUBLE,
       #vtk.VTK_LONG_LONG, # These types are unsupported in ITK
       #vtk.VTK_UNSIGNED_LONG_LONG,
