@@ -99,6 +99,9 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->LineThickness = 0.2;
   this->LineDiameter = 1.0;
 
+  // Show point label at point position by default
+  this->PointLabelsDistanceScale = 0.0;
+
   // Line color variables
   this->LineColorFadingStart = 1.;
   this->LineColorFadingEnd = 10.;
@@ -160,6 +163,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(propertiesLabelVisibility, PropertiesLabelVisibility);
   vtkMRMLWriteXMLBooleanMacro(pointLabelsVisibility, PointLabelsVisibility);
   vtkMRMLWriteXMLFloatMacro(textScale, TextScale);
+  vtkMRMLWriteXMLFloatMacro(pointLabelsDistanceScale, PointLabelsDistanceScale);
   vtkMRMLWriteXMLFloatMacro(glyphScale, GlyphScale);
   vtkMRMLWriteXMLFloatMacro(glyphSize, GlyphSize);
   vtkMRMLWriteXMLBooleanMacro(useGlyphScale, UseGlyphScale);
@@ -209,6 +213,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(propertiesLabelVisibility, PropertiesLabelVisibility);
   vtkMRMLReadXMLBooleanMacro(pointLabelsVisibility, PointLabelsVisibility);
   vtkMRMLReadXMLFloatMacro(textScale, TextScale);
+  vtkMRMLReadXMLFloatMacro(pointLabelsDistanceScale, PointLabelsDistanceScale);
   vtkMRMLReadXMLFloatMacro(glyphScale, GlyphScale);
   vtkMRMLReadXMLFloatMacro(glyphSize, GlyphSize);
   vtkMRMLReadXMLBooleanMacro(useGlyphScale, UseGlyphScale);
@@ -290,6 +295,7 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*
   vtkMRMLCopyBooleanMacro(PropertiesLabelVisibility);
   vtkMRMLCopyBooleanMacro(PointLabelsVisibility);
   vtkMRMLCopyFloatMacro(TextScale);
+  vtkMRMLCopyFloatMacro(PointLabelsDistanceScale);
   vtkMRMLCopyFloatMacro(GlyphScale);
   vtkMRMLCopyFloatMacro(GlyphSize);
   vtkMRMLCopyBooleanMacro(UseGlyphScale);
@@ -470,6 +476,7 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(PropertiesLabelVisibility);
   vtkMRMLPrintBooleanMacro(PointLabelsVisibility);
+  vtkMRMLPrintFloatMacro(PointLabelsDistanceScale);
   vtkMRMLPrintFloatMacro(TextScale);
   vtkMRMLPrintFloatMacro(GlyphScale);
   vtkMRMLPrintFloatMacro(GlyphSize);
