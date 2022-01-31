@@ -544,9 +544,9 @@ layoutSwitchAction.setToolTip("3D and slice view")
 ### Turn on slice intersections
 
 ```python
-viewNodes = slicer.util.getNodesByClass("vtkMRMLSliceCompositeNode")
-for viewNode in viewNodes:
-  viewNode.SetSliceIntersectionVisibility(1)
+sliceDisplayNodes = slicer.util.getNodesByClass("vtkMRMLSliceDisplayNode")
+for sliceDisplayNode in sliceDisplayNodes:
+  sliceDisplayNode.SetIntersectingSlicesVisibility(1)
 ```
 
 :::{note}
