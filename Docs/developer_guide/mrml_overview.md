@@ -489,7 +489,7 @@ In `vtkSlicer<MyCustomType>Logic.cxx`:
 
 In `qSlicer<MyCustomType>ModuleWidget.cxx`:
 
-* Override [`bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString())`](https://apidocs.slicer.org/master/classqSlicerAbstractModuleWidget.html#a52fe94bcc034b4d841d7fc05a4899d3c) and [`double nodeEditable(vtkMRMLNode* node)`](https://apidocs.slicer.org/master/classqSlicerAbstractModuleWidget.html#adebae2ce9686043d7f9dee09620b28bb) if you want this module to be connected to the Data module’s “Edit properties…” option in the right click menu.
+* Override [`bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString())`](https://apidocs.slicer.org/master/classqSlicerAbstractModuleWidget.html#a52fe94bcc034b4d841d7fc05a4899d3c) and [`double nodeEditable(vtkMRMLNode* node)`](https://apidocs.slicer.org/master/classqSlicerAbstractModuleWidget.html#adebae2ce9686043d7f9dee09620b28bb) if you want this module to be connected to the Data module’s "Edit properties..." option in the right click menu.
 
 ### Slice view pipeline
 
