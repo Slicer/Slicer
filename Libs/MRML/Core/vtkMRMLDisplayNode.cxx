@@ -56,6 +56,8 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->Diffuse = 1.0;
   this->Specular = 0;
   this->Power = 1;
+  this->Metallic = 0.0;
+  this->Roughness = 0.5;
   this->SelectedAmbient = 0.4;
   this->SelectedSpecular = 0.5;
 
@@ -139,6 +141,8 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(selectedSpecular, SelectedSpecular);
   vtkMRMLWriteXMLFloatMacro(specular, Specular);
   vtkMRMLWriteXMLFloatMacro(power, Power);
+  vtkMRMLWriteXMLFloatMacro(metallic, Metallic);
+  vtkMRMLWriteXMLFloatMacro(roughness, Roughness);
   vtkMRMLWriteXMLFloatMacro(opacity, Opacity);
   vtkMRMLWriteXMLFloatMacro(sliceIntersectionOpacity, SliceIntersectionOpacity);
   vtkMRMLWriteXMLFloatMacro(pointSize, PointSize);
@@ -191,6 +195,8 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(selectedSpecular, SelectedSpecular);
   vtkMRMLReadXMLFloatMacro(specular, Specular);
   vtkMRMLReadXMLFloatMacro(power, Power);
+  vtkMRMLReadXMLFloatMacro(metallic, Metallic);
+  vtkMRMLReadXMLFloatMacro(roughness, Roughness);
   vtkMRMLReadXMLFloatMacro(opacity, Opacity);
   vtkMRMLReadXMLFloatMacro(sliceIntersectionOpacity, SliceIntersectionOpacity);
   vtkMRMLReadXMLFloatMacro(pointSize, PointSize);
@@ -274,10 +280,13 @@ void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   this->SetSelectedSpecular(node->SelectedSpecular);
   this->SetOpacity(node->Opacity);
   this->SetSliceIntersectionOpacity(node->SliceIntersectionOpacity);
+  this->SetInterpolation(node->Interpolation);
   this->SetAmbient(node->Ambient);
   this->SetDiffuse(node->Diffuse);
   this->SetSpecular(node->Specular);
   this->SetPower(node->Power);
+  this->SetMetallic(node->Metallic);
+  this->SetRoughness(node->Roughness);
   this->SetVisibility(node->Visibility);
   this->SetVisibility2D(node->Visibility2D);
   this->SetVisibility3D(node->Visibility3D);
@@ -312,6 +321,8 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(SelectedSpecular);
   vtkMRMLPrintFloatMacro(Specular);
   vtkMRMLPrintFloatMacro(Power);
+  vtkMRMLPrintFloatMacro(Metallic);
+  vtkMRMLPrintFloatMacro(Roughness);
   vtkMRMLPrintFloatMacro(Opacity);
   vtkMRMLPrintFloatMacro(SliceIntersectionOpacity);
   vtkMRMLPrintFloatMacro(PointSize);

@@ -248,6 +248,11 @@
              <string>Phong</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>PBR</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item row="6" column="0" colspan="2">

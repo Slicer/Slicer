@@ -1540,6 +1540,8 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       actorProperties->SetOpacity(hierarchyOpacity * modelDisplayNode->GetOpacity());
       actorProperties->SetDiffuse(displayNode->GetDiffuse());
       actorProperties->SetSpecularPower(displayNode->GetPower());
+      actorProperties->SetMetallic(displayNode->GetMetallic());
+      actorProperties->SetRoughness(displayNode->GetRoughness());
       actorProperties->SetEdgeVisibility(displayNode->GetEdgeVisibility());
       actorProperties->SetEdgeColor(displayNode->GetEdgeColor());
       if (displayNode->GetTextureImageDataConnection() != nullptr)
