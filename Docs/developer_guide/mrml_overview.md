@@ -100,7 +100,9 @@ The following methods on the MRML scene are used to manage Undo/Redo stacks:
 
 ### Creating Custom MRML Node Classes
 
-There are a number of different MRML nodes and helper classes that need to be implemented for a single new MRML data type to work. Here is the not-so-short list. We will go over each of these in detail. Note that all of these can be implemented an extension and must be implemented in C++.
+If you are adding new functionality to 3D Slicer either via extensions, or even updates to the core, most of the time the existing MRML nodes will be sufficient. Many powerful C++ and Python extensions simply use and combine existing the node types to create new functionality. Other extensions derive from existing classes and add just a few methods to get the functionality they need, instead of creating new MRML types from scratch. If the existing MRML nodes don't offer enough (or almost enough) functionality to enable what you want to do, it is possible to create your own MRML nodes with a little bit of effort.
+
+There are a number of different MRML nodes and helper classes that can be implemented to enable new MRML data type functionality. Here is the not-so-short list. We will go over each of these in detail. Note that all of these can be implemented an extension and must be implemented in C++.
 
 1. [Data node](#the-data-node)
 2. [Display node](#the-display-node)
@@ -157,7 +159,7 @@ Key points:
   * `Get<MyCustomType>DisplayNode()` function that returns the downcast version of `GetDisplayNode()` saves users of your class a bit of downcasting.
 * Other methods:
   * Add other methods as your heart desires to view/modify the actual content of the data being stored.
-  * Pro tip: Any methods with signatures that contain only primitives, raw pointers to VTK derived objects, or a few std library items like `std::vector` will be automatically wrapped for use in Python. Any functions signatures that contain other classes (custom classes, smart pointers from the std library, etc) will not be wrapped.
+  * Pro tip: Any methods with signatures that contain only primitives, raw pointers to VTK derived objects, or a few std library items like `std::vector` will be automatically wrapped for use in Python. Any functions signatures that contain other classes (custom classes, smart pointers from the std library, etc) will not be wrapped. For best results, try to use existing VTK data objects, or have your custom classes derive from `vtkObject` to get automatic wrapping.
 
 #### The display node
 
@@ -258,7 +260,7 @@ A storage node is responsible for reading and writing data nodes to files. A sin
 
 It is common for a data node’s storage node to also write relevant values out of the display node (colors, opacity, etc) at the same time it writes the data.
 
-Note that the storage node is not sufficient in itself to allow the new data node to be saved/loaded from the normal 3DSlicer save/load facilities; the reader and writer will help with that.
+Note that the storage node is not sufficient in itself to allow the new data node to be saved/loaded from the normal 3D Slicer save/load facilities; the reader and writer will help with that.
 
 Files:
 
@@ -292,7 +294,7 @@ Key Points:
 
 #### The reader
 
-The recommended way to read a file into a MRML node is through the storage node. The reader, on the other hand, exists to interface with the loading facilities of 3DSlicer (drag and drop, as well as the button to load data into the scene). As such, the reader uses the storage node in its implementation.
+The recommended way to read a file into a MRML node is through the storage node. The reader, on the other hand, exists to interface with the loading facilities of 3D Slicer (drag and drop, as well as the button to load data into the scene). As such, the reader uses the storage node in its implementation.
 
 
 Files:
@@ -323,7 +325,7 @@ Key Points:
 
 #### The writer
 
-The writer is the companion to the reader, so, similar to the reader, it does not implement the actual writing of files, but rather it uses the storage node. Its existence is necessary to use 3DSlicer’s built in saving facilities, such as the save button.
+The writer is the companion to the reader, so, similar to the reader, it does not implement the actual writing of files, but rather it uses the storage node. Its existence is necessary to use 3D Slicer’s built in saving facilities, such as the save button.
 
 Files:
 
@@ -341,7 +343,7 @@ Key points:
 
 #### The subject hierarchy plugin
 
-A convenient module in 3DSlicer is the Data module. It brings all the different data types together under one roof and offers operations such as cloning, deleting, and renaming nodes that work regardless of the node type. The Data module uses the Subject Hierarchy, which is what we need to plug into so our new node type can be seen in and modified by the Data module.
+A convenient module in 3D Slicer is the Data module. It brings all the different data types together under one roof and offers operations such as cloning, deleting, and renaming nodes that work regardless of the node type. The Data module uses the Subject Hierarchy, which is what we need to plug into so our new node type can be seen in and modified by the Data module.
 
 Files:
 
@@ -365,9 +367,9 @@ Key Points:
 
 #### The module (aka putting it all together)
 
-If you have used 3DSlicer for any length of time, you have probably noticed that for each type of node (or set of types as in something like markups) there is a dedicated module that is used solely for interacting with the single node type (or set of types). Examples would be the Models, Volumes, and Markups modules. These modules are useful from a user perspective and also necessary to get your new node registered everywhere it needs to be.
+If you have used 3D Slicer for any length of time, you have probably noticed that for each type of node (or set of types as in something like markups) there is a dedicated module that is used solely for interacting with the single node type (or set of types). Examples would be the Models, Volumes, and Markups modules. These modules are useful from a user perspective and also necessary to get your new node registered everywhere it needs to be.
 
-As these are normal 3DSlicer modules, they come in three main parts, the module, the logic, and the module widget. The recommended way to create a new module is through the Extension Wizard (https://www.slicer.org/wiki/Documentation/Nightly/Developers/ExtensionWizard)
+As these are normal 3D Slicer modules, they come in three main parts, the module, the logic, and the module widget. The recommended way to create a new module is through the Extension Wizard (https://www.slicer.org/wiki/Documentation/Nightly/Developers/ExtensionWizard)
 
 Files:
 
