@@ -49,12 +49,13 @@ public:
     SurfaceRepresentation
   } RepresentationType;
 
-  /// Interpolation models
+  /// Interpolation modes
   /// \sa GetInterpolation(), SetInterpolation()
   typedef enum {
     FlatInterpolation = 0,
     GouraudInterpolation,
-    PhongInterpolation
+    PhongInterpolation,
+    PBRInterpolation
   } InterpolationType;
 
   /// Scalar range options for displaying data associated with this display
@@ -230,6 +231,20 @@ public:
   /// Get the specular power coef of the display node.
   /// \sa Power, SetPower()
   vtkGetMacro(Power, double);
+
+  //@{
+  /// The metalness of the material; values range from 0.0 (non-metal) to 1.0 (metal).
+  /// Only used in PBR interpolation mode.
+  vtkSetMacro(Metallic, double);
+  vtkGetMacro(Metallic, double);
+  //@}
+
+  //@{
+  /// The roughness of the material; values range from 0.0 (smooth) to 1.0 (rough).
+  /// Only used in PBR interpolation mode.
+  vtkSetMacro(Roughness, double);
+  vtkGetMacro(Roughness, double);
+  //@}
 
   /// Set the visibility of the display node.
   /// \sa Visibility, GetVisibility(), VisibilityOn(), VisibilityOff()
@@ -692,6 +707,10 @@ protected:
   /// 0.4 by default.
   /// \sa SetSelectedAmbient(), GetSelectedAmbient(),
   /// SelectedColor, Ambient, SelectedSpecular
+
+  double Metallic;
+  double Roughness;
+
   double SelectedAmbient;
   /// Node's selected specular.
   /// 0.5 by default.
