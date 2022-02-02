@@ -307,7 +307,7 @@ set(BRAINSTools_slicer_options
 Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/BRAINSia/BRAINSTools.git
   # When updating the GIT_TAG, consider updating CLI description files found in Docs/_extracli directory (see https://github.com/Slicer/Slicer/issues/5669)
-  GIT_TAG "590c371cecfc9e6f4dfed6dcc6416f67bccdaaf6"  # March 8th 2021
+  GIT_TAG "37b0a0f64cbff2b987fee321c9363554cee52b14"  # Jan 26th 2022
   LICENSE_FILES "http://www.apache.org/licenses/LICENSE-2.0.txt"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
