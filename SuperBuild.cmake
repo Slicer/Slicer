@@ -228,7 +228,6 @@ mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
 
 Slicer_Remote_Add(MultiVolumeExplorer
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/fedorov/MultiVolumeExplorer.git
-  # When updating the GIT_TAG, consider updating documentation in Docs/user_guide (see https://github.com/Slicer/Slicer/issues/5669)
   GIT_TAG 36102fd0ffae409319c0a0fee71dde1df64fe9e0
   OPTION_NAME Slicer_BUILD_MultiVolumeExplorer
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
@@ -238,7 +237,6 @@ list_conditional_append(Slicer_BUILD_MultiVolumeExplorer Slicer_REMOTE_DEPENDENC
 
 Slicer_Remote_Add(MultiVolumeImporter
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/fedorov/MultiVolumeImporter.git
-  # When updating the GIT_TAG, consider updating documentation in Docs/user_guide (see https://github.com/Slicer/Slicer/issues/5669)
   GIT_TAG db805948534563566f0a39c63e8d60fac0b63dcd
   OPTION_NAME Slicer_BUILD_MultiVolumeImporter
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
@@ -248,7 +246,6 @@ list_conditional_append(Slicer_BUILD_MultiVolumeImporter Slicer_REMOTE_DEPENDENC
 
 Slicer_Remote_Add(SimpleFilters
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/SimpleITK/SlicerSimpleFilters.git
-  # When updating the GIT_TAG, consider updating documentation in Docs/user_guide (see https://github.com/Slicer/Slicer/issues/5669)
   GIT_TAG 92e8db0030f6f9d9ea99dd5d8d1425b6b2189a68
   OPTION_NAME Slicer_BUILD_SimpleFilters
   OPTION_DEPENDS "Slicer_BUILD_QTSCRIPTEDMODULES;Slicer_USE_SimpleITK"
@@ -306,7 +303,6 @@ set(BRAINSTools_slicer_options
 
 Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/BRAINSia/BRAINSTools.git
-  # When updating the GIT_TAG, consider updating CLI description files found in Docs/_extracli directory (see https://github.com/Slicer/Slicer/issues/5669)
   GIT_TAG "37b0a0f64cbff2b987fee321c9363554cee52b14"  # Jan 26th 2022
   LICENSE_FILES "http://www.apache.org/licenses/LICENSE-2.0.txt"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
@@ -350,7 +346,6 @@ list_conditional_append(Slicer_BUILD_LandmarkRegistration Slicer_REMOTE_DEPENDEN
 
 Slicer_Remote_Add(SurfaceToolbox
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/SlicerSurfaceToolbox"
-  # When updating the GIT_TAG, consider updating documentation in Docs/user_guide (see https://github.com/Slicer/Slicer/issues/5669)
   GIT_TAG ba4a56c083f627fbe026fdbf29c0039edf9facef
   OPTION_NAME Slicer_BUILD_SurfaceToolbox
   OPTION_DEPENDS "Slicer_USE_PYTHONQT"
