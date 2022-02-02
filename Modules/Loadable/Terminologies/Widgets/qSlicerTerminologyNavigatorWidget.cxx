@@ -295,8 +295,9 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
   this->ComboBox_AnatomicRegionModifier->setEnabled(false);
 
   // Apply initial state of expand buttons
-  this->AnatomicalRegionExpandButton->setChecked(false);
-  this->CategoryExpandButton->setChecked(false);
+  QSettings* settings = qSlicerApplication::application()->userSettings();
+  this->CategoryExpandButton->setChecked(settings->value("Terminology/ShowCategorySelector", false).toBool());
+  this->AnatomicalRegionExpandButton->setChecked(settings->value("Terminology/ShowAnatomicalRegionSelector", false).toBool());
 
   // Set reset button sizes
   this->pushButton_ResetName->setMaximumHeight(this->lineEdit_Name->sizeHint().height());
@@ -623,7 +624,13 @@ qSlicerTerminologyNavigatorWidget::qSlicerTerminologyNavigatorWidget(QWidget* _p
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologyNavigatorWidget::~qSlicerTerminologyNavigatorWidget() = default;
+qSlicerTerminologyNavigatorWidget::~qSlicerTerminologyNavigatorWidget()
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+  QSettings* settings = qSlicerApplication::application()->userSettings();
+  settings->setValue("Terminology/ShowCategorySelector", d->CategoryExpandButton->isChecked());
+  settings->setValue("Terminology/ShowAnatomicalRegionSelector", d->AnatomicalRegionExpandButton->isChecked());
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::terminologyInfo(TerminologyInfoBundle &terminologyInfo)
