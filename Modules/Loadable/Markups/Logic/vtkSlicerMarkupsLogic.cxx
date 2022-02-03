@@ -191,36 +191,48 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject *caller,
       }
     else if (event == vtkMRMLMarkupsDisplayNode::JumpToPointEvent)
       {
-      int controlPointIndex = -1;
+      int componentIndex = -1;
+      int componentType = -1;
       int viewGroup = -1;
       vtkMRMLSliceNode* sliceNode = nullptr;
       if (callData != nullptr)
         {
         vtkMRMLInteractionEventData* eventData = reinterpret_cast<vtkMRMLInteractionEventData*>(callData);
-        if (eventData->GetComponentType() == vtkMRMLMarkupsDisplayNode::ComponentControlPoint)
-          {
-          controlPointIndex = eventData->GetComponentIndex();
-          }
+        componentIndex = eventData->GetComponentIndex();
+        componentType = eventData->GetComponentType();
         if (eventData->GetViewNode())
           {
           viewGroup = eventData->GetViewNode()->GetViewGroup();
           sliceNode = vtkMRMLSliceNode::SafeDownCast(eventData->GetViewNode());
           }
         }
-      // Jump current slice node to the plane of the control point (do not center)
-      if (sliceNode)
+      if (componentType == vtkMRMLMarkupsDisplayNode::ComponentControlPoint)
         {
-        vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(markupsDisplayNode->GetDisplayableNode());
-        if (markupsNode)
+        // Jump current slice node to the plane of the control point (do not center)
+        if (sliceNode)
           {
-          double worldPos[3] = { 0.0 };
-          markupsNode->GetNthControlPointPositionWorld(controlPointIndex, worldPos);
-          sliceNode->JumpSliceByOffsetting(worldPos[0], worldPos[1], worldPos[2]);
+          vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(markupsDisplayNode->GetDisplayableNode());
+          if (markupsNode)
+            {
+            double worldPos[3] = { 0.0 };
+            markupsNode->GetNthControlPointPositionWorld(componentIndex, worldPos);
+            sliceNode->JumpSliceByOffsetting(worldPos[0], worldPos[1], worldPos[2]);
+            }
           }
+          // Jump centered in all other slices in the view group
+          this->JumpSlicesToNthPointInMarkup(markupsDisplayNode->GetDisplayableNode()->GetID(), componentIndex,
+            true /* centered */, viewGroup, sliceNode);
         }
-      // Jump centered in all other slices in the view group
-      this->JumpSlicesToNthPointInMarkup(markupsDisplayNode->GetDisplayableNode()->GetID(), controlPointIndex,
-                                         true /* centered */, viewGroup, sliceNode);
+      else if (callData != nullptr && (componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle
+        || componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle
+        || componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle))
+        {
+        // Jump to the location of the current handle position.
+        vtkMRMLInteractionEventData* eventData = reinterpret_cast<vtkMRMLInteractionEventData*>(callData);
+        double position_World[3] = { 0.0, 0.0, 0.0 };
+        eventData->GetWorldPosition(position_World);
+        this->JumpSlicesToLocation(position_World[0], position_World[1], position_World[2], true /* centered */, viewGroup, sliceNode);
+        }
       }
     }
 

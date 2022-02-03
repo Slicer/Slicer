@@ -151,6 +151,8 @@ public:
   virtual void GetInteractionHandleAxisWorld(int type, int index, double axis[3]);
   /// Get the origin of the interaction handle widget
   virtual void GetInteractionHandleOriginWorld(double origin[3]);
+  /// Get the position of an interaction handle in world coordinates
+  virtual void GetInteractionHandlePositionWorld(int type, int index, double position[3]);
 
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
