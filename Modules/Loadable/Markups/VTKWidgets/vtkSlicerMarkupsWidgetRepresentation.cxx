@@ -892,6 +892,12 @@ void vtkSlicerMarkupsWidgetRepresentation::GetInteractionHandleOriginWorld(doubl
 }
 
 //----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation::GetInteractionHandlePositionWorld(int type, int index, double position[3])
+{
+  this->InteractionPipeline->GetInteractionHandlePositionWorld(type, index, position);
+}
+
+//----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation::UpdateInteractionHandleSize()
 {
   if (this->InteractionPipeline)
@@ -1628,7 +1634,6 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::GetIntera
   else if (type == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle)
     {
     this->ScaleHandlePoints->GetPoint(index, positionWorld);
-    this->ScaleScaleTransform->GetTransform()->TransformPoint(positionWorld, positionWorld);
     this->HandleToWorldTransform->TransformPoint(positionWorld, positionWorld);
     }
 }
