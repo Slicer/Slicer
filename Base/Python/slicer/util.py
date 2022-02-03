@@ -2306,7 +2306,8 @@ def delayDisplay(message, autoCloseMsec=1000):
 def infoDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display popup with a info message.
 
-  If there is no main window then the text is only logged (at info level).
+  If there is no main window, or if the application is running in testing mode (slicer.app.testingEnabled()==True),
+  then the text is only logged (at info level).
   """
   import qt, slicer
   import logging
@@ -2314,6 +2315,9 @@ def infoDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwa
     windowTitle = slicer.app.applicationName + " information"
   logging.info(text)
   mw = mainWindow()
+  if slicer.app.testingEnabled():
+    logging.info("Testing mode is enabled: Skipping info popup [%s]" % windowTitle)
+    return
   if mw:
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Information, standardButtons=standardButtons, **kwargs)
@@ -2321,7 +2325,8 @@ def infoDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwa
 def warningDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display popup with a warning message.
 
-  If there is no main window then the text is only logged (at warning level).
+  If there is no main window, or if the application is running in testing mode (slicer.app.testingEnabled()==True),
+  then the text is only logged (at warning level).
   """
   import qt, slicer
   import logging
@@ -2329,6 +2334,9 @@ def warningDisplay(text, windowTitle=None, parent=None, standardButtons=None, **
     windowTitle = slicer.app.applicationName + " warning"
   logging.warning(text)
   mw = mainWindow()
+  if slicer.app.testingEnabled():
+    logging.info("Testing mode is enabled: Skipping warning popup [%s]" % windowTitle)
+    return
   if mw:
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Warning, standardButtons=standardButtons, **kwargs)
@@ -2336,41 +2344,74 @@ def warningDisplay(text, windowTitle=None, parent=None, standardButtons=None, **
 def errorDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display an error popup.
 
-  If there is no main window then the text is only logged (at error level).
+  If there is no main window, or if the application is running in testing mode (slicer.app.testingEnabled()==True),
+  then the text is only logged (at error level).
   """
   import qt, slicer
   import logging
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " error"
   logging.error(text)
+  if slicer.app.testingEnabled():
+    logging.info("Testing mode is enabled: Skipping error popup [%s]" % windowTitle)
+    return
   mw = mainWindow()
   if mw:
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical, standardButtons=standardButtons, **kwargs)
 
 def confirmOkCancelDisplay(text, windowTitle=None, parent=None, **kwargs):
-  """Display an confirmation popup. Return if confirmed with OK."""
+  """Display a confirmation popup. Return if confirmed with OK.
+
+  When the application is running in testing mode (slicer.app.testingEnabled()==True),
+  the popup is skipped and True ("Ok") is returned, with a message being logged to indicate this.
+  """
   import qt, slicer
+  import logging
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " confirmation"
+  if slicer.app.testingEnabled():
+    result = True
+    logging.info("Testing mode is enabled: Skipping confirmation popup [%s] and returning %s." % (windowTitle, result))
+    return result
   result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
                        standardButtons=qt.QMessageBox.Ok | qt.QMessageBox.Cancel, **kwargs)
   return result == qt.QMessageBox.Ok
 
 def confirmYesNoDisplay(text, windowTitle=None, parent=None, **kwargs):
-  """Display an confirmation popup. Return if confirmed with Yes."""
+  """Display a confirmation popup. Return if confirmed with Yes.
+
+  When the application is running in testing mode (slicer.app.testingEnabled()==True),
+  the popup is skipped and True ("Yes") is returned, with a message being logged to indicate this.
+  """
   import qt, slicer
+  import logging
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " confirmation"
+  if slicer.app.testingEnabled():
+    result = True
+    logging.info("Testing mode is enabled: Skipping question popup [%s] and returning %s." % (windowTitle, result))
+    return result
   result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
                        standardButtons=qt.QMessageBox.Yes | qt.QMessageBox.No, **kwargs)
   return result == qt.QMessageBox.Yes
 
 def confirmRetryCloseDisplay(text, windowTitle=None, parent=None, **kwargs):
-  """Display an confirmation popup. Return if confirmed with Retry."""
+  """Display an error popup asking whether to retry, logging the text at error level.
+  Return if confirmed with Retry.
+
+  When the application is running in testing mode (slicer.app.testingEnabled()==True),
+  the popup is skipped and False ("Close") is returned, with a message being logged to indicate this.
+  """
   import qt, slicer
+  import logging
+  logging.error(text)
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " error"
+  if slicer.app.testingEnabled():
+    result = False
+    logging.info("Testing mode is enabled: Skipping retry popup [%s] and returning %s." % (windowTitle, result))
+    return result
   result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical,
                        standardButtons=qt.QMessageBox.Retry | qt.QMessageBox.Close, **kwargs)
   return result == qt.QMessageBox.Retry
