@@ -785,41 +785,56 @@ bool qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(
     const ExtensionMetadataType &extensionMetadata, int serverAPI)
 {
   bool valid = true;
-  QStringList expectedNonEmptyKeys;
+  QStringList requiredNonEmptyKeys; // essential keys, return with failure if not found
+  QStringList expectedNonEmptyKeys; // log warning if not found (but return with success)
   if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
     {
-    expectedNonEmptyKeys
+    requiredNonEmptyKeys
         << "item_id"
         << "name"
         << "productname";
     }
   else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
-    expectedNonEmptyKeys
+    requiredNonEmptyKeys
         << "_id"
         << "meta.app_id"
         << "meta.app_revision"
         << "meta.arch"
         << "meta.baseName"
-        << "meta.category"
-        << "meta.description"
-        << "meta.homepage"
-        << "meta.icon_url"
         << "meta.os"
-        << "meta.repository_type"
-        << "meta.repository_url"
-        << "meta.revision"
-//        << "meta.screenshots"
         << "name";
+    expectedNonEmptyKeys
+      << "meta.category"
+      << "meta.description"
+      << "meta.homepage"
+      << "meta.icon_url"
+      << "meta.repository_type"
+      << "meta.repository_url"
+      << "meta.revision"
+      << "meta.screenshots";
     }
   else
     {
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
     return false;
     }
+  // Check required keys (error if missing)
+  foreach(const QString& key, requiredNonEmptyKeys)
+    {
+    if (extensionMetadata.value(key).toString().isEmpty())
+      {
+      qWarning() << Q_FUNC_INFO << " failed: required key '" << key << "' is missing from extension metadata.";
+      valid = false;
+      }
+    }
+  // Check expected keys (warning if missing)
   foreach(const QString& key, expectedNonEmptyKeys)
     {
-    valid = valid && !extensionMetadata.value(key).toString().isEmpty();
+    if (extensionMetadata.value(key).toString().isEmpty())
+      {
+      qWarning() << Q_FUNC_INFO << " failed: expected key '" << key << "' is missing from extension metadata.";
+      }
     }
   return valid;
 }
