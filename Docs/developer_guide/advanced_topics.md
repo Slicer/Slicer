@@ -99,3 +99,21 @@ n = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLinearTransformNode')
 ```
 
 Note: MRML scene's `CreateNodeByClass` creates a node with the default settings set in the scene for that node type (using [vtkMRMLScene::AddDefaultNode](https://www.slicer.org/doc/html/classvtkMRMLScene.html#ae302c5ed4aabb2910bc35dcc9aa2513f)).
+
+## Working directory
+
+Similarly to other software, the current directory associated with Slicer corresponds to the folder the application executable is started from.
+
+Since the current working directory can be changed anytime by any module or Python package (e.g., to more conveniently write files in a specific directory) and it is not possible to enforce that the directory is restored to the original.
+
+Slicer provides a way to reliably access the working directory at startup time, through the `startupWorkingPath` application property:
+
+In Python:
+```python
+slicer.app.startupWorkingPath
+```
+
+In C++:
+```cpp
+qSlicerCoreApplication::startupWorkingPath()
+```
