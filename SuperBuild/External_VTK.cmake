@@ -101,8 +101,8 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       )
   endif()
   if(UNIX AND NOT APPLE)
-    find_package(FontConfig QUIET)
-    if(FONTCONFIG_FOUND)
+    find_package(Fontconfig QUIET)
+    if(Fontconfig_FOUND)
       list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
         -DModule_vtkRenderingFreeTypeFontConfig:BOOL=ON
         )
