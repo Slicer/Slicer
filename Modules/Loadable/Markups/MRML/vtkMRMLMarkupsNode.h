@@ -321,6 +321,7 @@ public:
   /// Add a new control point, returning the point index, -1 on failure.
   int AddControlPoint(vtkVector3d point, std::string label = std::string());
   int AddControlPoint(double point[3], std::string label = std::string());
+  int AddControlPoint(double x, double y, double z, std::string label = std::string());
   ///@}
 
   /// Add a controlPoint to the end of the list. Return index
@@ -335,6 +336,7 @@ public:
   /// Return index of point index, -1 on failure.
   int AddControlPointWorld(vtkVector3d point, std::string label = std::string());
   int AddControlPointWorld(double point[3], std::string label = std::string());
+  int AddControlPointWorld(double x, double y, double z, std::string label = std::string());
   ///@}
 
   ///@{

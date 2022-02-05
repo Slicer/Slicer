@@ -693,6 +693,12 @@ int vtkMRMLMarkupsNode::AddNControlPoints(int n, std::string label /*=std::strin
 }
 
 //-----------------------------------------------------------
+int vtkMRMLMarkupsNode::AddControlPointWorld(double x, double y, double z, std::string label /*=std::string()*/)
+{
+  return this->AddControlPointWorld(vtkVector3d(x, y, z), label);
+}
+
+//-----------------------------------------------------------
 int vtkMRMLMarkupsNode::AddControlPointWorld(double pointWorld[3], std::string label /*=std::string()*/)
 {
   return this->AddControlPointWorld(vtkVector3d(pointWorld), label);
@@ -704,6 +710,12 @@ int vtkMRMLMarkupsNode::AddControlPointWorld(vtkVector3d pointWorld, std::string
   vtkVector3d point;
   this->TransformPointFromWorld(pointWorld, point);
   return this->AddNControlPoints(1, label, &point);
+}
+
+//-----------------------------------------------------------
+int vtkMRMLMarkupsNode::AddControlPoint(double x, double y, double z, std::string label /*=std::string()*/)
+{
+  return this->AddControlPoint(vtkVector3d(x, y, z), label);
 }
 
 //-----------------------------------------------------------
