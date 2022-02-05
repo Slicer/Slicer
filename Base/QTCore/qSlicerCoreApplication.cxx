@@ -163,6 +163,7 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   this->DICOMDatabase = QSharedPointer<ctkDICOMDatabase>(new ctkDICOMDatabase);
 #endif
   this->NextResourceHandle = 0;
+  this->StartupWorkingPath = QDir::currentPath();
 }
 
 //-----------------------------------------------------------------------------
@@ -1182,6 +1183,7 @@ QSettings* qSlicerCoreApplication::revisionUserSettings()const
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerCoreApplication, QString, intDir, IntDir);
+CTK_GET_CPP(qSlicerCoreApplication, QString, startupWorkingPath, StartupWorkingPath);
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreApplication::isInstalled()const

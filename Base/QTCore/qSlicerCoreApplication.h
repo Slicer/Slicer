@@ -74,6 +74,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString slicerSharePath READ slicerSharePath CONSTANT)
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString cachePath READ cachePath WRITE setCachePath)
+  Q_PROPERTY(QString startupWorkingPath READ startupWorkingPath CONSTANT)
   Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
   Q_PROPERTY(QString launcherSettingsFilePath READ launcherSettingsFilePath CONSTANT)
   Q_PROPERTY(QString slicerDefaultSettingsFilePath READ slicerDefaultSettingsFilePath CONSTANT)
@@ -146,6 +147,9 @@ public:
   /// \sa repositoryRevision()
   /// \sa environment()
   Q_INVOKABLE QProcessEnvironment startupEnvironment() const;
+
+  /// Current working directory at the time the application was started.
+  QString startupWorkingPath() const;
 
   /// \brief Returns the current environment.
   ///

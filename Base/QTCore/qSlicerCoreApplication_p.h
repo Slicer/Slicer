@@ -152,6 +152,9 @@ public:
   /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   QString                                     IntDir;
 
+  /// Current working directory at the time the application was started.
+  QString StartupWorkingPath;
+
   QSettings*                                  DefaultSettings;
   QSettings*                                  UserSettings;
   QSettings*                                  RevisionUserSettings;
