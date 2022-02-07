@@ -767,8 +767,25 @@ void qSlicerCoreApplicationPrivate::parseArguments()
 //----------------------------------------------------------------------------
 QStringList qSlicerCoreApplicationPrivate::findTranslationFilesWithLanguageExtension(const QString& dir, const QString& languageExtension)
 {
-  const QString localeFilter = QString("*%1.qm").arg(languageExtension);
-  return QDir(dir).entryList(QStringList(localeFilter));
+  // Search with both underscore and hyphen as language/region separator (such as pt_BR),
+  // because languageExtension is expected to use underscore, but the translation .qm file may use either.
+  QStringList foundFiles;
+
+  // Underscore (Slicer_pt_BR.qm)
+  QString languageExtensionUnderscore(languageExtension);
+  // languageExtension is expected to use underscore, but just in case hyphen was used replace them
+  languageExtensionUnderscore.replace('-', '_');
+  const QString localeFilterUnderscore = QString("*%1.qm").arg(languageExtensionUnderscore);
+  foundFiles << QDir(dir).entryList(QStringList(localeFilterUnderscore));
+
+  // Hyphen (Slicer_pt-BR.qm)
+  QString languageExtensionHyphen(languageExtension);
+  languageExtensionHyphen.replace('_', '-');
+  const QString localeFilterHyphen = QString("*%1.qm").arg(languageExtensionHyphen);
+  foundFiles << QDir(dir).entryList(QStringList(localeFilterHyphen));
+
+  foundFiles.removeDuplicates();
+  return foundFiles;
 }
 
 //----------------------------------------------------------------------------
