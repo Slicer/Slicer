@@ -651,7 +651,7 @@ std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *
 //---------------------------------------------------------------------------
 std::string vtkSlicerMarkupsLogic::AddNewFiducialNode(const char *name, vtkMRMLScene *scene)
 {
-  vtkMRMLMarkupsNode* markupsNode = this->AddNewMarkupsNode("vtkMRMLFiducialNode", name ? name : "", scene);
+  vtkMRMLMarkupsNode* markupsNode = this->AddNewMarkupsNode("vtkMRMLMarkupsFiducialNode", name ? name : "", scene);
   if (!markupsNode)
     {
     return "";
