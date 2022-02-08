@@ -609,6 +609,7 @@ endif()
     UiTools #no dll
     Xml XmlPatterns
     Svg Sql
+    Concurrent Test #Required by CTK
     )
 
   if(Slicer_BUILD_MULTIMEDIA_SUPPORT)
