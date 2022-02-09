@@ -87,7 +87,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QLabel" name="label_5">
+    <widget class="QLabel" name="labelLoadedData">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
@@ -114,7 +114,7 @@
      </property>
      <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="labelPullDataFromRemoteServer">
         <property name="text">
          <string>Pull data from remote server:</string>
         </property>
@@ -131,7 +131,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="labelStorageListener">
         <property name="text">
          <string>Storage listener:</string>
         </property>
@@ -181,7 +181,7 @@
        </layout>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_7">
+       <widget class="QLabel" name="labelStartStorageListenerOnStartup">
         <property name="text">
          <string>Start storage listener on startup:</string>
         </property>
@@ -207,7 +207,7 @@
      </property>
      <layout class="QFormLayout" name="formLayout_2">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel" name="labelDatabaseLocation">
         <property name="text">
          <string>Database location:</string>
         </property>
@@ -224,14 +224,14 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_9">
+       <widget class="QLabel" name="labelAutoHideBrowserWindow">
         <property name="text">
          <string>Auto-hide browser window:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_10">
+       <widget class="QLabel" name="labelMaintenance">
         <property name="text">
          <string>Maintenance:</string>
         </property>
