@@ -181,7 +181,7 @@
        </layout>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="labelStartStorageListenerOnStartup">
+       <widget class="QLabel" name="runListenerAtStartLabel">
         <property name="text">
          <string>Start storage listener on startup:</string>
         </property>
