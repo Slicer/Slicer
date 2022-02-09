@@ -224,7 +224,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="labelAutoHideBrowserWindow">
+       <widget class="QLabel" name="browserAutoHideLabel">
         <property name="text">
          <string>Auto-hide browser window:</string>
         </property>
