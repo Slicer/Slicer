@@ -87,7 +87,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QLabel" name="labelLoadedData">
+    <widget class="QLabel" name="loadedDataLabel">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
