@@ -2306,74 +2306,105 @@ def delayDisplay(message, autoCloseMsec=1000):
 def infoDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display popup with a info message.
 
-  If there is no main window then the text is only logged (at info level).
+  If there is no main window, or if the application is running in testing mode (``slicer.app.testingEnabled() == True``),
+  then the text is only logged (at info level).
   """
-  import qt, slicer
-  import logging
-  if not windowTitle:
-    windowTitle = slicer.app.applicationName + " information"
-  logging.info(text)
-  mw = mainWindow()
-  if mw:
-    standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
-    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Information, standardButtons=standardButtons, **kwargs)
+  import qt, logging
+  standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
+  _messageDisplay(logging.INFO, text, None, parent=parent, windowTitle=windowTitle, mainWindowNeeded=True,
+                   icon=qt.QMessageBox.Information, standardButtons=standardButtons, **kwargs)
 
 def warningDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display popup with a warning message.
 
-  If there is no main window then the text is only logged (at warning level).
+  If there is no main window, or if the application is running in testing mode (``slicer.app.testingEnabled() == True``),
+  then the text is only logged (at warning level).
   """
-  import qt, slicer
-  import logging
-  if not windowTitle:
-    windowTitle = slicer.app.applicationName + " warning"
-  logging.warning(text)
-  mw = mainWindow()
-  if mw:
-    standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
-    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Warning, standardButtons=standardButtons, **kwargs)
+  import qt, logging
+  standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
+  _messageDisplay(logging.WARNING, text, None, parent=parent, windowTitle=windowTitle, mainWindowNeeded=True,
+                   icon=qt.QMessageBox.Warning, standardButtons=standardButtons, **kwargs)
 
 def errorDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display an error popup.
 
-  If there is no main window then the text is only logged (at error level).
+  If there is no main window, or if the application is running in testing mode (``slicer.app.testingEnabled() == True``),
+  then the text is only logged (at error level).
   """
-  import qt, slicer
-  import logging
-  if not windowTitle:
-    windowTitle = slicer.app.applicationName + " error"
-  logging.error(text)
-  mw = mainWindow()
-  if mw:
-    standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
-    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical, standardButtons=standardButtons, **kwargs)
+  import qt, logging
+  standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
+  _messageDisplay(logging.ERROR, text, None, parent=parent, windowTitle=windowTitle, mainWindowNeeded=True,
+                     icon=qt.QMessageBox.Critical, standardButtons=standardButtons, **kwargs)
 
 def confirmOkCancelDisplay(text, windowTitle=None, parent=None, **kwargs):
-  """Display an confirmation popup. Return if confirmed with OK."""
-  import qt, slicer
+  """Display a confirmation popup. Return if confirmed with OK.
+
+  When the application is running in testing mode (``slicer.app.testingEnabled() == True``),
+  the popup is skipped and True ("Ok") is returned, with a message being logged to indicate this.
+  """
+  import qt, slicer, logging
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " confirmation"
-  result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
-                       standardButtons=qt.QMessageBox.Ok | qt.QMessageBox.Cancel, **kwargs)
+  result = _messageDisplay(logging.INFO, text, True, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
+                            standardButtons=qt.QMessageBox.Ok | qt.QMessageBox.Cancel, **kwargs)
   return result == qt.QMessageBox.Ok
 
 def confirmYesNoDisplay(text, windowTitle=None, parent=None, **kwargs):
-  """Display an confirmation popup. Return if confirmed with Yes."""
-  import qt, slicer
+  """Display a confirmation popup. Return if confirmed with Yes.
+
+  When the application is running in testing mode (``slicer.app.testingEnabled() == True``),
+  the popup is skipped and True ("Yes") is returned, with a message being logged to indicate this.
+  """
+  import qt, slicer, logging
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " confirmation"
-  result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
-                       standardButtons=qt.QMessageBox.Yes | qt.QMessageBox.No, **kwargs)
+  result = _messageDisplay(logging.INFO, text, True, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
+                            standardButtons=qt.QMessageBox.Yes | qt.QMessageBox.No, **kwargs)
   return result == qt.QMessageBox.Yes
 
 def confirmRetryCloseDisplay(text, windowTitle=None, parent=None, **kwargs):
-  """Display an confirmation popup. Return if confirmed with Retry."""
-  import qt, slicer
-  if not windowTitle:
-    windowTitle = slicer.app.applicationName + " error"
-  result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical,
-                       standardButtons=qt.QMessageBox.Retry | qt.QMessageBox.Close, **kwargs)
+  """Display an error popup asking whether to retry, logging the text at error level.
+  Return if confirmed with Retry.
+
+  When the application is running in testing mode (``slicer.app.testingEnabled() == True``),
+  the popup is skipped and False ("Close") is returned, with a message being logged to indicate this.
+  """
+  import qt, logging
+  result = _messageDisplay(logging.ERROR, text, False, parent=parent, windowTitle=windowTitle,
+                            icon=qt.QMessageBox.Critical, standardButtons=qt.QMessageBox.Retry | qt.QMessageBox.Close, **kwargs)
   return result == qt.QMessageBox.Retry
+
+def _messageDisplay(logLevel, text, testingReturnValue, mainWindowNeeded=False, parent=None, windowTitle=None, **kwargs):
+  """Displays a messagebox and logs message text; knows what to do in testing mode.
+
+  :param logLevel: The level at which to log text, e.g. ``logging.INFO``, ``logging.ERROR``
+  :param text: Message text
+  :type text: str
+  :param testingReturnValue: When the application is in testing mode, this value is returned instead of raising the message box.
+  :param mainWindowNeeded: If True then the message box will not be raised if there is no mainWindow, but the text is still logged.
+  :type mainWindowNeeded: bool, optional
+  :param parent: The message box parent; by default it is set to main window by slicer.util.messageBox
+  :type parent: QWidget, optional
+  :param windowTitle: Window title; defaults to a generic title based on log level.
+  :type windowTitle: str, optional
+  :param kwargs: passed to :func:`messageBox`
+
+  Returns:
+    The output of :func:`messageBox`, with two exceptions:
+    - If the application is running in testing mode, then ``testingReturnValue`` is returned.
+    - Otherwise, if ``mainWindowNeeded`` is True and there is no main window, then None is returned.
+  """
+  import qt, slicer, logging
+  logging.log(logLevel, text)
+  logLevelString = logging.getLevelName(logLevel).lower() # e.g. this is "error" when logLevel is logging.ERROR
+  if not windowTitle:
+    windowTitle = slicer.app.applicationName + " " + logLevelString
+  if slicer.app.testingEnabled():
+    logging.info("Testing mode is enabled: Returning %s and skipping message box [%s]." % (testingReturnValue, windowTitle))
+    return testingReturnValue
+  if mainWindowNeeded and mainWindow() is None:
+    return
+  return messageBox(text, parent=parent, windowTitle=windowTitle, **kwargs)
 
 def messageBox(text, parent=None, **kwargs):
   """Displays a messagebox.
@@ -2509,6 +2540,7 @@ class WaitCursor:
 class MessageDialog:
   def __init__(self, message, show=True, logLevel=None):
     """Log the message and show a message box while the code in the context manager is being run.
+    When the application is running in testing mode (``slicer.app.testingEnabled() == True``), the message box is skipped.
 
     :param message: Text shown in the message box.
     :param show: If show is False, no dialog is shown.
