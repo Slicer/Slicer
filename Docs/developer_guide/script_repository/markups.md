@@ -298,6 +298,36 @@ for lineNodeName in lineNodeNames:
 ShowAngle()
 ```
 
+### Project a line to a plane
+
+Create a new line (`projectedLineNode`) by projecting a line (`lineNode`) to a plane (`planeNode`).
+
+Each control point is projected by computing coordinates in the plane coordinate system, zeroing the z coordinate (distance from plane) then transforming  back the coordinates to the world coordinate system.
+
+Transformation require homogeneous coordinates (1.0 appended to the 3D position), therefore 1.0 is added to the position after getting from the line and the 1.0 is removed when the computed point is added to the output line.
+
+```python
+lineNode = getNode('L')
+planeNode = getNode('P')
+
+# Create new node for storing the projected line node
+projectedLineNode = slicer.mrmlScene.AddNewNodeByClass(lineNode.GetClassName(), lineNode.GetName()+" projected")
+
+# Get transforms
+planeToWorld = vtk.vtkMatrix4x4()
+planeNode.GetObjectToWorldMatrix(planeToWorld)
+worldToPlane = vtk.vtkMatrix4x4()
+vtk.vtkMatrix4x4.Invert(planeToWorld, worldToPlane)
+
+# Project each point
+for pointIndex in range(2):
+    point_World = [*lineNode.GetNthControlPointPositionWorld(pointIndex), 1.0]
+    point_Plane = worldToPlane.MultiplyPoint(point_World)
+    projectedPoint_Plane = [point_Plane[0], point_Plane[1], 0.0, 1.0]
+    projectedPoint_World = planeToWorld.MultiplyPoint(projectedPoint_Plane)
+    projectedLineNode.AddControlPoint(projectedPoint_World[0:3])
+```
+
 ### Measure distances of points from a line
 
 Draw a markups line (`L`) and drop markups point list (`F`) in a view and then run the following code snippet to compute distances of the points from the line.
