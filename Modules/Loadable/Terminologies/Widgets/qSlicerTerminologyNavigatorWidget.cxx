@@ -630,9 +630,12 @@ qSlicerTerminologyNavigatorWidget::qSlicerTerminologyNavigatorWidget(QWidget* _p
 qSlicerTerminologyNavigatorWidget::~qSlicerTerminologyNavigatorWidget()
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
-  QSettings* settings = qSlicerApplication::application()->userSettings();
-  settings->setValue("Terminology/ShowCategorySelector", d->CategoryExpandButton->isChecked());
-  settings->setValue("Terminology/ShowAnatomicalRegionSelector", d->AnatomicalRegionExpandButton->isChecked());
+  if (qSlicerApplication::application())
+    {
+    QSettings* settings = qSlicerApplication::application()->userSettings();
+    settings->setValue("Terminology/ShowCategorySelector", d->CategoryExpandButton->isChecked());
+    settings->setValue("Terminology/ShowAnatomicalRegionSelector", d->AnatomicalRegionExpandButton->isChecked());
+    }
 }
 
 //-----------------------------------------------------------------------------
