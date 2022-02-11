@@ -109,7 +109,7 @@ use it for commercial purposes.</p>
     fileMenu = slicer.util.lookupTopLevelWidget('FileMenu')
     if fileMenu:
       for action in fileMenu.actions():
-        if action.text == 'Save':
+        if action.name == 'FileSaveSceneAction':
           fileMenu.insertAction(action,a)
 
 
