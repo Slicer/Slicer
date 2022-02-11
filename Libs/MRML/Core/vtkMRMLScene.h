@@ -752,8 +752,12 @@ public:
   void CopyDefaultNodesToScene(vtkMRMLScene *scene);
 
   /// \brief Returns true if the scene has been "significantly" modified
-  /// since the last time it was read or written.
-  bool GetModifiedSinceRead();
+  /// since the last saved state.
+  /// If modifiedNodes is provided then it returns the list of nodes that have been found to be modified.
+  bool GetModifiedSinceRead(vtkCollection* modifiedNodes=nullptr);
+
+  /// Timestamp of the scene's last saved state.
+  vtkGetMacro(StoredTime, vtkMTimeType);
 
   /// \brief Search the scene for storable nodes that are "ModifiedSinceRead".
   ///
