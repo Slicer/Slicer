@@ -24,6 +24,7 @@
 #include "qSlicerExportNodeDialog.h"
 #include "ui_qSlicerExportNodeDialog.h"
 
+class vtkMRMLNode;
 class vtkMRMLStorableNode;
 class qSlicerFileWriterOptionsWidget;
 
@@ -116,19 +117,35 @@ public:
   explicit qSlicerExportNodeDialogPrivate(QWidget* _parent=nullptr);
   ~qSlicerExportNodeDialogPrivate() override;
 
-  /* Set the nodes being exported and fill out the
-  dialog widgets with a reasonable initial state.
-  Two lists of node pointers must be given, one based on
-  recursively including the storable node child items of the selected node in the
+  /* Set the nodes being exported and fill out the dialog widgets with a reasonable initial state.
+  Two lists of node pointers must be given, one based on recursively including the storable node child items of the selected node in the
   subject hierarchy tree, and one based on nonrecursively doing so.
-  selectedNode is the single storable node that was selected in the subject hierarchy to
-  trigger this export, if there is one; can be null if there isn't. */
+  selectedNode is the single storable node that was selected in the subject hierarchy to trigger this export, if there is one;
+  can be null if there isn't. nodeIdToSubjectHierarchyPath is a mapping from node IDs to lists of subject hierarchy item names, where
+  each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID;
+  it can be left empty, but the "Preserve hierarchy" functionality will not work.
+  The reference parameters of this function are assumed to remain valid references during execution (exec) of this dialog.*/
   bool setup(
     vtkMRMLScene* scene,
-    const QList<vtkMRMLStorableNode*> & nodesNonrecursive,
-    const QList<vtkMRMLStorableNode*> & nodesRecursive,
-    vtkMRMLStorableNode* selectedNode = nullptr
+    const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
+    const QList<vtkMRMLStorableNode*>& nodesRecursive,
+    vtkMRMLStorableNode* selectedNode,
+    const QHash<QString,QVariant>& nodeIdToSubjectHierarchyPath
   );
+
+  /// Remove any problem-causing characters from \a fileName, strip off any extension from the end of it if that extension
+  /// is known to be associated with \a node, and then put \a extension back on
+  static QString forceFileNameExtension(const QString& fileName, const QString& extension, vtkMRMLNode* node);
+
+  /// Return a reasonable default filename choice for \a node with extension \a extension. It is based on the node name.
+  static QString defaultFilename(vtkMRMLNode* node, QString extension);
+
+  // Return whether list a has any elements that list b doesn't have.
+  template <typename T> static bool setDifferenceIsNonempty(const QList<T>& a, const QList<T>& b);
+
+  // Return whether all widgets that are part of the given layout are invisible
+  // Visibility is considered relative to the given widget relativeTo
+  static bool layoutWidgetsAllInvisible(const QLayout* layout, const QWidget* relativeTo);
 
 public slots:
   void accept() override; // overrides QDialog::accept()
@@ -136,7 +153,12 @@ public slots:
 protected slots:
   void formatChangedSlot();
   void onFilenameEditingFinished();
+
+  // This slot is meant to be connected to any checkbox state change that can affect which nodes are included for export
   void onNodeInclusionCheckboxStateChanged(int state);
+
+  // This slot is meant to be connected to "Include children" checkbox state change specifically
+  void onIncludeChildrenCheckBoxStateChanged(int state);
 
 protected:
 
@@ -150,12 +172,27 @@ protected:
   // with widgets that are selected based on the current state of this->nodeList()
   bool populateNodeTypeWidgetSets();
 
-  // Update the tabbing order to a top-to-bottom order, which can get messed up as we insert and remove widgets
+  // Update the visibility and state of the harden transform checkbox based on whether the list of
+  // nodes to be exported contains any nodes that have an associated transform
+  void updateHardenTransformCheckBox();
+
+  // Update the visibility and state of the preserve hierarchy checkbox based on whether the selected item
+  // in the subject hierarchy has children and whether the "Include children" option is checked
+  void updatePreserveHierarchyCheckBox();
+
+  // Update the tabbing order to a top-to-bottom order, which can get messed up as we insert and remove widgets.
+  // It would normally be better to fix tabbing order in the .ui file, but in this case rows of the layout are
+  // dyanmically added and removed, and so we set the tabbing order in code instead.
   void adjustTabbingOrder();
 
   // Return the recommended filename based on current filename and the
   // format selected in the dropdown
   QString recommendedFilename(vtkMRMLStorableNode*) const;
+
+  // Get a path to a suitable target directory for the given node if we wanted to replicate the folder structure of the
+  // subject hierarchy. The returned path may or may not exist. In case of any failure, this function logs a warning and
+  // falls back to simply returning the top level export target directory, so as to not fail the export completely.
+  QDir getSubjectHierarchyBasedDirectory(vtkMRMLStorableNode*) const;
 
   // Return the list of nodes to be exported, based on the status of RecursiveChildrenCheckBox
   const QList<vtkMRMLStorableNode*>& nodeList() const;
@@ -179,34 +216,38 @@ protected:
   vtkMRMLScene* MRMLScene;
 
   // The list of nodes to export in each of the two cases: recursively including children of the selected item or not
-  QList<vtkMRMLStorableNode*> nodesRecursive;
-  QList<vtkMRMLStorableNode*> nodesNonrecursive;
+  QList<vtkMRMLStorableNode*> NodesRecursive;
+  QList<vtkMRMLStorableNode*> NodesNonrecursive;
+
+  // Mapping from node IDs to lists of subject hierarchy item names, where
+  // each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID.
+  QHash<QString,QVariant> NodeIdToSubjectHierarchyPath;
 
   // The storable node that was selected in the subject hierarchy to trigger this export, if there is one;
   // can be empty if there isn't. It is conveniently a list so that a uniform interface can be provided by nodeList().
-  QList<vtkMRMLStorableNode*> nodesSelectedOnly;
+  QList<vtkMRMLStorableNode*> NodesSelectedOnly;
 
-  QString lastUsedDirectory;
-  QList<QString> lastUsedFormats;
-  bool lastUsedHardenTransform;
-  bool lastUsedRecursiveChildren;
-  bool lastUsedIncludeChildren;
+  QString LastUsedDirectory;
+  bool LastUsedHardenTransform;
+  bool LastUsedPreserveHierarchy;
+  bool LastUsedRecursiveChildren;
+  bool LastUsedIncludeChildren;
 
   // Mapping from node type to widget sets that are specific to a node type
-  QHash<NodeTypeWidgetSet::NodeType,NodeTypeWidgetSet*> nodeTypeToNodeTypeWidgetSet;
+  QHash<NodeTypeWidgetSet::NodeType,NodeTypeWidgetSet*> NodeTypeToNodeTypeWidgetSet;
 
   // The row of the QFormLayout that contains the placeholder label. This is the row where NodeTypeWidgetSets will be inserted.
-  int nodeTypeWidgetSetStartRow = -1;
+  int NodeTypeWidgetSetStartRow = -1;
 
   // List of node types (in the sense of NodeTypeWidgetSet::NodeType) that correspond to node-type-specific widget sets
   // that are currently visible in the dialog. The i^th item in this list has widgets that are meant to go into
   // row number (nodeTypeWidgetSetStartRow + i) of the QFormLayout associated to this dialog. This dialog class manages
   // the insertion and removal of the rows, and while doing so it keeps the following list up to date.
-  QList<NodeTypeWidgetSet::NodeType> nodeTypesInDialog;
+  QList<NodeTypeWidgetSet::NodeType> NodeTypesInDialog;
 
   // Used to prevent a signal feedback loop coming from the fact that
   // modifying file name can change export format and vice versa.
-  bool protectFilenameLineEdit;
+  bool ProtectFilenameLineEdit;
 };
 
 

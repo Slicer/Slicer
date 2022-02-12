@@ -43,8 +43,11 @@ public:
 
 
 public:
-  /// Get context menu actions to add to tree view
+  /// Get node item context menu actions to add to tree view
   QList<QAction*> itemContextMenuActions() const override;
+
+  /// Get scene item context menu actions to add to tree view
+  QList<QAction*> sceneContextMenuActions() const override;
 
   /// Show context menu actions valid for given subject hierarchy item
   void showContextMenuActionsForItem(vtkIdType itemID) override;
