@@ -88,7 +88,7 @@ enum
   };
 
 // Settings
-static const int INTERSECTION_VISUALIZATION_MODE = HideIntersection;
+static const int INTERSECTION_VISUALIZATION_MODE = ShowIntersection;
 static const int HANDLES_TYPE = Arrows;
 static const double OPACITY_RANGE = 1000.0;
 static const double FOV_HANDLES_MARGIN = 0.03; // 3% margin
@@ -98,7 +98,6 @@ static const double HANDLES_MIN_LINE_LENGTH = 50.0;
 
 // Intersection line
 static const double INTERSECTION_LINE_RESOLUTION = 50; // default = 8
-static const double INTERSECTION_LINE_EXTRA_THICKNESS = 1.0; // extra thickness with respect to normal slice intersection display
 
 // Handles
 static const double HANDLES_CIRCLE_THETA_RESOLUTION = 100; // default = 8
@@ -1075,8 +1074,8 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
 
     pipeline->HandlesVisibilityMode = displayNode->GetIntersectingSlicesInteractiveHandlesVisibilityMode();
 
-    pipeline->IntersectionLine1Property->SetLineWidth(displayNode->GetLineWidth() + INTERSECTION_LINE_EXTRA_THICKNESS);
-    pipeline->IntersectionLine2Property->SetLineWidth(displayNode->GetLineWidth() + INTERSECTION_LINE_EXTRA_THICKNESS);
+    pipeline->IntersectionLine1Property->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->IntersectionLine2Property->SetLineWidth(displayNode->GetLineWidth());
     }
 
   // Set color of handles
