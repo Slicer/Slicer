@@ -94,12 +94,12 @@ static const double INTERSECTION_LINE_RESOLUTION = 50; // default = 8
 // Handles
 static const double HANDLES_CIRCLE_THETA_RESOLUTION = 100; // default = 8
 static const double HANDLES_CIRCLE_PHI_RESOLUTION = 100; // default = 8
-static const double SLICEOFSSET_HANDLE_DEFAULT_POSITION[3] = { 0.0,0.0,0.0 };
-static const double SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION[3] = { 0.0,1.0,0.0 };
-static const double SLICEOFSSET_HANDLE_CIRCLE_RADIUS = 7.0;
-static const double SLICEOFSSET_HANDLE_ARROW_RADIUS = 3.0;
-static const double SLICEOFSSET_HANDLE_ARROW_LENGTH = 60.0;
-static const double SLICEOFSSET_HANDLE_ARROW_TIP_ANGLE = 27; // degrees
+static const double SLICEOFFSET_HANDLE_DEFAULT_POSITION[3] = { 0.0,0.0,0.0 };
+static const double SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[3] = { 0.0,1.0,0.0 };
+static const double SLICEOFFSET_HANDLE_CIRCLE_RADIUS = 7.0;
+static const double SLICEOFFSET_HANDLE_ARROW_RADIUS = 3.0;
+static const double SLICEOFFSET_HANDLE_ARROW_LENGTH = 60.0;
+static const double SLICEOFFSET_HANDLE_ARROW_TIP_ANGLE = 27; // degrees
 static const double ROTATION_HANDLE_DEFAULT_POSITION[3] = { 0.0,0.0,0.0 };
 static const double ROTATION_HANDLE_DEFAULT_ORIENTATION[3] = { 0.0,1.0,0.0 };
 static const double ROTATION_HANDLE_CIRCLE_RADIUS = 10.0;
@@ -429,26 +429,26 @@ class SliceIntersectionInteractionDisplayPipeline
       this->SliceOffsetHandle2Displayable = false;
 
       // Handle default position and orientation
-      double handleOriginDefault[3] = { SLICEOFSSET_HANDLE_DEFAULT_POSITION[0],
-                                        SLICEOFSSET_HANDLE_DEFAULT_POSITION[1],
-                                        SLICEOFSSET_HANDLE_DEFAULT_POSITION[2] };
-      double handleOrientationDefault[3] = { SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION[0],
-                                             SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION[1],
-                                             SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION[2] };
-      double handleOrientationDefaultInv[3] = { -SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION[0],
-                                                -SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION[1],
-                                                -SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION[2] };
+      double handleOriginDefault[3] = { SLICEOFFSET_HANDLE_DEFAULT_POSITION[0],
+                                        SLICEOFFSET_HANDLE_DEFAULT_POSITION[1],
+                                        SLICEOFFSET_HANDLE_DEFAULT_POSITION[2] };
+      double handleOrientationDefault[3] = { SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[0],
+                                             SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[1],
+                                             SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[2] };
+      double handleOrientationDefaultInv[3] = { -SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[0],
+                                                -SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[1],
+                                                -SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[2] };
 
       if (HANDLES_TYPE == Arrows)
         {
         // Define cone size
-        double coneAngleRad = (SLICEOFSSET_HANDLE_ARROW_TIP_ANGLE * M_PI) / 180.0;
-        double coneRadius = 2 * SLICEOFSSET_HANDLE_ARROW_RADIUS;
+        double coneAngleRad = (SLICEOFFSET_HANDLE_ARROW_TIP_ANGLE * M_PI) / 180.0;
+        double coneRadius = 2 * SLICEOFFSET_HANDLE_ARROW_RADIUS;
         double coneLength = coneRadius / tan(coneAngleRad);
 
         // Define cylinder size
-        double cylinderLength = SLICEOFSSET_HANDLE_ARROW_LENGTH - coneLength * 2;
-        double cylinderRadius = SLICEOFSSET_HANDLE_ARROW_RADIUS;
+        double cylinderLength = SLICEOFFSET_HANDLE_ARROW_LENGTH - coneLength * 2;
+        double cylinderRadius = SLICEOFFSET_HANDLE_ARROW_RADIUS;
 
         // Define cone positions to construct arrows
         double coneCenterR[3] = { handleOrientationDefault[0], handleOrientationDefault[1], handleOrientationDefault[2] };
@@ -471,7 +471,7 @@ class SliceIntersectionInteractionDisplayPipeline
         sliceOffsetHandle1LineSource->SetPoint2(coneBaseL);
         vtkNew<vtkTubeFilter> sliceOffsetHandle1LineTubeFilter;
         sliceOffsetHandle1LineTubeFilter->SetInputConnection(sliceOffsetHandle1LineSource->GetOutputPort());
-        sliceOffsetHandle1LineTubeFilter->SetRadius(SLICEOFSSET_HANDLE_ARROW_RADIUS);
+        sliceOffsetHandle1LineTubeFilter->SetRadius(SLICEOFFSET_HANDLE_ARROW_RADIUS);
         sliceOffsetHandle1LineTubeFilter->SetNumberOfSides(16);
         sliceOffsetHandle1LineTubeFilter->SetCapping(true);
         vtkNew<vtkConeSource> sliceOffsetHandle1RightConeSource;
@@ -509,7 +509,7 @@ class SliceIntersectionInteractionDisplayPipeline
         sliceOffsetHandle2LineSource->SetPoint2(coneBaseL);
         vtkNew<vtkTubeFilter> sliceOffsetHandle2LineTubeFilter;
         sliceOffsetHandle2LineTubeFilter->SetInputConnection(sliceOffsetHandle2LineSource->GetOutputPort());
-        sliceOffsetHandle2LineTubeFilter->SetRadius(SLICEOFSSET_HANDLE_ARROW_RADIUS);
+        sliceOffsetHandle2LineTubeFilter->SetRadius(SLICEOFFSET_HANDLE_ARROW_RADIUS);
         sliceOffsetHandle2LineTubeFilter->SetNumberOfSides(16);
         sliceOffsetHandle2LineTubeFilter->SetCapping(true);
         vtkNew<vtkConeSource> sliceOffsetHandle2RightConeSource;
@@ -560,7 +560,7 @@ class SliceIntersectionInteractionDisplayPipeline
         {
         // Translation sphere 1
         vtkNew<vtkSphereSource> sliceOffsetHandle1SphereSource;
-        sliceOffsetHandle1SphereSource->SetRadius(SLICEOFSSET_HANDLE_CIRCLE_RADIUS);
+        sliceOffsetHandle1SphereSource->SetRadius(SLICEOFFSET_HANDLE_CIRCLE_RADIUS);
         sliceOffsetHandle1SphereSource->SetThetaResolution(HANDLES_CIRCLE_THETA_RESOLUTION);
         sliceOffsetHandle1SphereSource->SetPhiResolution(HANDLES_CIRCLE_PHI_RESOLUTION);
         sliceOffsetHandle1SphereSource->SetCenter(handleOriginDefault);
@@ -581,7 +581,7 @@ class SliceIntersectionInteractionDisplayPipeline
 
         // Translation sphere 2
         vtkNew<vtkSphereSource> sliceOffsetHandle2SphereSource;
-        sliceOffsetHandle2SphereSource->SetRadius(SLICEOFSSET_HANDLE_CIRCLE_RADIUS);
+        sliceOffsetHandle2SphereSource->SetRadius(SLICEOFFSET_HANDLE_CIRCLE_RADIUS);
         sliceOffsetHandle2SphereSource->SetThetaResolution(HANDLES_CIRCLE_THETA_RESOLUTION);
         sliceOffsetHandle2SphereSource->SetPhiResolution(HANDLES_CIRCLE_PHI_RESOLUTION);
         sliceOffsetHandle2SphereSource->SetCenter(handleOriginDefault);

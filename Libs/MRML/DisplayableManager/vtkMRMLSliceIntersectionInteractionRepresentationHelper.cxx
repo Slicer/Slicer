@@ -71,8 +71,8 @@
 #include <vtkMRMLInteractionEventData.h>
 
 // Handles
-static const double SLICEOFSSET_HANDLE_DEFAULT_POSITION[3] = { 0.0,0.0,0.0 };
-static const double SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION[3] = { 0.0,1.0,0.0 };
+static const double SLICEOFFSET_HANDLE_DEFAULT_POSITION[3] = { 0.0,0.0,0.0 };
+static const double SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[3] = { 0.0,1.0,0.0 };
 
 vtkStandardNewMacro(vtkMRMLSliceIntersectionInteractionRepresentationHelper);
 
@@ -349,13 +349,13 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::ComputeHandleToWor
   handleToWorldTransformMatrix->Identity();
 
   // Get rotation matrix
-  double handleOrientationDefault[2] = { SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION[0],
-                                         SLICEOFSSET_HANDLE_DEFAULT_ORIENTATION [1]};
+  double handleOrientationDefault[2] = { SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[0],
+                                         SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION [1]};
   this->RotationMatrixFromVectors(handleOrientationDefault, handleOrientation, handleToWorldTransformMatrix);
 
   // Add translation to matrix
-  double handleTranslation[2] = { handlePosition[0] - SLICEOFSSET_HANDLE_DEFAULT_POSITION[0],
-                                  handlePosition[1] - SLICEOFSSET_HANDLE_DEFAULT_POSITION[1]};
+  double handleTranslation[2] = { handlePosition[0] - SLICEOFFSET_HANDLE_DEFAULT_POSITION[0],
+                                  handlePosition[1] - SLICEOFFSET_HANDLE_DEFAULT_POSITION[1]};
   handleToWorldTransformMatrix->SetElement(0, 3, handleTranslation[0]); // Translation X
   handleToWorldTransformMatrix->SetElement(1, 3, handleTranslation[1]); // Translation Y
 }
