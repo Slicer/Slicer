@@ -262,6 +262,12 @@ public:
   void SetIntersectingSlicesEnabled(IntersectingSlicesOperation operation, bool enabled);
   bool GetIntersectingSlicesEnabled(IntersectingSlicesOperation operation);
 
+  void SetIntersectingSlicesIntersectionMode(int mode);
+  int GetIntersectingSlicesIntersectionMode();
+
+  void SetIntersectingSlicesLineThicknessMode(int mode);
+  int GetIntersectingSlicesLineThicknessMode();
+
 protected:
 
   vtkMRMLApplicationLogic();

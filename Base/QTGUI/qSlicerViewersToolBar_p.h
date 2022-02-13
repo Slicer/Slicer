@@ -90,7 +90,9 @@ public slots:
   void setCrosshairThickness(int);
   void setCrosshairJumpSlicesMode(int);
 
+  void setIntersectingSlicesIntersectionMode(int);
   void setIntersectingSlicesVisibility(bool);
+  void setIntersectingSlicesLineThicknessMode(int);
   void setIntersectingSlicesInteractive(bool);
   void setIntersectingSlicesRotationEnabled(bool);
   void setIntersectingSlicesTranslationEnabled(bool);
@@ -115,8 +117,20 @@ public:
   QAction* CrosshairSmallBasicAction{nullptr};
   QAction* CrosshairSmallBasicIntersectionAction{nullptr};
 
+  ctkSignalMapper* CrosshairThicknessMapper{nullptr};
+  QAction* CrosshairFineAction{nullptr};
+  QAction* CrosshairMediumAction{nullptr};
+  QAction* CrosshairThickAction{nullptr};
+
+  QAction* CrosshairToggleAction{nullptr};
+
+
   QToolButton* SliceIntersectionsToolButton{nullptr};
   QMenu* SliceIntersectionsMenu{nullptr};
+
+  ctkSignalMapper* SliceIntersectionsMapper{nullptr};
+  QAction* SliceIntersectionsFullIntersectionAction{nullptr};
+  QAction* SliceIntersectionsSkipIntersectionAction{nullptr};
 
   QAction* IntersectingSlicesVisibleAction{nullptr};
   QAction* IntersectingSlicesInteractiveAction{nullptr};
@@ -124,12 +138,10 @@ public:
   QAction* IntersectingSlicesRotationEnabledAction{nullptr};
   QMenu* IntersectingSlicesInteractionModesMenu{nullptr};
 
-  ctkSignalMapper* CrosshairThicknessMapper{nullptr};
-  QAction* CrosshairFineAction{nullptr};
-  QAction* CrosshairMediumAction{nullptr};
-  QAction* CrosshairThickAction{nullptr};
-
-  QAction* CrosshairToggleAction{nullptr};
+  ctkSignalMapper* SliceIntersectionsThicknessMapper{nullptr};
+  QAction* SliceIntersectionsFineAction{nullptr};
+  QAction* SliceIntersectionsMediumAction{nullptr};
+  QAction* SliceIntersectionsThickAction{nullptr};
 
   int CrosshairLastMode{vtkMRMLCrosshairNode::ShowBasic};
 };

@@ -93,6 +93,41 @@ public:
   static const char* GetIntersectingSlicesInteractiveHandlesVisibilityModeAsString(int id);
   static int GetIntersectingSlicesInteractiveHandlesVisibilityModeFromString(const char*);
 
+  // Intersection mode
+  enum IntersectionMode
+  {
+    SkipLineCrossings = 1, // Lines do not intersect and there is a gap around the intersection point
+    FullLines = 2, // Lines intersect
+    IntersectionMode_Last // insert new types above this line
+  };
+  vtkGetMacro(IntersectingSlicesIntersectionMode, int);
+  vtkSetMacro(IntersectingSlicesIntersectionMode, int);
+
+  /// Return a string representing the intersection mode, set it from a string
+  const char* GetIntersectingSlicesIntersectionModeAsString();
+  void SetIntersectingSlicesIntersectionModeFromString(const char* intersectionModeString);
+
+  static const char* GetIntersectingSlicesIntersectionModeAsString(int id);
+  static int GetIntersectingSlicesIntersectionModeFromString(const char*);
+
+  // Line thickness mode
+  enum LineThicknessMode
+  {
+    FineLines = 1, // Thin lines
+    MediumLines, // Medium lines
+    ThickLines, // Thick lines
+    LineThicknessMode_Last // insert new types above this line
+  };
+  vtkGetMacro(IntersectingSlicesLineThicknessMode, int);
+  vtkSetMacro(IntersectingSlicesLineThicknessMode, int);
+
+  /// Return a string representing the intersection mode, set it from a string
+  const char* GetIntersectingSlicesLineThicknessModeAsString();
+  void SetIntersectingSlicesLineThicknessModeFromString(const char* lineThicknessModeString);
+
+  static const char* GetIntersectingSlicesLineThicknessModeAsString(int id);
+  static int GetIntersectingSlicesLineThicknessModeFromString(const char*);
+
   /// Get name of the default interaction context (typically the mouse)
   static const std::string GetDefaultContextName() { return ""; };
 
@@ -150,6 +185,10 @@ protected:
   bool IntersectingSlicesRotationEnabled{ true };
 
   int IntersectingSlicesInteractiveHandlesVisibilityMode{ NeverVisible };
+
+  int IntersectingSlicesIntersectionMode{ FullLines };
+
+  int IntersectingSlicesLineThicknessMode{ FineLines };
 
   /// Current active point or widget component type and index (hovered by the mouse or other interaction context)
   /// Map interaction context identifier (empty string for mouse) to component type enum
