@@ -73,13 +73,6 @@
 // MRML includes
 #include <vtkMRMLInteractionEventData.h>
 
-// Visualization modes
-enum
-  {
-  ShowIntersection = 0,
-  HideIntersection = 1,
-  };
-
 // Handles type
 enum
   {
@@ -88,7 +81,6 @@ enum
   };
 
 // Settings
-static const int INTERSECTION_VISUALIZATION_MODE = ShowIntersection;
 static const int HANDLES_TYPE = Arrows;
 static const double OPACITY_RANGE = 1000.0;
 static const double FOV_HANDLES_MARGIN = 0.03; // 3% margin
@@ -757,7 +749,7 @@ class SliceIntersectionInteractionDisplayPipeline
       bool sliceOffsetHandle2Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
         && this->TranslationHandlesVisible && this->SliceOffsetHandle2Displayable;
       bool translationHandleVisible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
-        && this->TranslationHandlesVisible && INTERSECTION_VISUALIZATION_MODE == ShowIntersection;
+        && this->TranslationHandlesVisible && this->SliceIntersectionMode == vtkMRMLSliceDisplayNode::FullLines;
 
       if (static_cast<bool>(this->RotationHandle1Actor->GetVisibility()) != rotationHandle1Visible
         || static_cast<bool>(this->RotationHandle2Actor->GetVisibility()) != rotationHandle2Visible
@@ -859,6 +851,7 @@ class SliceIntersectionInteractionDisplayPipeline
     bool RotationHandlesVisible = false;
     bool TranslationHandlesVisible = false;
     int  HandlesVisibilityMode = vtkMRMLSliceDisplayNode::NeverVisible;
+    int  SliceIntersectionMode = vtkMRMLSliceDisplayNode::SkipLineCrossings;
     // Indicates that this representation has changed and thus re-rendering is needed
     bool NeedToRender = true;
   };
@@ -1074,8 +1067,10 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
 
     pipeline->HandlesVisibilityMode = displayNode->GetIntersectingSlicesInteractiveHandlesVisibilityMode();
 
-    pipeline->IntersectionLine1Property->SetLineWidth(displayNode->GetLineWidth());
-    pipeline->IntersectionLine2Property->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->SliceIntersectionMode = displayNode->GetIntersectingSlicesIntersectionMode();
+
+    pipeline->IntersectionLine1Property->SetLineWidth(displayNode->GetIntersectingSlicesLineThicknessMode());
+    pipeline->IntersectionLine2Property->SetLineWidth(displayNode->GetIntersectingSlicesLineThicknessMode());
     }
 
   // Set color of handles
@@ -1157,14 +1152,14 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   // Get inner intersection line tips
   double intersectionInnerLineTip1[3] = { 0.0, 0.0, 0.0 };
   double intersectionInnerLineTip2[3] = { 0.0, 0.0, 0.0 };
-  if (INTERSECTION_VISUALIZATION_MODE == ShowIntersection)
+  if (pipeline->SliceIntersectionMode == vtkMRMLSliceDisplayNode::FullLines)
     {
     intersectionInnerLineTip1[0] = sliceIntersectionPoint[0];
     intersectionInnerLineTip1[1] = sliceIntersectionPoint[1];
     intersectionInnerLineTip2[0] = sliceIntersectionPoint[0];
     intersectionInnerLineTip2[1] = sliceIntersectionPoint[1];
     }
-  else if (INTERSECTION_VISUALIZATION_MODE == HideIntersection)
+  else if (pipeline->SliceIntersectionMode == vtkMRMLSliceDisplayNode::SkipLineCrossings)
     {
     double intersectionPointToOuterLineTip1[3] = { intersectionOuterLineTip1[0] - sliceIntersectionPoint[0],
                                                    intersectionOuterLineTip1[1] - sliceIntersectionPoint[1], 0.0 };
@@ -1244,7 +1239,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
     }
   if (dotProduct > 0.0)
   // this means vectors are oriented towards the same direction
-  // This may occur when using "HideIntersection" mode.
+  // This may occur when using "SkipLineCrossings" intersection mode.
     {
     if (line1VectorNorm < line2VectorNorm)
     // hide handles closer to intersection point

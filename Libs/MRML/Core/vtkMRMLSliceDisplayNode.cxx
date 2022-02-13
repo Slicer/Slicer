@@ -45,6 +45,8 @@ void vtkMRMLSliceDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(IntersectingSlicesTranslationEnabled);
   vtkMRMLPrintBooleanMacro(IntersectingSlicesRotationEnabled);
   vtkMRMLPrintIntMacro(IntersectingSlicesInteractiveHandlesVisibilityMode);
+  vtkMRMLPrintIntMacro(IntersectingSlicesIntersectionMode);
+  vtkMRMLPrintIntMacro(IntersectingSlicesLineThicknessMode);
   {
   os << indent << "ActiveComponents:";
   for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
@@ -76,6 +78,8 @@ void vtkMRMLSliceDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(intersectingSlicesTranslationEnabled, IntersectingSlicesTranslationEnabled);
   vtkMRMLWriteXMLBooleanMacro(intersectingSlicesRotationEnabled, IntersectingSlicesRotationEnabled);
   vtkMRMLWriteXMLIntMacro(intersectingSlicesInteractiveHandlesVisibilityMode, IntersectingSlicesInteractiveHandlesVisibilityMode);
+  vtkMRMLWriteXMLIntMacro(intersectingSlicesIntersectionMode, IntersectingSlicesIntersectionMode);
+  vtkMRMLWriteXMLIntMacro(intersectingSlicesIntersectionMode, IntersectingSlicesLineThicknessMode);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -90,6 +94,8 @@ void vtkMRMLSliceDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(intersectingSlicesTranslationEnabled, IntersectingSlicesTranslationEnabled);
   vtkMRMLReadXMLBooleanMacro(intersectingSlicesRotationEnabled, IntersectingSlicesRotationEnabled);
   vtkMRMLReadXMLIntMacro(intersectingSlicesInteractiveHandlesVisibilityMode, IntersectingSlicesInteractiveHandlesVisibilityMode);
+  vtkMRMLReadXMLIntMacro(intersectingSlicesIntersectionMode, IntersectingSlicesIntersectionMode);
+  vtkMRMLReadXMLIntMacro(intersectingSlicesLineThicknessMode, IntersectingSlicesLineThicknessMode);
   vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
@@ -112,6 +118,8 @@ void vtkMRMLSliceDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   vtkMRMLCopyBooleanMacro(IntersectingSlicesTranslationEnabled);
   vtkMRMLCopyBooleanMacro(IntersectingSlicesRotationEnabled);
   vtkMRMLCopyIntMacro(IntersectingSlicesInteractiveHandlesVisibilityMode);
+  vtkMRMLCopyIntMacro(IntersectingSlicesIntersectionMode);
+  vtkMRMLCopyIntMacro(IntersectingSlicesLineThicknessMode);
   vtkMRMLCopyEndMacro();
 }
 
@@ -196,6 +204,99 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisi
       return "Invalid";
     }
   }
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeAsString()
+  {
+  return vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeAsString(this->IntersectingSlicesIntersectionMode);
+  }
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceDisplayNode::SetIntersectingSlicesIntersectionModeFromString(const char* handlesVisibilityModeString)
+  {
+  this->SetIntersectingSlicesIntersectionMode(
+    vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeFromString(handlesVisibilityModeString));
+  }
+
+//-----------------------------------------------------------
+int vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeFromString(const char* name)
+  {
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < IntersectionMode_Last; ii++)
+    {
+    if (strcmp(name, GetIntersectingSlicesIntersectionModeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+  }
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeAsString(int id)
+{
+  switch (id)
+    {
+    case SkipLineCrossings: return "SkipLineCrossings";
+    case FullLines: return "FullLines";
+    default:
+      // invalid id
+      return "Invalid";
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsString()
+  {
+  return vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsString(this->IntersectingSlicesLineThicknessMode);
+  }
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceDisplayNode::SetIntersectingSlicesLineThicknessModeFromString(const char* handlesVisibilityModeString)
+  {
+  this->SetIntersectingSlicesLineThicknessMode(
+    vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeFromString(handlesVisibilityModeString));
+  }
+
+//-----------------------------------------------------------
+int vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeFromString(const char* name)
+  {
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < LineThicknessMode_Last; ii++)
+    {
+    if (strcmp(name, GetIntersectingSlicesLineThicknessModeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+  }
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsString(int id)
+{
+  switch (id)
+    {
+    case FineLines: return "FineLines";
+    case MediumLines: return "MediumLines";
+    case ThickLines: return "ThickLines";
+    default:
+      // invalid id
+      return "Invalid";
+    }
+}
 
 //---------------------------------------------------------------------------
 int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context/*=GetDefaultContextName()*/)
