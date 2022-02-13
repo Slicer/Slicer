@@ -89,6 +89,7 @@ public slots:
   void setCrosshairEnabled(bool); // used to toggle between last style and off
   void setCrosshairThickness(int);
   void setCrosshairJumpSlicesMode(int);
+
   void setIntersectingSlicesVisibility(bool);
   void setIntersectingSlicesInteractive(bool);
   void setIntersectingSlicesRotationEnabled(bool);
@@ -113,6 +114,9 @@ public:
   QAction* CrosshairBasicIntersectionAction{nullptr};
   QAction* CrosshairSmallBasicAction{nullptr};
   QAction* CrosshairSmallBasicIntersectionAction{nullptr};
+
+  QToolButton* SliceIntersectionsToolButton{nullptr};
+  QMenu* SliceIntersectionsMenu{nullptr};
 
   QAction* IntersectingSlicesVisibleAction{nullptr};
   QAction* IntersectingSlicesInteractiveAction{nullptr};

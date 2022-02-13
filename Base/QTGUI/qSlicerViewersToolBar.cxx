@@ -81,7 +81,7 @@ void qSlicerViewersToolBarPrivate::init()
   QObject::connect(crosshairJumpSlicesActions, SIGNAL(triggered(QAction*)), this->CrosshairJumpSlicesMapper, SLOT(map(QAction*)));
   QObject::connect(this->CrosshairJumpSlicesMapper, SIGNAL(mapped(int)), this, SLOT(setCrosshairJumpSlicesMode(int)));
 
-  // Style
+  // Crosshair Style
   QActionGroup* crosshairActions = new QActionGroup(q);
   crosshairActions->setExclusive(true);
 
@@ -132,7 +132,7 @@ void qSlicerViewersToolBarPrivate::init()
   QObject::connect(this->CrosshairMapper, SIGNAL(mapped(int)),
                    this, SLOT(setCrosshairMode(int)));
 
-  // Thickness
+  // Crosshair Thickness
   QActionGroup* crosshairThicknessActions = new QActionGroup(q);
   crosshairThicknessActions->setExclusive(true);
 
@@ -166,13 +166,38 @@ void qSlicerViewersToolBarPrivate::init()
   QObject::connect(this->CrosshairThicknessMapper, SIGNAL(mapped(int)),
                    this, SLOT(setCrosshairThickness(int)));
 
-  // Slice intersections visibility
-  this->IntersectingSlicesVisibleAction = new QAction(q);
-  this->IntersectingSlicesVisibleAction->setText(tr("Slice intersections"));
-  this->IntersectingSlicesVisibleAction->setToolTip(tr("Show how the other slice planes intersect each slice plane."));
-  this->IntersectingSlicesVisibleAction->setCheckable(true);
-  QObject::connect(this->IntersectingSlicesVisibleAction, SIGNAL(triggered(bool)),
-                   this, SLOT(setIntersectingSlicesVisibility(bool)));
+  // Crosshair Menu
+  this->CrosshairMenu = new QMenu(tr("Crosshair"), q);
+  this->CrosshairMenu->addActions(crosshairJumpSlicesActions->actions());
+  this->CrosshairMenu->addSeparator();
+  this->CrosshairMenu->addActions(crosshairActions->actions());
+  this->CrosshairMenu->addSeparator();
+  this->CrosshairMenu->addActions(crosshairThicknessActions->actions());
+
+  // Crosshair ToolButton
+  this->CrosshairToolButton = new QToolButton();
+  this->CrosshairToolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+  this->CrosshairToolButton->setToolTip(tr("Crosshair"));
+  this->CrosshairToolButton->setText(tr("Crosshair"));
+  this->CrosshairToolButton->setMenu(this->CrosshairMenu);
+  this->CrosshairToolButton->setPopupMode(QToolButton::MenuButtonPopup);
+
+  // Default Crosshair action
+  this->CrosshairToggleAction = new QAction(q);
+  this->CrosshairToggleAction->setIcon(QIcon(":/Icons/SlicesCrosshair.png"));
+  this->CrosshairToggleAction->setCheckable(true);
+  this->CrosshairToggleAction->setToolTip(tr(
+    "Toggle crosshair visibility. Hold Shift key and move mouse in a view to set crosshair position."));
+  this->CrosshairToggleAction->setText(tr("Crosshair"));
+  this->CrosshairToolButton->setDefaultAction(this->CrosshairToggleAction);
+  QObject::connect(this->CrosshairToggleAction, SIGNAL(toggled(bool)),
+                   this, SLOT(setCrosshairEnabled(bool)));
+
+  q->addWidget(this->CrosshairToolButton);
+  QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+                   this->CrosshairToolButton,
+                   SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
+
 
   // Interactive slice intersections
   this->IntersectingSlicesInteractiveAction = new QAction(q);
@@ -184,7 +209,6 @@ void qSlicerViewersToolBarPrivate::init()
     this, SLOT(setIntersectingSlicesInteractive(bool)));
 
   // Interaction options
-
   this->IntersectingSlicesTranslationEnabledAction = new QAction(q);
   this->IntersectingSlicesTranslationEnabledAction->setText(tr("Translate"));
   this->IntersectingSlicesTranslationEnabledAction->setToolTip(tr("Control visibility of translation handles for slice intersection."));
@@ -204,43 +228,35 @@ void qSlicerViewersToolBarPrivate::init()
   this->IntersectingSlicesInteractionModesMenu->addAction(this->IntersectingSlicesTranslationEnabledAction);
   this->IntersectingSlicesInteractionModesMenu->addAction(this->IntersectingSlicesRotationEnabledAction);
 
-  // Menu
-  this->CrosshairMenu = new QMenu(tr("Crosshair"), q);
-  this->CrosshairMenu->addActions(crosshairJumpSlicesActions->actions());
-  this->CrosshairMenu->addSeparator();
-  this->CrosshairMenu->addActions(crosshairActions->actions());
-  this->CrosshairMenu->addSeparator();
-  this->CrosshairMenu->addActions(crosshairThicknessActions->actions());
-  this->CrosshairMenu->addSeparator();
-  this->CrosshairMenu->addAction(this->IntersectingSlicesVisibleAction);
-  this->CrosshairMenu->addAction(this->IntersectingSlicesInteractiveAction);
-  this->CrosshairMenu->addMenu(this->IntersectingSlicesInteractionModesMenu);
+  // Slice Intersections Menu
+  this->SliceIntersectionsMenu = new QMenu(tr("Slice intersections"), q);
+  this->SliceIntersectionsMenu->addAction(this->IntersectingSlicesInteractiveAction);
+  this->SliceIntersectionsMenu->addMenu(this->IntersectingSlicesInteractionModesMenu);
   // Add connection to update slice intersection checkboxes before showing the dropdown menu
-  QObject::connect(this->CrosshairMenu, SIGNAL(aboutToShow()),
+  QObject::connect(this->SliceIntersectionsMenu, SIGNAL(aboutToShow()),
     this, SLOT(updateWidgetFromMRML()));
 
-  this->CrosshairToolButton = new QToolButton();
-//  this->CrosshairToolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-  this->CrosshairToolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-  this->CrosshairToolButton->setToolTip(tr("Crosshair"));
-  this->CrosshairToolButton->setText(tr("Crosshair"));
-  this->CrosshairToolButton->setMenu(this->CrosshairMenu);
-  this->CrosshairToolButton->setPopupMode(QToolButton::MenuButtonPopup);
+  // Slice Intersections ToolButton
+  this->SliceIntersectionsToolButton = new QToolButton();
+  this->SliceIntersectionsToolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+  this->SliceIntersectionsToolButton->setToolTip(tr("Slice intersections"));
+  this->SliceIntersectionsToolButton->setText(tr("Slice intersections"));
+  this->SliceIntersectionsToolButton->setMenu(this->SliceIntersectionsMenu);
+  this->SliceIntersectionsToolButton->setPopupMode(QToolButton::MenuButtonPopup);
 
-  // Default action
-  this->CrosshairToggleAction = new QAction(q);
-  this->CrosshairToggleAction->setIcon(QIcon(":/Icons/SlicesCrosshair.png"));
-  this->CrosshairToggleAction->setCheckable(true);
-  this->CrosshairToggleAction->setToolTip(tr(
-    "Toggle crosshair visibility. Hold Shift key and move mouse in a view to set crosshair position."));
-  this->CrosshairToggleAction->setText(tr("Crosshair"));
-  this->CrosshairToolButton->setDefaultAction(this->CrosshairToggleAction);
-  QObject::connect(this->CrosshairToggleAction, SIGNAL(toggled(bool)),
-                   this, SLOT(setCrosshairEnabled(bool)));
+  // Default Slice intersections action
+  this->IntersectingSlicesVisibleAction = new QAction(q);
+  this->IntersectingSlicesVisibleAction->setIcon(QIcon(":/Icons/SliceIntersections.png"));
+  this->IntersectingSlicesVisibleAction->setText(tr("Slice intersections"));
+  this->IntersectingSlicesVisibleAction->setToolTip(tr("Show how the other slice planes intersect each slice plane."));
+  this->IntersectingSlicesVisibleAction->setCheckable(true);
+  this->SliceIntersectionsToolButton->setDefaultAction(this->IntersectingSlicesVisibleAction);
+  QObject::connect(this->IntersectingSlicesVisibleAction, SIGNAL(triggered(bool)),
+                   this, SLOT(setIntersectingSlicesVisibility(bool)));
 
-  q->addWidget(this->CrosshairToolButton);
+  q->addWidget(this->SliceIntersectionsToolButton);
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
-                   this->CrosshairToolButton,
+                   this->SliceIntersectionsToolButton,
                    SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 
   /// Other controls
