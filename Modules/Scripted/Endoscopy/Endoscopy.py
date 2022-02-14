@@ -85,7 +85,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
     inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
     inputFiducialsNodeSelector.toolTip = "Select a fiducial list to define control points for the path."
-    inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLMarkupsCurveNode',
+    inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsPointListNode', 'vtkMRMLMarkupsFiducialNode', 'vtkMRMLMarkupsCurveNode',
       'vtkMRMLAnnotationHierarchyNode']
     inputFiducialsNodeSelector.noneEnabled = False
     inputFiducialsNodeSelector.addEnabled = False
@@ -388,7 +388,7 @@ class EndoscopyComputePath:
         coords = [0,0,0]
         f.GetFiducialCoordinates(coords)
         self.p[i] = coords
-    elif self.fids.GetClassName() == "vtkMRMLMarkupsFiducialNode":
+    elif self.fids.GetClassName() in ["vtkMRMLMarkupsPointListNode", "vtkMRMLMarkupsFiducialNode"]:
       # slicer4 Markups node
       self.n = self.fids.GetNumberOfControlPoints()
       n = self.n
@@ -551,7 +551,7 @@ class EndoscopyPathModel:
 
       if self.cursorType == "markups":
         # Markups cursor
-        cursor = scene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
+        cursor = scene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
         cursor.CreateDefaultDisplayNodes()
         cursor.GetDisplayNode().SetSelectedColor(1,0,0)  # red
         cursor.GetDisplayNode().SetSliceProjection(True)

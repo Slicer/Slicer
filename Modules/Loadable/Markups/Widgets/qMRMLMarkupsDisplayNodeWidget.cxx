@@ -29,7 +29,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLMarkupsDisplayNode.h>
-#include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsPointListNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLSelectionNode.h>
 
@@ -328,7 +328,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->curveLineDiameterSliderWidget->setValue(lineDiameter);
 
   // Only enable line size editing if not fiducial node
-  bool lineSizeEnabled = (vtkMRMLMarkupsFiducialNode::SafeDownCast(markupsDisplayNode->GetDisplayableNode()) == nullptr);
+  bool lineSizeEnabled = (vtkMRMLMarkupsPointListNode::SafeDownCast(markupsDisplayNode->GetDisplayableNode()) == nullptr);
   d->curveLineSizeIsAbsoluteButton->setEnabled(lineSizeEnabled);
   d->curveLineDiameterSliderWidget->setEnabled(lineSizeEnabled);
   d->curveLineThicknessSliderWidget->setEnabled(lineSizeEnabled);

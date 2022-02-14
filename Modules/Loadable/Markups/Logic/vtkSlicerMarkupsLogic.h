@@ -96,12 +96,12 @@ public:
   /// node.
   std::string AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *mrmlNode);
 
-  /// Create a new markups fiducial node and associated display node, adding both to
+  /// Create a new markups point list node and associated display node, adding both to
   /// the scene. If the scene argument is null use the scene set on the logic
   /// class, and also make it the active on on the selection node, otherwise
   /// add to the passed scene.
   /// On success, return the id, on failure return an empty string.
-  std::string AddNewFiducialNode(const char *name = "F", vtkMRMLScene *scene = nullptr);
+  std::string AddNewPointListNode(const char *name = "F", vtkMRMLScene *scene = nullptr);
 
   /// Create a new markups node and associated display node, adding both to the scene.
   /// For ROI nodes, each new node will have a unique color.
@@ -296,7 +296,14 @@ public:
   //-----------------------------------------------------------
   // All public methods below are deprecated
   //
-  // These methods are deprecated because they use old terms (markup instead of control point),
+  // These methods are deprecated because they use old terms (markup/fiducial instead of control point),
+
+  /// \deprecated Use AddNewPointListNode instead.
+  std::string AddNewFiducialNode(const char *name = "F", vtkMRMLScene *scene = nullptr)
+    {
+    vtkWarningMacro("vtkSlicerMarkupsLogic::AddNewFiducialNode method is deprecated, please use AddNewPointListNode instead");
+    return this->AddNewPointListNode(name, scene);
+    }
 
   /// \deprecated Use CopyNthControlPointToNewList instead.
   bool CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,

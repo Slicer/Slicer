@@ -581,7 +581,7 @@ void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode *markupsNode)
     {
     // If fiducial node was placed then reset node ID and deactivate placement
     const char *activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
-    if (activePlaceNodeClassName && strcmp(activePlaceNodeClassName, "vtkMRMLMarkupsFiducialNode") == 0)
+    if (activePlaceNodeClassName && (strcmp(activePlaceNodeClassName, "vtkMRMLMarkupsPointListNode") || strcmp(activePlaceNodeClassName, "vtkMRMLMarkupsFiducialNode")) == 0)
       {
       selectionNode->SetReferenceActivePlaceNodeID(nullptr);
       vtkSmartPointer<vtkCollection> interactionNodes = vtkSmartPointer<vtkCollection>::Take
@@ -653,9 +653,9 @@ std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *
 }
 
 //---------------------------------------------------------------------------
-std::string vtkSlicerMarkupsLogic::AddNewFiducialNode(const char *name, vtkMRMLScene *scene)
+std::string vtkSlicerMarkupsLogic::AddNewPointListNode(const char *name, vtkMRMLScene *scene)
 {
-  vtkMRMLMarkupsNode* markupsNode = this->AddNewMarkupsNode("vtkMRMLMarkupsFiducialNode", name ? name : "", scene);
+  vtkMRMLMarkupsNode* markupsNode = this->AddNewMarkupsNode("vtkMRMLMarkupsPointListNode", name ? name : "", scene);
   if (!markupsNode)
     {
     return "";
@@ -732,7 +732,7 @@ int vtkSlicerMarkupsLogic::AddControlPoint(double r, double a, double s)
   if (listID.size() == 0)
     {
     vtkDebugMacro("AddControlPoint: no point list is active, adding one first!");
-    std::string newListID = this->AddNewFiducialNode();
+    std::string newListID = this->AddNewPointListNode();
     if (newListID.size() == 0)
       {
       vtkErrorMacro("AddControlPoint: failed to add a new point list to the scene.");
@@ -754,15 +754,15 @@ int vtkSlicerMarkupsLogic::AddControlPoint(double r, double a, double s)
     vtkErrorMacro("AddControlPoint: failed to get the active point list with id " << listID);
     return -1;
     }
-  vtkMRMLMarkupsFiducialNode *fiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(listNode);
-  if (!fiducialNode)
+  vtkMRMLMarkupsPointListNode *pointListNode = vtkMRMLMarkupsPointListNode::SafeDownCast(listNode);
+  if (!pointListNode)
     {
     vtkErrorMacro("AddControlPoint: active list is not a point list: " << listNode->GetClassName());
     return -1;
     }
   vtkDebugMacro("AddControlPoint: adding a control point to the list " << listID);
   // add a control point to the active point list
-  return fiducialNode->AddControlPoint(vtkVector3d(r,a,s), std::string());
+  return pointListNode->AddControlPoint(vtkVector3d(r,a,s), std::string());
 }
 
 //---------------------------------------------------------------------------
@@ -1013,10 +1013,10 @@ char * vtkSlicerMarkupsLogic::LoadMarkupsFromFcsv(const char* fileName, const ch
     {
     newNodeName = this->GetMRMLScene()->GetUniqueNameByString(storageNode->GetFileNameWithoutExtension(fileName).c_str());
     }
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", newNodeName));
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsPointListNode", newNodeName));
   if (!markupsNode)
     {
-    vtkErrorMacro("LoadMarkups: failed to instantiate markups node by class vtkMRMLMarkupsFiducialNode");
+    vtkErrorMacro("LoadMarkups: failed to instantiate markups node by class vtkMRMLMarkupsPointListNode");
     if (userMessages)
       {
       userMessages->AddMessages(storageNode->GetUserMessages());
@@ -1394,8 +1394,8 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
         }
 
       // create a markups fiducial list with this name
-      std::string markupsListID = this->AddNewFiducialNode(hierarchyNode->GetName(), scene);
-      vtkMRMLMarkupsFiducialNode *markupsNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(scene->GetNodeByID(markupsListID.c_str()));
+      std::string markupsListID = this->AddNewPointListNode(hierarchyNode->GetName(), scene);
+      vtkMRMLMarkupsPointListNode *markupsNode = vtkMRMLMarkupsPointListNode::SafeDownCast(scene->GetNodeByID(markupsListID.c_str()));
       if (!markupsNode)
         {
         continue;
@@ -1592,7 +1592,7 @@ bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent, vtkMRMLInteractionNo
     vtkErrorMacro ("StartPlaceMode: No selection node in the scene." );
     return false;
     }
-  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
+  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsPointListNode");
 
   // now go into place mode with the persistece flag set
   if (!interactionNode)

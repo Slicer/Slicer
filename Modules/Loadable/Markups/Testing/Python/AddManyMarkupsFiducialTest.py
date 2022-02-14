@@ -50,6 +50,7 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
     #
     self.nodeTypeComboBox = qt.QComboBox()
     self.nodeTypeComboBox.addItem("vtkMRMLMarkupsFiducialNode")
+    self.nodeTypeComboBox.addItem("vtkMRMLMarkupsPointListNode")
     self.nodeTypeComboBox.addItem("vtkMRMLMarkupsLineNode")
     self.nodeTypeComboBox.addItem("vtkMRMLMarkupsAngleNode")
     self.nodeTypeComboBox.addItem("vtkMRMLMarkupsCurveNode")
@@ -234,10 +235,10 @@ class AddManyMarkupsFiducialTestTest(ScriptedLoadableModuleTest):
     m.moduleSelector().selectModule('Welcome')
 
     logic = AddManyMarkupsFiducialTestLogic()
-    logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes = 1, numberOfControlPoints=100, rOffset=0)
+    logic.run('vtkMRMLMarkupsPointListNode', numberOfNodes = 1, numberOfControlPoints=100, rOffset=0)
 
     self.delayDisplay("Now running it while the Markups Module is open")
     m.moduleSelector().selectModule('Markups')
-    logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes = 1, numberOfControlPoints=100, rOffset=100)
+    logic.run('vtkMRMLMarkupsPointListNode', numberOfNodes = 1, numberOfControlPoints=100, rOffset=100)
 
     self.delayDisplay('Test passed!')

@@ -115,7 +115,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( shNode )
 
     # Create sample markups node
-    markupsNode = slicer.vtkMRMLMarkupsFiducialNode()
+    markupsNode = slicer.vtkMRMLMarkupsPointListNode()
     slicer.mrmlScene.AddNode(markupsNode)
     markupsNode.SetName(self.sampleMarkupName)
     fiducialPosition = [100.0, 0.0, 0.0]
@@ -165,7 +165,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     # Get clone node context menu action and trigger
     cloneNodePlugin.itemContextMenuActions()[0].activate(qt.QAction.Trigger)
 
-    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode'), 2 )
+    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsPointListNode'), 2 )
     self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsDisplayNode'), 2 )
     self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialStorageNode'), 2 )
 

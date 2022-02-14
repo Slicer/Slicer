@@ -60,7 +60,7 @@ head = sampleDataLogic.downloadMRHead()
 volumesLogic = slicer.modules.volumes.logic()
 headLabel = volumesLogic.CreateLabelVolume(slicer.mrmlScene, head, 'head-label')
 
-pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode")
 pointListNode.AddControlPoint(vtk.vtkVector3d(1,0,5))
 pointListNode.SetName('Seed Point')
 

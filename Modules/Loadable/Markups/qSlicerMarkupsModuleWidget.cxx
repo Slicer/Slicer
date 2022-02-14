@@ -2638,7 +2638,7 @@ void qSlicerMarkupsModuleWidget::pasteSelectedFromClipboard()
     {
     // No point list is selected - create a new one
     // Assume a markups point list
-    this->onCreateMarkupByClass("vtkMRMLMarkupsFiducialNode");
+    this->onCreateMarkupByClass("vtkMRMLMarkupsPointListNode");
     if (!d->MarkupsNode)
       {
       return;
@@ -2862,7 +2862,7 @@ void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggere
     {
     // if there's no currently active markups list, trigger the default add
     // node
-    this->onCreateMarkupByClass("vtkMRMLMarkupsFiducialNode");
+    this->onCreateMarkupByClass("vtkMRMLMarkupsPointListNode");
     return;
     }
 

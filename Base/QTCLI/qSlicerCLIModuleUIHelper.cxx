@@ -278,6 +278,7 @@ void qSlicerCLIModuleUIHelperPrivate::initializeMaps()
 
   // Markups type attribute mapping
   Self::PointTypeAttributeToNodeType["point"] = "vtkMRMLMarkupsFiducialNode";
+  Self::PointTypeAttributeToNodeType["point"] = "vtkMRMLMarkupsPointListNode";
   Self::PointTypeAttributeToNodeType["line"] = "vtkMRMLMarkupsLineNode";
   Self::PointTypeAttributeToNodeType["angle"] = "vtkMRMLMarkupsAngleNode";
   Self::PointTypeAttributeToNodeType["curve"] = "vtkMRMLMarkupsCurveNode";
@@ -550,10 +551,9 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   QStringList nodeTypes;
-  nodeTypes += "vtkMRMLMarkupsFiducialNode";
+  nodeTypes += "vtkMRMLMarkupsPointListNode";
 
   widget->setNodeTypes(nodeTypes);
-  //TODO - title + " FiducialList"
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));
   widget->setBaseName(_label);
   // Markups can be added without switching to another module
@@ -586,6 +586,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleP
     // and add all nodes that are derived from vtkMRMLVolumeNode.
     widget->setNodeTypes(QStringList()
       << "vtkMRMLMarkupsFiducialNode"
+      << "vtkMRMLMarkupsPointListNode"
       << "vtkMRMLMarkupsLineNode"
       << "vtkMRMLMarkupsCurveNode"
       << "vtkMRMLMarkupsClosedCurveNode"
@@ -594,7 +595,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleP
     }
   else
     {
-    QString nodeType = Self::nodeTypeFromMap(Self::PointTypeAttributeToNodeType, type, "vtkMRMLMarkupsFiducialNode");
+    QString nodeType = Self::nodeTypeFromMap(Self::PointTypeAttributeToNodeType, type, "vtkMRMLMarkupsPointListNode");
     widget->setNodeTypes(QStringList(nodeType));
     }
 

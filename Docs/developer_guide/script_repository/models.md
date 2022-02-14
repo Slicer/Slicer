@@ -109,7 +109,7 @@ modelPointValues = modelNode.GetPolyData().GetPointData().GetArray("Normals")
 pointListNode = slicer.mrmlScene.GetFirstNodeByName("F")
 
 if not pointListNode:
-  pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode","F")
+  pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode","F")
 
 pointsLocator = vtk.vtkPointLocator() # could try using vtk.vtkStaticPointLocator() if need to optimize
 pointsLocator.SetDataSet(modelNode.GetPolyData())
@@ -197,7 +197,7 @@ def onPointsModified(observer=None, eventid=None):
 # Initial update
 onPointsModified()
 # Automatic update each time when a markup point is modified
-pointListNodeObserverTag = markupsNode.AddObserver(slicer.vtkMRMLMarkupsFiducialNode.PointModifiedEvent, onPointsModified)
+pointListNodeObserverTag = markupsNode.AddObserver(slicer.vtkMRMLMarkupsPointListNode.PointModifiedEvent, onPointsModified)
 
 # To stop updating selection, run this:
 # pointListNode.RemoveObserver(pointListNodeObserverTag)

@@ -50,6 +50,7 @@
        </property>
        <property name="nodeTypes">
         <stringlist>
+         <string>vtkMRMLMarkupsPointListNode</string>
          <string>vtkMRMLMarkupsFiducialNode</string>
         </stringlist>
        </property>

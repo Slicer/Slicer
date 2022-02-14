@@ -50,6 +50,7 @@
 #include "vtkMRMLMarkupsClosedCurveNode.h"
 #include "vtkMRMLMarkupsCurveNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
+#include "vtkMRMLMarkupsPointListNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
 #include "vtkMRMLMarkupsROINode.h"

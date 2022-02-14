@@ -20,7 +20,7 @@
 #include <vtkMRMLTransformStorageNode.h>
 
 // Markups includes
-#include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsPointListNode.h>
 #include <vtkMRMLMarkupsJsonStorageNode.h>
 #include <vtkMRMLMarkupsLineNode.h>
 
@@ -55,7 +55,7 @@ int main(int argc, char * argv[])
       }
     }
 
-  vtkNew<vtkMRMLMarkupsFiducialNode> midlinePointsNode;
+  vtkNew<vtkMRMLMarkupsPointListNode> midlinePointsNode;
   if (!Midline.empty())
     {
     vtkNew<vtkMRMLMarkupsJsonStorageNode> storageNode;

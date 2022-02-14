@@ -106,7 +106,7 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
     # create a control points list
     displayNode = slicer.vtkMRMLMarkupsDisplayNode()
     slicer.mrmlScene.AddNode(displayNode)
-    fidNode = slicer.vtkMRMLMarkupsFiducialNode()
+    fidNode = slicer.vtkMRMLMarkupsPointListNode()
     slicer.mrmlScene.AddNode(fidNode)
     fidNode.SetAndObserveDisplayNodeID(displayNode.GetID())
 

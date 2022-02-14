@@ -30,7 +30,7 @@
 #include <vtkMRMLDiffusionWeightedVolumeDisplayNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLLinearTransformNode.h>
-#include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsPointListNode.h>
 #include <vtkMRMLMarkupsROINode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVectorVolumeDisplayNode.h>
@@ -590,7 +590,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLDisplayableNode* roi, vtkM
   double outputOrigin_RAS[4] = { 0.0, 0.0, 0.0, 1.0 };
   outputIJKToRAS->MultiplyPoint(outputOrigin_IJK, outputOrigin_RAS);
 
-  vtkNew<vtkMRMLMarkupsFiducialNode> originMarkupNode;
+  vtkNew<vtkMRMLMarkupsPointListNode> originMarkupNode;
   // Markups are transformed from RAS to LPS by the CLI infrastructure, so we pass them in RAS
   originMarkupNode->AddControlPoint(outputOrigin_RAS);
   this->GetMRMLScene()->AddNode(originMarkupNode.GetPointer());

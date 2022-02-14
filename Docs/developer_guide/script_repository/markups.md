@@ -43,7 +43,7 @@ The [qSlicerMarkupsPlaceWidget widget](http://apidocs.slicer.org/master/classqSl
 ```python
 w=slicer.qSlicerMarkupsPlaceWidget()
 w.setMRMLScene(slicer.mrmlScene)
-markupsNodeID = slicer.modules.markups.logic().AddNewFiducialNode()
+markupsNodeID = slicer.modules.markups.logic().AddNewPointListNode()
 w.setCurrentNode(slicer.mrmlScene.GetNodeByID(markupsNodeID))
 # Hide all buttons and only show place button
 w.buttonsVisible=False
@@ -64,7 +64,7 @@ A lower level way to do this is via the selection and interaction nodes:
 
 ```python
 selectionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSelectionNodeSingleton")
-selectionNode.SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode")
+selectionNode.SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsPointListNode")
 interactionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLInteractionNodeSingleton")
 placeModePersistence = 1
 interactionNode.SetPlaceModePersistence(placeModePersistence)
@@ -83,10 +83,10 @@ interactionNode.SetPlaceModePersistence(0)
 
 ### Access to markups point list Properties
 
-Each vtkMRMLMarkupsFiducialNode has a vector of control points in it which can be accessed from python:
+Each vtkMRMLMarkupsPointListNode has a vector of control points in it which can be accessed from python:
 
 ```python
-pointListNode = getNode("vtkMRMLMarkupsFiducialNode1")
+pointListNode = getNode("vtkMRMLMarkupsPointListNode1")
 n = pointListNode.AddControlPoint([4.0, 5.5, -6.0])
 pointListNode.SetNthControlPointLabel(n, "new label")
 # each control point is given a unique id which can be accessed from the superclass level
@@ -394,8 +394,8 @@ To activate control point placement mode for a point list, both interaction mode
 ```python
 interactionNode = slicer.app.applicationLogic().GetInteractionNode()
 selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-selectionNode.SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode")
-pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+selectionNode.SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsPointListNode")
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode")
 selectionNode.SetActivePlaceNodeID(pointListNode.GetID())
 interactionNode.SetCurrentInteractionMode(interactionNode.Place)
 ```
@@ -404,7 +404,7 @@ Alternatively, *qSlicerMarkupsPlaceWidget* widget can be used to initiate markup
 
 ```python
 # Temporary markups point list node
-pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode")
 
 def placementModeChanged(active):
   print("Placement: " +("active" if active else "inactive"))
@@ -465,7 +465,7 @@ def onMarkupEndInteraction(caller, event):
   movingMarkupIndex = markupsNode.GetDisplayNode().GetActiveControlPoint()
   logging.info("End interaction: point ID = {0}, slice view = {1}".format(movingMarkupIndex, sliceView))
 
-pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode")
 pointListNode.AddControlPoint([0,0,0])
 pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, onMarkupChanged)
 pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointStartInteractionEvent, onMarkupStartInteraction)

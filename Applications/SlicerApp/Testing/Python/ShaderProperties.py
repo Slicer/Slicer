@@ -199,7 +199,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('GPU Ray Casting on')
 
-    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode")
     markupNode.AddControlPoint([0.0, 100.0, 0.0])
 
     self.delayDisplay('Point list added')
@@ -211,7 +211,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     # node
     #------------------------------------------------------
     def GetPointPosition():
-        fn = slicer.util.getNode('vtkMRMLMarkupsFiducialNode1')
+        fn = slicer.util.getNode('vtkMRMLMarkupsPointListNode1')
         p = [0.0, 0.0, 0.0]
         fn.GetNthControlPointPosition(0, p)
         return p
@@ -264,7 +264,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
         propNode = GetShaderPropertyNode()
         propNode.GetFragmentUniforms().SetUniform3f("center",p)
 
-    fn = slicer.util.getNode('vtkMRMLMarkupsFiducialNode1')
+    fn = slicer.util.getNode('vtkMRMLMarkupsPointListNode1')
     fn.AddObserver(fn.PointModifiedEvent, lambda caller,event: onPointMoved())
 
 

@@ -48,6 +48,7 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLMarkupsDisplayNode.h>
 #include <vtkMRMLMarkupsPlaneDisplayNode.h>
+#include <vtkMRMLMarkupsPointListNode.h>
 #include <vtkMRMLMarkupsROIDisplayNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLScene.h>

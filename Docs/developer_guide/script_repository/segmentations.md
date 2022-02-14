@@ -421,7 +421,7 @@ Show in the console names of segments visible at a markups control point positio
 
 ```python
 segmentationNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSegmentationNode")
-pointListNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLMarkupsPointListNode")
 sliceViewLabel = "Red"  # any slice view where segmentation node is visible works
 
 def printSegmentNames(unused1=None, unused2=None):
@@ -585,7 +585,7 @@ segStatLogic.computeStatistics()
 stats = segStatLogic.getStatistics()
 
 # Place a markup point in each centroid
-pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode")
 pointListNode.CreateDefaultDisplayNodes()
 for segmentId in stats["SegmentIDs"]:
   centroid_ras = stats[segmentId,"LabelmapSegmentStatisticsPlugin.centroid_ras"]

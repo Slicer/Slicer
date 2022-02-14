@@ -4,7 +4,7 @@
 displayNode = slicer.vtkMRMLMarkupsDisplayNode()
 slicer.mrmlScene.AddNode(displayNode)
 
-fid = slicer.vtkMRMLMarkupsFiducialNode()
+fid = slicer.vtkMRMLMarkupsPointListNode()
 slicer.mrmlScene.AddNode(fid)
 
 fid.SetAndObserveDisplayNodeID(displayNode.GetID())
@@ -27,7 +27,7 @@ print(f"After storing the scene, set control point coords to {afterStoreSceneCoo
 
 sv.RestoreScene()
 
-fidAfterRestore =  slicer.mrmlScene.GetNodeByID("vtkMRMLMarkupsFiducialNode1")
+fidAfterRestore =  slicer.mrmlScene.GetNodeByID("vtkMRMLMarkupsPointListNode1")
 
 coords = [0,0,0]
 fidAfterRestore.GetNthControlPointPosition(0,coords)

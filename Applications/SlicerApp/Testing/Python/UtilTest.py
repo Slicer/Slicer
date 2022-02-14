@@ -386,7 +386,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Test arrayFromMarkupsControlPoints')
 
-    markupsNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsFiducialNode')
+    markupsNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsPointListNode')
     markupsNode.AddControlPoint(vtk.vtkVector3d(10,20,30))
     markupsNode.AddControlPoint(vtk.vtkVector3d(21,21,31))
     markupsNode.AddControlPoint(vtk.vtkVector3d(32,33,44))
@@ -458,7 +458,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(narray.shape, (50, 3))
 
     self.delayDisplay('Test array with markups fiducials')
-    markupsNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsFiducialNode')
+    markupsNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsPointListNode')
     markupsNode.AddControlPoint(vtk.vtkVector3d(10,20,30))
     markupsNode.AddControlPoint(vtk.vtkVector3d(21,21,31))
     markupsNode.AddControlPoint(vtk.vtkVector3d(32,33,44))

@@ -422,7 +422,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     #  - Create another transform under the parent transform
     #
 
-    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode")
     markupNode.AddControlPoint([500.0, -1000.0, 0.0])
     markupNode.AddControlPoint([1000.0, 1000.0, 200.0])
     markupNode.AddControlPoint([-1500.0, -200.0, -100.0])

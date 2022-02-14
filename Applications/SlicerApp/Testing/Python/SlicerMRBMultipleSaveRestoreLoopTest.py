@@ -92,7 +92,7 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
     mrHeadVolume = SampleData.downloadSample("MRHead")
 
     # Place a control point
-    pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "F")
+    pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode", "F")
     pointListNode.CreateDefaultDisplayNodes()
     fid1 = [0.0, 0.0, 0.0]
     fidIndex1 = pointListNode.AddControlPoint(fid1)

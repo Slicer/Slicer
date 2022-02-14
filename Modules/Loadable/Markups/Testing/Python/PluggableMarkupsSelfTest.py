@@ -121,6 +121,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
       slicer.vtkMRMLMarkupsClosedCurveNode(): slicer.vtkSlicerCurveWidget(),
       slicer.vtkMRMLMarkupsCurveNode(): slicer.vtkSlicerCurveWidget(),
       slicer.vtkMRMLMarkupsFiducialNode(): slicer.vtkSlicerPointsWidget(),
+      slicer.vtkMRMLMarkupsPointListNode(): slicer.vtkSlicerPointsWidget(),
       slicer.vtkMRMLMarkupsLineNode(): slicer.vtkSlicerLineWidget(),
       slicer.vtkMRMLMarkupsPlaneNode(): slicer.vtkSlicerPlaneWidget(),
       slicer.vtkMRMLMarkupsROINode(): slicer.vtkSlicerROIWidget(),

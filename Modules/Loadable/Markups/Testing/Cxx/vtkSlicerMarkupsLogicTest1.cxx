@@ -38,7 +38,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
 
   // test without a scene
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  std::string id = logic1->AddNewFiducialNode();
+  std::string id = logic1->AddNewPointListNode();
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   // should be invalid if scene is not set
   CHECK_STD_STRING(id, "");
@@ -52,12 +52,12 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   // test with a scene
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   logic1->SetMRMLScene(scene);
-  TESTING_OUTPUT_ASSERT_ERRORS(17); // error messages are expected to be reported due to lack of selection node
+  TESTING_OUTPUT_ASSERT_ERRORS(19); // error messages are expected to be reported due to lack of selection node
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   const char *testName = "Test node 2";
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  id = logic1->AddNewFiducialNode(testName);
+  id = logic1->AddNewPointListNode(testName);
   TESTING_OUTPUT_ASSERT_ERRORS_END(); // error is expected to be reported due to lack of selection node
   CHECK_STD_STRING_DIFFERENT(id, "");
 
@@ -183,7 +183,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
     }
 
   // test setting active list id
-  std::string newID = logic1->AddNewFiducialNode("New list", scene);
+  std::string newID = logic1->AddNewPointListNode("New list", scene);
   activeListID = logic1->GetActiveListID();
   CHECK_STD_STRING(activeListID, newID);
 

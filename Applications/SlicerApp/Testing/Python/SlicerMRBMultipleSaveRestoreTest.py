@@ -89,7 +89,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     mrHeadVolume = SampleData.downloadSample("MRHead")
 
     # Place a control point
-    pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode","F")
+    pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode","F")
     pointListNode.CreateDefaultDisplayNodes()
     eye = [33.4975, 79.4042, -10.2143]
     nose = [-2.145, 116.14, -43.31]

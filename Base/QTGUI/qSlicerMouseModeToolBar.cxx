@@ -62,7 +62,7 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeT
   this->PlaceWidgetAction = nullptr;
 
   this->InteractionModesActionGroup = nullptr;
-  this->DefaultPlaceClassName = "vtkMRMLMarkupsFiducialNode";
+  this->DefaultPlaceClassName = "vtkMRMLMarkupsPointListNode";
 }
 
 //---------------------------------------------------------------------------

@@ -141,7 +141,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     # add a markups control point list
     #
 
-    pointList = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsFiducialNode')
+    pointList = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsPointListNode')
     pointList.AddControlPoint([10,20,15])
 
     #

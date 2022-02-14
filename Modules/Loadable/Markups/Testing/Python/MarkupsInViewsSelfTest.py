@@ -171,7 +171,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     lm.setLayout(2)
 
     # create a control points list
-    fidNode = slicer.vtkMRMLMarkupsFiducialNode()
+    fidNode = slicer.vtkMRMLMarkupsPointListNode()
     slicer.mrmlScene.AddNode(fidNode)
     fidNode.CreateDefaultDisplayNodes()
     displayNode = fidNode.GetDisplayNode()

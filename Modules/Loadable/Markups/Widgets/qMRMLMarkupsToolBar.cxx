@@ -70,7 +70,7 @@
 qMRMLMarkupsToolBarPrivate::qMRMLMarkupsToolBarPrivate(qMRMLMarkupsToolBar& object)
   : q_ptr(&object)
 {
-  this->DefaultPlaceClassName = "vtkMRMLMarkupsFiducialNode";
+  this->DefaultPlaceClassName = "vtkMRMLMarkupsPointListNode";
 }
 
 //---------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 #include <vtkTable.h>
 
 // Markups includes
-#include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsPointListNode.h>
 #include <vtkMRMLMarkupsFiducialStorageNode.h>
 
 int main(int argc, char* argv[])
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
     {
     // read the input seeds file
     std::cout << "Have an input seeds file with name " << seedsFile.c_str() << std::endl;
-    vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
+    vtkNew<vtkMRMLMarkupsPointListNode> fiducialNode;
     vtkNew<vtkMRMLMarkupsFiducialStorageNode> fiducialStorageNode;
     fiducialStorageNode->SetFileName(seedsFile.c_str());
     fiducialStorageNode->ReadData(fiducialNode.GetPointer());
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
       }
     }
   // copy the seeds list
-  vtkNew<vtkMRMLMarkupsFiducialNode> copiedFiducialNode;
+  vtkNew<vtkMRMLMarkupsPointListNode> copiedFiducialNode;
   // set the node name so that fiducials have names that don't just
   // start with -1, -2 etc
   copiedFiducialNode->SetName("seedsCopy");

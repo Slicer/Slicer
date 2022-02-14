@@ -1,7 +1,7 @@
 # Test restoring a scene with multiple lists with different number control points
 
 # first control point list
-fidNode1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "FidNode1")
+fidNode1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode", "FidNode1")
 fidNode1.CreateDefaultDisplayNodes()
 coords = [0.0, 0.0, 0.0]
 numFidsInList1 = 5
@@ -12,7 +12,7 @@ for i in range(numFidsInList1):
   coords[2] += 1.0
 
 # second control point list
-fidNode2 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "FidNode2")
+fidNode2 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode", "FidNode2")
 fidNode2.CreateDefaultDisplayNodes()
 numFidsInList2 = 10
 for i in range(numFidsInList2):
@@ -22,13 +22,13 @@ for i in range(numFidsInList2):
   coords[2] += 3.0
 
 # Create scene view
-numFidNodesBeforeStore = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode')
+numFidNodesBeforeStore = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsPointListNode')
 sv = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSceneViewNode")
 sv.StoreScene()
 
 # add a third list that will get removed on restore
 # second control point list
-fidNode3 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "FidNode3")
+fidNode3 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode", "FidNode3")
 fidNode3.CreateDefaultDisplayNodes()
 numFidsInList3 = 2
 for i in range(numFidsInList3):
@@ -40,7 +40,7 @@ for i in range(numFidsInList3):
 # Restore scene view
 sv.RestoreScene()
 
-numFidNodesAfterRestore = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode')
+numFidNodesAfterRestore = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsPointListNode')
 if numFidNodesAfterRestore != numFidNodesBeforeStore:
   print("After restoring the scene, expected ", numFidNodesBeforeStore, " control points nodes, but have ", numFidNodesAfterRestore)
   exceptionMessage = "After restoring the scene, expected " + str(numFidNodesBeforeStore) + " control points nodes, but have " + str(numFidNodesAfterRestore)

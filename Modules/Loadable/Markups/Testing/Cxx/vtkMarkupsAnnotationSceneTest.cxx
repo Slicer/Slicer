@@ -18,7 +18,7 @@
 // Markups includes
 #include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
-#include "vtkMRMLMarkupsFiducialNode.h"
+#include "vtkMRMLMarkupsPointListNode.h"
 #include "vtkSlicerMarkupsLogic.h"
 
 // Annotation includes
@@ -127,30 +127,30 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   markupsLogic->ConvertAnnotationFiducialsToMarkups();
 
   //
-  // test that we have 1 markup fiducial list and no annotation fiducials
+  // test that we have 1 markup point list and no annotation fiducials
   //
   int numAnnotationNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode");
-  int numMarkupsNodes = scene->GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialNode");
+  int numMarkupsNodes = scene->GetNumberOfNodesByClass("vtkMRMLMarkupsPointListNode");
   if (numAnnotationNodes != 0 ||
       numMarkupsNodes != 1)
     {
     std::cerr << "Failed to translate annotation fiducial nodes "
-              << " into markup fiducial nodes, still have "
+              << " into markup point list nodes, still have "
               << numAnnotationNodes
               << " annotation fiducial nodes in the scene, with "
-              << numMarkupsNodes << " markups fiducial nodes." << std::endl;
+              << numMarkupsNodes << " markups point list nodes." << std::endl;
     return EXIT_FAILURE;
     }
   std::vector<vtkMRMLNode *> nodes;
-  scene->GetNodesByClass("vtkMRMLMarkupsFiducialNode", nodes);
+  scene->GetNodesByClass("vtkMRMLMarkupsPointListNode", nodes);
   if (nodes.size() != 1)
     {
-    std::cerr << "Failed to get the markup fiducial nodes from the read in scene, collection size = " << nodes.size() << std::endl;
+    std::cerr << "Failed to get the markup point list nodes from the read in scene, collection size = " << nodes.size() << std::endl;
     return EXIT_FAILURE;
     }
 
   // check the control point positions
-  vtkMRMLMarkupsFiducialNode *mfnode = vtkMRMLMarkupsFiducialNode::SafeDownCast(nodes[0]);
+  vtkMRMLMarkupsPointListNode *mfnode = vtkMRMLMarkupsPointListNode::SafeDownCast(nodes[0]);
   if (!mfnode)
     {
     std::cerr << "Failed to get first markups fiducial node" << std::endl;

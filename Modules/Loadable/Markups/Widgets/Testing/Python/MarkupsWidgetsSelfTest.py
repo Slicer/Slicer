@@ -82,10 +82,10 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
     self.markupsLogic = slicer.modules.markups.logic()
 
     # Create sample markups node
-    self.markupsNode1 = slicer.mrmlScene.GetNodeByID(self.markupsLogic.AddNewFiducialNode())
+    self.markupsNode1 = slicer.mrmlScene.GetNodeByID(self.markupsLogic.AddNewPointListNode())
     self.markupsNode1.SetName(self.sampleMarkupsNodeName1)
 
-    self.markupsNode2 = slicer.mrmlScene.GetNodeByID(self.markupsLogic.AddNewFiducialNode())
+    self.markupsNode2 = slicer.mrmlScene.GetNodeByID(self.markupsLogic.AddNewPointListNode())
     self.markupsNode2.SetName(self.sampleMarkupsNodeName2)
 
   # ------------------------------------------------------------------------------

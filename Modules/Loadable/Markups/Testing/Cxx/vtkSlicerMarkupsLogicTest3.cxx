@@ -23,7 +23,7 @@
 
 // Markups includes
 #include "vtkMRMLMarkupsNode.h"
-#include "vtkMRMLMarkupsFiducialNode.h"
+#include "vtkMRMLMarkupsPointListNode.h"
 #include "vtkSlicerMarkupsLogic.h"
 
 // MRML includes
@@ -92,25 +92,25 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
   logic1->ConvertAnnotationFiducialsToMarkups();
 
   int numAnnotationFiducials = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode");
-  int numMarkupsFiducials = scene->GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialNode");
+  int numMarkupsPointLists = scene->GetNumberOfNodesByClass("vtkMRMLMarkupsPointListNode");
   if (numAnnotationFiducials != 0 ||
-      numMarkupsFiducials != 2)
+      numMarkupsPointLists != 2)
     {
     std::cerr << "Failed to convert 15 annotation fiducials in two hierarchies "
-    << " to 2 markup lists, have " << numAnnotationFiducials
-    << " annotation fiduicals and " << numMarkupsFiducials
-    << " markups fiducial lists" << std::endl;
+    << " to 2 markups point lists, have " << numAnnotationFiducials
+    << " annotation fiduicals and " << numMarkupsPointLists
+    << " markups point lists" << std::endl;
     return EXIT_FAILURE;
     }
   else
     {
-    std::cout << "Converted annotation fiducials to " << numMarkupsFiducials
-              << " markups fiducial lists" << std::endl;
+    std::cout << "Converted annotation fiducials to " << numMarkupsPointLists
+              << " markups point lists" << std::endl;
     }
 //  vtkIndent indent;
-//  for (int n = 0; n < numMarkupsFiducials; ++n)
+//  for (int n = 0; n < numMarkupsPointLists; ++n)
 //    {
-//    vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(n, "vtkMRMLMarkupsFiducialNode");
+//    vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(n, "vtkMRMLMarkupsPointListNode");
 //    std::cout << "\nConverted Markups node " << n << ":" << std::endl;
 //    mrmlNode->PrintSelf(std::cout, indent);
 //    }
@@ -122,27 +122,27 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
   applicationLogic->Delete();
 
   // check the second list
-  vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(1, "vtkMRMLMarkupsFiducialNode");
+  vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(1, "vtkMRMLMarkupsPointListNode");
   if (mrmlNode)
     {
-    vtkMRMLMarkupsFiducialNode *markupsFid = vtkMRMLMarkupsFiducialNode::SafeDownCast(mrmlNode);
-    if (markupsFid)
+    vtkMRMLMarkupsPointListNode *markupsPointList = vtkMRMLMarkupsPointListNode::SafeDownCast(mrmlNode);
+    if (markupsPointList)
       {
-      std::string desc = markupsFid->GetNthControlPointDescription(3);
+      std::string desc = markupsPointList->GetNthControlPointDescription(3);
       if (desc.compare("testing description") != 0)
         {
         std::cerr << "Failed to get the expected description on markup 3, got: "
                   << desc.c_str() << std::endl;
         return EXIT_FAILURE;
         }
-      std::string assocNodeID = markupsFid->GetNthControlPointAssociatedNodeID(4);
+      std::string assocNodeID = markupsPointList->GetNthControlPointAssociatedNodeID(4);
       if (assocNodeID.compare("vtkMRMLScalarVolumeNode4") != 0)
         {
         std::cerr << "Failed to get the expected associated node id on markup 4, got: "
                   << assocNodeID.c_str() << std::endl;
         return EXIT_FAILURE;
         }
-      vtkVector3d posVector = markupsFid->GetNthControlPointPositionVector(0);
+      vtkVector3d posVector = markupsPointList->GetNthControlPointPositionVector(0);
       double* pos = posVector.GetData();
       double expectedPos[3] = {5.5, -6.6, 0.0};
       if (vtkMath::Distance2BetweenPoints(pos, expectedPos) > 0.01)
@@ -151,7 +151,7 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
                   << pos[0] << "," << pos[1] << "," << pos[2] << std::endl;
         return EXIT_FAILURE;
         }
-      vtkMRMLMarkupsDisplayNode *dispNode = markupsFid->GetMarkupsDisplayNode();
+      vtkMRMLMarkupsDisplayNode *dispNode = markupsPointList->GetMarkupsDisplayNode();
       if (dispNode)
         {
         double col[3];
@@ -180,7 +180,7 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
       }
     else
       {
-      std::cerr << "Unable to get second markups fiducial node for testing!" << std::endl;
+      std::cerr << "Unable to get second markups point list node for testing!" << std::endl;
       return EXIT_FAILURE;
       }
     }
