@@ -115,6 +115,13 @@ bool vtkSegmentationHistory::SaveState()
     return false;
     }
 
+  if (this->LastRestoredState < (unsigned int)this->SegmentationStates.size())
+    {
+    // The current state is already saved, there is no need to save it again
+    // (it happens when save state is called after undoing changes).
+    return true;
+    }
+
   this->RemoveAllNextStates();
 
   SegmentationState newSegmentationState;
@@ -149,8 +156,12 @@ bool vtkSegmentationHistory::SaveState()
     }
   this->SegmentationStates.push_back(newSegmentationState);
 
-  // Set the current state as last restored state
-  this->LastRestoredState = (unsigned int)this->SegmentationStates.size();
+  // Set the current state as last restored state.
+  // Setting it to SegmentationStates.size() would mean that the state has been modified since
+  // the state was saved.
+  // Setting it to (SegmentationStates.size() - 1) means that the state has not been modified
+  // since it was saved, which allows avoiding saving of duplicate states.
+  this->LastRestoredState = (unsigned int)this->SegmentationStates.size() - 1;
   this->RemoveAllObsoleteStates();
 
   this->Modified();

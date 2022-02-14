@@ -118,7 +118,7 @@ protected:
   unsigned int MaximumNumberOfStates;
 
   // Index of the state in SegmentationStates that was restored last.
-  // If index == size of states then it means that the segmentation has changed
+  // If LastRestoredState == size of states then it means that the segmentation has changed
   // since the last restored state.
   unsigned int LastRestoredState;
 
