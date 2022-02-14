@@ -476,6 +476,11 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
   for (const auto markupName : markupsLogic->GetRegisteredMarkupsTypes())
     {
     vtkMRMLMarkupsNode* markupsNode = markupsLogic->GetNodeByMarkupsType(markupName.c_str());
+
+    if (markupsNode->GetMarkupType() == QString("Fiducial"))
+      {
+      continue;  // deprecated in favor of vtkMRMLMarkupsPointListNode
+      }
     if (markupsNode && markupsLogic->GetCreateMarkupsPushButton(markupName.c_str()))
       {
       bool buttonExists = false;

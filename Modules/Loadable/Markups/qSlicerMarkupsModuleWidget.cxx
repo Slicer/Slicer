@@ -793,6 +793,11 @@ void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
     vtkMRMLMarkupsNode* markupsNode =
       markupsLogic->GetNodeByMarkupsType(markupName.c_str());
 
+    if (markupsNode->GetMarkupType() == QString("Fiducial"))
+      {
+      continue;  // deprecated in favor of vtkMRMLMarkupsPointListNode
+      }
+
     // Create markups add buttons.
     if (markupsNode && q->markupsLogic()->GetCreateMarkupsPushButton(markupName.c_str()))
       {

@@ -34,6 +34,7 @@
 #include "vtkMRMLMarkupsPlaneDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneJsonStorageNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
+#include "vtkMRMLMarkupsPointListNode.h"
 #include "vtkMRMLMarkupsROIDisplayNode.h"
 #include "vtkMRMLMarkupsROIJsonStorageNode.h"
 #include "vtkMRMLMarkupsROINode.h"
@@ -386,10 +387,13 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New());
 
   // NOTE: the order of registration determines the order of the create push buttons in the GUI
+  vtkNew<vtkMRMLMarkupsPointListNode> pointListNode;
+  vtkNew<vtkSlicerPointsWidget> pointsWidget;
+  this->RegisterMarkupsNode(pointListNode, pointsWidget);
 
   vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
-  vtkNew<vtkSlicerPointsWidget> pointsWidget;
-  this->RegisterMarkupsNode(fiducialNode, pointsWidget);
+  vtkNew<vtkSlicerPointsWidget> pointsWidget2;
+  this->RegisterMarkupsNode(fiducialNode, pointsWidget2);
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialDisplayNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New());
 

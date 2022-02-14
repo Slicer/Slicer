@@ -23,6 +23,7 @@ set(${KIT}_SRCS
   vtkMRML${MODULE_NAME}JsonStorageNode.cxx
   vtkMRML${MODULE_NAME}LineNode.cxx
   vtkMRML${MODULE_NAME}Node.cxx
+  vtkMRML${MODULE_NAME}PointListNode.cxx
   vtkMRML${MODULE_NAME}PlaneDisplayNode.cxx
   vtkMRML${MODULE_NAME}PlaneJsonStorageNode.cxx
   vtkMRML${MODULE_NAME}PlaneNode.cxx

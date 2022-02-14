@@ -24,7 +24,7 @@
 // Markups includes
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsPointListNode.h"
 
 /// \brief MRML node to represent a fiducial markup
 /// Fiducial Markups nodes contain a list of control points.
@@ -35,17 +35,13 @@
 /// but performance is optimal if there are less than 2000 points.
 ///
 /// \ingroup Slicer_QtModules_Markups
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsFiducialNode : public vtkMRMLMarkupsNode
+class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsFiducialNode : public vtkMRMLMarkupsPointListNode
 {
 public:
   static vtkMRMLMarkupsFiducialNode *New();
   vtkTypeMacro(vtkMRMLMarkupsFiducialNode,vtkMRMLMarkupsNode);
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
-
-  const char* GetIcon() override {return ":/Icons/MarkupsFiducial.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsFiducialMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsFiducialMouseModePlaceAdd.png";}
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -58,12 +54,6 @@ public:
 
   /// Get markup type internal name
   const char* GetMarkupType() override {return "Fiducial";};
-
-  // Get markup type GUI display name
-  const char* GetTypeDisplayName() override {return "Point List";};
-
-  /// Get markup short name
-  const char* GetDefaultNodeNamePrefix() override {return "F";};
 
   /// Read node attributes from XML file
   void ReadXMLAttributes( const char** atts) override;
