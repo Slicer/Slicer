@@ -422,6 +422,7 @@ public:
   /// Get the active color of the markup. This color is used when the mouse pointer hovers over a markup.
   vtkGetVector3Macro(ActiveColor, double);
 
+  //@{
   /// The visibility and interactability of the interaction handles
   vtkGetMacro(HandlesInteractive, bool);
   vtkSetMacro(HandlesInteractive, bool);
@@ -437,11 +438,27 @@ public:
   vtkBooleanMacro(ScaleHandleVisibility, bool);
   void SetHandleVisibility(int handleType, bool visibility);
   bool GetHandleVisibility(int handleType);
+  //@}
 
+  //@{
   /// Get/Set interaction handle size relative to the window size.
   /// Diameter of the interaction handle points is defined as "scale" percentage of diagonal size of the window.
   vtkSetMacro(InteractionHandleScale, double);
   vtkGetMacro(InteractionHandleScale, double);
+  //@}
+
+  //@{
+  /// Get/Set the visibility of the individual handle axes
+  /// The order of the vector is: [X, Y, Z, ViewPlane]
+  /// "ViewPlane" scale/translation allows transformations to take place along the active view plane.
+  /// (ex. center translation point and ROI corner scale handles.
+  vtkSetVector4Macro(RotationHandleComponentVisibility, bool);
+  vtkGetVector4Macro(RotationHandleComponentVisibility, bool);
+  vtkSetVector4Macro(ScaleHandleComponentVisibility, bool);
+  vtkGetVector4Macro(ScaleHandleComponentVisibility, bool);
+  vtkSetVector4Macro(TranslationHandleComponentVisibility, bool);
+  vtkGetVector4Macro(TranslationHandleComponentVisibility, bool);
+  //@}
 
   /// Get data set containing the scalar arrays for this node type.
   /// For markups it is the curve poly data
@@ -453,6 +470,9 @@ public:
   virtual void UpdateAssignedAttribute() override;
 
   virtual void SetScalarVisibility(int visibility) override;
+
+  /// Get flag indicating if the markups node can display scale handles
+  vtkGetMacro(CanDisplayScaleHandles, bool);
 
 protected:
   vtkMRMLMarkupsDisplayNode();
@@ -518,5 +538,11 @@ protected:
   bool RotationHandleVisibility;
   bool ScaleHandleVisibility;
   double InteractionHandleScale;
+
+  bool RotationHandleComponentVisibility[4];
+  bool ScaleHandleComponentVisibility[4];
+  bool TranslationHandleComponentVisibility[4];
+
+  bool CanDisplayScaleHandles;
 };
 #endif

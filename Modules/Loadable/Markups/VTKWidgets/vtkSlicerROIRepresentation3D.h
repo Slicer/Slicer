@@ -138,6 +138,9 @@ protected:
     // Update scale handle positions
     virtual void UpdateScaleHandles();
 
+    // Update scale handle visibilities
+    void UpdateHandleVisibility() override;
+
     // Get handle opacity
     double GetHandleOpacity(int type, int index) override;
 

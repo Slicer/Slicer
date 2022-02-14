@@ -729,7 +729,6 @@ vtkSlicerPlaneRepresentation3D::HandleInfoList vtkSlicerPlaneRepresentation3D::M
   return handleInfoList;
 }
 
-
 //-----------------------------------------------------------------------------
 void vtkSlicerPlaneRepresentation3D::MarkupsInteractionPipelinePlane::UpdateScaleHandles()
 {
@@ -766,6 +765,41 @@ void vtkSlicerPlaneRepresentation3D::MarkupsInteractionPipelinePlane::UpdateScal
   vtkIdTypeArray* visibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
   visibilityArray->SetNumberOfValues(roiPoints->GetNumberOfPoints());
   visibilityArray->Fill(1);
+  this->UpdateHandleVisibility();
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerPlaneRepresentation3D::MarkupsInteractionPipelinePlane::UpdateHandleVisibility()
+{
+  MarkupsInteractionPipeline::UpdateHandleVisibility();
+
+  vtkSlicerMarkupsWidgetRepresentation* markupsRepresentation = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->Representation);
+  vtkMRMLMarkupsDisplayNode* displayNode = nullptr;
+  if (markupsRepresentation)
+    {
+    displayNode = markupsRepresentation->GetMarkupsDisplayNode();
+    }
+  if (!displayNode)
+    {
+    vtkGenericWarningMacro("UpdateHandleVisibility: Invalid display node");
+    return;
+    }
+
+  vtkIdTypeArray* scaleVisibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
+  if (scaleVisibilityArray)
+    {
+    bool* scaleHandleAxes = displayNode->GetScaleHandleComponentVisibility();
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleLEdge, scaleHandleAxes[0]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleREdge, scaleHandleAxes[0]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge, scaleHandleAxes[1]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge, scaleHandleAxes[1]);
+
+    bool viewPlaneScaleVisibility = scaleHandleAxes[3];
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner, viewPlaneScaleVisibility);
+    }
 }
 
 //----------------------------------------------------------------------

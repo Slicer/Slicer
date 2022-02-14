@@ -669,6 +669,65 @@ void vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::UpdateScaleHan
   vtkIdTypeArray* visibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
   visibilityArray->SetNumberOfValues(roiPoints->GetNumberOfPoints());
   visibilityArray->Fill(1);
+  this->UpdateHandleVisibility();
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::UpdateHandleVisibility()
+{
+  MarkupsInteractionPipeline::UpdateHandleVisibility();
+
+  vtkSlicerMarkupsWidgetRepresentation* markupsRepresentation = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->Representation);
+  vtkMRMLMarkupsDisplayNode* displayNode = nullptr;
+  if (markupsRepresentation)
+    {
+    displayNode = markupsRepresentation->GetMarkupsDisplayNode();
+    }
+  if (!displayNode)
+    {
+    vtkGenericWarningMacro("UpdateHandleVisibility: Invalid display node");
+    return;
+    }
+
+  bool* scaleHandleAxes = displayNode->GetScaleHandleComponentVisibility();
+
+  vtkIdTypeArray* scaleVisibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
+  if (scaleVisibilityArray)
+    {
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLFace, scaleHandleAxes[0]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRFace, scaleHandleAxes[0]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandlePFace, scaleHandleAxes[1]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleAFace, scaleHandleAxes[1]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleIFace, scaleHandleAxes[2]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleSFace, scaleHandleAxes[2]);
+
+    bool viewPlaneScaleVisibility = scaleHandleAxes[3];
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLPICorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRPICorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLAICorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRAICorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLASCorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRASCorner, viewPlaneScaleVisibility);
+
+    if (scaleVisibilityArray->GetNumberOfValues() > vtkMRMLMarkupsROIDisplayNode::HandleASEdge)
+      {
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLPEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRPEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLAEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRAEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLIEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRIEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLSEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRSEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandlePIEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleAIEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandlePSEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleASEdge, viewPlaneScaleVisibility);
+      }
+
+    }
 }
 
 //----------------------------------------------------------------------

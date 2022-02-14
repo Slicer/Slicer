@@ -230,6 +230,7 @@ protected:
     virtual void CreateRotationHandles();
     virtual void CreateTranslationHandles();
     virtual void CreateScaleHandles();
+    virtual void UpdateHandleVisibility();
     virtual void UpdateHandleColors();
 
     /// Set the scale of the interaction handles in world coordinates
