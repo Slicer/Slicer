@@ -594,6 +594,9 @@
      <property name="title">
       <string>Interaction handles</string>
      </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="qMRMLMarkupsInteractionHandleWidget" name="InteractionHandleWidget"/>
@@ -646,6 +649,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLMarkupsInteractionHandleWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLMarkupsInteractionHandleWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
    <header>ctkCollapsibleGroupBox.h</header>
@@ -660,12 +669,6 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLMarkupsInteractionHandleWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLMarkupsInteractionHandleWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

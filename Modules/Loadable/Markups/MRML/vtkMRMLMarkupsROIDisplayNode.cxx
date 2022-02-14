@@ -29,9 +29,13 @@ vtkMRMLMarkupsROIDisplayNode::vtkMRMLMarkupsROIDisplayNode()
 {
   this->FillOpacity = 0.2;
   this->HandlesInteractive = true;
-  this->TranslationHandleVisibility = false;
+  this->TranslationHandleVisibility = true;
   this->RotationHandleVisibility= false;
   this->ScaleHandleVisibility = true;
+  this->TranslationHandleComponentVisibility[0] = false;
+  this->TranslationHandleComponentVisibility[1] = false;
+  this->TranslationHandleComponentVisibility[2] = false;
+  this->CanDisplayScaleHandles = true;
 }
 
 //----------------------------------------------------------------------------
