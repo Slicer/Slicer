@@ -14,11 +14,14 @@ Version:   $Revision: 1.2 $
 
 // MRML includes
 #include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLSliceDisplayNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
-#include "vtkObjectFactory.h"
+#include "vtkCollection.h"
 #include "vtkCommand.h"
+#include "vtkObjectFactory.h"
 
 // STD includes
 #include <sstream>
@@ -275,4 +278,109 @@ void vtkMRMLSliceCompositeNode::SetLabelVolumeID(const char* id)
 const char* vtkMRMLSliceCompositeNode::GetLabelVolumeID()
 {
   return this->GetNodeReferenceID(LabelVolumeNodeReferenceRole);
+}
+
+//-----------------------------------------------------------
+int vtkMRMLSliceCompositeNode::GetSliceIntersectionVisibility()
+{
+  vtkWarningMacro("GetSliceIntersectionVisibility method is deprecated. Use GetIntersectingSlicesVisibility method"
+    " of vtkMRMLSliceDisplayNode object instead.");
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode();
+  if (!sliceDisplayNode)
+    {
+    vtkWarningMacro("SetSliceIntersectionVisibility failed: no slice display node was found");
+    return 0;
+    }
+  return sliceDisplayNode->GetIntersectingSlicesVisibility() ? 1 : 0;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetSliceIntersectionVisibility(int visibility)
+{
+  vtkWarningMacro("SetSliceIntersectionVisibility method is deprecated. Use SetIntersectingSlicesVisibility method"
+    " of vtkMRMLSliceDisplayNode object instead.");
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode();
+  if (!sliceDisplayNode)
+    {
+    vtkWarningMacro("SetSliceIntersectionVisibility failed: no slice display node was found");
+    return;
+    }
+  sliceDisplayNode->SetIntersectingSlicesVisibility(visibility != 0);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLSliceCompositeNode::GetCompositeNodeIDFromSliceModelNode(vtkMRMLModelNode* sliceModelNode)
+{
+  // Description of slice model nodes contain a string that specifies related slice node and composite node IDs:
+  // "SliceID vtkMRMLSliceNodeRed CompositeID vtkMRMLSliceCompositeNodeRed".
+  // This is an old mechanism that may go away in the future but it is likely to
+  // stay long enough for the lifetime of the deprecated methods
+  // GetSliceIntersectionVisibility/SetSliceIntersectionVisibility.
+
+  if (!sliceModelNode || !sliceModelNode->GetDescription())
+    {
+    return "";
+    }
+
+  // Iterate through the description split by spaces.
+  // If "CompositeID" component is found then the next component
+  // is returned as composite node ID.
+  std::stringstream description(sliceModelNode->GetDescription());
+  std::string previous;
+  std::string current;
+  while (true)
+    {
+    current.clear();
+    while (current.empty())
+      {
+      // Get the next string in a while loop to ignore multiple spaces
+      if (!std::getline(description, current, ' '))
+        {
+        return "";
+        }
+      }
+    if (previous == "CompositeID")
+      {
+      return current;
+      }
+    previous = current;
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLSliceDisplayNode* vtkMRMLSliceCompositeNode::GetSliceDisplayNode()
+{
+  if (this->Scene == nullptr || this->GetLayoutName() == nullptr)
+    {
+    return nullptr;
+    }
+
+  // It is an expensive operation to determine the displayable node
+  // (need to iterate through the scene), so the last found value
+  // is cached. If it is still valid then we use it.
+  if (this->LastFoundSliceDisplayNode != nullptr
+    && this->LastFoundSliceDisplayNode->GetScene() == this->Scene)
+    {
+    vtkMRMLModelNode* sliceModelNode = vtkMRMLModelNode::SafeDownCast(this->LastFoundSliceDisplayNode->GetDisplayableNode());
+    if (this->GetCompositeNodeIDFromSliceModelNode(sliceModelNode) == this->GetID())
+      {
+      return this->LastFoundSliceDisplayNode;
+      }
+    }
+
+  vtkMRMLNode* node = nullptr;
+  vtkCollectionSimpleIterator it;
+  vtkCollection* sceneNodes = this->Scene->GetNodes();
+  for (sceneNodes->InitTraversal(it);
+       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
+    {
+    vtkMRMLModelNode* sliceModelNode = vtkMRMLModelNode::SafeDownCast(node);
+    if (this->GetCompositeNodeIDFromSliceModelNode(sliceModelNode) == this->GetID())
+      {
+      this->LastFoundSliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(sliceModelNode->GetDisplayNode());
+      return this->LastFoundSliceDisplayNode;
+      }
+    }
+  this->LastFoundSliceDisplayNode = nullptr;
+  return nullptr;
 }
