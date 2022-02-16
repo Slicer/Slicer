@@ -136,6 +136,8 @@ public slots:
   /// \sa saveGUIState()
   virtual void restoreGUIState(bool force=false);
 
+  virtual void addFileToRecentFiles(const qSlicerIO::IOProperties& fileProperties);
+
 signals:
   /// Emitted when the window is first shown to the user.
   /// \sa showEvent(QShowEvent *)
@@ -145,6 +147,7 @@ protected slots:
   virtual void onModuleLoaded(const QString& moduleName);
   virtual void onModuleAboutToBeUnloaded(const QString& moduleName);
   virtual void onNewFileLoaded(const qSlicerIO::IOProperties &fileProperties);
+  virtual void onFileSaved(const qSlicerIO::IOProperties& fileProperties);
 
   virtual void onMRMLSceneModified(vtkObject*);
   virtual void onLayoutChanged(int);
