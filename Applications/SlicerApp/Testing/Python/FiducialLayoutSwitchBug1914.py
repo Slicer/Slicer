@@ -101,7 +101,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
     # Place a point on the red slice
     eye = [33.4975, 79.4042, -10.2143]
     markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsPointListNode")
-    markupNode.AddControlPoint(eye)
+    fidIndex = markupNode.AddControlPoint(eye)
     self.delayDisplay(f"Placed a point at {eye[0]:g}, {eye[1]:g}, {eye[2]:g}")
 
     # Pan and zoom
