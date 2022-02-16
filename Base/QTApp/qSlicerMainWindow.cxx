@@ -461,7 +461,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     this->PythonConsoleToggleViewAction->setText(qSlicerMainWindow::tr("&Python Interactor"));
     this->PythonConsoleToggleViewAction->setToolTip(qSlicerMainWindow::tr(
       "Show Python Interactor window for controlling the application's data, user interface, and internals"));
-    this->PythonConsoleToggleViewAction->setShortcut(QKeySequence("Ctrl+3"));
+    this->PythonConsoleToggleViewAction->setShortcuts({qSlicerMainWindow::tr("Ctrl+3"), qSlicerMainWindow::tr("Ctrl+`")});
     QObject::connect(this->PythonConsoleToggleViewAction, SIGNAL(toggled(bool)),
       q, SLOT(onPythonConsoleToggled(bool)));
     this->ViewMenu->insertAction(this->ModuleHomeAction, this->PythonConsoleToggleViewAction);
