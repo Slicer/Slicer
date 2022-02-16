@@ -146,6 +146,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   QObject::connect(app->coreIOManager(), SIGNAL(newFileLoaded(qSlicerIO::IOProperties)),
                    q, SLOT(onNewFileLoaded(qSlicerIO::IOProperties)));
+  QObject::connect(app->coreIOManager(), SIGNAL(fileSaved(qSlicerIO::IOProperties)),
+                   q, SLOT(onFileSaved(qSlicerIO::IOProperties)));
 
   //----------------------------------------------------------------------------
   // Load DICOM
@@ -1314,20 +1316,67 @@ void qSlicerMainWindow::on_EditApplicationSettingsAction_triggered()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::onNewFileLoaded(const qSlicerIO::IOProperties& fileProperties)
+void qSlicerMainWindow::addFileToRecentFiles(const qSlicerIO::IOProperties& fileProperties)
 {
   Q_D(qSlicerMainWindow);
 
-  d->RecentlyLoadedFileProperties.removeAll(fileProperties);
+  // Remove previous instance of the same file name. Since the file name can be slightly different
+  // (different directory separator, etc.) we don't do a binary compare but compare QFileInfo.
+  QString fileName = fileProperties.value("fileName").toString();
+  if (fileName.isEmpty())
+    {
+    return;
+    }
+  QFileInfo newFileInfo(fileName);
+  for (auto propertiesIt = d->RecentlyLoadedFileProperties.begin(); propertiesIt != d->RecentlyLoadedFileProperties.end() ;)
+    {
+    QFileInfo existingFileInfo(propertiesIt->value("fileName").toString());
+    if (newFileInfo == existingFileInfo)
+      {
+      // remove previous instance
+      propertiesIt = d->RecentlyLoadedFileProperties.erase(propertiesIt);
+      }
+    else
+      {
+      propertiesIt++;
+      }
+    }
 
   d->RecentlyLoadedFileProperties.enqueue(fileProperties);
-
   d->filterRecentlyLoadedFileProperties();
-
   d->setupRecentlyLoadedMenu(d->RecentlyLoadedFileProperties);
-
   // Keep the settings up-to-date
   qSlicerMainWindowPrivate::writeRecentlyLoadedFiles(d->RecentlyLoadedFileProperties);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onNewFileLoaded(const qSlicerIO::IOProperties& fileProperties)
+{
+  this->addFileToRecentFiles(fileProperties);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& fileProperties)
+{
+  Q_D(qSlicerMainWindow);
+  QString fileName = fileProperties["fileName"].toString();
+  if (fileName.isEmpty())
+    {
+    return;
+    }
+  // Adding every saved file to the recent files list could quickly overwrite the entire list,
+  // therefore we only add the scene file.
+  if (fileName.endsWith(".mrml", Qt::CaseInsensitive)
+    || fileName.endsWith(".mrb", Qt::CaseInsensitive))
+    {
+    // Scene file properties do not contain fileType and it contains screenshot,
+    // which can cause complication when attempted to be stored,
+    // therefore we create a new clean property set.
+    qSlicerIO::IOProperties properties;
+    properties["fileName"] = fileName;
+    properties["fileType"] = QString("SceneFile");
+    this->addFileToRecentFiles(properties);
+    }
 }
 
 //---------------------------------------------------------------------------

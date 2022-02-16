@@ -688,6 +688,12 @@ void qSlicerCoreIOManager::emitNewFileLoaded(const QVariantMap& loadedFileParame
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreIOManager::emitFileSaved(const QVariantMap& savedFileParameters)
+{
+  emit this->fileSaved(savedFileParameters);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreIOManager::addDefaultStorageNodes()
 {
   Q_D(qSlicerCoreIOManager);
@@ -793,6 +799,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
       continue;
       }
     nodes << writer->writtenNodes();
+    emit fileSaved(parameters);
     writeSuccess = true;
     break;
     }
