@@ -952,6 +952,58 @@ void vtkMRMLMarkupsPlaneNode::SetSize(double x, double y)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneNode::GetSizeWorld(double size_World[2])
+{
+  vtkNew<vtkMatrix4x4> objectToWorldMatrix;
+  this->GetObjectToWorldMatrix(objectToWorldMatrix);
+  vtkNew<vtkTransform> objectToWorldTransform;
+  objectToWorldTransform->SetMatrix(objectToWorldMatrix);
+
+  double sideVectorX_Object[3] = { this->Size[0], 0.0, 0.0 };
+  double sideVectorY_Object[3] = { 0.0, this->Size[1], 0.0 };
+
+  size_World[0] = vtkMath::Norm(objectToWorldTransform->TransformVector(sideVectorX_Object));
+  size_World[1] = vtkMath::Norm(objectToWorldTransform->TransformVector(sideVectorY_Object));
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLMarkupsPlaneNode::GetSizeWorld()
+{
+  this->GetSizeWorld(this->SizeWorld);
+  return this->SizeWorld;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneNode::SetSizeWorld(const double size_World[2])
+{
+  this->SetSizeWorld(size_World[0], size_World[1]);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneNode::SetSizeWorld(double sizeX_World, double sizeY_World)
+{
+  vtkNew<vtkMatrix4x4> objectToWorldMatrix;
+  this->GetObjectToWorldMatrix(objectToWorldMatrix);
+  vtkNew<vtkTransform> worldToObjectTransform;
+  worldToObjectTransform->SetMatrix(objectToWorldMatrix);
+  worldToObjectTransform->Inverse();
+
+  double sideVectorX_World[3] = { 0.0, 0.0, 0.0 };
+  double sideVectorY_World[3] = { 0.0, 0.0, 0.0 };
+  this->GetAxesWorld(sideVectorX_World, sideVectorY_World, nullptr);
+  vtkMath::MultiplyScalar(sideVectorX_World, sizeX_World);
+  vtkMath::MultiplyScalar(sideVectorY_World, sizeY_World);
+
+  double sideVectorX_Object[3] = { 1.0, 0.0, 0.0 };
+  worldToObjectTransform->TransformVector(sideVectorX_World, sideVectorX_Object);
+
+  double sideVectorY_Object[3] = { 0.0, 1.0, 0.0 };
+  worldToObjectTransform->TransformVector(sideVectorY_World, sideVectorY_Object);
+
+  this->SetSize(vtkMath::Norm(sideVectorX_Object), vtkMath::Norm(sideVectorY_Object));
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::SetPlaneBounds(double x0, double x1, double y0, double y1)
 {
   if (this->PlaneBounds[0] == x0 && this->PlaneBounds[1] == x1
@@ -1098,24 +1150,20 @@ void vtkMRMLMarkupsPlaneNode::GetRASBounds(double bounds[6])
     return;
     }
 
-  double xAxis_World[3] = { 0.0, 0.0, 0.0 };
-  double yAxis_World[3] = { 0.0, 0.0, 0.0 };
-  this->GetAxesWorld(xAxis_World, yAxis_World, nullptr);
+  vtkNew<vtkPoints> cornerPoints_World;
+  this->GetPlaneCornerPointsWorld(cornerPoints_World);
 
-  double centerWorld[3] = { 0.0, 0.0, 0.0 };
-  this->GetCenterWorld(centerWorld);
-
-  double planeBounds[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-  this->CalculatePlaneBounds(planeBounds, xAxis_World, yAxis_World, centerWorld, this->Size);
+  double planeBounds_World[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
+  this->CalculatePlaneBounds(cornerPoints_World, planeBounds_World);
 
   // Get bounds from control points
   Superclass::GetRASBounds(bounds);
-  bounds[0] = std::min(bounds[0], planeBounds[0]);
-  bounds[1] = std::max(bounds[1], planeBounds[1]);
-  bounds[2] = std::min(bounds[2], planeBounds[2]);
-  bounds[3] = std::max(bounds[3], planeBounds[3]);
-  bounds[4] = std::min(bounds[4], planeBounds[4]);
-  bounds[5] = std::max(bounds[5], planeBounds[5]);
+  bounds[0] = std::min(bounds[0], planeBounds_World[0]);
+  bounds[1] = std::max(bounds[1], planeBounds_World[1]);
+  bounds[2] = std::min(bounds[2], planeBounds_World[2]);
+  bounds[3] = std::max(bounds[3], planeBounds_World[3]);
+  bounds[4] = std::min(bounds[4], planeBounds_World[4]);
+  bounds[5] = std::max(bounds[5], planeBounds_World[5]);
 }
 
 //---------------------------------------------------------------------------
@@ -1127,68 +1175,122 @@ void vtkMRMLMarkupsPlaneNode::GetBounds(double bounds[6])
     return;
     }
 
+  vtkNew<vtkPoints> cornerPoints_Node;
+  this->GetPlaneCornerPoints(cornerPoints_Node);
+
+  double planeBounds_Node[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
+  this->CalculatePlaneBounds(cornerPoints_Node, planeBounds_Node);
+
+  // Get bounds from control points
+  Superclass::GetBounds(bounds);
+  bounds[0] = std::min(bounds[0], planeBounds_Node[0]);
+  bounds[1] = std::max(bounds[1], planeBounds_Node[1]);
+  bounds[2] = std::min(bounds[2], planeBounds_Node[2]);
+  bounds[3] = std::max(bounds[3], planeBounds_Node[3]);
+  bounds[4] = std::min(bounds[4], planeBounds_Node[4]);
+  bounds[5] = std::max(bounds[5], planeBounds_Node[5]);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneNode::GetPlaneCornerPoints(vtkPoints* points_Node)
+{
   double xAxis_Node[3] = { 0.0, 0.0, 0.0 };
   double yAxis_Node[3] = { 0.0, 0.0, 0.0 };
   this->GetAxes(xAxis_Node, yAxis_Node, nullptr);
 
   double center_Node[3] = { 0.0, 0.0, 0.0 };
-  this->GetCenterWorld(center_Node);
+  this->GetCenter(center_Node);
 
-  double planeBounds[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-  this->CalculatePlaneBounds(planeBounds, xAxis_Node, yAxis_Node, center_Node, this->Size);
+  double size_Node[2] = { 0.0, 0.0 };
+  this->GetSize(size_Node);
 
-  // Get bounds from control points
-  Superclass::GetBounds(bounds);
-  bounds[0] = std::min(bounds[0], planeBounds[0]);
-  bounds[1] = std::max(bounds[1], planeBounds[1]);
-  bounds[2] = std::min(bounds[2], planeBounds[2]);
-  bounds[3] = std::max(bounds[3], planeBounds[3]);
-  bounds[4] = std::min(bounds[4], planeBounds[4]);
-  bounds[5] = std::max(bounds[5], planeBounds[5]);
+  this->CalculatePlaneCornerPoints(points_Node, xAxis_Node, yAxis_Node, center_Node, size_Node);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::CalculatePlaneBounds(double bounds[6], double xAxis[3], double yAxis[3], double center[3], double size[2])
+void vtkMRMLMarkupsPlaneNode::GetPlaneCornerPointsWorld(vtkPoints* points_World)
 {
-  if (!bounds || !xAxis || !yAxis || !center || !size)
+  double xAxis_World[3] = { 0.0, 0.0, 0.0 };
+  double yAxis_World[3] = { 0.0, 0.0, 0.0 };
+  this->GetAxesWorld(xAxis_World, yAxis_World, nullptr);
+
+  double center_World[3] = { 0.0, 0.0, 0.0 };
+  this->GetCenterWorld(center_World);
+
+  double size_World[2] = { 0.0, 0.0 };
+  this->GetSizeWorld(size_World);
+
+  this->CalculatePlaneCornerPoints(points_World, xAxis_World, yAxis_World, center_World, size_World);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneNode::CalculatePlaneCornerPoints(vtkPoints * points, double xAxis[3], double yAxis[3], double center[3], double size[2])
+{
+  if (!points)
+    {
+    vtkErrorMacro("CalculatePlaneCornerPoints: Invalid points");
+    return;
+    }
+
+  double planeBounds[4] = { 0.0, -1.0, 0.0, -1.0 };
+  this->GetPlaneBounds(planeBounds);
+
+  // Scale the bounds so that they match the specified plane size.
+  planeBounds[0] *= size[0] / this->Size[0];
+  planeBounds[1] *= size[0] / this->Size[0];
+  planeBounds[2] *= size[1] / this->Size[1];
+  planeBounds[3] *= size[1] / this->Size[1];
+
+  double xAxisNegative[3] = { xAxis[0], xAxis[1], xAxis[2] };
+  vtkMath::MultiplyScalar(xAxisNegative, planeBounds[0]);
+  double xAxisPositive[3] = { xAxis[0], xAxis[1], xAxis[2] };
+  vtkMath::MultiplyScalar(xAxisPositive, planeBounds[1]);
+
+  double yAxisNegative[3] = { yAxis[0], yAxis[1], yAxis[2] };
+  vtkMath::MultiplyScalar(yAxisNegative, planeBounds[2]);
+  double yAxisPositive[3] = { yAxis[0], yAxis[1], yAxis[2] };
+  vtkMath::MultiplyScalar(yAxisPositive, planeBounds[3]);
+
+  points->SetNumberOfPoints(4);
+
+  double point0[3] = { 0.0, 0.0, 0.0 }; // LP
+  vtkMath::Add(center, point0, point0);
+  vtkMath::Add(xAxisNegative, point0, point0);
+  vtkMath::Add(yAxisNegative, point0, point0);
+  points->SetPoint(0, point0);
+
+  double point1[3] = { 0.0, 0.0, 0.0 }; // LA
+  vtkMath::Add(center, point1, point1);
+  vtkMath::Add(xAxisNegative, point1, point1);
+  vtkMath::Add(yAxisPositive, point1, point1);
+  points->SetPoint(1, point1);
+
+  double point2[3] = { 0.0, 0.0, 0.0 }; // RA
+  vtkMath::Add(center, point2, point2);
+  vtkMath::Add(xAxisPositive, point2, point2);
+  vtkMath::Add(yAxisPositive, point2, point2);
+  points->SetPoint(2, point2);
+
+  double point3[3] = { 0.0, 0.0, 0.0 }; // RP
+  vtkMath::Add(center, point3, point3);
+  vtkMath::Add(xAxisPositive, point3, point3);
+  vtkMath::Add(yAxisNegative, point3, point3);
+  points->SetPoint(3, point3);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneNode::CalculatePlaneBounds(vtkPoints* cornerPoints, double bounds[6])
+{
+  if (!cornerPoints || !bounds)
     {
     vtkErrorMacro("CalculatePlaneBounds: Invalid arguments");
     return;
     }
 
-  double xVector[3] = { xAxis[0], xAxis[1], xAxis[2] };
-  vtkMath::MultiplyScalar(xVector, 0.5 * size[0]);
-
-  double yVector[3] = { yAxis[0], yAxis[1], yAxis[2] };
-  vtkMath::MultiplyScalar(yVector, 0.5 * size[1]);
-
   vtkBoundingBox box;
-  for (int j = 0; j < 2; ++j)
+  for (int i = 0; i < cornerPoints->GetNumberOfPoints(); ++i)
     {
-    for (int i = 0; i < 2; ++i)
-      {
-      double cornerPoint[3] = { 0.0, 0.0, 0.0 };
-      vtkMath::Add(cornerPoint, center, cornerPoint);
-      if (i == 0)
-        {
-        vtkMath::Subtract(cornerPoint, xVector, cornerPoint);
-        }
-      else
-        {
-        vtkMath::Add(cornerPoint, xVector, cornerPoint);
-        }
-
-      if (j == 0)
-        {
-        vtkMath::Subtract(cornerPoint, yVector, cornerPoint);
-        }
-      else
-        {
-        vtkMath::Add(cornerPoint, yVector, cornerPoint);
-        }
-
-      box.AddPoint(cornerPoint);
-      }
+    box.AddPoint(cornerPoints->GetPoint(i));
     }
   box.GetBounds(bounds);
 }

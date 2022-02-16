@@ -1163,7 +1163,7 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateSca
 
   this->AxisScaleGlypher = vtkSmartPointer<vtkGlyph3D>::New();
   this->AxisScaleGlypher->SetInputConnection(this->ScaleScaleTransform->GetOutputPort());
-  this->AxisScaleGlypher->SetSourceConnection(this->AxisRotationHandleSource->GetOutputPort());
+  this->AxisScaleGlypher->SetSourceConnection(this->AxisScaleHandleSource->GetOutputPort());
   this->AxisScaleGlypher->ScalingOn();
   this->AxisScaleGlypher->SetScaleModeToDataScalingOff();
   this->AxisScaleGlypher->SetIndexModeToScalar();
