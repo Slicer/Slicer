@@ -445,6 +445,7 @@ void vtkMRMLMarkupsROINode::OnTransformNodeReferenceChanged(vtkMRMLTransformNode
   Superclass::OnTransformNodeReferenceChanged(transformNode);
   this->UpdateObjectToWorldMatrix();
   this->UpdateInteractionHandleToWorldMatrix();
+  this->UpdateAllMeasurements();
 }
 
 //---------------------------------------------------------------------------

@@ -140,6 +140,17 @@ public:
   //@}
 
   //@{
+  /// Get/Set size of the plane in the world coordinate system.
+  /// The size is defined in world coordinate system units.
+  /// When the size mode is auto, plane size is updated automatically
+  /// from the input control points.
+  void GetSizeWorld(double size[2]);
+  double* GetSizeWorld() VTK_SIZEHINT(2);
+  void SetSizeWorld(const double normal[2]);
+  void SetSizeWorld(double x, double y);
+  //@}
+
+  //@{
   /// Get/Set the bounds of the plane in Object coordinates
   vtkGetVector4Macro(PlaneBounds, double);
   virtual void SetPlaneBounds(double x0, double x1, double y0, double y1);
@@ -259,6 +270,12 @@ public:
   /// Re-implemented to react to changes in internal matrices or control points.
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
+  //@{
+  /// Retrieves the list of points that define the corners of the plane.
+  void GetPlaneCornerPoints(vtkPoints* points_Node);
+  void GetPlaneCornerPointsWorld(vtkPoints* points_World);
+  //@}
+
 protected:
 
   vtkSetMacro(MaximumNumberOfControlPoints, int);
@@ -274,7 +291,10 @@ protected:
   void CalculateAxesFromPoints(const double point0[3], const double point1[3], const double point2[3], double x[3], double y[3], double z[3]);
 
   /// Calculates the axis-aligned bounds defined by the corners of the plane.
-  void CalculatePlaneBounds(double bounds[6], double xAxis[3], double yAxis[3], double center[3], double size[2]);
+  void CalculatePlaneBounds(vtkPoints* cornerPoints, double bounds[6]);
+
+  /// Calculates the axis-aligned bounds defined by the corners of the plane.
+  void CalculatePlaneCornerPoints(vtkPoints* points, double xAxis[3], double yAxis[3], double center[3], double size[2]);
 
   /// Updates the plane based on plane type and control point position.
   virtual void UpdatePlaneFromControlPoints();
@@ -314,8 +334,9 @@ protected:
   // Arrays used to return pointers from GetNormal/GetOrigin functions.
   double Normal[3] = { 0.0, 0.0, 0.0 };
   double NormalWorld[3] = { 0.0, 0.0, 0.0 };
-  double Origin[3] = { 0.0,0.0,0.0 };
-  double OriginWorld[3] = { 0.0,0.0,0.0 };
+  double Origin[3] = { 0.0, 0.0, 0.0 };
+  double OriginWorld[3] = { 0.0, 0.0, 0.0 };
+  double SizeWorld[2] = { 0.0, 0.0 };
 
   int PlaneType{ PlaneTypePointNormal };
   bool IsPlaneValid{ false };

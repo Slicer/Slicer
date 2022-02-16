@@ -177,9 +177,9 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
     return;
     }
 
-  double xAxis_World[3] = { 0.0 };
-  double yAxis_World[3] = { 0.0 };
-  double zAxis_World[3] = { 0.0 };
+  double xAxis_World[3] = { 0.0, 0.0, 0.0 };
+  double yAxis_World[3] = { 0.0, 0.0, 0.0 };
+  double zAxis_World[3] = { 0.0, 0.0, 0.0 };
   planeNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
 
   double epsilon = 1e-5;
@@ -194,7 +194,7 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
 
   vtkNew<vtkPoints> arrowPoints_World;
 
-  double origin_World[3] = { 0.0 };
+  double origin_World[3] = { 0.0, 0.0, 0.0 };
   planeNode->GetOriginWorld(origin_World);
   arrowPoints_World->InsertNextPoint(origin_World);
 
@@ -209,63 +209,51 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
 
   this->ArrowGlypher->SetInputData(arrowPositionPolyData_World);
 
-  // Update the plane
-  double bounds_Object[4] = { 0.0, -1.0, 0.0, -1.0 };
-  planeNode->GetPlaneBounds(bounds_Object);
+  ////////
+  // Update the plane based on the corner points
+  vtkNew<vtkPoints> planeCornerPoints_World;
+  planeNode->GetPlaneCornerPointsWorld(planeCornerPoints_World);
 
-  vtkNew<vtkMatrix4x4> objectToWorldMatrix;
-  planeNode->GetObjectToWorldMatrix(objectToWorldMatrix);
+  // Update the plane border
 
-  vtkNew<vtkTransform> objectToWorldTransform;
-  objectToWorldTransform->SetMatrix(objectToWorldMatrix);
-  double planePoint1_Object[3] = { bounds_Object[0], bounds_Object[2], 0.0 };
-  double planePoint1_World[3] = { 0.0, 0.0, 0.0 };
-  objectToWorldTransform->TransformPoint(planePoint1_Object, planePoint1_World);
+  // To create a seamless border, we want the start/stop to be along one of the edges,
+  // rather than a corner.
+  double borderConnectionPoint_World[3] = { 0.0, 0.0, 0.0 };
+  vtkMath::Add(planeCornerPoints_World->GetPoint(0), borderConnectionPoint_World, borderConnectionPoint_World);
+  vtkMath::Add(planeCornerPoints_World->GetPoint(3), borderConnectionPoint_World, borderConnectionPoint_World);
+  vtkMath::MultiplyScalar(borderConnectionPoint_World, 0.5);
 
-  double planePoint2_Object[3] = { bounds_Object[0], bounds_Object[3], 0.0 };
-  double planePoint2_World[3] = { 0.0, 0.0, 0.0 };
-  objectToWorldTransform->TransformPoint(planePoint2_Object, planePoint2_World);
-
-  double planePoint3_Object[3] = { bounds_Object[1], bounds_Object[3], 0.0 };
-  double planePoint3_World[3] = { 0.0, 0.0, 0.0 };
-  objectToWorldTransform->TransformPoint(planePoint3_Object, planePoint3_World);
-
-  double planePoint4_Object[3] = { bounds_Object[1], bounds_Object[2], 0.0 };
-  double planePoint4_World[3] = { 0.0, 0.0, 0.0 };
-  objectToWorldTransform->TransformPoint(planePoint4_Object, planePoint4_World);
-
-  double planePoint5_World[3] = { 0.0 };
-  vtkMath::Add(planePoint1_World, planePoint4_World, planePoint5_World);
-  vtkMath::MultiplyScalar(planePoint5_World, 0.5);
-
-  this->PlaneFillFilter->SetOrigin(planePoint1_World);
-  this->PlaneFillFilter->SetPoint1(planePoint2_World);
-  this->PlaneFillFilter->SetPoint2(planePoint4_World);
-
-  vtkNew<vtkPoints> planePoints_World;
-  planePoints_World->InsertNextPoint(planePoint1_World);
-  planePoints_World->InsertNextPoint(planePoint2_World);
-  planePoints_World->InsertNextPoint(planePoint3_World);
-  planePoints_World->InsertNextPoint(planePoint4_World);
-  planePoints_World->InsertNextPoint(planePoint5_World);
+  vtkNew<vtkPoints> planeBorderPoints_World;
+  planeBorderPoints_World->Initialize();
+  planeBorderPoints_World->SetNumberOfPoints(0);
+  planeBorderPoints_World->InsertNextPoint(borderConnectionPoint_World);
+  planeBorderPoints_World->InsertNextPoint(planeCornerPoints_World->GetPoint(0));
+  planeBorderPoints_World->InsertNextPoint(planeCornerPoints_World->GetPoint(1));
+  planeBorderPoints_World->InsertNextPoint(planeCornerPoints_World->GetPoint(2));
+  planeBorderPoints_World->InsertNextPoint(planeCornerPoints_World->GetPoint(3));
 
   // Set the order of plane outline points
+  int numberOfBorderPoints = planeBorderPoints_World->GetNumberOfPoints();
   vtkNew<vtkIdList> line;
-  line->SetNumberOfIds(6);
-  line->SetId(0, 4);
-  for (vtkIdType i = 0; i < 4; ++i)
+  line->SetNumberOfIds(numberOfBorderPoints + 1);
+  for (vtkIdType i = 0; i < numberOfBorderPoints; ++i)
     {
-    line->SetId(i + 1, i);
+    line->SetId(i, i);
     }
-  line->SetId(5, 4);
+  line->SetId(numberOfBorderPoints, 0);
 
   vtkNew<vtkCellArray> lines;
   lines->InsertNextCell(line);
 
   vtkNew<vtkPolyData> outlinePolyData;
-  outlinePolyData->SetPoints(planePoints_World);
+  outlinePolyData->SetPoints(planeBorderPoints_World);
   outlinePolyData->SetLines(lines);
   this->PlaneOutlineFilter->SetInputDataObject(outlinePolyData);
+
+  // Update the plane fill
+  this->PlaneFillFilter->SetOrigin(planeCornerPoints_World->GetPoint(0));
+  this->PlaneFillFilter->SetPoint1(planeCornerPoints_World->GetPoint(1));
+  this->PlaneFillFilter->SetPoint2(planeCornerPoints_World->GetPoint(3));
 }
 
 //----------------------------------------------------------------------
@@ -739,31 +727,71 @@ void vtkSlicerPlaneRepresentation3D::MarkupsInteractionPipelinePlane::UpdateScal
     return;
     }
 
-  double bounds_Object[4] = { 0.0,  0.0, 0.0, 0.0};
-  planeNode->GetPlaneBounds(bounds_Object);
+  double size_World[4] = { 0.0,  0.0, 0.0, 0.0};
+  planeNode->GetSizeWorld(size_World);
 
-  if (bounds_Object[1] <= bounds_Object[0] || bounds_Object[3] <= bounds_Object[2])
+  if (size_World[0] <= 0.0 || size_World[1] <= 0.0)
     {
     this->ScaleHandlePoints->SetPoints(vtkNew<vtkPoints>());
     return;
     }
 
-  vtkNew<vtkPoints> roiPoints;
-  roiPoints->SetNumberOfPoints(8);
-  roiPoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleLEdge, bounds_Object[0], (bounds_Object[2] + bounds_Object[3]) / 2.0, 0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleREdge, bounds_Object[1], (bounds_Object[2] + bounds_Object[3]) / 2.0, 0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge, (bounds_Object[0] + bounds_Object[1]) / 2.0, bounds_Object[2], 0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge, (bounds_Object[0] + bounds_Object[1]) / 2.0, bounds_Object[3], 0.0);
+  vtkNew<vtkPoints> planeCornerPoints_World;
+  planeNode->GetPlaneCornerPointsWorld(planeCornerPoints_World);
 
-  roiPoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner, bounds_Object[0], bounds_Object[2], 0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner, bounds_Object[0], bounds_Object[3], 0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner, bounds_Object[1], bounds_Object[2], 0.0);
-  roiPoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner, bounds_Object[1], bounds_Object[3], 0.0);
+  double lpCorner_World[3] = { 0.0, 0.0, 0.0 };
+  planeCornerPoints_World->GetPoint(0, lpCorner_World);
 
-  this->ScaleHandlePoints->SetPoints(roiPoints);
+  double laCorner_World[3] = { 0.0, 0.0, 0.0 };
+  planeCornerPoints_World->GetPoint(1, laCorner_World);
+
+  double raCorner_World[3] = { 0.0, 0.0, 0.0 };
+  planeCornerPoints_World->GetPoint(2, raCorner_World);
+
+  double rpCorner_World[3] = { 0.0, 0.0, 0.0 };
+  planeCornerPoints_World->GetPoint(3, rpCorner_World);
+
+  double lEdge_World[3] = { 0.0, 0.0, 0.0 };
+  vtkMath::Add(laCorner_World, lpCorner_World, lEdge_World);
+  vtkMath::MultiplyScalar(lEdge_World, 0.5);
+
+  double rEdge_World[3] = { 0.0, 0.0, 0.0 };
+  vtkMath::Add(raCorner_World, rpCorner_World, rEdge_World);
+  vtkMath::MultiplyScalar(rEdge_World, 0.5);
+
+  double aEdge_World[3] = { 0.0, 0.0, 0.0 };
+  vtkMath::Add(laCorner_World, raCorner_World, aEdge_World);
+  vtkMath::MultiplyScalar(aEdge_World, 0.5);
+
+  double pEdge_World[3] = { 0.0, 0.0, 0.0 };
+  vtkMath::Add(lpCorner_World, rpCorner_World, pEdge_World);
+  vtkMath::MultiplyScalar(pEdge_World, 0.5);
+
+  vtkNew<vtkPoints> scaleHandlePoints;
+  scaleHandlePoints->SetNumberOfPoints(8);
+  scaleHandlePoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleLEdge, lEdge_World);
+  scaleHandlePoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleREdge, rEdge_World);
+  scaleHandlePoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge, aEdge_World);
+  scaleHandlePoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge, pEdge_World);
+
+  scaleHandlePoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner, lpCorner_World);
+  scaleHandlePoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner, laCorner_World);
+  scaleHandlePoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner, raCorner_World);
+  scaleHandlePoints->SetPoint(vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner, rpCorner_World);
+
+  vtkNew<vtkTransform> worldToHandleTransform;
+  worldToHandleTransform->DeepCopy(this->HandleToWorldTransform);
+  worldToHandleTransform->Inverse();
+
+  // Scale handles are expected in the handle coordinate system
+  for (int i = 0; i < scaleHandlePoints->GetNumberOfPoints(); ++i)
+    {
+    scaleHandlePoints->SetPoint(i, worldToHandleTransform->TransformPoint(scaleHandlePoints->GetPoint(i)));
+    }
+  this->ScaleHandlePoints->SetPoints(scaleHandlePoints);
 
   vtkIdTypeArray* visibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
-  visibilityArray->SetNumberOfValues(roiPoints->GetNumberOfPoints());
+  visibilityArray->SetNumberOfValues(this->ScaleHandlePoints->GetNumberOfPoints());
   visibilityArray->Fill(1);
   this->UpdateHandleVisibility();
 }

@@ -579,24 +579,11 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   objectToWorldTransform->SetMatrix(objectToWorldMatrix);
 
   // Update the plane
-  double bounds_Object[4] = { 0.0, -1.0, 0.0, -1.0 };
-  planeNode->GetPlaneBounds(bounds_Object);
-
-  double planePoint0_Object[3] = { bounds_Object[0], bounds_Object[2], 0.0 };
-  double planePoint0_World[3] = { 0.0, 0.0, 0.0 };
-  objectToWorldTransform->TransformPoint(planePoint0_Object, planePoint0_World);
-
-  double planePoint1_Object[3] = { bounds_Object[0], bounds_Object[3], 0.0 };
-  double planePoint1_World[3] = { 0.0, 0.0, 0.0 };
-  objectToWorldTransform->TransformPoint(planePoint1_Object, planePoint1_World);
-
-  double planePoint2_Object[3] = { bounds_Object[1], bounds_Object[2], 0.0 };
-  double planePoint2_World[3] = { 0.0, 0.0, 0.0 };
-  objectToWorldTransform->TransformPoint(planePoint2_Object, planePoint2_World);
-
-  this->PlaneFilter->SetOrigin(planePoint0_World);
-  this->PlaneFilter->SetPoint1(planePoint1_World);
-  this->PlaneFilter->SetPoint2(planePoint2_World);
+  vtkNew<vtkPoints> planeCornerPoints_World;
+  planeNode->GetPlaneCornerPointsWorld(planeCornerPoints_World);
+  this->PlaneFilter->SetOrigin(planeCornerPoints_World->GetPoint(0));
+  this->PlaneFilter->SetPoint1(planeCornerPoints_World->GetPoint(1));
+  this->PlaneFilter->SetPoint2(planeCornerPoints_World->GetPoint(3));
 
   double* arrowVectorSlice = this->WorldToSliceTransform->TransformDoubleVector(zAxis_World);
 
