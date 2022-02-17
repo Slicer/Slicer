@@ -70,7 +70,7 @@ void vtkMRMLAnnotationFiducialNode::SetTextFromID()
       //       std::string previousLabel = this->GetText(id-1);
       //   size_t prevpos = previousLabel.find_last_not_of("0123456789");
       //   std::string suffixPreviousLabel = previousLabel.substr(prevpos+1, std::string::npos);
-      //   lastNumber = atoi(suffixPreviousLabel.c_str());
+      //   lastNumber = std::stoi(suffixPreviousLabel.c_str());
       //   lastNumber++;
       //   }
       // ss << lastNumber;

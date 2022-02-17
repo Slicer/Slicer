@@ -42,8 +42,8 @@ int main(int argc, char * * argv)
   img->SetRegions( size );
   img->Allocate();
 
-  double               scaleMax = M_PI / atof(argv[1]);
-  double               scaleMin = M_PI / (0.5 * atof(argv[1]) );
+  double               scaleMax = M_PI / std::stod(argv[1]);
+  double               scaleMin = M_PI / (0.5 * std::stod(argv[1]) );
   double               scale;
   double               v, vTot;
   int                  i, j, k;
@@ -171,9 +171,9 @@ int main(int argc, char * * argv)
         case 'p':
           {
           ImageType::PointType pnt;
-          pnt[0] = atof( argv[++argNum] );
-          pnt[1] = atof( argv[++argNum] );
-          pnt[2] = atof( argv[++argNum] );
+          pnt[0] = std::stod( argv[++argNum] );
+          pnt[1] = std::stod( argv[++argNum] );
+          pnt[2] = std::stod( argv[++argNum] );
           img->SetOrigin(pnt);
           break;
           }
@@ -181,9 +181,9 @@ int main(int argc, char * * argv)
           {
           typedef itk::Euler3DTransform<double> TransformType;
           TransformType::Pointer tfm = TransformType::New();
-          double                 rotX = atof( argv[++argNum] );
-          double                 rotY = atof( argv[++argNum] );
-          double                 rotZ = atof( argv[++argNum] );
+          double                 rotX = std::stod( argv[++argNum] );
+          double                 rotY = std::stod( argv[++argNum] );
+          double                 rotZ = std::stod( argv[++argNum] );
           tfm->SetRotation( rotX, rotY, rotZ );
           img->SetDirection( tfm->GetMatrix() );
           break;

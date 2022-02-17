@@ -41,8 +41,8 @@ bool SequenceSortedByIndex(vtkMRMLSequenceNode* seqNode)
 {
   for (int i = 1; i < seqNode->GetNumberOfDataNodes(); i++)
     {
-    double previousIndexValue = atof(seqNode->GetNthIndexValue(i - 1).c_str());
-    double currentIndexValue = atof(seqNode->GetNthIndexValue(i).c_str());
+    double previousIndexValue = std::stod(seqNode->GetNthIndexValue(i - 1).c_str());
+    double currentIndexValue = std::stod(seqNode->GetNthIndexValue(i).c_str());
     if (previousIndexValue >= currentIndexValue)
       {
       std::cout << "Sequence is not sorted: index[" << i - 1 << "] = " << previousIndexValue

@@ -611,12 +611,12 @@ void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPresetFromString(const char *
   char *pos = strtok(presetChars, "|");
   if (pos != nullptr)
     {
-    window = atof(pos);
+    window = std::stod(pos);
     }
   pos = strtok(nullptr, "|");
   if (pos != nullptr)
     {
-    level = atof(pos);
+    level = std::stod(pos);
     }
   delete[] presetChars;
   this->AddWindowLevelPreset(window, level);

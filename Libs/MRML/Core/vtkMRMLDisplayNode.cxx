@@ -837,7 +837,7 @@ void vtkMRMLDisplayNode::SetScalarRangeFlagFromString(const char* str)
   if (scalarRangeFlag < 0)
     {
     // invalid value, maybe legacy scene
-    scalarRangeFlag = atoi(str);
+    scalarRangeFlag = std::stoi(str);
     }
   this->SetScalarRangeFlag(scalarRangeFlag);
 }

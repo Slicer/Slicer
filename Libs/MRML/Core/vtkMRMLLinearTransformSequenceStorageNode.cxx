@@ -224,7 +224,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
 
     if (frameFieldName.compare("Timestamp") == 0)
       {
-      double timestampSec = atof(value.c_str());
+      double timestampSec = std::stod(value.c_str());
       // round timestamp to 3 decimal digits, as timestamp is included in node names and having lots of decimal digits would
       // sometimes lead to extremely long node names
       std::ostringstream timestampSecStr;

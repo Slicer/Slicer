@@ -43,7 +43,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
    {
      std::string str = lineString.substr(15 + textOffset,std::string::npos);
      vtkDebugMacro("Getting visibility, substr = " << str);
-     int vis = atoi(str.c_str());
+     int vis = std::stoi(str.c_str());
      annotationDisplayNode->SetVisibility(vis);
      return 1;
    }
@@ -68,17 +68,17 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
      ptr = strtok(colors, ",");
      if (ptr != nullptr)
        {
-     r = atof(ptr);
+     r = std::stod(ptr);
        }
      ptr = strtok(nullptr, ",");
      if (ptr != nullptr)
        {
-     g = atof(ptr);
+     g = std::stod(ptr);
        }
      ptr = strtok(nullptr, ",");
      if (ptr != nullptr)
        {
-     b = atof(ptr);
+     b = std::stod(ptr);
        }
      // now set the correct value
      if (lineString.find(preposition + "Color = ") != std::string::npos)
@@ -96,7 +96,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
    {
      std::string str = lineString.substr(12 + textOffset, std::string::npos);
      vtkDebugMacro("Getting opacity, substr = " << str.c_str());
-     float val = atof(str.c_str());
+     float val = std::stod(str.c_str());
      annotationDisplayNode->SetOpacity(val);
      return 1;
    }
@@ -105,7 +105,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
    {
      std::string str = lineString.substr(12 + textOffset, std::string::npos);
      vtkDebugMacro("Getting ambient, substr = " << str.c_str());
-     float val = atof(str.c_str());
+     float val = std::stod(str.c_str());
      annotationDisplayNode->SetAmbient(val);
      return 1;
    }
@@ -113,7 +113,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
    {
      std::string str = lineString.substr(12 + textOffset, std::string::npos);
      vtkDebugMacro("Getting diffuse, substr = " << str.c_str());
-     float val = atof(str.c_str());
+     float val = std::stod(str.c_str());
      annotationDisplayNode->SetDiffuse(val);
      return 1;
    }
@@ -122,7 +122,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
    {
      std::string str = lineString.substr(13 + textOffset, std::string::npos);
      vtkDebugMacro("Getting specular, substr = " << str.c_str());
-     float val = atof(str.c_str());
+     float val = std::stod(str.c_str());
      annotationDisplayNode->SetSpecular(val);
      return 1;
    }
@@ -131,7 +131,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
    {
      std::string str = lineString.substr(10 + textOffset, std::string::npos);
      vtkDebugMacro("Getting power, substr = " << str.c_str());
-     float val = atof(str.c_str());
+     float val = std::stod(str.c_str());
      annotationDisplayNode->SetPower(val);
      return 1;
    }
@@ -140,7 +140,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
    {
      std::string str = lineString.substr(12 + textOffset, std::string::npos);
      vtkDebugMacro("Getting opacity, substr = " << str.c_str());
-     float val = atof(str.c_str());
+     float val = std::stod(str.c_str());
      annotationDisplayNode->SetOpacity(val);
      return 1;
    }
@@ -170,7 +170,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnn
    {
      std::string str = lineString.substr(10 + textOffset, std::string::npos);
      vtkDebugMacro("Getting textScale, substr = " << str.c_str());
-     float scale = atof(str.c_str());
+     float scale = std::stod(str.c_str());
      annotationDisplayNode->SetTextScale(scale);
      return 1;
    }
@@ -280,11 +280,11 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode *
           }
         else if (columnNumber == selColumn)
           {
-          sel = atoi(tokenString.c_str());
+          sel = std::stoi(tokenString.c_str());
           }
         else if (columnNumber == visColumn)
           {
-          vis = atoi(tokenString.c_str());
+          vis = std::stoi(tokenString.c_str());
           }
         }
       startPos = endPos +1;

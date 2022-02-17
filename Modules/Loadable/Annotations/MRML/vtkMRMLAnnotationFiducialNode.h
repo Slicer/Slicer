@@ -51,7 +51,7 @@ public:
     this->SetText(1,newValue,1,1);
     }
 
-  /// return atoi(this->GetText(1).c_str());
+  /// return std::stoi(this->GetText(1).c_str());
   int GetFiducialValue()
     {
     return 0;

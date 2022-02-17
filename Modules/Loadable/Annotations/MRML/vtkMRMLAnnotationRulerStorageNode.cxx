@@ -100,15 +100,15 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
 
       if (columnNumber == line1IDColumn)
         {
-        lineID = atoi(tokenString.c_str());
+        lineID = std::stoi(tokenString.c_str());
         }
      else if (columnNumber == selColumn)
         {
-        sel = atoi(tokenString.c_str());
+        sel = std::stoi(tokenString.c_str());
         }
       else if (columnNumber == visColumn)
         {
-        vis = atoi(tokenString.c_str());
+        vis = std::stoi(tokenString.c_str());
         }
       }
     startPos = endPos +1;

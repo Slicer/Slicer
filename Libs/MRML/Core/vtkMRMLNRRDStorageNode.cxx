@@ -496,7 +496,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(
     vtkErrorMacro(<< "Missing 'DWMRI_b-value' tag!");
     return 0;
     }
-  double ref_bvalue = atof(ref_bvalue_str.c_str());
+  double ref_bvalue = std::stod(ref_bvalue_str.c_str());
 
 
   /*

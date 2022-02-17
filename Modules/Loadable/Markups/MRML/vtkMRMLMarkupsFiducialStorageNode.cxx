@@ -632,22 +632,22 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
               // x,y,z
               getline(ss, component, '|');
-              x = atof(component.c_str());
+              x = std::stod(component.c_str());
               getline(ss, component, '|');
-              y = atof(component.c_str());
+              y = std::stod(component.c_str());
               getline(ss, component, '|');
-              z = atof(component.c_str());
+              z = std::stod(component.c_str());
               markupsNode->SetNthControlPointPosition(thisMarkupNumber,x,y,z);
 
               // selected
               getline(ss, component, '|');
-              sel = atoi(component.c_str());
+              sel = std::stoi(component.c_str());
               markupsNode->SetNthControlPointSelected(thisMarkupNumber,sel);
 
               // visibility
               getline(ss, component, '|');
               vtkDebugMacro("component = " << component.c_str());
-              vis = atoi(component.c_str());
+              vis = std::stoi(component.c_str());
               markupsNode->SetNthControlPointVisibility(thisMarkupNumber,vis);
               }
             else
@@ -676,22 +676,22 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
               // x,y,z
               getline(ss, component, separator);
-              x = atof(component.c_str());
+              x = std::stod(component.c_str());
               getline(ss, component, separator);
-              y = atof(component.c_str());
+              y = std::stod(component.c_str());
               getline(ss, component, separator);
-              z = atof(component.c_str());
+              z = std::stod(component.c_str());
               markupsNode->SetNthControlPointPosition(thisMarkupNumber,x,y,z);
 
               // selected
               getline(ss, component, separator);
-              sel = atoi(component.c_str());
+              sel = std::stoi(component.c_str());
               markupsNode->SetNthControlPointSelected(thisMarkupNumber,sel);
 
               // visibility
               getline(ss, component, separator);
               vtkDebugMacro("component = " << component.c_str());
-              vis = atoi(component.c_str());
+              vis = std::stoi(component.c_str());
               markupsNode->SetNthControlPointVisibility(thisMarkupNumber,vis);
               }
             thisMarkupNumber++;

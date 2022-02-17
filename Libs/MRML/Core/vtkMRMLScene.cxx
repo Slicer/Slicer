@@ -4631,9 +4631,9 @@ bool vtkMRMLScene::ParseVersion(const char* versionString, std::string& applicat
     {
     return false;
     }
-  major = atoi(majorStr.c_str());
-  minor = atoi(minorStr.c_str());
-  patch = atoi(patchStr.c_str());
-  revision = atoi(revisionStr.c_str());
+  major = std::stoi(majorStr.c_str());
+  minor = std::stoi(minorStr.c_str());
+  patch = std::stoi(patchStr.c_str());
+  revision = std::stoi(revisionStr.c_str());
   return true;
 }

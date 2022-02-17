@@ -73,23 +73,23 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
         }
       else if (columnNumber == xColumn)
         {
-        coord[0] = atof(tokenString.c_str());
+        coord[0] = std::stod(tokenString.c_str());
         }
       else if (columnNumber == yColumn)
         {
-        coord[1] = atof(tokenString.c_str());
+        coord[1] = std::stod(tokenString.c_str());
         }
       else if (columnNumber == zColumn)
         {
-        coord[2] = atof(tokenString.c_str());
+        coord[2] = std::stod(tokenString.c_str());
         }
       else if (columnNumber == selColumn)
         {
-        sel = atoi(tokenString.c_str());
+        sel = std::stoi(tokenString.c_str());
         }
       else if (columnNumber == visColumn)
         {
-        vis = atoi(tokenString.c_str());
+        vis = std::stoi(tokenString.c_str());
         }
       }
     startPos = endPos +1;
@@ -136,7 +136,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtk
     {
     std::string str = lineString.substr(19 +  pointOffset, std::string::npos);
     vtkDebugMacro("Getting numberingScheme, substr = " << str.c_str());
-    int val = atoi(str.c_str());
+    int val = std::stoi(str.c_str());
     refNode->SetNumberingScheme(val);
     return 1;
     }
@@ -514,28 +514,28 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //         //  {
 //         //    std::string str = lineString.substr(16,std::string::npos);
 //         //    vtkDebugMacro("Getting symbolScale, substr = " << str);
-//         //    float scale = atof(str.c_str());
+//         //    float scale = std::stod(str.c_str());
 //         //    annotationDisplayNode->SetGlyphScale(scale);
 //         //  }
 //         //else if (lineString.find("# symbolType = ") != std::string::npos)
 //         //  {
 //         //    std::string str = lineString.substr(15,std::string::npos);
 //         //    vtkDebugMacro("Getting symbolType, substr = " << str);
-//         //    int t = atoi(str.c_str());
+//         //    int t = std::stoi(str.c_str());
 //         //    annotationDisplayNode->SetGlyphType(t);
 //         //  }
 //         else if (lineString.find("# visibility = ") != std::string::npos)
 //           {
 //             std::string str = lineString.substr(15,std::string::npos);
 //             vtkDebugMacro("Getting visibility, substr = " << str);
-//             int vis = atoi(str.c_str());
+//             int vis = std::stoi(str.c_str());
 //             annotationDisplayNode->SetVisibility(vis);
 //           }
 //         else if (lineString.find("# textScale = ") != std::string::npos)
 //           {
 //             std::string str = lineString.substr(14, std::string::npos);
 //             vtkDebugMacro("Getting textScale, substr = " << str.c_str());
-//             float scale = atof(str.c_str());
+//             float scale = std::stod(str.c_str());
 //             annotationDisplayNode->SetTextScale(scale);
 //           }
 //         else if (lineString.find("# color = ") != std::string::npos ||
@@ -558,17 +558,17 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //             ptr = strtok(colors, ",");
 //             if (ptr != nullptr)
 //               {
-//             r = atof(ptr);
+//             r = std::stod(ptr);
 //               }
 //             ptr = strtok(nullptr, ",");
 //             if (ptr != nullptr)
 //               {
-//             g = atof(ptr);
+//             g = std::stod(ptr);
 //               }
 //             ptr = strtok(nullptr, ",");
 //             if (ptr != nullptr)
 //               {
-//             b = atof(ptr);
+//             b = std::stod(ptr);
 //               }
 //             // now set the correct value
 //             if (lineString.find("# color = ") != std::string::npos)
@@ -584,56 +584,56 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //           {
 //             std::string str = lineString.substr(12, std::string::npos);
 //             vtkDebugMacro("Getting opacity, substr = " << str.c_str());
-//             float val = atof(str.c_str());
+//             float val = std::stod(str.c_str());
 //             annotationDisplayNode->SetOpacity(val);
 //           }
 //         else if (lineString.find("# ambient = ") != std::string::npos)
 //           {
 //             std::string str = lineString.substr(12, std::string::npos);
 //             vtkDebugMacro("Getting ambient, substr = " << str.c_str());
-//             float val = atof(str.c_str());
+//             float val = std::stod(str.c_str());
 //             annotationDisplayNode->SetAmbient(val);
 //                   }
 //                 else if (lineString.find("# diffuse = ") != std::string::npos)
 //                   {
 //                   std::string str = lineString.substr(12, std::string::npos);
 //                   vtkDebugMacro("Getting diffuse, substr = " << str.c_str());
-//                   float val = atof(str.c_str());
+//                   float val = std::stod(str.c_str());
 //                   annotationDisplayNode->SetDiffuse(val);
 //                   }
 //                 else if (lineString.find("# specular = ") != std::string::npos)
 //                   {
 //                   std::string str = lineString.substr(13, std::string::npos);
 //                   vtkDebugMacro("Getting specular, substr = " << str.c_str());
-//                   float val = atof(str.c_str());
+//                   float val = std::stod(str.c_str());
 //                   annotationDisplayNode->SetSpecular(val);
 //                   }
 //                 else if (lineString.find("# power = ") != std::string::npos)
 //                   {
 //                   std::string str = lineString.substr(10, std::string::npos);
 //                   vtkDebugMacro("Getting power, substr = " << str.c_str());
-//                   float val = atof(str.c_str());
+//                   float val = std::stod(str.c_str());
 //                   annotationDisplayNode->SetPower(val);
 //                   }
 //                 else if (lineString.find("# opacity = ") != std::string::npos)
 //                   {
 //                   std::string str = lineString.substr(12, std::string::npos);
 //                   vtkDebugMacro("Getting opacity, substr = " << str.c_str());
-//                   float val = atof(str.c_str());
+//                   float val = std::stod(str.c_str());
 //                   annotationDisplayNode->SetOpacity(val);
 //                   }
 //                 else if (lineString.find("# locked = ") != std::string::npos)
 //                   {
 //                   std::string str = lineString.substr(10, std::string::npos);
 //                   vtkDebugMacro("Getting locked, substr = " << str.c_str());
-//                   int val = atoi(str.c_str());
+//                   int val = std::stoi(str.c_str());
 //                   annotationDisplayNode->SetLocked(val);
 //                   }
 //                 //else if (lineString.find("# numberingScheme = ") != std::string::npos)
 //                 //  {
 //                 //  std::string str = lineString.substr(10, std::string::npos);
 //                 //  vtkDebugMacro("Getting numberingScheme, substr = " << str.c_str());
-//                 //  int val = atoi(str.c_str());
+//                 //  int val = std::stoi(str.c_str());
 //                 //  annotationNode->SetNumberingScheme(val);
 //                 //  }
 //                 else if (lineString.find("# columns = ") != std::string::npos)
@@ -717,23 +717,23 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //                   }
 //                 else if (columnNumber == xColumn)
 //                   {
-//                   coord[0] = atof(ptr);
+//                   coord[0] = std::stod(ptr);
 //                   }
 //                 else if (columnNumber == yColumn)
 //                   {
-//                   coord[1] = atof(ptr);
+//                   coord[1] = std::stod(ptr);
 //                   }
 //                 else if (columnNumber == zColumn)
 //                   {
-//                   coord[2] = atof(ptr);
+//                   coord[2] = std::stod(ptr);
 //                   }
 //                 else if (columnNumber == selColumn)
 //                   {
-//                   sel = atoi(ptr);
+//                   sel = std::stoi(ptr);
 //                   }
 //                 else if (columnNumber == visColumn)
 //                   {
-//                   vis = atoi(ptr);
+//                   vis = std::stoi(ptr);
 //                   }
 //                 }
 //               if (reTokenise == false)

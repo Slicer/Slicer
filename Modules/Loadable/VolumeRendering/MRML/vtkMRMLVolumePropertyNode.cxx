@@ -258,7 +258,7 @@ int vtkMRMLVolumePropertyNode::DataFromString(const std::string& dataString, dou
     {
     std::string s;
     stream >> s;
-    data[i] = atof(s.c_str());
+    data[i] = std::stod(s.c_str());
     }
   return size;
 }

@@ -46,7 +46,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayPropert
     {
      std::string str = lineString.substr(15 + pointOffset,std::string::npos);
      vtkDebugMacro("Getting GlyphScale, substr = " << str);
-     float scale = atof(str.c_str());
+     float scale = std::stod(str.c_str());
      refNode->SetGlyphScale(scale);
      return 1;
     }
@@ -55,7 +55,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayPropert
     {
       std::string str = lineString.substr(14 + pointOffset,std::string::npos);
       vtkDebugMacro("Getting GlyphType, substr = " << str);
-      int t = atoi(str.c_str());
+      int t = std::stoi(str.c_str());
       refNode->SetGlyphType(t);
       return 1;
     }
@@ -121,23 +121,23 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(v
 
       if (columnNumber == xColumn)
         {
-        coord[0] = atof(tokenString.c_str());
+        coord[0] = std::stod(tokenString.c_str());
         }
       else if (columnNumber == yColumn)
         {
-        coord[1] = atof(tokenString.c_str());
+        coord[1] = std::stod(tokenString.c_str());
         }
       else if (columnNumber == zColumn)
         {
-        coord[2] = atof(tokenString.c_str());
+        coord[2] = std::stod(tokenString.c_str());
         }
       else if (columnNumber == selColumn)
         {
-        sel = atoi(tokenString.c_str());
+        sel = std::stoi(tokenString.c_str());
         }
       else if (columnNumber == visColumn)
         {
-        vis = atoi(tokenString.c_str());
+        vis = std::stoi(tokenString.c_str());
         }
       }
     startPos = endPos +1;
@@ -179,7 +179,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProper
    {
      std::string str = lineString.substr(19 +  pointOffset, std::string::npos);
      vtkDebugMacro("Getting numberingScheme, substr = " << str.c_str());
-     int val = atoi(str.c_str());
+     int val = std::stoi(str.c_str());
      refNode->SetNumberingScheme(val);
       return 1;
    }

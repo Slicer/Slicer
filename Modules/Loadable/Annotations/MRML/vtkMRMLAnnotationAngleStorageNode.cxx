@@ -76,19 +76,19 @@ int vtkMRMLAnnotationAngleStorageNode::ReadAnnotationAngleData(vtkMRMLAnnotation
 
       if (columnNumber == line1IDColumn)
         {
-        lineID[0] = atoi(tokenString.c_str());
+        lineID[0] = std::stoi(tokenString.c_str());
         }
       else if (columnNumber == line2IDColumn)
         {
-        lineID[1] = atoi(tokenString.c_str());
+        lineID[1] = std::stoi(tokenString.c_str());
         }
       else if (columnNumber == selColumn)
         {
-        sel = atoi(tokenString.c_str());
+        sel = std::stoi(tokenString.c_str());
         }
       else if (columnNumber == visColumn)
         {
-        vis = atoi(tokenString.c_str());
+        vis = std::stoi(tokenString.c_str());
         }
       }
     startPos = endPos +1;
@@ -129,7 +129,7 @@ int vtkMRMLAnnotationAngleStorageNode::ReadAnnotationAngleProperties(vtkMRMLAnno
    {
      std::string str = lineString.substr(13 + pointOffset,std::string::npos);
      vtkDebugMacro("Getting Resolution, substr = " << str);
-     float size = atof(str.c_str());
+     float size = std::stod(str.c_str());
      refNode->SetResolution(size);
      return 1;
    }

@@ -1845,7 +1845,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               {
               std::string progressString(stdoutbuffer, tagstart+17,
                                          tagend-tagstart-17);
-              node0->GetModuleDescription().GetProcessInformation()->Progress = atof(progressString.c_str());
+              node0->GetModuleDescription().GetProcessInformation()->Progress = std::stod(progressString.c_str());
               foundTag = true;
               }
             }
@@ -1858,7 +1858,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               {
               std::string progressString(stdoutbuffer, tagstart+23,
                                          tagend-tagstart-23);
-              node0->GetModuleDescription().GetProcessInformation()->StageProgress = atof(progressString.c_str());
+              node0->GetModuleDescription().GetProcessInformation()->StageProgress = std::stod(progressString.c_str());
               foundTag = true;
               }
             }

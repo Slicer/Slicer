@@ -65,7 +65,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLineDisplayProperties(vtkMR
     {
      std::string str = lineString.substr(18 + pointOffset,std::string::npos);
      vtkDebugMacro("Getting LineThickness, substr = " << str);
-     float size = atof(str.c_str());
+     float size = std::stod(str.c_str());
      refNode->SetLineThickness(size);
      return 1;
     }
@@ -130,19 +130,19 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
 
       if (columnNumber == startIDColumn)
         {
-        coordID[0] = atof(tokenString.c_str());
+        coordID[0] = std::stod(tokenString.c_str());
         }
       else if (columnNumber == endIDColumn)
         {
-        coordID[1] = atof(tokenString.c_str());
+        coordID[1] = std::stod(tokenString.c_str());
         }
       else if (columnNumber == selColumn)
         {
-        sel = atoi(tokenString.c_str());
+        sel = std::stoi(tokenString.c_str());
         }
       else if (columnNumber == visColumn)
         {
-        vis = atoi(tokenString.c_str());
+        vis = std::stoi(tokenString.c_str());
         }
       }
     startPos = endPos +1;

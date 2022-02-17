@@ -30,9 +30,9 @@ int main(int argc, char* * argv)
   std::string originalImageFileName(argv[1]);
   std::string labelImageFileName(argv[2]);
   std::string segmentedImageFileName(argv[3]);
-  double      expectedVolume = atof(argv[4]);
-  double      intensityHomogeneity = atof(argv[5]);
-  double      curvatureWeight = atof(argv[6]);
+  double      expectedVolume = std::stod(argv[4]);
+  double      intensityHomogeneity = std::stod(argv[5]);
+  double      curvatureWeight = std::stod(argv[6]);
 
   double maxRunningTime = 10000;
   short  labelValue = 1;

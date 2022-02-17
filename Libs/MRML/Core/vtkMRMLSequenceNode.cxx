@@ -375,8 +375,8 @@ int vtkMRMLSequenceNode::GetInsertPosition(const std::string& indexValue)
   if (this->IndexType == vtkMRMLSequenceNode::NumericIndex && !this->IndexEntries.empty())
     {
     int itemNumber = this->GetItemNumberFromIndexValue(indexValue, false);
-    double numericIndexValue = atof(indexValue.c_str());
-    double foundNumericIndexValue = atof(this->IndexEntries[itemNumber].IndexValue.c_str());
+    double numericIndexValue = std::stod(indexValue.c_str());
+    double foundNumericIndexValue = std::stod(this->IndexEntries[itemNumber].IndexValue.c_str());
     if (numericIndexValue < foundNumericIndexValue) // Deals with case of index value being smaller than any in the sequence and numeric tolerances
       {
       insertPosition = itemNumber;
@@ -455,9 +455,9 @@ int vtkMRMLSequenceNode::GetItemNumberFromIndexValue(const std::string& indexVal
     int upperBound = numberOfSeqItems-1;
 
     // Deal with index values not within the range of index values in the Sequence
-    double numericIndexValue = atof(indexValue.c_str());
-    double lowerNumericIndexValue = atof(this->IndexEntries[lowerBound].IndexValue.c_str());
-    double upperNumericIndexValue = atof(this->IndexEntries[upperBound].IndexValue.c_str());
+    double numericIndexValue = std::stod(indexValue.c_str());
+    double lowerNumericIndexValue = std::stod(this->IndexEntries[lowerBound].IndexValue.c_str());
+    double upperNumericIndexValue = std::stod(this->IndexEntries[upperBound].IndexValue.c_str());
     if (numericIndexValue <= lowerNumericIndexValue + this->NumericIndexValueTolerance)
       {
       if (numericIndexValue < lowerNumericIndexValue - this->NumericIndexValueTolerance && exactMatchRequired)
@@ -485,7 +485,7 @@ int vtkMRMLSequenceNode::GetItemNumberFromIndexValue(const std::string& indexVal
       {
       // Note that if middle is equal to either lowerBound or upperBound then upperBound - lowerBound <= 1
       int middle = int((lowerBound + upperBound)/2);
-      double middleNumericIndexValue = atof(this->IndexEntries[middle].IndexValue.c_str());
+      double middleNumericIndexValue = std::stod(this->IndexEntries[middle].IndexValue.c_str());
       if (fabs(numericIndexValue - middleNumericIndexValue) <= this->NumericIndexValueTolerance)
         {
         return middle;

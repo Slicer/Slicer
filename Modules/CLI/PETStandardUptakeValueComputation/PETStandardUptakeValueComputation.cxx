@@ -149,14 +149,14 @@ double ConvertTimeToSeconds(const char *time )
   // ---
   std::string timeStr = time;
   h = timeStr.substr( 0, 2 );
-  hours = atof( h.c_str() );
+  hours = std::stod( h.c_str() );
 
   minAndsecStr = timeStr.substr( 3 );
   m = minAndsecStr.substr(0, 2 );
-  minutes = atof( m.c_str() );
+  minutes = std::stod( m.c_str() );
 
   secStr = minAndsecStr.substr( 3 );
-  seconds = atof( secStr.c_str() );
+  seconds = std::stod( secStr.c_str() );
 
   double retval = ( seconds
                     + (60.0 * minutes)
@@ -727,7 +727,7 @@ double DecayCorrection(parameters & list, double inVal )
 
   double scanTimeSeconds = ConvertTimeToSeconds(list.seriesReferenceTime.c_str() );
   double startTimeSeconds = ConvertTimeToSeconds( list.injectionTime.c_str() );
-  double halfLife = atof( list.radionuclideHalfLife.c_str() );
+  double halfLife = std::stod( list.radionuclideHalfLife.c_str() );
   double decayTime = scanTimeSeconds - startTimeSeconds;
   double correctedVal = inVal * (double)pow(2.0, -(decayTime / halfLife) );
 
@@ -1142,7 +1142,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         if ( len >= 4 )
           {
           yearstr = tag.substr(0, 4);
-          // this->Year = atoi(yearstr.c_str() );
+          // this->Year = std::stoi(yearstr.c_str() );
           }
         else
           {
@@ -1152,7 +1152,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         if ( len >= 6 )
           {
           monthstr = tag.substr(4, 2);
-          // this->Month = atoi ( monthstr.c_str() );
+          // this->Month = std::stoi( monthstr.c_str() );
           }
         else
           {
@@ -1162,7 +1162,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         if ( len >= 8 )
           {
           daystr = tag.substr (6, 2);
-//            this->Day = atoi ( daystr.c_str() );
+//            this->Day = std::stoi( daystr.c_str() );
           }
         else
           {
