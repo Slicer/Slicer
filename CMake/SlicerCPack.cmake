@@ -357,6 +357,12 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   string(APPEND CPACK_NSIS_DEFINES "\n  ;Use ManifestDPIAware to improve appearance of installer")
   string(APPEND CPACK_NSIS_DEFINES "\n  ManifestDPIAware true\n")
 
+  # Use ManifestLongPathAware to support packaging of application where an install prefix like the following
+  # would lead to paths having their length beyond the 260 characters limit:
+  # "C:/path/to/Slicer-build/_CPack_Packages/win-amd64/NSIS/<Slicer_MAIN_PROJECT>-X.Y.Z-YYYY-MM-DD-win-amd64"
+  string(APPEND CPACK_NSIS_DEFINES "\n  ;Use ManifestLongPathAware to support longer install prefix")
+  string(APPEND CPACK_NSIS_DEFINES "\n  ManifestLongPathAware true\n")
+
   if (NOT Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT)
     # Install as regular user (UAC dialog will not be shown).
     string(APPEND CPACK_NSIS_DEFINES "\n  ;Install as regular user (UAC dialog will not be shown).")
