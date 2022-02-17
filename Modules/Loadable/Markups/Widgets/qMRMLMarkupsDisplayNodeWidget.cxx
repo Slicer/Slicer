@@ -98,10 +98,9 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
     q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
   QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
-  QObject::connect(this->variantLineThicknessCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(setCurveLineVariantThickness(bool)));
-  QObject::connect(this->curveLineMaxThicknessSliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(onCurveLineMaxThicknessSliderWidgetChanged(double)));
+  QObject::connect(this->lineDiameterModeComboBox, SIGNAL(currentIndexChanged(QString)),
+    q, SLOT(onLineDiameterModeComboBoxChanged(QString)));
+
   QObject::connect(this->PropertiesLabelVisibilityCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setPropertiesLabelVisibility(bool)));
   QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)),
@@ -513,17 +512,6 @@ void qMRMLMarkupsDisplayNodeWidget::setCurveLineSizeIsAbsolute(bool absolute)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLMarkupsDisplayNodeWidget::setCurveLineVariantThickness(bool val)
-{
-  Q_D(qMRMLMarkupsDisplayNodeWidget);
-  if (!d->MarkupsDisplayNode.GetPointer())
-    {
-    return;
-    }
-  d->MarkupsDisplayNode->SetVaryRadius(val);
-}
-
-//------------------------------------------------------------------------------
 bool qMRMLMarkupsDisplayNodeWidget::curveLineSizeIsAbsolute()const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
@@ -623,14 +611,26 @@ void qMRMLMarkupsDisplayNodeWidget::onCurveLineDiameterSliderWidgetChanged(doubl
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLMarkupsDisplayNodeWidget::onCurveLineMaxThicknessSliderWidgetChanged(double radiusFactor)
+void qMRMLMarkupsDisplayNodeWidget::onLineDiameterModeComboBoxChanged(QString text)
 {
   Q_D(qMRMLMarkupsDisplayNodeWidget);
-  if (!d->MarkupsDisplayNode.GetPointer())
+  if (!d->MarkupsDisplayNode)
     {
     return;
     }
-  d->MarkupsDisplayNode->SetRadiusFactor(radiusFactor);
+
+  if (text == "Constant")
+    {
+    d->MarkupsDisplayNode->SetLineDiameterMode(vtkMRMLMarkupsDisplayNode::Constant);
+    }
+  else if (text == "From Scalars")
+    {
+    d->MarkupsDisplayNode->SetLineDiameterMode(vtkMRMLMarkupsDisplayNode::FromScalars);
+    }
+  else if (text == "Absolute From Scalars")
+    {
+    d->MarkupsDisplayNode->SetLineDiameterMode(vtkMRMLMarkupsDisplayNode::AbsoluteFromScalars);
+    }
 }
 
 //-----------------------------------------------------------------------------

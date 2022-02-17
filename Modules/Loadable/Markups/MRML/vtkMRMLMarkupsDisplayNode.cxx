@@ -104,8 +104,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->LineThickness = 0.2;
   this->LineDiameter = 1.0;
 
-  this->VaryRadius = 0;
-  this->RadiusFactor = 10;
+  this->LineDiameterMode = 0;
 
   // Line color variables
   this->LineColorFadingStart = 1.;
@@ -172,8 +171,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLEnumMacro(curveLineSizeMode, CurveLineSizeMode);
   vtkMRMLWriteXMLFloatMacro(lineThickness, LineThickness);
   vtkMRMLWriteXMLFloatMacro(lineDiameter, LineDiameter);
-  vtkMRMLWriteXMLIntMacro(varyRadius, VaryRadius);
-  vtkMRMLWriteXMLFloatMacro(radiusFactor, RadiusFactor);
+  vtkMRMLWriteXMLIntMacro(lineDiameterMode, LineDiameterMode);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingStart, LineColorFadingStart);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
@@ -221,8 +219,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(curveLineSizeMode, CurveLineSizeMode);
   vtkMRMLReadXMLFloatMacro(lineThickness, LineThickness);
   vtkMRMLReadXMLFloatMacro(lineDiameter, LineDiameter);
-  vtkMRMLReadXMLIntMacro(varyRadius, VaryRadius);
-  vtkMRMLReadXMLFloatMacro(radiusFactor, RadiusFactor);
+  vtkMRMLReadXMLIntMacro(lineDiameterMode, LineDiameterMode);
   vtkMRMLReadXMLFloatMacro(lineColorFadingStart, LineColorFadingStart);
   vtkMRMLReadXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
   vtkMRMLReadXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
@@ -302,8 +299,7 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyEnumMacro(CurveLineSizeMode);
   vtkMRMLCopyFloatMacro(LineThickness);
   vtkMRMLCopyFloatMacro(LineDiameter);
-  vtkMRMLCopyIntMacro(VaryRadius);
-  vtkMRMLCopyFloatMacro(RadiusFactor);
+  vtkMRMLCopyIntMacro(LineDiameterMode);
   vtkMRMLCopyFloatMacro(LineColorFadingStart);
   vtkMRMLCopyFloatMacro(LineColorFadingEnd);
   vtkMRMLCopyFloatMacro(LineColorFadingSaturation);
@@ -499,8 +495,7 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintEnumMacro(CurveLineSizeMode);
   vtkMRMLPrintFloatMacro(LineThickness);
   vtkMRMLPrintFloatMacro(LineDiameter);
-  vtkMRMLPrintIntMacro(VaryRadius);
-  vtkMRMLPrintFloatMacro(RadiusFactor);
+  vtkMRMLPrintIntMacro(LineDiameterMode);
   vtkMRMLPrintFloatMacro(LineColorFadingStart);
   vtkMRMLPrintFloatMacro(LineColorFadingEnd);
   vtkMRMLPrintFloatMacro(LineColorFadingSaturation);

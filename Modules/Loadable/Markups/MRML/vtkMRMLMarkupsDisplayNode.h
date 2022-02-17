@@ -342,6 +342,14 @@ public:
     CurveLineSizeMode_Last // insert new types above this line
     };
 
+  /// Reimplements VTK_VARY_RADIUS_ macros
+  enum LineDiameterMode
+    {
+    Constant = 0, // VTK_VARY_RADIUS_OFF
+    FromScalars = 1, // VTK_VARY_RADIUS_BY_SCALAR
+    AbsoluteFromScalars = 3 // VTK_VARY_RADIUS_BY_ABSOLUTE_SCALAR
+    };
+
   /// Configure mode of determining line radius of markup curves.
   /// Default is relative thickness. Available modes in \sa CurveLineSizeModes
   vtkSetMacro(CurveLineSizeMode, int);
@@ -353,11 +361,8 @@ public:
 
   /// Set variant radius for tube filter.
   /// Values are given from 'VTK_VARY_RADIUS_' macro
-  vtkSetMacro(VaryRadius, int);
-  vtkGetMacro(VaryRadius, int);
-
-  vtkSetMacro(RadiusFactor, double);
-  vtkGetMacro(RadiusFactor, double);
+  vtkSetMacro(LineDiameterMode, int);
+  vtkGetMacro(LineDiameterMode, int);
 
   /// Configure line thickness
   /// Thickness is specified relative to markup point size
@@ -518,8 +523,7 @@ protected:
   double LineThickness;
   double LineDiameter;
 
-  int VaryRadius;
-  double RadiusFactor;
+  int LineDiameterMode;
 
   double LineColorFadingStart;
   double LineColorFadingEnd;
