@@ -386,7 +386,7 @@ int itkAnisotropicSimilarity3DTransformTest(int, char * [] )
       {
       for( unsigned int jj = 0; jj < 7; jj++ )
         {
-        if( vnl_math::abs( TheoreticalJacobian[ii][jj] - jacobian[ii][jj] ) > 1e-5 )
+        if( itk::Math::abs ( TheoreticalJacobian[ii][jj] - jacobian[ii][jj] ) > 1e-5 )
           {
           std::cout << "Jacobian components differ from expected values ";
           std::cout << std::endl << std::endl;
@@ -571,7 +571,7 @@ int itkAnisotropicSimilarity3DTransformTest(int, char * [] )
     // attempt to set an (orthogonal + scale) matrix
     matrix.GetVnlMatrix().set_identity();
 
-    double a = 1.0 / 180.0 * vnl_math::pi;
+    double a = 1.0 / 180.0 * itk::Math::pi;
     double s = 0.5;
     matrix[0][0] =        cos( a ) * s;
     matrix[0][1] = -1.0 * sin( a ) * s;

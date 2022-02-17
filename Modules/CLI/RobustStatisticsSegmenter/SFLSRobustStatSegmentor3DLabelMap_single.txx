@@ -736,7 +736,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
     double stdDev = m_kernelStddev[i] / m_kernelWidthFactor; // /10 as in Eric's appendix
 
     double var2 = -1.0 / (2 * stdDev * stdDev);
-    double c = 1.0 / sqrt(2 * (vnl_math::pi) ) / stdDev;
+    double c = 1.0 / sqrt(2 * (itk::Math::pi) ) / stdDev;
     for( long ii = 0; ii < n; ++ii )
       {
       pp += exp(var2 * (newFeature[i] - m_featureAtTheSeeds[ii][i]) * (newFeature[i] - m_featureAtTheSeeds[ii][i]) );
@@ -828,7 +828,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 //       //#endif
 
     double var2 = -1.0 / (2 * stdDev * stdDev);
-    double c = 1.0 / sqrt(2 * (vnl_math::pi) ) / stdDev;
+    double c = 1.0 / sqrt(2 * (itk::Math::pi) ) / stdDev;
     for( TPixel a = m_inputImageIntensityMin; a <= m_inputImageIntensityMax; ++a )
       {
       long ia = static_cast<long>(a - m_inputImageIntensityMin);

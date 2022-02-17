@@ -9,7 +9,7 @@
 #include "vtkInformation.h"
 #include <vtkVersion.h>
 
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 #include <vnl/vnl_double_3.h>
 
 #include "itkNumberToString.h"

@@ -15,7 +15,7 @@
 #define itkDiffusionTensor3DAbsCorrection_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <itkMatrix.h>
 #include "itkDiffusionTensor3DExtended.h"
 

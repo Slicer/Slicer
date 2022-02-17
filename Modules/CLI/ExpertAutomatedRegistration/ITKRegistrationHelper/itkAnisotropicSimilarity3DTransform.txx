@@ -18,7 +18,7 @@
 #define itkAnisotropicSimilarity3DTransform_txx
 
 #include "itkAnisotropicSimilarity3DTransform.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "vnl/vnl_det.h"
 
 namespace itk
