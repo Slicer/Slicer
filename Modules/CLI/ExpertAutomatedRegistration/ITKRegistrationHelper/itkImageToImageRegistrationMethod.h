@@ -82,7 +82,7 @@ public:
   itkGetMacro( RegistrationNumberOfThreads, unsigned int );
 
   itkSetObjectMacro( Observer, Command );
-  itkGetObjectMacro( Observer, Command );
+  itkGetConstObjectMacro( Observer, Command );
 
   void SetFixedImage( const ImageType * fixedImage );
 
@@ -137,7 +137,7 @@ protected:
 
   /** Provide derived classes with access to the Transform member variable. */
   itkSetObjectMacro( Transform, TransformType );
-  itkGetObjectMacro( Transform, TransformType );
+  itkGetConstObjectMacro( Transform, TransformType );
   itkGetConstObjectMacro( Transform, TransformType );
 
   using Superclass::MakeOutput;
