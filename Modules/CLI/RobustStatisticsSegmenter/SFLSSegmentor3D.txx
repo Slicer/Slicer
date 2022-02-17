@@ -1448,7 +1448,7 @@ CSFLSSegmentor3D<TPixel>
   return (dxx
           * (dy2
              + dz2) + dyy * (dx2 + dz2) + dzz * (dx2 + dy2) - 2 * dx * dy * dxy - 2 * dx * dz * dxz - 2 * dy * dz * dyz) \
-         / (dx2 + dy2 + dz2 + vnl_math::eps);
+         / (dx2 + dy2 + dz2 + itk::Math::eps);
 }
 
 template <typename TPixel>
