@@ -41,6 +41,11 @@
 // Slicer includes
 #include <vtkSlicerScalarBarActor.h>
 
+// STL includes
+#include <algorithm>
+#include <cstring>
+#include <numeric>
+
 namespace
 {
 const int RENDERER_LAYER = 1; // layer ID where the legent will be displayed
@@ -77,6 +82,17 @@ public:
   void UpdateSliceNode();
   void SetSliceCompositeNode(vtkMRMLSliceCompositeNode* compositeNode);
   void UpdateActorsVisibilityFromSliceCompositeNode();
+
+  /// Get lookup table as a copy of a LUT from table node without empty colors
+  /// \param colorTableNode - input color table node
+  /// \param validColorMaskVector - bool vector with true value for valid color
+  /// \return a newly created LUT without empty colors or nullptr in case of an error
+  /// \warning The returned LUT pointer must be deleted after usage or
+  /// a vtkSmartPointer<vtkLookupTable> must take control over the pointer.
+  /// If original color node doesn't have empty colors, then
+  /// \sa vtkMRMLColorNode::CreateLookupTableCopy() is used
+  vtkLookupTable* CreateLookupTableCopyWithoutEmptyColors( vtkMRMLColorNode* colorNode,
+    std::vector<bool>& validColorMaskVector);
 
   vtkMRMLColorLegendDisplayableManager* External;
 
@@ -370,37 +386,60 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
   // values range. It is therefore necessary to make a copy
   // of the colorNode vtkLookupTable in order not to impact
   // that lookup table original range.
-  vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(colorNode->CreateLookupTableCopy());
-
+  vtkSmartPointer<vtkLookupTable> lut;
+  std::vector<bool> validColorMask;
+  if (colorLegendDisplayNode->GetUseColorNamesForLabels())
+    {
+    lut = vtkSmartPointer<vtkLookupTable>::Take(this->CreateLookupTableCopyWithoutEmptyColors(colorNode, validColorMask));
+    }
+  else
+    {
+    lut = vtkSmartPointer<vtkLookupTable>::Take(colorNode->CreateLookupTableCopy());
+    }
+  if (lut.GetPointer() == nullptr)
+    {
+    return false;
+    }
   lut->SetTableRange(range);
 
-  if (colorLegendDisplayNode->GetUseColorNamesForLabels() && colorNode->GetNumberOfColors() > 0)
+  // Color name == label with valid number of colors (size of validColorMask vector in non zero)
+  if (colorLegendDisplayNode->GetUseColorNamesForLabels() && !validColorMask.empty())
     {
     // When there are only a few colors (e.g., 5-10) in the LUT then it is important to build the
     // color table more color indices, otherwise centered labels would not be show up at the correct
     // position. We oversample the LUT to have approximately 256 color indices (newNumberOfColors)
     // regardless of how many items were in the original color table.
+
+    // Only show colors and labels for valid colors in colorNode
+    int numberOfValidColors = std::accumulate(validColorMask.begin(), validColorMask.end(), 0);
     actor->SetLookupTable(lut);
-    double oversampling = 256.0 / colorNode->GetNumberOfColors();
-    int newNumberOfColors = colorNode->GetNumberOfColors() * oversampling;
-    actor->SetNumberOfLabels(colorNode->GetNumberOfColors());
-    actor->SetMaximumNumberOfColors(newNumberOfColors);
+    actor->SetNumberOfLabels(numberOfValidColors);
+    actor->SetMaximumNumberOfColors(256); // Without it colors on the ColorBar sometimes wrong
     actor->GetLookupTable()->ResetAnnotations();
-    for (int colorIndex = 0; colorIndex < newNumberOfColors; ++colorIndex)
+    // Set color names of labels only for valid colors
+    int i = 0;
+    for (auto it = validColorMask.begin(); it != validColorMask.end(); ++it)
       {
-      actor->GetLookupTable()->SetAnnotation(colorIndex, vtkStdString(colorNode->GetColorName(colorIndex/oversampling)));
+      size_t validIndex = it - validColorMask.begin();
+      if (*it && i < numberOfValidColors)
+        {
+        actor->GetLookupTable()->SetAnnotation(i++, vtkStdString(colorNode->GetColorName(validIndex)));
+        }
       }
     actor->SetUseAnnotationAsLabel(true);
     actor->SetCenterLabel(true);
     }
-  else
+  else if (!colorLegendDisplayNode->GetUseColorNamesForLabels()) // Color name == value ( default behaviour )
     {
     actor->SetNumberOfLabels(colorLegendDisplayNode->GetNumberOfLabels());
     actor->SetMaximumNumberOfColors(colorLegendDisplayNode->GetMaxNumberOfColors());
     actor->SetUseAnnotationAsLabel(false);
     actor->SetCenterLabel(false);
     actor->SetLookupTable(lut);
-
+    }
+  else
+    {
+    return false;
     }
 
   this->ShowActor(actor, true);
@@ -451,6 +490,54 @@ void vtkMRMLColorLegendDisplayableManager::vtkInternal::SetSliceCompositeNode(vt
   vtkSetAndObserveMRMLNodeMacro(this->SliceCompositeNode, compositeNode);
   this->External->SetUpdateFromMRMLRequested(true);
   this->External->RequestRender();
+}
+
+//------------------------------------------------------------------------------
+vtkLookupTable* vtkMRMLColorLegendDisplayableManager::vtkInternal::CreateLookupTableCopyWithoutEmptyColors( vtkMRMLColorNode* colorNode,
+  std::vector<bool>& validColorIndex)
+{
+  if (!colorNode)
+    {
+    return nullptr;
+    }
+
+  validColorIndex.resize(colorNode->GetNumberOfColors());
+
+  for (int i = 0; i < colorNode->GetNumberOfColors(); ++i)
+    {
+    const char* name = colorNode->GetColorName(i);
+    if (name && std::strcmp( name, colorNode->GetNoName()) != 0)
+      {
+      validColorIndex[i] = true;
+      }
+    }
+  int nofValidColors = std::accumulate( validColorIndex.begin(), validColorIndex.end(), 0);
+  if (nofValidColors == 0)
+    {
+    validColorIndex.clear();
+    return nullptr;
+    }
+  if (nofValidColors == colorNode->GetNumberOfColors())
+    {
+    return colorNode->CreateLookupTableCopy();
+    }
+
+  vtkLookupTable* newLUT = vtkLookupTable::New();
+  newLUT->Allocate(nofValidColors);
+  newLUT->SetNumberOfTableValues(nofValidColors);
+
+  for (int i = 0, j = 0; i < colorNode->GetNumberOfColors(); ++i)
+    {
+    double rgba[4] = {0.5, 0.5, 0.5, 1.0};
+    if (colorNode->GetColor( i, rgba) && validColorIndex[i])
+      {
+      newLUT->SetTableValue( j++, rgba);
+      }
+    }
+  newLUT->Build();
+  newLUT->BuildSpecialColors();
+
+  return newLUT;
 }
 
 //---------------------------------------------------------------------------
@@ -586,8 +673,6 @@ void vtkMRMLColorLegendDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* n
   if (node->IsA("vtkMRMLColorLegendDisplayNode"))
     {
     vtkUnObserveMRMLNodeMacro(node);
-
-    vtkMRMLColorLegendDisplayNode* dispNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(node);
 
     auto it = this->Internal->ColorLegendActorsMap.find(node->GetID());
     if (it != this->Internal->ColorLegendActorsMap.end())
