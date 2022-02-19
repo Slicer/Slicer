@@ -46,7 +46,6 @@ endif()
 
 if(Slicer_BUILD_LEGACY_CLI)
   set(legacy_cli_modules
-    ExpertAutomatedRegistration
     FiducialRegistration
     ResampleScalarVolume
     )
