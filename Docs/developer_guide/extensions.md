@@ -628,7 +628,7 @@ See the labs topic on [upgrading compiler infrastructure](https://www.slicer.org
 
 ### How do I publish a paper about my extension?
 
-Consider publishing a paper describing your extension. [This page](http://www.software.ac.uk/resources/guides/which-journals-should-i-publish-my-software) contains a list of journals that publish papers about software. [Citing 3D Slicer](../user_guide/about.html#how-to-cite) in all papers that use 3D Slicer is greatly appreciated.
+Consider publishing a paper describing your extension. [This page](http://www.software.ac.uk/resources/guides/which-journals-should-i-publish-my-software) contains a list of journals that publish papers about software. [Citing 3D Slicer](../user_guide/about.md#how-to-cite) in all papers that use 3D Slicer is greatly appreciated.
 
 ### How to force Slicer to download extensions corresponding to a different Slicer revision?
 
