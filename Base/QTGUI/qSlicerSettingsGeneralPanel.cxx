@@ -125,7 +125,8 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   QObject::connect(this->DefaultScenePathButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(setDefaultScenePath(QString)));
 
-  this->DocumentationBaseURLLineEdit->setText("https://slicer.readthedocs.io/{language}/{version}");
+  // Since currently there is only English language documentation on readthedocs, the default URL uses "en" language.
+  this->DocumentationBaseURLLineEdit->setText("https://slicer.readthedocs.io/en/{version}");
   this->ModuleDocumentationURLLineEdit->setText("{documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html");
 
   q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
