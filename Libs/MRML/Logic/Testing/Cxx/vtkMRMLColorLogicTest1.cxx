@@ -204,7 +204,8 @@ bool TestCopy()
   originalNode->NamesInitialisedOff();
   originalNode->SetNumberOfColors(6);
   originalNode->GetLookupTable()->SetTableRange(0, 5);
-  originalNode->SetColor(0, "background", 0.0, 0.0, 0.0, 0.0);
+  // Use NoName as color name to not list the "background" color in the color legend.
+  originalNode->SetColor(0, originalNode->GetNoName(), 0.0, 0.0, 0.0, 0.0);
   originalNode->SetColor(1, "one", 0.5, 1.0, 0.0, 0.1);
   originalNode->SetColor(2, "two", 0.5, 0.5, 0.0, 0.3);
   originalNode->SetColor(3, "three", 0.33, 0.0, 0.5, 0.5);

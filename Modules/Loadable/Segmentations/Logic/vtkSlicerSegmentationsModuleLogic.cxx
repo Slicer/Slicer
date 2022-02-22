@@ -1126,7 +1126,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     newColorTable->SetNumberOfColors(1);
     newColorTable->GetLookupTable()->SetRange(0, 0);
     newColorTable->GetLookupTable()->SetNumberOfTableValues(1);
-    newColorTable->SetColor(0, "Background", 0.0, 0.0, 0.0, 0.0);
+    // Use NoName as color name to not list the "background" color in the color legend.
+    newColorTable->SetColor(0, newColorTable->GetNoName(), 0.0, 0.0, 0.0, 0.0);
     labelmapNode->GetScene()->AddNode(newColorTable);
     labelmapNode->GetDisplayNode()->SetAndObserveColorNodeID(newColorTable->GetID());
     }
@@ -1165,7 +1166,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
   colorTableNode->SetNumberOfColors(numberOfColors);
   colorTableNode->GetLookupTable()->SetRange(0, numberOfColors - 1);
   colorTableNode->GetLookupTable()->SetNumberOfTableValues(numberOfColors);
-  colorTableNode->SetColor(0, "Background", 0.0, 0.0, 0.0, 0.0);
+  // Use NoName as color name to not list the "background" color in the color legend.
+  colorTableNode->SetColor(0, colorTableNode->GetNoName(), 0.0, 0.0, 0.0, 0.0);
 
   for (int i = colorFillStartIndex; i < colorTableNode->GetNumberOfColors(); ++i)
     {
