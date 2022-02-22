@@ -2155,7 +2155,8 @@ QString qSlicerCoreApplication::documentationBaseUrl() const
 {
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
-  QString url = appSettings->value("DocumentationBaseURL", "https://slicer.readthedocs.io/{language}/{version}").toString();
+  // Since currently there is only English language documentation on readthedocs, the default URL uses "en" language.
+  QString url = appSettings->value("DocumentationBaseURL", "https://slicer.readthedocs.io/en/{version}").toString();
   if (url.contains("{version}"))
     {
     url.replace("{version}", this->documentationVersion());
