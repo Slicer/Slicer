@@ -3087,12 +3087,23 @@ def logProcessOutput(proc):
   except ImportError:
     # Running from console
     guiApp = None
-  for line in proc.stdout:
-    if guiApp:
-      logging.info(line.rstrip())
-      guiApp.processEvents()  # give a chance the application to refresh GUI
-    else:
-      print(line.rstrip())
+
+  while True:
+    try:
+      line = proc.stdout.readline()
+      if not line:
+        break
+      if guiApp:
+        logging.info(line.rstrip())
+        guiApp.processEvents()  # give a chance the application to refresh GUI
+      else:
+        print(line.rstrip())
+    except UnicodeDecodeError as e:
+      # Code page conversion happens because `universal_newlines=True` sets process output to text mode,
+      # and it fails because probably system locale is not UTF8. We just ignore the error and discard the string,
+      # as we only guarantee correct behavior if an UTF8 locale is used.
+      pass
+
   proc.wait()
   retcode=proc.returncode
   if retcode != 0:

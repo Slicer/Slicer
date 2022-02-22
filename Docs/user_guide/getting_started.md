@@ -83,6 +83,8 @@ brew uninstall slicer-preview       # to uninstall
 
 **Note:** Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
 
+Getting command-line arguments and process output containing non-ASCII characters requires the system to use a UTF-8 locale. If the system uses a different locale then the `export LANG="C.UTF-8"` command may be used before launching the application to switch to an acceptable locale.
+
 #### Debian / Ubuntu
 The following may be needed on fresh debian or ubuntu:
 
