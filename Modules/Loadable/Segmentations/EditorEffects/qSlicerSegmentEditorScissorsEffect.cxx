@@ -1312,7 +1312,8 @@ void qSlicerSegmentEditorScissorsEffect::updateGUIFromMRML()
 
   bool wasBlocked = d->shapeDrawCenteredCheckBox->blockSignals(true);
   d->shapeDrawCenteredCheckBox->setCheckState(this->integerParameter("ShapeDrawCentered") ? Qt::Checked : Qt::Unchecked );
-  d->shapeDrawCenteredCheckBox->setEnabled(shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle);
+  d->shapeDrawCenteredCheckBox->setEnabled(shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle ||
+                                            shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
   d->shapeDrawCenteredCheckBox->blockSignals(wasBlocked);
 
   int sliceCutModeIndex = d->ConvertSliceCutModeFromString(QString(this->parameter("SliceCutMode")));
