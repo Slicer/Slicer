@@ -47,11 +47,17 @@ Slicer exits when the commands are completed because `--testing` options is spec
 
 ### Run a Python script file in the Slicer environment
 
-Run a Python script (stored in script file), without showing any graphical user interface:
+Run a Python script on Windows (stored in script file), without showing any graphical user interface:
 
-```console
-Slicer.exe --python-script "/full/path/to/myscript.py" --no-splash --no-main-window
-```
+ ```console
+ Slicer.exe --python-script "/full/path/to/myscript.py" --no-splash --no-main-window
+ ```
+
+ Run a Python script on MacOS (stored in script file), without showing any graphical user interface:
+
+ ```console
+ /Applications/Slicer.app/Contents/MacOS/Slicer --no-splash --no-main-window --python-script "/full/path/to/myscript.py" 
+ ```
 
 To make Slicer exit when the script execution is completed, call `sys.exit(errorCode)` (where `errorCode` is set 0 for success and other value to indicate error).
 
