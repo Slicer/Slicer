@@ -370,40 +370,35 @@ slicer.modules.markups.logic().JumpSlicesToLocation(mean_Ras[0], mean_Ras[1], me
 ### Get histogram of a segmented region
 
 ```python
-# Generate input data
+# Generate example input data (volumeNode, segmentationNode, segmentId)
 ################################################
 
 # Load master volume
 import SampleData
 sampleDataLogic = SampleData.SampleDataLogic()
-masterVolumeNode = sampleDataLogic.downloadMRBrainTumor1()
+volumeNode = sampleDataLogic.downloadMRBrainTumor1()
 
 # Create segmentation
 segmentationNode = slicer.vtkMRMLSegmentationNode()
 slicer.mrmlScene.AddNode(segmentationNode)
 segmentationNode.CreateDefaultDisplayNodes() # only needed for display
-segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(masterVolumeNode)
+segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(volumeNode)
 
 # Create segment
 tumorSeed = vtk.vtkSphereSource()
 tumorSeed.SetCenter(-6, 30, 28)
 tumorSeed.SetRadius(25)
 tumorSeed.Update()
-segmentationNode.AddSegmentFromClosedSurfaceRepresentation(tumorSeed.GetOutput(), "Segment A", [1.0,0.0,0.0])
+segmentId = segmentationNode.AddSegmentFromClosedSurfaceRepresentation(tumorSeed.GetOutput(), "Segment A", [1.0,0.0,0.0])
 
 # Compute histogram
 ################################################
 
-labelValue = 1  # label value of first segment
-
-# Get segmentation as labelmap volume node
-labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
-slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(segmentationNode, labelmapVolumeNode, masterVolumeNode)
-
-# Extract all voxels of the segment as numpy array
-volumeArray = slicer.util.arrayFromVolume(masterVolumeNode)
-labelArray = slicer.util.arrayFromVolume(labelmapVolumeNode)
-segmentVoxels = volumeArray[labelArray==labelValue]
+# Get voxel values of volume in the segmented region
+import numpy as np
+volumeArray = slicer.util.arrayFromVolume(volumeNode)
+segmentArray = slicer.util.arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, volumeNode)
+segmentVoxels = volumeArray[segmentArray != 0]
 
 # Compute histogram
 import numpy as np
