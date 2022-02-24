@@ -99,7 +99,7 @@ Install the dependencies:
 
 The included libcrypto.so.1.1 in the Slicer installation is incompatible with the system libraries used by Fedora 35. The fix, until it is updated, is to move/remove the included libcrypto files:
 
-    $SLICER_ROOT/lib/Slicer-4.11/libcrypto.*
+    $SLICER_ROOT/lib/Slicer-4.xx/libcrypto.*
 
 ## Using Slicer
 
