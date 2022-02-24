@@ -23,18 +23,7 @@ endif()
 if((NOT DEFINED LibArchive_INCLUDE_DIR
    OR NOT DEFINED LibArchive_LIBRARY) AND NOT Slicer_USE_SYSTEM_${proj})
 
-  #
-  # NOTE: - a stable, recent release (3.3.2) of LibArchive is now checked out from git
-  #         for all platforms.  For notes on cross-platform issues with earlier versions
-  #         of LibArchive, see the repository for earlier revisions of this file.
-
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
-
-  # CMake arguments specific to LibArchive >= 2.8.4
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-    -DBUILD_TESTING:BOOL=OFF
-    -DENABLE_OPENSSL:BOOL=OFF
-    )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
@@ -75,6 +64,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DBUILD_SHARED_LIBS:BOOL=ON
+      -DBUILD_TESTING:BOOL=OFF
       -DENABLE_ACL:BOOL=OFF
       -DENABLE_BZip2:BOOL=OFF
       -DENABLE_CAT:BOOL=OFF
