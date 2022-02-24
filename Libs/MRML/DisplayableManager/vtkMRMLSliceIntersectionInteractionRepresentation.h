@@ -93,6 +93,9 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
     void SetMRMLApplicationLogic(vtkMRMLApplicationLogic*);
     vtkGetObjectMacro(MRMLApplicationLogic, vtkMRMLApplicationLogic);
 
+    /// Compute slice intersection point between red, green and yellow slice nodes
+    void ComputeSliceIntersectionPoint();
+
     /// Get slice intersection point between red, green and yellow slice nodes
     double* GetSliceIntersectionPoint();
 
@@ -165,6 +168,9 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
 
     /// Slice intersection point in XY
     double SliceIntersectionPoint[4];
+
+    /// Indicate whether a valid slice intersection point was found or not
+    bool SliceIntersectionPointFound;
 
     /// Handle size, specified in renderer world coordinate system.
     /// For slice views, renderer world coordinate system is the display coordinate system, so it is measured in pixels.

@@ -898,6 +898,8 @@ vtkMRMLSliceIntersectionInteractionRepresentation::vtkMRMLSliceIntersectionInter
   this->SliceIntersectionPoint[2] = 0.0;
   this->SliceIntersectionPoint[3] = 1.0; // to allow easy homogeneous transformations
 
+  this->SliceIntersectionPointFound = false; // indicate whether a valid slice intersection point was found or not
+
   // Set interaction size. Determines the maximum distance for interaction.
   this->InteractionSize = INTERACTION_SIZE_PIXELS;
 
@@ -1089,7 +1091,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   vtkMatrix4x4::Invert(xyToRAS, rasToXY);
 
   // Get slice intersection point XY
-  this->GetSliceIntersectionPoint();
+  this->ComputeSliceIntersectionPoint();
   double sliceIntersectionPoint[4] = { this->SliceIntersectionPoint[0], this->SliceIntersectionPoint[1], this->SliceIntersectionPoint[2], 1 };
 
   // Get outer intersection line tips
@@ -1123,6 +1125,18 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   sliceViewBounds[2] = sliceViewBounds[2] + (sliceViewBounds[3] - sliceViewBounds[2]) * FOV_HANDLES_MARGIN;
   sliceViewBounds[3] = sliceViewBounds[3] - (sliceViewBounds[3] - sliceViewBounds[2]) * FOV_HANDLES_MARGIN;
 
+  // Define slice intersection point if not visible
+  if (this->SliceIntersectionPointFound == false)
+    {
+    // Mid-point of intersection line
+    sliceIntersectionPoint[0] = (intersectionLineTip1[0] + intersectionLineTip2[0]) / 2.0;
+    sliceIntersectionPoint[1] = (intersectionLineTip1[1] + intersectionLineTip2[1]) / 2.0;
+    sliceIntersectionPoint[2] = (intersectionLineTip1[2] + intersectionLineTip2[2]) / 2.0;
+    this->SliceIntersectionPoint[0] = sliceIntersectionPoint[0];
+    this->SliceIntersectionPoint[1] = sliceIntersectionPoint[1];
+    this->SliceIntersectionPoint[2] = sliceIntersectionPoint[2];
+    }
+
   // Get outer intersection line tips adjusted to FOV margins
   double intersectionOuterLineTip1[3] = { intersectionLineTip1[0], intersectionLineTip1[1], intersectionLineTip1[2] };
   double intersectionOuterLineTip2[3] = { intersectionLineTip2[0], intersectionLineTip2[1], intersectionLineTip2[2] };
@@ -1152,53 +1166,90 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   // Get inner intersection line tips
   double intersectionInnerLineTip1[3] = { 0.0, 0.0, 0.0 };
   double intersectionInnerLineTip2[3] = { 0.0, 0.0, 0.0 };
-  if (pipeline->SliceIntersectionMode == vtkMRMLSliceDisplayNode::FullLines)
+  if (this->SliceIntersectionPointFound == false)
     {
-    intersectionInnerLineTip1[0] = sliceIntersectionPoint[0];
-    intersectionInnerLineTip1[1] = sliceIntersectionPoint[1];
-    intersectionInnerLineTip2[0] = sliceIntersectionPoint[0];
-    intersectionInnerLineTip2[1] = sliceIntersectionPoint[1];
-    }
-  else if (pipeline->SliceIntersectionMode == vtkMRMLSliceDisplayNode::SkipLineCrossings)
-    {
-    double intersectionPointToOuterLineTip1[3] = { intersectionOuterLineTip1[0] - sliceIntersectionPoint[0],
-                                                   intersectionOuterLineTip1[1] - sliceIntersectionPoint[1], 0.0 };
-    double intersectionPointToOuterLineTip2[3] = { intersectionOuterLineTip2[0] - sliceIntersectionPoint[0],
-                                                   intersectionOuterLineTip2[1] - sliceIntersectionPoint[1], 0.0 };
-    double intersectionPointToOuterLineTip1Distance = vtkMath::Norm(intersectionPointToOuterLineTip1);
-    double intersectionPointToOuterLineTip2Distance = vtkMath::Norm(intersectionPointToOuterLineTip2);
-    vtkMath::Normalize(intersectionPointToOuterLineTip1);
-    vtkMath::Normalize(intersectionPointToOuterLineTip2);
-    double gapSize = sliceViewWidth * HIDE_INTERSECTION_GAP_SIZE; // gap size computed according to slice view size
-    if (intersectionPointToOuterLineTip1Distance > gapSize) // line segment visible
-      {
-      intersectionInnerLineTip1[0] = sliceIntersectionPoint[0] + intersectionPointToOuterLineTip1[0] * gapSize;
-      intersectionInnerLineTip1[1] = sliceIntersectionPoint[1] + intersectionPointToOuterLineTip1[1] * gapSize;
-      }
-    else // line segment not visible
-      {
-      intersectionInnerLineTip1[0] = intersectionOuterLineTip1[0];
-      intersectionInnerLineTip1[1] = intersectionOuterLineTip1[1];
-      }
-    if (intersectionPointToOuterLineTip2Distance > gapSize) // line segment visible
-      {
-      intersectionInnerLineTip2[0] = sliceIntersectionPoint[0] + intersectionPointToOuterLineTip2[0] * gapSize;
-      intersectionInnerLineTip2[1] = sliceIntersectionPoint[1] + intersectionPointToOuterLineTip2[1] * gapSize;
-      }
-    else // line segment not visible
-      {
-      intersectionInnerLineTip2[0] = intersectionOuterLineTip2[0];
-      intersectionInnerLineTip2[1] = intersectionOuterLineTip2[1];
-      }
+    //If no slice intersections, define inner line tips in segment center and avoid gap in line
+    intersectionInnerLineTip1[0] = (intersectionOuterLineTip1[0] + intersectionOuterLineTip2[0]) / 2.0;
+    intersectionInnerLineTip1[1] = (intersectionOuterLineTip1[1] + intersectionOuterLineTip2[1]) / 2.0;
+    intersectionInnerLineTip2[0] = (intersectionOuterLineTip1[0] + intersectionOuterLineTip2[0]) / 2.0;
+    intersectionInnerLineTip2[1] = (intersectionOuterLineTip1[1] + intersectionOuterLineTip2[1]) / 2.0;
     }
   else
     {
-    vtkWarningMacro("vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionDisplay failed: unknown visualization mode.");
-    if (pipeline->NeedToRender)
+    //If slice intersections, use slice intersection point to define inner and outer line tips
+    if (pipeline->SliceIntersectionMode == vtkMRMLSliceDisplayNode::FullLines)
       {
-      this->NeedToRenderOn();
+      intersectionInnerLineTip1[0] = sliceIntersectionPoint[0];
+      intersectionInnerLineTip1[1] = sliceIntersectionPoint[1];
+      intersectionInnerLineTip2[0] = sliceIntersectionPoint[0];
+      intersectionInnerLineTip2[1] = sliceIntersectionPoint[1];
       }
-    return;
+    else if (pipeline->SliceIntersectionMode == vtkMRMLSliceDisplayNode::SkipLineCrossings)
+      {
+      double intersectionPointToOuterLineTip1[3] = { intersectionOuterLineTip1[0] - sliceIntersectionPoint[0],
+                                                     intersectionOuterLineTip1[1] - sliceIntersectionPoint[1], 0.0 };
+      double intersectionPointToOuterLineTip2[3] = { intersectionOuterLineTip2[0] - sliceIntersectionPoint[0],
+                                                     intersectionOuterLineTip2[1] - sliceIntersectionPoint[1], 0.0 };
+      double intersectionPointToOuterLineTip1Distance = vtkMath::Norm(intersectionPointToOuterLineTip1);
+      double intersectionPointToOuterLineTip2Distance = vtkMath::Norm(intersectionPointToOuterLineTip2);
+      vtkMath::Normalize(intersectionPointToOuterLineTip1);
+      vtkMath::Normalize(intersectionPointToOuterLineTip2);
+
+      // Compute angle between intersection line segments
+      double dotProduct = vtkMath::Dot(intersectionPointToOuterLineTip1, intersectionPointToOuterLineTip2);
+      double cosineValue = dotProduct / (vtkMath::Norm(intersectionPointToOuterLineTip1) * vtkMath::Norm(intersectionPointToOuterLineTip2));
+      if (cosineValue > 1.0)
+        {
+        cosineValue = 1.0;
+        }
+      if (cosineValue < -1.0)
+      {
+        cosineValue = -1.0;
+      }
+      double angleDeg = acos(cosineValue) * (180.0 / M_PI);
+      if (angleDeg < 90.0) // Avoid parallel line segments oriented in the same direction
+        {
+        // Define inner line tips in segment center
+        intersectionInnerLineTip1[0] = (intersectionOuterLineTip1[0] + intersectionOuterLineTip2[0]) / 2.0;
+        intersectionInnerLineTip1[1] = (intersectionOuterLineTip1[1] + intersectionOuterLineTip2[1]) / 2.0;
+        intersectionInnerLineTip2[0] = (intersectionOuterLineTip1[0] + intersectionOuterLineTip2[0]) / 2.0;
+        intersectionInnerLineTip2[1] = (intersectionOuterLineTip1[1] + intersectionOuterLineTip2[1]) / 2.0;
+        }
+      else
+        {
+        // Remove line segments shorter than gap size
+        double gapSize = sliceViewWidth * HIDE_INTERSECTION_GAP_SIZE; // gap size computed according to slice view size
+        if (intersectionPointToOuterLineTip1Distance > gapSize) // line segment visible
+          {
+          intersectionInnerLineTip1[0] = sliceIntersectionPoint[0] + intersectionPointToOuterLineTip1[0] * gapSize;
+          intersectionInnerLineTip1[1] = sliceIntersectionPoint[1] + intersectionPointToOuterLineTip1[1] * gapSize;
+          }
+        else // line segment not visible
+          {
+          intersectionInnerLineTip1[0] = intersectionOuterLineTip1[0];
+          intersectionInnerLineTip1[1] = intersectionOuterLineTip1[1];
+          }
+        if (intersectionPointToOuterLineTip2Distance > gapSize) // line segment visible
+          {
+          intersectionInnerLineTip2[0] = sliceIntersectionPoint[0] + intersectionPointToOuterLineTip2[0] * gapSize;
+          intersectionInnerLineTip2[1] = sliceIntersectionPoint[1] + intersectionPointToOuterLineTip2[1] * gapSize;
+          }
+        else // line segment not visible
+          {
+          intersectionInnerLineTip2[0] = intersectionOuterLineTip2[0];
+          intersectionInnerLineTip2[1] = intersectionOuterLineTip2[1];
+          }
+        }
+      }
+    else
+      {
+      vtkWarningMacro("vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionDisplay failed: unknown visualization mode.");
+      if (pipeline->NeedToRender)
+        {
+        this->NeedToRenderOn();
+        }
+      return;
+      }
     }
 
   // Define intersection lines
@@ -1609,17 +1660,19 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::RemoveAllIntersectingSli
 }
 
 //----------------------------------------------------------------------
-double* vtkMRMLSliceIntersectionInteractionRepresentation::GetSliceIntersectionPoint()
+void vtkMRMLSliceIntersectionInteractionRepresentation::ComputeSliceIntersectionPoint()
 {
   this->SliceIntersectionPoint[0] = 0.0;
   this->SliceIntersectionPoint[1] = 0.0;
   this->SliceIntersectionPoint[2] = 0.0;
 
+  this->SliceIntersectionPointFound = false;
+
   size_t numberOfIntersections = this->Internal->SliceIntersectionInteractionDisplayPipelines.size();
   int numberOfFoundIntersectionPoints = 0;
   if (!this->Internal->SliceNode)
     {
-    return this->SliceIntersectionPoint;
+    return;
     }
 
   // XY to RAS
@@ -1696,18 +1749,24 @@ double* vtkMRMLSliceIntersectionInteractionRepresentation::GetSliceIntersectionP
     }
   if (numberOfFoundIntersectionPoints > 0)
     {
+    this->SliceIntersectionPointFound = true;
     this->SliceIntersectionPoint[0] /= numberOfFoundIntersectionPoints;
     this->SliceIntersectionPoint[1] /= numberOfFoundIntersectionPoints;
     this->SliceIntersectionPoint[2] /= numberOfFoundIntersectionPoints;
     }
   else
     {
+    this->SliceIntersectionPointFound = false;
     // No slice intersections, use slice centerpoint
     int* sliceDimension = this->Internal->SliceNode->GetDimensions();
     this->SliceIntersectionPoint[0] = sliceDimension[0] / 2.0;
     this->SliceIntersectionPoint[1] = sliceDimension[1] / 2.0;
     this->SliceIntersectionPoint[2] = 0.0;
     }
+}
+//----------------------------------------------------------------------
+double* vtkMRMLSliceIntersectionInteractionRepresentation::GetSliceIntersectionPoint()
+{
   return this->SliceIntersectionPoint;
 }
 
