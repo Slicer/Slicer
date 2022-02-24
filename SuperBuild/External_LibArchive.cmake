@@ -48,6 +48,16 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     QUIET
     )
 
+  # When updating the version of LibArchive, consider also
+  # updating the soversion number hard-coded below in the
+  # "fix_rpath" macOS external project step.
+  #
+  # To find out if the soversion number should be updated,
+  # review the logic computing INTERFACE_VERSION in the
+  # top-level LibArchive CMakeLists.txt and/or inspect the
+  # prefix associated with the library generated in the build
+  # tree.
+
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
