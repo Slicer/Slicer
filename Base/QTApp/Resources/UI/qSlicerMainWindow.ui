@@ -496,17 +496,6 @@
     <string>Ctrl+Y</string>
    </property>
   </action>
-  <action name="EditNewFiducialListAction">
-   <property name="text">
-    <string>New Fiducial List</string>
-   </property>
-   <property name="toolTip">
-    <string>Create a new list of fiducial points.</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+L</string>
-   </property>
-  </action>
   <action name="ViewExtensionsManagerAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
