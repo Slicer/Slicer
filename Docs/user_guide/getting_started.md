@@ -89,10 +89,6 @@ The following may be needed on fresh debian or ubuntu:
     sudo apt-get install libpulse-dev libnss3 libglu1-mesa
     sudo apt-get install --reinstall libxcb-xinerama0
 
-To run Slicer-4.11-2020-09-30 on older debian (e.g. debian 9) you may also need:
-
-    sudo apt-get install libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-randr0 libxcb-render-util0 libxcb-xkb-dev libxkbcommon-x11-dev
-
 #### ArchLinux
 ArchLinux runs the `strip` utility by default; this needs to be disabled in order to run Slicer binaries.  For more information see [this thread on the Slicer Forum](https://discourse.slicer.org/t/could-not-load-dicom-data/14211/5).
 
@@ -101,7 +97,7 @@ Install the dependencies:
 
     sudo dnf install mesa-libGLU libnsl
 
-The included libcrypto.so.1.1 in Slicer-4.11 is incompatible with the system libraries used by Fedora. The fix, until it is updated, is to move/remove the included libcrypto files:
+The included libcrypto.so.1.1 in the Slicer installation is incompatible with the system libraries used by Fedora 35. The fix, until it is updated, is to move/remove the included libcrypto files:
 
     $SLICER_ROOT/lib/Slicer-4.11/libcrypto.*
 
