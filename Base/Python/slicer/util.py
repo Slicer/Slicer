@@ -1842,7 +1842,7 @@ def arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, referenceVolumeN
 
 def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, referenceVolumeNode=None):
   """Sets binary labelmap representation of a segment from a numpy array.
-
+  :param narray: voxel array, containing 0 outside the segment, 1 inside the segment.
   :param segmentationNode: segmentation node that will be updated.
   :param segmentId: ID of the segment that will be updated.
     Can be determined from segment name by calling ``segmentationNode.GetSegmentation().GetSegmentIdBySegmentName(segmentName)``.
@@ -1867,7 +1867,15 @@ def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, re
   # Update segment in segmentation
   labelmapVolumeNode = slicer.modules.volumes.logic().CreateAndAddLabelVolume(referenceVolumeNode, "__temp__")
   try:
-    updateVolumeFromArray(labelmapVolumeNode, narray)
+    if narray.min() >= 0 and narray.max() <= 1:
+      # input array seems to be valid, use it as is (faster)
+      updateVolumeFromArray(labelmapVolumeNode, narray)
+    else:
+      # need to normalize the data because the label value must be 1
+      import numpy as np
+      narrayNormalized = np.zeros(narray.shape, np.uint8)
+      narrayNormalized[narray > 0] = 1
+      updateVolumeFromArray(labelmapVolumeNode, narrayNormalized)
     segmentIds = vtk.vtkStringArray()
     segmentIds.InsertNextValue(segmentId)
     if not slicer.modules.segmentations.logic().ImportLabelmapToSegmentationNode(labelmapVolumeNode, segmentationNode, segmentIds):
