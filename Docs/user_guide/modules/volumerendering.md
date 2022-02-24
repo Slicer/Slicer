@@ -69,7 +69,7 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
   - Rendering: Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.
     - VTK CPU Ray Casting: Available on all computers, regardless of capabilities of graphics hardware. The volume rendering is entirely realized on the CPU, therefore it is slower than other options.
     - VTK GPU Ray Casting (default): Uses graphics hardware for rendering, typically much faster than CPU volume rendering. This is the recommended method for computers that have sufficiant graphics capabilities. It supports surface smoothing to remove staircase artifacts.
-    - VTK Multi-Volume: Uses graphics hardware for rendering. Can render multiple overlapping volumes. Currently does not support cropping.
+    - VTK Multi-Volume: Uses graphics hardware for rendering. Can render multiple overlapping volumes but it has several limitations (see details in [limitations](#limitations) section at the bottom of this page.
 - Advanced: More controls to control the volume rendering. Contains 3 tabs: "Techniques", "Volume Properties" and "ROI"
   - Techniques: Advanced properties of the current volume rendering method.
     - Quality:
@@ -111,9 +111,11 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
 
 ## Limitations
 
-- To render multiple overlapping volumes, select "VTK Multi-Volume" rendering in "Display" section. Currently, no cropping can be applied in this mode.
+- To render multiple overlapping volumes, select "VTK Multi-Volume" rendering in "Display" section. This renderer is still experimental and has limitations such as:
+  - Cropping is not supported (cropping ROI is ignored)
+  - RGB volume rendering is not supported (volume does not appear)
 - To reduce staircase artifacts during rendering, choose enable "Surface smoothing" in Advanced/Techniques/Advanced rendering properties section, or choose "Normal" or "Maximum" as quality.
-- The volume must not be under a warping (affine or non-linear) transformation. The transform must be hardened on the volume to take effect.
+- The volume must not be under a warping (affine or non-linear) transformation. To render a warped volume, the transform must be hardened on the volume.
 
 ## Contributors
 
