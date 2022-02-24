@@ -220,6 +220,23 @@ model.GetDisplayNode().SetSliceIntersectionThickness(3)
 model.GetDisplayNode().SetColor(1,1,0)
 ```
 
+### Fit markups ROI to volume
+
+This code snippet creates a new markups ROI and fits it to a volume node.
+
+```python
+volumeNode = getNode('MRHead')
+
+# Create a new ROI that will be fit to volumeNode
+roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode")
+
+cropVolumeParameters = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLCropVolumeParametersNode")
+cropVolumeParameters.SetInputVolumeNodeID(volumeNode.GetID())
+cropVolumeParameters.SetROINodeID(roiNode.GetID())
+slicer.modules.cropvolume.logic().FitROIToInputVolume(cropVolumeParameters)
+slicer.mrmlScene.RemoveNode(cropVolumeParameters)
+```
+
 ### Fit markups plane to model
 
 This code snippet fits a plane a model node named `InputModel` and creates a new markups plane node to display this best fit plane.
