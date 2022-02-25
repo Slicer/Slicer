@@ -409,7 +409,7 @@ qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWi
   this->DirectoryPathLineEdit->setLabel("Output folder");
   this->DirectoryPathLineEdit->setFilters(ctkPathLineEdit::Dirs);
   this->DirectoryPathLineEdit->setMinimumSize(this->DirectoryPathLineEdit->sizeHint());
-  this->DirectoryPathLineEdit->setFocusPolicy(Qt::TabFocus); // (ctkPathLineEdit has a default focus policy of NoFocus)
+  this->DirectoryPathLineEdit->setFocusPolicy(Qt::StrongFocus); // (ctkPathLineEdit has a default focus policy of NoFocus)
 
   // Find the row of the QFormLayout after which NodeTypeWidgetSets should start getting populated
   int exportFormatsLabelRow;
