@@ -43,80 +43,6 @@
 
 
 //-----------------------------------------------------------------------------
-static QString forceFileNameExtension(const QString& fileName, const QString& extension, vtkMRMLNode* node)
-{
-  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-  QString strippedFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(fileName);
-  strippedFileName = coreIOManager->stripKnownExtension(strippedFileName, node) + extension;
-  return strippedFileName;
-}
-
-//-----------------------------------------------------------------------------
-static QString defaultFilename(vtkMRMLNode* node, QString extension)
-{
-  const QString unsafeNodeName(node->GetName() ? node->GetName() : "");
-  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-  if (!coreIOManager)
-    {
-    qCritical() << Q_FUNC_INFO << "failed: Core IO manager not found.";
-    return QString();
-    }
-  const QString safeNodeName = qSlicerCoreIOManager::forceFileNameValidCharacters(unsafeNodeName);
-  return forceFileNameExtension(safeNodeName, extension, node);
-}
-
-//-----------------------------------------------------------------------------
-// Return whether list a has any elements that list b doesn't have.
-template <typename T>
-static bool setDifferenceIsNonempty(const QList<T>& a, const QList<T>& b)
-{
-  for (const T & item : a)
-    {
-    if (!b.contains(item))
-      {
-      return true;
-      }
-    }
-  return false;
-}
-
-//-----------------------------------------------------------------------------
-// Return whether all widgets that are part of the given layout are invisible
-// Visibility is considered relative to the given widget relativeTo
-static bool layoutWidgetsAllInvisible(const QLayout* layout, const QWidget* relativeTo)
-{
-  for (int i = 0; i < layout->count(); ++i)
-    {
-    QWidget* widget = layout->itemAt(i)->widget();
-    if (widget && widget->isVisibleTo(relativeTo))
-      {
-      return false;
-      }
-    }
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-// Set up the given ctkPathLineEdit to make it easier to use in a tabbing order.
-// ctkPathLineEdit has a default focus policy of NoFocus. It will usable for tab ordering
-// if it has TabFocus and sets one of its member widgets as the focus proxy.
-// Really this should probably be a fix in the implementation of ctkPathLineEdit, but this is fine for now.
-static void fixCtkPathLineEditTabbing(ctkPathLineEdit* w)
-{
-  // Unfortunately, ctkPathLineEdit does not give direct access to its underlying widgets,
-  // so we have to do this fiddly thing with QObject::findChildren.
-  auto lineEdits = w->findChildren<QLineEdit*>();
-  if (lineEdits.size()!=1)
-    { // This might happen if ctkPathLineWidget ever changes its internals.
-    qWarning() << "Export dialog warning: unable to set up ctkPathLineEdit keyboard focus rules. Tabbing might be weird.";
-    return;
-    }
-
-  w->setFocusPolicy(Qt::TabFocus);
-  w->setFocusProxy(lineEdits[0]);
-}
-
-//-----------------------------------------------------------------------------
 NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* storableNode, vtkMRMLScene* scene)
   : prototypeNode{storableNode}
 {
@@ -413,31 +339,84 @@ void NodeTypeWidgetSet::setFrameStyle(NodeTypeWidgetSet::FrameStyle frameStyle)
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerExportNodeDialogPrivate::forceFileNameExtension(const QString& fileName, const QString& extension, vtkMRMLNode* node)
+{
+  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+  QString strippedFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(fileName);
+  strippedFileName = coreIOManager->stripKnownExtension(strippedFileName, node) + extension;
+  return strippedFileName;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerExportNodeDialogPrivate::defaultFilename(vtkMRMLNode* node, QString extension)
+{
+  const QString unsafeNodeName(node->GetName() ? node->GetName() : "");
+  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+  if (!coreIOManager)
+    {
+    qCritical() << Q_FUNC_INFO << "failed: Core IO manager not found.";
+    return QString();
+    }
+  const QString safeNodeName = qSlicerCoreIOManager::forceFileNameValidCharacters(unsafeNodeName);
+  return forceFileNameExtension(safeNodeName, extension, node);
+}
+
+//-----------------------------------------------------------------------------
+template <typename T>
+bool qSlicerExportNodeDialogPrivate::setDifferenceIsNonempty(const QList<T>& a, const QList<T>& b)
+{
+  for (const T & item : a)
+    {
+    if (!b.contains(item))
+      {
+      return true;
+      }
+    }
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerExportNodeDialogPrivate::layoutWidgetsAllInvisible(const QLayout* layout, const QWidget* relativeTo)
+{
+  for (int i = 0; i < layout->count(); ++i)
+    {
+    QWidget* widget = layout->itemAt(i)->widget();
+    if (widget && widget->isVisibleTo(relativeTo))
+      {
+      return false;
+      }
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWidget)
   : QDialog(parentWidget),
-    lastUsedHardenTransform{false},
-    lastUsedRecursiveChildren{true},
-    lastUsedIncludeChildren{true},
-    protectFilenameLineEdit{false}
+    LastUsedHardenTransform{false},
+    LastUsedPreserveHierarchy{true},
+    LastUsedRecursiveChildren{true},
+    LastUsedIncludeChildren{true},
+    ProtectFilenameLineEdit{false}
 {
   this->setupUi(this);
 
   connect(this->FilenameLineEdit, SIGNAL(editingFinished()), this, SLOT(onFilenameEditingFinished()));
   connect(this->RecursiveChildrenCheckBox, &QCheckBox::stateChanged, this, &qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged);
   connect(this->IncludeChildrenCheckBox, &QCheckBox::stateChanged, this, &qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged);
+  connect(this->IncludeChildrenCheckBox, &QCheckBox::stateChanged, this, &qSlicerExportNodeDialogPrivate::onIncludeChildrenCheckBoxStateChanged);
 
   // Set up DirectoryPathLineEdit widget to be a directory selector
   this->DirectoryPathLineEdit->setLabel("Output folder");
   this->DirectoryPathLineEdit->setFilters(ctkPathLineEdit::Dirs);
   this->DirectoryPathLineEdit->setMinimumSize(this->DirectoryPathLineEdit->sizeHint());
-  fixCtkPathLineEditTabbing(this->DirectoryPathLineEdit);
+  this->DirectoryPathLineEdit->setFocusPolicy(Qt::StrongFocus); // (ctkPathLineEdit has a default focus policy of NoFocus)
 
   // Find the row of the QFormLayout after which NodeTypeWidgetSets should start getting populated
   int exportFormatsLabelRow;
   this->formLayout->getWidgetPosition(this->ExportFormatsLabel, &exportFormatsLabelRow, nullptr); // (returns to second parameter)
   if (exportFormatsLabelRow >= 0)
     {
-    this->nodeTypeWidgetSetStartRow = exportFormatsLabelRow+1;
+    this->NodeTypeWidgetSetStartRow = exportFormatsLabelRow+1;
     }
   else
     {
@@ -454,40 +433,42 @@ const QList<vtkMRMLStorableNode*> & qSlicerExportNodeDialogPrivate::nodeList() c
 {
   if (!this->IncludeChildrenCheckBox->isChecked())
     {
-    return this->nodesSelectedOnly;
+    return this->NodesSelectedOnly;
     }
   else
     {
-    return this->RecursiveChildrenCheckBox->isChecked() ? this->nodesRecursive : this->nodesNonrecursive;
+    return this->RecursiveChildrenCheckBox->isChecked() ? this->NodesRecursive : this->NodesNonrecursive;
     }
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerExportNodeDialogPrivate::setup(
   vtkMRMLScene* scene,
-  const QList<vtkMRMLStorableNode*> & nodesNonrecursive,
-  const QList<vtkMRMLStorableNode*> & nodesRecursive,
-  vtkMRMLStorableNode* selectedNode /*=nullptr*/
+  const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
+  const QList<vtkMRMLStorableNode*>& nodesRecursive,
+  vtkMRMLStorableNode* selectedNode,
+  const QHash<QString,QVariant>& nodeIdToSubjectHierarchyPath
 )
 {
   this->MRMLScene = scene;
-  this->nodesRecursive = nodesRecursive;
-  this->nodesNonrecursive = nodesNonrecursive;
-  this->nodesSelectedOnly.clear();
+  this->NodesRecursive = nodesRecursive;
+  this->NodesNonrecursive = nodesNonrecursive;
+  this->NodeIdToSubjectHierarchyPath = nodeIdToSubjectHierarchyPath;
+  this->NodesSelectedOnly.clear();
   if (selectedNode)
     {
-    this->nodesSelectedOnly.push_back(selectedNode);
+    this->NodesSelectedOnly.push_back(selectedNode);
     }
 
   // Initialize children inclusion checkbox visibility and state
   this->IncludeChildrenCheckBox->blockSignals(true); // don't trigger onNodeInclusionCheckboxStateChanged
-  if (this->nodesSelectedOnly.empty())
+  if (this->NodesSelectedOnly.empty())
     {
     // There would be nothing to export if didn't include children, so force checked and hide
     this->IncludeChildrenCheckBox->setChecked(true);
     this->IncludeChildrenCheckBox->hide();
     }
-  else if (this->nodesRecursive.size()==1)
+  else if (this->NodesRecursive.size()==1)
     {
     // There are no children so it makes no difference-- force unchecked and hide
     this->IncludeChildrenCheckBox->setChecked(false);
@@ -496,7 +477,7 @@ bool qSlicerExportNodeDialogPrivate::setup(
   else
     {
     // There are children to include and it makes a difference whether we include them-- show checkbox
-    this->IncludeChildrenCheckBox->setChecked(this->lastUsedIncludeChildren);
+    this->IncludeChildrenCheckBox->setChecked(this->LastUsedIncludeChildren);
     this->IncludeChildrenCheckBox->show();
     }
   this->IncludeChildrenCheckBox->blockSignals(false);
@@ -505,7 +486,7 @@ bool qSlicerExportNodeDialogPrivate::setup(
   this->RecursiveChildrenCheckBox->blockSignals(true); // don't trigger onNodeInclusionCheckboxStateChanged
   if (this->IncludeChildrenCheckBox->isChecked())
     {
-    this->RecursiveChildrenCheckBox->setChecked(this->lastUsedRecursiveChildren);
+    this->RecursiveChildrenCheckBox->setChecked(this->LastUsedRecursiveChildren);
     this->RecursiveChildrenCheckBox->setEnabled(true);
     }
   else
@@ -513,37 +494,26 @@ bool qSlicerExportNodeDialogPrivate::setup(
     this->RecursiveChildrenCheckBox->setChecked(false);
     this->RecursiveChildrenCheckBox->setEnabled(false);
     }
+  // Show recursive checkbox only if it makes a difference
   this->RecursiveChildrenCheckBox->setVisible(setDifferenceIsNonempty(nodesRecursive, nodesNonrecursive));
+  if (nodesNonrecursive.empty())
+    {
+    // There would be nothing to export if we didn't include children recursively, so force checked and hide
+    this->RecursiveChildrenCheckBox->setChecked(true);
+    this->RecursiveChildrenCheckBox->hide();
+    }
   this->RecursiveChildrenCheckBox->blockSignals(false);
 
-  // Initialize coordinate system option visibility and state
-  bool someNodeHasTransform = false;
-  for (vtkMRMLStorableNode* node : this->nodeList())
-    {
-    vtkMRMLTransformableNode* nodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(node);
-    if (nodeAsTransformable && nodeAsTransformable->GetParentTransformNode())
-      {
-      someNodeHasTransform = true;
-      break;
-      }
-    }
-  if (someNodeHasTransform)
-    {
-    this->HardenTransformCheckBox->show();
-    this->HardenTransformCheckBox->setChecked(this->lastUsedHardenTransform);
-    }
-  else
-    {
-    this->HardenTransformCheckBox->hide();
-    this->HardenTransformCheckBox->setChecked(false);
-    }
+  // Initialize visibility, enabledness, and checked state for other general options
+  this->updateHardenTransformCheckBox();
+  this->updatePreserveHierarchyCheckBox();
 
   // Intitialize directory input widget
   this->DirectoryPathLineEdit->setCurrentPath(
-    this->lastUsedDirectory.isEmpty() ? this->MRMLScene->GetRootDirectory() : this->lastUsedDirectory
+    this->LastUsedDirectory.isEmpty() ? this->MRMLScene->GetRootDirectory() : this->LastUsedDirectory
   );
 
-  if (this->nodeTypeWidgetSetStartRow < 0)
+  if (this->NodeTypeWidgetSetStartRow < 0)
     {
     qCritical() << Q_FUNC_INFO << "failed: No row index available for the expected placeholder widget.";
     return false;
@@ -576,8 +546,62 @@ void qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged(int sta
     }
   this->RecursiveChildrenCheckBox->blockSignals(false);
 
+  // When the list of nodes to export changes, we need to reasses whether there is a node with transform among them
+  this->updateHardenTransformCheckBox();
+
   // Repopulate widgets based on the now possibly different node types occuring among the nodes slated for export
   this->populateNodeTypeWidgetSets();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerExportNodeDialogPrivate::onIncludeChildrenCheckBoxStateChanged(int state)
+{
+  Q_UNUSED(state);
+  this->updatePreserveHierarchyCheckBox();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerExportNodeDialogPrivate::updateHardenTransformCheckBox()
+{
+  bool someNodeHasTransform = false;
+  for (vtkMRMLStorableNode* node : this->nodeList())
+    {
+    vtkMRMLTransformableNode* nodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(node);
+    if (nodeAsTransformable && nodeAsTransformable->GetParentTransformNode())
+      {
+      someNodeHasTransform = true;
+      break;
+      }
+    }
+  if (someNodeHasTransform)
+    {
+    this->HardenTransformCheckBox->show();
+    this->HardenTransformCheckBox->setChecked(this->LastUsedHardenTransform);
+    }
+  else
+    {
+    this->HardenTransformCheckBox->hide();
+    this->HardenTransformCheckBox->setChecked(false);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerExportNodeDialogPrivate::updatePreserveHierarchyCheckBox()
+{
+  // We display the checkbox if and only the selected subject hierarchy item has children
+  this->PreserveHierarchyCheckBox->setVisible(this->NodesSelectedOnly.empty() || this->NodesRecursive.size()>1);
+
+  // We enable the checkbox if and only if children are being included for export
+  if (this->IncludeChildrenCheckBox->isChecked())
+    {
+    this->PreserveHierarchyCheckBox->setEnabled(true);
+    this->PreserveHierarchyCheckBox->setChecked(this->LastUsedPreserveHierarchy);
+    }
+  else
+    {
+    this->PreserveHierarchyCheckBox->setChecked(false);
+    this->PreserveHierarchyCheckBox->setEnabled(false);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -585,14 +609,14 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
 {
   // Clear the form layout of node-type-specific rows before we start filling it with new ones.
   // We use takeRow, not removeRow, so that widgets are removed from the layout without being deleted.
-  if (this->nodeTypeWidgetSetStartRow + this->nodeTypesInDialog.size() > this->formLayout->rowCount())
+  if (this->NodeTypeWidgetSetStartRow + this->NodeTypesInDialog.size() > this->formLayout->rowCount())
     {
     qCritical() << Q_FUNC_INFO << "failed: The list that tracks node-type-specific widgets is too long; it cannot be valid.";
     return false;
     }
-  for (int i = this->nodeTypesInDialog.size()-1; i >= 0; --i)
+  for (int i = this->NodeTypesInDialog.size()-1; i >= 0; --i)
     {
-    NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->nodeTypesInDialog[i], true);
+    NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->NodeTypesInDialog[i], true);
     if (!nodeTypeWidgetSet)
       {
       return false;
@@ -601,9 +625,9 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
     nodeTypeWidgetSet->notifyRemovedFromDialog();
 
     // The order of these two lines matters
-    this->formLayout->takeRow(this->nodeTypeWidgetSetStartRow + i);
+    this->formLayout->takeRow(this->NodeTypeWidgetSetStartRow + i);
     }
-  this->nodeTypesInDialog.clear();
+  this->NodeTypesInDialog.clear();
 
   // Go through the list of nodes to export, and look at each node type that shows up.
   // For each unique node type, get the associated NodeTypeWidgetSet, or construct one if there isn't one yet.
@@ -617,12 +641,12 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
       continue;
       }
 
-    if (!this->nodeTypeToNodeTypeWidgetSet.contains(nodeType))
+    if (!this->NodeTypeToNodeTypeWidgetSet.contains(nodeType))
       {
       try
         {
         NodeTypeWidgetSet* nodeTypeWidgetSet = new NodeTypeWidgetSet(this, node, this->MRMLScene);
-        this->nodeTypeToNodeTypeWidgetSet[nodeType] = nodeTypeWidgetSet;
+        this->NodeTypeToNodeTypeWidgetSet[nodeType] = nodeTypeWidgetSet;
         connect(nodeTypeWidgetSet->exportFormatComboBox, &QComboBox::currentTextChanged, this, &qSlicerExportNodeDialogPrivate::formatChangedSlot);
         }
       catch(std::runtime_error & error)
@@ -634,7 +658,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
     else
       {
       // The old prototype node pointer may have become invalid since the export dialog was last raised, so we must update it here.
-      this->nodeTypeToNodeTypeWidgetSet[nodeType]->prototypeNode = node;
+      this->NodeTypeToNodeTypeWidgetSet[nodeType]->prototypeNode = node;
       }
 
     nodeTypesToAddToDialog.push_back(nodeType);
@@ -655,19 +679,19 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
       {
       return false;
       }
-    nodeTypeWidgetSet->insertWidgetsAtRow(this->nodeTypeWidgetSetStartRow + this->nodeTypesInDialog.size(), this->formLayout);
-    this->nodeTypesInDialog.push_back(nodeType);
+    nodeTypeWidgetSet->insertWidgetsAtRow(this->NodeTypeWidgetSetStartRow + this->NodeTypesInDialog.size(), this->formLayout);
+    this->NodeTypesInDialog.push_back(nodeType);
     }
 
   // Set the label text and frame style for each nodeTypeWidgetSet. When there are multiple, we include the type display name in the label text.
-  if (this->nodeTypesInDialog.size() == 1)
+  if (this->NodeTypesInDialog.size() == 1)
     {
     this->theOnlyNodeTypeWidgetSet()->setFrameStyle(NodeTypeWidgetSet::FrameStyle::NoFrame);
     this->theOnlyNodeTypeWidgetSet()->setLabelText("");
     }
   else
     {
-    for (const auto& nodeType : this->nodeTypesInDialog)
+    for (const auto& nodeType : this->NodeTypesInDialog)
       {
       NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(nodeType, true);
       if (!nodeTypeWidgetSet)
@@ -679,7 +703,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
       // Hopefully not, so we can use type display names in the label text.
       // If there's a collsion, resort to using node type identifier (i.e. class name) in the label text.
       bool typeDisplayNameCollison = false;
-      for (const auto& otherNodeType : this->nodeTypesInDialog)
+      for (const auto& otherNodeType : this->NodeTypesInDialog)
         {
         if (nodeType==otherNodeType)
           {
@@ -733,17 +757,18 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
     }
   else
     {
+    this->setWindowTitle(QString("Export 0 Nodes")); // This hopefully never happens, but we want a correct title in case it does.
     qCritical() << Q_FUNC_INFO << "failed: There is nothing to export.";
     return false;
     }
 
   // Depending on whether there are multiple node types, make a few aesthetic touchups to the dialog
-  if (this->nodeTypesInDialog.size() > 1)
+  if (this->NodeTypesInDialog.size() > 1)
     {
     this->ExportFormatsLabel->show();
     this->formLayout->invalidate();
     }
-  else if (this->nodeTypesInDialog.size() == 1)
+  else if (this->NodeTypesInDialog.size() == 1)
     {
     this->ExportFormatsLabel->hide();
     this->formLayout->invalidate();
@@ -769,9 +794,9 @@ void qSlicerExportNodeDialogPrivate::adjustTabbingOrder()
 
   setTabOrder(this->FilenameLineEdit, this->DirectoryPathLineEdit);
 
-  for (int i = 0; i < this->nodeTypesInDialog.size(); ++i)
+  for (int i = 0; i < this->NodeTypesInDialog.size(); ++i)
     {
-    NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->nodeTypesInDialog[i], true);
+    NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->NodeTypesInDialog[i], true);
     if (!nodeTypeWidgetSet)
       {
       qWarning() << Q_FUNC_INFO << "error: could not find widgets while setting tabbing order.";
@@ -783,17 +808,18 @@ void qSlicerExportNodeDialogPrivate::adjustTabbingOrder()
       }
     else
       {
-      NodeTypeWidgetSet* previousNodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->nodeTypesInDialog[i-1], true);
+      NodeTypeWidgetSet* previousNodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->NodeTypesInDialog[i-1], true);
       setTabOrder(previousNodeTypeWidgetSet->optionsStackedWidget, nodeTypeWidgetSet->exportFormatComboBox);
       }
     setTabOrder(nodeTypeWidgetSet->exportFormatComboBox, nodeTypeWidgetSet->optionsStackedWidget);
-    if (i == this->nodeTypesInDialog.size()-1)
+    if (i == this->NodeTypesInDialog.size()-1)
       {
     setTabOrder(nodeTypeWidgetSet->optionsStackedWidget, this->IncludeChildrenCheckBox);
       }
     }
   setTabOrder(this->IncludeChildrenCheckBox,this->RecursiveChildrenCheckBox);
-  setTabOrder(this->RecursiveChildrenCheckBox, this->HardenTransformCheckBox);
+  setTabOrder(this->RecursiveChildrenCheckBox, this->PreserveHierarchyCheckBox);
+  setTabOrder(this->PreserveHierarchyCheckBox, this->HardenTransformCheckBox);
   setTabOrder(this->HardenTransformCheckBox,ButtonBox);
 }
 
@@ -812,21 +838,26 @@ void qSlicerExportNodeDialogPrivate::accept()
 //-----------------------------------------------------------------------------
 void qSlicerExportNodeDialogPrivate::saveWidgetStates()
 {
-  this->lastUsedDirectory = this->DirectoryPathLineEdit->currentPath();
+  this->LastUsedDirectory = this->DirectoryPathLineEdit->currentPath();
 
   if (this->HardenTransformCheckBox->isVisible())
     {
-    this->lastUsedHardenTransform = this->HardenTransformCheckBox->isChecked();
+    this->LastUsedHardenTransform = this->HardenTransformCheckBox->isChecked();
+    }
+
+  if (this->PreserveHierarchyCheckBox->isVisible())
+    {
+    this->LastUsedPreserveHierarchy = this->PreserveHierarchyCheckBox->isChecked();
     }
 
   if (this->IncludeChildrenCheckBox->isVisible())
     {
-    this->lastUsedIncludeChildren = this->IncludeChildrenCheckBox->isChecked();
+    this->LastUsedIncludeChildren = this->IncludeChildrenCheckBox->isChecked();
     }
 
   if (this->RecursiveChildrenCheckBox->isVisible())
     {
-    this->lastUsedRecursiveChildren = this->RecursiveChildrenCheckBox->isChecked();
+    this->LastUsedRecursiveChildren = this->RecursiveChildrenCheckBox->isChecked();
     }
 }
 
@@ -866,9 +897,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
       }
     }
 
-  // Build lists that can be passed to qSlicerCoreIOManager::exportNodes
-  QList<QString> filePaths;
-  QList<QString> formatTexts;
+  // Build savingParameterMaps, the list that will be passed to qSlicerCoreIOManager::exportNodes
   QList<qSlicerIO::IOProperties> savingParameterMaps;
   bool replaceYesToAll = false;
   bool replaceNoToAll = false;
@@ -882,13 +911,14 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
       qCritical() << Q_FUNC_INFO << "error: Map of NodeTypeWidgetSet was not properly populated. Skipping" << node->GetName();
       continue;
       }
-    if (!this->nodeTypesInDialog.contains(nodeType))
+    if (!this->NodeTypesInDialog.contains(nodeType))
       { // (validation step-- we don't want wrongly invisible widgets to influence the export outcome)
       qCritical() << Q_FUNC_INFO << "error: Failed to add NodeTypeWidgetSet for" << nodeTypeWidgetSet->nodeType << "into dialog. Skipping" << node->GetName();
       }
 
     // Construct file path for node
-    QDir directory = this->DirectoryPathLineEdit->currentPath();
+    QDir directory = this->PreserveHierarchyCheckBox->isChecked() ?
+      this->getSubjectHierarchyBasedDirectory(node) : this->DirectoryPathLineEdit->currentPath();
     QString filename;
     if (this->FilenameLineEdit->isEnabled())
       {
@@ -1044,7 +1074,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
 //-----------------------------------------------------------------------------
 void qSlicerExportNodeDialogPrivate::formatChangedSlot()
 {
-  if (this->nodeList().size()==1 && !this->protectFilenameLineEdit)
+  if (this->nodeList().size()==1 && !this->ProtectFilenameLineEdit)
     {
     this->FilenameLineEdit->setText(this->recommendedFilename(this->theOnlyNode()));
     }
@@ -1072,6 +1102,29 @@ QString qSlicerExportNodeDialogPrivate::recommendedFilename(vtkMRMLStorableNode*
 }
 
 //-----------------------------------------------------------------------------
+QDir qSlicerExportNodeDialogPrivate::getSubjectHierarchyBasedDirectory(vtkMRMLStorableNode* node) const
+{
+  QString nodeID(node->GetID());
+  if (!this->NodeIdToSubjectHierarchyPath.contains(nodeID) || !this->NodeIdToSubjectHierarchyPath[nodeID].canConvert<QStringList>())
+    {
+    qWarning() << Q_FUNC_INFO << "warning: lookup for" << node->GetName() << "failed in nodeIdToSubjectHierarchyPath;" <<
+      "\"Preserve hierarchy\" will not work correctly";
+    return this->DirectoryPathLineEdit->currentPath();
+    }
+
+  QStringList pathList = this->NodeIdToSubjectHierarchyPath[nodeID].toStringList();
+  QStringList pathListSanitizedReversed;
+
+  for (int i = pathList.size()-1; i >=0; --i)
+    {
+    pathListSanitizedReversed.push_back(qSlicerCoreIOManager::forceFileNameValidCharacters(pathList[i]));
+    }
+  QString subjectHierarchyPathString = pathListSanitizedReversed.join("/");
+
+  return QDir(QFileInfo(this->DirectoryPathLineEdit->currentPath(), subjectHierarchyPathString).absoluteFilePath());
+}
+
+//-----------------------------------------------------------------------------
 vtkMRMLStorableNode* qSlicerExportNodeDialogPrivate::theOnlyNode() const
 {
   if (this->nodeList().size()!=1)
@@ -1085,28 +1138,28 @@ vtkMRMLStorableNode* qSlicerExportNodeDialogPrivate::theOnlyNode() const
 //-----------------------------------------------------------------------------
 NodeTypeWidgetSet* qSlicerExportNodeDialogPrivate::getNodeTypeWidgetSetSafe(NodeTypeWidgetSet::NodeType nodeType, bool logError) const
 {
-  if (logError && !this->nodeTypeToNodeTypeWidgetSet.contains(nodeType))
+  if (logError && !this->NodeTypeToNodeTypeWidgetSet.contains(nodeType))
     {
     qCritical() << Q_FUNC_INFO << "failed: Map of node-type-specific widgets is missing the node type" << nodeType;
     }
-  return this->nodeTypeToNodeTypeWidgetSet.value(nodeType, nullptr);
+  return this->NodeTypeToNodeTypeWidgetSet.value(nodeType, nullptr);
 }
 
 //-----------------------------------------------------------------------------
 NodeTypeWidgetSet* qSlicerExportNodeDialogPrivate::theOnlyNodeTypeWidgetSet() const
 {
-  if (this->nodeTypesInDialog.size()!=1)
+  if (this->NodeTypesInDialog.size()!=1)
     {
     qCritical() << Q_FUNC_INFO << "failed: Expected exactly one node type.";
     return nullptr;
     }
-  return this->getNodeTypeWidgetSetSafe(this->nodeTypesInDialog[0], true);
+  return this->getNodeTypeWidgetSetSafe(this->NodeTypesInDialog[0], true);
 }
 
 //-----------------------------------------------------------------------------
 QComboBox* qSlicerExportNodeDialogPrivate::theOnlyExportFormatComboBox() const
 {
-  if (this->nodeTypesInDialog.size()!=1)
+  if (this->NodeTypesInDialog.size()!=1)
     {
     qCritical() << Q_FUNC_INFO << "failed: Expected exactly one node type.";
     return nullptr;
@@ -1118,7 +1171,7 @@ QComboBox* qSlicerExportNodeDialogPrivate::theOnlyExportFormatComboBox() const
 void qSlicerExportNodeDialogPrivate::onFilenameEditingFinished()
 {
   // This slot should only be activated when there is one node to export, because otherwise the filename entry box should be disabled
-  if (this->nodeList().size()!=1 || this->nodeTypesInDialog.size()!=1)
+  if (this->nodeList().size()!=1 || this->NodeTypesInDialog.size()!=1)
     {
     qCritical() << Q_FUNC_INFO << "detected an error: This should not be called when there are multiple nodes to export.";
     return;
@@ -1139,9 +1192,9 @@ void qSlicerExportNodeDialogPrivate::onFilenameEditingFinished()
   if (newFormat >= 0)
     {
     // Current extension matches a supported format, update the format selector widget accordingly
-    this->protectFilenameLineEdit = true; // Block formatChangedSlot from rudely changing the filename the user just typed in
+    this->ProtectFilenameLineEdit = true; // Block formatChangedSlot from rudely changing the filename the user just typed in
     this->theOnlyExportFormatComboBox()->setCurrentIndex(newFormat);
-    this->protectFilenameLineEdit = false;
+    this->ProtectFilenameLineEdit = false;
     }
 }
 
@@ -1247,6 +1300,17 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
       }
     }
 
+  // Get the hash map that attributes to each node a subject hierarchy path
+  QHash<QString,QVariant> nodeIdToSubjectHierarchyPath;
+  if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert< QHash<QString,QVariant> >())
+    {
+    nodeIdToSubjectHierarchyPath = properties["nodeIdToSubjectHierarchyPath"].toHash();
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << " warning: Did not receive a nodeIdToSubjectHierarchyPath mapping; \"Preserve hierarchy\" will not work";
+    }
+
   // It is again possible for there to be "nothing to export," if there are errors retreiving storable nodes above.
   if (nodesNonrecursive.isEmpty() && nodesRecursive.isEmpty())
     {
@@ -1254,7 +1318,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
     return false;
     }
 
-  if (!d->setup(scene, nodesNonrecursive, nodesRecursive, selectedNode))
+  if (!d->setup(scene, nodesNonrecursive, nodesRecursive, selectedNode, nodeIdToSubjectHierarchyPath))
     {
     return false;
     }

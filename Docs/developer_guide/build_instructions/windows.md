@@ -2,7 +2,7 @@
 
 ## Install prerequisites
 
-- [CMake](http://www.cmake.org/cmake/resources/software.html) version >= 3.21.1 (or 3.15.1 <= version < 3.20.4)
+- [CMake](http://www.cmake.org/cmake/resources/software.html) version that meets at least the minimum required CMake version >= 3.21.1 (or 3.16.3 <= version < 3.20.4)
 - [Git](https://git-scm.com/download/win) >= 1.7.10
   - Note: CMake must be able to find `git.exe` and `patch.exe`. If git is installed in the default location then they may be found there, but if they are not found then either add the folder that contains them to `PATH` environment variable; or set `GIT_EXECUTABLE` and `Patch_EXECUTABLE` as environment variables or as CMake variables at configure time.
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/)
@@ -20,7 +20,6 @@
   When configuring the Visual Studio Installer, enable `Desktop development with C++` and in installation details, check `MSVC v143 - VS2022 C++ x64...` (Visual Studio 2022 v143 toolset with 64-bit support) - in some distributions, this option is not enabled by default.
   Use `Visual Studio 17 2022` instead of `Visual Studio 16 2019` in the build instructions below.
 - Visual Studio 2017 (v141) toolset is not tested anymore but probably still works. Qt-5.15.2 requires v142 redistributables, so either these extra DLL files need to be added to the installation package or each user may need to install "Microsoft Visual C++ Redistributable" package.
-- Visual Studio 2015 (v140) toolset is not tested anymore and probably does not work. Requires Qt 5.10.x to build due to QtWebEngine.
 - Cygwin and Mingw: not tested and not recommended. Building with cygwin gcc not supported, but the cygwin shell environment can be used to run utilities such as git.
 
 :::

@@ -220,6 +220,23 @@ model.GetDisplayNode().SetSliceIntersectionThickness(3)
 model.GetDisplayNode().SetColor(1,1,0)
 ```
 
+### Fit markups ROI to volume
+
+This code snippet creates a new markups ROI and fits it to a volume node.
+
+```python
+volumeNode = getNode('MRHead')
+
+# Create a new ROI that will be fit to volumeNode
+roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode")
+
+cropVolumeParameters = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLCropVolumeParametersNode")
+cropVolumeParameters.SetInputVolumeNodeID(volumeNode.GetID())
+cropVolumeParameters.SetROINodeID(roiNode.GetID())
+slicer.modules.cropvolume.logic().FitROIToInputVolume(cropVolumeParameters)
+slicer.mrmlScene.RemoveNode(cropVolumeParameters)
+```
+
 ### Fit markups plane to model
 
 This code snippet fits a plane a model node named `InputModel` and creates a new markups plane node to display this best fit plane.
@@ -296,6 +313,36 @@ for lineNodeName in lineNodeNames:
 
 # Print current angle
 ShowAngle()
+```
+
+### Project a line to a plane
+
+Create a new line (`projectedLineNode`) by projecting a line (`lineNode`) to a plane (`planeNode`).
+
+Each control point is projected by computing coordinates in the plane coordinate system, zeroing the z coordinate (distance from plane) then transforming  back the coordinates to the world coordinate system.
+
+Transformation require homogeneous coordinates (1.0 appended to the 3D position), therefore 1.0 is added to the position after getting from the line and the 1.0 is removed when the computed point is added to the output line.
+
+```python
+lineNode = getNode('L')
+planeNode = getNode('P')
+
+# Create new node for storing the projected line node
+projectedLineNode = slicer.mrmlScene.AddNewNodeByClass(lineNode.GetClassName(), lineNode.GetName()+" projected")
+
+# Get transforms
+planeToWorld = vtk.vtkMatrix4x4()
+planeNode.GetObjectToWorldMatrix(planeToWorld)
+worldToPlane = vtk.vtkMatrix4x4()
+vtk.vtkMatrix4x4.Invert(planeToWorld, worldToPlane)
+
+# Project each point
+for pointIndex in range(2):
+    point_World = [*lineNode.GetNthControlPointPositionWorld(pointIndex), 1.0]
+    point_Plane = worldToPlane.MultiplyPoint(point_World)
+    projectedPoint_Plane = [point_Plane[0], point_Plane[1], 0.0, 1.0]
+    projectedPoint_World = planeToWorld.MultiplyPoint(projectedPoint_Plane)
+    projectedLineNode.AddControlPoint(projectedPoint_World[0:3])
 ```
 
 ### Measure distances of points from a line

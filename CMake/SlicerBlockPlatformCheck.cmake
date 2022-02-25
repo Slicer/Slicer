@@ -36,12 +36,13 @@ if(Slicer_PLATFORM_CHECK)
   if(WIN32)
     # See https://cmake.org/cmake/help/latest/variable/MSVC_VERSION.html
     # and https://en.wikipedia.org/wiki/Microsoft_Visual_Studio#Version_history
-    # 1900      = VS 14.0 (v140 toolset)
-    # 1910-1919 = VS 15.0 (v141 toolset)
+    # 1910-1919 = VS 15.0 (v141 toolset) 1914 = VS 15.7
     # 1920-1929 = VS 16.0 (v142 toolset)
     # 1930-1939 = VS 17.0 (v143 toolset)
-    if(NOT MSVC_VERSION VERSION_GREATER_EQUAL 1900)
-      message(FATAL_ERROR "Microsoft Visual C/C++ toolset 140 or newer is required !")
+    # VS 15.7 was announced to officially conform with the C++ standard of C++11, C++14 and C++17
+    # https://devblogs.microsoft.com/cppblog/announcing-msvc-conforms-to-the-c-standard/
+    if(NOT MSVC_VERSION VERSION_GREATER_EQUAL 1914)
+      message(FATAL_ERROR "Microsoft Visual C/C++ toolset 141 (VS 15.7) or newer is required !")
     endif()
   elseif(APPLE)
     # See CMake/Modules/Platform/Darwin.cmake)

@@ -134,7 +134,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "v2.1.1"
+    "ffd48e274e2112928e95e5dfc802d8ca3121c840"
     QUIET
     )
 
@@ -177,7 +177,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
       -DSimpleITK_PYTHON_THREADS:BOOL=ON
       -DSimpleITK_INSTALL_ARCHIVE_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
       -DSimpleITK_INSTALL_LIBRARY_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
-      -DSimpleITK_INT64_PIXELIDS:BOOL=OFF
+      -DSimpleITK_INT64_PIXELIDS:BOOL=ON
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
       -DSimpleITK_USE_SYSTEM_ITK:BOOL=ON
       -DITK_DIR:PATH=${ITK_DIR}

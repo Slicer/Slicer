@@ -31,6 +31,7 @@
 #include <QButtonGroup>
 #include <QDebug>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QRadioButton>
@@ -176,6 +177,7 @@ public:
   bool operationErase();
   bool operationInside();
   int shape();
+  int shapeDrawCentered();
 
 protected:
   /// Get pipeline object for widget. Create if does not exist
@@ -210,6 +212,7 @@ public:
   QRadioButton* circleRadioButton;
   QRadioButton* rectangleRadioButton;
   QButtonGroup* shapeGroup;
+  QCheckBox* shapeDrawCenteredCheckBox;
 
   QRadioButton* unlimitedRadioButton;
   QRadioButton* positiveRadioButton;
@@ -396,9 +399,22 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
           qWarning() << Q_FUNC_INFO << "Rectangle glyph is expected to have 4 points";
           break;
           }
-        points->SetPoint(1, this->DragStartPosition[0], eventPosition[1], 0.0);
-        points->SetPoint(2, eventPosition[0], eventPosition[1], 0.0);
-        points->SetPoint(3, eventPosition[0], this->DragStartPosition[1], 0.0);
+
+        if (this->shapeDrawCentered())
+          {
+          double halfWidth = fabs(eventPosition[0] - this->DragStartPosition[0]);
+          double halfHeight = fabs(eventPosition[1] - this->DragStartPosition[1]);
+          points->SetPoint(0, this->DragStartPosition[0] - halfWidth, this->DragStartPosition[1] - halfHeight, 0.0);
+          points->SetPoint(1, this->DragStartPosition[0] + halfWidth, this->DragStartPosition[1] - halfHeight, 0.0);
+          points->SetPoint(2, this->DragStartPosition[0] + halfWidth, this->DragStartPosition[1] + halfHeight, 0.0);
+          points->SetPoint(3, this->DragStartPosition[0] - halfWidth, this->DragStartPosition[1] + halfHeight, 0.0);
+          }
+        else
+          {
+          points->SetPoint(1, this->DragStartPosition[0], eventPosition[1], 0.0);
+          points->SetPoint(2, eventPosition[0], eventPosition[1], 0.0);
+          points->SetPoint(3, eventPosition[0], this->DragStartPosition[1], 0.0);
+          }
         points->Modified();
         break;
         }
@@ -415,8 +431,16 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
         for (int i = 0; i < numberOfPoints; i++)
           {
           double angle = 2.0 * vtkMath::Pi() * i / double(numberOfPoints);
-          position[0] = this->DragStartPosition[0] + radius * sin(angle);
-          position[1] = this->DragStartPosition[1] + radius * cos(angle);
+          if (this->shapeDrawCentered())
+            {
+            position[0] = this->DragStartPosition[0] + radius * sin(angle);
+            position[1] = this->DragStartPosition[1] + radius * cos(angle);
+            }
+          else
+            {
+            position[0] = (eventPosition[0] + this->DragStartPosition[0])/2 + radius/2 * sin(angle);
+            position[1] = (eventPosition[1] + this->DragStartPosition[1])/2 + radius/2 * cos(angle);
+            }
           points->SetPoint(i, position);
           }
         points->Modified();
@@ -1086,6 +1110,13 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::operationErase()
 }
 
 //-----------------------------------------------------------------------------
+int qSlicerSegmentEditorScissorsEffectPrivate::shapeDrawCentered()
+{
+  Q_Q(qSlicerSegmentEditorScissorsEffect);
+  return q->integerParameter("ShapeDrawCentered");
+}
+
+//-----------------------------------------------------------------------------
 int qSlicerSegmentEditorScissorsEffectPrivate::shape()
 {
   Q_Q(qSlicerSegmentEditorScissorsEffect);
@@ -1162,11 +1193,15 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->freeFormRadioButton = new QRadioButton("Free-form");
   d->circleRadioButton= new QRadioButton("Circle");
   d->rectangleRadioButton= new QRadioButton("Rectangle");
+  d->shapeDrawCenteredCheckBox = new QCheckBox("Centered");
+  d->shapeDrawCenteredCheckBox->setToolTip(
+    tr("If checked, click position sets the circle or rectangle center, otherwise click position is at the shape boundary."));
 
   d->gridLayout->addWidget(new QLabel("Shape:"), 0, 1);
   d->gridLayout->addWidget(d->freeFormRadioButton, 1, 1);
   d->gridLayout->addWidget(d->circleRadioButton, 2, 1);
   d->gridLayout->addWidget(d->rectangleRadioButton, 3, 1);
+  d->gridLayout->addWidget(d->shapeDrawCenteredCheckBox, 4, 1);
 
   d->shapeGroup = new QButtonGroup(this);
   d->shapeGroup->setExclusive(true);
@@ -1175,6 +1210,7 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->shapeGroup->addButton(d->rectangleRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
 
   QObject::connect(d->shapeGroup, SIGNAL(buttonClicked(int)), this, SLOT(setShape(int)));
+  QObject::connect(d->shapeDrawCenteredCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setShapeDrawCentered(int)));
 
   // Slice cut mode
 
@@ -1237,6 +1273,7 @@ void qSlicerSegmentEditorScissorsEffect::setMRMLDefaults()
   this->setParameterDefault("Shape", d->ConvertShapeToString(qSlicerSegmentEditorScissorsEffectPrivate::ShapeFreeForm));
   this->setParameterDefault("SliceCutMode", d->ConvertSliceCutModeToString(qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeUnlimited));
   this->setParameterDefault("SliceCutDepthMm", 0);
+  this->setParameterDefault("ShapeDrawCentered", 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1273,6 +1310,12 @@ void qSlicerSegmentEditorScissorsEffect::updateGUIFromMRML()
     d->shapeGroup->blockSignals(wasBlocked);
     }
 
+  bool wasBlocked = d->shapeDrawCenteredCheckBox->blockSignals(true);
+  d->shapeDrawCenteredCheckBox->setCheckState(this->integerParameter("ShapeDrawCentered") ? Qt::Checked : Qt::Unchecked );
+  d->shapeDrawCenteredCheckBox->setEnabled(shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle ||
+                                            shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
+  d->shapeDrawCenteredCheckBox->blockSignals(wasBlocked);
+
   int sliceCutModeIndex = d->ConvertSliceCutModeFromString(QString(this->parameter("SliceCutMode")));
   if (d->sliceCutModeGroup->button(sliceCutModeIndex))
     {
@@ -1281,7 +1324,7 @@ void qSlicerSegmentEditorScissorsEffect::updateGUIFromMRML()
     d->sliceCutModeGroup->blockSignals(wasBlocked);
     }
 
-  bool wasBlocked = d->sliceCutDepthSpinBox->blockSignals(true);
+  wasBlocked = d->sliceCutDepthSpinBox->blockSignals(true);
   d->sliceCutDepthSpinBox->setMRMLScene(this->scene());
   d->sliceCutDepthSpinBox->setValue(this->doubleParameter("SliceCutDepthMm"));
   d->sliceCutDepthSpinBox->setEnabled(sliceCutModeIndex == qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeSymmetric);
@@ -1303,7 +1346,18 @@ void qSlicerSegmentEditorScissorsEffect::setOperation(int operationIndex)
 void qSlicerSegmentEditorScissorsEffect::setShape(int shapeIndex)
 {
   Q_D(qSlicerSegmentEditorScissorsEffect);
-  this->setParameter("Shape", d->ConvertShapeToString(shapeIndex));
+  QString shape = d->ConvertShapeToString(shapeIndex);
+  this->setParameter("Shape", shape);
+  d->shapeDrawCenteredCheckBox->setEnabled(
+    shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle
+    || shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorScissorsEffect::setShapeDrawCentered(int checkState)
+{
+  Q_D(qSlicerSegmentEditorScissorsEffect);
+  this->setParameter("ShapeDrawCentered", checkState == Qt::Checked);
 }
 
 //-----------------------------------------------------------------------------
@@ -1335,6 +1389,7 @@ void qSlicerSegmentEditorScissorsEffect::updateMRMLFromGUI()
   this->setParameter("Shape", shape.toUtf8().constData());
   this->setParameter("SliceCutMode", sliceCutMode.toUtf8().constData());
   this->setParameter("SliceCutDepthMm", d->sliceCutDepthSpinBox->value());
+  this->setParameter("ShapeDrawCentered", d->shapeDrawCenteredCheckBox->checkState() == Qt::Checked);
 }
 
 //-----------------------------------------------------------------------------

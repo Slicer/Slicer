@@ -724,6 +724,23 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
   return d->SettingsDialog;
 }
 
+void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QString()*/)
+{
+  Q_D(qSlicerApplication);
+
+  // Reload settings to apply any changes that have been made outside of the
+  // dialog (e.g. changes to module paths due to installing extensions). See
+  // https://github.com/Slicer/Slicer/issues/3658.
+  d->SettingsDialog->reloadSettings();
+
+  if (!settingsPanel.isNull())
+  {
+    d->SettingsDialog->setCurrentPanel(settingsPanel);
+  }
+
+  // Now show the dialog
+  d->SettingsDialog->exec();
+}
 
 // --------------------------------------------------------------------------
 void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)

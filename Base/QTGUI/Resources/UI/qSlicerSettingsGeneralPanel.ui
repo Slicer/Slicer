@@ -134,7 +134,7 @@ Default: https://slicer.readthedocs.io/{language}/{version}</string>
    <item row="9" column="0">
     <widget class="QLabel" name="NumOfRecentlyLoadedFilesLabel">
      <property name="text">
-      <string>Max. number of 'Recently Loaded' menu items:</string>
+      <string>Max. number of 'Recent' menu items:</string>
      </property>
     </widget>
    </item>

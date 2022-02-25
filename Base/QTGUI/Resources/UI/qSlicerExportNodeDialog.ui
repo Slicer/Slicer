@@ -121,10 +121,20 @@
       <item>
        <widget class="QCheckBox" name="RecursiveChildrenCheckBox">
         <property name="toolTip">
-         <string>Uncheck this to include only direct children of the selected node</string>
+         <string>Uncheck this to include only direct children of the selected item</string>
         </property>
         <property name="text">
          <string>Recursively include children</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="PreserveHierarchyCheckBox">
+        <property name="toolTip">
+         <string>Create subdirectory structure based on node hierarchy. Uncheck this to simply export all nodes into the target directory.</string>
+        </property>
+        <property name="text">
+         <string>Preserve Hierarchy</string>
         </property>
        </widget>
       </item>

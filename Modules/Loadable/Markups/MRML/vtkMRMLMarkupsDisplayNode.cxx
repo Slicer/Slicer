@@ -127,6 +127,16 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->ScaleHandleVisibility = true;
   this->InteractionHandleScale = 3.0; // size of the handles as percent in screen size
 
+  // By default, all interaction handle axes are visible
+  for (int i = 0; i < 4; ++i)
+    {
+    this->RotationHandleComponentVisibility[i] = true;
+    this->ScaleHandleComponentVisibility[i] = true;
+    this->TranslationHandleComponentVisibility[i] = true;
+    }
+
+  this->CanDisplayScaleHandles = false;
+
   // Line color node
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -181,6 +191,30 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(occludedOpacity, OccludedOpacity);
   vtkMRMLWriteXMLStdStringMacro(textProperty, TextPropertyAsString);
   vtkMRMLWriteXMLVectorMacro(activeColor, ActiveColor, double, 3);
+
+  // Only write the handle axes properties if any of them are different from the default (all enabled).
+  if (!this->TranslationHandleComponentVisibility[0] ||
+      !this->TranslationHandleComponentVisibility[1] ||
+      !this->TranslationHandleComponentVisibility[2] ||
+      !this->TranslationHandleComponentVisibility[3])
+    {
+    vtkMRMLWriteXMLVectorMacro(translationHandleAxes, TranslationHandleComponentVisibility, bool, 4);
+    }
+  if (!this->RotationHandleComponentVisibility[0] ||
+      !this->RotationHandleComponentVisibility[1] ||
+      !this->RotationHandleComponentVisibility[2] ||
+      !this->RotationHandleComponentVisibility[3])
+    {
+    vtkMRMLWriteXMLVectorMacro(rotationHandleAxes, RotationHandleComponentVisibility, bool, 4);
+    }
+  if (!this->ScaleHandleComponentVisibility[0] ||
+      !this->ScaleHandleComponentVisibility[1] ||
+      !this->ScaleHandleComponentVisibility[2] ||
+      !this->ScaleHandleComponentVisibility[3])
+    {
+    vtkMRMLWriteXMLVectorMacro(scaleHandleAxes, ScaleHandleComponentVisibility, bool, 4);
+    }
+
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -225,6 +259,9 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(occludedOpacity, OccludedOpacity);
   vtkMRMLReadXMLStdStringMacro(textProperty, TextPropertyFromString);
   vtkMRMLReadXMLVectorMacro(activeColor, ActiveColor, double, 3);
+  vtkMRMLReadXMLVectorMacro(rotationHandleAxes, RotationHandleComponentVisibility, bool, 4);
+  vtkMRMLReadXMLVectorMacro(scaleHandleAxes, ScaleHandleComponentVisibility, bool, 4);
+  vtkMRMLReadXMLVectorMacro(translationHandleAxes, TranslationHandleComponentVisibility, bool, 4);
   vtkMRMLReadXMLEndMacro();
 
   // Fix up legacy markups fiducial nodes
@@ -305,6 +342,9 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   // The name is misleading, this ShallowCopy method actually creates a deep copy
   this->TextProperty->ShallowCopy(this->SafeDownCast(copySourceNode)->GetTextProperty());
   vtkMRMLCopyVectorMacro(ActiveColor, double, 3);
+  vtkMRMLCopyVectorMacro(RotationHandleComponentVisibility, bool, 4);
+  vtkMRMLCopyVectorMacro(ScaleHandleComponentVisibility, bool, 4);
+  vtkMRMLCopyVectorMacro(TranslationHandleComponentVisibility, bool, 4);
   vtkMRMLCopyEndMacro();
 }
 
@@ -500,6 +540,9 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(OccludedOpacity);
   vtkMRMLPrintStdStringMacro(TextPropertyAsString);
   vtkMRMLPrintVectorMacro(ActiveColor, double, 3);
+  vtkMRMLPrintVectorMacro(RotationHandleComponentVisibility, bool, 4);
+  vtkMRMLPrintVectorMacro(ScaleHandleComponentVisibility, bool, 4);
+  vtkMRMLPrintVectorMacro(TranslationHandleComponentVisibility, bool, 4);
   vtkMRMLPrintEndMacro();
 }
 

@@ -157,8 +157,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     )
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
     -DVTK_BUILD_TESTING:STRING=OFF
-    -DVTK_MODULE_ENABLE_VTK_AcceleratorsVTKm:BOOL=OFF
+    -DVTK_MODULE_ENABLE_VTK_AcceleratorsVTKm:BOOL=NO
     -DCMAKE_INSTALL_LIBDIR:STRING=lib # Force value to prevent lib64 from being used on Linux
+    -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:BOOL=NO
     # These options have been removed in VTK >= 8.90:
     # - BUILD_EXAMPLE
     # - BUILD_SHARED_LIBS
@@ -177,8 +178,8 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     set(_git_tag "97904fdcc7e73446b3131f32eac9fc9781b23c2d") # slicer-v8.2.0-2018-10-02-74d9488523
     set(vtk_egg_info_version "8.2.0")
   elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
-    set(_git_tag "98d686bb509f46543ebe04fdd5d120fdab87893b") # slicer-v9.0.20201111-733234c785-v3
-    set(vtk_egg_info_version "9.0.20201111")
+    set(_git_tag "e0d1851e22db9ae1d39096464964e7f1fe333436") # slicer-v9.1.20220125-efbe2afc2
+    set(vtk_egg_info_version "9.1.20220125")
   else()
     message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
   endif()

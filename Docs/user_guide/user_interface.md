@@ -174,7 +174,7 @@ View Controllers module provides an alternate way of displaying these controller
 | `Ctrl` + `0` | show Error Log |
 | `Ctrl` + `1` | show Application Help |
 | `Ctrl` + `2` | show Application Settings |
-| `Ctrl` + `3` | show/hide Python Interactor |
+| `Ctrl` + `3` / `Ctrl` + `` ` `` | show/hide Python Interactor |
 | `Ctrl` + `4` | show Extensions Manager |
 | `Ctrl` + `5` | show/hide Module Panel |
 | `Ctrl` + `h` | open default startup module (configurable in Application Settings) |

@@ -49,7 +49,6 @@
 #ifdef Slicer_USE_QtTesting
 #include <ctkQtTestingUtility.h>
 #endif
-#include <ctkSettingsDialog.h>
 #include <ctkVTKSliceView.h>
 #include <ctkVTKWidgetsUtils.h>
 
@@ -147,6 +146,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   QObject::connect(app->coreIOManager(), SIGNAL(newFileLoaded(qSlicerIO::IOProperties)),
                    q, SLOT(onNewFileLoaded(qSlicerIO::IOProperties)));
+  QObject::connect(app->coreIOManager(), SIGNAL(fileSaved(qSlicerIO::IOProperties)),
+                   q, SLOT(onFileSaved(qSlicerIO::IOProperties)));
 
   //----------------------------------------------------------------------------
   // Load DICOM
@@ -158,13 +159,13 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // ModulePanel
   //----------------------------------------------------------------------------
-  this->PanelDockWidget->toggleViewAction()->setText(qSlicerMainWindow::tr("&Module Panel"));
+  this->PanelDockWidget->toggleViewAction()->setText(qSlicerMainWindow::tr("Show &Module Panel"));
   this->PanelDockWidget->toggleViewAction()->setToolTip(
     qSlicerMainWindow::tr("Collapse/Expand the GUI panel and allows Slicer's viewers to occupy "
           "the entire application window"));
   this->PanelDockWidget->toggleViewAction()->setShortcut(QKeySequence("Ctrl+5"));
-  this->ViewMenu->insertAction(this->WindowToolBarsMenu->menuAction(),
-                               this->PanelDockWidget->toggleViewAction());
+  this->AppearanceMenu->insertAction(this->ShowStatusBarAction,
+                                     this->PanelDockWidget->toggleViewAction());
 
   //----------------------------------------------------------------------------
   // ModuleManager
@@ -462,10 +463,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     this->PythonConsoleToggleViewAction->setText(qSlicerMainWindow::tr("&Python Interactor"));
     this->PythonConsoleToggleViewAction->setToolTip(qSlicerMainWindow::tr(
       "Show Python Interactor window for controlling the application's data, user interface, and internals"));
-    this->PythonConsoleToggleViewAction->setShortcut(QKeySequence("Ctrl+3"));
+    this->PythonConsoleToggleViewAction->setShortcuts({qSlicerMainWindow::tr("Ctrl+3"), qSlicerMainWindow::tr("Ctrl+`")});
     QObject::connect(this->PythonConsoleToggleViewAction, SIGNAL(toggled(bool)),
       q, SLOT(onPythonConsoleToggled(bool)));
-    this->ViewMenu->insertAction(this->WindowToolBarsMenu->menuAction(), this->PythonConsoleToggleViewAction);
+    this->ViewMenu->insertAction(this->ModuleHomeAction, this->PythonConsoleToggleViewAction);
     this->PythonConsoleToggleViewAction->setIcon(QIcon(":/python-icon.png"));
     this->DialogToolBar->addAction(this->PythonConsoleToggleViewAction);
     }
@@ -811,6 +812,18 @@ ctkErrorLogWidget* qSlicerMainWindow::errorLogWidget()const
 {
   Q_D(const qSlicerMainWindow);
   return d->ErrorLogWidget;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::on_ShowStatusBarAction_triggered(bool toggled)
+{
+  this->statusBar()->setVisible(toggled);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::on_FileFavoriteModulesAction_triggered()
+{
+  qSlicerApplication::application()->openSettingsDialog("Modules");
 }
 
 //---------------------------------------------------------------------------
@@ -1299,33 +1312,71 @@ void qSlicerMainWindow::onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel lo
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::on_EditApplicationSettingsAction_triggered()
 {
-  ctkSettingsDialog* const settingsDialog =
-    qSlicerApplication::application()->settingsDialog();
+  qSlicerApplication::application()->openSettingsDialog();
+}
 
-  // Reload settings to apply any changes that have been made outside of the
-  // dialog (e.g. changes to module paths due to installing extensions). See
-  // https://github.com/Slicer/Slicer/issues/3658.
-  settingsDialog->reloadSettings();
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::addFileToRecentFiles(const qSlicerIO::IOProperties& fileProperties)
+{
+  Q_D(qSlicerMainWindow);
 
-  // Now show the dialog
-  settingsDialog->exec();
+  // Remove previous instance of the same file name. Since the file name can be slightly different
+  // (different directory separator, etc.) we don't do a binary compare but compare QFileInfo.
+  QString fileName = fileProperties.value("fileName").toString();
+  if (fileName.isEmpty())
+    {
+    return;
+    }
+  QFileInfo newFileInfo(fileName);
+  for (auto propertiesIt = d->RecentlyLoadedFileProperties.begin(); propertiesIt != d->RecentlyLoadedFileProperties.end() ;)
+    {
+    QFileInfo existingFileInfo(propertiesIt->value("fileName").toString());
+    if (newFileInfo == existingFileInfo)
+      {
+      // remove previous instance
+      propertiesIt = d->RecentlyLoadedFileProperties.erase(propertiesIt);
+      }
+    else
+      {
+      propertiesIt++;
+      }
+    }
+
+  d->RecentlyLoadedFileProperties.enqueue(fileProperties);
+  d->filterRecentlyLoadedFileProperties();
+  d->setupRecentlyLoadedMenu(d->RecentlyLoadedFileProperties);
+  // Keep the settings up-to-date
+  qSlicerMainWindowPrivate::writeRecentlyLoadedFiles(d->RecentlyLoadedFileProperties);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onNewFileLoaded(const qSlicerIO::IOProperties& fileProperties)
 {
+  this->addFileToRecentFiles(fileProperties);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& fileProperties)
+{
   Q_D(qSlicerMainWindow);
-
-  d->RecentlyLoadedFileProperties.removeAll(fileProperties);
-
-  d->RecentlyLoadedFileProperties.enqueue(fileProperties);
-
-  d->filterRecentlyLoadedFileProperties();
-
-  d->setupRecentlyLoadedMenu(d->RecentlyLoadedFileProperties);
-
-  // Keep the settings up-to-date
-  qSlicerMainWindowPrivate::writeRecentlyLoadedFiles(d->RecentlyLoadedFileProperties);
+  QString fileName = fileProperties["fileName"].toString();
+  if (fileName.isEmpty())
+    {
+    return;
+    }
+  // Adding every saved file to the recent files list could quickly overwrite the entire list,
+  // therefore we only add the scene file.
+  if (fileName.endsWith(".mrml", Qt::CaseInsensitive)
+    || fileName.endsWith(".mrb", Qt::CaseInsensitive))
+    {
+    // Scene file properties do not contain fileType and it contains screenshot,
+    // which can cause complication when attempted to be stored,
+    // therefore we create a new clean property set.
+    qSlicerIO::IOProperties properties;
+    properties["fileName"] = fileName;
+    properties["fileType"] = QString("SceneFile");
+    this->addFileToRecentFiles(properties);
+    }
 }
 
 //---------------------------------------------------------------------------

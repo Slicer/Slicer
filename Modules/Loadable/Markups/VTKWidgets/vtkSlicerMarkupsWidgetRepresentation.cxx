@@ -592,6 +592,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateInteractionPipeline()
     }
 
   this->InteractionPipeline->Actor->SetVisibility(this->MarkupsDisplayNode->GetHandlesInteractive());
+  this->InteractionPipeline->UpdateHandleVisibility();
 
   vtkNew<vtkTransform> handleToWorldTransform;
   handleToWorldTransform->SetMatrix(markupsNode->GetInteractionHandleToWorldMatrix());
@@ -954,6 +955,7 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::Initializ
   this->CreateRotationHandles();
   this->CreateTranslationHandles();
   this->CreateScaleHandles();
+  this->UpdateHandleVisibility();
   this->UpdateHandleColors();
 }
 
@@ -1062,6 +1064,13 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateRot
                                      zRotationMatrix->GetElement(0, 2), zRotationMatrix->GetElement(1, 2), zRotationMatrix->GetElement(2, 2));
   this->RotationHandlePoints->GetPointData()->AddArray(orientationArray);
 
+  vtkNew<vtkIdTypeArray> visibilityArray;
+  visibilityArray->SetName("visibility");
+  visibilityArray->SetNumberOfComponents(1);
+  visibilityArray->SetNumberOfValues(this->RotationHandlePoints->GetNumberOfPoints());
+  visibilityArray->Fill(1);
+  this->RotationHandlePoints->GetPointData()->AddArray(visibilityArray);
+
   this->Append->AddInputConnection(this->AxisRotationGlypher->GetOutputPort());
 }
 
@@ -1107,7 +1116,7 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateTra
   points->InsertNextPoint(INTERACTION_WIDGET_RADIUS, 0, 0); // X-axis
   points->InsertNextPoint(0, INTERACTION_WIDGET_RADIUS, 0); // Y-axis
   points->InsertNextPoint(0, 0, INTERACTION_WIDGET_RADIUS); // Z-axis
-  points->InsertNextPoint(0, 0, 0); // Free translation
+  points->InsertNextPoint(0, 0, 0); // View plane translation
   this->TranslationHandlePoints->SetPoints(points);
 
   vtkNew<vtkDoubleArray> orientationArray;
@@ -1116,7 +1125,7 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateTra
   orientationArray->InsertNextTuple3(1, 0, 0);
   orientationArray->InsertNextTuple3(0, 1, 0);
   orientationArray->InsertNextTuple3(0, 0, 1);
-  orientationArray->InsertNextTuple3(1, 0, 0); // Free translation
+  orientationArray->InsertNextTuple3(1, 0, 0); // View plane translation
   this->TranslationHandlePoints->GetPointData()->AddArray(orientationArray);
 
   vtkNew<vtkDoubleArray> glyphIndexArray;
@@ -1127,6 +1136,13 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateTra
   glyphIndexArray->InsertNextTuple1(0);
   glyphIndexArray->InsertNextTuple1(1);
   this->TranslationHandlePoints->GetPointData()->AddArray(glyphIndexArray);
+
+  vtkNew<vtkIdTypeArray> visibilityArray;
+  visibilityArray->SetName("visibility");
+  visibilityArray->SetNumberOfComponents(1);
+  visibilityArray->SetNumberOfValues(this->TranslationHandlePoints->GetNumberOfPoints());
+  visibilityArray->Fill(1);
+  this->TranslationHandlePoints->GetPointData()->AddArray(visibilityArray);
 
   this->Append->AddInputConnection(this->AxisTranslationGlypher->GetOutputPort());
 }
@@ -1147,7 +1163,7 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateSca
 
   this->AxisScaleGlypher = vtkSmartPointer<vtkGlyph3D>::New();
   this->AxisScaleGlypher->SetInputConnection(this->ScaleScaleTransform->GetOutputPort());
-  this->AxisScaleGlypher->SetSourceConnection(this->AxisRotationHandleSource->GetOutputPort());
+  this->AxisScaleGlypher->SetSourceConnection(this->AxisScaleHandleSource->GetOutputPort());
   this->AxisScaleGlypher->ScalingOn();
   this->AxisScaleGlypher->SetScaleModeToDataScalingOff();
   this->AxisScaleGlypher->SetIndexModeToScalar();
@@ -1167,6 +1183,41 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateSca
   this->ScaleHandlePoints->GetPointData()->AddArray(visibilityArray);
 
   this->Append->AddInputConnection(this->AxisScaleGlypher->GetOutputPort());
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::UpdateHandleVisibility()
+{
+  vtkSlicerMarkupsWidgetRepresentation* markupsRepresentation = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->Representation);
+  vtkMRMLMarkupsDisplayNode* displayNode = nullptr;
+  if (markupsRepresentation)
+    {
+    displayNode = markupsRepresentation->GetMarkupsDisplayNode();
+    }
+  if (!displayNode)
+    {
+    vtkGenericWarningMacro("UpdateHandleVisibility: Invalid display node");
+    return;
+    }
+
+  vtkIdTypeArray* rotationVisibilityArray = vtkIdTypeArray::SafeDownCast(this->RotationHandlePoints->GetPointData()->GetArray("visibility"));
+  if (rotationVisibilityArray)
+    {
+    bool* rotationVisibility = displayNode->GetRotationHandleComponentVisibility();
+    rotationVisibilityArray->SetValue(0, rotationVisibility[0]);
+    rotationVisibilityArray->SetValue(1, rotationVisibility[1]);
+    rotationVisibilityArray->SetValue(2, rotationVisibility[2]);
+    }
+
+  vtkIdTypeArray* translationVisibilityArray = vtkIdTypeArray::SafeDownCast(this->TranslationHandlePoints->GetPointData()->GetArray("visibility"));
+  if (translationVisibilityArray)
+    {
+    bool* translationVisibility = displayNode->GetTranslationHandleComponentVisibility();
+    translationVisibilityArray->SetValue(0, translationVisibility[0]);
+    translationVisibilityArray->SetValue(1, translationVisibility[1]);
+    translationVisibilityArray->SetValue(2, translationVisibility[2]);
+    translationVisibilityArray->SetValue(3, translationVisibility[3]);
+    }
 }
 
 //----------------------------------------------------------------------
@@ -1356,7 +1407,7 @@ double vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::GetHand
   double opacity = 1.0;
   if (type == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle && index == 3)
     {
-    // Free transform handle is always visible regardless of angle
+    // View plane transform handle is always visible regardless of angle
     return opacity;
     }
 

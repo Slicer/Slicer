@@ -208,6 +208,11 @@ public:
   /// \sa newFileLoaded()
   Q_INVOKABLE void emitNewFileLoaded(const QVariantMap& loadedFileParameters);
 
+  /// This function should be used from python scripted module willing to interface with
+  /// the qSlicerCoreIOManager. It will emit the signal fileSaved().
+  /// \sa fileSaved()
+  Q_INVOKABLE void emitFileSaved(const QVariantMap& savedFileParameters);
+
   /// Defines the file format that should be offered by default when the scene is saved.
   Q_INVOKABLE QString defaultSceneFileType()const;
 
@@ -241,6 +246,12 @@ signals:
   /// associated with a QString and a QStringList.
   /// \sa loadNodes(const qSlicerIO::IOFileType&, const qSlicerIO::IOProperties&, vtkCollection*)
   void newFileLoaded(const qSlicerIO::IOProperties& loadedFileParameters);
+
+  /// This signal is emitted each time a file is saved using saveNodes()
+  /// The \a savedFileParameters QVariant map contains the parameters
+  /// passed to the writer.
+  /// \sa saveNodes()
+  void fileSaved(const qSlicerIO::IOProperties& savedFileParameters);
 
 protected:
 

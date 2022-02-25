@@ -816,18 +816,18 @@ void vtkSlicerPlaneWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
 
     switch (index)
       {
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge:
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner:
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner:
+      case vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge:
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner:
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner:
         bounds_Plane[2] += scaleVector_Object[1];
         if (symmetricScale)
           {
           bounds_Plane[3] -= scaleVector_Object[1];
           }
         break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge:
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner:
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner:
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge:
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner:
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner:
         bounds_Plane[3] += scaleVector_Object[1];
         if (symmetricScale)
           {

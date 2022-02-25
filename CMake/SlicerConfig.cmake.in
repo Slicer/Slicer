@@ -52,7 +52,7 @@
 #  ConfigurePrerequisites    | Slicer_USE_CONFIGUREPREREQUISITES
 # --------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.13.4)
+cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
 
 foreach(component NoExtensionSupport ConfigurePrerequisites)
   string(TOUPPER ${component} _COMPONENT)
@@ -319,6 +319,13 @@ endif()
 set(Slicer_THIRDPARTY_BIN_DIR "@Slicer_THIRDPARTY_BIN_DIR@")
 set(Slicer_THIRDPARTY_LIB_DIR "@Slicer_THIRDPARTY_LIB_DIR@")
 set(Slicer_THIRDPARTY_SHARE_DIR  "@Slicer_THIRDPARTY_SHARE_DIR@")
+
+# Slicer Python version
+set(Slicer_REQUIRED_PYTHON_VERSION "@Slicer_REQUIRED_PYTHON_VERSION@")
+set(Slicer_REQUIRED_PYTHON_VERSION_MAJOR "@Slicer_REQUIRED_PYTHON_VERSION_MAJOR@")
+set(Slicer_REQUIRED_PYTHON_VERSION_MINOR "@Slicer_REQUIRED_PYTHON_VERSION_MINOR@")
+set(Slicer_REQUIRED_PYTHON_VERSION_PATCH "@Slicer_REQUIRED_PYTHON_VERSION_PATCH@")
+set(Slicer_REQUIRED_PYTHON_VERSION_DOT "@Slicer_REQUIRED_PYTHON_VERSION_DOT@")
 
 # Python stdlib and site-package sub-directories
 set(PYTHON_STDLIB_SUBDIR "@PYTHON_STDLIB_SUBDIR@")

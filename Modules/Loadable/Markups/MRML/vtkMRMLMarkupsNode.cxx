@@ -2342,6 +2342,7 @@ void vtkMRMLMarkupsNode::OnTransformNodeReferenceChanged(vtkMRMLTransformNode* t
   vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, this->CurvePolyToWorldTransform);
   Superclass::OnTransformNodeReferenceChanged(transformNode);
   this->UpdateInteractionHandleToWorldMatrix();
+  this->UpdateAllMeasurements();
 }
 
 //---------------------------------------------------------------------------

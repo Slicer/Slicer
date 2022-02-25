@@ -794,6 +794,8 @@ int vtkMRMLScene::Connect(vtkMRMLMessageCollection* userMessagesInput/*=nullptr*
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput/*=nullptr*/)
 {
+  bool wasSceneModified = this->GetModifiedSinceRead();
+
   // We use userMessages for collecting error information, so make sure we have it, even if the caller does not need it.
   vtkSmartPointer<vtkMRMLMessageCollection> userMessages = userMessagesInput;
   if (!userMessages)
@@ -926,10 +928,17 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput/*=nullptr*/
   importingTimer->Delete();
   timer->Delete();
 #endif
-  this->StoredTime.Modified();
 
   // Once the import is finished, give the SH a chance to ensure consistency
   this->SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(this));
+
+  if (!wasSceneModified)
+    {
+    // There were no unsaved modifications in the scene before loading the scene and now we just
+    // loaded a saved scene. so there are no unsaved changes. Update StoredTime to reflect this
+    // (it will make GetModifiedSinceRead() return false).
+    this->StoredTime.Modified();
+    }
 
   bool success = (userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0);
   return success ? 1 : 0;
@@ -1165,6 +1174,10 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection * userMessage
     }
 
   bool success = (userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0);
+  if (success)
+    {
+    this->StoredTime.Modified();
+    }
   return success ? 1 : 0;
 }
 
@@ -3651,8 +3664,12 @@ void vtkMRMLScene::SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLScene::GetModifiedSinceRead()
+bool vtkMRMLScene::GetModifiedSinceRead(vtkCollection* modifiedNodes/*=nullptr*/)
 {
+  if (modifiedNodes)
+    {
+    modifiedNodes->RemoveAllItems();
+    }
   int hideFromEditors = 0;
 
   // There is no need to save the scene if it does not have any displayable node.
@@ -3663,6 +3680,7 @@ bool vtkMRMLScene::GetModifiedSinceRead()
     return false;
     }
 
+  bool sceneModified = false;
   vtkMTimeType latestNodeMTime = this->GetMTime();
   vtkMRMLNode *node;
   vtkCollectionSimpleIterator it;
@@ -3675,13 +3693,17 @@ bool vtkMRMLScene::GetModifiedSinceRead()
       // because view nodes may change because application window is resized, etc.
       continue;
       }
-    if (node->GetMTime() > latestNodeMTime)
+    if (node->GetMTime() > this->StoredTime)
       {
-      latestNodeMTime = node->GetMTime();
+      sceneModified = true;
+      if (modifiedNodes)
+        {
+        modifiedNodes->AddItem(node);
+        }
       }
     }
 
-  return  latestNodeMTime > this->StoredTime;
+  return sceneModified;
 }
 
 //-----------------------------------------------------------------------------

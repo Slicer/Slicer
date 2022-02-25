@@ -17,7 +17,7 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 - Elongation: the elongation of the segment. Calculated from square root of the ratio of the second largest principal moment by the second smallest. See detailed definition [here](https://www.insight-journal.org/browse/publication/301).
 - Principal moments: the principal moments of inertia for each axes of the segment
 - Principal axes: the principal axes of rotation of the segment
-- Oriented bounding box: the non-axis aligned bounding box that encompasses the segment
+- Oriented bounding box: the non-axis aligned bounding box that encompasses the segment. Principal axis directions are used to orient the bounding box.
 
 ## Scalar volume statistics
 

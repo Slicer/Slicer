@@ -2429,7 +2429,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       {
       if (itksys::SystemTools::FileExists((*fit).c_str()))
         {
-        removed = itksys::SystemTools::RemoveFile((*fit).c_str());
+        removed = static_cast<bool>(itksys::SystemTools::RemoveFile((*fit).c_str()));
         if (!removed)
           {
           std::stringstream information;

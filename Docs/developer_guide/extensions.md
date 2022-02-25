@@ -618,9 +618,9 @@ Also, starting with [Slicer r25959](http://viewvc.slicer.org/viewvc.cgi/Slicer4?
 
 These relative paths are the one that the extensions manager will consider when generating the launcher and application settings for a given extension.
 
-### Can I use C++11/14/17 language features?
+### Can I use C++14/17/20 language features?
 
-We try to balance between compatibility and using new features. As a result, currently C++11 features are allowed, but usage of C++14/17 language features are discouraged in extensions (relying on C++14/17 features may lead to build errors on some build configurations).
+We try to balance between compatibility and using new features. As a result, currently C++14 features are allowed, but usage of C++17/20 language features are discouraged in extensions (relying on C++17/20 features may lead to build errors on some build configurations).
 
 If your extension can be compiled as a standalone project where you would like to use newer feature, you could rely on CMake detecting compile features. See [cmake-compile-features](https://cmake.org/cmake/help/v3.5/manual/cmake-compile-features.7.html) for more details.
 
@@ -628,7 +628,7 @@ See the labs topic on [upgrading compiler infrastructure](https://www.slicer.org
 
 ### How do I publish a paper about my extension?
 
-Consider publishing a paper describing your extension. [This page](http://www.software.ac.uk/resources/guides/which-journals-should-i-publish-my-software) contains a list of journals that publish papers about software. [Citing 3D Slicer](../user_guide/about.html#how-to-cite) in all papers that use 3D Slicer is greatly appreciated.
+Consider publishing a paper describing your extension. [This page](http://www.software.ac.uk/resources/guides/which-journals-should-i-publish-my-software) contains a list of journals that publish papers about software. [Citing 3D Slicer](../user_guide/about.md#how-to-cite) in all papers that use 3D Slicer is greatly appreciated.
 
 ### How to force Slicer to download extensions corresponding to a different Slicer revision?
 

@@ -39,9 +39,17 @@ public:
 public slots:
   void on_HelpKeyboardShortcutsAction_triggered();
   void on_HelpBrowseTutorialsAction_triggered();
-  void on_HelpInterfaceDocumentationAction_triggered();
+  void on_HelpDocumentationAction_triggered();
+  void on_HelpQuickStartAction_triggered();
+  void on_HelpGetHelpAction_triggered();
+  void on_HelpUserInterfaceAction_triggered();
+  void on_HelpVisitSlicerForumAction_triggered();
+  void on_HelpJoinUsOnTwitterAction_triggered();
+  void on_HelpSearchFeatureRequestsAction_triggered();
+  void on_HelpViewLicenseAction_triggered();
+  void on_HelpHowToCiteAction_triggered();
   void on_HelpSlicerPublicationsAction_triggered();
-  void on_HelpVisualBlogAction_triggered();
+  void on_HelpAcknowledgmentsAction_triggered();
 
   void on_HelpReportBugOrFeatureRequestAction_triggered();
   void on_HelpAboutSlicerAppAction_triggered();

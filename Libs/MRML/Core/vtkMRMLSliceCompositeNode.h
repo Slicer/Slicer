@@ -17,6 +17,9 @@
 
 #include "vtkMRMLNode.h"
 
+class vtkMRMLModelNode;
+class vtkMRMLSliceDisplayNode;
+
 /// \brief MRML node for storing a slice through RAS space.
 ///
 /// This node stores the information about how to composite two
@@ -103,6 +106,13 @@ public:
   vtkSetMacro (FiducialVisibility, int );
   vtkGetMacro (FiducialLabelVisibility, int );
   vtkSetMacro (FiducialLabelVisibility, int );
+
+  ///
+  /// This method is deprecated. Instead of this method use
+  /// SetIntersectingSlicesVisibility() and GetIntersectingSlicesVisibility()
+  /// of vtkMRMLSliceDisplayNode.
+  int GetSliceIntersectionVisibility();
+  void SetSliceIntersectionVisibility(int visibility);
 
   /// Get annotation space.
   vtkGetMacro ( AnnotationSpace, int );
@@ -233,6 +243,13 @@ protected:
   ~vtkMRMLSliceCompositeNode() override;
   vtkMRMLSliceCompositeNode(const vtkMRMLSliceCompositeNode&);
   void operator=(const vtkMRMLSliceCompositeNode&);
+
+  // Helper functions for deprecated SetSliceIntersectionVisibility/GetSliceIntersectionVisibility methods.
+  vtkMRMLSliceDisplayNode* GetSliceDisplayNode();
+  std::string GetCompositeNodeIDFromSliceModelNode(vtkMRMLModelNode* sliceModelNode);
+
+  // Cached value of last found displayable node (it is expensive to determine it)
+  vtkWeakPointer<vtkMRMLSliceDisplayNode> LastFoundSliceDisplayNode;
 
   // start by showing only the background volume
   double ForegroundOpacity{ 0.0 };

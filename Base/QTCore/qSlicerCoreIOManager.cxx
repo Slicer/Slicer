@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDir>
 #include <QElapsedTimer>
 #include <QFileInfo>
 
@@ -687,6 +688,12 @@ void qSlicerCoreIOManager::emitNewFileLoaded(const QVariantMap& loadedFileParame
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreIOManager::emitFileSaved(const QVariantMap& savedFileParameters)
+{
+  emit this->fileSaved(savedFileParameters);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreIOManager::addDefaultStorageNodes()
 {
   Q_D(qSlicerCoreIOManager);
@@ -748,16 +755,32 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     scene = d->currentScene();
     }
 
-  Q_ASSERT(parameters.contains("fileName"));
+  if (!parameters.contains("fileName") || !parameters["fileName"].canConvert<QString>())
+    {
+    qCritical() << Q_FUNC_INFO << "failed: \"fileName\" must be included as a string parameter.";
+    return false;
+    }
+  QString fileName = parameters["fileName"].toString();
+  if (fileName.isEmpty())
+    {
+    qCritical() << Q_FUNC_INFO << "failed: \"fileName\" parameter must not be empty.";
+    return false;
+    }
 
   // HACK - See https://github.com/Slicer/Slicer/issues/3322
   //        Sort writers to ensure generic ones are last.
   const QList<qSlicerFileWriter*> writers = d->writers(fileType, parameters, scene);
   if (writers.isEmpty())
     {
-    qWarning() << "No writer found to write file" << parameters.value("fileName")
+    qWarning() << "No writer found to write file" << fileName
                << "of type" << fileType;
     return false;
+    }
+
+  // Create the directory that the file will be saved to, if it does not exist
+  if (!QFileInfo(fileName).dir().mkpath(".")) // Note that if the directory already exists, mkpath simply returns true
+    {
+    qWarning() << Q_FUNC_INFO << ": Unable to create directory" << QFileInfo(fileName).absolutePath();
     }
 
   QStringList nodes;
@@ -776,6 +799,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
       continue;
       }
     nodes << writer->writtenNodes();
+    emit fileSaved(parameters);
     writeSuccess = true;
     break;
     }
