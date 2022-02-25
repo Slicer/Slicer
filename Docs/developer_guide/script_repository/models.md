@@ -209,6 +209,8 @@ glTF is a modern and very efficient file format for surface meshes, which is sup
 - https://3dviewer.net/ (requires a single zip file that contains all the exported files)
 - https://gltf-viewer.donmccurdy.com/ (the exported folder can be drag-and-dropped to the webpage)
 
+[SlicerOpenAnatomy extension](https://github.com/PerkLab/SlicerOpenAnatomy/) provides rich export of models and segmentations (preserving names, hierarchy, etc.), but for a basic export operation this code snippet can be used:
+
 ```python
 exporter = vtk.vtkGLTFExporter()
 exporter.SetRenderWindow(slicer.app.layoutManager().threeDWidget(0).threeDView().renderWindow())
