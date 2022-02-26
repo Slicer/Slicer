@@ -233,6 +233,7 @@ roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode")
 cropVolumeParameters = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLCropVolumeParametersNode")
 cropVolumeParameters.SetInputVolumeNodeID(volumeNode.GetID())
 cropVolumeParameters.SetROINodeID(roiNode.GetID())
+slicer.modules.cropvolume.logic().SnapROIToVoxelGrid(cropVolumeParameters)  # optional (rotates the ROI to match the volume axis directions)
 slicer.modules.cropvolume.logic().FitROIToInputVolume(cropVolumeParameters)
 slicer.mrmlScene.RemoveNode(cropVolumeParameters)
 ```
