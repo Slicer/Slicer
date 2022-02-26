@@ -12,7 +12,7 @@ class qSlicerSceneViewsModuleDialog : public qMRMLScreenShotDialog
 public:
   typedef qMRMLScreenShotDialog Superclass;
 
-  qSlicerSceneViewsModuleDialog();
+  qSlicerSceneViewsModuleDialog(QWidget* parent=nullptr);
   ~qSlicerSceneViewsModuleDialog() override;
 
   /// Set the SceneViews module logic.

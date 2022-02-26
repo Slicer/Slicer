@@ -147,7 +147,7 @@ public:
 
 protected:
   static ctkFileDialog* createFileDialog(const qSlicerIO::IOProperties& ioProperties =
-                                         qSlicerIO::IOProperties());
+                                         qSlicerIO::IOProperties(), QWidget* parent = nullptr);
 
   qSlicerIOOptions* options(const qSlicerIO::IOProperties& ioProperties)const;
 

@@ -23,6 +23,7 @@
 #include <QComboBox>
 #include <QDropEvent>
 #include <QFileDialog>
+#include <QMainWindow>
 #include <QMimeData>
 #include <QMessageBox>
 #include <QTemporaryDir>
@@ -46,8 +47,9 @@
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
+qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(qSlicerDataDialog* object, QWidget* _parent/*=nullptr*/)
   :QDialog(_parent)
+  ,q_ptr(object)
 {
   this->setupUi(this);
 
@@ -503,9 +505,8 @@ void qSlicerDataDialogPrivate::updateCheckBoxHeader(int itemRow, int itemColumn)
 //-----------------------------------------------------------------------------
 qSlicerDataDialog::qSlicerDataDialog(QObject* _parent)
   : qSlicerFileDialog(_parent)
-  , d_ptr(new qSlicerDataDialogPrivate(nullptr))
+  , d_ptr(new qSlicerDataDialogPrivate(this, nullptr))
 {
-  // FIXME give qSlicerDataDialog as a parent of qSlicerDataDialogPrivate;
 }
 
 //-----------------------------------------------------------------------------
@@ -584,7 +585,25 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
     }
 
   bool success = false;
-  if (d->exec() != QDialog::Accepted)
+
+  Qt::WindowFlags windowFlags = d->windowFlags();
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  if (mainWindow)
+    {
+    // setParent resets window flags, so save them and then restore
+    Qt::WindowFlags windowFlags = d->windowFlags();
+    d->setParent(mainWindow);
+    d->setWindowFlags(windowFlags);
+    }
+  int result = d->exec();
+  if (mainWindow)
+    {
+    d->setParent(nullptr);
+    d->setWindowFlags(windowFlags);
+    }
+
+  if (result != QDialog::Accepted)
     {
     d->reset();
     return success;

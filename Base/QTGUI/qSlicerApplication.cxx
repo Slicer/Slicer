@@ -177,13 +177,17 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 {
+  // Delete settings dialog. deleteLater would cause mamory leaks on exit.
+  this->SettingsDialog->setParent(nullptr);
   delete this->SettingsDialog;
   this->SettingsDialog = nullptr;
+
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   if(this->ExtensionsManagerDialog)
     {
+    this->ExtensionsManagerDialog->setParent(nullptr);
     delete this->ExtensionsManagerDialog;
-    this->ExtensionsManagerDialog =nullptr;
+    this->ExtensionsManagerDialog = nullptr;
     }
 #endif
 #ifdef Slicer_USE_QtTesting
@@ -266,6 +270,7 @@ void qSlicerApplicationPrivate::init()
   //----------------------------------------------------------------------------
   // Settings Dialog
   //----------------------------------------------------------------------------
+  // mainWindow is still nullptr, so the parent will be set later.
   this->SettingsDialog = new ctkSettingsDialog(nullptr);
   this->SettingsDialog->setResetButton(true);
   // Some settings panels are quite large, show maximize button to allow resizing with a single click
@@ -623,12 +628,13 @@ void qSlicerApplication::confirmRestart(QString reason)
     reason = tr("Are you sure you want to restart?");
     }
 
-  ctkMessageBox confirmDialog;
-  confirmDialog.setText(reason);
-  confirmDialog.setIcon(QMessageBox::Question);
-  confirmDialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-  confirmDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmRestart" );
-  bool restartConfirmed = (confirmDialog.exec() == QMessageBox::Ok);
+  ctkMessageBox* confirmDialog = new ctkMessageBox(this->mainWindow());
+  confirmDialog->setText(reason);
+  confirmDialog->setIcon(QMessageBox::Question);
+  confirmDialog->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+  confirmDialog->setDontShowAgainSettingsKey( "MainWindow/DontConfirmRestart" );
+  bool restartConfirmed = (confirmDialog->exec() == QMessageBox::Ok);
+  confirmDialog->deleteLater();
 
   if (restartConfirmed)
     {
@@ -728,15 +734,27 @@ void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QStri
 {
   Q_D(qSlicerApplication);
 
+  if (!d->SettingsDialog->parent() && this->mainWindow())
+    {
+    // Set the parent before displaying the dialog to make sure that
+    // when the user clicks on the application screen (even if outside the dialog)
+    // then the main window is brought to the front.
+
+    // setParent resets window flags, so save them and then restore
+    Qt::WindowFlags windowFlags = d->SettingsDialog->windowFlags();
+    d->SettingsDialog->setParent(this->mainWindow());
+    d->SettingsDialog->setWindowFlags(windowFlags);
+    }
+
   // Reload settings to apply any changes that have been made outside of the
   // dialog (e.g. changes to module paths due to installing extensions). See
   // https://github.com/Slicer/Slicer/issues/3658.
   d->SettingsDialog->reloadSettings();
 
   if (!settingsPanel.isNull())
-  {
+    {
     d->SettingsDialog->setCurrentPanel(settingsPanel);
-  }
+    }
 
   // Now show the dialog
   d->SettingsDialog->exec();
@@ -786,7 +804,7 @@ void qSlicerApplication::openExtensionsManagerDialog()
 
   if(!d->ExtensionsManagerDialog)
     {
-    d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(nullptr);
+    d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(this->mainWindow());
     }
   if (!d->ExtensionsManagerDialog->extensionsManagerModel() &&
       this->mainWindow())

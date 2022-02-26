@@ -77,7 +77,9 @@ qSlicerSceneViewsModuleDialog* qSlicerSceneViewsModuleWidgetPrivate::sceneViewDi
 {
   if (!this->SceneViewDialog)
     {
-    this->SceneViewDialog = new qSlicerSceneViewsModuleDialog();
+    qSlicerApplication* app = qSlicerApplication::application();
+    QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+    this->SceneViewDialog = new qSlicerSceneViewsModuleDialog(mainWindow);
 
     // pass a pointer to the logic class
     this->SceneViewDialog->setLogic(this->logic());
@@ -257,8 +259,10 @@ void qSlicerSceneViewsModuleWidget::restoreSceneView(const QString& mrmlId)
   if (!d->logic()->RestoreSceneView(mrmlId.toUtf8(), false))
     {
     // ask if the user wishes to save the current scene nodes, restore and delete them or cancel
-    ctkMessageBox missingNodesMsgBox;
-    missingNodesMsgBox.setWindowTitle("Data missing from Scene View");
+    qSlicerApplication* app = qSlicerApplication::application();
+    QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+    ctkMessageBox* missingNodesMsgBox = new ctkMessageBox(mainWindow);
+    missingNodesMsgBox->setWindowTitle("Data missing from Scene View");
     vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(this->mrmlScene()->GetNodeByID(mrmlId.toUtf8()));
     QString sceneViewName;
     if (viewNode)
@@ -275,20 +279,20 @@ void qSlicerSceneViewsModuleWidget::restoreSceneView(const QString& mrmlId)
       "If you don't add and restore, data not already saved to disk"
       ", or saved in another scene view,"
       " will be permanently lost!\n");
-    missingNodesMsgBox.setText(labelText + infoText);
+    missingNodesMsgBox->setText(labelText + infoText);
     // until CTK bug is fixed, informative text will overlap the don't show
     // again message so put it all in the label text
-    // missingNodesMsgBox.setInformativeText(infoText);
-    QPushButton *continueButton = missingNodesMsgBox.addButton(QMessageBox::Discard);
+    // missingNodesMsgBox->setInformativeText(infoText);
+    QPushButton *continueButton = missingNodesMsgBox->addButton(QMessageBox::Discard);
     continueButton->setText("Restore without saving");
-    QPushButton *addButton = missingNodesMsgBox.addButton(QMessageBox::Save);
+    QPushButton *addButton = missingNodesMsgBox->addButton(QMessageBox::Save);
     addButton->setText("Add and Restore");
-    missingNodesMsgBox.addButton(QMessageBox::Cancel);
+    missingNodesMsgBox->addButton(QMessageBox::Cancel);
 
-    missingNodesMsgBox.setIcon(QMessageBox::Warning);
-    missingNodesMsgBox.setDontShowAgainVisible(true);
-    missingNodesMsgBox.setDontShowAgainSettingsKey("SceneViewsModule/AlwaysRemoveNodes");
-    int ret = missingNodesMsgBox.exec();
+    missingNodesMsgBox->setIcon(QMessageBox::Warning);
+    missingNodesMsgBox->setDontShowAgainVisible(true);
+    missingNodesMsgBox->setDontShowAgainSettingsKey("SceneViewsModule/AlwaysRemoveNodes");
+    int ret = missingNodesMsgBox->exec();
     switch (ret)
       {
       case QMessageBox::Discard:
@@ -307,6 +311,7 @@ void qSlicerSceneViewsModuleWidget::restoreSceneView(const QString& mrmlId)
       default:
         break;
       }
+    missingNodesMsgBox->deleteLater();
     }
 
   qSlicerApplication::application()->mainWindow()->statusBar()->showMessage("The SceneView was restored including the attached scene.", 2000);

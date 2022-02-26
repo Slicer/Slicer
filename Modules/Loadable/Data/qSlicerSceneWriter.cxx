@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
+#include <QMainWindow>
 #include <QPixmap>
 
 // CTK includes
@@ -32,6 +33,7 @@
 // QtCore includes
 #include "qMRMLUtils.h"
 #include "qSlicerCoreApplication.h"
+#include "qSlicerApplication.h"
 #include "qSlicerSceneWriter.h"
 #include "vtkSlicerApplicationLogic.h"
 
@@ -218,7 +220,9 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
   int numFiles = saveDir.count() - 2;
   if (numFiles != 0)
     {
-    ctkMessageBox *emptyMessageBox = new ctkMessageBox(nullptr);
+    qSlicerApplication* app = qSlicerApplication::application();
+    QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+    ctkMessageBox *emptyMessageBox = new ctkMessageBox(mainWindow);
     QString error;
     switch(numFiles)
       {
@@ -238,10 +242,10 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
                          "Please choose an empty directory.")
                          .arg(saveDirName)
                          .arg(error);
-    emptyMessageBox->setAttribute( Qt::WA_DeleteOnClose, true );
     emptyMessageBox->setIcon(QMessageBox::Warning);
     emptyMessageBox->setText(message);
     emptyMessageBox->exec();
+    emptyMessageBox->deleteLater();
     return false;
     }
 

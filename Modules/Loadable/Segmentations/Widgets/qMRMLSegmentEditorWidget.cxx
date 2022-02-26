@@ -3605,7 +3605,7 @@ void qMRMLSegmentEditorWidget::onExportToFilesActionClicked()
     }
 
   // Create dialog to show the parameters widget in a popup window
-  QDialog* exportDialog = new QDialog(nullptr, Qt::Dialog);
+  QDialog* exportDialog = new QDialog(this, Qt::Dialog);
   exportDialog->setObjectName("SegmentationExportToFileWindow");
   exportDialog->setWindowTitle("Export segments to files");
 
@@ -3629,7 +3629,7 @@ void qMRMLSegmentEditorWidget::onExportToFilesActionClicked()
   exportDialog->exec();
 
   // Delete dialog when done
-  delete exportDialog;
+  exportDialog->deleteLater();
 }
 
 //-----------------------------------------------------------------------------
@@ -3814,10 +3814,12 @@ void qMRMLSegmentEditorWidget::showSegmentationGeometryDialog()
     return;
     }
 
-  qMRMLSegmentationGeometryDialog geometryDialog(d->SegmentationNode, this);
-  geometryDialog.setEditEnabled(true);
-  geometryDialog.setResampleLabelmaps(true);
-  if (!geometryDialog.exec())
+  qMRMLSegmentationGeometryDialog* geometryDialog = new qMRMLSegmentationGeometryDialog(d->SegmentationNode, this);
+  geometryDialog->setEditEnabled(true);
+  geometryDialog->setResampleLabelmaps(true);
+  int success = geometryDialog->exec();
+  geometryDialog->deleteLater();
+  if (!success)
     {
     // cancel clicked
     return;
