@@ -48,6 +48,7 @@ public slots:
   void addFiles();
   void reset();
   void showOptions(bool);
+  void resetColumnWidths(bool forceFileColumnStretch=false);
 
 protected slots:
   void onFileTypeChanged(const QString&);

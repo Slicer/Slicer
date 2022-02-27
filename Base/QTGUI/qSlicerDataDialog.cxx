@@ -26,6 +26,7 @@
 #include <QMainWindow>
 #include <QMimeData>
 #include <QMessageBox>
+#include <QScrollBar>
 #include <QTemporaryDir>
 
 /// CTK includes
@@ -147,7 +148,7 @@ void qSlicerDataDialogPrivate::addFiles()
     {
     this->addFile(file);
     }
-  //this->FileWidget->resizeColumnsToContents();
+  this->resetColumnWidths();
 }
 
 //-----------------------------------------------------------------------------
@@ -187,7 +188,7 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
       this->addDirectory(entry.absoluteFilePath());
       }
     }
-  //this->FileWidget->resizeColumnsToContents();
+  this->resetColumnWidths();
 }
 
 //-----------------------------------------------------------------------------
@@ -293,14 +294,57 @@ void qSlicerDataDialogPrivate::dropEvent(QDropEvent* event)
 void qSlicerDataDialogPrivate::reset()
 {
   this->FileWidget->setRowCount(0);
+  // forceFileColumnStretch=true to make the widgets nicely fill the available space
+  this->resetColumnWidths(true);
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::resetColumnWidths(bool forceFileColumnStretch/*=false*/)
+{
+  bool optionsVisible = !this->FileWidget->isColumnHidden(OptionsColumn);
+
+  QHeaderView* headerView = this->FileWidget->horizontalHeader();
+  if (optionsVisible && !forceFileColumnStretch)
+    {
+    // Use as much space for the filename as needed (if it becomes too long then we reduce the size later)
+    this->FileWidget->resizeColumnToContents(FileColumn);
+    // Ensure there is enough space for options
+    this->FileWidget->resizeColumnToContents(OptionsColumn);
+    // Allow the user to squeeze the filename column (to make more space for options)
+    headerView->setSectionResizeMode(FileColumn, QHeaderView::Interactive);
+
+    // Ensure that the OptionsColumn is visible (at least up to a size of 60 pixels)
+    int minimumOptionsColumnWidth = std::min(60, this->FileWidget->columnWidth(OptionsColumn));
+    int maximumFileColumnWidth = this->FileWidget->width() - this->FileWidget->columnWidth(TypeColumn) - minimumOptionsColumnWidth;
+    //int maximumFileColumnWidth = this->FileWidget->width() * 0.8;
+    if (this->FileWidget->columnWidth(FileColumn) > maximumFileColumnWidth)
+      {
+      this->FileWidget->setColumnWidth(FileColumn, maximumFileColumnWidth);
+      }
+    }
+  else
+    {
+    // Options section is hidden, use all the space for the filename
+    headerView->setSectionResizeMode(FileColumn, QHeaderView::Stretch);
+    }
+}
+
 
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::showOptions(bool show)
 {
   this->ShowOptionsCheckBox->setChecked(show);
-
   this->FileWidget->setColumnHidden(OptionsColumn, !show);
+  this->resetColumnWidths();
+  if (show)
+    {
+    if (QApplication::instance())
+      {
+      QApplication::instance()->processEvents(QEventLoop::ExcludeUserInputEvents);
+      }
+    this->FileWidget->horizontalScrollBar()->setSliderPosition(
+      this->FileWidget->horizontalScrollBar()->maximum());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -600,6 +644,7 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
       d->addFile(QFileInfo(fileName));
       }
     }
+  d->resetColumnWidths();
 
   bool success = false;
 
