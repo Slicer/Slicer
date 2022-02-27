@@ -333,9 +333,12 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
   vtkSmartPointer<vtkMRMLVolumeDisplayNode> displayNode;
   vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> dtPropNode;
 
-  if ( this->VolumeNode )
+  // Store the current volume node in a local variable because this->VolumeNode might change
+  // by modules in response to adding a display node to the scene.
+  vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = this->VolumeNode;
+  if (volumeNode)
     {
-    const char *id = this->VolumeNode->GetDisplayNodeID();
+    const char *id = volumeNode->GetDisplayNodeID();
     if (id)
       {
       if (this->GetMRMLScene())
@@ -346,25 +349,25 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
     else
       {
       // TODO: this is a hack
-      vtkDebugMacro("UpdateNodeReferences: Volume Node " << this->VolumeNode->GetID() << " doesn't have a display node, adding one.");
-      if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeNode))
+      vtkDebugMacro("UpdateNodeReferences: Volume Node " << volumeNode->GetID() << " doesn't have a display node, adding one.");
+      if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(volumeNode))
         {
         displayNode.TakeReference(vtkMRMLDiffusionTensorVolumeDisplayNode::New());
         dtPropNode.TakeReference(vtkMRMLDiffusionTensorDisplayPropertiesNode::New());
         }
-      else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(this->VolumeNode))
+      else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(volumeNode))
         {
         displayNode.TakeReference(vtkMRMLDiffusionWeightedVolumeDisplayNode::New());
         }
-      else if (vtkMRMLVectorVolumeNode::SafeDownCast(this->VolumeNode))
+      else if (vtkMRMLVectorVolumeNode::SafeDownCast(volumeNode))
         {
         displayNode.TakeReference(vtkMRMLVectorVolumeDisplayNode::New());
         }
-      else if (vtkMRMLLabelMapVolumeNode::SafeDownCast(this->VolumeNode))
+      else if (vtkMRMLLabelMapVolumeNode::SafeDownCast(volumeNode))
         {
         displayNode.TakeReference(vtkMRMLLabelMapVolumeDisplayNode::New());
         }
-      else if (vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode))
+      else if (vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode))
         {
         displayNode.TakeReference(vtkMRMLScalarVolumeDisplayNode::New());
         }
@@ -387,7 +390,7 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
 
       displayNode->SetDefaultColorMap();
 
-      this->VolumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+      volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
       }
     }
 
