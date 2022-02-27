@@ -272,6 +272,23 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& rea
   this->FileWidget->setSortingEnabled(sortingEnabled);
 }
 
+//---------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::dragEnterEvent(QDragEnterEvent* event)
+{
+  Q_Q(qSlicerDataDialog);
+  if (event && q->isMimeDataAccepted(event->mimeData()))
+    {
+    event->accept();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::dropEvent(QDropEvent* event)
+{
+  Q_Q(qSlicerDataDialog);
+  q->dropEvent(event);
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::reset()
 {
