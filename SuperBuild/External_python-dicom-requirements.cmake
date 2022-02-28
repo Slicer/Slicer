@@ -48,16 +48,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/six]
   # [Pillow]
   # Hashes correspond to the following packages:
-  #  - Pillow-9.0.0-cp39-cp39-macosx_10_10_x86_64.whl
-  #  - Pillow-9.0.0-cp39-cp39-macosx_11_0_arm64.whl
-  #  - Pillow-9.0.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - Pillow-9.0.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - Pillow-9.0.0-cp39-cp39-win_amd64.whl
-  Pillow==9.0.0 --hash=sha256:c2067b3bb0781f14059b112c9da5a91c80a600a97915b4f48b37f197895dd925 \
-                --hash=sha256:2d16b6196fb7a54aff6b5e3ecd00f7c0bab1b56eee39214b2b223a9d938c50af \
-                --hash=sha256:98cb63ca63cb61f594511c06218ab4394bf80388b3d66cd61d0b1f63ee0ea69f \
-                --hash=sha256:3586e12d874ce2f1bc875a3ffba98732ebb12e18fb6d97be482bd62b56803281 \
-                --hash=sha256:6579f9ba84a3d4f1807c4aab4be06f373017fc65fff43498885ac50a9b47a553
+  #  - Pillow-9.0.1-1-cp39-cp39-macosx_11_0_arm64.whl
+  #  - Pillow-9.0.1-cp39-cp39-macosx_10_10_x86_64.whl
+  #  - Pillow-9.0.1-cp39-cp39-macosx_11_0_arm64.whl
+  #  - Pillow-9.0.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - Pillow-9.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - Pillow-9.0.1-cp39-cp39-win_amd64.whl
+  Pillow==9.0.1 --hash=sha256:b9618823bd237c0d2575283f2939655f54d51b4527ec3972907a927acbcc5bfc \
+                --hash=sha256:80ca33961ced9c63358056bd08403ff866512038883e74f3a4bf88ad3eb66838 \
+                --hash=sha256:1c3c33ac69cf059bbb9d1a71eeaba76781b450bc307e2291f8a4764d779a6b28 \
+                --hash=sha256:12875d118f21cf35604176872447cdb57b07126750a33748bac15e77f90f1f9c \
+                --hash=sha256:d3c5c79ab7dfce6d88f1ba639b77e77a17ea33a01b07b99840d6ed08031cb2a7 \
+                --hash=sha256:f25ed6e28ddf50de7e7ea99d7a976d6a9c415f03adcaac9c41ff6ff41b6d86ac
   # [/Pillow]
   # [retrying]
   retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
