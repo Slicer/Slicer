@@ -140,15 +140,18 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
   def setupOptionsFrame(self):
     self.thresholdSliderLabel = qt.QLabel("Threshold Range:")
+    self.thresholdSliderLabel.setObjectName("thresholdSliderLabel")
     self.thresholdSliderLabel.setToolTip("Set the range of the background values that should be labeled.")
     self.scriptedEffect.addOptionsWidget(self.thresholdSliderLabel)
 
     self.thresholdSlider = ctk.ctkRangeWidget()
+    self.thresholdSlider.setObjectName("thresholdSlider")
     self.thresholdSlider.spinBoxAlignment = qt.Qt.AlignTop
     self.thresholdSlider.singleStep = 0.01
     self.scriptedEffect.addOptionsWidget(self.thresholdSlider)
 
     self.autoThresholdModeSelectorComboBox = qt.QComboBox()
+    self.autoThresholdModeSelectorComboBox.setObjectName("autoThresholdModeSelectorComboBox")
     self.autoThresholdModeSelectorComboBox.addItem("threshold above", MODE_SET_LOWER_MAX)
     self.autoThresholdModeSelectorComboBox.addItem("threshold below", MODE_SET_MIN_UPPER)
     self.autoThresholdModeSelectorComboBox.addItem("set as lower value", MODE_SET_LOWER)
@@ -158,6 +161,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       " Set as lower/upper value: only modifies one side of the threshold range.")
 
     self.autoThresholdMethodSelectorComboBox = qt.QComboBox()
+    self.autoThresholdMethodSelectorComboBox.setObjectName("autoThresholdMethodSelectorComboBox")
     self.autoThresholdMethodSelectorComboBox.addItem("Otsu", METHOD_OTSU)
     self.autoThresholdMethodSelectorComboBox.addItem("Huang", METHOD_HUANG)
     self.autoThresholdMethodSelectorComboBox.addItem("IsoData", METHOD_ISO_DATA)
@@ -202,6 +206,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     autoThresholdFrame.addWidget(self.setAutoThresholdButton, 2, 0, 1, 3)
 
     autoThresholdGroupBox = ctk.ctkCollapsibleGroupBox()
+    autoThresholdGroupBox.setObjectName("autoThresholdGroupBox")
     autoThresholdGroupBox.setTitle("Automatic threshold")
     autoThresholdGroupBox.setLayout(autoThresholdFrame)
     autoThresholdGroupBox.collapsed = True
@@ -365,12 +370,14 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.histogramUpperMethodButtonGroup.addButton(self.histogramUpperThresholdMaximumButton)
 
     histogramGroupBox = ctk.ctkCollapsibleGroupBox()
+    histogramGroupBox.setObjectName("histogramGroupBox")
     histogramGroupBox.setTitle("Local histogram")
     histogramGroupBox.setLayout(histogramFrame)
     histogramGroupBox.collapsed = True
     self.scriptedEffect.addOptionsWidget(histogramGroupBox)
 
     self.useForPaintButton = qt.QPushButton("Use for masking")
+    self.useForPaintButton.setObjectName("UseForMaskingButton")
     self.useForPaintButton.setToolTip("Use specified intensity range for masking and switch to Paint effect.")
     self.scriptedEffect.addOptionsWidget(self.useForPaintButton)
 
