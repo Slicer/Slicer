@@ -95,11 +95,13 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.previewButton.setSizePolicy(qSize)
 
     previewFrame = qt.QHBoxLayout()
+    previewFrame.setObjectName("previewFrame")
     previewFrame.addWidget(self.autoUpdateCheckBox)
     previewFrame.addWidget(self.previewButton)
     self.scriptedEffect.addLabeledOptionsWidget("Preview:", previewFrame)
 
     self.previewOpacitySlider = ctk.ctkSliderWidget()
+    self.previewOpacitySlider.setObjectName("previewOpacitySlider")
     self.previewOpacitySlider.setToolTip("Adjust visibility of results preview.")
     self.previewOpacitySlider.minimum = 0
     self.previewOpacitySlider.maximum = 1.0
@@ -109,6 +111,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.previewOpacitySlider.spinBoxVisible = False
 
     self.previewShow3DButton = qt.QPushButton("Show 3D")
+    self.previewShow3DButton.setObjectName("previewShow3DButton")
     self.previewShow3DButton.setToolTip("Preview results in 3D.")
     self.previewShow3DButton.setCheckable(True)
 
