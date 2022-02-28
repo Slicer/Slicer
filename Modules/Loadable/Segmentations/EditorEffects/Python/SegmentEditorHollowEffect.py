@@ -31,8 +31,11 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     operationLayout = qt.QVBoxLayout()
 
     self.insideSurfaceOptionRadioButton = qt.QRadioButton("inside surface")
+    self.insideSurfaceOptionRadioButton.setObjectName("insideSurfaceOptionRadioButton")
     self.medialSurfaceOptionRadioButton = qt.QRadioButton("medial surface")
+    self.medialSurfaceOptionRadioButton.setObjectName("medialSurfaceOptionRadioButton")
     self.outsideSurfaceOptionRadioButton = qt.QRadioButton("outside surface")
+    self.outsideSurfaceOptionRadioButton.setObjectName("outsideSurfaceOptionRadioButton")
     operationLayout.addWidget(self.insideSurfaceOptionRadioButton)
     operationLayout.addWidget(self.medialSurfaceOptionRadioButton)
     operationLayout.addWidget(self.outsideSurfaceOptionRadioButton)
@@ -41,6 +44,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     self.scriptedEffect.addLabeledOptionsWidget("Use current segment as:", operationLayout)
 
     self.shellThicknessMMSpinBox = slicer.qMRMLSpinBox()
+    self.shellThicknessMMSpinBox.setObjectName("shellThicknessMMSpinBox")
     self.shellThicknessMMSpinBox.setMRMLScene(slicer.mrmlScene)
     self.shellThicknessMMSpinBox.setToolTip("Thickness of the hollow shell.")
     self.shellThicknessMMSpinBox.quantity = "length"
