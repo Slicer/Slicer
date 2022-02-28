@@ -30,9 +30,11 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
   def setupOptionsFrame(self):
 
     operationLayout = qt.QVBoxLayout()
-
+    operationLayout.setObjectName("operationLayout")
     self.shrinkOptionRadioButton = qt.QRadioButton("Shrink")
+    self.shrinkOptionRadioButton.setObjectName("shrinkOptionRadioButton")
     self.growOptionRadioButton = qt.QRadioButton("Grow")
+    self.growOptionRadioButton.setObjectName("growOptionRadioButton")
     operationLayout.addWidget(self.shrinkOptionRadioButton)
     operationLayout.addWidget(self.growOptionRadioButton)
     self.growOptionRadioButton.setChecked(True)
@@ -40,6 +42,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     self.scriptedEffect.addLabeledOptionsWidget("Operation:", operationLayout)
 
     self.marginSizeMMSpinBox = slicer.qMRMLSpinBox()
+    self.marginSizeMMSpinBox.setObjectName("marginSizeMMSpinBox")
     self.marginSizeMMSpinBox.setMRMLScene(slicer.mrmlScene)
     self.marginSizeMMSpinBox.setToolTip("Segment boundaries will be shifted by this distance. Positive value means the segments will grow, negative value means segment will shrink.")
     self.marginSizeMMSpinBox.quantity = "length"
@@ -50,6 +53,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     self.marginSizeLabel.setToolTip("Size change in pixel. Computed from the segment's spacing and the specified margin size.")
 
     marginSizeFrame = qt.QHBoxLayout()
+    marginSizeFrame.setObjectName("marginSizeFrame")
     marginSizeFrame.addWidget(self.marginSizeMMSpinBox)
     self.marginSizeMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Margin size:", marginSizeFrame)
     self.scriptedEffect.addLabeledOptionsWidget("", self.marginSizeLabel)
