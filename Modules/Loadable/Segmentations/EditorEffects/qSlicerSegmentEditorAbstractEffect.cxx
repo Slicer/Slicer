@@ -39,6 +39,7 @@
 #include <QFrame>
 #include <QImage>
 #include <QLabel>
+#include <QMainWindow>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPixmap>
@@ -49,6 +50,7 @@
 #include "qMRMLSliceView.h"
 #include "qMRMLThreeDWidget.h"
 #include "qMRMLThreeDView.h"
+#include "qSlicerApplication.h"
 #include "qSlicerCoreApplication.h"
 #include "vtkMRMLSliceLogic.h"
 
@@ -1021,7 +1023,10 @@ int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
       }
     }
 
-  ctkMessageBox* confirmCurrentSegmentVisibleMsgBox = new ctkMessageBox(nullptr);
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+
+  ctkMessageBox* confirmCurrentSegmentVisibleMsgBox = new ctkMessageBox(mainWindow);
   confirmCurrentSegmentVisibleMsgBox->setAttribute(Qt::WA_DeleteOnClose);
   confirmCurrentSegmentVisibleMsgBox->setWindowTitle("Operate on invisible segment?");
   confirmCurrentSegmentVisibleMsgBox->setText("The currently selected segment is hidden. Would you like to make it visible?");

@@ -905,7 +905,7 @@ void vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute()
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
     {
-    vtkWarningMacro("vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute() failed: invalid markupsNode");
+    vtkWarningMacro("UpdateAssignedAttribute() failed: assign markupsNode before calling this method.");
     return;
     }
   markupsNode->UpdateAssignedAttribute();
@@ -923,7 +923,7 @@ void vtkMRMLMarkupsDisplayNode::SetScalarVisibility(int visibility)
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
     {
-    vtkWarningMacro("vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute() failed: invalid markupsNode");
+    vtkWarningMacro("UpdateAssignedAttribute() failed: assign markupsNode before calling this method.");
     return;
     }
   // Markups uses a different filter output when scalar visibility is enabled therefore

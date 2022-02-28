@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QMainWindow>
 
 // CTK includes
 #include <ctkFileDialog.h>
@@ -176,7 +177,7 @@ QStringList qSlicerStandardFileDialog::loadedNodes()const
 
 //-----------------------------------------------------------------------------
 ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
-    const qSlicerIO::IOProperties& ioProperties)
+    const qSlicerIO::IOProperties& ioProperties, QWidget* parent/*=nullptr*/)
 {
   if(ioProperties["objectName"].toString().isEmpty())
     {
@@ -185,7 +186,7 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
     }
 
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  ctkFileDialog* fileDialog = new ctkFileDialog();
+  ctkFileDialog* fileDialog = new ctkFileDialog(parent);
 
   if(ioProperties["fileType"].toBool())
     {
@@ -268,8 +269,10 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 
   qSlicerIO::IOProperties properties = ioProperties;
   properties["fileType"] = d->FileType;
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
-                                properties);
+                                properties, mainWindow);
   QFileDialog::AcceptMode  acceptMode = (d->Action == qSlicerFileDialog::Read) ?
     QFileDialog::AcceptOpen : QFileDialog::AcceptSave;
   fileDialog->setAcceptMode(acceptMode);
@@ -353,7 +356,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     options = nullptr;
     }
 
-  delete fileDialog;
+  fileDialog->deleteLater();
   return res;
 }
 
@@ -364,8 +367,10 @@ QStringList qSlicerStandardFileDialog::getOpenFileName(
   QStringList files;
   ioProperties["multipleFiles"] = QFileDialog::ExistingFiles;
   ioProperties["objectName"] = "getOpenFileName";
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
-                                ioProperties);
+                                ioProperties, mainWindow);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
   if(fileDialog->exec() == QDialog::Accepted)
@@ -373,7 +378,7 @@ QStringList qSlicerStandardFileDialog::getOpenFileName(
     files = fileDialog->selectedFiles();
     }
   ioManager->setFavorites(fileDialog->sidebarUrls());
-  delete fileDialog;
+  fileDialog->deleteLater();
   return files;
 }
 
@@ -384,8 +389,10 @@ QString qSlicerStandardFileDialog::getExistingDirectory(
   QString directory;
   ioProperties["fileMode"] = QFileDialog::Directory;
   ioProperties["objectName"] = "getExistingDirectory";
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
-                                ioProperties);
+                                ioProperties, mainWindow);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
   if (fileDialog->exec() == QDialog::Accepted)
@@ -393,6 +400,6 @@ QString qSlicerStandardFileDialog::getExistingDirectory(
     directory = fileDialog->selectedFiles().value(0);
     }
   ioManager->setFavorites(fileDialog->sidebarUrls());
-  delete fileDialog;
+  fileDialog->deleteLater();
   return directory;
 }

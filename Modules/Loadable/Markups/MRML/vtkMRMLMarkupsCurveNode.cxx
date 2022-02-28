@@ -1387,6 +1387,8 @@ void vtkMRMLMarkupsCurveNode::UpdateSurfaceScalarVariables()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
 {
+  // TODO: This method only works well if there is a single display node
+  // (or all display nodes use the same scalar display settings).
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
   if (!displayNode)
     {
