@@ -41,6 +41,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
   def setupOptionsFrame(self):
 
     self.methodSelectorComboBox = qt.QComboBox()
+    self.methodSelectorComboBox.setObjectName("methodSelectorComboBox")
     self.methodSelectorComboBox.addItem("Copy", LOGICAL_COPY)
     self.methodSelectorComboBox.addItem("Add", LOGICAL_UNION)
     self.methodSelectorComboBox.addItem("Subtract", LOGICAL_SUBTRACT)
@@ -51,6 +52,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     self.methodSelectorComboBox.setToolTip('Click <dfn>Show details</dfn> link above for description of operations.')
 
     self.bypassMaskingCheckBox = qt.QCheckBox("Bypass masking")
+    self.bypassMaskingCheckBox.setObjectName("bypassMaskingCheckBox")
     self.bypassMaskingCheckBox.setToolTip("Ignore all masking options and only modify the selected segment.")
     self.bypassMaskingCheckBox.objectName = self.__class__.__name__ + 'BypassMasking'
 
@@ -58,15 +60,18 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     self.applyButton.objectName = self.__class__.__name__ + 'Apply'
 
     operationFrame = qt.QHBoxLayout()
+    operationFrame.setObjectName("operationFrame")
     operationFrame.addWidget(self.methodSelectorComboBox)
     operationFrame.addWidget(self.applyButton)
     operationFrame.addWidget(self.bypassMaskingCheckBox)
     self.marginSizeMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Operation:", operationFrame)
 
     self.modifierSegmentSelectorLabel = qt.QLabel("Modifier segment:")
+    self.modifierSegmentSelectorLabel.setObjectName("modifierSegmentSelectorLabel")
     self.scriptedEffect.addOptionsWidget(self.modifierSegmentSelectorLabel)
 
     self.modifierSegmentSelector = slicer.qMRMLSegmentsTableView()
+    self.modifierSegmentSelector.setObjectName("modifierSegmentSelector")
     self.modifierSegmentSelector.selectionMode = qt.QAbstractItemView.SingleSelection
     self.modifierSegmentSelector.headerVisible = False
     self.modifierSegmentSelector.visibilityColumnVisible = False
