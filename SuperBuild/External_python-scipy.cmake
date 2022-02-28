@@ -31,18 +31,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   # [scipy]
   # Hashes correspond to the following packages:
-  #  - scipy-1.7.3-1-cp39-cp39-macosx_12_0_arm64.whl
-  #  - scipy-1.7.3-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - scipy-1.7.3-cp39-cp39-macosx_12_0_arm64.whl
-  #  - scipy-1.7.3-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - scipy-1.7.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - scipy-1.7.3-cp39-cp39-win_amd64.whl
-  scipy==1.7.3 --hash=sha256:b78a35c5c74d336f42f44106174b9851c783184a85a3fe3e68857259b37b9ffb \
-               --hash=sha256:eef93a446114ac0193a7b714ce67659db80caf940f3232bad63f4c7a81bc18df \
-               --hash=sha256:eb326658f9b73c07081300daba90a8746543b5ea177184daed26528273157294 \
-               --hash=sha256:edad1cf5b2ce1912c4d8ddad20e11d333165552aba262c882e28c78bbc09dbf6 \
-               --hash=sha256:5d1cc2c19afe3b5a546ede7e6a44ce1ff52e443d12b231823268019f608b9b12 \
-               --hash=sha256:3f78181a153fa21c018d346f595edd648344751d7f03ab94b398be2ad083ed3e
+  #  - scipy-1.8.0-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - scipy-1.8.0-cp39-cp39-macosx_12_0_arm64.whl
+  #  - scipy-1.8.0-cp39-cp39-macosx_12_0_universal2.macosx_10_9_x86_64.whl
+  #  - scipy-1.8.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - scipy-1.8.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - scipy-1.8.0-cp39-cp39-win_amd64.whl
+  scipy==1.8.0 --hash=sha256:de2e80ee1d925984c2504812a310841c241791c5279352be4707cdcd7c255039 \
+               --hash=sha256:c2bae431d127bf0b1da81fc24e4bba0a84d058e3a96b9dd6475dfcb3c5e8761e \
+               --hash=sha256:723b9f878095ed994756fa4ee3060c450e2db0139c5ba248ee3f9628bd64e735 \
+               --hash=sha256:e6f0cd9c0bd374ef834ee1e0f0999678d49dcc400ea6209113d81528958f97c7 \
+               --hash=sha256:f3720d0124aced49f6f2198a6900304411dbbeed12f56951d7c66ebef05e3df6 \
+               --hash=sha256:bb7088e89cd751acf66195d2f00cf009a1ea113f3019664032d9075b1e727b6c
   # [/scipy]
   ]===])
 

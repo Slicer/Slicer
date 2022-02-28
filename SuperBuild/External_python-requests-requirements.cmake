@@ -33,7 +33,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   idna==3.3 --hash=sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff
   # [/idna]
   # [charset-normalizer]
-  charset-normalizer==2.0.10 --hash=sha256:cb957888737fc0bbcd78e3df769addb41fd1ff8cf950dc9e7ad7793f1bf44455
+  charset-normalizer==2.0.12 --hash=sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df
   # [/charset-normalizer]
   # [urllib3]
   urllib3==1.26.8 --hash=sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed
