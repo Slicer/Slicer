@@ -1135,6 +1135,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     // Add effect options frame to the options widget and hide them
     effect->setupOptionsFrame();
     QFrame* effectOptionsFrame = effect->optionsFrame();
+    effectOptionsFrame->setObjectName(effect->name() + "OptionsFrame");
     effectOptionsFrame->setVisible(false);
     d->EffectsOptionsFrame->layout()->addWidget(effectOptionsFrame);
     }
