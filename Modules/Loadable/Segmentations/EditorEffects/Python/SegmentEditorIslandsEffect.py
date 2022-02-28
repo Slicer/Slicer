@@ -32,36 +32,42 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     self.operationRadioButtons = []
 
     self.keepLargestOptionRadioButton = qt.QRadioButton("Keep largest island")
+    self.keepLargestOptionRadioButton.setObjectName("keepLargestOptionRadioButton")
     self.keepLargestOptionRadioButton.setToolTip(
       "Keep only the largest island in selected segment, remove all other islands in the segment.")
     self.operationRadioButtons.append(self.keepLargestOptionRadioButton)
     self.widgetToOperationNameMap[self.keepLargestOptionRadioButton] = KEEP_LARGEST_ISLAND
 
     self.keepSelectedOptionRadioButton = qt.QRadioButton("Keep selected island")
+    self.keepSelectedOptionRadioButton.setObjectName("keepSelectedOptionRadioButton")
     self.keepSelectedOptionRadioButton.setToolTip(
       "Click on an island in a slice viewer to keep that island and remove all other islands in selected segment.")
     self.operationRadioButtons.append(self.keepSelectedOptionRadioButton)
     self.widgetToOperationNameMap[self.keepSelectedOptionRadioButton] = KEEP_SELECTED_ISLAND
 
     self.removeSmallOptionRadioButton = qt.QRadioButton("Remove small islands")
+    self.removeSmallOptionRadioButton.setObjectName("removeSmallOptionRadioButton")
     self.removeSmallOptionRadioButton.setToolTip(
       "Remove all islands from the selected segment that are smaller than the specified minimum size.")
     self.operationRadioButtons.append(self.removeSmallOptionRadioButton)
     self.widgetToOperationNameMap[self.removeSmallOptionRadioButton] = REMOVE_SMALL_ISLANDS
 
     self.removeSelectedOptionRadioButton = qt.QRadioButton("Remove selected island")
+    self.removeSelectedOptionRadioButton.setObjectName("removeSelectedOptionRadioButton")
     self.removeSelectedOptionRadioButton.setToolTip(
       "Click on an island to remove it from selected segment.")
     self.operationRadioButtons.append(self.removeSelectedOptionRadioButton)
     self.widgetToOperationNameMap[self.removeSelectedOptionRadioButton] = REMOVE_SELECTED_ISLAND
 
     self.addSelectedOptionRadioButton = qt.QRadioButton("Add selected island")
+    self.addSelectedOptionRadioButton.setObjectName("addSelectedOptionRadioButton")
     self.addSelectedOptionRadioButton.setToolTip(
       "Click on a region to add it to selected segment.")
     self.operationRadioButtons.append(self.addSelectedOptionRadioButton)
     self.widgetToOperationNameMap[self.addSelectedOptionRadioButton] = ADD_SELECTED_ISLAND
 
     self.splitAllOptionRadioButton = qt.QRadioButton("Split islands to segments")
+    self.splitAllOptionRadioButton.setObjectName("splitAllOptionRadioButton")
     self.splitAllOptionRadioButton.setToolTip(
       "Create a new segment for each island of selected segment. Islands smaller than minimum size will be removed. "+
       "Segments will be ordered by island size.")
@@ -69,6 +75,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     self.widgetToOperationNameMap[self.splitAllOptionRadioButton] = SPLIT_ISLANDS_TO_SEGMENTS
 
     operationLayout = qt.QGridLayout()
+    operationLayout.setObjectName("operationLayout")
     operationLayout.addWidget(self.keepLargestOptionRadioButton,0,0)
     operationLayout.addWidget(self.removeSmallOptionRadioButton,1,0)
     operationLayout.addWidget(self.splitAllOptionRadioButton,2,0)
@@ -80,6 +87,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     self.scriptedEffect.addOptionsWidget(operationLayout)
 
     self.minimumSizeSpinBox = qt.QSpinBox()
+    self.minimumSizeSpinBox.setObjectName("minimumSizeSpinBox")
     self.minimumSizeSpinBox.setToolTip("Islands consisting of less voxels than this minimum size, will be deleted.")
     self.minimumSizeSpinBox.setMinimum(0)
     self.minimumSizeSpinBox.setMaximum(vtk.VTK_INT_MAX)
