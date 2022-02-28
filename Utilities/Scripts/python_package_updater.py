@@ -57,12 +57,13 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
         hashes = []
         desired_version_files = data["releases"][desired_version]
         for release_file in desired_version_files:
-            if release_file["python_version"] not in ["py3", "py2.py3", cpython_tag]:
+            if release_file["python_version"] not in ["py3", "py2.py3", cpython_tag] and "abi3" not in release_file["filename"]:
+                # e.g. PyNaCl-1.5.0-cp36-abi3-win_amd64.whl has python_version tag of py36, but is abi compatible for Python 3.6 and later for the Windows platform
                 continue  # means we did 'pip list --outdated' earlier which confirmed version supports our python version
             if release_file["packagetype"] != "bdist_wheel":
                 continue  # Only want to install with wheels as building from source can require complex build tools
             filename = release_file["filename"]
-            if not filename.endswith(("py3-none-any.whl", "64.whl")):  # win_amd64.whl, aarch64.whl, x86_64.whl
+            if not filename.endswith(("py3-none-any.whl", "64.whl", "universal2.whl")):  # win_amd64.whl, aarch64.whl, x86_64.whl
                 continue  # Only want 64-bit wheels
             wheel_hash = release_file["digests"]["sha256"]
             filenames.append(" " * indentation + f"#  - {filename}")
