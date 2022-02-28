@@ -56,6 +56,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
 
     # Operation buttons layout
     operationLayout = qt.QGridLayout()
+    operationLayout.setObjectName("operationLayout")
     operationLayout.addWidget(self.fillInsideButton, 0, 0)
     operationLayout.addWidget(self.fillOutsideButton, 1, 0)
     operationLayout.addWidget(self.binaryMaskFillButton, 0, 1)
@@ -63,16 +64,19 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
 
     # fill value
     self.fillValueEdit = ctk.ctkDoubleSpinBox()
+    self.fillValueEdit.setObjectName("fillValueEdit")
     self.fillValueEdit.setToolTip("Choose the voxel intensity that will be used to fill the masked region.")
     self.fillValueLabel = qt.QLabel("Fill value: ")
 
     # Binary mask fill outside value
     self.binaryMaskFillOutsideEdit = ctk.ctkDoubleSpinBox()
+    self.binaryMaskFillOutsideEdit.setObjectName("binaryMaskFillOutsideEdit")
     self.binaryMaskFillOutsideEdit.setToolTip("Choose the voxel intensity that will be used to fill outside the mask.")
     self.fillOutsideLabel = qt.QLabel("Outside fill value: ")
 
     # Binary mask fill outside value
     self.binaryMaskFillInsideEdit = ctk.ctkDoubleSpinBox()
+    self.binaryMaskFillInsideEdit.setObjectName("binaryMaskFillInsideEdit")
     self.binaryMaskFillInsideEdit.setToolTip("Choose the voxel intensity that will be used to fill inside the mask.")
     self.fillInsideLabel = qt.QLabel(" Inside fill value: ")
 
@@ -93,9 +97,11 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
     fillInsideLayout.addRow(self.fillInsideLabel, self.binaryMaskFillInsideEdit)
 
     binaryMaskFillLayout = qt.QHBoxLayout()
+    binaryMaskFillLayout.setObjectName("binaryMaskFillLayout")
     binaryMaskFillLayout.addLayout(fillOutsideLayout)
     binaryMaskFillLayout.addLayout(fillInsideLayout)
     fillValuesSpinBoxLayout = qt.QFormLayout()
+    fillValuesSpinBoxLayout.setObjectName("fillValuesSpinBoxLayout")
     fillValuesSpinBoxLayout.addRow(binaryMaskFillLayout)
     fillValuesSpinBoxLayout.addRow(fillValueLayout)
     self.scriptedEffect.addOptionsWidget(fillValuesSpinBoxLayout)
@@ -117,6 +123,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
     self.inputVisibilityButton.setIcon(self.invisibleIcon)
     self.inputVisibilityButton.connect('clicked()', self.onInputVisibilityButtonClicked)
     inputLayout = qt.QHBoxLayout()
+    inputLayout.setObjectName("inputLayout")
     inputLayout.addWidget(self.inputVisibilityButton)
     inputLayout.addWidget(self.inputVolumeSelector)
     self.scriptedEffect.addLabeledOptionsWidget("Input Volume: ", inputLayout)
@@ -139,6 +146,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
     self.outputVisibilityButton.setIcon(self.invisibleIcon)
     self.outputVisibilityButton.connect('clicked()', self.onOutputVisibilityButtonClicked)
     outputLayout = qt.QHBoxLayout()
+    outputLayout.setObjectName("outputLayout")
     outputLayout.addWidget(self.outputVisibilityButton)
     outputLayout.addWidget(self.outputVolumeSelector)
     self.scriptedEffect.addLabeledOptionsWidget("Output Volume: ", outputLayout)
