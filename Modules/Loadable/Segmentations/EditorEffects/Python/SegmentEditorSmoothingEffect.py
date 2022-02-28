@@ -57,11 +57,13 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.kernelSizePixel.setToolTip("Diameter of the neighborhood in pixel. Computed from the segment's spacing and the specified kernel size.")
 
     kernelSizeFrame = qt.QHBoxLayout()
+    kernelSizeFrame.setObjectName("kernelSizeFrame")
     kernelSizeFrame.addWidget(self.kernelSizeMMSpinBox)
     kernelSizeFrame.addWidget(self.kernelSizePixel)
     self.kernelSizeMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Kernel size:", kernelSizeFrame)
 
     self.gaussianStandardDeviationMMSpinBox = slicer.qMRMLSpinBox()
+    self.gaussianStandardDeviationMMSpinBox.setObjectName("gaussianStandardDeviationMMSpinBox")
     self.gaussianStandardDeviationMMSpinBox.setMRMLScene(slicer.mrmlScene)
     self.gaussianStandardDeviationMMSpinBox.setToolTip("Standard deviation of the Gaussian smoothing filter coefficients. Higher value makes smoothing stronger (more details are suppressed).")
     self.gaussianStandardDeviationMMSpinBox.quantity = "length"
@@ -70,6 +72,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.gaussianStandardDeviationMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Standard deviation:", self.gaussianStandardDeviationMMSpinBox)
 
     self.jointTaubinSmoothingFactorSlider = ctk.ctkSliderWidget()
+    self.jointTaubinSmoothingFactorSlider.setObjectName("jointTaubinSmoothingFactorSlider")
     self.jointTaubinSmoothingFactorSlider.setToolTip("Higher value means stronger smoothing.")
     self.jointTaubinSmoothingFactorSlider.minimum = 0.01
     self.jointTaubinSmoothingFactorSlider.maximum = 1.0
@@ -99,6 +102,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     # Customize smoothing brush
     self.scriptedEffect.setColorSmudgeCheckboxVisible(False)
     self.paintOptionsGroupBox = ctk.ctkCollapsibleGroupBox()
+    self.paintOptionsGroupBox.setObjectName("paintOptionsGroupBox")
     self.paintOptionsGroupBox.setTitle("Smoothing brush options")
     self.paintOptionsGroupBox.setLayout(qt.QVBoxLayout())
     self.paintOptionsGroupBox.layout().addWidget(self.scriptedEffect.paintOptionsFrame())
