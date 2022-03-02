@@ -222,6 +222,12 @@ When you create a segmentation, internal labelmap geometry (extent, origin, spac
 
 If you want to extend the segmentation to a larger region then you need to modify segmentation's geometry using "Specify geometry" button.
 
+### Cannot edit the segments
+
+Masking settings (visible at the bottom of the effect options when any effect is selected) may prevent modifications of segments. If painting, erasing, etc. "does not work" then make sure your masking settings are set to default:
+- Editable area: everywhere
+- Editable intensity range: unchecked (it means that the segmentation is editable, regardless of the intensity values of the master volume)
+
 ### Segmentation is not accurate enough
 
 If details cannot be accurately depicted during segmentation or the exported surface has non-negligible errors (there are gaps or overlap between segments), then it is necessary to reduce the segmentation's spacing (more accurately: spacing of the internal binary labelmap representation in the segmentation node). *Spacing* is also known as *voxel size* or may be referred to as *resolution* (which is inverse of spacing - higher resolution means smaller spacing).
