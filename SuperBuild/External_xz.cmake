@@ -1,5 +1,5 @@
 
-set(proj LZMA)
+set(proj xz)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
@@ -27,15 +27,13 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/Slicer/lib_lzma.git"
+    "${EP_GIT_PROTOCOL}://github.com/xz-mirror/xz.git"
     QUIET
     )
 
-  # Use v5.2.2 to satisfy CPython 3.6 Windows build requirements
-  # See https://github.com/python/cpython/blob/3.6/PCbuild/readme.txt
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "v5.2.2"
+    "v5.2.5"
     QUIET
     )
 
@@ -72,11 +70,11 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(${proj}_INCLUDE_DIR ${EP_INSTALL_DIR}/include)
+  set(LZMA_INCLUDE_DIR ${EP_INSTALL_DIR}/include)
   if(WIN32)
-    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/lzma.lib)
+    set(LZMA_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.lib)
   else()
-    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.a)
+    set(LZMA_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.a)
   endif()
 
 else()
