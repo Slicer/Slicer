@@ -142,7 +142,7 @@ outputFolder = "c:/tmp/dicom-output"
 
 # Create patient and study and put the volume under the study
 shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
-# set IDs. Note: this does not equal to specifying DICOM tags, those are only the names that appear in the hierarchy tree
+# set IDs. Note: these IDs are not specifying DICOM tags, but only the names that appear in the hierarchy tree
 patientItemID = shNode.CreateSubjectItem(shNode.GetSceneItemID(), "test patient")
 studyItemID = shNode.CreateStudyItem(patientItemID, "test study")
 volumeShItemID = shNode.GetItemByDataNode(volumeNode)
@@ -154,8 +154,7 @@ exportables = exporter.examineForExport(volumeShItemID)
 for exp in exportables:
   # set output folder
   exp.directory = outputFolder
-  
-  # set DICOM PatientID and StudyID tags
+  # here we set DICOM PatientID and StudyID tags
   exp.setTag('PatientID', "test patient")
   exp.setTag('StudyID', "test study")
 
