@@ -1335,7 +1335,9 @@ void qMRMLSliceControllerWidgetPrivate::updateFromForegroundDisplayNode(vtkObjec
     {
     return;
     }
+  bool wasBlocked = this->actionForegroundInterpolation->blockSignals(true);
   this->actionForegroundInterpolation->setChecked(displayNode->GetInterpolate());
+  this->actionForegroundInterpolation->blockSignals(wasBlocked);
 }
 
 //---------------------------------------------------------------------------
@@ -1359,7 +1361,9 @@ void qMRMLSliceControllerWidgetPrivate::updateFromBackgroundDisplayNode(vtkObjec
     {
     return;
     }
+  bool wasBlocked = this->actionBackgroundInterpolation->blockSignals(true);
   this->actionBackgroundInterpolation->setChecked(displayNode->GetInterpolate());
+  this->actionBackgroundInterpolation->blockSignals(wasBlocked);
 }
 
 //---------------------------------------------------------------------------
