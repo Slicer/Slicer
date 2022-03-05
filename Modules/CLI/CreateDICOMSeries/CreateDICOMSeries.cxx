@@ -355,7 +355,7 @@ int DoIt( int argc, char * argv[])
     // ITK DICOM IO either sets all UIDs or none of them, so we return with error if not all UIDs are specified
     if (studyInstanceUID.empty() || seriesInstanceUID.empty() || frameOfReferenceUID.empty())
       {
-      std::cerr << "If any of UIDs (studyInstanceUID, seriesInstanceUID, and frameOfReferenceUID)"
+      std::cerr << "If any of UIDs (StudyInstanceUID, SeriesInstanceUID, and FrameOfReferenceInstanceUID)"
         << " are specified then all of them must be specified." << std::endl;
       return EXIT_FAILURE;
       }
