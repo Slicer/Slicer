@@ -16,11 +16,15 @@ if(Slicer_USE_SYSTEM_${proj})
 endif()
 
 # Sanity checks
-if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
-  message(FATAL_ERROR "${proj}_DIR variable is defined but corresponds to nonexistent directory")
+if(DEFINED LibFFI_INCLUDE_DIR AND NOT EXISTS ${LibFFI_INCLUDE_DIR})
+  message(FATAL_ERROR "LibFFI_INCLUDE_DIR variable is defined but corresponds to nonexistent directory")
+endif()
+if(DEFINED LibFFI_LIBRARY AND NOT EXISTS ${LibFFI_LIBRARY})
+  message(FATAL_ERROR "LibFFI_LIBRARY variable is defined but corresponds to nonexistent file")
 endif()
 
-if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
+if((NOT DEFINED LibFFI_INCLUDE_DIR
+   OR NOT DEFINED LibFFI_LIBRARY) AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
