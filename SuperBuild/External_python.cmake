@@ -10,7 +10,7 @@ if(NOT Slicer_USE_SYSTEM_python)
     bzip2
     CTKAPPLAUNCHER
     LibFFI
-    xz
+    LZMA
     zlib
     sqlite
     )
