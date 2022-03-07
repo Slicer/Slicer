@@ -39,9 +39,10 @@ The loaded color table will appear in the "File" category at the top. Click on t
 ### Show color legend
 
 There are several ways of showing/hiding color legend:
-- In Data module, right-clicking on an eye icon in the data tree opens the visibility menu. In that menu, "Show color legend" option can be used for showing/hiding the color legend in all views. The option only appears if a color lookup table is already associated with the selected item.
-- Colors module allows adding/removing color legend to any displayable node at one place: open the Color Legend section, select a displayable node (volume, model, markup). Click `Create` to create a color legend, and adjust visualization options.
-- Color Legend section in Volumes, Models, Markups modules can be used to show legend for the selected node.
+- In Data module: Right-click on an eye icon in the data tree to open the visibility menu. In that menu, "Show color legend" option can be used for showing/hiding the color legend in all views. The option only appears if a color lookup table is already associated with the selected item.
+- In Colors module: Color legend can be added/hidden for any displayable node at one place. Open the Color Legend section, select a displayable node (volume, model, markup). Click `Create` to create a color legend, and adjust visualization options.
+- In Volumes, Models, Markups modules: Color Legend section can be used to show legend for the selected node.
+- In slice views: Right-click on a volume to open the view context menu. In that menu, "Show color legend" option can be used to show/hide color legend for that volume in slice views.
 
 For displaying mapping from numeric values to colors (for example, for displaying a parametric image), choose `Label text` -> `Value`. For displaying color names (for example, names of anatomical structures for a labelmap volume), choose `Label text` -> `Color name`.
 
