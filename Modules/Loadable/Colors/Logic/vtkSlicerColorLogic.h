@@ -75,7 +75,7 @@ public:
 
   /// Get color legend node corresponding to the first valid display node of the input displayable node.
   /// Valid display node is any non-color-legend display node.
-  /// If not found then nulltr is returned.
+  /// If not found then nullptr is returned.
   static vtkMRMLColorLegendDisplayNode* GetColorLegendDisplayNode(vtkMRMLDisplayableNode* displayableNode);
 
   /// Get color legend node corresponding to a display node.

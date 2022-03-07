@@ -157,6 +157,9 @@ protected slots:
   /// Set window/level by mapped menu signal
   void setVolumePreset(const QString& presetId);
 
+  /// Toggle color legend option for current volume item in a slice view
+  void toggleVisibilityForCurrentItem(bool);
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumesPluginPrivate> d_ptr;
 

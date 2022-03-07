@@ -32,6 +32,7 @@
 #include "vtkSlicerApplicationLogic.h"
 #include "qSlicerModuleManager.h"
 #include "vtkSlicerVolumesLogic.h"
+#include "vtkSlicerColorLogic.h"
 #include "qSlicerAbstractCoreModule.h"
 
 // MRML includes
@@ -40,6 +41,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
+#include <vtkMRMLColorLegendDisplayNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceLogic.h>
@@ -101,6 +103,8 @@ public:
   QMenu* PresetSubmenu{nullptr};
   ctkSignalMapper* PresetModeMapper{nullptr};
 
+  QAction* ShowColorLegendAction{nullptr};
+
   vtkWeakPointer<vtkMRMLVolumeNode> SelectedVolumeNode;
 };
 
@@ -144,6 +148,15 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
   QObject::connect(this->ResetViewOrientationOnShowAction, SIGNAL(toggled(bool)), q, SLOT(toggleResetViewOrientationOnShowAction(bool)));
   this->ResetViewOrientationOnShowAction->setCheckable(true);
   this->ResetViewOrientationOnShowAction->setChecked(false);
+
+  // Add color legend action
+
+  this->ShowColorLegendAction = new QAction(tr("Show color legend"), q);
+  this->ShowColorLegendAction->setObjectName("ShowColorLegendAction");
+  q->setActionPosition(this->ShowColorLegendAction, qSlicerSubjectHierarchyAbstractPlugin::SectionBottom);
+  QObject::connect(this->ShowColorLegendAction, SIGNAL(toggled(bool)), q, SLOT(toggleVisibilityForCurrentItem(bool)));
+  this->ShowColorLegendAction->setCheckable(true);
+  this->ShowColorLegendAction->setChecked(false);
 
   // Add volume preset actions
 
@@ -272,7 +285,7 @@ QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::viewContextMenuActions()co
 {
   Q_D(const qSlicerSubjectHierarchyVolumesPlugin);
   QList<QAction*> actions;
-  actions << d->VolumeDisplayPresetAction;
+  actions << d->VolumeDisplayPresetAction << d->ShowColorLegendAction;
   return actions;
 }
 
@@ -321,6 +334,8 @@ void qSlicerSubjectHierarchyVolumesPlugin::showViewContextMenuActionsForItem(vtk
   // Cache nodes to have them available for the menu action execution.
   d->SelectedVolumeNode = sliceLogic->GetLayerVolumeNode(volumeLayer);
 
+  bool hasPrimaryDisplayNode = false;
+  bool colorLegendIsVisible = false;
   if (d->SelectedVolumeNode)
     {
     // Check the checkbox of the current display preset
@@ -369,7 +384,28 @@ void qSlicerSubjectHierarchyVolumesPlugin::showViewContextMenuActionsForItem(vtk
           }
         }
       }
+
+    // Parameters for color legend checkbox
+    vtkSlicerColorLogic* colorsModuleLogic = vtkSlicerColorLogic::SafeDownCast(
+      qSlicerApplication::application()->moduleLogic("Colors"));
+    if (colorsModuleLogic)
+      {
+        vtkMRMLVolumeDisplayNode* volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(d->SelectedVolumeNode->GetVolumeDisplayNode());
+        if (volumeDisplayNode)
+          {
+          hasPrimaryDisplayNode = true;
+          }
+        vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(d->SelectedVolumeNode);
+        if (colorLegendDisplayNode)
+          {
+          colorLegendIsVisible = colorLegendDisplayNode->GetVisibility(sliceNode->GetID());
+          }
+      }
     }
+  d->ShowColorLegendAction->setVisible(hasPrimaryDisplayNode);
+  QSignalBlocker Block(d->ShowColorLegendAction);
+  d->ShowColorLegendAction->setChecked(colorLegendIsVisible);
+
   d->VolumeDisplayPresetAction->setVisible(d->SelectedVolumeNode.GetPointer() != nullptr);
 }
 
@@ -850,7 +886,7 @@ QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::visibilityContextMenuActio
 
   QList<QAction*> actions;
   actions << d->ShowVolumesInBranchAction << d->ShowVolumeInForegroundAction
-    << d->ResetFieldOfViewOnShowAction << d->ResetViewOrientationOnShowAction;
+    << d->ResetFieldOfViewOnShowAction << d->ResetViewOrientationOnShowAction << d->ShowColorLegendAction;
   return actions;
 }
 
@@ -1296,5 +1332,38 @@ void qSlicerSubjectHierarchyVolumesPlugin::setVolumePreset(const QString& preset
       return;
       }
     volumesModuleLogic->ApplyVolumeDisplayPreset(d->SelectedVolumeNode->GetVolumeDisplayNode(), presetId.toStdString());
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumesPlugin::toggleVisibilityForCurrentItem(bool on)
+{
+  Q_D(qSlicerSubjectHierarchyVolumesPlugin);
+  if (d->SelectedVolumeNode)
+    {
+    // Show color legend display node
+    vtkMRMLDisplayNode* displayNode = d->SelectedVolumeNode->GetVolumeDisplayNode();
+    if (!displayNode || !displayNode->GetColorNode())
+      {
+      // No color node for this node, color legend is not applicable
+      return;
+      }
+
+    vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = nullptr;
+    if (on)
+      {
+      colorLegendDisplayNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(displayNode);
+      }
+    else
+      {
+      colorLegendDisplayNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
+      }
+
+    if (colorLegendDisplayNode)
+      {
+      colorLegendDisplayNode->SetVisibility(on);
+      // If visibility is set to false then prevent making the node visible again on show.
+      colorLegendDisplayNode->SetShowMode(on ? vtkMRMLDisplayNode::ShowDefault : vtkMRMLDisplayNode::ShowIgnore);
+      }
     }
 }
