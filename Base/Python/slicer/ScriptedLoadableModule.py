@@ -8,6 +8,7 @@ __all__ = ['ScriptedLoadableModule', 'ScriptedLoadableModuleWidget', 'ScriptedLo
 
 class ScriptedLoadableModule:
   def __init__(self, parent):
+    super().__init__()
     self.parent = parent
     self.moduleName = self.__class__.__name__
 
@@ -76,6 +77,7 @@ class ScriptedLoadableModuleWidget:
     """If parent widget is not specified: a top-level widget is created automatically;
     the application has to delete this widget (by calling widget.parent.deleteLater() to avoid memory leaks.
     """
+    super().__init__()
     # Get module name by stripping 'Widget' from the class name
     self.moduleName = self.__class__.__name__
     if self.moduleName.endswith('Widget'):
@@ -211,6 +213,7 @@ class ScriptedLoadableModuleWidget:
 
 class ScriptedLoadableModuleLogic:
   def __init__(self, parent = None):
+    super().__init__()
     # Get module name by stripping 'Logic' from the class name
     self.moduleName = self.__class__.__name__
     if self.moduleName.endswith('Logic'):
