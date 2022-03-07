@@ -1,5 +1,5 @@
 
-set(proj xz)
+set(proj LZMA)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
@@ -9,8 +9,9 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(Slicer_USE_SYSTEM_${proj})
   unset(${proj}_INCLUDE_DIR CACHE)
+  find_path(${proj}_INCLUDE_DIR lzma.h)
+
   unset(${proj}_LIBRARY CACHE)
-  find_path(${proj}_INCLUDE_PATH lzma.h)
   find_library(${proj}_LIBRARY lzma)
 endif()
 
@@ -70,11 +71,11 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(LZMA_INCLUDE_DIR ${EP_INSTALL_DIR}/include)
+  set(${proj}_INCLUDE_DIR ${EP_INSTALL_DIR}/include)
   if(WIN32)
-    set(LZMA_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.lib)
+    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.lib)
   else()
-    set(LZMA_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.a)
+    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.a)
   endif()
 
 else()
