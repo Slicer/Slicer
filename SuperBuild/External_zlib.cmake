@@ -8,18 +8,18 @@ set(${proj}_DEPENDENCIES "")
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  unset(zlib_DIR CACHE)
+  unset(ZLIB_ROOT CACHE)
   find_package(ZLIB REQUIRED)
   set(ZLIB_INCLUDE_DIR ${ZLIB_INCLUDE_DIRS})
   set(ZLIB_LIBRARY ${ZLIB_LIBRARIES})
 endif()
 
 # Sanity checks
-if(DEFINED zlib_DIR AND NOT EXISTS ${zlib_DIR})
-  message(FATAL_ERROR "zlib_DIR variable is defined but corresponds to nonexistent directory")
+if(DEFINED ZLIB_ROOT AND NOT EXISTS ${ZLIB_ROOT})
+  message(FATAL_ERROR "ZLIB_ROOT variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT DEFINED zlib_DIR AND NOT Slicer_USE_SYSTEM_${proj})
+if(NOT DEFINED ZLIB_ROOT AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
