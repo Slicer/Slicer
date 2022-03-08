@@ -137,7 +137,7 @@ change the built type (Debug as default) to Release:
 cmake -DCMAKE_BUILD_TYPE:STRING=Release ../Slicer
 ```
 
-:::{admonition} Tip
+:::{admonition} Tip -- Interfaces to change 3D Slicer configuration variables
 
 Instead of `cmake`, one can use `ccmake`, which provides a text-based interface or `cmake-gui`, which provides a graphical user interface. These applications will also provide a list of variables that can be changed.
 
@@ -152,19 +152,19 @@ be built by running this command in the **build** folder
 make
 ```
 
-:::{admonition} Tip
+:::{admonition} Tip -- Parallel build 
 
 Building Slicer will generally take long time, particularly on the first build or upon code/configuration changes. To help speeding up the process one can use `make -j<N>`, where `<N>` is the number of parallel builds. As a rule of thumb, many uses the `number of CPU threads + 1` as the number of parallel builds.
 
 :::
 
-:::{warning}
+:::{warning} 
 
 Increasing the number of parallel builds generally increases the memory required for the build process. In the event that the required memory exceeds the available memory, the process will either fail or start using swap memory, which will make in practice the system to freeze.
 
 :::
 
-:::{admonition} Tip
+:::{admonition} Tip -- Error detection during parallel build
 
 Using parallel builds makes finding compilation errors difficult due to the fact that all parallel build processes use the same screen output, as opposed to sequential builds, where the compilation process will stop at the error. A common technique to have parallel builds and easily find errors is launch a parallel build followed by a sequential build. For the parallel build, it is advised to run `make -j<N> -k` to have the parallel build keep going as far as possible before doing the sequential build with `make`.
 
