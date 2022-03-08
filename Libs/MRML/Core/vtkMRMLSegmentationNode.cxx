@@ -624,37 +624,37 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     }
 
   std::vector<std::string> maskSegmentIDs;
-  bool paintInsideSegments = false;
+  bool editInsideSegments = false;
   switch (editMode)
     {
   case vtkMRMLSegmentationNode::EditAllowedEverywhere:
-    paintInsideSegments = false;
+    editInsideSegments = false;
     break;
   case vtkMRMLSegmentationNode::EditAllowedInsideAllSegments:
-    paintInsideSegments = true;
+    editInsideSegments = true;
     maskSegmentIDs = allSegmentIDs;
     break;
   case vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments:
-    paintInsideSegments = true;
+    editInsideSegments = true;
     maskSegmentIDs = visibleSegmentIDs;
     break;
   case vtkMRMLSegmentationNode::EditAllowedOutsideAllSegments:
-    paintInsideSegments = false;
+    editInsideSegments = false;
     maskSegmentIDs = allSegmentIDs;
     break;
   case vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments:
-    paintInsideSegments = false;
+    editInsideSegments = false;
     maskSegmentIDs = visibleSegmentIDs;
     break;
   case vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment:
-    paintInsideSegments = true;
+    editInsideSegments = true;
     if (!maskSegmentID.empty())
       {
       maskSegmentIDs.push_back(maskSegmentID);
       }
     else
       {
-      vtkWarningMacro("vtkMRMLSegmentationNode::GenerateEditMask: PaintAllowedInsideSingleSegment selected but no mask segment is specified");
+      vtkWarningMacro("vtkMRMLSegmentationNode::GenerateEditMask: EditAllowedInsideSingleSegment selected but no mask segment is specified");
       }
     break;
   default:
@@ -662,7 +662,7 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     return false;
     }
 
-  if (!paintInsideSegments)
+  if (!editInsideSegments)
     {
     // Exclude edited segment from "outside" mask
     maskSegmentIDs.erase(std::remove(maskSegmentIDs.begin(), maskSegmentIDs.end(), editedSegmentID), maskSegmentIDs.end());
@@ -678,7 +678,7 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     // If we passed empty segment list to GenerateSharedLabelmap then it would use all segment IDs,
     // instead of filling the volume with a single value. Therefore, we need to handle this special case separately here.
     maskImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
-    vtkOrientedImageDataResample::FillImage(maskImage, paintInsideSegments ? 1 : 0);
+    vtkOrientedImageDataResample::FillImage(maskImage, editInsideSegments ? 1 : 0);
     }
   else
     {
@@ -687,8 +687,8 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
 
     vtkNew<vtkImageThreshold> threshold;
     threshold->SetInputData(maskImage);
-    threshold->SetInValue(paintInsideSegments ? 1 : 0);
-    threshold->SetOutValue(paintInsideSegments ? 0 : 1);
+    threshold->SetInValue(editInsideSegments ? 1 : 0);
+    threshold->SetOutValue(editInsideSegments ? 0 : 1);
     threshold->ReplaceInOn();
     threshold->ThresholdByLower(0);
     threshold->SetOutputScalarType(VTK_UNSIGNED_CHAR);
@@ -1225,4 +1225,36 @@ void vtkMRMLSegmentationNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* refer
     {
     this->InvokeCustomModifiedEvent(vtkMRMLSegmentationNode::ReferenceImageGeometryChangedEvent, reference->GetReferencedNode());
     }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSegmentationNode::ConvertMaskModeToString(int mode)
+{
+  switch (mode)
+  {
+    case EditAllowedEverywhere: return "EditAllowedEverywhere";
+    case EditAllowedInsideAllSegments: return "EditAllowedInsideAllSegments";
+    case EditAllowedInsideVisibleSegments: return "EditAllowedInsideVisibleSegments";
+    case EditAllowedOutsideAllSegments: return "EditAllowedOutsideAllSegments";
+    case EditAllowedOutsideVisibleSegments: return "EditAllowedOutsideVisibleSegments";
+    case EditAllowedInsideSingleSegment: return "EditAllowedInsideSingleSegment";
+    default: return "";
+  }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLSegmentationNode::ConvertMaskModeFromString(const char* modeStr)
+{
+  if (!modeStr)
+  {
+    return -1;
+  }
+  for (int i=0; i<EditAllowed_Last; i++)
+  {
+    if (strcmp(modeStr, vtkMRMLSegmentationNode::ConvertMaskModeToString(i)) == 0)
+    {
+      return i;
+    }
+  }
+  return -1;
 }
