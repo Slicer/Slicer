@@ -299,7 +299,12 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
   """
 
   def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
+    super(ScriptedLoadableModuleTest, self).__init__(*args, **kwargs)
+
+    # See https://github.com/Slicer/Slicer/pull/6243#issuecomment-1061800718 for more information.
+    # Do not pass *args, **kwargs since there is no base class after `unittest.TestCase`. This is only relevant to
+    # mixins of derived classes, which should each have the same signature as `object()`.
+    super(unittest.TestCase, self).__init__()
 
     # takeScreenshot default parameters
     self.enableScreenshots = False
