@@ -174,6 +174,12 @@ public:
     EditAllowed_Last
     };
 
+  //@{
+  /// Convert between constants IDs to/from string
+  static const char* ConvertMaskModeToString(int mode);
+  static int ConvertMaskModeFromString(const char* modeStr);
+  //@}
+
   /// Generates an edit mask image.
   /// If a mask voxel is non-zero it means that the image at that position is editable.
   /// \param maskImage output image, contains non-zero voxels where editing is not allowed

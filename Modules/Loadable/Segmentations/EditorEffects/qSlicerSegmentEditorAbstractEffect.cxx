@@ -303,7 +303,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   SlicerRenderBlocker renderBlocker;
 
   vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = modifierLabelmapInput;
-  if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentEditorNode::PaintAllowedEverywhere) ||
+  if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere) ||
     parameterSetNode->GetMasterVolumeIntensityMask())
     {
     vtkNew<vtkOrientedImageData> maskImage;
@@ -315,7 +315,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     vtkOrientedImageDataResample::FillImage(maskImage, m_EraseValue);
 
     // Apply mask to modifier labelmap if masking is enabled
-    if (!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentEditorNode::PaintAllowedEverywhere)
+    if (!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere)
       {
       vtkOrientedImageDataResample::ModifyImage(maskImage, this->maskLabelmap(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
       }
@@ -612,7 +612,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       }
     }
   else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove
-    && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentEditorNode::PaintAllowedInsideSingleSegment
+    && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
     && this->parameterSetNode()->GetMaskSegmentID()
     && strcmp(this->parameterSetNode()->GetMaskSegmentID(), segmentID) != 0)
     {

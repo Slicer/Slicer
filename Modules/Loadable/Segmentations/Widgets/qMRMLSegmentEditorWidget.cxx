@@ -400,11 +400,11 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->SpecifyGeometryButton->setMaximumHeight(this->MasterVolumeNodeComboBox->sizeHint().height());
   this->SpecifyGeometryButton->setMaximumWidth(this->MasterVolumeNodeComboBox->sizeHint().height());
 
-  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Everywhere"), vtkMRMLSegmentEditorNode::PaintAllowedEverywhere);
-  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Inside all segments"), vtkMRMLSegmentEditorNode::PaintAllowedInsideAllSegments);
-  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Inside all visible segments"), vtkMRMLSegmentEditorNode::PaintAllowedInsideVisibleSegments);
-  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Outside all segments"), vtkMRMLSegmentEditorNode::PaintAllowedOutsideAllSegments);
-  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Outside all visible segments"), vtkMRMLSegmentEditorNode::PaintAllowedOutsideVisibleSegments);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Everywhere"), vtkMRMLSegmentationNode::EditAllowedEverywhere);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Inside all segments"), vtkMRMLSegmentationNode::EditAllowedInsideAllSegments);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Inside all visible segments"), vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Outside all segments"), vtkMRMLSegmentationNode::EditAllowedOutsideAllSegments);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Outside all visible segments"), vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments);
   this->MaskModeComboBox->insertSeparator(this->MaskModeComboBox->count());
   this->MaskModeComboBoxFixedItemsCount = this->MaskModeComboBox->count();
 
@@ -1341,7 +1341,7 @@ void qMRMLSegmentEditorWidget::updateMaskingSection()
 
   bool wasBlocked = d->MaskModeComboBox->blockSignals(true);
   int maskModeIndex = -1;
-  if (d->ParameterSetNode->GetMaskMode() == vtkMRMLSegmentEditorNode::PaintAllowedInsideSingleSegment)
+  if (d->ParameterSetNode->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment)
     {
     // segment item
     maskModeIndex = d->MaskModeComboBox->findData(d->ParameterSetNode->GetMaskSegmentID());
@@ -3000,7 +3000,7 @@ void qMRMLSegmentEditorWidget::onMaskModeChanged(int index)
     {
     // specific index is selected
     d->ParameterSetNode->SetMaskSegmentID(d->MaskModeComboBox->itemData(index).toString().toUtf8());
-    d->ParameterSetNode->SetMaskMode(vtkMRMLSegmentEditorNode::PaintAllowedInsideSingleSegment);
+    d->ParameterSetNode->SetMaskMode(vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment);
     }
   else
     {
