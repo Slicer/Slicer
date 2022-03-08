@@ -143,6 +143,29 @@ Instead of `cmake`, one can use `ccmake`, which provides a text-based interface 
 
 :::
 
+:::{admonition} Tip -- Speed up 3D Slicer build with `ccache`
+
+`ccache` is a compiler cache that can speed up subsequent build of 3D Slicer. This can be useful if 3D Slicer is built often and there are no large divergences between subsequent builds. This requires `ccache` installed on the system (e.g., `sudo apt install ccache`).
+
+The first time `ccache` is used, the compilation time can marginally increased as it includes the first caching. After the first build, subsequent build times will decrease significantly.
+
+`ccache` is not detected as a valid compiler by the 3D slicer building process. You can generate local symbolic links to disguise the use of `ccache` as valid compilers:
+
+```console
+ln -s /usr/bin/ccache ~/.local/bin/c++
+ln -s /usr/bin/ccache ~/.local/bin/cc
+```
+
+Then, the Slicer build can be configured to use these compilers:
+
+```console
+cmake -DCMAKE_BUILD_TYPE:STRING=Release\
+-DCMAKE_CXX_COMPILER:STRING=$HOME/.local/bin/c++\
+-DCMAKE_C_COMPILER:STRING=$HOME/.local/bin/cc ../Slicer
+```
+
+:::
+
 ## Build Slicer
 
 Once the Slicer build project files have been generated, the Slicer project can
