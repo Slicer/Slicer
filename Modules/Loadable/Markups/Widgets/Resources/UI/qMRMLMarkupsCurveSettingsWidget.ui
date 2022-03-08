@@ -246,7 +246,7 @@
    <item>
     <widget class="ctkCollapsibleButton" name="resampleCurveCollapsibleButton" native="true">
      <property name="toolTip">
-      <string>Resample a curve and optionally constrain the points to a node</string>
+      <string>Resample a curve with the number of points specified.</string>
      </property>
      <property name="text" stdset="0">
       <string>Resample</string>
@@ -255,27 +255,6 @@
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout1">
-      <item row="2" column="1">
-       <widget class="qMRMLNodeComboBox" name="resampleCurveConstraintNodeSelector" native="true">
-        <property name="toolTip">
-         <string>Fiducials will be constrained to the surface if a node is selected</string>
-        </property>
-        <property name="nodeTypes" stdset="0">
-         <stringlist>
-          <string>vtkMRMLModelNode</string>
-         </stringlist>
-        </property>
-        <property name="noneEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="addEnabled" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="removeEnabled" stdset="0">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="resampleCurveOutputNodeLabel">
         <property name="text">
@@ -348,71 +327,14 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0" colspan="3">
+      <item row="4" column="0" colspan="3">
        <widget class="QPushButton" name="resampleCurveButton">
         <property name="toolTip">
-         <string>Resamples the active curve with the number of fiducials spcified. Can be constrained to a node surface.</string>
+         <string>Resamples the active curve with the number of points specified.</string>
         </property>
         <property name="text">
          <string>Resample curve</string>
         </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="resampleCurveConstraintNodeLabel">
-        <property name="toolTip">
-         <string>Optionally select a node to constrain placement of resampled curve points. </string>
-        </property>
-        <property name="text">
-         <string>Constrain points to surface: </string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" colspan="3">
-       <widget class="ctkCollapsibleGroupBox" name="AdvancedOptionCollapsibleGroupBox">
-        <property name="title">
-         <string>Advanced</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <property name="collapsed" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="collapsedHeight" stdset="0">
-         <number>7</number>
-        </property>
-        <layout class="QGridLayout" name="gridLayout2">
-         <item row="0" column="0">
-          <widget class="QLabel" name="resampleCurveMaxSearchRadiusLabel">
-           <property name="text">
-            <string>Maximum projection distance:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="ctkSliderWidget" name="resampleCurveMaxSearchRadiusSliderWidget" native="true">
-           <property name="toolTip">
-            <string>Select the maximum projection distance as percentage of bounding box size.</string>
-           </property>
-           <property name="singleStep" stdset="0">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="minimum" stdset="0">
-            <double>0.000000000000000</double>
-           </property>
-           <property name="maximum" stdset="0">
-            <double>100.000000000000000</double>
-           </property>
-           <property name="value" stdset="0">
-            <double>25.000000000000000</double>
-           </property>
-           <property name="suffix" stdset="0">
-            <string> %</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </widget>
       </item>
      </layout>

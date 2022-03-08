@@ -315,62 +315,6 @@ bool vtkMRMLMarkupsCurveNode::SetControlPointLabels(vtkStringArray* labels, vtkP
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, vtkMRMLModelNode* modelNode, double maximumSearchRadiusTolerance)
-{
-  if(!modelNode)
-    {
-    vtkErrorMacro("vtkMRMLMarkupsCurveNode::ResampleCurveSurface failed: Constraint surface is not valid");
-    return false;
-    }
-  if (maximumSearchRadiusTolerance <= 0 || maximumSearchRadiusTolerance > 1)
-    {
-    vtkErrorMacro("vtkMRMLMarkupsCurveNode::ResampleCurveSurface failed: Invalid search radius");
-    return false;
-    }
-  vtkPoints* originalPoints = this->GetCurvePointsWorld();
-  // If there is less than two points there is no segment to resample. Control points are already assumed to be on the surface.
-  if (!originalPoints  || originalPoints->GetNumberOfPoints() < 2)
-    {
-    vtkErrorMacro("vtkMRMLMarkupsCurveNode::ResampleCurveSurface failed: Invalid number of control points");
-    return false;
-    }
-  vtkNew<vtkPoints> originalControlPoints;
-  this->GetControlPointPositionsWorld(originalControlPoints);
-  vtkNew<vtkStringArray> originalLabels;
-  this->GetControlPointLabels(originalLabels);
-
-  vtkNew<vtkPoints> interpolatedPoints;
-  vtkNew<vtkDoubleArray> pedigreeIdsArray;
-  vtkMRMLMarkupsCurveNode::ResamplePoints(originalPoints, interpolatedPoints, controlPointDistance, this->CurveClosed, pedigreeIdsArray);
-  vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(this->Measurements, pedigreeIdsArray,
-    this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment());
-  vtkNew<vtkPoints> snappedToSurfaceControlPoints;
-
-  // Snap all the interpolated points to the curve as it stands before projecting
-  auto interpolatedPointsOnCurve = vtkSmartPointer<vtkPoints>::New();
-  for (vtkIdType i = 0; i < interpolatedPoints->GetNumberOfPoints(); ++i)
-    {
-    double p[3];
-    this->GetClosestPointPositionAlongCurveWorld(interpolatedPoints->GetPoint(i), p);
-    interpolatedPointsOnCurve->InsertNextPoint(p);
-    }
-
-  vtkNew<vtkPolyData> toBeProjected;
-  toBeProjected->SetPoints(interpolatedPointsOnCurve);
-
-  vtkNew<vtkProjectMarkupsCurvePointsFilter> projectMarkupsCurvePointsFilter;
-  projectMarkupsCurvePointsFilter->SetInputData(toBeProjected);
-  projectMarkupsCurvePointsFilter->SetInputCurveNode(this);
-  projectMarkupsCurvePointsFilter->SetMaximumSearchRadiusTolerance(maximumSearchRadiusTolerance);
-  projectMarkupsCurvePointsFilter->Update();
-  auto projectedPoly = projectMarkupsCurvePointsFilter->GetOutput();
-
-  this->SetControlPointPositionsWorld(projectedPoly->GetPoints());
-  this->SetControlPointLabelsWorld(originalLabels, originalControlPoints);
-  return true;
-}
-
-//---------------------------------------------------------------------------
 bool vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface(vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
   vtkPoints* surfacePoints, double maximumSearchRadiusTolerance)
 {

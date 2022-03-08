@@ -339,20 +339,7 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
     outputNode->SetSurfaceDistanceWeightingFunction(inputNode->GetSurfaceDistanceWeightingFunction());
     }
   double sampleDist = outputNode->GetCurveLengthWorld() / (resampleNumberOfPoints - 1);
-  vtkMRMLModelNode* constraintNode = vtkMRMLModelNode::SafeDownCast(d->resampleCurveConstraintNodeSelector->currentNode());
-  if (constraintNode)
-    {
-    double maximumSearchRadius = 0.01*d->resampleCurveMaxSearchRadiusSliderWidget->value();
-    bool success = outputNode->ResampleCurveSurface(sampleDist, constraintNode, maximumSearchRadius);
-    if (!success)
-      {
-      qWarning("vtkMRMLMarkupsCurveNode::ResampleCurveSurface failed");
-      }
-    }
-  else
-    {
-    outputNode->ResampleCurveWorld(sampleDist);
-    }
+  outputNode->ResampleCurveWorld(sampleDist);
 }
 
 //-----------------------------------------------------------------------------
@@ -398,7 +385,6 @@ void qMRMLMarkupsCurveSettingsWidget::setMRMLScene(vtkMRMLScene *mrmlScene)
   Q_D(qMRMLMarkupsCurveSettingsWidget);
 
   Superclass::setMRMLScene(mrmlScene);
-  d->resampleCurveConstraintNodeSelector->setMRMLScene(mrmlScene);
   d->modelNodeSelector->setMRMLScene(mrmlScene);
   d->resampleCurveOutputNodeSelector->setMRMLScene(mrmlScene);
 }
