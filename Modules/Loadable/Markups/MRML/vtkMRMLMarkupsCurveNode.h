@@ -153,13 +153,6 @@ public:
   /// Provides access to protected vtkMRMLMarkupsNode::SetControlPointLabelsWorld
   bool SetControlPointLabels(vtkStringArray* labels, vtkPoints* points);
 
-  /// Resample a curve with points constrained to surface
-  /// Projection to surface is constrained by maximumSearchRadius, specified as a percentage of the model's
-  /// bounding box diagonal in world coordinate system. Valid in the range between 0 and 1.
-  /// maximumSearchRadius is valid in the range between 0 and 1.
-  /// returns true if successful, false in case of error
-  bool ResampleCurveSurface(double controlPointDistance, vtkMRMLModelNode* node, double maximumSearchRadius=.25);
-
   /// Constrain points to a specified model surface
   /// Projection to surface is constrained by maximumSearchRadius, specified as a percentage of the model's
   /// bounding box diagonal in world coordinate system.
