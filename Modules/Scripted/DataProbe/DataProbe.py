@@ -6,7 +6,6 @@ import vtkTeem
 import DataProbeLib
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
-import numpy
 
 #
 # DataProbe
@@ -369,8 +368,9 @@ class DataProbeInfoWidget:
       imageCrop.SetVOI(imin, imax, jmin, jmax, 0,0)
       imageCrop.Update()
       vtkImageCropped = imageCrop.GetOutput()
-      xyzBounds = numpy.zeros(6, dtype=int)
+      xyzBounds = [0]*6
       vtkImageCropped.GetBounds(xyzBounds)
+      xyzBounds = [_roundInt(value) for value in xyzBounds]
       canvas.DrawImage(xyzBounds[0], xyzBounds[2], vtkImageCropped)
       canvas.Update()
       vtkImageFromCanvas = canvas.GetOutput()
