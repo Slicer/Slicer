@@ -64,8 +64,8 @@ public:
   //@}
 
   //@{
-  /// GetSet color legend position of lower left point, values are percentage of window size
-  /// Set color legend position of lower left point, values are percentage of window size
+  /// Get/Set color legend position of lower left point.
+  /// Values are fraction of window size.
   vtkGetVector2Macro(Position, double);
   vtkSetVector2Macro(Position, double);
   //@}
