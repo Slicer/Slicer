@@ -356,24 +356,27 @@ class DataProbeInfoWidget:
     imax = xyzInt[0]+imageSize
     jmin = xyzInt[1]-imageSize
     jmax = xyzInt[1]+imageSize
+    # The extra complexity of the canvas is used here to maintain a fixed size
+    # output due to the imageCrop returning a smaller image if the limits are
+    # outside the input image bounds. Specially useful when zooming at the borders.
     canvas = self.canvas
     canvas.SetScalarType(producer.GetOutput().GetScalarType())
     canvas.SetNumberOfScalarComponents(producer.GetOutput().GetNumberOfScalarComponents())
     canvas.SetExtent(imin, imax, jmin , jmax, 0 ,0)
     canvas.FillBox(imin, imax, jmin , jmax)
     canvas.Update()
-    if (imin <= imax) and (jmin <= jmax):
+    if (imin <= min(dims[0]-1,  imax)) and (jmin <= min(dims[1]-1,  jmax)):
       imageCrop.SetVOI(imin, imax, jmin, jmax, 0,0)
       imageCrop.Update()
-      vtkImage2 = imageCrop.GetOutput()
+      vtkImageCropped = imageCrop.GetOutput()
       xyzBounds = numpy.zeros(6, dtype=int)
-      vtkImage2.GetBounds(xyzBounds)
-      canvas.DrawImage(xyzBounds[0], xyzBounds[2], vtkImage2)
+      vtkImageCropped.GetBounds(xyzBounds)
+      canvas.DrawImage(xyzBounds[0], xyzBounds[2], vtkImageCropped)
       canvas.Update()
-      vtkImage = canvas.GetOutput()
-      if vtkImage:
+      vtkImageFromCanvas = canvas.GetOutput()
+      if vtkImageFromCanvas:
         qImage = qt.QImage()
-        slicer.qMRMLUtils().vtkImageDataToQImage(vtkImage, qImage)
+        slicer.qMRMLUtils().vtkImageDataToQImage(vtkImageFromCanvas, qImage)
         imagePixmap = qt.QPixmap.fromImage(qImage)
         imagePixmap = imagePixmap.scaled(outputSize, qt.Qt.KeepAspectRatio, qt.Qt.FastTransformation)
 
