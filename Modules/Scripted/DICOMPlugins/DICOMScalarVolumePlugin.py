@@ -747,7 +747,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
       columns, rows, slices = volumeNode.GetImageData().GetDimensions()
       corners = numpy.zeros(shape=[slices,2,2,3])
-      uids = volumeNode.GetAttribute('DICOM.instanceUIDs').split()
+      instanceUIDsAttribute = volumeNode.GetAttribute('DICOM.instanceUIDs')
+      uids = instanceUIDsAttribute.split() if instanceUIDsAttribute else []
       if len(uids) != slices:
         # There is no uid for each slice, so most likely all frames are in a single file
         # or maybe there is a problem with the sequence
