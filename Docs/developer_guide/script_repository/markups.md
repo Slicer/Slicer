@@ -43,8 +43,8 @@ The [qSlicerMarkupsPlaceWidget widget](http://apidocs.slicer.org/master/classqSl
 ```python
 w=slicer.qSlicerMarkupsPlaceWidget()
 w.setMRMLScene(slicer.mrmlScene)
-markupsNodeID = slicer.modules.markups.logic().AddNewFiducialNode()
-w.setCurrentNode(slicer.mrmlScene.GetNodeByID(markupsNodeID))
+markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsCurveNode")
+w.setCurrentNode(slicer.mrmlScene.GetNodeByID(markupsNode.GetID()))
 # Hide all buttons and only show place button
 w.buttonsVisible=False
 w.placeButton().show()
