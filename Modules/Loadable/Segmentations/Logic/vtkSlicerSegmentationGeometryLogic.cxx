@@ -118,6 +118,10 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     {
     return "No input segmentation specified";
     }
+  if (!this->SourceGeometryNode)
+    {
+    return "No source geometry specified";
+    }
 
   // Determine source type
   vtkMRMLScalarVolumeNode* sourceVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->SourceGeometryNode);
