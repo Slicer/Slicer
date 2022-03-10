@@ -15,6 +15,7 @@ comment = """
 #
 #########################################################
 
+
 #------------------------------------------------------------------------------
 def loadPatientByUID(patientUID):
   """ Load patient by patient UID from DICOM database.
@@ -72,6 +73,7 @@ def loadPatientByUID(patientUID):
 
   return loadSeriesByUID(seriesUIDs)
 
+
 #------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientName(name):
   """ Get patient UID by patient name for easy loading of a patient
@@ -86,6 +88,7 @@ def getDatabasePatientUIDByPatientName(name):
       return patientUID
   return None
 
+
 #------------------------------------------------------------------------------
 def loadPatientByName(patientName):
   """ Load patient by patient name from DICOM database.
@@ -95,6 +98,7 @@ def loadPatientByName(patientName):
   if patientUID is None:
     raise OSError('Patient not found by name %s' % patientName)
   return loadPatientByUID(patientUID)
+
 
 #------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientID(patientID):
@@ -121,6 +125,7 @@ def getDatabasePatientUIDByPatientID(patientID):
       return patientUID
   return None
 
+
 #------------------------------------------------------------------------------
 def loadPatientByPatientID(patientID):
   """ Load patient from DICOM database by DICOM PatientID.
@@ -130,6 +135,7 @@ def loadPatientByPatientID(patientID):
   if patientUID is None:
     raise OSError('Patient not found by PatientID %s' % patientID)
   return loadPatientByUID(patientUID)
+
 
 #------------------------------------------------------------------------------
 def loadPatient(uid=None, name=None, patientID=None):
@@ -144,6 +150,7 @@ def loadPatient(uid=None, name=None, patientID=None):
     return loadPatientByPatientID(patientID)
 
   raise ValueError('One of the following arguments needs to be specified: uid, name, patientID')
+
 
 #------------------------------------------------------------------------------
 def loadSeriesByUID(seriesUIDs):
@@ -168,6 +175,7 @@ def loadSeriesByUID(seriesUIDs):
   loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
   selectHighestConfidenceLoadables(loadablesByPlugin)
   return loadLoadables(loadablesByPlugin)
+
 
 def selectHighestConfidenceLoadables(loadablesByPlugin):
   """Review the selected state and confidence of the loadables
@@ -203,6 +211,7 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
         highestConfidenceValue = loadable.confidence
     for loadable in loadablesBySeries[series]:
       loadable.selected = loadable.confidence == highestConfidenceValue
+
 
 #------------------------------------------------------------------------------
 def loadByInstanceUID(instanceUID):
@@ -248,6 +257,7 @@ def loadByInstanceUID(instanceUID):
   # load the results
   return loadLoadables(filteredLoadablesByPlugin)
 
+
 #------------------------------------------------------------------------------
 def openDatabase(databaseDir):
   """Open DICOM database in the specified folder"""
@@ -260,6 +270,7 @@ def openDatabase(databaseDir):
     logging.error('Unable to open DICOM database ' + databaseDir)
     return False
   return True
+
 
 #------------------------------------------------------------------------------
 def clearDatabase(dicomDatabase=None):
@@ -274,6 +285,7 @@ def clearDatabase(dicomDatabase=None):
   removeEmptyDirs(dicomDatabase.databaseDirectory+'/dicom')
   dicomDatabase.databaseChanged()
 
+
 def removeEmptyDirs(path):
   for root, dirnames, filenames in os.walk(path, topdown=False):
     for dirname in dirnames:
@@ -282,6 +294,7 @@ def removeEmptyDirs(path):
         os.rmdir(os.path.realpath(os.path.join(root, dirname)))
       except OSError as e:
         logging.error("Removing directory failed: " + str(e))
+
 
 #------------------------------------------------------------------------------
 def openTemporaryDatabase(directory=None):
@@ -313,6 +326,7 @@ def openTemporaryDatabase(directory=None):
 
   return originalDatabaseDir
 
+
 #------------------------------------------------------------------------------
 def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
   """ Close temporary DICOM database and remove its directory if requested
@@ -331,7 +345,6 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
   else:
     logging.error('Unable to close DICOM database ' + slicer.dicomDatabase.databaseFilename)
 
-
   if originalDatabaseDir is None:
     # Only log debug if there was no original database, as it is a valid use case,
     # see openTemporaryDatabase
@@ -349,6 +362,7 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
       return False
 
   return True
+
 
 #------------------------------------------------------------------------------
 def createTemporaryDatabase(directory=None):
@@ -378,6 +392,7 @@ def createTemporaryDatabase(directory=None):
   else:
     return None
 
+
 #------------------------------------------------------------------------------
 def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
   """ Close temporary DICOM database and remove its directory if requested
@@ -394,6 +409,7 @@ def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
       dicomDatabase.initializeDatabase()
 
   return True
+
 
 #------------------------------------------------------------------------------
 class TemporaryDICOMDatabase:
@@ -413,6 +429,7 @@ class TemporaryDICOMDatabase:
   def __exit__(self, type, value, traceback):
     closeTemporaryDatabase(self.originalDatabaseDir)
 
+
 #------------------------------------------------------------------------------
 def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
   """ Import DICOM files from folder into Slicer database
@@ -430,6 +447,7 @@ def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
     logging.error('Failed to import DICOM folder ' + dicomDataDir)
     return False
   return True
+
 
 #------------------------------------------------------------------------------
 def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expectedLoadedNodes=None):
@@ -499,6 +517,7 @@ def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expecte
 
   return success
 
+
 #------------------------------------------------------------------------------
 def allSeriesUIDsInDatabase(database=None):
   """ Collect all series instance UIDs in a DICOM database (the Slicer one by default)
@@ -517,6 +536,7 @@ def allSeriesUIDsInDatabase(database=None):
     allSeriesUIDs.extend(seriesUIDs)
   return allSeriesUIDs
 
+
 #------------------------------------------------------------------------------
 def seriesUIDsForFiles(files):
   """ Collect series instance UIDs belonging to a list of files
@@ -527,6 +547,7 @@ def seriesUIDsForFiles(files):
     if seriesUID != '':
       seriesUIDs.add(seriesUID)
   return seriesUIDs
+
 
 #------------------------------------------------------------------------------
 class LoadDICOMFilesToDatabase:
@@ -562,6 +583,7 @@ class LoadDICOMFilesToDatabase:
 
   def __exit__(self, type, value, traceback):
     pass
+
 
 #------------------------------------------------------------------------------
 # TODO: more consistency checks:
@@ -671,6 +693,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
 
   return files, distances, warningText
 
+
 #------------------------------------------------------------------------------
 def refreshDICOMWidget():
   """ Refresh DICOM browser from database.
@@ -684,6 +707,7 @@ def refreshDICOMWidget():
     logging.error('DICOM module or browser cannot be accessed')
     return False
   return True
+
 
 def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, progressCallback=None, pluginInstances=None):
   """Take list of file lists, return loadables by plugin dictionary
@@ -726,6 +750,7 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
         messages.append("Plugin failed: %s." % pluginClass)
 
   return loadablesByPlugin, loadEnabled
+
 
 def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
   """Load each DICOM loadable item.
@@ -787,6 +812,7 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
   slicer.mrmlScene.RemoveObserver(sceneObserverTag)
 
   return loadedNodeIDs
+
 
 def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=None, accessToken=None):
   """
@@ -921,6 +947,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
     slicer.util.infoDisplay(f"DICOMweb import has been interrupted after completing {len(seriesImported)} out of {len(seriesInstanceUIDs)} series.")
 
   return seriesImported
+
 
 def registerSlicerURLHandler():
   """

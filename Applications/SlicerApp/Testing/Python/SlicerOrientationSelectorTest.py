@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+
 #
 # SlicerOrientationSelectorTest
 #
@@ -28,6 +29,7 @@ class SlicerOrientationSelectorTest(ScriptedLoadableModule):
     and was partially funded by NIH grant 1U24CA194354-01.
     """ # replace with organization, grant and thanks.
 
+
 #
 # SlicerOrientationSelectorTestWidget
 #
@@ -39,6 +41,7 @@ class SlicerOrientationSelectorTestWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # SlicerOrientationSelectorTestLogic
@@ -66,6 +69,7 @@ class SlicerOrientationSelectorTestLogic(ScriptedLoadableModuleLogic):
       logging.debug('hasImageData failed: no image data in volume node')
       return False
     return True
+
 
 class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
   """

@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+
 #
 # Endoscopy
 #
@@ -34,6 +35,7 @@ This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy
 (See <a>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>)
 NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 """
+
 
 #
 # qSlicerPythonModuleExampleWidget
@@ -112,7 +114,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     pathFormLayout.addRow(createPathButton)
     createPathButton.connect('clicked()', self.onCreatePathButtonClicked)
 
-
     # Flythrough collapsible button
     flythroughCollapsibleButton = ctk.ctkCollapsibleButton()
     flythroughCollapsibleButton.text = "Flythrough"
@@ -178,7 +179,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     inputFiducialsNodeSelector.setMRMLScene(slicer.mrmlScene)
     outputPathNodeSelector.setMRMLScene(slicer.mrmlScene)
 
-
   def setCameraNode(self, newCameraNode):
     """Allow to set the current camera node.
     Connected to signal 'currentNodeChanged()' emitted by camera node selector."""
@@ -214,7 +214,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
   def onCameraNodeModified(self, observer, eventid):
     self.updateWidgetFromMRML()
-
 
   def enableOrDisableCreateButton(self):
     """Connected to both the fiducial and camera node selector. It allows to
@@ -329,6 +328,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     self.cameraNode.EndModify(wasModified)
     self.cameraNode.ResetClippingRange()
+
 
 class EndoscopyComputePath:
   """Compute path given a list of fiducials.

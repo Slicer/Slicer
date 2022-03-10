@@ -4,6 +4,7 @@ import logging
 from SegmentEditorEffects import *
 import vtkITK
 
+
 class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
   """ Operate on connected components (islands) within a segment
   """

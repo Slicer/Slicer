@@ -23,6 +23,7 @@ import os
 import re
 import string
 
+
 #=============================================================================
 class Token:
   """Base class for CMake script tokens.
@@ -54,6 +55,7 @@ class Token:
   #---------------------------------------------------------------------------
   def __str__(self):
     return self.indent + self.text
+
 
 #=============================================================================
 class String(Token):
@@ -92,6 +94,7 @@ class String(Token):
   def __str__(self):
     return self.indent + self.prefix + self.text + self.suffix
 
+
 #=============================================================================
 class Comment(Token):
   """Comment token.
@@ -125,6 +128,7 @@ class Comment(Token):
   #---------------------------------------------------------------------------
   def __str__(self):
     return self.indent + self.prefix + self.text + self.suffix
+
 
 #=============================================================================
 class Command(Token):
@@ -169,6 +173,7 @@ class Command(Token):
   def __str__(self):
     args = "".join([str(a) for a in self.arguments])
     return self.indent + self.text + self.prefix + args + self.suffix
+
 
 #=============================================================================
 class CMakeScript:

@@ -10,6 +10,7 @@ import tempfile
 # SlicerTransformInteractionTest1
 #
 
+
 class SlicerTransformInteractionTest1(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
@@ -30,6 +31,7 @@ class SlicerTransformInteractionTest1(ScriptedLoadableModule):
 # SlicerTransformInteractionTest1Widget
 #
 
+
 class SlicerTransformInteractionTest1Widget(ScriptedLoadableModuleWidget):
   """
   """
@@ -40,6 +42,7 @@ class SlicerTransformInteractionTest1Widget(ScriptedLoadableModuleWidget):
 #
 # SlicerTransformInteractionTest1Logic
 #
+
 
 class SlicerTransformInteractionTest1Logic(ScriptedLoadableModuleLogic):
   """

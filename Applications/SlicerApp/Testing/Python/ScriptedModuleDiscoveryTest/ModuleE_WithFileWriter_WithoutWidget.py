@@ -2,6 +2,7 @@ from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = 'E'
 
+
 class ModuleE_WithFileWriter_WithoutWidget(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)

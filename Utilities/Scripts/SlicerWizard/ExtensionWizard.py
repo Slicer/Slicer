@@ -7,6 +7,7 @@ import textwrap
 
 from urllib.parse import urlparse
 
+
 #-----------------------------------------------------------------------------
 def haveGit():
   """Return True if git is available.
@@ -43,6 +44,7 @@ from .ExtensionProject import ExtensionProject
 from .TemplateManager import TemplateManager
 from .Utilities import *
 from .WizardHelpFormatter import WizardHelpFormatter
+
 
 #=============================================================================
 class ExtensionWizard:
@@ -651,7 +653,6 @@ class ExtensionWizard:
                         help="location for the extension index clone"
                              " (default: private directory"
                              " in the extension clone)")
-
 
     parser.add_argument("destination", default=os.getcwd(), nargs="?",
                         help="location of output files / extension source"

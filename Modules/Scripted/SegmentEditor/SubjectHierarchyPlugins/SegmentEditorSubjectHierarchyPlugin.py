@@ -2,6 +2,7 @@ import vtk, qt, ctk, slicer
 import logging
 from AbstractScriptedSubjectHierarchyPlugin import *
 
+
 class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
   """ Scripted subject hierarchy plugin for the Segment Editor module.
 

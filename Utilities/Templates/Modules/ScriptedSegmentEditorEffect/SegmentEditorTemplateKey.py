@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+
 class SegmentEditorTemplateKey(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
@@ -28,6 +29,7 @@ class SegmentEditorTemplateKey(ScriptedLoadableModule):
     effectFilename = os.path.join(os.path.dirname(__file__), self.__class__.__name__+'Lib/SegmentEditorEffect.py')
     instance.setPythonSource(effectFilename.replace('\\','/'))
     instance.self().register()
+
 
 class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
   """

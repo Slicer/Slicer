@@ -6,6 +6,7 @@ import os
 import sys
 import textwrap
 
+
 #-----------------------------------------------------------------------------
 def haveGit():
   """Return True if git is available.
@@ -54,6 +55,7 @@ _yesno = {
 
 _logLevel = None
 
+
 #=============================================================================
 class _LogWrapFormatter(logging.Formatter):
   #---------------------------------------------------------------------------
@@ -69,6 +71,7 @@ class _LogWrapFormatter(logging.Formatter):
     lines = super().format(record).split("\n")
     return "\n".join([textwrap.fill(l, self._width) for l in lines])
 
+
 #=============================================================================
 class _LogReverseLevelFilter(logging.Filter):
   #---------------------------------------------------------------------------
@@ -78,6 +81,7 @@ class _LogReverseLevelFilter(logging.Filter):
   #---------------------------------------------------------------------------
   def filter(self, record):
     return record.levelno < self._levelLimit
+
 
 #-----------------------------------------------------------------------------
 def _log(func, msg):
@@ -91,6 +95,7 @@ def _log(func, msg):
 
   else:
     func(msg)
+
 
 #-----------------------------------------------------------------------------
 def warn(msg):
@@ -111,6 +116,7 @@ def warn(msg):
 
   _log(logging.warning, msg)
 
+
 #-----------------------------------------------------------------------------
 def die(msg, exitCode=1):
   """Output an error message (or messages), with exception if present.
@@ -128,6 +134,7 @@ def die(msg, exitCode=1):
 
   _log(logging.error, msg)
   sys.exit(exitCode)
+
 
 #-----------------------------------------------------------------------------
 def inquire(msg, choices=_yesno):
@@ -178,6 +185,7 @@ def inquire(msg, choices=_yesno):
     except:
       pass
 
+
 #-----------------------------------------------------------------------------
 def initLogging(logger, args):
   """Initialize logging.
@@ -220,6 +228,7 @@ def initLogging(logger, args):
   ghLogger = logging.getLogger("github")
   ghLogger.setLevel(logging.WARNING)
 
+
 #-----------------------------------------------------------------------------
 def detectEncoding(data):
   """Attempt to determine the encoding of a byte sequence.
@@ -249,6 +258,7 @@ def detectEncoding(data):
       return None, 0.0
 
     return "ascii", 1.0
+
 
 #-----------------------------------------------------------------------------
 def buildProcessArgs(*args, **kwargs):
@@ -295,6 +305,7 @@ def buildProcessArgs(*args, **kwargs):
 
   return result + ["%s" % a for a in args if a is not None]
 
+
 #-----------------------------------------------------------------------------
 def createEmptyRepo(path, tool=None):
   """Create a repository in an empty or nonexistent location.
@@ -334,6 +345,7 @@ def createEmptyRepo(path, tool=None):
   import git
   return git.Repo.init(path)
 
+
 #-----------------------------------------------------------------------------
 class SourceTreeDirectory:
   """Abstract representation of a source tree directory.
@@ -364,6 +376,7 @@ class SourceTreeDirectory:
       raise OSError("'root/relative_directory' does not exist")
     self.root = root
     self.relative_directory = relative_directory
+
 
 #-----------------------------------------------------------------------------
 def getRepo(path, tool=None, create=False):
@@ -433,6 +446,7 @@ def getRepo(path, tool=None, create=False):
 
   return None
 
+
 #-----------------------------------------------------------------------------
 def getRemote(repo, urls, create=None):
   """Get the remote matching a URL.
@@ -481,6 +495,7 @@ def getRemote(repo, urls, create=None):
 
   return None
 
+
 #-----------------------------------------------------------------------------
 def localRoot(repo):
   """Get top level local directory of a repository.
@@ -507,6 +522,7 @@ def localRoot(repo):
     return repo.wc_root
 
   raise Exception("unable to determine repository local root")
+
 
 #-----------------------------------------------------------------------------
 def vcsPrivateDirectory(repo):

@@ -1,6 +1,7 @@
 import slicer
 import os
 
+
 def testMRMLSceneImportAndExport():
   tempDir = slicer.app.temporaryPath
   scenePath = tempDir + '/temp_scene.mrml'

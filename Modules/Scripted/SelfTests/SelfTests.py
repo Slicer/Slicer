@@ -10,6 +10,7 @@ import logging
 # framework for slicer as discussed here: http://na-mic.org/Bug/view.php?id=1922
 #
 
+
 class ExampleSelfTests:
 
   @staticmethod
@@ -115,6 +116,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
     return True
 
+
 class SelfTestsLogic:
   """Logic to handle invoking the tests and reporting the results"""
 
@@ -153,6 +155,7 @@ class SelfTestsLogic:
         if not continueCheck(self):
           return
 
+
 def SelfTestsTest():
   if hasattr(slicer,'selfTests'):
     logic = SelfTestsLogic(list(slicer.selfTests.keys()))
@@ -160,6 +163,7 @@ def SelfTestsTest():
   print(logic.results)
   print("SelfTestsTest Passed!")
   return logic.failed == []
+
 
 def SelfTestsDemo():
   pass

@@ -4,6 +4,7 @@ import vtk
 
 from slicer.util import VTKObservationMixin
 
+
 class Foo(VTKObservationMixin):
   def __init__(self):
     VTKObservationMixin.__init__(self)
@@ -68,7 +69,6 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
     self.assertEqual(foo.modifiedEventCount(object), 0)
     self.assertEqual(foo.modifiedEventCount(object2), 1)
 
-
   def test_hasObserver(self):
     foo = Foo()
     object = vtk.vtkObject()
@@ -104,7 +104,6 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
 
     foo.addObserver(object2, event, callback2)
     self.assertEqual(foo.observer(event, callback2), object2)
-
 
   def test_removeObserver(self):
     foo = Foo()

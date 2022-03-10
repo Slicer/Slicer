@@ -17,6 +17,7 @@ multishell_dwi_451 = os.path.join(mrmlcore_testdata_path, "multishell-DWI-451dir
 #================================================================================
 NRRD = namedtuple('NRRD', ['header', 'bvalue', 'gradients'])
 
+
 def parse_nhdr(path):
     dwmri_bval_key      = "DWMRI_b-value"
     dwmri_grad_keybase  = "DWMRI_gradient_"
@@ -129,6 +130,7 @@ def test_nrrd_dwi_load(first_file, second_file=None):
                                              err_msg="NHDR gradient does not match gradient in node attribute dictionary")
 
     return (parsed_nrrd, dw_node)
+
 
 def test_nrrd_dwi_roundtrip(test_nrrd_path):
     """DWI NRRD round-trip test

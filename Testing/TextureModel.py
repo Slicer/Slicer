@@ -1,6 +1,7 @@
 import Slicer
 import time
 
+
 def newPlane():
 
   # create a plane polydata

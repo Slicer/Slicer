@@ -26,6 +26,7 @@ _templateCategories = [
   "modules",
 ]
 
+
 #-----------------------------------------------------------------------------
 def _isSourceFile(name):
   for pat in _sourcePatterns:
@@ -33,6 +34,7 @@ def _isSourceFile(name):
       return True
 
   return False
+
 
 #-----------------------------------------------------------------------------
 def _isTemplateCategory(name, relPath):
@@ -42,6 +44,7 @@ def _isTemplateCategory(name, relPath):
   name = name.lower()
   return name in _templateCategories
 
+
 #-----------------------------------------------------------------------------
 def _listSources(directory):
   for root, subFolders, files in os.walk(directory):
@@ -49,6 +52,7 @@ def _listSources(directory):
       if _isSourceFile(f):
         f = os.path.join(root, f)
         yield f[len(directory) + 1:] # strip common dir
+
 
 #=============================================================================
 class TemplateManager:

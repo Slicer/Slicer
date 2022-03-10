@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+
 #
 # ScreenCapture
 #
@@ -39,6 +40,7 @@ VIEW_3D = '3d'
 
 AXIS_YAW = 0
 AXIS_PITCH = 1
+
 
 class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -129,7 +131,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.rotationAxisWidget.addItem("Yaw", AXIS_YAW)
     self.rotationAxisWidget.addItem("Pitch", AXIS_PITCH)
     inputFormLayout.addRow(self.rotationAxisLabel, self.rotationAxisWidget)
-
 
     # Sequence browser node selector
     self.sequenceBrowserNodeSelectorLabel = qt.QLabel("Sequence:")
@@ -591,7 +592,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.repeatSliderWidget.enabled = (numberOfSteps > 1)
     self.volumeNodeComboBox.setEnabled(numberOfSteps == 1)
 
-
   def setSliceOffset(self, offset):
     sliceLogic = self.logic.getSliceLogicFromSliceNode(self.viewNodeSelector.currentNode())
     sliceLogic.SetSliceOffset(offset)
@@ -790,6 +790,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.captureButton.text = self.captureButtonLabelCapture
     self.captureButton.setEnabled(True)
     self.enableInputOutputWidgets(True)
+
 
 #
 # ScreenCaptureLogic
@@ -1177,7 +1178,6 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     return blend.GetOutput()
 
-
   def viewFromNode(self, viewNode):
     if not viewNode:
       raise ValueError('Invalid view node.')
@@ -1464,6 +1464,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         break
       snapshotIndex += 1
     return [filename, snapshotIndex]
+
 
 class ScreenCaptureTest(ScriptedLoadableModuleTest):
   """

@@ -4,6 +4,7 @@ from .AbstractScriptedSegmentEditorEffect import *
 
 __all__ = ['AbstractScriptedSegmentEditorPaintEffect']
 
+
 #
 # Abstract class of python scripted segment editor paint effects
 #

@@ -28,6 +28,7 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 #
 #########################################################
 
+
 class DICOMExportScene:
   """Export slicer scene to dicom database
   """

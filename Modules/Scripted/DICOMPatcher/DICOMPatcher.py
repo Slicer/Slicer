@@ -4,6 +4,7 @@ from __main__ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+
 #
 # DICOMPatcher
 #
@@ -22,6 +23,7 @@ class DICOMPatcher(ScriptedLoadableModule):
     self.parent.helpText = """Fix common issues in DICOM files. This module may help fixing DICOM files that Slicer fails to import."""
     self.parent.helpText += parent.defaultDocumentationLink
     self.parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab."""
+
 
 #
 # DICOMPatcherWidget
@@ -164,6 +166,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
     self.statusLabel.appendPlainText(text)
     slicer.app.processEvents() # force update
 
+
 #
 # Patcher rules
 #
@@ -191,6 +194,7 @@ class DICOMPatcherRule:
 
   def generateOutputFilePath(self, ds, filepath):
     return filepath
+
 
 #
 #
@@ -297,6 +301,7 @@ class GenerateMissingIDs(DICOMPatcherRule):
       self.numberOfSeriesInStudyMap[ds.StudyInstanceUID] = self.numberOfSeriesInStudyMap[ds.StudyInstanceUID] + 1
       ds.SeriesNumber = self.numberOfSeriesInStudyMap[ds.StudyInstanceUID]
 
+
 #
 #
 #
@@ -307,6 +312,7 @@ class RemoveDICOMDIR(DICOMPatcherRule):
       return False
     self.addLog('DICOMDIR file is ignored (its contents may be inconsistent with the contents of the indexed DICOM files, therefore it is safer not to use it)')
     return True
+
 
 #
 #
@@ -326,6 +332,8 @@ class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
 
     if hasattr(ds, 'SOPClassUID') and ds.SOPClassUID == DCMTKPrivateMediaStorageSOPClassUID:
       ds.SOPClassUID = CTImageStorageSOPClassUID
+
+
 #
 #
 #
@@ -409,6 +417,7 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
 
       ds.PerFrameFunctionalGroupsSequence = perFrameFunctionalGroupsSequence
 
+
 #
 #
 #
@@ -458,6 +467,7 @@ class Anonymize(DICOMPatcherRule):
       self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID] = pydicom.uid.generate_uid(None)
     ds.SeriesInstanceUID = self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID]
 
+
 #
 #
 #
@@ -492,6 +502,7 @@ class NormalizeFileNames(DICOMPatcherRule):
     prefix = ds.Modality.lower() if hasattr(ds, 'Modality') else ""
     filePath = self.outputRootDir + "/" + folderName + "/" + self.getNextItemName(prefix, folderName)+".dcm"
     return filePath
+
 
 #
 # DICOMPatcherLogic
@@ -611,6 +622,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     slicer.util.selectModule('DICOM')
     dicomBrowser = slicer.modules.dicom.widgetRepresentation().self().browserWidget.dicomBrowser
     dicomBrowser.importDirectory(outputDirPath)
+
 
 #
 # Test

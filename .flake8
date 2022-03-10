@@ -94,10 +94,6 @@ ignore = \
   E266, \
   # multiple spaces after keyword
   E271, \
-  # expected 2 blank lines, found 1
-  E302, \
-  # too many blank lines
-  E303, \
   # multiple imports on one line
   E401, \
   # module level import not at top of file

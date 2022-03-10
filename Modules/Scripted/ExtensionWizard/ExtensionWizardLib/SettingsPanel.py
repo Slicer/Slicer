@@ -5,6 +5,7 @@ import SlicerWizard.TemplateManager
 from .DirectoryListWidget import DirectoryListWidget
 from .TemplatePathUtilities import *
 
+
 #=============================================================================
 #
 # _ui_SettingsPanel
@@ -40,6 +41,7 @@ class _ui_SettingsPanel:
     self.formLayout.addRow(label, widget)
     label = self.formLayout.labelForField(widget)
     label.alignment = self.formLayout.labelAlignment
+
 
 #=============================================================================
 #

@@ -6,6 +6,7 @@ from slicer.ScriptedLoadableModule import *
 from DICOMLib import DICOMUtils
 from slicer.util import TESTING_DATA_URL
 
+
 #
 # SubjectHierarchyGenericSelfTest
 #
@@ -38,6 +39,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
     tester = SubjectHierarchyGenericSelfTestTest()
     tester.runTest()
 
+
 #
 # SubjectHierarchyGenericSelfTestWidget
 #
@@ -45,6 +47,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
 class SubjectHierarchyGenericSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # SubjectHierarchyGenericSelfTestLogic

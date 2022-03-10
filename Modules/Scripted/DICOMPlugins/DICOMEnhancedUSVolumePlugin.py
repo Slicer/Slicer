@@ -12,6 +12,7 @@ except:
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 
+
 #
 # This is the plugin for DICOM module
 # to import volumes from Enhanced US Volume Storage DICOM files.
@@ -35,7 +36,6 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
     self.tags['photometricInterpretation'] = "0028,0004"
 
     self.detailedLogging = False
-
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
@@ -154,10 +154,10 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
 
     return volumeNode
 
+
 #
 # DICOMEnhancedUSVolumePlugin
 #
-
 class DICOMEnhancedUSVolumePlugin:
   """
   This class is the 'hook' for slicer to detect and recognize the plugin

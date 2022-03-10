@@ -1,10 +1,12 @@
 import slicer, qt
 
+
 #-----------------------------------------------------------------------------
 def _dialogIcon(icon):
   s = slicer.app.style()
   i = s.standardIcon(icon)
   return i.pixmap(qt.QSize(64, 64))
+
 
 #=============================================================================
 #
@@ -45,6 +47,7 @@ class _ui_LoadModulesDialog:
     self.buttonBox.setStandardButtons(qt.QDialogButtonBox.Yes |
                                       qt.QDialogButtonBox.No)
     vLayout.addWidget(self.buttonBox)
+
 
 #=============================================================================
 #

@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
+
 #
 # ShaderProperties
 #
@@ -21,6 +22,7 @@ class ShaderProperties(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed and was partially funded by NIH grant 3P41RR013218-12S1.
     """
+
 
 #
 # ShaderPropertiesWidget
@@ -42,14 +44,13 @@ class ShaderPropertiesWidget(ScriptedLoadableModuleWidget):
     self.layout.addWidget(self.wedgeTestButton)
     self.wedgeTestButton.connect("clicked()", lambda : ShaderPropertiesTest().testWedgeCut())
 
-
     # Add vertical spacer
     self.layout.addStretch(1)
-
 
   def runTests(self):
     tester = ShaderPropertiesTest()
     tester.testAll()
+
 
 #
 # ShaderPropertiesTest
@@ -173,7 +174,6 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Should be a carved out shoulder now")
 
-
   def testSphereCut(self):
 
     self.delayDisplay("Starting...")
@@ -264,6 +264,5 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
     fn = slicer.util.getNode('vtkMRMLMarkupsFiducialNode1')
     fn.AddObserver(fn.PointModifiedEvent, lambda caller,event: onPointMoved())
-
 
     self.delayDisplay("Should be a carved out nose now")

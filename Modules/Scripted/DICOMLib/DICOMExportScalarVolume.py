@@ -18,6 +18,7 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 #
 #########################################################
 
+
 class DICOMExportScalarVolume:
   """Code to export slicer data to dicom database
   TODO: delete temp directories and files

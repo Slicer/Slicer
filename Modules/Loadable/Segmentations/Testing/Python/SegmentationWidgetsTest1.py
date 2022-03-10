@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 import logging
 from slicer.ScriptedLoadableModule import *
 
+
 class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
   def setUp(self):
@@ -100,7 +101,6 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     self.assertEqual(len(segmentsTableView.displayedSegmentIDs()), 2)
     slicer.app.processEvents()
     slicer.util.delayDisplay("'NotStarted' shown")
-
 
     segmentsTableView.setSelectedSegmentIDs(["third"])
     segmentsTableView.setHideSegments(['second'])

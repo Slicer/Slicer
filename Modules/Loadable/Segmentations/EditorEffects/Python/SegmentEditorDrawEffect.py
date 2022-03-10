@@ -3,6 +3,7 @@ import vtk, qt, ctk, slicer
 import logging
 from SegmentEditorEffects import *
 
+
 class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
   """ DrawEffect is a LabelEffect implementing the interactive draw
       tool in the segment editor
@@ -142,6 +143,7 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
 
     self.drawPipelines[sliceWidget] = pipeline
     return pipeline
+
 
 #
 # DrawPipeline

@@ -20,6 +20,7 @@ class ModuleCleanup(ScriptedLoadableModule):
     partially funded by NIH grant 1R01EB021391.
     """
 
+
 class ModuleCleanupWidget(ScriptedLoadableModuleWidget):
   def __init__(self, parent=None):
     ScriptedLoadableModuleWidget.__init__(self, parent)

@@ -3,6 +3,7 @@ import slicer
 import os
 import shutil
 
+
 class SlicerUtilLoadSaveMINCTests(unittest.TestCase):
 
   def setUp(self):

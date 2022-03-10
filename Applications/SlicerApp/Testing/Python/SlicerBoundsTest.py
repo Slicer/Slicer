@@ -4,10 +4,10 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+
 #
 # SlicerOrientationSelectorTest
 #
-
 class SlicerBoundsTest(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
@@ -26,10 +26,10 @@ class SlicerBoundsTest(ScriptedLoadableModule):
     This file was originally developed by Johan Andruejol, Kitware Inc.
     """
 
+
 #
 # SlicerBoundsTest
 #
-
 class SlicerBoundsTestWidget(ScriptedLoadableModuleWidget):
   """
   """
@@ -37,13 +37,14 @@ class SlicerBoundsTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
 
+
 #
 # SlicerTransformInteractionTest1Logic
 #
-
 class SlicerBoundsTestLogic(ScriptedLoadableModuleLogic):
   """
   """
+
 
 class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
   """

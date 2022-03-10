@@ -14,6 +14,7 @@ Editing segments with overlap should split segments to separate layers.
 Shared segment modification behavior is controlled through qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap().
 '''
 
+
 class SegmentationsModuleTest2(unittest.TestCase):
 
   #------------------------------------------------------------------------------
@@ -117,7 +118,6 @@ class SegmentationsModuleTest2(unittest.TestCase):
     defaultModifierLabelmap = self.paintEffect.defaultModifierLabelmap()
     self.ijkToRas = vtk.vtkMatrix4x4()
     defaultModifierLabelmap.GetImageToWorldMatrix(self.ijkToRas)
-
 
     mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
     mergedLabelmap.SetImageToWorldMatrix(self.ijkToRas)
@@ -225,7 +225,6 @@ class SegmentationsModuleTest2(unittest.TestCase):
       self.paintEffect.modifySelectedSegmentByLabelmap(islandLabelmap, self.paintEffect.ModificationModeAdd)
       startExtent += size + 1
     self.checkSegmentVoxelCount(0, voxelSizeSum)
-
 
     layerCount = self.segmentation.GetNumberOfLayers()
     self.assertEqual(layerCount, 1)

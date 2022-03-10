@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
+
 #
 # AtlasTests
 #
@@ -32,6 +33,7 @@ class AtlasTests(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qAtlasTestsWidget
@@ -86,6 +88,7 @@ class AtlasTestsWidget(ScriptedLoadableModuleWidget):
   def onKneeAtlas(self):
     tester = AtlasTestsTest()
     tester.runKneeTest()
+
 
 #
 # AtlasTestsLogic

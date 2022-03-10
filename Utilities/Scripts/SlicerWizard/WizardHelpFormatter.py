@@ -1,5 +1,6 @@
 import argparse
 
+
 #=============================================================================
 class WizardHelpFormatter(argparse.HelpFormatter):
   """Custom formatter for |CLI| arguments.

@@ -58,8 +58,6 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
     else:
       print('Success in comparing MRHead vs itself with epsilon',volumesLogic.GetCompareVolumeGeometryEpsilon())
 
-
-
     #
     # clone the volume so can test for mismatches in geometry with
     # that operation

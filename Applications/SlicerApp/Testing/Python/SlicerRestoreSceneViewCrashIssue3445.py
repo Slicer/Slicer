@@ -5,6 +5,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
+
 #
 # SlicerRestoreSceneViewCrashIssue3445
 #
@@ -30,6 +31,7 @@ class SlicerRestoreSceneViewCrashIssue3445(ScriptedLoadableModule):
     and was partially funded by NIH grant 1U24CA194354-01.
     """ # replace with organization, grant and thanks.
 
+
 #
 # SlicerRestoreSceneViewCrashIssue3445Widget
 #
@@ -41,6 +43,7 @@ class SlicerRestoreSceneViewCrashIssue3445Widget(ScriptedLoadableModuleWidget):
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # SlicerRestoreSceneViewCrashIssue3445Logic
@@ -56,6 +59,7 @@ class SlicerRestoreSceneViewCrashIssue3445Logic(ScriptedLoadableModuleLogic):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
   pass
+
 
 class SlicerRestoreSceneViewCrashIssue3445Test(ScriptedLoadableModuleTest):
   """

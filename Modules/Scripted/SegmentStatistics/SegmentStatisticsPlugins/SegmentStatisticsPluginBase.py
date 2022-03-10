@@ -2,6 +2,7 @@ import vtk
 import qt
 import slicer
 
+
 class SegmentStatisticsPluginBase:
   """Base class for statistics plugins operating on segments.
   Derived classes should specify: self.name, self.keys, self.defaultKeys

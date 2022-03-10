@@ -6,6 +6,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import computeChecksum, extractAlgoAndDigest, TESTING_DATA_URL
 
+
 #
 # SampleData methods
 #
@@ -51,6 +52,7 @@ def downloadSamples(sampleName):
   """For a given sample name this will search the available sources
   and load it if it is available.  Returns the loaded nodes."""
   return SampleDataLogic().downloadSamples(sampleName)
+
 
 #
 # SampleData
@@ -99,7 +101,6 @@ use it for commercial purposes.</p>
     except AttributeError:
       slicer.modules.sampleDataSources = {}
 
-
   def addMenu(self):
     a = qt.QAction('Download Sample Data', slicer.util.mainWindow())
     a.setToolTip('Go to the SampleData module to download data from the network')
@@ -112,10 +113,10 @@ use it for commercial purposes.</p>
           fileMenu.insertAction(action, a)
           fileMenu.insertSeparator(action)
 
-
   def select(self):
     m = slicer.util.mainWindow()
     m.moduleSelector().selectModule('SampleData')
+
 
 #
 # SampleDataSource
@@ -395,6 +396,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     if not SampleDataLogic.sampleDataSourcesByCategory(category):
       return
     slicer.util.findChild(self.parent, '%sCollapsibleGroupBox' % category).setVisible(visible)
+
 
 #
 # SampleData logic

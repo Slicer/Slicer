@@ -7,6 +7,7 @@ from slicer.ScriptedLoadableModule import *
 # CropVolumeSelfTest
 #
 
+
 class CropVolumeSelfTest(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
@@ -49,7 +50,6 @@ class CropVolumeSelfTestTest(ScriptedLoadableModuleTest):
   def runTest(self):
     self.setUp()
     self.test_CropVolumeSelfTest()
-
 
   def test_CropVolumeSelfTest(self):
     """

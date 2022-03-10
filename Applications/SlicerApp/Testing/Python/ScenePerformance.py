@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
+
 #
 # ScenePerformance
 #
@@ -21,6 +22,7 @@ class ScenePerformance(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Julien Finet, Kitware, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
     """
+
 
 #
 # ScenePerformanceWidget
@@ -107,6 +109,7 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
   def findWidget(self, widget, objectName):
     return slicer.util.findChildren(widget, objectName)[0]
 
+
 #
 # ScenePerformanceLogic
 #
@@ -125,6 +128,7 @@ class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
 
   def stopTiming(self):
     return self.Timer.elapsed()
+
 
 class ScenePerformanceTest(ScriptedLoadableModuleTest):
 

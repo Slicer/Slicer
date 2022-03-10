@@ -5,6 +5,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 
+
 #
 # TemplateKey
 #
@@ -33,6 +34,7 @@ and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR0132
 
     # Additional initialization step after application startup is complete
     slicer.app.connect("startupCompleted()", registerSampleData)
+
 
 #
 # Register sample data sets in Sample Data module
@@ -82,6 +84,7 @@ def registerSampleData():
     # This node name will be used when the data set is loaded
     nodeNames='TemplateKey2'
   )
+
 
 #
 # TemplateKeyWidget
@@ -279,6 +282,7 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.logic.process(self.ui.inputSelector.currentNode(), self.ui.invertedOutputSelector.currentNode(),
           self.ui.imageThresholdSliderWidget.value, not self.ui.invertOutputCheckBox.checked, showResult=False)
 
+
 #
 # TemplateKeyLogic
 #
@@ -339,6 +343,7 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
 
     stopTime = time.time()
     logging.info(f'Processing completed in {stopTime-startTime:.2f} seconds')
+
 
 #
 # TemplateKeyTest

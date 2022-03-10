@@ -15,6 +15,7 @@ except ImportError:
 
 from . import DataProbeUtil
 
+
 class SliceAnnotations(VTKObservationMixin):
   """Implement the Qt window showing settings for Slice View Annotations
   """

@@ -4,6 +4,7 @@ import logging
 import time
 from SegmentEditorEffects import *
 
+
 class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoCompleteEffect):
   """ AutoCompleteEffect is an effect that can create a full segmentation
       from a partial segmentation (not all slices are segmented or only
@@ -46,7 +47,6 @@ updated automatically within a few seconds</li>
 If segments overlap, segment higher in the segments table will have priority.
 The effect uses <a href="http://interactivemedical.org/imic2014/CameraReadyPapers/Paper%204/IMIC_ID4_FastGrowCut.pdf">fast grow-cut method</a>.
 <p></html>"""
-
 
   def reset(self):
     self.growCutFilter = None

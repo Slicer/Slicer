@@ -3,6 +3,7 @@ import vtk, qt, ctk, slicer
 import logging
 from SegmentEditorEffects import *
 
+
 class SegmentEditorEffect(AbstractScriptedSegmentEditorEffect):
   """This effect uses Watershed algorithm to partition the input volume"""
 

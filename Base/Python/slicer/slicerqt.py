@@ -27,6 +27,7 @@ class _LogReverseLevelFilter(logging.Filter):
   def filter(self, record):
     return record.levelno < self._levelLimit
 
+
 #-----------------------------------------------------------------------------
 class SlicerApplicationLogHandler(logging.Handler):
   """
@@ -58,6 +59,7 @@ class SlicerApplicationLogHandler(logging.Handler):
         self.pythonToCtkLevelConverter[record.levelno], self.origin, context, msg)
     except:
       self.handleError(record)
+
 
 #-----------------------------------------------------------------------------
 def initLogging(logger):
@@ -102,6 +104,7 @@ def initLogging(logger):
 
 initLogging(logging.getLogger())
 
+
 def getSlicerRCFileName():
   """Return application startup file (Slicer resource script) file name.
   If a .slicerrc.py file is found in slicer.app.slicerHome folder then that will be used.
@@ -118,6 +121,7 @@ def getSlicerRCFileName():
   rcfile = rcfile.replace('\\','/') # make slashed consistent on Windows
   return rcfile
 
+
 #-----------------------------------------------------------------------------
 #
 # loadSlicerRCFile - Let's not add this function to 'slicer.util' so that
@@ -131,6 +135,7 @@ def loadSlicerRCFile():
   if os.path.isfile( rcfile ):
     print('Loading Slicer RC file [%s]' % ( rcfile ))
     exec(open(rcfile).read(), globals())
+
 
 #-----------------------------------------------------------------------------
 #

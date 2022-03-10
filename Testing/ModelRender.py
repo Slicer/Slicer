@@ -2,6 +2,7 @@ import Slicer
 import time
 import random
 
+
 def newSphere(name=''):
   if name == "":
     name = "sphere-%g" % time.time()
@@ -19,6 +20,7 @@ def newSphere(name=''):
   modelNode.SetAndObserveDisplayNodeID( modelDisplayNode.GetID() )
   modelNode.SetName(name)
   Slicer.slicer.MRMLScene.AddNode(modelNode)
+
 
 def sphereMovie(dir="."):
 

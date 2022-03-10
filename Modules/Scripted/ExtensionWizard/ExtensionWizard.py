@@ -11,6 +11,7 @@ import SlicerWizard.Utilities
 
 from ExtensionWizardLib import *
 
+
 #-----------------------------------------------------------------------------
 def _settingsList(settings, key, convertToAbsolutePaths=False):
   # Return a settings value as a list (even if empty or a single value)
@@ -28,6 +29,7 @@ def _settingsList(settings, key, convertToAbsolutePaths=False):
     return absolutePaths
   else:
     return value
+
 
 #=============================================================================
 #
@@ -52,6 +54,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 
     self.settingsPanel = SettingsPanel()
     slicer.app.settingsDialog().addPanel("Extension Wizard", self.settingsPanel)
+
 
 #=============================================================================
 #

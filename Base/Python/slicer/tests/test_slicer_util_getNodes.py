@@ -3,6 +3,7 @@ import slicer
 import slicer.util
 import vtk
 
+
 class SlicerUtilGetNodeTest(unittest.TestCase):
 
     def setUp(self):

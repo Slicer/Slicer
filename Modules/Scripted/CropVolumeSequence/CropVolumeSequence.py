@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+
 #
 # CropVolumeSequence
 #
@@ -24,6 +25,7 @@ class CropVolumeSequence(ScriptedLoadableModule):
     self.parent.acknowledgementText = """
 This file was originally developed by Andras Lasso
 """
+
 
 #
 # CropVolumeSequenceWidget
@@ -145,6 +147,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
   def onApplyButton(self):
     logic = CropVolumeSequenceLogic()
     logic.run(self.inputSelector.currentNode(), self.outputSelector.currentNode(), self.cropParametersSelector.currentNode())
+
 
 #
 # CropVolumeSequenceLogic
@@ -277,6 +280,7 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
         slicer.modules.sequences.logic().UpdateProxyNodesFromSequences(seqBrowser)
 
     logging.info('Processing completed')
+
 
 class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
   """

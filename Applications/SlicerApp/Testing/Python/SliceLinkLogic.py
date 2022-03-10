@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
+
 #
 # SliceLinkLogic
 #
@@ -25,6 +26,7 @@ class SliceLinkLogic(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE and was partially funded by NIH grant U54EB005149.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qSliceLinkLogicWidget
@@ -61,6 +63,7 @@ class SliceLinkLogicWidget(ScriptedLoadableModuleWidget):
 
   def onHelloWorldButtonClicked(self):
     print("Hello World !")
+
 
 #
 # SliceLinkLogicLogic

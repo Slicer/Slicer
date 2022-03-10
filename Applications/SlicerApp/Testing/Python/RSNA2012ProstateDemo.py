@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
+
 #
 # RSNA2012ProstateDemo
 #
@@ -26,6 +27,7 @@ class RSNA2012ProstateDemo(ScriptedLoadableModule):
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
 
+
 #
 # qRSNA2012ProstateDemoWidget
 #
@@ -44,6 +46,7 @@ class RSNA2012ProstateDemoWidget(ScriptedLoadableModuleWidget):
 
   def cleanup(self):
     pass
+
 
 class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
   """
