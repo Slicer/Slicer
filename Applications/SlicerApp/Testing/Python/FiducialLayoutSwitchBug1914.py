@@ -5,6 +5,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+
 #
 # FiducialLayoutSwitchBug1914
 #
@@ -22,6 +23,7 @@ class FiducialLayoutSwitchBug1914(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH  and was partially funded by NIH grant 3P41RR013218-12S1.
 """
+
 
 #
 # qFiducialLayoutSwitchBug1914Widget

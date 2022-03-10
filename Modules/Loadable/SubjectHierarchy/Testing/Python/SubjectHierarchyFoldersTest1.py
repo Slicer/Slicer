@@ -5,6 +5,7 @@ import logging
 from slicer.ScriptedLoadableModule import *
 from slicer.util import DATA_STORE_URL
 
+
 class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
   def setUp(self):

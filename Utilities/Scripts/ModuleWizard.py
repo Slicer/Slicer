@@ -27,6 +27,7 @@ def findSource(dir):
             fileList.append(file)
   return fileList
 
+
 def copyAndReplace(inFile, template, target, key, moduleName):
   newFile = os.path.join( target, inFile.replace(key, moduleName) )
   print ("creating %s" % newFile)
@@ -58,6 +59,7 @@ def usage():
   print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/CLIExtensionTemplate --target ../MyCLI MyCLI")
   print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/SuperBuildExtensionTemplate --target ../MySuperBuild MySuperBuild")
   print ("")
+
 
 def main(argv):
 
@@ -113,7 +115,6 @@ def main(argv):
 
   for file in sources:
     copyAndReplace(file, template, target, templateKey, moduleName)
-
 
   print ('\nModule %s created!' % moduleName)
 

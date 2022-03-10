@@ -7,6 +7,7 @@ from slicer.ScriptedLoadableModule import *
 from DICOMLib import DICOMUtils
 from slicer.util import TESTING_DATA_URL
 
+
 #
 # DICOMReaders
 #
@@ -24,6 +25,7 @@ class DICOMReaders(ScriptedLoadableModule):
     parent.acknowledgementText = """This work is supported primarily by the National Institutes of Health, National Cancer Institute, Informatics Technology for Cancer Research (ITCR) program, grant Quantitative Image Informatics for Cancer Research (QIICR) (U24 CA180918, PIs Kikinis and Fedorov). We also acknowledge support of the following grants: Neuroimage Analysis Center (NAC) (P41 EB015902, PI Kikinis) and National Center for Image Guided Therapy (NCIGT) (P41 EB015898, PI Tempany).
     This file was originally developed by Steve Pieper, Isomics, Inc.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qDICOMReadersWidget
@@ -163,7 +165,6 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
             if 'voxelValueUnits' in dataset.keys():
               self.assertEqual(volumeNode.GetVoxelValueUnits().GetAsPrintableString(), dataset['voxelValueUnits'])
 
-
         #
         # for each approach that loaded as expected, compare the volumes
         # to ensure they match in terms of pixel data and metadata
@@ -283,7 +284,6 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
           if loadable.selected:
             # found the first selected loadable
             break
-
 
       if len(loadable.warning) == 0:
         raise Exception("Expected warning about geometry issues due to missing slices!")

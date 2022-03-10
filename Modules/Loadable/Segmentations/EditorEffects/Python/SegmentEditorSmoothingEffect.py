@@ -3,6 +3,7 @@ import vtk, qt, ctk, slicer
 import logging
 from SegmentEditorEffects import *
 
+
 class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorPaintEffect):
   """ SmoothingEffect is an Effect that smoothes a selected segment
   """
@@ -363,7 +364,6 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
   def smoothMultipleSegments(self, maskImage=None, maskExtent=None):
     import vtkSegmentationCorePython as vtkSegmentationCore
-
 
     self.showStatusMessage(f'Joint smoothing ...')
     # Generate merged labelmap of all visible segments

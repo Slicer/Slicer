@@ -3,6 +3,7 @@ import vtk, qt, ctk, slicer
 import logging
 from SegmentEditorEffects import *
 
+
 class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
   """ ThresholdEffect is an Effect implementing the global threshold
       operation in the segment editor
@@ -926,6 +927,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.backgroundFunction.SetAlpha(1.0)
     self.backgroundFunction.Build()
 
+
 #
 # PreviewPipeline
 #
@@ -961,6 +963,7 @@ class PreviewPipeline:
     # Setup pipeline
     self.colorMapper.SetInputConnection(self.thresholdFilter.GetOutputPort())
     self.mapper.SetInputConnection(self.colorMapper.GetOutputPort())
+
 
 ###
 #

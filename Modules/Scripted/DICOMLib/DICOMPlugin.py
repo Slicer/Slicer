@@ -15,6 +15,7 @@ comment = """
 #
 #########################################################
 
+
 #
 # DICOMLoadable
 #
@@ -60,6 +61,7 @@ class DICOMLoadable:
         self.files.append(file)
       self.selected = qLoadable.selected
       self.confidence = qLoadable.confidence
+
 
 #
 # DICOMPlugin

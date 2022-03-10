@@ -6,6 +6,7 @@ import numpy as np
 # TODO: would be good to set up test driver so `import slicer, vtk` works,
 #       to make sure we are actually in Slicer's python.
 
+
 def main():
     # TODO parse from XML (maybe commontk/ctk-cli)
 
@@ -19,7 +20,6 @@ def main():
     parser.add_argument('--operationtype',
                         choices=['Addition', 'Multiplication', 'Fail'],
                         default='Addition')
-
 
     args = parser.parse_args()
     operation = args.operationtype

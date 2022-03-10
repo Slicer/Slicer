@@ -1,5 +1,6 @@
 import time
 
+
 def TestFiducialAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   print("numToAdd = ", numToAdd)
   if renameFlag > 0:

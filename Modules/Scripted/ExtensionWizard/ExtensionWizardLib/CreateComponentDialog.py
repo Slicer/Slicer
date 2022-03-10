@@ -3,6 +3,7 @@ import slicer
 import qt, ctk
 import re
 
+
 #=============================================================================
 #
 # _ui_CreateComponentDialog
@@ -35,6 +36,7 @@ class _ui_CreateComponentDialog:
     self.buttonBox.setStandardButtons(qt.QDialogButtonBox.Ok |
                                       qt.QDialogButtonBox.Cancel)
     self.vLayout.addWidget(self.buttonBox)
+
 
 #=============================================================================
 #

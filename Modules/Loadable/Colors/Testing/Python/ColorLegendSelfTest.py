@@ -9,6 +9,7 @@ import logging
 # ColorLegendSelfTest
 #
 
+
 class ColorLegendSelfTest(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
@@ -28,6 +29,7 @@ class ColorLegendSelfTest(ScriptedLoadableModule):
 #
 # ColorLegendSelfTestWidget
 #
+
 
 class ColorLegendSelfTestWidget(ScriptedLoadableModuleWidget):
 
@@ -59,7 +61,6 @@ class ColorLegendSelfTestWidget(ScriptedLoadableModuleWidget):
     # Add vertical spacer
     self.layout.addStretch(1)
 
-
   def cleanup(self):
     pass
 
@@ -67,6 +68,7 @@ class ColorLegendSelfTestWidget(ScriptedLoadableModuleWidget):
     test = ColorLegendSelfTestTest()
     print("Run the test algorithm")
     test.test_ColorLegendSelfTest1()
+
 
 class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
   """

@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
+
 #
 # SubjectHierarchyCorePluginsSelfTest
 #
@@ -35,6 +36,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
     tester = SubjectHierarchyCorePluginsSelfTestTest()
     tester.runTest()
 
+
 #
 # SubjectHierarchyCorePluginsSelfTestWidget
 #
@@ -42,6 +44,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
 class SubjectHierarchyCorePluginsSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # SubjectHierarchyCorePluginsSelfTestLogic

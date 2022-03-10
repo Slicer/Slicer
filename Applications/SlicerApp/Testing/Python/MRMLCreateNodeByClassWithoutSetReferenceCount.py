@@ -1,5 +1,6 @@
 import slicer
 
+
 def testMRMLCreateNodeByClassWithoutSetReferenceCount():
 
   # Always run this test as if CTest ran it.

@@ -2,6 +2,7 @@ import os
 
 import slicer
 
+
 #=============================================================================
 #
 # _ui_CreateComponentDialog

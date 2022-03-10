@@ -4,6 +4,7 @@ import logging
 import math
 from SegmentEditorEffects import *
 
+
 class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
   """This effect makes a segment hollow by replacing it with a shell at the segment boundary"""
 
@@ -74,7 +75,6 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     self.outsideSurfaceOptionRadioButton.connect("toggled(bool)", self.outsideSurfaceModeToggled)
     self.applyToAllVisibleSegmentsCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
 
-
   def createCursor(self, widget):
     # Turn off effect-specific cursor for this effect
     return slicer.util.mainWindow().cursor
@@ -134,7 +134,6 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     wasBlocked = self.applyToAllVisibleSegmentsCheckBox.blockSignals(True)
     self.applyToAllVisibleSegmentsCheckBox.setCheckState(applyToAllVisibleSegments)
     self.applyToAllVisibleSegmentsCheckBox.blockSignals(wasBlocked)
-
 
   def updateMRMLFromGUI(self):
     # Operation is managed separately

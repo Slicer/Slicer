@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
+
 #
 # MarkupsWidgetsSelfTest
 #
@@ -17,6 +18,7 @@ class MarkupsWidgetsSelfTest(ScriptedLoadableModule):
     self.parent.helpText = """This is a self test for Markups widgets."""
     self.parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
 
+
 #
 # MarkupsWidgetsSelfTestWidget
 #
@@ -24,6 +26,7 @@ class MarkupsWidgetsSelfTest(ScriptedLoadableModule):
 class MarkupsWidgetsSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # MarkupsWidgetsSelfTestLogic

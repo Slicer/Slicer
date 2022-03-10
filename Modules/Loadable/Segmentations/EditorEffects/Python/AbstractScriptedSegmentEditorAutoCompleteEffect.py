@@ -4,6 +4,7 @@ from .AbstractScriptedSegmentEditorEffect import *
 
 __all__ = ['AbstractScriptedSegmentEditorAutoCompleteEffect']
 
+
 #
 # Abstract class of python scripted segment editor auto-complete effects
 #
@@ -49,7 +50,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.minimumExtentMargin = 3
 
     self.previewComputationInProgress = False
-
 
   def __del__(self, scriptedEffect):
     super(SegmentEditorAutoCompleteEffect,self).__del__()

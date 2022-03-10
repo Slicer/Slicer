@@ -2,6 +2,7 @@ from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = 'B'
 
+
 class ModuleB(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)

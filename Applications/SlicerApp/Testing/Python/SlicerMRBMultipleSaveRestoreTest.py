@@ -2,6 +2,7 @@ import os
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
+
 #
 # SlicerMRBMultipleSaveRestoreTest
 #
@@ -104,7 +105,6 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
     self.delayDisplay('The MRHead volume is in the background of the Red viewer')
 
-
     # turn off visibility save scene view
     pointListNode.SetDisplayVisibility(0)
     self.delayDisplay('Not showing markup points')
@@ -193,14 +193,12 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.assertTrue( not self.strict or mrbLoaded )
     slicer.app.processEvents()
 
-
     # confirm that MRHead is in the background of the Red slice after mrb reload
     self.delayDisplay('MRHead volume is the background of the Red viewer after mrb reload?')
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
     fa = slicer.util.getNode('MRHead')
     self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
     self.delayDisplay('Yes, the MRHead volume is back in the background of the Red viewer')
-
 
     # confirm that the point list exists with two points
     pointListNode = slicer.util.getNode('F')

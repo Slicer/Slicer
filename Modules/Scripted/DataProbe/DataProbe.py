@@ -7,6 +7,7 @@ import DataProbeLib
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
+
 #
 # DataProbe
 #
@@ -59,6 +60,7 @@ indicated by the mouse position.
     if self.infoWidget:
       self.infoWidget.onShowImage(value)
 
+
 class DataProbeInfoWidget:
 
   def __init__(self, parent=None):
@@ -98,7 +100,6 @@ class DataProbeInfoWidget:
     if self.CrosshairNode:
       self.CrosshairNodeObserverTag = self.CrosshairNode.AddObserver(slicer.vtkMRMLCrosshairNode.CursorPositionModifiedEvent, self.processEvent)
 
-
   def __del__(self):
     self.removeObservers()
 
@@ -110,7 +111,6 @@ class DataProbeInfoWidget:
       postSize = preSize - 3
       name = name[:preSize] + "..." + name[-postSize:]
     return name
-
 
   def removeObservers(self):
     # remove observers and reset
@@ -184,7 +184,6 @@ class DataProbeInfoWidget:
       componentString = ("%4f" % component).rstrip('0').rstrip('.')
       pixel += ("%s, " % componentString)
     return pixel[:-2]
-
 
   def processEvent(self,observee,event):
     # TODO: use a timer to delay calculation and compress events
@@ -491,6 +490,7 @@ class DataProbeInfoWidget:
       self.imageLabel.hide()
       pixmap = qt.QPixmap()
       self.imageLabel.setPixmap(pixmap)
+
 
 #
 # DataProbe widget

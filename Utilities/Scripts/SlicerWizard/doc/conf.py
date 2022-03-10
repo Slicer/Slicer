@@ -28,6 +28,7 @@ sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 
 #%%% Site extensions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 #===============================================================================
 class WikidocRole:
   wiki_root = 'http://wiki.slicer.org/slicerWiki/index.php'
@@ -46,6 +47,7 @@ class WikidocRole:
     node = nodes.reference(rawtext, text, refuri=uri, **options)
     return [node], []
 
+
 #===============================================================================
 class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
   #-----------------------------------------------------------------------------
@@ -57,6 +59,7 @@ class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
     return '.'.join(module), attrs
 
 #%%% Site customizations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 #-------------------------------------------------------------------------------
 def setup(app):

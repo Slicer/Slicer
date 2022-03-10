@@ -8,6 +8,7 @@ from slicer.ScriptedLoadableModule import *
 # sceneImport2428
 #
 
+
 class sceneImport2428(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
@@ -30,6 +31,7 @@ class sceneImport2428(ScriptedLoadableModule):
 #
 # qsceneImport2428Widget
 #
+
 
 class sceneImport2428Widget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -210,7 +212,6 @@ verifyModels()
         if fileName in fileNamesInScene:
           self.delayDisplay("Model %d has duplicate file name %s! (ids: %s and %s)" % (n,fileName,modelNode.GetID(),storageNode.GetID()))
           success = False
-
 
     #
     # now check that each model has a unique polydata

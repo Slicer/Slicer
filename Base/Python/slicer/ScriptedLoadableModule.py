@@ -6,6 +6,7 @@ import importlib
 
 __all__ = ['ScriptedLoadableModule', 'ScriptedLoadableModuleWidget', 'ScriptedLoadableModuleLogic', 'ScriptedLoadableModuleTest']
 
+
 class ScriptedLoadableModule:
   def __init__(self, parent):
     super().__init__()
@@ -71,6 +72,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     testCase = TestCaseClass()
     testCase.messageDelay = msec
     testCase.runTest(**kwargs)
+
 
 class ScriptedLoadableModuleWidget:
   def __init__(self, parent = None):
@@ -210,6 +212,7 @@ class ScriptedLoadableModuleWidget:
   def onEditSource(self):
     filePath = slicer.util.modulePath(self.moduleName)
     qt.QDesktopServices.openUrl(qt.QUrl("file:///"+filePath, qt.QUrl.TolerantMode))
+
 
 class ScriptedLoadableModuleLogic:
   def __init__(self, parent = None):

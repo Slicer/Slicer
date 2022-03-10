@@ -2,6 +2,7 @@ import os
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
+
 #
 # SlicerMRBMultipleSaveRestoreLoopTest
 #
@@ -25,6 +26,7 @@ class SlicerMRBMultipleSaveRestoreLoopTest(ScriptedLoadableModule):
     Nicole Aucoin, BWH
     and was partially funded by NIH grant 3P41RR013218.
     """
+
 
 #
 # SlicerMRBMultipleSaveRestoreLoopTestWidget
@@ -71,7 +73,6 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
   def runTest(self):
     self.setUp()
     self.test_SlicerMRBMultipleSaveRestoreLoop()
-
 
   def test_SlicerMRBMultipleSaveRestoreLoop(self):
     """

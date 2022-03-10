@@ -4,6 +4,7 @@ from __main__ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import time
 
+
 #
 # TwoCLIsInParallelTest
 #
@@ -33,6 +34,7 @@ class TwoCLIsInParallelTest(ScriptedLoadableModule):
     tester = TwoCLIsInParallelTestTest()
     tester.runTest()
 
+
 #
 # TwoCLIsInParallelTestWidget
 #
@@ -41,6 +43,7 @@ class TwoCLIsInParallelTestWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # TwoCLIsInParallelTestLogic
@@ -91,6 +94,7 @@ class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
       if object == o and event == e and method == m:
         o.RemoveObserver(t)
         self.Observations.remove([o, e, m, g, t])
+
 
 #
 # TwoCLIsInParallelTestLogic

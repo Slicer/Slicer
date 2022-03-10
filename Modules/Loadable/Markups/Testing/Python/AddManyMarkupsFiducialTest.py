@@ -4,6 +4,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
+
 #
 # AddManyMarkupsFiducialTest
 #
@@ -21,6 +22,7 @@ class AddManyMarkupsFiducialTest(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qAddManyMarkupsFiducialTestWidget

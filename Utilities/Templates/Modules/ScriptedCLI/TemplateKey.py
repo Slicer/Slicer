@@ -3,6 +3,7 @@
 import os
 import sys
 
+
 def main(input, sigma, output):
 
     import SimpleITK as sitk

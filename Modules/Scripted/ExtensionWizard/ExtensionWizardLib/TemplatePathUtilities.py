@@ -4,12 +4,14 @@ import slicer
 
 _userTemplatePathKey = "ExtensionWizard/TemplatePaths"
 
+
 #-----------------------------------------------------------------------------
 def userTemplatePathKey(category=None):
   if category is None:
     return _userTemplatePathKey
   else:
     return f"{_userTemplatePathKey}/{category}"
+
 
 #-----------------------------------------------------------------------------
 def builtinTemplatePath():

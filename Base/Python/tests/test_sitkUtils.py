@@ -3,14 +3,13 @@ import sitkUtils as su
 
 import unittest
 
+
 class SitkUtilsTests(unittest.TestCase):
 
     def setUp(self):
         pass
 
-
     def test_SimpleITK_SlicerPushPull(self):
-
         """ Download the MRHead node
         """
         import SampleData
@@ -33,7 +32,6 @@ class SitkUtilsTests(unittest.TestCase):
                          'Original volume is changed')
         self.assertNotEqual(volumeNode1, volumeNode1Copy,
                          'Copy of original volume is not created')
-
 
         """ Few modification of the image : Direction, Origin """
         sitkimage.SetDirection((-1.0, 1.0, 0.0, 0.0, -1.0, 1.0, 1.0, 0.0, 1.0))

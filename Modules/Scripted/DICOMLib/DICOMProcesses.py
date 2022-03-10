@@ -385,6 +385,7 @@ class DICOMListener(DICOMStoreSCPProcess):
       else:
         logging.debug("no callback")
 
+
 class DICOMSender(DICOMProcess):
   """ Code to send files to a remote host.
       (Uses storescu from dcmtk.)
@@ -539,6 +540,7 @@ class DICOMSender(DICOMProcess):
     userMsg = f"Could not send {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"
     raise UserWarning(userMsg)
 
+
 class DICOMTestingQRServer:
   """helper class to set up the DICOM servers
   Code here depends only on python and DCMTK executables
@@ -595,7 +597,6 @@ class DICOMTestingQRServer:
       cmdLine += initialFiles
       p = subprocess.Popen(cmdLine)
       p.wait()
-
 
   def stop(self):
     self.qrProcess.kill()

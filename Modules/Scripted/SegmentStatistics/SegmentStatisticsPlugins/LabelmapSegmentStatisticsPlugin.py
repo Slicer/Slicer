@@ -5,6 +5,7 @@ import logging
 from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
 from functools import reduce
 
+
 class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
   """Statistical plugin for Labelmaps"""
 
@@ -385,7 +386,6 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
           principalAxisZ = list(principalAxisZTuple)
           transformSegmentToRas.TransformVectorAtPoint(centroidRASTuple, principalAxisZ, principalAxisZ)
           stats["principal_axis_z"] = principalAxisZ
-
 
     return stats
 

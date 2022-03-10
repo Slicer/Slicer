@@ -1,6 +1,7 @@
 import os
 import vtk, qt, ctk, slicer, logging
 
+
 #
 # Abstract class of python scripted segment editor effects
 #

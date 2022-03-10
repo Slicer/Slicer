@@ -115,6 +115,7 @@ def startupEnvironment():
   else:
     return {varname: startupEnv.value(varname) for varname in list(startupEnv.keys()) if varname}
 
+
 #
 # Custom Import
 #
@@ -193,6 +194,7 @@ def importModuleObjects(from_module_name, dest_module_name, type_info):
 
     if match:
       setattr(dest_module, item_name, item)
+
 
 #
 # UI
@@ -641,6 +643,7 @@ def forceRenderAllViews():
   for viewIndex in range(lm.plotViewCount):
     lm.plotWidget(viewIndex).plotView().repaint()
 
+
 #
 # IO
 #
@@ -970,6 +973,7 @@ def openAddFiducialDialog():
   from slicer import app
   return app.coreIOManager().openAddFiducialDialog()
 
+
 def openAddMarkupsDialog():
   from slicer import app
   return app.coreIOManager().openAddMarkupsDialog()
@@ -1030,6 +1034,7 @@ def saveScene(filename, properties={}):
   filetype = 'SceneFile'
   properties['fileName'] = filename
   return app.coreIOManager().saveNodes(filetype, properties)
+
 
 #
 # Module
@@ -1333,6 +1338,7 @@ def setDataProbeVisible(visible):
   widget = findChild(mw, "DataProbeCollapsibleWidget")
   widget.setVisible(visible)
 
+
 #
 # Layout
 #
@@ -1347,6 +1353,7 @@ def resetSliceViews():
   """Reset focal view around volumes"""
   import slicer
   manager = slicer.app.layoutManager().resetSliceViews()
+
 
 #
 # MRML
@@ -1499,7 +1506,6 @@ def getSubjectHierarchyItemChildren(parentItem=None, recursive=False):
   for childIndex in range(childrenIdList.GetNumberOfIds()):
     children.append(childrenIdList.GetId(childIndex))
   return children
-
 
 
 #
@@ -2322,6 +2328,7 @@ def dataframeFromMarkups(markupsNode):
     'description': description})
   return dataframe
 
+
 #
 # VTK
 #
@@ -2388,6 +2395,7 @@ def toLatin1String(text):
       cc = "?"
     vtkStr = vtkStr + cc
   return vtkStr
+
 
 #
 # File Utilities
@@ -2608,6 +2616,7 @@ def createProgressDialog(parent=None, value=0, maximum=100, labelText="", window
 
 
 from contextlib import contextmanager
+
 
 @contextmanager
 def displayPythonShell(display=True):

@@ -4,6 +4,7 @@ from __main__ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import time
 
+
 #
 # TwoCLIsInARowTest
 #
@@ -33,6 +34,7 @@ class TwoCLIsInARowTest(ScriptedLoadableModule):
     tester = TwoCLIsInARowTestTest()
     tester.runTest()
 
+
 #
 # TwoCLIsInARowTestWidget
 #
@@ -41,6 +43,7 @@ class TwoCLIsInARowTestWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # TwoCLIsInARowTestLogic
@@ -102,6 +105,8 @@ class TwoCLIsInARowTestLogic(ScriptedLoadableModuleLogic):
       if object == o and event == e and method == m:
         o.RemoveObserver(t)
         self.Observations.remove([o, e, m, g, t])
+
+
 #
 # TwoCLIsInARowTestLogic
 #

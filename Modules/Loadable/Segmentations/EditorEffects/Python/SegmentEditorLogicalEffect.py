@@ -3,6 +3,7 @@ import vtk, qt, ctk, slicer
 import logging
 from SegmentEditorEffects import *
 
+
 class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
   """ LogicalEffect is an MorphologyEffect to erode a layer of pixels from a segment
   """

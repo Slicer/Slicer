@@ -8,6 +8,7 @@ import pydicom as dicom
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 
+
 #
 # This is the plugin to handle translation of DICOM objects
 # that can be represented as multivolume objects
@@ -225,7 +226,6 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     return volumeNode
 
-
   def createAcquisitionTransform(self, volumeNode, metadata):
 
     # Creates transform that applies scan conversion transform
@@ -298,6 +298,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
           displacements[k][j][i] = targetPoint_RAS - sourcePoint_RAS
 
     return gridTransform
+
 
 #
 # DICOMGeAbusPlugin

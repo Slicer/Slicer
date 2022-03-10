@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
+
 #
 # ViewControllersSliceInterpolationBug1926
 #
@@ -24,6 +25,7 @@ class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE.  and was partially funded by NIH grant U54EB005149.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qViewControllersSliceInterpolationBug1926Widget
@@ -162,6 +164,5 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
     # Check whether we can change the interpolation (needs to check gui)
     redWidget = slicer.app.layoutManager().sliceWidget('Red')
     redController = redWidget.sliceController()
-
 
     self.delayDisplay('Test passed!')

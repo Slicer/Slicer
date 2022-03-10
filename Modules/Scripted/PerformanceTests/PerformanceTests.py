@@ -1,6 +1,7 @@
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
+
 #
 # PerformanceTests
 #
@@ -154,7 +155,6 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     self.log.insertPlainText('\n')
     self.log.ensureCursorVisible()
     self.log.repaint()
-
 
   def webViewCallback(self,qurl):
     url = qurl.toString()

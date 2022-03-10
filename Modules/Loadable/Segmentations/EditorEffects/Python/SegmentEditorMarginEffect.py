@@ -4,6 +4,7 @@ import logging
 import math
 from SegmentEditorEffects import *
 
+
 class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
   """ MaringEffect grows or shrinks the segment by a specified margin
   """
@@ -71,7 +72,6 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     self.shrinkOptionRadioButton.connect("toggled(bool)", self.shrinkOperationToggled)
     self.applyToAllVisibleSegmentsCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
 
-
   def createCursor(self, widget):
     # Turn off effect-specific cursor for this effect
     return slicer.util.mainWindow().cursor
@@ -124,7 +124,6 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     self.applyToAllVisibleSegmentsCheckBox.setCheckState(applyToAllVisibleSegments)
     self.applyToAllVisibleSegmentsCheckBox.blockSignals(wasBlocked)
 
-
     self.setWidgetMinMaxStepFromImageSpacing(self.marginSizeMMSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
 
   def growOperationToggled(self, toggled):
@@ -140,7 +139,6 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     self.scriptedEffect.setParameter("MarginSizeMm", marginSizeMM)
     applyToAllVisibleSegments = 1 if self.applyToAllVisibleSegmentsCheckBox.isChecked() else 0
     self.scriptedEffect.setParameter("ApplyToAllVisibleSegments", applyToAllVisibleSegments)
-
 
   def getMarginSizeMM(self):
     selectedSegmentLabelmapSpacing = [1.0, 1.0, 1.0]

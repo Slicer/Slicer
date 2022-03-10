@@ -5,8 +5,10 @@
 def exitSuccess():
   pass
 
+
 def exitFailure(message = ""):
   raise Exception(message)
+
 
 def runUnitTest(path, testname):
   import sys

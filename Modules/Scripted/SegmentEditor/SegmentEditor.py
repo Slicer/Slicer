@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 
+
 #
 # SegmentEditor
 #
@@ -31,6 +32,7 @@ and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
     import SubjectHierarchyPlugins
     scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
     scriptedPlugin.setPythonSource(SubjectHierarchyPlugins.SegmentEditorSubjectHierarchyPlugin.filePath)
+
 
 #
 # SegmentEditorWidget
@@ -155,6 +157,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def cleanup(self):
     self.removeObservers()
     self.effectFactorySingleton.disconnect('effectRegistered(QString)', self.editorEffectRegistered)
+
 
 class SegmentEditorTest(ScriptedLoadableModuleTest):
   """

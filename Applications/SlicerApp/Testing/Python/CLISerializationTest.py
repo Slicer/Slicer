@@ -32,6 +32,8 @@ Usage:
     CLISerializationTest.py
       /path/to/Slicer /path/to/CLIExecutables /path/to/data_dir /path/to/temp_dir
 """
+
+
 class CLISerializationTest:
   def __init__(self):
     self.SlicerExecutable = None

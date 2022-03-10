@@ -14,6 +14,7 @@ exec(open('/Users/pieper/slicer4/latest/Slicer/Libs/vtkITK/Testing/vtkITKArchety
 note that from the 't' variable in the console you can access the readers and other instance variables for debugging.
 """
 
+
 class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
     def setUp(self):
         from SampleData import SampleDataLogic
@@ -48,7 +49,6 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
       self.setUp()
       self.test_pointdata()
       self.test_ras_to_ijk()
-
 
 
 def compare_vtk_matrix(m1, m2, n=4):

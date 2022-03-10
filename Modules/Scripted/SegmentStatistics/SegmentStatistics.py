@@ -679,6 +679,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     fp.write(self.exportToString(nonEmptyKeysOnly))
     fp.close()
 
+
 class SegmentStatisticsTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.

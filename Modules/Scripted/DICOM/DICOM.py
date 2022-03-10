@@ -10,6 +10,7 @@ from slicer.util import settingsValue, toBool
 from slicer.ScriptedLoadableModule import *
 import DICOMLib
 
+
 #
 # DICOM
 #
@@ -19,7 +20,6 @@ import DICOMLib
 #
 
 class DICOM(ScriptedLoadableModule):
-
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
@@ -60,7 +60,6 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     self.viewFactory.setTagName("dicombrowser")
     if slicer.app.layoutManager() is not None:
       slicer.app.layoutManager().registerViewFactory(self.viewFactory)
-
 
   def performPostModuleDiscoveryTasks(self):
     """Since dicom plugins are discovered while the application
@@ -190,7 +189,6 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
         # Schema does not match, do not use it
         slicer.dicomDatabase.closeDatabase()
 
-
   def startListener(self):
 
     if not slicer.dicomDatabase.isOpen:
@@ -269,7 +267,6 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     if self.browserWidget:
       self.viewWidget.layout().addWidget(self.browserWidget)
 
-
   def onLayoutChanged(self, viewArrangement):
     if viewArrangement == self.currentViewArrangement:
       return
@@ -302,7 +299,6 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
         dataProbe.setVisible(True)
         self.dataProbeHasBeenTemporarilyHidden = False
 
-
   def onBrowserWidgetClosed(self):
     if (self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView and
       self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutNone):
@@ -317,7 +313,6 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
       layoutId = qt.QSettings().value("MainWindow/layout", slicer.vtkMRMLLayoutNode.SlicerLayoutInitialView)
 
     slicer.app.layoutManager().setLayout(layoutId)
-
 
   def _onModuleAboutToBeUnloaded(self, moduleName):
     # Application is shutting down. Stop the listener.
@@ -715,14 +710,12 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     if mw:
       mw.installEventFilter(self.dragAndDropEventFilter)
 
-
   def exit(self):
     mw = slicer.util.mainWindow()
     if mw:
       mw.removeEventFilter(self.dragAndDropEventFilter)
     self.removeListenerObservers()
     self.browserWidget.close()
-
 
   def addListenerObservers(self):
     if not hasattr(slicer, 'dicomListener'):
@@ -732,7 +725,6 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
     slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
-
   def removeListenerObservers(self):
     if not hasattr(slicer, 'dicomListener'):
       return
@@ -741,14 +733,11 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     slicer.dicomListener.fileToBeAddedCallback = None
     slicer.dicomListener.fileAddedCallback = None
 
-
   def updateGUIFromMRML(self, caller, event):
     pass
 
-
   def onLayoutChanged(self, viewArrangement):
     self.ui.showBrowserButton.checked = (viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
-
 
   def onCurrentItemChanged(self, id):
     plugin = slicer.qSlicerSubjectHierarchyPluginHandler.instance().getOwnerPluginForSubjectHierarchyItem(id)
@@ -756,7 +745,6 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
       self.subjectHierarchyCurrentVisibility = False
       return
     self.subjectHierarchyCurrentVisibility = plugin.getDisplayVisibility(id)
-
 
   def onCurrentItemModified(self, id):
     oldSubjectHierarchyCurrentVisibility = self.subjectHierarchyCurrentVisibility
@@ -774,7 +762,6 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         self.subjectHierarchyCurrentVisibility):
       self.browserWidget.close()
 
-
   def toggleBrowserWidget(self):
     if self.ui.showBrowserButton.checked:
       self.onOpenBrowserWidget()
@@ -782,16 +769,13 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
       if self.browserWidget:
         self.browserWidget.close()
 
-
   def importFolder(self):
     if not DICOMFileDialog.createDefaultDatabase():
       return
     self.browserWidget.dicomBrowser.openImportDialog()
 
-
   def onOpenBrowserWidget(self):
     slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
-
 
   def onToggleListener(self, toggled):
     if hasattr(slicer, 'dicomListener'):
@@ -801,7 +785,6 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
       slicer.modules.DICOMInstance.startListener()
       self.addListenerObservers()
     self.onListenerStateChanged()
-
 
   def onListenerStateChanged(self, newState=None):
     """ Called when the indexer process state changes
@@ -825,7 +808,6 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
       port = str(slicer.dicomListener.port) if hasattr(slicer, 'dicomListener') else "unknown"
       self.ui.listenerStateLabel.text = "running at port "+port
       self.ui.toggleListener.checked = True
-
 
   def onListenerToAddFile(self):
     """ Called when the indexer is about to add a file to the database.
@@ -884,21 +866,17 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
       self.testingServer.start(verbose=self.verboseServer.checked,initialFiles=files)
       #self.toggleServer.text = "Stop Testing Server"
 
-
   def onRunListenerAtStart(self, toggled):
     settings = qt.QSettings()
     settings.setValue('DICOM/RunListenerAtStart', toggled)
 
-
   def updateDatabaseDirectoryFromWidget(self, databaseDirectory):
     self.browserWidget.dicomBrowser.databaseDirectory = databaseDirectory
-
 
   def updateDatabaseDirectoryFromBrowser(self,databaseDirectory):
     wasBlocked = self.ui.directoryButton.blockSignals(True)
     self.ui.directoryButton.directory = databaseDirectory
     self.ui.directoryButton.blockSignals(wasBlocked)
-
 
   def onBrowserAutoHideStateChanged(self, autoHideState):
     if self.browserWidget:

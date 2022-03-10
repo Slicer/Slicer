@@ -4,6 +4,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
 
+
 #
 # AddStorableDataAfterSceneViewTest
 #
@@ -28,6 +29,7 @@ class AddStorableDataAfterSceneViewTest(ScriptedLoadableModule):
     self.parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH, and was partially funded by NIH grant 3P41RR013218-12S1.
 """
+
 
 #
 # qAddStorableDataAfterSceneViewTestWidget
@@ -82,6 +84,7 @@ class AddStorableDataAfterSceneViewTestWidget(ScriptedLoadableModuleWidget):
     logic = AddStorableDataAfterSceneViewTestLogic()
     enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
     logic.run(enableScreenshotsFlag)
+
 
 #
 # AddStorableDataAfterSceneViewTestLogic
@@ -172,7 +175,6 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     # for now, the non scene view storable data is removed
     self.assertIsNone( restoredData )
     slicer.util.delayDisplay('Success: extra storable node removed with scene view restore')
-
 
     #
     # add new storable again

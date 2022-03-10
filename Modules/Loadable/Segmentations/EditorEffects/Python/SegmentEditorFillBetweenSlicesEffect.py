@@ -3,6 +3,7 @@ import vtk, qt, ctk, slicer
 import logging
 from SegmentEditorEffects import *
 
+
 class SegmentEditorFillBetweenSlicesEffect(AbstractScriptedSegmentEditorAutoCompleteEffect):
   """ AutoCompleteEffect is an effect that can create a full segmentation
       from a partial segmentation (not all slices are segmented or only

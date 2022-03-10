@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 
+
 #-----------------------------------------------------------------------------
 def writeFile(path, content):
   # Test if file already contains desired content
@@ -20,10 +21,12 @@ def writeFile(path, content):
   with open(path, "wt") as f:
     f.write(content)
 
+
 #-----------------------------------------------------------------------------
 def addFile(path):
   name = os.path.basename(path)
   return [f"    <file alias=\"{name}\">{path}</file>"]
+
 
 #-----------------------------------------------------------------------------
 def buildContent(root, path):
@@ -48,6 +51,7 @@ def buildContent(root, path):
     out += buildContent(root, d)
 
   return out
+
 
 #-----------------------------------------------------------------------------
 def main(argv):

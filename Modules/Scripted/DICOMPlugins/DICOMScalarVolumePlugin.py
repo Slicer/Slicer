@@ -8,6 +8,7 @@ from DICOMLib import DICOMExportScalarVolume
 import logging
 from functools import cmp_to_key
 
+
 #
 # This is the plugin to handle translation of scalar volumes
 # from DICOM files into MRML nodes.  It follows the DICOM module's

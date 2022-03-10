@@ -64,7 +64,6 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     self.dicomBrowser.dicomTableManager().connect('studiesDoubleClicked(QModelIndex)', self.patientStudySeriesDoubleClicked)
     self.dicomBrowser.dicomTableManager().connect('seriesDoubleClicked(QModelIndex)', self.patientStudySeriesDoubleClicked)
 
-
   def open(self):
     self.show()
 
@@ -382,7 +381,6 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
       # All DICOM plugins would be enabled by default
       for pluginClass in slicer.modules.dicomPlugins:
         selectedPlugins.append(pluginClass)
-
 
     allFileCount = missingFileCount = 0
     for fileList in fileLists:

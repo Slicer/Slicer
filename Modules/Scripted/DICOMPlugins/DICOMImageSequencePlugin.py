@@ -12,6 +12,7 @@ except:
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 
+
 #
 # This is the plugin to handle translation of DICOM objects
 # that can be represented as multivolume objects
@@ -44,7 +45,6 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
     self.tags['orientation'] = "0020,0037"
 
     self.detailedLogging = False
-
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
@@ -334,7 +334,6 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
     return outputSequenceNode, playbackRateFps
 
-
   def load(self,loadable):
     """Load the selection
     """
@@ -385,6 +384,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
     # Return the last loaded sequence node (that is the one currently displayed in slice views)
     return outputSequenceNodes[-1]
+
 
 #
 # DICOMImageSequencePlugin

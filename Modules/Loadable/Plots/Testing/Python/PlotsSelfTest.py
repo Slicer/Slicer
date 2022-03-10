@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
+
 #
 # PlotsSelfTest
 #
@@ -18,6 +19,7 @@ class PlotsSelfTest(ScriptedLoadableModule):
     parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University
 and was supported through Canada CANARIE's Research Software Program."""
 
+
 #
 # PlotsSelfTestWidget
 #
@@ -25,6 +27,7 @@ and was supported through Canada CANARIE's Research Software Program."""
 class PlotsSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # PlotsSelfTestLogic

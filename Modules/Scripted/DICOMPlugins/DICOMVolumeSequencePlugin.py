@@ -8,6 +8,7 @@ from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 from DICOMLib import DICOMExportScalarVolume
 
+
 #
 # This plugin can export sequence node that contains volumes
 # to DICOM, using DICOM module's plugin infrastructure.
@@ -257,6 +258,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
 
     # Success
     return ""
+
 
 #
 # DICOMVolumeSequencePlugin

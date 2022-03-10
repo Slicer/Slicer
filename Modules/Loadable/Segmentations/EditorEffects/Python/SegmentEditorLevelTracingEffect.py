@@ -4,6 +4,7 @@ import logging
 from SegmentEditorEffects import *
 import vtkITK
 
+
 class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
   """ LevelTracingEffect is a LabelEffect implementing level tracing fill
       using intensity-based isolines
@@ -115,6 +116,7 @@ follows the same intensity value back to the starting point within the current s
 
     self.levelTracingPipelines[sliceWidget] = pipeline
     return pipeline
+
 
 #
 # LevelTracingPipeline

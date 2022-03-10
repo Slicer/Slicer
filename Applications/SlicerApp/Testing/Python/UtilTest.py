@@ -5,6 +5,7 @@ from slicer.ScriptedLoadableModule import *
 import logging
 import time
 
+
 #
 # UtilTest
 #
@@ -20,6 +21,7 @@ class UtilTest(ScriptedLoadableModule):
     This is a self test that tests the methods of slicer.util
     """
     parent.acknowledgementText = """""" # replace with organization, grant and thanks.
+
 
 #
 # UtilTestWidget
@@ -40,6 +42,7 @@ class UtilTestWidget(ScriptedLoadableModuleWidget):
     self.Widget = slicer.util.loadUI(path)
     self.layout.addWidget(self.Widget)
 
+
 #
 # UtilTestLogic
 #
@@ -47,6 +50,7 @@ class UtilTestWidget(ScriptedLoadableModuleWidget):
 class UtilTestLogic(ScriptedLoadableModuleLogic):
   def __init__(self):
     ScriptedLoadableModuleLogic.__init__(self)
+
 
 #
 # UtilTestLogic

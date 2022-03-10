@@ -26,6 +26,7 @@ _midas_upload_query_data = {}
 """Keep track of Midas upload query parameters for each submitted Extension.
 """
 
+
 def get_cmakecache_values(file_path, variables):
   result = dict.fromkeys(variables)
   with open(file_path) as cmakecache:
@@ -42,11 +43,13 @@ def get_cmakecache_values(file_path, variables):
         break
   return result
 
+
 def save_request(request, response_code):
   global _requests
   _requests.append((request, response_code))
   print("do_" + request.split(' ')[0] + '[%s]' % response_code)
   sys.stdout.flush()
+
 
 def get_open_port():
   """Sources:
@@ -59,6 +62,7 @@ def get_open_port():
   s.bind(("",0))
   port = s.getsockname()[1]
   return port
+
 
 class Handler(http.server.BaseHTTPRequestHandler):
 
@@ -95,7 +99,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
         message = json.dumps(response_data)
 
     self.send_response_with_message(response_type=response_type, message=message)
-
 
   def do_PUT(self):
 
@@ -354,7 +357,6 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
         scmrevision abcdefg
         depends TestExtA TestExtB TestExtC
         """))
-
 
   def test_index_build_with_upload(self):
     self._test_index_build('build_with_upload', True)
