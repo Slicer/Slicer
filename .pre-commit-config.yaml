@@ -7,3 +7,9 @@ repos:
   - id: check-case-conflict
   - id: check-merge-conflict
   - id: check-symlinks
+
+- repo: https://github.com/PyCQA/flake8
+  rev: "4.0.1"
+  hooks:
+  - id: flake8
+    additional_dependencies: [flake8-bugbear]
