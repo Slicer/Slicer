@@ -197,6 +197,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
       return
     if not self.extensionCheckPending:
       self.extensionCheckPending = True
+
       def timerCallback():
         # Prompting for extension may be undesirable in custom applications.
         # DICOM/PromptForExtensions key can be used to disable this feature.
@@ -204,6 +205,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         if promptForExtensionsEnabled:
           self.promptForExtensions()
         self.extensionCheckPending = False
+
       qt.QTimer.singleShot(0, timerCallback)
 
   def promptForExtensions(self):

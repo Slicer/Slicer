@@ -94,16 +94,10 @@ ignore = \
   E266, \
   # multiple spaces after keyword
   E271, \
-  # expected 1 blank line, found
-  E301, \
   # expected 2 blank lines, found 1
   E302, \
   # too many blank lines
   E303, \
-  # expected 2 blank lines after class or function definition, found 1
-  E305, \
-  # expected 1 blank line before a nested definition, found 0
-  E306, \
   # multiple imports on one line
   E401, \
   # module level import not at top of file
@@ -142,8 +136,6 @@ ignore = \
   F841, \
   # trailing whitespace
   W291, \
-  # blank line at end of file
-  W391, \
   # blank line contains whitespace
   W293, \
   # line break before binary operator

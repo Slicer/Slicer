@@ -31,6 +31,7 @@ class ModuleCleanupWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
     print("ModuleCleanupWidget setup")
+
   def cleanup(self):
     with open(self.testOutputFileName, "w") as fd:
       fd.write('ModuleCleanup generated this file when application exited')

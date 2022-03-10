@@ -401,12 +401,15 @@ class TemporaryDICOMDatabase:
      It creates a new DICOM database and temporarily sets it as the main
      DICOM database in the application (slicer.dicomDatabase).
   """
+
   def __init__(self, directory=None):
     self.temporaryDatabaseDir = directory
     self.originalDatabaseDir = None
+
   def __enter__(self):
     self.originalDatabaseDir = openTemporaryDatabase(self.temporaryDatabaseDir)
     return slicer.dicomDatabase
+
   def __exit__(self, type, value, traceback):
     closeTemporaryDatabase(self.originalDatabaseDir)
 

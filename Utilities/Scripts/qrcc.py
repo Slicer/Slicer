@@ -91,5 +91,6 @@ def main(argv):
     with open(args.out_path, "w") as f:
       compileResources(args.in_path, f, args)
 
+
 if __name__ == "__main__":
   main(sys.argv[1:])

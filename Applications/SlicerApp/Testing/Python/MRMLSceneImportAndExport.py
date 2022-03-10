@@ -13,5 +13,6 @@ def testMRMLSceneImportAndExport():
   if not success:
     raise Exception('Importing back a MRML scene failed !')
 
+
 if __name__ == '__main__':
   testMRMLSceneImportAndExport()

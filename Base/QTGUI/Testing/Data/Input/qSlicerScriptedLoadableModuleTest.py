@@ -29,4 +29,3 @@ class qSlicerScriptedLoadableModuleTestWidget:
 
   def exit(self):
     self.parent.setProperty('exit_called_within_Python', True)
-

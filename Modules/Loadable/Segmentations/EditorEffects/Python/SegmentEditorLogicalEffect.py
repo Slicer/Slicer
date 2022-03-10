@@ -268,6 +268,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     else:
       logging.error(f"Unknown operation: {operation}")
 
+
 LOGICAL_COPY = 'COPY'
 LOGICAL_UNION = 'UNION'
 LOGICAL_INTERSECT = 'INTERSECT'

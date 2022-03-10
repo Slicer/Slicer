@@ -1,5 +1,6 @@
 import time
 
+
 def TestRulerAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   print("numToAdd = ", numToAdd)
   if renameFlag > 0:
@@ -51,9 +52,9 @@ def TestRulerAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
     s2 = s2 + 1.5
     timeToAddLastRuler = timeToAddThisRuler
 
+
 testStartTime = time.process_time()
 TestRulerAdd()
 testEndTime = time.process_time()
 testTime = testEndTime - testStartTime
 print("Test total time = ", testTime)
-

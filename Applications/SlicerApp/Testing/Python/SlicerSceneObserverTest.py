@@ -5,6 +5,7 @@ import vtk
 class testClass:
   """ Check that slicer exits correctly after adding an observer to the mrml scene
   """
+
   def callback(self, caller, event):
     print(f'Got {event} from {caller}')
 

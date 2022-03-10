@@ -50,6 +50,7 @@ class CLISerializationTest:
   def deserializeCLI(self, cli_name, json_file_path, parameters=[]):
     return self._runCLI(cli_name, '--deserialize', json_file_path, parameters)
 
+
 if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(description='Test command line CLIs serialization/deserialization.')

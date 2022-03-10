@@ -178,7 +178,6 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
     self.updateParameterWidgetsVisibility()
 
-
   #
   # Effect specific methods (the above ones are the API methods to override)
   #
@@ -485,6 +484,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
     self.scriptedEffect.saveStateForUndo()
     self.onApply(maskImage, maskExtent)
+
 
 MEDIAN = 'MEDIAN'
 GAUSSIAN = 'GAUSSIAN'

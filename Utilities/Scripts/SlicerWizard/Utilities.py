@@ -24,6 +24,7 @@ def haveGit():
 
   return _haveGit
 
+
 try:
   from charset_normalizer import detect
   _haveCharDet = True
@@ -346,6 +347,7 @@ class SourceTreeDirectory:
     The relative path to the source directory.
   """
   #---------------------------------------------------------------------------
+
   def __init__(self, root, relative_directory):
     """
     :param root: Location of the source tree.

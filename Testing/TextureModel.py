@@ -74,4 +74,3 @@ def texturedPlane():
   elapsed = endTime - startTime
   hertz = int(steps / elapsed)
   print('ran %d iterations in %g seconds (%g hertz)' % (steps, elapsed, hertz))
-

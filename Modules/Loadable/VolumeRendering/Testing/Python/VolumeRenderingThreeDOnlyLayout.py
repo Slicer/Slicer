@@ -9,6 +9,7 @@ class VolumeRenderingThreeDOnlyLayout(ScriptedLoadableModuleTest):
     Uses ScriptedLoadableModuleTest base class, available at:
     https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
     """
+
     def setUp(self):
         pass
 

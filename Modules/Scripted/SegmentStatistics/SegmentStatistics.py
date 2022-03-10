@@ -30,6 +30,7 @@ Requires segment closed surface representation.
     self.parent.acknowledgementText = """
 Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.
 """
+
   def setup(self):
     # Register subject hierarchy plugin
     import SubjectHierarchyPlugins

@@ -395,6 +395,7 @@ class DICOMImageSequencePlugin:
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM Image Sequence Import Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]

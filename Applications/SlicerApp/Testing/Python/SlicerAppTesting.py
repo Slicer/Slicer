@@ -85,6 +85,7 @@ def timecall(method, **kwargs):
   repeat = 1
   if 'repeat' in kwargs:
     repeat = kwargs['repeat']
+
   def wrapper(*args, **kwargs):
     durations = []
     for iteration in range(1, repeat + 1):
@@ -96,4 +97,5 @@ def timecall(method, **kwargs):
     print(f"Average: {average:.2f}s\n")
     duration = average
     return (duration, result)
+
   return wrapper

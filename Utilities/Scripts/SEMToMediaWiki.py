@@ -328,5 +328,6 @@ def SEMToMediaWikiProg():
     else:
         sys.stdout.write(docString)
 
+
 if __name__ == '__main__':
     SEMToMediaWikiProg()

@@ -86,6 +86,7 @@ def checkKeepTemporarySettingsWithoutDisableSettingsDisplayWarning(slicer_execut
   assert returnCode == EXIT_SUCCESS
   print("=> ok\n")
 
+
 if __name__ == '__main__':
 
   if len(sys.argv) != 2:

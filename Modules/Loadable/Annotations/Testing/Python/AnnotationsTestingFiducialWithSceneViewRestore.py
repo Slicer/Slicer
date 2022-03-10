@@ -40,4 +40,3 @@ diffTotal = xdiff + ydiff + zdiff
 if diffTotal > 0.1:
   exceptionMessage = "Difference between coordinate values total = " + str(diffTotal)
   raise Exception(exceptionMessage)
-

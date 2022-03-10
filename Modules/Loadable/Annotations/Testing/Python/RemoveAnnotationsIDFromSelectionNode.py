@@ -31,4 +31,3 @@ if selectionNode:
   endIndex = selectionNode.PlaceNodeClassNameInList(annotClassName)
   if endIndex == -1:
     raise Exception(f"Failed to re-add {annotClassName}, end index = {endIndex}")
-

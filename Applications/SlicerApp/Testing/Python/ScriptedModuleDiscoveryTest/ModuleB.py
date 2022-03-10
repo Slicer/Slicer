@@ -18,8 +18,10 @@ class ModuleB(ScriptedLoadableModule):
   def somevar(self):
     return SOMEVAR
 
+
 class ModuleBWidget(ScriptedLoadableModuleWidget):
   def __init__(self, parent=None):
     ScriptedLoadableModuleWidget.__init__(self, parent)
+
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)

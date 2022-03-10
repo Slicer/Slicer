@@ -65,14 +65,8 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
       self.test_ras_to_ijk()
 
 
-
-
 def compare_vtk_matrix(m1, m2, n=4):
     for i in range(0,n):
         for j in range(0,n):
             assert m1.GetElement(i,j) == m2.GetElement(i,j)
     return True
-
-
-
-

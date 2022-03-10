@@ -128,4 +128,3 @@ class TwoCLIsInParallelTestTest(ScriptedLoadableModuleTest):
     self.assertTrue(logic.success)
 
     self.delayDisplay('Two CLIs in parallel test passed !')
-

@@ -267,6 +267,7 @@ class DICOMVolumeSequencePlugin:
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM Volume Sequence Export Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]

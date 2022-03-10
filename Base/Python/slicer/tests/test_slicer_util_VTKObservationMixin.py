@@ -156,5 +156,3 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
 
     foo.removeObservers(method=callback)
     self.assertEqual(len(foo.Observations), 1)
-
-
