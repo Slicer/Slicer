@@ -145,6 +145,8 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
     typedef std::vector<HandleInfo> HandleInfoList;
     virtual HandleInfoList GetHandleInfoList(SliceIntersectionInteractionDisplayPipeline* pipeline);
 
+    virtual int GetTranslateArrowCursor(const std::string& intersectingSliceNodeID);
+
   protected:
     vtkMRMLSliceIntersectionInteractionRepresentation();
     ~vtkMRMLSliceIntersectionInteractionRepresentation() override;
@@ -162,6 +164,8 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
     void SetSliceDisplayNode(vtkMRMLSliceDisplayNode* sliceDisplayNode);
 
     double GetSliceRotationAngleRad(int eventPos[2]);
+
+    double GetLineThicknessFromMode(int lineThicknessMode);
 
     /// Support picking
     double LastEventPosition[2];

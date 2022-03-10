@@ -157,22 +157,9 @@ bool vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveModeEnabled(
   return false;
 }
 
-//----------------------------------------------------------------------------
-const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisibilityModeAsString()
-  {
-  return vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisibilityModeAsString(this->IntersectingSlicesInteractiveHandlesVisibilityMode);
-  }
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceDisplayNode::SetIntersectingSlicesInteractiveHandlesVisibilityModeFromString(const char* handlesVisibilityModeString)
-  {
-  this->SetIntersectingSlicesInteractiveHandlesVisibilityMode(
-    vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisibilityModeFromString(handlesVisibilityModeString));
-  }
-
 //-----------------------------------------------------------
 int vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisibilityModeFromString(const char* name)
-  {
+{
   if (name == nullptr)
     {
     // invalid name
@@ -188,11 +175,11 @@ int vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisibilityMo
     }
   // unknown name
   return -1;
-  }
+}
 
 //---------------------------------------------------------------------------
 const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisibilityModeAsString(int id)
-  {
+{
   switch (id)
     {
     case NeverVisible: return "NeverVisible";
@@ -203,20 +190,7 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisi
       // invalid id
       return "Invalid";
     }
-  }
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeAsString()
-  {
-  return vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeAsString(this->IntersectingSlicesIntersectionMode);
-  }
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceDisplayNode::SetIntersectingSlicesIntersectionModeFromString(const char* handlesVisibilityModeString)
-  {
-  this->SetIntersectingSlicesIntersectionMode(
-    vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeFromString(handlesVisibilityModeString));
-  }
+}
 
 //-----------------------------------------------------------
 int vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeFromString(const char* name)
@@ -251,22 +225,9 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeAsStri
     }
 }
 
-//----------------------------------------------------------------------------
-const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsString()
-  {
-  return vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsString(this->IntersectingSlicesLineThicknessMode);
-  }
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceDisplayNode::SetIntersectingSlicesLineThicknessModeFromString(const char* handlesVisibilityModeString)
-  {
-  this->SetIntersectingSlicesLineThicknessMode(
-    vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeFromString(handlesVisibilityModeString));
-  }
-
 //-----------------------------------------------------------
 int vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeFromString(const char* name)
-  {
+{
   if (name == nullptr)
     {
     // invalid name
@@ -282,7 +243,7 @@ int vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeFromString(co
     }
   // unknown name
   return -1;
-  }
+}
 
 //---------------------------------------------------------------------------
 const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsString(int id)

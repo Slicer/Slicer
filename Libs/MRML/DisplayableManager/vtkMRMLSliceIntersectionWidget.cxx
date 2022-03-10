@@ -1595,15 +1595,20 @@ int vtkMRMLSliceIntersectionWidget::GetMouseCursor()
   switch (this->WidgetState)
     {
     case WidgetStateOnTranslateIntersectingSlicesHandle:
-    case WidgetStateOnTranslateSingleIntersectingSliceHandle:
       return VTK_CURSOR_SIZEALL;
-      break;
+    case WidgetStateOnTranslateSingleIntersectingSliceHandle:
+    {
+      vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+      if (!rep)
+        {
+        return VTK_CURSOR_DEFAULT;
+        }
+      return rep->GetTranslateArrowCursor(this->LastIntersectingSliceNodeID);
+    }
     case WidgetStateOnRotateIntersectingSlicesHandle:
       return VTK_CURSOR_HAND;
-      break;
     default:
       return VTK_CURSOR_DEFAULT;
-      break;
     }
 }
 

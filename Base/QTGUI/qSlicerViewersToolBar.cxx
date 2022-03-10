@@ -222,9 +222,9 @@ void qSlicerViewersToolBarPrivate::init()
 
   this->SliceIntersectionsMapper = new ctkSignalMapper(q);
   this->SliceIntersectionsMapper->setMapping(this->SliceIntersectionsSkipIntersectionAction,
-                                    vtkMRMLCrosshairNode::ShowBasic);
+                                    vtkMRMLSliceDisplayNode::SkipLineCrossings);
   this->SliceIntersectionsMapper->setMapping(this->SliceIntersectionsFullIntersectionAction,
-                                    vtkMRMLCrosshairNode::ShowIntersection);
+                                    vtkMRMLSliceDisplayNode::FullLines);
   QObject::connect(sliceIntersectionsActions, SIGNAL(triggered(QAction*)),
                    this->SliceIntersectionsMapper, SLOT(map(QAction*)));
   QObject::connect(this->SliceIntersectionsMapper, SIGNAL(mapped(int)),
@@ -255,11 +255,11 @@ void qSlicerViewersToolBarPrivate::init()
   sliceIntersectionsThicknessActions->addAction(this->SliceIntersectionsThickAction);
   this->SliceIntersectionsThicknessMapper = new ctkSignalMapper(q);
   this->SliceIntersectionsThicknessMapper->setMapping(this->SliceIntersectionsFineAction,
-                                             vtkMRMLCrosshairNode::Fine);
+                                             vtkMRMLSliceDisplayNode::FineLines);
   this->SliceIntersectionsThicknessMapper->setMapping(this->SliceIntersectionsMediumAction,
-                                             vtkMRMLCrosshairNode::Medium);
+                                             vtkMRMLSliceDisplayNode::MediumLines);
   this->SliceIntersectionsThicknessMapper->setMapping(this->SliceIntersectionsThickAction,
-                                             vtkMRMLCrosshairNode::Thick);
+                                             vtkMRMLSliceDisplayNode::ThickLines);
   QObject::connect(sliceIntersectionsThicknessActions, SIGNAL(triggered(QAction*)),
                    this->SliceIntersectionsThicknessMapper, SLOT(map(QAction*)));
   QObject::connect(this->SliceIntersectionsThicknessMapper, SIGNAL(mapped(int)),

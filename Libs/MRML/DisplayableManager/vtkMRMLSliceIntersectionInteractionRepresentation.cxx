@@ -1071,8 +1071,10 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
 
     pipeline->SliceIntersectionMode = displayNode->GetIntersectingSlicesIntersectionMode();
 
-    pipeline->IntersectionLine1Property->SetLineWidth(displayNode->GetIntersectingSlicesLineThicknessMode());
-    pipeline->IntersectionLine2Property->SetLineWidth(displayNode->GetIntersectingSlicesLineThicknessMode());
+    pipeline->IntersectionLine1Property->SetLineWidth(
+      this->GetLineThicknessFromMode(displayNode->GetIntersectingSlicesLineThicknessMode()));
+    pipeline->IntersectionLine2Property->SetLineWidth(
+      this->GetLineThicknessFromMode(displayNode->GetIntersectingSlicesLineThicknessMode()));
     }
 
   // Set color of handles
@@ -1897,9 +1899,20 @@ std::string vtkMRMLSliceIntersectionInteractionRepresentation::CanInteract(vtkMR
           if (dist2 < maxPickingDistanceFromControlPoint2)
             {
             handleOpacity = 1.0;
-            if (dist2 < closestDistance2)
+            if (dist2 < closestDistance2
+              || (handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle
+                && foundComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateSingleIntersectingSliceHandle))
               {
               closestDistance2 = dist2;
+
+              if (foundComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle
+                && handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateSingleIntersectingSliceHandle)
+                {
+                // We have already found an acceptable TranslateIntersectingSlices handle, which has higher priority
+                // than single-slice TranslateSingleIntersectingSlice handle.
+                continue;
+                }
+
               foundComponentType = handleInfo.ComponentType;
               foundComponentIndex = handleInfo.Index;
               intersectingSliceNodeID = handleInfo.IntersectingSliceNodeID;
@@ -2211,4 +2224,78 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateFromMRML(vtkMRMLNo
     self->UpdateSliceIntersectionDisplay(self->GetDisplayPipelineFromSliceLogic(sliceLogic));
     return;
     }
+}
+
+//----------------------------------------------------------------------
+int vtkMRMLSliceIntersectionInteractionRepresentation::GetTranslateArrowCursor(const std::string& intersectingSliceNodeID)
+{
+  for (std::deque<SliceIntersectionInteractionDisplayPipeline*>::iterator
+    sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
+    sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
+    {
+    vtkMRMLSliceLogic* sliceLogic = (*sliceIntersectionIt)->SliceLogic;
+    if (!sliceLogic)
+      {
+      continue;
+      }
+    if (!sliceLogic->GetSliceNode()
+      || !sliceLogic->GetSliceNode()->GetID()
+      || sliceLogic->GetSliceNode()->GetID() != intersectingSliceNodeID)
+      {
+      continue;
+      }
+
+    // We have found the slice
+    vtkLineSource* line = nullptr;
+    if ((*sliceIntersectionIt)->IntersectionLine1Actor->GetVisibility())
+      {
+      line = (*sliceIntersectionIt)->IntersectionLine1;
+      }
+    else if ((*sliceIntersectionIt)->IntersectionLine2Actor->GetVisibility())
+      {
+      line = (*sliceIntersectionIt)->IntersectionLine2;
+      }
+    if (!line)
+      {
+      // no intersection is visible
+      break;
+      }
+
+    double pt1[3] = { 0.0, 0.0, 0.0 };
+    double pt2[3] = { 0.0, 0.0, 0.0 };
+    line->GetPoint1(pt1);
+    line->GetPoint2(pt2);
+    // angle of intersection line in the slice view
+    // (between -180..180, +x axis = 0 deg, +y axis = 90 deg, -y axis = -90 deg)
+    double angle = vtkMath::DegreesFromRadians(atan2(pt1[1] - pt2[1], pt1[0] - pt2[0]));
+    if ((fabs(angle) > 180.0 - 22.5)
+      || (fabs(angle) < 22.5))
+      {
+      return VTK_CURSOR_SIZENS;
+      }
+    if (fabs(fabs(angle) - 90.0) < 22.5)
+      {
+      return VTK_CURSOR_SIZEWE;
+      }
+    if ((fabs(angle - 135.0) < 22.5)
+      || (fabs(angle + 45.0) < 22.5))
+      {
+      return VTK_CURSOR_SIZENE;
+      }
+    return VTK_CURSOR_SIZENW;
+  }
+  return VTK_CURSOR_DEFAULT;
+}
+
+//----------------------------------------------------------------------
+double vtkMRMLSliceIntersectionInteractionRepresentation::GetLineThicknessFromMode(int lineThicknessMode)
+{
+  switch (lineThicknessMode)
+  {
+  case vtkMRMLSliceDisplayNode::FineLines: return 1.0;
+  case vtkMRMLSliceDisplayNode::MediumLines: return 2.0;
+  case vtkMRMLSliceDisplayNode::ThickLines: return 3.0;
+  default:
+    return 1.0;
+  }
 }
