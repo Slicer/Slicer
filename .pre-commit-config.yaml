@@ -1,0 +1,9 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: "v4.1.0"
+  hooks:
+  - id: check-added-large-files
+    args: ['--maxkb=1024']
+  - id: check-case-conflict
+  - id: check-merge-conflict
+  - id: check-symlinks
