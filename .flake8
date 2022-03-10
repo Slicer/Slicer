@@ -126,8 +126,6 @@ ignore = \
   E731, \
   # ambiguous variable name 'l'
   E741, \
-  # SyntaxError: invalid syntax
-  E999, \
   # Module imported but unused
   F401, \
   # 'from module import *' used; unable to detect undefined names
