@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+    branches: [ master ]
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-python@v2
+
+    - uses: pre-commit/action@v2.0.3
