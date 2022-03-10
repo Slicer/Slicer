@@ -8,6 +8,12 @@ Markups point list can be loaded from file:
 slicer.util.loadMarkupsFiducialList("/path/to/list/F.fcsv")
 ```
 
+### Save markups to .fcsv file
+```python
+markups_node = slicer.mrmlScene.GetNodeByID("vtkMRMLMarkupsFiducialNode1")
+slicer.util.saveNode(markups_node, "/path/to/markpus/file.fcsv")
+```
+
 ### Adding control points Programmatically
 
 Markups control points can be added to the currently active point list from the python console by using the following module logic command:
