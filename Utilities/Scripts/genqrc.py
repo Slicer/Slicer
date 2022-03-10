@@ -88,6 +88,7 @@ def main(argv):
   else:
     writeFile(args.out_path, qrc_content)
 
+
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if __name__ == "__main__":

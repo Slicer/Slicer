@@ -57,6 +57,7 @@ class SubjectHierarchyGenericSelfTestLogic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     pass
 
@@ -107,7 +108,6 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.section_ComboboxFeatures()
 
     logging.info('Test finished')
-
 
   # ------------------------------------------------------------------------------
   def section_SetupPathsAndNames(self):
@@ -596,7 +596,6 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     comboBox.noneDisplay = 'No selection'
     comboBox.setCurrentItem(0)
     self.assertEqual(comboBox.defaultText, comboBox.noneDisplay)
-
 
   # ------------------------------------------------------------------------------
   # Utility functions

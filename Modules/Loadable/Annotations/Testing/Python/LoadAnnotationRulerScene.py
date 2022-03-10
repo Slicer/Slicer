@@ -15,4 +15,3 @@ slicer.mrmlScene.SetURL(scenePath)
 
 # and load it
 slicer.mrmlScene.Connect()
-

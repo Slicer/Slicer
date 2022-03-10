@@ -12,6 +12,7 @@ class SliceLinkLogic(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     parent.title = "SliceLinkLogic" # TODO make this more human readable by adding spaces

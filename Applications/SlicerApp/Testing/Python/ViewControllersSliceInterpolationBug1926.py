@@ -11,6 +11,7 @@ class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     parent.title = "ViewControllers Slice Interpolation Bug 1926" # TODO make this more human readable by adding spaces

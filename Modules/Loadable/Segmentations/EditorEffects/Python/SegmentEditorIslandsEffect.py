@@ -390,6 +390,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
     # Operation is managed separately
     self.scriptedEffect.setParameter("MinimumSize", self.minimumSizeSpinBox.value)
 
+
 KEEP_LARGEST_ISLAND = 'KEEP_LARGEST_ISLAND'
 KEEP_SELECTED_ISLAND = 'KEEP_SELECTED_ISLAND'
 REMOVE_SMALL_ISLANDS = 'REMOVE_SMALL_ISLANDS'

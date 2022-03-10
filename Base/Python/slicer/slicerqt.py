@@ -20,8 +20,10 @@ class _LogReverseLevelFilter(logging.Filter):
   """
   Rejects log records that are at or above the specified level
   """
+
   def __init__(self, levelLimit):
     self._levelLimit = levelLimit
+
   def filter(self, record):
     return record.levelno < self._levelLimit
 
@@ -30,6 +32,7 @@ class SlicerApplicationLogHandler(logging.Handler):
   """
   Writes logging records to Slicer application log.
   """
+
   def __init__(self):
     logging.Handler.__init__(self)
     if hasattr(ctk, 'ctkErrorLogLevel'):
@@ -88,6 +91,7 @@ def initLogging(logger):
   # Log debug messages from scripts by default, as they are useful for troubleshooting with users
   logger.setLevel(logging.DEBUG)
 
+
 #-----------------------------------------------------------------------------
 # Set up the root logger
 #
@@ -95,7 +99,7 @@ def initLogging(logger):
 # logging.info(), etc. then it would create a default root logger with default settings
 # that do not work nicely in Slicer (prints everything in console, messages are
 # not sent to the application log, etc).
-#
+
 initLogging(logging.getLogger())
 
 def getSlicerRCFileName():
@@ -209,5 +213,6 @@ class _Internal:
       slicer.selfTests = {}
     if moduleName in slicer.selfTests:
       del slicer.selfTests[moduleName]
+
 
 _internalInstance = _Internal()

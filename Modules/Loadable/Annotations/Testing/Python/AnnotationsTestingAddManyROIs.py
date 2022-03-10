@@ -1,5 +1,6 @@
 import time
 
+
 def TestROIAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   print("numToAdd = ", numToAdd)
   if renameFlag > 0:
@@ -51,9 +52,9 @@ def TestROIAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
     cz = cz + 2.0
     timeToAddLastROI = timeToAddThisROI
 
+
 testStartTime = time.process_time()
 TestROIAdd()
 testEndTime = time.process_time()
 testTime = testEndTime - testStartTime
 print("Test total time = ", testTime)
-

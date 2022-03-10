@@ -968,6 +968,7 @@ class PreviewPipeline:
 #
 class HistogramEventFilter(qt.QObject):
   thresholdEffect = None
+
   def setThresholdEffect(self, thresholdEffect):
     self.thresholdEffect = thresholdEffect
 
@@ -1198,6 +1199,7 @@ class HistogramPipeline:
     self.worldOriginToWorldTransform.Translate(center)
 
     self.sliceWidget.sliceView().scheduleRender()
+
 
 HISTOGRAM_BRUSH_TYPE_PARAMETER_NAME = "BrushType"
 

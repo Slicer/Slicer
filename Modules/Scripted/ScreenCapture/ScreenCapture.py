@@ -29,6 +29,7 @@ This work was was funded by Cancer Care Ontario
 and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
 """
 
+
 #
 # ScreenCaptureWidget
 #

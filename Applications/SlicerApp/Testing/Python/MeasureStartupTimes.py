@@ -204,6 +204,7 @@ def collect_startup_times_modules_to_load(output_file, modules_to_load, module_l
   with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
 
+
 if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(description='Measure startup times.')

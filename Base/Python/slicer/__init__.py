@@ -11,6 +11,7 @@ def _createModule(name, globals, docstring):
   sys.modules[name] = module
   globals[moduleName] = module
 
+
 #-----------------------------------------------------------------------------
 # Create slicer.modules and slicer.moduleNames
 

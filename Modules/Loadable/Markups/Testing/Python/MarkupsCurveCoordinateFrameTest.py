@@ -71,6 +71,7 @@ def removeCoordinateSystemUpdaters(curveObservations):
   for curve, observer in curveObservations:
     curve.RemoveObserver(observer)
 
+
 #
 # Set up tests
 #

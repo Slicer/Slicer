@@ -778,6 +778,7 @@ class SampleDataLogic:
     logging.log(logLevel, message)
 
   """Utility methods for backwards compatibility"""
+
   def downloadMRHead(self):
     return self.downloadSample('MRHead')
 

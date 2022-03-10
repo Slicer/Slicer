@@ -246,6 +246,7 @@ class PluggableMarkupsSelfTestTest(ScriptedLoadableModuleTest):
   """
   This is the test case
   """
+
   def setUp(self):
     logic = PluggableMarkupsSelfTestLogic()
     logic.setUp()

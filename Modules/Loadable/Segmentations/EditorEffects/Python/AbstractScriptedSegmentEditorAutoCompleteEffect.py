@@ -550,4 +550,5 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
     self.updateGUIFromMRML()
 
+
 ResultPreviewNodeReferenceRole = "SegmentationResultPreview"

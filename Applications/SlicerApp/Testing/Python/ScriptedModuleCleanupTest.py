@@ -84,6 +84,7 @@ def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
       import shutil
       shutil.rmtree(temporaryModuleDirPath)
 
+
 if __name__ == "__main__":
 
   parser = argparse.ArgumentParser()

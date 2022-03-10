@@ -101,7 +101,6 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Line added')
 
-
     #------------------------------------------------------
     # Utility functions to get the position of the first
     # markup line in the scene and the shader property
@@ -204,7 +203,6 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Point list added')
 
-
     #------------------------------------------------------
     # Utility functions to get the position of the first
     # markups point list in the scene and the shader property
@@ -269,4 +267,3 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
 
     self.delayDisplay("Should be a carved out nose now")
-

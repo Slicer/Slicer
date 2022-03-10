@@ -36,6 +36,7 @@ class TablesSelfTestLogic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     pass
 
@@ -214,7 +215,6 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     # Check if first and second column content is the same
     for rowIndex in range(5):
       self.assertEqual( tableModel.data(tableModel.index(rowIndex,0)), tableModel.data(tableModel.index(rowIndex,1)) )
-
 
   # ------------------------------------------------------------------------------
   def section_CliTableInputOutput(self):

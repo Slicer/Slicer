@@ -171,6 +171,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
     message = self.displayPerformance(action, property, time)
     print ( f'<DartMeasurement name="{action}-{property}" type="numeric/integer">{time}</DartMeasurement>')
     return message
+
   def displayPerformance(self, action, property, time):
     message = f'{action} ({property}) took {time} msecs '
     self.delayDisplay(message)

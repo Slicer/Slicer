@@ -35,6 +35,7 @@ def haveGit():
 
   return _haveGit
 
+
 from . import __version__, __version_info__
 
 from .ExtensionDescription import ExtensionDescription
@@ -168,7 +169,6 @@ class ExtensionWizard:
 
     except:
       die("failed to describe extension: %s" % sys.exc_info()[1])
-
 
   #---------------------------------------------------------------------------
   def _setExtensionUrl(self, project, name, value):

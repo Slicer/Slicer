@@ -44,6 +44,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     ScriptedLoadableModuleLogic.__init__(self)
 
@@ -63,6 +64,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
+
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
@@ -194,4 +196,3 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
         raise Exception("Image difference is too great!\nExpected <= 5.0, but got %g" % (meanVal))
 
     self.delayDisplay('Test passed!')
-

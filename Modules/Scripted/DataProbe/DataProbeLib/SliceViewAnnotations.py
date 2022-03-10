@@ -18,6 +18,7 @@ from . import DataProbeUtil
 class SliceAnnotations(VTKObservationMixin):
   """Implement the Qt window showing settings for Slice View Annotations
   """
+
   def __init__(self, layoutManager=None):
     VTKObservationMixin.__init__(self)
 

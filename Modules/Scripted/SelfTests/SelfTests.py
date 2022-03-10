@@ -164,6 +164,7 @@ def SelfTestsTest():
 def SelfTestsDemo():
   pass
 
+
 if __name__ == "__main__":
   import sys
   if '--test' in sys.argv:

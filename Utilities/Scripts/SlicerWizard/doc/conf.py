@@ -63,8 +63,8 @@ def setup(app):
   app.add_autodocumenter(ClassModuleClassDocumenter)
   app.add_role('wikidoc', WikidocRole())
 
-#-------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------------
 autoclass_content = 'both'
 autodoc_member_order = 'groupwise'
 

@@ -495,6 +495,7 @@ class EndoscopyPathModel:
        - Add one point per path point.
        - Add a single polyline
   """
+
   def __init__(self, path, fiducialListNode, outputPathNode=None, cursorType=None):
     """
       :param path: path points as numpy array.

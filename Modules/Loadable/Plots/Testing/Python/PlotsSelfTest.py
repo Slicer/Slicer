@@ -37,6 +37,7 @@ class PlotsSelfTestLogic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     pass
 

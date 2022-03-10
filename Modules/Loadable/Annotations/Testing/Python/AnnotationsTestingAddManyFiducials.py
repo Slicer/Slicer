@@ -44,9 +44,9 @@ def TestFiducialAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
     s = s + 1.0
     timeToAddLastFid = timeToAddThisFid
 
+
 testStartTime = time.process_time()
 TestFiducialAdd()
 testEndTime = time.process_time()
 testTime = testEndTime - testStartTime
 print("Test total time = ", testTime)
-
