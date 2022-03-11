@@ -41,6 +41,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkGeneralTransform.h>
 #include <vtkHomogeneousTransform.h>
+#include <vtkImageCast.h>
 #include <vtkImageThreshold.h>
 #include <vtkIntArray.h>
 #include <vtkLookupTable.h>
@@ -1083,8 +1084,14 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
     resampledLabelmap->SetSpacing(resampledSpacing);
     vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(effectiveExtentLabelmap, resampledLabelmap, resampledLabelmap, false, true);
 
+    // If the segmentation is very noisy then there can thousands of tiny islands
+    // that would make vtkITKIslandMath fail if the label values are stored on unsigned char.
+    vtkNew<vtkImageCast> castToUint;
+    castToUint->SetInputData(resampledLabelmap);
+    castToUint->SetOutputScalarTypeToUnsignedInt();
+
     vtkNew<vtkITKIslandMath> islandMath;
-    islandMath->SetInputData(resampledLabelmap);
+    islandMath->SetInputConnection(castToUint->GetOutputPort());
 
     vtkNew<vtkImageThreshold> largestIslandFilter;
     largestIslandFilter->SetInputConnection(islandMath->GetOutputPort());
