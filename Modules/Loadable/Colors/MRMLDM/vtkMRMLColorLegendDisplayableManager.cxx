@@ -115,6 +115,8 @@ vtkMRMLColorLegendDisplayableManager::vtkInternal::vtkInternal(vtkMRMLColorLegen
 : External(external)
 {
   this->ColorLegendRenderer = vtkSmartPointer<vtkRenderer>::New();
+  // Prevent erasing Z-buffer (important for quick picking and markup label visibility assessment)
+  this->ColorLegendRenderer->EraseOff();
 }
 
 //---------------------------------------------------------------------------
