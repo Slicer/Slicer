@@ -1011,16 +1011,18 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
   Q_D(qSlicerMarkupsModuleWidget);
 
   bool wasBlocked = d->activeMarkupTreeView->blockSignals(true);
-  d->activeMarkupTreeView->blockSignals(wasBlocked);
-  vtkIdType itemID = d->activeMarkupTreeView->subjectHierarchyNode()->GetItemByDataNode(d->MarkupsNode);
-  QModelIndex itemIndex = d->activeMarkupTreeView->sortFilterProxyModel()->indexFromSubjectHierarchyItem(itemID);
-  d->markupsDisplayWidget->setMRMLMarkupsNode(d->MarkupsNode);
-  if (itemIndex.row() >= 0)
+  if (d->MarkupsNode)
     {
-    d->activeMarkupTreeView->scrollTo(itemIndex);
-
-    d->activeMarkupTreeView->setCurrentNode(d->MarkupsNode);
+    vtkIdType itemID = d->activeMarkupTreeView->subjectHierarchyNode()->GetItemByDataNode(d->MarkupsNode);
+    QModelIndex itemIndex = d->activeMarkupTreeView->sortFilterProxyModel()->indexFromSubjectHierarchyItem(itemID);
+    if (itemIndex.row() >= 0)
+      {
+      d->activeMarkupTreeView->scrollTo(itemIndex);
+      }
     }
+  d->activeMarkupTreeView->setCurrentNode(d->MarkupsNode);
+  d->activeMarkupTreeView->blockSignals(wasBlocked);
+  d->markupsDisplayWidget->setMRMLMarkupsNode(d->MarkupsNode);
 
   // Color legend
   vtkMRMLColorLegendDisplayNode* colorLegendNode = nullptr;

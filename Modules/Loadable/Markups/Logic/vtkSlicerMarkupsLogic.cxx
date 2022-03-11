@@ -38,6 +38,7 @@
 #include "vtkMRMLMarkupsROIJsonStorageNode.h"
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
+#include "vtkMRMLTableStorageNode.h"
 
 // Markups vtk widgets includes
 #include "vtkSlicerAngleWidget.h"
@@ -2120,4 +2121,51 @@ void vtkSlicerMarkupsLogic::GenerateUniqueColor(double color[3])
   color[0] = rgba[0];
   color[1] = rgba[1];
   color[2] = rgba[2];
+}
+
+//------------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::ExportControlPointsToCSV(vtkMRMLMarkupsNode* markupsNode,
+  const std::string filename, bool lps/*=true*/)
+{
+  if (!markupsNode)
+    {
+    vtkGenericWarningMacro("vtkSlicerMarkupsLogic::ExportControlPointsToCSV failed: invalid input markupsNode");
+    return false;
+    }
+  vtkNew<vtkMRMLTableNode> tableNode;
+  if (!vtkSlicerMarkupsLogic::ExportControlPointsToTable(markupsNode, tableNode,
+    lps ? vtkMRMLStorageNode::CoordinateSystemLPS : vtkMRMLStorageNode::CoordinateSystemRAS))
+    {
+    return false;
+    }
+  vtkNew<vtkMRMLTableStorageNode> tableStorageNode;
+  tableStorageNode->SetFileName(filename.c_str());
+  if (!tableStorageNode->WriteData(tableNode))
+    {
+    return false;
+    }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::ImportControlPointsFromCSV(
+  vtkMRMLMarkupsNode* markupsNode, const std::string filename)
+{
+  if (!markupsNode)
+    {
+    vtkGenericWarningMacro("vtkSlicerMarkupsLogic::ImportControlPointsFromCSV failed: invalid markupsNode");
+    return false;
+    }
+  vtkNew<vtkMRMLTableNode> tableNode;
+  vtkNew<vtkMRMLTableStorageNode> tableStorageNode;
+  tableStorageNode->SetFileName(filename.c_str());
+  if (!tableStorageNode->ReadData(tableNode))
+    {
+    return false;
+    }
+  if (!vtkSlicerMarkupsLogic::ImportControlPointsFromTable(markupsNode, tableNode))
+    {
+    return false;
+    }
+  return true;
 }

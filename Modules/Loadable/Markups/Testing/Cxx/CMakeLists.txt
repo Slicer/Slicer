@@ -57,7 +57,7 @@ SIMPLE_TEST( vtkMRMLMarkupsStorageNodeTest2 ${TEMP} )
 
 # logic tests
 SIMPLE_TEST( vtkSlicerMarkupsLogicTest1 )
-SIMPLE_TEST( vtkSlicerMarkupsLogicTest2 )
+SIMPLE_TEST( vtkSlicerMarkupsLogicTest2 ${TEMP} )
 SIMPLE_TEST( vtkSlicerMarkupsLogicTest3 )
 SIMPLE_TEST( vtkSlicerMarkupsLogicTest4 )
 

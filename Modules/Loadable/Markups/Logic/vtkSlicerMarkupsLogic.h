@@ -293,6 +293,17 @@ public:
   static bool ExportControlPointsToTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode,
     int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS);
 
+  /// Export markups node control points to CSV file.
+  /// \param markupsNode Node that the control points are exported to.
+  /// \param filename Output filename.
+  /// \param lps Save files in LPS coordinate system. If set to false then RAS coordinate system is used.
+  static bool ExportControlPointsToCSV(vtkMRMLMarkupsNode* markupsNode, const std::string filename, bool lps = true);
+
+  /// Import markups node control points from CSV file.
+  /// \param markupsNode Node that the control points are imported from.
+  /// \param filename Input filename.
+  static bool ImportControlPointsFromCSV(vtkMRMLMarkupsNode* markupsNode, const std::string filename);
+
   //-----------------------------------------------------------
   // All public methods below are deprecated
   //
