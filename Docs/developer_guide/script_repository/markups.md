@@ -2,7 +2,7 @@
 
 ### Save markups to file
 
-Any markup node can be saved as a [markups json file](modules/markups.md#markups-json-file-format-mrk-json) file:
+Any markup node can be saved as a [markups json file](modules/markups.mds):
 
 ```python
 markupsNode = slicer.util.getNode('F')
@@ -17,7 +17,7 @@ slicer.modules.markups.logic().ExportControlPointsToCSV(markupsNode, "/path/to/M
 
 ### Load markups from file
 
-Any markup node can be loaded from a [markups json file](modules/markups.md#markups-json-file-format-mrk-json)
+Any markup node can be loaded from a [markups json file](modules/markups.md):
 
 ```python
 markupsNode = slicer.util.loadMarkups("/path/to/MyMarkups.mkp.json")
