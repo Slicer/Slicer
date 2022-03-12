@@ -905,7 +905,10 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int c
   // Get default generic anatomy color table
   vtkMRMLColorTableNode* genericAnatomyColorNode = vtkMRMLColorTableNode::SafeDownCast(
     this->Scene->GetNodeByID("vtkMRMLColorTableNodeFileGenericAnatomyColors.txt") );
-  if (!genericAnatomyColorNode || colorNumber == -1)
+  if (colorNumber == -1 // random color was requested
+    || !genericAnatomyColorNode // color node was not found
+    || genericAnatomyColorNode->GetNumberOfColors() <= 1 // color node is empty or only contains background color
+    )
     {
     // Generate random color if default color table is not available (such as in logic tests)
     std::default_random_engine randomGenerator(std::random_device{}());
@@ -920,8 +923,12 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int c
     {
     colorNumber = this->NumberOfGeneratedColors;
     }
-  // Contain the color index to the valid range of colors
-  colorNumber = colorNumber % genericAnatomyColorNode->GetNumberOfColors();
+
+  // Keep the color index in the valid range of colors in the color table:
+  // - colorNumber == 1 means the first usable color (colorNumber == 0 means automatic coloring)
+  // - We skip the first color (0) because that is the background color, which is usually set to
+  //   black (not a good segment color).
+  colorNumber = 1 + ((colorNumber - 1) % (genericAnatomyColorNode->GetNumberOfColors()-1));
 
   // Get color corresponding to the number of added segments (which is incremented in
   // vtkMRMLSegmentationNode::AddSegmentDisplayProperties every time a new segment display
