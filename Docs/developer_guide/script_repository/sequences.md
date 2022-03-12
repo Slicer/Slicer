@@ -134,6 +134,38 @@ for segmentIdIndex in range(visibleSegmentIds.GetNumberOfValues()):
     seriesNode.SetName(segment.GetName())
 ```
 
+### Export nodes warped by transform sequence
+
+Warp a segmentation with a sequence of transforms and write each transformed segmentation to a ply file. It can be used on sequence registration results created as shown in this [tutorial video](https://youtu.be/qVgXdXEEVFU).
+
+```
+# Inputs
+transformSequenceNode = getNode("OutputTransforms")
+segmentationNode = getNode("Segmentation")
+segmentIndex = 0
+outputFilePrefix = r"c:/tmp/20220312/seg"
+
+# Ensure the segmentation contains closed surface representation
+segmentationNode.CreateClosedSurfaceRepresentation()
+# Create temporary node that will be warped
+segmentModelNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+
+for itemIndex in range(transformSequenceNode.GetNumberOfDataNodes()):
+  # Get a copy of the segment that will be transformed
+  segment = segmentationNode.GetSegmentation().GetNthSegment(segmentIndex)
+  slicer.modules.segmentations.logic().ExportSegmentToRepresentationNode(segment, segmentModelNode)
+  # Apply the transform
+  transform = transformSequenceNode.GetNthDataNode(itemIndex).GetTransformToParent()
+  segmentModelNode.ApplyTransform(transform)
+  # Write to file
+  outputFileName = f"{outputFilePrefix}_{itemIndex:03}.ply"
+  print(outputFileName)
+  slicer.util.saveNode(segmentModelNode, outputFileName)
+
+# Delete temporary node
+slicer.mrmlScene.RemoveNode(segmentModelNode)
+```
+
 ### Create a 4D volume in Python - outside Slicer
 
 You can write a seq.nrrd file (that Slicer can load as a volume sequence) from an img numpy array of with dimensions `t`, `i`, `j`, `k` (volume index, followed by voxel coordinates). `space origin` specifies the image origin. `space directions` specify the image axis directions and spacing (spacing is the Euclidean norm of the axis vector). 
