@@ -1,8 +1,38 @@
 ## Markups
 
+### Save markups to file
+
+Any markup node can be saved as a [markups json file](modules/markups.md#markups-json-file-format-mrk-json) file:
+
+```python
+markupsNode = slicer.util.getNode('F')
+slicer.util.saveNode(markupsNode, "/path/to/MyMarkups.mkp.json")
+```
+
+Generally the markups json file format is recommended for saving all properties of a markups node, but for exporting only control point information (name, position, and basic state) a [control points table can be exported in standard csv file format](modules/markups.md#markups-control-points-table-file-format-csv-tsv):
+
+```python
+slicer.modules.markups.logic().ExportControlPointsToCSV(markupsNode, "/path/to/MyControlPoints.csv")
+```
+
+### Load markups from file
+
+Any markup node can be loaded from a [markups json file](modules/markups.md#markups-json-file-format-mrk-json)
+
+```python
+markupsNode = slicer.util.loadMarkups("/path/to/MyMarkups.mkp.json")
+```
+
+Control points can be loaded from [control points table csv file](modules/markups.md#markups-control-points-table-file-format-csv-tsv):
+
+```python
+markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsCurveNode")
+slicer.modules.markups.logic().ImportControlPointsFromCSV(markupsNode, "/path/to/MyControlPoints.csv")
+```
+
 ### Load markups point list from file
 
-Markups point list can be loaded from file:
+Markups point list can be loaded from legacy [fcsv file format](modules/markups.md#markups-fiducial-point-list-file-format-fcsv). Note that this file format is no longer recommended, as it is not a standard csv file format and can only store a small fraction of information that is in a markups node.
 
 ```python
 slicer.util.loadMarkupsFiducialList("/path/to/list/F.fcsv")
