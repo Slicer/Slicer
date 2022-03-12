@@ -2,7 +2,7 @@
 
 ### Save markups to file
 
-Any markup node can be saved as a [markups json file](modules/markups.mds):
+Any markup node can be saved as a [markups json file](modules/markups.md):
 
 ```python
 markupsNode = slicer.util.getNode('F')
