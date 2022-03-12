@@ -52,6 +52,8 @@
 //----------------------------------------------------------------------------
 const double vtkMRMLSegmentationDisplayNode::SEGMENT_COLOR_NO_OVERRIDE = -1.0;
 
+static const char* SegmentColorGeneratorSourceColorNodeReferenceRole = "segmentColorGenerator";
+
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSegmentationDisplayNode);
 
@@ -62,6 +64,8 @@ vtkMRMLSegmentationDisplayNode::vtkMRMLSegmentationDisplayNode()
   this->Visibility2D = 1; // show slice intersections by default
 
   this->SegmentationDisplayProperties.clear();
+
+  this->AddNodeReferenceRole(SegmentColorGeneratorSourceColorNodeReferenceRole);
 }
 
 //----------------------------------------------------------------------------
@@ -894,6 +898,18 @@ bool vtkMRMLSegmentationDisplayNode::CalculateAutoOpacitiesForSegments()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLSegmentationDisplayNode::SetSegmentColorGeneratorSourceColorNodeID(const char* colorNodeID)
+{
+  this->SetNodeReferenceID(SegmentColorGeneratorSourceColorNodeReferenceRole, colorNodeID);
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLSegmentationDisplayNode::GetSegmentColorGeneratorSourceColorNodeID()
+{
+  return this->GetNodeReferenceID(SegmentColorGeneratorSourceColorNodeReferenceRole);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int colorNumber/*=0*/)
 {
   if (!this->Scene)
@@ -902,12 +918,18 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int c
     return;
     }
 
-  // Get default generic anatomy color table
-  vtkMRMLColorTableNode* genericAnatomyColorNode = vtkMRMLColorTableNode::SafeDownCast(
-    this->Scene->GetNodeByID("vtkMRMLColorTableNodeFileGenericAnatomyColors.txt") );
+  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(
+    this->GetNodeReference(SegmentColorGeneratorSourceColorNodeReferenceRole));
+  if (!colorTableNode)
+    {
+    // Get default generic anatomy color table if no other color table was chosen
+    colorTableNode = vtkMRMLColorTableNode::SafeDownCast(
+      this->Scene->GetNodeByID("vtkMRMLColorTableNodeFileGenericAnatomyColors.txt"));
+    }
+
   if (colorNumber == -1 // random color was requested
-    || !genericAnatomyColorNode // color node was not found
-    || genericAnatomyColorNode->GetNumberOfColors() <= 1 // color node is empty or only contains background color
+    || !colorTableNode // color node was not found
+    || colorTableNode->GetNumberOfColors() <= 1 // color node is empty or only contains background color
     )
     {
     // Generate random color if default color table is not available (such as in logic tests)
@@ -928,13 +950,13 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int c
   // - colorNumber == 1 means the first usable color (colorNumber == 0 means automatic coloring)
   // - We skip the first color (0) because that is the background color, which is usually set to
   //   black (not a good segment color).
-  colorNumber = 1 + ((colorNumber - 1) % (genericAnatomyColorNode->GetNumberOfColors()-1));
+  colorNumber = 1 + ((colorNumber - 1) % (colorTableNode->GetNumberOfColors()-1));
 
   // Get color corresponding to the number of added segments (which is incremented in
   // vtkMRMLSegmentationNode::AddSegmentDisplayProperties every time a new segment display
   // properties entry is added
   double currentColor[4] = {0.0, 0.0, 0.0, 0.0};
-  genericAnatomyColorNode->GetColor(colorNumber, currentColor);
+  colorTableNode->GetColor(colorNumber, currentColor);
   color[0] = currentColor[0];
   color[1] = currentColor[1];
   color[2] = currentColor[2];
