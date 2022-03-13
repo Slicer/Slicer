@@ -191,14 +191,18 @@ By enabling `Apply to all segments`, all visible segments of the segmentation wi
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_islands.png) Islands
 
-Use this tool to create a unique segment for each connected region of the selected segment. Connected regions are defined as groups of pixels which touch each other but are surrounded by zero valued voxels.
+Use this tool to process "islands", i.e., connected regions that are defined as groups of non-empty voxels which touch each other but are surrounded by empty voxels.
 
-- Fully connected: If checked then only voxels that share a face are counted as connected; if unchecked then voxels that touch at an edge or a corner are considered connected.
-- Minimum size: All regions that have less than this number of voxels will be deleted.
+- `Keep largest island`: keep the larges connected region.
+- `Remove small islands`: keep all connected regions that are larger than `minimum size`.
+- `Split islands to segments`: create a unique segment for each connected region of the selected segment.
+- `Keep selected island`: after selecting this mode, click in a non-empty area in a slice view to keep that region and remove all other regions.
+- `Remove selected island`: after selecting this mode, click in a non-empty area in a slice view to remove that region and preserve all other regions.
+- `Add selected island`: after selecting this mode, click in an empty area in a slice view to add that empty region to the segment (fill hole).
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_logical_operators.png) Logical operators
 
-Apply Boolean operators to selected segment or combine segments.
+Apply basic copy, clear, fill, and Boolean operations to the selected segment(s). See more details about the methods by clicking on "Show details" in the effect description in Segment Editor.
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_mask_volume.png) Mask volume
 
