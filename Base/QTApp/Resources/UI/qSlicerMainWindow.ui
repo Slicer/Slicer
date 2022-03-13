@@ -234,14 +234,14 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
+    <addaction name="EditApplicationSettingsAction"/>
+    <addaction name="separator"/>
     <addaction name="CutAction"/>
     <addaction name="CopyAction"/>
     <addaction name="PasteAction"/>
     <addaction name="separator"/>
     <addaction name="EditRecordMacroAction"/>
     <addaction name="EditPlayMacroAction"/>
-    <addaction name="separator"/>
-    <addaction name="EditApplicationSettingsAction"/>
    </widget>
    <widget class="QMenu" name="ViewMenu">
     <property name="title">
