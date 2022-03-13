@@ -26,7 +26,8 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return "Edit islands (connected components) in a segment."
+    return """<html>Edit islands (connected components) in a segment<br>. To get more information
+about each operation, hover the mouse over the option and wait for the tooltip to appear.</html>"""
 
   def setupOptionsFrame(self):
     self.operationRadioButtons = []
@@ -39,7 +40,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
 
     self.keepSelectedOptionRadioButton = qt.QRadioButton("Keep selected island")
     self.keepSelectedOptionRadioButton.setToolTip(
-      "Click on an island in a slice viewer to keep that island and remove all other islands in selected segment.")
+      "Click on an island in a slice view to keep that island and remove all other islands in selected segment.")
     self.operationRadioButtons.append(self.keepSelectedOptionRadioButton)
     self.widgetToOperationNameMap[self.keepSelectedOptionRadioButton] = KEEP_SELECTED_ISLAND
 
@@ -51,13 +52,13 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
 
     self.removeSelectedOptionRadioButton = qt.QRadioButton("Remove selected island")
     self.removeSelectedOptionRadioButton.setToolTip(
-      "Click on an island to remove it from selected segment.")
+      "Click on an island in a slice view to remove it from selected segment.")
     self.operationRadioButtons.append(self.removeSelectedOptionRadioButton)
     self.widgetToOperationNameMap[self.removeSelectedOptionRadioButton] = REMOVE_SELECTED_ISLAND
 
     self.addSelectedOptionRadioButton = qt.QRadioButton("Add selected island")
     self.addSelectedOptionRadioButton.setToolTip(
-      "Click on a region to add it to selected segment.")
+      "Click on a region in a slice view to add it to selected segment.")
     self.operationRadioButtons.append(self.addSelectedOptionRadioButton)
     self.widgetToOperationNameMap[self.addSelectedOptionRadioButton] = ADD_SELECTED_ISLAND
 
@@ -369,7 +370,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     segmentSelectionRequired = self.currentOperationRequiresSegmentSelection()
     self.applyButton.setEnabled(not segmentSelectionRequired)
     if segmentSelectionRequired:
-      self.applyButton.setToolTip("Click in a slice viewer to select segment")
+      self.applyButton.setToolTip("Click in a slice view to select an island.")
     else:
       self.applyButton.setToolTip("")
 
