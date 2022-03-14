@@ -15,7 +15,7 @@ jobs:
       CERTDATA_REPO: gecko-dev
       CERTDATA_PATH: security/nss/lib/ckfw/builtins/certdata.txt
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Get sha and cannonical download url for latest version of certdata.txt file
         id: latest_certdata
