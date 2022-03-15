@@ -1,6 +1,11 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
+import os
+
+import ctk
+import vtk
+import qt
+
+import slicer
 from SegmentEditorEffects import *
 
 
@@ -391,7 +396,6 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
   def masterVolumeNodeChanged(self):
     # Set scalar range of master volume image data to threshold slider
-    import vtkSegmentationCorePython as vtkSegmentationCore
     masterImageData = self.scriptedEffect.masterVolumeImageData()
     if masterImageData:
       lo, hi = masterImageData.GetScalarRange()
@@ -590,7 +594,6 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     try:
       # Get master volume image data
-      import vtkSegmentationCorePython as vtkSegmentationCore
       masterImageData = self.scriptedEffect.masterVolumeImageData()
       # Get modifier labelmap
       modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()

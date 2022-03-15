@@ -1,14 +1,11 @@
-import os
-import glob
-import tempfile
-import zipfile
-import sys
-import qt
-import vtk
-import ctk
-import slicer
 import logging
-from slicer.util import settingsValue, toBool
+import os
+import tempfile
+
+import ctk
+import vtk
+
+import slicer
 
 import DICOMLib
 

@@ -1,7 +1,8 @@
-import os
-import time
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 
 
@@ -75,7 +76,6 @@ class MarkupsInViewsSelfTestWidget(ScriptedLoadableModuleWidget):
 class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
   def controlPointVisible3D(self, fidNode, viewNodeID, controlPointIndex):
-    import vtkSlicerMarkupsModuleVTKWidgetsPython
     lm = slicer.app.layoutManager()
     for v in range(lm.threeDViewCount):
      td = lm.threeDWidget(v)
@@ -93,7 +93,6 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     return False
 
   def controlPointVisibleSlice(self, fidNode, sliceNodeID, controlPointIndex):
-    import vtkSlicerMarkupsModuleVTKWidgetsPython
     lm = slicer.app.layoutManager()
     sliceNames = lm.sliceViewNames()
     for sliceName in sliceNames:

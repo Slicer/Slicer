@@ -1,9 +1,8 @@
-import os
-import unittest
-from __main__ import vtk, qt, ctk, slicer
+import qt
+
+import slicer
 from slicer.util import VTKObservationMixin
 from slicer.ScriptedLoadableModule import *
-import time
 
 
 #

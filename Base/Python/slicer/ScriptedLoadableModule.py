@@ -1,8 +1,14 @@
-import os, string
-import unittest
-import vtk, qt, ctk, slicer
-import logging
 import importlib
+import logging
+import os
+import unittest
+
+import ctk
+import qt
+import vtk
+
+import slicer
+
 
 __all__ = ['ScriptedLoadableModule', 'ScriptedLoadableModuleWidget', 'ScriptedLoadableModuleLogic', 'ScriptedLoadableModuleTest']
 

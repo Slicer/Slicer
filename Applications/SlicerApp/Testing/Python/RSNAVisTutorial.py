@@ -1,6 +1,7 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from DICOMLib import DICOMUtils
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
@@ -182,7 +183,6 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     self.enableScreenshots = enableScreenshotsFlag
     self.screenshotScaleFactor = screenshotScaleFactor
 
-    import os
     self.delayDisplay("Starting the DICOM test")
     #
     # first, get the data - a zip file of dicom data

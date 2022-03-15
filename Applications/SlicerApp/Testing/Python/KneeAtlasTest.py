@@ -1,5 +1,5 @@
 import unittest
-import slicer
+
 import AtlasTests
 
 

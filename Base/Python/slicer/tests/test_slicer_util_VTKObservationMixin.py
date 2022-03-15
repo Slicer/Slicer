@@ -1,5 +1,5 @@
-import slicer
 import unittest
+
 import vtk
 
 from slicer.util import VTKObservationMixin

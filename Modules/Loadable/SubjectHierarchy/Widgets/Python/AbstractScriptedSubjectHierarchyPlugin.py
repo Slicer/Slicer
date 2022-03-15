@@ -1,5 +1,6 @@
-import os
-import vtk, qt, ctk, slicer, logging
+import logging
+
+import slicer
 
 
 #

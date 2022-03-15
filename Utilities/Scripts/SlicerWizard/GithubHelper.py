@@ -5,7 +5,7 @@ import os
 import subprocess
 
 from github import Github
-from github.GithubObject import NotSet
+from github.GithubObject import NotSet  # noqa: F401
 
 from urllib.parse import urlparse
 

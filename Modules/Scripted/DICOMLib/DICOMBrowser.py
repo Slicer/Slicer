@@ -1,14 +1,13 @@
-import ctk
-import os, copy
-import qt
-import vtk
+import copy
 import logging
+import os
 
-from ctk import ctkDICOMIndexer
+import qt
+
 import slicer
 from slicer.util import VTKObservationMixin
-
 from slicer.util import settingsValue, toBool
+
 import DICOMLib
 
 

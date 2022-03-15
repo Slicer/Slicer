@@ -1,6 +1,8 @@
 import os
-import vtk, qt, ctk, slicer
-import logging
+
+import qt
+import vtk
+
 from SegmentEditorEffects import *
 
 

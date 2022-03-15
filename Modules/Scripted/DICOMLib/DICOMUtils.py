@@ -1,6 +1,11 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
+import os
+
+import ctk
+import qt
+import vtk
+
+import slicer
 
 #########################################################
 #
@@ -838,7 +843,6 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
   """
 
   from dicomweb_client.api import DICOMwebClient
-  import random
 
   seriesImported = []
   errors = []

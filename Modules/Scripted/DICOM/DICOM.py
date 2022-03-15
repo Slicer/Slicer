@@ -1,13 +1,14 @@
 import glob
 import logging
 import os
-import qt
-import vtk
-import ctk
-import slicer
 
+import ctk
+import qt
+
+import slicer
 from slicer.util import settingsValue, toBool
 from slicer.ScriptedLoadableModule import *
+
 import DICOMLib
 
 
@@ -24,7 +25,6 @@ class DICOM(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
 
-    import string
     self.parent.title = "DICOM"
     self.parent.categories = ["", "Informatics"] # top level module
     self.parent.contributors = ["Steve Pieper (Isomics)", "Andras Lasso (PerkLab)"]

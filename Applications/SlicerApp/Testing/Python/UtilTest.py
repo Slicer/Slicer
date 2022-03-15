@@ -1,9 +1,10 @@
 import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import qt
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import logging
-import time
 
 
 #
@@ -220,7 +221,6 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     volumeNode = SampleData.downloadSample("MRHead")
 
     import numpy as np
-    import math
 
     def some_func(x, y, z):
       return 0.1*x*x + 0.03*y*y + 0.05*z*z

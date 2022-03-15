@@ -1,7 +1,5 @@
 import os
 
-import slicer.util
-
 from slicer.ScriptedLoadableModule import *
 
 

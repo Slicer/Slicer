@@ -264,7 +264,7 @@ def findChildren(widget=None, name="", text="", title="", className=""):
   :return: list with all the widgets that meet all the given criteria.
   """
   # TODO: figure out why the native QWidget.findChildren method does not seem to work from PythonQt
-  import slicer, fnmatch
+  import fnmatch
   if not widget:
     widget = mainWindow()
   if not widget:
@@ -1199,7 +1199,7 @@ def modulePath(moduleName):
   :param moduleName: module name
   :return: file path of the module
   """
-  import slicer
+  import slicer  # noqa: F401
   return eval('slicer.modules.%s.path' % moduleName.lower())
 
 
@@ -1831,7 +1831,6 @@ def arrayFromTransformMatrix(transformNode, toWorld=False):
 
   To set transformation matrix from a numpy array, use :py:meth:`updateTransformMatrixFromArray`.
   """
-  import numpy as np
   from vtk import vtkMatrix4x4
   vmatrix = vtkMatrix4x4()
   if toWorld:
@@ -2071,7 +2070,6 @@ def arrayFromMarkupsCurvePoints(markupsNode, world = False):
 
   The returned array is just a copy and so any modification in the array will not affect the markup node.
   """
-  import numpy as np
   import vtk.util.numpy_support
   if world:
     pointData = markupsNode.GetCurvePointsWorld().GetData()
@@ -2159,7 +2157,6 @@ def addVolumeFromArray(narray, ijkToRAS=None, name=None, nodeClassName=None):
   """
   import slicer
   from vtk import vtkMatrix4x4
-  import numpy as np
 
   if name is None:
     name = ""
@@ -2195,7 +2192,6 @@ def arrayFromTableColumn(tableNode, columnName):
 
 def arrayFromTableColumnModified(tableNode, columnName):
   """Indicate that modification of a numpy array returned by :py:meth:`arrayFromTableColumn` has been completed."""
-  import vtk.util.numpy_support
   columnData = tableNode.GetTable().GetColumnByName(columnName)
   columnData.Modified()
   tableNode.GetTable().Modified()
@@ -2546,7 +2542,7 @@ def _messageDisplay(logLevel, text, testingReturnValue, mainWindowNeeded=False, 
     - If the application is running in testing mode, then ``testingReturnValue`` is returned.
     - Otherwise, if ``mainWindowNeeded`` is True and there is no main window, then None is returned.
   """
-  import qt, slicer, logging
+  import slicer, logging
   logging.log(logLevel, text)
   logLevelString = logging.getLevelName(logLevel).lower() # e.g. this is "error" when logLevel is logging.ERROR
   if not windowTitle:
@@ -2568,7 +2564,6 @@ def messageBox(text, parent=None, **kwargs):
 
     slicer.util.messageBox("Some message", dontShowAgainSettingsKey = "MainWindow/DontShowSomeMessage")
   """
-  import qt
   import ctk
   mbox = ctk.ctkMessageBox(parent if parent else mainWindow())
   mbox.text = text
@@ -3250,7 +3245,7 @@ def logProcessOutput(proc):
 
   :param proc: process object.
   """
-  from subprocess import Popen, PIPE, CalledProcessError
+  from subprocess import CalledProcessError
   import logging
   try:
     from slicer import app
@@ -3290,13 +3285,12 @@ def _executePythonModule(module, args):
   """
   # Determine pythonSlicerExecutablePath
   try:
-    from slicer import app
+    from slicer import app  # noqa: F401
     # If we get to this line then import from "app" is succeeded,
     # which means that we run this function from Slicer Python interpreter.
     # PythonSlicer is added to PATH environment variable in Slicer
     # therefore shutil.which will be able to find it.
     import shutil
-    import subprocess
     pythonSlicerExecutablePath = shutil.which('PythonSlicer')
     if not pythonSlicerExecutablePath:
       raise RuntimeError("PythonSlicer executable not found")

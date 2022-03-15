@@ -17,7 +17,7 @@ def haveGit():
   """
 
   try:
-    import git
+    import git  # noqa: F401
     _haveGit = True
 
   except ImportError:

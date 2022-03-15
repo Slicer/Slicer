@@ -1,5 +1,6 @@
-import slicer
 import logging
+
+import slicer
 
 #########################################################
 #
@@ -224,7 +225,6 @@ class DICOMPlugin:
 
     # Validate dataNode argument
     if dataNode is None or not dataNode.IsA('vtkMRMLNode'):
-      import sys
       logging.error('Unable to create subject hierarchy items: invalid data node provided')
       return
 

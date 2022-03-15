@@ -1,8 +1,6 @@
-import slicer
-import ctk
-import vtk
 import SimpleITK as sitk
-import warnings
+
+import slicer
 
 __sitk__MRMLIDImageIO_Registered__ = False
 

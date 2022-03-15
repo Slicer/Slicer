@@ -1,9 +1,10 @@
-import os
-import string
-from __main__ import vtk, qt, ctk, slicer
 import logging
+
 import numpy
 import pydicom as dicom
+import vtk
+
+import slicer
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
@@ -179,7 +180,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     reader.SetDICOMImageIOApproachToGDCM()
     reader.Update()
     imageData = reader.GetOutput()
-    from __main__ import vtk
+
     if reader.GetErrorCode() != vtk.vtkErrorCode.NoError:
       errorString = vtk.vtkErrorCode.GetStringFromErrorCode(reader.GetErrorCode())
       raise ValueError(
@@ -250,7 +251,6 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     # create a grid transform with one vector at the corner of each slice
     # the transform is in the same space and orientation as the volume node
-    from __main__ import vtk
     gridImage = vtk.vtkImageData()
     gridImage.SetOrigin(*volumeNode.GetOrigin())
     gridImage.SetDimensions(samplingPoints_shape[:3])

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-import argparse, sys
-import numpy as np
+import argparse
 
 # TODO: would be good to set up test driver so `import slicer, vtk` works,
 #       to make sure we are actually in Slicer's python.

@@ -1,8 +1,13 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
-from SegmentEditorEffects import *
+import os
+
+import qt
+import vtk
 import vtkITK
+
+import slicer
+
+from SegmentEditorEffects import *
 
 
 class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
@@ -66,7 +71,6 @@ follows the same intensity value back to the starting point within the current s
       self.scriptedEffect.saveStateForUndo()
 
       # Get modifier labelmap
-      import vtkSegmentationCorePython as vtkSegmentationCore
       modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
 
       # Apply poly data on modifier labelmap
@@ -152,7 +156,6 @@ class LevelTracingPipeline:
     # Calculate the current level trace view if the mouse is inside the volume extent
 
     # Get master volume image data
-    import vtkSegmentationCorePython as vtkSegmentationCore
     masterImageData = self.effect.scriptedEffect.masterVolumeImageData()
 
     segmentationNode = self.effect.scriptedEffect.parameterSetNode().GetSegmentationNode()

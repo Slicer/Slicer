@@ -1,8 +1,11 @@
-import os
-import unittest
-from __main__ import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+import os
+
+import ctk
+import qt
+
+import slicer
+from slicer.ScriptedLoadableModule import *
 
 
 #

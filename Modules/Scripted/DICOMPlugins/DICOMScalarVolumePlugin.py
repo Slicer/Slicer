@@ -1,12 +1,18 @@
+import logging
+from functools import cmp_to_key
+
+import ctk
 import numpy
-import os
-import vtk, qt, ctk, slicer, vtkITK
+import qt
+import vtk
+import vtkITK
+
+import slicer
+
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 from DICOMLib import DICOMUtils
 from DICOMLib import DICOMExportScalarVolume
-import logging
-from functools import cmp_to_key
 
 
 #

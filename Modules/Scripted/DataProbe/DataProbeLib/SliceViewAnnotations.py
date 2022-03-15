@@ -1,17 +1,11 @@
 import os
-import logging
+
 import qt
 import vtk
-import slicer
 
+import slicer
 from slicer.util import settingsValue
 from slicer.util import VTKObservationMixin
-
-try:
-  import numpy as np
-  NUMPY_AVAILABLE = True
-except ImportError:
-  NUMPY_AVAILABLE = False
 
 from . import DataProbeUtil
 

@@ -1,8 +1,10 @@
 import os
-import sys
 import traceback
 
-import qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 
 import SlicerWizard.ExtensionDescription
 import SlicerWizard.ExtensionProject

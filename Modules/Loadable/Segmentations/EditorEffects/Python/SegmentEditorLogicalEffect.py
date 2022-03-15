@@ -1,6 +1,11 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
+import os
+
+import qt
+import vtk
+
+import slicer
+
 from SegmentEditorEffects import *
 
 
@@ -156,8 +161,6 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     self.scriptedEffect.setParameter("ModifierSegmentID", modifierSegmentIDs)
 
   def getInvertedBinaryLabelmap(self, modifierLabelmap):
-    import vtkSegmentationCorePython as vtkSegmentationCore
-
     fillValue = 1
     eraseValue = 0
     inverter = vtk.vtkImageThreshold()
@@ -184,8 +187,6 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     import vtkSegmentationCorePython as vtkSegmentationCore
 
     self.scriptedEffect.saveStateForUndo()
-
-    import vtkSegmentationCorePython as vtkSegmentationCore
 
     # Get modifier labelmap and parameters
 

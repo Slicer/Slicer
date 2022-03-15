@@ -68,7 +68,6 @@ def run(module, node = None, parameters = None, wait_for_completion = False, del
   delete_temporary_files: remove temp files created during execution (True by default)
   update_display: show output nodes after completion
   """
-  import slicer.util
   if node:
     setNodeParameters(node, parameters)
   else:
@@ -84,6 +83,7 @@ def run(module, node = None, parameters = None, wait_for_completion = False, del
       logic.ApplyAndWait(node, update_display)
   else:
       logic.Apply(node, update_display)
+  #import slicer.util
   #widget = slicer.util.getModuleGui(module)
   #if not widget:
   #  print "Could not find widget representation for module"

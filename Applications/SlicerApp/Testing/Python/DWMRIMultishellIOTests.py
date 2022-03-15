@@ -1,10 +1,12 @@
-import sys, os, re, nose
-from nose.tools import assert_equal
+import os
+import re
+import sys
 from collections import namedtuple
 
+import nose
 import numpy as np
-import numpy.testing
 from vtk.util import numpy_support
+
 import slicer
 
 #===============================================================================

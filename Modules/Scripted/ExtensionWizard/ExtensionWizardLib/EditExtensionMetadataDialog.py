@@ -1,7 +1,8 @@
-import os
 import re
+
+import qt
+
 import slicer
-import qt, ctk
 
 from .EditableTreeWidget import EditableTreeWidget
 

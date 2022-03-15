@@ -1,5 +1,9 @@
-import vtk, qt, ctk, slicer
 import logging
+
+import qt
+
+import slicer
+
 from AbstractScriptedSubjectHierarchyPlugin import *
 
 

@@ -19,7 +19,6 @@ effectively no safeguards against producing a script that is syntactically
 invalid.
 """
 
-import os
 import re
 import string
 

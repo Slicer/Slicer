@@ -1,8 +1,12 @@
-import os, subprocess, time
-import slicer
-import qt
-import ctk
 import logging
+import os
+import subprocess
+import time
+
+import ctk
+import qt
+
+import slicer
 
 #########################################################
 #
@@ -200,7 +204,9 @@ class DICOMStoreSCPProcess(DICOMProcess):
     Returns true if process by that name exists (after attempting to
     terminate the process).
     """
-    import sys, os.path, ctypes, ctypes.wintypes
+    import ctypes
+    import ctypes.wintypes
+    import os.path
 
     psapi = ctypes.WinDLL('Psapi.dll')
     enum_processes = psapi.EnumProcesses

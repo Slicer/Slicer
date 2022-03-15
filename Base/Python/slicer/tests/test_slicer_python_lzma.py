@@ -1,7 +1,4 @@
 import unittest
-import slicer
-import os
-import shutil
 
 
 class SlicerPythonLzmaTests(unittest.TestCase):

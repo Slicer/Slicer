@@ -1,10 +1,10 @@
-import os
-import string
 import textwrap
-import unittest
-import vtk, qt, ctk, slicer
+
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import logging
 
 
 #

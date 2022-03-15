@@ -1,7 +1,6 @@
-import os
-import glob
-import slicer
 import logging
+
+import slicer
 
 #########################################################
 #

@@ -1,6 +1,4 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 
@@ -11,7 +9,6 @@ from slicer.util import VTKObservationMixin
 class SegmentEditor(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    import string
     self.parent.title = "Segment Editor"
     self.parent.categories = ["", "Segmentation"]
     self.parent.dependencies = ["Segmentations", "SubjectHierarchy"]

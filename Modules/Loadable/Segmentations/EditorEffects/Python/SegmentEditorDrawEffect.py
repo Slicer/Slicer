@@ -1,6 +1,11 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
+import os
+
+import qt
+import vtk
+
+import slicer
+
 from SegmentEditorEffects import *
 
 
@@ -281,7 +286,6 @@ class DrawPipeline:
       self.polyData.InsertNextCell(vtk.VTK_LINE, idList)
 
       # Get modifier labelmap
-      import vtkSegmentationCorePython as vtkSegmentationCore
       modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
 
       # Apply poly data on modifier labelmap

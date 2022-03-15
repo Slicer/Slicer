@@ -1,6 +1,9 @@
 import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import ctk
+import qt
+
+import slicer
 from DICOMLib import DICOMUtils
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
@@ -82,7 +85,6 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
 
   def onStartStopDicomPeer(self,flag):
     if flag:
-      import os
       self.startStopDicomPeerButton.setEnabled(False)
       dicomFilesDirectory = slicer.app.temporaryPath
       configFilePath = dicomFilesDirectory + '/Dcmtk-db/dcmqrscp.cfg'

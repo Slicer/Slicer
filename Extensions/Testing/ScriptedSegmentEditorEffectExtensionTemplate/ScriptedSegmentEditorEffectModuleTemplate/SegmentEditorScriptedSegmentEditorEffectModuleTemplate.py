@@ -1,8 +1,8 @@
 import os
-import unittest
-import vtk, qt, ctk, slicer
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import logging
 
 
 class SegmentEditorScriptedSegmentEditorEffectModuleTemplate(ScriptedLoadableModule):
@@ -11,7 +11,6 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplate(ScriptedLoadableMod
   """
 
   def __init__(self, parent):
-    import string
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "SegmentEditorScriptedSegmentEditorEffectModuleTemplate"
     self.parent.categories = ["Segmentation"]
@@ -61,7 +60,6 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplateTest(ScriptedLoadabl
     self.delayDisplay("Starting test_ScriptedSegmentEditorEffectModuleTemplate1")
 
     import vtkSegmentationCorePython as vtkSegmentationCore
-    import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
     import SampleData
     from SegmentStatistics import SegmentStatisticsLogic
 

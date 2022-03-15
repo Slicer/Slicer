@@ -21,7 +21,6 @@
 import argparse
 import json
 import os
-import sys
 import tempfile
 
 from SlicerAppTesting import *
@@ -245,7 +244,7 @@ if __name__ == '__main__':
 
   if args.reuse_module_list:
     print("Loading existing module listing")
-    collect_modules = read_modules
+    collect_modules = read_modules  # noqa: F811
 
   common_kwargs = {
     'display_output': args.display_slicer_output,
