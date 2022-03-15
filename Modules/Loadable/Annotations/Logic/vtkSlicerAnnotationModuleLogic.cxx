@@ -15,7 +15,6 @@
 #include "vtkMRMLAnnotationStickyNode.h"
 #include "vtkMRMLAnnotationTextNode.h"
 #include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLAnnotationBidimensionalNode.h"
 #include "vtkMRMLAnnotationSplineNode.h"
 #include "vtkMRMLAnnotationSnapshotNode.h"
 #include "vtkMRMLAnnotationSnapshotStorageNode.h"
@@ -372,7 +371,6 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
       // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png", "Fiducial");
       // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationTextNode",  ":/Icons/AnnotationTextWithArrow.png", "Text");
       selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
-      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensionalWithArrow.png", "Bidimensional");
       selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png", "ROI");
       // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png", "Angle");
       // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationStickyNode", "", "Sticky");
@@ -645,10 +643,6 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
 #if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 0, 0)
   scene->RegisterNodeClass(annotationROINode.GetPointer(), "ROI");
 #endif
-
-  // Bidimensional annotation
-  vtkNew<vtkMRMLAnnotationBidimensionalNode> annotationBidimensionalNode;
-  scene->RegisterNodeClass(annotationBidimensionalNode.GetPointer());
 
   // Fiducial annotation
   vtkNew<vtkMRMLAnnotationFiducialNode> annotationFiducialNode;
@@ -1865,70 +1859,6 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
 
       this->m_StringHolder = ss.str();
       }
-    }
-  else if (node->IsA("vtkMRMLAnnotationBidimensionalNode"))
-    {
-    double measurement1;
-    double measurement2;
-    if (vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement().size()
-        != 2)
-      {
-      // measurement is not ready
-      measurement1 = 0;
-      measurement2 = 0;
-      }
-    else
-      {
-      // measurement is ready
-      measurement1
-          = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement()[0];
-      measurement2
-          = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement()[1];
-      }
-
-    std::ostringstream ss;
-
-    // the greatest measurement should appear first..
-    double length1 = std::max(measurement1, measurement2);
-    double length2 = std::min(measurement1, measurement2);
-
-    char string[512];
-    sprintf(string, this->m_MeasurementFormat, length1);
-
-    std::string unit = string;
-    if (showUnits)
-      {
-      vtkMRMLUnitNode* lengthUnit = selectionNode ? selectionNode->GetUnitNode("length") : nullptr;
-      if (lengthUnit)
-        {
-        unit = lengthUnit->GetDisplayStringFromValue(length1);
-        }
-      else
-        {
-        unit += " mm";
-        }
-      }
-    ss << unit << " x ";
-
-    char string2[512];
-    sprintf(string2, this->m_MeasurementFormat, length2);
-
-    unit = string2;
-    if (showUnits)
-      {
-      vtkMRMLUnitNode* lengthUnit = selectionNode ? selectionNode->GetUnitNode("length") : nullptr;
-      if (lengthUnit)
-        {
-        unit = lengthUnit->GetDisplayStringFromValue(length2);
-        }
-      else
-        {
-        unit += " mm";
-        }
-      }
-    ss << unit;
-
-    this->m_StringHolder = ss.str();
     }
 
   return this->m_StringHolder.c_str();
