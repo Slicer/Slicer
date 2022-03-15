@@ -355,6 +355,10 @@ class DataProbeInfoWidget:
     imax = xyzInt[0]+imageSize
     jmin = xyzInt[1]-imageSize
     jmax = xyzInt[1]+imageSize
+    imin_trunc = max(0,imin)
+    imax_trunc = min(dims[0]-1, imax)
+    jmin_trunc = max(0, jmin)
+    jmax_trunc = min(dims[1]-1, jmax)
     # The extra complexity of the canvas is used here to maintain a fixed size
     # output due to the imageCrop returning a smaller image if the limits are
     # outside the input image bounds. Specially useful when zooming at the borders.
@@ -364,8 +368,8 @@ class DataProbeInfoWidget:
     canvas.SetExtent(imin, imax, jmin , jmax, 0 ,0)
     canvas.FillBox(imin, imax, jmin , jmax)
     canvas.Update()
-    if (imin <= min(dims[0]-1,  imax)) and (jmin <= min(dims[1]-1,  jmax)):
-      imageCrop.SetVOI(imin, imax, jmin, jmax, 0,0)
+    if (imin_trunc <= imax_trunc) and (jmin_trunc <= jmax_trunc):
+      imageCrop.SetVOI(imin_trunc, imax_trunc, jmin_trunc, jmax_trunc, 0,0)
       imageCrop.Update()
       vtkImageCropped = imageCrop.GetOutput()
       xyzBounds = [0]*6
