@@ -16,12 +16,6 @@ set(${KIT}_SRCS
   vtkAnnotationRulerRepresentation3D.cxx
   vtkAnnotationRulerRepresentation3D.h
 
-  # Bidimensional VTK widget
-  vtkAnnotationBidimensionalWidget.cxx
-  vtkAnnotationBidimensionalWidget.h
-  vtkAnnotationBidimensionalRepresentation.cxx
-  vtkAnnotationBidimensionalRepresentation.h
-
   vtkAnnotationGlyphSource2D.cxx
   vtkAnnotationGlyphSource2D.h
 

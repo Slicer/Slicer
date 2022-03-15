@@ -1,7 +1,6 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLAnnotationFiducialDisplayableManager.h>
 #include <vtkMRMLAnnotationRulerDisplayableManager.h>
-#include <vtkMRMLAnnotationBidimensionalDisplayableManager.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLThreeDViewInteractorStyle.h>
@@ -93,7 +92,6 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
 //  factory->RegisterDisplayableManager("vtkMRMLAnnotationDisplayableManager");
   factory->RegisterDisplayableManager("vtkMRMLAnnotationFiducialDisplayableManager");
   factory->RegisterDisplayableManager("vtkMRMLAnnotationRulerDisplayableManager");
-  factory->RegisterDisplayableManager("vtkMRMLAnnotationBidimensionalDisplayableManager");
   // need a model displayable manager to test for superclass conflicts
   factory->RegisterDisplayableManager("vtkMRMLModelDisplayableManager");
 
