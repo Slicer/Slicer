@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>Icons/AnnotationLock.png</file>
         <file>Icons/AnnotationUnlock.png</file>
-        <file>Icons/AnnotationSpline.png</file>
         <file>Icons/AnnotationEditAngle.png</file>
         <file>Icons/AnnotationEditDistance.png</file>
         <file>Icons/AnnotationEditNote.png</file>
