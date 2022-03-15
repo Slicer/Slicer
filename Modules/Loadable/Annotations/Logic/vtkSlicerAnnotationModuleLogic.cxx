@@ -4,8 +4,6 @@
 // Annotation/MRML includes
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
-#include "vtkMRMLAnnotationAngleNode.h"
-#include "vtkMRMLAnnotationAngleStorageNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
@@ -370,7 +368,6 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
       // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationTextNode",  ":/Icons/AnnotationTextWithArrow.png", "Text");
       selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
       selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png", "ROI");
-      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png", "Angle");
 
       // stop batch add
       this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
@@ -1810,28 +1807,6 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
     ss << unit;
 
     this->m_StringHolder = ss.str();
-    }
-  else if (node->IsA("vtkMRMLAnnotationAngleNode"))
-    {
-    double angle = vtkMRMLAnnotationAngleNode::SafeDownCast(annotationNode)->GetAngleMeasurement();
-    std::ostringstream ss;
-    ss << angle;
-    std::string measurement = ss.str();
-    if (showUnits)
-      {
-      // Get Unit from node
-      vtkMRMLUnitNode* angleUnit = selectionNode ? selectionNode->GetUnitNode("angle") : nullptr;
-      if (angleUnit)
-        {
-        measurement = angleUnit->GetDisplayStringFromValue(angle);
-        }
-      else
-        {
-        measurement += " degrees";
-        }
-      }
-
-    this->m_StringHolder = measurement;
     }
   else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
     {
