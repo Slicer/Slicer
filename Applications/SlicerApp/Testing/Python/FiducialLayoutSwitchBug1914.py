@@ -1,9 +1,10 @@
-import os
-import unittest
-import math
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+import math
+
+import vtk
+
+import slicer
+from slicer.ScriptedLoadableModule import *
 
 
 #

@@ -1,5 +1,8 @@
 import os
-import vtk, qt, ctk, slicer
+
+import ctk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 
 

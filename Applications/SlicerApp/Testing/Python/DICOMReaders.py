@@ -1,8 +1,10 @@
 import logging
-import numpy
 import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import numpy
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from DICOMLib import DICOMUtils
 from slicer.util import TESTING_DATA_URL
@@ -65,7 +67,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
     """ Test the DICOM loading of sample testing data
     """
     testPass = True
-    import os, json
+
     self.delayDisplay("Starting the DICOM test")
 
     referenceData = [
@@ -212,7 +214,7 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
 
     """
     testPass = True
-    import os, json
+
     self.delayDisplay("Starting the DICOM test")
 
     settings = qt.QSettings()

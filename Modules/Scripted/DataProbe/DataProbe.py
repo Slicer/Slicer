@@ -1,11 +1,13 @@
-import logging
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+import vtk
 import vtkTeem
-import DataProbeLib
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
+import DataProbeLib
 
 
 #
@@ -15,7 +17,7 @@ from slicer.util import TESTING_DATA_URL
 class DataProbe(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    import string
+
     parent.title = "DataProbe"
     parent.categories = ["Quantification"]
     parent.contributors = ["Steve Pieper (Isomics)"]

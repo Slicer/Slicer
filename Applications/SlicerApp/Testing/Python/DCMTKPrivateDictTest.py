@@ -1,4 +1,6 @@
-import DICOMLib, sys, slicer, os
+import sys
+
+import DICOMLib
 
 dcmfile = sys.argv[1]
 

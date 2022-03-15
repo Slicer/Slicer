@@ -3,9 +3,7 @@ import io
 import json
 import os
 import unittest
-import random
 import re
-import string
 import subprocess
 import sys
 import textwrap

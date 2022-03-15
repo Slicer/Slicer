@@ -24,7 +24,7 @@ def haveGit():
     # SSL is available
     try:
       global git, GithubHelper, NotSet
-      import git
+      import git  # noqa: F401
       from . import GithubHelper
       from .GithubHelper import NotSet
       _haveGit = True
@@ -299,7 +299,6 @@ class ExtensionWizard:
       p.save()
 
       # Commit the initial commit or updated meta-information
-      import git
       r.git.add(":/CMakeLists.txt")
       if createdRepo:
         logging.info("preparing initial commit")
@@ -486,7 +485,6 @@ class ExtensionWizard:
 
       # Update the index repository and get the base branch
       logging.info("updating local index clone")
-      import git
       xiRepo.git.fetch(xiUpstream)
       if not args.target in xiUpstream.refs:
         die("target branch '%s' does not exist" % args.target)

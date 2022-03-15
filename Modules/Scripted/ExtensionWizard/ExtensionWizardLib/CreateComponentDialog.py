@@ -1,7 +1,9 @@
 import os
+
+import ctk
+import qt
+
 import slicer
-import qt, ctk
-import re
 
 
 #=============================================================================

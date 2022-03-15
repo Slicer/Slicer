@@ -1,5 +1,11 @@
-import os
-import vtk, qt, ctk, slicer, logging
+import logging
+
+import ctk
+import qt
+import vtk
+
+import slicer
+
 from .AbstractScriptedSegmentEditorEffect import *
 
 __all__ = ['AbstractScriptedSegmentEditorAutoCompleteEffect']
@@ -304,7 +310,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.delayedAutoUpdateTimer.stop()
     self.observeSegmentation(False)
 
-    import vtkSegmentationCorePython as vtkSegmentationCore
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     segmentationDisplayNode = segmentationNode.GetDisplayNode()
     previewNode = self.getPreviewNode()

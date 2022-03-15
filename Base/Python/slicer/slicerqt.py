@@ -3,7 +3,7 @@ import sys
 
 import ctk
 import qt
-import vtk
+import vtk  # noqa: F401
 
 import slicer
 from slicer.util import *
@@ -145,7 +145,6 @@ def loadSlicerRCFile():
 class _Internal:
 
   def __init__( self ):
-    import imp
 
     # Set attribute 'slicer.app'
     setattr( slicer, 'app', _qSlicerCoreApplicationInstance )

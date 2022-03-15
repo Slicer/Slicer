@@ -1,5 +1,7 @@
 import time
 
+import slicer
+
 
 def TestFiducialAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   print("numToAdd = ", numToAdd)

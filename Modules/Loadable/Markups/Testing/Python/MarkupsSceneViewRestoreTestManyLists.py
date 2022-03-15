@@ -1,5 +1,7 @@
 # Test restoring a scene with multiple lists with different number control points
 
+import slicer
+
 # first control point list
 fidNode1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "FidNode1")
 fidNode1.CreateDefaultDisplayNodes()
@@ -70,9 +72,6 @@ td = lm.threeDWidget(0)
 mfm = td.threeDView().displayableManagerByClassName("vtkMRMLMarkupsDisplayableManager")
 h = mfm.GetHelper()
 print('Helper = ',h)
-
-# Markups widget classes are not imported into Python by default
-import vtkSlicerMarkupsModuleVTKWidgetsPython
 
 for markupsNode in [fid1AfterRestore, fid2AfterRestore]:
   markupsWidget = h.GetWidget(markupsNode)

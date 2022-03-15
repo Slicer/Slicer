@@ -1,5 +1,7 @@
 import time
 
+import slicer
+
 
 def TestRulerAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   print("numToAdd = ", numToAdd)

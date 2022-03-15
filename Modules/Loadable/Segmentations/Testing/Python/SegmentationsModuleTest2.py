@@ -1,11 +1,12 @@
+import logging
 import os
 import unittest
-import vtk, qt, ctk, slicer
-import logging
-from slicer.ScriptedLoadableModule import *
-from slicer.util import TESTING_DATA_URL
 
+import vtk
 import vtkSegmentationCore
+
+import slicer
+from slicer.util import TESTING_DATA_URL
 
 '''
 This class tests the shared labelmap behavior.

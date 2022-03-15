@@ -1,4 +1,5 @@
-import qt, ctk
+import ctk
+import qt
 
 import SlicerWizard.TemplateManager
 

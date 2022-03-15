@@ -1,3 +1,6 @@
+import slicer
+
+
 # get the selection node
 selectionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSelectionNodeSingleton")
 

@@ -1,11 +1,13 @@
-import vtk, qt, ctk
-import slicer
 import logging
+from contextlib import contextmanager
 
+import ctk
+import qt
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import NodeModify, VTKObservationMixin
-
-from contextlib import contextmanager
 
 
 @contextmanager

@@ -1,13 +1,9 @@
-import os
-import string
-from __main__ import vtk, qt, ctk, slicer
 import logging
-import numpy
-try:
-  import pydicom as dicom
-except:
-  # Slicer-4.10 backward compatibility
-  import dicom
+
+import pydicom as dicom
+import vtk
+
+import slicer
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable

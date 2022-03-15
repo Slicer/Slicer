@@ -20,10 +20,13 @@
 
 import argparse
 import os
-import sys
 import tempfile
 
-from SlicerAppTesting import *
+from SlicerAppTesting import (
+  EXIT_FAILURE,
+  EXIT_SUCCESS,
+  run,
+)
 
 """
 This test verifies that an exception raised in scripted module widget cleanup

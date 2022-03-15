@@ -1,10 +1,11 @@
 #Testing against the NRRD reader
 import unittest
-import slicer
+
+import numpy
 import vtkITK
 import vtkTeem
 from vtk.util import numpy_support as ns
-import numpy
+
 
 """
 To run as test from slicer python console, replace the following with your source tree path and paste:

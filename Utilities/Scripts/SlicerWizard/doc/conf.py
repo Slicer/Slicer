@@ -14,8 +14,6 @@ import argparse
 import os
 import sys
 
-import sphinx
-
 from docutils import nodes, utils
 from docutils.parsers.rst import roles
 

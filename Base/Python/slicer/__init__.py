@@ -38,7 +38,8 @@ try:
 except ImportError as detail:
   available_kits = []
 
-import string, os, sys
+import os
+import sys
 standalone_python = "python" in str.lower(os.path.split(sys.executable)[-1])
 
 for kit in available_kits:
@@ -64,8 +65,8 @@ for kit in available_kits:
 
 if not standalone_python:
   try:
-    import numpy
-    import scipy
+    import numpy  # noqa: F401
+    import scipy  # noqa: F401
   except ImportError as detail:
     print(detail)
 

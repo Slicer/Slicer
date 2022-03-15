@@ -1,12 +1,8 @@
-import os, copy
-import qt
-import vtk
 import logging
+import qt
 
 import slicer
-from slicer.util import VTKObservationMixin
 
-from slicer.util import settingsValue, toBool
 import DICOMLib
 
 

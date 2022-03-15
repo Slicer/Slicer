@@ -1,13 +1,6 @@
-import os, copy
 import qt
-import vtk
-import logging
 
 import slicer
-from slicer.util import VTKObservationMixin
-
-from slicer.util import settingsValue, toBool
-import DICOMLib
 
 
 class DICOMPluginSelector(qt.QWidget):

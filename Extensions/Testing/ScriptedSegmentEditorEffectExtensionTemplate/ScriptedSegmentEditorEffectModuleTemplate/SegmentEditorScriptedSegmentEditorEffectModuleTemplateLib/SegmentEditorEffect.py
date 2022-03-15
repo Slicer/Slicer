@@ -1,6 +1,11 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
+import os
+
+import qt
+import vtk
+
+import slicer
+
 from SegmentEditorEffects import *
 
 
@@ -88,7 +93,6 @@ To segment a single object, create a segment and paint inside and create another
     # Export master image data to temporary new volume node.
     # Note: Although the original master volume node is already in the scene, we do not use it here,
     # because the master volume may have been resampled to match segmentation geometry.
-    import vtkSegmentationCorePython as vtkSegmentationCore
     masterVolumeNode = slicer.vtkMRMLScalarVolumeNode()
     slicer.mrmlScene.AddNode(masterVolumeNode)
     masterVolumeNode.SetAndObserveTransformNodeID(segmentationNode.GetTransformNodeID())

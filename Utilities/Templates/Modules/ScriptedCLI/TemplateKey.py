@@ -1,6 +1,5 @@
 #!/usr/bin/env python-real
 
-import os
 import sys
 
 

@@ -1,6 +1,12 @@
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+
+import ctk
+import qt
+import vtk
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 from SegmentStatisticsPlugins import *
 
 
@@ -36,8 +42,6 @@ Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.
     import SubjectHierarchyPlugins
     scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
     scriptedPlugin.setPythonSource(SubjectHierarchyPlugins.SegmentStatisticsSubjectHierarchyPlugin.filePath)
-
-    import SegmentStatisticsPlugins
 
 
 class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
@@ -460,7 +464,6 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     Update statistical measures for specified segment.
     Note: This will not change or reset measurement results of other segments
     """
-    import vtkSegmentationCorePython as vtkSegmentationCore
 
     segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))
 
@@ -708,7 +711,6 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Starting test_SegmentStatisticsBasic")
 
-    import vtkSegmentationCorePython as vtkSegmentationCore
     import SampleData
     from SegmentStatistics import SegmentStatisticsLogic
 

@@ -1,8 +1,10 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
 import logging
-from slicer.ScriptedLoadableModule import *
+import unittest
+
+import qt
+import vtk
+
+import slicer
 from slicer.util import DATA_STORE_URL
 
 

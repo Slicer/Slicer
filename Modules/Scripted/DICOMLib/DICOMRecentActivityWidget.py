@@ -1,7 +1,9 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
 from functools import cmp_to_key
+
+import qt
+
+import slicer
 
 
 class DICOMRecentActivityWidget(qt.QWidget):

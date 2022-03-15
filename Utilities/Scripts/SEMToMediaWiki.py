@@ -8,10 +8,8 @@ a MediaWiki format
 """
 
 import sys
-import pprint
 
 import xml.dom.minidom
-from xml.dom.minidom import Node
 
 
 def getTextValuesFromNode(nodelist):

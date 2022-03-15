@@ -1,6 +1,5 @@
 class qSlicerScriptedLoadableModuleTest:
   def __init__(self, parent):
-    import string
     parent.title = "qSlicerScriptedLoadableModule Test"
     parent.categories = ["Testing"]
     parent.associatedNodeTypes = ["vtkMRMLModelNode", "vtkMRMLScalarVolumeNode"]

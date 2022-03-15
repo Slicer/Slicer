@@ -1,6 +1,5 @@
-import unittest
 import slicer
-from slicer.ScriptedLoadableModule import *
+from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 
 
 class VolumeRenderingThreeDOnlyLayout(ScriptedLoadableModuleTest):

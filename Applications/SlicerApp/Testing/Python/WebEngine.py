@@ -1,10 +1,7 @@
-import os
-import unittest
-import math
-import datetime
-import time
-import random
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 
 

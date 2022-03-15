@@ -1,9 +1,12 @@
 import logging
 import os
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
+
+import qt
+import vtk
+
+import slicer
 from DICOMLib import DICOMUtils
+from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
 

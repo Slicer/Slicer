@@ -1,6 +1,12 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
+import os
+
+import ctk
+import qt
+import vtk
+
+import slicer
+
 from SegmentEditorEffects import *
 
 
@@ -273,10 +279,6 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
   def smoothSelectedSegment(self, maskImage=None, maskExtent=None):
     try:
-
-      # Get master volume image data
-      import vtkSegmentationCorePython
-
       # Get modifier labelmap
       modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
       selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()

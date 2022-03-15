@@ -1,8 +1,13 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
-from SegmentEditorEffects import *
+import os
+
+import qt
+import vtk
 import vtkITK
+
+import slicer
+
+from SegmentEditorEffects import *
 
 
 class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
