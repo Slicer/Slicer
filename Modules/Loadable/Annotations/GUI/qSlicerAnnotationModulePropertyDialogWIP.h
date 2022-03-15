@@ -17,7 +17,6 @@ class vtkMRMLAnnotationDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationRulerNode;
-class vtkMRMLAnnotationAngleNode;
 class vtkMRMLAnnotationFiducialNode;
 
 /// \ingroup Slicer_QtModules_Annotation

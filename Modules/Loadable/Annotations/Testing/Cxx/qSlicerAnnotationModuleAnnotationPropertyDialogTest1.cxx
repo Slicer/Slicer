@@ -5,14 +5,12 @@
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
-#include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
 
 vtkSmartPointer<vtkMRMLAnnotationRulerNode> m_rulerCopy;
-vtkSmartPointer<vtkMRMLAnnotationAngleNode> m_angleCopy;
 vtkSmartPointer<vtkMRMLAnnotationDisplayNode> m_textDispCopy;
 vtkSmartPointer<vtkMRMLAnnotationLineDisplayNode> m_lineDispCopy;
 vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode> m_pointDispCopy;
@@ -78,17 +76,7 @@ void SaveAnnotationNode(vtkMRMLAnnotationNode* node)
 //-----------------------------------------------------------------------------
 void SaveStateForUndo(vtkMRMLNode* node)
 {
-    if( node->IsA( "vtkMRMLAnnotationAngleNode" ) )
-    {
-        vtkMRMLAnnotationAngleNode* mynode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
-        if (!m_angleCopy)
-        {
-            m_angleCopy = vtkSmartPointer<vtkMRMLAnnotationAngleNode>::New();
-        }
-        m_angleCopy->Copy(mynode);
-        SaveLinesNode(mynode);
-    }
-    else if (node->IsA( "vtkMRMLAnnotationRulerNode" ))
+    if (node->IsA( "vtkMRMLAnnotationRulerNode" ))
     {
         vtkMRMLAnnotationRulerNode* mynode = vtkMRMLAnnotationRulerNode::SafeDownCast(node);
         if (!m_rulerCopy)
@@ -139,13 +127,7 @@ void UndoAnnotationNode(vtkMRMLAnnotationNode* node)
 //-----------------------------------------------------------------------------
 void Undo(vtkMRMLNode* node)
 {
-    if( node->IsA( "vtkMRMLAnnotationAngleNode" ) )
-    {
-        vtkMRMLAnnotationAngleNode* anode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
-        anode->Copy(m_angleCopy);
-        UndoLinesNode(anode);
-    }
-    else if (node->IsA( "vtkMRMLAnnotationRulerNode" ))
+    if (node->IsA( "vtkMRMLAnnotationRulerNode" ))
     {
         vtkMRMLAnnotationRulerNode* rnode = vtkMRMLAnnotationRulerNode::SafeDownCast(node);
         rnode->Copy(m_rulerCopy);

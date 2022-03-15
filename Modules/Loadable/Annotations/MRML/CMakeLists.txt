@@ -34,10 +34,6 @@ set(${KIT}_SRCS
   vtkMRMLAnnotationLinesStorageNode.h
   vtkMRMLAnnotationLineDisplayNode.cxx
   vtkMRMLAnnotationLineDisplayNode.h
-  vtkMRMLAnnotationAngleNode.cxx
-  vtkMRMLAnnotationAngleNode.h
-  vtkMRMLAnnotationAngleStorageNode.cxx
-  vtkMRMLAnnotationAngleStorageNode.h
   vtkMRMLAnnotationRulerNode.cxx
   vtkMRMLAnnotationRulerNode.h
   vtkMRMLAnnotationRulerStorageNode.cxx
