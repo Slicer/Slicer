@@ -32,7 +32,6 @@ set(KIT_TEST_SRCS
   vtkMRMLAnnotationROINodeTest1.cxx
   vtkMRMLAnnotationDisplayableManagerTest1.cxx
   vtkMRMLAnnotationDisplayableManagerTest2.cxx
-  #TestAnnotationWidgetsStandalone.cxx
   #vtkMRMLAnnotationRulerDisplayableManagerTest1.cxx
   vtkSlicerAnnotationModuleLogicTest1.cxx
   vtkSlicerAnnotationModuleLogicImportSceneTest.cxx

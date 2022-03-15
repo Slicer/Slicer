@@ -54,8 +54,6 @@ set(${KIT}_SRCS
   vtkMRMLAnnotationROINode.h
   vtkMRMLAnnotationSplineNode.cxx
   vtkMRMLAnnotationSplineNode.h
-  vtkMRMLAnnotationBidimensionalNode.cxx
-  vtkMRMLAnnotationBidimensionalNode.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
