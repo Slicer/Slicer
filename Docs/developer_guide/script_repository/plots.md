@@ -62,6 +62,12 @@ plotView = slicer.app.layoutManager().plotWidget(0).plotView()
 plotView.saveAsSVG("c:/tmp/test.svg")
 ```
 
+### Create a plot view widget, and use a class to manage its associated nodes
+
+This example shows how to create a plot view widget without the associated plot chart node. The plot _chart_ widget is meant to fit into a Slicer layout (it has a colored bar with a controller), while the plot _view_ widget is just the part with the actual plot. This example also sets up a class to automate management of the various MRML nodes associated to a plot view, making it easy to update the plotted data from code.
+
+https://gist.github.com/ebrahimebrahim/8b899552da072fdd22727cfbf0e3a804
+
 ### Using matplotlib
 
 Matplotlib may be used from within Slicer, but the default Tk backend locks up and crashes Slicer. However, Matplotlib may still be used through other backends. More details can be found on the [MatPlotLib](http://matplotlib.sourceforge.net/) pages.
