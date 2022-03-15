@@ -176,106 +176,126 @@ Example:
 
 ## Library Dependencies
 
-# MRML classes should only depend on vtk and itk (not Slicer Logic or Qt)
-# Logic classes depend on MRML to store state
-# Logic classes should encapsulate vtk and itk pipelines to accomplish specific slicer tasks (such as resampling volumes for display)
-# GUI classes can depend on MRML and Logic and Qt
+- MRML classes should only depend on vtk and itk (not Slicer Logic or Qt)
+- Logic classes depend on MRML to store state
+- Logic classes should encapsulate vtk and itk pipelines to accomplish specific slicer tasks (such as resampling volumes for display)
+- GUI classes can depend on MRML and Logic and Qt
 
 ## Development Practices
 
-# While developing code, enable VTK_DEBUG_LEAKS (ON by default) in your vtk build and be sure to clean up any leaks that arise from your contributions.
+While developing code, enable VTK_DEBUG_LEAKS (ON by default) in your vtk build and be sure to clean up any leaks that arise from your contributions.
 
 ## Coordinate Systems
 
-# World space for 3D Views is in RAS (Right Anterior Superior) space. See [[Coordinate systems]].
-# All units are expressed in Millimeters (mm)
+- World space for 3D Views is in RAS (Right Anterior Superior) space. See [[Coordinate systems]].
+- All units are expressed in Millimeters (mm)
 
 ## String encoding: UTF-8 everywhere
 
-Slicer follows uses [https://utf8everywhere.org/ UTF-8 everywhere]: all strings in std::string, char[] arrays, files, etc. are in UTF-8 (except in rare exceptions where this is very clearly indicated). We don't use code pages or any other unicode encoding. If this leads to incorrect behavior anywhere then the underlying issue must be fixed (e.g., if a VTK function does not work correctly with UTF-8 encoded string input then a fix has to be submitted to VTK).
+Slicer uses [UTF-8 everywhere](https://utf8everywhere.org/): all strings in `std::string`, `char[]` arrays, files, etc. are in UTF-8 (except in rare exceptions where this is very clearly indicated). We don't use code pages or any other unicode encoding. If this leads to incorrect behavior anywhere then the underlying issue must be fixed (e.g., if a VTK function does not work correctly with UTF-8 encoded string input then a fix has to be submitted to VTK).
 
 On Windows, process code page of all Slicer executables (main application, CLI modules, tests, etc.) are explicitly set to UTF-8 by using "ctk_add_executable_utf8" function instead of plain "add_executable" in CMake. This makes all standard API functions to use UTF-8 encoding, even in third-party libraries. This mechanism requires Windows Version 1903 (May 2019 Update) or later. On Linux and Mac, encoding is already expected to be UTF-8 (it is currently not checked or enforced in any way).
 
 Conversion from std::string to QString:
-  std::string ss = ...
-  QString qs1 = QString::fromUtf8(ss); // this is slightly preferred, as it is very clear and explicit
-  QString qs2 = QString(ss); // same result as fromUtf8, acceptable, as it is a bit simpler and used throughout the code base anyway
+
+```
+std::string ss = ...
+QString qs1 = QString::fromUtf8(ss); // this is slightly preferred, as it is very clear and explicit
+QString qs2 = QString(ss); // same result as fromUtf8, acceptable, as it is a bit simpler and used throughout the code base anyway
+```
 
 Conversion from QString to std::string:
-  QString qs = ...
-  std::string ss  = QString::toUtf8(qs);
 
-Printing to console: in general, VTK, Qt, or ITK logging macros are preferred but if for some reason text must be printed on console then use qPrintable macro. This macro converts the string 
-  std::cerr << "Failed to create file " << qPrintable(filePath) << std::endl;
+```
+QString qs = ...
+std::string ss  = QString::toUtf8(qs);
+```
 
-Qt logging macros (qDebug, qWarning, QFatal): these macros expect UTF-8 encoded strings, therefore do not use qPrintable macro
+Printing to console: in general, VTK, Qt, or ITK logging macros are preferred but if for some reason text must be printed on console then use qPrintable macro. This macro converts the string
+
+```
+std::cerr << "Failed to create file " << qPrintable(filePath) << std::endl;
+```
+
+Qt logging macros (qDebug, qWarning, QFatal): these macros expect UTF-8 encoded strings, therefore do not use qPrintable macro.
 
 File management: All filenames have to be passed to file functions (such as fopen) must be UTF-8 encoded. All text file content is expected to be UTF-8 encoded, except very rare cases when a different encoding is explicitly specified in the file (for example in incoming DICOM files may use different encoding).
 
 ## Error and warning messages
-{| width="100%"
-| valign="top"|
+
 The ITK, VTK, Qt, std::cout, std::cerr .. all appear in the error log and can easily be filtered according to their type (debug/warning/error). 
 
-* **Errors**: Error should be used to signal something that should not happen. They usually mean that the execution of the current function/code should be stopped.
-* **Warnings**: Warning should be used to signal potentially dangerous behavior. Also consider using these in deprecated methods to warn your fellow developers.
-* **Debugs**: For general debug and developer aimed information, one can use the debug messages.
+- **Errors**: Error should be used to signal something that should not happen. They usually mean that the execution of the current function/code should be stopped.
+- **Warnings**: Warning should be used to signal potentially dangerous behavior. Also consider using these in deprecated methods to warn your fellow developers.
+- **Debugs**: For general debug and developer aimed information, one can use the debug messages.
 
-| align="right"|
-|[[Image: Slicer4ErrorLog.jpg|thumb|200px| Error log in Slicer 4]]
-|}
+### In Qt-based classes
 
-* In Qt-based classes:
-** For error messages, use [http://qt-project.org/doc/qt-4.8/qtglobal.html#qCritical qCritical()]. 
-  if (somethingWrongHappened)
-    {
-    qCritical() << "I encountered an error";
-    return;
-    }
+For error messages, use [qCritical()](http://qt-project.org/doc/qt-4.8/qtglobal.html#qCritical):
 
-:* For warnings, use [http://qt-project.org/doc/qt-4.8/qtglobal.html#qWarning qWarning()]. 
-  qWarning() << "Be careful here, this is dangerous";
+```
+if (somethingWrongHappened)
+  {
+  qCritical() << "I encountered an error";
+  return;
+  }
+```
 
-:* For debug, use [http://qt-project.org/doc/qt-4.8/qtglobal.html#qDebug qDebug()]:
-  qDebug() << "This variable has the value: "<< value;
+For warnings, use [qWarning()](http://qt-project.org/doc/qt-4.8/qtglobal.html#qWarning):
 
-* In VTK-based classes:
-** For error messages, use [http://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html vtkErrorMacro()]. 
-  if (somethingWrongHappened)
-    {
-    vtkErrorMacro("I encountered an error");
-    return;
-    }
+```
+qWarning() << "Be careful here, this is dangerous";
+```
 
-:* For warnings, use [http://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html vtkWarningMacro()]. 
-  vtkWarningMacro("Be careful here, this is dangerous");
+For debug, use [qDebug()](http://qt-project.org/doc/qt-4.8/qtglobal.html#qDebug):
 
-:* For debug, use [http://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html vtkDebugMacro()]:
-  vtkDebugMacro("This variable has the value: "<< value);
+```
+qDebug() << "This variable has the value: "<< value;
+```
 
-## Misc.
-# Ideally, no more than 80 characters per line.  Keep line length under 120 characters.
+### In VTK-based classes
+
+- For error messages, use [vtkErrorMacro()](http://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html):
+
+```
+if (somethingWrongHappened)
+  {
+  vtkErrorMacro("I encountered an error");
+  return;
+  }
+```
+
+For warnings, use [vtkWarningMacro()](http://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html):
+
+```
+vtkWarningMacro("Be careful here, this is dangerous");
+```
+
+For debug, use [vtkDebugMacro()](http://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html):
+
+```
+vtkDebugMacro("This variable has the value: "<< value);
+```
 
 ## Commits
 
-### Summary 
-
-* Separate the subject from body with a blank line
-* Limit the subject line to 50 characters
-* Capitalize the subject line
-* Do not end the subject line with a period
-* Use the imperative mood in the subject line
-* Wrap the body at 72 characters
-* Use the [[#Message_content|body to explain]] what and why vs. how
-** If there was important/useful/essential conversation or information, copy or include a reference
-* [[#Commit_message_prefix|Prefix]] the commit message title with "BUG:", "COMP:", "DOC:", "ENH:", "STYLE:". Note the ':' (colon) character.
-* When possible, one keyword to scope the change in the subject (i.e. "STYLE: README: ...", "BUG: vtkMRMLSliceLogic: ...")
+- Separate the subject from body with a blank line
+- Limit the subject line to 50 characters
+- Capitalize the subject line
+- Do not end the subject line with a period
+- Use the imperative mood in the subject line
+- Wrap the body at 72 characters
+- Use the body to explain what and why vs. how. If there was important/useful/essential conversation or information, copy or include a reference
+- Prefix the commit message title with "BUG:", "COMP:", "DOC:", "ENH:", "STYLE:". Note the ':' (colon) character.
+- When possible, one keyword to scope the change in the subject (i.e. "STYLE: README: ...", "BUG: vtkMRMLSliceLogic: ...")
 
 ### Commit message prefix
 
 Subversion Commits to Slicer require commit type in the comment.
 
 Valid commit types are:
+
+```
    BUG:   - a change made to fix a runtime issue
             (crash, segmentation fault, exception, or incorrect result,
    COMP:  - a fix for a compilation issue, error or warning,
@@ -284,92 +304,92 @@ Valid commit types are:
    PERF:  - a performance improvement,
    STYLE: - a change that does not impact the logic or execution of the code.
             (improve coding style, comments).
+```
+
 Note that the ':'(colon) directly follows the commit tag. For example, it is: "STYLE:" not "STYLE :"
 
-The Subversion command to commit the change is:
-  svn commit -m "BUG: fixed core dump when passed float data" filename1[, filename2, ...]
-
-By using the <code>-m</code> command line option, it's not possible to submit a message having multiple line.
-Submitting a mutli-line message can be achieved using the <code>-f</code> option:
-  svn commit -f /path/to/message filename1[, filename2, ...]
-
-It's also possible to set the environment variable [http://www.google.com/search?q=SVN_EDITOR|<code>SVN_EDITOR</code>]
-
 ### Message content
-# A good commit message title (first line) should **explain what the commit does for the user, not ''how'' it is done**. ''How'' can be explained in the body of the commit message (if looking at the code of the commit is not self explanatory enough).
-#: Examples:
-#:* Bad: <code>BUG: Check pointer validity before dereferencing</code> -> ''implementation detail'', ''self-explanatory'' (by looking at the code)
-#:* Good: <code>BUG: Fix crash in Module X when clicking Apply button</code>
-#:* Bad: <code>ENH: More work in qSlicerXModuleWidget</code> -> <code>more work</code> is ''too vague'', <code>qSlicerXModuleWidget</code> is too ''low level'' 
-#:* Good: <code>ENH: Add float image outputs in module X</code>
-#:* Bad: <code>COMP: Typo in cmake variable</code> -> ''implementation detail'', ''self-explanatory''
-#:* Good: <code>COMP: Fix compilation error with Numpy on Visual Studio</code>
-# If the commit is related to a [http://na-mic.org/Mantis/view_all_bug_page.php mantis issue] (bug or feature request), you can mention it in the commit message body by preceding the issue number with a **#**(pound) character:
- BUG: Fix crash in Volume Rendering module when switching view layout
- 
- vtkSetAndObserveMRMLNodeEventsMacro can't be used for observing all types of vtkObjects,
- only vtkMRMLNode is expected by vtkMRMLAbstractLogic::OnMRMLNodeModified(...) 
- Closes #1641
-Where <code>1641</code> refers to the [http://www.na-mic.org/Bug/view.php?id=1641 issue number] in mantis.
 
-Notice the empty 2nd line.
+A good commit message title (first line) should **explain what the commit does for the user, not ''how'' it is done**. *How* can be explained in the body of the commit message (if looking at the code of the commit is not self explanatory enough).
+
+Examples:
+- Bad: `BUG: Check pointer validity before dereferencing` -> *implementation detail*, *self-explanatory* (by looking at the code)
+- Good: `BUG: Fix crash in Module X when clicking Apply button`
+- Bad: `ENH: More work in qSlicerXModuleWidget` -> `more work` is *too vague*, `qSlicerXModuleWidget` is too *low level*
+- Good: `ENH: Add float image outputs in module X`
+- Bad: `COMP: Typo in cmake variable` -> *implementation detail*, *self-explanatory*
+- Good: `COMP: Fix compilation error with Numpy on Visual Studio`
+
+If the commit is related to an [issue](http://issues.slicer.org/) (bug or feature request), you can mention it at the end of the message body by preceding the issue number with a `#` (pound) character:
+
+```
+BUG: Fix crash in Volume Rendering module when switching view layout
+
+vtkSetAndObserveMRMLNodeEventsMacro can't be used for observing all types of vtkObjects,
+only vtkMRMLNode is expected by vtkMRMLAbstractLogic::OnMRMLNodeModified(...) 
+
+see #1641
+```
+
+Where `1641` refers to the [issue number](https://github.com/Slicer/Slicer/issues/1641) in the issue tracker. Use `see` before the issue number to refer to an issue. If the commit fixes an issue and no further testing is needed then `fixed #1641` can be added to the body, which automatically closes the issue when merged.
 
 ### Importing changes from external project/repository
 
-When you update the git tag or svn revision of any external project, explain in the commit message what the update does instead of just mentioning that an update in made.
+When you update the git tag of any external project, explain in the commit message what the update does instead of just mentioning that an update in made.
 
-This will avoid having a Slicer commit history made of unintelligible messages:
- r19180 - ENH: Update git tag
- r19181 - BUG: Update svn revision
- r19182 - ENH: revision updated
- ...
+This will avoid having a Slicer commit history made of uninformative messages such as:
+
+```
+r19180 - ENH: Update git tag
+r19181 - BUG: Update svn revision
+r19182 - ENH: revision updated
+```
 
 Ideally it should be the same message than the commit(s) in the external repository.
 
-Read [[Documentation/{{documentation/version}}/Developers/Versioning#Project_fork]] for an exhaustive list of recommendations.
+Read [Project forks page](https://www.slicer.org/wiki/Documentation/Nightly/Developers/ProjectForks) for an exhaustive list of recommendations.
 
 Example:
 
-{{pre2|<nowiki>
+```
 COMP: Update MultiVolumeExplorer to fix unused-local-typedefs warnings
 
 $ git shortlog 17a9095..d68663f --no-merges
 Jean-Christophe Fillion-Robin (1):
       COMP: Fix unused-local-typedefs warnings
-</nowiki>}}
+```
 
-See [http://viewvc.slicer.org/viewvc.cgi/Slicer4?view=revision&revision=23377 r23377]
+See [r23377](https://github.com/Slicer/Slicer/commit/3e04040d2e960ec4cd294cb8404169f16cfe0656).
 
 ### Resources
 
-* Read more on [http://chris.beams.io/posts/git-commit/ How to Write a Git Commit Message]
-* Discussion section of [http://git-scm.com/docs/git-commit git-commit(1)]
-
-<!-- http://www.na-mic.org/Wiki/index.php/Engineering:Subversion_Repository -->
+- Read more on [http://chris.beams.io/posts/git-commit/ How to Write a Git Commit Message]
+- Discussion section of [http://git-scm.com/docs/git-commit git-commit(1)]
 
 ## UI Design Guidelines
-{{:Documentation/{{documentation/version}}/Developers/Style Guide/UI}}
+
+See [UI Style Guide](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Style_Guide/UI).
 
 ## Logging
 
 The following log levels are used in Slicer:
-* Error: detected errors, conditions that should never occur
-* Warning: potential errors, possible computation inaccuracies
-* Info: important events, application state changes (helps to determine what the steps lead to a certain error or warning); one user action should not generate more than 1-2 info level messages
-* Debug: any information that may be useful for debugging and troubleshooting
+- Error: detected errors, conditions that should never occur
+- Warning: potential errors, possible computation inaccuracies
+- Info: important events, application state changes (helps to determine what the steps lead to a certain error or warning); one user action should not generate more than 1-2 info level messages
+- Debug: any information that may be useful for debugging and troubleshooting
 
 In VTK classes:
-* vtkErrorMacro("vtkMRMLClipModelsNode:: Invalid Clip Type");
-* vtkWarningMacro("Model " << modelNode->GetName() << "'s display node is null\n");
-* vtkDebugMacro("CreateWidget: found a glyph type already defined for this node: " << iter->second);
+- `vtkErrorMacro("vtkMRMLClipModelsNode:: Invalid Clip Type");`
+- `vtkWarningMacro("Model " << modelNode->GetName() << "'s display node is null\n");`
+- `vtkDebugMacro("CreateWidget: found a glyph type already defined for this node: " << iter->second);`
 
 In QT classes:
-* qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on file" << info.filePath();
-* qWarning() << "qSlicerIOManager::openScreenshotDialog: Unable to get Annotations module (annotations), using the CTK screen shot dialog.";
-* qDebug() << "qMRMLSceneFactoryWidget::deleteNode(" <<className <<") no node";
+- `qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on file" << info.filePath();`
+- `qWarning() << "qSlicerIOManager::openScreenshotDialog: Unable to get Annotations module (annotations), using the CTK screen shot dialog.";`
+- `qDebug() << "qMRMLSceneFactoryWidget::deleteNode(" <<className <<") no node";`
 
 In Python:
-* logging.error("This is an error message. It is printed on the console (to standard error) and to the application log.")
-* logging.warning("This is a warning message. It is printed on the console (to standard error) and to the application log.")
-* logging.info("This is an information message. It is printed on the console (to standard output) and to the application log.")
-* logging.debug("This is a debug message. It is only recorded in the application log but not displayed in the console. File name and line number is added to the log record.")
+- `logging.error("This is an error message. It is printed on the console (to standard error) and to the application log.")`
+- `logging.warning("This is a warning message. It is printed on the console (to standard error) and to the application log.")`
+- `logging.info("This is an information message. It is printed on the console (to standard output) and to the application log.")`
+- `logging.debug("This is a debug message. It is only recorded in the application log but not displayed in the console. File name and line number is added to the log record.")`
