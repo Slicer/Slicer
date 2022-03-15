@@ -50,8 +50,6 @@ set(${KIT}_SRCS
   vtkMRMLAnnotationTextNode.h
   vtkMRMLAnnotationROINode.cxx
   vtkMRMLAnnotationROINode.h
-  vtkMRMLAnnotationSplineNode.cxx
-  vtkMRMLAnnotationSplineNode.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

@@ -14,7 +14,6 @@
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationTextNode.h"
 #include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLAnnotationSplineNode.h"
 #include "vtkMRMLAnnotationSnapshotNode.h"
 #include "vtkMRMLAnnotationSnapshotStorageNode.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"
@@ -372,7 +371,6 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
       selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
       selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png", "ROI");
       // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png", "Angle");
-      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationSplineNode", ":/Icons/AnnotationSpline.png", "Spline");
 
       // stop batch add
       this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
