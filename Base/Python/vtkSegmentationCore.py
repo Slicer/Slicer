@@ -1,4 +1,4 @@
 """ This module loads all the classes from the vtkSegmentationCore library into its
 namespace."""
 
-from vtkSegmentationCorePython import *  # noqa: F401
+from vtkSegmentationCorePython import *

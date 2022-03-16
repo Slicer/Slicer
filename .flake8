@@ -15,6 +15,18 @@ format = pylint
 
 exclude = .git,__pycache__
 
+per-file-ignores = \
+  # Module imported but unused
+  Base/Python/mrml.py:F401 \
+  Base/Python/slicer/logic.py:F401 \
+  Base/Python/vtkAddon.py:F401 \
+  Base/Python/vtkITK.py:F401 \
+  Base/Python/vtkSegmentationCore.py:F401 \
+  Base/Python/vtkTeem.py:F401 \
+  Modules/*/__init__.py:F401 \
+  Extensions/*/__init__.py:F401 \
+  Utilities/*/__init__.py:F401
+
 ignore = \
   # Do not use bare `except:`, it also catches unexpected events like memory errors, interrupts, system exit, and so on.
   B001, \

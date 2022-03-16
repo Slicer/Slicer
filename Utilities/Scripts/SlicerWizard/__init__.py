@@ -37,10 +37,10 @@ often performed when developing code and extensions for Slicer.
   Custom formatter for |CLI| arguments.
 """
 
-from .__version__ import __version__, __version_info__  # noqa: F401
+from .__version__ import __version__, __version_info__
 
-from .ExtensionDescription import ExtensionDescription  # noqa: F401
-from .ExtensionProject import ExtensionProject  # noqa: F401
-from .ExtensionWizard import ExtensionWizard  # noqa: F401
-from .TemplateManager import TemplateManager  # noqa: F401
-from .WizardHelpFormatter import WizardHelpFormatter  # noqa: F401
+from .ExtensionDescription import ExtensionDescription
+from .ExtensionProject import ExtensionProject
+from .ExtensionWizard import ExtensionWizard
+from .TemplateManager import TemplateManager
+from .WizardHelpFormatter import WizardHelpFormatter

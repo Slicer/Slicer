@@ -1,4 +1,4 @@
 """ This module loads all the classes from the vtkSlicerBaseLogic library into its
 namespace."""
 
-from SlicerBaseLogicPython import *  # noqa: F401
+from SlicerBaseLogicPython import *
