@@ -584,7 +584,7 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
   visibilityArray->Fill(displayNode ? displayNode->GetScaleHandleVisibility() : 1.0);
   this->UpdateHandleVisibility();
 
-  // Corner handles are not visibile in 2D
+  // Corner handles are not visible in 2D
   for (int i = vtkMRMLMarkupsROIDisplayNode::HandleLPICorner; i <= vtkMRMLMarkupsROIDisplayNode::HandleRASCorner; ++i)
     {
     visibilityArray->SetValue(i, false);

@@ -51,7 +51,7 @@ Models can be edited using Surface toolbox or Dynamic modeler module, or by conv
     - **Advanced**
       - **Point Size**: Set the diameter of the model points (if the model is a point cloud or if the representation is "Points".) The size is expressed in screen units. 1.0 by default.
       - **Line Width**: Set the width of the model lines (if the model is a polyline or representation is "Wireframe"). The width is expressed in screen units. 1.0 by default.
-      - **Backface Color Offset**: Control the color of the inside of the model (which is visible when the model is open or the viewpoint is inside the model). The values correspont to hue, saturation, and lightness offset compared to the base color.
+      - **Backface Color Offset**: Control the color of the inside of the model (which is visible when the model is open or the viewpoint is inside the model). The values correspond to hue, saturation, and lightness offset compared to the base color.
     - **Edge Color**: Control the color of the model edges (if Edge Visibility is enabled). Black by default.
     - **Lighting**: Control whether the model representation is impacted by the frontfacing light. If enabled, Ambient, Diffuse and Specular parameters are used to compute the lighting effect. Enabled by default.
     - **Interpolation**: Control the shading interpolation method (Flat, Gouraud, Phong) for the model. Gouraud by default. Gouraud and Phong shading requires surface normals. If surface normals are missing then the model will be displayed with flat shading (faceted appearance). Surface Toolbox module can compute normals for a model.

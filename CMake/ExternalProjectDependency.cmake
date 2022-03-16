@@ -97,7 +97,7 @@ endif()
 # ``EP_GIT_PROTOCOL`` variable.
 #
 # If enabled, the variable ``EP_GIT_PROTOCOL`` is set to ``git``. Otherwise, it is set to ``https``.
-# Since GitHub removed unauthenticated access trough the git protocol
+# Since GitHub removed unauthenticated access through the git protocol
 # (see https://github.blog/2021-09-01-improving-git-protocol-security-github/ ),
 # and most projects are hosted on GitHub the option is disabled (https is used) by default.
 #

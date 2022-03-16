@@ -877,7 +877,7 @@ bool qSlicerCoreIOManager::exportNodes(
       success = false;
       continue;
       }
-    // We will do a shallow copy, unless tranform hardening was requested. Transform hardening
+    // We will do a shallow copy, unless transform hardening was requested. Transform hardening
     // can sometimes affect the underlying data of the transformable node, so it's worth doing
     // a deep copy to be certain that the original node is not modified during export.
     temporaryStorableNode->CopyContent(storableNode, /*deepCopy=*/hardenTransforms);
@@ -890,7 +890,7 @@ bool qSlicerCoreIOManager::exportNodes(
 
       if (!temporaryNodeAsTransformable)
         {
-        qCritical() << Q_FUNC_INFO << " failed: Node is tranformable but its copy is not... this should never happen.";
+        qCritical() << Q_FUNC_INFO << " failed: Node is transformable but its copy is not... this should never happen.";
         return false;
         }
 

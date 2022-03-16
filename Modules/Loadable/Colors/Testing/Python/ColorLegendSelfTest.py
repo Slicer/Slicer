@@ -137,7 +137,7 @@ class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
     colorLegend = slicer.modules.colors.logic().GetColorLegendDisplayNode(ctVolumeNode)
     self.assertIsNotNone(colorLegend)
 
-    self.delayDisplay('Exercise color legend udpates via MRML', self.delayMs)
+    self.delayDisplay('Exercise color legend updates via MRML', self.delayMs)
     # signal to displayable manager to show a created color legend
     colorLegend.SetMaxNumberOfColors(256)
     colorLegend.SetVisibility(True)

@@ -374,7 +374,7 @@ public:
 
   //@{
   /// Generate a unique color for a markup node.
-  /// In the current implementaiton, the color is not globally unique, but colors are generated
+  /// In the current implementation, the color is not globally unique, but colors are generated
   /// by iterating through the items in "MediumChart" color table.
   vtkVector3d GenerateUniqueColor();
   void GenerateUniqueColor(double color[3]);

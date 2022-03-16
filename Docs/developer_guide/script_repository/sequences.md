@@ -91,7 +91,7 @@ slicer.util.setSliceViewerLayers(background=mergedProxyNode)
 
 ### Plot segments average intensity over time
 
-This code snippet can be used to plot average intensity in speficic regions (designated using segments in a segmentation node) of a volume sequence over time.
+This code snippet can be used to plot average intensity in specific regions (designated using segments in a segmentation node) of a volume sequence over time.
 
 ```python
 # inputs

@@ -2533,7 +2533,7 @@ void vtkSlicerAnnotationModuleLogic::JumpSlicesToAnnotationCoordinate(const char
       return this->m_StringHolder.c_str();
       }
 
-    // get the corrsponding hierarchy
+    // get the corresponding hierarchy
     vtkMRMLAnnotationHierarchyNode* hNode =
         vtkMRMLAnnotationHierarchyNode::SafeDownCast(
             vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(

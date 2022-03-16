@@ -39,7 +39,7 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
 
 #### C++
 
-- Use the old-style VTK indentation (braces are in new line, indentet by two spaces), until the entire Slicer code base will be updated to use current VTK intentation style.
+- Use the old-style VTK indentation (braces are in new line, indented by two spaces), until the entire Slicer code base will be updated to use current VTK indentation style.
 - Use VTK naming conventions:
   - Local variable should start with a lower case.
     Use:
@@ -86,7 +86,7 @@ Useful information about some coding style decisions: <https://google.github.io/
   - `RASToSlice` not `RasToSlice`
   - `vtkMRML` not `vtkMrml`
   - `vtkSlicer` not `vTKSlicer`
-- Words should be spelled out and not abreviated
+- Words should be spelled out and not abbreviated
   - `GetWindow` not `GetWin`
 - File names must follow the [http://en.wikipedia.org/wiki/CamelCase Camel case] convention
   - `TestMyFeature.cxx` not `Test-My_Feature.cxx`

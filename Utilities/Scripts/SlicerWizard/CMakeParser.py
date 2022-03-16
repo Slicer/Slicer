@@ -204,11 +204,11 @@ class CMakeScript:
 
     .. code-block:: python
 
-      with open('CMakeLists.txt') as fi:
-        script = CMakeParser.CMakeScript(f.read())
+      with open('CMakeLists.txt') as input_file:
+        script = CMakeParser.CMakeScript(input_file.read())
 
-      with open('CMakeLists.txt.new', 'w') as fo:
-        fo.write(str(script))
+      with open('CMakeLists.txt.new', 'w') as output_file:
+        output_file.write(str(script))
     """
 
     self.tokens = []

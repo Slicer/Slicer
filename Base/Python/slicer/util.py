@@ -1293,7 +1293,7 @@ def setApplicationLogoVisible(visible=True, scaleFactor=None, icon=None):
 
   :param visible: if True then the logo is displayed, otherwise the area is left empty.
   :param scaleFactor: specifies the displayed size of the icon. 1.0 means original size, larger value means larger displayed size.
-  :param icon: a qt.QIcon oject specifying what icon to display as application logo.
+  :param icon: a qt.QIcon object specifying what icon to display as application logo.
 
   If there is no main window then the function has no effect.
   """
@@ -1458,7 +1458,7 @@ class NodeModify:
 class RenderBlocker:
   """
   Context manager to conveniently pause and resume view rendering. This makes sure that we are not displaying incomplete states to the user.
-  Pausing the views can be useful to improve performance and ensure consistency by skiping all rendering calls until the current code block has completed.
+  Pausing the views can be useful to improve performance and ensure consistency by skipping all rendering calls until the current code block has completed.
 
   Code blocks such as::
 
@@ -3000,7 +3000,7 @@ def extractAlgoAndDigest(checksum):
   """Given a checksum string formatted as ``<algo>:<digest>`` returns the tuple ``(algo, digest)``.
 
   ``<algo>`` is expected to be `SHA256`, `SHA512`, or `MD5`.
-  ``<digest>`` is expected to be the full length hexdecimal digest.
+  ``<digest>`` is expected to be the full length hexadecimal digest.
 
   :raises ValueError: if checksum is incorrectly formatted.
   """

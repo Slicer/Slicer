@@ -672,8 +672,8 @@ int isLoadableModuleTest()
     tmp.mkdir(temporaryDirName);
     tmp.cd(temporaryDirName);
 
-    QString path1 = QLatin1String("fo/foo/bar");
-    QString path2 = QLatin1String("fo/foo/bie");
+    QString path1 = QLatin1String("any/foo/bar");
+    QString path2 = QLatin1String("any/foo/bie");
 
     createFile(__LINE__, tmp, path1, "sol.txt");
     createFile(__LINE__, tmp, path1, "la.txt");

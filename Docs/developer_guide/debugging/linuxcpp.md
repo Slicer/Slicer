@@ -285,7 +285,7 @@ And stored, in a compressed format (.lz4), in
 ```
 
 It can happen that even with ulimit -c unlimited, the coredump files are still truncated.
-You can check latest coredumps, and the correspoding PID with:
+You can check latest coredumps, and the corresponding PID with:
 
 ```bash
 coredumpctl list

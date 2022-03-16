@@ -204,7 +204,7 @@ bool NodeTypeWidgetSet::updateOptionsWidget()
       }
 
     // We can only use options that are also widgets. If the following cast succeeds, we pass ownership
-    // of the options widget to the QStackedWidget, and if it fails we immediatly delete and give up.
+    // of the options widget to the QStackedWidget, and if it fails we immediately delete and give up.
     qSlicerFileWriterOptionsWidget* newOptionsWidget = dynamic_cast<qSlicerFileWriterOptionsWidget*>(options);
     if (!newOptionsWidget)
       {
@@ -508,7 +508,7 @@ bool qSlicerExportNodeDialogPrivate::setup(
   this->updateHardenTransformCheckBox();
   this->updatePreserveHierarchyCheckBox();
 
-  // Intitialize directory input widget
+  // Initialize directory input widget
   this->DirectoryPathLineEdit->setCurrentPath(
     this->LastUsedDirectory.isEmpty() ? this->MRMLScene->GetRootDirectory() : this->LastUsedDirectory
   );
@@ -549,7 +549,7 @@ void qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged(int sta
   // When the list of nodes to export changes, we need to reasses whether there is a node with transform among them
   this->updateHardenTransformCheckBox();
 
-  // Repopulate widgets based on the now possibly different node types occuring among the nodes slated for export
+  // Repopulate widgets based on the now possibly different node types occurring among the nodes slated for export
   this->populateNodeTypeWidgetSets();
 }
 
@@ -940,7 +940,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     QFileInfo fileInfo(directory, filename);
 
     // This can happen if there is one node to export and the user insists on leaving the filename box empty (user error)
-    // It can also happen if defaultFilename for some reason reutrns empty (program error)
+    // It can also happen if defaultFilename for some reason returns empty (program error)
     if (fileInfo.fileName().isEmpty())
       {
       if (this->FilenameLineEdit->isEnabled()) // user error
@@ -1311,7 +1311,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
     qWarning() << Q_FUNC_INFO << " warning: Did not receive a nodeIdToSubjectHierarchyPath mapping; \"Preserve hierarchy\" will not work";
     }
 
-  // It is again possible for there to be "nothing to export," if there are errors retreiving storable nodes above.
+  // It is again possible for there to be "nothing to export," if there are errors retrieving storable nodes above.
   if (nodesNonrecursive.isEmpty() && nodesRecursive.isEmpty())
     {
     qCritical() << Q_FUNC_INFO << "failed: There is nothing left to export.";
