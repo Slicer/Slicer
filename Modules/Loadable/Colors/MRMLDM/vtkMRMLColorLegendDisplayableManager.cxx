@@ -75,7 +75,7 @@ public:
   // Returns true if the actor has changed.
   bool UpdateActor(vtkMRMLColorLegendDisplayNode* dispNode);
 
-  // Show/hide the actor by adding to the renderr and enabling visibility; or removing from the renderer.
+  // Show/hide the actor by adding to the renderer and enabling visibility; or removing from the renderer.
   // Returns tru if visibility changed.
   bool ShowActor(vtkSlicerScalarBarActor* actor, bool show);
 

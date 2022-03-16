@@ -633,7 +633,7 @@ void vtkTeemNRRDReader::ExecuteInformation()
       {
       switch (this->nrrd->space)
         {
-        // WARNING: this->nrrd->measurementFrame[i][0:2] are the rows fo the measurementFrame matrix
+        // WARNING: this->nrrd->measurementFrame[i][0:2] are the rows of the measurementFrame matrix
         // on read, convert non-RAS coords into RAS coords, when we can
         case nrrdSpaceRightAnteriorSuperior:
           // no change needed

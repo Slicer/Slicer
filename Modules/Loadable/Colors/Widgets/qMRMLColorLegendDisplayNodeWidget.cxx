@@ -252,7 +252,7 @@ void qMRMLColorLegendDisplayNodeWidget::updateWidgetFromMRML()
   d->MaxNumberOfColorsSpinBox->setValue(d->ColorLegendDisplayNode->GetMaxNumberOfColors());
   d->NumberOfLabelsSpinBox->setValue(d->ColorLegendDisplayNode->GetNumberOfLabels());
 
-  // Labels naming and arrangment
+  // Labels naming and arrangement
   QSignalBlocker blocker14(d->UseColorNameAsLabelTextRadioButton);
   QSignalBlocker blocker15(d->UseScalarValueAsLabelTextRadioButton);
   if (d->ColorLegendDisplayNode->GetUseColorNamesForLabels())

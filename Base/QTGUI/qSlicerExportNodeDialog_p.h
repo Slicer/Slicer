@@ -36,7 +36,7 @@ class NodeTypeWidgetSet : public QObject
 {
   Q_OBJECT
 public:
-  // Node types will be represnted by class name QStrings.
+  // Node types will be represented by class name QStrings.
   using NodeType = QString;
 
   // Create a set of widgets that are node-type-specific. They will be parented to the given parent, which is expected
@@ -182,7 +182,7 @@ protected:
 
   // Update the tabbing order to a top-to-bottom order, which can get messed up as we insert and remove widgets.
   // It would normally be better to fix tabbing order in the .ui file, but in this case rows of the layout are
-  // dyanmically added and removed, and so we set the tabbing order in code instead.
+  // dynamically added and removed, and so we set the tabbing order in code instead.
   void adjustTabbingOrder();
 
   // Return the recommended filename based on current filename and the

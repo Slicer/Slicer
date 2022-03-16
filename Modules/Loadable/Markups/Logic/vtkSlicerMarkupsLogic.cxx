@@ -326,13 +326,13 @@ void vtkSlicerMarkupsLogic::UpdatePlaceNodeClassNamesInSelectionNode()
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("vtkSlicerMarkupsLogic::UpdatePlaceNodeClassNamesInSelectionNode faile: invalid scene");
+    vtkErrorMacro("vtkSlicerMarkupsLogic::UpdatePlaceNodeClassNamesInSelectionNode failed: invalid scene");
     return;
     }
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID().c_str()));
   if (!selectionNode)
     {
-    vtkErrorMacro("vtkSlicerMarkupsLogic::UpdatePlaceNodeClassNamesInSelectionNode faile: invalid selection node");
+    vtkErrorMacro("vtkSlicerMarkupsLogic::UpdatePlaceNodeClassNamesInSelectionNode failed: invalid selection node");
     return;
     }
 

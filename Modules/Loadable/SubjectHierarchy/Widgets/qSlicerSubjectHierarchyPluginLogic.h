@@ -86,7 +86,7 @@ public:
   /// \return List of object names of all registered view menu actions
   QStringList registeredViewContextMenuActionNames();
 
-  /// Set list of view conext menu action names that are allowed to be displayed.
+  /// Set list of view context menu action names that are allowed to be displayed.
   /// Allow-list can be further restricted for a specific node by using setAllowedViewContextMenuActionNamesForItem method.
   /// \param actionObjectNames List of view context menu actions to consider for displaying.
   ///        Only actions that are chosen to be visible by the owner plugin and listed in
@@ -109,7 +109,7 @@ public:
 
   /// Create menu from list of actions.
   /// Uses "section" property to determine position of the action in the menu:
-  /// each integer section value corresponds to a section and fractional part is used for ordering actions within the secion.
+  /// each integer section value corresponds to a section and fractional part is used for ordering actions within the section.
   /// \param menu will be set by inserting the actions. If it is set to nullptr then a string will be returned that contains
   /// name and "section" value of each action.
   /// \param allowedActions specifies object name of actions may be added to the menu. If the list is empty then it is ignored.

@@ -512,7 +512,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     previewNode.SetName(segmentationNode.GetName()+" preview")
     previewNode.RemoveClosedSurfaceRepresentation() # Force the closed surface representation to update
                                                     # TODO: This will no longer be required when we can use the segment editor to set multiple segments
-                                                    # as the closed surfaces will be converted as neccesary by the segmentation logic.
+                                                    # as the closed surfaces will be converted as necessary by the segmentation logic.
 
     mergedImage = slicer.vtkOrientedImageData()
     segmentationNode.GenerateMergedLabelmapForAllSegments(mergedImage,

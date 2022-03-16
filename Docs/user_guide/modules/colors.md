@@ -18,7 +18,7 @@ Two lookup table types are available:
 
 All built-in lookup tables are read-only to ensure consistency when using these colors. To edit a lookup table:
 - Go to Colors module
-- Choose a built-in lookup table that is similar to the desired color mapping. For example, `Labels` can be used as a starting points for a discrete table, `PET-DICOM` can be used for creating an editable continous scale.
+- Choose a built-in lookup table that is similar to the desired color mapping. For example, `Labels` can be used as a starting points for a discrete table, `PET-DICOM` can be used for creating an editable continuous scale.
 - Click the yellow "copy" folder + icon next to the colors selector to create a copy.
 - Specify a name for the new color lookup table and click OK.
 
@@ -96,7 +96,7 @@ For displaying color legend for segment names: [Export the segments to a labelma
   - **Opacity:** allows displaying the text semi-transparently.
   - **Font:** the font used to display the title text. Arial: sans-serif font. Courier: fixed-width font. Times: serif font.
   - **Style:** check these boxes if you wish to adjust the style of the title text font. **Shadow** makes the text visible over both dark and bright background.
-  - **Size:** font size ot the title. Label size is auto-scaled to fit the specified size of the color legend.
+  - **Size:** font size of the title. Label size is auto-scaled to fit the specified size of the color legend.
 
 ## Built-in color lookup tables
 
@@ -117,8 +117,8 @@ For displaying color legend for segment names: [Export the segments to a labelma
   - Green: A green scale of 256 values, useful for layering with Magenta.
   - Blue: A blue scale of 256 values from black to pure blue, useful for layering with Yellow.
   - Yellow: A yellow scale of 256 values, from black to pure yellow, useful for layering with blue (it's complementary, layering yields gray).
-  - Cyan: A cyan ramp of 256 values, from black to cyan, complementary ramp to red, layering yeilds gray.
-  - Magenta: A magenta scale of 256 colors from black to magenta, complementary ramp to green, layering yeilds gray.
+  - Cyan: A cyan ramp of 256 values, from black to cyan, complementary ramp to red, layering yields gray.
+  - Magenta: A magenta scale of 256 colors from black to magenta, complementary ramp to green, layering yields gray.
   - Warm1: A scale from yellow to red, of 256 colors, ramp of warm colors that's complementary to Cool1.
   - Warm2: A scale from green to yellow, 256 colors, ramp of warm colors that's complementary to Cool2.
   - Warm3: A scale from cyan to green, 256 colors, ramp of warm colors that's complementary to Cool3.
@@ -165,7 +165,7 @@ For displaying color legend for segment names: [Export the segments to a labelma
   - ColdToHotRainbow: a shifted rainbow that runs from blue to red, useful when needing to display a volume for which larger values are hotter.
   - HotToColdRainbow: a shifted rainbow that runs from red to blue, useful when needing to display a volume for which larger values are colder.
   - PelvisColor: useful for displaying segmented pelvic MRI volumes.
-  - Slicer3_2010_Brain_Labels: a brain segementation table with 16 labels defined.
+  - Slicer3_2010_Brain_Labels: a brain segmentation table with 16 labels defined.
   - 64Color-Nonsemantic: A color table with no semantic labels, pure color information.
   - MediumChartColors: A Stephen Few palette. Similar to the Dark Bright color but in the medium range of intensity. May be a better choice for bar charts.
   - DarkBrightChartColors: Palette designed by Stephen Few in "Practical Rules for Using Colors in Charts". Similar to the Maureen Stone palette. Stephen Few recommends this palette for highlighting data. This palette is useful when display small points or thin lines. Again, this palette is good for categorical data.

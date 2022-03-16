@@ -838,7 +838,7 @@ void vtkSlicerPlaneWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
         break;
       }
 
-    // If we have crossed over the origin, we need to flip the selected handle accros the Right and/or Anterior axis.
+    // If we have crossed over the origin, we need to flip the selected handle across the Right and/or Anterior axis.
     bool flipLRHandle = bounds_Plane[1] < bounds_Plane[0];
     bool flipPAHandle = bounds_Plane[3] < bounds_Plane[2];
     if (flipLRHandle || flipPAHandle)
@@ -954,7 +954,7 @@ bool vtkSlicerPlaneWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
     return false;
     }
 
-  // We have returned to place mode. Need to delete the uneccesary points
+  // We have returned to place mode. Need to delete the unnecessary points
   if (planeNode->GetPlaneType() == vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal)
     {
     planeNode->UpdateControlPointsFromPlane();

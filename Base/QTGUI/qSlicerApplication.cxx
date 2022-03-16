@@ -177,7 +177,7 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 {
-  // Delete settings dialog. deleteLater would cause mamory leaks on exit.
+  // Delete settings dialog. deleteLater would cause memory leaks on exit.
   this->SettingsDialog->setParent(nullptr);
   delete this->SettingsDialog;
   this->SettingsDialog = nullptr;

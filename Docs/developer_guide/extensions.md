@@ -491,7 +491,7 @@ This module is used in two situations:
 
 ### How to check if an extension is built by Slicer Extensions build system?
 
-Sometimes it is desirable to build the same source code in two different modes: as a standalone package or as a Slicer extension. To differenciate the two cases, the developer could check for the value of `<ExtensionName>_BUILD_SLICER_EXTENSION` CMake variable. This variable will be set to ON when the extension is built by the Slicer Extensions build system and it is not set otherwise. See details [here](https://github.com/Slicer/Slicer/blob/ff5f5a866d8afcaa0f2e6f615cc8f8cf07361741/Extensions/CMake/SlicerBlockBuildPackageAndUploadExtension.cmake#L95)
+Sometimes it is desirable to build the same source code in two different modes: as a standalone package or as a Slicer extension. To differentiate the two cases, the developer could check for the value of `<ExtensionName>_BUILD_SLICER_EXTENSION` CMake variable. This variable will be set to ON when the extension is built by the Slicer Extensions build system and it is not set otherwise. See details [here](https://github.com/Slicer/Slicer/blob/ff5f5a866d8afcaa0f2e6f615cc8f8cf07361741/Extensions/CMake/SlicerBlockBuildPackageAndUploadExtension.cmake#L95)
 
 ### How often extensions are uploaded on the extensions server?
 
@@ -643,7 +643,7 @@ On other approach is to re-configure and build Slicer setting the `Slicer_FORCED
 
 ### How to address ITK test driver caught an ITK exception "Could not create IO object for reading file"?
 
-If the following execption is reported when trying to run tests associated with a CLI modules:
+If the following exception is reported when trying to run tests associated with a CLI modules:
 
 ```text
  ITK test driver caught an ITK exception:

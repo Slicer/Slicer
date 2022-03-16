@@ -260,7 +260,7 @@ if(NOT DEFINED Vcvars_WRAPPER_BATCH_FILE)
   set(Vcvars_WRAPPER_BATCH_FILE "Vcvars_WRAPPER_BATCH_FILE-NOTFOUND")
 endif()
 
-# check Vcvars_MSVC_ARCH is propertly set
+# check Vcvars_MSVC_ARCH is properly set
 if(NOT Vcvars_MSVC_ARCH MATCHES ${_Vcvars_MSVC_ARCH_REGEX})
   message(FATAL_ERROR "Vcvars_MSVC_ARCH [${Vcvars_MSVC_ARCH}] is expected to match `${_Vcvars_MSVC_ARCH_REGEX}`")
 endif()
