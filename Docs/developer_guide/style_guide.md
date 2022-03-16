@@ -33,6 +33,7 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
     - Standard library imports
     - Related third party imports
     - Local apps/library specific imports
+      - Slicer application imports and local/module imports may be grouped independently.
   - One package per line (with or without multiple function/module/class imports from the package)
 - Avoid extraneous whitespaces
 - Naming conventions: when [PEP 8](http://www.python.org/dev/peps/pep-0008/#package-and-module-names) and Slicer naming conventions conflict, Slicer wins.
