@@ -118,13 +118,14 @@ pointsLocator.BuildLocator()
 def onMouseMoved(observer,eventid):
   ras=[0,0,0]
   crosshairNode.GetCursorPositionRAS(ras)
+  closestPointId = pointsLocator.FindClosestPoint(ras)
+  ras = modelNode.GetPolyData().GetPoint(closestPointId)
+  closestPointValue = modelPointValues.GetTuple(closestPointId)
   if pointListNode.GetNumberOfControlPoints() == 0:
     pointListNode.AddControlPoint(ras)
   else:
-    pointListNode.SetNthContorlPointPosition(0,*ras)
-  closestPointId = pointsLocator.FindClosestPoint(ras)
-  closestPointValue = modelPointValues.GetTuple(closestPointId)
-  print("RAS = " + repr(ras) + "    value = " + repr(closestPointValue))
+    pointListNode.SetNthControlPointPosition(0,*ras)
+  print(f"RAS={ras}  value={closestPointValue}")
 
 crosshairNode=slicer.util.getNode("Crosshair")
 observationId = crosshairNode.AddObserver(slicer.vtkMRMLCrosshairNode.CursorPositionModifiedEvent, onMouseMoved)
