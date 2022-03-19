@@ -228,6 +228,15 @@ set(PYTHONLAUNCHER_PYTHONPATH_INSTALLED
 #  explicitly updated to "Slicer" in a second step using the action "replace_application_name"
 #  implemented above.
 #
+# At the time this script is executed Slicer's binary dir is set to './d'
+# while SlicerCAT's binary dir is set to './d/slicersources-build'
+# and the application settings resides in './d/Slicer-build'
+set(slicer_app_settings_dir "${Slicer_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}")
+if(DEFINED Slicer_MAIN_PROJECT_APPLICATION_NAME AND
+  NOT ${Slicer_MAIN_PROJECT_APPLICATION_NAME} STREQUAL "Slicer")
+  set(slicer_app_settings_dir "${Slicer_BINARY_DIR}/../${Slicer_BINARY_INNER_SUBDIR}")
+endif()
+
 set(_python_launcher_config_params
 
   # Application properties required to lookup user revision settings
@@ -251,7 +260,7 @@ set(_python_launcher_config_params
   LIBRARY_PATHS_BUILD "${PYTHONLAUNCHER_LIBRARY_PATHS_BUILD}"
   ENVVARS_BUILD "${PYTHONLAUNCHER_ENVVARS_BUILD}"
   ADDITIONAL_PATH_ENVVARS_BUILD "${PYTHONLAUNCHER_ADDITIONAL_PATH_ENVVARS_BUILD}"
-  ADDITIONAL_SETTINGS_FILEPATH_BUILD "${Slicer_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}LauncherSettings.ini"
+  ADDITIONAL_SETTINGS_FILEPATH_BUILD "${slicer_app_settings_dir}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}LauncherSettings.ini"
 
   # Launcher settings specific to install tree
   APPLICATION_INSTALL_EXECUTABLE_NAME python-real${CMAKE_EXECUTABLE_SUFFIX}
