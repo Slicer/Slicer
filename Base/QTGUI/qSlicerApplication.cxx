@@ -141,8 +141,12 @@ public:
   QSettings* newSettings() override;
 
   QPointer<qSlicerLayoutManager> LayoutManager;
-  ctkToolTipTrapper*      ToolTipTrapper;
-  ctkSettingsDialog*      SettingsDialog;
+  ctkToolTipTrapper* ToolTipTrapper;
+  // If MainWindow exists and the dialog is displayed then the MainWindow 
+  // must be set as parent to ensure correct Z order; 
+  // but that also transfers the ownership of the object, therefore we use QPointer
+  // to keep track if the object is deleted already by the MainWindow.
+  QPointer<ctkSettingsDialog> SettingsDialog;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerExtensionsManagerDialog* ExtensionsManagerDialog;
   bool IsExtensionsManagerDialogOpen;
@@ -178,9 +182,14 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 {
   // Delete settings dialog. deleteLater would cause memory leaks on exit.
-  this->SettingsDialog->setParent(nullptr);
-  delete this->SettingsDialog;
-  this->SettingsDialog = nullptr;
+  // Settings dialog is displayed then MainWindow becomes its parent and 
+  // thus MainWindow is responsible for deleting it.
+  // Set the parent to 'nullptr' removes this responsibility.
+  if (this->SettingsDialog)
+    {
+    this->SettingsDialog->setParent(nullptr);
+    delete this->SettingsDialog;
+    }
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   if(this->ExtensionsManagerDialog)
