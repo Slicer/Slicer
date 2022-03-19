@@ -233,8 +233,9 @@ set(PYTHONLAUNCHER_PYTHONPATH_INSTALLED
 # and the application settings resides in './d/Slicer-build'
 set(app_name "Slicer")
 set(slicer_app_settings_dir "${Slicer_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}")
-if(DEFINED SLICERAPP_APPLICATION_NAME)
-  set(app_name ${SLICERAPP_APPLICATION_NAME})
+if(DEFINED Slicer_MAIN_PROJECT_APPLICATION_NAME AND 
+  NOT Slicer_MAIN_PROJECT_APPLICATION_NAME STREQUAL ${app_name})
+  set(app_name ${Slicer_MAIN_PROJECT_APPLICATION_NAME})
   set(slicer_app_settings_dir "${Slicer_BINARY_DIR}/../${Slicer_BINARY_INNER_SUBDIR}")
 endif()
 

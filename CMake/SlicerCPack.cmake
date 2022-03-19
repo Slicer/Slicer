@@ -80,8 +80,9 @@ if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
   # At the time this script is executed for both Slicer's and SlicerCAT's binary dir 
   # is set to './d/Slicer-build' and there application settings resides
   set(app_name "Slicer")
-  if(DEFINED SLICERAPP_APPLICATION_NAME)
-    set(app_name ${SLICERAPP_APPLICATION_NAME})
+  if(DEFINED Slicer_MAIN_PROJECT_APPLICATION_NAME AND 
+    NOT Slicer_MAIN_PROJECT_APPLICATION_NAME STREQUAL ${app_name})
+    set(app_name ${Slicer_MAIN_PROJECT_APPLICATION_NAME})
   endif()
   ctkAppLauncherConfigureForExecutable(
     APPLICATION_NAME ${executablename}
