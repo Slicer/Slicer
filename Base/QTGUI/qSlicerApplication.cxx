@@ -141,8 +141,8 @@ public:
   QSettings* newSettings() override;
 
   QPointer<qSlicerLayoutManager> LayoutManager;
-  ctkToolTipTrapper*      ToolTipTrapper;
-  ctkSettingsDialog*      SettingsDialog;
+  ctkToolTipTrapper* ToolTipTrapper;
+  QPointer<ctkSettingsDialog> SettingsDialog;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerExtensionsManagerDialog* ExtensionsManagerDialog;
   bool IsExtensionsManagerDialogOpen;
@@ -178,9 +178,11 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 {
   // Delete settings dialog. deleteLater would cause memory leaks on exit.
-  this->SettingsDialog->setParent(nullptr);
-  delete this->SettingsDialog;
-  this->SettingsDialog = nullptr;
+  if (this->SettingsDialog)
+    {
+    this->SettingsDialog->setParent(nullptr);
+    delete this->SettingsDialog;
+    }
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   if(this->ExtensionsManagerDialog)
