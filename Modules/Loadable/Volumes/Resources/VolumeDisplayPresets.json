@@ -1,5 +1,5 @@
 {
-    "@schema": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#",
+    "@schema": "https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#",
     "volumeDisplayPresets": [
         {
             "id": "CT_BONE",

@@ -59,7 +59,7 @@ set(ADDITIONAL_CMAKECACHE_OPTION "
 ##########################################
 set(EXTENSIONS_TRACK_QUALIFIER ${EXTENSIONS_INDEX_BRANCH})
 if(NOT DEFINED DRIVER_SCRIPT)
-  set(url https://raw.githubusercontent.com/Slicer/Slicer/master/Extensions/CMake/SlicerExtensionsDashboardDriverScript.cmake)
+  set(url https://raw.githubusercontent.com/Slicer/Slicer/main/Extensions/CMake/SlicerExtensionsDashboardDriverScript.cmake)
   set(dest ${DASHBOARDS_DIR}/${EXTENSION_DASHBOARD_SUBDIR}/${CTEST_SCRIPT_NAME}.driver)
   file(DOWNLOAD ${url} ${dest} STATUS status)
   if(NOT status MATCHES "0.*")
