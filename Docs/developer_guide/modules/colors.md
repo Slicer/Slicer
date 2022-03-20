@@ -2,7 +2,7 @@
 
 ## Color table file format (.txt, .ctbl)
 
-The color file format can store a [color node](https://apidocs.slicer.org/master/classvtkMRMLColorNode.html) in a plain text file with the `.txt` or `.ctbl` extension. It is a text file with values separated by space, with a custom header to specify lookup table type. Header lines are prefixed with `#`.
+The color file format can store a [color node](https://apidocs.slicer.org/main/classvtkMRMLColorNode.html) in a plain text file with the `.txt` or `.ctbl` extension. It is a text file with values separated by space, with a custom header to specify lookup table type. Header lines are prefixed with `#`.
 
 ### Discrete scale color lookup table
 

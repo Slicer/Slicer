@@ -1,13 +1,13 @@
 # Volume rendering
 
 ## Key classes
-- [vtkMRMLVolumeRenderingDisplayNode](https://apidocs.slicer.org/master/classvtkMRMLVolumeRenderingDisplayNode.html) controls the volume rendering properties. Each volume rendering technique has its own subclass.
-- [vtkSlicerVolumeRenderingLogic](https://apidocs.slicer.org/master/classvtkSlicerVolumeRenderingLogic.html) contains utility functions
-- [vtkMRMLScalarVolumeNode](https://apidocs.slicer.org/master/classvtkMRMLScalarVolumeNode.html) contains the volume itself
-- [vtkMRMLVolumePropertyNode](https://apidocs.slicer.org/master/classvtkMRMLVolumePropertyNode.html) points to the transfer functions
-- [vtkMRMLMarkupsROINode](https://apidocs.slicer.org/master/classvtkMRMLMarkupsROINode.html) controls the clipping planes
-- [vtkMRMLAnnotationROINode](https://apidocs.slicer.org/master/classvtkMRMLAnnotationROINode.html) controls the clipping planes (legacy, use vtkMRMLMarkupsROINode instead)
-- [vtkMRMLVolumeRenderingDisplayableManager](https://apidocs.slicer.org/master/classvtkMRMLVolumeRenderingDisplayableManager.html) responsible for adding VTK actors to the renderers
+- [vtkMRMLVolumeRenderingDisplayNode](https://apidocs.slicer.org/main/classvtkMRMLVolumeRenderingDisplayNode.html) controls the volume rendering properties. Each volume rendering technique has its own subclass.
+- [vtkSlicerVolumeRenderingLogic](https://apidocs.slicer.org/main/classvtkSlicerVolumeRenderingLogic.html) contains utility functions
+- [vtkMRMLScalarVolumeNode](https://apidocs.slicer.org/main/classvtkMRMLScalarVolumeNode.html) contains the volume itself
+- [vtkMRMLVolumePropertyNode](https://apidocs.slicer.org/main/classvtkMRMLVolumePropertyNode.html) points to the transfer functions
+- [vtkMRMLMarkupsROINode](https://apidocs.slicer.org/main/classvtkMRMLMarkupsROINode.html) controls the clipping planes
+- [vtkMRMLAnnotationROINode](https://apidocs.slicer.org/main/classvtkMRMLAnnotationROINode.html) controls the clipping planes (legacy, use vtkMRMLMarkupsROINode instead)
+- [vtkMRMLVolumeRenderingDisplayableManager](https://apidocs.slicer.org/main/classvtkMRMLVolumeRenderingDisplayableManager.html) responsible for adding VTK actors to the renderers
 
 ## Format of Volume Property (.vp) file
 

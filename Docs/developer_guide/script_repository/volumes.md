@@ -864,7 +864,7 @@ displayNode->SetCroppingEnabled(1);
 
 ### Register a new Volume Rendering mapper
 
-You need to derive from [vtkMRMLVolumeRenderingDisplayNode](https://apidocs.slicer.org/master/classvtkMRMLVolumeRenderingDisplayNode.html) and register your class within [vtkSlicerVolumeRenderingLogic](https://apidocs.slicer.org/master/classvtkSlicerVolumeRenderingLogic.html).
+You need to derive from [vtkMRMLVolumeRenderingDisplayNode](https://apidocs.slicer.org/main/classvtkMRMLVolumeRenderingDisplayNode.html) and register your class within [vtkSlicerVolumeRenderingLogic](https://apidocs.slicer.org/main/classvtkSlicerVolumeRenderingLogic.html).
 
 C++:
 
@@ -893,7 +893,7 @@ void qSlicerMyABCVolumeRenderingModule::setup()
 }
 ```
 
-If you want to expose control widgets for your volume rendering method, then register your widget with [addRenderingMethodWidget()](https://apidocs.slicer.org/master/classqSlicerVolumeRenderingModuleWidget.html#acd9cdb60f1fd260f3ebf74428bb7c45b).
+If you want to expose control widgets for your volume rendering method, then register your widget with [addRenderingMethodWidget()](https://apidocs.slicer.org/main/classqSlicerVolumeRenderingModuleWidget.html#acd9cdb60f1fd260f3ebf74428bb7c45b).
 
 ### Register custom volume rendering presets
 
