@@ -29,7 +29,7 @@ get_filename_component(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} REAL
 set(default_extension_description_dir ${CMAKE_CURRENT_SOURCE_DIR}/../)
 set(default_local_extension_dir ${default_extension_description_dir})
 
-set(Slicer_EXTENSIONS_TRACK_QUALIFIER "master" CACHE STRING "CDash extensions track qualifier (master, 4.4, ...)")
+set(Slicer_EXTENSIONS_TRACK_QUALIFIER "main" CACHE STRING "CDash extensions track qualifier (master, 4.4, ...)")
 
 #-----------------------------------------------------------------------------
 # Prerequisites
