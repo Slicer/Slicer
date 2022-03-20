@@ -236,7 +236,7 @@ class ExtensionWizard:
             createdRepo = True
 
             # Prepare the initial commit
-            branch = "master"
+            branch = "main"
             r.git.checkout(b=branch)
             r.git.add(":/")
 
@@ -261,10 +261,10 @@ class ExtensionWizard:
                     " with no pre-existing remotes")
 
             branch = r.active_branch
-            if branch.name != "master":
+            if branch.name != "main":
                 logging.warning("You are currently on the '%s' branch. "
                                 "It is strongly recommended to publish"
-                                " the 'master' branch." % branch)
+                                " the 'main' branch." % branch)
                 if not inquire("Continue anyway"):
                     die("canceled at user request")
 
@@ -644,9 +644,9 @@ class ExtensionWizard:
         parser.add_argument("--contribute", action="store_true",
                             help="register or update a compiled extension with"
                                  " the extension index (github account required)")
-        parser.add_argument("--target", metavar="VERSION", default="master",
+        parser.add_argument("--target", metavar="VERSION", default="main",
                             help="version of Slicer for which the extension"
-                                 " is intended (default='master')")
+                                 " is intended (default='main')")
         parser.add_argument("--index", metavar="PATH",
                             help="location for the extension index clone"
                                  " (default: private directory"

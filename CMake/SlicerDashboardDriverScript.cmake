@@ -273,7 +273,7 @@ if(NOT DEFINED GIT_REPOSITORY)
   set(GIT_REPOSITORY "https://github.com/Slicer/Slicer")
 endif()
 if(NOT DEFINED GIT_TAG)
-  set(GIT_TAG "master")
+  set(GIT_TAG "main")
 endif()
 list(APPEND variables GIT_REPOSITORY GIT_TAG)
 
