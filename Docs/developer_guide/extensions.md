@@ -280,7 +280,7 @@ The official Slicer extensions server is <https://extensions.slicer.org/>. To ge
 
 The extension server is built so that organizations can set up and maintain their own extensions servers, for example to distribute extensions for custom applications. Extensions server address can be set in Application Settings, in Extensions section.
 
-Until August 2021, a Midas-based server at `http://slicer.kitware.com/midas3` was used. This server is not online anymore, as it was not feasible to perform all software updates that would have kept it secure.
+Until August 2021, a Midas-based server at `https://slicer.kitware.com/midas3` was used. This server is not online anymore, as it was not feasible to perform all software updates that would have kept it secure.
 
 ## Extensions Index
 
@@ -322,7 +322,7 @@ Given a directory containing one or more extension description files, with the h
   - By default set to `OFF`.
     If enabled, extension builds will be submitted to Slicer dashboard and associated packages will be uploaded to extensions server.
 * - MIDAS_PACKAGE_URL
-  - MIDAS extensions server URL specifying where the extension should be uploaded. For example `http://slicer.kitware.com/midas3`.
+  - MIDAS extensions server URL specifying where the extension should be uploaded. For example `https://slicer.kitware.com/midas3`.
     Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source code.
 * - MIDAS_PACKAGE_EMAIL
   - Email allowing to authenticate to the extensions server.
@@ -382,7 +382,7 @@ cmake -DSlicer_DIR:PATH=~/Slicer-SuperBuild-Release/Slicer-build \
  -DCMAKE_BUILD_TYPE:STRING=Release \
  -DCTEST_MODEL:STRING=Experimental \
  -DSlicer_UPLOAD_EXTENSIONS:BOOL=ON \
- -DMIDAS_PACKAGE_URL:STRING=http://slicer.kitware.com/midas3 \
+ -DMIDAS_PACKAGE_URL:STRING=https://slicer.kitware.com/midas3 \
  -DMIDAS_PACKAGE_EMAIL:STRING=jchris.fillionr@kitware.com \
  -DMIDAS_PACKAGE_API_KEY:STRING=a0b012c0123d012abc01234a012345a0 \
  ~/Slicer/Extensions/CMake
@@ -393,7 +393,7 @@ Note: MIDAS server has been replaced by Girder. To upload to a custom Girder ser
 
 ### Build complete Extensions Index with dashboard submission
 
-Continuous and nightly extension dashboards are setup on the Slicer factory machine maintained by [http://www.kitware.com Kitware]. Developers can set up similar infrastructure privately for their custom applications.
+Continuous and nightly extension dashboards are setup on the Slicer factory machine maintained by [https://www.kitware.com Kitware]. Developers can set up similar infrastructure privately for their custom applications.
 
 By customizing the [extension template dashboard script](https://github.com/Slicer/Slicer/blob/master/Extensions/CMake/SlicerExtensionsDashboardScript.TEMPLATE.cmake), it is possible to easily setup dashboard client submitting to [CDash](https://slicer.cdash.org/index.php?project=SlicerPreview). See example dashboard scripts that are used on official Slicer build machines [here](https://github.com/Slicer/DashboardScripts). Note that these scripts are more complex than the template to allow code reuse between different configurations, but they are tested regularly and so guaranteed to work.
 

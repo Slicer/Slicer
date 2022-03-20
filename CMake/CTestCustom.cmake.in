@@ -81,7 +81,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Suppressing warnings about duplicate libraries in Darwin
   # At some point this may be addressed by CMake feature request:
-  # http://public.kitware.com/Bug/view.php?id=10179
+  # https://public.kitware.com/Bug/view.php?id=10179
   "ld: warning: duplicate dylib"
 
   # Suppressing warnings about GL_GLEXT_LEGACY, the link reported below
