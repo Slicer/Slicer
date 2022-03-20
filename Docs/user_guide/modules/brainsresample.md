@@ -13,8 +13,8 @@ Most frequently used for these scenarios:
 
 - NearestNeighbor: The value of the nearest voxel is copied into the new voxel
 - Linear: The average of the voxels in the input image occupying the new voxel volume is used
-- ResampleInPlace: Detailed information can be found [here](https://github.com/BRAINSia/BRAINSTools/blob/master/BRAINSCommonLib/itkResampleInPlaceImageFilter.h).
-- BSpline: Detailed information can be found [here](https://github.com/BRAINSia/BRAINSTools/blob/master/BRAINSCommonLib/itkResampleInPlaceImageFilter.h).
+- ResampleInPlace: Detailed information can be found [here](https://github.com/BRAINSia/BRAINSTools/blob/main/BRAINSCommonLib/itkResampleInPlaceImageFilter.h).
+- BSpline: Detailed information can be found [here](https://github.com/BRAINSia/BRAINSTools/blob/main/BRAINSCommonLib/itkResampleInPlaceImageFilter.h).
 - WindowedSinc: Detailed information can be found [here](https://itk.org/Doxygen/html/classitk_1_1WindowedSincInterpolateImageFunction.html).
 
 ```{include} ../../_moduledescriptions/BRAINSResampleParameters.md
