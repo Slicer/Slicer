@@ -5,7 +5,7 @@
 
 ### Pointers to VTK object
 
-If you are not familiar with VTK's memory management read this [general introduction](http://aosabook.org/en/vtk.html) and this [page describing usage of smart pointers](http://www.vtk.org/Wiki/VTK/Tutorials/SmartPointers). See Slicer-specific use cases and recommendations below.
+If you are not familiar with VTK's memory management read this [general introduction](http://aosabook.org/en/vtk.html) and this [page describing usage of smart pointers](https://www.vtk.org/Wiki/VTK/Tutorials/SmartPointers). See Slicer-specific use cases and recommendations below.
 
 Calling the plain `New()` method of VTK objects and storing the returned pointer in a plain pointer should be avoided, as this very often causes memory leaks.
 
