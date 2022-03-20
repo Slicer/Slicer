@@ -151,7 +151,7 @@ Notes:
 
 - Only visible segments are used by this effect.
 - The method does not use the master volume, only the shape of the specified segments.
-- The method uses *ND morphological contour interpolation algorithm* described in this paper: <http://insight-journal.org/browse/publication/977>
+- The method uses *ND morphological contour interpolation algorithm* described in this paper: <https://insight-journal.org/browse/publication/977>
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_margin.png) Margin
 

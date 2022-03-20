@@ -299,7 +299,7 @@ void qSlicerExtensionsManagerModelPrivate::init()
   this->initializeColumnIdToNameMap(Self::ArchiveNameColumn, "archivename");
   this->initializeColumnIdToNameMap(Self::MD5Column, "md5");
 
-  // See http://www.developer.nokia.com/Community/Wiki/Using_QStandardItemModel_in_QML
+  // See https://www.developer.nokia.com/Community/Wiki/Using_QStandardItemModel_in_QML
   QHash<int, QByteArray> roleNames;
   int columnIdx = 0;
   foreach(const QString& columnName, this->columnNames())

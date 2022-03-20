@@ -86,7 +86,7 @@ and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCA
 <p>CTLiver dataset comes from <a href="http://medicaldecathlon.com/">Medical Decathlon project</a> (imagesTr/liver_100.nii.gz in Task03_Liver collection)
 with a permissive copyright-license (<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA 4.0</a>), allowing for data to be shared, distributed and improved upon.</p>
 
-<p>CTA abdomen (Panoramix) dataset comes from <a href="http://www.osirix-viewer.com/resources/dicom-image-library/">Osirix DICOM image library</a>
+<p>CTA abdomen (Panoramix) dataset comes from <a href="https://www.osirix-viewer.com/resources/dicom-image-library/">Osirix DICOM image library</a>
 and is exclusively available for research and teaching. You are not authorized to redistribute or sell it, or
 use it for commercial purposes.</p>
 """
@@ -824,7 +824,7 @@ class SampleDataLogic:
     return self.downloadSamples('MRUSProstate')
 
   def humanFormatSize(self,size):
-    """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
+    """ from https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
     for x in ['bytes','KB','MB','GB']:
       if size < 1024.0 and size > -1024.0:
         return f"{size:3.1f} {x}"

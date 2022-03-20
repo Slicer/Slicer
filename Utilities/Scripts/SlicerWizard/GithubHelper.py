@@ -83,7 +83,7 @@ def logIn(repo=None):
   If `GITHUB_TOKEN` environment variable is set, its value will be used
   as password when invoking `git-credentials`_.
 
-  .. _git-credentials: http://git-scm.com/docs/gitcredentials.html
+  .. _git-credentials: https://git-scm.com/docs/gitcredentials.html
   """
 
   # Get client; use generic client if no repository

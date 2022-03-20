@@ -89,13 +89,13 @@ setattr(WikidocRole, 'wiki_doc_version', args.wikidoc_version)
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.intersphinx']
 
 intersphinx_mapping = {
-  'python': ('http://docs.python.org/%i.%i' % sys.version_info[:2], None),
+  'python': ('https://docs.python.org/%i.%i' % sys.version_info[:2], None),
   'github': ('http://jacquev6.github.io/PyGithub/v1', None),
 }
 
 try:
   import git
-  intersphinx_mapping['git'] = ('http://pythonhosted.org/GitPython/%s' % git.__version__.split(' ')[0], None)
+  intersphinx_mapping['git'] = ('https://pythonhosted.org/GitPython/%s' % git.__version__.split(' ')[0], None)
 except:
   pass
 

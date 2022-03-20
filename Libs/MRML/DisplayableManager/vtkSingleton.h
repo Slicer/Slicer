@@ -25,8 +25,8 @@
 ///
 /// @defgroup vtkSingleton Singleton definition and declaration helpers
 ///
-/// See http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.12
-/// and http://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Nifty_Counter
+/// See https://www.parashift.com/c++-faq-lite/ctors.html#faq-10.12
+/// and https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Nifty_Counter
 ///
 /// Inspired from VTK/Utilities/kwsys/SystemTools class
 /// @{

@@ -2,7 +2,7 @@
 
 ## GDB debug by attaching to running process (recommended)
 
-1. Starting with Ubuntu 10.10, ptracing of non-child processes by non-root users as been disabled -ie. only a process which is a parent of another process can ptrace it for normal users. More details [here](http://askubuntu.com/questions/41629/after-upgrade-gdb-wont-attach-to-process).
+1. Starting with Ubuntu 10.10, ptracing of non-child processes by non-root users as been disabled -ie. only a process which is a parent of another process can ptrace it for normal users. More details [here](https://askubuntu.com/questions/41629/after-upgrade-gdb-wont-attach-to-process).
 
     - You can temporarily disable this restriction by:
       ```bash

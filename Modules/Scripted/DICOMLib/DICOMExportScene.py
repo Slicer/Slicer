@@ -68,7 +68,7 @@ class DICOMExportScene:
     TODO: confirm that resulting file is valid - may need to change the CLI
     to include more parameters or do a new implementation ctk/DCMTK
     See:
-    http://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
+    https://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
     """
 
     # set up temp directories and files

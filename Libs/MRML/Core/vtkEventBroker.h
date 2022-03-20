@@ -40,7 +40,7 @@ class vtkObservation;
 /// removed properly.
 /// See also:
 /// https://wiki.na-mic.org/Wiki/index.php/Slicer3:EventBroker
-/// http://en.wikipedia.org/wiki/Observer_pattern
+/// https://en.wikipedia.org/wiki/Observer_pattern
 //
 /// Other interesting observer implementations:
 /// http://xlobject.sourceforge

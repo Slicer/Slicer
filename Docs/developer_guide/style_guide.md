@@ -16,7 +16,7 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
 
 - [VTK coding conventions](https://www.vtk.org/Wiki/VTK_Coding_Standards)
 - [Qt style guide](https://wiki.qt.io/Qt_Coding_Style)
-- [Python style guide](http://www.python.org/dev/peps/pep-0008/)
+- [Python style guide](https://www.python.org/dev/peps/pep-0008/)
 
 ### Languages
 
@@ -36,7 +36,7 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
       - Slicer application imports and local/module imports may be grouped independently.
   - One package per line (with or without multiple function/module/class imports from the package)
 - Avoid extraneous whitespaces
-- Naming conventions: when [PEP 8](http://www.python.org/dev/peps/pep-0008/#package-and-module-names) and Slicer naming conventions conflict, Slicer wins.
+- Naming conventions: when [PEP 8](https://www.python.org/dev/peps/pep-0008/#package-and-module-names) and Slicer naming conventions conflict, Slicer wins.
 
 #### C++
 
@@ -89,7 +89,7 @@ Useful information about some coding style decisions: <https://google.github.io/
   - `vtkSlicer` not `vTKSlicer`
 - Words should be spelled out and not abbreviated
   - `GetWindow` not `GetWin`
-- File names must follow the [http://en.wikipedia.org/wiki/CamelCase Camel case] convention
+- File names must follow the [https://en.wikipedia.org/wiki/CamelCase Camel case] convention
   - `TestMyFeature.cxx` not `Test-My_Feature.cxx`
 - Use US English words and spelling
   - "Millimeter" not "Millimetre"
@@ -111,7 +111,7 @@ Examples:
 When dealing with files names and path, use:
 - [kwsys::SystemTools](https://github.com/Kitware/VTK/blob/master/Utilities/KWSys/vtksys/SystemTools.hxx.in) in VTK classes
 - [QFileInfo](https://doc.qt.io/qt-5/qfileinfo.html)/[QDir](https://doc.qt.io/qt-5/qdir.html) in Qt classes
-- [http://docs.python.org/library/os.path.html os.path] in Python.
+- [https://docs.python.org/library/os.path.html os.path] in Python.
 
 Instead of doing string manipulation manually:
 
@@ -131,7 +131,7 @@ Prefer instead:
 
     os.path.join(), os.path.splitext(), os.path.abspath()...
 
-References: [Clean Code](http://www.amazon.com/gp/product/0132350882?ie=UTF8&tag=solisyntprog-20&linkCode=as2&camp=1789&creative=9325&creativeASIN=0132350882) from `Robert C. Martin`: `Mixing levels of abstraction within a function is always confusing. Readers may not be able to tell whether a particular expression is an essential concept or a detail. Worse, like broken windows, once details are mixed with essential concepts, more and more details tend to accrete within the functions.`
+References: [Clean Code](https://www.amazon.com/gp/product/0132350882?ie=UTF8&tag=solisyntprog-20&linkCode=as2&camp=1789&creative=9325&creativeASIN=0132350882) from `Robert C. Martin`: `Mixing levels of abstraction within a function is always confusing. Readers may not be able to tell whether a particular expression is an essential concept or a detail. Worse, like broken windows, once details are mixed with essential concepts, more and more details tend to accrete within the functions.`
 
 2. Use STL where you can, but:
 - In VTK classes follow the [https://www.vtk.org/Wiki/VTK_FAQ#Can_I_use_STL_with_VTK.3F VTK guidelines]
@@ -232,7 +232,7 @@ The ITK, VTK, Qt, std::cout, std::cerr .. all appear in the error log and can ea
 
 ### In Qt-based classes
 
-For error messages, use [qCritical()](http://qt-project.org/doc/qt-4.8/qtglobal.html#qCritical):
+For error messages, use [qCritical()](https://qt-project.org/doc/qt-4.8/qtglobal.html#qCritical):
 
 ```
 if (somethingWrongHappened)
@@ -242,13 +242,13 @@ if (somethingWrongHappened)
   }
 ```
 
-For warnings, use [qWarning()](http://qt-project.org/doc/qt-4.8/qtglobal.html#qWarning):
+For warnings, use [qWarning()](https://qt-project.org/doc/qt-4.8/qtglobal.html#qWarning):
 
 ```
 qWarning() << "Be careful here, this is dangerous";
 ```
 
-For debug, use [qDebug()](http://qt-project.org/doc/qt-4.8/qtglobal.html#qDebug):
+For debug, use [qDebug()](https://qt-project.org/doc/qt-4.8/qtglobal.html#qDebug):
 
 ```
 qDebug() << "This variable has the value: "<< value;
@@ -321,7 +321,7 @@ Examples:
 - Bad: `COMP: Typo in cmake variable` -> *implementation detail*, *self-explanatory*
 - Good: `COMP: Fix compilation error with Numpy on Visual Studio`
 
-If the commit is related to an [issue](http://issues.slicer.org/) (bug or feature request), you can mention it at the end of the message body by preceding the issue number with a `#` (pound) character:
+If the commit is related to an [issue](https://issues.slicer.org/) (bug or feature request), you can mention it at the end of the message body by preceding the issue number with a `#` (pound) character:
 
 ```
 BUG: Fix crash in Volume Rendering module when switching view layout
@@ -364,8 +364,8 @@ See [r23377](https://github.com/Slicer/Slicer/commit/3e04040d2e960ec4cd294cb8404
 
 ### Resources
 
-- Read more on [http://chris.beams.io/posts/git-commit/ How to Write a Git Commit Message]
-- Discussion section of [http://git-scm.com/docs/git-commit git-commit(1)]
+- Read more on [https://chris.beams.io/posts/git-commit/ How to Write a Git Commit Message]
+- Discussion section of [https://git-scm.com/docs/git-commit git-commit(1)]
 
 ## UI Design Guidelines
 

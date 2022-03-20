@@ -44,7 +44,7 @@ slicer.util.selectModule("DICOM")  # ensure DICOM database is initialized and
 slicer.app.processEvents()
 from DICOMLib import DICOMUtils
 DICOMUtils.importFromDICOMWeb(
-  dicomWebEndpoint="http://demo.kheops.online/api",
+  dicomWebEndpoint="https://demo.kheops.online/api",
   studyInstanceUID="1.3.6.1.4.1.14519.5.2.1.8421.4009.985792766370191766692237040819",
   accessToken="TfYXwbKAW7JYbAgZ7MyISf")
 ```

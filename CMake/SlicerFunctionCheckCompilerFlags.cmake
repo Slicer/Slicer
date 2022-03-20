@@ -18,7 +18,7 @@
 #
 ###########################################################################
 
-# See http://github.com/commontk/CTK/blob/master/CMake/ctkFunctionCheckCompilerFlags.cmake
+# See https://github.com/commontk/CTK/blob/master/CMake/ctkFunctionCheckCompilerFlags.cmake
 
 #
 # Helper macro allowing to check if the given flags are supported

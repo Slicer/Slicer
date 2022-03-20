@@ -77,7 +77,7 @@ public:
   ///
   /// so we follow the pattern suggested here:
   ///
-  /// http://stackoverflow.com/questions/13878373/where-am-i-supposed-to-reimplement-qapplicationnotify-function
+  /// https://stackoverflow.com/questions/13878373/where-am-i-supposed-to-reimplement-qapplicationnotify-function
   ///
   bool notify(QObject * receiver, QEvent * event) override;
 

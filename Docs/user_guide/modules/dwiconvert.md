@@ -15,7 +15,7 @@
 
 ## Similar modules
 
-[SlicerDMRI extension](http://slicerdmri.github.io/)
+[SlicerDMRI extension](https://slicerdmri.github.io/)
 
 ## Information for Developers
 

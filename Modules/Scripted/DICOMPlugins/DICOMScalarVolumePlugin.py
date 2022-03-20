@@ -459,7 +459,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       #   Note: There can be multiple presets (multiplicity 1-n) in the standard [1]. We have
       #   a way to put these into the display node [2], so they can be selected in the Volumes
       #   module.
-      #   [1] http://medical.nema.org/medical/dicom/current/output/html/part06.html
+      #   [1] https://medical.nema.org/medical/dicom/current/output/html/part06.html
       #   [2] https://github.com/Slicer/Slicer/blob/3bfa2fc2b310d41c09b7a9e8f8f6c4f43d3bd1e2/Libs/MRML/Core/vtkMRMLScalarVolumeDisplayNode.h#L172
       #
       try:
@@ -745,8 +745,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
       Note: PixelSpacing is row spacing followed by column spacing [1] (i.e. vertical then horizontal)
       while ImageOrientationPatient is row cosines then column cosines [2] (i.e. horizontal then vertical).
-      [1] http://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_10.7.1.1
-      [2] http://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_C.7.6.2
+      [1] https://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_10.7.1.1
+      [2] https://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_C.7.6.2
       """
       spacingTag = "0028,0030"
       positionTag = "0020,0032"

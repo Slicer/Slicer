@@ -55,7 +55,7 @@ You can create multiple schemes, each various command line options to pass to Sl
 
 ### Profiling
 
-The [Instruments](http://en.wikipedia.org/wiki/Instruments_%28application%29) tool is very useful for profiling.
+The [Instruments](https://en.wikipedia.org/wiki/Instruments_%28application%29) tool is very useful for profiling.
 
 ## Debugging using cross-platform IDEs
 

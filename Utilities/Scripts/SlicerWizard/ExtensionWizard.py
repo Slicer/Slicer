@@ -59,7 +59,7 @@ class ExtensionWizard:
     wizard = ExtensionWizard()
     wizard.execute()
 
-  Interaction with `GitHub <http://github.com>`_ uses
+  Interaction with `GitHub <https://github.com>`_ uses
   :func:`.GithubHelper.logIn` to authenticate.
 
   .. 'note' directive needs '\' to span multiple lines!
@@ -416,7 +416,7 @@ class ExtensionWizard:
     to exit before pushing the branch. (Updates of the user's fork to current
     upstream may still occur.)
 
-    .. _extension index repository: http://github.com/Slicer/ExtensionsIndex
+    .. _extension index repository: https://github.com/Slicer/ExtensionsIndex
     """
 
     try:

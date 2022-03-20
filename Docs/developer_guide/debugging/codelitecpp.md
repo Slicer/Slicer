@@ -1,6 +1,6 @@
 # C++ debugging with CodeLite
 
-[CodeLite](http://www.codelite.org) is a relatively lightweight, cross-platform IDE.
+[CodeLite](https://www.codelite.org) is a relatively lightweight, cross-platform IDE.
 
 ## Configure build
 

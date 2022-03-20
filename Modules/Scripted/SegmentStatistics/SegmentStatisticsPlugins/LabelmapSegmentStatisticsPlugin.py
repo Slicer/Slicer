@@ -432,12 +432,12 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     info["flatness"] = \
       self.createMeasurementInfo(name="Flatness",
       description="Segment flatness. Calculated from square root of the ratio of the second smallest principal moment by the smallest. Value of 0 represents a flat structure." +
-        " ( http://hdl.handle.net/1926/584 )",
+        " ( https://hdl.handle.net/1926/584 )",
       units="")
 
     info["elongation"] = \
       self.createMeasurementInfo(name="Elongation",
-      description="Segment elongation. Calculated from square root of the ratio of the second largest principal moment by the second smallest. ( http://hdl.handle.net/1926/584 )",
+      description="Segment elongation. Calculated from square root of the ratio of the second largest principal moment by the second smallest. ( https://hdl.handle.net/1926/584 )",
       units="")
 
     info["oriented_bounding_box"] = \

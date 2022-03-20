@@ -489,7 +489,7 @@ if(NOT ${Slicer_SKIP_CMAKE_SIZEOF_VOID_P_CHECK})
       "\tCMAKE_SIZEOF_VOID_P:${CMAKE_SIZEOF_VOID_P}\n"
       "Reconfigure '${CMAKE_PROJECT_NAME}' project using a compatible Generator.\n"
       "Generator used to configure Slicer was: ${Slicer_CMAKE_GENERATOR}\n"
-      "See http://www.cmake.org/cmake/help/v2.8.11/cmake.html#opt:-Ggenerator-name")
+      "See https://www.cmake.org/cmake/help/v2.8.11/cmake.html#opt:-Ggenerator-name")
   endif()
 endif()
 
