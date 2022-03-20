@@ -124,7 +124,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
   if("${EXTENSION_EXT_SCM}" STREQUAL "git")
     set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
     if("${ext_revision}" STREQUAL "")
-      set(ext_revision "origin/master")
+      set(ext_revision "origin/main")
     endif()
     set(ext_ep_options_repository
       GIT_REPOSITORY ${EXTENSION_EXT_SCMURL} GIT_TAG ${ext_revision})

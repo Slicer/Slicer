@@ -281,9 +281,9 @@ def getPullRequest(upstream, ref, user=None, fork=None, target=None):
       user = session.get_user("jdoe")
       repo = GithubHelper.getRepo(session, 'octocat/Hello-World')
 
-      # Look up request to merge 'my-branch' of any fork into 'master'
+      # Look up request to merge 'my-branch' of any fork into 'main'
       pr = GithubHelper.getPullRequest(upstream=repo, user=user,
-                                       ref='my-branch', target='master')
+                                       ref='my-branch', target='main')
 
     If any of ``user``, ``fork`` or ``target`` are ``None``, those criteria are
     not considered when searching for a matching pull request. If multiple
