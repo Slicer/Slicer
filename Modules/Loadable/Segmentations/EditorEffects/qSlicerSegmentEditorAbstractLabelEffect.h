@@ -63,8 +63,8 @@ public:
   /// Perform actions needed on reference geometry change
   void referenceGeometryChanged() override;
 
-  /// Perform actions needed on master volume change
-  void masterVolumeNodeChanged() override;
+  /// Perform actions needed on reference volume change
+  void referenceVolumeNodeChanged() override;
 
 public slots:
   /// Update user interface from parameter set node

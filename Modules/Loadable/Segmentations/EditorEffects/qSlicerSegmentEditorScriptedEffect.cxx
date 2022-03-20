@@ -63,7 +63,7 @@ public:
     ProcessViewNodeEventsMethod,
     SetMRMLDefaultsMethod,
     ReferenceGeometryChangedMethod,
-    MasterVolumeNodeChangedMethod,
+    ReferenceVolumeNodeChangedMethod,
     LayoutChangedMethod,
     InteractionNodeModifiedMethod,
     UpdateGUIFromMRMLMethod,
@@ -92,7 +92,7 @@ qSlicerSegmentEditorScriptedEffectPrivate::qSlicerSegmentEditorScriptedEffectPri
   this->PythonCppAPI.declareMethod(Self::ProcessViewNodeEventsMethod, "processViewNodeEvents");
   this->PythonCppAPI.declareMethod(Self::SetMRMLDefaultsMethod, "setMRMLDefaults");
   this->PythonCppAPI.declareMethod(Self::ReferenceGeometryChangedMethod, "referenceGeometryChanged");
-  this->PythonCppAPI.declareMethod(Self::MasterVolumeNodeChangedMethod, "masterVolumeNodeChanged");
+  this->PythonCppAPI.declareMethod(Self::ReferenceVolumeNodeChangedMethod, "referenceVolumeNodeChanged");
   this->PythonCppAPI.declareMethod(Self::LayoutChangedMethod, "layoutChanged");
   this->PythonCppAPI.declareMethod(Self::InteractionNodeModifiedMethod, "interactionNodeModified");
   this->PythonCppAPI.declareMethod(Self::UpdateGUIFromMRMLMethod, "updateGUIFromMRML");
@@ -412,13 +412,13 @@ void qSlicerSegmentEditorScriptedEffect::referenceGeometryChanged()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorScriptedEffect::masterVolumeNodeChanged()
+void qSlicerSegmentEditorScriptedEffect::referenceVolumeNodeChanged()
 {
   // Base class implementation needs to be called before the effect-specific one
-  this->Superclass::masterVolumeNodeChanged();
+  this->Superclass::referenceVolumeNodeChanged();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
-  d->PythonCppAPI.callMethod(d->MasterVolumeNodeChangedMethod);
+  d->PythonCppAPI.callMethod(d->ReferenceVolumeNodeChangedMethod);
 }
 
 //-----------------------------------------------------------------------------

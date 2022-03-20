@@ -173,8 +173,8 @@ class LevelTracingPipeline:
         Returns False if slice views are rotated.
         """
 
-        # Get master volume image data
-        masterImageData = self.effect.scriptedEffect.masterVolumeImageData()
+        # Get reference volume image data
+        masterImageData = self.effect.scriptedEffect.referenceVolumeImageData()
 
         segmentationNode = self.effect.scriptedEffect.parameterSetNode().GetSegmentationNode()
         parentTransformNode = None
@@ -209,7 +209,7 @@ class LevelTracingPipeline:
         self.tracingFilter.Update()
         polyData = self.tracingFilter.GetOutput()
 
-        # Get master volume IJK to slice XY transform
+        # Get reference volume IJK to slice XY transform
         xyToRas = sliceNode.GetXYToRAS()
         rasToIjk = vtk.vtkMatrix4x4()
         masterImageData.GetImageToWorldMatrix(rasToIjk)

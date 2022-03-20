@@ -100,9 +100,9 @@ class SegmentationsModuleTest2(unittest.TestCase):
         self.assertIsNotNone(self.segmentationNode)
         self.segmentEditorNode.SetAndObserveSegmentationNode(self.segmentationNode)
 
-        self.masterVolumeNode = slicer.util.loadVolume(self.dataDir + '/TinyPatient_CT.nrrd')
-        self.assertIsNotNone(self.masterVolumeNode)
-        self.segmentEditorNode.SetAndObserveMasterVolumeNode(self.masterVolumeNode)
+        self.referenceVolumeNode = slicer.util.loadVolume(self.dataDir + '/TinyPatient_CT.nrrd')
+        self.assertIsNotNone(self.referenceVolumeNode)
+        self.segmentEditorNode.SetAndObserveReferenceVolumeNode(self.referenceVolumeNode)
 
         self.segmentation = self.segmentationNode.GetSegmentation()
         self.segmentation.SetMasterRepresentationName(self.binaryLabelmapReprName)
@@ -467,8 +467,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
         # -------------------
         # Test intensity masking with segment mask
-        self.segmentEditorNode.MasterVolumeIntensityMaskOn()
-        self.segmentEditorNode.SetMasterVolumeIntensityMaskRange(-17, 848)
+        self.segmentEditorNode.ReferenceVolumeIntensityMaskOn()
+        self.segmentEditorNode.SetReferenceVolumeIntensityMaskRange(-17, 848)
         self.thresholdEffect.setParameter("MinimumThreshold", "-99999")
         self.thresholdEffect.setParameter("MaximumThreshold", "99999")
         self.segmentEditorNode.SetSelectedSegmentID(segment3Id)
@@ -478,7 +478,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
         # -------------------
         # Test intensity masking with islands
         self.segmentEditorNode.SetMaskMode(slicer.vtkMRMLSegmentationNode.EditAllowedEverywhere)
-        self.segmentEditorNode.MasterVolumeIntensityMaskOff()
+        self.segmentEditorNode.ReferenceVolumeIntensityMaskOff()
         self.segmentEditorNode.SetSelectedSegmentID(segment4Id)
 
         island1ModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
@@ -508,11 +508,11 @@ class SegmentationsModuleTest2(unittest.TestCase):
         self.paintEffect.modifySelectedSegmentByLabelmap(island2ModifierLabelmap, self.paintEffect.ModificationModeAdd)
 
         # Test intensity masking
-        self.segmentEditorNode.MasterVolumeIntensityMaskOn()
-        self.segmentEditorNode.SetMasterVolumeIntensityMaskRange(-17, 848)
+        self.segmentEditorNode.ReferenceVolumeIntensityMaskOn()
+        self.segmentEditorNode.SetReferenceVolumeIntensityMaskRange(-17, 848)
         self.islandEffect.self().onApply()
         self.checkSegmentVoxelCount(3, 87)  # Segment_4
 
         # Restore old overwrite setting
         self.segmentEditorNode.SetOverwriteMode(oldOverwriteMode)
-        self.segmentEditorNode.MasterVolumeIntensityMaskOff()
+        self.segmentEditorNode.ReferenceVolumeIntensityMaskOff()

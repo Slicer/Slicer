@@ -67,11 +67,11 @@ Other mesh file formats can be loaded as model and then converted to segmentatio
 
 ### Editing a segmentation imported from model (surface mesh) file
 
-Selection of a `master volume` is required for editing a segmentation. The master volume specifies the geometry (origin, spacing, axis directions, and extents) of the voxel grid that is used during editing.
+Selection of a `Reference volume` is required for editing a segmentation. The reference volume specifies the geometry (origin, spacing, axis directions, and extents) of the voxel grid that is used during editing.
 
 If no volume is available then it can be created by the following steps:
 - Go to `Segment editor` module
-- Click `Specify geometry` button (on the right side of `Master volume` node selector)
+- Click `Specify geometry` button (on the right side of `Reference volume` node selector)
 - For `Source geometry` choose the segmentation (this specifies the extents, i.e., the bounding box so that the complete object is included)
 - Adjust `Spacing` values as needed. It is recommended to set the same value for all three axes. Using smaller values preserve more details but at the cost of increased memory usage and computation time.
 - Click `OK`
@@ -141,7 +141,7 @@ The supported representations are listed in the Representations section. Existin
 See Script repository's [Segmentations section](../../developer_guide/script_repository.md#segmentations) for examples.
 
 ### DICOM export
-- The master representation is used when exporting into DICOM, therefore you need to select a master volume, create binary labelmap representation and set it as master
+- The master representation is used when exporting into DICOM, therefore you need to select a reference volume, create binary labelmap representation and set it as master
 - DICOM Segmentation Object export if `QuantitativeReporting` extension is installed
 - Legacy DICOM RT structure set export is available if `SlicerRT` extension is installed. RT structure sets are not recommended for storing segmentations, as they cannot store arbitrarily complex 3D shapes.
 - Follow [these instructions](dicom.md#export-data-from-the-scene-to-dicom-database) for exporting data in DICOM format.

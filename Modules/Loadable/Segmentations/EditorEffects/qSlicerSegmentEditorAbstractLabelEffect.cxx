@@ -88,7 +88,7 @@ void qSlicerSegmentEditorAbstractLabelEffect::referenceGeometryChanged()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractLabelEffect::masterVolumeNodeChanged()
+void qSlicerSegmentEditorAbstractLabelEffect::referenceVolumeNodeChanged()
 {
 }
 

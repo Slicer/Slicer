@@ -258,7 +258,7 @@ void qSlicerSegmentationsModuleWidget::updateWidgetFromMRML()
   // Update segment handler button states based on segment selection
   this->onSegmentSelectionChanged(QItemSelection(),QItemSelection());
 
-  // Update master volume label and combobox for export
+  // Update reference volume label and combobox for export
   this->onSegmentationNodeReferenceChanged();
 }
 

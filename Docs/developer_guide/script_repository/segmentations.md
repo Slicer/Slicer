@@ -441,7 +441,7 @@ slicer.modules.markups.logic().JumpSlicesToLocation(mean_Ras[0], mean_Ras[1], me
 # Generate example input data (volumeNode, segmentationNode, segmentId)
 ################################################
 
-# Load master volume
+# Load reference volume
 import SampleData
 sampleDataLogic = SampleData.SampleDataLogic()
 volumeNode = sampleDataLogic.downloadMRBrainTumor1()
@@ -518,7 +518,7 @@ To always make this the default, add the lines above to your [.slicerrc.py file]
 
 ### How to run segment editor effects from a script
 
-Editor effects are complex because they need to handle changing master volumes, undo/redo, masking operations, etc. Therefore, it is recommended to use the effect by instantiating a qMRMLSegmentEditorWidget or use/extract processing logic of the effect and use that from a script.
+Editor effects are complex because they need to handle changing reference volumes, undo/redo, masking operations, etc. Therefore, it is recommended to use the effect by instantiating a qMRMLSegmentEditorWidget or use/extract processing logic of the effect and use that from a script.
 
 #### Use Segment editor effects from script (qMRMLSegmentEditorWidget)
 

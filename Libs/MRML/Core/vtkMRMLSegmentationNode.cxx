@@ -570,7 +570,7 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedIm
 bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, int editMode,
   vtkOrientedImageData* referenceGeometry,
   std::string editedSegmentID/*=""*/, std::string maskSegmentID/*=""*/,
-  vtkOrientedImageData* masterVolume/*=nullptr*/, double editableIntensityRange[2]/*=nullptr*/,
+  vtkOrientedImageData* referenceVolume/*=nullptr*/, double editableIntensityRange[2]/*=nullptr*/,
   vtkMRMLSegmentationDisplayNode* displayNode/*=nullptr*/)
 {
   if (!maskImage)
@@ -698,11 +698,11 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     }
 
   // Apply threshold mask if paint threshold is turned on
-  if (masterVolume != nullptr && editableIntensityRange != nullptr)
+  if (referenceVolume != nullptr && editableIntensityRange != nullptr)
     {
     // Create threshold image
     vtkNew<vtkImageThreshold> threshold;
-    threshold->SetInputData(masterVolume);
+    threshold->SetInputData(referenceVolume);
     threshold->ThresholdBetween(editableIntensityRange[0], editableIntensityRange[1]);
     threshold->SetInValue(1);
     threshold->SetOutValue(0);
@@ -710,9 +710,9 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     threshold->Update();
     vtkNew<vtkOrientedImageData> thresholdMask; //  == 0 in editable region
     thresholdMask->ShallowCopy(threshold->GetOutput());
-    vtkNew<vtkMatrix4x4> masterVolumeToWorldMatrix;
-    masterVolume->GetImageToWorldMatrix(masterVolumeToWorldMatrix.GetPointer());
-    thresholdMask->SetImageToWorldMatrix(masterVolumeToWorldMatrix.GetPointer());
+    vtkNew<vtkMatrix4x4> referenceVolumeToWorldMatrix;
+    referenceVolume->GetImageToWorldMatrix(referenceVolumeToWorldMatrix.GetPointer());
+    thresholdMask->SetImageToWorldMatrix(referenceVolumeToWorldMatrix.GetPointer());
 
     if (!vtkOrientedImageDataResample::ApplyImageMask(maskImage, thresholdMask.GetPointer(), 1))
       {
