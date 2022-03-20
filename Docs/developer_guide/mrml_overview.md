@@ -19,19 +19,19 @@ Medical Reality Modeling Language (MRML) is a data model developed to represent 
 ### Basic MRML node types
 
 - **Data nodes** store basic properties of a data set. Since the same data set can be displayed in different ways (even within the same application, you may want to show the same data set differently in each view), display properties are not stored in the data node. Similarly, the same data set can be stored in various file formats, therefore file storage properties are not stored in a data node. Data nodes are typically thin wrappers over VTK objects, such as vtkPolyData, vtkImageData, vtkTable. Most important Slicer core data nodes are the following:
-  - **Volume** ([vtkMRMLVolume](https://apidocs.slicer.org/master/classvtkMRMLVolumeNode.html) and its subclasses): stores a 3D image. Each voxel of a volume may be a scalar (to store images with continuous grayscale values, such as a CT image), label (to store discrete labels, such as a segmentation result), vector (for storing displacement fields or RGB color images), or tensor (MRI diffusion images). 2D image volumes are represented as single-slice 3D volumes. 4D volumes are stored in sequence nodes (vtkMRMLSequenceNode).
-  - **Model** ([vtkMRMLModelNode](https://apidocs.slicer.org/master/classvtkMRMLModelNode.html)): stores a surface mesh (polygonal elements, points, lines, etc.) or volumetric mesh (tetrahedral, wedge elements, unstructured grid, etc.)
-  - **Segmentation** ([vtkMRMLSegmentationNode](https://apidocs.slicer.org/master/classvtkMRMLSegmentationNode.html)): complex data node that can store image segmentation (also known as contouring, labeling). It can store multiple representations internally, for example it can store both binary labelmap image and closed surface mesh.
-  - **Markups** ([vtkMRMLMarkupsNode](https://apidocs.slicer.org/master/classvtkMRMLMarkupsNode.html) and subclasses): store simple geometrical objects, such as point lists (formerly called "fiducial lists"), lines, angles, curves, planes for annotation and measurements. Annotations module is the old generation of markups functionality and is being phased out.
-  - **Transform** ([vtkMRMLTransformNode](https://apidocs.slicer.org/master/classvtkMRMLTransformNode.html)): stores geometrical transformation that can be applied to any [transformable nodes](https://apidocs.slicer.org/master/classvtkMRMLTransformableNode.html). A transformation can contain any number of linear or non-linear (warping) transforms chained together. In general, it is recommended to use vtkMRMLTransformNode. Child types (vtkMRMLLinearTransformNode, vtkMRMLBSplineTransformNode, vtkMRMLGridTransformNode) are kept for backward compatibility and to allow filtering for specific transformation types in user interface widgets.
-  - **Text** ([vtkMRMLTextNode](https://apidocs.slicer.org/master/classvtkMRMLTextNode.html)): stores text data, such as configuration files, descriptive text, etc.
-  - **Table** ([vtkMRMLTableNode](https://apidocs.slicer.org/master/classvtkMRMLTableNode.html)): stores tabular data (multiple scalar or vector arrays), used mainly for showing quantitative results in tables and plots
-- **Display nodes** ([vtkMRMLDisplayNode](https://apidocs.slicer.org/master/classvtkMRMLDisplayNode.html) and its subclasses) specify properties how to display data nodes. For example, a model node's color is stored in a display node associated with a model node.
+  - **Volume** ([vtkMRMLVolume](https://apidocs.slicer.org/main/classvtkMRMLVolumeNode.html) and its subclasses): stores a 3D image. Each voxel of a volume may be a scalar (to store images with continuous grayscale values, such as a CT image), label (to store discrete labels, such as a segmentation result), vector (for storing displacement fields or RGB color images), or tensor (MRI diffusion images). 2D image volumes are represented as single-slice 3D volumes. 4D volumes are stored in sequence nodes (vtkMRMLSequenceNode).
+  - **Model** ([vtkMRMLModelNode](https://apidocs.slicer.org/main/classvtkMRMLModelNode.html)): stores a surface mesh (polygonal elements, points, lines, etc.) or volumetric mesh (tetrahedral, wedge elements, unstructured grid, etc.)
+  - **Segmentation** ([vtkMRMLSegmentationNode](https://apidocs.slicer.org/main/classvtkMRMLSegmentationNode.html)): complex data node that can store image segmentation (also known as contouring, labeling). It can store multiple representations internally, for example it can store both binary labelmap image and closed surface mesh.
+  - **Markups** ([vtkMRMLMarkupsNode](https://apidocs.slicer.org/main/classvtkMRMLMarkupsNode.html) and subclasses): store simple geometrical objects, such as point lists (formerly called "fiducial lists"), lines, angles, curves, planes for annotation and measurements. Annotations module is the old generation of markups functionality and is being phased out.
+  - **Transform** ([vtkMRMLTransformNode](https://apidocs.slicer.org/main/classvtkMRMLTransformNode.html)): stores geometrical transformation that can be applied to any [transformable nodes](https://apidocs.slicer.org/main/classvtkMRMLTransformableNode.html). A transformation can contain any number of linear or non-linear (warping) transforms chained together. In general, it is recommended to use vtkMRMLTransformNode. Child types (vtkMRMLLinearTransformNode, vtkMRMLBSplineTransformNode, vtkMRMLGridTransformNode) are kept for backward compatibility and to allow filtering for specific transformation types in user interface widgets.
+  - **Text** ([vtkMRMLTextNode](https://apidocs.slicer.org/main/classvtkMRMLTextNode.html)): stores text data, such as configuration files, descriptive text, etc.
+  - **Table** ([vtkMRMLTableNode](https://apidocs.slicer.org/main/classvtkMRMLTableNode.html)): stores tabular data (multiple scalar or vector arrays), used mainly for showing quantitative results in tables and plots
+- **Display nodes** ([vtkMRMLDisplayNode](https://apidocs.slicer.org/main/classvtkMRMLDisplayNode.html) and its subclasses) specify properties how to display data nodes. For example, a model node's color is stored in a display node associated with a model node.
   - Multiple display nodes may be added for a single data, each specifying different display properties and view nodes. Built-in Slicer modules typically only show and allow editing of the *first* display node associated with a data node.
   - If a display node specifies a list of view nodes then the associated data node is only displayed in those views.
   - Display nodes may refer to *color nodes* to specify a list of colors or color look-up-tables.
   - When a data node is created then default display node can be added by calling its `CreateDefaultDisplayNodes()` method. In some cases, Slicer detects if the display and storage node is missing and tries to create a default nodes, but the developers should not rely on this error-recovery mechanism.
-- **Storage nodes** ([vtkMRMLStorageNode](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html) and its subclasses) specify how to store a data node in file. It can store one or more file name, compression options, coordinate system information, etc.
+- **Storage nodes** ([vtkMRMLStorageNode](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html) and its subclasses) specify how to store a data node in file. It can store one or more file name, compression options, coordinate system information, etc.
   - Default storage node may be created for a data node by calling its `CreateDefaultStorageNode()` method.
 - **View nodes** ([vtkMRMLAbstractViewNode](https://apidocs.slicer.org/v4.8/classvtkMRMLAbstractViewNode.html) and subclasses) specify view layout and appearance of views, such as background color. Additional nodes related to view nodes include:
   - vtkMRMLCameraNode stores properties of camera of a 3D view.
@@ -40,11 +40,11 @@ Medical Reality Modeling Language (MRML) is a data model developed to represent 
   - vtkMRMLLayoutNode defines the current view layout: what views (slice, 3D, table, etc.) are display and where. In addition to switching between built-in view layouts, custom view layouts can be specified using an XML description.
   - vtkMRMLInteractionNode specifies interaction mode of viewers (view/transform, window/level, place markups), such as what happens the user clicks in a view
   - vtkMRMLSelectionNode stores global state information of the scene, such as active markup (that is being placed), units (length, time, etc.) used in the scene, etc
-- **Plot nodes** specify how to display table node contents as plots. [Plot series node](https://apidocs.slicer.org/master/classvtkMRMLPlotSeriesNode.html) specifies a data series using one or two columns of a table node. [Plot chart node](https://apidocs.slicer.org/master/classvtkMRMLPlotChartNode.html) specifies which series to plot and how. [Plot view node](https://apidocs.slicer.org/master/classvtkMRMLPlotViewNode.html) specifies which plot chart to show in a view and how user can interact with it.
-- **Subject hierarchy node** ([vtkMRMLSubjectHierarchyNode](https://apidocs.slicer.org/master/classvtkMRMLSubjectHierarchyNode.html)) allows organization of data nodes into folders. Subject hierarchy folders may be associated with display nodes, which can be used to override display properties of all children in that folder. It replaces all previous hierarchy management methods, such as model or annotation hierarchies.
-- [**Sequence node**](https://github.com/Slicer/Slicer/blob/master/Libs/MRML/Core/vtkMRMLSequenceNode.h) stores a list of data nodes to represent time sequences or other multidimensional data sets in the scene. [Sequence browser node](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Sequences/MRML/vtkMRMLSequenceBrowserNode.h) specifies which one of the internal data node should be copied to the scene so that it can be displayed or edited. The node that represents a node of the internal scene is called a *proxy node*. When a proxy node is modified in the scene, all changes can be saved into the internal scene.
+- **Plot nodes** specify how to display table node contents as plots. [Plot series node](https://apidocs.slicer.org/main/classvtkMRMLPlotSeriesNode.html) specifies a data series using one or two columns of a table node. [Plot chart node](https://apidocs.slicer.org/main/classvtkMRMLPlotChartNode.html) specifies which series to plot and how. [Plot view node](https://apidocs.slicer.org/main/classvtkMRMLPlotViewNode.html) specifies which plot chart to show in a view and how user can interact with it.
+- **Subject hierarchy node** ([vtkMRMLSubjectHierarchyNode](https://apidocs.slicer.org/main/classvtkMRMLSubjectHierarchyNode.html)) allows organization of data nodes into folders. Subject hierarchy folders may be associated with display nodes, which can be used to override display properties of all children in that folder. It replaces all previous hierarchy management methods, such as model or annotation hierarchies.
+- [**Sequence node**](https://github.com/Slicer/Slicer/blob/main/Libs/MRML/Core/vtkMRMLSequenceNode.h) stores a list of data nodes to represent time sequences or other multidimensional data sets in the scene. [Sequence browser node](https://github.com/Slicer/Slicer/blob/main/Modules/Loadable/Sequences/MRML/vtkMRMLSequenceBrowserNode.h) specifies which one of the internal data node should be copied to the scene so that it can be displayed or edited. The node that represents a node of the internal scene is called a *proxy node*. When a proxy node is modified in the scene, all changes can be saved into the internal scene.
 
-Detailed documentation of MRML API can be found in [here](https://apidocs.slicer.org/master/classes.html).
+Detailed documentation of MRML API can be found in [here](https://apidocs.slicer.org/main/classes.html).
 
 ### MRML node attributes
 
@@ -152,32 +152,32 @@ Files:
 Key points:
 
 * Naming convention for class: `vtkMRML<MyCustomType>Node`
-  * E.g. [`vtkMRMLModelNode`](https://apidocs.slicer.org/master/classvtkMRMLModelNode.html)
-* Inherits from [`vtkMRMLDisplayableNode`](https://apidocs.slicer.org/master/classvtkMRMLDisplayableNode.html) if it is going to be displayed in the 3D or slice views.
+  * E.g. [`vtkMRMLModelNode`](https://apidocs.slicer.org/main/classvtkMRMLModelNode.html)
+* Inherits from [`vtkMRMLDisplayableNode`](https://apidocs.slicer.org/main/classvtkMRMLDisplayableNode.html) if it is going to be displayed in the 3D or slice views.
 * Constructing a new node:
-  * Declare [`vtkMRMLNode* CreateNodeInstance() override`](https://apidocs.slicer.org/master/classvtkMRMLNode.html#a6acd6b70ed94ae7384372bd5cb569639) and `static vtkMRMLYourNodeType *New()`. The implementations will be generated by using the macro [`vtkMRMLNodeNewMacro(vtkMRMLYourNodeType);`](https://apidocs.slicer.org/master/vtkMRMLNode_8h.html#acfdcb323c511216ccf8279632a8f8e94) in your cxx file.
+  * Declare [`vtkMRMLNode* CreateNodeInstance() override`](https://apidocs.slicer.org/main/classvtkMRMLNode.html#a6acd6b70ed94ae7384372bd5cb569639) and `static vtkMRMLYourNodeType *New()`. The implementations will be generated by using the macro [`vtkMRMLNodeNewMacro(vtkMRMLYourNodeType);`](https://apidocs.slicer.org/main/vtkMRMLNode_8h.html#acfdcb323c511216ccf8279632a8f8e94) in your cxx file.
   * Create a protected default constructor.
     * It must be protected because VTK only allows its objects to be created through the `New()` factory function.
     * Because of the use of the `New()` factory function, constructors with parameters are not typically used.
   * Create a destructor if needed.
   * Delete copy/move constructors and copy/move assignment operators.
 * To save to an MRB:
-  * Override [`const char* GetNodeTagName()`](https://apidocs.slicer.org/master/classvtkMRMLNode.html#a65538ef0ba40565a13a6f42d49031592) to return a unique XML tag.
-  * Override [`void ReadXMLAttributes(const char** atts)`](https://apidocs.slicer.org/master/classvtkMRMLNode.html#a7ab4e8e10cadd4486acb626763d0a891) and [`void WriteXML(ostream& of, int indent)`](https://apidocs.slicer.org/master/classvtkMRMLNode.html#aaff972a037da725aaa318bf4b8a6f9a8) to save to XML any attributes of the data node that will not be saved by the writer.
+  * Override [`const char* GetNodeTagName()`](https://apidocs.slicer.org/main/classvtkMRMLNode.html#a65538ef0ba40565a13a6f42d49031592) to return a unique XML tag.
+  * Override [`void ReadXMLAttributes(const char** atts)`](https://apidocs.slicer.org/main/classvtkMRMLNode.html#a7ab4e8e10cadd4486acb626763d0a891) and [`void WriteXML(ostream& of, int indent)`](https://apidocs.slicer.org/main/classvtkMRMLNode.html#aaff972a037da725aaa318bf4b8a6f9a8) to save to XML any attributes of the data node that will not be saved by the writer.
 * To work with Transforms:
-  * Override [`bool CanApplyNonLinearTransforms() const`](https://apidocs.slicer.org/master/classvtkMRMLTransformableNode.html#a7a7dda29c7ba59e55dcbaeb0f06c7f6b) to return true or false depending on if non linear transforms can be applied to your data type.
-  * Override [`void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode)`](https://apidocs.slicer.org/master/classvtkMRMLTransformableNode.html#aaf5e6afd30216db5aafeb7e1141e9eee). It will be called when a new transform is applied to your data node.
-  * Override [`void ApplyTransform(vtkAbstractTransform* transform)`](https://apidocs.slicer.org/master/classvtkMRMLTransformableNode.html#add3fb3ed7b65c0f2de92f535f013869b), which will be called when a transform is hardened.
+  * Override [`bool CanApplyNonLinearTransforms() const`](https://apidocs.slicer.org/main/classvtkMRMLTransformableNode.html#a7a7dda29c7ba59e55dcbaeb0f06c7f6b) to return true or false depending on if non linear transforms can be applied to your data type.
+  * Override [`void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode)`](https://apidocs.slicer.org/main/classvtkMRMLTransformableNode.html#aaf5e6afd30216db5aafeb7e1141e9eee). It will be called when a new transform is applied to your data node.
+  * Override [`void ApplyTransform(vtkAbstractTransform* transform)`](https://apidocs.slicer.org/main/classvtkMRMLTransformableNode.html#add3fb3ed7b65c0f2de92f535f013869b), which will be called when a transform is hardened.
   * See bullet on `ProcessMRMLEvents`.
-* Override [`void GetRASBounds(double bounds[6])`](https://apidocs.slicer.org/master/classvtkMRMLDisplayableNode.html#aa7fbcfe229f9249e1701bef2bbf7d64b) and [`void GetBounds(double bounds[6])`](https://apidocs.slicer.org/master/classvtkMRMLDisplayableNode.html#a0976f1f4f57c701f3301391e9b95e6f9) to allow the "Center the 3D view on scene" button in the 3D viewer to work. Note that the difference between these functions is that `GetRASBounds` returns the bounds after all transforms have been applied, while `GetBounds` returns the pre-transform bounds.
-* Use macro `vtkMRMLCopyContentMacro(vtkMRMLYourNodeType)` in the class definition and implement [`void CopyContent(vtkMRMLNode* anode, bool deepCopy)`](https://apidocs.slicer.org/master/classvtkMRMLNode.html#a94940453f557fbc3a59f65bd37311cef) in the cxx file. This should copy the data content of your node via either a shallow or deep copy.
-* Override [`vtkMRMLStorageNode* CreateDefaultStorageNode()`](https://apidocs.slicer.org/master/classvtkMRMLStorableNode.html#aa35937e99fbb721847c3aea7a818fa10) to return an owning pointer default storage node type for your class (see [The storage node](#the-storage-node)).
-* Override [`void CreateDefaultDisplayNodes()`](https://apidocs.slicer.org/master/classvtkMRMLDisplayableNode.html#ac9f1e28f999d5ccc035317246b728b03) to create the default display nodes (for 3D and/or 2D viewing).
-* Override [`void ProcessMRMLEvents(vtkObject * caller, unsigned long event, void* callData)`](https://apidocs.slicer.org/master/classvtkMRMLNode.html#afce3fc71df4f8d1e56901846f3c86a51):
+* Override [`void GetRASBounds(double bounds[6])`](https://apidocs.slicer.org/main/classvtkMRMLDisplayableNode.html#aa7fbcfe229f9249e1701bef2bbf7d64b) and [`void GetBounds(double bounds[6])`](https://apidocs.slicer.org/main/classvtkMRMLDisplayableNode.html#a0976f1f4f57c701f3301391e9b95e6f9) to allow the "Center the 3D view on scene" button in the 3D viewer to work. Note that the difference between these functions is that `GetRASBounds` returns the bounds after all transforms have been applied, while `GetBounds` returns the pre-transform bounds.
+* Use macro `vtkMRMLCopyContentMacro(vtkMRMLYourNodeType)` in the class definition and implement [`void CopyContent(vtkMRMLNode* anode, bool deepCopy)`](https://apidocs.slicer.org/main/classvtkMRMLNode.html#a94940453f557fbc3a59f65bd37311cef) in the cxx file. This should copy the data content of your node via either a shallow or deep copy.
+* Override [`vtkMRMLStorageNode* CreateDefaultStorageNode()`](https://apidocs.slicer.org/main/classvtkMRMLStorableNode.html#aa35937e99fbb721847c3aea7a818fa10) to return an owning pointer default storage node type for your class (see [The storage node](#the-storage-node)).
+* Override [`void CreateDefaultDisplayNodes()`](https://apidocs.slicer.org/main/classvtkMRMLDisplayableNode.html#ac9f1e28f999d5ccc035317246b728b03) to create the default display nodes (for 3D and/or 2D viewing).
+* Override [`void ProcessMRMLEvents(vtkObject * caller, unsigned long event, void* callData)`](https://apidocs.slicer.org/main/classvtkMRMLNode.html#afce3fc71df4f8d1e56901846f3c86a51):
   * This is used to process any events that happen regarding this object.
   * This method should handle the `vtkMRMLTransformableNode::TransformModifiedEvent` which is emitted any time the transform that is associated with the data object is changed.
 * Convenience methods - while not necessarily needed, they are nice to have.
-  * `Get<MyCustomType>DisplayNode()` function that returns the downcast version of [`GetDisplayNode()`](https://apidocs.slicer.org/master/classvtkMRMLDisplayableNode.html#ab2cac46d934a10817b75b37471fe65a8) saves users of your class a bit of downcasting.
+  * `Get<MyCustomType>DisplayNode()` function that returns the downcast version of [`GetDisplayNode()`](https://apidocs.slicer.org/main/classvtkMRMLDisplayableNode.html#ab2cac46d934a10817b75b37471fe65a8) saves users of your class a bit of downcasting.
 * Other methods:
   * Add other methods as your heart desires to view/modify the actual content of the data being stored.
 
@@ -204,13 +204,13 @@ Files:
 Key Points:
 
 * Naming convention for class: `vtkMRML<MyCustomType>DisplayNode`
-  * E.g. [`vtkMRMLModelDisplayNode`](https://apidocs.slicer.org/master/classvtkMRMLModelDisplayNode.html)
-* Inherits from [`vtkMRMLDisplayNode`](https://apidocs.slicer.org/master/classvtkMRMLDisplayNode.html).
+  * E.g. [`vtkMRMLModelDisplayNode`](https://apidocs.slicer.org/main/classvtkMRMLModelDisplayNode.html)
+* Inherits from [`vtkMRMLDisplayNode`](https://apidocs.slicer.org/main/classvtkMRMLDisplayNode.html).
 * Constructing a new node is same as the [data node](#the-data-node).
 * To save to an MRB is same as for the [data node](#the-data-node):
   * Some MRML types like Markups store display information when the actual data is being stored via the writer/storage node. If you do that, no action is needed in this class.
 * Convenience methods:
-  * `Get<YourDataType>Node()` function that returns a downcasted version of [`vtkMRMLDisplayableNode* GetDisplayableNode()`](https://apidocs.slicer.org/master/classvtkMRMLDisplayNode.html#a7100d9379c0b96b2a9ab1ad0a8514af7).
+  * `Get<YourDataType>Node()` function that returns a downcasted version of [`vtkMRMLDisplayableNode* GetDisplayableNode()`](https://apidocs.slicer.org/main/classvtkMRMLDisplayNode.html#a7100d9379c0b96b2a9ab1ad0a8514af7).
 * Other methods:
   * Add any methods regarding coloring/sizing/displaying your data node.
 
@@ -237,17 +237,17 @@ Files:
 Key points:
 
 * Naming convention for class: `vtkSlicer<MyCustomType>Widget`
-* Inherits from [`vtkMRMLAbstractWidget`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidget.html).
+* Inherits from [`vtkMRMLAbstractWidget`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidget.html).
 * Constructing a new node is same as the [data node](#the-data-node).
 * For viewing:
   * Add function(s) to create [widget representation](#the-widget-representation)(s). These will typically take a display node, a view node, and a vtkRenderer.
   * E.g. `void CreateDefaultRepresentation(vtkMRML<MyCustomType>DisplayNode* myCustomTypeDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer);`
 * For interaction override some or all of the following methods from vtkMRMLAbstractWidget:
-  * [`bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidget.html#a18d9e1148c3d53ea6244c69265e6176a)
-  * [`bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidget.html#ab8d51be6df9402eb96943e0e2d0b3123)
-  * [`void Leave(vtkMRMLInteractionEventData* eventData)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidget.html#a6428fe2d100bd1f38c306d3af74802a5)
-  * [`bool GetInteractive()`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidget.html#aaca79315fd1e7dce0f09e82c0b1c5e6e)
-  * [`int GetMouseCursor()`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidget.html#a8a6e0f8a3b81636e58f60cebbbd6f4d7)
+  * [`bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidget.html#a18d9e1148c3d53ea6244c69265e6176a)
+  * [`bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidget.html#ab8d51be6df9402eb96943e0e2d0b3123)
+  * [`void Leave(vtkMRMLInteractionEventData* eventData)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidget.html#a6428fe2d100bd1f38c306d3af74802a5)
+  * [`bool GetInteractive()`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidget.html#aaca79315fd1e7dce0f09e82c0b1c5e6e)
+  * [`int GetMouseCursor()`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidget.html#a8a6e0f8a3b81636e58f60cebbbd6f4d7)
 
 #### The widget representation
 
@@ -266,16 +266,16 @@ Files:
 Key Points:
 
 * Naming convention for class: `vtkSlicer<MyCustomType>WidgetRepresentation`
-* Inherits from [`vtkMRMLAbstractWidgetRepresentation`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidgetRepresentation.html).
+* Inherits from [`vtkMRMLAbstractWidgetRepresentation`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidgetRepresentation.html).
 * Constructing a new node is same as the [data node](#the-data-node).
-* Override [`void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidgetRepresentation.html#a404ce09ab17e92d203c82fee2a71b0ee) to update the widget representation when the underlying data or display nodes change.
+* Override [`void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidgetRepresentation.html#a404ce09ab17e92d203c82fee2a71b0ee) to update the widget representation when the underlying data or display nodes change.
 * To make the class behave like a vtkProp override:
-  * [`void GetActors(vtkPropCollection*)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidgetRepresentation.html#ab0124c85fa2d5032a37c690d58c1ef2f)
-  * [`void ReleaseGraphicsResources(vtkWindow*)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidgetRepresentation.html#aa1949d0b26d58d83df1c0764db6d19bf)
-  * [`int RenderOverlay(vtkViewport* viewport)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidgetRepresentation.html#a51314976a613b4c7324a571ee7243cbc)
-  * [`int RenderOpaqueGeometry(vtkViewport* viewport)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidgetRepresentation.html#a14e33bf29e9272dd9fe29c7baadec730)
-  * [`int RenderTranslucentPolygonalGeometry(vtkViewport* viewport)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidgetRepresentation.html#a0d00da2fcb99df807c6884ac757e1735)
-  * [`vtkTypeBool HasTranslucentPolygonalGeometry()`](https://apidocs.slicer.org/master/classvtkMRMLAbstractWidgetRepresentation.html#a16347752784cec5542751b9e6d81cf2b)
+  * [`void GetActors(vtkPropCollection*)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidgetRepresentation.html#ab0124c85fa2d5032a37c690d58c1ef2f)
+  * [`void ReleaseGraphicsResources(vtkWindow*)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidgetRepresentation.html#aa1949d0b26d58d83df1c0764db6d19bf)
+  * [`int RenderOverlay(vtkViewport* viewport)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidgetRepresentation.html#a51314976a613b4c7324a571ee7243cbc)
+  * [`int RenderOpaqueGeometry(vtkViewport* viewport)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidgetRepresentation.html#a14e33bf29e9272dd9fe29c7baadec730)
+  * [`int RenderTranslucentPolygonalGeometry(vtkViewport* viewport)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidgetRepresentation.html#a0d00da2fcb99df807c6884ac757e1735)
+  * [`vtkTypeBool HasTranslucentPolygonalGeometry()`](https://apidocs.slicer.org/main/classvtkMRMLAbstractWidgetRepresentation.html#a16347752784cec5542751b9e6d81cf2b)
 
 :::{important}
 
@@ -306,14 +306,14 @@ Files:
 Key Points:
 
 * Naming convention for class: `vtkSlicer<MyCustomType>DisplayableManager`
-* Inherits from [`vtkMRMLAbstractDisplayableManager`](https://apidocs.slicer.org/master/classvtkMRMLAbstractDisplayableManager.html).
+* Inherits from [`vtkMRMLAbstractDisplayableManager`](https://apidocs.slicer.org/main/classvtkMRMLAbstractDisplayableManager.html).
 * Constructing a new node is same as the [data node](#the-data-node).
-* Override [`void OnMRMLSceneNodeAdded(vtkMRMLNode* node)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractLogic.html#ac0102310f18a3880f00e93b8e37210c9) to watch for if a new node of your type is added to the scene. Add an appropriate widget(s) and widget representation(s) for any display nodes.
-* Override [`void OnMRMLSceneNodeRemoved(vtkMRMLNode* node)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractLogic.html#a92b1149d08ec5099a9ec61c0636f37c4) to watch for if a node of your type is removed from the scene. Remove corresponding widget(s) and widget representation(s).
-* Override [`void OnMRMLSceneEndImport()`](https://apidocs.slicer.org/master/classvtkMRMLAbstractLogic.html#ae826dc18ec31156f0eae3456608eb1c4) to watch for an MRB file that has finished importing.
-* Override [`void OnMRMLSceneEndClose()`](https://apidocs.slicer.org/master/classvtkMRMLAbstractLogic.html#a5f8a69a47eacec0cd95857beceb8eb34) to clean up when a scene closes.
-* Override [`void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData)`](https://apidocs.slicer.org/master/classvtkMRMLAbstractLogic.html#a43a759874ce32846c6dffc52e5941744) to watch for changes in the data node that would require the display to change.
-* Override [`void UpdateFromMRML()`](https://apidocs.slicer.org/master/classvtkMRMLAbstractDisplayableManager.html#a0e691194d46e40d73e598ba318324388) and [`void UpdateFromMRMLScene()`](https://apidocs.slicer.org/master/classvtkMRMLAbstractLogic.html#a50caeb3a373ccd53635ae2c08bc2e63e) to bring the displayable manager in line with the MRML Scene.
+* Override [`void OnMRMLSceneNodeAdded(vtkMRMLNode* node)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractLogic.html#ac0102310f18a3880f00e93b8e37210c9) to watch for if a new node of your type is added to the scene. Add an appropriate widget(s) and widget representation(s) for any display nodes.
+* Override [`void OnMRMLSceneNodeRemoved(vtkMRMLNode* node)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractLogic.html#a92b1149d08ec5099a9ec61c0636f37c4) to watch for if a node of your type is removed from the scene. Remove corresponding widget(s) and widget representation(s).
+* Override [`void OnMRMLSceneEndImport()`](https://apidocs.slicer.org/main/classvtkMRMLAbstractLogic.html#ae826dc18ec31156f0eae3456608eb1c4) to watch for an MRB file that has finished importing.
+* Override [`void OnMRMLSceneEndClose()`](https://apidocs.slicer.org/main/classvtkMRMLAbstractLogic.html#a5f8a69a47eacec0cd95857beceb8eb34) to clean up when a scene closes.
+* Override [`void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData)`](https://apidocs.slicer.org/main/classvtkMRMLAbstractLogic.html#a43a759874ce32846c6dffc52e5941744) to watch for changes in the data node that would require the display to change.
+* Override [`void UpdateFromMRML()`](https://apidocs.slicer.org/main/classvtkMRMLAbstractDisplayableManager.html#a0e691194d46e40d73e598ba318324388) and [`void UpdateFromMRMLScene()`](https://apidocs.slicer.org/main/classvtkMRMLAbstractLogic.html#a50caeb3a373ccd53635ae2c08bc2e63e) to bring the displayable manager in line with the MRML Scene.
 
 #### The storage node
 
@@ -341,17 +341,17 @@ Key Points:
 
 * Naming convention for class: `vtkMRML<MyCustomType>StorageNode`
   * If you have multiple storage nodes you may have other information in the name, such as the format that is written. E.g. `vtkMRMLMarkupsJSONStorageNode`.
-* Inherits from [`vtkMRMLStorageNode`](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html).
+* Inherits from [`vtkMRMLStorageNode`](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html).
 * Constructing a new node is same as the [data node](#the-data-node).
-* Override [`bool CanReadInReferenceNode(vtkMRMLNode *refNode)`](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html#af76f30cec1ccdc03bc496e5d39c784da) to allow a user to inquire at runtime if a particular node can be read in by this storage node.
-* Override protected [`void InitializeSupportedReadFileTypes()`](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html#af7c838cb215a8a5b1dd87a123b3fbc81) to show what file types and extensions this storage node can read (can be more than one).
-* Override protected [`void InitializeSupportedWriteFileTypes()`](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html#ab161ed9e9869cb61441659fe7c358906) to show what types and extensions this storage node can read (can be more than one).
+* Override [`bool CanReadInReferenceNode(vtkMRMLNode *refNode)`](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html#af76f30cec1ccdc03bc496e5d39c784da) to allow a user to inquire at runtime if a particular node can be read in by this storage node.
+* Override protected [`void InitializeSupportedReadFileTypes()`](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html#af7c838cb215a8a5b1dd87a123b3fbc81) to show what file types and extensions this storage node can read (can be more than one).
+* Override protected [`void InitializeSupportedWriteFileTypes()`](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html#ab161ed9e9869cb61441659fe7c358906) to show what types and extensions this storage node can read (can be more than one).
   * It is recommended to be able to read and write the same file types within a single storage node.
-* Override protected [`int ReadDataInternal(vtkMRMLNode *refNode)`](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html#a56aa52786dad2724a0a6a706b7fcf014):
-  * This is called by the public [`ReadData`](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html#afeeb4c95ee3164bd1d3374c053ffb04f) method.
+* Override protected [`int ReadDataInternal(vtkMRMLNode *refNode)`](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html#a56aa52786dad2724a0a6a706b7fcf014):
+  * This is called by the public [`ReadData`](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html#afeeb4c95ee3164bd1d3374c053ffb04f) method.
   * This is where the actually reading data from a file happens.
-* Override protected [`int WriteDataInternal(vtkMRMLNode *refNode)`](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html#a739831f001a7cebbeb72484944e842bf):
-  * This is called by the public [`WriteData`](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html#a1eb7a2b35d28175e2c490ac51cbf5baf) method.
+* Override protected [`int WriteDataInternal(vtkMRMLNode *refNode)`](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html#a739831f001a7cebbeb72484944e842bf):
+  * This is called by the public [`WriteData`](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html#a1eb7a2b35d28175e2c490ac51cbf5baf) method.
   * This is where the actually writing data to a file happens.
 * If your data node uses any coordinates (most nodes that get displayed should) it is recommended to be specific in your storage format whether the saved coordinates are RAS or LPS coordinates.
   * Having a way to allow the user to specify this is even better.
@@ -383,7 +383,7 @@ Files:
 Key Points:
 
 * Naming convention for class: `qSlicer<MyCustomType>Reader`
-* Inherits from [`qSlicerFileReader`](https://apidocs.slicer.org/master/classqSlicerFileReader.html).
+* Inherits from [`qSlicerFileReader`](https://apidocs.slicer.org/main/classqSlicerFileReader.html).
 * In the class definition, the following macros should be used:
   * `Q_OBJECT`
   * `Q_DECLARE_PRIVATE`
@@ -391,12 +391,12 @@ Key Points:
 * Constructing a new node:
   * Create constructor `qSlicer<MyCustomType>Reader(QObject* parent = nullptr)`.
     * This constructor, even if it is not explicitly used, allows this file to be wrapped in Python.
-* Override [`QString description() const`](https://apidocs.slicer.org/master/classqSlicerIO.html#af44106dbf852df0e6cc836b377630f5e) to provide a short description on the types of files read.
-* Override [`IOFileType fileType() const`](https://apidocs.slicer.org/master/classqSlicerIO.html#aac38b570ec5c0692caefa7d87657e58b) to give a string to associate with the types of files read.
+* Override [`QString description() const`](https://apidocs.slicer.org/main/classqSlicerIO.html#af44106dbf852df0e6cc836b377630f5e) to provide a short description on the types of files read.
+* Override [`IOFileType fileType() const`](https://apidocs.slicer.org/main/classqSlicerIO.html#aac38b570ec5c0692caefa7d87657e58b) to give a string to associate with the types of files read.
   * This string can be used in conjunction with the python method [`slicer.util.loadNodeFromFile`](https://slicer.readthedocs.io/en/latest/developer_guide/slicer.html#slicer.util.loadNodeFromFile)
-* Override [`QStringList extensions() const`](https://apidocs.slicer.org/master/classqSlicerFileReader.html#afb3187915977b2253d86634cc465b23d) to provide the extensions that can be read.
+* Override [`QStringList extensions() const`](https://apidocs.slicer.org/main/classqSlicerFileReader.html#afb3187915977b2253d86634cc465b23d) to provide the extensions that can be read.
   * Should be the same as the storage node since the reader uses the storage node.
-* Override [`bool load(const IOProperties& properties)`](https://apidocs.slicer.org/master/classqSlicerFileReader.html#ac9acb878cd8adcc426e9a7a9edac15df). This is the function that actually loads the node from the file into the scene.
+* Override [`bool load(const IOProperties& properties)`](https://apidocs.slicer.org/main/classqSlicerFileReader.html#ac9acb878cd8adcc426e9a7a9edac15df). This is the function that actually loads the node from the file into the scene.
 
 :::{important}
 
@@ -420,11 +420,11 @@ Files:
 Key points:
 
 * Naming convention for class: `qSlicer<MyCustomType>Writer`
-* Inherits from [`qSlicerNodeWriter`](https://apidocs.slicer.org/master/classqSlicerNodeWriter.html).
+* Inherits from [`qSlicerNodeWriter`](https://apidocs.slicer.org/main/classqSlicerNodeWriter.html).
 * See the [reader](#the-reader) for information on defining and constructing Qt style classes.
-* Override [`QStringList extensions(vtkObject* object) const`](https://apidocs.slicer.org/master/classqSlicerNodeWriter.html#aa2d7322c22d3d5fa7b9ef2843948b31a) to provide file extensions that can be written to.
+* Override [`QStringList extensions(vtkObject* object) const`](https://apidocs.slicer.org/main/classqSlicerNodeWriter.html#aa2d7322c22d3d5fa7b9ef2843948b31a) to provide file extensions that can be written to.
   * File extensions may be different, but don’t have to be, for different data nodes that in the same hierarchy (e.g. Markups Curve and Plane could reasonably require different file extensions, but they don’t).
-* Override [`bool write(const qSlicerIO::IOProperties& properties)`](https://apidocs.slicer.org/master/classqSlicerNodeWriter.html#aa7e3af9bf485b46735131e6363223ad8) to do the actual writing (by way of a storage node, of course).
+* Override [`bool write(const qSlicerIO::IOProperties& properties)`](https://apidocs.slicer.org/main/classqSlicerNodeWriter.html#aa7e3af9bf485b46735131e6363223ad8) to do the actual writing (by way of a storage node, of course).
 
 #### The subject hierarchy plugin
 
@@ -443,17 +443,17 @@ Files:
 Key Points:
 
 * Naming convention for class: `qSlicerSubjectHierarchy<MyCustomType>Plugin`
-* Inherits from [`qSlicerSubjectHierarchyAbstractPlugin`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyAbstractPlugin.html).
+* Inherits from [`qSlicerSubjectHierarchyAbstractPlugin`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyAbstractPlugin.html).
 * See the [reader](#the-reader) for information on defining and constructing Qt style classes.
-* Override [`double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyAbstractPlugin.html#a91df5054dd11126a05e730922b5e9e43).
+* Override [`double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyAbstractPlugin.html#a91df5054dd11126a05e730922b5e9e43).
   * This method is used to determine if a data node can be placed in the hierarchy using this plugin.
-* Override [`double canOwnSubjectHierarchyItem(vtkIdType itemID) const`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyAbstractPlugin.html#afe009201b32cc0a115aff0022cc1dd9f) to say if this plugin can own a particular subject hierarchy item.
-* Override [`const QString roleForPlugin() const`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyAbstractPlugin.html#a55f0d686fe8e38576bc890de95622ad5) to give the plugin’s role (most often meaning the data type the plugin can handle, e.g. Markup).
-* Override [`QIcon icon(vtkIdType itemID)`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyAbstractPlugin.html#a7a1b0b5a55a2a13d7b88f3746ea573bc) and [`QIcon visibilityIcon(int visible)`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyAbstractPlugin.html#a5bbd27154c71e174804bd833d50ce070) to set icons for your node type.
-* Override [`QString tooltip(vtkIdType itemID) const`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyAbstractPlugin.html#a7c748f1c4437fb4f63f88324b68157ef) to set a tool tip for your node type.
+* Override [`double canOwnSubjectHierarchyItem(vtkIdType itemID) const`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyAbstractPlugin.html#afe009201b32cc0a115aff0022cc1dd9f) to say if this plugin can own a particular subject hierarchy item.
+* Override [`const QString roleForPlugin() const`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyAbstractPlugin.html#a55f0d686fe8e38576bc890de95622ad5) to give the plugin’s role (most often meaning the data type the plugin can handle, e.g. Markup).
+* Override [`QIcon icon(vtkIdType itemID)`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyAbstractPlugin.html#a7a1b0b5a55a2a13d7b88f3746ea573bc) and [`QIcon visibilityIcon(int visible)`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyAbstractPlugin.html#a5bbd27154c71e174804bd833d50ce070) to set icons for your node type.
+* Override [`QString tooltip(vtkIdType itemID) const`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyAbstractPlugin.html#a7c748f1c4437fb4f63f88324b68157ef) to set a tool tip for your node type.
 * Override the following to determine what happens when a user gets/sets the node color through the subject hierarchy:
-  * [`void setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyAbstractPlugin.html#ad8b6d1065e78bfc73e6dcc71fce61c42)
-  * [`QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData) const`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyAbstractPlugin.html#a7be968d5ad3840512686b7c8501cf847)
+  * [`void setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyAbstractPlugin.html#ad8b6d1065e78bfc73e6dcc71fce61c42)
+  * [`QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData) const`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyAbstractPlugin.html#a7be968d5ad3840512686b7c8501cf847)
 
 #### The module (aka putting it all together)
 
@@ -477,19 +477,19 @@ Files:
 
 In `qSlicer<MyCustomType>Module.cxx`:
 
-* Override the [`void setup()`](https://apidocs.slicer.org/master/classqSlicerAbstractCoreModule.html#a9ad37e756338e7226f157b4eb54b9bcd) function:
-  * Register your displayable manager with the [`vtkMRMLThreeDViewDisplayableManagerFactory`](https://apidocs.slicer.org/master/classvtkMRMLThreeDViewDisplayableManagerFactory.html) and/or the [`vtkMRMLSliceViewDisplayableManagerFactory`](https://apidocs.slicer.org/master/classvtkMRMLSliceViewDisplayableManagerFactory.html).
-  * Register your subject hierarchy plugin with the [`qSlicerSubjectHierarchyPluginHandler`](https://apidocs.slicer.org/master/classqSlicerSubjectHierarchyPluginHandler.html).
-  * Register your reader and writer with the [`qSlicerIOManager`](https://apidocs.slicer.org/master/classqSlicerIOManager.html).
-* Override the [`QStringList associatedNodeTypes() const`](https://apidocs.slicer.org/master/classqSlicerAbstractCoreModule.html#a51d7c31d4901b3a313cb53b4891961f9) function and return all the new MRML classes created (data, display, and storage nodes).
+* Override the [`void setup()`](https://apidocs.slicer.org/main/classqSlicerAbstractCoreModule.html#a9ad37e756338e7226f157b4eb54b9bcd) function:
+  * Register your displayable manager with the [`vtkMRMLThreeDViewDisplayableManagerFactory`](https://apidocs.slicer.org/main/classvtkMRMLThreeDViewDisplayableManagerFactory.html) and/or the [`vtkMRMLSliceViewDisplayableManagerFactory`](https://apidocs.slicer.org/main/classvtkMRMLSliceViewDisplayableManagerFactory.html).
+  * Register your subject hierarchy plugin with the [`qSlicerSubjectHierarchyPluginHandler`](https://apidocs.slicer.org/main/classqSlicerSubjectHierarchyPluginHandler.html).
+  * Register your reader and writer with the [`qSlicerIOManager`](https://apidocs.slicer.org/main/classqSlicerIOManager.html).
+* Override the [`QStringList associatedNodeTypes() const`](https://apidocs.slicer.org/main/classqSlicerAbstractCoreModule.html#a51d7c31d4901b3a313cb53b4891961f9) function and return all the new MRML classes created (data, display, and storage nodes).
 
 In `vtkSlicer<MyCustomType>Logic.cxx`:
 
-* Override the protected [`void RegisterNodes()`](https://apidocs.slicer.org/master/classvtkMRMLAbstractLogic.html#acfa7f65f53d5fbe6d056e7cf32a23058) function and register all the new MRML classes created (data, display, and storage nodes) with the MRML scene.
+* Override the protected [`void RegisterNodes()`](https://apidocs.slicer.org/main/classvtkMRMLAbstractLogic.html#acfa7f65f53d5fbe6d056e7cf32a23058) function and register all the new MRML classes created (data, display, and storage nodes) with the MRML scene.
 
 In `qSlicer<MyCustomType>ModuleWidget.cxx`:
 
-* Override [`bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString())`](https://apidocs.slicer.org/master/classqSlicerAbstractModuleWidget.html#a52fe94bcc034b4d841d7fc05a4899d3c) and [`double nodeEditable(vtkMRMLNode* node)`](https://apidocs.slicer.org/master/classqSlicerAbstractModuleWidget.html#adebae2ce9686043d7f9dee09620b28bb) if you want this module to be connected to the Data module’s "Edit properties..." option in the right click menu.
+* Override [`bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString())`](https://apidocs.slicer.org/main/classqSlicerAbstractModuleWidget.html#a52fe94bcc034b4d841d7fc05a4899d3c) and [`double nodeEditable(vtkMRMLNode* node)`](https://apidocs.slicer.org/main/classqSlicerAbstractModuleWidget.html#adebae2ce9686043d7f9dee09620b28bb) if you want this module to be connected to the Data module’s "Edit properties..." option in the right click menu.
 
 ### Slice view pipeline
 
@@ -500,14 +500,14 @@ Another view of [VTK/MRML pipeline for the 2D slice views](https://www.slicer.or
 Notes: the MapToWindowLevelColors has no lookup table set, so it maps the scalar volume data to 0,255 with no "color" operation.  This is controlled by the Window/Level settings of the volume display node.  The MapToColors applies the current lookup table to go from 0-255 to full RGBA.
 
 Management of slice views is distributed between several objects:
-- Slice node ([vtkMRMLSliceNode](https://apidocs.slicer.org/master/classvtkMRMLSliceNode.html)): Stores the position, orientation, and size of the slice. This is a [view node](https://apidocs.slicer.org/master/classvtkMRMLAbstractViewNode.html) and as such it stores common view properties, such as the view name, layout color, background color.
-- Slice display node ([vtkMRMLSliceDisplayNode](https://apidocs.slicer.org/master/classvtkMRMLSliceDisplayNode.html)): Specifies how the slice should be displayed, such as visibility and style of display of intersecting slices. The class is based on [classvtkMRMLModelDisplayNode](https://apidocs.slicer.org/master/classvtkMRMLModelDisplayNode.html), therefore it also specifies which 3D views the slice is displayed in.
-- Slice composite node ([vtkMRMLSliceCompositeNode](https://apidocs.slicer.org/master/classvtkMRMLSliceCompositeNode.html)): Specifies what volumes are displayed in the slice and how to blend them. It is ended up being a separate node probably because it is somewhat a mix between a data node (that tells what data to display) and a display node (that specifies how the data is displayed).
-- Slice model node ([vtkMRMLModelNode](http://apidocs.slicer.org/master/classvtkMRMLModelNode.html)): It is a model node that displays the slice in 3D views. It stores a simple rectangle mesh on that the image cross-section is renderd as a texture.
-- Slice model transform node ([vtkMRMLTransformNode](http://apidocs.slicer.org/master/classvtkMRMLTransformNode.html)). The transform node is used for positioning the slice model node in 3D views. It is faster to use a transform node to position the plane than modifying the plane points each time the slice is moved.
-- Slice logic ([vtkMRMLSliceLogic](https://apidocs.slicer.org/master/classvtkMRMLSliceLogic.html)): This is not a MRML node but a logic class, which implements operationson MRML nodes. There is one logic for each slice view. The object keeps reference to all MRML nodes, so it is a good starting point for accessing any data related to slices and performing operations on slices. Slice logics are stored in the application logic object and can be retrieved like this: `sliceLogic = slicer.app.applicationLogic().GetSliceLogicByLayoutName('Red')`. There are a few other `GetSlicerLogic...` methods to get slice logic based on slice node, slice model display node, and to get all the slice logics.
-- Slice layer logic([vtkMRMLSliceLayerLogic](http://apidocs.slicer.org/master/classvtkMRMLSliceLayerLogic.html)): Implements reslicing and interpolation for a volume. There is one slice layer logic for each volume layer (foreground, background, label) for each slice view.
-- Slice link logic ([vtkMRMLSliceLinkLogic](https://apidocs.slicer.org/master/classvtkMRMLSliceLinkLogic.html)): There is only a singla instance of this object in the entire application. This object synchronizes slice view property changes between all slice views in the same view group.
+- Slice node ([vtkMRMLSliceNode](https://apidocs.slicer.org/main/classvtkMRMLSliceNode.html)): Stores the position, orientation, and size of the slice. This is a [view node](https://apidocs.slicer.org/main/classvtkMRMLAbstractViewNode.html) and as such it stores common view properties, such as the view name, layout color, background color.
+- Slice display node ([vtkMRMLSliceDisplayNode](https://apidocs.slicer.org/main/classvtkMRMLSliceDisplayNode.html)): Specifies how the slice should be displayed, such as visibility and style of display of intersecting slices. The class is based on [classvtkMRMLModelDisplayNode](https://apidocs.slicer.org/main/classvtkMRMLModelDisplayNode.html), therefore it also specifies which 3D views the slice is displayed in.
+- Slice composite node ([vtkMRMLSliceCompositeNode](https://apidocs.slicer.org/main/classvtkMRMLSliceCompositeNode.html)): Specifies what volumes are displayed in the slice and how to blend them. It is ended up being a separate node probably because it is somewhat a mix between a data node (that tells what data to display) and a display node (that specifies how the data is displayed).
+- Slice model node ([vtkMRMLModelNode](https://apidocs.slicer.org/main/classvtkMRMLModelNode.html)): It is a model node that displays the slice in 3D views. It stores a simple rectangle mesh on that the image cross-section is renderd as a texture.
+- Slice model transform node ([vtkMRMLTransformNode](https://apidocs.slicer.org/main/classvtkMRMLTransformNode.html)). The transform node is used for positioning the slice model node in 3D views. It is faster to use a transform node to position the plane than modifying the plane points each time the slice is moved.
+- Slice logic ([vtkMRMLSliceLogic](https://apidocs.slicer.org/main/classvtkMRMLSliceLogic.html)): This is not a MRML node but a logic class, which implements operationson MRML nodes. There is one logic for each slice view. The object keeps reference to all MRML nodes, so it is a good starting point for accessing any data related to slices and performing operations on slices. Slice logics are stored in the application logic object and can be retrieved like this: `sliceLogic = slicer.app.applicationLogic().GetSliceLogicByLayoutName('Red')`. There are a few other `GetSlicerLogic...` methods to get slice logic based on slice node, slice model display node, and to get all the slice logics.
+- Slice layer logic([vtkMRMLSliceLayerLogic](https://apidocs.slicer.org/main/classvtkMRMLSliceLayerLogic.html)): Implements reslicing and interpolation for a volume. There is one slice layer logic for each volume layer (foreground, background, label) for each slice view.
+- Slice link logic ([vtkMRMLSliceLinkLogic](https://apidocs.slicer.org/main/classvtkMRMLSliceLinkLogic.html)): There is only a singla instance of this object in the entire application. This object synchronizes slice view property changes between all slice views in the same view group.
 
 ### Layout
 
@@ -519,9 +519,9 @@ A layout manager ([qSlicerLayoutManager][qSlicerLayoutManager-apidoc]) shows or 
 - Pre-defined layouts are described using XML and are registered in `vtkMRMLLayoutLogic::AddDefaultLayouts()`.
 - Developer may register additional layout.
 
-[qSlicerLayoutManager-apidoc]: https://apidocs.slicer.org/master/classqSlicerLayoutManager.html
-[vtkMRMLLayoutNode-apidoc]: https://apidocs.slicer.org/master/classvtkMRMLLayoutNode.html
-[vtkMRMLLayoutLogic-apidoc]: https://apidocs.slicer.org/master/classvtkMRMLLayoutLogic.html
+[qSlicerLayoutManager-apidoc]: https://apidocs.slicer.org/main/classqSlicerLayoutManager.html
+[vtkMRMLLayoutNode-apidoc]: https://apidocs.slicer.org/main/classvtkMRMLLayoutNode.html
+[vtkMRMLLayoutLogic-apidoc]: https://apidocs.slicer.org/main/classvtkMRMLLayoutLogic.html
 
 #### Registering a custom layout
 

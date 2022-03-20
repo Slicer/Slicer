@@ -68,7 +68,7 @@ slicer.util.updateMarkupsControlPointsFromArray(curveNode, pointPositions)
 
 This code snippet creates a toggle button, which activates control point placement when pressed (and deactivates when released).
 
-The [qSlicerMarkupsPlaceWidget widget](https://apidocs.slicer.org/master/classqSlicerMarkupsPlaceWidget.html) can automatically activate placement of multiple points and can show buttons for deleting points, changing colors, lock, and hide points.
+The [qSlicerMarkupsPlaceWidget widget](https://apidocs.slicer.org/main/classqSlicerMarkupsPlaceWidget.html) can automatically activate placement of multiple points and can show buttons for deleting points, changing colors, lock, and hide points.
 
 ```python
 w=slicer.qSlicerMarkupsPlaceWidget()
@@ -585,7 +585,7 @@ Markups have `Color` and `SelectedColor` properties. `SelectedColor` is used if 
 
 ### Display list of control points in my module's GUI
 
-The [qSlicerSimpleMarkupsWidget](https://apidocs.slicer.org/master/classqSlicerSimpleMarkupsWidget.html) can be integrated into module widgets to display list of markups control points and initiate placement. An example of this use is in [Gel Dosimetry module](https://www.slicer.org/wiki/Documentation/Nightly/Modules/GelDosimetry).
+The [qSlicerSimpleMarkupsWidget](https://apidocs.slicer.org/main/classqSlicerSimpleMarkupsWidget.html) can be integrated into module widgets to display list of markups control points and initiate placement. An example of this use is in [Gel Dosimetry module](https://www.slicer.org/wiki/Documentation/Nightly/Modules/GelDosimetry).
 
 ### Pre-populate the scene with measurements
 
