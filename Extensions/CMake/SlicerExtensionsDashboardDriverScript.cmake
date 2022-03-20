@@ -382,8 +382,8 @@ else()
   message(FATAL_ERROR "Unknown script mode: '${SCRIPT_MODE}'. Script mode should be either 'experimental', 'continuous' or 'nightly'")
 endif()
 set(track_qualifier_cleaned "${EXTENSIONS_TRACK_QUALIFIER}-")
-# Track associated with 'master' should default to either 'Continuous', 'Nightly' or 'Experimental'
-if(track_qualifier_cleaned STREQUAL "master-")
+# Track associated with 'main should default to either 'Continuous', 'Nightly' or 'Experimental'
+if(track_qualifier_cleaned STREQUAL "main-")
   set(track_qualifier_cleaned "")
 endif()
 set(track Extensions-${track_qualifier_cleaned}${model})
