@@ -53,9 +53,9 @@
 namespace
 {
   const std::string MARKUPS_SCHEMA =
-    "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.3.json#";
+    "https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.3.json#";
   const std::string ACCEPTED_MARKUPS_SCHEMA_REGEX =
-    "^https://raw\\.githubusercontent\\.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
+    "^https://raw\\.githubusercontent\\.com/Slicer/Slicer/main/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
 }
 
 #include <vtkMRMLMarkupsJsonStorageNode_Private.h>

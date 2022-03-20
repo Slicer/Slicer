@@ -1,6 +1,6 @@
     {
         "$schema": "http://json-schema.org/draft-07/schema",
-        "$id": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-v1.0.2-schema.json#",
+        "$id": "https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/Markups/Resources/Schema/markups-v1.0.2-schema.json#",
         "type": "object",
         "title": "Schema for storing one or more markups",
         "description": "Stores points, lines, curves, etc.",
