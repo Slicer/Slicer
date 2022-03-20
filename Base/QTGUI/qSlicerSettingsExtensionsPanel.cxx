@@ -67,8 +67,8 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   this->ExtensionsManagerEnabledCheckBox->setChecked(true);
   if (app->extensionsManagerModel()->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
     {
-    this->ExtensionsServerUrlLineEdit->setText("http://slicer.kitware.com/midas3");
-    this->ExtensionsFrontendServerUrlLineEdit->setText("http://slicer.kitware.com/midas3/slicerappstore");
+    this->ExtensionsServerUrlLineEdit->setText("https://slicer.kitware.com/midas3");
+    this->ExtensionsFrontendServerUrlLineEdit->setText("https://slicer.kitware.com/midas3/slicerappstore");
     }
   else if (app->extensionsManagerModel()->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
     {

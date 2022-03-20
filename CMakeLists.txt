@@ -707,7 +707,7 @@ set(Slicer_VTK_USE_QVTKOPENGLWIDGET 1)
 # Testing
 #-----------------------------------------------------------------------------
 # NOTE: For CTEST_USE_LAUNCHER to work, it's required to include CTest at the superbuild level.
-#       See http://www.kitware.com/blog/home/post/11
+#       See https://www.kitware.com/blog/home/post/11
 
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
 include(CTest)
