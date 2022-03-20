@@ -58,7 +58,7 @@ Authors:
 ## Acknowledgements
 
 This module is partly funded by an Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health and Long-Term Care and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO) to provide free, open-source toolset for radiotherapy and related image-guided interventions.
-The work is part of the [National Alliance for Medical Image Computing](http://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+The work is part of the [National Alliance for Medical Image Computing](https://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)

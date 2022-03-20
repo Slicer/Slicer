@@ -537,7 +537,7 @@ The issue is that the your extension has a "non standard" layout and the wizard 
 
 Similar issue has been discussed and reported for the "SPHARM-PDM" or UKF extension.
 
-First half of the solution would be to move the metadata from Common.cmake to CMakeLists.txt as it is done in [here](http://www.nitrc.org/plugins/scmsvn/viewcvs.php?view=rev&root=spharm-pdm&revision=228). Then, you could make sure there is a project() statement by following what is suggested [here](http://www.na-mic.org/Bug/view.php?id=3737#c12081).
+First half of the solution would be to move the metadata from Common.cmake to CMakeLists.txt as it is done in [here](http://www.nitrc.org/plugins/scmsvn/viewcvs.php?view=rev&root=spharm-pdm&revision=228). Then, you could make sure there is a project() statement by following what is suggested [here](https://www.na-mic.org/Bug/view.php?id=3737#c12081).
 
 If you prefer not to re-organize your extension, you could still contribute extension description file by creating it manually.
 

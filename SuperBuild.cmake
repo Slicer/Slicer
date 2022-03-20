@@ -43,7 +43,7 @@ if(EP_GIT_PROTOCOL STREQUAL "https")
 "adding 'git config' statement between the 'git checkout' and the 'submodule init', it is required "
 "to manually update your global git config to successfully build ${CMAKE_PROJECT_NAME} with "
 "option Slicer_USE_GIT_PROTOCOL set to FALSE. "
-"See http://na-mic.org/Mantis/view.php?id=2731"
+"See https://na-mic.org/Mantis/view.php?id=2731"
 "\nYou could do so by running the command:\n"
 "  ${GIT_EXECUTABLE} config --global url.${base}.insteadOf ${insteadof}\n")
     endif()
