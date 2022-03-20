@@ -763,30 +763,30 @@ int isLoadableModuleTest()
     {
     //! [replaceWikiUrlVersion example1]
     CHECK_QSTRING(
-      qSlicerUtils::replaceWikiUrlVersion("http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter", "4.4"),
-      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter");
+      qSlicerUtils::replaceWikiUrlVersion("https://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter", "4.4"),
+      "https://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter");
     //! [replaceWikiUrlVersion example1]
 
     //! [replaceWikiUrlVersion example2]
     CHECK_QSTRING(
-      qSlicerUtils::replaceWikiUrlVersion("http://wiki.slicer.org/slicerWiki/index.php/Documentation/Foo/Extensions/SlicerToKiwiExporter", "Bar"),
-      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Bar/Extensions/SlicerToKiwiExporter");
+      qSlicerUtils::replaceWikiUrlVersion("https://wiki.slicer.org/slicerWiki/index.php/Documentation/Foo/Extensions/SlicerToKiwiExporter", "Bar"),
+      "https://wiki.slicer.org/slicerWiki/index.php/Documentation/Bar/Extensions/SlicerToKiwiExporter");
     //! [replaceWikiUrlVersion example2]
 
     //! [replaceWikiUrlVersion example3]
     CHECK_QSTRING(
-      qSlicerUtils::replaceWikiUrlVersion("http://wiki.slicer.org/slicerWiki/index.php/Documentation/Foo/Extensions/SlicerToKiwiExporter/Foo", "Bar"),
-      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Bar/Extensions/SlicerToKiwiExporter/Foo");
+      qSlicerUtils::replaceWikiUrlVersion("https://wiki.slicer.org/slicerWiki/index.php/Documentation/Foo/Extensions/SlicerToKiwiExporter/Foo", "Bar"),
+      "https://wiki.slicer.org/slicerWiki/index.php/Documentation/Bar/Extensions/SlicerToKiwiExporter/Foo");
     //! [replaceWikiUrlVersion example3]
 
     //! [replaceWikiUrlVersion example4]
     QString input =
       "Read documentation at "
-      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter."
+      "https://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter."
       "You will learn how to ...";
     QString expectedOutput =
       "Read documentation at "
-      "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter."
+      "https://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter."
       "You will learn how to ...";
     CHECK_QSTRING(qSlicerUtils::replaceWikiUrlVersion(input, "Nightly"), expectedOutput);
     //! [replaceWikiUrlVersion example4]

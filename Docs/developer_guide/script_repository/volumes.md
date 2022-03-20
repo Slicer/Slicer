@@ -836,7 +836,7 @@ propertyNode->SetScalarOpacity(opacities);
 // optionally set the gradients opacities with SetGradientOpacity
 ```
 
-Volume rendering logic has utility functions to help you create those transfer functions: [SetWindowLevelToVolumeProp](http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#ab8dbda38ad81b39b445b01e1bf8c7a86), [SetThresholdToVolumeProp](http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a1dcbe614493f3cbb9aa50c68a64764ca), [SetLabelMapToVolumeProp](http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a359314889c2b386fd4c3ffe5414522da).
+Volume rendering logic has utility functions to help you create those transfer functions: [SetWindowLevelToVolumeProp](https://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#ab8dbda38ad81b39b445b01e1bf8c7a86), [SetThresholdToVolumeProp](https://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a1dcbe614493f3cbb9aa50c68a64764ca), [SetLabelMapToVolumeProp](https://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a359314889c2b386fd4c3ffe5414522da).
 
 ### Limit volume rendering to a specific region of the volume
 
@@ -856,7 +856,7 @@ displayNode->SetCroppingEnabled(1);
 
 ### Register a new Volume Rendering mapper
 
-You need to derive from [vtkMRMLVolumeRenderingDisplayNode](http://apidocs.slicer.org/master/classvtkMRMLVolumeRenderingDisplayNode.html) and register your class within [vtkSlicerVolumeRenderingLogic](http://apidocs.slicer.org/master/classvtkSlicerVolumeRenderingLogic.html).
+You need to derive from [vtkMRMLVolumeRenderingDisplayNode](https://apidocs.slicer.org/master/classvtkMRMLVolumeRenderingDisplayNode.html) and register your class within [vtkSlicerVolumeRenderingLogic](https://apidocs.slicer.org/master/classvtkSlicerVolumeRenderingLogic.html).
 
 C++:
 
@@ -885,7 +885,7 @@ void qSlicerMyABCVolumeRenderingModule::setup()
 }
 ```
 
-If you want to expose control widgets for your volume rendering method, then register your widget with [addRenderingMethodWidget()](http://apidocs.slicer.org/master/classqSlicerVolumeRenderingModuleWidget.html#acd9cdb60f1fd260f3ebf74428bb7c45b).
+If you want to expose control widgets for your volume rendering method, then register your widget with [addRenderingMethodWidget()](https://apidocs.slicer.org/master/classqSlicerVolumeRenderingModuleWidget.html#acd9cdb60f1fd260f3ebf74428bb7c45b).
 
 ### Register custom volume rendering presets
 

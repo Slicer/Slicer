@@ -142,8 +142,8 @@ public:
 
   QPointer<qSlicerLayoutManager> LayoutManager;
   ctkToolTipTrapper* ToolTipTrapper;
-  // If MainWindow exists and the dialog is displayed then the MainWindow 
-  // must be set as parent to ensure correct Z order; 
+  // If MainWindow exists and the dialog is displayed then the MainWindow
+  // must be set as parent to ensure correct Z order;
   // but that also transfers the ownership of the object, therefore we use QPointer
   // to keep track if the object is deleted already by the MainWindow.
   QPointer<ctkSettingsDialog> SettingsDialog;
@@ -182,7 +182,7 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 {
   // Delete settings dialog. deleteLater would cause memory leaks on exit.
-  // Settings dialog is displayed then MainWindow becomes its parent and 
+  // Settings dialog is displayed then MainWindow becomes its parent and
   // thus MainWindow is responsible for deleting it.
   // Set the parent to 'nullptr' removes this responsibility.
   if (this->SettingsDialog)
@@ -448,7 +448,7 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
       errorMessage += tr("Adding more RAM may fix this issue.\n\n");
       }
     errorMessage += tr("If you have a repeatable sequence of steps that causes this message, ");
-    errorMessage += tr("please report the issue following instructions available at http://slicer.org\n\n\n");
+    errorMessage += tr("please report the issue following instructions available at https://slicer.org\n\n\n");
     errorMessage += tr("The message detail is:\n\n");
     errorMessage += tr("Exception thrown in event: ") + exception.what();
     qCritical() << errorMessage;
@@ -467,7 +467,7 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
     errorMessage += tr("please save your work and restart.\n\n");
     errorMessage += tr("If you have a repeatable sequence of steps that causes this message, ");
-    errorMessage += tr("please report the issue following instructions available at http://slicer.org\n\n\n");
+    errorMessage += tr("please report the issue following instructions available at https://slicer.org\n\n\n");
     errorMessage += tr("The message detail is:\n\n");
     errorMessage += tr("Exception thrown in event: ") + exception.what();
     qCritical() << errorMessage;

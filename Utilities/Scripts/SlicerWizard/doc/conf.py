@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 
 #===============================================================================
 class WikidocRole:
-  wiki_root = 'http://wiki.slicer.org/slicerWiki/index.php'
+  wiki_root = 'https://wiki.slicer.org/slicerWiki/index.php'
 
   #-----------------------------------------------------------------------------
   def __call__(self, role, rawtext, text, lineno, inliner,

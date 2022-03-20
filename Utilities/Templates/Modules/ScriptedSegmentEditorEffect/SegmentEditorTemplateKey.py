@@ -20,7 +20,7 @@ class SegmentEditorTemplateKey(ScriptedLoadableModule):
     self.parent.hidden = True
     self.parent.helpText = "This hidden module registers the segment editor effect"
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
-    self.parent.acknowledgementText = "Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details."
+    self.parent.acknowledgementText = "Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www.slicer.org for details."
     slicer.app.connect("startupCompleted()", self.registerEditorEffect)
 
   def registerEditorEffect(self):

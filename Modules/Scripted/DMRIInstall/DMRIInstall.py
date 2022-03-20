@@ -30,7 +30,7 @@ class DMRIInstall(ScriptedLoadableModule):
   For more information, please visit:
   <br>
   <br>
-  &nbsp;&nbsp; <a href="http://dmri.slicer.org">http://dmri.slicer.org</a>
+  &nbsp;&nbsp; <a href="https://dmri.slicer.org">https://dmri.slicer.org</a>
   <br>
   <br>
   Questions are welcome on the Slicer forum:
