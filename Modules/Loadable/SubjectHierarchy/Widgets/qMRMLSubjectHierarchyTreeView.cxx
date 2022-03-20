@@ -81,7 +81,7 @@ public:
   /// Setup all actions for tree view
   void setupActions();
 
-  /// Get list of enabled plugins \sa PluginWhitelist \sa PluginBlacklist
+  /// Get list of enabled plugins \sa PluginAllowlist \sa PluginBlocklist
   QList<qSlicerSubjectHierarchyAbstractPlugin*> enabledPlugins();
 
   void applyTransformToItem(vtkIdType itemID, const char* transformNodeID);
@@ -113,8 +113,8 @@ public:
   QAction* ExpandToDepthAction;
   QMenu* SceneMenu;
   QMenu* VisibilityMenu;
-  QStringList PluginWhitelist;
-  QStringList PluginBlacklist;
+  QStringList PluginAllowlist;
+  QStringList PluginBlocklist;
 
   QMenu* TransformMenu;
   QAction* TransformInteractionInViewAction;
@@ -435,9 +435,9 @@ QList<qSlicerSubjectHierarchyAbstractPlugin*> qMRMLSubjectHierarchyTreeViewPriva
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
     {
     QString pluginName = plugin->name();
-    bool whitelisted = (this->PluginWhitelist.isEmpty() || this->PluginWhitelist.contains(pluginName));
-    bool blacklisted = (!this->PluginBlacklist.isEmpty() && this->PluginBlacklist.contains(pluginName));
-    if ((whitelisted && !blacklisted) || !pluginName.compare("Default"))
+    bool allowlisted = (this->PluginAllowlist.isEmpty() || this->PluginAllowlist.contains(pluginName));
+    bool blocklisted = (!this->PluginBlocklist.isEmpty() && this->PluginBlocklist.contains(pluginName));
+    if ((allowlisted && !blocklisted) || !pluginName.compare("Default"))
       {
       enabledPluginList << plugin;
       }
@@ -1901,7 +1901,7 @@ void qMRMLSubjectHierarchyTreeView::updateSelectPluginActions()
       qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName( currentSelectPluginAction->data().toString() );
     double confidenceNumber = currentPlugin->canOwnSubjectHierarchyItem(currentItemID);
 
-    // Do not show plugin in list if confidence is 0, or if it's disabled (by whitelist or blacklist).
+    // Do not show plugin in list if confidence is 0, or if it's disabled (by allowlist or blocklist).
     // Always show owner plugin.
     if ( (confidenceNumber <= 0.0 || !enabledPluginsList.contains(currentPlugin))
       && !isOwner )
@@ -2232,24 +2232,24 @@ bool qMRMLSubjectHierarchyTreeView::multiSelection()
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::setPluginWhitelist(QStringList whitelist)
+void qMRMLSubjectHierarchyTreeView::setPluginAllowlist(QStringList allowlist)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  d->PluginWhitelist = whitelist;
+  d->PluginAllowlist = allowlist;
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::setPluginBlacklist(QStringList blacklist)
+void qMRMLSubjectHierarchyTreeView::setPluginBlocklist(QStringList blocklist)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  d->PluginBlacklist = blacklist;
+  d->PluginBlocklist = blocklist;
 }
 
 //--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::disablePlugin(QString plugin)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  d->PluginBlacklist << plugin;
+  d->PluginBlocklist << plugin;
 }
 
 //-----------------------------------------------------------------------------

@@ -158,9 +158,9 @@ class ViewContextMenuSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlug
     slicer.util.messageBox("This works!")
 ```
 
-### Use whitelist to customize view menu
+### Use allowlist to customize view menu
 
-When right-clicking certain types of nodes in the 2D/3D views, a subject hierarchy menu pops up. If menu actions need to be removed, a whitelist can be used to specify the ones that should show up.
+When right-clicking certain types of nodes in the 2D/3D views, a subject hierarchy menu pops up. If menu actions need to be removed, an allowlist can be used to specify the ones that should show up.
 
 ```python
 pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
