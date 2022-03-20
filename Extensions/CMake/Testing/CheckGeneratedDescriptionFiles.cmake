@@ -53,11 +53,11 @@ check_extension_metadata(
   )
 check_extension_metadata(
   "ICONURL"
-  "http://www.example.com/Slicer/Extensions/TestExtC.png"
+  "https://www.example.com/Slicer/Extensions/TestExtC.png"
   )
 check_extension_metadata(
   "SCREENSHOTURLS"
-  "http://www.example.com/Slicer/Extensions/TestExtC/Screenshots/1.png"
+  "https://www.example.com/Slicer/Extensions/TestExtC/Screenshots/1.png"
   )
 check_extension_metadata(
   "DEPENDS"

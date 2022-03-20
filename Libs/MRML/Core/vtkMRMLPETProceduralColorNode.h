@@ -60,9 +60,9 @@ public:
   /// PETrainbow to display PET overlay with cool to warm to white.
   /// PETrainbow2 is absed on the PET lookup-table of Fiji PET-CT plugin (https://sourceforge.net/projects/bifijiplugins/files/extraLUT/).
   /// PETDICOM is based on the DICOM standard PET color palette
-  /// (http://dicom.nema.org/medical/dicom/current/output/html/part06.html#sect_B.1.2).
+  /// (https://dicom.nema.org/medical/dicom/current/output/html/part06.html#sect_B.1.2).
   /// PEThotMetalBlue is based on the DICOM standard Hot Metal Blue color palette
-  /// (http://dicom.nema.org/medical/dicom/current/output/html/part06.html#sect_B.1.3).
+  /// (https://dicom.nema.org/medical/dicom/current/output/html/part06.html#sect_B.1.3).
   /// PETMIP to display PET overlay  with white to black.
   enum
   {

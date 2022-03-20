@@ -338,7 +338,7 @@ class DICOMPlugin:
   def mapSOPClassUIDToModality(self, sopClassUID):
     # Note more specialized definitions can be specified for MR by more
     # specialized plugins, see codes 110800 and on in
-    # http://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_D.html
+    # https://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_D.html
     MRname2UID = {
       "MR Image Storage": "1.2.840.10008.5.1.4.1.1.4",
       "Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.1",

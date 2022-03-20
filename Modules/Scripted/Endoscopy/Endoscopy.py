@@ -336,7 +336,7 @@ class EndoscopyComputePath:
   """Compute path given a list of fiducials.
   Path is stored in 'path' member variable as a numpy array.
   If a point list is received then curve points are generated using Hermite spline interpolation.
-  See http://en.wikipedia.org/wiki/Cubic_Hermite_spline
+  See https://en.wikipedia.org/wiki/Cubic_Hermite_spline
 
   Example:
     result = EndoscopyComputePath(fiducialListNode)
@@ -580,7 +580,7 @@ class EndoscopyPathModel:
 
     self.transform = transform
 
-  # source: http://stackoverflow.com/questions/12299540/plane-fitting-to-4-or-more-xyz-points
+  # source: https://stackoverflow.com/questions/12299540/plane-fitting-to-4-or-more-xyz-points
   def planeFit(self, points):
     """
     p, n = planeFit(points)

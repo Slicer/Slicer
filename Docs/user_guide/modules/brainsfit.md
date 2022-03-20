@@ -190,5 +190,5 @@ BRAINSFit --fixedVolume mouseFixed.nii.gz \
 
 ## References
 
-- [BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images](http://hdl.handle.net/1926/1291), Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007.
+- [BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images](https://hdl.handle.net/1926/1291), Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007.
 - [Source code on github](https://github.com/BRAINSia/BRAINSStandAlone/tree/master/BRAINSFit)

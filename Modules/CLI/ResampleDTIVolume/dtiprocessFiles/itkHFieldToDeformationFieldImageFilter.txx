@@ -1,5 +1,5 @@
 // Copied from dtiprocess
-// available there: http://www.nitrc.org/projects/dtiprocess/
+// available there: https://www.nitrc.org/projects/dtiprocess/
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit

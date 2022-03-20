@@ -491,12 +491,12 @@ void vtkParametricPolynomialApproximation::FitLeastSquaresPolynomials(
   // 1. VNL. While the VNL code is more sophisticated, and I guess also more stable, you would probably need to
   //    limit the number of samples and normalize data that you pass to the LSQR solver to be able to compute
   //    higher-order fits (see for example this page for related discussion:
-  //    http://digital.ni.com/public.nsf/allkb/45C2016C23B3B0298525645F0073B828).
+  //    https://digital.ni.com/public.nsf/allkb/45C2016C23B3B0298525645F0073B828).
   //    See an example how VNL is used in Plus:
   //    https://github.com/PlusToolkit/PlusLib/blob/master/src/PlusCommon/PlusMath.cxx#L111
   // 2. Mathematica uses different basis functions for polynomial fitting (shifted Chebyshev polynomials) instead
   //    of basis functions that are simple powers of a variable to make the fitting more robust (the source code
-  //    is available here: http://library.wolfram.com/infocenter/MathSource/6780/).
+  //    is available here: https://library.wolfram.com/infocenter/MathSource/6780/).
   const int maximumPolynomialOrder = 6;
   if (polynomialOrder > maximumPolynomialOrder)
     {

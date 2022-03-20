@@ -237,7 +237,7 @@ Other modules or packages that are required for this module's use.
 
 ===Tests===
 
-On the [http://www.cdash.org/CDash/index.php?project=Slicer3 Dashboard], these tests verify that the module is working on various platforms:
+On the [https://www.cdash.org/CDash/index.php?project=Slicer3 Dashboard], these tests verify that the module is working on various platforms:
 
 * MyModuleTest1 [http://viewvc.slicer.org/viewcvs.cgi/trunkMyModuleTest1.cxx]
 * MyModuleTest2 [http://viewvc.slicer.org/viewcvs.cgi/trunk MyModuleTest2.cxx]

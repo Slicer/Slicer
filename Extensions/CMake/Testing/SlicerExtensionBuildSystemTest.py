@@ -51,7 +51,7 @@ def save_request(request, response_code):
 
 def get_open_port():
   """Sources:
-  * http://stackoverflow.com/questions/2838244/get-open-tcp-port-in-python/2838309#2838309
+  * https://stackoverflow.com/questions/2838244/get-open-tcp-port-in-python/2838309#2838309
   * https://www.dnorth.net/2012/03/17/the-port-0-trick/
   * https://pypi.python.org/pypi/port-for/
   """

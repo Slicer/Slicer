@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 #------------------------------------------------------------------------------
-# Common options: http://valgrind.org/docs/manual/manual-core.html#manual-core.options
+# Common options: https://valgrind.org/docs/manual/manual-core.html#manual-core.options
 #
 TRACE_CHILDREN=yes        # yes|no
 GEN_SUPPRESSION=all       # yes|no|all
 VERBOSE_FLAG=             # <none>|-q|-v
 
-# Memcheck options: http://valgrind.org/docs/manual/mc-manual.html#mc-manual.options
+# Memcheck options: https://valgrind.org/docs/manual/mc-manual.html#mc-manual.options
 LEAK_CHECK=yes            # yes|no
 SHOW_LEAK_KINDS=definite  # a comma separated list of one or more of definite,indirect,possible,reachable
 TRACK_ORIGIN=yes          # yes|no

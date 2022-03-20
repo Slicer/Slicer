@@ -1921,7 +1921,7 @@ void qSlicerTerminologyNavigatorWidget::onLoadTerminologyClicked()
       {
       QString errorMessage =
         "Loading terminology from file %1 failed!<br><br>"
-        "Please check validity of the file using the <a href=\"http://qiicr.org/dcmqi/#/validators\">online validator tool</a>.";
+        "Please check validity of the file using the <a href=\"https://qiicr.org/dcmqi/#/validators\">online validator tool</a>.";
       QMessageBox::critical(this, "Load failed", errorMessage.arg(terminologyFileName));
       }
     }
@@ -1954,7 +1954,7 @@ void qSlicerTerminologyNavigatorWidget::onLoadAnatomicContextClicked()
       {
       QString errorMessage =
         "Loading anatomic context from file %1 failed!<br><br>"
-        "Please check validity of the file using the <a href=\"http://qiicr.org/dcmqi/#/validators\">online validator tool</a>.";
+        "Please check validity of the file using the <a href=\"https://qiicr.org/dcmqi/#/validators\">online validator tool</a>.";
       QMessageBox::critical(this, "Load failed", errorMessage.arg(anatomicContextFileName));
       }
     }

@@ -200,7 +200,7 @@ public:
   /// the provided \a version. If there are multiple
   /// "Documentation" path elements then only the first one is considered.
   ///
-  /// \note The "path element" term is defined in this rfc: http://tools.ietf.org/html/rfc3986
+  /// \note The "path element" term is defined in this rfc: https://tools.ietf.org/html/rfc3986
   /// "A path consists of a sequence of path segments separated by a slash
   /// ("/") character."
   ///

@@ -67,7 +67,7 @@ Background: Funding for Slicer is provided through competitive mechanisms primar
     - Start Event Viewer (eventvwr.exe), select Windows Logs / Application, and find the application error. If there is a DLL loading problem a line similar to this will appear: `Faulting module path: <something>.dll`. If you found a line similar to this, then try the following workaround: Start a command window. Enter `set path=` to clear the path variable. Enter Slicer.exe to start Slicer. If Slicer starts successfully then you need to remove remove unnecessary items from the system path (or delete the libraries installed at incorrect locations).
     - If Slicer still does not work then collect some more information and report the problem:
       - Get DLL dependency information using Dependency Walker tool:
-        - Download depends.exe from [here](http://www.dependencywalker.com/)
+        - Download depends.exe from [here](https://www.dependencywalker.com/)
         - Run depends.exe using the Slicer launcher: `Slicer.exe --launch path\to\depends.exe "bin\SlicerApp-real.exe"`
         - In dependency walker: Make sure the full path of DLLs are shown (click View / Full paths if you only see the DLL names). Use File / Save as... => Comma Separated Values (*.csv) to save logs to a file.
       - Enable process loading logging using the sxstrace tool, start Slicer, and save the log file (see instructions [here](https://technet.microsoft.com/en-ca/library/hh875651.aspx))

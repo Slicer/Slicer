@@ -1084,7 +1084,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       pythonArgv[i + 1] = QStringToPythonWCharPointer(scriptArgs.at(i));
       }
 
-    // See http://docs.python.org/c-api/init.html
+    // See https://docs.python.org/c-api/init.html
     PySys_SetArgvEx(pythonArgc, pythonArgv, /*updatepath=*/false);
 
     // Set 'sys.executable' so that Slicer can be used as a "regular" python interpreter
@@ -1669,8 +1669,8 @@ QString qSlicerCoreApplication::libraries()const
     "<a href=\"https://www.commontk.org/index.php/Main_Page\">CTK</a>, "
     "<a href=\"https://www.qt.io/\">Qt</a>, "
     "<a href=\"http://teem.sf.net\">Teem</a>, "
-    "<a href=\"http://www.python.org/\">Python</a>, "
-    "<a href=\"http://dicom.offis.de/dcmtk\">DCMTK</a><br />");
+    "<a href=\"https://www.python.org/\">Python</a>, "
+    "<a href=\"https://dicom.offis.de/dcmtk\">DCMTK</a><br />");
   return librariesText;
 }
 

@@ -182,7 +182,7 @@ class DataProbeInfoWidget:
       if component.is_integer():
         component = int(component)
       # format string according to suggestion here:
-      # http://stackoverflow.com/questions/2440692/formatting-floats-in-python-without-superfluous-zeros
+      # https://stackoverflow.com/questions/2440692/formatting-floats-in-python-without-superfluous-zeros
       # also set the default field width for each coordinate
       componentString = ("%4f" % component).rstrip('0').rstrip('.')
       pixel += ("%s, " % componentString)

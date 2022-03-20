@@ -18,8 +18,8 @@
 #!
 #! The macro also associates a label to the test based on the current value of KIT (or CLP or EXTENSION_NAME).
 #!
-#! \sa http://www.cmake.org/cmake/help/cmake-2-8-docs.html#command:add_test
-#! \sa http://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:PROJECT_NAME
+#! \sa https://www.cmake.org/cmake/help/cmake-2-8-docs.html#command:add_test
+#! \sa https://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:PROJECT_NAME
 #!
 #! \ingroup CMakeUtilities
 macro(simple_test testname)

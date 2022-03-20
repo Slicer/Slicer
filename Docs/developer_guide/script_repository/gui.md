@@ -56,7 +56,7 @@ Run a Python script on Windows (stored in script file), without showing any grap
  Run a Python script on MacOS (stored in script file), without showing any graphical user interface:
 
  ```console
- /Applications/Slicer.app/Contents/MacOS/Slicer --no-splash --no-main-window --python-script "/full/path/to/myscript.py" 
+ /Applications/Slicer.app/Contents/MacOS/Slicer --no-splash --no-main-window --python-script "/full/path/to/myscript.py"
  ```
 
 To make Slicer exit when the script execution is completed, call `sys.exit(errorCode)` (where `errorCode` is set 0 for success and other value to indicate error).
@@ -949,7 +949,7 @@ for (shortcutKey, callback) in shortcuts:
   shortcut.connect( "activated()", callback)
 ```
 
-Here's an example for cycling through Segment Editor effects (requested [on the Slicer forum](https://discourse.slicer.org/t/is-there-a-keystroke-to-cycle-through-effects-in-segment-editor/10117/2) for the [SlicerMorph](http://slicermorph.org) project).
+Here's an example for cycling through Segment Editor effects (requested [on the Slicer forum](https://discourse.slicer.org/t/is-there-a-keystroke-to-cycle-through-effects-in-segment-editor/10117/2) for the [SlicerMorph](https://slicermorph.org) project).
 
 ```python
 def cycleEffect(delta=1):

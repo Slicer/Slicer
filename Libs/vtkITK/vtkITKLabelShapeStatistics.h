@@ -53,7 +53,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Shape statistic parameters
-  /// See parameter definitions and formulas here: http://hdl.handle.net/1926/584
+  /// See parameter definitions and formulas here: https://hdl.handle.net/1926/584
   enum ShapeStatistic
   {
     /// Location of the center of mass of the label

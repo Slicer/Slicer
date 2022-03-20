@@ -696,7 +696,7 @@ int isLoadableModuleTest()
 
 #ifndef Q_OS_WIN32
     // Exe permissions are not supported on windows:
-    //  http://msdn.microsoft.com/en-us/library/1z319a54(v=vs.90).aspx
+    //  https://msdn.microsoft.com/en-us/library/1z319a54(v=vs.90).aspx
     //  https://qt.gitorious.org/qt/qt/blobs/092cd760d5fddf9640a310214fe01929f0fff3a8/src/corelib/io/qfsfileengine_win.cpp#line1781
 
     // Since directory are *NOT* executable, files should *NOT* be readable

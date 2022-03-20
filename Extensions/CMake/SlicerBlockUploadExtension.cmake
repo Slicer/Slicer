@@ -130,7 +130,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Set CTEST_BUILD_CONFIGURATION here
-# See http://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:CMAKE_CFG_INTDIR
+# See https://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:CMAKE_CFG_INTDIR
 if(CMAKE_CONFIGURATION_TYPES)
   set(CTEST_BUILD_CONFIGURATION ${CMAKE_CFG_INTDIR})
 else()

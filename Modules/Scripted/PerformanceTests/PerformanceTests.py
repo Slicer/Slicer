@@ -187,7 +187,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     self.webView.settings().setAttribute(qt.QWebSettings.DeveloperExtrasEnabled, True)
     self.webView.connect('loadFinished(bool)', self.webViewFormLoadedCallback)
     self.webView.show()
-    u = qt.QUrl('http://www.google.com')
+    u = qt.QUrl('https://www.google.com')
     self.webView.setUrl(u)
 
   def webViewFormLoadedCallback(self,ok):

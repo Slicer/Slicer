@@ -40,7 +40,7 @@ Opening up the panes on the left and right, additional options become visible:
 
 - Find items: Start typing the name of the category/type/region in the search box above the column.
 - Load new terminology/anatomical context: click the Load button next to the context drop-down and select JSON from local storage.
-- Create custom terminology/anatomical context: Start from an existing JSON file, such as the DICOM master list for [terminologies](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Terminologies/Resources/SegmentationCategoryTypeModifier-DICOM-Master.json) or [anatomical contexts](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Terminologies/Resources/AnatomicRegionAndModifier-DICOM-Master.json). Remove the entries you do not need. Validate the JSON file with the [validator online tool](http://qiicr.org/dcmqi/#/validators).
+- Create custom terminology/anatomical context: Start from an existing JSON file, such as the DICOM master list for [terminologies](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Terminologies/Resources/SegmentationCategoryTypeModifier-DICOM-Master.json) or [anatomical contexts](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Terminologies/Resources/AnatomicRegionAndModifier-DICOM-Master.json). Remove the entries you do not need. Validate the JSON file with the [validator online tool](https://qiicr.org/dcmqi/#/validators).
 
 ## References
 

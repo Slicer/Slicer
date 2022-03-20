@@ -219,9 +219,9 @@ ExternalProject_Execute(${proj} \"build\" make \${jflag} build_libs)
     # to fix this text. Thanks.
     #
     # [1] Script used to compile OpenSSL: https://gist.github.com/jcfr/6030240
-    # [2] http://siomsystems.com/mixing-visual-studio-versions/
-    # [3] http://bytes.com/topic/net/answers/505515-compile-different-versions-visual-studio
-    # [4] http://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx
+    # [2] https://siomsystems.com/mixing-visual-studio-versions/
+    # [3] https://bytes.com/topic/net/answers/505515-compile-different-versions-visual-studio
+    # [4] https://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx
 
     set(_error_msg "There is no pre-compiled version of OpenSSL ${OPENSSL_DOWNLOAD_VERSION} available for
 this version of visual studio [${MSVC_VERSION}]. You could either:

@@ -86,9 +86,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Suppressing warnings about GL_GLEXT_LEGACY, the link reported below
   # report a similar problem with GL_GLEXT_PROTOTYPE.
-  # http://lists.apple.com/archives/mac-opengl/2009/Dec/msg00081.html
+  # https://lists.apple.com/archives/mac-opengl/2009/Dec/msg00081.html
   # That problem could be solved installing a newer version of X11 SDK
-  # See http://xquartz.macosforge.org/trac/changeset/343
+  # See https://xquartz.macosforge.org/trac/changeset/343
   ".*warning.*GL_GLEXT_LEGACY.*redefined"
 
   # ITK suppressions

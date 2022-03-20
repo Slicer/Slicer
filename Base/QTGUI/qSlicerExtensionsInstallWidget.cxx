@@ -125,7 +125,7 @@ void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QStringList& er
       "  </div>"
       "  <div class='extensionsBody'>"
       "    <!-- Following layout and associated CSS style are inspired from Mozilla error message. -->"
-      "    <!-- It is originally covered by http://mozilla.org/MPL/2.0/ license -->"
+      "    <!-- It is originally covered by https://mozilla.org/MPL/2.0/ license -->"
       "    <!-- MPL 2.0 license is compatible with Slicer (BSD-like) license -->"
       "    <div class='error'>"
       "      <div id='errorTitle'><h1>Extensions can not be installed.</h1></div>"

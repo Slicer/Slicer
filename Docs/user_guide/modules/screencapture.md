@@ -92,7 +92,7 @@ On Windows, Screen Capture model can automatically download and install ffmpeg w
 
 ### MacOS setup instructions
 
-- Install homebrew (from http://brew.sh/)
+- Install homebrew (from https://brew.sh/)
 - Run:
   ```console
   brew install ffmpeg

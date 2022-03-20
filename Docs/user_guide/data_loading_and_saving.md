@@ -37,7 +37,7 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
   - Supported DICOM information objects:
     - Slicer core: CT, MRI, PET, X-ray, some ultrasound images; secondary capture with Slicer scene (MRB) in private tag
     - [Quantitative Reporting extension](https://qiicr.gitbooks.io/quantitativereporting-guide): DICOM Segmentation objects, Structured reports
-    - [SlicerRT extension](http://www.slicerrt.org/): DICOM RT Structure Set, RT Dose, RT Plan, RT Image
+    - [SlicerRT extension](https://www.slicerrt.org/): DICOM RT Structure Set, RT Dose, RT Plan, RT Image
     - [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart): 2D/3D/4D ultrasound (GE, Philips, Eigen Artemis, and other)
     - [SlicerDMRI](https://dmri.slicer.org) tractography storage
     - [SlicerDcm2nii](https://github.com/SlicerDMRI/SlicerDcm2nii) diffusion weighted MR
@@ -51,8 +51,8 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
   - To load an image file as segmentation (also known as label image, mask, region of interest) see [Segmentations module documentation](modules/segmentations.md#import-an-existing-segmentation-from-volume-file)
 - [**MetaImage**](https://www.itk.org/Wiki/MetaIO/Documentation) (.mha, .mhd): Coordinate system: LPS (AnatomicalOrientation in the file header is ignored).
 - [**VTK**](https://www.vtk.org/VTK/img/file-formats.pdf) (.vtk): Coordinate system: LPS. Important limitation: image axis directions cannot be stored in this file format.
-- [**Analyze**](http://www.grahamwideman.com/gw/brain/analyze/formatdoc.htm) (.hdr, .img, .img.gz): Image orientation is specified ambiguously in this format, therefore its use is strongle discouraged. For brain imaging, use Nifti format instead.
-- [**Nifti**](http://nifti.nimh.nih.gov/nifti-1/) (.nii, .nii.gz): File format for brain MRI. Not well suited as a general-purpose 3D image file format (use NRRD format instead).
+- [**Analyze**](https://www.grahamwideman.com/gw/brain/analyze/formatdoc.htm) (.hdr, .img, .img.gz): Image orientation is specified ambiguously in this format, therefore its use is strongle discouraged. For brain imaging, use Nifti format instead.
+- [**Nifti**](https://nifti.nimh.nih.gov/nifti-1/) (.nii, .nii.gz): File format for brain MRI. Not well suited as a general-purpose 3D image file format (use NRRD format instead).
   - To load an image file as segmentation (also known as label image, mask, region of interest) see [Segmentations module documentation](modules/segmentations.md#import-an-existing-segmentation-from-volume-file)
 - **Tagged image file format** (.tif, .tiff): can read/write single/series of frames
 - **PNG** (.png): can read single/series of frames, can write a single frame
@@ -66,7 +66,7 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
 - **Stimulate** (.spr)
 - **MGH-NMR** (.mgz)
 - **MRC Electron Density** (.mrc)
-- [SlicerRT extension](http://www.slicerrt.org/)
+- [SlicerRT extension](https://www.slicerrt.org/)
   - **Vista cone beam optical scanner volume** (.vff)
   - **DOSXYZnrc 3D dose** (.3ddose)
 - [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart): 2D/3D/4D ultrasound (GE, Philips, Eigen Artemis, and other; reading only)
@@ -92,7 +92,7 @@ Surface or volumetric meshes.
 - [**VTK Polygonal Data**](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf) (.vtk, .vtp): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Full color (RGB or RGBA) meshes can be read and written (color must be assigned as point scalar data of `unsigned char` type and 3 or 4 components). Texture image can be applied using "Texture model" module (in SlicerIGT extension).
 - [**VTK Unstructured Grid Data**](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf) (.vtk, .vtu): Volumetric mesh. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header.
 - **STereoLithography** (.stl): Format most commonly used for 3D printing. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header.
-- **Wavefront OBJ** (.obj): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Texture image can be applied using "Texture model" module (in SlicerIGT extension). The non-standard [technique of saving vertex color as additinal values after coordinates](http://www.paulbourke.net/dataformats/obj/colour.html) is not supported - if vertex coloring is needed then convert to PLY, VTK, or VTP format using another software.
+- **Wavefront OBJ** (.obj): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Texture image can be applied using "Texture model" module (in SlicerIGT extension). The non-standard [technique of saving vertex color as additinal values after coordinates](https://www.paulbourke.net/dataformats/obj/colour.html) is not supported - if vertex coloring is needed then convert to PLY, VTK, or VTP format using another software.
 - **Stanford Triangle Format** (.ply): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Full color (RGB or RGBA) meshes can be read and written (color must be assigned to vertex data in `uchar` type properties named `red`, `green`, `blue`, and optional `alpha`). Texture image can be applied using "Texture model" module (in SlicerIGT extension).
 - **BYU** (.byu, .g; reading only): Coordinate system: LPS.
 - **UCD** (.ucd; reading only): Coordinate system: LPS.
@@ -120,7 +120,7 @@ Surface or volumetric meshes.
 - [**ITK TXT transform**](https://www.itk.org/ItkSoftwareGuide.pdf) (.tfm, .txt): For linear, b-spline, and thin-plate spline, and composite transforms. Coordinate system: LPS.
 - [**Matlab MAT file**](https://www.itk.org/ItkSoftwareGuide.pdf) (.mat): For linear and b-spline transforms. Coordinate system: LPS.
 - **Displacement field** (.nrrd, .nhdr, .mha, .mhd, .nii, .nii.gz): For storing grid transform as a vector image, each voxel containing displacement vector. Coordinate system: LPS.
-- [SlicerRT extension](http://www.slicerrt.org/)
+- [SlicerRT extension](https://www.slicerrt.org/)
   - **Pinnacle DVF** (.dvf)
 
 ### Markups

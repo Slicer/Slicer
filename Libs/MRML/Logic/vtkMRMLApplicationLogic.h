@@ -152,7 +152,7 @@ public:
   /// characters for filenames but avoids known issue like slashes or colons.
   /// Ideally a version from vtksys
   /// or similar should be used, but nothing seems to be available.
-  /// http://en.wikipedia.org/wiki/Percent-encoding
+  /// https://en.wikipedia.org/wiki/Percent-encoding
   /// See https://github.com/Slicer/Slicer/issues/2605
   static std::string PercentEncode(std::string s);
 
