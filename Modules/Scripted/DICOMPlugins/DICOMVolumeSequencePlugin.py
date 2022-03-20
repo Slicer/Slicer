@@ -217,7 +217,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
 
             sequenceItemCount = sequenceBrowserNode.GetMasterSequenceNode().GetNumberOfDataNodes()
             originalSelectedSequenceItemNumber = sequenceBrowserNode.GetSelectedItemNumber()
-            masterVolumeNode = sequenceBrowserNode.GetMasterSequenceNode()
+            referenceVolumeNode = sequenceBrowserNode.GetMasterSequenceNode()
 
             # initialize content datetime from series datetime
             contentStartDate = exportable.tag("SeriesDate")
@@ -247,7 +247,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
                 slicer.app.processEvents()
                 # Compute content date&time
                 # TODO: verify that unit in sequence node is "second" (and convert to seconds if not)
-                timeOffsetSec = float(masterVolumeNode.GetNthIndexValue(sequenceItemIndex)) - float(masterVolumeNode.GetNthIndexValue(0))
+                timeOffsetSec = float(referenceVolumeNode.GetNthIndexValue(sequenceItemIndex)) - float(referenceVolumeNode.GetNthIndexValue(0))
                 contentDatetime = contentStartDatetime + datetime.timedelta(seconds=timeOffsetSec)
                 tags['Content Date'] = contentDatetime.strftime("%Y%m%d")
                 tags['Content Time'] = contentDatetime.strftime("%H%M%S.%f")

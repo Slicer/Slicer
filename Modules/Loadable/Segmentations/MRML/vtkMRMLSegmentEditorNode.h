@@ -38,7 +38,7 @@ class vtkMRMLScalarVolumeNode;
 /// \ingroup Segmentations
 /// \brief Parameter set node for the segment editor widget
 ///
-/// Stores parameters for a segment editor widget (selected segmentation, segment, master volume),
+/// Stores parameters for a segment editor widget (selected segmentation, segment, reference volume),
 /// and all the editor effects. The effect parameters are stored as attributes with names
 /// EffectName.ParameterName. If a parameter is changed, the node Modified event is not emitted,
 /// but the custom EffectParameterModified event that triggers update of the effect options widget only.
@@ -95,10 +95,10 @@ public:
 public:
 
   //@{
-  /// Get/set master volume node.
-  /// Master volume node is used when editing requires an underlying image.
-  vtkMRMLScalarVolumeNode* GetMasterVolumeNode();
-  void SetAndObserveMasterVolumeNode(vtkMRMLScalarVolumeNode* node);
+  /// Get/set reference volume node.
+  /// Reference volume node is used when editing requires an underlying image.
+  vtkMRMLScalarVolumeNode* GetReferenceVolumeNode();
+  void SetAndObserveReferenceVolumeNode(vtkMRMLScalarVolumeNode* node);
   //@}
 
   //@{
@@ -139,19 +139,19 @@ public:
   //@}
 
   //@{
-  /// Restrict editable area to regions where master volume intensity is in the specified range.
-  vtkBooleanMacro(MasterVolumeIntensityMask, bool);
-  vtkGetMacro(MasterVolumeIntensityMask, bool);
-  vtkSetMacro(MasterVolumeIntensityMask, bool);
+  /// Restrict editable area to regions where reference volume intensity is in the specified range.
+  vtkBooleanMacro(ReferenceVolumeIntensityMask, bool);
+  vtkGetMacro(ReferenceVolumeIntensityMask, bool);
+  vtkSetMacro(ReferenceVolumeIntensityMask, bool);
   //@}
 
   //@{
-  /// Get/set master volume intensity range for masking.
-  /// If MasterVolumeIntensityMask is enabled then only those areas are editable where
-  /// master volume voxels are in this intensity range.
-  /// \sa SetMasterVolumeIntensityMask()
-  vtkSetVector2Macro(MasterVolumeIntensityMaskRange, double);
-  vtkGetVector2Macro(MasterVolumeIntensityMaskRange, double);
+  /// Get/set reference volume intensity range for masking.
+  /// If ReferenceVolumeIntensityMask is enabled then only those areas are editable where
+  /// reference volume voxels are in this intensity range.
+  /// \sa SetReferenceVolumeIntensityMask()
+  vtkSetVector2Macro(ReferenceVolumeIntensityMaskRange, double);
+  vtkGetVector2Macro(ReferenceVolumeIntensityMaskRange, double);
   //@}
 
   //@{
@@ -178,8 +178,8 @@ protected:
 
   int OverwriteMode{OverwriteAllSegments};
 
-  bool MasterVolumeIntensityMask{false};
-  double MasterVolumeIntensityMaskRange[2];
+  bool ReferenceVolumeIntensityMask{false};
+  double ReferenceVolumeIntensityMaskRange[2];
 };
 
 #endif // __vtkMRMLSegmentEditorNode_h

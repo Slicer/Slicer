@@ -94,10 +94,10 @@ class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPl
         statisticsWidget = slicer.modules.segmentstatistics.widgetRepresentation().self()
         statisticsWidget.segmentationSelector.setCurrentNode(segmentationNode)
 
-        # Get master volume from segmentation
-        masterVolume = segmentationNode.GetNodeReference(slicer.vtkMRMLSegmentationNode.GetReferenceImageGeometryReferenceRole())
-        if masterVolume is not None:
-            statisticsWidget.scalarSelector.setCurrentNode(masterVolume)
+        # Get reference volume from segmentation
+        referenceVolume = segmentationNode.GetNodeReference(slicer.vtkMRMLSegmentationNode.GetReferenceImageGeometryReferenceRole())
+        if referenceVolume is not None:
+            statisticsWidget.scalarSelector.setCurrentNode(referenceVolume)
 
     def sceneContextMenuActions(self):
         return []

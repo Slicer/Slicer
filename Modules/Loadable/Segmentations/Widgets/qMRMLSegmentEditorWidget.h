@@ -67,8 +67,8 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
-  Q_PROPERTY(bool masterVolumeNodeSelectorVisible READ masterVolumeNodeSelectorVisible WRITE setMasterVolumeNodeSelectorVisible)
-  Q_PROPERTY(bool autoShowMasterVolumeNode READ autoShowMasterVolumeNode WRITE setAutoShowMasterVolumeNode)
+  Q_PROPERTY(bool referenceVolumeNodeSelectorVisible READ referenceVolumeNodeSelectorVisible WRITE setReferenceVolumeNodeSelectorVisible)
+  Q_PROPERTY(bool autoShowReferenceVolumeNode READ autoShowReferenceVolumeNode WRITE setAutoShowReferenceVolumeNode)
   Q_PROPERTY(bool switchToSegmentationsButtonVisible READ switchToSegmentationsButtonVisible WRITE setSwitchToSegmentationsButtonVisible)
   Q_PROPERTY(bool undoEnabled READ undoEnabled WRITE setUndoEnabled)
   Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates)
@@ -94,10 +94,10 @@ public:
   Q_INVOKABLE vtkMRMLNode* segmentationNode()const;
   /// Get ID of currently selected segmentation node
   Q_INVOKABLE QString segmentationNodeID()const;
-  /// Get currently selected master volume MRML node
-  Q_INVOKABLE vtkMRMLNode* masterVolumeNode()const;
-  /// Get ID of currently selected master volume node
-  Q_INVOKABLE QString masterVolumeNodeID()const;
+  /// Get currently selected reference volume MRML node
+  Q_INVOKABLE vtkMRMLNode* referenceVolumeNode()const;
+  /// Get ID of currently selected reference volume node
+  Q_INVOKABLE QString referenceVolumeNodeID()const;
 
   /// Get segment ID of selected segment
   Q_INVOKABLE QString currentSegmentID()const;
@@ -155,12 +155,12 @@ public:
 
   /// Show/hide the segmentation node selector widget.
   bool segmentationNodeSelectorVisible() const;
-  /// Show/hide the master volume node selector widget.
-  bool masterVolumeNodeSelectorVisible() const;
-  /// If autoShowMasterVolumeNode is enabled then master volume is automatically
-  /// displayed in slice views when a new master volume is selected or layout is changed.
+  /// Show/hide the reference volume node selector widget.
+  bool referenceVolumeNodeSelectorVisible() const;
+  /// If autoShowReferenceVolumeNode is enabled then reference volume is automatically
+  /// displayed in slice views when a new reference volume is selected or layout is changed.
   /// Enabled by default.
-  bool autoShowMasterVolumeNode() const;
+  bool autoShowReferenceVolumeNode() const;
   /// Show/hide the switch to Segmentations module button
   bool switchToSegmentationsButtonVisible() const;
   /// Undo/redo enabled.
@@ -188,14 +188,14 @@ public:
   Q_INVOKABLE void segmentationNodeSelectorRemoveAttribute(const QString& nodeType,
     const QString& attributeName);
 
-  /// Add node type attribute that filter the master volume nodes to display.
+  /// Add node type attribute that filter the reference volume nodes to display.
   /// \sa qMRMLNodeComboBox::addAttribute
-  Q_INVOKABLE void masterVolumeNodeSelectorAddAttribute(const QString& nodeType,
+  Q_INVOKABLE void referenceVolumeNodeSelectorAddAttribute(const QString& nodeType,
     const QString& attributeName,
     const QVariant& attributeValue = QVariant());
-  /// Remove node type attribute filtering the displayed master volume nodes.
+  /// Remove node type attribute filtering the displayed reference volume nodes.
   /// \sa qMRMLNodeComboBox::addAttribute
-  Q_INVOKABLE void masterVolumeNodeSelectorRemoveAttribute(const QString& nodeType,
+  Q_INVOKABLE void referenceVolumeNodeSelectorRemoveAttribute(const QString& nodeType,
     const QString& attributeName);
 
   /// Get current interaction node.
@@ -237,12 +237,12 @@ public slots:
   void setSegmentationNode(vtkMRMLNode* node);
   /// Set segmentation MRML node by its ID
   void setSegmentationNodeID(const QString& nodeID);
-  /// Set master volume MRML node.
-  /// If master volume has multiple scalar components
+  /// Set reference volume MRML node.
+  /// If reference volume has multiple scalar components
   /// then only the first scalar component is used.
-  void setMasterVolumeNode(vtkMRMLNode* node);
-  /// Set master volume MRML node by its ID
-  void setMasterVolumeNodeID(const QString& nodeID);
+  void setReferenceVolumeNode(vtkMRMLNode* node);
+  /// Set reference volume MRML node by its ID
+  void setReferenceVolumeNodeID(const QString& nodeID);
 
   /// Set selected segment by its ID
   void setCurrentSegmentID(const QString segmentID);
@@ -254,17 +254,17 @@ public slots:
   /// to allow reverting to the current state by using undo
   void saveStateForUndo();
 
-  /// Update modifierLabelmap, maskLabelmap, or alignedMasterVolumeNode
+  /// Update modifierLabelmap, maskLabelmap, or alignedReferenceVolumeNode
   void updateVolume(void* volumePtr, bool& success);
 
   /// Show/hide the segmentation node selector widget.
   void setSegmentationNodeSelectorVisible(bool);
-  /// Show/hide the master volume node selector widget.
-  void setMasterVolumeNodeSelectorVisible(bool);
-  /// If autoShowMasterVolumeNode is enabled then master volume is automatically
-  /// displayed in slice views when a new master volume is selected or layout is changed.
+  /// Show/hide the reference volume node selector widget.
+  void setReferenceVolumeNodeSelectorVisible(bool);
+  /// If autoShowReferenceVolumeNode is enabled then reference volume is automatically
+  /// displayed in slice views when a new reference volume is selected or layout is changed.
   /// Enabled by default.
-  void setAutoShowMasterVolumeNode(bool);
+  void setAutoShowReferenceVolumeNode(bool);
   /// Show/hide the switch to Segmentations module button
   void setSwitchToSegmentationsButtonVisible(bool);
   /// Undo/redo enabled.
@@ -273,8 +273,8 @@ public slots:
   void setMaximumNumberOfUndoStates(int);
   /// Set whether the widget is read-only
   void setReadOnly(bool aReadOnly);
-  /// Enable/disable masking using master volume intensity
-  void toggleMasterVolumeIntensityMaskEnabled();
+  /// Enable/disable masking using reference volume intensity
+  void toggleReferenceVolumeIntensityMaskEnabled();
 
   /// Restores previous saved state of the segmentation
   void undo();
@@ -310,11 +310,11 @@ public slots:
   /// (and not filtered by unorderedEffectsVisible).
   void updateEffectList();
 
-  /// Show master volume in slice views by hiding foreground and label volumes.
+  /// Show reference volume in slice views by hiding foreground and label volumes.
   /// \param forceShowInBackground If set to false then views will only change
-  ///   if master volume is not selected as either foreground or background volume.
+  ///   if reference volume is not selected as either foreground or background volume.
   /// \param fitSlice Reset field of view to include all volumes.
-  void showMasterVolumeInSliceViewers(bool forceShowInBackground = false, bool fitSlice = false);
+  void showReferenceVolumeInSliceViewers(bool forceShowInBackground = false, bool fitSlice = false);
 
   /// Rotate slice views to be aligned with segmentation node's internal
   /// labelmap representation axes.
@@ -346,9 +346,9 @@ signals:
   /// Emitted if different segment is selected in the segment list.
   void currentSegmentIDChanged(const QString&);
 
-  /// Emitted when the user selects a different master volume
-  /// (or any time master volume selection is changed in the segment editor parameter node).
-  void masterVolumeNodeChanged(vtkMRMLVolumeNode*);
+  /// Emitted when the user selects a different reference volume
+  /// (or any time reference volume selection is changed in the segment editor parameter node).
+  void referenceVolumeNodeChanged(vtkMRMLVolumeNode*);
 
   /// Emitted when the user selects a different segmentation node
   /// (or any time segmentation node selection is changed in the segment editor parameter node).
@@ -357,8 +357,8 @@ signals:
 protected slots:
   /// Handles changing of current segmentation MRML node
   void onSegmentationNodeChanged(vtkMRMLNode* node);
-  /// Handles changing of the current master volume MRML node
-  void onMasterVolumeNodeChanged(vtkMRMLNode* node);
+  /// Handles changing of the current reference volume MRML node
+  void onReferenceVolumeNodeChanged(vtkMRMLNode* node);
   /// Handles segment selection changes
   void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
@@ -386,8 +386,8 @@ protected slots:
   void onCreateSurfaceToggled(bool on);
   /// Called if a segment or representation is added or removed
   void onSegmentAddedRemoved();
-  /// Called if master volume image data is changed
-  void onMasterVolumeImageDataModified();
+  /// Called if reference volume image data is changed
+  void onReferenceVolumeImageDataModified();
   /// Handle layout changes
   void onLayoutChanged(int layoutIndex);
   /// Handle display node view ID changes
@@ -397,9 +397,9 @@ protected slots:
   void onMaskModeChanged(int);
 
   /// Enable/disable threshold when checkbox is toggled
-  void onMasterVolumeIntensityMaskChecked(bool checked);
+  void onReferenceVolumeIntensityMaskChecked(bool checked);
   /// Handles threshold values changed event
-  void onMasterVolumeIntensityMaskRangeChanged(double low, double high);
+  void onReferenceVolumeIntensityMaskRangeChanged(double low, double high);
 
   /// Changed selected overwritable segments
   void onOverwriteModeChanged(int);
@@ -435,7 +435,7 @@ protected:
   static void processEvents(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   void updateWidgetFromSegmentationNode();
-  void updateWidgetFromMasterVolumeNode();
+  void updateWidgetFromReferenceVolumeNode();
   void updateEffectsSectionFromMRML();
 
   /// Switches the master representation to binary labelmap. If the master representation

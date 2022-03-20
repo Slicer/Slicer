@@ -65,16 +65,16 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
         from SegmentStatistics import SegmentStatisticsLogic
 
         ##################################
-        self.delayDisplay("Load master volume")
+        self.delayDisplay("Load reference volume")
 
-        masterVolumeNode = SampleData.downloadSample('MRBrainTumor1')
+        referenceVolumeNode = SampleData.downloadSample('MRBrainTumor1')
 
         ##################################
         self.delayDisplay("Create segmentation containing a few spheres")
 
         segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
         segmentationNode.CreateDefaultDisplayNodes()
-        segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(masterVolumeNode)
+        segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(referenceVolumeNode)
 
         # Segments are defined by a list of: name and a list of sphere [radius, posX, posY, posZ]
         segmentGeometries = [
@@ -105,7 +105,7 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
         slicer.mrmlScene.AddNode(segmentEditorNode)
         segmentEditorWidget.setMRMLSegmentEditorNode(segmentEditorNode)
         segmentEditorWidget.setSegmentationNode(segmentationNode)
-        segmentEditorWidget.setMasterVolumeNode(masterVolumeNode)
+        segmentEditorWidget.setReferenceVolumeNode(referenceVolumeNode)
 
         ##################################
         self.delayDisplay("Run segmentation")
@@ -124,7 +124,7 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Compute statistics")
 
         segStatLogic = SegmentStatisticsLogic()
-        segStatLogic.computeStatistics(segmentationNode, masterVolumeNode)
+        segStatLogic.computeStatistics(segmentationNode, referenceVolumeNode)
 
         # Export results to table (just to see all results)
         resultsTableNode = slicer.vtkMRMLTableNode()

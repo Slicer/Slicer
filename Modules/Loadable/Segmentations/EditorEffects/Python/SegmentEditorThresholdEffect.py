@@ -72,7 +72,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         return qt.QIcon()
 
     def helpText(self):
-        return """<html>Fill segment based on master volume intensity range<br>. Options:<p>
+        return """<html>Fill segment based on reference volume intensity range<br>. Options:<p>
 <ul style="margin: 0">
 <li><b>Use for masking:</b> set the selected intensity range as <dfn>Editable intensity range</dfn> and switch to Paint effect.</li>
 <li><b>Apply:</b> set the previewed segmentation in the selected segment. Previous contents of the segment is overwritten.</li>
@@ -82,7 +82,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         self.setCurrentSegmentTransparent()
 
         # Update intensity range
-        self.masterVolumeNodeChanged()
+        self.referenceVolumeNodeChanged()
 
         # Setup and start preview pulse
         self.setupPreviewDisplay()
@@ -394,9 +394,9 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         self.setAutoThresholdButton.connect('clicked()', self.onAutoThreshold)
         self.applyButton.connect('clicked()', self.onApply)
 
-    def masterVolumeNodeChanged(self):
-        # Set scalar range of master volume image data to threshold slider
-        masterImageData = self.scriptedEffect.masterVolumeImageData()
+    def referenceVolumeNodeChanged(self):
+        # Set scalar range of reference volume image data to threshold slider
+        masterImageData = self.scriptedEffect.referenceVolumeImageData()
         if masterImageData:
             lo, hi = masterImageData.GetScalarRange()
             self.thresholdSlider.setRange(lo, hi)
@@ -514,8 +514,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     def onUseForPaint(self):
         parameterSetNode = self.scriptedEffect.parameterSetNode()
-        parameterSetNode.MasterVolumeIntensityMaskOn()
-        parameterSetNode.SetMasterVolumeIntensityMaskRange(self.thresholdSlider.minimumValue, self.thresholdSlider.maximumValue)
+        parameterSetNode.ReferenceVolumeIntensityMaskOn()
+        parameterSetNode.SetReferenceVolumeIntensityMaskRange(self.thresholdSlider.minimumValue, self.thresholdSlider.maximumValue)
         # Switch to paint effect
         self.scriptedEffect.selectEffect("Paint")
 
@@ -567,24 +567,24 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         else:
             logging.error(f"Unknown AutoThresholdMethod {autoThresholdMethod}")
 
-        masterImageData = self.scriptedEffect.masterVolumeImageData()
+        masterImageData = self.scriptedEffect.referenceVolumeImageData()
         self.autoThresholdCalculator.SetInputData(masterImageData)
 
         self.autoThresholdCalculator.Update()
         computedThreshold = self.autoThresholdCalculator.GetThreshold()
 
-        masterVolumeMin, masterVolumeMax = masterImageData.GetScalarRange()
+        referenceVolumeMin, referenceVolumeMax = masterImageData.GetScalarRange()
 
         if autoThresholdMode == MODE_SET_UPPER:
             self.scriptedEffect.setParameter("MaximumThreshold", computedThreshold)
         elif autoThresholdMode == MODE_SET_LOWER:
             self.scriptedEffect.setParameter("MinimumThreshold", computedThreshold)
         elif autoThresholdMode == MODE_SET_MIN_UPPER:
-            self.scriptedEffect.setParameter("MinimumThreshold", masterVolumeMin)
+            self.scriptedEffect.setParameter("MinimumThreshold", referenceVolumeMin)
             self.scriptedEffect.setParameter("MaximumThreshold", computedThreshold)
         elif autoThresholdMode == MODE_SET_LOWER_MAX:
             self.scriptedEffect.setParameter("MinimumThreshold", computedThreshold)
-            self.scriptedEffect.setParameter("MaximumThreshold", masterVolumeMax)
+            self.scriptedEffect.setParameter("MaximumThreshold", referenceVolumeMax)
         else:
             logging.error(f"Unknown AutoThresholdMode {autoThresholdMode}")
 
@@ -593,8 +593,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             return
 
         try:
-            # Get master volume image data
-            masterImageData = self.scriptedEffect.masterVolumeImageData()
+            # Get reference volume image data
+            masterImageData = self.scriptedEffect.referenceVolumeImageData()
             # Get modifier labelmap
             modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
             originalImageToWorldMatrix = vtk.vtkMatrix4x4()
@@ -615,7 +615,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             thresh.Update()
             modifierLabelmap.DeepCopy(thresh.GetOutput())
         except IndexError:
-            logging.error('apply: Failed to threshold master volume!')
+            logging.error('apply: Failed to threshold reference volume!')
             pass
 
         # Apply changes
@@ -687,7 +687,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         for sliceWidget in self.previewPipelines:
             pipeline = self.previewPipelines[sliceWidget]
             pipeline.lookupTable.SetTableValue(1, r, g, b, opacity)
-            layerLogic = self.getMasterVolumeLayerLogic(sliceWidget)
+            layerLogic = self.getReferenceVolumeLayerLogic(sliceWidget)
             pipeline.thresholdFilter.SetInputConnection(layerLogic.GetReslice().GetOutputPort())
             pipeline.thresholdFilter.ThresholdBetween(min, max)
             pipeline.actor.VisibilityOn()
@@ -702,7 +702,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     def processInteractionEvents(self, callerInteractor, eventId, viewWidget):
         abortEvent = False
 
-        masterImageData = self.scriptedEffect.masterVolumeImageData()
+        masterImageData = self.scriptedEffect.referenceVolumeImageData()
         if masterImageData is None:
             return abortEvent
 
@@ -774,21 +774,21 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             return
         self.updateHistogram()
 
-    def getMasterVolumeLayerLogic(self, sliceWidget):
-        masterVolumeNode = self.scriptedEffect.parameterSetNode().GetMasterVolumeNode()
+    def getReferenceVolumeLayerLogic(self, sliceWidget):
+        referenceVolumeNode = self.scriptedEffect.parameterSetNode().GetReferenceVolumeNode()
         sliceLogic = sliceWidget.sliceLogic()
 
         backgroundLogic = sliceLogic.GetBackgroundLayer()
         backgroundVolumeNode = backgroundLogic.GetVolumeNode()
-        if masterVolumeNode == backgroundVolumeNode:
+        if referenceVolumeNode == backgroundVolumeNode:
             return backgroundLogic
 
         foregroundLogic = sliceLogic.GetForegroundLayer()
         foregroundVolumeNode = foregroundLogic.GetVolumeNode()
-        if masterVolumeNode == foregroundVolumeNode:
+        if referenceVolumeNode == foregroundVolumeNode:
             return foregroundLogic
 
-        logging.warning("Master volume is not set as either the foreground or background")
+        logging.warning("Reference volume is not set as either the foreground or background")
 
         foregroundOpacity = 0.0
         if foregroundVolumeNode:
@@ -801,7 +801,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         return backgroundLogic
 
     def updateHistogram(self):
-        masterImageData = self.scriptedEffect.masterVolumeImageData()
+        masterImageData = self.scriptedEffect.referenceVolumeImageData()
         if masterImageData is None or self.histogramPipeline is None:
             self.histogramFunction.RemoveAllPoints()
             return
@@ -822,14 +822,14 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             self.histogramFunction.RemoveAllPoints()
             return
 
-        layerLogic = self.getMasterVolumeLayerLogic(self.histogramPipeline.sliceWidget)
+        layerLogic = self.getReferenceVolumeLayerLogic(self.histogramPipeline.sliceWidget)
         self.reslice.SetInputConnection(layerLogic.GetReslice().GetInputConnection(0, 0))
         self.reslice.SetResliceTransform(layerLogic.GetReslice().GetResliceTransform())
         self.reslice.SetInterpolationMode(layerLogic.GetReslice().GetInterpolationMode())
         self.reslice.SetOutputExtent(brushExtent)
 
         maxNumberOfBins = 1000
-        masterImageData = self.scriptedEffect.masterVolumeImageData()
+        masterImageData = self.scriptedEffect.referenceVolumeImageData()
         scalarRange = masterImageData.GetScalarRange()
         scalarType = masterImageData.GetScalarType()
         if scalarType == vtk.VTK_FLOAT or scalarType == vtk.VTK_DOUBLE:
@@ -909,7 +909,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     def updateHistogramBackground(self):
         self.backgroundFunction.RemoveAllPoints()
 
-        masterImageData = self.scriptedEffect.masterVolumeImageData()
+        masterImageData = self.scriptedEffect.referenceVolumeImageData()
         if masterImageData is None:
             return
 

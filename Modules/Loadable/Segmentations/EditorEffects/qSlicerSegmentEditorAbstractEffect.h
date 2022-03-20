@@ -178,9 +178,9 @@ public:
   /// Simple mechanism to let the effects know that reference geometry has changed
   /// NOTE: Base class implementation needs to be called with the effect-specific implementation.
   virtual void referenceGeometryChanged() { };
-  /// Simple mechanism to let the effects know that master volume has changed
+  /// Simple mechanism to let the effects know that reference volume has changed
   /// NOTE: Base class implementation needs to be called with the effect-specific implementation
-  virtual void masterVolumeNodeChanged() { };
+  virtual void referenceVolumeNodeChanged() { };
   /// Simple mechanism to let the effects know that the layout has changed
   virtual void layoutChanged() { };
   /// Let the effect know that the interaction node is modified.
@@ -264,12 +264,12 @@ public:
 
   /// Connect callback signals. Callbacks are called by the editor effect to request operations from the editor widget.
   /// \param selectEffectSlot called from the active effect to initiate switching to another effect (or de-select).
-  /// \param updateVolumeSlot called to request update of a volume (modifierLabelmap, alignedMasterVolume, maskLabelmap).
+  /// \param updateVolumeSlot called to request update of a volume (modifierLabelmap, alignedReferenceVolume, maskLabelmap).
   /// \param saveStateForUndoSlot called to request saving of segmentation state for undo operation
   void setCallbackSlots(QObject* receiver, const char* selectEffectSlot, const char* updateVolumeSlot, const char* saveStateForUndoSlot);
 
   /// Called by the editor widget.
-  void setVolumes(vtkOrientedImageData* alignedMasterVolume, vtkOrientedImageData* modifierLabelmap,
+  void setVolumes(vtkOrientedImageData* alignedReferenceVolume, vtkOrientedImageData* modifierLabelmap,
     vtkOrientedImageData* maskLabelmap, vtkOrientedImageData* selectedSegmentLabelmap, vtkOrientedImageData* referenceGeometryImage);
 
 // Effect parameter functions
@@ -360,9 +360,9 @@ public:
   bool showEffectCursorInSliceView();
   bool showEffectCursorInThreeDView();
 
-  /// Get image data of master volume aligned with the modifier labelmap.
+  /// Get image data of reference volume aligned with the modifier labelmap.
   /// \return Pointer to the image data
-  Q_INVOKABLE vtkOrientedImageData* masterVolumeImageData();
+  Q_INVOKABLE vtkOrientedImageData* referenceVolumeImageData();
 
   /// Signal to the editor that current state has to be saved (for allowing reverting
   /// to current segmentation state by undo operation)

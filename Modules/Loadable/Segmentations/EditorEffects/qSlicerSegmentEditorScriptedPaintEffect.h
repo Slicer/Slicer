@@ -100,8 +100,8 @@ public:
 
   /// Simple mechanism to let the effects know that reference geometry change has changed
   void referenceGeometryChanged() override;
-  /// Simple mechanism to let the effects know that master volume has changed
-  void masterVolumeNodeChanged() override;
+  /// Simple mechanism to let the effects know that reference volume has changed
+  void referenceVolumeNodeChanged() override;
   /// Simple mechanism to let the effects know that the layout has changed
   void layoutChanged() override;
 

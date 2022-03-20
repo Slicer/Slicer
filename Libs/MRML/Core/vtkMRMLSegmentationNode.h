@@ -186,7 +186,7 @@ public:
   /// \param editMode defines editable regions based on existing segments
   /// \param referenceGeometry defines image geometry (extent and IJK to world matrix) of the output
   /// \param editedSegmentID this segment will be always editable (regardless of editMode), optional
-  /// \param masterVolume used for intensity-based masking
+  /// \param referenceVolume used for intensity-based masking
   /// \param editableIntensityRange used for intensity-based masking
   /// \param displayNode used when edit mode refers to visible segments.
   ///   If not specified then the first display node is used.
@@ -194,7 +194,7 @@ public:
   virtual bool GenerateEditMask(vtkOrientedImageData* maskImage, int editMode,
     vtkOrientedImageData* referenceGeometry,
     std::string editedSegmentID="", std::string maskSegmentID="",
-    vtkOrientedImageData* masterVolume = nullptr, double editableIntensityRange[2] = nullptr,
+    vtkOrientedImageData* referenceVolume = nullptr, double editableIntensityRange[2] = nullptr,
     vtkMRMLSegmentationDisplayNode* displayNode = nullptr);
 
   /// Expose reference identifier to get the volume node defining the reference image geometry if any
