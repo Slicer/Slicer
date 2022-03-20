@@ -555,7 +555,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(
     cur_grad.copy_in(tmp_grads->GetTuple3(i));
 
     // note: this is norm^2, per the NA-MIC NRRD DWI convention
-    // http://wiki.na-mic.org/Wiki/index.php/NAMIC_Wiki:DTI:Nrrd_format
+    // https://wiki.na-mic.org/Wiki/index.php/NAMIC_Wiki:DTI:Nrrd_format
     double cur_bval = ref_bvalue * pow(cur_grad.two_norm() / max_grad_norm, 2);
     bvalues_array->SetValue(i, cur_bval);
 

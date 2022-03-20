@@ -246,11 +246,11 @@ On the [http://www.cdash.org/CDash/index.php?project=Slicer3 Dashboard], these t
 
 Links to known bugs in the Slicer3 bug tracker
 
-* [http://www.na-mic.org/Bug/view.php?id=000 Bug 000:description]
+* [https://www.na-mic.org/Bug/view.php?id=000 Bug 000:description]
 
 ===Usability issues===
 
-Follow this [http://na-mic.org/Mantis/main_page.php link] to
+Follow this [https://na-mic.org/Mantis/main_page.php link] to
 the Slicer3 bug tracker. Please select the '''usabilityissue category''' when browsing or contributing.
 
 ===Source code & documentation===
@@ -262,7 +262,7 @@ Source code:
 *[http://viewvc.slicer.org/viewcvs.cgi/trunk file.h ]
 
 Doxygen documentation:
-*[http://www.na-mic.org/Slicer/Documentation/Slicer3-doc/html/classes.html class1]
+*[https://www.na-mic.org/Slicer/Documentation/Slicer3-doc/html/classes.html class1]
 
 == More Information ==
 

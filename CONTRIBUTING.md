@@ -161,7 +161,7 @@ email.
 
 
 *The initial version of these guidelines was established during the [winter
- project week 2017](http://www.na-mic.org/Wiki/index.php/2017_Winter_Project_Week/UpdatingCommunityForums).*
+ project week 2017](https://www.na-mic.org/Wiki/index.php/2017_Winter_Project_Week/UpdatingCommunityForums).*
 
 #### Benevolent dictators for life
 

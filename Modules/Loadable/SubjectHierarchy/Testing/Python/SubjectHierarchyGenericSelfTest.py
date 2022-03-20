@@ -658,7 +658,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       radius = 50
       x = y = z = 0
 
-    # Taken from: http://www.na-mic.org/Bug/view.php?id=1536
+    # Taken from: https://www.na-mic.org/Bug/view.php?id=1536
     sphere = vtk.vtkSphereSource()
     sphere.SetCenter(x, y, z)
     sphere.SetRadius(radius)

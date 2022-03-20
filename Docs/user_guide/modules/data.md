@@ -111,7 +111,7 @@ List of all nodes in the scene. Supports Edit properties, Rename, Delete.
 
 ## Tutorials
 
-- 2016: [This tutorial](http://www.na-mic.org/Wiki/index.php/Winter2016TutorialContest) demonstrates the basic usage and potential of Slicer’s data manager module Subject Hierarchy using a two-timepoint radiotherapy phantom dataset.
+- 2016: [This tutorial](https://www.na-mic.org/Wiki/index.php/Winter2016TutorialContest) demonstrates the basic usage and potential of Slicer’s data manager module Subject Hierarchy using a two-timepoint radiotherapy phantom dataset.
 - 2015: Tutorial about [loading and viewing data](https://www.slicer.org/wiki/Documentation/4.5/Training).
 
 ## Information for developers

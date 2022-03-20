@@ -192,7 +192,7 @@ See examples and other developer information in [Developer guide](../../develope
 
 ## Acknowledgements
 
-This work is part of the [National Alliance for Medical Image Computing](http://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+This work is part of the [National Alliance for Medical Image Computing](https://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_namic.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_spl.png)

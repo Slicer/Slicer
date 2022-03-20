@@ -181,7 +181,7 @@ Authors:
 
 ## Acknowledgements
 
-This work is part of the National Alliance for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Information on NA-MIC can be obtained from the [NA-MIC website](http://www.na-mic.org/).
+This work is part of the National Alliance for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Information on NA-MIC can be obtained from the [NA-MIC website](https://www.na-mic.org/).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_spl.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)

@@ -39,7 +39,7 @@ class vtkObservation;
 /// It caches tags returned by AddObserver method so that observers can be
 /// removed properly.
 /// See also:
-/// http://wiki.na-mic.org/Wiki/index.php/Slicer3:EventBroker
+/// https://wiki.na-mic.org/Wiki/index.php/Slicer3:EventBroker
 /// http://en.wikipedia.org/wiki/Observer_pattern
 //
 /// Other interesting observer implementations:
