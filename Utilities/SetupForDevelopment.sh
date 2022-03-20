@@ -23,8 +23,8 @@ if test -d .git/.git; then
 Please 'rm -rf' this directory."
 fi
 
-# Make 'git pull' on master always use rebase.
-git config branch.master.rebase true
+# Make 'git pull' on main always use rebase.
+git config branch.main.rebase true
 
 # Make automatic and manual rebase operations to display a summary and stat
 # display of changes merged in the fast-forward operation.

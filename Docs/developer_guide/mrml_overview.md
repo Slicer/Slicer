@@ -127,7 +127,7 @@ MRML nodes can be implemented in a Slicer extension.
 
 :::{note}
 
-All links to API class and function documentation redirecting to `https://apidocs.slicer.org` correspond to documentation generated from the latest commit of the `master` branch of Slicer. This means that versions of this documentation associated with an older version of Slicer may be out of sync with the linked API.
+All links to API class and function documentation redirecting to `https://apidocs.slicer.org` correspond to documentation generated from the latest commit of the `main` branch of Slicer. This means that versions of this documentation associated with an older version of Slicer may be out of sync with the linked API.
 
 :::
 
