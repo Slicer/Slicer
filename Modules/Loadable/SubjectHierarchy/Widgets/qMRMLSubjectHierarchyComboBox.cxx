@@ -255,17 +255,17 @@ void qMRMLSubjectHierarchyComboBox::setHighlightReferencedItems(bool highlightOn
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::setPluginWhitelist(QStringList whitelist)
+void qMRMLSubjectHierarchyComboBox::setPluginAllowlist(QStringList allowlist)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
-  d->TreeView->setPluginWhitelist(whitelist);
+  d->TreeView->setPluginAllowlist(allowlist);
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::setPluginBlacklist(QStringList blacklist)
+void qMRMLSubjectHierarchyComboBox::setPluginBlocklist(QStringList blocklist)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
-  d->TreeView->setPluginBlacklist(blacklist);
+  d->TreeView->setPluginBlocklist(blocklist);
 }
 
 //--------------------------------------------------------------------------
