@@ -63,7 +63,7 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
         "label": "Crowds Cure Cancer", "url": "http://cancer.crowds-cure.org"
       },
       {
-        "label": "Slicer Home Page", "url": "http://slicer.org"
+        "label": "Slicer Home Page", "url": "https://slicer.org"
       },
       {
         "label": "MorphoSource", "url": "https://www.morphosource.org"

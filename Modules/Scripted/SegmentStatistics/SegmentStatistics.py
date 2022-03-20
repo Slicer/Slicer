@@ -34,7 +34,7 @@ Requires segment closed surface representation.
 """
     self.parent.helpText += parent.defaultDocumentationLink
     self.parent.acknowledgementText = """
-Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.
+Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www.slicer.org for details.
 """
 
   def setup(self):

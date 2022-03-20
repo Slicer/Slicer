@@ -26,9 +26,9 @@ class AtlasTests(ScriptedLoadableModule):
 
     For more information:
 
-    Abdominal Atlas: <a>http://www.slicer.org/publications/item/view/1918</a>
-    Brain Atlas: <a>http://www.slicer.org/publications/item/view/2037</a>
-    Knee Atlas: <a>http://www.slicer.org/publications/item/view/1953</a>
+    Abdominal Atlas: <a>https://www.slicer.org/publications/item/view/1918</a>
+    Brain Atlas: <a>https://www.slicer.org/publications/item/view/2037</a>
+    Knee Atlas: <a>https://www.slicer.org/publications/item/view/1953</a>
 
     """
     parent.acknowledgementText = """

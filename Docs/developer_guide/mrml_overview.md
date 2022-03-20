@@ -19,19 +19,19 @@ Medical Reality Modeling Language (MRML) is a data model developed to represent 
 ### Basic MRML node types
 
 - **Data nodes** store basic properties of a data set. Since the same data set can be displayed in different ways (even within the same application, you may want to show the same data set differently in each view), display properties are not stored in the data node. Similarly, the same data set can be stored in various file formats, therefore file storage properties are not stored in a data node. Data nodes are typically thin wrappers over VTK objects, such as vtkPolyData, vtkImageData, vtkTable. Most important Slicer core data nodes are the following:
-  - **Volume** ([vtkMRMLVolume](http://apidocs.slicer.org/master/classvtkMRMLVolumeNode.html) and its subclasses): stores a 3D image. Each voxel of a volume may be a scalar (to store images with continuous grayscale values, such as a CT image), label (to store discrete labels, such as a segmentation result), vector (for storing displacement fields or RGB color images), or tensor (MRI diffusion images). 2D image volumes are represented as single-slice 3D volumes. 4D volumes are stored in sequence nodes (vtkMRMLSequenceNode).
-  - **Model** ([vtkMRMLModelNode](http://apidocs.slicer.org/master/classvtkMRMLModelNode.html)): stores a surface mesh (polygonal elements, points, lines, etc.) or volumetric mesh (tetrahedral, wedge elements, unstructured grid, etc.)
-  - **Segmentation** ([vtkMRMLSegmentationNode](http://apidocs.slicer.org/master/classvtkMRMLSegmentationNode.html)): complex data node that can store image segmentation (also known as contouring, labeling). It can store multiple representations internally, for example it can store both binary labelmap image and closed surface mesh.
-  - **Markups** ([vtkMRMLMarkupsNode](http://apidocs.slicer.org/master/classvtkMRMLMarkupsNode.html) and subclasses): store simple geometrical objects, such as point lists (formerly called "fiducial lists"), lines, angles, curves, planes for annotation and measurements. Annotations module is the old generation of markups functionality and is being phased out.
-  - **Transform** ([vtkMRMLTransformNode](http://apidocs.slicer.org/master/classvtkMRMLTransformNode.html)): stores geometrical transformation that can be applied to any [transformable nodes](http://apidocs.slicer.org/master/classvtkMRMLTransformableNode.html). A transformation can contain any number of linear or non-linear (warping) transforms chained together. In general, it is recommended to use vtkMRMLTransformNode. Child types (vtkMRMLLinearTransformNode, vtkMRMLBSplineTransformNode, vtkMRMLGridTransformNode) are kept for backward compatibility and to allow filtering for specific transformation types in user interface widgets.
-  - **Text** ([vtkMRMLTextNode](http://apidocs.slicer.org/master/classvtkMRMLTextNode.html)): stores text data, such as configuration files, descriptive text, etc.
-  - **Table** ([vtkMRMLTableNode](http://apidocs.slicer.org/master/classvtkMRMLTableNode.html)): stores tabular data (multiple scalar or vector arrays), used mainly for showing quantitative results in tables and plots
-- **Display nodes** ([vtkMRMLDisplayNode](http://apidocs.slicer.org/master/classvtkMRMLDisplayNode.html) and its subclasses) specify properties how to display data nodes. For example, a model node's color is stored in a display node associated with a model node.
+  - **Volume** ([vtkMRMLVolume](https://apidocs.slicer.org/master/classvtkMRMLVolumeNode.html) and its subclasses): stores a 3D image. Each voxel of a volume may be a scalar (to store images with continuous grayscale values, such as a CT image), label (to store discrete labels, such as a segmentation result), vector (for storing displacement fields or RGB color images), or tensor (MRI diffusion images). 2D image volumes are represented as single-slice 3D volumes. 4D volumes are stored in sequence nodes (vtkMRMLSequenceNode).
+  - **Model** ([vtkMRMLModelNode](https://apidocs.slicer.org/master/classvtkMRMLModelNode.html)): stores a surface mesh (polygonal elements, points, lines, etc.) or volumetric mesh (tetrahedral, wedge elements, unstructured grid, etc.)
+  - **Segmentation** ([vtkMRMLSegmentationNode](https://apidocs.slicer.org/master/classvtkMRMLSegmentationNode.html)): complex data node that can store image segmentation (also known as contouring, labeling). It can store multiple representations internally, for example it can store both binary labelmap image and closed surface mesh.
+  - **Markups** ([vtkMRMLMarkupsNode](https://apidocs.slicer.org/master/classvtkMRMLMarkupsNode.html) and subclasses): store simple geometrical objects, such as point lists (formerly called "fiducial lists"), lines, angles, curves, planes for annotation and measurements. Annotations module is the old generation of markups functionality and is being phased out.
+  - **Transform** ([vtkMRMLTransformNode](https://apidocs.slicer.org/master/classvtkMRMLTransformNode.html)): stores geometrical transformation that can be applied to any [transformable nodes](https://apidocs.slicer.org/master/classvtkMRMLTransformableNode.html). A transformation can contain any number of linear or non-linear (warping) transforms chained together. In general, it is recommended to use vtkMRMLTransformNode. Child types (vtkMRMLLinearTransformNode, vtkMRMLBSplineTransformNode, vtkMRMLGridTransformNode) are kept for backward compatibility and to allow filtering for specific transformation types in user interface widgets.
+  - **Text** ([vtkMRMLTextNode](https://apidocs.slicer.org/master/classvtkMRMLTextNode.html)): stores text data, such as configuration files, descriptive text, etc.
+  - **Table** ([vtkMRMLTableNode](https://apidocs.slicer.org/master/classvtkMRMLTableNode.html)): stores tabular data (multiple scalar or vector arrays), used mainly for showing quantitative results in tables and plots
+- **Display nodes** ([vtkMRMLDisplayNode](https://apidocs.slicer.org/master/classvtkMRMLDisplayNode.html) and its subclasses) specify properties how to display data nodes. For example, a model node's color is stored in a display node associated with a model node.
   - Multiple display nodes may be added for a single data, each specifying different display properties and view nodes. Built-in Slicer modules typically only show and allow editing of the *first* display node associated with a data node.
   - If a display node specifies a list of view nodes then the associated data node is only displayed in those views.
   - Display nodes may refer to *color nodes* to specify a list of colors or color look-up-tables.
   - When a data node is created then default display node can be added by calling its `CreateDefaultDisplayNodes()` method. In some cases, Slicer detects if the display and storage node is missing and tries to create a default nodes, but the developers should not rely on this error-recovery mechanism.
-- **Storage nodes** ([vtkMRMLStorageNode](http://apidocs.slicer.org/master/classvtkMRMLStorageNode.html) and its subclasses) specify how to store a data node in file. It can store one or more file name, compression options, coordinate system information, etc.
+- **Storage nodes** ([vtkMRMLStorageNode](https://apidocs.slicer.org/master/classvtkMRMLStorageNode.html) and its subclasses) specify how to store a data node in file. It can store one or more file name, compression options, coordinate system information, etc.
   - Default storage node may be created for a data node by calling its `CreateDefaultStorageNode()` method.
 - **View nodes** ([vtkMRMLAbstractViewNode](https://apidocs.slicer.org/v4.8/classvtkMRMLAbstractViewNode.html) and subclasses) specify view layout and appearance of views, such as background color. Additional nodes related to view nodes include:
   - vtkMRMLCameraNode stores properties of camera of a 3D view.
@@ -40,11 +40,11 @@ Medical Reality Modeling Language (MRML) is a data model developed to represent 
   - vtkMRMLLayoutNode defines the current view layout: what views (slice, 3D, table, etc.) are display and where. In addition to switching between built-in view layouts, custom view layouts can be specified using an XML description.
   - vtkMRMLInteractionNode specifies interaction mode of viewers (view/transform, window/level, place markups), such as what happens the user clicks in a view
   - vtkMRMLSelectionNode stores global state information of the scene, such as active markup (that is being placed), units (length, time, etc.) used in the scene, etc
-- **Plot nodes** specify how to display table node contents as plots. [Plot series node](http://apidocs.slicer.org/master/classvtkMRMLPlotSeriesNode.html) specifies a data series using one or two columns of a table node. [Plot chart node](http://apidocs.slicer.org/master/classvtkMRMLPlotChartNode.html) specifies which series to plot and how. [Plot view node](http://apidocs.slicer.org/master/classvtkMRMLPlotViewNode.html) specifies which plot chart to show in a view and how user can interact with it.
-- **Subject hierarchy node** ([vtkMRMLSubjectHierarchyNode](http://apidocs.slicer.org/master/classvtkMRMLSubjectHierarchyNode.html)) allows organization of data nodes into folders. Subject hierarchy folders may be associated with display nodes, which can be used to override display properties of all children in that folder. It replaces all previous hierarchy management methods, such as model or annotation hierarchies.
+- **Plot nodes** specify how to display table node contents as plots. [Plot series node](https://apidocs.slicer.org/master/classvtkMRMLPlotSeriesNode.html) specifies a data series using one or two columns of a table node. [Plot chart node](https://apidocs.slicer.org/master/classvtkMRMLPlotChartNode.html) specifies which series to plot and how. [Plot view node](https://apidocs.slicer.org/master/classvtkMRMLPlotViewNode.html) specifies which plot chart to show in a view and how user can interact with it.
+- **Subject hierarchy node** ([vtkMRMLSubjectHierarchyNode](https://apidocs.slicer.org/master/classvtkMRMLSubjectHierarchyNode.html)) allows organization of data nodes into folders. Subject hierarchy folders may be associated with display nodes, which can be used to override display properties of all children in that folder. It replaces all previous hierarchy management methods, such as model or annotation hierarchies.
 - [**Sequence node**](https://github.com/Slicer/Slicer/blob/master/Libs/MRML/Core/vtkMRMLSequenceNode.h) stores a list of data nodes to represent time sequences or other multidimensional data sets in the scene. [Sequence browser node](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Sequences/MRML/vtkMRMLSequenceBrowserNode.h) specifies which one of the internal data node should be copied to the scene so that it can be displayed or edited. The node that represents a node of the internal scene is called a *proxy node*. When a proxy node is modified in the scene, all changes can be saved into the internal scene.
 
-Detailed documentation of MRML API can be found in [here](http://apidocs.slicer.org/master/classes.html).
+Detailed documentation of MRML API can be found in [here](https://apidocs.slicer.org/master/classes.html).
 
 ### MRML node attributes
 
@@ -102,7 +102,7 @@ The following methods on the MRML scene are used to manage Undo/Redo stacks:
 
 If you are adding new functionality to 3D Slicer either via extensions, or even updates to the core, most of the time the existing MRML nodes will be sufficient. Many powerful C++ and Python extensions simply use and combine existing the node types to create new functionality. Other extensions, instead of creating new MRML nodes from scratch, derive from existing nodes and add just a few methods to get the needed functionality. That said, if the existing MRML nodes don't offer enough (or almost enough) functionality to enable what needs to be done, it is possible to create custom MRML node classes with a little bit of effort.
 
-There are a number of different MRML nodes and helper classes that can be implemented to enable new MRML data type functionality. Here is the not-so-short list. We will go over each of these in detail. 
+There are a number of different MRML nodes and helper classes that can be implemented to enable new MRML data type functionality. Here is the not-so-short list. We will go over each of these in detail.
 
 1. [Data node](#the-data-node)
 2. [Display node](#the-display-node)
@@ -127,7 +127,7 @@ MRML nodes can be implemented in a Slicer extension.
 
 :::{note}
 
-All links to API class and function documentation redirecting to `https://apidocs.slicer.org` correspond to documentation generated from the latest commit of the `master` branch of Slicer. This means that versions of this documentation associated with an older version of Slicer may be out of sync with the linked API. 
+All links to API class and function documentation redirecting to `https://apidocs.slicer.org` correspond to documentation generated from the latest commit of the `master` branch of Slicer. This means that versions of this documentation associated with an older version of Slicer may be out of sync with the linked API.
 
 :::
 
@@ -519,9 +519,9 @@ A layout manager ([qSlicerLayoutManager][qSlicerLayoutManager-apidoc]) shows or 
 - Pre-defined layouts are described using XML and are registered in `vtkMRMLLayoutLogic::AddDefaultLayouts()`.
 - Developer may register additional layout.
 
-[qSlicerLayoutManager-apidoc]: http://apidocs.slicer.org/master/classqSlicerLayoutManager.html
-[vtkMRMLLayoutNode-apidoc]: http://apidocs.slicer.org/master/classvtkMRMLLayoutNode.html
-[vtkMRMLLayoutLogic-apidoc]: http://apidocs.slicer.org/master/classvtkMRMLLayoutLogic.html
+[qSlicerLayoutManager-apidoc]: https://apidocs.slicer.org/master/classqSlicerLayoutManager.html
+[vtkMRMLLayoutNode-apidoc]: https://apidocs.slicer.org/master/classvtkMRMLLayoutNode.html
+[vtkMRMLLayoutLogic-apidoc]: https://apidocs.slicer.org/master/classvtkMRMLLayoutLogic.html
 
 #### Registering a custom layout
 

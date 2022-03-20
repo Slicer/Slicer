@@ -4,7 +4,7 @@
 
 :::{note}
 
-An interactive version of this script is now included in the [SlicerDMRI extension](http://dmri.slicer.org) ([module code](https://github.com/SlicerDMRI/SlicerDMRI/tree/master/Modules/Scripted/TractographyExportPLY)). After installing SlicerDMRI, go to *Modules -> Diffusion -> Import and Export -> Export tractography to PLY (mesh)*.
+An interactive version of this script is now included in the [SlicerDMRI extension](https://dmri.slicer.org) ([module code](https://github.com/SlicerDMRI/SlicerDMRI/tree/master/Modules/Scripted/TractographyExportPLY)). After installing SlicerDMRI, go to *Modules -> Diffusion -> Import and Export -> Export tractography to PLY (mesh)*.
 
 :::
 

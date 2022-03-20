@@ -675,7 +675,7 @@ class ExtensionWizard:
             Option '%s' is not available.
 
             Consider re-building Slicer with SSL support or downloading
-            Slicer from http://download.slicer.org
+            Slicer from https://download.slicer.org
             """ % option))
 
     # Add built-in templates

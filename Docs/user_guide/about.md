@@ -51,7 +51,7 @@ The discussion concluded that bundling the contribution agreement in the license
 
 ### 3D Slicer as a platform
 
-To acknowledge 3D Slicer as a platform, please cite the [Slicer web site](http://www.slicer.org/) and the following publications when publishing work that uses or incorporates 3D Slicer:
+To acknowledge 3D Slicer as a platform, please cite the [Slicer web site](https://www.slicer.org/) and the following publications when publishing work that uses or incorporates 3D Slicer:
 
 **Fedorov A., Beichel R., Kalpathy-Cramer J., Finet J., Fillion-Robin J-C., Pujol S., Bauer C., Jennings D., Fennessy F.M., Sonka M., Buatti J., Aylward S.R., Miller J.V., Pieper S., Kikinis R. [3D Slicer as an Image Computing Platform for the Quantitative Imaging Network](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3466397/pdf/nihms383480.pdf). Magnetic Resonance Imaging. 2012 Nov;30(9):1323-41. PMID: 22770690. PMCID: PMC3466397.**
 

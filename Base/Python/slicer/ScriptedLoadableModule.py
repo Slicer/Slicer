@@ -28,8 +28,8 @@ This module was created from a template and the help section has not yet been up
 """
 
     parent.acknowledgementText = """
-This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.
-This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a href=http://www.slicer.org>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>).
+This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>https://www.slicer.org</a> for details.
+This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a href=https://www.slicer.org>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>).
 """
 
     # Set module icon from Resources/Icons/<ModuleName>.png
