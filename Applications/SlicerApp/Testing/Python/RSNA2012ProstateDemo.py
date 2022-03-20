@@ -9,7 +9,7 @@ from slicer.util import TESTING_DATA_URL
 
 class RSNA2012ProstateDemo(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
@@ -32,7 +32,7 @@ class RSNA2012ProstateDemo(ScriptedLoadableModule):
 
 class RSNA2012ProstateDemoWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def setup(self):
@@ -50,7 +50,7 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def setUp(self):

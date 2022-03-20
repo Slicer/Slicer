@@ -145,7 +145,7 @@ for i in range(numControlPoints):
   print(i,": RAS =",ras,", world =",world)
 ```
 
-You can also look at the sample code in the [Endoscopy module](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/Endoscopy/Endoscopy.py#L287) to see how python is used to access control points from a scripted module.
+You can also look at the sample code in the [Endoscopy module](https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/Endoscopy/Endoscopy.py#L287) to see how python is used to access control points from a scripted module.
 
 ### Define/edit a circular region of interest in a slice viewer
 

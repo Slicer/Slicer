@@ -186,8 +186,8 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
 ## Information for developers
 
 
-- [vtkSegmentationCore on GitHub](https://github.com/Slicer/Slicer/tree/master/Libs/vtkSegmentationCore) (within Slicer)
-- [Segmentations Slicer module on GitHub](https://github.com/Slicer/Slicer/tree/master/Modules/Loadable/Segmentations)
+- [vtkSegmentationCore on GitHub](https://github.com/Slicer/Slicer/tree/main/Libs/vtkSegmentationCore) (within Slicer)
+- [Segmentations Slicer module on GitHub](https://github.com/Slicer/Slicer/tree/main/Modules/Loadable/Segmentations)
 - [Segmentations Labs page](https://www.slicer.org/wiki/Documentation/Labs/Segmentations)
 - [Manipulation of segmentations from Python scripts - examples in script repository](../../developer_guide/script_repository.md#segmentations)
 

@@ -102,7 +102,7 @@ class MyListenerClass(VTKObservationMixin):
 
 ### Subject hierarchy plugin offering view context menu action
 
-If an object that supports view context menus (e.g. markups) is right-clicked in a slice or 3D view, it can offer custom actions. Due to internal limitations these plugins must be set up differently, as explained [here](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Annotations/SubjectHierarchyPlugins/AnnotationsSubjectHierarchyPlugin.py#L96-L107). This example makes it easier to create such a plugin.
+If an object that supports view context menus (e.g. markups) is right-clicked in a slice or 3D view, it can offer custom actions. Due to internal limitations these plugins must be set up differently, as explained [here](https://github.com/Slicer/Slicer/blob/main/Modules/Loadable/Annotations/SubjectHierarchyPlugins/AnnotationsSubjectHierarchyPlugin.py#L96-L107). This example makes it easier to create such a plugin.
 
 This text must be saved as `ViewContextMenu.py` and placed in a folder that is added to "Additional module paths" in Application Settings / Modules section.
 

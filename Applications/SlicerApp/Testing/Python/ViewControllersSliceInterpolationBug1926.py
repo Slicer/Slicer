@@ -11,7 +11,7 @@ from slicer.ScriptedLoadableModule import *
 
 class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
@@ -34,7 +34,7 @@ class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
 
 class ViewControllersSliceInterpolationBug1926Widget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def setup(self):
@@ -69,7 +69,7 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def setUp(self):

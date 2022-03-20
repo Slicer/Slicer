@@ -64,7 +64,7 @@ and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
 class SelfTestsWidget(ScriptedLoadableModuleWidget):
     """Slicer module that creates the Qt GUI for interacting with SelfTests
     Uses ScriptedLoadableModuleWidget base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     # sets up the widget

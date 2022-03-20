@@ -10,7 +10,7 @@ from slicer.ScriptedLoadableModule import *
 
 class SlicerMRBMultipleSaveRestoreLoopTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
@@ -35,7 +35,7 @@ class SlicerMRBMultipleSaveRestoreLoopTest(ScriptedLoadableModule):
 
 class SlicerMRBMultipleSaveRestoreLoopTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def setup(self):
@@ -46,7 +46,7 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, methodName='runTest', numberOfIterations=5, uniqueDirectory=True, strict=False):

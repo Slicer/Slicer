@@ -130,7 +130,7 @@ if __name__ == '__main__':
         Use this script to update external python project files with the latest version
         and the download hashes for the specified python modules.
 
-        For updating Slicer python packages for https://github.com/Slicer/Slicer/tree/master,
+        For updating Slicer python packages for https://github.com/Slicer/Slicer/tree/main,
         run using PythonSlicer.exe from the latest Slicer preview.
         In the specified search directory it will then locally update all the external python
         projects to have the latest version of the package with updated hashes.

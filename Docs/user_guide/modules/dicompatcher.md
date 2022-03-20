@@ -34,7 +34,7 @@ DICOM is a large and complex standard and device manufacturers and third-party s
 
 ## Information for Developers
 
-This is a Python scripted module. Source code is available [here](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/DICOMPatcher/DICOMPatcher.py).
+This is a Python scripted module. Source code is available [here](https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/DICOMPatcher/DICOMPatcher.py).
 
 ## Contributors
 
