@@ -8,9 +8,9 @@ This module is for creating videos, image sequences, or lightbox image from 3D a
 
 ### Input
 
-- **Master view:** This view will be changed during the animation (rotated, sweeped, etc.).
-- **Capture all views:** If enabled then all the view in the view layout will be captured. If disabled then only the master view will be captured. By capturing all views, it is possible to see the animated view (such as a moving slice) in 3D and in other slice views.
-- **Animation mode:** specifies how the master view will be modified during capture.
+- **Main view:** This view will be changed during the animation (rotated, sweeped, etc.).
+- **Capture all views:** If enabled then all the view in the view layout will be captured. If disabled then only the main view will be captured. By capturing all views, it is possible to see the animated view (such as a moving slice) in 3D and in other slice views.
+- **Animation mode:** specifies how the main view will be modified during capture.
   - **3D rotation:** Acquire video of a rotating 3D view. For smooth repeated display of a 360-degree rotation it is recommended to choose 31 or 61 as "Number of images".
   - **slice sweep:** Acquire video while going through selected range of image frames (for slice viewer only).
   - **slice fade:** Acquire video while fading between the foreground and background image (for slice viewer only).).

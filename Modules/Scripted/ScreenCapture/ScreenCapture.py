@@ -85,7 +85,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.viewNodeSelector.setMRMLScene(slicer.mrmlScene)
         self.viewNodeSelector.setToolTip("This slice or 3D view will be updated during capture."
                                          "Only this view will be captured unless 'Capture of all views' option in output section is enabled.")
-        inputFormLayout.addRow("Master view: ", self.viewNodeSelector)
+        inputFormLayout.addRow("Main view: ", self.viewNodeSelector)
 
         self.captureAllViewsCheckBox = qt.QCheckBox(" ")
         self.captureAllViewsCheckBox.checked = False
