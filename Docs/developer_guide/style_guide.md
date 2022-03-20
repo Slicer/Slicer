@@ -2,8 +2,8 @@
 
 ## General
 
-If you are editing code, take a few minutes to look at the code around you and determine its style. 
-If they use spaces around their if clauses, you should, too. 
+If you are editing code, take a few minutes to look at the code around you and determine its style.
+If they use spaces around their if clauses, you should, too.
 If their comments have little boxes of stars around them, make your comments have little boxes of stars around them too.
 
 The point of having style guidelines is to have a common vocabulary of coding so people can concentrate on what you are saying, rather than on how you are saying it. We present global style rules here so people know the vocabulary. But local style is also important. If code you add to a file looks drastically different from the existing code around it, the discontinuity throws readers out of their rhythm when they go to read it. Try to avoid this.
@@ -14,7 +14,7 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
 
 ### Toolkits and libraries
 
-- [VTK coding conventions](http://www.vtk.org/Wiki/VTK_Coding_Standards)
+- [VTK coding conventions](https://www.vtk.org/Wiki/VTK_Coding_Standards)
 - [Qt style guide](https://wiki.qt.io/Qt_Coding_Style)
 - [Python style guide](http://www.python.org/dev/peps/pep-0008/)
 
@@ -70,7 +70,7 @@ Useful information about some coding style decisions: <https://google.github.io/
 - Macros/functions should be lower case and words separated with underscores
 
   `include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Logic)` instead of `INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/Logic)`
-  
+
   `find_package(VTK REQUIRED)` instead of `FIND_PACKAGE(VTK REQUIRED)` or `Find_Package(VTK REQUIRED)`
 
 - Global variables are uppercase and words separated with underscores
@@ -134,8 +134,8 @@ Prefer instead:
 References: [Clean Code](http://www.amazon.com/gp/product/0132350882?ie=UTF8&tag=solisyntprog-20&linkCode=as2&camp=1789&creative=9325&creativeASIN=0132350882) from `Robert C. Martin`: `Mixing levels of abstraction within a function is always confusing. Readers may not be able to tell whether a particular expression is an essential concept or a detail. Worse, like broken windows, once details are mixed with essential concepts, more and more details tend to accrete within the functions.`
 
 2. Use STL where you can, but:
-- In VTK classes follow the [http://www.vtk.org/Wiki/VTK_FAQ#Can_I_use_STL_with_VTK.3F VTK guidelines]
-  - Note that a [vtkCollection](http://www.vtk.org/doc/nightly/html/classvtkCollection.html) is somewhat equivalent to `std::list<vtkSmartPointer<vtkObject*> >`
+- In VTK classes follow the [https://www.vtk.org/Wiki/VTK_FAQ#Can_I_use_STL_with_VTK.3F VTK guidelines]
+  - Note that a [vtkCollection](https://www.vtk.org/doc/nightly/html/classvtkCollection.html) is somewhat equivalent to `std::list<vtkSmartPointer<vtkObject*> >`
 - In Qt classes prefer [Qt Container classes](https://doc.qt.io/qt-5/containers.html)
 
 ## File layout
@@ -154,22 +154,22 @@ Example:
  // header
  // ...
  // end header
- 
+
  #include "qSlicerMyModule.h"
- 
+
  // MyModule includes
  #include "qSlicerMyModuleWidget.h"
  #include "vtkSlicerMyModuleLogic.h"
- 
+
  // MRML includes
  #include "vtkMRMLScene.h"
- 
+
  // Qt includes
  #include <QDialog>
- 
+
  // VTK includes
  #include <vtkSmartPointer.h>
- 
+
  // STD includes
  #include <vector>
 ```
@@ -224,7 +224,7 @@ File management: All filenames have to be passed to file functions (such as fope
 
 ## Error and warning messages
 
-The ITK, VTK, Qt, std::cout, std::cerr .. all appear in the error log and can easily be filtered according to their type (debug/warning/error). 
+The ITK, VTK, Qt, std::cout, std::cerr .. all appear in the error log and can easily be filtered according to their type (debug/warning/error).
 
 - **Errors**: Error should be used to signal something that should not happen. They usually mean that the execution of the current function/code should be stopped.
 - **Warnings**: Warning should be used to signal potentially dangerous behavior. Also consider using these in deprecated methods to warn your fellow developers.
@@ -256,7 +256,7 @@ qDebug() << "This variable has the value: "<< value;
 
 ### In VTK-based classes
 
-- For error messages, use [vtkErrorMacro()](http://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html):
+- For error messages, use [vtkErrorMacro()](https://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html):
 
 ```
 if (somethingWrongHappened)
@@ -266,13 +266,13 @@ if (somethingWrongHappened)
   }
 ```
 
-For warnings, use [vtkWarningMacro()](http://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html):
+For warnings, use [vtkWarningMacro()](https://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html):
 
 ```
 vtkWarningMacro("Be careful here, this is dangerous");
 ```
 
-For debug, use [vtkDebugMacro()](http://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html):
+For debug, use [vtkDebugMacro()](https://www.vtk.org/doc/release/3/html/vtkSetGet_8h.html):
 
 ```
 vtkDebugMacro("This variable has the value: "<< value);
@@ -327,7 +327,7 @@ If the commit is related to an [issue](http://issues.slicer.org/) (bug or featur
 BUG: Fix crash in Volume Rendering module when switching view layout
 
 vtkSetAndObserveMRMLNodeEventsMacro can't be used for observing all types of vtkObjects,
-only vtkMRMLNode is expected by vtkMRMLAbstractLogic::OnMRMLNodeModified(...) 
+only vtkMRMLNode is expected by vtkMRMLAbstractLogic::OnMRMLNodeModified(...)
 
 see #1641
 ```
