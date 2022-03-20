@@ -1665,7 +1665,7 @@ QString qSlicerCoreApplication::libraries()const
   QString librariesText(
     "Built on top of: "
     "<a href=\"https://www.vtk.org/\">VTK</a>, "
-    "<a href=\"http://www.itk.org/\">ITK</a>, "
+    "<a href=\"https://www.itk.org/\">ITK</a>, "
     "<a href=\"http://www.commontk.org/index.php/Main_Page\">CTK</a>, "
     "<a href=\"https://www.qt.io/\">Qt</a>, "
     "<a href=\"http://teem.sf.net\">Teem</a>, "

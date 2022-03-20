@@ -46,10 +46,10 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
     - Image volumes, RT structure sets, dose volumes, etc. can be exported using DICOM module's export feature.
     - Limited support for writing image volumes in DICOM format is provided by the Create DICOM Series module.
     - Support of writing DICOM Segmentation Objects is provided by the Reporting extension
-- [**NRRD**](http://www.itk.org/Wiki/MetaIO/Documentation) (.nrrd, .nhdr): General-purpose 2D/3D/4D file format. Coordinate system: as defined in the file header (usually LPS).
+- [**NRRD**](https://www.itk.org/Wiki/MetaIO/Documentation) (.nrrd, .nhdr): General-purpose 2D/3D/4D file format. Coordinate system: as defined in the file header (usually LPS).
   - **NRRD sequence** (.seq.nrrd): 4D volume
   - To load an image file as segmentation (also known as label image, mask, region of interest) see [Segmentations module documentation](modules/segmentations.md#import-an-existing-segmentation-from-volume-file)
-- [**MetaImage**](http://www.itk.org/Wiki/MetaIO/Documentation) (.mha, .mhd): Coordinate system: LPS (AnatomicalOrientation in the file header is ignored).
+- [**MetaImage**](https://www.itk.org/Wiki/MetaIO/Documentation) (.mha, .mhd): Coordinate system: LPS (AnatomicalOrientation in the file header is ignored).
 - [**VTK**](https://www.vtk.org/VTK/img/file-formats.pdf) (.vtk): Coordinate system: LPS. Important limitation: image axis directions cannot be stored in this file format.
 - [**Analyze**](http://www.grahamwideman.com/gw/brain/analyze/formatdoc.htm) (.hdr, .img, .img.gz): Image orientation is specified ambiguously in this format, therefore its use is strongle discouraged. For brain imaging, use Nifti format instead.
 - [**Nifti**](http://nifti.nimh.nih.gov/nifti-1/) (.nii, .nii.gz): File format for brain MRI. Not well suited as a general-purpose 3D image file format (use NRRD format instead).
@@ -116,9 +116,9 @@ Surface or volumetric meshes.
 
 ### Transforms
 
-- [**ITK HDF transform**](http://www.itk.org/ItkSoftwareGuide.pdf) (.h5): For linear, b-spline, grid (displacement field), thin-plate spline, and composite transforms. Coordinate system: LPS.
-- [**ITK TXT transform**](http://www.itk.org/ItkSoftwareGuide.pdf) (.tfm, .txt): For linear, b-spline, and thin-plate spline, and composite transforms. Coordinate system: LPS.
-- [**Matlab MAT file**](http://www.itk.org/ItkSoftwareGuide.pdf) (.mat): For linear and b-spline transforms. Coordinate system: LPS.
+- [**ITK HDF transform**](https://www.itk.org/ItkSoftwareGuide.pdf) (.h5): For linear, b-spline, grid (displacement field), thin-plate spline, and composite transforms. Coordinate system: LPS.
+- [**ITK TXT transform**](https://www.itk.org/ItkSoftwareGuide.pdf) (.tfm, .txt): For linear, b-spline, and thin-plate spline, and composite transforms. Coordinate system: LPS.
+- [**Matlab MAT file**](https://www.itk.org/ItkSoftwareGuide.pdf) (.mat): For linear and b-spline transforms. Coordinate system: LPS.
 - **Displacement field** (.nrrd, .nhdr, .mha, .mhd, .nii, .nii.gz): For storing grid transform as a vector image, each voxel containing displacement vector. Coordinate system: LPS.
 - [SlicerRT extension](http://www.slicerrt.org/)
   - **Pinnacle DVF** (.dvf)
