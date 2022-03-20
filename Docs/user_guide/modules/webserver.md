@@ -14,9 +14,9 @@ There are three types of endpoints:
 | [Slicer](#slicer-endpoints) | Give read/write access to features in Slicer's MRML scene and GUI.</br>This interface also exposes the Python interpreter so that arbitrary python code may be executed in the Slicer application. | `/slicer` | [SlicerRequestHandler][SlicerRequestHandler] |
 | [DICOMweb](#dicom-endpoints) | Exposes the Slicer dicom database as a DICOMweb services | `/dicom` | [DICOMRequestHandler][DICOMRequestHandler] |
 
-[StaticPagesRequestHandler]: https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/WebServer/WebServerLib/StaticPagesRequestHandler.py
-[SlicerRequestHandler]: https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/WebServer/WebServerLib/SlicerRequestHandler.py
-[DICOMRequestHandler]: https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/WebServer/WebServerLib/DICOMRequestHandler.py
+[StaticPagesRequestHandler]: https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/WebServer/WebServerLib/StaticPagesRequestHandler.py
+[SlicerRequestHandler]: https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/WebServer/WebServerLib/SlicerRequestHandler.py
+[DICOMRequestHandler]: https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/WebServer/WebServerLib/DICOMRequestHandler.py
 
 :::{note}
 The web server is integrated with the Qt event loop so it can be used together with the interactive session.

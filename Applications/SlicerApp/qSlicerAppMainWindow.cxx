@@ -290,7 +290,7 @@ void qSlicerAppMainWindow::on_HelpSearchFeatureRequestsAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpViewLicenseAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl("https://github.com/Slicer/Slicer/blob/master/License.txt"));
+  QDesktopServices::openUrl(QUrl("https://github.com/Slicer/Slicer/blob/main/License.txt"));
 }
 
 //---------------------------------------------------------------------------

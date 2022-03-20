@@ -20,7 +20,7 @@ Highlights:
 
 The 3D Slicer software is distributed under a BSD-style open source license that is broadly compatible with the Open Source Definition by [The Open Source Initiative](https://opensource.org/) and contains no restrictions on legal uses of the software.
 
-To use Slicer, please read the [3D Slicer Software License Agreement](https://github.com/Slicer/Slicer/blob/master/License.txt) before downloading any binary releases of the Slicer.
+To use Slicer, please read the [3D Slicer Software License Agreement](https://github.com/Slicer/Slicer/blob/main/License.txt) before downloading any binary releases of the Slicer.
 
 ### Historical notes about the license
 

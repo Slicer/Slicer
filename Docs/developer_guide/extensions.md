@@ -308,7 +308,7 @@ Extension developers have to make sure that the extension description in each br
 
 The extensions build system allows to drive the build, test, packaging and upload of Slicer extensions.
 
-Using the [extensions build system source code](https://github.com/Slicer/Slicer/tree/master/Extensions/CMake), it is possible to build extensions using either manual build or dashboard-driven automatic build. The extension description files must be simply placed in a folder, the same way as they are in the Extensions Index repository.
+Using the [extensions build system source code](https://github.com/Slicer/Slicer/tree/main/Extensions/CMake), it is possible to build extensions using either manual build or dashboard-driven automatic build. The extension description files must be simply placed in a folder, the same way as they are in the Extensions Index repository.
 
 ### Build list of extensions manually
 
@@ -424,7 +424,7 @@ make
 
 Continuous and nightly extension dashboards are setup on the Slicer factory machine maintained by [Kitware](https://www.kitware.com). Developers can set up similar infrastructure privately for their custom applications.
 
-By customizing the [extension template dashboard script](https://github.com/Slicer/Slicer/blob/master/Extensions/CMake/SlicerExtensionsDashboardScript.TEMPLATE.cmake), it is possible to easily setup dashboard client submitting to [CDash](https://slicer.cdash.org/index.php?project=SlicerPreview). See example dashboard scripts that are used on official Slicer build machines [here](https://github.com/Slicer/DashboardScripts). Note that these scripts are more complex than the template to allow code reuse between different configurations, but they are tested regularly and so guaranteed to work.
+By customizing the [extension template dashboard script](https://github.com/Slicer/Slicer/blob/main/Extensions/CMake/SlicerExtensionsDashboardScript.TEMPLATE.cmake), it is possible to easily setup dashboard client submitting to [CDash](https://slicer.cdash.org/index.php?project=SlicerPreview). See example dashboard scripts that are used on official Slicer build machines [here](https://github.com/Slicer/DashboardScripts). Note that these scripts are more complex than the template to allow code reuse between different configurations, but they are tested regularly and so guaranteed to work.
 
 ## Frequently asked questions
 
@@ -440,7 +440,7 @@ We suggest to use the `Slicer` prefix in the extension name, too, when the exten
 
 ### Where can I find the extension templates?
 
-The module and extension templates are available in the Slicer source tree: <https://github.com/Slicer/Slicer/tree/master/Utilities/Templates/>
+The module and extension templates are available in the Slicer source tree: <https://github.com/Slicer/Slicer/tree/main/Utilities/Templates/>
 
 Using the [Extension Wizard module](https://www.slicer.org/wiki/Documentation/Nightly/Developers/ExtensionWizard), developers can easily create a new extension without having to copy, rename and update manually every files.
 
@@ -515,8 +515,8 @@ To help fixing-up the libraries, executables and plugins so that they reference 
 
 This module is used in two situations:
 
-- Fixup of Slicer application itself. See [SlicerCPack.cmake#L36-68](https://github.com/Slicer/Slicer/blob/master/CMake/SlicerCPack.cmake#L36-68) and [SlicerCPackBundleFixup.cmake.in](https://github.com/Slicer/Slicer/blob/master/CMake/SlicerCPackBundleFixup.cmake.in).
-- Fixup of an extension package. See [SlicerExtensionCPack.cmake#L126-143](https://github.com/Slicer/Slicer/blob/master/CMake/SlicerExtensionCPack.cmake#L126-143) and [SlicerExtensionCPackBundleFixup.cmake.in](https://github.com/Slicer/Slicer/blob/master/CMake/SlicerExtensionCPackBundleFixup.cmake.in).
+- Fixup of Slicer application itself. See [SlicerCPack.cmake#L36-68](https://github.com/Slicer/Slicer/blob/main/CMake/SlicerCPack.cmake#L36-68) and [SlicerCPackBundleFixup.cmake.in](https://github.com/Slicer/Slicer/blob/main/CMake/SlicerCPackBundleFixup.cmake.in).
+- Fixup of an extension package. See [SlicerExtensionCPack.cmake#L126-143](https://github.com/Slicer/Slicer/blob/main/CMake/SlicerExtensionCPack.cmake#L126-143) and [SlicerExtensionCPackBundleFixup.cmake.in](https://github.com/Slicer/Slicer/blob/main/CMake/SlicerExtensionCPackBundleFixup.cmake.in).
 
 ### How to check if an extension is built by Slicer Extensions build system?
 
@@ -639,7 +639,7 @@ To build Slicer with SSL support, you need to build (or download) Qt with SSL su
 
 ### How to package third party libraries?
 
-Extensions integrating third party libraries should follow the [SuperBuild extension template](https://github.com/Slicer/Slicer/tree/master/Utilities/Templates/Extensions/SuperBuild).
+Extensions integrating third party libraries should follow the [SuperBuild extension template](https://github.com/Slicer/Slicer/tree/main/Utilities/Templates/Extensions/SuperBuild).
 
 Each third party libraries will be configured and built using a dedicated `External_MyLib.cmake` file, the install location of binaries and libraries should be set to `Slicer_INSTALL_BIN_DIR` and `Slicer_INSTALL_LIB_DIR`.
 

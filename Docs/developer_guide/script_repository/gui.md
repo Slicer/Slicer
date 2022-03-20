@@ -532,7 +532,7 @@ layoutManager.layoutLogic().GetLayoutNode().AddLayoutDescription(customLayoutId,
 layoutManager.setLayout(customLayoutId)
 ```
 
-See description of standard layouts (that can be used as examples) here: https://github.com/Slicer/Slicer/blob/master/Libs/MRML/Logic/vtkMRMLLayoutLogic.cxx
+See description of standard layouts (that can be used as examples) here: https://github.com/Slicer/Slicer/blob/main/Libs/MRML/Logic/vtkMRMLLayoutLogic.cxx
 
 You can use this code snippet to add a button to the layout selector toolbar:
 

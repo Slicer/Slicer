@@ -21,7 +21,7 @@ If you are new to Slicer development and you don't have push access to the Slice
 repository, here are the steps:
 
 1. [Fork and clone](https://docs.github.com/get-started/quickstart/fork-a-repo) the repository.
-2. Run the developer setup script [`Utilities/SetupForDevelopment.sh`](https://github.com/Slicer/Slicer/blob/master/Utilities/SetupForDevelopment.sh).
+2. Run the developer setup script [`Utilities/SetupForDevelopment.sh`](https://github.com/Slicer/Slicer/blob/main/Utilities/SetupForDevelopment.sh).
 3. Create a branch.
 4. [Push](https://docs.github.com/get-started/using-git/pushing-commits-to-a-remote-repository) the branch to your GitHub fork.
 5. Create a [Pull Request](https://github.com/Slicer/Slicer/pulls).

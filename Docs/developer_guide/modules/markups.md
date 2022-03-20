@@ -2,7 +2,7 @@
 
 ## Markups json file format (.mrk.json)
 
-All markups node types (point list, line, angle, curve, etc.) can be saved to and loaded from json files. Detailed specification of all elements of the file is available in the [JSON schema](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Markups/Resources/Schema).
+All markups node types (point list, line, angle, curve, etc.) can be saved to and loaded from json files. Detailed specification of all elements of the file is available in the [JSON schema](https://github.com/Slicer/Slicer/blob/main/Modules/Loadable/Markups/Resources/Schema).
 
 A simple example that specifies a markups point list with 3 points that can be saved to a `myexample.mrk.json` file and loaded into Slicer:
 
