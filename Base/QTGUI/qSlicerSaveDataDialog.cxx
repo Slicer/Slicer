@@ -252,7 +252,7 @@ void qSlicerSaveDataDialogPrivate::populateItems()
     storableNodes[std::string(node->GetID())] = node;
     }
 
-  // get all additioanl storable nodes for all scene views except "Master Scene View"
+  // get all additional storable nodes for all scene views except "Master Scene View"
   nodes.clear();
   this->MRMLScene->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
   for (it = nodes.begin(); it != nodes.end(); it++)
@@ -964,7 +964,7 @@ vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id, vtkMRMLScene* s
     for (it = nodes.begin(); it != nodes.end(); it++)
       {
       vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
-      // skip "Master Scene View" since it contains the same ndoes as the scene
+      // skip "Master Scene View" since it contains the same nodes as the scene
       if (svNode->GetName() && std::string("Master Scene View") == std::string(svNode->GetName()))
         {
         continue;
