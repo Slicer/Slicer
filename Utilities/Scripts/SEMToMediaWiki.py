@@ -246,7 +246,7 @@ On the [https://www.cdash.org/CDash/index.php?project=Slicer3 Dashboard], these 
 
 Links to known bugs in the Slicer3 bug tracker
 
-* [https://www.na-mic.org/Bug/view.php?id=000 Bug 000:description]
+* [https://mantisarchive.slicer.org/view.php?id=000 Bug 000:description]
 
 ===Usability issues===
 
