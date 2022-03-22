@@ -89,6 +89,7 @@ class DataProbeInfoWidget:
 
     # Used in _createMagnifiedPixmap()
     self.imageCrop = vtk.vtkExtractVOI()
+    self.canvas = vtk.vtkImageCanvasSource2D()
     self.painter = qt.QPainter()
     self.pen = qt.QPen()
 
@@ -351,17 +352,36 @@ class DataProbeInfoWidget:
     dims = producer.GetOutput().GetDimensions()
     minDim = min(dims[0],dims[1])
     imageSize = _roundInt(minDim/imageZoom/2.0)
-    imin = max(0,xyzInt[0]-imageSize)
-    imax = min(dims[0]-1,  xyzInt[0]+imageSize)
-    jmin = max(0,xyzInt[1]-imageSize)
-    jmax = min(dims[1]-1,  xyzInt[1]+imageSize)
-    if (imin <= imax) and (jmin <= jmax):
-      imageCrop.SetVOI(imin, imax, jmin, jmax, 0,0)
+    imin = xyzInt[0]-imageSize
+    imax = xyzInt[0]+imageSize
+    jmin = xyzInt[1]-imageSize
+    jmax = xyzInt[1]+imageSize
+    imin_trunc = max(0,imin)
+    imax_trunc = min(dims[0]-1, imax)
+    jmin_trunc = max(0, jmin)
+    jmax_trunc = min(dims[1]-1, jmax)
+    # The extra complexity of the canvas is used here to maintain a fixed size
+    # output due to the imageCrop returning a smaller image if the limits are
+    # outside the input image bounds. Specially useful when zooming at the borders.
+    canvas = self.canvas
+    canvas.SetScalarType(producer.GetOutput().GetScalarType())
+    canvas.SetNumberOfScalarComponents(producer.GetOutput().GetNumberOfScalarComponents())
+    canvas.SetExtent(imin, imax, jmin , jmax, 0 ,0)
+    canvas.FillBox(imin, imax, jmin , jmax)
+    canvas.Update()
+    if (imin_trunc <= imax_trunc) and (jmin_trunc <= jmax_trunc):
+      imageCrop.SetVOI(imin_trunc, imax_trunc, jmin_trunc, jmax_trunc, 0,0)
       imageCrop.Update()
-      vtkImage = imageCrop.GetOutput()
-      if vtkImage:
+      vtkImageCropped = imageCrop.GetOutput()
+      xyzBounds = [0]*6
+      vtkImageCropped.GetBounds(xyzBounds)
+      xyzBounds = [_roundInt(value) for value in xyzBounds]
+      canvas.DrawImage(xyzBounds[0], xyzBounds[2], vtkImageCropped)
+      canvas.Update()
+      vtkImageFromCanvas = canvas.GetOutput()
+      if vtkImageFromCanvas:
         qImage = qt.QImage()
-        slicer.qMRMLUtils().vtkImageDataToQImage(vtkImage, qImage)
+        slicer.qMRMLUtils().vtkImageDataToQImage(vtkImageFromCanvas, qImage)
         imagePixmap = qt.QPixmap.fromImage(qImage)
         imagePixmap = imagePixmap.scaled(outputSize, qt.Qt.KeepAspectRatio, qt.Qt.FastTransformation)
 
