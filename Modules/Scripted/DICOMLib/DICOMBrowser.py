@@ -244,7 +244,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     then return matches
 
     See
-    https://www.na-mic.org/Bug/view.php?id=4146
+    https://mantisarchive.slicer.org/view.php?id=4146
     """
 
     # 1 - load json

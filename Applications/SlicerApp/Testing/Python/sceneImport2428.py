@@ -26,7 +26,7 @@ class sceneImport2428(ScriptedLoadableModule):
     """
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
-    This is a module to support testing of <a>https://www.na-mic.org/Bug/view.php?id=2428</a>
+    This is a module to support testing of <a>https://mantisarchive.slicer.org/view.php?id=2428</a>
 """ # replace with organization, grant and thanks.
 
 #

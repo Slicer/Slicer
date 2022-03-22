@@ -327,7 +327,7 @@ macro(slicerMacroBuildQtModule)
     ${ARGN}
     )
 
-  # See https://www.na-mic.org/Bug/view.php?id=3332
+  # See https://mantisarchive.slicer.org/view.php?id=3332
   #message(AUTHOR_WARNING
   #  "Macro 'slicerMacroBuildQtModule' is deprecated: Use 'slicerMacroBuildLoadableModule' instead."
   #  )
