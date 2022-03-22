@@ -252,6 +252,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     # create a grid transform with one vector at the corner of each slice
     # the transform is in the same space and orientation as the volume node
+    import vtk
     gridImage = vtk.vtkImageData()
     gridImage.SetOrigin(*volumeNode.GetOrigin())
     gridImage.SetDimensions(samplingPoints_shape[:3])
