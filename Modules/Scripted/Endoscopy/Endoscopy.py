@@ -1,6 +1,7 @@
 import ctk
 import qt
 import vtk
+import vtk.util.numpy_support
 
 import slicer
 from slicer.ScriptedLoadableModule import *
@@ -364,8 +365,7 @@ class EndoscopyComputePath:
       if originalPointsPerSegment<pointsPerSegment:
         self.fids.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
       # Get it as a numpy array as an independent copy
-      import vtk.util.numpy_support as VN
-      self.path = VN.vtk_to_numpy(resampledPoints.GetData())
+      self.path = vtk.util.numpy_support(resampledPoints.GetData())
       return
 
     # hermite interpolation functions
@@ -534,8 +534,7 @@ class EndoscopyPathModel:
       linesIDArray.SetTuple1( 0, linesIDArray.GetNumberOfTuples() - 1 )
       lines.SetNumberOfCells(1)
 
-    import vtk.util.numpy_support as VN
-    pointsArray = VN.vtk_to_numpy(points.GetData())
+    pointsArray = vtk.util.numpy_support(points.GetData())
     self.planePosition, self.planeNormal = self.planeFit(pointsArray.T)
 
     # Create model node

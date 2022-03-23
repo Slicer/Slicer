@@ -3,6 +3,7 @@ import logging
 import numpy
 import pydicom as dicom
 import vtk
+import vtk.util.numpy_support
 
 import slicer
 
@@ -272,7 +273,6 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     # is mapped from the source corner to the target corner
 
     nshape = tuple(reversed(gridImage.GetDimensions()))
-    import vtk.util.numpy_support
     nshape = nshape + (3,)
     displacements = vtk.util.numpy_support.vtk_to_numpy(gridImage.GetPointData().GetScalars()).reshape(nshape)
 
