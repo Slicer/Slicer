@@ -1,6 +1,7 @@
 # Ignore all dotfiles...
 .*
 !.gitattributes
+!.git-blame-ignore-revs
 
 # Ignore all back-up files...
 *~
