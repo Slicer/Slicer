@@ -441,7 +441,6 @@ protected:
   BlendPipeline* PipelineUVW;
   vtkImageReslice * ExtractModelTexture;
   vtkAlgorithmOutput *    ImageDataConnection;
-  vtkTransform *    ActiveSliceTransform;
 
   vtkMRMLModelNode *            SliceModelNode;
   vtkMRMLModelDisplayNode *     SliceModelDisplayNode;
