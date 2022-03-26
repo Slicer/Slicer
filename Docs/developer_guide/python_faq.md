@@ -130,6 +130,10 @@ sliceNode = slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed')
 sliceNode.SetSliceResolutionMode(slicer.vtkMRMLSliceNode.SliceResolutionMatchVolumes)
 ```
 
+## How to run an external Python script as a CLI module
+
+A standalone Python script (that does not use any Slicer application features) can run from Slicer as a CLI module. Slicer generates a graphical user interface from the parameter definition XML file. See a complete example [here](https://github.com/lassoan/SlicerPythonCLIExample).
+
 ## How to type file paths in Python
 
 New Python users on Windows often surprised when they enter a path that contain backslash character (`\`) and it just does not work. Since backslash (`\`) is an escape character in Python, it requires special attention when used in string literals. For example, this is incorrect:
