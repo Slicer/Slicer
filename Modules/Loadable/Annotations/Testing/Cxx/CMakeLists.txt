@@ -22,9 +22,9 @@ set(KIT_TEST_SRCS
   vtkMRMLAnnotationControlPointsNodeTest1.cxx
   vtkMRMLAnnotationPointDisplayNodeTest1.cxx
   vtkMRMLAnnotationControlPointsStorageNodeTest1.cxx
-  vtkMRMLAnnotationLinesNodeTest1.cxx
+  #vtkMRMLAnnotationLinesNodeTest1.cxx
   vtkMRMLAnnotationLineDisplayNodeTest1.cxx
-  vtkMRMLAnnotationLinesStorageNodeTest1.cxx
+  #vtkMRMLAnnotationLinesStorageNodeTest1.cxx
   vtkMRMLAnnotationRulerNodeTest1.cxx
   vtkMRMLAnnotationRulerStorageNodeTest1.cxx
   vtkMRMLAnnotationFiducialNodeTest1.cxx
