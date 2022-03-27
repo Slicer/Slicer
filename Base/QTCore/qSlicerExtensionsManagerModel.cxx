@@ -1156,10 +1156,11 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     }
 
   ExtensionMetadataType updatedExtensionMetadata = result;
+  QHash<QString, QString> serverToExtensionDescriptionKey = q->serverToExtensionDescriptionKey(q->serverAPI());
   foreach(const QString& key, result.keys())
     {
     updatedExtensionMetadata.insert(
-      q->serverToExtensionDescriptionKey(q->serverAPI()).value(key, key), result.value(key));
+      serverToExtensionDescriptionKey.value(key, key), result.value(key));
     }
 
   return updatedExtensionMetadata;
