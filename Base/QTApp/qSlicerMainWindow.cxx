@@ -642,9 +642,9 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
     messageBox->exec();
     if (messageBox->clickedButton() == saveButton)
       {
-      // \todo Check if the save data dialog was "applied" and close the
-      // app in that case
+      // Save data and close the app
       this->FileSaveSceneAction->trigger();
+      close = true;
       }
     else if (messageBox->clickedButton() == exitButton)
       {
