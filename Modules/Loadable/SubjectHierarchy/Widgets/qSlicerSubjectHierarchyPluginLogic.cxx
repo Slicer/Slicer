@@ -69,6 +69,8 @@ public:
 
   /// Menu shown when right-clicking in a slice or 3D view
   QMenu* ViewContextMenu;
+  /// Enable properties action
+  bool editPropertiesActionEnabled = true;
   /// Edit properties action
   QAction* EditPropertiesAction;
   /// Actions from the registered plugins
@@ -591,6 +593,10 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
       {
       editActionVisible = ownerPlugin->canEditProperties(itemID);
       }
+    if (d->editPropertiesActionEnabled)
+      {
+      d->ViewMenu->addAction(d->EditPropertiesAction);
+      }
     }
   d->EditPropertiesAction->setVisible(editActionVisible);
 
@@ -683,6 +689,27 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
 void qSlicerSubjectHierarchyPluginLogic::registerViewContextMenuAction(QAction* action)
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
+
+  if (action)
+    {
+    const int viewMenuActionsCount = d->ViewMenuActions.count();
+
+    for(int i = 0; i < viewMenuActionsCount; i++)
+      {
+      if(action == d->ViewMenuActions.at(i))
+        {
+        d->ViewMenuActions.removeAt(i);
+        break;
+        }
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginLogic::registerViewMenuAction(QAction* action)
+{
+  Q_D(qSlicerSubjectHierarchyPluginLogic);
+
   if (action)
     {
     d->ViewContextMenuActions << action;
@@ -726,8 +753,19 @@ QStringList qSlicerSubjectHierarchyPluginLogic::registeredViewContextMenuActionN
     {
     registeredActionNames << action->objectName();
     }
+  if (d->editPropertiesActionEnabled)
+    {
+    registeredActionNames << d->EditPropertiesAction->objectName();
+    }
 
   return registeredActionNames;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginLogic::setEditPropertiesEnabled(bool enable)
+{
+    Q_D(qSlicerSubjectHierarchyPluginLogic);
+    d->editPropertiesActionEnabled = enable;
 }
 
 //-----------------------------------------------------------------------------

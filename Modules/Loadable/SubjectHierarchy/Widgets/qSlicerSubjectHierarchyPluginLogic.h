@@ -83,6 +83,8 @@ public:
   void registerCorePlugins();
 
   /// Get all view context menu actions available
+  Q_INVOKABLE void setEditPropertiesEnabled(bool enable);
+
   /// \return List of object names of all registered view menu actions
   QStringList registeredViewContextMenuActionNames();
 
@@ -127,6 +129,8 @@ protected:
 
   /// Add view menu action. Called by plugin handler when registering a plugin
   void registerViewContextMenuAction(QAction* action);
+  /// Remove menu action.
+  void unRegisterViewMenuAction(QAction* action);
 
 protected slots:
   /// Called when a node is added to the scene so that a plugin can create an item for it

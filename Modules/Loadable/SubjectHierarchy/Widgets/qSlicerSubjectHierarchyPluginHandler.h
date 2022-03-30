@@ -135,6 +135,10 @@ public:
   /// \return True if plugin registered successfully, false otherwise
   Q_INVOKABLE bool registerPlugin(qSlicerSubjectHierarchyAbstractPlugin* plugin);
 
+  /// Unregister a plugin
+  /// \return True if plugin is unregistered successfully, false otherwise
+  Q_INVOKABLE bool unRegisterPlugin(QString name);
+
   /// Get list of registered plugins
   Q_INVOKABLE QList<qSlicerSubjectHierarchyAbstractPlugin*> registeredPlugins() { return m_RegisteredPlugins; };
 

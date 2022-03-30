@@ -118,6 +118,17 @@ qSlicerSubjectHierarchyPluginHandler::~qSlicerSubjectHierarchyPluginHandler()
 }
 
 //---------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyPluginHandler::unRegisterPlugin(QString name)
+{
+  qSlicerSubjectHierarchyAbstractPlugin* currentPlugin = pluginByName(name);
+  foreach(QAction* action, currentPlugin->viewContextMenuActions())
+    {
+    this->m_PluginLogic->unRegisterViewMenuAction(action);
+    }
+  return true;
+}
+
+//---------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarchyAbstractPlugin* pluginToRegister)
 {
   if (pluginToRegister == nullptr)
