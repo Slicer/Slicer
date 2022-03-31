@@ -208,7 +208,8 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
         {
         vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
           "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
-          "File reading failed: invalid positionStatus '" << controlPointItem["positionStatus"].GetString()  << "'.");
+          "File reading failed: invalid positionStatus '" << controlPointItem["positionStatus"].GetString()
+          << "' for control point " << controlPointIndex + 1 << ".");
         return false;
         }
       cp->PositionStatus = positionStatus;
@@ -218,16 +219,16 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
       rapidjson::Value& positionItem = controlPointItem["position"];
       if (!this->ReadVector(positionItem, cp->Position))
         {
-        if (!cp->PositionStatus)
-          {
-          cp->PositionStatus = vtkMRMLMarkupsNode::PositionUndefined;
-          }
-        if(cp->PositionStatus != vtkMRMLMarkupsNode::PositionUndefined &&
-          cp->PositionStatus != vtkMRMLMarkupsNode::PositionMissing)
+        // If positionStatus is not defined there is a position value
+        // then it indicates that a valid position should be present,
+        // therefore it is an error that the position vector is invalid.
+        if (!controlPointItem.HasMember("positionStatus")
+          || cp->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
           {
           vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
             "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
-            "File reading failed: each control point position must be a 3-element numeric array.");
+            "File reading failed: position must be a 3-element numeric array"
+            << " for control point " << controlPointIndex + 1 << ".");
           return false;
           }
         }
@@ -236,9 +237,21 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
         cp->Position[0] = -cp->Position[0];
         cp->Position[1] = -cp->Position[1];
         }
+      if (!controlPointItem.HasMember("positionStatus"))
+        {
+        cp->PositionStatus = vtkMRMLMarkupsNode::PositionDefined;
+        }
       }
     else
       {
+      if (controlPointItem.HasMember("positionStatus")
+        && cp->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
+        {
+        vtkWarningToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+          "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
+          "File content is inconsistent: positionStatus is set to defined but no position values are provided"
+          << " for control point " << controlPointIndex + 1 << ".");
+        }
       cp->PositionStatus = vtkMRMLMarkupsNode::PositionUndefined;
       }
 
@@ -249,7 +262,8 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
         {
         vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
           "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
-          "File reading failed: each control point position must be a 3-element numeric array.");
+          "File reading failed: position must be a 3-element numeric array"
+          << " for control point " << controlPointIndex + 1 << ".");
         return false;
         }
       if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
@@ -260,7 +274,6 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
           }
         }
       }
-
 
     if (controlPointItem.HasMember("selected"))
       {
