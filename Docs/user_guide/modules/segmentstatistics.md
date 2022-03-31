@@ -24,11 +24,11 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 - Voxel count: the number of voxels in the segment
 - Volume mm3 the volume of the segment in mm3
 - Volume cm3 the volume of the segment in cm3
-- Minimum: the minimum scalar value behind the segment
-- Maximum: the maximum scalar value behind the segment
-- Mean: the mean scalar value behind the segment
-- Median: the median scalar value behind the segment
-- Standard deviation: the standard deviation of scalar values behind the segment
+- Minimum: the minimum scalar value in the segment
+- Maximum: the maximum scalar value in the segment
+- Mean: the mean scalar value in the segment
+- Median: the median scalar value in the segment
+- Standard deviation: the standard deviation of scalar values in the segment (computed using *corrected sample standard deviation* formula)
 
 ## Closed surface statistics
 
