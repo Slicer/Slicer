@@ -853,11 +853,6 @@ bool vtkMRMLModelNode::ShowDefaultScalarData()
     {
     return false;
     }
-  vtkPointData* pointData = this->GetMesh()->GetPointData();
-  if (!pointData || pointData->GetNumberOfArrays() == 0)
-    {
-    return false;
-    }
   vtkMRMLDisplayNode* displayNode = this->GetDisplayNode();
   if (!displayNode)
     {
@@ -866,33 +861,74 @@ bool vtkMRMLModelNode::ShowDefaultScalarData()
     }
 
   // If an RGB or RGBA array (3 or 4 component unsigned char array) is found
-  // then use that directly as point colors. This is most commonly used
+  // then use that directly as point or cell colors. This is most commonly used
   // in VTK, VTP, and PLY files.
-  for (int arrayIndex = 0; arrayIndex < pointData->GetNumberOfArrays(); arrayIndex++)
+
+  // Try cell data first because it is slightly preferable, as
+  // it does not need to interpolate the data for coloring the surface
+  // (colored region boundaries appear sharp, not blurred).
+  vtkCellData* cellData = this->GetMesh()->GetCellData();
+  if (cellData && cellData->GetNumberOfArrays() > 0)
     {
-    vtkUnsignedCharArray* dataArray = vtkUnsignedCharArray::SafeDownCast(pointData->GetArray(arrayIndex));
-    if (!dataArray || !dataArray->GetName())
+    // RGB(A) color
+    for (int arrayIndex = 0; arrayIndex < cellData->GetNumberOfArrays(); arrayIndex++)
       {
-      continue;
+      vtkUnsignedCharArray* dataArray = vtkUnsignedCharArray::SafeDownCast(cellData->GetArray(arrayIndex));
+      if (!dataArray || !dataArray->GetName())
+        {
+        continue;
+        }
+      if (dataArray->GetNumberOfComponents() == 3 || dataArray->GetNumberOfComponents() == 4)
+        {
+        // Found a suitable RGB or RGBA array
+        displayNode->SetActiveScalar(dataArray->GetName(), vtkAssignAttribute::CELL_DATA);
+        displayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDirectMapping);
+        displayNode->SetScalarVisibility(true);
+        return true;
+        }
       }
-    if (dataArray->GetNumberOfComponents() == 3 || dataArray->GetNumberOfComponents() == 4)
+    // Simple scalar
+    if (cellData->GetScalars())
       {
-      // Found a suitable RGB or RGBA array
-      displayNode->SetActiveScalar(dataArray->GetName(), vtkAssignAttribute::POINT_DATA);
-      displayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDirectMapping);
-      displayNode->SetScalarVisibility(true);
+      vtkDebugMacro("Made a new model display node, there are cell scalars defined "
+          "on the model - setting them visible and using the first one as the selected overlay");
+      displayNode->SetScalarVisibility(1);
+      displayNode->SetActiveScalar(cellData->GetAttribute(0)->GetName(), vtkAssignAttribute::CELL_DATA);
+      displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFileViridis.txt");
       return true;
       }
     }
 
-  if (this->GetMesh()->GetPointData()->GetScalars())
+  vtkPointData* pointData = this->GetMesh()->GetPointData();
+  if (pointData && pointData->GetNumberOfArrays() > 0)
     {
-    vtkDebugMacro("Made a new model display node, there are scalars defined "
-        "on the model - setting them visible and using the first one as the selected overlay");
-    displayNode->SetScalarVisibility(1);
-    displayNode->SetActiveScalarName(this->GetMesh()->GetPointData()->GetAttribute(0)->GetName());
-    // use the fs red green color node for now
-    displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFileViridis.txt");
+    // RGB(A) color
+    for (int arrayIndex = 0; arrayIndex < pointData->GetNumberOfArrays(); arrayIndex++)
+      {
+      vtkUnsignedCharArray* dataArray = vtkUnsignedCharArray::SafeDownCast(pointData->GetArray(arrayIndex));
+      if (!dataArray || !dataArray->GetName())
+        {
+        continue;
+        }
+      if (dataArray->GetNumberOfComponents() == 3 || dataArray->GetNumberOfComponents() == 4)
+        {
+        // Found a suitable RGB or RGBA array
+        displayNode->SetActiveScalar(dataArray->GetName(), vtkAssignAttribute::POINT_DATA);
+        displayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDirectMapping);
+        displayNode->SetScalarVisibility(true);
+        return true;
+        }
+      }
+    // Simple scalar
+    if (pointData->GetScalars())
+      {
+      vtkDebugMacro("Made a new model display node, there are point scalars defined "
+          "on the model - setting them visible and using the first one as the selected overlay");
+      displayNode->SetScalarVisibility(1);
+      displayNode->SetActiveScalar(pointData->GetAttribute(0)->GetName(), vtkAssignAttribute::POINT_DATA);
+      displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFileViridis.txt");
+      return true;
+      }
     }
 
   return false;
