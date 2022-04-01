@@ -43,6 +43,15 @@ follows the same intensity value back to the starting point within the current s
 <li><b>Left-click:</b> add the previewed region to the current segment.</li>
 </ul><p></html>"""
 
+  def setupOptionsFrame(self):
+    self.sliceRotatedErrorLabel = qt.QLabel()
+    # This widget displays an error message if the slice view is not aligned
+    # with the segmentation's axes.
+    self.scriptedEffect.addOptionsWidget(self.sliceRotatedErrorLabel)
+
+  def activate(self):
+    self.sliceRotatedErrorLabel.text = ""
+
   def deactivate(self):
     # Clear draw pipelines
     for sliceWidget, pipeline in self.levelTracingPipelines.items():
@@ -81,12 +90,19 @@ follows the same intensity value back to the starting point within the current s
     elif eventId == vtk.vtkCommand.MouseMoveEvent:
       if pipeline.actionState == '':
         xy = callerInteractor.GetEventPosition()
-        pipeline.preview(xy)
+        if pipeline.preview(xy):
+          self.sliceRotatedErrorLabel.text = ""
+        else:
+          self.sliceRotatedErrorLabel.text = ("<b><font color=\"red\">"
+            + "Slice view is not aligned with segmentation axis.<br>To use this effect, click the 'Slice views orientation' warning button."
+            + "</font></b>")
         abortEvent = True
         self.lastXY = xy
     elif eventId == vtk.vtkCommand.EnterEvent:
+      self.sliceRotatedErrorLabel.text = ""
       pipeline.actor.VisibilityOn()
     elif eventId == vtk.vtkCommand.LeaveEvent:
+      self.sliceRotatedErrorLabel.text = ""
       pipeline.actor.VisibilityOff()
       self.lastXY = None
 
@@ -153,7 +169,9 @@ class LevelTracingPipeline:
     actorProperty.SetLineWidth(1)
 
   def preview(self,xy):
-    # Calculate the current level trace view if the mouse is inside the volume extent
+    """Calculate the current level trace view if the mouse is inside the volume extent
+    Returns False if slice views are rotated.
+    """
 
     # Get master volume image data
     masterImageData = self.effect.scriptedEffect.masterVolumeImageData()
@@ -179,10 +197,14 @@ class LevelTracingPipeline:
     i1,j1,k1 = self.effect.xyToIjk((offset,offset), self.sliceWidget, masterImageData, parentTransformNode)
     if i0 == i1:
       self.tracingFilter.SetPlaneToJK()
-    if j0 == j1:
+    elif j0 == j1:
       self.tracingFilter.SetPlaneToIK()
-    if k0 == k1:
+    elif k0 == k1:
       self.tracingFilter.SetPlaneToIJ()
+    else:
+      self.polyData.Reset()
+      self.sliceWidget.sliceView().scheduleRender()
+      return False
 
     self.tracingFilter.Update()
     polyData = self.tracingFilter.GetOutput()
@@ -201,11 +223,14 @@ class LevelTracingPipeline:
       xyToIjk.Concatenate(worldToSegmentation)
     xyToIjk.Concatenate(rasToIjk)
     ijkToXy = xyToIjk.GetInverse()
-    ijkToXy.TransformPoints(polyData.GetPoints(), self.xyPoints)
-
-    self.polyData.DeepCopy(polyData)
-    self.polyData.GetPoints().DeepCopy(self.xyPoints)
+    if polyData.GetPoints():
+      ijkToXy.TransformPoints(polyData.GetPoints(), self.xyPoints)
+      self.polyData.DeepCopy(polyData)
+      self.polyData.GetPoints().DeepCopy(self.xyPoints)
+    else:
+      self.polyData.Reset()
     self.sliceWidget.sliceView().scheduleRender()
+    return True
 
   def appendPolyMask(self, modifierLabelmap):
     lines = self.polyData.GetLines()
