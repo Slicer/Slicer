@@ -32,6 +32,7 @@
 #include <vtkPoints.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
+#include <vtkVolumePicker.h>
 #include <vtkWorldPointPicker.h>
 
 vtkStandardNewMacro(vtkMRMLThreeDViewInteractorStyle);
@@ -43,6 +44,7 @@ vtkMRMLThreeDViewInteractorStyle::vtkMRMLThreeDViewInteractorStyle()
   this->AccuratePicker = vtkSmartPointer<vtkCellPicker>::New();
   this->AccuratePicker->SetTolerance( .005 );
   this->QuickPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+  this->QuickVolumePicker = vtkSmartPointer<vtkVolumePicker>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -126,9 +128,26 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
     return false;
   }
 
-  this->QuickPicker->Pick(x, y, 0, this->CurrentRenderer);
-
+  bool quickPicked = (this->QuickPicker->Pick(x, y, 0, this->CurrentRenderer) > 0);
   this->QuickPicker->GetPickPosition(pickPoint);
+
+  // QuickPicker ignores volume-rendered images, do a volume picking, too.
+  if (this->CameraNode && this->QuickVolumePicker->Pick(x, y, 0, this->CurrentRenderer))
+    {
+    double volumePickPoint[3] = { 0.0, 0.0, 0.0 };
+    this->QuickVolumePicker->GetPickPosition(volumePickPoint);
+    double* cameraPosition = this->CameraNode->GetPosition();
+    // Use QuickVolumePicker result instead of QuickPicker result if picked volume point
+    // is closer to the camera (or QuickPicker did not find anything).
+    if (!quickPicked
+      || vtkMath::Distance2BetweenPoints(volumePickPoint, cameraPosition)
+      < vtkMath::Distance2BetweenPoints(pickPoint, cameraPosition))
+      {
+      pickPoint[0] = volumePickPoint[0];
+      pickPoint[1] = volumePickPoint[1];
+      pickPoint[2] = volumePickPoint[2];
+      }
+    }
 
   return true;
 }
