@@ -24,21 +24,40 @@ def get_outdated_packages():
     return lines
 
 
+def parse_pip_list_output(packages_to_update):
+    """Parse output of pip list command.
+
+    Return a mapping of package names to (current_version, latest_version).
+    """
+    packages = {}
+    for i in range(2, len(packages_to_update) - 1):  # First two lines are headings, so skip parsing these. Last line is empty
+        details = packages_to_update[i].split()  # ['asn1crypto', '0.24.0', '1.4.0', 'wheel']
+        package_name = details[0]
+        current_version = details[1]
+        latest_version = details[2] if len(details) >= 3 else current_version
+        packages[package_name] = (current_version, latest_version)
+    return packages
+
+
 def update_external_project_python_packages(packages_to_update, directory, cpython_tag):
     """
     Find and replace outdated python package versions and hashes specified in external python project files.
 
-    Input: Packages to Update (list of str), Directory to search and update python packages (str), CPython Tag (str) (eg "cp36")
+    packages_to_update: dict of str: (str, str))
+        Mapping of package name to (current_version, latest_version)
+
+    directory: str
+        Directory to search and update python packages (str)
+
+    cpython_tag: str
+        CPython version specified as cpXY (eg "cp36")
     """
     python_version_info = sys.version_info
     interpreter_cpython_tag = f"cp{python_version_info.major}{python_version_info.minor}"
 
     indentation = 2
     lines_to_write = {}
-    for i in range(2, len(packages_to_update) - 1):  # First two lines are headings, so skip parsing these. Last line is empty
-        details = packages_to_update[i].split()  # ['asn1crypto', '0.24.0', '1.4.0', 'wheel']
-        package_name = details[0]
-        current_version = details[1]
+    for package_name, (current_version, latest_version) in packages_to_update.items():
 
         if package_name in ["vtk", "simpleitk"]:
             continue  # Slicer python wraps VTK and SimpleITK instead of installing the official python package from PyPI
@@ -48,7 +67,6 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
         data = url_request.json()
 
         if cpython_tag == interpreter_cpython_tag:
-            latest_version = details[2]
             desired_version = latest_version
         else:
             desired_version = current_version
@@ -131,8 +149,10 @@ if __name__ == '__main__':
     if not cpython_tag:
         # Assume script is updating python package versions for same cpython version being used to run script
         cpython_tag = interpreter_cpython_tag
+
     if cpython_tag == interpreter_cpython_tag:
-        packages_to_update = get_outdated_packages()
+        packages_to_update = parse_pip_list_output(get_outdated_packages())
     else:
-        packages_to_update = get_installed_packages()
+        packages_to_update = parse_pip_list_output(get_installed_packages())
+
     update_external_project_python_packages(packages_to_update, search_directory, cpython_tag)
