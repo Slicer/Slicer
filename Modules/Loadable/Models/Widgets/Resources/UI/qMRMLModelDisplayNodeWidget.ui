@@ -315,8 +315,6 @@
              </property>
              <property name="singleStep">
               <double>0.050000000000000</double>
-             <property name="pageStep">
-              <double>0.100000000000000</double>
              </property>
             </widget>
            </item>
@@ -336,8 +334,6 @@
              </property>
              <property name="singleStep">
               <double>0.050000000000000</double>
-             <property name="pageStep">
-              <double>0.100000000000000</double>
              </property>
             </widget>
            </item>
