@@ -135,12 +135,15 @@ if __name__ == '__main__':
     """
     parser.add_argument('-s', '--search-directory', metavar="Path/To/Directory", required=False, help="Directory to search and replace python version info")
     parser.add_argument('-c', '--cpython-tag', metavar="cp{Major}.{Minor}", required=False, help="CPython version of python packages to check for")
+    parser.add_argument('--from-installed-packages', action='store_true', required=False, help="Update external projects based on installed packages")
     args = parser.parse_args()
 
     search_directory = args.search_directory
     if not search_directory:
         # Assume script is in cloned Slicer repo, so choose the SuperBuild directory to search
         search_directory = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "SuperBuild")
+
+    print(f"Searching external projects in {search_directory} ")
 
     python_version_info = sys.version_info
     interpreter_cpython_tag = f"cp{python_version_info.major}{python_version_info.minor}"
@@ -150,7 +153,9 @@ if __name__ == '__main__':
         # Assume script is updating python package versions for same cpython version being used to run script
         cpython_tag = interpreter_cpython_tag
 
-    if cpython_tag == interpreter_cpython_tag:
+    if args.from_installed_packages:
+        packages_to_update = parse_pip_list_output(get_installed_packages())
+    elif cpython_tag == interpreter_cpython_tag:
         packages_to_update = parse_pip_list_output(get_outdated_packages())
     else:
         packages_to_update = parse_pip_list_output(get_installed_packages())
