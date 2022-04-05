@@ -73,7 +73,7 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
 
         filenames = []
         hashes = []
-        desired_version_files = data["releases"][desired_version]
+        desired_version_files = data["releases"].get(desired_version, [])
         for release_file in desired_version_files:
             if release_file["python_version"] not in ["py3", "py2.py3", cpython_tag] and "abi3" not in release_file["filename"]:
                 # e.g. PyNaCl-1.5.0-cp36-abi3-win_amd64.whl has python_version tag of py36, but is abi compatible for Python 3.6 and later for the Windows platform
