@@ -17,13 +17,13 @@
                 "contributors": "Andras Lasso (PerkLab, Queen's University), Steve Pieper (Isomics), Adam Rankin (Robarts), Csaba Pinter (Pixel Medical / Ebatinca), Christian Herz (CHOP), Matthew Jolley (CHOP/UPenn)",
                 "dependency": "SlicerIGT",
                 "description": "Modules for cardiac analysis and intervention planning and guidance",
-                "homepage": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerHeart",
-                "icon_url": "http://www.slicer.org/slicerWiki/images/f/ff/SlicerHeart_Logo_128x128.png",
+                "homepage": "http://www.slicer.org/w/index.php/Documentation/Nightly/Extensions/SlicerHeart",
+                "icon_url": "http://www.slicer.org/w/images/f/ff/SlicerHeart_Logo_128x128.png",
                 "os": "win",
                 "repository_type": "git",
                 "repository_url": "https://github.com/SlicerHeart/SlicerHeart.git",
                 "revision": "1db3627",
-                "screenshots": "http://www.slicer.org/slicerWiki/images/a/ae/BasicHeartView.png"
+                "screenshots": "http://www.slicer.org/w/images/a/ae/BasicHeartView.png"
             },
             "name": "30338_SlicerHeart_win_amd64_1db3627",
             "size": 3282838,
