@@ -556,11 +556,11 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
           name += ' ['+units+']'
       headerNames.append(name)
     uniqueHeaderNames = list(headerNames)
-    for name in {name for name in uniqueHeaderNames if uniqueHeaderNames.count(name)>1}:
+    for duplicateName in {name for name in uniqueHeaderNames if uniqueHeaderNames.count(name)>1}:
       j = 1
       for i in range(len(uniqueHeaderNames)):
-        if uniqueHeaderNames[i]==name:
-          uniqueHeaderNames[i] = name+' ('+str(j)+')'
+        if uniqueHeaderNames[i]==duplicateName:
+          uniqueHeaderNames[i] = duplicateName+' ('+str(j)+')'
           j += 1
     headerNames = {keys[i]: headerNames[i] for i in range(len(keys))}
     uniqueHeaderNames = {keys[i]: uniqueHeaderNames[i] for i in range(len(keys))}
