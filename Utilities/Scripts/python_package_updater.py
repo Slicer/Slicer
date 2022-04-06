@@ -125,7 +125,7 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
                     open_file.write(file_text)
 
 
-if __name__ == '__main__':
+def main(args):
     parser = ArgumentParser()
     parser.description = """
         Use this script to update external python project files with the latest version
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--cpython-tag', metavar="cp{Major}.{Minor}", required=False, help="CPython version of python packages to check for")
     parser.add_argument('--from-installed-packages', action='store_true', required=False, help="Update external projects based on installed packages")
     parser.add_argument('--path', metavar="Path/To/site-packages", required=False, help="Package installation path")
-    args = parser.parse_args()
+    args = parser.parse_args(args=args)
 
     search_directory = args.search_directory
     if not search_directory:
@@ -170,3 +170,7 @@ if __name__ == '__main__':
         packages_to_update = parse_pip_list_output(get_installed_packages(installation_path))
 
     update_external_project_python_packages(packages_to_update, search_directory, cpython_tag)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
