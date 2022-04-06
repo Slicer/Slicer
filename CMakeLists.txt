@@ -62,7 +62,7 @@ set(Slicer_CMAKE_DIR ${Slicer_SOURCE_DIR}/CMake)
 set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 
 #-----------------------------------------------------------------------------
-# https://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/DevelopmentWithGit
+# https://www.slicer.org/w/index.php/Documentation/Nightly/Developers/DevelopmentWithGit
 #-----------------------------------------------------------------------------
 include(SlicerCheckSourceTree)
 

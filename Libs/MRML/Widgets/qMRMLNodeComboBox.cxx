@@ -506,7 +506,7 @@ void qMRMLNodeComboBox::addAttribute(const QString& nodeType,
   if (nodeType=="vtkMRMLScalarVolumeNode" && attributeName=="LabelMap")
   {
     qWarning("vtkMRMLScalarVolumeNode does not have a LabelMap attribute anymore. Update your code according to "
-      "https://www.slicer.org/slicerWiki/index.php/Documentation/Labs/Segmentations#Module_update_instructions");
+      "https://www.slicer.org/w/index.php/Documentation/Labs/Segmentations#Module_update_instructions");
     return;
   }
 
