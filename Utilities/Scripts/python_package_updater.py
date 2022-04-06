@@ -6,22 +6,27 @@ import re
 import requests
 
 
-def get_installed_packages():
-    """Get the output of installed python packages as a list of lines."""
-    output = subprocess.check_output([sys.executable, "-m", "pip", "list"])
+def execute_pip_list(installation_path=None, outdated=False):
+    args = [sys.executable, "-m", "pip", "list"]
+    if installation_path is not None:
+        args.extend(["--path", installation_path])
+    if outdated:
+        args.extend(["--outdated"])
+    output = subprocess.check_output(args)
     pip_list = output.decode()
     print(pip_list)
     lines = pip_list.split("\n")
     return lines
 
 
-def get_outdated_packages():
+def get_installed_packages(installation_path=None):
+    """Get the output of installed python packages as a list of lines."""
+    return execute_pip_list(installation_path)
+
+
+def get_outdated_packages(installation_path=None):
     """Get the output of outdated installed python packages as a list of lines."""
-    output = subprocess.check_output([sys.executable, "-m", "pip", "list", "--outdated"])
-    pip_list_outdated = output.decode()
-    print(pip_list_outdated)
-    lines = pip_list_outdated.split("\n")
-    return lines
+    return execute_pip_list(installation_path, outdated=True)
 
 
 def parse_pip_list_output(packages_to_update):
@@ -136,6 +141,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--search-directory', metavar="Path/To/Directory", required=False, help="Directory to search and replace python version info")
     parser.add_argument('-c', '--cpython-tag', metavar="cp{Major}.{Minor}", required=False, help="CPython version of python packages to check for")
     parser.add_argument('--from-installed-packages', action='store_true', required=False, help="Update external projects based on installed packages")
+    parser.add_argument('--path', metavar="Path/To/site-packages", required=False, help="Package installation path")
     args = parser.parse_args()
 
     search_directory = args.search_directory
@@ -153,11 +159,13 @@ if __name__ == '__main__':
         # Assume script is updating python package versions for same cpython version being used to run script
         cpython_tag = interpreter_cpython_tag
 
+    installation_path = args.path if args.path is not None else None
+
     if args.from_installed_packages:
-        packages_to_update = parse_pip_list_output(get_installed_packages())
+        packages_to_update = parse_pip_list_output(get_installed_packages(installation_path))
     elif cpython_tag == interpreter_cpython_tag:
-        packages_to_update = parse_pip_list_output(get_outdated_packages())
+        packages_to_update = parse_pip_list_output(get_outdated_packages(installation_path))
     else:
-        packages_to_update = parse_pip_list_output(get_installed_packages())
+        packages_to_update = parse_pip_list_output(get_installed_packages(installation_path))
 
     update_external_project_python_packages(packages_to_update, search_directory, cpython_tag)
