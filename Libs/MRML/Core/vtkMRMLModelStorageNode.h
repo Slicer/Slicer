@@ -51,6 +51,10 @@ public:
   static const char* GetCoordinateSystemAsString(int id);
   static int GetCoordinateSystemFromString(const char* name);
 
+  /// Helper function that can convert a mesh (polydata, unstructured grid, or even just a point cloud)
+  /// between RAS and LPS coordinate system.
+  static void ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vtkPointSet* outputMesh);
+
 protected:
   vtkMRMLModelStorageNode();
   ~vtkMRMLModelStorageNode() override;
@@ -71,8 +75,6 @@ protected:
 
   /// Write data from a  referenced node
   int WriteDataInternal(vtkMRMLNode *refNode) override;
-
-  static void ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vtkPointSet* outputMesh);
 
   static int GetCoordinateSystemFromFileHeader(const char* header);
 
