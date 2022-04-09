@@ -32,6 +32,7 @@
 #include "qMRMLSegmentEditorWidgetPlugin.h"
 #include "qMRMLSegmentationDisplayNodeWidgetPlugin.h"
 #include "qMRMLSegmentationFileExportWidgetPlugin.h"
+#include "qMRMLSegmentationShow3DButtonPlugin.h"
 
 // \class Group the plugins in one library
 class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qSlicerSegmentationsModuleWidgetsPlugin
@@ -52,7 +53,8 @@ public:
       << new qMRMLSegmentSelectorWidgetPlugin
       << new qMRMLSegmentEditorWidgetPlugin
       << new qMRMLSegmentationDisplayNodeWidgetPlugin
-      << new qMRMLSegmentationFileExportWidgetPlugin;
+      << new qMRMLSegmentationFileExportWidgetPlugin
+      << new qMRMLSegmentationShow3DButtonPlugin;
     return plugins;
     }
 };

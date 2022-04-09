@@ -12,19 +12,15 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  qMRMLSegmentsTableView.cxx
-  qMRMLSegmentsTableView.h
+  qMRMLDoubleSpinBoxDelegate.h
+  qMRMLDoubleSpinBoxDelegate.cxx
   qMRMLSegmentsModel.cxx
   qMRMLSegmentsModel.h
   qMRMLSegmentsModel_p.h
-  qMRMLSortFilterSegmentsProxyModel.cxx
-  qMRMLSortFilterSegmentsProxyModel.h
-  qMRMLSegmentationRepresentationsListView.cxx
-  qMRMLSegmentationRepresentationsListView.h
+  qMRMLSegmentsTableView.cxx
+  qMRMLSegmentsTableView.h
   qMRMLSegmentationConversionParametersWidget.cxx
   qMRMLSegmentationConversionParametersWidget.h
-  qMRMLSegmentEditorWidget.cxx
-  qMRMLSegmentEditorWidget.h
   qMRMLSegmentationDisplayNodeWidget.cxx
   qMRMLSegmentationDisplayNodeWidget.h
   qMRMLSegmentationFileExportWidget.cxx
@@ -33,32 +29,39 @@ set(${KIT}_SRCS
   qMRMLSegmentationGeometryWidget.h
   qMRMLSegmentationGeometryDialog.cxx
   qMRMLSegmentationGeometryDialog.h
-  qMRMLDoubleSpinBoxDelegate.h
-  qMRMLDoubleSpinBoxDelegate.cxx
+  qMRMLSegmentationRepresentationsListView.cxx
+  qMRMLSegmentationRepresentationsListView.h
+  qMRMLSegmentationShow3DButton.h
+  qMRMLSegmentationShow3DButton.cxx
+  qMRMLSegmentEditorWidget.cxx
+  qMRMLSegmentEditorWidget.h
+  qMRMLSortFilterSegmentsProxyModel.cxx
+  qMRMLSortFilterSegmentsProxyModel.h
   )
 
 set(${KIT}_MOC_SRCS
   qMRMLSegmentsTableView.h
   qMRMLSegmentsModel.h
-  qMRMLSortFilterSegmentsProxyModel.h
-  qMRMLSegmentationRepresentationsListView.h
   qMRMLSegmentationConversionParametersWidget.h
-  qMRMLSegmentEditorWidget.h
   qMRMLSegmentationDisplayNodeWidget.h
   qMRMLSegmentationFileExportWidget.h
   qMRMLSegmentationGeometryWidget.h
   qMRMLSegmentationGeometryDialog.h
+  qMRMLSegmentationRepresentationsListView.h
+  qMRMLSegmentationShow3DButton.h
+  qMRMLSegmentEditorWidget.h
+  qMRMLSortFilterSegmentsProxyModel.h
   qMRMLDoubleSpinBoxDelegate.h
 )
 
 set(${KIT}_UI_SRCS
-  Resources/UI/qMRMLSegmentsTableView.ui
   Resources/UI/qMRMLSegmentationRepresentationsListView.ui
   Resources/UI/qMRMLSegmentationConversionParametersWidget.ui
   Resources/UI/qMRMLSegmentEditorWidget.ui
   Resources/UI/qMRMLSegmentationDisplayNodeWidget.ui
   Resources/UI/qMRMLSegmentationFileExportWidget.ui
   Resources/UI/qMRMLSegmentationGeometryWidget.ui
+  Resources/UI/qMRMLSegmentsTableView.ui
   )
 
 set(${KIT}_RESOURCES
@@ -66,10 +69,10 @@ set(${KIT}_RESOURCES
   )
 
 set(${KIT}_TARGET_LIBRARIES
-  vtkSlicerSegmentationsModuleMRML
-  vtkSlicerSegmentationsModuleLogic
   qSlicerSegmentationsEditorEffects
   qSlicerTerminologiesModuleWidgets
+  vtkSlicerSegmentationsModuleMRML
+  vtkSlicerSegmentationsModuleLogic
   )
 
 #-----------------------------------------------------------------------------

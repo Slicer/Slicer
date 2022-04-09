@@ -244,6 +244,8 @@ void qSlicerSegmentationsModuleWidget::updateWidgetFromMRML()
   d->SegmentationDisplayNodeWidget->setSegmentationNode(d->SegmentationNode);
   d->SegmentationDisplayNodeWidget->updateWidgetFromMRML();
 
+  d->show3DButton->setSegmentationNode(d->SegmentationNode);
+
   // Update copy/move/import/export buttons from selection
   this->updateCopyMoveButtonStates();
 
@@ -323,8 +325,8 @@ void qSlicerSegmentationsModuleWidget::init()
     this, SLOT(onSegmentSelectionChanged(QItemSelection,QItemSelection)));
   connect(d->pushButton_AddSegment, SIGNAL(clicked()),
     this, SLOT(onAddSegment()) );
-  connect(d->pushButton_EditSelected, SIGNAL(clicked()),
-    this, SLOT(onEditSelectedSegment()) );
+  connect(d->toolButton_Edit, SIGNAL(clicked()),
+    this, SLOT(onEditSegmentation()) );
   connect(d->pushButton_RemoveSelected, SIGNAL(clicked()),
     this, SLOT(onRemoveSelectedSegments()) );
 
@@ -435,7 +437,7 @@ void qSlicerSegmentationsModuleWidget::onSegmentSelectionChanged(const QItemSele
   d->pushButton_AddSegment->setEnabled(d->SegmentationNode != nullptr);
 
   QStringList selectedSegmentIds = d->SegmentsTableView->selectedSegmentIDs();
-  d->pushButton_EditSelected->setEnabled(selectedSegmentIds.count() == 1);
+  d->toolButton_Edit->setEnabled(d->SegmentationNode != nullptr);
   d->pushButton_RemoveSelected->setEnabled(selectedSegmentIds.count() > 0);
 }
 
@@ -486,18 +488,21 @@ void qSlicerSegmentationsModuleWidget::onAddSegment()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
+void qSlicerSegmentationsModuleWidget::onEditSegmentation()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
 
-  if ( !d->MRMLNodeComboBox_Segmentation->currentNode()
-    || d->SegmentsTableView->selectedSegmentIDs().count() != 1 )
+  if (!d->MRMLNodeComboBox_Segmentation->currentNode())
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment selection";
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentation";
     return;
     }
+
   QStringList segmentID;
-  segmentID << d->SegmentsTableView->selectedSegmentIDs()[0];
+  if (d->SegmentsTableView->selectedSegmentIDs().count() > 0)
+    {
+    segmentID << d->SegmentsTableView->selectedSegmentIDs()[0];
+    }
 
   // Switch to Segment Editor module, select segmentation node and segment ID
   qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("SegmentEditor");
@@ -506,23 +511,27 @@ void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
     qCritical() << Q_FUNC_INFO << ": Segment Editor module is not available";
     return;
     }
-  // Get segmentation selector combobox and set segmentation
-  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("SegmentationNodeComboBox");
-  if (!nodeSelector)
-    {
-    qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segment Editor module";
-    return;
-    }
-  nodeSelector->setCurrentNode(d->MRMLNodeComboBox_Segmentation->currentNode());
 
-  // Get segments table and select segment
-  qMRMLSegmentsTableView* segmentsTable = moduleWidget->findChild<qMRMLSegmentsTableView*>("SegmentsTableView");
-  if (!segmentsTable)
+  if (!segmentID.empty())
     {
-    qCritical() << Q_FUNC_INFO << ": SegmentsTableView is not found in Segment Editor module";
-    return;
+    // Get segmentation selector combobox and set segmentation
+    qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("SegmentationNodeComboBox");
+    if (!nodeSelector)
+      {
+      qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segment Editor module";
+      return;
+      }
+    nodeSelector->setCurrentNode(d->MRMLNodeComboBox_Segmentation->currentNode());
+
+    // Get segments table and select segment
+    qMRMLSegmentsTableView* segmentsTable = moduleWidget->findChild<qMRMLSegmentsTableView*>("SegmentsTableView");
+    if (!segmentsTable)
+      {
+      qCritical() << Q_FUNC_INFO << ": SegmentsTableView is not found in Segment Editor module";
+      return;
+      }
+    segmentsTable->setSelectedSegmentIDs(segmentID);
     }
-  segmentsTable->setSelectedSegmentIDs(segmentID);
 }
 
 //-----------------------------------------------------------------------------
