@@ -13,6 +13,8 @@ set(${KIT}_SRCS
   qMRMLSegmentationRepresentationsListViewPlugin.h
   qMRMLSegmentationConversionParametersWidgetPlugin.cxx
   qMRMLSegmentationConversionParametersWidgetPlugin.h
+  qMRMLSegmentationShow3DButtonPlugin.cxx
+  qMRMLSegmentationShow3DButtonPlugin.h
   qMRMLSegmentSelectorWidgetPlugin.cxx
   qMRMLSegmentSelectorWidgetPlugin.h
   qMRMLSegmentEditorWidgetPlugin.cxx
@@ -32,6 +34,7 @@ set(${KIT}_MOC_SRCS
   qMRMLSegmentEditorWidgetPlugin.h
   qMRMLSegmentationDisplayNodeWidgetPlugin.h
   qMRMLSegmentationFileExportWidgetPlugin.h
+  qMRMLSegmentationShow3DButtonPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

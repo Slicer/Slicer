@@ -136,18 +136,7 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkMenuButton" name="Show3DButton">
-       <property name="text">
-        <string> Show 3D</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
-         <normaloff>:/Icons/MakeModel.png</normaloff>:/Icons/MakeModel.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <widget class="qMRMLSegmentationShow3DButton" name="Show3DButton"/>
      </item>
      <item>
       <widget class="QToolButton" name="SwitchToSegmentationsButton">
@@ -478,6 +467,11 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLSegmentationShow3DButton</class>
+   <extends>QPushButton</extends>
+   <header>qMRMLSegmentationShow3DButton.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCheckBox</class>
    <extends>QCheckBox</extends>
    <header>ctkCheckBox.h</header>
@@ -498,11 +492,6 @@
    <class>ctkFittedTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>ctkFittedTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkMenuButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkMenuButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkRangeWidget</class>
