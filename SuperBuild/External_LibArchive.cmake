@@ -33,7 +33,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "1b2c437b99b361c7692538fa373e99955e9b93ae" # master v3.5.2
+    "2bc228b53942db7c5728099850fcf3720efe8f15" # master v3.6.1
     QUIET
     )
 
@@ -97,7 +97,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     )
   if(APPLE)
     ExternalProject_Add_Step(${proj} fix_rpath
-      COMMAND install_name_tool -id ${EP_INSTALL_DIR}/lib/libarchive.18.dylib ${EP_INSTALL_DIR}/lib/libarchive.18.dylib
+      COMMAND install_name_tool -id ${EP_INSTALL_DIR}/lib/libarchive.19.dylib ${EP_INSTALL_DIR}/lib/libarchive.19.dylib
       DEPENDEES install
       )
   endif()
