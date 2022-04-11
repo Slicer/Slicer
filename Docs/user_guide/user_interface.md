@@ -12,7 +12,23 @@ Slicer provides a large number "modules", each implementing a specific set of fu
 
 This panel (located by default on the left side of the application main window) displays all the options and features that the current module offers to the user. Current module can be selected using the **Module Selection** toolbar.
 
-**Data Probe** is located at the bottom of the module panel. It displays information about view content at the position of the mouse pointer.
+#### Data Probe
+
+Data Probe is located at the bottom of the module panel. It displays information about view content at the position of the mouse pointer:
+- Slice view information (displayed when the mouse is over a slice view):
+  - Slice view name: `Red`, `Green`, `Yellow`, etc.
+  - Anatomical position: three coordinate values, prefixed with `R`/`L` (right/left), `A`/`P` (anterior/posterior), `S`/`I` (superior/inferior). The origin - (0,0,0) position - was chosen by the imaging technologist when the image was created. For example `(R 17.6, P 35.3, S 12.1)` for a clinical image means that the current position is 17.6mm to the right from the origin, 35.3mm towards posterior, 12.1mm superior from the origin.
+  - View orientation: `Axial`, `Sagittal`, `Coronal` for standard anatomical orientations, and `Reformat` for any other orientation.
+  - Slice spacing: distance between slices in this orientation. For a clinical image `Sp: 2.5` means that slices are 2.5mm distance from each other.
+- Volume layer information: three lines, one for each volume layer
+  - Layer type: `L` (label), `F` (foreground), `B` (background).
+  - Volume name, or `None` if no volume is selected for that layer.
+  - Volume voxel (IJK) coordinates.
+  - Voxel value. For label volumes the label name corresponding to the voxel value is also displayed.
+- Segmentation information: for each segmentation visible at that position
+  - Layer type: `S` (segmentation)
+  - Segmentation name.
+  - Segment names. Multiple segment names are listed if multiple segments are displayed at that position (the segments overlap).
 
 ### Views
 
