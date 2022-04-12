@@ -240,8 +240,12 @@ void vtkMRMLSegmentationDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
   this->Opacity2DFill = node->Opacity2DFill;
   this->Opacity2DOutline = node->Opacity2DOutline;
   this->SegmentationDisplayProperties = node->SegmentationDisplayProperties;
-  this->SegmentListUpdateSource = node->SegmentListUpdateSource;
-  this->SegmentListUpdateTime = node->SegmentListUpdateTime;
+  // Reset segment list source to allow writing display properties to XML,
+  // even if referenced segmentation node cannot be found (for example,
+  // if SegmentListUpdateSource was not set to nullptr then segment display properties
+  // would not be saved in scene views).
+  this->SegmentListUpdateSource = nullptr;
+  this->SegmentListUpdateTime = 0;
 }
 
 //----------------------------------------------------------------------------
