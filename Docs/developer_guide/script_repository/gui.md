@@ -1090,6 +1090,7 @@ if not em.isExtensionInstalled(extensionName):
   url = f"{em.serverUrl().toString()}/api/v1/item/{extensionMetaData['_id']}/download"
   extensionPackageFilename = slicer.app.temporaryPath+'/'+extensionMetaData['_id']
   slicer.util.downloadFile(url, extensionPackageFilename)
+  em.interactive = False  # Disable popups (automatically install dependencies)
   em.installExtension(extensionPackageFilename)
   slicer.util.restart()
 ```
