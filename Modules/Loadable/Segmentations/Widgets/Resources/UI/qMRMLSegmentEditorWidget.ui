@@ -468,7 +468,7 @@
   </customwidget>
   <customwidget>
    <class>qMRMLSegmentationShow3DButton</class>
-   <extends>QPushButton</extends>
+   <extends>ctkMenuButton</extends>
    <header>qMRMLSegmentationShow3DButton.h</header>
   </customwidget>
   <customwidget>
