@@ -20,6 +20,23 @@ slicer.mrmlScene.RemoveNode(labelmapVolumeNode)
 
 The last line is optional. It removes the original labelmap volume so that the same information is not shown twice.
 
+### Create segmentation from a model node
+
+```python
+# Create some model that will be added to a segmentation node
+sphere = vtk.vtkSphereSource()
+sphere.SetCenter(-6, 30, 28)
+sphere.SetRadius(10)
+modelNode = slicer.modules.models.logic().AddModel(sphere.GetOutputPort())
+
+# Create segmentation
+segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
+segmentationNode.CreateDefaultDisplayNodes() # only needed for display
+
+# Import the model into the segmentation node
+slicer.modules.segmentations.logic().ImportModelToSegmentationNode(modelNode, segmentationNode)
+```
+
 ### Export labelmap node from segmentation node
 
 Export labelmap matching reference geometry of the segmentation:
