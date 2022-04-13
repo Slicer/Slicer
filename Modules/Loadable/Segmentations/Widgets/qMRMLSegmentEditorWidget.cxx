@@ -2107,6 +2107,8 @@ void qMRMLSegmentEditorWidget::onAddSegment()
     QStringList segmentIDList;
     segmentIDList << QString(addedSegmentID.c_str());
     d->SegmentsTableView->setSelectedSegmentIDs(segmentIDList);
+    // Make sure update of the effect buttons happens if the selected segment IDs do not change
+    this->updateEffectsSectionFromMRML();
     }
 
   // Assign the new segment the terminology of the (now second) last segment
