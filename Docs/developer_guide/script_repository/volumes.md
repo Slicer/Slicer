@@ -33,14 +33,22 @@ Get the first volume node in the scene and save as .nrrd file. To save in any ot
 
 ```python
 volumeNode = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLScalarVolumeNode')
-slicer.util.saveNode(volumeNode, "c:/tmp/test.nrrd")
+slicer.util.exportNode(volumeNode, "c:/tmp/test.nrrd")
 ```
 
 If you are saving to a format with optional compression, like nrrd, compression is on by default.  Saving is much faster with compression turned off but the files may be much larger (about 3x for medical images).
 
 ```python
-slicer.util.saveNode(volumeNode, imagePath, {"useCompression": 0})
+slicer.util.exportNode(volumeNode, imagePath, {"useCompression": 0})
 ```
+
+By default, parent transforms are ignored. To export the node in the world coordinate system (all transforms hardened), set `world=True`.
+
+```python
+slicer.util.exportNode(volumeNode, imagePath, {"useCompression": 0}, world=True)
+```
+
+`saveNode` method can be used instead of `exportNode` to update the current storage options (filename, compression options, etc.) in the scene.
 
 ### Load volume from .vti file
 
