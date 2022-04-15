@@ -1036,6 +1036,36 @@ def saveScene(filename, properties={}):
   return app.coreIOManager().saveNodes(filetype, properties)
 
 
+def exportNode(node, filename, properties={}, world=False):
+  """Export 'node' data into 'filename'.
+
+  If `world` is set to True then the node will be exported in the world coordinate system
+  (equivalent to hardening the transform before exporting).
+
+  This method is different from saveNode in that it does not modify any existing storage node
+  and therefore does not change the filename or filetype that is used when saving the scene.
+  """
+  from slicer import app, vtkDataFileFormatHelper
+  nodeIDs = [node.GetID()]
+  fileNames = [filename]
+  hardenTransform = world
+
+  if "fileFormat" not in properties:
+      foundFileFormat = None
+      currentExtension = app.coreIOManager().extractKnownExtension(filename, node)
+      fileWriterExtensions = app.coreIOManager().fileWriterExtensions(node)
+      for fileFormat in fileWriterExtensions:
+          extension = vtkDataFileFormatHelper.GetFileExtensionFromFormatString(fileFormat)
+          if extension == currentExtension:
+              foundFileFormat = fileFormat
+              break
+      if not foundFileFormat:
+          raise ValueError(f"Failed to export {node.GetID()} - no known file format was found for filename {filename}")
+      properties["fileFormat"] = foundFileFormat
+
+  return app.coreIOManager().exportNodes(nodeIDs, fileNames, properties, hardenTransform)
+
+
 #
 # Module
 #

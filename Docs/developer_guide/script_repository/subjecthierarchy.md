@@ -198,7 +198,7 @@ def exportNodes(shFolderItemId, outputFolder):
             storageNode = dataNode.GetStorageNode()
             filename = os.path.basename(storageNode.GetFileName())
             filepath = outputFolder + "/" + filename
-            slicer.util.saveNode(dataNode, filepath)
+            slicer.util.exportNode(dataNode, filepath)
         # Write all children of this child item
         grandChildIds = vtk.vtkIdList()
         shNode.GetItemChildren(shItemId, grandChildIds)

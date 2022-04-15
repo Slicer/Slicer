@@ -93,20 +93,22 @@ public:
   /// extension. Example of supported extensions:
   /// "", "*", ".*", ".jpg", ".png" ".tar.gz"...
   /// An empty extension or "*" means any filename (or directory) is valid
-  static QRegExp fileNameRegExp(const QString& extension = QString());
+  Q_INVOKABLE static QRegExp fileNameRegExp(const QString& extension = QString());
 
   /// Remove characters that are likely to cause problems in a filename
-  static QString forceFileNameValidCharacters(const QString& filename);
+  Q_INVOKABLE static QString forceFileNameValidCharacters(const QString& filename);
 
   /// If \a fileName ends with an extension that is associated with \a object,
   /// then return that extension. Otherwise return an empty string.
-  QString extractKnownExtension(const QString& fileName, vtkObject* object);
+  /// If there are multiple candidates (such as for "something.seg.nrrd" both
+  /// ".nrrd" and ".seg.nrrd" extensions match) then the longest is returned.
+  Q_INVOKABLE QString extractKnownExtension(const QString& fileName, vtkObject* object);
 
   /// If \a fileName ends with an extension that is associated with \a object,
   /// then return a stripped version of \a fileName, where that extension
   /// has been chopped off. If the extension is duplicated in the
   /// tail of \a fileName, then all duplicates are stripped away.
-  QString stripKnownExtension(const QString& fileName, vtkObject* object);
+  Q_INVOKABLE QString stripKnownExtension(const QString& fileName, vtkObject* object);
 
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.
@@ -178,6 +180,18 @@ public:
     const QList<qSlicerIO::IOProperties>& parameterMaps,
     bool hardenTransforms,
     vtkMRMLMessageCollection* userMessages=nullptr
+  );
+
+  /// Export nodes using the registered writers with an API that is usable from Python.
+  /// It only allows exporting all nodes with the same parameters.
+  /// Return true on success, false otherwise.
+  /// \sa exportNodes().
+  Q_INVOKABLE bool exportNodes(
+    const QStringList& nodeIDs,
+    const QStringList& fileNames,
+    const qSlicerIO::IOProperties& commonParameterMap,
+    bool hardenTransforms,
+    vtkMRMLMessageCollection* userMessages = nullptr
   );
 
   /// Save a scene corresponding to \a fileName

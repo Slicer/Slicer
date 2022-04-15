@@ -431,16 +431,20 @@ QString qSlicerCoreIOManager::forceFileNameValidCharacters(const QString& filena
 //-----------------------------------------------------------------------------
 QString qSlicerCoreIOManager::extractKnownExtension(const QString& fileName, vtkObject* object)
 {
+  QString longestMatchedExtension;
   foreach(const QString& nameFilter, this->fileWriterExtensions(object))
     {
     QString extension = QString::fromStdString(
       vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
     if (!extension.isEmpty() && fileName.endsWith(extension))
       {
-      return extension;
+      if (extension.length() > longestMatchedExtension.length())
+        {
+        longestMatchedExtension = extension;
+        }
       }
     }
-  return QString();
+  return longestMatchedExtension;
 }
 
 //-----------------------------------------------------------------------------
@@ -823,6 +827,32 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::exportNodes(
+  const QStringList& nodeIDs,
+  const QStringList& fileNames,
+  const qSlicerIO::IOProperties& commonParameterMap,
+  bool hardenTransforms,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/
+)
+{
+  if (nodeIDs.length() != fileNames.length())
+    {
+    qCritical() << Q_FUNC_INFO << " failed: Mismatch in number of nodeIDs and filenames";
+    return false;
+    }
+  QList<qSlicerIO::IOProperties> parameterMaps;
+  int nodeCount = nodeIDs.length();
+  for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
+    {
+    qSlicerIO::IOProperties parameterMap = commonParameterMap;
+    parameterMap["nodeID"] = nodeIDs[nodeIndex];
+    parameterMap["fileName"] = fileNames[nodeIndex];
+    parameterMaps << parameterMap;
+    }
+  return this->exportNodes(parameterMaps, hardenTransforms, userMessages);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreIOManager::exportNodes(
   const QList<qSlicerIO::IOProperties>& parameterMaps,
   bool hardenTransforms,
   vtkMRMLMessageCollection* userMessages/*=nullptr*/
@@ -941,7 +971,7 @@ bool qSlicerCoreIOManager::exportNodes(
       }
 
     // Finally, applying saving logic to the the temporary scene
-    if ( ! this->saveNodes(fileType, temporarySceneParameters, userMessages, temporaryScene) )
+    if (!this->saveNodes(fileType, temporarySceneParameters, userMessages, temporaryScene))
       {
       if (userMessages)
         {
@@ -953,7 +983,7 @@ bool qSlicerCoreIOManager::exportNodes(
       }
 
       // Pick up any user messages that were saved to temporaryStorableNode's storage node
-      if (temporaryStorableNode->GetStorageNode()
+      if (userMessages && temporaryStorableNode->GetStorageNode()
           && temporaryStorableNode->GetStorageNode()->GetUserMessages())
         {
         userMessages->AddMessages(temporaryStorableNode->GetStorageNode()->GetUserMessages());
