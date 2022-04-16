@@ -1445,11 +1445,35 @@ int vtkMRMLTransformNode::IsLinear()
     {
     return 1;
     }
+
   // No transform means identity transform, which is a linear transform
   if (this->TransformToParent==nullptr && this->TransformFromParent==nullptr)
     {
     return 1;
     }
+
+  // If it is a general transform then inspect all its components
+  vtkGeneralTransform* compositeTransform = vtkGeneralTransform::SafeDownCast(
+    this->TransformToParent ? this->TransformToParent : this->TransformFromParent);
+  if (compositeTransform)
+    {
+    vtkNew<vtkCollection> transformList;
+    FlattenGeneralTransform(transformList, compositeTransform);
+    vtkCollectionSimpleIterator it;
+    vtkAbstractTransform* transformComponent = nullptr;
+    for (transformList->InitTraversal(it); (transformComponent = vtkAbstractTransform::SafeDownCast(transformList->GetNextItemAsObject(it)));)
+      {
+      if (!transformComponent->IsA("vtkLinearTransform"))
+        {
+        // found a non-linear component
+        return 0;
+        }
+      }
+    // Have not found any non-linear component, therefore this composite transform is all linear
+    return 1;
+    }
+
+  // Not a linear transform and not a composite transform, must be non-linear
   return 0;
 }
 
