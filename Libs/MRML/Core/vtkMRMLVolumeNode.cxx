@@ -1066,12 +1066,14 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   double transformedBounds[6] = { 0.0,-1.0,0.0,-1.0,0.0,-1.0 };
   this->GetBoundsInternal(transformedBounds, rasToIJK, true);
   double spacing[3] = { 1.0, 1.0, 1.0 }; // output is specified in IJK coordinate system
-  reslice->SetOutputOrigin(transformedBounds[0] - 0.5 * spacing[0], transformedBounds[2] - 0.5 * spacing[1], transformedBounds[4] - 0.5 * spacing[2]);
+  // transformedBounds is computed so that it includes the voxel corners, therefore the origin is half voxel towards the image center
+  reslice->SetOutputOrigin(transformedBounds[0] + 0.5 * spacing[0], transformedBounds[2] + 0.5 * spacing[1], transformedBounds[4] + 0.5 * spacing[2]);
   reslice->SetOutputSpacing(spacing);
+  const double voxelExpandTolerance = 1e-3; // do not expand the volume with a new voxel if only expanding by 1/1000th of a voxel
   reslice->SetOutputExtent(
-    0, ceil((transformedBounds[1] - transformedBounds[0]) / spacing[0]),
-    0, ceil((transformedBounds[3] - transformedBounds[2]) / spacing[1]),
-    0, ceil((transformedBounds[5] - transformedBounds[4]) / spacing[2]));
+    0, ceil((transformedBounds[1] - transformedBounds[0]) / spacing[0] - voxelExpandTolerance) - 1,
+    0, ceil((transformedBounds[3] - transformedBounds[2]) / spacing[1] - voxelExpandTolerance) - 1,
+    0, ceil((transformedBounds[5] - transformedBounds[4]) / spacing[2] - voxelExpandTolerance) - 1);
 
   // Keep output spacing (1,1,1)
   reslice->TransformInputSamplingOff();
