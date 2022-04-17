@@ -28,6 +28,7 @@ welcome.md
 ```{toctree}
 :maxdepth: 1
 colors.md
+plots.md
 sampledata.md
 tables.md
 terminologies.md
