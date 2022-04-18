@@ -36,12 +36,12 @@
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTubeFilter.h"
+#include "vtkMRMLMarkupsLineNode.h"
 
 // MRML includes
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLProceduralColorNode.h"
-
 
 vtkStandardNewMacro(vtkSlicerLineRepresentation2D);
 
@@ -69,9 +69,21 @@ vtkSlicerLineRepresentation2D::vtkSlicerLineRepresentation2D()
   this->LineMapper->SetLookupTable(this->LineColorMap);
   this->LineMapper->SetScalarVisibility(true);
 
+  this->DiskSource = vtkSmartPointer<vtkDiskSource>::New();
+  this->DiskSource->SetInputConnection(this->WorldToSliceTransformer->GetOutputPort());
+
+  this->DiskMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+  this->DiskMapper->SetInputConnection(this->DiskSource->GetOutputPort());
+  this->DiskMapper->SetLookupTable(this->LineColorMap);
+  this->DiskMapper->SetScalarVisibility(true);
+
   this->LineActor = vtkSmartPointer<vtkActor2D>::New();
   this->LineActor->SetMapper(this->LineMapper);
   this->LineActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
+
+  this->DiskActor = vtkSmartPointer<vtkActor2D>::New();
+  this->DiskActor->SetMapper(this->DiskMapper);
+  this->DiskActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 }
 
 //----------------------------------------------------------------------
@@ -99,13 +111,35 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
     this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
   this->TubeFilter->SetRadius(diameter * 0.5);
 
+  /*
+   * Draw a circle with control point 0 as center, and line length as radius.
+   * Calculate line length using display positions to adapt with slice view scaling and displacements.
+   * Orient the disk to enclose the line.
+   */
+  double displayP1[3] = { 0.0 };
+  double displayP2[3] = { 0.0 };
+  double displayNormal[3] = { 0.0 };
+  this->GetNthControlPointDisplayPosition(0, displayP1);
+  this->GetNthControlPointDisplayPosition(1, displayP2);
+  double displayLineLength = std::sqrt(vtkMath::Distance2BetweenPoints(displayP1, displayP2));
+  vtkMath::Cross(displayP1, displayP2, displayNormal);
+  this->DiskSource->SetCenter(displayP1);
+  this->DiskSource->SetNormal(displayNormal);
+  this->DiskSource->SetOuterRadius(displayLineLength);
+  this->DiskSource->SetInnerRadius(displayLineLength - 1);
+  this->DiskSource->SetCircumferentialResolution(45);
+  this->DiskSource->Update();
+
   this->LineActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
+  vtkSmartPointer<vtkMRMLMarkupsLineNode> markupsLineNode = vtkMRMLMarkupsLineNode::SafeDownCast(markupsNode);
+  this->DiskActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2 && markupsLineNode->GetDiskVisibility2D());
 
   // Hide the line actor if it doesn't intersect the current slice
   this->SliceDistance->Update();
   if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()), this->SliceDistance->GetScalarArrayName()))
     {
     this->LineActor->SetVisibility(false);
+    this->DiskActor->SetVisibility(false);
     }
 
   if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2)
@@ -146,12 +180,14 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
     }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
+  this->DiskActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
     {
     // Update the line color mapping from the colorNode stored in the markups display node
     this->LineMapper->SetLookupTable(this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction());
+    this->DiskMapper->SetLookupTable(this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction());
     }
   else
     {
@@ -159,7 +195,9 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
     // (color, opacity, distance fading, saturation and hue offset) stored in the display node
     this->UpdateDistanceColorMap(this->LineColorMap, this->LineActor->GetProperty()->GetColor());
     this->LineMapper->SetLookupTable(this->LineColorMap);
+    this->DiskMapper->SetLookupTable(this->LineColorMap);
     }
+
 }
 
 
@@ -189,6 +227,7 @@ void vtkSlicerLineRepresentation2D::CanInteract(
 void vtkSlicerLineRepresentation2D::GetActors(vtkPropCollection *pc)
 {
   this->LineActor->GetActors(pc);
+  this->DiskActor->GetActors(pc);
   this->Superclass::GetActors(pc);
 }
 
@@ -196,6 +235,7 @@ void vtkSlicerLineRepresentation2D::GetActors(vtkPropCollection *pc)
 void vtkSlicerLineRepresentation2D::ReleaseGraphicsResources(vtkWindow *win)
 {
   this->LineActor->ReleaseGraphicsResources(win);
+  this->DiskActor->ReleaseGraphicsResources(win);
   this->Superclass::ReleaseGraphicsResources(win);
 }
 
@@ -206,6 +246,10 @@ int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport *viewport)
   if (this->LineActor->GetVisibility())
     {
     count +=  this->LineActor->RenderOverlay(viewport);
+    }
+  if (this->DiskActor->GetVisibility())
+    {
+    count +=  this->DiskActor->RenderOverlay(viewport);
     }
   count += this->Superclass::RenderOverlay(viewport);
   return count;
@@ -219,6 +263,10 @@ int vtkSlicerLineRepresentation2D::RenderOpaqueGeometry(vtkViewport *viewport)
     {
     count += this->LineActor->RenderOpaqueGeometry(viewport);
     }
+  if (this->DiskActor->GetVisibility())
+    {
+    count +=  this->DiskActor->RenderOpaqueGeometry(viewport);
+    }
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   return count;
 }
@@ -230,6 +278,10 @@ int vtkSlicerLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewpor
   if (this->LineActor->GetVisibility())
     {
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
+    }
+  if (this->DiskActor->GetVisibility())
+    {
+    count += this->DiskActor->RenderTranslucentPolygonalGeometry(viewport);
     }
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   return count;
@@ -243,6 +295,10 @@ vtkTypeBool vtkSlicerLineRepresentation2D::HasTranslucentPolygonalGeometry()
     return true;
     }
   if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  if (this->DiskActor->GetVisibility() && this->DiskActor->HasTranslucentPolygonalGeometry())
     {
     return true;
     }
@@ -267,6 +323,14 @@ void vtkSlicerLineRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
   else
     {
     os << indent << "Line Actor: (none)\n";
+    }
+  if (this->DiskActor)
+    {
+    os << indent << "Disk Actor Visibility: " << this->DiskActor->GetVisibility() << "\n";
+    }
+  else
+    {
+    os << indent << "Disk Actor: (none)\n";
     }
 }
 
@@ -295,6 +359,7 @@ void vtkSlicerLineRepresentation2D::UpdateInteractionPipeline()
     this->InteractionPipeline->Actor->SetVisibility(false);
     return;
     }
+  // Should we manage DiskActor similarly here?
   // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
   Superclass::UpdateInteractionPipeline();
 }

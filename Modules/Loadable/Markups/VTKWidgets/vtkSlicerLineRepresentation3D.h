@@ -32,6 +32,7 @@
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation3D.h"
+#include "vtkDiskSource.h"
 
 class vtkActor;
 class vtkPolyDataMapper;
@@ -78,6 +79,10 @@ protected:
 
   vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
+
+  vtkSmartPointer<vtkDiskSource> DiskSource;
+  vtkSmartPointer<vtkPolyDataMapper> DiskMapper;
+  vtkSmartPointer<vtkActor> DiskActor;
 
   vtkSmartPointer<vtkPolyDataMapper> LineMapper;
   vtkSmartPointer<vtkPolyDataMapper> LineOccludedMapper;

@@ -32,6 +32,7 @@
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
+#include "vtkDiskSource.h"
 
 class vtkTubeFilter;
 class vtkSampleImplicitFunctionFilter;
@@ -83,6 +84,9 @@ protected:
   vtkSmartPointer<vtkDiscretizableColorTransferFunction> LineColorMap;
 
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
+  vtkSmartPointer<vtkDiskSource> DiskSource;
+  vtkSmartPointer<vtkPolyDataMapper2D> DiskMapper;
+  vtkSmartPointer<vtkActor2D> DiskActor;
 
   vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformer;
   vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;

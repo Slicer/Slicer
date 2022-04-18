@@ -75,6 +75,20 @@ public:
   /// Return line length (distance between the two line endpoints) in world coordinate system.
   virtual double GetLineLengthWorld();
 
+  ///@{
+  /// Controls whether a circle should be drawn around point 0 in 2D, with radius being the line length
+  vtkGetMacro(DiskVisibility2D, int);
+  vtkSetMacro(DiskVisibility2D, int);
+  vtkBooleanMacro(DiskVisibility2D, int);
+  ///@}
+
+  ///@{
+  /// Controls whether a circle should be drawn around point 0 in 3D, with radius being the line length
+  vtkGetMacro(DiskVisibility3D, int);
+  vtkSetMacro(DiskVisibility3D, int);
+  vtkBooleanMacro(DiskVisibility3D, int);
+  ///@}
+
 protected:
   vtkMRMLMarkupsLineNode();
   ~vtkMRMLMarkupsLineNode() override;
@@ -83,6 +97,9 @@ protected:
 
   /// Calculates the handle to world matrix based on the current control points
   void UpdateInteractionHandleToWorldMatrix() override;
+
+  int DiskVisibility2D { 0 };
+  int DiskVisibility3D { 0 };
 };
 
 #endif

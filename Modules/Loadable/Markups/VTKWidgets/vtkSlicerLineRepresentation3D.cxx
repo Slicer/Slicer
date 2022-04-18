@@ -32,6 +32,7 @@
 // MRML includes
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsLineNode.h"
 
 vtkStandardNewMacro(vtkSlicerLineRepresentation3D);
 
@@ -51,6 +52,12 @@ vtkSlicerLineRepresentation3D::vtkSlicerLineRepresentation3D()
   this->LineOccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->LineOccludedMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
 
+  this->DiskSource = vtkSmartPointer<vtkDiskSource>::New();
+
+  this->DiskMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->DiskMapper->SetInputConnection(this->DiskSource->GetOutputPort());
+  this->DiskMapper->SetScalarVisibility(true);
+
   // Actors
   this->LineActor = vtkSmartPointer<vtkActor>::New();
   this->LineActor->SetMapper(this->LineMapper);
@@ -59,6 +66,10 @@ vtkSlicerLineRepresentation3D::vtkSlicerLineRepresentation3D()
   this->LineOccludedActor = vtkSmartPointer<vtkActor>::New();
   this->LineOccludedActor->SetMapper(this->LineOccludedMapper);
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(Unselected)->OccludedProperty);
+
+  this->DiskActor = vtkSmartPointer<vtkActor>::New();
+  this->DiskActor->SetMapper(this->DiskMapper);
+  this->DiskActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
   this->HideTextActorIfAllPointsOccluded = true;
 }
@@ -71,6 +82,7 @@ void vtkSlicerLineRepresentation3D::GetActors(vtkPropCollection *pc)
 {
   this->Superclass::GetActors(pc);
   this->LineActor->GetActors(pc);
+  this->DiskActor->GetActors(pc);
   this->LineOccludedActor->GetActors(pc);
 }
 
@@ -80,6 +92,7 @@ void vtkSlicerLineRepresentation3D::ReleaseGraphicsResources(
 {
   this->Superclass::ReleaseGraphicsResources(win);
   this->LineActor->ReleaseGraphicsResources(win);
+  this->DiskActor->ReleaseGraphicsResources(win);
   this->LineOccludedActor->ReleaseGraphicsResources(win);
 }
 
@@ -92,6 +105,10 @@ int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport *viewport)
     {
     count +=  this->LineActor->RenderOverlay(viewport);
     }
+  if (this->DiskActor->GetVisibility())
+      {
+      count +=  this->DiskActor->RenderOverlay(viewport);
+      }
   if (this->LineOccludedActor->GetVisibility())
     {
     count +=  this->LineOccludedActor->RenderOverlay(viewport);
@@ -112,6 +129,10 @@ int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(
     this->TubeFilter->SetRadius(diameter * 0.5);
     count += this->LineActor->RenderOpaqueGeometry(viewport);
     }
+  if (this->DiskActor->GetVisibility())
+      {
+      count += this->DiskActor->RenderOpaqueGeometry(viewport);
+      }
   if (this->LineOccludedActor->GetVisibility())
     {
     count += this->LineOccludedActor->RenderOpaqueGeometry(viewport);
@@ -132,6 +153,13 @@ int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(
     this->LineActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
     }
+  if (this->DiskActor->GetVisibility())
+      {
+      // The internal actor needs to share property keys.
+      // This ensures the mapper state is consistent and allows depth peeling to work as expected.
+      this->DiskActor->SetPropertyKeys(this->GetPropertyKeys());
+      count += this->DiskActor->RenderTranslucentPolygonalGeometry(viewport);
+      }
   if (this->LineOccludedActor->GetVisibility())
     {
     // The internal actor needs to share property keys.
@@ -153,6 +181,10 @@ vtkTypeBool vtkSlicerLineRepresentation3D::HasTranslucentPolygonalGeometry()
     {
     return true;
     }
+  if (this->DiskActor->GetVisibility() && this->DiskActor->HasTranslucentPolygonalGeometry())
+      {
+      return true;
+      }
   if (this->LineOccludedActor->GetVisibility() && this->LineOccludedActor->HasTranslucentPolygonalGeometry())
     {
     return true;
@@ -190,6 +222,26 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
 
   this->BuildLine(this->Line, false);
 
+  /*
+   * Draw a circle with control point 0 as center, and line length as radius.
+   * Calculate line length using RAS positions to adapt with 3D view scaling and displacements.
+   * Orient the circle to enclose the line.
+   */
+  vtkSmartPointer<vtkMRMLMarkupsLineNode> markupsLineNode = vtkMRMLMarkupsLineNode::SafeDownCast(markupsNode);
+  double rasP1[3] = { 0.0 };
+  double rasP2[3] = { 0.0 };
+  double rasNormal[3] = { 0.0 };
+  markupsLineNode->GetNthControlPointPositionWorld(0, rasP1);
+  markupsLineNode->GetNthControlPointPositionWorld(1, rasP2);
+  vtkMath::Cross(rasP1, rasP2, rasNormal);
+  double rasLineLength = std::sqrt(vtkMath::Distance2BetweenPoints(rasP1, rasP2));
+  this->DiskSource->SetCenter(rasP1);
+  this->DiskSource->SetNormal(rasNormal);
+  this->DiskSource->SetOuterRadius(rasLineLength);
+  this->DiskSource->SetInnerRadius(rasLineLength - 1);
+  this->DiskSource->SetCircumferentialResolution(45);
+  this->DiskSource->Update();
+
   // Line display
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
@@ -199,12 +251,14 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
   this->TubeFilter->SetRadius(diameter * 0.5);
 
   this->LineActor->SetVisibility(this->GetAllControlPointsVisible() && markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
+  this->DiskActor->SetVisibility(this->GetAllControlPointsVisible() && markupsNode->GetNumberOfDefinedControlPoints(true) == 2 && markupsLineNode->GetDiskVisibility3D());
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
     {
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
     }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
+  this->DiskActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
@@ -266,6 +320,14 @@ void vtkSlicerLineRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
   else
     {
     os << indent << "Line Visibility: (none)\n";
+    }
+    if (this->DiskActor)
+    {
+    os << indent << "Disk Visibility: " << this->DiskActor->GetVisibility() << "\n";
+    }
+  else
+    {
+    os << indent << "Disk Visibility: (none)\n";
     }
 }
 
