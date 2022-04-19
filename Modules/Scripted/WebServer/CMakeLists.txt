@@ -4,11 +4,15 @@ set(MODULE_NAME WebServer)
 
 #-----------------------------------------------------------------------------
 set(MODULE_PYTHON_SCRIPTS
-  WebServer.py
+  ${MODULE_NAME}.py
+  ${MODULE_NAME}Lib/__init__
+  ${MODULE_NAME}Lib/DICOMRequestHandler.py
+  ${MODULE_NAME}Lib/SlicerRequestHandler.py
+  ${MODULE_NAME}Lib/StaticPagesRequestHandler.py
   )
 
 set(MODULE_PYTHON_RESOURCES
-  Resources/Icons/WebServer.png
+  Resources/Icons/WebServer.svg  # source: Google Material Icon set (api_black_24dp.svg)
   Resources/docroot/index.html
   Resources/docroot/favicon.ico
   Resources/docroot/images/3DSlicer-DesktopIcon.png

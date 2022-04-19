@@ -4,18 +4,15 @@
 
 #slicer_header {
   font-size: 48px;
-  text-shadow: 2px 2px 3px #777; 
+  text-shadow: 2px 2px 3px #777;
 }
 #slicer_header .gray {
   color: #77c;
-  vertical-align: center; 
 }
 #slicer_header .text {
-  vertical-align: center; 
+  vertical-align: middle;
 }
 
-
-    
 /* Start with core styles outside of a media query that apply to mobile and up */
 /* Global typography and design elements, stacked containers */
 body { font-family: Helvetica, san-serif; }
