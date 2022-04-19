@@ -321,15 +321,12 @@ Given a directory containing one or more extension description files, with the h
 * - Slicer_UPLOAD_EXTENSIONS
   - By default set to `OFF`.
     If enabled, extension builds will be submitted to Slicer dashboard and associated packages will be uploaded to extensions server.
-* - MIDAS_PACKAGE_URL
-  - MIDAS extensions server URL specifying where the extension should be uploaded. For example `https://slicer.kitware.com/midas3`.
-    Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source code.
-* - MIDAS_PACKAGE_EMAIL
-  - Email allowing to authenticate to the extensions server.
-    Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source code.
-* - MIDAS_PACKAGE_API_KEY
+* - SLICER_PACKAGE_MANAGER_URL
+  - Slicer extensions server URL specifying where the extension should be uploaded. For example `https://slicer-packages.kitware.com`. source code.
+    Note that this variable is expected to be set in place of `MIDAS_PACKAGE_URL`.
+* - SLICER_PACKAGE_MANAGER_API_KEY
   - Token allowing to authenticate to the extensions server.
-    Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source code.
+    Note that this variable is expected to be set in place of `MIDAS_PACKAGE_API_KEY` and `MIDAS_PACKAGE_EMAIL`.
 ```
 
 The following folders will be used in the examples below:
@@ -377,19 +374,39 @@ Linux and macOS:
 
 ```
 cd ~/ExtensionsIndex-Release
+cmake -E env \
+  SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE=/path/to/slicer_package_manager_client \
+  SLICER_PACKAGE_MANAGER_URL=https://slicer-packages.kitware.com \
+  SLICER_PACKAGE_MANAGER_API_KEY=a0b012c0123d012abc01234a012345a0 \
+  \
 cmake -DSlicer_DIR:PATH=~/Slicer-SuperBuild-Release/Slicer-build \
  -DSlicer_EXTENSION_DESCRIPTION_DIR:PATH=~/ExtensionsIndex \
  -DCMAKE_BUILD_TYPE:STRING=Release \
  -DCTEST_MODEL:STRING=Experimental \
  -DSlicer_UPLOAD_EXTENSIONS:BOOL=ON \
- -DMIDAS_PACKAGE_URL:STRING=https://slicer.kitware.com/midas3 \
- -DMIDAS_PACKAGE_EMAIL:STRING=jchris.fillionr@kitware.com \
- -DMIDAS_PACKAGE_API_KEY:STRING=a0b012c0123d012abc01234a012345a0 \
  ~/Slicer/Extensions/CMake
+
 make
 ```
 
-Note: MIDAS server has been replaced by Girder. To upload to a custom Girder server, look up new variables in extensions build system source
+Windows:
+
+```
+cd /d C:\D\ExtensionsIndexR
+"c:\Program Files\CMake\bin\cmake.exe" -E env ^
+  SLICER_PACKAGE_MANAGER_CLIENT_EXECUTABLE=/path/to/slicer_package_manager_client ^
+  SLICER_PACKAGE_MANAGER_URL=https://slicer-packages.kitware.com ^
+  SLICER_PACKAGE_MANAGER_API_KEY=a0b012c0123d012abc01234a012345a0 ^
+  ^
+"c:\Program Files\CMake\bin\cmake.exe" -DSlicer_DIR:PATH=~/Slicer-SuperBuild-Release/Slicer-build ^
+ -DSlicer_EXTENSION_DESCRIPTION_DIR:PATH=C:/D/ExtensionsIndex ^
+ -DCMAKE_BUILD_TYPE:STRING=Release ^
+ -DCTEST_MODEL:STRING=Experimental ^
+ -DSlicer_UPLOAD_EXTENSIONS:BOOL=ON ^
+ C:/D/S4/Extensions/CMake
+
+make
+```
 
 ### Build complete Extensions Index with dashboard submission
 
