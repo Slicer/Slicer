@@ -425,10 +425,13 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       break;
     case WidgetEventRotateIntersectingSlicesStart:
       this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
+      // Indicate interaction in the slice node to make behavior similar to the 3D reformat widget
+      this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::MultiplanarReformatFlag);
       processedEvent = this->ProcessRotateIntersectingSlicesStart(eventData);
       break;
     case WidgetEventRotateIntersectingSlicesEnd:
       processedEvent = this->ProcessEndMouseDrag(eventData);
+      this->SliceLogic->EndSliceNodeInteraction();
       break;
     case WidgetEventTranslateSliceStart:
       this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
@@ -460,6 +463,9 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       this->LastLabelOpacity = this->GetLabelOpacity();
       this->StartActionSegmentationDisplayNode = this->GetVisibleSegmentationDisplayNode();
       processedEvent = this->ProcessStartMouseDrag(eventData);
+      // It would be nicer to call this->SliceLogic->StartSliceCompositeNodeInteraction(...) to
+      // synchronize opacity value. However, since synchronization occurs via GUI widgets
+      // (the slider in qMRMLSliceControllerWidget), there is no immediate need to change this.
       }
       break;
     case WidgetEventBlendEnd:
@@ -765,9 +771,6 @@ bool vtkMRMLSliceIntersectionWidget::ProcessStartMouseDrag(vtkMRMLInteractionEve
 
   this->ProcessMouseMove(eventData);
 
-  // Indicate interaction in the slice node to make behavior similar to the 3D reformat widget
-  this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::MultiplanarReformatFlag);
-
   return true;
 }
 
@@ -798,8 +801,6 @@ bool vtkMRMLSliceIntersectionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEvent
 
   // only claim this as processed if the mouse was moved (this lets the event interpreted as button click)
   bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
-
-  this->SliceLogic->EndSliceNodeInteraction();
 
   // Simulate a mousemove event to update the widget state according to the current position.
   // Without this, handles would always disappear at the end of drag-and-drop, even if the mouse pointer is over the widget
