@@ -330,6 +330,10 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 //----------------------------------------------------------------------
 void vtkSlicerPlaneRepresentation3D::UpdateInteractionPipeline()
 {
+  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
+  // This needs be called before updating the handles, since it updates HandleToWorldTransform.
+  Superclass::UpdateInteractionPipeline();
+
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
   if (!planeNode || !planeNode->GetIsPlaneValid())
     {
@@ -339,9 +343,6 @@ void vtkSlicerPlaneRepresentation3D::UpdateInteractionPipeline()
 
   MarkupsInteractionPipelinePlane* interactionPipeline = static_cast<MarkupsInteractionPipelinePlane*>(this->InteractionPipeline);
   interactionPipeline->UpdateScaleHandles();
-
-  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
-  Superclass::UpdateInteractionPipeline();
 }
 
 //----------------------------------------------------------------------
@@ -727,15 +728,6 @@ void vtkSlicerPlaneRepresentation3D::MarkupsInteractionPipelinePlane::UpdateScal
     return;
     }
 
-  double size_World[4] = { 0.0,  0.0, 0.0, 0.0};
-  planeNode->GetSizeWorld(size_World);
-
-  if (size_World[0] <= 0.0 || size_World[1] <= 0.0)
-    {
-    this->ScaleHandlePoints->SetPoints(vtkNew<vtkPoints>());
-    return;
-    }
-
   vtkNew<vtkPoints> planeCornerPoints_World;
   planeNode->GetPlaneCornerPointsWorld(planeCornerPoints_World);
 
@@ -813,16 +805,33 @@ void vtkSlicerPlaneRepresentation3D::MarkupsInteractionPipelinePlane::UpdateHand
     return;
     }
 
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(displayNode->GetDisplayableNode());
+  if (!planeNode)
+    {
+    vtkGenericWarningMacro("UpdateHandleVisibility: Invalid plane node");
+    return;
+    }
+
+  double size_World[4] = { 0.0, 0.0, 0.0, 0.0 };
+  planeNode->GetSizeWorld(size_World);
+
+  bool scaleHandleVisibility = true;
+  if (size_World[0] <= 0.0 || size_World[1] <= 0.0)
+    {
+    // Plane has no size. Hide the scale handles.
+    scaleHandleVisibility = false;
+    }
+
   vtkIdTypeArray* scaleVisibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
   if (scaleVisibilityArray)
     {
     bool* scaleHandleAxes = displayNode->GetScaleHandleComponentVisibility();
-    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleLEdge, scaleHandleAxes[0]);
-    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleREdge, scaleHandleAxes[0]);
-    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge, scaleHandleAxes[1]);
-    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge, scaleHandleAxes[1]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleLEdge, scaleHandleVisibility && scaleHandleAxes[0]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleREdge, scaleHandleVisibility && scaleHandleAxes[0]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge, scaleHandleVisibility && scaleHandleAxes[1]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge, scaleHandleVisibility && scaleHandleAxes[1]);
 
-    bool viewPlaneScaleVisibility = scaleHandleAxes[3];
+    bool viewPlaneScaleVisibility = scaleHandleVisibility && scaleHandleAxes[3];
     scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner, viewPlaneScaleVisibility);
     scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner, viewPlaneScaleVisibility);
     scaleVisibilityArray->SetValue(vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner, viewPlaneScaleVisibility);
