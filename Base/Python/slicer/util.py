@@ -3343,7 +3343,9 @@ def pip_install(requirements):
   Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
   user confirmation may be implemented, therefore it is recommended to use this method call instead of a plain
   pip install.
-  :param requirements: requirement specifier, same format as used by pip (https://docs.python.org/3/installing/index.html)
+  :param requirements: requirement specifier in the same format as used by pip (https://docs.python.org/3/installing/index.html).
+    It can be either a single string or a list of command-line arguments. It may be simpler to pass command-line arguments as a list
+    if the arguments may contain spaces (because no escaping of the strings with quotes is necessary).
 
   Example: calling from Slicer GUI
 
@@ -3359,7 +3361,16 @@ def pip_install(requirements):
     pip_install("tensorflow")
 
   """
-  args = 'install', *requirements.split()
+
+  if type(requirements) == str:
+    # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
+    import shlex
+    args = 'install', *(shlex.split(requirements))
+  elif type(requirements) == list:
+    args = 'install', *requirements
+  else:
+    raise ValueError("pip_install requirement input must be string or list")
+
   _executePythonModule('pip', args)
 
 
@@ -3370,7 +3381,9 @@ def pip_uninstall(requirements):
   user confirmation may be implemented, therefore it is recommended to use this method call instead of a plain
   pip uninstall.
 
-  :param requirements: requirement specifier, same format as used by pip (https://docs.python.org/3/installing/index.html)
+  :param requirements: requirement specifier in the same format as used by pip (https://docs.python.org/3/installing/index.html).
+    It can be either a single string or a list of command-line arguments. It may be simpler to pass command-line arguments as a list
+    if the arguments may contain spaces (because no escaping of the strings with quotes is necessary).
 
   Example: calling from Slicer GUI
 
@@ -3386,7 +3399,14 @@ def pip_uninstall(requirements):
     pip_uninstall("tensorflow")
 
   """
-  args = 'uninstall', *requirements.split(), '--yes'
+  if type(requirements) == str:
+    # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
+    import shlex
+    args = 'uninstall', *(shlex.split(requirements)), '--yes'
+  elif type(requirements) == list:
+    args = 'uninstall', *requirements, '--yes'
+  else:
+    raise ValueError("pip_uninstall requirement input must be string or list")
   _executePythonModule('pip', args)
 
 
