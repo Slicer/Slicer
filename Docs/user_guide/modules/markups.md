@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module is used to create and edit markups (point list, line, angle, curve, plane, etc.) and adjust their display properties.
+This module is used to create and edit markups (point list, line, angle, curve, closed curve, plane, ROI etc.) and adjust their display properties.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_types.png)
 
@@ -10,32 +10,34 @@ This module is used to create and edit markups (point list, line, angle, curve, 
 
 ### Place new markups
 
-1. Click "Create and place" button on the toolbar to activate place mode.
+1. Click the "Toggle Markups Toolbar" button in the Mouse Interaction toolbar to show/hide the Markups toolbar.
 
-Click the down-arrow icon on the button to choose markups type.
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_toggle_toolbar_2022_04_24.png)
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_place_toolbar.png)
+Using the Markups toolbar, click a markups type button to create a new object. The mouse interaction mode will automatically switch into control point placement mode.
 
-Click "Place multiple control points" checkbox to keep placing control points continuously, without the need to click the place button after each point.
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_toolbar_2022_04_24.png)
 
-2. Left-click in the slice or 3D views to place points.
+Click the down arrow of the control point place button in the Markups toolbar to select the "Place multiple control points" checkbox to keep placing control points continuously, without the need to click the place button after each point.
+
+2. Left-click in a slice view or 3D view to place points.
 
 3. Double-left-click or right-click to finish point placement.
 
-### Edit point positions in existing markups
+### Edit control point positions in existing markups
 
-- Make sure that the correct markups node is selected in Markups module.
-- Left-click-and drag a control point to move it
-- Left-click a control point to show it in all slice viewers. This helps in adjusting its position along all axes.
-- Right-click to delete or rename a control point or change node properties.
-- Ctrl + Left-click to place a new control point on a curve.
+- Make sure that the correct markup is selected in the Markups module or Markups toolbar.
+- Left-click-and drag a control point to move it.
+- Left-click a control point to jump to it in all slice viewers. This helps in adjusting its position along all axes.
+- Right-click to delete or rename a control point or change markup properties.
+- Ctrl + Left-click to place a new control point on a markups curve.
 - Enable Display / Interaction / Visible to show a widget that allows translation/rotation of the entire widget.
 
-### Edit properties of a markups node that is picked in a view
+### Edit properties of a markup that is picked in a view
 
-To pick a markups node in a viewer so that its properties can be edited in Markups module, right-click on it in a slice or 3D view and choose "Edit properties".
+To pick a markup in a viewer so that its properties can be edited in the Markups module, right-click on it in a slice view or 3D view and choose "Edit properties".
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_context_menu_properties.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_context_menu_properties_2022_04_24.png)
 
 ### Edit Plane markups
 
@@ -45,7 +47,7 @@ To pick a markups node in a viewer so that its properties can be edited in Marku
 - Plane size can be changed using handles on the corners and edges of the plane.
 - Left-click-and-drag on interaction handles to change the plane size.
 - Resizing a plane will change the size mode to "absolute", preventing changes in the control points from affecting the plane size.
-- Plane type and size mode can be changed from the "Plane settings" section of the markups module.
+- Plane type and size mode can be changed from the "Plane settings" section of the Markups module.
 
 ### Edit ROI markups
 
@@ -67,7 +69,7 @@ The following keyboard shortcuts are active when the markups toolbar is displaye
 ## Panels and their use
 
 - Create: click on any of the buttons to create a new markup. Click in any of the viewers to place control points.
-- Markups list: Select a markups node to populate the GUI and allow modifications. When control point placement is activated on the toolbar, then points are added to this selected markups node.
+- Markups list: Select a markup to populate the GUI and allow modifications. When control point placement is activated on the toolbar, then points are added to this selected markup.
 
 Display section:
 - Visibility: Toggle the markup visibility, which will override the individual control point visibility settings. If the eye icon is open, the list is visible, and pressing it will make it invisible. If the eye icon is closed, the list is invisible and pressing the button will make it visible.
@@ -90,8 +92,8 @@ Display section:
     - Projection Color: If not using markup color for the projection, use this color.
     - Outlined Behind Slice Plane: Control point projection is displayed filled (opacity = Projection Opacity) when on top of slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).
     - Projection Opacity: A value between 0 (invisible) and 1 (fully visible) for displaying the control point projection.
-    - Reset to Defaults: Reset the display properties of this markups node to the system defaults.
-    - Save to Defaults: Save the display properties of this markups node to be the new system defaults. Control point labels visibility and properties label visibility settings are not saved to defaults, as typically it is better to initialize these based on the node type (control point labels are more useful for markups point list nodes, while properties label is more useful for other markups nodes).
+    - Reset to Defaults: Reset the display properties of this markup to the system defaults.
+    - Save to Defaults: Save the display properties of this markup to be the new system defaults. The control point label visibility and properties label visibility are settings that are not included when saving defaults, as typically it is better to initialize these based on the markup type (control point labels are more useful for markups point lists, while the properties label is more useful for other markup types).
 - Scalars: Color markup according to a scalar, e.g. a per-control-point measurement (see Measurements section below)
   - Visible: Whether scalar coloring should be shown or the original color of the markup
   - Active Scalar: Which scalar array to use for coloring
@@ -107,7 +109,7 @@ Control points section:
   - Toggle lock flag: Toggle lock flag on all control points in the list. Use the drop down menu to set all to locked or unlocked.
   - Delete the highlighted control points from the active list: After highlighting rows in the table to select control points, press this button to delete them from the list.
   - Remove all control points from the active list: Pressing this button will delete all of the control points in the active list, leaving it with a list length of 0.
-  - Transformed: Check to show the transformed coordinates in the table. This will apply any transform nodes to the points in the list and show that result. Keep unchecked to show the raw RAS values that are stored in MRML. If you harden the transform the transformed coordinates will be the same as the non transformed coordinates.
+  - Transformed: Check to show the transformed coordinates in the table. This will apply any transform to the points in the list and show that result. Keep unchecked to show the raw RAS values that are stored in MRML. If you harden the transform the transformed coordinates will be the same as the non transformed coordinates.
   - Hide RAS: Check to hide the coordinate columns in the table and uncheck to show them. Right click in rows to see coordinates.
 - Control points table: Right click on rows in the table to bring up a context menu to show the full precision coordinates, distance between multiple highlighted control points, delete the highlighted control point, jump slice viewers to that location, refocus 3D viewers to that location, or if there are other lists, to copy or move the control point to another list.
   - Selected: A check box is shown in this column, it's check state depends on if the control point is selected or not. Click to toggle the selected state. Only selected control points will be passed to command line modules.
@@ -148,7 +150,7 @@ Curve settings section:
 
 Resample section:
 - Output node: Replace control points by curve points sampled at equal distances.
-- Constrain points to surface: If a model node is selected then the resampled points will be projected to the chosen model surface.
+- Constrain points to surface: If a model is selected, the resampled points will be projected to the chosen model surface.
 - Advanced:
   - Maximum projection distance: The maximum search radius tolerance defining the allowable projection distance for projecting resampled control points. It is specified as a percentage of the model's bounding box diagonal in world coordinate system.
 
