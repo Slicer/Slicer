@@ -390,6 +390,10 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   set(PACKAGE_APPLICATION_NAME "${APPLICATION_NAME} ${CPACK_PACKAGE_VERSION}")
   slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${PACKAGE_APPLICATION_NAME}")
 
+  get_property(${app_name}_CPACK_NSIS_MUI_ICON GLOBAL PROPERTY ${app_name}_WIN_ICON_FILE)
+  slicer_cpack_set("CPACK_NSIS_MUI_ICON")
+  slicer_verbose_set(CPACK_NSIS_INSTALLED_ICON_NAME "${app_name}.exe")
+
   # -------------------------------------------------------------------------
   # File extensions
   # -------------------------------------------------------------------------
