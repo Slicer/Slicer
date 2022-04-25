@@ -96,6 +96,12 @@ public:
   void vtkSetSpaceToLPS()  { this->SetSpace(nrrdSpaceLeftPosteriorSuperior); };
   void vtkSetSpaceToLPST() { this->SetSpace(nrrdSpaceLeftPosteriorSuperiorTime); };
 
+  /// Force the addition of a range axis, even when the size of the first image dimension (components, or frame list) is 1.
+  /// This is useful when attempting to write an image sequence with a single frame, as otherwise the range dimension would be omitted.
+  vtkSetMacro(ForceRangeAxis, bool);
+  vtkGetMacro(ForceRangeAxis, bool);
+  vtkBooleanMacro(ForceRangeAxis, bool);
+
   /// Utility function to return image as a Nrrd*
   void* MakeNRRD();
 
@@ -130,6 +136,8 @@ protected:
   AxisInfoMapType *AxisUnits;
   int VectorAxisKind;
   int Space;
+
+  bool ForceRangeAxis;
 
 private:
   vtkTeemNRRDWriter(const vtkTeemNRRDWriter&) = delete;
