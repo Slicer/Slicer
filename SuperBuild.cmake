@@ -317,15 +317,6 @@ if(Slicer_BUILD_BRAINSTOOLS)
   mark_as_superbuild(BRAINSCommonLib_DIR:PATH)
 endif()
 
-Slicer_Remote_Add(DataStore
-  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/Slicer-DataStore"
-  GIT_TAG 7b31153c7ec4c23966646275d10d5c109b2e463c
-  OPTION_NAME Slicer_BUILD_DataStore
-  OPTION_DEPENDS "Slicer_BUILD_WEBENGINE_SUPPORT"
-  LABELS REMOTE_MODULE
-  )
-list_conditional_append(Slicer_BUILD_DataStore Slicer_REMOTE_DEPENDENCIES DataStore)
-
 Slicer_Remote_Add(CompareVolumes
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/pieper/CompareVolumes"
   GIT_TAG 7e5530930282a5f99c746df331538e431f3609b4

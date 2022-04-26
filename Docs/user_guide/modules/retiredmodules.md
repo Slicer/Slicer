@@ -14,3 +14,6 @@ A module may also be retired if it no longer works properly (for example due to 
 - **Expert Automated Registration**
   - Retired: 2022-02-19, [commit 87fd349](https://github.com/Slicer/Slicer/commit/87fd349334e6414c28ba373bbc45d03c7345ad0c)
   - Reason: [No longer running properly](https://github.com/Slicer/Slicer/pull/6200#issuecomment-1045962304). BRAINS, Elastix, and ANTs registration toolkits offer superior registration results, see [Automatic Image Registration](../registration.md) section for details.
+- **DataStore**
+  - Retired: 2022-04-26
+  - Reason: Infrastructure for uploading and organizing datasets was based on the obsolete Slicer server based on Midas. Associated datasets are available as release assets associated with the [Slicer/SlicerDataStore](https://github.com/Slicer/SlicerDataStore) GitHub project.
