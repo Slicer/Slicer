@@ -34,7 +34,7 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "0e735f23032ececcf52ed49b27928390fff28e50"
+    "1c34e31d50ccad5b49ab435695ed0369c1830a5e"
     QUIET
     )
 
