@@ -82,6 +82,7 @@ int vtkMRMLSequenceStorageNodeTest1( int argc, char * argv[] )
   vtkNew<vtkMRMLScene> scene;
   scene->SetDataIOManager(vtkNew<vtkDataIOManager>());
   scene->GetDataIOManager()->SetCacheManager(vtkNew<vtkCacheManager>());
+  scene->GetDataIOManager()->GetCacheManager()->SetRemoteCacheDirectory(tempDir.c_str());
 
   // Add generic node sequence
   {
