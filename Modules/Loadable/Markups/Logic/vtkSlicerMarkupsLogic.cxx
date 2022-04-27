@@ -475,7 +475,7 @@ void vtkSlicerMarkupsLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
                   << " for markups node with id " << markupsNode->GetID());
     }
   // make it active for adding to via the mouse
-  this->SetActiveListID(markupsNode);
+  this->SetActiveList(markupsNode);
 }
 
 //---------------------------------------------------------------------------
@@ -565,12 +565,18 @@ std::string vtkSlicerMarkupsLogic::GetActiveListID()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode *markupsNode)
+void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode* markupsNode)
+{
+  this->SetActiveList(markupsNode);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMarkupsLogic::SetActiveList(vtkMRMLMarkupsNode *markupsNode)
 {
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID().c_str()));
   if (!selectionNode)
     {
-    vtkErrorMacro("vtkSlicerMarkupsLogic::SetActiveListID: No selection node in the scene.");
+    vtkErrorMacro("vtkSlicerMarkupsLogic::SetActiveList: No selection node in the scene.");
     return;
     }
 
@@ -662,7 +668,7 @@ std::string vtkSlicerMarkupsLogic::AddNewFiducialNode(const char *name, vtkMRMLS
   // make it active so mouse mode tool bar clicks will add new fids to this list.
   if (scene == nullptr || scene == this->GetMRMLScene())
     {
-    this->SetActiveListID(markupsNode);
+    this->SetActiveList(markupsNode);
     }
 
   const char* nodeId = markupsNode->GetID();

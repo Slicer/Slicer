@@ -188,7 +188,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   CHECK_STD_STRING(activeListID, newID);
 
   // set the old one active
-  logic1->SetActiveListID(activeMarkupsNode);
+  logic1->SetActiveList(activeMarkupsNode);
   activeListID = logic1->GetActiveListID();
   CHECK_STD_STRING(activeListID, activeMarkupsNode->GetID());
 

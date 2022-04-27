@@ -83,12 +83,16 @@ public:
   /// \sa SetActiveListID
   std::string GetActiveListID();
 
+  /// This method is deprecated due to its confusing name. It is kept for backward compatibility only,
+  /// SetActiveList method should be used instead.
+  void SetActiveListID(vtkMRMLMarkupsNode *markupsNode);
+
   /// Utility method to set the active place node from the passed markups
   /// node. Does not set the interaction mode to place.
   /// \sa GetActiveListID, StartPlaceMode
   /// \sa vtkMRMLSelectionNode::SetReferenceActivePlaceNodeClassName
   /// \sa vtkMRMLSelectionNode::SetActivePlaceNodeID
-  void SetActiveListID(vtkMRMLMarkupsNode *markupsNode);
+  void SetActiveList(vtkMRMLMarkupsNode* markupsNode);
 
   /// Create a new display node and observe it on the markups node.
   /// On success, return the id, on failure return an empty string.

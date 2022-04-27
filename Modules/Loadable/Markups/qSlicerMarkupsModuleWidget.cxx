@@ -628,7 +628,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setSelectionNodeActivePlaceNode(vtkMRMLN
     return;
     }
   vtkMRMLMarkupsNode* activePlaceNode = vtkMRMLMarkupsNode::SafeDownCast(node);
-  q->markupsLogic()->SetActiveListID(activePlaceNode);
+  q->markupsLogic()->SetActiveList(activePlaceNode);
   q->updateToolBar(activePlaceNode);
   q->updateWidgetFromMRML();
 }

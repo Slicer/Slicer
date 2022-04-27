@@ -381,11 +381,11 @@ void qSlicerMarkupsPlaceWidget::setCurrentNodeActive(bool active)
     {
     if (active)
       {
-      d->MarkupsLogic->SetActiveListID(this->currentMarkupsNode());
+      d->MarkupsLogic->SetActiveList(this->currentMarkupsNode());
       }
     else
       {
-      d->MarkupsLogic->SetActiveListID(nullptr);
+      d->MarkupsLogic->SetActiveList(nullptr);
       d->InteractionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
       }
     }
@@ -430,7 +430,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
     // activate and set place mode
     if (!wasActive)
       {
-      d->MarkupsLogic->SetActiveListID(this->currentMarkupsNode());
+      d->MarkupsLogic->SetActiveList(this->currentMarkupsNode());
       }
     if (d->PlaceMultipleMarkups == ForcePlaceSingleMarkup)
       {
@@ -506,11 +506,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     return;
     }
 
-  bool activePlaceNodePlacementValid = false;
-  if (currentMarkupsNode)
-    {
-    activePlaceNodePlacementValid = !currentMarkupsNode->GetControlPointPlacementComplete();
-    }
+  bool activePlaceNodePlacementValid = !currentMarkupsNode->GetControlPointPlacementComplete();
   d->PlaceButton->setEnabled(activePlaceNodePlacementValid);
 
   d->ColorButton->setEnabled(true);
@@ -604,8 +600,10 @@ void qSlicerMarkupsPlaceWidget::updateDeleteButton()
     d->DeleteButton->setPopupMode(showMenu ? QToolButton::MenuButtonPopup : QToolButton::DelayedPopup);
 
     vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-    if ( currentMarkupsNode == nullptr )
+    if (currentMarkupsNode == nullptr)
       {
+      // if there is no node selected then just leave the current button visibility as is,
+      // to avoid showing/hiding a button when the current node is temporarily set to nullptr
       return;
       }
     d->DeleteButton->setVisible(showMenu || !currentMarkupsNode->GetFixedNumberOfControlPoints()); // hide when no options to show
@@ -854,11 +852,11 @@ void qSlicerMarkupsPlaceWidget::onVisibilityButtonClicked()
 void qSlicerMarkupsPlaceWidget::onLockedButtonClicked()
 {
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if ( currentMarkupsNode == nullptr )
+  if (currentMarkupsNode == nullptr)
     {
     return;
     }
-  currentMarkupsNode->SetLocked( ! currentMarkupsNode->GetLocked() );
+  currentMarkupsNode->SetLocked(!currentMarkupsNode->GetLocked());
 }
 
 //-----------------------------------------------------------------------------
