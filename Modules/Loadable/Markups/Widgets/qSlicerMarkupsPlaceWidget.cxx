@@ -604,6 +604,10 @@ void qSlicerMarkupsPlaceWidget::updateDeleteButton()
     d->DeleteButton->setPopupMode(showMenu ? QToolButton::MenuButtonPopup : QToolButton::DelayedPopup);
 
     vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
+    if ( currentMarkupsNode == nullptr )
+      {
+      return;
+      }
     d->DeleteButton->setVisible(showMenu || !currentMarkupsNode->GetFixedNumberOfControlPoints()); // hide when no options to show
     }
   }
