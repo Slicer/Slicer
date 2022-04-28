@@ -553,6 +553,11 @@ layoutSwitchAction.setToolTip("3D and slice view")
 sliceDisplayNodes = slicer.util.getNodesByClass("vtkMRMLSliceDisplayNode")
 for sliceDisplayNode in sliceDisplayNodes:
   sliceDisplayNode.SetIntersectingSlicesVisibility(1)
+
+# Workaround to force visual update (see https://github.com/Slicer/Slicer/issues/6338)
+sliceNodes = slicer.util.getNodesByClass('vtkMRMLSliceNode')
+for sliceNode in sliceNodes:
+    sliceNode.Modified()
 ```
 
 :::{note}
