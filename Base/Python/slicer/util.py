@@ -2118,7 +2118,7 @@ def arrayFromMarkupsCurveData(markupsNode, arrayName, world=False):
     (effect of parent transform to the node is applied).
   :raises ValueError: in case of failure
 
-  Note that not all array may be available in both node and world coordinate sytems.
+  Note that not all array may be available in both node and world coordinate systems.
   For example, `Curvature` is only computed for the curve in world coordinate system.
 
   The returned array is not intended to be modified, as arrays are expected to be written only
