@@ -120,10 +120,10 @@ public:
     vtkWarningMacro("vtkMRMLMarkupsFiducialNode::AddFiducialFromArray method is deprecated, please use AddControlPoint instead");
     return this->AddControlPoint(pos, label);
     }
-  /// \deprecated Use GetNthControlPointPositionVector instead.
+  /// \deprecated Use GetNthControlPointPosition instead.
   void GetNthFiducialPosition(int n, double pos[3])
     {
-    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNthFiducialPosition method is deprecated, please use GetNthControlPointPositionVector instead");
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNthFiducialPosition method is deprecated, please use GetNthControlPointPosition instead");
     this->GetNthControlPointPosition(n, pos);
     }
   /// \deprecated Use SetNthControlPointPosition instead.
