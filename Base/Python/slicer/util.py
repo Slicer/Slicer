@@ -2109,6 +2109,40 @@ def arrayFromMarkupsCurvePoints(markupsNode, world = False):
   return narray
 
 
+def arrayFromMarkupsCurveData(markupsNode, arrayName, world=False):
+  """Return curve measurement results from a markups node as a numpy array.
+
+  :param markupsNode: node to get the curve point data from.
+  :param arrayName: array name to get (for example `Curvature`)
+  :param world: if set to True then the point coordinates are returned in world coordinate system
+    (effect of parent transform to the node is applied).
+  :raises ValueError: in case of failure
+
+  Note that not all array may be available in both node and world coordinate sytems.
+  For example, `Curvature` is only computed for the curve in world coordinate system.
+
+  The returned array is not intended to be modified, as arrays are expected to be written only
+  by measurement objects.
+  """
+  import vtk.util.numpy_support
+  if world:
+    curvePolyData = markupsNode.GetCurveWorld()
+  else:
+    curvePolyData = markupsNode.GetCurve()
+  pointData = curvePolyData.GetPointData()
+  if not pointData or pointData.GetNumberOfArrays() == 0:
+    raise ValueError(f"Input markups curve does not contain point data")
+
+  arrayVtk = pointData.GetArray(arrayName)
+  if not arrayVtk:
+    availableArrayNames = [pointData.GetArrayName(i) for i in range(pointData.GetNumberOfArrays())]
+    raise ValueError("Input markupsNode does not contain curve point data array '{}'. Available array names: '{}'".format(
+      arrayName, "', '".join(availableArrayNames)))
+
+  narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
+  return narray
+
+
 def updateVolumeFromArray(volumeNode, narray):
   """Sets voxels of a volume node from a numpy array.
 
