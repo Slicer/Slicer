@@ -3095,6 +3095,29 @@ def getFilesInDirectory(directory, absolutePath=True):
   return allFiles
 
 
+class chdir:
+  """Non thread-safe context manager to change the current working directory.
+
+  .. note::
+
+    Available in Python 3.11 as ``contextlib.chdir`` and adapted from https://github.com/python/cpython/pull/28271
+
+    Available in CTK as ``ctkScopedCurrentDir`` C++ class
+  """
+  def __init__(self, path):
+    self.path = path
+    self._old_cwd = []
+
+  def __enter__(self):
+    import os
+    self._old_cwd.append(os.getcwd())
+    os.chdir(self.path)
+
+  def __exit__(self, *excinfo):
+    import os
+    os.chdir(self._old_cwd.pop())
+
+
 def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = True, nodes = None):
   """Create a plot from a numpy array that contains two or more columns.
 
