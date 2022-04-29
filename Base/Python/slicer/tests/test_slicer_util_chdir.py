@@ -9,7 +9,7 @@ class SlicerUtilChdirTests(unittest.TestCase):
   """
   def test_simple(self):
     old_cwd = os.getcwd()
-    target = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../slicer"))
+    target = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../slicer"))
     self.assertNotEqual(old_cwd, target)
 
     with slicer.util.chdir(target):
@@ -18,8 +18,8 @@ class SlicerUtilChdirTests(unittest.TestCase):
 
   def test_reentrant(self):
     old_cwd = os.getcwd()
-    target1 = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../slicer"))
-    target2 = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../tests"))
+    target1 = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../slicer"))
+    target2 = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../tests"))
     self.assertNotIn(old_cwd, (target1, target2))
     chdir1, chdir2 = slicer.util.chdir(target1), slicer.util.chdir(target2)
 
@@ -35,7 +35,7 @@ class SlicerUtilChdirTests(unittest.TestCase):
 
   def test_exception(self):
     old_cwd = os.getcwd()
-    target = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../slicer"))
+    target = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../slicer"))
     self.assertNotEqual(old_cwd, target)
 
     try:
