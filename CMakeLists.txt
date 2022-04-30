@@ -235,8 +235,8 @@ option(WITH_COVERAGE "Enable/Disable coverage" OFF)
 mark_as_superbuild(WITH_COVERAGE)
 
 option(Slicer_USE_VTK_DEBUG_LEAKS "Enable VTKs Debug Leaks functionality in both VTK and Slicer." ON)
+mark_as_superbuild(Slicer_USE_VTK_DEBUG_LEAKS:BOOL)
 set(VTK_DEBUG_LEAKS ${Slicer_USE_VTK_DEBUG_LEAKS})
-mark_as_superbuild(VTK_DEBUG_LEAKS:BOOL)
 
 option(Slicer_BUILD_DICOM_SUPPORT "Build Slicer with DICOM support" ON)
 mark_as_superbuild(Slicer_BUILD_DICOM_SUPPORT)
