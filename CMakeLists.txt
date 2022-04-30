@@ -305,10 +305,17 @@ set_property(CACHE Slicer_REVISION_TYPE PROPERTY STRINGS
 mark_as_advanced(Slicer_REVISION_TYPE)
 mark_as_superbuild(Slicer_REVISION_TYPE)
 
-# Default Slicer_WC_COMMIT_COUNT_OFFSET is chosen to provide continuity of revisions when switching from SVN to git
-# at SVN revision=28825 / git hash 47deb76d7556e40de4e25e585c4b24a63a153da5 in official Slicer repository
-# (https://github.com/Slicer/Slicer.git).
-set(Slicer_WC_COMMIT_COUNT_OFFSET "3037" CACHE STRING
+# Default Slicer_WC_COMMIT_COUNT_OFFSET
+
+set(_commit_count_offsets
+  # Value is chosen to provide continuity of revisions when switching from SVN to git
+  # at SVN revision=28825 / git hash 47deb76d7556e40de4e25e585c4b24a63a153da5 in official Slicer repository
+  # (https://github.com/Slicer/Slicer.git).
+  "3037"
+  )
+list(JOIN _commit_count_offsets "+" _commit_count_offsets_expr)
+math(EXPR _commit_count_offset "${_commit_count_offsets_expr}")
+set(Slicer_WC_COMMIT_COUNT_OFFSET "${_commit_count_offset}" CACHE STRING
   "This value is added to commit count to compute Slicer_COMMIT_COUNT (that may be used to set Slicer_REVISION).")
 mark_as_advanced(Slicer_WC_COMMIT_COUNT_OFFSET)
 mark_as_superbuild(Slicer_WC_COMMIT_COUNT_OFFSET)
