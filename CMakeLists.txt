@@ -208,11 +208,6 @@ set(Slicer_BUILD_SHARED ${BUILD_SHARED_LIBS})
 include(SlicerApplicationOptions)
 
 #-----------------------------------------------------------------------------
-# Slicer version number
-#-----------------------------------------------------------------------------
-include(SlicerVersion)
-
-#-----------------------------------------------------------------------------
 # Append the library version information to the library target properties.
 #------------------------------------------------------------------------------
 option(Slicer_WITH_LIBRARY_VERSION "Build with library version information" OFF)
@@ -321,6 +316,11 @@ mark_as_superbuild(Slicer_WC_COMMIT_COUNT_OFFSET)
 option(Slicer_USE_FOLDERS "Organize build targets into folders" ON)
 mark_as_superbuild(Slicer_USE_FOLDERS)
 mark_as_advanced(Slicer_USE_FOLDERS)
+
+#-----------------------------------------------------------------------------
+# Slicer version number
+#-----------------------------------------------------------------------------
+include(SlicerVersion)
 
 #-----------------------------------------------------------------------------
 # External projects related options
