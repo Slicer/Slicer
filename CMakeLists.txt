@@ -43,7 +43,7 @@ if(NOT DEFINED Slicer_VERSION_MAJOR)
   set(Slicer_VERSION_MAJOR "5")
 endif()
 if(NOT DEFINED Slicer_VERSION_MINOR)
-  set(Slicer_VERSION_MINOR "0")
+  set(Slicer_VERSION_MINOR "1")
 endif()
 if(NOT DEFINED Slicer_VERSION_PATCH)
   set(Slicer_VERSION_PATCH "0")
@@ -312,6 +312,8 @@ set(_commit_count_offsets
   # at SVN revision=28825 / git hash 47deb76d7556e40de4e25e585c4b24a63a153da5 in official Slicer repository
   # (https://github.com/Slicer/Slicer.git).
   "3037"
+  # Allocate revisions for patch releases between v5.0.0 and v5.1.0
+  "100"
   )
 list(JOIN _commit_count_offsets "+" _commit_count_offsets_expr)
 math(EXPR _commit_count_offset "${_commit_count_offsets_expr}")
