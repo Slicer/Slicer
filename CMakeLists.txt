@@ -40,10 +40,10 @@ endif()
 
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_VERSION_MAJOR)
-  set(Slicer_VERSION_MAJOR "4")
+  set(Slicer_VERSION_MAJOR "5")
 endif()
 if(NOT DEFINED Slicer_VERSION_MINOR)
-  set(Slicer_VERSION_MINOR "13")
+  set(Slicer_VERSION_MINOR "0")
 endif()
 if(NOT DEFINED Slicer_VERSION_PATCH)
   set(Slicer_VERSION_PATCH "0")
