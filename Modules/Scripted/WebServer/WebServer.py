@@ -404,7 +404,16 @@ class SlicerHTTPServer(HTTPServer):
             highestConfidence = confidence
 
         if highestConfidenceHandler is not None and highestConfidence > 0.0:
-          contentType, responseBody = highestConfidenceHandler.handleRequest(uri, requestBody)
+          try:
+            contentType, responseBody = highestConfidenceHandler.handleRequest(uri, requestBody)
+          except:
+            etype, value, tb = sys.exc_info()
+            import traceback
+            self.logMessage(etype, value)
+            for frame in traceback.format_tb(tb):
+              self.logMessage(frame)
+            contentType = b'text/plain'
+            responseBody = b'Server error' # TODO: send correct error code in response
         else:
           contentType = b'text/plain'
           responseBody = b''
