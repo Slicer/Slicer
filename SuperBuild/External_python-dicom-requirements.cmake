@@ -41,7 +41,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [pydicom]
-  pydicom==2.2.1 --hash=sha256:444b5b7289135ff5ea76dfc69d3597dcfde1cd050ca387f709d777f35701242d
+  pydicom==2.3.0 --hash=sha256:8ff31e077cc51d19ac3b8ca988ac486099cdebfaf885989079fdc7c75068cdd8
   # [/pydicom]
   # [Pillow]
   # Hashes correspond to the following packages:

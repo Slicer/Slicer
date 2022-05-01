@@ -6,6 +6,8 @@ import logging
 import pydicom
 import urllib
 
+import slicer
+
 class DICOMRequestHandler(object):
   """
   Implements the mapping between DICOMweb endpoints
@@ -95,7 +97,7 @@ class DICOMRequestHandler(object):
           studyDataset.ModalitiesInStudy = list(modalitiesInStudy)
           studyDataset.ReferringPhysicianName = dataset.ReferringPhysicianName
           studyDataset[self.retrieveURLTag] = pydicom.dataelem.DataElement(
-              0x00080190, "UR", "TODO: provide WADO-RS RetrieveURL")
+                  0x00080190, "UR", "http://example.com") #TODO: provide WADO-RS RetrieveURL
           studyDataset.PatientName = dataset.PatientName
           studyDataset.PatientID = dataset.PatientID
           studyDataset.PatientBirthDate = dataset.PatientBirthDate

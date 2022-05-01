@@ -409,9 +409,9 @@ class SlicerHTTPServer(HTTPServer):
           except:
             etype, value, tb = sys.exc_info()
             import traceback
-            self.logMessage(etype, value)
             for frame in traceback.format_tb(tb):
               self.logMessage(frame)
+            self.logMessage(etype, value)
             contentType = b'text/plain'
             responseBody = b'Server error' # TODO: send correct error code in response
         else:
