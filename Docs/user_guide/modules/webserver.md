@@ -15,6 +15,8 @@ This code has been developed over a number of years in a separate repository whe
 
 Also note that the code should be considered somewhat experimental and a likely security risk.  Do not expose web server endpoints on the public internet without careful consideration.
 
+Because the web server uses standard http, there are many off-the-shelf security options, such as firewalls, ssh-tunneling, and authenticating proxies, that can be used to improve security of installations.
+
 ## Current Features
 
 The server launches on port `2016` by default when you enter the module. Access logs are shown in the GUI by default and can be routed to the console if persistence is needed (the GUI logs are cleared periodically).  If the default port is in use, other ports are checked sequentially until an open port is found, allowing more than one Slicer web server to run concurrently.
