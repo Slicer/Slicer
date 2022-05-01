@@ -376,7 +376,7 @@ class SlicerHTTPServer(HTTPServer):
           self.logMessage("Could not interpret first request lines: ", requestLines)
 
         if requestLines == "":
-          self.logMessage("Assuming empty sting is HTTP/1.1 GET of /.")
+          self.logMessage("Assuming empty string is HTTP/1.1 GET of /.")
 
         if version != b"HTTP/1.1":
           self.logMessage("Warning, we don't speak %s", version)

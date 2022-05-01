@@ -167,7 +167,7 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     Send the matrix for a tracked object in the scene
     :param m: 4x4 tracker matrix in column major order (position is last row)
     :param q: quaternion in WXYZ order
-    :param p: postion (last column of transform)
+    :param p: position (last column of transform)
     Matrix is overwritten if position or quaternion are provided
     """
     p = urllib.parse.urlparse(request.decode())
@@ -583,9 +583,9 @@ space origin: %%origin%%
     """
     Set the location of a control point in a markups fiducial
     :param id: mrml id of the fiducial list
-    :param r: Right cooridnate
-    :param a: Anterior cooridnate
-    :param s: Superior cooridnate
+    :param r: Right coordinate
+    :param a: Anterior coordinate
+    :param s: Superior coordinate
     """
     p = urllib.parse.urlparse(request.decode())
     q = urllib.parse.parse_qs(p.query)

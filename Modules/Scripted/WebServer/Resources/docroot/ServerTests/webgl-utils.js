@@ -36,7 +36,7 @@
  *
  * Instead of setting up a context manually it is recommended to
  * use. This will check for success or failure. On failure it
- * will attempt to present an approriate message to the user.
+ * will attempt to present an appropriate message to the user.
  *
  *       gl = WebGLUtils.setupWebGL(canvas);
  *
