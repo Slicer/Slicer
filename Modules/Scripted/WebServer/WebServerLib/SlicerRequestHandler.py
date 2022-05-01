@@ -216,7 +216,7 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
 
     self.tracker.SetMatrixTransformToParent(m)
 
-    return ( b"got it" ), b'text/plain'
+    return ( f"Set matrix".encode() ), b'text/plain'
 
   def sampleData(self, request):
     p = urllib.parse.urlparse(request.decode())
@@ -233,7 +233,7 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
       SampleData.downloadSample(name)
     except IndexError:
       return ( f"sampledata {name} was not found".encode() ), b'text/plain'
-    return ( b"got it" ), b'text/plain'
+    return ( f"Sample data {name} loaded".encode() ), b'text/plain'
 
   def volumeSelection(self,request):
     """
@@ -273,7 +273,7 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     volumeNode = nodes[nodes.keys()[newIndex]]
     selectionNode.SetReferenceActiveVolumeID( volumeNode.GetID() )
     applicationLogic.PropagateVolumeSelection(0)
-    return ( "got it" ), b'text/plain'
+    return ( f"Volume selected".encode() ), b'text/plain'
 
   def volumes(self, request, requestBody):
     """
@@ -724,7 +724,7 @@ space origin: %%origin%%
     if viewersLayout is not None:
       SlicerRequestHandler.setViewersLayout(viewersLayout)
 
-    return ( b"got it" ), b'text/plain'
+    return ( f"Switched {contents} to {viewersLayout}".encode() ), b'text/plain'
 
   def slice(self,request):
     """return a png for a slice view.

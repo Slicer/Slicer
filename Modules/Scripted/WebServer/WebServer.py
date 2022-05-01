@@ -102,29 +102,29 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
     # handlers
 
     self.enableSlicerHandler = qt.QCheckBox()
-    self.enableSlicerHandler.toolTip = "Enable remote control of Slicer application"
+    self.enableSlicerHandler.toolTip = "Enable remote control of Slicer application (stop server to change option)"
     advancedFormLayout.addRow('Slicer API: ', self.enableSlicerHandler)
 
     self.enableSlicerHandlerExec = qt.QCheckBox()
-    self.enableSlicerHandlerExec.toolTip = "Enable execution of arbitrary Python command using Slicer API. It only has effect if Slicer API is enabled, too."
+    self.enableSlicerHandlerExec.toolTip = "Enable execution of arbitrary Python command using Slicer API. It only has effect if Slicer API is enabled, too (stop server to change option)."
     advancedFormLayout.addRow('Slicer API exec: ', self.enableSlicerHandlerExec)
 
     self.enableDICOMHandler = qt.QCheckBox()
-    self.enableDICOMHandler.toolTip = "Enable serving Slicer DICOM database content via DICOMweb"
+    self.enableDICOMHandler.toolTip = "Enable serving Slicer DICOM database content via DICOMweb (stop server to change option)"
     advancedFormLayout.addRow('DICOMweb API: ', self.enableDICOMHandler)
 
     self.enableStaticPagesHandler = qt.QCheckBox()
-    self.enableStaticPagesHandler.toolTip = "Enable serving static pages"
+    self.enableStaticPagesHandler.toolTip = "Enable serving static pages (stop server to change option)"
     advancedFormLayout.addRow('Static pages: ', self.enableStaticPagesHandler)
 
     # log to console
     self.logToConsole = qt.QCheckBox()
-    self.logToConsole.toolTip = "Copy log messages to the python console and parent terminal"
+    self.logToConsole.toolTip = "Copy log messages to the python console and parent terminal (disable to improve performance)"
     advancedFormLayout.addRow('Log to Console: ', self.logToConsole)
 
     # log to GUI
     self.logToGUI = qt.QCheckBox()
-    self.logToGUI.toolTip = "Copy log messages to the log widget"
+    self.logToGUI.toolTip = "Copy log messages to the log widget (disable to improve performance)"
     advancedFormLayout.addRow('Log to GUI: ', self.logToGUI)
 
     # Initialize GUI
@@ -139,7 +139,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
     self.enableDICOMHandler.connect('clicked()', self.updateHandlersFromGUI)
     self.enableStaticPagesHandler.connect('clicked()', self.updateHandlersFromGUI)
     self.localConnectionButton.connect('clicked()', self.openLocalConnection)
-    self.localQtConnectionButton.connect('clicked()', lambda : self.openQtLocalConnection())
+    self.localQtConnectionButton.connect('clicked()', self.openQtLocalConnection)
     self.clearLogButton.connect('clicked()', self.log.clear)
     self.logToConsole.connect('clicked()', self.updateLoggingFromGUI)
     self.logToGUI.connect('clicked()', self.updateLoggingFromGUI)
@@ -192,7 +192,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
   def openLocalConnection(self):
     qt.QDesktopServices.openUrl(qt.QUrl(f'http://localhost:{self.logic.port}'))
 
-  def openQtLocalConnection(self,url):
+  def openQtLocalConnection(self):
     self.webWidget = slicer.qSlicerWebWidget()
     self.webWidget.url = f'http://localhost:{self.logic.port}'
     self.webWidget.show()
