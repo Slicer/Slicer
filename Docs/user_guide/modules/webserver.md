@@ -54,6 +54,30 @@ Currently only limited forms are supported (scalar volumes and grid transforms).
 
 Other endpoints allow get/set of transforms and fiducials.
 
+## DICOMweb
+
+Only a subset of DICOMweb is supported, but it is enough to run some viewers in a demo mode.
+
+For OHIF version 2, change the `platform/viewer/public/config/default.js`, set the `servers` configuration key as follows.
+
+```
+  servers: {
+    dicomWeb: [
+      {
+        name: 'DCM4CHEE',
+        wadoUriRoot: 'http://localhost:2016/dicom',
+        qidoRoot: 'http://localhost:2016/dicom',
+        wadoRoot: 'http://localhost:2016/dicom',
+        qidoSupportsIncludeField: true,
+        imageRendering: 'wadouri',
+        thumbnailRendering: 'wadouri',
+        enableStudyLazyLoad: true,
+        supportsFuzzyMatching: true,
+      },
+    ],
+  },
+```
+
 ## Panels and their use
 
 Currently there is only the logging console and the demo buttons. Further controls may be added depending on needs.
