@@ -58,6 +58,8 @@ protected:
   ~vtkMRMLLabelMapVolumeNode() override;
   vtkMRMLLabelMapVolumeNode(const vtkMRMLLabelMapVolumeNode&);
   void operator=(const vtkMRMLLabelMapVolumeNode&);
+
+  int GetResamplingInterpolationMode() override;
 };
 
 #endif

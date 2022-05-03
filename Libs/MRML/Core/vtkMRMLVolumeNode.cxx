@@ -1050,7 +1050,19 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
     }
 
   reslice->SetInputConnection(this->ImageDataConnection);
-  reslice->SetInterpolationModeToLinear();
+
+  // GetResamplingInterpolationMode does not use VTK_RESLICE... constants because it is an implementation
+  // detail that currently vtkImageReslice is used for resampling.
+  int resamplingMode = this->GetResamplingInterpolationMode();
+  switch (resamplingMode)
+    {
+    case VTK_NEAREST_INTERPOLATION: reslice->SetInterpolationModeToNearestNeighbor(); break;
+    case VTK_LINEAR_INTERPOLATION: reslice->SetInterpolationModeToLinear(); break;
+    case VTK_CUBIC_INTERPOLATION: reslice->SetInterpolationModeToCubic(); break;
+    default:
+      vtkErrorMacro("ApplyNonLinearTransform: invalid interpolation mode: " << this->GetResamplingInterpolationMode());
+    }
+
   double backgroundColor[4] = { 0, 0, 0, 0 };
   for (int i = 0; i < 4; i++)
     {
@@ -1104,6 +1116,13 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
 
   this->SetAndObserveImageData(resampleImage.GetPointer());
   this->EndModify(wasModified);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLVolumeNode::GetResamplingInterpolationMode()
+{
+  // By default linear interpolation is used for all volumes.
+  return VTK_LINEAR_INTERPOLATION;
 }
 
 //---------------------------------------------------------------------------
