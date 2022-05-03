@@ -34,6 +34,10 @@ public:
   vtkTypeMacro(vtkMRMLStaticMeasurement, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  /// Create a new instance of this measurement type.
+  VTK_NEWINSTANCE
+  vtkMRMLMeasurement* CreateInstance() const override { return vtkMRMLStaticMeasurement::New(); }
+
   /// Do nothing to compute the measurement as it is static
   void Compute() override;
 

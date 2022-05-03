@@ -33,6 +33,10 @@ public:
   vtkTypeMacro(vtkMRMLMeasurementLength, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  /// Create a new instance of this measurement type.
+  VTK_NEWINSTANCE
+  vtkMRMLMeasurement* CreateInstance() const override { return vtkMRMLMeasurementLength::New(); }
+
   /// Calculate length of \sa InputMRMLNode curve markup node and store the result internally
   void Compute() override;
 
