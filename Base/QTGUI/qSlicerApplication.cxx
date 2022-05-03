@@ -148,7 +148,7 @@ public:
   // to keep track if the object is deleted already by the MainWindow.
   QPointer<ctkSettingsDialog> SettingsDialog;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  qSlicerExtensionsManagerDialog* ExtensionsManagerDialog;
+  QPointer<qSlicerExtensionsManagerDialog> ExtensionsManagerDialog;
   bool IsExtensionsManagerDialogOpen;
 #endif
 #ifdef Slicer_USE_QtTesting
