@@ -72,3 +72,11 @@ void vtkMRMLLabelMapVolumeNode::CreateDefaultDisplayNodes()
   dispNode->SetDefaultColorMap();
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }
+
+//----------------------------------------------------------------------------
+int vtkMRMLLabelMapVolumeNode::GetResamplingInterpolationMode()
+{
+  // Labelmap volumes must be resampled using nearest neighbor method to avoid
+  // introducing new label values at boundaries.
+  return VTK_NEAREST_INTERPOLATION;
+}

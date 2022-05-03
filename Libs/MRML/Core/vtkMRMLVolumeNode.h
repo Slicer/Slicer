@@ -285,6 +285,10 @@ protected:
   /// If useParentTransform is false then parent transform is ignored.
   void GetCenterPositionRAS(double* centerPositionRAS, bool useParentTransform=true);
 
+  /// Returns the interpolation algorithm that should be used for resampling the volume.
+  /// The value is one of VTK_NEAREST_INTERPOLATION, VTK_LINEAR_INTERPOLATION, or VTK_CUBIC_INTERPOLATION.
+  virtual int GetResamplingInterpolationMode();
+
   /// these are unit length direction cosines
   double IJKToRASDirections[3][3];
 
