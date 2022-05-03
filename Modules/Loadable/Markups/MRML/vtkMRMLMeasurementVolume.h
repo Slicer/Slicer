@@ -33,6 +33,10 @@ public:
   vtkTypeMacro(vtkMRMLMeasurementVolume, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  /// Create a new instance of this measurement type.
+  VTK_NEWINSTANCE
+  vtkMRMLMeasurement* CreateInstance() const override { return vtkMRMLMeasurementVolume::New(); }
+
   /// Calculate Volume of \sa InputMRMLNode markups ROI node and store the result internally
   void Compute() override;
 

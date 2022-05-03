@@ -349,16 +349,12 @@ void vtkMRMLMeasurement::SetControlPointValues(vtkDoubleArray* inputValues)
 {
   if (!inputValues)
     {
-    if (this->ControlPointValues)
-      {
-      this->ControlPointValues->Delete();
-      this->ControlPointValues = nullptr;
-      }
+    this->ControlPointValues = nullptr;
     return;
     }
   if (!this->ControlPointValues)
     {
-    this->ControlPointValues = vtkDoubleArray::New();
+    this->ControlPointValues = vtkSmartPointer<vtkDoubleArray>::New();
     }
   this->ControlPointValues->DeepCopy(inputValues);
 }

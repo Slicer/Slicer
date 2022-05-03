@@ -84,6 +84,10 @@ public:
   vtkTypeMacro(vtkMRMLMeasurement, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  /// Create a new instance of this measurement type.
+  VTK_NEWINSTANCE
+  virtual vtkMRMLMeasurement* CreateInstance() const = 0;
+
   /// Reset state of object. Removes all content.
   virtual void Clear();
 
@@ -92,7 +96,7 @@ public:
   virtual void ClearValue(ComputationResult computationResult=NoChange);
 
   /// Copy one type into another (deep copy)
-  virtual void Copy(vtkMRMLMeasurement* aEntry);
+  virtual void Copy(vtkMRMLMeasurement* source);
 
   /// Perform calculation on InputMRMLNode and store the result internally.
   /// The subclasses need to implement this function
@@ -216,7 +220,7 @@ protected:
   ComputationResult LastComputationResult{InsufficientInput};
 
   /// Per-control point measurements.
-  vtkDoubleArray* ControlPointValues{nullptr};
+  vtkSmartPointer<vtkDoubleArray> ControlPointValues;
   /// Surface mesh for displaying computed value.
   vtkSmartPointer<vtkPolyData> MeshValue;
   /// MRML node used to calculate the measurement \sa Execute

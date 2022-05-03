@@ -33,6 +33,10 @@ public:
   vtkTypeMacro(vtkMRMLMeasurementArea, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  /// Create a new instance of this measurement type.
+  VTK_NEWINSTANCE
+  vtkMRMLMeasurement* CreateInstance() const override { return vtkMRMLMeasurementArea::New(); }
+
   /// Calculate area of \sa InputMRMLNode plane or closed curve markup node and store the result internally
   void Compute() override;
 

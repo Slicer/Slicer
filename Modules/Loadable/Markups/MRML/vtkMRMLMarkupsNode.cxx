@@ -159,13 +159,13 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy/*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
-  Superclass::CopyContent(anode, deepCopy);
+  Superclass::CopyContent(aSource, deepCopy);
 
-  vtkMRMLMarkupsNode* node = vtkMRMLMarkupsNode::SafeDownCast(anode);
-  if (!node)
+  vtkMRMLMarkupsNode* source = vtkMRMLMarkupsNode::SafeDownCast(aSource);
+  if (!source)
     {
     return;
     }
@@ -173,18 +173,18 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   // TODO: For now, we always deep-copy. We could improve copy performance
   // by implementing shallow-copy.
 
-  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyBeginMacro(aSource);
   vtkMRMLCopyBooleanMacro(Locked);
   vtkMRMLCopyStdStringMacro(ControlPointLabelFormat);
   vtkMRMLCopyOwnedMatrix4x4Macro(InteractionHandleToWorldMatrix);
   vtkMRMLCopyEndMacro();
 
-  this->TextList->DeepCopy(node->TextList);
+  this->TextList->DeepCopy(source->TextList);
 
   // set max number of markups after adding the new ones
-  this->LastUsedControlPointNumber = node->LastUsedControlPointNumber;
+  this->LastUsedControlPointNumber = source->LastUsedControlPointNumber;
 
-  this->CurveClosed = node->CurveClosed;
+  this->CurveClosed = source->CurveClosed;
 
   // BUG: When fiducial nodes appear in scene views as of Slicer 4.1 the per
   // fiducial information (visibility, position etc) is saved to the file on
@@ -197,7 +197,7 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
       this->Scene->IsRestoring())
     {
     if (this->GetNumberOfControlPoints() != 0 &&
-        node->GetNumberOfControlPoints() == 0)
+        source->GetNumberOfControlPoints() == 0)
       {
       // just return for now
       vtkWarningMacro("MarkupsNode Copy: Scene view is restoring and list to restore is empty, skipping copy of points");
@@ -205,15 +205,31 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
       }
     }
 
+  // Copy control points
   this->CurveInputPoly->GetPoints()->Reset();
   this->RemoveAllControlPoints();
-  int numMarkups = node->GetNumberOfControlPoints();
+  int numMarkups = source->GetNumberOfControlPoints();
   for (int n = 0; n < numMarkups; n++)
     {
-    ControlPoint* controlPoint = node->GetNthControlPoint(n);
+    ControlPoint* controlPoint = source->GetNthControlPoint(n);
     ControlPoint* controlPointCopy = new ControlPoint;
     (*controlPointCopy) = (*controlPoint);
     this->AddControlPoint(controlPointCopy, false);
+    }
+
+  // Copy measurements
+  this->RemoveAllMeasurements();
+  for (int index = 0; index < source->Measurements->GetNumberOfItems(); ++index)
+    {
+    vtkMRMLMeasurement* sourceMeasurement = vtkMRMLMeasurement::SafeDownCast(source->Measurements->GetItemAsObject(index));
+    if (!sourceMeasurement)
+      {
+      continue;
+      }
+    vtkSmartPointer<vtkMRMLMeasurement> measurement = this->GetMeasurement(sourceMeasurement->GetName().c_str());
+    measurement = vtkSmartPointer<vtkMRMLMeasurement>::Take(sourceMeasurement->CreateInstance());
+    measurement->Copy(sourceMeasurement);
+    this->AddMeasurement(measurement);
     }
 }
 
