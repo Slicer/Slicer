@@ -80,7 +80,7 @@ slicer://viewer/?studyUID=2.16.840.1.113669.632.20.121711.10000158860
     &dicomweb_uri_endpoint=%20http%3A%2F%2Fdemo.kheops.online%2Fapi%2Fwado
 ```
 
-#### MRML scene
+## MRML scene
 
 ### Get MRML node from the scene
 
@@ -277,7 +277,7 @@ slicer.mrmlScene.AddDefaultNode(defaultVolumeStorageNode)
 logging.info("Segmentation nodes will be stored uncompressed
 ```
 
-#### Module selection
+## Module selection
 
 ### Switch to a different module
 
@@ -295,7 +295,7 @@ Instead of the default Welcome module:
 qt.QSettings().setValue("Modules/HomeModule", "Data")
 ```
 
-#### Views
+## Views
 
 ### Display text in a 3D view or slice view
 
@@ -855,7 +855,7 @@ viewWidget.setMRMLViewNode(viewNode)
 viewWidget.show()
 ```
 
-#### Access VTK rendering classes
+## Access VTK rendering classes
 
 ### Access VTK views, renderers, and cameras
 
@@ -932,7 +932,7 @@ slicer.util.forceRenderAllViews()
 
 See more information on physically based rendering in VTK here: https://blog.kitware.com/vtk-pbr/
 
-#### Keyboard shortcuts and mouse gestures
+## Keyboard shortcuts and mouse gestures
 
 ### Customize keyboard shortcuts
 
@@ -1056,7 +1056,7 @@ shortcut.connect("activated()",
   lambda: slicer.modules.markups.logic().JumpSlicesToLocation(0,0,0, True))
 ```
 
-#### Launch external applications
+## Launch external applications
 
 How to run external applications from Slicer.
 
@@ -1083,7 +1083,7 @@ will output:
 
 On some systems, *shell=True* must be specified as well.
 
-#### Manage extensions
+## Manage extensions
 
 ### Download and install extension
 
