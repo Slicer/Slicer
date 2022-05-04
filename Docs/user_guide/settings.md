@@ -142,3 +142,25 @@ The following environment variables can be set before the application is started
 - `SLICER_EXTENSIONS_MANAGER_SERVER_URL`: URL of the extensions manager backend with the `/api` path. Default value is retrieved from the settings using the key `Extensions/ServerUrl`.
 - `SLICER_EXTENSIONS_MANAGER_FRONTEND_SERVER_URL`: URL of the extension manager frontend displaying the web page. Default value is retrieved from the settings using the key `Extensions/FrontendServerUrl`.
 - `SLICER_EXTENSIONS_MANAGER_SERVER_API`: Supported values are `Midas_v1` and `Girder_v1`. Default value is hard-coded to `Girder_v1`.
+
+### Qt built-in command-line options
+
+Slicer application accepts standard Qt command-line arguments that specify how Qt interacts with the windowing system.
+
+Examples of options:
+- `-qwindowgeometry geometry`, specifies window geometry for the main window using the X11-syntax. For example: `-qwindowgeometry 100x100+50+50`.
+- `-display hostname:screen_number`, switches displays on X11 and overrides the `DISPLAY` environment variable.
+- `-platform windows:dpiawareness=[0|1|2]`, sets the [DPI awareness](https://doc.qt.io/qt-5/highdpi.html#microsoft-windows) on Windows.
+- `-widgetcount`, prints debug message at the end about number of widgets left undestroyed and maximum number of widgets existed at the same time.
+- `-reverse`, sets the application's layout direction to `Qt::RightToLeft`.
+
+To learn about the supported options:
+- https://doc.qt.io/qt-5/qapplication.html#QApplication
+- https://doc.qt.io/qt-5/qguiapplication.html#supported-command-line-options
+
+:::{note}
+
+Since the Slicer launcher is itself a Qt application and the Qt built-in command-line options are expected to **only** be passed to
+the launched application `SlicerApp-real` and not the Slicer launcher, the list of arguments to filter is specified in the [Main.cpp](https://github.com/commontk/AppLauncher/blob/master/Main.cpp#L35) found in the `commontk/AppLauncher` project.
+
+:::
