@@ -10,7 +10,7 @@
   - when configuring the installer, enable `Desktop development with C++` and in installation details, check `MSVC v143 - VS2022 C++ x64...` (Visual Studio 2022 v143 toolset with 64-bit support) - in some distributions, this option is not enabled by default
 - [Qt5](https://www.qt.io/download-open-source): Download Qt universal installer and install Qt 5.15.2 components: `MSVC2019 64-bit`, `Qt Script`, `Qt WebEngine`. Installing Sources and Qt Debug Information Files are recommended for debugging (they allow stepping into Qt files with the debugger in debug-mode builds).
   - Note: These are all free, open-source components with LGPL license which allow free usage for any purpose, for any individuals or companies.
-- [NSIS](https://nsis.sourceforge.net/Download) (optional): Needed if packaging Slicer. Make sure you install the language packs.
+- [NSIS](https://nsis.sourceforge.io/Download) (optional): Needed if packaging Slicer. Make sure you install the language packs.
 
 :::{note}
 
@@ -30,7 +30,7 @@
 - Create build folder. This folder will be referred to as `<Slicer_BUILD>` in the following. Recommended path: `C:\D\S4R` for release-mode build, `C:\D\S4D` for debug-mode build.
   - You cannot use the same build tree for both release or debug mode builds. If both build types are needed, then the same source directory can be used, but a separate build directory must be created and configured for each build type.
 - Download source code into _Slicer source_ folder from GitHub: https://github.com/Slicer/Slicer.git
-  - The following command can be executed in _Slicer source_ folder to achieve this: `git clone https://github.com/Slicer/Slicer.git .`
+  - The following command can be executed in _Slicer source_ folder to achieve this: `git clone https://github.com/Slicer/Slicer.git .` (note the dot at the end of the command; the `.` is needed because without that git would create a `Slicer` subfolder in the current directory)
 - Configure the repository for developers (optional): Needed if changes need to be contributed to Slicer repository.
   - Right-click on `<Slicer_SOURCE>/Utilities` folder in Windows Explorer and select `Git bash here`
   - Execute this command in the terminal (and answer all questions): `./SetupForDevelopment.sh`
