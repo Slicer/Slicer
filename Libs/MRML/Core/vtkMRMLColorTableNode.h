@@ -212,6 +212,10 @@ public:
   /// Set a color into the User color table. Return 1 on success, 0 on failure.
   int SetColor(int entry, const char* name, double r, double g, double b, double a = 1.0);
 
+  /// Set many entries to the same name and color in one batch (with one ModifiedEvent).
+  /// This is much more efficient than setting many color entries one by one using SetColor().
+  int SetColors(int firstEntry, int lastEntry, const char* name, double r, double g, double b, double a = 1.0);
+
   /// Set a color into the User color table. Return 1 on success, 0 on failure.
   int SetColor(int entry, double r, double g, double b, double a);
   int SetColor(int entry, double r, double g, double b);
