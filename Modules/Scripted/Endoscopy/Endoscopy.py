@@ -365,7 +365,7 @@ class EndoscopyComputePath:
       if originalPointsPerSegment<pointsPerSegment:
         self.fids.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
       # Get it as a numpy array as an independent copy
-      self.path = vtk.util.numpy_support(resampledPoints.GetData())
+      self.path = vtk.util.numpy_support.vtk_to_numpy(resampledPoints.GetData())
       return
 
     # hermite interpolation functions
@@ -534,7 +534,7 @@ class EndoscopyPathModel:
       linesIDArray.SetTuple1( 0, linesIDArray.GetNumberOfTuples() - 1 )
       lines.SetNumberOfCells(1)
 
-    pointsArray = vtk.util.numpy_support(points.GetData())
+    pointsArray = vtk.util.numpy_support.vtk_to_numpy(points.GetData())
     self.planePosition, self.planeNormal = self.planeFit(pointsArray.T)
 
     # Create model node
