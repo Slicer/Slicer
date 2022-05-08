@@ -625,6 +625,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
   vtkProperty2D* actorProperties = actor->GetProperty();
   actorProperties->SetColor(displayNode->GetColor());
+  actorProperties->SetPointSize(displayNode->GetSliceIntersectionThickness());
   actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness());
   actorProperties->SetOpacity(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
 
