@@ -31,8 +31,10 @@ vtkMRMLNodeNewMacro(vtkMRMLColorTableStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLColorTableStorageNode::vtkMRMLColorTableStorageNode()
 {
-  // use 32K as a maximum color id for now
-  this->MaximumColorID = 32768;
+  // When a color table file contains very large numbers then most likely
+  // it is not a valid file (probably it is some other text file and not
+  // a color table). The highest acceptable color ID is specified in MaximumColorID.
+  this->MaximumColorID = 1000000;
   this->DefaultWriteFileExtension = "ctbl";
 }
 
@@ -150,11 +152,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       colorNode->GetLookupTable()->SetTableRange(0, maxID);
       }
     // init the table to black/opacity 0 with no name, just in case we're missing values
-    const char *noName = colorNode->GetNoName();
-    for (int i = 0; i < maxID+1; i++)
-      {
-      colorNode->SetColor(i, noName, 0.0, 0.0, 0.0, 0.0);
-      }
+    colorNode->SetColors(0, maxID, colorNode->GetNoName(), 0.0, 0.0, 0.0, 0.0);
     // We are sure that all the names are initialized here, flag it as such
     // to prevent unnecessary recomputation
     colorNode->NamesInitialisedOn();
