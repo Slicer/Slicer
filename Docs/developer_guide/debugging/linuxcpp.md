@@ -58,6 +58,20 @@ The Slicer app launcher provides options to start other programs with the Slicer
 - `--launch <executable> [<parameters>]`: executes an arbitrary program. For example, `Slicer --launch /usr/bin/gnome-terminal` starts gnome-terminal (then run GDB directly on SlicerApp-real)
 - `--gdb`: runs GDB then executes SlicerApp-real from within the debugger environment.
 
+## GDB debug by following the forked process
+
+```bash
+gdb Slicer
+```
+
+gdb should warn you that there are no debug symbols for Slicer, which is true because Slicer is the launcher. Now we need to set gdb to follow the forked process SlicerApp-real and run the launcher:
+
+```txt
+(gdb) set follow-fork-mode child
+(gdb) run
+```
+gdb will run Slicer and attach itself to the forked process SlicerApp-real
+
 ## GDB debug by using exec-wrapper
 
 An alternative approach is to use a wrapper script to emulate the functionality of the app launcher. This will allow you to use gdb or a gdb-controlling program such as an IDE, in order to interactively debug directly from GDB without attaching.
