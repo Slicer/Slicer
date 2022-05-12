@@ -1,10 +1,7 @@
-#
-# StaticPagesRequestHandler
-#
-
 import logging
 import mimetypes
 import os
+
 
 class StaticPagesRequestHandler(object):
   """Serves static pages content (files) from the configured docroot
