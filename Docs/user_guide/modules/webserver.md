@@ -129,7 +129,7 @@ For OHIF version 2, change the `platform/viewer/public/config/default.js`, set t
 
 ## Future work
 
-Features have been added to this server based on the needs of demos and proof of concept prototypes.  A more comprehensive mapping of the Slicer API to a web accessible API has not yet been performed.  Similarly, the DICOMweb implementation is bare-bones and has only been implemented to the extent required to suppor a simple viewer scenario without performance optimizations.  The existing framework could also be improved through the implementation of newer HTTP features and code refactoring.
+Features have been added to this server based on the needs of demos and proof of concept prototypes.  A more comprehensive mapping of the Slicer API to a web accessible API has not yet been performed.  Similarly, the DICOMweb implementation is bare-bones and has only been implemented to the extent required to support a simple viewer scenario without performance optimizations.  The existing framework could also be improved through the implementation of newer HTTP features and code refactoring.
 
 ## History
 
