@@ -165,215 +165,201 @@ void vtkMRMLViewLinkLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* cameraNode)
+void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCameraNode)
 {
   // only broadcast a camera node event if we are not already actively
   // broadcasting events and we are actively interacting with the node
-  if (!cameraNode || !cameraNode->GetInteracting())
+  if (!sourceCameraNode || !sourceCameraNode->GetInteracting())
+    {
+    return;
+    }
+  vtkCamera* sourceCamera = sourceCameraNode->GetCamera();
+  if (!sourceCamera)
     {
     return;
     }
 
-  vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast
-    (this->GetMRMLScene()->GetSingletonNode(cameraNode->GetLayoutName(), "vtkMRMLViewNode"));
-  if (!viewNode)
+  vtkMRMLViewNode* sourceViewNode = vtkMRMLViewNode::SafeDownCast
+    (this->GetMRMLScene()->GetSingletonNode(sourceCameraNode->GetLayoutName(), "vtkMRMLViewNode"));
+  if (!sourceViewNode)
     {
     return;
     }
 
-  int requiredViewGroup = viewNode->GetViewGroup();
-  vtkMRMLCameraNode* sNode = nullptr;
+  int sourceViewGroup = sourceViewNode->GetViewGroup();
+
+  vtkSmartPointer<vtkCollection> nodes = vtkSmartPointer<vtkCollection>::Take(
+    this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode"));
+  vtkMRMLCameraNode* cameraNode = nullptr;
   vtkCollectionSimpleIterator it;
-  vtkSmartPointer<vtkCollection> nodes;
-  nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode"));
   for (nodes->InitTraversal(it);
-      (sNode = vtkMRMLCameraNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
+      (cameraNode = vtkMRMLCameraNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
     {
-    if (!sNode || sNode == cameraNode)
+    if (!cameraNode || cameraNode == sourceCameraNode)
+      {
+      continue;
+      }
+    vtkCamera* camera = cameraNode->GetCamera();
+    if (!camera)
       {
       continue;
       }
 
-    vtkMRMLViewNode* sViewNode = vtkMRMLViewNode::SafeDownCast
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast
       (this->GetMRMLScene()->GetSingletonNode(cameraNode->GetLayoutName(), "vtkMRMLViewNode"));
-    if (!sViewNode || sViewNode->GetViewGroup() != requiredViewGroup)
-      {
-      continue;
-      }
-
-    vtkCamera* sCamera = sNode->GetCamera();
-    if (!sCamera)
+    if (!viewNode || viewNode->GetViewGroup() != sourceViewGroup)
       {
       continue;
       }
 
     // Axis selection
-    if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::LookFromAxis)
+    if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::LookFromAxis)
       {
-      vtkCamera* camera = cameraNode->GetCamera();
-      if (camera)
+      int wasModifying = cameraNode->StartModify();
+
+      if(cameraNode->GetParentTransformNode())
         {
-        int wasModifying = sNode->StartModify();
+        vtkNew<vtkTransform> cameraTransform;
+        vtkNew<vtkMatrix4x4> cameraTransformMatrix;
+        // Assumption: mrmlCamera nodes are only linearly transformed
+        vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(
+          nullptr, cameraNode->GetParentTransformNode(), cameraTransformMatrix.GetPointer());
+        cameraTransformMatrix->Invert(cameraTransformMatrix.GetPointer(), cameraTransformMatrix.GetPointer());
+        cameraTransform->Concatenate(cameraTransformMatrix.GetPointer());
 
-        if(sNode->GetParentTransformNode())
-          {
-          vtkNew<vtkTransform> cameraTransform;
-          vtkNew<vtkMatrix4x4> cameraTransformMatrix;
-          // Assumption: mrmlCamera nodes are only linearly transformed
-          vtkMRMLTransformNode::GetMatrixTransformBetweenNodes
-            (nullptr, sNode->GetParentTransformNode(), cameraTransformMatrix.GetPointer());
-          cameraTransformMatrix->Invert(cameraTransformMatrix.GetPointer(), cameraTransformMatrix.GetPointer());
-          cameraTransform->Concatenate(cameraTransformMatrix.GetPointer());
+        double position[3] = {0.0, 0.0, 0.0};
+        cameraTransform->Update();
+        cameraTransform->InternalTransformPoint(sourceCamera->GetPosition(), position);
+        camera->SetPosition(position);
 
-          double Position[3] = {0.0};
-          cameraTransform->Update();
-          cameraTransform->InternalTransformPoint(camera->GetPosition(), Position);
-          sCamera->SetPosition(Position);
-
-          double ViewUp[3] = {0.0};
-          cameraTransform->TransformNormal(camera->GetViewUp(), ViewUp);
-          sCamera->SetViewUp(ViewUp);
-          }
-        else
-          {
-          sCamera->SetPosition(camera->GetPosition());
-          sCamera->SetViewUp(camera->GetViewUp());
-          }
-
-        sNode->EndModify(wasModifying);
-        sNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
+        double viewUp[3] = {0.0, 1.0, 0.0};
+        cameraTransform->TransformNormal(sourceCamera->GetViewUp(), viewUp);
+        camera->SetViewUp(viewUp);
         }
+      else
+        {
+        camera->SetPosition(sourceCamera->GetPosition());
+        camera->SetViewUp(sourceCamera->GetViewUp());
+        }
+
+      cameraNode->EndModify(wasModifying);
+      cameraNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
       }
     // ZoomIn
-    else if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::ZoomInFlag)
+    else if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::ZoomInFlag)
       {
       // The zoom factor value is defined in the constructor of ctkVTKRenderView
       double zoomFactor = 0.05;
-      if (sCamera)
+      int wasModifying = cameraNode->StartModify();
+
+      if (camera->GetParallelProjection())
         {
-        int wasModifying = sNode->StartModify();
-
-        if (sCamera->GetParallelProjection())
-          {
-          sCamera->SetParallelScale(sCamera->GetParallelScale() / (1 + zoomFactor));
-          }
-        else
-          {
-          sCamera->Dolly(1 + zoomFactor);
-          }
-
-        sNode->EndModify(wasModifying);
-        sNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
+        camera->SetParallelScale(camera->GetParallelScale() / (1.0 + zoomFactor));
         }
+      else
+        {
+        camera->Dolly(1.0 + zoomFactor);
+        }
+
+      cameraNode->EndModify(wasModifying);
+      cameraNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
       }
     // ZoomOut
-    else if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::ZoomOutFlag)
+    else if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::ZoomOutFlag)
       {
       // The zoom factor value is defined in the constructor of ctkVTKRenderView
       double zoomFactor = -0.05;
-      if (sCamera)
+      int wasModifying = cameraNode->StartModify();
+
+      if (camera->GetParallelProjection())
         {
-        int wasModifying = sNode->StartModify();
-
-        if (sCamera->GetParallelProjection())
-          {
-          sCamera->SetParallelScale(sCamera->GetParallelScale() / (1 + zoomFactor));
-          }
-        else
-          {
-          sCamera->Dolly(1 + zoomFactor);
-          }
-
-        sNode->EndModify(wasModifying);
-        sNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
+        camera->SetParallelScale(camera->GetParallelScale() / (1.0 + zoomFactor));
         }
+      else
+        {
+        camera->Dolly(1.0 + zoomFactor);
+        }
+
+      cameraNode->EndModify(wasModifying);
+      cameraNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
       }
     // Reset Focal Point
-    else if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::CenterFlag)
+    else if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::CenterFlag)
       {
-      vtkCamera* camera = cameraNode->GetCamera();
-      if (camera)
+      int wasModifying = cameraNode->StartModify();
+
+      if(cameraNode->GetParentTransformNode())
         {
-        int wasModifying = sNode->StartModify();
+        vtkNew<vtkTransform> cameraTransform;
+        vtkNew<vtkMatrix4x4> cameraTransformMatrix;
+        // Assumption: mrmlCamera nodes are only linearly transformed
+        vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(
+          nullptr, cameraNode->GetParentTransformNode(), cameraTransformMatrix.GetPointer());
+        cameraTransformMatrix->Invert(cameraTransformMatrix.GetPointer(), cameraTransformMatrix.GetPointer());
+        cameraTransform->Concatenate(cameraTransformMatrix.GetPointer());
 
-        if(sNode->GetParentTransformNode())
-          {
-          vtkNew<vtkTransform> cameraTransform;
-          vtkNew<vtkMatrix4x4> cameraTransformMatrix;
-          // Assumption: mrmlCamera nodes are only linearly transformed
-          vtkMRMLTransformNode::GetMatrixTransformBetweenNodes
-            (nullptr, sNode->GetParentTransformNode(), cameraTransformMatrix.GetPointer());
-          cameraTransformMatrix->Invert(cameraTransformMatrix.GetPointer(), cameraTransformMatrix.GetPointer());
-          cameraTransform->Concatenate(cameraTransformMatrix.GetPointer());
-
-          double FocalPoint[3] = {0.};
-          cameraTransform->Update();
-          cameraTransform->InternalTransformPoint(camera->GetFocalPoint(), FocalPoint);
-          sCamera->SetFocalPoint(FocalPoint);
-          }
-        else
-          {
-          sCamera->SetFocalPoint(camera->GetFocalPoint());
-          }
-
-        sNode->EndModify(wasModifying);
-        sNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
+        double focalPoint[3] = {0.0, 0.0, 0.0};
+        cameraTransform->Update();
+        cameraTransform->InternalTransformPoint(sourceCamera->GetFocalPoint(), focalPoint);
+        camera->SetFocalPoint(focalPoint);
         }
+      else
+        {
+        camera->SetFocalPoint(sourceCamera->GetFocalPoint());
+        }
+
+      cameraNode->EndModify(wasModifying);
+      cameraNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
       }
     // Update vtkCameras (i.e., mouse interactions)
-    else if (cameraNode->GetInteractionFlags() == vtkMRMLCameraNode::CameraInteractionFlag)
+    else if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::CameraInteractionFlag)
       {
-      vtkCamera* camera = cameraNode->GetCamera();
-      if (camera)
+      int wasModifying = cameraNode->StartModify();
+
+      if(cameraNode->GetParentTransformNode())
         {
-        int wasModifying = sNode->StartModify();
+        vtkNew<vtkTransform> cameraTransform;
+        vtkNew<vtkMatrix4x4> cameraTransformMatrix;
+        // Assumption: mrmlCamera nodes are only linearly transformed
+        vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, cameraNode->GetParentTransformNode(), cameraTransformMatrix.GetPointer());
+        cameraTransformMatrix->Invert(cameraTransformMatrix.GetPointer(), cameraTransformMatrix.GetPointer());
+        cameraTransform->Concatenate(cameraTransformMatrix.GetPointer());
 
-        if(sNode->GetParentTransformNode())
+        double position[3] = {0.0, 0.0, 0.0};
+        cameraTransform->Update();
+        cameraTransform->InternalTransformPoint(sourceCamera->GetPosition(), position);
+        camera->SetPosition(position);
+
+        double focalPoint[3] = {0.0, 0.0, 0.0};
+        cameraTransform->Update();
+        cameraTransform->InternalTransformPoint(sourceCamera->GetFocalPoint(), focalPoint);
+        camera->SetFocalPoint(focalPoint);
+
+        double viewUp[3] = {0.0, 1.0, 0.0};
+        cameraTransform->TransformNormal(sourceCamera->GetViewUp(), viewUp);
+        camera->SetViewUp(viewUp);
+        }
+      else
+        {
+        camera->SetPosition(sourceCamera->GetPosition());
+        camera->SetFocalPoint(sourceCamera->GetFocalPoint());
+        camera->SetViewUp(sourceCamera->GetViewUp());
+        if (sourceCamera->GetParallelProjection())
           {
-          vtkNew<vtkTransform> cameraTransform;
-          vtkNew<vtkMatrix4x4> cameraTransformMatrix;
-          // Assumption: mrmlCamera nodes are only linearly transformed
-          vtkMRMLTransformNode::GetMatrixTransformBetweenNodes
-            (nullptr, sNode->GetParentTransformNode(), cameraTransformMatrix.GetPointer());
-          cameraTransformMatrix->Invert(cameraTransformMatrix.GetPointer(), cameraTransformMatrix.GetPointer());
-          cameraTransform->Concatenate(cameraTransformMatrix.GetPointer());
-
-          double Position[3] = {0.0};
-          cameraTransform->Update();
-          cameraTransform->InternalTransformPoint(camera->GetPosition(), Position);
-          sCamera->SetPosition(Position);
-
-          double FocalPoint[3] = {0.0};
-          cameraTransform->Update();
-          cameraTransform->InternalTransformPoint(camera->GetFocalPoint(), FocalPoint);
-          sCamera->SetFocalPoint(FocalPoint);
-
-          double ViewUp[3] = {0.0};
-          cameraTransform->TransformNormal(camera->GetViewUp(), ViewUp);
-          sCamera->SetViewUp(ViewUp);
+          camera->SetParallelScale(sourceCamera->GetParallelScale());
           }
         else
           {
-          sCamera->SetPosition(camera->GetPosition());
-          sCamera->SetFocalPoint(camera->GetFocalPoint());
-          sCamera->SetViewUp(camera->GetViewUp());
-          if (camera->GetParallelProjection())
-            {
-            sCamera->SetParallelScale(camera->GetParallelScale());
-            }
-          else
-            {
-            sCamera->SetViewAngle(camera->GetViewAngle());
-            }
+          camera->SetViewAngle(sourceCamera->GetViewAngle());
           }
-        if (camera->GetParallelProjection())
-          {
-          sCamera->SetParallelScale(camera->GetParallelScale());
-          }
-
-        sNode->EndModify(wasModifying);
-        sNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
         }
+      if (sourceCamera->GetParallelProjection())
+        {
+        camera->SetParallelScale(sourceCamera->GetParallelScale());
+        }
+
+      cameraNode->EndModify(wasModifying);
+      cameraNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
       }
     }
 }
