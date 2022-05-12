@@ -153,6 +153,7 @@ cameras.md
 eventbroker.md
 executionmodeltour.md
 extensionwizard.md
+webserver.md
 ```
 
 ## Testing
