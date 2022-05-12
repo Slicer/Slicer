@@ -49,7 +49,7 @@ Logging to the console and/or the GUI is useful for learning about the software 
 :::
 
 :::{warning}
-The `Slicer API exec` option exposes the full python interface of Slicer running with the same permissions as the Slicer app itself.  This means that users of that API can install arbtrary code on the system and execute it with the user's rights.  In practice this means that he user of the API can perform actions such as deleting files, sending emails, or insalling system software.  Exposing these capabilities is intentional as part of the design of the module, but users should be aware that enabling this feature is effectively the same as giving the user of the API the password to whatever account is running Slicer.
+The `Slicer API exec` option exposes the full python interface of Slicer running with the same permissions as the Slicer app itself.  This means that users of that API can install arbitrary code on the system and execute it with the user's rights.  In practice this means that he user of the API can perform actions such as deleting files, sending emails, or installing system software.  Exposing these capabilities is intentional as part of the design of the module, but users should be aware that enabling this feature is effectively the same as giving the user of the API the password to whatever account is running Slicer.
 
 Note also that even with the `Slicer API exec` disabled, it is possible that other endpoints expose vulerabilities such as buffer overruns that could lead to server exploits.  It is suggested that only trusted users be granted access to any of the API endpoints.
 :::
