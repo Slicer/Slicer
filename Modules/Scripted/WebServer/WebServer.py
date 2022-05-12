@@ -1,20 +1,22 @@
-# slicer imports
-from __main__ import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
-
-# python imports
-from http.server import HTTPServer
 import logging
 import os
 import sys
 import socket
 import urllib
+from http.server import HTTPServer
+
+import ctk
+import qt
+
+import slicer
+from slicer.ScriptedLoadableModule import *
 
 import WebServerLib
 
 #
 # WebServer
 #
+
 
 class WebServer(ScriptedLoadableModule):
   def __init__(self, parent):
@@ -32,6 +34,7 @@ This work was partially funded by NIH grant 3P41RR013218.
 #
 # WebServer widget
 #
+
 
 class WebServerWidget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -238,6 +241,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
 #
 # SlicerHTTPServer
 #
+
 
 class SlicerHTTPServer(HTTPServer):
   """

@@ -1,8 +1,3 @@
-#
-# SlicerRequestHandler
-#
-
-# python imports
 import json
 import logging
 import numpy
@@ -11,11 +6,11 @@ import sys
 import time
 import urllib
 
-from __main__ import qt
-from __main__ import slicer
-
-# vtk imports
+import qt
 import vtk.util.numpy_support
+
+import slicer
+
 
 class SlicerRequestHandler(object):
   """Implements the Slicer REST api"""
@@ -552,7 +547,6 @@ space origin: %%origin%%
 
 """.replace("%%sizes%%", sizes).replace("%%directions%%", directions).replace("%%origin%%", origin)
 
-
     nrrdData = nrrdHeader.encode() + lpsArray.tobytes()
     return nrrdData
 
@@ -650,7 +644,6 @@ space origin: %%origin%%
 
     return b'{"result": "ok"}'
 
-
   def mrml(self,request):
     """
     Returns a json list of all the mrml nodes
@@ -658,7 +651,6 @@ space origin: %%origin%%
     p = urllib.parse.urlparse(request.decode())
     q = urllib.parse.parse_qs(p.query)
     return ( json.dumps( list(slicer.util.getNodes('*').keys()) ).encode() ), b'application/json'
-
 
   def screenshot(self,request):
     """
@@ -674,7 +666,6 @@ space origin: %%origin%%
     pngData = bArray.data()
     self.logMessage('returning an image of %d length' % len(pngData))
     return pngData, b'image/png'
-
 
   @staticmethod
   def setViewersLayout(layoutName):
@@ -693,8 +684,6 @@ space origin: %%origin%%
     :param viewersLayout: {fourup, oneup3d, ...} slicer.vtkMRMLLayoutNode constants (SlicerLayout...View)
     :return: png encoded screenshot after applying params
     """
-    import vtk.util.numpy_support
-    import numpy
 
     p = urllib.parse.urlparse(request.decode())
     q = urllib.parse.parse_qs(p.query)
@@ -736,8 +725,6 @@ space origin: %%origin%%
     :param orientation: {axial, sagittal, coronal}
     :return: png encoded slice screenshot after applying params
     """
-    import vtk.util.numpy_support
-    import numpy
 
     p = urllib.parse.urlparse(request.decode())
     q = urllib.parse.parse_qs(p.query)
@@ -824,8 +811,6 @@ space origin: %%origin%%
     :param lookFromAxis: {L, R, A, P, I, S}
     :return: png binary buffer
     """
-    import numpy
-    import vtk.util.numpy_support
 
     p = urllib.parse.urlparse(request.decode())
     q = urllib.parse.parse_qs(p.query)

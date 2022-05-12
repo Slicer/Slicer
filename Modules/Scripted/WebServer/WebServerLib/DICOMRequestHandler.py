@@ -1,12 +1,9 @@
-#
-# DICOMRequestHandler
-#
-
 import logging
 import pydicom
 import urllib
 
 import slicer
+
 
 class DICOMRequestHandler(object):
   """
