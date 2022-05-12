@@ -67,12 +67,13 @@ macro(SlicerMacroExtractRepositoryInfo)
   set(${wc_info_prefix}_WC_TYPE local)
   set(${wc_info_prefix}_WC_URL "NA")
   set(${wc_info_prefix}_WC_ROOT "NA")
+  set(${wc_info_prefix}_WC_REVISION "NA")
   set(${wc_info_prefix}_WC_REVISION_NAME "NA")
   set(${wc_info_prefix}_WC_REVISION_HASH "NA")
 
   if(NOT EXISTS ${MY_SOURCE_DIR}/.git)
 
-    message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT or SVN checkout")
+    message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT checkout")
 
   else()
 
