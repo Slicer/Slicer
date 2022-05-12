@@ -682,13 +682,3 @@ It most likely means that the test driver is not linking against `ITKFactoryRegi
 - call `itk::itkFactoryRegistration();` in its main function.
 
 For more details, read [What is the ITKFactoryRegistration library?](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ#What_is_the_ITKFactoryRegistration_library_.3F).
-
-### My extension build fails with `CMake variable EXTENSION_WC_REVISION is empty` error
-
-When an extension is built, a description file is generated that contains the extension's version. The extension source code is expected to be stored in a git repository and the version information is automatically extracted from that. If the extension source code is in an uncontrolled folder (e.g., the source code was downloaded as a zip file instead of cloning the git repository) then the build system detects this and stops with the error `CMake variable EXTENSION_WC_REVISION is empty`.
-
-The recommended solution is to store the extension's source code in a git repository.
-
-To bypass automatic version detection, specify then the version using CMake variables manually when you configure your project - either using the CMake GUI or by adding these arguments when you call cmake.exe:
-
-    -DYourExtensionName_WC_REVISION:STRING=100 -DEXTENSION_WC_REVISION:STRING=100
