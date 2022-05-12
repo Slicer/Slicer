@@ -30,7 +30,7 @@
 - Create build folder. This folder will be referred to as `<Slicer_BUILD>` in the following. Recommended path: `C:\D\S4R` for release-mode build, `C:\D\S4D` for debug-mode build.
   - You cannot use the same build tree for both release or debug mode builds. If both build types are needed, then the same source directory can be used, but a separate build directory must be created and configured for each build type.
 - Download source code into _Slicer source_ folder from GitHub: https://github.com/Slicer/Slicer.git
-  - The following command can be executed in _Slicer source_ folder to achieve this: `git clone https://github.com/Slicer/Slicer.git .`
+  - The following command can be executed in _Slicer source_ folder to achieve this: `git clone https://github.com/Slicer/Slicer.git .` (note the dot at the end of the command; the `.` is needed because without that git would create a `Slicer` subfolder in the current directory)
 - Configure the repository for developers (optional): Needed if changes need to be contributed to Slicer repository.
   - Right-click on `<Slicer_SOURCE>/Utilities` folder in Windows Explorer and select `Git bash here`
   - Execute this command in the terminal (and answer all questions): `./SetupForDevelopment.sh`
