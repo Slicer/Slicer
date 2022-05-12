@@ -227,6 +227,12 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "fileName"))
       {
       std::string filename = vtkMRMLNode::URLDecodeString(attValue);
+      if (filename.empty())
+        {
+        // if filename is empty we still add it to the filename list to preserve original filename indices
+        this->AddFileName("");
+        continue;
+        }
 
       // convert to absolute filename
       std::string name;
@@ -252,6 +258,12 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
     if (!strncmp(attName, "fileListMember", 14))
       {
       std::string filename = vtkMRMLNode::URLDecodeString(attValue);
+      if (filename.empty())
+        {
+        // if filename is empty we still add it to the filename list to preserve original filename indices
+        this->AddFileName("");
+        continue;
+        }
 
       // convert to absolute filename
       std::string name;
