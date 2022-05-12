@@ -44,11 +44,21 @@ Because the web server uses standard http, there are many off-the-shelf security
   - Log to Console: Enable/disable the logging of messages in the console.
   - Log to GUI: Enable/disable the logging of messages in the module panel.
 
+:::{note}
+Logging to the console and/or the GUI is useful for learning about the software and for debugging, but slows down request handling and should be disabled for routine use.
+:::
+
+:::{warning}
+The `Slicer API exec` option exposes the full python interface of Slicer running with the same permissions as the Slicer app itself.  This means that users of that API can install arbitrary code on the system and execute it with the user's rights.  In practice this means that the user of the API can perform actions such as deleting files, sending emails, or installing system software.  Exposing these capabilities is intentional and aligned with the design of the module, but users should be aware that enabling this feature is effectively the same as giving the user of the API the password to whatever account is running Slicer.
+
+Note also that even with the `Slicer API exec` disabled, it is possible that other endpoints expose vulnerabilities such as buffer overruns that could lead to server exploits.  It is suggested that only trusted users be granted access to any of the API endpoints.
+:::
+
 ## Static endpoints
 
 Hosts files out of the module's `docroot` like any standard http server.
 
-Currently this is used just for examples.
+Currently this is used just for examples, but note that this server can be used to host [web applications](https://en.wikipedia.org/wiki/Single-page_application) of significant complexity with the option of interacting with the Slicer API.
 
 ## Slicer endpoints
 
@@ -59,11 +69,7 @@ The web server can also be accessed via other commands such as `curl`. A `dict` 
 For example, these commands may be used to download the MRHead sample data, change the screen layout and return a dictionary including the ID of the loaded volume:
 
 ```
-curl -X POST localhost:2016/slicer/exec --data "\
-import SampleData; volumeNode = SampleData.SampleDataLogic().downloadMRHead(); \
-slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView); \
-__execResult = {'volumeNodeID': volumeNode.GetID()} \
-"
+curl -X POST localhost:2016/slicer/exec --data "import SampleData; volumeNode = SampleData.SampleDataLogic().downloadMRHead(); slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView); __execResult = {'volumeNodeID': volumeNode.GetID()}"
 ```
 
 :::{note}
@@ -121,6 +127,10 @@ For OHIF version 2, change the `platform/viewer/public/config/default.js`, set t
 
 - The [OpenIGTLink](https://github.com/openigtlink/SlicerOpenIGTLink) Extension has some similar functionality customized for image guided therapy applications. It should be preferred for integration with imaging devices and use in a clinical setting or setting up continuous high-throughput image and transform streams.
 
+## Future work
+
+Features have been added to this server based on the needs of demos and proof of concept prototypes.  A more comprehensive mapping of the Slicer API to a web accessible API has not yet been performed.  Similarly, the DICOMweb implementation is bare-bones and has only been implemented to the extent required to support a simple viewer scenario without performance optimizations.  The existing framework could also be improved through the implementation of newer HTTP features and code refactoring.
+
 ## History
 
 The development of the first implementation was started by Steve Pieper in 2012 and has been developed over the years to include additional experiments. See [https://github.com/pieper/SlicerWeb](https://github.com/pieper/SlicerWeb)
@@ -131,7 +141,9 @@ In May 2022, the module was integrated into Slicer.
 
 ## Contributors
 
-- Steve Pieper (Isomics)
+- Steve Pieper, original author (Isomics)
+- Andras Lasso, refactoring and Slicer integration (Queens)
+- Jean-Christophe Fillion-Robin (Kitware)
 
 ## Acknowledgements
 
