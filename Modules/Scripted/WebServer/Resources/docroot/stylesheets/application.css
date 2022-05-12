@@ -1,0 +1,41 @@
+.container {
+  padding-left: 20px; 
+}
+
+#slicer_header {
+  font-size: 48px;
+  text-shadow: 2px 2px 3px #777;
+}
+#slicer_header .gray {
+  color: #77c;
+}
+#slicer_header .text {
+  vertical-align: middle;
+}
+
+/* Start with core styles outside of a media query that apply to mobile and up */
+/* Global typography and design elements, stacked containers */
+body { font-family: Helvetica, san-serif; }
+H1 { color: green; }
+a:link { color:purple; }
+
+/* Stack the two content containers */
+.main,
+.sidebar { display:block; width:100%; }
+
+/* First breakpoint at 576px */
+/* Inherits mobile styles, but floats containers to make columns */
+@media all and (min-width: 36em) {
+	.main { float: left; width:60%; }
+	.sidebar { float: left; width:40%; }
+}
+
+/* Second breakpoint at 800px */
+/* Adjusts column proportions, tweaks base H1 */
+@media all and (min-width: 50em) {
+	.main { width:70%; }
+	.sidebar { width:30%; }
+
+	/* You can also tweak any other styles in a breakpoint */
+	H1 { color: blue; font-size:1.2em }
+}
