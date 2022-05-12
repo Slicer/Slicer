@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>3D Slicer Server Tests</title>
+    <meta content='width=device-width, initial-scale=1' name='viewport'>
+    <link href='http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css' rel='stylesheet'>
+    <link href='stylesheets/application.css' rel='stylesheet'>
+    <script src='http://code.jquery.com/jquery-1.6.4.min.js'></script>
+    <script src='http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js'></script>
+  </head>
+  <body>
+    <div data-role='page'>
+      <div class='ui-bar ui-bar-c'>
+        <div id='slicer_header'>
+          <span class='text'>
+            <span class='gray'>3D</span>Slicer Server Tests
+          </span>
+        </div>
+      </div>
+      <div data-role='content'>
+        <ul data-role='listview'>
+
+          <li>
+            <a href='threeDCube.html'>
+              <h3>WebGL Slicer ThreeD View Cube</h3>
+              <p>Spinning cube with dynamic texture of rendered scene fetched from slicer</p>
+            </a>
+          </li>
+
+          <li>
+            <a href='timecube.html'>
+              <h3>WebGL Time Cube</h3>
+              <p>Spinning cube with dynamic texture fetched from slicer (only works when Python Imaging Library is included in Slicer-build</p>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
