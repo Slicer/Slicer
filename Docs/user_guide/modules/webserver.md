@@ -2,17 +2,25 @@
 
 ## Overview
 
-Creates a fairly simple but powerful web server that can respond to http(s) requests with data from the current application state or modify the application state. This module is meant to be the basis for implementing web applications that use Slicer as a remote render / computation engine or for controlling your Slicer instance for interaction with other system code like shell scripts or other applications.
+Creates a fairly simple but powerful web server that can respond to http(s) requests with data from the current application state or modify the application state.
 
-There are three basic types of endpoints:
-- **Static:** Hosts files out of the module's `docroot` like any standard http server. Currently this is used just for examples.
-- **Slicer:** Give read/write access to features in Slicer's MRML scene and GUI. This interface also exposes the Python interpreter so that arbitrary python code can be executed in the Slicer application (the user is prompted to approve this endpoint before code is accepted).
-- **DICOMweb:** Exposes the Slicer dicom database as a [DICOMweb endpoint](https://www.dicomstandard.org/dicomweb). This is somewhat limited, but enough to host a web app such as the [OHIF Viewer](https://ohif.org/).
+This module is meant to be the basis for implementing web applications that use Slicer as a remote render / computation engine or for controlling your Slicer instance for interaction with other system code like shell scripts or other applications.
 
+There are three types of endpoints:
+
+| Type | Description | Path | Handler |
+|--|--|--|--|
+| [Static](#static-endpoints) | Hosts files out of the module's `docroot` like any standard http server. | `/` | [StaticPagesRequestHandler][StaticPagesRequestHandler] |
+| [Slicer](#slicer-endpoints) | Give read/write access to features in Slicer's MRML scene and GUI.</br>This interface also exposes the Python interpreter so that arbitrary python code may be executed in the Slicer application. | `/slicer` | [SlicerRequestHandler][SlicerRequestHandler] |
+| [DICOMweb](#dicom-endpoints) | Exposes the Slicer dicom database as a DICOMweb services | `/dicom` | [DICOMRequestHandler][DICOMRequestHandler] |
+
+[StaticPagesRequestHandler]: https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/WebServer/WebServerLib/StaticPagesRequestHandler.py
+[SlicerRequestHandler]: https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/WebServer/WebServerLib/SlicerRequestHandler.py
+[DICOMRequestHandler]: https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/WebServer/WebServerLib/DICOMRequestHandler.py
+
+:::{note}
 The web server is integrated with the Qt event loop so it can be used together with the interactive session.
-
-This code has been developed over a number of years in a separate repository where there are additional experiments demonstrating other potential uses. The version in Slicer core has been stripped down to address the most common expected use cases. See [https://github.com/pieper/SlicerWeb](https://github.com/pieper/SlicerWeb).
-
+:::
 
 :::{warning}
 This module should be considered somewhat experimental and a likely security risk. Do not expose web server endpoints on the public internet without careful consideration.
@@ -35,6 +43,12 @@ Because the web server uses standard http, there are many off-the-shelf security
   - Static pages: Enable/disable serving of static files found in the `docroot`  associated with the `/` path.
   - Log to Console: Enable/disable the logging of messages in the console.
   - Log to GUI: Enable/disable the logging of messages in the module panel.
+
+## Static endpoints
+
+Hosts files out of the module's `docroot` like any standard http server.
+
+Currently this is used just for examples.
 
 ## Slicer endpoints
 
@@ -79,7 +93,9 @@ Other endpoints allow get/set of transforms and fiducials.
 
 ## DICOMweb endpoints
 
-Exposes the Slicer dicom database as a [DICOMweb endpoint](https://www.dicomstandard.org/dicomweb). This is somewhat limited, but enough to host a web app such as the [OHIF Viewer](https://ohif.org/).
+Exposes the Slicer dicom database as a [DICOMweb endpoint](https://www.dicomstandard.org/using/dicomweb).
+
+This version implements a subset of the `QIDO-RS` and `WADO-RS` specifications allowing to host a web app such as the [OHIF Viewer](https://ohif.org/).
 
 For OHIF version 2, change the `platform/viewer/public/config/default.js`, set the `servers` configuration key as follows.
 
@@ -104,6 +120,14 @@ For OHIF version 2, change the `platform/viewer/public/config/default.js`, set t
 ## Related modules
 
 - The [OpenIGTLink](https://github.com/openigtlink/SlicerOpenIGTLink) Extension has some similar functionality customized for image guided therapy applications. It should be preferred for integration with imaging devices and use in a clinical setting or setting up continuous high-throughput image and transform streams.
+
+## History
+
+The development of the first implementation was started by Steve Pieper in 2012 and has been developed over the years to include additional experiments. See [https://github.com/pieper/SlicerWeb](https://github.com/pieper/SlicerWeb)
+
+Then, in November 2021, a stripped down version of the module addressing the most common expected use cases was proposed in pull request [#5999](https://github.com/Slicer/Slicer/pull/5999).
+
+In May 2022, the module was integrated into Slicer.
 
 ## Contributors
 
