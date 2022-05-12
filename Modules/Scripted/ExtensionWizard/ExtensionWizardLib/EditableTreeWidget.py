@@ -1,5 +1,6 @@
 import qt
 
+
 #-----------------------------------------------------------------------------
 def _makeAction(parent, text, icon=None, shortcut=None, slot=None):
   action = qt.QAction(text, parent)
@@ -18,6 +19,7 @@ def _makeAction(parent, text, icon=None, shortcut=None, slot=None):
 
   return action
 
+
 #-----------------------------------------------------------------------------
 def _newItemPlaceholderItem(parent):
   palette = parent.palette
@@ -29,6 +31,7 @@ def _newItemPlaceholderItem(parent):
   item.setForeground(0, qt.QBrush(color))
 
   return item
+
 
 #=============================================================================
 #

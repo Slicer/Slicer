@@ -15,9 +15,9 @@ jobs:
       CERTDATA_REPO: gecko-dev
       CERTDATA_PATH: security/nss/lib/ckfw/builtins/certdata.txt
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Get sha and cannonical download url for latest version of certdata.txt file
+      - name: Get sha and canonical download url for latest version of certdata.txt file
         id: latest_certdata
         run: |
           sha=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \

@@ -1,6 +1,6 @@
 <RCC>
   <qresource>
-    <file>Icons/Chat.png</file> <!-- Adapted from http://openclipart.org/detail/170274/chat-button-by-scyg -->
+    <file>Icons/Chat.png</file> <!-- Adapted from https://openclipart.org/detail/170274/chat-button-by-scyg -->
     <file>Icons/SlicerWelcome.png</file>
   </qresource>
   <qresource>
@@ -10,8 +10,6 @@
     <file>Images/WelcomeLogo@2x.png</file>
     <file>HTML/OtherUsefulHints.html</file>
     <file>HTML/Feedback.html</file>
-    <file>Images/SlicerLoadDicom-Original.png</file>
-    <file>Images/SlicerLoadData-Original.png</file>
     <file>Images/SlicerWWW-Original.png</file>
     <file>Images/SlicerAdvancedGear-Original.png</file>
     <file>Images/WelcomeSubjectHierarchy.png</file>

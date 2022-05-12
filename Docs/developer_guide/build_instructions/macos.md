@@ -164,18 +164,6 @@ warning: target '@rpath/QtGui.framework/Versions/5/QtGui' does not exist...
 
 is present during packaging - doublecheck that Slicer was built with Qt that was built from source and not Qt that was installed from a web-installer or homebrew.
 
-#### LibArchive pointing to a nonexistent path
-
-If a packaged Slicer is launched on another mac and it crashes with the error log saying that
-
-```
-Library not loaded: /usr/local/opt/zstd/lib/libzstd.1.dylib
-  Referenced from: Slicer.app/Contents/lib/Slicer-4.13/libarchive.17.dylib
-```
-
-It means that `libarchive` has has found homebrew versions of some of it's requirements, rather than local ones. For the packaged version of Slicer to run on other machines none of the prerequisites should be installed via homebrew. For example `lz4` and `zstd` are bundled with `subversion` and `rsync` so if you have these two application installed via homebrew, `libarchive` will grab them from `/usr/local/opt/` and the packaged Slicer will not run on other machines. The solution is either to remove them from from homebrew with `brew remove lz4` and `brew remove zsdt` or to change the `$PATH` so that the local build folder goes before `/usr/local/opt/`. After doing this Slicer should be rebuilt and repackaged.
-See [Relevant issue that's tracking this error](https://github.com/Slicer/Slicer/issues/5415)
-
 ## Update Homebrew packages
 
 Slicer can be installed with a single command using [Homebrew](https://brew.sh/), as described in the [installation documentation](../../user_guide/getting_started.md#installing-using-homebrew).

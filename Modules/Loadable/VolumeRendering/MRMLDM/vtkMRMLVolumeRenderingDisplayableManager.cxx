@@ -348,7 +348,6 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UseDisplayNode(vtkMR
   vtkMRMLVolumeRenderingDisplayNode* volRenDispNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(displayNode);
   if ( !volRenDispNode
     || !volRenDispNode->GetVolumeNodeID()
-    || !volRenDispNode->GetROINodeID()
     || !volRenDispNode->GetVolumePropertyNodeID() )
     {
     return false;
@@ -370,8 +369,8 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::IsVisible(vtkMRMLVol
     }
 
   return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D()
-    && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID())
-    && displayNode->GetOpacity() > 0;
+    && displayNode->GetOpacity() > 0
+    && displayNode->IsDisplayableInView(this->External->GetMRMLViewNode()->GetID());
 }
 
 //---------------------------------------------------------------------------
@@ -1051,27 +1050,27 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
     vtkErrorWithObjectMacro(this->External, "UpdatePipelineROIs: Unable to get volume mapper");
     return;
     }
-  if (!displayNode || displayNode->GetROINodeID() == nullptr || !displayNode->GetCroppingEnabled())
+  if (!displayNode || displayNode->GetROINode() == nullptr || !displayNode->GetCroppingEnabled())
     {
     volumeMapper->RemoveAllClippingPlanes();
     return;
     }
 
-  vtkMRMLAnnotationROINode* roiNode = displayNode->GetROINode();
   vtkMRMLMarkupsROINode* markupsROINode = displayNode->GetMarkupsROINode();
+  vtkMRMLAnnotationROINode* annotationRoiNode = displayNode->GetAnnotationROINode();
   vtkNew<vtkPlanes> planes;
-  if (roiNode)
-    {
-    // Make sure the ROI node's inside out flag is on
-    roiNode->InsideOutOn();
-
-    // Calculate and set clipping planes
-    roiNode->GetTransformedPlanes(planes.GetPointer());
-    }
-  else if (markupsROINode)
+  if (markupsROINode)
     {
     // Calculate and set clipping planes
     markupsROINode->GetTransformedPlanes(planes.GetPointer(), true);
+    }
+  else if (annotationRoiNode)
+    {
+    // Make sure the ROI node's inside out flag is on
+    annotationRoiNode->InsideOutOn();
+
+    // Calculate and set clipping planes
+    annotationRoiNode->GetTransformedPlanes(planes.GetPointer());
     }
   volumeMapper->SetClippingPlanes(planes.GetPointer());
 }

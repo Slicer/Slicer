@@ -1,7 +1,7 @@
-import io
 import os
 import tempfile
 import unittest
+
 import slicer.util
 
 

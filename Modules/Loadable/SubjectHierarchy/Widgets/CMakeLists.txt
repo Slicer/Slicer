@@ -35,8 +35,6 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyDefaultPlugin.h
   qSlicerSubjectHierarchyCloneNodePlugin.cxx
   qSlicerSubjectHierarchyCloneNodePlugin.h
-  qSlicerSubjectHierarchyChartsPlugin.cxx
-  qSlicerSubjectHierarchyChartsPlugin.h
   qSlicerSubjectHierarchyParseLocalDataPlugin.cxx
   qSlicerSubjectHierarchyParseLocalDataPlugin.h
   qSlicerSubjectHierarchyRegisterPlugin.cxx
@@ -49,6 +47,8 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyViewContextMenuPlugin.h
   qSlicerSubjectHierarchyVisibilityPlugin.cxx
   qSlicerSubjectHierarchyVisibilityPlugin.h
+  qSlicerSubjectHierarchyExportPlugin.cxx
+  qSlicerSubjectHierarchyExportPlugin.h
   )
 if(Slicer_USE_PYTHONQT)
   list(APPEND ${KIT}_SRCS
@@ -63,7 +63,6 @@ set(${KIT}_MOC_SRCS
   qSlicerSubjectHierarchyPluginHandler.h
   qSlicerSubjectHierarchyDefaultPlugin.h
   qSlicerSubjectHierarchyCloneNodePlugin.h
-  qSlicerSubjectHierarchyChartsPlugin.h
   qSlicerSubjectHierarchyParseLocalDataPlugin.h
   qSlicerSubjectHierarchyRegisterPlugin.h
   qSlicerSubjectHierarchyFolderPlugin.h
@@ -74,6 +73,7 @@ set(${KIT}_MOC_SRCS
   qMRMLSubjectHierarchyComboBox.h
   qMRMLSubjectHierarchyModel.h
   qMRMLSortFilterSubjectHierarchyProxyModel.h
+  qSlicerSubjectHierarchyExportPlugin.h
   )
 if(Slicer_USE_PYTHONQT)
   list(APPEND ${KIT}_MOC_SRCS
@@ -95,6 +95,7 @@ set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleLogic
   qSlicerTerminologiesModuleWidgets
   MRMLCore
+  vtkSlicerVolumesModuleLogic
   )
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND ${KIT}_TARGET_LIBRARIES

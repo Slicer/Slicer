@@ -1,8 +1,10 @@
 import os
-import sys
 import traceback
 
-import qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 
 import SlicerWizard.ExtensionDescription
 import SlicerWizard.ExtensionProject
@@ -10,6 +12,7 @@ import SlicerWizard.TemplateManager
 import SlicerWizard.Utilities
 
 from ExtensionWizardLib import *
+
 
 #-----------------------------------------------------------------------------
 def _settingsList(settings, key, convertToAbsolutePaths=False):
@@ -28,6 +31,7 @@ def _settingsList(settings, key, convertToAbsolutePaths=False):
     return absolutePaths
   else:
     return value
+
 
 #=============================================================================
 #
@@ -52,6 +56,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 
     self.settingsPanel = SettingsPanel()
     slicer.app.settingsDialog().addPanel("Extension Wizard", self.settingsPanel)
+
 
 #=============================================================================
 #

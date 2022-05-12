@@ -60,7 +60,7 @@ public:
   ///
   /// Set encoding of the text
   /// For character encoding, please refer IANA Character Sets
-  /// (http://www.iana.org/assignments/character-sets/character-sets.xhtml)
+  /// (https://www.iana.org/assignments/character-sets/character-sets.xhtml)
   /// Default is VTK_ENCODING_US_ASCII
   void SetEncoding(int encoding);
   vtkGetMacro(Encoding, int);

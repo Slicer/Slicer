@@ -1,6 +1,7 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from DICOMLib import DICOMUtils
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
@@ -9,10 +10,12 @@ from slicer.util import TESTING_DATA_URL
 # RSNAVisTutorial
 #
 
+
 class RSNAVisTutorial(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     parent.title = "RSNAVisTutorial" # TODO make this more human readable by adding spaces
@@ -25,6 +28,7 @@ class RSNAVisTutorial(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qRSNAVisTutorialWidget
@@ -129,6 +133,7 @@ class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
     tester = eval(evalString)
     tester.runTest()
 
+
 #
 # RSNAVisTutorialLogic
 #
@@ -143,6 +148,7 @@ class RSNAVisTutorialLogic(ScriptedLoadableModuleLogic):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
   pass
+
 
 class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
   """
@@ -177,7 +183,6 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     self.enableScreenshots = enableScreenshotsFlag
     self.screenshotScaleFactor = screenshotScaleFactor
 
-    import os
     self.delayDisplay("Starting the DICOM test")
     #
     # first, get the data - a zip file of dicom data
@@ -388,7 +393,6 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
-
 
   def test_Part3Liver(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using the liver example data

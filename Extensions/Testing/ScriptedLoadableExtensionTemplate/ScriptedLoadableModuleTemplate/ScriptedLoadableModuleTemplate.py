@@ -1,13 +1,16 @@
 import logging
-import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
 #
 # ScriptedLoadableModuleTemplate
 #
+
 
 class ScriptedLoadableModuleTemplate(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
@@ -33,6 +36,7 @@ and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR0132
 #
 # ScriptedLoadableModuleTemplateWidget
 #
+
 
 class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -137,6 +141,7 @@ class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
 #
 # ScriptedLoadableModuleTemplateLogic
 #
+
 
 class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
   """This class should implement all the actual

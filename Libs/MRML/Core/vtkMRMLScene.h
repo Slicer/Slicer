@@ -158,11 +158,23 @@ public:
   /// \sa RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
   void RegisterNodeClass(vtkMRMLNode* node);
 
+  /// \brief Register abstract node type display name.
+  ///
+  /// This is used by GetTypeDisplayNameByClassName for an abstract class (Volume, Markups, etc),
+  /// for example in a node selector. Since abstract base classes cannot be instantiated, RegisterNodeClass
+  /// cannot be used for this purpose.
+  ///
+  /// \sa RegisterNodeClass(vtkMRMLNode* node), GetTypeDisplayNameByClassName
+  void RegisterAbstractNodeClass(std::string className, std::string typeDisplayName);
+
   /// Add a path to the list.
   const char* GetClassNameByTag(const char *tagName);
 
   /// Add a path to the list.
   const char* GetTagByClassName(const char *className);
+
+  /// Get type display name which is shown in the GUI.
+  std::string GetTypeDisplayNameByClassName(std::string className);
 
   /// Set a default node for node creation and reset.
   /// One default node can be specified for each node class.
@@ -334,6 +346,17 @@ public:
   ///
   /// \sa RegisterNodeClass(vtkMRMLNode* node)
   bool IsNodeClassRegistered(const std::string& className);
+
+  /// Get the number of registered abstract node classes
+  int GetNumberOfRegisteredAbstractNodeClasses();
+
+  /// Get the nth registered abstract node class name.
+  /// Returns empty string if out of range.
+  std::string GetNthRegisteredAbstractNodeClassName(int n);
+
+  /// Get the nth registered abstract node type display name.
+  /// Returns empty string if out of range.
+  std::string GetNthRegisteredAbstractNodeTypeDisplayName(int n);
 
   /// \brief Generate a node name that is unique in the scene.
   /// Calling this function successively with the same baseName returns a
@@ -653,6 +676,7 @@ public:
     NodeAddedEvent,
     NodeAboutToBeRemovedEvent,
     NodeRemovedEvent,
+    NodeClassRegisteredEvent,
 
     NewSceneEvent = 66030,
     MetadataAddedEvent = 66032, // ### Slicer 4.5: Simplify - Do not explicitly set for backward compat. See issue #3472
@@ -728,8 +752,12 @@ public:
   void CopyDefaultNodesToScene(vtkMRMLScene *scene);
 
   /// \brief Returns true if the scene has been "significantly" modified
-  /// since the last time it was read or written.
-  bool GetModifiedSinceRead();
+  /// since the last saved state.
+  /// If modifiedNodes is provided then it returns the list of nodes that have been found to be modified.
+  bool GetModifiedSinceRead(vtkCollection* modifiedNodes=nullptr);
+
+  /// Timestamp of the scene's last saved state.
+  vtkGetMacro(StoredTime, vtkMTimeType);
 
   /// \brief Search the scene for storable nodes that are "ModifiedSinceRead".
   ///
@@ -791,7 +819,7 @@ public:
   /// characters for filenames but avoids known issue like slashes or colons.
   /// Ideally a version from vtksys
   /// or similar should be used, but nothing seems to be available.
-  /// http://en.wikipedia.org/wiki/Percent-encoding
+  /// https://en.wikipedia.org/wiki/Percent-encoding
   /// See https://github.com/Slicer/Slicer/issues/2605
   static std::string PercentEncode(std::string s);
 
@@ -914,6 +942,7 @@ protected:
 
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;
   std::vector< std::string >  RegisteredNodeTags;
+  std::map< std::string, std::string > RegisteredAbstractNodeClassTypeDisplayNames; // map class name to type display name
 
   NodeReferencesType NodeReferences; // ReferencedIDs (string), ReferencingNodes (node pointer)
   std::map< std::string, std::string > ReferencedIDChanges;

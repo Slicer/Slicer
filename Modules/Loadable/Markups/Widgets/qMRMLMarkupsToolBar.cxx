@@ -69,8 +69,6 @@
 //---------------------------------------------------------------------------
 qMRMLMarkupsToolBarPrivate::qMRMLMarkupsToolBarPrivate(qMRMLMarkupsToolBar& object)
   : q_ptr(&object)
-  , MarkupsNodeSelector(nullptr)
-  , MarkupsPlaceWidget(nullptr)
 {
   this->DefaultPlaceClassName = "vtkMRMLMarkupsFiducialNode";
 }
@@ -80,36 +78,33 @@ void qMRMLMarkupsToolBarPrivate::init()
 {
   Q_Q(qMRMLMarkupsToolBar);
 
+  // set up keyboard shortcuts
+  q->addCreateNodeShortcut("Ctrl+Shift+A");
+  q->addTogglePersistenceShortcut("Ctrl+Shift+T");
+  q->addPlacePointShortcut("Ctrl+Shift+Space");
+
   // Markups node selector
-  // Set the toolbar (q) as parent to ensure that the MarkupsNodeSelector is deleted
-  // even if is not added to the layout.
   this->MarkupsNodeSelector = new qMRMLNodeComboBox(q);
+  this->MarkupsNodeSelector->setObjectName(QString("MarkupsNodeSelector"));
   this->MarkupsNodeSelector->setNodeTypes(QStringList(QString("vtkMRMLMarkupsNode")));
   this->MarkupsNodeSelector->setNoneEnabled(false);
   this->MarkupsNodeSelector->setAddEnabled(false);
   this->MarkupsNodeSelector->setRenameEnabled(true);
   this->MarkupsNodeSelector->setEditEnabled(true);
-  this->MarkupsNodeSelector->setMaximumWidth(150);
+  this->MarkupsNodeSelector->setMaximumWidth(165);
   this->MarkupsNodeSelector->setEnabled(true);
   this->MarkupsNodeSelector->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   this->MarkupsNodeSelector->setToolTip("Select active markup");
+  this->MarkupsNodeSelector->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+  this->NodeSelectorAction = q->addWidget(this->MarkupsNodeSelector);
 
-  connect(this->MarkupsNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SIGNAL(activeMarkupsNodeChanged(vtkMRMLNode*)) );
+  connect(this->MarkupsNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SIGNAL(activeMarkupsNodeChanged(vtkMRMLNode*)));
   connect(this->MarkupsNodeSelector, SIGNAL(nodeActivated(vtkMRMLNode*)), q, SLOT(onMarkupsNodeChanged(vtkMRMLNode*)));
 
-  // set up keyboard shortcuts
-  q->addCreateNodeShortcut(tr("Ctrl+Shift+A"));
-  q->addTogglePersistenceShortcut(tr("Ctrl+Shift+T"));
-  q->addPlacePointShortcut(tr("Ctrl+Shift+Space"));
   // Get scene and application logic
   q->setApplicationLogic(qSlicerApplication::application()->applicationLogic());
   q->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-
-  this->MarkupsNodeSelector->setMRMLScene(qSlicerApplication::application()->mrmlScene());
 }
-
-// --------------------------------------------------------------------------
-
 
 // --------------------------------------------------------------------------
 void qMRMLMarkupsToolBarPrivate::addSetModuleButton(vtkSlicerMarkupsLogic* markupsLogic, const QString& moduleName)
@@ -121,7 +116,7 @@ void qMRMLMarkupsToolBarPrivate::addSetModuleButton(vtkSlicerMarkupsLogic* marku
   moduleButton->setToolTip("Open the " + moduleName + " module");
   QString iconName = ":/Icons/" + moduleName + ".png";
   moduleButton->setIcon(QIcon(iconName));
-  QSignalMapper* mapper = new QSignalMapper(q);
+  QSignalMapper* mapper = new QSignalMapper(moduleButton);
   QObject::connect(moduleButton, SIGNAL(clicked()), mapper, SLOT(map()));
   mapper->setMapping(moduleButton, moduleName);
   QObject::connect(mapper, SIGNAL(mapped(const QString&)),
@@ -148,26 +143,6 @@ void qMRMLMarkupsToolBarPrivate::onSetModule(const QString& moduleName)
     return;
     }
   layoutManager->setCurrentModule(moduleName);
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLMarkupsToolBarPrivate::onAddNewMarkupsNodeByClass(const QString& className)
-{
-  if (this->MRMLScene)
-    {
-    vtkMRMLNode* node = this->MRMLScene->AddNewNodeByClass(className.toStdString().c_str());
-    vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
-
-    if (!markupsNode)
-      {
-      qCritical() << Q_FUNC_INFO << ": node added is not a vtkMRMLMarkupsNode.";
-      return;
-      }
-
-    std::string nodeName =
-      this->MRMLScene->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
-    markupsNode->SetName(nodeName.c_str());
-    }
 }
 
 // --------------------------------------------------------------------------
@@ -450,66 +425,135 @@ void qMRMLMarkupsToolBar::setApplicationLogic(vtkSlicerApplicationLogic* appLogi
 }
 
 //---------------------------------------------------------------------------
-void qMRMLMarkupsToolBar::addNodeActions(vtkSlicerMarkupsLogic* markupsLogic)
+void qMRMLMarkupsToolBar::initializeToolBarLayout()
+{
+  Q_D(qMRMLMarkupsToolBar);
+
+  vtkSlicerMarkupsLogic* markupsLogic =
+    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic("Markups"));
+  if (!markupsLogic)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
+    return;
+    }
+  // Markups place widget
+  d->MarkupsPlaceWidget = new qSlicerMarkupsPlaceWidget(this);
+  d->MarkupsPlaceWidget->setObjectName(QString("MarkupsPlaceWidget"));
+  d->MarkupsPlaceWidget->setDeleteAllControlPointsOptionVisible(true);
+  d->MarkupsPlaceWidget->setPlaceMultipleMarkups(qSlicerMarkupsPlaceWidget::ShowPlaceMultipleMarkupsOption);
+  d->MarkupsPlaceWidget->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+  this->addWidget(d->MarkupsPlaceWidget);
+  connect(d->MarkupsPlaceWidget, SIGNAL(activeMarkupsPlaceModeChanged(bool)), this, SIGNAL(activeMarkupsPlaceModeChanged(bool)));
+
+  // Module shortcuts
+  this->addSeparator();
+  d->addSetModuleButton(markupsLogic, "Markups");
+  d->addSetModuleButton(markupsLogic, "Annotations");
+
+  // Add event observers for registration/unregistration of markups
+  this->qvtkConnect(markupsLogic, vtkSlicerMarkupsLogic::MarkupRegistered,
+    this, SLOT(updateToolBarLayout()));
+  this->qvtkConnect(markupsLogic, vtkSlicerMarkupsLogic::MarkupUnregistered,
+    this, SLOT(updateToolBarLayout()));
+
+  this->updateToolBarLayout();
+}
+
+//---------------------------------------------------------------------------
+void qMRMLMarkupsToolBar::updateToolBarLayout()
 {
   // Node creation buttons
   Q_D(qMRMLMarkupsToolBar);
 
-  // Add node creation buttons
+  vtkSlicerMarkupsLogic* markupsLogic =
+    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic("Markups"));
+  if (!markupsLogic)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
+    return;
+    }
+
   for (const auto markupName : markupsLogic->GetRegisteredMarkupsTypes())
     {
-    vtkMRMLMarkupsNode* markupsNode =
-      markupsLogic->GetNodeByMarkupsType(markupName.c_str());
+    vtkMRMLMarkupsNode* markupsNode = markupsLogic->GetNodeByMarkupsType(markupName.c_str());
     if (markupsNode && markupsLogic->GetCreateMarkupsPushButton(markupName.c_str()))
       {
-      QSignalMapper* mapper = new QSignalMapper(this);
-      QPushButton* markupCreateButton = new QPushButton();
-      markupCreateButton->setObjectName(QString("Create") + QString(markupsNode->GetMarkupType()) + QString("PushButton"));
-      markupCreateButton->setToolTip("Create new " + QString(markupsNode->GetMarkupType()) + " node");
-      markupCreateButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
-      this->addWidget(markupCreateButton);
-      QObject::connect(markupCreateButton, SIGNAL(clicked()), mapper, SLOT(map()));
-      mapper->setMapping(markupCreateButton, markupsNode->GetClassName());
-      QObject::connect(mapper, SIGNAL(mapped(const QString&)), this, SLOT(onAddNewMarkupsNodeByClass(const QString&)));
+      bool buttonExists = false;
+      for (int index=0; index< this->layout()->count(); index++)
+        {
+        std::string buttonName = this->layout()->itemAt(index)->widget()->objectName().toStdString();
+        if (buttonName == "Create" + markupName + "PushButton")
+          {
+          buttonExists = true;
+          break;
+          }
+        }
+      if (!buttonExists)
+        {
+        QPushButton* markupCreateButton = new QPushButton();
+        QSignalMapper* mapper = new QSignalMapper(markupCreateButton);
+        std::string markupType = markupsNode->GetMarkupType() ? markupsNode->GetMarkupType() : "";
+        std::string markupDisplayName = markupsNode->GetTypeDisplayName() ? markupsNode->GetTypeDisplayName() : "";
+        markupCreateButton->setObjectName(QString::fromStdString("Create"+markupType+"PushButton"));
+        markupCreateButton->setToolTip("Create new " + QString::fromStdString(markupDisplayName));
+        markupCreateButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
+        markupCreateButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        this->insertWidget(d->NodeSelectorAction, markupCreateButton);
+        QObject::connect(markupCreateButton, SIGNAL(clicked()), mapper, SLOT(map()));
+        mapper->setMapping(markupCreateButton, markupsNode->GetClassName());
+        QObject::connect(mapper, SIGNAL(mapped(const QString&)), this, SLOT(onAddNewMarkupsNodeByClass(const QString&)));
+        }
       }
     }
 
-  this->addSeparator();
-  this->addWidget(d->MarkupsNodeSelector);
-
-  d->MarkupsPlaceWidget = new qSlicerMarkupsPlaceWidget;
-  d->MarkupsPlaceWidget->setDeleteAllMarkupsOptionVisible(true);
-  d->MarkupsPlaceWidget->setPlaceMultipleMarkups(qSlicerMarkupsPlaceWidget::ShowPlaceMultipleMarkupsOption);
-  connect(d->MarkupsPlaceWidget, SIGNAL(activeMarkupsPlaceModeChanged(bool)), this, SIGNAL(activeMarkupsPlaceModeChanged(bool)));
-  connect(d->MarkupsNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), d->MarkupsPlaceWidget, SLOT(setCurrentNode(vtkMRMLNode*)));
-  d->MarkupsPlaceWidget->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-
-  this->addWidget(d->MarkupsPlaceWidget);
-
-  this->addSeparator();
-  d->addSetModuleButton(markupsLogic, "Markups");
-  d->addSetModuleButton(markupsLogic, "Annotations");
+  for (int index = this->layout()->count()-1; index >=0 ; index--)
+    {
+    QString buttonName = this->layout()->itemAt(index)->widget()->objectName();
+    if (!buttonName.startsWith("Create") || !buttonName.endsWith("PushButton"))
+      {
+      // Not a markup create button, leave it as is
+      continue;
+      }
+    bool markupExists = false;
+    for (const auto markupName : markupsLogic->GetRegisteredMarkupsTypes())
+      {
+      //QString markupButtonName = QString("Create%1PushButton").arg(QString::fromStdString(markupName));
+      if (QString::fromStdString("Create"+markupName+"PushButton") == buttonName)
+        {
+        markupExists = true;
+        break;
+        }
+      }
+    if (markupExists)
+      {
+      // This button is still needed
+      continue;
+      }
+    // Corresponding markup type is no longer available, delete this button
+    QLayoutItem* item = this->layout()->takeAt(index);
+    delete item->widget();
+    delete item;
+    }
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLMarkupsToolBar::onAddNewMarkupsNodeByClass(const QString& className)
 {
   Q_D(qMRMLMarkupsToolBar);
-
-  if (!d->MRMLScene)
+  // Add new markups node to the scene
+  vtkMRMLMarkupsNode* markupsNode = nullptr;
+  vtkSlicerMarkupsLogic* markupsLogic =
+    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic("Markups"));
+  if (markupsLogic)
     {
-    qCritical() << Q_FUNC_INFO << " failed: invalid scene";
-    return;
+    markupsNode = markupsLogic->AddNewMarkupsNode(className.toStdString());
     }
-
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(d->MRMLScene->AddNewNodeByClass(className.toStdString().c_str()));
   if (!markupsNode)
     {
-    qCritical() << Q_FUNC_INFO << ": could not create markups node.";
+    qCritical() << Q_FUNC_INFO << ": failed to create new markups node by class " << className;
     return;
     }
-  std::string nodeName = d->MRMLScene->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
-  markupsNode->SetName(nodeName.c_str());
+  // Update GUI
   d->updateWidgetFromMRML();
   if (d->MarkupsPlaceWidget)
     {

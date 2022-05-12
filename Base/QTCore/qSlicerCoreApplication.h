@@ -74,6 +74,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString slicerSharePath READ slicerSharePath CONSTANT)
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString cachePath READ cachePath WRITE setCachePath)
+  Q_PROPERTY(QString startupWorkingPath READ startupWorkingPath CONSTANT)
   Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
   Q_PROPERTY(QString launcherSettingsFilePath READ launcherSettingsFilePath CONSTANT)
   Q_PROPERTY(QString slicerDefaultSettingsFilePath READ slicerDefaultSettingsFilePath CONSTANT)
@@ -146,6 +147,9 @@ public:
   /// \sa repositoryRevision()
   /// \sa environment()
   Q_INVOKABLE QProcessEnvironment startupEnvironment() const;
+
+  /// Current working directory at the time the application was started.
+  QString startupWorkingPath() const;
 
   /// \brief Returns the current environment.
   ///
@@ -303,7 +307,7 @@ public:
   void gatherExtensionsHistoryInformationOnStartup();
 
   /// If any, this method return the build intermediate directory
-  /// See $(IntDir) on http://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
+  /// See $(IntDir) on https://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
   QString intDir()const;
 
   /// Return true is this instance of Slicer is running from an installed directory
@@ -500,15 +504,22 @@ public:
   QSharedPointer<ctkDICOMDatabase> dicomDatabaseShared() const;
 #endif
 
-  static void loadTranslations(const QString& dir);
+  /// Return list of folders where the application looks for translations (*.qm files)
+  Q_INVOKABLE static QStringList translationFolders();
 
-  static void loadLanguage();
+  /// Load translations from all *.qm files in the specified folders.
+  /// \sa loadLanguage()
+  Q_INVOKABLE static void loadTranslations(const QString& dir);
+
+  /// Load translations from all *.qm files in translation folders.
+  /// \sa translationFolders(), loadTranslations
+  Q_INVOKABLE static void loadLanguage();
 
   /// Load certificates bundled into '<slicerHome>/<SLICER_SHARE_DIR>/Slicer.crt'.
   /// For more details, see Slicer/Base/QTCore/Resources/Certs/README
   /// Returns \a False if 'Slicer.crt' failed to be loaded.
   /// \sa QSslSocket::defaultCaCertificates()
-  static bool loadCaCertificates(const QString& slicerHome);
+  Q_INVOKABLE static bool loadCaCertificates(const QString& slicerHome);
 
   Q_INVOKABLE int registerResource(const QByteArray& data);
 
@@ -558,6 +569,11 @@ public slots:
   /// \param userMessages if specified then loading errors are returned via this object.
   /// \return Returns true on success.
   virtual bool loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages=nullptr);
+
+  /// Open URL in the the application.
+  /// Emits urlReceived signal that modules (such as DICOM module) can handle.
+  /// \param url URL string to open
+  virtual void openUrl(const QString& url);
 
 protected:
 

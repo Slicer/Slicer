@@ -21,7 +21,6 @@
 import argparse
 import json
 import os
-import sys
 import tempfile
 
 from SlicerAppTesting import *
@@ -30,6 +29,7 @@ from SlicerAppTesting import *
 Usage:
     MeasureStartupTimes.py /path/to/Slicer
 """
+
 
 def TemporaryPythonScript(code, *args, **kwargs):
   if 'suffix' not in kwargs:
@@ -42,6 +42,7 @@ def TemporaryPythonScript(code, *args, **kwargs):
   print(f"Written script {script.name} [{code}]")
   return script
 
+
 def collect_startup_times_normal(output_file, drop_cache=False, display_output=False):
   results= {}
   test = []
@@ -53,6 +54,7 @@ def collect_startup_times_normal(output_file, drop_cache=False, display_output=F
   results[" ".join(test)] = duration
   with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
+
 
 def collect_startup_times_overall(output_file, drop_cache=False, display_output=False):
 
@@ -88,12 +90,14 @@ def collect_startup_times_overall(output_file, drop_cache=False, display_output=
   with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
 
+
 def read_modules(input_file):
   # Read list of modules
   with open(input_file) as input:
     modules = json.load(input)
   print("Found %d modules reading %s\n" % (len(modules), input_file))
   return modules
+
 
 def collect_modules(output_file):
   # Collect list of all modules and their associated types
@@ -129,6 +133,7 @@ with open("{0}", 'w') as output:
 
   return read_modules(output_file)
 
+
 def slicerRevision():
   (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, [
     '--no-main-window', '--ignore-slicerrc', '--disable-modules',
@@ -136,6 +141,7 @@ def slicerRevision():
   ])
   assert returnCode == EXIT_SUCCESS
   return stdout.split()[0]
+
 
 def collect_startup_times_including_one_module(output_file, module_list, drop_cache=False, display_output=False):
   modules = collect_modules(module_list)
@@ -161,6 +167,7 @@ def collect_startup_times_including_one_module(output_file, module_list, drop_ca
   with open(output_file, 'w') as file:
     file.write(json.dumps(moduleTimes, indent=4))
 
+
 def collect_startup_times_excluding_one_module(output_file, module_list, drop_cache=False, display_output=False):
   modules = collect_modules(module_list)
   # Collect startup times disabling each module one by one
@@ -185,6 +192,7 @@ def collect_startup_times_excluding_one_module(output_file, module_list, drop_ca
   with open(output_file, 'w') as file:
     file.write(json.dumps(moduleTimes, indent=4))
 
+
 def collect_startup_times_modules_to_load(output_file, modules_to_load, module_list, drop_cache=False, display_output=False):
   modules = collect_modules(module_list)
   modulesToIgnore = list(modules.keys())
@@ -203,6 +211,7 @@ def collect_startup_times_modules_to_load(output_file, modules_to_load, module_l
   results[" ".join(modulesToIgnore)] = duration
   with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
+
 
 if __name__ == '__main__':
 
@@ -235,7 +244,7 @@ if __name__ == '__main__':
 
   if args.reuse_module_list:
     print("Loading existing module listing")
-    collect_modules = read_modules
+    collect_modules = read_modules  # noqa: F811
 
   common_kwargs = {
     'display_output': args.display_slicer_output,

@@ -20,10 +20,13 @@
 
 import argparse
 import os
-import sys
 import tempfile
 
-from SlicerAppTesting import *
+from SlicerAppTesting import (
+  EXIT_FAILURE,
+  EXIT_SUCCESS,
+  run,
+)
 
 """
 This test verifies that an exception raised in scripted module widget cleanup
@@ -47,7 +50,7 @@ def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
   temporaryModuleDirPath = tempfile.mkdtemp().replace('\\','/')
   try:
     # Copy helper module that creates a file when startup completed event is received
-    currentDirPath = os.path.dirname(os.path.abspath(__file__)).replace('\\','/')
+    currentDirPath = os.path.dirname(__file__).replace('\\','/')
     from shutil import copyfile
     copyfile(currentDirPath+'/ScriptedModuleCleanupTestHelperModule.py',
       temporaryModuleDirPath+'/ModuleCleanup.py')
@@ -83,6 +86,7 @@ def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
     if not debug:
       import shutil
       shutil.rmtree(temporaryModuleDirPath)
+
 
 if __name__ == "__main__":
 

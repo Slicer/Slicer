@@ -66,7 +66,9 @@ public:
   QList < QWidget* > OptionsWidgets;
   QColor DefaultNodeColor;
   bool DeleteMarkupsButtonVisible;
-  bool DeleteAllMarkupsOptionVisible;
+  bool DeleteAllControlPointsOptionVisible;
+  bool UnsetLastControlPointOptionVisible;
+  bool UnsetAllControlPointsOptionVisible;
   bool LastSignaledPlaceModeEnabled; // if placeModeEnabled changes compared to this value then a activeMarkupsPlaceModeChanged signal will be emitted
   bool IsUpdatingWidgetFromMRML;
 
@@ -77,7 +79,9 @@ qSlicerMarkupsPlaceWidgetPrivate::qSlicerMarkupsPlaceWidgetPrivate( qSlicerMarku
   : q_ptr(&object)
 {
   this->DeleteMarkupsButtonVisible = true;
-  this->DeleteAllMarkupsOptionVisible = true;
+  this->DeleteAllControlPointsOptionVisible = true;
+  this->UnsetLastControlPointOptionVisible = false;
+  this->UnsetAllControlPointsOptionVisible = false;
   this->PlaceMultipleMarkups = qSlicerMarkupsPlaceWidget::ShowPlaceMultipleMarkupsOption;
   this->PlaceMenu = nullptr;
   this->DeleteMenu = nullptr;
@@ -143,16 +147,18 @@ void qSlicerMarkupsPlaceWidget::setup()
 
   d->DeleteMenu = new QMenu(tr("Delete options"), d->DeleteButton);
   d->DeleteMenu->setObjectName("DeleteMenu");
-  d->DeleteMenu->addAction(d->ActionDeleteAll);
-  QObject::connect(d->ActionDeleteAll, SIGNAL(triggered()), this, SLOT(deleteAllPoints()));
   d->DeleteMenu->addAction(d->ActionUnsetLast);
   QObject::connect(d->ActionUnsetLast, SIGNAL(triggered()), this, SLOT(unsetLastDefinedPoint()));
   d->DeleteMenu->addAction(d->ActionUnsetAll);
   QObject::connect(d->ActionUnsetAll, SIGNAL(triggered()), this, SLOT(unsetAllPoints()));
-  if (d->DeleteAllMarkupsOptionVisible)
-    {
-    d->DeleteButton->setMenu(d->DeleteMenu);
-    }
+  d->DeleteMenu->addAction(d->ActionDeleteAll);
+  QObject::connect(d->ActionDeleteAll, SIGNAL(triggered()), this, SLOT(deleteAllPoints()));
+
+  d->ActionDeleteAll->setVisible(d->DeleteAllControlPointsOptionVisible);
+  d->ActionUnsetLast->setVisible(d->UnsetLastControlPointOptionVisible);
+  d->ActionUnsetAll->setVisible(d->UnsetAllControlPointsOptionVisible);
+  updateDeleteButton();
+
   d->DeleteButton->setVisible(d->DeleteMarkupsButtonVisible);
   connect( d->DeleteButton, SIGNAL(clicked()), this, SLOT(modifyLastPoint()) );
 
@@ -317,12 +323,6 @@ void qSlicerMarkupsPlaceWidget::unsetLastDefinedPoint()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsPlaceWidget::deleteLastMarkup()
-{
-  this->deleteLastPoint();
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::deleteAllPoints()
 {
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
@@ -343,12 +343,6 @@ void qSlicerMarkupsPlaceWidget::unsetAllPoints()
     return;
     }
   currentMarkupsNode->UnsetAllControlPoints();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMarkupsPlaceWidget::deleteAllMarkups()
-{
-  this->deleteAllPoints();
 }
 
 //-----------------------------------------------------------------------------
@@ -387,11 +381,11 @@ void qSlicerMarkupsPlaceWidget::setCurrentNodeActive(bool active)
     {
     if (active)
       {
-      d->MarkupsLogic->SetActiveListID(this->currentMarkupsNode());
+      d->MarkupsLogic->SetActiveList(this->currentMarkupsNode());
       }
     else
       {
-      d->MarkupsLogic->SetActiveListID(nullptr);
+      d->MarkupsLogic->SetActiveList(nullptr);
       d->InteractionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
       }
     }
@@ -436,7 +430,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
     // activate and set place mode
     if (!wasActive)
       {
-      d->MarkupsLogic->SetActiveListID(this->currentMarkupsNode());
+      d->MarkupsLogic->SetActiveList(this->currentMarkupsNode());
       }
     if (d->PlaceMultipleMarkups == ForcePlaceSingleMarkup)
       {
@@ -512,11 +506,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     return;
     }
 
-  bool activePlaceNodePlacementValid = false;
-  if (d->SelectionNode)
-    {
-    activePlaceNodePlacementValid = d->SelectionNode->GetActivePlaceNodePlacementValid();
-    }
+  bool activePlaceNodePlacementValid = !currentMarkupsNode->GetControlPointPlacementComplete();
   d->PlaceButton->setEnabled(activePlaceNodePlacementValid);
 
   d->ColorButton->setEnabled(true);
@@ -545,23 +535,22 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     d->ActionLocked->setIcon( QIcon( ":/Icons/Small/SlicerUnlock.png" ) );
     }
 
-  if (currentMarkupsNode->GetFixedNumberOfControlPoints())
+  bool fixedNumberControlPoints = currentMarkupsNode->GetFixedNumberOfControlPoints();
+  if (fixedNumberControlPoints)
     {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberLock.png"));
     d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsUnset.png"));
     d->DeleteButton->setToolTip("Unset position of the last control point placed (the control point will not be deleted).");
-    d->DeleteMenu->removeAction(d->ActionUnsetLast);
-    d->DeleteMenu->removeAction(d->ActionDeleteAll);
     }
   else
     {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberUnlock.png"));
     d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsDelete.png"));
     d->DeleteButton->setToolTip("Delete last added control point");
-    d->DeleteMenu->addAction(d->ActionUnsetLast);
-    d->DeleteMenu->addAction(d->ActionUnsetAll);
-    d->DeleteMenu->addAction(d->ActionDeleteAll);
     }
+  d->ActionUnsetLast->setVisible(!fixedNumberControlPoints && d->UnsetLastControlPointOptionVisible); // QToolButton button action does this so don't also have in menu
+  d->ActionDeleteAll->setVisible(!fixedNumberControlPoints && d->DeleteAllControlPointsOptionVisible);
+  this->updateDeleteButton();
 
   d->ActionVisibility->setEnabled(currentMarkupsNode->GetDisplayNode() != nullptr);
   if (currentMarkupsNode->GetDisplayNode() != nullptr)
@@ -599,6 +588,27 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
 
   d->IsUpdatingWidgetFromMRML = false;
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsPlaceWidget::updateDeleteButton()
+  {
+  Q_D(qSlicerMarkupsPlaceWidget);
+  if (d->DeleteButton)
+    {
+    bool showMenu = (d->ActionDeleteAll->isVisible() || d->ActionUnsetLast->isVisible() || d->ActionUnsetAll->isVisible());
+    d->DeleteButton->setMenu(showMenu ? d->DeleteMenu : nullptr);
+    d->DeleteButton->setPopupMode(showMenu ? QToolButton::MenuButtonPopup : QToolButton::DelayedPopup);
+
+    vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
+    if (currentMarkupsNode == nullptr)
+      {
+      // if there is no node selected then just leave the current button visibility as is,
+      // to avoid showing/hiding a button when the current node is temporarily set to nullptr
+      return;
+      }
+    d->DeleteButton->setVisible(showMenu || !currentMarkupsNode->GetFixedNumberOfControlPoints()); // hide when no options to show
+    }
+  }
 
 //------------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::setMRMLScene(vtkMRMLScene* scene)
@@ -643,6 +653,8 @@ void qSlicerMarkupsPlaceWidget::setPlaceMultipleMarkups(PlaceMultipleMarkupsType
   if (d->PlaceButton)
     {
     d->PlaceButton->setMenu(d->PlaceMultipleMarkups == ShowPlaceMultipleMarkupsOption ? d->PlaceMenu : nullptr);
+    // Changing to DelayedPopup mode will hide menu button to avoid confusion of empty menu
+    d->PlaceButton->setPopupMode(d->PlaceMultipleMarkups == ShowPlaceMultipleMarkupsOption ? QToolButton::MenuButtonPopup : QToolButton::DelayedPopup);
     }
   if (this->placeModeEnabled())
     {
@@ -658,20 +670,59 @@ void qSlicerMarkupsPlaceWidget::setPlaceMultipleMarkups(PlaceMultipleMarkupsType
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerMarkupsPlaceWidget::deleteAllMarkupsOptionVisible() const
+bool qSlicerMarkupsPlaceWidget::deleteAllControlPointsOptionVisible() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
-  return d->DeleteAllMarkupsOptionVisible;
+  return d->DeleteAllControlPointsOptionVisible;
 }
 
 //------------------------------------------------------------------------------
-void qSlicerMarkupsPlaceWidget::setDeleteAllMarkupsOptionVisible(bool visible)
+void qSlicerMarkupsPlaceWidget::setDeleteAllControlPointsOptionVisible(bool visible)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
-  d->DeleteAllMarkupsOptionVisible = visible;
+  d->DeleteAllControlPointsOptionVisible = visible;
   if (d->DeleteButton)
     {
-    d->DeleteButton->setMenu(visible ? d->DeleteMenu : nullptr);
+    d->ActionDeleteAll->setVisible(visible);
+    this->updateDeleteButton();
+    }
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMarkupsPlaceWidget::unsetLastControlPointOptionVisible() const
+{
+  Q_D(const qSlicerMarkupsPlaceWidget);
+  return d->UnsetLastControlPointOptionVisible;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerMarkupsPlaceWidget::setUnsetLastControlPointOptionVisible(bool visible)
+{
+  Q_D(qSlicerMarkupsPlaceWidget);
+  d->UnsetLastControlPointOptionVisible = visible;
+  if (d->DeleteButton)
+    {
+    d->ActionUnsetLast->setVisible(visible);
+    this->updateDeleteButton();
+    }
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMarkupsPlaceWidget::unsetAllControlPointsOptionVisible() const
+{
+  Q_D(const qSlicerMarkupsPlaceWidget);
+  return d->UnsetAllControlPointsOptionVisible;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerMarkupsPlaceWidget::setUnsetAllControlPointsOptionVisible(bool visible)
+{
+  Q_D(qSlicerMarkupsPlaceWidget);
+  d->UnsetAllControlPointsOptionVisible = visible;
+  if (d->DeleteButton)
+    {
+    d->ActionUnsetAll->setVisible(visible);
+    this->updateDeleteButton();
     }
 }
 
@@ -801,11 +852,11 @@ void qSlicerMarkupsPlaceWidget::onVisibilityButtonClicked()
 void qSlicerMarkupsPlaceWidget::onLockedButtonClicked()
 {
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if ( currentMarkupsNode == nullptr )
+  if (currentMarkupsNode == nullptr)
     {
     return;
     }
-  currentMarkupsNode->SetLocked( ! currentMarkupsNode->GetLocked() );
+  currentMarkupsNode->SetLocked(!currentMarkupsNode->GetLocked());
 }
 
 //-----------------------------------------------------------------------------

@@ -17,13 +17,16 @@
 
 #include "vtkMRMLNode.h"
 
+class vtkMRMLModelNode;
+class vtkMRMLSliceDisplayNode;
+
 /// \brief MRML node for storing a slice through RAS space.
 ///
 /// This node stores the information about how to composite two
 /// vtkMRMLVolumes into a single display image.
 class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 {
-  public:
+public:
   static vtkMRMLSliceCompositeNode *New();
   vtkTypeMacro(vtkMRMLSliceCompositeNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -105,9 +108,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkSetMacro (FiducialLabelVisibility, int );
 
   ///
-  /// toggles visibility of intersections of other slices in the slice viewer
-  vtkGetMacro (SliceIntersectionVisibility, int );
-  vtkSetMacro (SliceIntersectionVisibility, int );
+  /// This method is deprecated. Instead of this method use
+  /// SetIntersectingSlicesVisibility() and GetIntersectingSlicesVisibility()
+  /// of vtkMRMLSliceDisplayNode.
+  int GetSliceIntersectionVisibility();
+  void SetSliceIntersectionVisibility(int visibility);
 
   /// Get annotation space.
   vtkGetMacro ( AnnotationSpace, int );
@@ -239,27 +244,34 @@ protected:
   vtkMRMLSliceCompositeNode(const vtkMRMLSliceCompositeNode&);
   void operator=(const vtkMRMLSliceCompositeNode&);
 
-  double ForegroundOpacity;
+  // Helper functions for deprecated SetSliceIntersectionVisibility/GetSliceIntersectionVisibility methods.
+  vtkMRMLSliceDisplayNode* GetSliceDisplayNode();
+  std::string GetCompositeNodeIDFromSliceModelNode(vtkMRMLModelNode* sliceModelNode);
 
-  int Compositing;
+  // Cached value of last found displayable node (it is expensive to determine it)
+  vtkWeakPointer<vtkMRMLSliceDisplayNode> LastFoundSliceDisplayNode;
 
-  double LabelOpacity;
-  int LinkedControl;
-  int HotLinkedControl;
+  // start by showing only the background volume
+  double ForegroundOpacity{ 0.0 };
 
-  int FiducialVisibility;
-  int FiducialLabelVisibility;
+  int Compositing{ Alpha };
 
-  int SliceIntersectionVisibility;
+  // Show the label if there is one
+  double LabelOpacity{ 1.0 };
+  int LinkedControl{ 0 };
+  int HotLinkedControl{ 0 };
 
-  int AnnotationSpace;
-  int AnnotationMode;
+  int FiducialVisibility{ 1 };
+  int FiducialLabelVisibility{ 1 };
 
-  bool DoPropagateVolumeSelection;
+  int AnnotationSpace{ IJKAndRAS };
+  int AnnotationMode{ All };
 
-  int Interacting;
-  unsigned int InteractionFlags;
-  unsigned int InteractionFlagsModifier;
+  bool DoPropagateVolumeSelection{ true };
+
+  int Interacting{ 0 };
+  unsigned int InteractionFlags{ 0 };
+  unsigned int InteractionFlagsModifier{ (unsigned int)-1 };
 };
 
 #endif

@@ -26,7 +26,7 @@ curveNode = slicer.util.getNode('C')
 # Check number of arrays in the curve node
 curvePointData = curveNode.GetCurveWorld().GetPointData()
 if curvePointData.GetNumberOfArrays() != 1:
-  exceptionMessage = "Unexpected number of data arrays in curve: " + str(curvePointData.GetNumberOfArrays())
+  exceptionMessage = f"Unexpected number of data arrays in curve: {curvePointData.GetNumberOfArrays()} (expected 1)"
   raise Exception(exceptionMessage)
 
 # Turn on curvature calculation in curve node
@@ -35,11 +35,11 @@ curveNode.GetMeasurement("curvature max").SetEnabled(True)
 # Check curvature computation result
 curvePointData = curveNode.GetCurveWorld().GetPointData()
 if curvePointData.GetNumberOfArrays() != 2:
-  exceptionMessage = "Unexpected number of data arrays in curve: " + str(curvePointData.GetNumberOfArrays())
+  exceptionMessage = f"Unexpected number of data arrays in curve: {curvePointData.GetNumberOfArrays()} (expected 2)"
   raise Exception(exceptionMessage)
 
 if curvePointData.GetArrayName(1) != 'Curvature':
-  exceptionMessage = "Unexpected data array name in curve: " + str(curvePointData.GetArrayName(1))
+  exceptionMessage = f"Unexpected data array name in curve: {curvePointData.GetArrayName(1)} (expected 'Curvature')"
   raise Exception(exceptionMessage)
 
 curvatureArray = curvePointData.GetArray(1)

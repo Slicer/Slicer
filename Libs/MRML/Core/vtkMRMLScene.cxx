@@ -22,17 +22,11 @@ Version:   $Revision: 1.18 $
 
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCameraNode.h"
-#include "vtkMRMLChartNode.h"
-#include "vtkMRMLChartViewNode.h"
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLDoubleArrayNode.h"
-#include "vtkMRMLDoubleArrayStorageNode.h"
-#include "vtkMRMLFiducialListNode.h"
-#include "vtkMRMLFiducialListStorageNode.h"
 #include "vtkMRMLFolderDisplayNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLHierarchyStorageNode.h"
@@ -62,6 +56,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLSequenceStorageNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSnapshotClipNode.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
@@ -123,16 +118,9 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->NodeIDsMTime = 0;
 
-  this->RegisteredNodeClasses.clear();
-  this->UniqueIDs.clear();
-  this->UniqueNames.clear();
-
   this->Nodes = vtkCollection::New();
   this->MaximumNumberOfSavedUndoStates = 20;
   this->UndoFlag = false;
-
-  this->NodeReferences.clear();
-  this->ReferencedIDChanges.clear();
 
   this->CacheManager = nullptr;
   this->DataIOManager = nullptr;
@@ -183,9 +171,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelDisplayNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipModelsNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFiducialListNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFiducialListStorageNode >::New() );
-  this->RegisterNodeClass(vtkSmartPointer< vtkMRMLFolderDisplayNode >::New());
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFolderDisplayNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROINode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROIListNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceCompositeNode >::New() );
@@ -194,6 +180,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSegmentationNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSegmentationStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSelectionNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceDisplayNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLVolumeArchetypeStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLScalarVolumeDisplayNode >::New() );
@@ -229,12 +216,8 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTransformNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLGridTransformNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLBSplineTransformNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDoubleArrayNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDoubleArrayStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLCrosshairNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLInteractionNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLChartNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLChartViewNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableViewNode >::New() );
@@ -249,6 +232,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformSequenceStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode>::New());
 
+  this->RegisterAbstractNodeClass("vtkMRMLVolumeNode", "Volume");
 }
 
 //------------------------------------------------------------------------------
@@ -572,6 +556,24 @@ void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
   node->Register(this);
   this->RegisteredNodeClasses.push_back(node);
   this->RegisteredNodeTags.push_back(xmlTag);
+  this->InvokeEvent(vtkMRMLScene::NodeClassRegisteredEvent);
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::RegisterAbstractNodeClass(std::string className, std::string typeDisplayName)
+{
+  auto classNameTypeDisplayNameIt = this->RegisteredAbstractNodeClassTypeDisplayNames.find(className);
+  if (classNameTypeDisplayNameIt != this->RegisteredAbstractNodeClassTypeDisplayNames.end())
+    {
+    // class already registered
+    if (classNameTypeDisplayNameIt->second == typeDisplayName)
+      {
+      // no change
+      return;
+      }
+    }
+  this->RegisteredAbstractNodeClassTypeDisplayNames[className] = typeDisplayName;
+  this->InvokeEvent(vtkMRMLScene::NodeClassRegisteredEvent);
 }
 
 //------------------------------------------------------------------------------
@@ -579,6 +581,9 @@ void vtkMRMLScene::CopyRegisteredNodesToScene(vtkMRMLScene *scene)
 {
   if (scene)
     {
+    scene->RegisteredAbstractNodeClassTypeDisplayNames.insert(
+      this->RegisteredAbstractNodeClassTypeDisplayNames.begin(),
+      this->RegisteredAbstractNodeClassTypeDisplayNames.end());
     vtkMRMLNode* node = nullptr;
     for (unsigned int i=0; i<this->RegisteredNodeClasses.size(); i++)
       {
@@ -649,6 +654,25 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
       }
     }
   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLScene::GetTypeDisplayNameByClassName(std::string className)
+{
+  for (unsigned int i=0; i<this->RegisteredNodeClasses.size(); i++)
+    {
+    if (className.compare(this->RegisteredNodeClasses[i]->GetClassName())==0)
+      {
+      // found
+      return (this->RegisteredNodeClasses[i])->GetTypeDisplayName();
+      }
+    }
+  auto classNameTypeDisplayNameIt = this->RegisteredAbstractNodeClassTypeDisplayNames.find(className);
+  if (classNameTypeDisplayNameIt != this->RegisteredAbstractNodeClassTypeDisplayNames.end())
+    {
+    return classNameTypeDisplayNameIt->second;
+    }
+  return "";
 }
 
 //------------------------------------------------------------------------------
@@ -770,6 +794,8 @@ int vtkMRMLScene::Connect(vtkMRMLMessageCollection* userMessagesInput/*=nullptr*
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput/*=nullptr*/)
 {
+  bool wasSceneModified = this->GetModifiedSinceRead();
+
   // We use userMessages for collecting error information, so make sure we have it, even if the caller does not need it.
   vtkSmartPointer<vtkMRMLMessageCollection> userMessages = userMessagesInput;
   if (!userMessages)
@@ -902,10 +928,17 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput/*=nullptr*/
   importingTimer->Delete();
   timer->Delete();
 #endif
-  this->StoredTime.Modified();
 
   // Once the import is finished, give the SH a chance to ensure consistency
   this->SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(this));
+
+  if (!wasSceneModified)
+    {
+    // There were no unsaved modifications in the scene before loading the scene and now we just
+    // loaded a saved scene. so there are no unsaved changes. Update StoredTime to reflect this
+    // (it will make GetModifiedSinceRead() return false).
+    this->StoredTime.Modified();
+    }
 
   bool success = (userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0);
   return success ? 1 : 0;
@@ -1141,6 +1174,10 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection * userMessage
     }
 
   bool success = (userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0);
+  if (success)
+    {
+    this->StoredTime.Modified();
+    }
   return success ? 1 : 0;
 }
 
@@ -2244,6 +2281,12 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
       os << indent.GetNextIndent().GetNextIndent() << "Default write extension = " << (exts != nullptr ? exts : "NULL") << endl;
       }
    }
+
+  os << indent << "Registered abstract node classes:\n";
+  for (auto nodeClassNameTypeDisplayNameIt : this->RegisteredAbstractNodeClassTypeDisplayNames)
+    {
+    os << indent.GetNextIndent() << nodeClassNameTypeDisplayNameIt.first << ": " << nodeClassNameTypeDisplayNameIt.second << endl;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -2287,6 +2330,44 @@ vtkMRMLNode *vtkMRMLScene::GetNthRegisteredNodeClass(int n)
     {
     vtkErrorMacro("GetNthRegisteredNodeClass: index " << n << " out of bounds 0 - " << this->GetNumberOfRegisteredNodeClasses());
     return nullptr;
+    }
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLScene::GetNumberOfRegisteredAbstractNodeClasses()
+{
+  return static_cast<int>(this->RegisteredAbstractNodeClassTypeDisplayNames.size());
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLScene::GetNthRegisteredAbstractNodeClassName(int n)
+{
+  if (n >= 0 && n < this->GetNumberOfRegisteredAbstractNodeClasses())
+    {
+    auto classNameTypeDisplayNameIt = this->RegisteredAbstractNodeClassTypeDisplayNames.begin();
+    std::advance(classNameTypeDisplayNameIt, n);
+    return classNameTypeDisplayNameIt->first;
+    }
+  else
+    {
+    vtkErrorMacro("GetNthRegisteredAbstractNodeClassName: index " << n << " out of bounds 0 - " << this->GetNumberOfRegisteredAbstractNodeClasses());
+    return "";
+    }
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLScene::GetNthRegisteredAbstractNodeTypeDisplayName(int n)
+{
+  if (n >= 0 && n < this->GetNumberOfRegisteredAbstractNodeClasses())
+    {
+    auto classNameTypeDisplayNameIt = this->RegisteredAbstractNodeClassTypeDisplayNames.begin();
+    std::advance(classNameTypeDisplayNameIt, n);
+    return classNameTypeDisplayNameIt->second;
+    }
+  else
+    {
+    vtkErrorMacro("GetNthRegisteredAbstractNodeTypeDisplayName: index " << n << " out of bounds 0 - " << this->GetNumberOfRegisteredAbstractNodeClasses());
+    return "";
     }
 }
 
@@ -3583,8 +3664,12 @@ void vtkMRMLScene::SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLScene::GetModifiedSinceRead()
+bool vtkMRMLScene::GetModifiedSinceRead(vtkCollection* modifiedNodes/*=nullptr*/)
 {
+  if (modifiedNodes)
+    {
+    modifiedNodes->RemoveAllItems();
+    }
   int hideFromEditors = 0;
 
   // There is no need to save the scene if it does not have any displayable node.
@@ -3595,6 +3680,7 @@ bool vtkMRMLScene::GetModifiedSinceRead()
     return false;
     }
 
+  bool sceneModified = false;
   vtkMTimeType latestNodeMTime = this->GetMTime();
   vtkMRMLNode *node;
   vtkCollectionSimpleIterator it;
@@ -3607,13 +3693,17 @@ bool vtkMRMLScene::GetModifiedSinceRead()
       // because view nodes may change because application window is resized, etc.
       continue;
       }
-    if (node->GetMTime() > latestNodeMTime)
+    if (node->GetMTime() > this->StoredTime)
       {
-      latestNodeMTime = node->GetMTime();
+      sceneModified = true;
+      if (modifiedNodes)
+        {
+        modifiedNodes->AddItem(node);
+        }
       }
     }
 
-  return  latestNodeMTime > this->StoredTime;
+  return sceneModified;
 }
 
 //-----------------------------------------------------------------------------

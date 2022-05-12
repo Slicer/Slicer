@@ -25,6 +25,7 @@
 
 // MRML includes
 #include <vtkMRMLNode.h>
+#include <vtkMRMLSegmentationNode.h>
 
 // Segmentations includes
 #include "vtkSlicerSegmentationsModuleMRMLExport.h"
@@ -33,7 +34,6 @@
 
 class vtkMRMLScene;
 class vtkMRMLScalarVolumeNode;
-class vtkMRMLSegmentationNode;
 
 /// \ingroup Segmentations
 /// \brief Parameter set node for the segment editor widget
@@ -52,26 +52,6 @@ public:
     /// but also the segment editor state, a full Modified event is an overkill, because it would trigger
     /// editor widget UI update, instead of simple update of the effect option widgets only.
     EffectParameterModified = 62200
-    };
-
-  /// These enums are kept here only for backward compatibility and will be removed in the future.
-  /// Use vtkMRMLSegmentationNode EditAllowed... enums instead.
-  enum
-    {
-    /// Modification is allowed everywhere.
-    PaintAllowedEverywhere=0,
-    /// Modification is allowed inside all segments.
-    PaintAllowedInsideAllSegments,
-    /// Modification is allowed inside all visible segments.
-    PaintAllowedInsideVisibleSegments,
-    /// Modification is allowed outside all segments.
-    PaintAllowedOutsideAllSegments,
-    /// Modification is allowed outside all visible segments.
-    PaintAllowedOutsideVisibleSegments,
-    /// Modification is allowed only over the area covered by segment specified in MaskSegmentID.
-    PaintAllowedInsideSingleSegment,
-    // Insert valid types above this line
-    PaintAllowed_Last
     };
 
   enum
@@ -110,8 +90,6 @@ public:
   /// Convert between constants IDs to/from string
   static int ConvertOverwriteModeFromString(const char* modeStr);
   static const char* ConvertOverwriteModeToString(int mode);
-  static const char* ConvertMaskModeToString(int mode);
-  static int ConvertMaskModeFromString(const char* modeStr);
   //@}
 
 public:
@@ -144,17 +122,18 @@ public:
 
   //@{
   /// Defines which areas in the segmentation are editable.
-  /// Uses PaintAllowed_... constants.
-  /// \sa PaintAllowedEverywhere, PaintAllowedInsideAllSegments, PaintAllowedInsideVisibleSegments,
-  /// PaintAllowedOutsideAllSegments, PaintAllowedOutsideVisibleSegments, PaintAllowedInsideSingleSegment
+  /// Uses vtkMRMLSegmentationNode::EditAllowed_... constants.
+  /// \sa vtkMRMLSegmentationNode::EditAllowedEverywhere, vtkMRMLSegmentationNode::EditAllowedInsideAllSegments,
+  /// vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments, vtkMRMLSegmentationNode::EditAllowedOutsideAllSegments,
+  /// vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments, vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
   vtkSetMacro(MaskMode, int);
   vtkGetMacro(MaskMode, int);
   //@}
 
   //@{
   /// Get/set mask segment ID.
-  /// Painting is only allowed within the area of the mask segment if mask mode is PaintAllowedInsideSingleSegment.
-  /// \sa PaintAllowedInsideSingleSegment, SetMaskMode
+  /// Painting is only allowed within the area of the mask segment if mask mode is EditAllowedInsideSingleSegment.
+  /// \sa vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment, SetMaskMode
   vtkGetStringMacro(MaskSegmentID);
   vtkSetStringMacro(MaskSegmentID);
   //@}
@@ -194,7 +173,7 @@ protected:
   /// Active effect name
   char* ActiveEffectName{nullptr};
 
-  int MaskMode{PaintAllowedEverywhere};
+  int MaskMode{vtkMRMLSegmentationNode::EditAllowedEverywhere};
   char* MaskSegmentID{nullptr};
 
   int OverwriteMode{OverwriteAllSegments};

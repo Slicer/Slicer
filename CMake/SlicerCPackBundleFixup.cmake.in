@@ -386,7 +386,7 @@ function(fixup_bundle_with_plugins app)
      endforeach()
      # Update executable
      execute_process(COMMAND install_name_tool
-       -rpath "@executable_path/Frameworks" "@loader_path/../../../../"
+       -rpath "@executable_path/../Frameworks" "@loader_path/../../../../"
        ${changes} "${designer_executable}"
        )
      # Generate qt.conf file to override plugin paths and ensure plugins provided

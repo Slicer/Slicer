@@ -10,6 +10,9 @@ set(${KIT}_INCLUDE_DIRECTORIES
   ${qMRMLWidgets_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
   ${MRMLCore_INCLUDE_DIRS}
+  ${vtkSlicerVolumesModuleLogic_INCLUDE_DIRS}
+  ${vtkSlicerColorsModuleLogic_INCLUDE_DIRS}
+  ${vtkSlicerColorsModuleMRML_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -38,6 +41,7 @@ set(${KIT}_RESOURCES
 set(${KIT}_TARGET_LIBRARIES
   qSlicerSubjectHierarchyModuleWidgets
   vtkSlicerSubjectHierarchyModuleLogic
+  vtkSlicerColorsModuleLogic
   qMRMLWidgets
   MRMLLogic
   MRMLCore

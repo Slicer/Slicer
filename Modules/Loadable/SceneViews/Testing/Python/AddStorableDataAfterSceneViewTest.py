@@ -1,8 +1,11 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+
+import ctk
+import qt
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # AddStorableDataAfterSceneViewTest
@@ -28,6 +31,7 @@ class AddStorableDataAfterSceneViewTest(ScriptedLoadableModule):
     self.parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH, and was partially funded by NIH grant 3P41RR013218-12S1.
 """
+
 
 #
 # qAddStorableDataAfterSceneViewTestWidget
@@ -82,6 +86,7 @@ class AddStorableDataAfterSceneViewTestWidget(ScriptedLoadableModuleWidget):
     logic = AddStorableDataAfterSceneViewTestLogic()
     enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
     logic.run(enableScreenshotsFlag)
+
 
 #
 # AddStorableDataAfterSceneViewTestLogic
@@ -138,9 +143,11 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     slicer.util.delayDisplay("Starting the test")
 
     #
-    # add a fiducial
+    # add a markups control point list
     #
-    slicer.modules.markups.logic().AddFiducial()
+
+    pointList = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsFiducialNode')
+    pointList.AddControlPoint([10,20,15])
 
     #
     # save a scene view
@@ -170,7 +177,6 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     # for now, the non scene view storable data is removed
     self.assertIsNone( restoredData )
     slicer.util.delayDisplay('Success: extra storable node removed with scene view restore')
-
 
     #
     # add new storable again

@@ -28,6 +28,7 @@ Usage:
     SlicerOptionDisableSettingsTest.py /path/to/Slicer
 """
 
+
 def checkUserSettings(slicer_executable, common_args, keep_temporary_settings=False):
   # Add a user setting
   args = list(common_args)
@@ -50,6 +51,7 @@ def checkUserSettings(slicer_executable, common_args, keep_temporary_settings=Fa
       'if slicer.app.userSettings().value("foo") ' + condition + ': raise Exception("' + error + '.")'])
   assert runSlicerAndExit(slicer_executable, args)[0] == EXIT_SUCCESS
   print("=> ok\n")
+
 
 def checkRevisionUserSettings(slicer_executable, common_args, keep_temporary_settings=False):
   # Add a user revision setting
@@ -74,6 +76,7 @@ def checkRevisionUserSettings(slicer_executable, common_args, keep_temporary_set
   assert runSlicerAndExit(slicer_executable, args)[0] == EXIT_SUCCESS
   print("=> ok\n")
 
+
 def checkKeepTemporarySettingsWithoutDisableSettingsDisplayWarning(slicer_executable, common_args):
   args = list(common_args)
   args.remove('--disable-settings')
@@ -85,6 +88,7 @@ def checkKeepTemporarySettingsWithoutDisableSettingsDisplayWarning(slicer_execut
     raise Exception(f"Warning [{expectedMessage}] not found in stderr [{stderr}]")
   assert returnCode == EXIT_SUCCESS
   print("=> ok\n")
+
 
 if __name__ == '__main__':
 

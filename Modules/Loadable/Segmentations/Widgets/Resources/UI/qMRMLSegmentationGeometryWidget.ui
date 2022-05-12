@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>490</width>
-    <height>317</height>
+    <height>363</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,6 +67,7 @@
           <string>vtkMRMLScalarVolumeNode</string>
           <string>vtkMRMLSegmentationNode</string>
           <string>vtkMRMLModelNode</string>
+          <string>vtkMRMLMarkupsROINode</string>
           <string>vtkMRMLAnnotationROINode</string>
          </stringlist>
         </property>
@@ -187,13 +188,6 @@
       <property name="verticalSpacing">
        <number>6</number>
       </property>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_Directions">
-        <property name="text">
-         <string>Directions:</string>
-        </property>
-       </widget>
-      </item>
       <item row="4" column="0">
        <widget class="QLabel" name="label_Origin">
         <property name="text">
@@ -201,10 +195,19 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_Spacing">
-        <property name="text">
-         <string>Spacing:</string>
+      <item row="1" column="1">
+       <widget class="qMRMLCoordinatesWidget" name="MRMLCoordinatesWidget_Spacing">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="decimalsOption">
+         <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals|ctkDoubleSpinBox::ReplaceDecimals</set>
+        </property>
+        <property name="quantity">
+         <string>length</string>
         </property>
        </widget>
       </item>
@@ -227,53 +230,14 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="qMRMLCoordinatesWidget" name="MRMLCoordinatesWidget_Origin">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-        <property name="quantity">
-         <string>length</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_Dimensions">
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_Directions">
         <property name="text">
-         <string>Dimensions:</string>
+         <string>Directions:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="qMRMLCoordinatesWidget" name="MRMLCoordinatesWidget_Spacing">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-        <property name="decimalsOption">
-         <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals|ctkDoubleSpinBox::ReplaceDecimals</set>
-        </property>
-        <property name="quantity">
-         <string>length</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="qMRMLCoordinatesWidget" name="MRMLCoordinatesWidget_Dimensions">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="decimals">
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0" colspan="2">
+      <item row="8" column="0" colspan="2">
        <widget class="QLabel" name="label_Error">
         <property name="palette">
          <palette>
@@ -324,6 +288,88 @@
         <property name="wordWrap">
          <bool>true</bool>
         </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_Spacing">
+        <property name="text">
+         <string>Spacing:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_Dimensions">
+        <property name="text">
+         <string>Dimensions:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="qMRMLCoordinatesWidget" name="MRMLCoordinatesWidget_Origin">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="quantity">
+         <string>length</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLCoordinatesWidget" name="MRMLCoordinatesWidget_Dimensions">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="decimals">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="2">
+       <widget class="QGroupBox" name="groupBox_AdditionalOptions">
+        <property name="title">
+         <string>Additional Options</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Pad output:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="CheckBox_PadSegmentation">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>12</width>
+             <height>12</height>
+            </size>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>

@@ -17,17 +17,17 @@
 
 // MRML includes
 #include "vtkMRMLNode.h"
-class vtkMRMLColorNode;
-class vtkMRMLDisplayableNode;
-
-// VTK includes
-class vtkAlgorithmOutput;
-class vtkDataSet;
-class vtkImageData;
-class vtkPolyData;
 
 // STD includes
 #include <vector>
+
+class vtkAlgorithmOutput;
+class vtkDataSet;
+class vtkImageData;
+class vtkMRMLColorNode;
+class vtkMRMLDisplayableNode;
+class vtkPolyData;
+class vtkTextProperty;
 
 /// \brief Abstract class that contains graphical display properties for
 /// displayable nodes.
@@ -49,12 +49,13 @@ public:
     SurfaceRepresentation
   } RepresentationType;
 
-  /// Interpolation models
+  /// Interpolation modes
   /// \sa GetInterpolation(), SetInterpolation()
   typedef enum {
     FlatInterpolation = 0,
     GouraudInterpolation,
-    PhongInterpolation
+    PhongInterpolation,
+    PBRInterpolation
   } InterpolationType;
 
   /// Scalar range options for displaying data associated with this display
@@ -78,6 +79,13 @@ public:
     // insert types above this line
     NUM_SCALAR_RANGE_FLAGS
   } ScalarRangeFlagType;
+
+  /// Enumerated values for ShowMode.
+  typedef enum {
+    ShowDefault = 0, ///< set visibility of this node if user requests show of the displayable node
+    ShowIgnore, ///< set visibility manually, useful for non-essential display nodes (e.g., color legend)
+    ShowMode_Last
+  } ShowModeType;
 
   enum
     {
@@ -224,6 +232,20 @@ public:
   /// \sa Power, SetPower()
   vtkGetMacro(Power, double);
 
+  //@{
+  /// The metalness of the material; values range from 0.0 (non-metal) to 1.0 (metal).
+  /// Only used in PBR interpolation mode.
+  vtkSetMacro(Metallic, double);
+  vtkGetMacro(Metallic, double);
+  //@}
+
+  //@{
+  /// The roughness of the material; values range from 0.0 (smooth) to 1.0 (rough).
+  /// Only used in PBR interpolation mode.
+  vtkSetMacro(Roughness, double);
+  vtkGetMacro(Roughness, double);
+  //@}
+
   /// Set the visibility of the display node.
   /// \sa Visibility, GetVisibility(), VisibilityOn(), VisibilityOff()
   vtkSetMacro(Visibility, int);
@@ -236,7 +258,9 @@ public:
   /// Return true if the display node should be visible in the view node.
   /// To be visible in the view, the node needs to be visible
   /// (\a Visibility == 1) and the view ID must be in the ViewNodeIDs list
-  /// or the list must be empty (visible in all views).
+  /// or the list must be empty (visible in all views), visibility must be
+  /// enabled in all subject hierarchy parent folders and Visibility2D/Visibility3D
+  /// should be enabled (according to view node type).
   /// \sa Visibility, ViewNodeIDs
   virtual bool GetVisibility(const char* viewNodeID);
 
@@ -450,6 +474,27 @@ public:
   /// \sa FolderDisplayOverrideAllowed, SetFolderDisplayOverrideAllowed(), GetFolderDisplayOverrideAllowed()
   vtkBooleanMacro(FolderDisplayOverrideAllowed, bool);
 
+  //@{
+  /// Get/set the behavior when the user requests showing of the associated displayable node
+  /// (for example, by clicking on the eye icon in the subject hierarchy tree).
+  /// If set to ShowDefault then when the visibility as automatically adjusted according to the show request.
+  /// ShowDefault is recommended for most display nodes, for example vtkMRMLModelDisplayNode for a vtkMRMLModelNode.
+  /// If set to ShowIgnore then show request is ignored - visibility has to be set manually. ShowIgnore is useful
+  /// for auxiliary display nodes, such as vtkMRMLColorLegendDisplayNode or vtkMRMLVolumeRenderingDisplayNode,
+  /// which should only be shown if the user has explicitly requested it, because rendering could unnecessarily clutter
+  /// the view or would consume significant computing resources.
+  vtkSetMacro(ShowMode, int);
+  vtkGetMacro(ShowMode, int);
+  bool IsShowModeDefault() { return this->GetShowMode() == vtkMRMLDisplayNode::ShowDefault; }
+  //@}
+
+  //@{
+  /// Convert between ShowModeType and string
+  /// \sa SetShowMode
+  static const char* GetShowModeAsString(int flag);
+  static int GetShowModeFromString(const char* name);
+  //@}
+
   /// Set and observe the texture image data port.
   /// \sa TextureImageDataConnection, GetTextureImageDataConnection()
   virtual void SetTextureImageDataConnection(vtkAlgorithmOutput *ImageDataConnection);
@@ -568,6 +613,14 @@ public:
   /// Gets attribute location (point or cell data) from string
   static int GetAttributeLocationFromString(const char* name);
 
+  /// Returns a string containing the text style of the vtkTextProperty.
+  /// String format follows html-style CSS conventions.
+  static std::string GetTextPropertyAsString(vtkTextProperty* property);
+
+  /// Update the style of a vtkTextProperty from a string.
+  /// String format follows html-style CSS conventions.
+  static void UpdateTextPropertyFromString(std::string inputString, vtkTextProperty* property);
+
 protected:
   vtkMRMLDisplayNode();
   ~vtkMRMLDisplayNode() override;
@@ -579,6 +632,10 @@ protected:
   /// \sa SetColorNodeID(),
   /// ColorNode, ColorNodeID
   virtual void SetColorNodeInternal(vtkMRMLColorNode* newColorNode);
+
+  /// Get the color from a string of the form: rgba(0,0,0,0).
+  /// Utility function for UpdateTextPropertyFromString.
+  static void GetColorFromString(const std::string& colorString, double color[4]);
 
   /// Associated ImageDataConnection to apply as texture. The image data port is
   /// observed and when modified, vtkMRMLDisplayNode fires a ModifiedEvent too.
@@ -650,6 +707,10 @@ protected:
   /// 0.4 by default.
   /// \sa SetSelectedAmbient(), GetSelectedAmbient(),
   /// SelectedColor, Ambient, SelectedSpecular
+
+  double Metallic;
+  double Roughness;
+
   double SelectedAmbient;
   /// Node's selected specular.
   /// 0.5 by default.
@@ -811,6 +872,9 @@ protected:
   /// On by default.
   /// \sa GetFolderDisplayOverrideAllowed(), SetFolderDisplayOverrideAllowed()
   bool FolderDisplayOverrideAllowed;
+
+  /// \sa SetShowMode, GetShowMode
+  int ShowMode;
 
   /// Cached value of last found displayable node (it is expensive to determine it)
   vtkWeakPointer<vtkMRMLDisplayableNode> LastFoundDisplayableNode;

@@ -1,10 +1,12 @@
-import sys, os, re, nose
-from nose.tools import assert_equal
+import os
+import re
+import sys
 from collections import namedtuple
 
+import nose
 import numpy as np
-import numpy.testing
 from vtk.util import numpy_support
+
 import slicer
 
 #===============================================================================
@@ -16,6 +18,7 @@ multishell_dwi_451 = os.path.join(mrmlcore_testdata_path, "multishell-DWI-451dir
 
 #================================================================================
 NRRD = namedtuple('NRRD', ['header', 'bvalue', 'gradients'])
+
 
 def parse_nhdr(path):
     dwmri_bval_key      = "DWMRI_b-value"
@@ -36,7 +39,7 @@ def parse_nhdr(path):
                 break
 
             # careful about precedence -- ":=" must match first
-            key, val = [x.strip() for x in re.split(":=|=|:", line)]
+            key, val = (x.strip() for x in re.split(":=|=|:", line))
             assert(key not in kvdict)
             kvdict[key] = val
 
@@ -129,6 +132,7 @@ def test_nrrd_dwi_load(first_file, second_file=None):
                                              err_msg="NHDR gradient does not match gradient in node attribute dictionary")
 
     return (parsed_nrrd, dw_node)
+
 
 def test_nrrd_dwi_roundtrip(test_nrrd_path):
     """DWI NRRD round-trip test

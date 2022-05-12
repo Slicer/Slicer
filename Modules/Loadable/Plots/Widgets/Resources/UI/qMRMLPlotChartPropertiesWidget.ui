@@ -312,7 +312,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="legendVisibleLabel">
      <property name="text">
-      <string>Legend visible:</string>
+      <string>Legend visibility:</string>
      </property>
     </widget>
    </item>
@@ -326,7 +326,7 @@
    <item row="3" column="0">
     <widget class="QLabel" name="gridVisibleLabel">
      <property name="text">
-      <string>Grid visible:</string>
+      <string>Grid visibility:</string>
      </property>
     </widget>
    </item>

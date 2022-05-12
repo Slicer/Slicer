@@ -74,31 +74,62 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   QAction* helpKeyboardShortcutsAction = new QAction(mainWindow);
   helpKeyboardShortcutsAction->setObjectName("HelpKeyboardShortcutsAction");
-  helpKeyboardShortcutsAction->setText(qSlicerAppMainWindow::tr("&Keyboard Shortcuts"));
+  helpKeyboardShortcutsAction->setText(qSlicerAppMainWindow::tr("&Keyboard Shortcuts Reference"));
   helpKeyboardShortcutsAction->setToolTip(qSlicerAppMainWindow::tr("Raise a window that lists commonly-used keyboard shortcuts."));
 
-  QAction* helpInterfaceDocumentationAction = new QAction(mainWindow);
-  helpInterfaceDocumentationAction->setObjectName("HelpInterfaceDocumentationAction");
-  helpInterfaceDocumentationAction->setText(qSlicerAppMainWindow::tr("Interface Documentation"));
-  helpInterfaceDocumentationAction->setShortcut(QKeySequence(qSlicerAppMainWindow::tr("Ctrl+1", "Interface Documentation")));
+  QAction* helpDocumentationAction = new QAction(mainWindow);
+  helpDocumentationAction->setObjectName("HelpDocumentationAction");
+  helpDocumentationAction->setText(qSlicerAppMainWindow::tr("Documentation"));
+  helpDocumentationAction->setShortcut(QKeySequence(qSlicerAppMainWindow::tr("Ctrl+1", "Documentation")));
+
+  QAction* helpQuickStartAction = new QAction(mainWindow);
+  helpQuickStartAction->setObjectName("HelpQuickStartAction");
+  helpQuickStartAction->setText(qSlicerAppMainWindow::tr("Quick Start"));
+
+  QAction* helpGetHelpAction = new QAction(mainWindow);
+  helpGetHelpAction->setObjectName("HelpGetHelpAction");
+  helpGetHelpAction->setText(qSlicerAppMainWindow::tr("Get Help"));
+
+  QAction* helpUserInterfaceAction = new QAction(mainWindow);
+  helpUserInterfaceAction->setObjectName("HelpUserInterfaceAction");
+  helpUserInterfaceAction->setText(qSlicerAppMainWindow::tr("User Interface"));
+
+  QAction* helpVisitSlicerForumAction = new QAction(mainWindow);
+  helpVisitSlicerForumAction->setObjectName("HelpVisitSlicerForumAction");
+  helpVisitSlicerForumAction->setText(qSlicerAppMainWindow::tr("Visit the Slicer Forum"));
 
   QAction* helpBrowseTutorialsAction = new QAction(mainWindow);
   helpBrowseTutorialsAction->setObjectName("HelpBrowseTutorialsAction");
-  helpBrowseTutorialsAction->setText(qSlicerAppMainWindow::tr("Browse tutorials"));
+  helpBrowseTutorialsAction->setText(qSlicerAppMainWindow::tr("Browse Tutorials"));
   helpBrowseTutorialsAction->setToolTip(qSlicerAppMainWindow::tr("Raise the training pages in your favorite web browser"));
+
+  QAction* helpJoinUsOnTwitterAction = new QAction(mainWindow);
+  helpJoinUsOnTwitterAction->setObjectName("HelpJoinUsOnTwitterAction");
+  helpJoinUsOnTwitterAction->setText(qSlicerAppMainWindow::tr("Join Us on Twitter"));
+
+  QAction* helpSearchFeatureRequestsAction = new QAction(mainWindow);
+  helpSearchFeatureRequestsAction->setObjectName("HelpSearchFeatureRequestsAction");
+  helpSearchFeatureRequestsAction->setText(qSlicerAppMainWindow::tr("Search Feature Requests"));
+
+  QAction* helpViewLicenseAction = new QAction(mainWindow);
+  helpViewLicenseAction->setObjectName("HelpViewLicenseAction");
+  helpViewLicenseAction->setText(qSlicerAppMainWindow::tr("View License"));
+
+  QAction* helpHowToCiteAction = new QAction(mainWindow);
+  helpHowToCiteAction->setObjectName("HelpHowToCiteAction");
+  helpHowToCiteAction->setText(qSlicerAppMainWindow::tr("How to Cite"));
 
   QAction* helpSlicerPublicationsAction = new QAction(mainWindow);
   helpSlicerPublicationsAction->setObjectName("HelpSlicerPublicationsAction");
   helpSlicerPublicationsAction->setText(qSlicerAppMainWindow::tr("Slicer Publications"));
 
-  QAction* helpVisualBlogAction = new QAction(mainWindow);
-  helpVisualBlogAction->setObjectName("HelpVisualBlogAction");
-  helpVisualBlogAction->setText(qSlicerAppMainWindow::tr("Visual Blog"));
-  helpVisualBlogAction->setToolTip(qSlicerAppMainWindow::tr("Open the Slicer Visual Blog using your favorite web browser where you can post screenshots of interesting ways you are using the Slicer software package in your research and share them with the Slicer community."));
+  QAction* helpAcknowledgmentsAction = new QAction(mainWindow);
+  helpAcknowledgmentsAction->setObjectName("HelpAcknowledgmentsAction");
+  helpAcknowledgmentsAction->setText(qSlicerAppMainWindow::tr("Acknowledgments"));
 
   QAction* helpReportBugOrFeatureRequestAction = new QAction(mainWindow);
   helpReportBugOrFeatureRequestAction->setObjectName("HelpReportBugOrFeatureRequestAction");
-  helpReportBugOrFeatureRequestAction->setText(qSlicerAppMainWindow::tr("Report a bug"));
+  helpReportBugOrFeatureRequestAction->setText(qSlicerAppMainWindow::tr("Report a Bug"));
   helpReportBugOrFeatureRequestAction->setToolTip(qSlicerAppMainWindow::tr("Report error or request enhancement or new feature."));
 
   QAction* helpAboutSlicerAppAction = new QAction(mainWindow);
@@ -123,31 +154,36 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   logoLabel->setPixmap(qMRMLWidget::pixmapFromIcon(QIcon(":/ModulePanelLogo.png")));
   this->PanelDockWidget->setTitleBarWidget(logoLabel);
 
+  this->HelpMenu->addAction(helpDocumentationAction);
+  this->HelpMenu->addAction(helpQuickStartAction);
+  this->HelpMenu->addAction(helpGetHelpAction);
+  this->HelpMenu->addAction(helpUserInterfaceAction);
+  this->HelpMenu->addSeparator();
   this->HelpMenu->addAction(helpKeyboardShortcutsAction);
-  this->HelpMenu->addAction(helpInterfaceDocumentationAction);
   this->HelpMenu->addAction(helpBrowseTutorialsAction);
   this->HelpMenu->addSeparator();
-  this->HelpMenu->addAction(helpSlicerPublicationsAction);
-  this->HelpMenu->addAction(helpVisualBlogAction);
-  this->HelpMenu->addSeparator();
+  this->HelpMenu->addAction(helpVisitSlicerForumAction);
+  this->HelpMenu->addAction(helpJoinUsOnTwitterAction);
+  this->HelpMenu->addAction(helpSearchFeatureRequestsAction);
   this->HelpMenu->addAction(helpReportBugOrFeatureRequestAction);
+  this->HelpMenu->addSeparator();
+  this->HelpMenu->addAction(helpViewLicenseAction);
+  this->HelpMenu->addAction(helpHowToCiteAction);
+  this->HelpMenu->addAction(helpSlicerPublicationsAction);
+  this->HelpMenu->addAction(helpAcknowledgmentsAction);
+  this->HelpMenu->addSeparator();
   this->HelpMenu->addAction(helpAboutSlicerAppAction);
 
   //----------------------------------------------------------------------------
   // Icons in the menu
   //----------------------------------------------------------------------------
   // Customize QAction icons with standard pixmaps
-  // TODO: all these icons are a little bit too much.
   QIcon networkIcon = mainWindow->style()->standardIcon(QStyle::SP_DriveNetIcon);
   QIcon informationIcon = mainWindow->style()->standardIcon(QStyle::SP_MessageBoxInformation);
   QIcon questionIcon = mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion);
 
-  helpBrowseTutorialsAction->setIcon(networkIcon);
-  helpInterfaceDocumentationAction->setIcon(networkIcon);
-  helpSlicerPublicationsAction->setIcon(networkIcon);
   helpAboutSlicerAppAction->setIcon(informationIcon);
   helpReportBugOrFeatureRequestAction->setIcon(questionIcon);
-  helpVisualBlogAction->setIcon(networkIcon);
 
   setThemeIcon(helpAboutSlicerAppAction, "help-about");
   setThemeIcon(helpReportBugOrFeatureRequestAction, "tools-report-bug");
@@ -206,31 +242,73 @@ void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpBrowseTutorialsAction_triggered()
 {
-  QString url;
-
-  // TODO: update these URLs when tutorial main page is moved to ReadTheDocs.
-  if (qSlicerApplication::application()->releaseType() == "Stable")
-    {
-    url = QString("http://www.slicer.org/slicerWiki/index.php/Documentation/%1.%2/Training")
-                    .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
-    }
-  else
-    {
-    url = QString("http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Training");
-    }
-  QDesktopServices::openUrl(QUrl(url));
+  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/getting_started.html#tutorials"));
 }
 
 //---------------------------------------------------------------------------
-void qSlicerAppMainWindow::on_HelpInterfaceDocumentationAction_triggered()
+void qSlicerAppMainWindow::on_HelpDocumentationAction_triggered()
 {
   QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl()));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_HelpQuickStartAction_triggered()
+{
+  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/getting_started.html#quick-start"));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_HelpGetHelpAction_triggered()
+{
+  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/get_help.html"));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_HelpUserInterfaceAction_triggered()
+{
+  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/user_interface.html"));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_HelpVisitSlicerForumAction_triggered()
+{
+  QDesktopServices::openUrl(QUrl("https://discourse.slicer.org/"));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_HelpJoinUsOnTwitterAction_triggered()
+{
+  QDesktopServices::openUrl(QUrl("https://twitter.com/3dslicerapp"));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_HelpSearchFeatureRequestsAction_triggered()
+{
+  QDesktopServices::openUrl(QUrl("https://discourse.slicer.org/c/support/feature-requests/9"));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_HelpViewLicenseAction_triggered()
+{
+  QDesktopServices::openUrl(QUrl("https://github.com/Slicer/Slicer/blob/master/License.txt"));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_HelpHowToCiteAction_triggered()
+{
+  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/about.html#how-to-cite"));
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpSlicerPublicationsAction_triggered()
 {
   QDesktopServices::openUrl(QUrl("https://scholar.google.com/scholar?&as_sdt=1%2C22&as_vis=1&q=%28%223D+Slicer%22+OR+%22slicer+org%22+OR+Slicer3D%29+-Slic3r+&btnG="));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::on_HelpAcknowledgmentsAction_triggered()
+{
+  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/about.html#acknowledgments"));
 }
 
 //---------------------------------------------------------------------------
@@ -246,10 +324,4 @@ void qSlicerAppMainWindow::on_HelpReportBugOrFeatureRequestAction_triggered()
 {
   qSlicerErrorReportDialog errorReport(this);
   errorReport.exec();
-}
-
-//---------------------------------------------------------------------------
-void qSlicerAppMainWindow::on_HelpVisualBlogAction_triggered()
-{
-  QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer4:VisualBlog"));
 }

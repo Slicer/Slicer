@@ -416,9 +416,6 @@ protected slots:
   /// Update GUI if segmentation history is changed (e.g., undo/redo button states)
   void onSegmentationHistoryChanged();
 
-  /// Enable/disable surface smoothing
-  void onEnableSurfaceSmoothingToggled(bool enabled);
-  void onSurfaceSmoothingFactorChanged(double newSmoothingFactor);
   /// Switch to Segmentations module and jump to Import/Export section
   void onImportExportActionClicked();
   /// Open Export to files dialog

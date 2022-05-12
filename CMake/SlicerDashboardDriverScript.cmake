@@ -263,9 +263,7 @@ setIfNotDefined(run_ctest_with_notes TRUE)
 if(NOT DEFINED CDASH_PROJECT_NAME)
   set(CDASH_PROJECT_NAME  "SlicerPreview")
   if("${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
-    # XXX Rename Slicer CDash project
-    set(CDASH_PROJECT_NAME "Slicer4")
-    # set(CDASH_PROJECT_NAME  "SlicerStable")
+    set(CDASH_PROJECT_NAME  "SlicerStable")
   endif()
 endif()
 list(APPEND variables CDASH_PROJECT_NAME)
@@ -338,7 +336,7 @@ set(track ${CTEST_TRACK_PREFIX}${track}${CTEST_TRACK_SUFFIX})
 # Used in SlicerPackageAndUploadTarget CMake module
 set(ENV{CTEST_MODEL} ${model})
 
-# For more details, see http://www.kitware.com/blog/home/post/11
+# For more details, see https://www.kitware.com/blog/home/post/11
 set(CTEST_USE_LAUNCHERS 1)
 if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make")
   set(CTEST_USE_LAUNCHERS 0)

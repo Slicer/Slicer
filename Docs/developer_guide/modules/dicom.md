@@ -1,6 +1,6 @@
 # DICOM
 
-The overall DICOM Implementation in 3D Slicer consists of two main bodies of code embedded within the application.  [CTK](http://commontk.org) code is responsible for the implementation of the DICOM database and networking layer. The CTK code is implemented C++ and follows the Qt style. The DICOM Module exposes this functionality to slicer users, and provides hooks through which other module can register DICOM Plugins to handle the conversion of specific DICOM data objects into the corresponding MRML representation.  Once the data is in slicer, it can be operated on via the standard slicer mechanisms.
+The overall DICOM Implementation in 3D Slicer consists of two main bodies of code embedded within the application.  [CTK](https://commontk.org) code is responsible for the implementation of the DICOM database and networking layer. The CTK code is implemented C++ and follows the Qt style. The DICOM Module exposes this functionality to Slicer users, and provides hooks through which other module can register DICOM Plugins to handle the conversion of specific DICOM data objects into the corresponding MRML representation.  Once the data is in slicer, it can be operated on via the standard Slicer mechanisms.
 
 ## Customize table columns in DICOM browser
 
@@ -24,7 +24,7 @@ There are many different kind of DICOM information objects and import/export of 
 
 ## References
 
-See the [CTK web site](http://commontk.org) for more information on the internals of the DICOM implementation. This tool uses the [DCMTK DICOM library](http://dicom.offis.de).
+See the [CTK web site](https://commontk.org) for more information on the internals of the DICOM implementation. This tool uses the [DCMTK DICOM library](https://dicom.offis.de).
 
 ## Examples
 

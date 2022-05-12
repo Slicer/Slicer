@@ -94,6 +94,7 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
   this->TreeView->setColumnHidden(this->TreeView->model()->idColumn(), true);
   this->TreeView->setHeaderHidden(true);
   this->TreeView->setContextMenuEnabled(false);
+  this->TreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
   this->TreeView->setDragDropMode(QAbstractItemView::NoDragDrop);
 
   // No item label
@@ -166,6 +167,9 @@ void qMRMLSubjectHierarchyComboBox::setMRMLScene(vtkMRMLScene* scene)
     return;
     }
 
+  // Connect scene events so that title can be updated
+  qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onMRMLSceneCloseEnded(vtkObject*) ) );
+
   // Set tree root item to be the new scene, and disable showing it
   d->TreeView->setRootItem(shNode->GetSceneItemID());
 }
@@ -175,6 +179,9 @@ void qMRMLSubjectHierarchyComboBox::clearSelection()
 {
   Q_D(const qMRMLSubjectHierarchyComboBox);
   d->TreeView->clearSelection();
+
+  // Clear title and icon
+  this->updateComboBoxTitleAndIcon(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
 }
 
 //------------------------------------------------------------------------------
@@ -569,7 +576,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
     shNode->GetItemChildren(rootItem, childItemIDs, false);
     if (childItemIDs.empty())
       {
-      if (rootItem!= shNode->GetSceneItemID())
+      if (rootItem != shNode->GetSceneItemID())
         {
         std::string rootName = shNode->GetItemName(rootItem);
         QString label = QString("No items in branch: ") + QString::fromStdString(rootName);
@@ -744,4 +751,17 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
     qCritical() << Q_FUNC_INFO << ": No owner plugin for subject hierarchy item " << shNode->GetItemName(selectedShItemID).c_str();
     this->setDefaultIcon(QIcon());
     }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::onMRMLSceneCloseEnded(vtkObject* sceneObject)
+{
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  if (!scene)
+    {
+    return;
+    }
+
+  // Make sure the title generated from previous selection is cleared when closing the scene.
+  this->updateComboBoxTitleAndIcon(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
 }

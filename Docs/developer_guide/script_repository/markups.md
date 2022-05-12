@@ -1,25 +1,55 @@
 ## Markups
 
-### Load markups fiducial list from file
+### Save markups to file
 
-Markups fiducials can be loaded from file:
+Any markup node can be saved as a [markups json file](modules/markups.md):
+
+```python
+markupsNode = slicer.util.getNode('F')
+slicer.util.saveNode(markupsNode, "/path/to/MyMarkups.mkp.json")
+```
+
+Generally the markups json file format is recommended for saving all properties of a markups node, but for exporting only control point information (name, position, and basic state) a [control points table can be exported in standard csv file format](modules/markups.md#markups-control-points-table-file-format-csv-tsv):
+
+```python
+slicer.modules.markups.logic().ExportControlPointsToCSV(markupsNode, "/path/to/MyControlPoints.csv")
+```
+
+### Load markups from file
+
+Any markup node can be loaded from a [markups json file](modules/markups.md):
+
+```python
+markupsNode = slicer.util.loadMarkups("/path/to/MyMarkups.mkp.json")
+```
+
+Control points can be loaded from [control points table csv file](modules/markups.md#markups-control-points-table-file-format-csv-tsv):
+
+```python
+markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsCurveNode")
+slicer.modules.markups.logic().ImportControlPointsFromCSV(markupsNode, "/path/to/MyControlPoints.csv")
+```
+
+### Load markups point list from file
+
+Markups point list can be loaded from legacy [fcsv file format](modules/markups.md#markups-fiducial-point-list-file-format-fcsv). Note that this file format is no longer recommended, as it is not a standard csv file format and can only store a small fraction of information that is in a markups node.
 
 ```python
 slicer.util.loadMarkupsFiducialList("/path/to/list/F.fcsv")
 ```
 
-### Adding Fiducials Programmatically
+### Adding control points Programmatically
 
-Markups fiducials can be added to the currently active list from the python console by using the following module logic command:
+Markups control points can be added to the currently active point list from the python console by using the following module logic command:
 
 ```python
-slicer.modules.markups.logic().AddFiducial()
+slicer.modules.markups.logic().AddControlPoint()
 ```
 
-The command with no arguments will place a new fiducial at the origin. You can also pass it an initial location:
+The command with no arguments will place a new control point at the origin. You can also pass it an initial location:
 
 ```python
-slicer.modules.markups.logic().AddFiducial(1.0, -2.0, 3.3)
+slicer.modules.markups.logic().AddControlPoint(1.0, -2.0, 3.3)
 ```
 
 ### How to draw a curve using control points stored in a numpy array
@@ -34,26 +64,26 @@ curveNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsCurveNode")
 slicer.util.updateMarkupsControlPointsFromArray(curveNode, pointPositions)
 ```
 
-### Add a button to module GUI to activate fiducial placement
+### Add a button to module GUI to activate control point placement
 
-This code snippet creates a toggle button, which activates fiducial placement when pressed (and deactivates when released).
+This code snippet creates a toggle button, which activates control point placement when pressed (and deactivates when released).
 
-The [qSlicerMarkupsPlaceWidget widget](http://apidocs.slicer.org/master/classqSlicerMarkupsPlaceWidget.html) can automatically activate placement of multiple points and can show buttons for deleting points, changing colors, lock, and hide points.
+The [qSlicerMarkupsPlaceWidget widget](https://apidocs.slicer.org/master/classqSlicerMarkupsPlaceWidget.html) can automatically activate placement of multiple points and can show buttons for deleting points, changing colors, lock, and hide points.
 
 ```python
 w=slicer.qSlicerMarkupsPlaceWidget()
 w.setMRMLScene(slicer.mrmlScene)
-markupsNodeID = slicer.modules.markups.logic().AddNewFiducialNode()
-w.setCurrentNode(slicer.mrmlScene.GetNodeByID(markupsNodeID))
+markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsCurveNode")
+w.setCurrentNode(slicer.mrmlScene.GetNodeByID(markupsNode.GetID()))
 # Hide all buttons and only show place button
 w.buttonsVisible=False
 w.placeButton().show()
 w.show()
 ```
 
-### Adding Fiducials via mouse clicks
+### Adding control points via mouse clicks
 
-You can also set the mouse mode into Markups fiducial placement by calling:
+You can also set the mouse mode into Markups control point placement by calling:
 
 ```python
 placeModePersistence = 1
@@ -72,7 +102,7 @@ interactionNode.SetPlaceModePersistence(placeModePersistence)
 interactionNode.SetCurrentInteractionMode(1)
 ```
 
-To switch back to view transform once you're done placing fiducials:
+To switch back to view transform once you're done placing control points:
 
 ```python
 interactionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLInteractionNodeSingleton")
@@ -81,56 +111,57 @@ interactionNode.SwitchToViewTransformMode()
 interactionNode.SetPlaceModePersistence(0)
 ```
 
-### Access to Fiducial Properties
+### Access to markups point list Properties
 
-Each vtkMRMLMarkupsFiducialNode has a vector of points in it which can be accessed from python:
+Each vtkMRMLMarkupsFiducialNode has a vector of control points in it which can be accessed from python:
 
 ```python
-fidNode = getNode("vtkMRMLMarkupsFiducialNode1")
-n = fidNode.AddFiducial(4.0, 5.5, -6.0)
-fidNode.SetNthFiducialLabel(n, "new label")
-# each markup is given a unique id which can be accessed from the superclass level
-id1 = fidNode.GetNthMarkupID(n)
+pointListNode = getNode("vtkMRMLMarkupsFiducialNode1")
+n = pointListNode.AddControlPoint([4.0, 5.5, -6.0])
+pointListNode.SetNthControlPointLabel(n, "new label")
+# each control point is given a unique id which can be accessed from the superclass level
+id1 = pointListNode.GetNthControlPointID(n)
 # manually set the position
-fidNode.SetNthFiducialPosition(n, 6.0, 7.0, 8.0)
+pointListNode.SetNthControlPointPosition(n, 6.0, 7.0, 8.0)
 # set the label
-fidNode.SetNthFiducialLabel(n, "New label")
-# set the selected flag, only selected = 1 fiducials will be passed to CLIs
-fidNode.SetNthFiducialSelected(n, 1)
+pointListNode.SetNthControlPointLabel(n, "New label")
+# set the selected flag, only selected = 1 control points will be passed to CLIs
+pointListNode.SetNthControlPointSelected(n, 1)
 # set the visibility flag
-fidNode.SetNthFiducialVisibility(n, 0)
+pointListNode.SetNthControlPointVisibility(n, 0)
 ```
 
-You can loop over the fiducials in a list and get the coordinates:
+You can loop over the control points in a list and get the coordinates:
 
 ```python
-fidList = slicer.util.getNode("F")
-numFids = fidList.GetNumberOfFiducials()
-for i in range(numFids):
-  ras = [0,0,0]
-  fidList.GetNthFiducialPosition(i,ras)
+pointListNode = slicer.util.getNode("F")
+numControlPoints = pointListNode.GetNumberOfControlPoints()
+for i in range(numControlPoints):
+  ras = vtk.vtkVector3d(0,0,0)
+  pointListNode.GetNthControlPointPosition(i,ras)
   # the world position is the RAS position with any transform matrices applied
-  world = [0,0,0,0]
-  fidList.GetNthFiducialWorldCoordinates(0,world)
+  world = [0.0, 0.0, 0.0]
+  pointListNode.GetNthControlPointPositionWorld(i,world)
   print(i,": RAS =",ras,", world =",world)
 ```
 
-You can also look at the sample code in the [Endoscopy module](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/Endoscopy/Endoscopy.py#L287) to see how python is used to access fiducials from a scripted module.
+You can also look at the sample code in the [Endoscopy module](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/Endoscopy/Endoscopy.py#L287) to see how python is used to access control points from a scripted module.
 
 ### Define/edit a circular region of interest in a slice viewer
 
-Drop two markup points on a slice view and copy-paste the code below into the Python console. After this, as you move the markups you’ll see a circle following the markups.
+Drop two markups control points on a slice view and copy-paste the code below into the Python console. After this, as you move the control points you’ll see a circle following the markups.
 
 ```python
-# Update the sphere from the fiducial points
+# Update the sphere from the control points
 def UpdateSphere(param1, param2):
-  """Update the sphere from the fiducial points
+  """Update the sphere from the control points
   """
   import math
+  pointListNode = slicer.util.getNode("F")
   centerPointCoord = [0.0, 0.0, 0.0]
-  markups.GetNthFiducialPosition(0,centerPointCoord)
+  pointListNode.GetNthControlPointPosition(0,centerPointCoord)
   circumferencePointCoord = [0.0, 0.0, 0.0]
-  markups.GetNthFiducialPosition(1,circumferencePointCoord)
+  pointListNode.GetNthControlPointPosition(1,circumferencePointCoord)
   sphere.SetCenter(centerPointCoord)
   radius=math.sqrt((centerPointCoord[0]-circumferencePointCoord[0])**2+(centerPointCoord[1]-circumferencePointCoord[1])**2+(centerPointCoord[2]-circumferencePointCoord[2])**2)
   sphere.SetRadius(radius)
@@ -138,8 +169,8 @@ def UpdateSphere(param1, param2):
   sphere.SetThetaResolution(30)
   sphere.Update()
 
-# Get markup node from scene
-markups=slicer.util.getNode("F")
+# Get point list node from scene
+pointListNode = slicer.util.getNode("F")
 sphere = vtk.vtkSphereSource()
 UpdateSphere(0,0)
 
@@ -150,17 +181,17 @@ model.GetDisplayNode().SetSliceIntersectionVisibility(True)
 model.GetDisplayNode().SetSliceIntersectionThickness(3)
 model.GetDisplayNode().SetColor(1,1,0)
 
-# Call UpdateSphere whenever the fiducials are changed
-markups.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, UpdateSphere, 2)
+# Call UpdateSphere whenever the control points are changed
+pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, UpdateSphere, 2)
 ```
 
-### Specify a sphere by multiple of markups points
+### Specify a sphere by multiple control points
 
-Drop multiple markup points at the boundary of the spherical object and and copy-paste the code below into the Python console to get best-fit sphere. Minimum 4 points are required, it is recommended to place the points far from each other for most accurate fit.
+Drop multiple markups control points at the boundary of the spherical object and and copy-paste the code below into the Python console to get best-fit sphere. A minimum of 4 control points are required. Tt is recommended to place the control points far away from each other for the most accurate fit.
 
 ```python
 # Get markup node from scene
-markups = slicer.util.getNode("F")
+pointListNode = slicer.util.getNode("F")
 
 from scipy.optimize import least_squares
 import numpy
@@ -217,6 +248,42 @@ model = modelsLogic.AddModel(sphere.GetOutput())
 model.GetDisplayNode().SetSliceIntersectionVisibility(True)
 model.GetDisplayNode().SetSliceIntersectionThickness(3)
 model.GetDisplayNode().SetColor(1,1,0)
+```
+
+### Fit markups ROI to volume
+
+This code snippet creates a new markups ROI and fits it to a volume node.
+
+```python
+volumeNode = getNode('MRHead')
+
+# Create a new ROI that will be fit to volumeNode
+roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode")
+
+cropVolumeParameters = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLCropVolumeParametersNode")
+cropVolumeParameters.SetInputVolumeNodeID(volumeNode.GetID())
+cropVolumeParameters.SetROINodeID(roiNode.GetID())
+slicer.modules.cropvolume.logic().SnapROIToVoxelGrid(cropVolumeParameters)  # optional (rotates the ROI to match the volume axis directions)
+slicer.modules.cropvolume.logic().FitROIToInputVolume(cropVolumeParameters)
+slicer.mrmlScene.RemoveNode(cropVolumeParameters)
+```
+
+### Fit markups plane to model
+
+This code snippet fits a plane a model node named `InputModel` and creates a new markups plane node to display this best fit plane.
+
+```python
+inputModel = getNode('InputModel')
+
+# Compute best fit plane
+center = [0.0, 0.0, 0.0]
+normal = [0.0, 0.0, 1.0]
+vtk.vtkPlane.ComputeBestFittingPlane(inputModel.GetPolyData().GetPoints(), center, normal)
+
+# Display best fit plane as a markups plane
+planeNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsPlaneNode')
+planeNode.SetCenter(center)
+planeNode.SetNormal(normal)
 ```
 
 ### Measure angle between two markup planes
@@ -279,18 +346,48 @@ for lineNodeName in lineNodeNames:
 ShowAngle()
 ```
 
-### Measure distances of points from a line
+### Project a line to a plane
 
-Draw a markups line (`L`) and drop markups fiducial points (`F`) in a view then run the following code snippet to compute distances of the points from the line.
+Create a new line (`projectedLineNode`) by projecting a line (`lineNode`) to a plane (`planeNode`).
+
+Each control point is projected by computing coordinates in the plane coordinate system, zeroing the z coordinate (distance from plane) then transforming  back the coordinates to the world coordinate system.
+
+Transformation require homogeneous coordinates (1.0 appended to the 3D position), therefore 1.0 is added to the position after getting from the line and the 1.0 is removed when the computed point is added to the output line.
 
 ```python
-pointsNode = getNode("F")
+lineNode = getNode('L')
+planeNode = getNode('P')
+
+# Create new node for storing the projected line node
+projectedLineNode = slicer.mrmlScene.AddNewNodeByClass(lineNode.GetClassName(), lineNode.GetName()+" projected")
+
+# Get transforms
+planeToWorld = vtk.vtkMatrix4x4()
+planeNode.GetObjectToWorldMatrix(planeToWorld)
+worldToPlane = vtk.vtkMatrix4x4()
+vtk.vtkMatrix4x4.Invert(planeToWorld, worldToPlane)
+
+# Project each point
+for pointIndex in range(2):
+    point_World = [*lineNode.GetNthControlPointPositionWorld(pointIndex), 1.0]
+    point_Plane = worldToPlane.MultiplyPoint(point_World)
+    projectedPoint_Plane = [point_Plane[0], point_Plane[1], 0.0, 1.0]
+    projectedPoint_World = planeToWorld.MultiplyPoint(projectedPoint_Plane)
+    projectedLineNode.AddControlPoint(projectedPoint_World[0:3])
+```
+
+### Measure distances of points from a line
+
+Draw a markups line (`L`) and drop markups point list (`F`) in a view and then run the following code snippet to compute distances of the points from the line.
+
+```python
+pointListNode = getNode("F")
 lineNode = getNode("L")
 
-# Get fiducial point positions and line endpoints as numpy arrays
-points = slicer.util.arrayFromMarkupsControlPoints(pointsNode)
+# Get point list control point positions and line endpoints as numpy arrays
+points = slicer.util.arrayFromMarkupsControlPoints(pointListNode)
 line = slicer.util.arrayFromMarkupsControlPoints(lineNode)
-# Compute distance of points from the line
+# Compute distance of control points from the line
 from numpy import cross
 from numpy.linalg import norm
 for i, point in enumerate(points):
@@ -298,21 +395,21 @@ for i, point in enumerate(points):
     print(f"Point {i}: Position = {point}. Distance from line = {d}.")
 ```
 
-### Set slice position and orientation from 3 markup fiducials
+### Set slice position and orientation from 3 markups control points
 
-Drop 3 markup points in the scene and copy-paste the code below into the Python console. After this, as you move the markups you’ll see the red slice view position and orientation will be set to make it fit to the 3 points.
+Drop 3 markups control points in the scene and copy-paste the code below into the Python console. After this, as you move the control points you’ll see the red slice view position and orientation will be set to make it fit to the 3 points.
 
 ```python
-# Update plane from fiducial points
+# Update plane from control points
 def UpdateSlicePlane(param1=None, param2=None):
-  # Get point positions as numpy array
+  # Get control point positions as numpy array
   import numpy as np
-  nOfFiduciallPoints = markups.GetNumberOfFiducials()
-  if nOfFiduciallPoints < 3:
-    return  # not enough points
-  points = np.zeros([3,nOfFiduciallPoints])
-  for i in range(0, nOfFiduciallPoints):
-    markups.GetNthFiducialPosition(i, points[:,i])
+  nOfControlPoints = pointListNode.GetNumberOfControlPoints()
+  if nOfControlPoints < 3:
+    return  # not enough control points
+  points = np.zeros([3,nOfControlPoints])
+  for i in range(0, nOfControlPoints):
+    pointListNode.GetNthControlPointPosition(i, points[:,i])
   # Compute plane position and normal
   planePosition = points.mean(axis=1)
   planeNormal = np.cross(points[:,1] - points[:,0], points[:,2] - points[:,0])
@@ -321,74 +418,72 @@ def UpdateSlicePlane(param1=None, param2=None):
     planeX[0], planeX[1], planeX[2],
     planePosition[0], planePosition[1], planePosition[2], 0)
 
-# Get markup node from scene
+# Get point list node from scene
 sliceNode = slicer.app.layoutManager().sliceWidget("Red").mrmlSliceNode()
-markups = slicer.util.getNode("F")
+pointListNode = slicer.util.getNode("F")
 
 # Update slice plane manually
 UpdateSlicePlane()
 
 # Update slice plane automatically whenever points are changed
-markupObservation = [markups, markups.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, UpdateSlicePlane, 2)]
+pointListObservation = [pointListNode, pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, UpdateSlicePlane, 2)]
 ```
 
 To stop automatic updates, run this:
 
 ```python
-markupObservation[0].RemoveObserver(markupObservation[1])
+pointListObservation[0].RemoveObserver(pointListObservation[1])
 ```
 
-### Switching to markup fiducial placement mode
+### Switching to markups control point placement mode
 
-To activate a fiducial placement mode, both interaction mode has to be set and a fiducial node has to be selected:
+To activate control point placement mode for a point list, both interaction mode has to be set and a point list node has to be selected:
 
 ```python
 interactionNode = slicer.app.applicationLogic().GetInteractionNode()
 selectionNode = slicer.app.applicationLogic().GetSelectionNode()
 selectionNode.SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode")
-fiducialNode = slicer.vtkMRMLMarkupsFiducialNode()
-slicer.mrmlScene.AddNode(fiducialNode)
-fiducialNode.CreateDefaultDisplayNodes()
-selectionNode.SetActivePlaceNodeID(fiducialNode.GetID())
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+selectionNode.SetActivePlaceNodeID(pointListNode.GetID())
 interactionNode.SetCurrentInteractionMode(interactionNode.Place)
 ```
 
 Alternatively, *qSlicerMarkupsPlaceWidget* widget can be used to initiate markup placement:
 
 ```python
-# Temporary markups node
-markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+# Temporary markups point list node
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
 
 def placementModeChanged(active):
   print("Placement: " +("active" if active else "inactive"))
-  # You can inspect what is in the markups node here, delete the temporary markup node, etc.
+  # You can inspect what is in the markups node here, delete the temporary markup point list node, etc.
 
-# Create and set up widget that contains a single "place markup" button. The widget can be placed in the module GUI.
+# Create and set up widget that contains a single "place control point" button. The widget can be placed in the module GUI.
 placeWidget = slicer.qSlicerMarkupsPlaceWidget()
 placeWidget.setMRMLScene(slicer.mrmlScene)
-placeWidget.setCurrentNode(markupsNode)
+placeWidget.setCurrentNode(pointListNode)
 placeWidget.buttonsVisible=False
 placeWidget.placeButton().show()
 placeWidget.connect("activeMarkupsFiducialPlaceModeChanged(bool)", placementModeChanged)
 placeWidget.show()
 ```
 
-### Change markup fiducial display properties
+### Change markup point list display properties
 
-Display properties are stored in display node(s) associated with the fiducial node.
+Display properties are stored in display node(s) associated with the point list node.
 
 ```python
-fiducialNode = getNode("F")
-fiducialDisplayNode = fiducialNode.GetDisplayNode()
-fiducialDisplayNode.SetVisibility(False) # Hide all points
-fiducialDisplayNode.SetVisibility(True) # Show all points
-fiducialDisplayNode.SetSelectedColor(1,1,0) # Set color to yellow
-fiducialDisplayNode.SetViewNodeIDs(["vtkMRMLSliceNodeRed", "vtkMRMLViewNode1"]) # Only show in red slice view and first 3D view
+pointListNode = getNode("F")
+pointListDisplayNode = pointListNode.GetDisplayNode()
+pointListDisplayNode.SetVisibility(False) # Hide all points
+pointListDisplayNode.SetVisibility(True) # Show all points
+pointListDisplayNode.SetSelectedColor(1,1,0) # Set color to yellow
+pointListDisplayNode.SetViewNodeIDs(["vtkMRMLSliceNodeRed", "vtkMRMLViewNode1"]) # Only show in red slice view and first 3D view
 ```
 
-### Get a notification if a markup point position is modified
+### Get a notification if a markup control point position is modified
 
-Event management of Slicer-4.11 version is still subject to change. The example below shows how point manipulation can be observed now.
+Event management of Slicer-4.11 version is still subject to change. The example below shows how control point manipulation can be observed now.
 
 ```python
 def onMarkupChanged(caller,event):
@@ -397,7 +492,7 @@ def onMarkupChanged(caller,event):
   movingMarkupIndex = markupsNode.GetDisplayNode().GetActiveControlPoint()
   if movingMarkupIndex >= 0:
     pos = [0,0,0]
-    markupsNode.GetNthFiducialPosition(movingMarkupIndex, pos)
+    markupsNode.GetNthControlPointPosition(movingMarkupIndex, pos)
     isPreview = markupsNode.GetNthControlPointPositionStatus(movingMarkupIndex) == slicer.vtkMRMLMarkupsNode.PositionPreview
     if isPreview:
       logging.info("Point {0} is previewed at {1} in slice view {2}".format(movingMarkupIndex, pos, sliceView))
@@ -418,26 +513,25 @@ def onMarkupEndInteraction(caller, event):
   movingMarkupIndex = markupsNode.GetDisplayNode().GetActiveControlPoint()
   logging.info("End interaction: point ID = {0}, slice view = {1}".format(movingMarkupIndex, sliceView))
 
-markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
-markupsNode.CreateDefaultDisplayNodes()
-markupsNode.AddFiducial(0,0,0)
-markupsNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, onMarkupChanged)
-markupsNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointStartInteractionEvent, onMarkupStartInteraction)
-markupsNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointEndInteractionEvent, onMarkupEndInteraction)
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode.AddControlPoint([0,0,0])
+pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, onMarkupChanged)
+pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointStartInteractionEvent, onMarkupStartInteraction)
+pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointEndInteractionEvent, onMarkupEndInteraction)
 ```
 
-### Write markup positions to JSON file
+### Write markup control point positions to JSON file
 
 ```python
-markupNode = getNode("F")
+pointListNode = getNode("F")
 outputFileName = "c:/tmp/test.json"
 
 # Get markup positions
 data = []
-for fidIndex in range(markupNode.GetNumberOfFiducials()):
+for fidIndex in range(pointListNode.GetNumberOfControlPoints()):
   coords=[0,0,0]
-  markupNode.GetNthFiducialPosition(fidIndex,coords)
-  data.append({"label": markupNode.GetNthFiducialLabel(), "position": coords})
+  pointListNode.GetNthControlPointPosition(fidIndex,coords)
+  data.append({"label": pointListNode.GetNthControlPointLabel(), "position": coords})
 
 import json
 with open(outputFileName, "w") as outfile:
@@ -463,19 +557,19 @@ with open(outputFileName, "w") as outfile:
   json.dump(data, outfile)
 ```
 
-### Fit slice plane to markup fiducials
+### Fit slice plane to markup control points
 
 ```python
 sliceNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSliceNodeRed")
-markupsNode = slicer.mrmlScene.GetFirstNodeByName("F")
+pointListNode = slicer.mrmlScene.GetFirstNodeByName("F")
 # Get markup point positions as numpy arrays
 import numpy as np
 p1 = np.zeros(3)
 p2 = np.zeros(3)
 p3 = np.zeros(3)
-markupsNode.GetNthFiducialPosition(0, p1)
-markupsNode.GetNthFiducialPosition(1, p2)
-markupsNode.GetNthFiducialPosition(2, p3)
+pointListNode.GetNthControlPointPosition(0, p1)
+pointListNode.GetNthControlPointPosition(1, p2)
+pointListNode.GetNthControlPointPosition(2, p3)
 # Get plane axis directions
 n = np.cross(p2-p1, p2-p3) # plane normal direction
 n = n/np.linalg.norm(n)
@@ -491,7 +585,7 @@ Markups have `Color` and `SelectedColor` properties. `SelectedColor` is used if 
 
 ### Display list of control points in my module's GUI
 
-The [qSlicerSimpleMarkupsWidget](http://apidocs.slicer.org/master/classqSlicerSimpleMarkupsWidget.html) can be integrated into module widgets to display list of markups control points and initiate placement. An example of this use is in [Gel Dosimetry module](https://www.slicer.org/wiki/Documentation/Nightly/Modules/GelDosimetry).
+The [qSlicerSimpleMarkupsWidget](https://apidocs.slicer.org/master/classqSlicerSimpleMarkupsWidget.html) can be integrated into module widgets to display list of markups control points and initiate placement. An example of this use is in [Gel Dosimetry module](https://www.slicer.org/wiki/Documentation/Nightly/Modules/GelDosimetry).
 
 ### Pre-populate the scene with measurements
 
@@ -540,7 +634,7 @@ def copyLineMeasurementsToClipboard():
   for lineNode in lineNodes:
     # Get node filename that the length was measured on
     try:
-      volumeNode = slicer.mrmlScene.GetNodeByID(lineNode.GetNthMarkupAssociatedNodeID(0))
+      volumeNode = slicer.mrmlScene.GetNodeByID(lineNode.GetNthControlPointAssociatedNodeID(0))
       imagePath = volumeNode.GetStorageNode().GetFileName()
     except:
       imagePath = ''

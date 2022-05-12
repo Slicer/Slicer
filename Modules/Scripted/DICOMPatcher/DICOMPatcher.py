@@ -1,8 +1,12 @@
-import os
-import unittest
-from __main__ import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+import os
+
+import ctk
+import qt
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # DICOMPatcher
@@ -22,6 +26,7 @@ class DICOMPatcher(ScriptedLoadableModule):
     self.parent.helpText = """Fix common issues in DICOM files. This module may help fixing DICOM files that Slicer fails to import."""
     self.parent.helpText += parent.defaultDocumentationLink
     self.parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab."""
+
 
 #
 # DICOMPatcherWidget
@@ -128,8 +133,8 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
     pass
 
   def onPatchButton(self):
-    slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
-    try:
+    with slicer.util.tryWithErrorDisplay("Unexpected error.", waitCursor=True):
+
       import tempfile
       if not self.outputDirSelector.currentPath:
         self.outputDirSelector.currentPath =  tempfile.mkdtemp(prefix="DICOMPatcher-", dir=slicer.app.temporaryPath)
@@ -155,12 +160,6 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
         self.logic.addRule("NormalizeFileNames")
       self.logic.patchDicomDir(self.inputDirSelector.currentPath, self.outputDirSelector.currentPath)
 
-    except Exception as e:
-      self.addLog(f"Unexpected error: {str(e)}")
-      import traceback
-      traceback.print_exc()
-    slicer.app.restoreOverrideCursor()
-
   def onImportButton(self):
     self.logic.importDicomDir(self.outputDirSelector.currentPath)
 
@@ -170,6 +169,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
     self.statusLabel.appendPlainText(text)
     slicer.app.processEvents() # force update
 
+
 #
 # Patcher rules
 #
@@ -177,20 +177,27 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
 class DICOMPatcherRule:
   def __init__(self):
     self.logCallback = None
+
   def addLog(self, text):
     logging.info(text)
     if self.logCallback:
       self.logCallback(text)
+
   def processStart(self, inputRootDir, outputRootDir):
     pass
+
   def processDirectory(self, currentSubDir):
     pass
+
   def skipFile(self, filepath):
     return False
+
   def processDataSet(self, ds):
     pass
+
   def generateOutputFilePath(self, ds, filepath):
     return filepath
+
 
 #
 #
@@ -200,11 +207,14 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
   def __init__(self):
     self.requiredTags = ['PatientName', 'PatientID']
     self.eachFileIsSeparateSeries = False
+
   def processStart(self, inputRootDir, outputRootDir):
     self.patientIndex = 0
+
   def processDirectory(self, currentSubDir):
     self.firstFileInDirectory = True
     self.patientIndex += 1
+
   def processDataSet(self, ds):
     import pydicom
     if self.firstFileInDirectory:
@@ -222,14 +232,18 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
     ds.PatientName = self.patientName
     ds.PatientID = self.patientID
 
+
 class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
   def __init__(self):
     self.requiredTags = ['SeriesInstanceUID']
+
   def processStart(self, inputRootDir, outputRootDir):
     self.seriesIndex = 0
+
   def processDirectory(self, currentSubDir):
     self.firstFileInDirectory = True
     self.seriesIndex += 1
+
   def processDataSet(self, ds):
     import pydicom
     if self.firstFileInDirectory:
@@ -239,10 +253,12 @@ class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
     # Set the same patient name and ID as the first file in the directory
     ds.SeriesInstanceUID = self.seriesInstanceUID
 
+
 class GenerateMissingIDs(DICOMPatcherRule):
   def __init__(self):
     self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
     self.eachFileIsSeparateSeries = False
+
   def processStart(self, inputRootDir, outputRootDir):
     import pydicom
     self.patientIDToRandomIDMap = {}
@@ -251,12 +267,14 @@ class GenerateMissingIDs(DICOMPatcherRule):
     self.numberOfSeriesInStudyMap = {}
     # All files without a patient ID will be assigned to the same patient
     self.randomPatientID = pydicom.uid.generate_uid(None)
+
   def processDirectory(self, currentSubDir):
     import pydicom
     # Assume that all files in a directory belongs to the same study
     self.randomStudyUID = pydicom.uid.generate_uid(None)
     # Assume that all files in a directory belongs to the same series
     self.randomSeriesInstanceUID = pydicom.uid.generate_uid(None)
+
   def processDataSet(self, ds):
     import pydicom
 
@@ -286,6 +304,7 @@ class GenerateMissingIDs(DICOMPatcherRule):
       self.numberOfSeriesInStudyMap[ds.StudyInstanceUID] = self.numberOfSeriesInStudyMap[ds.StudyInstanceUID] + 1
       ds.SeriesNumber = self.numberOfSeriesInStudyMap[ds.StudyInstanceUID]
 
+
 #
 #
 #
@@ -296,6 +315,7 @@ class RemoveDICOMDIR(DICOMPatcherRule):
       return False
     self.addLog('DICOMDIR file is ignored (its contents may be inconsistent with the contents of the indexed DICOM files, therefore it is safer not to use it)')
     return True
+
 
 #
 #
@@ -315,12 +335,15 @@ class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
 
     if hasattr(ds, 'SOPClassUID') and ds.SOPClassUID == DCMTKPrivateMediaStorageSOPClassUID:
       ds.SOPClassUID = CTImageStorageSOPClassUID
+
+
 #
 #
 #
 
 class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
   """Add missing slice spacing info to multiframe files"""
+
   def processDataSet(self, ds):
     import pydicom
 
@@ -397,6 +420,7 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
 
       ds.PerFrameFunctionalGroupsSequence = perFrameFunctionalGroupsSequence
 
+
 #
 #
 #
@@ -404,6 +428,7 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
 class Anonymize(DICOMPatcherRule):
   def __init__(self):
     self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
+
   def processStart(self, inputRootDir, outputRootDir):
     import pydicom
     self.patientIDToRandomIDMap = {}
@@ -412,12 +437,14 @@ class Anonymize(DICOMPatcherRule):
     self.numberOfSeriesInStudyMap = {}
     # All files without a patient ID will be assigned to the same patient
     self.randomPatientID = pydicom.uid.generate_uid(None)
+
   def processDirectory(self, currentSubDir):
     import pydicom
     # Assume that all files in a directory belongs to the same study
     self.randomStudyUID = pydicom.uid.generate_uid(None)
     # Assume that all files in a directory belongs to the same series
     self.randomSeriesInstanceUID = pydicom.uid.generate_uid(None)
+
   def processDataSet(self, ds):
     import pydicom
 
@@ -443,6 +470,7 @@ class Anonymize(DICOMPatcherRule):
       self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID] = pydicom.uid.generate_uid(None)
     ds.SeriesInstanceUID = self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID]
 
+
 #
 #
 #
@@ -456,10 +484,12 @@ class NormalizeFileNames(DICOMPatcherRule):
     self.seriesUIDToFolderMap = {}
     # Number of files or folder in the specified folder
     self.numberOfItemsInFolderMap = {}
+
   def getNextItemName(self, prefix, root):
     numberOfFilesInFolder = self.numberOfItemsInFolderMap[root] if root in self.numberOfItemsInFolderMap else 0
     self.numberOfItemsInFolderMap[root] = numberOfFilesInFolder+1
     return f"{prefix}{numberOfFilesInFolder:03d}"
+
   def generateOutputFilePath(self, ds, filepath):
     folderName = ""
     patientNameID = str(ds.PatientName)+"*"+ds.PatientID
@@ -475,6 +505,7 @@ class NormalizeFileNames(DICOMPatcherRule):
     prefix = ds.Modality.lower() if hasattr(ds, 'Modality') else ""
     filePath = self.outputRootDir + "/" + folderName + "/" + self.getNextItemName(prefix, folderName)+".dcm"
     return filePath
+
 
 #
 # DICOMPatcherLogic
@@ -594,6 +625,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     slicer.util.selectModule('DICOM')
     dicomBrowser = slicer.modules.dicom.widgetRepresentation().self().browserWidget.dicomBrowser
     dicomBrowser.importDirectory(outputDirPath)
+
 
 #
 # Test

@@ -5,6 +5,6 @@ Paste the following commands into a shell:
   ./Utilities/SetupForDevelopment.sh
 
 See
-http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/DevelopmentWithGit
+https://www.slicer.org/w/index.php/Documentation/Nightly/Developers/DevelopmentWithGit
  for more information.'
 exit 1

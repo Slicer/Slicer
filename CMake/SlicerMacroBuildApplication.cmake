@@ -178,7 +178,6 @@ macro(slicerMacroBuildAppLibrary)
     set(TS_DIR
       "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Translations/"
     )
-    get_property(Slicer_LANGUAGES GLOBAL PROPERTY Slicer_LANGUAGES)
 
     include(SlicerMacroTranslation)
     SlicerMacroTranslation(
@@ -476,7 +475,7 @@ macro(slicerMacroBuildApplication)
 
   if(WIN32)
     if(Slicer_USE_PYTHONQT)
-      # HACK - See http://www.na-mic.org/Bug/view.php?id=1180
+      # HACK - See https://mantisarchive.slicer.org/view.php?id=1180
       get_filename_component(_python_library_name_we ${PYTHON_LIBRARY} NAME_WE)
       add_custom_command(
         TARGET ${slicerapp_target}

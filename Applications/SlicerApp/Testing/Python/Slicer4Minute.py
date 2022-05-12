@@ -1,8 +1,10 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
 
 #
 # Slicer4Minute
@@ -25,6 +27,7 @@ class Slicer4Minute(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE and was partially funded by NIH grant U54EB005149.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qSlicer4MinuteWidget
@@ -61,6 +64,7 @@ class Slicer4MinuteWidget(ScriptedLoadableModuleWidget):
 
   def onHelloWorldButtonClicked(self):
     print("Hello World !")
+
 
 #
 # Slicer4MinuteLogic

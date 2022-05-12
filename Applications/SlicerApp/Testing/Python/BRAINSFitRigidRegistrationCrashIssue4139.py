@@ -1,8 +1,8 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # BRAINSFitRigidRegistrationCrashIssue4139
@@ -30,6 +30,7 @@ class BRAINSFitRigidRegistrationCrashIssue4139(ScriptedLoadableModule):
     and was partially funded by NIH grant 1U24CA194354-01.
     """ # replace with organization, grant and thanks.
 
+
 #
 # BRAINSFitRigidRegistrationCrashIssue4139Widget
 #
@@ -41,6 +42,7 @@ class BRAINSFitRigidRegistrationCrashIssue4139Widget(ScriptedLoadableModuleWidge
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # BRAINSFitRigidRegistrationCrashIssue4139Logic
@@ -68,6 +70,7 @@ class BRAINSFitRigidRegistrationCrashIssue4139Logic(ScriptedLoadableModuleLogic)
       logging.debug('hasImageData failed: no image data in volume node')
       return False
     return True
+
 
 class BRAINSFitRigidRegistrationCrashIssue4139Test(ScriptedLoadableModuleTest):
   """

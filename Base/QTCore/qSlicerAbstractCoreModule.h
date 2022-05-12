@@ -204,7 +204,7 @@ public:
   virtual void printAdditionalInfo();
 
   /// Convenience method to return slicer wiki URL
-  QString slicerWikiUrl()const{ return "http://www.slicer.org/slicerWiki/index.php"; }
+  QString slicerWikiUrl()const{ return "https://www.slicer.org/w/index.php"; }
 
   /// Convenience method that returns a string that can be inserted into the application help text that contains
   /// link to the module's documentation in current Slicer version's documentation on ReadTheDocs.

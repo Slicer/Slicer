@@ -14,11 +14,16 @@ bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
                           vtkMRMLLayoutNode * layoutNode, int expectedViewArrangement)
 {
   // Ignore deprecated arrangements
-  if (expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView
-      || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutLightboxView
-      || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutSideBySideLightboxView
-      || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutSingleLightboxView
-      || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayout3DPlusLightboxView)
+  if (expectedViewArrangement == 5     // SlicerLayoutOneUpSliceView
+      || expectedViewArrangement == 11 // SlicerLayoutLightboxView
+      || expectedViewArrangement == 13 // SlicerLayoutSideBySideLightboxView
+      || expectedViewArrangement == 18 // SlicerLayoutSingleLightboxView
+      || expectedViewArrangement == 20 // SlicerLayout3DPlusLightboxView
+      || expectedViewArrangement == 24 // SlicerLayoutConventionalQuantitativeView
+      || expectedViewArrangement == 25 // SlicerLayoutFourUpQuantitativeView
+      || expectedViewArrangement == 26 // SlicerLayoutOneUpQuantitativeView
+      || expectedViewArrangement == 28 // SlicerLayoutThreeOverThreeQuantitativeView
+      )
     {
     return true;
     }
@@ -39,8 +44,7 @@ bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
 
 // Note:
 // (1) Because of Qt5 issue #50160, we need to explicitly call the quit function.
-//     This ensures that the workaround associated with qSlicerWebWidget,
-//     qMRMLChartWidget, ... is applied.
+//     This ensures that the workaround associated with qSlicerWebWidget is applied.
 //     See https://bugreports.qt.io/browse/QTBUG-50160#comment-305211
 
 int safeApplicationQuit(QApplication* app)

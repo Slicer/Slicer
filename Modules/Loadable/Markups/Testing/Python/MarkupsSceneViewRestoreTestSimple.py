@@ -10,28 +10,28 @@ slicer.mrmlScene.AddNode(fid)
 fid.SetAndObserveDisplayNodeID(displayNode.GetID())
 
 startCoords = [1.0, 2.0, 3.0]
-fid.AddFiducialFromArray(startCoords)
+fid.AddControlPoint(startCoords)
 
-fid.GetNthFiducialPosition(0,startCoords)
-print("Starting fiducial coordinates = ",startCoords)
+fid.GetNthControlPointPosition(0,startCoords)
+print(f"Starting control point coordinates = {startCoords}")
 
 sv = slicer.mrmlScene.AddNode(slicer.vtkMRMLSceneViewNode())
 
 sv.StoreScene()
 
 afterStoreSceneCoords = [11.1,22.2,33.3]
-fid.SetNthFiducialPositionFromArray(0, afterStoreSceneCoords)
+fid.SetNthControlPointPosition(0, afterStoreSceneCoords)
 
-fid.GetNthFiducialPosition(0,afterStoreSceneCoords)
-print("After storing the scene, set fiducial coords to ",afterStoreSceneCoords)
+fid.GetNthControlPointPosition(0,afterStoreSceneCoords)
+print(f"After storing the scene, set control point coords to {afterStoreSceneCoords}")
 
 sv.RestoreScene()
 
 fidAfterRestore =  slicer.mrmlScene.GetNodeByID("vtkMRMLMarkupsFiducialNode1")
 
 coords = [0,0,0]
-fidAfterRestore.GetNthFiducialPosition(0,coords)
-print("After restoring the scene, fiducial coordinates = ", coords)
+fidAfterRestore.GetNthControlPointPosition(0,coords)
+print("After restoring the scene, control point coordinates = ", coords)
 
 xdiff = coords[0] - startCoords[0]
 ydiff = coords[1] - startCoords[1]

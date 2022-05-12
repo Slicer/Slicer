@@ -1,8 +1,9 @@
-import os
-import time
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # MarkupsInCompareViewersSelfTest
@@ -16,11 +17,12 @@ class MarkupsInCompareViewersSelfTest(ScriptedLoadableModule):
     parent.dependencies = []
     parent.contributors = ["Nicole Aucoin (BWH)"]
     parent.helpText = """
-    This is a test case that exercises the fiducials with compare viewers.
+    This is a test case that exercises the control points lists with compare viewers.
     """
     parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH and was partially funded by NIH grant 3P41RR013218-12S1.
 """
+
 
 #
 # qMarkupsInCompareViewersSelfTestWidget
@@ -103,7 +105,7 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
     lm = slicer.app.layoutManager()
     lm.setLayout(2)
 
-    # create a fiducial list
+    # create a control points list
     displayNode = slicer.vtkMRMLMarkupsDisplayNode()
     slicer.mrmlScene.AddNode(displayNode)
     fidNode = slicer.vtkMRMLMarkupsFiducialNode()
@@ -119,14 +121,14 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
     eye1 = [33.4975, 79.4042, -10.2143]
     eye2 = [-31.283, 80.9652, -16.2143]
     nose = [4.61944, 114.526, -33.2143]
-    index = fidNode.AddFiducialFromArray(eye1)
-    fidNode.SetNthFiducialLabel(index, "eye-1")
-    index = fidNode.AddFiducialFromArray(eye2)
-    fidNode.SetNthFiducialLabel(index, "eye-2")
-    index = fidNode.AddFiducialFromArray(nose)
-    fidNode.SetNthFiducialLabel(index, "nose")
+    index = fidNode.AddControlPoint(eye1)
+    fidNode.SetNthControlPointLabel(index, "eye-1")
+    index = fidNode.AddControlPoint(eye2)
+    fidNode.SetNthControlPointLabel(index, "eye-2")
+    index = fidNode.AddControlPoint(nose)
+    fidNode.SetNthControlPointLabel(index, "nose")
 
-    slicer.util.delayDisplay("Placed 3 fiducials")
+    slicer.util.delayDisplay("Placed 3 control points")
 
     #
     # switch to 2 viewers compare layout
@@ -148,11 +150,11 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
     # make it visible in 3D
     compareLogic1.GetSliceNode().SetSliceVisible(1)
 
-    # scroll to a fiducial location
+    # scroll to a control point location
     compareLogic1.StartSliceOffsetInteraction()
     compareLogic1.SetSliceOffset(eye1[2])
     compareLogic1.EndSliceOffsetInteraction()
-    slicer.util.delayDisplay("MH Head in background, scrolled to a fiducial")
+    slicer.util.delayDisplay("MH Head in background, scrolled to a control point")
 
     # scroll around through the range of points
     offset = nose[2]

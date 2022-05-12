@@ -3,6 +3,7 @@ import slicer
 import os
 import shutil
 
+
 class SlicerPythonSqlite3Tests(unittest.TestCase):
   """This test verifies that Python is build with sqlite3 enabled.
   """

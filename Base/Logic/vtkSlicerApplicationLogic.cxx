@@ -153,19 +153,6 @@ void vtkSlicerApplicationLogic::SetMRMLSceneDataIO(vtkMRMLScene* newMRMLScene,
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::PropagateFiducialListSelection()
-{
-  if(!this->GetMRMLScene() || !this->GetSelectionNode())
-    {
-    return;
-    }
-  //char *ID = this->GetSelectionNode()->GetActiveFiducialListID();
-
-  // set the Fiducials GUI to show the active list? it's watching the node for
-  // now
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);

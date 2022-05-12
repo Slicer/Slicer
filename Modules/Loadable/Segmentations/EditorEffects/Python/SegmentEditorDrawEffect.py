@@ -1,7 +1,13 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
+import os
+
+import qt
+import vtk
+
+import slicer
+
 from SegmentEditorEffects import *
+
 
 class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
   """ DrawEffect is a LabelEffect implementing the interactive draw
@@ -80,13 +86,12 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
       sliceNode = viewWidget.sliceLogic().GetSliceNode()
       pipeline.lastInsertSliceNodeMTime = sliceNode.GetMTime()
       abortEvent = True
-    elif eventId == vtk.vtkCommand.RightButtonReleaseEvent or (eventId==vtk.vtkCommand.LeftButtonDoubleClickEvent and not anyModifierKeyPressed):
-      if pipeline.actionState == "finishing":
-        abortEvent = (pipeline.rasPoints.GetNumberOfPoints() > 1)
-        sliceNode = viewWidget.sliceLogic().GetSliceNode()
-        if abs(pipeline.lastInsertSliceNodeMTime - sliceNode.GetMTime()) < 2:
-          pipeline.apply()
-          pipeline.actionState = ""
+    elif (eventId == vtk.vtkCommand.RightButtonReleaseEvent and pipeline.actionState == "finishing") or (eventId==vtk.vtkCommand.LeftButtonDoubleClickEvent and not anyModifierKeyPressed):
+      abortEvent = (pipeline.rasPoints.GetNumberOfPoints() > 1)
+      sliceNode = viewWidget.sliceLogic().GetSliceNode()
+      if abs(pipeline.lastInsertSliceNodeMTime - sliceNode.GetMTime()) < 2:
+        pipeline.apply()
+        pipeline.actionState = ""
     elif eventId == vtk.vtkCommand.MouseMoveEvent:
       if pipeline.actionState == "drawing":
         xy = callerInteractor.GetEventPosition()
@@ -144,12 +149,14 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
     self.drawPipelines[sliceWidget] = pipeline
     return pipeline
 
+
 #
 # DrawPipeline
 #
 class DrawPipeline:
   """ Visualization objects and pipeline for each slice view for drawing
   """
+
   def __init__(self, scriptedEffect, sliceWidget):
     self.scriptedEffect = scriptedEffect
     self.sliceWidget = sliceWidget
@@ -279,7 +286,6 @@ class DrawPipeline:
       self.polyData.InsertNextCell(vtk.VTK_LINE, idList)
 
       # Get modifier labelmap
-      import vtkSegmentationCorePython as vtkSegmentationCore
       modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
 
       # Apply poly data on modifier labelmap

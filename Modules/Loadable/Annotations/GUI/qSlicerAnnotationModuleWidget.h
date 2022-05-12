@@ -38,7 +38,6 @@ public:
         StickyNode,
         SplineNode,
         RulerNode,
-        BidimensionalNode,
         ROINode,
         Screenshot,
       };

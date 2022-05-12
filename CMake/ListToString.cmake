@@ -18,7 +18,7 @@
 #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.13.4)
+cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
 
 function(list_to_string separator input_list output_string_var)
   set(_string "")

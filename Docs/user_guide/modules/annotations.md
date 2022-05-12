@@ -1,8 +1,14 @@
 # Annotations
 
+:::{warning}
+
+This module is deprecated and will be removed in the future. It is recommended to use the [Markups](markups.md) module.
+
+:::
+
 ## Overview
 
-Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are rulers and regions of interest (ROIs). Use the Markups module for fiducials.
+Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are rulers and regions of interest (ROIs).
 
 ## Panels and their use
 

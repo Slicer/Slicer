@@ -33,21 +33,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       )
   endif()
 
-  set(ep_cxx_standard_args)
-  # XXX: On MSVC disable building DCMTK with C++11. DCMTK checks C++11.
-  # compiler compatibility by inspecting __cplusplus, but MSVC doesn't set __cplusplus.
-  # See https://blogs.msdn.microsoft.com/vcblog/2016/06/07/standards-version-switches-in-the-compiler/.
-  # Microsoft: "We won’t update __cplusplus until the compiler fully conforms to
-  # the standard. Until then, you can check the value of _MSVC_LANG."
-  if(CMAKE_CXX_STANDARD AND UNIX)
-    list(APPEND ep_cxx_standard_args
-      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
-      -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
-      -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
-      -DDCMTK_ENABLE_CXX11:BOOL=ON
-      )
-  endif()
-
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/commontk/DCMTK.git"
@@ -56,11 +41,18 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    # Official DCMTK release DCMTK-3.6.6
-    # https://git.dcmtk.org/?p=dcmtk.git;a=commit;h=6cb30bd7fb42190e0188afbd8cb961c62a6fb9c9
-    # with an extra backported patch
-    # https://git.dcmtk.org/?p=dcmtk.git;a=commit;h=b665e2ec2d5ce435e28da6c938736dcfa84d0da6
-    "patched-DCMTK-3.6.6_20210115"
+    # Based of the official DCMTK release DCMTK-3.6.6
+    # * https://github.com/DCMTK/dcmtk/commit/6cb30bd7fb42190e0188afbd8cb961c62a6fb9c9
+    # * https://github.com/DCMTK/dcmtk/releases/tag/DCMTK-3.6.6
+    #
+    # with these backported patches:
+    # * Fixed extra padding created for some segmentations.
+    #   https://github.com/DCMTK/dcmtk/commit/b665e2ec2d5ce435e28da6c938736dcfa84d0da6
+    #
+    # * Made file extensions explicit for CMake CMP0115
+    #   https://github.com/DCMTK/dcmtk/commit/d090b6d7c65e52e01e436a2473dc8ba3f384efbb
+    #
+    "0f9bf4d9e9a778c11fdddafca691b451c2b621bc" # patched-DCMTK-3.6.6_20210115
     QUIET
     )
 
@@ -78,7 +70,9 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      ${ep_cxx_standard_args}
+      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
+      -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
+      -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
       -DDCMTK_WITH_ZLIB:BOOL=OFF # see CTK github issue #25

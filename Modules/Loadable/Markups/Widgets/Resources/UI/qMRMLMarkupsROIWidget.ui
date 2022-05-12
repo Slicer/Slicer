@@ -27,12 +27,12 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ctkCollapsibleButton" name="roiSettingsCollapseButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="roiSettingsCollapseButton">
+     <property name="text">
       <string>ROI Settings</string>
      </property>
-     <property name="collapsed" stdset="0">
-      <bool>true</bool>
+     <property name="collapsed">
+      <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -53,6 +53,20 @@
         <item row="0" column="1">
          <widget class="QComboBox" name="roiTypeComboBox"/>
         </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Inside out:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="insideOutCheckBox">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -68,20 +82,20 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="qMRMLRangeWidget" name="LRRangeWidget" native="true">
-          <property name="minimum" stdset="0">
+         <widget class="qMRMLRangeWidget" name="LRRangeWidget">
+          <property name="minimum">
            <double>-100.000000000000000</double>
           </property>
-          <property name="maximum" stdset="0">
+          <property name="maximum">
            <double>100.000000000000000</double>
           </property>
-          <property name="minimumValue" stdset="0">
+          <property name="minimumValue">
            <double>-50.000000000000000</double>
           </property>
-          <property name="maximumValue" stdset="0">
+          <property name="maximumValue">
            <double>50.000000000000000</double>
           </property>
-          <property name="minimumHandlePalette" stdset="0">
+          <property name="minimumHandlePalette">
            <palette>
             <active>
              <colorrole role="WindowText">
@@ -388,7 +402,7 @@
             </disabled>
            </palette>
           </property>
-          <property name="maximumHandlePalette" stdset="0">
+          <property name="maximumHandlePalette">
            <palette>
             <active>
              <colorrole role="WindowText">
@@ -695,7 +709,7 @@
             </disabled>
            </palette>
           </property>
-          <property name="quantity" stdset="0">
+          <property name="quantity">
            <string>length</string>
           </property>
          </widget>
@@ -711,20 +725,20 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="qMRMLRangeWidget" name="PARangeWidget" native="true">
-          <property name="minimum" stdset="0">
+         <widget class="qMRMLRangeWidget" name="PARangeWidget">
+          <property name="minimum">
            <double>-100.000000000000000</double>
           </property>
-          <property name="maximum" stdset="0">
+          <property name="maximum">
            <double>100.000000000000000</double>
           </property>
-          <property name="minimumValue" stdset="0">
+          <property name="minimumValue">
            <double>-50.000000000000000</double>
           </property>
-          <property name="maximumValue" stdset="0">
+          <property name="maximumValue">
            <double>50.000000000000000</double>
           </property>
-          <property name="minimumHandlePalette" stdset="0">
+          <property name="minimumHandlePalette">
            <palette>
             <active>
              <colorrole role="WindowText">
@@ -1031,7 +1045,7 @@
             </disabled>
            </palette>
           </property>
-          <property name="maximumHandlePalette" stdset="0">
+          <property name="maximumHandlePalette">
            <palette>
             <active>
              <colorrole role="WindowText">
@@ -1338,26 +1352,26 @@
             </disabled>
            </palette>
           </property>
-          <property name="quantity" stdset="0">
+          <property name="quantity">
            <string>length</string>
           </property>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="qMRMLRangeWidget" name="ISRangeWidget" native="true">
-          <property name="minimum" stdset="0">
+         <widget class="qMRMLRangeWidget" name="ISRangeWidget">
+          <property name="minimum">
            <double>-100.000000000000000</double>
           </property>
-          <property name="maximum" stdset="0">
+          <property name="maximum">
            <double>100.000000000000000</double>
           </property>
-          <property name="minimumValue" stdset="0">
+          <property name="minimumValue">
            <double>-50.000000000000000</double>
           </property>
-          <property name="maximumValue" stdset="0">
+          <property name="maximumValue">
            <double>50.000000000000000</double>
           </property>
-          <property name="minimumHandlePalette" stdset="0">
+          <property name="minimumHandlePalette">
            <palette>
             <active>
              <colorrole role="WindowText">
@@ -1664,7 +1678,7 @@
             </disabled>
            </palette>
           </property>
-          <property name="maximumHandlePalette" stdset="0">
+          <property name="maximumHandlePalette">
            <palette>
             <active>
              <colorrole role="WindowText">
@@ -1971,7 +1985,7 @@
             </disabled>
            </palette>
           </property>
-          <property name="quantity" stdset="0">
+          <property name="quantity">
            <string>length</string>
           </property>
          </widget>
@@ -2073,11 +2087,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkRangeWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkRangeWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLRangeWidget</class>
    <extends>ctkRangeWidget</extends>
    <header>qMRMLRangeWidget.h</header>
@@ -2087,6 +2096,11 @@
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkRangeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

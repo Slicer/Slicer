@@ -388,6 +388,11 @@ void qMRMLSegmentationConversionParametersWidget::applyConversion()
     return;
     }
 
+  // In case Enter was clicked while a parameter value was being edited,
+  // the editing is not yet finished by the time this method is called.
+  // Force finish editing now by unsetting current item.
+  d->ParametersTable->setCurrentItem(nullptr);
+
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
 
   // Perform conversion using selected path and chosen conversion parameters

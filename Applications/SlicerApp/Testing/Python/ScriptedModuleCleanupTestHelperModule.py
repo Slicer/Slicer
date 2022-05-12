@@ -1,7 +1,5 @@
 import os
 
-import slicer.util
-
 from slicer.ScriptedLoadableModule import *
 
 
@@ -20,6 +18,7 @@ class ModuleCleanup(ScriptedLoadableModule):
     partially funded by NIH grant 1R01EB021391.
     """
 
+
 class ModuleCleanupWidget(ScriptedLoadableModuleWidget):
   def __init__(self, parent=None):
     ScriptedLoadableModuleWidget.__init__(self, parent)
@@ -31,6 +30,7 @@ class ModuleCleanupWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
     print("ModuleCleanupWidget setup")
+
   def cleanup(self):
     with open(self.testOutputFileName, "w") as fd:
       fd.write('ModuleCleanup generated this file when application exited')

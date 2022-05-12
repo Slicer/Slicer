@@ -30,13 +30,13 @@
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
 #include "qSlicerSubjectHierarchyCloneNodePlugin.h"
-#include "qSlicerSubjectHierarchyChartsPlugin.h"
 #include "qSlicerSubjectHierarchyParseLocalDataPlugin.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 #include "qSlicerSubjectHierarchyFolderPlugin.h"
 #include "qSlicerSubjectHierarchyOpacityPlugin.h"
 #include "qSlicerSubjectHierarchyViewContextMenuPlugin.h"
 #include "qSlicerSubjectHierarchyVisibilityPlugin.h"
+#include "qSlicerSubjectHierarchyExportPlugin.h"
 
 // MRML includes
 #include "vtkMRMLAbstractViewNode.h"
@@ -142,13 +142,13 @@ void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyCloneNodePlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyChartsPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyRegisterPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyOpacityPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyVisibilityPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyExportPlugin());
 }
 
 //-----------------------------------------------------------------------------

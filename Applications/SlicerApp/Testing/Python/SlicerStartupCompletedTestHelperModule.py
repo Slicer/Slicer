@@ -3,6 +3,7 @@ import os
 
 from slicer.ScriptedLoadableModule import *
 
+
 class SlicerStartupCompletedTestHelperModule(ScriptedLoadableModule):
 
   def __init__(self, parent):

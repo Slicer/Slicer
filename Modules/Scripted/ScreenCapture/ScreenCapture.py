@@ -1,8 +1,13 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+import os
+
+import ctk
+import qt
+import vtk
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # ScreenCapture
@@ -29,6 +34,7 @@ This work was was funded by Cancer Care Ontario
 and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
 """
 
+
 #
 # ScreenCaptureWidget
 #
@@ -38,6 +44,7 @@ VIEW_3D = '3d'
 
 AXIS_YAW = 0
 AXIS_PITCH = 1
+
 
 class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -129,7 +136,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.rotationAxisWidget.addItem("Pitch", AXIS_PITCH)
     inputFormLayout.addRow(self.rotationAxisLabel, self.rotationAxisWidget)
 
-
     # Sequence browser node selector
     self.sequenceBrowserNodeSelectorLabel = qt.QLabel("Sequence:")
     self.sequenceBrowserNodeSelectorWidget = slicer.qMRMLNodeComboBox()
@@ -197,7 +203,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     # Output directory selector
     self.outputDirSelector = ctk.ctkPathLineEdit()
-    self.outputDirSelector.sizeAdjustPolicy = ctk.ctkPathLineEdit.AdjustToMinimumContentsLength
     self.outputDirSelector.filters = ctk.ctkPathLineEdit.Dirs
     self.outputDirSelector.settingKey = 'ScreenCaptureOutputDir'
     outputFormLayout.addRow("Output directory:", self.outputDirSelector)
@@ -591,7 +596,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.repeatSliderWidget.enabled = (numberOfSteps > 1)
     self.volumeNodeComboBox.setEnabled(numberOfSteps == 1)
 
-
   def setSliceOffset(self, offset):
     sliceLogic = self.logic.getSliceLogicFromSliceNode(self.viewNodeSelector.currentNode())
     sliceLogic.SetSliceOffset(offset)
@@ -790,6 +794,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.captureButton.text = self.captureButtonLabelCapture
     self.captureButton.setEnabled(True)
     self.enableInputOutputWidgets(True)
+
 
 #
 # ScreenCaptureLogic
@@ -1177,7 +1182,6 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     return blend.GetOutput()
 
-
   def viewFromNode(self, viewNode):
     if not viewNode:
       raise ValueError('Invalid view node.')
@@ -1464,6 +1468,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         break
       snapshotIndex += 1
     return [filename, snapshotIndex]
+
 
 class ScreenCaptureTest(ScriptedLoadableModuleTest):
   """

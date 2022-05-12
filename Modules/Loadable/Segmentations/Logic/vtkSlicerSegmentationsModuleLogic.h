@@ -439,6 +439,20 @@ public:
   static void GenerateMergedLabelmapInReferenceGeometry(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLVolumeNode* referenceVolumeNode,
     vtkStringArray* segmentIDs, int extentComputationMode, vtkOrientedImageData* mergedLabelmap_Reference, vtkIntArray* labelValues=nullptr);
 
+  /// Determine if any part of the effective extent is outside of the reference volume geometry
+  /// \param referenceVolumeNode Volume node that contains the reference geometry.
+  /// \param segmentationNode Segmentation node that contains the effective extent to be checked.
+  /// \param segmentIDs List of segment IDs that will be used to calculate the effective extent.
+  /// \return True if the effective segmentation extent is outside of the reference volume, False otherwise.
+  static bool IsEffectiveExentOutsideReferenceVolume(vtkMRMLVolumeNode* referenceVolumeNode, vtkMRMLSegmentationNode* segmentationNode,
+    vtkStringArray* segmentIDs = nullptr);
+
+  /// Determine if any part of the segmentation extent is outside of the reference geometry
+  /// \param referenceVolumeNode Image that contains the reference geometry.
+  /// \param segmentationNode Image that contains the segmentation geometry.
+  /// \return True if the segmentation extent is outside of the reference volume, False otherwise.
+  static bool IsSegmentationExentOutsideReferenceGeometry(vtkOrientedImageData* referenceGeometry, vtkOrientedImageData* segmentationGeometry);
+
 protected:
   void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 

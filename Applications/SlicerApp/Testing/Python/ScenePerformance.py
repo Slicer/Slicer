@@ -1,8 +1,11 @@
 import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
 
 #
 # ScenePerformance
@@ -21,6 +24,7 @@ class ScenePerformance(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Julien Finet, Kitware, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
     """
+
 
 #
 # ScenePerformanceWidget
@@ -107,6 +111,7 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
   def findWidget(self, widget, objectName):
     return slicer.util.findChildren(widget, objectName)[0]
 
+
 #
 # ScenePerformanceLogic
 #
@@ -125,6 +130,7 @@ class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
 
   def stopTiming(self):
     return self.Timer.elapsed()
+
 
 class ScenePerformanceTest(ScriptedLoadableModuleTest):
 
@@ -171,6 +177,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
     message = self.displayPerformance(action, property, time)
     print ( f'<DartMeasurement name="{action}-{property}" type="numeric/integer">{time}</DartMeasurement>')
     return message
+
   def displayPerformance(self, action, property, time):
     message = f'{action} ({property}) took {time} msecs '
     self.delayDisplay(message)

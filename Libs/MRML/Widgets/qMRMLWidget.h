@@ -38,7 +38,7 @@ class QMRML_WIDGETS_EXPORT qMRMLWidget : public QWidget
 
 public:
   typedef QWidget Superclass;
-  explicit qMRMLWidget(QWidget *parent=nullptr, Qt::WindowFlags f=nullptr);
+  explicit qMRMLWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
   ~qMRMLWidget() override;
 
   /// Return a pointer on the current MRML scene

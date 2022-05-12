@@ -1,7 +1,7 @@
 project(MRMLDisplayableManager)
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.13.4)
+cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
 #-----------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------
@@ -114,6 +114,8 @@ set(KIT_SRCS
   vtkMRMLCameraWidget.cxx
   vtkMRMLSliceIntersectionWidget.cxx
   vtkMRMLSliceIntersectionRepresentation2D.cxx
+  vtkMRMLSliceIntersectionInteractionRepresentation.cxx
+  vtkMRMLSliceIntersectionInteractionRepresentationHelper.cxx
   vtkMRMLRubberBandWidgetRepresentation.cxx
   vtkMRMLWindowLevelWidget.cxx
 

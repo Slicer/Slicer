@@ -254,6 +254,10 @@ void vtkImageLabelOutline::ThreadedExecute(vtkImageData *inData,
     vtkImageLabelOutlineExecute(this, inData, (char *)(inPtr),
       outData, outExt, id);
     break;
+  case VTK_SIGNED_CHAR:
+    vtkImageLabelOutlineExecute(this, inData, (signed char *)(inPtr),
+      outData, outExt, id);
+    break;
   case VTK_UNSIGNED_CHAR:
     vtkImageLabelOutlineExecute(this, inData, (unsigned char *)(inPtr),
       outData, outExt, id);

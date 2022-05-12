@@ -5,15 +5,18 @@ from . import CMakeParser
 
 from .Utilities import detectEncoding
 
+
 #-----------------------------------------------------------------------------
 def _isCommand(token, name):
   return isinstance(token, CMakeParser.Command) and token.text.lower() == name
+
 
 #-----------------------------------------------------------------------------
 def _trimIndent(indent):
   indent = "\n" + indent
   n = indent.rindex("\n")
   return indent[n:]
+
 
 #=============================================================================
 class ExtensionProject:
@@ -114,7 +117,6 @@ class ExtensionProject:
   #---------------------------------------------------------------------------
   def __exit__(self, exc_type, exc_value, traceback):
     self.save()
-
 
   #---------------------------------------------------------------------------
   @property

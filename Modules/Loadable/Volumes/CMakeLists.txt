@@ -22,6 +22,9 @@ set(MODULE_INCLUDE_DIRECTORIES
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
+  ${qSlicerColorsModuleWidgets_INCLUDE_DIRS}
+  ${vtkSlicerColorsModuleMRML_INCLUDE_DIRS}
+  ${vtkSlicerColorsModuleLogic_INCLUDE_DIRS}
   )
 
 set(MODULE_SRCS
@@ -51,6 +54,9 @@ set(MODULE_TARGET_LIBRARIES
   qSlicer${MODULE_NAME}ModuleWidgets
   vtkSlicer${MODULE_NAME}ModuleLogic
   qSlicer${MODULE_NAME}SubjectHierarchyPlugins
+  qSlicerColorsModuleWidgets
+  vtkSlicerColorsModuleLogic
+  vtkSlicerColorsModuleMRML
   )
 
 set(MODULE_RESOURCES

@@ -18,7 +18,8 @@
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLMarkupsStorageNode.h"
+#include "vtkMRMLMarkupsJsonStorageNode.h"
+#include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
 #include "vtkURIHandler.h"
@@ -28,10 +29,11 @@
 // VTK includes
 #include <vtkNew.h>
 
-int vtkMRMLMarkupsStorageNodeTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
+namespace
 {
-  vtkNew<vtkMRMLMarkupsStorageNode> node1;
-  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+int TestMarkupsStorageNode(vtkMRMLMarkupsStorageNode* node1)
+{
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1);
 
   TEST_SET_GET_INT(node1, CoordinateSystem, 0);
   TEST_SET_GET_INT(node1, CoordinateSystem, 1);
@@ -56,5 +58,18 @@ int vtkMRMLMarkupsStorageNodeTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)
   node1->UseRASOn();
   CHECK_STD_STRING(node1->GetCoordinateSystemAsString(), "RAS");
 
+  return EXIT_SUCCESS;
+}
+
+}
+
+int vtkMRMLMarkupsStorageNodeTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
+{
+  // vtkMRMLMarkupsStorageNodeTest is an abstract class, therefore we test it
+  // by instantiating child classes.
+  vtkNew<vtkMRMLMarkupsJsonStorageNode> jsonStorage;
+  vtkNew<vtkMRMLMarkupsFiducialStorageNode> fiducialStorage;
+  CHECK_EXIT_SUCCESS(TestMarkupsStorageNode(jsonStorage));
+  CHECK_EXIT_SUCCESS(TestMarkupsStorageNode(fiducialStorage));
   return EXIT_SUCCESS;
 }

@@ -19,6 +19,8 @@ set(${KIT}_SRCS
   qMRML${MODULE_NAME}ToolBar.cxx
   qMRML${MODULE_NAME}ToolBar.h
   qMRML${MODULE_NAME}ToolBar_p.h
+  qMRML${MODULE_NAME}PlaneWidget.cxx
+  qMRML${MODULE_NAME}PlaneWidget.h
   qMRML${MODULE_NAME}ROIWidget.cxx
   qMRML${MODULE_NAME}ROIWidget.h
   qMRML${MODULE_NAME}AbstractOptionsWidget.cxx
@@ -41,6 +43,7 @@ set(${KIT}_MOC_SRCS
   qMRML${MODULE_NAME}InteractionHandleWidget.h
   qMRML${MODULE_NAME}ToolBar.h
   qMRML${MODULE_NAME}ToolBar_p.h
+  qMRML${MODULE_NAME}PlaneWidget.h
   qMRML${MODULE_NAME}ROIWidget.h
   qMRML${MODULE_NAME}AbstractOptionsWidget.h
   qMRML${MODULE_NAME}AngleMeasurementsWidget.h
@@ -54,6 +57,7 @@ set(${KIT}_UI_SRCS
   Resources/UI/qMRML${MODULE_NAME}DisplayNodeWidget.ui
   Resources/UI/qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.ui
   Resources/UI/qMRML${MODULE_NAME}InteractionHandleWidget.ui
+  Resources/UI/qMRML${MODULE_NAME}PlaneWidget.ui
   Resources/UI/qMRML${MODULE_NAME}ROIWidget.ui
   Resources/UI/qMRML${MODULE_NAME}AngleMeasurementsWidget.ui
   Resources/UI/qMRML${MODULE_NAME}CurveSettingsWidget.ui

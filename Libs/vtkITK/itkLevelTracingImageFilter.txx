@@ -43,7 +43,7 @@ public:
   typedef typename InputImageType::SizeType InputSizeType;
 
   /** Dimension underlying input image. */
-  itkStaticConstMacro(ImageDimension, unsigned int,Superclass::ImageDimension);
+  static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
 
   /** Point typedef support. */
   typedef typename Superclass::PointType PointType;

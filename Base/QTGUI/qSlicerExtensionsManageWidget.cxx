@@ -375,7 +375,11 @@ public:
       int margin = this->margin() * 2;
       if (!this->MoreLinkTarget.isEmpty())
         {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+        margin += this->fontMetrics().horizontalAdvance(" More");
+#else
         margin += this->fontMetrics().width(" More");
+#endif
         }
       this->prepareText(
         this->fontMetrics().elidedText(this->ExtensionDescription,

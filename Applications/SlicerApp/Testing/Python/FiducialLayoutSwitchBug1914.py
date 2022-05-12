@@ -1,9 +1,11 @@
-import os
-import unittest
-import math
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+import math
+
+import vtk
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # FiducialLayoutSwitchBug1914
@@ -17,11 +19,12 @@ class FiducialLayoutSwitchBug1914(ScriptedLoadableModule):
     parent.dependencies = []
     parent.contributors = ["Nicole Aucoin (BWH)"]
     parent.helpText = """
-    Test for bug 1914, misplaced fiducial after switching layouts.
+    Test for bug 1914, misplaced control point after switching layouts.
     """
     parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH  and was partially funded by NIH grant 3P41RR013218-12S1.
 """
+
 
 #
 # qFiducialLayoutSwitchBug1914Widget
@@ -44,10 +47,11 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     ScriptedLoadableModuleLogic.__init__(self)
 
-  def getFiducialSliceDisplayableManagerHelper(self,sliceName='Red'):
+  def getPointSliceDisplayableManagerHelper(self,sliceName='Red'):
     sliceWidget = slicer.app.layoutManager().sliceWidget(sliceName)
     sliceView = sliceWidget.sliceView()
     collection = vtk.vtkCollection()
@@ -63,6 +67,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
+
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
@@ -98,13 +103,11 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
     import SampleData
     mrHeadVolume = SampleData.downloadSample("MRHead")
 
-    # Place a fiducial on the red slice
-    markupsLogic = slicer.modules.markups.logic()
+    # Place a point on the red slice
     eye = [33.4975, 79.4042, -10.2143]
-    fidIndex = markupsLogic.AddFiducial(eye[0], eye[1], eye[2])
-    fidID = markupsLogic.GetActiveListID()
-    fidNode = slicer.mrmlScene.GetNodeByID(fidID)
-    self.delayDisplay(f"Placed a fiducial at {eye[0]:g}, {eye[1]:g}, {eye[2]:g}")
+    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+    markupNode.AddControlPoint(eye)
+    self.delayDisplay(f"Placed a point at {eye[0]:g}, {eye[1]:g}, {eye[2]:g}")
 
     # Pan and zoom
     sliceWidget = slicer.app.layoutManager().sliceWidget('Red')
@@ -117,14 +120,14 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
 
     # Get the seed widget seed location
     startingSeedDisplayCoords = [0.0, 0.0, 0.0]
-    helper = logic.getFiducialSliceDisplayableManagerHelper('Red')
+    helper = logic.getPointSliceDisplayableManagerHelper('Red')
     if helper is not None:
-     seedWidget = helper.GetWidget(fidNode)
+     seedWidget = helper.GetWidget(markupNode)
      seedRepresentation = seedWidget.GetSeedRepresentation()
      handleRep = seedRepresentation.GetHandleRepresentation(fidIndex)
      startingSeedDisplayCoords = handleRep.GetDisplayPosition()
      print('Starting seed display coords = %d, %d, %d' % (startingSeedDisplayCoords[0], startingSeedDisplayCoords[1], startingSeedDisplayCoords[2]))
-    self.takeScreenshot('FiducialLayoutSwitchBug1914-StartingPosition','Fiducial starting position',slicer.qMRMLScreenShotDialog.Red)
+    self.takeScreenshot('FiducialLayoutSwitchBug1914-StartingPosition','Point starting position',slicer.qMRMLScreenShotDialog.Red)
 
     # Switch to red slice only
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
@@ -138,14 +141,14 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
 
     # Get the current seed widget seed location
     endingSeedDisplayCoords = [0.0, 0.0, 0.0]
-    helper = logic.getFiducialSliceDisplayableManagerHelper('Red')
+    helper = logic.getPointSliceDisplayableManagerHelper('Red')
     if helper is not None:
-     seedWidget = helper.GetWidget(fidNode)
+     seedWidget = helper.GetWidget(markupNode)
      seedRepresentation = seedWidget.GetSeedRepresentation()
      handleRep = seedRepresentation.GetHandleRepresentation(fidIndex)
      endingSeedDisplayCoords = handleRep.GetDisplayPosition()
      print('Ending seed display coords = %d, %d, %d' % (endingSeedDisplayCoords[0], endingSeedDisplayCoords[1], endingSeedDisplayCoords[2]))
-    self.takeScreenshot('FiducialLayoutSwitchBug1914-EndingPosition','Fiducial ending position',slicer.qMRMLScreenShotDialog.Red)
+    self.takeScreenshot('FiducialLayoutSwitchBug1914-EndingPosition','Point ending position',slicer.qMRMLScreenShotDialog.Red)
 
     # Compare to original seed widget location
     diff = math.pow((startingSeedDisplayCoords[0] - endingSeedDisplayCoords[0]),2) + math.pow((startingSeedDisplayCoords[1] - endingSeedDisplayCoords[1]),2) + math.pow((startingSeedDisplayCoords[2] - endingSeedDisplayCoords[2]),2)
@@ -158,12 +161,12 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
       sliceView = sliceWidget.sliceView()
       volumeRAS = sliceView.convertXYZToRAS(endingSeedDisplayCoords)
       seedRAS = [0,0,0]
-      fidNode.GetNthFiducialPosition(0,seedRAS)
+      markupNode.GetNthControlPointPosition(0,seedRAS)
       rasDiff = math.pow((seedRAS[0] - volumeRAS[0]),2) + math.pow((seedRAS[1] - volumeRAS[1]),2) + math.pow((seedRAS[2] - volumeRAS[2]),2)
       if rasDiff != 0.0:
         rasDiff = math.sqrt(rasDiff)
-      print('Checking the difference between fiducial RAS position',seedRAS,
-            'and volume RAS as derived from the fiducial display position',volumeRAS,': ',rasDiff)
+      print('Checking the difference between point RAS position',seedRAS,
+            'and volume RAS as derived from the point display position',volumeRAS,': ',rasDiff)
       if rasDiff > maximumRASDifference:
         raise Exception(f"RAS coordinate difference is too large as well!\nExpected < {maximumRASDifference:g} but got {rasDiff:g}")
       else:
@@ -183,7 +186,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
       shotDiff = imageMath.GetOutput()
       # save it as a scene view
       annotationLogic = slicer.modules.annotations.logic()
-      annotationLogic.CreateSnapShot("FiducialLayoutSwitchBug1914-Diff", "Difference between starting and ending fiducial seed positions",
+      annotationLogic.CreateSnapShot("FiducialLayoutSwitchBug1914-Diff", "Difference between starting and ending point positions",
                                      slicer.qMRMLScreenShotDialog.Red, screenshotScaleFactor, shotDiff)
       # calculate the image difference
       imageStats = vtk.vtkImageHistogramStatistics()
@@ -196,4 +199,3 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
         raise Exception("Image difference is too great!\nExpected <= 5.0, but got %g" % (meanVal))
 
     self.delayDisplay('Test passed!')
-

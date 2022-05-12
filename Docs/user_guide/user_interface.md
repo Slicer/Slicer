@@ -12,7 +12,23 @@ Slicer provides a large number "modules", each implementing a specific set of fu
 
 This panel (located by default on the left side of the application main window) displays all the options and features that the current module offers to the user. Current module can be selected using the **Module Selection** toolbar.
 
-**Data Probe** is located at the bottom of the module panel. It displays information about view content at the position of the mouse pointer.
+#### Data Probe
+
+Data Probe is located at the bottom of the module panel. It displays information about view content at the position of the mouse pointer:
+- Slice view information (displayed when the mouse is over a slice view):
+  - Slice view name: `Red`, `Green`, `Yellow`, etc.
+  - Anatomical position: three coordinate values, prefixed with `R`/`L` (right/left), `A`/`P` (anterior/posterior), `S`/`I` (superior/inferior). The origin - (0,0,0) position - was chosen by the imaging technologist when the image was created. For example `(R 17.6, P 35.3, S 12.1)` for a clinical image means that the current position is 17.6mm to the right from the origin, 35.3mm towards posterior, 12.1mm superior from the origin.
+  - View orientation: `Axial`, `Sagittal`, `Coronal` for standard anatomical orientations, and `Reformat` for any other orientation.
+  - Slice spacing: distance between slices in this orientation. For a clinical image `Sp: 2.5` means that slices are 2.5mm distance from each other.
+- Volume layer information: three lines, one for each volume layer
+  - Layer type: `L` (label), `F` (foreground), `B` (background).
+  - Volume name, or `None` if no volume is selected for that layer.
+  - Volume voxel (IJK) coordinates.
+  - Voxel value. For label volumes the label name corresponding to the voxel value is also displayed.
+- Segmentation information: for each segmentation visible at that position
+  - Layer type: `S` (segmentation)
+  - Segmentation name.
+  - Segment names. Multiple segment names are listed if multiple segments are displayed at that position (the segments overlap).
 
 ### Views
 
@@ -91,9 +107,9 @@ Slicer has multiple mouse modes: **Transform** (which allows interactive rotate,
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_mousemode_toolbar.png)
 
-The toolbar icons that switch between these mouse modes are shown from left to right above, respectively. Place Fiducial is the default place option as shown above; options to place other nodes such as Ruler and Region of Interest Widgets are also available from the drop-down Place Mode menu.
+The toolbar icons that switch between these mouse modes are shown from left to right above, respectively. Place Point List is the default place option as shown above; options to place other nodes such as Ruler and Region of Interest Widgets are also available from the drop-down Place Mode menu.
 
-> **Note:** Transform mode is the default interaction mode. By default, Place mode persists for one "place" operation after the Place Mode icon is selected, and then the mode switches back to Transform. Place mode can be made persistent (useful for creating multiple fiducial points, rulers, etc.) by checking the Persistent checkbox shown rightmost in the Mouse Mode Toolbar.
+> **Note:** Transform mode is the default interaction mode. By default, Place mode persists for one "place" operation after the Place Mode icon is selected, and then the mode switches back to Transform. Place mode can be made persistent (useful for placing multiple control points) by checking the Persistent checkbox shown rightmost in the Mouse Mode Toolbar.
 
 #### Adjusting image window/level
 
@@ -105,7 +121,7 @@ Window/level can be manually adjusted anytime by clicking on "Adjust window/leve
 
 [![](https://img.youtube.com/vi/u1B0F1KcVsk/0.jpg)](https://youtu.be/u1B0F1KcVsk "Demo video of how to adjust image window/level")
 
-Additional window/level options, presets, intensity histogram, automatic adjustments are available in Display section of [Volumes](modules/volumes) module.
+Additional window/level options, presets, intensity histogram, automatic adjustments are available in Display section of [Volumes](modules/volumes.md) module.
 
 ### 3D View
 
@@ -155,7 +171,10 @@ View Controllers module provides an alternate way of displaying these controller
 - **Rotate to volume plane** changes the orientation of the slice to match the closest acquisition orientation of the displayed volume.
 - **Orientation Marker** controls display of human, cube, etc in lower right corner.
 - **Ruler** controls display of ruler in slice view.
-- **View link** button synchronizes properties (which volumes are displayed, zoom factor, position of parallel views, opacities, etc.) between all slice views in the same view group. Long-click on the button exposes **hot-linked** option, which controls when properties are synchronized (immediately or when the mouse button is released).
+- **View link** button synchronizes properties of views in the same view group, such as foreground/backgroudn/label volume selection, foreground/label volume opacity, zoom factor.
+  - For parallel views (i.e., that are set to the same orientation,OD such as `axial`), the view center position is synchronized as well.
+  - Long-click on the button exposes **hot-linked** option, which controls when properties are synchronized (immediately or when the mouse button is released).
+  - A view group typically consists of 3 orthogonal views (e.g., in `Four-Up` view, `R`, `G`, `Y, views are in the same group). In layouts that contain multiple triplets of slice views, each triplet forms a separate group (e.g., in `Three over three` layout there are two view groups, one group is `R`, `G`, `Y`, the other groups is `R+`, `G+`, `Y+`).
 - **Layer visibility** "eye" buttons and **Layer opacity** spinboxes control visibility of segmentations and volumes in the slice view.
 - **Foreground volume opacity** slider allows fading between foreground and background volumes.
 - **Interpolation** allows displaying voxel values without interpolation. Recommended to keep interpolation enabled, and only disable it for testing and troubleshooting.
@@ -174,7 +193,7 @@ View Controllers module provides an alternate way of displaying these controller
 | `Ctrl` + `0` | show Error Log |
 | `Ctrl` + `1` | show Application Help |
 | `Ctrl` + `2` | show Application Settings |
-| `Ctrl` + `3` | show/hide Python Interactor |
+| `Ctrl` + `3` / `Ctrl` + `` ` `` | show/hide Python Interactor |
 | `Ctrl` + `4` | show Extensions Manager |
 | `Ctrl` + `5` | show/hide Module Panel |
 | `Ctrl` + `h` | open default startup module (configurable in Application Settings) |

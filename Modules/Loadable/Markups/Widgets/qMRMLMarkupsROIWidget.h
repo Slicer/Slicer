@@ -31,7 +31,6 @@
 #include <ctkVTKObject.h>
 
 // ------------------------------------------------------------------------------
-class vtkMRMLAnnotationROINode;
 class vtkMRMLNode;
 class vtkMRMLMarkupsROINode;
 class qMRMLMarkupsROIWidgetPrivate;
@@ -62,6 +61,9 @@ public:
   /// Checks whether a given node can be handled by the widget
   bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
 
+  /// Get the inside out state.
+  bool insideOut();
+
 public slots:
   /// Turn on/off the visibility of the ROI node
   void setDisplayClippingBox(bool visible);
@@ -69,6 +71,9 @@ public slots:
   /// Turn on/off the tracking mode of the sliders.
   /// The ROI node will be updated only when the slider handles are released.
   void setInteractiveMode(bool interactive);
+
+  /// Turn on/off inside out state.
+  void setInsideOut(bool insideOut);
 
   /// Updates the widget on MRML changes
   void updateWidgetFromMRML() override;

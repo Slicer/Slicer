@@ -113,10 +113,8 @@ public:
   virtual vtkMRMLMarkupsDisplayNode* GetMarkupsDisplayNode();
   virtual vtkMRMLMarkupsNode* GetMarkupsNode();
 
-  /// Compute the center by sampling the points along
-  /// the polyline of the widget at equal distances.
-  /// and it also updates automatically the center pos stored in the Markups node
-  virtual void UpdateCenter();
+  /// Compute the center of rotation and update it in the Markups node.
+  virtual void UpdateCenterOfRotation();
 
   /// Translation, rotation, scaling will happen around this position
   virtual bool GetTransformationReferencePoint(double referencePointWorld[3]);
@@ -153,6 +151,8 @@ public:
   virtual void GetInteractionHandleAxisWorld(int type, int index, double axis[3]);
   /// Get the origin of the interaction handle widget
   virtual void GetInteractionHandleOriginWorld(double origin[3]);
+  /// Get the position of an interaction handle in world coordinates
+  virtual void GetInteractionHandlePositionWorld(int type, int index, double position[3]);
 
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
@@ -196,9 +196,11 @@ protected:
     vtkSmartPointer<vtkSphereSource>                    AxisRotationHandleSource;
     vtkSmartPointer<vtkArcSource>                       AxisRotationArcSource;
     vtkSmartPointer<vtkTubeFilter>                      AxisRotationTubeFilter;
-    vtkSmartPointer<vtkAppendPolyData>                  AxisRotationGlyphSource;
+    vtkSmartPointer<vtkPolyData>                        AxisRotationInteriorAnglePolyData;
+    vtkSmartPointer<vtkTubeFilter>                      AxisRotationInterorAngleTubeFilter;
     vtkSmartPointer<vtkPolyData>                        RotationHandlePoints;
     vtkSmartPointer<vtkTransformPolyDataFilter>         RotationScaleTransform;
+    vtkSmartPointer<vtkAppendPolyData>                  AxisRotationGlyphSource;
     vtkSmartPointer<vtkTensorGlyph>                     AxisRotationGlypher;
 
     vtkSmartPointer<vtkArrowSource>                     AxisTranslationGlyphSource;
@@ -222,12 +224,13 @@ protected:
 
     double                                              StartFadeAngle{30};
     double                                              EndFadeAngle{20};
-    double                                              InteractionHandleScaleFactor{7.0};
+    double                                              InteractionHandleSize{1.0};
 
     virtual void InitializePipeline();
     virtual void CreateRotationHandles();
     virtual void CreateTranslationHandles();
     virtual void CreateScaleHandles();
+    virtual void UpdateHandleVisibility();
     virtual void UpdateHandleColors();
 
     /// Set the scale of the interaction handles in world coordinates
@@ -294,6 +297,9 @@ protected:
   virtual void UpdateViewScaleFactor() = 0;
 
   virtual void UpdateControlPointSize() = 0;
+
+  // Update the size of the interaction handle based on screen size + vtkMRMLMarkupsDisplayNode::InteractionHandleScale parameter.
+  virtual void UpdateInteractionHandleSize();
 
   double ViewScaleFactorMmPerPixel;
   double ScreenSizePixel; // diagonal size of the screen

@@ -28,6 +28,7 @@ welcome.md
 ```{toctree}
 :maxdepth: 1
 colors.md
+plots.md
 sampledata.md
 tables.md
 terminologies.md
@@ -54,9 +55,7 @@ reformat.md
 :maxdepth: 1
 segmentations.md
 segmenteditor.md
-simpleregiongrowingsegmentation.md
 brainsroiauto.md
-robuststatisticssegmenter.md
 ```
 
 ## Quantification
@@ -142,10 +141,12 @@ orientscalarvolume.md
 vectortoscalarvolume.md
 resampledtivolume.md
 resamplescalarvectordwivolume.md
-resamplescalarvolume.md
 ```
 
 ## Developer Tools
+
+These modules are intended for module developers.
+
 ```{toctree}
 :maxdepth: 1
 cameras.md
@@ -154,20 +155,31 @@ executionmodeltour.md
 extensionwizard.md
 ```
 
-## Legacy
-```{toctree}
-:maxdepth: 1
-annotations.md
-datastore.md
-editor.md
-expertautomatedregistration.md
-labelstatistics.md
-brainslabelstats.md
-```
-
 ## Testing
+
+These modules are for testing correctness and performance of the application.
+
 ```{toctree}
 :maxdepth: 1
 performancetests.md
 selftests.md
+```
+
+## Legacy and retired modules
+
+Deprecated modules are not recommended to be used anymore, typically because other modules have replaced them, and they are planned to be removed in the future.
+
+```{toctree}
+:maxdepth: 1
+annotations.md
+resamplescalarvolume.md
+robuststatisticssegmenter.md
+simpleregiongrowingsegmentation.md
+```
+
+Retired modules have been already removed from the application.
+
+```{toctree}
+:maxdepth: 1
+retiredmodules.md
 ```

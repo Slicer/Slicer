@@ -29,6 +29,7 @@
 
 // CTK includes
 #include <ctkComboBox.h>
+#include <ctkUtils.h>
 
 // MRMLWidgets includes
 #include "qMRMLNodeComboBoxDelegate.h"
@@ -60,10 +61,18 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   this->SelectNodeUponCreation = true;
   this->NoneDisplay = qMRMLNodeComboBox::tr("None");
   this->AutoDefaultText = true;
+
+  this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
 }
 
 // --------------------------------------------------------------------------
-qMRMLNodeComboBoxPrivate::~qMRMLNodeComboBoxPrivate() = default;
+qMRMLNodeComboBoxPrivate::~qMRMLNodeComboBoxPrivate()
+{
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->RemoveObserver(this->CallBack);
+    }
+}
 
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
@@ -111,7 +120,28 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
   // nodeTypeLabel() works only when the model is set.
   this->updateDefaultText();
 
+  this->CallBack->SetClientData(this);
+  this->CallBack->SetCallback(qMRMLNodeComboBoxPrivate::onMRMLSceneEvent);
+
   q->setEnabled(q->mrmlScene() != nullptr);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeComboBoxPrivate::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
+  void* client_data, void* call_data)
+{
+  vtkMRMLScene* scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
+  qMRMLNodeComboBoxPrivate* self = reinterpret_cast<qMRMLNodeComboBoxPrivate*>(client_data);
+  if (!self)
+    {
+    return;
+    }
+  if (event == vtkMRMLScene::NodeClassRegisteredEvent)
+    {
+    self->updateDefaultText();
+    self->updateNoneItem(false);
+    self->updateActionItems(false);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -293,7 +323,13 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
       extraItems.append(action->text());
       }
     }
+
+  // setPostItems inserts rows, which changes selection if selection was previously invalid (-1).
+  // Since NoneDisplay is only shown if selection is -1, we save and restore the current index.
+  int currentIndex = this->ComboBox->currentIndex();
   this->MRMLSceneModel->setPostItems(extraItems, this->MRMLSceneModel->mrmlSceneItem());
+  this->ComboBox->setCurrentIndex(currentIndex);
+
   QObject::connect(this->ComboBox->view(), SIGNAL(clicked(QModelIndex)),
                    q, SLOT(activateExtraItem(QModelIndex)),
                    Qt::UniqueConnection);
@@ -470,7 +506,7 @@ void qMRMLNodeComboBox::addAttribute(const QString& nodeType,
   if (nodeType=="vtkMRMLScalarVolumeNode" && attributeName=="LabelMap")
   {
     qWarning("vtkMRMLScalarVolumeNode does not have a LabelMap attribute anymore. Update your code according to "
-      "http://www.slicer.org/slicerWiki/index.php/Documentation/Labs/Segmentations#Module_update_instructions");
+      "https://www.slicer.org/w/index.php/Documentation/Labs/Segmentations#Module_update_instructions");
     return;
   }
 
@@ -561,17 +597,12 @@ QString qMRMLNodeComboBox::nodeTypeLabel(const QString& nodeType)const
   // Otherwise use the node tag
   if (this->mrmlScene())
     {
-    QString label = this->mrmlScene()->GetTagByClassName(nodeType.toUtf8());
+    QString label = QString::fromStdString(this->mrmlScene()->GetTypeDisplayNameByClassName(nodeType.toStdString()));
     if (!label.isEmpty())
       {
       return label;
       }
     }
-  // Special case: for volumes, use "Volume" as label
-  if (nodeType == "vtkMRMLVolumeNode")
-      {
-      return tr("Volume");
-      }
   // Otherwise just label the node as "node"
   return tr("node");
 }
@@ -765,7 +796,16 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
   d->MRMLSceneModel->setMRMLScene(scene);
-  d->updateDefaultText();
+
+  if (d->MRMLScene)
+    {
+    d->MRMLScene->RemoveObserver(d->CallBack);
+    }
+  d->MRMLScene = scene;
+  if (scene)
+    {
+    scene->AddObserver(vtkMRMLScene::NodeClassRegisteredEvent, d->CallBack);
+    }
   d->updateNoneItem(false);
   d->updateActionItems(false);
 
@@ -802,6 +842,10 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
     }
   d->RequestedNodeID.clear();
   d->RequestedNode = nullptr;
+
+  // Need to update the default text after currentIndex is restored
+  // (the text is only displayed if current index is set to -1).
+  d->updateDefaultText();
 
   this->setEnabled(scene != nullptr);
 }
@@ -853,7 +897,7 @@ void qMRMLNodeComboBox::setCurrentNodeID(const QString& nodeID)
     // it (in popup()), however we want the view to be always synchronized
     // with the currentIndex as we use it to know if it has changed. This is
     // why we set it here.
-    QModelIndex noneIndex = sceneIndex.child(0, d->ComboBox->modelColumn());
+    QModelIndex noneIndex = ctk::modelChildIndex(d->ComboBox->model(), sceneIndex, 0, d->ComboBox->modelColumn());
     d->ComboBox->view()->setCurrentIndex(
       d->NoneEnabled ? noneIndex : sceneIndex);
     d->ComboBox->setCurrentIndex(d->NoneEnabled ? 0 : -1);

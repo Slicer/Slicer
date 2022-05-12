@@ -25,6 +25,7 @@
 #include "ui_qMRMLSegmentationRepresentationsListView.h"
 
 #include "qMRMLSegmentationConversionParametersWidget.h"
+#include "qSlicerApplication.h"
 
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkSegmentation.h"
@@ -35,6 +36,7 @@
 #include <QAction>
 #include <QDebug>
 #include <QDialog>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
@@ -327,7 +329,9 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationAdvanced()
   QString representationName = this->sender()->property(REPRESENTATION_NAME_PROPERTY).toString();
 
   // Create dialog to show the parameters widget in a popup window
-  QDialog* parametersDialog = new QDialog(nullptr, Qt::Dialog);
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  QDialog* parametersDialog = new QDialog(mainWindow, Qt::Dialog);
   parametersDialog->setObjectName("SegmentationConversionParametersWindow");
   parametersDialog->setWindowTitle("Advanced segmentation conversion");
   QVBoxLayout* layout = new QVBoxLayout(parametersDialog);
@@ -361,7 +365,7 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationAdvanced()
   settings.endGroup();
 
   // Delete dialog when done
-  delete parametersDialog;
+  parametersDialog->deleteLater();
 
   this->populateRepresentationsList();
 }

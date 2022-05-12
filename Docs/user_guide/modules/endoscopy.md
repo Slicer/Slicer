@@ -30,4 +30,4 @@ Steve Pieper (Isomics), Jean-Christophe Fillion-Robin (Kitware)
 
 ## Acknowledgements
 
-This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy) NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper.
+This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See https://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy) NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www.slicer.org for details. Module implemented by Steve Pieper.

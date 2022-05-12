@@ -1,6 +1,6 @@
 # C++ debugging with CodeLite
 
-[CodeLite](http://www.codelite.org) is a relatively lightweight, cross-platform IDE.
+[CodeLite](https://www.codelite.org) is a relatively lightweight, cross-platform IDE.
 
 ## Configure build
 
@@ -14,7 +14,7 @@ To configure the binary for the Run command, set Program: `~/Slicer-SuperBuild-D
 
 ## Configure debugger
 
-This requires the use of a wrapper script, as [detailed here](linux.md#gdb-debug-by-using-exec-wrapper).
+This requires the use of a wrapper script, as [detailed here](linuxcpp.md#gdb-debug-by-using-exec-wrapper).
 
 After setting up the wrapper script (`WrapSlicer` below), change the following options:
 

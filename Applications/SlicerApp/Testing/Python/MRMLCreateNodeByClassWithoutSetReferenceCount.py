@@ -1,5 +1,6 @@
 import slicer
 
+
 def testMRMLCreateNodeByClassWithoutSetReferenceCount():
 
   # Always run this test as if CTest ran it.
@@ -13,6 +14,7 @@ def testMRMLCreateNodeByClassWithoutSetReferenceCount():
   slicer.mrmlScene.AddNode(n)
   # This is expected to leak memory because CreateNodeByClass increments the reference count by one
   # and nothing decrements it.
+
 
 if __name__ == '__main__':
   testMRMLCreateNodeByClassWithoutSetReferenceCount()

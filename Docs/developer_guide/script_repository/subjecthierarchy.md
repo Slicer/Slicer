@@ -173,3 +173,40 @@ print(pluginLogic.registeredViewContextMenuActionNames)
 # Hide all the other menu items and show only "Rename point":
 pluginLogic.allowedViewContextMenuActionNames = ["RenamePointAction"]
 ```
+
+### Save files to directory structure matching subject hierarchy folders
+
+This code snippet saves all the storable files (volumes, transforms, markups, etc.) into a folder structure that mirrors the structure of the subject hierarchy tree (file folders have the same name as subject hierarchy folders).
+
+```python
+def exportNodes(shFolderItemId, outputFolder):
+    # Get items in the folder
+    childIds = vtk.vtkIdList()
+    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode.GetItemChildren(shFolderItemId, childIds)
+    if childIds.GetNumberOfIds() == 0:
+        return
+    # Create output folder
+    import os
+    os.makedirs(outputFolder, exist_ok=True)
+    # Write each child item to file
+    for itemIdIndex in range(childIds.GetNumberOfIds()):
+        shItemId = childIds.GetId(itemIdIndex)
+        # Write node to file (if storable)
+        dataNode = shNode.GetItemDataNode(shItemId)
+        if dataNode and dataNode.IsA("vtkMRMLStorableNode") and dataNode.GetStorageNode():
+            storageNode = dataNode.GetStorageNode()
+            filename = os.path.basename(storageNode.GetFileName())
+            filepath = outputFolder + "/" + filename
+            slicer.util.exportNode(dataNode, filepath)
+        # Write all children of this child item
+        grandChildIds = vtk.vtkIdList()
+        shNode.GetItemChildren(shItemId, grandChildIds)
+        if grandChildIds.GetNumberOfIds() > 0:
+            exportNodes(shItemId, outputFolder+"/"+shNode.GetItemName(shItemId))
+
+shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+outputFolder = "c:/tmp/test20211123"
+slicer.app.ioManager().addDefaultStorageNodes()
+exportNodes(shNode.GetSceneItemID(), outputFolder)
+```

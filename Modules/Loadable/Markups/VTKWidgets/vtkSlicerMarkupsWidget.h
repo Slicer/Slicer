@@ -98,7 +98,7 @@ public:
   // Places a new markup point.
   // Reuses current preview point, if possible.
   // Returns true if the event is processed.
-  bool PlacePoint(vtkMRMLInteractionEventData* eventData);
+  virtual bool PlacePoint(vtkMRMLInteractionEventData* eventData);
 
   /// Add a point to the current active Markup at input World coordinates.
   virtual int AddPointFromWorldCoordinate(const double worldCoordinates[3]);
@@ -198,7 +198,7 @@ private:
 
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
 #define vtkSlicerMarkupsWidgetCreateInstanceMacro(type) \
-vtkSlicerMarkupsWidget* CreateInstance() const \
+vtkSlicerMarkupsWidget* CreateInstance() const override\
 { \
   vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
   if(ret) \
@@ -211,7 +211,7 @@ vtkSlicerMarkupsWidget* CreateInstance() const \
 }
 #else
 #define vtkSlicerMarkupsWidgetCreateInstanceMacro(type) \
-vtkSlicerMarkupsWidget* CreateInstance() const \
+vtkSlicerMarkupsWidget* CreateInstance() const override\
 { \
   vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
   if(ret) \

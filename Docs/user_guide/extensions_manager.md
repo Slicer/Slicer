@@ -97,6 +97,8 @@ This can be due to several reasons:
   - Alternative solution: download extension package using a web browser (possibly on a different computer) and install the extension manually. See instructions [here](#install-extensions-without-network-connection).
 - On macOS: on some older macbooks, the extension manager window appears very bright, washed out (more information is in [this issue](https://github.com/Slicer/Slicer/issues/5118))
   - Recommended action: setting the operating system to dark mode fixed the issue for several users.
+- On Linux: `Install Extensions` tab is blank if your linux kernel may not fulfill [Chromium sandboxing requirements](https://doc.qt.io/Qt-5/qtwebengine-platform-notes.html#sandboxing-support).
+  - Recommended action: turn off sandboxing by setting this environment variable before launching Slicer `QTWEBENGINE_DISABLE_SANDBOX=1`
 
 ### Extension is not found for current Slicer version
 

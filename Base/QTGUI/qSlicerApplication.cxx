@@ -141,10 +141,14 @@ public:
   QSettings* newSettings() override;
 
   QPointer<qSlicerLayoutManager> LayoutManager;
-  ctkToolTipTrapper*      ToolTipTrapper;
-  ctkSettingsDialog*      SettingsDialog;
+  ctkToolTipTrapper* ToolTipTrapper;
+  // If MainWindow exists and the dialog is displayed then the MainWindow
+  // must be set as parent to ensure correct Z order;
+  // but that also transfers the ownership of the object, therefore we use QPointer
+  // to keep track if the object is deleted already by the MainWindow.
+  QPointer<ctkSettingsDialog> SettingsDialog;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  qSlicerExtensionsManagerDialog* ExtensionsManagerDialog;
+  QPointer<qSlicerExtensionsManagerDialog> ExtensionsManagerDialog;
   bool IsExtensionsManagerDialogOpen;
 #endif
 #ifdef Slicer_USE_QtTesting
@@ -177,13 +181,22 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 {
-  delete this->SettingsDialog;
-  this->SettingsDialog = nullptr;
+  // Delete settings dialog. deleteLater would cause memory leaks on exit.
+  // Settings dialog is displayed then MainWindow becomes its parent and
+  // thus MainWindow is responsible for deleting it.
+  // Set the parent to 'nullptr' removes this responsibility.
+  if (this->SettingsDialog)
+    {
+    this->SettingsDialog->setParent(nullptr);
+    delete this->SettingsDialog;
+    }
+
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   if(this->ExtensionsManagerDialog)
     {
+    this->ExtensionsManagerDialog->setParent(nullptr);
     delete this->ExtensionsManagerDialog;
-    this->ExtensionsManagerDialog =nullptr;
+    this->ExtensionsManagerDialog = nullptr;
     }
 #endif
 #ifdef Slicer_USE_QtTesting
@@ -266,6 +279,7 @@ void qSlicerApplicationPrivate::init()
   //----------------------------------------------------------------------------
   // Settings Dialog
   //----------------------------------------------------------------------------
+  // mainWindow is still nullptr, so the parent will be set later.
   this->SettingsDialog = new ctkSettingsDialog(nullptr);
   this->SettingsDialog->setResetButton(true);
   // Some settings panels are quite large, show maximize button to allow resizing with a single click
@@ -434,7 +448,7 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
       errorMessage += tr("Adding more RAM may fix this issue.\n\n");
       }
     errorMessage += tr("If you have a repeatable sequence of steps that causes this message, ");
-    errorMessage += tr("please report the issue following instructions available at http://slicer.org\n\n\n");
+    errorMessage += tr("please report the issue following instructions available at https://slicer.org\n\n\n");
     errorMessage += tr("The message detail is:\n\n");
     errorMessage += tr("Exception thrown in event: ") + exception.what();
     qCritical() << errorMessage;
@@ -453,7 +467,7 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
     errorMessage += tr("please save your work and restart.\n\n");
     errorMessage += tr("If you have a repeatable sequence of steps that causes this message, ");
-    errorMessage += tr("please report the issue following instructions available at http://slicer.org\n\n\n");
+    errorMessage += tr("please report the issue following instructions available at https://slicer.org\n\n\n");
     errorMessage += tr("The message detail is:\n\n");
     errorMessage += tr("Exception thrown in event: ") + exception.what();
     qCritical() << errorMessage;
@@ -623,12 +637,13 @@ void qSlicerApplication::confirmRestart(QString reason)
     reason = tr("Are you sure you want to restart?");
     }
 
-  ctkMessageBox confirmDialog;
-  confirmDialog.setText(reason);
-  confirmDialog.setIcon(QMessageBox::Question);
-  confirmDialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-  confirmDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmRestart" );
-  bool restartConfirmed = (confirmDialog.exec() == QMessageBox::Ok);
+  ctkMessageBox* confirmDialog = new ctkMessageBox(this->mainWindow());
+  confirmDialog->setText(reason);
+  confirmDialog->setIcon(QMessageBox::Question);
+  confirmDialog->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+  confirmDialog->setDontShowAgainSettingsKey( "MainWindow/DontConfirmRestart" );
+  bool restartConfirmed = (confirmDialog->exec() == QMessageBox::Ok);
+  confirmDialog->deleteLater();
 
   if (restartConfirmed)
     {
@@ -724,6 +739,35 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
   return d->SettingsDialog;
 }
 
+void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QString()*/)
+{
+  Q_D(qSlicerApplication);
+
+  if (!d->SettingsDialog->parent() && this->mainWindow())
+    {
+    // Set the parent before displaying the dialog to make sure that
+    // when the user clicks on the application screen (even if outside the dialog)
+    // then the main window is brought to the front.
+
+    // setParent resets window flags, so save them and then restore
+    Qt::WindowFlags windowFlags = d->SettingsDialog->windowFlags();
+    d->SettingsDialog->setParent(this->mainWindow());
+    d->SettingsDialog->setWindowFlags(windowFlags);
+    }
+
+  // Reload settings to apply any changes that have been made outside of the
+  // dialog (e.g. changes to module paths due to installing extensions). See
+  // https://github.com/Slicer/Slicer/issues/3658.
+  d->SettingsDialog->reloadSettings();
+
+  if (!settingsPanel.isNull())
+    {
+    d->SettingsDialog->setCurrentPanel(settingsPanel);
+    }
+
+  // Now show the dialog
+  d->SettingsDialog->exec();
+}
 
 // --------------------------------------------------------------------------
 void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)
@@ -769,7 +813,7 @@ void qSlicerApplication::openExtensionsManagerDialog()
 
   if(!d->ExtensionsManagerDialog)
     {
-    d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(nullptr);
+    d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(this->mainWindow());
     }
   if (!d->ExtensionsManagerDialog->extensionsManagerModel() &&
       this->mainWindow())
@@ -943,7 +987,8 @@ void qSlicerApplication::logApplicationInformation() const
       << "CPU "
       << "VTK configuration "
       << "Qt configuration "
-      << "Developer mode enabled "
+      << "Internationalization "
+      << "Developer mode "
       << "Application path "
       << "Additional module paths ";
 
@@ -1108,11 +1153,25 @@ void qSlicerApplication::logApplicationInformation() const
 
   QSettings settings;
 
+  // Internationalization
+#ifdef Slicer_BUILD_I18N_SUPPORT
+  bool internationalizationEnabled =
+    qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled", true).toBool();
+  QString language = qSlicerApplication::application()->userSettings()->value("language").toString();
+  qDebug("%s: %s, language=%s",
+    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+    internationalizationEnabled ? "enabled" : "disabled",
+    qPrintable(language));
+#else
+  qDebug("%s: not supported",
+    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')));
+#endif
+
   // Developer mode enabled
   bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
   qDebug("%s: %s",
          qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-         developerModeEnabled ? "yes" : "no");
+         developerModeEnabled ? "enabled" : "disabled");
 
   // Additional module paths
   // These paths are not converted to absolute path, because the raw values are moreuseful for troubleshooting.

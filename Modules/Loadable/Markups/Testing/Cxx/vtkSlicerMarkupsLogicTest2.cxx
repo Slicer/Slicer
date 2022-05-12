@@ -17,7 +17,8 @@
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-#include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsCurveNode.h"
+#include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkSlicerMarkupsLogic.h"
 
 // VTK includes
@@ -36,13 +37,19 @@ static void PrintLabels(vtkMRMLMarkupsNode *m)
     }
 }
 
-int vtkSlicerMarkupsLogicTest2(int , char * [] )
+int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
 {
+  std::string tempFolder = ".";
+  if (argc > 1)
+    {
+    tempFolder = std::string(argv[1]);
+    }
+
   vtkNew<vtkSlicerMarkupsLogic> logic1;
 
   // Test moving markups between lists
-  vtkSmartPointer<vtkMRMLMarkupsNode> source = vtkSmartPointer<vtkMRMLMarkupsNode>::New();
-  vtkSmartPointer<vtkMRMLMarkupsNode> dest = vtkSmartPointer<vtkMRMLMarkupsNode>::New();
+  vtkSmartPointer<vtkMRMLMarkupsFiducialNode> source = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
+  vtkSmartPointer<vtkMRMLMarkupsFiducialNode> dest = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
 
   // null cases
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -293,6 +300,17 @@ int vtkSlicerMarkupsLogicTest2(int , char * [] )
     return EXIT_FAILURE;
     }
   // cleanup
+
+  // Test CSV export/import
+
+  std::string filename = tempFolder + "/vtkMRMLMarkupsLogicTest2-export-temp.csv";
+  CHECK_BOOL(logic1->ExportControlPointsToCSV(dest, filename), true);
+
+  vtkNew<vtkMRMLMarkupsCurveNode> importedNode;
+  CHECK_BOOL(logic1->ImportControlPointsFromCSV(importedNode, filename), true);
+
+  CHECK_INT(importedNode->GetNumberOfDefinedControlPoints(), dest->GetNumberOfDefinedControlPoints());
+  CHECK_INT(importedNode->GetNumberOfControlPoints(), dest->GetNumberOfControlPoints());
 
   return EXIT_SUCCESS;
 }

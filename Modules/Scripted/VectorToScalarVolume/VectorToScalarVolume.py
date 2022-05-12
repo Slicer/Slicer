@@ -1,11 +1,15 @@
-import vtk, qt, ctk
-import slicer
 import logging
+from contextlib import contextmanager
 
+import ctk
+import qt
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import NodeModify, VTKObservationMixin
 
-from contextlib import contextmanager
+
 @contextmanager
 def MyScopedQtPropertySetter(qobject, properties):
   """ Context manager to set/reset properties"""
@@ -17,6 +21,7 @@ def MyScopedQtPropertySetter(qobject, properties):
   yield
   for propertyName in properties.keys():
     setattr(qobject, propertyName, previousValues[propertyName])
+
 
 @contextmanager
 def MyObjectsBlockSignals(*qobjects):
@@ -34,16 +39,19 @@ def MyObjectsBlockSignals(*qobjects):
   for (qobject, previousValue) in zip(qobjects, previousValues):
     qobject.blockSignals(previousValue)
 
+
 def getNode(nodeID):
   if nodeID is None:
     return None
   return slicer.mrmlScene.GetNodeByID(nodeID)
+
 
 def getNodeID(node):
   if node is None:
     return ""
   else:
     return node.GetID()
+
 
 #
 # VectorToScalarVolume
@@ -74,6 +82,7 @@ Developed by Steve Pieper, Isomics, Inc.,
 partially funded by NIH grant 3P41RR013218-12S1 (NAC) and is part of the National Alliance
 for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the
 NIH Roadmap for Medical Research, Grant U54 EB005149."""
+
 
 #
 # VectorToScalarVolumeWidget
@@ -323,6 +332,7 @@ class VectorToScalarVolumeConversionMethodWidget(qt.QWidget):
     " returns data (str)"
     return self.methodSelectorComboBox.currentData
 
+
 #
 # VectorToScalarVolumeLogic
 #
@@ -339,7 +349,6 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
   EXTRACT_COMPONENT_NONE = -1
 
   CONVERSION_METHODS = (LUMINANCE, AVERAGE, SINGLE_COMPONENT)
-
 
   def __init__(self, parent = None):
     ScriptedLoadableModuleLogic.__init__(self, parent)
@@ -404,7 +413,6 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         return False, msg
 
     return True, None
-
 
   def run(self, parameterNode):
     """

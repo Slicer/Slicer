@@ -1,8 +1,9 @@
 import os
-import unittest
-import vtk, qt, ctk, slicer
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import logging
+
 
 class SegmentEditorScriptedSegmentEditorEffectModuleTemplate(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
@@ -10,7 +11,6 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplate(ScriptedLoadableMod
   """
 
   def __init__(self, parent):
-    import string
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "SegmentEditorScriptedSegmentEditorEffectModuleTemplate"
     self.parent.categories = ["Segmentation"]
@@ -19,7 +19,7 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplate(ScriptedLoadableMod
     self.parent.hidden = True
     self.parent.helpText = "This hidden module registers the segment editor effect"
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
-    self.parent.acknowledgementText = "Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details."
+    self.parent.acknowledgementText = "Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www.slicer.org for details."
     slicer.app.connect("startupCompleted()", self.registerEditorEffect)
 
   def registerEditorEffect(self):
@@ -28,6 +28,7 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplate(ScriptedLoadableMod
     effectFilename = os.path.join(os.path.dirname(__file__), self.__class__.__name__+'Lib/SegmentEditorEffect.py')
     instance.setPythonSource(effectFilename.replace('\\','/'))
     instance.self().register()
+
 
 class SegmentEditorScriptedSegmentEditorEffectModuleTemplateTest(ScriptedLoadableModuleTest):
   """
@@ -59,7 +60,6 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplateTest(ScriptedLoadabl
     self.delayDisplay("Starting test_ScriptedSegmentEditorEffectModuleTemplate1")
 
     import vtkSegmentationCorePython as vtkSegmentationCore
-    import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
     import SampleData
     from SegmentStatistics import SegmentStatisticsLogic
 

@@ -1,5 +1,6 @@
 import time
 
+
 def TestROIAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   print("numToAdd = ", numToAdd)
   if renameFlag > 0:
@@ -28,15 +29,15 @@ def TestROIAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
     roiNode = slicer.vtkMRMLAnnotationROINode()
     roiNode.SetXYZ(cx, cy, cz)
     roiNode.SetRadiusXYZ(rx, ry, rz)
-    t1 = time.clock()
+    t1 = time.process_time()
     roiNode.Initialize(slicer.mrmlScene)
-    t2 = time.clock()
+    t2 = time.process_time()
     timeToAddThisROI = t2 - t1
     dt = timeToAddThisROI - timeToAddLastROI
     if renameFlag > 0:
-      t3 = time.clock()
+      t3 = time.process_time()
       roiNode.SetName(str(i))
-      t4 = time.clock()
+      t4 = time.process_time()
       timeToRenameThisROI = t4 - t3
       dt2 = timeToRenameThisROI - timeToRenameLastROI
       print('%(index)04d\t' % {'index': i}, timeToAddThisROI, "\t", dt, "\t", timeToRenameThisROI, "\t", dt2)
@@ -51,9 +52,9 @@ def TestROIAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
     cz = cz + 2.0
     timeToAddLastROI = timeToAddThisROI
 
-testStartTime = time.clock()
+
+testStartTime = time.process_time()
 TestROIAdd()
-testEndTime = time.clock()
+testEndTime = time.process_time()
 testTime = testEndTime - testStartTime
 print("Test total time = ", testTime)
-

@@ -4,7 +4,7 @@
 #Filename: Slicer3_2010_Label_Colors.txt
 #Title: Slicer3:2010 Label Colors
 #PageName: Slicer3:2010_Label_Colors
-#Source: http://www.slicer.org/slicerWiki/index.php/Slicer3:2010_Label_Colors
+#Source: https://www.slicer.org/w/index.php/Slicer3:2010_Label_Colors
 #
 #Begin table data:
 0 Background 0 0 0 0

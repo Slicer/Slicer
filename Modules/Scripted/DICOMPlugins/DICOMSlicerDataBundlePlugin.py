@@ -1,6 +1,9 @@
-import os, zipfile, tempfile
-import vtk, qt, ctk, slicer
 import logging
+import os
+import tempfile
+
+import slicer
+
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 from DICOMLib import DICOMExportScene

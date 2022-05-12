@@ -66,15 +66,6 @@ public:
   /// If viewNode is nullptr then it is displayed in all 3D views in the current layout.
   bool showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode=nullptr);
 
-  /// Return true if the volume should be shown in 3D using volume rendering when showing in all view is requested.
-  bool autoShowIn3DViewsAsVolumeRendering(vtkIdType itemID);
-
-  /// Set if the volume should be shown in 3D using volume rendering when user requests to showing the volume in all views
-  /// (by clicking the eye icon in the subject hierarchy tree).
-  /// The option is enabled by default to show/hide volume rendering (once a volume rendering display node is created)
-  /// to show/hide the volume rendering along with slice views by default.
-  void setAutoShowIn3DViewsAsVolumeRendering(vtkIdType itemID, bool autoShow);
-
 protected slots:
   /// Toggle volume rendering option for current volume item
   void toggleVolumeRenderingForCurrentItem(bool);

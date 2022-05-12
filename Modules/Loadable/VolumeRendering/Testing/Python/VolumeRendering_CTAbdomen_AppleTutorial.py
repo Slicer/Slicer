@@ -1,4 +1,3 @@
-import os
 import slicer
 from slicer import slicervolumerenderingtestdatapaths as datapath
 

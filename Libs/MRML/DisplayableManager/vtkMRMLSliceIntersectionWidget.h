@@ -5,7 +5,7 @@
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+  See Copyright.txt or https://www.kitware.com/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -38,7 +38,7 @@
 class vtkSliceIntersectionRepresentation2D;
 class vtkMRMLApplicationLogic;
 class vtkMRMLSegmentationDisplayNode;
-
+class vtkMRMLSliceDisplayNode;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionWidget : public vtkMRMLAbstractWidget
 {
@@ -64,6 +64,8 @@ public:
   void SetSliceNode(vtkMRMLSliceNode* sliceNode);
   vtkMRMLSliceNode* GetSliceNode();
 
+  vtkMRMLSliceDisplayNode* GetSliceDisplayNode();
+
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic) override;
 
   /// Return true if the widget can process the event.
@@ -78,16 +80,29 @@ public:
   /// Widget states
   enum
     {
-    WidgetStateFollowCursor = WidgetStateUser,
-    WidgetStateBlend,
-    WidgetStateTranslateSlice,
-    WidgetStateZoomSlice,
-    WidgetStateTouchGesture,
+    // Interactions without handles
+    WidgetStateFollowCursor = WidgetStateUser, ///< Set intersecting slices to current cursor position
+    WidgetStateBlend, ///< Fade between foreground/background volumes
+    WidgetStateTranslateSlice, ///< Pan (translate in-plane) the current slice (using shift+left-click-and-drag or middle-click-and-drag)
+    WidgetStateRotateIntersectingSlices, ///< Rotate all intersecting slices (ctrl+alt+left-click-and-drag)
+    WidgetStateZoomSlice, ///< Zoom slice (using right-button or mouse wheel)
+    WidgetStateTouchGesture, ///< Pinch/zoom/pan using touch gestures
+
+    // Interactions with slice intersection handles
+    WidgetStateOnTranslateIntersectingSlicesHandle, ///< hovering over a slice intersection point
+    WidgetStateTranslateIntersectingSlicesHandle, ///< translating all intersecting slices by drag-and-dropping handle
+    WidgetStateOnRotateIntersectingSlicesHandle, ///< hovering over a rotation interaction handle
+    WidgetStateRotateIntersectingSlicesHandle, ///< rotating all intersecting slices by drag-and-dropping handle
+    WidgetStateOnTranslateSingleIntersectingSliceHandle, ///< hovering over a single-slice translation interaction handle
+    WidgetStateTranslateSingleIntersectingSliceHandle, ///< translating a single slice by drag-and-dropping handle
+
+    WidgetState_Last
     };
 
   /// Widget events
   enum
     {
+    // Interactions without handles
     WidgetEventTouchGestureStart = WidgetEventUser,
     WidgetEventTouchGestureEnd,
     WidgetEventTouchRotateSliceIntersection,
@@ -108,17 +123,30 @@ public:
     WidgetEventShowPreviousBackgroundVolume,
     WidgetEventShowNextForegroundVolume,
     WidgetEventShowPreviousForegroundVolume,
+    WidgetEventRotateIntersectingSlicesStart, // rotate all intersecting slices (ctrl-alt-left-click-and-drag)
+    WidgetEventRotateIntersectingSlicesEnd,
     WidgetEventTranslateSliceStart,
     WidgetEventTranslateSliceEnd,
     WidgetEventZoomSliceStart,
     WidgetEventZoomSliceEnd,
     WidgetEventSetCrosshairPosition,
     WidgetEventMaximizeView,
+
+    // Interactions with slice intersection handles
+    // WidgetStateOnTranslateIntersectingSlicesHandle/WidgetStateTranslateIntersectingSlicesHandle
+    WidgetEventTranslateIntersectingSlicesHandleStart,
+    WidgetEventTranslateIntersectingSlicesHandleEnd,
+    // WidgetStateOnRotateIntersectingSlicesHandle/WidgetStateRotateIntersectingSlicesHandle
+    WidgetEventRotateIntersectingSlicesHandleStart,
+    WidgetEventRotateIntersectingSlicesHandleEnd,
+    // WidgetStateOnTranslateSingleIntersectingSliceHandle/WidgetStateOnTranslateSingleIntersectingSliceHandle
+    WidgetEventTranslateSingleIntersectingSliceHandleStart,
+    WidgetEventTranslateSingleIntersectingSliceHandleEnd,
     };
 
   /// Action State values and management
   enum
-  {
+    {
     ActionNone = 0,
     ActionTranslate = 1,
     ActionZoom = 2,
@@ -136,7 +164,7 @@ public:
     | ActionBrowseSlice | ActionShowSlice | ActionAdjustLightbox | ActionSelectVolume
     | ActionSetCursorPosition | ActionSetCrosshairPosition
     | ActionTranslateSliceIntersection | ActionRotateSliceIntersection
-  };
+    };
 
   /// Set exact list of actions to enable.
   void SetActionsEnabled(int actions);
@@ -155,6 +183,9 @@ public:
 
   void UpdateInteractionEventMapping();
 
+  // Allows the widget to request a cursor shape
+  int GetMouseCursor() override;
+
 protected:
   vtkMRMLSliceIntersectionWidget();
   ~vtkMRMLSliceIntersectionWidget() override;
@@ -164,12 +195,12 @@ protected:
   bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData);
   bool ProcessBlend(vtkMRMLInteractionEventData* eventData);
 
-  bool ProcessRotateStart(vtkMRMLInteractionEventData* eventData);
-  bool ProcessRotate(vtkMRMLInteractionEventData* eventData);
+  bool ProcessRotateIntersectingSlicesStart(vtkMRMLInteractionEventData* eventData);
+  bool ProcessRotateIntersectingSlices(vtkMRMLInteractionEventData* eventData);
   bool ProcessSetCrosshair(vtkMRMLInteractionEventData* eventData);
   double GetSliceRotationAngleRad(double eventPos[2]);
 
-  // Move slice in-plane by click-and-drag
+  // Pan (move slice in-plane) by click-and-drag
   bool ProcessTranslateSlice(vtkMRMLInteractionEventData* eventData);
 
   bool ProcessZoomSlice(vtkMRMLInteractionEventData* eventData);
@@ -179,6 +210,13 @@ protected:
   bool ProcessTouchRotate(vtkMRMLInteractionEventData* eventData);
   bool ProcessTouchZoom(vtkMRMLInteractionEventData* eventData);
   bool ProcessTouchTranslate(vtkMRMLInteractionEventData* eventData);
+
+  bool ProcessTranslateIntersectingSlicesHandleStart(vtkMRMLInteractionEventData* eventData);
+  bool ProcessTranslateIntersectingSlicesHandle(vtkMRMLInteractionEventData* eventData);
+  bool ProcessTranslateSingleIntersectingSliceHandleStart(vtkMRMLInteractionEventData* eventData);
+  bool ProcessTranslateSingleIntersectingSliceHandle(vtkMRMLInteractionEventData* eventData);
+  bool ProcessRotateIntersectingSlicesHandleStart(vtkMRMLInteractionEventData* eventData);
+  bool ProcessRotateIntersectingSlicesHandle(vtkMRMLInteractionEventData* eventData);
 
   bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData);
 
@@ -202,12 +240,14 @@ protected:
 
   vtkMRMLSegmentationDisplayNode* GetVisibleSegmentationDisplayNode();
 
+  static void SliceModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
   static void SliceLogicsModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   vtkWeakPointer<vtkCollection> SliceLogics;
   vtkWeakPointer<vtkMRMLSliceNode> SliceNode;
   vtkWeakPointer<vtkMRMLSliceLogic> SliceLogic;
   vtkNew<vtkCallbackCommand> SliceLogicsModifiedCommand;
+  vtkNew<vtkCallbackCommand> SliceModifiedCommand;
 
   double StartEventPosition[2];
   double PreviousRotationAngleRad;
@@ -215,15 +255,19 @@ protected:
   double StartRotationCenter[2];
   double StartRotationCenter_RAS[4];
 
+  double StartTranslationPoint[2];
+  double StartTranslationPoint_RAS[3];
+  double CurrentTranslationPoint_RAS[3];
+
   double StartActionFOV[3];
   double VolumeScalarRange[2];
 
   enum
-  {
+    {
     LayerBackground,
     LayerForeground,
     LayerLabelmap
-  };
+    };
 
   // Blend
   double LastForegroundOpacity;
@@ -247,6 +291,8 @@ protected:
   ///  - direction: positive or negative (wraps through volumes in scene)
   void CycleVolumeLayer(int layer, int direction);
 
+  bool IsSliceIntersectionInteractive();
+
   /// Indicates whether the shift key was used during the previous action.
   /// This is used to require shift-up after a click-and-drag before accepting shift+mousemove.
   bool ModifierKeyPressedSinceLastClickAndDrag;
@@ -262,6 +308,9 @@ protected:
   bool TouchTranslationEnabled;
   double TotalTouchZoom;
   bool TouchZoomEnabled;
+
+  // Last intersecting slice node where interaction occurred
+  std::string LastIntersectingSliceNodeID;
 
 private:
   vtkMRMLSliceIntersectionWidget(const vtkMRMLSliceIntersectionWidget&) = delete;

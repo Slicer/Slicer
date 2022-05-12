@@ -1,6 +1,7 @@
 import unittest
-import slicer
+
 import AtlasTests
+
 
 class testClass:
   """ Run the knee atlas test by itself
@@ -10,6 +11,7 @@ class testClass:
     print("Import the atlas tests...")
     atlasTests = AtlasTests.AtlasTestsTest()
     atlasTests.test_KneeAtlasTest()
+
 
 class KneeAtlasTest(unittest.TestCase):
 

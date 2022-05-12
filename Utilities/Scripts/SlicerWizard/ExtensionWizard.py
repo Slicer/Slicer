@@ -7,6 +7,7 @@ import textwrap
 
 from urllib.parse import urlparse
 
+
 #-----------------------------------------------------------------------------
 def haveGit():
   """Return True if git is available.
@@ -23,7 +24,7 @@ def haveGit():
     # SSL is available
     try:
       global git, GithubHelper, NotSet
-      import git
+      import git  # noqa: F401
       from . import GithubHelper
       from .GithubHelper import NotSet
       _haveGit = True
@@ -35,6 +36,7 @@ def haveGit():
 
   return _haveGit
 
+
 from . import __version__, __version_info__
 
 from .ExtensionDescription import ExtensionDescription
@@ -42,6 +44,7 @@ from .ExtensionProject import ExtensionProject
 from .TemplateManager import TemplateManager
 from .Utilities import *
 from .WizardHelpFormatter import WizardHelpFormatter
+
 
 #=============================================================================
 class ExtensionWizard:
@@ -56,7 +59,7 @@ class ExtensionWizard:
     wizard = ExtensionWizard()
     wizard.execute()
 
-  Interaction with `GitHub <http://github.com>`_ uses
+  Interaction with `GitHub <https://github.com>`_ uses
   :func:`.GithubHelper.logIn` to authenticate.
 
   .. 'note' directive needs '\' to span multiple lines!
@@ -168,7 +171,6 @@ class ExtensionWizard:
 
     except:
       die("failed to describe extension: %s" % sys.exc_info()[1])
-
 
   #---------------------------------------------------------------------------
   def _setExtensionUrl(self, project, name, value):
@@ -297,7 +299,6 @@ class ExtensionWizard:
       p.save()
 
       # Commit the initial commit or updated meta-information
-      import git
       r.git.add(":/CMakeLists.txt")
       if createdRepo:
         logging.info("preparing initial commit")
@@ -415,7 +416,7 @@ class ExtensionWizard:
     to exit before pushing the branch. (Updates of the user's fork to current
     upstream may still occur.)
 
-    .. _extension index repository: http://github.com/Slicer/ExtensionsIndex
+    .. _extension index repository: https://github.com/Slicer/ExtensionsIndex
     """
 
     try:
@@ -484,7 +485,6 @@ class ExtensionWizard:
 
       # Update the index repository and get the base branch
       logging.info("updating local index clone")
-      import git
       xiRepo.git.fetch(xiUpstream)
       if not args.target in xiUpstream.refs:
         die("target branch '%s' does not exist" % args.target)
@@ -652,7 +652,6 @@ class ExtensionWizard:
                              " (default: private directory"
                              " in the extension clone)")
 
-
     parser.add_argument("destination", default=os.getcwd(), nargs="?",
                         help="location of output files / extension source"
                              " (default: '.')")
@@ -676,7 +675,7 @@ class ExtensionWizard:
             Option '%s' is not available.
 
             Consider re-building Slicer with SSL support or downloading
-            Slicer from http://download.slicer.org
+            Slicer from https://download.slicer.org
             """ % option))
 
     # Add built-in templates

@@ -68,8 +68,20 @@ public:
   static vtkSlicerVolumesLogic *New();
   vtkTypeMacro(vtkSlicerVolumesLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-
   typedef vtkSlicerVolumesLogic Self;
+
+  struct VolumeDisplayPreset
+    {
+    std::string id;
+    std::string name;
+    std::string description;
+    std::string icon;
+    double window{0.0};
+    double level{0.0};
+    std::string colorNodeID;
+    bool valid{false};
+    };
+  std::vector<VolumeDisplayPreset> VolumeDisplayPresets;
 
   /// Loading options, bitfield
   enum LoadingOptions {
@@ -280,11 +292,29 @@ public:
   /// \sa SetCompareVolumeGeometryEpsilon
   vtkGetMacro(CompareVolumeGeometryPrecision, int);
 
+  /// Method to set volume window/level based on a volume display preset.
+  /// Returns true on success.
+  bool ApplyVolumeDisplayPreset(vtkMRMLVolumeDisplayNode* displayNode, std::string presetId);
+
+  /// Get ID of the volume display preset that matches current display settings.
+  /// Returns empty string if there is no match.
+  std::string GetAppliedVolumeDisplayPresetId(vtkMRMLVolumeDisplayNode* displayNode);
+
+  ///  Method to get a vector to currently defined window level preset IDs.
+  std::vector<std::string> GetVolumeDisplayPresetIDs();
+
+  /// Get volume display preset based on ID.
+  /// If not found then the returned preset will have Valid member set to false.
+  VolumeDisplayPreset GetVolumeDisplayPreset(const std::string& presetId);
+
 protected:
   vtkSlicerVolumesLogic();
   ~vtkSlicerVolumesLogic() override;
   vtkSlicerVolumesLogic(const vtkSlicerVolumesLogic&);
   void operator=(const vtkSlicerVolumesLogic&);
+
+  /// Read default volume display presets from configuration file
+  void InitializeDefaultVolumeDisplayPresets();
 
   void ProcessMRMLNodesEvents(vtkObject * caller,
                                   unsigned long event,

@@ -41,7 +41,12 @@ ScreenCapture.ScreenCaptureLogic().captureSliceSweep(getNode("vtkMRMLSliceNodeRe
 ### Capture 3D view into PNG file with transparent background
 
 ```python
-renderWindow = slicer.app.layoutManager().threeDWidget(0).threeDView().renderWindow()
+# Set background to black (required for transparent background)
+view = slicer.app.layoutManager().threeDWidget(0).threeDView()
+view.mrmlViewNode().SetBackgroundColor(0,0,0)
+view.mrmlViewNode().SetBackgroundColor2(0,0,0)
+# Capture RGBA image
+renderWindow = view.renderWindow()
 renderWindow.SetAlphaBitPlanes(1)
 wti = vtk.vtkWindowToImageFilter()
 wti.SetInputBufferTypeToRGBA()
@@ -71,7 +76,7 @@ cap.captureImageFromView(view, filename)
 
 ### Save a series of images from a slice view
 
-You can use ScreenCapture module to capture series of images. To do it programmatically, save the following into a file such as ``/tmp/record.py`` and then in the slicer python console type ``execfile("/tmp/record.py")``
+You can use ScreenCapture module to capture series of images. To do it programmatically, save the following into a file such as ``/tmp/record.py`` and then in the Slicer python console type ``execfile("/tmp/record.py")``
 
 ```python
 layoutName = "Green"

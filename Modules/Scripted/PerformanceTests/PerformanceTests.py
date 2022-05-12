@@ -1,5 +1,8 @@
-import vtk, qt, ctk, slicer
+import qt
+import slicer
+
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # PerformanceTests
@@ -32,7 +35,6 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
         ( 'Get Sample Data', self.downloadMRHead ),
         ( 'Reslicing', self.reslicing ),
         ( 'Crosshair Jump', self.crosshairJump ),
-        ( 'Chart Test', self.chartTest ),
         ( 'Web View Test', self.webViewTest ),
         ( 'Fill Out Web Form Test', self.webViewFormTest ),
         ( 'Memory Check', self.memoryCheck ),
@@ -156,98 +158,6 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     self.log.ensureCursorVisible()
     self.log.repaint()
 
-  def chartMouseOverCallback(self, mrmlID, pointIndex, x, y):
-    node = slicer.util.getNode(mrmlID)
-    name = node.GetName()
-    print("Clicked at point {x}, {y} on node {name} (id {mrmlID}) with point index of {pointIndex}".format(
-      x=x,y=y,name=name,mrmlID=mrmlID,pointIndex=pointIndex))
-
-  def chartCallback(self, mrmlID, pointIndex, x, y):
-    node = slicer.util.getNode(mrmlID)
-    name = node.GetName()
-    slicer.util.infoDisplay("""Clicked at point {x}, {y}
-                               on node {name} (id {mrmlID})
-                               with point index of {pointIndex}
-                            """.format(x=x,y=y,name=name,mrmlID=mrmlID,pointIndex=pointIndex),
-                            windowTitle="Chart Callback")
-
-  def chartTest(self):
-    import math,random
-    ln = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLLayoutNode')
-    ln.SetViewArrangement(24)
-
-    chartView = findChildren(className='qMRMLChartView')[0]
-    print(chartView.connect("dataMouseOver(const char *,int,double,double)", self.chartMouseOverCallback))
-    print(chartView.connect("dataPointClicked(const char *,int,double,double)", self.chartCallback))
-
-    cvn = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLChartViewNode')
-
-    dn = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
-    a = dn.GetArray()
-    a.SetNumberOfTuples(600)
-    x = range(0, 600)
-    phase = random.random()
-    for i in range(len(x)):
-        a.SetComponent(i, 0, x[i]/50.0)
-        a.SetComponent(i, 1, math.sin(phase+x[i]/50.0))
-        a.SetComponent(i, 2, 0)
-
-    dn2 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
-    a = dn2.GetArray()
-    a.SetNumberOfTuples(600)
-    x = range(0, 600)
-    for i in range(len(x)):
-        a.SetComponent(i, 0, x[i]/50.0)
-        a.SetComponent(i, 1, math.cos(phase+x[i]/50.0))
-        a.SetComponent(i, 2, 0)
-
-    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
-    cn.AddArray('A double array', dn.GetID())
-    cn.AddArray('Another double array', dn2.GetID())
-
-    cvn.SetChartNodeID(cn.GetID())
-
-    cn.SetProperty('default', 'title', 'A simple chart with 2 curves')
-    cn.SetProperty('default', 'xAxisLabel', 'Something in x')
-    cn.SetProperty('default', 'yAxisLabel', 'Something in y')
-
-    cvn.SetChartNodeID(cn.GetID())
-
-    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
-    print(cn.GetID())
-    cn.AddArray('Just one array', dn.GetID())
-    cn.SetProperty('default', 'title', 'A simple chart with 1 curve')
-    cn.SetProperty('default', 'xAxisLabel', 'Just x')
-    cn.SetProperty('default', 'yAxisLabel', 'Just y')
-
-    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
-    print(cn.GetID())
-    cn.AddArray('The other array', dn2.GetID())
-    cn.SetProperty('default', 'title', 'A simple chart with another curve')
-    cn.SetProperty('default', 'xAxisLabel', 'time')
-    cn.SetProperty('default', 'yAxisLabel', 'velocity')
-    cn.SetProperty('The other array', 'showLines', 'on')
-    cn.SetProperty('The other array', 'showMarkers', 'off')
-    cn.SetProperty('The other array', 'color', '#fe7d20')
-
-    dn3 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
-    print(dn3.GetID())
-    a = dn3.GetArray()
-    a.SetNumberOfTuples(12)
-    x = range(0, 12)
-    for i in range(len(x)):
-        a.SetComponent(i, 0, x[i]/4.0)
-        a.SetComponent(i, 1, math.sin(x[i]/4.0))
-        a.SetComponent(i, 2, 0)
-
-    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
-    print(cn.GetID())
-    cn.AddArray('Periodic', dn3.GetID())
-    cn.SetProperty('default', 'title', 'A bar chart')
-    cn.SetProperty('default', 'xAxisLabel', 'time')
-    cn.SetProperty('default', 'yAxisLabel', 'velocity')
-    cn.SetProperty('default', 'type', 'Bar')
-
   def webViewCallback(self,qurl):
     url = qurl.toString()
     print(url)
@@ -277,7 +187,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     self.webView.settings().setAttribute(qt.QWebSettings.DeveloperExtrasEnabled, True)
     self.webView.connect('loadFinished(bool)', self.webViewFormLoadedCallback)
     self.webView.show()
-    u = qt.QUrl('http://www.google.com')
+    u = qt.QUrl('https://www.google.com')
     self.webView.setUrl(u)
 
   def webViewFormLoadedCallback(self,ok):
@@ -328,4 +238,3 @@ class sliceLogicTest:
 
   def testSliceLogic(self, iters):
     timeSteps(iters, self.stepSliceLogic)
-

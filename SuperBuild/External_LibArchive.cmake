@@ -23,18 +23,7 @@ endif()
 if((NOT DEFINED LibArchive_INCLUDE_DIR
    OR NOT DEFINED LibArchive_LIBRARY) AND NOT Slicer_USE_SYSTEM_${proj})
 
-  #
-  # NOTE: - a stable, recent release (3.3.2) of LibArchive is now checked out from git
-  #         for all platforms.  For notes on cross-platform issues with earlier versions
-  #         of LibArchive, see the repository for earlier revisions of this file.
-
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
-
-  # CMake arguments specific to LibArchive >= 2.8.4
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-    -DBUILD_TESTING:BOOL=OFF
-    -DENABLE_OPENSSL:BOOL=OFF
-    )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
@@ -44,9 +33,19 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "34940ef6ea0b21d77cb501d235164ad88f19d40c"  # master (v3.4.3) with fix-enum-cases
+    "1b2c437b99b361c7692538fa373e99955e9b93ae" # master v3.5.2
     QUIET
     )
+
+  # When updating the version of LibArchive, consider also
+  # updating the soversion number hard-coded below in the
+  # "fix_rpath" macOS external project step.
+  #
+  # To find out if the soversion number should be updated,
+  # review the logic computing INTERFACE_VERSION in the
+  # top-level LibArchive CMakeLists.txt and/or inspect the
+  # prefix associated with the library generated in the build
+  # tree.
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
@@ -65,6 +64,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DBUILD_SHARED_LIBS:BOOL=ON
+      -DBUILD_TESTING:BOOL=OFF
       -DENABLE_ACL:BOOL=OFF
       -DENABLE_BZip2:BOOL=OFF
       -DENABLE_CAT:BOOL=OFF
@@ -97,7 +97,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     )
   if(APPLE)
     ExternalProject_Add_Step(${proj} fix_rpath
-      COMMAND install_name_tool -id ${EP_INSTALL_DIR}/lib/libarchive.17.dylib ${EP_INSTALL_DIR}/lib/libarchive.17.dylib
+      COMMAND install_name_tool -id ${EP_INSTALL_DIR}/lib/libarchive.18.dylib ${EP_INSTALL_DIR}/lib/libarchive.18.dylib
       DEPENDEES install
       )
   endif()

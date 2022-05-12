@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "COPYRIGHT.txt"
+      - "License.txt"
+      - "README.txt"
+      - "requirements-docs.txt"
+      - "SuperBuild.cmake"
+      - "SuperBuild/**"
+      - "**.md"
+      - "Docs/**"
+  pull_request:
+    branches:
+      - "*"
+    paths-ignore:
+      - "COPYRIGHT.txt"
+      - "License.txt"
+      - "README.txt"
+      - "requirements-docs.txt"
+      - "SuperBuild.cmake"
+      - "SuperBuild/**"
+      - "**.md"
+      - "Docs/**"
+  # Allows running this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+jobs:
+  build-slicer:
+    name: Build Slicer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 'Build Slicer'
+        uses: ./.github/actions/slicer-build
+
+      - name: 'Upload Slicer package'
+        uses: actions/upload-artifact@v2
+        with:
+          name: slicer-package
+          path: ${{ github.workspace }}/${{ steps.slicer-build.outputs.package }}
+          retention-days: 1

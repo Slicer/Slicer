@@ -309,10 +309,10 @@
       <default></default>
     </string>
     <string>
-      <label>Frame of Reference Instance UID</label>
-      <name>frameOfReferenceInstanceUID</name>
-      <longflag>--frameOfReferenceInstanceUID</longflag>
-      <description><![CDATA[The frame of reference instance UID (0020,0052). Leave it blank to generate UIDs automatically.]]></description>
+      <label>Frame of Reference UID</label>
+      <name>frameOfReferenceUID</name>
+      <longflag>--frameOfReferenceUID</longflag>
+      <description><![CDATA[The frame of reference UID (0020,0052). Leave it blank to generate UIDs automatically.]]></description>
       <default></default>
     </string>
   </parameters>

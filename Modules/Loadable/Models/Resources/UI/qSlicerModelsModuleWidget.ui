@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>318</width>
-    <height>722</height>
+    <width>412</width>
+    <height>796</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -103,9 +103,6 @@
         <property name="indentation">
          <number>12</number>
         </property>
-        <property name="showRootItem">
-         <bool>true</bool>
-        </property>
         <property name="editMenuActionVisible">
          <bool>false</bool>
         </property>
@@ -163,6 +160,24 @@
         <property name="clippingConfigurationButtonVisible">
          <bool>true</bool>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="ColorLegendCollapsibleGroupBox">
+        <property name="toolTip">
+         <string>Color legend for the Color Table selected in Scalars section.</string>
+        </property>
+        <property name="title">
+         <string>Color Legend</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="qMRMLColorLegendDisplayNodeWidget" name="ColorLegendDisplayNodeWidget"/>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -266,6 +281,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLColorLegendDisplayNodeWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLColorLegendDisplayNodeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qMRMLModelDisplayNodeWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLModelDisplayNodeWidget.h</header>
@@ -279,6 +300,12 @@
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -388,6 +415,22 @@
     <hint type="destinationlabel">
      <x>207</x>
      <y>-9</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerModelsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ColorLegendDisplayNodeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>159</x>
+     <y>394</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>1032</y>
     </hint>
    </hints>
   </connection>

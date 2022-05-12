@@ -164,7 +164,11 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   // need to add the LabelMap attribute for them.
   // Note: the min width is currently set in the UI file directly
   //// Set the slice controller widgets a min width.
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+  //int volumeSelectorMinWidth = this->LabelMapComboBox->fontMetrics().horizontalAdvance("Xxxxxxxx") + 20;
+//#else
   //int volumeSelectorMinWidth = this->LabelMapComboBox->fontMetrics().width("Xxxxxxxx") + 20;
+//#endif
   //this->SliceOrientationSelector->setMinimumWidth(volumeSelectorMinWidth);
   //this->LabelMapComboBox->setMinimumWidth(volumeSelectorMinWidth);
   //this->BackgroundComboBox->setMinimumWidth(volumeSelectorMinWidth);
@@ -436,6 +440,8 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->MoreButton->setChecked(false);
 
   vtkNew<vtkMRMLSliceLogic> defaultLogic;
+  defaultLogic->SetMRMLApplicationLogic(vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic());
+
   q->setSliceLogic(defaultLogic.GetPointer());
 }
 
@@ -1329,7 +1335,9 @@ void qMRMLSliceControllerWidgetPrivate::updateFromForegroundDisplayNode(vtkObjec
     {
     return;
     }
+  bool wasBlocked = this->actionForegroundInterpolation->blockSignals(true);
   this->actionForegroundInterpolation->setChecked(displayNode->GetInterpolate());
+  this->actionForegroundInterpolation->blockSignals(wasBlocked);
 }
 
 //---------------------------------------------------------------------------
@@ -1353,7 +1361,9 @@ void qMRMLSliceControllerWidgetPrivate::updateFromBackgroundDisplayNode(vtkObjec
     {
     return;
     }
+  bool wasBlocked = this->actionBackgroundInterpolation->blockSignals(true);
   this->actionBackgroundInterpolation->setChecked(displayNode->GetInterpolate());
+  this->actionBackgroundInterpolation->blockSignals(wasBlocked);
 }
 
 //---------------------------------------------------------------------------

@@ -10,6 +10,7 @@ __all__ = [
   'Repository',
 ]
 
+
 #=============================================================================
 class CommandError(Exception):
   """
@@ -33,6 +34,7 @@ class CommandError(Exception):
     self.command = command
     self.code = code
     self.stderr = stderr
+
 
 #=============================================================================
 class Client:
@@ -135,6 +137,7 @@ class Client:
       result[parts[0]] = parts[1]
 
     return result
+
 
 #=============================================================================
 class Repository:

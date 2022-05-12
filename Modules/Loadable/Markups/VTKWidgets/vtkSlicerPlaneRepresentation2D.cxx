@@ -53,9 +53,9 @@
 // MRML includes
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLProceduralColorNode.h"
-
+#include "vtkMRMLMarkupsPlaneDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
+#include "vtkMRMLProceduralColorNode.h"
 
 vtkStandardNewMacro(vtkSlicerPlaneRepresentation2D);
 
@@ -170,7 +170,7 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->BuildPlane();
 
   bool visible = true;
-  if (markupsNode->GetNumberOfControlPoints() < 3)
+  if (!markupsNode->GetIsPlaneValid())
     {
     visible = false;
     }
@@ -186,9 +186,19 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
       }
     }
 
-  this->PlaneFillActor->SetVisibility(visible);
-  this->PlaneOutlineActor->SetVisibility(visible);
-  this->ArrowActor->SetVisibility(visible);
+  this->PlaneFillActor->SetVisibility(visible && this->MarkupsDisplayNode->GetFillVisibility());
+  this->PlaneOutlineActor->SetVisibility(visible && this->MarkupsDisplayNode->GetOutlineVisibility());
+
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(this->MarkupsDisplayNode);
+  if (planeDisplayNode)
+    {
+    this->ArrowActor->SetVisibility(visible && planeDisplayNode->GetNormalVisibility());
+    this->ArrowActor->GetProperty()->SetOpacity(planeDisplayNode->GetOpacity() * planeDisplayNode->GetNormalOpacity());
+    }
+  else
+    {
+    this->ArrowActor->SetVisibility(visible);
+    }
 
   // Properties label display
   if (visible && this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
@@ -287,8 +297,8 @@ void vtkSlicerPlaneRepresentation2D::CanInteract(
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
-  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  vtkMRMLMarkupsPlaneNode* markupsNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
+  if ( !markupsNode || markupsNode->GetLocked() || !markupsNode->GetIsPlaneValid()
     || !this->GetVisibility() || !interactionEventData )
     {
     return;
@@ -533,18 +543,18 @@ void vtkSlicerPlaneRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------
 void vtkSlicerPlaneRepresentation2D::BuildPlane()
 {
-  vtkMRMLMarkupsPlaneNode* markupsNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
-  if (!markupsNode || markupsNode->GetNumberOfControlPoints() != 3)
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
+  if (!planeNode || !planeNode->GetIsPlaneValid())
     {
     this->PlaneFillMapper->SetInputData(vtkNew<vtkPolyData>());
     this->ArrowMapper->SetInputData(vtkNew<vtkPolyData>());
     return;
     }
 
-  double xAxis_World[3] = { 0.0 };
-  double yAxis_World[3] = { 0.0 };
-  double zAxis_World[3] = { 0.0 };
-  markupsNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
+  double xAxis_World[3] = { 0.0, 0.0, 0.0 };
+  double yAxis_World[3] = { 0.0, 0.0, 0.0 };
+  double zAxis_World[3] = { 0.0, 0.0, 0.0 };
+  planeNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
 
   double epsilon = 1e-5;
   if (vtkMath::Norm(xAxis_World) <= epsilon ||
@@ -560,34 +570,20 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   this->ArrowMapper->SetInputConnection(this->ArrowGlypher->GetOutputPort());
 
   double origin_World[3] = { 0.0 };
-  markupsNode->GetOriginWorld(origin_World);
+  planeNode->GetOriginWorld(origin_World);
+
+  vtkNew<vtkMatrix4x4> objectToWorldMatrix;
+  planeNode->GetObjectToWorldMatrix(objectToWorldMatrix);
+
+  vtkNew<vtkTransform> objectToWorldTransform;
+  objectToWorldTransform->SetMatrix(objectToWorldMatrix);
 
   // Update the plane
-  double size_Object[2] = { 0.0 };
-  markupsNode->GetSize(size_Object);
-
-  double bounds_Object[4] = { -0.5 * size_Object[0], 0.5 * size_Object[0] , -0.5 * size_Object[1] , 0.5 * size_Object[1] };
-
-  double planePoint1_World[3] = { 0.0 };
-  double planePoint2_World[3] = { 0.0 };
-  double planePoint3_World[3] = { 0.0 };
-  for (int i = 0; i < 3; ++i)
-    {
-    planePoint1_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Object[0])
-      + (yAxis_World[i] * bounds_Object[2]); // Bottom left corner (Plane filter origin)
-
-    planePoint2_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Object[0])
-      + (yAxis_World[i] * bounds_Object[3]); // Top left corner
-
-    planePoint3_World[i] = origin_World[i]
-      + (xAxis_World[i] * bounds_Object[1])
-      + (yAxis_World[i] * bounds_Object[2]); // Bottom right corner
-    }
-  this->PlaneFilter->SetOrigin(planePoint1_World);
-  this->PlaneFilter->SetPoint1(planePoint2_World);
-  this->PlaneFilter->SetPoint2(planePoint3_World);
+  vtkNew<vtkPoints> planeCornerPoints_World;
+  planeNode->GetPlaneCornerPointsWorld(planeCornerPoints_World);
+  this->PlaneFilter->SetOrigin(planeCornerPoints_World->GetPoint(0));
+  this->PlaneFilter->SetPoint1(planeCornerPoints_World->GetPoint(1));
+  this->PlaneFilter->SetPoint2(planeCornerPoints_World->GetPoint(3));
 
   double* arrowVectorSlice = this->WorldToSliceTransform->TransformDoubleVector(zAxis_World);
 
@@ -633,7 +629,7 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   this->ArrowGlypher->SetInputData(arrowPolyData_World);
   this->ArrowGlypher->SetScaleFactor(this->ControlPointSize*2);
 
-  vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsNode->GetDisplayNode());
+  vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
   if (!displayNode)
     {
     return;
@@ -665,19 +661,72 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
 }
 
 //----------------------------------------------------------------------
+void vtkSlicerPlaneRepresentation2D::SetupInteractionPipeline()
+{
+  this->InteractionPipeline = new MarkupsInteractionPipelinePlane2D(this);
+  this->InteractionPipeline->InitializePipeline();
+}
+
+//----------------------------------------------------------------------
 void vtkSlicerPlaneRepresentation2D::UpdateInteractionPipeline()
 {
+  Superclass::UpdateInteractionPipeline();
+
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
-  if (!planeNode || planeNode->GetNumberOfControlPoints() < 3)
-    {
-    this->InteractionPipeline->Actor->SetVisibility(false);
-    return;
-    }
-  if (!this->PlaneFillActor->GetVisibility())
+  if (!planeNode || !planeNode->GetIsPlaneValid())
     {
     this->InteractionPipeline->Actor->SetVisibility(false);
     return;
     }
 
-  Superclass::UpdateInteractionPipeline();
+  if (!this->PlaneFillActor->GetVisibility() && !this->PlaneOutlineActor->GetVisibility())
+    {
+    this->InteractionPipeline->Actor->SetVisibility(false);
+    return;
+    }
+
+  this->InteractionPipeline->Actor->SetVisibility(this->MarkupsDisplayNode->GetVisibility()
+    && this->MarkupsDisplayNode->GetVisibility2D()
+    && this->MarkupsDisplayNode->GetHandlesInteractive());
+
+  vtkNew<vtkTransform> handleToWorldTransform;
+  handleToWorldTransform->SetMatrix(planeNode->GetInteractionHandleToWorldMatrix());
+  this->InteractionPipeline->HandleToWorldTransform->DeepCopy(handleToWorldTransform);
+
+  MarkupsInteractionPipelinePlane2D* interactionPipeline = dynamic_cast<MarkupsInteractionPipelinePlane2D*>(this->InteractionPipeline);
+  interactionPipeline->UpdateScaleHandles();
+  interactionPipeline->WorldToSliceTransformFilter->SetTransform(this->WorldToSliceTransform);
+}
+
+//----------------------------------------------------------------------
+vtkSlicerPlaneRepresentation2D::MarkupsInteractionPipelinePlane2D::MarkupsInteractionPipelinePlane2D(vtkSlicerMarkupsWidgetRepresentation* representation)
+  : vtkSlicerPlaneRepresentation3D::MarkupsInteractionPipelinePlane(representation)
+{
+  this->WorldToSliceTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->WorldToSliceTransformFilter->SetTransform(vtkNew<vtkTransform>());
+  this->WorldToSliceTransformFilter->SetInputConnection(this->HandleToWorldTransformFilter->GetOutputPort());
+  this->Mapper->SetInputConnection(this->WorldToSliceTransformFilter->GetOutputPort());
+  this->Mapper->SetTransformCoordinate(nullptr);
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerPlaneRepresentation2D::MarkupsInteractionPipelinePlane2D::GetViewPlaneNormal(double viewPlaneNormal[3])
+{
+  if (!viewPlaneNormal)
+    {
+    return;
+    }
+
+  double viewPlaneNormal4[4] = { 0.0, 0.0, 1.0, 0.0 };
+  if (this->Representation)
+    {
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(this->Representation->GetViewNode());
+    if (sliceNode)
+      {
+      sliceNode->GetSliceToRAS()->MultiplyPoint(viewPlaneNormal4, viewPlaneNormal4);
+      }
+    }
+  viewPlaneNormal[0] = viewPlaneNormal4[0];
+  viewPlaneNormal[1] = viewPlaneNormal4[1];
+  viewPlaneNormal[2] = viewPlaneNormal4[2];
 }

@@ -28,11 +28,13 @@
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceDisplayNode.h>
 
 // VTK includes
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
+#include <vtkGeneralTransform.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageBlend.h>
 #include <vtkImageResample.h>
@@ -582,10 +584,6 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
         {
         modelDisplayNode->SetInterpolateTexture(1);
         }
-      if ( this->SliceCompositeNode != nullptr )
-        {
-        modelDisplayNode->SetVisibility2D( this->SliceCompositeNode->GetSliceIntersectionVisibility() );
-        }
       }
     }
 
@@ -809,7 +807,7 @@ void vtkMRMLSliceLogic
     imageData->GetScalarRange(range);
     rangeLow = range[0];
     rangeHigh = range[1];
-    autoWindowLevel = (volumeDisplayNode->GetAutoScalarRange() != 0);
+    autoWindowLevel = (volumeDisplayNode->GetAutoWindowLevel() != 0);
     }
 }
 
@@ -845,7 +843,7 @@ void vtkMRMLSliceLogic
     imageData->GetScalarRange(range);
     rangeLow = range[0];
     rangeHigh = range[1];
-    autoWindowLevel = (volumeDisplayNode->GetAutoScalarRange() != 0);
+    autoWindowLevel = (volumeDisplayNode->GetAutoWindowLevel() != 0);
     }
 }
 
@@ -1009,13 +1007,6 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       {
       this->SetSliceExtentsToSliceNode();
       }
-    // update the slice intersection visibility to track the composite node setting
-    vtkMRMLModelDisplayNode *modelDisplayNode =
-      this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : nullptr;
-    if ( modelDisplayNode )
-      {
-      modelDisplayNode->SetVisibility2D(this->SliceCompositeNode->GetSliceIntersectionVisibility());
-      }
 
     // Now update the image blend with the background and foreground and label
     // -- layer 0 opacity is ignored, but since not all inputs may be non-0,
@@ -1072,11 +1063,11 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         }
         if ( this->LabelLayer && this->LabelLayer->GetImageDataConnection())
           {
-          modelDisplayNode->SetInterpolateTexture(0);
+          displayNode->SetInterpolateTexture(0);
           }
         else
           {
-          modelDisplayNode->SetInterpolateTexture(1);
+          displayNode->SetInterpolateTexture(1);
           }
        }
     if ( modified )
@@ -1252,7 +1243,8 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelNode->SetDisableModifiedEvent(0);
 
     // create display node and set texture
-    this->SliceModelDisplayNode = vtkMRMLModelDisplayNode::New();
+    vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceDisplayNode"));
+    this->SliceModelDisplayNode = sliceDisplayNode;
     this->SliceModelDisplayNode->SetScene(this->GetMRMLScene());
     this->SliceModelDisplayNode->SetDisableModifiedEvent(1);
 
@@ -1260,14 +1252,27 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetVisibility(0);
     this->SliceModelDisplayNode->SetOpacity(1);
     this->SliceModelDisplayNode->SetColor(1,1,1);
+
+    // Show intersecting slices in new slice views if this is currently enabled in the application.
+    vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
+    if (appLogic)
+      {
+      sliceDisplayNode->SetIntersectingSlicesVisibility(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesVisibility));
+      sliceDisplayNode->SetIntersectingSlicesInteractive(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesInteractive));
+      sliceDisplayNode->SetIntersectingSlicesTranslationEnabled(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesTranslation));
+      sliceDisplayNode->SetIntersectingSlicesRotationEnabled(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesRotation));
+      }
+
     std::string displayName = "Slice Display";
     std::string modelNodeName = "Slice " + this->SLICE_MODEL_NODE_NAME_SUFFIX;
+    std::string transformNodeName = "Slice Transform";
     if (this->SliceNode && this->SliceNode->GetLayoutName())
       {
       // Auto-set the colors based on the slice node
       this->SliceModelDisplayNode->SetColor(this->SliceNode->GetLayoutColor());
-      displayName = std::string(this->SliceNode->GetLayoutName()) + std::string(" Display");
+      displayName = this->SliceNode->GetLayoutName() + std::string(" Display");
       modelNodeName = this->SliceNode->GetLayoutName() + std::string(" ") + this->SLICE_MODEL_NODE_NAME_SUFFIX;
+      transformNodeName = this->SliceNode->GetLayoutName() + std::string(" Transform");
       }
     this->SliceModelDisplayNode->SetAmbient(1);
     this->SliceModelDisplayNode->SetBackfaceCulling(0);
@@ -1277,11 +1282,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetDisableModifiedEvent(0);
     // set an attribute to distinguish this from regular model display nodes
     this->SliceModelDisplayNode->SetAttribute("SliceLogic.IsSliceModelDisplayNode", "True");
-    this->SliceModelDisplayNode->SetName(displayName.c_str());
-    // Turn slice intersection off by default - there is a higher level GUI control
-    // in the SliceCompositeNode that tells if slices should be enabled for a given
-    // slice viewer
-    this->SliceModelDisplayNode->SetVisibility2D(0);
+    this->SliceModelDisplayNode->SetName(this->GetMRMLScene()->GenerateUniqueName(displayName).c_str());
 
     this->SliceModelNode->SetName(modelNodeName.c_str());
 
@@ -1297,6 +1298,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     vtkNew<vtkMatrix4x4> identity;
     identity->Identity();
     this->SliceModelTransformNode->SetMatrixTransformToParent(identity.GetPointer());
+    this->SliceModelTransformNode->SetName(this->GetMRMLScene()->GenerateUniqueName(transformNodeName).c_str());
 
     this->SliceModelTransformNode->SetDisableModifiedEvent(0);
 
@@ -1928,8 +1930,9 @@ void vtkMRMLSliceLogic::EndSliceCompositeNodeInteraction()
     this->SliceCompositeNode->InteractingOn();
     this->SliceCompositeNode->Modified();
     this->SliceCompositeNode->InteractingOff();
-    this->SliceCompositeNode->SetInteractionFlags(0);
     }
+
+  this->SliceCompositeNode->SetInteractionFlags(0);
 }
 
 //----------------------------------------------------------------------------
@@ -2064,8 +2067,9 @@ void vtkMRMLSliceLogic::EndSliceNodeInteraction()
     this->SliceNode->InteractingOn();
     this->SliceNode->Modified();
     this->SliceNode->InteractingOff();
-    this->SliceNode->SetInteractionFlags(0);
     }
+
+  this->SliceNode->SetInteractionFlags(0);
 }
 
 //----------------------------------------------------------------------------
@@ -2348,6 +2352,10 @@ bool vtkMRMLSliceLogic::IsSliceModelNode(vtkMRMLNode *mrmlNode)
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceLogic::IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayNode)
 {
+  if (vtkMRMLSliceDisplayNode::SafeDownCast(mrmlDisplayNode))
+    {
+    return true;
+    }
   if (mrmlDisplayNode != nullptr &&
       mrmlDisplayNode->IsA("vtkMRMLModelDisplayNode"))
     {
@@ -2397,4 +2405,123 @@ void vtkMRMLSliceLogic::RotateSliceToLowestVolumeAxes(bool forceSlicePlaneToSing
     }
   sliceNode->RotateToVolumePlane(volumeNode, forceSlicePlaneToSingleSlice);
   this->SnapSliceOffsetToIJK();
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLSliceLogic::GetEditableLayerAtWorldPosition(double worldPos[3],
+  bool backgroundVolumeEditable/*=true*/, bool foregroundVolumeEditable/*=true*/)
+{
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  if (!sliceNode)
+    {
+    return vtkMRMLSliceLogic::LayerNone;
+    }
+  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->GetSliceCompositeNode();
+  if (!sliceCompositeNode)
+    {
+    return vtkMRMLSliceLogic::LayerNone;
+    }
+
+  bool foregroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetForegroundVolumeID())
+    && foregroundVolumeEditable;
+  bool backgroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetBackgroundVolumeID())
+    && backgroundVolumeEditable;
+
+  if (!foregroundEditable && !backgroundEditable)
+    {
+    // window/level editing is disabled on both volumes
+    return vtkMRMLSliceLogic::LayerNone;
+    }
+  // By default adjust background volume, if available
+  bool adjustForeground = !backgroundEditable;
+
+  // If both foreground and background volumes are visible then choose adjustment of
+  // foreground volume, if foreground volume is visible in current mouse position
+  if (foregroundEditable && backgroundEditable)
+    {
+    adjustForeground = (sliceCompositeNode->GetForegroundOpacity() >= 0.01)
+      && this->IsEventInsideVolume(true, worldPos)   // inside background (used as mask for displaying foreground)
+      && this->vtkMRMLSliceLogic::IsEventInsideVolume(false, worldPos); // inside foreground
+    }
+
+  return (adjustForeground ? vtkMRMLSliceLogic::LayerForeground : vtkMRMLSliceLogic::LayerBackground);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::VolumeWindowLevelEditable(const char* volumeNodeID)
+{
+  if (!volumeNodeID)
+    {
+    return false;
+    }
+  vtkMRMLScene *scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    return false;
+    }
+  vtkMRMLVolumeNode* volumeNode =
+    vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeNodeID));
+  if (volumeNode == nullptr)
+    {
+    return false;
+    }
+  vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode =
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(volumeNode->GetVolumeDisplayNode());
+  if (!scalarVolumeDisplayNode)
+    {
+    return false;
+    }
+  return !scalarVolumeDisplayNode->GetWindowLevelLocked();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::IsEventInsideVolume(bool background, double worldPos[3])
+{
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  if (!sliceNode)
+    {
+    return false;
+    }
+  vtkMRMLSliceLayerLogic* layerLogic = background ?
+    this->GetBackgroundLayer() : this->GetForegroundLayer();
+  if (!layerLogic)
+    {
+    return false;
+    }
+  vtkMRMLVolumeNode* volumeNode = layerLogic->GetVolumeNode();
+  if (!volumeNode || !volumeNode->GetImageData())
+    {
+    return false;
+    }
+
+  vtkNew<vtkGeneralTransform> inputVolumeIJKToWorldTransform;
+  inputVolumeIJKToWorldTransform->PostMultiply();
+
+  vtkNew<vtkMatrix4x4> inputVolumeIJK2RASMatrix;
+  volumeNode->GetIJKToRASMatrix(inputVolumeIJK2RASMatrix);
+  inputVolumeIJKToWorldTransform->Concatenate(inputVolumeIJK2RASMatrix);
+
+  vtkNew<vtkGeneralTransform> inputVolumeRASToWorld;
+  vtkMRMLTransformNode::GetTransformBetweenNodes(volumeNode->GetParentTransformNode(), nullptr, inputVolumeRASToWorld);
+  inputVolumeIJKToWorldTransform->Concatenate(inputVolumeRASToWorld);
+
+  double ijkPos[3] = { 0.0, 0.0, 0.0 };
+  inputVolumeIJKToWorldTransform->GetInverse()->TransformPoint(worldPos, ijkPos);
+
+  int volumeExtent[6] = { 0 };
+  volumeNode->GetImageData()->GetExtent(volumeExtent);
+  for (int i = 0; i < 3; i++)
+    {
+    if (ijkPos[i]<volumeExtent[i * 2] || ijkPos[i]>volumeExtent[i * 2 + 1])
+      {
+      return false;
+      }
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLSliceDisplayNode* vtkMRMLSliceLogic::GetSliceDisplayNode()
+{
+  return vtkMRMLSliceDisplayNode::SafeDownCast(this->GetSliceModelDisplayNode());
 }

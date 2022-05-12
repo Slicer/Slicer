@@ -2,6 +2,7 @@ from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = 'A'
 
+
 class ModuleA(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
@@ -18,10 +19,13 @@ class ModuleA(ScriptedLoadableModule):
   def somevar(self):
     return SOMEVAR
 
+
 class ModuleAWidget(ScriptedLoadableModuleWidget):
   def __init__(self, parent=None):
     ScriptedLoadableModuleWidget.__init__(self, parent)
+
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
   def cleanup(self):
     print("ModuleAWidget finalized")

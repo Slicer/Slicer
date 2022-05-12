@@ -273,6 +273,12 @@ slicer_add_python_unittest(
   )
 
 slicer_add_python_unittest(
+  SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_util_chdir.py
+  SLICER_ARGS --no-main-window --disable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )
+
+slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_util_save.py
   SLICER_ARGS --no-main-window --disable-cli-modules --disable-scripted-loadable-modules DATA{${INPUT}/MR-head.nrrd}
   TESTNAME_PREFIX nomainwindow_
@@ -390,7 +396,7 @@ add_test(
 
 #
 # SelfTests
-# see http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/SelfTestModule
+# see https://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/SelfTestModule
 #
 
 if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
@@ -405,7 +411,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT SlicerMRBSaveRestoreCheckPathsTest.py)
   slicer_add_python_unittest(SCRIPT Slicer4Minute.py)
   slicer_add_python_unittest(SCRIPT SlicerBoundsTest.py)
-  slicer_add_python_unittest(SCRIPT Charting.py)
   if(Slicer_BUILD_WEBENGINE_SUPPORT)
     slicer_add_python_unittest(SCRIPT WebEngine.py)
   endif()
@@ -434,7 +439,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     SlicerMRBSaveRestoreCheckPathsTest.py
     Slicer4Minute.py
     SlicerBoundsTest.py
-    Charting.py
     WebEngine.py
     SliceLinkLogic.py
     ScenePerformance.py

@@ -48,7 +48,8 @@ class qSlicerAbstractModuleWidget;
 /// USAGE: Subclass AbstractScriptedSubjectHierarchyPlugin in SubjectHierarchyPlugins subfolder
 ///   of python scripted module, and register plugin by creating this class in module (e.g.
 ///   setup method of module widget) and setting python source to implemented plugin subclass.
-///   Example can be found here: https://subversion.assembla.com/svn/slicerrt/trunk/VolumeClip/src
+///   Example can be found here:
+///   https://slicer.readthedocs.io/en/latest/developer_guide/script_repository.html#subject-hierarchy-plugin-offering-view-context-menu-action
 ///
 /// Note about confidence values (\sa canAddNodeToSubjectHierarchy \sa canReparentItemInsideSubjectHierarchy \sa canOwnSubjectHierarchyItem):
 /// The confidence value is a floating point number between 0.0 and 1.0. Meaning of some typical values:

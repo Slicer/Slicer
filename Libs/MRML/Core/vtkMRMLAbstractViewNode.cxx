@@ -194,6 +194,12 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
     this->SetLayoutName(layoutName);
     }
 #endif
+
+  // Do not restore MappedInLayout state, because the view may not be mapped into the layout just yet.
+  // (the attribute tells that it was mapped into the layout when the scene was saved but the current
+  // layout may be different, see issue #6284).
+  this->SetAttribute("MappedInLayout", nullptr);
+
   this->EndModify(disabledModify);
 }
 

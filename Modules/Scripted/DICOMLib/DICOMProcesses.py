@@ -1,8 +1,12 @@
-import os, subprocess, time
-import slicer
-import qt
-import ctk
 import logging
+import os
+import subprocess
+import time
+
+import ctk
+import qt
+
+import slicer
 
 #########################################################
 #
@@ -200,7 +204,9 @@ class DICOMStoreSCPProcess(DICOMProcess):
     Returns true if process by that name exists (after attempting to
     terminate the process).
     """
-    import sys, os.path, ctypes, ctypes.wintypes
+    import ctypes
+    import ctypes.wintypes
+    import os.path
 
     psapi = ctypes.WinDLL('Psapi.dll')
     enum_processes = psapi.EnumProcesses
@@ -385,6 +391,7 @@ class DICOMListener(DICOMStoreSCPProcess):
       else:
         logging.debug("no callback")
 
+
 class DICOMSender(DICOMProcess):
   """ Code to send files to a remote host.
       (Uses storescu from dcmtk.)
@@ -539,6 +546,7 @@ class DICOMSender(DICOMProcess):
     userMsg = f"Could not send {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"
     raise UserWarning(userMsg)
 
+
 class DICOMTestingQRServer:
   """helper class to set up the DICOM servers
   Code here depends only on python and DCMTK executables
@@ -596,7 +604,6 @@ class DICOMTestingQRServer:
       p = subprocess.Popen(cmdLine)
       p.wait()
 
-
   def stop(self):
     self.qrProcess.kill()
     self.qrProcess.communicate()
@@ -637,4 +644,3 @@ AETable END
     fp = open(configFile,'w')
     fp.write(config)
     fp.close()
-

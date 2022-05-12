@@ -274,7 +274,7 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showInAllViews()
     {
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(i));
     vtkMRMLDisplayNode* displayNode = displayableNode ? vtkMRMLDisplayNode::SafeDownCast(displayableNode->GetDisplayNode()) : nullptr;
-    if (displayNode)
+    if (displayNode && displayNode->IsShowModeDefault())
       {
       MRMLNodeModifyBlocker blocker(displayNode);
       displayNode->RemoveAllViewNodeIDs();

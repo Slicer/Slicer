@@ -1,11 +1,14 @@
-import logging
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+import vtk
 import vtkTeem
-import DataProbeLib
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
+import DataProbeLib
+
 
 #
 # DataProbe
@@ -14,7 +17,7 @@ from slicer.util import TESTING_DATA_URL
 class DataProbe(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    import string
+
     parent.title = "DataProbe"
     parent.categories = ["Quantification"]
     parent.contributors = ["Steve Pieper (Isomics)"]
@@ -45,9 +48,9 @@ indicated by the mouse position.
     Do this in a startupCompleted callback so the rest of the interface is already
     built.
     """
-    # TODO - the parent name will likely change
     try:
-      parent = slicer.util.findChildren(text='Data Probe')[0]
+      mw = slicer.util.mainWindow()
+      parent = slicer.util.findChild(mw, "DataProbeCollapsibleWidget")
     except IndexError:
       print("No Data Probe frame - cannot create DataProbe")
       return
@@ -59,6 +62,7 @@ indicated by the mouse position.
     if self.infoWidget:
       self.infoWidget.onShowImage(value)
 
+
 class DataProbeInfoWidget:
 
   def __init__(self, parent=None):
@@ -69,6 +73,14 @@ class DataProbeInfoWidget:
 
     self.frame = qt.QFrame(parent)
     self.frame.setLayout(qt.QVBoxLayout())
+    # Set horizontal policy to Ignored to prevent a long segment or volume name making the widget wider.
+    # If the module panel made larger then the image viewers would move and the mouse pointer position
+    # would change in the image, potentially pointing outside the node with the long name, resulting in the
+    # module panel collapsing to the original size, causing an infinite oscillation.
+    qSize = qt.QSizePolicy()
+    qSize.setHorizontalPolicy(qt.QSizePolicy.Ignored)
+    qSize.setVerticalPolicy(qt.QSizePolicy.Preferred)
+    self.frame.setSizePolicy(qSize)
 
     modulePath = slicer.modules.dataprobe.path.replace("DataProbe.py","")
     self.iconsDIR = modulePath + '/Resources/Icons'
@@ -77,6 +89,7 @@ class DataProbeInfoWidget:
 
     # Used in _createMagnifiedPixmap()
     self.imageCrop = vtk.vtkExtractVOI()
+    self.canvas = vtk.vtkImageCanvasSource2D()
     self.painter = qt.QPainter()
     self.pen = qt.QPen()
 
@@ -90,7 +103,6 @@ class DataProbeInfoWidget:
     if self.CrosshairNode:
       self.CrosshairNodeObserverTag = self.CrosshairNode.AddObserver(slicer.vtkMRMLCrosshairNode.CursorPositionModifiedEvent, self.processEvent)
 
-
   def __del__(self):
     self.removeObservers()
 
@@ -102,7 +114,6 @@ class DataProbeInfoWidget:
       postSize = preSize - 3
       name = name[:preSize] + "..." + name[-postSize:]
     return name
-
 
   def removeObservers(self):
     # remove observers and reset
@@ -171,12 +182,11 @@ class DataProbeInfoWidget:
       if component.is_integer():
         component = int(component)
       # format string according to suggestion here:
-      # http://stackoverflow.com/questions/2440692/formatting-floats-in-python-without-superfluous-zeros
+      # https://stackoverflow.com/questions/2440692/formatting-floats-in-python-without-superfluous-zeros
       # also set the default field width for each coordinate
       componentString = ("%4f" % component).rstrip('0').rstrip('.')
       pixel += ("%s, " % componentString)
     return pixel[:-2]
-
 
   def processEvent(self,observee,event):
     # TODO: use a timer to delay calculation and compress events
@@ -342,17 +352,36 @@ class DataProbeInfoWidget:
     dims = producer.GetOutput().GetDimensions()
     minDim = min(dims[0],dims[1])
     imageSize = _roundInt(minDim/imageZoom/2.0)
-    imin = max(0,xyzInt[0]-imageSize)
-    imax = min(dims[0]-1,  xyzInt[0]+imageSize)
-    jmin = max(0,xyzInt[1]-imageSize)
-    jmax = min(dims[1]-1,  xyzInt[1]+imageSize)
-    if (imin <= imax) and (jmin <= jmax):
-      imageCrop.SetVOI(imin, imax, jmin, jmax, 0,0)
+    imin = xyzInt[0]-imageSize
+    imax = xyzInt[0]+imageSize
+    jmin = xyzInt[1]-imageSize
+    jmax = xyzInt[1]+imageSize
+    imin_trunc = max(0,imin)
+    imax_trunc = min(dims[0]-1, imax)
+    jmin_trunc = max(0, jmin)
+    jmax_trunc = min(dims[1]-1, jmax)
+    # The extra complexity of the canvas is used here to maintain a fixed size
+    # output due to the imageCrop returning a smaller image if the limits are
+    # outside the input image bounds. Specially useful when zooming at the borders.
+    canvas = self.canvas
+    canvas.SetScalarType(producer.GetOutput().GetScalarType())
+    canvas.SetNumberOfScalarComponents(producer.GetOutput().GetNumberOfScalarComponents())
+    canvas.SetExtent(imin, imax, jmin , jmax, 0 ,0)
+    canvas.FillBox(imin, imax, jmin , jmax)
+    canvas.Update()
+    if (imin_trunc <= imax_trunc) and (jmin_trunc <= jmax_trunc):
+      imageCrop.SetVOI(imin_trunc, imax_trunc, jmin_trunc, jmax_trunc, 0,0)
       imageCrop.Update()
-      vtkImage = imageCrop.GetOutput()
-      if vtkImage:
+      vtkImageCropped = imageCrop.GetOutput()
+      xyzBounds = [0]*6
+      vtkImageCropped.GetBounds(xyzBounds)
+      xyzBounds = [_roundInt(value) for value in xyzBounds]
+      canvas.DrawImage(xyzBounds[0], xyzBounds[2], vtkImageCropped)
+      canvas.Update()
+      vtkImageFromCanvas = canvas.GetOutput()
+      if vtkImageFromCanvas:
         qImage = qt.QImage()
-        slicer.qMRMLUtils().vtkImageDataToQImage(vtkImage, qImage)
+        slicer.qMRMLUtils().vtkImageDataToQImage(vtkImageFromCanvas, qImage)
         imagePixmap = qt.QPixmap.fromImage(qImage)
         imagePixmap = imagePixmap.scaled(outputSize, qt.Qt.KeepAspectRatio, qt.Qt.FastTransformation)
 
@@ -483,6 +512,7 @@ class DataProbeInfoWidget:
       self.imageLabel.hide()
       pixmap = qt.QPixmap()
       self.imageLabel.setPixmap(pixmap)
+
 
 #
 # DataProbe widget

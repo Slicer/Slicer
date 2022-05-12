@@ -17,7 +17,7 @@
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-#include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLStaticMeasurement.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
@@ -34,16 +34,16 @@
 
 int vtkMRMLMarkupsNodeTest1(int , char * [] )
 {
-  vtkNew<vtkMRMLMarkupsNode> node1;
+  vtkNew<vtkMRMLMarkupsFiducialNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   TEST_SET_GET_BOOLEAN(node1, Locked);
 
-  node1->SetMarkupLabelFormat(std::string("%N-%d"));
+  node1->SetControlPointLabelFormat(std::string("%N-%d"));
   node1->SetName("testingname");
-  std::string formatTest = node1->ReplaceListNameInMarkupLabelFormat();
+  std::string formatTest = node1->ReplaceListNameInControlPointLabelFormat();
   CHECK_STD_STRING(formatTest, "testingname-%d");
 
   vtkNew<vtkMRMLStaticMeasurement> measurement1;
@@ -192,7 +192,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
     }
 
   testOrientation[0] = 0.333;
-  node1->SetNthControlPointOrientationFromArray(0, testOrientation);
+  node1->SetNthControlPointOrientation(0, testOrientation);
   node1->GetNthControlPointOrientation(0, newOrientation);
   for (int r = 0; r < 4; r++)
     {
@@ -218,7 +218,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   testOrientation[2] = 1.0;
   testOrientation[3] = 0.0;
   double *orientationPointer = testOrientation;
-  node1->SetNthControlPointOrientationFromPointer(0, orientationPointer);
+  node1->SetNthControlPointOrientation(0, orientationPointer);
   node1->GetNthControlPointOrientation(0, newOrientation);
   for (int r = 0; r < 4; r++)
     {

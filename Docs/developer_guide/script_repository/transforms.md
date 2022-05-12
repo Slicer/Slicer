@@ -16,14 +16,14 @@ transformNode.AddObserver(slicer.vtkMRMLTransformNode.TransformModifiedEvent, on
 
 Set up the scene:
 
-- Add a markup fiducial node (centerOfRotationMarkupsNode) with a single point to specify center of rotation.
+- Add a markup point list node (centerOfRotationMarkupsNode) with a single point to specify center of rotation.
 - Add a rotation transform (rotationTransformNode) that will be edited in Transforms module to specify rotation angles.
 - Add a transform (finalTransformNode) and apply it (not harden) to those nodes (images, models, etc.) that you want to rotate around the center of rotation point.
 
 Then run the script below, go to Transforms module, select rotationTransformNode, and move rotation sliders.
 
 ```python
-# This markups fiducial node specifies the center of rotation
+# This markups point list node specifies the center of rotation
 centerOfRotationMarkupsNode = getNode("F")
 # This transform can be  edited in Transforms module
 rotationTransformNode = getNode("LinearTransform_3")
@@ -64,7 +64,7 @@ Set up the scene:
 Then run the script below, go to Transforms module, select rotationTransformNode, and move Edit / Rotation / IS slider.
 
 ```python
-# This markups fiducial node specifies the center of rotation
+# This markups point list node specifies the center of rotation
 rotationAxisMarkupsNode = getNode("L")
 # This transform can be edited in Transforms module (Edit / Rotation / IS slider)
 rotationTransformNode = getNode("LinearTransform_3")
@@ -112,37 +112,59 @@ rotationAxisMarkupsNodeObserver = rotationAxisMarkupsNode.AddObserver(slicer.vtk
 
 ### Convert between ITK and Slicer linear transforms
 
+ITK transform files store the resampling transform ("transform from parent") in LPS coordinate system. Slicer displays the modeling transform ("transform to parent") in RAS coordinate system. The following code snippets show how to compute the matrix that Slicer displays from an ITK transform file.
+
 ```python
 # Copy the content between the following triple-quotes to a file called 'LinearTransform.tfm', and load into Slicer
 
-tfm_file = """#Insight Transform File V1.0
+"""
+#Insight Transform File V1.0
 #Transform 0
 Transform: AffineTransform_double_3_3
 Parameters: 0.929794207512361 0.03834792453582355 -0.3660767246906854 -0.2694570325150706 0.7484457003494506 -0.6059884002657121 0.2507501531497781 0.6620864522947292 0.7062335947709847 -46.99999999999999 49 17.00000000000002
-FixedParameters: 0 0 0"""
+FixedParameters: 0 0 0
+"""
 
 import numpy as np
+import re
 
-# get the upper 3x4 transform matrix
-m = np.array( tfm_file.splitlines()[3].split()[1:], dtype=np.float64 )
+def read_itk_affine_transform(filename):
+    with open(filename) as f:
+        tfm_file_lines = f.readlines()
+    # parse the transform parameters
+    match = re.match("Transform: AffineTransform_[a-z]+_([0-9]+)_([0-9]+)", tfm_file_lines[2])
+    if not match or match.group(1) != '3' or match.group(2) != '3':
+        raise ValueError(f"{filename} is not an ITK 3D affine transform file")
+    p = np.array( tfm_file_lines[3].split()[1:], dtype=np.float64 )
+    # assemble 4x4 matrix from ITK transform parameters
+    itk_transform = np.array([
+        [p[0], p[1], p[2], p[9]],
+        [p[3], p[4], p[5], p[10]],
+        [p[6], p[7], p[8], p[11]],
+        [0, 0, 0, 1]])
+    return itk_transform
 
-# pad to a 4x4 matrix
-m2 = np.vstack((m.reshape(4,3).T, [0,0,0,1]))
+def itk_to_slicer_transform(itk_transform):
+    # ITK transform: from parent, using LPS coordinate system
+    # Transform displayed in Slicer: to parent, using RAS coordinate system
+    transform_from_parent_LPS = itk_transform
+    ras2lps = np.diag([-1, -1, 1, 1])
+    transform_from_parent_RAS = ras2lps @ transform_from_parent_LPS @ ras2lps
+    transform_to_parent_RAS = np.linalg.inv(transform_from_parent_RAS)
+    return transform_to_parent_RAS
 
-def itktfm_to_slicer(tfm):
-  ras2lps = np.diag([-1, -1, 1, 1])
-  mt = ras2lps @ m2 @ ras2lps
-  mt[:3,3] = mt[:3,:3] @ mt[:3,3]
-  return mt
-
-print( itktfm_to_slicer(m2) )
+filename = "path/to/LinearTransform.tfm"
+itk_tfm = read_itk_affine_transform(filename)
+slicer_tfm = itk_to_slicer_transform(itk_tfm)
+with np.printoptions(precision=6, suppress=True):
+    print(slicer_tfm)
 
 # Running the code above in Python should print the following output.
 # This output should match the display the loaded .tfm file in the Transforms module:
-# [[  0.92979  -0.26946  -0.25075  52.64097]
-# [  0.03835   0.74845  -0.66209 -46.12696]
-# [  0.36608   0.60599   0.70623  -0.48185]
-# [  0.        0.        0.        1.     ]]
+# [[  0.929794  -0.269457  -0.25075  -52.64097 ]
+#  [  0.038348   0.748446  -0.662086  46.126957]
+#  [  0.366077   0.605988   0.706234   0.481854]
+#  [  0.         0.         0.         1.      ]]
 ```
 
 C++:

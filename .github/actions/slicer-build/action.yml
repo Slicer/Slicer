@@ -1,0 +1,9 @@
+# action.yml
+name: 'Slicer Build'
+description: 'Build Slicer using BuildSlicer.sh script provided by the slicer/slicer-base docker image'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+outputs:
+  package: # id of output
+    description: 'Name of the generated Slicer package'

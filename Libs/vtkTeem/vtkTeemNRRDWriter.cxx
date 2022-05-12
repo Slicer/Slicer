@@ -9,7 +9,7 @@
 #include "vtkInformation.h"
 #include <vtkVersion.h>
 
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 #include <vnl/vnl_double_3.h>
 
 #include "itkNumberToString.h"
@@ -39,6 +39,7 @@ vtkTeemNRRDWriter::vtkTeemNRRDWriter()
   this->AxisUnits = new AxisInfoMapType;
   this->VectorAxisKind = nrrdKindUnknown;
   this->Space = nrrdSpaceRightAnteriorSuperior;
+  this->ForceRangeAxis = false;
 }
 
 //----------------------------------------------------------------------------
@@ -220,7 +221,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   double spaceDir[NRRD_DIM_MAX][NRRD_SPACE_DIM_MAX] = { 0.0 };
   unsigned int baseDim = 0;
   const unsigned int spaceDim = 3; // VTK is always 3D volumes.
-  if (size[0] > 1)
+  if (size[0] > 1 || this->ForceRangeAxis)
     {
     // the range axis has no space direction
     for (unsigned int saxi=0; saxi < spaceDim; saxi++)

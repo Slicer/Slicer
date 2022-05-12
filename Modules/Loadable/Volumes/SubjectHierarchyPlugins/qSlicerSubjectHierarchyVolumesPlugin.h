@@ -50,6 +50,16 @@ public:
   ~qSlicerSubjectHierarchyVolumesPlugin() override;
 
 public:
+
+  /// Get view context menu item actions that are available when right-clicking an object in the views.
+  /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
+  QList<QAction*> viewContextMenuActions()const override;
+
+  /// Show context menu actions valid for a given subject hierarchy item to be shown in the view.
+  /// \param itemID Subject Hierarchy item to show the context menu items for
+  /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute, etc.)
+  void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData);
+
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
   /// \param node Node to be added to the hierarchy
@@ -143,6 +153,12 @@ protected slots:
   /// closest to the view's default view axis when showing a volume in subject hierarchy.
   /// By default it is on. State is stored in the application settings.
   void toggleResetViewOrientationOnShowAction(bool);
+
+  /// Set window/level by mapped menu signal
+  void setVolumePreset(const QString& presetId);
+
+  /// Toggle color legend option for current volume item in a slice view
+  void toggleVisibilityForCurrentItem(bool);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumesPluginPrivate> d_ptr;

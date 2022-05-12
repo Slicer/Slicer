@@ -12,8 +12,8 @@ later used to establish the secured connection [1].
 This digital certificate could either be signed or self-signed [2]. By default, the browser
 rejects self-signed certificates and accepts only the one signed by a trusted Certificate authority.
 
-(1) http://en.wikipedia.org/wiki/Public_key_certificate
-(2) http://en.wikipedia.org/wiki/Self-signed_certificate
+(1) https://en.wikipedia.org/wiki/Public_key_certificate
+(2) https://en.wikipedia.org/wiki/Self-signed_certificate
 
 
 Certificate authority

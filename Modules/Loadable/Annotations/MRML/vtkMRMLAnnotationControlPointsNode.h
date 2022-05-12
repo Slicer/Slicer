@@ -21,7 +21,7 @@ public:
   static vtkMRMLAnnotationControlPointsNode *New();
   vtkTypeMacro(vtkMRMLAnnotationControlPointsNode,vtkMRMLAnnotationNode);
 
-  // void PrintSelf(ostream& os, vtkIndent indent);
+  // void PrintSelf(ostream& os, vtkIndent indent) override;
   // Description:
   // Just prints short summary
   void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) override;

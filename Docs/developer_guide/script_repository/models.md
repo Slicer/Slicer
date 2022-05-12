@@ -22,10 +22,10 @@ boxNode.GetDisplayNode().SetOpacity(0.8)
 
 ### Measure distance of points from surface
 
-This example computes closest distance of points (markups fiducial ``F``) from a surface (model node ``mymodel``) and writes results into a table.
+This example computes closest distance of points (markups point list `F`) from a surface (model node `mymodel`) and writes results into a table.
 
 ```python
-markupsNode = getNode("F")
+pointListNode = getNode("F")
 modelNode = getNode("mymodel")
 
 # Transform model polydata to world coordinate system
@@ -49,15 +49,15 @@ distanceCol = vtk.vtkDoubleArray()
 distanceCol.SetName("Distance")
 
 distanceFilter = vtk.vtkImplicitPolyDataDistance()
-distanceFilter.SetInput(surface_World);
-nOfFiduciallPoints = markupsNode.GetNumberOfFiducials()
-for i in range(0, nOfFiduciallPoints):
+distanceFilter.SetInput(surface_World)
+nOfControlPoints = pointListNode.GetNumberOfControlPoints()
+for i in range(0, nOfControlPoints):
   point_World = [0,0,0]
-  markupsNode.GetNthControlPointPositionWorld(i, point_World)
+  pointListNode.GetNthControlPointPositionWorld(i, point_World)
   closestPointOnSurface_World = [0,0,0]
   closestPointDistance = distanceFilter.EvaluateFunctionAndGetClosestPoint(point_World, closestPointOnSurface_World)
   indexCol.InsertNextValue(i)
-  labelCol.InsertNextValue(markupsNode.GetNthControlPointLabel(i))
+  labelCol.InsertNextValue(pointListNode.GetNthControlPointLabel(i))
   distanceCol.InsertNextValue(closestPointDistance)
 
 # Create a table from result arrays
@@ -106,10 +106,10 @@ The following script allows getting selected scalar value at a selected position
 
 modelNode = getNode("sphere")
 modelPointValues = modelNode.GetPolyData().GetPointData().GetArray("Normals")
-markupsNode = slicer.mrmlScene.GetFirstNodeByName("F")
+pointListNode = slicer.mrmlScene.GetFirstNodeByName("F")
 
-if not markupsNode:
-  markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode","F")
+if not pointListNode:
+  pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode","F")
 
 pointsLocator = vtk.vtkPointLocator() # could try using vtk.vtkStaticPointLocator() if need to optimize
 pointsLocator.SetDataSet(modelNode.GetPolyData())
@@ -118,13 +118,14 @@ pointsLocator.BuildLocator()
 def onMouseMoved(observer,eventid):
   ras=[0,0,0]
   crosshairNode.GetCursorPositionRAS(ras)
-  if markupsNode.GetNumberOfFiducials() == 0:
-    markupsNode.AddFiducial(*ras)
-  else:
-    markupsNode.SetNthFiducialPosition(0,*ras)
   closestPointId = pointsLocator.FindClosestPoint(ras)
+  ras = modelNode.GetPolyData().GetPoint(closestPointId)
   closestPointValue = modelPointValues.GetTuple(closestPointId)
-  print("RAS = " + repr(ras) + "    value = " + repr(closestPointValue))
+  if pointListNode.GetNumberOfControlPoints() == 0:
+    pointListNode.AddControlPoint(ras)
+  else:
+    pointListNode.SetNthControlPointPosition(0,*ras)
+  print(f"RAS={ras}  value={closestPointValue}")
 
 crosshairNode=slicer.util.getNode("Crosshair")
 observationId = crosshairNode.AddObserver(slicer.vtkMRMLCrosshairNode.CursorPositionModifiedEvent, onMouseMoved)
@@ -149,14 +150,14 @@ modelNode.GetDisplayNode().SetAndObserveColorNodeID("Viridis")
 modelNode.GetDisplayNode().SetScalarVisibility(True)
 ```
 
-### Select cells of a model using markups fiducial points
+### Select cells of a model using markups point list
 
-The following script selects cells of a model node that are closest to positions of markups fiducial points.
+The following script selects cells of a model node that are closest to positions of markups control points.
 
 ```python
 # Get input nodes
 modelNode = slicer.util.getNode("Segment_1") # select cells in this model
-markupsNode = slicer.util.getNode("F") # points will be selected at positions specified by this markups fiducial node
+pointListNode = slicer.util.getNode("F") # points will be selected at positions specified by this markups point list node
 
 # Create scalar array that will store selection state
 cellScalars = modelNode.GetMesh().GetCellData()
@@ -179,9 +180,9 @@ cell.SetDataSet(modelNode.GetMesh())
 cell.BuildLocator()
 
 def onPointsModified(observer=None, eventid=None):
-  global markupsNode, selectionArray
+  global pointListNode, selectionArray
   selectionArray.Fill(0) # set all cells to non-selected by default
-  markupPoints = slicer.util.arrayFromMarkupsControlPoints(markupsNode)
+  markupPoints = slicer.util.arrayFromMarkupsControlPoints(pointListNode)
   closestPoint = [0.0, 0.0, 0.0]
   cellObj = vtk.vtkGenericCell()
   cellId = vtk.mutable(0)
@@ -197,10 +198,10 @@ def onPointsModified(observer=None, eventid=None):
 # Initial update
 onPointsModified()
 # Automatic update each time when a markup point is modified
-markupsNodeObserverTag = markupsNode.AddObserver(slicer.vtkMRMLMarkupsFiducialNode.PointModifiedEvent, onPointsModified)
+pointListNodeObserverTag = markupsNode.AddObserver(slicer.vtkMRMLMarkupsFiducialNode.PointModifiedEvent, onPointsModified)
 
 # To stop updating selection, run this:
-# markupsNode.RemoveObserver(markupsNodeObserverTag)
+# pointListNode.RemoveObserver(pointListNodeObserverTag)
 ```
 
 ### Export entire scene as glTF
@@ -208,6 +209,8 @@ markupsNodeObserverTag = markupsNode.AddObserver(slicer.vtkMRMLMarkupsFiducialNo
 glTF is a modern and very efficient file format for surface meshes, which is supported by many web viewers, such as:
 - https://3dviewer.net/ (requires a single zip file that contains all the exported files)
 - https://gltf-viewer.donmccurdy.com/ (the exported folder can be drag-and-dropped to the webpage)
+
+[SlicerOpenAnatomy extension](https://github.com/PerkLab/SlicerOpenAnatomy/) provides rich export of models and segmentations (preserving names, hierarchy, etc.), but for a basic export operation this code snippet can be used:
 
 ```python
 exporter = vtk.vtkGLTFExporter()

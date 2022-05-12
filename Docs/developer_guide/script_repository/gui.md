@@ -1,3 +1,10 @@
+## Install Slicer
+
+There are different approaches to install Slicer and extensions programmatically:
+
+- Install Slicer manually and install extensions by using `slicer.app.extensionsManagerModel()`. See example [below](script_repository.md#download-and-install-extension) and in [install-slicer-extension.py](https://github.com/pieper/SlicerDockers/blob/master/slicer-plus/install-slicer-extension.py)
+- Directly interact with the REST API endpoints of https://slicer-packages.kitware.com using `curl` and `jq`. See [slicer-download.sh](https://github.com/Slicer/SlicerDocker/blob/master/scripts/slicer-download.sh)
+
 ## Launch Slicer
 
 ### Open a file with Slicer at the command line
@@ -40,11 +47,17 @@ Slicer exits when the commands are completed because `--testing` options is spec
 
 ### Run a Python script file in the Slicer environment
 
-Run a Python script (stored in script file), without showing any graphical user interface:
+Run a Python script on Windows (stored in script file), without showing any graphical user interface:
 
-```console
-Slicer.exe --python-script "/full/path/to/myscript.py" --no-splash --no-main-window
-```
+ ```console
+ Slicer.exe --python-script "/full/path/to/myscript.py" --no-splash --no-main-window
+ ```
+
+ Run a Python script on MacOS (stored in script file), without showing any graphical user interface:
+
+ ```console
+ /Applications/Slicer.app/Contents/MacOS/Slicer --no-splash --no-main-window --python-script "/full/path/to/myscript.py"
+ ```
 
 To make Slicer exit when the script execution is completed, call `sys.exit(errorCode)` (where `errorCode` is set 0 for success and other value to indicate error).
 
@@ -67,16 +80,16 @@ slicer://viewer/?studyUID=2.16.840.1.113669.632.20.121711.10000158860
     &dicomweb_uri_endpoint=%20http%3A%2F%2Fdemo.kheops.online%2Fapi%2Fwado
 ```
 
-#### MRML scene
+## MRML scene
 
 ### Get MRML node from the scene
 
-Get markups fiducial node named `F` (useful for quickly getting access to a MRML node in the Python console):
+Get markups point list node named `F` (useful for quickly getting access to a MRML node in the Python console):
 
 ```python
-fidsNode = getNode('F')
+pointListNode = getNode('F')
 # do something with the node... let's remove the first control point in it
-fidsNode.RemoveNthControlPoint(0)
+pointListNode.RemoveNthControlPoint(0)
 ```
 
 Getting the first volume node without knowing its name (useful if there is only one volume loaded):
@@ -264,7 +277,7 @@ slicer.mrmlScene.AddDefaultNode(defaultVolumeStorageNode)
 logging.info("Segmentation nodes will be stored uncompressed
 ```
 
-#### Module selection
+## Module selection
 
 ### Switch to a different module
 
@@ -282,7 +295,7 @@ Instead of the default Welcome module:
 qt.QSettings().setValue("Modules/HomeModule", "Data")
 ```
 
-#### Views
+## Views
 
 ### Display text in a 3D view or slice view
 
@@ -379,6 +392,8 @@ crosshairNode = slicer.util.getNode("Crosshair")
 crosshairNode.SetCrosshairRAS(position_RAS)
 # Center the position in all slice views
 slicer.vtkMRMLSliceNode.JumpAllSlices(slicer.mrmlScene, *position_RAS, slicer.vtkMRMLSliceNode.CenteredJumpSlice)
+# Make the crosshair visible
+crosshairNode.SetCrosshairMode(slicer.vtkMRMLCrosshairNode.ShowBasic)
 ```
 
 :::{note}
@@ -441,25 +456,22 @@ for i in range(0,255):
 slicer.mrmlScene.AddNode(invertedocean)
 ```
 
-### Show color scalar bar in slice views
+### Show color legend for a volume node
 
-Display color bar for background volume in slice views (managed by DataProbe):
+Display color legend for a volume node in slice views:
 
 ```python
-sliceAnnotations = slicer.modules.DataProbeInstance.infoWidget.sliceAnnotations
-sliceAnnotations.sliceViewAnnotationsEnabled = True
-sliceAnnotations.scalarBarEnabled = 1
-sliceAnnotations.scalarBarSelectedLayer = "background"  # alternative is "foreground"
-sliceAnnotations.rangeLabelFormat = "test %G"
-sliceAnnotations.updateSliceViewFromGUI()
+volumeNode = getNode('MRHead')
+colorLegendDisplayNode = slicer.modules.colors.logic().AddDefaultColorLegendDisplayNode(volumeNode)
 ```
 
-### Display color scalar bar in 3D views
+### Create custom color map and display color legend
 
 ```python
+modelNode = getNode('MyModel')  # color legend requires a displayable node
 colorTableRangeMm = 40
 title ="Radial\nCompression\n"
-labelsFormat = "%4.1f mm"
+labelFormat = "%4.1f mm"
 
 # Create color node
 colorNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLProceduralColorNode")
@@ -480,14 +492,11 @@ colorMap.AddRGBPoint(colorTableRangeMm * 0.2, 0.0, 1.0, 1.0)
 colorMap.AddRGBPoint(colorTableRangeMm * 0.5, 1.0, 1.0, 0.0)
 colorMap.AddRGBPoint(colorTableRangeMm * 1.0, 1.0, 0.0, 0.0)
 
-# Display color scalar bar
-colorWidget = slicer.modules.colors.widgetRepresentation()
-colorWidget.setCurrentColorNode(colorNode)
-ctkScalarBarWidget = slicer.util.findChildren(colorWidget, name="VTKScalarBar")[0]
-ctkScalarBarWidget.setDisplay(1)
-ctkScalarBarWidget.setTitle(title)
-ctkScalarBarWidget.setMaxNumberOfColors(256)
-ctkScalarBarWidget.setLabelsFormat(labelsFormat)
+# Display color legend
+modelNode.GetDisplayNode().SetAndObserveColorNodeID(colorNode.GetID())
+colorLegendDisplayNode = slicer.modules.colors.logic().AddDefaultColorLegendDisplayNode(modelNode)
+colorLegendDisplayNode.SetTitleText(title)
+colorLegendDisplayNode.SetLabelFormat(labelFormat)
 ```
 
 ### Customize view layout
@@ -533,7 +542,7 @@ viewToolBar = mainWindow().findChild("QToolBar", "ViewToolBar")
 layoutMenu = viewToolBar.widgetForAction(viewToolBar.actions()[0]).menu()
 layoutSwitchActionParent = layoutMenu  # use `layoutMenu` to add inside layout list, use `viewToolBar` to add next the standard layout list
 layoutSwitchAction = layoutSwitchActionParent.addAction("My view") # add inside layout list
-layoutSwitchAction.setData(layoutId)
+layoutSwitchAction.setData(customLayoutId)
 layoutSwitchAction.setIcon(qt.QIcon(":Icons/Go.png"))
 layoutSwitchAction.setToolTip("3D and slice view")
 ```
@@ -541,16 +550,21 @@ layoutSwitchAction.setToolTip("3D and slice view")
 ### Turn on slice intersections
 
 ```python
-viewNodes = slicer.util.getNodesByClass("vtkMRMLSliceCompositeNode")
-for viewNode in viewNodes:
-  viewNode.SetSliceIntersectionVisibility(1)
+sliceDisplayNodes = slicer.util.getNodesByClass("vtkMRMLSliceDisplayNode")
+for sliceDisplayNode in sliceDisplayNodes:
+  sliceDisplayNode.SetIntersectingSlicesVisibility(1)
+
+# Workaround to force visual update (see https://github.com/Slicer/Slicer/issues/6338)
+sliceNodes = slicer.util.getNodesByClass('vtkMRMLSliceNode')
+for sliceNode in sliceNodes:
+    sliceNode.Modified()
 ```
 
 :::{note}
 
 How to find code corresponding to a user interface widget?
 
-For this one I searched for "slice intersections" text in the whole slicer source code, found that the function is implemented in `Base\QTGUI\qSlicerViewersToolBar.cxx`, then translated the `qSlicerViewersToolBarPrivate::setSliceIntersectionVisible(bool visible)` method to Python.
+For this one I searched for "slice intersections" text in the whole Slicer source code, found that the function is implemented in `Base\QTGUI\qSlicerViewersToolBar.cxx`, then translated the `qSlicerViewersToolBarPrivate::setSliceIntersectionVisible(bool visible)` method to Python.
 
 :::
 
@@ -841,7 +855,7 @@ viewWidget.setMRMLViewNode(viewNode)
 viewWidget.show()
 ```
 
-#### Access VTK rendering classes
+## Access VTK rendering classes
 
 ### Access VTK views, renderers, and cameras
 
@@ -918,7 +932,7 @@ slicer.util.forceRenderAllViews()
 
 See more information on physically based rendering in VTK here: https://blog.kitware.com/vtk-pbr/
 
-#### Keyboard shortcuts and mouse gestures
+## Keyboard shortcuts and mouse gestures
 
 ### Customize keyboard shortcuts
 
@@ -940,7 +954,7 @@ for (shortcutKey, callback) in shortcuts:
   shortcut.connect( "activated()", callback)
 ```
 
-Here's an example for cycling through Segment Editor effects (requested [on the Slicer forum](https://discourse.slicer.org/t/is-there-a-keystroke-to-cycle-through-effects-in-segment-editor/10117/2) for the [SlicerMorph](http://slicermorph.org) project).
+Here's an example for cycling through Segment Editor effects (requested [on the Slicer forum](https://discourse.slicer.org/t/is-there-a-keystroke-to-cycle-through-effects-in-segment-editor/10117/2) for the [SlicerMorph](https://slicermorph.org) project).
 
 ```python
 def cycleEffect(delta=1):
@@ -1042,7 +1056,7 @@ shortcut.connect("activated()",
   lambda: slicer.modules.markups.logic().JumpSlicesToLocation(0,0,0, True))
 ```
 
-#### Launch external applications
+## Launch external applications
 
 How to run external applications from Slicer.
 
@@ -1069,7 +1083,7 @@ will output:
 
 On some systems, *shell=True* must be specified as well.
 
-#### Manage extensions
+## Manage extensions
 
 ### Download and install extension
 
@@ -1081,6 +1095,7 @@ if not em.isExtensionInstalled(extensionName):
   url = f"{em.serverUrl().toString()}/api/v1/item/{extensionMetaData['_id']}/download"
   extensionPackageFilename = slicer.app.temporaryPath+'/'+extensionMetaData['_id']
   slicer.util.downloadFile(url, extensionPackageFilename)
+  em.interactive = False  # Disable popups (automatically install dependencies)
   em.installExtension(extensionPackageFilename)
   slicer.util.restart()
 ```

@@ -12,5 +12,7 @@ script_repository
 build_instructions/index
 debugging/index
 contributing
+style_guide
+advanced_topics
 authors
 ```

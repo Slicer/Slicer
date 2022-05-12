@@ -44,6 +44,7 @@ set(${KIT}_RESOURCES
   )
 
 set(${KIT}_TARGET_LIBRARIES
+  vtkSlicerVolumesModuleLogic
   )
 
 #-----------------------------------------------------------------------------
@@ -58,6 +59,11 @@ SlicerMacroBuildModuleWidgets(
   RESOURCES ${${KIT}_RESOURCES}
   WRAP_PYTHONQT
   )
+
+#-----------------------------------------------------------------------------
+if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+  add_subdirectory(DesignerPlugins)
+endif()
 
 #-----------------------------------------------------------------------------
 if(BUILD_TESTING)

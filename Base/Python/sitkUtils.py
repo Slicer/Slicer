@@ -1,10 +1,9 @@
-import slicer
-import ctk
-import vtk
 import SimpleITK as sitk
-import warnings
+
+import slicer
 
 __sitk__MRMLIDImageIO_Registered__ = False
+
 
 def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className='vtkMRMLScalarVolumeNode'):
     """ Given a SimpleITK image, push it back to slicer for viewing
@@ -37,6 +36,7 @@ def PullVolumeFromSlicer(nodeObjectOrName):
     sitkimage = sitk.ReadImage(myNodeFullITKAddress)
     return sitkimage
 
+
 def GetSlicerITKReadWriteAddress(nodeObjectOrName):
     """ This function will return the ITK FileIO formatted text address
             so that the image can be read directly from the MRML scene
@@ -46,6 +46,7 @@ def GetSlicerITKReadWriteAddress(nodeObjectOrName):
     myNodeSceneID = myNode.GetID()
     myNodeFullITKAddress = 'slicer:' + myNodeSceneAddress + '#' + myNodeSceneID
     return myNodeFullITKAddress
+
 
 def EnsureRegistration():
     """Make sure MRMLIDImageIO reader is registered.

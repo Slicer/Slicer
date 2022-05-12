@@ -10,7 +10,7 @@ For debugging on Windows, Visual Studio is recommended as it has much better per
 
 ## Prerequisites
 
-- Build 3D Slicer in Debug mode, outside of Qt Creator, by following the [build instructions](../build_instructions.md).
+- Build 3D Slicer in Debug mode, outside of Qt Creator, by following the [build instructions](../build_instructions/overview.md).
 - Install Qt SDK with Qt Creator.
 
 ## Running the debugger

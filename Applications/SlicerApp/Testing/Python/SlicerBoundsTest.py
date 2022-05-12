@@ -1,13 +1,12 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import logging
+
 
 #
 # SlicerOrientationSelectorTest
 #
-
 class SlicerBoundsTest(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
@@ -26,27 +25,30 @@ class SlicerBoundsTest(ScriptedLoadableModule):
     This file was originally developed by Johan Andruejol, Kitware Inc.
     """
 
+
 #
 # SlicerBoundsTest
 #
-
 class SlicerBoundsTestWidget(ScriptedLoadableModuleWidget):
   """
   """
+
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # SlicerTransformInteractionTest1Logic
 #
-
 class SlicerBoundsTestLogic(ScriptedLoadableModuleLogic):
   """
   """
 
+
 class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
   """
   """
+
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
@@ -202,12 +204,11 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
     """ Test the GetRASBounds & GetBounds method on a markup.
     """
     #self.delayDisplay("Starting test_Markup")
-    markupNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLMarkupsFiducialNode())
-
-    markupNode.AddFiducial(1.0, 0.0, 0.0)
-    markupNode.AddFiducial(-45.0, -90.0, -180.0)
-    markupNode.AddFiducial(-200.0, 500.0, -0.23)
-    markupNode.AddFiducial(1.0, 1003.01, 0.0)
+    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+    markupNode.AddControlPoint([1.0, 0.0, 0.0])
+    markupNode.AddControlPoint([-45.0, -90.0, -180.0])
+    markupNode.AddControlPoint([-200.0, 500.0, -0.23])
+    markupNode.AddControlPoint([1.0, 1003.01, 0.0])
 
     bounds = list(range(6))
     markupNode.GetRASBounds(bounds)

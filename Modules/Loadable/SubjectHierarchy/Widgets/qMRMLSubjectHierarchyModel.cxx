@@ -28,6 +28,9 @@
 #include <QTimer>
 #include <QUrl>
 
+// CTK includes
+#include <ctkUtils.h>
+
 // qMRML includes
 #include "qMRMLSubjectHierarchyModel_p.h"
 
@@ -424,7 +427,7 @@ QModelIndex qMRMLSubjectHierarchyModel::indexFromSubjectHierarchyItem(vtkIdType 
     qCritical() << Q_FUNC_INFO << ": Invalid column " << column;
     return QModelIndex();
     }
-  return nodeParentIndex.child(row, column);
+  return ctk::modelChildIndex(const_cast<qMRMLSubjectHierarchyModel*>(this), nodeParentIndex, row, column);
 }
 
 //------------------------------------------------------------------------------

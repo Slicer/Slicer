@@ -631,6 +631,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   QStringList nodeTypes;
+  nodeTypes += "vtkMRMLMarkupsROINode";
   nodeTypes += "vtkMRMLROIListNode";
   nodeTypes += "vtkMRMLAnnotationROINode";
   widget->setNodeTypes(QStringList(nodeTypes));
@@ -806,7 +807,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
 QWidget* qSlicerCLIModuleUIHelperPrivate::createMeasurementTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
-  QString nodeType = "vtkMRMLDoubleArrayNode";
+  QString nodeType = "vtkMRMLTableNode";
   if (nodeType.isEmpty())
     {
     qWarning() << "MeasurementTag - Unknown type:" << type;

@@ -1126,7 +1126,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     newColorTable->SetNumberOfColors(1);
     newColorTable->GetLookupTable()->SetRange(0, 0);
     newColorTable->GetLookupTable()->SetNumberOfTableValues(1);
-    newColorTable->SetColor(0, "Background", 0.0, 0.0, 0.0, 0.0);
+    // Use NoName as color name to not list the "background" color in the color legend.
+    newColorTable->SetColor(0, newColorTable->GetNoName(), 0.0, 0.0, 0.0, 0.0);
     labelmapNode->GetScene()->AddNode(newColorTable);
     labelmapNode->GetDisplayNode()->SetAndObserveColorNodeID(newColorTable->GetID());
     }
@@ -1165,7 +1166,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
   colorTableNode->SetNumberOfColors(numberOfColors);
   colorTableNode->GetLookupTable()->SetRange(0, numberOfColors - 1);
   colorTableNode->GetLookupTable()->SetNumberOfTableValues(numberOfColors);
-  colorTableNode->SetColor(0, "Background", 0.0, 0.0, 0.0, 0.0);
+  // Use NoName as color name to not list the "background" color in the color legend.
+  colorTableNode->SetColor(0, colorTableNode->GetNoName(), 0.0, 0.0, 0.0, 0.0);
 
   for (int i = colorFillStartIndex; i < colorTableNode->GetNumberOfColors(); ++i)
     {
@@ -2674,4 +2676,68 @@ void vtkSlicerSegmentationsModuleLogic::CollapseBinaryLabelmaps(vtkMRMLSegmentat
   segmentationNode->GetSegmentation()->CollapseBinaryLabelmaps(forceToSingleLayer);
   segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
   vtkSlicerSegmentationsModuleLogic::ReconvertAllRepresentations(segmentationNode);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::IsEffectiveExentOutsideReferenceVolume(
+  vtkMRMLVolumeNode* referenceVolumeNode, vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIDs/*=nullptr*/)
+{
+  if (!referenceVolumeNode)
+    {
+    vtkGenericWarningMacro("Invalid reference volume node");
+    return false;
+    }
+
+  if (!segmentationNode)
+    {
+    vtkGenericWarningMacro("Invalid segmentation node");
+    return false;
+    }
+
+  std::string segmentationGeometryString = segmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry(
+    vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, segmentIDs);
+  vtkNew<vtkOrientedImageData> segmentationGeometry;
+  vtkSegmentationConverter::DeserializeImageGeometry(segmentationGeometryString, segmentationGeometry, false/*don't allocate*/);
+
+  vtkNew<vtkMatrix4x4> ijkToRASMatrix;
+  referenceVolumeNode->GetIJKToRASMatrix(ijkToRASMatrix);
+
+  vtkNew<vtkOrientedImageData> referenceGeometry;
+  referenceGeometry->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
+  referenceGeometry->SetGeometryFromImageToWorldMatrix(ijkToRASMatrix);
+
+  if (segmentationNode->GetParentTransformNode() != referenceVolumeNode->GetParentTransformNode())
+    {
+    vtkNew<vtkGeneralTransform> segmentationToReferenceTransform;
+    vtkMRMLTransformNode::GetTransformBetweenNodes(segmentationNode->GetParentTransformNode(),
+      referenceVolumeNode->GetParentTransformNode(), segmentationToReferenceTransform);
+    vtkOrientedImageDataResample::TransformOrientedImage(segmentationGeometry, segmentationToReferenceTransform, true/*geometry only*/);
+    }
+
+  return vtkSlicerSegmentationsModuleLogic::IsSegmentationExentOutsideReferenceGeometry(referenceGeometry, segmentationGeometry);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::IsSegmentationExentOutsideReferenceGeometry(
+  vtkOrientedImageData* referenceGeometry, vtkOrientedImageData* segmentationGeometry)
+{
+  vtkNew<vtkTransform> segmentationGeometryToReferenceGeometryTransform;
+  vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(segmentationGeometry, referenceGeometry, segmentationGeometryToReferenceGeometryTransform);
+
+  int transformedSegmentationExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  vtkOrientedImageDataResample::TransformExtent(segmentationGeometry->GetExtent(),
+    segmentationGeometryToReferenceGeometryTransform, transformedSegmentationExtent);
+
+  int referenceExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  referenceGeometry->GetExtent(referenceExtent);
+
+  for (int i = 0; i < 3; ++i)
+    {
+    if (transformedSegmentationExtent[2 * i] < referenceExtent[2 * i]
+      || transformedSegmentationExtent[2 * i + 1] > referenceExtent[2 * i + 1])
+      {
+      return true;
+      }
+    }
+  return false;
 }

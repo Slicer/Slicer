@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>462</width>
-    <height>38</height>
+    <width>370</width>
+    <height>115</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,14 +32,172 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="overallVisibilityCheckBox">
+   <item row="1" column="2">
+    <widget class="QLabel" name="translationEnableLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Enable translation:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="6">
+    <widget class="QLabel" name="yLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Y</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="6" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="translateYCheckBox">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="5" column="7" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="scaleZCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="7" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="rotateZCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="5" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="scaleXCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QLabel" name="xLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>X</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="7">
+    <widget class="QLabel" name="zLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Z</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="3">
+    <widget class="QCheckBox" name="scaleVisibilityCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="10">
+    <widget class="QPushButton" name="moreOptionsCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>More options...</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QCheckBox" name="overallVisibilityCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="8" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="scaleViewPlaneCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="2" colspan="9">
+    <widget class="ctkSliderWidget" name="interactionHandleScaleSlider">
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>20.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> %</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="6" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="rotateYCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -52,30 +210,137 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QCheckBox" name="translateVisibilityCheckBox">
-       <property name="text">
-        <string>Translate</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="rotateVisibilityCheckBox">
-       <property name="text">
-        <string>Rotate</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="scaleVisibilityCheckBox">
-       <property name="text">
-        <string>Scale</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="1" column="7" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="translateZCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QCheckBox" name="translateVisibilityCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="8">
+    <widget class="QLabel" name="viewPlaneLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>View plane</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="8" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="translateViewPlaneCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="5" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="rotateXCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="2">
+    <widget class="QLabel" name="scaleEnableLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Enable scaling:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="translateXCheckBox">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLabel" name="rotateEnableLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Enable rotation:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <widget class="QCheckBox" name="rotateVisibilityCheckBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="6" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="scaleYCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="9">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -86,7 +351,253 @@
    <header>qMRMLWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>translateXCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>210</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>135</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>scaleViewPlaneCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>307</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>303</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>scaleZCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>307</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>246</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>scaleYCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>307</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>scaleXCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>307</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>176</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>rotateZCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>307</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>246</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>rotateYCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>307</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>rotateXCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>307</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>176</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>translateViewPlaneCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>210</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>translateZCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>210</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>205</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>translateYCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>210</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>170</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>xLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>225</x>
+     <y>12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>yLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>244</x>
+     <y>12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>zLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>viewPlaneLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>301</x>
+     <y>12</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -52,7 +52,7 @@
 #  ConfigurePrerequisites    | Slicer_USE_CONFIGUREPREREQUISITES
 # --------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.13.4)
+cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
 
 foreach(component NoExtensionSupport ConfigurePrerequisites)
   string(TOUPPER ${component} _COMPONENT)
@@ -139,7 +139,6 @@ set(Slicer_LAUNCH_COMMAND "@Slicer_LAUNCH_COMMAND_CONFIG@")
 set(SEM_LAUNCH_COMMAND "@Slicer_LAUNCH_COMMAND_CONFIG@")
 
 # VCS commands
-set(Subversion_SVN_EXECUTABLE "@Subversion_SVN_EXECUTABLE@" CACHE FILEPATH "subversion command line client")
 set(GIT_EXECUTABLE "@GIT_EXECUTABLE@"  CACHE FILEPATH "Git command line client")
 
 # Slicer working copy Revision, URL and Root
@@ -321,6 +320,13 @@ set(Slicer_THIRDPARTY_BIN_DIR "@Slicer_THIRDPARTY_BIN_DIR@")
 set(Slicer_THIRDPARTY_LIB_DIR "@Slicer_THIRDPARTY_LIB_DIR@")
 set(Slicer_THIRDPARTY_SHARE_DIR  "@Slicer_THIRDPARTY_SHARE_DIR@")
 
+# Slicer Python version
+set(Slicer_REQUIRED_PYTHON_VERSION "@Slicer_REQUIRED_PYTHON_VERSION@")
+set(Slicer_REQUIRED_PYTHON_VERSION_MAJOR "@Slicer_REQUIRED_PYTHON_VERSION_MAJOR@")
+set(Slicer_REQUIRED_PYTHON_VERSION_MINOR "@Slicer_REQUIRED_PYTHON_VERSION_MINOR@")
+set(Slicer_REQUIRED_PYTHON_VERSION_PATCH "@Slicer_REQUIRED_PYTHON_VERSION_PATCH@")
+set(Slicer_REQUIRED_PYTHON_VERSION_DOT "@Slicer_REQUIRED_PYTHON_VERSION_DOT@")
+
 # Python stdlib and site-package sub-directories
 set(PYTHON_STDLIB_SUBDIR "@PYTHON_STDLIB_SUBDIR@")
 set(PYTHON_SITE_PACKAGES_SUBDIR "@PYTHON_SITE_PACKAGES_SUBDIR@")
@@ -483,7 +489,7 @@ if(NOT ${Slicer_SKIP_CMAKE_SIZEOF_VOID_P_CHECK})
       "\tCMAKE_SIZEOF_VOID_P:${CMAKE_SIZEOF_VOID_P}\n"
       "Reconfigure '${CMAKE_PROJECT_NAME}' project using a compatible Generator.\n"
       "Generator used to configure Slicer was: ${Slicer_CMAKE_GENERATOR}\n"
-      "See http://www.cmake.org/cmake/help/v2.8.11/cmake.html#opt:-Ggenerator-name")
+      "See https://www.cmake.org/cmake/help/v2.8.11/cmake.html#opt:-Ggenerator-name")
   endif()
 endif()
 

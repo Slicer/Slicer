@@ -31,7 +31,6 @@ class QWidget;
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 
-class qMRMLChartWidget;
 class qMRMLPlotWidget;
 class qMRMLTableWidget;
 class qMRMLThreeDWidget;
@@ -43,9 +42,7 @@ class vtkMRMLAbstractViewNode;
 class vtkMRMLColorLogic;
 class vtkMRMLLayoutLogic;
 class vtkMRMLScene;
-class vtkMRMLChartNode;
 class vtkMRMLNode;
-class vtkMRMLChartViewNode;
 class vtkMRMLTableNode;
 class vtkMRMLTableViewNode;
 class vtkMRMLViewNode;
@@ -87,7 +84,6 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public ctkLayoutFactory
   // The following properties are exposed so that they are available within python
   Q_PROPERTY(int layout READ layout WRITE setLayout NOTIFY layoutChanged DESIGNABLE false)
   Q_PROPERTY(int threeDViewCount READ threeDViewCount DESIGNABLE false)
-  Q_PROPERTY(int chartViewCount READ chartViewCount DESIGNABLE false)
   Q_PROPERTY(int tableViewCount READ tableViewCount DESIGNABLE false)
   Q_PROPERTY(int plotViewCount READ plotViewCount DESIGNABLE false)
 
@@ -143,7 +139,6 @@ public:
 
   /// Return the number of instantiated ThreeDRenderView
   int threeDViewCount()const;
-  int chartViewCount()const;
   int tableViewCount()const;
   int plotViewCount()const;
 
@@ -152,7 +147,6 @@ public:
   /// of instantiated qMRMLThreeDView (that should also be equal to the number
   /// of vtkMRMLViewNode)
   Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(int id)const;
-  Q_INVOKABLE qMRMLChartWidget* chartWidget(int id)const;
   Q_INVOKABLE qMRMLTableWidget* tableWidget(int id)const;
   Q_INVOKABLE qMRMLPlotWidget* plotWidget(int id)const;
 
@@ -181,24 +175,14 @@ public:
 
   /// Return the view node of the active 3D view.
   /// \todo For now the active view is the first 3D view.
-  /// \sa activeThreeDRenderer(), activeMRMLChartViewNode(),
-  /// activeChartRenderer()
+  /// \sa activeThreeDRenderer(), activeMRMLPlotViewNode(),
+  /// activePlotRenderer()
   Q_INVOKABLE vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
   /// Return the renderer of the active 3D view.
   /// \todo For now the active view is the first 3D view.
-  /// \sa  activeThreeDRenderer(), activeMRMLChartViewNode(),
-  /// activeChartRenderer()
+  /// \sa  activeThreeDRenderer(), activeMRMLPlotViewNode(),
+  /// activePlotRenderer()
   Q_INVOKABLE vtkRenderer* activeThreeDRenderer()const;
-  /// Return the view node of the active chart view.
-  /// \todo For now the active view is the first chart view.
-  /// \sa  activeChartRenderer(), activeMRMLThreeDViewNode(),
-  /// activeThreeDRenderer()
-  Q_INVOKABLE vtkMRMLChartViewNode* activeMRMLChartViewNode()const;
-  /// Return the renderer of the active chart view.
-  /// \todo For now the active view is the first chart view.
-  /// \sa  activeMRMLChartViewNode(), activeMRMLThreeDViewNode(),
-  /// activeThreeDRenderer()
-  Q_INVOKABLE vtkRenderer* activeChartRenderer()const;
   /// Return the view node of the active table view.
   /// \todo For now the active view is the first table view.
   /// \sa  activeTableRenderer(), activeMRMLThreeDViewNode(),
@@ -267,11 +251,9 @@ public slots:
 
 signals:
   void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode* newActiveMRMLThreeDViewNode);
-  void activeMRMLChartViewNodeChanged(vtkMRMLChartViewNode* newActiveMRMLChartViewNode);
-  void activeMRMLTableViewNodeChanged(vtkMRMLTableViewNode* newActiveMRMLChartViewNode);
+  void activeMRMLTableViewNodeChanged(vtkMRMLTableViewNode* newActiveMRMLTableViewNode);
   void activeMRMLPlotViewNodeChanged(vtkMRMLPlotViewNode* newActiveMRMLPlotViewNode);
   void activeThreeDRendererChanged(vtkRenderer* newRenderer);
-  void activeChartRendererChanged(vtkRenderer* newRenderer);
   void activeTableRendererChanged(vtkRenderer* newRenderer);
   void activePlotRendererChanged(vtkRenderer* newRenderer);
   void layoutChanged(int);

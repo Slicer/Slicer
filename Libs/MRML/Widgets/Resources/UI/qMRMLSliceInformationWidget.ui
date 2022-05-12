@@ -74,7 +74,7 @@
    <item row="3" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>Slice visible:</string>
+      <string>Slice visibility:</string>
      </property>
     </widget>
    </item>
@@ -108,7 +108,7 @@
    <item row="4" column="0">
     <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>Widget visible:</string>
+      <string>Widget visibility:</string>
      </property>
     </widget>
    </item>

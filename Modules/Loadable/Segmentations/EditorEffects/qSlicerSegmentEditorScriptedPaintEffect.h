@@ -92,7 +92,8 @@ public:
   /// Create a cursor customized for the given effect, potentially for each view
   QCursor createCursor(qMRMLWidget* viewWidget) override;
 
-  void paintApply(qMRMLWidget* viewWidget);
+  /// Paint labelmap
+  void paintApply(qMRMLWidget* viewWidget) override;
 
   /// Set default parameters in the parameter MRML node
   void setMRMLDefaults() override;

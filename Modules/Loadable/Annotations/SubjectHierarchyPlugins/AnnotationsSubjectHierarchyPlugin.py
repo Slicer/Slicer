@@ -1,6 +1,9 @@
-import vtk, qt, ctk, slicer
-import logging
+import qt
+
+import slicer
+
 from AbstractScriptedSubjectHierarchyPlugin import *
+
 
 class AnnotationsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
   """ Scripted subject hierarchy plugin for the Annotations module.

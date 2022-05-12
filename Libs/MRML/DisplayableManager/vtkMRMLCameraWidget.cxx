@@ -129,8 +129,13 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  // Mousewheel zooms direction is chosen to be consistent with other applications (Ctrl-MouseWheelForward zooms in in PowerPoint),
+  // and with Windows touchpad pinch-to-zoom (pinch to zoom in generates MouseWheelForward event).
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::NoModifier, WidgetEventCameraWheelZoomIn);
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::NoModifier, WidgetEventCameraWheelZoomOut);
+  // Ctrl-mousewheel (Windows touchpad pinch-to-zoom)
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::ControlModifier, WidgetEventCameraWheelZoomIn);
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::ControlModifier, WidgetEventCameraWheelZoomOut);
   // Touch zoom
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartPinchEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
   this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::PinchEvent, vtkEvent::AnyModifier, WidgetEventTouchPinchZoom);
@@ -338,13 +343,11 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
 
     case WidgetEventCameraWheelZoomIn:
       this->SaveStateForUndo();
-      // Slicer; invert direction to match right button drag
-      this->Dolly(pow((double)1.1, -0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
+      this->Dolly(pow((double)1.1, 0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
       break;
     case WidgetEventCameraWheelZoomOut:
       this->SaveStateForUndo();
-      // Slicer; invert direction to match right button drag
-      this->Dolly(pow((double)1.1, 0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
+      this->Dolly(pow((double)1.1, -0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
       break;
 
     case WidgetEventMouseMove:
@@ -615,7 +618,7 @@ bool vtkMRMLCameraWidget::ProcessRotate(vtkMRMLInteractionEventData* eventData)
     return true;
     }
 
-  int *size = this->Renderer->GetRenderWindow()->GetSize();
+  const int *size = this->Renderer->GetRenderWindow()->GetSize();
 
   double delta_elevation = -20.0 / size[1];
   double delta_azimuth = -20.0 / size[0];
@@ -741,12 +744,23 @@ bool vtkMRMLCameraWidget::ProcessTranslate(vtkMRMLInteractionEventData* eventDat
 
   // Camera motion is reversed
 
-  double motionVector[3] =
+  double motionVector[4] =
     {
     oldPickPoint[0] - newPickPoint[0],
     oldPickPoint[1] - newPickPoint[1],
-    oldPickPoint[2] - newPickPoint[2]
+    oldPickPoint[2] - newPickPoint[2],
+    0.0
     };
+
+  // If model transform is applied to the camera (scale, shear, rotations and translations)
+  // then we need to take that into account otherwise we will get
+  // under/over estimated translations if camera is scaled for example
+  vtkMatrix4x4* cameraModelTransformMatrix = camera->GetModelTransformMatrix();
+  if (cameraModelTransformMatrix)
+    {
+    cameraModelTransformMatrix->MultiplyPoint(motionVector, motionVector);
+    }
+
   camera->GetFocalPoint(viewFocus);
 
   double viewPoint[3] = { 0.0 };
@@ -1112,4 +1126,16 @@ bool vtkMRMLCameraWidget::ProcessMaximizeView(vtkMRMLInteractionEventData* event
   this->ModifierKeyPressedSinceLastClickAndDrag = true;
 
   return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLCameraWidget::GetTiltLocked()
+{
+  return this->CameraTiltLocked;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCameraWidget::SetTiltLocked(bool lockState)
+{
+  this->CameraTiltLocked = lockState;
 }

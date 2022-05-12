@@ -1,16 +1,11 @@
-import os
-import string
-from __main__ import vtk, qt, ctk, slicer
-import logging
-import numpy
-try:
-  import pydicom as dicom
-except:
-  # Slicer-4.10 backward compatibility
-  import dicom
+
+import vtk
+
+import slicer
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
+
 
 #
 # This is the plugin for DICOM module
@@ -35,7 +30,6 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
     self.tags['photometricInterpretation'] = "0028,0004"
 
     self.detailedLogging = False
-
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
@@ -154,15 +148,16 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
 
     return volumeNode
 
+
 #
 # DICOMEnhancedUSVolumePlugin
 #
-
 class DICOMEnhancedUSVolumePlugin:
   """
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM Enhanced US volume Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]

@@ -20,6 +20,23 @@ slicer.mrmlScene.RemoveNode(labelmapVolumeNode)
 
 The last line is optional. It removes the original labelmap volume so that the same information is not shown twice.
 
+### Create segmentation from a model node
+
+```python
+# Create some model that will be added to a segmentation node
+sphere = vtk.vtkSphereSource()
+sphere.SetCenter(-6, 30, 28)
+sphere.SetRadius(10)
+modelNode = slicer.modules.models.logic().AddModel(sphere.GetOutputPort())
+
+# Create segmentation
+segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
+segmentationNode.CreateDefaultDisplayNodes() # only needed for display
+
+# Import the model into the segmentation node
+slicer.modules.segmentations.logic().ImportModelToSegmentationNode(modelNode, segmentationNode)
+```
+
 ### Export labelmap node from segmentation node
 
 Export labelmap matching reference geometry of the segmentation:
@@ -251,6 +268,32 @@ shortcut.setKey(qt.QKeySequence("s"))
 shortcut.connect("activated()", toggleSphereBrush)
 ```
 
+### Create keyboard shortcut for toggling visibility of a set of segments
+
+This script toggles visibility of "completed" segments if Ctrl-k keyboard shortcut is pressed:
+
+```python
+slicer.segmentationNode = getNode('Segmentation')
+slicer.toggledSegmentState="completed"  # it could be "inprogress", "completed", "flagged"
+slicer.visibility = True
+
+def toggleSegmentVisibility():
+    slicer.visibility = not slicer.visibility
+    segmentation = slicer.segmentationNode.GetSegmentation()
+    for segmentIndex in range(segmentation.GetNumberOfSegments()):
+        segmentId = segmentation.GetNthSegmentID(segmentIndex)
+        segmentationStatus = vtk.mutable("")
+        if not segmentation.GetSegment(segmentId).GetTag("Segmentation.Status", segmentationStatus):
+            continue
+        if segmentationStatus != slicer.toggledSegmentState:
+            continue
+        slicer.segmentationNode.GetDisplayNode().SetSegmentVisibility(segmentId, slicer.visibility)
+
+shortcut = qt.QShortcut(slicer.util.mainWindow())
+shortcut.setKey(qt.QKeySequence("Ctrl+k"))
+shortcut.connect( "activated()", toggleSegmentVisibility)
+```
+
 ### Customize list of displayed Segment editor effects
 
 Only show Paint and Erase effects:
@@ -344,40 +387,35 @@ slicer.modules.markups.logic().JumpSlicesToLocation(mean_Ras[0], mean_Ras[1], me
 ### Get histogram of a segmented region
 
 ```python
-# Generate input data
+# Generate example input data (volumeNode, segmentationNode, segmentId)
 ################################################
 
 # Load master volume
 import SampleData
 sampleDataLogic = SampleData.SampleDataLogic()
-masterVolumeNode = sampleDataLogic.downloadMRBrainTumor1()
+volumeNode = sampleDataLogic.downloadMRBrainTumor1()
 
 # Create segmentation
 segmentationNode = slicer.vtkMRMLSegmentationNode()
 slicer.mrmlScene.AddNode(segmentationNode)
 segmentationNode.CreateDefaultDisplayNodes() # only needed for display
-segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(masterVolumeNode)
+segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(volumeNode)
 
 # Create segment
 tumorSeed = vtk.vtkSphereSource()
 tumorSeed.SetCenter(-6, 30, 28)
 tumorSeed.SetRadius(25)
 tumorSeed.Update()
-segmentationNode.AddSegmentFromClosedSurfaceRepresentation(tumorSeed.GetOutput(), "Segment A", [1.0,0.0,0.0])
+segmentId = segmentationNode.AddSegmentFromClosedSurfaceRepresentation(tumorSeed.GetOutput(), "Segment A", [1.0,0.0,0.0])
 
 # Compute histogram
 ################################################
 
-labelValue = 1  # label value of first segment
-
-# Get segmentation as labelmap volume node
-labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
-slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(segmentationNode, labelmapVolumeNode, masterVolumeNode)
-
-# Extract all voxels of the segment as numpy array
-volumeArray = slicer.util.arrayFromVolume(masterVolumeNode)
-labelArray = slicer.util.arrayFromVolume(labelmapVolumeNode)
-segmentVoxels = volumeArray[labelArray==labelValue]
+# Get voxel values of volume in the segmented region
+import numpy as np
+volumeArray = slicer.util.arrayFromVolume(volumeNode)
+segmentArray = slicer.util.arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, volumeNode)
+segmentVoxels = volumeArray[segmentArray != 0]
 
 # Compute histogram
 import numpy as np
@@ -391,11 +429,11 @@ slicer.util.plot(histogram, xColumnIndex = 1)
 
 ### Get segments visible at a selected position
 
-Show in the console names of segments visible at a markups fiducial position:
+Show in the console names of segments visible at a markups control point position:
 
 ```python
 segmentationNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSegmentationNode")
-markupsFiducialNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLMarkupsFiducialNode")
 sliceViewLabel = "Red"  # any slice view where segmentation node is visible works
 
 def printSegmentNames(unused1=None, unused2=None):
@@ -403,7 +441,7 @@ def printSegmentNames(unused1=None, unused2=None):
   sliceViewWidget = slicer.app.layoutManager().sliceWidget(sliceViewLabel)
   segmentationsDisplayableManager = sliceViewWidget.sliceView().displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D")
   ras = [0,0,0]
-  markupsFiducialNode.GetNthControlPointPositionWorld(0, ras)
+  pointListNode.GetNthControlPointPositionWorld(0, ras)
   segmentIds = vtk.vtkStringArray()
   segmentationsDisplayableManager.GetVisibleSegmentsForPosition(ras, segmentationNode.GetDisplayNode(), segmentIds)
   for idIndex in range(segmentIds.GetNumberOfValues()):
@@ -411,7 +449,7 @@ def printSegmentNames(unused1=None, unused2=None):
     print("Segment found at position {0}: {1}".format(ras, segment.GetName()))
 
 # Observe markup node changes
-markupsFiducialNode.AddObserver(slicer.vtkMRMLMarkupsPlaneNode.PointModifiedEvent, printSegmentNames)
+pointListNode.AddObserver(slicer.vtkMRMLMarkupsPlaneNode.PointModifiedEvent, printSegmentNames)
 printSegmentNames()
 ```
 
@@ -545,7 +583,7 @@ for segmentId in stats["SegmentIDs"]:
 
 #### Get centroid of each segment
 
-Place a markups fiducial point at the centroid of each segment.
+Place a markups control point at the centroid of each segment.
 
 ```python
 segmentationNode = getNode("Segmentation")
@@ -559,12 +597,12 @@ segStatLogic.computeStatistics()
 stats = segStatLogic.getStatistics()
 
 # Place a markup point in each centroid
-markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
-markupsNode.CreateDefaultDisplayNodes()
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode.CreateDefaultDisplayNodes()
 for segmentId in stats["SegmentIDs"]:
   centroid_ras = stats[segmentId,"LabelmapSegmentStatisticsPlugin.centroid_ras"]
   segmentName = segmentationNode.GetSegmentation().GetSegment(segmentId).GetName()
-  markupsNode.AddFiducialFromArray(centroid_ras, segmentName)
+  pointListNode.AddFiducialFromArray(centroid_ras, segmentName)
 ```
 
 #### Get size, position, and orientation of each segment

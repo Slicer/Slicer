@@ -17,18 +17,18 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 - Elongation: the elongation of the segment. Calculated from square root of the ratio of the second largest principal moment by the second smallest. See detailed definition [here](https://www.insight-journal.org/browse/publication/301).
 - Principal moments: the principal moments of inertia for each axes of the segment
 - Principal axes: the principal axes of rotation of the segment
-- Oriented bounding box: the non-axis aligned bounding box that encompasses the segment
+- Oriented bounding box: the non-axis aligned bounding box that encompasses the segment. Principal axis directions are used to orient the bounding box.
 
 ## Scalar volume statistics
 
 - Voxel count: the number of voxels in the segment
 - Volume mm3 the volume of the segment in mm3
 - Volume cm3 the volume of the segment in cm3
-- Minimum: the minimum scalar value behind the segment
-- Maximum: the maximum scalar value behind the segment
-- Mean: the mean scalar value behind the segment
-- Median: the median scalar value behind the segment
-- Standard deviation: the standard deviation of scalar values behind the segment
+- Minimum: the minimum scalar value in the segment
+- Maximum: the maximum scalar value in the segment
+- Mean: the mean scalar value in the segment
+- Median: the median scalar value in the segment
+- Standard deviation: the standard deviation of scalar values in the segment (computed using *corrected sample standard deviation* formula)
 
 ## Closed surface statistics
 
@@ -38,8 +38,8 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 
 ## Related Modules
 
-- [Segmentations](segmentations) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
-- [Segment Editor](segmenteditor) module for segmentation of volumes using tools for editing (paint, draw, erase, level tracing, grow from seeds, threshold, etc.)
+- [Segmentations](segmentations.md) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
+- [Segment Editor](segmenteditor.md) module for segmentation of volumes using tools for editing (paint, draw, erase, level tracing, grow from seeds, threshold, etc.)
 
 ## Information for developers
 
@@ -58,7 +58,7 @@ Authors:
 ## Acknowledgements
 
 This module is partly funded by an Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health and Long-Term Care and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO) to provide free, open-source toolset for radiotherapy and related image-guided interventions.
-The work is part of the [National Alliance for Medical Image Computing](http://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+The work is part of the [National Alliance for Medical Image Computing](https://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)

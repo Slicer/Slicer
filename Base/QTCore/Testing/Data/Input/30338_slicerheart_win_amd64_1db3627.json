@@ -1,0 +1,32 @@
+[
+    {
+            "_id": "617bb6f1342a877cb3d5c4d7",
+            "baseParentId": "5f4474d0e1d8c75dfc70547e",
+            "baseParentType": "collection",
+            "created": "2021-10-29T08:55:13.484000+00:00",
+            "creatorId": "5f446e46e1d8c75dfc705450",
+            "description": "Modules for cardiac analysis and intervention planning and guidance",
+            "folderId": "617b7cba342a877cb3d5a16a",
+            "lowerName": "30338_slicerheart_win_amd64_1db3627",
+            "meta": {
+                "app_id": "5f4474d0e1d8c75dfc705482",
+                "app_revision": "30338",
+                "arch": "amd64",
+                "baseName": "SlicerHeart",
+                "category": "Cardiac",
+                "contributors": "Andras Lasso (PerkLab, Queen's University), Steve Pieper (Isomics), Adam Rankin (Robarts), Csaba Pinter (Pixel Medical / Ebatinca), Christian Herz (CHOP), Matthew Jolley (CHOP/UPenn)",
+                "dependency": "SlicerIGT",
+                "description": "Modules for cardiac analysis and intervention planning and guidance",
+                "homepage": "http://www.slicer.org/w/index.php/Documentation/Nightly/Extensions/SlicerHeart",
+                "icon_url": "http://www.slicer.org/w/images/f/ff/SlicerHeart_Logo_128x128.png",
+                "os": "win",
+                "repository_type": "git",
+                "repository_url": "https://github.com/SlicerHeart/SlicerHeart.git",
+                "revision": "1db3627",
+                "screenshots": "http://www.slicer.org/w/images/a/ae/BasicHeartView.png"
+            },
+            "name": "30338_SlicerHeart_win_amd64_1db3627",
+            "size": 3282838,
+            "updated": "2021-10-29T08:55:13.488000+00:00"
+    }
+]

@@ -1,7 +1,9 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import qt
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # TablesSelfTest
@@ -17,6 +19,7 @@ class TablesSelfTest(ScriptedLoadableModule):
     self.parent.helpText = """This is a self test for Table node and widgets."""
     parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
 
+
 #
 # TablesSelfTestWidget
 #
@@ -24,6 +27,7 @@ class TablesSelfTest(ScriptedLoadableModule):
 class TablesSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # TablesSelfTestLogic
@@ -36,6 +40,7 @@ class TablesSelfTestLogic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     pass
 
@@ -214,7 +219,6 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     # Check if first and second column content is the same
     for rowIndex in range(5):
       self.assertEqual( tableModel.data(tableModel.index(rowIndex,0)), tableModel.data(tableModel.index(rowIndex,1)) )
-
 
   # ------------------------------------------------------------------------------
   def section_CliTableInputOutput(self):

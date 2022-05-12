@@ -23,8 +23,10 @@
 #include <QComboBox>
 #include <QDropEvent>
 #include <QFileDialog>
+#include <QMainWindow>
 #include <QMimeData>
 #include <QMessageBox>
+#include <QScrollBar>
 #include <QTemporaryDir>
 
 /// CTK includes
@@ -46,8 +48,9 @@
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
+qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(qSlicerDataDialog* object, QWidget* _parent/*=nullptr*/)
   :QDialog(_parent)
+  ,q_ptr(object)
 {
   this->setupUi(this);
 
@@ -145,7 +148,7 @@ void qSlicerDataDialogPrivate::addFiles()
     {
     this->addFile(file);
     }
-  //this->FileWidget->resizeColumnsToContents();
+  this->resetColumnWidths();
 }
 
 //-----------------------------------------------------------------------------
@@ -185,7 +188,7 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
       this->addDirectory(entry.absoluteFilePath());
       }
     }
-  //this->FileWidget->resizeColumnsToContents();
+  this->resetColumnWidths();
 }
 
 //-----------------------------------------------------------------------------
@@ -270,18 +273,78 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& rea
   this->FileWidget->setSortingEnabled(sortingEnabled);
 }
 
+//---------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::dragEnterEvent(QDragEnterEvent* event)
+{
+  Q_Q(qSlicerDataDialog);
+  if (event && q->isMimeDataAccepted(event->mimeData()))
+    {
+    event->accept();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::dropEvent(QDropEvent* event)
+{
+  Q_Q(qSlicerDataDialog);
+  q->dropEvent(event);
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::reset()
 {
   this->FileWidget->setRowCount(0);
+  // forceFileColumnStretch=true to make the widgets nicely fill the available space
+  this->resetColumnWidths(true);
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::resetColumnWidths(bool forceFileColumnStretch/*=false*/)
+{
+  bool optionsVisible = !this->FileWidget->isColumnHidden(OptionsColumn);
+
+  QHeaderView* headerView = this->FileWidget->horizontalHeader();
+  if (optionsVisible && !forceFileColumnStretch)
+    {
+    // Use as much space for the filename as needed (if it becomes too long then we reduce the size later)
+    this->FileWidget->resizeColumnToContents(FileColumn);
+    // Ensure there is enough space for options
+    this->FileWidget->resizeColumnToContents(OptionsColumn);
+    // Allow the user to squeeze the filename column (to make more space for options)
+    headerView->setSectionResizeMode(FileColumn, QHeaderView::Interactive);
+
+    // Ensure that the OptionsColumn is visible (at least up to a size of 60 pixels)
+    int minimumOptionsColumnWidth = std::min(60, this->FileWidget->columnWidth(OptionsColumn));
+    int maximumFileColumnWidth = this->FileWidget->width() - this->FileWidget->columnWidth(TypeColumn) - minimumOptionsColumnWidth;
+    //int maximumFileColumnWidth = this->FileWidget->width() * 0.8;
+    if (this->FileWidget->columnWidth(FileColumn) > maximumFileColumnWidth)
+      {
+      this->FileWidget->setColumnWidth(FileColumn, maximumFileColumnWidth);
+      }
+    }
+  else
+    {
+    // Options section is hidden, use all the space for the filename
+    headerView->setSectionResizeMode(FileColumn, QHeaderView::Stretch);
+    }
+}
+
 
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::showOptions(bool show)
 {
   this->ShowOptionsCheckBox->setChecked(show);
-
   this->FileWidget->setColumnHidden(OptionsColumn, !show);
+  this->resetColumnWidths();
+  if (show)
+    {
+    if (QApplication::instance())
+      {
+      QApplication::instance()->processEvents(QEventLoop::ExcludeUserInputEvents);
+      }
+    this->FileWidget->horizontalScrollBar()->setSliderPosition(
+      this->FileWidget->horizontalScrollBar()->maximum());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -503,9 +566,8 @@ void qSlicerDataDialogPrivate::updateCheckBoxHeader(int itemRow, int itemColumn)
 //-----------------------------------------------------------------------------
 qSlicerDataDialog::qSlicerDataDialog(QObject* _parent)
   : qSlicerFileDialog(_parent)
-  , d_ptr(new qSlicerDataDialogPrivate(nullptr))
+  , d_ptr(new qSlicerDataDialogPrivate(this, nullptr))
 {
-  // FIXME give qSlicerDataDialog as a parent of qSlicerDataDialogPrivate;
 }
 
 //-----------------------------------------------------------------------------
@@ -582,9 +644,28 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
       d->addFile(QFileInfo(fileName));
       }
     }
+  d->resetColumnWidths();
 
   bool success = false;
-  if (d->exec() != QDialog::Accepted)
+
+  Qt::WindowFlags windowFlags = d->windowFlags();
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  if (mainWindow)
+    {
+    // setParent resets window flags, so save them and then restore
+    Qt::WindowFlags windowFlags = d->windowFlags();
+    d->setParent(mainWindow);
+    d->setWindowFlags(windowFlags);
+    }
+  int result = d->exec();
+  if (mainWindow)
+    {
+    d->setParent(nullptr);
+    d->setWindowFlags(windowFlags);
+    }
+
+  if (result != QDialog::Accepted)
     {
     d->reset();
     return success;

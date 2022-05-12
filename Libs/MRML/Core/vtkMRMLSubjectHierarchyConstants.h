@@ -38,20 +38,21 @@ public:
   // Constant strings (std::string types for easy concatenation)
   //----------------------------------------------------------------------------
 
-  // Data node subject hierarchy attribute
+  /// Data node subject hierarchy attribute
   static const std::string GetSubjectHierarchyAttributePrefix()
     { return "SubjectHierarchy."; };
   static const std::string GetSubjectHierarchyExcludeFromTreeAttributeName()
     { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "ExcludeFromPotentialNodesList"; };
 
-  // Subject hierarchy item attributes
+  //@{
+  /// Subject hierarchy item attributes
   static const std::string GetSubjectHierarchyVirtualBranchAttributeName()
     { return "VirtualBranch"; };
   static const std::string GetSubjectHierarchyLevelAttributeName()
     { return "Level"; };
   static const std::string GetSubjectHierarchyNewItemNamePrefix()
     { return "New"; };
-
+  //@}
   // Non-DICOM levels
   static const char* GetSubjectHierarchyLevelFolder()
     { return "Folder"; };
@@ -108,8 +109,12 @@ public:
   // Study tags
   static const std::string  GetDICOMStudyInstanceUIDTagName()
     { return "StudyInstanceUID"; };
+  static const std::string  GetDICOMStudyInstanceUIDAttributeName()
+    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyInstanceUIDTagName(); };
   static const std::string  GetDICOMStudyIDTagName()
     { return "StudyID"; };
+  static const std::string  GetDICOMStudyIDAttributeName()
+    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyIDTagName(); };
   static const std::string  GetDICOMStudyDescriptionTagName()
     { return "StudyDescription"; };
   static const std::string  GetDICOMStudyDescriptionAttributeName()
@@ -140,6 +145,13 @@ public:
     { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + "Modality"; };
   static const std::string GetDICOMSeriesNumberAttributeName()
     { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + "SeriesNumber"; };
+
+  // FrameOfReferenceUID is not strictly a series-level tag (in theory it could change within a series
+  // but for practical applications most likely it will be the same within a sequence)
+  static const std::string GetDICOMFrameOfReferenceUIDTagName()
+    { return "FrameOfReferenceUID"; };
+  static const std::string GetDICOMFrameOfReferenceUIDAttributeName()
+    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMFrameOfReferenceUIDTagName(); };
 
 };
 

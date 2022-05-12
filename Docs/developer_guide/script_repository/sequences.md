@@ -91,7 +91,7 @@ slicer.util.setSliceViewerLayers(background=mergedProxyNode)
 
 ### Plot segments average intensity over time
 
-This code snippet can be used to plot average intensity in speficic regions (designated using segments in a segmentation node) of a volume sequence over time.
+This code snippet can be used to plot average intensity in specific regions (designated using segments in a segmentation node) of a volume sequence over time.
 
 ```python
 # inputs
@@ -132,6 +132,38 @@ for segmentIdIndex in range(visibleSegmentIds.GetNumberOfValues()):
     seriesNode = plotNodes['series'][segmentIdIndex]
     seriesNode.SetColor(segment.GetColor())
     seriesNode.SetName(segment.GetName())
+```
+
+### Export nodes warped by transform sequence
+
+Warp a segmentation with a sequence of transforms and write each transformed segmentation to a ply file. It can be used on sequence registration results created as shown in this [tutorial video](https://youtu.be/qVgXdXEEVFU).
+
+```
+# Inputs
+transformSequenceNode = getNode("OutputTransforms")
+segmentationNode = getNode("Segmentation")
+segmentIndex = 0
+outputFilePrefix = r"c:/tmp/20220312/seg"
+
+# Ensure the segmentation contains closed surface representation
+segmentationNode.CreateClosedSurfaceRepresentation()
+# Create temporary node that will be warped
+segmentModelNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+
+for itemIndex in range(transformSequenceNode.GetNumberOfDataNodes()):
+  # Get a copy of the segment that will be transformed
+  segment = segmentationNode.GetSegmentation().GetNthSegment(segmentIndex)
+  slicer.modules.segmentations.logic().ExportSegmentToRepresentationNode(segment, segmentModelNode)
+  # Apply the transform
+  transform = transformSequenceNode.GetNthDataNode(itemIndex).GetTransformToParent()
+  segmentModelNode.ApplyTransform(transform)
+  # Write to file
+  outputFileName = f"{outputFilePrefix}_{itemIndex:03}.ply"
+  print(outputFileName)
+  slicer.util.saveNode(segmentModelNode, outputFileName)
+
+# Delete temporary node
+slicer.mrmlScene.RemoveNode(segmentModelNode)
 ```
 
 ### Create a 4D volume in Python - outside Slicer

@@ -30,6 +30,7 @@
 class qSlicerColorsModuleWidgetPrivate;
 class vtkMRMLNode;
 class vtkScalarBarWidget;
+class QAbstractButton;
 
 class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModuleWidget
   : public qSlicerAbstractModuleWidget
@@ -43,19 +44,19 @@ public:
 
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
-  /// Get scalar bar actor displayed in 3D views.
-  Q_INVOKABLE virtual vtkScalarBarWidget* scalarBar();
-
 public slots:
   void setCurrentColorNode(vtkMRMLNode*);
   void updateNumberOfColors();
   void setLookupTableRange(double min, double max);
   void copyCurrentColorNode();
-  void setUseColorNameAsLabel(bool);
-  void setCenterLabel(bool);
+  void onDisplayableNodeChanged(vtkMRMLNode*);
+  void createColorLegend();
+  void deleteColorLegend();
+  void useCurrentColorsForColorLegend();
 
 protected slots:
   void onMRMLColorNodeChanged(vtkMRMLNode* newColorNode);
+  void updateColorLegendFromMRML();
 
 protected:
   void setup() override;

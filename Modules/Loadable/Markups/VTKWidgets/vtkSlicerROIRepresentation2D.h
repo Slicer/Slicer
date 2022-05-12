@@ -118,6 +118,8 @@ protected:
     ~MarkupsInteractionPipelineROI2D() override = default;
     void GetViewPlaneNormal(double viewPlaneNormal[3]) override;
     void UpdateScaleHandles() override;
+    void AddScaleEdgeIntersection(int pointIndex, vtkIdTypeArray* visibilityArray, vtkPoints* scaleHandleArray,
+      double sliceNormal[3], double sliceOrigin[3], double edgePoint[3], double edgeVector[3]);
     vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformFilter;
   };
 

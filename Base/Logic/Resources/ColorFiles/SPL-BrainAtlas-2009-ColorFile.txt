@@ -4,7 +4,7 @@
 #Filename: CCA_Atlases_MRI_Brain_Atlas_2010_ColorFile.txt
 #Title: CCA:Atlases:MRI Brain Atlas 2010:ColorFile
 #PageName: CCA:Atlases:MRI_Brain_Atlas_2010:ColorFile
-#Source: http://www.na-mic.org/Wiki/index.php/CCA:Atlases:MRI_Brain_Atlas_2010:ColorFile
+#Source: https://www.slicer.org/w/index.php/CCA:Atlases:MRI_Brain_Atlas_2010:ColorFile
 #
 #Begin table data:
 0 background 0 0 0 255

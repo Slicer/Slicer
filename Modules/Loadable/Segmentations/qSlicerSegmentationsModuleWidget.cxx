@@ -51,6 +51,10 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
+
+// CTK includes
+#include <ctkMessageBox.h>
 
 // Qt includes
 #include <QAbstractItemView>
@@ -240,6 +244,8 @@ void qSlicerSegmentationsModuleWidget::updateWidgetFromMRML()
   d->SegmentationDisplayNodeWidget->setSegmentationNode(d->SegmentationNode);
   d->SegmentationDisplayNodeWidget->updateWidgetFromMRML();
 
+  d->show3DButton->setSegmentationNode(d->SegmentationNode);
+
   // Update copy/move/import/export buttons from selection
   this->updateCopyMoveButtonStates();
 
@@ -319,8 +325,8 @@ void qSlicerSegmentationsModuleWidget::init()
     this, SLOT(onSegmentSelectionChanged(QItemSelection,QItemSelection)));
   connect(d->pushButton_AddSegment, SIGNAL(clicked()),
     this, SLOT(onAddSegment()) );
-  connect(d->pushButton_EditSelected, SIGNAL(clicked()),
-    this, SLOT(onEditSelectedSegment()) );
+  connect(d->toolButton_Edit, SIGNAL(clicked()),
+    this, SLOT(onEditSegmentation()) );
   connect(d->pushButton_RemoveSelected, SIGNAL(clicked()),
     this, SLOT(onRemoveSelectedSegments()) );
 
@@ -431,7 +437,7 @@ void qSlicerSegmentationsModuleWidget::onSegmentSelectionChanged(const QItemSele
   d->pushButton_AddSegment->setEnabled(d->SegmentationNode != nullptr);
 
   QStringList selectedSegmentIds = d->SegmentsTableView->selectedSegmentIDs();
-  d->pushButton_EditSelected->setEnabled(selectedSegmentIds.count() == 1);
+  d->toolButton_Edit->setEnabled(d->SegmentationNode != nullptr);
   d->pushButton_RemoveSelected->setEnabled(selectedSegmentIds.count() > 0);
 }
 
@@ -482,18 +488,21 @@ void qSlicerSegmentationsModuleWidget::onAddSegment()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
+void qSlicerSegmentationsModuleWidget::onEditSegmentation()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
 
-  if ( !d->MRMLNodeComboBox_Segmentation->currentNode()
-    || d->SegmentsTableView->selectedSegmentIDs().count() != 1 )
+  if (!d->MRMLNodeComboBox_Segmentation->currentNode())
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment selection";
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentation";
     return;
     }
+
   QStringList segmentID;
-  segmentID << d->SegmentsTableView->selectedSegmentIDs()[0];
+  if (d->SegmentsTableView->selectedSegmentIDs().count() > 0)
+    {
+    segmentID << d->SegmentsTableView->selectedSegmentIDs()[0];
+    }
 
   // Switch to Segment Editor module, select segmentation node and segment ID
   qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("SegmentEditor");
@@ -502,23 +511,27 @@ void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
     qCritical() << Q_FUNC_INFO << ": Segment Editor module is not available";
     return;
     }
-  // Get segmentation selector combobox and set segmentation
-  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("SegmentationNodeComboBox");
-  if (!nodeSelector)
-    {
-    qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segment Editor module";
-    return;
-    }
-  nodeSelector->setCurrentNode(d->MRMLNodeComboBox_Segmentation->currentNode());
 
-  // Get segments table and select segment
-  qMRMLSegmentsTableView* segmentsTable = moduleWidget->findChild<qMRMLSegmentsTableView*>("SegmentsTableView");
-  if (!segmentsTable)
+  if (!segmentID.empty())
     {
-    qCritical() << Q_FUNC_INFO << ": SegmentsTableView is not found in Segment Editor module";
-    return;
+    // Get segmentation selector combobox and set segmentation
+    qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("SegmentationNodeComboBox");
+    if (!nodeSelector)
+      {
+      qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segment Editor module";
+      return;
+      }
+    nodeSelector->setCurrentNode(d->MRMLNodeComboBox_Segmentation->currentNode());
+
+    // Get segments table and select segment
+    qMRMLSegmentsTableView* segmentsTable = moduleWidget->findChild<qMRMLSegmentsTableView*>("SegmentsTableView");
+    if (!segmentsTable)
+      {
+      qCritical() << Q_FUNC_INFO << ": SegmentsTableView is not found in Segment Editor module";
+      return;
+      }
+    segmentsTable->setSelectedSegmentIDs(segmentID);
     }
-  segmentsTable->setSelectedSegmentIDs(segmentID);
 }
 
 //-----------------------------------------------------------------------------
@@ -706,7 +719,6 @@ void qSlicerSegmentationsModuleWidget::onExportColorTableChanged()
 void qSlicerSegmentationsModuleWidget::onImportExportApply()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   if (d->radioButton_Export->isChecked())
     {
     this->exportFromCurrentSegmentation();
@@ -715,7 +727,6 @@ void qSlicerSegmentationsModuleWidget::onImportExportApply()
     {
     this->importToCurrentSegmentation();
     }
-  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -890,6 +901,36 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     displayNode->GetVisibleSegmentIDs(segmentIDs);
     }
 
+  vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->currentNode());
+  if (referenceVolumeNode)
+    {
+    vtkNew<vtkStringArray> segmentIDsArray;
+    segmentIDsArray->SetNumberOfValues(segmentIDs.size());
+    for (int i = 0; i < segmentIDs.size(); ++i)
+      {
+      segmentIDsArray->SetValue(i, segmentIDs[i]);
+      }
+
+    if (vtkSlicerSegmentationsModuleLogic::IsEffectiveExentOutsideReferenceVolume(
+      referenceVolumeNode, d->SegmentationNode, segmentIDsArray))
+      {
+      ctkMessageBox* exportWarningMesssgeBox = new ctkMessageBox(this);
+      exportWarningMesssgeBox->setAttribute(Qt::WA_DeleteOnClose);
+      exportWarningMesssgeBox->setWindowTitle("Export may erase data");
+      exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Ok);
+      exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Cancel);
+      exportWarningMesssgeBox->setDontShowAgainVisible(true);
+      exportWarningMesssgeBox->setIcon(QMessageBox::Warning);
+      exportWarningMesssgeBox->setDontShowAgainSettingsKey("Segmentations/AlwaysCropDuringSegmentationNodeExport");
+      exportWarningMesssgeBox->setText("The current segmentation does not completely fit into the new geometry.\n"
+                                       "Do you want to crop the segmentation?\n");
+      if (exportWarningMesssgeBox->exec() != QMessageBox::StandardButton::Ok)
+        {
+        return false;
+        }
+      }
+    }
+
   // Get selected item
   vtkIdType selectedItem = d->SubjectHierarchyComboBox_ImportExport->currentItem();
   vtkIdType folderItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID; // Often exporting into a folder
@@ -951,10 +992,9 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
   if (labelmapNode)
     {
     // Export selected segments into a multi-label labelmap volume
-    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     bool success = vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(currentSegmentationNode, segmentIDs, labelmapNode,
-      vtkMRMLVolumeNode::SafeDownCast(d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->currentNode()), vtkSegmentation::EXTENT_REFERENCE_GEOMETRY,
-      colorTableNode);
+      referenceVolumeNode, vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY, colorTableNode);
     QApplication::restoreOverrideCursor();
     if (!success)
       {
@@ -969,7 +1009,7 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
   else if (folderItem)
     {
     // Export selected segments into a models, a model node from each segment
-    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     bool success = vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(currentSegmentationNode, segmentIDs, folderItem);
     QApplication::restoreOverrideCursor();
     if (!success)
@@ -1024,7 +1064,7 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
     shNode->GetItemDataNode(selectedItem) );
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   if (labelmapNode)
     {
     std::string currentTerminologyContextName(

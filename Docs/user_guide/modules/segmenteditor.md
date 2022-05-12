@@ -12,7 +12,7 @@ To cite the Segment Editor in scientific publications, you can cite [3D Slicer](
 
 ## Keyboard shortcuts
 
-The following keyboard shortcuts are active when you are in the Editor module.  They are intended to allow two-handed editing, where on hand is on the mouse and the other hand uses the keyboard to switch modes.
+The following keyboard shortcuts are active when you are in the Segment Editor module.  They are intended to allow two-handed editing, where on hand is on the mouse and the other hand uses the keyboard to switch modes.
 
 | Key                       | Operation                              |
 | ------------------------- | -------------------------------------- |
@@ -37,7 +37,7 @@ The following keyboard shortcuts are active when you are in the Editor module.  
 ## Panels and their use
 
 - Segmentation: Choose the segmentation to edit
-- Master volume: Choose the volume to segment. The master volume that is selected the very first time after the segmentation is created is used to determine the segmentation's labelmap representation geometry (extent, resolution, axis directions, origin). The master volume is used by all editor effects that uses intensity of the segmented volume (e.g., thresholding, level tracing). The master volume can be changed at any time during the segmentation process. Note: changing the master volume does not affect the segmentation's labelmap representation geometry. To make changes to the geometry (make the extent larger, the resolution finer, etc.) click "Specify geometry" button next to the master volume selector, select a "Source geometry" node that will be used as a basis for the new geometry, adjust parameters, and click OK. To specify an arbitrary extens, an ROI (region of interest) node can be created and selected as source geometry.
+- Master volume: Choose the volume to segment. The master volume that is selected the very first time after the segmentation is created is used to determine the segmentation's labelmap representation geometry (extent, resolution, axis directions, origin). The master volume is used by all editor effects that uses intensity of the segmented volume (e.g., thresholding, level tracing). The master volume can be changed at any time during the segmentation process. Note: changing the master volume does not affect the segmentation's labelmap representation geometry. To make changes to the geometry (make the extent larger, the resolution finer, etc.) click "Specify geometry" button next to the master volume selector, select a "Source geometry" node that will be used as a basis for the new geometry, adjust parameters, and click OK. To specify an arbitrary extens, an ROI (region of interest) node can be created and selected as source geometry. If the new geometry will crop a region from the existing segments, a warning icon will be displayed beside the "Pad output" checkbox. If the "Pad output" is checked, the extent will be expanded so that it contains both the existing segments and the new reference geometry.
 - Add segment: Add a new segment to the segmentation and select it.
 - Remove segment: Select the segment you would like to delete then click Remove segment to delete from the segmentation.
 - Create Surface: Display your segmentation in the 3D Viewer. This is a toggle button. When turned on the surface is created and updated automatically as the user is segmenting. When turned off, the conversion is not ongoing so the segmentation process is faster. To change surface creation parameters: go to Segmentations module, click Update button in Closed surface row in Representations section, click Binary labelmap -> Closed surface line, double-click on value column to edit a conversion parameter value. Setting Smoothing factor to 0 disables smoothing, making updates much faster. Set Smoothing factor to 0.1 for weak smoothing and 0.5 or larger for stronger smoothing.
@@ -151,7 +151,7 @@ Notes:
 
 - Only visible segments are used by this effect.
 - The method does not use the master volume, only the shape of the specified segments.
-- The method uses *ND morphological contour interpolation algorithm* described in this paper: <http://insight-journal.org/browse/publication/977>
+- The method uses *ND morphological contour interpolation algorithm* described in this paper: <https://insight-journal.org/browse/publication/977>
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_margin.png) Margin
 
@@ -191,14 +191,18 @@ By enabling `Apply to all segments`, all visible segments of the segmentation wi
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_islands.png) Islands
 
-Use this tool to create a unique segment for each connected region of the selected segment. Connected regions are defined as groups of pixels which touch each other but are surrounded by zero valued voxels.
+Use this tool to process "islands", i.e., connected regions that are defined as groups of non-empty voxels which touch each other but are surrounded by empty voxels.
 
-- Fully connected: If checked then only voxels that share a face are counted as connected; if unchecked then voxels that touch at an edge or a corner are considered connected.
-- Minimum size: All regions that have less than this number of voxels will be deleted.
+- `Keep largest island`: keep the larges connected region.
+- `Remove small islands`: keep all connected regions that are larger than `minimum size`.
+- `Split islands to segments`: create a unique segment for each connected region of the selected segment.
+- `Keep selected island`: after selecting this mode, click in a non-empty area in a slice view to keep that region and remove all other regions.
+- `Remove selected island`: after selecting this mode, click in a non-empty area in a slice view to remove that region and preserve all other regions.
+- `Add selected island`: after selecting this mode, click in an empty area in a slice view to add that empty region to the segment (fill hole).
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_logical_operators.png) Logical operators
 
-Apply Boolean operators to selected segment or combine segments.
+Apply basic copy, clear, fill, and Boolean operations to the selected segment(s). See more details about the methods by clicking on "Show details" in the effect description in Segment Editor.
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_mask_volume.png) Mask volume
 
@@ -221,6 +225,12 @@ This is useful for removing irrelevant details from an image (for example remove
 When you create a segmentation, internal labelmap geometry (extent, origin, spacing, axis directions) is determined from the master volume *that you choose first*. You cannot paint outside this extent.
 
 If you want to extend the segmentation to a larger region then you need to modify segmentation's geometry using "Specify geometry" button.
+
+### Cannot edit the segments
+
+Masking settings (visible at the bottom of the effect options when any effect is selected) may prevent modifications of segments. If painting, erasing, etc. "does not work" then make sure your masking settings are set to default:
+- Editable area: everywhere
+- Editable intensity range: unchecked (it means that the segmentation is editable, regardless of the intensity values of the master volume)
 
 ### Segmentation is not accurate enough
 
@@ -253,10 +263,9 @@ Segment Editor allows editing of segmentation on slices of arbitrary orientation
 
 ## Related Modules
 
-- [Segment Statistics](segmentstatistics) module computes volume, surface, mean intensity, and various other metrics for each segment.
-- [Segmentations](segmentations) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
-- [Data](data) module shows all segmentations and segments in a tree structure. Commonly used operations are available by right-clicking on an item in the tree.
-- Editor module is the predecessor of this module. Segment Editor provides all its features and many more.
+- [Segment Statistics](segmentstatistics.md) module computes volume, surface, mean intensity, and various other metrics for each segment.
+- [Segmentations](segmentations.md) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
+- [Data](data.md) module shows all segmentations and segments in a tree structure. Commonly used operations are available by right-clicking on an item in the tree.
 
 ## Information for Developers
 
@@ -276,7 +285,7 @@ Authors:
 ## Acknowledgements
 
 This module is partly funded by an Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health and Long-Term Care and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO) to provide free, open-source toolset for radiotherapy and related image-guided interventions.
-The work is part of the [National Alliance for Medical Image Computing](http://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+The work is part of the [National Alliance for Medical Image Computing](https://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)

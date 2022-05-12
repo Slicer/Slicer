@@ -16,7 +16,7 @@ Often the Extensions Manager does not show any extensions for a developer build.
 
 Even if the Extensions Manager is not empty, the listed extensions are not expected to be compatible with developer builds, created on a different computer, in a different build environment or build options, due to porential ABI incompatibility issues.
 
-If a developer builds the Slicer application then it is expcted that the developer will also build all the extension he needs. Building all the extensions after Slicer build is completed [is a simple one-line command](../extensions.md#build-test-and-package). It is also possible to just [build selected extensions](../extensions.md#build-an-extension).
+If a developer builds the Slicer application then it is expected that the developer will also build all the extension he needs. Building all the extensions after Slicer build is completed [is a simple one-line command](../extensions.md#build-test-and-package). It is also possible to just [build selected extensions](../extensions.md#build-an-extension).
 
 ## Custom builds
 
@@ -33,5 +33,6 @@ Customized editions of Slicer can be generated without changing Slicer source co
 - `Slicer_USE_SimpleITK`: enable/disable SimpleITK support (ON/OFF)
 - `Slicer_BUILD_SimpleFilters`: enable/disable building SimpleFilters. Requires SimpleITK. (ON/OFF)
 - `Slicer_EXTENSION_SOURCE_DIRS`: Defines additional extensions that will be included in the application package as built-in modules. Full paths of extension source directories has to be specified, separated by semicolons.
+- `Slicer_BUILD_WIN32_CONSOLE_LAUNCHER`: Show/hide console (terminal window) on Windows.
 
-More customization is available by using [SlicerCustomAppTemplate](https://github.com/KitwareMedical/SlicerCustomAppTemplate) project maintained by Kitware.
+Moreoptions are listed in CMake files, such as in [SlicerApplicationOptions.cmake](https://github.com/Slicer/Slicer/blob/master/CMake/SlicerApplicationOptions.cmake) and further customization is achievable by using [SlicerCustomAppTemplate](https://github.com/KitwareMedical/SlicerCustomAppTemplate) project maintained by Kitware.

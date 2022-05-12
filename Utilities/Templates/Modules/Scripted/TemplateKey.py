@@ -1,9 +1,12 @@
-import os
-import unittest
 import logging
-import vtk, qt, ctk, slicer
+import os
+
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
+
 
 #
 # TemplateKey
@@ -33,6 +36,7 @@ and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR0132
 
     # Additional initialization step after application startup is complete
     slicer.app.connect("startupCompleted()", registerSampleData)
+
 
 #
 # Register sample data sets in Sample Data module
@@ -82,6 +86,7 @@ def registerSampleData():
     # This node name will be used when the data set is loaded
     nodeNames='TemplateKey2'
   )
+
 
 #
 # TemplateKeyWidget
@@ -267,7 +272,7 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     """
     Run processing when user clicks "Apply" button.
     """
-    try:
+    with slicer.util.tryWithErrorDisplay("Failed to compute results.", waitCursor=True):
 
       # Compute output
       self.logic.process(self.ui.inputSelector.currentNode(), self.ui.outputSelector.currentNode(),
@@ -278,11 +283,6 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # If additional output volume is selected then result with inverted threshold is written there
         self.logic.process(self.ui.inputSelector.currentNode(), self.ui.invertedOutputSelector.currentNode(),
           self.ui.imageThresholdSliderWidget.value, not self.ui.invertOutputCheckBox.checked, showResult=False)
-
-    except Exception as e:
-      slicer.util.errorDisplay("Failed to compute results: "+str(e))
-      import traceback
-      traceback.print_exc()
 
 
 #
@@ -345,6 +345,7 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
 
     stopTime = time.time()
     logging.info(f'Processing completed in {stopTime-startTime:.2f} seconds')
+
 
 #
 # TemplateKeyTest

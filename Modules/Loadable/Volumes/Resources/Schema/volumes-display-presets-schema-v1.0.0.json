@@ -1,0 +1,88 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#",
+    "type": "object",
+    "title": "Schema for storing presets for displaying image volumes",
+    "description": "Currently only window and level values are stored.",
+    "required": ["@schema", "volumeDisplayPresets"],
+    "additionalProperties": true,
+    "properties": {
+        "@schema": {
+            "$id": "#schema",
+            "type": "string",
+            "title": "Schema",
+            "description": "URL of versioned schema."
+        },
+        "volumeDisplayPresets": {
+            "$id": "#presets",
+            "type": "array",
+            "title": "Presets",
+            "description": "Stores a list of named display presets.",
+            "additionalItems": true,
+            "items": {
+                "$id": "#presetItems",
+                "anyOf": [
+                    {
+                        "$id": "#preset",
+                        "type": "object",
+                        "title": "Presets",
+                        "description": "Stores a single display preset.",
+                        "default": {},
+                        "required": ["id", "name", "window", "level", "color"],
+                        "additionalProperties": true,
+                        "properties": {
+                            "id": {
+                                "$id": "#preset/id",
+                                "type": "string",
+                                "title": "Id",
+                                "description": "Unique identifier of the preset. Must not start with underscore character (those are reserved for internal use).",
+                                "examples": ["CT_BONE", "CT_ABDOMEN"]
+                            },
+                            "name": {
+                                "$id": "#preset/name",
+                                "type": "string",
+                                "title": "Name",
+                                "description": "Human-readable name of the preset.",
+                                "examples": ["CT-Bone"]
+                            },
+                            "description": {
+                                "$id": "#preset/description",
+                                "type": "string",
+                                "title": "Description",
+                                "description": "Human-readable description of the preset.",
+                                "examples": ["Emphasize bone in a CT volume."]
+                            },
+                            "icon": {
+                                "$id": "#preset/icon",
+                                "type": "string",
+                                "title": "Icon",
+                                "description": "Illustrative image filename or resource path.",
+                                "examples": [":/Icons/WindowLevelPreset-CT-bone.png"]
+                            },
+                            "window": {
+                                "$id": "#preset/window",
+                                "type": "number",
+                                "title": "Window",
+                                "description": "Width of the voxel value range that will be mapped to the full dynamic range of the display. Negative value means inverse mapping (higher voxel values appear darker).",
+                                "examples": [1000.0, -50.0]
+                            },
+                            "level": {
+                                "$id": "#preset/level",
+                                "type": "number",
+                                "title": "Level",
+                                "description": "Center of the voxel value range that will be mapped to the full dynamic range of the display.",
+                                "examples": [426.0, -500.0]
+                            },
+                            "color": {
+                                "$id": "#preset/color",
+                                "type": "string",
+                                "title": "Color",
+                                "description": "Color node ID, specifying the lookup table that will be used to map voxel values to colors."
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -16,7 +16,7 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsFiducialNode.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -25,7 +25,7 @@
 // test copy and swap
 int vtkMRMLMarkupsNodeTest2(int , char * [] )
 {
-  vtkNew<vtkMRMLMarkupsNode> node1;
+  vtkNew<vtkMRMLMarkupsFiducialNode> node1;
   vtkIndent indent;
 
   // now try with some data
@@ -60,7 +60,7 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   pos0[0] = 3.0;
   pos0[1] = 5.5;
   pos0[2] = -2.6;
-  node1->SetNthControlPointPositionFromArray(0, pos0);
+  node1->SetNthControlPointPosition(0, pos0);
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   node1->SwapControlPoints(-1,100);
@@ -76,7 +76,7 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   pos1[0] = -3.9;
   pos1[1] = 15.5;
   pos1[2] = 2.666;
-  node1->SetNthControlPointPositionFromArray(1, pos1);
+  node1->SetNthControlPointPosition(1, pos1);
 
   std::cout << "Swapping markups 0 and 1, num markups = " << node1->GetNumberOfControlPoints() << std::endl;
   node1->PrintSelf(std::cout, indent);
@@ -114,7 +114,7 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   pos1New[0] = pos1New[0] * 0.33;
   pos1New[1] = pos1New[1] * 100.5;
   pos1New[2] = pos1New[2] * -10.67;
-  node1->SetNthControlPointPositionFromArray(1, pos1New);
+  node1->SetNthControlPointPosition(1, pos1New);
   node1->GetNthControlPointPosition(0, pos0New);
   if (pos0New[0] != pos1[0] ||
       pos0New[1] != pos1[1] ||

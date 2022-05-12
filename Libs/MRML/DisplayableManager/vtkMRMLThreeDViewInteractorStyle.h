@@ -5,7 +5,7 @@
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+  See Copyright.txt or https://www.kitware.com/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -27,6 +27,7 @@
 #include "vtkSmartPointer.h"
 
 class vtkCellPicker;
+class vtkVolumePicker;
 class vtkWorldPointPicker;
 
 /// \brief Interactive manipulation of the camera.
@@ -82,9 +83,13 @@ protected:
 
   vtkMRMLCameraNode *CameraNode;
 
-  /// For jump to slice feature (when mouse is moved while shift key is pressed)
+  // For jump to slice feature (when mouse is moved while shift key is pressed)
+  // Slow but can pick anything (volumes and semi-transparent surfaces)
   vtkSmartPointer<vtkCellPicker> AccuratePicker;
+  // Picker that uses Z buffer. Fast but ignores volumes and semi-transparent surfaces.
   vtkSmartPointer<vtkWorldPointPicker> QuickPicker;
+  // Picker for volume-rendered images. Fast, as it only computes a single ray.
+  vtkSmartPointer<vtkVolumePicker> QuickVolumePicker;
 
 private:
   vtkMRMLThreeDViewInteractorStyle(const vtkMRMLThreeDViewInteractorStyle&) = delete;

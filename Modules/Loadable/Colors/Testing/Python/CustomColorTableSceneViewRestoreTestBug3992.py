@@ -1,5 +1,7 @@
 import math
 
+import slicer
+
 # Test that a custom color table is consistent across scene view saves
 # and restores
 

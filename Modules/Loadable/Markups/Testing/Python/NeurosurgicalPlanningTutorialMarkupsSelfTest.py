@@ -1,8 +1,12 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+
+import ctk
+import qt
+import vtk
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # NeurosurgicalPlanningTutorialMarkupsSelfTest
@@ -20,6 +24,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTest(ScriptedLoadableModule):
       and was partially funded by NIH grant 3P41RR013218-12S1. The test was updated to use Segment editor by
       Andras Lasso, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program
       of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
+
 
 #
 # qNeurosurgicalPlanningTutorialMarkupsSelfTestWidget
@@ -83,6 +88,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget(ScriptedLoadableModuleW
     logic.screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
     logic.run()
 
+
 #
 # NeurosurgicalPlanningTutorialMarkupsSelfTestLogic
 #
@@ -94,6 +100,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     ScriptedLoadableModuleLogic.__init__(self)
 

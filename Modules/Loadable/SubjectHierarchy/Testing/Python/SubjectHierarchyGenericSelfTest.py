@@ -1,10 +1,14 @@
 import logging
 import os
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
+
+import qt
+import vtk
+
+import slicer
 from DICOMLib import DICOMUtils
+from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
 
 #
 # SubjectHierarchyGenericSelfTest
@@ -38,6 +42,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
     tester = SubjectHierarchyGenericSelfTestTest()
     tester.runTest()
 
+
 #
 # SubjectHierarchyGenericSelfTestWidget
 #
@@ -45,6 +50,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
 class SubjectHierarchyGenericSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # SubjectHierarchyGenericSelfTestLogic
@@ -57,6 +63,7 @@ class SubjectHierarchyGenericSelfTestLogic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     pass
 
@@ -107,7 +114,6 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.section_ComboboxFeatures()
 
     logging.info('Test finished')
-
 
   # ------------------------------------------------------------------------------
   def section_SetupPathsAndNames(self):
@@ -597,7 +603,6 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     comboBox.setCurrentItem(0)
     self.assertEqual(comboBox.defaultText, comboBox.noneDisplay)
 
-
   # ------------------------------------------------------------------------------
   # Utility functions
 
@@ -653,7 +658,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       radius = 50
       x = y = z = 0
 
-    # Taken from: http://www.na-mic.org/Bug/view.php?id=1536
+    # Taken from: https://mantisarchive.slicer.org/view.php?id=1536
     sphere = vtk.vtkSphereSource()
     sphere.SetCenter(x, y, z)
     sphere.SetRadius(radius)

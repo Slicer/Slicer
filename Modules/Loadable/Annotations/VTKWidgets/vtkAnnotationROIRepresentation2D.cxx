@@ -5,7 +5,7 @@
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+  See Copyright.txt or https://www.kitware.com/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -691,7 +691,7 @@ double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(d
     {
     return defaultHandleRadius;
     }
-  int* windowSize = this->Renderer->GetRenderWindow()->GetSize();
+  const int* windowSize = this->Renderer->GetRenderWindow()->GetSize();
   if (!windowSize)
     {
     return defaultHandleRadius;

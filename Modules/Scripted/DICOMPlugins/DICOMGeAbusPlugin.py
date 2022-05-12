@@ -1,12 +1,15 @@
-import os
-import string
-from __main__ import vtk, qt, ctk, slicer
 import logging
+
 import numpy
 import pydicom as dicom
+import vtk
+import vtk.util.numpy_support
+
+import slicer
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
+
 
 #
 # This is the plugin to handle translation of DICOM objects
@@ -178,7 +181,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     reader.SetDICOMImageIOApproachToGDCM()
     reader.Update()
     imageData = reader.GetOutput()
-    from __main__ import vtk
+
     if reader.GetErrorCode() != vtk.vtkErrorCode.NoError:
       errorString = vtk.vtkErrorCode.GetStringFromErrorCode(reader.GetErrorCode())
       raise ValueError(
@@ -225,7 +228,6 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     return volumeNode
 
-
   def createAcquisitionTransform(self, volumeNode, metadata):
 
     # Creates transform that applies scan conversion transform
@@ -250,7 +252,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     # create a grid transform with one vector at the corner of each slice
     # the transform is in the same space and orientation as the volume node
-    from __main__ import vtk
+    import vtk
     gridImage = vtk.vtkImageData()
     gridImage.SetOrigin(*volumeNode.GetOrigin())
     gridImage.SetDimensions(samplingPoints_shape[:3])
@@ -272,7 +274,6 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     # is mapped from the source corner to the target corner
 
     nshape = tuple(reversed(gridImage.GetDimensions()))
-    import vtk.util.numpy_support
     nshape = nshape + (3,)
     displacements = vtk.util.numpy_support.vtk_to_numpy(gridImage.GetPointData().GetScalars()).reshape(nshape)
 
@@ -299,6 +300,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     return gridTransform
 
+
 #
 # DICOMGeAbusPlugin
 #
@@ -308,6 +310,7 @@ class DICOMGeAbusPlugin:
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM GE ABUS Import Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]

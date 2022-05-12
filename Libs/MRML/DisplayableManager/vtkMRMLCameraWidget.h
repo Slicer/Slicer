@@ -68,6 +68,13 @@ public:
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
+  //@{
+  /// Get set tilt lock. It tilt is locked then the view cannot be rotated around the horizontal axis
+  /// (can only be rotated along the vertical axis).
+  bool GetTiltLocked();
+  void SetTiltLocked(bool lockState);
+  //@}
+
   /// Widget states
   enum
     {

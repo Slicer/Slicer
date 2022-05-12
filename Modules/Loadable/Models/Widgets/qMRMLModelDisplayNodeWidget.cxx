@@ -33,10 +33,10 @@
 #include <qSlicerSubjectHierarchyPluginHandler.h>
 
 // MRML include
-#include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
@@ -63,6 +63,8 @@ protected:
 public:
   qMRMLModelDisplayNodeWidgetPrivate(qMRMLModelDisplayNodeWidget& object);
   void init();
+
+  bool IsUpdatingWidgetFromMRML{ false };
 
   QList<vtkMRMLModelDisplayNode*> modelDisplayNodesFromSelection()const;
   QList<vtkMRMLDisplayNode*> displayNodesFromSelection()const;
@@ -149,10 +151,10 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
     q, SIGNAL(displayNodeChanged()));
 
   if (this->CurrentModelDisplayNode.GetPointer())
-  {
+    {
     q->setEnabled(true);
     q->setMRMLModelDisplayNode(this->CurrentModelDisplayNode);
-  }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -396,6 +398,12 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     return;
     }
 
+  if (d->IsUpdatingWidgetFromMRML)
+    {
+    return;
+    }
+  d->IsUpdatingWidgetFromMRML = true;
+
   d->VisibilityCheckBox->setChecked(d->CurrentDisplayNode->GetVisibility());
   d->DisplayNodeViewComboBox->setMRMLDisplayNode(d->CurrentDisplayNode);
   d->ClippingCheckBox->setChecked(d->CurrentDisplayNode->GetClipping());
@@ -511,9 +519,13 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->Property->SetDiffuse(d->CurrentDisplayNode->GetDiffuse());
   d->Property->SetSpecular(d->CurrentDisplayNode->GetSpecular());
   d->Property->SetSpecularPower(d->CurrentDisplayNode->GetPower());
+  d->Property->SetMetallic(d->CurrentDisplayNode->GetMetallic());
+  d->Property->SetRoughness(d->CurrentDisplayNode->GetRoughness());
 
   // Scalars
   d->ScalarsDisplayWidget->updateWidgetFromMRML();
+
+  d->IsUpdatingWidgetFromMRML = false;
 
   emit displayNodeChanged();
 }
@@ -619,6 +631,11 @@ void qMRMLModelDisplayNodeWidget::updateDisplayNodesFromProperty()
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
+  if (d->IsUpdatingWidgetFromMRML)
+    {
+    return;
+    }
+
   QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   foreach (vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
     {
@@ -632,6 +649,8 @@ void qMRMLModelDisplayNodeWidget::updateDisplayNodesFromProperty()
     displayNode->SetDiffuse(d->Property->GetDiffuse());
     displayNode->SetSpecular(d->Property->GetSpecular());
     displayNode->SetPower(d->Property->GetSpecularPower());
+    displayNode->SetMetallic(d->Property->GetMetallic());
+    displayNode->SetRoughness(d->Property->GetRoughness());
     displayNode->EndModify(wasModifying);
     }
 }
@@ -864,10 +883,18 @@ void qMRMLModelDisplayNodeWidget::setInterpolation(int newInterpolation)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
   if (!d->CurrentDisplayNode.GetPointer())
-  {
+    {
     return;
-  }
-  d->Property->SetInterpolation(newInterpolation);
+    }
+  switch (newInterpolation)
+    {
+    case vtkMRMLDisplayNode::FlatInterpolation: d->Property->SetInterpolationToFlat(); break;
+    case vtkMRMLDisplayNode::GouraudInterpolation: d->Property->SetInterpolationToGouraud(); break;
+    case vtkMRMLDisplayNode::PhongInterpolation: d->Property->SetInterpolationToPhong(); break;
+    case vtkMRMLDisplayNode::PBRInterpolation: d->Property->SetInterpolationToPBR(); break;
+    default:
+      qWarning() << Q_FUNC_INFO << " failed: invalid interpolation mode " << newInterpolation;
+    }
 }
 
 // --------------------------------------------------------------------------

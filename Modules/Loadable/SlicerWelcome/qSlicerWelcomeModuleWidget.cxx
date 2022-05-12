@@ -225,7 +225,7 @@ void qSlicerWelcomeModuleWidget::setup()
 //-----------------------------------------------------------------------------
 void qSlicerWelcomeModuleWidget::editApplicationSettings()
 {
-  qSlicerApplication::application()->settingsDialog()->exec();
+  qSlicerApplication::application()->openSettingsDialog();
 }
 
 

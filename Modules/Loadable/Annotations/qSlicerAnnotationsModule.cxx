@@ -50,17 +50,9 @@ void qSlicerAnnotationsModule::setup()
   // 3D
   QStringList threeDdisplayableManagers;
   threeDdisplayableManagers
-      //<< "TextThreeDView"
-      //<< "AngleThreeDView"
-      //<< "Text"
       << "Fiducial"
-      //<< "Bidimensional"
       << "Ruler"
       << "ROI"
-      //<< "StickyThreeDView"
-      //<< "SplineThreeDView"
-      //<< "RulerThreeDView"
-      //<< "BidimensionalThreeDView"
       ;
 
   foreach(const QString& name, threeDdisplayableManagers)
@@ -72,9 +64,7 @@ void qSlicerAnnotationsModule::setup()
   // 2D
   QStringList slicerViewDisplayableManagers;
   slicerViewDisplayableManagers
-      //<< "Text"
       << "Fiducial"
-      //<< "Bidimensional"
       << "Ruler"
       << "ROI"
       ;
@@ -161,7 +151,7 @@ QIcon qSlicerAnnotationsModule::icon() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerAnnotationsModule::categories() const
 {
-  return QStringList() << "" << "Informatics";
+  return QStringList() << "Legacy";
 }
 
 //-----------------------------------------------------------------------------

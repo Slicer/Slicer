@@ -122,6 +122,9 @@ void vtkSlicerROIRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
       return;
     }
 
+  this->ROIActor->SetVisibility(roiNode->GetNumberOfControlPoints() > 0 && this->MarkupsDisplayNode->GetFillVisibility());
+  this->ROIOutlineActor->SetVisibility(roiNode->GetNumberOfControlPoints() > 0 && this->MarkupsDisplayNode->GetOutlineVisibility());
+
   this->ROIToWorldTransform->SetMatrix(roiNode->GetInteractionHandleToWorldMatrix());
 
   int controlPointType = Active;
@@ -132,13 +135,11 @@ void vtkSlicerROIRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
 
   double opacity = this->MarkupsDisplayNode->GetOpacity();
 
-  double fillOpacity = this->MarkupsDisplayNode->GetFillVisibility()
-    ? opacity * this->MarkupsDisplayNode->GetFillOpacity() : 0.0;
+  double fillOpacity = opacity * this->MarkupsDisplayNode->GetFillOpacity();
   this->ROIProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIProperty->SetOpacity(fillOpacity);
 
-  double outlineOpacity = this->MarkupsDisplayNode->GetOutlineVisibility()
-    ? opacity * this->MarkupsDisplayNode->GetOutlineOpacity() : 0.0;
+  double outlineOpacity = opacity * this->MarkupsDisplayNode->GetOutlineOpacity();
   this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIOutlineProperty->SetOpacity(outlineOpacity);
 
@@ -416,7 +417,8 @@ void vtkSlicerROIRepresentation2D::UpdateInteractionPipeline()
     }
 
   this->InteractionPipeline->Actor->SetVisibility(this->MarkupsDisplayNode->GetVisibility()
-    && this->MarkupsDisplayNode->GetVisibility3D()
+    && roiNode->GetNumberOfControlPoints() > 0
+    && this->MarkupsDisplayNode->GetVisibility2D()
     && this->MarkupsDisplayNode->GetHandlesInteractive());
 
   vtkNew<vtkTransform> handleToWorldTransform;
@@ -559,144 +561,211 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
       }
     }
 
-  vtkMatrix4x4* roiToWorldMatrix = roiNode->GetInteractionHandleToWorldMatrix();
-  vtkNew<vtkTransform> worldToROITransform;
-  worldToROITransform->Concatenate(roiToWorldMatrix);
-  worldToROITransform->Inverse();
+  vtkMatrix4x4* objectToWorldMatrix = roiNode->GetObjectToWorldMatrix();
+  vtkNew<vtkTransform> worldToObjectTransform;
+  worldToObjectTransform->Concatenate(objectToWorldMatrix);
+  worldToObjectTransform->Inverse();
 
-  double viewPlaneOrigin_ROI[3] = { 0.0, 0.0, 0.0 };
-  double viewPlaneNormal_ROI[3] = { 0.0, 0.0, 0.0 };
-  worldToROITransform->TransformPoint(viewPlaneOrigin4, viewPlaneOrigin_ROI);
-  worldToROITransform->TransformVector(viewPlaneNormal4, viewPlaneNormal_ROI);
+  double viewPlaneOrigin_Object[3] = { 0.0, 0.0, 0.0 };
+  double viewPlaneNormal_Object[3] = { 0.0, 0.0, 0.0 };
+  worldToObjectTransform->TransformPoint(viewPlaneOrigin4, viewPlaneOrigin_Object);
+  worldToObjectTransform->TransformVector(viewPlaneNormal4, viewPlaneNormal_Object);
 
-  double sideLengths[3] = { 0.0,  0.0, 0.0 };
+  double sideLengths[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetSizeWorld(sideLengths);
-  vtkMath::MultiplyScalar(sideLengths, 0.5);
+  double sideRadius[3] = { sideLengths[0], sideLengths[1], sideLengths[2] };
+  vtkMath::MultiplyScalar(sideRadius, 0.5);
 
-  vtkNew<vtkPoints> roiPoints;
-  roiPoints->SetNumberOfPoints(6);
+  vtkNew<vtkPoints> scaleHandlePoints_Object;
+  scaleHandlePoints_Object->SetNumberOfPoints(26);
 
   vtkIdTypeArray* visibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
-  visibilityArray->SetNumberOfValues(roiPoints->GetNumberOfPoints());
+  visibilityArray->SetNumberOfValues(scaleHandlePoints_Object->GetNumberOfPoints());
   visibilityArray->Fill(displayNode ? displayNode->GetScaleHandleVisibility() : 1.0);
+  this->UpdateHandleVisibility();
+
+  // Corner handles are not visible in 2D
+  for (int i = vtkMRMLMarkupsROIDisplayNode::HandleLPICorner; i <= vtkMRMLMarkupsROIDisplayNode::HandleRASCorner; ++i)
+    {
+    visibilityArray->SetValue(i, false);
+    }
 
   vtkNew<vtkPlane> plane;
-  plane->SetNormal(viewPlaneNormal_ROI);
-  plane->SetOrigin(viewPlaneOrigin_ROI);
+  plane->SetNormal(viewPlaneNormal_Object);
+  plane->SetOrigin(viewPlaneOrigin_Object);
 
   // Left face handle
-  double lFacePoint_ROI[3] =  { -sideLengths[0], -sideLengths[1], -sideLengths[2] };
-  double lFacePointX_ROI[3] = { -sideLengths[0],  sideLengths[1], -sideLengths[2] };
-  double lFacePointY_ROI[3] = { -sideLengths[0], -sideLengths[1],  sideLengths[2] };
-  double lFaceIntersection0_ROI[3] = { 0.0, 0.0, 0.0 };
-  double lFaceIntersection1_ROI[3] = { 0.0, 0.0, 0.0 };
-  if (IntersectWithFinitePlane(viewPlaneNormal_ROI, viewPlaneOrigin_ROI,
-    lFacePoint_ROI, lFacePointX_ROI, lFacePointY_ROI, lFaceIntersection0_ROI, lFaceIntersection1_ROI))
+  double lFacePoint_Object[3] =  { -sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  double lFacePointX_Object[3] = { -sideRadius[0],  sideRadius[1], -sideRadius[2] };
+  double lFacePointY_Object[3] = { -sideRadius[0], -sideRadius[1],  sideRadius[2] };
+  double lFaceIntersection0_Object[3] = { 0.0, 0.0, 0.0 };
+  double lFaceIntersection1_Object[3] = { 0.0, 0.0, 0.0 };
+  if (IntersectWithFinitePlane(viewPlaneNormal_Object, viewPlaneOrigin_Object,
+    lFacePoint_Object, lFacePointX_Object, lFacePointY_Object, lFaceIntersection0_Object, lFaceIntersection1_Object))
     {
-    vtkMath::Add(lFaceIntersection0_ROI, lFaceIntersection1_ROI, lFacePoint_ROI);
-    vtkMath::MultiplyScalar(lFacePoint_ROI, 0.5);
+    vtkMath::Add(lFaceIntersection0_Object, lFaceIntersection1_Object, lFacePoint_Object);
+    vtkMath::MultiplyScalar(lFacePoint_Object, 0.5);
     }
   else
     {
     // Face does not intersect with the slice. Handle should not be visible.
     visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleLFace, lFacePoint_ROI);
+  scaleHandlePoints_Object->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleLFace, lFacePoint_Object);
 
   // Right face handle
-  double rFacePoint_ROI[3] =  { sideLengths[0], -sideLengths[1], -sideLengths[2] };
-  double rFacePointX_ROI[3] = { sideLengths[0],  sideLengths[1], -sideLengths[2] };
-  double rFacePointY_ROI[3] = { sideLengths[0], -sideLengths[1],  sideLengths[2] };
-  double rFaceIntersection0_ROI[3] = { 0.0, 0.0, 0.0 };
-  double rFaceIntersection1_ROI[3] = { 0.0, 0.0, 0.0 };
-  if (IntersectWithFinitePlane(viewPlaneNormal_ROI, viewPlaneOrigin_ROI,
-    rFacePoint_ROI, rFacePointX_ROI, rFacePointY_ROI, rFaceIntersection0_ROI, rFaceIntersection1_ROI))
+  double rFacePoint_Object[3] =  { sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  double rFacePointX_Object[3] = { sideRadius[0],  sideRadius[1], -sideRadius[2] };
+  double rFacePointY_Object[3] = { sideRadius[0], -sideRadius[1],  sideRadius[2] };
+  double rFaceIntersection0_Object[3] = { 0.0, 0.0, 0.0 };
+  double rFaceIntersection1_Object[3] = { 0.0, 0.0, 0.0 };
+  if (IntersectWithFinitePlane(viewPlaneNormal_Object, viewPlaneOrigin_Object,
+    rFacePoint_Object, rFacePointX_Object, rFacePointY_Object, rFaceIntersection0_Object, rFaceIntersection1_Object))
     {
-    vtkMath::Add(rFaceIntersection0_ROI, rFaceIntersection1_ROI, rFacePoint_ROI);
-    vtkMath::MultiplyScalar(rFacePoint_ROI, 0.5);
+    vtkMath::Add(rFaceIntersection0_Object, rFaceIntersection1_Object, rFacePoint_Object);
+    vtkMath::MultiplyScalar(rFacePoint_Object, 0.5);
     }
   else
     {
     // Face does not intersect with the slice. Handle should not be visible.
     visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleRFace, rFacePoint_ROI);
+  scaleHandlePoints_Object->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleRFace, rFacePoint_Object);
 
   // Posterior face handle
-  double pFacePoint_ROI[3] =  { -sideLengths[0], -sideLengths[1], -sideLengths[2] };
-  double pFacePointX_ROI[3] = {  sideLengths[0], -sideLengths[1], -sideLengths[2] };
-  double pFacePointY_ROI[3] = { -sideLengths[0], -sideLengths[1],  sideLengths[2] };
-  double pFaceIntersection0_ROI[3] = { 0.0, 0.0, 0.0 };
-  double pFaceIntersection1_ROI[3] = { 0.0, 0.0, 0.0 };
-  if (IntersectWithFinitePlane(viewPlaneNormal_ROI, viewPlaneOrigin_ROI,
-    pFacePoint_ROI, pFacePointX_ROI, pFacePointY_ROI, pFaceIntersection0_ROI, pFaceIntersection1_ROI))
+  double pFacePoint_Object[3] =  { -sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  double pFacePointX_Object[3] = {  sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  double pFacePointY_Object[3] = { -sideRadius[0], -sideRadius[1],  sideRadius[2] };
+  double pFaceIntersection0_Object[3] = { 0.0, 0.0, 0.0 };
+  double pFaceIntersection1_Object[3] = { 0.0, 0.0, 0.0 };
+  if (IntersectWithFinitePlane(viewPlaneNormal_Object, viewPlaneOrigin_Object,
+    pFacePoint_Object, pFacePointX_Object, pFacePointY_Object, pFaceIntersection0_Object, pFaceIntersection1_Object))
     {
-    vtkMath::Add(pFaceIntersection0_ROI, pFaceIntersection1_ROI, pFacePoint_ROI);
-    vtkMath::MultiplyScalar(pFacePoint_ROI, 0.5);
+    vtkMath::Add(pFaceIntersection0_Object, pFaceIntersection1_Object, pFacePoint_Object);
+    vtkMath::MultiplyScalar(pFacePoint_Object, 0.5);
     }
   else
     {
     // Face does not intersect with the slice. Handle should not be visible.
     visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandlePFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandlePFace, pFacePoint_ROI);
+  scaleHandlePoints_Object->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandlePFace, pFacePoint_Object);
 
   // Anterior face handle
-  double aFacePoint_ROI[3] =  { -sideLengths[0],  sideLengths[1], -sideLengths[2] };
-  double aFacePointX_ROI[3] = {  sideLengths[0],  sideLengths[1], -sideLengths[2] };
-  double aFacePointY_ROI[3] = { -sideLengths[0],  sideLengths[1],  sideLengths[2] };
-  double aFaceIntersection0_ROI[3] = { 0.0, 0.0, 0.0 };
-  double aFaceIntersection1_ROI[3] = { 0.0, 0.0, 0.0 };
-  if (IntersectWithFinitePlane(viewPlaneNormal_ROI, viewPlaneOrigin_ROI,
-    aFacePoint_ROI, aFacePointX_ROI, aFacePointY_ROI, aFaceIntersection0_ROI, aFaceIntersection1_ROI))
+  double aFacePoint_Object[3] =  { -sideRadius[0],  sideRadius[1], -sideRadius[2] };
+  double aFacePointX_Object[3] = {  sideRadius[0],  sideRadius[1], -sideRadius[2] };
+  double aFacePointY_Object[3] = { -sideRadius[0],  sideRadius[1],  sideRadius[2] };
+  double aFaceIntersection0_Object[3] = { 0.0, 0.0, 0.0 };
+  double aFaceIntersection1_Object[3] = { 0.0, 0.0, 0.0 };
+  if (IntersectWithFinitePlane(viewPlaneNormal_Object, viewPlaneOrigin_Object,
+    aFacePoint_Object, aFacePointX_Object, aFacePointY_Object, aFaceIntersection0_Object, aFaceIntersection1_Object))
     {
-    vtkMath::Add(aFaceIntersection0_ROI, aFaceIntersection1_ROI, aFacePoint_ROI);
-    vtkMath::MultiplyScalar(aFacePoint_ROI, 0.5);
+    vtkMath::Add(aFaceIntersection0_Object, aFaceIntersection1_Object, aFacePoint_Object);
+    vtkMath::MultiplyScalar(aFacePoint_Object, 0.5);
     }
   else
     {
     // Face does not intersect with the slice. Handle should not be visible.
     visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleAFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleAFace, aFacePoint_ROI);
+  scaleHandlePoints_Object->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleAFace, aFacePoint_Object);
 
   // Inferior face handle
-  double iFacePoint_ROI[3] =  { -sideLengths[0], -sideLengths[1], -sideLengths[2] };
-  double iFacePointX_ROI[3] = {  sideLengths[0], -sideLengths[1], -sideLengths[2] };
-  double iFacePointY_ROI[3] = { -sideLengths[0],  sideLengths[1], -sideLengths[2] };
-  double iFaceIntersection0_ROI[3] = { 0.0, 0.0, 0.0 };
-  double iFaceIntersection1_ROI[3] = { 0.0, 0.0, 0.0 };
-  if (IntersectWithFinitePlane(viewPlaneNormal_ROI, viewPlaneOrigin_ROI,
-    iFacePoint_ROI, iFacePointX_ROI, iFacePointY_ROI, iFaceIntersection0_ROI, iFaceIntersection1_ROI))
+  double iFacePoint_Object[3] =  { -sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  double iFacePointX_Object[3] = {  sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  double iFacePointY_Object[3] = { -sideRadius[0],  sideRadius[1], -sideRadius[2] };
+  double iFaceIntersection0_Object[3] = { 0.0, 0.0, 0.0 };
+  double iFaceIntersection1_Object[3] = { 0.0, 0.0, 0.0 };
+  if (IntersectWithFinitePlane(viewPlaneNormal_Object, viewPlaneOrigin_Object,
+    iFacePoint_Object, iFacePointX_Object, iFacePointY_Object, iFaceIntersection0_Object, iFaceIntersection1_Object))
     {
-    vtkMath::Add(iFaceIntersection0_ROI, iFaceIntersection1_ROI, iFacePoint_ROI);
-    vtkMath::MultiplyScalar(iFacePoint_ROI, 0.5);
+    vtkMath::Add(iFaceIntersection0_Object, iFaceIntersection1_Object, iFacePoint_Object);
+    vtkMath::MultiplyScalar(iFacePoint_Object, 0.5);
     }
   else
     {
     // Face does not intersect with the slice. Handle should not be visible.
     visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleIFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleIFace, iFacePoint_ROI);
+  scaleHandlePoints_Object->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleIFace, iFacePoint_Object);
 
   // Superior face handle
-  double sFacePoint_ROI[3] =  { -sideLengths[0], -sideLengths[1], sideLengths[2] };
-  double sFacePointX_ROI[3] = {  sideLengths[0], -sideLengths[1], sideLengths[2] };
-  double sFacePointY_ROI[3] = { -sideLengths[0],  sideLengths[1], sideLengths[2] };
-  double sFaceIntersection0_ROI[3] = { 0.0, 0.0, 0.0 };
-  double sFaceIntersection1_ROI[3] = { 0.0, 0.0, 0.0 };
-  if (IntersectWithFinitePlane(viewPlaneNormal_ROI, viewPlaneOrigin_ROI,
-    sFacePoint_ROI, sFacePointX_ROI, sFacePointY_ROI, sFaceIntersection0_ROI, sFaceIntersection1_ROI))
+  double sFacePoint_Object[3] =  { -sideRadius[0], -sideRadius[1], sideRadius[2] };
+  double sFacePointX_Object[3] = {  sideRadius[0], -sideRadius[1], sideRadius[2] };
+  double sFacePointY_Object[3] = { -sideRadius[0],  sideRadius[1], sideRadius[2] };
+  double sFaceIntersection0_Object[3] = { 0.0, 0.0, 0.0 };
+  double sFaceIntersection1_Object[3] = { 0.0, 0.0, 0.0 };
+  if (IntersectWithFinitePlane(viewPlaneNormal_Object, viewPlaneOrigin_Object,
+    sFacePoint_Object, sFacePointX_Object, sFacePointY_Object, sFaceIntersection0_Object, sFaceIntersection1_Object))
     {
-    vtkMath::Add(sFaceIntersection0_ROI, sFaceIntersection1_ROI, sFacePoint_ROI);
-    vtkMath::MultiplyScalar(sFacePoint_ROI, 0.5);
+    vtkMath::Add(sFaceIntersection0_Object, sFaceIntersection1_Object, sFacePoint_Object);
+    vtkMath::MultiplyScalar(sFacePoint_Object, 0.5);
     }
   else
     {
     // Face does not intersect with the slice. Handle should not be visible.
     visibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleSFace, false);
     }
-  roiPoints->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleSFace, sFacePoint_ROI);
+  scaleHandlePoints_Object->SetPoint(vtkMRMLMarkupsROIDisplayNode::HandleSFace, sFacePoint_Object);
 
-  this->ScaleHandlePoints->SetPoints(roiPoints);
+  double sVector_Object[3] = { 0.0, 0.0, sideLengths[2] };
+  double lpEdgePoint_Object[3] = { -sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleLPEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, lpEdgePoint_Object, sVector_Object);
+  double rpEdgePoint_Object[3] = {  sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleRPEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, rpEdgePoint_Object, sVector_Object);
+  double laEdgePoint_Object[3] = { -sideRadius[0],  sideRadius[1], -sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleLAEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, laEdgePoint_Object, sVector_Object);
+  double raEdgePoint_Object[3] = {  sideRadius[0],  sideRadius[1], -sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleRAEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, raEdgePoint_Object, sVector_Object);
+
+  double aVector_Object[3] = { 0.0, sideLengths[1], 0.0 };
+  double liEdgePoint_Object[3] = { -sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleLIEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, liEdgePoint_Object, aVector_Object);
+  double riEdgePoint_Object[3] = {  sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleRIEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, riEdgePoint_Object, aVector_Object);
+  double lsEdgePoint_Object[3] = { -sideRadius[0], -sideRadius[1],  sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleLSEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, lsEdgePoint_Object, aVector_Object);
+  double rsEdgePoint_Object[3] = {  sideRadius[0], -sideRadius[1],  sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleRSEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, rsEdgePoint_Object, aVector_Object);
+
+  double rVector_Object[3] = { sideLengths[0], 0.0, 0.0 };
+  double piEdgePoint_Object[3] = { -sideRadius[0], -sideRadius[1], -sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandlePIEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, piEdgePoint_Object, rVector_Object);
+  double aiEdgePoint_Object[3] = { -sideRadius[0],  sideRadius[1], -sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleAIEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, aiEdgePoint_Object, rVector_Object);
+  double psEdgePoint_Object[3] = { -sideRadius[0], -sideRadius[1],  sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandlePSEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, psEdgePoint_Object, rVector_Object);
+  double asEdgePoint_Object[3] = { -sideRadius[0],  sideRadius[1],  sideRadius[2] };
+  this->AddScaleEdgeIntersection(vtkMRMLMarkupsROIDisplayNode::HandleASEdge,
+    visibilityArray, scaleHandlePoints_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, asEdgePoint_Object, rVector_Object);
+
+  this->ScaleHandlePoints->SetPoints(scaleHandlePoints_Object);
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::AddScaleEdgeIntersection(
+  int pointIndex, vtkIdTypeArray* visibilityArray, vtkPoints* scaleHandlePoints_Object,
+  double viewPlaneNormal_Object[3], double viewPlaneOrigin_Object[3], double edgePoint1_Object[3], double edgeVector_Object[3])
+{
+  double edgePoint2_Object[3] = { 0.0, 0.0, 0.0 };
+  vtkMath::Add(edgePoint1_Object, edgeVector_Object, edgePoint2_Object);
+
+  double t = 0.0;
+  double raEdgeIntersection_Object[3] = { 0.0, 0.0, 0.0 };
+  if (!vtkPlane::IntersectWithLine(edgePoint1_Object, edgePoint2_Object, viewPlaneNormal_Object, viewPlaneOrigin_Object, t, raEdgeIntersection_Object))
+    {
+    visibilityArray->SetValue(pointIndex, false);
+    }
+  scaleHandlePoints_Object->SetPoint(pointIndex, raEdgeIntersection_Object);
 }

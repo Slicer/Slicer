@@ -37,11 +37,11 @@ public:
                                   vtkRenderer* renderer) override;
 
   /// Create instance of the markups widget
-  virtual vtkSlicerMarkupsWidget* CreateInstance() const;
+  virtual vtkSlicerMarkupsWidget* CreateInstance() const override;
 
 protected:
   vtkSlicerTestLineWidget();
-  ~vtkSlicerTestLineWidget();
+  ~vtkSlicerTestLineWidget() override;
 
 private:
   vtkSlicerTestLineWidget(const vtkSlicerTestLineWidget&) = delete;

@@ -176,7 +176,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   if (this->CurveClosed && markupsNode->GetNumberOfControlPoints() > 2 && !allNodesHidden)
     {
     double centerPosWorld[3], orient[3] = { 0 };
-    markupsNode->GetCenterPosition(centerPosWorld);
+    markupsNode->GetCenterOfRotationWorld(centerPosWorld);
     int centerControlPointType = allControlPointsSelected ? Selected : Unselected;
     if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentCenterPoint)
       {

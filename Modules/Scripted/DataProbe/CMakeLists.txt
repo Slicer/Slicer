@@ -3,9 +3,6 @@
 set(MODULE_NAME DataProbe)
 
 #-----------------------------------------------------------------------------
-add_subdirectory(Logic)
-
-#-----------------------------------------------------------------------------
 set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}.py
   ${MODULE_NAME}Lib/__init__

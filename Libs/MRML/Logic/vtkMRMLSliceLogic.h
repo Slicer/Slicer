@@ -27,6 +27,7 @@ class vtkMRMLLinearTransformNode;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLModelNode;
 class vtkMRMLSliceCompositeNode;
+class vtkMRMLSliceDisplayNode;
 class vtkMRMLSliceLayerLogic;
 class vtkMRMLSliceNode;
 class vtkMRMLVolumeNode;
@@ -141,8 +142,13 @@ public:
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
 
   ///
-  /// Model slice plane display props
+  /// Model slice plane display properties.
+  /// The method is deprecated, use SliceDisplayNode instead.
   vtkGetObjectMacro(SliceModelDisplayNode, vtkMRMLModelDisplayNode);
+
+  ///
+  /// Slice plane display properties
+  vtkMRMLSliceDisplayNode* GetSliceDisplayNode();
 
   ///
   /// Model slice plane transform from xy to RAS
@@ -370,6 +376,12 @@ public:
   /// is present and not equal to zero
   static bool IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayNode);
 
+  /// Get volume at the specified world position that should be used
+  /// for interactions, such as window/level adjustments.
+  /// backgroundVolumeEditable and foregroundVolumeEditable can be used specify that
+  /// a volume is not editable (even if it is visible at the given position).
+  int GetEditableLayerAtWorldPosition(double worldPos[3], bool backgroundVolumeEditable = true, bool foregroundVolumeEditable = true);
+
 protected:
 
   vtkMRMLSliceLogic();
@@ -410,6 +422,13 @@ protected:
   /// is a relatively expensive operation.
   bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers);
 
+  /// Returns true if position is inside the selected layer volume.
+  /// Use background flag to choose between foreground/background layer.
+  bool IsEventInsideVolume(bool background, double worldPos[3]);
+
+  /// Returns true if the volume's window/level values are editable on the GUI.
+  bool VolumeWindowLevelEditable(const char* volumeNodeID);
+
   bool                        AddingSliceModelNodes;
 
   vtkMRMLSliceNode *          SliceNode;
@@ -422,7 +441,6 @@ protected:
   BlendPipeline* PipelineUVW;
   vtkImageReslice * ExtractModelTexture;
   vtkAlgorithmOutput *    ImageDataConnection;
-  vtkTransform *    ActiveSliceTransform;
 
   vtkMRMLModelNode *            SliceModelNode;
   vtkMRMLModelDisplayNode *     SliceModelDisplayNode;

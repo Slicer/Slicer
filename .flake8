@@ -1,0 +1,150 @@
+[flake8]
+
+max-line-length = 550
+
+# Whether to display the pep8 instructions on failure (can be quite verbose)
+show-pep8 = False
+
+# Whether to show source code for each failure
+show-source = True
+
+# Maximum cyclomatic complexity allowed
+max-complexity = 80
+
+format = pylint
+
+exclude = .git,__pycache__
+
+per-file-ignores = \
+  # Module imported but unused
+  Base/Python/mrml.py:F401 \
+  Base/Python/slicer/logic.py:F401 \
+  Base/Python/vtkAddon.py:F401 \
+  Base/Python/vtkITK.py:F401 \
+  Base/Python/vtkSegmentationCore.py:F401 \
+  Base/Python/vtkTeem.py:F401 \
+  Modules/*/__init__.py:F401 \
+  Extensions/*/__init__.py:F401 \
+  Utilities/*/__init__.py:F401
+
+ignore = \
+  # Do not use bare `except:`, it also catches unexpected events like memory errors, interrupts, system exit, and so on.
+  B001, \
+  # Do not use mutable data structures for argument defaults.
+  B006, \
+  # Loop control variable not used within the loop body.
+  B007, \
+  # Do not perform function calls in argument defaults.
+  B008, \
+  # Do not call getattr(x, 'attr'), instead use normal property access: x.attr.
+  B009, \
+  # B010] Do not call setattr with a constant attribute value, it is not any safer than normal property access.
+  B010, \
+  # Indentation is not a multiple of four
+  E111, \
+  # Indentation is not a multiple of four (comment)
+  E114, \
+  # expected an indented block (comment)
+  E115, \
+  # unexpected indentation (comment)
+  E116, \
+  # over-indented
+  E117, \
+  # continuation line under-indented for hanging indent
+  E121, \
+  # continuation line missing indentation or outdented
+  E122, \
+  # closing bracket does not match visual indentation
+  E124, \
+  # closing bracket does not match indentation of opening bracket's line
+  E123, \
+  # continuation line with same indent as next logical line
+  E125, \
+  # continuation line over-indented for hanging indent
+  E126, \
+  # continuation line over-indented for visual indent
+  E127, \
+  # continuation line under-indented for visual indent
+  E128, \
+  # visually indented line with same indent as next logical line
+  E129, \
+  # continuation line unaligned for hanging indent
+  E131, \
+  # whitespace after '('
+  E201, \
+  # whitespace before ')'
+  E202, \
+  # whitespace before ','
+  E203, \
+  # whitespace before '('
+  E211, \
+  # multiple spaces before operator
+  E221, \
+  # multiple spaces after operator
+  E222, \
+  # missing whitespace around operator
+  E225, \
+  # missing whitespace around arithmetic operator
+  E226, \
+  # missing whitespace around bitwise or shift operator
+  E227, \
+  # missing whitespace around modulo operator
+  E228, \
+  # missing whitespace after ','
+  E231, \
+  # multiple spaces after ','
+  E241, \
+  # unexpected spaces around keyword / parameter equals
+  E251, \
+  # at least two spaces before inline comment
+  E261, \
+  # inline comment should start with '# '
+  E262, \
+  # block comment should start with '# '
+  E265, \
+  # too many leading '#' for block comment
+  E266, \
+  # multiple spaces after keyword
+  E271, \
+  # multiple imports on one line
+  E401, \
+  # module level import not at top of file
+  E402, \
+  # the backslash is redundant between bracket
+  E502, \
+  # multiple statements on one line (colon)
+  E701, \
+  # statement ends with a semicolon
+  E703, \
+  # comparison to True should be 'if cond is True:' or 'if cond:'
+  E712, \
+  # test for membership should be 'not in'
+  E713, \
+  # test for object identity should be 'is not'
+  E714, \
+  # do not use bare 'except'
+  E722, \
+  # do not assign a lambda expression, use a def
+  E731, \
+  # ambiguous variable name 'l'
+  E741, \
+  # 'from module import *' used; unable to detect undefined names
+  F403, \
+  # Name may be undefined, or defined from star import
+  F405, \
+  # f-string is missing placeholders
+  F541, \
+  # Redefinition of unused name from line n
+  F811, \
+  # Undefined name name
+  F821, \
+  # local variable 'inside_segment' is assigned to but never used
+  F841, \
+  # trailing whitespace
+  W291, \
+  # blank line contains whitespace
+  W293, \
+  # line break before binary operator
+  W503, \
+  # line break after binary operator
+  W504

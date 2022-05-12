@@ -33,14 +33,22 @@ Get the first volume node in the scene and save as .nrrd file. To save in any ot
 
 ```python
 volumeNode = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLScalarVolumeNode')
-slicer.util.saveNode(volumeNode, "c:/tmp/test.nrrd")
+slicer.util.exportNode(volumeNode, "c:/tmp/test.nrrd")
 ```
 
 If you are saving to a format with optional compression, like nrrd, compression is on by default.  Saving is much faster with compression turned off but the files may be much larger (about 3x for medical images).
 
 ```python
-slicer.util.saveNode(volumeNode, imagePath, {"useCompression": 0})
+slicer.util.exportNode(volumeNode, imagePath, {"useCompression": 0})
 ```
+
+By default, parent transforms are ignored. To export the node in the world coordinate system (all transforms hardened), set `world=True`.
+
+```python
+slicer.util.exportNode(volumeNode, imagePath, {"useCompression": 0}, world=True)
+```
+
+`saveNode` method can be used instead of `exportNode` to update the current storage options (filename, compression options, etc.) in the scene.
 
 ### Load volume from .vti file
 
@@ -388,19 +396,19 @@ for k in range(extent[4], extent[5]+1):
 imageData.Modified()
 ```
 
-### Get volume voxel coordinates from markup fiducial RAS coordinates
+### Get volume voxel coordinates from markup control point RAS coordinates
 
-This example shows how to get voxel coordinate of a volume corresponding to a markup fiducial point position.
+This example shows how to get voxel coordinate of a volume corresponding to a markup control point position.
 
 ```python
 # Inputs
 volumeNode = getNode("MRHead")
-markupsNode = getNode("F")
+pointListNode = getNode("F")
 markupsIndex = 0
 
 # Get point coordinate in RAS
 point_Ras = [0, 0, 0, 1]
-markupsNode.GetNthFiducialWorldCoordinates(markupsIndex, point_Ras)
+pointListNode.GetNthFiducialWorldCoordinates(markupsIndex, point_Ras)
 
 # If volume node is transformed, apply that transform to get volume's RAS coordinates
 transformRasToVolumeRas = vtk.vtkGeneralTransform()
@@ -418,14 +426,14 @@ point_Ijk = [ int(round(c)) for c in point_Ijk[0:3] ]
 print(point_Ijk)
 ```
 
-### Get markup fiducial RAS coordinates from volume voxel coordinates
+### Get markup control point RAS coordinates from volume voxel coordinates
 
-This example shows how to get position of maximum intensity voxel of a volume (determined by numpy, in IJK coordinates) in RAS coordinates so that it can be marked with a markup fiducial.
+This example shows how to get position of maximum intensity voxel of a volume (determined by numpy, in IJK coordinates) in RAS coordinates so that it can be marked with a markup control point.
 
 ```python
 # Inputs
 volumeNode = getNode("MRHead")
-markupsNode = getNode("F")
+pointListNode = getNode("F")
 
 # Get voxel position in IJK coordinate system
 import numpy as np
@@ -446,13 +454,13 @@ slicer.vtkMRMLTransformNode.GetTransformBetweenNodes(volumeNode.GetParentTransfo
 point_Ras = transformVolumeRasToRas.TransformPoint(point_VolumeRas[0:3])
 
 # Add a markup at the computed position and print its coordinates
-markupsNode.AddFiducial(point_Ras[0], point_Ras[1], point_Ras[2], "max")
+pointListNode.AddControlPoint((point_Ras[0], point_Ras[1], point_Ras[2]), "max")
 print(point_Ras)
 ```
 
 ### Get the values of all voxels for a label value
 
-If you have a background image called ‘Volume’ and a mask called ‘Volume-label’ created with the Editor you could do something like this:
+If you have a background image called ‘Volume’ and a mask called ‘Volume-label’ created with the Segment Editor you could do something like this:
 
 ```python
 import numpy
@@ -647,7 +655,7 @@ slicer.util.setSliceViewerLayers(background=outputVolumeNode)
 
 More information:
 
-- See the SimpleITK documentation for SimpleITK examples: http://www.itk.org/SimpleITKDoxygen/html/examples.html
+- See the SimpleITK documentation for SimpleITK examples: https://www.itk.org/SimpleITKDoxygen/html/examples.html
 - sitkUtils in Slicer is used for pushing and pulling images from Slicer to SimpleITK: https://github.com/Slicer/Slicer/blob/master/Base/Python/sitkUtils.py
 
 ### Get axial slice as numpy array
@@ -836,7 +844,7 @@ propertyNode->SetScalarOpacity(opacities);
 // optionally set the gradients opacities with SetGradientOpacity
 ```
 
-Volume rendering logic has utility functions to help you create those transfer functions: [SetWindowLevelToVolumeProp](http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#ab8dbda38ad81b39b445b01e1bf8c7a86), [SetThresholdToVolumeProp](http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a1dcbe614493f3cbb9aa50c68a64764ca), [SetLabelMapToVolumeProp](http://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a359314889c2b386fd4c3ffe5414522da).
+Volume rendering logic has utility functions to help you create those transfer functions: [SetWindowLevelToVolumeProp](https://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#ab8dbda38ad81b39b445b01e1bf8c7a86), [SetThresholdToVolumeProp](https://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a1dcbe614493f3cbb9aa50c68a64764ca), [SetLabelMapToVolumeProp](https://slicer.org/doc/html/classvtkSlicerVolumeRenderingLogic.html#a359314889c2b386fd4c3ffe5414522da).
 
 ### Limit volume rendering to a specific region of the volume
 
@@ -848,7 +856,7 @@ displayNode.CroppingEnabled = True
 C++:
 
 ```cpp
-vtkMRMLAnnotationROINode]* roiNode =...
+vtkMRMLMarkupsROINode* roiNode =...
 vtkMRMLVolumeRenderingDisplayNode* displayNode = ...
 displayNode->SetAndObserveROINodeID(roiNode->GetID());
 displayNode->SetCroppingEnabled(1);
@@ -856,7 +864,7 @@ displayNode->SetCroppingEnabled(1);
 
 ### Register a new Volume Rendering mapper
 
-You need to derive from [vtkMRMLVolumeRenderingDisplayNode](http://apidocs.slicer.org/master/classvtkMRMLVolumeRenderingDisplayNode.html) and register your class within [vtkSlicerVolumeRenderingLogic](http://apidocs.slicer.org/master/classvtkSlicerVolumeRenderingLogic.html).
+You need to derive from [vtkMRMLVolumeRenderingDisplayNode](https://apidocs.slicer.org/master/classvtkMRMLVolumeRenderingDisplayNode.html) and register your class within [vtkSlicerVolumeRenderingLogic](https://apidocs.slicer.org/master/classvtkSlicerVolumeRenderingLogic.html).
 
 C++:
 
@@ -885,7 +893,7 @@ void qSlicerMyABCVolumeRenderingModule::setup()
 }
 ```
 
-If you want to expose control widgets for your volume rendering method, then register your widget with [addRenderingMethodWidget()](http://apidocs.slicer.org/master/classqSlicerVolumeRenderingModuleWidget.html#acd9cdb60f1fd260f3ebf74428bb7c45b).
+If you want to expose control widgets for your volume rendering method, then register your widget with [addRenderingMethodWidget()](https://apidocs.slicer.org/master/classqSlicerVolumeRenderingModuleWidget.html#acd9cdb60f1fd260f3ebf74428bb7c45b).
 
 ### Register custom volume rendering presets
 

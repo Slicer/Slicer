@@ -55,7 +55,7 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
     set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "")
     set(CMAKE_TESTDRIVER_AFTER_TESTMAIN "")
 
-    set(EXTRA_INCLUDE "vtkWin32OutputWindow.h")
+    set(EXTRA_INCLUDE "vtkWin32OutputWindow.h\"\n\#include \"vtkVersionMacros.h")
 
     if(SLICER_TEST_DRIVER_WITH_VTK_ERROR_OUTPUT_CHECK)
       set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN

@@ -1,9 +1,11 @@
 import unittest
 import random
 
+
 class SlicerUnitTestTest(unittest.TestCase):
-  """ See http://docs.python.org/library/unittest.html#basic-example
+  """ See https://docs.python.org/library/unittest.html#basic-example
   """
+
   def setUp(self):
     self.seq = list(range(10))
 
@@ -24,4 +26,3 @@ class SlicerUnitTestTest(unittest.TestCase):
     self.assertRaises(ValueError, random.sample, self.seq, 20)
     for element in random.sample(self.seq, 5):
       self.assertIn(element, self.seq)
-

@@ -57,6 +57,20 @@
 #include <vtkWeakPointer.h>
 #include <vtkImageReslice.h>
 #include <vtkTransform.h>
+#include <vtksys/RegularExpression.hxx>
+
+// JSON includes
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+
+namespace
+{
+  const std::string MARKUPS_SCHEMA =
+    "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#";
+  const std::string ACCEPTED_VOLUME_DISPLAY_PRESETS_SCHEMA_REGEX =
+    "^https://raw\\.githubusercontent\\.com/slicer/slicer/master/Modules/Loadable/Volumes/Resources/Schema/"
+    "volumes-display-presets-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
+}
 
 /// CTK includes
 /// to avoid CTK includes which pull in a dependency on Qt, rehome some CTK
@@ -1544,4 +1558,220 @@ vtkSlicerVolumesLogic
   outputVolumeNode->SetAndObserveImageData(resliceFilter->GetOutput());
 
   return outputVolumeNode;
+}
+
+// --------------------------------------------------------------------------
+std::vector<std::string> vtkSlicerVolumesLogic::GetVolumeDisplayPresetIDs()
+{
+  std::vector<std::string> presetNamesVector;
+
+  if (this->VolumeDisplayPresets.empty())
+    {
+    InitializeDefaultVolumeDisplayPresets();
+    }
+
+  for (const auto& preset : VolumeDisplayPresets)
+    {
+    presetNamesVector.push_back(preset.id);
+    }
+  return(presetNamesVector);
+}
+
+// --------------------------------------------------------------------------
+void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
+{
+  if (!this->VolumeDisplayPresets.empty())
+    {
+    // already initialized
+    return;
+    }
+
+  // Volume presets are stored in a JSON file, read them from there
+  std::string displayPresetsFilename = this->GetModuleShareDirectory() + "/VolumeDisplayPresets.json";
+  FILE* fp = fopen(displayPresetsFilename.c_str(), "r");
+  if (!fp)
+    {
+    vtkErrorMacro("vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error opening the file '" << displayPresetsFilename << "'");
+    return;
+    }
+  std::unique_ptr<rapidjson::Document> jsonRoot = std::unique_ptr<rapidjson::Document>(new rapidjson::Document);
+  char buffer[4096];
+  rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
+  if (jsonRoot->ParseStream(fs).HasParseError())
+    {
+    vtkErrorMacro("vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error parsing the file '" << displayPresetsFilename << "'.");
+    fclose(fp);
+    }
+  fclose(fp);
+  std::string errorPrefix = "vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error reading '" + displayPresetsFilename + "'.";
+
+  // Verify schema
+  if (!(*jsonRoot).HasMember("@schema"))
+    {
+    vtkErrorMacro(<< errorPrefix << " File does not contain schema information.");
+    return;
+    }
+  rapidjson::Value& schema = (*jsonRoot)["@schema"];
+  vtksys::RegularExpression filterProgressRegExp(ACCEPTED_VOLUME_DISPLAY_PRESETS_SCHEMA_REGEX);
+  if (!filterProgressRegExp.find(schema.GetString()))
+    {
+    vtkErrorMacro(<< errorPrefix << " File is expected to contain @schema: "
+      << MARKUPS_SCHEMA << " (different minor and patch version numbers are accepted).");
+    return;
+    }
+
+  if (!jsonRoot->IsObject())
+    {
+    vtkErrorMacro(<< errorPrefix << " Syntax error in root element.");
+    return;
+    }
+
+  const rapidjson::Value& volumeDisplayPresets = (*jsonRoot)["volumeDisplayPresets"];
+  if (!volumeDisplayPresets.IsArray())
+    {
+    vtkErrorMacro(<< errorPrefix << " volumeDisplayPresets element is not found or not an array.");
+    return;
+    }
+
+  // iterate all available presets
+  for (rapidjson::Value::ConstValueIterator presetIt = volumeDisplayPresets.Begin(); presetIt != volumeDisplayPresets.End(); ++presetIt)
+    {
+    const rapidjson::Value& preset = *presetIt;
+    int presetIndex = (presetIt - volumeDisplayPresets.Begin() + 1);
+    ;
+    if (!preset.IsObject())
+      {
+      vtkErrorMacro(<< errorPrefix << " Syntax error reading preset " << presetIndex << ".");
+      continue;
+      }
+    if (!preset.HasMember("name") || !preset.HasMember("id") || !preset.HasMember("window") || !preset.HasMember("level"))
+      {
+      vtkErrorMacro(<< errorPrefix << " Error reading preset " << presetIndex << ". Missing required property name, id, window, level, or color.");
+      continue;
+      }
+    if (!preset["name"].IsString() || !preset["id"].IsString() || !preset["window"].IsDouble() || !preset["level"].IsDouble())
+      {
+      vtkErrorMacro(<< errorPrefix << " Error reading preset " << presetIndex << ". Wrong type for property name, id, window, or level.");
+      continue;
+      }
+    VolumeDisplayPreset presetObj;
+    presetObj.id = preset["id"].GetString();
+    presetObj.name = preset["name"].GetString();
+    presetObj.level = preset["level"].GetDouble();
+    presetObj.window = preset["window"].GetDouble();
+    presetObj.valid = true;
+    if (!preset["name"].IsString() || !preset["id"].IsString() || !preset["window"].IsDouble() || !preset["level"].IsDouble() || !preset["color"].IsString())
+      {
+      vtkErrorMacro(<< errorPrefix << " Error reading preset " << presetIndex << ". Wrong type for property name, id, window, or level.");
+      continue;
+      }
+    if (preset.HasMember("color"))
+      {
+      if (preset["color"].IsString())
+        {
+        presetObj.colorNodeID = preset["color"].GetString();
+        }
+      else
+        {
+        vtkErrorMacro(<< errorPrefix << " Error reading preset " << presetIndex << ". String type is expected for 'color' property.");
+        }
+      }
+    if (preset.HasMember("description"))
+      {
+      if (preset["description"].IsString())
+        {
+        presetObj.description = preset["description"].GetString();
+        }
+      else
+        {
+        vtkErrorMacro(<< errorPrefix << " Error reading preset " << presetIndex << ". String type is expected for 'description' property.");
+        }
+      }
+    if (preset.HasMember("icon"))
+      {
+      if (preset["icon"].IsString())
+        {
+        presetObj.icon = preset["icon"].GetString();
+        }
+      else
+        {
+        vtkErrorMacro(<< errorPrefix << " Error reading preset " << presetIndex << ". String type is expected for 'icon' property.");
+        }
+      }
+
+    this->VolumeDisplayPresets.push_back(presetObj);
+    }
+}
+
+// --------------------------------------------------------------------------
+vtkSlicerVolumesLogic::VolumeDisplayPreset vtkSlicerVolumesLogic::GetVolumeDisplayPreset(const std::string& presetId)
+{
+  if (this->VolumeDisplayPresets.empty())
+    {
+    this->InitializeDefaultVolumeDisplayPresets();
+    }
+  for (const auto& preset : this->VolumeDisplayPresets)
+    {
+    if (preset.id == presetId)
+      {
+      return preset;
+      }
+    }
+
+  // not found, create an invalid preset
+  VolumeDisplayPreset preset;
+  return preset;
+}
+
+// --------------------------------------------------------------------------
+bool vtkSlicerVolumesLogic::ApplyVolumeDisplayPreset(vtkMRMLVolumeDisplayNode* displayNode, std::string presetId)
+{
+  VolumeDisplayPreset preset = this->GetVolumeDisplayPreset(presetId);
+  if (!preset.valid)
+    {
+    vtkErrorMacro("vtkSlicerVolumesLogic::ApplyVolumeDisplayPreset failed: Could not find preset ID " << presetId);
+    return false;
+    }
+
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
+  if (!volumeDisplayNode)
+    {
+    vtkErrorMacro("vtkSlicerVolumesLogic::ApplyVolumeDisplayPreset failed: Invalid display node");
+    return false;
+    }
+  int disabledModify = volumeDisplayNode->StartModify();
+  volumeDisplayNode->SetAutoWindowLevel(0);
+  volumeDisplayNode->SetWindowLevel(preset.window, preset.level);
+  volumeDisplayNode->SetAndObserveColorNodeID(preset.colorNodeID);
+  volumeDisplayNode->EndModify(disabledModify);
+  return true;
+}
+
+
+// --------------------------------------------------------------------------
+std::string vtkSlicerVolumesLogic::GetAppliedVolumeDisplayPresetId(vtkMRMLVolumeDisplayNode* displayNode)
+{
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
+  if (!volumeDisplayNode)
+    {
+    return "";
+    }
+
+  if (this->VolumeDisplayPresets.empty())
+    {
+    this->InitializeDefaultVolumeDisplayPresets();
+    }
+  for (const auto& preset : this->VolumeDisplayPresets)
+    {
+    if (preset.window == volumeDisplayNode->GetWindow()
+      && preset.level == volumeDisplayNode->GetLevel()
+      && preset.colorNodeID == volumeDisplayNode->GetColorNodeID())
+      {
+      // found it
+      return preset.id;
+      }
+    }
+
+  // no matching preset was found
+  return "";
 }

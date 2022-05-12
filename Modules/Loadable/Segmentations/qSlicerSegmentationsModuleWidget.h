@@ -112,7 +112,7 @@ protected slots:
   void onSegmentationNodeReferenceChanged();
 
   void onAddSegment();
-  void onEditSelectedSegment();
+  void onEditSegmentation();
   void onRemoveSelectedSegments();
 
   void updateLayerWidgets();

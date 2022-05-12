@@ -4,33 +4,24 @@
 // Annotation/MRML includes
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
-#include "vtkMRMLAnnotationAngleNode.h"
-#include "vtkMRMLAnnotationAngleStorageNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationFiducialsStorageNode.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLAnnotationStickyNode.h"
 #include "vtkMRMLAnnotationTextNode.h"
 #include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLAnnotationBidimensionalNode.h"
-#include "vtkMRMLAnnotationSplineNode.h"
 #include "vtkMRMLAnnotationSnapshotNode.h"
 #include "vtkMRMLAnnotationSnapshotStorageNode.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 
 // MRML includes
-#include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLUnitNode.h>
-
-// Logic includes
-#include <vtkSlicerFiducialsLogic.h>
 
 // VTK includes
 #include <vtkImageData.h>
@@ -106,104 +97,6 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
     }
 }
 
-//-----------------------------------------------------------------------------
-// Load a fiducial list from file and make it into a set of fiducial annotations
-//-----------------------------------------------------------------------------
-char *vtkSlicerAnnotationModuleLogic::LoadFiducialList(const char *filename)
-{
-  char *nodeID = nullptr;
-  std::string idList;
-  if (!filename)
-    {
-    vtkErrorMacro("LoadFiducialList: null file name, cannot load");
-    return nodeID;
-    }
-
-  // turn on batch processing
-  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
-
-  // first off, load it as a fiducial list
-  vtkSlicerFiducialsLogic* fiducialsLogic = vtkSlicerFiducialsLogic::New();
-  fiducialsLogic->SetMRMLScene(this->GetMRMLScene());
-  vtkMRMLFiducialListNode* node = fiducialsLogic->LoadFiducialList(filename);
-  if (!node)
-    {
-    vtkErrorMacro("Unable to load fiducial list from : " << filename);
-    return nodeID;
-    }
-  // get the list name and make a hierarchy node with that name to add the
-  // fids to
-  char *fidListName = node->GetName();
-  vtkMRMLAnnotationHierarchyNode* fidListHierarchyNode =
-      vtkMRMLAnnotationHierarchyNode::New();
-  fidListHierarchyNode->HideFromEditorsOff();
-  if (fidListName)
-    {
-    fidListHierarchyNode->SetName(fidListName);
-    }
-  this->GetMRMLScene()->AddNode(fidListHierarchyNode);
-  // make it a child of the top level node
-  fidListHierarchyNode->SetParentNodeID(this->GetTopLevelHierarchyNodeID());
-  // and make it active so that the fids will be added to it
-  this->SetActiveHierarchyNodeID(fidListHierarchyNode->GetID());
-
-  // now iterate through the list and make fiducials
-  int numFids = node->GetNumberOfFiducials();
-  double *color = node->GetColor();
-  double *selColor = node->GetSelectedColor();
-  double symbolScale = node->GetSymbolScale();
-  double textScale = node->GetTextScale();
-  int locked = node->GetLocked();
-  int glyphType = node->GetGlyphType();
-  for (int n = 0; n < numFids; n++)
-    {
-    float *xyz = node->GetNthFiducialXYZ(n);
-    int sel = node->GetNthFiducialSelected(n);
-    int vis = node->GetNthFiducialVisibility(n);
-    const char *labelText = node->GetNthFiducialLabelText(n);
-
-    // now make an annotation
-    vtkMRMLAnnotationFiducialNode * fnode = vtkMRMLAnnotationFiducialNode::New();
-    fnode->SetName(labelText);
-    double coord[3] = {(double)xyz[0], (double)xyz[1], (double)xyz[2]};
-    fnode->AddControlPoint(coord, sel, vis);
-    fnode->SetSelected(sel);
-    fnode->SetLocked(locked);
-
-    this->GetMRMLScene()->AddNode(fnode);
-    if (n != 0)
-      {
-      idList += std::string(",");
-      }
-    idList += std::string(fnode->GetID());
-    fnode->CreateAnnotationTextDisplayNode();
-    fnode->CreateAnnotationPointDisplayNode();
-    fnode->SetTextScale(textScale);
-    fnode->GetAnnotationPointDisplayNode()->SetGlyphScale(symbolScale);
-    fnode->GetAnnotationPointDisplayNode()->SetGlyphType(glyphType);
-    fnode->GetAnnotationPointDisplayNode()->SetColor(color);
-    fnode->GetAnnotationPointDisplayNode()->SetSelectedColor(selColor);
-    fnode->GetAnnotationTextDisplayNode()->SetColor(color);
-    fnode->GetAnnotationTextDisplayNode()->SetSelectedColor(selColor);
-    fnode->SetDisplayVisibility(vis);
-    fnode->Delete();
-    }
-  // clean up
-  fidListHierarchyNode->Delete();
-  // remove the legacy node
-  this->GetMRMLScene()->RemoveNode(node->GetStorageNode());
-  this->GetMRMLScene()->RemoveNode(node);
-
-  // turn off batch processing
-  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
-
-  if (idList.length())
-    {
-    nodeID = (char *)malloc(sizeof(char) * (idList.length() + 1));
-    strcpy(nodeID, idList.c_str());
-    }
-  return nodeID;
-}
 
 //-----------------------------------------------------------------------------
 // Load an annotation from file
@@ -474,11 +367,7 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
       // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png", "Fiducial");
       // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationTextNode",  ":/Icons/AnnotationTextWithArrow.png", "Text");
       selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
-      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensionalWithArrow.png", "Bidimensional");
       selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png", "ROI");
-      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png", "Angle");
-      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationStickyNode", "", "Sticky");
-      // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationSplineNode", ":/Icons/AnnotationSpline.png", "Spline");
 
       // stop batch add
       this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
@@ -747,10 +636,6 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
 #if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 0, 0)
   scene->RegisterNodeClass(annotationROINode.GetPointer(), "ROI");
 #endif
-
-  // Bidimensional annotation
-  vtkNew<vtkMRMLAnnotationBidimensionalNode> annotationBidimensionalNode;
-  scene->RegisterNodeClass(annotationBidimensionalNode.GetPointer());
 
   // Fiducial annotation
   vtkNew<vtkMRMLAnnotationFiducialNode> annotationFiducialNode;
@@ -1923,28 +1808,6 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
 
     this->m_StringHolder = ss.str();
     }
-  else if (node->IsA("vtkMRMLAnnotationAngleNode"))
-    {
-    double angle = vtkMRMLAnnotationAngleNode::SafeDownCast(annotationNode)->GetAngleMeasurement();
-    std::ostringstream ss;
-    ss << angle;
-    std::string measurement = ss.str();
-    if (showUnits)
-      {
-      // Get Unit from node
-      vtkMRMLUnitNode* angleUnit = selectionNode ? selectionNode->GetUnitNode("angle") : nullptr;
-      if (angleUnit)
-        {
-        measurement = angleUnit->GetDisplayStringFromValue(angle);
-        }
-      else
-        {
-        measurement += " degrees";
-        }
-      }
-
-    this->m_StringHolder = measurement;
-    }
   else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
     {
     std::ostringstream ss;
@@ -1967,70 +1830,6 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
 
       this->m_StringHolder = ss.str();
       }
-    }
-  else if (node->IsA("vtkMRMLAnnotationBidimensionalNode"))
-    {
-    double measurement1;
-    double measurement2;
-    if (vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement().size()
-        != 2)
-      {
-      // measurement is not ready
-      measurement1 = 0;
-      measurement2 = 0;
-      }
-    else
-      {
-      // measurement is ready
-      measurement1
-          = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement()[0];
-      measurement2
-          = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement()[1];
-      }
-
-    std::ostringstream ss;
-
-    // the greatest measurement should appear first..
-    double length1 = std::max(measurement1, measurement2);
-    double length2 = std::min(measurement1, measurement2);
-
-    char string[512];
-    sprintf(string, this->m_MeasurementFormat, length1);
-
-    std::string unit = string;
-    if (showUnits)
-      {
-      vtkMRMLUnitNode* lengthUnit = selectionNode ? selectionNode->GetUnitNode("length") : nullptr;
-      if (lengthUnit)
-        {
-        unit = lengthUnit->GetDisplayStringFromValue(length1);
-        }
-      else
-        {
-        unit += " mm";
-        }
-      }
-    ss << unit << " x ";
-
-    char string2[512];
-    sprintf(string2, this->m_MeasurementFormat, length2);
-
-    unit = string2;
-    if (showUnits)
-      {
-      vtkMRMLUnitNode* lengthUnit = selectionNode ? selectionNode->GetUnitNode("length") : nullptr;
-      if (lengthUnit)
-        {
-        unit = lengthUnit->GetDisplayStringFromValue(length2);
-        }
-      else
-        {
-        unit += " mm";
-        }
-      }
-    ss << unit;
-
-    this->m_StringHolder = ss.str();
     }
 
   return this->m_StringHolder.c_str();
@@ -2635,7 +2434,7 @@ void vtkSlicerAnnotationModuleLogic::JumpSlicesToAnnotationCoordinate(const char
       return this->m_StringHolder.c_str();
       }
 
-    // get the corrsponding hierarchy
+    // get the corresponding hierarchy
     vtkMRMLAnnotationHierarchyNode* hNode =
         vtkMRMLAnnotationHierarchyNode::SafeDownCast(
             vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(

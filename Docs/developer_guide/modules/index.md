@@ -5,8 +5,11 @@ Modules usually interact with each other only indirectly, by making changes and 
 ```{toctree}
 :maxdepth: 2
 
+colors
 dicom
 markups
+plots
+segmentations
 segmenteditor
 transforms
 volumerendering

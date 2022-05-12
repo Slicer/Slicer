@@ -11,7 +11,7 @@ For debugging on Windows, Visual Studio is recommended as it has much better per
 
 ## Prerequisites
 
-- Build 3D Slicer in Debug mode, outside of Visual Studio Code, by following the [build instructions](../build_instructions.md).
+- Build 3D Slicer in Debug mode, outside of Visual Studio Code, by following the [build instructions](../build_instructions/overview.md).
 - Install Visual Studio Code
 - Install the `C/C++` extension in Visual Studio Code
 

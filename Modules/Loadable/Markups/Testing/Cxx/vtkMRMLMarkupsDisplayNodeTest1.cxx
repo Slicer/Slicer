@@ -22,7 +22,11 @@
 int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLMarkupsDisplayNode> node1;
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+  // 4 warnings in vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute() are expected
+  TESTING_OUTPUT_ASSERT_WARNINGS(4);
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   TEST_SET_GET_DOUBLE_RANGE(node1, TextScale, 0.0, 100.0);
 

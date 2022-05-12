@@ -34,10 +34,6 @@ set(${KIT}_SRCS
   vtkMRMLAnnotationLinesStorageNode.h
   vtkMRMLAnnotationLineDisplayNode.cxx
   vtkMRMLAnnotationLineDisplayNode.h
-  vtkMRMLAnnotationAngleNode.cxx
-  vtkMRMLAnnotationAngleNode.h
-  vtkMRMLAnnotationAngleStorageNode.cxx
-  vtkMRMLAnnotationAngleStorageNode.h
   vtkMRMLAnnotationRulerNode.cxx
   vtkMRMLAnnotationRulerNode.h
   vtkMRMLAnnotationRulerStorageNode.cxx
@@ -46,16 +42,10 @@ set(${KIT}_SRCS
   vtkMRMLAnnotationFiducialNode.h
   vtkMRMLAnnotationFiducialsStorageNode.cxx
   vtkMRMLAnnotationFiducialsStorageNode.h
-  vtkMRMLAnnotationStickyNode.cxx
-  vtkMRMLAnnotationStickyNode.h
   vtkMRMLAnnotationTextNode.cxx
   vtkMRMLAnnotationTextNode.h
   vtkMRMLAnnotationROINode.cxx
   vtkMRMLAnnotationROINode.h
-  vtkMRMLAnnotationSplineNode.cxx
-  vtkMRMLAnnotationSplineNode.h
-  vtkMRMLAnnotationBidimensionalNode.cxx
-  vtkMRMLAnnotationBidimensionalNode.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

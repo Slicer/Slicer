@@ -173,7 +173,7 @@ bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UseDisplayNode(vtkMR
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::IsVisible(vtkMRMLSegmentationDisplayNode* displayNode)
 {
-  return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D()
+  return displayNode
     && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID())
     && displayNode->GetOpacity3D() > 0;
 }
@@ -581,6 +581,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
       }
     pipeline->Actor->GetProperty()->SetDiffuse(genericDisplayNode->GetDiffuse());
     pipeline->Actor->GetProperty()->SetSpecularPower(genericDisplayNode->GetPower());
+    pipeline->Actor->GetProperty()->SetMetallic(displayNode->GetMetallic());
+    pipeline->Actor->GetProperty()->SetRoughness(displayNode->GetRoughness());
     pipeline->Actor->GetProperty()->SetEdgeVisibility(genericDisplayNode->GetEdgeVisibility());
     pipeline->Actor->GetProperty()->SetEdgeColor(genericDisplayNode->GetEdgeColor());
 

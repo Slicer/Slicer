@@ -22,7 +22,8 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog()
+qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog(QWidget* parent/*=nullptr*/)
+  : qMRMLScreenShotDialog(parent)
 {
   this->m_Logic = nullptr;
   this->setLayoutManager(qSlicerApplication::application()->layoutManager());

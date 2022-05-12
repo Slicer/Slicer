@@ -81,3 +81,7 @@ message(STATUS "Configuring ${_project_name} with Qt ${_major}.${_minor}.${_patc
   set(QT_BINARY_DIR "${Qt5_DIR}/../../../bin")
   get_filename_component(QT_BINARY_DIR ${QT_BINARY_DIR} ABSOLUTE)
   message(STATUS "Setting QT_BINARY_DIR: ${QT_BINARY_DIR}")
+
+set(QT_LIBRARY_DIR "${Qt5_DIR}/../../../lib")
+get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} ABSOLUTE)
+message(STATUS "Setting QT_LIBRARY_DIR: ${QT_LIBRARY_DIR}")

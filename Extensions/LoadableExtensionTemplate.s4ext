@@ -4,7 +4,7 @@
 # - the value can be blank
 #
 
-# This is source code manager (i.e. svn)
+# This is source code manager
 scm local
 scmurl Testing/LoadableExtensionTemplate
 scmrevision NA
@@ -28,7 +28,7 @@ contributors John Doe (AnyWare Corp.)
 category Examples
 
 # url to icon (png, size 128x128 pixels)
-iconurl http://www.example.com/Slicer/Extensions/LoadableExtensionTemplate.png
+iconurl https://www.example.com/Slicer/Extensions/LoadableExtensionTemplate.png
 
 # Give people an idea what to expect from this code
 #  - Is it just a test or something you stand behind?
@@ -38,7 +38,7 @@ status
 description This is an example of a simple extension
 
 # Space separated list of urls
-screenshoturls http://www.example.com/Slicer/Extensions/LoadableExtensionTemplate/Screenshots/1.png
+screenshoturls https://www.example.com/Slicer/Extensions/LoadableExtensionTemplate/Screenshots/1.png
 
 # 0 or 1: Define if the extension should be enabled after its installation.
 enabled 1

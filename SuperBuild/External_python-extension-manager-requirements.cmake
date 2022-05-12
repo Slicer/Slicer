@@ -40,16 +40,13 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   couchdb==1.2 --hash=sha256:13a28a1159c49f8346732e8724b9a4d65cba54bec017c4a7eeb1499fe88151d1
   # [/CouchDB]
   # [gitdb]
-  gitdb==4.0.7 --hash=sha256:6c4cc71933456991da20917998acbe6cf4fb41eeaab7d6d67fbc05ecd4c865b0
+  gitdb==4.0.9 --hash=sha256:8033ad4e853066ba6ca92050b9df2f89301b8fc8bf7e9324d412a63f8bf1a8fd
   # [/gitdb]
   # [smmap]
-  smmap==4.0.0 --hash=sha256:a9a7479e4c572e2e775c404dcd3080c8dc49f39918c2cf74913d30c4c478e3c2
+  smmap==5.0.0 --hash=sha256:2aba19d6a040e78d8b09de5c57e96207b09ed71d8e55ce0959eeee6c8e190d94
   # [/smmap]
-  # [typing-extensions]
-  typing-extensions==3.10.0.2 --hash=sha256:f1d25edafde516b146ecd0613dabcc61409817af4766fbbcfb8d1ad4ec441a34
-  # [/typing-extensions]
   # [GitPython]
-  GitPython==3.1.18 --hash=sha256:fce760879cd2aebd2991b3542876dc5c4a909b30c9d69dfc488e504a8db37ee8
+  GitPython==3.1.27 --hash=sha256:5b68b000463593e05ff2b261acff0ff0972df8ab1b70d3cdbd41b546c8b8fc3d
   # [/GitPython]
   # [six]
   six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254

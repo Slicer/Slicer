@@ -23,8 +23,20 @@
 
 #include "vtkMRMLSegmentationNode.h"
 
+#include "qSlicerApplication.h"
+
+// Segmentations logic includes
+#include "vtkSlicerSegmentationsModuleLogic.h"
+
+// CTK includes
+#include <ctkMessageBox.h>
+
+// Segmentation core includes
+#include <vtkOrientedImageData.h>
+
 // Qt includes
 #include <QDialog>
+#include <QMainWindow>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -49,6 +61,7 @@ private:
   qMRMLSegmentationGeometryWidget* GeometryWidget;
   QPushButton* OKButton;
   QPushButton* CancelButton;
+
 };
 
 //-----------------------------------------------------------------------------
@@ -59,7 +72,10 @@ qMRMLSegmentationGeometryDialogPrivate::qMRMLSegmentationGeometryDialogPrivate(q
 }
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentationGeometryDialogPrivate::~qMRMLSegmentationGeometryDialogPrivate() = default;
+qMRMLSegmentationGeometryDialogPrivate::~qMRMLSegmentationGeometryDialogPrivate()
+{
+  delete this->GeometryWidget;
+}
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentationGeometryDialogPrivate::init()
@@ -158,6 +174,16 @@ bool qMRMLSegmentationGeometryDialog::exec()
 
   // Initialize dialog
   d->GeometryWidget->setSegmentationNode(d->SegmentationNode);
+
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  if (mainWindow)
+    {
+    // setParent resets window flags, so save them and then restore
+    Qt::WindowFlags windowFlags = d->windowFlags();
+    d->setParent(mainWindow);
+    d->setWindowFlags(windowFlags);
+    }
 
   // Show dialog
   bool result = false;

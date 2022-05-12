@@ -6,7 +6,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *         https://www.apache.org/licenses/LICENSE-2.0.txt
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,7 @@
 #define itkDCMTKFileReader_h
 
 // XXX # Workaround bug in packaging of DCMTK 3.6.0 on Debian.
-//     # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=637687
+//     # See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=637687
 #ifndef HAVE_CONFIG_H
 #define HAVE_CONFIG_H
 #endif

@@ -177,8 +177,8 @@
         </property>
         <property name="nodeTypes">
          <stringlist>
-          <string>vtkMRMLAnnotationROINode</string>
           <string>vtkMRMLMarkupsROINode</string>
+          <string>vtkMRMLAnnotationROINode</string>
          </stringlist>
         </property>
         <property name="baseName">

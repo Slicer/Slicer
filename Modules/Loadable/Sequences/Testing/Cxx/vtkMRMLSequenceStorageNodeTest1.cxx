@@ -19,6 +19,8 @@
 ==============================================================================*/
 
 // MRML includes
+#include <vtkCacheManager.h>
+#include <vtkDataIOManager.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLLinearTransformSequenceStorageNode.h>
 #include <vtkMRMLModelNode.h>
@@ -30,19 +32,57 @@
 #include <vtkMRMLVolumeSequenceStorageNode.h>
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkPolyData.h>
 
 #include "vtkMRMLCoreTestingMacros.h"
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSequenceStorageNodeTest1( int, char * [] )
+int TestWriteReadSequence(const std::string& tempDir, vtkMRMLSequenceNode* sequenceNode, vtkMRMLStorageNode* storageNode, std::string fileName)
 {
+  std::stringstream fullFilePathSS;
+  fullFilePathSS << tempDir << "/" << fileName << "." << storageNode->GetDefaultWriteFileExtension();
+  std::string fullFilePath = fullFilePathSS.str();
+  if (vtksys::SystemTools::FileExists(fullFilePath.c_str(), true))
+    {
+    vtksys::SystemTools::RemoveFile(fullFilePath.c_str());
+    }
+
+  std::cout << "Testing sequence write: " << fullFilePath << std::endl;
+  storageNode->SetFileName(fullFilePath.c_str());
+  CHECK_BOOL(storageNode->WriteData(sequenceNode), true);
+
+  vtkSmartPointer<vtkMRMLScene> scene = sequenceNode->GetScene();
+
+  vtkSmartPointer<vtkMRMLSequenceNode> readSequenceNode = vtkSmartPointer<vtkMRMLSequenceNode>::Take(
+    vtkMRMLSequenceNode::SafeDownCast(sequenceNode->CreateNodeInstance()));
+  scene->AddNode(readSequenceNode);
+  vtkSmartPointer<vtkMRMLStorageNode> readStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(
+    vtkMRMLStorageNode::SafeDownCast(storageNode->CreateNodeInstance()));
+  scene->AddNode(readStorageNode);
+
+  std::cout << "Testing sequence read: " << fullFilePath << std::endl;
+  readStorageNode->SetFileName(fullFilePath.c_str());
+  CHECK_BOOL(readStorageNode->ReadData(readSequenceNode), true);
+  CHECK_INT(readSequenceNode->GetNumberOfDataNodes(), sequenceNode->GetNumberOfDataNodes());
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+int vtkMRMLSequenceStorageNodeTest1( int argc, char * argv[] )
+{
+  std::string tempDir = ".";
+  if (argc > 1)
+    {
+    tempDir = argv[1];
+    }
+
   vtkNew<vtkMRMLScene> scene;
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformSequenceStorageNode>::New());
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLSequenceNode>::New());
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLSequenceStorageNode>::New());
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode>::New());
+  scene->SetDataIOManager(vtkNew<vtkDataIOManager>());
+  scene->GetDataIOManager()->SetCacheManager(vtkNew<vtkCacheManager>());
+  scene->GetDataIOManager()->GetCacheManager()->SetRemoteCacheDirectory(tempDir.c_str());
 
   // Add generic node sequence
   {
@@ -52,17 +92,22 @@ int vtkMRMLSequenceStorageNodeTest1( int, char * [] )
     genericSequenceNode->AddDefaultStorageNode();
     vtkSmartPointer<vtkMRMLSequenceStorageNode> addedGenericStorageNode = vtkMRMLSequenceStorageNode::SafeDownCast(genericSequenceNode->GetStorageNode());
     CHECK_NOT_NULL(addedGenericStorageNode);
+    CHECK_EXIT_SUCCESS(TestWriteReadSequence(tempDir, genericSequenceNode, addedGenericStorageNode, "TestGenericSequence"));
   }
 
   // Add volume node sequence
   {
     vtkSmartPointer<vtkMRMLSequenceNode> imageSequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+    vtkNew<vtkImageData> image;
+    image->SetDimensions(10, 10, 1);
+    image->AllocateScalars(VTK_CHAR, 1);
     vtkSmartPointer<vtkMRMLScalarVolumeNode> volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLScalarVolumeNode"));
+    volumeNode->SetAndObserveImageData(image);
     imageSequenceNode->SetDataNodeAtValue(volumeNode.GetPointer(), "0");
     imageSequenceNode->AddDefaultStorageNode();
     vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode> addedVolumeStorageNode
       = vtkMRMLVolumeSequenceStorageNode::SafeDownCast(imageSequenceNode->GetStorageNode());
-    CHECK_NOT_NULL(addedVolumeStorageNode);
+    CHECK_EXIT_SUCCESS(TestWriteReadSequence(tempDir, imageSequenceNode, addedVolumeStorageNode, "TestImageSequence"));
   }
 
   // Add transform node sequence
@@ -75,6 +120,7 @@ int vtkMRMLSequenceStorageNodeTest1( int, char * [] )
     vtkSmartPointer<vtkMRMLLinearTransformSequenceStorageNode> addedTransformStorageNode
       = vtkMRMLLinearTransformSequenceStorageNode::SafeDownCast(transformSequenceNode->GetStorageNode());
     CHECK_NOT_NULL(addedTransformStorageNode);
+    CHECK_EXIT_SUCCESS(TestWriteReadSequence(tempDir, transformSequenceNode, addedTransformStorageNode, "TestTransformSequence"));
   }
 
   // Create generic node sequence

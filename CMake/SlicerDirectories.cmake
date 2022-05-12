@@ -61,7 +61,7 @@ set(Slicer_INCLUDE_DIR "include/${Slicer_MAIN_PROJECT_APPLICATION_NAME}-${Slicer
 set(Slicer_SHARE_DIR "share/${Slicer_MAIN_PROJECT_APPLICATION_NAME}-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_LIBEXEC_DIR "libexec/${Slicer_MAIN_PROJECT_APPLICATION_NAME}-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
-set(Slicer_QM_DIR "${Slicer_BIN_DIR}/Translations")
+set(Slicer_QM_DIR "${Slicer_BIN_DIR}/translations")
 
 # for install tree
 set(Slicer_INSTALL_ROOT "./")

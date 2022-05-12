@@ -33,12 +33,9 @@ class qSlicerDICOMExportable;
 class qSlicerDICOMTagEditorWidgetPrivate;
 class vtkMRMLScene;
 
-/// Widget for showing and editing pseudo-tags for series to export. Pseudo-tag is
-/// a concept defined by the DICOM plugin that produces the exportable that will be
-/// translated into real DICOM tags at the time of export. A pseudo-tag is a pair of
-/// strings that consist of
-/// Further info in \sa qSlicerDICOMExportable and on this page:
-/// https://www.assembla.com/spaces/slicerrt/tickets/55-export-rt-data-from-slicer-in-dicom-rt-format?comment=609182213#comment:609182213
+/// Widget for showing and editing pseudo-tags for series to export. Pseudo-tag is a
+/// pair of strings (name, value) that DICOM plugins use to set values of real DICOM tags in
+/// the exported data set.
 /// \ingroup Slicer_QtModules_SubjectHierarchy
 class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMTagEditorWidget : public QWidget
 {

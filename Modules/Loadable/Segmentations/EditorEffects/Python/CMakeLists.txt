@@ -43,4 +43,5 @@ ctkMacroCompilePythonScript(
   RESOURCES "${SegmentEditorEffects_PYTHON_RESOURCES}"
   DESTINATION_DIR ${Slicer_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}/SegmentEditorEffects
   INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}/SegmentEditorEffects
+  NO_INSTALL_SUBDIR
   )

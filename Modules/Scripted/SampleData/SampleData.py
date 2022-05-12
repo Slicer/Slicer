@@ -1,10 +1,15 @@
 import logging
 import os
 import textwrap
-import unittest
-import vtk, qt, ctk, slicer
+
+import ctk
+import qt
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import computeChecksum, extractAlgoAndDigest, TESTING_DATA_URL
+
 
 #
 # SampleData methods
@@ -52,6 +57,7 @@ def downloadSamples(sampleName):
   and load it if it is available.  Returns the loaded nodes."""
   return SampleDataLogic().downloadSamples(sampleName)
 
+
 #
 # SampleData
 #
@@ -80,7 +86,7 @@ and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCA
 <p>CTLiver dataset comes from <a href="http://medicaldecathlon.com/">Medical Decathlon project</a> (imagesTr/liver_100.nii.gz in Task03_Liver collection)
 with a permissive copyright-license (<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA 4.0</a>), allowing for data to be shared, distributed and improved upon.</p>
 
-<p>CTA abdomen (Panoramix) dataset comes from <a href="http://www.osirix-viewer.com/resources/dicom-image-library/">Osirix DICOM image library</a>
+<p>CTA abdomen (Panoramix) dataset comes from <a href="https://www.osirix-viewer.com/resources/dicom-image-library/">Osirix DICOM image library</a>
 and is exclusively available for research and teaching. You are not authorized to redistribute or sell it, or
 use it for commercial purposes.</p>
 """
@@ -99,23 +105,22 @@ use it for commercial purposes.</p>
     except AttributeError:
       slicer.modules.sampleDataSources = {}
 
-
   def addMenu(self):
-    actionIcon = self.parent.icon
-    a = qt.QAction(actionIcon, 'Download Sample Data', slicer.util.mainWindow())
+    a = qt.QAction('Download Sample Data', slicer.util.mainWindow())
     a.setToolTip('Go to the SampleData module to download data from the network')
     a.connect('triggered()', self.select)
 
     fileMenu = slicer.util.lookupTopLevelWidget('FileMenu')
     if fileMenu:
       for action in fileMenu.actions():
-        if action.text == 'Save':
-          fileMenu.insertAction(action,a)
-
+        if action.objectName == "FileSaveSceneAction":
+          fileMenu.insertAction(action, a)
+          fileMenu.insertSeparator(action)
 
   def select(self):
     m = slicer.util.mainWindow()
     m.moduleSelector().selectModule('SampleData')
+
 
 #
 # SampleDataSource
@@ -395,6 +400,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     if not SampleDataLogic.sampleDataSourcesByCategory(category):
       return
     slicer.util.findChild(self.parent, '%sCollapsibleGroupBox' % category).setVisible(visible)
+
 
 #
 # SampleData logic
@@ -778,6 +784,7 @@ class SampleDataLogic:
     logging.log(logLevel, message)
 
   """Utility methods for backwards compatibility"""
+
   def downloadMRHead(self):
     return self.downloadSample('MRHead')
 
@@ -817,7 +824,7 @@ class SampleDataLogic:
     return self.downloadSamples('MRUSProstate')
 
   def humanFormatSize(self,size):
-    """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
+    """ from https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
     for x in ['bytes','KB','MB','GB']:
       if size < 1024.0 and size > -1024.0:
         return f"{size:3.1f} {x}"

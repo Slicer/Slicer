@@ -1,12 +1,8 @@
-import os, copy
-import qt
-import vtk
 import logging
+import qt
 
 import slicer
-from slicer.util import VTKObservationMixin
 
-from slicer.util import settingsValue, toBool
 import DICOMLib
 
 
@@ -88,17 +84,12 @@ class DICOMSendDialog(qt.QDialog):
     self.cancelRequested = False
     okButton = self.bbox.button(self.bbox.Ok)
 
-    try:
-      #qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
+    with slicer.util.tryWithErrorDisplay("DICOM sending failed."):
       okButton.enabled = False
       DICOMLib.DICOMSender(self.files, address, protocol, aeTitle=aeTitle, progressCallback=self.onProgress)
       logging.debug("DICOM sending of %s files succeeded" % len(self.files))
       self.close()
-    except Exception as result:
-      import traceback
-      slicer.util.errorDisplay("DICOM sending failed: %s" % str(result), parent=self.parent().window(), detailedText=traceback.format_exc())
 
-    #qt.QApplication.restoreOverrideCursor()
     okButton.enabled = True
     self.sendingIsInProgress = False
 

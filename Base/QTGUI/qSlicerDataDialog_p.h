@@ -34,9 +34,13 @@ class qSlicerDataDialogPrivate
   , public Ui_qSlicerDataDialog
 {
   Q_OBJECT
+  Q_DECLARE_PUBLIC(qSlicerDataDialog);
 public:
-  explicit qSlicerDataDialogPrivate(QWidget* _parent=nullptr);
+  explicit qSlicerDataDialogPrivate(qSlicerDataDialog* object, QWidget* _parent=nullptr);
   ~qSlicerDataDialogPrivate() override;
+
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
 
   QList<qSlicerIO::IOProperties> selectedFiles()const;
 public slots:
@@ -44,6 +48,7 @@ public slots:
   void addFiles();
   void reset();
   void showOptions(bool);
+  void resetColumnWidths(bool forceFileColumnStretch=false);
 
 protected slots:
   void onFileTypeChanged(const QString&);
@@ -53,6 +58,8 @@ protected slots:
 //  void updateCheckBoxHeader(int row, int column);
 
 protected:
+  qSlicerDataDialog* const q_ptr;
+
   enum ColumnType
   {
     FileColumn = 0,

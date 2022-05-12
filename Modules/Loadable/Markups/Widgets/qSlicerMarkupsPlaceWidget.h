@@ -44,13 +44,18 @@ qSlicerMarkupsPlaceWidget : public qSlicerWidget
   Q_OBJECT
   Q_ENUMS(PlaceMultipleMarkupsType)
   Q_PROPERTY(bool buttonsVisible READ buttonsVisible WRITE setButtonsVisible)
-  Q_PROPERTY(bool deleteAllMarkupsOptionVisible READ deleteAllMarkupsOptionVisible WRITE setDeleteAllMarkupsOptionVisible)
+  Q_PROPERTY(bool deleteAllControlPointsOptionVisible READ deleteAllControlPointsOptionVisible WRITE setDeleteAllControlPointsOptionVisible)
+  Q_PROPERTY(bool unsetLastControlPointOptionVisible READ unsetLastControlPointOptionVisible WRITE setUnsetLastControlPointOptionVisible)
+  Q_PROPERTY(bool unsetAllControlPointsOptionVisible READ unsetAllControlPointsOptionVisible WRITE setUnsetAllControlPointsOptionVisible)
   Q_PROPERTY(PlaceMultipleMarkupsType placeMultipleMarkups READ placeMultipleMarkups WRITE setPlaceMultipleMarkups)
   Q_PROPERTY(QColor nodeColor READ nodeColor WRITE setNodeColor)
   Q_PROPERTY(QColor defaultNodeColor READ defaultNodeColor WRITE setDefaultNodeColor)
   Q_PROPERTY(bool currentNodeActive READ currentNodeActive WRITE setCurrentNodeActive)
   Q_PROPERTY(bool placeModeEnabled READ placeModeEnabled WRITE setPlaceModeEnabled)
   Q_PROPERTY(bool placeModePersistency READ placeModePersistency WRITE setPlaceModePersistency)
+
+  /// \deprecated Use deleteAllControlPointsOptionVisible instead.
+  Q_PROPERTY(bool deleteAllMarkupsOptionVisible READ deleteAllMarkupsOptionVisible WRITE setDeleteAllMarkupsOptionVisible)
 
 public:
   typedef qSlicerWidget Superclass;
@@ -91,7 +96,13 @@ public:
   bool buttonsVisible() const;
 
   /// Returns true if the Delete all option on the Delete button is visible.
-  bool deleteAllMarkupsOptionVisible() const;
+  bool deleteAllControlPointsOptionVisible() const;
+
+  /// Returns true if the Unset last control point option on the Delete button is visible.
+  bool unsetLastControlPointOptionVisible() const;
+
+  /// Returns true if the Unset all control points option on the Delete button is visible.
+  bool unsetAllControlPointsOptionVisible() const;
 
   /// Get the selected color of the currently selected markups node.
   QColor nodeColor() const;
@@ -106,6 +117,19 @@ public:
 
   // Button to delete control point(s) or unset their position
   Q_INVOKABLE QToolButton* deleteButton() const;
+
+  //-----------------------------------------------------------
+  // All public methods below are deprecated
+  //
+  // These methods are deprecated because they use old terms (markup instead of control point),
+
+  /// \deprecated Use deleteAllControlPointsOptionVisible instead.
+  bool deleteAllMarkupsOptionVisible() const
+  {
+    qWarning("qSlicerMarkupsPlaceWidget::deleteAllMarkupsOptionVisible method is deprecated, please use deleteAllControlPointsOptionVisible instead");
+    return this->deleteAllControlPointsOptionVisible();
+  };
+
 
 public slots:
 
@@ -136,7 +160,13 @@ public slots:
   void setButtonsVisible(bool visible);
 
   /// Set visibility of Delete all markups option.
-  void setDeleteAllMarkupsOptionVisible(bool visible);
+  void setDeleteAllControlPointsOptionVisible(bool visible);
+
+  /// Set visibility of Unset last control point option.
+  void setUnsetLastControlPointOptionVisible(bool visible);
+
+  /// Set visibility of Unset all control point option
+  void setUnsetAllControlPointsOptionVisible(bool visible);
 
   /// Set place mode to persistent (remains active until deactivated). Does not enable or disable placement mode.
   void setPlaceModePersistency(bool);
@@ -152,22 +182,43 @@ public slots:
   /// Delete all points from the markups node.
   void deleteAllPoints();
 
-  /// \deprecated Use deleteLastPoint instead.
-  void deleteLastMarkup();
-
-  /// \deprecated Use deleteLastPoint instead.
-  void deleteAllMarkups();
-
   /// Unset the position status of the last placed markup point.
   void unsetLastDefinedPoint();
 
   /// Unset the position of all points from the markups node.
   void unsetAllPoints();
 
+  //-----------------------------------------------------------
+  // All public methods below are deprecated
+  //
+  // These methods are deprecated because they use old terms (markup instead of control point),
+
+  /// \deprecated Use deleteLastPoint instead.
+  void deleteLastMarkup()
+  {
+  qWarning("qSlicerMarkupsPlaceWidget::deleteLastMarkup method is deprecated, please use deleteLastPoint instead");
+  this->deleteLastPoint();
+  };
+  /// \deprecated Use deleteAllPoints instead.
+  void deleteAllMarkups()
+  {
+  qWarning("qSlicerMarkupsPlaceWidget::deleteAllMarkups method is deprecated, please use deleteAllPoints instead");
+  this->deleteAllPoints();
+  };
+  /// \deprecated Use setDeleteAllControlPointsOptionVisible instead.
+  void setDeleteAllMarkupsOptionVisible(bool visible)
+  {
+  qWarning("qSlicerMarkupsPlaceWidget::setDeleteAllMarkupsOptionVisible method is deprecated, please use setDeleteAllControlPointsOptionVisible instead");
+  this->setDeleteAllControlPointsOptionVisible(visible);
+  };
+
 protected slots:
 
   /// Update the GUI to reflect the currently selected markups node.
   void updateWidget();
+
+  /// Update the Delete Button to reflect the currently visible delete button options.
+  void updateDeleteButton();
 
   /// Update the currently selected markups node to have its selected color changed.
   void onColorButtonChanged(QColor);

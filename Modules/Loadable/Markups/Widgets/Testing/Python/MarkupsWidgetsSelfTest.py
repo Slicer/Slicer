@@ -1,7 +1,8 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # MarkupsWidgetsSelfTest
@@ -17,6 +18,7 @@ class MarkupsWidgetsSelfTest(ScriptedLoadableModule):
     self.parent.helpText = """This is a self test for Markups widgets."""
     self.parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
 
+
 #
 # MarkupsWidgetsSelfTestWidget
 #
@@ -24,6 +26,7 @@ class MarkupsWidgetsSelfTest(ScriptedLoadableModule):
 class MarkupsWidgetsSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # MarkupsWidgetsSelfTestLogic
@@ -36,6 +39,7 @@ class MarkupsWidgetsSelfTestLogic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     pass
 
@@ -139,7 +143,7 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
 
     numberOfFiducialsAdded = 5
     for i in range(numberOfFiducialsAdded):
-      self.markupsLogic.AddFiducial()
+      self.markupsNode3.AddControlPoint([i*20, i*15, i*5])
 
     tableWidget = simpleMarkupsWidget.tableWidget()
     self.assertEqual(tableWidget.rowCount, numberOfFiducialsAdded)
@@ -166,15 +170,20 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
     placeWidget.buttonsVisible = True
     self.assertTrue(placeWidget.buttonsVisible)
 
-    placeWidget.deleteAllMarkupsOptionVisible = False
-    self.assertFalse(placeWidget.deleteAllMarkupsOptionVisible)
-    placeWidget.deleteAllMarkupsOptionVisible = True
-    self.assertTrue(placeWidget.deleteAllMarkupsOptionVisible)
+    placeWidget.deleteAllControlPointsOptionVisible = False
+    self.assertFalse(placeWidget.deleteAllControlPointsOptionVisible)
+    placeWidget.deleteAllControlPointsOptionVisible = True
+    self.assertTrue(placeWidget.deleteAllControlPointsOptionVisible)
 
-    placeWidget.deleteAllMarkupsOptionVisible = False
-    self.assertFalse(placeWidget.deleteAllMarkupsOptionVisible)
-    placeWidget.deleteAllMarkupsOptionVisible = True
-    self.assertTrue(placeWidget.deleteAllMarkupsOptionVisible)
+    placeWidget.unsetLastControlPointOptionVisible = False
+    self.assertFalse(placeWidget.unsetLastControlPointOptionVisible)
+    placeWidget.unsetLastControlPointOptionVisible = True
+    self.assertTrue(placeWidget.unsetLastControlPointOptionVisible)
+
+    placeWidget.unsetAllControlPointsOptionVisible = False
+    self.assertFalse(placeWidget.unsetAllControlPointsOptionVisible)
+    placeWidget.unsetAllControlPointsOptionVisible = True
+    self.assertTrue(placeWidget.unsetAllControlPointsOptionVisible)
 
     placeWidget.placeMultipleMarkups = slicer.qSlicerMarkupsPlaceWidget.ForcePlaceSingleMarkup
     placeWidget.placeModeEnabled = True

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13.4)
+cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
 
 project(ScriptedLoadableExtensionTemplate)
 
@@ -8,8 +8,8 @@ set(EXTENSION_HOMEPAGE "https://www.slicer.org/wiki/Documentation/Nightly/Extens
 set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_CONTRIBUTORS "John Doe (AnyWare Corp.)")
 set(EXTENSION_DESCRIPTION "This is an example of a simple extension")
-set(EXTENSION_ICONURL "http://www.example.com/Slicer/Extensions/ScriptedLoadableExtensionTemplate.png")
-set(EXTENSION_SCREENSHOTURLS "http://www.example.com/Slicer/Extensions/ScriptedLoadableExtensionTemplate/Screenshots/1.png")
+set(EXTENSION_ICONURL "https://www.example.com/Slicer/Extensions/ScriptedLoadableExtensionTemplate.png")
+set(EXTENSION_SCREENSHOTURLS "https://www.example.com/Slicer/Extensions/ScriptedLoadableExtensionTemplate/Screenshots/1.png")
 set(EXTENSION_DEPENDS "NA") # Specified as a list or "NA" if no dependencies
 
 #-----------------------------------------------------------------------------

@@ -445,6 +445,8 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::SetTransformDisplayProp
   actor->GetProperty()->SetOpacity(displayNode->GetOpacity());
   actor->GetProperty()->SetDiffuse(displayNode->GetDiffuse());
   actor->GetProperty()->SetSpecularPower(displayNode->GetPower());
+  actor->GetProperty()->SetMetallic(displayNode->GetMetallic());
+  actor->GetProperty()->SetRoughness(displayNode->GetRoughness());
   actor->GetProperty()->SetEdgeVisibility(displayNode->GetEdgeVisibility());
   actor->GetProperty()->SetEdgeColor(displayNode->GetEdgeColor());
 

@@ -527,6 +527,13 @@ void vtkMRMLTransformNode::GetTransformBetweenNodes(vtkMRMLTransformNode* source
     return;
     }
 
+  // If the number of transforms between the nodes exceeds the max depth threshold, then begin to search
+  // for duplicate transform nodes to ensure that the transform nodes don't contain a loop.
+  // See issue https://github.com/Slicer/Slicer/issues/6355.
+  int maxDepth = 100;
+  int currentDepth = 0;
+  std::set<vtkMRMLTransformNode*> visitedTransformNodes;
+
   if (sourceNode != nullptr && sourceNode->IsTransformNodeMyParent(targetNode))
     {
     // traverse the transform tree from bottom to top, from sourceNode to targetNode
@@ -536,6 +543,16 @@ void vtkMRMLTransformNode::GetTransformBetweenNodes(vtkMRMLTransformNode* source
       if (transformToParent)
         {
         transformSourceToTarget->Concatenate(transformToParent);
+        }
+
+      ++currentDepth;
+      if (currentDepth > maxDepth && !visitedTransformNodes.insert(current).second)
+        {
+        // Max depth exceeded and duplicate transform found. Loop detected.
+        // See issue https://github.com/Slicer/Slicer/issues/6355.
+        vtkGenericWarningMacro("vtkMRMLTransformNode::GetTransformBetweenNodes: Loop detected between transform nodes");
+        transformSourceToTarget->Identity();
+        break;
         }
       }
     }
@@ -548,6 +565,16 @@ void vtkMRMLTransformNode::GetTransformBetweenNodes(vtkMRMLTransformNode* source
       if (transformToParent)
         {
         transformSourceToTarget->Concatenate(transformToParent);
+        }
+
+      ++currentDepth;
+      if (currentDepth > maxDepth && !visitedTransformNodes.insert(current).second)
+        {
+        // Max depth exceeded and duplicate transform found. Loop detected.
+        // See issue https://github.com/Slicer/Slicer/issues/6355.
+        vtkGenericWarningMacro("vtkMRMLTransformNode::GetTransformBetweenNodes: Loop detected between transform nodes");
+        transformSourceToTarget->Identity();
+        break;
         }
       }
     // in transformSourceToTarget we have transform targetNode->sourceNode,
@@ -1445,11 +1472,35 @@ int vtkMRMLTransformNode::IsLinear()
     {
     return 1;
     }
+
   // No transform means identity transform, which is a linear transform
   if (this->TransformToParent==nullptr && this->TransformFromParent==nullptr)
     {
     return 1;
     }
+
+  // If it is a general transform then inspect all its components
+  vtkGeneralTransform* compositeTransform = vtkGeneralTransform::SafeDownCast(
+    this->TransformToParent ? this->TransformToParent : this->TransformFromParent);
+  if (compositeTransform)
+    {
+    vtkNew<vtkCollection> transformList;
+    FlattenGeneralTransform(transformList, compositeTransform);
+    vtkCollectionSimpleIterator it;
+    vtkAbstractTransform* transformComponent = nullptr;
+    for (transformList->InitTraversal(it); (transformComponent = vtkAbstractTransform::SafeDownCast(transformList->GetNextItemAsObject(it)));)
+      {
+      if (!transformComponent->IsA("vtkLinearTransform"))
+        {
+        // found a non-linear component
+        return 0;
+        }
+      }
+    // Have not found any non-linear component, therefore this composite transform is all linear
+    return 1;
+    }
+
+  // Not a linear transform and not a composite transform, must be non-linear
   return 0;
 }
 

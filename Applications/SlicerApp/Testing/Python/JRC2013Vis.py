@@ -1,9 +1,13 @@
 import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import ctk
+import qt
+
+import slicer
 from DICOMLib import DICOMUtils
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
 
 #
 # JRC2013Vis
@@ -22,6 +26,7 @@ class JRC2013Vis(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qJRC2013VisWidget
@@ -80,7 +85,6 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
 
   def onStartStopDicomPeer(self,flag):
     if flag:
-      import os
       self.startStopDicomPeerButton.setEnabled(False)
       dicomFilesDirectory = slicer.app.temporaryPath
       configFilePath = dicomFilesDirectory + '/Dcmtk-db/dcmqrscp.cfg'
@@ -129,6 +133,7 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
     else:
       print('Stop DICOM peer')
       self.popen.kill()
+
 
 #
 # JRC2013VisLogic
@@ -374,7 +379,6 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
-
 
   def test_Part3Liver(self):
     """ Test using the liver example data

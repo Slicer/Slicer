@@ -22,7 +22,6 @@
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLMarkupsStorageNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
@@ -1412,48 +1411,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           // get the fiducial list node
           vtkMRMLNode *node
             = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
-          vtkMRMLFiducialListNode *fiducials
-            = vtkMRMLFiducialListNode::SafeDownCast(node);
           vtkMRMLDisplayableHierarchyNode *points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
           vtkMRMLDisplayableNode *markups = vtkMRMLDisplayableNode::SafeDownCast(node);
-          if (fiducials)
-            {
-            // check to see if module can handle more than one point
-            long numberOfSelectedFiducials=0;
-            for (int i=0; i < fiducials->GetNumberOfFiducials(); ++i)
-              {
-              if (fiducials->GetNthFiducialSelected(i))
-                {
-                numberOfSelectedFiducials++;
-                }
-              }
-
-            if (numberOfSelectedFiducials == 1
-                || (*pit).GetMultiple() == "true")
-              {
-              for (int i=0; i < fiducials->GetNumberOfFiducials(); ++i)
-                {
-                float *pt;
-                std::ostringstream ptAsString;
-
-                if (fiducials->GetNthFiducialSelected(i))
-                  {
-                  pt = fiducials->GetNthFiducialXYZ(i);
-                  ptAsString << pt[0] << "," << pt[1] << "," << pt[2];
-
-                  commandLineAsString.push_back(prefix + flag);
-                  commandLineAsString.push_back(ptAsString.str());
-                  }
-                }
-              }
-            else
-              {
-              // Can't support this command line with this fiducial
-              // list
-              vtkErrorMacro("Module does not support multiple fiducials.");
-              }
-            }
-          else if (markups && markups->IsA("vtkMRMLMarkupsNode"))
+          if (markups && markups->IsA("vtkMRMLMarkupsNode"))
             {
             int multipleFlag = 1;
             if ((*pit).GetMultiple() == "false")
@@ -1578,7 +1538,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                 }
               }
             }
-          else if (roi && roi->IsA("vtkMRMLAnnotationROINode"))
+          else if (roi && (roi->IsA("vtkMRMLMarkupsROINode") || roi->IsA("vtkMRMLAnnotationROINode")))
             {
             roi->WriteCLI(commandLineAsString, prefix+flag, coordinateSystem, multipleFlag);
             }
@@ -2469,7 +2429,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       {
       if (itksys::SystemTools::FileExists((*fit).c_str()))
         {
-        removed = itksys::SystemTools::RemoveFile((*fit).c_str());
+        removed = static_cast<bool>(itksys::SystemTools::RemoveFile((*fit).c_str()));
         if (!removed)
           {
           std::stringstream information;

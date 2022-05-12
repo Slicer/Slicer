@@ -180,7 +180,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
     //         TypeError: super(type, obj): obj must be an instance or subtype of type
     //
     //      More details about the exception :
-    //        http://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
+    //        https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
     //
     return false;
     }

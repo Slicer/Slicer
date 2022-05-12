@@ -1,14 +1,17 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
-import logging
 import copy
+import os
 import tempfile
+
+import vtk
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # SlicerTransformInteractionTest1
 #
+
 
 class SlicerTransformInteractionTest1(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
@@ -30,6 +33,7 @@ class SlicerTransformInteractionTest1(ScriptedLoadableModule):
 # SlicerTransformInteractionTest1Widget
 #
 
+
 class SlicerTransformInteractionTest1Widget(ScriptedLoadableModuleWidget):
   """
   """
@@ -41,9 +45,11 @@ class SlicerTransformInteractionTest1Widget(ScriptedLoadableModuleWidget):
 # SlicerTransformInteractionTest1Logic
 #
 
+
 class SlicerTransformInteractionTest1Logic(ScriptedLoadableModuleLogic):
   """
   """
+
   def addTransform(self):
     """Create and add a transform node with a display node to the
        mrmlScene.
@@ -68,6 +74,7 @@ class SlicerTransformInteractionTest1Logic(ScriptedLoadableModuleLogic):
 class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
   """
   """
+
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
@@ -417,15 +424,15 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     #self.delayDisplay('Starting test_3D_parentTransform')
     #
     # Setup:
-    #  - Use a markup fiducial node
+    #  - Use a markup control points list node
     #  - Create a parent transform
     #  - Create another transform under the parent transform
     #
 
-    markupNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLMarkupsFiducialNode())
-    markupNode.AddFiducial(500.0, -1000.0, 0.0)
-    markupNode.AddFiducial(1000.0, 1000.0, 200.0)
-    markupNode.AddFiducial(-1500.0, -200.0, -100.0)
+    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+    markupNode.AddControlPoint([500.0, -1000.0, 0.0])
+    markupNode.AddControlPoint([1000.0, 1000.0, 200.0])
+    markupNode.AddControlPoint([-1500.0, -200.0, -100.0])
 
     logic = SlicerTransformInteractionTest1Logic()
     parentNode, parendDisplayNode = logic.addTransform()
@@ -537,7 +544,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
     tdNode = tNode.GetDisplayNode()
     self.assertIsNotNone(tdNode)
-    self.assertEquals(tdNode.GetEditorVisibility(), 1)
+    self.assertEqual(tdNode.GetEditorVisibility(), 1)
 
     manager = logic.getModel3DDisplayableManager()
     self.assertIsNotNone(manager)

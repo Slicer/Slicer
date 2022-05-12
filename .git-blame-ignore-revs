@@ -1,0 +1,32 @@
+#
+# This file lists revisions that should be ignored when considering
+# attribution for the actual code written.  Code style changes should
+# not be considered as modifications with regards to attribution.
+#
+# To see clean and meaningful blame information.
+# $ git blame important.py --ignore-revs-file .git-blame-ignore-revs
+#
+# To configure git to automatically ignore revisions listed in a file on every call to git blame.
+# $ git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# Ignore changes introduced when doing global file format changes
+# STYLE: Trim trailing whitespace
+d1a182641c58b385921ee305bb327e0374482fd2
+# STYLE: Update Slicer website links to https versions
+f4f2697342d4461e0f4ef19a33dbcbfc1195523b
+# STYLE: Update NAMIC website links to https versions
+1fecd29dd31c0926116406eface8d17f2c8c785f
+# STYLE: Update VTK website links to https versions
+3ba522a4af0d9a66a1d1e96d39f5ba041ff92f09
+# STYLE: Update ITK website links to https versions
+84065636881e576490a2af503d5aa7ee5b14eb3c
+# STYLE: Update CTK website links to https versions
+b820abe5c3c477309d9159e01f2ead405b59a412
+# STYLE: Update Kitware website links to https versions
+1048c734e70c5e55482fd2531abc17d308d71539
+# STYLE: Update apache website links to https versions
+a1335408963ecfc5e96b35ee8d55fea0801c2291
+# STYLE: Update other website links to https version
+02e9a428fda15ad538d00de9bb33c227d320cb41
+# STYLE: Eliminate going through a redirect to a Slicer wiki URL
+67295561c7f33b65bc763dd6282ecacd7e8c410d

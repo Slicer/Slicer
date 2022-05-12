@@ -353,6 +353,8 @@ void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
   d->Property->SetDiffuse(d->MRMLDisplayNode->GetDiffuse());
   d->Property->SetSpecular(d->MRMLDisplayNode->GetSpecular());
   d->Property->SetSpecularPower(d->MRMLDisplayNode->GetPower());
+  d->Property->SetMetallic(d->MRMLDisplayNode->GetMetallic());
+  d->Property->SetRoughness(d->MRMLDisplayNode->GetRoughness());
   qvtkUnblock(d->Property, vtkCommand::ModifiedEvent, this);
 }
 

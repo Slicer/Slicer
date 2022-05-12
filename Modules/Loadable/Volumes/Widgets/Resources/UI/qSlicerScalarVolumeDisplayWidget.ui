@@ -6,34 +6,34 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>331</width>
-    <height>303</height>
+    <width>302</width>
+    <height>224</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Scalar Volume Display</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
-   <property name="margin">
+  <layout class="QFormLayout" name="formLayout">
+   <property name="leftMargin">
     <number>0</number>
    </property>
-   <item row="11" column="0" colspan="3">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="LookupTableLabel">
+     <property name="text">
+      <string>Lookup Table:</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
+    </widget>
    </item>
-   <item row="8" column="0" colspan="3">
-    <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
-   </item>
-   <item row="0" column="2">
+   <item row="0" column="1">
     <widget class="qMRMLColorTableComboBox" name="ColorTableComboBox">
      <property name="showChildNodeTypes">
       <bool>true</bool>
@@ -53,13 +53,10 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0" colspan="3">
-    <widget class="qMRMLVolumeThresholdWidget" name="MRMLVolumeThresholdWidget"/>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="LookupTableLabel">
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="InterpolateCheckbox">
      <property name="text">
-      <string>Lookup Table:</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -76,236 +73,45 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="3">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QToolButton" name="CTBonePresetToolButton">
-       <property name="toolTip">
-        <string>CT-bone: Emphasize bone in a CT volume.</string>
-       </property>
-       <property name="accessibleName">
-        <string>CT-Bone</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/Icons/WindowLevelPreset-CT-bone.png</normaloff>:/Icons/WindowLevelPreset-CT-bone.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>45</width>
-         <height>45</height>
-        </size>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="CTAirPresetToolButton">
-       <property name="toolTip">
-        <string>CT-air: Emphasize air in a CT volume.</string>
-       </property>
-       <property name="accessibleName">
-        <string>CT-Air</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/Icons/WindowLevelPreset-CT-air.png</normaloff>:/Icons/WindowLevelPreset-CT-air.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>45</width>
-         <height>45</height>
-        </size>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="PETPresetToolButton">
-       <property name="toolTip">
-        <string>PET: Preset for PET volume (use the Rainbow Color LUT).</string>
-       </property>
-       <property name="accessibleName">
-        <string>PET</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/Icons/WindowLevelPreset-PET.png</normaloff>:/Icons/WindowLevelPreset-PET.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>45</width>
-         <height>45</height>
-        </size>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="CTAbdomenPresetToolButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>CT-abdomen: View abdominal CT volume.</string>
-       </property>
-       <property name="accessibleName">
-        <string>CT-Abdomen</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/Icons/WindowLevelPreset-Abdomen.png</normaloff>:/Icons/WindowLevelPreset-Abdomen.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>45</width>
-         <height>45</height>
-        </size>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="CTBrainPresetToolButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>CT-brain: View brain CT volume.</string>
-       </property>
-       <property name="accessibleName">
-        <string>CT-Brain</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/Icons/WindowLevelPreset-Brain.png</normaloff>:/Icons/WindowLevelPreset-Brain.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>45</width>
-         <height>45</height>
-        </size>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="CTLungPresetToolButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>CT-lung: View lung CT volume.</string>
-       </property>
-       <property name="accessibleName">
-        <string>CT-Lung</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/Icons/WindowLevelPreset-Lung.png</normaloff>:/Icons/WindowLevelPreset-Lung.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>45</width>
-         <height>45</height>
-        </size>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="DTIPresetToolButton">
-       <property name="toolTip">
-        <string>DTI: Preset for DTI scalar volumes like FA (use the Rainbow Color LUT).</string>
-       </property>
-       <property name="accessibleName">
-        <string>DTI</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/Icons/WindowLevelPreset-DTI.png</normaloff>:/Icons/WindowLevelPreset-DTI.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>45</width>
-         <height>45</height>
-        </size>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="2">
-    <widget class="QCheckBox" name="InterpolateCheckbox">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0" colspan="3">
-    <widget class="QWidget" name="PresetsWidget" native="true">
+   <item row="2" column="1">
+    <widget class="QPushButton" name="LockWindowLevelButton">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="margin">
-       <number>0</number>
-      </property>
-     </layout>
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>:/Icons/Medium/SlicerUnlock.png</normaloff>:/Icons/Medium/SlicerUnlock.png</iconset>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
-   <item row="10" column="0" colspan="3">
+   <item row="4" column="0" colspan="2">
+    <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="qMRMLVolumeThresholdWidget" name="MRMLVolumeThresholdWidget"/>
+   </item>
+   <item row="6" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="HistogramGroupBox">
      <property name="title">
       <string>Histogram</string>
@@ -345,36 +151,31 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="LockWindowLevelButton">
+   <item row="3" column="0" colspan="2">
+    <widget class="QWidget" name="PresetsWidget" native="true">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>30</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string/>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-       <normaloff>:/Icons/Medium/SlicerUnlock.png</normaloff>:/Icons/Medium/SlicerUnlock.png</iconset>
-     </property>
-     <property name="checkable">
-      <bool>false</bool>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -420,7 +221,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerVolumesModule.qrc"/>
+  <include location="../../../Resources/qSlicerVolumesModule.qrc"/>
  </resources>
  <connections>
   <connection>

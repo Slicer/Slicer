@@ -162,7 +162,7 @@ QPixmap qMRMLWidget::pixmapFromIcon(const QIcon& icon)
 
   // To achieve this, we first determine the pixmap size in device independent units,
   // which is the size of the base image (icon.availableSizes().first(), because for that
-  // DevicePixelRatio=1.0), and then we retieve the pixmap for this size.
+  // DevicePixelRatio=1.0), and then we retrieve the pixmap for this size.
 
   QPixmap pixmap = icon.pixmap(icon.availableSizes().first());
   return pixmap;

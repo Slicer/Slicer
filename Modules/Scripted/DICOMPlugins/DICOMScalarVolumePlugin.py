@@ -1,12 +1,19 @@
+import logging
+from functools import cmp_to_key
+
+import ctk
 import numpy
-import os
-import vtk, qt, ctk, slicer, vtkITK
+import qt
+import vtk
+import vtkITK
+
+import slicer
+
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 from DICOMLib import DICOMUtils
 from DICOMLib import DICOMExportScalarVolume
-import logging
-from functools import cmp_to_key
+
 
 #
 # This is the plugin to handle translation of scalar volumes
@@ -452,7 +459,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       #   Note: There can be multiple presets (multiplicity 1-n) in the standard [1]. We have
       #   a way to put these into the display node [2], so they can be selected in the Volumes
       #   module.
-      #   [1] http://medical.nema.org/medical/dicom/current/output/html/part06.html
+      #   [1] https://medical.nema.org/medical/dicom/current/output/html/part06.html
       #   [2] https://github.com/Slicer/Slicer/blob/3bfa2fc2b310d41c09b7a9e8f8f6c4f43d3bd1e2/Libs/MRML/Core/vtkMRMLScalarVolumeDisplayNode.h#L172
       #
       try:
@@ -560,7 +567,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     exportable.setTag('ContentTime', '')
     exportable.setTag('SeriesNumber', '1')
     exportable.setTag('SeriesInstanceUID', '')
-    exportable.setTag('FrameOfReferenceInstanceUID', '')
+    exportable.setTag('FrameOfReferenceUID', '')
 
     return [exportable]
 
@@ -607,7 +614,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       tags['Patient Birth Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateTagName())
       tags['Patient Sex'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexTagName())
       tags['Patient Comments'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
-      tags['Study ID'] = self.defaultStudyID
+      tags['Study ID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName())
       tags['Study Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
       tags['Study Time'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeTagName())
       tags['Study Description'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
@@ -623,19 +630,49 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
       tags['Study Instance UID'] = exportable.tag('StudyInstanceUID')
       tags['Series Instance UID'] = exportable.tag('SeriesInstanceUID')
-      tags['Frame of Reference Instance UID'] = exportable.tag('FrameOfReferenceInstanceUID')
+      tags['Frame of Reference UID'] = exportable.tag('FrameOfReferenceUID')
+
+      # Generate any missing but required UIDs
+      if not tags['Study Instance UID']:
+        import pydicom as dicom
+        tags['Study Instance UID'] = dicom.uid.generate_uid()
+      if not tags['Series Instance UID']:
+        import pydicom as dicom
+        tags['Series Instance UID'] = dicom.uid.generate_uid()
+      if not tags['Frame of Reference UID']:
+        import pydicom as dicom
+        tags['Frame of Reference UID'] = dicom.uid.generate_uid()
+
+      # Use the default Study ID if none is specified
+      if not tags['Study ID']:
+        tags['Study ID'] = self.defaultStudyID
 
       # Validate tags
       if tags['Modality'] == "":
         error = "Empty modality for series '" + volumeNode.GetName() + "'"
         logging.error(error)
         return error
+
+      seriesInstanceUID = tags['Series Instance UID']
+      if seriesInstanceUID:
+        # Make sure we don't use a series instance UID that already exists (it would mix in more slices into an existing series,
+        # which is very unlikely that users would want).
+        db = slicer.dicomDatabase
+        studyInstanceUID = db.studyForSeries(seriesInstanceUID)
+        if studyInstanceUID:
+          # This seriesInstanceUID is already found in the database
+          if len(seriesInstanceUID)>25:
+            seriesInstanceUID = seriesInstanceUID[:20] + "..."
+          error = f"A series already exists in the database by SeriesInstanceUID {seriesInstanceUID}."
+          logging.error(error)
+          return error
+
       #TODO: more tag checks
 
       # Perform export
       exporter = DICOMExportScalarVolume(tags['Study ID'], volumeNode, tags, directory)
       if not exporter.export():
-        return "Creating DICOM files from scalar volume failed"
+        return "Creating DICOM files from scalar volume failed. See the application log for details."
 
     # Success
     return ""
@@ -708,8 +745,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
       Note: PixelSpacing is row spacing followed by column spacing [1] (i.e. vertical then horizontal)
       while ImageOrientationPatient is row cosines then column cosines [2] (i.e. horizontal then vertical).
-      [1] http://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_10.7.1.1
-      [2] http://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_C.7.6.2
+      [1] https://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_10.7.1.1
+      [2] https://dicom.nema.org/medical/dicom/current/output/html/part03.html#sect_C.7.6.2
       """
       spacingTag = "0028,0030"
       positionTag = "0020,0032"
@@ -717,7 +754,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
       columns, rows, slices = volumeNode.GetImageData().GetDimensions()
       corners = numpy.zeros(shape=[slices,2,2,3])
-      uids = volumeNode.GetAttribute('DICOM.instanceUIDs').split()
+      instanceUIDsAttribute = volumeNode.GetAttribute('DICOM.instanceUIDs')
+      uids = instanceUIDsAttribute.split() if instanceUIDsAttribute else []
       if len(uids) != slices:
         # There is no uid for each slice, so most likely all frames are in a single file
         # or maybe there is a problem with the sequence
@@ -815,6 +853,7 @@ class DICOMScalarVolumePlugin:
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM Scalar Volume Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]

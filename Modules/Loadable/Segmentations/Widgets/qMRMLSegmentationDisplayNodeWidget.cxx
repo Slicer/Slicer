@@ -280,30 +280,34 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
   // Set overall visibility
   d->checkBox_Visible->setChecked( d->SegmentationDisplayNode->GetVisibility() );
 
+  bool wasBlocked = d->SliderWidget_Opacity->blockSignals(true);
+  d->SliderWidget_Opacity->setValue(d->SegmentationDisplayNode->GetOpacity());
+  d->SliderWidget_Opacity->blockSignals(wasBlocked);
+
   // Set visibility and opacity settings
-  d->checkBox_VisibilitySliceFill->blockSignals(true);
+  wasBlocked = d->checkBox_VisibilitySliceFill->blockSignals(true);
   d->checkBox_VisibilitySliceFill->setChecked(d->SegmentationDisplayNode->GetVisibility2DFill());
-  d->checkBox_VisibilitySliceFill->blockSignals(false);
+  d->checkBox_VisibilitySliceFill->blockSignals(wasBlocked);
 
-  d->checkBox_VisibilitySliceOutline->blockSignals(true);
+  wasBlocked = d->checkBox_VisibilitySliceOutline->blockSignals(true);
   d->checkBox_VisibilitySliceOutline->setChecked(d->SegmentationDisplayNode->GetVisibility2DOutline());
-  d->checkBox_VisibilitySliceOutline->blockSignals(false);
+  d->checkBox_VisibilitySliceOutline->blockSignals(wasBlocked);
 
-  d->checkBox_Visibility3D->blockSignals(true);
+  wasBlocked = d->checkBox_Visibility3D->blockSignals(true);
   d->checkBox_Visibility3D->setChecked(d->SegmentationDisplayNode->GetVisibility3D());
-  d->checkBox_Visibility3D->blockSignals(false);
+  d->checkBox_Visibility3D->blockSignals(wasBlocked);
 
-  d->SliderWidget_OpacitySliceFill->blockSignals(true);
+  wasBlocked = d->SliderWidget_OpacitySliceFill->blockSignals(true);
   d->SliderWidget_OpacitySliceFill->setValue(d->SegmentationDisplayNode->GetOpacity2DFill());
-  d->SliderWidget_OpacitySliceFill->blockSignals(false);
+  d->SliderWidget_OpacitySliceFill->blockSignals(wasBlocked);
 
-  d->SliderWidget_OpacitySliceOutline->blockSignals(true);
+  wasBlocked = d->SliderWidget_OpacitySliceOutline->blockSignals(true);
   d->SliderWidget_OpacitySliceOutline->setValue(d->SegmentationDisplayNode->GetOpacity2DOutline());
-  d->SliderWidget_OpacitySliceOutline->blockSignals(false);
+  d->SliderWidget_OpacitySliceOutline->blockSignals(wasBlocked);
 
-  d->SliderWidget_Opacity3D->blockSignals(true);
+  wasBlocked = d->SliderWidget_Opacity3D->blockSignals(true);
   d->SliderWidget_Opacity3D->setValue(d->SegmentationDisplayNode->GetOpacity3D());
-  d->SliderWidget_Opacity3D->blockSignals(false);
+  d->SliderWidget_Opacity3D->blockSignals(wasBlocked);
 
   // Set visibility checkbox states
 

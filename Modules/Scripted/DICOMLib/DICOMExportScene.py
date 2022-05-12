@@ -1,14 +1,11 @@
-import os
-import glob
-import tempfile
-import zipfile
-import sys
-import qt
-import vtk
-import ctk
-import slicer
 import logging
-from slicer.util import settingsValue, toBool
+import os
+import tempfile
+
+import ctk
+import vtk
+
+import slicer
 
 import DICOMLib
 
@@ -27,6 +24,7 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 """
 #
 #########################################################
+
 
 class DICOMExportScene:
   """Export slicer scene to dicom database
@@ -70,7 +68,7 @@ class DICOMExportScene:
     TODO: confirm that resulting file is valid - may need to change the CLI
     to include more parameters or do a new implementation ctk/DCMTK
     See:
-    http://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
+    https://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
     """
 
     # set up temp directories and files

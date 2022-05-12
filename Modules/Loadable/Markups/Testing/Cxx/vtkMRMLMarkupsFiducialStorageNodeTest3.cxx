@@ -76,8 +76,8 @@ int vtkMRMLMarkupsFiducialStorageNodeTest3(int argc, char * argv[] )
 
   // test values on the first markup
   double inputPoint[3] = {64.2531, 3.69, 62.886};
-  double outputPoint[3];
-  markupsFiducialNode->GetNthFiducialPosition(0, outputPoint);
+  vtkVector3d posVector = markupsFiducialNode->GetNthControlPointPositionVector(0);
+  double* outputPoint = posVector.GetData();
   double diff = fabs(outputPoint[0] - inputPoint[0]) + fabs(outputPoint[1] - inputPoint[1]) + fabs(outputPoint[2] - inputPoint[2]);
   if (diff > 0.1)
     {

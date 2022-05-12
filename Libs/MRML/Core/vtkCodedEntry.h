@@ -21,7 +21,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 /// vtkCodedEntry is a lightweight class that stores standard coded entries consisting of
 /// CodingSchemeDesignator + CodeValue + CodeMeaning triplets.
 /// This is a commonly used concept in DICOM, see chapter 3: Encoding of Coded Entry Data
-/// (http://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_8.3.html).
+/// (https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_8.3.html).
 ///
 class VTK_MRML_EXPORT vtkCodedEntry : public vtkObject
 {

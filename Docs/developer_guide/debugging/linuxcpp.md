@@ -2,7 +2,7 @@
 
 ## GDB debug by attaching to running process (recommended)
 
-1. Starting with Ubuntu 10.10, ptracing of non-child processes by non-root users as been disabled -ie. only a process which is a parent of another process can ptrace it for normal users. More details [here](http://askubuntu.com/questions/41629/after-upgrade-gdb-wont-attach-to-process).
+1. Starting with Ubuntu 10.10, ptracing of non-child processes by non-root users as been disabled -ie. only a process which is a parent of another process can ptrace it for normal users. More details [here](https://askubuntu.com/questions/41629/after-upgrade-gdb-wont-attach-to-process).
 
     - You can temporarily disable this restriction by:
       ```bash
@@ -57,6 +57,20 @@ The Slicer app launcher provides options to start other programs with the Slicer
 
 - `--launch <executable> [<parameters>]`: executes an arbitrary program. For example, `Slicer --launch /usr/bin/gnome-terminal` starts gnome-terminal (then run GDB directly on SlicerApp-real)
 - `--gdb`: runs GDB then executes SlicerApp-real from within the debugger environment.
+
+## GDB debug by following the forked process
+
+```bash
+gdb Slicer
+```
+
+gdb should warn you that there are no debug symbols for Slicer, which is true because Slicer is the launcher. Now we need to set gdb to follow the forked process SlicerApp-real and run the launcher:
+
+```txt
+(gdb) set follow-fork-mode child
+(gdb) run
+```
+gdb will run Slicer and attach itself to the forked process SlicerApp-real
 
 ## GDB debug by using exec-wrapper
 
@@ -285,7 +299,7 @@ And stored, in a compressed format (.lz4), in
 ```
 
 It can happen that even with ulimit -c unlimited, the coredump files are still truncated.
-You can check latest coredumps, and the correspoding PID with:
+You can check latest coredumps, and the corresponding PID with:
 
 ```bash
 coredumpctl list

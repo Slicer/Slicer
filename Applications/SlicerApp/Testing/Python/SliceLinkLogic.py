@@ -1,8 +1,10 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
 
 #
 # SliceLinkLogic
@@ -12,6 +14,7 @@ class SliceLinkLogic(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     parent.title = "SliceLinkLogic" # TODO make this more human readable by adding spaces
@@ -24,6 +27,7 @@ class SliceLinkLogic(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE and was partially funded by NIH grant U54EB005149.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qSliceLinkLogicWidget
@@ -60,6 +64,7 @@ class SliceLinkLogicWidget(ScriptedLoadableModuleWidget):
 
   def onHelloWorldButtonClicked(self):
     print("Hello World !")
+
 
 #
 # SliceLinkLogicLogic

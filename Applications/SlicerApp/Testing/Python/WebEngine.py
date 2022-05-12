@@ -1,10 +1,7 @@
-import os
-import unittest
-import math
-import datetime
-import time
-import random
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 
 
@@ -29,6 +26,7 @@ class WebEngine(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper and was partially funded by NSF grant 1759883
 """ # replace with organization, grant and thanks.
+
 
 #
 # qWebEngineWidget
@@ -65,7 +63,7 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
         "label": "Crowds Cure Cancer", "url": "http://cancer.crowds-cure.org"
       },
       {
-        "label": "Slicer Home Page", "url": "http://slicer.org"
+        "label": "Slicer Home Page", "url": "https://slicer.org"
       },
       {
         "label": "MorphoSource", "url": "https://www.morphosource.org"
@@ -138,13 +136,11 @@ class WebEngineTest(ScriptedLoadableModuleTest):
       self.delayDisplay("Got a result back from JavaScript")
       print((js, result))
 
-
   def test_WebEngine1(self):
     """ Testing WebEngine
     """
 
     self.delayDisplay("Starting the test")
-
 
     webWidget = slicer.qSlicerWebWidget()
     webWidget.size = qt.QSize(1024,512)

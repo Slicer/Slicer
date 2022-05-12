@@ -1,8 +1,7 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
+
 
 #
 # SegmentEditor
@@ -10,7 +9,6 @@ from slicer.util import VTKObservationMixin
 class SegmentEditor(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    import string
     self.parent.title = "Segment Editor"
     self.parent.categories = ["", "Segmentation"]
     self.parent.dependencies = ["Segmentations", "SubjectHierarchy"]
@@ -31,6 +29,7 @@ and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
     import SubjectHierarchyPlugins
     scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
     scriptedPlugin.setPythonSource(SubjectHierarchyPlugins.SegmentEditorSubjectHierarchyPlugin.filePath)
+
 
 #
 # SegmentEditorWidget
@@ -155,6 +154,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def cleanup(self):
     self.removeObservers()
     self.effectFactorySingleton.disconnect('effectRegistered(QString)', self.editorEffectRegistered)
+
 
 class SegmentEditorTest(ScriptedLoadableModuleTest):
   """

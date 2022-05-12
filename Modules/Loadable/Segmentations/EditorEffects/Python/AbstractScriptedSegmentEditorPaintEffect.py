@@ -1,8 +1,7 @@
-import os
-import vtk, qt, ctk, slicer, logging
 from .AbstractScriptedSegmentEditorEffect import *
 
 __all__ = ['AbstractScriptedSegmentEditorPaintEffect']
+
 
 #
 # Abstract class of python scripted segment editor paint effects

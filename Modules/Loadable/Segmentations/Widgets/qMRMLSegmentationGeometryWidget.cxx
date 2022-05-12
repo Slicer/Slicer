@@ -25,6 +25,7 @@
 #include "ui_qMRMLSegmentationGeometryWidget.h"
 
 #include "vtkSlicerSegmentationGeometryLogic.h"
+#include "vtkSlicerSegmentationsModuleLogic.h"
 #include "vtkMRMLSegmentationNode.h"
 
 // SegmentationCore includes
@@ -35,10 +36,9 @@
 #include "vtkCalculateOversamplingFactor.h"
 
 // MRML includes
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLTransformNode.h"
-#include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLModelNode.h"
 
 // VTK includes
 #include <vtkAddonMathUtilities.h>
@@ -83,6 +83,7 @@ qMRMLSegmentationGeometryWidgetPrivate::qMRMLSegmentationGeometryWidgetPrivate(q
   , EditEnabled(false)
 {
   this->Logic = vtkSlicerSegmentationGeometryLogic::New();
+  this->Logic->PadOutputGeometryOff();
 }
 
 //-----------------------------------------------------------------------------
@@ -110,6 +111,8 @@ void qMRMLSegmentationGeometryWidgetPrivate::init()
     q, SLOT(onIsotropicSpacingChanged(bool)) );
   QObject::connect(this->MRMLCoordinatesWidget_Spacing, SIGNAL(coordinatesChanged(double*)),
     q, SLOT(onUserSpacingChanged(double*)) );
+  QObject::connect(this->CheckBox_PadSegmentation, SIGNAL(toggled(bool)),
+    q, SLOT(onPadSegmentationChanged(bool)));
 
   q->setEnabled(this->SegmentationNode.GetPointer());
 }
@@ -117,6 +120,8 @@ void qMRMLSegmentationGeometryWidgetPrivate::init()
 //-----------------------------------------------------------------------------
 void qMRMLSegmentationGeometryWidgetPrivate::updateGeometryWidgets()
 {
+  Q_Q(qMRMLSegmentationGeometryWidget);
+
   vtkOrientedImageData* geometryImageData = this->Logic->GetOutputGeometryImageData();
   if (!geometryImageData)
     {
@@ -154,6 +159,22 @@ void qMRMLSegmentationGeometryWidgetPrivate::updateGeometryWidgets()
     for (int j=0; j<3; ++j)
       {
       this->MatrixWidget_Directions->setValue(i, j, directions->GetElement(i,j));
+      }
+    }
+
+  this->CheckBox_PadSegmentation->setIcon(QIcon());
+  this->CheckBox_PadSegmentation->setText("");
+  if (this->SegmentationNode && this->SegmentationNode->GetSegmentation() && !this->Logic->GetPadOutputGeometry())
+    {
+    std::string commonLabelmapGeometryString = this->SegmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry(
+      vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+    vtkNew<vtkOrientedImageData> segmentationGeometry;
+    vtkSegmentationConverter::DeserializeImageGeometry(commonLabelmapGeometryString, segmentationGeometry, false/*don't allocate*/);
+    if (vtkSlicerSegmentationsModuleLogic::IsSegmentationExentOutsideReferenceGeometry(geometryImageData, segmentationGeometry))
+      {
+      QIcon warningIcon = q->style()->standardIcon(QStyle::SP_MessageBoxWarning);
+      this->CheckBox_PadSegmentation->setIcon(warningIcon);
+      this->CheckBox_PadSegmentation->setText("The current segmentation may not fit into the new geometry.");
       }
     }
 }
@@ -346,6 +367,29 @@ void qMRMLSegmentationGeometryWidget::setSpacing(double aSpacing[3])
 {
   Q_D(qMRMLSegmentationGeometryWidget);
   d->MRMLCoordinatesWidget_Spacing->setCoordinates(aSpacing);
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLSegmentationGeometryWidget::padSegmentation()const
+{
+  Q_D(const qMRMLSegmentationGeometryWidget);
+  return d->CheckBox_PadSegmentation->isChecked();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentationGeometryWidget::setPadSegmentation(bool aPadSegmentation)
+{
+  Q_D(qMRMLSegmentationGeometryWidget);
+  d->CheckBox_PadSegmentation->setChecked(aPadSegmentation);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentationGeometryWidget::onPadSegmentationChanged(bool padSegmentation)
+{
+  Q_D(qMRMLSegmentationGeometryWidget);
+
+  d->Logic->SetPadOutputGeometry(padSegmentation);
+  this->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------

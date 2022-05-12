@@ -28,6 +28,7 @@ def qCleanupResources():
 qInitResources()
 """
 
+
 def compileResources(in_path, out_file, args):
   # Determine command line for rcc
   if sys.platform.startswith("win") or sys.platform.startswith("cygwin"):
@@ -71,6 +72,7 @@ def compileResources(in_path, out_file, args):
   out_file.write(_data)
   out_file.write(_footer)
 
+
 def main(argv):
   parser = argparse.ArgumentParser(description="PythonQt Resource Compiler")
 
@@ -90,6 +92,7 @@ def main(argv):
   else:
     with open(args.out_path, "w") as f:
       compileResources(args.in_path, f, args)
+
 
 if __name__ == "__main__":
   main(sys.argv[1:])

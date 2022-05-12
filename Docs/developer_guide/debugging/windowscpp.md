@@ -3,7 +3,7 @@
 ## Debugging using Visual Studio
 
 Prerequisites:
-- Build 3D Slicer in Debug by following the [build instructions](../build_instructions.md).
+- Build 3D Slicer in Debug by following the [build instructions](../build_instructions/overview.md).
 
 1. To run Slicer, the launcher needs to set certain environment variables. The easiest is to use the launcher to set these and start Visual Studio in this environment. All these can be accomplished by running the following command in `<Slicer_BUILD>/Slicer-build` folder:
 

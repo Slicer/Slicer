@@ -159,6 +159,13 @@ public:
   /// The color with index \sa NumberOfGeneratedColors from generic anatomy color table is returned.
   void GenerateSegmentColor(double &r, double &g, double &b);
 
+  //@{
+  /// Get/Set color table node ID that is used for generating default colors for new segments.
+  /// If not specified then "vtkMRMLColorTableNodeFileGenericAnatomyColors.txt" is used.
+  void SetSegmentColorGeneratorSourceColorNodeID(const char* colorNodeID);
+  const char* GetSegmentColorGeneratorSourceColorNodeID();
+  ///@}
+
   /// Collect representation names that are stored as poly data
   void GetPolyDataRepresentationNames(std::set<std::string> &representationNames);
 

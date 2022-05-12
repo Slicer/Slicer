@@ -1020,7 +1020,8 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
     vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i);
     vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
 
-    if (displayNode == nullptr)
+    // don't do anything if display node is invalid or it is a color legend
+    if (!displayNode || (displayNode && displayNode->IsA("vtkMRMLColorLegendDisplayNode")))
       {
       continue;
       }
@@ -1455,8 +1456,8 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
     // still want to show/hide children regardless of application of display properties from the
     // hierarchy.
     bool visible = hierarchyVisibility
-      && modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID())
-      && modelDisplayNode->GetVisibility() && modelDisplayNode->GetVisibility3D();
+      && modelDisplayNode->GetVisibility() && modelDisplayNode->GetVisibility3D()
+      && modelDisplayNode->IsDisplayableInView(this->GetMRMLViewNode()->GetID());
     prop->SetVisibility(visible);
 
     vtkMapper* mapper = actor ? actor->GetMapper() : nullptr;
@@ -1539,6 +1540,8 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       actorProperties->SetOpacity(hierarchyOpacity * modelDisplayNode->GetOpacity());
       actorProperties->SetDiffuse(displayNode->GetDiffuse());
       actorProperties->SetSpecularPower(displayNode->GetPower());
+      actorProperties->SetMetallic(displayNode->GetMetallic());
+      actorProperties->SetRoughness(displayNode->GetRoughness());
       actorProperties->SetEdgeVisibility(displayNode->GetEdgeVisibility());
       actorProperties->SetEdgeColor(displayNode->GetEdgeColor());
       if (displayNode->GetTextureImageDataConnection() != nullptr)

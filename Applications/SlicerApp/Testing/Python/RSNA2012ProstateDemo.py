@@ -1,8 +1,7 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
 
 #
 # RSNA2012ProstateDemo
@@ -12,6 +11,7 @@ class RSNA2012ProstateDemo(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     parent.title = "RSNA2012ProstateDemo" # TODO make this more human readable by adding spaces
@@ -24,6 +24,7 @@ class RSNA2012ProstateDemo(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qRSNA2012ProstateDemoWidget
@@ -43,6 +44,7 @@ class RSNA2012ProstateDemoWidget(ScriptedLoadableModuleWidget):
 
   def cleanup(self):
     pass
+
 
 class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
   """

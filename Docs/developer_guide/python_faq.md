@@ -51,7 +51,7 @@ for groupIndex in range(n.GetNumberOfParameterGroups()):
       n.GetParameterTag(groupIndex, parameterIndex),n.GetParameterLabel(groupIndex, parameterIndex)))
 ```
 
-### Passing markups fiducials to CLIs
+### Passing markups point list to CLIs
 
 ```python
 import SampleData
@@ -60,20 +60,18 @@ head = sampleDataLogic.downloadMRHead()
 volumesLogic = slicer.modules.volumes.logic()
 headLabel = volumesLogic.CreateLabelVolume(slicer.mrmlScene, head, 'head-label')
 
-fiducialNode = slicer.vtkMRMLAnnotationFiducialNode()
-fiducialNode.SetFiducialWorldCoordinates((1,0,5))
-fiducialNode.SetName('Seed Point')
-fiducialNode.Initialize(slicer.mrmlScene)
-fiducialsList = getNode('Fiducials List')
+pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+pointListNode.AddControlPoint(vtk.vtkVector3d(1,0,5))
+pointListNode.SetName('Seed Point')
 
-params = {'inputVolume': head.GetID(), 'outputVolume': headLabel.GetID(), 'seed' : fiducialsList.GetID(), 'iterations' : 2}
+params = {'inputVolume': head.GetID(), 'outputVolume': headLabel.GetID(), 'seed' : pointListNode.GetID(), 'iterations' : 2}
 
 cliNode = slicer.cli.runSync(slicer.modules.simpleregiongrowingsegmentation, None, params)
 ```
 
 ### Running CLI in the background
 
-If the CLI module is executed using `slicer.cli.run` method then the CLI module runs in a background thread, so the call to `startProcessing` will return right away and the user interface will not be blocked. The `slicer.cli.run` call returns a cliNode (an instance of [vtkMRMLCommandLineModuleNode](http://slicer.org/doc/html/classvtkMRMLCommandLineModuleNode.html)) which can be used to monitor the progress of the module.
+If the CLI module is executed using `slicer.cli.run` method then the CLI module runs in a background thread, so the call to `startProcessing` will return right away and the user interface will not be blocked. The `slicer.cli.run` call returns a cliNode (an instance of [vtkMRMLCommandLineModuleNode](https://slicer.org/doc/html/classvtkMRMLCommandLineModuleNode.html)) which can be used to monitor the progress of the module.
 
 In this example we create a simple callback `onProcessingStatusUpdate` that will be called whenever the cliNode is modified.  The status will tell you if the nodes is Pending, Running, or Completed.
 
@@ -113,7 +111,7 @@ cliNode.AddObserver('ModifiedEvent', onProcessingStatusUpdate)
 
 ## How to find a Python function for any Slicer features
 
-All features of Slicer are available via Python scripts. [Slicer script repository](../script_repository.md) contains examples for the most commonly used features.
+All features of Slicer are available via Python scripts. [Slicer script repository](script_repository.md) contains examples for the most commonly used features.
 
 To find out what Python commands correspond to a feature that is visible on the graphical user interface, search in Slicer's source code where that text occurs, find the corresponding widget or action name, then search for that widget or action name in the source code to find out what commands it triggers.
 
@@ -131,6 +129,10 @@ Complete example: *How to emulate selection of `FOV, spacing match Volumes` chec
 sliceNode = slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed')
 sliceNode.SetSliceResolutionMode(slicer.vtkMRMLSliceNode.SliceResolutionMatchVolumes)
 ```
+
+## How to run an external Python script as a CLI module
+
+A standalone Python script (that does not use any Slicer application features) can run from Slicer as a CLI module. Slicer generates a graphical user interface from the parameter definition XML file. See a complete example [here](https://github.com/lassoan/SlicerPythonCLIExample).
 
 ## How to type file paths in Python
 

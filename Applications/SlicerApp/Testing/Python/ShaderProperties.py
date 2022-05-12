@@ -1,8 +1,12 @@
 import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import qt
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
 
 #
 # ShaderProperties
@@ -21,6 +25,7 @@ class ShaderProperties(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed and was partially funded by NIH grant 3P41RR013218-12S1.
     """
+
 
 #
 # ShaderPropertiesWidget
@@ -42,14 +47,13 @@ class ShaderPropertiesWidget(ScriptedLoadableModuleWidget):
     self.layout.addWidget(self.wedgeTestButton)
     self.wedgeTestButton.connect("clicked()", lambda : ShaderPropertiesTest().testWedgeCut())
 
-
     # Add vertical spacer
     self.layout.addStretch(1)
-
 
   def runTests(self):
     tester = ShaderPropertiesTest()
     tester.testAll()
+
 
 #
 # ShaderPropertiesTest
@@ -101,10 +105,9 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Line added')
 
-
     #------------------------------------------------------
     # Utility functions to get the position of the first
-    # fiducial point in the scene and the shader property
+    # markup line in the scene and the shader property
     # node
     #------------------------------------------------------
     def GetLineEndpoints():
@@ -160,7 +163,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     shaderProp.AddFragmentShaderReplacement("//VTK::Cropping::Impl", True, croppingImplShaderCode, False)
 
     #------------------------------------------------------
-    # Add a callback when the fiducial moves to adjust
+    # Add a callback when the line moves to adjust
     # the endpoints of the carving sphere accordingly
     #------------------------------------------------------
     def onControlPointMoved():
@@ -173,7 +176,6 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     fn.AddObserver(fn.PointModifiedEvent, lambda caller,event: onControlPointMoved())
 
     self.delayDisplay("Should be a carved out shoulder now")
-
 
   def testSphereCut(self):
 
@@ -199,21 +201,20 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('GPU Ray Casting on')
 
-    markupNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLMarkupsFiducialNode())
-    markupNode.AddFiducial(0.0, 100.0, 0.0)
+    markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+    markupNode.AddControlPoint([0.0, 100.0, 0.0])
 
-    self.delayDisplay('Fiducial added')
-
+    self.delayDisplay('Point list added')
 
     #------------------------------------------------------
     # Utility functions to get the position of the first
-    # fiducial point in the scene and the shader property
+    # markups point list in the scene and the shader property
     # node
     #------------------------------------------------------
-    def GetFiducialPosition():
+    def GetPointPosition():
         fn = slicer.util.getNode('vtkMRMLMarkupsFiducialNode1')
-        p=[0]*3
-        fn.GetNthFiducialPosition(0,p)
+        p = [0.0, 0.0, 0.0]
+        fn.GetNthControlPointPosition(0, p)
         return p
 
     def GetShaderPropertyNode():
@@ -239,8 +240,8 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     #------------------------------------------------------
     shaderUniforms = shaderPropNode.GetFragmentUniforms()
     shaderUniforms.RemoveAllUniforms()
-    fiducialPos = GetFiducialPosition()
-    shaderUniforms.SetUniform3f("center",fiducialPos)
+    pointPos = GetPointPosition()
+    shaderUniforms.SetUniform3f("center",pointPos)
     shaderUniforms.SetUniformf("radius",50.)
 
     #------------------------------------------------------
@@ -256,17 +257,15 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     shaderProp.AddFragmentShaderReplacement("//VTK::Cropping::Impl", True, croppingImplShaderCode, False)
 
     #------------------------------------------------------
-    # Add a callback when the fiducial moves to adjust
+    # Add a callback when the point moves to adjust
     # the center of the carving sphere accordingly
     #------------------------------------------------------
-    def onFiducialMoved():
-        p = GetFiducialPosition()
+    def onPointMoved():
+        p = GetPointPosition()
         propNode = GetShaderPropertyNode()
         propNode.GetFragmentUniforms().SetUniform3f("center",p)
 
     fn = slicer.util.getNode('vtkMRMLMarkupsFiducialNode1')
-    fn.AddObserver(fn.PointModifiedEvent, lambda caller,event: onFiducialMoved())
-
+    fn.AddObserver(fn.PointModifiedEvent, lambda caller,event: onPointMoved())
 
     self.delayDisplay("Should be a carved out nose now")
-

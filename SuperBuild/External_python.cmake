@@ -9,6 +9,7 @@ if(NOT Slicer_USE_SYSTEM_python)
   list(APPEND ${proj}_DEPENDENCIES
     bzip2
     CTKAPPLAUNCHER
+    LibFFI
     LZMA
     zlib
     sqlite
@@ -24,7 +25,7 @@ endif()
 #       by ExternalProjectDependency module.
 #       That way, the variable are available in External_tcl.cmake despite the fact
 #       the "tcl" project does NOT directly depend on "python".
-set(PYTHON_STDLIB_SUBDIR lib/python3.6)
+set(PYTHON_STDLIB_SUBDIR lib/python${Slicer_REQUIRED_PYTHON_VERSION_DOT})
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(PYTHON_STDLIB_SUBDIR Lib)
 endif()
@@ -37,8 +38,8 @@ if(Slicer_USE_SYSTEM_${proj})
   unset(PYTHON_INCLUDE_DIR CACHE)
   unset(PYTHON_LIBRARY CACHE)
   unset(PYTHON_EXECUTABLE CACHE)
-  find_package(PythonLibs 3.6 REQUIRED)
-  find_package(PythonInterp 3.6 REQUIRED)
+  find_package(PythonLibs ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
+  find_package(PythonInterp ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
   set(PYTHON_INCLUDE_DIR ${PYTHON_INCLUDE_DIRS})
   set(PYTHON_LIBRARY ${PYTHON_LIBRARIES})
   set(PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE})
@@ -48,11 +49,14 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
    OR NOT DEFINED PYTHON_LIBRARY
    OR NOT DEFINED PYTHON_EXECUTABLE) AND NOT Slicer_USE_SYSTEM_${proj})
 
-  set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-3.6.7")
+  set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-${Slicer_REQUIRED_PYTHON_VERSION}")
+
+  set(_download_3.9.10_url "https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz")
+  set(_download_3.9.10_md5 "1440acb71471e2394befdb30b1a958d1")
 
   ExternalProject_Add(python-source
-    URL "https://www.python.org/ftp/python/3.6.7/Python-3.6.7.tgz"
-    URL_MD5 "c83551d83bf015134b4b2249213f3f85"
+    URL ${_download_${Slicer_REQUIRED_PYTHON_VERSION}_url}
+    URL_MD5 ${_download_${Slicer_REQUIRED_PYTHON_VERSION}_md5}
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${python_SOURCE_DIR}
     CONFIGURE_COMMAND ""
@@ -119,7 +123,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "dca8bee81e29b452560bd969d67e7d08237e23d6"
+    "bb45aa7a4cfc7a5a93bc490c6158f702d1a2226f"
     QUIET
     )
 
@@ -158,8 +162,10 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       -DLZMA_LIBRARY:FILEPATH=${LZMA_LIBRARY}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
-      -DSQLITE3_LIBRARY:FILEPATH=${sqlite_LIBRARY}
-      -DSQLITE3_INCLUDE_PATH:PATH=${sqlite_INCLUDE_DIR}
+      -DLibFFI_INCLUDE_DIR:PATH=${LibFFI_INCLUDE_DIR}
+      -DLibFFI_LIBRARY:FILEPATH=${LibFFI_LIBRARY}
+      -DSQLite3_INCLUDE_DIR:PATH=${sqlite_INCLUDE_DIR}
+      -DSQLite3_LIBRARY:FILEPATH=${sqlite_LIBRARY}
       -DENABLE_SSL:BOOL=${PYTHON_ENABLE_SSL}
       -DPatch_EXECUTABLE:FILEPATH=${Patch_EXECUTABLE}
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
@@ -177,14 +183,14 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       set(python_IMPORT_SUFFIX dylib)
     endif()
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/lib)
-    set(PYTHON_INCLUDE_DIR ${python_DIR}/include/python3.6m)
-    set(PYTHON_LIBRARY ${python_DIR}/lib/libpython3.6m.${python_IMPORT_SUFFIX})
+    set(PYTHON_INCLUDE_DIR ${python_DIR}/include/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}${Slicer_REQUIRED_PYTHON_ABIFLAGS})
+    set(PYTHON_LIBRARY ${python_DIR}/lib/libpython${Slicer_REQUIRED_PYTHON_VERSION_DOT}${Slicer_REQUIRED_PYTHON_ABIFLAGS}.${python_IMPORT_SUFFIX})
     set(PYTHON_EXECUTABLE ${python_DIR}/bin/PythonSlicer)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python)
   elseif(WIN32)
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/bin)
     set(PYTHON_INCLUDE_DIR ${python_DIR}/include)
-    set(PYTHON_LIBRARY ${python_DIR}/libs/python36.lib)
+    set(PYTHON_LIBRARY ${python_DIR}/libs/python${Slicer_REQUIRED_PYTHON_VERSION_MAJOR}${Slicer_REQUIRED_PYTHON_VERSION_MINOR}.lib)
     set(PYTHON_EXECUTABLE ${python_DIR}/bin/PythonSlicer.exe)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python.exe)
   else()
@@ -192,9 +198,9 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   endif()
 
   if(NOT Slicer_USE_SYSTEM_python)
-
     ExternalProject_Add_Step(${proj} configure_python_launcher
       COMMAND ${CMAKE_COMMAND}
+        -DACTION:STRING=default
         -DCMAKE_EXECUTABLE_SUFFIX:STRING=${CMAKE_EXECUTABLE_SUFFIX}
         -DCTKAppLauncher_DIR:PATH=${CTKAppLauncher_DIR}
         -DOPENSSL_EXPORT_LIBRARY_DIR:PATH=${OPENSSL_EXPORT_LIBRARY_DIR}
@@ -210,7 +216,14 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
         -DSlicer_LIB_DIR:PATH=${Slicer_LIB_DIR}
         -DSlicer_SHARE_DIR:PATH=${Slicer_SHARE_DIR}
         -DSlicer_SOURCE_DIR:PATH=${Slicer_SOURCE_DIR}
-
+        -DSlicer_REVISION:STRING=${Slicer_REVISION}
+        -DSlicer_ORGANIZATION_DOMAIN:STRING=${Slicer_ORGANIZATION_DOMAIN}
+        -DSlicer_ORGANIZATION_NAME:STRING=${Slicer_ORGANIZATION_NAME}
+        -DSLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME:STRING=${SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME}
+        -P ${Slicer_SOURCE_DIR}/SuperBuild/python_configure_python_launcher.cmake
+      COMMAND ${CMAKE_COMMAND}
+        -DACTION:STRING=replace_application_name
+        -DPYTHON_REAL_EXECUTABLE:FILEPATH=${slicer_PYTHON_REAL_EXECUTABLE}
         -P ${Slicer_SOURCE_DIR}/SuperBuild/python_configure_python_launcher.cmake
       DEPENDEES install
       )

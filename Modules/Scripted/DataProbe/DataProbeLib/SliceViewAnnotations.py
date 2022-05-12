@@ -1,28 +1,21 @@
 import os
-import logging
+
 import qt
 import vtk
-import slicer
 
+import slicer
 from slicer.util import settingsValue
 from slicer.util import VTKObservationMixin
 
-try:
-  import numpy as np
-  NUMPY_AVAILABLE = True
-except ImportError:
-  NUMPY_AVAILABLE = False
-
 from . import DataProbeUtil
+
 
 class SliceAnnotations(VTKObservationMixin):
   """Implement the Qt window showing settings for Slice View Annotations
   """
+
   def __init__(self, layoutManager=None):
     VTKObservationMixin.__init__(self)
-    self.hasVTKPVScalarBarActor = hasattr(slicer, 'vtkPVScalarBarActor')
-    if not self.hasVTKPVScalarBarActor:
-      logging.warning("SliceAnnotations: Disable features relying on vtkPVScalarBarActor")
 
     self.layoutManager = layoutManager
     if self.layoutManager is None:
@@ -96,17 +89,11 @@ class SliceAnnotations(VTKObservationMixin):
     self.fontSize = settingsValue('DataProbe/sliceViewAnnotations.fontSize', 14, converter=int)
     self.backgroundDICOMAnnotationsPersistence = settingsValue(
         'DataProbe/sliceViewAnnotations.bgDICOMAnnotationsPersistence', 0, converter=int)
-
-    self.scalarBarEnabled = settingsValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', 0, converter=int)
-    self.scalarBarEnabledLastStatus = self.scalarBarEnabled
-    self.scalarBarSelectedLayer = settingsValue('DataProbe/sliceViewAnnotations.scalarBarSelectedLayer', 'background')
-    self.rangeLabelFormat = settingsValue('DataProbe/sliceViewAnnotations.rangeLabelFormat', '%G')
-
     self.sliceViewAnnotationsEnabledparameter = 'sliceViewAnnotationsEnabled'
     self.parameterNode = self.dataProbeUtil.getParameterNode()
     self.addObserver(self.parameterNode, vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
-    self.maximumTextLength= 35
+    self.maximumTextLength = 35
 
     self.create()
 
@@ -131,9 +118,7 @@ class SliceAnnotations(VTKObservationMixin):
     self.topLeftCheckBox = find(window,'topLeftCheckBox')[0]
     self.topLeftCheckBox.checked = self.topLeft
     self.topRightCheckBox = find(window,'topRightCheckBox')[0]
-    self.topRightCheckBox.toolTip = "Top right corner annotation is only enabled when the scalarBar is off."
     self.topRightCheckBox.checked = self.topRight
-    self.topRightCheckBox.enabled = not(self.scalarBarEnabled)
 
     self.bottomLeftCheckBox = find(window, 'bottomLeftCheckBox')[0]
     self.bottomLeftCheckBox.checked = self.bottomLeft
@@ -158,18 +143,6 @@ class SliceAnnotations(VTKObservationMixin):
 
     self.annotationsAmountGroupBox = find(window,'annotationsAmountGroupBox')[0]
 
-    self.scalarBarCollapsibleButton = find(window,'scalarBarCollapsibleButton')[0]
-    self.scalarBarEnableCheckBox = find(window,'scalarBarEnableCheckBox')[0]
-    self.scalarBarEnableCheckBox.checked = self.scalarBarEnabled
-    self.scalarBarLayerSelectionGroupBox = find(window,'scalarBarLayerSelectionGroupBox')[0]
-
-    self.backgroundRadioButton = find(window, 'backgroundRadioButton')[0]
-    self.backgroundRadioButton.checked = self.scalarBarSelectedLayer == 'background'
-    self.foregroundRadioButton = find(window, 'foregroundRadioButton')[0]
-    self.foregroundRadioButton.checked = self.scalarBarSelectedLayer == 'foreground'
-    self.rangeLabelFormatLineEdit = find(window,'rangeLabelFormatLineEdit')[0]
-    self.rangeLabelFormatLineEdit.text = self.rangeLabelFormat
-
     self.restoreDefaultsButton = find(window, 'restoreDefaultsButton')[0]
 
     self.updateEnabledButtons()
@@ -190,12 +163,6 @@ class SliceAnnotations(VTKObservationMixin):
 
     self.backgroundPersistenceCheckBox.connect('clicked()', self.onBackgroundLayerPersistenceCheckBox)
 
-    self.scalarBarEnableCheckBox.connect('clicked()', self.onScalarBarCheckBox)
-    self.backgroundRadioButton.connect('clicked()',self.onLayerSelectionRadioButton)
-    self.foregroundRadioButton.connect('clicked()',self.onLayerSelectionRadioButton)
-    self.rangeLabelFormatLineEdit.connect('editingFinished()',self.onRangeLabelFormatLineEdit)
-    self.rangeLabelFormatLineEdit.connect('returnPressed()',self.onRangeLabelFormatLineEdit)
-
     self.restoreDefaultsButton.connect('clicked()', self.restoreDefaultValues)
 
   def onLayoutManagerDestroyed(self):
@@ -206,17 +173,12 @@ class SliceAnnotations(VTKObservationMixin):
   def onSliceViewAnnotationsCheckBox(self):
     if self.sliceViewAnnotationsCheckBox.checked:
       self.sliceViewAnnotationsEnabled = 1
-      self.scalarBarEnableCheckBox.checked = self.scalarBarEnabledLastStatus
-      self.scalarBarEnabled = self.scalarBarEnabledLastStatus
     else:
-      self.scalarBarEnabledLastStatus = self.scalarBarEnabled
-      self.scalarBarEnableCheckBox.checked = False
       self.sliceViewAnnotationsEnabled = 0
-      self.scalarBarEnabled = 0
+
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.enabled', self.sliceViewAnnotationsEnabled)
-    settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', self.scalarBarEnabled)
-    settings.setValue('DataProbe/sliceViewAnnotations.scalarBarSelectedLayer', self.scalarBarSelectedLayer)
+
     self.updateEnabledButtons()
     self.updateSliceViewFromGUI()
 
@@ -230,33 +192,10 @@ class SliceAnnotations(VTKObservationMixin):
         self.backgroundDICOMAnnotationsPersistence)
     self.updateSliceViewFromGUI()
 
-  def onLayerSelectionRadioButton(self):
-    if self.backgroundRadioButton.checked:
-      self.scalarBarSelectedLayer = 'background'
-    else:
-      self.scalarBarSelectedLayer = 'foreground'
-    self.updateSliceViewFromGUI()
-
-  def onScalarBarCheckBox(self):
-    if self.scalarBarEnableCheckBox.checked:
-      self.topRightCheckBox.enabled = False
-    else:
-      self.topRightCheckBox.enabled = True
-    self.scalarBarEnabled = int(self.scalarBarEnableCheckBox.checked)
-    settings = qt.QSettings()
-    settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled',
-        self.scalarBarEnabled)
-    settings.setValue('DataProbe/sliceViewAnnotations.scalarBarSelectedLayer',
-        self.scalarBarSelectedLayer)
-    self.updateSliceViewFromGUI()
-
   def onCornerTextsActivationCheckBox(self):
     self.topLeft = int(self.topLeftCheckBox.checked)
     self.topRight = int(self.topRightCheckBox.checked)
     self.bottomLeft = int(self.bottomLeftCheckBox.checked)
-
-    if self.topRight:
-      self.scalarBarEnableCheckBox.checked = False
 
     self.updateSliceViewFromGUI()
 
@@ -286,14 +225,6 @@ class SliceAnnotations(VTKObservationMixin):
         self.fontSize)
     self.updateSliceViewFromGUI()
 
-  def onRangeLabelFormatLineEdit(self):
-    # Updating font size and family
-    self.rangeLabelFormat =  self.rangeLabelFormatLineEdit.text
-    settings = qt.QSettings()
-    settings.setValue('DataProbe/sliceViewAnnotations.rangeLabelFormat',
-        self.rangeLabelFormat)
-    self.updateSliceViewFromGUI()
-
   def restoreDefaultValues(self):
     self.topLeftCheckBox.checked = True
     self.topLeft = 1
@@ -306,10 +237,6 @@ class SliceAnnotations(VTKObservationMixin):
     self.fontFamily = 'Times'
     self.backgroundDICOMAnnotationsPersistence = 0
     self.backgroundPersistenceCheckBox.checked = False
-    self.scalarBarEnableCheckBox.checked = False
-    self.scalarBarEnabled = 0
-    self.rangeLabelFormat = '%G'
-    self.rangeLabelFormatLineEdit.text = '%G'
 
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.enabled', self.sliceViewAnnotationsEnabled)
@@ -320,9 +247,7 @@ class SliceAnnotations(VTKObservationMixin):
     settings.setValue('DataProbe/sliceViewAnnotations.fontSize',self.fontSize)
     settings.setValue('DataProbe/sliceViewAnnotations.bgDICOMAnnotationsPersistence',
         self.backgroundDICOMAnnotationsPersistence)
-    settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', self.scalarBarEnabled)
-    settings.setValue('DataProbe/sliceViewAnnotations.scalarBarSelectedLayer', self.scalarBarSelectedLayer)
-    settings.setValue('DataProbe/sliceViewAnnotations.rangeLabelFormat', self.rangeLabelFormat)
+
     self.updateSliceViewFromGUI()
 
   def updateGUIFromMRML(self,caller,event):
@@ -338,9 +263,7 @@ class SliceAnnotations(VTKObservationMixin):
     self.cornerTextParametersCollapsibleButton.enabled = enabled
     self.activateCornersGroupBox.enabled = enabled
     self.fontPropertiesGroupBox.enabled = enabled
-    self.scalarBarLayerSelectionGroupBox.enabled = enabled
     self.annotationsAmountGroupBox.enabled = enabled
-    self.scalarBarCollapsibleButton.enabled = enabled
     self.restoreDefaultsButton.enabled = enabled
 
   def updateSliceViewFromGUI(self):
@@ -365,7 +288,6 @@ class SliceAnnotations(VTKObservationMixin):
       sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
       if sliceWidget:
         sl = sliceWidget.sliceLogic()
-        self.updateScalarBar(sl)
         self.updateCornerAnnotation(sl)
 
   def createGlobalVariables(self):
@@ -373,8 +295,6 @@ class SliceAnnotations(VTKObservationMixin):
     self.sliceWidgets = {}
     self.sliceViews = {}
     self.renderers = {}
-    self.scalarBars = {}
-    self.scalarBarWidgets = {}
 
   def createCornerAnnotations(self):
     self.createGlobalVariables()
@@ -400,27 +320,6 @@ class SliceAnnotations(VTKObservationMixin):
     sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
     self.sliceWidgets[sliceViewName] = sliceWidget
 
-    # Create scalarBar
-    self.scalarBars[sliceViewName] = self.createScalarBar(sliceViewName)
-
-  def createScalarBar(self, sliceViewName):
-    if self.hasVTKPVScalarBarActor:
-      scalarBar = slicer.vtkPVScalarBarActor()
-    else:
-      scalarBar = vtk.vtkScalarBarActor()
-    scalarBar.SetTitle(" ")
-    # adjust text property
-    if self.hasVTKPVScalarBarActor:
-      scalarBar.SetRangeLabelFormat(self.rangeLabelFormat)
-    lookupTable = vtk.vtkLookupTable()
-    scalarBar.SetLookupTable(lookupTable)
-    '''
-    scalarBarWidget = vtk.vtkScalarBarWidget()
-    scalarBarWidget.SetScalarBarActor(scalarBar)
-    self.scalarBarWidgets[sliceViewName] = scalarBarWidget
-    '''
-    return scalarBar
-
   def updateViewAnnotations(self,caller,event):
     if not self.sliceViewAnnotationsEnabled:
       # when self.sliceViewAnnotationsEnabled is set to false
@@ -439,7 +338,6 @@ class SliceAnnotations(VTKObservationMixin):
         self.createActors(sliceViewName)
         self.updateSliceViewFromGUI()
     self.makeAnnotationText(caller)
-    self.updateScalarBar(caller)
 
   def updateCornerAnnotation(self, sliceLogic):
 
@@ -468,93 +366,6 @@ class SliceAnnotations(VTKObservationMixin):
         cornerAnnotation.SetText(position, "")
 
     self.sliceViews[sliceViewName].scheduleRender()
-
-  def updateScalarBar(self, sliceLogic):
-    sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
-    if not sliceCompositeNode:
-      return
-
-    # Get the layers
-    backgroundLayer = sliceLogic.GetBackgroundLayer()
-    # Get slice view name
-    sliceNode = backgroundLayer.GetSliceNode()
-    if not sliceNode:
-      return
-    sliceViewName = sliceNode.GetLayoutName()
-    scalarBar = self.scalarBars[sliceViewName]
-    renderer = self.renderers[sliceViewName]
-    #scalarBarWidget = self.scalarBarWidgets[sliceViewName]
-    if self.scalarBarEnabled:
-      self.modifyScalarBar(sliceLogic)
-    else:
-      renderer.RemoveActor(scalarBar)
-
-  def modifyScalarBar(self, sliceLogic):
-    sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
-    if not sliceCompositeNode:
-      return
-
-    # Get the layers
-    backgroundLayer = sliceLogic.GetBackgroundLayer()
-    foregroundLayer = sliceLogic.GetForegroundLayer()
-
-    # Get slice view name
-    sliceViewName = backgroundLayer.GetSliceNode().GetLayoutName()
-
-    renderer = self.renderers[sliceViewName]
-    if self.sliceViews[sliceViewName]:
-      scalarBar = self.scalarBars[sliceViewName]
-      # Font
-      scalarBarTextProperty = scalarBar.GetLabelTextProperty()
-      scalarBarTextProperty.ItalicOff()
-      scalarBarTextProperty.BoldOff()
-      if self.fontFamily == 'Times':
-        scalarBarTextProperty.SetFontFamilyToTimes()
-      else:
-        scalarBarTextProperty.SetFontFamilyToArial()
-
-      scalarBar.SetTextPositionToPrecedeScalarBar()
-      if self.hasVTKPVScalarBarActor:
-        scalarBar.SetRangeLabelFormat(self.rangeLabelFormat)
-        scalarBar.SetAddRangeAnnotations(0)
-      else:
-        scalarBar.SetMaximumWidthInPixels(50)
-
-      renderer.SetViewport(0,0,1,1)
-      renderer.SetLayer(0)
-      #renderWindow = renderer.GetRenderWindow()
-      #interactor = renderWindow.GetInteractor()
-
-      # create the scalarBarWidget
-      #scalarBarWidget = self.scalarBarWidgets[sliceViewName]
-      #scalarBarWidget.SetInteractor(interactor)
-      renderer.AddActor(self.scalarBars[sliceViewName])
-
-      # Adjusting the positions of the scalar bar: shift up the scalar bar
-      # if there is an orientation marker in the bottom right corner
-      sliceNode = backgroundLayer.GetSliceNode()
-      if sliceNode.GetOrientationMarkerType() != slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeNone:
-        scalarBar.SetPosition(0.8,0.3)
-        scalarBar.SetPosition2(0.17,0.7)
-      else:
-        scalarBar.SetPosition(0.8,0.1)
-        scalarBar.SetPosition2(0.17,0.8)
-
-      # Get the volumes
-      backgroundVolume = backgroundLayer.GetVolumeNode()
-      foregroundVolume = foregroundLayer.GetVolumeNode()
-
-      if (backgroundVolume is not None and self.scalarBarSelectedLayer == 'background'):
-        self.updateScalarBarRange(sliceLogic, backgroundVolume, scalarBar, self.scalarBarSelectedLayer)
-        renderer.AddActor(scalarBar)
-        #scalarBarWidget.On()
-      elif (foregroundVolume is not None and self.scalarBarSelectedLayer == 'foreground'):
-        self.updateScalarBarRange(sliceLogic, foregroundVolume, scalarBar, self.scalarBarSelectedLayer)
-        renderer.AddActor(scalarBar)
-        #scalarBarWidget.On()
-      else:
-        renderer.RemoveActor(scalarBar)
-        #scalarBarWidget.Off()
 
   def makeAnnotationText(self, sliceLogic):
     self.resetTexts()
@@ -645,27 +456,6 @@ class SliceAnnotations(VTKObservationMixin):
 
       self.drawCornerAnnotations(sliceViewName)
 
-  @staticmethod
-  def updateScalarBarRange(sliceLogic, volumeNode, scalarBar, selectedLayer):
-    vdn = volumeNode.GetDisplayNode()
-    if vdn:
-      vcn = vdn.GetColorNode()
-      if vcn is None:
-        return
-      lut = vcn.GetLookupTable()
-      lut2 = vtk.vtkLookupTable()
-      lut2.DeepCopy(lut)
-      width = vtk.mutable(0)
-      level = vtk.mutable(0)
-      rangeLow = vtk.mutable(0)
-      rangeHigh = vtk.mutable(0)
-      if selectedLayer == 'background':
-        sliceLogic.GetBackgroundWindowLevelAndRange(width,level,rangeLow,rangeHigh)
-      else:
-        sliceLogic.GetForegroundWindowLevelAndRange(width,level,rangeLow,rangeHigh)
-      lut2.SetRange(level-width/2,level+width/2)
-      scalarBar.SetLookupTable(lut2)
-
   def makeDicomAnnotation(self,bgUid,fgUid,sliceViewName):
     # Do not attempt to retrieve dicom values if no local database exists
     if not slicer.dicomDatabase.isOpen:
@@ -733,9 +523,8 @@ class SliceAnnotations(VTKObservationMixin):
         self.cornerTexts[2]['6-Bg-SeriesTime']['text'] = self.formatDICOMTime(dicomDic['Series Time'])
         self.cornerTexts[2]['8-Bg-SeriesDescription']['text'] = dicomDic['Series Description']
 
-      # top right corner annotation would be hidden if scalarBar is on and
-      # view height is less than 260 pixels
-      if (self.topRight and (not self.scalarBarEnabled)):
+      # top right corner annotation would be hidden if view height is less than 260 pixels
+      if (self.topRight):
         self.cornerTexts[3]['1-Institution-Name']['text'] = dicomDic['Institution Name']
         self.cornerTexts[3]['2-Referring-Phisycian']['text'] = dicomDic['Referring Physician Name'].replace('^',', ')
         self.cornerTexts[3]['3-Manufacturer']['text'] = dicomDic['Manufacturer']

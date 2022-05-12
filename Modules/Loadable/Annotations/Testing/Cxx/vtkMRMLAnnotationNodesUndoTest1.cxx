@@ -1,7 +1,6 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLAnnotationFiducialDisplayableManager.h>
 #include <vtkMRMLAnnotationRulerDisplayableManager.h>
-#include <vtkMRMLAnnotationBidimensionalDisplayableManager.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLThreeDViewInteractorStyle.h>
@@ -12,7 +11,6 @@
 // MRML includes
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
-#include "vtkMRMLAnnotationBidimensionalNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
 
@@ -93,7 +91,6 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
 //  factory->RegisterDisplayableManager("vtkMRMLAnnotationDisplayableManager");
   factory->RegisterDisplayableManager("vtkMRMLAnnotationFiducialDisplayableManager");
   factory->RegisterDisplayableManager("vtkMRMLAnnotationRulerDisplayableManager");
-  factory->RegisterDisplayableManager("vtkMRMLAnnotationBidimensionalDisplayableManager");
   // need a model displayable manager to test for superclass conflicts
   factory->RegisterDisplayableManager("vtkMRMLModelDisplayableManager");
 
@@ -152,25 +149,6 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   std::cout << "Calling Scene Undo" << std::endl;
   scene->Undo();
   std::cout << "After undo for ruler" << std::endl;
-
-  // test undo/redo on the scene with a bidimensional node
-  vtkNew<vtkMRMLAnnotationBidimensionalNode> node3;
-  scene->RegisterNodeClass(node3.GetPointer());
-  double b1[3];
-  b1[0] = 0.0;
-  b1[1] = 1.0;
-  b1[2] = -1.0;
-  node3->SetControlPoint(b1, 0);
-  b1[0] = 1.0;
-  node3->SetControlPoint(b1, 1);
-  b1[0] = -1.0;
-  node3->SetControlPoint(b1, 2);
-  b1[0] = 0.5;
-  node3->SetControlPoint(b1, 3);
-  scene->SaveStateForUndo();
-  node3->Initialize(scene);
-  scene->Undo();
-  std::cout << "After undo for bidimensional" << std::endl;
 
   // and one more test: add a fiducial after all the undo's are done
   vtkNew<vtkMRMLAnnotationFiducialNode> doFid;

@@ -86,7 +86,3 @@ class vtkScriptedExampleDisplayableManager:
 
   def OnMRMLDisplayableNodeModifiedEvent(self, viewNode):
     print("vtkScriptedExampleDisplayableManager - onMRMLDisplayableNodeModifiedEvent")
-
-
-
-

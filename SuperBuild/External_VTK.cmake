@@ -48,7 +48,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       )
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
-      -DVTK_PYTHON_VERSION:STRING=3
+      -DVTK_PYTHON_VERSION:STRING=${Slicer_REQUIRED_PYTHON_VERSION_MAJOR}
       -DPython3_ROOT_DIR:PATH=${Python3_ROOT_DIR}
       -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
       -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY}
@@ -157,8 +157,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     )
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
     -DVTK_BUILD_TESTING:STRING=OFF
-    -DVTK_MODULE_ENABLE_VTK_AcceleratorsVTKm:BOOL=OFF
+    -DVTK_MODULE_ENABLE_VTK_AcceleratorsVTKm:BOOL=NO
     -DCMAKE_INSTALL_LIBDIR:STRING=lib # Force value to prevent lib64 from being used on Linux
+    -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:BOOL=NO
     # These options have been removed in VTK >= 8.90:
     # - BUILD_EXAMPLE
     # - BUILD_SHARED_LIBS
@@ -177,8 +178,8 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     set(_git_tag "97904fdcc7e73446b3131f32eac9fc9781b23c2d") # slicer-v8.2.0-2018-10-02-74d9488523
     set(vtk_egg_info_version "8.2.0")
   elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
-    set(_git_tag "98d686bb509f46543ebe04fdd5d120fdab87893b") # slicer-v9.0.20201111-733234c785-v3
-    set(vtk_egg_info_version "9.0.20201111")
+    set(_git_tag "684e8a602bd57dd6aaf4a7e086c2ea5d76e8e8b5") # slicer-v9.1.20220125-efbe2afc2
+    set(vtk_egg_info_version "9.1.20220125")
   else()
     message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
   endif()
@@ -231,7 +232,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
   if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
     # Create the vtk-*.egg-info directory to prevent pip from re-installing
     # vtk package as a wheel when listed as dependency in Slicer extension.
-    set(_vtk_egg_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-${vtk_egg_info_version}-py3.6.egg-info")
+    set(_vtk_egg_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-${vtk_egg_info_version}-py${Slicer_REQUIRED_PYTHON_VERSION_DOT}.egg-info")
     ExternalProject_Add_Step(${proj} create_egg_info
       COMMAND ${CMAKE_COMMAND} -E make_directory ${_vtk_egg_info_dir}
       COMMAND ${CMAKE_COMMAND} -E touch ${_vtk_egg_info_dir}/PKG-INFO
@@ -267,7 +268,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
   # pythonpath
     if(UNIX)
       set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-        ${VTK_DIR}/${_library_output_subdir}/python3.6/site-packages
+        ${VTK_DIR}/${_library_output_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
       if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
@@ -324,7 +325,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     endif()
     if(UNIX)
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-        <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/python3.6/site-packages
+        <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
@@ -332,7 +333,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         # Adding the following line is needed only for (<VTK_MAJOR_VERSION>.<VTK_MINOR_VERSION> <= 8.1),
         # but since we only have Slicer_VTK_VERSION_MAJOR variable, following the update of VTK
         # version from 9.0 to 8.2, there is no way to discriminate between 8.1 and 8.2.
-        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python3.6/site-packages
+        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     endif()
     mark_as_superbuild(

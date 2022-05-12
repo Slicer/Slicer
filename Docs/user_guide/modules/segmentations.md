@@ -15,7 +15,7 @@ Motivation, features, and details of the infrastructure are explained in paper *
 
 ### Edit segmentation
 
-Segmentation can be edited using [Segment Editor](segmenteditor) module.
+Segmentation can be edited using [Segment Editor](segmenteditor.md) module.
 
 ### Import an existing segmentation from volume file
 
@@ -55,10 +55,23 @@ Other mesh file formats can be loaded as model and then converted to segmentatio
 - Go to `Data` module, `Subject hierarchy` tab
 - Right-click on the name of the imported volume and choose `Convert model to segmentation node`
 
-Tip: Selection of a `master volume` is required for editing a segmentation. If no volume is available then it can be created by:
-- Go to `Segmend editor` module
+### Editing a segmentation imported from model (surface mesh) file
+
+Selection of a `master volume` is required for editing a segmentation. The master volume specifies the geometry (origin, spacing, axis directions, and extents) of the voxel grid that is used during editing.
+
+If no volume is available then it can be created by the following steps:
+- Go to `Segment editor` module
 - Click `Specify geometry` button (on the right side of `Master volume` node selector)
-- In the displayed `Segmentation geometry` window click `OK`
+- For `Source geometry` choose the segmentation (this specifies the extents, i.e., the bounding box so that the complete object is included)
+- Adjust `Spacing` values as needed. It is recommended to set the same value for all three axes. Using smaller values preserve more details but at the cost of increased memory usage and computation time.
+- Click `OK`
+- When an editing operation is started then the Segment Editor will ask if the master representation should be changed to binary labelmap. Answer `Yes`, because binary labelmap representation is required for editing.
+
+:::{note}
+
+Certain editing operations are available directly on models, without converting to segmentation. For example, using Surface Toolbox and Dynamic Modeler modules.
+
+:::
 
 ### Export segmentation to model (surface mesh) file
 
@@ -81,7 +94,7 @@ If segments in a segmentation do not overlap each other then segmentation is sav
 
 To force saving segmentation as a 3D volume, export it to a labelmap volume by right-clicking on the segmentation in Data module.
 
-For advanced export options, `Segmentations` module's `Export/import models and labelmaps` section can be used. If exported segmentation geometry (origin, spacing, axis directions, extents) must exactly match another volume's then then choose that volume as `Reference volume` in `Advanced` section.
+For advanced export options, `Segmentations` module's `Export/import models and labelmaps` section can be used. If exported segmentation geometry (origin, spacing, axis directions, extents) must exactly match another volume's then then choose that volume as `Reference volume` in `Advanced` section. Using a reference volume for labelmap export may result in the segmentation being cropped if some regions are outside of the new geometry. A confirmation popup will be displayed before the segmentation is cropped.
 
 ### Export segmentation to labelmap volume file
 
@@ -98,6 +111,7 @@ For exporting segmentation as NRRD or NIFTI file for external software that uses
 
 Labelmap volumes can be created in any other formats by [exporting segmentation to labelmap volume](segmentations.md#export-segmentation-to-labelmap-volume) then in application menu, choose `File` / `Save`.
 
+Using a reference volume for labelmap export may result in the segmentation being cropped if some regions are outside of the new geometry. A confirmation popup will be displayed before the segmentation is cropped.
 
 ### Create new representation in segmentation (conversion)
 
@@ -169,8 +183,7 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
 
 ## Related modules
 
-- [Segment Editor](segmenteditor) module is for editing segments of a segmentation node
-- Editor module: the legacy Editor module has been replaced by Segment Editor module.
+- [Segment Editor](segmenteditor.md) module is for editing segments of a segmentation node
 
 ## References
 

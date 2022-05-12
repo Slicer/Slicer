@@ -1,9 +1,12 @@
 # markups measurements test
 
-from slicer.util import TESTING_DATA_URL
 import json
 import os
+
 import numpy as np
+import vtk
+
+import slicer
 
 #
 # Test markups measurements (except curves, which are tested in MarkupsCurveMeasurementsTest.py)
@@ -92,6 +95,7 @@ if not preserveFiles:
 #
 
 markupsNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsPlaneNode')
+markupsNode.SetPlaneType(slicer.vtkMRMLMarkupsPlaneNode.PlaneType3Points)
 markupsNode.AddControlPoint(vtk.vtkVector3d(30, -22.4, 13.8))
 markupsNode.AddControlPoint(vtk.vtkVector3d(50, -22.4, 13.8))
 markupsNode.AddControlPoint(vtk.vtkVector3d(30, -62.4, 13.8))

@@ -27,7 +27,6 @@ static const char* UNIT_NODE_REFERENCE_ROLE = "unit/";
 static const char* ACTIVE_VOLUME_REFERENCE_ROLE = "ActiveVolume";
 static const char* SECONDARY_VOLUME_REFERENCE_ROLE = "SecondaryVolume";
 static const char* ACTIVE_LABEL_VOLUME_REFERENCE_ROLE = "ActiveLabelVolume";
-static const char* ACTIVE_FIDUCIAL_LIST_REFERENCE_ROLE = "ActiveFiducialList";
 static const char* ACTIVE_PLACE_NODE_REFERENCE_ROLE = "ActivePlaceNode";
 static const char* ACTIVE_ROI_LIST_REFERENCE_ROLE = "ActiveROIList";
 static const char* ACTIVE_CAMERA_REFERENCE_ROLE = "ActiveCamera";
@@ -54,7 +53,6 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->AddNodeReferenceRole(ACTIVE_VOLUME_REFERENCE_ROLE, "activeVolumeID");
   this->AddNodeReferenceRole(SECONDARY_VOLUME_REFERENCE_ROLE, "secondaryVolumeID");
   this->AddNodeReferenceRole(ACTIVE_LABEL_VOLUME_REFERENCE_ROLE, "ActiveLabelVolumeID");
-  this->AddNodeReferenceRole(ACTIVE_FIDUCIAL_LIST_REFERENCE_ROLE, "ActiveFiducialListID");
   this->AddNodeReferenceRole(ACTIVE_PLACE_NODE_REFERENCE_ROLE, "ActivePlaceNodeID");
   this->AddNodeReferenceRole(ACTIVE_ROI_LIST_REFERENCE_ROLE, "ActiveROIListID");
   this->AddNodeReferenceRole(ACTIVE_CAMERA_REFERENCE_ROLE, "ActiveCameraID");
@@ -103,10 +101,6 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
   if (this->GetActiveLabelVolumeID() && strcmp(this->GetActiveLabelVolumeID(), "NULL") == 0)
     {
     this->SetActiveLabelVolumeID(nullptr);
-    }
-  if (this->GetActiveFiducialListID() && strcmp(this->GetActiveFiducialListID(), "NULL") == 0)
-    {
-    this->SetActiveFiducialListID(nullptr);
     }
   if (this->GetActivePlaceNodeID() && strcmp(this->GetActivePlaceNodeID(), "NULL") == 0)
     {
@@ -487,17 +481,6 @@ const char* vtkMRMLSelectionNode::GetActiveLabelVolumeID()
 void vtkMRMLSelectionNode::SetActiveLabelVolumeID(const char* id)
 {
   this->SetNodeReferenceID(ACTIVE_LABEL_VOLUME_REFERENCE_ROLE, id);
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLSelectionNode::GetActiveFiducialListID()
-{
-  return this->GetNodeReferenceID(ACTIVE_FIDUCIAL_LIST_REFERENCE_ROLE);
-}
-//----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::SetActiveFiducialListID(const char* id)
-{
-  this->SetNodeReferenceID(ACTIVE_FIDUCIAL_LIST_REFERENCE_ROLE, id);
 }
 
 //----------------------------------------------------------------------------

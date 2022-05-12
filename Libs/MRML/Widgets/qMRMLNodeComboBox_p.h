@@ -41,6 +41,8 @@ class QComboBox;
 class qMRMLNodeFactory;
 class qMRMLSceneModel;
 
+#include "vtkCallbackCommand.h"
+#include "vtkSmartPointer.h"
 #include "vtkWeakPointer.h"
 
 // -----------------------------------------------------------------------------
@@ -66,6 +68,8 @@ public:
 
   bool hasPostItem(const QString& name)const;
 
+  static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data);
+
   QComboBox*        ComboBox;
   qMRMLNodeFactory* MRMLNodeFactory;
   qMRMLSceneModel*  MRMLSceneModel;
@@ -75,6 +79,9 @@ public:
   bool              EditEnabled;
   bool              RenameEnabled;
   QString           InteractionNodeSingletonTag;
+
+  vtkWeakPointer<vtkMRMLScene> MRMLScene;
+  vtkSmartPointer<vtkCallbackCommand> CallBack;
 
   QHash<QString, QString> NodeTypeLabels;
 

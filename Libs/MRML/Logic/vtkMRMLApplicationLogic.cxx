@@ -35,6 +35,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLStorageNode.h"
@@ -916,4 +917,251 @@ void vtkMRMLApplicationLogic::OnMRMLSceneStartRestore()
 void vtkMRMLApplicationLogic::OnMRMLSceneEndRestore()
 {
   this->ResumeRender();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled(
+  vtkMRMLApplicationLogic::IntersectingSlicesOperation operation, bool enabled)
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkWarningMacro("vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled failed: invalid scene");
+    return;
+    }
+
+  vtkSmartPointer<vtkCollection> sliceDisplayNodes =
+    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
+  if (sliceDisplayNodes.GetPointer())
+    {
+    vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
+    vtkCollectionSimpleIterator it;
+    for (sliceDisplayNodes->InitTraversal(it);
+      (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+      {
+      switch (operation)
+        {
+        case vtkMRMLApplicationLogic::IntersectingSlicesVisibility:
+          sliceDisplayNode->SetIntersectingSlicesVisibility(enabled);
+          break;
+        case vtkMRMLApplicationLogic::IntersectingSlicesInteractive:
+          sliceDisplayNode->SetIntersectingSlicesInteractive(enabled);
+          break;
+        case vtkMRMLApplicationLogic::IntersectingSlicesTranslation:
+          sliceDisplayNode->SetIntersectingSlicesTranslationEnabled(enabled);
+          break;
+        case vtkMRMLApplicationLogic::IntersectingSlicesRotation:
+          sliceDisplayNode->SetIntersectingSlicesRotationEnabled(enabled);
+          break;
+        }
+      }
+    }
+
+  // The vtkMRMLSliceIntersectionWidget should observe slice display node modifications
+  // but as a workaround for now, trigger update by modifying all the slice nodes.
+  vtkSmartPointer<vtkCollection> sliceNodes =
+    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
+  if (sliceNodes.GetPointer())
+    {
+    vtkMRMLSliceNode* sliceNode = nullptr;
+    vtkCollectionSimpleIterator it;
+    for (sliceNodes->InitTraversal(it);
+      (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+      {
+      sliceNode->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled(
+  vtkMRMLApplicationLogic::IntersectingSlicesOperation operation)
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkWarningMacro("vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled failed: invalid scene");
+    return false;
+    }
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(
+    scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
+  if (!sliceDisplayNode)
+    {
+    // No slice display nodes are in the scene yet, use the scene default node instead.
+    // Developers can set the default appearance of intersecting slices by modifying the
+    // default slice display node.
+    vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode =
+      vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
+    if (!defaultSliceDisplayNode.GetPointer())
+      {
+      defaultSliceDisplayNode = vtkSmartPointer<vtkMRMLSliceDisplayNode>::New();
+      scene->AddDefaultNode(defaultSliceDisplayNode);
+      }
+    sliceDisplayNode = defaultSliceDisplayNode;
+    if (!sliceDisplayNode)
+      {
+      vtkErrorMacro("vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled failed: cannot get slice display node");
+      return false;
+      }
+    }
+
+  switch (operation)
+    {
+    case vtkMRMLApplicationLogic::IntersectingSlicesVisibility:
+      return sliceDisplayNode->GetIntersectingSlicesVisibility();
+    case vtkMRMLApplicationLogic::IntersectingSlicesInteractive:
+      return sliceDisplayNode->GetIntersectingSlicesInteractive();
+    case vtkMRMLApplicationLogic::IntersectingSlicesTranslation:
+      return sliceDisplayNode->GetIntersectingSlicesTranslationEnabled();
+    case vtkMRMLApplicationLogic::IntersectingSlicesRotation:
+      return sliceDisplayNode->GetIntersectingSlicesRotationEnabled();
+    }
+
+  return false;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetIntersectingSlicesIntersectionMode(int mode)
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkWarningMacro("vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled failed: invalid scene");
+    return;
+    }
+
+  vtkSmartPointer<vtkCollection> sliceDisplayNodes =
+    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
+  if (sliceDisplayNodes.GetPointer())
+    {
+    vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
+    vtkCollectionSimpleIterator it;
+    for (sliceDisplayNodes->InitTraversal(it);
+      (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+      {
+      sliceDisplayNode->SetIntersectingSlicesIntersectionMode(mode);
+      }
+    }
+
+  // The vtkMRMLSliceIntersectionWidget should observe slice display node modifications
+  // but as a workaround for now, trigger update by modifying all the slice nodes.
+  vtkSmartPointer<vtkCollection> sliceNodes =
+    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
+  if (sliceNodes.GetPointer())
+  {
+    vtkMRMLSliceNode* sliceNode = nullptr;
+    vtkCollectionSimpleIterator it;
+    for (sliceNodes->InitTraversal(it);
+      (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+    {
+      sliceNode->Modified();
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLApplicationLogic::GetIntersectingSlicesIntersectionMode()
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkWarningMacro("vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled failed: invalid scene");
+    return false;
+    }
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(
+    scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
+  if (!sliceDisplayNode)
+    {
+    // No slice display nodes are in the scene yet, use the scene default node instead.
+    // Developers can set the default appearance of intersecting slices by modifying the
+    // default slice display node.
+    vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode =
+      vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
+    if (!defaultSliceDisplayNode.GetPointer())
+      {
+      defaultSliceDisplayNode = vtkSmartPointer<vtkMRMLSliceDisplayNode>::New();
+      scene->AddDefaultNode(defaultSliceDisplayNode);
+      }
+    sliceDisplayNode = defaultSliceDisplayNode;
+    if (!sliceDisplayNode)
+      {
+      vtkErrorMacro("vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled failed: cannot get slice display node");
+      return false;
+      }
+    }
+
+  return sliceDisplayNode->GetIntersectingSlicesIntersectionMode();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetIntersectingSlicesLineThicknessMode(int mode)
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkWarningMacro("vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled failed: invalid scene");
+    return;
+    }
+
+  vtkSmartPointer<vtkCollection> sliceDisplayNodes =
+    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
+  if (sliceDisplayNodes.GetPointer())
+    {
+    vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
+    vtkCollectionSimpleIterator it;
+    for (sliceDisplayNodes->InitTraversal(it);
+      (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+      {
+      sliceDisplayNode->SetIntersectingSlicesLineThicknessMode(mode);
+      }
+    }
+
+  // The vtkMRMLSliceIntersectionWidget should observe slice display node modifications
+  // but as a workaround for now, trigger update by modifying all the slice nodes.
+  vtkSmartPointer<vtkCollection> sliceNodes =
+    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
+  if (sliceNodes.GetPointer())
+    {
+    vtkMRMLSliceNode* sliceNode = nullptr;
+    vtkCollectionSimpleIterator it;
+    for (sliceNodes->InitTraversal(it);
+      (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+      {
+      sliceNode->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLApplicationLogic::GetIntersectingSlicesLineThicknessMode()
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkWarningMacro("vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled failed: invalid scene");
+    return false;
+    }
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(
+    scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
+  if (!sliceDisplayNode)
+    {
+    // No slice display nodes are in the scene yet, use the scene default node instead.
+    // Developers can set the default appearance of intersecting slices by modifying the
+    // default slice display node.
+    vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode =
+      vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
+    if (!defaultSliceDisplayNode.GetPointer())
+      {
+      defaultSliceDisplayNode = vtkSmartPointer<vtkMRMLSliceDisplayNode>::New();
+      scene->AddDefaultNode(defaultSliceDisplayNode);
+      }
+    sliceDisplayNode = defaultSliceDisplayNode;
+    if (!sliceDisplayNode)
+      {
+      vtkErrorMacro("vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled failed: cannot get slice display node");
+      return false;
+      }
+    }
+
+  return sliceDisplayNode->GetIntersectingSlicesLineThicknessMode();
 }

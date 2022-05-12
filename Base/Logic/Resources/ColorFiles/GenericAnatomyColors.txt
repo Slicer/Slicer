@@ -4,7 +4,7 @@
 #Filename: Slicer3_2010_GenericAnatomyColors.txt
 #Title: Slicer3:2010 GenericAnatomyColors
 #PageName: Slicer3:2010_GenericAnatomyColors
-#Source: http://www.slicer.org/slicerWiki/index.php/Slicer3:2010_GenericAnatomyColors#Lookup_table
+#Source: https://www.slicer.org/w/index.php/Slicer3:2010_GenericAnatomyColors#Lookup_table
 #
 #Begin table data:
 0 background 0 0 0 0

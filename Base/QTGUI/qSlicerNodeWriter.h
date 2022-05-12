@@ -66,7 +66,7 @@ public:
 
   virtual vtkMRMLNode* getNodeByID(const char *id)const;
 
-  /// Return a qSlicerIONodeWriterOptionsWidget
+  /// Return a qSlicerNodeWriterOptionsWidget
   qSlicerIOOptions* options()const override;
 
 protected:

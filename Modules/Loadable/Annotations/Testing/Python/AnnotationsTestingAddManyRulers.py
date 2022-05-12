@@ -1,5 +1,8 @@
 import time
 
+import slicer
+
+
 def TestRulerAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   print("numToAdd = ", numToAdd)
   if renameFlag > 0:
@@ -28,15 +31,15 @@ def TestRulerAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
     rulerNode = slicer.vtkMRMLAnnotationRulerNode()
     rulerNode.SetPosition1(r1, a1, s1)
     rulerNode.SetPosition2(r2, a2, s2)
-    t1 = time.clock()
+    t1 = time.process_time()
     rulerNode.Initialize(slicer.mrmlScene)
-    t2 = time.clock()
+    t2 = time.process_time()
     timeToAddThisRuler = t2 - t1
     dt = timeToAddThisRuler - timeToAddLastRuler
     if renameFlag > 0:
-      t3 = time.clock()
+      t3 = time.process_time()
       rulerNode.SetName(str(i))
-      t4 = time.clock()
+      t4 = time.process_time()
       timeToRenameThisRuler = t4 - t3
       dt2 = timeToRenameThisRuler - timeToRenameLastRuler
       print('%(index)04d\t' % {'index': i}, timeToAddThisRuler, "\t", dt, "\t", timeToRenameThisRuler, "\t", dt2)
@@ -51,9 +54,9 @@ def TestRulerAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
     s2 = s2 + 1.5
     timeToAddLastRuler = timeToAddThisRuler
 
-testStartTime = time.clock()
+
+testStartTime = time.process_time()
 TestRulerAdd()
-testEndTime = time.clock()
+testEndTime = time.process_time()
 testTime = testEndTime - testStartTime
 print("Test total time = ", testTime)
-

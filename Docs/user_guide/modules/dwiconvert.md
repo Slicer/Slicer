@@ -8,17 +8,16 @@
 
 ## Tutorials
 
-- Tutorial: http://slicerdmri.github.io/docs/tutorials/DWIConverterTutorial.pdf
-- Test data: http://slicer.kitware.com/midas3/download/item/93008/SiemensTrioTim2.tar.gz
+- Tutorials: https://dmri.slicer.org/docs/
 
 ```{include} ../../_moduledescriptions/DWIConvertParameters.md
 ```
 
 ## Similar modules
 
-[SlicerDMRI extension](http://slicerdmri.github.io/)
+[SlicerDMRI extension](https://slicerdmri.github.io/)
 
 ## Information for Developers
 
-- [DICOM for DWI and DTI](http://wiki.na-mic.org/Wiki/index.php/NAMIC_Wiki:DTI:DICOM_for_DWI_and_DTI)
+- [DICOM for DWI and DTI](https://wiki.na-mic.org/Wiki/index.php/NAMIC_Wiki:DTI:DICOM_for_DWI_and_DTI)
 - [Source code on github](https://github.com/BRAINSia/BRAINSTools)

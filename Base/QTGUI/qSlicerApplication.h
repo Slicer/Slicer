@@ -22,7 +22,7 @@
 #define __qSlicerApplication_h
 
 // Qt includes
-#include <QPalette>
+class QPalette;
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -77,7 +77,7 @@ public:
   ///
   /// so we follow the pattern suggested here:
   ///
-  /// http://stackoverflow.com/questions/13878373/where-am-i-supposed-to-reimplement-qapplicationnotify-function
+  /// https://stackoverflow.com/questions/13878373/where-am-i-supposed-to-reimplement-qapplicationnotify-function
   ///
   bool notify(QObject * receiver, QEvent * event) override;
 
@@ -121,6 +121,7 @@ public:
   QString nodeModule(vtkMRMLNode* node, double *confidence=nullptr)const;
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
+  Q_INVOKABLE void openSettingsDialog(const QString& settingsPanel=QString());
 
   /// Log application information.
   ///

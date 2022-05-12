@@ -10,6 +10,7 @@ import numpy as np
 
 # Helper functions to Visualize coordinate system frame along a curve
 
+
 def updateCoordinateSystemsModel(updateInfo):
   model, curve, coordinateSystemAppender, curvePointToWorldTransform, transform, transformer = updateInfo
   coordinateSystemAppender.RemoveAllInputs()
@@ -23,6 +24,7 @@ def updateCoordinateSystemsModel(updateInfo):
     coordinateSystemAppender.AddInputData(coordinateSystemInWorld)
   coordinateSystemAppender.Update()
   model.SetAndObservePolyData(coordinateSystemAppender.GetOutput())
+
 
 def createCoordinateSystemsModel(curve, axisLength=5):
   """Add a coordinate system model at each curve point.
@@ -61,15 +63,18 @@ def createCoordinateSystemsModel(curve, axisLength=5):
   updateCoordinateSystemsModel(updateInfo)
   return updateInfo
 
+
 def addCoordinateSystemUpdater(updateInfo):
   model, curve, coordinateSystemAppender, curvePointToWorldTransform, transform, transformer = updateInfo
   observation = curve.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent,
     lambda caller, eventData, updateInfo=updateInfo: updateCoordinateSystemsModel(updateInfo))
   return [curve, observation]
 
+
 def removeCoordinateSystemUpdaters(curveObservations):
   for curve, observer in curveObservations:
     curve.RemoveObserver(observer)
+
 
 #
 # Set up tests

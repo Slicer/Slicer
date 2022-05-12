@@ -1,6 +1,12 @@
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+
+import ctk
+import qt
+import vtk
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 from SegmentStatisticsPlugins import *
 
 
@@ -28,15 +34,14 @@ Requires segment closed surface representation.
 """
     self.parent.helpText += parent.defaultDocumentationLink
     self.parent.acknowledgementText = """
-Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.
+Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www.slicer.org for details.
 """
+
   def setup(self):
     # Register subject hierarchy plugin
     import SubjectHierarchyPlugins
     scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
     scriptedPlugin.setPythonSource(SubjectHierarchyPlugins.SegmentStatisticsSubjectHierarchyPlugin.filePath)
-
-    import SegmentStatisticsPlugins
 
 
 class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
@@ -182,7 +187,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
     """Calculate the label statistics
     """
 
-    try:
+    with slicer.util.tryWithErrorDisplay("Failed to compute results.", waitCursor=True):
       if not self.outputTableSelector.currentNode():
         newTable = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
         self.outputTableSelector.setCurrentNode(newTable)
@@ -201,14 +206,10 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
       self.logic.computeStatistics()
       self.logic.exportToTable(self.outputTableSelector.currentNode())
       self.logic.showTable(self.outputTableSelector.currentNode())
-    except Exception as e:
-      slicer.util.errorDisplay("Failed to compute statistics: "+str(e))
-      import traceback
-      traceback.print_exc()
-    finally:
-      # Unlock GUI
-      self.applyButton.setEnabled(True)
-      self.applyButton.text = "Apply"
+
+    # Unlock GUI
+    self.applyButton.setEnabled(True)
+    self.applyButton.text = "Apply"
 
   def onEditParameters(self, pluginName=None):
     """Open dialog box to edit plugin's parameters"""
@@ -463,7 +464,6 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     Update statistical measures for specified segment.
     Note: This will not change or reset measurement results of other segments
     """
-    import vtkSegmentationCorePython as vtkSegmentationCore
 
     segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))
 
@@ -556,11 +556,11 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
           name += ' ['+units+']'
       headerNames.append(name)
     uniqueHeaderNames = list(headerNames)
-    for name in {name for name in uniqueHeaderNames if uniqueHeaderNames.count(name)>1}:
+    for duplicateName in {name for name in uniqueHeaderNames if uniqueHeaderNames.count(name)>1}:
       j = 1
       for i in range(len(uniqueHeaderNames)):
-        if uniqueHeaderNames[i]==name:
-          uniqueHeaderNames[i] = name+' ('+str(j)+')'
+        if uniqueHeaderNames[i]==duplicateName:
+          uniqueHeaderNames[i] = duplicateName+' ('+str(j)+')'
           j += 1
     headerNames = {keys[i]: headerNames[i] for i in range(len(keys))}
     uniqueHeaderNames = {keys[i]: uniqueHeaderNames[i] for i in range(len(keys))}
@@ -682,6 +682,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     fp.write(self.exportToString(nonEmptyKeysOnly))
     fp.close()
 
+
 class SegmentStatisticsTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
@@ -710,7 +711,6 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Starting test_SegmentStatisticsBasic")
 
-    import vtkSegmentationCorePython as vtkSegmentationCore
     import SampleData
     from SegmentStatistics import SegmentStatisticsLogic
 

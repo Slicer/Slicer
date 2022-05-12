@@ -197,6 +197,10 @@ public:
   QTimer FilterParameterChangedTimer;
 
   bool JumpToSelectedSegmentEnabled;
+
+  /// When the model is being reset, the blocking state and selected segment IDs are stored here.
+  bool WasBlockingTableSignalsBeforeReset;
+  QStringList SelectedSegmentIDsBeforeReset;
 };
 
 //-----------------------------------------------------------------------------
@@ -209,6 +213,7 @@ qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableV
   , Model(nullptr)
   , SortFilterModel(nullptr)
   , JumpToSelectedSegmentEnabled(false)
+  , WasBlockingTableSignalsBeforeReset(false)
 {
   for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
     {
@@ -285,6 +290,8 @@ void qMRMLSegmentsTableViewPrivate::init()
   QObject::connect(&this->FilterParameterChangedTimer, &QTimer::timeout, q, &qMRMLSegmentsTableView::updateMRMLFromFilterParameters);
   QObject::connect(this->SegmentsTable->selectionModel(), &QItemSelectionModel::selectionChanged, q, &qMRMLSegmentsTableView::onSegmentSelectionChanged);
   QObject::connect(this->Model, &qMRMLSegmentsModel::segmentAboutToBeModified, q, &qMRMLSegmentsTableView::segmentAboutToBeModified);
+  QObject::connect(this->Model, &QAbstractItemModel::modelAboutToBeReset, q, &qMRMLSegmentsTableView::modelAboutToBeReset);
+  QObject::connect(this->Model, &QAbstractItemModel::modelReset, q, &qMRMLSegmentsTableView::modelReset);
   QObject::connect(this->SegmentsTable, &QTableView::clicked, q, &qMRMLSegmentsTableView::onSegmentsTableClicked);
   QObject::connect(this->FilterLineEdit, &ctkSearchBox::textEdited, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setTextFilter);
   for (QPushButton* button : this->ShowStatusButtons)
@@ -730,6 +737,7 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
     return;
     }
 
+  bool validSelection = false;
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   // First segment selection should also clear other selections
   QItemSelectionModel::SelectionFlag itemSelectionFlag = QItemSelectionModel::ClearAndSelect;
@@ -740,12 +748,19 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
       {
       continue;
       }
+    validSelection = true;
     QItemSelectionModel::QItemSelectionModel::SelectionFlags flags = QFlags<QItemSelectionModel::SelectionFlag>();
     flags.setFlag(itemSelectionFlag);
     flags.setFlag(QItemSelectionModel::Rows);
     d->SegmentsTable->selectionModel()->select(index, flags);
     // Afther the first segment, we append to the current selection
     itemSelectionFlag = QItemSelectionModel::Select;
+    }
+
+  if (!validSelection)
+    {
+    // The list of segment IDs was either empty, or all IDs were invalid.
+    d->SegmentsTable->selectionModel()->clearSelection();
     }
 }
 
@@ -1371,7 +1386,7 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsDown()
     return;
     }
 
-  for (int i = selectedSegmentIDs.count()-1;  i >=0; --i)
+  for (int i = selectedSegmentIDs.count() - 1; i >= 0; --i)
     {
     QModelIndex selectedModelIndex = segmentModelIndices[i];
     QModelIndex nextModelIndex = d->SortFilterModel->index(selectedModelIndex.row() + 1, 0);
@@ -1427,4 +1442,21 @@ bool qMRMLSegmentsTableView::jumpToSelectedSegmentEnabled()const
 {
   Q_D(const qMRMLSegmentsTableView);
   return d->JumpToSelectedSegmentEnabled;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSegmentsTableView::modelAboutToBeReset()
+{
+  Q_D(qMRMLSegmentsTableView);
+  d->WasBlockingTableSignalsBeforeReset = d->SegmentsTable->blockSignals(true);
+  d->SelectedSegmentIDsBeforeReset = this->selectedSegmentIDs();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSegmentsTableView::modelReset()
+{
+  Q_D(qMRMLSegmentsTableView);
+  d->SegmentsTable->blockSignals(d->WasBlockingTableSignalsBeforeReset);
+  this->setSelectedSegmentIDs(d->SelectedSegmentIDsBeforeReset);
+  d->SelectedSegmentIDsBeforeReset.clear();
 }

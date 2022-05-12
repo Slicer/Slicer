@@ -73,6 +73,7 @@ class MdInclude(rst.Directive):
             """Temporary workaround to remove multiple build warnings caused by upstream bug.
             See https://github.com/readthedocs/recommonmark/issues/177 for details.
             """
+
             def visit_document(self, node):
                 pass
 

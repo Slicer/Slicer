@@ -41,22 +41,10 @@
 #include <vtkStdString.h>
 #include <vtkStringArray.h>
 
-//-----------------------------------------------------------------------------
-class qSlicerSegmentationsNodeWriterPrivate
-{
-public:
-  QString Description;
-  qSlicerIO::IOFileType FileType;
-  QStringList NodeClassNames;
-  bool SupportUseCompression;
-};
-
 //----------------------------------------------------------------------------
 qSlicerSegmentationsNodeWriter::qSlicerSegmentationsNodeWriter(QObject* parentObject)
   : qSlicerNodeWriter("Segmentation", QString("SegmentationFile"), QStringList() << "vtkMRMLSegmentationNode", true, parentObject)
-  , d_ptr(new qSlicerSegmentationsNodeWriterPrivate)
 {
-  Q_D(qSlicerSegmentationsNodeWriter);
 }
 
 //----------------------------------------------------------------------------
@@ -88,8 +76,7 @@ bool qSlicerSegmentationsNodeWriter::write(const qSlicerIO::IOProperties& proper
 //-----------------------------------------------------------------------------
 qSlicerIOOptions* qSlicerSegmentationsNodeWriter::options() const
 {
-  Q_D(const qSlicerSegmentationsNodeWriter);
   qSlicerSegmentationsNodeWriterOptionsWidget* options = new qSlicerSegmentationsNodeWriterOptionsWidget;
-  options->setShowUseCompression(d->SupportUseCompression);
+  options->setShowUseCompression(this->supportUseCompression());
   return options;
 }

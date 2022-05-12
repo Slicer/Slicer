@@ -21,15 +21,15 @@ As a result of imaging exam, imaging equipment generates DICOM files, where each
 There is a variety of DICOM objects defined by the standard. Most common object types are those that store the image volumes produced by the CT and MR scanners. Those objects most often will have multiple files (instances) for each series. Image processing tasks most often are concerned with analyzing the whole image *volume*, which most often corresponds to a single Series.
 
 More information about DICOM standard:
-- The DICOM Homepage: http://dicom.nema.org/
-- DICOM on wikipedia: http://en.wikipedia.org/wiki/DICOM
-- Clean and simple DICOM tag browser: http://dicom.innolitics.com
+- The DICOM Homepage: https://dicom.nema.org/
+- DICOM on wikipedia: https://en.wikipedia.org/wiki/DICOM
+- Clean and simple DICOM tag browser: https://dicom.innolitics.com
 - A useful tag lookup site: http://dicomlookup.com/
 - A hyperlinked version of the standard: http://dabsoft.ch/dicom/
 
 ### Slicer DICOM Database
 
-To organize the data and allow faster access, Slicer keeps a local DICOM Database containing copies of (or links to) DICOM files, and basic information about content of each file. You can have multiple databases on your computer at a time, and switch between them if, for example, they include data from different research projects.  Each database is simply a directory on your local disk that has a few [SQLite](http://sqlite.org/) files and subdirectories to store image data.  Do not manually modify the contents of these directories. DICOM data can enter the database either through file import or via a DICOM network transfer. Slicer modules may also populate the DICOM database with computation results.
+To organize the data and allow faster access, Slicer keeps a local DICOM Database containing copies of (or links to) DICOM files, and basic information about content of each file. You can have multiple databases on your computer at a time, and switch between them if, for example, they include data from different research projects.  Each database is simply a directory on your local disk that has a few [SQLite](https://sqlite.org/) files and subdirectories to store image data.  Do not manually modify the contents of these directories. DICOM data can enter the database either through file import or via a DICOM network transfer. Slicer modules may also populate the DICOM database with computation results.
 
 Note that the DICOM standard does not specify how files will be organized on disk, so if you have DICOM data from a CDROM or otherwise transferred from a scanner, you cannot in general tell anything about the contents from the file or directory names. However once the data is imported to the database, it will be organized according the the DICOM standard Patient/Study/Series hierarchy.
 
@@ -83,17 +83,25 @@ By right clicking on a Patient, Study, or Series, you can delete the entry from 
 
 Data in the scene can be exported to DICOM format, to be stored in DICOM database or exported to DICOM files:
 
-1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM export plugin for exporting images, but additional extensions may be needed for other information objects. *SlicerRT extension is needed for importing/exporting radiation therapy information objects (RT structure set, dose, image, plan). Quantitative reporting extension is needed to import export DICOM segmentation objects, structured reports, and parametric maps.* See complete list in [Supported data formats page](../data_loading_and_saving.md#supported-data-formats).
+1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM export plugin for exporting images, but additional extensions may be needed for other information objects.
+    - `SlicerRT` extension is needed for importing/exporting radiation therapy information objects: RT structure set, RT dose, RT image, RT plan.
+    - `Quantitative reporting` extension is needed for importing/exporting DICOM segmentation objects, structured reports, and parametric maps.
+    - See complete list in [Supported data formats page](../data_loading_and_saving.md#supported-data-formats).
 2. Go to Data module or DICOM module.
 3. Right-click on a data node in the data tree that will be converted to DICOM format.
 4. Select the export type in the bottom left of the export dialog. This is necessary because there may be several DICOM information objects that can store the same kind of data. For example, segmentation can be stored as DICOM segmentation object (modern DICOM) or RT structure set (legacy representation, mostly used by radiation treatment planning).
     - "Slicer data bundle" export type writes the entire scene to DICOM format by encapsulating the scene MRB package inside a DICOM file. The result as a DICOM secondary capture object, which can be stored in any DICOM archival system. This secondary capture information stores all details of the scene but only 3D Slicer can interpret the data.
     - Export type: Once the user selected a node, the DICOM plugins generate exportables for the series they can export. The list of the results appear in this section, grouped by plugin. The confidence number will be the average of the confidence numbers for the individual series for that plugin.
 5. Optional: Edit DICOM tags that will be used in the exported data sets. The metadata from the select study will be automatically filled in to the Export dialog and you can select a Slicer volume to export.
-    - DICOM tag editor consists of a list of tables. Tables for the common tags for the patient and study on the top, and the tags for the individual series below them
+    - DICOM tag editor consists of a list of tables. Tables for the common tags for the patient and study on the top, and the tags for the individual series below them.
     - "Tags" in the displayed table are not always written directly to DICOM tags, they are just used by the DICOM plugins to fill DICOM tags in the exported files. This allows much more flexibility and DICOM plugins can auto-populate some information and plugins can expose other export options in this list (e.g. compression, naming convention).
     - Save modified tags: check this checkbox to save the new tag values in the scene persistently.
+    - How to set unique identifier tags:
+        - `StudyInstanceUID` tag specifies which patient and study the new series will be added to. If the value is set to empty then a new study will be created. It is recommended to keep all patient and study values (`PatientName`, `PatientID`, `StudyID`, etc.) the same among series in the same study.
+        - `SeriesInstanceUID` tag identifies an image series. Its value is set to empty by default, which will result in creation of a new UID and thereby a new series. In very rare cases users may want to specify a UID, but the UID cannot be any of the existing UIDs because that would result in the exported image slices being mixed into another series. Therefore, the UID is only accepted if it is not used for any of the images that are already in the database.
+        - `FrameOfReferenceUID` tag specifies a spatial reference. If two images have the same frame of reference UID value then it means that they are spatially aligned. By default, the value is empty, which means that a new frame of reference UID is created and so the exported image is not associated with any other image. If an image is spatially registered to another then it is advisable to copy the frame of reference UID value from the other image, because this may be required for fused display of the images in some image review software.
 6. Click Export
+    - In case of any error, a short message is displayed. More details about the error are provided in the application log.
 
 *Notes:*
 - To create DICOM files without adding them to the DICOM database, check "Export to folder" option and choose an output folder.
@@ -138,7 +146,7 @@ Slicer supports sending of DICOM items to a remote server using DICOMweb protoco
 - **Patient list**: shows patients in the database. Studies available for the selected patient(s) are listed in study list. Multiple patients can be selected.
 - **Study list**: shows studies for the currently selected patient(s). Multiple studies can be selected.
 - **Series list**: shows list of series (images, structure sets, segmentations, registration objects, etc.) available for selected studies.
-- **Load**: click this button to load currently selected loadables into slicer.
+- **Load**: click this button to load currently selected loadables into Slicer.
 - **Loaded data**: shows all content currently loaded into the scene, which can be displayed in viewers by clicking the eye icon
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_basic_rev02.png)
@@ -183,7 +191,7 @@ DICOM files do not need to have a specific file extension, and it may not be str
 2. Once import is completed, you will see the window of the DICOM Browser listing all Patients/Studies/Series currently indexed. You can next select individual items from the DICOM Browser window and load them.
 3. Once you load the data into Slicer using DICOM Browser, you can switch to the "Data" module to examine the content that was imported.
 
-### When I click on "Load selection to slicer" I get an error message "Could not load ... as a scalar volume"
+### When I click on "Load selection to Slicer" I get an error message "Could not load ... as a scalar volume"
 
 A common cause of loading failure is corruption of the DICOM files by incorrect anonymization. Patient name, patient ID, and series instance UID fields should not be empty or missing (the anonymizer should replace them by other valid strings). Try to load the original, non-anonymized sequence and/or change your anonymization procedure.
 
@@ -203,17 +211,17 @@ If you have trouble importing DICOM data here are some steps to try:
 - Make sure filename is not very long (below a few ten characters) and full file path on Windows is below about 200 characters
 - To confirm that your installation of Sicer is reading data correctly, try loading other data, such as [this anonymized sample DICOM series (CT scan)](https://s3.amazonaws.com/IsomicsPublic/SampleData/QIN-HEADNECK-01-0024-CT.zip)
 - Try import using different DICOM readers: in Application settings / DICOM / DICOMScalarVolumePlugin / DICOM reader approach: switch from DCMTK to GDCM (or GDCM to DCMTK), restart Slicer, and attempt to load the data set again.
-- See if the SlicerDcm2nii extension will convert your images. You can install this module using the Extension manager. Once installed you will be able to use the Dcm2niixGUI module from slicer.
-- Try the [DICOM Patcher](dicompatcher) module.
+- See if the SlicerDcm2nii extension will convert your images. You can install this module using the Extension manager. Once installed you will be able to use the Dcm2niixGUI module from Slicer.
+- Try the [DICOM Patcher](dicompatcher.md) module.
 - Review the Error Log (menu: View / Error log) for information.
 - Try loading the data by selecting one of the files in the [Add data](../data_loading_and_saving).  *Note: be sure to turn on Show Options and then turn off the Single File option in order to load the selected series as a volume*. In general, this is not recommended, as the loaded data may be incomplete or distorted, but it might work in some cases when proper DICOM loading fails.
-- If you are still unable to load the data, you may need to find a utility that converts the data into something Slicer can read.  Sometimes tools like [FreeSurfer](http://surfer.nmr.mgh.harvard.edu/), [FSL](http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/) or [MRIcron](https://www.nitrc.org/projects/mricron ) can understand special formats that Slicer does not handle natively.  These systems typically export [NIfTI](http://nifti.nimh.nih.gov/nifti-1/) files that slicer can read.
-- For archival studies, are you sure that your data is in DICOM format, or is it possible the data is stored in one of the proprietary [MR](http://www.dclunie.com/medical-image-faq/html/part4.html) or [CT](http://www.dclunie.com/medical-image-faq/html/part3.html) formats that predated DICOM? If the latter, you may want to try the dcm2nii tool distributed with [MRIcron](https://www.nitrc.org/frs/?group_id=152) up until 2016. More recent versions of MRIcorn include dcm2niix, which is better for modern DICOM images. However, the legacy dcm2nii includes support for proprietary formats from GE, Philips, Siemens and Elscint.
+- If you are still unable to load the data, you may need to find a utility that converts the data into something Slicer can read.  Sometimes tools like [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/), [FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/) or [MRIcron](https://www.nitrc.org/projects/mricron ) can understand special formats that Slicer does not handle natively.  These systems typically export [NIfTI](https://nifti.nimh.nih.gov/nifti-1/) files that Slicer can read.
+- For archival studies, are you sure that your data is in DICOM format, or is it possible the data is stored in one of the proprietary [MR](https://www.dclunie.com/medical-image-faq/html/part4.html) or [CT](https://www.dclunie.com/medical-image-faq/html/part3.html) formats that predated DICOM? If the latter, you may want to try the dcm2nii tool distributed with [MRIcron](https://www.nitrc.org/frs/?group_id=152) up until 2016. More recent versions of MRIcorn include dcm2niix, which is better for modern DICOM images. However, the legacy dcm2nii includes support for proprietary formats from GE, Philips, Siemens and Elscint.
 - If none of the above help, then you can get help from the Slicer developer team, by posting on the [Slicer forum](https://discourse.slicer.org) a short description of what you expect the data set to contain and the following information about the data set:
-  - You may share the DICOM files if they do not contain patient confidential information: upload the dataset somewhere (Dropbox, OneDrive, Google drive, ...) and post the download link. *Please be careful not to accidentally reveal private health information (patient name, birthdate, ID, etc.)*. If you want to remove identifiers from the DICOM files you may want to look at [DicomCleaner](http://www.dclunie.com/pixelmed/software/webstart/DicomCleanerUsage.html), [gdcmanon](http://gdcm.sourceforge.net/html/gdcmanon.html) or [the RSNA Clinical Trial Processor](http://mircwiki.rsna.org/index.php?title=CTP-The_RSNA_Clinical_Trial_Processor) software.
+  - You may share the DICOM files if they do not contain patient confidential information: upload the dataset somewhere (Dropbox, OneDrive, Google drive, ...) and post the download link. *Please be careful not to accidentally reveal private health information (patient name, birthdate, ID, etc.)*. If you want to remove identifiers from the DICOM files you may want to look at [DicomCleaner](https://www.dclunie.com/pixelmed/software/webstart/DicomCleanerUsage.html), [gdcmanon](http://gdcm.sourceforge.net/html/gdcmanon.html) or [the RSNA Clinical Trial Processor](https://mircwiki.rsna.org/index.php?title=CTP-The_RSNA_Clinical_Trial_Processor) software.
   - If it is not feasible to share the DICOM files, you may share the DICOM metadata and application log instead. Make sure to **remove patient name, birthdate, ID, and all other private health information** from the text, upload the files somewhere (Dropbox, OneDrive, Google drive, ...), and post the download link.
     - To obtain DICOM metadata: right-click on the series in the DICOM browser, select View metadata, and click Copy Metadata button. Paste the copied text to any text editor.
-    - To obtain detailed application log of the DICOM loading: Enable detailed logging for DICOM (menu: Edit / Application settings / DICOM / Detailed logging), then attempt to load the series (select the series in the DICOM browser and click "Load" button), and retrieve the log (menu: Help / Report a bug -> Copy log messages to clipboard).
+    - To obtain detailed application log of the DICOM loading: Enable detailed logging for DICOM (menu: Edit / Application settings / DICOM / Detailed logging), then attempt to load the series (select the series in the DICOM browser and click "Load" button), and retrieve the log (menu: Help / Report a Bug -> Copy log messages to clipboard).
 
 ### Something is displayed, but it is not what I expected
 
@@ -225,7 +233,7 @@ If none of the data sets seems to be correct then follow the steps described in 
 
 #### Image is stretched or compressed along one axis
 
-Some non-clinical (industrial or pre-clinical) imaging systems do not generate valid DICOM data sets. For example, they may incorrectly assume that slice thickness tag defines image geometry, while according to DICOM standard, image slice position must be used for determining image geometry. [DICOM Patcher](dicompatcher) module can fix some of these images: remove the images from Slicer's DICOM database, process the image files with DICOM Patcher module, and re-import the processed file into Slicer's DICOM database. If image is still distorted, go to *Volumes* module, open *Volume information* section, and adjust *Image spacing* values.
+Some non-clinical (industrial or pre-clinical) imaging systems do not generate valid DICOM data sets. For example, they may incorrectly assume that slice thickness tag defines image geometry, while according to DICOM standard, image slice position must be used for determining image geometry. [DICOM Patcher](dicompatcher.md) module can fix some of these images: remove the images from Slicer's DICOM database, process the image files with DICOM Patcher module, and re-import the processed file into Slicer's DICOM database. If image is still distorted, go to *Volumes* module, open *Volume information* section, and adjust *Image spacing* values.
 
 Scanners may create image volumes with varying image slice spacing. Slicer can represent such images in the scene by apply a non-linear transform. To enable this feature, go to menu: Edit / Application settings / DICOM and set *Acquisition geometry regularization* to *apply regularization transform*. Slice view, segmentation, and many other features work directly on non-linearly transformed volumes. For some other features, such as volume rendering, you need to harden the transform on the volume: go to Data module, in the row of the volume node, double-click on the transform column, and choose *Harden transform*.
 
@@ -235,9 +243,9 @@ Note that if Slicer displays a warning about non-uniform slice spacing then it m
 
 - [Add data](../data_loading_and_saving) dialog can be used to load some DICOM images directly, with bypassing the DICOM database. This may be faster in some cases, but it is not recommended, as it only supports certain kind of images and consistency and correctness of the data is not verified.
 - [Quantitative Reporting](https://github.com/QIICR/QuantitativeReporting#summary) extension reads and writes DICOM Segmentation Objects (label maps), structured reports, and parametric maps.
-- [SlicerRT](http://www.slicerrt.org/) extension reads and write DICOM Radiation Therapy objects (RT structure set, dose, image, plan, etc.) and provides tools for visualizing and analyzing them.
+- [SlicerRT](https://www.slicerrt.org/) extension reads and write DICOM Radiation Therapy objects (RT structure set, dose, image, plan, etc.) and provides tools for visualizing and analyzing them.
 - [LongitudinalPETCT](https://github.com/QIICR/LongitudinalPETCT#longitudinalpetct) extension reads all PET/CT studies for a selected patient and provides tools for tracking metabolic activity detected by PET tracers.
-- [DICOM Patcher](dicompatcher) module can be used before importing to fix common DICOM non-compliance errors.
+- [DICOM Patcher](dicompatcher.md) module can be used before importing to fix common DICOM non-compliance errors.
 
 ## Contributors
 
@@ -254,7 +262,7 @@ Authors:
 
 ## Acknowledgements
 
-This work is part of the [National Alliance for Medical Image Computing](http://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149, and by Quantitative Image Informatics for Cancer Research (QIICR) (U24 CA180918).
+This work is part of the [National Alliance for Medical Image Computing](https://www.na-mic.org/) (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149, and by Quantitative Image Informatics for Cancer Research (QIICR) (U24 CA180918).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_namic.png)

@@ -356,11 +356,11 @@ void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*
     vtkMRMLDisplayableNode::CopyContent(anode, deepCopy);
 
     /// Duplicated from vtkMRMLVolumeNode::CopyContent()
-    vtkAlgorithm* producer = this->ImageDataConnection ?
-      this->ImageDataConnection->GetProducer() : nullptr;
+    vtkAlgorithm* producer = streamingVolumeNode->ImageDataConnection ?
+      streamingVolumeNode->ImageDataConnection->GetProducer() : nullptr;
     vtkImageData* sourceImageData = vtkImageData::SafeDownCast(
       producer ? producer->GetOutputDataObject(
-        this->ImageDataConnection->GetIndex()) : nullptr);
+        streamingVolumeNode->ImageDataConnection->GetIndex()) : nullptr);
 
     vtkSmartPointer<vtkImageData> targetImageData = sourceImageData;
     if (deepCopy && sourceImageData)

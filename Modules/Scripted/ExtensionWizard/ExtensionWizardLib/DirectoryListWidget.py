@@ -1,4 +1,7 @@
-import slicer, qt
+import qt
+
+import slicer
+
 
 #=============================================================================
 #
@@ -22,6 +25,7 @@ class _ui_DirectoryListWidget:
     self.removePathButton.icon = qt.QIcon.fromTheme("list-remove")
     self.removePathButton.text = "Remove"
     layout.addWidget(self.removePathButton, 1, 1)
+
 
 #=============================================================================
 #

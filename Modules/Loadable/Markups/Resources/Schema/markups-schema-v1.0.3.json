@@ -1,0 +1,699 @@
+    {
+        "$schema": "http://json-schema.org/draft-07/schema",
+        "$id": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-v1.0.3-schema.json#",
+        "type": "object",
+        "title": "Schema for storing one or more markups",
+        "description": "Stores points, lines, curves, etc.",
+        "required": ["@schema", "markups"],
+        "additionalProperties": true,
+        "properties": {
+            "@schema": {
+                "$id": "#schema",
+                "type": "string",
+                "title": "Schema",
+                "description": "URL of versioned schema."
+            },
+            "markups": {
+                "$id": "#markups",
+                "type": "array",
+                "title": "Markups",
+                "description": "Stores position and display properties of one or more markups.",
+                "additionalItems": true,
+                "items": {
+                    "$id": "#markupItems",
+                    "anyOf": [
+                        {
+                            "$id": "#markup",
+                            "type": "object",
+                            "title": "Markup",
+                            "description": "Stores a single markup.",
+                            "default": {},
+                            "required": ["type"],
+                            "additionalProperties": true,
+                            "properties": {
+                                "type": {
+                                    "$id": "#markup/type",
+                                    "type": "string",
+                                    "title": "Basic type",
+                                    "enum": ["Fiducial", "Line", "Angle", "Curve", "ClosedCurve", "Plane", "ROI"]
+                                },
+                                "name": {
+                                    "$id": "#markup/name",
+                                    "type": "string",
+                                    "title": "Name",
+                                    "description": "Displayed name of the markup.",
+                                    "default": ""
+                                },
+                                "coordinateSystem": {
+                                    "$id": "#markup/coordinateSystem",
+                                    "type": "string",
+                                    "title": "Control point positions coordinate system name",
+                                    "description": "Coordinate system name. Medical images most commonly use LPS patient coordinate system.",
+                                    "default": "LPS",
+                                    "enum": ["LPS", "RAS"]
+                                },
+                                "coordinateUnits": {
+                                    "$id": "#markup/coordinateUnits",
+                                    "anyOf": [
+                                        {
+                                            "type": "string",
+                                            "title": "Units of control point coordinates",
+                                            "description": "Control point coordinate values are specified in this length unit. Specified in UCUM.",
+                                            "default": "mm",
+                                            "enum": ["mm", "um"]
+                                        },
+                                        {
+                                            "type": "array",
+                                            "title": "Coordinates units code",
+                                            "description": "Standard DICOM-compliant terminology item containing code, coding scheme designator, code meaning.",
+                                            "examples": [["mm", "UCUM", "millimeter"]],
+                                            "additionalItems": false,
+                                            "items": { "type": "string" },
+                                            "minItems": 3,
+                                            "maxItems": 3
+                                        }
+                                    ]
+                                },
+                                "locked": {
+                                    "$id": "#markup/locked",
+                                    "type": "boolean",
+                                    "title": "Locked",
+                                    "description": "Markup can be interacted with on the user interface.",
+                                    "default": true
+                                },
+                                "fixedNumberOfControlPoints": {
+                                    "$id": "#markup/fixedNumberOfControlPoints",
+                                    "type": "boolean",
+                                    "title": "Fixed number of control points",
+                                    "description": "Number of control points is fixed at the current value. Control points may not be added or removed (point positions can be unset instead of deleting).",
+                                    "default": false
+                                },
+                                "labelFormat": {
+                                    "$id": "#markup/labelFormat",
+                                    "type": "string",
+                                    "title": "Label format",
+                                    "description": "Format of generation new labels. %N refers to node name, %d refers to point index.",
+                                    "default": "%N-%d"
+                                },
+                                "lastUsedControlPointNumber": {
+                                    "$id": "#markup/lastUsedControlPointNumber",
+                                    "type": "integer",
+                                    "title": "Last used control point number",
+                                    "description": "This value is used for generating number in the control point's name when a new point is added.",
+                                    "default": 0
+                                },
+                                "roiType": {
+                                    "$id": "#markup/roiType",
+                                    "type": "string",
+                                    "title": "ROI type",
+                                    "description": "Method used to determine ROI bounds from control points. Ex. 'Box', 'BoundingBox'.",
+                                    "default": "Box"
+                                },
+                               "insideOut": {
+                                    "$id": "#markup/insideOut",
+                                    "type": "boolean",
+                                    "title": "Inside out",
+                                    "description": "ROI is inside out. Objects that would normally be inside are considered outside and vice versa.",
+                                    "default": false
+                                },
+                                "planeType": {
+                                    "$id": "#markup/planeType",
+                                    "type": "string",
+                                    "title": "Plane type",
+                                    "description": "Method used to determine dimensions from control points. Ex. 'PointNormal', '3Points'.",
+                                    "default": "PointNormal"
+                                },
+                                "sizeMode": {
+                                    "$id": "#markup/sizeMode",
+                                    "type": "string",
+                                    "title": "Plane size mode",
+                                    "description": "Mode used to calculate the size of the plane representation. (Ex. Static absolute or automatically calculated plane size based on control points).",
+                                    "default": "auto"
+                                },
+                                "autoScalingSizeFactor": {
+                                    "$id": "#markup/autoScalingSizeFactor",
+                                    "type": "number",
+                                    "title": "Plane auto scaling size factor",
+                                    "description": "When the plane size mode is 'auto', the size of the plane is scaled by the auto size scaling factor.",
+                                    "default": "1.0"
+                                },
+                                "center": {
+                                    "$id": "#markup/center",
+                                    "type": "array",
+                                    "title": "Center",
+                                    "description": "The center of the markups representation. Ex. center of ROI or plane markups.",
+                                    "examples": [[0.0, 0.0, 0.0]],
+                                    "additionalItems": false,
+                                    "items": { "type": "number" },
+                                    "minItems": 3,
+                                    "maxItems": 3
+                                },
+                                "normal": {
+                                    "$id": "#markup/normal",
+                                    "type": "array",
+                                    "title": "Normal",
+                                    "description": "The normal direction of plane markups.",
+                                    "examples": [[0.0, 0.0, 1.0]],
+                                    "additionalItems": false,
+                                    "items": { "type": "number" },
+                                    "minItems": 3,
+                                    "maxItems": 3
+                                },
+                                "size": {
+                                    "$id": "#markup/size",
+                                    "type": "array",
+                                    "title": "Size",
+                                    "description": "The size of the markups representation. For example, axis-aligned edge lengths of the ROI or plane markups.",
+                                    "examples": [[5.0, 5.0, 4.0], [5.0, 5.0, 0.0]],
+                                    "additionalItems": false,
+                                    "items": { "type": "number" },
+                                    "minItems": 3,
+                                    "maxItems": 3
+                                },
+                                "planeBounds": {
+                                    "$id": "#markup/planeBounds",
+                                    "type": "array",
+                                    "title": "Plane bounds",
+                                    "description": "The bounds of the plane representation.",
+                                    "examples": [[-50, 50, -50, 50]],
+                                    "additionalItems": false,
+                                    "items": { "type": "number" },
+                                    "minItems": 4,
+                                    "maxItems": 4
+                                },
+                                "objectToBase": {
+                                    "$id": "#markup/objectToBase",
+                                    "type": "array",
+                                    "title": "Object to Base matrix",
+                                    "description": "4x4 transform matrix from the object representation to the coordinate system defined by the control points.",
+                                    "examples": [[-0.9744254538021788, -0.15660098593235834, -0.16115572030626558, 26.459385388492746,
+                                                  -0.08525118065879463, -0.4059244688892957, 0.9099217338613386, -48.04154530201596,
+                                                  -0.20791169081775938, 0.9003896138683279, 0.3821927158637956, -53.35829266424462,
+                                                  0.0, 0.0, 0.0, 1.0]],
+                                    "additionalItems": false,
+                                    "items": { "type": "number" },
+                                    "minItems": 16,
+                                    "maxItems": 16
+                                },
+                                "baseToNode": {
+                                    "$id": "#markup/baseToNode",
+                                    "type": "array",
+                                    "title": "Base to Node matrix",
+                                    "description": "4x4 transform matrix from the base representation to the node coordinate system.",
+                                    "examples": [[-0.9744254538021788, -0.15660098593235834, -0.16115572030626558, 26.459385388492746,
+                                                  -0.08525118065879463, -0.4059244688892957, 0.9099217338613386, -48.04154530201596,
+                                                  -0.20791169081775938, 0.9003896138683279, 0.3821927158637956, -53.35829266424462,
+                                                  0.0, 0.0, 0.0, 1.0]],
+                                    "additionalItems": false,
+                                    "items": { "type": "number" },
+                                    "minItems": 16,
+                                    "maxItems": 16
+                                },
+                                "orientation": {
+                                    "$id": "#markup/orientation",
+                                    "type": "array",
+                                    "title": "Markups orientation",
+                                    "description": "3x3 orientation matrix of the markups representation. Ex. [orientation[0], orientation[3], orientation[6]] is the x vector of the object coordinate system in the node coordinate system.",
+                                    "examples": [[-0.6157905804369491, -0.3641498920623639, 0.6987108251316091,
+                                                  -0.7414677108739087, -0.03213048377225371, -0.6702188193000602,
+                                                  0.2665100275346712, -0.9307859518297049, -0.2502197376306259]],
+                                    "additionalItems": false,
+                                    "items": { "type": "number" },
+                                    "minItems": 9,
+                                    "maxItems": 9
+                                },
+                                "controlPoints": {
+                                    "$id": "#markup/controlPoints",
+                                    "type": "array",
+                                    "title": "Control points",
+                                    "description": "Stores all control points of this markup.",
+                                    "default": [],
+                                    "additionalItems": true,
+                                    "items": {
+                                        "$id": "#markup/controlPointItems",
+                                        "anyOf": [
+                                            {
+                                                "$id": "#markup/controlPoint",
+                                                "type": "object",
+                                                "title": "The first anyOf schema",
+                                                "description": "Object containing the properties of a single control point.",
+                                                "default": {},
+                                                "required": [],
+                                                "additionalProperties": true,
+                                                "properties": {
+                                                    "id": {
+                                                        "$id": "#markup/controlPoint/id",
+                                                        "type": "string",
+                                                        "title": "Control point ID",
+                                                        "description": "Identifier of the control point within this markup",
+                                                        "default": "",
+                                                        "examples": ["2", "5"]
+                                                    },
+                                                    "label": {
+                                                        "$id": "#markup/controlPoint/label",
+                                                        "type": "string",
+                                                        "title": "Control point label",
+                                                        "description": "Label displayed next to the control point.",
+                                                        "default": "",
+                                                        "examples": ["F_1"]
+                                                    },
+                                                    "description": {
+                                                        "$id": "#markup/controlPoint/description",
+                                                        "type": "string",
+                                                        "title": "Control point description",
+                                                        "description": "Details about the control point.",
+                                                        "default": ""
+                                                    },
+                                                    "associatedNodeID": {
+                                                        "$id": "#markup/controlPoint/associatedNodeID",
+                                                        "type": "string",
+                                                        "title": "Associated node ID",
+                                                        "description": "ID of the node where this markups is defined on.",
+                                                        "default": "",
+                                                        "examples": ["vtkMRMLModelNode1"]
+                                                    },
+                                                    "position": {
+                                                        "$id": "#markup/controlPoint/position",
+                                                        "type": "array",
+                                                        "title": "Control point position",
+                                                        "description": "Tuple of 3 defined in the specified coordinate system.",
+                                                        "examples": [[-9.9, 1.1, 12.3]],
+                                                        "additionalItems": false,
+                                                        "items": { "type": "number" },
+                                                        "minItems": 3,
+                                                        "maxItems": 3
+                                                    },
+                                                    "orientation": {
+                                                        "$id": "#markup/controlPoint/orientation",
+                                                        "type": "array",
+                                                        "title": "Control point orientation",
+                                                        "description": "3x3 orientation matrix",
+                                                        "examples": [[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 ]],
+                                                        "additionalItems": false,
+                                                        "items": {"type": "number"},
+                                                        "minItems": 9,
+                                                        "maxItems": 9
+                                                    },
+                                                    "selected": {
+                                                        "$id": "#markup/controlPoint/selected",
+                                                        "type": "boolean",
+                                                        "title": "Control point is selected",
+                                                        "description": "Specifies if the control point is selected or unselected.",
+                                                        "default": true
+                                                    },
+                                                    "locked": {
+                                                        "$id": "#markup/controlPoint/locked",
+                                                        "type": "boolean",
+                                                        "title": "Control point locked",
+                                                        "description": "Control point cannot be moved on the user interface.",
+                                                        "default": false
+                                                    },
+                                                    "visibility": {
+                                                        "$id": "#markup/controlPoint/visibility",
+                                                        "type": "boolean",
+                                                        "title": "The visibility schema",
+                                                        "description": "Visibility of the control point.",
+                                                        "default": true
+                                                    },
+                                                    "positionStatus": {
+                                                        "$id": "#markup/controlPoint/positionStatus",
+                                                        "type": "string",
+                                                        "title": "The positionStatus schema",
+                                                        "description": "Status of the control point position.",
+                                                        "enum": ["undefined", "preview", "defined"],
+                                                        "default": "defined"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                "display": {
+                                    "$id": "#display",
+                                    "type": "object",
+                                    "title": "The display schema",
+                                    "description": "Object holding markups display properties.",
+                                    "default": {},
+                                    "required": [],
+                                    "additionalProperties": true,
+                                    "properties": {
+                                        "visibility": {
+                                            "$id": "#display/visibility",
+                                            "type": "boolean",
+                                            "title": "Markup visibility",
+                                            "description": "Visibility of the entire markup.",
+                                            "default": true
+                                        },
+                                        "opacity": {
+                                            "$id": "#display/opacity",
+                                            "type": "number",
+                                            "title": "Markup opacity",
+                                            "description": "Overall opacity of the markup.",
+                                            "minimum": 0.0,
+                                            "maximum": 1.0,
+                                            "default": 1.0
+                                        },
+                                        "color": {
+                                            "$id": "#display/color",
+                                            "type": "array",
+                                            "title": "Markup color",
+                                            "description": "Overall RGB color of the markup.",
+                                            "default": [0.4, 1.0, 1.0],
+                                            "additionalItems": false,
+                                            "items": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                                            "minItems": 3,
+                                            "maxItems": 3
+                                        },
+                                        "selectedColor": {
+                                            "$id": "#display/selectedColor",
+                                            "title": "Markup selected color",
+                                            "description": "Overall RGB color of selected points in the markup.",
+                                            "default": [1.0, 0.5, 0.5],
+                                            "additionalItems": false,
+                                            "items": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                                            "minItems": 3,
+                                            "maxItems": 3
+                                        },
+                                        "activeColor": {
+                                            "$id": "#display/activeColor",
+                                            "title": "Markup active color",
+                                            "description": "Overall RGB color of active points in the markup.",
+                                            "default": [0.4, 1.0, 0.0],
+                                            "additionalItems": false,
+                                            "items": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                                            "minItems": 3,
+                                            "maxItems": 3
+                                        },
+                                        "propertiesLabelVisibility": {
+                                            "$id": "#display/propertiesLabelVisibility",
+                                            "type": "boolean",
+                                            "title": "Properties label visibility",
+                                            "description": "Visibility of the label that shows basic properties.",
+                                            "default": false
+                                        },
+                                        "pointLabelsVisibility": {
+                                            "$id": "#display/pointLabelsVisibility",
+                                            "type": "boolean",
+                                            "title": "Point labels visibility",
+                                            "description": "Visibility of control point labels.",
+                                            "default": false
+                                        },
+                                        "textScale": {
+                                            "$id": "#display/textScale",
+                                            "type": "number",
+                                            "title": "Markup overall text scale",
+                                            "description": "Size of displayed text as percentage of window size.",
+                                            "default": 3.0,
+                                            "minimum": 0.0
+                                        },
+                                        "glyphType": {
+                                            "$id": "#display/glyphType",
+                                            "type": "string",
+                                            "title": "The glyphType schema",
+                                            "description": "Enum representing the displayed glyph type.",
+                                            "default": "Sphere3D",
+                                            "enum": ["Vertex2D", "Dash2D", "Cross2D", "ThickCross2D", "Triangle2D", "Square2D",
+                                                "Circle2D", "Diamond2D", "Arrow2D", "ThickArrow2D", "HookedArrow2D", "StarBurst2D",
+                                                "Sphere3D", "Diamond3D"]
+                                        },
+                                        "glyphScale": {
+                                            "$id": "#display/glyphScale",
+                                            "type": "number",
+                                            "title": "Point glyph scale",
+                                            "description": "Glyph size as percentage of window size.",
+                                            "default": 1.0,
+                                            "minimum": 0.0
+                                        },
+                                        "glyphSize": {
+                                            "$id": "#display/glyphSize",
+                                            "type": "number",
+                                            "title": "Point glyph size",
+                                            "description": "Absolute glyph size.",
+                                            "default": 5.0,
+                                            "minimum": 0.0
+                                        },
+                                        "useGlyphScale": {
+                                            "$id": "#display/useGlyphScale",
+                                            "type": "boolean",
+                                            "title": "Use glyph scale",
+                                            "description": "Use relative glyph scale.",
+                                            "default": true
+                                        },
+                                        "sliceProjection": {
+                                            "$id": "#display/sliceProjection",
+                                            "type": "boolean",
+                                            "title": "Slice projection",
+                                            "description": "Enable project markups to slice views.",
+                                            "default": false
+                                        },
+                                        "sliceProjectionUseFiducialColor": {
+                                            "$id": "#display/sliceProjectionUseFiducialColor",
+                                            "type": "boolean",
+                                            "title": "Use fiducial color for slice projection",
+                                            "description": "Choose between projetion color or fiducial color for projections.",
+                                            "default": true
+                                        },
+                                        "sliceProjectionOutlinedBehindSlicePlane": {
+                                            "$id": "#display/sliceProjectionOutlinedBehindSlicePlane",
+                                            "type": "boolean",
+                                            "title": "Display slice projection as outline",
+                                            "description": "Display slice projection as outline if behind slice plane.",
+                                            "default": false
+                                        },
+                                        "sliceProjectionColor": {
+                                            "$id": "#display/sliceProjectionColor",
+                                            "type": "array",
+                                            "title": "Slice projection color",
+                                            "description": "Overall RGB color for displaying projection.",
+                                            "default": [1.0, 1.0, 1.0],
+                                            "additionalItems": false,
+                                            "items": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                                            "minItems": 3,
+                                            "maxItems": 3
+                                        },
+                                        "sliceProjectionOpacity": {
+                                            "$id": "#display/sliceProjectionOpacity",
+                                            "type": "number",
+                                            "title": "Slice projection opacity",
+                                            "description": "Overall opacity of markup slice projection.",
+                                            "minimum": 0.0,
+                                            "maximum": 1.0,
+                                            "default": 0.6
+                                        },
+                                        "lineThickness": {
+                                            "$id": "#display/lineThickness",
+                                            "type": "number",
+                                            "title": "Line thickness",
+                                            "description": "Line thickness relative to markup size.",
+                                            "default": 0.2,
+                                            "minimum": 0.0
+                                        },
+                                        "lineColorFadingStart": {
+                                            "$id": "#display/lineColorFadingStart",
+                                            "type": "number",
+                                            "title": "Line color fading start",
+                                            "description": "Distance where line starts to fade out.",
+                                            "default": 1.0,
+                                            "minimum": 0.0
+                                        },
+                                        "lineColorFadingEnd": {
+                                            "$id": "#display/lineColorFadingEnd",
+                                            "type": "number",
+                                            "title": "Line color fading end",
+                                            "description": "Distance where line fades out completely.",
+                                            "default": 10.0,
+                                            "minimum": 0.0
+                                        },
+                                        "lineColorFadingSaturation": {
+                                            "$id": "#display/lineColorFadingSaturation",
+                                            "type": "number",
+                                            "title": "Color fading saturation",
+                                            "description": "Amount of color saturation change as the line fades out.",
+                                            "default": 1.0
+                                        },
+                                        "lineColorFadingHueOffset": {
+                                            "$id": "#display/lineColorFadingHueOffset",
+                                            "type": "number",
+                                            "title": "Color fadue hue offset",
+                                            "description": "Change in color hue as the line fades out.",
+                                            "default": 0.0
+                                        },
+                                        "handlesInteractive": {
+                                            "$id": "#display/handlesInteractive",
+                                            "type": "boolean",
+                                            "title": "Handles interactive",
+                                            "description": "Show interactive handles to transform this markup.",
+                                            "default": false
+                                        },
+                                        "translationHandleVisibility": {
+                                            "$id": "#display/translationHandleVisibility",
+                                            "type": "boolean",
+                                            "title": "Translation handle visibility",
+                                            "description": "Visibility of the translation interaction handles",
+                                            "default": false
+                                        },
+                                        "rotationHandleVisibility": {
+                                            "$id": "#display/rotationHandleVisibility",
+                                            "type": "boolean",
+                                            "title": "Rotation handle visibility",
+                                            "description": "Visibility of the rotation interaction handles",
+                                            "default": false
+                                        },
+                                        "scaleHandleVisibility": {
+                                            "$id": "#display/scaleHandleVisibility",
+                                            "type": "boolean",
+                                            "title": "Scale handle visibility",
+                                            "description": "Visibility of the scale interaction handles",
+                                            "default": false
+                                        },
+                                        "interactionHandleScale": {
+                                            "$id": "#display/interactionHandleScale",
+                                            "type": "number",
+                                            "title": "Interaction handle glyph scale",
+                                            "description": "Interaction handle size as percentage of window size.",
+                                            "default": 3.0
+                                        },
+                                        "snapMode": {
+                                            "$id": "#display/snapMode",
+                                            "type": "string",
+                                            "title": "Snap mode",
+                                            "description": "How control points can be defined and moved.",
+                                            "default": "toVisibleSurface",
+                                            "enum": ["unconstrained", "toVisibleSurface"]
+                                        }
+                                    }
+                                },
+                                "measurements": {
+                                    "$id": "#markup/measurements",
+                                    "type": "array",
+                                    "title": "Measurements",
+                                    "description": "Stores all measurements for this markup.",
+                                    "default": [],
+                                    "additionalItems": true,
+                                    "items": {
+                                        "$id": "#markup/measurementItems",
+                                        "anyOf": [
+                                            {
+                                                "$id": "#markup/measurement",
+                                                "type": "object",
+                                                "title": "Measurement",
+                                                "description": "Store a single measurement.",
+                                                "default": {},
+                                                "required": [],
+                                                "additionalProperties": true,
+                                                "properties": {
+                                                    "name": {
+                                                        "$id": "#markup/measurement/name",
+                                                        "type": "string",
+                                                        "title": "Measurement name",
+                                                        "description": "Printable name of the measurement",
+                                                        "default": "",
+                                                        "examples": ["length", "area"]
+                                                    },
+                                                    "enabled": {
+                                                        "$id": "#markup/measurement/enabled",
+                                                        "type": "boolean",
+                                                        "title": "Computation of the measurement is enabled",
+                                                        "description": "This can be used to define measurements but prevent automatic updates.",
+                                                        "default": true
+                                                    },
+                                                    "value": {
+                                                        "$id": "#display/measurement/value",
+                                                        "type": "number",
+                                                        "title": "Measurement value",
+                                                        "description": "Numeric value of the measurement."
+                                                    },
+                                                    "units": {
+                                                        "$id": "#markup/measurement/units",
+                                                        "anyOf": [
+                                                            {
+                                                                "type": "string",
+                                                                "title": "Measurement unit",
+                                                                "description": "Printable measurement unit. Use of UCUM is preferred.",
+                                                                "default": "",
+                                                                "examples": ["mm", "mm2"]
+                                                            },
+                                                            {
+                                                                "type": "array",
+                                                                "title": "Measurement units code",
+                                                                "description": "Standard DICOM-compliant terminology item containing code, coding scheme designator, code meaning.",
+                                                                "examples": [["cm3", "UCUM", "cubic centimeter"]],
+                                                                "additionalItems": false,
+                                                                "items": { "type": "string" },
+                                                                "minItems": 3,
+                                                                "maxItems": 3
+                                                            }
+                                                        ]
+                                                    },
+                                                    "description": {
+                                                        "$id": "#markup/measurement/description",
+                                                        "type": "string",
+                                                        "title": "Measurement description",
+                                                        "description": "Explanation of the measurement.",
+                                                        "default": ""
+                                                    },
+                                                    "printFormat": {
+                                                        "$id": "#markup/measurement/printFormat",
+                                                        "type": "string",
+                                                        "title": "Print format",
+                                                        "description": "Format string (printf-style) to create user-displayable string from value and units.",
+                                                        "default": "",
+                                                        "examples": ["%5.3f %s"]
+                                                    },
+                                                    "quantityCode": {
+                                                        "$id": "#markup/measurement/quantityCode",
+                                                        "type": "array",
+                                                        "title": "Measurement quantity code",
+                                                        "description": "Standard DICOM-compliant terminology item containing code, coding scheme designator, code meaning.",
+                                                        "default": [],
+                                                        "examples": [["118565006", "SCT", "Volume"]],
+                                                        "additionalItems": false,
+                                                        "items": { "type": "string" },
+                                                        "minItems": 3,
+                                                        "maxItems": 3
+                                                    },
+                                                    "derivationCode": {
+                                                        "$id": "#markup/measurement/derivationCode",
+                                                        "type": "array",
+                                                        "title": "Measurement derivation code",
+                                                        "description": "Standard DICOM-compliant terminology item containing code, coding scheme designator, code meaning.",
+                                                        "default": [],
+                                                        "examples": [["255605001", "SCT", "Minimum"]],
+                                                        "additionalItems": false,
+                                                        "items": { "type": "string" },
+                                                        "minItems": 3,
+                                                        "maxItems": 3
+                                                    },
+                                                    "methodCode": {
+                                                        "$id": "#markup/measurement/methodCode",
+                                                        "type": "array",
+                                                        "title": "Measurement method code",
+                                                        "description": "Standard DICOM-compliant terminology item containing code, coding scheme designator, code meaning.",
+                                                        "default": [],
+                                                        "examples": [["126030", "DCM", "Sum of segmented voxel volumes"]],
+                                                        "additionalItems": false,
+                                                        "items": { "type": "string" },
+                                                        "minItems": 3,
+                                                        "maxItems": 3
+                                                    },
+                                                    "controlPointValues": {
+                                                        "$id": "#markup/controlPoint/controlPointValues",
+                                                        "type": "array",
+                                                        "title": "Measurement values for each control point.",
+                                                        "description": "This stores measurement result if it has value for each control point.",
+                                                        "examples": [[-9.9, 1.1, 12.3, 4.3, 4.8]],
+                                                        "additionalItems": false,
+                                                        "items": { "type": "number" }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }

@@ -17,5 +17,7 @@
     <file alias="extension-macosx-2.tar.gz">19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
     <file alias="extension-macosx-3.json">19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.json</file>
     <file alias="extension-macosx-3.tar.gz">19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
+
+    <file alias="extension-win-0.json">30338_slicerheart_win_amd64_1db3627.json</file>
   </qresource>
 </RCC>

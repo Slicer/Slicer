@@ -12,7 +12,7 @@ public:
   /// The Usual vtk class functions
   static vtkUserTagTable *New();
   vtkTypeMacro(vtkUserTagTable, vtkTable);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Get the vtkTable that contains user-defined keyword/value pairs.

@@ -42,7 +42,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWidget : public QWidget, public virtual 
   Q_OBJECT
   QVTK_OBJECT
 public:
-  qSlicerWidget(QWidget *parent=nullptr, Qt::WindowFlags f=nullptr);
+  qSlicerWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
   ~qSlicerWidget() override;
 
   // Convenience method for getting application logic from the application.

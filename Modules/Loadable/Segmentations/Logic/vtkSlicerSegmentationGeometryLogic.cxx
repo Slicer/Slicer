@@ -29,12 +29,12 @@
 #include "vtkCalculateOversamplingFactor.h"
 
 // MRML includes
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLNodePropertyMacros.h"
-
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkMatrix4x4.h>
@@ -52,11 +52,6 @@ vtkStandardNewMacro(vtkSlicerSegmentationGeometryLogic);
 //----------------------------------------------------------------------------
 vtkSlicerSegmentationGeometryLogic::vtkSlicerSegmentationGeometryLogic()
 {
-  this->InputSegmentationNode = nullptr;
-  this->SourceGeometryNode = nullptr;
-  this->OversamplingFactor = 1.0;
-  this->IsotropicSpacing = false;
-
   this->OutputGeometryImageData = vtkOrientedImageData::New();
 }
 
@@ -123,10 +118,15 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     {
     return "No input segmentation specified";
     }
+  if (!this->SourceGeometryNode)
+    {
+    return "No source geometry specified";
+    }
 
   // Determine source type
   vtkMRMLScalarVolumeNode* sourceVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->SourceGeometryNode);
   vtkMRMLAnnotationROINode* sourceRoiNode = vtkMRMLAnnotationROINode::SafeDownCast(this->SourceGeometryNode);
+  vtkMRMLMarkupsROINode* sourceMarkupsRoiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->SourceGeometryNode);
   vtkMRMLSegmentationNode* sourceSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->SourceGeometryNode);
 
   if (sourceVolumeNode
@@ -135,7 +135,7 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     //TODO: Fractional labelmaps cannot be used yet as source, as DetermineCommonLabelmapGeometry only supports binary labelmaps
     return this->CalculateOutputGeometryFromImage();
     }
-  else if (sourceRoiNode)
+  else if (sourceRoiNode || sourceMarkupsRoiNode)
     {
     return this->CalculateOutputGeometryFromBounds(false); // use source axes
     }
@@ -143,6 +143,37 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     {
     return this->CalculateOutputGeometryFromBounds(true); // use current axes
     }
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerSegmentationGeometryLogic::CalculatePaddedOutputGeometry()
+{
+  if (!this->InputSegmentationNode || !this->PadOutputGeometry)
+    {
+    return;
+    }
+
+  std::string segmentationGeometryString = this->InputSegmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry(
+    vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+  vtkNew<vtkOrientedImageData> inputGeometryImageData;
+  vtkSegmentationConverter::DeserializeImageGeometry(segmentationGeometryString, inputGeometryImageData, false/*don't allocate*/);
+  vtkNew<vtkTransform> segmentationGeometryToReferenceGeometryTransform;
+  vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(inputGeometryImageData,
+    this->OutputGeometryImageData, segmentationGeometryToReferenceGeometryTransform);
+
+  int transformedSegmentationExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  vtkOrientedImageDataResample::TransformExtent(inputGeometryImageData->GetExtent(),
+    segmentationGeometryToReferenceGeometryTransform, transformedSegmentationExtent);
+
+  int outputGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  this->OutputGeometryImageData->GetExtent(outputGeometryExtent);
+
+  for (int i = 0; i < 3; ++i)
+    {
+    outputGeometryExtent[2*i] = std::min(outputGeometryExtent[2*i], transformedSegmentationExtent[2*i]);
+    outputGeometryExtent[2*i+1] = std::max(outputGeometryExtent[2*i+1], transformedSegmentationExtent[2*i+1]);
+    }
+  this->OutputGeometryImageData->SetExtent(outputGeometryExtent);
 }
 
 //-----------------------------------------------------------------------------
@@ -223,6 +254,8 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometryFromImage
     vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(this->OutputGeometryImageData, this->OversamplingFactor);
     }
 
+  this->CalculatePaddedOutputGeometry();
+
   // success
   return "";
 }
@@ -249,12 +282,37 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometryFromBound
   double sourceBounds[6] = { 0, -1, 0, -1, 0, -1 };
   this->SourceGeometryNode->GetBounds(sourceBounds);
 
+  vtkMRMLMarkupsROINode* sourceMarkupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(this->SourceGeometryNode);
+  if (sourceMarkupsROINode)
+    {
+    // Set the bounds from the ROI in Object coordinate system.
+    // Center of the ROI in "Object" is [0,0,0].
+    double roiSize[3] = { 0.0, 0.0, 0.0 };
+    sourceMarkupsROINode->GetSize(roiSize);
+    double roiCenter[3] = { 0.0, 0.0, 0.0 };
+    sourceMarkupsROINode->GetCenter(roiCenter);
+    for (int i = 0; i < 3; ++i)
+      {
+      sourceBounds[2*i]     = - (roiSize[i] * 0.5);
+      sourceBounds[2*i + 1] = + (roiSize[i] * 0.5);
+      }
+    }
+
   // Determine transform between source node and input segmentation
   vtkNew<vtkMatrix4x4> segmentationToSourceMatrix;
   if (!vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(this->InputSegmentationNode->GetParentTransformNode(),
     this->SourceGeometryNode->GetParentTransformNode(), segmentationToSourceMatrix))
     {
     vtkWarningMacro("CalculateOutputGeometry: Ignoring parent transforms because non-linear components have been found");
+    }
+
+  if (sourceMarkupsROINode)
+    {
+    // If the source object is a markups ROI node, then we treat the ROI Object coordinate system as the "Source".
+    vtkMatrix4x4* objectToNodeMatrix = sourceMarkupsROINode->GetObjectToNodeMatrix();
+    vtkNew<vtkMatrix4x4> nodeToObjectMatrix;
+    vtkMatrix4x4::Invert(objectToNodeMatrix, nodeToObjectMatrix);
+    vtkMatrix4x4::Multiply4x4(nodeToObjectMatrix, segmentationToSourceMatrix, segmentationToSourceMatrix);
     }
 
   vtkNew<vtkMatrix4x4> outputGeometryImageToSourceMatrix;
@@ -332,6 +390,8 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometryFromBound
     vtkMath::Round(std::max(corner1_OutputGeometryImage[2], corner2_OutputGeometryImage[2]))
     };
   this->OutputGeometryImageData->SetExtent(outputExtent);
+
+  this->CalculatePaddedOutputGeometry();
 
   // success
   return"";
@@ -513,7 +573,8 @@ bool vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode()
       }
 
     // Resample
-    if (!vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(currentLabelmap, geometryImageData, currentLabelmap, false, true))
+    if (!vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(
+      currentLabelmap, geometryImageData, currentLabelmap, false, this->PadOutputGeometry))
       {
       vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode: "
         << "Segment " << this->InputSegmentationNode->GetName() << "/" << currentSegmentID.c_str() << " failed to be resampled");

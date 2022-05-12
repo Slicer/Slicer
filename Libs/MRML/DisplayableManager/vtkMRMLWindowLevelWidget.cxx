@@ -364,7 +364,7 @@ void vtkMRMLWindowLevelWidget::ProcessAdjustWindowLevel(vtkMRMLInteractionEventD
   double rangeLow = this->VolumeScalarRange[0];
   double rangeHigh = this->VolumeScalarRange[1];
 
-  int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
+  const int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
   double windowMinSize = std::min(windowSize[0], windowSize[1]);
 
   double gain = (rangeHigh - rangeLow) / windowMinSize;
@@ -394,77 +394,19 @@ void vtkMRMLWindowLevelWidget::ProcessAdjustWindowLevel(vtkMRMLInteractionEventD
 //----------------------------------------------------------------------------
 int vtkMRMLWindowLevelWidget::GetEditableLayerAtEventPosition(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceLogic* sliceLogic = this->GetSliceLogic();
-  if (!sliceLogic)
+  double worldPos[3] = { 0.0, 0.0, 0.0 };
+  eventData->GetWorldPosition(worldPos);
+  if (!eventData->IsWorldPositionValid())
     {
+    vtkErrorMacro("vtkMRMLWindowLevelWidget::GetEditableLayerAtEventPosition failed: invalid world position");
     return vtkMRMLSliceLogic::LayerNone;
     }
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
-  if (!sliceNode)
+  if (!this->GetSliceLogic())
     {
+    vtkErrorMacro("vtkMRMLWindowLevelWidget::GetEditableLayerAtEventPosition failed: invalid slice logic");
     return vtkMRMLSliceLogic::LayerNone;
     }
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
-  if (!sliceCompositeNode)
-    {
-    return vtkMRMLSliceLogic::LayerNone;
-    }
-
-  bool foregroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetForegroundVolumeID())
-    && this->ForegroundVolumeEditable;
-  bool backgroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetBackgroundVolumeID())
-    && this->BackgroundVolumeEditable;
-
-  if (!foregroundEditable && !backgroundEditable)
-    {
-    // window/level editing is disabled on both volumes
-    return vtkMRMLSliceLogic::LayerNone;
-    }
-  // By default adjust background volume, if available
-  bool adjustForeground = !backgroundEditable;
-
-  // If both foreground and background volumes are visible then choose adjustment of
-  // foreground volume, if foreground volume is visible in current mouse position
-  if (foregroundEditable && backgroundEditable)
-    {
-    adjustForeground = (sliceCompositeNode->GetForegroundOpacity() > 0.0)
-      && this->IsEventInsideVolume(true, eventData)   // inside background (used as mask for displaying foreground)
-      && this->IsEventInsideVolume(false, eventData); // inside foreground
-    }
-
-  return (adjustForeground ? vtkMRMLSliceLogic::LayerForeground : vtkMRMLSliceLogic::LayerBackground);
-}
-
-//----------------------------------------------------------------------------
-bool vtkMRMLWindowLevelWidget::VolumeWindowLevelEditable(const char* volumeNodeID)
-{
-  if (!volumeNodeID)
-    {
-    return false;
-    }
-  vtkMRMLSliceLogic* sliceLogic = this->GetSliceLogic();
-  if (!sliceLogic)
-    {
-    return false;
-    }
-  vtkMRMLScene *scene = sliceLogic->GetMRMLScene();
-  if (!scene)
-    {
-    return false;
-    }
-  vtkMRMLVolumeNode* volumeNode =
-    vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeNodeID));
-  if (volumeNode == nullptr)
-    {
-    return false;
-    }
-  vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode =
-    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
-  if (!scalarVolumeDisplayNode)
-    {
-    return false;
-    }
-  return !scalarVolumeDisplayNode->GetWindowLevelLocked();
+  return this->GetSliceLogic()->GetEditableLayerAtWorldPosition(worldPos, this->BackgroundVolumeEditable, this->ForegroundVolumeEditable);
 }
 
 //----------------------------------------------------------------------------
@@ -647,7 +589,7 @@ bool vtkMRMLWindowLevelWidget::UpdateWindowLevelFromRectangle(int layer, int cor
   vtkMRMLSliceLogic* sliceLogic = this->GetSliceLogic();
   if (!sliceLogic)
     {
-    return vtkMRMLSliceLogic::LayerNone;
+    return false;
     }
   vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
   if (!sliceNode)
@@ -716,48 +658,6 @@ bool vtkMRMLWindowLevelWidget::UpdateWindowLevelFromRectangle(int layer, int cor
   // It is more robust than taking the minimum and maximum - a few outlier voxels do not throw off the range.
   double* intensityRange = stats->GetAutoRange();
   displayNode->SetWindowLevelMinMax(intensityRange[0], intensityRange[1]);
-  return true;
-}
-
-//----------------------------------------------------------------------------
-bool vtkMRMLWindowLevelWidget::IsEventInsideVolume(bool background, vtkMRMLInteractionEventData* eventData)
-{
-  vtkMRMLSliceLogic* sliceLogic = this->GetSliceLogic();
-  if (!sliceLogic)
-    {
-    return false;
-    }
-  vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
-  if (!sliceNode)
-    {
-    return false;
-    }
-  vtkMRMLSliceLayerLogic* layerLogic = background ?
-    sliceLogic->GetBackgroundLayer() : sliceLogic->GetForegroundLayer();
-  if (!layerLogic)
-    {
-    return false;
-    }
-  vtkMRMLVolumeNode* volumeNode = layerLogic->GetVolumeNode();
-  if (!volumeNode || !volumeNode->GetImageData())
-    {
-    return false;
-    }
-  const int* eventPosition = eventData->GetDisplayPosition();
-  double xyz[3] = { 0 };
-  vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetRenderer(), sliceNode, eventPosition[0], eventPosition[1], xyz);
-  vtkGeneralTransform* xyToBackgroundIJK = layerLogic->GetXYToIJKTransform();
-  double mousePositionIJK[3] = { 0 };
-  xyToBackgroundIJK->TransformPoint(xyz, mousePositionIJK);
-  int volumeExtent[6] = { 0 };
-  volumeNode->GetImageData()->GetExtent(volumeExtent);
-  for (int i = 0; i < 3; i++)
-    {
-    if (mousePositionIJK[i]<volumeExtent[i * 2] || mousePositionIJK[i]>volumeExtent[i * 2 + 1])
-      {
-      return false;
-      }
-    }
   return true;
 }
 

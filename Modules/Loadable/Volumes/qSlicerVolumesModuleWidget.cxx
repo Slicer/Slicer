@@ -21,13 +21,23 @@
 // Qt includes
 #include <QDebug>
 
+// SlicerQt includes
+#include <qSlicerCoreApplication.h>
+#include <qSlicerModuleManager.h>
+#include <qSlicerAbstractCoreModule.h>
+
 // CTK includes
 //#include <ctkModelTester.h>
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLVolumeDisplayNode.h>
+
+// Colors includes
+#include <vtkSlicerColorLogic.h>
+#include <vtkMRMLColorLegendDisplayNode.h>
 
 // Volumes includes
 #include "qSlicerVolumesModuleWidget.h"
@@ -67,15 +77,13 @@ void qSlicerVolumesModuleWidget::setup()
   QObject::connect(d->ActiveVolumeNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    this, SLOT(nodeSelectionChanged(vtkMRMLNode*)));
 
+  QObject::connect(d->ColorLegendCollapsibleButton, SIGNAL(contentsCollapsed(bool)),
+                   this, SLOT(colorLegendCollapsibleButtonCollapsed(bool)));
+
   // Set up labelmap conversion
   d->ConvertVolumeFrame->setVisible(false);
   QObject::connect(d->ConvertVolumeButton, SIGNAL(clicked()),
                    this, SLOT(convertVolume()));
-  /*QObject::connect(d->ConvertVolumeTargetSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   this, SLOT(nodeSelectionChanged(vtkMRMLNode*)));*/
-
-  //ctkModelTester* tester = new ctkModelTester(this);
-  //tester->setModel(d->ActiveVolumeNodeSelector->model());
 }
 
 //------------------------------------------------------------------------------
@@ -92,35 +100,51 @@ void qSlicerVolumesModuleWidget::updateWidgetFromMRML()
 
   vtkMRMLVolumeNode* currentVolumeNode = vtkMRMLVolumeNode::SafeDownCast(
     d->ActiveVolumeNodeSelector->currentNode() );
-  if (!currentVolumeNode)
+
+  // Color legend section
+  vtkMRMLColorLegendDisplayNode* colorLegendNode = nullptr;
+  if (currentVolumeNode)
     {
-    d->ConvertVolumeFrame->setVisible(false);
-    return;
+    colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(currentVolumeNode);
+    }
+  d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
+  if (!colorLegendNode)
+    {
+    d->ColorLegendCollapsibleButton->setCollapsed(true);
     }
 
-  // Show convert to labelmap frame only if the exact type is scalar volume
-  // (not labelmap, vector, tensor, DTI, etc.)
-  QStringList convertTargetNodeTypes;
-  if (!strcmp(currentVolumeNode->GetClassName(), "vtkMRMLScalarVolumeNode"))
-    {
-    d->ConvertVolumeFrame->setVisible(true);
-    d->ConvertVolumeLabel->setText(tr("Convert to label map:"));
-    convertTargetNodeTypes << "vtkMRMLLabelMapVolumeNode";
-    }
-  else if (!strcmp(currentVolumeNode->GetClassName(), "vtkMRMLLabelMapVolumeNode"))
-    {
-    d->ConvertVolumeFrame->setVisible(true);
-    d->ConvertVolumeLabel->setText(tr("Convert to scalar volume:"));
-    convertTargetNodeTypes << "vtkMRMLScalarVolumeNode";
-    }
-  else
-    {
-    d->ConvertVolumeFrame->setVisible(false);
-    }
+  d->InfoCollapsibleButton->setEnabled(currentVolumeNode);
+  d->DisplayCollapsibleButton->setEnabled(currentVolumeNode);
+  d->ColorLegendCollapsibleButton->setEnabled(currentVolumeNode);
 
-  // Set base name of target labelmap node
-  d->ConvertVolumeTargetSelector->setBaseName(QString("%1_Label").arg(currentVolumeNode->GetName()));
-  d->ConvertVolumeTargetSelector->setNodeTypes(convertTargetNodeTypes);
+  // Convert to volume section
+  bool convertVolumeSectionVisible = false;
+  if (currentVolumeNode)
+    {
+
+    // Show convert to labelmap frame only if the exact type is scalar volume
+    // (not labelmap, vector, tensor, DTI, etc.)
+    QStringList convertTargetNodeTypes;
+    if (!strcmp(currentVolumeNode->GetClassName(), "vtkMRMLScalarVolumeNode"))
+      {
+      convertVolumeSectionVisible = true;
+      d->ConvertVolumeLabel->setText(tr("Convert to label map:"));
+      convertTargetNodeTypes << "vtkMRMLLabelMapVolumeNode";
+      }
+    else if (!strcmp(currentVolumeNode->GetClassName(), "vtkMRMLLabelMapVolumeNode"))
+      {
+      convertVolumeSectionVisible = true;
+      d->ConvertVolumeLabel->setText(tr("Convert to scalar volume:"));
+      convertTargetNodeTypes << "vtkMRMLScalarVolumeNode";
+      }
+    if (convertVolumeSectionVisible)
+      {
+      // Set base name of target labelmap node
+      d->ConvertVolumeTargetSelector->setBaseName(QString("%1_Label").arg(currentVolumeNode->GetName()));
+      d->ConvertVolumeTargetSelector->setNodeTypes(convertTargetNodeTypes);
+      }
+    }
+  d->ConvertVolumeFrame->setVisible(convertVolumeSectionVisible);
 }
 
 //------------------------------------------------------------------------------
@@ -218,4 +242,38 @@ bool qSlicerVolumesModuleWidget::setEditedNode(vtkMRMLNode* node,
     }
 
   return false;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerVolumesModuleWidget::colorLegendCollapsibleButtonCollapsed(bool collapsed)
+{
+  Q_D(qSlicerVolumesModuleWidget);
+  if (collapsed)
+    {
+    return;
+    }
+
+  vtkMRMLVolumeNode* currentVolume = vtkMRMLVolumeNode::SafeDownCast(d->ActiveVolumeNodeSelector->currentNode());
+  vtkMRMLColorLegendDisplayNode* colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(currentVolume);
+  if (!colorLegendNode && currentVolume)
+    {
+    // color legend node does not exist, we need to create it now
+
+    // Pause render to prevent the new Color legend displayed for a moment before it is hidden.
+    vtkMRMLApplicationLogic* mrmlAppLogic = this->logic()->GetMRMLApplicationLogic();
+    if (mrmlAppLogic)
+      {
+      mrmlAppLogic->PauseRender();
+      }
+    colorLegendNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(currentVolume);
+    if (colorLegendNode)
+      {
+      colorLegendNode->SetVisibility(false); // just because the groupbox is opened, don't show color legend yet
+      }
+    if (mrmlAppLogic)
+      {
+      mrmlAppLogic->ResumeRender();
+      }
+    }
+  d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
 }

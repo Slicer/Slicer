@@ -430,7 +430,7 @@
         <item>
          <widget class="QToolButton" name="SliceLinkButton">
           <property name="toolTip">
-           <string>Link/Unlink the slice controls (except scales) across all Slice Viewers.</string>
+           <string>Link slice views. Synchronizes properties of all slice views in the same view group.</string>
           </property>
           <property name="text">
            <string/>
@@ -707,7 +707,7 @@
     <string>Fit to window</string>
    </property>
    <property name="toolTip">
-    <string>Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
+    <string>Reset field of view. Adjusts the slice view's field of view to match the extent of lowest volume layer (background, then foreground, then label).</string>
    </property>
   </action>
   <action name="actionRotate_to_volume_plane">

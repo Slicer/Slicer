@@ -1605,17 +1605,17 @@ void vtkSegmentation::ClearSegment(std::string segmentId)
   this->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentId, sharedSegmentIDs, false);
   if (this->GetMasterRepresentationName() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() && !sharedSegmentIDs.empty())
     {
-    vtkOrientedImageData* binaryLablemap = vtkOrientedImageData::SafeDownCast(masterRepresentation);
-    if (binaryLablemap)
+    vtkOrientedImageData* binaryLabelmap = vtkOrientedImageData::SafeDownCast(masterRepresentation);
+    if (binaryLabelmap)
       {
       vtkNew<vtkImageThreshold> threshold;
-      threshold->SetInputData(binaryLablemap);
+      threshold->SetInputData(binaryLabelmap);
       threshold->ThresholdBetween(segment->GetLabelValue(), segment->GetLabelValue());
       threshold->SetInValue(0);
       threshold->ReplaceOutOff();
       threshold->Update();
-      binaryLablemap->ShallowCopy(threshold->GetOutput());
-      binaryLablemap->Modified();
+      binaryLabelmap->ShallowCopy(threshold->GetOutput());
+      binaryLabelmap->Modified();
       }
     }
   else if (masterRepresentation)
@@ -1997,7 +1997,7 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
 
     // We were supposed to use the extent from the reference geometry string, however it did  not exist.
     // Instead, calculate extent from effective extent of segments.
-    if (extentComputationMode == EXTENT_REFERENCE_GEOMETRY)
+    if (extentComputationMode == EXTENT_REFERENCE_GEOMETRY || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
       {
       extentComputationMode = EXTENT_UNION_OF_EFFECTIVE_SEGMENTS;
       }
@@ -2007,13 +2007,26 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
   vtkSegmentationConverter::DeserializeImageGeometry(referenceGeometryString, commonGeometryImage, false);
 
   if (extentComputationMode == EXTENT_UNION_OF_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS
-    || extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED)
+    || extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED
+    || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
     {
     // Determine extent that contains all segments
     int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
     this->DetermineCommonLabelmapExtent(commonGeometryExtent, commonGeometryImage, sharedSegmentIDs,
-      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED,
+      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED ||
+      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY,
       extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED);
+    if (extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
+      {
+      // Expand the common geometry extent to include the reference image geometry.
+      int referenceGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
+      commonGeometryImage->GetExtent(referenceGeometryExtent);
+      for (int i = 0; i < 3; ++i)
+        {
+        commonGeometryExtent[2*i]   = std::min(commonGeometryExtent[2*i],   referenceGeometryExtent[2*i]);
+        commonGeometryExtent[2*i+1] = std::max(commonGeometryExtent[2*i+1], referenceGeometryExtent[2*i+1]);
+        }
+      }
     commonGeometryImage->SetExtent(commonGeometryExtent);
     }
 

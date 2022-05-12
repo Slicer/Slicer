@@ -73,6 +73,19 @@ public:
     HandleLASCorner,
     HandleRASCorner,
 
+    HandleLPEdge,
+    HandleRPEdge,
+    HandleLAEdge,
+    HandleRAEdge,
+    HandleLIEdge,
+    HandleRIEdge,
+    HandleLSEdge,
+    HandleRSEdge,
+    HandlePIEdge,
+    HandleAIEdge,
+    HandlePSEdge,
+    HandleASEdge,
+
     HandleROI_Last
   };
 

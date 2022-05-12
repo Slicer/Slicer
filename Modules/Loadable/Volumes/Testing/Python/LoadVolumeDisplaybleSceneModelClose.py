@@ -1,6 +1,6 @@
-import unittest
-import vtk, qt, ctk, slicer
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 class VolumesLoadSceneCloseTesting(ScriptedLoadableModuleTest):
 

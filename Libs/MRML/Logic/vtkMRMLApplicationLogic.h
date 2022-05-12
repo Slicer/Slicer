@@ -25,6 +25,7 @@
 #include "vtkMRMLAbstractLogic.h"
 
 #include "vtkMRMLLogicExport.h"
+#include "vtkMRMLSliceCompositeNode.h"
 
 class vtkMRMLColorLogic;
 class vtkMRMLModelDisplayNode;
@@ -151,7 +152,7 @@ public:
   /// characters for filenames but avoids known issue like slashes or colons.
   /// Ideally a version from vtksys
   /// or similar should be used, but nothing seems to be available.
-  /// http://en.wikipedia.org/wiki/Percent-encoding
+  /// https://en.wikipedia.org/wiki/Percent-encoding
   /// See https://github.com/Slicer/Slicer/issues/2605
   static std::string PercentEncode(std::string s);
 
@@ -249,6 +250,23 @@ public:
   /// \return constant pointer to vtkMRMLAbstractLogic corresponding to the
   /// logic associated to th logic
   vtkMRMLAbstractLogic* GetModuleLogic(const char* moduleName) const;
+
+  enum IntersectingSlicesOperation
+  {
+    IntersectingSlicesVisibility,
+    IntersectingSlicesInteractive,
+    IntersectingSlicesTranslation,
+    IntersectingSlicesRotation,
+  };
+
+  void SetIntersectingSlicesEnabled(IntersectingSlicesOperation operation, bool enabled);
+  bool GetIntersectingSlicesEnabled(IntersectingSlicesOperation operation);
+
+  void SetIntersectingSlicesIntersectionMode(int mode);
+  int GetIntersectingSlicesIntersectionMode();
+
+  void SetIntersectingSlicesLineThicknessMode(int mode);
+  int GetIntersectingSlicesLineThicknessMode();
 
 protected:
 

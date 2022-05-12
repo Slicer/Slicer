@@ -34,6 +34,8 @@ set(KIT_SRCS
   qSlicerDataDialog.h
   qSlicerDirectoryListView.cxx
   qSlicerDirectoryListView.h
+  qSlicerExportNodeDialog.cxx
+  qSlicerExportNodeDialog.h
 
   qSlicerFileDialog.cxx
   qSlicerFileDialog.h
@@ -189,6 +191,8 @@ set(KIT_MOC_SRCS
   qSlicerDataDialog.h
   qSlicerDataDialog_p.h
   qSlicerDirectoryListView.h
+  qSlicerExportNodeDialog.h
+  qSlicerExportNodeDialog_p.h
   qSlicerFileDialog.h
   qSlicerFileWriterOptionsWidget.h
   qSlicerIOManager.h
@@ -278,6 +282,7 @@ endif()
 set(KIT_UI_SRCS
   Resources/UI/qSlicerActionsDialog.ui
   Resources/UI/qSlicerDataDialog.ui
+  Resources/UI/qSlicerExportNodeDialog.ui
   Resources/UI/qSlicerModelsDialog.ui
   Resources/UI/qSlicerModuleFinderDialog.ui
   Resources/UI/qSlicerModulePanel.ui

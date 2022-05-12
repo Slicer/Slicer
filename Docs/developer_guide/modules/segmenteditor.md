@@ -75,6 +75,7 @@ Common parameters must be set using `setCommonParameter` method (others can be s
 | ApplyToAllVisibleSegments | int   | no     | 0           | 0 or 1                                             |
 | Operation                 | enum  | no     | EraseInside | EraseInside, EraseOutside, FillInside, FillOutside |
 | Shape                     | enum  | no     | FreeForm    | FreeForm, Circle, Rectangle                        |
+| ShapeDrawCentered         | int   | no     | 0           | 0 (first click defines rectangle or circle boundary), 1 (click defines shape center) |
 | SliceCutMode              | enum  | no     | Unlimited   | Unlimited, Positive, Negative, Symmetric           |
 | SliceCutDepthMm           | float | no     | 0.0         | >=0.0 (single slice = 0.0)                         |
 

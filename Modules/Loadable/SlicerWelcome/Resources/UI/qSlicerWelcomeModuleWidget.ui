@@ -46,36 +46,24 @@
        <number>4</number>
       </property>
       <item row="0" column="0">
-       <widget class="QPushButton" name="LoadDicomDataButton">
+       <widget class="QPushButton" name="LoadNonDicomDataButton">
         <property name="text">
-         <string>Load DICOM Data</string>
+         <string>Add Data</string>
         </property>
         <property name="icon">
-         <iconset resource="../qSlicerWelcomeModule.qrc">
-          <normaloff>:/Images/SlicerLoadDicom-Original.png</normaloff>:/Images/SlicerLoadDicom-Original.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>45</width>
-          <height>22</height>
-         </size>
+         <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+          <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QPushButton" name="LoadNonDicomDataButton">
+       <widget class="QPushButton" name="LoadDicomDataButton">
         <property name="text">
-         <string>Load Data</string>
+         <string>Add DICOM Data</string>
         </property>
         <property name="icon">
-         <iconset resource="../qSlicerWelcomeModule.qrc">
-          <normaloff>:/Images/SlicerLoadData-Original.png</normaloff>:/Images/SlicerLoadData-Original.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>45</width>
-          <height>22</height>
-         </size>
+         <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+          <normaloff>:/Icons/Small/SlicerLoadDICOM.png</normaloff>:/Icons/Small/SlicerLoadDICOM.png</iconset>
         </property>
        </widget>
       </item>
@@ -136,7 +124,7 @@
       <item row="2" column="1">
        <widget class="QPushButton" name="ExploreLoadedDataPushButton">
         <property name="text">
-         <string>Explore Loaded Data</string>
+         <string>Explore Added Data</string>
         </property>
         <property name="icon">
          <iconset resource="../qSlicerWelcomeModule.qrc">

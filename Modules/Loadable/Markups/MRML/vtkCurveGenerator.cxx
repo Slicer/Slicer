@@ -903,7 +903,7 @@ void vtkCurveGenerator::SortByMinimumSpanningTreePosition(vtkPoints* points, vtk
     }
 
   // implementation of Prim's algorithm heavily based on:
-  // http://www.geeksforgeeks.org/greedy-algorithms-set-5-prims-minimum-spanning-tree-mst-2/
+  // https://www.geeksforgeeks.org/greedy-algorithms-set-5-prims-minimum-spanning-tree-mst-2/
   std::vector< int > parent(numberOfPoints); // Array to store constructed MST
   std::vector< double > key(numberOfPoints);   // Key values used to pick minimum weight edge in cut
   std::vector< bool > mstSet(numberOfPoints);  // To represent set of vertices not yet included in MST

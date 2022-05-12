@@ -28,9 +28,6 @@
 
 // Slicer includes
 #include <qMRMLWidgetsConfigure.h> // For MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-#include "qMRMLChartWidget.h"
-#endif
 #include "qMRMLLayoutManager.h"
 #include "qMRMLSliceWidget.h"
 #include "qMRMLTableWidget.h"
@@ -39,7 +36,6 @@
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
-#include <vtkMRMLChartViewNode.h>
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLScene.h>
@@ -54,29 +50,6 @@
 
 namespace
 {
-//------------------------------------------------------------------------------
-bool testLayoutManagerViewWidgetForChart(int line, qMRMLLayoutManager* layoutManager, int viewId)
-{
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  qMRMLChartWidget* widget = layoutManager->chartWidget(viewId);
-  vtkMRMLChartViewNode* node = widget ? widget->mrmlChartViewNode() : nullptr;
-  if (!widget || !node)
-    {
-    std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::chartWidget()" << std::endl;
-    return false;
-    }
-  if (layoutManager->viewWidget(node) != widget)
-    {
-    std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::viewWidget()" << std::endl;
-    return false;
-    }
-#else
-  Q_UNUSED(line);
-  Q_UNUSED(layoutManager);
-  Q_UNUSED(viewId);
-#endif
-  return true;
-}
 //------------------------------------------------------------------------------
 bool testLayoutManagerViewWidgetForTable(int line, qMRMLLayoutManager* layoutManager, int viewId)
 {
@@ -191,24 +164,6 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
   if (!testLayoutManagerViewWidgetForThreeD(__LINE__, layoutManager, 0))
-    {
-    return EXIT_FAILURE;
-    }
-
-  layoutManager->setLayout(vtkMRMLLayoutNode::SlicerLayoutFourUpQuantitativeView);
-  if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Green"))
-    {
-    return EXIT_FAILURE;
-    }
-  if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Red"))
-    {
-    return EXIT_FAILURE;
-    }
-  if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Yellow"))
-    {
-    return EXIT_FAILURE;
-    }
-  if (!testLayoutManagerViewWidgetForChart(__LINE__, layoutManager, 0))
     {
     return EXIT_FAILURE;
     }

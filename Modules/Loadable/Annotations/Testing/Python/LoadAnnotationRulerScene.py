@@ -1,4 +1,8 @@
 import os
+import sys
+
+import slicer
+
 
 # try get the path of the ruler scene file from the arguments
 numArgs = len(sys.argv)
@@ -15,4 +19,3 @@ slicer.mrmlScene.SetURL(scenePath)
 
 # and load it
 slicer.mrmlScene.Connect()
-

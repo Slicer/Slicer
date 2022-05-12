@@ -22,8 +22,6 @@ import csv
 import json
 import os
 import shutil
-import tempfile
-import sys
 
 from SlicerAppTesting import *
 
@@ -32,6 +30,8 @@ Usage:
     CLISerializationTest.py
       /path/to/Slicer /path/to/CLIExecutables /path/to/data_dir /path/to/temp_dir
 """
+
+
 class CLISerializationTest:
   def __init__(self):
     self.SlicerExecutable = None
@@ -49,6 +49,7 @@ class CLISerializationTest:
 
   def deserializeCLI(self, cli_name, json_file_path, parameters=[]):
     return self._runCLI(cli_name, '--deserialize', json_file_path, parameters)
+
 
 if __name__ == '__main__':
 

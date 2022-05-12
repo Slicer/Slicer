@@ -2,7 +2,7 @@
 
 ## Debugging using Xcode
 
-We do not support building using Xcode, however if you build slicer using traditional unix Makefiles you can still debug using the powerful source debugging features of Xcode.
+We do not support building using Xcode, however if you build Slicer using traditional unix Makefiles you can still debug using the powerful source debugging features of Xcode.
 
 :::{note}
 
@@ -37,7 +37,7 @@ Alternatively, you can use the Product->Debug->Create a Symbolic Breakpoint... o
 
 To debug startup issues you can set up a *Scheme* and select the `Slicer.app` in your `Slicer-build` directory (see screenshot). You can set up multiple schemes with different command line arguments and executables (for example to debug tests).
 
-Since you are using a dummy project but want to debug the slicer application, you need to do the following:
+Since you are using a dummy project but want to debug the Slicer application, you need to do the following:
 
 - Start Xcode and open dummy project
 - Pick Product->Edit Scheme...
@@ -49,13 +49,13 @@ Since you are using a dummy project but want to debug the slicer application, yo
 
 :::{tip}
 
-You can create multiple schemes, each various command line options to pass to slicer so you can easily get back to a debugging environment.
+You can create multiple schemes, each various command line options to pass to Slicer so you can easily get back to a debugging environment.
 
 :::
 
 ### Profiling
 
-The [Instruments](http://en.wikipedia.org/wiki/Instruments_%28application%29) tool is very useful for profiling.
+The [Instruments](https://en.wikipedia.org/wiki/Instruments_%28application%29) tool is very useful for profiling.
 
 ## Debugging using cross-platform IDEs
 

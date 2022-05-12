@@ -1,13 +1,21 @@
-import os, string
-import unittest
-import vtk, qt, ctk, slicer
-import logging
 import importlib
+import logging
+import os
+import unittest
+
+import ctk
+import qt
+import vtk
+
+import slicer
+
 
 __all__ = ['ScriptedLoadableModule', 'ScriptedLoadableModuleWidget', 'ScriptedLoadableModuleLogic', 'ScriptedLoadableModuleTest']
 
+
 class ScriptedLoadableModule:
   def __init__(self, parent):
+    super().__init__()
     self.parent = parent
     self.moduleName = self.__class__.__name__
 
@@ -20,8 +28,8 @@ This module was created from a template and the help section has not yet been up
 """
 
     parent.acknowledgementText = """
-This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.
-This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a href=http://www.slicer.org>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>).
+This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>https://www.slicer.org</a> for details.
+This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a href=https://www.slicer.org>https://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>).
 """
 
     # Set module icon from Resources/Icons/<ModuleName>.png
@@ -71,11 +79,13 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     testCase.messageDelay = msec
     testCase.runTest(**kwargs)
 
+
 class ScriptedLoadableModuleWidget:
   def __init__(self, parent = None):
     """If parent widget is not specified: a top-level widget is created automatically;
     the application has to delete this widget (by calling widget.parent.deleteLater() to avoid memory leaks.
     """
+    super().__init__()
     # Get module name by stripping 'Widget' from the class name
     self.moduleName = self.__class__.__name__
     if self.moduleName.endswith('Widget'):
@@ -200,22 +210,19 @@ class ScriptedLoadableModuleWidget:
     """Reload scripted module widget representation and call :func:`ScriptedLoadableModuleTest.runTest()`
     passing ``kwargs``.
     """
-    try:
+    with slicer.util.tryWithErrorDisplay("Reload and Test failed."):
       self.onReload()
       test = slicer.selfTests[self.moduleName]
       test(msec=int(slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay")), **kwargs)
-    except Exception as e:
-      import traceback
-      traceback.print_exc()
-      errorMessage = "Reload and Test: Exception!\n\n" + str(e) + "\n\nSee Python Console for Stack Trace"
-      slicer.util.errorDisplay(errorMessage)
 
   def onEditSource(self):
     filePath = slicer.util.modulePath(self.moduleName)
     qt.QDesktopServices.openUrl(qt.QUrl("file:///"+filePath, qt.QUrl.TolerantMode))
 
+
 class ScriptedLoadableModuleLogic:
   def __init__(self, parent = None):
+    super().__init__()
     # Get module name by stripping 'Logic' from the class name
     self.moduleName = self.__class__.__name__
     if self.moduleName.endswith('Logic'):

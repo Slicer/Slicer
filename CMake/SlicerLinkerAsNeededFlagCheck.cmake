@@ -52,6 +52,6 @@ else()
     message(STATUS "Checking if --no-as-needed linker flag is required - failed.")
     message(WARNING "Could not compile test code."
       "Linker could fail trying to resolve symbols for underlinked libraries."
-      "See issue 2321 (http://na-mic.org/Mantis/view.php?id=2321) for more details.")
+      "See issue 2321 (https://mantisarchive.slicer.org/view.php?id=2321) for more details.")
   endif()
 endif()

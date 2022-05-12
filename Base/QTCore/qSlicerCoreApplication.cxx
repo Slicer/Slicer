@@ -132,6 +132,7 @@
 //-----------------------------------------------------------------------------
 // Helper function
 
+#ifdef Slicer_USE_PYTHONQT
 namespace
 {
 wchar_t* QStringToPythonWCharPointer(QString str)
@@ -142,6 +143,7 @@ wchar_t* QStringToPythonWCharPointer(QString str)
   return res;
   }
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods
@@ -163,6 +165,7 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   this->DICOMDatabase = QSharedPointer<ctkDICOMDatabase>(new ctkDICOMDatabase);
 #endif
   this->NextResourceHandle = 0;
+  this->StartupWorkingPath = QDir::currentPath();
 }
 
 //-----------------------------------------------------------------------------
@@ -763,6 +766,56 @@ void qSlicerCoreApplicationPrivate::parseArguments()
     }
 }
 
+//----------------------------------------------------------------------------
+QStringList qSlicerCoreApplicationPrivate::findTranslationFilesWithLanguageExtension(const QString& dir, const QString& languageExtension)
+{
+  // Search with both underscore and hyphen as language/region separator (such as pt_BR),
+  // because languageExtension is expected to use underscore, but the translation .qm file may use either.
+  QStringList foundFiles;
+
+  // Underscore (Slicer_pt_BR.qm)
+  QString languageExtensionUnderscore(languageExtension);
+  // languageExtension is expected to use underscore, but just in case hyphen was used replace them
+  languageExtensionUnderscore.replace('-', '_');
+  const QString localeFilterUnderscore = QString("*%1.qm").arg(languageExtensionUnderscore);
+  foundFiles << QDir(dir).entryList(QStringList(localeFilterUnderscore));
+
+  // Hyphen (Slicer_pt-BR.qm)
+  QString languageExtensionHyphen(languageExtension);
+  languageExtensionHyphen.replace('_', '-');
+  const QString localeFilterHyphen = QString("*%1.qm").arg(languageExtensionHyphen);
+  foundFiles << QDir(dir).entryList(QStringList(localeFilterHyphen));
+
+  foundFiles.removeDuplicates();
+  return foundFiles;
+}
+
+//----------------------------------------------------------------------------
+QStringList qSlicerCoreApplicationPrivate::findTranslationFiles(const QString& dir, const QString& settingsLanguage)
+{
+  // If settings language is empty don't search translation files (application default)
+  if (settingsLanguage.isEmpty())
+    {
+    return QStringList{};
+    }
+
+  // Try to find the translation files using specific language extension
+  // (In case of fr_FR -> look for *fr_FR.qm files).
+  QStringList files = findTranslationFilesWithLanguageExtension(dir, settingsLanguage);
+  if (files.isEmpty())
+    {
+    // If no specific translations have been found, look for a generic language extension
+    // (In case of fr_FR -> look for *fr.qm files).
+    const QString genericExtension = settingsLanguage.split("_")[0];
+    if (genericExtension != settingsLanguage)
+      {
+      files = findTranslationFilesWithLanguageExtension(dir, genericExtension);
+      }
+    }
+
+  return files;
+}
+
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplication methods
 
@@ -1031,7 +1084,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       pythonArgv[i + 1] = QStringToPythonWCharPointer(scriptArgs.at(i));
       }
 
-    // See http://docs.python.org/c-api/init.html
+    // See https://docs.python.org/c-api/init.html
     PySys_SetArgvEx(pythonArgc, pythonArgv, /*updatepath=*/false);
 
     // Set 'sys.executable' so that Slicer can be used as a "regular" python interpreter
@@ -1149,6 +1202,7 @@ QSettings* qSlicerCoreApplication::revisionUserSettings()const
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerCoreApplication, QString, intDir, IntDir);
+CTK_GET_CPP(qSlicerCoreApplication, QString, startupWorkingPath, StartupWorkingPath);
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreApplication::isInstalled()const
@@ -1610,14 +1664,13 @@ QString qSlicerCoreApplication::libraries()const
 {
   QString librariesText(
     "Built on top of: "
-    "<a href=\"http://www.vtk.org/\">VTK</a>, "
-    "<a href=\"http://www.itk.org/\">ITK</a>, "
-    "<a href=\"http://www.commontk.org/index.php/Main_Page\">CTK</a>, "
+    "<a href=\"https://www.vtk.org/\">VTK</a>, "
+    "<a href=\"https://www.itk.org/\">ITK</a>, "
+    "<a href=\"https://www.commontk.org/index.php/Main_Page\">CTK</a>, "
     "<a href=\"https://www.qt.io/\">Qt</a>, "
     "<a href=\"http://teem.sf.net\">Teem</a>, "
-    "<a href=\"http://www.python.org/\">Python</a>, "
-    "<a href=\"http://dicom.offis.de/dcmtk\">DCMTK</a>, "
-    "<a href=\"http://www.jqplot.com/\">JQPlot</a><br />");
+    "<a href=\"https://www.python.org/\">Python</a>, "
+    "<a href=\"https://dicom.offis.de/dcmtk\">DCMTK</a><br />");
   return librariesText;
 }
 
@@ -1777,9 +1830,9 @@ void qSlicerCoreApplication
 {
   QTimer* timer = new QTimer(this);
   timer->setSingleShot(true);
-  timer->setProperty("caller", qVariantFromValue(caller));
-  timer->setProperty("eventID", qVariantFromValue(eventID));
-  timer->setProperty("callData", qVariantFromValue(callData));
+  timer->setProperty("caller", QVariant::fromValue(caller));
+  timer->setProperty("eventID", QVariant::fromValue(eventID));
+  timer->setProperty("callData", QVariant::fromValue(callData));
   timer->connect(timer, SIGNAL(timeout()),this, SLOT(invokeEvent()));
   timer->start(delay);
 }
@@ -1889,12 +1942,7 @@ void qSlicerCoreApplication::loadTranslations(const QString& dir)
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   Q_ASSERT(app);
 
-  QString localeFilter =
-      QString( QString("*") + app->settings()->value("language").toString());
-  localeFilter += QString(".qm");
-
-  QDir directory(dir);
-  QStringList qmFiles = directory.entryList(QStringList(localeFilter));
+  QStringList qmFiles = qSlicerCoreApplicationPrivate::findTranslationFiles(dir, app->settings()->value("language").toString());
 
   foreach(QString qmFile, qmFiles)
     {
@@ -1914,25 +1962,43 @@ void qSlicerCoreApplication::loadTranslations(const QString& dir)
 }
 
 //----------------------------------------------------------------------------
+QStringList qSlicerCoreApplication::translationFolders()
+{
+#ifdef Slicer_BUILD_I18N_SUPPORT
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (!app)
+    {
+    return QStringList();
+    }
+
+  QStringList qmDirs;
+  qmDirs << qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(QString(Slicer_QM_DIR));
+
+  // we check if the application is installed or not.
+  if (!app->isInstalled())
+    {
+    qmDirs << QString(Slicer_QM_OUTPUT_DIRS).split(";");
+    }
+
+  return qmDirs;
+#else
+  return QStringList();
+#endif
+}
+
+//----------------------------------------------------------------------------
 void qSlicerCoreApplication::loadLanguage()
 {
 #ifdef Slicer_BUILD_I18N_SUPPORT
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  Q_ASSERT(app);
-
-  // we check if the application is installed or not.
-  if (app->isInstalled())
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (!app)
     {
-    QString qmDir = QString(Slicer_QM_DIR);
-    app->loadTranslations(qmDir);
+    return;
     }
-  else
+  QStringList qmDirs = qSlicerCoreApplication::translationFolders();
+  foreach(QString qmDir, qmDirs)
     {
-    QStringList qmDirs = QString(Slicer_QM_OUTPUT_DIRS).split(";");
-    foreach(QString qmDir, qmDirs)
-      {
-      app->loadTranslations(qmDir);
-      }
+    app->loadTranslations(qmDir);
     }
 #endif
 }
@@ -2091,7 +2157,8 @@ QString qSlicerCoreApplication::documentationBaseUrl() const
 {
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
-  QString url = appSettings->value("DocumentationBaseURL", "https://slicer.readthedocs.io/{language}/{version}").toString();
+  // Since currently there is only English language documentation on readthedocs, the default URL uses "en" language.
+  QString url = appSettings->value("DocumentationBaseURL", "https://slicer.readthedocs.io/en/{version}").toString();
   if (url.contains("{version}"))
     {
     url.replace("{version}", this->documentationVersion());
@@ -2166,4 +2233,10 @@ bool qSlicerCoreApplication::loadFiles(const QStringList& filePaths, vtkMRMLMess
       }
     }
   return success;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerCoreApplication::openUrl(const QString& url)
+{
+  emit urlReceived(url);
 }

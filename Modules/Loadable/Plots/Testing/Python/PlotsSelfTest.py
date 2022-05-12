@@ -1,7 +1,8 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # PlotsSelfTest
@@ -18,6 +19,7 @@ class PlotsSelfTest(ScriptedLoadableModule):
     parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University
 and was supported through Canada CANARIE's Research Software Program."""
 
+
 #
 # PlotsSelfTestWidget
 #
@@ -25,6 +27,7 @@ and was supported through Canada CANARIE's Research Software Program."""
 class PlotsSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # PlotsSelfTestLogic
@@ -37,6 +40,7 @@ class PlotsSelfTestLogic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     pass
 

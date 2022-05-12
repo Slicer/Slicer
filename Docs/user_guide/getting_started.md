@@ -25,7 +25,7 @@ GPU: Graphics must support minimum OpenGL 3.2. Integrated graphics card is suffi
 
 ## Installing 3D Slicer
 
-To download Slicer, click [here](http://download.slicer.org/).
+To download Slicer, click [here](https://download.slicer.org/).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_download.png)
 
@@ -81,7 +81,10 @@ brew uninstall slicer-preview       # to uninstall
 - Run the `Slicer` executable.
 - Remove the directory to uninstall.
 
-**Note:** Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
+**Notes:**
+- Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
+- The Extension Manager uses QtWebengine to display the list of extensions. If your linux kernel does not fulfill [sandboxing requirements](https://doc.qt.io/Qt-5/qtwebengine-platform-notes.html#sandboxing-support) then you can turn off sandboxing by this command: `export QTWEBENGINE_DISABLE_SANDBOX=1`
+- Getting command-line arguments and process output containing non-ASCII characters requires the system to use a UTF-8 locale. If the system uses a different locale then the `export LANG="C.UTF-8"` command may be used before launching the application to switch to an acceptable locale.
 
 #### Debian / Ubuntu
 The following may be needed on fresh debian or ubuntu:
@@ -89,12 +92,17 @@ The following may be needed on fresh debian or ubuntu:
     sudo apt-get install libpulse-dev libnss3 libglu1-mesa
     sudo apt-get install --reinstall libxcb-xinerama0
 
-To run Slicer-4.11-2020-09-30 on older debian (e.g. debian 9) you may also need:
-
-    sudo apt-get install libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-randr0 libxcb-render-util0 libxcb-xkb-dev libxkbcommon-x11-dev
-
 #### ArchLinux
 ArchLinux runs the `strip` utility by default; this needs to be disabled in order to run Slicer binaries.  For more information see [this thread on the Slicer Forum](https://discourse.slicer.org/t/could-not-load-dicom-data/14211/5).
+
+#### Fedora
+Install the dependencies:
+
+    sudo dnf install mesa-libGLU libnsl
+
+The included libcrypto.so.1.1 in the Slicer installation is incompatible with the system libraries used by Fedora 35. The fix, until it is updated, is to move/remove the included libcrypto files:
+
+    $SLICER_ROOT/lib/Slicer-4.xx/libcrypto.*
 
 ## Using Slicer
 
@@ -124,18 +132,18 @@ You can customize views (show orientation marker, ruler, change orientation, tra
 
 #### Process data
 
-3D Slicer is built on a modular architecture. Choose a module to process or analyze your data. Most important modules are the following (complete list is available in [Modules](modules/index) section):
+3D Slicer is built on a modular architecture. Choose a module to process or analyze your data. Most important modules are the following (complete list is available in [Modules](modules/index.md) section):
 
 - [Welcome](modules/welcome.md): The default module when 3D Slicer is started. The panel features options for loading data and customizing 3D Slicer. Below those options are drop-down boxes that contain essential information for using 3D Slicer.
-- [Data](modules/data): acts as a central data-organizing hub. Lists all data currently in the scene and allows basic operations such as search, rename, delete and move.
-- [DICOM](modules/dicom): Import and export DICOM objects, such as images, segmentations, structure sets, radiation therapy objects, etc.
-- [Volumes](modules/volumes): Used for changing the appearance of various volume types.
-- [Volume Rendering](modules/volumerendering): Provides interactive visualization of 3D image data.
-- [Segmentations](modules/segmentations): Edit display properties and import/export segmentations.
-- [Segment Editor](modules/segmenteditor): Segment 3D volumes using various manual, semi-automatic, and automatic tools.
-- [Markups](modules/markups): Allows the creation and editing of markups associated with a scene. Currently, lists of fiducially are supported as markups.
+- [Data](modules/data.md): acts as a central data-organizing hub. Lists all data currently in the scene and allows basic operations such as search, rename, delete and move.
+- [DICOM](modules/dicom.md): Import and export DICOM objects, such as images, segmentations, structure sets, radiation therapy objects, etc.
+- [Volumes](modules/volumes.md): Used for changing the appearance of various volume types.
+- [Volume Rendering](modules/volumerendering.md): Provides interactive visualization of 3D image data.
+- [Segmentations](modules/segmentations.md): Edit display properties and import/export segmentations.
+- [Segment Editor](modules/segmenteditor.md): Segment 3D volumes using various manual, semi-automatic, and automatic tools.
+- [Markups](modules/markups.md): Allows the creation and editing of markups associated with a scene.
 - [Models](modules/models.md): Loads and adjusts display parameters of models. Allows the user to change the appearance of and organize 3D surface models.
-- [Transforms](modules/transforms): This module is used for creating and editing transformation matrices. You can establish these relations by moving nodes from the Transformable list to the Transformed list or by dragging the nodes under the Transformation nodes in the Data module.
+- [Transforms](modules/transforms.md): This module is used for creating and editing transformation matrices. You can establish these relations by moving nodes from the Transformable list to the Transformed list or by dragging the nodes under the Transformation nodes in the Data module.
 
 #### Save data
 
@@ -164,7 +172,7 @@ For more tutorials, visit the [Tutorial page](https://www.slicer.org/wiki/Docume
 
 ### User manual
 
-Browse the [User Guide](user_interface) section to find quick overview of the application user interface or [Modules](modules/index) section for detailed description of each module.
+Browse the [User Interface](user_interface) section to find quick overview of the application user interface or [Modules](modules/index.md) section for detailed description of each module.
 
 ### Ask for help
 
@@ -182,10 +190,10 @@ Terms used in various fields of medical and biomedical image computing and clini
 - **Bounds**: Describes bounding box of a spatial object along 3 axes. Defined in VTK by 6 floating-point values: `X_min`, `X_max`, `Y_min`, `Y_max`, `Z_min`, `Z_max`.
 -** Brightness/contras**t: Specifies linear mapping of voxel values to brightness of a displayed pixel. Brightness is the linear offset, contrast is the multiplier. In medical imaging, this linear mapping is more commonly specified by window/level values.
 - **Cell**: Data cells are simple topological elements of meshes, such as lines, polygons, tetrahedra, etc.
-- **Color bar** (or scalar bar): a widget overlaid on slice or 3D views that displays a color bar, indicating mapping between color and data value.
+- **Color legend** (or color bar, scalar bar): a widget overlaid on slice or 3D views that displays a color legend, indicating meaning of colors.
 - **Coordinate system** (or coordinate frame, reference frame, space): Specified by position of origin, axis directions, and distance unit. All coordinate systems in 3D Slicer are right-handed.
 - **Extension** (or Slicer extension): A collection of modules that is not bundled with the core application but can be downloaded and installed using the Extensions manager.
-- [**Extensions manager**](extensions_manager): A software component of Slicer that allows browsing, installing, uninstalling extensions in the [Extensions catalog (also known as the Slicer app store)](http://slicer.kitware.com/midas3/slicerappstore) directly from the application.
+- [**Extensions manager**](extensions_manager): A software component of Slicer that allows browsing, installing, uninstalling extensions in the [Extensions catalog (also known as the Slicer app store)](https://extensions.slicer.org) directly from the application.
 - [**Extensions index**](https://github.com/Slicer/ExtensionsIndex): A repository that contains description of each extension that the Extension catalog is built from.
 - **Extent**: Range of integer coordinates along 3 axes. Defined in VTK by 6 values, for IJK axes: `I_min`, `I_max`, `J_min`, `J_max`, `K_min`, `K_max`. Both minimum and maximum values are inclusive, therefore size of an array is `(I_max - I_min + 1)` x `(J_max - J_min + 1)` x `(K_max - K_min + 1)`.
 - **Fiducial**: Represents a point in 3D space. The term originates from image-guided surgery, where "fiducial markers" are used to mark point positions.
@@ -196,12 +204,12 @@ Terms used in various fields of medical and biomedical image computing and clini
 - **ITK**: [Insight Toolkit](https://itk.org/). Software library that Slicer uses for most image processing operations.
 - **Labelmap** (or labelmap volume, labelmap volume node): Volume node that has discrete (integer) voxel values. Typically each value corresponds to a specific structure or region. This allows compact representation of non-overlapping regions in a single 3D array. Most software use a single labelmap to store an image segmentation, but Slicer uses a dedicated segmentation node, which can contain multiple representations (multiple labelmaps to allow storing overlapping segments; closed surface representation for quick 3D visualization, etc.).
 - **LPS**: Left-posterior-superior anatomical coordinate system. Most commonly used coordinate system in medical image computing. Slicer stores all data in LPS coordinate system on disk (and converts to/from RAS when writing to or reading from disk).
-- **Markups**: Simple geometric objects and measurements that the user can place in viewers. [Markups module](modules/markups) can be used to create such objects. There are several types, such as fiducial list, line, curve, plane, ROI.
+- **Markups**: Simple geometric objects and measurements that the user can place in viewers. [Markups module](modules/markups.md) can be used to create such objects. There are several types, such as point list, line, curve, plane, ROI.
 - **Master volume**: Voxel values of this volume is used during segmentation by those effects that rely on intensity of an underlying volume.
 - **MRML**: [Medical Reality Markup Language](https://en.wikipedia.org/wiki/Medical_Reality_Markup_Language): Software library for storage, visualization, and processing of information objects that may be used in medical applications. The library is designed to be reusable in various software applications, but 3D Slicer is the only major application that is known to use it.
 - **Model** (or model node): MRML node storing surface mesh (consists of triangle, polygon, or other 2D cells) or volumetric mesh (consists of tetrahedral, wedge, or other 3D cells)
 - **Module** (or Slicer module): A Slicer module is a software component consisting of a graphical user interface (that is displayed in the module panel when the module is selected), a logic (that implements algorithms that operate on MRML nodes), and may provide new MRML node types, displayable managers (that are responsible for displaying those nodes in views), input/output plugins (that are responsible for load/save MRML nodes in files), and various other plugins. Modules are typically independent and only communicate with each other via modifying MRML nodes, but sometimes a module use features provided by other modules by calling methods in its logic.
-- **Node** (or MRML node): One data object in the scene. A node can represent data (such as an image or a mesh), describe how it is displayed (color, opacity, etc.), stored on disk, spatial transformations applied on them, etc. There is a C++ class hierarchy to define the common behaviors of nodes, such as the property of being storable on disk or being geometrically transformable. The structure of this class hierarchy can be inspected in the code or in the [API documentation](http://apidocs.slicer.org/master/classvtkMRMLStorableNode.html).
+- **Node** (or MRML node): One data object in the scene. A node can represent data (such as an image or a mesh), describe how it is displayed (color, opacity, etc.), stored on disk, spatial transformations applied on them, etc. There is a C++ class hierarchy to define the common behaviors of nodes, such as the property of being storable on disk or being geometrically transformable. The structure of this class hierarchy can be inspected in the code or in the [API documentation](https://apidocs.slicer.org/master/classvtkMRMLStorableNode.html).
 - **Orientation marker**: Arrow, box, or human shaped marker to show axis directions in slice views and 3D views.
 - **RAS**: Right-anterior-superior anatomical coordinate system. Coordinate system used internally in Slicer. It can be converted to/from LPS coordinate system by inverting the direction of the first two axes.
 - **Reference**: Has no specific meaning, but typically refers to a secondary input (data object, coordinate frame, geometry, etc.) for an operation.
@@ -212,10 +220,10 @@ Terms used in various fields of medical and biomedical image computing and clini
 - **Scalar component**: One element of a vector. Number of scalar components means the length of the vector.
 - **Scalar value**: A simple number. Typically floating-point.
 - **Scene** (or MRML scene): This is the data structure that contains all the data that is currently loaded into the application and additional information about how they should be displayed or used. The term originates [computer graphics](https://en.wikipedia.org/wiki/Rendering_(computer_graphics)).
-- **Segment** (also known as structure, contour, region of interest): One structure in a segmentation. See more information in [Image segmentation](image_segmentation) section.
-- **Segmentation** (also known as contouring, annotation, region of interest, structure set): Process of delineating 3D structures in images. Segmentation can also refer to the MRML node that is the result of the segmentation process. A segmentation node typically contains multiple segments (each segment corresponds to one 3D structure). Segmentation nodes are not labelmap nodes or model nodes but they can store multiple representations (binary labelmap, closed surface, etc.). See more information in [Image segmentation](image_segmentation) section.
+- **Segment**: Corresponds to single structure in a segmentation. See more information in [Image segmentation](image_segmentation) section.
+- **Segmentation** (also known as contouring, annotation; region of interest, structure set, mask): Process of delineating 3D structures in images. Segmentation can also refer to the MRML node that is the result of the segmentation process. A segmentation node typically contains multiple segments (each segment corresponds to one 3D structure). Segmentation nodes are not labelmap nodes or model nodes but they can store multiple representations (binary labelmap, closed surface, etc.). See more information in [Image segmentation](image_segmentation) section.
 - **Slice**: Intersection of a 3D object with a plane.
-- **Slice view annotations**: text in corner of slice views displaying name, selected DICOM tags, and color bar of the displayed volumes
+- **Slice view annotations**: text in corner of slice views displaying name, and selected DICOM tags of the displayed volumes
 - **Spacing**: Voxel size of a volume, typically specified in mm/pixel.
 - **Transform** (or transformation): Can transform any 3D object from one coordinate system to another. Most common type is rigid transform, which can change position and orientation of an object. Linear transforms can scale, mirror, shear objects. Non-linear transforms can arbitrarily warp the 3D space. To display a volume in the world coordinate system, the volume has to be resampled, therefore transform *from* the world coordinate system to the volume is needed (it is called the resampling transform). To transform all other node types to the world coordinate system, all points must be transformed *to* the world coordinate system (modeling transform). Since a transform node must be applicable to any nodes, transform nodes can provide both *from* and *to* the parent (store one and compute the other on-the-fly).
 - **Volume** (or volume node, scalar volume, image): MRML node storing 3D array of voxels. Indices of the array are typically referred to as IJK. Range of IJK coordinates are called extents. Geometry of the volume is specified by its origin (position of the IJK=(0,0,0) point), spacing (size of a voxel along I, J, K axes), axis directions (direction of I, J, K axes in the reference coordinate system) with respect to a frame of reference. 2D images are single-slice 3D volumes, with their position and orientation specified in 3D space.

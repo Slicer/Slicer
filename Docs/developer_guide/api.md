@@ -7,7 +7,7 @@ Check out these [developer tutorials](https://www.slicer.org/wiki/Documentation/
 ## C++
 
 Majority of Slicer core modules and all basic infrastructure are implemented in C++.
-Documentation of these classes are available at: http://apidocs.slicer.org/master
+Documentation of these classes are available at: https://apidocs.slicer.org/master
 
 ## Python
 
@@ -30,11 +30,11 @@ vtkITK
 ### Doxygen-style documentation
 
 Slicer core infrastructure is mostly implemented in C++ and it is made available in Python in the `slicer` namespace.
-Documentation of these classes is available at: http://apidocs.slicer.org/master/
+Documentation of these classes is available at: https://apidocs.slicer.org/master/
 
 C++ classes are made available in Python using two mechanisms: PythonQt and VTK Python wrapper. They have a few slight differences:
-- Qt classes (class name starts with `q` or `Q`): for example, [qSlicerMarkupsPlaceWidget](http://apidocs.slicer.org/master/classqSlicerMarkupsPlaceWidget.html). These classes are all derived from QObject and follow [Qt](https://www.qt.io/) conventions. They support properties, signals, and slots.
-- VTK classes (class name starts with `vtk`): for example, [vtkMRMLModelDisplayNode](http://apidocs.slicer.org/master/classvtkMRMLModelDisplayNode.html). These classes are all derived from vtkObject and follow [VTK](https://vtk.org/) conventions.
+- Qt classes (class name starts with `q` or `Q`): for example, [qSlicerMarkupsPlaceWidget](https://apidocs.slicer.org/master/classqSlicerMarkupsPlaceWidget.html). These classes are all derived from QObject and follow [Qt](https://www.qt.io/) conventions. They support properties, signals, and slots.
+- VTK classes (class name starts with `vtk`): for example, [vtkMRMLModelDisplayNode](https://apidocs.slicer.org/master/classvtkMRMLModelDisplayNode.html). These classes are all derived from vtkObject and follow [VTK](https://vtk.org/) conventions.
 
 This documentation is generated using the Doxygen tool, which uses C++ syntax. The following rules can help in interpreting this documentation for Python:
 
@@ -48,10 +48,10 @@ This documentation is generated using the Doxygen tool, which uses C++ syntax. T
 
   ```python
   >>> w = slicer.qSlicerMarkupsPlaceWidget()
-  >>> w.deleteAllMarkupsOptionVisible
+  >>> w.deleteAllControlPointsOptionVisible
   True
-  >>> w.deleteAllMarkupsOptionVisible=False
-  >>> w.deleteAllMarkupsOptionVisible
+  >>> w.deleteAllControlPointsOptionVisible=False
+  >>> w.deleteAllControlPointsOptionVisible
   False
   ```
 

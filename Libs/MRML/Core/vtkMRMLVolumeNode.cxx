@@ -1050,7 +1050,19 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
     }
 
   reslice->SetInputConnection(this->ImageDataConnection);
-  reslice->SetInterpolationModeToLinear();
+
+  // GetResamplingInterpolationMode does not use VTK_RESLICE... constants because it is an implementation
+  // detail that currently vtkImageReslice is used for resampling.
+  int resamplingMode = this->GetResamplingInterpolationMode();
+  switch (resamplingMode)
+    {
+    case VTK_NEAREST_INTERPOLATION: reslice->SetInterpolationModeToNearestNeighbor(); break;
+    case VTK_LINEAR_INTERPOLATION: reslice->SetInterpolationModeToLinear(); break;
+    case VTK_CUBIC_INTERPOLATION: reslice->SetInterpolationModeToCubic(); break;
+    default:
+      vtkErrorMacro("ApplyNonLinearTransform: invalid interpolation mode: " << this->GetResamplingInterpolationMode());
+    }
+
   double backgroundColor[4] = { 0, 0, 0, 0 };
   for (int i = 0; i < 4; i++)
     {
@@ -1066,12 +1078,14 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   double transformedBounds[6] = { 0.0,-1.0,0.0,-1.0,0.0,-1.0 };
   this->GetBoundsInternal(transformedBounds, rasToIJK, true);
   double spacing[3] = { 1.0, 1.0, 1.0 }; // output is specified in IJK coordinate system
-  reslice->SetOutputOrigin(transformedBounds[0] - 0.5 * spacing[0], transformedBounds[2] - 0.5 * spacing[1], transformedBounds[4] - 0.5 * spacing[2]);
+  // transformedBounds is computed so that it includes the voxel corners, therefore the origin is half voxel towards the image center
+  reslice->SetOutputOrigin(transformedBounds[0] + 0.5 * spacing[0], transformedBounds[2] + 0.5 * spacing[1], transformedBounds[4] + 0.5 * spacing[2]);
   reslice->SetOutputSpacing(spacing);
+  const double voxelExpandTolerance = 1e-3; // do not expand the volume with a new voxel if only expanding by 1/1000th of a voxel
   reslice->SetOutputExtent(
-    0, ceil((transformedBounds[1] - transformedBounds[0]) / spacing[0]),
-    0, ceil((transformedBounds[3] - transformedBounds[2]) / spacing[1]),
-    0, ceil((transformedBounds[5] - transformedBounds[4]) / spacing[2]));
+    0, ceil((transformedBounds[1] - transformedBounds[0]) / spacing[0] - voxelExpandTolerance) - 1,
+    0, ceil((transformedBounds[3] - transformedBounds[2]) / spacing[1] - voxelExpandTolerance) - 1,
+    0, ceil((transformedBounds[5] - transformedBounds[4]) / spacing[2] - voxelExpandTolerance) - 1);
 
   // Keep output spacing (1,1,1)
   reslice->TransformInputSamplingOff();
@@ -1102,6 +1116,13 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
 
   this->SetAndObserveImageData(resampleImage.GetPointer());
   this->EndModify(wasModified);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLVolumeNode::GetResamplingInterpolationMode()
+{
+  // By default linear interpolation is used for all volumes.
+  return VTK_LINEAR_INTERPOLATION;
 }
 
 //---------------------------------------------------------------------------

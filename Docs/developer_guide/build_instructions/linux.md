@@ -4,8 +4,8 @@ The instructions to build Slicer for GNU/Linux systems are slightly different
 depending on the linux distribution and the specific configuration of the
 system. In the following sections you can find instructions that will work for
 some of the most common linux distributions in their standard configuration. If
-you are using a different distribution you can use these instructions as
-guidelines to adapt the process to your system. You can also ask questions
+you are using a different distribution you can use [these instructions](./linux.md#any-distribution)
+to adapt the process to your system. You can also ask questions
 related to the building process in the [Slicer forum](https://discourse.slicer.org).
 
 ## Pre-requisites
@@ -24,7 +24,7 @@ code of slicer, generating the project files and build the project.
 In addition, Slicer requires a set of support libraries that are not includes as
 part of the *superbuild*:
 
-- Qt5 with the components listed below. Qt version 5.15.1 is recommended, other Qt versions are not tested and may cause build errors or may cause problems when running the application.
+- Qt5 with the components listed below. Qt version 5.15.2 is recommended, other Qt versions are not tested and may cause build errors or may cause problems when running the application.
   - Multimedia
   - UiTools
   - XMLPatterns
@@ -35,29 +35,34 @@ part of the *superbuild*:
   - Private
 - libXt
 
-### Debian 10 Stable (Buster)
+### Debian 11 Stable (Bullseye) and Testing (Bookworm) 
 
 Install the development tools and the support libraries:
 
 ```console
 sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui \
-  qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
+  qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
   qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
 
-### Debian Testing (Bullseye) and Debian 9
-
-*This option is not suggested since it does not work with standard packages.  Debian 9 Qt 5.7 packages will not work with current Slicer 4.11.  Checked 2020-08-19.  May be possible to build from source or install other packages.  In addition, for Debian 9 you also need to build cmake from source as [described here](https://cmake.org/install/) or otherwise get a newer version than is supplied by the distribution.*
+### Ubuntu 21.10 (Impish Indri)
 
 Install the development tools and the support libraries:
 
 ```console
 sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui \
-  qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
+  qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
   qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
 
 ### Ubuntu 20.04 (Focal Fossa)
+
+:::{note} Warning
+:class: warning
+Since the default Qt5 packages available on Ubuntu 20.04 correspond to version 5.12.8 and version 5.15.2 is used to build and test the packages available for download. Compiling Slicer against version 5.12.8 may not succeed, and if it does, the compiled Slicer application may behave differently.
+
+To use Qt 5.15.2, we recommend you download and install following [these instructions](./linux.md#any-distribution)
+:::
 
 Install the development tools and the support libraries:
 
@@ -69,12 +74,58 @@ sudo apt update && sudo apt install git subversion build-essential cmake cmake-c
 
 ### ArchLinux
 
+:::{note} Warning
+:class: warning
+ArchLinux uses a rolling-release package distribution approach. This means that the versions of the packages will change over time and the following instructions might not be actual. **Last time tested: 2022-03-08.**
+:::
+
 Install the development tools and the support libraries:
 
 ```console
 sudo pacman -S git make patch subversion gcc cmake \
   qt5-base qt5-multimedia qt5-tools qt5-xmlpatterns qt5-svg qt5-webengine qt5-script qt5-x11extras libxt
 ```
+### Any Distribution
+
+This section describes how to install Qt as distributed by *The QT Company*, which can be used for any GNU/Linux distribution.
+
+:::{note} Warning
+:class: warning
+
+This process requires an account in [qt.io](https://qt.io) 
+
+:::
+
+Download the Qt linux online installer and make it executable:
+
+```console
+ curl -LO http://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run
+ chmod +x qt-unified-linux-x64-online.run
+```
+You can run the installer and follow the instructions in the GUI. Keep in mind that the components needed by 3D Slicer are: `qt.qt5.5152.gcc_64`, `qt.qt5.5152.qtscript` `qt.qt5.5152.qtscript.gcc_64`, `qt.qt5.5152.qtwebengine` and `qt.qt5.5152.qtwebengine.gcc_64`.
+
+Alternatively, you can request the installation of the components with the following command (you will be prompted for license agreements and permissions):
+
+```console
+export QT_ACCOUNT_LOGIN=<set your qt.io account email here>
+export QT_ACCOUNT_PASSWORD=<set your password here>
+./qt-unified-linux-x64-online.run \
+  install \
+    qt.qt5.5152.gcc_64 \
+    qt.qt5.5152.qtscript \
+    qt.qt5.5152.qtscript.gcc_64 \
+    qt.qt5.5152.qtwebengine \
+    qt.qt5.5152.qtwebengine.gcc_64 \
+  --root /opt/qt \
+  --email $QT_ACCOUNT_LOGIN \
+  --pw $QT_ACCOUNT_PASSWORD
+```
+:::{note} Warning
+:class: warning
+
+When configuring the Slicer build project, the CMake variable `Qt5_DIR` need to be set using the full path to the Qt5 installation directory ending with `5.15.2/gcc_64/lib/cmake/Qt5`. For example, assuming you installed Qt in `/opt/qt`, you may use `cmake -DCMAKE_BUILD_TYPE:STRING=Release -DQt5_DIR:PATH=/opt/qt/5.15.2/gcc_64/lib/cmake/Qt5 ../Slicer`.
+
+:::
 
 ## Checkout Slicer source files
 
@@ -137,9 +188,34 @@ change the built type (Debug as default) to Release:
 cmake -DCMAKE_BUILD_TYPE:STRING=Release ../Slicer
 ```
 
-:::{admonition} Tip
+:::{admonition} Tip -- Interfaces to change 3D Slicer configuration variables
 
 Instead of `cmake`, one can use `ccmake`, which provides a text-based interface or `cmake-gui`, which provides a graphical user interface. These applications will also provide a list of variables that can be changed.
+
+:::
+
+:::{admonition} Tip -- Speed up 3D Slicer build with `ccache`
+
+`ccache` is a compiler cache that can speed up subsequent build of 3D Slicer. This can be useful if 3D Slicer is built often and there are no large divergences between subsequent builds. This requires `ccache` installed on the system (e.g., `sudo apt install ccache`).
+
+The first time `ccache` is used, the compilation time can marginally increased as it includes the first caching. After the first build, subsequent build times will decrease significantly.
+
+`ccache` is not detected as a valid compiler by the 3D Slicer building process. You can generate local symbolic links to disguise the use of `ccache` as valid compilers:
+
+```console
+ln -s /usr/bin/ccache ~/.local/bin/c++
+ln -s /usr/bin/ccache ~/.local/bin/cc
+```
+
+Then, the Slicer build can be configured to use these compilers:
+
+```console
+cmake \
+  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DCMAKE_CXX_COMPILER:STRING=$HOME/.local/bin/c++ \
+  -DCMAKE_C_COMPILER:STRING=$HOME/.local/bin/cc \
+  ../Slicer
+```
 
 :::
 
@@ -152,7 +228,7 @@ be built by running this command in the **build** folder
 make
 ```
 
-:::{admonition} Tip
+:::{admonition} Tip -- Parallel build 
 
 Building Slicer will generally take long time, particularly on the first build or upon code/configuration changes. To help speeding up the process one can use `make -j<N>`, where `<N>` is the number of parallel builds. As a rule of thumb, many uses the `number of CPU threads + 1` as the number of parallel builds.
 
@@ -164,7 +240,7 @@ Increasing the number of parallel builds generally increases the memory required
 
 :::
 
-:::{admonition} Tip
+:::{admonition} Tip -- Error detection during parallel build
 
 Using parallel builds makes finding compilation errors difficult due to the fact that all parallel build processes use the same screen output, as opposed to sequential builds, where the compilation process will stop at the error. A common technique to have parallel builds and easily find errors is launch a parallel build followed by a sequential build. For the parallel build, it is advised to run `make -j<N> -k` to have the parallel build keep going as far as possible before doing the sequential build with `make`.
 

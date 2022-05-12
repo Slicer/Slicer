@@ -1,8 +1,14 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
+import os
 import time
+
+import qt
+import vtk
+
+import slicer
+
 from SegmentEditorEffects import *
+
 
 class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoCompleteEffect):
   """ AutoCompleteEffect is an effect that can create a full segmentation
@@ -46,7 +52,6 @@ updated automatically within a few seconds</li>
 If segments overlap, segment higher in the segments table will have priority.
 The effect uses <a href="http://interactivemedical.org/imic2014/CameraReadyPapers/Paper%204/IMIC_ID4_FastGrowCut.pdf">fast grow-cut method</a>.
 <p></html>"""
-
 
   def reset(self):
     self.growCutFilter = None

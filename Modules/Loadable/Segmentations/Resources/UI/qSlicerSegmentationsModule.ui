@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>340</width>
-    <height>756</height>
+    <height>870</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -127,9 +127,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_EditSelected">
+         <widget class="qMRMLSegmentationShow3DButton" name="show3DButton"/>
+        </item>
+        <item>
+         <widget class="QToolButton" name="toolButton_Edit">
+          <property name="toolTip">
+           <string>Go to Segment Editor module</string>
+          </property>
           <property name="text">
-           <string>Edit selected</string>
+           <string>...</string>
           </property>
           <property name="icon">
            <iconset resource="../../Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc">
@@ -849,6 +855,7 @@
    <class>qMRMLSegmentsTableView</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLSegmentsTableView.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLSegmentationRepresentationsListView</class>
@@ -864,6 +871,11 @@
    <class>qMRMLSegmentationFileExportWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLSegmentationFileExportWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSegmentationShow3DButton</class>
+   <extends>QPushButton</extends>
+   <header>qMRMLSegmentationShow3DButton.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLSubjectHierarchyComboBox</class>
@@ -930,8 +942,8 @@
      <y>3</y>
     </hint>
     <hint type="destinationlabel">
-     <x>346</x>
-     <y>643</y>
+     <x>329</x>
+     <y>632</y>
     </hint>
    </hints>
   </connection>
@@ -946,8 +958,8 @@
      <y>136</y>
     </hint>
     <hint type="destinationlabel">
-     <x>137</x>
-     <y>289</y>
+     <x>145</x>
+     <y>456</y>
     </hint>
    </hints>
   </connection>
@@ -962,8 +974,8 @@
      <y>634</y>
     </hint>
     <hint type="destinationlabel">
-     <x>343</x>
-     <y>730</y>
+     <x>326</x>
+     <y>739</y>
     </hint>
    </hints>
   </connection>
@@ -1026,8 +1038,8 @@
      <y>431</y>
     </hint>
     <hint type="destinationlabel">
-     <x>224</x>
-     <y>699</y>
+     <x>325</x>
+     <y>741</y>
     </hint>
    </hints>
   </connection>

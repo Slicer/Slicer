@@ -4,6 +4,7 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMainWindow>
 #include <QMetaProperty>
 #include <QProgressDialog>
 #include <QSettings>
@@ -570,30 +571,33 @@ void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMes
     // Everything is OK, no need to show error popup.
     return;
     }
-  ctkMessageBox messageBox;
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  ctkMessageBox* messageBox = new ctkMessageBox(mainWindow);
   QString text;
   if (overallSuccess)
     {
-    messageBox.setWindowTitle(tr("Adding data succeeded"));
-    messageBox.setIcon(QMessageBox::Information);
+    messageBox->setWindowTitle(tr("Adding data succeeded"));
+    messageBox->setIcon(QMessageBox::Information);
     text = tr("The selected files were loaded successfully but errors or warnings were reported.");
     }
   else
     {
-    messageBox.setWindowTitle(tr("Adding data failed"));
-    messageBox.setIcon(QMessageBox::Critical);
+    messageBox->setWindowTitle(tr("Adding data failed"));
+    messageBox->setIcon(QMessageBox::Critical);
     text = tr("Error occurred while loading the selected files.");
     }
   text += "\n";
   if (userMessages)
     {
     text += tr("Click 'Show details' button and check the application log for more information.");
-    messageBox.setDetailedText(QString::fromStdString(userMessages->GetAllMessagesAsString()));
+    messageBox->setDetailedText(QString::fromStdString(userMessages->GetAllMessagesAsString()));
     }
   else
     {
     text += tr("Check the application log for more information.");
     }
-  messageBox.setText(text);
-  messageBox.exec();
+  messageBox->setText(text);
+  messageBox->exec();
+  messageBox->deleteLater();
 }

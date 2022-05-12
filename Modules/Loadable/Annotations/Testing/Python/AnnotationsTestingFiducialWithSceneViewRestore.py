@@ -1,5 +1,8 @@
 # Test that setting a fiducial coordinate is consistent across scene view saves and restores
 
+import slicer
+
+
 fid = slicer.vtkMRMLAnnotationFiducialNode()
 fid.SetScene(slicer.mrmlScene)
 fid.CreateAnnotationTextDisplayNode()
@@ -40,4 +43,3 @@ diffTotal = xdiff + ydiff + zdiff
 if diffTotal > 0.1:
   exceptionMessage = "Difference between coordinate values total = " + str(diffTotal)
   raise Exception(exceptionMessage)
-

@@ -5,7 +5,7 @@ import os
 import subprocess
 
 from github import Github
-from github.GithubObject import NotSet
+from github.GithubObject import NotSet  # noqa: F401
 
 from urllib.parse import urlparse
 
@@ -15,6 +15,7 @@ __all__ = [
   'getFork',
   'getPullRequest',
 ]
+
 
 #=============================================================================
 class _CredentialToken:
@@ -39,6 +40,7 @@ class _CredentialToken:
     lines = [f"{k}={getattr(self, k)}" for k in self._keys]
     return "%s\n\n" % "\n".join(lines)
 
+
 #-----------------------------------------------------------------------------
 def _credentials(client, request, action="fill"):
   # Set up and execute 'git credential' process, passing stringized token to
@@ -53,6 +55,7 @@ def _credentials(client, request, action="fill"):
 
   # Return token parsed from the command's output
   return _CredentialToken(out.decode())
+
 
 #-----------------------------------------------------------------------------
 def logIn(repo=None):
@@ -80,7 +83,7 @@ def logIn(repo=None):
   If `GITHUB_TOKEN` environment variable is set, its value will be used
   as password when invoking `git-credentials`_.
 
-  .. _git-credentials: http://git-scm.com/docs/gitcredentials.html
+  .. _git-credentials: https://git-scm.com/docs/gitcredentials.html
   """
 
   # Get client; use generic client if no repository
@@ -104,6 +107,7 @@ def logIn(repo=None):
 
   # Return github session
   return session
+
 
 #-----------------------------------------------------------------------------
 def getRepo(session, name=None, url=None):
@@ -174,6 +178,7 @@ def getRepo(session, name=None, url=None):
 
   return None
 
+
 #-----------------------------------------------------------------------------
 def getFork(user, upstream, create=False):
   """Get user's fork of the specified repository.
@@ -230,6 +235,7 @@ def getFork(user, upstream, create=False):
     return user.create_fork(upstream)
 
   return None
+
 
 #-----------------------------------------------------------------------------
 def getPullRequest(upstream, ref, user=None, fork=None, target=None):

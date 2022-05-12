@@ -1254,26 +1254,18 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
   if (this->GetType() != this->User &&
       this->GetType() != this->File)
     {
-      vtkErrorMacro("vtkMRMLColorTableNode::SetNumberOfColors: ERROR: can't set number of colors if not a user defined color table, reset the type first to User or File\n");
-      return;
+    vtkErrorMacro("vtkMRMLColorTableNode::SetNumberOfColors: Cannot set number of colors"
+      " if not a user defined color table, reset the type first to User or File");
+    return;
     }
 
   int numberOfTableValues = this->GetLookupTable()->GetNumberOfTableValues();
   if (numberOfTableValues != n)
     {
+    MRMLNodeModifyBlocker blocker(this);
     this->GetLookupTable()->SetNumberOfTableValues(n);
-    for (int indx = numberOfTableValues; indx < n; indx++)
-      {
-      this->GetLookupTable()->SetTableValue(indx, 0.0, 0.0, 0.0);
-      }
+    this->SetColors(numberOfTableValues, n - 1, this->GetNoName(), 0.0, 0.0, 0.0, 1.0);
     }
-
-  if (this->Names.size() != (unsigned int)n)
-    {
-    this->Names.resize(n);
-    }
-
-  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1357,6 +1349,61 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, dou
     }
 
   // trigger a modified event
+  this->Modified();
+  return 1;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char *name, double r, double g, double b, double a)
+{
+  if (this->GetType() != this->User &&
+      this->GetType() != this->File)
+    {
+    vtkErrorMacro("vtkMRMLColorTableNode::SetColors: Cannot set a color if not a user defined color table, reset the type first to User or File");
+    return 0;
+    }
+  if (firstEntry > lastEntry)
+    {
+    // empty range, nothing to do
+    return 1;
+    }
+  vtkIdType numberOfValues = this->GetLookupTable()->GetNumberOfTableValues();
+  if (vtkIdType(this->Names.size()) < numberOfValues)
+    {
+    std::string noNameStr = this->GetNoName() ? this->GetNoName() : "";
+    this->Names.resize(numberOfValues, noNameStr);
+    }
+  if (firstEntry < 0 || firstEntry >= numberOfValues)
+    {
+    vtkErrorMacro("vtkMRMLColorTableNode::SetColors: requested first entry "
+      << firstEntry << " is out of table range: 0 - " << numberOfValues << ", call SetNumberOfColors");
+    return 0;
+    }
+  if (lastEntry < 0 || lastEntry >= numberOfValues)
+    {
+    vtkErrorMacro("vtkMRMLColorTableNode::SetColors: requested last entry "
+      << lastEntry << " is out of table range: 0 - " << numberOfValues << ", call SetNumberOfColors");
+    return 0;
+    }
+
+  MRMLNodeModifyBlocker blocker(this);
+
+  std::string nameStr = name ? name : "";
+  vtkLookupTable* lut = this->GetLookupTable();
+  // Setting color values using the pointer returned by WritePointer()
+  // works similarly to vtkLookupTable::SetTableValue().
+  unsigned char* rgba = lut->WritePointer(firstEntry, lastEntry - firstEntry + 1);
+  for (int indx = firstEntry; indx <= lastEntry; indx++)
+    {
+    *(rgba++) = static_cast<unsigned char>(r * 255.0 + 0.5);
+    *(rgba++) = static_cast<unsigned char>(g * 255.0 + 0.5);
+    *(rgba++) = static_cast<unsigned char>(b * 255.0 + 0.5);
+    *(rgba++) = static_cast<unsigned char>(a * 255.0 + 0.5);
+    this->Names[indx] = nameStr;
+    }
+  lut->BuildSpecialColors();
+  lut->Modified();
+
   this->Modified();
   return 1;
 }

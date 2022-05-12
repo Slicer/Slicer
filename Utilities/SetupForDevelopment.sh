@@ -2,7 +2,7 @@
 
 # Run this script to set up development with git.
 # For more information, see:
-# http://www.slicer.org/slicerWiki/index.php/Documentation/Labs/DevelopmentWithGit
+# https://www.slicer.org/w/index.php/Documentation/Labs/DevelopmentWithGit
 #
 
 printErrorAndExit() {

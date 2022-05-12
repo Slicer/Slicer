@@ -14,7 +14,9 @@ slicerMacroConfigureModuleCxxTestDriver(
   WITH_VTK_DEBUG_LEAKS_CHECK
   )
 
+set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
+
 #-----------------------------------------------------------------------------
 simple_test(vtkMRMLSequenceBrowserNodeTest1)
 simple_test(vtkMRMLSequenceNodeTest1)
-simple_test(vtkMRMLSequenceStorageNodeTest1)
+simple_test(vtkMRMLSequenceStorageNodeTest1 ${TEMP})

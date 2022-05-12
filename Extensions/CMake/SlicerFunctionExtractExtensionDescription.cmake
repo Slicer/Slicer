@@ -29,10 +29,8 @@ endif()
 # is used to extract information associated with a given extension <file>.
 #
 # The function defines the following variables in the caller scope:
-#  <var-prefix>_EXT_SCM - type of source repository (i.e. 'svn', 'git', 'local')
+#  <var-prefix>_EXT_SCM - type of source repository (i.e. 'git', 'local')
 #  <var-prefix>_EXT_SCMURL - URL of the associated source repository
-#  <var-prefix>_EXT_SVNUSERNAME - Username for Subversion checkout and update
-#  <var-prefix>_EXT_SVNPASSWORD - Password for Subversion checkout and update
 #  <var-prefix>_EXT_SCMREVISION - REVISION associated with the source repository
 #  <var-prefix>_EXT_BUILD_SUBDIRECTORY - Corresponds to the extension inner build directory (default is ".")
 #  <var-prefix>_EXT_DEPENDS - list of dependencies
@@ -116,8 +114,6 @@ function(slicer_extract_extension_description_test)
     SCMREVISION
     )
   set(optional
-    #SVNUSERNAME
-    #SVNPASSWORD
     DEPENDS
     BUILD_SUBDIRECTORY
     HOMEPAGE
@@ -135,12 +131,12 @@ function(slicer_extract_extension_description_test)
   set(expected_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware), Pat Marion (Kitware), Steve Pieper (Isomics), Atsushi Yamada (Shiga University of Medical Science)")
   set(expected_DESCRIPTION "The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.")
   set(expected_ENABLED "1")
-  set(expected_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter")
-  set(expected_ICONURL "http://www.slicer.org/slicerWiki/images/6/64/SlicerToKiwiExporterLogo.png")
+  set(expected_HOMEPAGE "https://www.slicer.org/w/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter")
+  set(expected_ICONURL "https://www.slicer.org/w/images/6/64/SlicerToKiwiExporterLogo.png")
   set(expected_SCM "git")
   set(expected_SCMREVISION "9d7341e978df954a2c875240290833d7528ef29c")
   set(expected_SCMURL "https://github.com/jcfr/SlicerToKiwiExporter.git")
-  set(expected_SCREENSHOTURLS "http://www.slicer.org/slicerWiki/images/9/9e/SlicerToKiwiExporter_Kiwiviewer_8.PNG http://www.slicer.org/slicerWiki/images/a/ab/SlicerToKiwiExporter_Kiwiviewer_9.PNG http://www.slicer.org/slicerWiki/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png")
+  set(expected_SCREENSHOTURLS "https://www.slicer.org/w/images/9/9e/SlicerToKiwiExporter_Kiwiviewer_8.PNG https://www.slicer.org/w/images/a/ab/SlicerToKiwiExporter_Kiwiviewer_9.PNG https://www.slicer.org/w/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png")
   set(expected_STATUS "")
 
   # Extract extension description without depends

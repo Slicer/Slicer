@@ -20,7 +20,7 @@
 
 ==============================================================================*/
 
-///  vtkSliceRTScalarBarActor - slicer vtk class for adding color names in scalarbar
+///  vtkSlicerScalarBarActor - slicer vtk class for adding color names in scalar bar
 ///
 /// This class enhances the vtkScalarBarActor class by adding color names
 /// in the label display.
@@ -83,6 +83,11 @@ protected:
   // It centers labels on color swatches instead of placing labels
   // at the edge.
   void ConfigureTicks() override;
+
+  // Modify original behavior by aligning title to the left/right when orientation is vertical.
+  // This allows moving the color bar to the edge of the view, even if the title is long.
+  void PrepareTitleText() override;
+  void ConfigureTitle() override;
 
   /// flag for setting color name as label
   int UseAnnotationAsLabel;

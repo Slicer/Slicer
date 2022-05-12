@@ -1,8 +1,15 @@
-import os
-import vtk, qt, ctk, slicer, logging
+import logging
+
+import ctk
+import qt
+import vtk
+
+import slicer
+
 from .AbstractScriptedSegmentEditorEffect import *
 
 __all__ = ['AbstractScriptedSegmentEditorAutoCompleteEffect']
+
 
 #
 # Abstract class of python scripted segment editor auto-complete effects
@@ -49,7 +56,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.minimumExtentMargin = 3
 
     self.previewComputationInProgress = False
-
 
   def __del__(self, scriptedEffect):
     super(SegmentEditorAutoCompleteEffect,self).__del__()
@@ -304,7 +310,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.delayedAutoUpdateTimer.stop()
     self.observeSegmentation(False)
 
-    import vtkSegmentationCorePython as vtkSegmentationCore
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     segmentationDisplayNode = segmentationNode.GetDisplayNode()
     previewNode = self.getPreviewNode()
@@ -512,7 +517,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     previewNode.SetName(segmentationNode.GetName()+" preview")
     previewNode.RemoveClosedSurfaceRepresentation() # Force the closed surface representation to update
                                                     # TODO: This will no longer be required when we can use the segment editor to set multiple segments
-                                                    # as the closed surfaces will be converted as neccesary by the segmentation logic.
+                                                    # as the closed surfaces will be converted as necessary by the segmentation logic.
 
     mergedImage = slicer.vtkOrientedImageData()
     segmentationNode.GenerateMergedLabelmapForAllSegments(mergedImage,
@@ -549,5 +554,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.setPreviewShow3D(previewShow3D)
 
     self.updateGUIFromMRML()
+
 
 ResultPreviewNodeReferenceRole = "SegmentationResultPreview"

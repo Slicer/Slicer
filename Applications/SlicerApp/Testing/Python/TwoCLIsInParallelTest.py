@@ -1,8 +1,8 @@
-import os
-import unittest
-from __main__ import vtk, qt, ctk, slicer
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import time
+
 
 #
 # TwoCLIsInParallelTest
@@ -33,6 +33,7 @@ class TwoCLIsInParallelTest(ScriptedLoadableModule):
     tester = TwoCLIsInParallelTestTest()
     tester.runTest()
 
+
 #
 # TwoCLIsInParallelTestWidget
 #
@@ -41,6 +42,7 @@ class TwoCLIsInParallelTestWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # TwoCLIsInParallelTestLogic
@@ -92,6 +94,7 @@ class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
         o.RemoveObserver(t)
         self.Observations.remove([o, e, m, g, t])
 
+
 #
 # TwoCLIsInParallelTestLogic
 #
@@ -128,4 +131,3 @@ class TwoCLIsInParallelTestTest(ScriptedLoadableModuleTest):
     self.assertTrue(logic.success)
 
     self.delayDisplay('Two CLIs in parallel test passed !')
-

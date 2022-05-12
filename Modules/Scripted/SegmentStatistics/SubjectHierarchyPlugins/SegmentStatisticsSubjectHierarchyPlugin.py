@@ -1,6 +1,11 @@
-import vtk, qt, ctk, slicer
 import logging
+
+import qt
+
+import slicer
+
 from AbstractScriptedSubjectHierarchyPlugin import *
+
 
 class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
   """ Scripted subject hierarchy plugin for the Segment Statistics module.

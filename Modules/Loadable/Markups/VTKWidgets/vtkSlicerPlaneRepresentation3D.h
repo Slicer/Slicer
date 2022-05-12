@@ -108,8 +108,36 @@ protected:
   // Setup the pipeline for plane display
   void BuildPlane();
 
+
+  // Initialize interaction handle pipeline
+  void SetupInteractionPipeline() override;
+
   // Update visibility of interaction handles for representation
   void UpdateInteractionPipeline() override;
+
+  class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT MarkupsInteractionPipelinePlane : public MarkupsInteractionPipeline
+  {
+  public:
+    MarkupsInteractionPipelinePlane(vtkSlicerMarkupsWidgetRepresentation* representation);
+    ~MarkupsInteractionPipelinePlane() override = default;
+
+    // Initialize scale handles
+    void CreateScaleHandles() override;
+
+    HandleInfoList GetHandleInfoList() override;
+
+    // Update scale handle positions
+    virtual void UpdateScaleHandles();
+
+    // Update scale handle visibilities
+    void UpdateHandleVisibility() override;
+
+    void GetHandleColor(int type, int index, double color[4]) override;
+    double GetHandleOpacity(int type, int index) override;
+
+    void GetInteractionHandleAxisWorld(int type, int index, double axis[3]) override;
+  };
+  friend class vtkSlicerPlaneRepresentation2D;
 
 private:
   vtkSlicerPlaneRepresentation3D(const vtkSlicerPlaneRepresentation3D&) = delete;

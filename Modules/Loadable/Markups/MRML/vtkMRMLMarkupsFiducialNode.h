@@ -56,8 +56,11 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "MarkupsFiducial";}
 
-  /// Get markup name
+  /// Get markup type internal name
   const char* GetMarkupType() override {return "Fiducial";};
+
+  // Get markup type GUI display name
+  const char* GetTypeDisplayName() override {return "Point List";};
 
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "F";};
@@ -87,52 +90,126 @@ public:
   /// If the number is set to 0 then no it means there is no preference (this is the default value).
   vtkSetMacro(RequiredNumberOfControlPoints, int);
 
-  /// Get the number of fiducials in this node
-  int GetNumberOfFiducials() { return this->GetNumberOfControlPoints(); } ;
-  /// Add a new fiducial from x,y,z coordinates and return the fiducial index
-  int AddFiducial(double x, double y, double z);
-  int AddFiducial(double x, double y, double z, std::string label);
-  /// Add a new fiducial from an array and return the fiducial index
-  int AddFiducialFromArray(double pos[3], std::string label = std::string());
-  /// Get the position of the nth fiducial, returning it in the pos array
-  void GetNthFiducialPosition(int n, double pos[3]);
-  /// Set the position of the nth fiducial from x, y, z coordinates
-  void SetNthFiducialPosition(int n, double x, double y, double z);
-  /// Set the position of the nth fiducial from a double array
-  void SetNthFiducialPositionFromArray(int n, double pos[3]);
-  /// Get selected property on Nth fiducial
-  bool GetNthFiducialSelected(int n = 0);
-  /// Set selected property on Nth fiducial
-  void SetNthFiducialSelected(int n, bool flag);
-  /// Get locked property on Nth fiducial
-  bool GetNthFiducialLocked(int n = 0);
-  /// Set locked property on Nth fiducial
-  void SetNthFiducialLocked(int n, bool flag);
-  /// Get visibility property on Nth fiducial
-  bool GetNthFiducialVisibility(int n = 0);
-  /// Set visibility property on Nth fiducial. If the visibility is set to
-  /// true on the node/list as a whole, the nth fiducial visibility is used to
-  /// determine if it is visible. If the visibility is set to false on the node
-  /// as a whole, all fiducials are hidden but keep this value for when the
-  /// list as a whole is turned visible.
-  /// \sa vtkMRMLDisplayableNode::SetDisplayVisibility
-  /// \sa vtkMRMLDisplayNode::SetVisibility
-  void SetNthFiducialVisibility(int n, bool flag);
-  /// Get label on nth fiducial
-  std::string GetNthFiducialLabel(int n = 0);
-  /// Set label on nth fiducial
-  void SetNthFiducialLabel(int n, std::string label);
-  /// Get associated node id on nth fiducial
-  std::string GetNthFiducialAssociatedNodeID(int n = 0);
-  /// Set associated node id on nth fiducial
-  void SetNthFiducialAssociatedNodeID(int n, const char* id);
-  /// Set world coordinates on nth fiducial
-  void SetNthFiducialWorldCoordinates(int n, double coords[4]);
-  /// Get world coordinates on nth fiducial
-  void GetNthFiducialWorldCoordinates(int n, double coords[4]);
-
   /// Create and observe default display node(s)
   void CreateDefaultDisplayNodes() override;
+
+  //-----------------------------------------------------------
+  // All public methods below are deprecated
+  //
+  // These methods are either deprecated because they use old terms (markup instead of control point),
+  // or include "array", "vector", "pointer" in the name (it is redundant, as input arguments can be
+  // deduced from the type; and return type for vectors is always vtkVectorNd).
+  //
+
+  /// \deprecated Use GetNumberOfControlPoints instead.
+  int GetNumberOfFiducials()
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNumberOfFiducials method is deprecated, please use GetNumberOfControlPoints instead");
+    return this->GetNumberOfControlPoints();
+    };
+  /// \deprecated Use AddControlPoint instead.
+  int AddFiducial(double x, double y, double z, std::string label = std::string())
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::AddFiducial method is deprecated, please use AddControlPoint instead");
+    return this->AddControlPoint(vtkVector3d(x, y, z), label);
+    }
+  /// Add a new fiducial from an array and return the fiducial index
+  /// \deprecated Use AddControlPoint instead.
+  int AddFiducialFromArray(double pos[3], std::string label = std::string())
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::AddFiducialFromArray method is deprecated, please use AddControlPoint instead");
+    return this->AddControlPoint(pos, label);
+    }
+  /// \deprecated Use GetNthControlPointPosition instead.
+  void GetNthFiducialPosition(int n, double pos[3])
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNthFiducialPosition method is deprecated, please use GetNthControlPointPosition instead");
+    this->GetNthControlPointPosition(n, pos);
+    }
+  /// \deprecated Use SetNthControlPointPosition instead.
+  void SetNthFiducialPosition(int n, double x, double y, double z)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::SetNthFiducialPosition method is deprecated, please use SetNthControlPointPosition instead");
+    this->SetNthControlPointPosition(n, x, y, z);
+    };
+  /// \deprecated Use SetNthControlPointPositionFromArray instead.
+  void SetNthFiducialPositionFromArray(int n, double pos[3])
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::SetNthFiducialPositionFromArray method is deprecated, please use SetNthControlPointPositionFromArray instead");
+    this->SetNthControlPointPositionFromArray(n, pos);
+    };
+  /// \deprecated Use GetNthControlPointSelected instead.
+  bool GetNthFiducialSelected(int n = 0)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNthFiducialSelected method is deprecated, please use GetNthControlPointSelected instead");
+    return this->GetNthControlPointSelected(n);
+    };
+  /// \deprecated Use SetNthControlPointSelected instead.
+  void SetNthFiducialSelected(int n, bool flag)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::SetNthFiducialSelected method is deprecated, please use SetNthControlPointSelected instead");
+    this->SetNthControlPointSelected(n, flag);
+    };
+  /// \deprecated Use GetNthControlPointLocked instead.
+  bool GetNthFiducialLocked(int n = 0)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNthFiducialLocked method is deprecated, please use GetNthControlPointLocked instead");
+    return this->GetNthControlPointLocked(n);
+    };
+  /// \deprecated Use SetNthControlPointLocked instead.
+  void SetNthFiducialLocked(int n, bool flag)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::SetNthFiducialLocked method is deprecated, please use SetNthControlPointLocked instead");
+    this->SetNthControlPointLocked(n, flag);
+    };
+  /// \deprecated Use GetNthControlPointVisibility instead.
+  bool GetNthFiducialVisibility(int n = 0)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNthFiducialVisibility method is deprecated, please use GetNthControlPointVisibility instead");
+    return this->GetNthControlPointVisibility(n);
+    };
+  /// \deprecated Use SetNthControlPointVisibility instead.
+  void SetNthFiducialVisibility(int n, bool flag)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::SetNthFiducialVisibility method is deprecated, please use SetNthControlPointVisibility instead");
+    this->SetNthControlPointVisibility(n, flag);
+    };
+  /// \deprecated Use GetNthControlPointLabel instead.
+  std::string GetNthFiducialLabel(int n = 0)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNthFiducialLabel method is deprecated, please use GetNthControlPointLabel instead");
+    return this->GetNthControlPointLabel(n);
+    };
+  /// \deprecated Use SetNthControlPointLabel instead.
+  void SetNthFiducialLabel(int n, std::string label)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::SetNthFiducialLabel method is deprecated, please use SetNthControlPointLabel instead");
+    this->SetNthControlPointLabel(n, label);
+    };
+  /// \deprecated Use GetNthControlPointAssociatedNodeID instead.
+  std::string GetNthFiducialAssociatedNodeID(int n = 0)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNthFiducialAssociatedNodeID method is deprecated, please use GetNthControlPointAssociatedNodeID instead");
+    return this->GetNthControlPointAssociatedNodeID(n);
+    };
+  /// \deprecated Use SetNthControlPointAssociatedNodeID instead.
+  void SetNthFiducialAssociatedNodeID(int n, const char* id)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::SetNthFiducialAssociatedNodeID method is deprecated, please use SetNthControlPointAssociatedNodeID instead");
+    this->SetNthControlPointAssociatedNodeID(n, (id ? std::string(id) : ""));
+    };
+  /// \deprecated Use SetNthControlPointPositionWorld instead.
+  void SetNthFiducialWorldCoordinates(int n, double coords[4])
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::SetNthFiducialWorldCoordinates method is deprecated, please use SetNthControlPointPositionWorld instead");
+    this->SetNthControlPointPositionWorld(n, coords[0], coords[1], coords[2]);
+    };
+  /// \deprecated Use GetNthControlPointPositionWorld instead.
+  void GetNthFiducialWorldCoordinates(int n, double coords[4])
+    {
+    vtkWarningMacro("vtkMRMLMarkupsFiducialNode::GetNthFiducialWorldCoordinates method is deprecated, please use GetNthControlPointPositionWorld instead");
+    this->GetNthControlPointPositionWorld(n, coords);
+    };
 
 protected:
   vtkMRMLMarkupsFiducialNode();

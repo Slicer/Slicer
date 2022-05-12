@@ -41,7 +41,7 @@
 #     Supported hash algorithms depends on the version of CMake.
 #     See https://cmake.org/cmake/help/latest/command/string.html#supported-hash-algorithms
 #
-#   FILEPATH 
+#   FILEPATH
 #     File for computing the cryptographic hash and substituting ``%(hash)`` in
 #     specified URL template.
 #

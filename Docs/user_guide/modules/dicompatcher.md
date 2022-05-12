@@ -30,7 +30,7 @@ DICOM is a large and complex standard and device manufacturers and third-party s
 
 ## Related Modules
 
-- [DICOM](dicom) DICOM browser that lists all data sets in Slicer's DICOM database.
+- [DICOM](dicom.md) DICOM browser that lists all data sets in Slicer's DICOM database.
 
 ## Information for Developers
 

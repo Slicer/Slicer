@@ -19,9 +19,9 @@ effectively no safeguards against producing a script that is syntactically
 invalid.
 """
 
-import os
 import re
 import string
+
 
 #=============================================================================
 class Token:
@@ -54,6 +54,7 @@ class Token:
   #---------------------------------------------------------------------------
   def __str__(self):
     return self.indent + self.text
+
 
 #=============================================================================
 class String(Token):
@@ -92,6 +93,7 @@ class String(Token):
   def __str__(self):
     return self.indent + self.prefix + self.text + self.suffix
 
+
 #=============================================================================
 class Comment(Token):
   """Comment token.
@@ -125,6 +127,7 @@ class Comment(Token):
   #---------------------------------------------------------------------------
   def __str__(self):
     return self.indent + self.prefix + self.text + self.suffix
+
 
 #=============================================================================
 class Command(Token):
@@ -170,6 +173,7 @@ class Command(Token):
     args = "".join([str(a) for a in self.arguments])
     return self.indent + self.text + self.prefix + args + self.suffix
 
+
 #=============================================================================
 class CMakeScript:
   """Tokenized representation of a CMake script.
@@ -199,11 +203,11 @@ class CMakeScript:
 
     .. code-block:: python
 
-      with open('CMakeLists.txt') as fi:
-        script = CMakeParser.CMakeScript(f.read())
+      with open('CMakeLists.txt') as input_file:
+        script = CMakeParser.CMakeScript(input_file.read())
 
-      with open('CMakeLists.txt.new', 'w') as fo:
-        fo.write(str(script))
+      with open('CMakeLists.txt.new', 'w') as output_file:
+        output_file.write(str(script))
     """
 
     self.tokens = []

@@ -80,7 +80,7 @@ public:
   void CanInteractWithLine(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2);
 
-  bool AccuratePick(int x, int y, double pickPoint[3]);
+  bool AccuratePick(int x, int y, double pickPoint[3], double pickNormal[3]=nullptr);
 
   /// Return true if the control point is actually visible
   /// (displayed and not occluded by other objects in the view).
@@ -98,7 +98,7 @@ protected:
   vtkSlicerMarkupsWidgetRepresentation3D();
   ~vtkSlicerMarkupsWidgetRepresentation3D() override;
 
-  double GetViewScaleFactorAtPosition(double positionWorld[3]);
+  double GetViewScaleFactorAtPosition(double positionWorld[3], vtkMRMLInteractionEventData* interactionEventData = nullptr);
 
   void UpdateViewScaleFactor() override;
 

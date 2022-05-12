@@ -15,7 +15,6 @@
 #include <qMRMLUtils.h>
 
 // Annotations includes
-#include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
@@ -26,7 +25,6 @@
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLFiducialListNode.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
 
 // MRML includes
@@ -795,18 +793,7 @@ void qSlicerAnnotationModulePropertyDialog::saveStateForUndo(vtkMRMLNode* node)
 {
   Q_UNUSED(node);
   /*
-   if (node->IsA("vtkMRMLAnnotationAngleNode"))
-   {
-   vtkMRMLAnnotationAngleNode* mynode =
-   vtkMRMLAnnotationAngleNode::SafeDownCast(node);
-   if (!this->m_angleCopy)
-   {
-   this->m_angleCopy = vtkMRMLAnnotationAngleNode::New();
-   }
-   this->m_angleCopy->Copy(mynode);
-   this->SaveLinesNode(mynode);
-   }
-   else if (node->IsA("vtkMRMLAnnotationRulerNode"))
+   if (node->IsA("vtkMRMLAnnotationRulerNode"))
    {
    vtkMRMLAnnotationRulerNode* mynode =
    vtkMRMLAnnotationRulerNode::SafeDownCast(node);
@@ -881,14 +868,7 @@ void qSlicerAnnotationModulePropertyDialog::undo(vtkMRMLNode* node)
 {
   Q_UNUSED(node);
   /*
-   if (node->IsA("vtkMRMLAnnotationAngleNode"))
-   {
-   vtkMRMLAnnotationAngleNode* anode =
-   vtkMRMLAnnotationAngleNode::SafeDownCast(node);
-   anode->Copy(m_angleCopy);
-   this->UndoLinesNode(anode);
-   }
-   else if (node->IsA("vtkMRMLAnnotationRulerNode"))
+   if (node->IsA("vtkMRMLAnnotationRulerNode"))
    {
    vtkMRMLAnnotationRulerNode* rnode =
    vtkMRMLAnnotationRulerNode::SafeDownCast(node);

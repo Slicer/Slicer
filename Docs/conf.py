@@ -273,7 +273,7 @@ for inputpath in inputpaths:
         for name in files:
             if name in excludenames:
                 continue
-            if name.endswith((".xml")):
+            if name.endswith(".xml"):
                 print(f"Generating CLI module documentation from {name}")
                 dom = ET.parse(os.path.join(root, name))
                 _generatemd(dom, docsfolder, outpath, "cli_module_overview_to_md.xsl", "Overview")

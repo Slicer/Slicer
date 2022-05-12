@@ -1,8 +1,10 @@
 import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import logging
+
 
 class SegmentEditorTemplateKey(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
@@ -10,7 +12,6 @@ class SegmentEditorTemplateKey(ScriptedLoadableModule):
   """
 
   def __init__(self, parent):
-    import string
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "SegmentEditorTemplateKey"
     self.parent.categories = ["Segmentation"]
@@ -19,7 +20,7 @@ class SegmentEditorTemplateKey(ScriptedLoadableModule):
     self.parent.hidden = True
     self.parent.helpText = "This hidden module registers the segment editor effect"
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
-    self.parent.acknowledgementText = "Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details."
+    self.parent.acknowledgementText = "Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www.slicer.org for details."
     slicer.app.connect("startupCompleted()", self.registerEditorEffect)
 
   def registerEditorEffect(self):
@@ -28,6 +29,7 @@ class SegmentEditorTemplateKey(ScriptedLoadableModule):
     effectFilename = os.path.join(os.path.dirname(__file__), self.__class__.__name__+'Lib/SegmentEditorEffect.py')
     instance.setPythonSource(effectFilename.replace('\\','/'))
     instance.self().register()
+
 
 class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
   """
@@ -59,7 +61,6 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Starting test_TemplateKey1")
 
     import vtkSegmentationCorePython as vtkSegmentationCore
-    import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
     import SampleData
     from SegmentStatistics import SegmentStatisticsLogic
 

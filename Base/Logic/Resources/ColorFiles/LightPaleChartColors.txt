@@ -4,7 +4,7 @@
 #Filename: Slicer4_2012_LightPaleChartColors.txt
 #Title: Slicer4:2012 LightPaleChartColors
 #PageName: Slicer4:2012_LightPaleChartColors
-#Source: http://www.slicer.org/slicerWiki/index.php/Slicer4:2012_LightPaleChartColors
+#Source: https://www.slicer.org/w/index.php/Slicer4:2012_LightPaleChartColors
 #
 #Begin table data:
 0 Series_1 241 175 174 255

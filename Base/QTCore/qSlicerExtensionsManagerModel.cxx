@@ -299,7 +299,7 @@ void qSlicerExtensionsManagerModelPrivate::init()
   this->initializeColumnIdToNameMap(Self::ArchiveNameColumn, "archivename");
   this->initializeColumnIdToNameMap(Self::MD5Column, "md5");
 
-  // See http://www.developer.nokia.com/Community/Wiki/Using_QStandardItemModel_in_QML
+  // See https://www.developer.nokia.com/Community/Wiki/Using_QStandardItemModel_in_QML
   QHash<int, QByteArray> roleNames;
   int columnIdx = 0;
   foreach(const QString& columnName, this->columnNames())
@@ -785,41 +785,56 @@ bool qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(
     const ExtensionMetadataType &extensionMetadata, int serverAPI)
 {
   bool valid = true;
-  QStringList expectedNonEmptyKeys;
+  QStringList requiredNonEmptyKeys; // essential keys, return with failure if not found
+  QStringList expectedNonEmptyKeys; // log warning if not found (but return with success)
   if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
     {
-    expectedNonEmptyKeys
+    requiredNonEmptyKeys
         << "item_id"
         << "name"
         << "productname";
     }
   else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
-    expectedNonEmptyKeys
+    requiredNonEmptyKeys
         << "_id"
         << "meta.app_id"
         << "meta.app_revision"
         << "meta.arch"
         << "meta.baseName"
-        << "meta.category"
-        << "meta.description"
-        << "meta.homepage"
-        << "meta.icon_url"
         << "meta.os"
-        << "meta.repository_type"
-        << "meta.repository_url"
-        << "meta.revision"
-//        << "meta.screenshots"
         << "name";
+    expectedNonEmptyKeys
+      << "meta.category"
+      << "meta.description"
+      << "meta.homepage"
+      << "meta.icon_url"
+      << "meta.repository_type"
+      << "meta.repository_url"
+      << "meta.revision"
+      << "meta.screenshots";
     }
   else
     {
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
     return false;
     }
+  // Check required keys (error if missing)
+  foreach(const QString& key, requiredNonEmptyKeys)
+    {
+    if (extensionMetadata.value(key).toString().isEmpty())
+      {
+      qWarning() << Q_FUNC_INFO << " failed: required key '" << key << "' is missing from extension metadata.";
+      valid = false;
+      }
+    }
+  // Check expected keys (warning if missing)
   foreach(const QString& key, expectedNonEmptyKeys)
     {
-    valid = valid && !extensionMetadata.value(key).toString().isEmpty();
+    if (extensionMetadata.value(key).toString().isEmpty())
+      {
+      qWarning() << Q_FUNC_INFO << " failed: expected key '" << key << "' is missing from extension metadata.";
+      }
     }
   return valid;
 }
@@ -1141,10 +1156,11 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     }
 
   ExtensionMetadataType updatedExtensionMetadata = result;
+  QHash<QString, QString> serverToExtensionDescriptionKey = q->serverToExtensionDescriptionKey(q->serverAPI());
   foreach(const QString& key, result.keys())
     {
     updatedExtensionMetadata.insert(
-      q->serverToExtensionDescriptionKey(q->serverAPI()).value(key, key), result.value(key));
+      serverToExtensionDescriptionKey.value(key, key), result.value(key));
     }
 
   return updatedExtensionMetadata;
@@ -3037,7 +3053,11 @@ qSlicerExtensionsManagerModel::parseExtensionDescriptionFile(const QString& file
       {
       continue;
       }
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QStringList components = line.split(" ", Qt::SkipEmptyParts);
+#else
     QStringList components = line.split(" ", QString::SkipEmptyParts);
+#endif
     if (components.size() == 0)
       {
       continue;

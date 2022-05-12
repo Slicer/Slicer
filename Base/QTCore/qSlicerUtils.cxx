@@ -86,7 +86,7 @@ bool qSlicerUtils::isCLIScriptedExecutable(const QString& filePath)
 //-----------------------------------------------------------------------------
 bool qSlicerUtils::isCLILoadableModule(const QString& filePath)
 {
-  // See http://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
+  // See https://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
   QRegExp regex("(lib.+Lib\\.(so|dylib))|((?!lib).+Lib\\.(dll|DLL))");
   return regex.exactMatch(QFileInfo(filePath).fileName());
 }
@@ -94,7 +94,7 @@ bool qSlicerUtils::isCLILoadableModule(const QString& filePath)
 //-----------------------------------------------------------------------------
 bool qSlicerUtils::isLoadableModule(const QString& filePath)
 {
-  // See http://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
+  // See https://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
   QRegExp regex("(libqSlicer.+Module\\.(so|dylib))|((?!lib)qSlicer.+Module\\.(dll|DLL))");
   return regex.exactMatch(QFileInfo(filePath).fileName());
 }

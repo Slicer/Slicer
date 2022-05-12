@@ -122,7 +122,9 @@ public:
     /// Extent is computed as union of effective extent of all segments
     EXTENT_UNION_OF_EFFECTIVE_SEGMENTS,
     /// Extent is computed as union of effective extent of all segments, with a single-voxel padding added on each side
-    EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED
+    EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED,
+    /// Extent is computed as the reference geometry, expanded to contain the union of all segments
+    EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY
     };
 
   /// Container type for segments. Maps segment IDs to segment objects

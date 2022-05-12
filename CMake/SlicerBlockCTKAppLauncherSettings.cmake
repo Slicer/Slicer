@@ -71,7 +71,11 @@ set(SLICER_LIBRARY_PATHS_BUILD
   )
 
 if(NOT Slicer_USE_SYSTEM_QT)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${QT_LIBRARY_DIR})
+  if(WIN32)
+    list(APPEND SLICER_LIBRARY_PATHS_BUILD ${QT_BINARY_DIR})
+  else()
+    list(APPEND SLICER_LIBRARY_PATHS_BUILD ${QT_LIBRARY_DIR})
+  endif()
 endif()
 
 # The following lines allow Slicer to load a CLI module extension that depends
@@ -193,6 +197,9 @@ if(Slicer_USE_PYTHONQT)
   # External projects - path environment variables
   list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_BUILD
     "PYTHONPATH"
+    # Ensures "slicer_dll_directories.add()" can add relevant directories.
+    # See SuperBuild/python_configure_python_launcher.cmake
+    "LibraryPaths"
     )
 
 endif()
@@ -307,6 +314,9 @@ if(Slicer_USE_PYTHONQT)
   # External projects - path environment variables
   list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
     "PYTHONPATH"
+    # Ensures "slicer_dll_directories.add()" can add relevant directories.
+    # See SuperBuild/python_configure_python_launcher.cmake
+    "LibraryPaths"
     )
 
 endif()

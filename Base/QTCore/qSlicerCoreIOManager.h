@@ -27,6 +27,7 @@
 #include <QList>
 #include <QMap>
 #include <QObject>
+#include <QString>
 #include <QVariantMap>
 
 // CTK includes
@@ -88,6 +89,27 @@ public:
   /// Always includes the leading dot.
   Q_INVOKABLE QString completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode *node)const;
 
+  /// Generate a regular expression that can ensure a filename has a valid
+  /// extension. Example of supported extensions:
+  /// "", "*", ".*", ".jpg", ".png" ".tar.gz"...
+  /// An empty extension or "*" means any filename (or directory) is valid
+  Q_INVOKABLE static QRegExp fileNameRegExp(const QString& extension = QString());
+
+  /// Remove characters that are likely to cause problems in a filename
+  Q_INVOKABLE static QString forceFileNameValidCharacters(const QString& filename);
+
+  /// If \a fileName ends with an extension that is associated with \a object,
+  /// then return that extension. Otherwise return an empty string.
+  /// If there are multiple candidates (such as for "something.seg.nrrd" both
+  /// ".nrrd" and ".seg.nrrd" extensions match) then the longest is returned.
+  Q_INVOKABLE QString extractKnownExtension(const QString& fileName, vtkObject* object);
+
+  /// If \a fileName ends with an extension that is associated with \a object,
+  /// then return a stripped version of \a fileName, where that extension
+  /// has been chopped off. If the extension is duplicated in the
+  /// tail of \a fileName, then all duplicates are stripped away.
+  Q_INVOKABLE QString stripKnownExtension(const QString& fileName, vtkObject* object);
+
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.
   /// A map of qvariant allows to specify which \a parameters should be passed to the reader.
@@ -136,12 +158,41 @@ public:
   /// Attributes are typically:
   /// For all: QString fileName (or QStringList fileNames)
   /// For nodes: QString nodeID, bool useCompression
-  /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
+  /// If a valid pointer is passed to \a userMessages additional error or warning information may be returned in it.
+  /// If a valid pointer is passed to \a scene, writers will be told to use that scene instead of the current scene.
   /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType,
-  /// loadNodes()
+  /// loadNodes(), exportNodes()
   Q_INVOKABLE bool saveNodes(qSlicerIO::IOFileType fileType,
-                             const qSlicerIO::IOProperties& parameters,
-                              vtkMRMLMessageCollection* userMessages=nullptr);
+    const qSlicerIO::IOProperties& parameters,
+    vtkMRMLMessageCollection* userMessages=nullptr,
+    vtkMRMLScene* scene=nullptr
+  );
+
+  /// Export nodes using the registered writers. Return true on success, false otherwise.
+  /// Unlike saveNodes(), this function creates a temporary scene while saving, in order to to avoid modifying storage nodes in the current scene.
+  /// The list \a parameterMaps should consist of maps that each specify a "nodeID" (ID of a node in the main scene),
+  /// a "fileName" (an absolute file path), a "fileFormat" (e.g. "NRRD (.nrrd)"), and any other options that the associated writer may end up using.
+  /// \param parameterMaps For each node to exported, a map of parameters that will get passed to qSlicerCoreIOManager::saveNodes.
+  /// \param hardenTransforms Whether to temporarily apply transform hardening before export.
+  /// \param userMessages If a valid pointer is passed, then error messages may be returned in it.
+  /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType, vtkMRMLStorageNode, saveNodes().
+  Q_INVOKABLE bool exportNodes(
+    const QList<qSlicerIO::IOProperties>& parameterMaps,
+    bool hardenTransforms,
+    vtkMRMLMessageCollection* userMessages=nullptr
+  );
+
+  /// Export nodes using the registered writers with an API that is usable from Python.
+  /// It only allows exporting all nodes with the same parameters.
+  /// Return true on success, false otherwise.
+  /// \sa exportNodes().
+  Q_INVOKABLE bool exportNodes(
+    const QStringList& nodeIDs,
+    const QStringList& fileNames,
+    const qSlicerIO::IOProperties& commonParameterMap,
+    bool hardenTransforms,
+    vtkMRMLMessageCollection* userMessages = nullptr
+  );
 
   /// Save a scene corresponding to \a fileName
   /// This function is provided for convenience and is equivalent to call
@@ -170,6 +221,11 @@ public:
   /// the qSlicerCoreIOManager. It will emit the signal newFileLoaded().
   /// \sa newFileLoaded()
   Q_INVOKABLE void emitNewFileLoaded(const QVariantMap& loadedFileParameters);
+
+  /// This function should be used from python scripted module willing to interface with
+  /// the qSlicerCoreIOManager. It will emit the signal fileSaved().
+  /// \sa fileSaved()
+  Q_INVOKABLE void emitFileSaved(const QVariantMap& savedFileParameters);
 
   /// Defines the file format that should be offered by default when the scene is saved.
   Q_INVOKABLE QString defaultSceneFileType()const;
@@ -204,6 +260,12 @@ signals:
   /// associated with a QString and a QStringList.
   /// \sa loadNodes(const qSlicerIO::IOFileType&, const qSlicerIO::IOProperties&, vtkCollection*)
   void newFileLoaded(const qSlicerIO::IOProperties& loadedFileParameters);
+
+  /// This signal is emitted each time a file is saved using saveNodes()
+  /// The \a savedFileParameters QVariant map contains the parameters
+  /// passed to the writer.
+  /// \sa saveNodes()
+  void fileSaved(const qSlicerIO::IOProperties& savedFileParameters);
 
 protected:
 

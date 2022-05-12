@@ -4,7 +4,7 @@ Goal of registration is to align position and orientation of images, models, and
 
 ## Manual registration
 
-Any data nodes (images, models, markups, etc.) can be placed under a transform and the transform can be adjusted interactively in [Transforms](modules/transforms) module (using sliders) or in 3D views.
+Any data nodes (images, models, markups, etc.) can be placed under a transform and the transform can be adjusted interactively in [Transforms](modules/transforms.md) module (using sliders) or in 3D views.
 
 Advantage of this approach is that it is simple, applicable to any data type, and approximate alignment can be reached very quickly. However, achieving accurate registration using this approach is tedious and time-consuming, because many fine adjustments steps are needed, with visual checks in multiple orientations after each adjustment.
 
@@ -15,7 +15,7 @@ Registration can be computed automatically from corresponding landmark point pai
 Recommended modules:
 
 - [Landmark registration](https://www.slicer.org/wiki/Documentation/Nightly/Modules/LandmarkRegistration): for registering slightly misaligned images. Supports rigid and deformable registration with automatic local landmark refinement, live preview, image comparison.
-- Fiducial registration wizard (in [SlicerIGT extension](http://www.slicerigt.org/)): for registering any data nodes (even mixed data, such as registration of images to models), and for images that are not aligned at all. Supports rigid and deformable registration, automatic point matching, automatic collection from tracked pointer devices. See [U-12 SlicerIGT tutorial](http://www.slicerigt.org/wp/user-tutorial/) for a quick introduction of main features.
+- Fiducial registration wizard (in [SlicerIGT extension](https://www.slicerigt.org/)): for registering any data nodes (even mixed data, such as registration of images to models), and for images that are not aligned at all. Supports rigid and deformable registration, automatic point matching, automatic collection from tracked pointer devices. See [U-12 SlicerIGT tutorial](https://www.slicerigt.org/wp/user-tutorial/) for a quick introduction of main features.
 
 ## Automatic image registration
 

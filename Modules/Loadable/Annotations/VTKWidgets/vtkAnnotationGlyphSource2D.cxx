@@ -5,7 +5,7 @@
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+  See Copyright.txt or https://www.kitware.com/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -18,9 +18,6 @@
 
 // Logic includes
 #include "vtkSlicerBaseLogic.h"
-
-// MRML includes
-#include <vtkMRMLFiducialListNode.h>
 
 // VTK includes
 #include <vtkCellArray.h>
@@ -619,65 +616,5 @@ void vtkAnnotationGlyphSource2D::PrintSelf(ostream& os, vtkIndent indent)
     case VTK_STARBURST_GLYPH:
       os << "Star Burst\n";
       break;
-    }
-}
-
-void vtkAnnotationGlyphSource2D::SetGlyphTypeAsString(const char *type)
-{
-  if (type == nullptr)
-    {
-    vtkErrorMacro("Cannot set glyph type from a null string.");
-    return;
-    }
-
-  vtkNew<vtkMRMLFiducialListNode> listNode;
-
-  if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::StarBurst2D) ) )
-    {
-    this->SetGlyphTypeToStarBurst();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Vertex2D) ) )
-    {
-    this->SetGlyphTypeToVertex();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Dash2D) ) )
-    {
-    this->SetGlyphTypeToDash();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Cross2D) ) )
-    {
-    this->SetGlyphTypeToCross();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::ThickCross2D) ) )
-    {
-    this->SetGlyphTypeToThickCross();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Triangle2D) ) )
-    {
-    this->SetGlyphTypeToTriangle();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Square2D) ) )
-    {
-    this->SetGlyphTypeToSquare();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Circle2D) ) )
-    {
-    this->SetGlyphTypeToCircle();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Diamond2D) ) )
-    {
-    this->SetGlyphTypeToDiamond();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Arrow2D) ) )
-    {
-    this->SetGlyphTypeToArrow();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::ThickArrow2D) ) )
-    {
-    this->SetGlyphTypeToThickArrow();
-    }
-  else if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::HookedArrow2D) ) )
-    {
-    this->SetGlyphTypeToHookedArrow();
     }
 }

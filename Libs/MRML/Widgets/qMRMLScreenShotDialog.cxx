@@ -362,7 +362,7 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
     renderWindow->OffScreenRenderingOn();
 
     // Resize render window and slice widget
-    int* renderWindowSize = renderWindow->GetSize();
+    const int* renderWindowSize = renderWindow->GetSize();
     int width = renderWindowSize[0];
     int height = renderWindowSize[1];
     int scaledWidth = width * scaleFactor;

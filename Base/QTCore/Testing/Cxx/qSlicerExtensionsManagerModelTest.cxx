@@ -50,11 +50,19 @@ private:
 
   static ExtensionMetadataType extensionMetadata(const QString &os, int extensionId, bool filtered = false);
 
+  // Harmonize field names between server APIs. These steps are dispersed in the qSlicerExtensionsManagerModel class,
+  // therefore we need to replicate them here.
+  static void normalizeExtensionMetadata(QVariantMap &metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI);
+
+  static void filterExtensionMetadata(QVariantMap &metadata);
+
+  static QVariantMap flattenExtensionMetadata(QVariantMap metadata);
+
   QStringList expectedExtensionNames()const;
 
   QString slicerVersion(const QString& operatingSystem, int extensionId);
 
-  bool prepareJson(const QString& jsonFile);
+  bool prepareJson(const QString& jsonFile, qSlicerExtensionsManagerModel::ServerAPI serverAPI);
 
   void installHelper(qSlicerExtensionsManagerModel *model, const QString &os, int extensionId, const QString &tmp);
 
@@ -198,7 +206,8 @@ QString qSlicerExtensionsManagerModelTester::slicerVersion(const QString& operat
 }
 
 // ----------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile)
+bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile,
+  qSlicerExtensionsManagerModel::ServerAPI serverAPI)
 {
   bool success = true;
   QDir tmp = QDir::temp();
@@ -213,8 +222,25 @@ bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile)
     }
   success = success && tmp.mkdir("api");
   success = success && tmp.cd("api");
-  success = success && QFile::copy(jsonFile,  tmp.filePath("json"));
-  success = success && QFile::setPermissions(tmp.filePath("json"), QFile::ReadOwner | QFile::WriteOwner);
+  QString filename;
+  if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    {
+    QString appID = "5f4474d0e1d8c75dfc705482";
+    success = success && tmp.mkdir("v1");
+    success = success && tmp.cd("v1");
+    success = success && tmp.mkdir("app");
+    success = success && tmp.cd("app");
+    success = success && tmp.mkdir(appID);
+    success = success && tmp.cd(appID);
+    filename = "extension";
+    }
+  else
+    {
+    // Midas_v1
+    filename = "json";
+    }
+  success = success && QFile::copy(jsonFile, tmp.filePath(filename));
+  success = success && QFile::setPermissions(tmp.filePath(filename), QFile::ReadOwner | QFile::WriteOwner);
   return success;
 }
 
@@ -236,11 +262,26 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
     QFile::setPermissions(copiedArchiveFile, QFile::ReadOwner | QFile::WriteOwner);
     }
 
-  QVERIFY2(this->prepareJson(QString(":/extension-%1-%2.json").arg(os).arg(extensionId)),
+  QVERIFY2(this->prepareJson(QString(":/extension-%1-%2.json").arg(os).arg(extensionId), qSlicerExtensionsManagerModel::Midas_v1),
            QString("Failed to prepare json for extensionId: %1-%2").arg(os).arg(extensionId).toUtf8());
+
+  qSlicerExtensionsManagerModel::ServerAPI serverAPI = qSlicerExtensionsManagerModel::Midas_v1;
+
+  // The only API for changing server API is an environment variable.
+  // We save the environment variable current value, modify it temporarily, then restore it.
+  QString oldServerApiStr = qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_API");
+  qputenv("SLICER_EXTENSIONS_MANAGER_SERVER_API",
+    qSlicerExtensionsManagerModel::serverAPIToString(serverAPI).toUtf8());
   ExtensionMetadataType metadata = model->retrieveExtensionMetadata(QString("%1").arg(extensionId));
+  qputenv("SLICER_EXTENSIONS_MANAGER_SERVER_API", oldServerApiStr.toUtf8());
+
   QVERIFY(metadata.count() > 0);
-  QCOMPARE(metadata, Self::extensionMetadata(os, extensionId));
+  QVariantMap expectedMetadata = Self::extensionMetadata(os, extensionId);
+
+  Self::normalizeExtensionMetadata(metadata, serverAPI);
+  Self::normalizeExtensionMetadata(expectedMetadata, serverAPI);
+
+  QCOMPARE(metadata, expectedMetadata);
 
   QString extensionName = metadata.value("extensionname").toString();
   QCOMPARE(extensionName, this->expectedExtensionNames().at(extensionId));
@@ -317,12 +358,22 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
   QScriptValue scriptValue = scriptEngine.evaluate("(" + QString(metadataFile.readAll()) + ")");
 
   QScriptValue data = scriptValue.property("data");
-  if (!QTest::qVerify(data.isObject() && data.isArray(), "data.isObject() && data.isArray()", "", __FILE__, __LINE__))
+  ExtensionMetadataType allMetadata;
+  if (data.isValid())
     {
-    return ExtensionMetadataType();
+    // Midas_v1 stores metadata in a "data" attribute
+    if (!QTest::qVerify(data.isObject() && data.isArray(), "data.isObject() && data.isArray()", "", __FILE__, __LINE__))
+      {
+      return ExtensionMetadataType();
+      }
+    allMetadata = data.property(0).toVariant().toMap();
+    }
+  else
+    {
+    // Girder_v1
+    allMetadata = scriptValue.property(0).toVariant().toMap();
     }
 
-  ExtensionMetadataType allMetadata = data.property(0).toVariant().toMap();
   if (!QTest::qVerify(allMetadata.count() > 0, "allMetadata.count() > 0", "", __FILE__, __LINE__))
     {
     return ExtensionMetadataType();
@@ -341,6 +392,77 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
           allMetadata.value(key));
     }
   return metadata;
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::normalizeExtensionMetadata(
+  QVariantMap& metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI)
+{
+  // Girder_v1 API contains some of the fields in a metadata object,
+  // move those into top-level properties.
+  metadata = Self::flattenExtensionMetadata(metadata);
+
+  // Different server APIs use slightly different property names for metadata,
+  // make sure that standardized extension description property names are present, too.
+  ExtensionMetadataType metadataExtended = metadata;
+  QHash<QString, QString> serverToExtensionDescriptionKey = qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI);
+  foreach(const QString & key, metadata.keys())
+    {
+    metadataExtended.insert(
+      serverToExtensionDescriptionKey.value(key, key), metadata.value(key));
+    }
+  metadata = metadataExtended;
+
+  // Filter out unused property names.
+  Self::filterExtensionMetadata(metadata);
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::filterExtensionMetadata(QVariantMap &metadata)
+{
+  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore());
+  QVariantMap filteredMetadata;
+  foreach(const QString & key, metadata.keys())
+    {
+    if (keysToIgnore.contains(key))
+      {
+      continue;
+      }
+    filteredMetadata.insert(
+      qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey().value(key, key),
+      metadata.value(key));
+    }
+  metadata = filteredMetadata;
+}
+
+// ----------------------------------------------------------------------------
+QVariantMap qSlicerExtensionsManagerModelTester::flattenExtensionMetadata(QVariantMap map)
+{
+  QVariantMap output;
+  foreach(const QString& key, map.keys())
+    {
+    QVariant value = map.value(key);
+    if (value.canConvert<QVariantMap>())
+      {
+      value = QVariant::fromValue(QVariantList() << value.toMap());
+      }
+    if (value.canConvert<QVariantList>())
+      {
+      foreach(const QVariant& item, value.toList())
+        {
+        QVariantMap subMap = qSlicerExtensionsManagerModelTester::flattenExtensionMetadata(item.toMap());
+        foreach(const QString& subKey, subMap.keys())
+          {
+          output.insert(QString("%1.%2").arg(key).arg(subKey), subMap.value(subKey));
+          }
+        }
+      }
+    else
+      {
+      output.insert(key, value);
+      }
+    }
+  return output;
 }
 
 // ----------------------------------------------------------------------------
@@ -540,34 +662,52 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
 {
   QVERIFY(this->resetTmp());
 
+  QFETCH(qSlicerExtensionsManagerModel::ServerAPI, serverAPI);
   QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
 
   QFETCH(QString, extensionId);
   QFETCH(QString, jsonFile);
-  QVERIFY2(this->prepareJson(jsonFile),
+  QVERIFY2(this->prepareJson(jsonFile, serverAPI),
            QString("Failed to prepare json for extensionId: %1").arg(extensionId).toUtf8());
 
   QFETCH(QString, slicerVersion);
   qSlicerExtensionsManagerModel model;
   model.setExtensionsSettingsFilePath(QSettings().fileName());
   model.setSlicerVersion(slicerVersion);
+
+  QString oldServerApiStr = qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_API");
+  qputenv("SLICER_EXTENSIONS_MANAGER_SERVER_API", qSlicerExtensionsManagerModel::serverAPIToString(serverAPI).toUtf8());
   ExtensionMetadataType extensionMetadata = model.retrieveExtensionMetadata(extensionId);
+  qputenv("SLICER_EXTENSIONS_MANAGER_SERVER_API", oldServerApiStr.toUtf8());
 
   QFETCH(QVariantMap, expectedResult);
+
+  Self::normalizeExtensionMetadata(extensionMetadata, serverAPI);
+  Self::normalizeExtensionMetadata(expectedResult, serverAPI);
+
   QCOMPARE(extensionMetadata, expectedResult);
 }
 
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata_data()
 {
+  QTest::addColumn<qSlicerExtensionsManagerModel::ServerAPI>("serverAPI");
   QTest::addColumn<QString>("extensionId");
   QTest::addColumn<QString>("jsonFile");
   QTest::addColumn<QString>("slicerVersion");
   QTest::addColumn<QVariantMap>("expectedResult");
 
-  QTest::newRow("0") << "0" << QString(":/extension-%1-0.json").arg(Slicer_OS_LINUX_NAME)
+  QTest::newRow("0") << qSlicerExtensionsManagerModel::Midas_v1
+                     << "0"
+                     << QString(":/extension-%1-0.json").arg(Slicer_OS_LINUX_NAME)
                      << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
                      << Self::extensionMetadata(Slicer_OS_LINUX_NAME, 0);
+
+  QTest::newRow("1") << qSlicerExtensionsManagerModel::Girder_v1
+                     << "0"
+                     << QString(":/extension-%1-0.json").arg(Slicer_OS_WIN_NAME)
+                     << this->slicerVersion(Slicer_OS_WIN_NAME, 0)
+                     << Self::extensionMetadata(Slicer_OS_WIN_NAME, 0);
 }
 
 // ----------------------------------------------------------------------------

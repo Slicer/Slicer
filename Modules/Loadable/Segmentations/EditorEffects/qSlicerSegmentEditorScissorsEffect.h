@@ -75,6 +75,7 @@ public slots:
 
   virtual void setOperation(int operationIndex);
   virtual void setShape(int shapeIndex);
+  virtual void setShapeDrawCentered(int checkState);
   virtual void setSliceCutMode(int sliceCutModeIndex);
   virtual void onSliceCutDepthChanged(double value);
 

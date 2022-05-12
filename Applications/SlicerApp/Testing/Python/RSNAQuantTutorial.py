@@ -1,8 +1,11 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
+
 #
 # RSNAQuantTutorial
 #
@@ -11,6 +14,7 @@ class RSNAQuantTutorial(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     parent.title = "RSNAQuantTutorial" # TODO make this more human readable by adding spaces
@@ -23,6 +27,7 @@ class RSNAQuantTutorial(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qRSNAQuantTutorialWidget
@@ -106,6 +111,7 @@ class RSNAQuantTutorialWidget(ScriptedLoadableModuleWidget):
     tester = RSNAQuantTutorialTest()
     tester.setUp()
     tester.test_Part3PETCT(enableScreenshotsFlag,screenshotScaleFactor)
+
 
 #
 # RSNAQuantTutorialLogic
@@ -194,7 +200,6 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       redWidget.sliceController().setSliceLink(True)
       redWidget.sliceController().setSliceVisible(True)
 
-
       self.takeScreenshot('Ruler','Ruler used to measure tumor diameter',-1)
 
       self.delayDisplay('Test passed!')
@@ -202,7 +207,6 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
-
 
   def test_Part3PETCT(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using the PETCT module
@@ -300,7 +304,6 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
 
-
   def test_Part2ChangeTracker(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test the ChangeTracker module
     """
@@ -396,7 +399,6 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
 
       self.delayDisplay('Look!')
       redWidget.sliceController().setSliceVisible(True)
-
 
       self.delayDisplay('Crosshairs')
       compareWidget = layoutManager.sliceWidget('Compare1')

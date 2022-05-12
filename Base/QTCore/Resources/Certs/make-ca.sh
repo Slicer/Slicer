@@ -10,7 +10,7 @@
 # Original script available at [1] and adapted by Jean-Christophe Fillion-Robin
 # to only generate a .crt bundle needed for OpenSSL.
 #
-# [1] http://anduin.linuxfromscratch.org/BLFS/other/make-ca.sh-20170514
+# [1] https://anduin.linuxfromscratch.org/BLFS/other/make-ca.sh-20170514
 #
 # Changes:
 #

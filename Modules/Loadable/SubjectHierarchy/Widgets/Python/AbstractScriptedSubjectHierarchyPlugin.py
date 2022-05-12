@@ -1,5 +1,7 @@
-import os
-import vtk, qt, ctk, slicer, logging
+import logging
+
+import slicer
+
 
 #
 # Abstract class of python scripted subject hierarchy plugins
@@ -21,7 +23,7 @@ class AbstractScriptedSubjectHierarchyPlugin:
           scriptedPlugin.setPythonSource(VolumeClipSubjectHierarchyPlugin.filePath)
           ...
 
-      Example can be found here: https://subversion.assembla.com/svn/slicerrt/trunk/VolumeClip/src
+      Example can be found here: https://slicer.readthedocs.io/en/latest/developer_guide/script_repository.html#subject-hierarchy-plugin-offering-view-context-menu-action
   """
 
   def __init__(self, scriptedPlugin):

@@ -5,6 +5,7 @@ import re
 
 from .ExtensionProject import ExtensionProject
 
+
 #=============================================================================
 class ExtensionDescription:
   """Representation of an extension description.

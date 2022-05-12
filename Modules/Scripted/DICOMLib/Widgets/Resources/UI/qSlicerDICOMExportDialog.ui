@@ -441,6 +441,9 @@ If unchecked, the exported dataset will be added to the DICOM database.</string>
        <property name="text">
         <string>Export</string>
        </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item>

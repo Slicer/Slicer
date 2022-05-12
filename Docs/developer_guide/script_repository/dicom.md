@@ -44,7 +44,7 @@ slicer.util.selectModule("DICOM")  # ensure DICOM database is initialized and
 slicer.app.processEvents()
 from DICOMLib import DICOMUtils
 DICOMUtils.importFromDICOMWeb(
-  dicomWebEndpoint="http://demo.kheops.online/api",
+  dicomWebEndpoint="https://demo.kheops.online/api",
   studyInstanceUID="1.3.6.1.4.1.14519.5.2.1.8421.4009.985792766370191766692237040819",
   accessToken="TfYXwbKAW7JYbAgZ7MyISf")
 ```
@@ -84,19 +84,37 @@ pydicom.dcmread(fileList[0])
 ds.CTExposureSequence[0].ExposureModulationType
 ```
 
-### Access tag of a volume loaded from DICOM? For example, get the patient position stored in a volume
+### Access tag of a scalar volume loaded from DICOM
+
+Volumes loaded by `DICOMScalarVolumePlugin` store `SOP Instance UIDs` in the volume node's `DICOM.instanceUIDs` attribute. For example, this can be used to get the patient position stored in a volume:
 
 ```python
 volumeName = "2: ENT IMRT"
-n = slicer.util.getNode(volumeName)
-instUids = n.GetAttribute("DICOM.instanceUIDs").split()
+volumeNode = slicer.util.getNode(volumeName)
+instUids = volumeNode.GetAttribute("DICOM.instanceUIDs").split()
 filename = slicer.dicomDatabase.fileForInstance(instUids[0])
-print(slicer.dicomDatabase.fileValue(filename, "0018,5100"))
+print(slicer.dicomDatabase.fileValue(filename, "0018,5100"))  # patient position
 ```
 
 ### Access tag of an item in the Subject Hierarchy tree
 
-For example, get the content time tag of a structure set:
+Data sets loaded by various DICOM plugins may not use `DICOM.instanceUIDs` attribute but instead they save the `Series Instance UID` to the subject hierarchy item. The `SOP Instance UIDs` can be retrieved based on the series instance UID, which then can be used to retrieve DICOM tags:
+
+```python
+volumeName = "2: ENT IMRT"
+volumeNode = slicer.util.getNode(volumeName)
+
+# Get series instance UID from subject hierarchy
+shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+volumeItemId = shNode.GetItemByDataNode(volumeNode)
+seriesInstanceUID = shNode.GetItemUID(volumeItemId, 'DICOM')
+
+# Get patient name (0010,0010) from the first file of the series
+instUids = slicer.dicomDatabase.instancesForSeries(seriesInstanceUID)
+print(slicer.dicomDatabase.instanceValue(instUids[0], '0010,0010')) # patient name
+```
+
+Another example, using referenced instance UIDs to get the content time tag of a structure set:
 
 ```python
 rtStructName = "3: RTSTRUCT: PROS"
@@ -105,10 +123,10 @@ shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlS
 rtStructShItemID = shNode.GetItemByDataNode(rtStructNode)
 ctSliceInstanceUids = shNode.GetItemAttribute(rtStructShItemID, "DICOM.ReferencedInstanceUIDs").split()
 filename = slicer.dicomDatabase.fileForInstance(ctSliceInstanceUids[0])
-print(slicer.dicomDatabase.fileValue(filename, "0008,0033"))
+print(slicer.dicomDatabase.fileValue(filename, "0008,0033"))  # content time
 ```
 
-### Get path and filename of a loaded DICOM volume
+### Get path and filename of a scalar volume node loaded from DICOM
 
 ```python
 def pathFromNode(node):
@@ -142,6 +160,7 @@ outputFolder = "c:/tmp/dicom-output"
 
 # Create patient and study and put the volume under the study
 shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+# set IDs. Note: these IDs are not specifying DICOM tags, but only the names that appear in the hierarchy tree
 patientItemID = shNode.CreateSubjectItem(shNode.GetSceneItemID(), "test patient")
 studyItemID = shNode.CreateStudyItem(patientItemID, "test study")
 volumeShItemID = shNode.GetItemByDataNode(volumeNode)
@@ -151,7 +170,11 @@ import DICOMScalarVolumePlugin
 exporter = DICOMScalarVolumePlugin.DICOMScalarVolumePluginClass()
 exportables = exporter.examineForExport(volumeShItemID)
 for exp in exportables:
+  # set output folder
   exp.directory = outputFolder
+  # here we set DICOM PatientID and StudyID tags
+  exp.setTag('PatientID', "test patient")
+  exp.setTag('StudyID', "test study")
 
 exporter.export(exportables)
 ```

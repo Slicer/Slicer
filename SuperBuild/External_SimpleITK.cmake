@@ -94,6 +94,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
 # Added by '${CMAKE_CURRENT_LIST_FILE}'
 set(ENV{${_varname}} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
 ")
+  if(WIN32)
+    file(APPEND ${_env_script}
+"#------------------------------------------------------------------------------
+# Added by '${CMAKE_CURRENT_LIST_FILE}' to ensure the function 'slicer_dll_directories.add()'
+# called from sitecustomize can add all the directories associated with the SimpleITK
+# dependencies.
+#
+# This is required when executing the SimpleITK external project install command below to
+# ensure the _SimpleITK module can resolve its dependencies.
+set(ENV{LibraryPaths} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
+")
+  endif()
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
@@ -122,7 +134,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "v2.1.1"
+    "ffd48e274e2112928e95e5dfc802d8ca3121c840"
     QUIET
     )
 
@@ -165,7 +177,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
       -DSimpleITK_PYTHON_THREADS:BOOL=ON
       -DSimpleITK_INSTALL_ARCHIVE_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
       -DSimpleITK_INSTALL_LIBRARY_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
-      -DSimpleITK_INT64_PIXELIDS:BOOL=OFF
+      -DSimpleITK_INT64_PIXELIDS:BOOL=ON
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
       -DSimpleITK_USE_SYSTEM_ITK:BOOL=ON
       -DITK_DIR:PATH=${ITK_DIR}

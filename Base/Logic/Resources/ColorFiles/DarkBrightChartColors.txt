@@ -4,7 +4,7 @@
 #Filename: Slicer4_2012_DarkBrightChartColors.txt
 #Title: Slicer4:2012 DarkBrightChartColors
 #PageName: Slicer4:2012_DarkBrightChartColors
-#Source: http://www.slicer.org/slicerWiki/index.php/Slicer4:2012_DarkBrightChartColors
+#Source: https://www.slicer.org/w/index.php/Slicer4:2012_DarkBrightChartColors
 #
 #Begin table data:
 0 Series_1 236 44 51 255

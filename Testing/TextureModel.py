@@ -1,6 +1,7 @@
 import Slicer
 import time
 
+
 def newPlane():
 
   # create a plane polydata
@@ -74,4 +75,3 @@ def texturedPlane():
   elapsed = endTime - startTime
   hertz = int(steps / elapsed)
   print('ran %d iterations in %g seconds (%g hertz)' % (steps, elapsed, hertz))
-

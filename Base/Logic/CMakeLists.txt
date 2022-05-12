@@ -31,7 +31,13 @@ if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND ${PROJECT_NAME}_ITK_COMPONENTS ${ModuleDescriptionParser_ITK_COMPONENTS})
 endif()
 find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
-set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+if(ITK_VERSION VERSION_GREATER_EQUAL "5.3")
+  foreach(factory_uc IN ITEMS "IMAGEIO" "MESHIO" "TRANSFORMIO")
+    set(ITK_NO_${factory_uc}_FACTORY_REGISTER_MANAGER 1)
+  endforeach()
+else()
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+endif()
 list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
 list(APPEND ITK_INCLUDE_DIRS
   ${ITKFactoryRegistration_INCLUDE_DIRS}
@@ -114,10 +120,8 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerApplicationLogic.cxx
   vtkSlicerModuleLogic.cxx
   vtkSlicerTask.cxx
-  vtkSlicerFiducialsLogic.cxx
   vtkDataIOManagerLogic.cxx
   # slicer's vtk extensions (filters)
-  vtkSlicerGlyphSource2D.cxx
   vtkTransformVisualizerGlyph3D.cxx
   vtkImageRectangularSource.cxx
   vtkSystemInformation.cxx

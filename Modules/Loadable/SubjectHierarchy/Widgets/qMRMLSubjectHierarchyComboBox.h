@@ -25,6 +25,7 @@
 
 // CTK includes
 #include <ctkComboBox.h>
+#include <ctkVTKObject.h>
 
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
@@ -40,6 +41,7 @@ class vtkMRMLScene;
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyComboBox : public ctkComboBox
 {
   Q_OBJECT
+  QVTK_OBJECT
 
   /// This property controls whether the root item (folder, an item for a data node, or the scene itself),
   /// if any is visible. When the root item is visible, it appears as a top-level item,
@@ -214,7 +216,9 @@ signals:
 protected slots:
   void updateComboBoxTitleAndIcon(vtkIdType selectedShItemID);
 
-  void hidePopup();
+  void hidePopup() override;
+
+  virtual void onMRMLSceneCloseEnded(vtkObject* sceneObject);
 
 protected:
   /// Handle mouse press event (disable context menu)

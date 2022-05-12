@@ -33,6 +33,9 @@
 #include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScene.h>
 
+// CTK includes
+#include <ctkUtils.h>
+
 // Slicer includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
@@ -159,13 +162,13 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
       {
       QStringList extensionsList = QString::fromStdString(extensions).split(";");
       QStringList lastLoadedExtensionsList = QString::fromStdString(lastLoadedExtensions).split(";");
-      QSet<QString> notInstalledExtensions = lastLoadedExtensionsList.toSet().subtract(extensionsList.toSet());
+      QSet<QString> notInstalledExtensions = ctk::qStringListToQSet(lastLoadedExtensionsList).subtract(ctk::qStringListToQSet(extensionsList));
       if (!notInstalledExtensions.isEmpty())
         {
         QString extensionsInformation =
           tr("These extensions were installed when the scene was saved but not installed now: %1."
              " These extensions may be required for successful loading of the scene.")
-          .arg(QStringList::fromSet(notInstalledExtensions).join(", "));
+          .arg(ctk::qSetToQStringList(notInstalledExtensions).join(", "));
         this->userMessages()->AddMessage(vtkCommand::MessageEvent, extensionsInformation.toStdString());
         }
       }

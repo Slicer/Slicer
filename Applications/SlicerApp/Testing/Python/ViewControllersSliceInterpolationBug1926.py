@@ -1,7 +1,9 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # ViewControllersSliceInterpolationBug1926
@@ -11,6 +13,7 @@ class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     parent.title = "ViewControllers Slice Interpolation Bug 1926" # TODO make this more human readable by adding spaces
@@ -23,6 +26,7 @@ class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
     parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE.  and was partially funded by NIH grant U54EB005149.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qViewControllersSliceInterpolationBug1926Widget
@@ -161,6 +165,5 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
     # Check whether we can change the interpolation (needs to check gui)
     redWidget = slicer.app.layoutManager().sliceWidget('Red')
     redController = redWidget.sliceController()
-
 
     self.delayDisplay('Test passed!')

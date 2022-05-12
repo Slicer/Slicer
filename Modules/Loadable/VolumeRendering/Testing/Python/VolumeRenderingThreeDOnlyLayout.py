@@ -1,6 +1,5 @@
-import unittest
 import slicer
-from slicer.ScriptedLoadableModule import *
+from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 
 
 class VolumeRenderingThreeDOnlyLayout(ScriptedLoadableModuleTest):
@@ -9,6 +8,7 @@ class VolumeRenderingThreeDOnlyLayout(ScriptedLoadableModuleTest):
     Uses ScriptedLoadableModuleTest base class, available at:
     https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
     """
+
     def setUp(self):
         pass
 

@@ -41,9 +41,14 @@
 #include <QSettings>
 #include <QUrl>
 
+// CTK includes
+#include <ctkMessageBox.h>
+
 // Slicer includes
 #include "qSlicerCoreApplication.h"
 #include <vtkMRMLSliceLogic.h>
+#include <vtkOrientedImageData.h>
+#include <vtkOrientedImageDataResample.h>
 #include <vtkSlicerApplicationLogic.h>
 
 //-----------------------------------------------------------------------------
@@ -282,14 +287,35 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
       labelmapConversionColorTableNode = vtkMRMLColorTableNode::SafeDownCast(d->ColorTableNodeSelector->currentNode());
       }
 
+    vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ReferenceVolumeComboBox->currentNode());
+    if (referenceVolumeNode && d->SegmentationNode &&
+      vtkSlicerSegmentationsModuleLogic::IsEffectiveExentOutsideReferenceVolume(
+        referenceVolumeNode, d->SegmentationNode, segmentIds))
+      {
+      ctkMessageBox* exportWarningMesssgeBox = new ctkMessageBox(this);
+      exportWarningMesssgeBox->setAttribute(Qt::WA_DeleteOnClose);
+      exportWarningMesssgeBox->setWindowTitle("Exporting may erase data");
+      exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Ok);
+      exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Cancel);
+      exportWarningMesssgeBox->setDontShowAgainVisible(true);
+      exportWarningMesssgeBox->setIcon(QMessageBox::Warning);
+      exportWarningMesssgeBox->setDontShowAgainSettingsKey("Segmentations/AlwaysCropDuringSegmentationFileExport");
+      exportWarningMesssgeBox->setText("The current segmentation does not completely fit into the new geometry.\n"
+                                       "Do you want to crop the segmentation?\n");
+      if (exportWarningMesssgeBox->exec() != QMessageBox::StandardButton::Ok)
+        {
+        return;
+        }
+      }
+
     vtkSlicerSegmentationsModuleLogic::ExportSegmentsBinaryLabelmapRepresentationToFiles(
       d->DestinationFolderButton->directory().toUtf8().constData(),
       d->SegmentationNode.GetPointer(),
       segmentIds.GetPointer(),
       extension,
       d->UseCompressionCheckBox->isChecked(),
-      vtkMRMLVolumeNode::SafeDownCast(d->ReferenceVolumeComboBox->currentNode()),
-      vtkSegmentation::EXTENT_REFERENCE_GEOMETRY,
+      referenceVolumeNode,
+      vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY,
       labelmapConversionColorTableNode);
     }
 

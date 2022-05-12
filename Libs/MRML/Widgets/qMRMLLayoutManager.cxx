@@ -28,10 +28,6 @@
 #include <qMRMLSliceView.h>
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-#include <qMRMLChartView.h>
-#include <qMRMLChartWidget.h>
-#endif
 #include <qMRMLTableView.h>
 #include <qMRMLTableWidget.h>
 #include <qMRMLPlotView.h>
@@ -40,6 +36,7 @@
 #include <qMRMLThreeDWidget.h>
 
 // MRMLLogic includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLColorLogic.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLViewLogic.h>
@@ -47,7 +44,6 @@
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
-#include <vtkMRMLChartViewNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTableViewNode.h>
@@ -123,61 +119,6 @@ void qMRMLLayoutThreeDViewFactory::deleteView(vtkMRMLAbstractViewNode* viewNode)
 }
 
 //------------------------------------------------------------------------------
-// qMRMLLayoutChartViewFactory
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-//------------------------------------------------------------------------------
-qMRMLLayoutChartViewFactory::qMRMLLayoutChartViewFactory(QObject* parent)
-  : qMRMLLayoutViewFactory(parent)
-{
-}
-
-//------------------------------------------------------------------------------
-QString qMRMLLayoutChartViewFactory::viewClassName()const
-{
-  return "vtkMRMLChartViewNode";
-}
-
-//------------------------------------------------------------------------------
-vtkMRMLColorLogic* qMRMLLayoutChartViewFactory::colorLogic()const
-{
-  return this->ColorLogic;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutChartViewFactory::setColorLogic(vtkMRMLColorLogic* colorLogic)
-{
-  this->ColorLogic = colorLogic;
-  foreach(QWidget* view, this->registeredViews())
-    {
-    qMRMLChartWidget* chartWidget = qobject_cast<qMRMLChartWidget*>(view);
-    Q_ASSERT(chartWidget);
-    chartWidget->setColorLogic(this->colorLogic());
-    }
-}
-
-//------------------------------------------------------------------------------
-QWidget* qMRMLLayoutChartViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
-{
-  if (!this->layoutManager() || !viewNode || !this->layoutManager()->viewport())
-    {
-    Q_ASSERT(viewNode);
-    return nullptr;
-    }
-
-  // There must be a unique ChartWidget per node
-  Q_ASSERT(!this->viewWidget(viewNode));
-
-  qMRMLChartWidget* chartWidget = new qMRMLChartWidget(this->layoutManager()->viewport());
-  chartWidget->setObjectName(QString("qMRMLChartWidget%1").arg(viewNode->GetLayoutName()));
-  chartWidget->setColorLogic(this->colorLogic()); /// \todo move color logic to view factory.
-  chartWidget->setMRMLScene(this->mrmlScene());
-  chartWidget->setMRMLChartViewNode(vtkMRMLChartViewNode::SafeDownCast(viewNode));
-
-  return chartWidget;
-}
-#endif
-
-//------------------------------------------------------------------------------
 // qMRMLLayoutTableViewFactory
 //------------------------------------------------------------------------------
 qMRMLLayoutTableViewFactory::qMRMLLayoutTableViewFactory(QObject* parent)
@@ -223,6 +164,25 @@ qMRMLLayoutPlotViewFactory::qMRMLLayoutPlotViewFactory(QObject* parent)
 QString qMRMLLayoutPlotViewFactory::viewClassName() const
 {
   return "vtkMRMLPlotViewNode";
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLColorLogic* qMRMLLayoutPlotViewFactory::colorLogic()const
+{
+  return this->ColorLogic;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutPlotViewFactory::setColorLogic(vtkMRMLColorLogic* colorLogic)
+{
+  this->ColorLogic = colorLogic;
+  /*
+  foreach(QWidget* view, this->registeredViews())
+    {
+    qMRMLPlotWidget* plotWidget = qobject_cast<qMRMLPlotWidget*>(view);
+    plotWidget->setColorLogic(this->colorLogic());
+    }
+  */
 }
 
 //------------------------------------------------------------------------------
@@ -291,11 +251,10 @@ QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
   qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   sliceWidget->setObjectName(QString("qMRMLSliceWidget%1").arg(viewNode->GetLayoutName()));
-  sliceWidget->setMRMLScene(this->mrmlScene());
+  // set slice node before setting the scene to allow using slice node names in the slice transform, display, and model nodes
   sliceWidget->setMRMLSliceNode(vtkMRMLSliceNode::SafeDownCast(viewNode));
+  sliceWidget->setMRMLScene(this->mrmlScene());
   sliceWidget->setSliceLogics(this->sliceLogics());
-  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
-  sliceWidget->sliceLogic()->SetMRMLApplicationLogic(applicationLogic);
   this->sliceLogics()->AddItem(sliceWidget->sliceLogic());
 
   return sliceWidget;
@@ -325,9 +284,6 @@ qMRMLLayoutManagerPrivate::qMRMLLayoutManagerPrivate(qMRMLLayoutManager& object)
   this->MRMLLayoutNode = nullptr;
   this->MRMLLayoutLogic = vtkMRMLLayoutLogic::New();
   this->ActiveMRMLThreeDViewNode = nullptr;
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  this->ActiveMRMLChartViewNode = nullptr;
-#endif
   this->ActiveMRMLTableViewNode = nullptr;
   this->ActiveMRMLPlotViewNode = nullptr;
   //this->SavedCurrentViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
@@ -355,12 +311,6 @@ void qMRMLLayoutManagerPrivate::init()
     new qMRMLLayoutSliceViewFactory;
   q->registerViewFactory(sliceViewFactory);
 
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  qMRMLLayoutChartViewFactory* chartViewFactory =
-    new qMRMLLayoutChartViewFactory;
-  q->registerViewFactory(chartViewFactory);
-#endif
-
   qMRMLLayoutTableViewFactory* tableViewFactory =
     new qMRMLLayoutTableViewFactory;
   q->registerViewFactory(tableViewFactory);
@@ -376,19 +326,6 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(vtkMRMLViewNode* node
   Q_Q(const qMRMLLayoutManager);
   return qobject_cast<qMRMLThreeDWidget*>(
         q->mrmlViewFactory("vtkMRMLViewNode")->viewWidget(node));
-}
-
-//------------------------------------------------------------------------------
-qMRMLChartWidget* qMRMLLayoutManagerPrivate::chartWidget(vtkMRMLChartViewNode* node)const
-{
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  Q_Q(const qMRMLLayoutManager);
-  return qobject_cast<qMRMLChartWidget*>(
-        q->mrmlViewFactory("vtkMRMLChartViewNode")->viewWidget(node));
-#else
-  Q_UNUSED(node);
-  return nullptr;
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -426,12 +363,6 @@ vtkMRMLNode* qMRMLLayoutManagerPrivate::viewNode(QWidget* widget)const
     {
     return qobject_cast<qMRMLThreeDWidget*>(widget)->mrmlViewNode();
     }
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  if (qobject_cast<qMRMLChartWidget*>(widget))
-    {
-    return qobject_cast<qMRMLChartWidget*>(widget)->mrmlChartViewNode();
-    }
-#endif
   if (qobject_cast<qMRMLTableWidget*>(widget))
     {
     return qobject_cast<qMRMLTableWidget*>(widget)->mrmlTableViewNode();
@@ -460,12 +391,6 @@ QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode)const
     {
     widget = this->threeDWidget(vtkMRMLViewNode::SafeDownCast(viewNode));
     }
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  if (vtkMRMLChartViewNode::SafeDownCast(viewNode))
-    {
-    widget = this->chartWidget(vtkMRMLChartViewNode::SafeDownCast(viewNode));
-    }
-#endif
   if (vtkMRMLTableViewNode::SafeDownCast(viewNode))
     {
     widget = this->tableWidget(vtkMRMLTableViewNode::SafeDownCast(viewNode));
@@ -509,36 +434,6 @@ void qMRMLLayoutManagerPrivate
     q->mrmlViewFactory("vtkMRMLViewNode")->activeRenderer());
   emit q->activeMRMLThreeDViewNodeChanged(
     vtkMRMLViewNode::SafeDownCast(node));
-}
-
-// --------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setActiveMRMLChartViewNode(vtkMRMLChartViewNode* node)
-{
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  Q_Q(qMRMLLayoutManager);
-  QObject::connect(q->mrmlViewFactory("vtkMRMLChartViewNode"),
-                   SIGNAL(activeViewNodeChanged(vtkMRMLAbstractViewNode*)),
-                   this, SLOT(onActiveChartViewNodeChanged(vtkMRMLAbstractViewNode*)),
-                   Qt::UniqueConnection);
-  q->mrmlViewFactory("vtkMRMLChartViewNode")->setActiveViewNode(node);
-#else
-  Q_UNUSED(node);
-#endif
-}
-
-// --------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate
-::onActiveChartViewNodeChanged(vtkMRMLAbstractViewNode* node)
-{
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  Q_Q(qMRMLLayoutManager);
-  emit q->activeChartRendererChanged(
-    q->mrmlViewFactory("vtkMRMLChartViewNode")->activeRenderer());
-  emit q->activeMRMLChartViewNodeChanged(
-    vtkMRMLChartViewNode::SafeDownCast(node));
-#else
-  Q_UNUSED(node);
-#endif
 }
 
 // --------------------------------------------------------------------------
@@ -961,21 +856,6 @@ int qMRMLLayoutManager::threeDViewCount()const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLLayoutManager::chartViewCount()const
-{
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLChartViewNode");
-  if (!viewFactory)
-    {
-    return 0;
-    }
-  return viewFactory->viewCount();
-#else
-  return 0;
-#endif
-}
-
-//------------------------------------------------------------------------------
 int qMRMLLayoutManager::tableViewCount()const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLTableViewNode");
@@ -1017,22 +897,6 @@ qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(const QString& name)const
     return nullptr;
     }
   return qobject_cast<qMRMLThreeDWidget*>(viewFactory->viewWidget(name));
-}
-
-//------------------------------------------------------------------------------
-qMRMLChartWidget* qMRMLLayoutManager::chartWidget(int id)const
-{
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLChartViewNode");
-  if (!viewFactory)
-    {
-    return nullptr;
-    }
-  return qobject_cast<qMRMLChartWidget*>(viewFactory->viewWidget(id));
-#else
-  Q_UNUSED(id);
-  return nullptr;
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -1084,33 +948,25 @@ vtkCollection *qMRMLLayoutManager::mrmlViewLogics() const
 //------------------------------------------------------------------------------
 void qMRMLLayoutManager::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
 {
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  qMRMLLayoutChartViewFactory* viewChartFactory =
-    qobject_cast<qMRMLLayoutChartViewFactory*>(this->mrmlViewFactory("vtkMRMLChartViewNode"));
-  if (!viewChartFactory)
+  qMRMLLayoutPlotViewFactory* viewFactory =
+    qobject_cast<qMRMLLayoutPlotViewFactory*>(this->mrmlViewFactory("vtkMRMLPlotViewNode"));
+  if (!viewFactory)
     {
     return;
     }
-  viewChartFactory->setColorLogic(colorLogic);
-#else
-  Q_UNUSED(colorLogic);
-#endif
+  viewFactory->setColorLogic(colorLogic);
 }
 
 //------------------------------------------------------------------------------
 vtkMRMLColorLogic* qMRMLLayoutManager::mrmlColorLogic()const
 {
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  qMRMLLayoutChartViewFactory* viewFactory =
-    qobject_cast<qMRMLLayoutChartViewFactory*>(this->mrmlViewFactory("vtkMRMLChartViewNode"));
+  qMRMLLayoutPlotViewFactory* viewFactory =
+    qobject_cast<qMRMLLayoutPlotViewFactory*>(this->mrmlViewFactory("vtkMRMLPlotViewNode"));
   if (!viewFactory)
     {
     return nullptr;
     }
   return viewFactory->colorLogic();
-#else
-  return nullptr;
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -1182,17 +1038,6 @@ vtkMRMLViewNode* qMRMLLayoutManager::activeMRMLThreeDViewNode()const
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLChartViewNode* qMRMLLayoutManager::activeMRMLChartViewNode()const
-{
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  return vtkMRMLChartViewNode::SafeDownCast(
-    this->mrmlViewFactory("vtkMRMLChartViewNode")->activeViewNode());
-#else
-  return nullptr;
-#endif
-}
-
-//------------------------------------------------------------------------------
 vtkMRMLTableViewNode* qMRMLLayoutManager::activeMRMLTableViewNode()const
 {
   return vtkMRMLTableViewNode::SafeDownCast(
@@ -1210,16 +1055,6 @@ vtkMRMLPlotViewNode *qMRMLLayoutManager::activeMRMLPlotViewNode()const
 vtkRenderer* qMRMLLayoutManager::activeThreeDRenderer()const
 {
   return this->mrmlViewFactory("vtkMRMLViewNode")->activeRenderer();
-}
-
-//------------------------------------------------------------------------------
-vtkRenderer* qMRMLLayoutManager::activeChartRenderer()const
-{
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-  return this->mrmlViewFactory("vtkMRMLChartViewNode")->activeRenderer();
-#else
-  return nullptr;
-#endif
 }
 
 //------------------------------------------------------------------------------

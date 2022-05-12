@@ -2,6 +2,7 @@
 #include "ui_qSlicerScalarVolumeDisplayWidget.h"
 
 // Qt includes
+#include <QToolButton>
 
 // CTK includes
 #include <ctkVTKColorTransferFunction.h>
@@ -23,6 +24,15 @@
 #include <vtkImageData.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
+
+// Qt includes
+#include <QDebug>
+
+// Slicer includes
+#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerApplication.h"
+#include "qSlicerModuleManager.h"
+#include "vtkSlicerVolumesLogic.h"
 
 // STD includes
 #include <limits>
@@ -82,27 +92,50 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
   barsItem->setBarWidth(1.);
   scene->addItem(barsItem);
 
+  // Add mapping from presets defined in the Volumes module logic (VolumeDisplayPresets.json)
+
+    // read volume preset names from volumes logic
+  vtkSlicerVolumesLogic* volumesModuleLogic = (qSlicerCoreApplication::application() ? vtkSlicerVolumesLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleLogic("Volumes")) : nullptr);
+  if (volumesModuleLogic)
+  {
+    QLayout* volumeDisplayPresetsLayout = this->PresetsWidget->layout();
+    if (!volumeDisplayPresetsLayout)
+      {
+      volumeDisplayPresetsLayout = new QHBoxLayout;
+      this->PresetsWidget->setLayout(volumeDisplayPresetsLayout);
+      }
+    std::vector<std::string> presetIds = volumesModuleLogic->GetVolumeDisplayPresetIDs();
+    for (const auto& presetId : presetIds)
+      {
+      vtkSlicerVolumesLogic::VolumeDisplayPreset preset = volumesModuleLogic->GetVolumeDisplayPreset(presetId);
+      QString presetIdStr = QString::fromStdString(presetId);
+      QString presetName = q->tr(preset.name.c_str());
+      QToolButton* presetButton = new QToolButton();
+      presetButton->setObjectName(presetIdStr);
+      presetButton->setToolTip(q->tr(preset.name.c_str()) + "\n" + q->tr(preset.description.c_str()));
+      if (!preset.icon.empty())
+        {
+        presetButton->setIcon(QIcon(QString::fromStdString(preset.icon)));
+        presetButton->setIconSize(QSize(45, 45));
+        }
+      volumeDisplayPresetsLayout->addWidget(presetButton);
+      QObject::connect(presetButton, SIGNAL(clicked()),
+        q, SLOT(onPresetButtonClicked()));
+      }
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << " failed: Module logic 'Volumes' not found. No volume display presets will be added.";
+    return;
+    }
+
   QObject::connect(this->InterpolateCheckbox, SIGNAL(toggled(bool)),
                    q, SLOT(setInterpolate(bool)));
   QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(setColorNode(vtkMRMLNode*)));
-
   QObject::connect(this->LockWindowLevelButton, SIGNAL(clicked()),
                    q, SLOT(onLockWindowLevelButtonClicked()));
-  QObject::connect(this->CTBonePresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->CTAirPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->PETPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->CTAbdomenPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->CTBrainPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->CTLungPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
-  QObject::connect(this->DTIPresetToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPresetButtonClicked()));
   QObject::connect(this->HistogramGroupBox, SIGNAL(toggled(bool)),
                    q, SLOT(onHistogramSectionExpanded(bool)));
 }
@@ -213,13 +246,7 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
       d->LockWindowLevelButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
       d->LockWindowLevelButton->setToolTip(QString("Click to prevent modification of Window/Level values"));
       }
-    d->CTBonePresetToolButton->setEnabled(!lockedWindowLevel);
-    d->CTAirPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->PETPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->CTAbdomenPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->CTBrainPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->CTLungPresetToolButton->setEnabled(!lockedWindowLevel);
-    d->DTIPresetToolButton->setEnabled(!lockedWindowLevel);
+    d->PresetsWidget->setEnabled(!lockedWindowLevel);
     d->MRMLWindowLevelWidget->setEnabled(!lockedWindowLevel);
     }
   this->updateHistogram();
@@ -255,7 +282,7 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   // Screen resolution is limited, therefore it does not make sense to compute
   // many bin counts.
   const int maxBinCount = 1000;
-  if (voxelValues->GetArrayType() == VTK_FLOAT || voxelValues->GetArrayType() == VTK_DOUBLE)
+  if (voxelValues->GetDataType() == VTK_FLOAT || voxelValues->GetDataType() == VTK_DOUBLE)
     {
     d->Histogram->setNumberOfBins(maxBinCount);
     }
@@ -400,77 +427,18 @@ void qSlicerScalarVolumeDisplayWidget::onLockWindowLevelButtonClicked()
 void qSlicerScalarVolumeDisplayWidget::onPresetButtonClicked()
 {
   QToolButton* preset = qobject_cast<QToolButton*>(this->sender());
-  this->setPreset(preset->accessibleName());
+  this->setPreset(preset->objectName());
 }
 
 // --------------------------------------------------------------------------
-void qSlicerScalarVolumeDisplayWidget::setPreset(const QString& presetName)
+void qSlicerScalarVolumeDisplayWidget::setPreset(const QString& presetId)
 {
   Q_D(qSlicerScalarVolumeDisplayWidget);
-  QString colorNodeID;
-  double window = -1.;
-  double level = std::numeric_limits<double>::max();
-  if (presetName == "CT-Bone")
+  vtkSlicerVolumesLogic* volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(qSlicerApplication::application()->moduleLogic("Volumes"));
+  if (!volumesModuleLogic)
     {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 1000.;
-    level = 400.;
+    qCritical() << Q_FUNC_INFO << " failed: volumes module logic is not available";
+    return;
     }
-  else if (presetName == "CT-Air")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 1000.;
-    level = -426.;
-    }
-  else if (presetName == "PET")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeRainbow";
-    window = 10000.;
-    level = 6000.;
-    }
-  else if (presetName == "CT-Abdomen")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 350.;
-    level = 40.;
-    }
-  else if (presetName == "CT-Brain")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 100.;
-    level = 50.;
-    }
-  else if (presetName == "CT-Lung")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 1400.;
-    level = -500.;
-    }
-  else if (presetName == "DTI")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeRainbow";
-    window = 1.0;
-    level = 0.5;
-    }
-  vtkMRMLNode* colorNode = this->mrmlScene()->GetNodeByID(colorNodeID.toUtf8());
-  if (colorNode)
-    {
-    this->setColorNode(colorNode);
-    }
-  if (window != -1 || level!= std::numeric_limits<double>::max())
-    {
-    d->MRMLWindowLevelWidget->setAutoWindowLevel(qMRMLWindowLevelWidget::Manual);
-    }
-  if (window != -1 && level != std::numeric_limits<double>::max())
-    {
-    d->MRMLWindowLevelWidget->setWindowLevel(window, level);
-    }
-  else if (window != -1)
-    {
-    d->MRMLWindowLevelWidget->setWindow(window);
-    }
-  else if (level != std::numeric_limits<double>::max())
-    {
-    d->MRMLWindowLevelWidget->setLevel(level);
-    }
+  volumesModuleLogic->ApplyVolumeDisplayPreset(this->volumeDisplayNode(), presetId.toStdString());
 }

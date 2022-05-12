@@ -1,9 +1,9 @@
-import os
-import unittest
-from __main__ import vtk, qt, ctk, slicer
+import qt
+
+import slicer
 from slicer.util import VTKObservationMixin
 from slicer.ScriptedLoadableModule import *
-import time
+
 
 #
 # CLIEventTest
@@ -34,6 +34,7 @@ class CLIEventTest(ScriptedLoadableModule):
     tester = CLIEventTestTest()
     tester.runTest()
 
+
 #
 # CLIEventTestWidget
 #
@@ -42,6 +43,7 @@ class CLIEventTestWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # CLIEventTestLogic
@@ -72,6 +74,7 @@ class CLIEventTestLogic(VTKObservationMixin):
 
     if self.StatusEventCallback:
       self.StatusEventCallback(cliNode)
+
 
 #
 # CLIEventTestLogic

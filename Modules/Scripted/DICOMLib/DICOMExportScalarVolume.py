@@ -1,7 +1,6 @@
-import os
-import glob
-import slicer
 import logging
+
+import slicer
 
 #########################################################
 #
@@ -17,6 +16,7 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 """
 #
 #########################################################
+
 
 class DICOMExportScalarVolume:
   """Code to export slicer data to dicom database
@@ -101,7 +101,7 @@ class DICOMExportScalarVolume:
     TODO: confirm that resulting file is valid - may need to change the CLI
     to include more parameters or do a new implementation ctk/DCMTK
     See:
-    http://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
+    https://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
     TODO: add more parameters to the CLI and/or find a different
     mechanism for creating the DICOM files
     """
@@ -142,8 +142,11 @@ class DICOMExportScalarVolume:
     # UIDs
     cliparameters['studyInstanceUID'] = self.tags['Study Instance UID']
     cliparameters['seriesInstanceUID'] = self.tags['Series Instance UID']
-    cliparameters['frameOfReferenceInstanceUID'] = self.tags['Frame of Reference Instance UID']
-
+    if 'Frame of Reference UID' in self.tags:
+      cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
+    elif 'Frame of Reference Instance UID' in self.tags:
+      logging.warning('Usage of "Frame of Reference Instance UID" is deprecated, use "Frame of Reference UID" instead.')
+      cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
     cliparameters['inputVolume'] = self.volumeNode.GetID()
 
     cliparameters['dicomDirectory'] = self.directory

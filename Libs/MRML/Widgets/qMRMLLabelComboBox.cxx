@@ -5,6 +5,7 @@
 
 // CTK includes
 #include <ctkComboBox.h>
+#include <ctkUtils.h>
 
 // qMRML includes
 #include "qMRMLLabelComboBox.h"
@@ -130,14 +131,14 @@ qMRMLLabelComboBox::~qMRMLLabelComboBox() = default;
 void qMRMLLabelComboBox::printAdditionalInfo()
 {
   Q_D(qMRMLLabelComboBox);
-  qDebug().nospace() << "qMRMLLabelComboBox:" << this << endl
-      << " MRMLColorNode:" << d->ColorNode << endl
-      << "  ClassName:" << (d->ColorNode ? d->ColorNode->GetClassName() : "null") << endl
-      << "  ID:" << (d->ColorNode ? d->ColorNode->GetID() : "null") << endl
-      << "  Type:" << (d->ColorNode ? d->ColorNode->GetTypeAsString() : "null") << endl
-      << " CurrentColor:" << d->CurrentColor << endl
-      << " NoneEnabled:" << d->NoneEnabled << endl
-      << " ColorNameVisible:" << d->ColorNameVisible << endl;
+  qDebug().nospace() << "qMRMLLabelComboBox:" << this << ctk::endl
+      << " MRMLColorNode:" << d->ColorNode << ctk::endl
+      << "  ClassName:" << (d->ColorNode ? d->ColorNode->GetClassName() : "null") << ctk::endl
+      << "  ID:" << (d->ColorNode ? d->ColorNode->GetID() : "null") << ctk::endl
+      << "  Type:" << (d->ColorNode ? d->ColorNode->GetTypeAsString() : "null") << ctk::endl
+      << " CurrentColor:" << d->CurrentColor << ctk::endl
+      << " NoneEnabled:" << d->NoneEnabled << ctk::endl
+      << " ColorNameVisible:" << d->ColorNameVisible << ctk::endl;
 }
 
 // ---------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
-import unittest
-import vtk, qt, ctk, slicer
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 
 
@@ -57,8 +58,6 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
       return False
     else:
       print('Success in comparing MRHead vs itself with epsilon',volumesLogic.GetCompareVolumeGeometryEpsilon())
-
-
 
     #
     # clone the volume so can test for mismatches in geometry with

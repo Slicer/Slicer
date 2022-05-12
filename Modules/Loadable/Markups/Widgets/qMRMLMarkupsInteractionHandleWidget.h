@@ -53,7 +53,6 @@ public:
 
 public slots:
   /// Set the MRML display node
-  void setMRMLDisplayNode(vtkMRMLNode* node);
   void setMRMLDisplayNode(vtkMRMLMarkupsDisplayNode* node);
 
 protected slots:

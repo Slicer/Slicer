@@ -2,9 +2,9 @@
 
 ## Markups json file format (.mrk.json)
 
-All markups node types (fiducials, line, angle, curve, etc.) can be saved to and loaded from json files.
+All markups node types (point list, line, angle, curve, etc.) can be saved to and loaded from json files. Detailed specification of all elements of the file is available in the [JSON schema](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Markups/Resources/Schema).
 
-A simple example that specifies a markups fiducial list with 3 points that can be saved to a `myexample.mrk.json` file and loaded into Slicer:
+A simple example that specifies a markups point list with 3 points that can be saved to a `myexample.mrk.json` file and loaded into Slicer:
 
 ```
 {"@schema": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.0.json#",
@@ -15,12 +15,9 @@ A simple example that specifies a markups fiducial list with 3 points that can b
 ]}]}
 ```
 
-All elements and properties are specified in this [JSON schema](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.0.json).
-
-
 ## Markups fiducial point list file format (.fcsv)
 
-The Markups Fiducial storage node uses a comma separated value file with a custom header to store the fiducials on disk. A simple example:
+vtkMRMLMarkupsFiducialStorageNode uses a comma separated value file with a custom header to store the control points on disk. A simple example:
 
 ```
 # Markups fiducial file version = 4.13
@@ -37,15 +34,15 @@ File header:
 - Line 3: a comment line explaining the fields in the csv (`columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID`)
 
 Each line after the header specifies a control point. Meaning of columns:
-- id: a string giving a unique id for this fiducial, usually based on the class name
-- x,y,z: the floating point coordinate of the fiducial point
-- ow,ox,oy,oz: the orientation quaternion of this fiducial, angle and axis, default 0,0,0,1 (or 0,0,0,0,0,0,1.0)
-- vis: the visibility flag for this fiducial, 0 or 1, default 1
-- sel: the selected flag for this fiducial, 0 or 1, default 1
-- lock: the locked flag for this fiducial, 0 or 1, default 0
-- label: the name for this fiducial, displayed beside the glyph, with quotes around it if there is a comma in the field
-- desc: a string description for this fiducial, optional
-- associatedNodeID = an id of a node in the scene with which the fiducial is associated, for example the volume or model on which the fiducial was placed, optional
+- id: a string giving a unique id for this control point, usually based on the class name
+- x,y,z: the floating point coordinate of the control point
+- ow,ox,oy,oz: the orientation quaternion of this control point, angle and axis, default 0,0,0,1 (or 0,0,0,0,0,0,1.0)
+- vis: the visibility flag for this control point, 0 or 1, default 1
+- sel: the selected flag for this control point, 0 or 1, default 1
+- lock: the locked flag for this control point, 0 or 1, default 0
+- label: the name for this control point, displayed beside the glyph, with quotes around it if there is a comma in the field
+- desc: a string description for this control point, optional
+- associatedNodeID = an id of a node in the scene with which the control point is associated, for example the volume or model on which the control point was placed, optional
 
 ## Markups control points table file format (.csv, .tsv)
 

@@ -1,6 +1,7 @@
 import slicer
 import os
 
+
 def testMRMLSceneImportAndExport():
   tempDir = slicer.app.temporaryPath
   scenePath = tempDir + '/temp_scene.mrml'
@@ -12,6 +13,7 @@ def testMRMLSceneImportAndExport():
   os.remove(scenePath)
   if not success:
     raise Exception('Importing back a MRML scene failed !')
+
 
 if __name__ == '__main__':
   testMRMLSceneImportAndExport()

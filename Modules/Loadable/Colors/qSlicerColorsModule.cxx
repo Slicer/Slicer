@@ -24,6 +24,9 @@
 // CTK includes
 #include <ctkColorDialog.h>
 
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+
 // Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
@@ -40,6 +43,14 @@
 // Slicer Logic includes
 #include <vtkSlicerApplicationLogic.h>
 #include "vtkSlicerColorLogic.h"
+
+// SubjectHierarchy Plugins includes
+#include "qSlicerSubjectHierarchyPluginHandler.h"
+#include "qSlicerSubjectHierarchyColorLegendPlugin.h"
+
+// DisplayableManager initialization
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkSlicerColorsModuleMRMLDisplayableManager)
 
 //-----------------------------------------------------------------------------
 class qSlicerColorsModulePrivate
@@ -82,6 +93,14 @@ QIcon qSlicerColorsModule::icon()const
 void qSlicerColorsModule::setup()
 {
   Q_D(qSlicerColorsModule);
+
+  // DisplayableManager initialization
+  // Register color legend displayable manager for slice and 3D views
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLColorLegendDisplayableManager");
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLColorLegendDisplayableManager");
+
   qSlicerApplication * app = qSlicerApplication::application();
   if (!app)
     {
@@ -116,6 +135,10 @@ void qSlicerColorsModule::setup()
                                 "Labels", SIGNAL(colorSelected(QColor)),
                                 SIGNAL(colorNameSelected(QString)));
   ctkColorDialog::setDefaultTab(1);
+
+  // Register Subject Hierarchy core plugins
+  qSlicerSubjectHierarchyColorLegendPlugin* colorLegendPlugin = new qSlicerSubjectHierarchyColorLegendPlugin();
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(colorLegendPlugin);
 }
 
 //-----------------------------------------------------------------------------
@@ -143,20 +166,20 @@ vtkMRMLAbstractLogic* qSlicerColorsModule::createLogic()
 QString qSlicerColorsModule::helpText()const
 {
   QString help =
-    "The <b>Colors Module</b> manages color look up tables.<br>"
-    "Tables are used by mappers to translate between an integer and a color "
-    "value for display of models and volumes.<br>Slicer supports three kinds "
-    "of tables:<br>"
-    "1. Continuous scales, like the greyscale table.<br>"
-    "2. Parametric tables, defined by an equation, such as the FMRIPA table.<br>"
-    "3. Discrete tables, such as those read in from a file.<br><br>"
-    "You can create a duplicate of a color table to allow editing the "
-    "names and values and color by clicking on the folder+ icon.<br>"
-    "You can then save the new color table via the File -> Save interface.<br>"
-    "The color file format is a plain text file with the .txt or .ctbl extension. "
-    "Each line in the file has:<br>"
-    "label\tname\tR\tG\tB\tA<br>label is an integer, name a string, and RGBA are "
-    "0-255.";
+    "The <b>Colors Module</b> manages color look up tables, stored in Color nodes.<br>"
+    "These tables translate between a numeric value and a color "
+    "for displaying of various data types, such as volumes and models.<br>"
+    "Two lookup table types are available:<br>"
+    "<ul>"
+    "<li>Discrete table: List of named colors are specified (example: GenericAnatomyColors). "
+    "Discrete tables can be used for continuous mapping as well, in this case the colors "
+    "are used as samples at equal distance within the specified range, and smoothly "
+    "interpolating between them (example: Grey).</li>"
+    "<li>Continuous scale: Color is specified for arbitrarily chosen numerical values "
+    "and color value can be computed by smoothly interpolating between these values "
+    "(example: PET-DICOM). No names are specified for colors.</li>"
+    "All built-in color tables are read-only. To edit colors, create a copy "
+    "of the color table by clicking on the 'copy' folder icon.<br>";
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -176,6 +199,7 @@ QStringList qSlicerColorsModule::contributors()const
   moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
   moduleContributors << QString("Julien Finet (Kitware)");
   moduleContributors << QString("Ron Kikinis (SPL, BWH)");
+  moduleContributors << QString("Mikhail Polkovnikov (IHEP)");
   return moduleContributors;
 }
 

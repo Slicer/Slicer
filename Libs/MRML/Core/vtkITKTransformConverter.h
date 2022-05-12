@@ -5,7 +5,7 @@
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+  See Copyright.txt or https://www.kitware.com/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -163,7 +163,7 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
   // (1) to ensure the objects are of the right type string comparison is done
   // (2) static_cast is used instead of dynamic_cast.
   // See InsightSoftwareConsortium/ITK@d1e9fe2
-  // and see http://stackoverflow.com/questions/8024010/why-do-template-class-functions-have-to-be-declared-in-the-same-translation-unit
+  // and see https://stackoverflow.com/questions/8024010/why-do-template-class-functions-have-to-be-declared-in-the-same-translation-unit
   //
   // The disadvantage of this approach is that each supported class name has to be explicitly listed here and if the class hierarchy changes in ITK
   // then the static cast may produce invalid results. Also, even if the transform class name is matching,

@@ -69,7 +69,7 @@ public:
   bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr,
     vtkMRMLMessageCollection* userMessages = nullptr) override;
 
-  /// Helper funcion to display result of loadNodes.
+  /// Helper function to display result of loadNodes.
   /// If success is set false then an error popup is displayed.
   /// If success is set to true then a popup is only displayed if error or warning messages are logged.
   /// If a popup is displayed then all the user-displayable messages are displayed in a collapsed "Details" section.

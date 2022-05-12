@@ -1,7 +1,5 @@
 import unittest
-import slicer
-import os
-import shutil
+
 
 class SlicerPythonLzmaTests(unittest.TestCase):
   """This test verifies that Python is build with lzma enabled.

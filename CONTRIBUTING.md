@@ -134,7 +134,7 @@ blog post.
 
 After changes are integrated, every evening at 10pm EST (3am UTC), Slicer build bots (aka factories)
 will build, test and package the Slicer application and all its extensions on Linux, macOS
-and Windows. Results are published daily on CDash ([Stable](http://slicer.cdash.org/index.php?project=Slicer4) & [Preview](http://slicer.cdash.org/index.php?project=SlicerPreview))
+and Windows. Results are published daily on CDash ([Stable](https://slicer.cdash.org/index.php?project=SlicerStable) & [Preview](https://slicer.cdash.org/index.php?project=SlicerPreview))
 and developers that introduced changes resulting in build or test failures are notified by
 email.
 
@@ -161,7 +161,7 @@ email.
 
 
 *The initial version of these guidelines was established during the [winter
- project week 2017](http://www.na-mic.org/Wiki/index.php/2017_Winter_Project_Week/UpdatingCommunityForums).*
+ project week 2017](https://www.na-mic.org/Wiki/index.php/2017_Winter_Project_Week/UpdatingCommunityForums).*
 
 #### Benevolent dictators for life
 

@@ -1,23 +1,24 @@
-# Test restoring a scene with multiple lists with different number
-# of fiducials
+# Test restoring a scene with multiple lists with different number control points
 
-# first fiducial list
+import slicer
+
+# first control point list
 fidNode1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "FidNode1")
 fidNode1.CreateDefaultDisplayNodes()
 coords = [0.0, 0.0, 0.0]
 numFidsInList1 = 5
 for i in range(numFidsInList1):
-  fidNode1.AddFiducialFromArray(coords)
+  fidNode1.AddControlPoint(coords)
   coords[0] += 1.0
   coords[1] += 2.0
   coords[2] += 1.0
 
-# second fiducial list
+# second control point list
 fidNode2 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "FidNode2")
 fidNode2.CreateDefaultDisplayNodes()
 numFidsInList2 = 10
 for i in range(numFidsInList2):
-  fidNode2.AddFiducialFromArray(coords)
+  fidNode2.AddControlPoint(coords)
   coords[0] += 1.0
   coords[1] += 1.0
   coords[2] += 3.0
@@ -28,12 +29,12 @@ sv = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSceneViewNode")
 sv.StoreScene()
 
 # add a third list that will get removed on restore
-# second fiducial list
+# second control point list
 fidNode3 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "FidNode3")
 fidNode3.CreateDefaultDisplayNodes()
 numFidsInList3 = 2
 for i in range(numFidsInList3):
-  fidNode3.AddFiducialFromArray(coords)
+  fidNode3.AddControlPoint(coords)
   coords[0] += 1.0
   coords[1] += 2.0
   coords[2] += 3.0
@@ -43,12 +44,12 @@ sv.RestoreScene()
 
 numFidNodesAfterRestore = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode')
 if numFidNodesAfterRestore != numFidNodesBeforeStore:
-  print("After restoring the scene, expected ", numFidNodesBeforeStore, " fiducial nodes, but have ", numFidNodesAfterRestore)
-  exceptionMessage = "After restoring the scene, expected " + str(numFidNodesBeforeStore) + " fiducial nodes, but have " + str(numFidNodesAfterRestore)
+  print("After restoring the scene, expected ", numFidNodesBeforeStore, " control points nodes, but have ", numFidNodesAfterRestore)
+  exceptionMessage = "After restoring the scene, expected " + str(numFidNodesBeforeStore) + " control points nodes, but have " + str(numFidNodesAfterRestore)
   raise Exception(exceptionMessage)
 
 fid1AfterRestore = slicer.mrmlScene.GetFirstNodeByName("FidNode1")
-numFidsInList1AfterRestore = fid1AfterRestore.GetNumberOfMarkups()
+numFidsInList1AfterRestore = fid1AfterRestore.GetNumberOfControlPoints()
 print("After restore, list with name FidNode1 has id ", fid1AfterRestore.GetID(), " and num fids = ", numFidsInList1AfterRestore)
 if numFidsInList1AfterRestore != numFidsInList1:
   exceptionMessage = "After restoring list 1, id = " + fid1AfterRestore.GetID()
@@ -57,7 +58,7 @@ if numFidsInList1AfterRestore != numFidsInList1:
   raise Exception(exceptionMessage)
 
 fid2AfterRestore = slicer.mrmlScene.GetFirstNodeByName("FidNode2")
-numFidsInList2AfterRestore = fid2AfterRestore.GetNumberOfMarkups()
+numFidsInList2AfterRestore = fid2AfterRestore.GetNumberOfControlPoints()
 print("After restore, list with name FidNode2 has id ", fid2AfterRestore.GetID(), " and num fids = ", numFidsInList2AfterRestore)
 if numFidsInList2AfterRestore != numFidsInList2:
   exceptionMessage = "After restoring list 2,  id = " + fid2AfterRestore.GetID()
@@ -71,9 +72,6 @@ td = lm.threeDWidget(0)
 mfm = td.threeDView().displayableManagerByClassName("vtkMRMLMarkupsDisplayableManager")
 h = mfm.GetHelper()
 print('Helper = ',h)
-
-# Markups widget classes are not imported into Python by default
-import vtkSlicerMarkupsModuleVTKWidgetsPython
 
 for markupsNode in [fid1AfterRestore, fid2AfterRestore]:
   markupsWidget = h.GetWidget(markupsNode)
@@ -91,7 +89,7 @@ for markupsNode in [fid1AfterRestore, fid2AfterRestore]:
     worldPos = controlPointsPoly.GetPoint(s)
     print("control point ",s," world position = ",worldPos)
     fidPos = [0.0,0.0,0.0]
-    markupsNode.GetNthFiducialPosition(s,fidPos)
+    markupsNode.GetNthControlPointPosition(s,fidPos)
     xdiff = fidPos[0] - worldPos[0]
     ydiff = fidPos[1] - worldPos[1]
     zdiff = fidPos[2] - worldPos[2]

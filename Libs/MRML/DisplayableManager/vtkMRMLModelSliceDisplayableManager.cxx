@@ -179,10 +179,9 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal::IsVisible(vtkMRMLDisplayN
     return false;
     }
   bool visibleOnNode = true;
-  vtkMRMLSliceNode* sliceNode = this->SliceNode;
-  if (sliceNode)
+  if (this->SliceNode)
     {
-    visibleOnNode = displayNode->GetVisibility(sliceNode->GetID());
+    visibleOnNode = displayNode->GetVisibility() && displayNode->IsDisplayableInView(this->SliceNode->GetID());
     }
   else
     {
@@ -626,6 +625,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
   vtkProperty2D* actorProperties = actor->GetProperty();
   actorProperties->SetColor(displayNode->GetColor());
+  actorProperties->SetPointSize(displayNode->GetSliceIntersectionThickness());
   actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness());
   actorProperties->SetOpacity(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
 

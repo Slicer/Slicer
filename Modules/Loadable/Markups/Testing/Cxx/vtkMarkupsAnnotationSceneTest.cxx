@@ -157,8 +157,8 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  double markupPosition[3] = {0.0, 0.0, 0.0};
-  mfnode->GetNthFiducialPosition(0, markupPosition);
+  vtkVector3d posVector= mfnode->GetNthControlPointPositionVector(0);
+  double* markupPosition = posVector.GetData();
   double diff = vtkMath::Distance2BetweenPoints(annotationPosition1, markupPosition);
   if (diff > 0.01)
     {
@@ -172,8 +172,8 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  double markupPosition2[3] = {0.0, 0.0, 0.0};
-  mfnode->GetNthFiducialPosition(1, markupPosition2);
+  vtkVector3d posVector2 = mfnode->GetNthControlPointPositionVector(1);
+  double* markupPosition2 = posVector2.GetData();
   diff = vtkMath::Distance2BetweenPoints(annotationPosition2, markupPosition2);
   if (diff > 0.01)
     {

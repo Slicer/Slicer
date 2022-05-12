@@ -2,10 +2,10 @@
 <executable>
   <category>Registration</category>
   <title>General Registration (BRAINS)</title>
-  <description>Register a three-dimensional volume to a reference volume (Mattes Mutual Information by default). Method described in BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images, Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007. http://hdl.handle.net/1926/1291</description>
+  <description>Register a three-dimensional volume to a reference volume (Mattes Mutual Information by default). Method described in BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images, Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007. https://hdl.handle.net/1926/1291</description>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsfit.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
-  <contributor>Hans J. Johnson (hans-johnson -at- uiowa.edu, http://www.psychiatry.uiowa.edu), Ali Ghayoor</contributor>
+  <contributor>Hans J. Johnson (hans-johnson -at- uiowa.edu, https://www.psychiatry.uiowa.edu), Ali Ghayoor</contributor>
   <acknowledgements><![CDATA[Hans Johnson(1,3,4); Kent Williams(1); Gregory Harris(1), Vincent Magnotta(1,2,3);  Andriy Fedorov(5); Ali Ghayoor(4) 1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Radiology, 3=University of Iowa Department of Biomedical Engineering, 4=University of Iowa Department of Electrical and Computer Engineering, 5=Surgical Planning Lab, Harvard]]>  </acknowledgements>
   <version>5.4.0</version>
 

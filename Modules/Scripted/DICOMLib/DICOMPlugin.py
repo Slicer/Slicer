@@ -1,5 +1,6 @@
-import slicer
 import logging
+
+import slicer
 
 #########################################################
 #
@@ -14,6 +15,7 @@ comment = """
 """
 #
 #########################################################
+
 
 #
 # DICOMLoadable
@@ -61,6 +63,7 @@ class DICOMLoadable:
       self.selected = qLoadable.selected
       self.confidence = qLoadable.confidence
 
+
 #
 # DICOMPlugin
 #
@@ -84,6 +87,7 @@ class DICOMPlugin:
     self.tags = {}
     self.tags['seriesDescription'] = "0008,103E"
     self.tags['seriesNumber'] = "0020,0011"
+    self.tags['frameOfReferenceUID'] = "0020,0052"
 
   def findPrivateTag(self, ds, group, element, privateCreator):
     """Helper function to get private tag from private creator name.
@@ -198,6 +202,7 @@ class DICOMPlugin:
     tags['seriesInstanceUID'] = "0020,000E"
     tags['seriesModality'] = "0008,0060"
     tags['seriesNumber'] = "0020,0011"
+    tags['frameOfReferenceUID'] = "0020,0052"
     tags['studyInstanceUID'] = "0020,000D"
     tags['studyID'] = "0020,0010"
     tags['studyDescription'] = "0008,1030"
@@ -220,7 +225,6 @@ class DICOMPlugin:
 
     # Validate dataNode argument
     if dataNode is None or not dataNode.IsA('vtkMRMLNode'):
-      import sys
       logging.error('Unable to create subject hierarchy items: invalid data node provided')
       return
 
@@ -242,6 +246,8 @@ class DICOMPlugin:
                           slicer.dicomDatabase.fileValue(firstFile, tags['seriesModality']) )
     shn.SetItemAttribute( seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(),
                           slicer.dicomDatabase.fileValue(firstFile, tags['seriesNumber']) )
+    shn.SetItemAttribute( seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMFrameOfReferenceUIDAttributeName(),
+                          slicer.dicomDatabase.fileValue(firstFile, tags['frameOfReferenceUID']) )
     # Set instance UIDs
     instanceUIDs = ""
     for file in loadable.files:
@@ -313,9 +319,9 @@ class DICOMPlugin:
         shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionAttributeName(),
                               studyDescription )
         studyDate = slicer.dicomDatabase.fileValue(firstFile,tags['studyDate'])
-        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDTagName(),
+        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDAttributeName(),
                               studyInstanceUid )
-        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName(),
+        shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDAttributeName(),
                               studyId )
         shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateAttributeName(),
                               studyDate )
@@ -332,7 +338,7 @@ class DICOMPlugin:
   def mapSOPClassUIDToModality(self, sopClassUID):
     # Note more specialized definitions can be specified for MR by more
     # specialized plugins, see codes 110800 and on in
-    # http://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_D.html
+    # https://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_D.html
     MRname2UID = {
       "MR Image Storage": "1.2.840.10008.5.1.4.1.1.4",
       "Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.1",

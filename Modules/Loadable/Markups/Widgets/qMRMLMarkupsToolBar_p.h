@@ -93,7 +93,6 @@ public slots:
   void onActivePlaceNodeClassNameChangedEvent();
   void onPlaceNodeClassNameListModifiedEvent();
   void onSetModule(const QString& moduleName);
-  void onAddNewMarkupsNodeByClass(const QString& className);
 
 public:
   vtkSmartPointer<vtkMRMLScene>            MRMLScene;
@@ -102,9 +101,9 @@ public:
   vtkWeakPointer<vtkMRMLSelectionNode>     SelectionNode;
 
   QString DefaultPlaceClassName;
-
-  qMRMLNodeComboBox* MarkupsNodeSelector;
-  qSlicerMarkupsPlaceWidget* MarkupsPlaceWidget;
+  QAction* NodeSelectorAction{nullptr};
+  qMRMLNodeComboBox* MarkupsNodeSelector{nullptr};
+  qSlicerMarkupsPlaceWidget* MarkupsPlaceWidget{nullptr};
 };
 
 #endif

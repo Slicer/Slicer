@@ -75,7 +75,7 @@ protected:
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
   bool ProcessWidgetSymmetricScaleStart(vtkMRMLInteractionEventData* eventData);
   bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData) override;
-  bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData);
+  bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData) override;
 
   void ScaleWidget(double eventPos[2]) override;
   void ScaleWidget(double eventPos[2], bool symmetricScale);

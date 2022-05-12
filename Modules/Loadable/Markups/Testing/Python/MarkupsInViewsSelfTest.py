@@ -1,8 +1,10 @@
-import os
-import time
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # MarkupsInViewsSelfTest
@@ -16,11 +18,12 @@ class MarkupsInViewsSelfTest(ScriptedLoadableModule):
     parent.dependencies = []
     parent.contributors = ["Nicole Aucoin (BWH)"]
     parent.helpText = """
-    This is a test case that exercises the fiducials with different settings on the display node to show only in certain views.
+    This is a test case that exercises the control points nodes with different settings on the display node to show only in certain views.
     """
     parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH and was partially funded by NIH grant 3P41RR013218-12S1.
 """
+
 
 #
 # qMarkupsInViewsSelfTestWidget
@@ -73,7 +76,6 @@ class MarkupsInViewsSelfTestWidget(ScriptedLoadableModuleWidget):
 class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
   def controlPointVisible3D(self, fidNode, viewNodeID, controlPointIndex):
-    import vtkSlicerMarkupsModuleVTKWidgetsPython
     lm = slicer.app.layoutManager()
     for v in range(lm.threeDViewCount):
      td = lm.threeDWidget(v)
@@ -91,7 +93,6 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     return False
 
   def controlPointVisibleSlice(self, fidNode, sliceNodeID, controlPointIndex):
-    import vtkSlicerMarkupsModuleVTKWidgetsPython
     lm = slicer.app.layoutManager()
     sliceNames = lm.sliceViewNames()
     for sliceName in sliceNames:
@@ -170,7 +171,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     lm = slicer.app.layoutManager()
     lm.setLayout(2)
 
-    # create a fiducial list
+    # create a control points list
     fidNode = slicer.vtkMRMLMarkupsFiducialNode()
     slicer.mrmlScene.AddNode(fidNode)
     fidNode.CreateDefaultDisplayNodes()
@@ -193,22 +194,22 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     eye1 = [33.4975, 79.4042, -10.2143]
     eye2 = [-31.283, 80.9652, -16.2143]
     nose = [4.61944, 114.526, -33.2143]
-    controlPointIndex = fidNode.AddFiducialFromArray(eye1)
+    controlPointIndex = fidNode.AddControlPoint(eye1)
     slicer.nodeEvents = self.nodeEvents
     assert(len(self.nodeEvents) == 1)
     assert(self.nodeEvents[0] == slicer.vtkMRMLMarkupsNode.PointPositionDefinedEvent)
-    fidNode.SetNthFiducialLabel(controlPointIndex, "eye-1")
-    controlPointIndex = fidNode.AddFiducialFromArray(eye2)
-    fidNode.SetNthFiducialLabel(controlPointIndex, "eye-2")
+    fidNode.SetNthControlPointLabel(controlPointIndex, "eye-1")
+    controlPointIndex = fidNode.AddControlPoint(eye2)
+    fidNode.SetNthControlPointLabel(controlPointIndex, "eye-2")
     # hide the second eye as a test of visibility flags
-    fidNode.SetNthFiducialVisibility(controlPointIndex, controlPointIndex)
-    controlPointIndex = fidNode.AddFiducialFromArray(nose)
-    fidNode.SetNthFiducialLabel(controlPointIndex, "nose")
+    fidNode.SetNthControlPointVisibility(controlPointIndex, controlPointIndex)
+    controlPointIndex = fidNode.AddControlPoint(nose)
+    fidNode.SetNthControlPointLabel(controlPointIndex, "nose")
 
     for tag in fidNodeObserverTags:
       fidNode.RemoveObserver(tag)
 
-    slicer.util.delayDisplay("Placed 3 fiducials")
+    slicer.util.delayDisplay("Placed 3 control points")
 
     # self.printViewAndSliceNodes()
 
@@ -281,7 +282,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     # test of the visibility in slice views
     displayNode.RemoveAllViewNodeIDs()
 
-    # jump to the last fiducial
+    # jump to the last control point
     slicer.modules.markups.logic().JumpSlicesToNthPointInMarkup(fidNode.GetID(), controlPointIndex, True)
     # refocus the 3D cameras as well
     slicer.modules.markups.logic().FocusCamerasOnNthPointInMarkup(fidNode.GetID(), controlPointIndex)

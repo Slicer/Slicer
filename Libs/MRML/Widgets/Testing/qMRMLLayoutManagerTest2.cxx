@@ -92,16 +92,6 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
       return EXIT_FAILURE;
       }
 
-    int expectedChartViewCout = 0;
-    int currentChartViewCount = layoutManager->chartViewCount();
-    if (expectedChartViewCout != currentChartViewCount)
-      {
-      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
-                << "  expectedChartViewCout:" << expectedChartViewCout << "\n"
-                << "  currentChartViewCount:" << currentChartViewCount << std::endl;
-      return EXIT_FAILURE;
-      }
-
     int expectedTableViewCout = 0;
     int currentTableViewCount = layoutManager->tableViewCount();
     if (expectedTableViewCout != currentTableViewCount)
@@ -155,16 +145,6 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
                 << "  expectedSliceViewCout:" << expectedSliceViewCout << "\n"
                 << "  currentSliceViewCount:" << currentSliceViewCount << std::endl;
-      return EXIT_FAILURE;
-      }
-
-    int expectedChartViewCout = 0;
-    int currentChartViewCount = layoutManager->chartViewCount();
-    if (expectedChartViewCout != currentChartViewCount)
-      {
-      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
-                << "  expectedChartViewCout:" << expectedChartViewCout << "\n"
-                << "  currentChartViewCount:" << currentChartViewCount << std::endl;
       return EXIT_FAILURE;
       }
 

@@ -78,28 +78,10 @@ qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject * parent )
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerFileNameItemDelegate::forceFileNameValidCharacters(const QString& filename)
-{
-  // Remove characters that are likely to cause problems in filename
-  QString sanitizedFilename;
-  QRegExp regExp = qSlicerFileNameItemDelegate::fileNameRegExp();
-  for (int i = 0; i < filename.size(); ++i)
-    {
-    if (regExp.exactMatch(QString(filename[i])))
-      {
-      sanitizedFilename += filename[i];
-      }
-    }
-  // Remove leading and trailing spaces
-  sanitizedFilename = sanitizedFilename.trimmed();
-  return sanitizedFilename;
-}
-
-//-----------------------------------------------------------------------------
 QString qSlicerFileNameItemDelegate::forceFileNameExtension(const QString& fileName, const QString& extension,
                                                    vtkMRMLScene* mrmlScene, const QString& nodeID)
 {
-  QString strippedFileName = qSlicerFileNameItemDelegate::forceFileNameValidCharacters(fileName);
+  QString strippedFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(fileName);
   if(!mrmlScene)
     {
     // no scene is set, cannot check extension
@@ -115,20 +97,10 @@ QString qSlicerFileNameItemDelegate::forceFileNameExtension(const QString& fileN
     qCritical() << Q_FUNC_INFO << " failed: node not found by ID " << qPrintable(nodeID);
     return QString();
     }
-  strippedFileName = qSlicerSaveDataDialogPrivate::stripKnownExtension(strippedFileName, object) + extension;
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  strippedFileName = coreIOManager->stripKnownExtension(strippedFileName, object) + extension;
   return strippedFileName;
-}
-
-//-----------------------------------------------------------------------------
-QRegExp qSlicerFileNameItemDelegate::fileNameRegExp(const QString& extension)
-{
-  QRegExp regExp("[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]{1,255}");
-
-  if (!extension.isEmpty())
-    {
-    regExp.setPattern(regExp.pattern() + extension);
-    }
-  return regExp;
 }
 
 //-----------------------------------------------------------------------------
@@ -280,7 +252,7 @@ void qSlicerSaveDataDialogPrivate::populateItems()
     storableNodes[std::string(node->GetID())] = node;
     }
 
-  // get all additioanl storable nodes for all scene views except "Master Scene View"
+  // get all additional storable nodes for all scene views except "Master Scene View"
   nodes.clear();
   this->MRMLScene->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
   for (it = nodes.begin(); it != nodes.end(); it++)
@@ -364,7 +336,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   // Scene Format
   QComboBox* sceneComboBoxWidget = new QComboBox(this->FileWidget);
   int currentFormat = -1;
-  QString currentExtension = Self::extractKnownExtension(sceneFileInfo.fileName(), this->MRMLScene);
+  QString currentExtension = coreIOManager->extractKnownExtension(sceneFileInfo.fileName(), this->MRMLScene);
   foreach(const QString& nameFilter,
           coreIOManager->fileWriterExtensions(this->MRMLScene))
     {
@@ -442,7 +414,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
 */
   // Get absolute filename and create storage node if needed
   QFileInfo fileInfo = this->nodeFileInfo(storableNode);
-  if (fileInfo == QFileInfo())
+  if (fileInfo.filePath().isEmpty())
     {
     return;
     }
@@ -511,7 +483,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
   // Remove characters from node name that cannot be used in file names
   // (same method as in qSlicerFileNameItemDelegate::forceFileNameExtension)
   QString inputNodeName(node->GetName() ? node->GetName() : "");
-  QString safeNodeName = qSlicerFileNameItemDelegate::forceFileNameValidCharacters(inputNodeName);
+  QString safeNodeName = qSlicerCoreIOManager::forceFileNameValidCharacters(inputNodeName);
 
   vtkMRMLStorageNode* snode = node->GetStorageNode();
   if (snode == nullptr)
@@ -719,7 +691,6 @@ ctkPathLineEdit* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(const Q
 {
   ctkPathLineEdit* directoryEdit = new ctkPathLineEdit("Output folder", QStringList(), ctkPathLineEdit::Dirs, this->FileWidget);
   directoryEdit->setCurrentPath(fileInfo.absolutePath());
-  directoryEdit->setSizeAdjustPolicy(ctkPathLineEdit::AdjustToMinimumContentsLength);
   directoryEdit->setShowHistoryButton(false);
   return directoryEdit;
 }
@@ -737,45 +708,6 @@ void qSlicerSaveDataDialogPrivate
       snode->GetUserMessages()->ClearMessages();
       }
     }
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerSaveDataDialogPrivate::extractKnownExtension(const QString& fileName, vtkObject* object)
-{
-  qSlicerCoreIOManager* coreIOManager =
-    qSlicerCoreApplication::application()->coreIOManager();
-
-  foreach(const QString& nameFilter,
-          coreIOManager->fileWriterExtensions(object))
-    {
-    QString extension = QString::fromStdString(
-      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
-    if (!extension.isEmpty() && fileName.endsWith(extension))
-      {
-      return extension;
-      }
-    }
-  return QString();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerSaveDataDialogPrivate::stripKnownExtension(const QString& fileName, vtkObject* object)
-{
-  QString strippedFileName(fileName);
-
-  QString knownExtension = Self::extractKnownExtension(fileName, object);
-  if (!knownExtension.isEmpty())
-    {
-    strippedFileName.chop(knownExtension.length());
-    // check that the extension wasn't doubled by having the file name be
-    // constructed from a node name that included the extension
-    if (strippedFileName.endsWith(knownExtension))
-      {
-      return Self::stripKnownExtension(strippedFileName, object);
-      }
-    return strippedFileName;
-    }
-  return strippedFileName;
 }
 
 //-----------------------------------------------------------------------------
@@ -1032,7 +964,7 @@ vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id, vtkMRMLScene* s
     for (it = nodes.begin(); it != nodes.end(); it++)
       {
       vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
-      // skip "Master Scene View" since it contains the same ndoes as the scene
+      // skip "Master Scene View" since it contains the same nodes as the scene
       if (svNode->GetName() && std::string("Master Scene View") == std::string(svNode->GetName()))
         {
         continue;
@@ -1402,7 +1334,7 @@ void qSlicerSaveDataDialogPrivate::onItemChanged(QTableWidgetItem* widgetItem)
   /// If it does not match any of the file extensions then the current file extension will
   /// be added (this way when the user just enters filename, the extension is added automatically).
   QTableWidgetItem* fileNameItem = this->FileWidget->item(widgetItem->row(), FileNameColumn);
-  QString strippedFileName = qSlicerFileNameItemDelegate::forceFileNameValidCharacters(fileNameItem->text());
+  QString strippedFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(fileNameItem->text());
 
   // Determine current file extension
   vtkObject* objectToSave = mrmlScene;
@@ -1416,7 +1348,9 @@ void qSlicerSaveDataDialogPrivate::onItemChanged(QTableWidgetItem* widgetItem)
       return;
       }
     }
-  QString currentExtension = Self::extractKnownExtension(strippedFileName, objectToSave);
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  QString currentExtension = coreIOManager->extractKnownExtension(strippedFileName, objectToSave);
 
   // Update file format selector according to current extension
   QComboBox* fileFormatsWidget = qobject_cast<QComboBox*>(this->FileWidget->cellWidget(widgetItem->row(), FileFormatColumn));

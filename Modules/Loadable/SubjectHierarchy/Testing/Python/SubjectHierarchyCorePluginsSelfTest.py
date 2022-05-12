@@ -1,7 +1,8 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # SubjectHierarchyCorePluginsSelfTest
@@ -35,6 +36,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
     tester = SubjectHierarchyCorePluginsSelfTestTest()
     tester.runTest()
 
+
 #
 # SubjectHierarchyCorePluginsSelfTestWidget
 #
@@ -42,6 +44,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
 class SubjectHierarchyCorePluginsSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # SubjectHierarchyCorePluginsSelfTestLogic
@@ -54,6 +57,7 @@ class SubjectHierarchyCorePluginsSelfTestLogic(ScriptedLoadableModuleLogic):
   this class and make use of the functionality without
   requiring an instance of the Widget
   """
+
   def __init__(self):
     pass
 
@@ -92,7 +96,6 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
 
     self.section_SetupPathsAndNames()
     self.section_MarkupRole()
-    self.section_ChartRole()
     self.section_CloneNode()
     self.section_SegmentEditor()
 
@@ -101,7 +104,6 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     # Set constants
     self.invalidItemID = slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID()
     self.sampleMarkupName = 'SampleMarkup'
-    self.sampleChartName = 'SampleChart'
     self.studyItemID = self.invalidItemID
     self.cloneNodeNamePostfix = slicer.qSlicerSubjectHierarchyCloneNodePlugin().getCloneNodeNamePostfix()
 
@@ -121,7 +123,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     slicer.mrmlScene.AddNode(markupsNode)
     markupsNode.SetName(self.sampleMarkupName)
     fiducialPosition = [100.0, 0.0, 0.0]
-    markupsNode.AddFiducialFromArray(fiducialPosition)
+    markupsNode.AddControlPoint(fiducialPosition)
     markupsShItemID = shNode.GetItemByDataNode(markupsNode)
     self.assertIsNotNone( markupsShItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )
@@ -135,27 +137,6 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.assertEqual( markupsShItemID, markupsShItemID2 )
     self.assertEqual( shNode.GetItemParent(markupsShItemID), self.studyItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )
-
-  # ------------------------------------------------------------------------------
-  def section_ChartRole(self):
-    self.delayDisplay("Chart role",self.delayMs)
-
-    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
-    self.assertIsNotNone( shNode )
-
-    # Create sample chart node
-    chartNode = slicer.vtkMRMLChartNode()
-    slicer.mrmlScene.AddNode(chartNode)
-    chartNode.SetName(self.sampleChartName)
-    chartShItemID = shNode.GetItemByDataNode(chartNode)
-    self.assertIsNotNone( chartShItemID )
-    self.assertEqual( shNode.GetItemOwnerPluginName(chartShItemID), 'Charts' )
-
-    # Add chart under study
-    chartShItemID2 = shNode.CreateItem(self.studyItemID, chartNode)
-    self.assertEqual( chartShItemID, chartShItemID2 )
-    self.assertEqual( shNode.GetItemParent(chartShItemID), self.studyItemID )
-    self.assertEqual( shNode.GetItemOwnerPluginName(chartShItemID), 'Charts' )
 
   # ------------------------------------------------------------------------------
   def section_CloneNode(self):

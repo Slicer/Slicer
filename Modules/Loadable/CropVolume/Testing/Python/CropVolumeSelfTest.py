@@ -1,11 +1,10 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import slicer
 from slicer.ScriptedLoadableModule import *
 
 #
 # CropVolumeSelfTest
 #
+
 
 class CropVolumeSelfTest(ScriptedLoadableModule):
   def __init__(self, parent):
@@ -50,7 +49,6 @@ class CropVolumeSelfTestTest(ScriptedLoadableModuleTest):
     self.setUp()
     self.test_CropVolumeSelfTest()
 
-
   def test_CropVolumeSelfTest(self):
     """
     Replicate the crashe in issue 3117
@@ -61,8 +59,7 @@ class CropVolumeSelfTestTest(ScriptedLoadableModuleTest):
     import SampleData
 
     vol = SampleData.downloadSample("MRHead")
-    roi = slicer.vtkMRMLAnnotationROINode()
-    roi.Initialize(slicer.mrmlScene)
+    roi = slicer.vtkMRMLMarkupsROINode()
 
     mainWindow = slicer.util.mainWindow()
     mainWindow.moduleSelector().selectModule('CropVolume')
@@ -88,8 +85,7 @@ class CropVolumeSelfTestTest(ScriptedLoadableModuleTest):
     mainWindow.moduleSelector().selectModule('CropVolume')
     cropVolumeNode = slicer.mrmlScene.GetNodeByID('vtkMRMLCropVolumeParametersNode1')
     vol = SampleData.downloadSample("MRHead")
-    roi = slicer.vtkMRMLAnnotationROINode()
-    roi.Initialize(slicer.mrmlScene)
+    roi = slicer.vtkMRMLMarkupsROINode()
     cropVolumeNode.SetInputVolumeNodeID(vol.GetID())
     cropVolumeNode.SetROINodeID(roi.GetID())
     cropVolumeLogic.Apply(cropVolumeNode)

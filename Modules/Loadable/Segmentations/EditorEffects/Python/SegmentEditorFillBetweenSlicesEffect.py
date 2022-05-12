@@ -1,7 +1,10 @@
 import os
-import vtk, qt, ctk, slicer
-import logging
+
+import qt
+import vtk
+
 from SegmentEditorEffects import *
+
 
 class SegmentEditorFillBetweenSlicesEffect(AbstractScriptedSegmentEditorAutoCompleteEffect):
   """ AutoCompleteEffect is an effect that can create a full segmentation
@@ -35,7 +38,7 @@ do not use sphere brush with Paint effect and always leave at least one empty sl
 <li>The complete segmentation will be created by interpolating segmentations in empty slices.</li>
 </ul><p>
 Masking settings are ignored. If segments overlap, segment higher in the segments table will have priority.
-The effect uses  <a href="http://insight-journal.org/browse/publication/977">morphological contour interpolation method</a>.
+The effect uses  <a href="https://insight-journal.org/browse/publication/977">morphological contour interpolation method</a>.
 <p></html>"""
 
   def computePreviewLabelmap(self, mergedImage, outputLabelmap):

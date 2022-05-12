@@ -82,7 +82,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
         if(action)
           {
           QString which = action->objectName();
-          if(which == QString::null)
+          if(which.isNull())
             {
             which = action->text();
             }
@@ -102,7 +102,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
         if (action && !action->menu())
           {
           QString which = action->objectName();
-          if(which == QString::null)
+          if(which.isNull())
             {
             which = action->text();
             }

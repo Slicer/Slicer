@@ -1,5 +1,8 @@
 import time
 
+import slicer
+
+
 def TestFiducialAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   print("numToAdd = ", numToAdd)
   if renameFlag > 0:
@@ -24,15 +27,15 @@ def TestFiducialAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
 #    print "i = ", i, "/", numToAdd, ", r = ", r, ", a = ", a, ", s = ", s
     fidNode = slicer.vtkMRMLAnnotationFiducialNode()
     fidNode.SetFiducialCoordinates(r, a, s)
-    t1 = time.clock()
+    t1 = time.process_time()
     fidNode.Initialize(slicer.mrmlScene)
-    t2 = time.clock()
+    t2 = time.process_time()
     timeToAddThisFid = t2 - t1
     dt = timeToAddThisFid - timeToAddLastFid
     if renameFlag > 0:
-      t3 = time.clock()
+      t3 = time.process_time()
       fidNode.SetName(str(i))
-      t4 = time.clock()
+      t4 = time.process_time()
       timeToRenameThisFid = t4 - t3
       dt2 = timeToRenameThisFid - timeToRenameLastFid
       print('%(index)04d\t' % {'index': i}, timeToAddThisFid, "\t", dt, "\t", timeToRenameThisFid, "\t", dt2)
@@ -44,9 +47,9 @@ def TestFiducialAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
     s = s + 1.0
     timeToAddLastFid = timeToAddThisFid
 
-testStartTime = time.clock()
+
+testStartTime = time.process_time()
 TestFiducialAdd()
-testEndTime = time.clock()
+testEndTime = time.process_time()
 testTime = testEndTime - testStartTime
 print("Test total time = ", testTime)
-

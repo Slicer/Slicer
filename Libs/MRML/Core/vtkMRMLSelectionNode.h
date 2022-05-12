@@ -70,16 +70,6 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// \deprecated Use SetActiveLabelVolumeID instead
   void SetReferenceActiveLabelVolumeID (const char *id) { this->SetActiveLabelVolumeID(id); };
 
-  /// \deprecated Get the ID of a vtkMRMLFiducialListNode
-  /// \sa SetActiveFiducialListID, SetReferenceActiveFiducialListID
-  const char* GetActiveFiducialListID();
-  /// \deprecated Set the ID of a vtkMRMLFiducialListNode
-  /// \sa SetReferenceActiveFiducialListID, GetActiveFiducialListID
-  void SetActiveFiducialListID(const char* id);
-  /// \deprecated Set the Id of a vtkMRMLFiducialListNode
-  /// \sa SetActiveFiducialListID, GetActiveFiducialListID
-  void SetReferenceActiveFiducialListID (const char *id) { this->SetActiveFiducialListID(id); };
-
   /// Get the classname of the active placeNode type.
   /// The active placeNode is used to control what placeNode is being
   /// dropped by the user. This replaces ActiveAnnotationID.

@@ -1,6 +1,8 @@
-import os
-import vtk, qt, ctk, slicer
+import ctk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # SlicerMRBMultipleSaveRestoreLoopTest
@@ -26,6 +28,7 @@ class SlicerMRBMultipleSaveRestoreLoopTest(ScriptedLoadableModule):
     and was partially funded by NIH grant 3P41RR013218.
     """
 
+
 #
 # SlicerMRBMultipleSaveRestoreLoopTestWidget
 #
@@ -48,7 +51,7 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
 
   def __init__(self, methodName='runTest', numberOfIterations=5, uniqueDirectory=True, strict=False):
     """
-    Tests the use of mrml and mrb save formats with volumes and fiducials.
+    Tests the use of mrml and mrb save formats with volumes and point lists.
     Checks that scene views are saved and restored as expected after multiple
     MRB saves and loads.
 
@@ -72,7 +75,6 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
     self.setUp()
     self.test_SlicerMRBMultipleSaveRestoreLoop()
 
-
   def test_SlicerMRBMultipleSaveRestoreLoop(self):
     """
     Stress test the issue reported in bug 3956 where saving
@@ -91,19 +93,17 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
     import SampleData
     mrHeadVolume = SampleData.downloadSample("MRHead")
 
-    # Place a fiducial
-    markupsLogic = slicer.modules.markups.logic()
+    # Place a control point
+    pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "F")
+    pointListNode.CreateDefaultDisplayNodes()
     fid1 = [0.0, 0.0, 0.0]
-    fidIndex1 = markupsLogic.AddFiducial(fid1[0], fid1[1], fid1[2])
-    fidID = markupsLogic.GetActiveListID()
-    fidNode = slicer.mrmlScene.GetNodeByID(fidID)
+    fidIndex1 = pointListNode.AddControlPoint(fid1)
 
-
-    self.delayDisplay('Finished with download and placing fiducials')
+    self.delayDisplay('Finished with download and placing points')
 
     ioManager = slicer.app.ioManager()
     widget = slicer.app.layoutManager().viewport()
-    self.fiducialPosition = fid1
+    self.pointPosition = fid1
     for i in range(self.numberOfIterations):
 
       print('\n\nIteration %s' % i)
@@ -136,22 +136,22 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
       self.assertEqual(redComposite.GetBackgroundVolumeID(), mrHead.GetID())
       self.delayDisplay('The MRHead volume is AGAIN in the background of the Red viewer')
 
-      # confirm that the fiducial list exists with 1 points
-      fidNode = slicer.util.getNode('F')
-      self.assertEqual(fidNode.GetNumberOfFiducials(), 1)
-      self.delayDisplay('The fiducial list has 1 point in it')
+      # confirm that the point list exists with 1 points
+      pointListNode = slicer.util.getNode('F')
+      self.assertEqual(pointListNode.GetNumberOfControlPoints(), 1)
+      self.delayDisplay('The point list has 1 point in it')
 
       # adjust the fid list location
-      self.fiducialPosition = [i, i, i]
-      print((i, ': reset fiducial position array to ', self.fiducialPosition))
-      fidNode.SetNthFiducialPositionFromArray(0, self.fiducialPosition)
+      self.pointPosition = [i, i, i]
+      print((i, ': reset point position array to ', self.pointPosition))
+      pointListNode.SetNthControlPointPosition(0, self.pointPosition)
     self.delayDisplay("Loop Finished")
 
-    print(('Fiducial position from loop = ',self.fiducialPosition))
-    fidNode = slicer.util.getNode('F')
-    finalFiducialPosition = [ 0,0,0 ]
-    fidNode.GetNthFiducialPosition(0, finalFiducialPosition)
-    print(('Final fiducial scene pos = ',finalFiducialPosition))
-    self.assertEqual(self.fiducialPosition, finalFiducialPosition)
+    print(('Point position from loop = ',self.pointPosition))
+    pointListNode = slicer.util.getNode('F')
+    finalPointPosition = [ 0,0,0 ]
+    pointListNode.GetNthControlPointPosition(0, finalPointPosition)
+    print(('Final point scene pos = ',finalPointPosition))
+    self.assertEqual(self.pointPosition, finalPointPosition)
 
     self.delayDisplay("Test Finished")

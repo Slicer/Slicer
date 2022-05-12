@@ -22,12 +22,9 @@ set(KIT_TEST_SRCS
   vtkMRMLAnnotationControlPointsNodeTest1.cxx
   vtkMRMLAnnotationPointDisplayNodeTest1.cxx
   vtkMRMLAnnotationControlPointsStorageNodeTest1.cxx
-  vtkMRMLAnnotationTextDisplayNodeTest1.cxx
-  vtkMRMLAnnotationLinesNodeTest1.cxx
+  #vtkMRMLAnnotationLinesNodeTest1.cxx
   vtkMRMLAnnotationLineDisplayNodeTest1.cxx
-  vtkMRMLAnnotationLinesStorageNodeTest1.cxx
-  vtkMRMLAnnotationAngleNodeTest1.cxx
-  vtkMRMLAnnotationAngleStorageNodeTest1.cxx
+  #vtkMRMLAnnotationLinesStorageNodeTest1.cxx
   vtkMRMLAnnotationRulerNodeTest1.cxx
   vtkMRMLAnnotationRulerStorageNodeTest1.cxx
   vtkMRMLAnnotationFiducialNodeTest1.cxx
@@ -35,15 +32,10 @@ set(KIT_TEST_SRCS
   vtkMRMLAnnotationROINodeTest1.cxx
   vtkMRMLAnnotationDisplayableManagerTest1.cxx
   vtkMRMLAnnotationDisplayableManagerTest2.cxx
-  #TestAnnotationWidgetsStandalone.cxx
-  #vtkMRMLAnnotationTextNodeAndWidgetTest1.cxx
-  #vtkMRMLAnnotationTextDisplayableManagerTest1.cxx
   #vtkMRMLAnnotationRulerDisplayableManagerTest1.cxx
-  #vtkMRMLAnnotationTextNodeAndWidgetTest1.cxx
   vtkSlicerAnnotationModuleLogicTest1.cxx
   vtkSlicerAnnotationModuleLogicImportSceneTest.cxx
   #qSlicerAnnotationModuleAnnotationPropertyDialogTest1.cxx
-  #TestAnnAngleWidget3D.cxx
   )
 
 #-----------------------------------------------------------------------------

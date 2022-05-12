@@ -27,8 +27,16 @@
 // qMRMLWidget includes
 #include "qMRMLWidgetsExport.h"
 
-/// This class is intended to improve visual appearance of ctkCollapsibleButton,
-/// but currently it works exactly as its base class ctkCollapsibleButton.
+class qMRMLCollapsibleButtonPrivate;
+class vtkMRMLScene;
+
+/// This class is intended to improve visual appearance and convenience of ctkCollapsibleButton.
+///
+/// Currently the visual appearance is the same as its base class.
+///
+/// The mrmlSceneChanged signal can be used to simplify scene settings in Qt Designer:
+/// it allows drawing one long signal/slot arrow from the top-level widget to the collapsible button
+/// and a short signal/slot arrow from the collapsible button to each child widget in it.
 class QMRML_WIDGETS_EXPORT qMRMLCollapsibleButton : public ctkCollapsibleButton
 {
   Q_OBJECT
@@ -38,7 +46,23 @@ public:
 
   /// Constructors
   explicit qMRMLCollapsibleButton(QWidget* parent = nullptr);
-  ~qMRMLCollapsibleButton() override = default;
+  ~qMRMLCollapsibleButton() override;
+
+  /// Return a pointer on the MRML scene
+  vtkMRMLScene* mrmlScene() const;
+
+public slots:
+  void setMRMLScene(vtkMRMLScene* scene);
+
+signals:
+  void mrmlSceneChanged(vtkMRMLScene*);
+
+protected:
+  QScopedPointer<qMRMLCollapsibleButtonPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qMRMLCollapsibleButton);
+  Q_DISABLE_COPY(qMRMLCollapsibleButton);
 };
 
 #endif

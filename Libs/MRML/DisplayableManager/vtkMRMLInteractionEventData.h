@@ -115,6 +115,8 @@ public:
   void SetInteractionContextName(const std::string& v);
   const std::string& GetInteractionContextName();
 
+  void WorldToDisplay(const double worldPosition[3], double displayPosition[3]);
+
 protected:
   int Modifiers;
   int DisplayPosition[2];
@@ -128,6 +130,8 @@ protected:
   int ComponentType;
   int ComponentIndex;
   bool MouseMovedSinceButtonDown;
+  double WorldToViewTransformMatrix[16];
+  bool WorldToViewTransformMatrixValid;
 
   //@{
   /// For KeyPressEvent

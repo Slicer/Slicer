@@ -76,18 +76,17 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 
 #ifdef Slicer_BUILD_I18N_SUPPORT
   bool internationalizationEnabled =
-      qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled").toBool();
+      qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled", true).toBool();
 
   this->LanguageLabel->setVisible(internationalizationEnabled);
   this->LanguageComboBox->setVisible(internationalizationEnabled);
 
   if (internationalizationEnabled)
     {
-    /// Default values
+    // Disable showing country flags because not all regions have a flag (e.g., Latin America)
+    this->LanguageComboBox->setCountryFlagsVisible(false);
     this->LanguageComboBox->setDefaultLanguage("en");
-    /// set the directory where all the translations files are.
-    this->LanguageComboBox->setDirectory(
-        QString(Slicer_QM_OUTPUT_DIRS).split(";").at(0));
+    this->LanguageComboBox->setDirectories(qSlicerCoreApplication::translationFolders());
     }
 #else
   this->LanguageLabel->setVisible(false);
@@ -126,7 +125,8 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   QObject::connect(this->DefaultScenePathButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(setDefaultScenePath(QString)));
 
-  this->DocumentationBaseURLLineEdit->setText("https://slicer.readthedocs.io/{language}/{version}");
+  // Since currently there is only English language documentation on readthedocs, the default URL uses "en" language.
+  this->DocumentationBaseURLLineEdit->setText("https://slicer.readthedocs.io/en/{version}");
   this->ModuleDocumentationURLLineEdit->setText("{documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html");
 
   q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
@@ -164,7 +164,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                       ctkSettingsPanel::OptionRequireRestart);
   q->registerProperty("RecentlyLoadedFiles/NumberToKeep", this->NumOfRecentlyLoadedFiles, "value",
                       SIGNAL(valueChanged(int)),
-                      "Max. number of 'Recently Loaded' menu items",
+                      "Max. number of 'Recent' menu items",
                       ctkSettingsPanel::OptionRequireRestart);
 }
 

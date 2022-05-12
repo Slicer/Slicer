@@ -1,15 +1,13 @@
-import os
-import string
-from __main__ import vtk, qt, ctk, slicer
 import logging
-import numpy
-if slicer.app.majorVersion >= 5 or (slicer.app.majorVersion == 4 and slicer.app.minorVersion >= 11):
-  import pydicom
-else:
-  import dicom
+
+import pydicom
+import qt
+
+import slicer
+
 from DICOMLib import DICOMPlugin
-from DICOMLib import DICOMLoadable
 from DICOMLib import DICOMExportScalarVolume
+
 
 #
 # This plugin can export sequence node that contains volumes
@@ -193,10 +191,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
       tags['Patient Name'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameTagName())
       tags['Patient ID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDTagName())
       tags['Patient Comments'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
-      if slicer.app.majorVersion >= 5 or (slicer.app.majorVersion == 4 and slicer.app.minorVersion >= 11):
-        tags['Study Instance UID'] = pydicom.uid.generate_uid()
-      else:
-        tags['Study Instance UID'] = dicom.UID.generate_uid()
+      tags['Study Instance UID'] = pydicom.uid.generate_uid()
       tags['Patient Birth Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateTagName())
       tags['Patient Sex'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexTagName())
       tags['Study ID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName())
@@ -210,12 +205,8 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
       tags['Series Number'] = exportable.tag('SeriesNumber')
       tags['Series Date'] = exportable.tag("SeriesDate")
       tags['Series Time'] = exportable.tag("SeriesTime")
-      if slicer.app.majorVersion >= 5 or (slicer.app.majorVersion == 4 and slicer.app.minorVersion >= 11):
-        tags['Series Instance UID'] = pydicom.uid.generate_uid()
-        tags['Frame of Reference Instance UID'] = pydicom.uid.generate_uid()
-      else:
-        tags['Series Instance UID'] = dicom.UID.generate_uid()
-        tags['Frame of Reference Instance UID'] = dicom.UID.generate_uid()
+      tags['Series Instance UID'] = pydicom.uid.generate_uid()
+      tags['Frame of Reference UID'] = pydicom.uid.generate_uid()
 
       # Validate tags
       if tags['Modality'] == "":
@@ -268,6 +259,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
     # Success
     return ""
 
+
 #
 # DICOMVolumeSequencePlugin
 #
@@ -277,6 +269,7 @@ class DICOMVolumeSequencePlugin:
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM Volume Sequence Export Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]

@@ -7,7 +7,7 @@
     <xsl:text>&#10;</xsl:text>
   </xsl:template>
 
-  <!-- See http://na-mic.org/Mantis/view.php?id=2536 -->
+  <!-- See https://mantisarchive.slicer.org/view.php?id=2536 -->
   <xsl:template match="name">
     <xsl:text> (*</xsl:text>
     <xsl:value-of select="."/>

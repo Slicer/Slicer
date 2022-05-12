@@ -1,8 +1,12 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+
+import ctk
+import qt
+import vtk
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # CropVolumeSequence
@@ -24,6 +28,7 @@ class CropVolumeSequence(ScriptedLoadableModule):
     self.parent.acknowledgementText = """
 This file was originally developed by Andras Lasso
 """
+
 
 #
 # CropVolumeSequenceWidget
@@ -145,6 +150,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
   def onApplyButton(self):
     logic = CropVolumeSequenceLogic()
     logic.run(self.inputSelector.currentNode(), self.outputSelector.currentNode(), self.cropParametersSelector.currentNode())
+
 
 #
 # CropVolumeSequenceLogic
@@ -278,6 +284,7 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
 
     logging.info('Processing completed')
 
+
 class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
@@ -313,7 +320,7 @@ class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
     volumeNode = sequenceBrowserNode.GetProxyNode(sequenceNode)
 
     # Set cropping region
-    roiNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLAnnotationROINode')
+    roiNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsROINode')
     cropVolumeNode.SetROINodeID(roiNode.GetID())
     cropVolumeNode.SetInputVolumeNodeID(volumeNode.GetID())
     slicer.modules.cropvolume.logic().FitROIToInputVolume(cropVolumeNode)

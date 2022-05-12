@@ -1,9 +1,12 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
 import logging
-from slicer.ScriptedLoadableModule import *
+import unittest
+
+import qt
+import vtk
+
+import slicer
 from slicer.util import DATA_STORE_URL
+
 
 class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
@@ -76,7 +79,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
   #------------------------------------------------------------------------------
   def TestSection_LoadTestData(self):
-    # Load NAC Brain Atlas 2015 (https://slicer.kitware.com/midas3/item/121588)
+    # Load NAC Brain Atlas 2015 (https://github.com/Slicer/SlicerDataStore/releases/download/SHA256/d69d0331d4fd2574be1459b7734921f64f5872d3cb9589ec01b2f53dadc7112f)
     logging.info('Test section: Load NAC Brain Atlas 2015')
 
     import SampleData

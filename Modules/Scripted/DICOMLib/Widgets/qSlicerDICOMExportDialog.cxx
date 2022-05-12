@@ -264,11 +264,16 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
     PythonQtObjectPtr context = PythonQt::self()->getMainModule();
     // A plugin should return one exportable for one series, but nevertheless
     // a list is returned for convenient concatenation (without type check etc.)
-    context.evalScript( QString(
+    context.evalScript(QString(
       "exportables = []\n"
       "for pluginClass in slicer.modules.dicomPlugins:\n"
       "  plugin = slicer.modules.dicomPlugins[pluginClass]()\n"
-      "  exportables.extend(plugin.examineForExport(%1))\n" )
+      "  try:\n"
+      "    exportables.extend(plugin.examineForExport(%1))\n"
+      "  except Exception as e:\n"
+      "    logging.error(f'Failed to get exportables from plugin {type(plugin).__name__}')\n"
+      "    import traceback\n"
+      "    traceback.print_exc()\n")
       .arg(selectedSeriesItemID) );
 
     // Extract resulting exportables from python
@@ -590,9 +595,15 @@ bool qSlicerDICOMExportDialog::exportSeries(const QDir& outputFolder)
   PythonQt::init();
   PythonQtObjectPtr exportContext = PythonQt::self()->getMainModule();
   exportContext.addVariable("exportables", exportableList);
-  exportContext.evalScript( QString(
+  exportContext.evalScript(QString(
     "plugin = slicer.modules.dicomPlugins[%1]()\n"
-    "errorMessage = plugin.export(exportables)\n" )
+    "try:\n"
+    "  errorMessage = plugin.export(exportables)\n"
+    "except Exception as e:\n"
+    "  errorMessage = 'DICOM export failed. See application log for details';\n"
+    "  logging.error(f'Failed to export using plugin {type(plugin).__name__}')\n"
+    "  import traceback\n"
+    "  traceback.print_exc()\n")
     .arg(qSlicerCorePythonManager::toPythonStringLiteral(d->DICOMTagEditorWidget->exportables()[0]->pluginClass())));
   QApplication::restoreOverrideCursor();
 

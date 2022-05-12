@@ -1,8 +1,10 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
+
 
 #
 # AtlasTests
@@ -24,14 +26,15 @@ class AtlasTests(ScriptedLoadableModule):
 
     For more information:
 
-    Abdominal Atlas: <a>http://www.slicer.org/publications/item/view/1918</a>
-    Brain Atlas: <a>http://www.slicer.org/publications/item/view/2037</a>
-    Knee Atlas: <a>http://www.slicer.org/publications/item/view/1953</a>
+    Abdominal Atlas: <a>https://www.slicer.org/publications/item/view/1918</a>
+    Brain Atlas: <a>https://www.slicer.org/publications/item/view/2037</a>
+    Knee Atlas: <a>https://www.slicer.org/publications/item/view/1953</a>
 
     """
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
+
 
 #
 # qAtlasTestsWidget
@@ -86,6 +89,7 @@ class AtlasTestsWidget(ScriptedLoadableModuleWidget):
   def onKneeAtlas(self):
     tester = AtlasTestsTest()
     tester.runKneeTest()
+
 
 #
 # AtlasTestsLogic

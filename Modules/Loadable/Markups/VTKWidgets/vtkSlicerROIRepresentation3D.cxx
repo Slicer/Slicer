@@ -124,7 +124,6 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
     case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
       this->UpdateCubeSourceFromMRML(roiNode);
       break;
-      break;
     default:
       this->ROIActor->SetVisibility(false);
       return;
@@ -132,7 +131,12 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
 
   this->ROIToWorldTransform->SetMatrix(roiNode->GetObjectToWorldMatrix());
 
-  this->ROIActor->SetVisibility(true);
+  this->ROIActor->SetVisibility(roiNode->GetNumberOfControlPoints() > 0 && displayNode->GetFillVisibility());
+  this->ROIOccludedActor->SetVisibility(this->ROIActor->GetVisibility() && displayNode->GetOccludedVisibility());
+
+  this->ROIOutlineActor->SetVisibility(roiNode->GetNumberOfControlPoints() > 0 && displayNode->GetOutlineVisibility());
+  this->ROIOutlineOccludedActor->SetVisibility(this->ROIOutlineActor->GetVisibility() && displayNode->GetOccludedVisibility());
+
   this->VisibilityOn();
   this->PickableOn();
 
@@ -156,7 +160,7 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
     }
 
   double opacity = displayNode->GetOpacity();
-  double fillOpacity = this->MarkupsDisplayNode->GetFillVisibility() ? displayNode->GetFillOpacity() : 0.0;
+  double fillOpacity = displayNode->GetFillOpacity();
   this->ROIProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIProperty->SetOpacity(opacity * fillOpacity);
 
@@ -166,8 +170,7 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->ROIMapper, this->ROIOccludedMapper);
 
-  double outlineOpacity = this->MarkupsDisplayNode->GetOutlineVisibility()
-    ? opacity * this->MarkupsDisplayNode->GetOutlineOpacity() : 0.0;
+  double outlineOpacity = opacity * this->MarkupsDisplayNode->GetOutlineOpacity();
   this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIOutlineProperty->SetOpacity(outlineOpacity);
 
@@ -473,6 +476,7 @@ void vtkSlicerROIRepresentation3D::UpdateInteractionPipeline()
     }
 
   this->InteractionPipeline->Actor->SetVisibility(this->MarkupsDisplayNode->GetVisibility()
+    && roiNode->GetNumberOfControlPoints() > 0
     && this->MarkupsDisplayNode->GetVisibility3D()
     && this->MarkupsDisplayNode->GetHandlesInteractive());
 
@@ -665,6 +669,65 @@ void vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::UpdateScaleHan
   vtkIdTypeArray* visibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
   visibilityArray->SetNumberOfValues(roiPoints->GetNumberOfPoints());
   visibilityArray->Fill(1);
+  this->UpdateHandleVisibility();
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::UpdateHandleVisibility()
+{
+  MarkupsInteractionPipeline::UpdateHandleVisibility();
+
+  vtkSlicerMarkupsWidgetRepresentation* markupsRepresentation = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->Representation);
+  vtkMRMLMarkupsDisplayNode* displayNode = nullptr;
+  if (markupsRepresentation)
+    {
+    displayNode = markupsRepresentation->GetMarkupsDisplayNode();
+    }
+  if (!displayNode)
+    {
+    vtkGenericWarningMacro("UpdateHandleVisibility: Invalid display node");
+    return;
+    }
+
+  bool* scaleHandleAxes = displayNode->GetScaleHandleComponentVisibility();
+
+  vtkIdTypeArray* scaleVisibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
+  if (scaleVisibilityArray)
+    {
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLFace, scaleHandleAxes[0]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRFace, scaleHandleAxes[0]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandlePFace, scaleHandleAxes[1]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleAFace, scaleHandleAxes[1]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleIFace, scaleHandleAxes[2]);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleSFace, scaleHandleAxes[2]);
+
+    bool viewPlaneScaleVisibility = scaleHandleAxes[3];
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLPICorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRPICorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLAICorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRAICorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLASCorner, viewPlaneScaleVisibility);
+    scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRASCorner, viewPlaneScaleVisibility);
+
+    if (scaleVisibilityArray->GetNumberOfValues() > vtkMRMLMarkupsROIDisplayNode::HandleASEdge)
+      {
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLPEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRPEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLAEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRAEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLIEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRIEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleLSEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleRSEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandlePIEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleAIEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandlePSEdge, viewPlaneScaleVisibility);
+      scaleVisibilityArray->SetValue(vtkMRMLMarkupsROIDisplayNode::HandleASEdge, viewPlaneScaleVisibility);
+      }
+
+    }
 }
 
 //----------------------------------------------------------------------

@@ -55,8 +55,6 @@ class QLayout;
 class QGridLayout;
 class QButtonGroup;
 class qMRMLSliceWidget;
-class qMRMLChartView;
-class qMRMLChartWidget;
 class qMRMLTableView;
 class qMRMLTableWidget;
 class qMRMLPlotView;
@@ -67,7 +65,6 @@ class vtkCollection;
 class vtkObject;
 class vtkMRMLLayoutLogic;
 class vtkMRMLLayoutNode;
-class vtkMRMLChartViewNode;
 class vtkMRMLTableViewNode;
 class vtkMRMLPlotViewNode;
 class vtkMRMLViewNode;
@@ -92,7 +89,6 @@ public:
 
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
-  void setActiveMRMLChartViewNode(vtkMRMLChartViewNode * node);
   void setActiveMRMLTableViewNode(vtkMRMLTableViewNode * node);
   void setActiveMRMLPlotViewNode(vtkMRMLPlotViewNode * node);
 
@@ -110,7 +106,6 @@ public:
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName.
   qMRMLThreeDWidget* threeDWidget(vtkMRMLViewNode* node)const;
-  qMRMLChartWidget* chartWidget(vtkMRMLChartViewNode* node)const;
   qMRMLTableWidget* tableWidget(vtkMRMLTableViewNode* node)const;
   qMRMLPlotWidget* plotWidget(vtkMRMLPlotViewNode* node)const;
 
@@ -134,7 +129,6 @@ public slots:
   void updateLayoutFromMRMLScene();
 
   void onActiveThreeDViewNodeChanged(vtkMRMLAbstractViewNode*);
-  void onActiveChartViewNodeChanged(vtkMRMLAbstractViewNode*);
   void onActiveTableViewNodeChanged(vtkMRMLAbstractViewNode*);
   void onActivePlotViewNodeChanged(vtkMRMLAbstractViewNode*);
 
@@ -148,7 +142,6 @@ public:
   vtkMRMLLayoutNode*      MRMLLayoutNode;
   vtkMRMLLayoutLogic*     MRMLLayoutLogic;
   vtkMRMLViewNode*        ActiveMRMLThreeDViewNode;
-  vtkMRMLChartViewNode*   ActiveMRMLChartViewNode;
   vtkMRMLTableViewNode*   ActiveMRMLTableViewNode;
   vtkMRMLPlotViewNode*    ActiveMRMLPlotViewNode;
 protected:
@@ -177,27 +170,6 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-class QMRML_WIDGETS_EXPORT qMRMLLayoutChartViewFactory
-  : public qMRMLLayoutViewFactory
-{
-  Q_OBJECT
-public:
-  typedef qMRMLLayoutViewFactory Superclass;
-  qMRMLLayoutChartViewFactory(QObject* parent = nullptr);
-
-  QString viewClassName()const override;
-
-  vtkMRMLColorLogic* colorLogic()const;
-  void setColorLogic(vtkMRMLColorLogic* colorLogic);
-
-protected:
-  QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
-  vtkMRMLColorLogic* ColorLogic{nullptr};
-};
-#endif
-
-//------------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLLayoutTableViewFactory
   : public qMRMLLayoutViewFactory
 {
@@ -222,6 +194,9 @@ public:
   qMRMLLayoutPlotViewFactory(QObject* parent = nullptr);
 
   QString viewClassName()const override;
+
+  vtkMRMLColorLogic* colorLogic()const;
+  void setColorLogic(vtkMRMLColorLogic* colorLogic);
 
 protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;

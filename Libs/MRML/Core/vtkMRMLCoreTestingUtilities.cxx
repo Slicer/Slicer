@@ -23,6 +23,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
@@ -490,12 +491,12 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
 
   node->ResetURIList();
   std::cout << "Number of uri's after resetting list = " << node->GetNumberOfURIs() << std::endl;
-  node->AddURI("http://www.nowhere.com/filename.txt");
+  node->AddURI("https://www.nowhere.com/filename.txt");
   CHECK_INT(node->GetNumberOfURIs(),1);
 
-  CHECK_STRING(node->GetNthURI(0), "http://www.nowhere.com/filename.txt");
+  CHECK_STRING(node->GetNthURI(0), "https://www.nowhere.com/filename.txt");
 
-  node->ResetNthURI(0, "http://www.nowhere.com/newfilename.txt");
+  node->ResetNthURI(0, "https://www.nowhere.com/newfilename.txt");
   node->ResetNthURI(100, "ftp://not.in.list");
   node->ResetNthURI(100, nullptr);
   const char *dataDirName = "/test-ing/a/dir ect.ory";
@@ -505,7 +506,7 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   CHECK_STRING(node->GetFileName(), "/test-ing/a/dir ect.ory/file.txt");
 
   std::cout << "Resetting Data Directory to " << dataDirName << " succeeded, got new file name of " << node->GetFileName() << std::endl;
-  const char *uriPrefix = "http://www.somewhere.com/";
+  const char *uriPrefix = "https://www.somewhere.com/";
   node->SetURIPrefix(uriPrefix);
 
   const char *defaultExt = node->GetDefaultWriteFileExtension();
@@ -516,6 +517,10 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   std::cout << "Is relative file path relative? " << node->IsFilePathRelative("tmp/file.txt") << std::endl;
   node->RemoveObserver(errorObserverTag);
   node->RemoveObserver(warningObserverTag);
+
+  // Remove any error/warning messages, just in case the storage node is later used in some more tests
+  node->GetUserMessages()->ClearMessages();
+
   return EXIT_SUCCESS;
   }
 

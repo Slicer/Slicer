@@ -14,8 +14,6 @@ import argparse
 import os
 import sys
 
-import sphinx
-
 from docutils import nodes, utils
 from docutils.parsers.rst import roles
 
@@ -28,9 +26,10 @@ sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 
 #%%% Site extensions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 #===============================================================================
 class WikidocRole:
-  wiki_root = 'http://wiki.slicer.org/slicerWiki/index.php'
+  wiki_root = 'https://wiki.slicer.org/slicerWiki/index.php'
 
   #-----------------------------------------------------------------------------
   def __call__(self, role, rawtext, text, lineno, inliner,
@@ -46,6 +45,7 @@ class WikidocRole:
     node = nodes.reference(rawtext, text, refuri=uri, **options)
     return [node], []
 
+
 #===============================================================================
 class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
   #-----------------------------------------------------------------------------
@@ -58,13 +58,14 @@ class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
 
 #%%% Site customizations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 #-------------------------------------------------------------------------------
 def setup(app):
   app.add_autodocumenter(ClassModuleClassDocumenter)
   app.add_role('wikidoc', WikidocRole())
 
-#-------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------------
 autoclass_content = 'both'
 autodoc_member_order = 'groupwise'
 
@@ -88,13 +89,13 @@ setattr(WikidocRole, 'wiki_doc_version', args.wikidoc_version)
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.intersphinx']
 
 intersphinx_mapping = {
-  'python': ('http://docs.python.org/%i.%i' % sys.version_info[:2], None),
+  'python': ('https://docs.python.org/%i.%i' % sys.version_info[:2], None),
   'github': ('http://jacquev6.github.io/PyGithub/v1', None),
 }
 
 try:
   import git
-  intersphinx_mapping['git'] = ('http://pythonhosted.org/GitPython/%s' % git.__version__.split(' ')[0], None)
+  intersphinx_mapping['git'] = ('https://pythonhosted.org/GitPython/%s' % git.__version__.split(' ')[0], None)
 except:
   pass
 

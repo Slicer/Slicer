@@ -1,0 +1,68 @@
+{
+    "@schema": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#",
+    "volumeDisplayPresets": [
+        {
+            "id": "CT_BONE",
+            "name": "CT-Bone",
+            "description": "Emphasize bone in a CT volume.",
+            "icon": ":/Icons/WindowLevelPreset-CT-bone.png",
+            "window": 1000.0,
+            "level": 400.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "id": "CT_AIR",
+            "name": "CT-Air",
+            "description": "Emphasize air in a CT volume.",
+            "icon": ":/Icons/WindowLevelPreset-CT-air.png",
+            "window": 1000.0,
+            "level": -426.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "id": "CT_BRAIN",
+            "name": "CT-Brain",
+            "description": "View brain CT volume.",
+            "icon": ":/Icons/WindowLevelPreset-Brain.png",
+            "window": 100.0,
+            "level": 50.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "id": "CT_ABDOMEN",
+            "name": "CT-Abdomen",
+            "description": "View abdominal CT volume.",
+            "icon": ":/Icons/WindowLevelPreset-Abdomen.png",
+            "window": 350.0,
+            "level": 40.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "id": "CT_LUNG",
+            "name": "CT-Lung",
+            "description": "View lung CT volume.",
+            "icon": ":/Icons/WindowLevelPreset-Lung.png",
+            "window": 1400.0,
+            "level": -500.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "id": "PET",
+            "name": "PET",
+            "description": "Preset for PET volume (uses rainbow color table).",
+            "icon": ":/Icons/WindowLevelPreset-PET.png",
+            "window": 10000.0,
+            "level": 6000.0,
+            "color": "vtkMRMLColorTableNodeRainbow"
+        },
+        {
+            "id": "DTI",
+            "name": "DTI",
+            "description": "Preset for DTI scalar volumes like FA (uses rainbow color table).",
+            "icon": ":/Icons/WindowLevelPreset-DTI.png",
+            "window": 1.0,
+            "level": 0.5,
+            "color": "vtkMRMLColorTableNodeRainbow"
+        }
+    ]
+}

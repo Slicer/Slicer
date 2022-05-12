@@ -43,27 +43,29 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [pydicom]
   pydicom==2.3.0 --hash=sha256:8ff31e077cc51d19ac3b8ca988ac486099cdebfaf885989079fdc7c75068cdd8
   # [/pydicom]
-  # [Pillow]
-  # Hashes correspond to the following packages:
-  #  - Pillow-8.3.2-cp36-cp36m-macosx_10_10_x86_64.whl
-  #  - Pillow-8.3.2-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - Pillow-8.3.2-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - Pillow-8.3.2-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl
-  #  - Pillow-8.3.2-cp36-cp36m-win_amd64.whl
-  Pillow==8.3.2 --hash=sha256:11eb7f98165d56042545c9e6db3ce394ed8b45089a67124298f0473b29cb60b2 \
-                --hash=sha256:2f23b2d3079522fdf3c09de6517f625f7a964f916c956527bed805ac043799b8 \
-                --hash=sha256:e5a31c07cea5edbaeb4bdba6f2b87db7d3dc0f446f379d907e51cc70ea375629 \
-                --hash=sha256:8f284dc1695caf71a74f24993b7c7473d77bc760be45f776a2c2f4e04c170550 \
-                --hash=sha256:a048dad5ed6ad1fad338c02c609b862dfaa921fcd065d747194a6805f91f2196
-  # [/Pillow]
   # [six]
   six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
   # [/six]
+  # [Pillow]
+  # Hashes correspond to the following packages:
+  #  - Pillow-9.0.1-1-cp39-cp39-macosx_11_0_arm64.whl
+  #  - Pillow-9.0.1-cp39-cp39-macosx_10_10_x86_64.whl
+  #  - Pillow-9.0.1-cp39-cp39-macosx_11_0_arm64.whl
+  #  - Pillow-9.0.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - Pillow-9.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - Pillow-9.0.1-cp39-cp39-win_amd64.whl
+  Pillow==9.0.1 --hash=sha256:b9618823bd237c0d2575283f2939655f54d51b4527ec3972907a927acbcc5bfc \
+                --hash=sha256:80ca33961ced9c63358056bd08403ff866512038883e74f3a4bf88ad3eb66838 \
+                --hash=sha256:1c3c33ac69cf059bbb9d1a71eeaba76781b450bc307e2291f8a4764d779a6b28 \
+                --hash=sha256:12875d118f21cf35604176872447cdb57b07126750a33748bac15e77f90f1f9c \
+                --hash=sha256:d3c5c79ab7dfce6d88f1ba639b77e77a17ea33a01b07b99840d6ed08031cb2a7 \
+                --hash=sha256:f25ed6e28ddf50de7e7ea99d7a976d6a9c415f03adcaac9c41ff6ff41b6d86ac
+  # [/Pillow]
   # [retrying]
   retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
   # [/retrying]
   # [dicomweb-client]
-  dicomweb-client==0.53.0 --hash=sha256:f68434122d1ec02fdb35e37ce355d8c511183d79f1752b50cf53517c6d9be1d0
+  dicomweb-client==0.54.4 --hash=sha256:397cb05982258fde33bd059efecd74893350826f9fe71f36a9500e98baf6f96d
   # [/dicomweb-client]
   ]===])
 

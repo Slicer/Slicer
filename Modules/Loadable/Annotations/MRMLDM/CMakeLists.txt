@@ -15,13 +15,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
 
 set(displayable_manager_SRCS
   vtkMRMLAnnotationDisplayableManager.cxx
-  vtkMRMLAnnotationTextDisplayableManager.cxx
   vtkMRMLAnnotationFiducialDisplayableManager.cxx
-  #vtkMRMLAnnotationStickyDisplayableManager.cxx
-  #vtkMRMLAnnotationAngleDisplayableManager.cxx
-  #vtkMRMLAnnotationSplineDisplayableManager.cxx
   vtkMRMLAnnotationRulerDisplayableManager.cxx
-  vtkMRMLAnnotationBidimensionalDisplayableManager.cxx
   vtkMRMLAnnotationROIDisplayableManager.cxx
   )
 

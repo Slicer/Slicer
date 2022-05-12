@@ -295,8 +295,12 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
   this->ComboBox_AnatomicRegionModifier->setEnabled(false);
 
   // Apply initial state of expand buttons
-  this->AnatomicalRegionExpandButton->setChecked(false);
-  this->CategoryExpandButton->setChecked(false);
+  if (qSlicerApplication::application())
+    {
+    QSettings* settings = qSlicerApplication::application()->userSettings();
+    this->CategoryExpandButton->setChecked(settings->value("Terminology/ShowCategorySelector", false).toBool());
+    this->AnatomicalRegionExpandButton->setChecked(settings->value("Terminology/ShowAnatomicalRegionSelector", false).toBool());
+    }
 
   // Set reset button sizes
   this->pushButton_ResetName->setMaximumHeight(this->lineEdit_Name->sizeHint().height());
@@ -623,7 +627,16 @@ qSlicerTerminologyNavigatorWidget::qSlicerTerminologyNavigatorWidget(QWidget* _p
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologyNavigatorWidget::~qSlicerTerminologyNavigatorWidget() = default;
+qSlicerTerminologyNavigatorWidget::~qSlicerTerminologyNavigatorWidget()
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+  if (qSlicerApplication::application())
+    {
+    QSettings* settings = qSlicerApplication::application()->userSettings();
+    settings->setValue("Terminology/ShowCategorySelector", d->CategoryExpandButton->isChecked());
+    settings->setValue("Terminology/ShowAnatomicalRegionSelector", d->AnatomicalRegionExpandButton->isChecked());
+    }
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::terminologyInfo(TerminologyInfoBundle &terminologyInfo)
@@ -1908,7 +1921,7 @@ void qSlicerTerminologyNavigatorWidget::onLoadTerminologyClicked()
       {
       QString errorMessage =
         "Loading terminology from file %1 failed!<br><br>"
-        "Please check validity of the file using the <a href=\"http://qiicr.org/dcmqi/#/validators\">online validator tool</a>.";
+        "Please check validity of the file using the <a href=\"https://qiicr.org/dcmqi/#/validators\">online validator tool</a>.";
       QMessageBox::critical(this, "Load failed", errorMessage.arg(terminologyFileName));
       }
     }
@@ -1941,7 +1954,7 @@ void qSlicerTerminologyNavigatorWidget::onLoadAnatomicContextClicked()
       {
       QString errorMessage =
         "Loading anatomic context from file %1 failed!<br><br>"
-        "Please check validity of the file using the <a href=\"http://qiicr.org/dcmqi/#/validators\">online validator tool</a>.";
+        "Please check validity of the file using the <a href=\"https://qiicr.org/dcmqi/#/validators\">online validator tool</a>.";
       QMessageBox::critical(this, "Load failed", errorMessage.arg(anatomicContextFileName));
       }
     }

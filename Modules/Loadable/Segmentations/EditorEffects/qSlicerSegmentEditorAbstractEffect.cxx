@@ -39,6 +39,7 @@
 #include <QFrame>
 #include <QImage>
 #include <QLabel>
+#include <QMainWindow>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPixmap>
@@ -49,6 +50,7 @@
 #include "qMRMLSliceView.h"
 #include "qMRMLThreeDWidget.h"
 #include "qMRMLThreeDView.h"
+#include "qSlicerApplication.h"
 #include "qSlicerCoreApplication.h"
 #include "vtkMRMLSliceLogic.h"
 
@@ -301,7 +303,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   SlicerRenderBlocker renderBlocker;
 
   vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = modifierLabelmapInput;
-  if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentEditorNode::PaintAllowedEverywhere) ||
+  if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere) ||
     parameterSetNode->GetMasterVolumeIntensityMask())
     {
     vtkNew<vtkOrientedImageData> maskImage;
@@ -313,7 +315,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     vtkOrientedImageDataResample::FillImage(maskImage, m_EraseValue);
 
     // Apply mask to modifier labelmap if masking is enabled
-    if (!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentEditorNode::PaintAllowedEverywhere)
+    if (!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere)
       {
       vtkOrientedImageDataResample::ModifyImage(maskImage, this->maskLabelmap(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
       }
@@ -353,9 +355,6 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       vtkOrientedImageDataResample::ModifyImage(maskImage, thresholdMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
       }
 
-    vtkNew<vtkOrientedImageData> maskWithCurrentSegment;
-    maskWithCurrentSegment->DeepCopy(maskImage);
-
     vtkSmartPointer<vtkOrientedImageData> segmentLayerLabelmap =
       vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetMasterRepresentationName()));
     if (segmentLayerLabelmap
@@ -376,11 +375,13 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       vtkNew<vtkOrientedImageData> invertedSegment;
       invertedSegment->ShallowCopy(segmentInverter->GetOutput());
       invertedSegment->CopyDirections(segmentLayerLabelmap);
-      vtkOrientedImageDataResample::ModifyImage(maskWithCurrentSegment, invertedSegment, vtkOrientedImageDataResample::OPERATION_MINIMUM);
+      vtkOrientedImageDataResample::ModifyImage(maskImage, invertedSegment, vtkOrientedImageDataResample::OPERATION_MINIMUM);
       }
 
-    // If we need to the modifier labelmap, make a copy to not modify the input
-    vtkOrientedImageDataResample::ApplyImageMask(modifierLabelmap, maskWithCurrentSegment, m_EraseValue, true);
+    // Apply the mask to the modifier labelmap. Make a copy so that we don't modify the original.
+    modifierLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
+    modifierLabelmap->DeepCopy(modifierLabelmapInput);
+    vtkOrientedImageDataResample::ApplyImageMask(modifierLabelmap, maskImage, m_EraseValue, true);
 
     if (segmentLayerLabelmap && modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet)
       {
@@ -610,20 +611,19 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
         }
       }
     }
-  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove)
+  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove
+    && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
+    && this->parameterSetNode()->GetMaskSegmentID()
+    && strcmp(this->parameterSetNode()->GetMaskSegmentID(), segmentID) != 0)
     {
     // In general, we don't try to "add back" areas to other segments when an area is removed from the selected segment.
     // The only exception is when we draw inside one specific segment. In that case erasing adds to the mask segment. It is useful
     // for splitting a segment into two by painting.
-    if (this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentEditorNode::PaintAllowedInsideSingleSegment
-      && this->parameterSetNode()->GetMaskSegmentID())
+    if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
+      modifierLabelmap, segmentationNode, this->parameterSetNode()->GetMaskSegmentID(), vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK,
+      extent, false, segmentIDsToOverwrite))
       {
-      if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-        modifierLabelmap, segmentationNode, this->parameterSetNode()->GetMaskSegmentID(), vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK,
-        extent, false, segmentIDsToOverwrite))
-        {
-        qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from segment " << this->parameterSetNode()->GetMaskSegmentID();
-        }
+      qCritical() << Q_FUNC_INFO << ": Failed to add back modifier labelmap to segment " << this->parameterSetNode()->GetMaskSegmentID();
       }
     }
 
@@ -1023,7 +1023,10 @@ int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
       }
     }
 
-  ctkMessageBox* confirmCurrentSegmentVisibleMsgBox = new ctkMessageBox(nullptr);
+  qSlicerApplication* app = qSlicerApplication::application();
+  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+
+  ctkMessageBox* confirmCurrentSegmentVisibleMsgBox = new ctkMessageBox(mainWindow);
   confirmCurrentSegmentVisibleMsgBox->setAttribute(Qt::WA_DeleteOnClose);
   confirmCurrentSegmentVisibleMsgBox->setWindowTitle("Operate on invisible segment?");
   confirmCurrentSegmentVisibleMsgBox->setText("The currently selected segment is hidden. Would you like to make it visible?");

@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>Icons/AnnotationLock.png</file>
         <file>Icons/AnnotationUnlock.png</file>
-        <file>Icons/AnnotationSpline.png</file>
         <file>Icons/AnnotationEditAngle.png</file>
         <file>Icons/AnnotationEditDistance.png</file>
         <file>Icons/AnnotationEditNote.png</file>
@@ -20,7 +19,6 @@
         <file>Icons/AnnotationPlayForward.png</file>
         <file>Icons/AnnotationMouseModePick.png</file>
         <file>Icons/AnnotationMouseModePlace.png</file>
-        <file>Icons/AnnotationAngle.png</file>
         <file>Icons/AnnotationMoveDown.png</file>
         <file>Icons/AnnotationMoveUp.png</file>
         <file>Icons/AnnotationDelete.png</file>
@@ -45,9 +43,6 @@
         <file>Icons/AnnotationLayout.png</file>
         <file>Icons/AnnotationVisibility.png</file>
         <file>Icons/AnnotationVolumesModule.png</file>
-        <file>Icons/AnnotationBidimensional.png</file>
-        <file>Icons/AnnotationBidimensionalWithArrow.png</file>
-        <file>Icons/AnnotationEditBidimensional.png</file>
         <file>Icons/Annotation.png</file>
         <file>Icons/ViewCamera.png</file>
         <file>Icons/SnapshotRestore.png</file>

@@ -282,11 +282,7 @@ void vtkMRMLMarkupsFiducialStorageNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsFiducialStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  return refNode->IsA("vtkMRMLMarkupsFiducialNode") ||
-         refNode->IsA("vtkMRMLMarkupsLineNode") ||
-         refNode->IsA("vtkMRMLMarkupsAngleNode") ||
-         refNode->IsA("vtkMRMLMarkupsCurveNode") ||
-         refNode->IsA("vtkMRMLMarkupsPlaneNode");
+  return refNode->IsA("vtkMRMLMarkupsNode");
 }
 
 //----------------------------------------------------------------------------
@@ -554,7 +550,8 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       markupsNode->RemoveAllControlPoints();
       }
 
-    char line[MARKUPS_BUFFER_SIZE];
+    std::vector<char> lineBuff(vtkMRMLMarkupsFiducialStorageNode::GetMaximumLineLength());
+    char* line = &(lineBuff[0]);
 
     // save the valid lines in a vector, parse them once know the max id
     std::vector<std::string>lines;
@@ -567,7 +564,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
     while (fstr.good())
       {
-      fstr.getline(line, MARKUPS_BUFFER_SIZE);
+      fstr.getline(line, vtkMRMLMarkupsFiducialStorageNode::GetMaximumLineLength());
 
       // does it start with a #?
       if (line[0] == '#')
@@ -795,4 +792,66 @@ void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedReadFileTypes()
 void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Markups Fiducial CSV (.fcsv)");
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLMarkupsFiducialStorageNode::ConvertStringToStorageFormat(std::string input)
+{
+  std::string output = input;
+
+  // are there any commas that will require the string to have double
+  // quotes put around it? also for now putting quotes around the
+  // whole string if there are internal quotes
+  bool surroundingQuotesNeeded = false;
+  size_t commaPos = output.find(",");
+  size_t quotePos = output.find("\"");
+
+  if (commaPos != std::string::npos ||
+      quotePos != std::string::npos)
+    {
+    surroundingQuotesNeeded = true;
+    }
+
+  // escape any extant double quotes by adding an extra double quote
+  while (quotePos != std::string::npos)
+    {
+    output.replace(quotePos, 1, std::string("\"\""));
+    quotePos = output.find("\"",quotePos+2);
+    }
+  if (surroundingQuotesNeeded)
+    {
+    // put quotes around the whole thing
+    output = std::string("\"") + output + std::string("\"");
+    }
+  return output;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLMarkupsFiducialStorageNode::ConvertStringFromStorageFormat(std::string input)
+{
+  std::string output = input;
+
+  if (output.size() == 0)
+    {
+    return output;
+    }
+  // remove any leading and trailing quotes
+  if (output.find_first_of("\"") == size_t(0))
+    {
+    output.erase(0, 1);
+    }
+  size_t last = output.size() - 1;
+  if (output.find_last_of("\"") == last)
+    {
+    output.erase(last, 1);
+    }
+
+  // change any doubled quotes to single quotes
+  size_t quotesPos = output.find("\"\"");
+  while (quotesPos != std::string::npos)
+    {
+    output.replace(quotesPos, 2, "\"");
+    quotesPos = output.find("\"\"");
+    }
+  return output;
 }

@@ -1,11 +1,14 @@
 import os
-import vtk, qt, ctk, slicer
+
+import ctk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # SlicerMRBSaveRestoreCheckPathsTest
 #
-
 class SlicerMRBSaveRestoreCheckPathsTest(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
@@ -25,6 +28,7 @@ class SlicerMRBSaveRestoreCheckPathsTest(ScriptedLoadableModule):
     Nicole Aucoin, BWH
     and was partially funded by NIH grant 3P41RR013218.
     """
+
 
 class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
   """

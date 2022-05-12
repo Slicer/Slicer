@@ -186,6 +186,15 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
     double origin[3] = {0.,0.,0.};
     d->ImageOriginWidget->setCoordinates(origin);
 
+    // Set IJK to RAS direction matrix to identity
+    for (int i=0; i<3; i++)
+      {
+      for (int j=0; j<3; j++)
+        {
+        d->IJKToRASDirectionMatrixWidget->setValue(i,j, i==j ? 1. : 0.);
+        }
+      }
+
     d->ScalarRangeValueLabel->setText("");
 
     d->ScanOrderComboBox->setCurrentIndex(-1);
@@ -222,7 +231,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   double* origin = d->VolumeNode->GetOrigin();
   d->ImageOriginWidget->setCoordinates(origin);
 
-  double IJKToRASDirections[3][3] = { {1,0,0}, {0,1,0}, {0,0,1} };
+  double IJKToRASDirections[3][3] = { {1.,0.,0.}, {0.,1.,0.}, {0.,0.,1.} };
   d->VolumeNode->GetIJKToRASDirections(IJKToRASDirections);
   for (int i=0; i<3; i++)
     {

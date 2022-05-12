@@ -1,7 +1,7 @@
 #!/usr/bin/env python-real
 
-import os
 import sys
+
 
 def main(input, sigma, output):
 

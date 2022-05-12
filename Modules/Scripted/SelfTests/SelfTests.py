@@ -1,14 +1,19 @@
 import traceback
-import vtk, qt, ctk, slicer
+
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import logging
+
 #
 # SelfTests
 #
 # This code includes the GUI for the slicer module.
-# The purpose is to provide a BIST (http://en.wikipedia.org/wiki/Built-in_self-test)
-# framework for slicer as discussed here: http://na-mic.org/Bug/view.php?id=1922
+# The purpose is to provide a BIST (https://en.wikipedia.org/wiki/Built-in_self-test)
+# framework for slicer as discussed here: https://na-mic.org/Bug/view.php?id=1922
 #
+
 
 class ExampleSelfTests:
 
@@ -115,6 +120,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
     return True
 
+
 class SelfTestsLogic:
   """Logic to handle invoking the tests and reporting the results"""
 
@@ -153,6 +159,7 @@ class SelfTestsLogic:
         if not continueCheck(self):
           return
 
+
 def SelfTestsTest():
   if hasattr(slicer,'selfTests'):
     logic = SelfTestsLogic(list(slicer.selfTests.keys()))
@@ -161,8 +168,10 @@ def SelfTestsTest():
   print("SelfTestsTest Passed!")
   return logic.failed == []
 
+
 def SelfTestsDemo():
   pass
+
 
 if __name__ == "__main__":
   import sys

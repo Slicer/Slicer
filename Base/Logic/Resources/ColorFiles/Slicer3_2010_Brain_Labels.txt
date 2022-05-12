@@ -4,7 +4,7 @@
 #Filename: Slicer3_2010_Brain_Labels.txt
 #Title: Slicer3:2010 Brain Labels
 #PageName: Slicer3:2010_Brain_Labels
-#Source: http://www.slicer.org/slicerWiki/index.php/Slicer3:2010_Brain_Labels
+#Source: https://www.slicer.org/w/index.php/Slicer3:2010_Brain_Labels
 #
 #Begin table data:
 0 Background 0 0 0 0

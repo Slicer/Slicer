@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
     std::cerr << "No input transform found! Specified transform ID = " << transform1ID << std::endl;
     return EXIT_FAILURE;
     }
-  // fiducials
+  // Control point lists
   std::cout << "Have an input seed list of size " << seed.size() << std::endl;
   for (unsigned int i = 0; i < seed.size(); ++i)
     {
@@ -116,11 +116,12 @@ int main(int argc, char* argv[])
     vtkNew<vtkMRMLMarkupsFiducialStorageNode> fiducialStorageNode;
     fiducialStorageNode->SetFileName(seedsFile.c_str());
     fiducialStorageNode->ReadData(fiducialNode.GetPointer());
-    std::cout << "Number of fids read = " << fiducialNode->GetNumberOfFiducials() << ", coordinate system flag = " << fiducialStorageNode->GetCoordinateSystem() << std::endl;
-    for (int i = 0; i < fiducialNode->GetNumberOfFiducials(); ++i)
+    std::cout << "Number of fids read = " << fiducialNode->GetNumberOfControlPoints()
+      << ", coordinate system flag = " << fiducialStorageNode->GetCoordinateSystem() << std::endl;
+    for (int i = 0; i < fiducialNode->GetNumberOfControlPoints(); ++i)
       {
       double pos[3];
-      fiducialNode->GetNthFiducialPosition(i, pos);
+      fiducialNode->GetNthControlPointPosition(i, pos);
       std::cout << i << "\t" << pos[0] << "\t" << pos[1] << "\t" << pos[2] << std::endl;
       }
     }
@@ -132,13 +133,13 @@ int main(int argc, char* argv[])
   for (unsigned int i = 0; i < seed.size(); ++i)
     {
     std::cout << "Copying seed list to output file list: " << seed[i][0] << ", " << seed[i][1] << ", " << seed[i][2] << std::endl;
-    copiedFiducialNode->AddFiducial(seed[i][0], seed[i][1], seed[i][2]);
+    copiedFiducialNode->AddControlPoint(vtkVector3d(seed[i][0], seed[i][1], seed[i][2]));
     // toggle some settings
     if (i == 0)
       {
-      copiedFiducialNode->SetNthFiducialLocked(i, true);
-      copiedFiducialNode->SetNthFiducialSelected(i, false);
-      copiedFiducialNode->SetNthFiducialVisibility(i, false);
+      copiedFiducialNode->SetNthControlPointLocked(i, true);
+      copiedFiducialNode->SetNthControlPointSelected(i, false);
+      copiedFiducialNode->SetNthControlPointVisibility(i, false);
       }
     }
   // write out the copy
@@ -186,6 +187,24 @@ int main(int argc, char* argv[])
     tsvWriter->SetFieldDelimiter("\t");
     tsvWriter->SetInputData(table);
     tsvWriter->Update();
+    }
+
+  if (!regions.empty())
+    {
+    std::cout << "Regions:" << std::endl;
+    for (const std::vector<float> &region : regions)
+      {
+      std::cout << "  region:" << std::endl;
+      std::cout << "    center: " << region[0] << ", " << region[1] << ", " << region[2] << std::endl;
+      std::cout << "    radius: " << region[3] << ", " << region[4] << ", " << region[5] << std::endl;
+      if (region.size() == 15)
+        {
+        std::cout << "    axis X: " << region[6] << ", " << region[9] << ", " << region[12] << std::endl;
+        std::cout << "    axis Y: " << region[7] << ", " << region[10] << ", " << region[13] << std::endl;
+        std::cout << "    axis Z: " << region[8] << ", " << region[11] << ", " << region[14] << std::endl;
+        }
+      }
+    std::cout << std::endl;
     }
 
   // Write out the return parameters in "name = value" form

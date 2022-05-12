@@ -44,7 +44,6 @@
 #include <vtkSphereSource.h>
 #include <vtkTextProperty.h>
 #include <vtkWidgetRepresentation.h>
-#include <vtkMRMLColorTableNode.h>
 
 // STD includes
 #include <algorithm>
@@ -75,7 +74,6 @@ vtkMRMLMarkupsDisplayableManager::vtkMRMLMarkupsDisplayableManager()
   this->LastClickWorldCoordinates[2]=0.0;
   this->LastClickWorldCoordinates[3]=1.0;
 
-  this->currentColorTableIndex = 3;
 }
 
 //---------------------------------------------------------------------------
@@ -571,27 +569,6 @@ bool vtkMRMLMarkupsDisplayableManager::IsManageable(const char* nodeClassName)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayableManager::CreateNewMarkupsNode(
-  const std::string &markupsNodeClassName)
-{
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(
-    this->GetMRMLScene()->AddNewNodeByClass(markupsNodeClassName));
-  std::string nodeName =
-    this->GetMRMLScene()->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
-  markupsNode->SetName(nodeName.c_str());
-  markupsNode->AddDefaultStorageNode();
-  markupsNode->CreateDefaultDisplayNodes();
-
-  if (markupsNodeClassName == "vtkMRMLMarkupsROINode")
-    {
-    double currentColor[3];
-    this->GetNewMarkupsColor(currentColor);
-    markupsNode->GetDisplayNode()->SetSelectedColor(currentColor);
-    }
-  return markupsNode;
-}
-
-//---------------------------------------------------------------------------
 vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2)
 {
   vtkSlicerMarkupsWidget* closestWidget = nullptr;
@@ -873,8 +850,20 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement(
   // If there is no active markups node then create a new one
   if (!activeMarkupsNode)
     {
-    activeMarkupsNode = this->CreateNewMarkupsNode(placeNodeClassName);
-    selectionNode->SetReferenceActivePlaceNodeID(activeMarkupsNode->GetID());
+    vtkSlicerMarkupsLogic* markupsLogic =
+      vtkSlicerMarkupsLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("Markups"));
+    if (markupsLogic)
+      {
+      activeMarkupsNode = markupsLogic->AddNewMarkupsNode(placeNodeClassName);
+      }
+    if (activeMarkupsNode)
+      {
+      selectionNode->SetReferenceActivePlaceNodeID(activeMarkupsNode->GetID());
+      }
+    else
+      {
+      vtkErrorMacro("GetWidgetForPlacement failed to create new markups node by class " << placeNodeClassName);
+      }
     }
 
   if (!activeMarkupsNode)
@@ -935,21 +924,19 @@ vtkSlicerMarkupsWidget * vtkMRMLMarkupsDisplayableManager::CreateWidget(vtkMRMLM
     }
 
   // Create a widget of the associated type if the node matches the registered nodes
-  vtkSlicerMarkupsWidget* widget =
-    vtkSlicerMarkupsWidget::SafeDownCast(
-      markupsLogic->GetWidgetByMarkupsType(markupsNode->GetMarkupType())
-    )->CreateInstance();
-
-
-  // If the widget was successfully created
-  if (widget)
+  vtkSlicerMarkupsWidget* widgetForMarkup = vtkSlicerMarkupsWidget::SafeDownCast(
+    markupsLogic->GetWidgetByMarkupsType(markupsNode->GetMarkupType()));
+  vtkSlicerMarkupsWidget* widget = widgetForMarkup ? widgetForMarkup->CreateInstance() : nullptr;
+  if (!widget)
     {
-    vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
-    vtkRenderer* renderer = this->GetRenderer();
-    widget->SetMRMLApplicationLogic(this->GetMRMLApplicationLogic());
-    widget->CreateDefaultRepresentation(markupsDisplayNode, viewNode, renderer);
+    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager::CreateWidget failed: cannot instantiate widget for markup " << markupsNode->GetMarkupType());
+    return nullptr;
     }
 
+  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
+  vtkRenderer* renderer = this->GetRenderer();
+  widget->SetMRMLApplicationLogic(this->GetMRMLApplicationLogic());
+  widget->CreateDefaultRepresentation(markupsDisplayNode, viewNode, renderer);
   return widget;
 }
 
@@ -958,37 +945,3 @@ void vtkMRMLMarkupsDisplayableManager::ConvertDeviceToXYZ(double x, double y, do
 {
   vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetInteractor(), this->GetMRMLSliceNode(), x, y, xyz);
 }
-
-//---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayableManager::UpdateCurrentColorTableIndex()
-  {
-
-  if (this->currentColorTableIndex < 255)
-    {
-    this->currentColorTableIndex += 1;
-    }
-  else
-    {
-    this->currentColorTableIndex = 0;
-    }
-  }
-//-----------------------------------------------------------------------------
-bool vtkMRMLMarkupsDisplayableManager::GetNewMarkupsColor(double currentColor[3])
-  {
-  vtkMRMLColorTableNode* randomIntegers = vtkMRMLColorTableNode::SafeDownCast(
-    this->GetMRMLScene()->GetNodeByID("vtkMRMLColorTableNodeRandom"));
-  double currentColorArray[4];
-  bool success = randomIntegers->GetColor(this->currentColorTableIndex, currentColorArray);
-  if (success)
-    {
-    currentColor[0] = currentColorArray[0];
-    currentColor[1] = currentColorArray[1];
-    currentColor[2] = currentColorArray[2];
-    this->UpdateCurrentColorTableIndex();
-    return true;
-    }
-  else
-    {
-    return false;
-    }
-  }

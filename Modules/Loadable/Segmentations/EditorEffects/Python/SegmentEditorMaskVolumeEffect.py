@@ -3,6 +3,7 @@ import vtk, qt, ctk, slicer
 import logging
 from SegmentEditorEffects import *
 
+
 class SegmentEditorMaskVolumeEffect(AbstractScriptedSegmentEditorEffect):
   """This effect fills a selected volume node inside and/or outside a segment with a chosen value.
   """

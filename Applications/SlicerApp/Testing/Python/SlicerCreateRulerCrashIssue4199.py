@@ -1,8 +1,8 @@
-import os
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # SlicerCreateRulerCrashIssue4199
@@ -30,6 +30,7 @@ class SlicerCreateRulerCrashIssue4199(ScriptedLoadableModule):
     and was partially funded by NIH grant 1U24CA194354-01.
     """ # replace with organization, grant and thanks.
 
+
 #
 # SlicerCreateRulerCrashIssue4199Widget
 #
@@ -41,6 +42,7 @@ class SlicerCreateRulerCrashIssue4199Widget(ScriptedLoadableModuleWidget):
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # SlicerCreateRulerCrashIssue4199Logic
@@ -68,6 +70,7 @@ class SlicerCreateRulerCrashIssue4199Logic(ScriptedLoadableModuleLogic):
       logging.debug('hasImageData failed: no image data in volume node')
       return False
     return True
+
 
 class SlicerCreateRulerCrashIssue4199Test(ScriptedLoadableModuleTest):
   """

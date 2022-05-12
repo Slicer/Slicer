@@ -70,6 +70,7 @@ public slots:
   virtual void setHomeModuleCurrent();
   virtual void restoreToolbars();
 
+  virtual void on_FileFavoriteModulesAction_triggered();
   virtual void on_FileAddDataAction_triggered();
   virtual void on_FileLoadDataAction_triggered();
   virtual void on_FileImportSceneAction_triggered();
@@ -117,6 +118,26 @@ public slots:
   virtual void on_PasteAction_triggered();
   virtual void on_ViewExtensionsManagerAction_triggered();
 
+  virtual void on_ShowStatusBarAction_triggered(bool);
+
+  /// Write GUI state to application settings.
+  ///
+  /// GUI state includes:
+  /// - main window state and geometry (only if MainWindow/geometry application setting is
+  ///   enabled or force argument is set to true)
+  /// - current view layout ID
+  /// - favorite modules
+  /// - recently loaded files
+  ///
+  /// \sa restoreGUIState()
+  virtual void saveGUIState(bool force=false);
+
+  /// Read GUI state from application settings and update the user interface accordingly.
+  /// \sa saveGUIState()
+  virtual void restoreGUIState(bool force=false);
+
+  virtual void addFileToRecentFiles(const qSlicerIO::IOProperties& fileProperties);
+
 signals:
   /// Emitted when the window is first shown to the user.
   /// \sa showEvent(QShowEvent *)
@@ -126,6 +147,7 @@ protected slots:
   virtual void onModuleLoaded(const QString& moduleName);
   virtual void onModuleAboutToBeUnloaded(const QString& moduleName);
   virtual void onNewFileLoaded(const qSlicerIO::IOProperties &fileProperties);
+  virtual void onFileSaved(const qSlicerIO::IOProperties& fileProperties);
 
   virtual void onMRMLSceneModified(vtkObject*);
   virtual void onLayoutChanged(int);

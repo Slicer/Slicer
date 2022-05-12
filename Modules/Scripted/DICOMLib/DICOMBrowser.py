@@ -1,14 +1,13 @@
-import ctk
-import os, copy
-import qt
-import vtk
+import copy
 import logging
+import os
 
-from ctk import ctkDICOMIndexer
+import qt
+
 import slicer
 from slicer.util import VTKObservationMixin
-
 from slicer.util import settingsValue, toBool
+
 import DICOMLib
 
 
@@ -63,7 +62,6 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     self.dicomBrowser.dicomTableManager().connect('patientsDoubleClicked(QModelIndex)', self.patientStudySeriesDoubleClicked)
     self.dicomBrowser.dicomTableManager().connect('studiesDoubleClicked(QModelIndex)', self.patientStudySeriesDoubleClicked)
     self.dicomBrowser.dicomTableManager().connect('seriesDoubleClicked(QModelIndex)', self.patientStudySeriesDoubleClicked)
-
 
   def open(self):
     self.show()
@@ -197,6 +195,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
       return
     if not self.extensionCheckPending:
       self.extensionCheckPending = True
+
       def timerCallback():
         # Prompting for extension may be undesirable in custom applications.
         # DICOM/PromptForExtensions key can be used to disable this feature.
@@ -204,6 +203,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         if promptForExtensionsEnabled:
           self.promptForExtensions()
         self.extensionCheckPending = False
+
       qt.QTimer.singleShot(0, timerCallback)
 
   def promptForExtensions(self):
@@ -244,7 +244,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     then return matches
 
     See
-    http://www.na-mic.org/Bug/view.php?id=4146
+    https://mantisarchive.slicer.org/view.php?id=4146
     """
 
     # 1 - load json
@@ -380,7 +380,6 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
       # All DICOM plugins would be enabled by default
       for pluginClass in slicer.modules.dicomPlugins:
         selectedPlugins.append(pluginClass)
-
 
     allFileCount = missingFileCount = 0
     for fileList in fileLists:
@@ -601,7 +600,11 @@ class DICOMReferencesDialog(qt.QMessageBox):
     self.layout().setSpacing(9)
     self.setWindowTitle(self.WINDOW_TITLE)
     fontMetrics = qt.QFontMetrics(qt.QApplication.font(self))
-    self.setMinimumWidth(fontMetrics.width(self.WINDOW_TITLE))
+    try:
+      self.setMinimumWidth(fontMetrics.horizontalAdvance(self.WINDOW_TITLE))
+    except AttributeError:
+      # Support Qt < 5.11 lacking QFontMetrics::horizontalAdvance()
+      self.setMinimumWidth(fontMetrics.width(self.WINDOW_TITLE))
 
   def _addTextLabel(self):
     label = qt.QLabel(self.WINDOW_TEXT)

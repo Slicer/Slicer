@@ -57,18 +57,11 @@
 // Markups logic includes
 #include "vtkSlicerMarkupsLogic.h"
 
-// Makrups vtk widgets includes
-#include "vtkSlicerAngleWidget.h"
-#include "vtkSlicerCurveWidget.h"
-#include "vtkSlicerLineWidget.h"
-#include "vtkSlicerPlaneWidget.h"
-#include "vtkSlicerPointsWidget.h"
-#include "vtkSlicerROIWidget.h"
-
 // Markups widgets
-#include "qMRMLMarkupsROIWidget.h"
-#include "qMRMLMarkupsCurveSettingsWidget.h"
 #include "qMRMLMarkupsAngleMeasurementsWidget.h"
+#include "qMRMLMarkupsCurveSettingsWidget.h"
+#include "qMRMLMarkupsPlaneWidget.h"
+#include "qMRMLMarkupsROIWidget.h"
 #include "qMRMLMarkupsToolBar.h"
 #include "qMRMLMarkupsOptionsWidgetsFactory.h"
 #include "qMRMLNodeComboBox.h"
@@ -173,8 +166,7 @@ void qSlicerMarkupsModulePrivate::addToolBar()
     {
     mainWindow->restoreState(settings.value("windowState").toByteArray());
     }
-  vtkSlicerMarkupsLogic* logic = vtkSlicerMarkupsLogic::SafeDownCast(q->logic());
-  this->ToolBar->addNodeActions(logic);
+  this->ToolBar->initializeToolBarLayout();
 }
 
 //-----------------------------------------------------------------------------
@@ -247,44 +239,13 @@ void qSlicerMarkupsModule::setup()
     return;
     }
 
-  // Register markups
-  // NOTE: the order of registration determines the order of the create push buttons in the GUI
-
-  vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
-  vtkNew<vtkSlicerPointsWidget> pointsWidget;
-  logic->RegisterMarkupsNode(fiducialNode, pointsWidget);
-
-  vtkNew<vtkMRMLMarkupsLineNode> lineNode;
-  vtkNew<vtkSlicerLineWidget> lineWidget;
-  logic->RegisterMarkupsNode(lineNode, lineWidget);
-
-  vtkNew<vtkMRMLMarkupsAngleNode> angleNode;
-  vtkNew<vtkSlicerAngleWidget> angleWidget;
-  logic->RegisterMarkupsNode(angleNode, angleWidget);
-
-  vtkNew<vtkMRMLMarkupsCurveNode> curveNode;
-  vtkNew<vtkSlicerCurveWidget> curveWidget;
-  logic->RegisterMarkupsNode(curveNode, curveWidget);
-
-  vtkNew<vtkMRMLMarkupsClosedCurveNode> closedCurveNode;
-  vtkNew<vtkSlicerCurveWidget> closedCurveWidget;
-  logic->RegisterMarkupsNode(closedCurveNode, closedCurveWidget);
-
-  vtkNew<vtkMRMLMarkupsPlaneNode> planeNode;
-  vtkNew<vtkSlicerPlaneWidget> planeWidget;
-  logic->RegisterMarkupsNode(planeNode, planeWidget);
-
-  vtkNew<vtkMRMLMarkupsROINode> roiNode;
-  vtkNew<vtkSlicerROIWidget> roiWidget;
-  logic->RegisterMarkupsNode(roiNode, roiWidget);
-
   // Register displayable managers (same displayable manager handles both slice and 3D views)
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLMarkupsDisplayableManager");
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLMarkupsDisplayableManager");
 
   // Register IO
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  qSlicerMarkupsReader *markupsReader = new qSlicerMarkupsReader(vtkSlicerMarkupsLogic::SafeDownCast(this->logic()), this);
+  qSlicerMarkupsReader *markupsReader = new qSlicerMarkupsReader(logic, this);
   ioManager->registerIO(markupsReader);
   ioManager->registerIO(new qSlicerMarkupsWriter(this));
 
@@ -302,6 +263,7 @@ qSlicerAbstractModuleRepresentation* qSlicerMarkupsModule::createWidgetRepresent
   auto optionsWidgetFactory = qMRMLMarkupsOptionsWidgetsFactory::instance();
   optionsWidgetFactory->registerOptionsWidget(new qMRMLMarkupsAngleMeasurementsWidget());
   optionsWidgetFactory->registerOptionsWidget(new qMRMLMarkupsCurveSettingsWidget());
+  optionsWidgetFactory->registerOptionsWidget(new qMRMLMarkupsPlaneWidget());
   optionsWidgetFactory->registerOptionsWidget(new qMRMLMarkupsROIWidget());
 
   // Create and configure module widget.
@@ -323,18 +285,8 @@ vtkMRMLAbstractLogic* qSlicerMarkupsModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerMarkupsModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLAnnotationFiducialNode"
-    << "vtkMRMLMarkupsDisplayNode"
-    << "vtkMRMLMarkupsFiducialNode"
-    << "vtkMRMLMarkupsLineNode"
-    << "vtkMRMLMarkupsAngleNode"
-    << "vtkMRMLMarkupsCurveNode"
-    << "vtkMRMLMarkupsClosedCurveNode"
-    << "vtkMRMLMarkupsPlaneNode"
-    << "vtkMRMLMarkupsROINode"
-    << "vtkMRMLMarkupsFiducialStorageNode"
-    << "vtkMRMLMarkupsJsonStorageNode";
+  // This module can edit properties
+  return QStringList() << "vtkMRMLMarkupsNode";
 }
 
 //-----------------------------------------------------------------------------
@@ -390,8 +342,13 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     }
   if (settings.contains("Markups/GlyphType"))
     {
-    markupsDisplayNode->SetGlyphType(vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(
-      settings.value("Markups/GlyphType").toString().toUtf8()));
+    int glyphType = vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(settings.value("Markups/GlyphType").toString().toUtf8());
+    // If application settings is old then it may contain invalid GlyphType. In this case use Sphere3D glyph instead.
+    if (glyphType == vtkMRMLMarkupsDisplayNode::GlyphTypeInvalid)
+      {
+      glyphType = vtkMRMLMarkupsDisplayNode::Sphere3D;
+      }
+    markupsDisplayNode->SetGlyphType(glyphType);
     }
   if (settings.contains("Markups/GlyphScale"))
     {
@@ -499,6 +456,11 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     {
     markupsDisplayNode->SetOpacity(settings.value("Markups/Opacity").toDouble());
     }
+  if (settings.contains("Markups/InteractionHandleScale"))
+    {
+    markupsDisplayNode->SetInteractionHandleScale(settings.value("Markups/InteractionHandleScale").toDouble());
+    }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -544,7 +506,7 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
   settings.setValue("Markups/OccludedOpacity", markupsDisplayNode->GetOccludedOpacity());
 
   settings.setValue("Markups/TextProperty", QString::fromStdString(
-    vtkMRMLMarkupsDisplayNode::GetTextPropertyAsString(markupsDisplayNode->GetTextProperty())));
+    vtkMRMLDisplayNode::GetTextPropertyAsString(markupsDisplayNode->GetTextProperty())));
 
   color = markupsDisplayNode->GetSelectedColor();
   settings.setValue("Markups/SelectedColor", QColor::fromRgbF(color[0], color[1], color[2]));
@@ -553,6 +515,8 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
   color = markupsDisplayNode->GetActiveColor();
   settings.setValue("Markups/ActiveColor", QColor::fromRgbF(color[0], color[1], color[2]));
   settings.setValue("Markups/Opacity", markupsDisplayNode->GetOpacity());
+
+  settings.setValue("Markups/InteractionHandleScale", markupsDisplayNode->GetInteractionHandleScale());
 }
 
 //-----------------------------------------------------------------------------

@@ -25,7 +25,6 @@
 #include "qSlicerSegmentationsModuleExport.h"
 #include "qSlicerNodeWriter.h"
 
-class qSlicerSegmentationsNodeWriterPrivate;
 class vtkMRMLNode;
 
 /// Utility class that is ready to use for most of the nodes.
@@ -38,7 +37,7 @@ public:
   qSlicerSegmentationsNodeWriter(QObject* parent);
   ~qSlicerSegmentationsNodeWriter() override;
 
-  /// Return a qSlicerIOSegmentationNodeWriterOptionsWidget
+  /// Return a new qSlicerSegmentationsNodeWriterOptionsWidget
   qSlicerIOOptions* options()const override;
 
   /// Write the node referenced by "nodeID" into the "fileName" file.
@@ -47,11 +46,7 @@ public:
   /// Create a storage node if the storable node doesn't have any.
   bool write(const qSlicerIO::IOProperties& properties) override;
 
-protected:
-  QScopedPointer<qSlicerSegmentationsNodeWriterPrivate> d_ptr;
-
 private:
-  Q_DECLARE_PRIVATE(qSlicerSegmentationsNodeWriter);
   Q_DISABLE_COPY(qSlicerSegmentationsNodeWriter);
 };
 

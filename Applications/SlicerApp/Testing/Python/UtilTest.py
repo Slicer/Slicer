@@ -1,9 +1,11 @@
 import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import qt
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import logging
-import time
+
 
 #
 # UtilTest
@@ -20,6 +22,7 @@ class UtilTest(ScriptedLoadableModule):
     This is a self test that tests the methods of slicer.util
     """
     parent.acknowledgementText = """""" # replace with organization, grant and thanks.
+
 
 #
 # UtilTestWidget
@@ -40,6 +43,7 @@ class UtilTestWidget(ScriptedLoadableModuleWidget):
     self.Widget = slicer.util.loadUI(path)
     self.layout.addWidget(self.Widget)
 
+
 #
 # UtilTestLogic
 #
@@ -47,6 +51,7 @@ class UtilTestWidget(ScriptedLoadableModuleWidget):
 class UtilTestLogic(ScriptedLoadableModuleLogic):
   def __init__(self):
     ScriptedLoadableModuleLogic.__init__(self)
+
 
 #
 # UtilTestLogic
@@ -216,7 +221,6 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     volumeNode = SampleData.downloadSample("MRHead")
 
     import numpy as np
-    import math
 
     def some_func(x, y, z):
       return 0.1*x*x + 0.03*y*y + 0.05*z*z

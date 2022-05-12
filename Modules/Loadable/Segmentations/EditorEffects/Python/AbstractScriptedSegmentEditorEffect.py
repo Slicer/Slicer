@@ -1,5 +1,7 @@
-import os
-import vtk, qt, ctk, slicer, logging
+import qt
+
+import slicer
+
 
 #
 # Abstract class of python scripted segment editor effects
@@ -66,13 +68,11 @@ class AbstractScriptedSegmentEditorEffect:
     return [rasVector.x(), rasVector.y(), rasVector.z()]
 
   def xyzToIjk(self, xyz, viewWidget, image, parentTransformNode=None):
-    import vtkSegmentationCorePython as vtkSegmentationCore
     xyzVector = qt.QVector3D(xyz[0], xyz[1], xyz[2])
     ijkVector = self.scriptedEffect.xyzToIjk(xyzVector, viewWidget, image, parentTransformNode)
     return [int(ijkVector.x()), int(ijkVector.y()), int(ijkVector.z())]
 
   def xyToIjk(self, xy, viewWidget, image, parentTransformNode=None):
-    import vtkSegmentationCorePython as vtkSegmentationCore
     xyPoint = qt.QPoint(xy[0], xy[1])
     ijkVector = self.scriptedEffect.xyToIjk(xyPoint, viewWidget, image, parentTransformNode)
     return [int(ijkVector.x()), int(ijkVector.y()), int(ijkVector.z())]

@@ -43,7 +43,6 @@
 // STD includes
 #include <sstream>
 #include <algorithm> // for std::find
-#include <regex>
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #  define SNPRINTF _snprintf
 #else
@@ -1550,34 +1549,23 @@ std::string vtkMRMLSequenceBrowserNode::GetFormattedIndexValue(int index)
   return formattedString;
 }
 
-
 //-----------------------------------------------------------------------------
 bool vtkMRMLSequenceBrowserNode::ValidateFormatString(std::string& validatedFormat, std::string& prefix, std::string& suffix,
                                                              const std::string& requestedFormat, const std::string& typeString)
 {
   // This regex finds sprintf specifications. Only the first is used to format the index value
-  std::regex specifierRegex;
-  std::smatch specifierMatch;
-  try
-    {
-    // Regex from: https://stackoverflow.com/a/8915445
-    specifierRegex = std::regex(R"###(%(?:\d+\$)?[+-]?(?:[ 0]|'.{1})?-?\d*(?:\.\d+)?[)###" + typeString + "]");
-    std::regex_search(requestedFormat, specifierMatch, specifierRegex);
-    }
-  catch (const std::regex_error& e)
-    {
-    vtkErrorWithObjectMacro(nullptr, "Sequence browser regex error " << e.what());
-    return false;
-    }
-
-  if (specifierMatch.size() < 1)
+  // Regex from: https://stackoverflow.com/a/8915445
+  std::string regexString = "%([0-9]\\$)?[+-]?([ 0]|'.{1})?-?[0-9]*(\\.[0-9]+)?[" + typeString + "]";
+  vtksys::RegularExpression specifierRegex = vtksys::RegularExpression(regexString);
+  vtksys::RegularExpressionMatch specifierMatch;
+  if (!specifierRegex.find(requestedFormat.c_str(), specifierMatch))
     {
     return false;
     }
 
-  validatedFormat = specifierMatch.str(0);
-  prefix = specifierMatch.prefix().str();
-  suffix = specifierMatch.suffix().str();
+  validatedFormat = specifierMatch.match(0);
+  prefix = requestedFormat.substr(0, specifierMatch.start());
+  suffix = requestedFormat.substr(specifierMatch.end(), requestedFormat.length() - specifierMatch.end());
   return true;
 }
 

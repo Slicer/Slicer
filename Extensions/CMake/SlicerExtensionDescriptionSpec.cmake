@@ -60,7 +60,7 @@ endmacro()
 
 _define_metadata(
   "SCM"
-  "Source code management system: git or svn"
+  "Source code management system: git"
   1
   "")
 
@@ -72,17 +72,6 @@ _define_metadata("SCMURL"
 _define_metadata("SCMREVISION"
   "Revision allowing to checkout the expected source code"
   1
-  "")
-
-_define_metadata(
-  "SVNUSERNAME"
-  "Allow to specify username associated with svn checkout"
-  0
-  "")
-
-_define_metadata("SVNPASSWORD"
-  "Allow to specify password associated with svn checkout"
-  0
   "")
 
 _define_metadata("DEPENDS"
@@ -175,7 +164,7 @@ function(slicer_extension_description_spec_defaults_test)
   list(LENGTH Slicer_EXT_REQUIRED_METADATA_NAMES required_metadata_count)
   list(LENGTH Slicer_EXT_OPTIONAL_METADATA_NAMES optional_metadata_count)
 
-  set(expected 15)
+  set(expected 13)
   set(actual ${metadata_count})
   if(NOT ${actual} EQUAL ${expected})
     message(FATAL_ERROR
@@ -189,7 +178,7 @@ function(slicer_extension_description_spec_defaults_test)
       "Problem with metadata_count. Expected: ${expected}, actual: ${actual}")
   endif()
 
-  set(expected 12)
+  set(expected 10)
   set(actual ${optional_metadata_count})
   if(NOT ${actual} EQUAL ${expected})
     message(FATAL_ERROR
@@ -203,8 +192,6 @@ function(slicer_extension_description_spec_defaults_test)
     SCMREVISION
     )
   set(optional
-    SVNUSERNAME
-    SVNPASSWORD
     DEPENDS
     BUILD_SUBDIRECTORY
     HOMEPAGE

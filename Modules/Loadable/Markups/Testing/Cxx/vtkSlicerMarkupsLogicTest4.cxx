@@ -33,7 +33,9 @@
 #include "vtkSlicerMarkupsLogic.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLCoreTestingMacros.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include<vtkCallbackCommand.h>
@@ -51,7 +53,14 @@ bool unregisteredEventReceived = false;
 //------------------------------------------------------------------------------
 int vtkSlicerMarkupsLogicTest4(int , char*[])
 {
+  vtkNew<vtkMRMLScene> scene;
+
+  // Application logic - Creates vtkMRMLSelectionNode and vtkMRMLInteractionNode
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene);
+
   vtkNew<vtkSlicerMarkupsLogic> logic4;
+  logic4->SetMRMLScene(scene);
 
   // Set a callback for detecting registration events
   vtkNew<vtkCallbackCommand> registeredCallbackCommand;
@@ -63,10 +72,12 @@ int vtkSlicerMarkupsLogicTest4(int , char*[])
   unregisteredCallbackCommand->SetCallback(UnregisteredEventDetectionCallback);
   logic4->AddObserver(vtkSlicerMarkupsLogic::MarkupUnregistered, unregisteredCallbackCommand);
 
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   // Test registration of a Markups Node with correct node and widget
   logic4->RegisterMarkupsNode(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(),
                               vtkSmartPointer<vtkSlicerPointsWidget>::New());
-  CHECK_BOOL(registeredEventReceived, true);
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
+  CHECK_BOOL(registeredEventReceived, false);  // already registered, should not re-register
 
   // Test registration of a Markups Node with nullptr node
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -97,7 +108,7 @@ int vtkSlicerMarkupsLogicTest4(int , char*[])
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   CHECK_BOOL(unregisteredEventReceived, false);
 
-  // // Try to unregister a valid node
+  // Try to unregister a valid node
   unregisteredEventReceived = false;
   logic4->UnregisterMarkupsNode(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New());
   CHECK_BOOL(unregisteredEventReceived, true);
@@ -108,6 +119,8 @@ int vtkSlicerMarkupsLogicTest4(int , char*[])
   logic4->UnregisterMarkupsNode(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New());
   TESTING_OUTPUT_ASSERT_WARNINGS_END();
   CHECK_BOOL(unregisteredEventReceived, false);
+
+  logic4->UnregisterMarkupsNode(vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New());
 
   vtkNew<vtkMRMLMarkupsFiducialNode> markupsFiducialNode;
   vtkNew<vtkMRMLMarkupsAngleNode> markupsAngleNode;

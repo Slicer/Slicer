@@ -2,6 +2,7 @@ from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = 'D'
 
+
 class ModuleD_WithFileDialog_WithoutWidget(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)

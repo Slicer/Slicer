@@ -4,7 +4,7 @@
 #Filename: Slicer4_2012_MediumChartColors.txt
 #Title: Slicer4:2012 MediumChartColors
 #PageName: Slicer4:2012_MediumChartColors
-#Source: http://www.slicer.org/slicerWiki/index.php/Slicer4:2012_MediumChartColors
+#Source: https://www.slicer.org/w/index.php/Slicer4:2012_MediumChartColors
 #
 #Begin table data:
 0 Series_1 239 89 98 255

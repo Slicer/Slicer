@@ -1,8 +1,9 @@
 import logging
 import os
-import unittest
-import vtk, qt, ctk, slicer
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 class SlicerScriptedFileReaderWriterTest(ScriptedLoadableModule):
   def __init__(self, parent):
@@ -19,11 +20,13 @@ class SlicerScriptedFileReaderWriterTest(ScriptedLoadableModule):
     '''
     self.parent = parent
 
+
 class SlicerScriptedFileReaderWriterTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
     # Default reload&test widgets are enough.
     # Note that reader and writer is not reloaded.
+
 
 class SlicerScriptedFileReaderWriterTestFileReader:
 

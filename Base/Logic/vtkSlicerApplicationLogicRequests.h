@@ -176,7 +176,7 @@ public:
         }
       else
         {
-        removed = itksys::SystemTools::RemoveFile(m_Filename.c_str());
+        removed = static_cast<bool>(itksys::SystemTools::RemoveFile(m_Filename.c_str()));
         }
       if (!removed)
         {
@@ -273,7 +273,7 @@ public:
       if (m_DeleteFile)
         {
         int removed;
-        removed = itksys::SystemTools::RemoveFile(m_Filename.c_str());
+        removed = static_cast<bool>(itksys::SystemTools::RemoveFile(m_Filename.c_str()));
         if (!removed)
           {
           std::stringstream information;
@@ -488,7 +488,7 @@ public:
     if (m_DeleteFile)
       {
       int removed;
-      removed = itksys::SystemTools::RemoveFile( m_Filename.c_str() );
+      removed = static_cast<bool>(itksys::SystemTools::RemoveFile( m_Filename.c_str() ));
       if (!removed)
         {
         std::stringstream information;

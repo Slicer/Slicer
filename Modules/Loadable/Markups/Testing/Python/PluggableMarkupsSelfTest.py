@@ -1,9 +1,11 @@
-import os
-import time
-import unittest
-import vtk, qt, ctk, slicer
-from slicer.ScriptedLoadableModule import *
 import logging
+
+import ctk
+import qt
+
+import slicer
+from slicer.ScriptedLoadableModule import *
+
 
 #
 # PluggableMarkupsSelfTest
@@ -24,6 +26,7 @@ class PluggableMarkupsSelfTest(ScriptedLoadableModule):
     This file was originally developed by Rafael Palomar (OUS) and was funded by
     the Research Council of Norway (grant nr. 311393).
     """
+
 
 #
 # PluggableMarkupsSelfTestWidget
@@ -65,6 +68,7 @@ class PluggableMarkupsSelfTestWidget(ScriptedLoadableModuleWidget):
     logging.debug("Execute logic.run() method")
     logic = PluggableMarkupsSelfTestLogic()
     logic.run()
+
 
 class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
 
@@ -131,6 +135,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
     return [
       slicer.qMRMLMarkupsCurveSettingsWidget(),
       slicer.qMRMLMarkupsAngleMeasurementsWidget(),
+      slicer.qMRMLMarkupsPlaneWidget(),
       slicer.qMRMLMarkupsROIWidget(),
       slicer.qMRMLMarkupsTestLineWidget()
     ]
@@ -227,7 +232,6 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
         raise Exception("%s does not exist" % additionalOptionsWidget.objectName)
 
   def run(self):
-
     """
     Run the tests
     """
@@ -245,6 +249,7 @@ class PluggableMarkupsSelfTestTest(ScriptedLoadableModuleTest):
   """
   This is the test case
   """
+
   def setUp(self):
     logic = PluggableMarkupsSelfTestLogic()
     logic.setUp()

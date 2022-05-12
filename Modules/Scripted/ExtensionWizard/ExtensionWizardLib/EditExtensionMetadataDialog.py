@@ -1,14 +1,17 @@
-import os
 import re
+
+import qt
+
 import slicer
-import qt, ctk
 
 from .EditableTreeWidget import EditableTreeWidget
+
 
 #-----------------------------------------------------------------------------
 def _map_property(objfunc, name):
   return property(lambda self: getattr(objfunc(self), name),
                   lambda self, value: setattr(objfunc(self), name, value))
+
 
 #=============================================================================
 #
@@ -45,6 +48,7 @@ class _ui_EditExtensionMetadataDialog:
     self.buttonBox.setStandardButtons(qt.QDialogButtonBox.Ok |
                                       qt.QDialogButtonBox.Cancel)
     vLayout.addWidget(self.buttonBox)
+
 
 #=============================================================================
 #

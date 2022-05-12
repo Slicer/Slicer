@@ -71,7 +71,7 @@ vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
   this->DefaultRenderingMethod = nullptr;
   this->UseLinearRamp = true;
   this->PresetsScene = nullptr;
-  this->DefaultROIClassName = "vtkMRMLAnnotationROINode";
+  this->DefaultROIClassName = "vtkMRMLMarkupsROINode";
 
   this->RegisterRenderingMethod("VTK CPU Ray Casting",
     "vtkMRMLCPURayCastVolumeRenderingDisplayNode");
@@ -795,25 +795,9 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
     return;
     }
 
-  vtkMRMLAnnotationROINode* roiNode = vspNode->GetROINode();
+  vtkMRMLAnnotationROINode* roiNode = vspNode->GetAnnotationROINode();
   vtkMRMLMarkupsROINode* markupsROINode = vspNode->GetMarkupsROINode();
-  if (roiNode)
-    {
-    MRMLNodeModifyBlocker blocker(roiNode);
-
-    double xyz[3] = {0.0};
-    double center[3] = {0.0};
-
-    vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, xyz, center);
-    for (int i = 0; i < 3; i++)
-      {
-      xyz[i] *= 0.5;
-      }
-
-    roiNode->SetXYZ(center);
-    roiNode->SetRadiusXYZ(xyz);
-    }
-  else if (markupsROINode)
+  if (markupsROINode)
     {
     MRMLNodeModifyBlocker blocker(markupsROINode);
 
@@ -829,6 +813,22 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
     markupsROINode->GetObjectToNodeMatrix()->Identity();
     markupsROINode->SetXYZ(center);
     markupsROINode->SetRadiusXYZ(xyz);
+    }
+  else if (roiNode)
+    {
+    MRMLNodeModifyBlocker blocker(roiNode);
+
+    double xyz[3] = {0.0};
+    double center[3] = {0.0};
+
+    vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, xyz, center);
+    for (int i = 0; i < 3; i++)
+      {
+      xyz[i] *= 0.5;
+      }
+
+    roiNode->SetXYZ(center);
+    roiNode->SetRadiusXYZ(xyz);
     }
 }
 
@@ -872,7 +872,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateDefaultV
   vtkMRMLVolumePropertyNode* volumePropertyNode = displayNode->GetVolumePropertyNode();
   if (!volumePropertyNode)
   {
-    this->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode);
+    this->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode, nullptr, nullptr, false);
     this->SetRecommendedVolumeRenderingProperties(displayNode);
     volumePropertyNode = displayNode->GetVolumePropertyNode();
   }
@@ -1071,7 +1071,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
   vtkMRMLVolumeRenderingDisplayNode *displayNode, vtkMRMLVolumeNode *volumeNode,
-  vtkMRMLVolumePropertyNode *propNode /*=nullptr*/, vtkMRMLNode *roiNode /*=nullptr*/ )
+  vtkMRMLVolumePropertyNode *propNode /*=nullptr*/, vtkMRMLNode *roiNode /*=nullptr*/, bool createROI/*=true*/)
 {
   if (displayNode == nullptr)
     {
@@ -1093,37 +1093,66 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
     displayNode->SetAndObserveVolumePropertyNodeID(propNode->GetID());
     }
 
-  if (roiNode == nullptr && displayNode->GetROINode() == nullptr)
-    {
-    roiNode = this->GetMRMLScene()->AddNewNodeByClass(this->DefaultROIClassName);
-    vtkMRMLAnnotationROINode* annotationROINode = vtkMRMLAnnotationROINode::SafeDownCast(roiNode);
-    vtkMRMLMarkupsROINode* markupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(roiNode);
-    if (annotationROINode)
-      {
-      annotationROINode->CreateDefaultDisplayNodes();
-      annotationROINode->SetInteractiveMode(1);
-      annotationROINode->SetDisplayVisibility(displayNode->GetCroppingEnabled());
-      }
-    else if (markupsROINode)
-      {
-      vtkMRMLMarkupsDisplayNode* markupsDisplayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsROINode->GetDisplayNode());
-      if (markupsDisplayNode)
-        {
-        markupsDisplayNode->SetHandlesInteractive(true);
-        markupsDisplayNode->SetFillVisibility(false);
-        }
-      // by default, show the ROI only if cropping is enabled
-      markupsROINode->SetDisplayVisibility(displayNode->GetCroppingEnabled());
-      }
-    }
-  if (roiNode != nullptr)
+  if (roiNode)
     {
     displayNode->SetAndObserveROINodeID(roiNode->GetID());
+    }
+  else if (displayNode->GetROINode() == nullptr && createROI)
+    {
+    roiNode = this->CreateROINode(displayNode);
     }
 
   this->CopyDisplayToVolumeRenderingDisplayNode(displayNode);
 
   this->FitROIToVolume(displayNode);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLDisplayableNode* vtkSlicerVolumeRenderingLogic::CreateROINode(vtkMRMLVolumeRenderingDisplayNode *displayNode)
+{
+  if (displayNode == nullptr)
+    {
+    vtkErrorMacro("vtkSlicerVolumeRenderingLogic::CreateROINode: display node pointer is null.");
+    return nullptr;
+    }
+
+  if (displayNode->GetROINode())
+    {
+    // already created
+    return displayNode->GetROINode();
+    }
+
+  vtkMRMLNode* roiNode = this->GetMRMLScene()->AddNewNodeByClass(this->DefaultROIClassName, "Volume rendering ROI");
+  vtkMRMLAnnotationROINode* annotationROINode = vtkMRMLAnnotationROINode::SafeDownCast(roiNode);
+  vtkMRMLMarkupsROINode* markupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(roiNode);
+  if (annotationROINode)
+    {
+    annotationROINode->CreateDefaultDisplayNodes();
+    annotationROINode->SetInteractiveMode(1);
+    annotationROINode->SetDisplayVisibility(displayNode->GetCroppingEnabled());
+    }
+  else if (markupsROINode)
+    {
+    vtkMRMLMarkupsDisplayNode* markupsDisplayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsROINode->GetDisplayNode());
+    if (markupsDisplayNode)
+      {
+      markupsDisplayNode->SetHandlesInteractive(true);
+      // Turn off filling. Semi-transparent actors may introduce volume rendering artifacts in certain
+      // configurations and the filling also makes the views a bit more complex.
+      markupsDisplayNode->SetFillVisibility(false);
+      }
+    // by default, show the ROI only if cropping is enabled
+    markupsROINode->SetDisplayVisibility(displayNode->GetCroppingEnabled());
+    }
+  else
+    {
+    vtkErrorMacro("vtkSlicerVolumeRenderingLogic::CreateROINode failed: cannot instantiate ROI node");
+    return nullptr;
+    }
+  displayNode->SetAndObserveROINodeID(roiNode->GetID());
+  this->FitROIToVolume(displayNode);
+
+  return displayNode->GetROINode();
 }
 
 //----------------------------------------------------------------------------

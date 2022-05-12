@@ -257,7 +257,11 @@ public:
 
   /// Get/Set markup point size relative to the window size.
   /// This value is only used in slice views and only if SliceUseGlyphScale is set to true.
-  /// Diameter of the point is defined as "scale" percentage of diagonal size of the window.
+  /// Diameter of the point is defined as percentage of "window size".
+  /// "Window size" is computed as diagonal size of the screen multiplied by ScreenScaleFactor.
+  /// Currently ScreenScaleFactor is set to to a fixed value of 0.2 (therefore glyph scale = 1.00
+  /// corresponds to 20% of the screen diagonal size), but this factor may be made configurable
+  /// in the future.
   vtkSetMacro(GlyphScale,double);
   vtkGetMacro(GlyphScale,double);
 
@@ -414,7 +418,7 @@ public:
 
   /// Text property object that controls the display properties of text actors in 2D and 3D.
   /// The text object property controls background color/opacity, frame size/color, font, etc.
-  /// This function should always return a valid vtkTextProperty pointer.
+  /// This function always returns a valid vtkTextProperty pointer.
   vtkGetObjectMacro(TextProperty, vtkTextProperty);
 
   /// Set the active color of the markup. This color is used when the mouse pointer hovers over a markup.
@@ -422,6 +426,7 @@ public:
   /// Get the active color of the markup. This color is used when the mouse pointer hovers over a markup.
   vtkGetVector3Macro(ActiveColor, double);
 
+  //@{
   /// The visibility and interactability of the interaction handles
   vtkGetMacro(HandlesInteractive, bool);
   vtkSetMacro(HandlesInteractive, bool);
@@ -437,6 +442,27 @@ public:
   vtkBooleanMacro(ScaleHandleVisibility, bool);
   void SetHandleVisibility(int handleType, bool visibility);
   bool GetHandleVisibility(int handleType);
+  //@}
+
+  //@{
+  /// Get/Set interaction handle size relative to the window size.
+  /// Diameter of the interaction handle points is defined as "scale" percentage of diagonal size of the window.
+  vtkSetMacro(InteractionHandleScale, double);
+  vtkGetMacro(InteractionHandleScale, double);
+  //@}
+
+  //@{
+  /// Get/Set the visibility of the individual handle axes
+  /// The order of the vector is: [X, Y, Z, ViewPlane]
+  /// "ViewPlane" scale/translation allows transformations to take place along the active view plane.
+  /// (ex. center translation point and ROI corner scale handles.
+  vtkSetVector4Macro(RotationHandleComponentVisibility, bool);
+  vtkGetVector4Macro(RotationHandleComponentVisibility, bool);
+  vtkSetVector4Macro(ScaleHandleComponentVisibility, bool);
+  vtkGetVector4Macro(ScaleHandleComponentVisibility, bool);
+  vtkSetVector4Macro(TranslationHandleComponentVisibility, bool);
+  vtkGetVector4Macro(TranslationHandleComponentVisibility, bool);
+  //@}
 
   /// Get data set containing the scalar arrays for this node type.
   /// For markups it is the curve poly data
@@ -447,13 +473,10 @@ public:
   /// Update scalar range and update markups pipeline when the active scalar array is changed
   virtual void UpdateAssignedAttribute() override;
 
-  // Returns a string containing the text style of the vtkTextProperty.
-  // String format follows html-style CSS conventions.
-  static std::string GetTextPropertyAsString(vtkTextProperty* property);
+  virtual void SetScalarVisibility(int visibility) override;
 
-  // Update the style of a vtkTextProperty from a string.
-  // String format follows html-style CSS conventions.
-  static void UpdateTextPropertyFromString(std::string inputString, vtkTextProperty* property);
+  /// Get flag indicating if the markups node can display scale handles
+  vtkGetMacro(CanDisplayScaleHandles, bool);
 
 protected:
   vtkMRMLMarkupsDisplayNode();
@@ -468,9 +491,6 @@ protected:
   // Return a string representing the text style
   // String format follows html-style conventions
   std::string GetTextPropertyAsString();
-
-  // Get the color from a string of the form: rgba(0,0,0,0)
-  static void GetColorFromString(const std::string& colorString, double color[4]);
 
   /// Current active point or widget component type and index (hovered by the mouse or other interaction context)
   /// Map interaction context identifier (empty string for mouse) to component type enum
@@ -521,5 +541,12 @@ protected:
   bool TranslationHandleVisibility;
   bool RotationHandleVisibility;
   bool ScaleHandleVisibility;
+  double InteractionHandleScale;
+
+  bool RotationHandleComponentVisibility[4];
+  bool ScaleHandleComponentVisibility[4];
+  bool TranslationHandleComponentVisibility[4];
+
+  bool CanDisplayScaleHandles;
 };
 #endif

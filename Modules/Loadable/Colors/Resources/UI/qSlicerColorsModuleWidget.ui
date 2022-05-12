@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>292</width>
-    <height>485</height>
+    <width>301</width>
+    <height>625</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,18 @@
    <iconset resource="../qSlicerColorsModule.qrc">
     <normaloff>:/Icons/Colors.png</normaloff>:/Icons/Colors.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_7">
+   <item row="4" column="1">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
+     <property name="activeSizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="3">
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -67,119 +77,114 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
+   <item row="3" column="0" colspan="3">
+    <widget class="ctkCollapsibleButton" name="ColorLegendCollapsibleButton">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="text">
-      <string>Color Table Display</string>
-     </property>
-     <property name="collapsed">
-      <bool>false</bool>
-     </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="HideInvalidColorsCheckBox">
-        <property name="toolTip">
-         <string>Show/Hide the unnamed color entries in the list below.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="LUTRangeLabel">
-        <property name="text">
-         <string>Scalar Range:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="NumberOfColorsSpinBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="maximum">
-         <number>10000000</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="HideInvalidColorsLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Hide empty Colors:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="NumberOfColorsLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Number of Colors:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" colspan="2">
-       <widget class="qMRMLColorTableView" name="ColorView">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" colspan="2">
-       <widget class="qMRMLRangeWidget" name="LUTRangeWidget">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="toolTip">
-         <string>The range of scalars that are mapped to the full range of colors.</string>
-        </property>
-        <property name="minimum">
-         <double>-150.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>150.000000000000000</double>
-        </property>
-        <property name="minimumValue">
-         <double>-100.000000000000000</double>
-        </property>
-        <property name="maximumValue">
-         <double>100.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="ctkCollapsibleButton" name="ContinuousDisplayCollapsibleButton">
-     <property name="text">
-      <string>Continuous Display</string>
+      <string>Color Legend</string>
      </property>
      <property name="collapsed">
       <bool>true</bool>
      </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="1">
+         <widget class="qMRMLNodeComboBox" name="DisplayableNodeComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLScalarVolumeNode</string>
+            <string>vtkMRMLModelNode</string>
+           </stringlist>
+          </property>
+          <property name="addEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="removeEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="editEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="DisplayableNodeLabel">
+          <property name="text">
+           <string>Displayable node:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="qMRMLColorLegendDisplayNodeWidget" name="ColorLegendDisplayNodeWidget"/>
+        </item>
+        <item row="2" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="CreateColorLegendButton">
+            <property name="toolTip">
+             <string>Create color legend for the selected displayable node.</string>
+            </property>
+            <property name="text">
+             <string>Create</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="UseCurrentColorsButton">
+            <property name="toolTip">
+             <string>Use the currently selected colors for the selected displayable node.</string>
+            </property>
+            <property name="text">
+             <string>Use current colors</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="DeleteColorLegendButton">
+            <property name="toolTip">
+             <string>Delete the color legend for the selected displayable node.</string>
+            </property>
+            <property name="text">
+             <string>Delete</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="DisplayableNodeLabel_2">
+          <property name="text">
+           <string>Color legend:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3">
+    <widget class="ctkCollapsibleButton" name="EditColorsCollapsibleButton">
+     <property name="text">
+      <string>Color Table</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
+      <item row="6" column="0" colspan="2">
        <widget class="ctkVTKScalarsToColorsWidget" name="ContinuousScalarsToColorsWidget">
         <property name="minimumSize">
          <size>
@@ -187,80 +192,124 @@
           <height>120</height>
          </size>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>120</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QFrame" name="ColorTableFrame">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QFormLayout" name="formLayout_2">
+         <property name="horizontalSpacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="NumberOfColorsLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Number of Colors: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="NumberOfColorsSpinBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="maximum">
+            <number>10000000</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="HideInvalidColorsLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Hide empty Colors: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="HideInvalidColorsCheckBox">
+           <property name="toolTip">
+            <string>Show/Hide the unnamed color entries in the list below.</string>
+           </property>
+           <property name="text">
+            <string> </string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="LUTRangeLabel">
+           <property name="text">
+            <string>Scalar Range:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="qMRMLRangeWidget" name="LUTRangeWidget">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>The range of scalars that are mapped to the full range of colors.</string>
+           </property>
+           <property name="minimum">
+            <double>-150.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>150.000000000000000</double>
+           </property>
+           <property name="minimumValue">
+            <double>-100.000000000000000</double>
+           </property>
+           <property name="maximumValue">
+            <double>100.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="qMRMLColorTableView" name="ColorView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="ctkCollapsibleButton" name="ScalarBarCollapsibleButton">
-     <property name="text">
-      <string>Color Scalar Bar</string>
-     </property>
-     <property name="collapsed">
-      <bool>true</bool>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0" colspan="2">
-       <widget class="ctkVTKScalarBarWidget" name="VTKScalarBar"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="toolTip">
-         <string>Toggle between using the names of color table colors and the scalar values for the labels in the scalar bar widget.</string>
-        </property>
-        <property name="text">
-         <string>Use color names for labels: </string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="UseColorNameAsLabelCheckBox">
-        <property name="toolTip">
-         <string>Toggle between using the names of color table colors and the scalar values for the labels in the scalar bar widget.</string>
-        </property>
-        <property name="text">
-         <string>  </string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label">
-        <property name="toolTip">
-         <string>Toggle between centerling names of color table colors on color swatches in the scalar bar widget.</string>
-        </property>
-        <property name="text">
-         <string>Center labels: </string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="CenterLabelCheckBox">
-        <property name="toolTip">
-         <string>Toggle between centerling names of color table colors on color swatches in the scalar bar widget.</string>
-        </property>
-        <property name="text">
-         <string>  </string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
-     <property name="activeSizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
     </widget>
    </item>
   </layout>
@@ -270,6 +319,7 @@
    <class>qMRMLColorTableComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
    <header>qMRMLColorTableComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLColorTableView</class>
@@ -280,11 +330,18 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLRangeWidget</class>
    <extends>ctkRangeWidget</extends>
    <header>qMRMLRangeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -293,9 +350,10 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkVTKScalarBarWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkVTKScalarBarWidget.h</header>
+   <class>qMRMLColorLegendDisplayNodeWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLColorLegendDisplayNodeWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkVTKScalarsToColorsWidget</class>
@@ -321,6 +379,7 @@
  </customwidgets>
  <resources>
   <include location="../qSlicerColorsModule.qrc"/>
+  <include location="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -340,7 +399,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>DisplayCollapsibleButton</sender>
+   <sender>EditColorsCollapsibleButton</sender>
    <signal>toggled(bool)</signal>
    <receiver>DynamicSpacer</receiver>
    <slot>setInactive(bool)</slot>
@@ -372,7 +431,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>DisplayCollapsibleButton</sender>
+   <sender>EditColorsCollapsibleButton</sender>
    <signal>toggled(bool)</signal>
    <receiver>ColorView</receiver>
    <slot>setShowOnlyNamedColors(bool)</slot>
@@ -416,6 +475,22 @@
     <hint type="destinationlabel">
      <x>179</x>
      <y>200</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerColorsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>DisplayableNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>154</x>
+     <y>544</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>205</x>
+     <y>488</y>
     </hint>
    </hints>
   </connection>

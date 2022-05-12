@@ -1,10 +1,11 @@
-import os
-import string
 import textwrap
-import unittest
-import vtk, qt, ctk, slicer
+
+import ctk
+import qt
+
+import slicer
 from slicer.ScriptedLoadableModule import *
-import logging
+
 
 #
 # DMRIInstall
@@ -29,7 +30,7 @@ class DMRIInstall(ScriptedLoadableModule):
   For more information, please visit:
   <br>
   <br>
-  &nbsp;&nbsp; <a href="http://dmri.slicer.org">http://dmri.slicer.org</a>
+  &nbsp;&nbsp; <a href="https://dmri.slicer.org">https://dmri.slicer.org</a>
   <br>
   <br>
   Questions are welcome on the Slicer forum:
@@ -76,6 +77,7 @@ class DMRIInstall(ScriptedLoadableModule):
     BIRN, NCIGT, and the Slicer Community.
     """)
 
+
 class DMRIInstallWidget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
@@ -101,12 +103,10 @@ class DMRIInstallWidget(ScriptedLoadableModuleWidget):
 
     self.parent.layout().addStretch(1)
 
-
   def onError(self):
     self.applyButton.enabled = False
     self.textBox.setHtml(DMRIInstall.errorText)
     return
-
 
   def onApply(self):
     emm = slicer.app.extensionsManagerModel()

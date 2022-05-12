@@ -1,6 +1,8 @@
-import os
-import vtk, qt, ctk, slicer
+import vtk
+
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # SlicerMRBMultipleSaveRestoreTest
@@ -49,7 +51,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
 
   def __init__(self,methodName='runTest',uniqueDirectory=True,strict=False):
     """
-    Tests the use of mrml and mrb save formats with volumes and fiducials.
+    Tests the use of mrml and mrb save formats with volumes and markups points lists.
     Checks that scene views are saved and restored as expected.
     Checks that after a scene view restore, MRB save and reload works as expected.
 
@@ -88,17 +90,15 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     import SampleData
     mrHeadVolume = SampleData.downloadSample("MRHead")
 
-    # Place a fiducial
-    markupsLogic = slicer.modules.markups.logic()
+    # Place a control point
+    pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode","F")
+    pointListNode.CreateDefaultDisplayNodes()
     eye = [33.4975, 79.4042, -10.2143]
     nose = [-2.145, 116.14, -43.31]
-    fidIndexEye = markupsLogic.AddFiducial(eye[0], eye[1], eye[2])
-    fidIndexNose = markupsLogic.AddFiducial(nose[0], nose[1], nose[2])
-    fidID = markupsLogic.GetActiveListID()
-    fidNode = slicer.mrmlScene.GetNodeByID(fidID)
+    fidIndexEye = pointListNode.AddControlPoint(eye)
+    fidIndexNose = pointListNode.AddControlPoint(nose)
 
-
-    self.delayDisplay('Finished with download and placing fiducials\n')
+    self.delayDisplay('Finished with download and placing markups points\n')
 
     # confirm that MRHead is in the background of the Red slice
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
@@ -106,14 +106,13 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
     self.delayDisplay('The MRHead volume is in the background of the Red viewer')
 
-
     # turn off visibility save scene view
-    fidNode.SetDisplayVisibility(0)
-    self.delayDisplay('Not showing fiducials')
-    self.storeSceneView('Invisible-view', "Not showing fiducials")
-    fidNode.SetDisplayVisibility(1)
-    self.delayDisplay('Showing fiducials')
-    self.storeSceneView('Visible-view', "Showing fiducials")
+    pointListNode.SetDisplayVisibility(0)
+    self.delayDisplay('Not showing markup points')
+    self.storeSceneView('Invisible-view', "Not showing markup points")
+    pointListNode.SetDisplayVisibility(1)
+    self.delayDisplay('Showing markup points')
+    self.storeSceneView('Visible-view', "Showing markup points")
 
     #
     # save the mrml scene to a temp directory, then zip it
@@ -150,22 +149,22 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
     self.delayDisplay('The MRHead volume is AGAIN in the background of the Red viewer')
 
-    # confirm that the fiducial list exists with two points
-    self.delayDisplay('Does the fiducial list have 2 points in it?')
-    fidNode = slicer.util.getNode('F')
-    self.assertEqual(fidNode.GetNumberOfFiducials(), 2)
-    self.delayDisplay('The fiducial list has 2 points in it')
+    # confirm that the point list exists with two points
+    self.delayDisplay('Does the point list have 2 points in it?')
+    pointListNode = slicer.util.getNode('F')
+    self.assertEqual(pointListNode.GetNumberOfControlPoints(), 2)
+    self.delayDisplay('The point list has 2 points in it')
 
     # Restore the invisible scene view
     self.delayDisplay('About to restore Invisible-view scene')
     sceneView = slicer.util.getNode('Invisible-view')
     sceneView.RestoreScene()
-    fidNode = slicer.util.getNode('F')
-    self.assertEqual(fidNode.GetDisplayVisibility(), 0)
-    self.delayDisplay("NOT seeing the fiducials")
-    self.delayDisplay('Does the fiducial list still have 2 points in it after restoring a scenen view?')
-    self.assertEqual(fidNode.GetNumberOfFiducials(), 2)
-    self.delayDisplay('The fiducial list has 2 points in it after scene view restore')
+    pointListNode = slicer.util.getNode('F')
+    self.assertEqual(pointListNode.GetDisplayVisibility(), 0)
+    self.delayDisplay("NOT seeing the points")
+    self.delayDisplay('Does the point list still have 2 points in it after restoring a scenen view?')
+    self.assertEqual(pointListNode.GetNumberOfControlPoints(), 2)
+    self.delayDisplay('The point list has 2 points in it after scene view restore')
 
     #
     # Save it again
@@ -195,7 +194,6 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.assertTrue( not self.strict or mrbLoaded )
     slicer.app.processEvents()
 
-
     # confirm that MRHead is in the background of the Red slice after mrb reload
     self.delayDisplay('MRHead volume is the background of the Red viewer after mrb reload?')
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
@@ -203,13 +201,12 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
     self.delayDisplay('Yes, the MRHead volume is back in the background of the Red viewer')
 
-
-    # confirm that the fiducial list exists with two points
-    fidNode = slicer.util.getNode('F')
-    self.assertEqual(fidNode.GetNumberOfFiducials(), 2)
-    self.delayDisplay('The fiducial list has 2 points in it after scene view restore, save and MRB reload')
-    self.assertEqual(fidNode.GetDisplayVisibility(), 0)
-    self.delayDisplay("NOT seeing the fiducials")
+    # confirm that the point list exists with two points
+    pointListNode = slicer.util.getNode('F')
+    self.assertEqual(pointListNode.GetNumberOfControlPoints(), 2)
+    self.delayDisplay('The point list has 2 points in it after scene view restore, save and MRB reload')
+    self.assertEqual(pointListNode.GetDisplayVisibility(), 0)
+    self.delayDisplay("NOT seeing the points")
 
     self.delayDisplay("Test Finished")
 
