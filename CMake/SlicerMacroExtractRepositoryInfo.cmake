@@ -72,13 +72,7 @@ macro(SlicerMacroExtractRepositoryInfo)
 
   if(NOT EXISTS ${MY_SOURCE_DIR}/.git)
 
-    if(DEFINED ${wc_info_prefix}_WC_REVISION)
-      message(STATUS "Using manually defined WC revision: ${wc_info_prefix}_WC_REVISION=${${wc_info_prefix}_WC_REVISION}")
-    else()
-      message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a git repository."
-        "To resolve this warning store the extension source code in a git repository or set ${wc_info_prefix}_WC_REVISION CMake variable.")
-      set(${wc_info_prefix}_WC_REVISION "NA")
-    endif()
+    message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT or SVN checkout")
 
   else()
 
