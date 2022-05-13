@@ -22,6 +22,8 @@ If developing modules in Python only, then it is not necessary to build the exte
 
 :::
 
+Similarly to the building of Slicer core, multi-configuration builds are not supported: one build tree can be only used for one build mode (Release or Debug or RelWithDebInfo or MinSizeRel). If a release and debug mode build are needed then the same source code folder can be used (e.g., `C:\D\SlicerHeart`) but a separate binary folder must be created for each build mode (e.g., `C:\D\SlicerHeart-R` and `C:\D\SlicerHeart-D` for release and debug modes).
+
 Assuming that the source code of your extension is located in folder `MyExtension`, an extension can be built by the following steps.
 
 ### Linux and macOS
@@ -69,7 +71,7 @@ Run `CMake (cmake-gui)` from the Windows Start menu.
 - Click `Configure`. No errors should be displayed.
 - Click `Generate` button.
 - Click `Open project` button to open `MyExtension.sln` in Visual Studio.
-- Select build configuration (Debug, Release, ...) that matches the build configuration of the chosen Slicer build.
+- Select build configuration (Debug, Release, ...) that matches the build configuration (Release, Debug, ...) of the chosen Slicer build.
 - In the menu choose Build / Build Solution.
 
 ## Test an extension
@@ -83,8 +85,8 @@ To test an extension, you need to specify location(s) where Slicer should look f
   - Option A: start the application using the `SlicerWithMyExtension` executable in your build directory. This starts Slicer, specifying additional module paths via command-line arguments.
   - Option B: specify additional module paths manually in application settings. Assuming your extension has been built into folder `MyExtension-debug`, add these module folders (if they exist) to the additional module paths in Slicer's application settings:
     - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-scripted-modules`
-    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules`
-    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules`
+    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules\Debug` or `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules\Release` or (on systems where multi-configuration builds are not used, such as linux) simply `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules`:
+    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules\Debug`, `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules\Release`, or `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules`
 
 ### Run automatic tests
 
@@ -158,7 +160,6 @@ $ make package
 - Open `MyExtension.sln` in Visual Studio.
 - Right-click on `PACKAGES` project, then select `Build`.
 
-
 ## Write documentation for an extension
 
 Keep documentation with your extension's source code and keep it up-to-date whenever the software changes.
@@ -177,7 +178,7 @@ adding a playback button using [this free service](https://addplaybuttontoimage.
 ## Distribute an extension
 
 - Upload source code of your extension to a publicly available repository. It is recommended to start the repository name with "Slicer" (to make Slicer extensions easier to identify) followed by your extension name (for example, "Sequences" extension is stored in "SlicerSequences" repository). However, this is not a mandatory requirement. If you have a compelling reason not to use Slicer prefix, please make a note while making the pull request. See more requirements in the [new extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
-  - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://docs.github.com/en/get-started/quickstart/set-up-git#set-up-git).
+  - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://docs.github.com/get-started/quickstart/set-up-git).
 - If developing an extension that contains [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python):
   - Build the `PACKAGE` target to create a package file.
   - Test your extension by installing the created package file using the Extensions Manager.
@@ -188,6 +189,8 @@ adding a playback button using [this free service](https://addplaybuttontoimage.
     - If the extension was built then you can find the automatically generated extension description in the build folder
     - If the extension was not built then create the extension description file manually, using a text editor
   - Add your .s4ext file to your forked repository: it can be done using a git client or simply by clicking ''Upload files'' button
+    - To make the extension appear in the latest Slicer Preview Release: upload the file into the `master` branch.
+    - To make the extension appear in the latest Slicer Stable Release: upload the file into the branch corresponding to the stable release version, for example: `4.10`.
   - Create a pull request: by clicking ''Create pull request'' button
   - Follow the instructions in the pull request template
 
@@ -277,9 +280,15 @@ Note: Parameters in URLS (such as `&foo=bar`) are not supported. URL shortener s
 
 ## Extensions server
 
-The official Slicer extensions server is <https://extensions.slicer.org/>. To get a list of extensions, specify the Slicer revision and platform in the URL, for example: <https://extensions.slicer.org/catalog/All/30117/win>
+The official Slicer extensions server, the "Extensions Catalog" is available at <https://extensions.slicer.org/>. To get a list of extensions, specify the Slicer revision and platform in the URL, for example: <https://extensions.slicer.org/catalog/All/30117/win>.
 
-The extension server is built so that organizations can set up and maintain their own extensions servers, for example to distribute extensions for custom applications. Extensions server address can be set in Application Settings, in Extensions section.
+The Extensions Catalog is implemented a web application ([source code](https://github.com/KitwareMedical/slicer-extensions-webapp)), which connects
+to a [Girder server](https://slicer-packages.kitware.com/#collection/5f4474d0e1d8c75dfc70547e/folder/5f4474d0e1d8c75dfc705482), a general-purpose
+storage server with the Slicer Package Manager plugin ([source code](https://github.com/girder/slicer_package_manager)), which provides a
+convenient REST API for accessing Slicer extension packages and metadata.
+
+The extension server is designed so that organizations can set up and maintain their own extensions servers, for example to distribute
+extensions for custom applications. Extensions server address can be set in the Application Settings, in the Extensions section.
 
 Until August 2021, a Midas-based server at `https://slicer.kitware.com/midas3` was used. This server is not online anymore, as it was not feasible to perform all software updates that would have kept it secure.
 
@@ -411,7 +420,7 @@ make
 
 ### Build complete Extensions Index with dashboard submission
 
-Continuous and nightly extension dashboards are setup on the Slicer factory machine maintained by [https://www.kitware.com Kitware]. Developers can set up similar infrastructure privately for their custom applications.
+Continuous and nightly extension dashboards are setup on the Slicer factory machine maintained by [Kitware](https://www.kitware.com). Developers can set up similar infrastructure privately for their custom applications.
 
 By customizing the [extension template dashboard script](https://github.com/Slicer/Slicer/blob/master/Extensions/CMake/SlicerExtensionsDashboardScript.TEMPLATE.cmake), it is possible to easily setup dashboard client submitting to [CDash](https://slicer.cdash.org/index.php?project=SlicerPreview). See example dashboard scripts that are used on official Slicer build machines [here](https://github.com/Slicer/DashboardScripts). Note that these scripts are more complex than the template to allow code reuse between different configurations, but they are tested regularly and so guaranteed to work.
 
@@ -527,7 +536,7 @@ Independently of the extension test results, if the extension could be successfu
 ### How do I associate a remote with my local extension git source directory?
 
 - Start a terminal (or Git Bash on Windows)
-- Get the associated SSH remote url. [Need help?](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories#cloning-with-ssh)
+- Get the associated SSH remote url. [Need help?](https://docs.github.com/get-started/getting-started-with-git/about-remote-repositories#cloning-with-ssh)
 - Associate the remote URL with your local git source tree
 
     ```bash

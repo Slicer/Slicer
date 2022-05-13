@@ -37,306 +37,44 @@ See some background information in [VTK leak debugging in Slicer3](https://www.s
 
 1. If you build the application from source, make sure VTK_DEBUG_LEAKS CMake flag is set to ON. Slicer Preview Releases are built with this flag is ON, while in Slicer Stable Releases the flag is OFF.
 
-2. Create a test that reproduces the memory leak systematically.
+2. Reproduce the memory leak. When the application exits, it logs a message like this:
 
-    After execution, the memory leaks are printed automatically by VTK on the standard output:
+```
+vtkDebugLeaks has detected LEAKS!
+Class "vtkCommand or subclass" has 1 instance still around.
+```
 
-    ```txt
-    224: vtkDebugLeaks has detected LEAKS!
-    224: Class "vtkProperty2D" has 60 instances still around.
-    ...
-    ```
+3. Add the listed classes to the `VTK_DEBUG_LEAKS_TRACE_CLASSES` environment variable (separated by commas, if there are multiple). For example:
 
-    Alternatively, you can simply run Slicer instead of a custom test.
+```
+VTK_DEBUG_LEAKS_TRACE_CLASSES=vtkCommand
+```
 
-3. Analyze the code to see where the leak could be
+In Visual Studio, environment variable can be added to `SlicerApp` project properties -> Debugging -> Environment.
 
-    - Here is a listing of the most common mistakes
+4. Reproduce the memory leak. It will print the stack trace of the call that allocated the object, which should be enough information to determine which object instance in the code it was. For example:
 
-      - `this->MyXXX = vtkXXX::New();`
-        - Is there a matching this->MyXXX->Delete() ?
-        - Are you sure `this->MyXXX` is `0` before being assigned a new pointer?  If not, then you need to add
+```
+vtkDebugLeaks has detected LEAKS!
+Class "vtkCommand or subclass" has 1 instance still around.
 
-            ```cpp
-            if (this->MyXXX != 0)
-              {
-              this->MyXXX->Delete();
-              this->MyXXX = 0;
-              }
-              this->MyXXX = vtkXXX::New();
-            ```
-
-    - To reduce memory leaks, use the smart pointers:
-      - `vtkNew<vtkXXX> myXXX;`
-      - `vtkSmartPointer myXXX = vtkSmartPointer<vtkXXX>::New()`
-      - `vtkSmartPointer<vtkXXX> myXXX = vtkSmartPointer<vtkXXX>::Take(this->CreateObjAndCallerOwnsReference());`
-      - `vtkSmartPointer<vtkXXX> myXXX; myXXX.TakeReference(this->CreateObjAndCallerOwnsReference())`
-
-4. Find what specific instance of a class (here vtkProperty2D) leaks.
-
-    If the class is instantiated a large amount of time, it is hard to know what instance is leaking. By making verbose the constructor and destructor of the faulty class, you can infer which instance is leaking. Below are 2 techniques to print whenever the con/destructors are called:
-
-    - By recompiling VTK
-
-        You can edit the constructor and destructor of the class (here vtkProperty2D::vtkProperty2D() and vtkProperty2D::~vtkProperty2D())
-
-        ```cpp
-        vtkProperty2D::vtkProperty2D()
-        {
-        ...
-        static int count = 0;
-        std::cout << "CREATE vtkProperty2D instance #" << count++ << " " << this << std::endl;
-        }
-
-        vtkProperty2D::~vtkProperty2D()
-        {
-        ...
-        static int count = 0;
-        std::cout << "DELETE vtkProperty2D instance #" << count++ << " " << this << std::endl;
-        }
-        ```
-
-        Don't forget to rebuild VTK if the class is from VTK (no need to build Slicer inner build)
-        After running the test, you should see outputs similar to:
-
-        ```txt
-        ...
-        CREATE vtkProperty2D instance #0 0x0123456
-        ...
-        CREATE vtkProperty2D instance #1 0x01234E5
-        ...
-        DELETE vtkProperty2D instance #0 0x0123456
-        ...
-        DELETE vtkProperty2D instance #1 0x01234E5
-        ...
-        CREATE vtkProperty2D instance #2 0x0123A23
-        ...
-        CREATE vtkProperty2D instance #3 0x0124312
-        ...
-        ```
-
-        Copy/paste the listing in a text editor and ensure that for each CREATE of a pointer (e.g. 0x0123456) it exists a DELETE. If there isn't, you found what instance is leaking. Note the instance # (here instance #2 and #3)
-
-    - Without recompiling any library but using the debugger. Any debugger with advanced breakpoint controls should work.
-
-      - With Visual Studio
-        - Set breakpoints in the class constructor and destructor methods.</li>
-        - Right click on the breakpoint, select "When Hit..." and "Print a message" with "Function: $FUNCTION {this}". Make sure the "execution" checkbox is selected.
-        - Execute the test or Slicer
-        - Open the "Output" tab and copy paste the contents into an advanced file editor (not Visual Studio)
-
-      - With GDB
-        - Start gdb using the launcher:
-          - In the build tree: `./Slicer --gdb`
-          - For an installed Slicer:
-
-              ```txt
-              ./Slicer --launch bash
-              gdb ./bin/SlicerApp-real
-              ```
-
-        - Place breakpoints in the functions
-
-            ```txt
-            (gdb) break vtkProperty2D::vtkProperty2D()
-            (gdb) break vtkProperty2D::~vtkProperty2D()
-            ```
-
-          gdb will stop in those methods each time the program steps into. It will then print a line such as:
-
-          ```txt
-          Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x123456789) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-          22 vtkProperty2D::vtkProperty2D()
-          ```
-
-        - Automatically continue execution after each break
-
-            ```txt
-            (gdb) commands 1
-            > continue
-            > end
-            (gdb) commands 2
-            > continue
-            > end
-            ```
-
-        - Start the execution and copy paste the logs printed by gdb into an advanced file editor (e.g. emacs)
-
-            ```txt
-            (gdb) run
-            ```
-
-    After running the test(by recompiling or with debugger), you should see outputs similar to
-
-    ```txt
-    ...
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123456) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    22 vtkProperty2D::vtkProperty2D()
-    ...
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x01234E5) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    22 vtkProperty2D::vtkProperty2D()
-    ...
-    Breakpoint 2, vtkProperty2D::~vtkProperty2() (this=0x0123456) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:37
-    37 vtkProperty2D::vtkProperty2D()
-    ...
-    Breakpoint 2, vtkProperty2D::~vtkProperty2() (this=0x01234E5) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:37
-    37 vtkProperty2D::vtkProperty2D()
-    ...
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123A23) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    22 vtkProperty2D::vtkProperty2D()
-    ...
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0124312) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    22 vtkProperty2D::vtkProperty2D()
-    ...
-    Breakpoint 2, vtkProperty2D::~vtkProperty2() (this=0x0123A23) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:37
-    37 vtkProperty2D::vtkProperty2D()
-    ...
-    ```
-
-    In an text editor, cleanup the logs by keeping only the "Breakpoint*" lines:
-
-    ```txt
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123456) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x01234E5) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 2, vtkProperty2D::~vtkProperty2() (this=0x0123456) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:37
-    Breakpoint 2, vtkProperty2D::~vtkProperty2() (this=0x01234E5) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:37
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123A23) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0124312) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 2, vtkProperty2D::~vtkProperty2() (this=0x0123A23) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:37
-    ```
-
-    Save a copy of this file, and make the destructor lines similar to the constructor ones (using Replace tools):
-
-    ```txt
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123456) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x01234E5) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123456) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x01234E5) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123A23) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0124312) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123A23) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    ```
-
-    Sort the file to make the constructor and destructor lines next to each other(emacs: M-x sort-lines, Notepad++: TextFX/TextFX Tools/Sort lines case sensitive):
-
-    ```txt
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0124312) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123456) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123456) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x01234E5) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x01234E5) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123A23) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123A23) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    ```
-
-    Find the line that is not duplicated:
-
-    - Using Notepad++ (version >=6):
-      - Open the search dialog
-      - Find what: `^(.*?)$\s+?^(?=.*^\1$)`, Replace with: `dup `, toggle `Regular expression`
-      - Replace All
-      - The line without the `dup` prefix is the line we are looking for
-    - Using emacs:
-      - C-M-%
-      - Replace regexp: `\(.*\)<type C-q C-j>\1`
-      - with: `dup<type C-q C-j>`
-
-    Extract the instance address from the line: e.g. 0x0124312
-
-    From the original logs, keep only the Constructor lines:
-
-    ```txt
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123456) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x01234E5) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0123A23) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    Breakpoint 1, vtkProperty2D::vtkProperty2() (this=0x0124312) at /home/user/Slicer-superbuild/VTK/.../vtkProperty2D.cxx:22
-    ```
-
-    Search into the original saved file what line the address is: e.g. 4
-
-5. Find the leaking instance at run-time. Run the test with the debugger, set a breakpoint in the class constructor and ignore the break as many time as the instance number (say it's 2 for the examples below). By analyzing the trace, you should be able to find the faulty instance.
-
-    - GDB
-      ```txt
-      (gdb) break vtkProperty2D::vtkProperty2D()
-      Breakpoint 1 at 0x5b22d0e55d04296: file vtkProperty2D.cxx, line 22
-      (gdb) ignore 1 2
-      (gdb) run
-      ```
-      When the debugger stops, check the call stack:
-      ```txt
-      (gdb) backtrace
-      ```
-    - Visual Studio
-      - Set a breakpoint in vtkProperty2D::vtkProperty2D()
-      - Right click on the breakpoint and select HitCount, select "break when the hit count is equal to" and type '2'
-      - Start the application
-
-### Track crashes due to accessing already deleted object pointer
-
-If the application crashes by accessing an invalid pointer. The goal here is to find when (and why) the pointer is deleted before it is accessed .
-
-1. Before the crash, print the value of the pointer:
-
-    Add before the crash (i.e. `this->MyObject->update()`):
-
-    ```cpp
-    std::cout << ">>>>>Object pointer: " << this->MyObject << std::endl;
-    ```
-
-2. Add a counter in the destructor:
-
-    Add in the object destructor (it can be in the base class (vtkObject or vtkMRMLNode) if you don't know the type):
-
-    ```cpp
-    static int count = 0;
-    std::cout << "#######Object Destructed: " << this << " " << count++ << std::endl;
-    ```
-
-3. Run the application and make it crash.
-4. In the logs you shall see something like that:
-
-    ```txt
-    #######Object Destructed: 0x12345678 0
-    #######Object Destructed: 0x12345679 1
-    #######Object Destructed: 0x12345680 2
-    >>>>>Object Pointer: 0x12345660
-    >>>>>Object Pointer: 0x12345661
-    >>>>>Object Pointer: 0x12345662
-    #######Object Destructed: 0x12345660 3
-    #######Object Destructed: 0x12345661 4
-    #######Object Destructed: 0x12345662 5
-    #######Object Destructed: 0x12345663 6
-    >>>>>Object Pointer: 0x12345670
-    >>>>>Object Pointer: 0x12345671
-    >>>>>Object Pointer: 0x12345672
-    #######Object Destructed: 0x12345660 7
-    #######Object Destructed: 0x12345661 8
-    #######Object Destructed: 0x12345662 9
-    >>>>>Object Pointer: '''0x12345663'''
-    Segfault
-    ```
-
-5. Search in the logs when the pointer before crash has been deleted. Set a conditional breakpoint in the debugger:
-
-    ```txt
-    (gdb) break MyObj.cxx:103 if count == 6
-    ```
-
-    or
-
-    ```txt
-    (gdb) break MyObj.cxx:103
-    (gdb) ignore 1 5
-    ```
-
-    or if you don't want to use a debugger, you can make it crash the 6th time:
-
-    ```
-    assert(count != 6);
-    ```
-
-6. Analyze the backtrace to understand why the pointer has been deleted without letting know the object that tries to access it.
+Remaining instance of object 'vtkCallbackCommand' was allocated at:
+ at vtkCommand::vtkCommand in C:\D\S4D\VTK\Common\Core\vtkCommand.cxx line 28
+ at vtkCallbackCommand::vtkCallbackCommand in C:\D\S4D\VTK\Common\Core\vtkCallbackCommand.cxx line 20
+ at vtkCallbackCommand::New in C:\D\S4D\VTK\Common\Core\vtkCallbackCommand.h line 49
+ at vtkNew<vtkCallbackCommand>::vtkNew<vtkCallbackCommand> in C:\D\S4D\VTK\Common\Core\vtkNew.h line 89
+ at qSlicerCoreApplicationPrivate::init in C:\D\S4\Base\QTCore\qSlicerCoreApplication.cxx line 325
+ at qSlicerApplicationPrivate::init in C:\D\S4\Base\QTGUI\qSlicerApplication.cxx line 232
+ at qSlicerApplication::qSlicerApplication in C:\D\S4\Base\QTGUI\qSlicerApplication.cxx line 393
+ at `anonymous namespace'::SlicerAppMain in C:\D\S4\Applications\SlicerApp\Main.cxx line 40
+ at main in C:\D\S4\Base\QTApp\qSlicerApplicationMainWrapper.cxx line 57
+ at invoke_main in D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl line 79
+ at __scrt_common_main_seh in D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl line 288
+ at __scrt_common_main in D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl line 331
+ at mainCRTStartup in D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp line 17
+ at BaseThreadInitThunk
+ at RtlUserThreadStart
+```
 
 ### Why is my VTK actor/widget not visible?
 

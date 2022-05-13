@@ -92,6 +92,23 @@ The following may be needed on fresh debian or ubuntu:
     sudo apt-get install libpulse-dev libnss3 libglu1-mesa
     sudo apt-get install --reinstall libxcb-xinerama0
 
+:::{note} Warning
+:class: warning
+
+Debian 10.12 users may encounter an error when launching Slicer:
+
+    Warning: Ignoring XDG_SESSION_TYPE=wayland on Gnome. Use QT_QPA_PLATFORM=wayland to run on Wayland anyway.
+    qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+    This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+    Available platform plugins are: xcb.
+
+[The solution](https://forum.qt.io/topic/93247/qt-qpa-plugin-could-not-load-the-qt-platform-plugin-xcb-in-even-though-it-was-found/81) is to create symlink:
+
+    sudo ln -s /usr/lib/x86_64-linux-gnu/libxcb-util.so /usr/lib/x86_64-linux-gnu/libxcb-util.so.1
+
+:::
+
 #### ArchLinux
 ArchLinux runs the `strip` utility by default; this needs to be disabled in order to run Slicer binaries.  For more information see [this thread on the Slicer Forum](https://discourse.slicer.org/t/could-not-load-dicom-data/14211/5).
 

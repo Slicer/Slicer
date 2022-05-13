@@ -22,9 +22,16 @@ Segmentation can be edited using [Segment Editor](segmenteditor.md) module.
 3D volumes in NRRD (.nrrd or .nhdr) and Nifti (.nii or .nii.gz) file formats can be directly loaded as segmentation:
 - Drag-and-drop the volume file to the application window (or use menu: `File` / `Add Data`, then select the file)
 - In `Description` column choose `Segmentation`
+- Optional: if a color table (specifying name and color for each label value) is available then load that first into the application and then select it as `Color node` in the `Options` section. Specification of the color table file format is available [here](../../developer_guide/modules/colors.md#color-table-file-format-txt-ctbl).
 - Click `OK`
 
-Other volume file formats can be loaded as labelmap volume and then converted to segmentation node:
+:::{tip}
+
+To avoid the need to always manually select `Segmentation`, save the `.nrrd` file using the `.seg.nrrd` file extension. It makes Slicer load the image as a segmentation by default.
+
+::: 
+
+Other image file formats can be loaded as labelmap volume and then converted to segmentation:
 - Drag-and-drop the volume file to the application window (or use menu: `File` / `Add Data`, then select the file)
 - Click `Show Options`
 - In `Options` column check `LabelMap` checkbox (to indicate that the volume is a labelmap, not a grayscale image)
@@ -32,7 +39,11 @@ Other volume file formats can be loaded as labelmap volume and then converted to
 - Go to `Data` module, `Subject hierarchy` tab
 - Right-click on the name of the imported volume and choose `Convert labelmap to segmentation node`
 
-Tip: To show the segmentation in 3D, go to `Segmentations` module and in `Representations` section, `Closed surface` row, click `Create`. Or, during segment editing in `Segment Editor` module click`Show 3D` button to show/hide segmentation in 3D.
+:::{tip}
+
+To show the segmentation in 3D, go to `Segmentations` module and click `Show 3D`. Alternatively, go to `Data` module and drag-and-drop the segmentation into each view where you want to see them - if the segmentation is dragged into a 3D view then it will be shown there in 3D.
+
+::: 
 
 ### Import an existing segmentation from model (surface mesh) file
 
@@ -105,7 +116,7 @@ For exporting segmentation as NRRD or NIFTI file for external software that uses
 - Open `Export to files` section in `Segmentations` module (or in `Segment editor` module: choose `Export to files`, in the drop-down menu of `Segmentations` button)
 - In `File format` selector choose `NRRD` or `NIFTI`. NRRD format is recommended, as it is a simple, general-purpose file format. For neuroimaging, NIFTI file format may be a better choice, as it is the most commonly used research file format in that field.
 - Optional: choose Reference volume if you want your segmentation to match a selected volume's geometry (origin, spacing, axis directions) instead of the current segmentation geometry
-- Optional: check `Use color table values` checkbox and select a color table to set voxel values in the exported files from values specified in the color table. Without that, voxel values are based on the order of segments in the segmentation node.
+- Optional: check `Use color table values` checkbox and select a color table to set voxel values in the exported files from values specified in the color table. The label value is index of the color table entry that has the same name as the segment name. If a color table is not specified then, voxel values are based on the order of segments in the segment list (voxels that are outside of all segments are set to 0, voxels of the first segment are set to  1, voxels of the second segment are set to 2, etc).
 - Set additional options (destination folder, compression, etc.) as needed
 - Click `Export`
 

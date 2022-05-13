@@ -50,5 +50,8 @@ slicerMacroBuildLoadableModule(
   SRCS ${MODULE_SRCS}
   MOC_SRCS ${MODULE_MOC_SRCS}
   TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
+  # Important: remove NO_INSTALL option below when this template is used for implementing a new module.
+  # Installation is disabled here because this template is used for testing custom markups in Slicer core
+  # and we don't want this testing module to appear in the Slicer installation package.
   NO_INSTALL
   )

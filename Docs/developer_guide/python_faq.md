@@ -109,6 +109,40 @@ cliNode.AddObserver('ModifiedEvent', onProcessingStatusUpdate)
 # cliNode.Cancel()
 ```
 
+## How to use a loadable module from Python
+
+Both Python scripted loadable modules and C++ loadable modules can be used from Python in multiple ways: by modifying MRML nodes, calling methods of the module logic object, and adding reusable GUI widgets provided by the module.
+
+It may be tempting to use another module via the module's GUI (for example, by simulating button clicks), since Qt allows access to widgets via public methods, signals, and properties. However, a module GUI is not designed to be manipulated programmatically, and doing so could lead to unexpected behavior. Therefore, it is only recommended to interact with a module GUI object for testing and debugging.
+
+### Calling methods of a module logic
+
+Functions that a module offers to other modules are made available via the module's logic class.
+
+For most modules, the logic class can be accessed by calling the `slicer.util.getModuleLogic('ModuleName')` convenience function.
+- If the type of the returned logic object is a `qSlicerBaseQTCLI.vtkSlicerCLIModuleLogic` then it means that it is a CLI module. Follow the instructions described in the [How to run a CLI module from Python](#how-to-run-a-cli-module-from-python) section.
+- If the method returns an error, it means that the module does not instantiate a publicly accessible module logic object. Some Python scripted loadable modules create a logic just in time when it is needed. In this cases, a module logic can be instantiated by importing the corresponding Python module and instantiating classes - see for example how it is done for [DICOM module](script_repository.md#load-dicom-files-into-the-scene-from-a-folder).
+
+There are many examples for using a module's logic class in the [Script Repository](script_repository). Note that in the examples a module logic may obtained by using `slicer.modules.modulename.logic()`, which only works for C++ loadable modules, but otherwise it returns the same result as `slicer.util.getModuleLogic()`.
+
+Module logic methods can be explored by using the `help` Python function (`help(slicer.util.getModuleLogic('Markups'))`) or using auto-complete in the Python console (type `slicer.util.getModuleLogic('Markups').Get` and hit <kbd>Tab</kbd>). Documentation of module logic of C++ classes can be found in the [C++ API documentation](api.md#c), for Python scripted modules developers currently need to get documentation from the [source code](https://github.com/Slicer/Slicer/tree/master/Modules/Scripted).
+
+### Adding reusable widgets provided by modules
+
+Most Slicer core modules provide a set of resuable, conigurable GUI widgets that can help developers in building their module's user interface.
+
+For example, Volumes module offers a widget that can display and edit basic properties of volume nodes:
+
+```python
+volumeNode = getNode('MRHead')
+w = slicer.qMRMLVolumeInfoWidget()
+w.setMRMLScene(slicer.mrmlScene)
+w.setVolumeNode(volumeNode)
+w.show()
+```
+
+While these widgets can be instantiated using Python scripting, it is more convenient (and requires less code) to add them to a module's user interface using Qt designer.
+
 ## How to find a Python function for any Slicer features
 
 All features of Slicer are available via Python scripts. [Slicer script repository](script_repository.md) contains examples for the most commonly used features.

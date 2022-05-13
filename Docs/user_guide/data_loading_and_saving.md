@@ -99,7 +99,7 @@ Surface or volumetric meshes.
 - **ITK meta** (.meta; reading only): Coordinate system: LPS.
 - [FreeSurfer extension](https://github.com/PerkLab/SlicerFreeSurfer):
   - **Freesurfer surfaces** (.orig, .inflated, .sphere, .white, .smoothwm, .pial; reading only)
-- [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart:
+- [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart):
   - **CARTO surface model** (.vtk; writing only): special .vtk polydata file format variant, which contains patient name and ID to allow import into CARTO cardiac electrophysiology mapping systems
 
 ### Segmentations
