@@ -6,7 +6,7 @@ import re
 from .ExtensionProject import ExtensionProject
 
 
-#=============================================================================
+# =============================================================================
 class ExtensionDescription:
   """Representation of an extension description.
 
@@ -22,7 +22,7 @@ class ExtensionDescription:
 
   DESCRIPTION_FILE_TEMPLATE = None
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, repo=None, filepath=None, sourcedir=None, cmakefile="CMakeLists.txt"):
     """
     :param repo:
@@ -156,11 +156,11 @@ class ExtensionDescription:
         self._setProjectAttribute("svnusername", p, elideempty=True)
         self._setProjectAttribute("svnpassword", p, elideempty=True)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __repr__(self):
     return repr(self.__dict__)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @staticmethod
   def _remotePublicUrl(remote):
     url = remote.url
@@ -169,7 +169,7 @@ class ExtensionDescription:
 
     return url
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @staticmethod
   def _gitSvnInfo(repo, remote):
     result = {}
@@ -179,19 +179,19 @@ class ExtensionDescription:
         result[key] = value.strip()
     return result
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _setProjectAttribute(self, name, project, default=None, required=False,
                            elideempty=False, substitute=True):
 
     if default is None and not required:
-      default=""
+      default = ""
 
     v = project.getValue("EXTENSION_" + name.upper(), default, substitute)
 
     if len(v) or not elideempty:
       setattr(self, name, v)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def clear(self, attr=None):
     """Remove attributes from the extension description.
 
@@ -206,14 +206,14 @@ class ExtensionDescription:
     for key in self.__dict__.keys() if attr is None else (attr,):
       delattr(self, key)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _read(self, fp):
     for l in fp:
       m = self._reParam.match(l)
       if m is not None:
         setattr(self, m.group(1), m.group(2).strip())
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def read(self, path):
     """Read extension description from directory.
 
@@ -241,7 +241,7 @@ class ExtensionDescription:
     with open(descriptionFiles[0]) as fp:
       self._read(fp)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @staticmethod
   def _findOccurences(a_str, sub):
     start = 0
@@ -251,7 +251,7 @@ class ExtensionDescription:
         yield start
         start += len(sub)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _write(self, fp):
     # Creation of the map
     dictio = dict()
@@ -271,7 +271,7 @@ class ExtensionDescription:
 
     if self.DESCRIPTION_FILE_TEMPLATE is not None:
       extDescriptFile = open(self.DESCRIPTION_FILE_TEMPLATE)
-      for line in extDescriptFile.readlines() :
+      for line in extDescriptFile.readlines():
         if "${" in line:
           variables = self._findOccurences(line, "$")
           temp = line
@@ -280,8 +280,8 @@ class ExtensionDescription:
               var = ""
               i = variable + 2
               while line[i] != '}':
-                var+=line[i]
-                i+=1
+                var += line[i]
+                i += 1
               temp = temp.replace("${" + var + "}", dictio[var])
           fp.write(temp)
         else:
@@ -292,7 +292,7 @@ class ExtensionDescription:
       for key in sorted(self.__dict__):
         fp.write((f"{key} {getattr(self, key)}").strip() + "\n")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def write(self, out):
     """Write extension description to a file or stream.
 

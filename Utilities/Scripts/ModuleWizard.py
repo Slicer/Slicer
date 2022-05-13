@@ -22,20 +22,20 @@ def findSource(dir):
               fnmatch.fnmatch(file, "*.md5") or \
               fnmatch.fnmatch(file, "*.png") or \
               fnmatch.fnmatch(file, "*.dox"):
-            file = os.path.join(root,file)
-            file = file[len(dir):] # strip common dir
+            file = os.path.join(root, file)
+            file = file[len(dir):]  # strip common dir
             fileList.append(file)
   return fileList
 
 
 def copyAndReplace(inFile, template, target, key, moduleName):
-  newFile = os.path.join( target, inFile.replace(key, moduleName) )
-  print ("creating %s" % newFile)
+  newFile = os.path.join(target, inFile.replace(key, moduleName))
+  print("creating %s" % newFile)
   path = os.path.dirname(newFile)
   if not os.path.exists(path):
       os.makedirs(path)
 
-  fp = open(os.path.join(template,inFile))
+  fp = open(os.path.join(template, inFile))
   contents = fp.read()
   fp.close()
   contents = contents.replace(key, moduleName)
@@ -46,19 +46,19 @@ def copyAndReplace(inFile, template, target, key, moduleName):
 
 
 def usage():
-  print ("")
-  print ("Usage:")
-  print ("ModuleWizard [--template <dir>] [--templateKey <key>] [--target <dir>] <moduleName>")
-  print ("  --template default ./Extensions/Testing/LoadableExtensionTemplate")
-  print ("  --templateKey default is dirname of template")
-  print ("  --target default ./Modules/Loadable/<moduleName>")
-  print ("Examples (from Slicer source directory):")
-  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/LoadableExtensionTemplate --target ../MyExtension MyExtension")
-  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/ScriptedLoadableExtensionTemplate --target ../MyScript MyScript")
-  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/EditorExtensionTemplate --target ../MyEditorEffect MyEditorEffect")
-  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/CLIExtensionTemplate --target ../MyCLI MyCLI")
-  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/SuperBuildExtensionTemplate --target ../MySuperBuild MySuperBuild")
-  print ("")
+  print("")
+  print("Usage:")
+  print("ModuleWizard [--template <dir>] [--templateKey <key>] [--target <dir>] <moduleName>")
+  print("  --template default ./Extensions/Testing/LoadableExtensionTemplate")
+  print("  --templateKey default is dirname of template")
+  print("  --target default ./Modules/Loadable/<moduleName>")
+  print("Examples (from Slicer source directory):")
+  print("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/LoadableExtensionTemplate --target ../MyExtension MyExtension")
+  print("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/ScriptedLoadableExtensionTemplate --target ../MyScript MyScript")
+  print("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/EditorExtensionTemplate --target ../MyEditorEffect MyEditorEffect")
+  print("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/CLIExtensionTemplate --target ../MyCLI MyCLI")
+  print("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/SuperBuildExtensionTemplate --target ../MySuperBuild MySuperBuild")
+  print("")
 
 
 def main(argv):
@@ -85,7 +85,7 @@ def main(argv):
     moduleName = arg
 
   if moduleName == "":
-    print ("Please specify module name")
+    print("Please specify module name")
     usage()
     exit()
 
@@ -109,14 +109,14 @@ def main(argv):
     usage()
     exit()
 
-  print (f"\nWill copy \n\t{template} \nto \n\t{target} \nreplacing \"{templateKey}\" with \"{moduleName}\"\n")
-  sources = findSource( template )
-  print (sources)
+  print(f"\nWill copy \n\t{template} \nto \n\t{target} \nreplacing \"{templateKey}\" with \"{moduleName}\"\n")
+  sources = findSource(template)
+  print(sources)
 
   for file in sources:
     copyAndReplace(file, template, target, templateKey, moduleName)
 
-  print ('\nModule %s created!' % moduleName)
+  print('\nModule %s created!' % moduleName)
 
 
 if __name__ == "__main__":

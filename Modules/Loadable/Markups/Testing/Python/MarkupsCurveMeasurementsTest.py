@@ -43,8 +43,8 @@ if curvePointData.GetArrayName(1) != 'Curvature':
   raise Exception(exceptionMessage)
 
 curvatureArray = curvePointData.GetArray(1)
-if curvatureArray.GetMaxId() != curvePointData.GetNumberOfTuples()-1:
-  exceptionMessage = "Unexpected number of values in curvature data array: %d (expected %d)" % (curvatureArray.GetMaxId(), curvePointData.GetNumberOfTuples()-1)
+if curvatureArray.GetMaxId() != curvePointData.GetNumberOfTuples() - 1:
+  exceptionMessage = "Unexpected number of values in curvature data array: %d (expected %d)" % (curvatureArray.GetMaxId(), curvePointData.GetNumberOfTuples() - 1)
   raise Exception(exceptionMessage)
 
 if abs(curvatureArray.GetRange()[0] - 0.0) > 0.0001:
@@ -84,8 +84,8 @@ if curvePointData.GetArrayName(1) != 'Curvature':
   raise Exception(exceptionMessage)
 
 curvatureArray = curvePointData.GetArray(1)
-if curvatureArray.GetMaxId() != curvePointData.GetNumberOfTuples()-1:
-  exceptionMessage = "Unexpected number of values in curvature data array: %d (expected %d)" % (curvatureArray.GetMaxId(), curvePointData.GetNumberOfTuples()-1)
+if curvatureArray.GetMaxId() != curvePointData.GetNumberOfTuples() - 1:
+  exceptionMessage = "Unexpected number of values in curvature data array: %d (expected %d)" % (curvatureArray.GetMaxId(), curvePointData.GetNumberOfTuples() - 1)
   raise Exception(exceptionMessage)
 
 if abs(curvatureArray.GetRange()[0] - 0.0) > 0.0001:
@@ -180,7 +180,7 @@ numberOfControlPoints = 40
 import math
 closedCurveNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode")
 for controlPointIndex in range(numberOfControlPoints):
-    angle = 2.0*math.pi * controlPointIndex/numberOfControlPoints
+    angle = 2.0 * math.pi * controlPointIndex / numberOfControlPoints
     closedCurveNode.AddControlPoint(vtk.vtkVector3d(radius * math.sin(angle), radius * math.cos(angle), 0.0))
 
 # Turn on curvature calculation in curve node
@@ -191,19 +191,19 @@ if curvatureArray.GetNumberOfValues() < 10:
   exceptionMessage = "Many values are expected in the curvature array, instead found just %d" % curvatureArray.GetNumberOfValues()
   raise Exception(exceptionMessage)
 
-if abs(curvatureArray.GetRange()[0] - 1/radius) > 1e-4:
+if abs(curvatureArray.GetRange()[0] - 1 / radius) > 1e-4:
   exceptionMessage = "Unexpected minimum in curvature data array: " + str(curvatureArray.GetRange()[0])
   raise Exception(exceptionMessage)
-if abs(curvatureArray.GetRange()[1] - 1/radius) > 1e-4:
+if abs(curvatureArray.GetRange()[1] - 1 / radius) > 1e-4:
   exceptionMessage = "Unexpected maximum in curvature data array: " + str(curvatureArray.GetRange()[1])
   raise Exception(exceptionMessage)
-if abs(curvatureArray.GetRange()[1] - 1/radius) > 1e-4:
+if abs(curvatureArray.GetRange()[1] - 1 / radius) > 1e-4:
   exceptionMessage = "Unexpected maximum in curvature data array: " + str(curvatureArray.GetRange()[1])
   raise Exception(exceptionMessage)
-if abs(closedCurveNode.GetMeasurement("curvature mean").GetValue() - 1/radius) > 1e-4:
+if abs(closedCurveNode.GetMeasurement("curvature mean").GetValue() - 1 / radius) > 1e-4:
   exceptionMessage = "Unexpected curvature mean value: " + str(closedCurveNode.GetMeasurement("curvature mean").GetValue())
   raise Exception(exceptionMessage)
-if abs(closedCurveNode.GetMeasurement("curvature max").GetValue() - 1/radius) > 1e-4:
+if abs(closedCurveNode.GetMeasurement("curvature max").GetValue() - 1 / radius) > 1e-4:
   exceptionMessage = "Unexpected curvature max value: " + str(closedCurveNode.GetMeasurement("curvature max").GetValue())
   raise Exception(exceptionMessage)
 

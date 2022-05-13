@@ -26,7 +26,7 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedLabelEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -160,15 +160,15 @@ class LevelTracingPipeline:
     self.mapper = vtk.vtkPolyDataMapper2D()
     self.actor = vtk.vtkActor2D()
     actorProperty = self.actor.GetProperty()
-    actorProperty.SetColor( 107/255., 190/255., 99/255. )
-    actorProperty.SetLineWidth( 1 )
+    actorProperty.SetColor(107 / 255., 190 / 255., 99 / 255.)
+    actorProperty.SetLineWidth(1)
     self.mapper.SetInputData(self.polyData)
     self.actor.SetMapper(self.mapper)
     actorProperty = self.actor.GetProperty()
-    actorProperty.SetColor(1,1,0)
+    actorProperty.SetColor(1, 1, 0)
     actorProperty.SetLineWidth(1)
 
-  def preview(self,xy):
+  def preview(self, xy):
     """Calculate the current level trace view if the mouse is inside the volume extent
     Returns False if slice views are rotated.
     """
@@ -193,8 +193,8 @@ class LevelTracingPipeline:
     sliceNode = self.effect.scriptedEffect.viewNode(self.sliceWidget)
     offset = max(sliceNode.GetDimensions())
 
-    i0,j0,k0 = self.effect.xyToIjk((0,0), self.sliceWidget, masterImageData, parentTransformNode)
-    i1,j1,k1 = self.effect.xyToIjk((offset,offset), self.sliceWidget, masterImageData, parentTransformNode)
+    i0, j0, k0 = self.effect.xyToIjk((0, 0), self.sliceWidget, masterImageData, parentTransformNode)
+    i1, j1, k1 = self.effect.xyToIjk((offset, offset), self.sliceWidget, masterImageData, parentTransformNode)
     if i0 == i1:
       self.tracingFilter.SetPlaneToJK()
     elif j0 == j1:

@@ -17,9 +17,9 @@ __all__ = [
 ]
 
 
-#=============================================================================
+# =============================================================================
 class _CredentialToken:
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, text=None, **kwargs):
     # Set attributes from named arguments
     self._keys = set(kwargs.keys())
@@ -34,14 +34,14 @@ class _CredentialToken:
           self._keys.add(t[0])
           setattr(self, t[0], t[1])
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __str__(self):
     # Return string representation suitable for being fed to 'git credential'
     lines = [f"{k}={getattr(self, k)}" for k in self._keys]
     return "%s\n\n" % "\n".join(lines)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _credentials(client, request, action="fill"):
   # Set up and execute 'git credential' process, passing stringized token to
   # the process's stdin
@@ -57,7 +57,7 @@ def _credentials(client, request, action="fill"):
   return _CredentialToken(out.decode())
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def logIn(repo=None):
   """Create github session.
 
@@ -109,7 +109,7 @@ def logIn(repo=None):
   return session
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def getRepo(session, name=None, url=None):
   """Get a github repository by name or URL.
 
@@ -179,7 +179,7 @@ def getRepo(session, name=None, url=None):
   return None
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def getFork(user, upstream, create=False):
   """Get user's fork of the specified repository.
 
@@ -237,7 +237,7 @@ def getFork(user, upstream, create=False):
   return None
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def getPullRequest(upstream, ref, user=None, fork=None, target=None):
   """Get pull request for the specified user's fork and ref.
 

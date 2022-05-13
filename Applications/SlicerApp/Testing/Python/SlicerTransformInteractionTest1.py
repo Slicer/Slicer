@@ -86,7 +86,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
   def assertMatrix(self, m, expected):
     for i in range(4):
       for j in range(4):
-        self.assertAlmostEqual(m.GetElement(i,j), expected[i][j])
+        self.assertAlmostEqual(m.GetElement(i, j), expected[i][j])
 
   def runTest(self):
     """Run as few or as many tests as needed here.
@@ -104,7 +104,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     """
     logic = SlicerTransformInteractionTest1Logic()
 
-    #self.delayDisplay("Starting test_3D_interactionDefaults")
+    # self.delayDisplay("Starting test_3D_interactionDefaults")
     logic = SlicerTransformInteractionTest1Logic()
     tNode, tdNode = logic.addTransform()
     self.assertFalse(tdNode.GetEditorVisibility())
@@ -128,14 +128,14 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     representation.GetTransform(defaultTransform)
 
     expectedDefaultTransform = [
-      [100.0,   0.0,    0.0,    0.0],
-      [0.0,   100.0,    0.0,    0.0],
-      [0.0,     0.0,  100.0,    0.0],
-      [0.0,     0.0,    0.0,    1.0],
+      [100.0, 0.0, 0.0, 0.0],
+      [0.0, 100.0, 0.0, 0.0],
+      [0.0, 0.0, 100.0, 0.0],
+      [0.0, 0.0, 0.0, 1.0],
       ]
     self.assertTransform(defaultTransform, expectedDefaultTransform)
 
-    #self.delayDisplay('test_3D_interactionDefaults passed!')
+    # self.delayDisplay('test_3D_interactionDefaults passed!')
 
   def test_3D_interactionVolume(self):
     """ Test that the interaction widget interacts correctly in the 3D view.
@@ -145,7 +145,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     import SampleData
     volume = SampleData.downloadSample('CTAAbdomenPanoramix')
 
-    #self.delayDisplay("Starting test_3D_interactionVolume")
+    # self.delayDisplay("Starting test_3D_interactionVolume")
     logic = SlicerTransformInteractionTest1Logic()
     tNode, tdNode = logic.addTransform()
     self.assertFalse(tdNode.GetEditorVisibility())
@@ -167,10 +167,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     transform = vtk.vtkTransform()
 
     expectedDefaultTransform = [
-      [100.0,   0.0,    0.0,    0.0],
-      [0.0,   100.0,    0.0,    0.0],
-      [0.0,     0.0,  100.0,    0.0],
-      [0.0,     0.0,    0.0,    1.0],
+      [100.0, 0.0, 0.0, 0.0],
+      [0.0, 100.0, 0.0, 0.0],
+      [0.0, 0.0, 100.0, 0.0],
+      [0.0, 0.0, 0.0, 1.0],
       ]
     representation.GetTransform(transform)
     self.assertTransform(transform, expectedDefaultTransform)
@@ -179,10 +179,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     volume.SetAndObserveTransformNodeID(tNode.GetID())
     tdNode.UpdateEditorBounds()
     volumeTransform = [
-      [654.609375,  0.0,  0.0,  -2.030487060546875],
-      [0.0, 476.484375, 0.0,  126.66322422027588],
-      [0.0, 0.0,  645.0,  -186.37799072265625],
-      [0.0, 0.0,  0.0,  1.0],
+      [654.609375, 0.0, 0.0, -2.030487060546875],
+      [0.0, 476.484375, 0.0, 126.66322422027588],
+      [0.0, 0.0, 645.0, -186.37799072265625],
+      [0.0, 0.0, 0.0, 1.0],
       ]
     representation.GetTransform(transform)
     self.assertTransform(transform, volumeTransform)
@@ -226,7 +226,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     self.assertTransform(transform, defaultPlusMoveTransform)
 
     ##
-    ## 1- With rotate transform (and translation)
+    # 1- With rotate transform (and translation)
     ##
     # Add a rotation to the transform
     rotation = vtk.vtkTransform()
@@ -235,10 +235,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     tNode.ApplyTransformMatrix(rotation.GetMatrix())
 
     defaultPlusMovePlusRotationTransform = [
-      defaultPlusMoveTransform[2], #[0.0, 0.0, 100.0, 0.2]
-      defaultPlusMoveTransform[0], #[100.0, 0.0, 0.0, -42.0]
-      defaultPlusMoveTransform[1], #[0.0, 100.0, 0.0, 52.0]
-      defaultPlusMoveTransform[3]  #[0.0, 0.0, 0.0, 1.0],
+      defaultPlusMoveTransform[2],  # [0.0, 0.0, 100.0, 0.2]
+      defaultPlusMoveTransform[0],  # [100.0, 0.0, 0.0, -42.0]
+      defaultPlusMoveTransform[1],  # [0.0, 100.0, 0.0, 52.0]
+      defaultPlusMoveTransform[3]  # [0.0, 0.0, 0.0, 1.0],
       ]
     representation.GetTransform(transform)
     self.assertTransform(transform, defaultPlusMovePlusRotationTransform)
@@ -263,10 +263,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     self.assertTransform(transform, defaultPlusMovePlusRotationTransform)
 
     ##
-    ## 1- With scaling transform (and rotation and translation)
+    # 1- With scaling transform (and rotation and translation)
     ##
     # Add a rotation to the transform
-    scale = [2.0, 3.0, 7.0, 1.0] # nice prime numbers
+    scale = [2.0, 3.0, 7.0, 1.0]  # nice prime numbers
     scaling = vtk.vtkTransform()
     scaling.Scale(scale[0], scale[1], scale[2])
     tNode.ApplyTransformMatrix(scaling.GetMatrix())
@@ -274,7 +274,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     defaultPlusMovePlusRotationPlusScalingTransform = []
     for i in range(4):
       defaultPlusMovePlusRotationPlusScalingTransform.append(
-        [x*scale[i] for x in defaultPlusMovePlusRotationTransform[i]])
+        [x * scale[i] for x in defaultPlusMovePlusRotationTransform[i]])
 
     representation.GetTransform(transform)
     self.assertTransform(transform, defaultPlusMovePlusRotationPlusScalingTransform)
@@ -283,7 +283,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     volumePlusMovePlusRotationPlusScalingTransform = []
     for i in range(4):
       volumePlusMovePlusRotationPlusScalingTransform.append(
-        [x*scale[i] for x in volumePlusMovePlusRotationTransform[i]])
+        [x * scale[i] for x in volumePlusMovePlusRotationTransform[i]])
 
     volume.SetAndObserveTransformNodeID(tNode.GetID())
     tdNode.UpdateEditorBounds()
@@ -296,12 +296,12 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     representation.GetTransform(transform)
     self.assertTransform(transform, defaultPlusMovePlusRotationPlusScalingTransform)
 
-    #self.delayDisplay('test_3D_interactionVolume passed!')
+    # self.delayDisplay('test_3D_interactionVolume passed!')
 
   def test_3D_interaction2Models(self):
     """ Test that the interaction widget works with multiple models.
     """
-    #self.delayDisplay("Starting test_3D_interaction2Models")
+    # self.delayDisplay("Starting test_3D_interaction2Models")
     #
     # Setup:
     #  1. Create 2 cubes:
@@ -365,10 +365,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
     # Check default widget transform values
     expectedDefaultTransform = [
-      [100.0,   0.0,    0.0,    0.0],
-      [0.0,   100.0,    0.0,    0.0],
-      [0.0,     0.0,  100.0,    0.0],
-      [0.0,     0.0,    0.0,    1.0],
+      [100.0, 0.0, 0.0, 0.0],
+      [0.0, 100.0, 0.0, 0.0],
+      [0.0, 0.0, 100.0, 0.0],
+      [0.0, 0.0, 0.0, 1.0],
       ]
     representation.GetTransform(transform)
     self.assertTransform(transform, expectedDefaultTransform)
@@ -378,7 +378,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     tdNode.UpdateEditorBounds()
     centeredCubeTransform = copy.deepcopy(expectedDefaultTransform)
     for i in range(3):
-      centeredCubeTransform[i][i] = 2*centeredCubeSize[i]
+      centeredCubeTransform[i][i] = 2 * centeredCubeSize[i]
 
     representation.GetTransform(transform)
     self.assertTransform(transform, centeredCubeTransform)
@@ -387,10 +387,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     movedCubeNode.SetAndObserveTransformNodeID(tNode.GetID())
     tdNode.UpdateEditorBounds()
     bothCubeTransform = [
-      [2452.35424805,     0.0,      0.0,         -363.088562012],
-      [0.0,             593.0,      0.0,          -48.25],
-      [0.0,               0.0,   2535.19702148,  -483.799255371],
-      [0.0,               0.0,      0.0,            1.0],
+      [2452.35424805, 0.0, 0.0, -363.088562012],
+      [0.0, 593.0, 0.0, -48.25],
+      [0.0, 0.0, 2535.19702148, -483.799255371],
+      [0.0, 0.0, 0.0, 1.0],
     ]
 
     representation.GetTransform(transform)
@@ -400,10 +400,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     centeredCubeNode.SetAndObserveTransformNodeID(None)
     tdNode.UpdateEditorBounds()
     movedCubeTransform = [
-      [2207.58724976,   0.0,     0.0,          -424.280311584],
-      [0.0,           466.0,     0.0,           -80.0],
-      [0.0,             0.0,   2207.58731651,  -565.701681614],
-      [0.0,             0.0,      0.0,            1.0],
+      [2207.58724976, 0.0, 0.0, -424.280311584],
+      [0.0, 466.0, 0.0, -80.0],
+      [0.0, 0.0, 2207.58731651, -565.701681614],
+      [0.0, 0.0, 0.0, 1.0],
     ]
 
     representation.GetTransform(transform)
@@ -416,12 +416,12 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     representation.GetTransform(transform)
     self.assertTransform(transform, expectedDefaultTransform)
 
-    #self.delayDisplay('test_3D_interaction2Models passed!')
+    # self.delayDisplay('test_3D_interaction2Models passed!')
 
   def test_3D_parentTransform(self):
     """ Test that the interaction widget works with a parent transform.
     """
-    #self.delayDisplay('Starting test_3D_parentTransform')
+    # self.delayDisplay('Starting test_3D_parentTransform')
     #
     # Setup:
     #  - Use a markup control points list node
@@ -457,10 +457,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     leafNode.SetAndObserveTransformNodeID(parentNode.GetID())
     tdNode.UpdateEditorBounds()
     expectedDefaultTransform = [
-      [100.0,   0.0,    0.0,    0.0],
-      [0.0,   100.0,    0.0,    0.0],
-      [0.0,     0.0,  100.0,    0.0],
-      [0.0,     0.0,    0.0,    1.0],
+      [100.0, 0.0, 0.0, 0.0],
+      [0.0, 100.0, 0.0, 0.0],
+      [0.0, 0.0, 100.0, 0.0],
+      [0.0, 0.0, 0.0, 1.0],
       ]
 
     representation.GetTransform(transform)
@@ -477,10 +477,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     parentNode.ApplyTransformMatrix(parentTransform.GetMatrix())
 
     expectedTransformWithParent = [
-      [0.0,   0.0, 200.0,  51.0],
-      [700.0, 0.0,   0.0, -27.0],
-      [0.0, 300.0,   0.0,   3.3],
-      [0.0,   0.0,   0.0,   1.0],
+      [0.0, 0.0, 200.0, 51.0],
+      [700.0, 0.0, 0.0, -27.0],
+      [0.0, 300.0, 0.0, 3.3],
+      [0.0, 0.0, 0.0, 1.0],
     ]
     representation.GetTransform(transform)
     self.assertTransform(transform, expectedTransformWithParent)
@@ -489,10 +489,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     markupNode.SetAndObserveTransformNodeID(leafNode.GetID())
     tdNode.UpdateEditorBounds()
     expectedMarkupTransformWithParent = [
-      [0.0,     0.0, 1200.0,  151.0],
-      [35000.0, 0.0,   0.0, -1777.0],
-      [0.0, 12000.0,   0.0,   3.3],
-      [0.0,     0.0,   0.0,   1.0],
+      [0.0, 0.0, 1200.0, 151.0],
+      [35000.0, 0.0, 0.0, -1777.0],
+      [0.0, 12000.0, 0.0, 3.3],
+      [0.0, 0.0, 0.0, 1.0],
     ]
     representation.GetTransform(transform)
     self.assertTransform(transform, expectedMarkupTransformWithParent)
@@ -500,22 +500,22 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     # Set the parent transform to identity
     parentNode.ApplyTransformMatrix(parentTransform.GetLinearInverse().GetMatrix())
     expectedMarkupTransform = [
-      [5000.0,   0.0,   0.0, -250.0],
-      [0.0,   4000.0,   0.0,    0.0],
-      [0.0,      0.0, 600.0,   50.0],
-      [0.0,     0.0,    0.0,   1.0],
+      [5000.0, 0.0, 0.0, -250.0],
+      [0.0, 4000.0, 0.0, 0.0],
+      [0.0, 0.0, 600.0, 50.0],
+      [0.0, 0.0, 0.0, 1.0],
     ]
     representation.GetTransform(transform)
     self.assertTransform(transform, expectedMarkupTransform)
 
-    #self.delayDisplay('test_3D_parentTransform passed!')
+    # self.delayDisplay('test_3D_parentTransform passed!')
 
   def test_3D_interactionSerialization(self):
     """ Test that the serialzation the interaction properties.
     """
     logic = SlicerTransformInteractionTest1Logic()
 
-    #self.delayDisplay("Starting test_3D_interactionSerialization")
+    # self.delayDisplay("Starting test_3D_interactionSerialization")
     # Setup
     tNode, tdNode = logic.addTransform()
     tNode.SetMatrixTransformToParent(vtk.vtkMatrix4x4())
@@ -556,7 +556,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     """
     logic = SlicerTransformInteractionTest1Logic()
 
-    #self.delayDisplay("Starting test_3D_boundsUpdateROI")
+    # self.delayDisplay("Starting test_3D_boundsUpdateROI")
     # Setup
     roiNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLAnnotationROINode())
     roiNode.SetXYZ(100, 300, -0.689)
@@ -577,10 +577,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     transform = vtk.vtkTransform()
 
     expectedDefaultTransform = [
-      [100.0,   0.0,    0.0,    0.0],
-      [0.0,   100.0,    0.0,    0.0],
-      [0.0,     0.0,  100.0,    0.0],
-      [0.0,     0.0,    0.0,    1.0],
+      [100.0, 0.0, 0.0, 0.0],
+      [0.0, 100.0, 0.0, 0.0],
+      [0.0, 0.0, 100.0, 0.0],
+      [0.0, 0.0, 0.0, 1.0],
       ]
     representation.GetTransform(transform)
     self.assertTransform(transform, expectedDefaultTransform)
@@ -595,10 +595,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
     tdNode.UpdateEditorBounds()
     roiDefaultTransform = [
-      [2800.0,  0.0,    0.0,   100.0],
-      [0.0,     32.0,   0.0,   300.0],
-      [0.0,     0.0,  180.0,    -0.689],
-      [0.0,     0.0,    0.0,     1.0],
+      [2800.0, 0.0, 0.0, 100.0],
+      [0.0, 32.0, 0.0, 300.0],
+      [0.0, 0.0, 180.0, -0.689],
+      [0.0, 0.0, 0.0, 1.0],
     ]
     representation.GetTransform(transform)
     self.assertTransform(transform, roiDefaultTransform)

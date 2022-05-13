@@ -64,8 +64,8 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
     self.inputSelector.noneEnabled = False
     self.inputSelector.showHidden = False
     self.inputSelector.showChildNodeTypes = False
-    self.inputSelector.setMRMLScene( slicer.mrmlScene )
-    self.inputSelector.setToolTip( "Pick a sequence node of volumes that will be cropped and resampled." )
+    self.inputSelector.setMRMLScene(slicer.mrmlScene)
+    self.inputSelector.setToolTip("Pick a sequence node of volumes that will be cropped and resampled.")
     parametersFormLayout.addRow("Input volume sequence: ", self.inputSelector)
 
     #
@@ -80,8 +80,8 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
     self.outputSelector.noneDisplay = "(Overwrite input)"
     self.outputSelector.showHidden = False
     self.outputSelector.showChildNodeTypes = False
-    self.outputSelector.setMRMLScene( slicer.mrmlScene )
-    self.outputSelector.setToolTip( "Pick a sequence node where the cropped and resampled volumes will be stored." )
+    self.outputSelector.setMRMLScene(slicer.mrmlScene)
+    self.outputSelector.setToolTip("Pick a sequence node where the cropped and resampled volumes will be stored.")
     parametersFormLayout.addRow("Output volume sequence: ", self.outputSelector)
 
     #
@@ -96,12 +96,12 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
     self.cropParametersSelector.noneEnabled = False
     self.cropParametersSelector.showHidden = True
     self.cropParametersSelector.showChildNodeTypes = False
-    self.cropParametersSelector.setMRMLScene( slicer.mrmlScene )
+    self.cropParametersSelector.setMRMLScene(slicer.mrmlScene)
     self.cropParametersSelector.setToolTip("Select a crop volumes parameters.")
 
     self.editCropParametersButton = qt.QPushButton()
     self.editCropParametersButton.setIcon(qt.QIcon(':Icons/Go.png'))
-    #self.editCropParametersButton.setMaximumWidth(60)
+    # self.editCropParametersButton.setMaximumWidth(60)
     self.editCropParametersButton.enabled = True
     self.editCropParametersButton.toolTip = "Go to Crop Volume module to edit cropping parameters."
     hbox = qt.QHBoxLayout()
@@ -188,7 +188,7 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
 
     seqBrowser = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceBrowserNode")
     seqBrowser.SetAndObserveMasterSequenceNodeID(inputVolSeq.GetID())
-    seqBrowser.SetSaveChanges(inputVolSeq, True) # allow modifying node in the sequence
+    seqBrowser.SetSaveChanges(inputVolSeq, True)  # allow modifying node in the sequence
 
     seqBrowser.SetSelectedItemNumber(0)
     slicer.modules.sequences.logic().UpdateAllProxyNodes()
@@ -326,7 +326,7 @@ class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
     slicer.modules.cropvolume.logic().FitROIToInputVolume(cropVolumeNode)
 
     # Crop volume sequence
-    CropVolumeSequenceLogic().run(sequenceNode,croppedSequenceNode,cropVolumeNode)
+    CropVolumeSequenceLogic().run(sequenceNode, croppedSequenceNode, cropVolumeNode)
 
     # Verify results
 

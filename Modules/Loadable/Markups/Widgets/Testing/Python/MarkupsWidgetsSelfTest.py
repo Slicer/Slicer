@@ -65,13 +65,13 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
   # ------------------------------------------------------------------------------
   def test_MarkupsWidgetsSelfTest_FullTest1(self):
     # Check for Tables module
-    self.assertTrue( slicer.modules.tables )
+    self.assertTrue(slicer.modules.tables)
 
     self.section_SetupPathsAndNames()
     self.section_CreateMarkups()
     self.section_SimpleMarkupsWidget()
     self.section_MarkupsPlaceWidget()
-    self.delayDisplay("Test passed",self.delayMs)
+    self.delayDisplay("Test passed", self.delayMs)
 
   # ------------------------------------------------------------------------------
   def section_SetupPathsAndNames(self):
@@ -81,7 +81,7 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_CreateMarkups(self):
-    self.delayDisplay("Create markup nodes",self.delayMs)
+    self.delayDisplay("Create markup nodes", self.delayMs)
 
     self.markupsLogic = slicer.modules.markups.logic()
 
@@ -94,10 +94,10 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_SimpleMarkupsWidget(self):
-    self.delayDisplay("Test SimpleMarkupsWidget",self.delayMs)
+    self.delayDisplay("Test SimpleMarkupsWidget", self.delayMs)
 
     simpleMarkupsWidget = slicer.qSlicerSimpleMarkupsWidget()
-    nodeSelector = slicer.util.findChildren(simpleMarkupsWidget,"MarkupsNodeComboBox")[0]
+    nodeSelector = slicer.util.findChildren(simpleMarkupsWidget, "MarkupsNodeComboBox")[0]
     self.assertIsNone(simpleMarkupsWidget.interactionNode())
     simpleMarkupsWidget.setMRMLScene(slicer.mrmlScene)
     simpleMarkupsWidget.show()
@@ -130,20 +130,20 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
     simpleMarkupsWidget.optionsVisible = True
     self.assertTrue(simpleMarkupsWidget.optionsVisible)
 
-    defaultColor = qt.QColor(0,255,0)
+    defaultColor = qt.QColor(0, 255, 0)
     simpleMarkupsWidget.defaultNodeColor = defaultColor
     self.assertEqual(simpleMarkupsWidget.defaultNodeColor, defaultColor)
 
     self.markupsNode3 = nodeSelector.addNode()
     displayNode3 = self.markupsNode3.GetDisplayNode()
     color3 = displayNode3.GetColor()
-    self.assertEqual(color3[0]*255, defaultColor.red())
-    self.assertEqual(color3[1]*255, defaultColor.green())
-    self.assertEqual(color3[2]*255, defaultColor.blue())
+    self.assertEqual(color3[0] * 255, defaultColor.red())
+    self.assertEqual(color3[1] * 255, defaultColor.green())
+    self.assertEqual(color3[2] * 255, defaultColor.blue())
 
     numberOfFiducialsAdded = 5
     for i in range(numberOfFiducialsAdded):
-      self.markupsNode3.AddControlPoint([i*20, i*15, i*5])
+      self.markupsNode3.AddControlPoint([i * 20, i * 15, i * 5])
 
     tableWidget = simpleMarkupsWidget.tableWidget()
     self.assertEqual(tableWidget.rowCount, numberOfFiducialsAdded)
@@ -157,7 +157,7 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_MarkupsPlaceWidget(self):
-    self.delayDisplay("Test MarkupsPlaceWidget",self.delayMs)
+    self.delayDisplay("Test MarkupsPlaceWidget", self.delayMs)
 
     placeWidget = slicer.qSlicerMarkupsPlaceWidget()
     self.assertIsNone(placeWidget.interactionNode())

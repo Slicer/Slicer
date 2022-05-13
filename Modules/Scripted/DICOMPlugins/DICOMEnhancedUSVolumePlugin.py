@@ -31,7 +31,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
 
     self.detailedLogging = False
 
-  def examine(self,fileLists):
+  def examine(self, fileLists):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter.
@@ -42,7 +42,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
 
     return loadables
 
-  def examineFiles(self,files):
+  def examineFiles(self, files):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     files parameter.
@@ -100,7 +100,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
 
     return loadables
 
-  def load(self,loadable):
+  def load(self, loadable):
     """Load the selection
     """
 

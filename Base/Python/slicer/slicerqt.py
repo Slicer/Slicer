@@ -15,7 +15,7 @@ try:
 except: pass
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 class _LogReverseLevelFilter(logging.Filter):
   """
   Rejects log records that are at or above the specified level
@@ -28,7 +28,7 @@ class _LogReverseLevelFilter(logging.Filter):
     return record.levelno < self._levelLimit
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 class SlicerApplicationLogHandler(logging.Handler):
   """
   Writes logging records to Slicer application log.
@@ -38,10 +38,10 @@ class SlicerApplicationLogHandler(logging.Handler):
     logging.Handler.__init__(self)
     if hasattr(ctk, 'ctkErrorLogLevel'):
       self.pythonToCtkLevelConverter = {
-        logging.DEBUG : ctk.ctkErrorLogLevel.Debug,
-        logging.INFO : ctk.ctkErrorLogLevel.Info,
-        logging.WARNING : ctk.ctkErrorLogLevel.Warning,
-        logging.ERROR : ctk.ctkErrorLogLevel.Error }
+        logging.DEBUG: ctk.ctkErrorLogLevel.Debug,
+        logging.INFO: ctk.ctkErrorLogLevel.Info,
+        logging.WARNING: ctk.ctkErrorLogLevel.Warning,
+        logging.ERROR: ctk.ctkErrorLogLevel.Error}
     self.origin = "Python"
     self.category = "Python"
 
@@ -61,7 +61,7 @@ class SlicerApplicationLogHandler(logging.Handler):
       self.handleError(record)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def initLogging(logger):
   """
   Initialize logging by creating log handlers and setting default log level.
@@ -94,7 +94,7 @@ def initLogging(logger):
   logger.setLevel(logging.DEBUG)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Set up the root logger
 #
 # We initialize the root logger because if somebody just called logging.debug(),
@@ -112,17 +112,17 @@ def getSlicerRCFileName():
   If that environment variable is not specified then .slicerrc.py in the user's home folder
   will be used ('~/.slicerrc.py')."""
   import os
-  rcfile = os.path.join(slicer.app.slicerHome,".slicerrc.py")
+  rcfile = os.path.join(slicer.app.slicerHome, ".slicerrc.py")
   if not os.path.exists(rcfile):
     if 'SLICERRC' in os.environ:
       rcfile = os.environ['SLICERRC']
     else:
-      rcfile = os.path.expanduser( '~/.slicerrc.py' )
-  rcfile = rcfile.replace('\\','/') # make slashed consistent on Windows
+      rcfile = os.path.expanduser('~/.slicerrc.py')
+  rcfile = rcfile.replace('\\', '/')  # make slashed consistent on Windows
   return rcfile
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 # loadSlicerRCFile - Let's not add this function to 'slicer.util' so that
 # the global dictionary of the main context is passed to exec().
@@ -132,22 +132,22 @@ def loadSlicerRCFile():
   """If it exists, execute slicer resource script"""
   import os
   rcfile = getSlicerRCFileName()
-  if os.path.isfile( rcfile ):
-    print('Loading Slicer RC file [%s]' % ( rcfile ))
+  if os.path.isfile(rcfile):
+    print('Loading Slicer RC file [%s]' % (rcfile))
     exec(open(rcfile).read(), globals())
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 # Internal
 #
 
 class _Internal:
 
-  def __init__( self ):
+  def __init__(self):
 
     # Set attribute 'slicer.app'
-    setattr( slicer, 'app', _qSlicerCoreApplicationInstance )
+    setattr(slicer, 'app', _qSlicerCoreApplicationInstance)
 
     # Listen factory and module manager to update slicer.{modules, moduleNames} when appropriate
     moduleManager = slicer.app.moduleManager()
@@ -157,51 +157,51 @@ class _Internal:
     # This would be the case if, for example, a commandline module wants to
     # use qSlicerApplication for tcl access but without all the managers.
     # Note: This is not the default behavior.
-    if hasattr( moduleManager, 'factoryManager' ):
+    if hasattr(moduleManager, 'factoryManager'):
       factoryManager = moduleManager.factoryManager()
-      factoryManager.connect( 'modulesRegistered(QStringList)', self.setSlicerModuleNames )
-      moduleManager.connect( 'moduleLoaded(QString)', self.setSlicerModules )
-      moduleManager.connect( 'moduleAboutToBeUnloaded(QString)', self.unsetSlicerModule )
+      factoryManager.connect('modulesRegistered(QStringList)', self.setSlicerModuleNames)
+      moduleManager.connect('moduleLoaded(QString)', self.setSlicerModules)
+      moduleManager.connect('moduleAboutToBeUnloaded(QString)', self.unsetSlicerModule)
 
     # Retrieve current instance of the scene and set 'slicer.mrmlScene'
-    setattr( slicer, 'mrmlScene', slicer.app.mrmlScene() )
+    setattr(slicer, 'mrmlScene', slicer.app.mrmlScene())
 
     # HACK - Since qt.QTimer.singleShot is both a property and a static method, the property
     # is wrapped in python and prevent the call to the convenient static method having
     # the same name. To fix the problem, let's overwrite it's value.
     # Ideally this should be fixed in PythonQt itself.
-    def _singleShot( msec, receiverOrCallable, member=None ):
+    def _singleShot(msec, receiverOrCallable, member=None):
       """Calls either a python function or a slot after a given time interval."""
       # Add 'moduleManager' as parent to prevent the premature destruction of the timer.
       # Doing so, we ensure that the QTimer will be deleted before PythonQt is cleanup.
       # Indeed, the moduleManager is destroyed before the pythonManager.
-      timer = qt.QTimer( slicer.app.moduleManager() )
-      timer.setSingleShot( True )
-      if callable( receiverOrCallable ):
-        timer.connect( "timeout()", receiverOrCallable )
+      timer = qt.QTimer(slicer.app.moduleManager())
+      timer.setSingleShot(True)
+      if callable(receiverOrCallable):
+        timer.connect("timeout()", receiverOrCallable)
       else:
-        timer.connect( "timeout()", receiverOrCallable, member )
-      timer.start( msec )
+        timer.connect("timeout()", receiverOrCallable, member)
+      timer.start(msec)
 
-    qt.QTimer.singleShot = staticmethod( _singleShot )
+    qt.QTimer.singleShot = staticmethod(_singleShot)
 
-  def setSlicerModuleNames( self, moduleNames):
+  def setSlicerModuleNames(self, moduleNames):
     """Add module names as attributes of module slicer.moduleNames"""
     for name in moduleNames:
-      setattr( slicer.moduleNames, name, name )
+      setattr(slicer.moduleNames, name, name)
       # HACK For backward compatibility with ITKv3, map "dwiconvert" module name to "dicomtonrrdconverter"
       if name == 'DWIConvert':
-        setattr( slicer.moduleNames, 'DicomToNrrdConverter', name )
+        setattr(slicer.moduleNames, 'DicomToNrrdConverter', name)
 
-  def setSlicerModules( self, moduleName ):
+  def setSlicerModules(self, moduleName):
     """Add modules as attributes of module slicer.modules"""
     moduleManager = slicer.app.moduleManager()
-    setattr( slicer.modules, moduleName.lower(), moduleManager.module(moduleName) )
+    setattr(slicer.modules, moduleName.lower(), moduleManager.module(moduleName))
     # HACK For backward compatibility with ITKv3, map "dicomtonrrdconverter" module to "dwiconvert"
     if moduleName == 'DWIConvert':
-      setattr( slicer.modules, 'dicomtonrrdconverter', moduleManager.module(moduleName) )
+      setattr(slicer.modules, 'dicomtonrrdconverter', moduleManager.module(moduleName))
 
-  def unsetSlicerModule( self, moduleName ):
+  def unsetSlicerModule(self, moduleName):
     """Remove attribute from ``slicer.modules``
     """
     if hasattr(slicer.modules, moduleName + "Instance"):

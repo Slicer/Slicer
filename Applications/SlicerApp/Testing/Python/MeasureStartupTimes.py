@@ -44,7 +44,7 @@ def TemporaryPythonScript(code, *args, **kwargs):
 
 
 def collect_startup_times_normal(output_file, drop_cache=False, display_output=False):
-  results= {}
+  results = {}
   test = []
   (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
   (returnCode, stdout, stderr) = result
@@ -58,7 +58,7 @@ def collect_startup_times_normal(output_file, drop_cache=False, display_output=F
 
 def collect_startup_times_overall(output_file, drop_cache=False, display_output=False):
 
-  results= {}
+  results = {}
 
   test = ["--help"]
   (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
@@ -173,7 +173,7 @@ def collect_startup_times_excluding_one_module(output_file, module_list, drop_ca
   # Collect startup times disabling each module one by one
   moduleTimes = {}
   for (idx, (moduleName, moduleType)) in enumerate(modules.iteritems(), start=1):
-    #if moduleType == "CLI":
+    # if moduleType == "CLI":
     #  print("=> Skipping CLI [%s]\n" % moduleName)
     #  continue
     print("[%d/%d]" % (idx, len(modules)))
@@ -207,7 +207,7 @@ def collect_startup_times_modules_to_load(output_file, modules_to_load, module_l
     if stdout: print("STDOUT [%s]\n" % stdout)
     if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
 
-  results= {}
+  results = {}
   results[" ".join(modulesToIgnore)] = duration
   with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
@@ -223,7 +223,7 @@ if __name__ == '__main__':
   parser.add_argument("--excluding-one-module", action="store_true")
   parser.add_argument("--including-one-module", action="store_true")
   # Common options
-  parser.add_argument("-n", "--repeat",  default=1, type=int)
+  parser.add_argument("-n", "--repeat", default=1, type=int)
   parser.add_argument("--drop-cache", action="store_true")
   parser.add_argument("--reuse-module-list", action="store_true")
   parser.add_argument("--display-slicer-output", action="store_true")

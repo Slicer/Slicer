@@ -28,14 +28,14 @@ indicated by the mouse position.
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
     parent.acknowledgementText = """This work is supported by NA-MIC, NAC, NCIGT, NIH U24 CA180918 (PIs Kikinis and Fedorov) and the Slicer Community."""
     # TODO: need a DataProbe icon
-    #parent.icon = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
+    # parent.icon = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
     self.infoWidget = None
 
-    if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
+    if slicer.mrmlScene.GetTagByClassName("vtkMRMLScriptedModuleNode") != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
     # Trigger the menu to be added when application has started up
-    if not slicer.app.commandOptions().noMainWindow :
+    if not slicer.app.commandOptions().noMainWindow:
       slicer.app.connect("startupCompleted()", self.addView)
 
   def __del__(self):
@@ -55,7 +55,7 @@ indicated by the mouse position.
       print("No Data Probe frame - cannot create DataProbe")
       return
     self.infoWidget = DataProbeInfoWidget(parent)
-    parent.layout().insertWidget(0,self.infoWidget.frame)
+    parent.layout().insertWidget(0, self.infoWidget.frame)
 
   def showZoomedSlice(self, value=False):
     self.showZoomedSlice = value
@@ -82,7 +82,7 @@ class DataProbeInfoWidget:
     qSize.setVerticalPolicy(qt.QSizePolicy.Preferred)
     self.frame.setSizePolicy(qSize)
 
-    modulePath = slicer.modules.dataprobe.path.replace("DataProbe.py","")
+    modulePath = slicer.modules.dataprobe.path.replace("DataProbe.py", "")
     self.iconsDIR = modulePath + '/Resources/Icons'
 
     self.showImage = False
@@ -95,7 +95,7 @@ class DataProbeInfoWidget:
 
     self._createSmall()
 
-    #Helper class to calculate and display tensor scalars
+    # Helper class to calculate and display tensor scalars
     self.calculateTensorScalars = CalculateTensorScalars()
 
     # Observe the crosshair node to get the current cursor position
@@ -106,7 +106,7 @@ class DataProbeInfoWidget:
   def __del__(self):
     self.removeObservers()
 
-  def fitName(self,name,nameSize=None):
+  def fitName(self, name, nameSize=None):
     if not nameSize:
       nameSize = self.nameSize
     if len(name) > nameSize:
@@ -121,7 +121,7 @@ class DataProbeInfoWidget:
       self.CrosshairNode.RemoveObserver(self.CrosshairNodeObserverTag)
     self.CrosshairNodeObserverTag = None
 
-  def getPixelString(self,volumeNode,ijk):
+  def getPixelString(self, volumeNode, ijk):
     """Given a volume node, create a human readable
     string describing the contents"""
     # TODO: the volume nodes should have a way to generate
@@ -169,7 +169,7 @@ class DataProbeInfoWidget:
         value = self.calculateTensorScalars(tensor, operation=operation)
         if value is not None:
             valueString = ("%f" % value).rstrip('0').rstrip('.')
-            return "%s %s"%(scalarVolumeDisplayNode.GetScalarInvariantAsString(), valueString)
+            return "%s %s" % (scalarVolumeDisplayNode.GetScalarInvariantAsString(), valueString)
         else:
             return scalarVolumeDisplayNode.GetScalarInvariantAsString()
 
@@ -178,7 +178,7 @@ class DataProbeInfoWidget:
     if numberOfComponents > 3:
       return "%d components" % numberOfComponents
     for c in range(numberOfComponents):
-      component = imageData.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+      component = imageData.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], c)
       if component.is_integer():
         component = int(component)
       # format string according to suggestion here:
@@ -188,11 +188,11 @@ class DataProbeInfoWidget:
       pixel += ("%s, " % componentString)
     return pixel[:-2]
 
-  def processEvent(self,observee,event):
+  def processEvent(self, observee, event):
     # TODO: use a timer to delay calculation and compress events
     insideView = False
-    ras = [0.0,0.0,0.0]
-    xyz = [0.0,0.0,0.0]
+    ras = [0.0, 0.0, 0.0]
+    xyz = [0.0, 0.0, 0.0]
     sliceNode = None
     if self.CrosshairNode:
       insideView = self.CrosshairNode.GetCursorPositionRAS(ras)
@@ -207,12 +207,12 @@ class DataProbeInfoWidget:
     if not insideView or not sliceNode or not sliceLogic:
       # reset all the readouts
       self.viewerColor.text = ""
-      self.viewInfo.text =  ""
+      self.viewInfo.text = ""
       layers = ('L', 'F', 'B')
       for layer in layers:
-        self.layerNames[layer].setText( "" )
-        self.layerIJKs[layer].setText( "" )
-        self.layerValues[layer].setText( "" )
+        self.layerNames[layer].setText("")
+        self.layerIJKs[layer].setText("")
+        self.layerValues[layer].setText("")
       self.imageLabel.hide()
       self.viewerColor.hide()
       self.viewInfo.hide()
@@ -226,7 +226,7 @@ class DataProbeInfoWidget:
     self.showImageFrame.hide()
 
     # populate the widgets
-    self.viewerColor.setText( " " )
+    self.viewerColor.setText(" ")
     rgbColor = sliceNode.GetLayoutColor()
     color = qt.QColor.fromRgbF(rgbColor[0], rgbColor[1], rgbColor[2])
     if hasattr(color, 'name'):
@@ -244,7 +244,7 @@ class DataProbeInfoWidget:
     layerLogicCalls = (('L', sliceLogic.GetLabelLayer),
                        ('F', sliceLogic.GetForegroundLayer),
                        ('B', sliceLogic.GetBackgroundLayer))
-    for layer,logicCall in layerLogicCalls:
+    for layer, logicCall in layerLogicCalls:
       layerLogic = logicCall()
       volumeNode = layerLogic.GetVolumeNode()
       ijk = [0, 0, 0]
@@ -288,7 +288,7 @@ class DataProbeInfoWidget:
     if hasattr(self.frame.parent(), 'text'):
       sceneName = slicer.mrmlScene.GetURL()
       if sceneName != "":
-        self.frame.parent().text = "Data Probe: %s" % self.fitName(sceneName,nameSize=2*self.nameSize)
+        self.frame.parent().text = "Data Probe: %s" % self.fitName(sceneName, nameSize=2 * self.nameSize)
       else:
         self.frame.parent().text = "Data Probe"
 
@@ -310,9 +310,9 @@ class DataProbeInfoWidget:
     return \
       "  {layoutName: <8s}  ({rLabel} {ras_x:3.1f}, {aLabel} {ras_y:3.1f}, {sLabel} {ras_z:3.1f})  {orient: >8s} Sp: {spacing:s}" \
       .format(layoutName=sliceNode.GetLayoutName(),
-              rLabel=sliceNode.GetAxisLabel(1) if ras[0]>=0 else sliceNode.GetAxisLabel(0),
-              aLabel=sliceNode.GetAxisLabel(3) if ras[1]>=0 else sliceNode.GetAxisLabel(2),
-              sLabel=sliceNode.GetAxisLabel(5) if ras[2]>=0 else sliceNode.GetAxisLabel(4),
+              rLabel=sliceNode.GetAxisLabel(1) if ras[0] >= 0 else sliceNode.GetAxisLabel(0),
+              aLabel=sliceNode.GetAxisLabel(3) if ras[1] >= 0 else sliceNode.GetAxisLabel(2),
+              sLabel=sliceNode.GetAxisLabel(5) if ras[2] >= 0 else sliceNode.GetAxisLabel(4),
               ras_x=abs(ras[0]),
               ras_y=abs(ras[1]),
               ras_z=abs(ras[2]),
@@ -330,7 +330,7 @@ class DataProbeInfoWidget:
 
   def generateIJKPixelValueDescription(self, ijk, slicerLayerLogic):
     volumeNode = slicerLayerLogic.GetVolumeNode()
-    return "<b>%s</b>" % self.getPixelString(volumeNode,ijk) if volumeNode else ""
+    return "<b>%s</b>" % self.getPixelString(volumeNode, ijk) if volumeNode else ""
 
   def _createMagnifiedPixmap(self, xyz, inputImageDataConnection, outputSize, crosshairColor, imageZoom=10):
 
@@ -350,30 +350,30 @@ class DataProbeInfoWidget:
     xyzInt = [_roundInt(value) for value in xyz]
     producer = inputImageDataConnection.GetProducer()
     dims = producer.GetOutput().GetDimensions()
-    minDim = min(dims[0],dims[1])
-    imageSize = _roundInt(minDim/imageZoom/2.0)
-    imin = xyzInt[0]-imageSize
-    imax = xyzInt[0]+imageSize
-    jmin = xyzInt[1]-imageSize
-    jmax = xyzInt[1]+imageSize
-    imin_trunc = max(0,imin)
-    imax_trunc = min(dims[0]-1, imax)
+    minDim = min(dims[0], dims[1])
+    imageSize = _roundInt(minDim / imageZoom / 2.0)
+    imin = xyzInt[0] - imageSize
+    imax = xyzInt[0] + imageSize
+    jmin = xyzInt[1] - imageSize
+    jmax = xyzInt[1] + imageSize
+    imin_trunc = max(0, imin)
+    imax_trunc = min(dims[0] - 1, imax)
     jmin_trunc = max(0, jmin)
-    jmax_trunc = min(dims[1]-1, jmax)
+    jmax_trunc = min(dims[1] - 1, jmax)
     # The extra complexity of the canvas is used here to maintain a fixed size
     # output due to the imageCrop returning a smaller image if the limits are
     # outside the input image bounds. Specially useful when zooming at the borders.
     canvas = self.canvas
     canvas.SetScalarType(producer.GetOutput().GetScalarType())
     canvas.SetNumberOfScalarComponents(producer.GetOutput().GetNumberOfScalarComponents())
-    canvas.SetExtent(imin, imax, jmin , jmax, 0 ,0)
-    canvas.FillBox(imin, imax, jmin , jmax)
+    canvas.SetExtent(imin, imax, jmin, jmax, 0, 0)
+    canvas.FillBox(imin, imax, jmin, jmax)
     canvas.Update()
     if (imin_trunc <= imax_trunc) and (jmin_trunc <= jmax_trunc):
-      imageCrop.SetVOI(imin_trunc, imax_trunc, jmin_trunc, jmax_trunc, 0,0)
+      imageCrop.SetVOI(imin_trunc, imax_trunc, jmin_trunc, jmax_trunc, 0, 0)
       imageCrop.Update()
       vtkImageCropped = imageCrop.GetOutput()
-      xyzBounds = [0]*6
+      xyzBounds = [0] * 6
       vtkImageCropped.GetBounds(xyzBounds)
       xyzBounds = [_roundInt(value) for value in xyzBounds]
       canvas.DrawImage(xyzBounds[0], xyzBounds[2], vtkImageCropped)
@@ -390,8 +390,8 @@ class DataProbeInfoWidget:
         pen = qt.QPen()
         pen.setColor(crosshairColor)
         painter.setPen(pen)
-        painter.drawLine(0, int(imagePixmap.height()/2), imagePixmap.width(), int(imagePixmap.height()/2))
-        painter.drawLine(int(imagePixmap.width()/2), 0, int(imagePixmap.width()/2), imagePixmap.height())
+        painter.drawLine(0, int(imagePixmap.height() / 2), imagePixmap.width(), int(imagePixmap.height() / 2))
+        painter.drawLine(int(imagePixmap.width() / 2), 0, int(imagePixmap.width() / 2), imagePixmap.height())
         painter.end()
         return imagePixmap
     return None
@@ -432,7 +432,7 @@ class DataProbeInfoWidget:
     qSize.setHorizontalPolicy(qt.QSizePolicy.Expanding)
     qSize.setVerticalPolicy(qt.QSizePolicy.Expanding)
     self.imageLabel.setSizePolicy(qSize)
-    #self.imageLabel.setScaledContents(True)
+    # self.imageLabel.setScaledContents(True)
     self.frame.layout().addWidget(self.imageLabel)
     self.onShowImage(False)
 

@@ -60,7 +60,7 @@ def compileResources(in_path, out_file, args):
 
   # Read data, if using a temporary file (see above)
   if tmp_path is not None:
-    with open(tmp_path,"rb") as tmp_file:
+    with open(tmp_path, "rb") as tmp_file:
       data = tmp_file.read()
 
     os.remove(tmp_path)

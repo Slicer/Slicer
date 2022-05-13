@@ -147,7 +147,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     #
 
     pointList = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsFiducialNode')
-    pointList.AddControlPoint([10,20,15])
+    pointList.AddControlPoint([10, 20, 15])
 
     #
     # save a scene view
@@ -175,7 +175,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     restoredData = slicer.mrmlScene.GetNodeByID(mrHeadID)
 
     # for now, the non scene view storable data is removed
-    self.assertIsNone( restoredData )
+    self.assertIsNone(restoredData)
     slicer.util.delayDisplay('Success: extra storable node removed with scene view restore')
 
     #
@@ -195,7 +195,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     restoredData = slicer.mrmlScene.GetNodeByID(mrHeadID)
 
     # in this case the non scene view storable data is kept' scene is not changed
-    self.assertIsNotNone( restoredData )
+    self.assertIsNotNone(restoredData)
     slicer.util.delayDisplay('Success: extra storable node NOT removed with scene view restore')
 
     print('Scene error code = ' + str(slicer.mrmlScene.GetErrorCode()))

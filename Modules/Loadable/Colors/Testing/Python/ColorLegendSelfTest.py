@@ -23,7 +23,7 @@ class ColorLegendSelfTest(ScriptedLoadableModule):
     """
     self.parent.acknowledgementText = """
     This file was originally developed by Kevin Wang, PMH and was funded by CCO and OCAIRO.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 #
 # ColorLegendSelfTestWidget
@@ -95,7 +95,7 @@ class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
     import SampleData
     sampleDataLogic = SampleData.SampleDataLogic()
     ctVolumeNode = sampleDataLogic.downloadCTChest()
-    self.assertIsNotNone( ctVolumeNode )
+    self.assertIsNotNone(ctVolumeNode)
 
     self.delayDisplay('Switch to Colors module')
     m = slicer.util.mainWindow()
@@ -154,9 +154,9 @@ class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
 
     # Test showing color legend only in a single slice node
     sliceNameColor = {
-      'Red': [ 1., 0., 0. ],
-      'Green': [ 0., 1., 0. ],
-      'Yellow': [ 1., 1., 0.]
+      'Red': [1., 0., 0.],
+      'Green': [0., 1., 0.],
+      'Yellow': [1., 1., 0.]
       }
     for sliceName, titleColor in sliceNameColor.items():
       self.delayDisplay('Test color legend on the ' + sliceName + ' slice view', self.delayMs)
@@ -164,7 +164,7 @@ class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
       colorLegend.SetViewNodeIDs([sliceNode.GetID()])
       colorLegend.SetTitleText(sliceName)
       colorLegend.GetTitleTextProperty().SetColor(titleColor)
-      self.delayDisplay('Test color legend on the ' + sliceName + ' slice view finished!',self.delayMs*2)
+      self.delayDisplay('Test color legend on the ' + sliceName + ' slice view finished!', self.delayMs * 2)
 
     colorLegend.SetVisibility(False)
 

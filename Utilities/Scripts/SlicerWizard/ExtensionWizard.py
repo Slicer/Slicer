@@ -8,7 +8,7 @@ import textwrap
 from urllib.parse import urlparse
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def haveGit():
   """Return True if git is available.
 
@@ -46,7 +46,7 @@ from .Utilities import *
 from .WizardHelpFormatter import WizardHelpFormatter
 
 
-#=============================================================================
+# =============================================================================
 class ExtensionWizard:
   """Implementation class for the Extension Wizard.
 
@@ -75,11 +75,11 @@ class ExtensionWizard:
   _reAddSubdirectory = \
     re.compile("(?<=\n)([ \t]*)add_subdirectory[(][^)]+[)][^\n]*\n")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self):
     self._templateManager = TemplateManager()
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def create(self, args, name, kind="default"):
     """Create a new extension from specified extension template.
 
@@ -108,7 +108,7 @@ class ExtensionWizard:
     except:
       die("failed to create extension: %s" % sys.exc_info()[1])
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def addModule(self, args, kind, name):
     """Add a module to an existing extension.
 
@@ -142,7 +142,7 @@ class ExtensionWizard:
     except:
       die("failed to add module: %s" % sys.exc_info()[1])
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def describe(self, args):
     """Generate extension description and write it to :attr:`sys.stdout`.
 
@@ -172,7 +172,7 @@ class ExtensionWizard:
     except:
       die("failed to describe extension: %s" % sys.exc_info()[1])
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _setExtensionUrl(self, project, name, value):
     name = "EXTENSION_%s" % name
 
@@ -194,7 +194,7 @@ class ExtensionWizard:
 
     project.setValue(name, value)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def publish(self, args):
     """Publish extension to github repository.
 
@@ -320,7 +320,7 @@ class ExtensionWizard:
     except:
       die("failed to publish extension: %s" % sys.exc_info()[1])
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _extensionIndexCommitMessage(self, name, description, update, wrap=True):
     args = description.__dict__
     args["name"] = name
@@ -354,7 +354,7 @@ class ExtensionWizard:
 
       return template % args
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def contribute(self, args):
     """Add or update an extension to/in the index repository.
 
@@ -603,7 +603,7 @@ class ExtensionWizard:
     except:
       die("failed to register extension: %s" % sys.exc_info()[1])
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _execute(self, args):
     # Set up arguments
     parser = argparse.ArgumentParser(description="Slicer Wizard",
@@ -682,8 +682,8 @@ class ExtensionWizard:
     scriptPath = os.path.dirname(os.path.realpath(__file__))
 
     candidateBuiltInTemplatePaths = [
-        os.path.join(scriptPath, "..", "..", "..", "Utilities", "Templates"), # Run from source directory
-        os.path.join(scriptPath, "..", "..", "..", "share", # Run from install
+        os.path.join(scriptPath, "..", "..", "..", "Utilities", "Templates"),  # Run from source directory
+        os.path.join(scriptPath, "..", "..", "..", "share",  # Run from install
                      "Slicer-%s.%s" % tuple(__version_info__[:2]),
                      "Wizard", "Templates")
         ]
@@ -740,7 +740,7 @@ class ExtensionWizard:
     if not acted:
       die(("no action was requested!", "", parser.format_usage().rstrip()))
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def execute(self, *args, **kwargs):
     """execute(*args, exit=True, **kwargs)
     Execute the wizard in |CLI| mode.

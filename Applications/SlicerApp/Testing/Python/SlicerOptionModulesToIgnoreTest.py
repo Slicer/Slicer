@@ -32,12 +32,12 @@ Usage:
 
 if __name__ == '__main__':
 
-  debug = False # Set to True to:
+  debug = False  # Set to True to:
                 #  * display the path of the created extension_dir
                 #  * avoid deleting the extension_dir
 
   if len(sys.argv) != 3:
-    print(os.path.basename(sys.argv[0]) +" /path/to/Slicer /path/to/slicerExtensionWizard")
+    print(os.path.basename(sys.argv[0]) + " /path/to/Slicer /path/to/slicerExtensionWizard")
     exit(EXIT_FAILURE)
 
   slicer_executable = os.path.expanduser(sys.argv[1])

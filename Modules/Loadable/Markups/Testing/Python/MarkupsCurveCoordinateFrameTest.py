@@ -35,13 +35,13 @@ def createCoordinateSystemsModel(curve, axisLength=5):
   # Create coordinate system polydata
   axisAppender = vtk.vtkAppendPolyData()
   xAxis = vtk.vtkLineSource()
-  xAxis.SetPoint1(0,0,0)
+  xAxis.SetPoint1(0, 0, 0)
   xAxis.SetPoint2(axisLength * 2, 0, 0)
   yAxis = vtk.vtkLineSource()
-  yAxis.SetPoint1(0,0,0)
+  yAxis.SetPoint1(0, 0, 0)
   yAxis.SetPoint2(0, axisLength, 0)
   zAxis = vtk.vtkLineSource()
-  zAxis.SetPoint1(0,0,0)
+  zAxis.SetPoint1(0, 0, 0)
   zAxis.SetPoint2(0, 0, axisLength)
   axisAppender.AddInputConnection(xAxis.GetOutputPort())
   axisAppender.AddInputConnection(yAxis.GetOutputPort())
@@ -54,7 +54,7 @@ def createCoordinateSystemsModel(curve, axisLength=5):
   transformer.SetInputConnection(axisAppender.GetOutputPort())
   # Create model appender that assembles the model that contains all the coordinate systems
   coordinateSystemAppender = vtk.vtkAppendPolyData()
-  #model = slicer.modules.models.logic().AddModel(coordinateSystemAppender.GetOutputPort())
+  # model = slicer.modules.models.logic().AddModel(coordinateSystemAppender.GetOutputPort())
   model = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
   model.CreateDefaultDisplayNodes()
   # prevent picking by markups so that the control points can be moved without sticking to the generated model
@@ -111,12 +111,12 @@ curveObservations.append(addCoordinateSystemUpdater(updateInfo))
 if not planarCurveNode.GetCurvePointToWorldTransformAtPointIndex(6, curvePointToWorldTransform):
   raise Exception("Test1 GetCurvePointToWorldTransformAtPointIndex failed")
 
-curvePointToWorldMatrix= slicer.util.arrayFromVTKMatrix(curvePointToWorldTransform)
+curvePointToWorldMatrix = slicer.util.arrayFromVTKMatrix(curvePointToWorldTransform)
 expectedCurvePointToWorldMatrix = np.array(
-  [[ 2.15191499e-01,  0.00000000e+00, -9.76571871e-01, -3.03394470e+01],
-  [ 0.00000000e+00, -1.00000000e+00,  0.00000000e+00, 3.63797881e-09],
-  [-9.76571871e-01,  0.00000000e+00, -2.15191499e-01, 8.10291061e+01],
-  [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00, 1.00000000e+00]])
+  [[2.15191499e-01, 0.00000000e+00, -9.76571871e-01, -3.03394470e+01],
+  [0.00000000e+00, -1.00000000e+00, 0.00000000e+00, 3.63797881e-09],
+  [-9.76571871e-01, 0.00000000e+00, -2.15191499e-01, 8.10291061e+01],
+  [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 
 if not np.isclose(curvePointToWorldMatrix, expectedCurvePointToWorldMatrix).all():
   raise Exception(f"Test1 CurvePointToWorldTransformAtPointIndex value incorrect: got {curvePointToWorldMatrix}, expected {expectedCurvePointToWorldMatrix}.")
@@ -141,12 +141,12 @@ curveObservations.append(addCoordinateSystemUpdater(updateInfo))
 if not closedCurveNode.GetCurvePointToWorldTransformAtPointIndex(6, curvePointToWorldTransform):
   raise Exception("Test2 GetCurvePointToWorldTransformAtPointIndex failed")
 
-curvePointToWorldMatrix= slicer.util.arrayFromVTKMatrix(curvePointToWorldTransform)
+curvePointToWorldMatrix = slicer.util.arrayFromVTKMatrix(curvePointToWorldTransform)
 expectedCurvePointToWorldMatrix = np.array(
-  [[-3.85813409e-01,  0.00000000e+00, -9.22576833e-01, -3.71780586e+01],
-  [ 0.00000000e+00,  1.00000000e+00,  0.00000000e+00, 3.63797881e-09],
-  [ 9.22576833e-01,  0.00000000e+00, -3.85813409e-01, 8.78303909e+01],
-  [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00, 1.00000000e+00]])
+  [[-3.85813409e-01, 0.00000000e+00, -9.22576833e-01, -3.71780586e+01],
+  [0.00000000e+00, 1.00000000e+00, 0.00000000e+00, 3.63797881e-09],
+  [9.22576833e-01, 0.00000000e+00, -3.85813409e-01, 8.78303909e+01],
+  [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 
 if not np.isclose(curvePointToWorldMatrix, expectedCurvePointToWorldMatrix).all():
   raise Exception(f"Test2 CurvePointToWorldTransformAtPointIndex value incorrect: got {curvePointToWorldMatrix}, expected {expectedCurvePointToWorldMatrix}.")
@@ -196,12 +196,12 @@ curveObservations.append(addCoordinateSystemUpdater(updateInfo))
 if not centerlineCurve.GetCurvePointToWorldTransformAtPointIndex(6, curvePointToWorldTransform):
   raise Exception("Test3 GetCurvePointToWorldTransformAtPointIndex failed")
 
-curvePointToWorldMatrix= slicer.util.arrayFromVTKMatrix(curvePointToWorldTransform)
+curvePointToWorldMatrix = slicer.util.arrayFromVTKMatrix(curvePointToWorldTransform)
 expectedCurvePointToWorldMatrix = np.array(
-  [[ 9.85648052e-01,  8.80625424e-03, -1.68583415e-01, -3.08991909e+00],
-  [-6.35257659e-02,  9.44581803e-01, -3.22070946e-01, 2.22146526e-01],
-  [ 1.56404587e-01,  3.28157991e-01,  9.31584638e-01, -7.34501495e+01],
-  [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00, 1.00000000e+00]])
+  [[9.85648052e-01, 8.80625424e-03, -1.68583415e-01, -3.08991909e+00],
+  [-6.35257659e-02, 9.44581803e-01, -3.22070946e-01, 2.22146526e-01],
+  [1.56404587e-01, 3.28157991e-01, 9.31584638e-01, -7.34501495e+01],
+  [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 
 if not np.isclose(curvePointToWorldMatrix, expectedCurvePointToWorldMatrix).all():
   raise Exception(f"Test3 CurvePointToWorldTransformAtPointIndex value incorrect: got {curvePointToWorldMatrix}, expected {expectedCurvePointToWorldMatrix}.")
@@ -215,7 +215,7 @@ numberOfControlPoints = 40
 import math
 circleCurveNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode")
 for controlPointIndex in range(numberOfControlPoints):
-    angle = 2.0*math.pi * controlPointIndex/numberOfControlPoints
+    angle = 2.0 * math.pi * controlPointIndex / numberOfControlPoints
     pointIndex = circleCurveNode.AddControlPoint(vtk.vtkVector3d(radius * math.sin(angle), radius * math.cos(angle), 0.0))
 
 # Visualize
@@ -228,12 +228,12 @@ curveObservations.append(addCoordinateSystemUpdater(updateInfo))
 if not circleCurveNode.GetCurvePointToWorldTransformAtPointIndex(6, curvePointToWorldTransform):
   raise Exception("Test4. GetCurvePointToWorldTransformAtPointIndex failed")
 
-curvePointToWorldMatrix= slicer.util.arrayFromVTKMatrix(curvePointToWorldTransform)
+curvePointToWorldMatrix = slicer.util.arrayFromVTKMatrix(curvePointToWorldTransform)
 expectedCurvePointToWorldMatrix = np.array(
-  [[ 0.10190135,  0.        ,  0.99479451,  3.29378772],
-  [ 0.99479451,  0.        , -0.10190135, 34.84461594],
-  [ 0.        ,  1.        ,  0.        ,  0.        ],
-  [ 0.        ,  0.        ,  0.        ,  1.        ]])
+  [[0.10190135, 0., 0.99479451, 3.29378772],
+  [0.99479451, 0., -0.10190135, 34.84461594],
+  [0., 1., 0., 0.],
+  [0., 0., 0., 1.]])
 
 if not np.isclose(curvePointToWorldMatrix, expectedCurvePointToWorldMatrix).all():
   raise Exception(f"Test4. CurvePointToWorldTransformAtPointIndex value incorrect: got {curvePointToWorldMatrix}, expected {expectedCurvePointToWorldMatrix}.")

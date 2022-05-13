@@ -26,7 +26,7 @@ class DICOMReaders(ScriptedLoadableModule):
     """
     parent.acknowledgementText = """This work is supported primarily by the National Institutes of Health, National Cancer Institute, Informatics Technology for Cancer Research (ITCR) program, grant Quantitative Image Informatics for Cancer Research (QIICR) (U24 CA180918, PIs Kikinis and Fedorov). We also acknowledge support of the following grants: Neuroimage Analysis Center (NAC) (P41 EB015902, PI Kikinis) and National Center for Image Guided Therapy (NCIGT) (P41 EB015898, PI Tempany).
     This file was originally developed by Steve Pieper, Isomics, Inc.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #
@@ -71,7 +71,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Starting the DICOM test")
 
     referenceData = [
-      { "url": TESTING_DATA_URL + "SHA256/3450ef9372a3460a2f181c8d3bb35a74b4f0acb10c6e18cfcf7804e1d99bf843",
+      {"url": TESTING_DATA_URL + "SHA256/3450ef9372a3460a2f181c8d3bb35a74b4f0acb10c6e18cfcf7804e1d99bf843",
         "checksum": "SHA256:3450ef9372a3460a2f181c8d3bb35a74b4f0acb10c6e18cfcf7804e1d99bf843",
         "fileName": "Mouse-MR-example-where-GDCM_fails.zip",
         "name": "Mouse-MR-example-where-GDCM_fails",
@@ -82,7 +82,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         "voxelValueQuantity": "(110852, DCM, \"MR signal intensity\")",
         "voxelValueUnits": "(1, UCUM, \"no units\")"
       },
-      { "url": TESTING_DATA_URL + "SHA256/899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
+      {"url": TESTING_DATA_URL + "SHA256/899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
         "checksum": "SHA256:899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
         "fileName": "deidentifiedMRHead-dcm-one-series.zip",
         "name": "deidentifiedMRHead-dcm-one-series",
@@ -95,12 +95,12 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
     # another dataset that could be added in the future - currently fails for all readers
     # due to invalid format - see https://issues.slicer.org/view.php?id=3569
-      #{ "url": TESTING_DATA_URL + "SHA256/4cbd051dc249ea47d0f7b4147ea8340ba11a4a18a1771d37c387e40538374cab",
-        #"fileName": "RIDER_bug.zip",
-        #"name": "RIDER_bug",
-        #"seriesUID": "1.3.6.1.4.1.9328.50.7.261772317324041365541450388603508531852",
-        #"expectedFailures": []
-      #}
+      # { "url": TESTING_DATA_URL + "SHA256/4cbd051dc249ea47d0f7b4147ea8340ba11a4a18a1771d37c387e40538374cab",
+        # "fileName": "RIDER_bug.zip",
+        # "name": "RIDER_bug",
+        # "seriesUID": "1.3.6.1.4.1.9328.50.7.261772317324041365541450388603508531852",
+        # "expectedFailures": []
+      # }
 
     loadingResult = {}
     #
@@ -153,7 +153,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         for readerApproach in readerApproaches:
           self.delayDisplay('Loading Selection with approach: %s' % readerApproach)
           loadable.name = basename + "-" + readerApproach
-          volumeNode = scalarVolumePlugin.load(loadable,readerApproach)
+          volumeNode = scalarVolumePlugin.load(loadable, readerApproach)
           if not volumeNode and readerApproach not in dataset['expectedFailures']:
             raise Exception("Expected to be able to read with %s, but couldn't" % readerApproach)
           if volumeNode and readerApproach in dataset['expectedFailures']:
@@ -177,14 +177,14 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         for approachIndex in range(len(approachesThatLoaded)):
           firstApproach = approachesThatLoaded[approachIndex]
           firstVolume = volumesByApproach[firstApproach]
-          for secondApproachIndex in range(approachIndex+1,len(approachesThatLoaded)):
+          for secondApproachIndex in range(approachIndex + 1, len(approachesThatLoaded)):
             secondApproach = approachesThatLoaded[secondApproachIndex]
             secondVolume = volumesByApproach[secondApproach]
             print(f'comparing  {firstApproach},{secondApproach}')
-            comparison = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin'].compareVolumeNodes(firstVolume,secondVolume)
+            comparison = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin'].compareVolumeNodes(firstVolume, secondVolume)
             if comparison != "":
               print(('failed: %s', comparison))
-              failedComparisons[firstApproach,secondApproach] = comparison
+              failedComparisons[firstApproach, secondApproach] = comparison
 
         if len(failedComparisons.keys()) > 0:
           raise Exception("Loaded volumes don't match: %s" % failedComparisons)

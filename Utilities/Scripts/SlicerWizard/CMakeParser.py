@@ -23,7 +23,7 @@ import re
 import string
 
 
-#=============================================================================
+# =============================================================================
 class Token:
   """Base class for CMake script tokens.
 
@@ -42,21 +42,21 @@ class Token:
     many cases in order to produce a syntactically correct script.
   """
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, text, indent=""):
     self.text = text
     self.indent = indent
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __repr__(self):
     return "Token(text=%(text)r, indent=%(indent)r)" % self.__dict__
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __str__(self):
     return self.indent + self.text
 
 
-#=============================================================================
+# =============================================================================
 class String(Token):
   """String token.
 
@@ -78,23 +78,23 @@ class String(Token):
   outside of a command context.
   """
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, text, indent="", prefix="", suffix=""):
     text = super().__init__(text, indent)
     self.prefix = prefix
     self.suffix = suffix
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __repr__(self):
     return "String(prefix=%(prefix)r, suffix=%(suffix)r," \
            " text=%(text)r, indent=%(indent)r)" % self.__dict__
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __str__(self):
     return self.indent + self.prefix + self.text + self.suffix
 
 
-#=============================================================================
+# =============================================================================
 class Comment(Token):
   """Comment token.
 
@@ -113,23 +113,23 @@ class Comment(Token):
     bracket which shall match the long bracket in :attr:`prefix`.
   """
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, prefix, text, indent="", suffix=""):
     text = super().__init__(text, indent)
     self.prefix = prefix
     self.suffix = suffix
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __repr__(self):
     return "Comment(prefix=%(prefix)r, suffix=%(suffix)r," \
            " text=%(text)r, indent=%(indent)r)" % self.__dict__
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __str__(self):
     return self.indent + self.prefix + self.text + self.suffix
 
 
-#=============================================================================
+# =============================================================================
 class Command(Token):
   """Command token.
 
@@ -155,26 +155,26 @@ class Command(Token):
     the command.
   """
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, text, arguments=[], indent="", prefix="(", suffix=")"):
     text = super().__init__(text, indent)
     self.prefix = prefix
     self.suffix = suffix
     self.arguments = arguments
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __repr__(self):
     return "Command(text=%(text)r, prefix=%(prefix)r," \
            " suffix=%(suffix)r, arguments=%(arguments)r," \
            " indent=%(indent)r)" % self.__dict__
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __str__(self):
     args = "".join([str(a) for a in self.arguments])
     return self.indent + self.text + self.prefix + args + self.suffix
 
 
-#=============================================================================
+# =============================================================================
 class CMakeScript:
   """Tokenized representation of a CMake script.
 
@@ -191,7 +191,7 @@ class CMakeScript:
   _reBracketQuote = re.compile(r"\[=*\[")
   _reEscape = re.compile(r"\\[\\\"nrt$ ]")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, content):
     """
     :param content: Textual content of a CMake script.
@@ -234,21 +234,21 @@ class CMakeScript:
         self.tokens.append(Token(text=self._content[:n], indent=indent))
         self._content = self._content[n:]
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __repr__(self):
     return repr(self.tokens)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __str__(self):
     return "".join([str(t) for t in self.tokens])
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _chomp(self):
     result = self._content[0]
     self._content = self._content[1:]
     return result
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _chompSpace(self):
     result = ""
 
@@ -258,7 +258,7 @@ class CMakeScript:
 
     return result
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _chompString(self, end, escapes):
     result = ""
 
@@ -277,7 +277,7 @@ class CMakeScript:
 
     raise EOFError("unexpected EOF while parsing string (expected %r)" % end)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _parseArgument(self, indent):
     text = ""
 
@@ -315,7 +315,7 @@ class CMakeScript:
 
     return String(text=text, indent=indent)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _parseComment(self, match, indent):
     b = match.group(1)
     e = "\n" if b is None else b.replace("[", "]")
@@ -332,7 +332,7 @@ class CMakeScript:
 
     return token
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _parseCommand(self, match, indent):
     command = match.group(1)
     prefix = match.group(2)
@@ -358,7 +358,7 @@ class CMakeScript:
 
     raise EOFError("unexpected EOF while parsing command (expected ')')")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _is(self, regex):
     self._match = regex.match(self._content)
     return self._match is not None

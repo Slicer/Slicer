@@ -14,7 +14,7 @@ import SlicerWizard.Utilities
 from ExtensionWizardLib import *
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _settingsList(settings, key, convertToAbsolutePaths=False):
   # Return a settings value as a list (even if empty or a single value)
 
@@ -33,13 +33,13 @@ def _settingsList(settings, key, convertToAbsolutePaths=False):
     return value
 
 
-#=============================================================================
+# =============================================================================
 #
 # ExtensionWizard
 #
-#=============================================================================
+# =============================================================================
 class ExtensionWizard:
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, parent):
     parent.title = "Extension Wizard"
     parent.icon = qt.QIcon(":/Icons/Medium/ExtensionWizard.png")
@@ -58,14 +58,14 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     slicer.app.settingsDialog().addPanel("Extension Wizard", self.settingsPanel)
 
 
-#=============================================================================
+# =============================================================================
 #
 # ExtensionWizardWidget
 #
-#=============================================================================
+# =============================================================================
 class ExtensionWizardWidget:
-  #---------------------------------------------------------------------------
-  def __init__(self, parent = None):
+  # ---------------------------------------------------------------------------
+  def __init__(self, parent=None):
     if not parent:
       self.parent = qt.QWidget()
       self.parent.setLayout(qt.QVBoxLayout())
@@ -86,7 +86,7 @@ class ExtensionWizardWidget:
     self.templateManager = None
     self.setupTemplates()
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def setup(self):
     # Instantiate and connect widgets ...
 
@@ -173,11 +173,11 @@ class ExtensionWizardWidget:
     # Add vertical spacer
     self.layout.addStretch(1)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def cleanup(self):
     pass
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def setupTemplates(self):
     self.templateManager = SlicerWizard.TemplateManager()
 
@@ -209,7 +209,7 @@ class ExtensionWizardWidget:
           qt.qWarning("failed to add template path %r for category %r" % mp)
           qt.qWarning(traceback.format_exc())
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def createExtension(self):
     dlg = CreateComponentDialog("extension", self.parent.window())
     dlg.setTemplates(self.templateManager.templates("extensions"))
@@ -234,8 +234,8 @@ class ExtensionWizardWidget:
         else:
           destination = SlicerWizard.Utilities.localRoot(repo)
           cmakeFile = os.path.join(destination, "CMakeLists.txt")
-          createInSubdirectory = False # create the files in the destination directory
-          requireEmptyDirectory = False # we only check if no CMakeLists.txt file exists
+          createInSubdirectory = False  # create the files in the destination directory
+          requireEmptyDirectory = False  # we only check if no CMakeLists.txt file exists
           if os.path.exists(cmakeFile):
             raise OSError("create extension: refusing to overwrite"
                           " directory containing CMakeLists.txt file at '%s'" % dlg.destination)
@@ -257,7 +257,7 @@ class ExtensionWizardWidget:
 
       return
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def selectExtension(self, path=None):
     if path is None or isinstance(path, bool):
       path = qt.QFileDialog.getExistingDirectory(
@@ -328,7 +328,7 @@ class ExtensionWizardWidget:
     self.extensionLocation = path
     return True
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def loadModules(self, path, depth=1):
     # Get list of modules in specified path
     modules = ModuleInfo.findModules(path, depth)
@@ -401,7 +401,7 @@ class ExtensionWizardWidget:
           slicer.util.errorDisplay(text, parent=self.parent.window(), windowTitle="Error loading module(s)",
                                    standardButtons=qt.QMessageBox.Close)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def createExtensionModule(self):
     if (self.extensionLocation is None):
       # Action shouldn't be enabled if no extension is selected, but guard
@@ -439,13 +439,13 @@ class ExtensionWizardWidget:
                               " to include the module in the extension build," \
                               " you will need to update the extension" \
                               " CMakeLists.txt by hand."
-        slicer.util.errorDisplay(text, parent=self.parent.window(), detailedText = traceback.format_exc(),
+        slicer.util.errorDisplay(text, parent=self.parent.window(), detailedText=traceback.format_exc(),
                                    standardButtons=qt.QMessageBox.Close, informativeText=detailedInformation)
 
       self.loadModules(os.path.join(self.extensionLocation, name), depth=0)
       return
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def editExtensionMetadata(self):
     xd = self.extensionDescription
     xp = self.extensionProject

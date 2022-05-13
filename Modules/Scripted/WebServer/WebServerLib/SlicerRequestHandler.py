@@ -23,7 +23,7 @@ class SlicerRequestHandler(object):
 
   def canHandleRequest(self, uri, requestBody):
     parsedURL = urllib.parse.urlparse(uri)
-    pathParts = os.path.split(parsedURL.path) # path is like /slicer/timeimage
+    pathParts = os.path.split(parsedURL.path)  # path is like /slicer/timeimage
     route = pathParts[0]
     return 0.5 if route.startswith(b'/slicer') else 0.0
 
@@ -93,7 +93,7 @@ class SlicerRequestHandler(object):
         print(frame)
     return contentType, responseBody
 
-  def exec(self,request, requestBody):
+  def exec(self, request, requestBody):
     """
     Implements the Read Eval Print Loop for python code.
     :param source: python code to run
@@ -141,7 +141,7 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
         self.cube.Update()
         # display node
         self.modelDisplay = slicer.vtkMRMLModelDisplayNode()
-        self.modelDisplay.SetColor(1,1,0) # yellow
+        self.modelDisplay.SetColor(1, 1, 0)  # yellow
         slicer.mrmlScene.AddNode(self.modelDisplay)
         # self.modelDisplay.SetPolyData(self.cube.GetOutputPort())
         # Create model node
@@ -157,7 +157,7 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
         slicer.mrmlScene.AddNode(self.tracker)
         self.trackingDevice.SetAndObserveTransformNodeID(self.tracker.GetID())
 
-  def tracking(self,request):
+  def tracking(self, request):
     """
     Send the matrix for a tracked object in the scene
     :param m: 4x4 tracker matrix in column major order (position is last row)
@@ -167,17 +167,17 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     """
     p = urllib.parse.urlparse(request.decode())
     q = urllib.parse.parse_qs(p.query)
-    self.logMessage (q)
+    self.logMessage(q)
     try:
-      transformMatrix = list(map(float,q['m'][0].split(',')))
+      transformMatrix = list(map(float, q['m'][0].split(',')))
     except KeyError:
       transformMatrix = None
     try:
-      quaternion = list(map(float,q['q'][0].split(',')))
+      quaternion = list(map(float, q['q'][0].split(',')))
     except KeyError:
       quaternion = None
     try:
-      position = list(map(float,q['p'][0].split(',')))
+      position = list(map(float, q['p'][0].split(',')))
     except KeyError:
       position = None
 
@@ -188,14 +188,14 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     if transformMatrix:
       for row in range(3):
         for column in range(3):
-          m.SetElement(row,column, transformMatrix[3*row+column])
-          m.SetElement(row,column, transformMatrix[3*row+column])
-          m.SetElement(row,column, transformMatrix[3*row+column])
-          m.SetElement(row,column, transformMatrix[3*row+column])
+          m.SetElement(row, column, transformMatrix[3 * row + column])
+          m.SetElement(row, column, transformMatrix[3 * row + column])
+          m.SetElement(row, column, transformMatrix[3 * row + column])
+          m.SetElement(row, column, transformMatrix[3 * row + column])
 
     if position:
       for row in range(3):
-        m.SetElement(row,3, position[row])
+        m.SetElement(row, 3, position[row])
 
     if quaternion:
       qu = vtk.vtkQuaternion['float64']()
@@ -203,15 +203,15 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
       qu.SetX(quaternion[1])
       qu.SetY(quaternion[2])
       qu.SetZ(quaternion[3])
-      m3 = [[0,0,0],[0,0,0],[0,0,0]]
+      m3 = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
       qu.ToMatrix3x3(m3)
       for row in range(3):
         for column in range(3):
-          m.SetElement(row,column, m3[row][column])
+          m.SetElement(row, column, m3[row][column])
 
     self.tracker.SetMatrixTransformToParent(m)
 
-    return ( f"Set matrix".encode() ), b'text/plain'
+    return (f"Set matrix".encode()), b'text/plain'
 
   def sampleData(self, request):
     p = urllib.parse.urlparse(request.decode())
@@ -222,15 +222,15 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     except KeyError:
       name = None
     if not name:
-      return ( b"sampledata name was not specifiedXYZ" ), b'text/plain'
+      return (b"sampledata name was not specifiedXYZ"), b'text/plain'
     import SampleData
     try:
       SampleData.downloadSample(name)
     except IndexError:
-      return ( f"sampledata {name} was not found".encode() ), b'text/plain'
-    return ( f"Sample data {name} loaded".encode() ), b'text/plain'
+      return (f"sampledata {name} was not found".encode()), b'text/plain'
+    return (f"Sample data {name} loaded".encode()), b'text/plain'
 
-  def volumeSelection(self,request):
+  def volumeSelection(self, request):
     """
     Cycles through loaded volumes in the scene
     :param cmd: either "next" or "previous" to indicate direction
@@ -266,9 +266,9 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     if newIndex < 0:
       newIndex = len(nodes) - 1
     volumeNode = nodes[nodes.keys()[newIndex]]
-    selectionNode.SetReferenceActiveVolumeID( volumeNode.GetID() )
+    selectionNode.SetReferenceActiveVolumeID(volumeNode.GetID())
     applicationLogic.PropagateVolumeSelection(0)
-    return ( f"Volume selected".encode() ), b'text/plain'
+    return (f"Volume selected".encode()), b'text/plain'
 
   def volumes(self, request, requestBody):
     """
@@ -280,7 +280,7 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     for id_ in mrmlVolumes.keys():
       volumeNode = mrmlVolumes[id_]
       volumes.append({"name": volumeNode.GetName(), "id": volumeNode.GetID()})
-    return ( json.dumps(volumes).encode() ), b'application/json'
+    return (json.dumps(volumes).encode()), b'application/json'
 
   def volume(self, request, requestBody):
     """
@@ -310,7 +310,7 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     for id_ in mrmlGridTransforms.keys():
       gridTransform = mrmlGridTransforms[id_]
       gridTransforms.append({"name": gridTransform.GetName(), "id": gridTransform.GetID()})
-    return ( json.dumps(gridTransforms).encode() ), b'application/json'
+    return (json.dumps(gridTransforms).encode()), b'application/json'
 
   def gridTransform(self, request, requestBody):
     """
@@ -344,14 +344,14 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
       return
 
     fields = {}
-    endOfHeader = requestBody.find(b'\n\n') #TODO: could be \r\n
+    endOfHeader = requestBody.find(b'\n\n')  # TODO: could be \r\n
     header = requestBody[:endOfHeader]
     self.logMessage(header)
     for line in header.split(b'\n'):
       colonIndex = line.find(b':')
       if line[0] != '#' and colonIndex != -1:
         key = line[:colonIndex]
-        value = line[colonIndex+2:]
+        value = line[colonIndex + 2:]
         fields[key] = value
 
     if fields[b'type'] != b'short':
@@ -371,28 +371,28 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
       return b"{'status': 'failed'}"
 
     imageData = vtk.vtkImageData()
-    imageData.SetDimensions(list(map(int,fields[b'sizes'].split(b' '))))
+    imageData.SetDimensions(list(map(int, fields[b'sizes'].split(b' '))))
     imageData.AllocateScalars(vtk.VTK_SHORT, 1)
 
-    origin = list(map(float, fields[b'space origin'].replace(b'(',b'').replace(b')',b'').split(b',')))
+    origin = list(map(float, fields[b'space origin'].replace(b'(', b'').replace(b')', b'').split(b',')))
     origin[0] *= -1
     origin[1] *= -1
 
     directions = []
     directionParts = fields[b'space directions'].split(b')')[:3]
     for directionPart in directionParts:
-      part = directionPart.replace(b'(',b'').replace(b')',b'').split(b',')
+      part = directionPart.replace(b'(', b'').replace(b')', b'').split(b',')
       directions.append(list(map(float, part)))
 
     ijkToRAS = vtk.vtkMatrix4x4()
     ijkToRAS.Identity()
     for row in range(3):
-      ijkToRAS.SetElement(row,3, origin[row])
+      ijkToRAS.SetElement(row, 3, origin[row])
       for column in range(3):
         element = directions[column][row]
         if row < 2:
           element *= -1
-        ijkToRAS.SetElement(row,column, element)
+        ijkToRAS.SetElement(row, column, element)
 
     try:
       node = slicer.util.getNode(volumeID)
@@ -406,14 +406,14 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     node.SetAndObserveImageData(imageData)
     node.SetIJKToRASMatrix(ijkToRAS)
 
-    pixels = numpy.frombuffer(requestBody[endOfHeader+2:],dtype=numpy.dtype('int16'))
+    pixels = numpy.frombuffer(requestBody[endOfHeader + 2:], dtype=numpy.dtype('int16'))
     array = slicer.util.array(node.GetID())
     array[:] = pixels.reshape(array.shape)
     imageData.GetPointData().GetScalars().Modified()
 
     displayNode = node.GetDisplayNode()
     displayNode.ProcessMRMLEvents(displayNode, vtk.vtkCommand.ModifiedEvent, "")
-    #TODO: this could be optional
+    # TODO: this could be optional
     slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveVolumeID(node.GetID())
     slicer.app.applicationLogic().PropagateVolumeSelection()
 
@@ -429,7 +429,7 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
     if volumeNode is None or volumeArray is None:
       self.logMessage('Could not find requested volume')
       return None
-    supportedNodes = ["vtkMRMLScalarVolumeNode","vtkMRMLLabelMapVolumeNode"]
+    supportedNodes = ["vtkMRMLScalarVolumeNode", "vtkMRMLLabelMapVolumeNode"]
     if not volumeNode.GetClassName() in supportedNodes:
       self.logMessage('Can only get scalar volumes')
       return None
@@ -445,31 +445,31 @@ curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLa
       scalarType = 'short'
 
     sizes = imageData.GetDimensions()
-    sizes = " ".join(list(map(str,sizes)))
+    sizes = " ".join(list(map(str, sizes)))
 
-    originList = [0,]*3
-    directionLists = [[0,]*3,[0,]*3,[0,]*3]
+    originList = [0, ] * 3
+    directionLists = [[0, ] * 3, [0, ] * 3, [0, ] * 3]
     ijkToRAS = vtk.vtkMatrix4x4()
     volumeNode.GetIJKToRASMatrix(ijkToRAS)
     for row in range(3):
-      originList[row] = ijkToRAS.GetElement(row,3)
+      originList[row] = ijkToRAS.GetElement(row, 3)
       for column in range(3):
-        element = ijkToRAS.GetElement(row,column)
+        element = ijkToRAS.GetElement(row, column)
         if row < 2:
           element *= -1
         directionLists[column][row] = element
-    originList[0] *=-1
-    originList[1] *=-1
-    origin = '('+','.join(list(map(str,originList)))+')'
+    originList[0] *= -1
+    originList[1] *= -1
+    origin = '(' + ','.join(list(map(str, originList))) + ')'
     directions = ""
     for directionList in directionLists:
-      direction = '('+','.join(list(map(str,directionList)))+')'
+      direction = '(' + ','.join(list(map(str, directionList))) + ')'
       directions += direction + " "
     directions = directions[:-1]
 
     # should look like:
-    #space directions: (0,1,0) (0,0,-1) (-1.2999954223632812,0,0)
-    #space origin: (86.644897460937486,-133.92860412597656,116.78569793701172)
+    # space directions: (0,1,0) (0,0,-1) (-1.2999954223632812,0,0)
+    # space origin: (86.644897460937486,-133.92860412597656,116.78569793701172)
 
     nrrdHeader = """NRRD0004
 # Complete NRRD file format specification at:
@@ -498,7 +498,7 @@ space origin: %%origin%%
     if transformNode is None or transformArray is None:
       self.logMessage('Could not find requested transform')
       return None
-    supportedNodes = ["vtkMRMLGridTransformNode",]
+    supportedNodes = ["vtkMRMLGridTransformNode", ]
     if not transformNode.GetClassName() in supportedNodes:
       self.logMessage('Can only get grid transforms')
       return None
@@ -506,7 +506,7 @@ space origin: %%origin%%
     # map the vectors to be in the LPS measurement frame
     # (need to make a copy so as not to change the slicer transform)
     lpsArray = numpy.array(transformArray)
-    lpsArray *= numpy.array([-1,-1,1])
+    lpsArray *= numpy.array([-1, -1, 1])
 
     imageData = transformNode.GetTransformFromParent().GetDisplacementGrid()
 
@@ -516,21 +516,21 @@ space origin: %%origin%%
     # -- here we assume it is axial as generated by LandmarkTransform
 
     sizes = (3,) + imageData.GetDimensions()
-    sizes = " ".join(list(map(str,sizes)))
+    sizes = " ".join(list(map(str, sizes)))
 
     spacing = list(imageData.GetSpacing())
-    spacing[0] *= -1 # RAS to LPS
-    spacing[1] *= -1 # RAS to LPS
+    spacing[0] *= -1  # RAS to LPS
+    spacing[1] *= -1  # RAS to LPS
     directions = '(%g,0,0) (0,%g,0) (0,0,%g)' % tuple(spacing)
 
     origin = list(imageData.GetOrigin())
-    origin[0] *= -1 # RAS to LPS
-    origin[1] *= -1 # RAS to LPS
+    origin[0] *= -1  # RAS to LPS
+    origin[1] *= -1  # RAS to LPS
     origin = '(%g,%g,%g)' % tuple(origin)
 
     # should look like:
-    #space directions: (0,1,0) (0,0,-1) (-1.2999954223632812,0,0)
-    #space origin: (86.644897460937486,-133.92860412597656,116.78569793701172)
+    # space directions: (0,1,0) (0,0,-1) (-1.2999954223632812,0,0)
+    # space origin: (86.644897460937486,-133.92860412597656,116.78569793701172)
 
     nrrdHeader = """NRRD0004
 # Complete NRRD file format specification at:
@@ -563,15 +563,15 @@ space origin: %%origin%%
       node['scale'] = displayNode.GetGlyphScale()
       node['markups'] = []
       for markupIndex in range(markupsNode.GetNumberOfMarkups()):
-        position = [0,]*3
+        position = [0, ] * 3
         markupsNode.GetNthFiducialPosition(markupIndex, position)
         position
-        node['markups'].append( {
+        node['markups'].append({
           'label': markupsNode.GetNthFiducialLabel(markupIndex),
           'position': position
         })
       fiducials[markupsNode.GetID()] = node
-    return ( json.dumps( fiducials ).encode() ), b'application/json'
+    return (json.dumps(fiducials).encode()), b'application/json'
 
   def fiducial(self, request, requestBody):
     """
@@ -628,9 +628,9 @@ space origin: %%origin%%
 
     from DICOMLib import DICOMUtils
     loadedUIDs = DICOMUtils.importFromDICOMWeb(
-        dicomWebEndpoint = request['dicomWEBPrefix'] + '/' + request['dicomWEBStore'],
-        studyInstanceUID = request['studyUID'],
-        accessToken = request['accessToken'])
+        dicomWebEndpoint=request['dicomWEBPrefix'] + '/' + request['dicomWEBStore'],
+        studyInstanceUID=request['studyUID'],
+        accessToken=request['accessToken'])
 
     files = []
     for studyUID in loadedUIDs:
@@ -644,15 +644,15 @@ space origin: %%origin%%
 
     return b'{"result": "ok"}'
 
-  def mrml(self,request):
+  def mrml(self, request):
     """
     Returns a json list of all the mrml nodes
     """
     p = urllib.parse.urlparse(request.decode())
     q = urllib.parse.parse_qs(p.query)
-    return ( json.dumps( list(slicer.util.getNodes('*').keys()) ).encode() ), b'application/json'
+    return (json.dumps(list(slicer.util.getNodes('*').keys())).encode()), b'application/json'
 
-  def screenshot(self,request):
+  def screenshot(self, request):
     """
     Returns screenshot of the application main window.
     """
@@ -678,7 +678,7 @@ space origin: %%origin%%
                 return
     raise ValueError("Unknown layout name: " + layoutName)
 
-  def gui(self,request):
+  def gui(self, request):
     """return a png of the application GUI.
     :param contents: {full, viewers}
     :param viewersLayout: {fourup, oneup3d, ...} slicer.vtkMRMLLayoutNode constants (SlicerLayout...View)
@@ -713,9 +713,9 @@ space origin: %%origin%%
     if viewersLayout is not None:
       SlicerRequestHandler.setViewersLayout(viewersLayout)
 
-    return ( f"Switched {contents} to {viewersLayout}".encode() ), b'text/plain'
+    return (f"Switched {contents} to {viewersLayout}".encode()), b'text/plain'
 
-  def slice(self,request):
+  def slice(self, request):
     """return a png for a slice view.
     :param view: {red, yellow, green}
     :param scrollTo: 0 to 1 for slice position within volume
@@ -762,29 +762,29 @@ space origin: %%origin%%
     except (KeyError, ValueError):
       orientation = None
 
-    offsetKey = 'offset.'+view
-    #if mode == 'start' or not self.interactionState.has_key(offsetKey):
-      #self.interactionState[offsetKey] = sliceLogic.GetSliceOffset()
+    offsetKey = 'offset.' + view
+    # if mode == 'start' or not self.interactionState.has_key(offsetKey):
+      # self.interactionState[offsetKey] = sliceLogic.GetSliceOffset()
 
     if scrollTo:
       volumeNode = sliceLogic.GetBackgroundLayer().GetVolumeNode()
-      bounds = [0,] * 6
-      sliceLogic.GetVolumeSliceBounds(volumeNode,bounds)
+      bounds = [0, ] * 6
+      sliceLogic.GetVolumeSliceBounds(volumeNode, bounds)
       sliceLogic.SetSliceOffset(bounds[4] + (scrollTo * (bounds[5] - bounds[4])))
     if offset:
-      #startOffset = self.interactionState[offsetKey]
+      # startOffset = self.interactionState[offsetKey]
       sliceLogic.SetSliceOffset(startOffset + offset)
     if copySliceGeometryFrom:
       otherSliceLogic = layoutManager.sliceWidget(copySliceGeometryFrom.capitalize()).sliceLogic()
       otherSliceNode = otherSliceLogic.GetSliceNode()
       sliceNode = sliceLogic.GetSliceNode()
       # technique from vtkMRMLSliceLinkLogic (TODO: should be exposed as method)
-      sliceNode.GetSliceToRAS().DeepCopy( otherSliceNode.GetSliceToRAS() )
+      sliceNode.GetSliceToRAS().DeepCopy(otherSliceNode.GetSliceToRAS())
       fov = sliceNode.GetFieldOfView()
       otherFOV = otherSliceNode.GetFieldOfView()
-      sliceNode.SetFieldOfView( otherFOV[0],
+      sliceNode.SetFieldOfView(otherFOV[0],
                                 otherFOV[0] * fov[1] / fov[0],
-                                fov[2] )
+                                fov[2])
 
     if orientation:
       sliceNode = sliceLogic.GetSliceNode()
@@ -806,7 +806,7 @@ space origin: %%origin%%
     self.logMessage('returning an image of %d length' % len(pngData))
     return pngData, b'image/png'
 
-  def threeD(self,request):
+  def threeD(self, request):
     """return a png for a threeD view
     :param lookFromAxis: {L, R, A, P, I, S}
     :return: png binary buffer
@@ -856,7 +856,7 @@ space origin: %%origin%%
     view.renderEnabled = False
 
     if lookFromAxis:
-      axes = ['None', 'r','l','s','i','a','p']
+      axes = ['None', 'r', 'l', 's', 'i', 'a', 'p']
       try:
         axis = axes.index(lookFromAxis[0].lower())
         view.lookFromViewAxis(axis)
@@ -876,7 +876,7 @@ space origin: %%origin%%
     self.logMessage('threeD returning an image of %d length' % len(pngData))
     return pngData, b'image/png'
 
-  def timeimage(self,request=''):
+  def timeimage(self, request=''):
     """
     For timing and debugging - return an image with the current time
     rendered as text down to the hundredth of a second
@@ -910,15 +910,15 @@ space origin: %%origin%%
     color.setAlphaF(0.8)
     pen.setColor(color)
     pen.setWidth(5)
-    pen.setStyle(3) # dotted line (Qt::DotLine)
+    pen.setStyle(3)  # dotted line (Qt::DotLine)
     painter.setPen(pen)
-    rect = qt.QRect(1, 1, imageWidth-2, imageHeight-2)
+    rect = qt.QRect(1, 1, imageWidth - 2, imageHeight - 2)
     painter.drawRect(rect)
     color = qt.QColor("#333")
     pen.setColor(color)
     painter.setPen(pen)
-    position = qt.QPoint(10,20)
-    text = str(time.time()) # text to draw
+    position = qt.QPoint(10, 20)
+    text = str(time.time())  # text to draw
     painter.drawText(position, text)
     painter.end()
 
@@ -928,7 +928,7 @@ space origin: %%origin%%
     pngData = self.vtkImageDataToPNG(vtkTimeImage)
     return pngData, b'image/png'
 
-  def vtkImageDataToPNG(self,imageData):
+  def vtkImageDataToPNG(self, imageData):
     """Return a buffer of png data using the data
     from the vtkImageData.
     :param imageData: a vtkImageData instance

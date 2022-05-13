@@ -36,8 +36,8 @@ import time
 
 __all__ = ['EXIT_FAILURE', 'EXIT_SUCCESS', 'run', 'runSlicer', 'runSlicerAndExit', 'timecall']
 
-EXIT_FAILURE=1
-EXIT_SUCCESS=0
+EXIT_FAILURE = 1
+EXIT_SUCCESS = 0
 
 
 def dropcache():

@@ -306,7 +306,7 @@ class VectorToScalarVolumeConversionMethodWidget(qt.QWidget):
 
   def setup(self):
     self.methodLayout = qt.QHBoxLayout(self)
-    self.methodLayout.setContentsMargins(0,0,0,0)
+    self.methodLayout.setContentsMargins(0, 0, 0, 0)
     self.methodSelectorComboBox = qt.QComboBox()
 
     self.methodSelectorComboBox.addItem("Luminance", VectorToScalarVolumeLogic.LUMINANCE)
@@ -350,7 +350,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
 
   CONVERSION_METHODS = (LUMINANCE, AVERAGE, SINGLE_COMPONENT)
 
-  def __init__(self, parent = None):
+  def __init__(self, parent=None):
     ScriptedLoadableModuleLogic.__init__(self, parent)
 
   def createParameterNode(self):
@@ -493,7 +493,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
     weights = vtk.vtkDoubleArray()
     weights.SetNumberOfValues(numberOfComponents)
     # TODO: Average could be extended to let the user choose the weights of the components.
-    evenWeight = 1.0/numberOfComponents
+    evenWeight = 1.0 / numberOfComponents
     logging.debug("ImageWeightedSum: weight value for all components: %s" % evenWeight)
     for comp in range(numberOfComponents):
       weights.SetValue(comp, evenWeight)

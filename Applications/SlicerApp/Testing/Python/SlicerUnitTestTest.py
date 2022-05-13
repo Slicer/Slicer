@@ -16,7 +16,7 @@ class SlicerUnitTestTest(unittest.TestCase):
     self.assertEqual(self.seq, list(range(10)))
 
     # Should raise an exception for an immutable sequence
-    self.assertRaises(TypeError, random.shuffle, (1,2,3))
+    self.assertRaises(TypeError, random.shuffle, (1, 2, 3))
 
   def test_choice(self):
     element = random.choice(self.seq)

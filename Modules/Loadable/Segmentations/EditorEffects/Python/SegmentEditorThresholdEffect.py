@@ -62,7 +62,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -173,7 +173,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     # Li sometimes crashes (index out of range error in
     # ITK/Modules/Filtering/Thresholding/include/itkLiThresholdCalculator.hxx#L94)
     # We can add this method back when issue is fixed in ITK.
-    #self.autoThresholdMethodSelectorComboBox.addItem("Li", METHOD_LI)
+    # self.autoThresholdMethodSelectorComboBox.addItem("Li", METHOD_LI)
     self.autoThresholdMethodSelectorComboBox.addItem("Maximum entropy", METHOD_MAXIMUM_ENTROPY)
     self.autoThresholdMethodSelectorComboBox.addItem("Moments", METHOD_MOMENTS)
     self.autoThresholdMethodSelectorComboBox.addItem("Renyi entropy", METHOD_RENYI_ENTROPY)
@@ -185,12 +185,12 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.selectPreviousAutoThresholdButton = qt.QToolButton()
     self.selectPreviousAutoThresholdButton.text = "<"
     self.selectPreviousAutoThresholdButton.setToolTip("Select previous thresholding method and set thresholds."
-      +" Useful for iterating through all available methods.")
+      + " Useful for iterating through all available methods.")
 
     self.selectNextAutoThresholdButton = qt.QToolButton()
     self.selectNextAutoThresholdButton.text = ">"
     self.selectNextAutoThresholdButton.setToolTip("Select next thresholding method and set thresholds."
-      +" Useful for iterating through all available methods.")
+      + " Useful for iterating through all available methods.")
 
     self.setAutoThresholdButton = qt.QPushButton("Set")
     self.setAutoThresholdButton.setToolTip("Set threshold using selected method.")
@@ -309,7 +309,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     lowerGroupBox = qt.QGroupBox("Lower")
     lowerHistogramLayout = qt.QHBoxLayout()
-    lowerHistogramLayout.setContentsMargins(0,3,0,3)
+    lowerHistogramLayout.setContentsMargins(0, 3, 0, 3)
     lowerGroupBox.setLayout(lowerHistogramLayout)
     histogramItemFrame.addWidget(lowerGroupBox)
     self.histogramLowerMethodButtonGroup = qt.QButtonGroup()
@@ -342,7 +342,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     upperGroupBox = qt.QGroupBox("Upper")
     upperHistogramLayout = qt.QHBoxLayout()
-    upperHistogramLayout.setContentsMargins(0,3,0,3)
+    upperHistogramLayout.setContentsMargins(0, 3, 0, 3)
     upperGroupBox.setLayout(upperHistogramLayout)
     histogramItemFrame.addWidget(upperGroupBox)
     self.histogramUpperMethodButtonGroup = qt.QButtonGroup()
@@ -403,7 +403,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       self.thresholdSlider.singleStep = (hi - lo) / 1000.
       if (self.scriptedEffect.doubleParameter("MinimumThreshold") == self.scriptedEffect.doubleParameter("MaximumThreshold")):
         # has not been initialized yet
-        self.scriptedEffect.setParameter("MinimumThreshold", lo+(hi-lo)*0.25)
+        self.scriptedEffect.setParameter("MinimumThreshold", lo + (hi - lo) * 0.25)
         self.scriptedEffect.setParameter("MaximumThreshold", hi)
 
   def layoutChanged(self):
@@ -509,7 +509,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
   #
   # Effect specific methods (the above ones are the API methods to override)
   #
-  def onThresholdValuesChanged(self,min,max):
+  def onThresholdValuesChanged(self, min, max):
     self.scriptedEffect.updateMRMLFromGUI()
 
   def onUseForPaint(self):
@@ -674,19 +674,19 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     displayNode = segmentationNode.GetDisplayNode()
     if displayNode is None:
       logging.error("preview: Invalid segmentation display node!")
-      color = [0.5,0.5,0.5]
+      color = [0.5, 0.5, 0.5]
     segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
 
     # Make sure we keep the currently selected segment hidden (the user may have changed selection)
     if segmentID != self.previewedSegmentID:
       self.setCurrentSegmentTransparent()
 
-    r,g,b = segmentationNode.GetSegmentation().GetSegment(segmentID).GetColor()
+    r, g, b = segmentationNode.GetSegmentation().GetSegment(segmentID).GetColor()
 
     # Set values to pipelines
     for sliceWidget in self.previewPipelines:
       pipeline = self.previewPipelines[sliceWidget]
-      pipeline.lookupTable.SetTableValue(1,  r, g, b,  opacity)
+      pipeline.lookupTable.SetTableValue(1, r, g, b, opacity)
       layerLogic = self.getMasterVolumeLayerLogic(sliceWidget)
       pipeline.thresholdFilter.SetInputConnection(layerLogic.GetReslice().GetOutputPort())
       pipeline.thresholdFilter.ThresholdBetween(min, max)
@@ -816,8 +816,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     brushBounds = brushPolydata.GetBounds()
     brushExtent = [0, -1, 0, -1, 0, -1]
     for i in range(3):
-      brushExtent[2*i] = vtk.vtkMath.Floor(brushBounds[2*i])
-      brushExtent[2*i+1] = vtk.vtkMath.Ceil(brushBounds[2*i+1])
+      brushExtent[2 * i] = vtk.vtkMath.Floor(brushBounds[2 * i])
+      brushExtent[2 * i + 1] = vtk.vtkMath.Ceil(brushBounds[2 * i + 1])
     if brushExtent[0] > brushExtent[1] or brushExtent[2] > brushExtent[3] or brushExtent[4] > brushExtent[5]:
       self.histogramFunction.RemoveAllPoints()
       return
@@ -853,7 +853,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       self.histogramFunction.AddPoint(binSpacing * i + scalarRange[0], value)
     self.histogramFunction.AdjustRange(scalarRange)
 
-    lower  = self.imageAccumulate.GetMin()[0]
+    lower = self.imageAccumulate.GetMin()[0]
     average = self.imageAccumulate.GetMean()[0]
     upper = self.imageAccumulate.GetMax()[0]
 
@@ -916,9 +916,9 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     scalarRange = masterImageData.GetScalarRange()
 
     epsilon = 0.00001
-    low   = self.scriptedEffect.doubleParameter("MinimumThreshold")
+    low = self.scriptedEffect.doubleParameter("MinimumThreshold")
     upper = self.scriptedEffect.doubleParameter("MaximumThreshold")
-    low =   max(scalarRange[0] + epsilon, low)
+    low = max(scalarRange[0] + epsilon, low)
     upper = min(scalarRange[1] - epsilon, upper)
 
     self.backgroundFunction.AddRGBPoint(scalarRange[0], 1, 1, 1)
@@ -943,7 +943,7 @@ class PreviewPipeline:
     self.lookupTable.SetRampToLinear()
     self.lookupTable.SetNumberOfTableValues(2)
     self.lookupTable.SetTableRange(0, 1)
-    self.lookupTable.SetTableValue(0,  0, 0, 0,  0)
+    self.lookupTable.SetTableValue(0, 0, 0, 0, 0)
     self.colorMapper = vtk.vtkImageMapToRGBA()
     self.colorMapper.SetOutputFormatToRGBA()
     self.colorMapper.SetLookupTable(self.lookupTable)
@@ -1077,7 +1077,7 @@ class HistogramPipeline:
     self.actor = vtk.vtkActor2D()
     self.actor.SetMapper(self.mapper)
     actorProperty = self.actor.GetProperty()
-    actorProperty.SetColor(1,1,0)
+    actorProperty.SetColor(1, 1, 0)
     actorProperty.SetLineWidth(2)
     renderer = self.scriptedEffect.renderer(sliceWidget)
     if renderer is None:
@@ -1100,7 +1100,7 @@ class HistogramPipeline:
       self.thinActor = vtk.vtkActor2D()
       self.thinActor.SetMapper(self.thinMapper)
       thinActorProperty = self.thinActor.GetProperty()
-      thinActorProperty.SetColor(1,1,0)
+      thinActorProperty.SetColor(1, 1, 0)
       thinActorProperty.SetLineWidth(1)
       self.scriptedEffect.addActor2D(sliceWidget, self.thinActor)
     elif self.brushMode == HISTOGRAM_BRUSH_TYPE_LINE:
@@ -1155,21 +1155,21 @@ class HistogramPipeline:
     # brush is rotated to the slice widget plane
     brushToWorldOriginTransformMatrix = vtk.vtkMatrix4x4()
     brushToWorldOriginTransformMatrix.DeepCopy(self.sliceWidget.sliceLogic().GetSliceNode().GetSliceToRAS())
-    brushToWorldOriginTransformMatrix.SetElement(0,3, 0)
-    brushToWorldOriginTransformMatrix.SetElement(1,3, 0)
-    brushToWorldOriginTransformMatrix.SetElement(2,3, 0)
+    brushToWorldOriginTransformMatrix.SetElement(0, 3, 0)
+    brushToWorldOriginTransformMatrix.SetElement(1, 3, 0)
+    brushToWorldOriginTransformMatrix.SetElement(2, 3, 0)
 
     self.brushToWorldOriginTransform.Identity()
     self.brushToWorldOriginTransform.Concatenate(brushToWorldOriginTransformMatrix)
-    self.brushToWorldOriginTransform.RotateX(90) # cylinder's long axis is the Y axis, we need to rotate it to Z axis
+    self.brushToWorldOriginTransform.RotateX(90)  # cylinder's long axis is the Y axis, we need to rotate it to Z axis
 
     sliceSpacingMm = self.scriptedEffect.sliceSpacing(self.sliceWidget)
 
-    center = [0,0,0]
+    center = [0, 0, 0]
     if self.brushMode == HISTOGRAM_BRUSH_TYPE_CIRCLE:
       center = self.point1
 
-      point1ToPoint2 = [0,0,0]
+      point1ToPoint2 = [0, 0, 0]
       vtk.vtkMath.Subtract(self.point1, self.point2, point1ToPoint2)
       radius = vtk.vtkMath.Normalize(point1ToPoint2)
 
@@ -1180,17 +1180,17 @@ class HistogramPipeline:
     elif self.brushMode == HISTOGRAM_BRUSH_TYPE_BOX:
       self.brushToWorldOriginTransformer.SetInputConnection(self.brushCubeSource.GetOutputPort())
 
-      length = [0,0,0]
+      length = [0, 0, 0]
       for i in range(3):
         center[i] = (self.point1[i] + self.point2[i]) / 2.0
         length[i] = abs(self.point1[i] - self.point2[i])
 
-      xVector = [1,0,0,0]
+      xVector = [1, 0, 0, 0]
       self.brushToWorldOriginTransform.MultiplyPoint(xVector, xVector)
       xLength = abs(vtk.vtkMath.Dot(xVector[:3], length))
       self.brushCubeSource.SetXLength(xLength)
 
-      zVector = [0,0,1,0]
+      zVector = [0, 0, 1, 0]
       self.brushToWorldOriginTransform.MultiplyPoint(zVector, zVector)
       zLength = abs(vtk.vtkMath.Dot(zVector[:3], length))
       self.brushCubeSource.SetZLength(zLength)

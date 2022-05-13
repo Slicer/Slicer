@@ -70,42 +70,6 @@ ignore = \
   E129, \
   # continuation line unaligned for hanging indent
   E131, \
-  # whitespace after '('
-  E201, \
-  # whitespace before ')'
-  E202, \
-  # whitespace before ','
-  E203, \
-  # whitespace before '('
-  E211, \
-  # multiple spaces before operator
-  E221, \
-  # multiple spaces after operator
-  E222, \
-  # missing whitespace around operator
-  E225, \
-  # missing whitespace around arithmetic operator
-  E226, \
-  # missing whitespace around bitwise or shift operator
-  E227, \
-  # missing whitespace around modulo operator
-  E228, \
-  # missing whitespace after ','
-  E231, \
-  # multiple spaces after ','
-  E241, \
-  # unexpected spaces around keyword / parameter equals
-  E251, \
-  # at least two spaces before inline comment
-  E261, \
-  # inline comment should start with '# '
-  E262, \
-  # block comment should start with '# '
-  E265, \
-  # too many leading '#' for block comment
-  E266, \
-  # multiple spaces after keyword
-  E271, \
   # multiple imports on one line
   E401, \
   # module level import not at top of file

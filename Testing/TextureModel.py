@@ -6,9 +6,9 @@ def newPlane():
 
   # create a plane polydata
   plane = Slicer.slicer.vtkPlaneSource()
-  plane.SetOrigin( 0., 0., 0. )
-  plane.SetPoint1( 100., 0., 0. )
-  plane.SetPoint2( 0., 0., 100. )
+  plane.SetOrigin(0., 0., 0.)
+  plane.SetPoint1(100., 0., 0.)
+  plane.SetPoint2(0., 0., 100.)
   plane.GetOutput().Update()
 
   # create a simple texture image
@@ -30,9 +30,9 @@ def newPlane():
   # set up model node
   modelNode = Slicer.slicer.vtkMRMLModelNode()
 # VTK6 TODO
-  modelNode.SetAndObservePolyData( plane.GetOutput() )
-  modelNode.SetAndObserveDisplayNodeID( modelDisplayNode.GetID() )
-  modelNode.SetAndObserveTransformNodeID( transformNode.GetID() )
+  modelNode.SetAndObservePolyData(plane.GetOutput())
+  modelNode.SetAndObserveDisplayNodeID(modelDisplayNode.GetID())
+  modelNode.SetAndObserveTransformNodeID(transformNode.GetID())
   modelNode.SetName("Plane")
   Slicer.slicer.MRMLScene.AddNode(modelNode)
 
@@ -58,18 +58,18 @@ def texturedPlane():
   steps = 200
   startTime = time.time()
 
-  modelNode,transformNode,imageSource = newPlane()
+  modelNode, transformNode, imageSource = newPlane()
 
   toParent = vtk.vtkMatrix4x4()
   transformNode.GetMatrixTransformToParent(toParent)
   for i in range(steps):
-    imageSource.SetInValue( 200*(i%2) )
+    imageSource.SetInValue(200 * (i % 2))
 
     toParent.SetElement(0, 3, i)
     transformNode.SetMatrixTransformToParent(toParent)
 
     modelNode.GetPolyData().Modified()
-    Slicer.TkCall( "update" )
+    Slicer.TkCall("update")
 
   endTime = time.time()
   elapsed = endTime - startTime

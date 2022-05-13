@@ -18,7 +18,7 @@ class SlicerCreateRulerCrashIssue4199(ScriptedLoadableModule):
     self.parent.title = "Create ruler crash (Issue 4199)"
     self.parent.categories = ["Testing.TestCases"]
     self.parent.dependencies = []
-    self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)"] # replace with "Firstname Lastname (Organization)"
+    self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)"]  # replace with "Firstname Lastname (Organization)"
     self.parent.helpText = """This test has been added to check that
     Slicer does not crash after creating a ruler and entering
     the Annotations module.
@@ -28,7 +28,7 @@ class SlicerCreateRulerCrashIssue4199(ScriptedLoadableModule):
     self.parent.acknowledgementText = """
     This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
     and was partially funded by NIH grant 1U24CA194354-01.
-    """ # replace with organization, grant and thanks.
+    """  # replace with organization, grant and thanks.
 
 
 #
@@ -58,7 +58,7 @@ class SlicerCreateRulerCrashIssue4199Logic(ScriptedLoadableModuleLogic):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def hasImageData(self,volumeNode):
+  def hasImageData(self, volumeNode):
     """This is an example logic method that
     returns true if the passed in volume
     node has valid image data

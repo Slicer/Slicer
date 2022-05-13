@@ -27,7 +27,7 @@ markupsNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsLineNode')
 length = 34.12
 direction = np.array([0.3, -0.4, 0.8])
 pos1 = np.array([20, -12.4, 3.8])
-pos2 = pos1 + direction/np.linalg.norm(direction) * length
+pos2 = pos1 + direction / np.linalg.norm(direction) * length
 markupsNode.AddControlPoint(vtk.vtkVector3d(pos1))
 markupsNode.AddControlPoint(vtk.vtkVector3d(pos2))
 
@@ -38,7 +38,7 @@ if abs(measurement.GetValue() - length) > 1e-4:
 if measurement.GetValueWithUnitsAsPrintableString() != '34.12mm':
   raise Exception("Unexpected length measurement result: " + measurement.GetValueWithUnitsAsPrintableString())
 
-markupsFilename = markupsMeasurementsTestDir+'/line.mkp.json'
+markupsFilename = markupsMeasurementsTestDir + '/line.mkp.json'
 slicer.util.saveNode(markupsNode, markupsFilename)
 
 with open(markupsFilename) as f:
@@ -67,7 +67,7 @@ if abs(measurement.GetValue() - 117.4) > 0.1:
 if measurement.GetValueWithUnitsAsPrintableString() != '117.4deg':
   raise Exception("Unexpected angle measurement result: " + measurement.GetValueWithUnitsAsPrintableString())
 
-markupsFilename = markupsMeasurementsTestDir+'/angle.mkp.json'
+markupsFilename = markupsMeasurementsTestDir + '/angle.mkp.json'
 slicer.util.saveNode(markupsNode, markupsFilename)
 
 with open(markupsFilename) as f:
@@ -105,7 +105,7 @@ measurement.SetEnabled(True)
 if measurement.GetValueWithUnitsAsPrintableString() != '32.00cm2':
   raise Exception("Unexpected area measurement result: " + measurement.GetValueWithUnitsAsPrintableString())
 
-markupsFilename = markupsMeasurementsTestDir+'/plane.mkp.json'
+markupsFilename = markupsMeasurementsTestDir + '/plane.mkp.json'
 slicer.util.saveNode(markupsNode, markupsFilename)
 
 with open(markupsFilename) as f:
@@ -124,14 +124,14 @@ if not preserveFiles:
 
 markupsNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsROINode')
 markupsNode.AddControlPoint(vtk.vtkVector3d(61, -12.4, 13.8))
-markupsNode.SetSize(20,30,40)
+markupsNode.SetSize(20, 30, 40)
 
 measurement = markupsNode.GetMeasurement("volume")
 measurement.SetEnabled(True)
 if measurement.GetValueWithUnitsAsPrintableString() != '24.000cm3':
   raise Exception("Unexpected volume measurement result: " + measurement.GetValueWithUnitsAsPrintableString())
 
-markupsFilename = markupsMeasurementsTestDir+'/roi.mkp.json'
+markupsFilename = markupsMeasurementsTestDir + '/roi.mkp.json'
 slicer.util.saveNode(markupsNode, markupsFilename)
 
 with open(markupsFilename) as f:

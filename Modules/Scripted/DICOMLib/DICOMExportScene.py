@@ -49,7 +49,7 @@ class DICOMExportScene:
     # Dictionary where the keys are the tag names (such as StudyInstanceUID), and the values are the tag values
     self.optionalTags = {}
 
-  def progress(self,string):
+  def progress(self, string):
     # TODO: make this a callback for a gui progress dialog
     logging.info(string)
 
@@ -94,12 +94,12 @@ class DICOMExportScene:
     imageReader.Update()
 
     # Clean up paths on Windows (some commands and operations are not performed properly with mixed slash and backslash)
-    self.saveDirectoryPath = self.saveDirectoryPath.replace('\\','/')
-    self.imageFile = self.imageFile.replace('\\','/')
-    self.zipFile = self.zipFile.replace('\\','/')
-    self.dumpFile = self.dumpFile.replace('\\','/')
-    self.templateFile = self.templateFile.replace('\\','/')
-    self.sdbFile = self.sdbFile.replace('\\','/')
+    self.saveDirectoryPath = self.saveDirectoryPath.replace('\\', '/')
+    self.imageFile = self.imageFile.replace('\\', '/')
+    self.zipFile = self.zipFile.replace('\\', '/')
+    self.dumpFile = self.dumpFile.replace('\\', '/')
+    self.templateFile = self.templateFile.replace('\\', '/')
+    self.sdbFile = self.sdbFile.replace('\\', '/')
 
     # save the scene to the temp dir
     self.progress('Saving scene into MRB...')
@@ -139,7 +139,7 @@ class DICOMExportScene:
     fp.close()
 
     self.progress('Encapsulating scene in DICOM dump...')
-    args = [ self.dumpFile, self.templateFile, '--generate-new-uids', '--overwrite-uids', '--ignore-errors' ]
+    args = [self.dumpFile, self.templateFile, '--generate-new-uids', '--overwrite-uids', '--ignore-errors']
     DICOMLib.DICOMCommand('dump2dcm', args).start()
 
     # now create the Secondary Capture data set
@@ -149,12 +149,12 @@ class DICOMExportScene:
         '-k', 'StudyDescription=%s' % str(self.studyDescription),
         '-k', 'SeriesDescription=%s' % str(self.seriesDescription),
         '--dataset-from', self.templateFile,
-        self.imageFile, self.sdbFile ]
+        self.imageFile, self.sdbFile]
     argIndex = 6
     for key, value in self.optionalTags.items():
       args.insert(argIndex, '-k')
       tagNameValue = f'{str(key)}={str(value)}'
-      args.insert(argIndex+1, tagNameValue)
+      args.insert(argIndex + 1, tagNameValue)
       argIndex += 2
     self.progress('Creating DICOM binary file...')
     DICOMLib.DICOMCommand('img2dcm', args).start()

@@ -20,14 +20,14 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
     AbstractScriptedSegmentEditorAutoCompleteEffect.__init__(self, scriptedEffect)
     scriptedEffect.name = 'Grow from seeds'
     self.minimumNumberOfSegments = 2
-    self.clippedMasterImageDataRequired = True # master volume intensities are used by this effect
-    self.clippedMaskImageDataRequired = True # masking is used
+    self.clippedMasterImageDataRequired = True  # master volume intensities are used by this effect
+    self.clippedMaskImageDataRequired = True  # masking is used
     self.growCutFilter = None
 
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):

@@ -20,10 +20,10 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     self.setUp()
     self.test_SegmentationWidgetsTest1()
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def test_SegmentationWidgetsTest1(self):
     # Check for modules
-    self.assertIsNotNone( slicer.modules.segmentations )
+    self.assertIsNotNone(slicer.modules.segmentations)
 
     self.TestSection_00_SetupPathsAndNames()
     self.TestSection_01_GenerateInputData()
@@ -33,12 +33,12 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
     logging.info('Test finished')
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_00_SetupPathsAndNames(self):
     logging.info('Test section 0: SetupPathsAndNames')
     self.inputSegmentationNode = None
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_01_GenerateInputData(self):
     logging.info('Test section 1: GenerateInputData')
     self.inputSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
@@ -48,11 +48,11 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     for segmentName in ['first', 'second', 'third']:
       sphereSegment = slicer.vtkSegment()
       sphereSegment.SetName(segmentName)
-      sphereSegment.SetColor(random.uniform(0.0,1.0), random.uniform(0.0,1.0), random.uniform(0.0,1.0))
+      sphereSegment.SetColor(random.uniform(0.0, 1.0), random.uniform(0.0, 1.0), random.uniform(0.0, 1.0))
 
       sphere = vtk.vtkSphereSource()
-      sphere.SetCenter(random.uniform(0,100),random.uniform(0,100),random.uniform(0,100))
-      sphere.SetRadius(random.uniform(20,30))
+      sphere.SetCenter(random.uniform(0, 100), random.uniform(0, 100), random.uniform(0, 100))
+      sphere.SetRadius(random.uniform(20, 30))
       sphere.Update()
       spherePolyData = sphere.GetOutput()
       sphereSegment.AddRepresentation(
@@ -67,7 +67,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     displayNode = self.inputSegmentationNode.GetDisplayNode()
     self.assertIsNotNone(displayNode)
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_02_qMRMLSegmentsTableView(self):
     logging.info('Test section 2: qMRMLSegmentsTableView')
 
@@ -123,7 +123,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     self.inputSegmentationNode.SetSegmentListFilterEnabled(False)
     self.inputSegmentationNode.SetSegmentListFilterOptions("")
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def compareOutputGeometry(self, orientedImageData, spacing, origin, directions):
     if orientedImageData is None:
       logging.error('Invalid input oriented image data')
@@ -141,22 +141,22 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     tolerance = 0.0001
     actualSpacing = orientedImageData.GetSpacing()
     actualOrigin = orientedImageData.GetOrigin()
-    actualDirections = [[0]*3,[0]*3,[0]*3]
+    actualDirections = [[0] * 3, [0] * 3, [0] * 3]
     orientedImageData.GetDirections(actualDirections)
-    for i in [0,1,2]:
+    for i in [0, 1, 2]:
       if not numpy.isclose(spacing[i], actualSpacing[i], tolerance):
         logging.warning('Spacing discrepancy: ' + str(spacing) + ' != ' + str(actualSpacing))
         return False
       if not numpy.isclose(origin[i], actualOrigin[i], tolerance):
         logging.warning('Origin discrepancy: ' + str(origin) + ' != ' + str(actualOrigin))
         return False
-      for j in [0,1,2]:
+      for j in [0, 1, 2]:
         if not numpy.isclose(directions[i][j], actualDirections[i][j], tolerance):
           logging.warning('Directions discrepancy: ' + str(directions) + ' != ' + str(actualDirections))
           return False
     return True
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def getForegroundVoxelCount(self, imageData):
     if imageData is None:
       logging.error('Invalid input image data')
@@ -167,7 +167,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     imageAccumulate.Update()
     return imageAccumulate.GetVoxelCount()
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_03_qMRMLSegmentationGeometryWidget(self):
     logging.info('Test section 2: qMRMLSegmentationGeometryWidget')
 
@@ -205,7 +205,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     segmentOrientedImageData.SetImageToWorldMatrix(mrImageToWorldMatrix)
     segment = slicer.vtkSegment()
     segment.SetName('Brain')
-    segment.SetColor(0.0,0.0,1.0)
+    segment.SetColor(0.0, 0.0, 1.0)
     segment.AddRepresentation(binaryLabelmapReprName, segmentOrientedImageData)
     segmentationNode.GetSegmentation().AddSegment(segment)
 
@@ -213,13 +213,13 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     geometryWidget = slicer.qMRMLSegmentationGeometryWidget()
     geometryWidget.setSegmentationNode(segmentationNode)
     geometryWidget.editEnabled = True
-    geometryImageData = slicer.vtkOrientedImageData() # To contain the output later
+    geometryImageData = slicer.vtkOrientedImageData()  # To contain the output later
 
     # Volume source with no transforms
     geometryWidget.setSourceNode(tinyVolumeNode)
     geometryWidget.geometryImageData(geometryImageData)
     self.assertTrue(self.compareOutputGeometry(geometryImageData,
-        (49,49,23), (248.8439, 248.2890, -123.75),
+        (49, 49, 23), (248.8439, 248.2890, -123.75),
         [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]))
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
@@ -227,9 +227,9 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
     # Transformed volume source
     translationTransformMatrix = vtk.vtkMatrix4x4()
-    translationTransformMatrix.SetElement(0,3,24.5)
-    translationTransformMatrix.SetElement(1,3,24.5)
-    translationTransformMatrix.SetElement(2,3,11.5)
+    translationTransformMatrix.SetElement(0, 3, 24.5)
+    translationTransformMatrix.SetElement(1, 3, 24.5)
+    translationTransformMatrix.SetElement(2, 3, 11.5)
     translationTransformNode = slicer.vtkMRMLLinearTransformNode()
     translationTransformNode.SetName('TestTranslation')
     slicer.mrmlScene.AddNode(translationTransformNode)
@@ -238,7 +238,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     tinyVolumeNode.SetAndObserveTransformNodeID(translationTransformNode.GetID())
     geometryWidget.geometryImageData(geometryImageData)
     self.assertTrue(self.compareOutputGeometry(geometryImageData,
-        (49,49,23), (273.3439, 272.7890, -112.25),
+        (49, 49, 23), (273.3439, 272.7890, -112.25),
         [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]))
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
@@ -249,7 +249,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     geometryWidget.setIsotropicSpacing(True)
     geometryWidget.geometryImageData(geometryImageData)
     self.assertTrue(self.compareOutputGeometry(geometryImageData,
-        (23,23,23), (248.8439, 248.2890, -123.75),
+        (23, 23, 23), (248.8439, 248.2890, -123.75),
         [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]))
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
@@ -272,7 +272,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     geometryWidget.setSourceNode(tinySegmentationNode)
     geometryWidget.geometryImageData(geometryImageData)
     self.assertTrue(self.compareOutputGeometry(geometryImageData,
-        (49,49,23), (248.8439, 248.2890, -123.75),
+        (49, 49, 23), (248.8439, 248.2890, -123.75),
         [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]))
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
@@ -282,10 +282,10 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     tinySegmentationNode.GetSegmentation().SetConversionParameter('Smoothing factor', '0.0')
     self.assertTrue(tinySegmentationNode.GetSegmentation().CreateRepresentation(closedSurfaceReprName))
     tinySegmentationNode.GetSegmentation().SetMasterRepresentationName(closedSurfaceReprName)
-    tinySegmentationNode.Modified() # Trigger re-calculation of geometry (only generic Modified event is observed)
+    tinySegmentationNode.Modified()  # Trigger re-calculation of geometry (only generic Modified event is observed)
     geometryWidget.geometryImageData(geometryImageData)
     self.assertTrue(self.compareOutputGeometry(geometryImageData,
-        (1,1,1), (-86.645, 133.929, 116.786),  # current origin of the segmentation is kept
+        (1, 1, 1), (-86.645, 133.929, 116.786),  # current origin of the segmentation is kept
         [[0.0, 0.0, 1.0], [-1.0, 0.0, 0.0], [0.0, -1.0, 0.0]]))
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
@@ -296,13 +296,13 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
     outputFolderId = shNode.CreateFolderItem(shNode.GetSceneItemID(), 'ModelsFolder')
     success = vtkSlicerSegmentationsModuleLogic.vtkSlicerSegmentationsModuleLogic.ExportVisibleSegmentsToModels(
-      tinySegmentationNode, outputFolderId )
+      tinySegmentationNode, outputFolderId)
     self.assertTrue(success)
     modelNode = slicer.util.getNode('Body_Contour')
     geometryWidget.setSourceNode(modelNode)
     geometryWidget.geometryImageData(geometryImageData)
     self.assertTrue(self.compareOutputGeometry(geometryImageData,
-        (1,1,1), (-86.645, 133.929, 116.786),  # current origin of the segmentation is kept
+        (1, 1, 1), (-86.645, 133.929, 116.786),  # current origin of the segmentation is kept
         [[0.0, 0.0, 1.0], [-1.0, 0.0, 0.0], [0.0, -1.0, 0.0]]))
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
@@ -323,7 +323,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     modelNode.Modified()
     geometryWidget.geometryImageData(geometryImageData)
     self.assertTrue(self.compareOutputGeometry(geometryImageData,
-        (1,1,1), (-86.645, 177.282, -12.122),
+        (1, 1, 1), (-86.645, 177.282, -12.122),
         [[0.0, 0.0, 1.0], [-0.7071, -0.7071, 0.0], [0.7071, -0.7071, 0.0]]))
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
@@ -336,14 +336,14 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     rasCenter = [0.0, 0.0, 0.0]
     slicer.vtkMRMLSliceLogic.GetVolumeRASBox(tinyVolumeNode, rasDimensions, rasCenter)
     print(f"rasDimensions={rasDimensions}, rasCenter={rasCenter}")
-    rasRadius = [x/2.0 for x in rasDimensions]
+    rasRadius = [x / 2.0 for x in rasDimensions]
     roiNode.SetCenter(rasCenter)
     roiNode.SetRadiusXYZ(rasRadius)
     geometryWidget.setSourceNode(roiNode)
     geometryWidget.geometryImageData(geometryImageData)
     print(f"geometryImageData: {geometryImageData}")
     self.assertTrue(self.compareOutputGeometry(geometryImageData,
-        (1,1,1), (28.344, 27.789, -20.25),
+        (1, 1, 1), (28.344, 27.789, -20.25),
         [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]))
     slicer.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentOrientedImageData, geometryImageData, geometryImageData, False, True)
@@ -352,7 +352,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
     slicer.util.delayDisplay('Segmentation geometry widget test passed')
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_04_qMRMLSegmentEditorWidget(self):
     logging.info('Test section 4: qMRMLSegmentEditorWidget')
 
@@ -395,11 +395,11 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     slicer.util.delayDisplay("Next segment (with second segment hidden)")
 
     # Trying to go out of bounds past first segment
-    segmentEditorWidget.selectPreviousSegment() #First
+    segmentEditorWidget.selectPreviousSegment()  # First
     self.assertEqual(self.segmentEditorNode.GetSelectedSegmentID(), 'first')
-    segmentEditorWidget.selectPreviousSegment() #First
+    segmentEditorWidget.selectPreviousSegment()  # First
     self.assertEqual(self.segmentEditorNode.GetSelectedSegmentID(), 'first')
-    segmentEditorWidget.selectPreviousSegment() #First
+    segmentEditorWidget.selectPreviousSegment()  # First
     self.assertEqual(self.segmentEditorNode.GetSelectedSegmentID(), 'first')
     slicer.app.processEvents()
     slicer.util.delayDisplay("Multiple previous segment")

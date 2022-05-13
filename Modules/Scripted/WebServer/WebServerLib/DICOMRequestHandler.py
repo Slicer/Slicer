@@ -101,7 +101,7 @@ class DICOMRequestHandler(object):
           firstInstance = instances[0]
           dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(firstInstance), stop_before_pixels=True)
           studyDataset = pydicom.dataset.Dataset()
-          studyDataset.SpecificCharacterSet =  [u'ISO_IR 100']
+          studyDataset.SpecificCharacterSet = [u'ISO_IR 100']
           studyDataset.StudyDate = dataset.StudyDate
           studyDataset.StudyTime = dataset.StudyTime
           studyDataset.StudyDescription = dataset.StudyDescription
@@ -111,7 +111,7 @@ class DICOMRequestHandler(object):
           studyDataset.ModalitiesInStudy = list(modalitiesInStudy)
           studyDataset.ReferringPhysicianName = dataset.ReferringPhysicianName
           studyDataset[self.retrieveURLTag] = pydicom.dataelem.DataElement(
-                  0x00080190, "UR", "http://example.com") #TODO: provide WADO-RS RetrieveURL
+                  0x00080190, "UR", "http://example.com")  # TODO: provide WADO-RS RetrieveURL
           studyDataset.PatientName = dataset.PatientName
           studyDataset.PatientID = dataset.PatientID
           studyDataset.PatientBirthDate = dataset.PatientBirthDate
@@ -163,7 +163,7 @@ class DICOMRequestHandler(object):
         firstInstance = instances[0]
         dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(firstInstance), stop_before_pixels=True)
         seriesDataset = pydicom.dataset.Dataset()
-        seriesDataset.SpecificCharacterSet =  [u'ISO_IR 100']
+        seriesDataset.SpecificCharacterSet = [u'ISO_IR 100']
         seriesDataset.Modality = dataset.Modality
         seriesDataset.SeriesInstanceUID = dataset.SeriesInstanceUID
         seriesDataset.SeriesNumber = dataset.SeriesNumber
@@ -202,7 +202,7 @@ class DICOMRequestHandler(object):
     try:
       instanceUID = q[b'objectUID'][0].decode().strip()
     except KeyError:
-      return None,None
+      return None, None
     self.logMessage('found uid %s' % instanceUID)
     contentType = b'application/dicom'
     path = slicer.dicomDatabase.fileForInstance(instanceUID)

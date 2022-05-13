@@ -5,7 +5,7 @@ import slicer
 _userTemplatePathKey = "ExtensionWizard/TemplatePaths"
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def userTemplatePathKey(category=None):
   if category is None:
     return _userTemplatePathKey
@@ -13,7 +13,7 @@ def userTemplatePathKey(category=None):
     return f"{_userTemplatePathKey}/{category}"
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def builtinTemplatePath():
   # Look for templates in source directory first
   path = slicer.util.sourceDir()

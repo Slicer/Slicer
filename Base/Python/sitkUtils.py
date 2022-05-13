@@ -42,7 +42,7 @@ def GetSlicerITKReadWriteAddress(nodeObjectOrName):
             so that the image can be read directly from the MRML scene
     """
     myNode = nodeObjectOrName if isinstance(nodeObjectOrName, slicer.vtkMRMLNode) else slicer.util.getNode(nodeObjectOrName)
-    myNodeSceneAddress = myNode.GetScene().GetAddressAsString("").replace('Addr=','')
+    myNodeSceneAddress = myNode.GetScene().GetAddressAsString("").replace('Addr=', '')
     myNodeSceneID = myNode.GetID()
     myNodeFullITKAddress = 'slicer:' + myNodeSceneAddress + '#' + myNodeSceneID
     return myNodeFullITKAddress
@@ -63,5 +63,5 @@ def EnsureRegistration():
     if __sitk__MRMLIDImageIO_Registered__:
       return
     vl = slicer.modules.volumes.logic()
-    volumeNode = vl.AddArchetypeVolume('_DUMMY_DOES_NOT_EXIST__','invalidRead')
+    volumeNode = vl.AddArchetypeVolume('_DUMMY_DOES_NOT_EXIST__', 'invalidRead')
     __sitk__MRMLIDImageIO_Registered__ = True

@@ -64,7 +64,7 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
   # ------------------------------------------------------------------------------
   def test_PlotsSelfTest_FullTest1(self):
     # Check for Plots module
-    self.assertTrue( slicer.modules.plots )
+    self.assertTrue(slicer.modules.plots)
 
     self.section_SetupPathsAndNames()
     self.section_CreateTable()
@@ -114,7 +114,7 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
     inc = 7.5 / (numPoints - 1)
     table.SetNumberOfRows(numPoints)
     for i in range(numPoints):
-      table.SetValue(i, 0, i * inc )
+      table.SetValue(i, 0, i * inc)
       table.SetValue(i, 1, math.cos(i * inc))
       table.SetValue(i, 2, math.sin(i * inc))
 

@@ -22,7 +22,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -70,18 +70,18 @@ about each operation, hover the mouse over the option and wait for the tooltip t
 
     self.splitAllOptionRadioButton = qt.QRadioButton("Split islands to segments")
     self.splitAllOptionRadioButton.setToolTip(
-      "Create a new segment for each island of selected segment. Islands smaller than minimum size will be removed. "+
+      "Create a new segment for each island of selected segment. Islands smaller than minimum size will be removed. " +
       "Segments will be ordered by island size.")
     self.operationRadioButtons.append(self.splitAllOptionRadioButton)
     self.widgetToOperationNameMap[self.splitAllOptionRadioButton] = SPLIT_ISLANDS_TO_SEGMENTS
 
     operationLayout = qt.QGridLayout()
-    operationLayout.addWidget(self.keepLargestOptionRadioButton,0,0)
-    operationLayout.addWidget(self.removeSmallOptionRadioButton,1,0)
-    operationLayout.addWidget(self.splitAllOptionRadioButton,2,0)
-    operationLayout.addWidget(self.keepSelectedOptionRadioButton,0,1)
-    operationLayout.addWidget(self.removeSelectedOptionRadioButton,1,1)
-    operationLayout.addWidget(self.addSelectedOptionRadioButton,2,1)
+    operationLayout.addWidget(self.keepLargestOptionRadioButton, 0, 0)
+    operationLayout.addWidget(self.removeSmallOptionRadioButton, 1, 0)
+    operationLayout.addWidget(self.splitAllOptionRadioButton, 2, 0)
+    operationLayout.addWidget(self.keepSelectedOptionRadioButton, 0, 1)
+    operationLayout.addWidget(self.removeSelectedOptionRadioButton, 1, 1)
+    operationLayout.addWidget(self.addSelectedOptionRadioButton, 2, 1)
 
     self.operationRadioButtons[0].setChecked(True)
     self.scriptedEffect.addOptionsWidget(operationLayout)
@@ -122,13 +122,13 @@ about each operation, hover the mouse over the option and wait for the tooltip t
     operationName = self.scriptedEffect.parameter("Operation")
     minimumSize = self.scriptedEffect.integerParameter("MinimumSize")
     if operationName == KEEP_LARGEST_ISLAND:
-      self.splitSegments(minimumSize = minimumSize, maxNumberOfSegments = 1)
+      self.splitSegments(minimumSize=minimumSize, maxNumberOfSegments=1)
     elif operationName == REMOVE_SMALL_ISLANDS:
-      self.splitSegments(minimumSize = minimumSize, split = False)
+      self.splitSegments(minimumSize=minimumSize, split=False)
     elif operationName == SPLIT_ISLANDS_TO_SEGMENTS:
-      self.splitSegments(minimumSize = minimumSize)
+      self.splitSegments(minimumSize=minimumSize)
 
-  def splitSegments(self, minimumSize = 0, maxNumberOfSegments = 0, split = True):
+  def splitSegments(self, minimumSize=0, maxNumberOfSegments=0, split=True):
     """
     minimumSize: if 0 then it means that all islands are kept, regardless of size
     maxNumberOfSegments: if 0 then it means that all islands are kept, regardless of how many
@@ -162,7 +162,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
     islandCount = islandMath.GetNumberOfIslands()
     islandOrigCount = islandMath.GetOriginalNumberOfIslands()
     ignoredIslands = islandOrigCount - islandCount
-    logging.info( "%d islands created (%d ignored)" % (islandCount, ignoredIslands) )
+    logging.info("%d islands created (%d ignored)" % (islandCount, ignoredIslands))
 
     baseSegmentName = "Label"
     selectedSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
@@ -202,7 +202,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         segmentID = selectedSegmentID
         if i != 0 and split:
           segment = slicer.vtkSegment()
-          name = baseSegmentName + "_" + str(i+1)
+          name = baseSegmentName + "_" + str(i + 1)
           segment.SetName(name)
           segment.AddRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName(),
             selectedSegment.GetRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()))
@@ -320,7 +320,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
       seedPoints = vtk.vtkPoints()
       origin = inputLabelImage.GetOrigin()
       spacing = inputLabelImage.GetSpacing()
-      seedPoints.InsertNextPoint(origin[0]+ijk[0]*spacing[0], origin[1]+ijk[1]*spacing[1], origin[2]+ijk[2]*spacing[2])
+      seedPoints.InsertNextPoint(origin[0] + ijk[0] * spacing[0], origin[1] + ijk[1] * spacing[1], origin[2] + ijk[2] * spacing[2])
       floodFillingFilter.SetSeedPoints(seedPoints)
       floodFillingFilter.ThresholdBetween(pixelValue, pixelValue)
 
@@ -332,12 +332,12 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         modifierLabelmap.DeepCopy(floodFillingFilter.GetOutput())
         self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd)
 
-      elif pixelValue != 0: # if clicked on empty part then there is nothing to remove or keep
+      elif pixelValue != 0:  # if clicked on empty part then there is nothing to remove or keep
 
         if operationName == KEEP_SELECTED_ISLAND:
           floodFillingFilter.SetInValue(1)
           floodFillingFilter.SetOutValue(0)
-        else: # operationName == REMOVE_SELECTED_ISLAND:
+        else:  # operationName == REMOVE_SELECTED_ISLAND:
           floodFillingFilter.SetInValue(1)
           floodFillingFilter.SetOutValue(0)
 
@@ -347,7 +347,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
 
         if operationName == KEEP_SELECTED_ISLAND:
           self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
-        else: # operationName == REMOVE_SELECTED_ISLAND:
+        else:  # operationName == REMOVE_SELECTED_ISLAND:
           self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeRemove)
 
     except IndexError:
@@ -358,7 +358,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
     return abortEvent
 
   def processViewNodeEvents(self, callerViewNode, eventId, viewWidget):
-    pass # For the sake of example
+    pass  # For the sake of example
 
   def setMRMLDefaults(self):
     self.scriptedEffect.setParameterDefault("Operation", KEEP_LARGEST_ISLAND)

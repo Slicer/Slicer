@@ -36,22 +36,22 @@ Usage:
 
 if __name__ == '__main__':
 
-  debug = False # Set to True to:
+  debug = False  # Set to True to:
                 #  * display the path of the expected test output file
                 #  * avoid deleting the created temporary directory
 
   if len(sys.argv) != 2:
-    print(os.path.basename(sys.argv[0]) +" /path/to/Slicer")
+    print(os.path.basename(sys.argv[0]) + " /path/to/Slicer")
     exit(EXIT_FAILURE)
 
-  temporaryModuleDirPath = tempfile.mkdtemp().replace('\\','/')
+  temporaryModuleDirPath = tempfile.mkdtemp().replace('\\', '/')
   try:
 
     # Copy helper module that creates a file when startup completed event is received
-    currentDirPath = os.path.dirname(__file__).replace('\\','/')
+    currentDirPath = os.path.dirname(__file__).replace('\\', '/')
     from shutil import copyfile
-    copyfile(currentDirPath+'/SlicerStartupCompletedTestHelperModule.py',
-      temporaryModuleDirPath+'/SlicerStartupCompletedTestHelperModule.py')
+    copyfile(currentDirPath + '/SlicerStartupCompletedTestHelperModule.py',
+      temporaryModuleDirPath + '/SlicerStartupCompletedTestHelperModule.py')
 
     slicer_executable = os.path.expanduser(sys.argv[1])
     common_args = [

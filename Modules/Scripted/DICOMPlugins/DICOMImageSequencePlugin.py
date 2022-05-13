@@ -42,7 +42,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
     self.detailedLogging = False
 
-  def examine(self,fileLists):
+  def examine(self, fileLists):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter.
@@ -53,7 +53,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
     return loadables
 
-  def examineFiles(self,files):
+  def examineFiles(self, files):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     files parameter.
@@ -158,7 +158,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
           # Add to loadables list
           loadables.append(loadable)
-          instanceNumberToLoadableIndex[instanceNumber] = len(loadables)-1
+          instanceNumberToLoadableIndex[instanceNumber] = len(loadables) - 1
         else:
           # existing instance number, add this file
           loadableIndex = instanceNumberToLoadableIndex[instanceNumber]
@@ -183,24 +183,24 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
       loadable.name = name.strip()  # remove leading and trailing spaces, if any
       loadable.tooltip = f"{ds.Modality} image sequence"
       loadable.selected = True
-      if len(cineMriTriggerTimes)>3:
+      if len(cineMriTriggerTimes) > 3:
         if self.detailedLogging:
-          logging.debug("Several different trigger times found ("+repr(cineMriTriggerTimes)+") - assuming this series is a cine MRI")
+          logging.debug("Several different trigger times found (" + repr(cineMriTriggerTimes) + ") - assuming this series is a cine MRI")
         # This is likely a cardiac cine acquisition.
         if len(cineMriImageOrientations) > 1:
           if self.detailedLogging:
-            logging.debug("Several different image orientations found ("+repr(cineMriImageOrientations)+") - assuming this series is a rotational cine MRI")
+            logging.debug("Several different image orientations found (" + repr(cineMriImageOrientations) + ") - assuming this series is a rotational cine MRI")
           # Multivolume importer sets confidence=0.9-1.0, so we need to set a bit higher confidence to be selected by default
           loadable.confidence = 1.05
         else:
           if self.detailedLogging:
-            logging.debug("All image orientations are the same ("+repr(cineMriImageOrientations)+") - probably the MultiVolume plugin should load this")
+            logging.debug("All image orientations are the same (" + repr(cineMriImageOrientations) + ") - probably the MultiVolume plugin should load this")
           # Multivolume importer sets confidence=0.9-1.0, so we need to set a bit lower confidence to allow multivolume selected by default
           loadable.confidence = 0.85
       else:
         # This may be a 3D acquisition,so set lower confidence than scalar volume's default (0.5)
         if self.detailedLogging:
-          logging.debug("Only one or few different trigger times found ("+repr(cineMriTriggerTimes)+") - assuming this series is not a cine MRI")
+          logging.debug("Only one or few different trigger times found (" + repr(cineMriTriggerTimes) + ") - assuming this series is not a cine MRI")
         loadable.confidence = 0.4
       loadable.grayscale = ('MONOCHROME' in ds.PhotometricInterpretation)
 
@@ -330,7 +330,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
     return outputSequenceNode, playbackRateFps
 
-  def load(self,loadable):
+  def load(self, loadable):
     """Load the selection
     """
 

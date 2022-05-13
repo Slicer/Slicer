@@ -92,7 +92,7 @@ def GetSEMDoc(filename):
     doc = xml.dom.minidom.parse(filename)
     executableNode = [node for node in doc.childNodes if
             node.nodeName == "executable"]
-    #Only use the first
+    # Only use the first
     return executableNode[0]
 
 
@@ -196,7 +196,7 @@ def DumpSEMMediaWikiFeatures(executableNode):
         currentNode = parameterNode.firstChild
         while currentNode is not None:
             if currentNode.nodeType == currentNode.ELEMENT_NODE:
-                #If this node doe not have a "label" element, then skip it.
+                # If this node doe not have a "label" element, then skip it.
                 if getThisNodesInfoAsText(currentNode, "label") != "":
                     # if this node has a default value -- document it!
                     if getThisNodesInfoAsText(currentNode, "default") != "":

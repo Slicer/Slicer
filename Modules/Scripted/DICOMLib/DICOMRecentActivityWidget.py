@@ -130,7 +130,7 @@ class DICOMRecentActivityWidget(qt.QWidget):
     series = self.recentSeries[modelIndex.row()]
     seriesUID = series.series
     seriesTableView = self.browserWidget.dicomBrowser.dicomTableManager().seriesTable().tableView()
-    foundModelIndex = seriesTableView.model().match(seriesTableView.model().index(0,0), qt.Qt.ItemDataRole(), seriesUID, 1)
+    foundModelIndex = seriesTableView.model().match(seriesTableView.model().index(0, 0), qt.Qt.ItemDataRole(), seriesUID, 1)
     if foundModelIndex:
         row = foundModelIndex[0].row()
         seriesTableView.selectRow(row)
