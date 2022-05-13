@@ -6,7 +6,7 @@ def exitSuccess():
   pass
 
 
-def exitFailure(message = ""):
+def exitFailure(message=""):
   raise Exception(message)
 
 

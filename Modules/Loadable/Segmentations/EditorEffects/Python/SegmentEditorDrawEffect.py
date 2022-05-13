@@ -22,7 +22,7 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedLabelEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -86,7 +86,7 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
       sliceNode = viewWidget.sliceLogic().GetSliceNode()
       pipeline.lastInsertSliceNodeMTime = sliceNode.GetMTime()
       abortEvent = True
-    elif (eventId == vtk.vtkCommand.RightButtonReleaseEvent and pipeline.actionState == "finishing") or (eventId==vtk.vtkCommand.LeftButtonDoubleClickEvent and not anyModifierKeyPressed):
+    elif (eventId == vtk.vtkCommand.RightButtonReleaseEvent and pipeline.actionState == "finishing") or (eventId == vtk.vtkCommand.LeftButtonDoubleClickEvent and not anyModifierKeyPressed):
       abortEvent = (pipeline.rasPoints.GetNumberOfPoints() > 1)
       sliceNode = viewWidget.sliceLogic().GetSliceNode()
       if abs(pipeline.lastInsertSliceNodeMTime - sliceNode.GetMTime()) < 2:
@@ -173,7 +173,7 @@ class DrawPipeline:
     self.mapper.SetInputData(self.polyData)
     self.actor.SetMapper(self.mapper)
     actorProperty = self.actor.GetProperty()
-    actorProperty.SetColor(1,1,0)
+    actorProperty.SetColor(1, 1, 0)
     actorProperty.SetLineWidth(1)
 
     self.createStippleTexture(0xAAAA, 8)
@@ -223,7 +223,7 @@ class DrawPipeline:
     polyData.SetLines(lines)
     return polyData
 
-  def addPoint(self,ras):
+  def addPoint(self, ras):
     # Add a world space point to the current outline
 
     # Store active slice when first point is added
@@ -244,11 +244,11 @@ class DrawPipeline:
     p = self.rasPoints.InsertNextPoint(ras)
     if p > 0:
       idList = vtk.vtkIdList()
-      idList.InsertNextId(p-1)
+      idList.InsertNextId(p - 1)
       idList.InsertNextId(p)
       self.polyData.InsertNextCell(vtk.VTK_LINE, idList)
 
-  def setLineMode(self,mode="solid"):
+  def setLineMode(self, mode="solid"):
     actorProperty = self.actor.GetProperty()
     if mode == "solid":
       self.polyData.GetPointData().SetTCoords(None)
@@ -281,7 +281,7 @@ class DrawPipeline:
     if lineExists:
       # Close the polyline back to the first point
       idList = vtk.vtkIdList()
-      idList.InsertNextId(self.polyData.GetNumberOfPoints()-1)
+      idList.InsertNextId(self.polyData.GetNumberOfPoints() - 1)
       idList.InsertNextId(0)
       self.polyData.InsertNextCell(vtk.VTK_LINE, idList)
 

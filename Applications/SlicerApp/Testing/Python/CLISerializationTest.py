@@ -70,11 +70,11 @@ if __name__ == '__main__':
   temp_dir = os.path.expanduser(getattr(args, "/path/to/temp_dir"))
 
   # Create input/output
-  serializeSeedsOutFile = '%s/%s.acsv' %(temp_dir, 'SeedsSerialized')
-  deserializeSeedsOutFile = '%s/%s.acsv' %(temp_dir, 'SeedsDeSerialized')
-  json_file = '%s/%s.json' %(temp_dir, 'ExecutionModelTourSerialized')
+  serializeSeedsOutFile = '%s/%s.acsv' % (temp_dir, 'SeedsSerialized')
+  deserializeSeedsOutFile = '%s/%s.acsv' % (temp_dir, 'SeedsDeSerialized')
+  json_file = '%s/%s.json' % (temp_dir, 'ExecutionModelTourSerialized')
 
-  #Copy .mrml file to prevent modification of source tree
+  # Copy .mrml file to prevent modification of source tree
   mrml_source_path = os.path.join(data_dir, 'ExecutionModelTourTest.mrml')
   mrml_dest_path = os.path.join(temp_dir, 'ExecutionModelTourTestPython.mrml')
   shutil.copyfile(mrml_source_path, mrml_dest_path)
@@ -84,8 +84,8 @@ if __name__ == '__main__':
   EMTSerializer.SlicerExecutable = slicer_executable
   CLIName = 'ExecutionModelTour'
   required_inputs = [
-    '--transform1', '%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode1'%(temp_dir),
-    '--transform2', '%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode2'%(temp_dir),
+    '--transform1', '%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode1' % (temp_dir),
+    '--transform2', '%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode2' % (temp_dir),
     mrHeadResampled,
     ctHeadAxial,
     ]
@@ -106,93 +106,93 @@ if __name__ == '__main__':
   # Serialize the CLI
   (returncode, serializeErr, serializeOut) = EMTSerializer.serializeCLI(CLIName, json_file, parameters)
   if returncode != EXIT_SUCCESS:
-    print("Problem while serializing the CLI: %s" %serializeErr)
+    print("Problem while serializing the CLI: %s" % serializeErr)
     exit(EXIT_FAILURE)
 
   # Make sure the Json is generated correctly
   expected_json = {
-      "Parameters" :
+      "Parameters":
       {
-        "Boolean Parameters" :
+        "Boolean Parameters":
         {
-          "boolean1" : True,
-          "boolean2" : False,
-          "boolean3" : False
+          "boolean1": True,
+          "boolean2": False,
+          "boolean3": False
         },
-        "Enumeration Parameters" :
+        "Enumeration Parameters":
         {
-          "stringChoice" : "Bill"
+          "stringChoice": "Bill"
         },
-        "File, Directory and Image Parameters" :
+        "File, Directory and Image Parameters":
         {
-          "directory1" : "",
-          "file1" : "",
-          "files" : [ "1.does", "2.not", "3.matter" ],
-          "image1" : "",
-          "image2" : "",
-          "outputFile1" : ""
+          "directory1": "",
+          "file1": "",
+          "files": ["1.does", "2.not", "3.matter"],
+          "image1": "",
+          "image2": "",
+          "outputFile1": ""
         },
-        "Generic Tables" :
+        "Generic Tables":
         {
-          "inputDT" : "",
-          "outputDT" : ""
+          "inputDT": "",
+          "outputDT": ""
         },
-        "Geometry Parameters" :
+        "Geometry Parameters":
         {
-          "InputModel" : "",
-          "ModelSceneFile" : [],
-          "OutputModel" : ""
+          "InputModel": "",
+          "ModelSceneFile": [],
+          "OutputModel": ""
         },
-        "Index Parameters" :
+        "Index Parameters":
         {
-          "arg0" : mrHeadResampled,
-          "arg1" : ctHeadAxial
+          "arg0": mrHeadResampled,
+          "arg1": ctHeadAxial
         },
-        "Measurements" :
+        "Measurements":
         {
-          "inputFA" : "",
-          "outputFA" : ""
+          "inputFA": "",
+          "outputFA": ""
         },
-        "Point Parameters" :
+        "Point Parameters":
         {
-          "seed" : [[1.0,0.0,-1.0]],
-          "seedsFile" : "",
-          "seedsOutFile" : serializeSeedsOutFile,
+          "seed": [[1.0, 0.0, -1.0]],
+          "seedsFile": "",
+          "seedsOutFile": serializeSeedsOutFile,
         },
-        "Regions of interest" :
+        "Regions of interest":
         {
-          "regions" : []
+          "regions": []
         },
-        "Scalar Parameters (\u00e1rv\u00edzt\u0171r\u0151 t\u00fck\u00f6rf\u00far\u00f3g\u00e9p)" :
+        "Scalar Parameters (\u00e1rv\u00edzt\u0171r\u0151 t\u00fck\u00f6rf\u00far\u00f3g\u00e9p)":
         {
-          "doubleVariable" : 30,
-          "integerVariable" : 30
+          "doubleVariable": 30,
+          "integerVariable": 30
         },
-        "Simple return types" :
+        "Simple return types":
         {
-          "abooleanreturn" : False,
-          "adoublereturn" : 14,
-          "afloatreturn" : 7,
-          "anintegerreturn" : 5,
-          "anintegervectorreturn" : [],
-          "astringchoicereturn" : "Bill",
-          "astringreturn" : "Hello"
+          "abooleanreturn": False,
+          "adoublereturn": 14,
+          "afloatreturn": 7,
+          "anintegerreturn": 5,
+          "anintegervectorreturn": [],
+          "astringchoicereturn": "Bill",
+          "astringreturn": "Hello"
         },
-        "Transform Parameters" :
+        "Transform Parameters":
         {
-          "transform1" : "%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode1"%(temp_dir),
-          "transform2" : "%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode2"%(temp_dir),
-          "transformInput" : "",
-          "transformInputBspline" : "",
-          "transformInputNonlinear" : "",
-          "transformOutput" : "",
-          "transformOutputBspline" : "",
-          "transformOutputNonlinear" : ""
+          "transform1": "%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode1" % (temp_dir),
+          "transform2": "%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode2" % (temp_dir),
+          "transformInput": "",
+          "transformInputBspline": "",
+          "transformInputNonlinear": "",
+          "transformOutput": "",
+          "transformOutputBspline": "",
+          "transformOutputNonlinear": ""
         },
-        "Vector Parameters" :
+        "Vector Parameters":
         {
-          "floatVector" : [ 1.2999999523162842, 2, -14 ],
-          "stringVector" : [ "foo", "bar", "foobar" ]
+          "floatVector": [1.2999999523162842, 2, -14],
+          "stringVector": ["foo", "bar", "foobar"]
         }
       }
     }
@@ -201,11 +201,11 @@ if __name__ == '__main__':
     data = json.load(file)
     if data != expected_json:
       print('Json comparison failed !')
-      expected_json_filename = temp_dir+'/ExecutionModelTourSerializedBaseline.json'
+      expected_json_filename = temp_dir + '/ExecutionModelTourSerializedBaseline.json'
       print("Expected json: " + expected_json_filename)
       with open(expected_json_filename, 'w', encoding='utf8') as outfile:
         json.dump(expected_json, outfile, indent="\t", ensure_ascii=False)
-      actual_json_filename = temp_dir+'/ExecutionModelTourSerializedActual.json'
+      actual_json_filename = temp_dir + '/ExecutionModelTourSerializedActual.json'
       print("Actual json: " + actual_json_filename)
       with open(actual_json_filename, 'w', encoding='utf8') as outfile:
         json.dump(data, outfile, indent="\t", ensure_ascii=False)
@@ -217,7 +217,7 @@ if __name__ == '__main__':
     ]
   (returncode, deserializeErr, deserializeOut) = EMTSerializer.deserializeCLI(CLIName, json_file, parameters)
   if returncode != EXIT_SUCCESS:
-    print("Problem while deserializing the CLI: %s" %deserializeErr)
+    print("Problem while deserializing the CLI: %s" % deserializeErr)
     exit(EXIT_FAILURE)
 
   # Finally compare seeds file
@@ -233,9 +233,9 @@ if __name__ == '__main__':
 
     for i in range(len(serializedRows)):
       if serializedRows[i] != deserializedRows[i]:
-        print('Row #%s comparison failed:' %i)
-        print('Serialize row: %s' %serializedRows[i])
-        print('Deserialize row: %s' %deserializedRows[i])
+        print('Row #%s comparison failed:' % i)
+        print('Serialize row: %s' % serializedRows[i])
+        print('Deserialize row: %s' % deserializedRows[i])
         exit(EXIT_FAILURE)
 
   try:

@@ -27,9 +27,9 @@ class DataProbeUtil:
 
   def _findParameterNodeInScene(self):
     node = None
-    size =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
+    size = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
     for i in range(size):
-      n  = slicer.mrmlScene.GetNthNodeByClass( i, "vtkMRMLScriptedModuleNode" )
+      n = slicer.mrmlScene.GetNthNodeByClass(i, "vtkMRMLScriptedModuleNode")
       if n.GetModuleName() == "DataProbe":
         node = n
     return node
@@ -40,9 +40,9 @@ class DataProbeUtil:
     be called for any other reason.
     """
     node = slicer.vtkMRMLScriptedModuleNode()
-    node.SetSingletonTag( "DataProbe" )
-    node.SetModuleName( "DataProbe" )
-    #node.SetParameter( "label", "1" )
+    node.SetSingletonTag("DataProbe")
+    node.SetModuleName("DataProbe")
+    # node.SetParameter( "label", "1" )
     slicer.mrmlScene.AddNode(node)
     # Since we are a singleton, the scene won't add our node into the scene,
     # but will instead insert a copy, so we find that and return it

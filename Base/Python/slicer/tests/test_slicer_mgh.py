@@ -7,12 +7,12 @@ import shutil
 class SlicerUtilLoadSaveMGHTests(unittest.TestCase):
 
   def setUp(self):
-    for MGHFileNames in ['MGH_T1.mgz','MGH_T1_longname.mgh.gz','MGH_T1_uncompressed.mgz']:
+    for MGHFileNames in ['MGH_T1.mgz', 'MGH_T1_longname.mgh.gz', 'MGH_T1_uncompressed.mgz']:
       try:
         os.remove(os.path.join(slicer.app.temporaryPath, MGHFileNames))
       except OSError:
         pass
-    shutil.rmtree(os.path.join(slicer.app.temporaryPath, 'SlicerUtilLoadSaveMGHTests' ), True)
+    shutil.rmtree(os.path.join(slicer.app.temporaryPath, 'SlicerUtilLoadSaveMGHTests'), True)
 
   def test_saveShortCompressedNode(self):
     node = slicer.util.getNode('T1')

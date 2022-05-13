@@ -4,8 +4,8 @@ import DICOMLib
 
 dcmfile = sys.argv[1]
 
-dcmdump=DICOMLib.DICOMCommand('dcmdump',[dcmfile])
-dump=str(dcmdump.start()).replace("\\r","\r").replace("\\n","\n").splitlines()
+dcmdump = DICOMLib.DICOMCommand('dcmdump', [dcmfile])
+dump = str(dcmdump.start()).replace("\\r", "\r").replace("\\n", "\n").splitlines()
 
 found_private_tag = False
 for line in dump:

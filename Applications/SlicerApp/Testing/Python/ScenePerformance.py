@@ -59,7 +59,7 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
     self.RepeatSpinBox = self.findWidget(self.parent, 'RepeatSpinBox')
 
     widget.setMRMLScene(slicer.mrmlScene)
-    #self.MRMLNodeComboBox.setMRMLScene(slicer.mrmlScene)
+    # self.MRMLNodeComboBox.setMRMLScene(slicer.mrmlScene)
 
     self.TimePushButton.connect('clicked()', self.timeAction)
     self.ActionComboBox.connect('currentIndexChanged(int)', self.updateActionProperties)
@@ -73,7 +73,7 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
     tester = ScenePerformanceTest()
     tester.setUp()
     tester.setRepeat(self.RepeatSpinBox.value)
-    if self.ActionComboBox.currentIndex == 0: # Add Data
+    if self.ActionComboBox.currentIndex == 0:  # Add Data
       if (self.URLLineEdit.text == ''):
         file = self.ActionPathLineEdit.currentPath
       else:
@@ -81,20 +81,20 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
         file = logic.downloadFile(self.URLLineEdit.text, self.URLFileNameLineEdit.text)
       results = tester.addData(file)
       self.ResultsTextEdit.append(results)
-    elif self.ActionComboBox.currentIndex == 1: # Restore
+    elif self.ActionComboBox.currentIndex == 1:  # Restore
       results = tester.restoreSceneView(self.SceneViewSpinBox.value)
       self.ResultsTextEdit.append(results)
-    elif self.ActionComboBox.currentIndex == 3: # Layout
+    elif self.ActionComboBox.currentIndex == 3:  # Layout
       results = tester.setLayout(self.LayoutSpinBox.value)
       self.ResultsTextEdit.append(results)
-    elif self.ActionComboBox.currentIndex == 2: # Close
+    elif self.ActionComboBox.currentIndex == 2:  # Close
       results = tester.closeScene()
       self.ResultsTextEdit.append(results)
-    elif self.ActionComboBox.currentIndex == 4: # Add Node
+    elif self.ActionComboBox.currentIndex == 4:  # Add Node
       node = self.MRMLNodeComboBox.currentNode()
       results = tester.addNode(node)
       self.ResultsTextEdit.append(results)
-    elif self.ActionComboBox.currentIndex == 5: # Modify Node
+    elif self.ActionComboBox.currentIndex == 5:  # Modify Node
       node = self.MRMLNodeComboBox.currentNode()
       results = tester.modifyNode(node)
       self.ResultsTextEdit.append(results)
@@ -137,9 +137,9 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
   def setUp(self):
     self.Repeat = 1
     self.delayDisplay("Setup")
-    #layoutManager = slicer.app.layoutManager()
-    #layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
-    #slicer.mrmlScene.Clear(0)
+    # layoutManager = slicer.app.layoutManager()
+    # layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
+    # slicer.mrmlScene.Clear(0)
 
   def setRepeat(self, repeat):
     self.Repeat = repeat
@@ -156,10 +156,10 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
     self.modifyNodeByID('vtkMRMLScalarVolumeNode2')
     self.modifyNodeByID('vtkMRMLScalarVolumeNode3')
     self.modifyNodeByID('vtkMRMLScalarVolumeDisplayNode2')
-    #self.modifyNodeByID('vtkMRMLModelHierarchyNode2')
+    # self.modifyNodeByID('vtkMRMLModelHierarchyNode2')
     self.modifyNodeByID('vtkMRMLModelNode4')
     self.modifyNodeByID('vtkMRMLModelDisplayNode5')
-    #self.modifyNodeByID('vtkMRMLModelHierarchyNode3')
+    # self.modifyNodeByID('vtkMRMLModelHierarchyNode3')
     self.modifyNodeByID('vtkMRMLModelStorageNode1')
     self.addNodeByID('vtkMRMLModelNode302')
     self.setLayout(3)
@@ -175,7 +175,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
 
   def reportPerformance(self, action, property, time):
     message = self.displayPerformance(action, property, time)
-    print ( f'<DartMeasurement name="{action}-{property}" type="numeric/integer">{time}</DartMeasurement>')
+    print(f'<DartMeasurement name="{action}-{property}" type="numeric/integer">{time}</DartMeasurement>')
     return message
 
   def displayPerformance(self, action, property, time):

@@ -17,17 +17,17 @@ class sceneImport2428(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "Scene Import (Issue 2428)" # make this more human readable by adding spaces
+    parent.title = "Scene Import (Issue 2428)"  # make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
-    parent.contributors = ["Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
+    parent.contributors = ["Steve Pieper (Isomics)"]  # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     This is an example of scripted loadable module bundled in an extension.
     """
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
     This is a module to support testing of <a>https://mantisarchive.slicer.org/view.php?id=2428</a>
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 #
 # qsceneImport2428Widget
@@ -108,15 +108,15 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     # Create segmentation
     segmentationNode = slicer.vtkMRMLSegmentationNode()
     slicer.mrmlScene.AddNode(segmentationNode)
-    segmentationNode.CreateDefaultDisplayNodes() # only needed for display
+    segmentationNode.CreateDefaultDisplayNodes()  # only needed for display
     segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(head)
 
     # Add a few segments
     segments = [
-      ["Segment A", [0,65,32], 25, [1.0,0.0,0.0]],
-      ["Segment B", [1, -14, 30], 30, [1.0,1.0,0.0]],
-      ["Segment C", [0, 28, -7], 15, [0.0,1.0,1.0]],
-      ["Segment D", [31, 33, 27], 25, [0.0,0.0,1.0]] ]
+      ["Segment A", [0, 65, 32], 25, [1.0, 0.0, 0.0]],
+      ["Segment B", [1, -14, 30], 30, [1.0, 1.0, 0.0]],
+      ["Segment C", [0, 28, -7], 15, [0.0, 1.0, 1.0]],
+      ["Segment D", [31, 33, 27], 25, [0.0, 0.0, 1.0]]]
     for [name, position, radius, color] in segments:
       seed = vtk.vtkSphereSource()
       seed.SetCenter(position)
@@ -129,8 +129,8 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(segmentationNode, headLabel, head)
 
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    selectionNode.SetActiveVolumeID( head.GetID() )
-    selectionNode.SetActiveLabelVolumeID( headLabel.GetID() )
+    selectionNode.SetActiveVolumeID(head.GetID())
+    selectionNode.SetActiveLabelVolumeID(headLabel.GetID())
     slicer.app.applicationLogic().PropagateVolumeSelection(0)
 
     #
@@ -140,7 +140,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     # - make a new hierarchy node
     #
 
-    self.delayDisplay( "Building..." )
+    self.delayDisplay("Building...")
 
     parameters = {}
     parameters["InputVolume"] = headLabel.GetID()
@@ -149,9 +149,9 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     parameters["StartLabel"] = -1
     parameters["EndLabel"] = -1
     outHierarchy = slicer.vtkMRMLModelHierarchyNode()
-    outHierarchy.SetScene( slicer.mrmlScene )
-    outHierarchy.SetName( "sceneImport2428Hierachy" )
-    slicer.mrmlScene.AddNode( outHierarchy )
+    outHierarchy.SetScene(slicer.mrmlScene)
+    outHierarchy.SetName("sceneImport2428Hierachy")
+    slicer.mrmlScene.AddNode(outHierarchy)
     parameters["ModelSceneFile"] = outHierarchy
 
     modelMaker = slicer.modules.modelmaker
@@ -162,7 +162,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
 
     success = self.verifyModels()
 
-    success = success and (slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelNode" ) > 3)
+    success = success and (slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelNode") > 3)
 
     self.delayDisplay("Test finished")
 
@@ -197,28 +197,28 @@ verifyModels()
     polyDataInScene = []
     fileNamesInScene = []
     success = True
-    numModels = slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelNode" )
+    numModels = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelNode")
     for n in range(numModels):
-      modelNode = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelNode" )
+      modelNode = slicer.mrmlScene.GetNthNodeByClass(n, "vtkMRMLModelNode")
       polyDataInScene.append(modelNode.GetPolyData())
       for dn in range(modelNode.GetNumberOfDisplayNodes()):
         displayNode = modelNode.GetNthDisplayNode(dn)
         if modelNode.GetPolyData() != displayNode.GetInputPolyData():
-          self.delayDisplay("Model %d does not match its display node %d! (name: %s, ids: %s and %s)" % (n,dn,modelNode.GetName(), modelNode.GetID(),displayNode.GetID()))
+          self.delayDisplay("Model %d does not match its display node %d! (name: %s, ids: %s and %s)" % (n, dn, modelNode.GetName(), modelNode.GetID(), displayNode.GetID()))
           success = False
       for sn in range(modelNode.GetNumberOfStorageNodes()):
         storageNode = modelNode.GetNthStorageNode(sn)
         fileName = storageNode.GetFileName()
         fileNamesInScene.append(fileName)
         if fileName in fileNamesInScene:
-          self.delayDisplay("Model %d has duplicate file name %s! (ids: %s and %s)" % (n,fileName,modelNode.GetID(),storageNode.GetID()))
+          self.delayDisplay("Model %d has duplicate file name %s! (ids: %s and %s)" % (n, fileName, modelNode.GetID(), storageNode.GetID()))
           success = False
 
     #
     # now check that each model has a unique polydata
     #
     for n in range(numModels):
-      modelNode = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelNode" )
+      modelNode = slicer.mrmlScene.GetNthNodeByClass(n, "vtkMRMLModelNode")
       if polyDataInScene.count(modelNode.GetPolyData()) > 1:
         self.delayDisplay(f"Polydata for Model is duplicated! (id: {n} and {modelNode.GetID()})")
         success = False

@@ -7,19 +7,19 @@ import slicer
 from .EditableTreeWidget import EditableTreeWidget
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _map_property(objfunc, name):
   return property(lambda self: getattr(objfunc(self), name),
                   lambda self, value: setattr(objfunc(self), name, value))
 
 
-#=============================================================================
+# =============================================================================
 #
 # _ui_EditExtensionMetadataDialog
 #
-#=============================================================================
+# =============================================================================
 class _ui_EditExtensionMetadataDialog:
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, parent):
     vLayout = qt.QVBoxLayout(parent)
     formLayout = qt.QFormLayout()
@@ -50,17 +50,17 @@ class _ui_EditExtensionMetadataDialog:
     vLayout.addWidget(self.buttonBox)
 
 
-#=============================================================================
+# =============================================================================
 #
 # EditExtensionMetadataDialog
 #
-#=============================================================================
+# =============================================================================
 class EditExtensionMetadataDialog:
   project = _map_property(lambda self: self.ui.nameEdit, "text")
   category = _map_property(lambda self: self.ui.categoryEdit, "text")
   description = _map_property(lambda self: self.ui.descriptionEdit, "plainText")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, parent):
     self.dialog = qt.QDialog(parent)
     self.ui = _ui_EditExtensionMetadataDialog(self.dialog)
@@ -68,7 +68,7 @@ class EditExtensionMetadataDialog:
     self.ui.buttonBox.connect("accepted()", self.accept)
     self.ui.buttonBox.connect("rejected()", self.dialog, "reject()")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def accept(self):
     if not len(self.project):
       slicer.util.errorDisplay("Extension name may not be empty.", windowTitle="Invalid metadata", parent=self.dialog)
@@ -81,11 +81,11 @@ class EditExtensionMetadataDialog:
 
     self.dialog.accept()
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def exec_(self):
     return self.dialog.exec_()
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @property
   def contributors(self):
     result = []
@@ -99,7 +99,7 @@ class EditExtensionMetadataDialog:
         result.append(name)
     return ", ".join(result)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @contributors.setter
   def contributors(self, value):
     self.ui.contributorsList.clear()
@@ -110,7 +110,7 @@ class EditExtensionMetadataDialog:
       try:
         n = c.index("(")
         item.setText(0, c[:n].strip())
-        item.setText(1, c[n+1:-1].strip())
+        item.setText(1, c[n + 1:-1].strip())
 
       except ValueError:
         qt.qWarning("%r: badly formatted contributor" % c)

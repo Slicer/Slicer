@@ -9,15 +9,15 @@ from slicer.ScriptedLoadableModule import *
 class CropVolumeSelfTest(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "CropVolumeSelfTest" # TODO make this more human readable by adding spaces
+    parent.title = "CropVolumeSelfTest"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
-    parent.contributors = ["Andrey Fedorov (BWH)"] # replace with "Firstname Lastname (Org)"
+    parent.contributors = ["Andrey Fedorov (BWH)"]  # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     This module was developed as a self test to perform the operations needed for crop volume.
     """
     parent.acknowledgementText = """
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #

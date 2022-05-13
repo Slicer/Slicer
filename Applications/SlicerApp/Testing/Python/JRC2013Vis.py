@@ -16,16 +16,16 @@ from slicer.util import TESTING_DATA_URL
 class JRC2013Vis(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "JRC2013Vis" # TODO make this more human readable by adding spaces
+    parent.title = "JRC2013Vis"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
-    parent.contributors = ["Nicholas Herlambang (AZE R&D)"] # replace with "Firstname Lastname (Org)"
+    parent.contributors = ["Nicholas Herlambang (AZE R&D)"]  # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     This module was developed as a self test to perform the operations needed for the JRC 2013 Visualization Tutorial
     """
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #
@@ -53,8 +53,8 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
     formLayout = qt.QFormLayout(testsCollapsibleButton)
 
     # test buttons
-    tests = ( ("Part 1: DICOM",self.onPart1DICOM),("Part 2: Head", self.onPart2Head),("Part 3: Liver", self.onPart3Liver),("Part 4: Lung", self.onPart4Lung),)
-    for text,slot in tests:
+    tests = (("Part 1: DICOM", self.onPart1DICOM), ("Part 2: Head", self.onPart2Head), ("Part 3: Liver", self.onPart3Liver), ("Part 4: Lung", self.onPart4Lung),)
+    for text, slot in tests:
       testButton = qt.QPushButton(text)
       testButton.toolTip = "Run the test."
       formLayout.addWidget(testButton)
@@ -83,7 +83,7 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
     tester.setUp()
     tester.test_Part4Lung()
 
-  def onStartStopDicomPeer(self,flag):
+  def onStartStopDicomPeer(self, flag):
     if flag:
       self.startStopDicomPeerButton.setEnabled(False)
       dicomFilesDirectory = slicer.app.temporaryPath
@@ -197,8 +197,8 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       import os
       configFilePath = dicomFilesDirectory + '/Dcmtk-db/dcmqrscp.cfg'
       processCurrentPath = dicomFilesDirectory + '/Dcmtk-db/'
-      print("configFilePath: "+os.path.abspath(configFilePath))
-      print("processCurrentPath: "+os.path.abspath(processCurrentPath))
+      print("configFilePath: " + os.path.abspath(configFilePath))
+      print("processCurrentPath: " + os.path.abspath(processCurrentPath))
 
       dcmqrscpExeOptions = (
         '/bin',
@@ -249,20 +249,20 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       self.delayDisplay('Change Level')
       layoutManager = slicer.app.layoutManager()
       redWidget = layoutManager.sliceWidget('Red')
-      slicer.util.clickAndDrag(redWidget,start=(10,10),end=(10,40))
+      slicer.util.clickAndDrag(redWidget, start=(10, 10), end=(10, 40))
 
       self.delayDisplay('Change Window')
-      slicer.util.clickAndDrag(redWidget,start=(10,10),end=(40,10))
+      slicer.util.clickAndDrag(redWidget, start=(10, 10), end=(40, 10))
 
       self.delayDisplay('Change Layout')
       layoutManager = slicer.app.layoutManager()
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
 
       self.delayDisplay('Zoom')
-      slicer.util.clickAndDrag(redWidget,button='Right',start=(10,10),end=(10,40))
+      slicer.util.clickAndDrag(redWidget, button='Right', start=(10, 10), end=(10, 40))
 
       self.delayDisplay('Pan')
-      slicer.util.clickAndDrag(redWidget,button='Middle',start=(10,10),end=(40,40))
+      slicer.util.clickAndDrag(redWidget, button='Middle', start=(10, 10), end=(40, 40))
 
       self.delayDisplay('Center')
       redWidget.sliceController().fitSliceToBackground()
@@ -280,7 +280,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpView)
 
       self.delayDisplay('Shift Mouse')
-      slicer.util.clickAndDrag(redWidget,button='None',start=(100,100),end=(140,140),modifiers=['Shift'])
+      slicer.util.clickAndDrag(redWidget, button='None', start=(100, 100), end=(140, 140), modifiers=['Shift'])
 
       self.delayDisplay('Conventional, Link, Slice Model')
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
@@ -293,7 +293,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
 
       self.delayDisplay('Zoom')
       threeDView = layoutManager.threeDWidget(0).threeDView()
-      slicer.util.clickAndDrag(threeDView,button='Right')
+      slicer.util.clickAndDrag(threeDView, button='Right')
 
       self.delayDisplay('Test passed!')
     except Exception as e:
@@ -327,9 +327,9 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       mainWindow = slicer.util.mainWindow()
       layoutManager = slicer.app.layoutManager()
       threeDView = layoutManager.threeDWidget(0).threeDView()
-      redWidget = layoutManager.sliceWidget('vtkMRMLSliceNode1') # it would be 'Red' in a recent scene
+      redWidget = layoutManager.sliceWidget('vtkMRMLSliceNode1')  # it would be 'Red' in a recent scene
       redController = redWidget.sliceController()
-      greenWidget = layoutManager.sliceWidget('vtkMRMLSliceNode2') # it would be 'Green' in a recent scene
+      greenWidget = layoutManager.sliceWidget('vtkMRMLSliceNode2')  # it would be 'Green' in a recent scene
       greenController = greenWidget.sliceController()
 
       self.delayDisplay('Models and Slice Model')
@@ -337,7 +337,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       redWidget.sliceController().setSliceVisible(True)
 
       self.delayDisplay('Scroll Slices')
-      for offset in range(-20,20,2):
+      for offset in range(-20, 20, 2):
         redController.setSliceOffsetValue(offset)
 
       self.delayDisplay('Skin Opacity')
@@ -372,7 +372,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
 
       self.delayDisplay('Zoom')
       threeDView = layoutManager.threeDWidget(0).threeDView()
-      slicer.util.clickAndDrag(threeDView,button='Right')
+      slicer.util.clickAndDrag(threeDView, button='Right')
 
       self.delayDisplay('Test passed!')
     except Exception as e:
@@ -412,7 +412,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       mainWindow.moduleSelector().selectModule('Models')
       segmentII = slicer.util.getNode('LiverSegment_II')
       segmentII.GetDisplayNode().SetVisibility(0)
-      slicer.util.clickAndDrag(threeDView,start=(10,200),end=(10,10))
+      slicer.util.clickAndDrag(threeDView, start=(10, 200), end=(10, 10))
 
       self.delayDisplay('Segment II visible')
       segmentII.GetDisplayNode().SetVisibility(1)
@@ -433,7 +433,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
         modelNode.GetDisplayNode().SetVisibility(0)
 
       segmentVII = slicer.util.getNode('LiverSegment_II')
-      transparentNodes = ('MiddleHepaticVein_and_Branches','LiverSegment_IVb','LiverSegmentV',)
+      transparentNodes = ('MiddleHepaticVein_and_Branches', 'LiverSegment_IVb', 'LiverSegmentV',)
       for nodeName in transparentNodes:
         modelNode = slicer.util.getNode(nodeName)
         modelNode.GetDisplayNode().SetOpacity(0.5)

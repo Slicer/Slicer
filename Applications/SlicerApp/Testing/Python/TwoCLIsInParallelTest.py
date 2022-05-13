@@ -10,14 +10,14 @@ from slicer.ScriptedLoadableModule import *
 
 class TwoCLIsInParallelTest(ScriptedLoadableModule):
   def __init__(self, parent):
-    parent.title = "TwoCLIsInParallelTest" # TODO make this more human readable by adding spaces
+    parent.title = "TwoCLIsInParallelTest"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = ["CLI4Test"]
     parent.contributors = ["Johan Andruejol (Kitware)"]
     parent.helpText = """
     This is a self test that tests running two CLIs in parallel through python
     """
-    parent.acknowledgementText = """""" # replace with organization, grant and thanks.
+    parent.acknowledgementText = """"""  # replace with organization, grant and thanks.
     self.parent = parent
 
     # Add this test to the SelfTest module's list for discovery when the module
@@ -64,7 +64,7 @@ class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
     cliNode = slicer.cli.run(cliModule, cliNode, self.parameters, False)
 
   def onModule1Modified(self, cliNode, event):
-    print("--",cliNode.GetStatusString(),":", cliNode.GetName())
+    print("--", cliNode.GetStatusString(), ":", cliNode.GetName())
     if not cliNode.IsBusy():
       self.removeObservers(cliNode, self.StatusModifiedEvent, self.onModule1Modified)
 
@@ -75,9 +75,9 @@ class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
     cliNode = slicer.cli.run(cliModule, cliNode, self.parameters, True)
     self.success = cliNode.GetStatusString() == 'Completed'
 
-  def addObserver(self, object, event, method, group = 'none'):
+  def addObserver(self, object, event, method, group='none'):
     if self.hasObserver(object, event, method):
-      print(object.GetName(),'already has observer')
+      print(object.GetName(), 'already has observer')
       return
     tag = object.AddObserver(event, method)
     self.Observations.append([object, event, method, group, tag])

@@ -23,7 +23,7 @@ class DICOMExportScalarVolume:
   TODO: delete temp directories and files
   """
 
-  def __init__(self,studyUID,volumeNode,tags,directory,filenamePrefix=None):
+  def __init__(self, studyUID, volumeNode, tags, directory, filenamePrefix=None):
     """
     studyUID parameter is not used (studyUID is retrieved from tags).
     """
@@ -32,9 +32,9 @@ class DICOMExportScalarVolume:
     self.tags = tags
     self.directory = directory
     self.filenamePrefix = filenamePrefix if filenamePrefix else "IMG"
-    #self.referenceFile = None
+    # self.referenceFile = None
 
-  #TODO: May come in use when appending to existing study
+  # TODO: May come in use when appending to existing study
   # def parametersFromStudy(self,studyUID=None):
     # """Return a dictionary of the required conversion parameters
     # based on the studyUID found in the dicom dictionary (empty if
@@ -91,7 +91,7 @@ class DICOMExportScalarVolume:
             # p[tags[tag]] = value
     # return p
 
-  def progress(self,string):
+  def progress(self, string):
     # TODO: make this a callback for a gui progress dialog
     print(string)
 
@@ -134,8 +134,8 @@ class DICOMExportScalarVolume:
       else:
         # labelmap volume
         scalarRange = displayNode.GetScalarRange()
-        cliparameters['windowCenter'] = str((scalarRange[0]+scalarRange[0])/2.0)
-        cliparameters['windowWidth'] = str(scalarRange[1]-scalarRange[0])
+        cliparameters['windowCenter'] = str((scalarRange[0] + scalarRange[0]) / 2.0)
+        cliparameters['windowWidth'] = str(scalarRange[1] - scalarRange[0])
     cliparameters['contentDate'] = self.tags['Content Date']
     cliparameters['contentTime'] = self.tags['Content Time']
 

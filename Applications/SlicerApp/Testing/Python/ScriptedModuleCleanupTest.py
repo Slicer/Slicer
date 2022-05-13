@@ -47,13 +47,13 @@ def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
     * avoid deleting the created temporary directory
   """
 
-  temporaryModuleDirPath = tempfile.mkdtemp().replace('\\','/')
+  temporaryModuleDirPath = tempfile.mkdtemp().replace('\\', '/')
   try:
     # Copy helper module that creates a file when startup completed event is received
-    currentDirPath = os.path.dirname(__file__).replace('\\','/')
+    currentDirPath = os.path.dirname(__file__).replace('\\', '/')
     from shutil import copyfile
-    copyfile(currentDirPath+'/ScriptedModuleCleanupTestHelperModule.py',
-      temporaryModuleDirPath+'/ModuleCleanup.py')
+    copyfile(currentDirPath + '/ScriptedModuleCleanupTestHelperModule.py',
+      temporaryModuleDirPath + '/ModuleCleanup.py')
 
     common_arguments = [
       '--no-splash',

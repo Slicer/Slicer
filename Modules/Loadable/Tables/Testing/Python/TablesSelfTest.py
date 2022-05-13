@@ -64,7 +64,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
   # ------------------------------------------------------------------------------
   def test_TablesSelfTest_FullTest1(self):
     # Check for Tables module
-    self.assertTrue( slicer.modules.tables )
+    self.assertTrue(slicer.modules.tables)
 
     self.section_SetupPathsAndNames()
     self.section_CreateTable()
@@ -89,7 +89,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
     # Add a new column
     column = tableNode.AddColumn()
-    self.assertTrue( column is not None )
+    self.assertTrue(column is not None)
     column.InsertNextValue("some")
     column.InsertNextValue("data")
     column.InsertNextValue("in this")
@@ -98,9 +98,9 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
     # Check table
     table = tableNode.GetTable()
-    self.assertTrue( table is not None )
-    self.assertTrue( table.GetNumberOfRows() == 4 )
-    self.assertTrue( table.GetNumberOfColumns() == 1 )
+    self.assertTrue(table is not None)
+    self.assertTrue(table.GetNumberOfRows() == 4)
+    self.assertTrue(table.GetNumberOfColumns() == 1)
 
   # ------------------------------------------------------------------------------
   def section_TableProperties(self):
@@ -123,22 +123,22 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
     # Make sure subject hierarchy auto-creation is on for this test
     tablesWidget = slicer.modules.tables.widgetRepresentation()
-    self.assertTrue( tablesWidget is not None )
+    self.assertTrue(tablesWidget is not None)
 
     tableNode = slicer.util.getNode(self.sampleTableName)
 
     tablesWidget.setCurrentTableNode(tableNode)
 
-    lockTableButton = slicer.util.findChildren(widget=tablesWidget,name='LockTableButton')[0]
-    copyButton = slicer.util.findChildren(widget=tablesWidget,name='CopyButton')[0]
-    pasteButton = slicer.util.findChildren(widget=tablesWidget,name='PasteButton')[0]
-    addRowButton = slicer.util.findChildren(widget=tablesWidget,name='RowInsertButton')[0]
-    deleteRowButton = slicer.util.findChildren(widget=tablesWidget,name='RowDeleteButton')[0]
-    lockFirstRowButton = slicer.util.findChildren(widget=tablesWidget,name='LockFirstRowButton')[0]
-    addColumnButton = slicer.util.findChildren(widget=tablesWidget,name='ColumnInsertButton')[0]
-    deleteColumnButton = slicer.util.findChildren(widget=tablesWidget,name='ColumnDeleteButton')[0]
-    lockFirstColumnButton = slicer.util.findChildren(widget=tablesWidget,name='LockFirstColumnButton')[0]
-    tableView = slicer.util.findChildren(widget=tablesWidget,name='TableView')[0]
+    lockTableButton = slicer.util.findChildren(widget=tablesWidget, name='LockTableButton')[0]
+    copyButton = slicer.util.findChildren(widget=tablesWidget, name='CopyButton')[0]
+    pasteButton = slicer.util.findChildren(widget=tablesWidget, name='PasteButton')[0]
+    addRowButton = slicer.util.findChildren(widget=tablesWidget, name='RowInsertButton')[0]
+    deleteRowButton = slicer.util.findChildren(widget=tablesWidget, name='RowDeleteButton')[0]
+    lockFirstRowButton = slicer.util.findChildren(widget=tablesWidget, name='LockFirstRowButton')[0]
+    addColumnButton = slicer.util.findChildren(widget=tablesWidget, name='ColumnInsertButton')[0]
+    deleteColumnButton = slicer.util.findChildren(widget=tablesWidget, name='ColumnDeleteButton')[0]
+    lockFirstColumnButton = slicer.util.findChildren(widget=tablesWidget, name='LockFirstColumnButton')[0]
+    tableView = slicer.util.findChildren(widget=tablesWidget, name='TableView')[0]
 
     tableModel = tableView.model()
 
@@ -149,32 +149,32 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Test add rows/columns")
 
     addRowButton.click()
-    self.assertTrue( tableNode.GetNumberOfRows() == initialNumberOfRows+1 )
+    self.assertTrue(tableNode.GetNumberOfRows() == initialNumberOfRows + 1)
 
     addColumnButton.click()
-    self.assertTrue( tableNode.GetNumberOfColumns() == initialNumberOfColumns+1 )
+    self.assertTrue(tableNode.GetNumberOfColumns() == initialNumberOfColumns + 1)
 
     #############
     self.delayDisplay("Test lock first row/column")
 
-    self.assertTrue( tableModel.data(tableModel.index(0,0)) == 'Column 1' )
+    self.assertTrue(tableModel.data(tableModel.index(0, 0)) == 'Column 1')
     lockFirstRowButton.click()
-    self.assertTrue( tableModel.data(tableModel.index(0,0)) == 'some' )
+    self.assertTrue(tableModel.data(tableModel.index(0, 0)) == 'some')
     lockFirstColumnButton.click()
-    self.assertTrue( tableModel.data(tableModel.index(0,0)) == '' )
+    self.assertTrue(tableModel.data(tableModel.index(0, 0)) == '')
     lockFirstRowButton.click()
     lockFirstColumnButton.click()
 
     #############
     self.delayDisplay("Test delete row/column")
 
-    tableView.selectionModel().select(tableModel.index(1,1),qt.QItemSelectionModel.Select) # Select second item in second column
+    tableView.selectionModel().select(tableModel.index(1, 1), qt.QItemSelectionModel.Select)  # Select second item in second column
     deleteColumnButton.click()
-    self.assertTrue( tableNode.GetNumberOfColumns() == initialNumberOfColumns )
+    self.assertTrue(tableNode.GetNumberOfColumns() == initialNumberOfColumns)
 
-    tableView.selectionModel().select(tableModel.index(4,0),qt.QItemSelectionModel.Select) # Select 5th item in first column
+    tableView.selectionModel().select(tableModel.index(4, 0), qt.QItemSelectionModel.Select)  # Select 5th item in first column
     deleteRowButton.click()
-    self.assertTrue( tableNode.GetNumberOfRows() == initialNumberOfRows )
+    self.assertTrue(tableNode.GetNumberOfRows() == initialNumberOfRows)
 
     #############
     self.delayDisplay("Test if buttons are disabled")
@@ -182,24 +182,24 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     lockTableButton.click()
 
     addRowButton.click()
-    self.assertTrue( tableNode.GetNumberOfRows() == initialNumberOfRows )
+    self.assertTrue(tableNode.GetNumberOfRows() == initialNumberOfRows)
 
     addColumnButton.click()
-    self.assertTrue( tableNode.GetNumberOfColumns() == initialNumberOfColumns )
+    self.assertTrue(tableNode.GetNumberOfColumns() == initialNumberOfColumns)
 
-    tableView.selectionModel().select(tableView.model().index(0,0),qt.QItemSelectionModel.Select)
+    tableView.selectionModel().select(tableView.model().index(0, 0), qt.QItemSelectionModel.Select)
 
     deleteColumnButton.click()
-    self.assertTrue( tableNode.GetNumberOfColumns() == initialNumberOfColumns )
+    self.assertTrue(tableNode.GetNumberOfColumns() == initialNumberOfColumns)
 
     deleteRowButton.click()
-    self.assertTrue( tableNode.GetNumberOfRows() == initialNumberOfRows )
+    self.assertTrue(tableNode.GetNumberOfRows() == initialNumberOfRows)
 
     lockFirstRowButton.click()
-    self.assertTrue( tableModel.data(tableModel.index(0,0)) == 'Column 1' )
+    self.assertTrue(tableModel.data(tableModel.index(0, 0)) == 'Column 1')
 
     lockFirstColumnButton.click()
-    self.assertTrue( tableModel.data(tableModel.index(0,0)) == 'Column 1' )
+    self.assertTrue(tableModel.data(tableModel.index(0, 0)) == 'Column 1')
 
     lockTableButton.click()
 
@@ -213,12 +213,12 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     # Paste first column into a newly created second column
     addColumnButton.click()
 
-    tableView.setCurrentIndex(tableModel.index(0,1))
+    tableView.setCurrentIndex(tableModel.index(0, 1))
     pasteButton.click()
 
     # Check if first and second column content is the same
     for rowIndex in range(5):
-      self.assertEqual( tableModel.data(tableModel.index(rowIndex,0)), tableModel.data(tableModel.index(rowIndex,1)) )
+      self.assertEqual(tableModel.data(tableModel.index(rowIndex, 0)), tableModel.data(tableModel.index(rowIndex, 1)))
 
   # ------------------------------------------------------------------------------
   def section_CliTableInputOutput(self):
@@ -236,8 +236,8 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     inputTableNode.AddEmptyRow()
     for row in range(3):
       for col in range(3):
-        inputTableNode.SetCellText(row,col,str((row+1)*(col+1)))
-    inputTableNode.SetCellText(0,0,"source")
+        inputTableNode.SetCellText(row, col, str((row + 1) * (col + 1)))
+    inputTableNode.SetCellText(0, 0, "source")
 
     outputTableNode = slicer.vtkMRMLTableNode()
     slicer.mrmlScene.AddNode(outputTableNode)
@@ -261,12 +261,12 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     # of the first column, which is set to "Computed first" and "Computed second" strings
     for row in range(3):
       for col in range(3):
-        if row==0 and col==0:
-          self.assertTrue( outputTableNode.GetCellText(row, col) == "Computed first")
-        elif row==1 and col==0:
-          self.assertTrue( outputTableNode.GetCellText(row, col) == "Computed second")
+        if row == 0 and col == 0:
+          self.assertTrue(outputTableNode.GetCellText(row, col) == "Computed first")
+        elif row == 1 and col == 0:
+          self.assertTrue(outputTableNode.GetCellText(row, col) == "Computed second")
         else:
-          self.assertTrue( outputTableNode.GetCellText(row, col) == inputTableNode.GetCellText(row, col) )
+          self.assertTrue(outputTableNode.GetCellText(row, col) == inputTableNode.GetCellText(row, col))
 
   def createDummyTransform(self):
     transformNode = slicer.vtkMRMLLinearTransformNode()
@@ -275,7 +275,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
   def createDummyVolume(self):
     imageData = vtk.vtkImageData()
-    imageData.SetDimensions(10,10,10)
+    imageData.SetDimensions(10, 10, 10)
     imageData.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
     volumeNode = slicer.vtkMRMLScalarVolumeNode()
     volumeNode.SetAndObserveImageData(imageData)

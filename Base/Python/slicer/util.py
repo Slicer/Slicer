@@ -120,12 +120,12 @@ def startupEnvironment():
 # Custom Import
 #
 
-def importVTKClassesFromDirectory(directory, dest_module_name, filematch = '*'):
+def importVTKClassesFromDirectory(directory, dest_module_name, filematch='*'):
   from vtk import vtkObjectBase
   importClassesFromDirectory(directory, dest_module_name, vtkObjectBase, filematch)
 
 
-def importQtClassesFromDirectory(directory, dest_module_name, filematch = '*'):
+def importQtClassesFromDirectory(directory, dest_module_name, filematch='*'):
   importClassesFromDirectory(directory, dest_module_name, 'PythonQtClassWrapper', filematch)
 
 
@@ -137,7 +137,7 @@ def importQtClassesFromDirectory(directory, dest_module_name, filematch = '*'):
 __import_classes_cache = set()
 
 
-def importClassesFromDirectory(directory, dest_module_name, type_info, filematch = '*'):
+def importClassesFromDirectory(directory, dest_module_name, type_info, filematch='*'):
   # Create entry for __import_classes_cache
   cache_key = ",".join([str(arg) for arg in [directory, dest_module_name, type_info, filematch]])
   # Check if function has already been called with this set of parameters
@@ -208,7 +208,7 @@ def lookupTopLevelWidget(objectName):
   """
   from slicer import app
   for w in app.topLevelWidgets():
-    if hasattr(w,'objectName'):
+    if hasattr(w, 'objectName'):
       if w.objectName == objectName: return w
   # not found
   raise RuntimeError("Failed to obtain reference to '%s'" % objectName)
@@ -241,7 +241,7 @@ def pythonShell():
   return console
 
 
-def showStatusMessage(message, duration = 0):
+def showStatusMessage(message, duration=0):
   """Display ``message`` in the status bar.
   """
   mw = mainWindow()
@@ -281,7 +281,7 @@ def findChildren(widget=None, name="", text="", title="", className=""):
     # sometimes, p is null, f.e. when using --python-script or --python-code
     if not p:
       continue
-    if not hasattr(p,'children'):
+    if not hasattr(p, 'children'):
       continue
     parents += p.children()
     matched_filter_criteria = 0
@@ -338,7 +338,7 @@ def loadUI(path):
   return widget
 
 
-def startQtDesigner(args = None):
+def startQtDesigner(args=None):
   """ Start Qt Designer application to allow editing UI files.
   """
   import slicer
@@ -366,7 +366,7 @@ def childWidgetVariables(widget):
     self.ui.outputSelector.setMRMLScene(slicer.mrmlScene)
 
   """
-  ui = type('', (), {})() # empty object
+  ui = type('', (), {})()  # empty object
   childWidgets = findChildren(widget)
   for childWidget in childWidgets:
     if hasattr(childWidget, "name"):
@@ -411,17 +411,17 @@ def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeF
 
   for (widget, parameterName) in parameterEditWidgets:
     widgetClassName = widget.className()
-    if widgetClassName=="QSpinBox":
+    if widgetClassName == "QSpinBox":
       widget.connect("valueChanged(int)", updateParameterNodeFromGUI)
-    elif widgetClassName=="QCheckBox":
+    elif widgetClassName == "QCheckBox":
       widget.connect("clicked()", updateParameterNodeFromGUI)
-    elif widgetClassName=="QPushButton":
+    elif widgetClassName == "QPushButton":
       widget.connect("toggled(bool)", updateParameterNodeFromGUI)
-    elif widgetClassName=="qMRMLNodeComboBox":
+    elif widgetClassName == "qMRMLNodeComboBox":
       widget.connect("currentNodeIDChanged(QString)", updateParameterNodeFromGUI)
-    elif widgetClassName=="QComboBox":
+    elif widgetClassName == "QComboBox":
       widget.connect("currentIndexChanged(int)", updateParameterNodeFromGUI)
-    elif widgetClassName=="ctkSliderWidget":
+    elif widgetClassName == "ctkSliderWidget":
       widget.connect("valueChanged(double)", updateParameterNodeFromGUI)
 
 
@@ -431,15 +431,15 @@ def removeParameterEditWidgetConnections(parameterEditWidgets, updateParameterNo
 
   for (widget, parameterName) in parameterEditWidgets:
     widgetClassName = widget.className()
-    if widgetClassName=="QSpinBox":
+    if widgetClassName == "QSpinBox":
       widget.disconnect("valueChanged(int)", updateParameterNodeFromGUI)
-    elif widgetClassName=="QPushButton":
+    elif widgetClassName == "QPushButton":
       widget.disconnect("toggled(bool)", updateParameterNodeFromGUI)
-    elif widgetClassName=="qMRMLNodeComboBox":
+    elif widgetClassName == "qMRMLNodeComboBox":
       widget.disconnect("currentNodeIDChanged(QString)", updateParameterNodeFromGUI)
-    elif widgetClassName=="QComboBox":
+    elif widgetClassName == "QComboBox":
       widget.disconnect("currentIndexChanged(int)", updateParameterNodeFromGUI)
-    elif widgetClassName=="ctkSliderWidget":
+    elif widgetClassName == "ctkSliderWidget":
       widget.disconnect("valueChanged(double)", updateParameterNodeFromGUI)
 
 
@@ -456,21 +456,21 @@ def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
   for (widget, parameterName) in parameterEditWidgets:
     widgetClassName = widget.className()
     parameterValue = parameterNode.GetParameter(parameterName)
-    if widgetClassName=="QSpinBox":
+    if widgetClassName == "QSpinBox":
       if parameterValue:
         widget.value = int(float(parameterValue))
       else:
         widget.value = 0
-    if widgetClassName=="ctkSliderWidget":
+    if widgetClassName == "ctkSliderWidget":
       if parameterValue:
         widget.value = float(parameterValue)
       else:
         widget.value = 0.0
-    elif widgetClassName=="QCheckBox" or widgetClassName=="QPushButton":
+    elif widgetClassName == "QCheckBox" or widgetClassName == "QPushButton":
       widget.checked = (parameterValue == "true")
-    elif widgetClassName=="QComboBox":
+    elif widgetClassName == "QComboBox":
       widget.setCurrentText(parameterValue)
-    elif widgetClassName=="qMRMLNodeComboBox":
+    elif widgetClassName == "qMRMLNodeComboBox":
       widget.currentNodeID = parameterNode.GetNodeReferenceID(parameterName)
 
 
@@ -486,13 +486,13 @@ def updateNodeFromParameterEditWidgets(parameterEditWidgets, parameterNode):
 
   for (widget, parameterName) in parameterEditWidgets:
     widgetClassName = widget.className()
-    if widgetClassName=="QSpinBox" or widgetClassName=="ctkSliderWidget":
+    if widgetClassName == "QSpinBox" or widgetClassName == "ctkSliderWidget":
       parameterNode.SetParameter(parameterName, str(widget.value))
-    elif widgetClassName=="QCheckBox" or widgetClassName=="QPushButton":
+    elif widgetClassName == "QCheckBox" or widgetClassName == "QPushButton":
       parameterNode.SetParameter(parameterName, "true" if widget.checked else "false")
-    elif widgetClassName=="QComboBox":
+    elif widgetClassName == "QComboBox":
       parameterNode.SetParameter(parameterName, widget.currentText)
-    elif widgetClassName=="qMRMLNodeComboBox":
+    elif widgetClassName == "qMRMLNodeComboBox":
       parameterNode.SetNodeReferenceID(parameterName, widget.currentNodeID)
 
 
@@ -821,7 +821,7 @@ def loadScalarOverlay(filename, modelNodeID, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  return loadNodeFromFile(filename, 'ScalarOverlayFile', {'modelNodeId': modelNodeID }, returnNode)
+  return loadNodeFromFile(filename, 'ScalarOverlayFile', {'modelNodeId': modelNodeID}, returnNode)
 
 
 def loadSegmentation(filename, returnNode=False):
@@ -1260,7 +1260,7 @@ def reloadScriptedModule(moduleName):
   p = os.path.dirname(filePath)
 
   if not p in sys.path:
-    sys.path.insert(0,p)
+    sys.path.insert(0, p)
 
   with open(filePath, encoding='utf8') as fp:
     reloaded_module = imp.load_module(
@@ -1310,7 +1310,7 @@ def setModulePanelTitleVisible(visible):
   mw = mainWindow()
   if mw is None:
     return
-  modulePanelDockWidget = mw.findChildren('QDockWidget','PanelDockWidget')[0]
+  modulePanelDockWidget = mw.findChildren('QDockWidget', 'PanelDockWidget')[0]
   if visible:
     modulePanelDockWidget.setTitleBarWidget(None)
   else:
@@ -1542,7 +1542,7 @@ def getSubjectHierarchyItemChildren(parentItem=None, recursive=False):
 # MRML-numpy
 #
 
-def array(pattern = "", index = 0):
+def array(pattern="", index=0):
   """Return the array you are "most likely to want" from the indexth
 
   MRML node that matches the pattern.
@@ -1571,7 +1571,7 @@ def array(pattern = "", index = 0):
     return arrayFromTransformMatrix(node)
 
   # TODO: accessors for other node types: polydata (verts, polys...), colors
-  raise RuntimeError("Cannot get node "+node.GetID()+" as array")
+  raise RuntimeError("Cannot get node " + node.GetID() + " as array")
 
 
 def arrayFromVolume(volumeNode):
@@ -1607,9 +1607,9 @@ def arrayFromVolume(volumeNode):
       nshape = nshape + (components,)
     narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
   elif volumeNode.GetClassName() in tensorTypes:
-    narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetTensors()).reshape(nshape+(3,3))
+    narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetTensors()).reshape(nshape + (3, 3))
   else:
-    raise RuntimeError("Unsupported volume type: "+volumeNode.GetClassName())
+    raise RuntimeError("Unsupported volume type: " + volumeNode.GetClassName())
   return narray
 
 
@@ -1657,9 +1657,9 @@ def _vtkArrayFromModelData(modelNode, arrayName, location):
 
   :raises ValueError: in case of failure
   """
-  if location=='point':
+  if location == 'point':
     modelData = modelNode.GetMesh().GetPointData()
-  elif location=='cell':
+  elif location == 'cell':
     modelData = modelNode.GetMesh().GetCellData()
   else:
     raise ValueError("Location attribute must be set to 'point' or 'cell'")
@@ -1815,16 +1815,16 @@ def vtkMatrixFromArray(narray):
   from vtk import vtkMatrix4x4
   from vtk import vtkMatrix3x3
   narrayshape = narray.shape
-  if narrayshape == (4,4):
+  if narrayshape == (4, 4):
     vmatrix = vtkMatrix4x4()
     updateVTKMatrixFromArray(vmatrix, narray)
     return vmatrix
-  elif narrayshape == (3,3):
+  elif narrayshape == (3, 3):
     vmatrix = vtkMatrix3x3()
     updateVTKMatrixFromArray(vmatrix, narray)
     return vmatrix
   else:
-    raise RuntimeError("Unsupported numpy array shape: "+str(narrayshape)+" expected (4,4)")
+    raise RuntimeError("Unsupported numpy array shape: " + str(narrayshape) + " expected (4,4)")
 
 
 def updateVTKMatrixFromArray(vmatrix, narray):
@@ -1868,11 +1868,11 @@ def arrayFromTransformMatrix(transformNode, toWorld=False):
   else:
     success = transformNode.GetMatrixTransformToParent(vmatrix)
   if not success:
-    raise RuntimeError("Failed to get transformation matrix from node "+transformNode.GetID())
+    raise RuntimeError("Failed to get transformation matrix from node " + transformNode.GetID())
   return arrayFromVTKMatrix(vmatrix)
 
 
-def updateTransformMatrixFromArray(transformNode, narray, toWorld = False):
+def updateTransformMatrixFromArray(transformNode, narray, toWorld=False):
   """Set transformation matrix from a numpy array of size 4x4 (toParent).
 
   :param world: if set to True then the transform will be set so that transform
@@ -1883,13 +1883,13 @@ def updateTransformMatrixFromArray(transformNode, narray, toWorld = False):
   import numpy as np
   from vtk import vtkMatrix4x4
   narrayshape = narray.shape
-  if narrayshape != (4,4):
-    raise RuntimeError("Unsupported numpy array shape: "+str(narrayshape)+" expected (4,4)")
+  if narrayshape != (4, 4):
+    raise RuntimeError("Unsupported numpy array shape: " + str(narrayshape) + " expected (4,4)")
   if toWorld and transformNode.GetParentTransformNode():
     # thisToParent = worldToParent * thisToWorld = inv(parentToWorld) * toWorld
     narrayParentToWorld = arrayFromTransformMatrix(transformNode.GetParentTransformNode())
     thisToParent = np.dot(np.linalg.inv(narrayParentToWorld), narray)
-    updateTransformMatrixFromArray(transformNode, thisToParent, toWorld = False)
+    updateTransformMatrixFromArray(transformNode, thisToParent, toWorld=False)
   else:
     vmatrix = vtkMatrix4x4()
     updateVTKMatrixFromArray(vmatrix, narray)
@@ -2035,7 +2035,7 @@ def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, re
     slicer.mrmlScene.RemoveNode(labelmapVolumeNode)
 
 
-def arrayFromMarkupsControlPoints(markupsNode, world = False):
+def arrayFromMarkupsControlPoints(markupsNode, world=False):
   """Return control point positions of a markups node as rows in a numpy array (of size Nx3).
 
   :param world: if set to True then the control points coordinates are returned in world coordinate system
@@ -2050,13 +2050,13 @@ def arrayFromMarkupsControlPoints(markupsNode, world = False):
   narray = np.zeros([numberOfControlPoints, 3])
   for controlPointIndex in range(numberOfControlPoints):
     if world:
-      markupsNode.GetNthControlPointPositionWorld(controlPointIndex, narray[controlPointIndex,:])
+      markupsNode.GetNthControlPointPositionWorld(controlPointIndex, narray[controlPointIndex, :])
     else:
-      markupsNode.GetNthControlPointPosition(controlPointIndex, narray[controlPointIndex,:])
+      markupsNode.GetNthControlPointPosition(controlPointIndex, narray[controlPointIndex, :])
   return narray
 
 
-def updateMarkupsControlPointsFromArray(markupsNode, narray, world = False):
+def updateMarkupsControlPointsFromArray(markupsNode, narray, world=False):
   """Sets control point positions in a markups node from a numpy array of size Nx3.
 
   :param world: if set to True then the control point coordinates are expected in world coordinate system.
@@ -2069,30 +2069,30 @@ def updateMarkupsControlPointsFromArray(markupsNode, narray, world = False):
     markupsNode.RemoveAllControlPoints()
     return
   if len(narrayshape) != 2 or narrayshape[1] != 3:
-    raise RuntimeError("Unsupported numpy array shape: "+str(narrayshape)+" expected (N,3)")
+    raise RuntimeError("Unsupported numpy array shape: " + str(narrayshape) + " expected (N,3)")
   numberOfControlPoints = narrayshape[0]
   oldNumberOfControlPoints = markupsNode.GetNumberOfControlPoints()
   # Update existing control points
   for controlPointIndex in range(min(numberOfControlPoints, oldNumberOfControlPoints)):
     if world:
-      markupsNode.SetNthControlPointPositionWorldFromArray(controlPointIndex, narray[controlPointIndex,:])
+      markupsNode.SetNthControlPointPositionWorldFromArray(controlPointIndex, narray[controlPointIndex, :])
     else:
-      markupsNode.SetNthControlPointPositionFromArray(controlPointIndex, narray[controlPointIndex,:])
+      markupsNode.SetNthControlPointPositionFromArray(controlPointIndex, narray[controlPointIndex, :])
   if numberOfControlPoints >= oldNumberOfControlPoints:
     # Add new points to the markup node
     from vtk import vtkVector3d
     for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints):
       if world:
-        markupsNode.AddControlPointWorld(vtkVector3d(narray[controlPointIndex,:]))
+        markupsNode.AddControlPointWorld(vtkVector3d(narray[controlPointIndex, :]))
       else:
-        markupsNode.AddControlPoint(vtkVector3d(narray[controlPointIndex,:]))
+        markupsNode.AddControlPoint(vtkVector3d(narray[controlPointIndex, :]))
   else:
     # Remove extra point from the markup node
     for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints, -1):
-      markupsNode.RemoveNthControlPoint(controlPointIndex-1)
+      markupsNode.RemoveNthControlPoint(controlPointIndex - 1)
 
 
-def arrayFromMarkupsCurvePoints(markupsNode, world = False):
+def arrayFromMarkupsCurvePoints(markupsNode, world=False):
   """Return interpolated curve point positions of a markups node as rows in a numpy array (of size Nx3).
 
   :param world: if set to True then the point coordinates are returned in world coordinate system
@@ -2164,7 +2164,7 @@ def updateVolumeFromArray(volumeNode, narray):
     vshape = vshape[1:4]
   else:
     # TODO: add support for tensor volumes
-    raise RuntimeError("Unsupported numpy array shape: "+str(narray.shape))
+    raise RuntimeError("Unsupported numpy array shape: " + str(narray.shape))
 
   vimage = volumeNode.GetImageData()
   if not vimage:
@@ -2299,7 +2299,7 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
   if isinstance(columnNames, str):
     columnNames = [columnNames]
   for columnIndex, ncolumn in enumerate(ncolumns):
-    vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(),deep=True,array_type=vtk.VTK_FLOAT)
+    vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
     if (columnNames is not None) and (columnIndex < len(columnNames)):
       vcolumn.SetName(columnNames[columnIndex])
     tableNode.AddColumn(vcolumn)
@@ -2322,11 +2322,11 @@ def dataframeFromTable(tableNode):
     raise ImportError("Failed to convert to pandas dataframe. Please install pandas by running `slicer.util.pip_install('pandas')`")
   dataframe = pd.DataFrame()
   vtable = tableNode.GetTable()
-  for columnIndex in range (vtable.GetNumberOfColumns()):
+  for columnIndex in range(vtable.GetNumberOfColumns()):
     vcolumn = vtable.GetColumn(columnIndex)
     column = []
     numberOfComponents = vcolumn.GetNumberOfComponents()
-    if numberOfComponents==1:
+    if numberOfComponents == 1:
       # most common, simple case
       for rowIndex in range(vcolumn.GetNumberOfValues()):
         column.append(vcolumn.GetValue(rowIndex))
@@ -2370,7 +2370,7 @@ def dataframeFromMarkups(markupsNode):
   for controlPointIndex in range(numberOfControlPoints):
     label.append(markupsNode.GetNthControlPointLabel(controlPointIndex))
     description.append(markupsNode.GetNthControlPointDescription(controlPointIndex))
-    p=[0,0,0]
+    p = [0, 0, 0]
     markupsNode.GetNthControlPointPositionWorld(controlPointIndex, p)
     positionWorldR.append(p[0])
     positionWorldA.append(p[1])
@@ -2498,7 +2498,7 @@ def toLatin1String(text):
 # File Utilities
 #
 
-def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):
+def tempDirectory(key='__SlicerTemp__', tempDir=None, includeDateTime=True):
   """Come up with a unique directory name in the temp dir and make it and return it
 
   Note: this directory is not automatically cleaned up
@@ -2538,7 +2538,7 @@ def delayDisplay(message, autoCloseMsec=1000, parent=None, **kwargs):
       setattr(messagePopup, key, value)
   layout = qt.QVBoxLayout()
   messagePopup.setLayout(layout)
-  label = qt.QLabel(message,messagePopup)
+  label = qt.QLabel(message, messagePopup)
   layout.addWidget(label)
   if autoCloseMsec >= 0:
     qt.QTimer.singleShot(autoCloseMsec, messagePopup.close)
@@ -2655,7 +2655,7 @@ def _messageDisplay(logLevel, text, testingReturnValue, mainWindowNeeded=False, 
   """
   import slicer, logging
   logging.log(logLevel, text)
-  logLevelString = logging.getLevelName(logLevel).lower() # e.g. this is "error" when logLevel is logging.ERROR
+  logLevelString = logging.getLevelName(logLevel).lower()  # e.g. this is "error" when logLevel is logging.ERROR
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " " + logLevelString
   if slicer.app.testingEnabled():
@@ -2938,7 +2938,7 @@ def settingsValue(key, default, converter=lambda v: v, settings=None):
   return converter(settings.value(key)) if settings.contains(key) else default
 
 
-def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
+def clickAndDrag(widget, button='Left', start=(10, 10), end=(10, 40), steps=20, modifiers=[]):
   """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
 
   :param button: "Left", "Middle", "Right", or "None"
@@ -2973,8 +2973,8 @@ def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifie
     down = interactor.MiddleButtonPressEvent
     up = interactor.MiddleButtonReleaseEvent
   elif button == 'None' or not button:
-    down = lambda : None
-    up = lambda : None
+    down = lambda: None
+    up = lambda: None
   else:
     raise RuntimeError("Bad button - should be Left or Right, not %s" % button)
   if 'Shift' in modifiers:
@@ -2983,15 +2983,15 @@ def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifie
     interactor.SetControlKey(1)
   interactor.SetEventPosition(*start)
   down()
-  if (steps<2):
+  if (steps < 2):
     interactor.SetEventPosition(end[0], end[1])
     interactor.MouseMoveEvent()
   else:
     for step in range(steps):
-      frac = float(step)/(steps-1)
-      x = int(start[0] + frac*(end[0]-start[0]))
-      y = int(start[1] + frac*(end[1]-start[1]))
-      interactor.SetEventPosition(x,y)
+      frac = float(step) / (steps - 1)
+      x = int(start[0] + frac * (end[0] - start[0]))
+      y = int(start[1] + frac * (end[1] - start[1]))
+      interactor.SetEventPosition(x, y)
       interactor.MouseMoveEvent()
   up()
   interactor.SetShiftKey(0)
@@ -3068,7 +3068,7 @@ def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=No
     return False
   fileName, fileExtension = os.path.splitext(archiveFilePath)
   if fileExtension.lower() != '.zip':
-    #TODO: Support other archive types
+    # TODO: Support other archive types
     logging.error('Only zip archives are supported now, got ' + fileExtension)
     return False
 
@@ -3176,11 +3176,11 @@ def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
 def getFilesInDirectory(directory, absolutePath=True):
   """Collect all files in a directory and its subdirectories in a list."""
   import os
-  allFiles=[]
+  allFiles = []
   for root, subdirs, files in os.walk(directory):
     for fileName in files:
       if absolutePath:
-        fileAbsolutePath = os.path.abspath(os.path.join(root, fileName)).replace('\\','/')
+        fileAbsolutePath = os.path.abspath(os.path.join(root, fileName)).replace('\\', '/')
         allFiles.append(fileAbsolutePath)
       else:
         allFiles.append(fileName)
@@ -3210,7 +3210,7 @@ class chdir:
     os.chdir(self._old_cwd.pop())
 
 
-def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = True, nodes = None):
+def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes=None):
   """Create a plot from a numpy array that contains two or more columns.
 
   :param narray: input numpy array containing data series in columns.
@@ -3282,7 +3282,7 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
     tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
 
   if title is not None:
-    tableNode.SetName(title+' table')
+    tableNode.SetName(title + ' table')
   updateTableFromArray(tableNode, narray)
   # Update column names
   numberOfColumns = tableNode.GetTable().GetNumberOfColumns()
@@ -3297,7 +3297,7 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
         columnName = "Y"
         yColumnIndex += 1
       else:
-        columnName = "Y"+str(yColumnIndex)
+        columnName = "Y" + str(yColumnIndex)
         yColumnIndex += 1
     tableNode.GetTable().GetColumn(columnIndex).SetName(columnName)
 
@@ -3416,7 +3416,7 @@ def logProcessOutput(proc):
       pass
 
   proc.wait()
-  retcode=proc.returncode
+  retcode = proc.returncode
   if retcode != 0:
     raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
 
@@ -3443,7 +3443,7 @@ def _executePythonModule(module, args):
     # Running from console
     import os
     import sys
-    pythonSlicerExecutablePath = os.path.dirname(sys.executable)+"/PythonSlicer"
+    pythonSlicerExecutablePath = os.path.dirname(sys.executable) + "/PythonSlicer"
     if os.name == 'nt':
       pythonSlicerExecutablePath += ".exe"
 

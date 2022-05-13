@@ -21,7 +21,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -152,10 +152,10 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
       selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
 
     marginSizePixel = self.getMarginSizePixel()
-    marginSizeMM = [abs((marginSizePixel[i])*selectedSegmentLabelmapSpacing[i]) for i in range(3)]
+    marginSizeMM = [abs((marginSizePixel[i]) * selectedSegmentLabelmapSpacing[i]) for i in range(3)]
     for i in range(3):
       if marginSizeMM[i] > 0:
-        marginSizeMM[i] = round(marginSizeMM[i], max(int(-math.floor(math.log10(marginSizeMM[i]))),1))
+        marginSizeMM[i] = round(marginSizeMM[i], max(int(-math.floor(math.log10(marginSizeMM[i]))), 1))
     return marginSizeMM
 
   def showStatusMessage(self, msg, timeoutMsec=500):
@@ -218,7 +218,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
       self.scriptedEffect.saveStateForUndo()
 
-      applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) !=0 \
+      applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) != 0 \
           if self.scriptedEffect.parameter("ApplyToAllVisibleSegments") else False
 
       if applyToAllVisibleSegments:

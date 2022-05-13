@@ -22,7 +22,7 @@ class SlicerUtilGetNodeTest(unittest.TestCase):
         return nodes
 
     def test_getFirstNodeByName(self):
-        self.assertEqual(slicer.util.getFirstNodeByName("Volume", 'vtkMRMLScalarVolumeNode').GetName(), "Volume1" )
+        self.assertEqual(slicer.util.getFirstNodeByName("Volume", 'vtkMRMLScalarVolumeNode').GetName(), "Volume1")
 
     def test_getNode(self):
 
@@ -60,5 +60,5 @@ class SlicerUtilGetNodeTest(unittest.TestCase):
 
         self.assertEqual(list(slicer.util.getNodes("Volume").keys()), ["Volume"])
         self.assertIsInstance(slicer.util.getNodes("Volume")["Volume"], vtk.vtkObject)
-        self.assertEqual(list(slicer.util.getNodes("Volume",useLists=True).keys()), ["Volume"])
-        self.assertIsInstance(slicer.util.getNodes("Volume",useLists=True)["Volume"], list)
+        self.assertEqual(list(slicer.util.getNodes("Volume", useLists=True).keys()), ["Volume"])
+        self.assertIsInstance(slicer.util.getNodes("Volume", useLists=True)["Volume"], list)

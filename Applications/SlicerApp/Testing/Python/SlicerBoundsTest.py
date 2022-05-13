@@ -72,7 +72,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
   def test_Volume(self):
     """ Test the GetRASBounds & GetBounds method on a volume.
     """
-    #self.delayDisplay("Starting test_Volume")
+    # self.delayDisplay("Starting test_Volume")
     import SampleData
     volumeNode = SampleData.downloadSample('CTAAbdomenPanoramix')
 
@@ -98,12 +98,12 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
 
     volumeNode.GetBounds(bounds)
     self.assertListAlmostEquals(bounds, untransformedBounds)
-    #self.delayDisplay('test_Volume passed!')
+    # self.delayDisplay('test_Volume passed!')
 
   def test_Model(self):
     """ Test the GetRASBounds & GetBounds method on a model.
     """
-    #self.delayDisplay("Starting test_Model")
+    # self.delayDisplay("Starting test_Model")
     # Setup
     cubeSource = vtk.vtkCubeSource()
     cubeSource.SetXLength(500)
@@ -146,12 +146,12 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
 
     modelNode.GetBounds(bounds)
     self.assertListAlmostEquals(bounds, untransformedBounds)
-    #self.delayDisplay('test_Model passed!')
+    # self.delayDisplay('test_Model passed!')
 
   def test_Segmentation(self):
     """ Test the GetRASBounds & GetBounds method on a segmentation.
     """
-    #self.delayDisplay("Starting test_Segmentation")
+    # self.delayDisplay("Starting test_Segmentation")
     cubeSource = vtk.vtkCubeSource()
     cubeSource.SetXLength(500)
     cubeSource.SetYLength(200)
@@ -198,12 +198,12 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
     segmentationNode.GetBounds(bounds)
     self.assertListAlmostEquals(bounds, untransformedBounds)
 
-    #self.delayDisplay('test_Segmentation passed!')
+    # self.delayDisplay('test_Segmentation passed!')
 
   def test_Markup(self):
     """ Test the GetRASBounds & GetBounds method on a markup.
     """
-    #self.delayDisplay("Starting test_Markup")
+    # self.delayDisplay("Starting test_Markup")
     markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
     markupNode.AddControlPoint([1.0, 0.0, 0.0])
     markupNode.AddControlPoint([-45.0, -90.0, -180.0])
@@ -232,12 +232,12 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
 
     markupNode.GetBounds(bounds)
     self.assertListAlmostEquals(bounds, untransformedBounds)
-    #self.delayDisplay('test_Markup passed!')
+    # self.delayDisplay('test_Markup passed!')
 
   def test_ROI(self):
     """ Test the GetRASBounds & GetBounds method on a ROI.
     """
-    #self.delayDisplay("Starting test_ROI")
+    # self.delayDisplay("Starting test_ROI")
     roiNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLAnnotationROINode())
     roiNode.SetXYZ(100, 300, -0.689)
     roiNode.SetRadiusXYZ(700, 8, 45)
@@ -265,4 +265,4 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
     roiNode.GetBounds(bounds)
     self.assertListAlmostEquals(bounds, untransformedBounds)
 
-    #self.delayDisplay('test_ROI passed!')
+    # self.delayDisplay('test_ROI passed!')

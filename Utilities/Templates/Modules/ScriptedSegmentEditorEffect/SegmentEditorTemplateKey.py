@@ -26,8 +26,8 @@ class SegmentEditorTemplateKey(ScriptedLoadableModule):
   def registerEditorEffect(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as qSlicerSegmentationsEditorEffects
     instance = qSlicerSegmentationsEditorEffects.qSlicerSegmentEditorScriptedEffect(None)
-    effectFilename = os.path.join(os.path.dirname(__file__), self.__class__.__name__+'Lib/SegmentEditorEffect.py')
-    instance.setPythonSource(effectFilename.replace('\\','/'))
+    effectFilename = os.path.join(os.path.dirname(__file__), self.__class__.__name__ + 'Lib/SegmentEditorEffect.py')
+    instance.setPythonSource(effectFilename.replace('\\', '/'))
     instance.self().register()
 
 
@@ -78,9 +78,9 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
 
     # Segments are defined by a list of: name and a list of sphere [radius, posX, posY, posZ]
     segmentGeometries = [
-      ['Tumor', [[10, -6,30,28]]],
-      ['Background', [[10, 0,65,22], [15, 1, -14, 30], [12, 0, 28, -7], [5, 0,30,54], [12, 31, 33, 27], [17, -42, 30, 27], [6, -2,-17,71]]],
-      ['Air', [[10, 76,73,0], [15, -70,74,0]]] ]
+      ['Tumor', [[10, -6, 30, 28]]],
+      ['Background', [[10, 0, 65, 22], [15, 1, -14, 30], [12, 0, 28, -7], [5, 0, 30, 54], [12, 31, 33, 27], [17, -42, 30, 27], [6, -2, -17, 71]]],
+      ['Air', [[10, 76, 73, 0], [15, -70, 74, 0]]]]
     for segmentGeometry in segmentGeometries:
       segmentName = segmentGeometry[0]
       appender = vtk.vtkAppendPolyData()
@@ -118,7 +118,7 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Make segmentation results nicely visible in 3D")
     segmentationDisplayNode = segmentationNode.GetDisplayNode()
     segmentationDisplayNode.SetSegmentVisibility("Air", False)
-    segmentationDisplayNode.SetSegmentOpacity3D("Background",0.5)
+    segmentationDisplayNode.SetSegmentOpacity3D("Background", 0.5)
 
     ##################################
     self.delayDisplay("Compute statistics")
@@ -133,7 +133,7 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
     segStatLogic.showTable(resultsTableNode)
 
     self.delayDisplay("Check a few numerical results")
-    self.assertEqual( round(segStatLogic.statistics["Tumor","LM volume cc"]), 16)
-    self.assertEqual( round(segStatLogic.statistics["Background","LM volume cc"]), 3010)
+    self.assertEqual(round(segStatLogic.statistics["Tumor", "LM volume cc"]), 16)
+    self.assertEqual(round(segStatLogic.statistics["Background", "LM volume cc"]), 3010)
 
     self.delayDisplay('test_TemplateKey1 passed')

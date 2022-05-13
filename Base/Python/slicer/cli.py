@@ -1,7 +1,7 @@
 """ This module is a place holder for convenient functions allowing to interact with CLI."""
 
 
-def createNode(cliModule, parameters = None):
+def createNode(cliModule, parameters=None):
   """Creates a new vtkMRMLCommandLineModuleNode for a specific module, with
   optional parameters"""
   if not cliModule:
@@ -41,9 +41,9 @@ def setNodeParameters(node, parameters):
       node.SetParameterAsNode(key, value)
     elif isinstance(value, list) or isinstance(value, tuple):
       commaSeparatedString = str(value)
-      commaSeparatedString = commaSeparatedString[1:len(commaSeparatedString)-1]
+      commaSeparatedString = commaSeparatedString[1:len(commaSeparatedString) - 1]
       node.SetParameterAsString(key, commaSeparatedString)
-    #TODO: file support
+    # TODO: file support
     else:
       print("parameter ", key, " has unsupported type ", value.__class__.__name__)
 
@@ -59,7 +59,7 @@ def runSync(module, node=None, parameters=None, delete_temporary_files=True, upd
   return run(module, node=node, parameters=parameters, wait_for_completion=True, delete_temporary_files=delete_temporary_files, update_display=update_display)
 
 
-def run(module, node = None, parameters = None, wait_for_completion = False, delete_temporary_files = True, update_display=True):
+def run(module, node=None, parameters=None, wait_for_completion=False, delete_temporary_files=True, update_display=True):
   """Runs a CLI, optionally given a node with optional parameters, returning
   back the node (or the new one if created)
   node: existing parameter node (None by default)
@@ -83,13 +83,13 @@ def run(module, node = None, parameters = None, wait_for_completion = False, del
       logic.ApplyAndWait(node, update_display)
   else:
       logic.Apply(node, update_display)
-  #import slicer.util
-  #widget = slicer.util.getModuleGui(module)
-  #if not widget:
+  # import slicer.util
+  # widget = slicer.util.getModuleGui(module)
+  # if not widget:
   #  print "Could not find widget representation for module"
   #  return None
-  #widget.setCurrentCommandLineModuleNode(node)
-  #widget.apply()
+  # widget.setCurrentCommandLineModuleNode(node)
+  # widget.apply()
   return node
 
 

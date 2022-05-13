@@ -121,8 +121,8 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
 
     # Volume but not LabelMap
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-    if ( pluginHandlerSingleton.pluginByName('Volumes').canOwnSubjectHierarchyItem(itemID)
-         and not pluginHandlerSingleton.pluginByName('LabelMaps').canOwnSubjectHierarchyItem(itemID) ):
+    if (pluginHandlerSingleton.pluginByName('Volumes').canOwnSubjectHierarchyItem(itemID)
+         and not pluginHandlerSingleton.pluginByName('LabelMaps').canOwnSubjectHierarchyItem(itemID)):
       # Get current item
       currentItemID = pluginHandlerSingleton.currentItem()
       if not currentItemID:

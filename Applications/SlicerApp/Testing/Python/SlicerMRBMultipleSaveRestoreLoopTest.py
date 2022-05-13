@@ -127,7 +127,7 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
       mrbLoaded = ioManager.loadScene(mrbFilePath)
 
       # load can return false even though it succeeded - only fail if in strict mode
-      self.assertTrue( not self.strict or mrbLoaded )
+      self.assertTrue(not self.strict or mrbLoaded)
       slicer.app.processEvents()
 
       # confirm that MRHead is in the background of the Red slice
@@ -147,11 +147,11 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
       pointListNode.SetNthControlPointPosition(0, self.pointPosition)
     self.delayDisplay("Loop Finished")
 
-    print(('Point position from loop = ',self.pointPosition))
+    print(('Point position from loop = ', self.pointPosition))
     pointListNode = slicer.util.getNode('F')
-    finalPointPosition = [ 0,0,0 ]
+    finalPointPosition = [0, 0, 0]
     pointListNode.GetNthControlPointPosition(0, finalPointPosition)
-    print(('Final point scene pos = ',finalPointPosition))
+    print(('Final point scene pos = ', finalPointPosition))
     self.assertEqual(self.pointPosition, finalPointPosition)
 
     self.delayDisplay("Test Finished")

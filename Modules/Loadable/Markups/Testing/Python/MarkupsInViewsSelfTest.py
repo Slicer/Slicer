@@ -115,9 +115,9 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
   def printViewNodeIDs(self, displayNode):
     numIDs = displayNode.GetNumberOfViewNodeIDs()
     if numIDs == 0:
-      print('No view node ids for display node',displayNode.GetID())
+      print('No view node ids for display node', displayNode.GetID())
       return
-    print('View node ids for display node',displayNode.GetID())
+    print('View node ids for display node', displayNode.GetID())
     for i in range(numIDs):
       id = displayNode.GetNthViewNodeID(i)
       print(id)
@@ -127,13 +127,13 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     print('Number of view nodes = ', numViewNodes)
     for vn in range(numViewNodes):
       viewNode = slicer.mrmlScene.GetNthNodeByClass(vn, 'vtkMRMLViewNode')
-      print('\t',viewNode.GetName(),"id =",viewNode.GetID())
+      print('\t', viewNode.GetName(), "id =", viewNode.GetID())
 
     numSliceNodes = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
     print('Number of slice nodes = ', numSliceNodes)
     for sn in range(numSliceNodes):
       sliceNode = slicer.mrmlScene.GetNthNodeByClass(sn, 'vtkMRMLSliceNode')
-      print('\t',sliceNode.GetName(),"id =",sliceNode.GetID())
+      print('\t', sliceNode.GetName(), "id =", sliceNode.GetID())
 
   def onRecordNodeEvent(self, caller, event, eventId):
     self.nodeEvents.append(eventId)
@@ -186,7 +186,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     self.nodeEvents = []
     observedEvents = [
       slicer.vtkMRMLMarkupsNode.PointPositionDefinedEvent,
-      slicer.vtkMRMLMarkupsNode.PointPositionUndefinedEvent ]
+      slicer.vtkMRMLMarkupsNode.PointPositionUndefinedEvent]
     for eventId in observedEvents:
       fidNodeObserverTags.append(fidNode.AddObserver(eventId, lambda caller, event, eventId=eventId: self.onRecordNodeEvent(caller, event, eventId)))
 
@@ -290,7 +290,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     # show only in red
     displayNode.AddViewNodeID('vtkMRMLSliceNodeRed')
     slicer.util.delayDisplay("Show only in red slice")
-    if not self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeRed', controlPointIndex):
+    if not self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeRed', controlPointIndex):
       slicer.util.delayDisplay("Test failed: widget not displayed on red slice")
       # self.printViewNodeIDs(displayNode)
       return False
@@ -303,11 +303,11 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     # self.printViewNodeIDs(displayNode)
     displayNode.AddViewNodeID('vtkMRMLSliceNodeGreen')
     slicer.util.delayDisplay('Show only in green slice')
-    if (self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeRed', controlPointIndex)
-        or not self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeGreen', controlPointIndex)):
+    if (self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeRed', controlPointIndex)
+        or not self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeGreen', controlPointIndex)):
       slicer.util.delayDisplay("Test failed: widget not displayed only on green slice")
-      print('\tred = ',self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeRed', controlPointIndex))
-      print('\tgreen =',self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeGreen', controlPointIndex))
+      print('\tred = ', self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeRed', controlPointIndex))
+      print('\tgreen =', self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeGreen', controlPointIndex))
       self.printViewNodeIDs(displayNode)
       return False
 

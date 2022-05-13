@@ -18,7 +18,7 @@ class SlicerPythonSqlite3Tests(unittest.TestCase):
     import sqlite3
 
     database_filename = os.path.join(self.tempDir, 'database.sql')
-    print("database_filename="+database_filename)
+    print("database_filename=" + database_filename)
 
     self.connection = sqlite3.connect(database_filename)
     print(sqlite3.version)

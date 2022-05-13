@@ -52,8 +52,8 @@ class DMRIInstall(ScriptedLoadableModule):
   Slicer revision: {revision}<br>
   Platform: {platform}
   """).format(builddate=slicer.app.applicationVersion,
-              revision = slicer.app.repositoryRevision,
-              platform = slicer.app.platform)
+              revision=slicer.app.repositoryRevision,
+              platform=slicer.app.platform)
 
   def __init__(self, parent):
 
@@ -87,7 +87,7 @@ class DMRIInstallWidget(ScriptedLoadableModuleWidget):
     ScriptedLoadableModuleWidget.setup(self)
 
     self.textBox = ctk.ctkFittedTextBrowser()
-    self.textBox.setOpenExternalLinks(True) # Open links in default browser
+    self.textBox.setOpenExternalLinks(True)  # Open links in default browser
     self.textBox.setHtml(DMRIInstall.helpText)
     self.parent.layout().addWidget(self.textBox)
 

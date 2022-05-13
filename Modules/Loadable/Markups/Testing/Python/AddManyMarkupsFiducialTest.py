@@ -24,7 +24,7 @@ class AddManyMarkupsFiducialTest(ScriptedLoadableModule):
     """
     parent.acknowledgementText = """
     This file was originally developed by Nicole Aucoin, BWH and was partially funded by NIH grant 3P41RR013218-12S1.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #
@@ -136,7 +136,7 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
     labelsHiddenFlag = self.labelsHiddenFlagCheckBox.checked
     locked = self.lockedFlagCheckBox.checked
     print(f"Run the logic method to add {numberOfNodes} nodes with {numberOfControlPoints} control points each")
-    logic.run(nodeType, numberOfNodes, numberOfControlPoints,0, fewerModifyFlag, locked, labelsHiddenFlag)
+    logic.run(nodeType, numberOfNodes, numberOfControlPoints, 0, fewerModifyFlag, locked, labelsHiddenFlag)
 
 
 #
@@ -145,7 +145,7 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
 
 class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
 
-  def run(self, nodeType, numberOfNodes = 10, numberOfControlPoints=10, rOffset=0,usefewerModifyCalls=False,locked=False, labelsHidden=False):
+  def run(self, nodeType, numberOfNodes=10, numberOfControlPoints=10, rOffset=0, usefewerModifyCalls=False, locked=False, labelsHidden=False):
     """
     Run the actual algorithm
     """
@@ -188,13 +188,13 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
       for controlPointIndex in range(numberOfControlPoints):
         #    print "controlPointIndex = ", controlPointIndex, "/", numberOfControlPoints, ", r = ", r, ", a = ", a, ", s = ", s
         t1 = time.process_time()
-        markupsNode.AddControlPoint(vtk.vtkVector3d(r,a,s))
+        markupsNode.AddControlPoint(vtk.vtkVector3d(r, a, s))
         t2 = time.process_time()
         timeToAddThisFid = t2 - t1
         dt = timeToAddThisFid - timeToAddLastFid
-        #print '%(index)04d\t' % {'index': controlPointIndex}, timeToAddThisFid, "\t", dt
-        r = float(controlPointIndex)/numberOfControlPoints * 100.0 - 50.0 + random.uniform(-20.0, 20.0)
-        a = float(controlPointIndex)/numberOfControlPoints * 100.0 - 50.0 + random.uniform(-20.0, 20.0)
+        # print '%(index)04d\t' % {'index': controlPointIndex}, timeToAddThisFid, "\t", dt
+        r = float(controlPointIndex) / numberOfControlPoints * 100.0 - 50.0 + random.uniform(-20.0, 20.0)
+        a = float(controlPointIndex) / numberOfControlPoints * 100.0 - 50.0 + random.uniform(-20.0, 20.0)
         s = random.uniform(-20.0, 20.0)
         timeToAddLastFid = timeToAddThisFid
 
@@ -207,7 +207,7 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
 
     testEndTime = time.process_time()
     testTime = testEndTime - testStartTime
-    print("Total time to add ",numberOfControlPoints," = ", testTime)
+    print("Total time to add ", numberOfControlPoints, " = ", testTime)
 
     return True
 
@@ -239,10 +239,10 @@ class AddManyMarkupsFiducialTestTest(ScriptedLoadableModuleTest):
     m.moduleSelector().selectModule('Welcome')
 
     logic = AddManyMarkupsFiducialTestLogic()
-    logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes = 1, numberOfControlPoints=100, rOffset=0)
+    logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes=1, numberOfControlPoints=100, rOffset=0)
 
     self.delayDisplay("Now running it while the Markups Module is open")
     m.moduleSelector().selectModule('Markups')
-    logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes = 1, numberOfControlPoints=100, rOffset=100)
+    logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes=1, numberOfControlPoints=100, rOffset=100)
 
     self.delayDisplay('Test passed!')

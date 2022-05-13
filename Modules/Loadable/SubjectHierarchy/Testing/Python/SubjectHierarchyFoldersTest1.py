@@ -21,10 +21,10 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     self.setUp()
     self.test_SubjectHierarchyFoldersTest1()
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def test_SubjectHierarchyFoldersTest1(self):
     # Check for modules
-    self.assertIsNotNone( slicer.modules.subjecthierarchy )
+    self.assertIsNotNone(slicer.modules.subjecthierarchy)
 
     self.TestSection_InitializeTest()
     self.TestSection_LoadTestData()
@@ -34,7 +34,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
     logging.info('Test finished')
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_InitializeTest(self):
     #
     # Define variables
@@ -77,7 +77,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     self.modelDisplayableManager = self.getModelDisplayableManager()
     self.assertIsNotNone(self.modelDisplayableManager)
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_LoadTestData(self):
     # Load NAC Brain Atlas 2015 (https://github.com/Slicer/SlicerDataStore/releases/download/SHA256/d69d0331d4fd2574be1459b7734921f64f5872d3cb9589ec01b2f53dadc7112f)
     logging.info('Test section: Load NAC Brain Atlas 2015')
@@ -93,7 +93,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     ioManager.loadFile(sceneFile)
 
     # Check number of models to see if atlas was fully loaded
-    self.assertEqual(298, slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelNode')) # 301 with main window due to the slice views
+    self.assertEqual(298, slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelNode'))  # 301 with main window due to the slice views
 
     # Check number of model hierarchy nodes to make sure all of them were converted
     self.assertEqual(0, slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelHierarchyNode'))
@@ -110,7 +110,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
         numberOfFolderItems += 1
     self.assertEqual(80, numberOfFolderItems)
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_FolderVisibility(self):
     # Test apply display properties on branch feature
     logging.info('Test section: Folder visibility')
@@ -140,7 +140,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     # Hide branch using the folder plugin
     self.startTiming()
     self.folderPlugin.setDisplayVisibility(brainFolderItem, 0)
-    logging.info('Time of hiding whole brain: ' + str(self.stopTiming()/1000) + ' s')
+    logging.info('Time of hiding whole brain: ' + str(self.stopTiming() / 1000) + ' s')
 
     # Check if a folder display node was indeed created when changing display property on the folder
     self.assertEqual(1, slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLFolderDisplayNode'))
@@ -163,7 +163,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     # Show folder again
     self.startTiming()
     self.folderPlugin.setDisplayVisibility(brainFolderItem, 1)
-    logging.info('Time of showing whole brain: ' + str(self.stopTiming()/1000) + ' s')
+    logging.info('Time of showing whole brain: ' + str(self.stopTiming() / 1000) + ' s')
 
     # Check number of visible models
     numberOfVisibleModels = 0
@@ -178,7 +178,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     testModelHierarchyVisibility = slicer.vtkMRMLFolderDisplayNode.GetHierarchyVisibility(self.testModelNode)
     self.assertTrue(testModelHierarchyVisibility)
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_ApplyDisplayPropertiesOnBranch(self):
     # Test apply display properties on branch feature
     logging.info('Test section: Apply display properties on branch')
@@ -191,7 +191,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     overrideColorQt = qt.QColor(self.overrideColor[0], self.overrideColor[1], self.overrideColor[2])
     self.startTiming()
     self.folderPlugin.setDisplayColor(midbrainFolderItem, overrideColorQt, {})
-    logging.info('Time of setting override color on midbrain branch: ' + str(self.stopTiming()/1000) + ' s')
+    logging.info('Time of setting override color on midbrain branch: ' + str(self.stopTiming() / 1000) + ' s')
 
     # Check number of models with overridden color
     numberOfOverriddenMidbrainModels = 0
@@ -201,13 +201,13 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     for index in range(midbrainModelItems.GetNumberOfIds()):
       currentMidbrainModelItem = midbrainModelItems.GetId(index)
       currentMidbrainModelNode = self.shNode.GetItemDataNode(currentMidbrainModelItem)
-      if currentMidbrainModelNode: # The child item can be a folder as well, in which case there is no model node
+      if currentMidbrainModelNode:  # The child item can be a folder as well, in which case there is no model node
         displayNode = currentMidbrainModelNode.GetDisplayNode()
         actor = self.modelDisplayableManager.GetActorByID(displayNode.GetID())
         currentColor = actor.GetProperty().GetColor()
-        if (currentColor[0] == self.overrideColor[0]/255 and
-            currentColor[1] == self.overrideColor[1]/255 and
-            currentColor[2] == self.overrideColor[2]/255):
+        if (currentColor[0] == self.overrideColor[0] / 255 and
+            currentColor[1] == self.overrideColor[1] / 255 and
+            currentColor[2] == self.overrideColor[2] / 255):
           if currentMidbrainModelNode is self.testModelNode:
             testModelNodeOverridden = True
           numberOfOverriddenMidbrainModels += 1
@@ -234,7 +234,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     testModelHierarchyOpacity = slicer.vtkMRMLFolderDisplayNode.GetHierarchyOpacity(self.testModelNode)
     self.assertEqual(testModelHierarchyOpacity, 0.25)
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_FolderDisplayOverrideAllowed(self):
     # Test exclusion of a node from the apply display properties feature
     logging.info('Test section: Disable apply display properties using FolderDisplayOverrideAllowed')
@@ -250,25 +250,25 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
     testModelCurrentColor = testModelActor.GetProperty().GetColor()
     colorOverridden = False
-    if (testModelCurrentColor[0] == self.overrideColor[0]/255 and
-        testModelCurrentColor[1] == self.overrideColor[1]/255 and
-        testModelCurrentColor[2] == self.overrideColor[2]/255):
+    if (testModelCurrentColor[0] == self.overrideColor[0] / 255 and
+        testModelCurrentColor[1] == self.overrideColor[1] / 255 and
+        testModelCurrentColor[2] == self.overrideColor[2] / 255):
       colorOverridden = True
     self.assertFalse(colorOverridden)
 
     testModelCurrentOpacity = testModelActor.GetProperty().GetOpacity()
     self.assertEqual(testModelCurrentOpacity, 1.0)
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def startTiming(self):
     self.timer = qt.QTime()
     self.timer.start()
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def stopTiming(self):
     return self.timer.elapsed()
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def getModelDisplayableManager(self):
     if self.viewWidget is None:
       logging.error('View widget is not created')

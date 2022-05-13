@@ -91,11 +91,11 @@ and is exclusively available for research and teaching. You are not authorized t
 use it for commercial purposes.</p>
 """
 
-    if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
+    if slicer.mrmlScene.GetTagByClassName("vtkMRMLScriptedModuleNode") != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
     # Trigger the menu to be added when application has started up
-    if not slicer.app.commandOptions().noMainWindow :
+    if not slicer.app.commandOptions().noMainWindow:
       slicer.app.connect("startupCompleted()", self.addMenu)
 
     # allow other modules to register sample data sources by appending
@@ -170,12 +170,12 @@ class SampleDataSource:
       if checksums is None:
         checksums = [None] * len(uris)
     elif isinstance(uris, str):
-      uris = [uris,]
-      fileNames = [fileNames,]
-      nodeNames = [nodeNames,]
-      loadFiles = [loadFiles,]
-      loadFileType = [loadFileType,]
-      checksums = [checksums,]
+      uris = [uris, ]
+      fileNames = [fileNames, ]
+      nodeNames = [nodeNames, ]
+      loadFiles = [loadFiles, ]
+      loadFileType = [loadFileType, ]
+      checksums = [checksums, ]
 
     updatedFileType = []
     for fileName, nodeName, fileType in zip(fileNames, nodeNames, loadFileType):
@@ -297,15 +297,15 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     Download buttons are organized in collapsible GroupBox with one GroupBox
     per category.
     """
-    iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
+    iconPath = os.path.join(os.path.dirname(__file__).replace('\\', '/'), 'Resources', 'Icons')
     mainWindow = slicer.util.mainWindow()
     if mainWindow:
-      iconSize = qt.QSize(int(mainWindow.width/8),int(mainWindow.height/6))
+      iconSize = qt.QSize(int(mainWindow.width / 8), int(mainWindow.height / 6))
     else:
       # There is no main window in the automated tests
       desktop = qt.QDesktopWidget()
       mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
-      iconSize = qt.QSize(int(mainScreenSize.width()/15),int(mainScreenSize.height()/10))
+      iconSize = qt.QSize(int(mainScreenSize.width() / 15), int(mainScreenSize.height() / 10))
 
     categories = sorted(dataSources.keys())
 
@@ -344,7 +344,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
           for nodeName in source.nodeNames:
             if not nodeName:
               continue
-            thumbnailImageAttempt = os.path.join(iconPath, nodeName+'.png')
+            thumbnailImageAttempt = os.path.join(iconPath, nodeName + '.png')
             if os.path.exists(thumbnailImageAttempt):
               thumbnailImage = thumbnailImageAttempt
               break
@@ -373,7 +373,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     # Show message in status bar
     doc = qt.QTextDocument()
     doc.setHtml(message)
-    slicer.util.showStatusMessage(doc.toPlainText(),3000)
+    slicer.util.showStatusMessage(doc.toPlainText(), 3000)
     # Show message in log window at the bottom of the module widget
     self.log.insertHtml(message)
     self.log.insertPlainText('\n')
@@ -596,7 +596,7 @@ class SampleDataLogic:
 
   def registerDevelopmentSampleDataSources(self):
     """Fills in the sample data sources displayed only if developer mode is enabled."""
-    iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
+    iconPath = os.path.join(os.path.dirname(__file__).replace('\\', '/'), 'Resources', 'Icons')
     self.registerCustomSampleDataSource(
       category=self.developmentCategoryName, sampleName='TinyPatient',
       uris=[TESTING_DATA_URL + 'SHA256/c0743772587e2dd4c97d4e894f5486f7a9a202049c8575e032114c0a5c935c3b',
@@ -630,7 +630,7 @@ class SampleDataLogic:
     """Download all files for the given source and return a
     list of file paths for the results"""
     filePaths = []
-    for uri,fileName,checksum in zip(source.uris,source.fileNames,source.checksums):
+    for uri, fileName, checksum in zip(source.uris, source.fileNames, source.checksums):
       filePaths.append(self.downloadFileIntoCache(uri, fileName, checksum))
     return filePaths
 
@@ -657,7 +657,7 @@ class SampleDataLogic:
     resultNodes = []
     resultFilePaths = []
 
-    for uri,fileName,nodeName,checksum,loadFile,loadFileType in zip(source.uris,source.fileNames,source.nodeNames,source.checksums,source.loadFiles,source.loadFileType):
+    for uri, fileName, nodeName, checksum, loadFile, loadFileType in zip(source.uris, source.fileNames, source.nodeNames, source.checksums, source.loadFiles, source.loadFileType):
 
       current_source = SampleDataSource(uris=uri, fileNames=fileName, nodeNames=nodeName, checksums=checksum, loadFiles=loadFile, loadFileType=loadFileType, loadFileProperties=source.loadFileProperties)
 
@@ -667,7 +667,7 @@ class SampleDataLogic:
         try:
           filePath = self.downloadFileIntoCache(uri, fileName, checksum)
         except ValueError:
-          self.logMessage('<b>Download failed (attempt %d of %d)...</b>' % (attemptsCount+1, maximumAttemptsCount), logging.ERROR)
+          self.logMessage('<b>Download failed (attempt %d of %d)...</b>' % (attemptsCount + 1, maximumAttemptsCount), logging.ERROR)
           continue
         resultFilePaths.append(filePath)
 
@@ -706,17 +706,17 @@ class SampleDataLogic:
         file = qt.QFile(filePath)
         if file.exists() and not file.remove():
           self.logMessage('<b>Load failed (attempt %d of %d). Unable to delete and try again loading %s</b>'
-            % (attemptsCount+1, maximumAttemptsCount, filePath), logging.ERROR)
+            % (attemptsCount + 1, maximumAttemptsCount, filePath), logging.ERROR)
           resultNodes.append(loadedNode)
           break
-        self.logMessage('<b>Load failed (attempt %d of %d)...</b>' % (attemptsCount+1, maximumAttemptsCount), logging.ERROR)
+        self.logMessage('<b>Load failed (attempt %d of %d)...</b>' % (attemptsCount + 1, maximumAttemptsCount), logging.ERROR)
 
     if resultNodes:
       return resultNodes
     else:
       return resultFilePaths
 
-  def sourceForSampleName(self,sampleName):
+  def sourceForSampleName(self, sampleName):
     """For a given sample name this will search the available sources.
     Returns SampleDataSource instance."""
     for category in slicer.modules.sampleDataSources.keys():
@@ -766,12 +766,12 @@ class SampleDataLogic:
       loadFileType=loadFileTypes, loadFileProperties=loadFileProperties, checksums=checksums
     ))
 
-  def downloadSample(self,sampleName):
+  def downloadSample(self, sampleName):
     """For a given sample name this will search the available sources
     and load it if it is available.  Returns the first loaded node."""
     return self.downloadSamples(sampleName)[0]
 
-  def downloadSamples(self,sampleName):
+  def downloadSamples(self, sampleName):
     """For a given sample name this will search the available sources
     and load it if it is available.  Returns the loaded nodes."""
     source = self.sourceForSampleName(sampleName)
@@ -823,15 +823,15 @@ class SampleDataLogic:
     # returns list since that's what earlier method did
     return self.downloadSamples('MRUSProstate')
 
-  def humanFormatSize(self,size):
+  def humanFormatSize(self, size):
     """ from https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
-    for x in ['bytes','KB','MB','GB']:
+    for x in ['bytes', 'KB', 'MB', 'GB']:
       if size < 1024.0 and size > -1024.0:
         return f"{size:3.1f} {x}"
       size /= 1024.0
     return "{:3.1f} {}".format(size, 'TB')
 
-  def reportHook(self,blocksSoFar,blockSize,totalSize):
+  def reportHook(self, blocksSoFar, blockSize, totalSize):
     # we clamp to 100% because the blockSize might be larger than the file itself
     percent = min(int((100. * blocksSoFar * blockSize) / totalSize), 100)
     if percent == 100 or (percent - self.downloadPercent >= 10):
@@ -886,7 +886,7 @@ class SampleDataLogic:
         self.logMessage('<b>File already exists in cache - reusing it.</b>')
     return filePath
 
-  def loadScene(self, uri,  fileProperties = {}):
+  def loadScene(self, uri, fileProperties={}):
     self.logMessage('<b>Requesting load</b> %s ...' % uri)
     fileProperties['fileName'] = uri
     success = slicer.app.coreIOManager().loadNodes('SceneFile', fileProperties)
@@ -896,7 +896,7 @@ class SampleDataLogic:
     self.logMessage('<b>Load finished</b>')
     return True
 
-  def loadNode(self, uri, name, fileType = 'VolumeFile', fileProperties = {}):
+  def loadNode(self, uri, name, fileType='VolumeFile', fileProperties={}):
     self.logMessage(f'<b>Requesting load</b> <i>{name}</i> from {uri} ...')
 
     fileProperties['fileName'] = uri
@@ -905,7 +905,7 @@ class SampleDataLogic:
     loadedNodes = vtk.vtkCollection()
     success = slicer.app.coreIOManager().loadNodes(fileType, fileProperties, loadedNodes)
 
-    if not success or loadedNodes.GetNumberOfItems()<1:
+    if not success or loadedNodes.GetNumberOfItems() < 1:
       self.logMessage('<b>\tLoad failed!</b>', logging.ERROR)
       return None
 
@@ -1161,7 +1161,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
       return
     slicer.util.selectModule("SampleData")
     widget = slicer.modules.SampleDataWidget
-    button = slicer.util.findChild(widget.parent,'customDownloaderPushButton')
+    button = slicer.util.findChild(widget.parent, 'customDownloaderPushButton')
 
     self.assertEqual(self.customDownloads, [])
 

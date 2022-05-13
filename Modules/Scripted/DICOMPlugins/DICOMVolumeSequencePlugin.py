@@ -94,7 +94,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
     exportable.tooltip = "Creates a series of DICOM files from volume sequences"
     exportable.subjectHierarchyItemID = subjectHierarchyItemID
     exportable.pluginClass = self.__module__
-    exportable.confidence = 0.6 # Simple volume has confidence of 0.5, use a slightly higher value here
+    exportable.confidence = 0.6  # Simple volume has confidence of 0.5, use a slightly higher value here
 
     # Define required tags and default values
     exportable.setTag('SeriesDescription', f'Volume sequence of {sequenceItemCount} frames')
@@ -112,42 +112,42 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
     year = 0
     month = 0
     day = 0
-    if len(dt)==8: # YYYYMMDD
+    if len(dt) == 8:  # YYYYMMDD
       year = int(dt[0:4])
       month = int(dt[4:6])
       day = int(dt[6:8])
     else:
-      raise OSError("Invalid DICOM date string: "+tm+" (failed to parse YYYYMMDD)")
+      raise OSError("Invalid DICOM date string: " + tm + " (failed to parse YYYYMMDD)")
 
     hour = 0
     minute = 0
     second = 0
     microsecond = 0
-    if len(tm)>=6:
+    if len(tm) >= 6:
       try:
-        hhmmss = str.split(tm,'.')[0]
+        hhmmss = str.split(tm, '.')[0]
       except:
         hhmmss = tm
       try:
-        microsecond = int(float('0.'+str.split(tm,'.')[1]) * 1e6)
+        microsecond = int(float('0.' + str.split(tm, '.')[1]) * 1e6)
       except:
         microsecond = 0
-      if len(hhmmss)==6: # HHMMSS
+      if len(hhmmss) == 6:  # HHMMSS
         hour = int(hhmmss[0:2])
         minute = int(hhmmss[2:4])
         second = int(hhmmss[4:6])
-      elif len(hhmmss)==4: # HHMM
+      elif len(hhmmss) == 4:  # HHMM
         hour = int(hhmmss[0:2])
         minute = int(hhmmss[2:4])
-      elif len(hhmmss)==2: # HH
+      elif len(hhmmss) == 2:  # HH
         hour = int(hhmmss[0:2])
       else:
-        raise OSError("Invalid DICOM time string: "+tm+" (failed to parse HHMMSS)")
+        raise OSError("Invalid DICOM time string: " + tm + " (failed to parse HHMMSS)")
 
     import datetime
     return datetime.datetime(year, month, day, hour, minute, second, microsecond)
 
-  def export(self,exportables):
+  def export(self, exportables):
     for exportable in exportables:
       # Get volume node to export
       shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
@@ -167,7 +167,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         logging.error(error)
         return error
 
-      volumeSequenceNode =  sequenceBrowserNode.GetSequenceNode(volumeNode)
+      volumeSequenceNode = sequenceBrowserNode.GetSequenceNode(volumeNode)
       if not volumeSequenceNode:
         error = "Series '" + shNode.GetItemName(exportable.subjectHierarchyItemID) + "' cannot be exported as volume sequence"
         logging.error(error)
@@ -213,7 +213,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         error = "Empty modality for series '" + volumeNode.GetName() + "'"
         logging.error(error)
         return error
-      #TODO: more tag checks
+      # TODO: more tag checks
 
       sequenceItemCount = sequenceBrowserNode.GetMasterSequenceNode().GetNumberOfDataNodes()
       originalSelectedSequenceItemNumber = sequenceBrowserNode.GetSelectedItemNumber()
@@ -247,7 +247,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         slicer.app.processEvents()
         # Compute content date&time
         # TODO: verify that unit in sequence node is "second" (and convert to seconds if not)
-        timeOffsetSec = float(masterVolumeNode.GetNthIndexValue(sequenceItemIndex))-float(masterVolumeNode.GetNthIndexValue(0))
+        timeOffsetSec = float(masterVolumeNode.GetNthIndexValue(sequenceItemIndex)) - float(masterVolumeNode.GetNthIndexValue(0))
         contentDatetime = contentStartDatetime + datetime.timedelta(seconds=timeOffsetSec)
         tags['Content Date'] = contentDatetime.strftime("%Y%m%d")
         tags['Content Time'] = contentDatetime.strftime("%H%M%S.%f")

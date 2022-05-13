@@ -21,7 +21,7 @@ comment = """
 #########################################################
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def loadPatientByUID(patientUID):
   """ Load patient by patient UID from DICOM database.
   Returns list of loaded node ids.
@@ -79,7 +79,7 @@ def loadPatientByUID(patientUID):
   return loadSeriesByUID(seriesUIDs)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientName(name):
   """ Get patient UID by patient name for easy loading of a patient
   """
@@ -94,7 +94,7 @@ def getDatabasePatientUIDByPatientName(name):
   return None
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def loadPatientByName(patientName):
   """ Load patient by patient name from DICOM database.
   Returns list of loaded node ids.
@@ -105,7 +105,7 @@ def loadPatientByName(patientName):
   return loadPatientByUID(patientUID)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientID(patientID):
   """ Get database patient UID by DICOM patient ID for easy loading of a patient
   """
@@ -131,7 +131,7 @@ def getDatabasePatientUIDByPatientID(patientID):
   return None
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def loadPatientByPatientID(patientID):
   """ Load patient from DICOM database by DICOM PatientID.
   Returns list of loaded node ids.
@@ -142,7 +142,7 @@ def loadPatientByPatientID(patientID):
   return loadPatientByUID(patientUID)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def loadPatient(uid=None, name=None, patientID=None):
   """ Load patient from DICOM database fr uid, name, or patient ID.
   Returns list of loaded node ids.
@@ -157,7 +157,7 @@ def loadPatient(uid=None, name=None, patientID=None):
   raise ValueError('One of the following arguments needs to be specified: uid, name, patientID')
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def loadSeriesByUID(seriesUIDs):
   """ Load multiple series by UID from DICOM database.
   Returns list of loaded node ids.
@@ -218,7 +218,7 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
       loadable.selected = loadable.confidence == highestConfidenceValue
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def loadByInstanceUID(instanceUID):
   """ Load with the most confident loadable that contains the instanceUID from DICOM database.
   This helps in the case where an instance is part of a series which may offer multiple
@@ -258,12 +258,12 @@ def loadByInstanceUID(instanceUID):
             'loadable': loadable
           }
   filteredLoadablesByPlugin = {}
-  filteredLoadablesByPlugin[highestConfidence['plugin']] = [highestConfidence['loadable'],]
+  filteredLoadablesByPlugin[highestConfidence['plugin']] = [highestConfidence['loadable'], ]
   # load the results
   return loadLoadables(filteredLoadablesByPlugin)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def openDatabase(databaseDir):
   """Open DICOM database in the specified folder"""
   if not os.access(databaseDir, os.F_OK):
@@ -277,7 +277,7 @@ def openDatabase(databaseDir):
   return True
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def clearDatabase(dicomDatabase=None):
   """Delete entire content (index and copied files) of the DICOM database"""
   # Remove files from index and copied files from disk
@@ -287,7 +287,7 @@ def clearDatabase(dicomDatabase=None):
   for patientId in patientIds:
     dicomDatabase.removePatient(patientId)
   # Delete empty folders remaining after removing copied files
-  removeEmptyDirs(dicomDatabase.databaseDirectory+'/dicom')
+  removeEmptyDirs(dicomDatabase.databaseDirectory + '/dicom')
   dicomDatabase.databaseChanged()
 
 
@@ -301,7 +301,7 @@ def removeEmptyDirs(path):
         logging.error("Removing directory failed: " + str(e))
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def openTemporaryDatabase(directory=None):
   """ Temporarily change the main DICOM database folder location,
   return current database directory. Useful for tests and demos.
@@ -332,7 +332,7 @@ def openTemporaryDatabase(directory=None):
   return originalDatabaseDir
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
   """ Close temporary DICOM database and remove its directory if requested
   """
@@ -369,7 +369,7 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
   return True
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def createTemporaryDatabase(directory=None):
   """ Open temporary DICOM database, return new database object
   """
@@ -398,7 +398,7 @@ def createTemporaryDatabase(directory=None):
     return None
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
   """ Close temporary DICOM database and remove its directory if requested
   """
@@ -416,7 +416,7 @@ def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
   return True
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class TemporaryDICOMDatabase:
   """Context manager to conveniently use temporary DICOM database.
      It creates a new DICOM database and temporarily sets it as the main
@@ -435,7 +435,7 @@ class TemporaryDICOMDatabase:
     closeTemporaryDatabase(self.originalDatabaseDir)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
   """ Import DICOM files from folder into Slicer database
   """
@@ -454,7 +454,7 @@ def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
   return True
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expectedLoadedNodes=None):
   """ Load series by UID, and verify loadable selection and loaded nodes.
 
@@ -487,7 +487,7 @@ def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expecte
         if loadable.selected:
           if plugin.loadType in actualSelectedPlugins:
             count = int(actualSelectedPlugins[plugin.loadType])
-            actualSelectedPlugins[plugin.loadType] = count+1
+            actualSelectedPlugins[plugin.loadType] = count + 1
           else:
             actualSelectedPlugins[plugin.loadType] = 1
     for pluginName in expectedSelectedPlugins.keys():
@@ -514,16 +514,16 @@ def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expecte
     for nodeType in expectedLoadedNodes.keys():
       nodeCollection = slicer.mrmlScene.GetNodesByClass(nodeType)
       nodeCollection.UnRegister(None)
-      numOfLoadedNodes = nodeCollection.GetNumberOfItems()-actualLoadedNodes[nodeType]
+      numOfLoadedNodes = nodeCollection.GetNumberOfItems() - actualLoadedNodes[nodeType]
       if numOfLoadedNodes != expectedLoadedNodes[nodeType]:
         logging.error("Number of loaded %s nodes was %d, but %d was expected" % \
-          (nodeType, numOfLoadedNodes, expectedLoadedNodes[nodeType]) )
+          (nodeType, numOfLoadedNodes, expectedLoadedNodes[nodeType]))
         success = False
 
   return success
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def allSeriesUIDsInDatabase(database=None):
   """ Collect all series instance UIDs in a DICOM database (the Slicer one by default)
 
@@ -542,7 +542,7 @@ def allSeriesUIDsInDatabase(database=None):
   return allSeriesUIDs
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def seriesUIDsForFiles(files):
   """ Collect series instance UIDs belonging to a list of files
   """
@@ -554,11 +554,11 @@ def seriesUIDsForFiles(files):
   return seriesUIDs
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class LoadDICOMFilesToDatabase:
   """Context manager to conveniently load DICOM files downloaded zipped from the internet
   """
-  def __init__( self, url, archiveFilePath=None, dicomDataDir=None, \
+  def __init__(self, url, archiveFilePath=None, dicomDataDir=None, \
                 expectedNumberOfFiles=None, selectedPlugins=None, loadedNodes=None, checksum=None):
     from time import gmtime, strftime
     if archiveFilePath is None:
@@ -577,7 +577,7 @@ class LoadDICOMFilesToDatabase:
     self.loadedNodes = loadedNodes
 
   def __enter__(self):
-    if slicer.util.downloadAndExtractArchive( self.url, self.archiveFilePath, \
+    if slicer.util.downloadAndExtractArchive(self.url, self.archiveFilePath, \
                                               self.dicomDataDir, self.expectedNumberOfExtractedFiles,
                                               checksum=self.checksum):
       dicomFiles = slicer.util.getFilesInDirectory(self.dicomDataDir)
@@ -590,7 +590,7 @@ class LoadDICOMFilesToDatabase:
     pass
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # TODO: more consistency checks:
 # - is there gantry tilt?
 # - are the orientations the same for all slices?
@@ -633,15 +633,15 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
   sliceAxes = [float(zz) for zz in ref[tags['orientation']].split('\\')]
   x = np.array(sliceAxes[:3])
   y = np.array(sliceAxes[3:])
-  scanAxis = np.cross(x,y)
+  scanAxis = np.cross(x, y)
   scanOrigin = np.array([float(zz) for zz in ref[tags['position']].split('\\')])
 
   # For each file in series, calculate the distance along the scan axis, sort files by this
   sortList = []
   missingGeometry = False
   for file in filePaths:
-    positionStr = slicer.dicomDatabase.fileValue(file,tags['position'])
-    orientationStr = slicer.dicomDatabase.fileValue(file,tags['orientation'])
+    positionStr = slicer.dicomDatabase.fileValue(file, tags['position'])
+    orientationStr = slicer.dicomDatabase.fileValue(file, tags['orientation'])
     if not positionStr or positionStr == "" or not orientationStr or orientationStr == "":
       missingGeometry = True
       break
@@ -658,7 +658,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
   sortedFiles = sorted(sortList, key=lambda x: x[1])
   files = []
   distances = {}
-  for file,dist in sortedFiles:
+  for file, dist in sortedFiles:
     files.append(file)
     distances[file] = dist
 
@@ -677,7 +677,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
     spacing0 = dist1 - dist0
     n = 1
     for fileN in files[1:]:
-      fileNminus1 = files[n-1]
+      fileNminus1 = files[n - 1]
       distN = distances[fileN]
       distNminus1 = distances[fileNminus1]
       spacingN = distN - distNminus1
@@ -699,7 +699,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
   return files, distances, warningText
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def refreshDICOMWidget():
   """ Refresh DICOM browser from database.
   It is useful when the database is changed via a database object that is
@@ -735,7 +735,7 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
       pluginInstances[pluginClassName] = slicer.modules.dicomPlugins[pluginClassName]()
     plugin = pluginInstances[pluginClassName]
     if progressCallback:
-      cancelled = progressCallback(pluginClassName, step*100/len(pluginClassNames))
+      cancelled = progressCallback(pluginClassName, step * 100 / len(pluginClassNames))
       if cancelled:
         break
     try:
@@ -782,7 +782,7 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
 
   for step, (loadable, plugin) in enumerate(selectedLoadables.items(), start=1):
     if progressCallback:
-      cancelled = progressCallback(loadable.name, step*100/len(selectedLoadables))
+      cancelled = progressCallback(loadable.name, step * 100 / len(selectedLoadables))
       if cancelled:
         break
 
@@ -804,7 +804,7 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
       for derivedItem in loadable.derivedItems:
         indexer = ctk.ctkDICOMIndexer()
         if progressCallback:
-          cancelled = progressCallback(f"{loadable.name} ({derivedItem})", step*100/len(selectedLoadables))
+          cancelled = progressCallback(f"{loadable.name} ({derivedItem})", step * 100 / len(selectedLoadables))
           if cancelled:
             break
         indexer.addFile(slicer.dicomDatabase, derivedItem)
@@ -855,11 +855,11 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
     slicer.app.processEvents()
 
     if accessToken is None:
-      client = DICOMwebClient(url = dicomWebEndpoint)
+      client = DICOMwebClient(url=dicomWebEndpoint)
     else:
       client = DICOMwebClient(
-                url = dicomWebEndpoint,
-                headers = { "Authorization": f"Bearer {accessToken}" },
+                url=dicomWebEndpoint,
+                headers={"Authorization": f"Bearer {accessToken}"},
                 )
 
     seriesList = client.search_for_series(study_instance_uid=studyInstanceUID)
@@ -916,7 +916,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
         outputDirectoryPath = outputDirectory.path()
 
         for instanceIndex, instance in enumerate(instances):
-          progressDialog.setValue(int(100*instanceIndex/numberOfInstances))
+          progressDialog.setValue(int(100 * instanceIndex / numberOfInstances))
           slicer.app.processEvents()
           cancelled = progressDialog.wasCanceled
           if cancelled:
@@ -963,12 +963,12 @@ def registerSlicerURLHandler():
   if os.name == 'nt':
     launcherPath = qt.QDir.toNativeSeparators(qt.QFileInfo(slicer.app.launcherExecutableFilePath).absoluteFilePath())
     reg = qt.QSettings(f"HKEY_CURRENT_USER\\Software\\Classes", qt.QSettings.NativeFormat)
-    reg.setValue(f"{slicer.app.applicationName}/.",f"{slicer.app.applicationName} supported file")
-    reg.setValue(f"{slicer.app.applicationName}/URL protocol","")
-    reg.setValue(f"{slicer.app.applicationName}/shell/open/command/.",f"\"{launcherPath}\" \"%1\"")
-    reg.setValue(f"{slicer.app.applicationName}/DefaultIcon/.",f"{slicer.app.applicationName}.exe,0")
+    reg.setValue(f"{slicer.app.applicationName}/.", f"{slicer.app.applicationName} supported file")
+    reg.setValue(f"{slicer.app.applicationName}/URL protocol", "")
+    reg.setValue(f"{slicer.app.applicationName}/shell/open/command/.", f"\"{launcherPath}\" \"%1\"")
+    reg.setValue(f"{slicer.app.applicationName}/DefaultIcon/.", f"{slicer.app.applicationName}.exe,0")
     for ext in ['mrml', 'mrb']:
-      reg.setValue(f".{ext}/.",f"{slicer.app.applicationName}")
+      reg.setValue(f".{ext}/.", f"{slicer.app.applicationName}")
       reg.setValue(f".{ext}/Content Type", f"application/x-{ext}")
   else:
     raise NotImplementedError()

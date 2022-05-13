@@ -1,7 +1,7 @@
 import argparse
 
 
-#=============================================================================
+# =============================================================================
 class WizardHelpFormatter(argparse.HelpFormatter):
   """Custom formatter for |CLI| arguments.
 
@@ -12,12 +12,12 @@ class WizardHelpFormatter(argparse.HelpFormatter):
   raises an assertion).
   """
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _format_action_invocation(self, *args):
     text = super()._format_action_invocation(*args)
     return text.replace("<", "[").replace(">", "]")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _format_usage(self, *args):
     text = super()._format_usage(*args)
     return text.replace("<", "[").replace(">", "]")

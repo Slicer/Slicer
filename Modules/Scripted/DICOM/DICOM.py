@@ -26,7 +26,7 @@ class DICOM(ScriptedLoadableModule):
     ScriptedLoadableModule.__init__(self, parent)
 
     self.parent.title = "DICOM"
-    self.parent.categories = ["", "Informatics"] # top level module
+    self.parent.categories = ["", "Informatics"]  # top level module
     self.parent.contributors = ["Steve Pieper (Isomics)", "Andras Lasso (PerkLab)"]
     self.parent.helpText = """
 This module allows importing, loading, and exporting DICOM files, and sending receiving data using DICOM networking.
@@ -72,7 +72,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
       return
     self.postModuleDiscoveryTasksPerformed = True
 
-    if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
+    if slicer.mrmlScene.GetTagByClassName("vtkMRMLScriptedModuleNode") != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
     self.initializeDICOMDatabase()
@@ -118,7 +118,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 
     url = qt.QUrl(urlString)
     if (url.authority().lower() != "viewer"):
-      logging.debug("DICOM module ignores non-viewer URL: "+urlString)
+      logging.debug("DICOM module ignores non-viewer URL: " + urlString)
       return
     query = qt.QUrlQuery(url)
     queryMap = {}
@@ -126,13 +126,13 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
       queryMap[key] = qt.QUrl.fromPercentEncoding(value)
 
     if not "dicomweb_endpoint" in queryMap:
-      logging.debug("DICOM module ignores URL without dicomweb_endpoint query parameter: "+urlString)
+      logging.debug("DICOM module ignores URL without dicomweb_endpoint query parameter: " + urlString)
       return
     if not "studyUID" in queryMap:
-      logging.debug("DICOM module ignores URL without studyUID query parameter: "+urlString)
+      logging.debug("DICOM module ignores URL without studyUID query parameter: " + urlString)
       return
 
-    logging.info("DICOM module received URL: "+urlString)
+    logging.info("DICOM module received URL: " + urlString)
 
     accessToken = None
     if "access_token" in queryMap:
@@ -167,18 +167,18 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     # Try to initialize the database using the location stored in settings
     if slicer.app.commandOptions().testingEnabled:
       # For automatic tests (use a separate DICOM database for testing)
-      slicer.dicomDatabaseDirectorySettingsKey = 'DatabaseDirectoryTest_'+ctk.ctkDICOMDatabase().schemaVersion()
+      slicer.dicomDatabaseDirectorySettingsKey = 'DatabaseDirectoryTest_' + ctk.ctkDICOMDatabase().schemaVersion()
       databaseDirectory = os.path.join(slicer.app.temporaryPath,
-        'temp'+slicer.app.applicationName+'DICOMDatabase_'+ctk.ctkDICOMDatabase().schemaVersion())
+        'temp' + slicer.app.applicationName + 'DICOMDatabase_' + ctk.ctkDICOMDatabase().schemaVersion())
     else:
       # For production
-      slicer.dicomDatabaseDirectorySettingsKey = 'DatabaseDirectory_'+ctk.ctkDICOMDatabase().schemaVersion()
+      slicer.dicomDatabaseDirectorySettingsKey = 'DatabaseDirectory_' + ctk.ctkDICOMDatabase().schemaVersion()
       settings = qt.QSettings()
       databaseDirectory = settings.value(slicer.dicomDatabaseDirectorySettingsKey)
       if not databaseDirectory:
         documentsLocation = qt.QStandardPaths.DocumentsLocation
         documents = qt.QStandardPaths.writableLocation(documentsLocation)
-        databaseDirectory = os.path.join(documents, slicer.app.applicationName+"DICOMDatabase")
+        databaseDirectory = os.path.join(documents, slicer.app.applicationName + "DICOMDatabase")
         settings.setValue(slicer.dicomDatabaseDirectorySettingsKey, databaseDirectory)
 
     # Attempt to open the database. If it fails then user will have to configure it using DICOM module.
@@ -208,7 +208,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
       logging.error("Failed to start DICOM listener. Process start failed.")
       return False
     slicer.dicomListener = dicomListener
-    logging.info("DICOM C-Store SCP service started at port "+str(slicer.dicomListener.port))
+    logging.info("DICOM C-Store SCP service started at port " + str(slicer.dicomListener.port))
 
   def stopListener(self):
     if hasattr(slicer, 'dicomListener'):
@@ -391,7 +391,7 @@ class DICOMFileDialog:
   and commit http://svn.slicer.org/Slicer4/trunk@21951 and issue #3081
   """
 
-  def __init__(self,qSlicerFileDialog):
+  def __init__(self, qSlicerFileDialog):
     self.qSlicerFileDialog = qSlicerFileDialog
     qSlicerFileDialog.fileType = 'DICOM Directory'
     qSlicerFileDialog.description = 'Load directory into DICOM database'
@@ -415,10 +415,10 @@ class DICOMFileDialog:
     if mimeData.hasFormat('text/uri-list'):
       urls = mimeData.urls()
       for url in urls:
-        localPath = url.toLocalFile() # convert QUrl to local path
+        localPath = url.toLocalFile()  # convert QUrl to local path
         pathInfo = qt.QFileInfo()
-        pathInfo.setFile(localPath) # information about the path
-        if pathInfo.isDir(): # if it is a directory we add the files to the dialog
+        pathInfo.setFile(localPath)  # information about the path
+        if pathInfo.isDir():  # if it is a directory we add the files to the dialog
           directoriesToAdd.append(localPath)
         else:
           filesToAdd.append(localPath)
@@ -661,8 +661,8 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     mw = slicer.util.mainWindow()
     if mw:
       try:
-        action = slicer.util.findChildren(mw,name='LoadDICOMAction')[0]
-        action.connect('triggered()',self.onOpenBrowserWidget)
+        action = slicer.util.findChildren(mw, name='LoadDICOMAction')[0]
+        action.connect('triggered()', self.onOpenBrowserWidget)
       except IndexError:
         logging.error('Could not connect to the main window DICOM button')
 
@@ -807,7 +807,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
       self.ui.listenerStateLabel.text = "starting"
     if newState == 2:
       port = str(slicer.dicomListener.port) if hasattr(slicer, 'dicomListener') else "unknown"
-      self.ui.listenerStateLabel.text = "running at port "+port
+      self.ui.listenerStateLabel.text = "running at port " + port
       self.ui.toggleListener.checked = True
 
   def onListenerToAddFile(self):
@@ -856,16 +856,16 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         self.tmpDir = tmpDir + '/DICOM'
         if not os.path.exists(self.tmpDir):
           os.mkdir(self.tmpDir)
-        self.testingServer = DICOMLib.DICOMTestingQRServer(exeDir=self.exeDir,tmpDir=self.tmpDir)
+        self.testingServer = DICOMLib.DICOMTestingQRServer(exeDir=self.exeDir, tmpDir=self.tmpDir)
 
       # look for the sample data to load (only works on build trees
       # with standard naming conventions)
-      self.dataDir =  slicer.app.slicerHome + '/../../Slicer4/Testing/Data/Input/CTHeadAxialDicom'
-      files = glob.glob(self.dataDir+'/*.dcm')
+      self.dataDir = slicer.app.slicerHome + '/../../Slicer4/Testing/Data/Input/CTHeadAxialDicom'
+      files = glob.glob(self.dataDir + '/*.dcm')
 
       # now start the server
-      self.testingServer.start(verbose=self.verboseServer.checked,initialFiles=files)
-      #self.toggleServer.text = "Stop Testing Server"
+      self.testingServer.start(verbose=self.verboseServer.checked, initialFiles=files)
+      # self.toggleServer.text = "Stop Testing Server"
 
   def onRunListenerAtStart(self, toggled):
     settings = qt.QSettings()
@@ -874,7 +874,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
   def updateDatabaseDirectoryFromWidget(self, databaseDirectory):
     self.browserWidget.dicomBrowser.databaseDirectory = databaseDirectory
 
-  def updateDatabaseDirectoryFromBrowser(self,databaseDirectory):
+  def updateDatabaseDirectoryFromBrowser(self, databaseDirectory):
     wasBlocked = self.ui.directoryButton.blockSignals(True)
     self.ui.directoryButton.directory = databaseDirectory
     self.ui.directoryButton.blockSignals(wasBlocked)

@@ -264,7 +264,7 @@ def _generatemd(dom, docsfolder, outpath, xslt, suffix):
     xsltpath = os.path.join(docsfolder, xslt)
     transform = ET.XSLT(ET.parse(xsltpath))
     content = str(transform(dom))
-    with open(os.path.join(outpath, os.path.splitext(name)[0]+suffix+'.md'), 'w', encoding='utf8') as outfile:
+    with open(os.path.join(outpath, os.path.splitext(name)[0] + suffix + '.md'), 'w', encoding='utf8') as outfile:
         outfile.write(content)
 
 

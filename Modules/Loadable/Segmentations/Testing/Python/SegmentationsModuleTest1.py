@@ -23,10 +23,10 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.setUp()
     self.test_SegmentationsModuleTest1()
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def test_SegmentationsModuleTest1(self):
     # Check for modules
-    self.assertIsNotNone( slicer.modules.segmentations )
+    self.assertIsNotNone(slicer.modules.segmentations)
 
     self.TestSection_SetupPathsAndNames()
     self.TestSection_RetrieveInputData()
@@ -39,7 +39,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
     logging.info('Test finished')
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_SetupPathsAndNames(self):
     # Set up paths used for this test
     self.segmentationsModuleTestDir = slicer.app.temporaryPath + '/SegmentationsModuleTest'
@@ -65,7 +65,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.closedSurfaceReprName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName()
     self.binaryLabelmapReprName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_RetrieveInputData(self):
     try:
       slicer.util.downloadAndExtractArchive(
@@ -74,17 +74,17 @@ class SegmentationsModuleTest1(unittest.TestCase):
         checksum='SHA256:b902f635ef2059cd3b4ba854c000b388e4a9e817a651f28be05c22511a317ec7')
 
       numOfFilesInDataDirTest = len([name for name in os.listdir(self.dataDir) if os.path.isfile(self.dataDir + '/' + name)])
-      self.assertEqual( numOfFilesInDataDirTest, self.expectedNumOfFilesInDataDir )
-      self.assertTrue( os.access(self.dataSegDir, os.F_OK) )
+      self.assertEqual(numOfFilesInDataDirTest, self.expectedNumOfFilesInDataDir)
+      self.assertTrue(os.access(self.dataSegDir, os.F_OK))
       numOfFilesInDataSegDirTest = len([name for name in os.listdir(self.dataSegDir) if os.path.isfile(self.dataSegDir + '/' + name)])
-      self.assertEqual( numOfFilesInDataSegDirTest, self.expectedNumOfFilesInDataSegDir )
+      self.assertEqual(numOfFilesInDataSegDirTest, self.expectedNumOfFilesInDataSegDir)
 
     except Exception as e:
       import traceback
       traceback.print_exc()
       logging.error('Test caused exception!\n' + str(e))
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_LoadInputData(self):
     # Load into Slicer
     slicer.util.loadVolume(self.dataDir + '/TinyPatient_CT.nrrd')
@@ -94,7 +94,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.inputSegmentationNode = slicer.util.getNode('vtkMRMLSegmentationNode1')
     self.inputSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_AddRemoveSegment(self):
     # Add/remove segment from segmentation (check display properties, color table, etc.)
     logging.info('Test section: Add/remove segment')
@@ -105,18 +105,18 @@ class SegmentationsModuleTest1(unittest.TestCase):
     # If segments are not found then the returned color is the pre-defined invalid color
     bodyColor = self.inputSegmentationNode.GetSegmentation().GetSegment(self.bodySegmentName).GetColor()
     logging.info(f"bodyColor: {bodyColor}")
-    self.assertEqual(int(bodyColor[0]*100), 33)
-    self.assertEqual(int(bodyColor[1]*100), 66)
-    self.assertEqual(int(bodyColor[2]*100), 0)
+    self.assertEqual(int(bodyColor[0] * 100), 33)
+    self.assertEqual(int(bodyColor[1] * 100), 66)
+    self.assertEqual(int(bodyColor[2] * 100), 0)
     tumorColor = self.inputSegmentationNode.GetSegmentation().GetSegment(self.tumorSegmentName).GetColor()
     logging.info(f"tumorColor: {tumorColor}")
-    self.assertEqual(int(tumorColor[0]*100), 100)
-    self.assertEqual(int(tumorColor[1]*100), 0)
-    self.assertEqual(int(tumorColor[2]*100), 0)
+    self.assertEqual(int(tumorColor[0] * 100), 100)
+    self.assertEqual(int(tumorColor[1] * 100), 0)
+    self.assertEqual(int(tumorColor[2] * 100), 0)
 
     # Create new segment
     sphere = vtk.vtkSphereSource()
-    sphere.SetCenter(0,50,0)
+    sphere.SetCenter(0, 50, 0)
     sphere.SetRadius(80)
     sphere.Update()
     spherePolyData = vtk.vtkPolyData()
@@ -124,7 +124,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
     self.sphereSegment = vtkSegmentationCore.vtkSegment()
     self.sphereSegment.SetName(self.sphereSegmentName)
-    self.sphereSegment.SetColor(0.0,0.0,1.0)
+    self.sphereSegment.SetColor(0.0, 0.0, 1.0)
     self.sphereSegment.AddRepresentation(self.closedSurfaceReprName, spherePolyData)
 
     # Add segment to segmentation
@@ -137,18 +137,18 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.inputSegmentationNode.GenerateMergedLabelmapForAllSegments(mergedLabelmap, 0)
     imageStat = vtk.vtkImageAccumulate()
     imageStat.SetInputData(mergedLabelmap)
-    imageStat.SetComponentExtent(0,4,0,0,0,0)
-    imageStat.SetComponentOrigin(0,0,0)
-    imageStat.SetComponentSpacing(1,1,1)
+    imageStat.SetComponentExtent(0, 4, 0, 0, 0, 0)
+    imageStat.SetComponentOrigin(0, 0, 0)
+    imageStat.SetComponentSpacing(1, 1, 1)
     imageStat.Update()
     imageStatResult = imageStat.GetOutput()
     for i in range(4):
       logging.info(f"Volume {i}: {imageStatResult.GetScalarComponentAsDouble(i,0,0,0)}")
     self.assertEqual(imageStat.GetVoxelCount(), 1000)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 786)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 170)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 4)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 40)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0, 0, 0, 0), 786)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1, 0, 0, 0), 170)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2, 0, 0, 0), 4)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3, 0, 0, 0), 40)
 
     # Check if segment reorder is taken into account in merged labelmap generation
     # Change segment order
@@ -162,16 +162,16 @@ class SegmentationsModuleTest1(unittest.TestCase):
     for i in range(4):
       logging.info(f"Volume {i}: {imageStatResult.GetScalarComponentAsDouble(i,0,0,0)}")
     self.assertEqual(imageStat.GetVoxelCount(), 1000)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 786)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 170)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 39)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 5)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0, 0, 0, 0), 786)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1, 0, 0, 0), 170)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2, 0, 0, 0), 39)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3, 0, 0, 0), 5)
 
     # Remove segment from segmentation
     self.inputSegmentationNode.GetSegmentation().RemoveSegment(self.sphereSegmentName)
     self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_MergeLabelmapWithDifferentGeometries(self):
     # Merge labelmap when segments containing labelmaps with different geometries (both same directions, different directions)
     logging.info('Test section: Merge labelmap with different geometries')
@@ -215,21 +215,21 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
     imageStat = vtk.vtkImageAccumulate()
     imageStat.SetInputData(mergedLabelmap)
-    imageStat.SetComponentExtent(0,5,0,0,0,0)
-    imageStat.SetComponentOrigin(0,0,0)
-    imageStat.SetComponentSpacing(1,1,1)
+    imageStat.SetComponentExtent(0, 5, 0, 0, 0, 0)
+    imageStat.SetComponentOrigin(0, 0, 0)
+    imageStat.SetComponentSpacing(1, 1, 1)
     imageStat.Update()
     imageStatResult = imageStat.GetOutput()
     for i in range(5):
       logging.info(f"Volume {i}: {imageStatResult.GetScalarComponentAsDouble(i,0,0,0)}")
     self.assertEqual(imageStat.GetVoxelCount(), 226981000)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 178838889)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 39705288)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 890883)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 7545940)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(4,0,0,0), 0)  # Built from color table and color four is removed in previous test section
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0, 0, 0, 0), 178838889)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1, 0, 0, 0), 39705288)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2, 0, 0, 0), 890883)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3, 0, 0, 0), 7545940)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(4, 0, 0, 0), 0)  # Built from color table and color four is removed in previous test section
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_ImportExportSegment(self):
     # Import/export, both one label and all labels
     logging.info('Test section: Import/export segment')
@@ -243,11 +243,11 @@ class SegmentationsModuleTest1(unittest.TestCase):
     result = slicer.vtkSlicerSegmentationsModuleLogic.ExportSegmentToRepresentationNode(bodySegment, bodyModelNode)
     self.assertTrue(result)
     self.assertIsNotNone(bodyModelNode.GetPolyData())
-    #TODO: Number of points increased to 1677 due to end-capping, need to investigate!
-    #self.assertEqual(bodyModelNode.GetPolyData().GetNumberOfPoints(), 302)
-    #TODO: On Linux and Windows it is 588, on Mac it is 580. Need to investigate
+    # TODO: Number of points increased to 1677 due to end-capping, need to investigate!
+    # self.assertEqual(bodyModelNode.GetPolyData().GetNumberOfPoints(), 302)
+    # TODO: On Linux and Windows it is 588, on Mac it is 580. Need to investigate
     # self.assertEqual(bodyModelNode.GetPolyData().GetNumberOfCells(), 588)
-    #self.assertTrue(bodyModelNode.GetPolyData().GetNumberOfCells() == 588 or bodyModelNode.GetPolyData().GetNumberOfCells() == 580)
+    # self.assertTrue(bodyModelNode.GetPolyData().GetNumberOfCells() == 588 or bodyModelNode.GetPolyData().GetNumberOfCells() == 580)
 
     # Export single segment to volume node
     bodyLabelmapNode = slicer.vtkMRMLLabelMapVolumeNode()
@@ -274,23 +274,23 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertIsNotNone(allSegmentsImageData)
     imageStat = vtk.vtkImageAccumulate()
     imageStat.SetInputData(allSegmentsImageData)
-    imageStat.SetComponentExtent(0,5,0,0,0,0)
-    imageStat.SetComponentOrigin(0,0,0)
-    imageStat.SetComponentSpacing(1,1,1)
+    imageStat.SetComponentExtent(0, 5, 0, 0, 0, 0)
+    imageStat.SetComponentOrigin(0, 0, 0)
+    imageStat.SetComponentSpacing(1, 1, 1)
     imageStat.Update()
     imageStatResult = imageStat.GetOutput()
     for i in range(4):
       logging.info(f"Volume {i}: {imageStatResult.GetScalarComponentAsDouble(i,0,0,0)}")
     self.assertEqual(imageStat.GetVoxelCount(), 127109360)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 78967249)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 39705288)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 890883)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 7545940)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0, 0, 0, 0), 78967249)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1, 0, 0, 0), 39705288)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2, 0, 0, 0), 890883)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3, 0, 0, 0), 7545940)
     # Import model to segment
     modelImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'ModelImport')
     modelImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
     modelSegment = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromModelNode(bodyModelNode)
-    modelSegment.UnRegister(None) # Need to release ownership
+    modelSegment.UnRegister(None)  # Need to release ownership
     self.assertIsNotNone(modelSegment)
     self.assertIsNotNone(modelSegment.GetRepresentation(self.closedSurfaceReprName))
 
@@ -319,7 +319,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     threshold.Update()
     allSegmentsLabelmapNode.GetImageData().ShallowCopy(threshold.GetOutput())
     labelSegment = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromLabelmapVolumeNode(allSegmentsLabelmapNode)
-    labelSegment.UnRegister(None) # Need to release ownership
+    labelSegment.UnRegister(None)  # Need to release ownership
     self.assertIsNotNone(labelSegment)
     self.assertIsNotNone(labelSegment.GetRepresentation(self.binaryLabelmapReprName))
 
@@ -365,7 +365,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     modelTransformedImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
     modelTransformedImportSegmentationNode.SetAndObserveTransformNodeID(modelTransformedImportSegmentationTransformNode.GetID())
     modelSegmentTranformed = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromModelNode(bodyModelNodeTransformed, modelTransformedImportSegmentationNode)
-    modelSegmentTranformed.UnRegister(None) # Need to release ownership
+    modelSegmentTranformed.UnRegister(None)  # Need to release ownership
     self.assertIsNotNone(modelSegmentTranformed)
     modelSegmentTransformedPolyData = modelSegmentTranformed.GetRepresentation(self.closedSurfaceReprName)
     self.assertIsNotNone(modelSegmentTransformedPolyData)
@@ -461,48 +461,48 @@ class SegmentationsModuleTest1(unittest.TestCase):
     slicer.mrmlScene.RemoveNode(tumorLabelmapNode)
     slicer.mrmlScene.RemoveNode(singleLabelImportSegmentationNode)
 
-  #------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------
   def TestSection_SubjectHierarchy(self):
     # Subject hierarchy plugin: item creation, removal, renaming
     logging.info('Test section: Subject hierarchy')
 
     shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
-    self.assertIsNotNone( shNode )
+    self.assertIsNotNone(shNode)
 
     # Check if subject hierarchy items have been created
     segmentationShItemID = shNode.GetItemByDataNode(self.inputSegmentationNode)
-    self.assertIsNotNone( segmentationShItemID )
+    self.assertIsNotNone(segmentationShItemID)
 
     bodyItemID = shNode.GetItemChildWithName(segmentationShItemID, self.bodySegmentName)
-    self.assertIsNotNone( bodyItemID )
-    tumorItemID  = shNode.GetItemChildWithName(segmentationShItemID, self.tumorSegmentName)
-    self.assertIsNotNone( tumorItemID )
-    sphereItemID  = shNode.GetItemChildWithName(segmentationShItemID, self.sphereSegmentName)
-    self.assertIsNotNone( sphereItemID )
+    self.assertIsNotNone(bodyItemID)
+    tumorItemID = shNode.GetItemChildWithName(segmentationShItemID, self.tumorSegmentName)
+    self.assertIsNotNone(tumorItemID)
+    sphereItemID = shNode.GetItemChildWithName(segmentationShItemID, self.sphereSegmentName)
+    self.assertIsNotNone(sphereItemID)
 
     # Rename segment
     bodySegment = self.inputSegmentationNode.GetSegmentation().GetSegment(self.bodySegmentName)
     bodySegment.SetName('Body')
     qt.QApplication.processEvents()
-    self.assertEqual( shNode.GetItemName(bodyItemID), 'Body')
+    self.assertEqual(shNode.GetItemName(bodyItemID), 'Body')
 
     tumorSegment = self.inputSegmentationNode.GetSegmentation().GetSegment(self.tumorSegmentName)
     shNode.SetItemName(tumorItemID, 'Tumor')
     qt.QApplication.processEvents()
-    self.assertEqual( tumorSegment.GetName(), 'Tumor')
+    self.assertEqual(tumorSegment.GetName(), 'Tumor')
 
     # Remove segment
     self.inputSegmentationNode.GetSegmentation().RemoveSegment(bodySegment)
     qt.QApplication.processEvents()
     logging.info('(The error messages below are results of testing invalidity of objects, they are supposed to appear)')
-    self.assertEqual( shNode.GetItemChildWithName(segmentationShItemID, 'Body'), 0)
-    self.assertEqual( self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
+    self.assertEqual(shNode.GetItemChildWithName(segmentationShItemID, 'Body'), 0)
+    self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
 
     shNode.RemoveItem(tumorItemID)
     qt.QApplication.processEvents()
-    self.assertEqual( self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 1 )
+    self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 1)
 
     # Remove segmentation
     slicer.mrmlScene.RemoveNode(self.inputSegmentationNode)
-    self.assertEqual( shNode.GetItemName(segmentationShItemID), '')
-    self.assertEqual( shNode.GetItemName(sphereItemID), '')
+    self.assertEqual(shNode.GetItemName(segmentationShItemID), '')
+    self.assertEqual(shNode.GetItemName(sphereItemID), '')

@@ -6,19 +6,19 @@ from . import CMakeParser
 from .Utilities import detectEncoding
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _isCommand(token, name):
   return isinstance(token, CMakeParser.Command) and token.text.lower() == name
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _trimIndent(indent):
   indent = "\n" + indent
   n = indent.rindex("\n")
   return indent[n:]
 
 
-#=============================================================================
+# =============================================================================
 class ExtensionProject:
   """Convenience class for manipulating an extension project.
 
@@ -38,7 +38,7 @@ class ExtensionProject:
 
   _referencedVariables = re.compile(r"\$\{([\w_\/\.\+\-]+)\}")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, path, encoding=None, filename="CMakeLists.txt", ):
     """
     :param path: Top level directory of the extension project.
@@ -82,7 +82,7 @@ class ExtensionProject:
         cmakeFiles.append(cmakeFile)
     return cmakeFiles
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @staticmethod
   def _parse(cmakeFile, encoding=None):
     with open(cmakeFile, "rb") as fp:
@@ -110,15 +110,15 @@ class ExtensionProject:
 
     return contents, encoding
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __enter__(self):
     return self
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __exit__(self, exc_type, exc_value, traceback):
     self.save()
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @property
   def encoding(self):
     """Character encoding of the extension project CMakeLists.txt.
@@ -139,7 +139,7 @@ class ExtensionProject:
 
     return self._encoding
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @property
   def project(self):
     """Name of extension project.
@@ -169,7 +169,7 @@ class ExtensionProject:
 
     raise EOFError("could not find project")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @project.setter
   def project(self, value):
 
@@ -184,7 +184,7 @@ class ExtensionProject:
 
     raise EOFError("could not find project")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def substituteVariableReferences(self, text):
     """Return a copy of ``text`` where all valid '``${var}``' occurrences
     have been replaced.
@@ -225,7 +225,7 @@ class ExtensionProject:
       text = _substitue(text)
     return text
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def getValue(self, name, default=None, substitute=False):
     """Get value of CMake variable set in project.
 
@@ -283,7 +283,7 @@ class ExtensionProject:
 
     raise KeyError("script does not set %r" % name)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def setValue(self, name, value):
     """Change value of CMake variable set in project.
 
@@ -320,7 +320,7 @@ class ExtensionProject:
 
     raise KeyError("script does not set %r" % name)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def addModule(self, name):
     """Add a module to the build rules of the project.
 
@@ -360,7 +360,7 @@ class ExtensionProject:
                             indent=indent)
     self._scriptContents.tokens.insert(after, t)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def save(self, destination=None, encoding=None):
     """Save the project.
 

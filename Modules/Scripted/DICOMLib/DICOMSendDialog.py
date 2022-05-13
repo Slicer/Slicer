@@ -33,7 +33,7 @@ class DICOMSendDialog(qt.QDialog):
     self.settings = qt.QSettings()
 
     self.protocolSelectorCombobox = qt.QComboBox()
-    self.protocolSelectorCombobox.addItems(["DIMSE","DICOMweb"])
+    self.protocolSelectorCombobox.addItems(["DIMSE", "DICOMweb"])
     self.protocolSelectorCombobox.setCurrentText(self.settings.value('DICOM/Send/Protocol', 'DIMSE'))
     self.protocolSelectorCombobox.currentIndexChanged.connect(self.onProtocolSelectorChange)
     self.dicomFormLayout.addRow("Protocol: ", self.protocolSelectorCombobox)
@@ -79,7 +79,7 @@ class DICOMSendDialog(qt.QDialog):
     self.settings.setValue('DICOM/Send/AETitle', aeTitle)
     self.settings.setValue('DICOM/Send/Protocol', protocol)
     self.progressBar.value = 0
-    self.progressBar.maximum = len(self.files)+1
+    self.progressBar.maximum = len(self.files) + 1
     self.progressBar.show()
     self.cancelRequested = False
     okButton = self.bbox.button(self.bbox.Ok)

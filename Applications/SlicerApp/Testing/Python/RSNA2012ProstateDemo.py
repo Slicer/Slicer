@@ -14,16 +14,16 @@ class RSNA2012ProstateDemo(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "RSNA2012ProstateDemo" # TODO make this more human readable by adding spaces
+    parent.title = "RSNA2012ProstateDemo"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
-    parent.contributors = ["Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
+    parent.contributors = ["Steve Pieper (Isomics)"]  # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     This module was developed as a self test to perform the operations needed for the RSNA 2012 Prostate Demo
     """
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #
@@ -78,8 +78,8 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
     svns = slicer.util.getNodes('vtkMRMLSceneViewNode*')
 
     for reps in range(5):
-      for svname,svnode in svns.items():
-        self.delayDisplay('Restoring scene view %s ...' % svname )
+      for svname, svnode in svns.items():
+        self.delayDisplay('Restoring scene view %s ...' % svname)
         svnode.RestoreScene()
         self.delayDisplay('OK')
 

@@ -207,8 +207,8 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
     slicer._webServerStarted = self.logic.serverStarted
     self.stopServer()
 
-    packageName='WebServerLib'
-    submoduleNames=['SlicerRequestHandler', 'StaticPagesRequestHandler']
+    packageName = 'WebServerLib'
+    submoduleNames = ['SlicerRequestHandler', 'StaticPagesRequestHandler']
     if hasattr(slicer.modules, "dicom"):
       submoduleNames.append('DICOMRequestHandler')
     import imp
@@ -217,7 +217,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
     for submoduleName in submoduleNames:
       f, filename, description = imp.find_module(submoduleName, package.__path__)
       try:
-          imp.load_module(packageName+'.'+submoduleName, f, filename, description)
+          imp.load_module(packageName + '.' + submoduleName, f, filename, description)
       finally:
           f.close()
 
@@ -228,12 +228,12 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
       slicer.modules.WebServerWidget.startServer()
     del slicer._webServerStarted
 
-  def logMessage(self,*args):
+  def logMessage(self, *args):
     if self.consoleMessages:
       for arg in args:
         print(arg)
     if self.guiMessages:
-      if len(self.log.html) > 1024*256:
+      if len(self.log.html) > 1024 * 256:
         self.log.clear()
         self.log.insertHtml("Log cleared\n")
       for arg in args:
@@ -254,7 +254,7 @@ class SlicerHTTPServer(HTTPServer):
   """
   # TODO: set header so client knows that image refreshes are needed (avoid
   # using the &time=xxx trick)
-  def __init__(self, server_address=("",2016), requestHandlers=None, docroot='.', logMessage=None, certfile=None):
+  def __init__(self, server_address=("", 2016), requestHandlers=None, docroot='.', logMessage=None, certfile=None):
     """
     :param server_address: passed to parent class (default ("", 8070))
     :param requestHandlers: request handler objects; if not specified then Slicer, DICOM, and StaticPages handlers are registered
@@ -262,7 +262,7 @@ class SlicerHTTPServer(HTTPServer):
     :param logMessage: a callable for messages
     :param certfile: path to a file with an ssl certificate (.pem file)
     """
-    HTTPServer.__init__(self,server_address, SlicerHTTPServer.DummyRequestHandler)
+    HTTPServer.__init__(self, server_address, SlicerHTTPServer.DummyRequestHandler)
 
     self.requestHandlers = []
 
@@ -305,7 +305,7 @@ class SlicerHTTPServer(HTTPServer):
       self.connectionSocket = connectionSocket
       self.docroot = docroot
       self.logMessage = logMessage
-      self.bufferSize = 1024*1024
+      self.bufferSize = 1024 * 1024
       self.requestHandlers = []
       for requestHandler in requestHandlers:
         self.registerRequestHandler(requestHandler)
@@ -338,8 +338,8 @@ class SlicerHTTPServer(HTTPServer):
         if self.expectedRequestSize > 0:
           self.logMessage('received... %d of %d expected' % (len(self.requestSoFar), self.expectedRequestSize))
           if len(self.requestSoFar) >= self.expectedRequestSize:
-            requestHeader = self.requestSoFar[:endOfHeader+2]
-            requestBody = self.requestSoFar[4+endOfHeader:]
+            requestHeader = self.requestSoFar[:endOfHeader + 2]
+            requestBody = self.requestSoFar[4 + endOfHeader:]
             requestComplete = True
         else:
           if endOfHeader != -1:
@@ -353,8 +353,8 @@ class SlicerHTTPServer(HTTPServer):
               self.expectedRequestSize = 4 + endOfHeader + contentLength
               self.logMessage('Expecting a body of %d, total size %d' % (contentLength, self.expectedRequestSize))
               if len(requestPart) == self.expectedRequestSize:
-                requestHeader = requestPart[:endOfHeader+2]
-                requestBody = requestPart[4+endOfHeader:]
+                requestHeader = requestPart[:endOfHeader + 2]
+                requestBody = requestPart[4 + endOfHeader:]
                 requestComplete = True
             else:
               self.logMessage('Found end of header with no content, so body is empty')
@@ -375,11 +375,11 @@ class SlicerHTTPServer(HTTPServer):
           self.logMessage("Ignoring empty request")
           return
 
-        method,uri,version = [b'GET', b'/', b'HTTP/1.1'] # defaults
+        method, uri, version = [b'GET', b'/', b'HTTP/1.1']  # defaults
         requestLines = requestHeader.split(b'\r\n')
         self.logMessage(requestLines[0])
         try:
-          method,uri,version = requestLines[0].split(b' ')
+          method, uri, version = requestLines[0].split(b' ')
         except ValueError as e:
           self.logMessage("Could not interpret first request lines: ", requestLines)
 
@@ -421,7 +421,7 @@ class SlicerHTTPServer(HTTPServer):
               self.logMessage(frame)
             self.logMessage(etype, value)
             contentType = b'text/plain'
-            responseBody = b'Server error' # TODO: send correct error code in response
+            responseBody = b'Server error'  # TODO: send correct error code in response
         else:
           contentType = b'text/plain'
           responseBody = b''
@@ -453,10 +453,10 @@ class SlicerHTTPServer(HTTPServer):
       self.logMessage('Sending on %d...' % (fileno))
       sendError = False
       try:
-        sent = self.connectionSocket.send(self.response[:500*self.bufferSize])
+        sent = self.connectionSocket.send(self.response[:500 * self.bufferSize])
         self.response = self.response[sent:]
         self.sentSoFar += sent
-        self.logMessage('sent: %d (%d of %d, %f%%)' % (sent, self.sentSoFar, self.toSend, 100.*self.sentSoFar / self.toSend))
+        self.logMessage('sent: %d (%d of %d, %f%%)' % (sent, self.sentSoFar, self.toSend, 100. * self.sentSoFar / self.toSend))
       except socket.error as e:
         self.logMessage('Socket error while sending: %s' % e)
         sendError = True
@@ -468,7 +468,7 @@ class SlicerHTTPServer(HTTPServer):
         self.connectionSocket.close()
         self.logMessage('closed fileno %d' % (fileno))
 
-  def onServerSocketNotify(self,fileno):
+  def onServerSocketNotify(self, fileno):
       self.logMessage('got request on %d' % fileno)
       try:
         (connectionSocket, clientAddress) = self.socket.accept()
@@ -484,7 +484,7 @@ class SlicerHTTPServer(HTTPServer):
     """
     try:
       self.logMessage('started httpserver...')
-      self.notifier = qt.QSocketNotifier(self.socket.fileno(),qt.QSocketNotifier.Read)
+      self.notifier = qt.QSocketNotifier(self.socket.fileno(), qt.QSocketNotifier.Read)
       self.logMessage('listening on %d...' % self.socket.fileno())
       self.notifier.connect('activated(int)', self.onServerSocketNotify)
 
@@ -503,22 +503,22 @@ class SlicerHTTPServer(HTTPServer):
 
     The default is to print a traceback and continue.
     """
-    print ('-'*40)
-    print ('Exception happened during processing of request', request)
-    print ('From', client_address)
+    print('-' * 40)
+    print('Exception happened during processing of request', request)
+    print('From', client_address)
     import traceback
-    traceback.print_exc() # XXX But this goes to stderr!
-    print ('-'*40)
+    traceback.print_exc()  # XXX But this goes to stderr!
+    print('-' * 40)
 
   @classmethod
-  def findFreePort(self,port=2016):
+  def findFreePort(self, port=2016):
     """returns a port that is not apparently in use"""
     portFree = False
     while not portFree:
       try:
-        s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-        s.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
-        s.bind( ( "", port ) )
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(("", port))
       except socket.error as e:
         portFree = False
         port += 1
@@ -588,7 +588,7 @@ class WebServerLogic:
     certfile = None
     self.server = SlicerHTTPServer(requestHandlers=self.requestHandlers,
       docroot=self.docroot,
-      server_address=("",self.port),
+      server_address=("", self.port),
       logMessage=self.logMessage,
       certfile=certfile)
     self.server.start()

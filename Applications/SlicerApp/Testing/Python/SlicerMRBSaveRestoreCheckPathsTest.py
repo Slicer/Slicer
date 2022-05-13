@@ -72,7 +72,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
   def getStorableNode(self, storageNode):
     numberOfStorableNodes = storageNode.GetScene().GetNumberOfNodesByClass('vtkMRMLStorableNode')
     for n in range(numberOfStorableNodes):
-      storableNode = storageNode.GetScene().GetNthNodeByClass(n,'vtkMRMLStorableNode')
+      storableNode = storageNode.GetScene().GetNthNodeByClass(n, 'vtkMRMLStorableNode')
       if storableNode.GetStorageNodeID() == storageNode.GetID():
         return storableNode
     return None
@@ -85,22 +85,22 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
     # first get the main scene storage nodes
     numberOfStorageNodes = scene.GetNumberOfNodesByClass('vtkMRMLStorageNode')
     for n in range(numberOfStorageNodes):
-      storageNode = scene.GetNthNodeByClass(n,'vtkMRMLStorageNode')
+      storageNode = scene.GetNthNodeByClass(n, 'vtkMRMLStorageNode')
       storableNode = self.getStorableNode(storageNode)
       if storageNode.GetSaveWithScene() and not storableNode.GetModifiedSinceRead():
-        print('Checking storage node: ',storageNode.GetID())
+        print('Checking storage node: ', storageNode.GetID())
         fileName = storageNode.GetFileName()
         absFileName = storageNode.GetAbsoluteFilePath(fileName)
         if not absFileName:
-          print('\tUnable to get absolute path for file name ',fileName)
+          print('\tUnable to get absolute path for file name ', fileName)
           self.numberOfFilesNotFound += 1
         elif not os.path.exists(absFileName):
-          print('\tfile does not exist: ',absFileName)
-          print('\t\tnon absolute file name = ',fileName)
-          print('\t\tscene of the node root dir = ',storageNode.GetScene().GetRootDirectory())
+          print('\tfile does not exist: ', absFileName)
+          print('\t\tnon absolute file name = ', fileName)
+          print('\t\tscene of the node root dir = ', storageNode.GetScene().GetRootDirectory())
           if storableNode is not None:
-            print('\t\tstorable node name = ',storableNode.GetName())
-            print('\t\tmodified since read = ',storableNode.GetModifiedSinceRead())
+            print('\t\tstorable node name = ', storableNode.GetName())
+            print('\t\tmodified since read = ', storableNode.GetModifiedSinceRead())
           else:
             print('\t\tNo storable node found for this storage node')
           # double check that it's not due to the unzipped files being deleted
@@ -109,14 +109,14 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
           else:
             print('\t\tMRB files were deleted after load, not counting this file as not found for the purposes of this test')
         else:
-          print('\tfile exists:',absFileName)
+          print('\tfile exists:', absFileName)
         # check for the file list
         numberOfFileNames = storageNode.GetNumberOfFileNames()
         for n in range(numberOfFileNames):
           fileName = storageNode.GetNthFileName(n)
           absFileName = storageNode.GetAbsoluteFilePath(fileName)
           if not os.path.exists(absFileName):
-            print('\t',n,'th file list member does not exist: ',absFileName)
+            print('\t', n, 'th file list member does not exist: ', absFileName)
             if (not self.mrbDeleteFilesAfterLoad) or ('BundleSaveTemp' in absFileName):
               self.numberOfFilesNotFound += 1
             else:
@@ -139,7 +139,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
     self.checkSceneFileNames(scene)
     self.checkSceneViewFileNames(scene)
     if self.numberOfFilesNotFound != 0:
-      print('checkAllFilesNames: there are ',self.numberOfFilesNotFound,'files that are missing from disk\n')
+      print('checkAllFilesNames: there are ', self.numberOfFilesNotFound, 'files that are missing from disk\n')
     self.assertEqual(self.numberOfFilesNotFound, 0)
 
   def test_SlicerMRBSaveRestoreCheckPaths(self):
@@ -199,7 +199,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
     #
     # save the mrb
     #
-    mrbFilePath= slicer.util.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-1.mrb'
+    mrbFilePath = slicer.util.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-1.mrb'
     slicer.util.delayDisplay("\n\n\nSaving mrb to: %s" % mrbFilePath)
     self.assertTrue(
         ioManager.saveScene(mrbFilePath, screenShot)
@@ -218,7 +218,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
     slicer.util.delayDisplay('Now, reload the first saved MRB\n\n\n')
     mrbLoaded = ioManager.loadScene(mrbFilePath)
     # load can return false even though it succeeded - only fail if in strict mode
-    self.assertTrue( not self.strict or mrbLoaded )
+    self.assertTrue(not self.strict or mrbLoaded)
     slicer.app.processEvents()
     slicer.util.delayDisplay("\n\n\nFinished reloading the first saved MRB\n\n\n")
     #
@@ -229,7 +229,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
     #
     # Save it again
     #
-    mrbFilePath= slicer.util.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-2.mrb'
+    mrbFilePath = slicer.util.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-2.mrb'
     slicer.util.delayDisplay("Saving second mrb to: %s\n\n\n\n" % mrbFilePath)
     self.assertTrue(
         ioManager.saveScene(mrbFilePath, screenShot)

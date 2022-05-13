@@ -17,10 +17,10 @@ class AtlasTests(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "AtlasTests" # TODO make this more human readable by adding spaces
+    parent.title = "AtlasTests"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
-    parent.contributors = ["Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
+    parent.contributors = ["Steve Pieper (Isomics)"]  # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     This is a self test that downloads and displays volumetric atlases from the NA-MIC publication database.
 
@@ -33,7 +33,7 @@ class AtlasTests(ScriptedLoadableModule):
     """
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #
@@ -105,7 +105,7 @@ class AtlasTestsLogic(ScriptedLoadableModuleLogic):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def hasImageData(self,volumeNode):
+  def hasImageData(self, volumeNode):
     """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
@@ -161,7 +161,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
       'uris': TESTING_DATA_URL + 'SHA256/5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea',
       'checksums': 'SHA256:5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea',
       }
-    self.perform_AtlasTest(downloads,'I')
+    self.perform_AtlasTest(downloads, 'I')
 
   def test_BrainAtlasTest(self):
     self.delayDisplay('Running Brain Atlas Test')
@@ -171,7 +171,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
       'uris': TESTING_DATA_URL + 'SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1',
       'checksums': 'SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1',
       }
-    self.perform_AtlasTest(downloads,'A1_grayT1')
+    self.perform_AtlasTest(downloads, 'A1_grayT1')
 
   def test_KneeAtlasTest(self):
     self.delayDisplay('Running Knee Atlas Test')
@@ -181,7 +181,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
       'uris': TESTING_DATA_URL + 'SHA256/5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33',
       'checksums': 'SHA256:5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33',
       }
-    self.perform_AtlasTest(downloads,'I')
+    self.perform_AtlasTest(downloads, 'I')
 
   def perform_AtlasTest(self, downloads, testVolumePattern):
     """ Perform the actual atlas test.
@@ -201,7 +201,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
 
     volumeNode = slicer.util.getNode(pattern=testVolumePattern)
     logic = AtlasTestsLogic()
-    self.assertIsNotNone( logic.hasImageData(volumeNode) )
+    self.assertIsNotNone(logic.hasImageData(volumeNode))
 
     m = slicer.util.mainWindow()
 
@@ -236,7 +236,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
           # collapse and change the color on the hierarchy to full red
           mh.SetExpanded(0)
           self.delayDisplay("Model hierarchy " + mh.GetName() + ": expanded = false")
-          mhd.SetColor(1,0,0)
+          mhd.SetColor(1, 0, 0)
           self.delayDisplay("Model hierarchy " + mh.GetName() + ": color = red")
           # set the collapsed visibility to 0
           mhd.SetVisibility(0)
@@ -257,7 +257,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     numSceneViews = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSceneViewNode")
     for s in range(numSceneViews):
       sv = slicer.mrmlScene.GetNthNodeByClass(s, "vtkMRMLSceneViewNode")
-      self.delayDisplay("Restoring scene " + sv.GetName() + " (" + str(s+1) + "/" + str(numSceneViews) + ")")
+      self.delayDisplay("Restoring scene " + sv.GetName() + " (" + str(s + 1) + "/" + str(numSceneViews) + ")")
       sv.RestoreScene()
 
     self.delayDisplay('Test passed!')

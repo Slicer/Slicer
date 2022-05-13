@@ -11,14 +11,14 @@ from slicer.ScriptedLoadableModule import *
 
 class CLIEventTest(ScriptedLoadableModule):
   def __init__(self, parent):
-    parent.title = "CLIEventTest" # TODO make this more human readable by adding spaces
+    parent.title = "CLIEventTest"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = ["CLI4Test"]
     parent.contributors = ["Johan Andruejol (Kitware)"]
     parent.helpText = """
     This is a self test that tests that CLI send all the event properly.
     """
-    parent.acknowledgementText = """""" # replace with organization, grant and thanks.
+    parent.acknowledgementText = """"""  # replace with organization, grant and thanks.
     self.parent = parent
 
     # Add this test to the SelfTest module's list for discovery when the module
@@ -65,7 +65,7 @@ class CLIEventTestLogic(VTKObservationMixin):
     cliNode = slicer.cli.run(cliModule, cliNode, parameters, wait_for_completion)
 
   def onCLIModified(self, cliNode, event):
-    print ("-- " + cliNode.GetStatusString() + ":" + cliNode.GetName())
+    print("-- " + cliNode.GetStatusString() + ":" + cliNode.GetName())
     self.StatusEvents.append(cliNode.GetStatus())
 
     if not cliNode.IsBusy():
@@ -237,7 +237,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(shNode.GetItemParent(shNode.GetItemByDataNode(outputVolume)), shNode.GetSceneItemID())
 
     self.delayDisplay('Run CLI module')
-    cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue' : 100, 'ThresholdType' : 'Above'}
+    cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue': 100, 'ThresholdType': 'Above'}
     cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True)
 
     # After CLI execution is completed, output volume must be in the same folder as the referenced node

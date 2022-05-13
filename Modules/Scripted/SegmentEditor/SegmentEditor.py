@@ -47,7 +47,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     ScriptedLoadableModuleWidget.setup(self)
 
     # Add margin to the sides
-    self.layout.setContentsMargins(4,0,4,0)
+    self.layout.setContentsMargins(4, 0, 4, 0)
 
     #
     # Segment editor widget

@@ -20,7 +20,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -165,10 +165,10 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
       selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
 
     shellThicknessPixel = self.getShellThicknessPixel()
-    shellThicknessMM = [abs((shellThicknessPixel[i])*selectedSegmentLabelmapSpacing[i]) for i in range(3)]
+    shellThicknessMM = [abs((shellThicknessPixel[i]) * selectedSegmentLabelmapSpacing[i]) for i in range(3)]
     for i in range(3):
       if shellThicknessMM[i] > 0:
-        shellThicknessMM[i] = round(shellThicknessMM[i], max(int(-math.floor(math.log10(shellThicknessMM[i]))),1))
+        shellThicknessMM[i] = round(shellThicknessMM[i], max(int(-math.floor(math.log10(shellThicknessMM[i]))), 1))
     return shellThicknessMM
 
   def showStatusMessage(self, msg, timeoutMsec=500):
@@ -199,11 +199,11 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     spacing = selectedSegmentLabelmap.GetSpacing()
     voxelDiameter = min(selectedSegmentLabelmap.GetSpacing())
     if shellMode == MEDIAL_SURFACE:
-      margin.SetOuterMarginMM( 0.5 * shellThicknessMM)
-      margin.SetInnerMarginMM(-0.5 * shellThicknessMM + 0.5*voxelDiameter)
+      margin.SetOuterMarginMM(0.5 * shellThicknessMM)
+      margin.SetInnerMarginMM(-0.5 * shellThicknessMM + 0.5 * voxelDiameter)
     elif shellMode == INSIDE_SURFACE:
-      margin.SetOuterMarginMM(shellThicknessMM + 0.1*voxelDiameter)
-      margin.SetInnerMarginMM(0.0 + 0.1*voxelDiameter) # Don't include the original border (0.0)
+      margin.SetOuterMarginMM(shellThicknessMM + 0.1 * voxelDiameter)
+      margin.SetInnerMarginMM(0.0 + 0.1 * voxelDiameter)  # Don't include the original border (0.0)
     elif shellMode == OUTSIDE_SURFACE:
       margin.SetOuterMarginMM(0.0)
       margin.SetInnerMarginMM(-shellThicknessMM + voxelDiameter)
@@ -226,7 +226,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
       self.scriptedEffect.saveStateForUndo()
 
-      applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) !=0 \
+      applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) != 0 \
           if self.scriptedEffect.parameter("ApplyToAllVisibleSegments") else False
 
       if applyToAllVisibleSegments:

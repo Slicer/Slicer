@@ -137,7 +137,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
 
       import tempfile
       if not self.outputDirSelector.currentPath:
-        self.outputDirSelector.currentPath =  tempfile.mkdtemp(prefix="DICOMPatcher-", dir=slicer.app.temporaryPath)
+        self.outputDirSelector.currentPath = tempfile.mkdtemp(prefix="DICOMPatcher-", dir=slicer.app.temporaryPath)
 
       self.inputDirSelector.addCurrentPathToHistory()
       self.outputDirSelector.addCurrentPathToHistory()
@@ -167,7 +167,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
     """Append text to log window
     """
     self.statusLabel.appendPlainText(text)
-    slicer.app.processEvents() # force update
+    slicer.app.processEvents()  # force update
 
 
 #
@@ -279,8 +279,8 @@ class GenerateMissingIDs(DICOMPatcherRule):
     import pydicom
 
     for tag in self.requiredTags:
-      if not hasattr(ds,tag):
-        setattr(ds,tag,'')
+      if not hasattr(ds, tag):
+        setattr(ds, tag, '')
 
     # Generate a new SOPInstanceUID to avoid different files having the same SOPInstanceUID
     ds.SOPInstanceUID = pydicom.uid.generate_uid(None)
@@ -347,7 +347,7 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
   def processDataSet(self, ds):
     import pydicom
 
-    if not hasattr(ds,'NumberOfFrames'):
+    if not hasattr(ds, 'NumberOfFrames'):
       return
     numberOfFrames = ds.NumberOfFrames
     if numberOfFrames <= 1:
@@ -356,18 +356,18 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
     # Multi-frame sequence, we may need to add slice positions
 
     # Error in Dolphin 3D CBCT scanners, they store multiple frames but they keep using CTImageStorage as storage class
-    if ds.SOPClassUID == '1.2.840.10008.5.1.4.1.1.2': # Computed Tomography Image IOD
-      ds.SOPClassUID = '1.2.840.10008.5.1.4.1.1.2.1' # Enhanced CT Image IOD
+    if ds.SOPClassUID == '1.2.840.10008.5.1.4.1.1.2':  # Computed Tomography Image IOD
+      ds.SOPClassUID = '1.2.840.10008.5.1.4.1.1.2.1'  # Enhanced CT Image IOD
 
-    sliceStartPosition = ds.ImagePositionPatient if hasattr(ds,'ImagePositionPatient') else [0,0,0]
-    sliceAxes = ds.ImageOrientationPatient if hasattr(ds,'ImageOrientationPatient') else [1,0,0,0,1,0]
+    sliceStartPosition = ds.ImagePositionPatient if hasattr(ds, 'ImagePositionPatient') else [0, 0, 0]
+    sliceAxes = ds.ImageOrientationPatient if hasattr(ds, 'ImageOrientationPatient') else [1, 0, 0, 0, 1, 0]
     x = sliceAxes[:3]
     y = sliceAxes[3:]
-    z = [x[1] * y[2] - x[2] * y[1], x[2] * y[0] - x[0] * y[2], x[0] * y[1] - x[1] * y[0]] # cross(x,y)
-    sliceSpacing = ds.SliceThickness if hasattr(ds,'SliceThickness') else 1.0
-    pixelSpacing = ds.PixelSpacing if hasattr(ds,'PixelSpacing') else [1.0, 1.0]
+    z = [x[1] * y[2] - x[2] * y[1], x[2] * y[0] - x[0] * y[2], x[0] * y[1] - x[1] * y[0]]  # cross(x,y)
+    sliceSpacing = ds.SliceThickness if hasattr(ds, 'SliceThickness') else 1.0
+    pixelSpacing = ds.PixelSpacing if hasattr(ds, 'PixelSpacing') else [1.0, 1.0]
 
-    if not (pydicom.tag.Tag(0x5200,0x9229) in ds):
+    if not (pydicom.tag.Tag(0x5200, 0x9229) in ds):
 
       # (5200,9229) SQ (Sequence with undefined length #=1)     # u/l, 1 SharedFunctionalGroupsSequence
       #   (0020,9116) SQ (Sequence with undefined length #=1)     # u/l, 1 PlaneOrientationSequence
@@ -379,24 +379,24 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
       planeOrientationDataSet = pydicom.dataset.Dataset()
       planeOrientationDataSet.ImageOrientationPatient = sliceAxes
       planeOrientationSequence = pydicom.sequence.Sequence()
-      planeOrientationSequence.insert(pydicom.tag.Tag(0x0020,0x9116),planeOrientationDataSet)
+      planeOrientationSequence.insert(pydicom.tag.Tag(0x0020, 0x9116), planeOrientationDataSet)
 
       pixelMeasuresDataSet = pydicom.dataset.Dataset()
       pixelMeasuresDataSet.SliceThickness = sliceSpacing
       pixelMeasuresDataSet.PixelSpacing = pixelSpacing
       pixelMeasuresSequence = pydicom.sequence.Sequence()
-      pixelMeasuresSequence.insert(pydicom.tag.Tag(0x0028,0x9110),pixelMeasuresDataSet)
+      pixelMeasuresSequence.insert(pydicom.tag.Tag(0x0028, 0x9110), pixelMeasuresDataSet)
 
       sharedFunctionalGroupsDataSet = pydicom.dataset.Dataset()
       sharedFunctionalGroupsDataSet.PlaneOrientationSequence = planeOrientationSequence
       sharedFunctionalGroupsDataSet.PixelMeasuresSequence = pixelMeasuresSequence
       sharedFunctionalGroupsSequence = pydicom.sequence.Sequence()
-      sharedFunctionalGroupsSequence.insert(pydicom.tag.Tag(0x5200,0x9229),sharedFunctionalGroupsDataSet)
+      sharedFunctionalGroupsSequence.insert(pydicom.tag.Tag(0x5200, 0x9229), sharedFunctionalGroupsDataSet)
       ds.SharedFunctionalGroupsSequence = sharedFunctionalGroupsSequence
 
-    if not (pydicom.tag.Tag(0x5200,0x9230) in ds):
+    if not (pydicom.tag.Tag(0x5200, 0x9230) in ds):
 
-      #(5200,9230) SQ (Sequence with undefined length #=54)    # u/l, 1 PerFrameFunctionalGroupsSequence
+      # (5200,9230) SQ (Sequence with undefined length #=54)    # u/l, 1 PerFrameFunctionalGroupsSequence
       #  (0020,9113) SQ (Sequence with undefined length #=1)     # u/l, 1 PlanePositionSequence
       #    (0020,0032) DS [-94.7012\-312.701\-806.500]             #  26, 3 ImagePositionPatient
       #  (0020,9113) SQ (Sequence with undefined length #=1)     # u/l, 1 PlanePositionSequence
@@ -408,15 +408,15 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
       for frameIndex in range(numberOfFrames):
         planePositionDataSet = pydicom.dataset.Dataset()
         slicePosition = [
-          sliceStartPosition[0]+frameIndex*z[0]*sliceSpacing,
-          sliceStartPosition[1]+frameIndex*z[1]*sliceSpacing,
-          sliceStartPosition[2]+frameIndex*z[2]*sliceSpacing]
+          sliceStartPosition[0] + frameIndex * z[0] * sliceSpacing,
+          sliceStartPosition[1] + frameIndex * z[1] * sliceSpacing,
+          sliceStartPosition[2] + frameIndex * z[2] * sliceSpacing]
         planePositionDataSet.ImagePositionPatient = slicePosition
         planePositionSequence = pydicom.sequence.Sequence()
-        planePositionSequence.insert(pydicom.tag.Tag(0x0020,0x9113),planePositionDataSet)
+        planePositionSequence.insert(pydicom.tag.Tag(0x0020, 0x9113), planePositionDataSet)
         perFrameFunctionalGroupsDataSet = pydicom.dataset.Dataset()
         perFrameFunctionalGroupsDataSet.PlanePositionSequence = planePositionSequence
-        perFrameFunctionalGroupsSequence.insert(pydicom.tag.Tag(0x5200,0x9230),perFrameFunctionalGroupsDataSet)
+        perFrameFunctionalGroupsSequence.insert(pydicom.tag.Tag(0x5200, 0x9230), perFrameFunctionalGroupsDataSet)
 
       ds.PerFrameFunctionalGroupsSequence = perFrameFunctionalGroupsSequence
 
@@ -487,12 +487,12 @@ class NormalizeFileNames(DICOMPatcherRule):
 
   def getNextItemName(self, prefix, root):
     numberOfFilesInFolder = self.numberOfItemsInFolderMap[root] if root in self.numberOfItemsInFolderMap else 0
-    self.numberOfItemsInFolderMap[root] = numberOfFilesInFolder+1
+    self.numberOfItemsInFolderMap[root] = numberOfFilesInFolder + 1
     return f"{prefix}{numberOfFilesInFolder:03d}"
 
   def generateOutputFilePath(self, ds, filepath):
     folderName = ""
-    patientNameID = str(ds.PatientName)+"*"+ds.PatientID
+    patientNameID = str(ds.PatientName) + "*" + ds.PatientID
     if patientNameID not in self.patientNameIDToFolderMap:
       self.patientNameIDToFolderMap[patientNameID] = self.getNextItemName("pa", folderName)
     folderName += self.patientNameIDToFolderMap[patientNameID]
@@ -501,9 +501,9 @@ class NormalizeFileNames(DICOMPatcherRule):
     folderName += "/" + self.studyUIDToFolderMap[ds.StudyInstanceUID]
     if ds.SeriesInstanceUID not in self.seriesUIDToFolderMap:
       self.seriesUIDToFolderMap[ds.SeriesInstanceUID] = self.getNextItemName("se", folderName)
-    folderName += "/" +self.seriesUIDToFolderMap[ds.SeriesInstanceUID]
+    folderName += "/" + self.seriesUIDToFolderMap[ds.SeriesInstanceUID]
     prefix = ds.Modality.lower() if hasattr(ds, 'Modality') else ""
-    filePath = self.outputRootDir + "/" + folderName + "/" + self.getNextItemName(prefix, folderName)+".dcm"
+    filePath = self.outputRootDir + "/" + folderName + "/" + self.getNextItemName(prefix, folderName) + ".dcm"
     return filePath
 
 
@@ -560,8 +560,8 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     import pydicom
 
     self.addLog('DICOM patching started...')
-    logging.debug('DICOM patch input directory: '+inputDirPath)
-    logging.debug('DICOM patch output directory: '+outputDirPath)
+    logging.debug('DICOM patch input directory: ' + inputDirPath)
+    logging.debug('DICOM patch output directory: ' + outputDirPath)
 
     for rule in self.patchingRules:
       rule.logCallback = self.addLog
@@ -577,8 +577,8 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
         rule.processDirectory(currentSubDir)
 
       for file in files:
-        filePath = os.path.join(root,file)
-        self.addLog('Examining %s...' % os.path.join(currentSubDir,file))
+        filePath = os.path.join(root, file)
+        self.addLog('Examining %s...' % os.path.join(currentSubDir, file))
 
         skipFileRequestingRule = None
         for rule in self.patchingRules:
@@ -586,7 +586,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
             skipFileRequestingRule = rule
             break
         if skipFileRequestingRule:
-          self.addLog('  Rule '+rule.__class__.__name__+' requested to skip this file.')
+          self.addLog('  Rule ' + rule.__class__.__name__ + ' requested to skip this file.')
           continue
 
         try:
@@ -600,7 +600,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
         for rule in self.patchingRules:
           rule.processDataSet(ds)
 
-        patchedFilePath = os.path.abspath(os.path.join(rootOutput,file))
+        patchedFilePath = os.path.abspath(os.path.join(rootOutput, file))
         for rule in self.patchingRules:
           patchedFilePath = rule.generateOutputFilePath(ds, patchedFilePath)
 
@@ -621,7 +621,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     """
     Utility function to import DICOM files from a directory
     """
-    self.addLog('Initiate DICOM importing from folder '+outputDirPath)
+    self.addLog('Initiate DICOM importing from folder ' + outputDirPath)
     slicer.util.selectModule('DICOM')
     dicomBrowser = slicer.modules.dicom.widgetRepresentation().self().browserWidget.dicomBrowser
     dicomBrowser.importDirectory(outputDirPath)
@@ -665,19 +665,19 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
     testDir = tempfile.mkdtemp(prefix="DICOMPatcherTest-", dir=slicer.app.temporaryPath)
     self.assertTrue(os.path.isdir(testDir))
 
-    inputTestDir = testDir+"/input"
+    inputTestDir = testDir + "/input"
     os.makedirs(inputTestDir)
-    outputTestDir = testDir+"/output"
-    self.delayDisplay('Created test directory: '+testDir)
+    outputTestDir = testDir + "/output"
+    self.delayDisplay('Created test directory: ' + testDir)
 
     self.delayDisplay("Generate test files")
 
-    testFileNonDICOM = open(inputTestDir+"/NonDICOMFile.txt", "w")
+    testFileNonDICOM = open(inputTestDir + "/NonDICOMFile.txt", "w")
     testFileNonDICOM.write("This is not a DICOM file")
     testFileNonDICOM.close()
 
-    testFileDICOMFilename = inputTestDir+"/DICOMFile.dcm"
-    self.delayDisplay('Writing test file: '+testFileDICOMFilename)
+    testFileDICOMFilename = inputTestDir + "/DICOMFile.dcm"
+    self.delayDisplay('Writing test file: ' + testFileDICOMFilename)
     import pydicom
     file_meta = pydicom.dataset.Dataset()
     file_meta.MediaStorageSOPClassUID = '1.2.840.10008.5.1.4.1.1.2'  # CT Image Storage
@@ -705,10 +705,10 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Verify generated files")
 
     expectedWalk = []
-    expectedWalk.append([['pa000'], [         ]])
-    expectedWalk.append([['st000'], [         ]])
-    expectedWalk.append([['se000'], [         ]])
-    expectedWalk.append([[       ], ['000.dcm']])
+    expectedWalk.append([['pa000'], []])
+    expectedWalk.append([['st000'], []])
+    expectedWalk.append([['se000'], []])
+    expectedWalk.append([[], ['000.dcm']])
     step = 0
     for root, subFolders, files in os.walk(outputTestDir):
       self.assertEqual(subFolders, expectedWalk[step][0])
