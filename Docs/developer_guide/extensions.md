@@ -410,7 +410,7 @@ make
 
 ### Build complete Extensions Index with dashboard submission
 
-Continuous and nightly extension dashboards are setup on the Slicer factory machine maintained by [https://www.kitware.com Kitware]. Developers can set up similar infrastructure privately for their custom applications.
+Continuous and nightly extension dashboards are setup on the Slicer factory machine maintained by [Kitware](https://www.kitware.com). Developers can set up similar infrastructure privately for their custom applications.
 
 By customizing the [extension template dashboard script](https://github.com/Slicer/Slicer/blob/master/Extensions/CMake/SlicerExtensionsDashboardScript.TEMPLATE.cmake), it is possible to easily setup dashboard client submitting to [CDash](https://slicer.cdash.org/index.php?project=SlicerPreview). See example dashboard scripts that are used on official Slicer build machines [here](https://github.com/Slicer/DashboardScripts). Note that these scripts are more complex than the template to allow code reuse between different configurations, but they are tested regularly and so guaranteed to work.
 
