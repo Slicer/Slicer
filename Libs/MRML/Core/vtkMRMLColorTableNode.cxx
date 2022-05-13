@@ -1259,12 +1259,20 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
     return;
     }
 
-  int numberOfTableValues = this->GetLookupTable()->GetNumberOfTableValues();
-  if (numberOfTableValues != n)
+  int numberOfTableValuesBefore = this->GetLookupTable()->GetNumberOfTableValues();
+  if (numberOfTableValuesBefore != n)
     {
     MRMLNodeModifyBlocker blocker(this);
     this->GetLookupTable()->SetNumberOfTableValues(n);
-    this->SetColors(numberOfTableValues, n - 1, this->GetNoName(), 0.0, 0.0, 0.0, 1.0);
+    // Initialize new elements (needed if color table is made larger).
+    this->SetColors(numberOfTableValuesBefore, n - 1, this->GetNoName(), 0.0, 0.0, 0.0, 1.0);
+    }
+  if (n > int(this->Names.size()))
+    {
+    // There are less names than colors (it may happen for example if a lookup table with many
+    // elements is set). We initialize the color names to have one for each lookup table item.
+    std::string noNameStr = this->GetNoName() ? this->GetNoName() : "";
+    this->Names.resize(n, noNameStr);
     }
 }
 

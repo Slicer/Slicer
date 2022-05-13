@@ -353,23 +353,16 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
     {
     this->SetNamesFromColors();
     }
-
-  if (ind < (int)this->Names.size() && ind >= 0)
-    {
-    if (strcmp(this->Names[ind].c_str(), "") == 0)
-      {
-      return this->NoName;
-      }
-    else
-      {
-      return this->Names[ind].c_str();
-      }
-    }
-  else
+  if (ind < 0 || ind >= (int)this->Names.size())
     {
     vtkDebugMacro("vtkMRMLColorNode::GetColorName: index " << ind << " is out of range 0 - " << this->Names.size());
     return "invalid";
     }
+  if (this->Names[ind].empty())
+    {
+    return this->NoName;
+    }
+  return this->Names[ind].c_str();
 }
 
 //---------------------------------------------------------------------------
