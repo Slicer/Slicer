@@ -74,11 +74,11 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
 
     self.delayMs = 700
 
-    #TODO: Comment out (sample code for debugging)
-    #logFile = open('d:/pyTestLog.txt', 'w')
-    #logFile.write(repr(slicer.modules.SubjectHierarchyCorePluginsSelfTest) + '\n')
-    #logFile.write(repr(slicer.modules.subjecthierarchy) + '\n')
-    #logFile.close()
+    # TODO: Comment out (sample code for debugging)
+    # logFile = open('d:/pyTestLog.txt', 'w')
+    # logFile.write(repr(slicer.modules.SubjectHierarchyCorePluginsSelfTest) + '\n')
+    # logFile.write(repr(slicer.modules.subjecthierarchy) + '\n')
+    # logFile.close()
 
   def runTest(self):
     """Run as few or as many tests as needed here.
@@ -89,7 +89,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
   # ------------------------------------------------------------------------------
   def test_SubjectHierarchyCorePluginsSelfTest_FullTest1(self):
     # Check for SubjectHierarchy module
-    self.assertTrue( slicer.modules.subjecthierarchy )
+    self.assertTrue(slicer.modules.subjecthierarchy)
 
     # Switch to subject hierarchy module so that the changes can be seen as the test goes
     slicer.util.selectModule('SubjectHierarchy')
@@ -113,10 +113,10 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
 
   # ------------------------------------------------------------------------------
   def section_MarkupRole(self):
-    self.delayDisplay("Markup role",self.delayMs)
+    self.delayDisplay("Markup role", self.delayMs)
 
     shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
-    self.assertIsNotNone( shNode )
+    self.assertIsNotNone(shNode)
 
     # Create sample markups node
     markupsNode = slicer.vtkMRMLMarkupsFiducialNode()
@@ -125,8 +125,8 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     fiducialPosition = [100.0, 0.0, 0.0]
     markupsNode.AddControlPoint(fiducialPosition)
     markupsShItemID = shNode.GetItemByDataNode(markupsNode)
-    self.assertIsNotNone( markupsShItemID )
-    self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )
+    self.assertIsNotNone(markupsShItemID)
+    self.assertEqual(shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups')
 
     # Create patient and study
     patientItemID = shNode.CreateSubjectItem(shNode.GetSceneItemID(), 'Patient')
@@ -134,22 +134,22 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
 
     # Add markups under study
     markupsShItemID2 = shNode.CreateItem(self.studyItemID, markupsNode)
-    self.assertEqual( markupsShItemID, markupsShItemID2 )
-    self.assertEqual( shNode.GetItemParent(markupsShItemID), self.studyItemID )
-    self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )
+    self.assertEqual(markupsShItemID, markupsShItemID2)
+    self.assertEqual(shNode.GetItemParent(markupsShItemID), self.studyItemID)
+    self.assertEqual(shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups')
 
   # ------------------------------------------------------------------------------
   def section_CloneNode(self):
-    self.delayDisplay("Clone node",self.delayMs)
+    self.delayDisplay("Clone node", self.delayMs)
 
     shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
-    self.assertIsNotNone( shNode )
+    self.assertIsNotNone(shNode)
 
     markupsNode = slicer.util.getNode(self.sampleMarkupName)
     markupsShItemID = shNode.GetItemByDataNode(markupsNode)
 
-    self.assertIsNotNone( markupsShItemID )
-    self.assertIsNotNone( shNode.GetItemDataNode(markupsShItemID) )
+    self.assertIsNotNone(markupsShItemID)
+    self.assertIsNotNone(shNode.GetItemDataNode(markupsShItemID))
 
     # Add storage node for markups node to test cloning those
     markupsStorageNode = slicer.vtkMRMLMarkupsFiducialStorageNode()
@@ -158,10 +158,10 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
 
     # Get clone node plugin
     pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler().instance()
-    self.assertIsNotNone( pluginHandler )
+    self.assertIsNotNone(pluginHandler)
 
     cloneNodePlugin = pluginHandler.pluginByName('CloneNode')
-    self.assertIsNotNone( cloneNodePlugin )
+    self.assertIsNotNone(cloneNodePlugin)
 
     # Set markup node as current (i.e. selected in the tree) for clone
     pluginHandler.setCurrentItem(markupsShItemID)
@@ -169,28 +169,28 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     # Get clone node context menu action and trigger
     cloneNodePlugin.itemContextMenuActions()[0].activate(qt.QAction.Trigger)
 
-    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode'), 2 )
-    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsDisplayNode'), 2 )
-    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialStorageNode'), 2 )
+    self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode'), 2)
+    self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsDisplayNode'), 2)
+    self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialStorageNode'), 2)
 
     clonedMarkupsName = self.sampleMarkupName + self.cloneNodeNamePostfix
     clonedMarkupsNode = slicer.util.getNode(clonedMarkupsName)
-    self.assertIsNotNone( clonedMarkupsNode )
+    self.assertIsNotNone(clonedMarkupsNode)
     clonedMarkupsShItemID = shNode.GetItemChildWithName(self.studyItemID, clonedMarkupsName)
-    self.assertIsNotNone( clonedMarkupsShItemID )
-    self.assertIsNotNone( clonedMarkupsNode.GetDisplayNode() )
-    self.assertIsNotNone( clonedMarkupsNode.GetStorageNode() )
+    self.assertIsNotNone(clonedMarkupsShItemID)
+    self.assertIsNotNone(clonedMarkupsNode.GetDisplayNode())
+    self.assertIsNotNone(clonedMarkupsNode.GetStorageNode())
 
     inSameStudy = slicer.vtkSlicerSubjectHierarchyModuleLogic.AreItemsInSameBranch(
       shNode, markupsShItemID, clonedMarkupsShItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy())
-    self.assertTrue( inSameStudy )
+    self.assertTrue(inSameStudy)
 
   # ------------------------------------------------------------------------------
   def section_SegmentEditor(self):
-    self.delayDisplay("Segment Editor",self.delayMs)
+    self.delayDisplay("Segment Editor", self.delayMs)
 
     shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
-    self.assertIsNotNone( shNode )
+    self.assertIsNotNone(shNode)
 
     import SampleData
     mrHeadNode = SampleData.SampleDataLogic().downloadMRHead()
@@ -226,5 +226,5 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone(segmentationNode)
 
     segmentationItem = shNode.GetItemByDataNode(segmentationNode)
-    self.assertEqual( shNode.GetItemParent(segmentationItem), shNode.GetItemParent(mrHeadItem) )
-    self.assertEqual( segmentationNode.GetName()[:len(mrHeadNode.GetName())], mrHeadNode.GetName() )
+    self.assertEqual(shNode.GetItemParent(segmentationItem), shNode.GetItemParent(mrHeadItem))
+    self.assertEqual(segmentationNode.GetName()[:len(mrHeadNode.GetName())], mrHeadNode.GetName())

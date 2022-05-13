@@ -19,10 +19,10 @@ class ScriptedLoadableModuleTemplate(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "ScriptedLoadableModuleTemplate" # TODO make this more human readable by adding spaces
+    self.parent.title = "ScriptedLoadableModuleTemplate"  # TODO make this more human readable by adding spaces
     self.parent.categories = ["Examples"]
     self.parent.dependencies = []
-    self.parent.contributors = ["John Doe (AnyWare Corp.)"] # replace with "Firstname Lastname (Organization)"
+    self.parent.contributors = ["John Doe (AnyWare Corp.)"]  # replace with "Firstname Lastname (Organization)"
     self.parent.helpText = """
 This is an example of scripted loadable module bundled in an extension.
 It performs a simple thresholding on the input volume and optionally captures a screenshot.
@@ -31,7 +31,7 @@ It performs a simple thresholding on the input volume and optionally captures a 
     self.parent.acknowledgementText = """
 This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
 and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 #
 # ScriptedLoadableModuleTemplateWidget
@@ -69,8 +69,8 @@ class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
     self.inputSelector.noneEnabled = False
     self.inputSelector.showHidden = False
     self.inputSelector.showChildNodeTypes = False
-    self.inputSelector.setMRMLScene( slicer.mrmlScene )
-    self.inputSelector.setToolTip( "Pick the input to the algorithm." )
+    self.inputSelector.setMRMLScene(slicer.mrmlScene)
+    self.inputSelector.setToolTip("Pick the input to the algorithm.")
     parametersFormLayout.addRow("Input Volume: ", self.inputSelector)
 
     #
@@ -84,8 +84,8 @@ class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
     self.outputSelector.noneEnabled = True
     self.outputSelector.showHidden = False
     self.outputSelector.showChildNodeTypes = False
-    self.outputSelector.setMRMLScene( slicer.mrmlScene )
-    self.outputSelector.setToolTip( "Pick the output to the algorithm." )
+    self.outputSelector.setMRMLScene(slicer.mrmlScene)
+    self.outputSelector.setToolTip("Pick the output to the algorithm.")
     parametersFormLayout.addRow("Output Volume: ", self.outputSelector)
 
     #
@@ -153,7 +153,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def hasImageData(self,volumeNode):
+  def hasImageData(self, volumeNode):
     """This is an example logic method that
     returns true if the passed in volume
     node has valid image data
@@ -175,7 +175,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     if not outputVolumeNode:
       logging.debug('isValidInputOutputData failed: no output volume node defined')
       return False
-    if inputVolumeNode.GetID()==outputVolumeNode.GetID():
+    if inputVolumeNode.GetID() == outputVolumeNode.GetID():
       logging.debug('isValidInputOutputData failed: input and output volume is the same. Create a new volume for output to avoid this error.')
       return False
     return True
@@ -192,7 +192,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     logging.info('Processing started')
 
     # Compute the thresholded output volume using the Threshold Scalar Volume CLI module
-    cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue' : imageThreshold, 'ThresholdType' : 'Above'}
+    cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue': imageThreshold, 'ThresholdType': 'Above'}
     cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True)
 
     logging.info('Processing completed')
@@ -243,6 +243,6 @@ class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
     self.delayDisplay('Finished with download and loading')
 
     logic = ScriptedLoadableModuleTemplateLogic()
-    self.assertIsNotNone( logic.hasImageData(volumeNode) )
-    self.takeScreenshot('ScriptedLoadableModuleTemplateTest-Start','MyScreenshot',-1)
+    self.assertIsNotNone(logic.hasImageData(volumeNode))
+    self.takeScreenshot('ScriptedLoadableModuleTemplateTest-Start', 'MyScreenshot', -1)
     self.delayDisplay('Test passed!')

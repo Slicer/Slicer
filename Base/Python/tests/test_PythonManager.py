@@ -21,12 +21,12 @@ class PythonManagerTests(unittest.TestCase):
             'test with both single \' and double " quotes',
             'test backslash \\ and \'single\' and "double" quotes'
             "'test string in single quotes'"
-            '"test string in double quotes"' ]
+            '"test string in double quotes"']
 
         for test_string in test_strings:
             test_string_literal = slicer.app.pythonManager().toPythonStringLiteral(test_string)
-            exec("test_string_literal_value = "+test_string_literal, globals())
-            print("Test: "+test_string+" -> "+test_string_literal+" -> "+test_string_literal_value)
+            exec("test_string_literal_value = " + test_string_literal, globals())
+            print("Test: " + test_string + " -> " + test_string_literal + " -> " + test_string_literal_value)
             self.assertEqual(test_string, test_string_literal_value)
 
     def tearDown(self):

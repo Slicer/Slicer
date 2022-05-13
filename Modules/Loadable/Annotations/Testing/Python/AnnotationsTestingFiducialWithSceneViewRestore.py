@@ -9,26 +9,26 @@ fid.CreateAnnotationTextDisplayNode()
 fid.CreateAnnotationPointDisplayNode()
 
 startCoords = [1.0, 2.0, 3.0]
-fid.AddControlPoint(startCoords,0,1)
+fid.AddControlPoint(startCoords, 0, 1)
 
 slicer.mrmlScene.AddNode(fid)
 fid.GetFiducialCoordinates(startCoords)
-print("Starting fiducial coordinates = ",startCoords)
+print("Starting fiducial coordinates = ", startCoords)
 
 sv = slicer.mrmlScene.AddNode(slicer.vtkMRMLSceneViewNode())
 
 sv.StoreScene()
 
 fid.SetFiducialCoordinates(11.1, 22.2, 33.3)
-afterStoreSceneCoords = [0,0,0]
+afterStoreSceneCoords = [0, 0, 0]
 fid.GetFiducialCoordinates(afterStoreSceneCoords)
-print("After storing the scene, set fiducial coords to ",afterStoreSceneCoords)
+print("After storing the scene, set fiducial coords to ", afterStoreSceneCoords)
 
 sv.RestoreScene()
 
-fidAfterRestore =  slicer.mrmlScene.GetNodeByID("vtkMRMLAnnotationFiducialNode1")
+fidAfterRestore = slicer.mrmlScene.GetNodeByID("vtkMRMLAnnotationFiducialNode1")
 
-coords = [0,0,0]
+coords = [0, 0, 0]
 fidAfterRestore.GetFiducialCoordinates(coords)
 print("After restoring the scene, fiducial coordinates = ", coords)
 

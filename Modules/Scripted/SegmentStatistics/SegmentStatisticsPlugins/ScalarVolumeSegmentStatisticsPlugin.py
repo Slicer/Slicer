@@ -10,8 +10,8 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     super().__init__()
     self.name = "Scalar Volume"
     self.keys = ["voxel_count", "volume_mm3", "volume_cm3", "min", "max", "mean", "median", "stdev"]
-    self.defaultKeys = self.keys # calculate all measurements by default
-    #... developer may add extra options to configure other parameters
+    self.defaultKeys = self.keys  # calculate all measurements by default
+    # ... developer may add extra options to configure other parameters
 
   def computeStatistics(self, segmentID):
     requestedKeys = self.getRequestedKeys()
@@ -19,14 +19,14 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))
     grayscaleNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("ScalarVolume"))
 
-    if len(requestedKeys)==0:
+    if len(requestedKeys) == 0:
       return {}
 
     stencil = self.getStencilForVolume(segmentationNode, segmentID, grayscaleNode)
     if not stencil:
       return {}
 
-    cubicMMPerVoxel = reduce(lambda x,y: x*y, grayscaleNode.GetSpacing())
+    cubicMMPerVoxel = reduce(lambda x, y: x * y, grayscaleNode.GetSpacing())
     ccPerCubicMM = 0.001
 
     stat = vtk.vtkImageAccumulate()
@@ -47,7 +47,7 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
       stats["volume_mm3"] = stat.GetVoxelCount() * cubicMMPerVoxel
     if "volume_cm3" in requestedKeys:
       stats["volume_cm3"] = stat.GetVoxelCount() * cubicMMPerVoxel * ccPerCubicMM
-    if stat.GetVoxelCount()>0:
+    if stat.GetVoxelCount() > 0:
       if "min" in requestedKeys:
         stats["min"] = stat.GetMin()[0]
       if "max" in requestedKeys:
@@ -99,8 +99,8 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     segmentLabelmap_Reference = vtkSegmentationCore.vtkOrientedImageData()
     vtkSegmentationCore.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
       segmentLabelmap, referenceGeometry_Reference, segmentLabelmap_Reference,
-      False, # nearest neighbor interpolation
-      False, # no padding
+      False,  # nearest neighbor interpolation
+      False,  # no padding
       segmentationToReferenceGeometryTransform)
 
     # We need to know exactly the value of the segment voxels, apply threshold to make force the selected label value
@@ -155,7 +155,7 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     info["volume_cm3"] = \
       self.createMeasurementInfo(name="Volume cm3", description="Volume in cm3", units="cm3",
                                    quantityDicomCode=self.createCodedEntry("118565006", "SCT", "Volume", True),
-                                   unitsDicomCode=self.createCodedEntry("cm3","UCUM","cubic centimeter", True),
+                                   unitsDicomCode=self.createCodedEntry("cm3", "UCUM", "cubic centimeter", True),
                                    measurementMethodDicomCode=self.createCodedEntry("126030", "DCM",
                                                                              "Sum of segmented voxel volumes", True))
 
@@ -171,27 +171,27 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                                    units=scalarVolumeUnits.GetCodeMeaning(),
                                    quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                    unitsDicomCode=scalarVolumeUnits.GetAsString(),
-                                   derivationDicomCode=self.createCodedEntry("56851009","SCT","Maximum", True))
+                                   derivationDicomCode=self.createCodedEntry("56851009", "SCT", "Maximum", True))
 
     info["mean"] = \
       self.createMeasurementInfo(name="Mean", description="Mean scalar value",
                                    units=scalarVolumeUnits.GetCodeMeaning(),
                                    quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                    unitsDicomCode=scalarVolumeUnits.GetAsString(),
-                                   derivationDicomCode=self.createCodedEntry("373098007","SCT","Mean", True))
+                                   derivationDicomCode=self.createCodedEntry("373098007", "SCT", "Mean", True))
 
     info["median"] = \
       self.createMeasurementInfo(name="Median", description="Median scalar value",
                                    units=scalarVolumeUnits.GetCodeMeaning(),
                                    quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                    unitsDicomCode=scalarVolumeUnits.GetAsString(),
-                                   derivationDicomCode=self.createCodedEntry("median","SCT","Median", True))
+                                   derivationDicomCode=self.createCodedEntry("median", "SCT", "Median", True))
 
     info["stdev"] = \
       self.createMeasurementInfo(name="Standard deviation", description="Standard deviation of scalar values",
                                    units=scalarVolumeUnits.GetCodeMeaning(),
                                    quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                    unitsDicomCode=scalarVolumeUnits.GetAsString(),
-                                   derivationDicomCode=self.createCodedEntry('386136009','SCT','Standard Deviation', True))
+                                   derivationDicomCode=self.createCodedEntry('386136009', 'SCT', 'Standard Deviation', True))
 
     return info[key] if key in info else None

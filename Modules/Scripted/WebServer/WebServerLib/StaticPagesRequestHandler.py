@@ -34,7 +34,7 @@ class StaticPagesRequestHandler(object):
     responseBody = None
     if uri.startswith(b'/'):
       uri = uri[1:]
-    path = os.path.join(self.docroot,uri)
+    path = os.path.join(self.docroot, uri)
     self.logMessage('docroot: %s' % self.docroot)
     if os.path.isdir(path):
       for index in b"index.html", b"index.htm":
@@ -46,7 +46,7 @@ class StaticPagesRequestHandler(object):
       contentType = b"text/html"
       responseBody = b"<ul>"
       for entry in os.listdir(path):
-        responseBody += b"<li><a href='%s'>%s</a></li>" % (os.path.join(uri,entry), entry)
+        responseBody += b"<li><a href='%s'>%s</a></li>" % (os.path.join(uri, entry), entry)
       responseBody += b"</ul>"
     else:
       ext = os.path.splitext(path)[-1].decode()

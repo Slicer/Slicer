@@ -10,14 +10,14 @@ from slicer.ScriptedLoadableModule import *
 
 class TwoCLIsInARowTest(ScriptedLoadableModule):
   def __init__(self, parent):
-    parent.title = "TwoCLIsInARowTest" # TODO make this more human readable by adding spaces
+    parent.title = "TwoCLIsInARowTest"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = ["CLI4Test"]
     parent.contributors = ["Alexis Girault (Kitware), Johan Andruejol (Kitware)"]
     parent.helpText = """
     This is a self test that tests the piping of two CLIs through python
     """
-    parent.acknowledgementText = """""" # replace with organization, grant and thanks.
+    parent.acknowledgementText = """"""  # replace with organization, grant and thanks.
     self.parent = parent
 
     # Add this test to the SelfTest module's list for discovery when the module
@@ -67,7 +67,7 @@ class TwoCLIsInARowTestLogic(ScriptedLoadableModuleLogic):
     cliNode = slicer.cli.run(cliModule, cliNode, self.parameters, False)
 
   def onModule1Modified(self, cliNode, event):
-    print("--",cliNode.GetStatusString(),":", cliNode.GetName())
+    print("--", cliNode.GetStatusString(), ":", cliNode.GetName())
     if not cliNode.IsBusy():
       self.removeObservers(cliNode, self.StatusModifiedEvent, self.onModule1Modified)
       if cliNode.GetStatusString() == 'Completed':
@@ -81,14 +81,14 @@ class TwoCLIsInARowTestLogic(ScriptedLoadableModuleLogic):
     cliNode = slicer.cli.run(cliModule, cliNode, self.parameters, False)
 
   def onModule2Modified(self, cliNode, event):
-    print("--",cliNode.GetStatusString(),":", cliNode.GetName())
+    print("--", cliNode.GetStatusString(), ":", cliNode.GetName())
     if not cliNode.IsBusy():
       self.removeObservers(cliNode, self.StatusModifiedEvent, self.onModule2Modified)
       self.success = cliNode.GetStatusString() == 'Completed'
 
-  def addObserver(self, object, event, method, group = 'none'):
+  def addObserver(self, object, event, method, group='none'):
     if self.hasObserver(object, event, method):
-      print(object.GetName(),'already has observer')
+      print(object.GetName(), 'already has observer')
       return
     tag = object.AddObserver(event, method)
     self.Observations.append([object, event, method, group, tag])

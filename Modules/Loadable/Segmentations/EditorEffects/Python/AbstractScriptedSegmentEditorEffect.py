@@ -85,9 +85,9 @@ class AbstractScriptedSegmentEditorEffect:
       return
     import math
     spinbox.unitAwareProperties &= ~(slicer.qMRMLSpinBox.MinimumValue | slicer.qMRMLSpinBox.MaximumValue | slicer.qMRMLSpinBox.Precision)
-    stepSize = 10**(math.floor(math.log10(min(imageData.GetSpacing())/10.0)))
+    stepSize = 10**(math.floor(math.log10(min(imageData.GetSpacing()) / 10.0)))
     spinbox.minimum = stepSize
-    spinbox.maximum = 10**(math.ceil(math.log10(max(imageData.GetSpacing())*100.0)))
+    spinbox.maximum = 10**(math.ceil(math.log10(max(imageData.GetSpacing()) * 100.0)))
     spinbox.singleStep = stepSize
     # number of decimals is set to be able to show the step size (e.g., stepSize = 0.01 => decimals = 2)
-    spinbox.decimals = max(int(-math.floor(math.log10(stepSize))),0)
+    spinbox.decimals = max(int(-math.floor(math.log10(stepSize))), 0)

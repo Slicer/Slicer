@@ -40,12 +40,12 @@ class ShaderPropertiesWidget(ScriptedLoadableModuleWidget):
     self.sphereTestButton = qt.QPushButton()
     self.sphereTestButton.text = "Sphere test"
     self.layout.addWidget(self.sphereTestButton)
-    self.sphereTestButton.connect("clicked()", lambda : ShaderPropertiesTest().testSphereCut())
+    self.sphereTestButton.connect("clicked()", lambda: ShaderPropertiesTest().testSphereCut())
 
     self.wedgeTestButton = qt.QPushButton()
     self.wedgeTestButton.text = "Wedge test"
     self.layout.addWidget(self.wedgeTestButton)
-    self.wedgeTestButton.connect("clicked()", lambda : ShaderPropertiesTest().testWedgeCut())
+    self.wedgeTestButton.connect("clicked()", lambda: ShaderPropertiesTest().testWedgeCut())
 
     # Add vertical spacer
     self.layout.addStretch(1)
@@ -98,34 +98,34 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('GPU Ray Casting on')
 
-    endpoints = [ [-162.94, 2.32192, -30.1792], [-144.842, 96.867, -36.8726] ]
+    endpoints = [[-162.94, 2.32192, -30.1792], [-144.842, 96.867, -36.8726]]
     markupNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLMarkupsLineNode())
     for endpoint in endpoints:
         markupNode.AddControlPoint(vtk.vtkVector3d(endpoint))
 
     self.delayDisplay('Line added')
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Utility functions to get the position of the first
     # markup line in the scene and the shader property
     # node
-    #------------------------------------------------------
+    # ------------------------------------------------------
     def GetLineEndpoints():
         fn = slicer.util.getNode('vtkMRMLMarkupsLineNode1')
         endpoints = []
         for n in range(2):
-            endpoints.append([0,]*3)
-            fn.GetNthControlPointPosition(n,endpoints[n])
+            endpoints.append([0, ] * 3)
+            fn.GetNthControlPointPosition(n, endpoints[n])
         return endpoints
 
     def GetShaderPropertyNode():
         return slicer.util.getNode('vtkMRMLShaderPropertyNode1')
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Get the shader property node which contains every custom
     # shader modifications for every mapper associated with
     # the first volume rendering display node
-    #------------------------------------------------------
+    # ------------------------------------------------------
     displayNode = slicer.util.getNodesByClass('vtkMRMLGPURayCastVolumeRenderingDisplayNode')[0]
     shaderPropNode = displayNode.GetOrCreateShaderPropertyNode(slicer.mrmlScene)
     shaderProp = shaderPropNode.GetShaderProperty()
@@ -135,22 +135,22 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     volumeProperty = volumePropertyNode.GetVolumeProperty()
     volumeProperty.ShadeOff()
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Declare and initialize custom uniform variables
     # used in our shader replacement
-    #------------------------------------------------------
+    # ------------------------------------------------------
     shaderUniforms = shaderPropNode.GetFragmentUniforms()
     shaderUniforms.RemoveAllUniforms()
     endpoints = GetLineEndpoints()
-    shaderUniforms.SetUniform3f("endpoint0",endpoints[0])
-    shaderUniforms.SetUniform3f("endpoint1",endpoints[1])
-    shaderUniforms.SetUniformf("coneCutoff",0.8)
+    shaderUniforms.SetUniform3f("endpoint0", endpoints[0])
+    shaderUniforms.SetUniform3f("endpoint1", endpoints[1])
+    shaderUniforms.SetUniformf("coneCutoff", 0.8)
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Replace the cropping implementation part of the
     # raycasting shader to skip everything in the sphere
     # defined by endpoints and radius
-    #------------------------------------------------------
+    # ------------------------------------------------------
     croppingImplShaderCode = """
         vec4 texCoordRAS = in_volumeMatrix[0] * in_textureDatasetMatrix[0]  * vec4(g_dataPos, 1.);
         vec3 samplePoint = texCoordRAS.xyz;
@@ -162,18 +162,18 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     shaderProp.ClearAllFragmentShaderReplacements()
     shaderProp.AddFragmentShaderReplacement("//VTK::Cropping::Impl", True, croppingImplShaderCode, False)
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Add a callback when the line moves to adjust
     # the endpoints of the carving sphere accordingly
-    #------------------------------------------------------
+    # ------------------------------------------------------
     def onControlPointMoved():
         endpoints = GetLineEndpoints()
         propNode = GetShaderPropertyNode()
-        propNode.GetFragmentUniforms().SetUniform3f("endpoint0",endpoints[0])
-        propNode.GetFragmentUniforms().SetUniform3f("endpoint1",endpoints[1])
+        propNode.GetFragmentUniforms().SetUniform3f("endpoint0", endpoints[0])
+        propNode.GetFragmentUniforms().SetUniform3f("endpoint1", endpoints[1])
 
     fn = slicer.util.getNode('vtkMRMLMarkupsLineNode1')
-    fn.AddObserver(fn.PointModifiedEvent, lambda caller,event: onControlPointMoved())
+    fn.AddObserver(fn.PointModifiedEvent, lambda caller, event: onControlPointMoved())
 
     self.delayDisplay("Should be a carved out shoulder now")
 
@@ -206,11 +206,11 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Point list added')
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Utility functions to get the position of the first
     # markups point list in the scene and the shader property
     # node
-    #------------------------------------------------------
+    # ------------------------------------------------------
     def GetPointPosition():
         fn = slicer.util.getNode('vtkMRMLMarkupsFiducialNode1')
         p = [0.0, 0.0, 0.0]
@@ -220,11 +220,11 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     def GetShaderPropertyNode():
         return slicer.util.getNode('vtkMRMLShaderPropertyNode1')
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Get the shader property node which contains every custom
     # shader modifications for every mapper associated with
     # the first volume rendering display node
-    #------------------------------------------------------
+    # ------------------------------------------------------
     displayNode = slicer.util.getNodesByClass('vtkMRMLGPURayCastVolumeRenderingDisplayNode')[0]
     shaderPropNode = displayNode.GetOrCreateShaderPropertyNode(slicer.mrmlScene)
     shaderProp = shaderPropNode.GetShaderProperty()
@@ -234,21 +234,21 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     volumeProperty = volumePropertyNode.GetVolumeProperty()
     volumeProperty.ShadeOff()
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Declare and initialize custom uniform variables
     # used in our shader replacement
-    #------------------------------------------------------
+    # ------------------------------------------------------
     shaderUniforms = shaderPropNode.GetFragmentUniforms()
     shaderUniforms.RemoveAllUniforms()
     pointPos = GetPointPosition()
-    shaderUniforms.SetUniform3f("center",pointPos)
-    shaderUniforms.SetUniformf("radius",50.)
+    shaderUniforms.SetUniform3f("center", pointPos)
+    shaderUniforms.SetUniformf("radius", 50.)
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Replace the cropping implementation part of the
     # raycasting shader to skip everything in the sphere
     # defined by center and radius
-    #------------------------------------------------------
+    # ------------------------------------------------------
     croppingImplShaderCode = """
         vec4 texCoordRAS = in_volumeMatrix[0] * in_textureDatasetMatrix[0]  * vec4(g_dataPos, 1.);
         g_skip = length(texCoordRAS.xyz - center) < radius;
@@ -256,16 +256,16 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     shaderProp.ClearAllFragmentShaderReplacements()
     shaderProp.AddFragmentShaderReplacement("//VTK::Cropping::Impl", True, croppingImplShaderCode, False)
 
-    #------------------------------------------------------
+    # ------------------------------------------------------
     # Add a callback when the point moves to adjust
     # the center of the carving sphere accordingly
-    #------------------------------------------------------
+    # ------------------------------------------------------
     def onPointMoved():
         p = GetPointPosition()
         propNode = GetShaderPropertyNode()
-        propNode.GetFragmentUniforms().SetUniform3f("center",p)
+        propNode.GetFragmentUniforms().SetUniform3f("center", p)
 
     fn = slicer.util.getNode('vtkMRMLMarkupsFiducialNode1')
-    fn.AddObserver(fn.PointModifiedEvent, lambda caller,event: onPointMoved())
+    fn.AddObserver(fn.PointModifiedEvent, lambda caller, event: onPointMoved())
 
     self.delayDisplay("Should be a carved out nose now")

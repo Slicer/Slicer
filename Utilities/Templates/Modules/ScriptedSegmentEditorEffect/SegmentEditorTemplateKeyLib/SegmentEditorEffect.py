@@ -14,15 +14,15 @@ class SegmentEditorEffect(AbstractScriptedSegmentEditorEffect):
 
   def __init__(self, scriptedEffect):
     scriptedEffect.name = 'TemplateKey'
-    scriptedEffect.perSegment = False # this effect operates on all segments at once (not on a single selected segment)
-    scriptedEffect.requireSegments = True # this effect requires segment(s) existing in the segmentation
+    scriptedEffect.perSegment = False  # this effect operates on all segments at once (not on a single selected segment)
+    scriptedEffect.requireSegments = True  # this effect requires segment(s) existing in the segmentation
     AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
   def clone(self):
     # It should not be necessary to modify this method
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -43,7 +43,7 @@ To segment a single object, create a segment and paint inside and create another
      # Object scale slider
     self.objectScaleMmSlider = slicer.qMRMLSliderWidget()
     self.objectScaleMmSlider.setMRMLScene(slicer.mrmlScene)
-    self.objectScaleMmSlider.quantity = "length" # get unit, precision, etc. from MRML unit node
+    self.objectScaleMmSlider.quantity = "length"  # get unit, precision, etc. from MRML unit node
     self.objectScaleMmSlider.minimum = 0
     self.objectScaleMmSlider.maximum = 10
     self.objectScaleMmSlider.value = 2.0

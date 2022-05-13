@@ -16,16 +16,16 @@ class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "ViewControllers Slice Interpolation Bug 1926" # TODO make this more human readable by adding spaces
+    parent.title = "ViewControllers Slice Interpolation Bug 1926"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
-    parent.contributors = ["Jim Miller (GE)"] # replace with "Firstname Lastname (Org)"
+    parent.contributors = ["Jim Miller (GE)"]  # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     Test case for the interaction between the ViewControllers module, linking, slice interpolation, and the selection of background, foreground, and label images. When entering the ViewControllers module, extra View Controllers are created and configured.  If linking is on, then foreground, background, and label selection can be propagated to the other views incorrectly. If the node selectors are bocked from emitting signals, then the viewers maintain their proper volumes. However the slice interpolation widget is then not managed properly.
     """
     parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE.  and was partially funded by NIH grant U54EB005149.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #
@@ -122,10 +122,10 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
     self.delayDisplay('Linked the viewers (first Compare View)')
 
     # Set the data to be same on all viewers
-    logic.StartSliceCompositeNodeInteraction(2)  #BackgroundVolumeFlag
+    logic.StartSliceCompositeNodeInteraction(2)  # BackgroundVolumeFlag
     compareCNode.SetBackgroundVolumeID(tumor.GetID())
     logic.EndSliceCompositeNodeInteraction()
-    self.assertEqual( compareCNode.GetBackgroundVolumeID(), tumor.GetID())
+    self.assertEqual(compareCNode.GetBackgroundVolumeID(), tumor.GetID())
     self.delayDisplay('Compare views configured')
 
     # Get handles to the Red viewer
@@ -135,7 +135,7 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
 
     # Configure the red viewer with a different dataset
     redCNode.SetLinkedControl(0)
-    redLogic.StartSliceCompositeNodeInteraction(2)  #BackgroundVolumeFlag
+    redLogic.StartSliceCompositeNodeInteraction(2)  # BackgroundVolumeFlag
     redCNode.SetBackgroundVolumeID(head.GetID())
     redLogic.EndSliceCompositeNodeInteraction()
     redCNode.SetLinkedControl(1)
@@ -146,9 +146,9 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
     compareCNode2 = slicer.util.getNode('vtkMRMLSliceCompositeNodeCompare2')
 
     # Check whether the viewers have the proper data initially
-    self.assertEqual( redCNode.GetBackgroundVolumeID(), head.GetID())
-    self.assertEqual( compareCNode.GetBackgroundVolumeID(), tumor.GetID())
-    self.assertEqual( compareCNode2.GetBackgroundVolumeID(), tumor.GetID())
+    self.assertEqual(redCNode.GetBackgroundVolumeID(), head.GetID())
+    self.assertEqual(compareCNode.GetBackgroundVolumeID(), tumor.GetID())
+    self.assertEqual(compareCNode2.GetBackgroundVolumeID(), tumor.GetID())
     self.delayDisplay('All viewers configured properly')
 
     # Switch to the View Controllers module
@@ -157,9 +157,9 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
     self.delayDisplay("Entered View Controllers module")
 
     # Check the volume selectors
-    self.assertTrue( redCNode.GetBackgroundVolumeID() == head.GetID())
-    self.assertTrue( compareCNode.GetBackgroundVolumeID() == tumor.GetID())
-    self.assertTrue( compareCNode2.GetBackgroundVolumeID() == tumor.GetID())
+    self.assertTrue(redCNode.GetBackgroundVolumeID() == head.GetID())
+    self.assertTrue(compareCNode.GetBackgroundVolumeID() == tumor.GetID())
+    self.assertTrue(compareCNode2.GetBackgroundVolumeID() == tumor.GetID())
     self.delayDisplay('All viewers still configured properly')
 
     # Check whether we can change the interpolation (needs to check gui)

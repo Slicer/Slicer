@@ -27,7 +27,7 @@ _templateCategories = [
 ]
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _isSourceFile(name):
   for pat in _sourcePatterns:
     if fnmatch.fnmatch(name, pat):
@@ -36,7 +36,7 @@ def _isSourceFile(name):
   return False
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _isTemplateCategory(name, relPath):
   if not os.path.isdir(os.path.join(relPath, name)):
     return False
@@ -45,16 +45,16 @@ def _isTemplateCategory(name, relPath):
   return name in _templateCategories
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _listSources(directory):
   for root, subFolders, files in os.walk(directory):
     for f in files:
       if _isSourceFile(f):
         f = os.path.join(root, f)
-        yield f[len(directory) + 1:] # strip common dir
+        yield f[len(directory) + 1:]  # strip common dir
 
 
-#=============================================================================
+# =============================================================================
 class TemplateManager:
   """Template collection manager.
 
@@ -62,7 +62,7 @@ class TemplateManager:
   using that collection.
   """
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self):
     self._paths = {}
     self._keys = {}
@@ -70,14 +70,14 @@ class TemplateManager:
     for c in _templateCategories:
       self._paths[c] = {}
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _getKey(self, kind):
     if kind in self._keys:
       return self._keys[kind]
 
     return "TemplateKey"
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def _copyAndReplace(self, inFile, template, destination, key, name):
     outFile = os.path.join(destination, inFile.replace(key, name))
     logging.info("creating '%s'" % outFile)
@@ -119,7 +119,7 @@ class TemplateManager:
     with open(outFile, "wb") as fp:
       fp.write(contents)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def copyTemplate(self, destination, category, kind, name, createInSubdirectory=True, requireEmptyDirectory=True):
     """Copy (instantiate) a template.
 
@@ -179,7 +179,7 @@ class TemplateManager:
 
     return destination
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def addCategoryPath(self, category, path):
     """Add templates for a particular category to the collection.
 
@@ -203,7 +203,7 @@ class TemplateManager:
       if os.path.isdir(entryPath):
         self._paths[category][entry.lower()] = entryPath
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def addPath(self, basePath):
     """Add a template path to the collection.
 
@@ -225,7 +225,7 @@ class TemplateManager:
       if _isTemplateCategory(entry, basePath):
         self.addCategoryPath(entry.lower(), os.path.join(basePath, entry))
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def setKey(self, name, value):
     """Set template key for specified template.
 
@@ -246,7 +246,7 @@ class TemplateManager:
 
     self._keys[name] = value
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @classmethod
   def categories(cls):
     """Get list of known template categories.
@@ -258,7 +258,7 @@ class TemplateManager:
 
     return list(_templateCategories)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def templates(self, category=None):
     """Get collection of available templates.
 
@@ -289,7 +289,7 @@ class TemplateManager:
     else:
       return tuple(self._paths[category].keys())
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def listTemplates(self):
     """List available templates.
 
@@ -312,7 +312,7 @@ class TemplateManager:
 
       logging.info("")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def addArguments(self, parser):
     """Add template manager |CLI| arguments to parser.
 
@@ -341,7 +341,7 @@ class TemplateManager:
                         help="set template substitution key for specified"
                              " template (default key: 'TemplateKey')")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def parseArguments(self, args):
     """Automatically add paths and keys from |CLI| arguments.
 

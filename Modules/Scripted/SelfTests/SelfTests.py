@@ -53,7 +53,7 @@ and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
       slicer.selfTests = {}
 
     # register the example tests
-    slicer.selfTests['MRMLSceneExists'] = lambda : slicer.app.mrmlScene
+    slicer.selfTests['MRMLSceneExists'] = lambda: slicer.app.mrmlScene
     slicer.selfTests['CloseScene'] = ExampleSelfTests.closeScene
 
 #
@@ -102,7 +102,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
       self.testButtons[test] = qt.QPushButton(test)
       self.testButtons[test].setToolTip(slicer.selfTests[test].__doc__)
       self.testList.layout().addWidget(self.testButtons[test])
-      self.testMapper.setMapping(self.testButtons[test],test)
+      self.testMapper.setMapping(self.testButtons[test], test)
       self.testButtons[test].connect('clicked()', self.testMapper, 'map()')
 
     # Add spacer to layout
@@ -112,11 +112,11 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
     self.logic.run(continueCheck=self.continueCheck)
     slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
 
-  def onRun(self,test):
-    self.logic.run([test,], continueCheck=self.continueCheck)
+  def onRun(self, test):
+    self.logic.run([test, ], continueCheck=self.continueCheck)
     slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
 
-  def continueCheck(self,logic):
+  def continueCheck(self, logic):
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
     return True
 
@@ -124,7 +124,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
 class SelfTestsLogic:
   """Logic to handle invoking the tests and reporting the results"""
 
-  def __init__(self,selfTests):
+  def __init__(self, selfTests):
     self.selfTests = selfTests
     self.results = {}
     self.passed = []
@@ -136,13 +136,13 @@ class SelfTestsLogic:
       return "No tests run"
     s = "%.0f%% passed (%d of %d)" % (
         (100. * len(self.passed) / testsRun),
-        len(self.passed), testsRun )
-    s +="\n---\n"
+        len(self.passed), testsRun)
+    s += "\n---\n"
     for test in self.results:
       s += f"{test}\t{self.results[test]}\n"
     return s
 
-  def run(self,tests=None,continueCheck=None):
+  def run(self, tests=None, continueCheck=None):
     if not tests:
       tests = list(self.selfTests.keys())
 
@@ -161,7 +161,7 @@ class SelfTestsLogic:
 
 
 def SelfTestsTest():
-  if hasattr(slicer,'selfTests'):
+  if hasattr(slicer, 'selfTests'):
     logic = SelfTestsLogic(list(slicer.selfTests.keys()))
     logic.run()
   print(logic.results)
@@ -184,4 +184,4 @@ if __name__ == "__main__":
     exit()
   # TODO - 'exit()' returns so this code gets run
   # even if the argument matches one of the cases above
-  #print ("usage: SelfTests.py [--test | --demo]")
+  # print ("usage: SelfTests.py [--test | --demo]")

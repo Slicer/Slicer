@@ -17,16 +17,16 @@ class Slicer4Minute(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "Slicer4Minute" # TODO make this more human readable by adding spaces
+    parent.title = "Slicer4Minute"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
-    parent.contributors = ["Jim Miller (GE)"] # replace with "Firstname Lastname (Org)"
+    parent.contributors = ["Jim Miller (GE)"]  # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     Test suite for the Slicer 4 Minute tutorial
     """
     parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE and was partially funded by NIH grant U54EB005149.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #
@@ -80,7 +80,7 @@ class Slicer4MinuteLogic(ScriptedLoadableModuleLogic):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def hasImageData(self,volumeNode):
+  def hasImageData(self, volumeNode):
     """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
@@ -139,7 +139,7 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
 
     # check volume is loaded out of scene
     volumeNode = slicer.util.getNode(pattern="grayscale")
-    self.assertIsNotNone( logic.hasImageData(volumeNode) )
+    self.assertIsNotNone(logic.hasImageData(volumeNode))
 
     # check the slice planes
     red = slicer.util.getNode(pattern="vtkMRMLSliceNode1")

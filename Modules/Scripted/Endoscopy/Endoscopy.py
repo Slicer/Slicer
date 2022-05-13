@@ -52,7 +52,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     ScriptedLoadableModuleWidget.__init__(self, parent)
     self.cameraNode = None
     self.cameraNodeObserverTag = None
-    self.cameraObserverTag= None
+    self.cameraObserverTag = None
     # Flythough variables
     self.transform = None
     self.path = None
@@ -252,21 +252,21 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     self.flythroughCollapsibleButton.enabled = len(result.path) > 0
 
   def frameSliderValueChanged(self, newValue):
-    #print "frameSliderValueChanged:", newValue
+    # print "frameSliderValueChanged:", newValue
     self.flyTo(newValue)
 
   def frameSkipSliderValueChanged(self, newValue):
-    #print "frameSkipSliderValueChanged:", newValue
+    # print "frameSkipSliderValueChanged:", newValue
     self.skip = int(newValue)
 
   def frameDelaySliderValueChanged(self, newValue):
-    #print "frameDelaySliderValueChanged:", newValue
+    # print "frameDelaySliderValueChanged:", newValue
     self.timer.interval = newValue
 
   def viewAngleSliderValueChanged(self, newValue):
     if not self.cameraNode:
       return
-    #print "viewAngleSliderValueChanged:", newValue
+    # print "viewAngleSliderValueChanged:", newValue
     self.cameraNode.GetCamera().SetViewAngle(newValue)
 
   def onPlayButtonToggled(self, checked):
@@ -295,13 +295,13 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     wasModified = self.cameraNode.StartModify()
 
     self.camera.SetPosition(cameraPosition)
-    focalPointPosition = self.path[pathPointIndex+1]
+    focalPointPosition = self.path[pathPointIndex + 1]
     self.camera.SetFocalPoint(*focalPointPosition)
     self.camera.OrthogonalizeViewUp()
 
     toParent = vtk.vtkMatrix4x4()
     self.transform.GetMatrixTransformToParent(toParent)
-    toParent.SetElement(0 ,3, cameraPosition[0])
+    toParent.SetElement(0, 3, cameraPosition[0])
     toParent.SetElement(1, 3, cameraPosition[1])
     toParent.SetElement(2, 3, cameraPosition[2])
 
@@ -311,7 +311,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     # This can be used for example to show a reformatted slice
     # using with SlicerIGT extension's VolumeResliceDriver module.
     import numpy as np
-    zVec = (focalPointPosition-cameraPosition)/np.linalg.norm(focalPointPosition-cameraPosition)
+    zVec = (focalPointPosition - cameraPosition) / np.linalg.norm(focalPointPosition - cameraPosition)
     yVec = self.pathPlaneNormal
     xVec = np.cross(yVec, zVec)
     xVec /= np.linalg.norm(xVec)
@@ -344,10 +344,10 @@ class EndoscopyComputePath:
 
   """
 
-  def __init__(self, fiducialListNode, dl = 0.5):
+  def __init__(self, fiducialListNode, dl=0.5):
     import numpy
-    self.dl = dl # desired world space step size (in mm)
-    self.dt = dl # current guess of parametric stepsize
+    self.dl = dl  # desired world space step size (in mm)
+    self.dt = dl  # current guess of parametric stepsize
     self.fids = fiducialListNode
 
     # Already a curve, just get the points, sampled at equal distances.
@@ -356,23 +356,23 @@ class EndoscopyComputePath:
       # Temporarily increase the number of points per segment, to get a very smooth curve
       pointsPerSegment = int(self.fids.GetCurveLengthWorld() / self.dl / self.fids.GetNumberOfControlPoints()) + 1
       originalPointsPerSegment = self.fids.GetNumberOfPointsPerInterpolatingSegment()
-      if originalPointsPerSegment<pointsPerSegment:
+      if originalPointsPerSegment < pointsPerSegment:
         self.fids.SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment)
       # Get equidistant points
       resampledPoints = vtk.vtkPoints()
       slicer.vtkMRMLMarkupsCurveNode.ResamplePoints(self.fids.GetCurvePointsWorld(), resampledPoints, self.dl, self.fids.GetCurveClosed())
       # Restore original number of pointsPerSegment
-      if originalPointsPerSegment<pointsPerSegment:
+      if originalPointsPerSegment < pointsPerSegment:
         self.fids.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
       # Get it as a numpy array as an independent copy
       self.path = vtk.util.numpy_support.vtk_to_numpy(resampledPoints.GetData())
       return
 
     # hermite interpolation functions
-    self.h00 = lambda t: 2*t**3 - 3*t**2     + 1
-    self.h10 = lambda t:   t**3 - 2*t**2 + t
-    self.h01 = lambda t:-2*t**3 + 3*t**2
-    self.h11 = lambda t:   t**3 -   t**2
+    self.h00 = lambda t: 2 * t**3 - 3 * t**2 + 1
+    self.h10 = lambda t: t**3 - 2 * t**2 + t
+    self.h01 = lambda t: -2 * t**3 + 3 * t**2
+    self.h11 = lambda t: t**3 - t**2
 
     # n is the number of control points in the piecewise curve
 
@@ -383,10 +383,10 @@ class EndoscopyComputePath:
       self.n = collection.GetNumberOfItems()
       if self.n == 0:
         return
-      self.p = numpy.zeros((self.n,3))
+      self.p = numpy.zeros((self.n, 3))
       for i in range(self.n):
         f = collection.GetItemAsObject(i)
-        coords = [0,0,0]
+        coords = [0, 0, 0]
         f.GetFiducialCoordinates(coords)
         self.p[i] = coords
     elif self.fids.GetClassName() == "vtkMRMLMarkupsFiducialNode":
@@ -397,7 +397,7 @@ class EndoscopyComputePath:
         return
       # get fiducial positions
       # sets self.p
-      self.p = numpy.zeros((n,3))
+      self.p = numpy.zeros((n, 3))
       for i in range(n):
         coord = [0.0, 0.0, 0.0]
         self.fids.GetNthControlPointPositionWorld(i, coord)
@@ -410,7 +410,7 @@ class EndoscopyComputePath:
         return
       # get control point data
       # sets self.p
-      self.p = numpy.zeros((n,3))
+      self.p = numpy.zeros((n, 3))
       for i in range(n):
         self.p[i] = self.fids.GetNthFiducialXYZ(i)
 
@@ -420,14 +420,14 @@ class EndoscopyComputePath:
     # - first tangent is out vector, last is in vector
     # - sets self.m
     n = self.n
-    fm = numpy.zeros((n,3))
-    for i in range(0,n-1):
-      fm[i] = self.p[i+1] - self.p[i]
-    self.m = numpy.zeros((n,3))
-    for i in range(1,n-1):
-      self.m[i] = (fm[i-1] + fm[i]) / 2.
+    fm = numpy.zeros((n, 3))
+    for i in range(0, n - 1):
+      fm[i] = self.p[i + 1] - self.p[i]
+    self.m = numpy.zeros((n, 3))
+    for i in range(1, n - 1):
+      self.m[i] = (fm[i - 1] + fm[i]) / 2.
     self.m[0] = fm[0]
-    self.m[n-1] = fm[n-2]
+    self.m[n - 1] = fm[n - 2]
 
     self.path = [self.p[0]]
     self.calculatePath()
@@ -441,25 +441,25 @@ class EndoscopyComputePath:
     # - put resulting points into self.path
     #
     n = self.n
-    segment = 0 # which first point of current segment
-    t = 0 # parametric current parametric increment
-    remainder = 0 # how much of dl isn't included in current step
-    while segment < n-1:
+    segment = 0  # which first point of current segment
+    t = 0  # parametric current parametric increment
+    remainder = 0  # how much of dl isn't included in current step
+    while segment < n - 1:
       t, p, remainder = self.step(segment, t, self.dl)
       if remainder != 0 or t == 1.:
         segment += 1
         t = 0
-        if segment < n-1:
+        if segment < n - 1:
           t, p, remainder = self.step(segment, t, remainder)
       self.path.append(p)
 
-  def point(self,segment,t):
-    return (self.h00(t)*self.p[segment] +
-              self.h10(t)*self.m[segment] +
-              self.h01(t)*self.p[segment+1] +
-              self.h11(t)*self.m[segment+1])
+  def point(self, segment, t):
+    return (self.h00(t) * self.p[segment] +
+              self.h10(t) * self.m[segment] +
+              self.h01(t) * self.p[segment + 1] +
+              self.h11(t) * self.m[segment + 1])
 
-  def step(self,segment,t,dl):
+  def step(self, segment, t, dl):
     """ Take a step of dl and return the path point and new t
       return:
       t = new parametric coordinate after step
@@ -468,13 +468,13 @@ class EndoscopyComputePath:
         this is the amount of world space not covered by step
     """
     import numpy.linalg
-    p0 = self.path[self.path.__len__() - 1] # last element in path
+    p0 = self.path[self.path.__len__() - 1]  # last element in path
     remainder = 0
     ratio = 100
     count = 0
     while abs(1. - ratio) > 0.05:
       t1 = t + self.dt
-      pguess = self.point(segment,t1)
+      pguess = self.point(segment, t1)
       dist = numpy.linalg.norm(pguess - p0)
       ratio = self.dl / dist
       self.dt *= ratio
@@ -523,7 +523,7 @@ class EndoscopyPathModel:
     linesIDArray.InsertNextTuple1(0)
 
     polygons = vtk.vtkCellArray()
-    polyData.SetPolys( polygons )
+    polyData.SetPolys(polygons)
     idArray = polygons.GetData()
     idArray.Reset()
     idArray.InsertNextTuple1(0)
@@ -531,7 +531,7 @@ class EndoscopyPathModel:
     for point in path:
       pointIndex = points.InsertNextPoint(*point)
       linesIDArray.InsertNextTuple1(pointIndex)
-      linesIDArray.SetTuple1( 0, linesIDArray.GetNumberOfTuples() - 1 )
+      linesIDArray.SetTuple1(0, linesIDArray.GetNumberOfTuples() - 1)
       lines.SetNumberOfCells(1)
 
     pointsArray = vtk.util.numpy_support.vtk_to_numpy(points.GetData())
@@ -542,7 +542,7 @@ class EndoscopyPathModel:
     if not model:
       model = scene.AddNewNodeByClass("vtkMRMLModelNode", scene.GenerateUniqueName("Path-%s" % fids.GetName()))
       model.CreateDefaultDisplayNodes()
-      model.GetDisplayNode().SetColor(1,1,0) # yellow
+      model.GetDisplayNode().SetColor(1, 1, 0)  # yellow
 
     model.SetAndObservePolyData(polyData)
 
@@ -554,15 +554,15 @@ class EndoscopyPathModel:
         # Markups cursor
         cursor = scene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
         cursor.CreateDefaultDisplayNodes()
-        cursor.GetDisplayNode().SetSelectedColor(1,0,0)  # red
+        cursor.GetDisplayNode().SetSelectedColor(1, 0, 0)  # red
         cursor.GetDisplayNode().SetSliceProjection(True)
-        cursor.AddControlPoint(vtk.vtkVector3d(0,0,0)," ")  # do not show any visible label
+        cursor.AddControlPoint(vtk.vtkVector3d(0, 0, 0), " ")  # do not show any visible label
         cursor.SetNthControlPointLocked(0, True)
       else:
         # Model cursor
         cursor = scene.AddNewNodeByClass("vtkMRMLMarkupsModelNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
         cursor.CreateDefaultDisplayNodes()
-        cursor.GetDisplayNode().SetColor(1,0,0)  # red
+        cursor.GetDisplayNode().SetColor(1, 0, 0)  # red
         cursor.GetDisplayNode().BackfaceCullingOn()  # so that the camera can see through the cursor from inside
         # Add a sphere as cursor
         sphere = vtk.vtkSphereSource()
@@ -593,9 +593,9 @@ class EndoscopyPathModel:
     """
     import numpy as np
     from numpy.linalg import svd
-    points = np.reshape(points, (np.shape(points)[0], -1)) # Collapse trialing dimensions
+    points = np.reshape(points, (np.shape(points)[0], -1))  # Collapse trialing dimensions
     assert points.shape[0] <= points.shape[1], f"There are only {points.shape[1]} points in {points.shape[0]} dimensions."
     ctr = points.mean(axis=1)
-    x = points - ctr[:,np.newaxis]
-    M = np.dot(x, x.T) # Could also use np.cov(x) here.
-    return ctr, svd(M)[0][:,-1]
+    x = points - ctr[:, np.newaxis]
+    M = np.dot(x, x.T)  # Could also use np.cov(x) here.
+    return ctr, svd(M)[0][:, -1]

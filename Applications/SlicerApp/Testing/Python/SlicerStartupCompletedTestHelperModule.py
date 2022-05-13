@@ -24,7 +24,7 @@ class SlicerStartupCompletedTestHelperModule(ScriptedLoadableModule):
   def onStartupCompleted(self):
     print("StartupCompleted emitted")
     import os
-    fd = os.open(self.testOutputFileName, os.O_RDWR|os.O_CREAT)
+    fd = os.open(self.testOutputFileName, os.O_RDWR | os.O_CREAT)
     os.write(fd, 'SlicerStartupCompletedTestHelperModule.py generated this file')
     os.write(fd, 'when slicer.app emitted startupCompleted() signal\n')
     os.close(fd)

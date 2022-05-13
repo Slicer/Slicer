@@ -22,12 +22,12 @@ def main(input, sigma, output):
     image = caster.Execute(image)
 
     writer = sitk.ImageFileWriter()
-    writer.SetFileName (output)
-    writer.Execute (image)
+    writer.SetFileName(output)
+    writer.Execute(image)
 
 
 if __name__ == "__main__":
-    if len (sys.argv) < 4:
+    if len(sys.argv) < 4:
         print("Usage: TemplateKey <input> <sigma> <output>")
-        sys.exit (1)
+        sys.exit(1)
     main(sys.argv[1], float(sys.argv[2]), sys.argv[3])

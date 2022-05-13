@@ -7,7 +7,7 @@ import sys
 import textwrap
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def haveGit():
   """Return True if git is available.
 
@@ -56,9 +56,9 @@ _yesno = {
 _logLevel = None
 
 
-#=============================================================================
+# =============================================================================
 class _LogWrapFormatter(logging.Formatter):
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self):
     super().__init__()
     try:
@@ -66,24 +66,24 @@ class _LogWrapFormatter(logging.Formatter):
     except:
       self._width = 79
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def format(self, record):
     lines = super().format(record).split("\n")
     return "\n".join([textwrap.fill(l, self._width) for l in lines])
 
 
-#=============================================================================
+# =============================================================================
 class _LogReverseLevelFilter(logging.Filter):
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, levelLimit):
     self._levelLimit = levelLimit
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def filter(self, record):
     return record.levelno < self._levelLimit
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _log(func, msg):
   if sys.exc_info()[0] is not None:
     if _logLevel <= logging.DEBUG:
@@ -97,7 +97,7 @@ def _log(func, msg):
     func(msg)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def warn(msg):
   """Output a warning message (or messages), with exception if present.
 
@@ -117,7 +117,7 @@ def warn(msg):
   _log(logging.warning, msg)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def die(msg, exitCode=1):
   """Output an error message (or messages), with exception if present.
 
@@ -136,7 +136,7 @@ def die(msg, exitCode=1):
   sys.exit(exitCode)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def inquire(msg, choices=_yesno):
   """Get multiple-choice input from the user.
 
@@ -186,7 +186,7 @@ def inquire(msg, choices=_yesno):
       pass
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def initLogging(logger, args):
   """Initialize logging.
 
@@ -229,7 +229,7 @@ def initLogging(logger, args):
   ghLogger.setLevel(logging.WARNING)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def detectEncoding(data):
   """Attempt to determine the encoding of a byte sequence.
 
@@ -253,14 +253,14 @@ def detectEncoding(data):
     return result["encoding"], result["confidence"]
 
   else:
-    chars = ''.join(map(chr, list(range(7,14)) + list(range(32, 128))))
+    chars = ''.join(map(chr, list(range(7, 14)) + list(range(32, 128))))
     if len(data.translate(None, chars)):
       return None, 0.0
 
     return "ascii", 1.0
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def buildProcessArgs(*args, **kwargs):
   """Build |CLI| arguments from Python-like arguments.
 
@@ -306,7 +306,7 @@ def buildProcessArgs(*args, **kwargs):
   return result + ["%s" % a for a in args if a is not None]
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def createEmptyRepo(path, tool=None):
   """Create a repository in an empty or nonexistent location.
 
@@ -346,7 +346,7 @@ def createEmptyRepo(path, tool=None):
   return git.Repo.init(path)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 class SourceTreeDirectory:
   """Abstract representation of a source tree directory.
 
@@ -358,7 +358,7 @@ class SourceTreeDirectory:
 
     The relative path to the source directory.
   """
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
 
   def __init__(self, root, relative_directory):
     """
@@ -378,7 +378,7 @@ class SourceTreeDirectory:
     self.relative_directory = relative_directory
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def getRepo(path, tool=None, create=False):
   """Obtain a git repository for the specified path.
 
@@ -447,7 +447,7 @@ def getRepo(path, tool=None, create=False):
   return None
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def getRemote(repo, urls, create=None):
   """Get the remote matching a URL.
 
@@ -496,7 +496,7 @@ def getRemote(repo, urls, create=None):
   return None
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def localRoot(repo):
   """Get top level local directory of a repository.
 
@@ -524,7 +524,7 @@ def localRoot(repo):
   raise Exception("unable to determine repository local root")
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def vcsPrivateDirectory(repo):
   """Get |VCS| private directory of a repository.
 

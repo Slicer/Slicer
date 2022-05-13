@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 
-#=============================================================================
+# =============================================================================
 class CommandError(Exception):
   """
   .. attribute:: command
@@ -27,7 +27,7 @@ class CommandError(Exception):
     Raw text of the command's standard error stream.
   """
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, command, code, stderr):
     super(Exception, self).__init__("%r command exited with non-zero status" %
                                     command[0])
@@ -36,7 +36,7 @@ class CommandError(Exception):
     self.stderr = stderr
 
 
-#=============================================================================
+# =============================================================================
 class Client:
   """Wrapper for executing the ``svn`` process.
 
@@ -50,11 +50,11 @@ class Client:
     c.log('.', limit=5)
   """
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, repo=None):
     self._wc_root = repo.wc_root if repo is not None else None
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __getattr__(self, name):
     """Return a lambda to invoke the svn command ``name``."""
 
@@ -64,7 +64,7 @@ class Client:
 
     return lambda *args, **kwargs: self.execute(name, *args, **kwargs)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def execute(self, command, *args, **kwargs):
     """Execute ``command`` and return line-split output.
 
@@ -107,7 +107,7 @@ class Client:
 
     return out.split("\n")
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def info(self, *args, **kwargs):
     """Return information about the specified item.
 
@@ -139,7 +139,7 @@ class Client:
     return result
 
 
-#=============================================================================
+# =============================================================================
 class Repository:
   """Abstract representation of a subversion repository.
 
@@ -179,7 +179,7 @@ class Repository:
     root.
   """
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, path=os.getcwd()):
     """
     :param path: Location of the repository checkout.

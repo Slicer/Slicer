@@ -35,7 +35,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     # Set module icon from Resources/Icons/<ModuleName>.png
     moduleDir = os.path.dirname(self.parent.path)
     for iconExtension in ['.svg', '.png']:
-      iconPath = os.path.join(moduleDir, 'Resources/Icons', self.moduleName+iconExtension)
+      iconPath = os.path.join(moduleDir, 'Resources/Icons', self.moduleName + iconExtension)
       if os.path.isfile(iconPath):
         parent.icon = qt.QIcon(iconPath)
         break
@@ -81,7 +81,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
 
 
 class ScriptedLoadableModuleWidget:
-  def __init__(self, parent = None):
+  def __init__(self, parent=None):
     """If parent widget is not specified: a top-level widget is created automatically;
     the application has to delete this widget (by calling widget.parent.deleteLater() to avoid memory leaks.
     """
@@ -200,7 +200,7 @@ class ScriptedLoadableModuleWidget:
     # from old ones.
     print('\n' * 2)
     print('-' * 30)
-    print('Reloading module: '+self.moduleName)
+    print('Reloading module: ' + self.moduleName)
     print('-' * 30)
     print('\n' * 2)
 
@@ -217,11 +217,11 @@ class ScriptedLoadableModuleWidget:
 
   def onEditSource(self):
     filePath = slicer.util.modulePath(self.moduleName)
-    qt.QDesktopServices.openUrl(qt.QUrl("file:///"+filePath, qt.QUrl.TolerantMode))
+    qt.QDesktopServices.openUrl(qt.QUrl("file:///" + filePath, qt.QUrl.TolerantMode))
 
 
 class ScriptedLoadableModuleLogic:
-  def __init__(self, parent = None):
+  def __init__(self, parent=None):
     super().__init__()
     # Get module name by stripping 'Logic' from the class name
     self.moduleName = self.__class__.__name__
@@ -247,9 +247,9 @@ class ScriptedLoadableModuleLogic:
           parameterNode.SetAttribute("ModuleName", self.moduleName)
         return parameterNode
     else:
-      numberOfScriptedModuleNodes =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
+      numberOfScriptedModuleNodes = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
       for nodeIndex in range(numberOfScriptedModuleNodes):
-        parameterNode  = slicer.mrmlScene.GetNthNodeByClass( nodeIndex, "vtkMRMLScriptedModuleNode" )
+        parameterNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, "vtkMRMLScriptedModuleNode")
         if parameterNode.GetAttribute("ModuleName") == self.moduleName:
           return parameterNode
     # no parameter node was found for this module, therefore we add a new one now
@@ -262,9 +262,9 @@ class ScriptedLoadableModuleLogic:
     Multiple parameter nodes are useful for storing multiple parameter sets in a single scene.
     """
     foundParameterNodes = []
-    numberOfScriptedModuleNodes =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
+    numberOfScriptedModuleNodes = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
     for nodeIndex in range(numberOfScriptedModuleNodes):
-      parameterNode  = slicer.mrmlScene.GetNthNodeByClass( nodeIndex, "vtkMRMLScriptedModuleNode" )
+      parameterNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, "vtkMRMLScriptedModuleNode")
       if parameterNode.GetAttribute("ModuleName") == self.moduleName:
         foundParameterNodes.append(parameterNode)
     return foundParameterNodes
@@ -281,12 +281,12 @@ class ScriptedLoadableModuleLogic:
       return
 
     node = slicer.mrmlScene.CreateNodeByClass("vtkMRMLScriptedModuleNode")
-    node.UnRegister(None) # object is owned by the Python variable now
+    node.UnRegister(None)  # object is owned by the Python variable now
     if self.isSingletonParameterNode:
-      node.SetSingletonTag( self.moduleName )
+      node.SetSingletonTag(self.moduleName)
     # Add module name in an attribute to allow filtering in node selector widgets
     # Note that SetModuleName is not used anymore as it would be redundant with the ModuleName attribute.
-    node.SetAttribute( "ModuleName", self.moduleName )
+    node.SetAttribute("ModuleName", self.moduleName)
     node.SetName(slicer.mrmlScene.GenerateUniqueName(self.moduleName))
     return node
 
@@ -310,7 +310,7 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
     self.enableScreenshots = False
     self.screenshotScaleFactor = 1.0
 
-  def delayDisplay(self,message,requestedDelay=None,msec=None):
+  def delayDisplay(self, message, requestedDelay=None, msec=None):
     """
     Display messages to the user/tester during testing.
 
@@ -346,7 +346,7 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
 
     slicer.util.delayDisplay(message, msec)
 
-  def takeScreenshot(self,name,description,type=-1):
+  def takeScreenshot(self, name, description, type=-1):
     """ Take a screenshot of the selected viewport and store as and
     annotation snapshot node. Convenience method for automated testing.
 
@@ -394,7 +394,7 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
     # grab and convert to vtk image data
     qimage = ctk.ctkWidgetsUtils.grabWidget(widget)
     imageData = vtk.vtkImageData()
-    slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
+    slicer.qMRMLUtils().qImageToVtkImageData(qimage, imageData)
 
     annotationLogic = slicer.modules.annotations.logic()
     annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
@@ -403,4 +403,4 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
     """
     Run a default selection of tests here.
     """
-    logging.warning('No test is defined in '+self.__class__.__name__)
+    logging.warning('No test is defined in ' + self.__class__.__name__)

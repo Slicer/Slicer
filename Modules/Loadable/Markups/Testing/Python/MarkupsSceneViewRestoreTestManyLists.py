@@ -71,7 +71,7 @@ lm = slicer.app.layoutManager()
 td = lm.threeDWidget(0)
 mfm = td.threeDView().displayableManagerByClassName("vtkMRMLMarkupsDisplayableManager")
 h = mfm.GetHelper()
-print('Helper = ',h)
+print('Helper = ', h)
 
 for markupsNode in [fid1AfterRestore, fid2AfterRestore]:
   markupsWidget = h.GetWidget(markupsNode)
@@ -87,9 +87,9 @@ for markupsNode in [fid1AfterRestore, fid2AfterRestore]:
   # check positions
   for s in range(markupsNode.GetNumberOfControlPoints()):
     worldPos = controlPointsPoly.GetPoint(s)
-    print("control point ",s," world position = ",worldPos)
-    fidPos = [0.0,0.0,0.0]
-    markupsNode.GetNthControlPointPosition(s,fidPos)
+    print("control point ", s, " world position = ", worldPos)
+    fidPos = [0.0, 0.0, 0.0]
+    markupsNode.GetNthControlPointPosition(s, fidPos)
     xdiff = fidPos[0] - worldPos[0]
     ydiff = fidPos[1] - worldPos[1]
     zdiff = fidPos[2] - worldPos[2]

@@ -6,13 +6,13 @@ import qt
 import slicer
 
 
-#=============================================================================
+# =============================================================================
 #
 # _ui_CreateComponentDialog
 #
-#=============================================================================
+# =============================================================================
 class _ui_CreateComponentDialog:
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, parent):
     self.vLayout = qt.QVBoxLayout(parent)
     self.formLayout = qt.QFormLayout()
@@ -40,13 +40,13 @@ class _ui_CreateComponentDialog:
     self.vLayout.addWidget(self.buttonBox)
 
 
-#=============================================================================
+# =============================================================================
 #
 # CreateComponentDialog
 #
-#=============================================================================
+# =============================================================================
 class CreateComponentDialog:
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, componenttype, parent):
     self.dialog = qt.QDialog(parent)
     self.ui = _ui_CreateComponentDialog(self.dialog)
@@ -57,7 +57,7 @@ class CreateComponentDialog:
     self._typelc = componenttype.lower()
     self._typetc = componenttype.title()
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def accept(self):
     if not len(self.componentName):
       slicer.util.errorDisplay("%s name may not be empty." % self._typetc,
@@ -73,7 +73,7 @@ class CreateComponentDialog:
 
     self.dialog.accept()
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def setTemplates(self, templates, default="default"):
     self.ui.componentType.clear()
     self.ui.componentType.addItems(templates)
@@ -83,16 +83,16 @@ class CreateComponentDialog:
     except ValueError:
       pass
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def exec_(self):
     return self.dialog.exec_()
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @property
   def showDestination(self):
     return self.ui.destination.visible
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @showDestination.setter
   def showDestination(self, value):
     field = self.ui.destination
@@ -101,17 +101,17 @@ class CreateComponentDialog:
     label.visible = value
     field.visible = value
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @property
   def componentName(self):
     return self.ui.componentName.text
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @property
   def componentType(self):
     return self.ui.componentType.currentText
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @property
   def destination(self):
     return self.ui.destination.currentPath

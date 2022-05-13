@@ -59,8 +59,8 @@ for (column_name, column_width) in max_row_widths.items():
 print(template.format(**titles))
 
 # Print separator
-print(template.format(**{column_name: '-'*column_width for column_name, column_width in max_row_widths.items()}))
+print(template.format(**{column_name: '-' * column_width for column_name, column_width in max_row_widths.items()}))
 
 # Print content
 for row in table:
-    print(template.format(**row) )
+    print(template.format(**row))

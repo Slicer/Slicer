@@ -7,7 +7,7 @@ class ModuleD_WithFileDialog_WithoutWidget(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "Module A"
-    self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)",]
+    self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)", ]
     self.parent.helpText = """
     This module allows to test the scripted module import.
     """
@@ -22,7 +22,7 @@ class ModuleD_WithFileDialog_WithoutWidget(ScriptedLoadableModule):
 
 class DICOMFileDialog:
 
-  def __init__(self,qSlicerFileDialog):
+  def __init__(self, qSlicerFileDialog):
     self.qSlicerFileDialog = qSlicerFileDialog
     qSlicerFileDialog.fileType = 'Foo Directory'
     qSlicerFileDialog.description = 'Do something awesome with Foo'

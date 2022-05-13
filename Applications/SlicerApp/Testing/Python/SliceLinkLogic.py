@@ -17,16 +17,16 @@ class SliceLinkLogic(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "SliceLinkLogic" # TODO make this more human readable by adding spaces
+    parent.title = "SliceLinkLogic"  # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
-    parent.contributors = ["Jim Miller (GE)"] # replace with "Firstname Lastname (Org)"
+    parent.contributors = ["Jim Miller (GE)"]  # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     This module tests the Slice link logic
     """
     parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE and was partially funded by NIH grant U54EB005149.
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #
@@ -80,7 +80,7 @@ class SliceLinkLogicLogic(ScriptedLoadableModuleLogic):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def hasImageData(self,volumeNode):
+  def hasImageData(self, volumeNode):
     """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
@@ -139,9 +139,9 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
 
     volumeNode = slicer.util.getNode(pattern="FA")
     logic = SliceLinkLogicLogic()
-    self.assertIsNotNone( logic.hasImageData(volumeNode) )
+    self.assertIsNotNone(logic.hasImageData(volumeNode))
 
-    eps = 0.02 # on high-DPI screens FOV difference can be up to 1.25%, so set the tolerance to 2%
+    eps = 0.02  # on high-DPI screens FOV difference can be up to 1.25%, so set the tolerance to 2%
     print('eps = ' + str(eps) + '\n')
 
     # Change to a CompareView
@@ -163,10 +163,10 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
     self.delayDisplay('Linked the viewers (first Compare View)')
 
     # Set the data to be same on all viewers
-    logic.StartSliceCompositeNodeInteraction(1)  #ForegroundVolumeFlag
+    logic.StartSliceCompositeNodeInteraction(1)  # ForegroundVolumeFlag
     compareCNode.SetForegroundVolumeID(volumeNode.GetID())
     logic.EndSliceCompositeNodeInteraction()
-    self.assertEqual( compareCNode.GetForegroundVolumeID(), volumeNode.GetID())
+    self.assertEqual(compareCNode.GetForegroundVolumeID(), volumeNode.GetID())
     print('')
 
     # Check that whether the volume was propagated
@@ -180,32 +180,32 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
     print('')
 
     # Set the orientation to axial
-    logic.StartSliceNodeInteraction(12)  #OrientationFlag & ResetFieldOfViewFlag
+    logic.StartSliceNodeInteraction(12)  # OrientationFlag & ResetFieldOfViewFlag
     compareNode.SetOrientation('Axial')
     logic.FitSliceToAll()
     compareNode.UpdateMatrices()
     logic.EndSliceNodeInteraction()
 
     # Reset the field of view
-    logic.StartSliceNodeInteraction(8)  #ResetFieldOfViewFlag
+    logic.StartSliceNodeInteraction(8)  # ResetFieldOfViewFlag
     logic.FitSliceToAll()
     compareNode.UpdateMatrices()
     logic.EndSliceNodeInteraction()
     # Note: we validate on fov[1] when resetting the field of view (fov[0] can
     # differ by a few units)
     self.delayDisplay('Broadcasted a reset of the field of view to all Compare Views')
-    diff = abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
+    diff = abs(compareNode2.GetFieldOfView()[1] - compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
     print("Field of view of comparison (y) between compare viewers #1 and #2: " + str(diff))
     self.assertLess(diff, eps)
 
-    diff = abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
+    diff = abs(compareNode3.GetFieldOfView()[1] - compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
     print("Field of view of comparison (y) between compare viewers #1 and #3: " + str(diff))
     self.assertLess(diff, eps)
     print('')
 
     # Changed the number of lightboxes
     ln.SetNumberOfCompareViewLightboxColumns(6)
-    logic.StartSliceNodeInteraction(8)  #ResetFieldOfViewFlag
+    logic.StartSliceNodeInteraction(8)  # ResetFieldOfViewFlag
     logic.FitSliceToAll()
     compareNode.UpdateMatrices()
     logic.EndSliceNodeInteraction()
@@ -213,64 +213,64 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
     # Note: we validate on fov[1] when resetting the field of view (fov[0] can
     # differ by a few units)
     self.delayDisplay('Changed the number of lightboxes')
-    diff = abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
+    diff = abs(compareNode2.GetFieldOfView()[1] - compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
     print("Field of view of comparison (y) between compare viewers #1 and #2: " + str(diff))
     self.assertLess(diff, eps)
 
-    diff = abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
+    diff = abs(compareNode3.GetFieldOfView()[1] - compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
     print("Field of view of comparison between compare viewers #1 and #3: " + str(diff))
     self.assertLess(diff, eps)
     print('')
 
     # Pan
-    logic.StartSliceNodeInteraction(32) #XYZOriginFlag
+    logic.StartSliceNodeInteraction(32)  # XYZOriginFlag
     xyz = compareNode.GetXYZOrigin()
     compareNode.SetSliceOrigin(xyz[0] + 50, xyz[1] + 50, xyz[2])
     logic.EndSliceNodeInteraction()
 
     self.delayDisplay('Broadcasted a pan to all Compare Views')
-    diff = abs(compareNode2.GetXYZOrigin()[0]-compareNode.GetXYZOrigin()[0])
+    diff = abs(compareNode2.GetXYZOrigin()[0] - compareNode.GetXYZOrigin()[0])
     print("Origin comparison (x) between compare viewers #1 and #2: " + str(diff))
     self.assertLess(diff, eps)
 
-    diff = abs(compareNode3.GetXYZOrigin()[0]-compareNode.GetXYZOrigin()[0])
+    diff = abs(compareNode3.GetXYZOrigin()[0] - compareNode.GetXYZOrigin()[0])
     print("Origin comparison (x) between compare viewers #1 and #3: " + str(diff))
     self.assertLess(diff, eps)
     print('')
 
     # Zoom
-    logic.StartSliceNodeInteraction(2) #FieldOfFlag
+    logic.StartSliceNodeInteraction(2)  # FieldOfFlag
     fov = compareNode.GetFieldOfView()
     compareNode.SetFieldOfView(fov[0] * 0.5, fov[1] * 0.5, fov[2])
     logic.EndSliceNodeInteraction()
     # Note: we validate on fov[0] when zooming (fov[1] can differ by
     # a few units)
     self.delayDisplay('Broadcasted a zoom to all Compare Views')
-    diff = abs(compareNode2.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0]
+    diff = abs(compareNode2.GetFieldOfView()[0] - compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0]
     print("Field of view of comparison (x) between compare viewers #1 and #2: " + str(diff))
     self.assertLess(diff, eps)
 
-    diff = abs(compareNode3.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0]
+    diff = abs(compareNode3.GetFieldOfView()[0] - compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0]
     print("Field of view of comparison (x) between compare viewers #1 and #3: " + str(diff))
     self.assertLess(diff, eps)
     print('')
 
     # Change the slice
-    logic.StartSliceNodeInteraction(1)   #SliceToRAS
+    logic.StartSliceNodeInteraction(1)  # SliceToRAS
     logic.SetSliceOffset(80)
     logic.EndSliceNodeInteraction()
     self.delayDisplay('Broadcasted a change in slice offset to all Compare Views')
-    diff = abs(compareNode2.GetSliceOffset()-compareNode.GetSliceOffset())
+    diff = abs(compareNode2.GetSliceOffset() - compareNode.GetSliceOffset())
     print("Slice offset comparison between compare viewers #1 and #2: " + str(diff))
     self.assertLess(diff, eps)
 
-    diff = abs(compareNode3.GetSliceOffset()-compareNode.GetSliceOffset())
+    diff = abs(compareNode3.GetSliceOffset() - compareNode.GetSliceOffset())
     print("Slice offset comparison between compare viewers #1 and #3: " + str(diff))
     self.assertLess(diff, eps)
     print('')
 
     # Change the orientation
-    logic.StartSliceNodeInteraction(12)  #OrientationFlag & ResetFieldOfViewFlag
+    logic.StartSliceNodeInteraction(12)  # OrientationFlag & ResetFieldOfViewFlag
     compareNode.SetOrientation('Sagittal')
     logic.FitSliceToAll()
     compareNode.UpdateMatrices()

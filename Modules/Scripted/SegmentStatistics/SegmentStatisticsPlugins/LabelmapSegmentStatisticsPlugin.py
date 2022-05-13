@@ -19,28 +19,28 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
       "principal_moments",
       ] + self.principalAxisKeys + self.obbKeys
 
-    self.defaultKeys = ["voxel_count", "volume_mm3", "volume_cm3"] # Don't calculate label shape statistics by default since they take longer to compute
+    self.defaultKeys = ["voxel_count", "volume_mm3", "volume_cm3"]  # Don't calculate label shape statistics by default since they take longer to compute
     self.keys = self.defaultKeys + self.shapeKeys
     self.keyToShapeStatisticNames = {
-      "centroid_ras" : vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Centroid),
+      "centroid_ras": vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Centroid),
       "feret_diameter_mm": vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.FeretDiameter),
-      "surface_area_mm2" : vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Perimeter),
-      "roundness" : vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Roundness),
-      "flatness" : vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Flatness),
-      "elongation" : vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Elongation),
-      "oriented_bounding_box" : vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.OrientedBoundingBox),
-      "obb_origin_ras" : "OrientedBoundingBoxOrigin",
-      "obb_diameter_mm" : "OrientedBoundingBoxSize",
-      "obb_direction_ras_x" : "OrientedBoundingBoxDirectionX",
-      "obb_direction_ras_y" : "OrientedBoundingBoxDirectionY",
-      "obb_direction_ras_z" : "OrientedBoundingBoxDirectionZ",
-      "principal_moments" : vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.PrincipalMoments),
-      "principal_axes" : vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.PrincipalAxes),
-      "principal_axis_x" : "PrincipalAxisX",
-      "principal_axis_y" : "PrincipalAxisY",
-      "principal_axis_z" : "PrincipalAxisZ",
+      "surface_area_mm2": vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Perimeter),
+      "roundness": vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Roundness),
+      "flatness": vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Flatness),
+      "elongation": vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.Elongation),
+      "oriented_bounding_box": vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.OrientedBoundingBox),
+      "obb_origin_ras": "OrientedBoundingBoxOrigin",
+      "obb_diameter_mm": "OrientedBoundingBoxSize",
+      "obb_direction_ras_x": "OrientedBoundingBoxDirectionX",
+      "obb_direction_ras_y": "OrientedBoundingBoxDirectionY",
+      "obb_direction_ras_z": "OrientedBoundingBoxDirectionZ",
+      "principal_moments": vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.PrincipalMoments),
+      "principal_axes": vtkITK.vtkITKLabelShapeStatistics.GetShapeStatisticAsString(vtkITK.vtkITKLabelShapeStatistics.PrincipalAxes),
+      "principal_axis_x": "PrincipalAxisX",
+      "principal_axis_y": "PrincipalAxisY",
+      "principal_axis_z": "PrincipalAxisZ",
       }
-    #... developer may add extra options to configure other parameters
+    # ... developer may add extra options to configure other parameters
 
   def computeStatistics(self, segmentID):
     import vtkSegmentationCorePython as vtkSegmentationCore
@@ -48,7 +48,7 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
 
     segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))
 
-    if len(requestedKeys)==0:
+    if len(requestedKeys) == 0:
       return {}
 
     containsLabelmapRepresentation = segmentationNode.GetSegmentation().ContainsRepresentation(
@@ -87,7 +87,7 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     stat.Update()
 
     # Add data to statistics list
-    cubicMMPerVoxel = reduce(lambda x,y: x*y, segmentLabelmap.GetSpacing())
+    cubicMMPerVoxel = reduce(lambda x, y: x * y, segmentLabelmap.GetSpacing())
     ccPerCubicMM = 0.001
     stats = {}
     if "voxel_count" in requestedKeys:
@@ -167,7 +167,7 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
 
       statTable = shapeStat.GetOutput()
       if "centroid_ras" in requestedKeys:
-        centroidRAS = [0,0,0]
+        centroidRAS = [0, 0, 0]
         centroidTuple = None
         centroidArray = statTable.GetColumnByName(self.keyToShapeStatisticNames["centroid_ras"])
         if centroidArray is None:
@@ -235,7 +235,7 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
 
       if "obb_origin_ras" in requestedKeys:
         obbOriginTuple = None
-        obbOriginRAS = [0,0,0]
+        obbOriginRAS = [0, 0, 0]
         obbOriginArray = statTable.GetColumnByName(self.keyToShapeStatisticNames["obb_origin_ras"])
         if obbOriginArray is None:
           logging.error("Could not calculate obb_origin_ras!")

@@ -60,7 +60,7 @@ class DICOMProcess:
     if os.name == 'nt':
       self.exeExtension = '.exe'
 
-    self.QProcessState = {0: 'NotRunning', 1: 'Starting', 2: 'Running',}
+    self.QProcessState = {0: 'NotRunning', 1: 'Starting', 2: 'Running', }
 
   def __del__(self):
     self.stop()
@@ -89,7 +89,7 @@ class DICOMProcess:
     return None, None
 
   def stop(self):
-    if hasattr(self,'process'):
+    if hasattr(self, 'process'):
       if self.process:
         logging.debug("stopping DICOM process")
         self.process.kill()
@@ -103,9 +103,9 @@ class DICOMCommand(DICOMProcess):
   Run a generic dcmtk command and return the stdout
   """
 
-  def __init__(self,cmd,args):
+  def __init__(self, cmd, args):
     super().__init__()
-    self.executable = self.exeDir+'/'+cmd+self.exeExtension
+    self.executable = self.exeDir + '/' + cmd + self.exeExtension
     self.args = args
 
   def __del__(self):
@@ -157,7 +157,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
         self.port = settings.value('StoragePort')
 
     self.storescpExecutable = os.path.join(self.exeDir, self.STORESCP_PROCESS_FILE_NAME + self.exeExtension)
-    self.dcmdumpExecutable = os.path.join(self.exeDir,'dcmdump'+self.exeExtension)
+    self.dcmdumpExecutable = os.path.join(self.exeDir, 'dcmdump' + self.exeExtension)
 
   def __del__(self):
     super().__del__()
@@ -175,7 +175,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
     self.killStoreSCPProcesses()
     onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' \
                           % (self.dcmdumpExecutable, self.incomingDataDir)
-    args = [str(self.port), '--accept-all', '--output-directory' , self.incomingDataDir, '--exec-sync',
+    args = [str(self.port), '--accept-all', '--output-directory', self.incomingDataDir, '--exec-sync',
             '--exec-on-reception', onReceptionCallback]
     logging.debug("Starting storescp process")
     super().start(self.storescpExecutable, args)
@@ -398,7 +398,7 @@ class DICOMSender(DICOMProcess):
   """
   extended_dicom_config_path = 'DICOM/dcmtk/storescu-seg.cfg'
 
-  def __init__(self,files,address,protocol=None,progressCallback=None,aeTitle=None):
+  def __init__(self, files, address, protocol=None, progressCallback=None, aeTitle=None):
     """protocol: can be DIMSE (default) or DICOMweb
     port: optional (if not specified then address URL should contain it)
     """
@@ -418,7 +418,7 @@ class DICOMSender(DICOMProcess):
   def __del__(self):
     super().__del__()
 
-  def defaultProgressCallback(self,s):
+  def defaultProgressCallback(self, s):
     logging.debug(s)
 
   def send(self):
@@ -468,7 +468,7 @@ class DICOMSender(DICOMProcess):
         if url.path().startswith('/view/'):
           # This is a Kheops viewer URL.
           # Retrieve the token from the viewer URL and use the Kheops API URL to connect to the server.
-          token = url.path().replace('/view/','')
+          token = url.path().replace('/view/', '')
           effectiveServerUrl = "https://demo.kheops.online/api"
           from requests.auth import HTTPBasicAuth
           from dicomweb_client.session_utils import create_session_from_auth
@@ -492,9 +492,9 @@ class DICOMSender(DICOMProcess):
 
   def dicomSend(self, file, config=None, config_profile='Default'):
     """Send DICOM file to the specified modality."""
-    self.storeSCUExecutable = self.exeDir+'/storescu'+self.exeExtension
+    self.storeSCUExecutable = self.exeDir + '/storescu' + self.exeExtension
 
-    ### TODO: maybe use dcmsend (is smarter about the compress/decompress)
+    # TODO: maybe use dcmsend (is smarter about the compress/decompress)
 
     args = []
 
@@ -555,7 +555,7 @@ class DICOMTestingQRServer:
   """
   # TODO: make this use DICOMProcess superclass
 
-  def __init__(self,exeDir=".",tmpDir="./DICOM"):
+  def __init__(self, exeDir=".", tmpDir="./DICOM"):
     self.qrProcess = None
     self.tmpDir = tmpDir
     self.exeDir = exeDir
@@ -566,15 +566,15 @@ class DICOMTestingQRServer:
   def qrRunning(self):
     return self.qrProcess is not None
 
-  def start(self,verbose=False,initialFiles=None):
+  def start(self, verbose=False, initialFiles=None):
     if self.qrRunning():
       self.stop()
 
-    self.dcmqrscpExecutable = self.exeDir+'/dcmqrdb/apps/dcmqrscp'
-    self.storeSCUExecutable = self.exeDir+'/dcmnet/apps/storescu'
+    self.dcmqrscpExecutable = self.exeDir + '/dcmqrdb/apps/dcmqrscp'
+    self.storeSCUExecutable = self.exeDir + '/dcmnet/apps/storescu'
 
     # make the config file
-    cfg = self.tmpDir+"/dcmqrscp.cfg"
+    cfg = self.tmpDir + "/dcmqrscp.cfg"
     self.makeConfigFile(cfg, storageDirectory=self.tmpDir)
 
     # start the server!
@@ -585,9 +585,9 @@ class DICOMTestingQRServer:
     cmdLine.append(cfg)
     self.qrProcess = subprocess.Popen(cmdLine)
                                       # TODO: handle output
-                                      #stdin=subprocess.PIPE,
-                                      #stdout=subprocess.PIPE,
-                                      #stderr=subprocess.PIPE)
+                                      # stdin=subprocess.PIPE,
+                                      # stdout=subprocess.PIPE,
+                                      # stderr=subprocess.PIPE)
 
     # push the data to the server!
     if initialFiles:
@@ -610,7 +610,7 @@ class DICOMTestingQRServer:
     self.qrProcess.wait()
     self.qrProcess = None
 
-  def makeConfigFile(self,configFile,storageDirectory='.'):
+  def makeConfigFile(self, configFile, storageDirectory='.'):
     """ make a config file for the local instance with just
     the parts we need (comments and examples removed).
     For examples and the full syntax
@@ -641,6 +641,6 @@ AETable END
 """
     config = template % storageDirectory
 
-    fp = open(configFile,'w')
+    fp = open(configFile, 'w')
     fp.write(config)
     fp.close()

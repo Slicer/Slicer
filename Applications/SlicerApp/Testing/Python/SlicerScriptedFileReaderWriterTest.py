@@ -65,7 +65,7 @@ class SlicerScriptedFileReaderWriterTestFileReader:
         baseName = slicer.mrmlScene.GenerateUniqueName(baseName)
 
       # Read file content
-      with open (filePath) as myfile:
+      with open(filePath) as myfile:
         data = myfile.readlines()
 
       # Check if file is valid
@@ -81,7 +81,7 @@ class SlicerScriptedFileReaderWriterTestFileReader:
       # self.parent.userMessages().AddMessage(vtk.vtkCommand.WarningEvent, "This is a warning message")
 
     except Exception as e:
-      logging.error('Failed to load file: '+str(e))
+      logging.error('Failed to load file: ' + str(e))
       import traceback
       traceback.print_exc()
       return False
@@ -119,12 +119,12 @@ class SlicerScriptedFileReaderWriterTestFileWriter:
 
       # Write node content to file
       filePath = properties['fileName']
-      with open (filePath, 'w') as myfile:
+      with open(filePath, 'w') as myfile:
         myfile.write("magic\n")
         myfile.write(node.GetText())
 
     except Exception as e:
-      logging.error('Failed to write file: '+str(e))
+      logging.error('Failed to write file: ' + str(e))
       import traceback
       traceback.print_exc()
       return False

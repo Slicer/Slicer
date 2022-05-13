@@ -37,7 +37,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     # Stores merged labelmap image geometry (voxel data is not allocated)
     self.mergedLabelmapGeometryImage = None
     self.selectedSegmentIds = None
-    self.selectedSegmentModifiedTimes = {} # map from segment ID to ModifiedTime
+    self.selectedSegmentModifiedTimes = {}  # map from segment ID to ModifiedTime
     self.clippedMasterImageData = None
     self.clippedMaskImageData = None
 
@@ -58,7 +58,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.previewComputationInProgress = False
 
   def __del__(self, scriptedEffect):
-    super(SegmentEditorAutoCompleteEffect,self).__del__()
+    super(SegmentEditorAutoCompleteEffect, self).__del__()
     self.delayedAutoUpdateTimer.stop()
     self.observeSegmentation(False)
 
@@ -71,10 +71,10 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     if extent[0] > extent[1] or extent[2] > extent[3] or extent[4] > extent[5]:
       return False
     numberOfFilledCorners = 0
-    for i in [0,1]:
-      for j in [2,3]:
-        for k in [4,5]:
-          voxelValue = labelmapOrientedImageData.GetScalarComponentAsFloat(extent[i],extent[j],extent[k],0)
+    for i in [0, 1]:
+      for j in [2, 3]:
+        for k in [4, 5]:
+          voxelValue = labelmapOrientedImageData.GetScalarComponentAsFloat(extent[i], extent[j], extent[k], 0)
           if label is None:
             if voxelValue > 0:
               numberOfFilledCorners += 1
@@ -221,7 +221,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         vtkSegmentationCore.vtkSegmentation.SegmentAdded,
         vtkSegmentationCore.vtkSegmentation.SegmentRemoved,
         vtkSegmentationCore.vtkSegmentation.SegmentModified,
-        vtkSegmentationCore.vtkSegmentation.MasterRepresentationModified ]
+        vtkSegmentationCore.vtkSegmentation.MasterRepresentationModified]
       for eventId in observedEvents:
         self.segmentationNodeObserverTags.append(self.observedSegmentation.AddObserver(eventId, self.onSegmentationModified))
 
@@ -331,7 +331,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       if segmentationDisplayNode is not None and self.isBackgroundLabelmap(previewSegmentLabelmap):
         # Automatically hide result segments that are background (all eight corners are non-zero)
         segmentationDisplayNode.SetSegmentVisibility(segmentID, False)
-      previewNode.GetSegmentation().RemoveSegment(segmentID) # delete now to limit memory usage
+      previewNode.GetSegmentation().RemoveSegment(segmentID)  # delete now to limit memory usage
 
     if previewContainsClosedSurfaceRepresentation:
       segmentationNode.CreateClosedSurfaceRepresentation()
@@ -340,7 +340,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
   def setPreviewOpacity(self, opacity):
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-    segmentationNode.GetDisplayNode().SetOpacity(1.0-opacity)
+    segmentationNode.GetDisplayNode().SetOpacity(1.0 - opacity)
     previewNode = self.getPreviewNode()
     if previewNode:
       previewNode.GetDisplayNode().SetOpacity(opacity)
@@ -353,7 +353,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
   def getPreviewOpacity(self):
     previewNode = self.getPreviewNode()
-    return previewNode.GetDisplayNode().GetOpacity() if previewNode else 0.6 # default opacity for preview
+    return previewNode.GetDisplayNode().GetOpacity() if previewNode else 0.6  # default opacity for preview
 
   def setPreviewShow3D(self, show):
     previewNode = self.getPreviewNode()
@@ -455,19 +455,19 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       # Margin size is relative to combined seed region size, but minimum of 3 voxels
       print(f"self.extentGrowthRatio = {self.extentGrowthRatio}")
       margin = [
-        int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[1]-labelsEffectiveExtent[0]))),
-        int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[3]-labelsEffectiveExtent[2]))),
-        int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[5]-labelsEffectiveExtent[4]))) ]
+        int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[1] - labelsEffectiveExtent[0]))),
+        int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[3] - labelsEffectiveExtent[2]))),
+        int(max(3, self.extentGrowthRatio * (labelsEffectiveExtent[5] - labelsEffectiveExtent[4])))]
       labelsExpandedExtent = [
-        max(masterImageExtent[0], labelsEffectiveExtent[0]-margin[0]),
-        min(masterImageExtent[1], labelsEffectiveExtent[1]+margin[0]),
-        max(masterImageExtent[2], labelsEffectiveExtent[2]-margin[1]),
-        min(masterImageExtent[3], labelsEffectiveExtent[3]+margin[1]),
-        max(masterImageExtent[4], labelsEffectiveExtent[4]-margin[2]),
-        min(masterImageExtent[5], labelsEffectiveExtent[5]+margin[2]) ]
-      print("masterImageExtent = "+repr(masterImageExtent))
-      print("labelsEffectiveExtent = "+repr(labelsEffectiveExtent))
-      print("labelsExpandedExtent = "+repr(labelsExpandedExtent))
+        max(masterImageExtent[0], labelsEffectiveExtent[0] - margin[0]),
+        min(masterImageExtent[1], labelsEffectiveExtent[1] + margin[0]),
+        max(masterImageExtent[2], labelsEffectiveExtent[2] - margin[1]),
+        min(masterImageExtent[3], labelsEffectiveExtent[3] + margin[1]),
+        max(masterImageExtent[4], labelsEffectiveExtent[4] - margin[2]),
+        min(masterImageExtent[5], labelsEffectiveExtent[5] + margin[2])]
+      print("masterImageExtent = " + repr(masterImageExtent))
+      print("labelsEffectiveExtent = " + repr(labelsEffectiveExtent))
+      print("labelsExpandedExtent = " + repr(labelsExpandedExtent))
       self.mergedLabelmapGeometryImage.SetExtent(labelsExpandedExtent)
 
       # Create and setup preview node
@@ -505,8 +505,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         intensityBasedMasking = self.scriptedEffect.parameterSetNode().GetMasterVolumeIntensityMask()
         success = segmentationNode.GenerateEditMask(self.clippedMaskImageData,
           self.scriptedEffect.parameterSetNode().GetMaskMode(),
-          self.clippedMasterImageData, # reference geometry
-          "", # edited segment ID
+          self.clippedMasterImageData,  # reference geometry
+          "",  # edited segment ID
           self.scriptedEffect.parameterSetNode().GetMaskSegmentID() if self.scriptedEffect.parameterSetNode().GetMaskSegmentID() else "",
           self.clippedMasterImageData if intensityBasedMasking else None,
           self.scriptedEffect.parameterSetNode().GetMasterVolumeIntensityMaskRange() if intensityBasedMasking else None)
@@ -514,8 +514,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
           logging.error("Failed to create edit mask")
           self.clippedMaskImageData = None
 
-    previewNode.SetName(segmentationNode.GetName()+" preview")
-    previewNode.RemoveClosedSurfaceRepresentation() # Force the closed surface representation to update
+    previewNode.SetName(segmentationNode.GetName() + " preview")
+    previewNode.RemoveClosedSurfaceRepresentation()  # Force the closed surface representation to update
                                                     # TODO: This will no longer be required when we can use the segment editor to set multiple segments
                                                     # as the closed surfaces will be converted as necessary by the segmentation logic.
 
@@ -542,7 +542,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         previewSegment.SetColor(inputSegment.GetColor())
         previewNode.GetSegmentation().AddSegment(previewSegment, segmentID)
 
-      labelValue = index + 1 # n-th segment label value = n + 1 (background label value is 0)
+      labelValue = index + 1  # n-th segment label value = n + 1 (background label value is 0)
       previewSegment.AddRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName(), outputLabelmap)
       previewSegment.SetLabelValue(labelValue)
 

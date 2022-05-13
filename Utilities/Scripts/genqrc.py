@@ -5,7 +5,7 @@ import os
 import sys
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def writeFile(path, content):
   # Test if file already contains desired content
   if os.path.exists(path):
@@ -22,13 +22,13 @@ def writeFile(path, content):
     f.write(content)
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def addFile(path):
   name = os.path.basename(path)
   return [f"    <file alias=\"{name}\">{path}</file>"]
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def buildContent(root, path):
   dirs = []
   out = ["  <qresource prefix=\"%s\">" % path]
@@ -53,7 +53,7 @@ def buildContent(root, path):
   return out
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def main(argv):
   parser = argparse.ArgumentParser(description="PythonQt Resource Compiler")
 
@@ -79,7 +79,7 @@ def main(argv):
     ""]
 
   for path in args.resource_directories:
-    path = os.path.dirname(os.path.join(path, '.')) # remove trailing '/'
+    path = os.path.dirname(os.path.join(path, '.'))  # remove trailing '/'
     qrc_content += buildContent(os.path.dirname(path), os.path.basename(path))
 
   qrc_content += ["</RCC>"]
@@ -93,7 +93,7 @@ def main(argv):
     writeFile(args.out_path, qrc_content)
 
 
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if __name__ == "__main__":
   main(sys.argv[1:])

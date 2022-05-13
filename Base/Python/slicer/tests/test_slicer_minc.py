@@ -12,7 +12,7 @@ class SlicerUtilLoadSaveMINCTests(unittest.TestCase):
         os.remove(os.path.join(slicer.app.temporaryPath, MINCFileNames))
       except OSError:
         pass
-    shutil.rmtree(os.path.join(slicer.app.temporaryPath, 'SlicerUtilLoadSaveMINCTests' ), True)
+    shutil.rmtree(os.path.join(slicer.app.temporaryPath, 'SlicerUtilLoadSaveMINCTests'), True)
 
   def test_saveMINCNode(self):
     node = slicer.util.getNode('pd_z-_float_xyz')

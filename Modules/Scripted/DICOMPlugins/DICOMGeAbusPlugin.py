@@ -36,7 +36,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     # Accepted private creator identifications
     self.privateCreators = ["U-Systems", "General Electric Company 01"]
 
-  def examine(self,fileLists):
+  def examine(self, fileLists):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter.
@@ -47,7 +47,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     return loadables
 
-  def examineFiles(self,files):
+  def examineFiles(self, files):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     files parameter.
@@ -69,7 +69,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
           # Unsupported class
           continue
 
-        manufacturerModelName = slicer.dicomDatabase.fileValue(filePath,self.tags['manufacturerModelName'])
+        manufacturerModelName = slicer.dicomDatabase.fileValue(filePath, self.tags['manufacturerModelName'])
         if manufacturerModelName != "Invenia":
           if detailedLogging:
             logging.debug("ManufacturerModelName is not Invenia, the series will not be considered as an ABUS image")
@@ -128,14 +128,14 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
       raise ValueError(f"Failed to parse DICOM file: {str(e)}")
 
     fieldsInfo = {
-      'NipplePosition': { 'group': 0x0021, 'element': 0x20, 'private': True, 'required': False},
-      'FirstElementPosition': { 'group': 0x0021, 'element': 0x21, 'private': True, 'required': False},
-      'CurvatureRadiusProbe': { 'group': 0x0021, 'element': 0x40, 'private': True, 'required': True},
-      'CurvatureRadiusTrack': { 'group': 0x0021, 'element': 0x41, 'private': True, 'required': True},
-      'LineDensity': { 'group': 0x0021, 'element': 0x62, 'private': True, 'required': False},
-      'ScanDepthCm': { 'group': 0x0021, 'element': 0x63, 'private': True, 'required': True},
-      'SpacingBetweenSlices': { 'group': 0x0018, 'element': 0x0088, 'private': False, 'required': True},
-      'PixelSpacing': { 'group': 0x0028, 'element': 0x0030, 'private': False, 'required': True},
+      'NipplePosition': {'group': 0x0021, 'element': 0x20, 'private': True, 'required': False},
+      'FirstElementPosition': {'group': 0x0021, 'element': 0x21, 'private': True, 'required': False},
+      'CurvatureRadiusProbe': {'group': 0x0021, 'element': 0x40, 'private': True, 'required': True},
+      'CurvatureRadiusTrack': {'group': 0x0021, 'element': 0x41, 'private': True, 'required': True},
+      'LineDensity': {'group': 0x0021, 'element': 0x62, 'private': True, 'required': False},
+      'ScanDepthCm': {'group': 0x0021, 'element': 0x63, 'private': True, 'required': True},
+      'SpacingBetweenSlices': {'group': 0x0018, 'element': 0x0088, 'private': False, 'required': True},
+      'PixelSpacing': {'group': 0x0028, 'element': 0x0030, 'private': False, 'required': True},
     }
 
     fieldValues = {}
@@ -161,7 +161,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     return fieldValues
 
-  def load(self,loadable):
+  def load(self, loadable):
     """Load the selection
     """
 
@@ -201,12 +201,12 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     sliceSpacing = metadata['SpacingBetweenSlices']
 
     ijkToRas = vtk.vtkMatrix4x4()
-    ijkToRas.SetElement(0,0,-1)
-    ijkToRas.SetElement(1,1,-1)  # so that J axis points toward posterior
+    ijkToRas.SetElement(0, 0, -1)
+    ijkToRas.SetElement(1, 1, -1)  # so that J axis points toward posterior
     volumeNode.SetIJKToRASMatrix(ijkToRas)
     volumeNode.SetSpacing(lateralSpacing, axialSpacing, sliceSpacing)
     extent = imageData.GetExtent()
-    volumeNode.SetOrigin((extent[1]-extent[0]+1)*0.5*lateralSpacing, 0, -(extent[5]-extent[2]+1)*0.5*sliceSpacing)
+    volumeNode.SetOrigin((extent[1] - extent[0] + 1) * 0.5 * lateralSpacing, 0, -(extent[5] - extent[2] + 1) * 0.5 * sliceSpacing)
     volumeNode.SetAndObserveImageData(imageData)
 
     # Apply scan conversion transform
@@ -239,16 +239,16 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     # Create a sampling grid for the transform
     import numpy as np
     spacing = np.array(volumeNode.GetSpacing())
-    averageSpacing = (spacing[0]+spacing[1]+spacing[2])/3.0
+    averageSpacing = (spacing[0] + spacing[1] + spacing[2]) / 3.0
     voxelsPerTransformControlPoint = 20  # the transform is changing smoothly, so we don't need to add too many control points
     gridSpacingMm = averageSpacing * voxelsPerTransformControlPoint
-    gridSpacingVoxel = np.floor(gridSpacingMm/spacing).astype(int)
+    gridSpacingVoxel = np.floor(gridSpacingMm / spacing).astype(int)
     gridAxesIJK = []
     imageData = volumeNode.GetImageData()
     extent = imageData.GetExtent()
     for axis in range(3):
-      gridAxesIJK.append(list(range(extent[axis*2], extent[axis*2+1]+gridSpacingVoxel[axis], gridSpacingVoxel[axis])))
-    samplingPoints_shape = [len(gridAxesIJK[0]),len(gridAxesIJK[1]),len(gridAxesIJK[2]),3]
+      gridAxesIJK.append(list(range(extent[axis * 2], extent[axis * 2 + 1] + gridSpacingVoxel[axis], gridSpacingVoxel[axis])))
+    samplingPoints_shape = [len(gridAxesIJK[0]), len(gridAxesIJK[1]), len(gridAxesIJK[2]), 3]
 
     # create a grid transform with one vector at the corner of each slice
     # the transform is in the same space and orientation as the volume node
@@ -256,7 +256,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     gridImage = vtk.vtkImageData()
     gridImage.SetOrigin(*volumeNode.GetOrigin())
     gridImage.SetDimensions(samplingPoints_shape[:3])
-    gridImage.SetSpacing(gridSpacingVoxel[0]*spacing[0], gridSpacingVoxel[1]*spacing[1], gridSpacingVoxel[2]*spacing[2])
+    gridImage.SetSpacing(gridSpacingVoxel[0] * spacing[0], gridSpacingVoxel[1] * spacing[1], gridSpacingVoxel[2] * spacing[2])
     gridImage.AllocateScalars(vtk.VTK_DOUBLE, 3)
     transform = slicer.vtkOrientedGridTransform()
     directionMatrix = vtk.vtkMatrix4x4()
@@ -266,7 +266,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     # create the grid transform node
     gridTransform = slicer.vtkMRMLGridTransformNode()
-    gridTransform.SetName(slicer.mrmlScene.GenerateUniqueName(volumeNode.GetName()+' acquisition transform'))
+    gridTransform.SetName(slicer.mrmlScene.GenerateUniqueName(volumeNode.GetName() + ' acquisition transform'))
     slicer.mrmlScene.AddNode(gridTransform)
     gridTransform.SetAndObserveTransformToParent(transform)
 
@@ -282,7 +282,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     ijkToRas = vtk.vtkMatrix4x4()
     volumeNode.GetIJKToRASMatrix(ijkToRas)
     spacing = volumeNode.GetSpacing()
-    center_IJK = [(extent[0]+extent[1])/2.0, extent[2], (extent[4]+extent[5])/2.0]
+    center_IJK = [(extent[0] + extent[1]) / 2.0, extent[2], (extent[4] + extent[5]) / 2.0]
     sourcePoints_RAS = numpy.zeros(shape=samplingPoints_shape)
     targetPoints_RAS = numpy.zeros(shape=samplingPoints_shape)
     for k in range(samplingPoints_shape[2]):
@@ -290,12 +290,12 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         for i in range(samplingPoints_shape[0]):
           samplingPoint_IJK = [gridAxesIJK[0][i], gridAxesIJK[1][j], gridAxesIJK[2][k], 1]
           sourcePoint_RAS = np.array(ijkToRas.MultiplyPoint(samplingPoint_IJK)[:3])
-          radius = probeRadius - (samplingPoint_IJK[1]-center_IJK[1]) * spacing[1]
-          angleRad = (samplingPoint_IJK[0]-center_IJK[0]) * spacing[0] / probeRadius
+          radius = probeRadius - (samplingPoint_IJK[1] - center_IJK[1]) * spacing[1]
+          angleRad = (samplingPoint_IJK[0] - center_IJK[0]) * spacing[0] / probeRadius
           targetPoint_RAS = np.array([
             -radius * sin(angleRad),
             radius * cos(angleRad) - probeRadius,
-            spacing[2] * (samplingPoint_IJK[2]-center_IJK[2])])
+            spacing[2] * (samplingPoint_IJK[2] - center_IJK[2])])
           displacements[k][j][i] = targetPoint_RAS - sourcePoint_RAS
 
     return gridTransform

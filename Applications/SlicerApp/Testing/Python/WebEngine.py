@@ -25,7 +25,7 @@ class WebEngine(ScriptedLoadableModule):
     """
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper and was partially funded by NSF grant 1759883
-""" # replace with organization, grant and thanks.
+"""  # replace with organization, grant and thanks.
 
 
 #
@@ -39,7 +39,7 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
 
   def __init__(self, parent):
     ScriptedLoadableModuleWidget.__init__(self, parent)
-    self.webWidgets = [] # hold references so windows persist
+    self.webWidgets = []  # hold references so windows persist
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
@@ -94,7 +94,7 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
   def onSiteButtonClicked(self, site):
     webWidget = slicer.qSlicerWebWidget()
     slicerGeometry = slicer.util.mainWindow().geometry
-    webWidget.size = qt.QSize(1536,1024)
+    webWidget.size = qt.QSize(1536, 1024)
     webWidget.pos = qt.QPoint(slicerGeometry.x() + 256, slicerGeometry.y() + 128)
     webWidget.url = site["url"]
     webWidget.show()
@@ -143,7 +143,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Starting the test")
 
     webWidget = slicer.qSlicerWebWidget()
-    webWidget.size = qt.QSize(1024,512)
+    webWidget.size = qt.QSize(1024, 512)
     webWidget.webView().url = qt.QUrl("")
     webWidget.show()
     self.delayDisplay('Showing widget')

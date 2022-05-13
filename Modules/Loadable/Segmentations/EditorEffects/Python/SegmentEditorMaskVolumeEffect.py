@@ -10,17 +10,17 @@ class SegmentEditorMaskVolumeEffect(AbstractScriptedSegmentEditorEffect):
 
   def __init__(self, scriptedEffect):
     scriptedEffect.name = 'Mask volume'
-    scriptedEffect.perSegment = True # this effect operates on a single selected segment
+    scriptedEffect.perSegment = True  # this effect operates on a single selected segment
     AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
-    #Effect-specific members
+    # Effect-specific members
     self.buttonToOperationNameMap = {}
 
   def clone(self):
     # It should not be necessary to modify this method
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -132,7 +132,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
     self.outputVolumeSelector.noneEnabled = True
     self.outputVolumeSelector.noneDisplay = "(Create new Volume)"
     self.outputVolumeSelector.showHidden = False
-    self.outputVolumeSelector.setMRMLScene( slicer.mrmlScene )
+    self.outputVolumeSelector.setMRMLScene(slicer.mrmlScene)
     self.outputVolumeSelector.setToolTip("Masked output volume. It may be the same as the input volume for cumulative masking.")
     self.outputVolumeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onOutputVolumeChanged)
 
@@ -282,10 +282,10 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
       volumesLogic = slicer.modules.volumes.logic()
       scene = inputVolume.GetScene()
       if operationMode == "FILL_INSIDE_AND_OUTSIDE":
-        outputVolumeName = inputVolume.GetName()+" label"
+        outputVolumeName = inputVolume.GetName() + " label"
         outputVolume = volumesLogic.CreateAndAddLabelVolume(inputVolume, outputVolumeName)
       else:
-        outputVolumeName = inputVolume.GetName()+" masked"
+        outputVolumeName = inputVolume.GetName() + " masked"
         outputVolume = volumesLogic.CloneVolumeGeneric(scene, inputVolume, outputVolumeName, False)
       self.outputVolumeSelector.setCurrentNode(outputVolume)
 

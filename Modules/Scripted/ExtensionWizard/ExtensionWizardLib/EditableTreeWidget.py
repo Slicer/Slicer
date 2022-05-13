@@ -1,7 +1,7 @@
 import qt
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _makeAction(parent, text, icon=None, shortcut=None, slot=None):
   action = qt.QAction(text, parent)
 
@@ -20,7 +20,7 @@ def _makeAction(parent, text, icon=None, shortcut=None, slot=None):
   return action
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _newItemPlaceholderItem(parent):
   palette = parent.palette
   color = qt.QColor(palette.text().color())
@@ -33,13 +33,13 @@ def _newItemPlaceholderItem(parent):
   return item
 
 
-#=============================================================================
+# =============================================================================
 #
 # EditableTreeWidget
 #
-#=============================================================================
+# =============================================================================
 class EditableTreeWidget(qt.QTreeWidget):
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def __init__(self, *args, **kwargs):
     qt.QTreeWidget.__init__(self, *args, **kwargs)
 
@@ -67,7 +67,7 @@ class EditableTreeWidget(qt.QTreeWidget):
     self.connect('itemChanged(QTreeWidgetItem*,int)', self.updateItemData)
     self.connect('itemSelectionChanged()', self.updateActions)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def addItem(self, item, placeholder=False):
     item.setFlags(item.flags() | qt.Qt.ItemIsEditable)
 
@@ -79,24 +79,24 @@ class EditableTreeWidget(qt.QTreeWidget):
       self._items.insert(pos, item)
       self.insertTopLevelItem(pos, item)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def clear(self):
     # Delete all but placeholder item
     while len(self._items) > 1:
       del self._items[0]
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   @property
   def itemCount(self):
     return self.topLevelItemCount - 1
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def selectedRows(self):
     placeholder = self._items[-1]
     items = self.selectedItems()
     return [self.indexOfTopLevelItem(i) for i in items if i is not placeholder]
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def setSelectedRows(self, rows):
     sm = self.selectionModel()
     sm.clear()
@@ -104,7 +104,7 @@ class EditableTreeWidget(qt.QTreeWidget):
     for item in (self.topLevelItem(row) for row in rows):
       item.setSelected(True)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def updateActions(self):
     placeholder = self._items[-1]
 
@@ -117,7 +117,7 @@ class EditableTreeWidget(qt.QTreeWidget):
     self._shiftDownAction.enabled = len(rows) and not last in rows
     self._deleteAction.enabled = True if len(rows) else False
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def updateItemData(self, item, column):
     # Create new placeholder item if edited item is current placeholder
     if item is self._items[-1]:
@@ -131,7 +131,7 @@ class EditableTreeWidget(qt.QTreeWidget):
       # Update actions so new item can be moved/deleted
       self.updateActions()
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def shiftSelection(self, delta):
     current = self.currentItem()
 
@@ -145,15 +145,15 @@ class EditableTreeWidget(qt.QTreeWidget):
     self.setSelectedRows(row + delta for row in rows)
     self.setCurrentItem(current)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def shiftSelectionUp(self):
     self.shiftSelection(-1)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def shiftSelectionDown(self):
     self.shiftSelection(+1)
 
-  #---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def deleteSelection(self):
     rows = self.selectedRows()
     for row in reversed(sorted(rows)):

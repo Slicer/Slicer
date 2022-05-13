@@ -21,7 +21,7 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorPaintEffect):
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedPaintEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -122,16 +122,16 @@ If segments overlap, segment higher in the segments table will have priority. <b
   def updateParameterWidgetsVisibility(self):
     methodIndex = self.methodSelectorComboBox.currentIndex
     smoothingMethod = self.methodSelectorComboBox.itemData(methodIndex)
-    morphologicalMethod = (smoothingMethod==MEDIAN or smoothingMethod==MORPHOLOGICAL_OPENING or smoothingMethod==MORPHOLOGICAL_CLOSING)
+    morphologicalMethod = (smoothingMethod == MEDIAN or smoothingMethod == MORPHOLOGICAL_OPENING or smoothingMethod == MORPHOLOGICAL_CLOSING)
     self.kernelSizeMMLabel.setVisible(morphologicalMethod)
     self.kernelSizeMMSpinBox.setVisible(morphologicalMethod)
     self.kernelSizePixel.setVisible(morphologicalMethod)
-    self.gaussianStandardDeviationMMLabel.setVisible(smoothingMethod==GAUSSIAN)
-    self.gaussianStandardDeviationMMSpinBox.setVisible(smoothingMethod==GAUSSIAN)
-    self.jointTaubinSmoothingFactorLabel.setVisible(smoothingMethod==JOINT_TAUBIN)
-    self.jointTaubinSmoothingFactorSlider.setVisible(smoothingMethod==JOINT_TAUBIN)
-    self.applyToAllVisibleSegmentsLabel.setVisible(smoothingMethod!=JOINT_TAUBIN)
-    self.applyToAllVisibleSegmentsCheckBox.setVisible(smoothingMethod!=JOINT_TAUBIN)
+    self.gaussianStandardDeviationMMLabel.setVisible(smoothingMethod == GAUSSIAN)
+    self.gaussianStandardDeviationMMSpinBox.setVisible(smoothingMethod == GAUSSIAN)
+    self.jointTaubinSmoothingFactorLabel.setVisible(smoothingMethod == JOINT_TAUBIN)
+    self.jointTaubinSmoothingFactorSlider.setVisible(smoothingMethod == JOINT_TAUBIN)
+    self.applyToAllVisibleSegmentsLabel.setVisible(smoothingMethod != JOINT_TAUBIN)
+    self.applyToAllVisibleSegmentsCheckBox.setVisible(smoothingMethod != JOINT_TAUBIN)
 
   def getKernelSizePixel(self):
     selectedSegmentLabelmapSpacing = [1.0, 1.0, 1.0]
@@ -141,7 +141,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
     # size rounded to nearest odd number. If kernel size is even then image gets shifted.
     kernelSizeMM = self.scriptedEffect.doubleParameter("KernelSizeMm")
-    kernelSizePixel = [int(round((kernelSizeMM / selectedSegmentLabelmapSpacing[componentIndex]+1)/2)*2-1) for componentIndex in range(3)]
+    kernelSizePixel = [int(round((kernelSizeMM / selectedSegmentLabelmapSpacing[componentIndex] + 1) / 2) * 2 - 1) for componentIndex in range(3)]
     return kernelSizePixel
 
   def updateGUIFromMRML(self):
@@ -197,7 +197,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     """maskImage: contains nonzero where smoothing will be applied
     """
     smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
-    applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) !=0 \
+    applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) != 0 \
         if self.scriptedEffect.parameter("ApplyToAllVisibleSegments") else False
 
     if smoothingMethod != JOINT_TAUBIN:
@@ -352,11 +352,11 @@ If segments overlap, segment higher in the segments table will have priority. <b
           if smoothingMethod == MORPHOLOGICAL_OPENING:
             smoothingFilter.SetOpenValue(labelValue)
             smoothingFilter.SetCloseValue(backgroundValue)
-          else: # must be smoothingMethod == MORPHOLOGICAL_CLOSING:
+          else:  # must be smoothingMethod == MORPHOLOGICAL_CLOSING:
             smoothingFilter.SetOpenValue(backgroundValue)
             smoothingFilter.SetCloseValue(labelValue)
 
-        smoothingFilter.SetKernelSize(kernelSizePixel[0],kernelSizePixel[1],kernelSizePixel[2])
+        smoothingFilter.SetKernelSize(kernelSizePixel[0], kernelSizePixel[1], kernelSizePixel[2])
         smoothingFilter.Update()
 
         self.modifySelectedSegmentByLabelmap(smoothingFilter.GetOutput(), selectedSegmentLabelmap, modifierLabelmap, maskImage, maskExtent)
@@ -383,10 +383,10 @@ If segments overlap, segment higher in the segments table will have priority. <b
       logging.error('Failed to apply smoothing: cannot get list of visible segments')
       return
 
-    segmentLabelValues = [] # list of [segmentId, labelValue]
+    segmentLabelValues = []  # list of [segmentId, labelValue]
     for i in range(visibleSegmentIds.GetNumberOfValues()):
       segmentId = visibleSegmentIds.GetValue(i)
-      segmentLabelValues.append([segmentId, i+1])
+      segmentLabelValues.append([segmentId, i + 1])
 
     # Perform smoothing in voxel space
     ici = vtk.vtkImageChangeInformation()
@@ -409,8 +409,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
     # Low-pass filtering using Taubin's method
     smoothingFactor = self.scriptedEffect.doubleParameter("JointTaubinSmoothingFactor")
-    smoothingIterations = 100 #  according to VTK documentation 10-20 iterations could be enough but we use a higher value to reduce chance of shrinking
-    passBand = pow(10.0, -4.0*smoothingFactor) # gives a nice range of 1-0.0001 from a user input of 0-1
+    smoothingIterations = 100  # according to VTK documentation 10-20 iterations could be enough but we use a higher value to reduce chance of shrinking
+    passBand = pow(10.0, -4.0 * smoothingFactor)  # gives a nice range of 1-0.0001 from a user input of 0-1
     smoother = vtk.vtkWindowedSincPolyDataFilter()
     smoother.SetInputConnection(convertToPolyData.GetOutputPort())
     smoother.SetNumberOfIterations(smoothingIterations)
@@ -432,8 +432,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
     # Convert polydata to stencil
     polyDataToImageStencil = vtk.vtkPolyDataToImageStencil()
     polyDataToImageStencil.SetInputConnection(geometryFilter.GetOutputPort())
-    polyDataToImageStencil.SetOutputSpacing(1,1,1)
-    polyDataToImageStencil.SetOutputOrigin(0,0,0)
+    polyDataToImageStencil.SetOutputSpacing(1, 1, 1)
+    polyDataToImageStencil.SetOutputOrigin(0, 0, 0)
     polyDataToImageStencil.SetOutputWholeExtent(mergedImage.GetExtent())
 
     # Convert stencil to image
@@ -445,7 +445,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     stencil.SetInputData(emptyBinaryLabelMap)
     stencil.SetStencilConnection(polyDataToImageStencil.GetOutputPort())
     stencil.ReverseStencilOn()
-    stencil.SetBackgroundValue(1) # General foreground value is 1 (background value because of reverse stencil)
+    stencil.SetBackgroundValue(1)  # General foreground value is 1 (background value because of reverse stencil)
 
     imageToWorldMatrix = vtk.vtkMatrix4x4()
     mergedImage.GetImageToWorldMatrix(imageToWorldMatrix)
@@ -481,7 +481,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     maskExtent = self.scriptedEffect.paintBrushesIntoLabelmap(maskImage, viewWidget)
     self.scriptedEffect.clearBrushes()
     self.scriptedEffect.forceRender(viewWidget)
-    if maskExtent[0]>maskExtent[1] or maskExtent[2]>maskExtent[3] or maskExtent[4]>maskExtent[5]:
+    if maskExtent[0] > maskExtent[1] or maskExtent[2] > maskExtent[3] or maskExtent[4] > maskExtent[5]:
       return
 
     self.scriptedEffect.saveStateForUndo()

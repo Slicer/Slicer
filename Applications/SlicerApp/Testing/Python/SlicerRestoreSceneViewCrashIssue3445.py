@@ -17,7 +17,7 @@ class SlicerRestoreSceneViewCrashIssue3445(ScriptedLoadableModule):
     self.parent.title = "SceneView restore crash (Issue 3445)"
     self.parent.categories = ["Testing.TestCases"]
     self.parent.dependencies = []
-    self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)"] # replace with "Firstname Lastname (Organization)"
+    self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)"]  # replace with "Firstname Lastname (Organization)"
     self.parent.helpText = """This test has been added to check that
     Slicer does not crash while restoring scene view associated with BrainAtlas2012.mrb.
 
@@ -26,7 +26,7 @@ class SlicerRestoreSceneViewCrashIssue3445(ScriptedLoadableModule):
     self.parent.acknowledgementText = """
     This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
     and was partially funded by NIH grant 1U24CA194354-01.
-    """ # replace with organization, grant and thanks.
+    """  # replace with organization, grant and thanks.
 
 
 #

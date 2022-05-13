@@ -49,7 +49,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def __init__(self,methodName='runTest',uniqueDirectory=True,strict=False):
+  def __init__(self, methodName='runTest', uniqueDirectory=True, strict=False):
     """
     Tests the use of mrml and mrb save formats with volumes and markups points lists.
     Checks that scene views are saved and restored as expected.
@@ -91,7 +91,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     mrHeadVolume = SampleData.downloadSample("MRHead")
 
     # Place a control point
-    pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode","F")
+    pointListNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", "F")
     pointListNode.CreateDefaultDisplayNodes()
     eye = [33.4975, 79.4042, -10.2143]
     nose = [-2.145, 116.14, -43.31]
@@ -103,7 +103,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     # confirm that MRHead is in the background of the Red slice
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
     mrHead = slicer.util.getNode('MRHead')
-    self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
+    self.assertEqual(redComposite.GetBackgroundVolumeID(), mrHead.GetID())
     self.delayDisplay('The MRHead volume is in the background of the Red viewer')
 
     # turn off visibility save scene view
@@ -126,7 +126,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     )
     self.delayDisplay("Finished saving scene")
     self.assertTrue(
-        applicationLogic.Zip(mrbFilePath,sceneSaveDirectory)
+        applicationLogic.Zip(mrbFilePath, sceneSaveDirectory)
     )
     self.delayDisplay("Finished saving MRB")
     self.delayDisplay("Slicer mrml scene root dir after first save = %s" % slicer.mrmlScene.GetRootDirectory())
@@ -139,14 +139,14 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.delayDisplay('Now, reload the saved MRB')
     mrbLoaded = applicationLogic.OpenSlicerDataBundle(mrbFilePath, mrbExtractPath)
     # load can return false even though it succeeded - only fail if in strict mode
-    self.assertTrue( not self.strict or mrbLoaded )
+    self.assertTrue(not self.strict or mrbLoaded)
     slicer.app.processEvents()
 
     # confirm again that MRHead is in the background of the Red slice
     self.delayDisplay('Is the MHRead volume AGAIN in the background of the Red viewer?')
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
     mrHead = slicer.util.getNode('MRHead')
-    self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
+    self.assertEqual(redComposite.GetBackgroundVolumeID(), mrHead.GetID())
     self.delayDisplay('The MRHead volume is AGAIN in the background of the Red viewer')
 
     # confirm that the point list exists with two points
@@ -170,14 +170,14 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     # Save it again
     #
     sceneSaveDirectory = slicer.util.tempDirectory('__scene2__')
-    mrbFilePath= slicer.util.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestore-2.mrb'
+    mrbFilePath = slicer.util.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestore-2.mrb'
     self.delayDisplay("Saving scene to: %s\n" % sceneSaveDirectory + "Saving mrb to: %s" % mrbFilePath)
     self.assertTrue(
         applicationLogic.SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None)
     )
     self.delayDisplay("Finished saving scene after restoring a scene view")
     self.assertTrue(
-        applicationLogic.Zip(mrbFilePath,sceneSaveDirectory)
+        applicationLogic.Zip(mrbFilePath, sceneSaveDirectory)
     )
     self.delayDisplay("Finished saving MRB after restoring a scene view")
 
@@ -191,14 +191,14 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     self.delayDisplay('Now, reload the second saved MRB %s' % mrbFilePath)
     mrbLoaded = applicationLogic.OpenSlicerDataBundle(mrbFilePath, mrbExtractPath)
     # load can return false even though it succeeded - only fail if in strict mode
-    self.assertTrue( not self.strict or mrbLoaded )
+    self.assertTrue(not self.strict or mrbLoaded)
     slicer.app.processEvents()
 
     # confirm that MRHead is in the background of the Red slice after mrb reload
     self.delayDisplay('MRHead volume is the background of the Red viewer after mrb reload?')
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
     fa = slicer.util.getNode('MRHead')
-    self.assertEqual( redComposite.GetBackgroundVolumeID(), mrHead.GetID() )
+    self.assertEqual(redComposite.GetBackgroundVolumeID(), mrHead.GetID())
     self.delayDisplay('Yes, the MRHead volume is back in the background of the Red viewer')
 
     # confirm that the point list exists with two points
@@ -210,7 +210,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Test Finished")
 
-  def storeSceneView(self,name,description=""):
+  def storeSceneView(self, name, description=""):
     """  Store a scene view into the current scene.
     TODO: this might move to slicer.util
     """

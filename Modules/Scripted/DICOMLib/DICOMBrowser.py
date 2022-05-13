@@ -35,7 +35,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
   This is a helper used in the DICOMWidget class.
   """
 
-  closed = qt.Signal() # Invoked when the dicom widget is closed using the close method
+  closed = qt.Signal()  # Invoked when the dicom widget is closed using the close method
 
   def __init__(self, dicomBrowser=None, parent="mainWindow"):
     VTKObservationMixin.__init__(self)
@@ -177,13 +177,13 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
   def updateButtonStates(self):
     if self.advancedView:
-      #self.loadButton.enabled =         loadEnabled = loadEnabled or loadablesByPlugin[plugin] != []
+      # self.loadButton.enabled =         loadEnabled = loadEnabled or loadablesByPlugin[plugin] != []
       loadablesChecked = self.loadableTable.getNumberOfCheckedItems() > 0
       self.loadButton.enabled = loadablesChecked
       self.examineButton.enabled = len(self.fileLists) != 0
       self.uncheckAllButton.enabled = loadablesChecked
     else:
-      #seriesSelected  = self.dicomBrowser.dicomTableManager().seriesTable().tableView().selectedIndexes()
+      # seriesSelected  = self.dicomBrowser.dicomTableManager().seriesTable().tableView().selectedIndexes()
       self.loadButton.enabled = self.fileLists
 
   def onDirectoryImported(self):

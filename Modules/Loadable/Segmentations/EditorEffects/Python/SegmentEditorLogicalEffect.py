@@ -21,7 +21,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
     clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-    clonedEffect.setPythonSource(__file__.replace('\\','/'))
+    clonedEffect.setPythonSource(__file__.replace('\\', '/'))
     return clonedEffect
 
   def icon(self):
@@ -157,7 +157,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     bypassMasking = 1 if self.bypassMaskingCheckBox.isChecked() else 0
     self.scriptedEffect.setParameter("BypassMasking", bypassMasking)
 
-    modifierSegmentIDs = ';'.join(self.modifierSegmentSelector.selectedSegmentIDs()) # semicolon-separated list of segment IDs
+    modifierSegmentIDs = ';'.join(self.modifierSegmentSelector.selectedSegmentIDs())  # semicolon-separated list of segment IDs
     self.scriptedEffect.setParameter("ModifierSegmentID", modifierSegmentIDs)
 
   def getInvertedBinaryLabelmap(self, modifierLabelmap):
@@ -191,7 +191,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     # Get modifier labelmap and parameters
 
     operation = self.scriptedEffect.parameter("Operation")
-    bypassMasking =  (self.scriptedEffect.integerParameter("BypassMasking") != 0)
+    bypassMasking = (self.scriptedEffect.integerParameter("BypassMasking") != 0)
 
     selectedSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
 
@@ -224,8 +224,8 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
         modifierSegmentLabelmap_CommonGeometry = slicer.vtkOrientedImageData()
         vtkSegmentationCore.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
           modifierSegmentLabelmap, commonGeometryImage, modifierSegmentLabelmap_CommonGeometry,
-          False, # nearest neighbor interpolation,
-          True # make sure resampled modifier segment is not cropped
+          False,  # nearest neighbor interpolation,
+          True  # make sure resampled modifier segment is not cropped
           )
         modifierSegmentLabelmap = modifierSegmentLabelmap_CommonGeometry
 

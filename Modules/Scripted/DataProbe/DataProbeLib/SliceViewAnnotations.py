@@ -37,40 +37,40 @@ class SliceAnnotations(VTKObservationMixin):
 
     self.sliceViewNames = []
     self.popupGeometry = qt.QRect()
-    self.cornerTexts =[]
+    self.cornerTexts = []
     # Bottom Left Corner Text
     self.cornerTexts.append({
-      '1-Label':{'text':'','category':'A'},
-      '2-Foreground':{'text':'','category':'A'},
-      '3-Background':{'text':'','category':'A'}
+      '1-Label': {'text': '', 'category': 'A'},
+      '2-Foreground': {'text': '', 'category': 'A'},
+      '3-Background': {'text': '', 'category': 'A'}
       })
     # Bottom Right Corner Text
     # Not used - orientation figure may be drawn there
     self.cornerTexts.append({
-      '1-TR':{'text':'','category':'A'},
-      '2-TE':{'text':'','category':'A'}
+      '1-TR': {'text': '', 'category': 'A'},
+      '2-TE': {'text': '', 'category': 'A'}
       })
     # Top Left Corner Text
     self.cornerTexts.append({
-      '1-PatientName':{'text':'','category':'B'},
-      '2-PatientID':{'text':'','category':'A'},
-      '3-PatientInfo':{'text':'','category':'B'},
-      '4-Bg-SeriesDate':{'text':'','category':'B'},
-      '5-Fg-SeriesDate':{'text':'','category':'B'},
-      '6-Bg-SeriesTime':{'text':'','category':'C'},
-      '7-Bg-SeriesTime':{'text':'','category':'C'},
-      '8-Bg-SeriesDescription':{'text':'','category':'C'},
-      '9-Fg-SeriesDescription':{'text':'','category':'C'}
+      '1-PatientName': {'text': '', 'category': 'B'},
+      '2-PatientID': {'text': '', 'category': 'A'},
+      '3-PatientInfo': {'text': '', 'category': 'B'},
+      '4-Bg-SeriesDate': {'text': '', 'category': 'B'},
+      '5-Fg-SeriesDate': {'text': '', 'category': 'B'},
+      '6-Bg-SeriesTime': {'text': '', 'category': 'C'},
+      '7-Bg-SeriesTime': {'text': '', 'category': 'C'},
+      '8-Bg-SeriesDescription': {'text': '', 'category': 'C'},
+      '9-Fg-SeriesDescription': {'text': '', 'category': 'C'}
       })
     # Top Right Corner Text
     self.cornerTexts.append({
-      '1-Institution-Name':{'text':'','category':'B'},
-      '2-Referring-Phisycian':{'text':'','category':'B'},
-      '3-Manufacturer':{'text':'','category':'C'},
-      '4-Model':{'text':'','category':'C'},
-      '5-Patient-Position':{'text':'','category':'A'},
-      '6-TR':{'text':'','category':'A'},
-      '7-TE':{'text':'','category':'A'}
+      '1-Institution-Name': {'text': '', 'category': 'B'},
+      '2-Referring-Phisycian': {'text': '', 'category': 'B'},
+      '3-Manufacturer': {'text': '', 'category': 'C'},
+      '4-Model': {'text': '', 'category': 'C'},
+      '5-Patient-Position': {'text': '', 'category': 'A'},
+      '6-TR': {'text': '', 'category': 'A'},
+      '7-TE': {'text': '', 'category': 'A'}
       })
 
     self.annotationsDisplayAmount = 0
@@ -103,7 +103,7 @@ class SliceAnnotations(VTKObservationMixin):
   def create(self):
     # Instantiate and connect widgets ...
     loader = qt.QUiLoader()
-    path = os.path.join(os.path.dirname(__file__), 'Resources', 'UI','settings.ui')
+    path = os.path.join(os.path.dirname(__file__), 'Resources', 'UI', 'settings.ui')
     qfile = qt.QFile(path)
     qfile.open(qt.QFile.ReadOnly)
     self.window = loader.load(qfile)
@@ -111,37 +111,37 @@ class SliceAnnotations(VTKObservationMixin):
 
     find = slicer.util.findChildren
     self.cornerTextParametersCollapsibleButton = find(window, 'cornerTextParametersCollapsibleButton')[0]
-    self.sliceViewAnnotationsCheckBox = find(window,'sliceViewAnnotationsCheckBox')[0]
+    self.sliceViewAnnotationsCheckBox = find(window, 'sliceViewAnnotationsCheckBox')[0]
     self.sliceViewAnnotationsCheckBox.checked = self.sliceViewAnnotationsEnabled
 
-    self.activateCornersGroupBox = find(window,'activateCornersGroupBox')[0]
-    self.topLeftCheckBox = find(window,'topLeftCheckBox')[0]
+    self.activateCornersGroupBox = find(window, 'activateCornersGroupBox')[0]
+    self.topLeftCheckBox = find(window, 'topLeftCheckBox')[0]
     self.topLeftCheckBox.checked = self.topLeft
-    self.topRightCheckBox = find(window,'topRightCheckBox')[0]
+    self.topRightCheckBox = find(window, 'topRightCheckBox')[0]
     self.topRightCheckBox.checked = self.topRight
 
     self.bottomLeftCheckBox = find(window, 'bottomLeftCheckBox')[0]
     self.bottomLeftCheckBox.checked = self.bottomLeft
 
-    self.level1RadioButton = find(window,'level1RadioButton')[0]
-    self.level2RadioButton = find(window,'level2RadioButton')[0]
-    self.level3RadioButton = find(window,'level3RadioButton')[0]
+    self.level1RadioButton = find(window, 'level1RadioButton')[0]
+    self.level2RadioButton = find(window, 'level2RadioButton')[0]
+    self.level3RadioButton = find(window, 'level3RadioButton')[0]
 
-    self.fontPropertiesGroupBox = find(window,'fontPropertiesGroupBox')[0]
-    self.timesFontRadioButton = find(window,'timesFontRadioButton')[0]
-    self.arialFontRadioButton = find(window,'arialFontRadioButton')[0]
+    self.fontPropertiesGroupBox = find(window, 'fontPropertiesGroupBox')[0]
+    self.timesFontRadioButton = find(window, 'timesFontRadioButton')[0]
+    self.arialFontRadioButton = find(window, 'arialFontRadioButton')[0]
     if self.fontFamily == 'Times':
       self.timesFontRadioButton.checked = True
     else:
       self.arialFontRadioButton.checked = True
 
-    self.fontSizeSpinBox = find(window,'fontSizeSpinBox')[0]
+    self.fontSizeSpinBox = find(window, 'fontSizeSpinBox')[0]
     self.fontSizeSpinBox.value = self.fontSize
 
-    self.backgroundPersistenceCheckBox = find(window,'backgroundPersistenceCheckBox')[0]
+    self.backgroundPersistenceCheckBox = find(window, 'backgroundPersistenceCheckBox')[0]
     self.backgroundPersistenceCheckBox.checked = self.backgroundDICOMAnnotationsPersistence
 
-    self.annotationsAmountGroupBox = find(window,'annotationsAmountGroupBox')[0]
+    self.annotationsAmountGroupBox = find(window, 'annotationsAmountGroupBox')[0]
 
     self.restoreDefaultsButton = find(window, 'restoreDefaultsButton')[0]
 
@@ -243,14 +243,14 @@ class SliceAnnotations(VTKObservationMixin):
     settings.setValue('DataProbe/sliceViewAnnotations.topLeft', self.topLeft)
     settings.setValue('DataProbe/sliceViewAnnotations.topRight', self.topRight)
     settings.setValue('DataProbe/sliceViewAnnotations.bottomLeft', self.bottomLeft)
-    settings.setValue('DataProbe/sliceViewAnnotations.fontFamily',self.fontFamily)
-    settings.setValue('DataProbe/sliceViewAnnotations.fontSize',self.fontSize)
+    settings.setValue('DataProbe/sliceViewAnnotations.fontFamily', self.fontFamily)
+    settings.setValue('DataProbe/sliceViewAnnotations.fontSize', self.fontSize)
     settings.setValue('DataProbe/sliceViewAnnotations.bgDICOMAnnotationsPersistence',
         self.backgroundDICOMAnnotationsPersistence)
 
     self.updateSliceViewFromGUI()
 
-  def updateGUIFromMRML(self,caller,event):
+  def updateGUIFromMRML(self, caller, event):
     if self.parameterNode.GetParameter(self.sliceViewAnnotationsEnabledparameter) == '':
       # parameter does not exist - probably initializing
       return
@@ -320,7 +320,7 @@ class SliceAnnotations(VTKObservationMixin):
     sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
     self.sliceWidgets[sliceViewName] = sliceWidget
 
-  def updateViewAnnotations(self,caller,event):
+  def updateViewAnnotations(self, caller, event):
     if not self.sliceViewAnnotationsEnabled:
       # when self.sliceViewAnnotationsEnabled is set to false
       # then annotation and scalar bar gets hidden, therefore
@@ -394,14 +394,14 @@ class SliceAnnotations(VTKObservationMixin):
       # Update slice corner annotations
       #
       # Case I: Both background and foregraound
-      if ( backgroundVolume is not None and foregroundVolume is not None):
+      if (backgroundVolume is not None and foregroundVolume is not None):
         if self.bottomLeft:
           foregroundOpacity = sliceCompositeNode.GetForegroundOpacity()
           backgroundVolumeName = backgroundVolume.GetName()
           foregroundVolumeName = foregroundVolume.GetName()
           self.cornerTexts[0]['3-Background']['text'] = 'B: ' + backgroundVolumeName
-          self.cornerTexts[0]['2-Foreground']['text'] = 'F: ' + foregroundVolumeName +  ' (' + str(
-                   "%d"%(foregroundOpacity*100)) + '%)'
+          self.cornerTexts[0]['2-Foreground']['text'] = 'F: ' + foregroundVolumeName + ' (' + str(
+                   "%d" % (foregroundOpacity * 100)) + '%)'
 
         bgUids = backgroundVolume.GetAttribute('DICOM.instanceUIDs')
         fgUids = foregroundVolume.GetAttribute('DICOM.instanceUIDs')
@@ -409,11 +409,11 @@ class SliceAnnotations(VTKObservationMixin):
           bgUid = bgUids.partition(' ')[0]
           fgUid = fgUids.partition(' ')[0]
           self.dicomVolumeNode = 1
-          self.makeDicomAnnotation(bgUid,fgUid,sliceViewName)
+          self.makeDicomAnnotation(bgUid, fgUid, sliceViewName)
         elif (bgUids and self.backgroundDICOMAnnotationsPersistence):
           uid = bgUids.partition(' ')[0]
           self.dicomVolumeNode = 1
-          self.makeDicomAnnotation(uid,None,sliceViewName)
+          self.makeDicomAnnotation(uid, None, sliceViewName)
         else:
           for key in self.cornerTexts[2]:
             self.cornerTexts[2][key]['text'] = ''
@@ -428,7 +428,7 @@ class SliceAnnotations(VTKObservationMixin):
         uids = backgroundVolume.GetAttribute('DICOM.instanceUIDs')
         if uids:
           uid = uids.partition(' ')[0]
-          self.makeDicomAnnotation(uid,None,sliceViewName)
+          self.makeDicomAnnotation(uid, None, sliceViewName)
           self.dicomVolumeNode = 1
         else:
           self.dicomVolumeNode = 0
@@ -443,7 +443,7 @@ class SliceAnnotations(VTKObservationMixin):
         if uids:
           uid = uids.partition(' ')[0]
           # passed UID as bg
-          self.makeDicomAnnotation(uid,None,sliceViewName)
+          self.makeDicomAnnotation(uid, None, sliceViewName)
           self.dicomVolumeNode = 1
         else:
           self.dicomVolumeNode = 0
@@ -452,11 +452,11 @@ class SliceAnnotations(VTKObservationMixin):
         labelOpacity = sliceCompositeNode.GetLabelOpacity()
         labelVolumeName = labelVolume.GetName()
         self.cornerTexts[0]['1-Label']['text'] = 'L: ' + labelVolumeName + ' (' + str(
-                 "%d"%(labelOpacity*100)) + '%)'
+                 "%d" % (labelOpacity * 100)) + '%)'
 
       self.drawCornerAnnotations(sliceViewName)
 
-  def makeDicomAnnotation(self,bgUid,fgUid,sliceViewName):
+  def makeDicomAnnotation(self, bgUid, fgUid, sliceViewName):
     # Do not attempt to retrieve dicom values if no local database exists
     if not slicer.dicomDatabase.isOpen:
       return
@@ -475,7 +475,7 @@ class SliceAnnotations(VTKObservationMixin):
                 self.cornerTexts[2][key]['text'] = ''
         else:
           if '1-PatientName' in self.cornerTexts[2]:
-            self.cornerTexts[2]['1-PatientName']['text'] = backgroundDicomDic['Patient Name'].replace('^',', ')
+            self.cornerTexts[2]['1-PatientName']['text'] = backgroundDicomDic['Patient Name'].replace('^', ', ')
           if '2-PatientID' in self.cornerTexts[2]:
             self.cornerTexts[2]['2-PatientID']['text'] = 'ID: ' + backgroundDicomDic['Patient ID']
           backgroundDicomDic['Patient Birth Date'] = self.formatDICOMDate(backgroundDicomDic['Patient Birth Date'])
@@ -489,7 +489,7 @@ class SliceAnnotations(VTKObservationMixin):
               self.cornerTexts[2]['5-Fg-SeriesDate']['text'] = 'F: ' + self.formatDICOMDate(foregroundDicomDic['Series Date'])
           else:
             if '4-Bg-SeriesDate' in self.cornerTexts[2]:
-              self.cornerTexts[2]['4-Bg-SeriesDate']['text'] =  self.formatDICOMDate(backgroundDicomDic['Series Date'])
+              self.cornerTexts[2]['4-Bg-SeriesDate']['text'] = self.formatDICOMDate(backgroundDicomDic['Series Date'])
 
           if (backgroundDicomDic['Series Time'] != foregroundDicomDic['Series Time']):
             if '6-Bg-SeriesTime' in self.cornerTexts[2]:
@@ -515,8 +515,8 @@ class SliceAnnotations(VTKObservationMixin):
       dicomDic = self.extractDICOMValues(uid)
 
       if self.topLeft and viewHeight > 150:
-        self.cornerTexts[2]['1-PatientName']['text'] = dicomDic['Patient Name'].replace('^',', ')
-        self.cornerTexts[2]['2-PatientID']['text'] = 'ID: ' + dicomDic ['Patient ID']
+        self.cornerTexts[2]['1-PatientName']['text'] = dicomDic['Patient Name'].replace('^', ', ')
+        self.cornerTexts[2]['2-PatientID']['text'] = 'ID: ' + dicomDic['Patient ID']
         dicomDic['Patient Birth Date'] = self.formatDICOMDate(dicomDic['Patient Birth Date'])
         self.cornerTexts[2]['3-PatientInfo']['text'] = self.makePatientInfo(dicomDic)
         self.cornerTexts[2]['4-Bg-SeriesDate']['text'] = self.formatDICOMDate(dicomDic['Series Date'])
@@ -526,13 +526,13 @@ class SliceAnnotations(VTKObservationMixin):
       # top right corner annotation would be hidden if view height is less than 260 pixels
       if (self.topRight):
         self.cornerTexts[3]['1-Institution-Name']['text'] = dicomDic['Institution Name']
-        self.cornerTexts[3]['2-Referring-Phisycian']['text'] = dicomDic['Referring Physician Name'].replace('^',', ')
+        self.cornerTexts[3]['2-Referring-Phisycian']['text'] = dicomDic['Referring Physician Name'].replace('^', ', ')
         self.cornerTexts[3]['3-Manufacturer']['text'] = dicomDic['Manufacturer']
         self.cornerTexts[3]['4-Model']['text'] = dicomDic['Model']
         self.cornerTexts[3]['5-Patient-Position']['text'] = dicomDic['Patient Position']
         modality = dicomDic['Modality']
         if modality == 'MR':
-         self.cornerTexts[3]['6-TR']['text']  = 'TR ' + dicomDic['Repetition Time']
+         self.cornerTexts[3]['6-TR']['text'] = 'TR ' + dicomDic['Repetition Time']
          self.cornerTexts[3]['7-TE']['text'] = 'TE ' + dicomDic['Echo Time']
 
   @staticmethod
@@ -550,7 +550,7 @@ class SliceAnnotations(VTKObservationMixin):
     if date != '':
       date = date.rstrip()
       # convert to ISO 8601 Date format
-      standardDate = date[:4] + '-' + date[4:6]+ '-' + date[6:]
+      standardDate = date[:4] + '-' + date[4:6] + '-' + date[6:]
     return standardDate
 
   @staticmethod
@@ -559,20 +559,20 @@ class SliceAnnotations(VTKObservationMixin):
       # time field is empty
       return ''
     studyH = time[:2]
-    if int(studyH) > 12 :
-      studyH = str (int(studyH) - 12)
+    if int(studyH) > 12:
+      studyH = str(int(studyH) - 12)
       clockTime = ' PM'
     else:
       studyH = studyH
       clockTime = ' AM'
     studyM = time[2:4]
     studyS = time[4:6]
-    return studyH + ':' + studyM  + ':' + studyS +clockTime
+    return studyH + ':' + studyM + ':' + studyS + clockTime
 
   @staticmethod
-  def fitText(text,textSize):
+  def fitText(text, textSize):
     if len(text) > textSize:
-      preSize = int(textSize/2)
+      preSize = int(textSize / 2)
       postSize = preSize - 3
       text = text[:preSize] + "..." + text[-postSize:]
     return text
@@ -590,19 +590,19 @@ class SliceAnnotations(VTKObservationMixin):
       cornerAnnotation = ''
       for key in keys:
         text = cornerText[key]['text']
-        if ( text != ''):
+        if (text != ''):
           text = self.fitText(text, self.maximumTextLength)
           # level 1: All categories will be displayed
           if self.annotationsDisplayAmount == 0:
-            cornerAnnotation = cornerAnnotation+ text + '\n'
+            cornerAnnotation = cornerAnnotation + text + '\n'
           # level 2: Category A and B will be displayed
           elif self.annotationsDisplayAmount == 1:
             if (cornerText[key]['category'] != 'C'):
-              cornerAnnotation = cornerAnnotation+ text + '\n'
+              cornerAnnotation = cornerAnnotation + text + '\n'
           # level 3 only Category A will be displayed
           elif self.annotationsDisplayAmount == 2:
             if (cornerText[key]['category'] == 'A'):
-              cornerAnnotation = cornerAnnotation+ text + '\n'
+              cornerAnnotation = cornerAnnotation + text + '\n'
       sliceCornerAnnotation = self.sliceViews[sliceViewName].cornerAnnotation()
       # encode to avoid 'unicode conversion error' for patient names containing international characters
       cornerAnnotation = cornerAnnotation
@@ -625,7 +625,7 @@ class SliceAnnotations(VTKObservationMixin):
     if uid in self.extractedDICOMValuesCache.keys():
       return self.extractedDICOMValuesCache[uid]
 
-    p ={}
+    p = {}
     tags = {
     "0008,0021": "Series Date",
     "0008,0031": "Series Time",
@@ -645,7 +645,7 @@ class SliceAnnotations(VTKObservationMixin):
     "0018,0081": "Echo Time"
     }
     for tag in tags.keys():
-      value = slicer.dicomDatabase.instanceValue(uid,tag)
+      value = slicer.dicomDatabase.instanceValue(uid, tag)
       p[tags[tag]] = value
 
     # Store DICOM tags in cache

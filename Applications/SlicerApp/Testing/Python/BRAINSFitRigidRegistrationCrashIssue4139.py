@@ -18,7 +18,7 @@ class BRAINSFitRigidRegistrationCrashIssue4139(ScriptedLoadableModule):
     self.parent.title = "BRAINSFit Rigid Registration vtkITKTransformConverter crash (Issue 4139)"
     self.parent.categories = ["Testing.TestCases"]
     self.parent.dependencies = []
-    self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)"] # replace with "Firstname Lastname (Organization)"
+    self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)"]  # replace with "Firstname Lastname (Organization)"
     self.parent.helpText = """This test has been added to check that
     Slicer does not crash in vtkITKTransformConverter after completing BRAINSFit rigid registration.
 
@@ -28,7 +28,7 @@ class BRAINSFitRigidRegistrationCrashIssue4139(ScriptedLoadableModule):
     self.parent.acknowledgementText = """
     This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
     and was partially funded by NIH grant 1U24CA194354-01.
-    """ # replace with organization, grant and thanks.
+    """  # replace with organization, grant and thanks.
 
 
 #
@@ -58,7 +58,7 @@ class BRAINSFitRigidRegistrationCrashIssue4139Logic(ScriptedLoadableModuleLogic)
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
-  def hasImageData(self,volumeNode):
+  def hasImageData(self, volumeNode):
     """This is an example logic method that
     returns true if the passed in volume
     node has valid image data
@@ -123,11 +123,11 @@ class BRAINSFitRigidRegistrationCrashIssue4139Test(ScriptedLoadableModuleTest):
     slicer.mrmlScene.AddNode(outputVolume)
 
     parameters = {
-      'fixedVolume' : fixed,
-      'movingVolume' : moving,
-      'linearTransform' : outputTransform,
-      'outputVolume' : outputVolume,
-      'useRigid' : True
+      'fixedVolume': fixed,
+      'movingVolume': moving,
+      'linearTransform': outputTransform,
+      'outputVolume': outputVolume,
+      'useRigid': True
     }
     cmdLineNode = slicer.cli.runSync(slicer.modules.brainsfit, parameters=parameters)
     self.assertIsNotNone(cmdLineNode)

@@ -10,8 +10,8 @@ class ClosedSurfaceSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     super().__init__()
     self.name = "Closed Surface"
     self.keys = ["surface_mm2", "volume_mm3", "volume_cm3"]
-    self.defaultKeys = self.keys # calculate all measurements by default
-    #... developer may add extra options to configure other parameters
+    self.defaultKeys = self.keys  # calculate all measurements by default
+    # ... developer may add extra options to configure other parameters
 
   def computeStatistics(self, segmentID):
     import vtkSegmentationCorePython as vtkSegmentationCore
@@ -19,7 +19,7 @@ class ClosedSurfaceSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
 
     segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))
 
-    if len(requestedKeys)==0:
+    if len(requestedKeys) == 0:
       return {}
 
     containsClosedSurfaceRepresentation = segmentationNode.GetSegmentation().ContainsRepresentation(
