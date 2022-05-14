@@ -70,9 +70,9 @@ if __name__ == '__main__':
     temp_dir = os.path.expanduser(getattr(args, "/path/to/temp_dir"))
 
     # Create input/output
-    serializeSeedsOutFile = '%s/%s.acsv' % (temp_dir, 'SeedsSerialized')
-    deserializeSeedsOutFile = '%s/%s.acsv' % (temp_dir, 'SeedsDeSerialized')
-    json_file = '%s/%s.json' % (temp_dir, 'ExecutionModelTourSerialized')
+    serializeSeedsOutFile = f'{temp_dir}/SeedsSerialized.acsv'
+    deserializeSeedsOutFile = f'{temp_dir}/SeedsDeSerialized.acsv'
+    json_file = f'{temp_dir}/ExecutionModelTourSerialized.json'
 
     # Copy .mrml file to prevent modification of source tree
     mrml_source_path = os.path.join(data_dir, 'ExecutionModelTourTest.mrml')

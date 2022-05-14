@@ -397,7 +397,7 @@ import vtk.util.numpy_support
 import slicer
 
 
-class SlicerRequestHandler(object):
+class SlicerRequestHandler:
     """Implements the Slicer REST api"""
 
     def __init__(self, enableExec=False):
@@ -810,7 +810,7 @@ class SlicerRequestHandler(object):
         supportedScalarTypes = ["short", "double"]
         scalarType = imageData.GetScalarTypeAsString()
         if scalarType not in supportedScalarTypes:
-            self.logMessage('Can only get volumes of types %s, not %s' % (str(supportedScalarTypes), scalarType))
+            self.logMessage(f'Can only get volumes of types {str(supportedScalarTypes)}, not {scalarType}')
             self.logMessage('Converting to short, but may cause data loss.')
             volumeArray = numpy.array(volumeArray, dtype='int16')
             scalarType = 'short'

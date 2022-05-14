@@ -5,7 +5,7 @@ import urllib
 import slicer
 
 
-class DICOMRequestHandler(object):
+class DICOMRequestHandler:
     """
     Implements the mapping between DICOMweb endpoints
     and ctkDICOMDatabase api calls.
@@ -104,13 +104,13 @@ class DICOMRequestHandler(object):
                     firstInstance = instances[0]
                     dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(firstInstance), stop_before_pixels=True)
                     studyDataset = pydicom.dataset.Dataset()
-                    studyDataset.SpecificCharacterSet = [u'ISO_IR 100']
+                    studyDataset.SpecificCharacterSet = ['ISO_IR 100']
                     studyDataset.StudyDate = dataset.StudyDate
                     studyDataset.StudyTime = dataset.StudyTime
                     studyDataset.StudyDescription = dataset.StudyDescription if hasattr(studyDataset, 'StudyDescription') else None
                     studyDataset.StudyInstanceUID = dataset.StudyInstanceUID
                     studyDataset.AccessionNumber = dataset.AccessionNumber
-                    studyDataset.InstanceAvailability = u'ONLINE'
+                    studyDataset.InstanceAvailability = 'ONLINE'
                     studyDataset.ModalitiesInStudy = list(modalitiesInStudy)
                     studyDataset.ReferringPhysicianName = dataset.ReferringPhysicianName
                     studyDataset[self.retrieveURLTag] = pydicom.dataelem.DataElement(
@@ -164,10 +164,10 @@ class DICOMRequestHandler(object):
             for instance in instances:
                 dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(instance), stop_before_pixels=True)
                 instanceDataset = pydicom.dataset.Dataset()
-                instanceDataset.SpecificCharacterSet = [u'ISO_IR 100']
+                instanceDataset.SpecificCharacterSet = ['ISO_IR 100']
                 instanceDataset.SOPClassUID = dataset.SOPClassUID
                 instanceDataset.SOPInstanceUID = dataset.SOPInstanceUID
-                instanceDataset.InstanceAvailability = u'ONLINE'
+                instanceDataset.InstanceAvailability = 'ONLINE'
                 instanceDataset[self.retrieveURLTag] = pydicom.dataelem.DataElement(
                     0x00080190, "UR", "http://example.com")  # TODO: provide WADO-RS RetrieveURL
                 instanceDataset.StudyInstanceUID = dataset.StudyInstanceUID
@@ -219,7 +219,7 @@ class DICOMRequestHandler(object):
                 firstInstance = instances[0]
                 dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(firstInstance), stop_before_pixels=True)
                 seriesDataset = pydicom.dataset.Dataset()
-                seriesDataset.SpecificCharacterSet = [u'ISO_IR 100']
+                seriesDataset.SpecificCharacterSet = ['ISO_IR 100']
                 seriesDataset.Modality = dataset.Modality
                 seriesDataset.SeriesInstanceUID = dataset.SeriesInstanceUID
                 seriesDataset.SeriesNumber = dataset.SeriesNumber

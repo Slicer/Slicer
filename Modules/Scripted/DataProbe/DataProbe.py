@@ -169,7 +169,7 @@ class DataProbeInfoWidget:
             value = self.calculateTensorScalars(tensor, operation=operation)
             if value is not None:
                 valueString = ("%f" % value).rstrip('0').rstrip('.')
-                return "%s %s" % (scalarVolumeDisplayNode.GetScalarInvariantAsString(), valueString)
+                return f"{scalarVolumeDisplayNode.GetScalarInvariantAsString()} {valueString}"
             else:
                 return scalarVolumeDisplayNode.GetScalarInvariantAsString()
 

@@ -1,4 +1,3 @@
-
 import vtk
 
 import slicer
