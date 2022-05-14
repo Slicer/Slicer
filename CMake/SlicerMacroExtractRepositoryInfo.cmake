@@ -39,12 +39,23 @@
 #  <var-prefix>_WC_REVISION_NAME - Name associated with <var-prefix>_WC_REVISION_HASH
 #  <var-prefix>_WC_REVISION_HASH - current revision
 #  <var-prefix>_WC_REVISION - Equal to <var-prefix>_WC_REVISION_HASH
+#  <var-prefix>_WC_COMMIT_COUNT - number of commits in current branch
+#  <var-prefix>_WC_LAST_CHANGED_DATE - date of last commit
 #
-# If source directory is not GIT, the macro will return early
-# displaying an warning message:
+# If the source directory is not a GIT repository, the macro will
+# display a warning message like the following:
 #
 #   -- Skipping repository info extraction: directory [/path/to/src] is not a GIT checkout
 
+# and set the following variables:
+#
+#   <var-prefix>_WC_TYPE: "local"
+#   <var-prefix>_WC_URL: "NA"
+#   <var-prefix>_ROOT: "NA"
+#   <var-prefix>_WC_REVISION_NAME: "NA"
+#   <var-prefix>_WC_REVISION_HASH: "NA"
+#   <var-prefix>_WC_REVISION: "NA"
+#
 macro(SlicerMacroExtractRepositoryInfo)
   include(CMakeParseArguments)
   set(options)
