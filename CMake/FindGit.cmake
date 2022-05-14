@@ -35,6 +35,7 @@
 #  <var-prefix>_WC_REVISION_NAME - Name associated with <var-prefix>_WC_REVISION_HASH
 #  <var-prefix>_WC_URL - output of command `git config --get remote.origin.url'
 #  <var-prefix>_WC_ROOT - Same value as working copy URL
+#  <var-prefix>_WC_COMMIT_COUNT - number of commits in current branch
 #  <var-prefix>_WC_LAST_CHANGED_DATE - date of last commit
 #  <var-prefix>_WC_GITSVN - Set to false
 #
@@ -48,7 +49,6 @@
 #  <var-prefix>_WC_LAST_CHANGED_DATE - date of last commit
 #  <var-prefix>_WC_LAST_CHANGED_REV - revision of last commit
 #  <var-prefix>_WC_LAST_CHANGED_LOG - last log of base revision
-#  <var-prefix>_WC_COMMIT_COUNT - number of commits in current branch
 #
 # Example usage:
 #   find_package(Git)
