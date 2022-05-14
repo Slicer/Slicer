@@ -4,7 +4,7 @@ import os
 import re
 
 
-class StaticPagesRequestHandler(object):
+class StaticPagesRequestHandler:
     """Serves static pages content (files) from the configured docroot
 
     uriRewriteRules member variable contain a list of string pairs. iI each pair,
@@ -71,6 +71,6 @@ class StaticPagesRequestHandler(object):
                 fp = open(path, 'rb')
                 responseBody = fp.read()
                 fp.close()
-            except IOError:
+            except OSError:
                 responseBody = None
         return contentType, responseBody

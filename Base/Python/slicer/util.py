@@ -2716,7 +2716,7 @@ def _messageDisplay(logLevel, text, testingReturnValue, mainWindowNeeded=False, 
     if not windowTitle:
         windowTitle = slicer.app.applicationName + " " + logLevelString
     if slicer.app.testingEnabled():
-        logging.info("Testing mode is enabled: Returning %s and skipping message box [%s]." % (testingReturnValue, windowTitle))
+        logging.info(f"Testing mode is enabled: Returning {testingReturnValue} and skipping message box [{windowTitle}].")
         return testingReturnValue
     if mainWindowNeeded and mainWindow() is None:
         return
@@ -2739,7 +2739,7 @@ def messageBox(text, parent=None, **kwargs):
     import logging, qt, slicer
     if slicer.app.testingEnabled():
         testingReturnValue = qt.QMessageBox.Ok
-        logging.info("Testing mode is enabled: Returning %s (qt.QMessageBox.Ok) and displaying an auto-closing message box [%s]." % (testingReturnValue, text))
+        logging.info(f"Testing mode is enabled: Returning {testingReturnValue} (qt.QMessageBox.Ok) and displaying an auto-closing message box [{text}].")
         slicer.util.delayDisplay(text, autoCloseMsec=3000, parent=parent, **kwargs)
         return testingReturnValue
 

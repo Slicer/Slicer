@@ -26,7 +26,7 @@ class ImportItkSnapLabel(ScriptedLoadableModule):
 # (identified by its special name <moduleName>FileReader)
 #
 
-class ImportItkSnapLabelFileReader(object):
+class ImportItkSnapLabelFileReader:
 
     def __init__(self, parent):
         self.parent = parent
@@ -115,7 +115,7 @@ class ImportItkSnapLabelFileReader(object):
         colors = []
 
         lineIndex = 0
-        with open(filename, "r") as fileobj:
+        with open(filename) as fileobj:
             for line in fileobj:
                 lineIndex += 1
                 commentLine = commentLineRegex.search(line)

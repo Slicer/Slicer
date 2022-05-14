@@ -299,10 +299,10 @@ class SlicerHTTPServer(HTTPServer):
         self.requestCommunicators = {}
         self.enableCORS = enableCORS
 
-    class DummyRequestHandler(object):
+    class DummyRequestHandler:
         pass
 
-    class SlicerRequestCommunicator(object):
+    class SlicerRequestCommunicator:
         """
         Encapsulate elements for handling event driven read of request.
         An instance is created for each client connection to our web server.
@@ -374,7 +374,7 @@ class SlicerHTTPServer(HTTPServer):
                             self.logMessage('Found end of header with no content, so body is empty')
                             requestHeader = self.requestSoFar[:-2]
                             requestComplete = True
-            except socket.error as e:
+            except OSError as e:
                 print('Socket error: ', e)
                 print('So far:\n', self.requestSoFar)
                 requestComplete = True
@@ -475,7 +475,7 @@ class SlicerHTTPServer(HTTPServer):
                 self.response = self.response[sent:]
                 self.sentSoFar += sent
                 self.logMessage('sent: %d (%d of %d, %f%%)' % (sent, self.sentSoFar, self.toSend, 100. * self.sentSoFar / self.toSend))
-            except socket.error as e:
+            except OSError as e:
                 self.logMessage('Socket error while sending: %s' % e)
                 sendError = True
 
@@ -493,8 +493,8 @@ class SlicerHTTPServer(HTTPServer):
             fileno = connectionSocket.fileno()
             self.requestCommunicators[fileno] = self.SlicerRequestCommunicator(connectionSocket, self.requestHandlers, self.docroot, self.logMessage, self.enableCORS)
             self.logMessage('Connected on %s fileno %d' % (connectionSocket, connectionSocket.fileno()))
-        except socket.error as e:
-            self.logMessage('Socket Error', socket.error, e)
+        except OSError as e:
+            self.logMessage('Socket Error', OSError, e)
 
     def start(self):
         """start the server
@@ -537,7 +537,7 @@ class SlicerHTTPServer(HTTPServer):
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 s.bind(("", port))
-            except socket.error as e:
+            except OSError as e:
                 portFree = False
                 port += 1
             finally:

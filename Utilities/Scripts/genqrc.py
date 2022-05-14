@@ -18,7 +18,7 @@ def writeFile(path, content):
             pass
 
     # Write file
-    with open(path, "wt") as f:
+    with open(path, "w") as f:
         f.write(content)
 
 
