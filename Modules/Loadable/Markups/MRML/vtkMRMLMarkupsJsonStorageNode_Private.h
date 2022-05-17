@@ -15,6 +15,9 @@
 
 ==============================================================================*/
 
+// STD includes
+#include <memory>
+
 // MRML includes
 #include "vtkMRMLMarkupsJsonStorageNode.h"
 
