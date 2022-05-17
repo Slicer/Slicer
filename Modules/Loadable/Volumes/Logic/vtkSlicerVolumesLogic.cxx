@@ -14,6 +14,7 @@
 
 // STD includes
 #include <algorithm>
+#include <memory>
 
 // Volumes includes
 #include "vtkSlicerVolumesLogic.h"
