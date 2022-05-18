@@ -266,8 +266,12 @@ public:
 
   /// Unregisters a markup and its corresponding widget. This will trigger the
   /// vtkSlicerMarkupsLogic::MarkupUnregistered event.
-  /// \param markupsNode MRMLMakrups node to be unregistered.
+  /// \param markupsNode MRMLMarkups node to be unregistered.
   void UnregisterMarkupsNode(vtkMRMLMarkupsNode*  markupsNode);
+
+  /// Returns true if the provided class name is a known markups class
+  /// (it has ben registered in the logic using RegisterMarkupsNode).
+  bool IsMarkupsNodeRegistered(const char* nodeType) const;
 
   /// This returns an instance to a corresponding vtkSlicerMarkupsWidget associated
   /// to the indicated markups name.

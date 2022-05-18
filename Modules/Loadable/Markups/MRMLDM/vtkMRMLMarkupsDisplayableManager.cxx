@@ -557,15 +557,7 @@ bool vtkMRMLMarkupsDisplayableManager::IsManageable(const char* nodeClassName)
     return false;
     }
 
-  vtkSmartPointer<vtkMRMLNode> node =
-    vtkSmartPointer<vtkMRMLNode>::Take(this->GetMRMLScene()->CreateNodeByClass(nodeClassName));
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
-  if (!markupsNode)
-    {
-    return false;
-    }
-
-  return markupsLogic->GetWidgetByMarkupsType(markupsNode->GetMarkupType()) ? true : false;
+  return markupsLogic->IsMarkupsNodeRegistered(nodeClassName);
 }
 
 //---------------------------------------------------------------------------
