@@ -1793,6 +1793,23 @@ void vtkSlicerMarkupsLogic::UnregisterMarkupsNode(vtkMRMLMarkupsNode* markupsNod
 }
 
 //----------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::IsMarkupsNodeRegistered(const char* nodeType) const
+{
+  if (!nodeType)
+    {
+    return false;
+    }
+  for (auto markupTypToMarkupEntryIt : this->Internal->MarkupTypeToMarkupEntry)
+    {
+    if (strcmp(markupTypToMarkupEntryIt.second.MarkupsNode->GetClassName(), nodeType) == 0)
+      {
+      return true;
+      }
+    }
+  return false;
+}
+
+//----------------------------------------------------------------------------
 vtkSlicerMarkupsWidget* vtkSlicerMarkupsLogic::GetWidgetByMarkupsType(const char* markupName) const
 {
   if (!markupName)
