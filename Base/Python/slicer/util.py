@@ -2480,7 +2480,7 @@ def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):
   return dirPath
 
 
-def delayDisplay(message, autoCloseMsec=1000, parent=None):
+def delayDisplay(message, autoCloseMsec=1000, parent=None, **kwargs):
   """Display an information message in a popup window for a short time.
 
   If ``autoCloseMsec < 0`` then the window is not closed until the user clicks on it
@@ -2496,6 +2496,9 @@ def delayDisplay(message, autoCloseMsec=1000, parent=None):
     slicer.app.processEvents()
     return
   messagePopup = qt.QDialog(parent if parent else mainWindow())
+  for key, value in kwargs.items():
+    if hasattr(messagePopup, key):
+      setattr(messagePopup, key, value)
   layout = qt.QVBoxLayout()
   messagePopup.setLayout(layout)
   label = qt.QLabel(message,messagePopup)
@@ -2636,12 +2639,14 @@ def messageBox(text, parent=None, **kwargs):
     slicer.util.messageBox("Some message", dontShowAgainSettingsKey = "MainWindow/DontShowSomeMessage")
 
   When the application is running in testing mode (``slicer.app.testingEnabled() == True``),
-  the popup is skipped and ``qt.QMessageBox.Ok`` is returned, with the text being logged to indicate this.
+  an auto-closing popup with a delay of 3s is shown using :func:`delayDisplay()` and ``qt.QMessageBox.Ok``
+  is returned, with the text being logged to indicate this.
   """
   import logging, qt, slicer
   if slicer.app.testingEnabled():
     testingReturnValue = qt.QMessageBox.Ok
-    logging.info("Testing mode is enabled: Returning %s (qt.QMessageBox.Ok) and skipping message box [%s]." % (testingReturnValue, text))
+    logging.info("Testing mode is enabled: Returning %s (qt.QMessageBox.Ok) and displaying an auto-closing message box [%s]." % (testingReturnValue, text))
+    slicer.util.delayDisplay(text, autoCloseMsec=3000, parent=parent, **kwargs)
     return testingReturnValue
 
   import ctk
