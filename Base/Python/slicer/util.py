@@ -2627,7 +2627,16 @@ def messageBox(text, parent=None, **kwargs):
   For example::
 
     slicer.util.messageBox("Some message", dontShowAgainSettingsKey = "MainWindow/DontShowSomeMessage")
+
+  When the application is running in testing mode (``slicer.app.testingEnabled() == True``),
+  the popup is skipped and ``qt.QMessageBox.Ok`` is returned, with the text being logged to indicate this.
   """
+  import logging, qt, slicer
+  if slicer.app.testingEnabled():
+    testingReturnValue = qt.QMessageBox.Ok
+    logging.info("Testing mode is enabled: Returning %s (qt.QMessageBox.Ok) and skipping message box [%s]." % (testingReturnValue, text))
+    return testingReturnValue
+
   import ctk
   mbox = ctk.ctkMessageBox(parent if parent else mainWindow())
   mbox.text = text
