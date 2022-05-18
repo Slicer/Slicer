@@ -116,8 +116,6 @@ public:
 
   /// the number of columns matches the column labels by using the size of the QStringList
   int numberOfColumns();
-  /// return the column index for a given QString, -1 if not a valid header
-  int columnIndex(QString label);
 
   vtkMRMLSelectionNode* selectionNode();
 
@@ -137,6 +135,19 @@ public:
 
   // place the markups options widgets.
   void placeMarkupsOptionsWidgets();
+
+  enum ControlPointColumnsIds
+    {
+    SelectedColumn = 0,
+    LockedColumn,
+    VisibleColumn,
+    NameColumn,
+    DescriptionColumn,
+    RColumn,
+    AColumn,
+    SColumn,
+    PositionColumn
+    };
 
 private:
   vtkWeakPointer<vtkMRMLMarkupsNode> MarkupsNode;
@@ -185,7 +196,10 @@ private:
 qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMarkupsModuleWidget& object)
   : q_ptr(&object)
 {
-  this->columnLabels << "Selected" << "Locked" << "Visible" << "Name" << "Description" << "R" << "A" << "S" << "Position";
+  Q_Q(qSlicerMarkupsModuleWidget);
+
+  this->columnLabels << q->tr("Selected") << q->tr("Locked") << q->tr("Visible")
+    << q->tr("Name") << q->tr("Description") << q->tr("R") << q->tr("A") << q->tr("S") << q->tr("Position");
 
   this->newMarkupWithCurrentDisplayPropertiesAction = nullptr;
   this->visibilityMenu = nullptr;
@@ -215,12 +229,6 @@ qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMark
   this->ImportExportCoordinateSystemButtonGroup = nullptr;
 
   this->updateMarkupsOptionsWidgets();
-}
-
-//-----------------------------------------------------------------------------
-int qSlicerMarkupsModuleWidgetPrivate::columnIndex(QString label)
-{
-  return this->columnLabels.indexOf(label);
 }
 
 //-----------------------------------------------------------------------------
@@ -445,18 +453,16 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // number of columns with headers
   this->activeMarkupTableWidget->setColumnCount(this->numberOfColumns());
   this->activeMarkupTableWidget->setHorizontalHeaderLabels(this->columnLabels);
-  this->activeMarkupTableWidget->horizontalHeader()->setFixedHeight(32);
-  this->activeMarkupTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-  this->activeMarkupTableWidget->horizontalHeader()->setSectionResizeMode(this->columnIndex("Name"), QHeaderView::Stretch);
+  // We do not use QHeaderView::ResizeToContents, as it slows down table updates when there are many control points
+  this->activeMarkupTableWidget->horizontalHeader()->setSectionResizeMode(qSlicerMarkupsModuleWidgetPrivate::NameColumn, QHeaderView::Stretch);
   this->activeMarkupTableWidget->horizontalHeader()->setStretchLastSection(false);
-  this->activeMarkupTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
   // adjust the column widths
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Name"), 60);
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Description"), 120);
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("R"), 65);
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("A"), 65);
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("S"), 65);
+  this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::NameColumn, 60);
+  this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn, 120);
+  this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::RColumn, 65);
+  this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::AColumn, 65);
+  this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::SColumn, 65);
 
   // show/hide the coordinate columns
   QObject::connect(this->coordinatesComboBox,
@@ -465,25 +471,25 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // use an icon for some column headers
   // selected is a check box
-  QTableWidgetItem *selectedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Selected"));
+  QTableWidgetItem *selectedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::SelectedColumn);
   selectedHeader->setText("");
   selectedHeader->setIcon(QIcon(":/Icons/MarkupsSelected.png"));
   selectedHeader->setToolTip(QString("Click in this column to select/deselect control points for passing to CLI modules"));
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Selected"), 30);
+  this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::SelectedColumn, 30);
   // locked is an open and closed lock
-  QTableWidgetItem *lockedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Locked"));
+  QTableWidgetItem *lockedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::LockedColumn);
   lockedHeader->setText("");
   lockedHeader->setIcon(QIcon(":/Icons/Small/SlicerLockUnlock.png"));
   lockedHeader->setToolTip(QString("Click in this column to lock/unlock control points to prevent them from being moved by mistake"));
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Locked"), 30);
+  this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::LockedColumn, 30);
   // visible is an open and closed eye
-  QTableWidgetItem *visibleHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Visible"));
+  QTableWidgetItem *visibleHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::VisibleColumn);
   visibleHeader->setText("");
   visibleHeader->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
   visibleHeader->setToolTip(QString("Click in this column to show/hide control points in 2D and 3D"));
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Visible"), 30);
+  this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::VisibleColumn, 30);
   // position is a location bubble
-  QTableWidgetItem *positionHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Position"));
+  QTableWidgetItem *positionHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::PositionColumn);
   positionHeader->setText("");
   positionHeader->setIcon(QIcon(":/Icons/Large/MarkupsPositionStatus.png"));
   positionHeader->setToolTip(QString("Click in this column to modify the control point position state.\n\n"
@@ -491,7 +497,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                                      "- Skip: 'Place multiple control points' mode skips over the control point entry\n"
                                      "- Restore: Set the control point position to its last known set position\n"
                                      "- Clear: Clear the defined control point position, but do not delete the control point"));
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Position"), 10);
+  this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::PositionColumn, 10);
 
   // listen for changes so can update mrml node
   QObject::connect(this->activeMarkupTableWidget, SIGNAL(cellChanged(int, int)),
@@ -1076,12 +1082,9 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
   int numberOfPoints = d->MarkupsNode->GetNumberOfControlPoints();
   if (d->activeMarkupTableWidget->rowCount() != numberOfPoints)
     {
-    // clear it out
-    d->activeMarkupTableWidget->setRowCount(numberOfPoints);
-    }
-  for (int m = 0; m < numberOfPoints; m++)
-    {
-    this->updateRow(m);
+    // force full update of the table
+    // (after node change or batch update with multiple rows added or deleted)
+    this->updateRows();
     }
   // Update options widgets
   foreach(const auto& widget, d->MarkupsOptionsWidgets)
@@ -1139,120 +1142,161 @@ void qSlicerMarkupsModuleWidget::updateMaximumScaleFromVolumes()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::updateRow(int m)
+void qSlicerMarkupsModuleWidget::updateRows()
 {
   Q_D(qSlicerMarkupsModuleWidget);
-
-  // this is updating the qt widget from MRML, and should not trigger any updates on the node, so turn off events
-  d->activeMarkupTableWidget->blockSignals(true);
-
-  // qDebug() << QString("updateRow: row = ") + QString::number(m) + QString(", number of rows = ") + QString::number(d->activeMarkupTableWidget->rowCount());
-  // get active markups node
-  vtkMRMLMarkupsNode* markupsNode = nullptr;
-   vtkMRMLNode* node = d->activeMarkupTreeView->currentNode();
-   if (node)
-     {
-     // make sure the node is still in the scene and convert to markups
-     markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->GetNodeByID(node->GetID()));
-     }
-  if (!markupsNode
-    || m >= markupsNode->GetNumberOfControlPoints()) // markup point is already deleted (possible after batch update)
+  vtkMRMLMarkupsNode* markupsNode = this->mrmlMarkupsNode();
+  if (!markupsNode)
     {
-    //qDebug() << QString("update Row: unable to get markups node with id ") + activeMarkupsNodeID;
     return;
     }
 
+  int numberOfPoints = d->MarkupsNode->GetNumberOfControlPoints();
+  if (d->activeMarkupTableWidget->rowCount() != numberOfPoints)
+    {
+    d->activeMarkupTableWidget->setRowCount(numberOfPoints);
+    }
+  for (int m = 0; m < numberOfPoints; m++)
+    {
+    this->updateRow(m);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::updateRow(int controlPointIndex)
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  vtkMRMLMarkupsNode* markupsNode = this->mrmlMarkupsNode();
+  if (!markupsNode
+    || controlPointIndex >= markupsNode->GetNumberOfControlPoints()) // markup point is already deleted (possible after batch update)
+    {
+    return;
+    }
+
+  if (controlPointIndex < 0)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid controlPointIndex";
+    return;
+    }
+
+  // this is updating the qt widget from MRML, and should not trigger any updates on the node, so turn off events
+  QSignalBlocker blocker(d->activeMarkupTableWidget);
+
   // selected
-  QTableWidgetItem* selectedItem = new QTableWidgetItem();
-  if (markupsNode->GetNthControlPointSelected(m))
+  int column = qSlicerMarkupsModuleWidgetPrivate::SelectedColumn;
+  QTableWidgetItem* item = d->activeMarkupTableWidget->item(controlPointIndex, column);
+  bool isNewItem = false;
+  if (!item)
     {
-    selectedItem->setCheckState(Qt::Checked);
+    item = new QTableWidgetItem();
+    // disable editing so that a double click won't bring up an entry box
+    item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+    isNewItem = true;
     }
-  else
+  Qt::CheckState selectedState = (markupsNode->GetNthControlPointSelected(controlPointIndex) ? Qt::Checked : Qt::Unchecked);
+  if (isNewItem || item->checkState() != selectedState)
     {
-    selectedItem->setCheckState(Qt::Unchecked);
+    item->setCheckState(selectedState);
     }
-  // disable editing so that a double click won't bring up an entry box
-  selectedItem->setFlags(selectedItem->flags() & ~Qt::ItemIsEditable);
-  int selectedIndex = d->columnIndex("Selected");
-  if (d->activeMarkupTableWidget->item(m,selectedIndex) == nullptr ||
-      (d->activeMarkupTableWidget->item(m,selectedIndex)->checkState() != selectedItem->checkState()))
+  if (isNewItem)
     {
-    d->activeMarkupTableWidget->setItem(m,selectedIndex,selectedItem);
+    d->activeMarkupTableWidget->setItem(controlPointIndex, column, item);
     }
 
   // locked
-  QTableWidgetItem* lockedItem = new QTableWidgetItem();
-  // disable checkable
-  lockedItem->setData(Qt::CheckStateRole, QVariant());
-  lockedItem->setFlags(lockedItem->flags() & ~Qt::ItemIsUserCheckable);
-  // disable editing so that a double click won't bring up an entry box
-  lockedItem->setFlags(lockedItem->flags() & ~Qt::ItemIsEditable);
-  if (markupsNode->GetNthControlPointLocked(m))
+  column = qSlicerMarkupsModuleWidgetPrivate::LockedColumn;
+  item = d->activeMarkupTableWidget->item(controlPointIndex, column);
+  isNewItem = false;
+  if (!item)
     {
-    lockedItem->setData(Qt::UserRole, QVariant(true));
-    lockedItem->setData(Qt::DecorationRole, d->SlicerLockIcon);
+    item = new QTableWidgetItem();
+    // disable checkable
+    item->setData(Qt::CheckStateRole, QVariant());
+    item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
+    // disable editing so that a double click won't bring up an entry box
+    item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+    isNewItem = true;
     }
-  else
+  bool locked = markupsNode->GetNthControlPointLocked(controlPointIndex);
+  if (isNewItem || item->data(Qt::UserRole).toBool() != locked)
     {
-    lockedItem->setData(Qt::UserRole, QVariant(false));
-    lockedItem->setData(Qt::DecorationRole, d->SlicerUnlockIcon);
+    item->setData(Qt::UserRole, QVariant(locked));
+    item->setData(Qt::DecorationRole, locked ? d->SlicerLockIcon : d->SlicerUnlockIcon);
     }
-  int lockedIndex = d->columnIndex("Locked");
-  if (d->activeMarkupTableWidget->item(m,lockedIndex) == nullptr ||
-      d->activeMarkupTableWidget->item(m,lockedIndex)->data(Qt::UserRole) != lockedItem->data(Qt::UserRole))
+  if (isNewItem)
     {
-    d->activeMarkupTableWidget->setItem(m,lockedIndex,lockedItem);
+    d->activeMarkupTableWidget->setItem(controlPointIndex, column, item);
     }
 
   // visible
-  QTableWidgetItem* visibleItem = new QTableWidgetItem();
-  // disable checkable
-  visibleItem->setData(Qt::CheckStateRole, QVariant());
-  visibleItem->setFlags(visibleItem->flags() & ~Qt::ItemIsUserCheckable);
-  // disable editing so that a double click won't bring up an entry box
-  visibleItem->setFlags(visibleItem->flags() & ~Qt::ItemIsEditable);
-  if (markupsNode->GetNthControlPointVisibility(m))
+  column = qSlicerMarkupsModuleWidgetPrivate::VisibleColumn;
+  item = d->activeMarkupTableWidget->item(controlPointIndex, column);
+  isNewItem = false;
+  if (!item)
     {
-    visibleItem->setData(Qt::UserRole, QVariant(true));
-    visibleItem->setData(Qt::DecorationRole, d->SlicerVisibleIcon);
+    item = new QTableWidgetItem();
+    // disable checkable
+    item->setData(Qt::CheckStateRole, QVariant());
+    item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
+    // disable editing so that a double click won't bring up an entry box
+    item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+    isNewItem = true;
     }
-  else
+  bool visible = markupsNode->GetNthControlPointVisibility(controlPointIndex);
+  if (isNewItem || item->data(Qt::UserRole).toBool() != visible)
     {
-    visibleItem->setData(Qt::UserRole, QVariant(false));
-    visibleItem->setData(Qt::DecorationRole, d->SlicerInvisibleIcon);
+    item->setData(Qt::UserRole, QVariant(visible));
+    item->setData(Qt::DecorationRole, visible ? d->SlicerVisibleIcon : d->SlicerInvisibleIcon);
     }
-    int visibleIndex = d->columnIndex("Visible");
-   if (d->activeMarkupTableWidget->item(m,visibleIndex) == nullptr ||
-       d->activeMarkupTableWidget->item(m,visibleIndex)->data(Qt::UserRole) != visibleItem->data(Qt::UserRole))
-     {
-     d->activeMarkupTableWidget->setItem(m,visibleIndex,visibleItem);
-     }
+  if (isNewItem)
+    {
+    d->activeMarkupTableWidget->setItem(controlPointIndex, column, item);
+    }
 
-   // name
-   int nameIndex = d->columnIndex("Name");
-   QString markupLabel = QString(markupsNode->GetNthControlPointLabel(m).c_str());
-   if (d->activeMarkupTableWidget->item(m,nameIndex) == nullptr ||
-       d->activeMarkupTableWidget->item(m,nameIndex)->text() != markupLabel)
-     {
-     d->activeMarkupTableWidget->setItem(m,nameIndex,new QTableWidgetItem(markupLabel));
-     }
+  // name
+  column = qSlicerMarkupsModuleWidgetPrivate::NameColumn;
+  item = d->activeMarkupTableWidget->item(controlPointIndex, column);
+  isNewItem = false;
+  if (!item)
+    {
+    item = new QTableWidgetItem();
+    isNewItem = true;
+    }
+  QString label = QString::fromStdString(markupsNode->GetNthControlPointLabel(controlPointIndex));
+  if (isNewItem || item->text() != label)
+    {
+    item->setText(label);
+    }
+  if (isNewItem)
+    {
+    d->activeMarkupTableWidget->setItem(controlPointIndex, column, item);
+    }
 
-   // description
-   int descriptionIndex = d->columnIndex("Description");
-   QString markupDescription = QString(markupsNode->GetNthControlPointDescription(m).c_str());
-   if (d->activeMarkupTableWidget->item(m,descriptionIndex) == nullptr ||
-       d->activeMarkupTableWidget->item(m,descriptionIndex)->text() != markupLabel)
-     {
-     d->activeMarkupTableWidget->setItem(m,descriptionIndex,new QTableWidgetItem(markupDescription));
-     }
+  // description
+  column = qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn;
+  item = d->activeMarkupTableWidget->item(controlPointIndex, column);
+  isNewItem = false;
+  if (!item)
+    {
+    item = new QTableWidgetItem();
+    isNewItem = true;
+    }
+  QString description = QString::fromStdString(markupsNode->GetNthControlPointDescription(controlPointIndex));
+  if (isNewItem || item->text() != description)
+    {
+    item->setText(description);
+    }
+  if (isNewItem)
+    {
+    d->activeMarkupTableWidget->setItem(controlPointIndex, column, item);
+    }
 
-   // point
+   // coordinates
    double point[3] = {0.0, 0.0, 0.0};
    if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
      {
      double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
-     markupsNode->GetNthControlPointPositionWorld(m, worldPoint);
+     markupsNode->GetNthControlPointPositionWorld(controlPointIndex, worldPoint);
      for (int p = 0; p < 3; ++p)
        {
        point[p] = worldPoint[p];
@@ -1260,64 +1304,66 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
      }
    else
      {
-     markupsNode->GetNthControlPointPosition(m, point);
+     markupsNode->GetNthControlPointPosition(controlPointIndex, point);
      }
-  int rColumnIndex = d->columnIndex("R");
-  int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(m);
-  if (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined ||
-      mPositionStatus == vtkMRMLMarkupsNode::PositionPreview)
+  int rColumnIndex = qSlicerMarkupsModuleWidgetPrivate::RColumn;
+  int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(controlPointIndex);
+  bool showCoordinates = (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined ||
+    mPositionStatus == vtkMRMLMarkupsNode::PositionPreview);
+  for (int p = 0; p < 3; p++)
     {
-    for (int p = 0; p < 3; p++)
+    column = rColumnIndex + p;
+    item = d->activeMarkupTableWidget->item(controlPointIndex, column);
+    isNewItem = false;
+    if (!item)
+      {
+      item = new QTableWidgetItem();
+      isNewItem = true;
+      }
+    QString coordinate;
+    if (showCoordinates)
       {
       // last argument to number sets the precision
-      QString coordinate = QString::number(point[p], 'f', 3);
-      if (d->activeMarkupTableWidget->item(m, rColumnIndex + p) == nullptr ||
-          d->activeMarkupTableWidget->item(m, rColumnIndex + p)->text() != coordinate)
-        {
-        d->activeMarkupTableWidget->setItem(m, rColumnIndex + p, new QTableWidgetItem(coordinate));
-        }
+      coordinate = QString::number(point[p], 'f', 3);
       }
-    }
-  else
-  {
-    for (int p = 0; p < 3; p++)
+    if (isNewItem || item->text() != coordinate)
       {
-      d->activeMarkupTableWidget->setItem(m, rColumnIndex + p, new QTableWidgetItem(""));
+      item->setText(coordinate);
       }
-  }
-  // position
-  QTableWidgetItem* positionItem = new QTableWidgetItem();
-  // disable editing so that a double click won't bring up an entry box
-  positionItem->setFlags(positionItem->flags() & ~Qt::ItemIsEditable);
-  if (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined)
-    {
-    positionItem->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionDefined));
-    positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsDefined.png"));
-    }
-  else if (mPositionStatus == vtkMRMLMarkupsNode::PositionPreview)
-    {
-    positionItem->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionPreview));
-    positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsInProgress.png"));
-    }
-  else if (mPositionStatus == vtkMRMLMarkupsNode::PositionMissing)
-    {
-    positionItem->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionMissing));
-    positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsMissing.png"));
-    }
-  else if (mPositionStatus == vtkMRMLMarkupsNode::PositionUndefined)
-    {
-    positionItem->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionUndefined));
-    positionItem->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsUndefined.png"));
-    }
-  int positionIndex = d->columnIndex("Position");
-  if (d->activeMarkupTableWidget->item(m, positionIndex) == nullptr ||
-      d->activeMarkupTableWidget->item(m, positionIndex)->data(Qt::UserRole) != positionItem->data(Qt::UserRole))
-    {
-    d->activeMarkupTableWidget->setItem(m, positionIndex, positionItem);
+    if (isNewItem)
+      {
+      d->activeMarkupTableWidget->setItem(controlPointIndex, column, item);
+      }
     }
 
-  // unblock so that changes to the table will propagate to MRML
-  d->activeMarkupTableWidget->blockSignals(false);
+  // position status
+  column = qSlicerMarkupsModuleWidgetPrivate::PositionColumn;
+  item = d->activeMarkupTableWidget->item(controlPointIndex, column);
+  isNewItem = false;
+  if (!item)
+    {
+    item = new QTableWidgetItem();
+    // disable editing so that a double click won't bring up an entry box
+    item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+    isNewItem = true;
+    }
+  int positionStatus = markupsNode->GetNthControlPointPositionStatus(controlPointIndex);
+  if (isNewItem
+    || item->data(Qt::UserRole).toInt() != positionStatus)
+    {
+    item->setData(Qt::UserRole, positionStatus);
+    switch (positionStatus)
+      {
+      case vtkMRMLMarkupsNode::PositionDefined: item->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsDefined.png")); break;
+      case vtkMRMLMarkupsNode::PositionPreview: item->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsInProgress.png")); break;
+      case vtkMRMLMarkupsNode::PositionMissing: item->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsMissing.png")); break;
+      case vtkMRMLMarkupsNode::PositionUndefined: item->setData(Qt::DecorationRole, QPixmap(":/Icons/XSmall/MarkupsUndefined.png")); break;
+      }
+    }
+  if (isNewItem)
+    {
+    d->activeMarkupTableWidget->setItem(controlPointIndex, column, item);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1967,7 +2013,7 @@ void qSlicerMarkupsModuleWidget::onListVisibileInvisiblePushButtonClicked()
     }
 
   // toggle the visibility
-  int visibleFlag = d->MarkupsNode->GetDisplayVisibility();
+  bool visibleFlag = d->MarkupsNode->GetDisplayVisibility();
   visibleFlag = !visibleFlag;
   d->MarkupsNode->SetDisplayVisibility(visibleFlag);
 
@@ -1985,7 +2031,8 @@ void qSlicerMarkupsModuleWidget::onListLockedUnlockedPushButtonClicked()
     {
     return;
     }
-  d->MarkupsNode->SetLocked(!d->MarkupsNode->GetLocked());
+  bool locked = d->MarkupsNode->GetLocked();
+  d->MarkupsNode->SetLocked(!locked);
   this->updateWidgetFromMRML();
 }
 
@@ -2068,12 +2115,12 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
     qDebug() << QString("Unable to find item in table at ") + QString::number(row) + QString(", ") + QString::number(column);
     return;
     }
-  if (column == d->columnIndex("Selected"))
+  if (column == qSlicerMarkupsModuleWidgetPrivate::SelectedColumn)
     {
     bool flag = (item->checkState() == Qt::Unchecked ? false : true);
     d->MarkupsNode->SetNthControlPointSelected(n, flag);
     }
-  else if (column == d->columnIndex("Locked"))
+  else if (column == qSlicerMarkupsModuleWidgetPrivate::LockedColumn)
     {
     bool flag = item->data(Qt::UserRole) == QVariant(true) ? true : false;
     // update the icon
@@ -2087,7 +2134,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
       }
     d->MarkupsNode->SetNthControlPointLocked(n, flag);
     }
-  else if (column == d->columnIndex("Visible"))
+  else if (column == qSlicerMarkupsModuleWidgetPrivate::VisibleColumn)
     {
     bool flag = item->data(Qt::UserRole) == QVariant(true) ? true : false;
     // update the eye icon
@@ -2101,32 +2148,32 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
       }
     d->MarkupsNode->SetNthControlPointVisibility(n, flag);
     }
-  else if (column ==  d->columnIndex("Name"))
+  else if (column == qSlicerMarkupsModuleWidgetPrivate::NameColumn)
     {
     std::string name = std::string(item->text().toUtf8());
     d->MarkupsNode->SetNthControlPointLabel(n, name);
     }
-  else if (column ==  d->columnIndex("Description"))
+  else if (column ==  qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn)
     {
     std::string description = std::string(item->text().toUtf8());
     d->MarkupsNode->SetNthControlPointDescription(n, description);
     }
-  else if (column == d->columnIndex("R") ||
-           column == d->columnIndex("A") ||
-           column == d->columnIndex("S"))
+  else if (column == qSlicerMarkupsModuleWidgetPrivate::RColumn ||
+           column == qSlicerMarkupsModuleWidgetPrivate::AColumn ||
+           column == qSlicerMarkupsModuleWidgetPrivate::SColumn)
     {
     // get the new value
     double newPoint[3] = {0.0, 0.0, 0.0};
-    if (d->activeMarkupTableWidget->item(row, d->columnIndex("R")) == nullptr ||
-        d->activeMarkupTableWidget->item(row, d->columnIndex("A")) == nullptr ||
-        d->activeMarkupTableWidget->item(row, d->columnIndex("S")) == nullptr)
+    if (d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::RColumn) == nullptr ||
+        d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::AColumn) == nullptr ||
+        d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::SColumn) == nullptr)
       {
       // init state, return
       return;
       }
-    newPoint[0] = d->activeMarkupTableWidget->item(row, d->columnIndex("R"))->text().toDouble();
-    newPoint[1] = d->activeMarkupTableWidget->item(row, d->columnIndex("A"))->text().toDouble();
-    newPoint[2] = d->activeMarkupTableWidget->item(row, d->columnIndex("S"))->text().toDouble();
+    newPoint[0] = d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::RColumn)->text().toDouble();
+    newPoint[1] = d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::AColumn)->text().toDouble();
+    newPoint[2] = d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::SColumn)->text().toDouble();
 
     // get the old value
     double point[3] = {0.0, 0.0, 0.0};
@@ -2164,7 +2211,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
       //qDebug() << QString("Cell changed: no change in location bigger than ") + QString::number(minChange);
       }
     }
-  else if (column == d->columnIndex("Position"))
+  else if (column == qSlicerMarkupsModuleWidgetPrivate::PositionColumn)
     {
     bool persistenceModeEnabled = d->getPersistanceModeEnabled();
     if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionUndefined))
@@ -2217,8 +2264,8 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellClicked(QTableWidgetItem
     }
   int column = item->column();
   int row = item->row();
-  if (column == d->columnIndex(QString("Visible")) ||
-           column == d->columnIndex(QString("Locked")))
+  if (column == qSlicerMarkupsModuleWidgetPrivate::VisibleColumn ||
+    column == qSlicerMarkupsModuleWidgetPrivate::LockedColumn)
     {
     // toggle the user role, the icon update is triggered by this change
     if (item->data(Qt::UserRole) == QVariant(false))
@@ -2230,7 +2277,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellClicked(QTableWidgetItem
       item->setData(Qt::UserRole, QVariant(false));
       }
     }
-  else if (column == d->columnIndex("Position"))
+  else if (column == qSlicerMarkupsModuleWidgetPrivate::PositionColumn)
     {
       if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionDefined))
         {
@@ -2732,7 +2779,28 @@ void qSlicerMarkupsModuleWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsN
   this->updateMeasurementsDescriptionLabel();
   this->populateMeasurementSettingsTable();
 
+  // Force update of control point table
+  d->activeMarkupTableWidget->setRowCount(0);
+
   this->updateWidgetFromMRML();
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLMarkupsNode* qSlicerMarkupsModuleWidget::mrmlMarkupsNode()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  vtkMRMLNode* node = d->activeMarkupTreeView->currentNode();
+  if (!node)
+    {
+    return nullptr;
+    }
+  if (!this->mrmlScene())
+    {
+    return nullptr;
+    }
+ // make sure the node is still in the scene and convert to markups
+ vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->GetNodeByID(node->GetID()));
+ return markupsNode;
 }
 
 //-----------------------------------------------------------------------------
@@ -2748,22 +2816,20 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject
 
   int* nPtr = reinterpret_cast<int*>(callData);
   int n = (nPtr ? *nPtr : -1);
+
   if (n>=0)
     {
     this->updateRow(n);
+    // Only scroll to the point that is currently being placed if jump to slice is enabled
+    // (this could be controlled by a separate flag, but there are already too many options on the GUI).
     if (d->jumpModeComboBox->currentIndex() != JUMP_MODE_COMBOBOX_INDEX_IGNORE)
       {
-      // Get markups node, make sure the node is still in the scene and convert to markups
-      vtkMRMLMarkupsNode* markupsNode = nullptr;
-      vtkMRMLNode* node = d->activeMarkupTreeView->currentNode();
-      if (node)
-        {
-        markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->GetNodeByID(node->GetID()));
-        }
+      vtkMRMLMarkupsNode* markupsNode = this->mrmlMarkupsNode();
       if (markupsNode)
         {
         int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(n);
-        if (mPositionStatus == vtkMRMLMarkupsNode::PositionPreview)
+        if (mPositionStatus == vtkMRMLMarkupsNode::PositionPreview
+          && d->activeMarkupTableWidget->currentRow() != n)
           {
           d->activeMarkupTableWidget->setCurrentCell(n, 0);
           }
@@ -2772,8 +2838,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject
     }
   else
     {
-    // batch update finished
-    this->updateWidgetFromMRML();
+    this->updateRows();
     }
 }
 
@@ -2785,7 +2850,14 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointAddedEvent()
   int newRow = d->activeMarkupTableWidget->rowCount();
   d->activeMarkupTableWidget->insertRow(newRow);
 
-  this->updateRow(newRow);
+  if (newRow >= 0)
+    {
+    this->updateRow(newRow);
+    }
+  else
+    {
+    this->updateRows();
+    }
 
   // scroll to the new row only if jump slices is not selected
   // (if jump slices on click in table is selected, selecting the new
@@ -2819,6 +2891,10 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointRemovedEvent(vtkObject 
   else
     {
     // batch update finished
+    // If points are only removed then number of rows will not match the number of control points,
+    // which will trigger a full update in updateWidgetFromMRML.
+    // If points are removed and added then onActiveMarkupsNodePointAddedEvent is called, which
+    // performs the full update.
     this->updateWidgetFromMRML();
     }
 }
@@ -2924,20 +3000,20 @@ void qSlicerMarkupsModuleWidget::onHideCoordinateColumnsToggled(int index)
   bool hide = bool(index == COORDINATE_COMBOBOX_INDEX_HIDE);
 
     // back to default column widths
-  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("R"), hide);
-  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("A"), hide);
-  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("S"), hide);
+  d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::RColumn, hide);
+  d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::AColumn, hide);
+  d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::SColumn, hide);
 
   if(hide)
     {
-    d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Name"), 60);
-    d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Description"), 120);
+    d->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::NameColumn, 60);
+    d->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn, 120);
     }
   else
     {
     // expand the name and description columns
-    d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Name"), 120);
-    d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Description"), 240);
+    d->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::NameColumn, 120);
+    d->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn, 240);
     }
   this->updateWidgetFromMRML();
 }
