@@ -440,16 +440,16 @@ void vtkMRMLCameraNode::SetLayoutName(const char* layoutName)
       {
       // no change
       return;
+      }
     }
-    }
-  else if (this->GetSingletonTag() != nullptr && strcmp(layoutName, this->GetSingletonTag()))
+  else if (this->GetSingletonTag() != nullptr && strcmp(layoutName, this->GetSingletonTag()) == 0)
     {
     // no change
     return;
-      }
+    }
   this->SetSingletonTag(layoutName);
   this->InvokeEvent(vtkMRMLCameraNode::LayoutNameModifiedEvent, nullptr);
-    }
+}
 
 //-----------------------------------------------------------
 char* vtkMRMLCameraNode::GetLayoutName()
