@@ -5,9 +5,10 @@
 - [CMake](https://www.cmake.org/cmake/resources/software.html) version that meets at least the minimum required CMake version >= 3.21.1 (or 3.16.3 <= version < 3.20.4)
 - [Git](https://git-scm.com/download/win) >= 1.7.10
   - Note: CMake must be able to find `git.exe` and `patch.exe`. If git is installed in the default location then they may be found there, but if they are not found then either add the folder that contains them to `PATH` environment variable; or set `GIT_EXECUTABLE` and `Patch_EXECUTABLE` as environment variables or as CMake variables at configure time.
-- [Visual Studio](https://visualstudio.microsoft.com/downloads/)
-  - any edition can be used (including the free Community edition)
-  - when configuring the installer, enable `Desktop development with C++` and in installation details, check `MSVC v143 - VS2022 C++ x64...` (Visual Studio 2022 v143 toolset with 64-bit support) - in some distributions, this option is not enabled by default
+- [Visual Studio](https://visualstudio.microsoft.com/downloads/): any edition can be used (including the free Community edition), when configuring the installer:
+  - Enable `Desktop development with C++` and in installation details
+  - Enable the `MSVC v143 - VS2022 C++ x64...` (Visual Studio 2022 v143 toolset with 64-bit support) component - in some distributions, this option is not enabled by default.
+  - Enable the latest Windows10 SDK component - without this CMake might not find a compiler during configuration step.
 - [Qt5](https://www.qt.io/download-open-source): Download Qt universal installer and install Qt 5.15.2 components: `MSVC2019 64-bit`, `Qt Script`, `Qt WebEngine`. Installing Sources and Qt Debug Information Files are recommended for debugging (they allow stepping into Qt files with the debugger in debug-mode builds).
   - Note: These are all free, open-source components with LGPL license which allow free usage for any purpose, for any individuals or companies.
 - [NSIS](https://nsis.sourceforge.io/Download) (optional): Needed if packaging Slicer. Make sure you install the language packs.
