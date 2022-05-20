@@ -139,10 +139,9 @@ bool vtkSlicerMarkupsWidget::ProcessControlPointMoveStart(vtkMRMLInteractionEven
     {
     return false;
     }
-  if (markupsNode->GetNthControlPointLocked(activeControlPoint))
-    {
-    return false;
-    }
+  // Do not reject this event if control point is locked
+  // because then we would not receive the mouse release event
+  // and so we could not process mouse clicks.
   this->SetWidgetState(WidgetStateTranslateControlPoint);
   this->StartWidgetInteraction(eventData);
   return true;
@@ -1043,6 +1042,12 @@ void vtkSlicerMarkupsWidget::TranslatePoint(double eventPos[2], bool snapToSlice
     }
   if (activeControlPointIndex < 0 || activeControlPointIndex >= markupsNode->GetNumberOfControlPoints())
     {
+    return;
+    }
+
+  if (markupsNode->GetNthControlPointLocked(activeControlPointIndex))
+    {
+    // point is locked, do not translate
     return;
     }
 
