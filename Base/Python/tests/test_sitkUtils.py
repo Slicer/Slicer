@@ -31,7 +31,7 @@ class SitkUtilsTests(unittest.TestCase):
         self.assertEqual(volumeNode1, slicer.util.getNode('MRHead'),
                          'Original volume is changed')
         self.assertNotEqual(volumeNode1, volumeNode1Copy,
-                         'Copy of original volume is not created')
+                            'Copy of original volume is not created')
 
         """ Few modification of the image : Direction, Origin """
         sitkimage.SetDirection((-1.0, 1.0, 0.0, 0.0, -1.0, 1.0, 1.0, 0.0, 1.0))
@@ -67,8 +67,8 @@ class SitkUtilsTests(unittest.TestCase):
 
                 if pushToNewNode:
                     volumeNodeTested = su.PushVolumeToSlicer(sitkimage,
-                        name='volumeNode-' + volumeClassName + "-" + str(pushToNewNode),
-                        className=volumeClassName)
+                                                             name='volumeNode-' + volumeClassName + "-" + str(pushToNewNode),
+                                                             className=volumeClassName)
                     existingVolumeNode = volumeNodeTested
                 else:
                     volumeNodeTested = su.PushVolumeToSlicer(sitkimage, existingVolumeNode)

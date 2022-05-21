@@ -25,340 +25,340 @@ import string
 
 # =============================================================================
 class Token:
-  """Base class for CMake script tokens.
+    """Base class for CMake script tokens.
 
-  This is the base class for CMake script tokens. An occurrence of a token
-  whose type is exactly :class:`.Token` (i.e. not a subclass thereof) is a
-  syntactic error unless the token text is empty.
+    This is the base class for CMake script tokens. An occurrence of a token
+    whose type is exactly :class:`.Token` (i.e. not a subclass thereof) is a
+    syntactic error unless the token text is empty.
 
-  .. attribute:: text
+    .. attribute:: text
 
-    The textual content of the token.
+      The textual content of the token.
 
-  .. attribute:: indent
+    .. attribute:: indent
 
-    The whitespace (including newlines) which preceded the token. As the parser
-    is strictly preserving of whitespace, note that this must be non-empty in
-    many cases in order to produce a syntactically correct script.
-  """
+      The whitespace (including newlines) which preceded the token. As the parser
+      is strictly preserving of whitespace, note that this must be non-empty in
+      many cases in order to produce a syntactically correct script.
+    """
 
-  # ---------------------------------------------------------------------------
-  def __init__(self, text, indent=""):
-    self.text = text
-    self.indent = indent
+    # ---------------------------------------------------------------------------
+    def __init__(self, text, indent=""):
+        self.text = text
+        self.indent = indent
 
-  # ---------------------------------------------------------------------------
-  def __repr__(self):
-    return "Token(text=%(text)r, indent=%(indent)r)" % self.__dict__
+    # ---------------------------------------------------------------------------
+    def __repr__(self):
+        return "Token(text=%(text)r, indent=%(indent)r)" % self.__dict__
 
-  # ---------------------------------------------------------------------------
-  def __str__(self):
-    return self.indent + self.text
+    # ---------------------------------------------------------------------------
+    def __str__(self):
+        return self.indent + self.text
 
 
 # =============================================================================
 class String(Token):
-  """String token.
+    """String token.
 
-  .. attribute:: text
+    .. attribute:: text
 
-    The textual content of the string. Note that escapes are not evaluated and
-    will appear in their raw (escaped) form.
+      The textual content of the string. Note that escapes are not evaluated and
+      will appear in their raw (escaped) form.
 
-  .. attribute:: prefix
+    .. attribute:: prefix
 
-    The delimiter which starts this string. The delimiter may be empty,
-    ``'"'``, or a lua-style long bracket (e.g. ``'[['``, ``'[===['``, etc.).
+      The delimiter which starts this string. The delimiter may be empty,
+      ``'"'``, or a lua-style long bracket (e.g. ``'[['``, ``'[===['``, etc.).
 
-  .. attribute:: suffix
+    .. attribute:: suffix
 
-    The delimiter which ends this string, which shall match the :attr:`prefix`.
+      The delimiter which ends this string, which shall match the :attr:`prefix`.
 
-  String tokens appear as arguments to :class:`.Command`, as they are not valid
-  outside of a command context.
-  """
+    String tokens appear as arguments to :class:`.Command`, as they are not valid
+    outside of a command context.
+    """
 
-  # ---------------------------------------------------------------------------
-  def __init__(self, text, indent="", prefix="", suffix=""):
-    text = super().__init__(text, indent)
-    self.prefix = prefix
-    self.suffix = suffix
+    # ---------------------------------------------------------------------------
+    def __init__(self, text, indent="", prefix="", suffix=""):
+        text = super().__init__(text, indent)
+        self.prefix = prefix
+        self.suffix = suffix
 
-  # ---------------------------------------------------------------------------
-  def __repr__(self):
-    return "String(prefix=%(prefix)r, suffix=%(suffix)r," \
-           " text=%(text)r, indent=%(indent)r)" % self.__dict__
+    # ---------------------------------------------------------------------------
+    def __repr__(self):
+        return "String(prefix=%(prefix)r, suffix=%(suffix)r," \
+               " text=%(text)r, indent=%(indent)r)" % self.__dict__
 
-  # ---------------------------------------------------------------------------
-  def __str__(self):
-    return self.indent + self.prefix + self.text + self.suffix
+    # ---------------------------------------------------------------------------
+    def __str__(self):
+        return self.indent + self.prefix + self.text + self.suffix
 
 
 # =============================================================================
 class Comment(Token):
-  """Comment token.
+    """Comment token.
 
-  .. attribute:: text
+    .. attribute:: text
 
-    The textual content of the comment.
+      The textual content of the comment.
 
-  .. attribute:: prefix
+    .. attribute:: prefix
 
-    The delimiter which starts this comment: ``'#'``, optionally followed by a
-    lua-style long bracket (e.g. ``'[['``, ``'[===['``, etc.).
+      The delimiter which starts this comment: ``'#'``, optionally followed by a
+      lua-style long bracket (e.g. ``'[['``, ``'[===['``, etc.).
 
-  .. attribute:: suffix
+    .. attribute:: suffix
 
-    The delimiter which ends this comment: either empty, or a lua-style long
-    bracket which shall match the long bracket in :attr:`prefix`.
-  """
+      The delimiter which ends this comment: either empty, or a lua-style long
+      bracket which shall match the long bracket in :attr:`prefix`.
+    """
 
-  # ---------------------------------------------------------------------------
-  def __init__(self, prefix, text, indent="", suffix=""):
-    text = super().__init__(text, indent)
-    self.prefix = prefix
-    self.suffix = suffix
+    # ---------------------------------------------------------------------------
+    def __init__(self, prefix, text, indent="", suffix=""):
+        text = super().__init__(text, indent)
+        self.prefix = prefix
+        self.suffix = suffix
 
-  # ---------------------------------------------------------------------------
-  def __repr__(self):
-    return "Comment(prefix=%(prefix)r, suffix=%(suffix)r," \
-           " text=%(text)r, indent=%(indent)r)" % self.__dict__
+    # ---------------------------------------------------------------------------
+    def __repr__(self):
+        return "Comment(prefix=%(prefix)r, suffix=%(suffix)r," \
+               " text=%(text)r, indent=%(indent)r)" % self.__dict__
 
-  # ---------------------------------------------------------------------------
-  def __str__(self):
-    return self.indent + self.prefix + self.text + self.suffix
+    # ---------------------------------------------------------------------------
+    def __str__(self):
+        return self.indent + self.prefix + self.text + self.suffix
 
 
 # =============================================================================
 class Command(Token):
-  """Command token.
+    """Command token.
 
-  .. attribute:: text
+    .. attribute:: text
 
-    The name of the command.
+      The name of the command.
 
-  .. attribute:: prefix
+    .. attribute:: prefix
 
-    The delimiter which starts the command's argument list. This shall end with
-    ``'('`` and may begin with whitespace if there is whitespace separating the
-    command name from the '('.
+      The delimiter which starts the command's argument list. This shall end with
+      ``'('`` and may begin with whitespace if there is whitespace separating the
+      command name from the '('.
 
-  .. attribute:: suffix
+    .. attribute:: suffix
 
-    The delimiter which ends the command's argument list. This shall end with
-    ``')'`` and may begin with whitespace if there is whitespace separating the
-    last argument (or the opening '(' if there are no arguments) from the ')'.
+      The delimiter which ends the command's argument list. This shall end with
+      ``')'`` and may begin with whitespace if there is whitespace separating the
+      last argument (or the opening '(' if there are no arguments) from the ')'.
 
-  .. attribute:: arguments
+    .. attribute:: arguments
 
-    A :class:`list` of :class:`.String` tokens which comprise the arguments of
-    the command.
-  """
+      A :class:`list` of :class:`.String` tokens which comprise the arguments of
+      the command.
+    """
 
-  # ---------------------------------------------------------------------------
-  def __init__(self, text, arguments=[], indent="", prefix="(", suffix=")"):
-    text = super().__init__(text, indent)
-    self.prefix = prefix
-    self.suffix = suffix
-    self.arguments = arguments
+    # ---------------------------------------------------------------------------
+    def __init__(self, text, arguments=[], indent="", prefix="(", suffix=")"):
+        text = super().__init__(text, indent)
+        self.prefix = prefix
+        self.suffix = suffix
+        self.arguments = arguments
 
-  # ---------------------------------------------------------------------------
-  def __repr__(self):
-    return "Command(text=%(text)r, prefix=%(prefix)r," \
-           " suffix=%(suffix)r, arguments=%(arguments)r," \
-           " indent=%(indent)r)" % self.__dict__
+    # ---------------------------------------------------------------------------
+    def __repr__(self):
+        return "Command(text=%(text)r, prefix=%(prefix)r," \
+               " suffix=%(suffix)r, arguments=%(arguments)r," \
+               " indent=%(indent)r)" % self.__dict__
 
-  # ---------------------------------------------------------------------------
-  def __str__(self):
-    args = "".join([str(a) for a in self.arguments])
-    return self.indent + self.text + self.prefix + args + self.suffix
+    # ---------------------------------------------------------------------------
+    def __str__(self):
+        args = "".join([str(a) for a in self.arguments])
+        return self.indent + self.text + self.prefix + args + self.suffix
 
 
 # =============================================================================
 class CMakeScript:
-  """Tokenized representation of a CMake script.
+    """Tokenized representation of a CMake script.
 
-  .. attribute:: tokens
+    .. attribute:: tokens
 
-    The :class:`list` of tokens which comprise the script. Manipulations of
-    this list should be used to change the content of the script.
-  """
-
-  _reWhitespace = re.compile(r"\s")
-  _reCommand = re.compile(r"([" + string.ascii_letters + r"]\w*)(\s*\()")
-  _reComment = re.compile(r"#(\[=*\[)?")
-  _reQuote = re.compile("\"")
-  _reBracketQuote = re.compile(r"\[=*\[")
-  _reEscape = re.compile(r"\\[\\\"nrt$ ]")
-
-  # ---------------------------------------------------------------------------
-  def __init__(self, content):
-    """
-    :param content: Textual content of a CMake script.
-    :type content: :class:`str`
-
-    :raises:
-      :exc:`~exceptions.SyntaxError` or :exc:`~exceptions.EOFError` if a
-      parsing error occurs (i.e. if the input text is not syntactically valid).
-
-    .. code-block:: python
-
-      with open('CMakeLists.txt') as input_file:
-        script = CMakeParser.CMakeScript(input_file.read())
-
-      with open('CMakeLists.txt.new', 'w') as output_file:
-        output_file.write(str(script))
+      The :class:`list` of tokens which comprise the script. Manipulations of
+      this list should be used to change the content of the script.
     """
 
-    self.tokens = []
+    _reWhitespace = re.compile(r"\s")
+    _reCommand = re.compile(r"([" + string.ascii_letters + r"]\w*)(\s*\()")
+    _reComment = re.compile(r"#(\[=*\[)?")
+    _reQuote = re.compile("\"")
+    _reBracketQuote = re.compile(r"\[=*\[")
+    _reEscape = re.compile(r"\\[\\\"nrt$ ]")
 
-    self._content = content
-    self._match = None
+    # ---------------------------------------------------------------------------
+    def __init__(self, content):
+        """
+        :param content: Textual content of a CMake script.
+        :type content: :class:`str`
 
-    while len(self._content):
-      indent = self._chompSpace()
+        :raises:
+          :exc:`~exceptions.SyntaxError` or :exc:`~exceptions.EOFError` if a
+          parsing error occurs (i.e. if the input text is not syntactically valid).
 
-      # Consume comments
-      if self._is(self._reComment):
-        self.tokens.append(self._parseComment(self._match, indent))
+        .. code-block:: python
 
-      # Consume commands
-      elif self._is(self._reCommand):
-        self.tokens.append(self._parseCommand(self._match, indent))
+          with open('CMakeLists.txt') as input_file:
+            script = CMakeParser.CMakeScript(input_file.read())
 
-      # Consume other tokens (pedantically, if we get here, the script is
-      # malformed, except at EOF)
-      else:
-        m = self._reWhitespace.search(self._content)
-        n = m.start() if m is not None else len(self._content)
-        self.tokens.append(Token(text=self._content[:n], indent=indent))
-        self._content = self._content[n:]
+          with open('CMakeLists.txt.new', 'w') as output_file:
+            output_file.write(str(script))
+        """
 
-  # ---------------------------------------------------------------------------
-  def __repr__(self):
-    return repr(self.tokens)
+        self.tokens = []
 
-  # ---------------------------------------------------------------------------
-  def __str__(self):
-    return "".join([str(t) for t in self.tokens])
+        self._content = content
+        self._match = None
 
-  # ---------------------------------------------------------------------------
-  def _chomp(self):
-    result = self._content[0]
-    self._content = self._content[1:]
-    return result
+        while len(self._content):
+            indent = self._chompSpace()
 
-  # ---------------------------------------------------------------------------
-  def _chompSpace(self):
-    result = ""
+            # Consume comments
+            if self._is(self._reComment):
+                self.tokens.append(self._parseComment(self._match, indent))
 
-    while len(self._content) and self._content[0].isspace():
-      result += self._content[0]
-      self._content = self._content[1:]
+            # Consume commands
+            elif self._is(self._reCommand):
+                self.tokens.append(self._parseCommand(self._match, indent))
 
-    return result
+            # Consume other tokens (pedantically, if we get here, the script is
+            # malformed, except at EOF)
+            else:
+                m = self._reWhitespace.search(self._content)
+                n = m.start() if m is not None else len(self._content)
+                self.tokens.append(Token(text=self._content[:n], indent=indent))
+                self._content = self._content[n:]
 
-  # ---------------------------------------------------------------------------
-  def _chompString(self, end, escapes):
-    result = ""
+    # ---------------------------------------------------------------------------
+    def __repr__(self):
+        return repr(self.tokens)
 
-    while len(self._content):
-      if escapes and self._is(self._reEscape):
-        e = self._match.group(0)
-        result += e
-        self._content = self._content[len(e):]
+    # ---------------------------------------------------------------------------
+    def __str__(self):
+        return "".join([str(t) for t in self.tokens])
 
-      elif self._content.startswith(end):
-        self._content = self._content[len(end):]
+    # ---------------------------------------------------------------------------
+    def _chomp(self):
+        result = self._content[0]
+        self._content = self._content[1:]
         return result
 
-      else:
-        result += self._chomp()
+    # ---------------------------------------------------------------------------
+    def _chompSpace(self):
+        result = ""
 
-    raise EOFError("unexpected EOF while parsing string (expected %r)" % end)
+        while len(self._content) and self._content[0].isspace():
+            result += self._content[0]
+            self._content = self._content[1:]
 
-  # ---------------------------------------------------------------------------
-  def _parseArgument(self, indent):
-    text = ""
+        return result
 
-    while len(self._content):
-      if self._is(self._reQuote) or self._is(self._reBracketQuote):
-        prefix = self._match.group(0)
-        self._content = self._content[len(prefix):]
+    # ---------------------------------------------------------------------------
+    def _chompString(self, end, escapes):
+        result = ""
 
-        if prefix == "\"":
-          suffix = prefix
-          s = self._chompString(suffix, escapes=True)
+        while len(self._content):
+            if escapes and self._is(self._reEscape):
+                e = self._match.group(0)
+                result += e
+                self._content = self._content[len(e):]
 
-        else:
-          suffix = prefix.replace("[", "]")
-          s = self._chompString(suffix, escapes=False)
+            elif self._content.startswith(end):
+                self._content = self._content[len(end):]
+                return result
 
-        if not len(text):
-          return String(prefix=prefix, suffix=suffix, text=s, indent=indent)
+            else:
+                result += self._chomp()
 
-        text += prefix + s + suffix
+        raise EOFError("unexpected EOF while parsing string (expected %r)" % end)
 
-      elif self._content[0].isspace():
-        break
+    # ---------------------------------------------------------------------------
+    def _parseArgument(self, indent):
+        text = ""
 
-      elif self._is(self._reEscape):
-        e = self._match.group(0)
-        text += e
-        self._content = self._content[len(e):]
+        while len(self._content):
+            if self._is(self._reQuote) or self._is(self._reBracketQuote):
+                prefix = self._match.group(0)
+                self._content = self._content[len(prefix):]
 
-      elif self._content[0] == ")":
-        break
+                if prefix == "\"":
+                    suffix = prefix
+                    s = self._chompString(suffix, escapes=True)
 
-      else:
-        text += self._chomp()
+                else:
+                    suffix = prefix.replace("[", "]")
+                    s = self._chompString(suffix, escapes=False)
 
-    return String(text=text, indent=indent)
+                if not len(text):
+                    return String(prefix=prefix, suffix=suffix, text=s, indent=indent)
 
-  # ---------------------------------------------------------------------------
-  def _parseComment(self, match, indent):
-    b = match.group(1)
-    e = "\n" if b is None else b.replace("[", "]")
-    n = self._content.find(e)
-    if n < 0:
-      raise EOFError("unexpected EOF while parsing comment (expected %r" % e)
+                text += prefix + s + suffix
 
-    i = match.end()
-    suffix = e.strip()
-    token = Comment(prefix=self._content[:i], suffix=suffix,
-                    text=self._content[i:n], indent=indent)
+            elif self._content[0].isspace():
+                break
 
-    self._content = self._content[n + len(suffix):]
+            elif self._is(self._reEscape):
+                e = self._match.group(0)
+                text += e
+                self._content = self._content[len(e):]
 
-    return token
+            elif self._content[0] == ")":
+                break
 
-  # ---------------------------------------------------------------------------
-  def _parseCommand(self, match, indent):
-    command = match.group(1)
-    prefix = match.group(2)
-    arguments = []
+            else:
+                text += self._chomp()
 
-    self._content = self._content[match.end():]
+        return String(text=text, indent=indent)
 
-    while len(self._content):
-      argIndent = self._chompSpace()
+    # ---------------------------------------------------------------------------
+    def _parseComment(self, match, indent):
+        b = match.group(1)
+        e = "\n" if b is None else b.replace("[", "]")
+        n = self._content.find(e)
+        if n < 0:
+            raise EOFError("unexpected EOF while parsing comment (expected %r" % e)
 
-      if not len(self._content):
-        break
+        i = match.end()
+        suffix = e.strip()
+        token = Comment(prefix=self._content[:i], suffix=suffix,
+                        text=self._content[i:n], indent=indent)
 
-      if self._content[0] == ")":
-        self._content = self._content[1:]
-        return Command(text=command, arguments=arguments, indent=indent,
-                       prefix=prefix, suffix=argIndent + ")")
-      elif self._is(self._reComment):
-        arguments.append(self._parseComment(self._match, argIndent))
+        self._content = self._content[n + len(suffix):]
 
-      else:
-        arguments.append(self._parseArgument(argIndent))
+        return token
 
-    raise EOFError("unexpected EOF while parsing command (expected ')')")
+    # ---------------------------------------------------------------------------
+    def _parseCommand(self, match, indent):
+        command = match.group(1)
+        prefix = match.group(2)
+        arguments = []
 
-  # ---------------------------------------------------------------------------
-  def _is(self, regex):
-    self._match = regex.match(self._content)
-    return self._match is not None
+        self._content = self._content[match.end():]
+
+        while len(self._content):
+            argIndent = self._chompSpace()
+
+            if not len(self._content):
+                break
+
+            if self._content[0] == ")":
+                self._content = self._content[1:]
+                return Command(text=command, arguments=arguments, indent=indent,
+                               prefix=prefix, suffix=argIndent + ")")
+            elif self._is(self._reComment):
+                arguments.append(self._parseComment(self._match, argIndent))
+
+            else:
+                arguments.append(self._parseArgument(argIndent))
+
+        raise EOFError("unexpected EOF while parsing command (expected ')')")
+
+    # ---------------------------------------------------------------------------
+    def _is(self, regex):
+        self._match = regex.match(self._content)
+        return self._match is not None

@@ -47,9 +47,9 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
         self.assertTrue(numpy.allclose(self.nrrdArray, self.itkArray))
 
     def runTest(self):
-      self.setUp()
-      self.test_pointdata()
-      self.test_ras_to_ijk()
+        self.setUp()
+        self.test_pointdata()
+        self.test_ras_to_ijk()
 
 
 def compare_vtk_matrix(m1, m2, n=4):

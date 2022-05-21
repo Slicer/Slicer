@@ -28,9 +28,9 @@ class SlicerUtilGetNodeTest(unittest.TestCase):
 
         # Test handling of requesting non-existing node
         with self.assertRaises(slicer.util.MRMLNodeNotFoundException):
-          slicer.util.getNode("")
+            slicer.util.getNode("")
         with self.assertRaises(slicer.util.MRMLNodeNotFoundException):
-          slicer.util.getNode("NotExistingNodeName")
+            slicer.util.getNode("NotExistingNodeName")
 
         # For the following tests, use a dedicated scene where
         # all nodes are known.
