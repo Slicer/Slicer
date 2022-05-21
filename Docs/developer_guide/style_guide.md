@@ -22,7 +22,7 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
 
 #### Python
 
-- Indentation is 2 spaces per level for consistency with the rest of the code base. This may be revisited in the future. Do not use tabs.
+- Follow the Slicer repository Flake8 configuration and run `python -m pre_commit run --all-files` to confirm compliance.
 - Text encoding: UTF-8 is preferred, Latin-1 is acceptable
 - Comparisons:
   - To singletons (e.g. None): use 'is' or 'is not', never equality operations.
@@ -35,7 +35,6 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
     - Local apps/library specific imports
       - Slicer application imports and local/module imports may be grouped independently.
   - One package per line (with or without multiple function/module/class imports from the package)
-- Avoid extraneous whitespaces
 - Naming conventions: when [PEP 8](https://www.python.org/dev/peps/pep-0008/#package-and-module-names) and Slicer naming conventions conflict, Slicer wins.
 
 #### C++
