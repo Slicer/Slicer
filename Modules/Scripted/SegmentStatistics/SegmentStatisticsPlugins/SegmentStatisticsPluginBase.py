@@ -149,9 +149,12 @@ class SegmentStatisticsPluginBase:
             info = self.getMeasurementInfo(key)
             if info and ("name" in info or "description" in info):
                 label = info["name"] if "name" in info else info["description"]
-                if "name" in info: tooltip += "\nname: " + str(info["name"])
-                if "description" in info: tooltip += "\ndescription: " + str(info["description"])
-                if "units" in info: tooltip += "\nunits: " + (str(info["units"]) if info["units"] else "n/a")
+                if "name" in info:
+                    tooltip += "\nname: " + str(info["name"])
+                if "description" in info:
+                    tooltip += "\ndescription: " + str(info["description"])
+                if "units" in info:
+                    tooltip += "\nunits: " + (str(info["units"]) if info["units"] else "n/a")
             checkbox = qt.QCheckBox(label, self.optionsWidget)
             checkbox.checked = key in requestedKeys
             checkbox.setToolTip(tooltip)

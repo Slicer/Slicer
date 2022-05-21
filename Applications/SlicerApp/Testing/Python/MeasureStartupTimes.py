@@ -49,8 +49,10 @@ def collect_startup_times_normal(output_file, drop_cache=False, display_output=F
     (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
     (returnCode, stdout, stderr) = result
     if display_output:
-        if stdout: print("STDOUT [%s]\n" % stdout)
-        if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+        if stdout:
+            print("STDOUT [%s]\n" % stdout)
+        if stderr and returnCode == EXIT_SUCCESS:
+            print("STDERR [%s]\n" % stderr)
     results[" ".join(test)] = duration
     with open(output_file, 'w') as file:
         file.write(json.dumps(results, indent=4))
@@ -84,8 +86,10 @@ def collect_startup_times_overall(output_file, drop_cache=False, display_output=
 
         (returnCode, stdout, stderr) = result
         if display_output:
-            if stdout: print("STDOUT [%s]\n" % stdout)
-            if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+            if stdout:
+                print("STDOUT [%s]\n" % stdout)
+            if stderr and returnCode == EXIT_SUCCESS:
+                print("STDERR [%s]\n" % stderr)
 
     with open(output_file, 'w') as file:
         file.write(json.dumps(results, indent=4))
@@ -155,8 +159,10 @@ def collect_startup_times_including_one_module(output_file, module_list, drop_ca
         (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
         (returnCode, stdout, stderr) = result
         if display_output:
-            if stdout: print("STDOUT [%s]\n" % stdout)
-            if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+            if stdout:
+                print("STDOUT [%s]\n" % stdout)
+            if stderr and returnCode == EXIT_SUCCESS:
+                print("STDERR [%s]\n" % stderr)
         if returnCode != EXIT_SUCCESS:
             # XXX Ignore module with dependencies
             duration = None
@@ -180,8 +186,10 @@ def collect_startup_times_excluding_one_module(output_file, module_list, drop_ca
         (duration, result) = runSlicerAndExitWithTime(slicer_executable, ['--testing', '--modules-to-ignore', moduleName], drop_cache=drop_cache)
         (returnCode, stdout, stderr) = result
         if display_output:
-            if stdout: print("STDOUT [%s]\n" % stdout)
-            if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+            if stdout:
+                print("STDOUT [%s]\n" % stdout)
+            if stderr and returnCode == EXIT_SUCCESS:
+                print("STDERR [%s]\n" % stderr)
         if returnCode != EXIT_SUCCESS:
             # XXX Ignore module with dependencies
             duration = None
@@ -204,8 +212,10 @@ def collect_startup_times_modules_to_load(output_file, modules_to_load, module_l
     (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
     (returnCode, stdout, stderr) = result
     if display_output:
-        if stdout: print("STDOUT [%s]\n" % stdout)
-        if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+        if stdout:
+            print("STDOUT [%s]\n" % stdout)
+        if stderr and returnCode == EXIT_SUCCESS:
+            print("STDERR [%s]\n" % stderr)
 
     results = {}
     results[" ".join(modulesToIgnore)] = duration

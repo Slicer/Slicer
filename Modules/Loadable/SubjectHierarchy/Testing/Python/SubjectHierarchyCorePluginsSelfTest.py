@@ -108,7 +108,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
         self.cloneNodeNamePostfix = slicer.qSlicerSubjectHierarchyCloneNodePlugin().getCloneNodeNamePostfix()
 
         # Test printing of all context menu actions and their section numbers
-        pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler().instance();
+        pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler().instance()
         print(pluginHandler.dumpContextMenuActions())
 
     # ------------------------------------------------------------------------------

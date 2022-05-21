@@ -217,7 +217,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             displayedTypeDescriptions = []
             for extension in extensionsToOffer:
                 typeDescription = extension['typeDescription']
-                if not typeDescription in displayedTypeDescriptions:
+                if typeDescription not in displayedTypeDescriptions:
                     # only display each data type only once
                     message += '  ' + typeDescription + '\n'
                     displayedTypeDescriptions.append(typeDescription)
@@ -225,7 +225,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             displayedExtensionNames = []
             for extension in extensionsToOffer:
                 extensionName = extension['name']
-                if not extensionName in displayedExtensionNames:
+                if extensionName not in displayedExtensionNames:
                     # only display each extension name only once
                     message += '  ' + extensionName + '\n'
                     displayedExtensionNames.append(extensionName)
@@ -488,7 +488,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     def showReferenceDialogAndProceed(self):
         referencesDialog = DICOMReferencesDialog(self, loadables=self.referencedLoadables)
         answer = referencesDialog.exec_()
-        if referencesDialog.rememberChoiceAndStopAskingCheckbox.checked == True:
+        if referencesDialog.rememberChoiceAndStopAskingCheckbox.checked is True:
             if answer == qt.QMessageBox.Yes:
                 qt.QSettings().setValue('DICOM/automaticallyLoadReferences', qt.QMessageBox.Yes)
             if answer == qt.QMessageBox.No:
@@ -497,7 +497,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             # each check box corresponds to a referenced loadable that was selected by examine;
             # if the user confirmed that reference should be loaded, add it to the self.loadablesByPlugin dictionary
             for plugin in self.referencedLoadables:
-                for loadable in [l for l in self.referencedLoadables[plugin] if l.selected]:
+                for loadable in [loadable_item for loadable_item in self.referencedLoadables[plugin] if loadable_item.selected]:
                     if referencesDialog.checkboxes[loadable].checked:
                         self.loadablesByPlugin[plugin].append(loadable)
                 self.loadablesByPlugin[plugin] = list(set(self.loadablesByPlugin[plugin]))
@@ -507,7 +507,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
     def addReferencesAndProceed(self):
         for plugin in self.referencedLoadables:
-            for loadable in [l for l in self.referencedLoadables[plugin] if l.selected]:
+            for loadable in [loadable_item for loadable_item in self.referencedLoadables[plugin] if loadable_item.selected]:
                 self.loadablesByPlugin[plugin].append(loadable)
             self.loadablesByPlugin[plugin] = list(set(self.loadablesByPlugin[plugin]))
         self.proceedWithReferencedLoadablesSelection()
@@ -615,7 +615,7 @@ class DICOMReferencesDialog(qt.QMessageBox):
         self.checkBoxGroupBox = qt.QGroupBox("References")
         self.checkBoxGroupBox.setLayout(qt.QFormLayout())
         for plugin in self.loadables:
-            for loadable in [l for l in self.loadables[plugin] if l.selected]:
+            for loadable in [loadable_item for loadable_item in self.loadables[plugin] if loadable_item.selected]:
                 checkBoxText = loadable.name + ' (' + plugin.loadType + ') '
                 cb = qt.QCheckBox(checkBoxText, self)
                 cb.checked = True

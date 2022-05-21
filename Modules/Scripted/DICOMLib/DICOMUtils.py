@@ -63,7 +63,7 @@ def loadPatientByUID(patientUID):
         raise OSError('DICOM module or database cannot be accessed')
 
     patientUIDstr = str(patientUID)
-    if not patientUIDstr in slicer.dicomDatabase.patients():
+    if patientUIDstr not in slicer.dicomDatabase.patients():
         raise OSError('No patient found with DICOM database UID %s' % patientUIDstr)
 
     # Select all series in selected patient
@@ -864,7 +864,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
 
         seriesList = client.search_for_series(study_instance_uid=studyInstanceUID)
         seriesInstanceUIDs = []
-        if not seriesInstanceUID is None:
+        if seriesInstanceUID is not None:
             seriesInstanceUIDs = [seriesInstanceUID]
         else:
             for series in seriesList:

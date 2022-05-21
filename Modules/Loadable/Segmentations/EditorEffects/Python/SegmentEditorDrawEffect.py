@@ -235,7 +235,8 @@ class DrawPipeline:
 
         # Don't allow adding points on except on the active slice
         # (where first point was laid down)
-        if self.activeSliceOffset != currentSliceOffset: return
+        if self.activeSliceOffset != currentSliceOffset:
+            return
 
         # Keep track of node state (in case of pan/zoom)
         sliceNode = sliceLogic.GetSliceNode()

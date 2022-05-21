@@ -12,7 +12,8 @@ from slicer.util import *
 #      that way the following try/except could be avoided.
 try:
     import slicer.cli
-except: pass
+except:
+    pass
 
 
 # -----------------------------------------------------------------------------

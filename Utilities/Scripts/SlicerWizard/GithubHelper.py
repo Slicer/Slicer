@@ -28,9 +28,9 @@ class _CredentialToken:
 
         # Set attributes from input text (i.e. 'git credential fill' output)
         if text is not None:
-            for l in text.split("\n"):
-                if "=" in l:
-                    t = l.split("=", 1)
+            for line in text.split("\n"):
+                if "=" in line:
+                    t = line.split("=", 1)
                     self._keys.add(t[0])
                     setattr(self, t[0], t[1])
 
