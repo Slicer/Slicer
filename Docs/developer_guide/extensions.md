@@ -83,8 +83,8 @@ To test an extension, you need to specify location(s) where Slicer should look f
   - Option A: start the application using the `SlicerWithMyExtension` executable in your build directory. This starts Slicer, specifying additional module paths via command-line arguments.
   - Option B: specify additional module paths manually in application settings. Assuming your extension has been built into folder `MyExtension-debug`, add these module folders (if they exist) to the additional module paths in Slicer's application settings:
     - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-scripted-modules`
-    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules`
-    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules`
+    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules\Debug` or `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules\Release` or (on systems where multi-configuration builds are not used, such as linux) simply `C:\path\to\MyExtension-debug\lib\Slicer-4.13\qt-loadable-modules`:
+    - `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules\Debug`, `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules\Release`, or `C:\path\to\MyExtension-debug\lib\Slicer-4.13\cli-modules`
 
 ### Run automatic tests
 
