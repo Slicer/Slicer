@@ -357,7 +357,7 @@ class ExtensionWizardWidget:
                     for module in modulesToLoad:
                         rawPath = os.path.dirname(module.path)
                         path = qt.QDir(rawPath)
-                        if not path in searchPaths:
+                        if path not in searchPaths:
                             searchPaths.append(path)
                             rawSearchPaths.append(rawPath)
                             modified = True

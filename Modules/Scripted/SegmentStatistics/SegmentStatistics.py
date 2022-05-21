@@ -369,7 +369,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
             if key.count(".") > 0:
                 logging.warning("Plugin keys should not contain extra '.' as it might mix pluginname.measurementkey in "
                                 "the parameter node")
-        if not plugin.__class__ in SegmentStatisticsLogic.registeredPlugins:
+        if plugin.__class__ not in SegmentStatisticsLogic.registeredPlugins:
             SegmentStatisticsLogic.registeredPlugins.append(plugin.__class__)
         else:
             logging.warning("SegmentStatisticsLogic.registerPlugin will not register plugin because \
@@ -454,7 +454,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
                 segmentID = visibleSegmentIds.GetValue(segmentIndex)
                 self.updateStatisticsForSegment(segmentID)
         finally:
-            if not transformedSegmentationNode is None:
+            if transformedSegmentationNode is not None:
                 # We made a copy and hardened the segmentation transform
                 self.getParameterNode().SetParameter("Segmentation", segmentationNode.GetID())
                 slicer.mrmlScene.RemoveNode(transformedSegmentationNode)
@@ -549,8 +549,10 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
                 if dicomBasedName and 'DICOM.UnitsCode' in info and info['DICOM.UnitsCode']:
                     entry.SetFromString(info['DICOM.UnitsCode'])
                     units = entry.GetCodeValue()
-                    if len(units) > 0 and units[0] == '[' and units[-1] == ']': units = units[1:-1]
-                    if len(units) > 0: name += ' [' + units + ']'
+                    if len(units) > 0 and units[0] == '[' and units[-1] == ']':
+                        units = units[1:-1]
+                    if len(units) > 0:
+                        name += ' [' + units + ']'
                 elif 'units' in info and info['units'] and len(info['units']) > 0:
                     units = info['units']
                     name += ' [' + units + ']'
@@ -805,14 +807,16 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         self.assertEqual(segStatLogic.getStatistics()["Test_2", "LabelmapSegmentStatisticsPlugin.voxel_count"], 9807)
-        with self.assertRaises(KeyError): segStatLogic.getStatistics()["Test_4", "ScalarVolumeSegmentStatisticsPlugin.voxel count"]
+        with self.assertRaises(KeyError):
+            segStatLogic.getStatistics()["Test_4", "ScalarVolumeSegmentStatisticsPlugin.voxel count"]
         # assert there are no result for this segment
         segStatLogic.updateStatisticsForSegment('Test_4')
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         self.assertEqual(segStatLogic.getStatistics()["Test_2", "LabelmapSegmentStatisticsPlugin.voxel_count"], 9807)
         self.assertEqual(segStatLogic.getStatistics()["Test_4", "LabelmapSegmentStatisticsPlugin.voxel_count"], 380)
-        with self.assertRaises(KeyError): segStatLogic.getStatistics()["Test_5", "ScalarVolumeSegmentStatisticsPlugin.voxel count"]
+        with self.assertRaises(KeyError):
+            segStatLogic.getStatistics()["Test_5", "ScalarVolumeSegmentStatisticsPlugin.voxel count"]
         # assert there are no result for this segment
 
         # calculate measurements for all segments

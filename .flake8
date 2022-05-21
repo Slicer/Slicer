@@ -46,22 +46,10 @@ ignore = \
   E402, \
   # the backslash is redundant between bracket
   E502, \
-  # multiple statements on one line (colon)
-  E701, \
-  # statement ends with a semicolon
-  E703, \
-  # comparison to True should be 'if cond is True:' or 'if cond:'
-  E712, \
-  # test for membership should be 'not in'
-  E713, \
-  # test for object identity should be 'is not'
-  E714, \
   # do not use bare 'except'
   E722, \
   # do not assign a lambda expression, use a def
   E731, \
-  # ambiguous variable name 'l'
-  E741, \
   # 'from module import *' used; unable to detect undefined names
   F403, \
   # Name may be undefined, or defined from star import

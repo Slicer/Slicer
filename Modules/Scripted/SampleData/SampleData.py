@@ -672,7 +672,7 @@ class SampleDataLogic:
                 resultFilePaths.append(filePath)
 
                 if loadFileType == 'ZipFile':
-                    if loadFile == False:
+                    if loadFile is False:
                         resultNodes.append(filePath)
                         break
                     outputDir = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory() + "/" + os.path.splitext(os.path.basename(filePath))[0]
@@ -690,7 +690,7 @@ class SampleDataLogic:
                         resultNodes.append(filePath)
                         break
                 elif nodeName:
-                    if loadFile == False:
+                    if loadFile is False:
                         resultNodes.append(filePath)
                         break
                     loadedNode = self.loadNode(filePath, nodeName, loadFileType, source.loadFileProperties.copy())

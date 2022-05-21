@@ -122,14 +122,14 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                 temp = statFilterOptions
                 statFilterOptions = []
                 for option in temp:
-                    if not option in self.obbKeys:
+                    if option not in self.obbKeys:
                         statFilterOptions.append(option)
                 statFilterOptions.append("oriented_bounding_box")
 
                 temp = requestedOptions
                 requestedOptions = []
                 for option in temp:
-                    if not option in self.obbKeys:
+                    if option not in self.obbKeys:
                         requestedOptions.append(option)
                 requestedOptions.append("oriented_bounding_box")
 
@@ -142,14 +142,14 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                 temp = statFilterOptions
                 statFilterOptions = []
                 for option in temp:
-                    if not option in self.principalAxisKeys:
+                    if option not in self.principalAxisKeys:
                         statFilterOptions.append(option)
                 statFilterOptions.append("principal_axes")
 
                 temp = requestedOptions
                 requestedOptions = []
                 for option in temp:
-                    if not option in self.principalAxisKeys:
+                    if option not in self.principalAxisKeys:
                         requestedOptions.append(option)
                 requestedOptions.append("principal_axes")
                 requestedOptions.append("centroid_ras")

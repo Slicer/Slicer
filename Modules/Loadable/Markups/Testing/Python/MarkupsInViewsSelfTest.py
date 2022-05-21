@@ -341,7 +341,7 @@ class MarkupsInViewsSelfTestTest(ScriptedLoadableModuleTest):
         logic = MarkupsInViewsSelfTestLogic()
         retval = logic.run()
 
-        if retval == True:
+        if retval is True:
             self.delayDisplay('Test passed!')
         else:
             self.delayDisplay('Test failed!')

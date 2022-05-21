@@ -209,7 +209,8 @@ def lookupTopLevelWidget(objectName):
     from slicer import app
     for w in app.topLevelWidgets():
         if hasattr(w, 'objectName'):
-            if w.objectName == objectName: return w
+            if w.objectName == objectName:
+                return w
     # not found
     raise RuntimeError("Failed to obtain reference to '%s'" % objectName)
 
@@ -1259,7 +1260,7 @@ def reloadScriptedModule(moduleName):
     filePath = modulePath(moduleName)
     p = os.path.dirname(filePath)
 
-    if not p in sys.path:
+    if p not in sys.path:
         sys.path.insert(0, p)
 
     with open(filePath, encoding='utf8') as fp:

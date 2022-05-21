@@ -173,9 +173,9 @@ class ExtensionDescription:
     @staticmethod
     def _gitSvnInfo(repo, remote):
         result = {}
-        for l in repo.git.svn('info', R=remote).split("\n"):
-            if len(l):
-                key, value = l.split(":", 1)
+        for line in repo.git.svn('info', R=remote).split("\n"):
+            if len(line):
+                key, value = line.split(":", 1)
                 result[key] = value.strip()
         return result
 
@@ -208,8 +208,8 @@ class ExtensionDescription:
 
     # ---------------------------------------------------------------------------
     def _read(self, fp):
-        for l in fp:
-            m = self._reParam.match(l)
+        for line in fp:
+            m = self._reParam.match(line)
             if m is not None:
                 setattr(self, m.group(1), m.group(2).strip())
 
@@ -247,7 +247,8 @@ class ExtensionDescription:
         start = 0
         while True:
             start = a_str.find(sub, start)
-            if start == -1: return
+            if start == -1:
+                return
             yield start
             start += len(sub)
 

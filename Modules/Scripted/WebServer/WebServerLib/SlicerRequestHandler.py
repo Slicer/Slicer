@@ -242,7 +242,7 @@ class SlicerRequestHandler(object):
         except KeyError:
             cmd = 'next'
         options = ['next', 'previous']
-        if not cmd in options:
+        if cmd not in options:
             cmd = 'next'
 
         applicationLogic = slicer.app.applicationLogic()
@@ -605,7 +605,7 @@ space origin: %%origin%%
             s = 0
 
         fiducialNode = slicer.util.getNode(fiducialID)
-        fiducialNode.SetNthFiducialPosition(index, float(r), float(a), float(s));
+        fiducialNode.SetNthFiducialPosition(index, float(r), float(a), float(s))
         return "{'result': 'ok'}", b'application/json'
 
     def accessDICOMwebStudy(self, request, requestBody):
@@ -733,7 +733,7 @@ space origin: %%origin%%
         except KeyError:
             view = 'red'
         options = ['red', 'yellow', 'green']
-        if not view in options:
+        if view not in options:
             view = 'red'
         layoutManager = slicer.app.layoutManager()
         sliceLogic = layoutManager.sliceWidget(view.capitalize()).sliceLogic()
