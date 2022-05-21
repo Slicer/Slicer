@@ -241,7 +241,7 @@ docsfolder = os.path.dirname(__file__)
 inputpaths = [
     os.path.join(docsfolder, "../Modules/CLI"),
     os.path.join(docsfolder, "_extracli"),
-    ]
+]
 
 # List of modules to be excluded from documentation generation
 # (for example, testing modules only).
@@ -249,7 +249,7 @@ excludenames = [
     'CLIROITest.xml',
     'TestGridTransformRegistration.xml',
     'DiffusionTensorTest.xml',
-    ]
+]
 
 # Output folder that contains all generated markdown files.
 outpath = os.path.join(docsfolder, "_moduledescriptions")

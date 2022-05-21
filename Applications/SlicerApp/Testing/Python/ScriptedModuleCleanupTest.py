@@ -23,9 +23,9 @@ import os
 import tempfile
 
 from SlicerAppTesting import (
-  EXIT_FAILURE,
-  EXIT_SUCCESS,
-  run,
+    EXIT_FAILURE,
+    EXIT_SUCCESS,
+    run,
 )
 
 """
@@ -41,59 +41,59 @@ Usage:
 
 
 def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
-  """
-  If debug is set to True:
-    * display the path of the expected test output file
-    * avoid deleting the created temporary directory
-  """
+    """
+    If debug is set to True:
+      * display the path of the expected test output file
+      * avoid deleting the created temporary directory
+    """
 
-  temporaryModuleDirPath = tempfile.mkdtemp().replace('\\', '/')
-  try:
-    # Copy helper module that creates a file when startup completed event is received
-    currentDirPath = os.path.dirname(__file__).replace('\\', '/')
-    from shutil import copyfile
-    copyfile(currentDirPath + '/ScriptedModuleCleanupTestHelperModule.py',
-      temporaryModuleDirPath + '/ModuleCleanup.py')
+    temporaryModuleDirPath = tempfile.mkdtemp().replace('\\', '/')
+    try:
+        # Copy helper module that creates a file when startup completed event is received
+        currentDirPath = os.path.dirname(__file__).replace('\\', '/')
+        from shutil import copyfile
+        copyfile(currentDirPath + '/ScriptedModuleCleanupTestHelperModule.py',
+                 temporaryModuleDirPath + '/ModuleCleanup.py')
 
-    common_arguments = [
-      '--no-splash',
-      '--disable-builtin-modules',
-      '--additional-module-path', temporaryModuleDirPath,
-      '--python-code', 'slicer.util.selectModule("ModuleCleanup")'
-    ]
+        common_arguments = [
+            '--no-splash',
+            '--disable-builtin-modules',
+            '--additional-module-path', temporaryModuleDirPath,
+            '--python-code', 'slicer.util.selectModule("ModuleCleanup")'
+        ]
 
-    test_output_file = temporaryModuleDirPath + "/ModuleCleanupTest.out"
-    os.environ['SLICER_MODULE_CLEANUP_TEST_OUTPUT'] = test_output_file
-    if debug:
-      print("SLICER_MODULE_CLEANUP_TEST_OUTPUT=%s" % test_output_file)
+        test_output_file = temporaryModuleDirPath + "/ModuleCleanupTest.out"
+        os.environ['SLICER_MODULE_CLEANUP_TEST_OUTPUT'] = test_output_file
+        if debug:
+            print("SLICER_MODULE_CLEANUP_TEST_OUTPUT=%s" % test_output_file)
 
-    # Test
-    args = list(common_arguments)
-    if testing_enabled:
-      args.append('--testing')
-    else:
-      args.append('--exit-after-startup')
-    (returnCode, stdout, stderr) = run(slicer_executable, args)
+        # Test
+        args = list(common_arguments)
+        if testing_enabled:
+            args.append('--testing')
+        else:
+            args.append('--exit-after-startup')
+        (returnCode, stdout, stderr) = run(slicer_executable, args)
 
-    assert(os.path.isfile(test_output_file))
+        assert(os.path.isfile(test_output_file))
 
-    if testing_enabled:
-      assert(returnCode == EXIT_FAILURE)
-    else:
-      assert(returnCode == EXIT_SUCCESS)
+        if testing_enabled:
+            assert(returnCode == EXIT_FAILURE)
+        else:
+            assert(returnCode == EXIT_SUCCESS)
 
-  finally:
-    if not debug:
-      import shutil
-      shutil.rmtree(temporaryModuleDirPath)
+    finally:
+        if not debug:
+            import shutil
+            shutil.rmtree(temporaryModuleDirPath)
 
 
 if __name__ == "__main__":
 
-  parser = argparse.ArgumentParser()
-  parser.add_argument("/path/to/Slicer")
-  parser.add_argument('--with-testing', dest='testing_enabled', action='store_true')
-  args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("/path/to/Slicer")
+    parser.add_argument('--with-testing', dest='testing_enabled', action='store_true')
+    args = parser.parse_args()
 
-  slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))
-  check_exit_code(slicer_executable, testing_enabled=args.testing_enabled)
+    slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))
+    check_exit_code(slicer_executable, testing_enabled=args.testing_enabled)

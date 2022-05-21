@@ -32,76 +32,76 @@ Usage:
 
 
 def TemporaryPythonScript(code, *args, **kwargs):
-  if 'suffix' not in kwargs:
-    kwargs['suffix'] = '.py'
-  if 'mode' not in kwargs:
-    kwargs['mode'] = 'w'
-  script = tempfile.NamedTemporaryFile(*args, **kwargs)
-  script.write(code)
-  script.flush()
-  print(f"Written script {script.name} [{code}]")
-  return script
+    if 'suffix' not in kwargs:
+        kwargs['suffix'] = '.py'
+    if 'mode' not in kwargs:
+        kwargs['mode'] = 'w'
+    script = tempfile.NamedTemporaryFile(*args, **kwargs)
+    script.write(code)
+    script.flush()
+    print(f"Written script {script.name} [{code}]")
+    return script
 
 
 def collect_startup_times_normal(output_file, drop_cache=False, display_output=False):
-  results = {}
-  test = []
-  (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
-  (returnCode, stdout, stderr) = result
-  if display_output:
-    if stdout: print("STDOUT [%s]\n" % stdout)
-    if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
-  results[" ".join(test)] = duration
-  with open(output_file, 'w') as file:
-    file.write(json.dumps(results, indent=4))
+    results = {}
+    test = []
+    (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+    (returnCode, stdout, stderr) = result
+    if display_output:
+        if stdout: print("STDOUT [%s]\n" % stdout)
+        if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+    results[" ".join(test)] = duration
+    with open(output_file, 'w') as file:
+        file.write(json.dumps(results, indent=4))
 
 
 def collect_startup_times_overall(output_file, drop_cache=False, display_output=False):
 
-  results = {}
+    results = {}
 
-  test = ["--help"]
-  (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
-  results[" ".join(test)] = duration
-
-  tests = [
-    [],
-    ['--disable-builtin-cli-modules'],
-    ['--disable-builtin-loadable-modules'],
-    ['--disable-builtin-scripted-loadable-modules'],
-    ['--disable-builtin-cli-modules', '--disable-builtin-scripted-loadable-modules'],
-    ['--disable-modules']
-  ]
-
-  for test in tests:
+    test = ["--help"]
     (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
     results[" ".join(test)] = duration
 
-  for test in tests:
-    test.insert(0, '--disable-python')
-    (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
-    results[" ".join(test)] = duration
+    tests = [
+        [],
+        ['--disable-builtin-cli-modules'],
+        ['--disable-builtin-loadable-modules'],
+        ['--disable-builtin-scripted-loadable-modules'],
+        ['--disable-builtin-cli-modules', '--disable-builtin-scripted-loadable-modules'],
+        ['--disable-modules']
+    ]
 
-    (returnCode, stdout, stderr) = result
-    if display_output:
-      if stdout: print("STDOUT [%s]\n" % stdout)
-      if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+    for test in tests:
+        (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+        results[" ".join(test)] = duration
 
-  with open(output_file, 'w') as file:
-    file.write(json.dumps(results, indent=4))
+    for test in tests:
+        test.insert(0, '--disable-python')
+        (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+        results[" ".join(test)] = duration
+
+        (returnCode, stdout, stderr) = result
+        if display_output:
+            if stdout: print("STDOUT [%s]\n" % stdout)
+            if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+
+    with open(output_file, 'w') as file:
+        file.write(json.dumps(results, indent=4))
 
 
 def read_modules(input_file):
-  # Read list of modules
-  with open(input_file) as input:
-    modules = json.load(input)
-  print("Found %d modules reading %s\n" % (len(modules), input_file))
-  return modules
+    # Read list of modules
+    with open(input_file) as input:
+        modules = json.load(input)
+    print("Found %d modules reading %s\n" % (len(modules), input_file))
+    return modules
 
 
 def collect_modules(output_file):
-  # Collect list of all modules and their associated types
-  python_script = TemporaryPythonScript("""
+    # Collect list of all modules and their associated types
+    python_script = TemporaryPythonScript("""
 import json
 
 modules = {{}}
@@ -127,148 +127,148 @@ with open("{0}", 'w') as output:
   output.write(json.dumps(modules, indent=4))
 """.format(output_file))
 
-  (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, ['--python-script', python_script.name])
-  assert returnCode == EXIT_SUCCESS
-  print("=> ok\n")
+    (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, ['--python-script', python_script.name])
+    assert returnCode == EXIT_SUCCESS
+    print("=> ok\n")
 
-  return read_modules(output_file)
+    return read_modules(output_file)
 
 
 def slicerRevision():
-  (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, [
-    '--no-main-window', '--ignore-slicerrc', '--disable-modules',
-    '--python-code', 'print(slicer.app.repositoryRevision)'
-  ])
-  assert returnCode == EXIT_SUCCESS
-  return stdout.split()[0]
+    (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, [
+        '--no-main-window', '--ignore-slicerrc', '--disable-modules',
+        '--python-code', 'print(slicer.app.repositoryRevision)'
+    ])
+    assert returnCode == EXIT_SUCCESS
+    return stdout.split()[0]
 
 
 def collect_startup_times_including_one_module(output_file, module_list, drop_cache=False, display_output=False):
-  modules = collect_modules(module_list)
-  # Collect startup times disabling each module one by one
-  moduleTimes = {}
-  for (idx, (moduleName, moduleType)) in enumerate(modules.iteritems(), start=1):
-    modules_minus_one = list(modules.keys())
-    del modules_minus_one[modules_minus_one.index(moduleName)]
-    print("[%d/%d] including %s" % (idx, len(modules), moduleName))
-    test = ['--testing', '--modules-to-ignore', ",".join(modules_minus_one)]
-    (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
-    (returnCode, stdout, stderr) = result
-    if display_output:
-      if stdout: print("STDOUT [%s]\n" % stdout)
-      if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
-    if returnCode != EXIT_SUCCESS:
-      # XXX Ignore module with dependencies
-      duration = None
-      print("=> failed\n")
-    else:
-      moduleTimes[moduleName] = duration
+    modules = collect_modules(module_list)
+    # Collect startup times disabling each module one by one
+    moduleTimes = {}
+    for (idx, (moduleName, moduleType)) in enumerate(modules.iteritems(), start=1):
+        modules_minus_one = list(modules.keys())
+        del modules_minus_one[modules_minus_one.index(moduleName)]
+        print("[%d/%d] including %s" % (idx, len(modules), moduleName))
+        test = ['--testing', '--modules-to-ignore', ",".join(modules_minus_one)]
+        (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+        (returnCode, stdout, stderr) = result
+        if display_output:
+            if stdout: print("STDOUT [%s]\n" % stdout)
+            if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+        if returnCode != EXIT_SUCCESS:
+            # XXX Ignore module with dependencies
+            duration = None
+            print("=> failed\n")
+        else:
+            moduleTimes[moduleName] = duration
 
-  with open(output_file, 'w') as file:
-    file.write(json.dumps(moduleTimes, indent=4))
+    with open(output_file, 'w') as file:
+        file.write(json.dumps(moduleTimes, indent=4))
 
 
 def collect_startup_times_excluding_one_module(output_file, module_list, drop_cache=False, display_output=False):
-  modules = collect_modules(module_list)
-  # Collect startup times disabling each module one by one
-  moduleTimes = {}
-  for (idx, (moduleName, moduleType)) in enumerate(modules.iteritems(), start=1):
-    # if moduleType == "CLI":
-    #  print("=> Skipping CLI [%s]\n" % moduleName)
-    #  continue
-    print("[%d/%d]" % (idx, len(modules)))
-    (duration, result) = runSlicerAndExitWithTime(slicer_executable, ['--testing', '--modules-to-ignore', moduleName], drop_cache=drop_cache)
-    (returnCode, stdout, stderr) = result
-    if display_output:
-      if stdout: print("STDOUT [%s]\n" % stdout)
-      if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
-    if returnCode != EXIT_SUCCESS:
-      # XXX Ignore module with dependencies
-      duration = None
-      print("=> failed\n")
-    else:
-      moduleTimes[moduleName] = duration
+    modules = collect_modules(module_list)
+    # Collect startup times disabling each module one by one
+    moduleTimes = {}
+    for (idx, (moduleName, moduleType)) in enumerate(modules.iteritems(), start=1):
+        # if moduleType == "CLI":
+        #  print("=> Skipping CLI [%s]\n" % moduleName)
+        #  continue
+        print("[%d/%d]" % (idx, len(modules)))
+        (duration, result) = runSlicerAndExitWithTime(slicer_executable, ['--testing', '--modules-to-ignore', moduleName], drop_cache=drop_cache)
+        (returnCode, stdout, stderr) = result
+        if display_output:
+            if stdout: print("STDOUT [%s]\n" % stdout)
+            if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+        if returnCode != EXIT_SUCCESS:
+            # XXX Ignore module with dependencies
+            duration = None
+            print("=> failed\n")
+        else:
+            moduleTimes[moduleName] = duration
 
-  with open(output_file, 'w') as file:
-    file.write(json.dumps(moduleTimes, indent=4))
+    with open(output_file, 'w') as file:
+        file.write(json.dumps(moduleTimes, indent=4))
 
 
 def collect_startup_times_modules_to_load(output_file, modules_to_load, module_list, drop_cache=False, display_output=False):
-  modules = collect_modules(module_list)
-  modulesToIgnore = list(modules.keys())
-  for moduleName in modules_to_load.split(","):
-    print("Including %s" % moduleName)
-    del modulesToIgnore[modulesToIgnore.index(moduleName)]
+    modules = collect_modules(module_list)
+    modulesToIgnore = list(modules.keys())
+    for moduleName in modules_to_load.split(","):
+        print("Including %s" % moduleName)
+        del modulesToIgnore[modulesToIgnore.index(moduleName)]
 
-  test = ['--testing', '--modules-to-ignore', ",".join(modulesToIgnore)]
-  (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
-  (returnCode, stdout, stderr) = result
-  if display_output:
-    if stdout: print("STDOUT [%s]\n" % stdout)
-    if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
+    test = ['--testing', '--modules-to-ignore', ",".join(modulesToIgnore)]
+    (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+    (returnCode, stdout, stderr) = result
+    if display_output:
+        if stdout: print("STDOUT [%s]\n" % stdout)
+        if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
 
-  results = {}
-  results[" ".join(modulesToIgnore)] = duration
-  with open(output_file, 'w') as file:
-    file.write(json.dumps(results, indent=4))
+    results = {}
+    results[" ".join(modulesToIgnore)] = duration
+    with open(output_file, 'w') as file:
+        file.write(json.dumps(results, indent=4))
 
 
 if __name__ == '__main__':
 
-  parser = argparse.ArgumentParser(description='Measure startup times.')
-  # Experiments
-  parser.add_argument("--normal", action="store_true")
-  parser.add_argument("--modules-to-load")
-  parser.add_argument("--overall", action="store_true")
-  parser.add_argument("--excluding-one-module", action="store_true")
-  parser.add_argument("--including-one-module", action="store_true")
-  # Common options
-  parser.add_argument("-n", "--repeat", default=1, type=int)
-  parser.add_argument("--drop-cache", action="store_true")
-  parser.add_argument("--reuse-module-list", action="store_true")
-  parser.add_argument("--display-slicer-output", action="store_true")
-  parser.add_argument("/path/to/Slicer")
-  args = parser.parse_args()
+    parser = argparse.ArgumentParser(description='Measure startup times.')
+    # Experiments
+    parser.add_argument("--normal", action="store_true")
+    parser.add_argument("--modules-to-load")
+    parser.add_argument("--overall", action="store_true")
+    parser.add_argument("--excluding-one-module", action="store_true")
+    parser.add_argument("--including-one-module", action="store_true")
+    # Common options
+    parser.add_argument("-n", "--repeat", default=1, type=int)
+    parser.add_argument("--drop-cache", action="store_true")
+    parser.add_argument("--reuse-module-list", action="store_true")
+    parser.add_argument("--display-slicer-output", action="store_true")
+    parser.add_argument("/path/to/Slicer")
+    args = parser.parse_args()
 
-  slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))
-  all = (not args.normal
-    and not args.modules_to_load
-    and not args.overall
-    and not args.excluding_one_module
-    and not args.including_one_module)
+    slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))
+    all = (not args.normal
+           and not args.modules_to_load
+           and not args.overall
+           and not args.excluding_one_module
+           and not args.including_one_module)
 
-  runSlicerAndExitWithTime = timecall(runSlicerAndExit, repeat=args.repeat)
+    runSlicerAndExitWithTime = timecall(runSlicerAndExit, repeat=args.repeat)
 
-  sliver_revision = slicerRevision()
-  module_list = "Modules-r%s.json" % sliver_revision
+    sliver_revision = slicerRevision()
+    module_list = "Modules-r%s.json" % sliver_revision
 
-  if args.reuse_module_list:
-    print("Loading existing module listing")
-    collect_modules = read_modules  # noqa: F811
+    if args.reuse_module_list:
+        print("Loading existing module listing")
+        collect_modules = read_modules  # noqa: F811
 
-  common_kwargs = {
-    'display_output': args.display_slicer_output,
-    'drop_cache': args.drop_cache
+    common_kwargs = {
+        'display_output': args.display_slicer_output,
+        'drop_cache': args.drop_cache
     }
 
-  # Since the "normal" experiment is included in the "overall" one,
-  # it is not executed by default.
-  if args.normal:
-    collect_startup_times_normal("StartupTimesNormal-r%s.json" % sliver_revision, **common_kwargs)
+    # Since the "normal" experiment is included in the "overall" one,
+    # it is not executed by default.
+    if args.normal:
+        collect_startup_times_normal("StartupTimesNormal-r%s.json" % sliver_revision, **common_kwargs)
 
-  # Since the "modules-to-load" experiment requires user input and is provided
-  # for convenience, it is not executed by default.
-  if args.modules_to_load:
-    collect_startup_times_modules_to_load(
-      "StartupTimesSelectedModules.json", args.modules_to_load, module_list, **common_kwargs)
+    # Since the "modules-to-load" experiment requires user input and is provided
+    # for convenience, it is not executed by default.
+    if args.modules_to_load:
+        collect_startup_times_modules_to_load(
+            "StartupTimesSelectedModules.json", args.modules_to_load, module_list, **common_kwargs)
 
-  if all or args.overall:
-    collect_startup_times_overall("StartupTimes-r%s.json" % sliver_revision, **common_kwargs)
+    if all or args.overall:
+        collect_startup_times_overall("StartupTimes-r%s.json" % sliver_revision, **common_kwargs)
 
-  if all or args.excluding_one_module:
-    collect_startup_times_excluding_one_module(
-      "StartupTimesExcludingOneModule-r%s.json" % sliver_revision, module_list, **common_kwargs)
+    if all or args.excluding_one_module:
+        collect_startup_times_excluding_one_module(
+            "StartupTimesExcludingOneModule-r%s.json" % sliver_revision, module_list, **common_kwargs)
 
-  if all or args.including_one_module:
-    collect_startup_times_including_one_module(
-      "StartupTimesIncludingOneModule-r%s.json" % sliver_revision, module_list, **common_kwargs)
+    if all or args.including_one_module:
+        collect_startup_times_including_one_module(
+            "StartupTimesIncludingOneModule-r%s.json" % sliver_revision, module_list, **common_kwargs)

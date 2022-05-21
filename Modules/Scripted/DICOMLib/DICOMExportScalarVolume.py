@@ -19,32 +19,32 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 
 
 class DICOMExportScalarVolume:
-  """Code to export slicer data to dicom database
-  TODO: delete temp directories and files
-  """
-
-  def __init__(self, studyUID, volumeNode, tags, directory, filenamePrefix=None):
+    """Code to export slicer data to dicom database
+    TODO: delete temp directories and files
     """
-    studyUID parameter is not used (studyUID is retrieved from tags).
-    """
-    self.studyUID = studyUID
-    self.volumeNode = volumeNode
-    self.tags = tags
-    self.directory = directory
-    self.filenamePrefix = filenamePrefix if filenamePrefix else "IMG"
-    # self.referenceFile = None
 
-  # TODO: May come in use when appending to existing study
-  # def parametersFromStudy(self,studyUID=None):
-    # """Return a dictionary of the required conversion parameters
-    # based on the studyUID found in the dicom dictionary (empty if
-    # not well defined"""
-    # if not studyUID:
-      # studyUID = self.studyUID
+    def __init__(self, studyUID, volumeNode, tags, directory, filenamePrefix=None):
+        """
+        studyUID parameter is not used (studyUID is retrieved from tags).
+        """
+        self.studyUID = studyUID
+        self.volumeNode = volumeNode
+        self.tags = tags
+        self.directory = directory
+        self.filenamePrefix = filenamePrefix if filenamePrefix else "IMG"
+        # self.referenceFile = None
 
-    # # TODO: we should install dicom.dic with slicer and use it to
-    # # define the tag to name mapping
-    # tags = {
+    # TODO: May come in use when appending to existing study
+    # def parametersFromStudy(self,studyUID=None):
+        # """Return a dictionary of the required conversion parameters
+        # based on the studyUID found in the dicom dictionary (empty if
+        # not well defined"""
+        # if not studyUID:
+        #     studyUID = self.studyUID
+
+        # # TODO: we should install dicom.dic with slicer and use it to
+        # # define the tag to name mapping
+        # tags = {
         # "0010,0010": "Patient Name",
         # "0010,0020": "Patient ID",
         # "0010,4000": "Patient Comments",
@@ -54,114 +54,114 @@ class DICOMExportScalarVolume:
         # "0008,0060": "Modality",
         # "0008,0070": "Manufacturer",
         # "0008,1090": "Model",
-    # }
-    # seriesNumbers = []
-    # p = {}
-    # if studyUID:
-      # series = slicer.dicomDatabase.seriesForStudy(studyUID)
-      # # first find a unique series number
-      # for serie in series:
-        # files = slicer.dicomDatabase.filesForSeries(serie, 1)
-        # if len(files):
-          # slicer.dicomDatabase.loadFileHeader(files[0])
-          # dump = slicer.dicomDatabase.headerValue('0020,0011')
-          # try:
-            # value = dump[dump.index('[')+1:dump.index(']')]
-            # seriesNumbers.append(int(value))
-          # except ValueError:
-            # pass
-      # for i in xrange(len(series)+1):
-        # if not i in seriesNumbers:
-          # p['Series Number'] = i
-          # break
+        # }
+        # seriesNumbers = []
+        # p = {}
+        # if studyUID:
+        #     series = slicer.dicomDatabase.seriesForStudy(studyUID)
+        #     # first find a unique series number
+        #     for serie in series:
+        #         files = slicer.dicomDatabase.filesForSeries(serie, 1)
+        #         if len(files):
+        #             slicer.dicomDatabase.loadFileHeader(files[0])
+        #             dump = slicer.dicomDatabase.headerValue('0020,0011')
+        #             try:
+        #                 value = dump[dump.index('[')+1:dump.index(']')]
+        #                 seriesNumbers.append(int(value))
+        #             except ValueError:
+        #                 pass
+        #     for i in xrange(len(series)+1):
+        #         if not i in seriesNumbers:
+        #             p['Series Number'] = i
+        #             break
 
-      # # now find the other values from any file (use first file in first series)
-      # if len(series):
-        # p['Series Number'] = str(len(series)+1) # doesn't need to be unique, but we try
-        # files = slicer.dicomDatabase.filesForSeries(series[0], 1)
-        # if len(files):
-          # self.referenceFile = files[0]
-          # slicer.dicomDatabase.loadFileHeader(self.referenceFile)
-          # for tag in tags.keys():
-            # dump = slicer.dicomDatabase.headerValue(tag)
-            # try:
-              # value = dump[dump.index('[')+1:dump.index(']')]
-            # except ValueError:
-              # value = "Unknown"
-            # p[tags[tag]] = value
-    # return p
+        #     # now find the other values from any file (use first file in first series)
+        #     if len(series):
+        #         p['Series Number'] = str(len(series)+1) # doesn't need to be unique, but we try
+        #         files = slicer.dicomDatabase.filesForSeries(series[0], 1)
+        #         if len(files):
+        #             self.referenceFile = files[0]
+        #             slicer.dicomDatabase.loadFileHeader(self.referenceFile)
+        #             for tag in tags.keys():
+        #                 dump = slicer.dicomDatabase.headerValue(tag)
+        #                 try:
+        #                     value = dump[dump.index('[')+1:dump.index(']')]
+        #                 except ValueError:
+        #                     value = "Unknown"
+        #                 p[tags[tag]] = value
+        # return p
 
-  def progress(self, string):
-    # TODO: make this a callback for a gui progress dialog
-    print(string)
+    def progress(self, string):
+        # TODO: make this a callback for a gui progress dialog
+        print(string)
 
-  def export(self):
-    """
-    Export the volume data using the ITK-based utility
-    TODO: confirm that resulting file is valid - may need to change the CLI
-    to include more parameters or do a new implementation ctk/DCMTK
-    See:
-    https://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
-    TODO: add more parameters to the CLI and/or find a different
-    mechanism for creating the DICOM files
-    """
-    cliparameters = {}
-    # Patient
-    cliparameters['patientName'] = self.tags['Patient Name']
-    cliparameters['patientID'] = self.tags['Patient ID']
-    cliparameters['patientBirthDate'] = self.tags['Patient Birth Date']
-    cliparameters['patientSex'] = self.tags['Patient Sex'] if self.tags['Patient Sex'] else "[unknown]"
-    cliparameters['patientComments'] = self.tags['Patient Comments']
-    # Study
-    cliparameters['studyID'] = self.tags['Study ID']
-    cliparameters['studyDate'] = self.tags['Study Date']
-    cliparameters['studyTime'] = self.tags['Study Time']
-    cliparameters['studyDescription'] = self.tags['Study Description']
-    cliparameters['modality'] = self.tags['Modality']
-    cliparameters['manufacturer'] = self.tags['Manufacturer']
-    cliparameters['model'] = self.tags['Model']
-    # Series
-    cliparameters['seriesDescription'] = self.tags['Series Description']
-    cliparameters['seriesNumber'] = self.tags['Series Number']
-    cliparameters['seriesDate'] = self.tags['Series Date']
-    cliparameters['seriesTime'] = self.tags['Series Time']
-    # Image
-    displayNode = self.volumeNode.GetDisplayNode()
-    if displayNode:
-      if displayNode.IsA('vtkMRMLScalarVolumeDisplayNode'):
-        cliparameters['windowCenter'] = str(displayNode.GetLevel())
-        cliparameters['windowWidth'] = str(displayNode.GetWindow())
-      else:
-        # labelmap volume
-        scalarRange = displayNode.GetScalarRange()
-        cliparameters['windowCenter'] = str((scalarRange[0] + scalarRange[0]) / 2.0)
-        cliparameters['windowWidth'] = str(scalarRange[1] - scalarRange[0])
-    cliparameters['contentDate'] = self.tags['Content Date']
-    cliparameters['contentTime'] = self.tags['Content Time']
+    def export(self):
+        """
+        Export the volume data using the ITK-based utility
+        TODO: confirm that resulting file is valid - may need to change the CLI
+        to include more parameters or do a new implementation ctk/DCMTK
+        See:
+        https://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
+        TODO: add more parameters to the CLI and/or find a different
+        mechanism for creating the DICOM files
+        """
+        cliparameters = {}
+        # Patient
+        cliparameters['patientName'] = self.tags['Patient Name']
+        cliparameters['patientID'] = self.tags['Patient ID']
+        cliparameters['patientBirthDate'] = self.tags['Patient Birth Date']
+        cliparameters['patientSex'] = self.tags['Patient Sex'] if self.tags['Patient Sex'] else "[unknown]"
+        cliparameters['patientComments'] = self.tags['Patient Comments']
+        # Study
+        cliparameters['studyID'] = self.tags['Study ID']
+        cliparameters['studyDate'] = self.tags['Study Date']
+        cliparameters['studyTime'] = self.tags['Study Time']
+        cliparameters['studyDescription'] = self.tags['Study Description']
+        cliparameters['modality'] = self.tags['Modality']
+        cliparameters['manufacturer'] = self.tags['Manufacturer']
+        cliparameters['model'] = self.tags['Model']
+        # Series
+        cliparameters['seriesDescription'] = self.tags['Series Description']
+        cliparameters['seriesNumber'] = self.tags['Series Number']
+        cliparameters['seriesDate'] = self.tags['Series Date']
+        cliparameters['seriesTime'] = self.tags['Series Time']
+        # Image
+        displayNode = self.volumeNode.GetDisplayNode()
+        if displayNode:
+            if displayNode.IsA('vtkMRMLScalarVolumeDisplayNode'):
+                cliparameters['windowCenter'] = str(displayNode.GetLevel())
+                cliparameters['windowWidth'] = str(displayNode.GetWindow())
+            else:
+                # labelmap volume
+                scalarRange = displayNode.GetScalarRange()
+                cliparameters['windowCenter'] = str((scalarRange[0] + scalarRange[0]) / 2.0)
+                cliparameters['windowWidth'] = str(scalarRange[1] - scalarRange[0])
+        cliparameters['contentDate'] = self.tags['Content Date']
+        cliparameters['contentTime'] = self.tags['Content Time']
 
-    # UIDs
-    cliparameters['studyInstanceUID'] = self.tags['Study Instance UID']
-    cliparameters['seriesInstanceUID'] = self.tags['Series Instance UID']
-    if 'Frame of Reference UID' in self.tags:
-      cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
-    elif 'Frame of Reference Instance UID' in self.tags:
-      logging.warning('Usage of "Frame of Reference Instance UID" is deprecated, use "Frame of Reference UID" instead.')
-      cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
-    cliparameters['inputVolume'] = self.volumeNode.GetID()
+        # UIDs
+        cliparameters['studyInstanceUID'] = self.tags['Study Instance UID']
+        cliparameters['seriesInstanceUID'] = self.tags['Series Instance UID']
+        if 'Frame of Reference UID' in self.tags:
+            cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
+        elif 'Frame of Reference Instance UID' in self.tags:
+            logging.warning('Usage of "Frame of Reference Instance UID" is deprecated, use "Frame of Reference UID" instead.')
+            cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
+        cliparameters['inputVolume'] = self.volumeNode.GetID()
 
-    cliparameters['dicomDirectory'] = self.directory
-    cliparameters['dicomPrefix'] = self.filenamePrefix
+        cliparameters['dicomDirectory'] = self.directory
+        cliparameters['dicomPrefix'] = self.filenamePrefix
 
-    #
-    # run the task (in the background)
-    # - use the GUI to provide progress feedback
-    # - use the GUI's Logic to invoke the task
-    #
-    if not hasattr(slicer.modules, 'createdicomseries'):
-      logging.error("CreateDICOMSeries module is not found")
-      return False
-    dicomWrite = slicer.modules.createdicomseries
-    cliNode = slicer.cli.run(dicomWrite, None, cliparameters, wait_for_completion=True)
-    success = (cliNode.GetStatus() == cliNode.Completed)
-    slicer.mrmlScene.RemoveNode(cliNode)
-    return success
+        #
+        # run the task (in the background)
+        # - use the GUI to provide progress feedback
+        # - use the GUI's Logic to invoke the task
+        #
+        if not hasattr(slicer.modules, 'createdicomseries'):
+            logging.error("CreateDICOMSeries module is not found")
+            return False
+        dicomWrite = slicer.modules.createdicomseries
+        cliNode = slicer.cli.run(dicomWrite, None, cliparameters, wait_for_completion=True)
+        success = (cliNode.GetStatus() == cliNode.Completed)
+        slicer.mrmlScene.RemoveNode(cliNode)
+        return success

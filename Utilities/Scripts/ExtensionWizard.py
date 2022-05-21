@@ -7,5 +7,5 @@ from SlicerWizard import ExtensionWizard
 
 
 if __name__ == "__main__":
-  w = ExtensionWizard()
-  w.execute()
+    w = ExtensionWizard()
+    w.execute()

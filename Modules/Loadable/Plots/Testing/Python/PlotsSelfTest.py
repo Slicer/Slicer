@@ -9,14 +9,14 @@ from slicer.ScriptedLoadableModule import *
 #
 
 class PlotsSelfTest(ScriptedLoadableModule):
-  def __init__(self, parent):
-    ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "PlotsSelfTest"
-    self.parent.categories = ["Testing.TestCases"]
-    self.parent.dependencies = ["Plots"]
-    self.parent.contributors = ["Andras Lasso (PerkLab, Queen's)"]
-    self.parent.helpText = """This is a self test for plot nodes and widgets."""
-    parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University
+    def __init__(self, parent):
+        ScriptedLoadableModule.__init__(self, parent)
+        self.parent.title = "PlotsSelfTest"
+        self.parent.categories = ["Testing.TestCases"]
+        self.parent.dependencies = ["Plots"]
+        self.parent.contributors = ["Andras Lasso (PerkLab, Queen's)"]
+        self.parent.helpText = """This is a self test for plot nodes and widgets."""
+        parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University
 and was supported through Canada CANARIE's Research Software Program."""
 
 
@@ -25,8 +25,8 @@ and was supported through Canada CANARIE's Research Software Program."""
 #
 
 class PlotsSelfTestWidget(ScriptedLoadableModuleWidget):
-  def setup(self):
-    ScriptedLoadableModuleWidget.setup(self)
+    def setup(self):
+        ScriptedLoadableModuleWidget.setup(self)
 
 
 #
@@ -34,141 +34,141 @@ class PlotsSelfTestWidget(ScriptedLoadableModuleWidget):
 #
 
 class PlotsSelfTestLogic(ScriptedLoadableModuleLogic):
-  """This class should implement all the actual
-  computation done by your module.  The interface
-  should be such that other python code can import
-  this class and make use of the functionality without
-  requiring an instance of the Widget
-  """
+    """This class should implement all the actual
+    computation done by your module.  The interface
+    should be such that other python code can import
+    this class and make use of the functionality without
+    requiring an instance of the Widget
+    """
 
-  def __init__(self):
-    pass
+    def __init__(self):
+        pass
 
 
 class PlotsSelfTestTest(ScriptedLoadableModuleTest):
-  """
-  This is the test case for your scripted module.
-  """
-
-  def setUp(self):
-    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
-    slicer.mrmlScene.Clear(0)
-
-  def runTest(self):
-    """Run as few or as many tests as needed here.
+    This is the test case for your scripted module.
     """
-    self.setUp()
-    self.test_PlotsSelfTest_FullTest1()
 
-  # ------------------------------------------------------------------------------
-  def test_PlotsSelfTest_FullTest1(self):
-    # Check for Plots module
-    self.assertTrue(slicer.modules.plots)
+    def setUp(self):
+        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+        """
+        slicer.mrmlScene.Clear(0)
 
-    self.section_SetupPathsAndNames()
-    self.section_CreateTable()
-    self.section_CreatePlots()
-    self.section_TestPlotView()
-    self.delayDisplay("Test passed")
+    def runTest(self):
+        """Run as few or as many tests as needed here.
+        """
+        self.setUp()
+        self.test_PlotsSelfTest_FullTest1()
 
-  # ------------------------------------------------------------------------------
-  def section_SetupPathsAndNames(self):
-    # Set constants
-    self.tableName = 'SampleTable'
-    self.xColumnName = 'x'
-    self.y1ColumnName = 'cos'
-    self.y2ColumnName = 'sin'
+    # ------------------------------------------------------------------------------
+    def test_PlotsSelfTest_FullTest1(self):
+        # Check for Plots module
+        self.assertTrue(slicer.modules.plots)
 
-    self.series1Name = "Cosine"
-    self.series2Name = "Sine"
+        self.section_SetupPathsAndNames()
+        self.section_CreateTable()
+        self.section_CreatePlots()
+        self.section_TestPlotView()
+        self.delayDisplay("Test passed")
 
-    self.chartName = "My Chart"
+    # ------------------------------------------------------------------------------
+    def section_SetupPathsAndNames(self):
+        # Set constants
+        self.tableName = 'SampleTable'
+        self.xColumnName = 'x'
+        self.y1ColumnName = 'cos'
+        self.y2ColumnName = 'sin'
 
-  # ------------------------------------------------------------------------------
-  def section_CreateTable(self):
-    self.delayDisplay("Create table")
+        self.series1Name = "Cosine"
+        self.series2Name = "Sine"
 
-    tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode", self.tableName)
-    self.assertIsNotNone(tableNode)
-    table = tableNode.GetTable()
-    self.assertIsNotNone(table)
+        self.chartName = "My Chart"
 
-    # Create X, Y1, and Y2 series
+    # ------------------------------------------------------------------------------
+    def section_CreateTable(self):
+        self.delayDisplay("Create table")
 
-    arrX = vtk.vtkFloatArray()
-    arrX.SetName(self.xColumnName)
-    table.AddColumn(arrX)
+        tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode", self.tableName)
+        self.assertIsNotNone(tableNode)
+        table = tableNode.GetTable()
+        self.assertIsNotNone(table)
 
-    arrY1 = vtk.vtkFloatArray()
-    arrY1.SetName(self.y1ColumnName)
-    table.AddColumn(arrY1)
+        # Create X, Y1, and Y2 series
 
-    arrY2 = vtk.vtkFloatArray()
-    arrY2.SetName(self.y2ColumnName)
-    table.AddColumn(arrY2)
+        arrX = vtk.vtkFloatArray()
+        arrX.SetName(self.xColumnName)
+        table.AddColumn(arrX)
 
-    # Fill in the table with some example values
-    import math
-    numPoints = 69
-    inc = 7.5 / (numPoints - 1)
-    table.SetNumberOfRows(numPoints)
-    for i in range(numPoints):
-      table.SetValue(i, 0, i * inc)
-      table.SetValue(i, 1, math.cos(i * inc))
-      table.SetValue(i, 2, math.sin(i * inc))
+        arrY1 = vtk.vtkFloatArray()
+        arrY1.SetName(self.y1ColumnName)
+        table.AddColumn(arrY1)
 
-  # ------------------------------------------------------------------------------
-  def section_CreatePlots(self):
-    self.delayDisplay("Create plots")
+        arrY2 = vtk.vtkFloatArray()
+        arrY2.SetName(self.y2ColumnName)
+        table.AddColumn(arrY2)
 
-    tableNode = slicer.util.getNode(self.tableName)
+        # Fill in the table with some example values
+        import math
+        numPoints = 69
+        inc = 7.5 / (numPoints - 1)
+        table.SetNumberOfRows(numPoints)
+        for i in range(numPoints):
+            table.SetValue(i, 0, i * inc)
+            table.SetValue(i, 1, math.cos(i * inc))
+            table.SetValue(i, 2, math.sin(i * inc))
 
-    # Create plot data series nodes
+    # ------------------------------------------------------------------------------
+    def section_CreatePlots(self):
+        self.delayDisplay("Create plots")
 
-    plotSeriesNode1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode", self.series1Name)
-    plotSeriesNode1.SetAndObserveTableNodeID(tableNode.GetID())
-    plotSeriesNode1.SetXColumnName(self.xColumnName)
-    plotSeriesNode1.SetYColumnName(self.y1ColumnName)
-    plotSeriesNode1.SetLineStyle(slicer.vtkMRMLPlotSeriesNode.LineStyleDash)
-    plotSeriesNode1.SetMarkerStyle(slicer.vtkMRMLPlotSeriesNode.MarkerStyleSquare)
+        tableNode = slicer.util.getNode(self.tableName)
 
-    plotSeriesNode2 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode", self.series2Name)
-    plotSeriesNode2.SetAndObserveTableNodeID(tableNode.GetID())
-    plotSeriesNode2.SetXColumnName(self.xColumnName)
-    plotSeriesNode2.SetYColumnName(self.y2ColumnName)
-    plotSeriesNode2.SetUniqueColor()
+        # Create plot data series nodes
 
-    # Create plot chart node
-    plotChartNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotChartNode", self.chartName)
-    plotChartNode.AddAndObservePlotSeriesNodeID(plotSeriesNode1.GetID())
-    plotChartNode.AddAndObservePlotSeriesNodeID(plotSeriesNode2.GetID())
-    plotChartNode.SetTitle('A simple plot with 2 curves')
-    plotChartNode.SetXAxisTitle('A simple plot with 2 curves')
-    plotChartNode.SetYAxisTitle('This is the Y axis')
+        plotSeriesNode1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode", self.series1Name)
+        plotSeriesNode1.SetAndObserveTableNodeID(tableNode.GetID())
+        plotSeriesNode1.SetXColumnName(self.xColumnName)
+        plotSeriesNode1.SetYColumnName(self.y1ColumnName)
+        plotSeriesNode1.SetLineStyle(slicer.vtkMRMLPlotSeriesNode.LineStyleDash)
+        plotSeriesNode1.SetMarkerStyle(slicer.vtkMRMLPlotSeriesNode.MarkerStyleSquare)
 
-  # ------------------------------------------------------------------------------
-  def section_TestPlotView(self):
-    self.delayDisplay("Test plot view")
+        plotSeriesNode2 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode", self.series2Name)
+        plotSeriesNode2.SetAndObserveTableNodeID(tableNode.GetID())
+        plotSeriesNode2.SetXColumnName(self.xColumnName)
+        plotSeriesNode2.SetYColumnName(self.y2ColumnName)
+        plotSeriesNode2.SetUniqueColor()
 
-    plotChartNode = slicer.util.getNode(self.chartName)
+        # Create plot chart node
+        plotChartNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotChartNode", self.chartName)
+        plotChartNode.AddAndObservePlotSeriesNodeID(plotSeriesNode1.GetID())
+        plotChartNode.AddAndObservePlotSeriesNodeID(plotSeriesNode2.GetID())
+        plotChartNode.SetTitle('A simple plot with 2 curves')
+        plotChartNode.SetXAxisTitle('A simple plot with 2 curves')
+        plotChartNode.SetYAxisTitle('This is the Y axis')
 
-    # Create plot view node
-    plotViewNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotViewNode")
-    plotViewNode.SetPlotChartNodeID(plotChartNode.GetID())
+    # ------------------------------------------------------------------------------
+    def section_TestPlotView(self):
+        self.delayDisplay("Test plot view")
 
-    # Create plotWidget
-    plotWidget = slicer.qMRMLPlotWidget()
-    plotWidget.setMRMLScene(slicer.mrmlScene)
-    plotWidget.setMRMLPlotViewNode(plotViewNode)
-    plotWidget.show()
+        plotChartNode = slicer.util.getNode(self.chartName)
 
-    # Create plotView
-    plotView = slicer.qMRMLPlotView()
-    plotView.setMRMLScene(slicer.mrmlScene)
-    plotView.setMRMLPlotViewNode(plotViewNode)
-    plotView.show()
+        # Create plot view node
+        plotViewNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotViewNode")
+        plotViewNode.SetPlotChartNodeID(plotChartNode.GetID())
 
-    # Save variables into slicer namespace for debugging
-    slicer.plotWidget = plotWidget
-    slicer.plotView = plotView
+        # Create plotWidget
+        plotWidget = slicer.qMRMLPlotWidget()
+        plotWidget.setMRMLScene(slicer.mrmlScene)
+        plotWidget.setMRMLPlotViewNode(plotViewNode)
+        plotWidget.show()
+
+        # Create plotView
+        plotView = slicer.qMRMLPlotView()
+        plotView.setMRMLScene(slicer.mrmlScene)
+        plotView.setMRMLPlotViewNode(plotViewNode)
+        plotView.show()
+
+        # Save variables into slicer namespace for debugging
+        slicer.plotWidget = plotWidget
+        slicer.plotView = plotView
