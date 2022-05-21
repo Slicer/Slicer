@@ -125,10 +125,10 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
         for key, value in query.queryItems(qt.QUrl.FullyDecoded):
             queryMap[key] = qt.QUrl.fromPercentEncoding(value)
 
-        if not "dicomweb_endpoint" in queryMap:
+        if "dicomweb_endpoint" not in queryMap:
             logging.debug("DICOM module ignores URL without dicomweb_endpoint query parameter: " + urlString)
             return
-        if not "studyUID" in queryMap:
+        if "studyUID" not in queryMap:
             logging.debug("DICOM module ignores URL without studyUID query parameter: " + urlString)
             return
 

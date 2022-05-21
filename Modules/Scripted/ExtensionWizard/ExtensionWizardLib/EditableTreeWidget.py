@@ -113,8 +113,8 @@ class EditableTreeWidget(qt.QTreeWidget):
 
         last = self.topLevelItemCount - 2
 
-        self._shiftUpAction.enabled = len(rows) and not 0 in rows
-        self._shiftDownAction.enabled = len(rows) and not last in rows
+        self._shiftUpAction.enabled = len(rows) and 0 not in rows
+        self._shiftDownAction.enabled = len(rows) and last not in rows
         self._deleteAction.enabled = True if len(rows) else False
 
     # ---------------------------------------------------------------------------

@@ -486,7 +486,7 @@ class ExtensionWizard:
             # Update the index repository and get the base branch
             logging.info("updating local index clone")
             xiRepo.git.fetch(xiUpstream)
-            if not args.target in xiUpstream.refs:
+            if args.target not in xiUpstream.refs:
                 die("target branch '%s' does not exist" % args.target)
 
             xiBase = xiUpstream.refs[args.target]

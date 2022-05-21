@@ -69,7 +69,7 @@ class _LogWrapFormatter(logging.Formatter):
     # ---------------------------------------------------------------------------
     def format(self, record):
         lines = super().format(record).split("\n")
-        return "\n".join([textwrap.fill(l, self._width) for l in lines])
+        return "\n".join([textwrap.fill(line, self._width) for line in lines])
 
 
 # =============================================================================

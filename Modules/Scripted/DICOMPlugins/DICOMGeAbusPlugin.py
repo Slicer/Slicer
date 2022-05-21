@@ -156,7 +156,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
             fieldInfo = fieldsInfo[fieldName]
             if not fieldInfo['required']:
                 continue
-            if not fieldName in fieldValues:
+            if fieldName not in fieldValues:
                 raise ValueError(f"Mandatory field {fieldName} was not found")
 
         return fieldValues

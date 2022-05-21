@@ -55,8 +55,8 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
         slicer.mrmlScene.Clear(0)
 
     def assertListAlmostEquals(self, list, expected):
-        for l, e in zip(list, expected):
-            self.assertAlmostEqual(l, e)
+        for list_item, expected_item in zip(list, expected):
+            self.assertAlmostEqual(list_item, expected_item)
 
     def runTest(self):
         """Run as few or as many tests as needed here.

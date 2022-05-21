@@ -392,7 +392,7 @@ class SlicerHTTPServer(HTTPServer):
 
                 # TODO: methods = ["GET", "POST", "PUT", "DELETE"]
                 methods = [b"GET", b"POST", b"PUT"]
-                if not method in methods:
+                if method not in methods:
                     self.logMessage("Warning, we only handle %s" % methods)
                     return
 
