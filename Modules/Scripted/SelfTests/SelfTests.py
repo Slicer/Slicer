@@ -17,44 +17,44 @@ from slicer.ScriptedLoadableModule import *
 
 class ExampleSelfTests:
 
-  @staticmethod
-  def closeScene():
-    """Close the scene"""
-    slicer.mrmlScene.Clear(0)
+    @staticmethod
+    def closeScene():
+        """Close the scene"""
+        slicer.mrmlScene.Clear(0)
 
 
 class SelfTests(ScriptedLoadableModule):
-  def __init__(self, parent):
-    ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "SelfTests"
-    self.parent.categories = ["Testing"]
-    self.parent.contributors = ["Steve Pieper (Isomics)"]
-    self.parent.helpText = """
+    def __init__(self, parent):
+        ScriptedLoadableModule.__init__(self, parent)
+        self.parent.title = "SelfTests"
+        self.parent.categories = ["Testing"]
+        self.parent.contributors = ["Steve Pieper (Isomics)"]
+        self.parent.helpText = """
 The SelfTests module allows developers to provide built-in self-tests (BIST) for slicer so that users can tell
 if their installed version of slicer are running as designed.
 """
-    self.parent.helpText += self.getDefaultModuleDocumentationLink()
-    self.parent.acknowledgementText = """
+        self.parent.helpText += self.getDefaultModuleDocumentationLink()
+        self.parent.acknowledgementText = """
 This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program
 and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).
 """
 
-    #
-    # slicer.selfTests is a dictionary of tests that are registered
-    # here or in other parts of the code.  The key is the name of the test
-    # and the value is a python callable that runs the test and returns
-    # if the test passed or raises and exception if it fails.
-    # the __doc__ attribute of the test is used as a tooltip for the test
-    # button.
-    #
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
+        #
+        # slicer.selfTests is a dictionary of tests that are registered
+        # here or in other parts of the code.  The key is the name of the test
+        # and the value is a python callable that runs the test and returns
+        # if the test passed or raises and exception if it fails.
+        # the __doc__ attribute of the test is used as a tooltip for the test
+        # button.
+        #
+        try:
+            slicer.selfTests
+        except AttributeError:
+            slicer.selfTests = {}
 
-    # register the example tests
-    slicer.selfTests['MRMLSceneExists'] = lambda: slicer.app.mrmlScene
-    slicer.selfTests['CloseScene'] = ExampleSelfTests.closeScene
+        # register the example tests
+        slicer.selfTests['MRMLSceneExists'] = lambda: slicer.app.mrmlScene
+        slicer.selfTests['CloseScene'] = ExampleSelfTests.closeScene
 
 #
 # SelfTests widget
@@ -62,126 +62,126 @@ and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
 
 
 class SelfTestsWidget(ScriptedLoadableModuleWidget):
-  """Slicer module that creates the Qt GUI for interacting with SelfTests
-  Uses ScriptedLoadableModuleWidget base class, available at:
-  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
-  """
+    """Slicer module that creates the Qt GUI for interacting with SelfTests
+    Uses ScriptedLoadableModuleWidget base class, available at:
+    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+    """
 
-  # sets up the widget
-  def setup(self):
-    ScriptedLoadableModuleWidget.setup(self)
+    # sets up the widget
+    def setup(self):
+        ScriptedLoadableModuleWidget.setup(self)
 
-    # This module is often used in developer mode, therefore
-    # collapse reload & test section by default.
-    if hasattr(self, "reloadCollapsibleButton"):
-      self.reloadCollapsibleButton.collapsed = True
+        # This module is often used in developer mode, therefore
+        # collapse reload & test section by default.
+        if hasattr(self, "reloadCollapsibleButton"):
+            self.reloadCollapsibleButton.collapsed = True
 
-    self.logic = SelfTestsLogic(slicer.selfTests)
+        self.logic = SelfTestsLogic(slicer.selfTests)
 
-    globals()['selfTests'] = self
+        globals()['selfTests'] = self
 
-    #
-    # test list
-    #
+        #
+        # test list
+        #
 
-    self.testList = ctk.ctkCollapsibleButton(self.parent)
-    self.testList.setLayout(qt.QVBoxLayout())
-    self.testList.setText("Self Tests")
-    self.layout.addWidget(self.testList)
-    self.testList.collapsed = False
+        self.testList = ctk.ctkCollapsibleButton(self.parent)
+        self.testList.setLayout(qt.QVBoxLayout())
+        self.testList.setText("Self Tests")
+        self.layout.addWidget(self.testList)
+        self.testList.collapsed = False
 
-    self.runAll = qt.QPushButton("Run All")
-    self.testList.layout().addWidget(self.runAll)
-    self.runAll.connect('clicked()', self.onRunAll)
+        self.runAll = qt.QPushButton("Run All")
+        self.testList.layout().addWidget(self.runAll)
+        self.runAll.connect('clicked()', self.onRunAll)
 
-    self.testButtons = {}
-    self.testMapper = qt.QSignalMapper()
-    self.testMapper.connect('mapped(const QString&)', self.onRun)
-    testKeys = sorted(slicer.selfTests.keys())
-    for test in testKeys:
-      self.testButtons[test] = qt.QPushButton(test)
-      self.testButtons[test].setToolTip(slicer.selfTests[test].__doc__)
-      self.testList.layout().addWidget(self.testButtons[test])
-      self.testMapper.setMapping(self.testButtons[test], test)
-      self.testButtons[test].connect('clicked()', self.testMapper, 'map()')
+        self.testButtons = {}
+        self.testMapper = qt.QSignalMapper()
+        self.testMapper.connect('mapped(const QString&)', self.onRun)
+        testKeys = sorted(slicer.selfTests.keys())
+        for test in testKeys:
+            self.testButtons[test] = qt.QPushButton(test)
+            self.testButtons[test].setToolTip(slicer.selfTests[test].__doc__)
+            self.testList.layout().addWidget(self.testButtons[test])
+            self.testMapper.setMapping(self.testButtons[test], test)
+            self.testButtons[test].connect('clicked()', self.testMapper, 'map()')
 
-    # Add spacer to layout
-    self.layout.addStretch(1)
+        # Add spacer to layout
+        self.layout.addStretch(1)
 
-  def onRunAll(self):
-    self.logic.run(continueCheck=self.continueCheck)
-    slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
+    def onRunAll(self):
+        self.logic.run(continueCheck=self.continueCheck)
+        slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
 
-  def onRun(self, test):
-    self.logic.run([test, ], continueCheck=self.continueCheck)
-    slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
+    def onRun(self, test):
+        self.logic.run([test, ], continueCheck=self.continueCheck)
+        slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
 
-  def continueCheck(self, logic):
-    slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
-    return True
+    def continueCheck(self, logic):
+        slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
+        return True
 
 
 class SelfTestsLogic:
-  """Logic to handle invoking the tests and reporting the results"""
+    """Logic to handle invoking the tests and reporting the results"""
 
-  def __init__(self, selfTests):
-    self.selfTests = selfTests
-    self.results = {}
-    self.passed = []
-    self.failed = []
+    def __init__(self, selfTests):
+        self.selfTests = selfTests
+        self.results = {}
+        self.passed = []
+        self.failed = []
 
-  def __str__(self):
-    testsRun = len(list(self.results.keys()))
-    if testsRun == 0:
-      return "No tests run"
-    s = "%.0f%% passed (%d of %d)" % (
-        (100. * len(self.passed) / testsRun),
-        len(self.passed), testsRun)
-    s += "\n---\n"
-    for test in self.results:
-      s += f"{test}\t{self.results[test]}\n"
-    return s
+    def __str__(self):
+        testsRun = len(list(self.results.keys()))
+        if testsRun == 0:
+            return "No tests run"
+        s = "%.0f%% passed (%d of %d)" % (
+            (100. * len(self.passed) / testsRun),
+            len(self.passed), testsRun)
+        s += "\n---\n"
+        for test in self.results:
+            s += f"{test}\t{self.results[test]}\n"
+        return s
 
-  def run(self, tests=None, continueCheck=None):
-    if not tests:
-      tests = list(self.selfTests.keys())
+    def run(self, tests=None, continueCheck=None):
+        if not tests:
+            tests = list(self.selfTests.keys())
 
-    for test in tests:
-      try:
-        result = self.selfTests[test]()
-        self.passed.append(test)
-      except Exception as e:
-        traceback.print_exc()
-        result = "Failed with: %s" % e
-        self.failed.append(test)
-      self.results[test] = result
-      if continueCheck:
-        if not continueCheck(self):
-          return
+        for test in tests:
+            try:
+                result = self.selfTests[test]()
+                self.passed.append(test)
+            except Exception as e:
+                traceback.print_exc()
+                result = "Failed with: %s" % e
+                self.failed.append(test)
+            self.results[test] = result
+            if continueCheck:
+                if not continueCheck(self):
+                    return
 
 
 def SelfTestsTest():
-  if hasattr(slicer, 'selfTests'):
-    logic = SelfTestsLogic(list(slicer.selfTests.keys()))
-    logic.run()
-  print(logic.results)
-  print("SelfTestsTest Passed!")
-  return logic.failed == []
+    if hasattr(slicer, 'selfTests'):
+        logic = SelfTestsLogic(list(slicer.selfTests.keys()))
+        logic.run()
+    print(logic.results)
+    print("SelfTestsTest Passed!")
+    return logic.failed == []
 
 
 def SelfTestsDemo():
-  pass
+    pass
 
 
 if __name__ == "__main__":
-  import sys
-  if '--test' in sys.argv:
-    if SelfTestsTest():
-      exit(0)
-    exit(1)
-  if '--demo' in sys.argv:
-    SelfTestsDemo()
-    exit()
-  # TODO - 'exit()' returns so this code gets run
-  # even if the argument matches one of the cases above
-  # print ("usage: SelfTests.py [--test | --demo]")
+    import sys
+    if '--test' in sys.argv:
+        if SelfTestsTest():
+            exit(0)
+        exit(1)
+    if '--demo' in sys.argv:
+        SelfTestsDemo()
+        exit()
+    # TODO - 'exit()' returns so this code gets run
+    # even if the argument matches one of the cases above
+    # print ("usage: SelfTests.py [--test | --demo]")

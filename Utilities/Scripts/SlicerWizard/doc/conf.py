@@ -29,40 +29,40 @@ sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 
 # ===============================================================================
 class WikidocRole:
-  wiki_root = 'https://wiki.slicer.org/slicerWiki/index.php'
+    wiki_root = 'https://wiki.slicer.org/slicerWiki/index.php'
 
-  # -----------------------------------------------------------------------------
-  def __call__(self, role, rawtext, text, lineno, inliner,
-               options={}, content=[]):
+    # -----------------------------------------------------------------------------
+    def __call__(self, role, rawtext, text, lineno, inliner,
+                 options={}, content=[]):
 
-    roles.set_classes(options)
+        roles.set_classes(options)
 
-    parts = utils.unescape(text).split(' ', 1)
-    uri = '{}/Documentation/{}/{}'.format(self.wiki_root, self.wiki_doc_version,
-                                      parts[0])
-    text = parts[1]
+        parts = utils.unescape(text).split(' ', 1)
+        uri = '{}/Documentation/{}/{}'.format(self.wiki_root, self.wiki_doc_version,
+                                              parts[0])
+        text = parts[1]
 
-    node = nodes.reference(rawtext, text, refuri=uri, **options)
-    return [node], []
+        node = nodes.reference(rawtext, text, refuri=uri, **options)
+        return [node], []
 
 
 # ===============================================================================
 class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
-  # -----------------------------------------------------------------------------
-  def resolve_name(self, *args):
-    module, attrs = super().resolve_name(*args)
-    module = module.split('.')
-    if module[-1] == attrs[0]:
-      del module[-1]
-    return '.'.join(module), attrs
+    # -----------------------------------------------------------------------------
+    def resolve_name(self, *args):
+        module, attrs = super().resolve_name(*args)
+        module = module.split('.')
+        if module[-1] == attrs[0]:
+            del module[-1]
+        return '.'.join(module), attrs
 
 # %%% Site customizations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 # -------------------------------------------------------------------------------
 def setup(app):
-  app.add_autodocumenter(ClassModuleClassDocumenter)
-  app.add_role('wikidoc', WikidocRole())
+    app.add_autodocumenter(ClassModuleClassDocumenter)
+    app.add_role('wikidoc', WikidocRole())
 
 
 # -------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ parser.add_argument("-D", dest='defs', action="append", default=[])
 args, pargs = parser.parse_known_args()
 
 for d in args.defs:
-  setattr(args, *d.split('=', 1))
+    setattr(args, *d.split('=', 1))
 
 setattr(WikidocRole, 'wiki_doc_version', args.wikidoc_version)
 
@@ -89,15 +89,15 @@ setattr(WikidocRole, 'wiki_doc_version', args.wikidoc_version)
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.intersphinx']
 
 intersphinx_mapping = {
-  'python': ('https://docs.python.org/%i.%i' % sys.version_info[:2], None),
-  'github': ('http://jacquev6.github.io/PyGithub/v1', None),
+    'python': ('https://docs.python.org/%i.%i' % sys.version_info[:2], None),
+    'github': ('http://jacquev6.github.io/PyGithub/v1', None),
 }
 
 try:
-  import git
-  intersphinx_mapping['git'] = ('https://pythonhosted.org/GitPython/%s' % git.__version__.split(' ')[0], None)
+    import git
+    intersphinx_mapping['git'] = ('https://pythonhosted.org/GitPython/%s' % git.__version__.split(' ')[0], None)
 except:
-  pass
+    pass
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -240,21 +240,21 @@ htmlhelp_basename = 'SlicerWizarddoc'
 # %%% Options for LaTeX output %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-# 'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    # 'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-# 'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    # 'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-# 'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    # 'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'SlicerWizard.tex', 'SlicerWizard Documentation',
-   author, 'manual'),
+    ('index', 'SlicerWizard.tex', 'SlicerWizard Documentation',
+     author, 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -297,9 +297,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'SlicerWizard', 'SlicerWizard Documentation',
-   author, 'SlicerWizard', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'SlicerWizard', 'SlicerWizard Documentation',
+     author, 'SlicerWizard', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

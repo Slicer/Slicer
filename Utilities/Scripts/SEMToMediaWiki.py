@@ -28,7 +28,7 @@ def getThisNodesInfoAsText(currentNode, label):
     Only get the text info for the matching label at this level of the tree
     """
     labelNodeList = [node for node in
-    currentNode.childNodes if node.nodeName == label]
+                     currentNode.childNodes if node.nodeName == label]
 
     if len(labelNodeList) > 0:
         labelNode = labelNodeList[0]  # Only get the first one
@@ -44,7 +44,7 @@ def getLongFlagDefinition(currentNode):
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         return "{}{}{}".format("[<span style=\"color:orange\">--",
-            getTextValuesFromNode(labelNode.childNodes), "</span>]")
+                               getTextValuesFromNode(labelNode.childNodes), "</span>]")
     return ""
 
 
@@ -56,7 +56,7 @@ def getFlagDefinition(currentNode):
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         return "{}{}{}".format("[<span style=\"color:pink\">-",
-            getTextValuesFromNode(labelNode.childNodes), "</span>]")
+                               getTextValuesFromNode(labelNode.childNodes), "</span>]")
     return ""
 
 
@@ -68,7 +68,7 @@ def getLabelDefinition(currentNode):
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         return "{}{}{}".format("** <span style=\"color:green\">'''",
-            getTextValuesFromNode(labelNode.childNodes), "'''</span>")
+                               getTextValuesFromNode(labelNode.childNodes), "'''</span>")
     return ""
 
 
@@ -80,7 +80,7 @@ def getDefaultValueDefinition(currentNode):
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         return "{}{}{}".format("''Default value: ",
-            getTextValuesFromNode(labelNode.childNodes), "''")
+                               getTextValuesFromNode(labelNode.childNodes), "''")
     return ""
 
 
@@ -91,7 +91,7 @@ def GetSEMDoc(filename):
     """
     doc = xml.dom.minidom.parse(filename)
     executableNode = [node for node in doc.childNodes if
-            node.nodeName == "executable"]
+                      node.nodeName == "executable"]
     # Only use the first
     return executableNode[0]
 
@@ -185,7 +185,7 @@ def DumpSEMMediaWikiFeatures(executableNode):
     outRegion = ""
     outRegion += "===Quick Tour of Features and Use===\n\n"
     outRegion += "{}{}".format("A list panels in the interface,",
-           " their features, what they mean, and how to use them.\n")
+                               " their features, what they mean, and how to use them.\n")
     outRegion += "{|\n|\n"
     # Now print all the command line arguments and the labels
     # that showup in the GUI interface
@@ -201,23 +201,23 @@ def DumpSEMMediaWikiFeatures(executableNode):
                     # if this node has a default value -- document it!
                     if getThisNodesInfoAsText(currentNode, "default") != "":
                         outRegion += "{} {} {}: {} {}\n".format(
-                                getLabelDefinition(currentNode),
-                                getLongFlagDefinition(currentNode),
-                                getFlagDefinition(currentNode),
-                                getThisNodesInfoAsText(currentNode,
-                                    "description"),
-                                getDefaultValueDefinition(currentNode))
+                            getLabelDefinition(currentNode),
+                            getLongFlagDefinition(currentNode),
+                            getFlagDefinition(currentNode),
+                            getThisNodesInfoAsText(currentNode,
+                                                   "description"),
+                            getDefaultValueDefinition(currentNode))
                     else:
                         outRegion += "{} {} {}: {}\n\n".format(
-                                getLabelDefinition(currentNode),
-                                getLongFlagDefinition(currentNode),
-                                getFlagDefinition(currentNode),
-                                getThisNodesInfoAsText(currentNode,
-                                    "description"))
+                            getLabelDefinition(currentNode),
+                            getLongFlagDefinition(currentNode),
+                            getFlagDefinition(currentNode),
+                            getThisNodesInfoAsText(currentNode,
+                                                   "description"))
             currentNode = currentNode.nextSibling
 
     outRegion += "{}{}\n".format("|[[Image:screenshotBlankNotOptional.png|",
-            "thumb|280px|User Interface]]")
+                                 "thumb|280px|User Interface]]")
     outRegion += "|}\n\n"
     return outRegion
 
@@ -287,15 +287,15 @@ def SEMToMediaWikiProg():
     version = "%prog v0.1"
     parser = OptionParser()
     parser.add_option("-x", "--xmlfile", dest="xmlfilename",
-        action="store", type="string",
-        metavar="XMLFILE", help="The SEM formatted XMLFILE file")
+                      action="store", type="string",
+                      metavar="XMLFILE", help="The SEM formatted XMLFILE file")
     parser.add_option("-o", "--outfile", dest="outfilename",
-        action="store", type="string", default=None,
-        metavar="MEDIAWIKIFILE",
-        help="The MEDIAWIKIFILE ascii file with media-wiki formatted text.")
+                      action="store", type="string", default=None,
+                      metavar="MEDIAWIKIFILE",
+                      help="The MEDIAWIKIFILE ascii file with media-wiki formatted text.")
     parser.add_option("-p", "--parts", dest="parts",
-        action="store", type="string", default="hbf",
-        help="The parts to print out, h=Header,b=body,f=footer")
+                      action="store", type="string", default="hbf",
+                      help="The parts to print out, h=Header,b=body,f=footer")
     parser.epilog = program_description
 #    print program_description
     (options, args) = parser.parse_args()

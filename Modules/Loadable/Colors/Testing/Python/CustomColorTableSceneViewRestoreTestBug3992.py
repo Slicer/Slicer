@@ -12,7 +12,7 @@ colorNode.SetTypeToFile()
 colorNode.NamesInitialisedOff()
 colorNode.SetNumberOfColors(3)
 if colorNode.GetLookupTable() is not None:
-  colorNode.GetLookupTable().SetTableRange(0, 2)
+    colorNode.GetLookupTable().SetTableRange(0, 2)
 
 colorNode.SetColor(0, 'zero', 0.0, 0.0, 0.0, 0.0)
 colorNode.SetColor(1, 'one', 1.0, 1.0, 1.0, 1.0)
@@ -52,7 +52,7 @@ print("Saved to ", url)
 # make sure it writes the color table
 writeFlag = colorStorageNode.WriteData(colorNode)
 if writeFlag == 0:
-  print("Error writing out file ", colorStorageNode.GetFileName())
+    print("Error writing out file ", colorStorageNode.GetFileName())
 
 
 # clear out the scene and re-read from disk
@@ -76,14 +76,14 @@ colorNodeAfterRestore = slicer.util.getFirstNodeByName('CustomTest')
 # mrmlScene.GetNodeByID("vtkMRMLColorTableNode1")
 
 if colorNodeAfterRestore is None:
-  exceptionMessage = "Unable to find vtkMRMLColorTableNode1 in scene after restore"
-  raise Exception(exceptionMessage)
+    exceptionMessage = "Unable to find vtkMRMLColorTableNode1 in scene after restore"
+    raise Exception(exceptionMessage)
 
 numColors = colorNodeAfterRestore.GetNumberOfColors()
 
 if numColors != 3:
-  exceptionMessage = "Color node doesn't have 3 colors, instead has " + str(numColors)
-  raise Exception(exceptionMessage)
+    exceptionMessage = "Color node doesn't have 3 colors, instead has " + str(numColors)
+    raise Exception(exceptionMessage)
 
 afterRestoreSceneCol2 = [0., 0., 0., 0.0]
 colorNodeAfterRestore.GetColor(2, afterRestoreSceneCol2)
@@ -104,5 +104,5 @@ diffTotal = math.fabs(rdiff) + math.fabs(gdiff) + math.fabs(bdiff) + math.fabs(a
 print("Difference between colors after restored the scene and value from when it was read in from disk:\n\t", rdiff, gdiff, bdiff, adiff, "\n\tsummed absolute diff = ", diffTotal)
 
 if diffTotal > 0.1:
-  exceptionMessage = "Difference between color values total = " + str(diffTotal)
-  raise Exception(exceptionMessage)
+    exceptionMessage = "Difference between color values total = " + str(diffTotal)
+    raise Exception(exceptionMessage)
