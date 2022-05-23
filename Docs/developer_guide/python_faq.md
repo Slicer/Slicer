@@ -111,9 +111,9 @@ cliNode.AddObserver('ModifiedEvent', onProcessingStatusUpdate)
 
 ## How to use a loadable module from Python
 
-Both Python scripted loadable modules and C++ loadable modules can be used from Python in multiple ways: by modfiying MRML nodes, calling methods of the module logic object, and adding reusable GUI widgets provided by the module.
+Both Python scripted loadable modules and C++ loadable modules can be used from Python in multiple ways: by modifying MRML nodes, calling methods of the module logic object, and adding reusable GUI widgets provided by the module.
 
-It may be tempting to use another module via the module's GUI (for example, by simulating button clicks), since Qt allows access to widgets via public methods, signals, and properties. However, a module GUI is not designed to be manipulated programmatically, and doing so could lead to unexpected behavior. Therefore, it is only recommended to interact with a moudule GUI object for testing and debugging.
+It may be tempting to use another module via the module's GUI (for example, by simulating button clicks), since Qt allows access to widgets via public methods, signals, and properties. However, a module GUI is not designed to be manipulated programmatically, and doing so could lead to unexpected behavior. Therefore, it is only recommended to interact with a module GUI object for testing and debugging.
 
 ### Calling methods of a module logic
 
