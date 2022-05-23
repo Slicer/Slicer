@@ -368,7 +368,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
     if (!errorText.empty())
       {
       detailsText += "<span style = \"color:#FF0000;\">";
-      detailsText += errorText.c_str();
+      detailsText += QString::fromStdString(errorText).toHtmlEscaped();
       detailsText += "</span>";
       }
     if (!errorText.empty() && !outputText.empty())
@@ -377,7 +377,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
       }
     if (!outputText.empty())
       {
-      detailsText += node->GetOutputText().c_str();
+      detailsText += QString::fromStdString(node->GetOutputText()).toHtmlEscaped();
       }
     detailsText += "</pre>";
     d->DetailsTextBrowser->setText(detailsText);
