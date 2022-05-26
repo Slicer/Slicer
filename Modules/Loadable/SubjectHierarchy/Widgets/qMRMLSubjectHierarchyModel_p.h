@@ -68,7 +68,7 @@ public:
   virtual ~qMRMLSubjectHierarchyModelPrivate();
   void init();
 
-  /// This method is called by qMRMLSubjectHierarchyModel::updateFromSubjectHierarchy() to speed up
+  /// This method is called by qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy() to speed up
   /// the loading. By explicitly specifying the \a index, it skips item lookup within their parents
   /// happening in qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(vtkIdType).
   virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, int index);
