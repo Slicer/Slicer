@@ -35,7 +35,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   packaging==21.3 --hash=sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522
   # [/packaging]
   # [pyparsing]
-  pyparsing==3.0.7 --hash=sha256:a6c06a88f252e6c322f65faf8f418b16213b51bdfaece0524c1c1bc30c63c484
+  pyparsing==3.0.9 --hash=sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc
   # [/pyparsing]
   # [six]
   six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254

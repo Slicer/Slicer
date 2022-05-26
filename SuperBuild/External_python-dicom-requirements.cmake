@@ -48,24 +48,28 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/six]
   # [Pillow]
   # Hashes correspond to the following packages:
-  #  - Pillow-9.0.1-1-cp39-cp39-macosx_11_0_arm64.whl
-  #  - Pillow-9.0.1-cp39-cp39-macosx_10_10_x86_64.whl
-  #  - Pillow-9.0.1-cp39-cp39-macosx_11_0_arm64.whl
-  #  - Pillow-9.0.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - Pillow-9.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - Pillow-9.0.1-cp39-cp39-win_amd64.whl
-  Pillow==9.0.1 --hash=sha256:b9618823bd237c0d2575283f2939655f54d51b4527ec3972907a927acbcc5bfc \
-                --hash=sha256:80ca33961ced9c63358056bd08403ff866512038883e74f3a4bf88ad3eb66838 \
-                --hash=sha256:1c3c33ac69cf059bbb9d1a71eeaba76781b450bc307e2291f8a4764d779a6b28 \
-                --hash=sha256:12875d118f21cf35604176872447cdb57b07126750a33748bac15e77f90f1f9c \
-                --hash=sha256:d3c5c79ab7dfce6d88f1ba639b77e77a17ea33a01b07b99840d6ed08031cb2a7 \
-                --hash=sha256:f25ed6e28ddf50de7e7ea99d7a976d6a9c415f03adcaac9c41ff6ff41b6d86ac
+  #  - Pillow-9.2.0-cp39-cp39-macosx_10_10_x86_64.whl
+  #  - Pillow-9.2.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - Pillow-9.2.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - Pillow-9.2.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - Pillow-9.2.0-cp39-cp39-manylinux_2_28_aarch64.whl
+  #  - Pillow-9.2.0-cp39-cp39-manylinux_2_28_x86_64.whl
+  #  - Pillow-9.2.0-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - Pillow-9.2.0-cp39-cp39-win_amd64.whl
+  Pillow==9.2.0 --hash=sha256:0ed2c4ef2451de908c90436d6e8092e13a43992f1860275b4d8082667fbb2ffc \
+                --hash=sha256:4ad2f835e0ad81d1689f1b7e3fbac7b01bb8777d5a985c8962bedee0cc6d43da \
+                --hash=sha256:ea98f633d45f7e815db648fd7ff0f19e328302ac36427343e4432c84432e7ff4 \
+                --hash=sha256:9a54614049a18a2d6fe156e68e188da02a046a4a93cf24f373bffd977e943421 \
+                --hash=sha256:5aed7dde98403cd91d86a1115c78d8145c83078e864c1de1064f52e6feb61b20 \
+                --hash=sha256:13b725463f32df1bfeacbf3dd197fb358ae8ebcd8c5548faa75126ea425ccb60 \
+                --hash=sha256:808add66ea764ed97d44dda1ac4f2cfec4c1867d9efb16a33d158be79f32b8a4 \
+                --hash=sha256:fac2d65901fb0fdf20363fbd345c01958a742f2dc62a8dd4495af66e3ff502a4
   # [/Pillow]
   # [retrying]
   retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
   # [/retrying]
   # [dicomweb-client]
-  dicomweb-client==0.54.4 --hash=sha256:397cb05982258fde33bd059efecd74893350826f9fe71f36a9500e98baf6f96d
+  dicomweb-client==0.56.2 --hash=sha256:7cb314f5dc899613ddacbc8481256416793ccf3ff503d0105c508e2116a1639c
   # [/dicomweb-client]
   ]===])
 
