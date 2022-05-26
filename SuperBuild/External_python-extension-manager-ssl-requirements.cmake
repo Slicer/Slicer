@@ -33,18 +33,24 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [PyJWT]
-  PyJWT==2.3.0 --hash=sha256:e0c4bb8d9f0af0c7f5b1ec4c5036309617d03d56932877f2f7a0beeb5318322f
+  PyJWT==2.4.0 --hash=sha256:72d1d253f32dbd4f5c88eaf1fdc62f3a19f676ccbadb9dbc5d07e951b2b26daf
   # [/PyJWT]
   # [wrapt]
   # Hashes correspond to the following packages:
-  #  - wrapt-1.13.3-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - wrapt-1.13.3-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl
-  #  - wrapt-1.13.3-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - wrapt-1.13.3-cp39-cp39-win_amd64.whl
-  wrapt==1.13.3 --hash=sha256:981da26722bebb9247a0601e2922cedf8bb7a600e89c852d063313102de6f2cb \
-                --hash=sha256:25b1b1d5df495d82be1c9d2fad408f7ce5ca8a38085e2da41bb63c914baadff7 \
-                --hash=sha256:865c0b50003616f05858b22174c40ffc27a38e67359fa1495605f96125f76640 \
-                --hash=sha256:81bd7c90d28a4b2e1df135bfbd7c23aee3050078ca6441bead44c42483f9ebfb
+  #  - wrapt-1.14.1-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - wrapt-1.14.1-cp39-cp39-macosx_11_0_arm64.whl
+  #  - wrapt-1.14.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - wrapt-1.14.1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - wrapt-1.14.1-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - wrapt-1.14.1-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - wrapt-1.14.1-cp39-cp39-win_amd64.whl
+  wrapt==1.14.1 --hash=sha256:3232822c7d98d23895ccc443bbdf57c7412c5a65996c30442ebe6ed3df335383 \
+                --hash=sha256:988635d122aaf2bdcef9e795435662bcd65b02f4f4c1ae37fbee7401c440b3a7 \
+                --hash=sha256:9cca3c2cdadb362116235fdbd411735de4328c61425b0aa9f872fd76d02c4e86 \
+                --hash=sha256:40e7bc81c9e2b2734ea4bc1aceb8a8f0ceaac7c5299bc5d69e37c44d9081d43b \
+                --hash=sha256:b9b7a708dd92306328117d8c4b62e2194d00c365f18eff11a9b53c6f923b01e3 \
+                --hash=sha256:34aa51c45f28ba7f12accd624225e2b1e5a3a45206aa191f6f9aac931d9d56fe \
+                --hash=sha256:dee60e1de1898bde3b238f18340eec6148986da0455d8ba7848d50470a7a32fb
   # [/wrapt]
   # [Deprecated]
   Deprecated==1.2.13 --hash=sha256:64756e3e14c8c5eea9795d93c524551432a0be75629f8f29e67ab8caf076c76d
@@ -54,16 +60,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/pycparser]
   # [cffi]
   # Hashes correspond to the following packages:
-  #  - cffi-1.15.0-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - cffi-1.15.0-cp39-cp39-macosx_11_0_arm64.whl
-  #  - cffi-1.15.0-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl
-  #  - cffi-1.15.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - cffi-1.15.0-cp39-cp39-win_amd64.whl
-  cffi==1.15.0 --hash=sha256:45e8636704eacc432a206ac7345a5d3d2c62d95a507ec70d62f23cd91770482a \
-               --hash=sha256:31fb708d9d7c3f49a60f04cf5b119aeefe5644daba1cd2a0fe389b674fd1de37 \
-               --hash=sha256:74fdfdbfdc48d3f47148976f49fab3251e550a8720bebc99bf1483f5bfb5db3e \
-               --hash=sha256:ffaa5c925128e29efbde7301d8ecaf35c8c60ffbcd6a1ffd3a552177c8e5e796 \
-               --hash=sha256:3773c4d81e6e818df2efbc7dd77325ca0dcb688116050fb2b3011218eda36139
+  #  - cffi-1.15.1-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - cffi-1.15.1-cp39-cp39-macosx_11_0_arm64.whl
+  #  - cffi-1.15.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cffi-1.15.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cffi-1.15.1-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - cffi-1.15.1-cp39-cp39-win_amd64.whl
+  cffi==1.15.1 --hash=sha256:54a2db7b78338edd780e7ef7f9f6c442500fb0d41a5a4ea24fff1c929d5af585 \
+               --hash=sha256:fcd131dd944808b5bdb38e6f5b53013c5aa4f334c5cad0c72742f6eba4b73db0 \
+               --hash=sha256:6c9a799e985904922a4d207a94eae35c78ebae90e128f0c4e521ce339396be9d \
+               --hash=sha256:5d598b938678ebf3c67377cdd45e09d431369c3b1a5b331058c338e201f12b27 \
+               --hash=sha256:98d85c6a2bef81588d9227dde12db8a7f47f639f4a17c9ae08e773aa9c697bf3 \
+               --hash=sha256:70df4e3b545a17496c9b3f41f5115e69a4f2e77e94e1d2a8e1070bc0c38c8a3c
   # [/cffi]
   # [PyNaCl]
   # Hashes correspond to the following packages:
