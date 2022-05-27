@@ -240,6 +240,14 @@ void qSlicerWebWidgetPrivate::handleDownload(QWebEngineDownloadItem* download)
 {
   Q_Q(qSlicerWebWidget);
 
+  if (this->WebEnginePage != download->page())
+    {
+    // Since the download request is emitted by the default profile observed by
+    // all web widget instances, we ignore the request if it does not originate
+    // from the page associated with this web widget instance.
+    return;
+    }
+
   qSlicerWebDownloadWidget *downloader = new qSlicerWebDownloadWidget(q);
   downloader->setAttribute(Qt::WA_DeleteOnClose);
   downloader->show();
