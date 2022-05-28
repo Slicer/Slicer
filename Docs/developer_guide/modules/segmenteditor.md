@@ -26,7 +26,6 @@ Common parameters must be set using `setCommonParameter` method (others can be s
 | ApplyToAllVisibleSegments | int   | no     | 0              | 0 or 1                     |
 | ShellMode                 | enum  | no     | INSIDE_SURFACE | INSIDE_SURFACE, MEDIAL_SURFACE, OUTSIDE_SURFACE |
 | ShellThicknessMm          | float | no     | 3.0            | >0.0                       |
-| BypassMasking             | int   | no     | 0              | 0 or 1                     |
 
 ### Islands
 
@@ -34,7 +33,6 @@ Common parameters must be set using `setCommonParameter` method (others can be s
 |---------------|------|--------|---------------------|--------|
 | Operation     | enum | no     | KEEP_LARGEST_ISLAND | KEEP_LARGEST_ISLAND, KEEP_SELECTED_ISLAND, REMOVE_SMALL_ISLANDS, REMOVE_SELECTED_ISLAND, ADD_SELECTED_ISLAND, SPLIT_ISLANDS_TO_SEGMENTS |
 | MinimumSize   | int  | no     | 1000                | >0     |
-| BypassMasking | int  | no     | 0                   | 0 or 1 |
 
 ### Logical operators
 
@@ -50,8 +48,6 @@ Common parameters must be set using `setCommonParameter` method (others can be s
 |---------------------------|-------|--------|---------|----------------------------|
 | ApplyToAllVisibleSegments | int   | no     | 0       | 0 or 1                     |
 | MarginSizeMm              | float | no     | 3.0     | <0.0 (shrink), >0.0 (grow) |
-| ShellThicknessMm          | float | no     | 3.0     | >0.0                       |
-| BypassMasking             | int   | no     |         | 0 or 1                     |
 
 ### Paint effect and Erase effect
 
