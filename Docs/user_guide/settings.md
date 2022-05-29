@@ -30,7 +30,7 @@ Directory where modules can store their temporary outputs if needed.
 
 #### Additional module paths
 
-List of directories scanned at startup to load additional modules. Any CLI, Loadable or scripted modules located in these paths will be loaded. Extensions are listed in the list, to remove an extension, use the [Extensions Manager](extensions_manager) instead.
+List of directories scanned at startup to load additional modules. Any CLI, Loadable or scripted modules located in these paths will be loaded. Extensions are listed in the list, to remove an extension, use the [Extensions Manager](extensions_manager.md) instead.
 
 It is also possible to start Slicer by temporarily adding module paths (not saved in settings) by passing the arguments in the command line.
 
@@ -69,7 +69,7 @@ To add a module, drag&drop it from the *Modules* list above. Then use the advanc
 
 The overall theme of Slicer is controlled by the selected Style:
 - Slicer (default): it sets the style based on theme settings set by the operating system.
-  For example, on Windows if [dark mode][(https://blogs.windows.com/windowsexperience/2016/08/08/windows-10-tip-personalize-your-pc-by-enabling-the-dark-theme/)]
+  For example, on Windows if [dark mode](https://blogs.windows.com/windowsexperience/2016/08/08/windows-10-tip-personalize-your-pc-by-enabling-the-dark-theme/)
   is turned on for apps, then the `Dark Slicer` style will be used upon launching Slicer. Currently, automatic detection of dark mode is not available on Linux,
   therefore use needs to manually select `Dark Slicer` style for a dark color scheme.
 - Light Slicer: application window background is bright, regardless of operating system settings.

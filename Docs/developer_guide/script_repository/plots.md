@@ -64,7 +64,7 @@ plotView.saveAsSVG("c:/tmp/test.svg")
 
 ### Using matplotlib
 
-Matplotlib may be used from within Slicer, but the default Tk backend locks up and crashes Slicer. However, Matplotlib may still be used through other backends. More details can be found on the [MatPlotLib](https://matplotlib.sourceforge.net/) pages.
+Matplotlib may be used from within Slicer, but the default Tk backend locks up and crashes Slicer. However, Matplotlib may still be used through other backends. More details can be found on the [MatPlotLib](https://matplotlib.org/) pages.
 
 #### Non-interactive plot
 

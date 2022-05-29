@@ -102,7 +102,7 @@ Slicer.exe --VisualStudioProject
 
 ## Debug Slicer
 
-- C++ debugging: Visual Studio is recommended on Windows, see [instructions](../debugging/windowscpp).
+- C++ debugging: Visual Studio is recommended on Windows, see [instructions](../debugging/windowscpp.md).
 - Python debugging: multiple development environments can be used, see [instructions](../debugging/overview.md#python-debugging).
 
 ## Common errors

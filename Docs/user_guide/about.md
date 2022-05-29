@@ -9,7 +9,7 @@
 **Note:** There is no restriction on use, but Slicer is **NOT** approved for clinical use and the distributed application is intended for research use. Permissions and compliance with applicable rules are the responsibility of the user. For details on the license see [here](https://www.slicer.org/wiki/License).
 
 Highlights:
-- Free, [open-source](https://en.wikipedia.org/wiki/Open_source>) software available on multiple operating systems: Linux, macOS and Windows.
+- Free, [open-source](https://en.wikipedia.org/wiki/Open_source) software available on multiple operating systems: Linux, macOS and Windows.
 - Multi organ: from head to toe.
 - Support for multi-modality imaging including, MRI, CT, US, nuclear medicine, and microscopy.
 - Real-time interface for medical devices, such as surgical navigation systems, imaging systems, robotic devices, and sensors.
@@ -140,7 +140,7 @@ Many of the activities around the Slicer effort are made possible through fundin
 |[NIH R43DE027595](https://projectreporter.nih.gov/project_info_description.cfm?aid=9465772&icde=36620728&ddparam=&ddvalue=&ddsub=&cr=2&csb=default&cs=ASC&pball=)|VROrthognathic          |Paniagua, Beatriz|2017-09-07|2018-09-06|High-Fidelity Virtual Reality Trainer for Orthognathic Surgery|
 |[NIH 1R21DE025306](https://projectreporter.nih.gov/project_info_description.cfm?aid=9111256&icde=31459429&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|CMF                     |Paniagua, Beatriz|2016-09-01|2018-08-31|TEXTURAL BIOMARKERS OF ARTHRITIS FOR THE SUBCHONDRAL BONE IN THE TEMPOROMANDIBULAR JOINT|
 |[NIH 1U01NS082086](https://projectreporter.nih.gov/project_info_description.cfm?aid=8462842&icde=27164806&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|HD_SHAPEANALSS          |Gerig, Guido|2012-09-28|2018-08-31|4D Shape Analysis for Modeling Spatiotemporal Change Trajectories in Huntington’s|
-|[NIH U24 CA180918](https://projectreporter.nih.gov/project_info_description.cfm?aid=8911287&icde=27026906)|[QIICR]((https://qiicr.org))|Ron Kikinis, Andrey Fedorov|2013-09-04|2018-08-31|Quantitative Image Informatics for Cancer Research (QIICR)|
+|[NIH U24 CA180918](https://projectreporter.nih.gov/project_info_description.cfm?aid=8911287&icde=27026906)|[QIICR](https://qiicr.org)|Ron Kikinis, Andrey Fedorov|2013-09-04|2018-08-31|Quantitative Image Informatics for Cancer Research (QIICR)|
 |[NIH 5R01NS055903](https://projectreporter.nih.gov/project_info_description.cfm?aid=8900362&icde=27164764&ddparam=&ddvalue=&ddsub=&cr=1&csb=default&cs=ASC)|HD_KIDS                 |Nopoulos, Peggy|2009-03-01|2018-07-31|Growth and Development of the Striatum in Huntington's Disease|
 |[NIH 1U01CA199459](https://projectreporter.nih.gov/project_info_description.cfm?aid=8971083&icde=27026834)|SlicerDMRI Diffusion MRI|O'Donnell, Lauren Jean|2015-09-22|2018-07-31|Open Source Diffusion MRI Technology For Brain Cancer Research|
 |[NIH 5R01EB020667-02](https://projectreporter.nih.gov/project_info_description.cfm?aid=9100712&icde=34329960)|OpenIGTLink             |Tokuda, Junichi|2015-07-01|2018-06-30|OpenIGTLink: A Network Communication Interface for Closed-Loop Image-Guided Interventions|
@@ -191,7 +191,7 @@ We invite commercial entities to use 3D Slicer.
 ### Commercial Partners
 
 - [Ebatinca SL](https://ebatinca.com/) is an international technology company in Las Palmas, Spain focused on technology for sustainable development.
-- [Isomics](https://www.isomics.com/) uses 3D Slicer in a variety of academic and commercial research partnerships in fields such as planning and guidance for neurosurgery, quantitative imaging for clinical trials, clinical image informatics.
+- [Isomics](https://isomics.com/) uses 3D Slicer in a variety of academic and commercial research partnerships in fields such as planning and guidance for neurosurgery, quantitative imaging for clinical trials, clinical image informatics.
 - [Kitware](https://www.kitware.com/opensource/slicer.html) focuses on solving the world’s most complex scientific challenges through customized software solutions. The company has a long history of contributing to open source platforms that serve as the foundation of many medical visualization and data processing applications. Kitware helps customers develop commercial products based on 3D Slicer and has used the platform to rapidly prototype solutions in nearly every aspect of medical imaging.
 - [Pixel Medical](https://pixelmedical.ca) builds on and contributes to 3D Slicer to develop innovative medical software from idea to clinical prototype to finished product, and to support academic research projects. Areas of expertise include radiation therapy, image guided therapy, virtual & augmented reality, hardware & device support, and machine learning & artificial intelligence.
 
