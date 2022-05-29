@@ -717,14 +717,28 @@ bool qMRMLSegmentEditorWidgetPrivate::updateMaskLabelmap()
   vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
   if (!segmentationNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segmentation node, modifier labelmap, or mask labelmap";
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentation node";
     return false;
     }
+
+  std::string referenceGeometryStr = this->referenceImageGeometry();
+  if (referenceGeometryStr.empty())
+    {
+    qCritical() << Q_FUNC_INFO << ": Cannot determine mask labelmap geometry";
+    return false;
+    }
+  vtkNew<vtkOrientedImageData> referenceGeometry;
+  if (!vtkSegmentationConverter::DeserializeImageGeometry(referenceGeometryStr, referenceGeometry, false))
+    {
+    qCritical() << Q_FUNC_INFO << ": Cannot determine mask labelmap geometry";
+    return false;
+    }
+
   // GenerateEditMask can add intensity range based mask, too. We do not use it here, as currently
   // editable intensity range is taken into account in qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap.
   // It would simplify implementation if we passed master volume and intensity range to GenerateEditMask here
   // and removed intensity range based masking from modifySelectedSegmentByLabelmap.
-  if (!segmentationNode->GenerateEditMask(this->MaskLabelmap, this->ParameterSetNode->GetMaskMode(), this->ModifierLabelmap,
+  if (!segmentationNode->GenerateEditMask(this->MaskLabelmap, this->ParameterSetNode->GetMaskMode(), referenceGeometry,
     this->ParameterSetNode->GetSelectedSegmentID() ? this->ParameterSetNode->GetSelectedSegmentID() : "",
     this->ParameterSetNode->GetMaskSegmentID() ? this->ParameterSetNode->GetMaskSegmentID() : ""))
     {
