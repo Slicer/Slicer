@@ -8,9 +8,9 @@
 - [vtkMRMLPlotSeriesNode](https://apidocs.slicer.org/master/classvtkMRMLPlotSeriesNode.html): Defines a data series by referring to a table node and column name(s) for X and Y axes and labels.
   - It also defines display properties, such as plot type, color, line style.
   - Line and bar plots only require Y axis (points along X axis are equally spaced), scatter plots require two input data columns, for X and Y axes.
-- [vtkMRMLPlotChartNode](https://apidocs.slicer.org/master/classvtkMRMLPlotChart.html): Specifies which data series need to be shown in the chart.
+- [vtkMRMLPlotChartNode](https://apidocs.slicer.org/master/classvtkMRMLPlotChartNode.html): Specifies which data series need to be shown in the chart.
   - Also contains global display properties for the chart, such as titles and font style.
-- [vtkMRMLPlotViewNode](https://apidocs.slicer.org/master/classvtkMRMLPlotView.html): Specifies which chart is to be displayed in the plot view and how the user can interact with it.
+- [vtkMRMLPlotViewNode](https://apidocs.slicer.org/master/classvtkMRMLPlotViewNode.html): Specifies which chart is to be displayed in the plot view and how the user can interact with it.
     - There has to be exactly one plot view node for each plot view widget. This class can not be created or copied unless is connected with a plot view.
 
 ### Widgets

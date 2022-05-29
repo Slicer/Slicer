@@ -70,7 +70,7 @@ folderPlugin.setDisplayVisibility(folderItemID, 1)
 
 ### Filter items in TreeView or ComboBox
 
-Displayed items can be filtered using *setAttributeFilter* method. An example of the usage can be found in the [unit test](https://github.com/Slicer/Slicer/blob/e66e3b08e35384526528e6ae678e9ec9f079f286/Applications/SlicerApp/Testing/Python/SubjectHierarchyGenericSelfTest.py#L352-L360). Modified version here:
+Displayed items can be filtered using *setAttributeFilter* method. An example of the usage can be found in the [unit test](https://github.com/Slicer/Slicer/blob/53fb5b8acd41cb36eafbc5c4b66ff39c8434f4c6/Applications/SlicerApp/Testing/Python/SubjectHierarchyGenericSelfTest.py#L352-L360). Modified version here:
 
 ```python
 print(shTreeView.displayedItemCount()) # 5

@@ -20,14 +20,14 @@ The PR Process, Circle CI, and Related Gotchas
 If you are new to Slicer development and you don't have push access to the Slicer
 repository, here are the steps:
 
-1. [Fork and clone](https://help.github.com/articles/fork-a-repo/) the repository.
+1. [Fork and clone](https://docs.github.com/en/get-started/quickstart/fork-a-repo) the repository.
 2. Run the developer setup script [`Utilities/SetupForDevelopment.sh`](https://github.com/Slicer/Slicer/blob/master/Utilities/SetupForDevelopment.sh).
 3. Create a branch.
-4. [Push](https://help.github.com/articles/pushing-to-a-remote/) the branch to your GitHub fork.
+4. [Push](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository) the branch to your GitHub fork.
 5. Create a [Pull Request](https://github.com/Slicer/Slicer/pulls).
 
-This corresponds to the `Fork & Pull Model` mentioned in the [GitHub flow](https://guides.github.com/introduction/flow/index.html)
-guides.
+This corresponds to the `Fork & Pull Model` described in the [GitHub collaborative development](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/getting-started/about-collaborative-development-models)
+documentation.
 
 When submitting a PR, the developers following the project will be notified. That
 said, to engage specific developers, you can add `Cc: @<username>` comment to notify
@@ -82,7 +82,7 @@ commits, the message body should follow the following guidelines:
   a regression test, provide the link. If it fixes a compiler error, provide a
   minimal verbatim message of the compiler error. If the commit closes an
   issue, use the [GitHub issue closing
-  keywords](https://help.github.com/en/articles/closing-issues-using-keywords).
+  keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue).
 
 Keep in mind that the significant time is invested in reviewing commits and
 *pull requests*, so following these guidelines will greatly help the people

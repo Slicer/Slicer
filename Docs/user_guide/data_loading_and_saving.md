@@ -16,7 +16,7 @@ Data in the scene can be saved to DICOM files in two steps:
 1. Export to database: save data from the scene into the application's DICOM database
 2. Export to file system: copy DICOM files from the database to a chosen folder in the file system
 
-More details are provided in the [DICOM module documentation](modules/dicom).
+More details are provided in the [DICOM module documentation](modules/dicom.md).
 
 ## Non-DICOM data
 
@@ -51,7 +51,7 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
   - To load an image file as segmentation (also known as label image, mask, region of interest) see [Segmentations module documentation](modules/segmentations.md#import-an-existing-segmentation-from-volume-file)
 - [**MetaImage**](https://www.itk.org/Wiki/MetaIO/Documentation) (.mha, .mhd): Coordinate system: LPS (AnatomicalOrientation in the file header is ignored).
 - [**VTK**](https://www.vtk.org/VTK/img/file-formats.pdf) (.vtk): Coordinate system: LPS. Important limitation: image axis directions cannot be stored in this file format.
-- [**Analyze**](https://www.grahamwideman.com/gw/brain/analyze/formatdoc.htm) (.hdr, .img, .img.gz): Image orientation is specified ambiguously in this format, therefore its use is strongle discouraged. For brain imaging, use Nifti format instead.
+- [**Analyze**](https://web.archive.org/web/20220312005651/www.grahamwideman.com/gw/brain/analyze/formatdoc.htm) (.hdr, .img, .img.gz): Image orientation is specified ambiguously in this format, therefore its use is strongle discouraged. For brain imaging, use Nifti format instead.
 - [**Nifti**](https://nifti.nimh.nih.gov/nifti-1/) (.nii, .nii.gz): File format for brain MRI. Not well suited as a general-purpose 3D image file format (use NRRD format instead).
   - To load an image file as segmentation (also known as label image, mask, region of interest) see [Segmentations module documentation](modules/segmentations.md#import-an-existing-segmentation-from-volume-file)
 - **Tagged image file format** (.tif, .tiff): can read/write single/series of frames
@@ -92,7 +92,7 @@ Surface or volumetric meshes.
 - [**VTK Polygonal Data**](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf) (.vtk, .vtp): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Full color (RGB or RGBA) meshes can be read and written (color must be assigned as point scalar data of `unsigned char` type and 3 or 4 components). Texture image can be applied using "Texture model" module (in SlicerIGT extension).
 - [**VTK Unstructured Grid Data**](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf) (.vtk, .vtu): Volumetric mesh. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header.
 - **STereoLithography** (.stl): Format most commonly used for 3D printing. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header.
-- **Wavefront OBJ** (.obj): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Texture image can be applied using "Texture model" module (in SlicerIGT extension). The non-standard [technique of saving vertex color as additinal values after coordinates](https://www.paulbourke.net/dataformats/obj/colour.html) is not supported - if vertex coloring is needed then convert to PLY, VTK, or VTP format using another software.
+- **Wavefront OBJ** (.obj): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Texture image can be applied using "Texture model" module (in SlicerIGT extension). The non-standard [technique of saving vertex color as additinal values after coordinates](https://web.archive.org/web/20220508010504/www.paulbourke.net/dataformats/obj/colour.html) is not supported - if vertex coloring is needed then convert to PLY, VTK, or VTP format using another software.
 - **Stanford Triangle Format** (.ply): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Full color (RGB or RGBA) meshes can be read and written (color must be assigned to vertex data in `uchar` type properties named `red`, `green`, `blue`, and optional `alpha`). Texture image can be applied using "Texture model" module (in SlicerIGT extension).
 - **BYU** (.byu, .g; reading only): Coordinate system: LPS.
 - **UCD** (.ucd; reading only): Coordinate system: LPS.
