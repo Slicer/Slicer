@@ -25,7 +25,7 @@ More information about DICOM standard:
 - DICOM on wikipedia: https://en.wikipedia.org/wiki/DICOM
 - Clean and simple DICOM tag browser: https://dicom.innolitics.com
 - A useful tag lookup site: http://dicomlookup.com/
-- A hyperlinked version of the standard: http://dabsoft.ch/dicom/
+- A hyperlinked version of the standard: https://web.archive.org/web/20180624030937/http://dabsoft.ch/dicom/
 
 ### Slicer DICOM Database
 

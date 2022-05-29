@@ -8,7 +8,7 @@ Segment Editor does not edit labelmap volumes or models, but segmentations can b
 
 ## How to cite
 
-To cite the Segment Editor in scientific publications, you can cite [3D Slicer](../about.html#how-to-cite) and the Segment Editor paper: *Cs. Pinter, A. Lasso, G. Fichtinger, "Polymorph segmentation representation for medical image computing", Computer Methods and Programs in Biomedicine, Volume 171, p19-26, 2019* ([pdf](http://perk.cs.queensu.ca/sites/perkd7.cs.queensu.ca/files/Pinter2019_Manuscript.pdf), [DOI](https://doi.org/10.1016/j.cmpb.2019.02.011)). Additional references to non-trivial algorithms used in Segment Editor effects are provided below, in the documentation of each effect.
+To cite the Segment Editor in scientific publications, you can cite [3D Slicer](../about.md#how-to-cite) and the Segment Editor paper: *Cs. Pinter, A. Lasso, G. Fichtinger, "Polymorph segmentation representation for medical image computing", Computer Methods and Programs in Biomedicine, Volume 171, p19-26, 2019* ([pdf](http://perk.cs.queensu.ca/sites/perkd7.cs.queensu.ca/files/Pinter2019_Manuscript.pdf), [DOI](https://doi.org/10.1016/j.cmpb.2019.02.011)). Additional references to non-trivial algorithms used in Segment Editor effects are provided below, in the documentation of each effect.
 
 ## Keyboard shortcuts
 

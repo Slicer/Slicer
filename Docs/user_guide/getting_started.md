@@ -134,7 +134,7 @@ You can customize views (show orientation marker, ruler, change orientation, tra
 
 3D Slicer is built on a modular architecture. Choose a module to process or analyze your data. Most important modules are the following (complete list is available in [Modules](modules/index.md) section):
 
-- [Welcome](modules/welcome.md): The default module when 3D Slicer is started. The panel features options for loading data and customizing 3D Slicer. Below those options are drop-down boxes that contain essential information for using 3D Slicer.
+- *Welcome*: The default module when 3D Slicer is started. The panel features options for loading data and customizing 3D Slicer. Below those options are drop-down boxes that contain essential information for using 3D Slicer.
 - [Data](modules/data.md): acts as a central data-organizing hub. Lists all data currently in the scene and allows basic operations such as search, rename, delete and move.
 - [DICOM](modules/dicom.md): Import and export DICOM objects, such as images, segmentations, structure sets, radiation therapy objects, etc.
 - [Volumes](modules/volumes.md): Used for changing the appearance of various volume types.
@@ -147,7 +147,7 @@ You can customize views (show orientation marker, ruler, change orientation, tra
 
 #### Save data
 
-Data sets loaded into the application can be saved using Save data dialog or exported to DICOM format using DICOM module. Detailes are described in [Data loading and saving section](data_loading_and_saving).
+Data sets loaded into the application can be saved using Save data dialog or exported to DICOM format using DICOM module. Detailes are described in [Data loading and saving section](data_loading_and_saving.md).
 
 #### Extensions
 
@@ -157,7 +157,7 @@ Data sets loaded into the application can be saved using Save data dialog or exp
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_extensions_manager.png)
 
-For details about downloading extensions, see [Extensions Manager documentation](extensions_manager).
+For details about downloading extensions, see [Extensions Manager documentation](extensions_manager.md).
 Click [here](https://www.slicer.org/wiki/Documentation/Nightly/ModuleExtensionListing/Extensions_by_category) for a full list of extensions. The links on the page will provide documentation for each extension.
 
 Slicer is extensible. If you are interested in customizing or adding functionality to Slicer, click [here](https://www.slicer.org/wiki/Documentation/Nightly/Training#Tutorials_for_software_developers).
@@ -172,7 +172,7 @@ For more tutorials, visit the [Tutorial page](https://www.slicer.org/wiki/Docume
 
 ### User manual
 
-Browse the [User Interface](user_interface) section to find quick overview of the application user interface or [Modules](modules/index.md) section for detailed description of each module.
+Browse the [User Interface](user_interface.md) section to find quick overview of the application user interface or [Modules](modules/index.md) section for detailed description of each module.
 
 ### Ask for help
 
@@ -220,7 +220,7 @@ Terms used in various fields of medical and biomedical image computing and clini
 - **Scalar component**: One element of a vector. Number of scalar components means the length of the vector.
 - **Scalar value**: A simple number. Typically floating-point.
 - **Scene** (or MRML scene): This is the data structure that contains all the data that is currently loaded into the application and additional information about how they should be displayed or used. The term originates [computer graphics](https://en.wikipedia.org/wiki/Rendering_(computer_graphics)).
-- **Segment**: Corresponds to single structure in a segmentation. See more information in [Image segmentation](image_segmentation) section.
+- **Segment**: Corresponds to single structure in a segmentation. See more information in [Image segmentation](image_segmentation.md) section.
 - **Segmentation** (also known as contouring, annotation; region of interest, structure set, mask): Process of delineating 3D structures in images. Segmentation can also refer to the MRML node that is the result of the segmentation process. A segmentation node typically contains multiple segments (each segment corresponds to one 3D structure). Segmentation nodes are not labelmap nodes or model nodes but they can store multiple representations (binary labelmap, closed surface, etc.). See more information in [Image segmentation](image_segmentation) section.
 - **Slice**: Intersection of a 3D object with a plane.
 - **Slice view annotations**: text in corner of slice views displaying name, and selected DICOM tags of the displayed volumes

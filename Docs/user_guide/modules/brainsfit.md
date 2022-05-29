@@ -10,7 +10,7 @@ Most frequently used for these scenarios and recommended registration settings.
 
 ### Same Subject: Longitudinal
 
-For this case we're registering a baseline T1 scan with a follow-up T1 scan on the same subject a year later.  The two images are available on the [Midas site](http://midas.kitware.com/item/view/483) as test.nii.gz and test2.nii.gz
+For this case we're registering a baseline T1 scan with a follow-up T1 scan on the same subject a year later.
 
 First, set the fixed and moving volumes:
 
@@ -191,4 +191,4 @@ BRAINSFit --fixedVolume mouseFixed.nii.gz \
 ## References
 
 - [BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images](https://hdl.handle.net/1926/1291), Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007.
-- [Source code on github](https://github.com/BRAINSia/BRAINSStandAlone/tree/master/BRAINSFit)
+- [Source code on github](https://github.com/BRAINSia/BRAINSTools/tree/main/BRAINSFit)

@@ -655,7 +655,7 @@ slicer.util.setSliceViewerLayers(background=outputVolumeNode)
 
 More information:
 
-- See the SimpleITK documentation for SimpleITK examples: https://www.itk.org/SimpleITKDoxygen/html/examples.html
+- See the SimpleITK documentation for SimpleITK examples: https://simpleitk.org/doxygen/latest/html/examples.html
 - sitkUtils in Slicer is used for pushing and pulling images from Slicer to SimpleITK: https://github.com/Slicer/Slicer/blob/master/Base/Python/sitkUtils.py
 
 ### Get axial slice as numpy array
