@@ -175,6 +175,9 @@ public:
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
   /// \param extentComputationMode If referenceVolumeNode is not specified then labelmap extents will be determined based on this value.
   ///   By default, the minimum necessary size is used. Set value to vtkSegmentation::EXTENT_REFERENCE_GEOMETRY to use reference geometry extent.
+  /// \param colorTableNode If specified then it is used for setting label values in the output labelmapNode (by matching segment name to color name).
+  ///   RGB values in the colorTableNode are updated with corresponding segment colors.
+  ///   New color table entries are added for each segment that had no corresponding entry in the table already.
   static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentIDs,
     vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr,
     int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, vtkMRMLColorTableNode* colorTableNode = nullptr);

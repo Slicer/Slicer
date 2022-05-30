@@ -1073,9 +1073,19 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     }
   labelmapNode->SetAndObserveTransformNodeID(parentTransformNode ? parentTransformNode->GetID() : "");
 
+  std::vector<std::string> exportedSegmentIDs;
+  if (segmentIDs.empty())
+    {
+    segmentationNode->GetSegmentation()->GetSegmentIDs(exportedSegmentIDs);
+    }
+  else
+    {
+    exportedSegmentIDs = segmentIDs;
+    }
+
   vtkNew<vtkOrientedImageData> mergedLabelmap_Reference;
   vtkNew<vtkStringArray> segmentIDsArray;
-  for (std::string segmentID : segmentIDs)
+  for (std::string segmentID : exportedSegmentIDs)
     {
     segmentIDsArray->InsertNextValue(segmentID);
     }
@@ -1137,15 +1147,6 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     labelmapNode->GetDisplayNode()->GetColorNode() ); // Always valid, as it was created just above if was missing
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
     segmentationNode->GetDisplayNode() );
-  std::vector<std::string> exportedSegmentIDs;
-  if (segmentIDs.empty())
-    {
-    segmentationNode->GetSegmentation()->GetSegmentIDs(exportedSegmentIDs);
-    }
-  else
-    {
-    exportedSegmentIDs = segmentIDs;
-    }
 
   int numberOfColors = exportedSegmentIDs.size() + 1;
   if (labelValues)
