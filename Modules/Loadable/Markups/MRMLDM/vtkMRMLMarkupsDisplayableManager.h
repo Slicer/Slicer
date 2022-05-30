@@ -63,7 +63,7 @@ public:
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
-  void SetHasFocus(bool hasFocus) override;
+  void SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData) override;
   bool GetGrabFocus() override;
   bool GetInteractive() override;
   int GetMouseCursor() override;

@@ -386,12 +386,12 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
     {
     if (oldFocusedDisplayableManager != nullptr)
       {
-      oldFocusedDisplayableManager->SetHasFocus(false);
+      oldFocusedDisplayableManager->SetHasFocus(false, eventData);
       }
     this->FocusedDisplayableManager = closestDisplayableManager;
     if (closestDisplayableManager != nullptr)
       {
-      closestDisplayableManager->SetHasFocus(true);
+      closestDisplayableManager->SetHasFocus(true, eventData);
       }
     }
 

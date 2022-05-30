@@ -56,7 +56,7 @@ public:
   virtual int GetMouseCursor();
 
   // Called to notify the displayable manager that it has got or lost the focus.
-  void SetHasFocus(bool hasFocus) override;
+  void SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData) override;
 
 protected:
   vtkMRMLCrosshairDisplayableManager();

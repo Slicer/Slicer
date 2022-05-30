@@ -972,7 +972,7 @@ bool vtkMRMLAbstractDisplayableManager::ProcessInteractionEvent(vtkMRMLInteracti
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::SetHasFocus(bool vtkNotUsed(hasFocus))
+void vtkMRMLAbstractDisplayableManager::SetHasFocus(bool vtkNotUsed(hasFocus), vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
   return;
 }
