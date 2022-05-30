@@ -177,7 +177,7 @@ adding a playback button using [this free service](https://addplaybuttontoimage.
 ## Distribute an extension
 
 - Upload source code of your extension to a publicly available repository. It is recommended to start the repository name with "Slicer" (to make Slicer extensions easier to identify) followed by your extension name (for example, "Sequences" extension is stored in "SlicerSequences" repository). However, this is not a mandatory requirement. If you have a compelling reason not to use Slicer prefix, please make a note while making the pull request. See more requirements in the [new extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
-  - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://docs.github.com/en/get-started/quickstart/set-up-git#set-up-git).
+  - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://docs.github.com/get-started/quickstart/set-up-git).
 - If developing an extension that contains [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python):
   - Build the `PACKAGE` target to create a package file.
   - Test your extension by installing the created package file using the Extensions Manager.
@@ -527,7 +527,7 @@ Independently of the extension test results, if the extension could be successfu
 ### How do I associate a remote with my local extension git source directory?
 
 - Start a terminal (or Git Bash on Windows)
-- Get the associated SSH remote url. [Need help?](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories#cloning-with-ssh)
+- Get the associated SSH remote url. [Need help?](https://docs.github.com/get-started/getting-started-with-git/about-remote-repositories#cloning-with-ssh)
 - Associate the remote URL with your local git source tree
 
     ```bash
