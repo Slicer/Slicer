@@ -102,12 +102,12 @@ Slicer can import a labelmap volume into segmentation, visualize/edit the segmen
 
 #### Create color table node
 
-A color table node can be loaded from a [color table file](../modules/colors.md#color-table-file-format-txt-ctbl) or created from scratch like this:
+A color table node can be loaded from a [color table file](modules/colors.md#color-table-file-format-txt-ctbl) or created from scratch like this:
 
 ```python
 segment_names_to_labels = [("ribs", 10), ("right lung", 12), ("left lung", 6)]
-colorTableNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLColorTableNode")
 
+colorTableNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLColorTableNode")
 colorTableNode.SetTypeToUser()
 colorTableNode.HideFromEditorsOff()  # make the color table selectable in the GUI outside Colors module
 slicer.mrmlScene.AddNode(colorTableNode); colorTableNode.UnRegister(None)
