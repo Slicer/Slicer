@@ -619,10 +619,10 @@ int vtkMRMLCrosshairDisplayableManager::GetMouseCursor()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCrosshairDisplayableManager::SetHasFocus(bool hasFocus)
+void vtkMRMLCrosshairDisplayableManager::SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData)
 {
   if (this->Internal->SliceIntersectionWidget)
     {
-    this->Internal->SliceIntersectionWidget->Leave(nullptr);
+    this->Internal->SliceIntersectionWidget->Leave(eventData);
     }
 }

@@ -867,11 +867,11 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayableManager::SetHasFocus(bool hasFocus)
+void vtkMRMLMarkupsDisplayableManager::SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData)
 {
   if (!hasFocus && this->LastActiveWidget!=nullptr)
     {
-    this->LastActiveWidget->Leave(nullptr);
+    this->LastActiveWidget->Leave(eventData);
     this->LastActiveWidget = nullptr;
     }
 }

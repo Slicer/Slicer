@@ -101,7 +101,7 @@ public:
   virtual bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData);
 
   /// Set if the widget gets/loses focus (interaction events are processed by this displayable manager).
-  virtual void SetHasFocus(bool hasFocus);
+  virtual void SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData);
 
   /// Displayable manager can indicate that it would like to get all events (even when mouse pointer is outside the window).
   virtual bool GetGrabFocus();
