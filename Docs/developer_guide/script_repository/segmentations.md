@@ -95,6 +95,57 @@ shortcut.setKey(qt.QKeySequence("Ctrl+Shift+s"))
 shortcut.connect( "activated()", exportLabelmap)
 ```
 
+### Import/export labelmap node using custom label value mapping
+
+While in segmentation nodes segments are identified by segment ID, name, or terminology; in labelmap nodes a segment can be identified only by its label value.
+Slicer can import a labelmap volume into segmentation, visualize/edit the segmentation, then export the segmentation into labelmap volume - preserving the label values in the output. This is achieved by using a color node during labelmap node import and export, which assigns a name for each label value. Segment corresponding to a label value is found by matching the color name to the segment name.
+
+#### Create color table node
+
+A color table node can be loaded from a [color table file](modules/colors.md#color-table-file-format-txt-ctbl) or created from scratch like this:
+
+```python
+segment_names_to_labels = [("ribs", 10), ("right lung", 12), ("left lung", 6)]
+
+colorTableNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLColorTableNode")
+colorTableNode.SetTypeToUser()
+colorTableNode.HideFromEditorsOff()  # make the color table selectable in the GUI outside Colors module
+slicer.mrmlScene.AddNode(colorTableNode); colorTableNode.UnRegister(None)
+largestLabelValue = max([name_value[1] for name_value in segment_names_to_labels])
+colorTableNode.SetNumberOfColors(largestLabelValue + 1)
+colorTableNode.SetNamesInitialised(True) # prevent automatic color name generation
+import random
+for segmentName, labelValue in segment_names_to_labels:
+    r = random.uniform(0.0, 1.0)
+    g = random.uniform(0.0, 1.0)
+    b = random.uniform(0.0, 1.0)
+    a = 1.0
+    success = colorTableNode.SetColor(labelValue, segmentName, r, g, b, a)
+```
+
+#### Export labelmap node from segmentation node using custom label value mapping
+
+```python
+segmentationNode = getNode('Segmentation')  # source segmentation node
+labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")  # export to new labelmap volume
+referenceVolumeNode = None # it could be set to the master volume
+segmentIds = segmentationNode.GetSegmentation().GetSegmentIDs()  # export all segments
+colorTableNode = ...  # created from scratch or loaded from file
+
+slicer.modules.segmentations.logic().ExportSegmentsToLabelmapNode(segmentationNode, segmentIds, labelmapVolumeNode, referenceVolumeNode, slicer.vtkSegmentation.EXTENT_REFERENCE_GEOMETRY, colorTableNode)
+```
+
+#### Import labelmap node into segmentation node using custom label value mapping
+
+```python
+labelmapVolumeNode = getNode('Volume-label')
+segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")  # import into new segmentation node
+colorTableNode = ...  # created from scratch or loaded from file
+
+labelmapVolumeNode.GetDisplayNode().SetAndObserveColorNodeID(colorTableNode.GetID())  # just in case the custom color table has not been already associated with the labelmap volume
+slicer.modules.segmentations.logic().ImportLabelmapToSegmentationNode(labelmapVolumeNode, segmentationNode)
+```
+
 ### Export model nodes from segmentation node
 
 ```python
