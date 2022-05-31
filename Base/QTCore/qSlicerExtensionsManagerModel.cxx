@@ -958,44 +958,65 @@ QVariantMap qSlicerExtensionsManagerModelPrivate::getExtensionsInfoFromPreviousI
   QSettings settings(extensionsHistorySettingsFile, QSettings::IniFormat);
   settings.beginGroup("ExtensionsHistory/Revisions");
   QStringList revisions = settings.childKeys();
-  revisions.sort(); //revisions sorted ascending
-  int lastRevision = -1;
-  for (int i = revisions.length() - 1; i >= 0; i--) //the revision with the highest number not equal the current one is considered to be the last revision
+
+  // Numerically sort the revision list.
+  // Non-numeric versions will be assigned revision numbers -1, -2, ...
+  // Uses a QMap as suggested in QStringList::sort() documentation.
+  QMap<int, QString> revisionNumberToString;
+  int nextNonNumericRevisionNumber = -1;
+  for (auto revision : revisions)
+    {
+    bool ok = false;
+    int revisionNumber = revision.toInt(&ok);
+    if (!ok)
+      {
+      // non-numeric revision
+      revisionNumber = (nextNonNumericRevisionNumber--);
+      }
+    revisionNumberToString[revisionNumber] = revision;
+    }
+  revisions = QStringList(revisionNumberToString.values());
+
+  // Get the last revision: the revision with the highest number not equal the current one.
+  QString lastRevision;
+  for (int i = revisions.length() - 1; i >= 0; i--)
     {
     if (revisions[i] != this->SlicerRevision)
       {
-      lastRevision = i;
+      lastRevision = revisions[i];
       break;
       }
     }
-  if (lastRevision == -1)
+  if (lastRevision.isEmpty())
     {
     return extensionsHistoryInformation;
     }
 
-  for (int i = 0; i < revisions.length(); i++)
+  // Get list of extension names and corresponding Slicer revision
+  QMap<QString, QString> extensionNamesRevisions;
+  foreach(const QString & revision, revisions)
     {
     QVariantMap curExtensionInfo;
-    const QStringList& extensionNames = settings.value(revisions.at(i)).toStringList();
-    for (int j = 0; j < extensionNames.length(); j++)
+    const QStringList& extensionNames = settings.value(revision).toStringList();
+    foreach(const QString & extensionName, extensionNames)
       {
-      QString extensionName = extensionNames.at(j);
-      QString extensionId = "";
+      extensionNamesRevisions[extensionName] = revision;
+      }
+    }
 
-      curExtensionInfo.insert("UsedLastInRevision", revisions.at(i));
-      if (i == lastRevision || (extensionsHistoryInformation.contains(extensionName) &&
-        extensionsHistoryInformation.value(extensionName).toMap().value("WasInstalledInLastRevision").toBool()))
-        {
-        curExtensionInfo.insert("WasInstalledInLastRevision", true);
-        }
-      else
-        {
-        curExtensionInfo.insert("WasInstalledInLastRevision", false);
-        }
-      curExtensionInfo.insert("IsInstalled", q->isExtensionInstalled(extensionName));
+  QStringList extensionsInstallInLastRevision = settings.value(lastRevision).toStringList();
+
+  foreach(const QString & extensionName, extensionNamesRevisions.keys())
+    {
+    QString revision = extensionNamesRevisions[extensionName];
+    const QStringList& extensionNames = settings.value(revision).toStringList();
+    foreach (const QString& extensionName, extensionNames)
+      {
+      bool isInstalled = q->isExtensionInstalled(extensionName);
       bool isCompatible = true;
+      QString extensionId;
       QString description;
-      if (!q->isExtensionInstalled(extensionName))
+      if (!isInstalled)
         {
         qRestAPI::Parameters parameters;
         if (q->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
@@ -1019,16 +1040,22 @@ QVariantMap qSlicerExtensionsManagerModelPrivate::getExtensionsInfoFromPreviousI
           }
         const ExtensionMetadataType& metaData = retrieveExtensionMetadata(parameters);
         description = metaData.value("description").toString();
-        extensionId = metaData.value("extension_id").toString();     //retrieve updated extension id for not installed extensions
+        extensionId = metaData.value("extension_id").toString(); // retrieve updated extension id for not installed extensions
         isCompatible = (this->isExtensionCompatible(metaData, this->SlicerRevision, this->SlicerOs, this->SlicerArch).length() == 0);
         }
       else
         {
+        // Extension is already installed
         const ExtensionMetadataType& metaData = q->extensionMetadata(extensionName);
         description = metaData.value("description").toString();
         extensionId = metaData.value("extension_id").toString();
         isCompatible = (q->isExtensionCompatible(extensionName).length() == 0);
         }
+
+      QVariantMap curExtensionInfo;
+      curExtensionInfo.insert("UsedLastInRevision", revision);
+      curExtensionInfo.insert("WasInstalledInLastRevision", extensionsInstallInLastRevision.contains(extensionName));
+      curExtensionInfo.insert("IsInstalled", isInstalled);
       curExtensionInfo.insert("Description", description);
       curExtensionInfo.insert("ExtensionId", extensionId);
       curExtensionInfo.insert("IsCompatible", isCompatible);
@@ -2084,12 +2111,13 @@ void qSlicerExtensionsManagerModel::onUpdateCheckComplete(
     }
   else
     {
-    // Check for valid response (expecting exactly one result)
+    // Check for valid response (expecting exactly one result).
+    // Multiple results are returned if the extension is not found by id.
     if (results.count() > 1)
       {
-      const QString msg = "Update check for %1 failed: received unexpected"
+      const QString msg = "Update check for %1 (%2) failed: received unexpected"
                           " multiple responses from the server";
-      d->warning(msg.arg(updateInfo.ExtensionName));
+      d->warning(msg.arg(updateInfo.ExtensionName).arg(updateInfo.InstalledVersion));
       return;
       }
 
