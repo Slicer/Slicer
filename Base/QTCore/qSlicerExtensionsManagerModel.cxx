@@ -1982,7 +1982,6 @@ void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
       }
     else
       {
-      qRestAPI::Parameters parameters;
       if (this->serverAPI() == Self::Midas_v1)
         {
         parameters["productname"] = extensionName;
@@ -2038,7 +2037,19 @@ void qSlicerExtensionsManagerModel::onUpdateCheckFinished(const QUuid& requestId
   Q_D(qSlicerExtensionsManagerModel);
 
   QScopedPointer<qRestResult> restResult(d->CheckForUpdatesApi.takeResult(requestId));
-  bool success = restResult.isNull() ? false : qMidasAPI::parseMidasResponse(restResult.data(), restResult->response());
+
+  bool success = false;
+  if (!restResult.isNull())
+    {
+    if (this->serverAPI() == qSlicerExtensionsManagerModel::Midas_v1)
+      {
+      success = qMidasAPI::parseMidasResponse(restResult.data(), restResult->response());
+      }
+    else if (this->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
+      {
+      success = qGirderAPI::parseGirderAPIv1Response(restResult.data(), restResult->response());
+      }
+    }
   if (success)
     {
     this->onUpdateCheckComplete(requestId, restResult->results());
@@ -2082,13 +2093,13 @@ void qSlicerExtensionsManagerModel::onUpdateCheckComplete(
       return;
       }
 
-    // Get extension information from response
-    const ExtensionMetadataType& extensionMetadata = results.first();
-
+    // Get extension information from server response
+    const ExtensionMetadataType& extensionMetadata = qRestAPI::qVariantMapFlattened(results.first());
+    QHash<QString, QString> serverToExtensionDescriptionKey = this->serverToExtensionDescriptionKey(this->serverAPI());
     const QString& extensionId =
-      extensionMetadata.value("extension_id").toString();
+      extensionMetadata.value(serverToExtensionDescriptionKey.key("extension_id")).toString();
     const QString& extensionRevision =
-      extensionMetadata.value("revision").toString();
+      extensionMetadata.value(serverToExtensionDescriptionKey.key("revision")).toString();
 
     const QString msg("update check for %1 complete:"
                       " '%2' available, '%3' installed");
