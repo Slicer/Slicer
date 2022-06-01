@@ -177,6 +177,7 @@ public slots:
   bool launchDesigner(const QStringList& args = QStringList());
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  /// Opens the Extensions Manager model popup window for installing, updating, uninstalling extensions.
   void openExtensionsManagerDialog();
 #endif
 

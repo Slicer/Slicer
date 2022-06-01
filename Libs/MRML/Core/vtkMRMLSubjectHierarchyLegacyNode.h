@@ -132,7 +132,7 @@ protected:
   char* OwnerPluginName{nullptr};
 
   /// List of UIDs of this subject hierarchy node
-  /// UIDs can be DICOM UIDs, MIDAS urls, etc.
+  /// UIDs can be DICOM UIDs, Girder urls, etc.
   std::map<std::string, std::string> UIDs;
 
 protected:
