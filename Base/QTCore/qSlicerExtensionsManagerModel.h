@@ -40,6 +40,7 @@ class QNetworkReply;
 class qSlicerExtensionsManagerModelPrivate;
 class QStandardItemModel;
 
+/// \brief Class querying and storing extensions data
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerExtensionsManagerModel : public QObject
 {
   Q_OBJECT
@@ -277,17 +278,19 @@ public:
   /// Return the item model used internally
   Q_INVOKABLE const QStandardItemModel * model()const;
 
+  /// Conversion map to get extensions manager model keys from metadata returned by the extensions server
   /// \sa convertExtensionMetadata()
   static QHash<QString, QString> serverToExtensionDescriptionKey(int serverAPI);
 
-  /// Convert server keys to description keys.
+  /// Convert server keys to extensions manager model keys.
   /// \sa serverToExtensionDescriptionKey()
   static ExtensionMetadataType convertExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI);
 
+  /// Server metadata fields that should not be copied to the extensions manager model.
   /// \sa filterExtensionMetadata()
   static QStringList serverKeysToIgnore(int serverAPI);
 
-  /// Exclude irrelevant server metadata.
+  /// Remove server metadata fields that should be ignored.
   /// \sa serverKeysToIgnore()
   static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI);
 
@@ -341,7 +344,7 @@ public slots:
   /// \sa isExtensionScheduledForUpdate, updateScheduledExtensions
   bool scheduleExtensionForUpdate(const QString& extensionName);
 
-  /// \brief Cancel the uninstallation of \a extensionName
+  /// \brief Cancel the update of \a extensionName
   /// Tell the application to keep \a extensionName installed
   /// \sa scheduleExtensionForUninstall
   bool cancelExtensionScheduledForUpdate(const QString& extensionName);
