@@ -11,25 +11,36 @@ if(Slicer_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported!")
 endif()
 
-set(tbb_ver "2019_20191006oss")
+set(tbb_ver "2021.5.0")
 if (WIN32)
-  set(tbb_file "tbb${tbb_ver}_win.zip")
-  set(tbb_md5 "a061a7c9821a374023201e8592860730")
+  set(tbb_file "oneapi-tbb-${tbb_ver}-win.zip")
+  set(tbb_sha256 "096c004c7079af89fe990bb259d58983b0ee272afa3a7ef0733875bfe09fcd8e")
 elseif (APPLE)
-  set(tbb_file "tbb${tbb_ver}_mac.tgz")
-  set(tbb_md5 "43a0d6409317ee94f047622fd489a6c8")
+  set(tbb_file "oneapi-tbb-${tbb_ver}-mac.tgz")
+  set(tbb_sha256 "388c1c25314e3251e38c87ade2323af74cdaae2aec9b68e4c206d61c30ef9c33")
 else ()
-  set(tbb_file "tbb${tbb_ver}_lin.tgz")
-  set(tbb_md5 "b5025847fa47040b4d2da8d6bdba0224")
+  set(tbb_file "oneapi-tbb-${tbb_ver}-lin.tgz")
+  set(tbb_sha256 "74861b1586d6936b620cdab6775175de46ad8b0b36fa6438135ecfb8fb5bdf98")
 endif ()
+
+if(APPLE)
+  set(tbb_cmake_osx_required_deployment_target "10.15") # See https://github.com/oneapi-src/oneTBB/blob/master/SYSTEM_REQUIREMENTS.md
+
+  if(NOT DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
+    message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET is not defined")
+  endif()
+  if(NOT CMAKE_OSX_DEPLOYMENT_TARGET VERSION_GREATER_EQUAL ${tbb_cmake_osx_required_deployment_target})
+    message(FATAL_ERROR "TBB requires macOS >= ${tbb_cmake_osx_required_deployment_target}. CMAKE_OSX_DEPLOYMENT_TARGET currently set to ${CMAKE_OSX_DEPLOYMENT_TARGET}")
+  endif()
+endif()
 
 #------------------------------------------------------------------------------
 set(TBB_INSTALL_DIR "${CMAKE_BINARY_DIR}/${proj}-install")
 
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
-  URL https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/${tbb_file}
-  URL_MD5 ${tbb_md5}
+  URL https://github.com/oneapi-src/oneTBB/releases/download/v${tbb_ver}/${tbb_file}
+  URL_HASH SHA256=${tbb_sha256}
   DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
   SOURCE_DIR ${TBB_INSTALL_DIR}
   BUILD_IN_SOURCE 1
@@ -62,53 +73,21 @@ if (WIN32)
     message(FATAL_ERROR "TBB does not support your Visual Studio compiler. [MSVC_VERSION: ${MSVC_VERSION}]")
   endif ()
   set(tbb_libdir lib/${tbb_archdir}/${tbb_vsdir})
-  set(tbb_bindir bin/${tbb_archdir}/${tbb_vsdir})
+  set(tbb_bindir redist/${tbb_archdir}/${tbb_vsdir})
 elseif (APPLE)
   set(tbb_libdir "lib")
-  set(tbb_bindir "bin")
+  set(tbb_bindir "${tbb_libdir}")
 else ()
   set(tbb_libdir "lib/${tbb_archdir}/gcc4.8")
-  set(tbb_bindir "bin")
-  set(tbb_libsuffix "${CMAKE_SHARED_LIBRARY_SUFFIX}")
+  set(tbb_bindir "${tbb_libdir}")
 endif ()
 
-if (NOT WIN32)
-  set(tbb_lib_prefix "lib")
-else ()
-  set(tbb_lib_prefix "")
-endif ()
-
-if (NOT tbb_libsuffix)
-  set(tbb_libsuffix ${CMAKE_SHARED_LIBRARY_SUFFIX})
-  if (WIN32)
-    set(tbb_libsuffix ${CMAKE_IMPORT_LIBRARY_SUFFIX})
-  endif ()
-endif ()
-
-# TODO: apply this patch
-# if (UNIX AND NOT APPLE)
-  # superbuild_apply_patch(tbb gcc5x-warning-fix
-    # "Tell TBB about GCC 5.1 stdlib support")
-# endif()
 
 #------------------------------------------------------------------------------
 
-# Variables used to configure VTK8
-set(TBB_INCLUDE_DIR "${TBB_INSTALL_DIR}/tbb${tbb_ver}/include")
-set(TBB_LIBRARY_DEBUG "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbb_debug${tbb_libsuffix}")
-set(TBB_LIBRARY_RELEASE "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbb${tbb_libsuffix}")
-
-set(TBB_MALLOC_INCLUDE_DIR "${TBB_INSTALL_DIR}/tbb${tbb_ver}/include/tbb")
-set(TBB_MALLOC_LIBRARY_DEBUG "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbbmalloc_debug${tbb_libsuffix}")
-set(TBB_MALLOC_LIBRARY_RELEASE "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbbmalloc${tbb_libsuffix}")
-
-set(TBB_MALLOC_PROXY_INCLUDE_DIR "${TBB_INSTALL_DIR}/tbb${tbb_ver}/include/tbb")
-set(TBB_MALLOC_PROXY_LIBRARY_DEBUG "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbbmalloc_proxy_debug${tbb_libsuffix}")
-set(TBB_MALLOC_PROXY_LIBRARY_RELEASE "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}/${tbb_lib_prefix}tbbmalloc_proxy${tbb_libsuffix}")
-
 # Variables used to install TBB and configure launcher
-set(TBB_BIN_DIR "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_bindir}")
-set(TBB_LIB_DIR "${TBB_INSTALL_DIR}/tbb${tbb_ver}/${tbb_libdir}")
+set(TBB_BIN_DIR "${TBB_INSTALL_DIR}/${tbb_bindir}")
+set(TBB_LIB_DIR "${TBB_INSTALL_DIR}/${tbb_libdir}")
 mark_as_superbuild(
   VARS
     TBB_BIN_DIR:PATH
@@ -119,7 +98,7 @@ mark_as_superbuild(
 
 ExternalProject_GenerateProjectDescription_Step(${proj}
   VERSION ${tbb_ver}
-  LICENSE_FILES "https://raw.githubusercontent.com/oneapi-src/oneTBB/2019_U9/LICENSE"
+  LICENSE_FILES "https://raw.githubusercontent.com/oneapi-src/oneTBB/v${tbb_ver}/LICENSE.txt"
   )
 
 #-----------------------------------------------------------------------------
@@ -131,7 +110,7 @@ mark_as_superbuild(
   LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
   )
 
-set(TBB_DIR ${TBB_INSTALL_DIR}/tbb${tbb_ver}/cmake)
+set(TBB_DIR ${TBB_INSTALL_DIR}/lib/cmake/tbb)
 ExternalProject_Message(${proj} "TBB_DIR:${TBB_DIR}")
 mark_as_superbuild(
   VARS TBB_DIR:PATH
