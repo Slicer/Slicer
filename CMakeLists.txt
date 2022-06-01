@@ -527,7 +527,7 @@ set(Slicer_VTK_RENDERING_USE_${Slicer_VTK_RENDERING_BACKEND}_BACKEND 1)
 
 # Slicer build is only tested with Sequential and TBB. OpenMP might work.
 # Use TBB by default only on Windows, as it has not been tested on other platforms.
-if(WIN32)
+if(WIN32 AND Slicer_VTK_VERSION_MAJOR VERSION_GREATER_EQUAL "9")
   set(Slicer_DEFAULT_VTK_SMP_IMPLEMENTATION_TYPE "TBB")
 else()
   set(Slicer_DEFAULT_VTK_SMP_IMPLEMENTATION_TYPE "Sequential")
