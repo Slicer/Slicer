@@ -95,6 +95,7 @@ function(slicerInstallLibrary)
       FILES_MATCHING PATTERN "${lib_name}*" ${install_permissions}
       PATTERN "${lib_name}*.a" EXCLUDE
       PATTERN "${lib_name}*.debug" EXCLUDE
+      PATTERN "${lib_name}*_debug.*" EXCLUDE
       REGEX "${lib_dir}/.+/" EXCLUDE)
 
     if(_slicerInstallLibrary_STRIP)
