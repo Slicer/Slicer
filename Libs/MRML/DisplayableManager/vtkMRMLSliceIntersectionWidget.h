@@ -81,7 +81,7 @@ public:
   enum
     {
     // Interactions without handles
-    WidgetStateFollowCursor = WidgetStateUser, ///< Set intersecting slices to current cursor position
+    WidgetStateMoveCrosshair = WidgetStateUser, ///< Move crosshair position, can be used for moving the crosshair with click-and-drag.
     WidgetStateBlend, ///< Fade between foreground/background volumes
     WidgetStateTranslateSlice, ///< Pan (translate in-plane) the current slice (using shift+left-click-and-drag or middle-click-and-drag)
     WidgetStateRotateIntersectingSlices, ///< Rotate all intersecting slices (ctrl+alt+left-click-and-drag)
@@ -108,6 +108,8 @@ public:
     WidgetEventTouchRotateSliceIntersection,
     WidgetEventTouchZoomSlice,
     WidgetEventTouchTranslateSlice,
+    WidgetEventMoveCrosshairStart,
+    WidgetEventMoveCrosshairEnd,
     WidgetEventBlendStart,
     WidgetEventBlendEnd,
     WidgetEventToggleLabelOpacity,
@@ -130,6 +132,7 @@ public:
     WidgetEventZoomSliceStart,
     WidgetEventZoomSliceEnd,
     WidgetEventSetCrosshairPosition,
+    WidgetEventSetCrosshairPositionBackground, //< set crosshair position without consuming the event (so that other widgets can process the event)
     WidgetEventMaximizeView,
 
     // Interactions with slice intersection handles
@@ -198,6 +201,7 @@ protected:
   bool ProcessRotateIntersectingSlicesStart(vtkMRMLInteractionEventData* eventData);
   bool ProcessRotateIntersectingSlices(vtkMRMLInteractionEventData* eventData);
   bool ProcessSetCrosshair(vtkMRMLInteractionEventData* eventData);
+  bool ProcessSetCrosshairBackground(vtkMRMLInteractionEventData* eventData);
   double GetSliceRotationAngleRad(double eventPos[2]);
 
   // Pan (move slice in-plane) by click-and-drag

@@ -78,9 +78,9 @@ public:
   /// Widget states
   enum
     {
-    WidgetStateFollowCursor = WidgetStateUser,
+    WidgetStateMoveCrosshair = WidgetStateUser, ///< Move crosshair position, can be used for moving the crosshair with click-and-drag.
     WidgetStateSpin,
-    WidgetStateTouchGesture,
+    WidgetStateTouchGesture
     };
 
   /// Widget events
@@ -88,6 +88,9 @@ public:
     {
     WidgetEventSpinStart = WidgetEventUser,
     WidgetEventSpinEnd,
+
+    WidgetEventMoveCrosshairStart,
+    WidgetEventMoveCrosshairEnd,
 
     WidgetEventCameraRotateToRight,
     WidgetEventCameraRotateToLeft,
@@ -132,6 +135,7 @@ public:
     WidgetEventTouchPanTranslate,
 
     WidgetEventSetCrosshairPosition,
+    WidgetEventSetCrosshairPositionBackground, //< set crosshair position without consuming the event (so that other widgets can process the event)
     WidgetEventMaximizeView,
     };
 
@@ -156,6 +160,7 @@ protected:
   bool ProcessScale(vtkMRMLInteractionEventData* eventData);
   bool ProcessSpin(vtkMRMLInteractionEventData* eventData);
   bool ProcessSetCrosshair(vtkMRMLInteractionEventData* eventData);
+  bool ProcessSetCrosshairBackground(vtkMRMLInteractionEventData* eventData);
 
   bool ProcessTouchGestureStart(vtkMRMLInteractionEventData* eventData);
   bool ProcessTouchGestureEnd(vtkMRMLInteractionEventData* eventData);

@@ -458,6 +458,38 @@ vtkMRMLInteractionNode* vtkMRMLAbstractWidget::GetInteractionNode()
 }
 
 //---------------------------------------------------------------------------
+bool vtkMRMLAbstractWidget::CanProcessButtonClickEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
+{
+  if (eventData->GetMouseMovedSinceButtonDown())
+    {
+    return false;
+    }
+
+  int clickEvent = 0;
+  switch (eventData->GetType())
+    {
+    case vtkCommand::LeftButtonReleaseEvent:
+      clickEvent = vtkMRMLInteractionEventData::LeftButtonClickEvent;
+      break;
+    case vtkCommand::MiddleButtonReleaseEvent:
+      clickEvent = vtkMRMLInteractionEventData::MiddleButtonClickEvent;
+      break;
+    case vtkCommand::RightButtonReleaseEvent:
+      clickEvent = vtkMRMLInteractionEventData::RightButtonClickEvent;
+      break;
+    default:
+      return false;
+    }
+
+  // Temporarily change the event ID to click, and process the event
+  int originalEventType = eventData->GetType();
+  eventData->SetType(clickEvent);
+  bool canProcessEvent = this->CanProcessInteractionEvent(eventData, distance2);
+  eventData->SetType(originalEventType);
+  return canProcessEvent;
+}
+
+//---------------------------------------------------------------------------
 int vtkMRMLAbstractWidget::ProcessButtonClickEvent(vtkMRMLInteractionEventData* eventData)
 {
   if (eventData->GetMouseMovedSinceButtonDown())
