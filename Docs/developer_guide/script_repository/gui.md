@@ -1007,6 +1007,40 @@ cameraWidget.SetEventTranslationClickAndDrag(cameraWidget.WidgetStateIdle, vtk.v
   cameraWidget.WidgetStateRotate, cameraWidget.WidgetEventRotateStart, cameraWidget.WidgetEventRotateEnd)
 ```
 
+#### Custom shortcut for moving crosshair in a slice view
+
+```python
+# Red slice view
+sliceViewLabel = "Red"
+sliceViewWidget = slicer.app.layoutManager().sliceWidget(sliceViewLabel)
+displayableManager = sliceViewWidget.sliceView().displayableManagerByClassName("vtkMRMLCrosshairDisplayableManager")
+widget = displayableManager.GetSliceIntersectionWidget()
+
+# Set crosshair position by left-click
+widget.SetEventTranslation(widget.WidgetStateIdle, slicer.vtkMRMLInteractionEventData.LeftButtonClickEvent, vtk.vtkEvent.NoModifier, widget.WidgetEventSetCrosshairPosition)
+widget.SetEventTranslation(widget.WidgetStateIdle, slicer.vtkMRMLInteractionEventData.LeftButtonClickEvent, vtk.vtkEvent.NoModifier, widget.WidgetEventSetCrosshairPosition)
+
+# Move crosshair by Alt+left-click-and-drag
+widget.SetEventTranslationClickAndDrag(widget.WidgetStateIdle, vtk.vtkCommand.LeftButtonPressEvent, vtk.vtkEvent.AltModifier,
+  widget.WidgetStateMoveCrosshair, widget.WidgetEventMoveCrosshairStart, widget.WidgetEventMoveCrosshairEnd)
+```
+
+#### Custom shortcut for moving crosshair in a 3D view
+
+```python
+# 3D view
+threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
+cameraDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLCameraDisplayableManager")
+widget = cameraDisplayableManager.GetCameraWidget()
+
+# Set crosshair position by left-click
+widget.SetEventTranslation(widget.WidgetStateIdle, slicer.vtkMRMLInteractionEventData.LeftButtonClickEvent, vtk.vtkEvent.NoModifier, widget.WidgetEventSetCrosshairPosition)
+
+# Move crosshair by Alt+left-click-and-drag
+widget.SetEventTranslationClickAndDrag(widget.WidgetStateIdle, vtk.vtkCommand.LeftButtonPressEvent, vtk.vtkEvent.AltModifier,
+  widget.WidgetStateMoveCrosshair, widget.WidgetEventMoveCrosshairStart, widget.WidgetEventMoveCrosshairEnd)
+```
+
 #### Add shortcut to adjust window/level in any mouse mode
 
 Makes Ctrl + Right-click-and-drag gesture adjust window/level in red slice view. This gesture works even when not in "Adjust window/level" mouse mode.

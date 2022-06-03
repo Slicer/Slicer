@@ -143,7 +143,7 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
     }
   if (this->GetActionEnabled(ActionSetCrosshairPosition))
     {
-    this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::ShiftModifier, WidgetEventSetCrosshairPosition);
+    this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::ShiftModifier, WidgetEventSetCrosshairPositionBackground);
     }
   if (this->GetActionEnabled(ActionBlend))
     {
@@ -309,7 +309,8 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   if (widgetEvent == WidgetEventNone)
     {
-    return false;
+    // If this event is not recognized then give a chance to process it as a click event.
+    return this->CanProcessButtonClickEvent(eventData, distance2);
     }
   if (!this->GetRepresentation())
     {
@@ -317,7 +318,8 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
     }
 
   // If we are currently dragging a point then we interact everywhere
-  if (this->WidgetState == WidgetStateTranslate
+  if (this->WidgetState == WidgetStateMoveCrosshair
+    || this->WidgetState == WidgetStateTranslate
     || this->WidgetState == WidgetStateRotateIntersectingSlices
     || this->WidgetState == WidgetStateBlend
     || this->WidgetState == WidgetStateTranslateSlice
@@ -332,13 +334,10 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
   // For example, this allows markup preview to remain visible in place mode while adjusting slice position
   // with shift + mouse-move.
   if (this->GetActionEnabled(ActionSetCrosshairPosition)
-    && this->WidgetState == WidgetStateIdle
-    && eventData->GetType() == vtkCommand::MouseMoveEvent
-    && eventData->GetModifiers() & vtkEvent::ShiftModifier)
+    && widgetEvent == WidgetEventSetCrosshairPositionBackground)
     {
-    this->ProcessSetCrosshair(eventData);
+    this->ProcessSetCrosshairBackground(eventData);
     }
-
 
   // Representation
   vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
@@ -406,6 +405,13 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
     case WidgetEventTouchGestureEnd:
       this->ProcessTouchGestureEnd(eventData);
       break;
+    case WidgetEventMoveCrosshairStart:
+      this->SetWidgetState(WidgetStateMoveCrosshair);
+      processedEvent = this->ProcessStartMouseDrag(eventData);
+      break;
+    case WidgetEventMoveCrosshairEnd:
+      processedEvent = this->ProcessEndMouseDrag(eventData);
+      break;
     case WidgetEventTouchRotateSliceIntersection:
       this->ProcessTouchRotate(eventData);
       break;
@@ -472,7 +478,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       processedEvent = this->ProcessEndMouseDrag(eventData);
       break;
     case WidgetEventSetCrosshairPosition:
-      // Event is handled in CanProcessInteractionEvent
+      this->ProcessSetCrosshair(eventData);
       break;
     case WidgetEventToggleLabelOpacity:
       {
@@ -643,6 +649,9 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
       const double* worldPos = eventData->GetWorldPosition();
       this->GetSliceNode()->JumpAllSlices(worldPos[0], worldPos[1], worldPos[2]);
       }
+      break;
+    case WidgetStateMoveCrosshair:
+      this->ProcessSetCrosshair(eventData);
       break;
     case WidgetStateBlend:
       this->ProcessBlend(eventData);
@@ -1423,13 +1432,19 @@ void vtkMRMLSliceIntersectionWidget::ScaleZoom(double zoomScaleFactor, vtkMRMLIn
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceIntersectionWidget::ProcessSetCrosshair(vtkMRMLInteractionEventData* eventData)
+bool vtkMRMLSliceIntersectionWidget::ProcessSetCrosshairBackground(vtkMRMLInteractionEventData* eventData)
 {
   if (!this->ModifierKeyPressedSinceLastClickAndDrag)
     {
     // this event was caused by a "stuck" modifier key
     return false;
     }
+  return this->ProcessSetCrosshair(eventData);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionWidget::ProcessSetCrosshair(vtkMRMLInteractionEventData* eventData)
+{
   vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
   vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(sliceNode->GetScene());
   if (!crosshairNode)
