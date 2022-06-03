@@ -2395,39 +2395,76 @@ def dataframeFromMarkups(markupsNode):
 
 class VTKObservationMixin:
   def __init__(self):
+    from weakref import WeakKeyDictionary
+
     super().__init__()
-    self.Observations = []
+
+    self.__observations = WeakKeyDictionary()
+    # {obj: {event: {method: (group, tag, priority)}}}
+
+  @property
+  def Observations(self):
+    return [
+      (obj, event, method, group, tag, priority)
+      for obj, events in self.__observations.items()
+      for event, methods in events.items()
+      for method, (group, tag, priority) in methods.items()
+    ]
 
   def removeObservers(self, method=None):
-    for o, e, m, g, t, p in list(self.Observations):
-      if method == m or method is None:
-        o.RemoveObserver(t)
-        self.Observations.remove([o, e, m, g, t, p])
+    if method is None:
+      for obj, _, _, _, tag, _ in self.Observations:
+        obj.RemoveObserver(tag)
+      self.__observations.clear()
+    else:
+      for obj, events in self.__observations.items():
+        for e, methods in events.items():
+          if method in methods:
+            g, t, p = methods.pop(method)
+            obj.RemoveObserver(t)
 
-  def addObserver(self, object, event, method, group = 'none', priority = 0.0):
-    if self.hasObserver(object, event, method):
-      print('already has observer')
+  def addObserver(self, obj, event, method, group='none', priority=0.0):
+    from warnings import warn
+
+    events = self.__observations.setdefault(obj, {})
+    methods = events.setdefault(event, {})
+
+    if method in methods:
+      warn('already has observer')
       return
-    tag = object.AddObserver(event, method, priority)
-    self.Observations.append([object, event, method, group, tag, priority])
 
-  def removeObserver(self, object, event, method):
-    for o, e, m, g, t, p in self.Observations:
-      if o == object and e == event and m == method:
-        o.RemoveObserver(t)
-        self.Observations.remove([o, e, m, g, t, p])
+    tag = obj.AddObserver(event, method, priority)
+    methods[method] = group, tag, priority
 
-  def hasObserver(self, object, event, method):
-    for o, e, m, g, t, p in self.Observations:
-      if o == object and e == event and m == method:
-        return True
-    return False
+  def removeObserver(self, obj, event, method):
+    from warnings import warn
 
-  def observer(self, event, method):
-    for o, e, m, g, t, p in self.Observations:
-      if e == event and m == method:
-        return o
-    return None
+    try:
+      events = self.__observations[obj]
+      methods = events[event]
+      group, tag, priority = methods.pop(method)
+      obj.RemoveObserver(tag)
+    except KeyError:
+      warn('does not have observer')
+
+  def getObserver(self, obj, event, method, default=None):
+    try:
+      events = self.__observations[obj]
+      methods = events[event]
+      group, tag, priority = methods[method]
+      return group, tag, priority
+    except KeyError:
+      return default
+
+  def hasObserver(self, obj, event, method):
+    return self.getObserver(obj, event, method) is not None
+
+  def observer(self, event, method, default=None):
+    for obj, events in self.__observations.items():
+      if self.hasObserver(obj, event, method):
+        return obj
+
+    return default
 
 
 def toVTKString(text):
