@@ -670,7 +670,8 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   if (widgetEvent == WidgetEventNone)
     {
-    return false;
+    // If this event is not recognized then give a chance to process it as a click event.
+    return this->CanProcessButtonClickEvent(eventData, distance2);
     }
   vtkSlicerMarkupsWidgetRepresentation* rep = this->GetMarkupsRepresentation();
   if (!rep)
