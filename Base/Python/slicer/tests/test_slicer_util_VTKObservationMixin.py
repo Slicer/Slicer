@@ -1,4 +1,5 @@
 import unittest
+import unittest.mock
 
 import vtk
 
@@ -43,7 +44,8 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
     self.assertEqual(foo.modifiedEventCount(object2), 0)
 
     foo.ModifiedEventCount = {}
-    foo.addObserver(object, event, callback)
+    with self.assertWarns(UserWarning):
+      foo.addObserver(object, event, callback)
     object.Modified()
     self.assertEqual(len(foo.Observations), 1)
     self.assertEqual(foo.modifiedEventCount(object), 1)
@@ -104,6 +106,34 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
 
     foo.addObserver(object2, event, callback2)
     self.assertEqual(foo.observer(event, callback2), object2)
+
+  def test_getObserver(self):
+    foo = Foo()
+    obj = vtk.vtkObject()
+    event = vtk.vtkCommand.ModifiedEvent
+    callback = foo.onObjectModified
+
+    group = 'a'
+    priority = 42.0
+
+    foo.addObserver(obj, event, callback, group=group, priority=priority)
+    group_, tag_, priority_ = foo.getObserver(obj, event, callback)
+
+    self.assertEqual(group, group_)
+    self.assertEqual(priority, priority_)
+
+  def test_releaseNodes(self):
+    foo = Foo()
+    node = vtk.vtkObject()
+    callback = unittest.mock.Mock()
+
+    foo.addObserver(node, vtk.vtkCommand.DeleteEvent, callback)
+
+    self.assertEqual(len(foo.Observations), 1)
+    callback.assert_not_called()
+    del node
+    callback.assert_called_once()
+    self.assertEqual(len(foo.Observations), 0)
 
   def test_removeObserver(self):
     foo = Foo()
