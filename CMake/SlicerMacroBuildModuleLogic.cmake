@@ -124,17 +124,6 @@ macro(SlicerMacroBuildModuleLogic)
     set(Slicer_Wrapped_LIBRARIES
       )
 
-    if(${VTK_VERSION} VERSION_LESS "8.90")
-      list(APPEND Slicer_Wrapped_LIBRARIES
-        SlicerBaseLogicPythonD
-        )
-      foreach(library ${MODULELOGIC_TARGET_LIBRARIES})
-        if(TARGET ${library}PythonD)
-          list(APPEND Slicer_Wrapped_LIBRARIES ${library}PythonD)
-        endif()
-      endforeach()
-    endif()
-
     SlicerMacroPythonWrapModuleVTKLibrary(
       NAME ${MODULELOGIC_NAME}
       SRCS ${MODULELOGIC_SRCS}
@@ -148,19 +137,9 @@ macro(SlicerMacroBuildModuleLogic)
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
       ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
       )
-    if(${VTK_VERSION} VERSION_LESS "8.90")
-      set_target_properties(${MODULELOGIC_NAME}PythonD PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
-        )
-    endif()
 
     if(NOT "${MODULELOGIC_FOLDER}" STREQUAL "")
       set_target_properties(${MODULELOGIC_NAME}Python PROPERTIES FOLDER ${MODULELOGIC_FOLDER})
-      if(${VTK_VERSION} VERSION_LESS "8.90")
-        set_target_properties(${MODULELOGIC_NAME}PythonD PROPERTIES FOLDER ${MODULELOGIC_FOLDER})
-      endif()
       if(TARGET ${MODULELOGIC_NAME}Hierarchy)
         set_target_properties(${MODULELOGIC_NAME}Hierarchy PROPERTIES FOLDER ${MODULELOGIC_FOLDER})
       endif()
@@ -168,9 +147,6 @@ macro(SlicerMacroBuildModuleLogic)
 
     # Export target
     set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${MODULELOGIC_NAME}Python)
-    if(${VTK_VERSION} VERSION_LESS "8.90")
-      set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${MODULELOGIC_NAME}PythonD)
-    endif()
   endif()
 
 endmacro()

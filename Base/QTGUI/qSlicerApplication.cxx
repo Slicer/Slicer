@@ -113,10 +113,7 @@
 
 // VTK includes
 #include <vtkNew.h>
-#include <vtkVersionMacros.h> // must precede reference to VTK_*_VERSION
-#if VTK_MAJOR_VERSION >= 9
 #include <vtkSMP.h> // For VTK_SMP_BACKEND
-#endif
 
 //-----------------------------------------------------------------------------
 class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate

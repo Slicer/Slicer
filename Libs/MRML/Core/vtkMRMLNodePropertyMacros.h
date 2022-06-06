@@ -326,8 +326,6 @@
     }
 
 /// Macro for reading an iterable container (of std::string) node property from XML.
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
-// Use std::string
 #define vtkMRMLReadXMLStdStringVectorMacro(xmlAttributeName, propertyName, vectorType) \
   if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
     { \
@@ -342,23 +340,6 @@
       } \
     this->Set##propertyName(attributeValues); \
     }
-#else
-// Use vtksys::String
-#define vtkMRMLReadXMLStdStringVectorMacro(xmlAttributeName, propertyName, vectorType) \
-  if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
-    { \
-    vectorType<std::string> attributeValues; \
-    std::string valueString(xmlReadAttValue); \
-    std::vector<vtksys::String> splitXmlReadAttValue = vtksys::SystemTools::SplitString(valueString, ';'); \
-    for (std::string attributeValue : splitXmlReadAttValue) \
-      { \
-      vtksys::SystemTools::ReplaceString(attributeValue, "%3B", ";"); \
-      vtksys::SystemTools::ReplaceString(attributeValue, "%25", "%"); \
-      attributeValues.emplace_back(attributeValue); \
-      } \
-    this->Set##propertyName(attributeValues); \
-    }
-#endif
 
 /// Macro for reading a vtkMatrix4x4* node property from XML.
 /// "Owned" means that the node owns the matrix, the object is always valid and cannot be replaced from outside

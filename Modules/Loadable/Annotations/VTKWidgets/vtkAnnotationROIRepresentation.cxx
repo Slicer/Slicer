@@ -1338,11 +1338,7 @@ void vtkAnnotationROIRepresentation::HighlightFace(int cellId)
   if ( cellId >= 0 )
     {
     vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType *pts;
-#else
-    vtkIdType *pts;
-#endif
     vtkCellArray *cells = this->HexFacePolyData->GetPolys();
     this->HexPolyData->GetCellPoints(cellId, npts, pts);
     this->HexFacePolyData->Modified();

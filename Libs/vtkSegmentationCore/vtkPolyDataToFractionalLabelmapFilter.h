@@ -89,24 +89,16 @@ public:
   double* GetOutputOrigin() override;
   void GetOutputOrigin(double origin[3]) override;
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   using Superclass::SetOutputOrigin;
   void SetOutputOrigin(const double origin[3]) override;
-#else
-  void SetOutputOrigin(double origin[3]);
-#endif
   void SetOutputOrigin(double x, double y, double z) override;
 
   using Superclass::GetOutputSpacing;
   double* GetOutputSpacing() override;
   void GetOutputSpacing(double spacing[3]) override;
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   using Superclass::SetOutputSpacing;
   void SetOutputSpacing(const double spacing[3]) override;
-#else
-  void SetOutputSpacing(double spacing[3]);
-#endif
   void SetOutputSpacing(double x, double y, double z) override;
 
 

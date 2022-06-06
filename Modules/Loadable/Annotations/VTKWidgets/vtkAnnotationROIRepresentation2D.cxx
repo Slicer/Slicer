@@ -742,11 +742,7 @@ void vtkAnnotationROIRepresentation2D::PrintIntersections(ostream& os)
     {
     double *pts = static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
     vtkIdType ncpts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType *cpts;
-#else
-    vtkIdType *cpts;
-#endif
     this->IntersectionFaces[i]->GetCellPoints(0, ncpts, cpts);
     os << "   Face[" << i << "]=(" << pts[3*cpts[0]] << ", " << pts[3*cpts[0]+1] << ", " << pts[3*cpts[0]+2] <<
                              "), (" << pts[3*cpts[1]] << ", " << pts[3*cpts[1]+1] << ", " << pts[3*cpts[1]+2] <<
