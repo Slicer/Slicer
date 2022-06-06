@@ -269,16 +269,3 @@ ctkAppLauncherConfigureForExecutable(
   APPLICATION_NAME PythonSlicer
   ${_python_launcher_config_params}
   )
-
-# SlicerPython executable name is deprecated and will be removed in the future
-# (name is not compatible with some development environments - see the comment above).
-file(WRITE "${python_bin_dir}/SlicerPython-is-obsolete.py" [==[
-exit("""SlicerPython executable is obsolete and will be removed. Use PythonSlicer executable instead.
-For more details, see https://github.com/Slicer/Slicer/issues/4843
-""")
-]==])
-ctkAppLauncherConfigureForExecutable(
-  APPLICATION_NAME SlicerPython
-  APPLICATION_DEFAULT_ARGUMENTS "${python_bin_dir}/SlicerPython-is-obsolete.py"
-  ${_python_launcher_config_params}
-  )
