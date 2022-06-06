@@ -64,15 +64,11 @@ public:
   double GetMaxSpacing();
 
   /// Get matrix including directions only
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION > 2)
   using vtkImageData::GetDirectionMatrix;
-#endif
   void GetDirectionMatrix(vtkMatrix4x4* mat);
 
   /// Set directions by matrix
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION > 2)
   using vtkImageData::SetDirectionMatrix;
-#endif
   void SetDirectionMatrix(vtkMatrix4x4* mat);
 
   /// Get the geometry matrix that includes the spacing and origin information

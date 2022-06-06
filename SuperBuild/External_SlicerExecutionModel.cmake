@@ -49,7 +49,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       )
   endif()
 
-  if(Slicer_VTK_VERSION_MAJOR STREQUAL "9" AND Slicer_USE_PYTHONQT)
+  if(Slicer_USE_PYTHONQT)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       # Required by FindPython3 CMake module used by VTK
       -DPython3_ROOT_DIR:PATH=${Python3_ROOT_DIR}

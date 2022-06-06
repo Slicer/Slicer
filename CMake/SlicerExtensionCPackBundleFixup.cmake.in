@@ -312,9 +312,8 @@ function(fixup_slicer_extension)
     )
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
-  set(Slicer_VTK_VERSION_MAJOR "@Slicer_VTK_VERSION_MAJOR@")
 
-  if(Slicer_USE_PYTHONQT AND ${Slicer_VTK_VERSION_MAJOR} VERSION_GREATER_EQUAL 9)
+  if(Slicer_USE_PYTHONQT)
     list(APPEND candidates_pattern
       "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@bin/Python/vtkmodules/*.so"
       )

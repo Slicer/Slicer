@@ -33,13 +33,8 @@ Version:   $Revision$
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkDebugLeaks.h>
 #include <vtkDecimatePro.h>
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-  #include <vtkDiscreteFlyingEdges3D.h>
-  #include <vtkFlyingEdges3D.h>
-#else
-  #include <vtkDiscreteMarchingCubes.h>
-  #include <vtkMarchingCubes.h>
-#endif
+#include <vtkDiscreteFlyingEdges3D.h>
+#include <vtkFlyingEdges3D.h>
 #include <vtkGeometryFilter.h>
 #include <vtkImageAccumulate.h>
 #include <vtkImageChangeInformation.h>
@@ -277,11 +272,7 @@ int main(int argc, char * argv[])
   // vtk and helper variables
   vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader;
   vtkImageData *                                    image;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   vtkSmartPointer<vtkDiscreteFlyingEdges3D>         cubes;
-#else
-  vtkSmartPointer<vtkDiscreteMarchingCubes>         cubes;
-#endif
   vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smoother;
   bool                                              makeMultiple = false;
   bool                                              useStartEnd = false;
@@ -294,11 +285,7 @@ int main(int argc, char * argv[])
   vtkSmartPointer<vtkImageConstantPad>        padder;
   vtkSmartPointer<vtkDecimatePro>             decimator;
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   vtkSmartPointer<vtkFlyingEdges3D>           mcubes;
-#else
-  vtkSmartPointer<vtkMarchingCubes>           mcubes;
-#endif
   vtkSmartPointer<vtkImageThreshold>          imageThreshold;
   vtkSmartPointer<vtkThreshold>               threshold;
   vtkSmartPointer<vtkImageToStructuredPoints> imageToStructuredPoints;
@@ -667,11 +654,7 @@ int main(int argc, char * argv[])
       cubes = nullptr;
       }
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
     cubes = vtkSmartPointer<vtkDiscreteFlyingEdges3D>::New();
-#else
-    cubes = vtkSmartPointer<vtkDiscreteMarchingCubes>::New();
-#endif
     std::string            comment1 = "Discrete Marching Cubes";
     vtkPluginFilterWatcher watchDMCubes(cubes,
                                         comment1.c_str(),
@@ -1105,11 +1088,7 @@ int main(int argc, char * argv[])
         mcubes->SetInputData(nullptr);
         mcubes = nullptr;
         }
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
       mcubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
-#else
-      mcubes = vtkSmartPointer<vtkMarchingCubes>::New();
-#endif
       std::string            comment5 = "Marching Cubes " + labelName;
       vtkPluginFilterWatcher watchThreshold(mcubes,
                                             comment5.c_str(),
@@ -1177,10 +1156,8 @@ int main(int argc, char * argv[])
       if (SaveIntermediateModels)
         {
         writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-#if VTK_MAJOR_VERSION >= 9
-        // version 5.1 is not compatible with earlier Slicer versions and most other software
+        // version 5.1 is not compatible with earlier Slicer versions (VTK < 9) and most other software
         writer->SetFileVersion(42);
-#endif
         std::string            commentSaveCubes = "Writing intermediate model after marching cubes " + labelName;
         vtkPluginFilterWatcher watchWriter(writer,
                                            commentSaveCubes.c_str(),

@@ -93,10 +93,6 @@ vtkMRMLThreeDReformatDisplayableManager::vtkInternal::vtkInternal(
     vtkMRMLThreeDReformatDisplayableManager* _external)
 {
   this->External = _external;
-
-#if VTK_MAJOR_VERSION <= 7
-  vtkWarningWithObjectMacro(_external, "Widget outline mode not available");
-#endif
 }
 
 //---------------------------------------------------------------------------
@@ -338,9 +334,7 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal
                  sliceToRAS->GetElement(1,3),
                  sliceToRAS->GetElement(2,3));
 
-#if VTK_MAJOR_VERSION > 7
   rep->SetDrawOutline(sliceNode->GetWidgetOutlineVisible());
-#endif
 
   // Update the widget itself if necessary
   bool visible =

@@ -25,15 +25,10 @@
 #include "vtkOrientedImageData.h"
 
 // VTK includes
-#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkCompositeDataGeometryFilter.h>
 #include <vtkCompositeDataIterator.h>
 #include <vtkDecimatePro.h>
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-  #include <vtkDiscreteFlyingEdges3D.h>
-#else
-  #include <vtkDiscreteMarchingCubes.h>
-#endif
+#include <vtkDiscreteFlyingEdges3D.h>
 #include <vtkExtractSelectedThresholds.h>
 #include <vtkGeometryFilter.h>
 #include <vtkImageAccumulate.h>
@@ -294,11 +289,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   double smoothingFactor = vtkVariant(this->ConversionParameters[GetSmoothingFactorParameterName()].first).ToDouble();
   int computeSurfaceNormals = vtkVariant(this->ConversionParameters[GetComputeSurfaceNormalsParameterName()].first).ToInt();
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   vtkNew<vtkDiscreteFlyingEdges3D> marchingCubes;
-#else
-  vtkNew<vtkDiscreteMarchingCubes> marchingCubes;
-#endif
   marchingCubes->SetInputData(binaryLabelmapWithIdentityGeometry);
   marchingCubes->ComputeGradientsOff();
   marchingCubes->ComputeNormalsOff(); // While computing normals is faster using the flying edges filter,

@@ -387,11 +387,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     }
 
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   std::vector<std::string> directoryParts;
-#else
-  std::vector<vtksys::String> directoryParts;
-#endif
   directoryParts = vtksys::SystemTools::SplitString(directoryToZip, '/', true);
   std::string directoryName = directoryParts.back();
 

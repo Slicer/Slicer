@@ -515,19 +515,15 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
       {
       writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-#if VTK_MAJOR_VERSION >= 9
-      // version 5.1 is not compatible with earlier Slicer versions and most other software
+      // version 5.1 is not compatible with earlier Slicer versions (VTK < 9) and most other software
       writer->SetFileVersion(42);
-#endif
       writer->SetInputData(meshToWrite);
       }
     else
       {
       writer = vtkSmartPointer<vtkUnstructuredGridWriter>::New();
-#if VTK_MAJOR_VERSION >= 9
-      // version 5.1 is not compatible with earlier Slicer versions and most other software
+      // version 5.1 is not compatible with earlier Slicer versions (VTK < 9) and most other software
       writer->SetFileVersion(42);
-#endif
       writer->SetInputData(meshToWrite);
       }
 
@@ -706,10 +702,8 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       fullNameWithoutExtension.erase(fullNameWithoutExtension.size() - 4);
       }
     exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
     std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     exporter->SetOBJFileComment(header.c_str());
-#endif
     try
       {
       exporter->Write();

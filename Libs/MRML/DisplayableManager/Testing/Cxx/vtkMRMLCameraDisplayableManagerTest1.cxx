@@ -715,11 +715,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     {
     vtkNew<vtkWindowToImageFilter> windowToImageFilter;
     windowToImageFilter->SetInput(rw.GetPointer());
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 1)
     windowToImageFilter->SetScale(1, 1); //set the resolution of the output image
-#else
-    windowToImageFilter->SetMagnification(1); //set the resolution of the output image
-#endif
     windowToImageFilter->Update();
 
     vtkStdString screenshootFilename = testHelper->GetDataRoot();
