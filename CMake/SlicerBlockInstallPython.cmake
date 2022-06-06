@@ -134,9 +134,6 @@ To create a Slicer package including python libraries, you can *NOT* provide you
 
   _install_python_launcher(PythonSlicer)
 
-  # SlicerPython executable is deprecated, see details in External_python.cmake
-  _install_python_launcher(SlicerPython)
-
   # Install headers
   set(python_include_subdir /Include/)
   if(UNIX)
