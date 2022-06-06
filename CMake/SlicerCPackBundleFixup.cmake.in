@@ -172,8 +172,7 @@ function(fixup_bundle_with_plugins app)
       )
   endif()
 
-  set(Slicer_VTK_VERSION_MAJOR "@Slicer_VTK_VERSION_MAJOR@")
-  if(Slicer_USE_PYTHONQT AND ${Slicer_VTK_VERSION_MAJOR} VERSION_GREATER_EQUAL 9)
+  if(Slicer_USE_PYTHONQT)
     list(APPEND candidates_pattern
       "${app_dir}/Contents/bin/Python/vtkmodules/*.so"
       )

@@ -35,7 +35,6 @@
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes
-#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkActor2D.h>
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
@@ -59,12 +58,8 @@
 #include <vtkWeakPointer.h>
 
 // VTK includes: customization
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-  #include <vtkCompositeDataGeometryFilter.h>
-  #include <vtkPlaneCutter.h>
-#else
-  #include <vtkCutter.h>
-#endif
+#include <vtkCompositeDataGeometryFilter.h>
+#include <vtkPlaneCutter.h>
 #include <vtkSampleImplicitFunctionFilter.h>
 
 // STD includes
@@ -88,12 +83,8 @@ public:
     vtkSmartPointer<vtkDataSetSurfaceFilter> SurfaceExtractor;
     vtkSmartPointer<vtkTransformFilter> ModelWarper;
     vtkSmartPointer<vtkPlane> Plane;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
     vtkSmartPointer<vtkPlaneCutter> Cutter;
     vtkSmartPointer<vtkCompositeDataGeometryFilter> GeometryFilter; // appends multiple cut pieces into a single polydata
-#else
-    vtkSmartPointer<vtkCutter> Cutter;
-#endif
     vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;
     vtkSmartPointer<vtkProp> Actor;
     };
@@ -319,12 +310,8 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   // Create pipeline
   Pipeline* pipeline = new Pipeline();
   pipeline->Actor = actor.GetPointer();
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   pipeline->Cutter = vtkSmartPointer<vtkPlaneCutter>::New();
   pipeline->GeometryFilter = vtkSmartPointer<vtkCompositeDataGeometryFilter>::New();
-#else
-  pipeline->Cutter = vtkSmartPointer<vtkCutter>::New();
-#endif
   pipeline->SliceDistance = vtkSmartPointer<vtkSampleImplicitFunctionFilter>::New();
   pipeline->TransformToSlice = vtkSmartPointer<vtkTransform>::New();
   pipeline->NodeToWorld = vtkSmartPointer<vtkGeneralTransform>::New();
@@ -335,18 +322,11 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
   // Set up pipeline
   pipeline->Transformer->SetTransform(pipeline->TransformToSlice);
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   pipeline->Transformer->SetInputConnection(pipeline->GeometryFilter->GetOutputPort());
   pipeline->Cutter->SetPlane(pipeline->Plane);
   pipeline->Cutter->BuildTreeOff(); // the cutter crashes for complex geometries if build tree is enabled
   pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
   pipeline->GeometryFilter->SetInputConnection(pipeline->Cutter->GetOutputPort());
-#else
-  pipeline->Transformer->SetInputConnection(pipeline->Cutter->GetOutputPort());
-  pipeline->Cutter->SetCutFunction(pipeline->Plane);
-  pipeline->Cutter->SetGenerateCutScalars(0);
-  pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
-#endif
   // Projection is created from outer surface of volumetric meshes (for polydata surface
   // extraction is just shallow-copy)
   pipeline->SurfaceExtractor->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
@@ -493,25 +473,9 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     {
     // show intersection in the slice view
     // include clipper in the pipeline
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
     pipeline->Transformer->SetInputConnection(pipeline->GeometryFilter->GetOutputPort());
-#else
-    pipeline->Transformer->SetInputConnection(pipeline->Cutter->GetOutputPort());
-
-    // optimization for slice to slice intersections which are 1 quad polydatas
-    // no need for 50^3 default locator divisions
-    if (pointSet->GetPoints() != nullptr && pointSet->GetNumberOfPoints() <= 4)
-    {
-      vtkNew<vtkPointLocator> locator;
-      double *bounds = pointSet->GetBounds();
-      locator->SetDivisions(2, 2, 2);
-      locator->InitPointInsertion(pointSet->GetPoints(), bounds);
-      pipeline->Cutter->SetLocator(locator.GetPointer());
-    }
-#endif
     pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
     // If there is no input or if the input has no points, the vtkTransformPolyDataFilter will display an error message
     // on every update: "No input data".
     // To prevent the error, if the input is empty then the actor should not be visible since there is nothing to display.
@@ -521,7 +485,6 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
       pipeline->Actor->SetVisibility(false);
       return;
       }
-#endif
 
     //  Set Poly Data Transform
     vtkNew<vtkMatrix4x4> rasToSliceXY;

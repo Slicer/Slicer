@@ -362,10 +362,10 @@ option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter ser
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
 set(_default_vtk "9")
-set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "VTK major version (8 or 9)")
-set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "8" "9")
-if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8|9)$")
-  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 8 or 9.")
+set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "VTK major version (9)")
+set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "9")
+if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(9)$")
+  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 9.")
 endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
 
@@ -518,7 +518,7 @@ set(Slicer_VTK_RENDERING_USE_${Slicer_VTK_RENDERING_BACKEND}_BACKEND 1)
 
 # Slicer build is only tested with Sequential and TBB. OpenMP might work.
 # Use TBB by default only on Windows, as it has not been tested on other platforms.
-if(WIN32 AND Slicer_VTK_VERSION_MAJOR VERSION_GREATER_EQUAL "9")
+if(WIN32)
   set(Slicer_DEFAULT_VTK_SMP_IMPLEMENTATION_TYPE "TBB")
 else()
   set(Slicer_DEFAULT_VTK_SMP_IMPLEMENTATION_TYPE "Sequential")
@@ -543,13 +543,8 @@ message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
 #-----------------------------------------------------------------------------
 # Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
-if (Slicer_VTK_VERSION_MAJOR VERSION_LESS "9")
-  set(VTK_COMPONENT_PREFIX "vtk")
-  set(VTK_TARGET_PREFIX "vtk")
-else()
   set(VTK_COMPONENT_PREFIX "")
   set(VTK_TARGET_PREFIX "VTK::")
-endif()
 set(Slicer_VTK_COMPONENTS
   ${VTK_COMPONENT_PREFIX}FiltersExtraction
   ${VTK_COMPONENT_PREFIX}FiltersFlowPaths
@@ -573,27 +568,11 @@ set(Slicer_VTK_COMPONENTS
   ${VTK_COMPONENT_PREFIX}ViewsQt
   ${VTK_COMPONENT_PREFIX}zlib
   )
-if (Slicer_VTK_VERSION_MAJOR VERSION_LESS "9")
-  list(APPEND Slicer_VTK_COMPONENTS
-    ${VTK_COMPONENT_PREFIX}GUISupportQtOpenGL
-    )
-endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_VTK_COMPONENTS
     ${VTK_COMPONENT_PREFIX}WrappingPythonCore
     )
-endif()
-if(UNIX AND NOT APPLE AND Slicer_VTK_VERSION_MAJOR VERSION_LESS "9")
-  find_package(FontConfig QUIET)
-  if(FONTCONFIG_FOUND)
-    list(APPEND Slicer_VTK_COMPONENTS
-      ${VTK_COMPONENT_PREFIX}RenderingFreeTypeFontConfig
-      )
-    if(TARGET vtkRenderingFreeTypeOpenGL)
-      list(APPEND VTK_LIBRARIES ${VTK_TARGET_PREFIX}RenderingFreeTypeOpenGL)
-    endif()
-  endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -852,15 +831,9 @@ endif()
 # VTK
 #-----------------------------------------------------------------------------
 find_package(VTK REQUIRED)
-if (VTK_VERSION VERSION_LESS "8.90")
-  find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
-  include(${VTK_USE_FILE})
-  set(VTK_GUI_SUPPORT_QT_TARGET_NAME "vtkGUISupportQt")
-else()
-  set(VTK_LIBRARIES "")
-  find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED)
-  set(VTK_GUI_SUPPORT_QT_TARGET_NAME "VTK::GUISupportQt")
-endif ()
+set(VTK_LIBRARIES "")
+find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED)
+set(VTK_GUI_SUPPORT_QT_TARGET_NAME "VTK::GUISupportQt")
 
 if(NOT TARGET ${VTK_GUI_SUPPORT_QT_TARGET_NAME})
   message(FATAL_ERROR "error: VTK was not configured to use Qt, you probably need "

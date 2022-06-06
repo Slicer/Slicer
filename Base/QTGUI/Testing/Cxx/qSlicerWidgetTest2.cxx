@@ -174,11 +174,7 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
 
   vtkWidget->setParent(&parentWidget);
   vbox.addWidget(vtkWidget);
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkWidget->renderWindow()->Render();
-#else
-  vtkWidget->GetRenderWindow()->Render();
-#endif
 
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   QWebEngineView webView;
@@ -192,13 +188,8 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   parentWidget.show();
   parentWidget.raise();
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkMRMLSliceLogic* sliceLogic = setupSliceDisplay(
     scene, vtkWidget->renderWindow(), argv[1] );
-#else
-  vtkMRMLSliceLogic* sliceLogic = setupSliceDisplay(
-    scene, vtkWidget->GetRenderWindow(), argv[1]);
-#endif
 
   if (argc < 3 || QString(argv[2]) != "-I")
   {

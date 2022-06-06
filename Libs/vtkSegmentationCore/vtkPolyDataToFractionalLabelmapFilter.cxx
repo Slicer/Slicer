@@ -299,11 +299,7 @@ void vtkPolyDataToFractionalLabelmapFilter::GetOutputOrigin(double origin[3])
 }
 
 //----------------------------------------------------------------------------
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
 void vtkPolyDataToFractionalLabelmapFilter::SetOutputOrigin(const double origin[3])
-#else
-void vtkPolyDataToFractionalLabelmapFilter::SetOutputOrigin(double origin[3])
-#endif
 {
   this->OutputImageTransformData->SetOrigin(origin);
 }
@@ -327,11 +323,7 @@ void vtkPolyDataToFractionalLabelmapFilter::GetOutputSpacing(double spacing[3])
 }
 
 //----------------------------------------------------------------------------
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
 void vtkPolyDataToFractionalLabelmapFilter::SetOutputSpacing(const double spacing[3])
-#else
-void vtkPolyDataToFractionalLabelmapFilter::SetOutputSpacing(double spacing[3])
-#endif
 {
   this->OutputImageTransformData->SetSpacing(spacing);
 }
@@ -648,11 +640,7 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
       // get the connectivity count for each point
       vtkSmartPointer<vtkCellArray> lines = slice->GetLines();
       vtkIdType npts = 0;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
       const vtkIdType *pointIds = nullptr;
-#else
-      vtkIdType *pointIds = nullptr;
-#endif
       vtkIdType count = lines->GetNumberOfConnectivityEntries();
       for (vtkIdType loc = 0; loc < count; loc += npts + 1)
         {
@@ -840,11 +828,7 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
 
     vtkCellArray* lines = this->LinesCache[z];
     vtkIdType count = lines->GetNumberOfConnectivityEntries();
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType* pointIds = this->PointIdsCache[z];
-#else
-    vtkIdType* pointIds = this->PointIdsCache[z];
-#endif
     vtkIdType npts = this->NptsCache[z];
     vtkIdTypeArray* pointNeighborCountsArray = this->PointNeighborCountsCache[z];
     vtkIdType* pointNeighborCounts = pointNeighborCountsArray->GetPointer(0);
@@ -932,11 +916,7 @@ void vtkPolyDataToFractionalLabelmapFilter::PolyDataCutter(
         continue;
       }
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType *ptIds = nullptr;
-#else
-    vtkIdType *ptIds = nullptr;
-#endif
     vtkIdType npts;
     input->GetCellPoints(id, npts, ptIds);
     loc += npts + 1;

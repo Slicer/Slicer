@@ -32,7 +32,6 @@ endif()
 if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
-  set(EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS)
   set(EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS)
 
   set(VTK_WRAP_PYTHON OFF)
@@ -60,9 +59,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
 
   # Markups module needs vtkFrenetSerretFrame, which is available in
   # SplineDrivenImageSlicer remote module.
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS
-    -DModule_SplineDrivenImageSlicer:BOOL=ON
-    )
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
     -DVTK_MODULE_ENABLE_VTK_SplineDrivenImageSlicer:BOOL=YES
     )
@@ -74,11 +70,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     -DVTK_MODULE_ENABLE_VTK_RenderingContextOpenGL2:STRING=YES
     )
 
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS
-    -DVTK_USE_GUISUPPORT:BOOL=ON
-    -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
-    -DModule_vtkTestingRendering:BOOL=ON
-    )
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
     -DVTK_MODULE_ENABLE_VTK_GUISupportQt:STRING=YES
     -DVTK_GROUP_ENABLE_Qt:STRING=YES
@@ -91,9 +82,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     )
 
   if("${Slicer_VTK_RENDERING_BACKEND}" STREQUAL "OpenGL2")
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS
-      -DModule_vtkGUISupportQtOpenGL:BOOL=ON
-      )
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
       -DVTK_MODULE_ENABLE_VTK_GUISupportQtOpenGL:STRING=YES
       )
@@ -136,24 +124,11 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       )
   endif()
 
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS
-    -DBUILD_TESTING:BOOL=OFF
-    -DBUILD_EXAMPLES:BOOL=OFF
-    -DBUILD_SHARED_LIBS:BOOL=ON
-    -DVTK_USE_PARALLEL:BOOL=ON
-    -DVTK_WRAP_TCL:BOOL=OFF
-    -DModule_vtkAcceleratorsVTKm:BOOL=OFF
-    )
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
     -DVTK_BUILD_TESTING:STRING=OFF
     -DVTK_MODULE_ENABLE_VTK_AcceleratorsVTKm:BOOL=NO
     -DCMAKE_INSTALL_LIBDIR:STRING=lib # Force value to prevent lib64 from being used on Linux
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:BOOL=NO
-    # These options have been removed in VTK >= 8.90:
-    # - BUILD_EXAMPLE
-    # - BUILD_SHARED_LIBS
-    # - VTK_USE_PARALLEL
-    # - VTK_WRAP_TCL
     )
 
   ExternalProject_SetIfNotDefined(
@@ -163,10 +138,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     )
 
   set(_git_tag)
-  if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
-    set(_git_tag "97904fdcc7e73446b3131f32eac9fc9781b23c2d") # slicer-v8.2.0-2018-10-02-74d9488523
-    set(vtk_egg_info_version "8.2.0")
-  elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
+  if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
     set(_git_tag "efbbf9c02e989a8f2f12395634044779653f6f0e") # slicer-v9.1.20220125-efbe2afc2
     set(vtk_egg_info_version "9.1.20220125")
   else()
@@ -260,15 +232,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         ${VTK_DIR}/${_library_output_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
-      if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
         set(${proj}_PYTHONPATH_LAUNCHER_BUILD
           ${VTK_DIR}/${_library_output_subdir}/Lib/site-packages
           )
-      else()
-        set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-          ${VTK_DIR}/${_library_output_subdir}/<CMAKE_CFG_INTDIR>/Lib/site-packages
-          )
-      endif()
     endif()
 
   mark_as_superbuild(
@@ -284,33 +250,24 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     # in a standard location using CMake/SlicerBlockInstallExternalPythonModules.cmake
 
     # library paths
-    if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
-      if(UNIX)
-        set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
-          <APPLAUNCHER_SETTINGS_DIR>/../lib
-          )
-      else()
-        set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
-          <APPLAUNCHER_SETTINGS_DIR>/../bin
-          )
-      endif()
-      mark_as_superbuild(
-        VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
-        LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+    if(UNIX)
+      set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+        <APPLAUNCHER_SETTINGS_DIR>/../lib
+        )
+    else()
+      set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+        <APPLAUNCHER_SETTINGS_DIR>/../bin
         )
     endif()
+    mark_as_superbuild(
+      VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+      )
 
     # pythonpath
-    if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
-      set(_library_install_subdir "bin")
-      if(UNIX)
-        set(_library_install_subdir "lib")
-      endif()
-    else()
-      set(_library_install_subdir ${Slicer_INSTALL_BIN_DIR})
-      if(UNIX)
-        set(_library_install_subdir ${Slicer_INSTALL_LIB_DIR})
-      endif()
+    set(_library_install_subdir "bin")
+    if(UNIX)
+      set(_library_install_subdir "lib")
     endif()
     if(UNIX)
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
@@ -319,10 +276,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
         <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/Lib/site-packages
-        # Adding the following line is needed only for (<VTK_MAJOR_VERSION>.<VTK_MINOR_VERSION> <= 8.1),
-        # but since we only have Slicer_VTK_VERSION_MAJOR variable, following the update of VTK
-        # version from 9.0 to 8.2, there is no way to discriminate between 8.1 and 8.2.
-        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     endif()
     mark_as_superbuild(

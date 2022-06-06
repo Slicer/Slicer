@@ -71,11 +71,7 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
           vtkWin32OutputWindow::SafeDownCast(vtkOutputWindow::GetInstance());
         if (outputWindow)
           {
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
           outputWindow->SetDisplayModeToAlwaysStdErr();
-#else
-          outputWindow->SendToStdErrOn();
-#endif
           }
       #endif")
     endif()

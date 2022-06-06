@@ -1831,7 +1831,6 @@ int vtkMRMLModelDisplayableManager::Pick3D(double ras[3])
     return 0;
     }
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   if (this->Internal->CellPicker->Pick3DPoint(ras, ren))
     {
     this->SetPickedCellID(this->Internal->CellPicker->GetCellId());
@@ -1850,10 +1849,6 @@ int vtkMRMLModelDisplayableManager::Pick3D(double ras[3])
 
     this->SetPickedRAS(ras);
     }
-#else
-  vtkErrorMacro("Pick3D: This function is only accessible in newer VTK version");
-  (void)ras; // not used
-#endif
 
   return 1;
 }

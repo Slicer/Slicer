@@ -40,7 +40,6 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
       )
-    if(Slicer_VTK_VERSION_MAJOR STREQUAL "9")
       list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
         # Required by CTK SuperBuild to conditionally pass Python3_* variables
         -DVTK_PYTHON_VERSION:STRING=3
@@ -52,7 +51,6 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
         -DPython3_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY_RELEASE}
         -DPython3_EXECUTABLE:FILEPATH=${Python3_EXECUTABLE}
         )
-    endif()
   endif()
 
   if(Slicer_BUILD_DICOM_SUPPORT)

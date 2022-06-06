@@ -39,11 +39,7 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
     for (int i = 0; i < n; i++)
       {
       vtkIdType npts = 0;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
       const vtkIdType *pts = nullptr;
-#else
-      vtkIdType *pts = nullptr;
-#endif
       lines->GetNextCell(npts, pts);
       for (int j= 0; j < npts; j++)
         {
@@ -189,11 +185,7 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
     for (int i = 0; i < n; i++ )
       {
       vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
       const vtkIdType *pts = nullptr;
-#else
-      vtkIdType *pts = nullptr;
-#endif
       lines->GetNextCell(npts, pts);
       if (!pts)
         {
@@ -339,17 +331,9 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
   lines->InitTraversal();
   // cellLine->SetTraversalLocation(id);
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *cPts = nullptr;
-#else
-  vtkIdType *cPts = nullptr;
-#endif
   vtkIdType cNpts = 0;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *nPts = nullptr;
-#else
-  vtkIdType *nPts = nullptr;
-#endif
   vtkIdType nNpts = 0;
   for (int i = 0; i <= id; i++ )
     {
@@ -363,11 +347,6 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
       vtkErrorMacro("Error in cell structure " << cNpts  << " " << nNpts);
       return;
     }
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
-      // TODO
-#else
-      cPts[0]=nPts[0]; cPts[1]=nPts[1];
-#endif
       cPts=nPts;
     }
   lines->SetNumberOfCells(n-1);
@@ -407,11 +386,7 @@ int vtkMRMLAnnotationLinesNode::GetEndPointsId(vtkIdType id, vtkIdType ctrlPtsID
   lines->InitTraversal();
 
   vtkIdType npts = 0;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts = nullptr;
-#else
-  vtkIdType *pts = nullptr;
-#endif
 
   for (int i = 0; i < id; i++ )
     {

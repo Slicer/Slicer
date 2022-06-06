@@ -57,7 +57,6 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
       )
-    if(Slicer_VTK_VERSION_MAJOR STREQUAL "9")
       list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
         # Required by FindPython3 CMake module used by VTK
         -DPython3_ROOT_DIR:PATH=${Python3_ROOT_DIR}
@@ -67,7 +66,6 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
         -DPython3_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY_RELEASE}
         -DPython3_EXECUTABLE:FILEPATH=${Python3_EXECUTABLE}
         )
-    endif()
   endif()
 
   if(Slicer_BUILD_ITKPython)

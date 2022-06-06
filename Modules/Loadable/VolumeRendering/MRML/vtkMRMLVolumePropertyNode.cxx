@@ -34,14 +34,12 @@ vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
   this->ObservedEvents->InsertNextValue(vtkCommand::EndInteractionEvent);
 
   vtkVolumeProperty* property = vtkVolumeProperty::New();
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   property->SetUseClippedVoxelIntensity(true);
   // Clipped voxel intensity has to be a different enough so that it the computed gradient
   // will change primarily between the two sides of the clipping plane.
   // Default value is -10e37, which does not result in smooth clipped surface (most probably
   // due to numerical errors), but -1e10 works robustly.
   property->SetClippedVoxelIntensity(-1e10);
-#endif
   vtkSetAndObserveMRMLObjectEventsMacro(this->VolumeProperty, property, this->ObservedEvents);
   property->Delete();
 
@@ -154,9 +152,7 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
   // VolumeProperty->IndependentComponents is determined automatically from the input volume,
   // therefore it is not necessary to copy its.
   this->VolumeProperty->SetInterpolationType(node->VolumeProperty->GetInterpolationType());
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   this->VolumeProperty->SetUseClippedVoxelIntensity(node->VolumeProperty->GetUseClippedVoxelIntensity());
-#endif
 
   for (int i=0; i<VTK_MAX_VRCOMP; i++)
     {
