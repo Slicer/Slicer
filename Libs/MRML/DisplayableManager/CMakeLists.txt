@@ -170,7 +170,7 @@ set(libs
 
 if(MRMLDisplayableManager_USE_PYTHON)
   set(VTK_COMMON_PYTHON_LIBRARY
-    ${VTK_TARGET_PREFIX}WrappingPythonCore # For vtkPythonUtil
+    VTK::WrappingPythonCore # For vtkPythonUtil
     )
   list(APPEND libs
     ${VTK_COMMON_PYTHON_LIBRARY} # For vtkPythonUtils

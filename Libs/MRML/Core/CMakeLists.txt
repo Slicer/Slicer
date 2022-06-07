@@ -303,7 +303,7 @@ set(libs
   vtkSegmentationCore
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
-  ${VTK_TARGET_PREFIX}IOInfovis
+  VTK::IOInfovis
   ${LibArchive_LIBRARY}
   )
 if(MRML_USE_vtkTeem)
