@@ -317,14 +317,16 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
 
     set(OpenSSL_DIR ${EP_SOURCE_DIR})
     set(_openssl_base_dir ${OpenSSL_DIR})
-    if(DEFINED CMAKE_CONFIGURATION_TYPES)
-      set(OpenSSL_DIR ${OpenSSL_DIR}/${CMAKE_CFG_INTDIR})
-      set(_copy_release_directory 1)
-    else()
+    # At configure time CMAKE_CFG_INTDIR unwraps to $(Configuration) thus making
+    # impossible to use OpenSSL as a dependency of bundling extension (xeus from SlicerJupyter)
+    if(DEFINED CMAKE_BUILD_TYPE)
       set(OpenSSL_DIR ${OpenSSL_DIR}/${CMAKE_BUILD_TYPE})
       if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
         set(_copy_release_directory 1)
       endif()
+    elseif(DEFINED CMAKE_CONFIGURATION_TYPES)
+      set(OpenSSL_DIR ${OpenSSL_DIR}/${CMAKE_CFG_INTDIR})
+      set(_copy_release_directory 1)
     endif()
 
     # Support building in RelWithDebInfo configuration
