@@ -552,35 +552,33 @@ message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
 #-----------------------------------------------------------------------------
 # Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
-  set(VTK_COMPONENT_PREFIX "")
-  set(VTK_TARGET_PREFIX "VTK::")
 set(Slicer_VTK_COMPONENTS
-  ${VTK_COMPONENT_PREFIX}FiltersExtraction
-  ${VTK_COMPONENT_PREFIX}FiltersFlowPaths
-  ${VTK_COMPONENT_PREFIX}FiltersGeometry
-  ${VTK_COMPONENT_PREFIX}FiltersParallel
-  ${VTK_COMPONENT_PREFIX}GUISupportQtSQL
-  ${VTK_COMPONENT_PREFIX}IOExport
-  ${VTK_COMPONENT_PREFIX}IOImage
-  ${VTK_COMPONENT_PREFIX}IOLegacy
-  ${VTK_COMPONENT_PREFIX}IOPLY
-  ${VTK_COMPONENT_PREFIX}IOXML
-  ${VTK_COMPONENT_PREFIX}ImagingMath
-  ${VTK_COMPONENT_PREFIX}ImagingMorphological
-  ${VTK_COMPONENT_PREFIX}ImagingStatistics
-  ${VTK_COMPONENT_PREFIX}ImagingStencil
-  ${VTK_COMPONENT_PREFIX}InteractionImage
-  ${VTK_COMPONENT_PREFIX}RenderingContext${Slicer_VTK_RENDERING_BACKEND}
-  ${VTK_COMPONENT_PREFIX}RenderingQt
-  ${VTK_COMPONENT_PREFIX}RenderingVolume${Slicer_VTK_RENDERING_BACKEND}
-  ${VTK_COMPONENT_PREFIX}TestingRendering
-  ${VTK_COMPONENT_PREFIX}ViewsQt
-  ${VTK_COMPONENT_PREFIX}zlib
+  FiltersExtraction
+  FiltersFlowPaths
+  FiltersGeometry
+  FiltersParallel
+  GUISupportQtSQL
+  IOExport
+  IOImage
+  IOLegacy
+  IOPLY
+  IOXML
+  ImagingMath
+  ImagingMorphological
+  ImagingStatistics
+  ImagingStencil
+  InteractionImage
+  RenderingContext${Slicer_VTK_RENDERING_BACKEND}
+  RenderingQt
+  RenderingVolume${Slicer_VTK_RENDERING_BACKEND}
+  TestingRendering
+  ViewsQt
+  zlib
   )
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_VTK_COMPONENTS
-    ${VTK_COMPONENT_PREFIX}WrappingPythonCore
+    WrappingPythonCore
     )
 endif()
 

@@ -30,7 +30,7 @@ set(${KIT}_SRCS
   )
 
 set(${KIT}_TARGET_LIBRARIES
-  ${VTK_TARGET_PREFIX}RenderingAnnotation
+  VTK::RenderingAnnotation
   vtkSlicer${MODULE_NAME}ModuleMRML
   )
 

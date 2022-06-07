@@ -475,7 +475,7 @@ set(MRMLWidgets_LIBRARIES
   ${CTK_LIBRARIES}
   MRMLLogic
   MRMLDisplayableManager
-  ${VTK_TARGET_PREFIX}RenderingQt
+  VTK::RenderingQt
   )
 
 target_link_libraries(${lib_name} ${MRMLWidgets_LIBRARIES})
