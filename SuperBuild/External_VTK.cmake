@@ -232,9 +232,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         ${VTK_DIR}/${_library_output_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
-        set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-          ${VTK_DIR}/${_library_output_subdir}/Lib/site-packages
-          )
+      set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+        ${VTK_DIR}/${_library_output_subdir}/Lib/site-packages
+        )
     endif()
 
   mark_as_superbuild(
