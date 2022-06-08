@@ -227,16 +227,3 @@ mark_as_superbuild(
   VARS ITK_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
-
-# Set Eigen dirs to be used in SlicerCAT dependencies
-set(Eigen3_ROOT ${EP_SOURCE_DIR}/Modules/ThirdParty/Eigen3/src/itkeigen)
-set(Eigen3_DIR ${Eigen3_ROOT})
-set(Eigen3_INCLUDE_DIR ${Eigen3_ROOT})  # needed to find Eigen in h5geo
-
-mark_as_superbuild(
-  VARS
-    Eigen3_ROOT:PATH
-    Eigen3_DIR:PATH
-    Eigen3_INCLUDE_DIR:PATH
-  LABELS "FIND_PACKAGE"
-  )
