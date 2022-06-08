@@ -2812,7 +2812,7 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
   //  | DescriptionColumn    | description       | description        | description        | meta.description     |
   //  | ScreenshotsColumn    | screenshots       | screenshoturls     | screenshots        | meta.screenshots     |
   //  | EnabledColumn        | enabled           | enabled            | enabled            |                      |
-  //  | ArchiveNameColumn    | archivename       |                    | name               | name                 |
+  //  | ArchiveNameColumn    | archivename       |                    | name               |                      |
   //  | MD5Column            | md5               |                    | md5                |                      |
   //  |                      |                   |                    |                    |                      |
   //  |                      |                   | build_subdirectory |                    |                      |
@@ -2877,7 +2877,7 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
     serverToExtensionDescriptionKey.insert("meta.description", "description");
     serverToExtensionDescriptionKey.insert("meta.screenshots", "screenshots");
     // enabled
-    serverToExtensionDescriptionKey.insert("name", "archivename");
+    // archivename
     // md5
     }
   else

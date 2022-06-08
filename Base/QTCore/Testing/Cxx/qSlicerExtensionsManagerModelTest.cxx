@@ -54,7 +54,7 @@ private:
   // therefore we need to replicate them here.
   static void normalizeExtensionMetadata(QVariantMap &metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI);
 
-  static void filterExtensionMetadata(QVariantMap &metadata);
+  static void filterExtensionMetadata(QVariantMap &metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI);
 
   static QVariantMap flattenExtensionMetadata(QVariantMap metadata);
 
@@ -359,6 +359,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
 
   QScriptValue data = scriptValue.property("data");
   ExtensionMetadataType allMetadata;
+  qSlicerExtensionsManagerModel::ServerAPI serverAPI = qSlicerExtensionsManagerModel::Midas_v1;
   if (data.isValid())
     {
     // Midas_v1 stores metadata in a "data" attribute
@@ -371,6 +372,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
   else
     {
     // Girder_v1
+    serverAPI = qSlicerExtensionsManagerModel::Girder_v1;
     allMetadata = scriptValue.property(0).toVariant().toMap();
     }
 
@@ -379,7 +381,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
     return ExtensionMetadataType();
     }
 
-  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore());
+  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore(serverAPI));
   QVariantMap metadata;
   foreach(const QString& key, allMetadata.keys())
     {
@@ -388,7 +390,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
       continue;
       }
     metadata.insert(
-          qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey().value(key, key),
+          qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI).value(key, key),
           allMetadata.value(key));
     }
   return metadata;
@@ -414,13 +416,13 @@ void qSlicerExtensionsManagerModelTester::normalizeExtensionMetadata(
   metadata = metadataExtended;
 
   // Filter out unused property names.
-  Self::filterExtensionMetadata(metadata);
+  Self::filterExtensionMetadata(metadata, serverAPI);
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::filterExtensionMetadata(QVariantMap &metadata)
+void qSlicerExtensionsManagerModelTester::filterExtensionMetadata(QVariantMap &metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI)
 {
-  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore());
+  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore(serverAPI));
   QVariantMap filteredMetadata;
   foreach(const QString & key, metadata.keys())
     {
@@ -429,7 +431,7 @@ void qSlicerExtensionsManagerModelTester::filterExtensionMetadata(QVariantMap &m
       continue;
       }
     filteredMetadata.insert(
-      qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey().value(key, key),
+      qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI).value(key, key),
       metadata.value(key));
     }
   metadata = filteredMetadata;
@@ -652,7 +654,7 @@ void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey_da
   expected.insert("meta.description", "description");
   expected.insert("meta.screenshots", "screenshots");
   // enabled
-  expected.insert("name", "archivename");
+  // archivename
   QTest::newRow("1") << expected.keys() << expected.values() << qSlicerExtensionsManagerModel::Girder_v1;
   }
 }
@@ -715,8 +717,9 @@ void qSlicerExtensionsManagerModelTester::testFilterExtensionMetadata()
 {
   QFETCH(QVariantMap, inputExtensionMetadata);
   QFETCH(QVariantMap, expectedExtensionMetadata);
+  QFETCH(qSlicerExtensionsManagerModel::ServerAPI, serverAPI);
   ExtensionMetadataType filteredExtensionMetadata =
-      qSlicerExtensionsManagerModel::filterExtensionMetadata(inputExtensionMetadata);
+      qSlicerExtensionsManagerModel::filterExtensionMetadata(inputExtensionMetadata, serverAPI);
   QCOMPARE(filteredExtensionMetadata, expectedExtensionMetadata);
 }
 
@@ -725,9 +728,15 @@ void qSlicerExtensionsManagerModelTester::testFilterExtensionMetadata_data()
 {
   QTest::addColumn<QVariantMap>("inputExtensionMetadata");
   QTest::addColumn<QVariantMap>("expectedExtensionMetadata");
+  QTest::addColumn<qSlicerExtensionsManagerModel::ServerAPI>("serverAPI");
 
   QTest::newRow("0") << Self::extensionMetadata(Slicer_OS_LINUX_NAME, 0)
-                     << Self::extensionMetadata(Slicer_OS_LINUX_NAME, 0, /* filtered= */ true);
+                     << Self::extensionMetadata(Slicer_OS_LINUX_NAME, 0, /* filtered= */ true)
+                     << qSlicerExtensionsManagerModel::Midas_v1;
+
+  QTest::newRow("1") << Self::extensionMetadata(Slicer_OS_WIN_NAME, 0)
+                     << Self::extensionMetadata(Slicer_OS_WIN_NAME, 0, /* filtered= */ true)
+                     << qSlicerExtensionsManagerModel::Girder_v1;
 }
 
 // ----------------------------------------------------------------------------
