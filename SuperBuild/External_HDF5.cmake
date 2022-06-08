@@ -125,7 +125,8 @@ if(NOT DEFINED HDF5_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     LABELS "PATHS_LAUNCHER_BUILD"
     )
 
-  # lock h5 containers to disable multiple instances of the same file
+  # Prevent the file from being opened in multiple instances thus preventing the loss of data.
+  # This is done by deault in HDF5 but adding this env var allows user to make a decision.
   set(${proj}_ENVVARS_LAUNCHER_BUILD
     "HDF5_USE_FILE_LOCKING=TRUE"
     )
@@ -139,7 +140,7 @@ if(NOT DEFINED HDF5_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   # Set env variable
   set(${proj}_ENVVARS_LAUNCHER_INSTALLED 
-    "HDF5_USE_FILE_LOCKING=FALSE"
+    "HDF5_USE_FILE_LOCKING=TRUE"
     )
 
   mark_as_superbuild(
