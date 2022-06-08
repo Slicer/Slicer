@@ -13,8 +13,6 @@ install(FILES ${VTK_PYTHON_MODULE}/vtk.py
   DESTINATION ${Slicer_INSTALL_BIN_DIR}/Python
   COMPONENT Runtime)
 
-endif()
-
 # Install CTK python modules
 install(DIRECTORY ${CTK_DIR}/CTK-build/bin/Python/ctk ${CTK_DIR}/CTK-build/bin/Python/qt
   DESTINATION ${Slicer_INSTALL_BIN_DIR}/Python
