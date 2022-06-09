@@ -76,8 +76,7 @@ public:
 
   enum ServerAPI
     {
-    Midas_v1 = 0,
-    Girder_v1,
+    Girder_v1 = 1,
     ServerAPI_Last
     };
 
@@ -286,11 +285,11 @@ public:
   static ExtensionMetadataType convertExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI);
 
   /// \sa filterExtensionMetadata()
-  static QStringList serverKeysToIgnore(int serverAPI = Self::Midas_v1);
+  static QStringList serverKeysToIgnore(int serverAPI);
 
   /// Exclude irrelevant server metadata.
   /// \sa serverKeysToIgnore()
-  static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI = Self::Midas_v1);
+  static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI);
 
   static QStringList readArrayValues(QSettings& settings,
                                      const QString& arrayName, const QString fieldName);

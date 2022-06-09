@@ -141,7 +141,7 @@ The following environment variables can be set before the application is started
 - `SLICERRC`: Custom application startup file path. Contains a full path to a Python script. By default it is `~/.slicerrc.py` (where ~ is the user profile a.k.a user home folder).
 - `SLICER_EXTENSIONS_MANAGER_SERVER_URL`: URL of the extensions manager backend with the `/api` path. Default value is retrieved from the settings using the key `Extensions/ServerUrl`.
 - `SLICER_EXTENSIONS_MANAGER_FRONTEND_SERVER_URL`: URL of the extension manager frontend displaying the web page. Default value is retrieved from the settings using the key `Extensions/FrontendServerUrl`.
-- `SLICER_EXTENSIONS_MANAGER_SERVER_API`: Supported values are `Midas_v1` and `Girder_v1`. Default value is hard-coded to `Girder_v1`.
+- `SLICER_EXTENSIONS_MANAGER_SERVER_API`: Supported value is `Girder_v1`. Default value is hard-coded to `Girder_v1`.
 
 ### Qt built-in command-line options
 

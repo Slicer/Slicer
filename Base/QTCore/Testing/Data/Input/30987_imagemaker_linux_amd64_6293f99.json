@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "62985040e8408647b3b7fdad",
+    "baseParentId": "5f4474d0e1d8c75dfc70547e",
+    "baseParentType": "collection",
+    "created": "2022-06-02T05:53:04.889000+00:00",
+    "creatorId": "5f446e46e1d8c75dfc705450",
+    "description": "This is a CLI module to create an image from scratch.",
+    "folderId": "629842e1e8408647b3b7ebaf",
+    "lowerName": "30987_imagemaker_linux_amd64_6293f99",
+    "meta": {
+      "app_id": "5f4474d0e1d8c75dfc705482",
+      "app_revision": "30987",
+      "arch": "amd64",
+      "baseName": "ImageMaker",
+      "category": "Developer Tools",
+      "contributors": "Julien Finet (Kitware)",
+      "dependency": "NA",
+      "description": "This is a CLI module to create an image from scratch.",
+      "homepage": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/ImageMaker",
+      "icon_url": "http://www.slicer.org/slicerWiki/images/e/e5/QuickToolsLogo.png",
+      "os": "linux",
+      "repository_type": "git",
+      "repository_url": "https://github.com/finetjul/ImageMaker",
+      "revision": "6293f99",
+      "screenshots": "http://www.slicer.org/slicerWiki/images/8/81/ImageMaker.png"
+    },
+    "name": "30987_ImageMaker_linux_amd64_6293f99",
+    "size": 1200220,
+    "updated": "2022-06-02T05:53:04.928000+00:00"
+  }
+]
