@@ -376,6 +376,8 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
     allMetadata = scriptValue.property(0).toVariant().toMap();
     }
 
+  allMetadata = qRestAPI::qVariantMapFlattened(allMetadata);
+
   if (!QTest::qVerify(allMetadata.count() > 0, "allMetadata.count() > 0", "", __FILE__, __LINE__))
     {
     return ExtensionMetadataType();
