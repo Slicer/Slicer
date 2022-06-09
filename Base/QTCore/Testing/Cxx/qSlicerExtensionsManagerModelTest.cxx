@@ -26,6 +26,9 @@
 #include <ctkTest.h>
 #include <ctkUtils.h>
 
+// qRestAPI includes
+#include <qRestAPI.h>
+
 // QtCore includes
 #include "qSlicerExtensionsManagerModel.h"
 #include "vtkSlicerConfigure.h"
@@ -53,10 +56,6 @@ private:
   // Harmonize field names between server APIs. These steps are dispersed in the qSlicerExtensionsManagerModel class,
   // therefore we need to replicate them here.
   static void normalizeExtensionMetadata(QVariantMap &metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI);
-
-  static void filterExtensionMetadata(QVariantMap &metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI);
-
-  static QVariantMap flattenExtensionMetadata(QVariantMap metadata);
 
   QStringList expectedExtensionNames()const;
 
@@ -404,69 +403,16 @@ void qSlicerExtensionsManagerModelTester::normalizeExtensionMetadata(
 {
   // Girder_v1 API contains some of the fields in a metadata object,
   // move those into top-level properties.
-  metadata = Self::flattenExtensionMetadata(metadata);
+  metadata = qRestAPI::qVariantMapFlattened(metadata);
 
   // Different server APIs use slightly different property names for metadata,
   // make sure that standardized extension description property names are present, too.
-  ExtensionMetadataType metadataExtended = metadata;
-  QHash<QString, QString> serverToExtensionDescriptionKey = qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI);
-  foreach(const QString & key, metadata.keys())
-    {
-    metadataExtended.insert(
-      serverToExtensionDescriptionKey.value(key, key), metadata.value(key));
-    }
-  metadata = metadataExtended;
 
   // Filter out unused property names.
-  Self::filterExtensionMetadata(metadata, serverAPI);
-}
+  metadata = qSlicerExtensionsManagerModel::filterExtensionMetadata(metadata, serverAPI);
 
-// ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::filterExtensionMetadata(QVariantMap &metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI)
-{
-  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore(serverAPI));
-  QVariantMap filteredMetadata;
-  foreach(const QString & key, metadata.keys())
-    {
-    if (keysToIgnore.contains(key))
-      {
-      continue;
-      }
-    filteredMetadata.insert(
-      qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI).value(key, key),
-      metadata.value(key));
-    }
-  metadata = filteredMetadata;
-}
-
-// ----------------------------------------------------------------------------
-QVariantMap qSlicerExtensionsManagerModelTester::flattenExtensionMetadata(QVariantMap map)
-{
-  QVariantMap output;
-  foreach(const QString& key, map.keys())
-    {
-    QVariant value = map.value(key);
-    if (value.canConvert<QVariantMap>())
-      {
-      value = QVariant::fromValue(QVariantList() << value.toMap());
-      }
-    if (value.canConvert<QVariantList>())
-      {
-      foreach(const QVariant& item, value.toList())
-        {
-        QVariantMap subMap = qSlicerExtensionsManagerModelTester::flattenExtensionMetadata(item.toMap());
-        foreach(const QString& subKey, subMap.keys())
-          {
-          output.insert(QString("%1.%2").arg(key).arg(subKey), subMap.value(subKey));
-          }
-        }
-      }
-    else
-      {
-      output.insert(key, value);
-      }
-    }
-  return output;
+  // Convert server property names.
+  metadata = qSlicerExtensionsManagerModel::convertExtensionMetadata(metadata, serverAPI);
 }
 
 // ----------------------------------------------------------------------------
