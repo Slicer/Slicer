@@ -75,7 +75,6 @@ if(NOT DEFINED HDF5_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(HDF5_ROOT ${EP_INSTALL_DIR})
   set(HDF5_DIR ${EP_INSTALL_DIR}/share/cmake/hdf5)
   set(HDF5_BIN_DIR ${EP_INSTALL_DIR}/bin)
   set(HDF5_LIB_DIR ${EP_INSTALL_DIR}/lib)
@@ -133,11 +132,9 @@ else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
-# HDF5_ROOT - used by VTK. HDF5_DIR - used by ITK
 # HDF5_BIN_DIR, HDF5_LIB_DIR used mostly for packaging purposes
 mark_as_superbuild(
   VARS
-    HDF5_ROOT:PATH
     HDF5_DIR:PATH
     HDF5_BIN_DIR:PATH
     HDF5_LIB_DIR:PATH
@@ -145,7 +142,6 @@ mark_as_superbuild(
   LABELS "FIND_PACKAGE"
   )
 
-ExternalProject_Message(${proj} "HDF5_ROOT: ${HDF5_ROOT}")
 ExternalProject_Message(${proj} "HDF5_DIR: ${HDF5_DIR}")
 ExternalProject_Message(${proj} "HDF5_BIN_DIR: ${HDF5_BIN_DIR}")
 ExternalProject_Message(${proj} "HDF5_LIB_DIR: ${HDF5_LIB_DIR}")
