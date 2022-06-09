@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "629878f3e8408647b3b8543a",
+    "baseParentId": "5f4474d0e1d8c75dfc70547e",
+    "baseParentType": "collection",
+    "created": "2022-06-02T08:46:43.903000+00:00",
+    "creatorId": "5f446e46e1d8c75dfc705450",
+    "description": "This is a CLI module to create an image from scratch.",
+    "folderId": "629842e1e8408647b3b7ebaf",
+    "lowerName": "30987_imagemaker_macosx_amd64_6293f99",
+    "meta": {
+      "app_id": "5f4474d0e1d8c75dfc705482",
+      "app_revision": "30987",
+      "arch": "amd64",
+      "baseName": "ImageMaker",
+      "category": "Developer Tools",
+      "contributors": "Julien Finet (Kitware)",
+      "dependency": "NA",
+      "description": "This is a CLI module to create an image from scratch.",
+      "homepage": "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/ImageMaker",
+      "icon_url": "http://www.slicer.org/slicerWiki/images/e/e5/QuickToolsLogo.png",
+      "os": "macosx",
+      "repository_type": "git",
+      "repository_url": "https://github.com/finetjul/ImageMaker",
+      "revision": "6293f99",
+      "screenshots": "http://www.slicer.org/slicerWiki/images/8/81/ImageMaker.png"
+    },
+    "name": "30987_ImageMaker_macosx_amd64_6293f99",
+    "size": 1472311,
+    "updated": "2022-06-02T08:46:43.915000+00:00"
+  }
+]

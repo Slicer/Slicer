@@ -1,22 +1,18 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file alias="extension-linux-0.json">19354-linux-amd64-CLIExtensionTemplate-svn19354-2012-02-23.json</file>
-    <file alias="extension-linux-0.tar.gz">19354-linux-amd64-CLIExtensionTemplate-svn19354-2012-02-23.tar.gz</file>
-    <file alias="extension-linux-1.json">19354-linux-amd64-LoadableExtensionTemplate-svn19354-2012-02-23.json</file>
-    <file alias="extension-linux-1.tar.gz">19354-linux-amd64-LoadableExtensionTemplate-svn19354-2012-02-23.tar.gz</file>
-    <file alias="extension-linux-2.json">19354-linux-amd64-ScriptedLoadableExtensionTemplate-svn19354-2012-02-23.json</file>
-    <file alias="extension-linux-2.tar.gz">19354-linux-amd64-ScriptedLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz</file>
-    <file alias="extension-linux-3.json">19354-linux-amd64-SuperBuildLoadableExtensionTemplate-svn19354-2012-02-23.json</file>
-    <file alias="extension-linux-3.tar.gz">19354-linux-amd64-SuperBuildLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz</file>
+    <file alias="extension-linux-0.json">30987_imagemaker_linux_amd64_6293f99.json</file>
+    <file alias="extension-linux-0.tar.gz">30987-linux-amd64-ImageMaker-git6293f99-2017-07-03.tar.gz</file>
+    <file alias="extension-linux-1.json">30987_markupstomodel_linux_amd64_835453f.json</file>
+    <file alias="extension-linux-1.tar.gz">30987-linux-amd64-MarkupsToModel-git835453f-2022-05-11.tar.gz</file>
+    <file alias="extension-linux-2.json">30987_curvemaker_linux_amd64_5619cf5.json</file>
+    <file alias="extension-linux-2.tar.gz">30987-linux-amd64-CurveMaker-git5619cf5-2019-09-09.tar.gz</file>
 
-    <file alias="extension-macosx-0.json">19615-macosx-amd64-CLIExtensionTemplate-svn19615-2012-03-18.json</file>
-    <file alias="extension-macosx-0.tar.gz">19615-macosx-amd64-CLIExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
-    <file alias="extension-macosx-1.json">19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.json</file>
-    <file alias="extension-macosx-1.tar.gz">19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
-    <file alias="extension-macosx-2.json">19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.json</file>
-    <file alias="extension-macosx-2.tar.gz">19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
-    <file alias="extension-macosx-3.json">19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.json</file>
-    <file alias="extension-macosx-3.tar.gz">19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
+    <file alias="extension-macosx-0.json">30987_imagemaker_macosx_amd64_6293f99.json</file>
+    <file alias="extension-macosx-0.tar.gz">30987-macosx-amd64-ImageMaker-git6293f99-2017-07-03.tar.gz</file>
+    <file alias="extension-macosx-1.json">30987_markupstomodel_macosx_amd64_835453f.json</file>
+    <file alias="extension-macosx-1.tar.gz">30987-macosx-amd64-MarkupsToModel-git835453f-2022-05-11.tar.gz</file>
+    <file alias="extension-macosx-2.json">30987_curvemaker_macosx_amd64_5619cf5.json</file>
+    <file alias="extension-macosx-2.tar.gz">30987-macosx-amd64-CurveMaker-git5619cf5-2019-09-09.tar.gz</file>
 
     <file alias="extension-win-0.json">30338_slicerheart_win_amd64_1db3627.json</file>
   </qresource>

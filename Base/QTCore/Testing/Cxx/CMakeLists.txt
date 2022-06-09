@@ -8,14 +8,12 @@ if(BUILD_TESTING)
 
   # Download pre-built test extensions into build directory
   foreach(hash_and_filename IN ITEMS
-      "01fd0b39e96da9e85b841273173001958a5feb219875deee0719a74e36b02652:19354-linux-amd64-CLIExtensionTemplate-svn19354-2012-02-23.tar.gz"
-      "87105840a5b6a5efee1e682df07957d880e23e131791c3b53746e0a4e6c2dfc8:19354-linux-amd64-LoadableExtensionTemplate-svn19354-2012-02-23.tar.gz"
-      "dd619c9bbd8f058f85c124d775fe5fec1883f05ce4c1025c0f245db1ec088b51:19354-linux-amd64-ScriptedLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz"
-      "8e047014e0d5addf1c8c5d92c20069e2c6d5c9893a670c4731b4c4e45cac7b21:19354-linux-amd64-SuperBuildLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz"
-      "57d76d876cb96bde01d30a16d42316941209c8b6c22ad311d623d918597141c0:19615-macosx-amd64-CLIExtensionTemplate-svn19615-2012-03-18.tar.gz"
-      "3ce4a2f0485c9f5db56fb48727421fbe9ccef213c345175e8defb573ce2113da:19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.tar.gz"
-      "d0d9ee8477a9e29c7b2823c2b7ece97183209e14375aa44ae4cc1f2f3a18b8c1:19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz"
-      "15b83e8e00f530f2fea3ed436587ad248b5b008ca04d0af13ef595e5574ac36f:19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz"
+      "5eb10b69fe164d9998be8cfd2a18a868afe0d9ac052f79fea9564ec3de6a8a07:30987-linux-amd64-ImageMaker-git6293f99-2017-07-03.tar.gz"
+      "cd4434157d4846ee211ebe76ebc109e4ebf5dea6de06c146bfdd1366a7e32793:30987-linux-amd64-MarkupsToModel-git835453f-2022-05-11.tar.gz"
+      "aa0c39c22027777f27205b671eff272466c75cb020d7c264a44b271b23b3e91a:30987-linux-amd64-CurveMaker-git5619cf5-2019-09-09.tar.gz"
+      "66b6dfa2fd76b5d47f0a0eebabde1b61a7779b3c5c475243ead2e84fb5718d16:30987-macosx-amd64-ImageMaker-git6293f99-2017-07-03.tar.gz"
+      "505556ddfac14d69017146663e18360c03afd972c5b906e14fe92c17917a1f45:30987-macosx-amd64-MarkupsToModel-git835453f-2022-05-11.tar.gz"
+      "cd65433867aa1bfa9c7b57b193f3d6c01c9adb8eca8fb644147ec234fe1bcecb:30987-macosx-amd64-CurveMaker-git5619cf5-2019-09-09.tar.gz"
       )
     string(REPLACE ":" ";" hash_and_filename ${hash_and_filename})
     list(GET hash_and_filename 0 _hash)
@@ -29,14 +27,12 @@ if(BUILD_TESTING)
 
   # Copy json files into build directory
   foreach(filename IN ITEMS
-      "19354-linux-amd64-CLIExtensionTemplate-svn19354-2012-02-23.json"
-      "19354-linux-amd64-LoadableExtensionTemplate-svn19354-2012-02-23.json"
-      "19354-linux-amd64-ScriptedLoadableExtensionTemplate-svn19354-2012-02-23.json"
-      "19354-linux-amd64-SuperBuildLoadableExtensionTemplate-svn19354-2012-02-23.json"
-      "19615-macosx-amd64-CLIExtensionTemplate-svn19615-2012-03-18.json"
-      "19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.json"
-      "19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.json"
-      "19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.json"
+      "30987_imagemaker_linux_amd64_6293f99.json"
+      "30987_markupstomodel_linux_amd64_835453f.json"
+      "30987_curvemaker_linux_amd64_5619cf5.json"
+      "30987_imagemaker_macosx_amd64_6293f99.json"
+      "30987_markupstomodel_macosx_amd64_835453f.json"
+      "30987_curvemaker_macosx_amd64_5619cf5.json"
       "30338_slicerheart_win_amd64_1db3627.json"
       )
     configure_file(

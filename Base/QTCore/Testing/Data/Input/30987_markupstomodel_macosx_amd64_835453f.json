@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "62986155e8408647b3b817a3",
+    "baseParentId": "5f4474d0e1d8c75dfc70547e",
+    "baseParentType": "collection",
+    "created": "2022-06-02T07:05:57.318000+00:00",
+    "creatorId": "5f446e46e1d8c75dfc705450",
+    "description": "Create tube or closed surface models from points of a markup fiducial node.",
+    "folderId": "629842e1e8408647b3b7ebaf",
+    "lowerName": "30987_markupstomodel_macosx_amd64_835453f",
+    "meta": {
+      "app_id": "5f4474d0e1d8c75dfc705482",
+      "app_revision": "30987",
+      "arch": "amd64",
+      "baseName": "MarkupsToModel",
+      "category": "Informatics",
+      "contributors": "Thomas Vaughan (PerkLab, Queen's University), Andras Lasso (PerkLab, Queen's University), Adam Rankin (Robarts Research Center, Western University), Aniqah Mair (PerkLab, Queen's University), Jaime Garcia Guevara (PerkLab, Queen's University)",
+      "dependency": "NA",
+      "description": "Create tube or closed surface models from points of a markup fiducial node.",
+      "homepage": "https://github.com/SlicerIGT/MarkupsToModel",
+      "icon_url": "https://github.com/SlicerIGT/SlicerMarkupsToModel/raw/master/MarkupsToModel.png",
+      "os": "macosx",
+      "repository_type": "git",
+      "repository_url": "https://github.com/SlicerIGT/SlicerMarkupsToModel",
+      "revision": "835453f",
+      "screenshots": "https://github.com/SlicerIGT/SlicerMarkupsToModel/raw/master/ClosedSurface.png https://github.com/SlicerIGT/SlicerMarkupsToModel/raw/master/Curve.png"
+    },
+    "name": "30987_MarkupsToModel_macosx_amd64_835453f",
+    "size": 157458,
+    "updated": "2022-06-02T07:05:57.357000+00:00"
+  }
+]

@@ -64,18 +64,7 @@ QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
    QUrl url = this->ExtensionsManagerModel->frontendServerUrl();
    int serverAPI = this->ExtensionsManagerModel->serverAPI();
 
-   if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-     {
-     QUrlQuery urlQuery;
-     urlQuery.setQueryItems(
-        QList<QPair<QString, QString> >()
-        << QPair<QString, QString>("layout", "empty")
-        << QPair<QString, QString>("os", this->SlicerOs)
-        << QPair<QString, QString>("arch", this->SlicerArch)
-        << QPair<QString, QString>("revision", this->SlicerRevision));
-     url.setQuery(urlQuery);
-     }
-   else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
      {
      url.setPath(url.path() + QString("/catalog/All/%1/%2").arg(this->SlicerRevision).arg(this->SlicerOs));
      }
@@ -171,11 +160,7 @@ void qSlicerExtensionsInstallWidgetPrivate::setDarkThemeEnabled(bool enabled)
     return;
     }
   int serverAPI = this->ExtensionsManagerModel->serverAPI();
-  if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-    {
-    // Not supported
-    }
-  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+  if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
     q->evalJS(QString("app.$vuetify.theme.dark = %1;").arg(enabled ? "true" : "false"));
     }
@@ -328,11 +313,7 @@ void qSlicerExtensionsInstallWidget::onExtensionInstalled(const QString& extensi
   if(d->BrowsingEnabled)
     {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
-    if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-      {
-      this->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'ScheduleUninstall')").arg(extensionName));
-      }
-    else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
       {
       this->evalJS(QString("app.setExtensionButtonState('%1', 'Installed');").arg(extensionName));
       }
@@ -350,11 +331,7 @@ void qSlicerExtensionsInstallWidget::onExtensionScheduledForUninstall(const QStr
   if(d->BrowsingEnabled)
     {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
-    if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-      {
-      this->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'CancelScheduledForUninstall')").arg(extensionName));
-      }
-    else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
       {
       this->evalJS(QString("app.setExtensionButtonState('%1', 'ScheduledForUninstall');").arg(extensionName));
       }
@@ -406,11 +383,7 @@ void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErr
     state = "error";
     }
   int serverAPI = d->ExtensionsManagerModel->serverAPI();
-  if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-    {
-    this->evalJS(QString("midas.createNotice('%1', %2, '%3')").arg(escapedText).arg(delay).arg(state));
-    }
-  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+  if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
     this->evalJS(QString("app.createNotice('%1', %2, '%3')").arg(escapedText).arg(delay).arg(state));
     }

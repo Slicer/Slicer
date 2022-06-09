@@ -373,11 +373,7 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
       }
     bool isCatalogPage = false;
     int serverAPI = this->extensionsManagerModel()->serverAPI();
-    if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-      {
-      isCatalogPage = d->lastInstallWidgetUrl.path().endsWith("/slicerappstore");
-      }
-    else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
       {
       isCatalogPage = d->lastInstallWidgetUrl.path().contains("/catalog");
       }
@@ -394,11 +390,7 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
       if (!d->toolsWidget->SearchBox->hasFocus())
         {
         QString lastSearchTextLoaded;
-        if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-          {
-          lastSearchTextLoaded = QUrlQuery(d->lastInstallWidgetUrl).queryItemValue("search");
-          }
-        else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+        if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
           {
           lastSearchTextLoaded = QUrlQuery(d->lastInstallWidgetUrl).queryItemValue("q");
           }
@@ -441,12 +433,7 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
   bool isCatalogPage = false;
   int serverAPI = this->extensionsManagerModel()->serverAPI();
   QString lastSearchTextLoaded;
-  if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-    {
-    lastSearchTextLoaded = QUrlQuery(newUrl).queryItemValue("search");
-    isCatalogPage = newUrl.path().endsWith("/slicerappstore");
-    }
-  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+  if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
     lastSearchTextLoaded = QUrlQuery(newUrl).queryItemValue("q");
     isCatalogPage = newUrl.path().contains("/catalog");
@@ -501,13 +488,7 @@ void qSlicerExtensionsManagerWidget::processSearchTextChange()
     if (searchText != d->lastInstallWidgetSearchText)
       {
       int serverAPI = this->extensionsManagerModel()->serverAPI();
-      if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-        {
-        d->ExtensionsInstallWidget->webView()->page()->runJavaScript(
-          "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
-          "midas.slicerappstore.applyFilter();");
-        }
-      else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+      if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
         {
         d->ExtensionsInstallWidget->webView()->page()->runJavaScript(
           "app.search(" + jsQuote(searchText) + ");");

@@ -545,11 +545,7 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
 
   QString moreLinkTarget;
   int serverAPI = q->extensionsManagerModel()->serverAPI();
-  if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-    {
-    moreLinkTarget = QString("slicer:%1").arg(extensionId);
-    }
-  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+  if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
      moreLinkTarget = QString("slicer:%1").arg(extensionName);
     }
@@ -926,16 +922,7 @@ void qSlicerExtensionsManageWidget::onLinkActivated(const QString& link)
 
   QUrl url = d->ExtensionsManagerModel->frontendServerUrl();
   int serverAPI = this->extensionsManagerModel()->serverAPI();
-  if (serverAPI == qSlicerExtensionsManagerModel::Midas_v1)
-    {
-    url.setPath(url.path() + "/extension/view");
-    QUrlQuery urlQuery;
-    urlQuery.addQueryItem("extensionId", link.mid(7)); // remove leading "slicer:"
-    urlQuery.addQueryItem("breadcrumbs", "none");
-    urlQuery.addQueryItem("layout", "empty");
-    url.setQuery(urlQuery);
-    }
-  else if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+  if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
     QString extensionName = link.mid(7); // remove leading "slicer:"
     url.setPath(url.path() + QString("/view/%1/%2/%3")
