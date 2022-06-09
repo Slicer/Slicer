@@ -1384,6 +1384,7 @@ QStringList qSlicerExtensionsManagerModel::installedExtensions()const
     {
     names << d->Model.item(rowIdx, qSlicerExtensionsManagerModelPrivate::NameColumn)->text();
     }
+  std::sort(names.begin(), names.end());
   return names;
 }
 
@@ -1485,6 +1486,7 @@ QStringList qSlicerExtensionsManagerModel::enabledExtensions()const
       names << d->Model.item(rowIdx, qSlicerExtensionsManagerModelPrivate::NameColumn)->text();
       }
     }
+  std::sort(names.begin(), names.end());
   return names;
 }
 

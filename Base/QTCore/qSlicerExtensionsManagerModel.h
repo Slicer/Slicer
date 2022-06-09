@@ -142,7 +142,7 @@ public:
   /// \sa installExtension, isExtensionInstalled, installedExtensions, extensionInstalled
   int numberOfInstalledExtensions()const;
 
-  /// \brief Return names of all installed extensions
+  /// \brief Return names of all installed extensions sorted in alphabetical order.
   /// \sa installExtension, installedExtensionsCount, isExtensionInstalled, extensionInstalled
   QStringList installedExtensions()const;
 
@@ -179,7 +179,7 @@ public:
   /// \sa uninstallScheduledExtensions();
   Q_INVOKABLE bool isExtensionScheduledForUninstall(const QString& extensionName)const;
 
-  /// \brief Return names of all enabled extensions
+  /// \brief Return names of all enabled extensions sorted in alphabetical order.
   /// \sa setExtensionEnabled, extensionEnabledChanged, isExtensionEnabled
   QStringList enabledExtensions()const;
 
