@@ -2865,7 +2865,7 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
     serverToExtensionDescriptionKey.insert("meta.icon_url", "iconurl");
     serverToExtensionDescriptionKey.insert("meta.category", "category");
     // status
-    // contributors
+    serverToExtensionDescriptionKey.insert("meta.contributors", "contributors");
     serverToExtensionDescriptionKey.insert("meta.description", "description");
     serverToExtensionDescriptionKey.insert("meta.screenshots", "screenshots");
     // enabled
