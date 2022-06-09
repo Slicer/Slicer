@@ -278,10 +278,18 @@ public:
   /// Return the item model used internally
   Q_INVOKABLE const QStandardItemModel * model()const;
 
-  static QHash<QString, QString> serverToExtensionDescriptionKey(int serverAPI = Self::Midas_v1);
+  /// \sa convertExtensionMetadata()
+  static QHash<QString, QString> serverToExtensionDescriptionKey(int serverAPI);
 
+  /// Convert server keys to description keys.
+  /// \sa serverToExtensionDescriptionKey()
+  static ExtensionMetadataType convertExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI);
+
+  /// \sa filterExtensionMetadata()
   static QStringList serverKeysToIgnore(int serverAPI = Self::Midas_v1);
 
+  /// Exclude irrelevant server metadata.
+  /// \sa serverKeysToIgnore()
   static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI = Self::Midas_v1);
 
   static QStringList readArrayValues(QSettings& settings,

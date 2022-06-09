@@ -1182,15 +1182,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     this->ServerResponseCache[serverResponseCacheKey] = result;
     }
 
-  ExtensionMetadataType updatedExtensionMetadata = result;
-  QHash<QString, QString> serverToExtensionDescriptionKey = q->serverToExtensionDescriptionKey(q->serverAPI());
-  foreach(const QString& key, result.keys())
-    {
-    updatedExtensionMetadata.insert(
-      serverToExtensionDescriptionKey.value(key, key), result.value(key));
-    }
-
-  return updatedExtensionMetadata;
+  return qSlicerExtensionsManagerModel::convertExtensionMetadata(result, q->serverAPI());
 }
 
 // --------------------------------------------------------------------------
@@ -2885,6 +2877,20 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
     }
   return serverToExtensionDescriptionKey;
+}
+
+// --------------------------------------------------------------------------
+qSlicerExtensionsManagerModel::ExtensionMetadataType
+qSlicerExtensionsManagerModel::convertExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI)
+{
+  ExtensionMetadataType updatedExtensionMetadata;
+  QHash<QString, QString> serverToExtensionDescriptionKey = Self::serverToExtensionDescriptionKey(serverAPI);
+  foreach(const QString& key, extensionMetadata.keys())
+    {
+    updatedExtensionMetadata.insert(
+      serverToExtensionDescriptionKey.value(key, key), extensionMetadata.value(key));
+    }
+  return updatedExtensionMetadata;
 }
 
 // --------------------------------------------------------------------------
