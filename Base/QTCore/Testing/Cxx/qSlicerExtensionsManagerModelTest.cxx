@@ -650,7 +650,7 @@ void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey_da
   expected.insert("meta.icon_url", "iconurl");
   expected.insert("meta.category", "category");
   // status
-  // contributors
+  expected.insert("meta.contributors", "contributors");
   expected.insert("meta.description", "description");
   expected.insert("meta.screenshots", "screenshots");
   // enabled
