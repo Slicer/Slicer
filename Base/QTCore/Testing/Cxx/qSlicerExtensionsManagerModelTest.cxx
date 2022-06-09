@@ -59,6 +59,8 @@ private:
 
   QStringList expectedExtensionNames()const;
 
+  QString extensionNameFromExtenionId(int extensionId);
+
   QString slicerVersion(const QString& operatingSystem, int extensionId);
 
   bool prepareJson(const QString& jsonFile, qSlicerExtensionsManagerModel::ServerAPI serverAPI);
@@ -178,6 +180,15 @@ QStringList qSlicerExtensionsManagerModelTester::expectedExtensionNames()const
   return QStringList()
       << "CLIExtensionTemplate" << "LoadableExtensionTemplate"
       << "ScriptedLoadableExtensionTemplate" << "SuperBuildLoadableExtensionTemplate";
+
+// ----------------------------------------------------------------------------
+QString qSlicerExtensionsManagerModelTester::extensionNameFromExtenionId(int extensionId)
+{
+  if (extensionId < 0 || extensionId >= this->expectedExtensionNames().count())
+    {
+    return QString();
+    }
+  return  this->expectedExtensionNames().at(extensionId);
 }
 
 // ----------------------------------------------------------------------------
@@ -897,10 +908,6 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
   QString slicerRevision("19354");
   QString slicerVersion = "4.0";
 
-  QStringList expectedExtensionNames;
-  expectedExtensionNames << "CLIExtensionTemplate" << "LoadableExtensionTemplate"
-                         << "ScriptedLoadableExtensionTemplate" << "SuperBuildLoadableExtensionTemplate";
-
   qSlicerExtensionsManagerModel model;
   model.setExtensionsSettingsFilePath(QSettings().fileName());
   model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
@@ -909,7 +916,7 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
   QSignalSpy spyExtensionUninstalled(&model, SIGNAL(extensionUninstalled(QString)));
   QSignalSpy spySlicerRequirementsChanged(&model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)));
 
-  for (int extensionId = 0; extensionId < 4; ++extensionId)
+  for (int extensionId = 0; extensionId < this->expectedExtensionNames().count(); ++extensionId)
     {
     this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
 
@@ -937,11 +944,14 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
     QCOMPARE(spyExtensionEnabledChanged.count(), 2);
     }
 
-  QCOMPARE(model.installedExtensions(), expectedExtensionNames);
+  QStringList expectedInstalledExtensionNames = this->expectedExtensionNames();
+  std::sort(expectedInstalledExtensionNames.begin(), expectedInstalledExtensionNames.end());
+
+  QCOMPARE(model.installedExtensions(), expectedInstalledExtensionNames);
   QCOMPARE(spyModelUpdated.count(), 0);
   QCOMPARE(spyExtensionUninstalled.count(), 0);
   QCOMPARE(spySlicerRequirementsChanged.count(), 0);
-  QCOMPARE(model.installedExtensionsCount(), 4);
+  QCOMPARE(model.installedExtensionsCount(), expectedInstalledExtensionNames.count());
 }
 
 // ----------------------------------------------------------------------------
@@ -963,7 +973,7 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
 
-    for (int extensionId = 0; extensionId < 4; ++extensionId)
+    for (int extensionId = 0; extensionId < this->expectedExtensionNames().count(); ++extensionId)
       {
       this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
       }
@@ -1215,12 +1225,15 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
   QString architecture("amd64");
   QString slicerRevision("19354");
 
+  QStringList expectedInstalledExtensionNames = this->expectedExtensionNames();
+  std::sort(expectedInstalledExtensionNames.begin(), expectedInstalledExtensionNames.end());
+
   {
     qSlicerExtensionsManagerModel model;
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
-    for (int extensionId = 0; extensionId < 4; ++extensionId)
+    for (int extensionId = 0; extensionId < this->expectedExtensionNames().count(); ++extensionId)
       {
       this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
       }
@@ -1244,9 +1257,8 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     QCOMPARE(spyExtensionEnabledChanged.count(), 0);
     QCOMPARE(spyExtensionUninstalled.count(), 0);
     QCOMPARE(spySlicerRequirementsChanged.count(), 0);
-
-    QCOMPARE(model.installedExtensions(), this->expectedExtensionNames());
-    QCOMPARE(model.installedExtensionsCount(), 4);
+    QCOMPARE(model.installedExtensions(), expectedInstalledExtensionNames);
+    QCOMPARE(model.installedExtensionsCount(), expectedInstalledExtensionNames.count());
 
     model.updateModel();
 
@@ -1256,8 +1268,8 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     QCOMPARE(spyExtensionUninstalled.count(), 0);
     QCOMPARE(spySlicerRequirementsChanged.count(), 0);
 
-    QCOMPARE(model.installedExtensions(), this->expectedExtensionNames());
-    QCOMPARE(model.installedExtensionsCount(), 4);
+    QCOMPARE(model.installedExtensions(), expectedInstalledExtensionNames);
+    QCOMPARE(model.installedExtensionsCount(), expectedInstalledExtensionNames.count());
   }
   {
     qSlicerExtensionsManagerModel model;
@@ -1301,8 +1313,8 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     QCOMPARE(spyExtensionUninstalled.count(), 0);
     QCOMPARE(spySlicerRequirementsChanged.count(), 0);
 
-    QCOMPARE(model.installedExtensions(), this->expectedExtensionNames());
-    QCOMPARE(model.installedExtensionsCount(), 4);
+    QCOMPARE(model.installedExtensions(), expectedInstalledExtensionNames);
+    QCOMPARE(model.installedExtensionsCount(), expectedInstalledExtensionNames.count());
   }
 }
 
@@ -1507,18 +1519,20 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensions_data()
                                << (QList<int>()) << expectedInstalledExtensionNames;
 
   expectedInstalledExtensionNames = this->expectedExtensionNames();
+  std::sort(expectedInstalledExtensionNames.begin(), expectedInstalledExtensionNames.end());
+
   QTest::newRow("4 installed") << operatingSystem << architecture << slicerRevision
                                << (QList<int>() << 0 << 1 << 2 << 3) << expectedInstalledExtensionNames;
 
-  expectedInstalledExtensionNames.removeLast();
+  expectedInstalledExtensionNames.removeOne(this->extensionNameFromExtenionId(3));
   QTest::newRow("3 installed") << operatingSystem << architecture << slicerRevision
                                << (QList<int>() << 0 << 1 << 2) << expectedInstalledExtensionNames;
 
-  expectedInstalledExtensionNames.removeLast();
+  expectedInstalledExtensionNames.removeOne(this->extensionNameFromExtenionId(2));
   QTest::newRow("2 installed") << operatingSystem << architecture << slicerRevision
                                << (QList<int>() << 0 << 1) << expectedInstalledExtensionNames;
 
-  expectedInstalledExtensionNames.removeLast();
+  expectedInstalledExtensionNames.removeOne(this->extensionNameFromExtenionId(1));
   QTest::newRow("1 installed") << operatingSystem << architecture << slicerRevision
                                << (QList<int>() << 0) << expectedInstalledExtensionNames;
 }
@@ -1612,38 +1626,43 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled_data()
                                << extensionNamesToDisable << expectedEnabledExtensionNamesAfterDisable;
 
   expectedEnabledExtensionNames = this->expectedExtensionNames();
+  std::sort(expectedEnabledExtensionNames.begin(), expectedEnabledExtensionNames.end());
   extensionNamesToDisable = QStringList()
       << this->expectedExtensionNames().at(0)
       << this->expectedExtensionNames().at(2);
   expectedEnabledExtensionNamesAfterDisable = QStringList()
       << this->expectedExtensionNames().at(1)
       << this->expectedExtensionNames().at(3);
+  std::sort(expectedEnabledExtensionNamesAfterDisable.begin(), expectedEnabledExtensionNamesAfterDisable.end());
   QTest::newRow("4 installed") << operatingSystem << architecture << slicerRevision
                                << (QList<int>() << 0 << 1 << 2 << 3) << expectedEnabledExtensionNames
                                << extensionNamesToDisable << expectedEnabledExtensionNamesAfterDisable;
 
-  expectedEnabledExtensionNames.removeLast();
+  expectedEnabledExtensionNames.removeOne(this->extensionNameFromExtenionId(3));
   extensionNamesToDisable = QStringList()
       << this->expectedExtensionNames().at(1)
       << this->expectedExtensionNames().at(2);
   expectedEnabledExtensionNamesAfterDisable = QStringList()
       << this->expectedExtensionNames().at(0);
+  std::sort(expectedEnabledExtensionNamesAfterDisable.begin(), expectedEnabledExtensionNamesAfterDisable.end());
   QTest::newRow("3 installed") << operatingSystem << architecture << slicerRevision
                                << (QList<int>() << 0 << 1 << 2) << expectedEnabledExtensionNames
                                << extensionNamesToDisable << expectedEnabledExtensionNamesAfterDisable;
 
-  expectedEnabledExtensionNames.removeLast();
+  expectedEnabledExtensionNames.removeOne(this->extensionNameFromExtenionId(2));
   extensionNamesToDisable = QStringList()
       << this->expectedExtensionNames().at(0);
   expectedEnabledExtensionNamesAfterDisable = QStringList()
       << this->expectedExtensionNames().at(1);
+  std::sort(expectedEnabledExtensionNamesAfterDisable.begin(), expectedEnabledExtensionNamesAfterDisable.end());
   QTest::newRow("2 installed") << operatingSystem << architecture << slicerRevision
                                << (QList<int>() << 0 << 1) << expectedEnabledExtensionNames
                                << extensionNamesToDisable << expectedEnabledExtensionNamesAfterDisable;
 
-  expectedEnabledExtensionNames.removeLast();
+  expectedEnabledExtensionNames.removeOne(this->extensionNameFromExtenionId(1));
   extensionNamesToDisable = QStringList() << this->expectedExtensionNames().at(0);
   expectedEnabledExtensionNamesAfterDisable = QStringList();
+  std::sort(expectedEnabledExtensionNamesAfterDisable.begin(), expectedEnabledExtensionNamesAfterDisable.end());
   QTest::newRow("1 installed") << operatingSystem << architecture << slicerRevision
                                << (QList<int>() << 0) << expectedEnabledExtensionNames
                                << extensionNamesToDisable << expectedEnabledExtensionNamesAfterDisable;
