@@ -2929,9 +2929,17 @@ QStringList qSlicerExtensionsManagerModel::serverKeysToIgnore(int serverAPI)
 qSlicerExtensionsManagerModel::ExtensionMetadataType
 qSlicerExtensionsManagerModel::filterExtensionMetadata(const ExtensionMetadataType& extensionMetadata, int serverAPI)
 {
+  QStringList extensionMetadataKeys = serverToExtensionDescriptionKey(serverAPI).values();
+
   ExtensionMetadataType filteredExtensionMetadata = extensionMetadata;
   foreach(const QString& key, Self::serverKeysToIgnore(serverAPI))
     {
+    // Do not remove entry if the corresponding key may be returned
+    // by "convertExtensionMetadata()".
+    if (extensionMetadataKeys.contains(key))
+      {
+      continue;
+      }
     filteredExtensionMetadata.remove(key);
     }
   return filteredExtensionMetadata;
