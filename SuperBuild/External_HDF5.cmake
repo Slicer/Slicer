@@ -67,7 +67,6 @@ if(NOT DEFINED HDF5_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DHDF5_GENERATE_HEADERS:BOOL=ON
       -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON
       -DHDF_PACKAGE_NAMESPACE:STRING=hdf5::
-      -DCMAKE_POLICY_DEFAULT_CMP0074:STRING=NEW 
       # find package dirs
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
     DEPENDS 
@@ -78,29 +77,9 @@ if(NOT DEFINED HDF5_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(HDF5_ROOT ${EP_INSTALL_DIR})
   set(HDF5_DIR ${EP_INSTALL_DIR}/share/cmake/hdf5)
-  set(HDF5_INCLUDE_DIR ${EP_INSTALL_DIR}/include())
-  if(WIN32)
-    set(HDF5_RUNTIME_DIR ${EP_INSTALL_DIR}/bin)
-    if(${CMAKE_BUILD_TYPE} MATCHES Debug)
-      set(HDF5_C_LIBRARY ${EP_INSTALL_DIR}/lib/hdf5_D.lib)
-    else()
-      set(HDF5_C_LIBRARY ${EP_INSTALL_DIR}/lib/hdf5.lib)
-    endif()
-  elseif(APPLE)
-    set(HDF5_RUNTIME_DIR ${EP_INSTALL_DIR}/lib)
-    if(${CMAKE_BUILD_TYPE} MATCHES Debug)
-      set(HDF5_C_LIBRARY ${EP_INSTALL_DIR}/lib/libhdf5_debug.dylib)
-    else()
-      set(HDF5_C_LIBRARY ${EP_INSTALL_DIR}/lib/libhdf5.dylib)
-    endif()
-  else()
-    set(HDF5_RUNTIME_DIR ${EP_INSTALL_DIR}/lib)
-    if(${CMAKE_BUILD_TYPE} MATCHES Debug)
-      set(HDF5_C_LIBRARY ${EP_INSTALL_DIR}/lib/libhdf5_debug.so)
-    else()
-      set(HDF5_C_LIBRARY ${EP_INSTALL_DIR}/lib/libhdf5.so)
-    endif()
-  endif()
+  set(HDF5_BIN_DIR ${EP_INSTALL_DIR}/bin)
+  set(HDF5_LIB_DIR ${EP_INSTALL_DIR}/lib)
+  set(HDF5_INCLUDE_DIR ${EP_INSTALL_DIR}/include)
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
@@ -154,18 +133,20 @@ else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
+# HDF5_ROOT - used by VTK. HDF5_DIR - used by ITK
+# HDF5_BIN_DIR, HDF5_LIB_DIR used mostly for packaging purposes
 mark_as_superbuild(
   VARS
     HDF5_ROOT:PATH
     HDF5_DIR:PATH
-    HDF5_RUNTIME_DIR:PATH
+    HDF5_BIN_DIR:PATH
+    HDF5_LIB_DIR:PATH
     HDF5_INCLUDE_DIR:PATH
-    HDF5_C_LIBRARY:FILEPATH
   LABELS "FIND_PACKAGE"
   )
 
 ExternalProject_Message(${proj} "HDF5_ROOT: ${HDF5_ROOT}")
 ExternalProject_Message(${proj} "HDF5_DIR: ${HDF5_DIR}")
-ExternalProject_Message(${proj} "HDF5_RUNTIME_DIR: ${HDF5_RUNTIME_DIR}")
+ExternalProject_Message(${proj} "HDF5_BIN_DIR: ${HDF5_BIN_DIR}")
+ExternalProject_Message(${proj} "HDF5_LIB_DIR: ${HDF5_LIB_DIR}")
 ExternalProject_Message(${proj} "HDF5_INCLUDE_DIR: ${HDF5_INCLUDE_DIR}")
-ExternalProject_Message(${proj} "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}")
