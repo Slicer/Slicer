@@ -1339,7 +1339,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
   foreach(const QString& columnName, d->columnNames())
     {
     // TODO Server should provide us with depends. In the mean time, let's not export it.
-    if (columnName == "depends")
+    if (columnName == "depends" && this->serverAPI() == Self::Girder_v1)
       {
       continue;
       }
