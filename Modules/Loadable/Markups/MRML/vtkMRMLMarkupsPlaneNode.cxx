@@ -1378,7 +1378,7 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromPointNormal()
   baseToNodeTransform->Translate(origin_Node);
   this->BaseToNodeMatrix->DeepCopy(baseToNodeTransform->GetMatrix());
 
-  if (this->GetNumberOfDefinedControlPoints() >= 1 && this->Size[0] >= 0.0 && this->Size[1] >= 0.0)
+  if (this->GetNumberOfDefinedControlPoints(true/*include preview*/) >= 1 && this->Size[0] >= 0.0 && this->Size[1] >= 0.0)
     {
     this->SetIsPlaneValid(true);
     }
