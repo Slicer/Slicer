@@ -10,21 +10,27 @@
 
 ## I want to report a problem
 
-If something is definitely not working as intended then [file a bug report in the Slicer issue tracker](https://github.com/Slicer/Slicer/issues/new/choose).
+If you are not sure if Slicer behaves incorrectly or you are not using it properly then [ask about it on the Slicer Forum](https://discourse.slicer.org/c/support) (in the `Support` category). If you are _sure_ that Slicer is not working as intended then [submit a bug report in the Slicer issue tracker](https://github.com/Slicer/Slicer/issues/new?assignees=&labels=type%3Abug&template=bug_report.md).
 
-It is important to provide enough specific information so that a software developer can duplicate the problem. Follow instructions in the bug report template.
+In your question/report provide all the information that is described in the [bug reporting template](https://github.com/Slicer/Slicer/blob/master/.github/ISSUE_TEMPLATE/bug_report.md#summary).
 
-If the problem occurs by using the application from custom code, follow [SSCCE (Short, Self Contained, Correct, Example) approach](http://sscce.org).
+:::{tip}
 
-Don't be anonymous: real people trying hard to solve real problems are more likely to get valuable help. If you tell about yourself and your project then it may get more attention.
+Don't be anonymous: real people trying hard to solve real problems are more likely to get valuable help. If you tell about yourself and your project then it may get more attention and the problem may be resolved sooner.
+
+::: 
 
 ## I would like to request enhancement or new feature
 
-First search on the Slicer forum to see if someone asked for this feature already. If you find a very similar request, tell us that you are interested in it too.
+First search on the [Slicer forum](https://discourse.slicer.org) and in the [Slicer issue tracker](https://github.com/Slicer/Slicer/issues?q=is%3Aissue+is%3Aopen+label%3Atype%3Aenhancement) to see if someone asked for this feature already. If you find a very similar request, tell us that you are interested in it too by adding a comment and/or adding a "thumbs-up" to the top post.
 
-If you cannot find a similar topic on the Slicer forum, write a post in the [Feature request category](https://discourse.slicer.org/c/support/feature-requests)
+If you cannot find a similar feature request, then write a post in the [Feature request category](https://discourse.slicer.org/c/support/feature-requests) to discuss it with Slicer developers and community members.
+
+:::{tip}
 
 If you write about yourself and your project then there is a higher chance that your request will be worked on. Describe what assistance you can offer for the implementation (your own time, funding, etc.).
+
+:::
 
 ## I would like to let the Slicer community know, how Slicer helped me in my research
 
