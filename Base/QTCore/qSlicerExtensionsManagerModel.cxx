@@ -1522,7 +1522,7 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
 
   if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
     {
-    QString item_id = extensionMetadata["_id"].toString();
+    QString item_id = extensionMetadata["extension_id"].toString();
 
     // Retrieve file_id associated with the item
     QString file_id;
