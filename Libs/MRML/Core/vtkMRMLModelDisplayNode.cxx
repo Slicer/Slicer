@@ -44,7 +44,9 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->PassThrough = vtkPassThrough::New();
   this->AssignAttribute = vtkAssignAttribute::New();
   this->ThresholdFilter = vtkThreshold::New();
-  this->ThresholdFilter->ThresholdBetween(0.0, -1.0); // indicates uninitialized
+  this->ThresholdFilter->SetLowerThreshold(0.0);
+  this->ThresholdFilter->SetUpperThreshold(-1.0); // indicates uninitialized
+  this->ThresholdFilter->SetThresholdFunction(vtkThreshold::THRESHOLD_BETWEEN);
   this->ThresholdRangeTemp[0] = 0.0;
   this->ThresholdRangeTemp[1] = -1.0;
   this->ConvertToPolyDataFilter = vtkGeometryFilter::New();
@@ -331,7 +333,9 @@ void vtkMRMLModelDisplayNode::SetThresholdEnabled(bool enabled)
 void vtkMRMLModelDisplayNode::SetThresholdRange(double min, double max)
 {
   vtkMTimeType mtime = this->ThresholdFilter->GetMTime();
-  this->ThresholdFilter->ThresholdBetween(min, max);
+  this->ThresholdFilter->SetLowerThreshold(min);
+  this->ThresholdFilter->SetUpperThreshold(max);
+  this->ThresholdFilter->SetThresholdFunction(vtkThreshold::THRESHOLD_BETWEEN);
   if (this->ThresholdFilter->GetMTime() > mtime)
     {
     this->Modified();
