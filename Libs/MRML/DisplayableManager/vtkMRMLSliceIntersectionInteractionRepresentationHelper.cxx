@@ -97,7 +97,6 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::PrintSelf(ostream 
 void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetSliceViewBoundariesXY(vtkMRMLSliceNode* sliceNode, double* sliceViewBounds)
 {
   // Get FOV of current slice node in mm
-  char* sliceNodeName = sliceNode->GetName();
   double sliceFOVMm[3] = { 0.0,0.0,0.0 };
   sliceNode->GetFieldOfView(sliceFOVMm);
 
