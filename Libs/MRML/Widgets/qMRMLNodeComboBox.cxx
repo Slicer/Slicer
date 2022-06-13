@@ -130,7 +130,8 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
 void qMRMLNodeComboBoxPrivate::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
   void* client_data, void* call_data)
 {
-  vtkMRMLScene* scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
+  Q_UNUSED(vtk_obj);
+  Q_UNUSED(call_data);
   qMRMLNodeComboBoxPrivate* self = reinterpret_cast<qMRMLNodeComboBoxPrivate*>(client_data);
   if (!self)
     {
