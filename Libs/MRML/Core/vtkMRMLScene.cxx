@@ -3681,7 +3681,6 @@ bool vtkMRMLScene::GetModifiedSinceRead(vtkCollection* modifiedNodes/*=nullptr*/
     }
 
   bool sceneModified = false;
-  vtkMTimeType latestNodeMTime = this->GetMTime();
   vtkMRMLNode *node;
   vtkCollectionSimpleIterator it;
   for (this->Nodes->InitTraversal(it);
