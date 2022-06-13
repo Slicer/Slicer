@@ -1066,7 +1066,9 @@ int main(int argc, char * argv[])
       // be okay
       // threshold->SetAttributeModeToUseCellData();
 
-      threshold->ThresholdBetween(i, i);
+      threshold->SetLowerThreshold(i);
+      threshold->SetUpperThreshold(i);
+      threshold->SetThresholdFunction(vtkThreshold::THRESHOLD_BETWEEN);
       threshold->ReleaseDataFlagOn();
 
       if (geometryFilter)

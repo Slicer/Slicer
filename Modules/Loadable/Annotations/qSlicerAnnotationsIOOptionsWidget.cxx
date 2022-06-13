@@ -48,25 +48,7 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
   Q_D(qSlicerAnnotationsIOOptionsWidget);
   d->setupUi(this);
 
-  // Replace the horizontal layout with a flow layout
-  ctkFlowLayout* flowLayout = new ctkFlowLayout;
-  flowLayout->setPreferredExpandingDirections(Qt::Horizontal);
-  flowLayout->setAlignItems(false);
-  QLayout* oldLayout = this->layout();
-  int margins[4];
-  oldLayout->getContentsMargins(&margins[0],&margins[1],&margins[2],&margins[3]);
-  QLayoutItem* item = nullptr;
-  while((item = oldLayout->takeAt(0)))
-    {
-    if (item->widget())
-      {
-      flowLayout->addWidget(item->widget());
-      }
-    }
-  // setLayout() will take care or reparenting layouts and widgets
-  delete oldLayout;
-  flowLayout->setContentsMargins(0,0,0,0);
-  this->setLayout(flowLayout);
+  ctkFlowLayout* flowLayout = ctkFlowLayout::replaceLayout(this);
 
   this->FileTypeButtonGroup = new QButtonGroup(flowLayout);
   this->FileTypeButtonGroup->addButton(d->FiducialRadioButton);

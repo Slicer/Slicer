@@ -1409,10 +1409,8 @@ void vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(double xAxis[3], double yAx
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsROINode::WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
-         int coordinateSystem, int multipleFlag)
+         int coordinateSystem, int vtkNotUsed(multipleFlag))
 {
-  int numControlPoints = this->GetNumberOfControlPoints();
-
   // check if the coordinate system flag is set to LPS, otherwise assume RAS
   bool useLPS = (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS);
 

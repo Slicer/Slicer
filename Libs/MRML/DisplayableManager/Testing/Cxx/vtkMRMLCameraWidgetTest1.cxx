@@ -73,7 +73,7 @@ void doTranslate(vtkRenderer* renderer, vtkMRMLViewNode* viewNode, vtkMRMLCamera
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLCameraWidgetTest1(int argc, char* argv[])
+int vtkMRMLCameraWidgetTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   // Renderer, RenderWindow and Interactor
   vtkNew<vtkRenderer> rr;
