@@ -676,7 +676,11 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
       }
     }
   // Remove duplicates (mixes up order of items)
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  allColumnsIndexes = QSet<QModelIndex>(allColumnsIndexes.begin(), allColumnsIndexes.end()).values();
+#else
   allColumnsIndexes = allColumnsIndexes.toSet().toList();
+#endif
 
   QMimeData* mimeData = this->QStandardItemModel::mimeData(allColumnsIndexes);
   mimeData->setUrls(selectedShItemUrls);
