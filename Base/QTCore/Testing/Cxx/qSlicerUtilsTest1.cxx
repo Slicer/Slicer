@@ -872,7 +872,7 @@ int qSlicerUtilsTest1(int, char *[])
     CHECK_EXIT_SUCCESS(replaceWikiUrlVersionTest());
     CHECK_EXIT_SUCCESS(replaceDocumentationUrlVersionTest());
     }
-  catch (std::runtime_error e)
+  catch (const std::runtime_error& e)
     {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
