@@ -738,7 +738,7 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
     for (int i = 1; i < this->columnCount(); ++i)
       {
       QStandardItem* sceneOtherColumn = new QStandardItem();
-      sceneOtherColumn->setFlags(nullptr);
+      sceneOtherColumn->setFlags(Qt::NoItemFlags);
       sceneItems << sceneOtherColumn;
       }
     sceneItem->setColumnCount(this->columnCount());
@@ -780,7 +780,7 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
         }
       else
         {
-        newItem->setFlags(nullptr);
+        newItem->setFlags(Qt::NoItemFlags);
         }
       items.append(newItem);
       }
