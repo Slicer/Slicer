@@ -88,7 +88,6 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
   #------------------------------------------------------------------------------
   def TestSection_SetupScene(self):
-
     self.paintEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Paint")
     self.eraseEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Erase")
     self.islandEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Islands")
@@ -111,7 +110,6 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
   #------------------------------------------------------------------------------
   def TestSection_SharedLabelmapMultipleLayerEditing(self):
-
     self.segmentation.RemoveAllSegments()
     self.segmentation.AddEmptySegment("Segment_1")
     self.segmentation.AddEmptySegment("Segment_2")
@@ -148,7 +146,6 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
   #------------------------------------------------------------------------------
   def TestSection_IslandEffects(self):
-
     islandSizes = [1, 26, 11, 6, 8, 6, 2]
     islandSizes.sort(reverse=True)
 
@@ -266,6 +263,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
     segment1Id = self.segmentation.AddEmptySegment("Segment_1")
     segment1 = self.segmentation.GetSegment(segment1Id)
     segment1.SetLabelValue(1)
+    self.segmentEditorNode.SetSelectedSegmentID("Segment_1")
 
     segment2Id = self.segmentation.AddEmptySegment("Segment_2")
     segment2 = self.segmentation.GetSegment(segment2Id)
@@ -320,6 +318,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
       self.runMarginEffect(segment1, segment2, dataType, self.segmentEditorNode.OverwriteNone)
       self.assertEqual(self.segmentation.GetNumberOfLayers(), 2)
 
+  #------------------------------------------------------------------------------
   def runMarginEffect(self, segment1, segment2, dataType, overwriteMode):
     logging.info(f"Running margin effect with data type: {dataType}, and overwriteMode {overwriteMode}")
     marginEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Margin")
@@ -367,8 +366,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
     self.segmentEditorNode.SetOverwriteMode(oldOverwriteMode)
 
+  #------------------------------------------------------------------------------
   def TestSection_MaskingSettings(self):
-
     self.segmentation.RemoveAllSegments()
     segment1Id = self.segmentation.AddEmptySegment("Segment_1")
     segment2Id = self.segmentation.AddEmptySegment("Segment_2")
