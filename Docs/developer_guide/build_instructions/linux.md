@@ -85,6 +85,29 @@ Install the development tools and the support libraries:
 sudo pacman -S git make patch subversion gcc cmake \
   qt5-base qt5-multimedia qt5-tools qt5-xmlpatterns qt5-svg qt5-webengine qt5-script qt5-x11extras libxt
 ```
+
+### CentOS 7
+:::{note}
+Slicer built on CentOS 7 will be available for many Linux distributions and releases
+:::
+
+Install Qt and CMake as described in [Any Distribution](./linux.md#any-distribution) section.
+
+Since by default CentOS 7 comes with `gcc 4.8.5` only having [experimental support for C++14](https://gcc.gnu.org/onlinedocs/gcc-4.8.5/gcc/C-Dialect-Options.html#C-Dialect-Options), the following allows to install and activate the `devtoolset-11` [providing](https://access.redhat.com/documentation/en-us/red_hat_developer_toolset/11/html/11.0_release_notes/dts11.0_release#Changes_in_DTS) `gcc 11.2.1` [supporting C++20](https://en.cppreference.com/w/cpp/compiler_support/20).
+
+CentOS 7 comes with pretty old devtoolset (gcc 4.8.5). Install and activate newer toolset (11 in this case):
+
+```console
+sudo yum install centos-release-scl
+sudo yum install devtoolset-11-gcc*
+scl enable devtoolset-11 bash         # activation is needed for every terminal session
+```
+
+Install pre-requisites:
+```console
+sudo yum install patch mesa-libGL-devel libuuid-devel
+```
+
 ### Any Distribution
 
 This section describes how to install Qt as distributed by *The QT Company*, which can be used for any GNU/Linux distribution.
