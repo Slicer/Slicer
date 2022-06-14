@@ -109,6 +109,7 @@ void qMRMLMarkupsToolBarPrivate::init()
 // --------------------------------------------------------------------------
 void qMRMLMarkupsToolBarPrivate::addSetModuleButton(vtkSlicerMarkupsLogic* markupsLogic, const QString& moduleName)
 {
+  Q_UNUSED(markupsLogic);
   Q_Q(qMRMLMarkupsToolBar);
 
   QPushButton* moduleButton = new QPushButton();
