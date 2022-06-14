@@ -85,11 +85,10 @@ void qSlicerIconComboBox::showPopup()
   listRect.setWidth( itemsPerRow * itemSize.width() );
   listRect.setHeight( itemsPerColumns * itemSize.height() );
 
-  int marginLeft, marginTop, marginRight, marginBottom;
-  container->getContentsMargins(&marginLeft, &marginTop, &marginRight, &marginBottom);
-  listRect.setWidth( listRect.width() + marginLeft + marginRight);
+  QMargins margins = container->contentsMargins();
+  listRect.setWidth( listRect.width() + margins.left() + margins.right());
   listRect.setWidth( listRect.width() + container->frameWidth());
-  listRect.setHeight( listRect.height() + marginTop + marginBottom);
+  listRect.setHeight( listRect.height() + margins.top() + margins.bottom());
   listRect.setHeight( listRect.height() + container->frameWidth());
 
   // Position horizontally.
