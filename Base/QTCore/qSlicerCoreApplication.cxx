@@ -1928,7 +1928,7 @@ void qSlicerCoreApplication::onAboutToQuit()
 
 #ifdef Slicer_USE_PYTHONQT
   // Override return code only if testing mode is enabled
-  if (this->corePythonManager()->pythonErrorOccured() && this->coreCommandOptions()->isTestingEnabled())
+  if (this->corePythonManager()->pythonErrorOccured() && this->testAttribute(AA_EnableTesting))
     {
     d->ReturnCode = qSlicerCoreApplication::ExitFailure;
     }
