@@ -153,6 +153,9 @@ protected slots:
   virtual void onLayoutChanged(int);
   virtual void onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel);
 
+  // Show/hide update indicator on Extensions Manager toolbar icon
+  void setExtensionUpdatesAvailable(bool updateAvailable);
+
 #ifdef Slicer_USE_PYTHONQT
   virtual void onPythonConsoleUserInput(const QString&);
 #endif

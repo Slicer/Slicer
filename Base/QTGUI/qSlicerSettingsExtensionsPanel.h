@@ -50,11 +50,13 @@ public:
 signals:
   void extensionsServerUrlChanged(const QString& url);
   void extensionsFrontendServerUrlChanged(const QString& url);
+  void extensionsAutoUpdateSettingsChanged();
 
 protected slots:
   void onExtensionsManagerEnabled(bool value);
   /// \todo This slot does nothing.
   void onExtensionsPathChanged(const QString& path);
+  void updateAutoUpdateWidgetsFromModel();
 
 protected:
   QScopedPointer<qSlicerSettingsExtensionsPanelPrivate> d_ptr;

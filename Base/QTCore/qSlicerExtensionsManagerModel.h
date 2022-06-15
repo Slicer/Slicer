@@ -41,21 +41,37 @@ class qSlicerExtensionsManagerModelPrivate;
 class QStandardItemModel;
 
 /// \brief Class querying and storing extensions data
+///
+/// The model maintains a list of "managed" extensions, i.e., extensions that
+/// are currently installed or that the user bookmarked.
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerExtensionsManagerModel : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int numberOfInstalledExtensions READ numberOfInstalledExtensions NOTIFY modelUpdated)
   Q_PROPERTY(int installedExtensionsCount READ installedExtensionsCount NOTIFY modelUpdated)
+  /// Number of extensions that are installed or bookmarked
+  Q_PROPERTY(int managedExtensionsCount READ managedExtensionsCount NOTIFY modelUpdated)
+  /// Names of extensions that are installed or bookmarked
+  Q_PROPERTY(QStringList managedExtensions READ managedExtensions NOTIFY modelUpdated)
+  /// Names of bookmarked extensions
+  Q_PROPERTY(QStringList bookmarkedExtensions READ bookmarkedExtensions NOTIFY modelUpdated)
   Q_PROPERTY(QStringList installedExtensions READ installedExtensions NOTIFY modelUpdated)
   Q_PROPERTY(QStringList enabledExtensions READ enabledExtensions NOTIFY modelUpdated)
+  /// Names of extensions that have updates available on the server
+  Q_PROPERTY(QStringList availableUpdateExtensions READ availableUpdateExtensions NOTIFY modelUpdated)
   Q_PROPERTY(bool newExtensionEnabledByDefault READ newExtensionEnabledByDefault WRITE setNewExtensionEnabledByDefault NOTIFY newExtensionEnabledByDefaultChanged)
   Q_PROPERTY(bool interactive READ interactive WRITE setInteractive NOTIFY interactiveChanged)
   Q_PROPERTY(QString extensionsSettingsFilePath READ extensionsSettingsFilePath WRITE setExtensionsSettingsFilePath NOTIFY extensionsSettingsFilePathChanged)
-  Q_PROPERTY(QString extensionsHistorySettingsFilePath READ extensionsHistorySettingsFilePath WRITE setExtensionsHistorySettingsFilePath NOTIFY extensionsHistorySettingsFilePathChanged)
   Q_PROPERTY(QString slicerRevision READ slicerRevision WRITE setSlicerRevision NOTIFY slicerRevisionChanged)
   Q_PROPERTY(QString slicerOs READ slicerOs WRITE setSlicerOs NOTIFY slicerOsChanged)
   Q_PROPERTY(QString slicerArch READ slicerArch WRITE setSlicerArch NOTIFY slicerArchChanged)
-  Q_PROPERTY(QString slicerVersion READ slicerVersion WRITE setSlicerVersion NOTIFY slicerVersionChanged)
+  /// Download extensions metadata from the server at application startup to allow the application to display update available indicator.
+  Q_PROPERTY(bool autoUpdateCheck READ autoUpdateCheck WRITE setAutoUpdateCheck NOTIFY autoUpdateSettingsChanged)
+  /// Automatically install any extension updates.
+  Q_PROPERTY(bool autoUpdateInstall READ autoUpdateInstall WRITE setAutoUpdateInstall NOTIFY autoUpdateSettingsChanged)
+  /// Automatically install all dependencies (other extensions that the installed extension requires) when installing an extension.
+  Q_PROPERTY(bool autoInstallDependencies READ autoInstallDependencies WRITE setAutoInstallDependencies NOTIFY autoUpdateSettingsChanged)
+
 public:
   /// Superclass typedef
   typedef QObject Superclass;
@@ -112,6 +128,9 @@ public:
   /// \sa extensionsSettingsFilePath()
   Q_INVOKABLE QUrl frontendServerUrl()const;
 
+  /// Returns the URL of the extensions manager frontend for the current application version and operating system.
+  Q_INVOKABLE QUrl extensionsListUrl()const;
+
   Q_INVOKABLE QString extensionsInstallPath()const;
 
   Q_INVOKABLE QString extensionInstallPath(const QString& extensionName) const;
@@ -123,12 +142,33 @@ public:
   void setNewExtensionEnabledByDefault(bool value);
   bool newExtensionEnabledByDefault()const;
 
+  bool autoUpdateCheck()const;
+  bool autoUpdateInstall()const;
+  bool autoInstallDependencies()const;
+
   /// If set to true (by default) then the user may be asked to confirm installation of additional dependencies.
   /// If set to false then no blocking popups are displayed and dependencies are installed automatically.
-  void setInteractive(bool value);
   bool interactive()const;
 
-  Q_INVOKABLE ExtensionMetadataType extensionMetadata(const QString& extensionName)const;
+  enum MatadataSource
+    {
+    MetadataAll = 0, ///< return local metadata, and if any fields are not set locally then set it from the server
+    MetadataLocal,   ///< return local metadata (stored in s4ext files in the extensions folder)
+    MetadataServer   ///< return metadata downloaded from the server
+    };
+  Q_INVOKABLE ExtensionMetadataType extensionMetadata(const QString& extensionName, int source = MetadataAll)const;
+
+  Q_INVOKABLE QString extensionDescription(const QString& extensionName)const;
+
+  /// \brief Return the number of managed extensions
+  /// \sa managedExtensionsCount, installedExtensionsCount, bookmarkedExtensionsCount
+  int managedExtensionsCount()const;
+
+  /// \brief Return names of all managed extensions, i.e., installed or bookmarked extensions
+  QStringList managedExtensions()const;
+
+  /// \brief Return True if the \a extensionName is loaded
+  bool isExtensionLoaded(const QString& extensionName) const;
 
   /// \brief Return True if the \a extensionName is installed
   /// \sa installExtension, installedExtensionsCount, installedExtensions, extensionInstalled
@@ -145,6 +185,11 @@ public:
   /// \brief Return names of all installed extensions sorted in alphabetical order.
   /// \sa installExtension, installedExtensionsCount, isExtensionInstalled, extensionInstalled
   QStringList installedExtensions()const;
+
+  /// \brief Return True if the \a extensionName is bookmarked.
+  /// Bookmarked extensions are included in the list of managed extensions list, even if not installed.
+  /// \sa setExtensionBookmarked, extensionBookmarkedChanged, bookmarkedExtensions
+  Q_INVOKABLE bool isExtensionBookmarked(const QString& extensionName)const;
 
   /// \brief Return True if the \a extensionName is enabled
   /// \sa setExtensionEnabled, extensionEnabledChanged, enabledExtensions
@@ -164,6 +209,10 @@ public:
   /// \sa checkForUpdates
   Q_INVOKABLE bool isExtensionUpdateAvailable(const QString& extensionName)const;
 
+  /// Get list of extension names that has available updates.
+  /// \sa checkForUpdates
+  QStringList availableUpdateExtensions()const;
+
   /// Test if extension is scheduled to be updated.
   ///
   /// \return \c true if \p extensionName is scheduled to be updated.
@@ -179,6 +228,10 @@ public:
   /// \sa uninstallScheduledExtensions();
   Q_INVOKABLE bool isExtensionScheduledForUninstall(const QString& extensionName)const;
 
+  /// \brief Return names of all bookmarked extensions
+  /// \sa setExtensionBookmarked, extensionBookmarkedChanged, bookmarkedExtensions
+  QStringList bookmarkedExtensions()const;
+
   /// \brief Return names of all enabled extensions sorted in alphabetical order.
   /// \sa setExtensionEnabled, extensionEnabledChanged, isExtensionEnabled
   QStringList enabledExtensions()const;
@@ -188,14 +241,6 @@ public:
   /// Signal extensionsSettingsFilePathChanged() is emitted when a new path is set.
   QString extensionsSettingsFilePath()const;
   void setExtensionsSettingsFilePath(const QString& extensionsSettingsFilePath);
-
-  /// \brief Set/Get extension history settings file path.
-  ///
-  /// Signal extensionsHistorySettingsFilePathChanged() is emitted when a new path is set.
-  QString extensionsHistorySettingsFilePath()const;
-  void setExtensionsHistorySettingsFilePath(const QString& extensionsHistorySettingsFilePath);
-
-  QVariantMap extensionsHistoryInformation()const;
 
   /// \brief Set/Get Slicer revision.
   ///
@@ -242,14 +287,6 @@ public:
   /// \sa setSlicerRevision, setSlicerOs, setSlicerArch, setSlicerRequirements
   Q_INVOKABLE QStringList isExtensionCompatible(const QString& extensionName) const;
 
-  /// \brief Query the extension server and retrieve the metadata associated with \a extensionId
-  /// \sa setServerUrl
-  Q_INVOKABLE ExtensionMetadataType retrieveExtensionMetadata(const QString& extensionId);
-
-  /// \brief Query the extension server and retrieve the metadata associated with \a extensionName
-  /// \sa setServerUrl
-  Q_INVOKABLE ExtensionMetadataType retrieveExtensionMetadataByName(const QString& extensionName);
-
   /// Install extension from the specified archive file.
   ///
   /// This attempts to install an extension given only the archive file
@@ -257,7 +294,7 @@ public:
   /// determine the extension name.
   ///
   /// \sa installExtension(const QString&,ExtensionMetadataType,const QString&)
-  Q_INVOKABLE bool installExtension(const QString &archiveFile);
+  Q_INVOKABLE bool installExtension(const QString &archiveFile, bool installDependencies = true);
 
   /// Install extension.
   ///
@@ -265,10 +302,17 @@ public:
   /// metadata from the specified archive file. If the metadata is empty, the
   /// metadata from the extension description contained in the archive is used.
   ///
-  /// \sa downloadExtension, isExtensionScheduledForUninstall, extensionScheduledForUninstall
+  /// \sa isExtensionScheduledForUninstall, extensionScheduledForUninstall
   Q_INVOKABLE bool installExtension(const QString& extensionName,
                                     ExtensionMetadataType extensionMetadata,
-                                    const QString &archiveFile);
+                                    const QString &archiveFile, bool installDependencies = true);
+
+  /// \brief Uninstall \a extensionName
+  /// It is only allowed if the extension is not loaded already.
+  /// If the extension is already loaded then use scheduleExtensionForUninstall instead.
+  /// \note The directory containing the extension will be deleted.
+  /// \sa installExtension
+  bool uninstallExtension(const QString& extensionName);
 
   /// \brief Extract \a archiveFile into \a destinationPath/extensionName directory
   Q_INVOKABLE bool extractExtensionArchive(const QString& extensionName,
@@ -277,6 +321,13 @@ public:
 
   /// Return the item model used internally
   Q_INVOKABLE const QStandardItemModel * model()const;
+
+  /// Return time of last successful update of extensions metadata from the server.
+  /// If there has not been any updates then it the object is set to null.
+  QDateTime lastUpdateTimeExtensionsMetadataFromServer();
+
+  /// Number of operations in progress
+  QStringList activeTasks() const;
 
   /// Conversion map to get extensions manager model keys from metadata returned by the extensions server
   /// \sa convertExtensionMetadata()
@@ -307,6 +358,10 @@ public:
 
 public slots:
 
+  /// \brief Add/remove bookmark for an extension.
+  /// Add/remove this extension from the list of bookmarked extensions in the application settings.
+  void setExtensionBookmarked(const QString& extensionName, bool value);
+
   /// \brief Enable or disable an extension.
   /// Tell the application to load (or skip the loading) of \a extensionName
   /// by adding (or removing) all associated module paths to the application settings.
@@ -315,7 +370,13 @@ public slots:
   /// \brief Download and install \a extensionId
   /// The \a extensionId corresponds to the identifier used on the extension server itself.
   /// \sa installExtension, scheduleExtensionForUninstall, uninstallScheduledExtensions
-  bool downloadAndInstallExtension(const QString& extensionId);
+  bool downloadAndInstallExtension(const QString& extensionId, bool installDependencies=true);
+
+  /// \brief Download and install \a extensionId
+  /// The \a extensionId corresponds to the identifier used on the extension server itself.
+  /// This method is used by the extensions.slicer.org extension installer.
+  /// \sa installExtension, scheduleExtensionForUninstall, uninstallScheduledExtensions
+  bool downloadAndInstallExtensionByName(const QString& extensionId, bool installDependencies=true);
 
   /// \brief Schedule \a extensionName of uninstall
   /// Tell the application to uninstall \a extensionName when it will restart
@@ -329,12 +390,19 @@ public slots:
   /// \sa scheduleExtensionForUninstall
   bool cancelExtensionScheduledForUninstall(const QString& extensionName);
 
-  /// Check for updates to installed extensions.
-  ///
-  /// This checks each installed extension to see if it is the latest version.
-  /// If \p installUpdates is \c true, available updates will be automatically
-  /// scheduled for installation.
-  void checkForUpdates(bool installUpdates);
+  /// Request updating the extension metadata that is stored on the extensions server.
+  /// Only queries the extensions server if update is due (sufficient time
+  /// is elapsed since the last update), or force is set to true.
+  /// The last query result is saved and if the server is not contacted
+  /// then this cached information is used.
+  /// Set waitForCompletion to true to make sure all metadata is up-to-date when the method returns.
+  /// Returns false if waitForCompletion is set to true and metadata cannot be retrieved.
+  bool updateExtensionsMetadataFromServer(bool force=false, bool waitForCompletion=false);
+
+  /// Compares current extensions versions with versions available on the server.
+  /// Emits extensionMetadataUpdated(QString extensionName) and emit extensionUpdatesAvailable(bool found) signals.
+  /// If Extensions/AutoUpdateInstall is enabled in application settings then this will also install the updated extensions.
+  void checkForExtensionsUpdates();
 
   /// Schedule \p extensionName to be updated (reinstalled).
   ///
@@ -383,20 +451,25 @@ public slots:
   /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall,
   bool uninstallScheduledExtensions();
 
-  void gatherExtensionsHistoryInformationOnStartup();
-
-  QVariantMap getExtensionHistoryInformation();
-
   void identifyIncompatibleExtensions();
 
   bool exportExtensionList(QString& exportFilePath);
 
   QStringList checkInstallPrerequisites() const;
 
+  /// Call this method when extensions are started to be loaded.
+  /// It allows to the model to know which extensions are loaded,
+  /// which is important because after application startup extensions
+  /// cannot be immediately loaded or unloaded.
+  void aboutToLoadExtensions();
+
+  /// Full update of the extensions from extension description files and settings.
   void updateModel();
 
-  /// Number of operations in progress
-  QStringList activeTasks() const;
+  void setAutoUpdateCheck(bool enable);
+  void setAutoUpdateInstall(bool enable);
+  void setAutoInstallDependencies(bool enable);
+  void setInteractive(bool value);
 
 signals:
 
@@ -409,11 +482,20 @@ signals:
 
   void modelUpdated();
 
+  /// Emitted when metadata download from the extensions server is completed.
+  void updateExtensionsMetadataFromServerCompleted(bool success);
+
   void extensionUpdateAvailable(const QString& extensionName);
+
+  /// Emitted after updates are checked on the extensions server.
+  void extensionUpdatesAvailable(bool available);
 
   void extensionInstalled(const QString& extensionName);
 
   void extensionUpdated(const QString& extensionName);
+
+  /// Emitted when extension metadata (description, icon URL, etc. is updated)
+  void extensionMetadataUpdated(const QString& extensionName);
 
   void extensionScheduledForUninstall(const QString& extensionName);
 
@@ -424,6 +506,9 @@ signals:
   void extensionCancelledScheduleForUpdate(const QString& extensionName);
 
   void extensionUninstalled(const QString& extensionName);
+
+  /// Emitted when bookmark is added to or removed from an extension
+  void extensionBookmarkedChanged(const QString& extensionName, bool value);
 
   void extensionEnabledChanged(const QString& extensionName, bool value);
 
@@ -442,13 +527,12 @@ signals:
 
   void messageLogged(const QString& text, ctkErrorLogLevel::LogLevels level) const;
 
-  void extensionHistoryGatheredOnStartup(const QVariantMap&);
-
   void installDownloadProgress(const QString& extensionName, qint64 received, qint64 total);
 
   void extensionsSettingsFilePathChanged(const QString& extensionsSettingsFilePath);
 
-  void extensionsHistorySettingsFilePathChanged(const QString& extensionsHistorySettingsFilePath);
+  /// Emitted when autoUpdateCheck, autoUpdateInstall, or autoInstallDependencies properties are changed
+  void autoUpdateSettingsChanged();
 
 protected slots:
 
@@ -463,11 +547,7 @@ protected slots:
   void onUpdateDownloadProgress(qSlicerExtensionDownloadTask* task,
                                 qint64 received, qint64 total);
 
-  void onUpdateCheckFinished(const QUuid& requestId);
-
-  void onUpdateCheckComplete(const QUuid& requestId,
-                             const QList<QVariantMap>& results);
-  void onUpdateCheckFailed(const QUuid& requestId);
+  bool onExtensionsMetadataFromServerQueryFinished(const QUuid& requestId);
 
 protected:
   QScopedPointer<qSlicerExtensionsManagerModelPrivate> d_ptr;

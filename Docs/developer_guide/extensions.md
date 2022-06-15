@@ -287,6 +287,8 @@ to a [Girder server](https://slicer-packages.kitware.com/#collection/5f4474d0e1d
 storage server with the Slicer Package Manager plugin ([source code](https://github.com/girder/slicer_package_manager)), which provides a
 convenient REST API for accessing Slicer extension packages and metadata.
 
+The "Manage extensions" tab in the Extensions Manager in Slicer uses this REST API to get information on updates and get packages to install or update.
+
 The extension server is designed so that organizations can set up and maintain their own extensions servers, for example to distribute
 extensions for custom applications. Extensions server address can be set in the Application Settings, in the Extensions section.
 
@@ -692,4 +694,3 @@ It most likely means that the test driver is not linking against `ITKFactoryRegi
 - call `itk::itkFactoryRegistration();` in its main function.
 
 For more details, read [What is the ITKFactoryRegistration library?](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ#What_is_the_ITKFactoryRegistration_library_.3F).
-

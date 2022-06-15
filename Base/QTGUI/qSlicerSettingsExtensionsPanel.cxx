@@ -78,6 +78,12 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 #ifdef Q_OS_MAC
   this->ExtensionsInstallPathButton->setDisabled(true);
 #endif
+  this->AutoUpdateCheckCheckBox->setChecked(false);
+  this->AutoUpdateInstallCheckBox->setChecked(false);
+  this->AutoInstallDependenciesCheckBox->setChecked(true);
+
+  bool extensionsManagerEnabled = app && app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool();
+  this->OpenExtensionsManagerPushButton->setVisible(extensionsManagerEnabled);
 
   // Register settings
   q->registerProperty("Extensions/ManagerEnabled", this->ExtensionsManagerEnabledCheckBox,
@@ -93,6 +99,13 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
                       QString(), ctkSettingsPanel::OptionNone,
                       app->revisionUserSettings());
 
+  q->registerProperty("Extensions/AutoUpdateCheck", this->AutoUpdateCheckCheckBox, "checked",
+    SIGNAL(toggled(bool)), "Automatic update check");
+  q->registerProperty("Extensions/AutoUpdateInstall", this->AutoUpdateInstallCheckBox, "checked",
+    SIGNAL(toggled(bool)), "Automatic update install");
+  q->registerProperty("Extensions/AutoInstallDependencies", this->AutoInstallDependenciesCheckBox, "checked",
+    SIGNAL(toggled(bool)), "Automatic install of dependencies");
+
   qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(
     this->ExtensionsInstallPathButton, "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("Extensions/InstallPath", relativePathMapper,
@@ -102,15 +115,25 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->ExtensionsManagerEnabledCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(onExtensionsManagerEnabled(bool)));
+    q, SLOT(onExtensionsManagerEnabled(bool)));
   QObject::connect(this->ExtensionsServerUrlLineEdit, SIGNAL(textChanged(QString)),
-                   q, SIGNAL(extensionsServerUrlChanged(QString)));
+    q, SIGNAL(extensionsServerUrlChanged(QString)));
   QObject::connect(this->ExtensionsFrontendServerUrlLineEdit, SIGNAL(textChanged(QString)),
-                   q, SIGNAL(extensionsFrontendServerUrlChanged(QString)));
+    q, SIGNAL(extensionsFrontendServerUrlChanged(QString)));
   QObject::connect(this->ExtensionsInstallPathButton, SIGNAL(directoryChanged(QString)),
-                   q, SLOT(onExtensionsPathChanged(QString)));
+    q, SLOT(onExtensionsPathChanged(QString)));
   QObject::connect(this->OpenExtensionsManagerPushButton, SIGNAL(clicked()),
-                   app, SLOT(openExtensionsManagerDialog()));
+    app, SLOT(openExtensionsManagerDialog()));
+  QObject::connect(this->OpenExtensionsCatalogWebsitePushButton, SIGNAL(clicked()),
+    app, SLOT(openExtensionsCatalogWebsite()));
+  QObject::connect(app->extensionsManagerModel(), SIGNAL(autoUpdateSettingsChanged()),
+    q, SLOT(updateAutoUpdateWidgetsFromModel()));
+  QObject::connect(this->AutoUpdateCheckCheckBox, SIGNAL(toggled(bool)),
+    app->extensionsManagerModel(), SLOT(setAutoUpdateCheck(bool)));
+  QObject::connect(this->AutoUpdateInstallCheckBox, SIGNAL(toggled(bool)),
+    app->extensionsManagerModel(), SLOT(setAutoUpdateInstall(bool)));
+  QObject::connect(this->AutoInstallDependenciesCheckBox, SIGNAL(toggled(bool)),
+    app->extensionsManagerModel(), SLOT(setAutoInstallDependencies(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -138,4 +161,21 @@ void qSlicerSettingsExtensionsPanel::onExtensionsManagerEnabled(bool value)
 void qSlicerSettingsExtensionsPanel::onExtensionsPathChanged(const QString& path)
 {
   qSlicerCoreApplication::application()->setExtensionsInstallPath(path);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsExtensionsPanel::updateAutoUpdateWidgetsFromModel()
+{
+  Q_D(qSlicerSettingsExtensionsPanel);
+  qSlicerApplication* app = qSlicerApplication::application();
+  if (!app->extensionsManagerModel())
+    {
+    return;
+    }
+  QSignalBlocker blocker1(d->AutoUpdateCheckCheckBox);
+  QSignalBlocker blocker2(d->AutoUpdateInstallCheckBox);
+  QSignalBlocker blocker3(d->AutoInstallDependenciesCheckBox);
+  d->AutoUpdateCheckCheckBox->setChecked(app->extensionsManagerModel()->autoUpdateCheck());
+  d->AutoUpdateInstallCheckBox->setChecked(app->extensionsManagerModel()->autoUpdateInstall());
+  d->AutoInstallDependenciesCheckBox->setChecked(app->extensionsManagerModel()->autoInstallDependencies());
 }

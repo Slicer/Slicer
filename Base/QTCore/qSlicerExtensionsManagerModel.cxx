@@ -21,6 +21,8 @@
 // Qt includes
 #include <QDebug>
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -30,6 +32,7 @@
 #include <QStandardItemModel>
 #include <QTemporaryFile>
 #include <QTextStream>
+#include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
 
@@ -56,14 +59,6 @@
 // --------------------------------------------------------------------------
 namespace
 {
-
-// --------------------------------------------------------------------------
-struct UpdateCheckInformation
-{
-  QString ExtensionName;
-  QString InstalledVersion;
-  bool InstallAutomatically;
-};
 
 // --------------------------------------------------------------------------
 struct UpdateDownloadInformation
@@ -122,7 +117,11 @@ public:
     ScreenshotsColumn,
     EnabledColumn,
     ArchiveNameColumn,
-    MD5Column
+    MD5Column,
+    UpdatedColumn, // date and time when the extension on the server was updated
+    InstalledColumn, // extension files are in place
+    LoadedColumn, // extension actually loaded into the application
+    BookmarkedColumn, // extension is bookmarked
     };
 
   enum ItemDataRole{
@@ -145,7 +144,11 @@ public:
     ScreenshotsRole,
     EnabledRole,
     ArchiveRole,
-    MD5Role
+    MD5Role,
+    UpdatedRole,
+    InstalledRole,
+    LoadedRole,
+    BookmarkedRole,
     };
 
   typedef qSlicerExtensionsManagerModelPrivate Self;
@@ -160,6 +163,11 @@ public:
   void log(const QString& text, ctkErrorLogLevel::LogLevels level) const;
 
   int role(const QByteArray& roleName);
+
+  /// Save/load extensions metadata that was retrieved from the server to a local cache
+  /// (in application settings) to avoid too frequent polling of the server.
+  void saveExtensionsMetadataFromServerToCache();
+  void loadCachedExtensionsMetadataFromServer();
 
   QFileInfoList extensionDescriptionFileInfos(const QString& extensionDescriptionPath)const;
 
@@ -185,7 +193,9 @@ public:
 
   QString extractArchive(const QDir& extensionsDir, const QString &archiveFile);
 
-  qSlicerExtensionDownloadTask* downloadExtension(const QString& extensionId);
+  qSlicerExtensionDownloadTask* downloadExtensionByName(const QString& extensionName);
+
+  QStringList dependenciesToInstall(const QStringList& directDependencies, QStringList& unresolvedDependencies);
 
   /// Update (reinstall) specified extension.
   ///
@@ -193,13 +203,16 @@ public:
   ///
   /// \param extensionName Name of the extension.
   /// \param
-  /// \sa downloadExtension, installExtension
+  /// \sa downloadExtensionByName, installExtension
   bool updateExtension(const QString& extensionName, const QString& archiveFile);
 
-  /// \brief Uninstall \a extensionName
-  /// \note The directory containing the extension will be deleted.
-  /// \sa downloadExtension, installExtension
-  bool uninstallExtension(const QString& extensionName);
+  /// Returns true it is due to check if there are any updates for managed extensions.
+  bool isExtensionsMetadataUpdateDue() const;
+
+  /// Removes s4ext file and icon file from the extension install folder.
+  /// The s4ext file is kept until the extension is managed (installed or bookmarked)
+  /// for metadata access quickly and even without network connection.
+  bool removeExtensionDescriptionFile(const QString& extensionName);
 
   QStringList extensionLibraryPaths(const QString& extensionName)const;
   QStringList extensionQtPluginPaths(const QString& extensionName)const;
@@ -214,42 +227,33 @@ public:
       const ExtensionMetadataType& metadata, const QString& slicerRevision,
       const QString& slicerOs, const QString& slicerArch);
 
-  void saveExtensionDescription(const QString& extensionDescriptionFile, const ExtensionMetadataType &allExtensionMetadata);
-  void saveExtensionToHistorySettings(const QString& extensionsHistorySettingsFile, const ExtensionMetadataType &extensionMetadata);
-  void scheduleExtensionHistorySettingRemoval(const QString& extensionsHistorySettingsFile, const ExtensionMetadataType &extensionMetadata);
-  void addExtensionHistorySetting(const QString& extensionsHistorySettingsFile, const ExtensionMetadataType &extensionMetadata, const QString& settingsPath);
-  void cancelExtensionHistorySettingRemoval(const QString& extensionsHistorySettingsFile, const QString& extensionName);
-  void removeScheduledExtensionHistorySettings(const QString& extensionsHistorySettingsFile);
-  QVariantMap getExtensionsInfoFromPreviousInstallations(const QString& extensionsHistorySettingsFile);
-  void gatherExtensionsHistoryInformationOnStartup();
-
-
-  qSlicerExtensionsManagerModel::ExtensionMetadataType retrieveExtensionMetadata(
-    const qRestAPI::Parameters& parameters);
-
   void initializeColumnIdToNameMap(int columnIdx, const char* columnName);
   QHash<int, QString> ColumnIdToName;
   QStringList ColumnNames;
 
-  bool NewExtensionEnabledByDefault;
-  bool Interactive;
+  bool NewExtensionEnabledByDefault{true};
+  bool Interactive{true};
+  bool AutoUpdateCheck{false};
+  bool AutoUpdateInstall{false};
+  bool AutoInstallDependencies{true};
 
   QNetworkAccessManager NetworkManager;
-  qRestAPI CheckForUpdatesApi;
-  QHash<QUuid, UpdateCheckInformation> CheckForUpdatesRequests;
 
-  qRestAPI GetExtensionMetadataApi;
+  qRestAPI ExtensionsMetadataFromServerAPI;
+  QMap<QString, QVariantMap> ExtensionsMetadataFromServer;
+  QUuid ExtensionsMetadataFromServerQueryUID;  // if not null then it means that query is in progress
 
   QHash<QString, UpdateDownloadInformation> AvailableUpdates;
 
   QString ExtensionsSettingsFilePath;
-  QString ExtensionsHistorySettingsFilePath;
 
   QString SlicerRevision;
   QString SlicerOs;
   QString SlicerArch;
 
   QString SlicerVersion;
+
+  QStringList LoadedExtensions;
 
   QStandardItemModelWithRole Model;
 
@@ -263,8 +267,6 @@ public:
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModelPrivate::qSlicerExtensionsManagerModelPrivate(qSlicerExtensionsManagerModel& object)
   : q_ptr(&object)
-  , NewExtensionEnabledByDefault(true)
-  , Interactive(true)
 {
 }
 
@@ -297,6 +299,10 @@ void qSlicerExtensionsManagerModelPrivate::init()
   this->initializeColumnIdToNameMap(Self::EnabledColumn, "enabled");
   this->initializeColumnIdToNameMap(Self::ArchiveNameColumn, "archivename");
   this->initializeColumnIdToNameMap(Self::MD5Column, "md5");
+  this->initializeColumnIdToNameMap(Self::UpdatedColumn, "updated");
+  this->initializeColumnIdToNameMap(Self::InstalledColumn, "installed");
+  this->initializeColumnIdToNameMap(Self::LoadedColumn, "loaded");
+  this->initializeColumnIdToNameMap(Self::BookmarkedColumn, "bookmarked");
 
   // See https://www.developer.nokia.com/Community/Wiki/Using_QStandardItemModel_in_QML
   QHash<int, QByteArray> roleNames;
@@ -309,16 +315,20 @@ void qSlicerExtensionsManagerModelPrivate::init()
 
   this->Model.CustomRoleNames = roleNames;
 
+  QSettings settings;
+  this->AutoUpdateCheck = settings.value("Extensions/AutoUpdateCheck", this->AutoUpdateCheck).toBool();
+  this->AutoUpdateInstall = settings.value("Extensions/AutoUpdateInstall", this->AutoUpdateInstall).toBool();
+  this->AutoInstallDependencies = settings.value("Extensions/AutoInstallDependencies", this->AutoInstallDependencies).toBool();
+
   QObject::connect(q, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
                    q, SLOT(identifyIncompatibleExtensions()));
 
   QObject::connect(q, SIGNAL(modelUpdated()),
                    q, SLOT(identifyIncompatibleExtensions()));
 
-  QObject::connect(&this->CheckForUpdatesApi,
+  QObject::connect(&this->ExtensionsMetadataFromServerAPI,
                    SIGNAL(finished(QUuid)),
-                   q, SLOT(onUpdateCheckFinished(QUuid)));
-
+                   q, SLOT(onExtensionsMetadataFromServerQueryFinished(QUuid)));
 }
 
 // --------------------------------------------------------------------------
@@ -384,6 +394,77 @@ int qSlicerExtensionsManagerModelPrivate::role(const QByteArray& roleName)
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::saveExtensionsMetadataFromServerToCache()
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+
+  // stores time of last update check for this Slicer installation
+  QSettings extensionSettings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
+  QDateTime currentTime = QDateTime::currentDateTimeUtc();
+  extensionSettings.setValue("Extensions/MetadataFromServerUpdateTime", currentTime.toString(Qt::ISODate));
+  extensionSettings.setValue("Extensions/MetadataFromServerUrl", q->serverUrl().toString());
+
+  // Convert to json to allow writing to settings TODO: use filename instead?
+  QJsonObject jsonExtensionsMetadata;
+  foreach(const QString & extensionName, this->ExtensionsMetadataFromServer.keys())
+    {
+    QJsonObject metadata = QJsonObject::fromVariantMap(this->ExtensionsMetadataFromServer[extensionName]);
+    jsonExtensionsMetadata.insert(extensionName, metadata);
+    }
+  // Write to json file
+  QByteArray renderedJson = QJsonDocument(jsonExtensionsMetadata).toJson();
+  QString metadataFilePath = q->extensionInstallPath("ExtensionsMetadataFromServer.json");
+  QFile jsonFile(metadataFilePath);
+  jsonFile.open(QIODevice::WriteOnly);
+  jsonFile.write(renderedJson);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::loadCachedExtensionsMetadataFromServer()
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+
+  this->ExtensionsMetadataFromServer.clear();
+
+  QSettings extensionSettings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
+  QString cachedServerUrl = extensionSettings.value("Extensions/MetadataFromServerUrl").toString();
+  if (cachedServerUrl.isEmpty() || cachedServerUrl != q->serverUrl().toString())
+    {
+    // no metadata cached for this server URL
+    return;
+    }
+
+  // Read last server response from json file
+  QString metadataFilePath = q->extensionInstallPath("ExtensionsMetadataFromServer.json");
+  QFile jsonFile(metadataFilePath);
+  if (!jsonFile.exists() || !jsonFile.open(QIODevice::ReadOnly))
+    {
+    // no metadata has been cached yet
+    return;
+    }
+  QByteArray renderedJson = jsonFile.readAll();
+  jsonFile.close();
+  // Convert to json
+  QJsonParseError parseError;
+  QJsonDocument jsonDoc = QJsonDocument::fromJson(renderedJson, &parseError);
+  if (parseError.error != QJsonParseError::NoError)
+    {
+    this->warning(qSlicerExtensionsManagerModel::tr("Failed to parse %1: error at %2: %3")
+      .arg(metadataFilePath).arg(parseError.offset).arg(parseError.errorString()));
+    return;
+    }
+  QJsonObject jsonExtensionsMetadata = jsonDoc.object();
+
+  // Convert from json to string->QVariantMap map
+  foreach(const QString & extensionName, jsonExtensionsMetadata.keys())
+    {
+    QJsonObject jsonMetadata = jsonExtensionsMetadata[extensionName].toObject();
+    QVariantMap metadata = jsonMetadata.toVariantMap();
+    this->ExtensionsMetadataFromServer[extensionName] = metadata;
+    }
+}
+
+// --------------------------------------------------------------------------
 QFileInfoList qSlicerExtensionsManagerModelPrivate::extensionDescriptionFileInfos(const QString& extensionDescriptionPath)const
 {
   QDir extensionDescriptionDir(extensionDescriptionPath);
@@ -394,20 +475,85 @@ QFileInfoList qSlicerExtensionsManagerModelPrivate::extensionDescriptionFileInfo
 }
 
 // --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModelPrivate::dependenciesToInstall(const QStringList& directDependencies, QStringList &unresolvedDependencies)
+{
+  Q_Q(qSlicerExtensionsManagerModel);
+
+  // Gather information on dependency extensions
+  QStringList dependencies = directDependencies;
+  QStringList toInstall; // extension names that needs to be installed (directDependencies and their dependencies)
+
+  while (!dependencies.isEmpty())
+    {
+    QString dependencyName = dependencies.takeFirst();
+    if (dependencyName.isEmpty()
+      || dependencyName == "NA" // "NA" is used for indicating no dependency
+      || unresolvedDependencies.contains(dependencyName)
+      || toInstall.contains(dependencyName))
+      {
+      continue;
+      }
+
+    if (!q->isExtensionInstalled(dependencyName))
+      {
+      // Dependency not yet installed
+      const qSlicerExtensionsManagerModel::ExtensionMetadataType& dependencyMetadataOnServer = this->ExtensionsMetadataFromServer.value(dependencyName);
+      if (dependencyMetadataOnServer.contains("extension_id"))
+        {
+        // found on server, add to the list of dependencies to install
+        toInstall << dependencyName;
+        }
+      else
+        {
+        // not found on server, this is an unresolved issue
+        unresolvedDependencies.append(dependencyName);
+        }
+      }
+
+    // Add dependencies of dependencies.
+    // We do this even if the extension was installed because it is possible that some dependencies did not get installed.
+    qSlicerExtensionsManagerModel::ExtensionMetadataType dependencyMetadata = q->extensionMetadata(dependencyName);
+    dependencies << dependencyMetadata.value("depends").toString().split(" ");
+    dependencies.removeDuplicates();
+    }
+  return toInstall;
+}
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelPrivate::addExtensionModelRow(const ExtensionMetadataType &metadata)
 {
-  QList<QStandardItem*> itemList;
-
-  foreach(const QString& key, this->columnNames())
+  QString extensionName = metadata["extensionname"].toString();
+  QList<QStandardItem*> foundItems =
+    this->Model.findItems(extensionName, Qt::MatchExactly, Self::NameColumn);
+  if (foundItems.count() == 1)
     {
-    QString value = metadata.value(key).toString();
-    QStandardItem * item = new QStandardItem(value);
-    item->setEditable(false);
-    item->setData(value, this->role(key.toUtf8()));
-    itemList << item;
+    // Extension is in the model already, update items
+    int row = foundItems.at(0)->row();
+    int column = 0;
+    foreach(const QString & key, this->columnNames())
+      {
+      QString value = metadata.value(key).toString();
+      QStandardItem* item = this->Model.item(row, column);
+      item->setData(value, this->role(key.toUtf8()));
+      item->setData(value, Qt::DisplayRole);
+      column++;
+      }
     }
-
-  this->Model.invisibleRootItem()->appendRow(itemList);
+  else
+    {
+    // Extension is not in the model yet, create new row
+    QList<QStandardItem*> itemList;
+    foreach(const QString& key, this->columnNames())
+      {
+      QString value = metadata.value(key).toString();
+      QStandardItem * item = new QStandardItem(value);
+      item->setEditable(false);
+      item->setData(value, this->role(key.toUtf8()));
+      item->setData(value, Qt::DisplayRole);
+      itemList << item;
+      }
+    this->Model.invisibleRootItem()->appendRow(itemList);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -496,13 +642,48 @@ QStringList removeFromPathList(const QStringList& paths, const QStringList& path
 } // end of anonymous namespace
 
 // --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::isExtensionsMetadataUpdateDue() const
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+
+  // stores common settings
+  if (!this->AutoUpdateCheck)
+    {
+    return false;
+    }
+
+  // stores time of last update check for this Slicer installation
+  QSettings extensionSettings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
+  if (!extensionSettings.contains("Extensions/MetadataFromServerUpdateTime"))
+    {
+    // there has never been an update check
+    return true;
+    }
+
+  QString lastUpdateTimeStr = extensionSettings.value("Extensions/MetadataFromServerUpdateTime").toString();
+  QDateTime lastUpdateTime = QDateTime::fromString(lastUpdateTimeStr, Qt::ISODate);
+  QDateTime currentTime = QDateTime::currentDateTimeUtc();
+  // By default, we check for updates once a day
+  int updateFrequencyMinutes = QSettings().value("Extensions/AutoUpdateFrequencyMinutes", 24 * 60).toInt();
+  qint64 updateFrequencyMsec = qint64(updateFrequencyMinutes) * qint64(60000);
+  if (lastUpdateTime.msecsTo(currentTime) < updateFrequencyMsec)
+    {
+    // not enough time has passed since the last update check
+    return false;
+    }
+
+  return true;
+}
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelPrivate::addExtensionPathToApplicationSettings(const QString& extensionName)
 {
   Q_Q(qSlicerExtensionsManagerModel);
   QSettings settings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
   QStringList additionalPaths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(settings.value("Modules/AdditionalPaths").toStringList());
+  QStringList newModulePaths = q->extensionModulePaths(extensionName);
   settings.setValue("Modules/AdditionalPaths",
-    qSlicerCoreApplication::application()->toSlicerHomeRelativePaths(appendToPathList(additionalPaths, q->extensionModulePaths(extensionName))));
+    qSlicerCoreApplication::application()->toSlicerHomeRelativePaths(appendToPathList(additionalPaths, newModulePaths)));
 }
 
 // --------------------------------------------------------------------------
@@ -693,12 +874,12 @@ QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensi
   bool success = vtkArchive::ExtractTar(qPrintable(archiveFile), /* verbose */ false, /* extract */ true, &extracted_files);
   if(!success)
     {
-    this->critical(QString("Failed to extract %1 into %2").arg(archiveFile).arg(extensionsDir.absolutePath()));
+    this->critical(qSlicerExtensionsManagerModel::tr("Failed to extract %1 into %2").arg(archiveFile).arg(extensionsDir.absolutePath()));
     return QString();
     }
   if(extracted_files.size() == 0)
     {
-    this->warning(QString("Archive %1 doesn't contain any files !").arg(archiveFile));
+    this->warning(qSlicerExtensionsManagerModel::tr("Archive %1 doesn't contain any files").arg(archiveFile));
     return QString();
     }
 
@@ -850,17 +1031,17 @@ QStringList qSlicerExtensionsManagerModelPrivate::isExtensionCompatible(
     }
   QStringList reasons;
   QString extensionSlicerRevision = metadata.value("slicer_revision").toString();
-  if (slicerRevision != extensionSlicerRevision)
+  if (!extensionSlicerRevision.isEmpty() && slicerRevision != extensionSlicerRevision)
     {
     reasons << qSlicerExtensionsManagerModel::tr("extensionSlicerRevision [%1] is different from slicerRevision [%2]").arg(extensionSlicerRevision).arg(slicerRevision);
     }
   QString extensionArch = metadata.value("arch").toString();
-  if (slicerArch != extensionArch)
+  if (!extensionArch.isEmpty() && slicerArch != extensionArch)
     {
     reasons << qSlicerExtensionsManagerModel::tr("extensionArch [%1] is different from slicerArch [%2]").arg(extensionArch).arg(slicerArch);
     }
   QString extensionOs = metadata.value("os").toString();
-  if (slicerOs != extensionOs)
+  if (!extensionOs.isEmpty() && slicerOs != extensionOs)
     {
     reasons << qSlicerExtensionsManagerModel::tr("extensionOs [%1] is different from slicerOs [%2]").arg(extensionOs).arg(slicerOs);
     }
@@ -868,297 +1049,10 @@ QStringList qSlicerExtensionsManagerModelPrivate::isExtensionCompatible(
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelPrivate::saveExtensionDescription(
-    const QString& extensionDescriptionFile, const ExtensionMetadataType& allExtensionMetadata)
-{
-//  QStringList expectedKeys;
-//  expectedKeys << "extensionname" << "scm" << "scmurl" << "arch" << "os"
-//               << "depends" << "homepage" << "category"
-//               << "description" << "enabled"
-//               << "revision" << "slicer_revision";
-
-//  // TODO Make sure expected keys are provided
-//  // TODO Tuple in metadata should be ordered as the expectedKeys. May be could use QList<QPair<> >
-//  ExtensionMetadataType updatedMetadata;
-//  foreach(const QString& key, expectedKeys)
-//    {
-//    updatedMetadata.insert(key, allExtensionMetadata[key]);
-//    }
-
-  qSlicerExtensionsManagerModel::writeExtensionDescriptionFile(extensionDescriptionFile, allExtensionMetadata);
-}
-
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelPrivate::saveExtensionToHistorySettings(
-  const QString& extensionsHistorySettingsFile, const ExtensionMetadataType &extensionMetadata)
-{
-  this->addExtensionHistorySetting(extensionsHistorySettingsFile, extensionMetadata, "ExtensionsHistory/Revisions/" + this->SlicerRevision);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelPrivate::scheduleExtensionHistorySettingRemoval(
-  const QString& extensionsHistorySettingsFile, const ExtensionMetadataType &extensionMetadata)
-{
-  this->addExtensionHistorySetting(extensionsHistorySettingsFile, extensionMetadata, "ExtensionsHistory/ScheduledForRemoval");
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelPrivate::addExtensionHistorySetting(
-  const QString& extensionsHistorySettingsFile, const ExtensionMetadataType &extensionMetadata, const QString& settingsPath)
-{
-  QSettings settings(extensionsHistorySettingsFile, QSettings::IniFormat);
-  QStringList settingsInfoList = settings.value(settingsPath).toStringList();
-  settingsInfoList << extensionMetadata.value("extensionname").toString();
-  settingsInfoList.removeDuplicates();
-  settings.setValue(settingsPath, settingsInfoList);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelPrivate::cancelExtensionHistorySettingRemoval(
-  const QString& extensionsHistorySettingsFile, const QString& extensionName)
-{
-  QSettings settings(extensionsHistorySettingsFile, QSettings::IniFormat);
-  QStringList settingsInfoList = settings.value("ExtensionsHistory/ScheduledForRemoval").toStringList();
-  settingsInfoList.removeOne(extensionName);
-  settingsInfoList.removeDuplicates();
-  settings.setValue("ExtensionsHistory/ScheduledForRemoval", settingsInfoList);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelPrivate::removeScheduledExtensionHistorySettings(
-  const QString& extensionsHistorySettingsFile)
-{
-  QSettings settings(extensionsHistorySettingsFile, QSettings::IniFormat);
-  QStringList scheduledForRemovalList = settings.value("ExtensionsHistory/ScheduledForRemoval").toStringList();
-  QStringList historyList = settings.value("ExtensionsHistory/Revisions/" + this->SlicerRevision).toStringList();
-  for (int i = 0; i < scheduledForRemovalList.length(); i++)
-    {
-    historyList.removeOne(scheduledForRemovalList.at(i));
-    }
-  historyList.removeDuplicates();
-  settings.setValue("ExtensionsHistory/Revisions/" + this->SlicerRevision, historyList);
-  settings.setValue("ExtensionsHistory/ScheduledForRemoval", "");
-}
-
-// --------------------------------------------------------------------------
-QVariantMap qSlicerExtensionsManagerModelPrivate::getExtensionsInfoFromPreviousInstallations(
-  const QString& extensionsHistorySettingsFile)
-{
-  Q_Q(qSlicerExtensionsManagerModel);
-  QVariantMap extensionsHistoryInformation;
-  QSettings settings(extensionsHistorySettingsFile, QSettings::IniFormat);
-  settings.beginGroup("ExtensionsHistory/Revisions");
-  QStringList revisions = settings.childKeys();
-
-  // Numerically sort the revision list.
-  // Non-numeric versions will be assigned revision numbers -1, -2, ...
-  // Uses a QMap as suggested in QStringList::sort() documentation.
-  QMap<int, QString> revisionNumberToString;
-  int nextNonNumericRevisionNumber = -1;
-  for (auto revision : revisions)
-    {
-    bool ok = false;
-    int revisionNumber = revision.toInt(&ok);
-    if (!ok)
-      {
-      // non-numeric revision
-      revisionNumber = (nextNonNumericRevisionNumber--);
-      }
-    revisionNumberToString[revisionNumber] = revision;
-    }
-  revisions = QStringList(revisionNumberToString.values());
-
-  // Get the last revision: the revision with the highest number not equal the current one.
-  QString lastRevision;
-  for (int i = revisions.length() - 1; i >= 0; i--)
-    {
-    if (revisions[i] != this->SlicerRevision)
-      {
-      lastRevision = revisions[i];
-      break;
-      }
-    }
-  if (lastRevision.isEmpty())
-    {
-    return extensionsHistoryInformation;
-    }
-
-  // Get list of extension names and corresponding Slicer revision
-  QMap<QString, QString> extensionNamesRevisions;
-  foreach(const QString & revision, revisions)
-    {
-    QVariantMap curExtensionInfo;
-    const QStringList& extensionNames = settings.value(revision).toStringList();
-    foreach(const QString & extensionName, extensionNames)
-      {
-      extensionNamesRevisions[extensionName] = revision;
-      }
-    }
-
-  QStringList extensionsInstallInLastRevision = settings.value(lastRevision).toStringList();
-
-  foreach(const QString & extensionName, extensionNamesRevisions.keys())
-    {
-    QString revision = extensionNamesRevisions[extensionName];
-    const QStringList& extensionNames = settings.value(revision).toStringList();
-    foreach (const QString& extensionName, extensionNames)
-      {
-      bool isInstalled = q->isExtensionInstalled(extensionName);
-      bool isCompatible = true;
-      QString extensionId;
-      QString description;
-      if (!isInstalled)
-        {
-        qRestAPI::Parameters parameters;
-        if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
-          {
-          parameters["baseName"] = extensionName;
-          parameters["app_revision"] = q->slicerRevision();
-          parameters["os"] = q->slicerOs();
-          parameters["arch"] = q->slicerArch();
-          }
-        else
-          {
-          qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << q->serverAPI();
-          return extensionsHistoryInformation;
-          }
-        const ExtensionMetadataType& metaData = retrieveExtensionMetadata(parameters);
-        description = metaData.value("description").toString();
-        extensionId = metaData.value("extension_id").toString(); // retrieve updated extension id for not installed extensions
-        isCompatible = (this->isExtensionCompatible(metaData, this->SlicerRevision, this->SlicerOs, this->SlicerArch).length() == 0);
-        }
-      else
-        {
-        // Extension is already installed
-        const ExtensionMetadataType& metaData = q->extensionMetadata(extensionName);
-        description = metaData.value("description").toString();
-        extensionId = metaData.value("extension_id").toString();
-        isCompatible = (q->isExtensionCompatible(extensionName).length() == 0);
-        }
-
-      QVariantMap curExtensionInfo;
-      curExtensionInfo.insert("UsedLastInRevision", revision);
-      curExtensionInfo.insert("WasInstalledInLastRevision", extensionsInstallInLastRevision.contains(extensionName));
-      curExtensionInfo.insert("IsInstalled", isInstalled);
-      curExtensionInfo.insert("Description", description);
-      curExtensionInfo.insert("ExtensionId", extensionId);
-      curExtensionInfo.insert("IsCompatible", isCompatible);
-      extensionsHistoryInformation.insert(extensionName, curExtensionInfo);
-      }
-    }
-  return extensionsHistoryInformation;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelPrivate::gatherExtensionsHistoryInformationOnStartup()
-{
-  Q_Q(qSlicerExtensionsManagerModel);
-  emit q->extensionHistoryGatheredOnStartup(q->getExtensionHistoryInformation());
-}
-
-// --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelPrivate::initializeColumnIdToNameMap(int columnIdx, const char* columnName)
 {
   this->ColumnIdToName[columnIdx] = columnName;
   this->ColumnNames << columnName;
-}
-
-// --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModelPrivate
-::retrieveExtensionMetadata(const qRestAPI::Parameters& parameters)
-{
-  Q_Q(const qSlicerExtensionsManagerModel);
-
-  ExtensionMetadataType result;
-
-  QString serverResponseCacheKey = q->serverUrl().toString();
-  foreach(const QString & parametersName, parameters.keys())
-    {
-    serverResponseCacheKey += ";" + parameters[parametersName];
-    }
-  if (this->ServerResponseCache.contains(serverResponseCacheKey))
-    {
-    result = this->ServerResponseCache[serverResponseCacheKey];
-    }
-  else
-    {
-    int maxWaitingTimeInMSecs = 2500;
-    this->GetExtensionMetadataApi.setTimeOut(maxWaitingTimeInMSecs);
-    qRestAPI::Parameters queryParameters = parameters;
-    if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
-      {
-      QUrl url = q->serverUrl().toString();
-      QString appID = "5f4474d0e1d8c75dfc705482";
-      url.setPath(url.path() + QString("/api/v1/app/%1/extension").arg(appID));
-      this->GetExtensionMetadataApi.setServerUrl(url.toString());
-      }
-    else
-      {
-      qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << q->serverAPI();
-      return ExtensionMetadataType();
-      }
-    QUuid queryUuid = this->GetExtensionMetadataApi.get("", queryParameters);
-
-    QScopedPointer<qRestResult> restResult(this->GetExtensionMetadataApi.takeResult(queryUuid));
-
-    QString errorText; // if any error occurs then this will be set to non-empty
-    if(restResult)
-      {
-      if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
-        {
-        qGirderAPI::parseGirderAPIv1Response(restResult.data(), restResult->response());
-        }
-
-      QList<QVariantMap> results = restResult->results();
-      // extension manager returned OK
-      if (results.count() == 0)
-        {
-        // Extension information not found.
-        // Not an error (it means that extension is not available for the
-        // specific revision and operating system), just return an empty result.
-        }
-      else if (results.count() == 1)
-        {
-        // extension manager returned 1 result, we can use this
-        result = qRestAPI::qVariantMapFlattened(results.at(0));
-        if (!qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(result, q->serverAPI()))
-          {
-          errorText = "invalid response received";
-          }
-        }
-      else
-        {
-        // extension manager returned multiple results, this is not expected, do not use the results
-        errorText = QString("expected 0 or 1 result, received %1").arg(results.count());
-        }
-      }
-    else
-      {
-      if (this->GetExtensionMetadataApi.error() == qRestAPI::UnknownError)
-        {
-        errorText = "unknown error";
-        }
-      else
-        {
-        errorText = this->GetExtensionMetadataApi.errorString();
-        }
-      }
-    if (!errorText.isEmpty())
-      {
-      this->critical(QString("Error retrieving extension metadata: %1 (%2)")
-        .arg(parameters.values().join(", "))
-        .arg(errorText));
-      if (!result.isEmpty())
-        {
-        this->critical(QString("\nResponse:\n%1").arg(qRestAPI::qVariantToString(result)));
-        }
-      return ExtensionMetadataType();
-      }
-    this->ServerResponseCache[serverResponseCacheKey] = result;
-    }
-
-  return qSlicerExtensionsManagerModel::convertExtensionMetadata(result, q->serverAPI());
 }
 
 // --------------------------------------------------------------------------
@@ -1299,44 +1193,139 @@ bool qSlicerExtensionsManagerModel::newExtensionEnabledByDefault()const
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel::extensionMetadata(const QString& extensionName)const
+void qSlicerExtensionsManagerModel::setAutoUpdateCheck(bool enable)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  if (d->AutoUpdateCheck == enable)
+    {
+    return;
+    }
+  d->AutoUpdateCheck = enable;
+  QSettings settings;
+  settings.setValue("Extensions/AutoUpdateCheck", enable);
+  emit this->autoUpdateSettingsChanged();
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::autoUpdateCheck()const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+  return d->AutoUpdateCheck;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::setAutoUpdateInstall(bool enable)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  if (d->AutoUpdateInstall == enable)
+    {
+    return;
+    }
+  d->AutoUpdateInstall = enable;
+  QSettings settings;
+  settings.setValue("Extensions/AutoUpdateInstall", enable);
+  emit this->autoUpdateSettingsChanged();
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::autoUpdateInstall()const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+  return d->AutoUpdateInstall;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::setAutoInstallDependencies(bool enable)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  if (d->AutoInstallDependencies == enable)
+    {
+    return;
+    }
+  d->AutoInstallDependencies = enable;
+  QSettings settings;
+  settings.setValue("Extensions/AutoInstallDependencies", enable);
+  emit this->autoUpdateSettingsChanged();
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::autoInstallDependencies()const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+  return d->AutoInstallDependencies;
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerExtensionsManagerModel::extensionDescription(const QString& extensionName)const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+  QStandardItem* item = d->extensionItem(extensionName);
+  if (!item)
+    {
+    return QString();
+    }
+  int row = item->row();
+  QString description = d->Model.data(d->Model.index(row, qSlicerExtensionsManagerModelPrivate::DescriptionColumn),
+    qSlicerExtensionsManagerModelPrivate::DescriptionRole).toString();
+  return description;
+}
+
+// --------------------------------------------------------------------------
+qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel::extensionMetadata(
+  const QString& extensionName, int source/*=MetadataAll*/)const
 {
   Q_D(const qSlicerExtensionsManagerModel);
 
   ExtensionMetadataType metadata;
-  QStandardItem * item = d->extensionItem(extensionName);
-  if (!item)
+  if ((source == MetadataAll || source == MetadataServer)
+    && d->ExtensionsMetadataFromServer.contains(extensionName))
     {
-    return metadata;
+    metadata = d->ExtensionsMetadataFromServer[extensionName];
     }
-  int row = item->row();
-
-  foreach(const QString& columnName, d->columnNames())
+  if (source == MetadataAll || source == MetadataLocal)
     {
-    metadata.insert(columnName, d->Model.data(
-          d->Model.index(row, d->columnNames().indexOf(columnName)), Qt::DisplayRole).toString());
+    QStandardItem * item = d->extensionItem(extensionName);
+    if (item)
+      {
+      int row = item->row();
+      foreach(const QString& columnName, d->columnNames())
+        {
+        metadata.insert(columnName, d->Model.data(d->Model.index(row, d->columnNames().indexOf(columnName)), Qt::DisplayRole).toString());
+        }
+      }
     }
-
   return metadata;
 }
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::isExtensionLoaded(const QString& extensionName) const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+  QStandardItem* item = d->extensionItem(extensionName, qSlicerExtensionsManagerModelPrivate::LoadedColumn);
+  if (!item)
+    {
+    return false;
+    }
+  return item->data(qSlicerExtensionsManagerModelPrivate::LoadedRole).toBool();
+}
+
 
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::isExtensionInstalled(const QString& extensionName) const
 {
   Q_D(const qSlicerExtensionsManagerModel);
-  QModelIndexList foundIndexes = d->Model.match(
-        d->Model.index(0, qSlicerExtensionsManagerModelPrivate::NameColumn),
-        qSlicerExtensionsManagerModelPrivate::NameRole, QVariant(extensionName),
-        /* hits = */ 1, /* flags= */ Qt::MatchExactly | Qt::MatchWrap);
-  Q_ASSERT(foundIndexes.size() < 2);
-  return (foundIndexes.size() != 0);
+  QStandardItem* item = d->extensionItem(extensionName, qSlicerExtensionsManagerModelPrivate::InstalledColumn);
+  if (!item)
+    {
+    return false;
+    }
+  return item->data(qSlicerExtensionsManagerModelPrivate::InstalledRole).toBool();
 }
 
 // --------------------------------------------------------------------------
 int qSlicerExtensionsManagerModel::installedExtensionsCount()const
 {
-  Q_D(const qSlicerExtensionsManagerModel);
-  return d->Model.rowCount();
+  return this->installedExtensions().size();
 }
 
 // --------------------------------------------------------------------------
@@ -1346,7 +1335,13 @@ int qSlicerExtensionsManagerModel::numberOfInstalledExtensions()const
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModel::installedExtensions()const
+int qSlicerExtensionsManagerModel::managedExtensionsCount()const
+{
+  return this->managedExtensions().size();
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModel::managedExtensions()const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   QStringList names;
@@ -1356,6 +1351,99 @@ QStringList qSlicerExtensionsManagerModel::installedExtensions()const
     }
   std::sort(names.begin(), names.end());
   return names;
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModel::installedExtensions()const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+  QStringList names;
+  for(int rowIdx = 0; rowIdx < d->Model.rowCount(); ++rowIdx)
+    {
+    QStandardItem* installedItem = d->Model.item(rowIdx, qSlicerExtensionsManagerModelPrivate::InstalledColumn);
+    if (!installedItem)
+      {
+      // invalid item
+      continue;
+      }
+    if (!installedItem->data(qSlicerExtensionsManagerModelPrivate::InstalledRole).toBool())
+      {
+      // not installed
+      continue;
+      }
+    names << d->Model.item(rowIdx, qSlicerExtensionsManagerModelPrivate::NameColumn)->text();
+    }
+  std::sort(names.begin(), names.end());
+  return names;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::setExtensionBookmarked(const QString& extensionName, bool bookmark)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  if (bookmark == this->isExtensionBookmarked(extensionName))
+    {
+    // no change
+    return;
+    }
+
+  // Update model
+  QStandardItem * item = const_cast<QStandardItem*>(
+        d->extensionItem(extensionName, qSlicerExtensionsManagerModelPrivate::BookmarkedColumn));
+  if (!item)
+    {
+    d->warning(tr("Failed to add bookmark extension: %1").arg(extensionName));
+    return;
+    }
+
+  item->setData(bookmark, qSlicerExtensionsManagerModelPrivate::BookmarkedRole);
+  item->setData(bookmark, Qt::DisplayRole);
+
+  // Bookmarked status is shared between all Slicer installations, therefore this flag is not saved into the
+  // extension description file but to application settings.
+
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
+    {
+    d->critical(error);
+    return;
+    }
+
+  QSettings settings;
+  QStringList bookmarkedExtensions = settings.value("Extensions/Bookmarked").toStringList();
+  if (bookmarkedExtensions.contains(extensionName) != bookmark)
+    {
+    if (bookmark)
+      {
+      bookmarkedExtensions << extensionName;
+      }
+    else
+      {
+      bookmarkedExtensions.removeAll(extensionName);
+      }
+    settings.setValue("Extensions/Bookmarked", bookmarkedExtensions);
+    }
+
+  bool installed = this->isExtensionInstalled(extensionName);
+  if (!installed)
+    {
+    d->removeExtensionDescriptionFile(extensionName);
+    d->Model.removeRow(item->row());
+    }
+
+  emit this->extensionBookmarkedChanged(extensionName, bookmark);
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::isExtensionBookmarked(const QString& extensionName)const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+  QStandardItem* item = d->extensionItem(extensionName, qSlicerExtensionsManagerModelPrivate::BookmarkedColumn);
+  if (!item)
+    {
+    return false;
+    }
+  return item->data(qSlicerExtensionsManagerModelPrivate::BookmarkedRole).toBool() == true;
 }
 
 // --------------------------------------------------------------------------
@@ -1389,16 +1477,13 @@ void qSlicerExtensionsManagerModel::setExtensionEnabled(const QString& extension
     return;
     }
 
-  ExtensionMetadataType updatedMetadata = this->extensionMetadata(extensionName);
-  updatedMetadata["enabled"] = value;
-
-  d->saveExtensionDescription(this->extensionDescriptionFile(extensionName), updatedMetadata);
-
   QStandardItem * item = const_cast<QStandardItem*>(
         d->extensionItem(extensionName, qSlicerExtensionsManagerModelPrivate::EnabledColumn));
   Q_ASSERT(item);
   item->setData(value, qSlicerExtensionsManagerModelPrivate::EnabledRole);
   item->setData(value, Qt::DisplayRole);
+
+  this->writeExtensionDescriptionFile(this->extensionDescriptionFile(extensionName), this->extensionMetadata(extensionName));
 
   emit this->extensionEnabledChanged(extensionName, value);
 }
@@ -1444,6 +1529,14 @@ bool qSlicerExtensionsManagerModel::isExtensionScheduledForUninstall(
 }
 
 // --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModel::bookmarkedExtensions()const
+{
+  QSettings settings;
+  QStringList bookmarkedExtensions = settings.value("Extensions/Bookmarked").toStringList();
+  return bookmarkedExtensions;
+}
+
+// --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModel::enabledExtensions()const
 {
   Q_D(const qSlicerExtensionsManagerModel);
@@ -1461,61 +1554,22 @@ QStringList qSlicerExtensionsManagerModel::enabledExtensions()const
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel
-::retrieveExtensionMetadata(const QString& extensionId)
-{
-  Q_D(qSlicerExtensionsManagerModel);
-
-  if (extensionId.isEmpty())
-    {
-    return ExtensionMetadataType();
-    }
-
-  qRestAPI::Parameters parameters;
-  parameters["extension_id"] = extensionId;
-
-  return d->retrieveExtensionMetadata(parameters);
-}
-
-// --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel
-::retrieveExtensionMetadataByName(const QString& extensionName)
-{
-  Q_D(qSlicerExtensionsManagerModel);
-
-  if (extensionName.isEmpty())
-    {
-    return ExtensionMetadataType();
-    }
-
-  qRestAPI::Parameters parameters;
-  if (this->serverAPI() == Self::Girder_v1)
-    {
-    parameters["baseName"] = extensionName;
-    parameters["app_revision"] = this->slicerRevision();
-    parameters["os"] = this->slicerOs();
-    parameters["arch"] = this->slicerArch();
-    }
-  else
-    {
-    qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << this->serverAPI();
-    return ExtensionMetadataType();
-    }
-  return d->retrieveExtensionMetadata(parameters);
-}
-
-// --------------------------------------------------------------------------
 qSlicerExtensionDownloadTask*
-qSlicerExtensionsManagerModelPrivate::downloadExtension(
-  const QString& extensionId)
+qSlicerExtensionsManagerModelPrivate::downloadExtensionByName(const QString& extensionName)
 {
   Q_Q(qSlicerExtensionsManagerModel);
 
-  this->debug(QString("Retrieving extension metadata [ extensionId: %1]").arg(extensionId));
-  ExtensionMetadataType extensionMetadata = q->retrieveExtensionMetadata(extensionId);
+  this->debug(qSlicerExtensionsManagerModel::tr("Retrieving extension metadata for %1 extension").arg(extensionName));
+  ExtensionMetadataType extensionMetadata = this->ExtensionsMetadataFromServer.value(extensionName);
+  if (extensionMetadata.count() == 0 || !extensionMetadata.contains("extension_id"))
+    {
+    // ensure extension metadata has been downloaded from the server and try again
+    q->updateExtensionsMetadataFromServer(false, true);
+    extensionMetadata = this->ExtensionsMetadataFromServer.value(extensionName);
+    }
   if (extensionMetadata.count() == 0)
     {
-    return nullptr;
+    this->critical(qSlicerExtensionsManagerModel::tr("Failed to get metadata from server for extension: %1").arg(extensionName));
     }
 
   QUrl downloadUrl(q->serverUrl());
@@ -1523,11 +1577,16 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
   if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
     {
     QString item_id = extensionMetadata["extension_id"].toString();
+    if (item_id.isEmpty())
+      {
+      return nullptr;
+      }
 
-    // Retrieve file_id associated with the item
+    // Retrieve file_id and archive name (extension package filename) associated with the item
     QString file_id;
+    QString archivename;
 
-    this->debug(QString("Retrieving extension files [ extensionId: %1 ]").arg(item_id));
+    this->debug(qSlicerExtensionsManagerModel::tr("Retrieving %1 extension files (extensionId: %2)").arg(extensionName).arg(item_id));
     qRestAPI getItemFilesApi;
     getItemFilesApi.setServerUrl(q->serverUrl().toString() + QString("/api/v1/item/%1/files").arg(item_id));
     const QUuid& queryUuid = getItemFilesApi.get("");
@@ -1544,6 +1603,7 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
       else if (results.count() == 1)
         {
         file_id = results.at(0).value("_id").toString();
+        archivename = results.at(0).value("name").toString();
         }
       else
         {
@@ -1552,13 +1612,14 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
         }
       }
 
-    if (file_id.isEmpty())
+    if (file_id.isEmpty() || archivename.isEmpty())
       {
       return nullptr;
       }
 
-    this->debug(QString("Downloading extension [ item_id: %1, file_id: %2]").arg(item_id).arg(file_id));
+    this->debug(qSlicerExtensionsManagerModel::tr("Downloading %1 extension (item_id: %2, file_id: %3)").arg(extensionName).arg(item_id).arg(file_id));
     downloadUrl.setPath(downloadUrl.path() + QString("/api/v1/file/%1/download").arg(file_id));
+    extensionMetadata.insert("archivename", archivename);
     }
   else
     {
@@ -1579,7 +1640,42 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& extensionId)
+bool qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& extensionId, bool installDependencies/*=true*/)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  // Installing an extension requires metadata of all other extensions to be able to track down dependencies,
+  // therefore specifying the extension by a low-level id does not make sense. However, this is the method
+  // used by the web interface, so for now we keep supporting it.
+
+  if (extensionId.isEmpty())
+    {
+    d->critical(tr("Download of extension failed, id is invalid."));
+    return false;
+    }
+
+  // Ensure extension metadata has been downloaded from the server
+  if (d->ExtensionsMetadataFromServer.empty())
+    {
+    this->updateExtensionsMetadataFromServer(/* force= */true, /* waitForCompletion= */true);
+    }
+
+  // Find extension name by ID
+  foreach(const QString & extensionName, d->ExtensionsMetadataFromServer.keys())
+    {
+    if (d->ExtensionsMetadataFromServer[extensionName].value("extension_id") == extensionId)
+      {
+      // found it
+      return this->downloadAndInstallExtensionByName(extensionName, installDependencies);
+      }
+    }
+
+  // not found
+  d->critical(tr("Download of extension failed, could not find an extension with id = %1").arg(extensionId));
+  return false;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::downloadAndInstallExtensionByName(const QString& extensionName, bool installDependencies)
 {
   Q_D(qSlicerExtensionsManagerModel);
   QString error;
@@ -1588,12 +1684,13 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
     d->critical(error);
     return false;
     }
-  qSlicerExtensionDownloadTask* const task = d->downloadExtension(extensionId);
+  qSlicerExtensionDownloadTask* const task = d->downloadExtensionByName(extensionName);
   if (!task)
     {
-    d->critical("Failed to retrieve metadata for extension " + extensionId);
+    d->critical(tr("Failed to retrieve metadata for %1 extension").arg(extensionName));
     return false;
     }
+  task->setInstallDependencies(installDependencies);
   connect(task, SIGNAL(finished(qSlicerExtensionDownloadTask*)),
           this, SLOT(onInstallDownloadFinished(qSlicerExtensionDownloadTask*)));
   connect(task, SIGNAL(progress(qSlicerExtensionDownloadTask*, qint64, qint64)),
@@ -1628,7 +1725,7 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
 
   if (reply->error())
     {
-    d->critical(QString("Failed downloading: %1").arg(downloadUrl.toString()));
+    d->critical(tr("Failed downloading: %1").arg(downloadUrl.toString()));
     d->ActiveTasks.remove(task);
     return;
     }
@@ -1638,29 +1735,26 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
   QTemporaryFile file(QString("%1/%2.XXXXXX").arg(QDir::tempPath(), archiveName));
   if (!file.open())
     {
-    d->critical(QString("Could not create temporary file for writing: %1").arg(file.errorString()));
+    d->critical(tr("Could not create temporary file for writing: %1").arg(file.errorString()));
     d->ActiveTasks.remove(task);
     return;
     }
   file.write(reply->readAll());
   file.close();
-  const ExtensionMetadataType& extensionMetadata =
-    this->filterExtensionMetadata(task->metadata(), this->serverAPI());
-  this->installExtension(extensionName, extensionMetadata, file.fileName());
+  this->installExtension(extensionName, task->metadata(), file.fileName(), task->installDependencies());
   d->ActiveTasks.remove(task);
 }
 
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::installExtension(
-  const QString& archiveFile)
+  const QString& archiveFile, bool installDependencies/*=true*/)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
   std::vector<std::string> archiveContents;
   if (!vtkArchive::ListArchive(qPrintable(archiveFile), archiveContents))
     {
-    d->critical(
-      QString("Failed to list extension archive '%1'").arg(archiveFile));
+    d->critical(tr("Failed to list extension archive '%1'").arg(archiveFile));
     return false;
     }
   for (size_t n = 0; n < archiveContents.size(); ++n)
@@ -1673,42 +1767,41 @@ bool qSlicerExtensionsManagerModel::installExtension(
       {
       const QFileInfo fi(fileName);
       return this->installExtension(fi.completeBaseName(),
-                                    ExtensionMetadataType(), archiveFile);
+        ExtensionMetadataType(), archiveFile, installDependencies);
       }
     }
 
-  d->critical(
-    QString("No extension description found in archive '%1'").arg(archiveFile));
+  d->critical(tr("No extension description found in archive '%1'").arg(archiveFile));
   return false;
 }
 
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::installExtension(
   const QString& extensionName, ExtensionMetadataType extensionMetadata,
-  const QString& archiveFile)
+  const QString& archiveFile, bool withDependencies/*=true*/)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
   if (extensionName.isEmpty())
     {
-    d->critical("installExtension: extensionName is not set !");
+    d->critical(tr("InstallExtension failed: extensionName is not set"));
     return false;
     }
-
   if (this->isExtensionInstalled(extensionName))
     {
+    d->warning(tr("Skip installation of %1 extension. It is already installed.").arg(extensionName));
     return false;
     }
 
   if (this->extensionsInstallPath().isEmpty())
     {
-    d->critical("Extensions/InstallPath setting is not set !");
+    d->critical(tr("Extensions/InstallPath setting is not set"));
     return false;
     }
 
   if (!QDir().mkpath(this->extensionsInstallPath()))
     {
-    d->critical(QString("Failed to create extension installation directory %1").arg(this->extensionsInstallPath()));
+    d->critical(tr("Failed to create extension installation directory %1").arg(this->extensionsInstallPath()));
     return false;
     }
 
@@ -1718,8 +1811,6 @@ bool qSlicerExtensionsManagerModel::installExtension(
     d->critical(error);
     return false;
     }
-
-  QString extensionDescriptionFile = this->extensionDescriptionFile(extensionName);
 
   if (!this->extractExtensionArchive(extensionName, archiveFile, this->extensionsInstallPath()))
     {
@@ -1744,11 +1835,11 @@ bool qSlicerExtensionsManagerModel::installExtension(
     // Copy expected keys from archive description
     QStringList expectedKeys;
     expectedKeys << "category" << "contributors" << "description" << "homepage"
-                 << "iconurl" << "screenshots" << "status";
+      << "iconurl" << "screenshots" << "status" << "updated";
 
     const ExtensionMetadataType::const_iterator notFound =
       extensionIndexMetadata.constEnd();
-    foreach (const QString& key, expectedKeys)
+    foreach(const QString & key, expectedKeys)
       {
       const ExtensionMetadataType::const_iterator iter =
         extensionIndexMetadata.constFind(key);
@@ -1758,8 +1849,8 @@ bool qSlicerExtensionsManagerModel::installExtension(
         }
       }
 
-    extensionMetadata.insert("scm",      extensionIndexMetadata.value("scm",         "NA"));
-    extensionMetadata.insert("scmurl",   extensionIndexMetadata.value("scmurl",      "NA"));
+    extensionMetadata.insert("scm", extensionIndexMetadata.value("scm", "NA"));
+    extensionMetadata.insert("scmurl", extensionIndexMetadata.value("scmurl", "NA"));
     extensionMetadata.insert("revision", extensionIndexMetadata.value("scmrevision", "NA"));
 
     // Fill in keys related to the target Slicer platform
@@ -1774,122 +1865,94 @@ bool qSlicerExtensionsManagerModel::installExtension(
     extensionMetadata.insert("enabled", d->NewExtensionEnabledByDefault);
     }
 
-  // Gather information on dependency extensions
-  const QStringList dependencies = extensionIndexMetadata.value("depends").toString().split(" ");
-  QHash<QString, ExtensionMetadataType> dependenciesMetadata;
-  QStringList unresolvedDependencies;
-  foreach (const QString& dependencyName, dependencies)
-    {
-    if (!dependencyName.isEmpty() && dependencyName != "NA")
-      {
-      if (this->isExtensionInstalled(dependencyName))
-        {
-        // Dependency is already installed
-        continue;
-        }
-
-      qRestAPI::Parameters parameters;
-      if (this->serverAPI() == Self::Girder_v1)
-        {
-        parameters["baseName"] = dependencyName;
-        parameters["app_revision"] = this->slicerRevision();
-        parameters["os"] = this->slicerOs();
-        parameters["arch"] = this->slicerArch();
-        }
-      else
-        {
-        qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << this->serverAPI();
-        }
-
-      const ExtensionMetadataType& dependencyMetadata =
-        d->retrieveExtensionMetadata(parameters);
-      if (dependencyMetadata.contains("extension_id"))
-        {
-        dependenciesMetadata.insert(dependencyName, dependencyMetadata);
-        }
-      else
-        {
-        unresolvedDependencies.append(dependencyName);
-        }
-      }
-    }
-
   bool success = true;
-
-  // Warn about unresolved dependencies
-  if (!unresolvedDependencies.isEmpty())
+  if (withDependencies)
     {
-    success = false;
-    qWarning() << QString("%1 extension depends on the following extensions, which could not be found: %2")
-      .arg(extensionName)
-      .arg(unresolvedDependencies.join(", "));
-    if (d->Interactive)
-      {
-      QString msg = QString("<p>%1 depends on the following extensions, which could not be found:</p><ul>").arg(extensionName);
-      foreach(const QString& dependencyName, unresolvedDependencies)
-        {
-        msg += QString("<li>%1</li>").arg(dependencyName);
-        }
-      msg += "</ul><p>The extension may not function properly.</p>";
-      QMessageBox::warning(nullptr, "Unresolved dependencies", msg);
-      }
-    }
+    QStringList unresolvedDependencies;
+    QStringList directDependencies = extensionMetadata.value("depends").toString().split(" ");
+    QStringList dependenciesToInstall = d->dependenciesToInstall(directDependencies, unresolvedDependencies);
 
-  // Prompt to install dependencies (if any)
-  if (!dependenciesMetadata.isEmpty())
-    {
-    QMessageBox::StandardButton result = QMessageBox::Yes;
-    if (d->Interactive)
+    // Prompt to install dependencies (if any)
+    if (!dependenciesToInstall.isEmpty())
       {
-      QString msg = QString("<p>%1 depends on the following extensions:</p><ul>").arg(extensionName);
-      foreach (const QString& dependencyName, dependenciesMetadata.keys())
+      QMessageBox::StandardButton result = QMessageBox::Yes;
+      if (d->Interactive && !d->AutoInstallDependencies)
         {
-        msg += QString("<li>%1</li>").arg(dependencyName);
-        }
-      msg += "</ul><p>Would you like to install them now?</p>";
-      result = QMessageBox::question(nullptr, "Install dependencies", msg, QMessageBox::Yes | QMessageBox::No);
-      }
-    else
-      {
-      QString msg = QString("The following extensions are required by %1 extension therefore they will be installed now: %2")
-        .arg(extensionName)
-        .arg(dependenciesMetadata.keys().join(", "));
-      qDebug() << msg;
-      }
-
-    if (result == QMessageBox::Yes)
-      {
-      // Install dependencies
-      QString msg;
-      foreach (const ExtensionMetadataType& dependency, dependenciesMetadata)
-        {
-        bool res = this->downloadAndInstallExtension(
-              dependency.value("extension_id").toString());
-        if (!res)
+        QString msg = QString("<p>%1 depends on the following extensions:</p><ul>").arg(extensionName);
+        foreach (const QString& dependencyName, dependenciesToInstall)
           {
-          msg += QString("<li>%1</li>").arg(dependency.value("extensionname").toString());
-          success = false;
+          msg += QString("<li>%1</li>").arg(dependencyName);
+          }
+        msg += "</ul><p>Would you like to install them now?</p>";
+        result = QMessageBox::question(nullptr, "Install dependencies", msg, QMessageBox::Yes | QMessageBox::No);
+        }
+      else
+        {
+        QString msg = QString("The following extensions are required by %1 extension therefore they will be installed now: %2")
+          .arg(extensionName)
+          .arg(dependenciesToInstall.join(", "));
+        qDebug() << msg;
+        }
+
+      if (result == QMessageBox::Yes)
+        {
+        // Install dependencies
+        QString msg;
+        foreach (const QString& dependency, dependenciesToInstall)
+          {
+          bool res = this->downloadAndInstallExtensionByName(dependency, false /*installation of dependencies already confirmed*/);
+          if (!res)
+            {
+            msg += QString("<li>%1</li>").arg(dependency);
+            success = false;
+            }
+          }
+        if (!msg.isEmpty())
+          {
+          d->critical(tr("Error while installing dependent extensions:<ul>%1<ul>").arg(msg));
           }
         }
-      if (!msg.isEmpty())
+      else
         {
-        d->critical(QString("Error while installing dependent extensions:<ul>%1<ul>").arg(msg));
+        // Skip installing dependencies
+        qWarning() << QString("%1 extension requires extensions %2 but the user chose not to install them.")
+          .arg(extensionName)
+          .arg(dependenciesToInstall.join(", "));
+        success = false;
         }
       }
-    else
+
+    // Warn about unresolved dependencies
+    if (!unresolvedDependencies.isEmpty())
       {
-      qWarning() << QString("%1 extension requires extensions %2 but the user chose not to install them.")
-        .arg(extensionName)
-        .arg(dependenciesMetadata.keys().join(", "));
       success = false;
+      qWarning() << tr("%1 extension depends on the following extensions, which could not be found: %2")
+        .arg(extensionName)
+        .arg(unresolvedDependencies.join(", "));
+      if (d->Interactive)
+        {
+        QString msg = QString("<p>%1 depends on the following extensions, which could not be found:</p><ul>").arg(extensionName);
+        foreach(const QString & dependencyName, unresolvedDependencies)
+          {
+          msg += QString("<li>%1</li>").arg(dependencyName);
+          }
+        msg += "</ul><p>The extension may not function properly.</p>";
+        QMessageBox::warning(nullptr, "Unresolved dependencies", msg);
+        }
       }
     }
 
   // Finish installing the extension
-  d->saveExtensionDescription(extensionDescriptionFile, extensionMetadata);
+  extensionMetadata["installed"] = true;
   d->addExtensionSettings(extensionName);
-  d->addExtensionModelRow(Self::parseExtensionDescriptionFile(extensionDescriptionFile));
-  d->saveExtensionToHistorySettings(this->extensionsHistorySettingsFilePath(), extensionMetadata);
+  // bookmarking is shared between all application installations, it is not in the
+  // metadata fields
+  bool bookmarked = QSettings().value("Extensions/Bookmarked").toStringList().contains(extensionName);
+  extensionMetadata["bookmarked"] = bookmarked;
+  d->addExtensionModelRow(extensionMetadata);
+
+  this->writeExtensionDescriptionFile(this->extensionDescriptionFile(extensionName), this->extensionMetadata(extensionName));
+
   emit this->extensionInstalled(extensionName);
 
   // Log notice that extension was installed
@@ -1898,7 +1961,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
   const QString& extensionRevision =
     extensionMetadata.value("revision").toString();
 
-  QString msg = "Installed extension " + extensionName;
+  QString msg = tr("Installed extension %1").arg(extensionName);
   if (!extensionId.isEmpty())
     {
     msg += QString(" (%1)").arg(extensionId);
@@ -1913,65 +1976,86 @@ bool qSlicerExtensionsManagerModel::installExtension(
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
+bool qSlicerExtensionsManagerModel::updateExtensionsMetadataFromServer(bool force/*=false*/, bool waitForCompletion/*=false*/)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
-  if (this->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
+  // until the new data is read from the server
+  d->loadCachedExtensionsMetadataFromServer();
+
+  if (!force && !d->isExtensionsMetadataUpdateDue())
     {
-    QString appID = "5f4474d0e1d8c75dfc705482";
-    d->CheckForUpdatesApi.setServerUrl(this->serverUrl().toString() + QString("/api/v1/app/%1/extension").arg(appID));
-    }
-  else
-    {
-    qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << this->serverAPI();
-    return;
+    return true;
     }
 
-  // Loop over extensions
-  foreach (const QString& extensionName, this->installedExtensions())
+  if (d->ExtensionsMetadataFromServerQueryUID.isNull())
     {
-    const ExtensionMetadataType& extensionMetadata =
-      this->extensionMetadata(extensionName);
-    const QString& extensionId =
-      extensionMetadata.value("extension_id").toString();
-
-    // Build parameters to query server about the extension
+    // query is not in progress yet, start it
     qRestAPI::Parameters parameters;
-    if (!extensionId.isEmpty())
+    if (this->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
       {
-      parameters["extension_id"] = extensionId;
+      QString appID = "5f4474d0e1d8c75dfc705482";
+      if (this->serverUrl().toString().isEmpty())
+        {
+        // server address has not been specified, normal at very first startup
+        // (default server address is set up by an application settings page)
+        return false;
+        }
+      d->ExtensionsMetadataFromServerAPI.setServerUrl(this->serverUrl().toString() + QString("/api/v1/app/%1/extension").arg(appID));
+      parameters["app_revision"] = this->slicerRevision();
+      parameters["os"] = this->slicerOs();
+      parameters["arch"] = this->slicerArch();
+      // request all metadata in a single response (it makes synchronous query simpler)
+      parameters["limit"] = QString::number(0);
       }
     else
       {
-      if (this->serverAPI() == Self::Girder_v1)
-        {
-        parameters["baseName"] = extensionName;
-        parameters["app_revision"] = this->slicerRevision();
-        parameters["os"] = this->slicerOs();
-        parameters["arch"] = this->slicerArch();
-        }
-      else
-        {
-        qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << this->serverAPI();
-        return;
-        }
+      qWarning() << "Update extension information from server failed: missing implementation for serverAPI" << this->serverAPI();
+      return false;
       }
 
     // Issue the query
-    const QUuid& requestId =
-      d->CheckForUpdatesApi.get("", parameters);
-
-    // Store information about the request
-    UpdateCheckInformation updateInfo;
-
-    updateInfo.InstallAutomatically = installUpdates;
-    updateInfo.ExtensionName = extensionName;
-    updateInfo.InstalledVersion =
-      extensionMetadata.value("revision").toString();
-
-    d->CheckForUpdatesRequests.insert(requestId, updateInfo);
+    d->ExtensionsMetadataFromServerQueryUID = d->ExtensionsMetadataFromServerAPI.get("", parameters);
     }
+
+  if (!waitForCompletion)
+    {
+    return true;
+    }
+
+  // Temporarily disable onExtensionsMetadataFromServerQueryFinished call via signal/slot
+  // because we'll call it directly to get returned result.
+  QObject::disconnect(&d->ExtensionsMetadataFromServerAPI,
+    SIGNAL(finished(QUuid)),
+    this, SLOT(onExtensionsMetadataFromServerQueryFinished(QUuid)));
+
+  bool success = this->onExtensionsMetadataFromServerQueryFinished(d->ExtensionsMetadataFromServerQueryUID);
+
+  QObject::connect(&d->ExtensionsMetadataFromServerAPI,
+    SIGNAL(finished(QUuid)),
+    this, SLOT(onExtensionsMetadataFromServerQueryFinished(QUuid)));
+
+  if (!success)
+    {
+    d->warning(tr("Update extension information from server failed: timed out while waiting for server response from %1")
+      .arg(d->ExtensionsMetadataFromServerAPI.serverUrl()));
+    }
+
+  return success;
+}
+
+// --------------------------------------------------------------------------
+QDateTime qSlicerExtensionsManagerModel::lastUpdateTimeExtensionsMetadataFromServer()
+{
+  QSettings extensionSettings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  if (!extensionSettings.contains("Extensions/MetadataFromServerUpdateTime"))
+    {
+    // there has never been an update check
+    return QDateTime();
+    }
+  QString lastUpdateTimeStr = extensionSettings.value("Extensions/MetadataFromServerUpdateTime").toString();
+  QDateTime lastUpdateTime = QDateTime::fromString(lastUpdateTimeStr, Qt::ISODate);
+  return lastUpdateTime;
 }
 
 // --------------------------------------------------------------------------
@@ -1983,11 +2067,19 @@ bool qSlicerExtensionsManagerModel::isExtensionUpdateAvailable(
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::onUpdateCheckFinished(const QUuid& requestId)
+QStringList qSlicerExtensionsManagerModel::availableUpdateExtensions() const
 {
+  Q_D(const qSlicerExtensionsManagerModel);
+  return d->AvailableUpdates.keys();
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::onExtensionsMetadataFromServerQueryFinished(const QUuid& requestId)
+{
+  Q_UNUSED(requestId);
   Q_D(qSlicerExtensionsManagerModel);
 
-  QScopedPointer<qRestResult> restResult(d->CheckForUpdatesApi.takeResult(requestId));
+  QScopedPointer<qRestResult> restResult(d->ExtensionsMetadataFromServerAPI.takeResult(d->ExtensionsMetadataFromServerQueryUID));
 
   bool success = false;
   if (!restResult.isNull())
@@ -1997,87 +2089,99 @@ void qSlicerExtensionsManagerModel::onUpdateCheckFinished(const QUuid& requestId
       success = qGirderAPI::parseGirderAPIv1Response(restResult.data(), restResult->response());
       }
     }
-  if (success)
+  if (!success)
     {
-    this->onUpdateCheckComplete(requestId, restResult->results());
+    // Query failed
+    d->warning(tr("Failed to download extension metadata from server"));
+    d->ExtensionsMetadataFromServerQueryUID = QUuid();
+    emit updateExtensionsMetadataFromServerCompleted(false);
+    return false;
     }
-  else
-    {
-    this->onUpdateCheckFailed(requestId);
-    }
-}
 
-// --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::onUpdateCheckComplete(
-  const QUuid& requestId, const QList<QVariantMap>& results)
-{
-  Q_D(qSlicerExtensionsManagerModel);
+  d->ExtensionsMetadataFromServer.clear();
 
-  const UpdateCheckInformation& updateInfo =
-    d->CheckForUpdatesRequests.take(requestId);
-
-  // Parse server response
-  if (updateInfo.ExtensionName.isEmpty())
+  // Process response
+  foreach (const QVariantMap& result, restResult->results())
     {
-    const QString msg(
-      "Received response to query %1 with no associated request?");
-    d->info(msg.arg(requestId.toString()));
-    }
-  else if (results.isEmpty())
-    {
-    const QString msg("Update check for %1 failed: no response from server"
-                      " (no such extension known?)");
-    d->warning(msg.arg(updateInfo.ExtensionName));
-    }
-  else
-    {
-    // Check for valid response (expecting exactly one result).
-    // Multiple results are returned if the extension is not found by id.
-    if (results.count() > 1)
-      {
-      const QString msg = "Update check for %1 (%2) failed: received unexpected"
-                          " multiple responses from the server";
-      d->warning(msg.arg(updateInfo.ExtensionName).arg(updateInfo.InstalledVersion));
-      return;
-      }
-
     // Get extension information from server response
-    const ExtensionMetadataType& extensionMetadata = qRestAPI::qVariantMapFlattened(results.first());
-    QHash<QString, QString> serverToExtensionDescriptionKey = this->serverToExtensionDescriptionKey(this->serverAPI());
-    const QString& extensionId =
-      extensionMetadata.value(serverToExtensionDescriptionKey.key("extension_id")).toString();
-    const QString& extensionRevision =
-      extensionMetadata.value(serverToExtensionDescriptionKey.key("revision")).toString();
-
-    const QString msg("update check for %1 complete:"
-                      " '%2' available, '%3' installed");
-    d->info(msg.arg(updateInfo.ExtensionName, extensionRevision,
-                    updateInfo.InstalledVersion));
-
-    // Check if update is available
-    if (!extensionRevision.isEmpty() &&
-        extensionRevision != updateInfo.InstalledVersion)
+    ExtensionMetadataType serverExtensionMetadata = qRestAPI::qVariantMapFlattened(result);
+    ExtensionMetadataType extensionMetadata = Self::filterExtensionMetadata(serverExtensionMetadata, this->serverAPI());
+    extensionMetadata = Self::convertExtensionMetadata(extensionMetadata, this->serverAPI());
+    QString extensionName = extensionMetadata["extensionname"].toString();
+    if (extensionName.isEmpty())
       {
-      // Add to known updates
-      d->AvailableUpdates.insert(updateInfo.ExtensionName,
-                                 UpdateDownloadInformation(extensionId));
-
-      // Immediately start update process if requested
-      if (updateInfo.InstallAutomatically)
-        {
-        this->scheduleExtensionForUpdate(updateInfo.ExtensionName);
-        }
-
-      emit this->extensionUpdateAvailable(updateInfo.ExtensionName);
+      d->warning(tr("Extension metadata response missed required 'extensionname' field"));
+      continue;
       }
+    d->ExtensionsMetadataFromServer[extensionName] = extensionMetadata;
     }
+  d->ExtensionsMetadataFromServerQueryUID = QUuid();
+  d->saveExtensionsMetadataFromServerToCache();
+
+  this->updateModel();
+
+  emit updateExtensionsMetadataFromServerCompleted(true);
+  return true;
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::onUpdateCheckFailed(const QUuid& requestId)
+void qSlicerExtensionsManagerModel::checkForExtensionsUpdates()
 {
   Q_D(qSlicerExtensionsManagerModel);
-  d->CheckForUpdatesRequests.remove(requestId);
+  bool updatedExtensionsFound = false;
+
+  QSettings settings;
+  foreach(const QString& extensionName, d->ExtensionsMetadataFromServer.keys())
+    {
+    ExtensionMetadataType metadata = d->ExtensionsMetadataFromServer[extensionName];
+    // Check for updates
+    if (this->isExtensionInstalled(extensionName))
+      {
+      // Extension is installed, check if an update is available
+      const QString& extensionId = metadata.value("extension_id").toString();
+      const QString& extensionRevision = metadata.value("revision").toString();
+      if (extensionId.isEmpty() || extensionRevision.isEmpty())
+        {
+        d->warning(tr("Update check response for extension %1 missed required 'extension_id' or 'revision' field").arg(extensionName));
+        continue;
+        }
+      ExtensionMetadataType installedExtensionMetadata = this->extensionMetadata(extensionName);
+      QString installedRevision = installedExtensionMetadata.value("revision").toString();
+      if (extensionRevision == installedRevision)
+        {
+        // up-to-date
+        continue;
+        }
+      // Update is available
+      d->debug(tr("Update found for %1 extension: '%2' installed, '%3' available, ")
+        .arg(extensionName, installedRevision, extensionRevision));
+      d->AvailableUpdates.insert(extensionName, UpdateDownloadInformation(extensionId));
+      // Immediately start update process if requested
+      if (d->AutoUpdateInstall)
+        {
+        this->scheduleExtensionForUpdate(extensionName);
+        }
+      emit this->extensionUpdateAvailable(extensionName);
+      updatedExtensionsFound = true;
+      }
+    else if (this->isExtensionBookmarked(extensionName))
+      {
+      // Extension is not installed just bookmarked.
+      // It is included in the model, so we need to update the model.
+      metadata["installed"] = false;
+      metadata["loaded"] = false;
+      metadata["bookmarked"] = true;
+      d->addExtensionModelRow(metadata);
+      emit this->extensionMetadataUpdated(extensionName);
+      }
+    }
+
+  if (updatedExtensionsFound)
+    {
+    QSettings extensionSettings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+    extensionSettings.setValue("Extensions/UpdatesAvailable", true);
+    emit extensionUpdatesAvailable(true);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -2119,16 +2223,17 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
   // Notify observers of event
   emit this->downloadFinished(reply);
 
+  const QString& extensionName = task->extensionName();
+
   // Did the download succeed?
   if (reply->error())
     {
-    d->critical("Failed downloading: " + downloadUrl.toString());
+    d->critical(tr("Failed downloading %1 extension from %2").arg(extensionName).arg(downloadUrl.toString()));
     d->ActiveTasks.remove(task);
     return;
     }
 
   // Look up the update information
-  const QString& extensionName = task->extensionName();
   const QHash<QString, UpdateDownloadInformation>::iterator iter =
     d->AvailableUpdates.find(extensionName);
 
@@ -2138,7 +2243,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
     // since we won't be installing the update Immediately)
     if (!QDir(this->extensionsInstallPath()).mkpath(".updates"))
       {
-      d->critical("Could not create directory for update archive");
+      d->critical(tr("Could not create .updates directory for update archive in %1").arg(this->extensionsInstallPath()));
       d->ActiveTasks.remove(task);
       return;
       }
@@ -2157,7 +2262,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
     QFile file(archivePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
       {
-      d->critical("Could not create file for writing: " + file.errorString());
+      d->critical(tr("Could not write file: '%1' (%2)").arg(archivePath).arg(file.errorString()));
       d->ActiveTasks.remove(task);
       return;
       }
@@ -2177,6 +2282,12 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
   const QString& extensionName)
 {
   Q_D(qSlicerExtensionsManagerModel);
+
+  // If the user has installed some extension updates then we clear the new extension update
+  // notification until the next check.
+  QSettings extensionSettings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  extensionSettings.setValue("Extensions/UpdatesAvailable", false);
+  emit extensionUpdatesAvailable(false);
 
   QString error;
   if (!d->checkExtensionSettingsPermissions(error))
@@ -2207,14 +2318,12 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
     return true;
     }
 
-  UpdateDownloadInformation& updateInfo =
-    d->AvailableUpdates[extensionName];
+  const UpdateDownloadInformation& updateInfo = d->AvailableUpdates.value(extensionName);
   if (updateInfo.ArchiveName.isEmpty())
     {
     if (updateInfo.ExtensionId.isEmpty())
       {
-      d->critical("Missing download information for extension " +
-                  extensionName);
+      d->critical(tr("Missing download information for %1 extension").arg(extensionName));
       return false;
       }
 
@@ -2224,12 +2333,10 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
       return true;
       }
 
-    qSlicerExtensionDownloadTask* const task =
-      d->downloadExtension(updateInfo.ExtensionId);
+    qSlicerExtensionDownloadTask* const task = d->downloadExtensionByName(extensionName);
     if (!task)
       {
-      d->critical("Failed to retrieve metadata for extension " +
-                  updateInfo.ExtensionId);
+      d->critical(tr("Failed to retrieve metadata for %1 extension").arg(extensionName));
       return false;
       }
 
@@ -2243,11 +2350,10 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
     }
 
   // Add to scheduled updates
-  const ExtensionMetadataType metadata = this->extensionMetadata(extensionName);
   scheduled[extensionName] = updateInfo.ArchiveName;
   settings.setValue("Extensions/ScheduledForUpdate", scheduled);
 
-  d->info(extensionName + " scheduled for update");
+  d->info(tr("%1 extension scheduled for update").arg(extensionName));
   emit this->extensionScheduledForUpdate(extensionName);
 
   return true;
@@ -2292,14 +2398,13 @@ bool qSlicerExtensionsManagerModelPrivate::updateExtension(
   QStandardItem * item = this->extensionItem(extensionName);
   if (!item)
     {
-    qCritical() << "Failed to update extension" << extensionName;
+    critical(qSlicerExtensionsManagerModel::tr("Failed to update %1 extension").arg(extensionName));
     return false;
     }
 
   if (!q->isExtensionScheduledForUpdate(extensionName))
     {
-    qCritical() << "Failed to update extension" << extensionName
-                << "- Extension is NOT 'scheduled for update'";
+    critical(qSlicerExtensionsManagerModel::tr("Failed to update %1 extension: it is not scheduled for update").arg(extensionName));
     return false;
     }
 
@@ -2380,8 +2485,6 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUninstall(const QString&
 
   d->removeExtensionSettings(extensionName);
 
-  const ExtensionMetadataType& extensionMetadata = this->extensionMetadata(extensionName);
-  d->scheduleExtensionHistorySettingRemoval(this->extensionsHistorySettingsFilePath(), extensionMetadata);
   emit this->extensionScheduledForUninstall(extensionName);
 
   return true;
@@ -2404,57 +2507,88 @@ bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUninstall(const Q
     }
   d->removeExtensionFromScheduledForUninstallList(extensionName);
   d->addExtensionSettings(extensionName);
-  d->cancelExtensionHistorySettingRemoval(this->extensionsHistorySettingsFilePath(), extensionName);
   emit this->extensionCancelledScheduleForUninstall(extensionName);
 
   return true;
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModelPrivate::uninstallExtension(const QString& extensionName)
+bool qSlicerExtensionsManagerModel::uninstallExtension(const QString& extensionName)
 {
-  Q_Q(qSlicerExtensionsManagerModel);
+  Q_D(qSlicerExtensionsManagerModel);
 
   QString error;
-  if (!this->checkExtensionSettingsPermissions(error))
+  if (!d->checkExtensionSettingsPermissions(error))
     {
-    this->critical(error);
+    d->critical(error);
     return false;
     }
 
-  QStandardItem * item = this->extensionItem(extensionName);
+  QStandardItem* item = d->extensionItem(extensionName);
   if (!item)
     {
-    qCritical() << "Failed to uninstall extension" << extensionName;
+    d->critical(tr("Failed to uninstall %1 extension").arg(extensionName));
     return false;
     }
 
-  if (!q->isExtensionScheduledForUninstall(extensionName))
+  if (this->isExtensionLoaded(extensionName))
     {
-    qCritical() << "Failed to uninstall extension" << extensionName
-                << " - Extension is NOT 'scheduled for uninstall'";
+    d->critical(tr("Failed to uninstall %1 extension: extension is already loaded").arg(extensionName));
     return false;
     }
+
+  bool bookmarked = this->isExtensionBookmarked(extensionName);
 
   bool success = true;
-  success = success && ctk::removeDirRecursively(q->extensionInstallPath(extensionName));
-  success = success && QFile::remove(q->extensionDescriptionFile(extensionName));
-  success = success && this->Model.removeRow(item->row());
+  if (QDir(this->extensionInstallPath(extensionName)).exists())
+    {
+    success = success && ctk::removeDirRecursively(this->extensionInstallPath(extensionName));
+    }
+  if (bookmarked)
+    {
+    // Keep the extension description around, just update in the extension description that is no longer installed
+    QStandardItem * item = const_cast<QStandardItem*>(
+          d->extensionItem(extensionName, qSlicerExtensionsManagerModelPrivate::InstalledColumn));
+    if (item)
+      {
+      item->setData(false, qSlicerExtensionsManagerModelPrivate::InstalledRole);
+      item->setData(false, Qt::DisplayRole);
+      }
+    }
+  else
+    {
+    // Not installed or bookmarked - remove from managed extensions
+    success = success && d->Model.removeRow(item->row());
+    }
+  success = success && d->removeExtensionDescriptionFile(extensionName);
 
+  if (success)
+    {
+    d->removeExtensionSettings(extensionName);
+    d->removeExtensionFromScheduledForUninstallList(extensionName);
+    }
+
+  emit this->extensionUninstalled(extensionName);
+
+  return success;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::removeExtensionDescriptionFile(const QString& extensionName)
+{
+  Q_Q(qSlicerExtensionsManagerModel);
+  bool success = true;
+
+  // Remove s4ext file
+  success = success && QFile::remove(q->extensionDescriptionFile(extensionName));
+
+  // Remove icon file
   const QDir installDir(q->extensionsInstallPath());
   const QFileInfoList& iconEntries = installDir.entryInfoList(QStringList() << extensionName + "-icon.*");
   foreach (const QFileInfo& iconEntry, iconEntries)
     {
     success = success && QFile::remove(iconEntry.absoluteFilePath());
     }
-
-  if (success)
-    {
-    this->removeExtensionSettings(extensionName);
-    this->removeExtensionFromScheduledForUninstallList(extensionName);
-    }
-
-  emit q->extensionUninstalled(extensionName);
 
   return success;
 }
@@ -2510,12 +2644,10 @@ bool qSlicerExtensionsManagerModel::uninstallScheduledExtensions()
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::uninstallScheduledExtensions(QStringList& uninstalledExtensions)
 {
-  Q_D(qSlicerExtensionsManagerModel);
-  d->removeScheduledExtensionHistorySettings(this->extensionsHistorySettingsFilePath());
   bool result = true;
   foreach(const QString& extensionName, this->scheduledForUninstallExtensions())
     {
-    const bool success = d->uninstallExtension(extensionName);
+    const bool success = this->uninstallExtension(extensionName);
     if(success)
       {
       uninstalledExtensions << extensionName;
@@ -2526,21 +2658,6 @@ bool qSlicerExtensionsManagerModel::uninstallScheduledExtensions(QStringList& un
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::gatherExtensionsHistoryInformationOnStartup()
-{
-  Q_D(qSlicerExtensionsManagerModel);
-  d->gatherExtensionsHistoryInformationOnStartup();
-}
-
-// --------------------------------------------------------------------------
-QVariantMap  qSlicerExtensionsManagerModel::getExtensionHistoryInformation()
-{
-  Q_D(qSlicerExtensionsManagerModel);
-  return d->getExtensionsInfoFromPreviousInstallations(extensionsHistorySettingsFilePath());
-}
-
-
-// --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModel::updateModel()
 {
   Q_D(qSlicerExtensionsManagerModel);
@@ -2549,10 +2666,59 @@ void qSlicerExtensionsManagerModel::updateModel()
 
   d->Model.clear();
 
+  QSettings settings;
+  QStringList bookmarkedExtensions = settings.value("Extensions/Bookmarked").toStringList();
+
+  // First just gather extensions, we'll sort and group them before adding to the model
+  QStringList installedExtensions;
+  QMap<QString, ExtensionMetadataType> extensionsMetadataFromDescriptionFiles;
   foreach(const QFileInfo& fileInfo, d->extensionDescriptionFileInfos(extensionDescriptionPath))
     {
     ExtensionMetadataType metadata = Self::parseExtensionDescriptionFile(fileInfo.absoluteFilePath());
-    d->addExtensionModelRow(metadata);
+    QString extensionName = metadata["extensionname"].toString();
+    bool loaded = d->LoadedExtensions.contains(extensionName);
+    metadata["loaded"] = loaded;
+    bool bookmarked = bookmarkedExtensions.contains(extensionName);
+    metadata["bookmarked"] = bookmarked;
+    bool installed = metadata["installed"].toBool();
+    if (!installed && !bookmarked)
+      {
+      // not installed and not bookmarked (for example, because list of bookmarked extensions changed)
+      // remove the extension description file now
+      d->removeExtensionDescriptionFile(extensionName);
+      continue;
+      }
+    extensionsMetadataFromDescriptionFiles[extensionName] = metadata;
+    if (installed)
+      {
+      installedExtensions << extensionName;
+      }
+    }
+
+  // Add installed extensions, sorted alphabetically
+  QStringList managedExtensions;
+  managedExtensions << bookmarkedExtensions;
+  managedExtensions << installedExtensions;
+  managedExtensions.removeDuplicates();
+  managedExtensions.sort(Qt::CaseInsensitive);
+  foreach(const QString& extensionName, managedExtensions)
+    {
+    if (extensionsMetadataFromDescriptionFiles.contains(extensionName))
+      {
+      // This is an installed or bookmarked extension with an extension description (s4ext) file.
+      d->addExtensionModelRow(extensionsMetadataFromDescriptionFiles[extensionName]);
+      }
+    else
+      {
+      // This is a bookmarked extension without an extension description (s4ext) file.
+      // Use metadata received from the server.
+      ExtensionMetadataType metadata = d->ExtensionsMetadataFromServer.value(extensionName);
+      metadata["extensionname"] = extensionName;
+      metadata["loaded"] = false;
+      metadata["installed"] = false;
+      metadata["bookmarked"] = true;
+      d->addExtensionModelRow(metadata);
+      }
     }
 
   emit this->modelUpdated();
@@ -2571,21 +2737,6 @@ void qSlicerExtensionsManagerModel::setExtensionsSettingsFilePath(const QString&
     }
   d->ExtensionsSettingsFilePath = extensionsSettingsFilePath;
   emit this->extensionsSettingsFilePathChanged(extensionsSettingsFilePath);
-}
-
-// --------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, extensionsHistorySettingsFilePath, ExtensionsHistorySettingsFilePath)
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::setExtensionsHistorySettingsFilePath(const QString& extensionsHistorySettingsFilePath)
-{
-  Q_D(qSlicerExtensionsManagerModel);
-  if (d->ExtensionsHistorySettingsFilePath == extensionsHistorySettingsFilePath)
-    {
-    return;
-    }
-  d->ExtensionsHistorySettingsFilePath = extensionsHistorySettingsFilePath;
-  emit this->extensionsHistorySettingsFilePathChanged(extensionsHistorySettingsFilePath);
 }
 
 // --------------------------------------------------------------------------
@@ -2656,7 +2807,7 @@ void qSlicerExtensionsManagerModel::identifyIncompatibleExtensions()
     QStringList reasons = this->isExtensionCompatible(extensionName, d->SlicerRevision, d->SlicerOs, d->SlicerArch);
     if (!reasons.isEmpty())
       {
-      reasons.prepend(QString("Extension %1 is incompatible").arg(extensionName));
+      reasons.prepend(tr("Extension %1 is incompatible").arg(extensionName));
       qCritical() << reasons.join("\n  ");
       this->setExtensionEnabled(extensionName, false);
       emit this->extensionIdentifedAsIncompatible(extensionName);
@@ -2734,15 +2885,11 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
   //  | EnabledColumn        | enabled           | enabled            |                      |
   //  | ArchiveNameColumn    | archivename       |                    |                      |
   //  | MD5Column            | md5               |                    |                      |
-  //  |                      |                   |                    |                      |
+  //  | UpdatedColumn        | updated           | updated            | updated              | package update date and time in ISO format
+  //  | InstalledColumn      | installed         | installed          |                      |
+  //  | BookmarkedColumn     | bookmarked        | bookmarked         |                      |
   //  |                      |                   | build_subdirectory |                      |
-  //  |                      |                   |                    |                      |
-  //  |                      |                   |                    |                      |
-  //  |                      |                   |                    |                      |
-  //  |                      |                   |                    |                      |
   //  |                      |                   |                    | created              |
-  //  |                      |                   |                    |                      |
-  //  |                      |                   |                    |                      |
   //  |                      |                   |                    | baseParentId         |
   //  |                      |                   |                    | baseParentType       |
   //  |                      |                   |                    | creatorId            |
@@ -2752,7 +2899,6 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
   //  |                      |                   |                    | meta.app_id          |
   //  |                      |                   |                    | name                 |
   //  |                      |                   |                    | size                 |
-  //  |                      |                   |                    | updated              |
 
   if (serverAPI == Self::Girder_v1)
     {
@@ -2776,6 +2922,7 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
     // enabled
     // archivename
     // md5
+    serverToExtensionDescriptionKey.insert("updated", "updated");
     }
   else
     {
@@ -2804,17 +2951,16 @@ QStringList qSlicerExtensionsManagerModel::serverKeysToIgnore(int serverAPI)
   if (serverAPI == Self::Girder_v1)
     {
     return QStringList()
-        << "baseParentId"
-        << "baseParentType"
-        << "created"
-        << "creatorId"
-        << "description"
-        << "folderId"
-        << "lowerName"
-        << "meta.app_id"
-        << "name"
-        << "size"
-        << "updated";
+      << "baseParentId"
+      << "baseParentType"
+      << "created"
+      << "creatorId"
+      << "description"
+      << "folderId"
+      << "lowerName"
+      << "meta.app_id"
+      << "name"
+      << "size";
     }
   else
     {
@@ -2884,14 +3030,15 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
 
   if (extensionName.isEmpty())
     {
-    d->critical("Corrupted extension package");
+    d->critical(tr("Corrupted %1 extension package").arg(extensionName));
     return false;
     }
 
   QString error;
   if (!d->checkExtensionsInstallDestinationPath(destinationPath, error))
     {
-    d->critical(QString("Failed to extract archive %1 into directory %2").arg(archiveFile).arg(destinationPath));
+    d->critical(tr("Failed to extract %1 extension archive %2 into directory %3")
+      .arg(extensionName).arg(archiveFile).arg(destinationPath));
     d->critical(error);
     return false;
     }
@@ -2935,28 +3082,28 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
 
   if (!ctk::copyDirRecursively(srcPathToCopy, intermediatePath))
     {
-    d->critical(QString("Failed to copy directory %1 into directory %2").arg(srcPathToCopy).arg(intermediatePath));
+    d->critical(tr("Failed to copy directory %1 into directory %2").arg(srcPathToCopy).arg(intermediatePath));
     return false;
     }
 
   //  Step2: <extensionName>-XXXXXX -> <extensionName>
   if (!ctk::copyDirRecursively(intermediatePath, dstPath))
     {
-    d->critical(QString("Failed to copy directory %1 into directory %2").arg(intermediatePath).arg(dstPath));
+    d->critical(tr("Failed to copy directory %1 into directory %2").arg(intermediatePath).arg(dstPath));
     return false;
     }
 
   //  Step3: Remove <extensionName>-XXXXXX
   if (!ctk::removeDirRecursively(intermediatePath))
     {
-    d->critical(QString("Failed to remove directory %1").arg(intermediatePath));
+    d->critical(tr("Failed to remove directory %1").arg(intermediatePath));
     return false;
     }
 
   //  Step4: Remove  <extensionName>/<archiveBaseName>
   if (!ctk::removeDirRecursively(srcPath))
     {
-    d->critical(QString("Failed to remove directory %1").arg(srcPath));
+    d->critical(tr("Failed to remove directory %1").arg(srcPath));
     return false;
     }
 
@@ -2974,7 +3121,9 @@ bool qSlicerExtensionsManagerModel::writeExtensionDescriptionFile(const QString&
   QTextStream outputStream(&outputFile);
   foreach(const QString& key, metadata.keys())
     {
-    if (key == "extensionname")
+    if (key == "extensionname" // name is defined by the s4ext filename
+      || key == "bookmarked"   // bookmarked extensions are stored in application settings
+      || key == "loaded")      // this is just temporary state information
       {
       continue;
       }
@@ -3020,6 +3169,11 @@ qSlicerExtensionsManagerModel::parseExtensionDescriptionFile(const QString& file
   if (metadata.count() > 0)
     {
     metadata.insert("extensionname", QFileInfo(file).baseName());
+    // In earlier installations
+    if (!metadata.contains("installed"))
+      {
+      metadata["installed"] = "true";
+      }
     }
 
   return metadata;
@@ -3090,4 +3244,49 @@ QStringList qSlicerExtensionsManagerModel::activeTasks() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   return d->ActiveTasks.values();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::aboutToLoadExtensions()
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  // Extensions that are currently installed are about to be loaded, so set
+  // "loaded" flag based on current "installed" flag.
+  // We may install extensions later, but they will not be loaded immediately
+  // (only on the next application restart).
+  d->LoadedExtensions.clear();
+  for (int rowIdx = 0; rowIdx < d->Model.rowCount(); ++rowIdx)
+    {
+    QStandardItem* installedItem = d->Model.item(rowIdx, qSlicerExtensionsManagerModelPrivate::InstalledColumn);
+    bool installed = installedItem->data(qSlicerExtensionsManagerModelPrivate::InstalledRole).toBool();
+    QStandardItem* loadedItem = d->Model.item(rowIdx, qSlicerExtensionsManagerModelPrivate::LoadedColumn);
+    loadedItem->setData(installed, qSlicerExtensionsManagerModelPrivate::LoadedRole);
+    loadedItem->setData(installed, Qt::DisplayRole);
+    // Save the loaded extension into a list in case we later do a full model update.
+    if (installed)
+      {
+      d->LoadedExtensions << d->Model.item(rowIdx, qSlicerExtensionsManagerModelPrivate::NameColumn)->text();
+      }
+    }
+}
+
+// --------------------------------------------------------------------------
+QUrl qSlicerExtensionsManagerModel::extensionsListUrl()const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+
+  QUrl url = this->frontendServerUrl();
+  int serverAPI = this->serverAPI();
+
+  if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+    {
+    url.setPath(url.path() + QString("/catalog/All/%1/%2").arg(d->SlicerRevision).arg(d->SlicerOs));
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
+    }
+
+  return url;
 }

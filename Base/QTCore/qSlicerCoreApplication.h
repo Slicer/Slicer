@@ -304,8 +304,6 @@ public:
   /// Set slicer extension directory
   void setExtensionsInstallPath(const QString& path);
 
-  void gatherExtensionsHistoryInformationOnStartup();
-
   /// If any, this method return the build intermediate directory
   /// See $(IntDir) on https://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
   QString intDir()const;

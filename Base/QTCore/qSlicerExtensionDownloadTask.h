@@ -36,6 +36,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerExtensionDownloadTask : public QObject
   Q_PROPERTY(QString extensionName READ extensionName WRITE setExtensionName)
   Q_PROPERTY(QString archiveName READ archiveName WRITE setArchiveName)
   Q_PROPERTY(QNetworkReply* reply READ reply)
+  Q_PROPERTY(bool installDependencies READ installDependencies WRITE setInstallDependencies)
 
 public:
   /// Constructor.
@@ -74,6 +75,11 @@ public:
 
   /// Get associated network reply.
   QNetworkReply* reply() const;
+
+  /// Install extensions that the requested extension needs.
+  /// Enabled by default.
+  bool installDependencies() const;
+  void setInstallDependencies(bool confirm);
 
 signals:
   void finished(qSlicerExtensionDownloadTask*);

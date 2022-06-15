@@ -1,6 +1,12 @@
 <RCC>
     <qresource prefix="/Icons">
+        <file alias="Add.svg">Icons/Add.svg</file>
+        <file alias="Bookmark.svg">Icons/Bookmark.svg</file>
+        <file alias="BookmarkAdd.svg">Icons/BookmarkAdd.svg</file>
+        <file alias="Install.svg">Icons/Install.svg</file>
+        <file alias="Update.svg">Icons/Update.svg</file>
         <file alias="ExtensionDefaultIcon.png">Icons/ExtensionDefaultIcon.png</file>
+        <file alias="ExtensionNotificationIcon.png">Icons/ExtensionNotificationIcon.png</file>
         <file alias="Go.png">Icons/Go.png</file>
         <file alias="ExtensionUpdateAvailable.svg">Icons/ExtensionUpdateAvailable.svg</file>
         <file alias="MouseSinglePickMode.png">Icons/MouseSinglePickMode.png</file>
