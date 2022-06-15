@@ -318,12 +318,17 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
     }
 
   // If we are currently dragging a point then we interact everywhere
+  // (we do not let any other widget take away the focus).
   if (this->WidgetState == WidgetStateMoveCrosshair
     || this->WidgetState == WidgetStateTranslate
     || this->WidgetState == WidgetStateRotateIntersectingSlices
     || this->WidgetState == WidgetStateBlend
     || this->WidgetState == WidgetStateTranslateSlice
-    || this->WidgetState == WidgetStateZoomSlice)
+    || this->WidgetState == WidgetStateZoomSlice
+    || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle
+    || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
+    || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
+    )
     {
     distance2 = 0.0;
     return true;
