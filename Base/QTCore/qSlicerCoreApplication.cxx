@@ -321,10 +321,12 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Create callback function that allows invoking VTK object modified requests from any thread.
   // This is used for example in MRMLIDImageIO to indicate that image update is completed.
-  vtkNew<vtkCallbackCommand> modifiedRequestCallback;
-  modifiedRequestCallback->SetClientData(this->AppLogic);
-  modifiedRequestCallback->SetCallback(vtkSlicerApplicationLogic::RequestModifiedCallback);
-  vtkEventBroker::GetInstance()->SetRequestModifiedCallback(modifiedRequestCallback);
+  { // placed in a block to avoid memory leaks on quick exit at handlePreApplicationCommandLineArguments
+    vtkNew<vtkCallbackCommand> modifiedRequestCallback;
+    modifiedRequestCallback->SetClientData(this->AppLogic);
+    modifiedRequestCallback->SetCallback(vtkSlicerApplicationLogic::RequestModifiedCallback);
+    vtkEventBroker::GetInstance()->SetRequestModifiedCallback(modifiedRequestCallback);
+  }
 
   // Ensure that temporary folder is writable
   {
@@ -403,6 +405,8 @@ void qSlicerCoreApplicationPrivate::init()
   q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                  this->ModuleManager->factoryManager(), SLOT(setMRMLScene(vtkMRMLScene*)));
 
+  // The application may exit here immediately if a simple command is specified on the
+  // command-line (for example `--version` prints the version information and quits).
   q->handlePreApplicationCommandLineArguments();
 
 #ifdef Slicer_USE_PYTHONQT
@@ -422,7 +426,6 @@ void qSlicerCoreApplicationPrivate::init()
 
   qSlicerExtensionsManagerModel * model = new qSlicerExtensionsManagerModel(q);
   model->setExtensionsSettingsFilePath(q->slicerRevisionUserSettingsFilePath());
-  model->setExtensionsHistorySettingsFilePath(q->slicerUserSettingsFilePath());
   model->setSlicerRequirements(q->revision(), q->os(), q->arch());
   q->setExtensionsManagerModel(model);
 
@@ -444,6 +447,13 @@ void qSlicerCoreApplicationPrivate::init()
 
   this->createDirectory(q->extensionsInstallPath(), "extensions"); // Make sure the path exists
 
+  // Prevent extensions manager model from displaying popups during startup (don't ask for confirmation)
+  bool wasInteractive = model->interactive();
+  model->setInteractive(false);
+
+  // If auto-update is disabled then this will not contact the server
+  model->updateExtensionsMetadataFromServer();
+
   model->updateModel();
 
   QStringList updatedExtensions;
@@ -459,6 +469,19 @@ void qSlicerCoreApplicationPrivate::init()
     {
     qDebug() << "Successfully uninstalled extension" << extensionName;
     }
+
+  if (model->autoUpdateCheck())
+    {
+    // The latest metadata updates will not be available yet, but next time the application
+    // is started.
+    model->checkForExtensionsUpdates();
+    }
+
+  model->setInteractive(wasInteractive);
+
+  // Indicate that there are no more changes to the extensions
+  // and they will be loaded using current settings.
+  model->aboutToLoadExtensions();
 
   // Set the list of installed extensions in the scene so that we can warn the user
   // if the scene is loaded with some of the extensions not present.
@@ -1507,14 +1530,6 @@ void qSlicerCoreApplication::setExtensionsInstallPath(const QString& path)
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   Q_ASSERT(this->extensionsManagerModel());
   this->extensionsManagerModel()->updateModel();
-#endif
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplication::gatherExtensionsHistoryInformationOnStartup()
-{
-#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  this->extensionsManagerModel()->gatherExtensionsHistoryInformationOnStartup();
 #endif
 }
 

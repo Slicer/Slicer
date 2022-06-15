@@ -21,6 +21,7 @@
 // Qt includes
 #include <QAction>
 #include <QDebug>
+#include <QDesktopServices>
 #include <QFile>
 #include <QLabel>
 #include <QtGlobal>
@@ -77,6 +78,7 @@
 #endif
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 # include "qSlicerExtensionsManagerDialog.h"
+# include "qSlicerExtensionsManagerModel.h"
 # include "qSlicerSettingsExtensionsPanel.h"
 #endif
 #include "qSlicerSettingsCachePanel.h"
@@ -790,23 +792,7 @@ void qSlicerApplication::openExtensionsManagerDialog()
     }
   d->IsExtensionsManagerDialogOpen = true;
 
-  // Startup of extensions manager can take tens of seconds.
-  // Display a popup to let the user know.
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  QDialog* startupInProgressDialog = new QDialog(this->mainWindow(), Qt::FramelessWindowHint | Qt::Dialog);
-  QVBoxLayout* layout = new QVBoxLayout();
-  startupInProgressDialog->setLayout(layout);
-  QFrame* frame = new QFrame();
-  frame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  layout->addWidget(frame);
-  QVBoxLayout* innerLayout = new QVBoxLayout();
-  frame->setLayout(innerLayout);
-  innerLayout->setMargin(20);
-  QLabel* label = new QLabel();
-  label->setText(tr("Extensions manager is starting, please wait..."));
-  innerLayout->addWidget(label);
-  startupInProgressDialog->show();
-  this->processEvents();
 
   if(!d->ExtensionsManagerDialog)
     {
@@ -821,10 +807,7 @@ void qSlicerApplication::openExtensionsManagerDialog()
   // This call takes most of the startup time
   d->ExtensionsManagerDialog->setExtensionsManagerModel(this->extensionsManagerModel());
 
-  // Hide the popup window.
   QApplication::restoreOverrideCursor();
-  startupInProgressDialog->hide();
-  startupInProgressDialog->deleteLater();
 
   bool accepted = (d->ExtensionsManagerDialog->exec() == QDialog::Accepted);
   if (accepted)
@@ -832,6 +815,18 @@ void qSlicerApplication::openExtensionsManagerDialog()
     this->confirmRestart();
     }
   d->IsExtensionsManagerDialogOpen = false;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerApplication::openExtensionsCatalogWebsite()
+{
+  Q_D(qSlicerApplication);
+  if (!this->extensionsManagerModel())
+    {
+    return;
+    }
+  QUrl url = this->extensionsManagerModel()->extensionsListUrl();
+  QDesktopServices::openUrl(url);
 }
 #endif
 

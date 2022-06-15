@@ -29,8 +29,8 @@
 #include <ctkPimpl.h>
 
 // QtGUI includes
-#include "qSlicerExtensionsInstallWidget.h"
-#include "qSlicerExtensionsInstallWidget_p.h"
+#include "qSlicerExtensionsServerWidget.h"
+#include "qSlicerExtensionsServerWidget_p.h"
 #include "qSlicerExtensionsManagerModel.h"
 
 // --------------------------------------------------------------------------
@@ -40,12 +40,12 @@ void ExtensionInstallWidgetWebChannelProxy::refresh()
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsInstallWidgetPrivate::qSlicerExtensionsInstallWidgetPrivate(qSlicerExtensionsInstallWidget& object)
+qSlicerExtensionsServerWidgetPrivate::qSlicerExtensionsServerWidgetPrivate(qSlicerExtensionsServerWidget& object)
   : qSlicerWebWidgetPrivate(object),
     q_ptr(&object),
     BrowsingEnabled(true)
 {
-  Q_Q(qSlicerExtensionsInstallWidget);
+  Q_Q(qSlicerExtensionsServerWidget);
   this->ExtensionsManagerModel = nullptr;
   this->InstallWidgetForWebChannel = new ExtensionInstallWidgetWebChannelProxy;
   this->InstallWidgetForWebChannel->InstallWidget = q;
@@ -53,33 +53,15 @@ qSlicerExtensionsInstallWidgetPrivate::qSlicerExtensionsInstallWidgetPrivate(qSl
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsInstallWidgetPrivate::~qSlicerExtensionsInstallWidgetPrivate()
+qSlicerExtensionsServerWidgetPrivate::~qSlicerExtensionsServerWidgetPrivate()
 {
   delete this->InstallWidgetForWebChannel;
 }
 
 // --------------------------------------------------------------------------
-QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
+void qSlicerExtensionsServerWidgetPrivate::setFailurePage(const QStringList& errors)
 {
-   QUrl url = this->ExtensionsManagerModel->frontendServerUrl();
-   int serverAPI = this->ExtensionsManagerModel->serverAPI();
-
-   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
-     {
-     url.setPath(url.path() + QString("/catalog/All/%1/%2").arg(this->SlicerRevision).arg(this->SlicerOs));
-     }
-   else
-     {
-     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
-     }
-
-   return url;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QStringList& errors)
-{
-  Q_Q(qSlicerExtensionsInstallWidget);
+  Q_Q(qSlicerExtensionsServerWidget);
   QString html =
       "<style type='text/css'>"
       "  div.viewWrapperSlicer{"
@@ -145,16 +127,16 @@ void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QStringList& er
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::updateTheme()
+void qSlicerExtensionsServerWidgetPrivate::updateTheme()
 {
-  Q_Q(qSlicerExtensionsInstallWidget);
+  Q_Q(qSlicerExtensionsServerWidget);
   this->setDarkThemeEnabled(q->style()->objectName().compare("Dark Slicer", Qt::CaseInsensitive) == 0);
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::setDarkThemeEnabled(bool enabled)
+void qSlicerExtensionsServerWidgetPrivate::setDarkThemeEnabled(bool enabled)
 {
-  Q_Q(qSlicerExtensionsInstallWidget);
+  Q_Q(qSlicerExtensionsServerWidget);
   if(!this->BrowsingEnabled)
     {
     return;
@@ -171,7 +153,7 @@ void qSlicerExtensionsInstallWidgetPrivate::setDarkThemeEnabled(bool enabled)
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannelTransport(QByteArray& webChannelScript)
+void qSlicerExtensionsServerWidgetPrivate::initializeWebChannelTransport(QByteArray& webChannelScript)
 {
   this->Superclass::initializeWebChannelTransport(webChannelScript);
   webChannelScript.append(
@@ -182,7 +164,7 @@ void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannelTransport(QByteA
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannel(QWebChannel* webChannel)
+void qSlicerExtensionsServerWidgetPrivate::initializeWebChannel(QWebChannel* webChannel)
 {
   this->Superclass::initializeWebChannel(webChannel);
   webChannel->registerObject(
@@ -190,10 +172,10 @@ void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannel(QWebChannel* we
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::registerExtensionsManagerModel(
+void qSlicerExtensionsServerWidgetPrivate::registerExtensionsManagerModel(
     qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel)
 {
-  Q_Q(qSlicerExtensionsInstallWidget);
+  Q_Q(qSlicerExtensionsServerWidget);
   QWebChannel* webChannel = q->webView()->page()->webChannel();
   if (oldModel)
     {
@@ -206,27 +188,27 @@ void qSlicerExtensionsInstallWidgetPrivate::registerExtensionsManagerModel(
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsInstallWidget::qSlicerExtensionsInstallWidget(QWidget* _parent)
-  : Superclass(new qSlicerExtensionsInstallWidgetPrivate(*this), _parent)
+qSlicerExtensionsServerWidget::qSlicerExtensionsServerWidget(QWidget* _parent)
+  : Superclass(new qSlicerExtensionsServerWidgetPrivate(*this), _parent)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   d->init();
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsInstallWidget::~qSlicerExtensionsInstallWidget() = default;
+qSlicerExtensionsServerWidget::~qSlicerExtensionsServerWidget() = default;
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel* qSlicerExtensionsInstallWidget::extensionsManagerModel()const
+qSlicerExtensionsManagerModel* qSlicerExtensionsServerWidget::extensionsManagerModel()const
 {
-  Q_D(const qSlicerExtensionsInstallWidget);
+  Q_D(const qSlicerExtensionsServerWidget);
   return d->ExtensionsManagerModel;
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensionsManagerModel* model)
+void qSlicerExtensionsServerWidget::setExtensionsManagerModel(qSlicerExtensionsManagerModel* model)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   if (this->extensionsManagerModel() == model)
     {
     return;
@@ -235,7 +217,7 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
   disconnect(this, SLOT(onExtensionInstalled(QString)));
   //disconnect(this, SLOT(onExtensionUninstalled(QString)));
   disconnect(this, SLOT(onExtensionScheduledForUninstall(QString)));
-  disconnect(this, SLOT(onSlicerRequirementsChanged(QString,QString,QString)));
+  disconnect(this, SLOT(onSlicerRequirementsChanged()));
   disconnect(this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
   disconnect(this, SLOT(onDownloadStarted(QNetworkReply*)));
   disconnect(this, SLOT(onDownloadFinished(QNetworkReply*)));
@@ -247,8 +229,7 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
 
   if (model)
     {
-    this->onSlicerRequirementsChanged(
-          model->slicerRevision(), model->slicerOs(), model->slicerArch());
+    this->onSlicerRequirementsChanged();
 
     QObject::connect(model, SIGNAL(extensionInstalled(QString)),
                      this, SLOT(onExtensionInstalled(QString)));
@@ -260,7 +241,7 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
                      this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
 
     QObject::connect(model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
-                     this, SLOT(onSlicerRequirementsChanged(QString,QString,QString)));
+                     this, SLOT(onSlicerRequirementsChanged()));
 
     QObject::connect(model, SIGNAL(messageLogged(QString,ctkErrorLogLevel::LogLevels)),
                      this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
@@ -274,25 +255,13 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerExtensionsInstallWidget, QString, slicerRevision, SlicerRevision)
-CTK_SET_CPP(qSlicerExtensionsInstallWidget, const QString&, setSlicerRevision, SlicerRevision)
+CTK_GET_CPP(qSlicerExtensionsServerWidget, bool, isBrowsingEnabled, BrowsingEnabled)
+CTK_SET_CPP(qSlicerExtensionsServerWidget, bool, setBrowsingEnabled, BrowsingEnabled)
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerExtensionsInstallWidget, QString, slicerOs, SlicerOs)
-CTK_SET_CPP(qSlicerExtensionsInstallWidget, const QString&, setSlicerOs, SlicerOs)
-
-// --------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerExtensionsInstallWidget, QString, slicerArch, SlicerArch)
-CTK_SET_CPP(qSlicerExtensionsInstallWidget, const QString&, setSlicerArch, SlicerArch)
-
-// --------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerExtensionsInstallWidget, bool, isBrowsingEnabled, BrowsingEnabled)
-CTK_SET_CPP(qSlicerExtensionsInstallWidget, bool, setBrowsingEnabled, BrowsingEnabled)
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::refresh()
+void qSlicerExtensionsServerWidget::refresh()
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   if (!d->ExtensionsManagerModel)
     {
     return;
@@ -303,13 +272,13 @@ void qSlicerExtensionsInstallWidget::refresh()
     d->setFailurePage(errors);
     return;
     }
-  this->webView()->setUrl(d->extensionsListUrl());
+  this->webView()->setUrl(this->extensionsManagerModel()->extensionsListUrl());
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onExtensionInstalled(const QString& extensionName)
+void qSlicerExtensionsServerWidget::onExtensionInstalled(const QString& extensionName)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   if(d->BrowsingEnabled)
     {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
@@ -325,9 +294,9 @@ void qSlicerExtensionsInstallWidget::onExtensionInstalled(const QString& extensi
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onExtensionScheduledForUninstall(const QString& extensionName)
+void qSlicerExtensionsServerWidget::onExtensionScheduledForUninstall(const QString& extensionName)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   if(d->BrowsingEnabled)
     {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
@@ -343,18 +312,15 @@ void qSlicerExtensionsInstallWidget::onExtensionScheduledForUninstall(const QStr
 }
 
 // -------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onExtensionCancelledScheduleForUninstall(const QString& extensionName)
+void qSlicerExtensionsServerWidget::onExtensionCancelledScheduleForUninstall(const QString& extensionName)
 {
   this->onExtensionInstalled(extensionName);
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onSlicerRequirementsChanged(const QString& revision,const QString& os,const QString& arch)
+void qSlicerExtensionsServerWidget::onSlicerRequirementsChanged()
 {
-  Q_D(qSlicerExtensionsInstallWidget);
-  this->setSlicerRevision(revision);
-  this->setSlicerOs(os);
-  this->setSlicerArch(arch);
+  Q_D(qSlicerExtensionsServerWidget);
   if (d->BrowsingEnabled)
     {
     this->refresh();
@@ -362,9 +328,9 @@ void qSlicerExtensionsInstallWidget::onSlicerRequirementsChanged(const QString& 
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level)
+void qSlicerExtensionsServerWidget::onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   if(!d->BrowsingEnabled)
     {
     return;
@@ -394,30 +360,30 @@ void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErr
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onLoadStarted()
+void qSlicerExtensionsServerWidget::onLoadStarted()
 {
   this->Superclass::onLoadStarted();
   this->initJavascript();
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::initJavascript()
+void qSlicerExtensionsServerWidget::initJavascript()
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   this->Superclass::initJavascript();
-  // This is done in qSlicerExtensionsInstallWidgetPrivate::initializeWebChannel()
-  // and qSlicerExtensionsInstallWidgetPrivate::registerExtensionsManagerModel()
+  // This is done in qSlicerExtensionsServerWidgetPrivate::initializeWebChannel()
+  // and qSlicerExtensionsServerWidgetPrivate::registerExtensionsManagerModel()
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
+void qSlicerExtensionsServerWidget::onLoadFinished(bool ok)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   this->Superclass::onLoadFinished(ok);
   if(!ok && d->NavigationRequestAccepted)
     {
     d->setFailurePage(QStringList() << QString("Failed to load extension page using this URL: <strong>%1</strong>")
-                      .arg(d->extensionsListUrl().toString()));
+                      .arg(this->extensionsManagerModel()->extensionsListUrl().toString()));
     }
   if (ok)
     {
@@ -426,17 +392,17 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsInstallWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+bool qSlicerExtensionsServerWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   d->InternalHosts = QStringList() << this->extensionsManagerModel()->frontendServerUrl().host();
   return Superclass::acceptNavigationRequest(url, type, isMainFrame);
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::changeEvent(QEvent *e)
+void qSlicerExtensionsServerWidget::changeEvent(QEvent *e)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
+  Q_D(qSlicerExtensionsServerWidget);
   switch (e->type())
     {
     case QEvent::StyleChange:

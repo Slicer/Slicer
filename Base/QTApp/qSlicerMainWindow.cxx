@@ -63,6 +63,9 @@
 #include "qSlicerCommandOptions.h"
 #include "qSlicerCoreCommandOptions.h"
 #include "qSlicerErrorReportDialog.h"
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+#include "qSlicerExtensionsManagerModel.h"
+#endif
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModulesMenu.h"
@@ -1141,10 +1144,17 @@ void qSlicerMainWindow::showEvent(QShowEvent *event)
     d->WindowInitialShowCompleted = true;
     this->disclaimer();
     this->pythonConsoleInitialDisplay();
+
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-    // See https://issues.slicer.org/view.php?id=4641
-    // qSlicerApplication::application()->gatherExtensionsHistoryInformationOnStartup();
+    qSlicerApplication* app = qSlicerApplication::application();
+    if (app && app->extensionsManagerModel())
+      {
+      connect(app->extensionsManagerModel(), SIGNAL(extensionUpdatesAvailable(bool)),
+        this, SLOT(setExtensionUpdatesAvailable(bool)));
+      this->setExtensionUpdatesAvailable(!app->extensionsManagerModel()->availableUpdateExtensions().empty());
+      }
 #endif
+
     emit initialWindowShown();
     }
 }
@@ -1714,4 +1724,35 @@ void qSlicerMainWindow::changeEvent(QEvent* event)
     default:
       break;
     }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::setExtensionUpdatesAvailable(bool updateAvailable)
+{
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  Q_D(qSlicerMainWindow);
+  qSlicerApplication* app = qSlicerApplication::application();
+  if (!app || !app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool())
+    {
+    return;
+    }
+
+  // Check if there was a change
+  const char extensionUpdateAvailablePropertyName[] = "extensionUpdateAvailable";
+  if (d->ViewExtensionsManagerAction->property(extensionUpdateAvailablePropertyName).toBool() == updateAvailable)
+    {
+    // no change
+    return;
+    }
+  d->ViewExtensionsManagerAction->setProperty(extensionUpdateAvailablePropertyName, updateAvailable);
+
+  if (updateAvailable)
+    {
+    d->ViewExtensionsManagerAction->setIcon(QIcon(":/Icons/ExtensionNotificationIcon.png"));
+    }
+  else
+    {
+    d->ViewExtensionsManagerAction->setIcon(QIcon(":/Icons/ExtensionDefaultIcon.png"));
+    }
+#endif
 }

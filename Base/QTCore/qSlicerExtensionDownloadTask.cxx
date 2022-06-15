@@ -45,6 +45,7 @@ public:
   QString ExtensionName;
   QString ArchiveName;
   QVariantMap Metadata;
+  bool InstallDependencies{true};
 };
 
 /*
@@ -146,4 +147,18 @@ void qSlicerExtensionDownloadTask::emitFinished()
 void qSlicerExtensionDownloadTask::emitError(QNetworkReply::NetworkError error)
 {
   emit this->error(this, error);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerExtensionDownloadTask::installDependencies() const
+{
+  Q_D(const qSlicerExtensionDownloadTask);
+  return d->InstallDependencies;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerExtensionDownloadTask::setInstallDependencies(bool install)
+{
+  Q_D(qSlicerExtensionDownloadTask);
+  d->InstallDependencies = install;
 }

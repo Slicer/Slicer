@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerExtensionsInstallWidgetPrivate_p_h
-#define __qSlicerExtensionsInstallWidgetPrivate_p_h
+#ifndef __qSlicerExtensionsServerWidgetPrivate_p_h
+#define __qSlicerExtensionsServerWidgetPrivate_p_h
 
 // Qt includes
 #include <QObject>
@@ -27,7 +27,7 @@
 #include <QWebChannel>
 
 // Slicer includes
-class qSlicerExtensionsInstallWidget;
+class qSlicerExtensionsServerWidget;
 class qSlicerExtensionsManagerModel;
 #include "qSlicerWebWidget_p.h"
 
@@ -37,7 +37,7 @@ class ExtensionInstallWidgetWebChannelProxy : public QObject
   Q_OBJECT
 public:
   ExtensionInstallWidgetWebChannelProxy() = default;
-  qSlicerExtensionsInstallWidget* InstallWidget{nullptr};
+  qSlicerExtensionsServerWidget* InstallWidget{nullptr};
 public slots:
   void refresh();
 private:
@@ -45,20 +45,16 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-class qSlicerExtensionsInstallWidgetPrivate : public qSlicerWebWidgetPrivate
+class qSlicerExtensionsServerWidgetPrivate : public qSlicerWebWidgetPrivate
 {
-  Q_DECLARE_PUBLIC(qSlicerExtensionsInstallWidget);
+  Q_DECLARE_PUBLIC(qSlicerExtensionsServerWidget);
 protected:
-  qSlicerExtensionsInstallWidget* const q_ptr;
+  qSlicerExtensionsServerWidget* const q_ptr;
 
 public:
   typedef qSlicerWebWidgetPrivate Superclass;
-  qSlicerExtensionsInstallWidgetPrivate(qSlicerExtensionsInstallWidget& object);
-  ~qSlicerExtensionsInstallWidgetPrivate() override;
-
-  /// Return the URL allowing to retrieve the extension list page
-  /// associated with the current architecture, operating system and slicer revision.
-  QUrl extensionsListUrl();
+  qSlicerExtensionsServerWidgetPrivate(qSlicerExtensionsServerWidget& object);
+  ~qSlicerExtensionsServerWidgetPrivate() override;
 
   void setFailurePage(const QStringList &errors);
 
@@ -70,10 +66,6 @@ public:
   void registerExtensionsManagerModel(qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel);
 
   qSlicerExtensionsManagerModel * ExtensionsManagerModel;
-
-  QString SlicerRevision;
-  QString SlicerOs;
-  QString SlicerArch;
 
   bool BrowsingEnabled;
 

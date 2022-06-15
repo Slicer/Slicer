@@ -109,10 +109,8 @@ set(KIT_SRCS
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_SRCS
-    qSlicerExtensionsRestoreWidget.cxx
-    qSlicerExtensionsRestoreWidget.h
-    qSlicerExtensionsManageWidget.cxx
-    qSlicerExtensionsManageWidget.h
+    qSlicerExtensionsLocalWidget.cxx
+    qSlicerExtensionsLocalWidget.h
     qSlicerExtensionsManagerDialog.cxx
     qSlicerExtensionsManagerDialog.h
     qSlicerExtensionsManagerWidget.cxx
@@ -122,9 +120,9 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     )
   if(Slicer_BUILD_WEBENGINE_SUPPORT)
     list(APPEND KIT_SRCS
-      qSlicerExtensionsInstallWidget.cxx
-      qSlicerExtensionsInstallWidget.h
-      qSlicerExtensionsInstallWidget_p.h
+      qSlicerExtensionsServerWidget.cxx
+      qSlicerExtensionsServerWidget.h
+      qSlicerExtensionsServerWidget_p.h
       )
   endif()
 endif()
@@ -234,16 +232,15 @@ set(KIT_MOC_SRCS
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_MOC_SRCS
-    qSlicerExtensionsRestoreWidget.h
-    qSlicerExtensionsManageWidget.h
+    qSlicerExtensionsLocalWidget.h
     qSlicerExtensionsManagerDialog.h
     qSlicerExtensionsManagerWidget.h
     qSlicerSettingsExtensionsPanel.h
     )
   if(Slicer_BUILD_WEBENGINE_SUPPORT)
     list(APPEND KIT_MOC_SRCS
-      qSlicerExtensionsInstallWidget.h
-      qSlicerExtensionsInstallWidget_p.h
+      qSlicerExtensionsServerWidget.h
+      qSlicerExtensionsServerWidget_p.h
       )
   endif()
 endif()

@@ -53,10 +53,6 @@ private:
 
   static ExtensionMetadataType extensionMetadata(const QString &os, int extensionId, bool filtered = false, bool installed = false);
 
-  // Harmonize field names between server APIs. These steps are dispersed in the qSlicerExtensionsManagerModel class,
-  // therefore we need to replicate them here.
-  static void normalizeExtensionMetadata(QVariantMap &metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI);
-
   QStringList expectedExtensionNames()const;
 
   QString extensionNameFromExtenionId(int extensionId);
@@ -258,6 +254,8 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
   QVERIFY(model != nullptr);
   QVERIFY(extensionId >= 0 && extensionId <= 3);
 
+  model->setServerQueryWithLimitEnabled(false);
+
   QString inputArchiveFile = QString(":/extension-%1-%2.tar.gz").arg(os).arg(extensionId);
   QString copiedArchiveFile = tmp + "/" + QFileInfo(inputArchiveFile).fileName();
   if (!QFile::exists(copiedArchiveFile))
@@ -272,24 +270,22 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
 
   qSlicerExtensionsManagerModel::ServerAPI serverAPI = qSlicerExtensionsManagerModel::Girder_v1;
 
+  QString expectedExtensionName = this->expectedExtensionNames().at(extensionId);
+
   // The only API for changing server API is an environment variable.
   // We save the environment variable current value, modify it temporarily, then restore it.
   QString oldServerApiStr = qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_API");
   qputenv("SLICER_EXTENSIONS_MANAGER_SERVER_API",
     qSlicerExtensionsManagerModel::serverAPIToString(serverAPI).toUtf8());
-  ExtensionMetadataType metadata = model->retrieveExtensionMetadata(QString("%1").arg(extensionId));
+  model->updateExtensionsMetadataFromServer(/* force= */ true, /* waitForCompletion= */ true);
+  ExtensionMetadataType metadata = model->extensionMetadata(expectedExtensionName);
   qputenv("SLICER_EXTENSIONS_MANAGER_SERVER_API", oldServerApiStr.toUtf8());
 
   QVERIFY(metadata.count() > 0);
   QVariantMap expectedMetadata = Self::extensionMetadata(os, extensionId);
 
-  Self::normalizeExtensionMetadata(metadata, serverAPI);
-  Self::normalizeExtensionMetadata(expectedMetadata, serverAPI);
-
-  QCOMPARE(metadata, expectedMetadata);
-
   QString extensionName = metadata.value("extensionname").toString();
-  QCOMPARE(extensionName, this->expectedExtensionNames().at(extensionId));
+  QCOMPARE(extensionName, expectedExtensionName);
 
   QVERIFY(!model->isExtensionInstalled(extensionName));
   QVERIFY(!model->isExtensionEnabled(extensionName));
@@ -298,13 +294,15 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
   QSignalSpy spyExtensionEnabledChanged(model, SIGNAL(extensionEnabledChanged(QString,bool)));
 
   QVERIFY(model->installExtension(extensionName, metadata, copiedArchiveFile));
-  QCOMPARE(model->extensionMetadata(extensionName), Self::extensionMetadata(os, extensionId, /* filtered= */ true, /* installed= */ true));
+  QCOMPARE(model->extensionMetadata(extensionName, /* source= */ qSlicerExtensionsManagerModel::MetadataServer),
+           Self::extensionMetadata(os, extensionId, /* filtered= */ true, /* installed= */ false));
   QCOMPARE(model->extensionDescriptionFile(extensionName),
            model->extensionsInstallPath() + "/" + extensionName + ".s4ext");
 
   QCOMPARE(spyExtensionInstalled.count(), 1);
   QCOMPARE(spyExtensionEnabledChanged.count(), 0);
 
+  // Attempt to install the same extension twice and check that no additional signals are emitted.
   QVERIFY(!model->installExtension(extensionName, metadata, copiedArchiveFile));
   QCOMPARE(spyExtensionInstalled.count(), 1);
   QCOMPARE(spyExtensionEnabledChanged.count(), 0);
@@ -404,24 +402,6 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
           allMetadata.value(key));
     }
   return metadata;
-}
-
-// ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::normalizeExtensionMetadata(
-  QVariantMap& metadata, qSlicerExtensionsManagerModel::ServerAPI serverAPI)
-{
-  // Girder_v1 API contains some of the fields in a metadata object,
-  // move those into top-level properties.
-  metadata = qRestAPI::qVariantMapFlattened(metadata);
-
-  // Different server APIs use slightly different property names for metadata,
-  // make sure that standardized extension description property names are present, too.
-
-  // Filter out unused property names.
-  metadata = qSlicerExtensionsManagerModel::filterExtensionMetadata(metadata, serverAPI);
-
-  // Convert server property names.
-  metadata = qSlicerExtensionsManagerModel::convertExtensionMetadata(metadata, serverAPI);
 }
 
 // ----------------------------------------------------------------------------
@@ -533,8 +513,7 @@ void qSlicerExtensionsManagerModelTester::testServerKeysToIgnore_data()
                          << "lowerName"
                          << "meta.app_id"
                          << "name"
-                         << "size"
-                         << "updated")
+                         << "size")
                      << qSlicerExtensionsManagerModel::Girder_v1;
 }
 
@@ -581,6 +560,8 @@ void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey_da
   expected.insert("meta.screenshots", "screenshots");
   // enabled
   // archivename
+  // md5
+  expected.insert("updated", "updated");
   QTest::newRow("1") << expected.keys() << expected.values() << qSlicerExtensionsManagerModel::Girder_v1;
   }
 }
@@ -592,27 +573,26 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
 
   QFETCH(qSlicerExtensionsManagerModel::ServerAPI, serverAPI);
   QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
+  QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
-  QFETCH(QString, extensionId);
+  QFETCH(QString, extensionName);
   QFETCH(QString, jsonFile);
   QVERIFY2(this->prepareJson(jsonFile, serverAPI),
-           QString("Failed to prepare json for extensionId: %1").arg(extensionId).toUtf8());
+           QString("Failed to prepare json for extensionId: %1").arg(extensionName).toUtf8());
 
   QFETCH(QString, slicerVersion);
   qSlicerExtensionsManagerModel model;
+  model.setServerQueryWithLimitEnabled(false);
   model.setExtensionsSettingsFilePath(QSettings().fileName());
   model.setSlicerVersion(slicerVersion);
 
   QString oldServerApiStr = qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_API");
   qputenv("SLICER_EXTENSIONS_MANAGER_SERVER_API", qSlicerExtensionsManagerModel::serverAPIToString(serverAPI).toUtf8());
-  ExtensionMetadataType extensionMetadata = model.retrieveExtensionMetadata(extensionId);
+  model.updateExtensionsMetadataFromServer(/* force= */ true, /* waitForCompletion= */ true);
+  ExtensionMetadataType extensionMetadata = model.extensionMetadata(extensionName);
   qputenv("SLICER_EXTENSIONS_MANAGER_SERVER_API", oldServerApiStr.toUtf8());
 
   QFETCH(QVariantMap, expectedResult);
-
-  Self::normalizeExtensionMetadata(extensionMetadata, serverAPI);
-  Self::normalizeExtensionMetadata(expectedResult, serverAPI);
-
   QCOMPARE(extensionMetadata, expectedResult);
 }
 
@@ -620,16 +600,17 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
 void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata_data()
 {
   QTest::addColumn<qSlicerExtensionsManagerModel::ServerAPI>("serverAPI");
-  QTest::addColumn<QString>("extensionId");
+  QTest::addColumn<QString>("extensionName");
   QTest::addColumn<QString>("jsonFile");
   QTest::addColumn<QString>("slicerVersion");
   QTest::addColumn<QVariantMap>("expectedResult");
 
+  int extensionId = 0;
   QTest::newRow("1") << qSlicerExtensionsManagerModel::Girder_v1
-                     << "0"
-                     << QString(":/extension-%1-0.json").arg(Slicer_OS_WIN_NAME)
-                     << this->slicerVersion(Slicer_OS_WIN_NAME, 0)
-                     << Self::extensionMetadata(Slicer_OS_WIN_NAME, 0);
+                     << this->extensionNameFromExtenionId(extensionId)
+                     << QString(":/extension-%1-%2.json").arg(Slicer_OS_LINUX_NAME).arg(extensionId)
+                     << this->slicerVersion(Slicer_OS_LINUX_NAME, extensionId)
+                     << Self::extensionMetadata(Slicer_OS_LINUX_NAME, extensionId, /* filtered= */ true);
 }
 
 // ----------------------------------------------------------------------------
@@ -840,6 +821,7 @@ void qSlicerExtensionsManagerModelTester::testWriteAndParseExtensionDescriptionF
   metadata.insert("enabled", "true");
   metadata.insert("extensionname", "ImageMaker");
   metadata.insert("homepage", "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/ImageMaker");
+  metadata.insert("installed", "true");
   metadata.insert("md5", "d4726e1fd85b19930e0e8e8e5d6afa62");
   metadata.insert("os", "linux");
   metadata.insert("release", "");
@@ -869,6 +851,7 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
   model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
   model.setSlicerVersion(slicerVersion);
   QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
+  QSignalSpy spyExtensionUpdated(&model, SIGNAL(extensionUpdated(QString)));
   QSignalSpy spyExtensionUninstalled(&model, SIGNAL(extensionUninstalled(QString)));
   QSignalSpy spySlicerRequirementsChanged(&model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)));
 
@@ -904,7 +887,8 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
   std::sort(expectedInstalledExtensionNames.begin(), expectedInstalledExtensionNames.end());
 
   QCOMPARE(model.installedExtensions(), expectedInstalledExtensionNames);
-  QCOMPARE(spyModelUpdated.count(), 0);
+  QCOMPARE(spyModelUpdated.count(), expectedInstalledExtensionNames.count());
+  QCOMPARE(spyExtensionUpdated.count(), 0);
   QCOMPARE(spyExtensionUninstalled.count(), 0);
   QCOMPARE(spySlicerRequirementsChanged.count(), 0);
   QCOMPARE(model.installedExtensionsCount(), expectedInstalledExtensionNames.count());
@@ -1190,7 +1174,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
       {
       this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
       }
-    QCOMPARE(spyModelUpdated.count(), 0);
+    QCOMPARE(spyModelUpdated.count(), this->expectedExtensionNames().count());
   }
   {
     qSlicerExtensionsManagerModel model;
@@ -1199,6 +1183,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
 
     QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
     QSignalSpy spyExtensionInstalled(&model, SIGNAL(extensionInstalled(QString)));
+    QSignalSpy spyExtensionUpdated(&model, SIGNAL(extensionUpdated(QString)));
     QSignalSpy spyExtensionUninstalled(&model, SIGNAL(extensionUninstalled(QString)));
     QSignalSpy spyExtensionEnabledChanged(&model, SIGNAL(extensionEnabledChanged(QString,bool)));
     QSignalSpy spySlicerRequirementsChanged(&model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)));
@@ -1207,6 +1192,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
 
     QCOMPARE(spyModelUpdated.count(), 1);
     QCOMPARE(spyExtensionInstalled.count(), 0);
+    QCOMPARE(spyExtensionUpdated.count(), 0);
     QCOMPARE(spyExtensionEnabledChanged.count(), 0);
     QCOMPARE(spyExtensionUninstalled.count(), 0);
     QCOMPARE(spySlicerRequirementsChanged.count(), 0);
@@ -1217,6 +1203,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
 
     QCOMPARE(spyModelUpdated.count(), 2);
     QCOMPARE(spyExtensionInstalled.count(), 0);
+    QCOMPARE(spyExtensionUpdated.count(), 0);
     QCOMPARE(spyExtensionEnabledChanged.count(), 0);
     QCOMPARE(spyExtensionUninstalled.count(), 0);
     QCOMPARE(spySlicerRequirementsChanged.count(), 0);
@@ -1231,6 +1218,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
 
     QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
     QSignalSpy spyExtensionInstalled(&model, SIGNAL(extensionInstalled(QString)));
+    QSignalSpy spyExtensionUpdated(&model, SIGNAL(extensionUpdated(QString)));
     QSignalSpy spyExtensionUninstalled(&model, SIGNAL(extensionUninstalled(QString)));
     QSignalSpy spyExtensionEnabledChanged(&model, SIGNAL(extensionEnabledChanged(QString,bool)));
     QSignalSpy spySlicerRequirementsChanged(&model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)));
@@ -1260,6 +1248,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
 
     QCOMPARE(spyModelUpdated.count(), 2);
     QCOMPARE(spyExtensionInstalled.count(), 0);
+    QCOMPARE(spyExtensionUpdated.count(), 0);
     QCOMPARE(spyExtensionEnabledChanged.count(), 1);
     QCOMPARE(spyExtensionUninstalled.count(), 0);
     QCOMPARE(spySlicerRequirementsChanged.count(), 0);

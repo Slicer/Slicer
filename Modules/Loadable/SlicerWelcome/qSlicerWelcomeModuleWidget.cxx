@@ -42,6 +42,7 @@
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerUtils.h"
+#include "qSlicerExtensionsManagerModel.h"
 
 // CTK includes
 #include "ctkButtonGroup.h"
@@ -96,10 +97,6 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     {
     group->addButton(collapsible);
     }
-
-  QObject::connect(this->OpenExtensionsManagerButton, SIGNAL(clicked()),
-                   qSlicerApplication::application(), SLOT(openExtensionsManagerDialog()));
-
 
   // Lazily set the fitted browser source to avoid overhead when the module
   // is loaded.
@@ -213,8 +210,29 @@ void qSlicerWelcomeModuleWidget::setup()
           this, SLOT (exploreLoadedData()));
 
 #ifndef Slicer_BUILD_DICOM_SUPPORT
-  d->LoadDicomDataButton->setDisabled(true);
+  d->LoadDicomDataButton->hide();
 #endif
+
+  bool extensionsManagerEnabled = false;
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  qSlicerApplication* app = qSlicerApplication::application();
+  extensionsManagerEnabled = app && app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool();
+#endif
+  if (extensionsManagerEnabled)
+    {
+    QObject::connect(d->OpenExtensionsManagerButton, SIGNAL(clicked()),
+      qSlicerApplication::application(), SLOT(openExtensionsManagerDialog()));
+    if (app->extensionsManagerModel())
+      {
+      QObject::connect(app->extensionsManagerModel(), SIGNAL(extensionUpdatesAvailable(bool)),
+        this, SLOT(setExtensionUpdatesAvailable(bool)));
+      this->setExtensionUpdatesAvailable(!app->extensionsManagerModel()->availableUpdateExtensions().empty());
+      }
+    }
+  else
+    {
+    d->OpenExtensionsManagerButton->hide();
+    }
 
   this->Superclass::setup();
 
@@ -263,4 +281,37 @@ bool qSlicerWelcomeModuleWidget::exploreLoadedData()
 {
   Q_D(qSlicerWelcomeModuleWidget);
   return d->selectModule("Data");
+}
+
+//---------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::setExtensionUpdatesAvailable(bool updateAvailable)
+{
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  Q_D(qSlicerWelcomeModuleWidget);
+  qSlicerApplication* app = qSlicerApplication::application();
+  if (!app || !app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool())
+    {
+    return;
+    }
+
+  // Check if there was a change
+  const char extensionUpdateAvailablePropertyName[] = "extensionUpdateAvailable";
+  if (d->OpenExtensionsManagerButton->property(extensionUpdateAvailablePropertyName).toBool() == updateAvailable)
+    {
+    // no change
+    return;
+    }
+  d->OpenExtensionsManagerButton->setProperty(extensionUpdateAvailablePropertyName, updateAvailable);
+
+  if (updateAvailable)
+    {
+    d->OpenExtensionsManagerButton->setIcon(QIcon(":/Icons/ExtensionNotificationIcon.png"));
+    }
+  else
+    {
+    d->OpenExtensionsManagerButton->setIcon(QIcon(":/Icons/ExtensionDefaultIcon.png"));
+    }
+#else
+  Q_UNUSED(updateAvailable);
+#endif
 }
