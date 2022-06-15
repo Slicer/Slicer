@@ -215,7 +215,6 @@ public:
   /// cleanup happens only if testing mode is enabled.
   ///
   /// \sa QApplication::exec(), returnCode()
-  /// \sa qSlicerCoreCommandOptions::isTestingEnabled()
   static int exec();
 
   /// Get MRML Scene

@@ -179,7 +179,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
     }
 
   // Exit if testing module is enabled and not all modules are instantiated
-  if (!failedToBeInstantiatedModuleNames.isEmpty() && app.commandOptions()->isTestingEnabled())
+  if (!failedToBeInstantiatedModuleNames.isEmpty() && app.testAttribute(qSlicerCoreApplication::AA_EnableTesting))
     {
     return EXIT_FAILURE;
     }
