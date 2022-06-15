@@ -284,7 +284,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   qSlicerIOOptionsWidget* optionsWidget =
     dynamic_cast<qSlicerIOOptionsWidget*>(options);
   // options is not necessary a qSlicerIOOptionsWidget (for the case of
-  // readers/modules with no UI. If there is a UI then add it inside the  file
+  // readers/modules with no UI. If there is a UI then add it inside the file
   // dialog.
   if (optionsWidget)
     {
@@ -314,10 +314,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
       {
       properties.unite(options->properties());
       }
-    else
-      {
-      properties["fileName"] = fileDialog->selectedFiles();
-      }
+    properties["fileName"] = fileDialog->selectedFiles();
     if (d->Action == qSlicerFileDialog::Read)
       {
       vtkNew<vtkCollection> loadedNodes;
