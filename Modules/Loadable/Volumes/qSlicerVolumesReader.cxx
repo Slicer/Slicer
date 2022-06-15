@@ -173,9 +173,9 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     fileList.GetPointer());
   if (node)
     {
-    if (properties.contains("colorNodeID"))
+    QString colorNodeID = properties.value("colorNodeID", QString()).toString();
+    if (!colorNodeID.isEmpty())
       {
-      QString colorNodeID = properties["colorNodeID"].toString();
       vtkMRMLVolumeDisplayNode* displayNode = node->GetVolumeDisplayNode();
       if (displayNode)
         {
