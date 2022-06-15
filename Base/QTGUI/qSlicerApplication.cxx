@@ -451,7 +451,7 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     errorMessage += tr("The message detail is:\n\n");
     errorMessage += tr("Exception thrown in event: ") + exception.what();
     qCritical() << errorMessage;
-    if (this->commandOptions()->isTestingEnabled())
+    if (this->testAttribute(AA_EnableTesting))
       {
       this->exit(EXIT_FAILURE);
       }
@@ -470,7 +470,7 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     errorMessage += tr("The message detail is:\n\n");
     errorMessage += tr("Exception thrown in event: ") + exception.what();
     qCritical() << errorMessage;
-    if (this->commandOptions()->isTestingEnabled())
+    if (this->testAttribute(AA_EnableTesting))
       {
       this->exit(EXIT_FAILURE);
       }
