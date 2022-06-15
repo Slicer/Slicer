@@ -277,9 +277,15 @@ Note: Parameters in URLS (such as `&foo=bar`) are not supported. URL shortener s
 
 ## Extensions server
 
-The official Slicer extensions server is <https://extensions.slicer.org/>. To get a list of extensions, specify the Slicer revision and platform in the URL, for example: <https://extensions.slicer.org/catalog/All/30117/win>
+The official Slicer extensions server, the "Extensions Catalog" is available at <https://extensions.slicer.org/>. To get a list of extensions, specify the Slicer revision and platform in the URL, for example: <https://extensions.slicer.org/catalog/All/30117/win>.
 
-The extension server is built so that organizations can set up and maintain their own extensions servers, for example to distribute extensions for custom applications. Extensions server address can be set in Application Settings, in Extensions section.
+The Extensions Catalog is implemented a web application ([source code](https://github.com/KitwareMedical/slicer-extensions-webapp)), which connects
+to a [Girder server](https://slicer-packages.kitware.com/#collection/5f4474d0e1d8c75dfc70547e/folder/5f4474d0e1d8c75dfc705482), a general-purpose
+storage server with the Slicer Package Manager plugin ([source code](https://github.com/girder/slicer_package_manager)), which provides a
+convenient REST API for accessing Slicer extension packages and metadata.
+
+The extension server is designed so that organizations can set up and maintain their own extensions servers, for example to distribute
+extensions for custom applications. Extensions server address can be set in the Application Settings, in the Extensions section.
 
 Until August 2021, a Midas-based server at `https://slicer.kitware.com/midas3` was used. This server is not online anymore, as it was not feasible to perform all software updates that would have kept it secure.
 

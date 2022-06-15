@@ -4,7 +4,7 @@
 
 New features can be added to 3D Slicer by installing "extensions". An extension is a delivery package bundling together one or more Slicer modules. After installing an extension, the associated modules will be presented to the user the same way as built-in modules.
 
-The Slicer community maintains a website referred to as the [Slicer Extensions Catalog](https://extensions.slicer.org/catalog/All/30117/win) for finding and downloading extensions. Extensions manager in Slicer makes the catalog available directly in the application and allows extension install, update, or uninstall extensions by a few clicks.
+The Slicer community maintains a website referred to as the [Slicer Extensions Catalog](https://extensions.slicer.org/catalog/All/30822/win) for finding and downloading extensions. Extensions manager in Slicer makes the catalog available directly in the application and allows extension install, update, or uninstall extensions by a few clicks.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extensions_manager.png)
 
@@ -39,7 +39,7 @@ Extensions are updated every night for the latest Slicer Stable Release. Extensi
 #### Update extensions for Slicer Preview Releases
 
 Each Slicer Preview Release and all corresponding extensions are built at once, and only once (every night, from the latest version of Slicer).
-To get latest extensions for a Slicer Preview Release, download and install the latest Slicer and reinstall the extensions.
+To get latest extensions for a Slicer Preview Release, download and install the latest Slicer Preview Release and reinstall the extensions.
 
 ### Uninstall extensions
 
@@ -59,7 +59,7 @@ Extensions can be temporarily disabled. Disabled extensions are not loaded into 
 
 ### Install extensions without network connection
 
-Extensions can be downloaded from the Extensions catalog using any web browser then installed manually.
+Extensions can be downloaded from the Extensions Catalog website and can be installed manually, without network connection, in Slicer using the Extensions manager.
 
 #### Download extension packages
 
