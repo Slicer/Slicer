@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerExtensionsInstallWidget_h
-#define __qSlicerExtensionsInstallWidget_h
+#ifndef __qSlicerExtensionsServerWidget_h
+#define __qSlicerExtensionsServerWidget_h
 
 // CTK includes
 #include <ctkErrorLogModel.h>
@@ -28,41 +28,28 @@
 #include "qSlicerBaseQTGUIExport.h"
 #include "qSlicerWebWidget.h"
 
-class qSlicerExtensionsInstallWidgetPrivate;
+class qSlicerExtensionsServerWidgetPrivate;
 class qSlicerExtensionsManagerModel;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsInstallWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsServerWidget
   : public qSlicerWebWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString slicerRevision READ slicerRevision WRITE setSlicerRevision)
-  Q_PROPERTY(QString slicerOs READ slicerOs WRITE setSlicerOs)
-  Q_PROPERTY(QString slicerArch READ slicerArch WRITE setSlicerArch)
   Q_PROPERTY(bool browsingEnabled READ isBrowsingEnabled WRITE setBrowsingEnabled)
 public:
   /// Superclass typedef
   typedef qSlicerWebWidget Superclass;
 
   /// Constructor
-  explicit qSlicerExtensionsInstallWidget(QWidget* parent = nullptr);
+  explicit qSlicerExtensionsServerWidget(QWidget* parent = nullptr);
 
   /// Destructor
-  ~qSlicerExtensionsInstallWidget() override;
+  ~qSlicerExtensionsServerWidget() override;
 
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
-  QString slicerRevision()const;
-  void setSlicerRevision(const QString& revision);
-
-  QString slicerOs()const;
-  void setSlicerOs(const QString& os);
-
-  QString slicerArch()const;
-  void setSlicerArch(const QString& arch);
-
   bool isBrowsingEnabled() const;
-  void setBrowsingEnabled(bool state);
 
 public slots:
   /// Refresh the web page associated with the widget
@@ -74,9 +61,11 @@ public slots:
 
   void onExtensionCancelledScheduleForUninstall(const QString& extensionName);
 
-  void onSlicerRequirementsChanged(const QString& revision,const QString& os,const QString& arch);
+  void onSlicerRequirementsChanged();
 
   void onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level);
+
+  void setBrowsingEnabled(bool state);
 
 protected:
   bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame) override;
@@ -88,8 +77,8 @@ protected slots:
   void onLoadStarted() override;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerExtensionsInstallWidget);
-  Q_DISABLE_COPY(qSlicerExtensionsInstallWidget);
+  Q_DECLARE_PRIVATE(qSlicerExtensionsServerWidget);
+  Q_DISABLE_COPY(qSlicerExtensionsServerWidget);
 };
 
 #endif

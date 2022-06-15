@@ -60,6 +60,7 @@ public:
 
 protected slots:
   void onModelUpdated();
+  void onBatchProcessingChanged();
 
 protected:
   QScopedPointer<qSlicerExtensionsManagerDialogPrivate> d_ptr;

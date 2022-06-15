@@ -31,6 +31,9 @@
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
+// CTK includes
+#include <ctkErrorLogLevel.h>
+
 class qSlicerExtensionsManagerWidgetPrivate;
 class qSlicerExtensionsManagerModel;
 
@@ -54,8 +57,19 @@ public:
   /// Shows a popup if operations are still in progress, asking if the user wants to stop them.
   bool confirmClose();
 
+  bool isInBatchProcessing();
+
+signals:
+
+  /// If this signal is emitted when entering/exiting batch processing mode.
+  /// In batch mode the user should not be able to allowed to quite the extensions manager.
+  void inBatchProcessing(bool batch);
+
 public slots:
   void refreshInstallWidget();
+
+  // Request update state of automatic extension update check and install checkbox states
+  void updateAutoUpdateWidgetsFromModel();
 
 protected slots:
   void onModelUpdated();
@@ -68,8 +82,17 @@ protected slots:
   void onSearchTextChanged(const QString& newText);
 
   void onCheckForUpdatesTriggered();
+  void onEditBookmarksTriggered();
+  void onInstallUpdatesTriggered();
+  void onInstallBookmarkedTriggered();
   void onInstallFromFileTriggered();
+
+  void setAutoUpdateCheck(bool toggle);
+  void setAutoUpdateInstall(bool toggle);
+  void setAutoInstallDependencies(bool toggle);
+
   void onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level);
+  void onMessagesAcknowledged();
 
 protected:
   void timerEvent(QTimerEvent*) override;

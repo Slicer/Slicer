@@ -50,6 +50,7 @@ public slots:
   bool loadDicomData();
   void editApplicationSettings();
   bool exploreLoadedData();
+  void setExtensionUpdatesAvailable(bool updateAvailable);
 
 protected:
   void setup() override;

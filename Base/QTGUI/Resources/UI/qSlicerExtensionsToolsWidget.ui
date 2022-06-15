@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>188</width>
+    <width>593</width>
     <height>46</height>
    </rect>
   </property>
@@ -15,19 +15,74 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
+    <widget class="QToolButton" name="CheckForUpdatesButton">
+     <property name="toolTip">
+      <string>Query the Extensions Server if there are updates for any of the installed extensions</string>
+     </property>
+     <property name="text">
+      <string>Check for updates</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/Icons/Update.svg</normalon>
+      </iconset>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="InstallUpdatesButton">
+     <property name="toolTip">
+      <string>Updates all extensions with the latest version available on the Extensions Server</string>
+     </property>
+     <property name="text">
+      <string>Update all</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/Icons/Update.svg</normalon>
+      </iconset>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="InstallBookmarkedButton">
+     <property name="toolTip">
+      <string>Install all the bookmarked extensions</string>
+     </property>
+     <property name="text">
+      <string>Install bookmarked</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/Icons/Install.svg</normalon>
+      </iconset>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="InstallFromFileButton">
      <property name="toolTip">
-      <string>Install Extension from File...</string>
+      <string>Install extensions from one or more extension package files</string>
      </property>
      <property name="text">
       <string>Install from file...</string>
      </property>
      <property name="icon">
-      <iconset resource="../qSlicerBaseQTGUI.qrc">
-       <normaloff>:/Icons/Large/SlicerAddData.png</normaloff>:/Icons/Large/SlicerAddData.png</iconset>
+      <iconset>
+       <normalon>:/Icons/Add.svg</normalon>
+      </iconset>
      </property>
-     <property name="autoRaise">
-      <bool>true</bool>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
      </property>
     </widget>
    </item>
@@ -59,21 +114,61 @@
     </widget>
    </item>
   </layout>
-  <action name="CheckForUpdatesAction">
-   <property name="icon">
-    <iconset resource="../qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/XSmall/SlicerCheckForUpdates.png</normaloff>:/Icons/XSmall/SlicerCheckForUpdates.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Check for Updates</string>
-   </property>
-  </action>
-  <action name="AutoUpdateAction">
+  <action name="AutoUpdateCheckAction">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Install Updates &amp;Automatically</string>
+    <string>Automatically check for updates</string>
+   </property>
+   <property name="toolTip">
+    <string>Periodically check for updated extensions.</string>
+   </property>
+  </action>
+  <action name="AutoUpdateInstallAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Automatically install updates</string>
+   </property>
+   <property name="toolTip">
+    <string>Automatically install updated extensions</string>
+   </property>
+  </action>
+  <action name="CheckForUpdatesAction">
+   <property name="text">
+    <string>Check for updates</string>
+   </property>
+   <property name="toolTip">
+    <string>Query the Extensions Server if there are updates for any of the installed extensions</string>
+   </property>
+  </action>
+  <action name="EditBookmarksAction">
+   <property name="text">
+    <string>Edit bookmarks...</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit list of bookmarks in a text field</string>
+   </property>
+  </action>
+  <action name="OpenExtensionsCatalogWebsiteAction">
+   <property name="text">
+    <string>Open Extensions Catalog website...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Extensions Catalog website in the default web browser. Useful for downloading extension packages for offline use.</string>
+   </property>
+  </action>
+  <action name="AutoInstallDependenciesAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Automatically install dependencies</string>
+   </property>
+   <property name="toolTip">
+    <string>Automatically install required additional extensions when installing an extension</string>
    </property>
   </action>
  </widget>

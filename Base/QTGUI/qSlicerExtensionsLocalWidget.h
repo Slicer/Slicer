@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerExtensionsManageWidget_h
-#define __qSlicerExtensionsManageWidget_h
+#ifndef __qSlicerExtensionsLocalWidget_h
+#define __qSlicerExtensionsLocalWidget_h
 
 // Qt includes
 #include <QListWidget>
@@ -30,9 +30,9 @@
 
 class qSlicerExtensionsItemDelegate;
 class qSlicerExtensionsManagerModel;
-class qSlicerExtensionsManageWidgetPrivate;
+class qSlicerExtensionsLocalWidgetPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManageWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsLocalWidget
   : public QListWidget
 {
   Q_OBJECT
@@ -42,10 +42,10 @@ public:
   typedef QListWidget Superclass;
 
   /// Constructor
-  explicit qSlicerExtensionsManageWidget(QWidget* parent = nullptr);
+  explicit qSlicerExtensionsLocalWidget(QWidget* parent = nullptr);
 
   /// Destructor
-  ~qSlicerExtensionsManageWidget() override;
+  ~qSlicerExtensionsLocalWidget() override;
 
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
@@ -59,8 +59,13 @@ signals:
 public slots:
   void displayExtensionDetails(const QString& extensionName);
   void setSearchText(const QString& newText);
+  // Refresh after application settings changed (server URL, autoupdate settings)
+  void refresh();
 
 protected slots:
+  void addBookmark(const QString& extensionName);
+  void removeBookmark(const QString& extensionName);
+  void installExtension(const QString& extensionName);
   void setExtensionEnabled(const QString& extensionName);
   void setExtensionDisabled(const QString& extensionName);
   void setExtensionUpdateAvailable(const QString& extensionName);
@@ -72,23 +77,27 @@ protected slots:
   void onIconDownloadComplete(const QString& extensionName);
   void onLinkActivated(const QString& link);
   void onExtensionInstalled(const QString& extensionName);
+  void onExtensionUninstalled(const QString& extensionName);
+  void onExtensionMetadataUpdated(const QString& extensionName);
+  void onExtensionBookmarkedChanged(const QString& extensionName, bool bookmarked);
   void onExtensionScheduledForUninstall(const QString& extensionName);
   void onExtensionCancelledScheduleForUninstall(const QString& extensionName);
   void setExtensionUpdateScheduled(const QString& extensionName);
   void setExtensionUpdateCanceled(const QString& extensionName);
   void setExtensionUpdateDownloadProgress(
     const QString& extensionName, qint64 received, qint64 total);
+  void setExtensionInstallDownloadProgress(
+    const QString& extensionName, qint64 received, qint64 total);
   void onModelExtensionEnabledChanged(const QString& extensionName, bool enabled);
 
 protected:
-  QScopedPointer<qSlicerExtensionsManageWidgetPrivate> d_ptr;
+  QScopedPointer<qSlicerExtensionsLocalWidgetPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerExtensionsManageWidget);
-  Q_DISABLE_COPY(qSlicerExtensionsManageWidget);
+  Q_DECLARE_PRIVATE(qSlicerExtensionsLocalWidget);
+  Q_DISABLE_COPY(qSlicerExtensionsLocalWidget);
 
   friend class qSlicerExtensionsItemDelegate;
 };
 
 #endif
-

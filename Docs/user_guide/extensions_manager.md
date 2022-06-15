@@ -8,19 +8,38 @@ The Slicer community maintains a website referred to as the [Slicer Extensions C
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extensions_manager.png)
 
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extensions_manager_update.png)
+
 ## How to
 
 ### Install extensions
 
 - Open Extensions manager using menu: View / Extensions manager. On macOS, Extensions manager requires the [application to be installed](getting_started.md#mac).
-- To restore previously installed extensions:
-  - Go to "Restore Extensions" tab
-  - Check the checkbox on the left side of each extension that should be installed. If the extension that you want to install is disabled and has "not found for current Slicer version" message is displayed below its name then follow instructions in [troubleshooting section](#extension-is-not-found-for-current-slicer-version).
-  - Click "Install Selected" button.
-- To install new extensions: go to "Install extensions" tab and click "Install" button for each extension to be installed.
-- If "Install dependencies" window appears, click "Yes" to install extensions that the selected extension requires. If dependencies are not installed then the chosen extension may not work properly.
+- To install new extensions:
+  - Go to "Install extensions" tab
+  - Click "Install" button for each extension to be installed.
+- To restore previously "bookmarked" extensions:
+  - Go to "Manage Extensions" tab
+  - Click "Install bookmarked" button to install all bookmarked extensions; or click "Install" button of specific extensions.
+- If "Install dependencies" window appears, click "Yes" to install extensions that the selected extension requires. If dependencies are not installed then the chosen extension may not work properly. Automatic installation of dependencies can be enabled by using the "Automatically install dependencies" option in the "Settings" button's menu.
 - Wait until "Restart" button in the lower-right corner becomes enabled, then click "Restart".
 - Click "OK" if you are asked to restart Slicer, unless you have valuable changes in the scene. If there are changes in the scene that needs to be saved then choose "Cancel", save the scene, and restart the application manually.
+
+:::{note}
+
+Extensions can be "bookmarked" so that they can be easily reinstalled later, even in other Slicer versions. Bookmarks can be added or removed by clicking the orange bookmark icon in the extensions list in the "Manage extensions" tab.
+
+All current bookmarks can be conveniently accessed and multiple bookmarks can be added using "Edit bookmarks..." in the "Settings" button's menu. This feature is also useful to quickly share the list of bookmarked extensions with others, or easily add multiple bookmarked extensions for easy installation.
+
+:::
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extensions_manager_settings.png)
+
+:::{note}
+
+If the extension that you want to install is disabled and has "Not found for this version of the application" message is displayed below its name then follow instructions in [troubleshooting section](#extension-is-not-found-for-current-slicer-version).
+
+:::
 
 ### Update extensions
 
@@ -28,11 +47,18 @@ The Slicer community maintains a website referred to as the [Slicer Extensions C
 
 - Open Extensions manager using menu: View / Extensions manager.
 - Go to "Manage extensions" tab.
-- Click the tools button ("wrench" icon in the top-right corner) and select "Check for updates".
-- Click "Update" button for each extension to update. If "An update is available" message is not displayed for any of the extensions then it means that extensions are already up-to-date.
+- Click "Check for updates" button for looking for updates for all installed extensions.
+- For each extension that has an available update, "An update is available..." note is displayed.
+- Click "Update all" button to install all available updates or click "Update" button for specific extensions.
 - Click "Restart" button to restart the application.
 
-By selecting "Install Updates Automatically" from the tools menu, Slicer will check if extension updates are available at start-up and choose all of them for update.
+:::{note}
+
+By enabling "Automatically check for updates" in the "Settings" button's menu, Slicer will check if extension updates are available at start-up and display a small orange notification marker on the Extensions Manager icon on the toolbar.
+
+By enabling "Automatically install updates" in the "Settings" button's menu, Slicer will automatically install updates when an update is found.
+
+:::
 
 Extensions are updated every night for the latest Slicer Stable Release. Extensions are not updated for earlier Slicer Stable Releases.
 
@@ -63,18 +89,17 @@ Extensions can be downloaded from the Extensions Catalog website and can be inst
 
 #### Download extension packages
 
-- Get application revision number from menu: Help / About 3D Slicer. The revision is a number preceded by r character, for example: if the complete version string is 4.13.0-2021-03-05 r29749 / 121ffbd the application revision number is 29749.
-- Start a web browser and open the extensions catalog (app store) website. The default Slicer extensions catalog is available at: [https://extensions.slicer.org](https://extensions.slicer.org). To see a list of extensions, operating system (`win`, `linux`, `macosx`) and Slicer reviesion must be provided in the format: `https://extensions.slicer.org/catalog/All/<revision>/<os>`, for example <https://extensions.slicer.org/catalog/All/30117/win>
-- Select operating system (Windows, Linux, or Mac OSX), bitness (64-bit), and revision (the application revision number retrieved in the first step). If "No extensions found..." message is displayed then check [troubleshooting section](#extensions-manager-does-not-show-any-extensions).
+- Opening the Extension Catalog in the default web browser on your system by clicking on "Open Extensions Catalog website" in the "Settings" button's menu
+  - Alternatively, open the website in any web browser using a link like this: `https://extensions.slicer.org/catalog/All/<revision>/<os>`, for example <https://extensions.slicer.org/catalog/All/30117/win>. `revision` refers to the application revision number that can be obtained from menu: Help / About 3D Slicer (the revision is a number preceded by r character, for example: if the complete version string is 4.13.0-2021-03-05 r29749 / 121ffbd the application revision number is 29749). `os` refers to the operating system, use `win`, `linux`, or `macosx`.
 - Click "Download" button of the selected extension(s) to download the extension package.
 
 #### Install downloaded extension packages
 
 - Open Extensions manager using menu: View / Extensions manager.
-- Click the "Install extension from file" button (folder icon in the top-right corner).
-- Select the the previously downloaded extension package.
-- Wait for the "Installed extension..." window and click "OK".
-- Install additional extensions as needed, then click "Restart" button to restart the application.
+- Click the "Install fom file..." button.
+- Select the the previously downloaded extension package(s). Multiple extension packages can be selected at once.
+- Wait for the installations to complete.
+- Click "Restart" button to restart the application.
 
 ## Troubleshooting
 

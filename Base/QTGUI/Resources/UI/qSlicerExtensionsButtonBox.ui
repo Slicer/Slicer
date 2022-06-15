@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>363</width>
-    <height>92</height>
+    <width>528</width>
+    <height>190</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -27,115 +27,65 @@
      </property>
     </spacer>
    </item>
-   <item>
-    <widget class="QWidget" name="UpdateOptionsWidget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>20</height>
-      </size>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,0">
-      <property name="margin">
-       <number>0</number>
-      </property>
-      <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>0</width>
-          <height>17</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QProgressBar" name="UpdateProgress"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="ScheduleForUpdateButton">
-        <property name="toolTip">
-         <string>Tell the application to update this extension on restart.</string>
-        </property>
-        <property name="text">
-         <string>Update</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="CancelScheduledForUpdateButton">
-        <property name="toolTip">
-         <string>Tell the application to keep the currently installed version of this extension.</string>
-        </property>
-        <property name="text">
-         <string>Cancel Update</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+   <item row="3" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
+      <widget class="QProgressBar" name="InstallProgress"/>
      </item>
      <item>
-      <widget class="QPushButton" name="EnableButton">
+      <widget class="QPushButton" name="InstallButton">
        <property name="toolTip">
-        <string>Tell the application to load this extension by adding all associated module paths to the application settings.</string>
+        <string>Install this extension (requires restart).</string>
        </property>
        <property name="text">
-        <string>Enable</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="DisableButton">
-       <property name="toolTip">
-        <string>Tell the application to skip loading of this extension by removing all associated module paths from the application settings.</string>
-       </property>
-       <property name="text">
-        <string>Disable</string>
+        <string>Install</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item row="1" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QPushButton" name="AddBookmarkButton">
+       <property name="toolTip">
+        <string>Click this button to add bookmark this extension. Bookmarked extension will appear in all application versions for easy reinstallation.</string>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
+       <property name="text">
+        <string/>
        </property>
-      </spacer>
+       <property name="icon">
+        <iconset>
+         <normalon>:/Icons/BookmarkAdd.svg</normalon>
+        </iconset>
+       </property>
+      </widget>
      </item>
+     <item>
+      <widget class="ctkPushButton" name="RemoveBookmarkButton">
+       <property name="toolTip">
+        <string>Click to remove the bookmark.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/Icons/Bookmark.svg</normalon>
+        </iconset>
+       </property>
+       <property name="buttonTextAlignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="iconAlignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="7" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QPushButton" name="ScheduleForUninstallButton">
        <property name="toolTip">
@@ -158,8 +108,132 @@
      </item>
     </layout>
    </item>
+   <item row="7" column="0">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="1">
+    <widget class="QWidget" name="UpdateOptionsWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QProgressBar" name="UpdateProgress"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ScheduleForUpdateButton">
+          <property name="toolTip">
+           <string>Tell the application to update this extension on restart.</string>
+          </property>
+          <property name="text">
+           <string>Update</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="CancelScheduledForUpdateButton">
+          <property name="toolTip">
+           <string>Tell the application to keep the currently installed version of this extension.</string>
+          </property>
+          <property name="text">
+           <string>Cancel Update</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="EnableButton">
+       <property name="toolTip">
+        <string>Tell the application to load this extension by adding all associated module paths to the application settings.</string>
+       </property>
+       <property name="text">
+        <string>Enable</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="DisableButton">
+       <property name="toolTip">
+        <string>Tell the application to skip loading of this extension by removing all associated module paths from the application settings.</string>
+       </property>
+       <property name="text">
+        <string>Disable</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="StatusLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>ScheduleForUpdateButton</tabstop>
+  <tabstop>CancelScheduledForUpdateButton</tabstop>
+  <tabstop>AddBookmarkButton</tabstop>
+  <tabstop>RemoveBookmarkButton</tabstop>
+  <tabstop>EnableButton</tabstop>
+  <tabstop>DisableButton</tabstop>
+  <tabstop>ScheduleForUninstallButton</tabstop>
+  <tabstop>CancelScheduledForUninstallButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../qSlicerBaseQTGUI.qrc"/>
+ </resources>
  <connections/>
 </ui>

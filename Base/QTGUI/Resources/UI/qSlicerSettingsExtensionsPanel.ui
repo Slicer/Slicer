@@ -7,14 +7,23 @@
     <x>0</x>
     <y>0</y>
     <width>378</width>
-    <height>164</height>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Extensions</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -25,12 +34,15 @@
      <item row="0" column="0">
       <widget class="QLabel" name="ExtensionsManagerEnabledLabel">
        <property name="text">
-        <string>Enable extensions manager:</string>
+        <string>Enable Extensions Manager:</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
       <widget class="QCheckBox" name="ExtensionsManagerEnabledCheckBox">
+       <property name="toolTip">
+        <string>Hide Extensions Manager from the application user interface. Automatic updates are performed even if the Extensions Manager is disabled.</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -40,34 +52,131 @@
       </widget>
      </item>
      <item row="1" column="0">
+      <widget class="QLabel" name="AutoUpdateCheckLabel">
+       <property name="text">
+        <string>Automatically check for updates:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="AutoUpdateCheckCheckBox">
+       <property name="toolTip">
+        <string>Periodically check the extensions server for updates</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="AutoUpdateInstallLabel">
+       <property name="text">
+        <string>Automatically install updates:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="AutoUpdateInstallCheckBox">
+       <property name="toolTip">
+        <string>If updates are found then install them automatically</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
       <widget class="QLabel" name="ExtensionsServerUrlLabel">
        <property name="text">
         <string>Extensions server URL:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="4" column="1">
       <widget class="QLineEdit" name="ExtensionsServerUrlLineEdit"/>
      </item>
-     <item row="2" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="ExtensionsFrontendServerUrlLabel">
        <property name="text">
         <string>Extensions frontend server URL:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="5" column="1">
       <widget class="QLineEdit" name="ExtensionsFrontendServerUrlLineEdit"/>
      </item>
-     <item row="3" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="ExtensionsInstallPathLabel">
        <property name="text">
         <string>Extensions installation path:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="6" column="1">
       <widget class="ctkDirectoryButton" name="ExtensionsInstallPathButton"/>
+     </item>
+     <item row="7" column="1">
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="8" column="0" colspan="2">
+      <widget class="QPushButton" name="OpenExtensionsManagerPushButton">
+       <property name="text">
+        <string>Open Extensions Manager...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../qSlicerBaseQTGUI.qrc">
+         <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0" colspan="2">
+      <widget class="QPushButton" name="OpenExtensionsCatalogWebsitePushButton">
+       <property name="text">
+        <string>Open Extensions Catalog website...</string>
+       </property>
+       <property name="toolTip">
+        <string>Open Extensions Catalog website in the default web browser. Useful for downloading extension packages for offline use.</string>
+      </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="AutoUpdateInstallLabel_2">
+       <property name="text">
+        <string>Automatically install dependencies:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="AutoInstallDependenciesCheckBox">
+       <property name="toolTip">
+        <string>Automatically install required additional extensions when installing an extension</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -87,17 +196,6 @@
      </property>
     </spacer>
    </item>
-   <item>
-    <widget class="QPushButton" name="OpenExtensionsManagerPushButton">
-     <property name="text">
-      <string>Open Extensions Manager...</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../qSlicerBaseQTGUI.qrc">
-       <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -116,22 +214,5 @@
  <resources>
   <include location="../qSlicerBaseQTGUI.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>ExtensionsManagerEnabledCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>OpenExtensionsManagerPushButton</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>145</x>
-     <y>4</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>228</x>
-     <y>160</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
