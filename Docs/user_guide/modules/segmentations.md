@@ -24,7 +24,13 @@ Segmentation can be edited using [Segment Editor](segmenteditor.md) module.
 - In `Description` column choose `Segmentation`
 - Click `OK`
 
-Other volume file formats can be loaded as labelmap volume and then converted to segmentation node:
+:::{tip}
+
+To avoid the need to always manually select `Segmentation`, save the `.nrrd` file using the `.seg.nrrd` file extension. It makes Slicer load the image as a segmentation by default.
+
+::: 
+
+Other image file formats can be loaded as labelmap volume and then converted to segmentation:
 - Drag-and-drop the volume file to the application window (or use menu: `File` / `Add Data`, then select the file)
 - Click `Show Options`
 - In `Options` column check `LabelMap` checkbox (to indicate that the volume is a labelmap, not a grayscale image)
@@ -32,7 +38,11 @@ Other volume file formats can be loaded as labelmap volume and then converted to
 - Go to `Data` module, `Subject hierarchy` tab
 - Right-click on the name of the imported volume and choose `Convert labelmap to segmentation node`
 
-Tip: To show the segmentation in 3D, go to `Segmentations` module and in `Representations` section, `Closed surface` row, click `Create`. Or, during segment editing in `Segment Editor` module click`Show 3D` button to show/hide segmentation in 3D.
+:::{tip}
+
+To show the segmentation in 3D, go to `Segmentations` module and click `Show 3D`. Alternatively, go to `Data` module and drag-and-drop the segmentation into each view where you want to see them - if the segmentation is dragged into a 3D view then it will be shown there in 3D.
+
+::: 
 
 ### Import an existing segmentation from model (surface mesh) file
 
