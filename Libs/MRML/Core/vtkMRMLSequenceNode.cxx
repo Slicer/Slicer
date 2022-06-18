@@ -245,6 +245,9 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode *anode)
     }
   this->SequenceScene=vtkMRMLScene::New();
 
+  // Get data node ID in the target scene from the data node ID in the source scene
+  std::map< std::string, std::string > sourceToTargetDataNodeID;
+
   if (snode->SequenceScene)
     {
     for (int n = 0; n < snode->SequenceScene->GetNodes()->GetNumberOfItems(); n++)
@@ -255,7 +258,8 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode *anode)
         vtkErrorMacro("Invalid node in vtkMRMLSequenceNode");
         continue;
         }
-      this->DeepCopyNodeToScene(node, this->SequenceScene);
+      vtkMRMLNode* targetDataNode = this->DeepCopyNodeToScene(node, this->SequenceScene);
+      sourceToTargetDataNodeID[node->GetID()] = targetDataNode->GetID();
       }
     }
 
@@ -267,13 +271,15 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode *anode)
     seqItem.DataNode = nullptr;
     if (sourceIndexIt->DataNode!=nullptr)
       {
-      seqItem.DataNode=this->SequenceScene->GetNodeByID(sourceIndexIt->DataNode->GetID());
+      std::string targetDataNodeID = sourceToTargetDataNodeID[sourceIndexIt->DataNode->GetID()];
+      seqItem.DataNode = this->SequenceScene->GetNodeByID(targetDataNodeID);
       seqItem.DataNodeID.clear();
       }
     if (seqItem.DataNode==nullptr)
       {
       // data node was not found, at least copy its ID
-      seqItem.DataNodeID=sourceIndexIt->DataNodeID;
+      std::string targetDataNodeID = sourceToTargetDataNodeID[sourceIndexIt->DataNodeID];
+      seqItem.DataNodeID = targetDataNodeID;
       if (seqItem.DataNodeID.empty())
         {
         vtkWarningMacro("vtkMRMLSequenceNode::Copy: node was not found at index value "<<seqItem.IndexValue);
@@ -769,7 +775,7 @@ vtkMRMLNode* vtkMRMLSequenceNode::DeepCopyNodeToScene(vtkMRMLNode* source, vtkMR
 {
   if (source == nullptr)
     {
-    vtkGenericWarningMacro("NodeSequencer::CopyNode failed, invalid node");
+    vtkGenericWarningMacro("vtkMRMLSequenceNode::DeepCopyNodeToScene failed, invalid node");
     return nullptr;
     }
   std::string baseName = "Data";
