@@ -213,11 +213,9 @@ void qSlicerWelcomeModuleWidget::setup()
   d->LoadDicomDataButton->hide();
 #endif
 
-  bool extensionsManagerEnabled = false;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerApplication* app = qSlicerApplication::application();
-  extensionsManagerEnabled = app && app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool();
-#endif
+  bool extensionsManagerEnabled = app && app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool();
   if (extensionsManagerEnabled)
     {
     QObject::connect(d->OpenExtensionsManagerButton, SIGNAL(clicked()),
@@ -233,6 +231,9 @@ void qSlicerWelcomeModuleWidget::setup()
     {
     d->OpenExtensionsManagerButton->hide();
     }
+#else
+  d->OpenExtensionsManagerButton->hide();
+#endif
 
   this->Superclass::setup();
 
