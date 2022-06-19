@@ -386,6 +386,11 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   Q_Q(qMRMLSegmentEditorWidget);
   this->setupUi(q);
 
+  // Set combobox size adjust policy to prevent long node leading to large minimum width.
+  // (AdjustToContentsOnFirstShow is used by default, which may make the minimum width quite large.)
+  this->SegmentationNodeComboBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+  this->MasterVolumeNodeComboBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+
   this->SliceRotateWarningButton->setMaximumHeight(this->SegmentationNodeComboBox->sizeHint().height());
   this->SliceRotateWarningButton->setMaximumWidth(this->SegmentationNodeComboBox->sizeHint().height());
   this->SpecifyGeometryButton->setMaximumHeight(this->MasterVolumeNodeComboBox->sizeHint().height());
