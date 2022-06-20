@@ -188,6 +188,8 @@ adding a playback button using [this free service](https://addplaybuttontoimage.
     - If the extension was built then you can find the automatically generated extension description in the build folder
     - If the extension was not built then create the extension description file manually, using a text editor
   - Add your .s4ext file to your forked repository: it can be done using a git client or simply by clicking ''Upload files'' button
+    - To make the extension appear in the latest Slicer Preview Release: upload the file into the `master` branch.
+    - To make the extension appear in the latest Slicer Stable Release: upload the file into the branch corresponding to the stable release vesion, for example: `4.10`.
   - Create a pull request: by clicking ''Create pull request'' button
   - Follow the instructions in the pull request template
 
