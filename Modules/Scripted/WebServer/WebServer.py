@@ -11,8 +11,6 @@ import qt
 import slicer
 from slicer.ScriptedLoadableModule import *
 
-import WebServerLib
-
 #
 # WebServer
 #
@@ -114,7 +112,8 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
 
     self.enableDICOMHandler = qt.QCheckBox()
     self.enableDICOMHandler.toolTip = "Enable serving Slicer DICOM database content via DICOMweb (stop server to change option)"
-    advancedFormLayout.addRow('DICOMweb API: ', self.enableDICOMHandler)
+    if hasattr(slicer.modules, "dicom"):
+      advancedFormLayout.addRow('DICOMweb API: ', self.enableDICOMHandler)
 
     self.enableStaticPagesHandler = qt.QCheckBox()
     self.enableStaticPagesHandler.toolTip = "Enable serving static pages (stop server to change option)"
@@ -168,7 +167,10 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
     self.logToGUI.checked = slicer.app.userSettings().value("WebServer/logToGUI", True)
     self.enableSlicerHandler.checked = slicer.app.userSettings().value("WebServer/enableSlicerHandler", True)
     self.enableSlicerHandlerExec.checked = slicer.app.userSettings().value("WebServer/enableSlicerHandlerExec", False)
-    self.enableDICOMHandler.checked = slicer.app.userSettings().value("WebServer/enableDICOMHandler", True)
+    if hasattr(slicer.modules, "dicom"):
+      self.enableDICOMHandler.checked = slicer.app.userSettings().value("WebServer/enableDICOMHandler", True)
+    else:
+      self.enableDICOMHandler.checked = False
     self.enableStaticPagesHandler.checked = slicer.app.userSettings().value("WebServer/enableStaticPagesHandler", True)
 
   def updateGUIFromLogic(self):
@@ -206,7 +208,9 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
     self.stopServer()
 
     packageName='WebServerLib'
-    submoduleNames=['DICOMRequestHandler', 'SlicerRequestHandler', 'StaticPagesRequestHandler']
+    submoduleNames=['SlicerRequestHandler', 'StaticPagesRequestHandler']
+    if hasattr(slicer.modules, "dicom"):
+      submoduleNames.append('DICOMRequestHandler')
     import imp
     f, filename, description = imp.find_module(packageName)
     package = imp.load_module(packageName, f, filename, description)
@@ -562,11 +566,14 @@ class WebServerLogic:
 
   def addDefaultRequestHandlers(self, enableSlicer=True, enableExec=False, enableDICOM=True, enableStaticPages=True):
     if enableSlicer:
-      self.requestHandlers.append(WebServerLib.SlicerRequestHandler(enableExec))
+      from WebServerLib import SlicerRequestHandler
+      self.requestHandlers.append(SlicerRequestHandler(enableExec))
     if enableDICOM:
-      self.requestHandlers.append(WebServerLib.DICOMRequestHandler())
+      from WebServerLib import DICOMRequestHandler
+      self.requestHandlers.append(DICOMRequestHandler())
     if enableStaticPages:
-      self.requestHandlers.append(WebServerLib.StaticPagesRequestHandler(self.docroot))
+      from WebServerLib import StaticPagesRequestHandler
+      self.requestHandlers.append(StaticPagesRequestHandler(self.docroot))
 
   def logMessage(self, *args):
     logging.debug(args)
