@@ -2007,7 +2007,7 @@ bool qSlicerExtensionsManagerModel::updateExtensionsMetadataFromServer(bool forc
       }
     else
       {
-      qWarning() << "Update extension information from server failed: missing implementation for serverAPI " << this->serverAPI();
+      qWarning() << "Update extension information from server failed: missing implementation for serverAPI" << this->serverAPI();
       return false;
       }
 
