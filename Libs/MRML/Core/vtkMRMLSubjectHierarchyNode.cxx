@@ -3129,10 +3129,6 @@ void vtkMRMLSubjectHierarchyNode::SetItemDisplayVisibility(vtkIdType itemID, int
       << ". Needs to be one of the following: 0:Hidden, 1:Visible" );
     return;
     }
-  if (this->Scene->IsBatchProcessing())
-    {
-    return;
-    }
 
   vtkMRMLNode* dataNode = this->GetItemDataNode(itemID);
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(dataNode);
