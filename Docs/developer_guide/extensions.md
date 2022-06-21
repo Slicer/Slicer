@@ -22,6 +22,8 @@ If developing modules in Python only, then it is not necessary to build the exte
 
 :::
 
+Similarly to the building of Slicer core, multi-configuration builds are not supported: one build tree can be only used for one build mode (Release or Debug or RelWithDebInfo or MinSizeRel). If a release and debug mode build are needed then the same source code folder can be used (e.g., `C:\D\SlicerHeart`) but a separate binary folder must be created for each build mode (e.g., `C:\D\SlicerHeart-R` and `C:\D\SlicerHeart-D` for release and debug modes).
+
 Assuming that the source code of your extension is located in folder `MyExtension`, an extension can be built by the following steps.
 
 ### Linux and macOS
@@ -69,7 +71,7 @@ Run `CMake (cmake-gui)` from the Windows Start menu.
 - Click `Configure`. No errors should be displayed.
 - Click `Generate` button.
 - Click `Open project` button to open `MyExtension.sln` in Visual Studio.
-- Select build configuration (Debug, Release, ...) that matches the build configuration of the chosen Slicer build.
+- Select build configuration (Debug, Release, ...) that matches the build configuration (Release, Debug, ...) of the chosen Slicer build.
 - In the menu choose Build / Build Solution.
 
 ## Test an extension
@@ -157,7 +159,6 @@ $ make package
 
 - Open `MyExtension.sln` in Visual Studio.
 - Right-click on `PACKAGES` project, then select `Build`.
-
 
 ## Write documentation for an extension
 
