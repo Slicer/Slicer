@@ -93,9 +93,7 @@ Slicer built on CentOS 7 will be available for many Linux distributions and rele
 
 Install Qt and CMake as described in [Any Distribution](./linux.md#any-distribution) section.
 
-Since by default CentOS 7 comes with `gcc 4.8.5` only having [experimental support for C++14](https://gcc.gnu.org/onlinedocs/gcc-4.8.5/gcc/C-Dialect-Options.html#C-Dialect-Options), the following allows to install and activate the `devtoolset-11` [providing](https://access.redhat.com/documentation/en-us/red_hat_developer_toolset/11/html/11.0_release_notes/dts11.0_release#Changes_in_DTS) `gcc 11.2.1` [supporting C++20](https://en.cppreference.com/w/cpp/compiler_support/20).
-
-CentOS 7 comes with pretty old devtoolset (gcc 4.8.5). Install and activate newer toolset (11 in this case):
+Since by default CentOS 7 comes with `gcc 4.8.5` only having [experimental support for C++14](https://gcc.gnu.org/onlinedocs/gcc-4.8.5/gcc/C-Dialect-Options.html#C-Dialect-Options), the following allows to install and activate the `devtoolset-11` [providing](https://access.redhat.com/documentation/en-us/red_hat_developer_toolset/11/html/11.0_release_notes/dts11.0_release#Changes_in_DTS) `gcc 11.2.1` [supporting C++20](https://en.cppreference.com/w/cpp/compiler_support/20):
 
 ```console
 sudo yum install centos-release-scl
