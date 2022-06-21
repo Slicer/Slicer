@@ -28,11 +28,11 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QScopedPointer>
-#include <QSignalSpy>
 #include <QSettings>
 #include <QStandardItemModel>
 #include <QTemporaryFile>
 #include <QTextStream>
+#include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
 
@@ -164,9 +164,6 @@ public:
 
   int role(const QByteArray& roleName);
 
-  /// This method should only be called after initialization.
-  void queryExtensionsMetadataFromServer();
-
   /// Save/load extensions metadata that was retrieved from the server to a local cache
   /// (in application settings) to avoid too frequent polling of the server.
   void saveExtensionsMetadataFromServerToCache();
@@ -243,9 +240,7 @@ public:
   QNetworkAccessManager NetworkManager;
 
   qRestAPI ExtensionsMetadataFromServerAPI;
-  bool ServerQueryWithLimit = true;
   QMap<QString, QVariantMap> ExtensionsMetadataFromServer;
-  QList<QVariantMap> ExtensionsMetadataFromServerQueryResults;
   QUuid ExtensionsMetadataFromServerQueryUID;  // if not null then it means that query is in progress
 
   QHash<QString, UpdateDownloadInformation> AvailableUpdates;
@@ -396,38 +391,6 @@ int qSlicerExtensionsManagerModelPrivate::role(const QByteArray& roleName)
       }
     }
   return -1;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelPrivate::queryExtensionsMetadataFromServer()
-{
-  Q_Q(qSlicerExtensionsManagerModel);
-
-  // Build parameters to query server about the extension
-  qRestAPI::Parameters parameters;
-  if (q->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
-    {
-    parameters["app_revision"] = q->slicerRevision();
-    parameters["os"] = q->slicerOs();
-    parameters["arch"] = q->slicerArch();
-    if (this->ServerQueryWithLimit)
-      {
-      parameters["offset"] = QString::number(this->ExtensionsMetadataFromServerQueryResults.size());
-      // "limit" parameter is not specified as we rely on the server's default value
-      }
-    else
-      {
-      parameters["limit"] = QString::number(-1);
-      }
-    }
-  else
-    {
-    qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << q->serverAPI();
-    return;
-    }
-
-  // Issue the query
-  this->ExtensionsMetadataFromServerQueryUID = this->ExtensionsMetadataFromServerAPI.get("", parameters);
 }
 
 // --------------------------------------------------------------------------
@@ -2022,12 +1985,10 @@ bool qSlicerExtensionsManagerModel::updateExtensionsMetadataFromServer(bool forc
     return true;
     }
 
-  QSignalSpy spy{ this, SIGNAL(updateExtensionsMetadataFromServerCompleted(bool)) };
-
   if (d->ExtensionsMetadataFromServerQueryUID.isNull())
     {
     // query is not in progress yet, start it
-    d->ExtensionsMetadataFromServerQueryResults.clear();
+    qRestAPI::Parameters parameters;
     if (this->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
       {
       QString appID = "5f4474d0e1d8c75dfc705482";
@@ -2038,13 +1999,20 @@ bool qSlicerExtensionsManagerModel::updateExtensionsMetadataFromServer(bool forc
         return false;
         }
       d->ExtensionsMetadataFromServerAPI.setServerUrl(this->serverUrl().toString() + QString("/api/v1/app/%1/extension").arg(appID));
+      parameters["app_revision"] = this->slicerRevision();
+      parameters["os"] = this->slicerOs();
+      parameters["arch"] = this->slicerArch();
+      // request all metadata in a single response (it makes synchronous query simpler)
+      parameters["limit"] = QString::number(0);
       }
     else
       {
       qWarning() << "Update extension information from server failed: missing implementation for serverAPI" << this->serverAPI();
       return false;
       }
-    d->queryExtensionsMetadataFromServer();
+
+    // Issue the query
+    d->ExtensionsMetadataFromServerQueryUID = d->ExtensionsMetadataFromServerAPI.get("", parameters);
     }
 
   if (!waitForCompletion)
@@ -2052,21 +2020,26 @@ bool qSlicerExtensionsManagerModel::updateExtensionsMetadataFromServer(bool forc
     return true;
     }
 
-  // Wait up to 15 seconds for the update check to complete
-  // (typically takes only a few seconds)
-  int timeoutMsec = 15000;
-  bool completedSignalReceived = spy.wait(timeoutMsec);
-  if (!completedSignalReceived)
+  // Temporarily disable onExtensionsMetadataFromServerQueryFinished call via signal/slot
+  // because we'll call it directly to get returned result.
+  QObject::disconnect(&d->ExtensionsMetadataFromServerAPI,
+    SIGNAL(finished(QUuid)),
+    this, SLOT(onExtensionsMetadataFromServerQueryFinished(QUuid)));
+
+  bool success = this->onExtensionsMetadataFromServerQueryFinished(d->ExtensionsMetadataFromServerQueryUID);
+
+  QObject::connect(&d->ExtensionsMetadataFromServerAPI,
+    SIGNAL(finished(QUuid)),
+    this, SLOT(onExtensionsMetadataFromServerQueryFinished(QUuid)));
+
+  if (!success)
     {
     d->warning(tr("Update extension information from server failed: timed out while waiting for server response from %1")
       .arg(d->ExtensionsMetadataFromServerAPI.serverUrl()));
     }
-  return completedSignalReceived;
-}
 
-// --------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerExtensionsManagerModel, bool, serverQueryWithLimitEnabled, ServerQueryWithLimit);
-CTK_SET_CPP(qSlicerExtensionsManagerModel, bool, setServerQueryWithLimitEnabled, ServerQueryWithLimit);
+  return success;
+}
 
 // --------------------------------------------------------------------------
 QDateTime qSlicerExtensionsManagerModel::lastUpdateTimeExtensionsMetadataFromServer()
@@ -2098,7 +2071,7 @@ QStringList qSlicerExtensionsManagerModel::availableUpdateExtensions() const
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::onExtensionsMetadataFromServerQueryFinished(const QUuid& requestId)
+bool qSlicerExtensionsManagerModel::onExtensionsMetadataFromServerQueryFinished(const QUuid& requestId)
 {
   Q_UNUSED(requestId);
   Q_D(qSlicerExtensionsManagerModel);
@@ -2117,31 +2090,15 @@ void qSlicerExtensionsManagerModel::onExtensionsMetadataFromServerQueryFinished(
     {
     // Query failed
     d->warning(tr("Failed to download extension metadata from server"));
-    d->ExtensionsMetadataFromServerQueryResults.clear();
     d->ExtensionsMetadataFromServerQueryUID = QUuid();
     emit updateExtensionsMetadataFromServerCompleted(false);
-    return;
-    }
-
-  d->ExtensionsMetadataFromServerQueryResults.append(restResult->results());
-
-  if (restResult->results().count() > 0 && d->ServerQueryWithLimit)
-    {
-    // May not have received all the items yet.
-    // To make things simpler, we don't process the data received so far,
-    // but keep requesting more data until there is no more (we received
-    // everything) and then process all data at once.
-    // This should not be an issue because these few queries should be
-    // all done in a few seconds (with current sever settings, 50 items
-    // are returned and there are less than 200 extensions).
-    d->queryExtensionsMetadataFromServer();
-    return;
+    return false;
     }
 
   d->ExtensionsMetadataFromServer.clear();
 
   // Process response
-  foreach (const QVariantMap& result, d->ExtensionsMetadataFromServerQueryResults)
+  foreach (const QVariantMap& result, restResult->results())
     {
     // Get extension information from server response
     ExtensionMetadataType serverExtensionMetadata = qRestAPI::qVariantMapFlattened(result);
@@ -2155,13 +2112,13 @@ void qSlicerExtensionsManagerModel::onExtensionsMetadataFromServerQueryFinished(
       }
     d->ExtensionsMetadataFromServer[extensionName] = extensionMetadata;
     }
-  d->ExtensionsMetadataFromServerQueryResults.clear();
   d->ExtensionsMetadataFromServerQueryUID = QUuid();
   d->saveExtensionsMetadataFromServerToCache();
 
   this->updateModel();
 
   emit updateExtensionsMetadataFromServerCompleted(true);
+  return true;
 }
 
 // --------------------------------------------------------------------------

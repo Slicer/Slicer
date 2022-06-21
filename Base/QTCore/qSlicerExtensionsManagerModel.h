@@ -399,18 +399,6 @@ public slots:
   /// Returns false if waitForCompletion is set to true and metadata cannot be retrieved.
   bool updateExtensionsMetadataFromServer(bool force=false, bool waitForCompletion=false);
 
-  /// \brief Enable/disable the use of limit and offset parameters for querying extension metadata from the extensions server.
-  ///
-  /// If enabled (the default), the server may return metadata for a limited number of extensions
-  /// at once (for example, 50) to keep the server's load and response time low. The model automatically
-  /// submits additional queries until all data is retrieved.
-  ///
-  /// IF disabled, the limit is to -1 and all metadata are retrieve at once.
-  ///
-  /// \sa updateExtensionsMetadataFromServer()
-  bool serverQueryWithLimitEnabled()const;
-  void setServerQueryWithLimitEnabled(bool value);
-
   /// Compares current extensions versions with versions available on the server.
   /// Emits extensionMetadataUpdated(QString extensionName) and emit extensionUpdatesAvailable(bool found) signals.
   /// If Extensions/AutoUpdateInstall is enabled in application settings then this will also install the updated extensions.
@@ -559,7 +547,7 @@ protected slots:
   void onUpdateDownloadProgress(qSlicerExtensionDownloadTask* task,
                                 qint64 received, qint64 total);
 
-  void onExtensionsMetadataFromServerQueryFinished(const QUuid& requestId);
+  bool onExtensionsMetadataFromServerQueryFinished(const QUuid& requestId);
 
 protected:
   QScopedPointer<qSlicerExtensionsManagerModelPrivate> d_ptr;

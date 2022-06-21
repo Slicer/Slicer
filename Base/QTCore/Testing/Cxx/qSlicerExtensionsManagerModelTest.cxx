@@ -254,8 +254,6 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
   QVERIFY(model != nullptr);
   QVERIFY(extensionId >= 0 && extensionId <= 3);
 
-  model->setServerQueryWithLimitEnabled(false);
-
   QString inputArchiveFile = QString(":/extension-%1-%2.tar.gz").arg(os).arg(extensionId);
   QString copiedArchiveFile = tmp + "/" + QFileInfo(inputArchiveFile).fileName();
   if (!QFile::exists(copiedArchiveFile))
@@ -582,7 +580,6 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
 
   QFETCH(QString, slicerVersion);
   qSlicerExtensionsManagerModel model;
-  model.setServerQueryWithLimitEnabled(false);
   model.setExtensionsSettingsFilePath(QSettings().fileName());
   model.setSlicerVersion(slicerVersion);
 
