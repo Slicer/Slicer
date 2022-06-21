@@ -1582,8 +1582,9 @@ qSlicerExtensionsManagerModelPrivate::downloadExtensionByName(const QString& ext
       return nullptr;
       }
 
-    // Retrieve file_id associated with the item
+    // Retrieve file_id and archive name (extension package filename) associated with the item
     QString file_id;
+    QString archivename;
 
     this->debug(qSlicerExtensionsManagerModel::tr("Retrieving %1 extension files (extensionId: %2)").arg(extensionName).arg(item_id));
     qRestAPI getItemFilesApi;
@@ -1602,6 +1603,7 @@ qSlicerExtensionsManagerModelPrivate::downloadExtensionByName(const QString& ext
       else if (results.count() == 1)
         {
         file_id = results.at(0).value("_id").toString();
+        archivename = results.at(0).value("name").toString();
         }
       else
         {
@@ -1610,13 +1612,14 @@ qSlicerExtensionsManagerModelPrivate::downloadExtensionByName(const QString& ext
         }
       }
 
-    if (file_id.isEmpty())
+    if (file_id.isEmpty() || archivename.isEmpty())
       {
       return nullptr;
       }
 
     this->debug(qSlicerExtensionsManagerModel::tr("Downloading %1 extension (item_id: %2, file_id: %3)").arg(extensionName).arg(item_id).arg(file_id));
     downloadUrl.setPath(downloadUrl.path() + QString("/api/v1/file/%1/download").arg(file_id));
+    extensionMetadata.insert("archivename", archivename);
     }
   else
     {
@@ -2259,7 +2262,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
     QFile file(archivePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
       {
-      d->critical(tr("Could not create file for writing: %1").arg(file.errorString()));
+      d->critical(tr("Could not write file: '%1' (%2)").arg(archivePath).arg(file.errorString()));
       d->ActiveTasks.remove(task);
       return;
       }
