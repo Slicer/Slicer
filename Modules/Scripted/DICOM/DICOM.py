@@ -83,6 +83,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
         self.startListener()
 
     if not slicer.app.commandOptions().noMainWindow:
+      slicer.util.mainWindow().findChild(qt.QAction, "LoadDICOMAction").setVisible(True)
       # add to the main app file menu
       self.addMenu()
       # add the settings options
