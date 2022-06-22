@@ -352,6 +352,9 @@
    <property name="toolTip">
     <string>Raise the DICOM module for loading DICOM datasets.</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="FileImportSceneAction">
    <property name="icon">
