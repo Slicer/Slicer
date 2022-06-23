@@ -591,7 +591,9 @@ void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMes
   if (userMessages)
     {
     text += tr("Click 'Show details' button and check the application log for more information.");
-    messageBox->setDetailedText(QString::fromStdString(userMessages->GetAllMessagesAsString()));
+    QString messagesStr = QString::fromStdString(userMessages->GetAllMessagesAsString());
+    messageBox->setDetailedText(messagesStr);
+    qWarning() << Q_FUNC_INFO << "Errors occurred while loading nodes:" << messagesStr;
     }
   else
     {
