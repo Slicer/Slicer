@@ -46,6 +46,17 @@ set(Slicer_EXTENSION_CPACK_BUNDLE_FIXUP_CONFIG ${Slicer_SOURCE_DIR}/CMake/Slicer
 set(Slicer_GUI_LIBRARY_CONFIG ${Slicer_GUI_LIBRARY})
 set(Slicer_CORE_LIBRARY_CONFIG ${Slicer_CORE_LIBRARY})
 
+get_property(_custom_targets GLOBAL PROPERTY SLICER_CUSTOM_TARGETS)
+if(_custom_targets)
+  foreach(target ${_custom_targets})
+    set(Slicer_INCLUDE_CUSTOM_TARGET_DIRS_CONFIG
+"${Slicer_INCLUDE_CUSTOM_TARGET_DIRS_CONFIG}
+set(${target}_INCLUDE_DIRS
+  \"${${target}_INCLUDE_DIRS}\")"
+)
+  endforeach()
+endif()
+
 get_property(_module_targets GLOBAL PROPERTY SLICER_MODULE_TARGETS)
 if(_module_targets)
   foreach(target ${_module_targets})

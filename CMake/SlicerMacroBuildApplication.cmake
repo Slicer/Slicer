@@ -103,6 +103,16 @@ macro(slicerMacroBuildAppLibrary)
   # Include dirs
   # --------------------------------------------------------------------------
 
+  if(NOT DEFINED ${lib_name}_SOURCE_DIR)
+    set(${lib_name}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "" FORCE)
+  endif()
+
+  if(NOT DEFINED ${lib_name}_BINARY_DIR)
+    set(${lib_name}_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "" FORCE)
+  endif()
+
+  set(${lib_name}_INCLUDE_DIRS ${${lib_name}_SOURCE_DIR} ${${lib_name}_BINARY_DIR} CACHE INTERNAL "" FORCE)
+
   set(include_dirs
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -217,9 +227,11 @@ macro(slicerMacroBuildAppLibrary)
     ${SLICERAPPLIB_TARGET_LIBRARIES}
     )
 
+  set_property(GLOBAL APPEND PROPERTY SLICER_CUSTOM_TARGETS ${SLICERAPPLIB_NAME})
+
   # Folder
   set_target_properties(${lib_name} PROPERTIES FOLDER ${SLICERAPPLIB_FOLDER})
-
+  
   #-----------------------------------------------------------------------------
   # Install library
   #-----------------------------------------------------------------------------
