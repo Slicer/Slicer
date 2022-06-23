@@ -807,6 +807,11 @@ vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vtkPointSet* outputMesh)
 {
+  if (!inputMesh || !outputMesh)
+    {
+    vtkGenericWarningMacro("vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS: invalid input or output mesh");
+    return;
+    }
   vtkNew<vtkTransform> transformRasLps;
   transformRasLps->Scale(-1, -1, 1);
   // vtkTransformPolyDataFilter preserves texture coordinates, while vtkTransformFilter removes them,

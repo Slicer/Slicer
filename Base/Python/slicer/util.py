@@ -661,12 +661,13 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
       If returnNode is True then a status flag and loaded node are returned.
     :raises RuntimeError: in case of failure
     """
-    from slicer import app
+    from slicer import app, vtkMRMLMessageCollection
     from vtk import vtkCollection
     properties['fileName'] = filename
 
     loadedNodesCollection = vtkCollection()
-    success = app.coreIOManager().loadNodes(filetype, properties, loadedNodesCollection)
+    userMessages = vtkMRMLMessageCollection()
+    success = app.coreIOManager().loadNodes(filetype, properties, loadedNodesCollection, userMessages)
     loadedNode = loadedNodesCollection.GetItemAsObject(0) if loadedNodesCollection.GetNumberOfItems() > 0 else None
 
     # Deprecated way of returning status and node
@@ -678,7 +679,9 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
         return success, loadedNode
 
     if not success:
-        errorMessage = "Failed to load node from file: " + str(filename)
+        errorMessage = f"Failed to load node from file: {filename}"
+        if userMessages.GetNumberOfMessages() > 0:
+            errorMessage += "\n" + userMessages.GetAllMessagesAsString()
         raise RuntimeError(errorMessage)
 
     return loadedNode
@@ -695,14 +698,17 @@ def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
     :return: loaded node(s) in an iterator object.
     :raises RuntimeError: in case of failure
     """
-    from slicer import app
+    from slicer import app, vtkMRMLMessageCollection
     from vtk import vtkCollection
     properties['fileName'] = filename
 
     loadedNodesCollection = vtkCollection()
-    success = app.coreIOManager().loadNodes(filetype, properties, loadedNodesCollection)
+    userMessages = vtkMRMLMessageCollection()
+    success = app.coreIOManager().loadNodes(filetype, properties, loadedNodesCollection, userMessages)
     if not success:
-        errorMessage = "Failed to load nodes from file: " + str(filename)
+        errorMessage = f"Failed to load node from file: {filename}"
+        if userMessages.GetNumberOfMessages() > 0:
+            errorMessage += "\n" + userMessages.GetAllMessagesAsString()
         raise RuntimeError(errorMessage)
 
     return iter(loadedNodesCollection)
@@ -1004,14 +1010,25 @@ def saveNode(node, filename, properties={}):
     method 'qSlicerCoreIOManager::fileWriterFileType(vtkObject*)'. This can be done
     by specifying a 'fileType'attribute to the optional 'properties' dictionary.
     """
-    from slicer import app
+    from slicer import app, vtkMRMLMessageCollection
+
     properties["nodeID"] = node.GetID()
     properties["fileName"] = filename
     if hasattr(properties, "fileType"):
         filetype = properties["fileType"]
     else:
         filetype = app.coreIOManager().fileWriterFileType(node)
-    return app.coreIOManager().saveNodes(filetype, properties)
+    userMessages = vtkMRMLMessageCollection()
+    success = app.coreIOManager().saveNodes(filetype, properties, userMessages)
+
+    if not success:
+        import logging
+        errorMessage = f"Failed to save node to file: {filename}"
+        if userMessages.GetNumberOfMessages() > 0:
+            errorMessage += "\n" + userMessages.GetAllMessagesAsString()
+        logging.error(errorMessage)
+
+    return success
 
 
 def saveScene(filename, properties={}):
@@ -1031,10 +1048,20 @@ def saveScene(filename, properties={}):
     will be written to disk. If needed, directories and sub-directories
     will be created.
     """
-    from slicer import app
+    from slicer import app, vtkMRMLMessageCollection
     filetype = 'SceneFile'
     properties['fileName'] = filename
-    return app.coreIOManager().saveNodes(filetype, properties)
+    userMessages = vtkMRMLMessageCollection()
+    success = app.coreIOManager().saveNodes(filetype, properties, userMessages)
+
+    if not success:
+        import logging
+        errorMessage = f"Failed to save scene to file: {filename}"
+        if userMessages.GetNumberOfMessages() > 0:
+            errorMessage += "\n" + userMessages.GetAllMessagesAsString()
+        logging.error(errorMessage)
+
+    return success
 
 
 def exportNode(node, filename, properties={}, world=False):
@@ -1046,7 +1073,7 @@ def exportNode(node, filename, properties={}, world=False):
     This method is different from saveNode in that it does not modify any existing storage node
     and therefore does not change the filename or filetype that is used when saving the scene.
     """
-    from slicer import app, vtkDataFileFormatHelper
+    from slicer import app, vtkDataFileFormatHelper, vtkMRMLMessageCollection
     nodeIDs = [node.GetID()]
     fileNames = [filename]
     hardenTransform = world
@@ -1064,12 +1091,22 @@ def exportNode(node, filename, properties={}, world=False):
             raise ValueError(f"Failed to export {node.GetID()} - no known file format was found for filename {filename}")
         properties["fileFormat"] = foundFileFormat
 
-    return app.coreIOManager().exportNodes(nodeIDs, fileNames, properties, hardenTransform)
+    userMessages = vtkMRMLMessageCollection()
+    success = app.coreIOManager().exportNodes(nodeIDs, fileNames, properties, hardenTransform, userMessages)
 
+    if not success:
+        import logging
+        errorMessage = f"Failed to export node to file: {filename}"
+        if userMessages.GetNumberOfMessages() > 0:
+            errorMessage += "\n" + userMessages.GetAllMessagesAsString()
+        logging.error(errorMessage)
+
+    return success
 
 #
 # Module
 #
+
 
 def moduleSelector():
     """Return module selector widget.
