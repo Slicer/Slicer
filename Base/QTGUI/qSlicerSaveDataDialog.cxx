@@ -1288,6 +1288,18 @@ void qSlicerSaveDataDialogPrivate::updateStatusIconFromMessageCollection(int row
   if (userMessages)
     {
     messagesStr = QString::fromStdString(userMessages->GetAllMessagesAsString(&errorFound, &warningFound));
+    if (errorFound)
+      {
+      qCritical() << Q_FUNC_INFO << "Data save error:" << messagesStr;
+      }
+    else if (warningFound)
+      {
+      qWarning() << Q_FUNC_INFO << "Data save warning:" << messagesStr;
+      }
+    else
+      {
+      qDebug() << Q_FUNC_INFO << "Data save information:" << messagesStr;
+      }
     }
   this->setStatusIcon(row, (!success || errorFound) ? this->ErrorIcon : (warningFound ? this->WarningIcon : QIcon()), messagesStr);
 }
