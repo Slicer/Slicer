@@ -35,6 +35,7 @@
 #include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLSceneViewNode.h>
+#include <vtkMRMLMessageCollection.h>
 
 // VTK includes
 #include <vtkStdString.h>
@@ -165,6 +166,8 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
     {
     this->setWrittenNodes(QStringList() << node->GetID());
     }
+
+  this->userMessages()->AddMessages(snode->GetUserMessages());
 
   return res;
 }
