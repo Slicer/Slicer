@@ -1031,6 +1031,10 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
   bool success = coreIOManager->exportNodes(savingParameterMaps, this->HardenTransformCheckBox->isChecked(), userMessages);
   QApplication::restoreOverrideCursor();
 
+  bool warningFound = false;
+  bool errorFound = false;
+  QString messagesStr = QString::fromStdString(userMessages->GetAllMessagesAsString(&errorFound, &warningFound));
+
   if (!success)
     {
     // Make sure at least one error message is in userMessages if saving returns with error
@@ -1039,7 +1043,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
       userMessages->AddMessage(vtkCommand::ErrorEvent, tr("Error encountered while exporting.").toStdString());
       }
 
-    QString messagesStr = QString::fromStdString(userMessages->GetAllMessagesAsString());
+    qCritical() << Q_FUNC_INFO << "Data export error:" << messagesStr;
 
     // display messagesStr as an error message
     QMessageBox::critical(this, tr("Export Error"), messagesStr);
@@ -1047,23 +1051,21 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
   // In case there are any errors or warnings in storage node, make sure to alert even in case of success:
   else if (userMessages->GetNumberOfMessages() > 0)
     {
-    bool warningFound = false;
-    bool errorFound = false;
-    QString messagesStr = QString::fromStdString(userMessages->GetAllMessagesAsString(&errorFound, &warningFound));
-
     if (errorFound)
       {
+      qWarning() << Q_FUNC_INFO << "Data export warning: node write returned success, but there were error messages during write." << messagesStr;
       QMessageBox::critical(this, tr("Export Error"), messagesStr);
       // If there was an error, this should never have been considered a success.
       success = false;
-      qWarning() << Q_FUNC_INFO << " warning: node write returned success, while there were error messages during write.";
       }
     else if (warningFound)
       {
+      qWarning() << Q_FUNC_INFO << "Data export warning: node write returned success, but there were warning messages during write." << messagesStr;
       QMessageBox::warning(this, tr("Export Warning"), messagesStr);
       }
     else
       {
+      qDebug() << Q_FUNC_INFO << "Data export information:" << messagesStr;
       QMessageBox::information(this, tr("Export Information"), messagesStr);
       }
     }
