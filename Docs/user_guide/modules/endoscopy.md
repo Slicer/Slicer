@@ -4,6 +4,9 @@
 
 Provides interactive animation of flythrough paths.
 
+## Basic use
+Use the Markups module or toolbar to create a set of points in 3D space.  These then need to be selected to be the Input Fiducials (Point List).  Then create a new target model for the path.  Clicking Create Path will populate the selected model with a curve through the input points.  There will also be a Cursor node showing the current camera position.  You may need to turn off the visibility of the points and cursor (using the Data module) if they obscure the view in 3D.  The Flythrough controls can be used to view the simulated endoscopy. 
+
 ## Panels and their use
 
 ### Path
