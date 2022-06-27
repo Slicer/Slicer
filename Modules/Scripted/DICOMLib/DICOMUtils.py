@@ -846,7 +846,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
 
     seriesImported = []
     errors = []
-    clientLogger = logging.getLogger('dicomweb_client.api')
+    clientLogger = logging.getLogger('dicomweb_client')
     originalClientLogLevel = clientLogger.level
 
     progressDialog = slicer.util.createProgressDialog(parent=slicer.util.mainWindow(), value=0, maximum=100)

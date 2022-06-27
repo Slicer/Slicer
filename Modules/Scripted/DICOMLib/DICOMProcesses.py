@@ -453,8 +453,6 @@ class DICOMSender(DICOMProcess):
                 slicer.util.restart()
 
             # Establish connection
-            import dicomweb_client.log
-            dicomweb_client.log.configure_logging(2)
             from dicomweb_client.api import DICOMwebClient
             effectiveServerUrl = self.destinationUrl.toString()
             session = None
@@ -477,12 +475,21 @@ class DICOMSender(DICOMProcess):
 
             client = DICOMwebClient(url=effectiveServerUrl, session=session, headers=headers)
 
-            for file in self.files:
-                if not self.progressCallback(f"Sending {file} to {self.destinationUrl.toString()} using {self.protocol}"):
-                    raise UserWarning("Sending was cancelled, upload is incomplete.")
-                import pydicom
-                dataset = pydicom.dcmread(file)
-                client.store_instances(datasets=[dataset])
+            # Turn off detailed logging, because it would slow down the file transfer
+            clientLogger = logging.getLogger('dicomweb_client')
+            originalClientLogLevel = clientLogger.level
+            clientLogger.setLevel(logging.WARNING)
+
+            try:
+                for file in self.files:
+                    if not self.progressCallback(f"Sending {file} to {self.destinationUrl.toString()} using {self.protocol}"):
+                        raise UserWarning("Sending was cancelled, upload is incomplete.")
+                    import pydicom
+                    dataset = pydicom.dcmread(file)
+                    client.store_instances(datasets=[dataset])
+            finally:
+                clientLogger.setLevel(originalClientLogLevel)
+
         else:
             # DIMSE (traditional DICOM networking)
             for file in self.files:
