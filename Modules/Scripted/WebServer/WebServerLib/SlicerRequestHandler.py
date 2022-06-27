@@ -564,7 +564,7 @@ space origin: %%origin%%
             node['markups'] = []
             for markupIndex in range(markupsNode.GetNumberOfMarkups()):
                 position = [0, ] * 3
-                markupsNode.GetNthFiducialPosition(markupIndex, position)
+                markupsNode.GetNthControlPointPosition(markupIndex, position)
                 position
                 node['markups'].append({
                     'label': markupsNode.GetNthFiducialLabel(markupIndex),
