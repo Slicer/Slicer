@@ -115,7 +115,7 @@ For exporting segmentation as NRRD or NIFTI file for external software that uses
 - Open `Export to files` section in `Segmentations` module (or in `Segment editor` module: choose `Export to files`, in the drop-down menu of `Segmentations` button)
 - In `File format` selector choose `NRRD` or `NIFTI`. NRRD format is recommended, as it is a simple, general-purpose file format. For neuroimaging, NIFTI file format may be a better choice, as it is the most commonly used research file format in that field.
 - Optional: choose Reference volume if you want your segmentation to match a selected volume's geometry (origin, spacing, axis directions) instead of the current segmentation geometry
-- Optional: check `Use color table values` checkbox and select a color table to set voxel values in the exported files from values specified in the color table. Without that, voxel values are based on the order of segments in the segmentation node.
+- Optional: check `Use color table values` checkbox and select a color table to set voxel values in the exported files from values specified in the color table. The label value is index of the color table entry that has the same name as the segment name. If a color table is not specified then, voxel values are based on the order of segments in the segment list (voxels that are outside of all segments are set to 0, voxels of the first segment are set to  1, voxels of the second segment are set to 2, etc).
 - Set additional options (destination folder, compression, etc.) as needed
 - Click `Export`
 
