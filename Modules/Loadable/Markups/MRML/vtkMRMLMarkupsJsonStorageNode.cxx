@@ -53,9 +53,10 @@
 namespace
 {
   const std::string MARKUPS_SCHEMA =
-    "https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.3.json#";
+    "https://raw.githubusercontent.com/slicer/slicer/main/modules/loadable/markups/resources/schema/markups-schema-v1.0.3.json#";
+  // regex should be lower case
   const std::string ACCEPTED_MARKUPS_SCHEMA_REGEX =
-    "^https://raw\\.githubusercontent\\.com/Slicer/Slicer/main/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
+    "^https://raw\\.githubusercontent\\.com/slicer/slicer/(main|master)/modules/loadable/markups/resources/schema/markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
 }
 
 #include <vtkMRMLMarkupsJsonStorageNode_Private.h>
@@ -125,8 +126,12 @@ std::unique_ptr<rapidjson::Document> vtkMRMLMarkupsJsonStorageNode::vtkInternal:
     }
   rapidjson::Value& schema = (*jsonRoot)["@schema"];
 
+  std::string schemaString = schema.GetString();
+  // make schema string lower case to match the regex and make comparison case insensitive
+  std::transform(schemaString.begin(), schemaString.end(), schemaString.begin(), ::tolower);
+
   vtksys::RegularExpression filterProgressRegExp(ACCEPTED_MARKUPS_SCHEMA_REGEX);
-  if (!filterProgressRegExp.find(schema.GetString()))
+  if (!filterProgressRegExp.find(schemaString))
     {
     vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
       "File reading failed. File '" << filePath << "' is expected to contain @schema: "
