@@ -123,7 +123,7 @@ set(ENV{LibraryPaths} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
   file(WRITE ${_install_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${EP_BINARY_DIR}/SimpleITK-build/Wrapping/Python\")
-ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py install)
+ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" \"-m\" \"pip\" \"install\" \".\")
 ")
 
   ExternalProject_SetIfNotDefined(
@@ -134,7 +134,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "ffd48e274e2112928e95e5dfc802d8ca3121c840"
+    "1c0cf5de03fd8b8279a6522e910bbce67a4d8bf8"  # post-v2.2.0 2022-08-30
     QUIET
     )
 
