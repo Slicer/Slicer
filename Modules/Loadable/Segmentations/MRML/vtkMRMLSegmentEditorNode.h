@@ -38,7 +38,7 @@ class vtkMRMLScalarVolumeNode;
 /// \ingroup Segmentations
 /// \brief Parameter set node for the segment editor widget
 ///
-/// Stores parameters for a segment editor widget (selected segmentation, segment, reference volume),
+/// Stores parameters for a segment editor widget (selected segmentation, segment, source volume),
 /// and all the editor effects. The effect parameters are stored as attributes with names
 /// EffectName.ParameterName. If a parameter is changed, the node Modified event is not emitted,
 /// but the custom EffectParameterModified event that triggers update of the effect options widget only.
@@ -95,10 +95,16 @@ public:
 public:
 
   //@{
-  /// Get/set reference volume node.
-  /// Reference volume node is used when editing requires an underlying image.
-  vtkMRMLScalarVolumeNode* GetReferenceVolumeNode();
-  void SetAndObserveReferenceVolumeNode(vtkMRMLScalarVolumeNode* node);
+  /// Get/set source volume node.
+  /// Source volume node is used when editing requires an underlying image.
+  vtkMRMLScalarVolumeNode* GetSourceVolumeNode();
+  void SetAndObserveSourceVolumeNode(vtkMRMLScalarVolumeNode* node);
+  //@}
+
+  //@{
+  /// Deprecated. Use GetSourceVolumeNode/SetAndObserveSourceVolumeNode methods instead.
+  vtkMRMLScalarVolumeNode* GetMasterVolumeNode();
+  void SetAndObserveMasterVolumeNode(vtkMRMLScalarVolumeNode* node);
   //@}
 
   //@{
@@ -139,19 +145,60 @@ public:
   //@}
 
   //@{
-  /// Restrict editable area to regions where reference volume intensity is in the specified range.
-  vtkBooleanMacro(ReferenceVolumeIntensityMask, bool);
-  vtkGetMacro(ReferenceVolumeIntensityMask, bool);
-  vtkSetMacro(ReferenceVolumeIntensityMask, bool);
+  /// Restrict editable area to regions where source volume intensity is in the specified range.
+  vtkBooleanMacro(SourceVolumeIntensityMask, bool);
+  vtkGetMacro(SourceVolumeIntensityMask, bool);
+  vtkSetMacro(SourceVolumeIntensityMask, bool);
   //@}
 
   //@{
-  /// Get/set reference volume intensity range for masking.
-  /// If ReferenceVolumeIntensityMask is enabled then only those areas are editable where
-  /// reference volume voxels are in this intensity range.
-  /// \sa SetReferenceVolumeIntensityMask()
-  vtkSetVector2Macro(ReferenceVolumeIntensityMaskRange, double);
-  vtkGetVector2Macro(ReferenceVolumeIntensityMaskRange, double);
+  /// Deprecated. Use Get/SetSourceVolumeIntensityMask method instead.
+  virtual void MasterVolumeIntensityMaskOn() { this->SourceVolumeIntensityMaskOn(); }
+  virtual void MasterVolumeIntensityMaskOff() { this->SourceVolumeIntensityMaskOff(); }
+  virtual bool GetMasterVolumeIntensityMask() { return this->GetSourceVolumeIntensityMask(); }
+  //@}
+
+  //@{
+  /// Get/set source volume intensity range for masking.
+  /// If SourceVolumeIntensityMask is enabled then only those areas are editable where
+  /// source volume voxels are in this intensity range.
+  /// \sa SetSourceVolumeIntensityMask()
+  vtkSetVector2Macro(SourceVolumeIntensityMaskRange, double);
+  vtkGetVector2Macro(SourceVolumeIntensityMaskRange, double);
+  //@}
+
+  //@{
+  /// Deprecated. Use Get/SetSourceVolumeIntensityMaskRange method instead.
+  virtual void SetMasterVolumeIntensityMaskRange(double _arg1, double _arg2)
+    {
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::SetMasterVolumeIntensityMaskRange() method is deprecated, use SetSourceVolumeIntensityMaskRange method instead");
+    this->SetSourceVolumeIntensityMaskRange(_arg1, _arg2);
+    }
+  void SetMasterVolumeIntensityMaskRange(const double _arg[2])
+    {
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::SetMasterVolumeIntensityMaskRange() method is deprecated, use SetSourceVolumeIntensityMaskRange method instead");
+    this->SetSourceVolumeIntensityMaskRange(_arg);
+    }
+
+  virtual double* GetMasterVolumeIntensityMaskRange() VTK_SIZEHINT(2)
+    {
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
+    return this->GetSourceVolumeIntensityMaskRange();
+    }
+
+  VTK_WRAPEXCLUDE
+  virtual void GetMasterVolumeIntensityMaskRange(double& _arg1, double& _arg2)
+    {
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
+    this->GetSourceVolumeIntensityMaskRange(_arg2, _arg2);
+    }
+
+  VTK_WRAPEXCLUDE
+  virtual void GetMasterVolumeIntensityMaskRange(double _arg[2])
+    {
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
+    this->GetSourceVolumeIntensityMaskRange(_arg);
+    }
   //@}
 
   //@{
@@ -178,8 +225,8 @@ protected:
 
   int OverwriteMode{OverwriteAllSegments};
 
-  bool ReferenceVolumeIntensityMask{false};
-  double ReferenceVolumeIntensityMaskRange[2];
+  bool SourceVolumeIntensityMask{false};
+  double SourceVolumeIntensityMaskRange[2];
 };
 
 #endif // __vtkMRMLSegmentEditorNode_h

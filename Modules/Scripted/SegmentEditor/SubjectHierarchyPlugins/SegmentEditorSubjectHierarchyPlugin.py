@@ -103,10 +103,10 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
         # Name segmentation node based on the volume
         segmentationNode.SetName(volumeNode.GetName() + '_Segmentation')
 
-        # Set reference volume
-        editorWidget.parameterSetNode.SetAndObserveReferenceVolumeNode(volumeNode)
+        # Set source volume
+        editorWidget.parameterSetNode.SetAndObserveSourceVolumeNode(volumeNode)
 
-        # Place segmentation under the reference volume in subject hierarchy
+        # Place segmentation under the source volume in subject hierarchy
         segmentationShItemID = shNode.GetItemByDataNode(segmentationNode)
         shNode.SetItemParent(segmentationShItemID, shNode.GetItemParent(currentItemID))
 

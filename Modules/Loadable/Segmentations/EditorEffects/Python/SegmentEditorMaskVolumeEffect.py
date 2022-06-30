@@ -31,7 +31,8 @@ class SegmentEditorMaskVolumeEffect(AbstractScriptedSegmentEditorEffect):
         return qt.QIcon()
 
     def helpText(self):
-        return """<html>Use the currently selected segment as a mask to blank out regions in a volume.<br> The mask is applied to the reference volume by default.<p>
+        return """<html>Use the currently selected segment as a mask to blank out regions in a volume.
+<br> The mask is applied to the source volume by default.<p>
 Fill inside and outside operation creates a binary labelmap volume as output, with the inside and outside fill values modifiable.
 </html>"""
 
@@ -108,10 +109,10 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         self.inputVolumeSelector.addEnabled = True
         self.inputVolumeSelector.removeEnabled = True
         self.inputVolumeSelector.noneEnabled = True
-        self.inputVolumeSelector.noneDisplay = "(Reference volume)"
+        self.inputVolumeSelector.noneDisplay = "(Source volume)"
         self.inputVolumeSelector.showHidden = False
         self.inputVolumeSelector.setMRMLScene(slicer.mrmlScene)
-        self.inputVolumeSelector.setToolTip("Volume to mask. Default is current reference volume node.")
+        self.inputVolumeSelector.setToolTip("Volume to mask. Default is current source volume node.")
         self.inputVolumeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onInputVolumeChanged)
 
         self.inputVisibilityButton = qt.QToolButton()
@@ -195,9 +196,9 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         outputVolume = self.scriptedEffect.parameterSetNode().GetNodeReference("Mask volume.OutputVolume")
         self.outputVolumeSelector.setCurrentNode(outputVolume)
 
-        referenceVolume = self.scriptedEffect.parameterSetNode().GetReferenceVolumeNode()
+        sourceVolume = self.scriptedEffect.parameterSetNode().GetSourceVolumeNode()
         if inputVolume is None:
-            inputVolume = referenceVolume
+            inputVolume = sourceVolume
 
         self.fillValueEdit.setVisible(operationName in ["FILL_INSIDE", "FILL_OUTSIDE"])
         self.fillValueLabel.setVisible(operationName in ["FILL_INSIDE", "FILL_OUTSIDE"])
@@ -232,9 +233,9 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         self.scriptedEffect.setParameter("InputVisibility", "True")
 
     def deactivate(self):
-        if self.outputVolumeSelector.currentNode() is not self.scriptedEffect.parameterSetNode().GetReferenceVolumeNode():
+        if self.outputVolumeSelector.currentNode() is not self.scriptedEffect.parameterSetNode().GetSourceVolumeNode():
             self.scriptedEffect.setParameter("OutputVisibility", "False")
-        slicer.util.setSliceViewerLayers(background=self.scriptedEffect.parameterSetNode().GetReferenceVolumeNode())
+        slicer.util.setSliceViewerLayers(background=self.scriptedEffect.parameterSetNode().GetSourceVolumeNode())
 
     def onOperationSelectionChanged(self, operationName, toggle):
         if not toggle:
@@ -244,14 +245,14 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
     def getInputVolume(self):
         inputVolume = self.inputVolumeSelector.currentNode()
         if inputVolume is None:
-            inputVolume = self.scriptedEffect.parameterSetNode().GetReferenceVolumeNode()
+            inputVolume = self.scriptedEffect.parameterSetNode().GetSourceVolumeNode()
         return inputVolume
 
     def onInputVisibilityButtonClicked(self):
         inputVolume = self.scriptedEffect.parameterSetNode().GetNodeReference("Mask volume.InputVolume")
-        referenceVolume = self.scriptedEffect.parameterSetNode().GetReferenceVolumeNode()
+        sourceVolume = self.scriptedEffect.parameterSetNode().GetSourceVolumeNode()
         if inputVolume is None:
-            inputVolume = referenceVolume
+            inputVolume = sourceVolume
         if inputVolume:
             slicer.util.setSliceViewerLayers(background=inputVolume)
             self.updateGUIFromMRML()

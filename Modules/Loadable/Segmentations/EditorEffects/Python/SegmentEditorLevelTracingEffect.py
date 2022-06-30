@@ -173,8 +173,8 @@ class LevelTracingPipeline:
         Returns False if slice views are rotated.
         """
 
-        # Get reference volume image data
-        masterImageData = self.effect.scriptedEffect.referenceVolumeImageData()
+        # Get source volume image data
+        sourceImageData = self.effect.scriptedEffect.sourceVolumeImageData()
 
         segmentationNode = self.effect.scriptedEffect.parameterSetNode().GetSegmentationNode()
         parentTransformNode = None
@@ -182,10 +182,10 @@ class LevelTracingPipeline:
             parentTransformNode = segmentationNode.GetParentTransformNode()
 
         self.xyPoints.Reset()
-        ijk = self.effect.xyToIjk(xy, self.sliceWidget, masterImageData, parentTransformNode)
-        dimensions = masterImageData.GetDimensions()
+        ijk = self.effect.xyToIjk(xy, self.sliceWidget, sourceImageData, parentTransformNode)
+        dimensions = sourceImageData.GetDimensions()
 
-        self.tracingFilter.SetInputData(masterImageData)
+        self.tracingFilter.SetInputData(sourceImageData)
         self.tracingFilter.SetSeed(ijk)
 
         # Select the plane corresponding to current slice orientation
@@ -193,8 +193,8 @@ class LevelTracingPipeline:
         sliceNode = self.effect.scriptedEffect.viewNode(self.sliceWidget)
         offset = max(sliceNode.GetDimensions())
 
-        i0, j0, k0 = self.effect.xyToIjk((0, 0), self.sliceWidget, masterImageData, parentTransformNode)
-        i1, j1, k1 = self.effect.xyToIjk((offset, offset), self.sliceWidget, masterImageData, parentTransformNode)
+        i0, j0, k0 = self.effect.xyToIjk((0, 0), self.sliceWidget, sourceImageData, parentTransformNode)
+        i1, j1, k1 = self.effect.xyToIjk((offset, offset), self.sliceWidget, sourceImageData, parentTransformNode)
         if i0 == i1:
             self.tracingFilter.SetPlaneToJK()
         elif j0 == j1:
@@ -209,10 +209,10 @@ class LevelTracingPipeline:
         self.tracingFilter.Update()
         polyData = self.tracingFilter.GetOutput()
 
-        # Get reference volume IJK to slice XY transform
+        # Get source volume IJK to slice XY transform
         xyToRas = sliceNode.GetXYToRAS()
         rasToIjk = vtk.vtkMatrix4x4()
-        masterImageData.GetImageToWorldMatrix(rasToIjk)
+        sourceImageData.GetImageToWorldMatrix(rasToIjk)
         rasToIjk.Invert()
         xyToIjk = vtk.vtkGeneralTransform()
         xyToIjk.PostMultiply()

@@ -351,7 +351,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
                     self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeRemove)
 
         except IndexError:
-            logging.error('apply: Failed to threshold reference volume!')
+            logging.error('Island processing failed')
         finally:
             qt.QApplication.restoreOverrideCursor()
 

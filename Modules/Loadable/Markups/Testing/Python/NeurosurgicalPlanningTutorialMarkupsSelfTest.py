@@ -241,7 +241,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self().editor
         segmentEditorNode = segmentEditorWidget.mrmlSegmentEditorNode()
         segmentEditorNode.SetAndObserveSegmentationNode(segmentationNode)
-        segmentEditorNode.SetAndObserveReferenceVolumeNode(baselineVolume)
+        segmentEditorNode.SetAndObserveSourceVolumeNode(baselineVolume)
 
         # create segments
         region1SegmentId = segmentationNode.GetSegmentation().AddEmptySegment("Tumor-cystic")
