@@ -52,11 +52,17 @@
 
 namespace
 {
+  // Schema ID used to be an URL where the schema was available, but since "master" branch was renamed
+  // to "main" the URL does not resolve to a valid file anymore. This is not a problem, because Schema ID does
+  // not have to correspond to an URL where the schema is available according to the JSON standard, it is just
+  // recommended for compatibility with software that assumes this. The ID will likely to be changed to have
+  // "main" in the name in the future, but for compatibility with Slicer < 5.1 the current value is preserved for now.
+  // After sufficient time has passed and we are no longer concerned about forward compatibility with
+  // Slicer < 5.1, the branch name may be changed to "main".
   const std::string MARKUPS_SCHEMA =
-    "https://raw.githubusercontent.com/slicer/slicer/main/modules/loadable/markups/resources/schema/markups-schema-v1.0.3.json#";
+    "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.3.json#";
   // regex should be lower case
-  const std::string ACCEPTED_MARKUPS_SCHEMA_REGEX =
-    "^https://raw\\.githubusercontent\\.com/slicer/slicer/(main|master)/modules/loadable/markups/resources/schema/markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
+  const std::string ACCEPTED_MARKUPS_SCHEMA_REGEX = ".*markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#*$";
 }
 
 #include <vtkMRMLMarkupsJsonStorageNode_Private.h>
