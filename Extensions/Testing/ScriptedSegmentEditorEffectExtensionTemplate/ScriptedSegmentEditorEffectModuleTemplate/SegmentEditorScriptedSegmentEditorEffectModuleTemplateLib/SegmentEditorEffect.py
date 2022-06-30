@@ -90,24 +90,24 @@ To segment a single object, create a segment and paint inside and create another
         # Allow users revert to this state by clicking Undo
         self.scriptedEffect.saveStateForUndo()
 
-        # Export reference image data to temporary new volume node.
-        # Note: Although the original reference volume node is already in the scene, we do not use it here,
-        # because the reference volume may have been resampled to match segmentation geometry.
-        referenceVolumeNode = slicer.vtkMRMLScalarVolumeNode()
-        slicer.mrmlScene.AddNode(referenceVolumeNode)
-        referenceVolumeNode.SetAndObserveTransformNodeID(segmentationNode.GetTransformNodeID())
-        slicer.vtkSlicerSegmentationsModuleLogic.CopyOrientedImageDataToVolumeNode(self.scriptedEffect.referenceVolumeImageData(), referenceVolumeNode)
+        # Export source image data to temporary new volume node.
+        # Note: Although the original source volume node is already in the scene, we do not use it here,
+        # because the source volume may have been resampled to match segmentation geometry.
+        sourceVolumeNode = slicer.vtkMRMLScalarVolumeNode()
+        slicer.mrmlScene.AddNode(sourceVolumeNode)
+        sourceVolumeNode.SetAndObserveTransformNodeID(segmentationNode.GetTransformNodeID())
+        slicer.vtkSlicerSegmentationsModuleLogic.CopyOrientedImageDataToVolumeNode(self.scriptedEffect.sourceVolumeImageData(), sourceVolumeNode)
         # Generate merged labelmap of all visible segments, as the filter expects a single labelmap with all the labels.
         mergedLabelmapNode = slicer.vtkMRMLLabelMapVolumeNode()
         slicer.mrmlScene.AddNode(mergedLabelmapNode)
-        slicer.vtkSlicerSegmentationsModuleLogic.ExportSegmentsToLabelmapNode(segmentationNode, visibleSegmentIds, mergedLabelmapNode, referenceVolumeNode)
+        slicer.vtkSlicerSegmentationsModuleLogic.ExportSegmentsToLabelmapNode(segmentationNode, visibleSegmentIds, mergedLabelmapNode, sourceVolumeNode)
 
         # Run segmentation algorithm
         import SimpleITK as sitk
         import sitkUtils
         # Read input data from Slicer into SimpleITK
         labelImage = sitk.ReadImage(sitkUtils.GetSlicerITKReadWriteAddress(mergedLabelmapNode.GetName()))
-        backgroundImage = sitk.ReadImage(sitkUtils.GetSlicerITKReadWriteAddress(referenceVolumeNode.GetName()))
+        backgroundImage = sitk.ReadImage(sitkUtils.GetSlicerITKReadWriteAddress(sourceVolumeNode.GetName()))
         # Run watershed filter
         featureImage = sitk.GradientMagnitudeRecursiveGaussian(backgroundImage, float(self.scriptedEffect.doubleParameter("ObjectScaleMm")))
         del backgroundImage
@@ -126,7 +126,7 @@ To segment a single object, create a segment and paint inside and create another
 
         # Update segmentation from labelmap node and remove temporary nodes
         slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode(mergedLabelmapNode, segmentationNode, visibleSegmentIds)
-        slicer.mrmlScene.RemoveNode(referenceVolumeNode)
+        slicer.mrmlScene.RemoveNode(sourceVolumeNode)
         slicer.mrmlScene.RemoveNode(mergedLabelmapNode)
 
         qt.QApplication.restoreOverrideCursor()

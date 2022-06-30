@@ -20,7 +20,7 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
         AbstractScriptedSegmentEditorAutoCompleteEffect.__init__(self, scriptedEffect)
         scriptedEffect.name = 'Grow from seeds'
         self.minimumNumberOfSegments = 2
-        self.clippedMasterImageDataRequired = True  # reference volume intensities are used by this effect
+        self.clippedMasterImageDataRequired = True  # source volume intensities are used by this effect
         self.clippedMaskImageDataRequired = True  # masking is used
         self.growCutFilter = None
 
@@ -38,8 +38,8 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
 
     def helpText(self):
         return """<html>Growing segments to create complete segmentation<br>.
-Location, size, and shape of initial segments and content of reference volume are taken into account.
-Final segment boundaries will be placed where reference volume brightness changes abruptly. Instructions:<p>
+Location, size, and shape of initial segments and content of source volume are taken into account.
+Final segment boundaries will be placed where source volume brightness changes abruptly. Instructions:<p>
 <ul style="margin: 0">
 <li>Use Paint or other offects to draw seeds in each region that should belong to a separate segment.
 Paint each seed with a different segment. Minimum two segments are required.</li>

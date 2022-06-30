@@ -39,7 +39,7 @@
 
 //------------------------------------------------------------------------------
 static const char* SEGMENTATION_REFERENCE_ROLE = "segmentationRef";
-static const char* MASTER_VOLUME_REFERENCE_ROLE = "referenceVolumeRef";
+static const char* SOURCE_VOLUME_REFERENCE_ROLE = "masterVolumeRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSegmentEditorNode);
@@ -48,8 +48,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSegmentEditorNode);
 vtkMRMLSegmentEditorNode::vtkMRMLSegmentEditorNode()
 {
   this->SetHideFromEditors(true);
-  this->ReferenceVolumeIntensityMaskRange[0] = 0.0;
-  this->ReferenceVolumeIntensityMaskRange[1] = 0.0;
+  this->SourceVolumeIntensityMaskRange[0] = 0.0;
+  this->SourceVolumeIntensityMaskRange[1] = 0.0;
 }
 
 //----------------------------------------------------------------------------
@@ -70,8 +70,8 @@ void vtkMRMLSegmentEditorNode::WriteXML(ostream& of, int nIndent)
   of << " activeEffectName=\"" << (this->ActiveEffectName?this->ActiveEffectName:"") << "\"";
   of << " maskMode=\"" << vtkMRMLSegmentationNode::ConvertMaskModeToString(this->MaskMode) << "\"";
   of << " maskSegmentID=\"" << (this->MaskSegmentID?this->MaskSegmentID:"") << "\"";
-  of << " referenceVolumeIntensityMask=\"" << (this->ReferenceVolumeIntensityMask ? "true" : "false") << "\"";
-  of << " referenceVolumeIntensityMaskRange=\"" << this->ReferenceVolumeIntensityMaskRange[0] << " " << this->ReferenceVolumeIntensityMaskRange[1] << "\"";
+  of << " masterVolumeIntensityMask=\"" << (this->SourceVolumeIntensityMask ? "true" : "false") << "\"";
+  of << " masterVolumeIntensityMaskRange=\"" << this->SourceVolumeIntensityMaskRange[0] << " " << this->SourceVolumeIntensityMaskRange[1] << "\"";
   of << " overwriteMode=\"" << vtkMRMLSegmentEditorNode::ConvertOverwriteModeToString(this->OverwriteMode) << "\"";
 }
 
@@ -107,23 +107,31 @@ void vtkMRMLSegmentEditorNode::ReadXMLAttributes(const char** atts)
       {
       this->SetMaskSegmentID(attValue);
       }
-    else if (!strcmp(attName, "referenceVolumeIntensityMask"))
+    else if (!strcmp(attName, "masterVolumeIntensityMask")
+      || !strcmp(attName, "sourceVolumeIntensityMask")) // for future compatibility
       {
-      this->SetReferenceVolumeIntensityMask(!strcmp(attValue,"true"));
+      this->SetSourceVolumeIntensityMask(!strcmp(attValue,"true"));
       }
-    else if (!strcmp(attName, "referenceVolumeIntensityMaskRange"))
+    else if (!strcmp(attName, "masterVolumeIntensityMaskRange")
+      || !strcmp(attName, "sourceVolumeIntensityMaskRange")) // for future compatibility)
       {
       std::stringstream ss;
       ss << attValue;
       double range[2]={0};
       ss >> range[0];
       ss >> range[1];
-      this->SetReferenceVolumeIntensityMaskRange(range);
+      this->SetSourceVolumeIntensityMaskRange(range);
       }
     else if (!strcmp(attName, "overwriteMode"))
       {
       this->SetOverwriteMode(vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(attValue));
       }
+    }
+
+  // For future compatibility (when masterVolumeRef will be replaced by sourceVolumeRef)
+  if (this->GetNodeReferenceID("sourceVolumeRef"))
+    {
+		this->SetNodeReferenceID(SOURCE_VOLUME_REFERENCE_ROLE, this->GetNodeReferenceID("sourceVolumeRef"));
     }
 
   this->EndModify(disabledModify);
@@ -143,8 +151,8 @@ void vtkMRMLSegmentEditorNode::Copy(vtkMRMLNode *anode)
   this->SetActiveEffectName(otherNode->ActiveEffectName);
   this->SetMaskMode(otherNode->GetMaskMode());
   this->SetMaskSegmentID(otherNode->GetMaskSegmentID());
-  this->SetReferenceVolumeIntensityMask(otherNode->GetReferenceVolumeIntensityMask());
-  this->SetReferenceVolumeIntensityMaskRange(otherNode->GetReferenceVolumeIntensityMaskRange());
+  this->SetSourceVolumeIntensityMask(otherNode->GetSourceVolumeIntensityMask());
+  this->SetSourceVolumeIntensityMaskRange(otherNode->GetSourceVolumeIntensityMaskRange());
   this->SetOverwriteMode(otherNode->GetOverwriteMode());
 
   this->DisableModifiedEventOff();
@@ -161,20 +169,33 @@ void vtkMRMLSegmentEditorNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "MaskMode: " << vtkMRMLSegmentationNode::ConvertMaskModeToString(this->MaskMode) << "\n";
   os << indent << "MaskSegmentID: " << (this->MaskSegmentID?this->MaskSegmentID:"") << "\n";
   os << indent << "OverwriteMode: " << vtkMRMLSegmentEditorNode::ConvertOverwriteModeToString(this->OverwriteMode) << "\n";
-  os << indent << "ReferenceVolumeIntensityMask: " << (this->ReferenceVolumeIntensityMask ? "true" : "false") << "\n";
-  os << indent << "ReferenceVolumeIntensityMaskRange: " << this->ReferenceVolumeIntensityMaskRange[0] << " " << this->ReferenceVolumeIntensityMaskRange[1] << "\n";
+  os << indent << "SourceVolumeIntensityMask: " << (this->SourceVolumeIntensityMask ? "true" : "false") << "\n";
+  os << indent << "SourceVolumeIntensityMaskRange: " << this->SourceVolumeIntensityMaskRange[0] << " " << this->SourceVolumeIntensityMaskRange[1] << "\n";
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* vtkMRMLSegmentEditorNode::GetReferenceVolumeNode()
+vtkMRMLScalarVolumeNode* vtkMRMLSegmentEditorNode::GetSourceVolumeNode()
 {
-  return vtkMRMLScalarVolumeNode::SafeDownCast( this->GetNodeReference(MASTER_VOLUME_REFERENCE_ROLE) );
+  return vtkMRMLScalarVolumeNode::SafeDownCast( this->GetNodeReference(SOURCE_VOLUME_REFERENCE_ROLE) );
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSegmentEditorNode::SetAndObserveReferenceVolumeNode(vtkMRMLScalarVolumeNode* node)
+vtkMRMLScalarVolumeNode* vtkMRMLSegmentEditorNode::GetMasterVolumeNode()
 {
-  this->SetNodeReferenceID(MASTER_VOLUME_REFERENCE_ROLE, (node ? node->GetID() : nullptr));
+  vtkWarningMacro("qSlicerSegmentEditorAbstractEffect::GetMasterVolumeNode() method is deprecated, use GetSourceVolumeNode method instead");
+  return this->GetSourceVolumeNode();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSegmentEditorNode::SetAndObserveSourceVolumeNode(vtkMRMLScalarVolumeNode* node)
+{
+  this->SetNodeReferenceID(SOURCE_VOLUME_REFERENCE_ROLE, (node ? node->GetID() : nullptr));
+}
+
+void vtkMRMLSegmentEditorNode::SetAndObserveMasterVolumeNode(vtkMRMLScalarVolumeNode* node)
+{
+  vtkWarningMacro("qSlicerSegmentEditorAbstractEffect::SetAndObserveMasterVolumeNode() method is deprecated, use SetAndObserveSourceVolumeNode method instead");
+  this->SetAndObserveSourceVolumeNode(node);
 }
 
 //----------------------------------------------------------------------------

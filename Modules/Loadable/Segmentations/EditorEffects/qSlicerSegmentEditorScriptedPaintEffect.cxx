@@ -55,7 +55,8 @@ public:
     CreateCursorMethod,
     SetMRMLDefaultsMethod,
     ReferenceGeometryChangedMethod,
-    ReferenceVolumeNodeChangedMethod,
+    MasterVolumeNodeChangedMethod,
+    SourceVolumeNodeChangedMethod,
     LayoutChangedMethod,
     UpdateGUIFromMRMLMethod,
     UpdateMRMLFromGUIMethod,
@@ -82,7 +83,8 @@ qSlicerSegmentEditorScriptedPaintEffectPrivate::qSlicerSegmentEditorScriptedPain
   this->PythonCppAPI.declareMethod(Self::CreateCursorMethod, "createCursor");
   this->PythonCppAPI.declareMethod(Self::SetMRMLDefaultsMethod, "setMRMLDefaults");
   this->PythonCppAPI.declareMethod(Self::ReferenceGeometryChangedMethod, "referenceGeometryChanged");
-  this->PythonCppAPI.declareMethod(Self::ReferenceVolumeNodeChangedMethod, "referenceVolumeNodeChanged");
+  this->PythonCppAPI.declareMethod(Self::SourceVolumeNodeChangedMethod, "sourceVolumeNodeChanged");
+  this->PythonCppAPI.declareMethod(Self::MasterVolumeNodeChangedMethod, "masterVolumeNodeChanged");
   this->PythonCppAPI.declareMethod(Self::LayoutChangedMethod, "layoutChanged");
   this->PythonCppAPI.declareMethod(Self::UpdateGUIFromMRMLMethod, "updateGUIFromMRML");
   this->PythonCppAPI.declareMethod(Self::UpdateMRMLFromGUIMethod, "updateMRMLFromGUI");
@@ -343,13 +345,24 @@ void qSlicerSegmentEditorScriptedPaintEffect::referenceGeometryChanged()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorScriptedPaintEffect::referenceVolumeNodeChanged()
+void qSlicerSegmentEditorScriptedPaintEffect::sourceVolumeNodeChanged()
 {
   // Base class implementation needs to be called before the effect-specific one
-  this->Superclass::referenceVolumeNodeChanged();
+  this->Superclass::sourceVolumeNodeChanged();
 
   Q_D(const qSlicerSegmentEditorScriptedPaintEffect);
-  d->PythonCppAPI.callMethod(d->ReferenceVolumeNodeChangedMethod);
+  d->PythonCppAPI.callMethod(d->SourceVolumeNodeChangedMethod);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorScriptedPaintEffect::masterVolumeNodeChanged()
+{
+  // Note: deprecated
+  // Base class implementation needs to be called before the effect-specific one
+  this->Superclass::masterVolumeNodeChanged();
+
+  Q_D(const qSlicerSegmentEditorScriptedPaintEffect);
+  d->PythonCppAPI.callMethod(d->MasterVolumeNodeChangedMethod);
 }
 
 //-----------------------------------------------------------------------------

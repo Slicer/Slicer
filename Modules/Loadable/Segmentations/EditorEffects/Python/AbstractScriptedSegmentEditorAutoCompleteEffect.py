@@ -396,7 +396,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             return True
         vtkSegmentationCore.vtkSegmentationConverter.DeserializeImageGeometry(effectiveGeometryString, effectiveGeometryImage)
 
-        masterImageData = self.scriptedEffect.referenceVolumeImageData()
+        masterImageData = self.scriptedEffect.sourceVolumeImageData()
         masterImageExtent = masterImageData.GetExtent()
 
         # The effective extent of the selected segments
@@ -413,7 +413,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
                 (masterImageExtent[5] != currentLabelExtent[5] and currentLabelExtent[5] < effectiveLabelExtent[5] + self.minimumExtentMargin))
 
     def preview(self):
-        # Get reference volume image data
+        # Get source volume image data
         import vtkSegmentationCorePython as vtkSegmentationCore
 
         # Get segmentation
@@ -449,7 +449,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
                 return
             vtkSegmentationCore.vtkSegmentationConverter.DeserializeImageGeometry(commonGeometryString, self.mergedLabelmapGeometryImage)
 
-            masterImageData = self.scriptedEffect.referenceVolumeImageData()
+            masterImageData = self.scriptedEffect.sourceVolumeImageData()
             masterImageExtent = masterImageData.GetExtent()
             labelsEffectiveExtent = self.mergedLabelmapGeometryImage.GetExtent()
             # Margin size is relative to combined seed region size, but minimum of 3 voxels
@@ -502,14 +502,16 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             self.clippedMaskImageData = None
             if self.clippedMaskImageDataRequired:
                 self.clippedMaskImageData = slicer.vtkOrientedImageData()
-                intensityBasedMasking = self.scriptedEffect.parameterSetNode().GetReferenceVolumeIntensityMask()
+                intensityBasedMasking = self.scriptedEffect.parameterSetNode().GetSourceVolumeIntensityMask()
+                maskSegmentID = self.scriptedEffect.parameterSetNode().GetMaskSegmentID() if self.scriptedEffect.parameterSetNode().GetMaskSegmentID() else ""
+                intensityRange = self.scriptedEffect.parameterSetNode().GetSourceVolumeIntensityMaskRange() if intensityBasedMasking else None
                 success = segmentationNode.GenerateEditMask(self.clippedMaskImageData,
                                                             self.scriptedEffect.parameterSetNode().GetMaskMode(),
                                                             self.clippedMasterImageData,  # reference geometry
                                                             "",  # edited segment ID
-                                                            self.scriptedEffect.parameterSetNode().GetMaskSegmentID() if self.scriptedEffect.parameterSetNode().GetMaskSegmentID() else "",
+                                                            maskSegmentID,
                                                             self.clippedMasterImageData if intensityBasedMasking else None,
-                                                            self.scriptedEffect.parameterSetNode().GetReferenceVolumeIntensityMaskRange() if intensityBasedMasking else None)
+                                                            intensityRange)
                 if not success:
                     logging.error("Failed to create edit mask")
                     self.clippedMaskImageData = None

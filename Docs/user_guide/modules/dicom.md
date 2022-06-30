@@ -175,7 +175,7 @@ DICOM module settings:
 - **DICOM database settings**: allows you to select a location on disk for Slicer's database of DICOM files. The application manages content of this folder (stores metadata and copy of imported DICOM files): do not manually copy any data into this folder.
 - Additional settings are available in menu: Edit / Application Settings / DICOM:
     - Generic DICOM settings:
-        - Load referenced series will give you the option of easily loading, for example, the reference volume of a segmentation when you open the segmentation.  This can also be made to happen automatically.
+        - Load referenced series will give you the option of easily loading, for example, the source volume of a segmentation when you open the segmentation.  This can also be made to happen automatically.
     - DICOMScalarVolumePlugin settings:
         - You can choose what back-end library to use (currently GDCM, DCMTK, or GDCM with DCMTK fallback with the last option being the default.  This is provided in case some data is unsupported by one library or the other.
         - Acquisition geometry regularization option supports the creation of a nonlinear transform that corrects for things like missing slices or gantry tilt in the acquisition.  See more information [here](https://github.com/Slicer/Slicer/commit/3328b81211cb2e9ae16a0b49097744171c8c71c0)

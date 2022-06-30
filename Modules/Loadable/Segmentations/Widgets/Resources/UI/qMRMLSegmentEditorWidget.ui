@@ -17,14 +17,14 @@
    <item row="0" column="0">
     <layout class="QGridLayout" name="NodeSelectorLayout">
      <item row="1" column="0">
-      <widget class="QLabel" name="ReferenceVolumeNodeLabel">
+      <widget class="QLabel" name="SourceVolumeNodeLabel">
        <property name="text">
-        <string>Reference volume:</string>
+        <string>Source volume:</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="qMRMLNodeComboBox" name="ReferenceVolumeNodeComboBox">
+      <widget class="qMRMLNodeComboBox" name="SourceVolumeNodeComboBox">
        <property name="nodeTypes">
         <stringlist>
          <string>vtkMRMLScalarVolumeNode</string>
@@ -45,7 +45,7 @@
         <bool>true</bool>
        </property>
        <property name="noneDisplay">
-        <string>Select reference volume to enable editing</string>
+        <string>Select source volume to enable editing</string>
        </property>
       </widget>
      </item>
@@ -385,21 +385,21 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="ReferenceVolumeIntensityMaskRangeLabel">
+           <widget class="QLabel" name="SourceVolumeIntensityMaskRangeLabel">
             <property name="text">
              <string>Editable intensity range:</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="ctkCheckBox" name="ReferenceVolumeIntensityMaskCheckBox">
+           <widget class="ctkCheckBox" name="SourceVolumeIntensityMaskCheckBox">
             <property name="toolTip">
-             <string>Only those regions are allowed to be changed where the reference volume intensity is in the specified range</string>
+             <string>Only those regions are allowed to be changed where the source volume intensity is in the specified range</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0" colspan="2">
-           <widget class="ctkRangeWidget" name="ReferenceVolumeIntensityMaskRangeWidget">
+           <widget class="ctkRangeWidget" name="SourceVolumeIntensityMaskRangeWidget">
             <property name="singleStep">
              <double>0.010000000000000</double>
             </property>
@@ -525,7 +525,7 @@
   <connection>
    <sender>qMRMLSegmentEditorWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ReferenceVolumeNodeComboBox</receiver>
+   <receiver>SourceVolumeNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">

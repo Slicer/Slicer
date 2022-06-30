@@ -89,7 +89,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.parameterSetNode = segmentEditorNode
         self.editor.setMRMLSegmentEditorNode(self.parameterSetNode)
 
-    def getDefaultReferenceVolumeNodeID(self):
+    def getDefaultSourceVolumeNodeID(self):
         layoutManager = slicer.app.layoutManager()
         firstForegroundVolumeID = None
         # Use first background volume node in any of the displayed layouts.
@@ -127,9 +127,9 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             if not segmentationNode:
                 segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
             self.editor.setSegmentationNode(segmentationNode)
-            if not self.editor.referenceVolumeNodeID():
-                referenceVolumeNodeID = self.getDefaultReferenceVolumeNodeID()
-                self.editor.setReferenceVolumeNodeID(referenceVolumeNodeID)
+            if not self.editor.sourceVolumeNodeID():
+                sourceVolumeNodeID = self.getDefaultSourceVolumeNodeID()
+                self.editor.setSourceVolumeNodeID(sourceVolumeNodeID)
 
     def exit(self):
         self.editor.setActiveEffect(None)

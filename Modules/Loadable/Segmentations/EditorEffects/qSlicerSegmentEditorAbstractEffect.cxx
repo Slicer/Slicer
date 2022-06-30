@@ -304,7 +304,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
 
   vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = modifierLabelmapInput;
   if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere) ||
-    parameterSetNode->GetReferenceVolumeIntensityMask())
+    parameterSetNode->GetSourceVolumeIntensityMask())
     {
     vtkNew<vtkOrientedImageData> maskImage;
     maskImage->SetExtent(modifierLabelmap->GetExtent());
@@ -321,27 +321,27 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       }
 
     // Apply threshold mask if paint threshold is turned on
-    if (parameterSetNode->GetReferenceVolumeIntensityMask())
+    if (parameterSetNode->GetSourceVolumeIntensityMask())
       {
-      vtkOrientedImageData* referenceVolumeOrientedImageData = this->referenceVolumeImageData();
-      if (!referenceVolumeOrientedImageData)
+      vtkOrientedImageData* sourceVolumeOrientedImageData = this->sourceVolumeImageData();
+      if (!sourceVolumeOrientedImageData)
         {
-        qCritical() << Q_FUNC_INFO << ": Unable to get reference volume image";
+        qCritical() << Q_FUNC_INFO << ": Unable to get source volume image";
         this->defaultModifierLabelmap();
         return;
         }
-      // Make sure the modifier labelmap has the same geometry as the reference volume
-      if (!vtkOrientedImageDataResample::DoGeometriesMatch(modifierLabelmap, referenceVolumeOrientedImageData))
+      // Make sure the modifier labelmap has the same geometry as the source volume
+      if (!vtkOrientedImageDataResample::DoGeometriesMatch(modifierLabelmap, sourceVolumeOrientedImageData))
         {
-        qCritical() << Q_FUNC_INFO << ": Modifier labelmap should have the same geometry as the reference volume";
+        qCritical() << Q_FUNC_INFO << ": Modifier labelmap should have the same geometry as the source volume";
         this->defaultModifierLabelmap();
         return;
         }
 
       // Create threshold image
       vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
-      threshold->SetInputData(referenceVolumeOrientedImageData);
-      threshold->ThresholdBetween(parameterSetNode->GetReferenceVolumeIntensityMaskRange()[0], parameterSetNode->GetReferenceVolumeIntensityMaskRange()[1]);
+      threshold->SetInputData(sourceVolumeOrientedImageData);
+      threshold->ThresholdBetween(parameterSetNode->GetSourceVolumeIntensityMaskRange()[0], parameterSetNode->GetSourceVolumeIntensityMaskRange()[1]);
       threshold->SetInValue(m_EraseValue);
       threshold->SetOutValue(m_FillValue);
       threshold->SetOutputScalarTypeToUnsignedChar();
@@ -627,22 +627,22 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       }
     }
 
-  // Make sure the segmentation node is under the same parent as the reference volume
-  vtkMRMLScalarVolumeNode* referenceVolumeNode = d->ParameterSetNode->GetReferenceVolumeNode();
-  if (referenceVolumeNode)
+  // Make sure the segmentation node is under the same parent as the source volume
+  vtkMRMLScalarVolumeNode* sourceVolumeNode = d->ParameterSetNode->GetSourceVolumeNode();
+  if (sourceVolumeNode)
     {
     vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->ParameterSetNode->GetScene());
     if (shNode)
       {
       vtkIdType segmentationId = shNode->GetItemByDataNode(segmentationNode);
-      vtkIdType referenceVolumeShId = shNode->GetItemByDataNode(referenceVolumeNode);
-      if (segmentationId && referenceVolumeShId)
+      vtkIdType sourceVolumeShId = shNode->GetItemByDataNode(sourceVolumeNode);
+      if (segmentationId && sourceVolumeShId)
         {
-        shNode->SetItemParent(segmentationId, shNode->GetItemParent(referenceVolumeShId));
+        shNode->SetItemParent(segmentationId, shNode->GetItemParent(sourceVolumeShId));
         }
       else
         {
-        qCritical() << Q_FUNC_INFO << ": Subject hierarchy items not found for segmentation or reference volume";
+        qCritical() << Q_FUNC_INFO << ": Subject hierarchy items not found for segmentation or source volume";
         }
       }
     }
@@ -1203,14 +1203,14 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameterDefault(QString name,
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::setVolumes(vtkOrientedImageData* alignedReferenceVolume,
+void qSlicerSegmentEditorAbstractEffect::setVolumes(vtkOrientedImageData* alignedSourceVolume,
   vtkOrientedImageData* modifierLabelmap, vtkOrientedImageData* maskLabelmap,
   vtkOrientedImageData* selectedSegmentLabelmap, vtkOrientedImageData* referenceGeometryImage)
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
   d->ModifierLabelmap = modifierLabelmap;
   d->MaskLabelmap = maskLabelmap;
-  d->AlignedReferenceVolume = alignedReferenceVolume;
+  d->AlignedSourceVolume = alignedSourceVolume;
   d->SelectedSegmentLabelmap = selectedSegmentLabelmap;
   d->ReferenceGeometryImage = referenceGeometryImage;
 }
@@ -1249,16 +1249,24 @@ vtkOrientedImageData* qSlicerSegmentEditorAbstractEffect::maskLabelmap()
 }
 
 //-----------------------------------------------------------------------------
-vtkOrientedImageData* qSlicerSegmentEditorAbstractEffect::referenceVolumeImageData()
+vtkOrientedImageData* qSlicerSegmentEditorAbstractEffect::sourceVolumeImageData()
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
   bool success = false;
-  emit d->updateVolumeSignal(d->AlignedReferenceVolume.GetPointer(), success);
+  emit d->updateVolumeSignal(d->AlignedSourceVolume.GetPointer(), success);
   if (!success)
     {
     return nullptr;
     }
-  return d->AlignedReferenceVolume;
+  return d->AlignedSourceVolume;
+}
+
+//-----------------------------------------------------------------------------
+vtkOrientedImageData* qSlicerSegmentEditorAbstractEffect::masterVolumeImageData()
+{
+  qWarning("qSlicerSegmentEditorAbstractEffect::masterVolumeImageData() method is deprecated,"
+    " use sourceVolumeImageData method instead");
+  return this->sourceVolumeImageData();
 }
 
 //-----------------------------------------------------------------------------
