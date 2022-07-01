@@ -202,6 +202,19 @@ public slots:
   /// \param plugin Name of the plugin to disable
   void disablePlugin(QString plugin);
 
+  /// Deprecated. Use setPluginAllowlist instead.
+  void setPluginWhitelist(QStringList allowlist)
+    {
+    qWarning("qMRMLSubjectHierarchyComboBox::setPluginWhitelist is deprecated. Use setPluginAllowlist instead.");
+    this->setPluginAllowlist(allowlist);
+    }
+  /// Deprecated. Use setPluginBlocklist instead.
+  void setPluginBlacklist(QStringList blocklist)
+    {
+    qWarning("qMRMLSubjectHierarchyComboBox::setPluginBlacklist is deprecated. Use setPluginBlocklist instead.");
+    this->setPluginBlocklist(blocklist);
+    }
+
   void setIncludeItemAttributeNamesFilter(QStringList filter);
   void setIncludeNodeAttributeNamesFilter(QStringList filter);
   void setExcludeItemAttributeNamesFilter(QStringList filter);
