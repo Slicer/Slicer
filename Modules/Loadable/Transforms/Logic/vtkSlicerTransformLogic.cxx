@@ -18,6 +18,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsPlaneNode.h"
+#include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -1277,7 +1279,8 @@ bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output, vtkMRMLTra
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTransformDisplayNode* displayNode, vtkMRMLNode* regionNode)
+bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
+  vtkMRMLTransformDisplayNode* displayNode, vtkMRMLNode* regionNode, vtkMRMLMarkupsNode* glyphPointsNode/*=nullptr*/)
 {
   if (displayNode == nullptr || output == nullptr || regionNode == nullptr)
     {
@@ -1287,6 +1290,8 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
   vtkNew<vtkMatrix4x4> ijkToRAS;
   int regionSize_IJK[3] = { 0 };
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(regionNode);
+  vtkMRMLMarkupsROINode* markupsRoiNode = vtkMRMLMarkupsROINode::SafeDownCast(regionNode);
+  vtkMRMLMarkupsPlaneNode* markupsPlaneNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(regionNode);
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(regionNode);
   if (sliceNode != nullptr)
     {
@@ -1316,6 +1321,38 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
     regionSize_IJK[1] = numOfPointsY;
     regionSize_IJK[2] = 0;
     }
+  else if (markupsPlaneNode != nullptr)
+    {
+    double roiDiameter_Object[3] = { 0.0, 0.0, 0.0 };
+    markupsPlaneNode->GetSize(roiDiameter_Object);
+    double planeBounds[4] = {0.0, 0.0, 0.0, 0.0};
+    markupsPlaneNode->GetPlaneBounds(planeBounds);
+    double roiCorner_Object[4] = { planeBounds[0], planeBounds[2], 0.0, 1.0 };
+    double roiCorner_World[4] = { 0.0, 0.0, 0.0, 1.0 };
+    markupsPlaneNode->GetObjectToWorldMatrix(ijkToRAS); // IJK = object, RAS = world
+    ijkToRAS->MultiplyPoint(roiCorner_Object, roiCorner_World);
+    ijkToRAS->SetElement(0, 3, roiCorner_World[0]);
+    ijkToRAS->SetElement(1, 3, roiCorner_World[1]);
+    ijkToRAS->SetElement(2, 3, roiCorner_World[2]);
+    regionSize_IJK[0] = roiDiameter_Object[0];
+    regionSize_IJK[1] = roiDiameter_Object[1];
+    regionSize_IJK[2] = roiDiameter_Object[2];
+    }
+  else if (markupsRoiNode != nullptr)
+    {
+    double roiDiameter_Object[3] = { 0.0, 0.0, 0.0 };
+    markupsRoiNode->GetSize(roiDiameter_Object);
+    double roiCorner_Object[4] = { -roiDiameter_Object[0] / 2.0, -roiDiameter_Object[1] / 2.0, -roiDiameter_Object[2] / 2.0, 1.0 };
+    double roiCorner_World[4] = { 0.0, 0.0, 0.0, 1.0 };
+    markupsRoiNode->GetObjectToWorldMatrix()->MultiplyPoint(roiCorner_Object, roiCorner_World);
+    ijkToRAS->DeepCopy(markupsRoiNode->GetObjectToWorldMatrix());
+    ijkToRAS->SetElement(0, 3, roiCorner_World[0]);
+    ijkToRAS->SetElement(1, 3, roiCorner_World[1]);
+    ijkToRAS->SetElement(2, 3, roiCorner_World[2]);
+    regionSize_IJK[0] = roiDiameter_Object[0];
+    regionSize_IJK[1] = roiDiameter_Object[1];
+    regionSize_IJK[2] = roiDiameter_Object[2];
+    }
   else if (displayableNode != nullptr)
     {
     double bounds_RAS[6] = { 0 };
@@ -1333,7 +1370,6 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
     return false;
     }
   vtkSmartPointer<vtkPoints> samplePoints_RAS;
-  vtkMRMLMarkupsNode* glyphPointsNode = vtkMRMLMarkupsNode::SafeDownCast(regionNode);
   if (glyphPointsNode != nullptr)
     {
     samplePoints_RAS = vtkSmartPointer<vtkPoints>::New();

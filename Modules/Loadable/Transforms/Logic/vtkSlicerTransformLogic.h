@@ -90,9 +90,11 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
     vtkMatrix4x4* roiToRAS, int* roiSize, vtkPoints* samplePositions_RAS = nullptr);
 
   /// Generate polydata for 3D transform visualization
-  /// Region node can be slice (vtkMRMLSliceNode), volume (vtkMRMLVolumeNode), region of interest (vtkMRMLAnnotationROINode), or model (vtkMRMLModelNode).
+  /// Region node can be slice (vtkMRMLSliceNode), volume (vtkMRMLVolumeNode), region of interest (vtkMRMLMarkupsROINode), or model (vtkMRMLModelNode).
+  /// If glyphPointsNode is specified and display mode is glyphs then the region is ignored and glyphs are drawn at the markup control points.
   /// Return true on success.
-  static bool GetVisualization3d(vtkPolyData* output_RAS, vtkMRMLTransformDisplayNode* displayNode, vtkMRMLNode* regionNode);
+  static bool GetVisualization3d(vtkPolyData* output_RAS, vtkMRMLTransformDisplayNode* displayNode,
+    vtkMRMLNode* regionNode, vtkMRMLMarkupsNode* glyphPointsNode=nullptr);
 
   /// Name of the scalar array that stores the displacement magnitude values
   /// in polydata returned by GetVisualization2d and GetVisualization3d.
