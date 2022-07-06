@@ -28,6 +28,7 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLProceduralColorNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformDisplayNode.h>
@@ -299,12 +300,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeli
     return;
     }
 
-  vtkMRMLNode* regionNode=displayNode->GetRegionNode();
-  if (displayNode->GetVisualizationMode() == vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH && displayNode->GetGlyphPointsNode())
-    {
-    // If a node is specified for glyph visualization then region is ignored.
-    regionNode = displayNode->GetGlyphPointsNode();
-    }
+  vtkMRMLNode* regionNode = displayNode->GetRegionNode();
   if (regionNode==nullptr)
     {
     pipeline->Actor->SetVisibility(false);
@@ -319,12 +315,13 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeli
     return;
     }
 
-  if (!vtkSlicerTransformLogic::GetVisualization3d(pipeline->InputPolyData, displayNode, regionNode))
-  {
+  vtkMRMLMarkupsNode* glyphPointsNode = vtkMRMLMarkupsNode::SafeDownCast(displayNode->GetGlyphPointsNode());
+  if (!vtkSlicerTransformLogic::GetVisualization3d(pipeline->InputPolyData, displayNode, regionNode, glyphPointsNode))
+    {
     vtkWarningWithObjectMacro(displayNode, "Failed to show transform in 3D: unsupported ROI type");
     pipeline->Actor->SetVisibility(false);
     return;
-  }
+    }
 
   if (pipeline->InputPolyData->GetNumberOfPoints()==0)
     {

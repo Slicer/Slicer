@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>499</width>
-    <height>794</height>
+    <height>798</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,7 +26,16 @@
    <string>Whether the transform widget can be translated.</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_6">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
     <number>4</number>
    </property>
    <item row="5" column="1">
@@ -159,7 +168,7 @@
             <string>Enable scaling by manpulating 3D widget (shift +left click and drag the handle at the center of widget face, or left click and drag the center handle)</string>
            </property>
            <property name="text">
-            <string>  </string>
+            <string/>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -182,7 +191,7 @@
             <string>Enable translating by manpulating 3D widget (left click and drag anywhere on the widget face)</string>
            </property>
            <property name="text">
-            <string>  </string>
+            <string/>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -205,7 +214,7 @@
             <string>Enable scaling by manpulating 3D widget (left click and drag the handle at the center of widget face)</string>
            </property>
            <property name="text">
-            <string>  </string>
+            <string/>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -465,6 +474,8 @@
             <string>vtkMRMLSliceNode</string>
             <string>vtkMRMLModelNode</string>
             <string>vtkMRMLVolumeNode</string>
+            <string>vtkMRMLMarkupsROINode</string>
+            <string>vtkMRMLMarkupsPlaneNode</string>
            </stringlist>
           </property>
           <property name="baseName">
@@ -583,7 +594,7 @@
                <number>0</number>
               </property>
               <property name="singleStep">
-               <double>0.500000000000000</double>
+               <double>1.000000000000000</double>
               </property>
               <property name="pageStep">
                <double>25.000000000000000</double>
@@ -723,7 +734,16 @@
                <bool>true</bool>
               </property>
               <layout class="QGridLayout" name="gridLayout_5">
-               <property name="margin">
+               <property name="leftMargin">
+                <number>4</number>
+               </property>
+               <property name="topMargin">
+                <number>4</number>
+               </property>
+               <property name="rightMargin">
+                <number>4</number>
+               </property>
+               <property name="bottomMargin">
                 <number>4</number>
                </property>
                <property name="spacing">
@@ -748,7 +768,7 @@
                   <number>0</number>
                  </property>
                  <property name="singleStep">
-                  <double>0.500000000000000</double>
+                  <double>1.000000000000000</double>
                  </property>
                  <property name="pageStep">
                   <double>2.000000000000000</double>
