@@ -1377,7 +1377,9 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromPointNormal()
     }
   baseToNodeTransform->Translate(origin_Node);
   this->BaseToNodeMatrix->DeepCopy(baseToNodeTransform->GetMatrix());
-
+  // this->BaseToNodeMatrix modified event is ignored if we get here from a MRML node callback,
+  // so we need to call Modified() to ensure that node modification is notified.
+  this->Modified();
   if (this->GetNumberOfDefinedControlPoints(true/*include preview*/) >= 1 && this->Size[0] >= 0.0 && this->Size[1] >= 0.0)
     {
     this->SetIsPlaneValid(true);
@@ -1427,6 +1429,9 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFrom3Points()
       }
     }
   this->BaseToNodeMatrix->DeepCopy(baseToNodeMatrix);
+  // this->BaseToNodeMatrix modified event is ignored if we get here from a MRML node callback,
+  // so we need to call Modified() to ensure that node modification is notified.
+  this->Modified();
 
   this->SetIsPlaneValid(true);
   this->UpdatePlaneSize();
@@ -1506,15 +1511,20 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromPlaneFit()
       this->SetSize(0.0, 0.0);
       }
     this->SetIsPlaneValid(false);
-    return;
     }
+  else
+    {
+    // The orientation of the coordinate system is adjusted so that the z axis aligns with the normal of the
+    // best fit plane defined by the control points.
+    vtkNew<vtkMatrix4x4> bestFitMatrix_Node;
+    bool valid = this->GetClosestFitPlaneFromControlPoints(this->BaseToNodeMatrix);
+    this->SetIsPlaneValid(valid);
+    this->UpdatePlaneSize();
+   }
 
-  // The orientation of the coordinate system is adjusted so that the z axis aligns with the normal of the
-  // best fit plane defined by the control points.
-  vtkNew<vtkMatrix4x4> bestFitMatrix_Node;
-  bool valid = this->GetClosestFitPlaneFromControlPoints(this->BaseToNodeMatrix);
-  this->SetIsPlaneValid(valid);
-  this->UpdatePlaneSize();
+  // this->BaseToNodeMatrix modified event is ignored if we get here from a MRML node callback,
+  // so we need to call Modified() to ensure that node modification is notified.
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
