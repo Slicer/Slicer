@@ -249,6 +249,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::AddDisplayNode(vtkMRMLT
   vtkNew<vtkPolyDataMapper> mapper;
   pipeline->Actor->SetMapper(mapper.GetPointer());
   pipeline->Actor->SetVisibility(false);
+  pipeline->Actor->SetPickable(false);
   pipeline->InputPolyData = vtkSmartPointer<vtkPolyData>::New();
   mapper->SetInputData(pipeline->InputPolyData);
 
