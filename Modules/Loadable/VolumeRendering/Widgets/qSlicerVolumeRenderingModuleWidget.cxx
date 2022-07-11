@@ -1031,7 +1031,6 @@ void qSlicerVolumeRenderingModuleWidget::onEffectiveRangeModified()
   vtkMRMLVolumePropertyNode* volumePropertyNode = this->mrmlVolumePropertyNode();
   if (!volumePropertyNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid volume property node";
     return;
     }
 
