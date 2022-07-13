@@ -192,8 +192,6 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   q->QTreeView::setModel(this->SortFilterModel);
   QObject::connect( q->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                     q, SLOT(onSelectionChanged(QItemSelection,QItemSelection)) );
-  // selectionChanged signal is not triggered when the same item is selected. This connection handles the case when the same item is re-selected.
-  QObject::connect( q, SIGNAL(pressed(const QModelIndex&)), q, SLOT(onCurrentSelection(const QModelIndex&)) );
 
   this->SortFilterModel->setParent(q);
   this->SortFilterModel->setSourceModel(this->Model);
@@ -1505,23 +1503,6 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
   // Emit current item changed signal
   emit currentItemChanged(selectedShItems[0]);
   emit currentItemsChanged(selectedShItems);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::onCurrentSelection(const QModelIndex &currentItemIndex)
-{
-  Q_D(qMRMLSubjectHierarchyTreeView);
-  if (!d->SortFilterModel)
-    {
-    return;
-    }
-
-  vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(currentItemIndex);
-  // Emit current item signal only if the current item is pressed to avoid duplicated signals when the item is changed
-  if (itemID == d->SelectedItems[0])
-    {
-    emit currentItemChanged(d->SelectedItems[0]);
-    }
 }
 
 //------------------------------------------------------------------------------

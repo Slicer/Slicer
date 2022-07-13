@@ -313,7 +313,6 @@ signals:
 
 protected slots:
   virtual void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-  virtual void onCurrentSelection(const QModelIndex &currentItemIndex);
 
   /// Updates subject hierarchy item expanded property when item is expanded
   virtual void onItemExpanded(const QModelIndex &expandedItemIndex);
