@@ -365,7 +365,7 @@ void DefineSlice(int **Corners, int RowLength, int LineLength, T inVal, T outVal
 
   // Area of interest
   for (int y = MinInY; y <= MaxInY; y ++) {
-    // Split Rectangle in to two triangles
+    // Split rectangle into two triangles
     DefineXMinMaxInTriangle(Corners[0], Corners[1], Corners[3], y, inMinX1, inMaxX1);
     DefineXMinMaxInTriangle(Corners[1], Corners[2], Corners[3], y, inMinX2, inMaxX2);
     if (inMaxX1 < 0) DefineLine(inMinX2, inMaxX2,LineLength, inVal, outVal, InsideGraySlopeFlag,Result);
