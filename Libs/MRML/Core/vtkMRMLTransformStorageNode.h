@@ -92,7 +92,7 @@ protected:
   /// additive bulk transform (as in ITKv3 bspline transform).
   virtual int ReadFromITKv3BSplineTransformFile(vtkMRMLNode *refNode);
 
-  /// This method uses ITK's transform reading infrastucture to
+  /// This method uses ITK's transform reading infrastructure to
   /// read simple or composite transforms.  The composite transform can
   /// contain nested transforms in any order coming in theory
   /// from any file type and it is read into a vtkGeneralTransform.

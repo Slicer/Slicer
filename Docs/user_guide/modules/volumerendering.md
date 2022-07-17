@@ -68,7 +68,7 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
   - Crop: Simple controls for the cropping box (ROI). More controls are available in the "Advanced..." section. Enable/Disable cropping of the volume. Show/Hide the cropping box. Reset the box ROI to the volume's bounds.
   - Rendering: Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.
     - VTK CPU Ray Casting: Available on all computers, regardless of capabilities of graphics hardware. The volume rendering is entirely realized on the CPU, therefore it is slower than other options.
-    - VTK GPU Ray Casting (default): Uses graphics hardware for rendering, typically much faster than CPU volume rendering. This is the recommended method for computers that have sufficiant graphics capabilities. It supports surface smoothing to remove staircase artifacts.
+    - VTK GPU Ray Casting (default): Uses graphics hardware for rendering, typically much faster than CPU volume rendering. This is the recommended method for computers that have sufficient graphics capabilities. It supports surface smoothing to remove staircase artifacts.
     - VTK Multi-Volume: Uses graphics hardware for rendering. Can render multiple overlapping volumes but it has several limitations (see details in [limitations](#limitations) section at the bottom of this page.
 - Advanced: More controls to control the volume rendering. Contains 3 tabs: "Techniques", "Volume Properties" and "ROI"
   - Techniques: Advanced properties of the current volume rendering method.

@@ -300,7 +300,7 @@ The ExtensionsIndex is a repository containing a list of [extension description 
 
 The ExtensionsIndex is hosted on GitHub: <https://github.com/Slicer/ExtensionsIndex>
 
-Each branch of the repository contains extension descrtiption files that corresponds to the same branch in the Slicer repository. For example, `main` branch contains descriptions for Slicer `main` branch, and `4.11` branch contains extension descripions for Slicer's `4.11` branch.
+Each branch of the repository contains extension description files that corresponds to the same branch in the Slicer repository. For example, `main` branch contains descriptions for Slicer `main` branch, and `4.11` branch contains extension descripions for Slicer's `4.11` branch.
 
 Extension developers have to make sure that the extension description in each branch of the Extensions index is compatible with the corresponding Slicer version. Extension developers often create the same branches (`main`, `4.11`, `4.13`, ...) in their repository and they specify this branch name in the extensions descriptor file.
 

@@ -647,7 +647,7 @@ macro(slicerMacroBuildApplication)
         # Slicer arguments triggering display of launcher help
         HELP_SHORT_ARG "-h"
         HELP_LONG_ARG "--help"
-        # Slicer arguments that should NOT be associated with the spash screeb
+        # Slicer arguments that should NOT be associated with the splash screen
         NOSPLASH_ARGS "--no-splash,--help,--version,--home,--program-path,--no-main-window,--settings-path,--temporary-path"
         # Extra application associated with the launcher
         EXTRA_APPLICATION_TO_LAUNCH_BUILD ${extraApplicationToLaunchListForBuildTree}

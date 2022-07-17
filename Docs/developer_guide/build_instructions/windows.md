@@ -69,7 +69,7 @@ cd /d C:\D\S4D
 - Add `Qt5_DIR` variable pointing to Qt5 folder: click Add entry button, set `Name` to `Qt5_DIR`, set `Type` to `PATH`, and set `Value` to the Qt5 folder, such as `C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5`.
 - Click `Configure`
 - Select your compiler: `Visual Studio 17 2022`, and click `Finish`
-- Click `Generate` and wait for project generation to finish (may take a few minues)
+- Click `Generate` and wait for project generation to finish (may take a few minutes)
 - Click `Open Project`
 - If building in release mode:
   - Open the top-level Slicer.sln file in the build directory in Visual Studio

@@ -29,7 +29,7 @@
 
 class QComboBox;
 
-/// \brief Abstract Item delegate to show unselectable items highlighed when the mouse is
+/// \brief Abstract Item delegate to show unselectable items highlighted when the mouse is
 /// over them to give a feeling of selectable item.
 ///
 /// This is used in qMRMLNodeComboBox for the extra items:

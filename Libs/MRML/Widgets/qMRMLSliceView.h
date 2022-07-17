@@ -36,7 +36,7 @@ class vtkMRMLSliceNode;
 class vtkMRMLSliceViewInteractorStyle;
 
 /// \brief 2D view for slice nodes.
-/// For performance reasons, the view block refreshs when the scene is in
+/// For performance reasons, the view block refreshes when the scene is in
 /// batch process state.
 /// \sa qMRMLSliceWidget, qMRMLSliceControllerWidget, qMRMLThreeDView
 class QMRML_WIDGETS_EXPORT qMRMLSliceView

@@ -231,7 +231,7 @@ simple_test( vtkThinPlateSplineTransformTest1 )
 function(SIMPLE_TEST_WITH_SCENE TESTNAME SCENEFILENAME)
   # Extract list of external files to download. Note that the ${_externalfiles} variable
   # is only specified to trigger download of data files used in the scene, the arguments
-  # are NOT explcitly used in ${KIT}CxxTests test executable.
+  # are NOT explicitly used in ${KIT}CxxTests test executable.
   string(REPLACE "|" ";" scenefilename_and_externalfiles ${SCENEFILENAME})
   list(GET scenefilename_and_externalfiles 0 SCENEFILENAME)
   list(LENGTH scenefilename_and_externalfiles _length)

@@ -36,7 +36,7 @@ class vtkMRMLViewNode;
 class vtkCollection;
 
 /// \brief 3D view for view nodes.
-/// For performance reasons, the view block refreshs when the scene is in
+/// For performance reasons, the view block refreshes when the scene is in
 /// batch process state.
 /// \sa qMRMLThreeDWidget, qMRMLThreeDViewControllerWidget, qMRMLSliceView
 class QMRML_WIDGETS_EXPORT qMRMLThreeDView : public ctkVTKRenderView

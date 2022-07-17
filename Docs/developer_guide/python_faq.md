@@ -129,7 +129,7 @@ Module logic methods can be explored by using the `help` Python function (`help(
 
 ### Adding reusable widgets provided by modules
 
-Most Slicer core modules provide a set of resuable, conigurable GUI widgets that can help developers in building their module's user interface.
+Most Slicer core modules provide a set of reusable, configurable GUI widgets that can help developers in building their module's user interface.
 
 For example, Volumes module offers a widget that can display and edit basic properties of volume nodes:
 

@@ -38,7 +38,7 @@ def checkUserSettings(slicer_executable, common_args, keep_temporary_settings=Fa
     print("=> ok\n")
 
     # User settings previously added should:
-    #  * NOT be set by detault
+    #  * NOT be set by default
     #  * be set if '--keep-temporary-settings' is provided
     args = list(common_args)
     condition = 'is not None'
@@ -62,7 +62,7 @@ def checkRevisionUserSettings(slicer_executable, common_args, keep_temporary_set
     print("=> ok\n")
 
     # User revision settings previously added should:
-    #  * NOT be set by detault
+    #  * NOT be set by default
     #  * be set if '--keep-temporary-settings' is provided
     args = list(common_args)
     condition = 'is not None'

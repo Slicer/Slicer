@@ -48,7 +48,7 @@ namespace itk
  *     <code>slicer:\<scene id\>#\<node id\></code>                    - local slicer
  *     <code>slicer://\<hostname\>/\<scene id\>#\<node id\></code>     - remote slicer
  *
- * This code was written on the Massachusettes Turnpike with extreme
+ * This code was written on the Massachusetts Turnpike with extreme
  * glare on the LCD.
  */
 class MRMLIDImageIO_EXPORT MRMLIDImageIO : public ImageIOBase

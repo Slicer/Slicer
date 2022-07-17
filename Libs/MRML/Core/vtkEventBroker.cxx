@@ -864,7 +864,7 @@ void vtkEventBroker::ProcessEventQueue ()
   // - register your pointer to the observation in case it
   //   gets deleted during handling of the event
   // - if the observation is no longer in the queue, stop processing events
-  // - unregister before after dequeing in case the observation should go away
+  // - unregister before after dequeuing in case the observation should go away
   //
   while ( this->GetNumberOfQueuedObservations() > 0 )
     {

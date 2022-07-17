@@ -209,11 +209,11 @@ void vtkImageRectangularSourceExecute(vtkImageRectangularSource *self,
     }
 }
 
-// Beginining
+// Beginning
 namespace RectSource
 {
 
-// Define in a tirangle the min and max
+// Define in a triangle the min and max
 int Min(int x1, int x2) {return (x1 < x2 ? x1 : x2);}
 int Min(int x1, int x2, int x3) {return Min(Min(x1,x2),x3);}
 int Min(int x1, int x2, int x3, int x4) {return Min(Min(x1,x2,x3),x4);}
@@ -365,7 +365,7 @@ void DefineSlice(int **Corners, int RowLength, int LineLength, T inVal, T outVal
 
   // Area of interest
   for (int y = MinInY; y <= MaxInY; y ++) {
-    // Split Rectangual in two triangles
+    // Split rectangle into two triangles
     DefineXMinMaxInTriangle(Corners[0], Corners[1], Corners[3], y, inMinX1, inMaxX1);
     DefineXMinMaxInTriangle(Corners[1], Corners[2], Corners[3], y, inMinX2, inMaxX2);
     if (inMaxX1 < 0) DefineLine(inMinX2, inMaxX2,LineLength, inVal, outVal, InsideGraySlopeFlag,Result);

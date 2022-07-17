@@ -62,8 +62,8 @@
     <integer>
       <name>numberOfHistogramBins</name>
       <longflag>numberOfHistogramBins</longflag>
-      <label>Number Of Historgram Bins</label>
-      <description>The number of historgram bins when MMI (Mattes) is metric type.</description>
+      <label>Number Of Histogram Bins</label>
+      <description>The number of histogram bins when MMI (Mattes) is metric type.</description>
       <default>50</default>
     </integer>
 

@@ -171,7 +171,7 @@ View Controllers module provides an alternate way of displaying these controller
 - **Rotate to volume plane** changes the orientation of the slice to match the closest acquisition orientation of the displayed volume.
 - **Orientation Marker** controls display of human, cube, etc in lower right corner.
 - **Ruler** controls display of ruler in slice view.
-- **View link** button synchronizes properties of views in the same view group, such as foreground/backgroudn/label volume selection, foreground/label volume opacity, zoom factor.
+- **View link** button synchronizes properties of views in the same view group, such as foreground/background/label volume selection, foreground/label volume opacity, zoom factor.
   - For parallel views (i.e., that are set to the same orientation,OD such as `axial`), the view center position is synchronized as well.
   - Long-click on the button exposes **hot-linked** option, which controls when properties are synchronized (immediately or when the mouse button is released).
   - A view group typically consists of 3 orthogonal views (e.g., in `Four-Up` view, `R`, `G`, `Y, views are in the same group). In layouts that contain multiple triplets of slice views, each triplet forms a separate group (e.g., in `Three over three` layout there are two view groups, one group is `R`, `G`, `Y`, the other groups is `R+`, `G+`, `Y+`).

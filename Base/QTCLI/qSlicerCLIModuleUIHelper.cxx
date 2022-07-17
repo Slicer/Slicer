@@ -638,7 +638,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
   //TODO - title + " RegionList"
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));
   widget->setBaseName(_label);
-  // Reegion can be added without switching to another module
+  // Region can be added without switching to another module
   // therefore it makes sense to enable adding nodes.
   widget->setAddEnabled(true);
   widget->setRenameEnabled(true);
