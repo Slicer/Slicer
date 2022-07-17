@@ -176,7 +176,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   vtkNew<vtkMRMLCameraNode> cameraNode;
   scene->AddNode(cameraNode.GetPointer());
 
-  // Check if both displayable manager cought the event
+  // Check if both displayable manager caught the event
   if (vtkMRMLTestThreeDViewDisplayableManager::NodeAddedCount != 1)
     {
     std::cerr << "Line " << __LINE__
@@ -247,7 +247,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  // Check if both displayable manager cought the event
+  // Check if both displayable manager caught the event
   if (vtkMRMLTestThreeDViewDisplayableManager::NodeAddedCount != 1)
     {
     std::cerr << "Line " << __LINE__
@@ -311,7 +311,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  // Check if both displayable manager cought the event
+  // Check if both displayable manager caught the event
   if (vtkMRMLTestThreeDViewDisplayableManager::NodeAddedCount != 2)
     {
     std::cerr << "Line " << __LINE__

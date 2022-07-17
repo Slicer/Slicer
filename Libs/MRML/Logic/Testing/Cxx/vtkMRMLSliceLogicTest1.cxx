@@ -58,7 +58,7 @@ int vtkMRMLSliceLogicTest1(int , char * [] )
   // TODO: need to fix the test.
   // The problem here is that the current node of the logic is wrong
   // it hasn't been added to the mrml scene. So when modified,
-  // the logic realizes it and create a new node (loosing the props).
+  // the logic realizes it and create a new node (losing the props).
   //TEST_SET_GET_VALUE(logic, SliceOffset, 1);
 
   logic->DeleteSliceModel();

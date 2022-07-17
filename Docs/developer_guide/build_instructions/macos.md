@@ -59,7 +59,7 @@ cmake \
 - Remarks:
   - Instead of `cmake`, you can use `ccmake` or `cmake-gui` to visually inspect and edit configure options.
   - Using top-level directory name like `/opt/sr` for Release or `/opt/s` for Debug is recommended. If `/opt` does not exist on your machine you need to use sudo for `mkdir` and `chown` in `/opt`.
-  - [Step-by-step debug instuctions](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Tutorials/Debug_Instructions)
+  - [Step-by-step debug instructions](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Tutorials/Debug_Instructions)
   - Additional configuration options to customize the application are described [here](overview.md#custom-builds).
 
 ### General information

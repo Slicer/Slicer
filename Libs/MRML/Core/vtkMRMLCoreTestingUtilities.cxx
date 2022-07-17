@@ -129,7 +129,7 @@ int GetExpectedNodeAddedClassNames(const char * sceneFilePath, std::vector<std::
   int expectedNumberOfNode = xmlParser->GetRootElement()->GetNumberOfNestedElements();
   CHECK_BOOL(expectedNumberOfNode > 0, true);
 
-  // Loop though all exepcted node and populate expectedNodeAddedClassNames vector
+  // Loop though all expected node and populate expectedNodeAddedClassNames vector
   // Note that node that can't be instantiated using CreateNodeByClass are not expected
   for(int i=0; i < xmlParser->GetRootElement()->GetNumberOfNestedElements(); ++i)
     {

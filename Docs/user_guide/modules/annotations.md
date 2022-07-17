@@ -60,8 +60,8 @@ Create and edit annotations, supplementary information associated with a scene. 
 
 - **Modify Annotation Properties: Advanced**:
   - **Text**: Set the descriptive text, text color, scale, opacity on this panel
-  - **Points**: Set the coordinate location of the point(s), glyph color, scale, glyph type, opacity, ambient, diffuse, specular material properites on this panel
-  - **Lines**: This panel is only enabled for rulers. Set the line color, label visibility, label position along the line (from 0-1), tick spacing, maximum number of ticks, opacity, ambient, diffuse, specular material properites on this panel
+  - **Points**: Set the coordinate location of the point(s), glyph color, scale, glyph type, opacity, ambient, diffuse, specular material properties on this panel
+  - **Lines**: This panel is only enabled for rulers. Set the line color, label visibility, label position along the line (from 0-1), tick spacing, maximum number of ticks, opacity, ambient, diffuse, specular material properties on this panel
   - **ROI**: This panel is only enabled for regions of interest. Set the ranges for the ROI along it's axes, LR, PA, IS. Toggle the ROI visibility and if it's updated interactively on this panel
 
 - **Toolbar**:

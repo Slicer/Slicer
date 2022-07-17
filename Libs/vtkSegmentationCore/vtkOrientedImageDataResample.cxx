@@ -1642,7 +1642,7 @@ void vtkOrientedImageDataResample::GetLabelValuesInMask(std::vector<int>& labelV
     effectiveExtent[2 * i + 1] = std::min(binaryExtent[2 * i + 1], maskExtent[2 * i + 1]);
     }
 
-  // No labels in mask if effective extent is emptyy
+  // No labels in mask if effective extent is empty
   if (effectiveExtent[0] > effectiveExtent[1] || effectiveExtent[2] > effectiveExtent[3] || effectiveExtent[4] > effectiveExtent[5])
     {
     return;
@@ -1805,7 +1805,7 @@ bool vtkOrientedImageDataResample::IsLabelInMask(
     effectiveExtent[2 * i + 1] = std::min(binaryExtent[2 * i + 1], maskExtent[2 * i + 1]);
     }
 
-  // No labels in mask if effective extent is emptyy
+  // No labels in mask if effective extent is empty
   if (effectiveExtent[0] > effectiveExtent[1] || effectiveExtent[2] > effectiveExtent[3] || effectiveExtent[4] > effectiveExtent[5])
     {
     return false;

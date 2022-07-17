@@ -47,7 +47,7 @@ public:
   /// and used when calling AddDataIOToScene
   /// and RemoveDataIOFromScene
   /// The Get methods can be used elsewhere, but the set methods
-  /// should only be used for debuggin
+  /// should only be used for debugging
   vtkGetObjectMacro (CacheManager, vtkCacheManager);
   virtual void SetCacheManager(vtkCacheManager*);
   vtkGetObjectMacro (DataIOManager, vtkDataIOManager);

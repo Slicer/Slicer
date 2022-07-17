@@ -242,7 +242,7 @@ int TestCompositeTransformHardenSplit(const char *filename)
   CHECK_EXIT_SUCCESS(testTransformAccuracy(transformFromWorldAfterHardening.GetPointer(), transformToWorldAfterHardening.GetPointer(),
     testPoints, transformedPoints.GetPointer(), transformedPointsBackToTest.GetPointer()));
 
-  // Split trasnform
+  // Split transform
   CHECK_BOOL(bsplineTransformNode->Split(), true);
 
   // Test if transform to world is the same after splitting

@@ -20,7 +20,7 @@ The existing two rules can be used as examples: the [default](https://github.com
 
 ## Plugin architecture
 
-There are many different kind of DICOM information objects and import/export of all of them would not be feasible to implement in the Slicer core (see more information in the [DICOM module user manual](../../user_guide/modules/dicom.md#dicom-plugins)). Therefore, extensions can implement custom importer/exporter clases based on DICOMLib.DICOMPlugin class and add them to slicer.modules.dicomPlugins dictionary object. The DICOM module uses these plugins to determine list of loadable and exportable items.
+There are many different kind of DICOM information objects and import/export of all of them would not be feasible to implement in the Slicer core (see more information in the [DICOM module user manual](../../user_guide/modules/dicom.md#dicom-plugins)). Therefore, extensions can implement custom importer/exporter classes based on DICOMLib.DICOMPlugin class and add them to slicer.modules.dicomPlugins dictionary object. The DICOM module uses these plugins to determine list of loadable and exportable items.
 
 ## References
 

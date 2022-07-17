@@ -88,7 +88,7 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
   - Image Dimensions: The number of pixels in "IJK" space - this is the way the data is arranged in memory. The IJK indices (displayed in the DataProbe) go from 0 to dimension-1 in each direction.
   - Image Spacing: The physical distance between pixel centers when mapped to patient space expressed in millimeters.
   - Image Origin: The location of the center of the 0,0,0 (IJK) pixel expressed with respect to patient space. Patient space is organized with respect to the subject's Right, Anterior, and Superior anatomical directions. See [coordinate systems page](https://www.slicer.org/w/index.php/Coordinate_systems) for more information.
-  - IJK to RAS Direction Matrix: The trasnform matrix from the IJK to RAS coordinate systems
+  - IJK to RAS Direction Matrix: The transform matrix from the IJK to RAS coordinate systems
   - Center Volume: This button will apply a transform to the volume that shifts its center to the origin in patient space. Harden the transform on the volume to permanently change the image origin.
   - Scan Order: Describes the image orientation (how the IJK space is oriented with respect to patient RAS.
   - Number of Scalars: Most CT or MR scans have one scalar component (grayscale). Color images have three components (red, green, blue).

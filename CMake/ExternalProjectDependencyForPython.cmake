@@ -62,7 +62,7 @@
 #
 #  ``OUTPUT_VAR_PREFIX <output-var-prefix>``
 #    Specify the prefix of output variables ``<output-var-prefix>_PATH`` and ``<output-var-prefix>_VERSION``.
-#    It defaults to upercase value of ``<python-module-name>``.
+#    It defaults to uppercase value of ``<python-module-name>``.
 #
 
 function(ExternalProject_FindPythonPackage)

@@ -58,7 +58,7 @@ void vtkTagTable::PrintSelf(ostream& os, vtkIndent indent)
         {
         os << indent << "TagTable:\n";
         os << indent << "Attribute = " << iter->first << " Value = " << iter->second << " Selected = " << "??" << "\n";
-        vtkErrorMacro ( "vtkTagTable::PrintSelf -- TagTable and TagSelectionTable are out of synch." );
+        vtkErrorMacro ( "vtkTagTable::PrintSelf -- TagTable and TagSelectionTable are out of sync." );
         }
       }
 }
