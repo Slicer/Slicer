@@ -73,7 +73,13 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->SetEventTranslation(WidgetStateOnWidget, vtkMRMLInteractionEventData::LeftButtonClickEvent, vtkEvent::NoModifier, WidgetEventJumpCursor);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventAction);
 
-  unsigned int menuStates[] = { WidgetStateOnWidget, WidgetStateOnTranslationHandle, WidgetStateOnRotationHandle, WidgetStateOnScaleHandle };
+  unsigned int menuStates[] = {
+    WidgetStateOnWidget,
+    WidgetStateOnTranslationHandle,
+    WidgetStateOnRotationHandle,
+    WidgetStateOnScaleHandle,
+    WidgetStateOnViewRotationHandle
+  };
   for (auto menuState : menuStates)
     {
     this->SetEventTranslation(menuState, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventReserved);
@@ -104,6 +110,11 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->SetEventTranslation(WidgetStateOnRotationHandle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
   this->SetEventTranslation(WidgetStateOnRotationHandle, vtkMRMLInteractionEventData::LeftButtonClickEvent, vtkEvent::NoModifier, WidgetEventJumpCursor);
 
+  this->SetEventTranslationClickAndDrag(WidgetStateOnViewRotationHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
+    WidgetStateViewRotate, WidgetEventViewRotateStart, WidgetEventViewRotateEnd);
+  this->SetEventTranslation(WidgetStateOnViewRotationHandle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
+  this->SetEventTranslation(WidgetStateOnViewRotationHandle, vtkMRMLInteractionEventData::LeftButtonClickEvent, vtkEvent::NoModifier, WidgetEventJumpCursor);
+
   this->SetEventTranslationClickAndDrag(WidgetStateOnScaleHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
   this->SetEventTranslation(WidgetStateOnScaleHandle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
@@ -115,6 +126,8 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->SetEventTranslation(WidgetStateOnTranslationHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnRotationHandle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnRotationHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnViewRotationHandle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnViewRotationHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnScaleHandle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnScaleHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
 }
@@ -164,6 +177,20 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetRotateStart(vtkMRMLInteractionEventDat
     }
 
   this->SetWidgetState(WidgetStateRotate);
+  this->StartWidgetInteraction(eventData);
+  return true;
+}
+
+//----------------------------------------------------------------------
+bool vtkSlicerMarkupsWidget::ProcessWidgetViewRotateStart(vtkMRMLInteractionEventData* eventData)
+{
+  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnViewRotationHandle)
+    || this->IsAnyControlPointLocked())
+    {
+    return false;
+    }
+
+  this->SetWidgetState(WidgetStateViewRotate);
   this->StartWidgetInteraction(eventData);
   return true;
 }
@@ -223,7 +250,8 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
     || state == WidgetStateOnWidget
     || state == WidgetStateOnTranslationHandle
     || state == WidgetStateOnRotationHandle
-    || state == WidgetStateOnScaleHandle)
+    || state == WidgetStateOnScaleHandle
+    || state == WidgetStateOnViewRotationHandle)
     {
     // update state
     int foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
@@ -245,6 +273,10 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
     else if (foundComponentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle)
       {
       this->SetWidgetState(WidgetStateOnScaleHandle);
+      }
+    else if (foundComponentType == vtkMRMLMarkupsDisplayNode::ComponentViewRotationHandle)
+      {
+      this->SetWidgetState(WidgetStateOnViewRotationHandle);
       }
     else
       {
@@ -282,6 +314,10 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
       {
       this->RotateWidget(eventPos);
       }
+    else if (state == WidgetStateViewRotate)
+      {
+      this->ViewRotateWidget(eventPos);
+      }
 
     if (markupsNode->GetCurveClosed())
       {
@@ -307,6 +343,7 @@ bool vtkSlicerMarkupsWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* ev
     && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateTranslate
     && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateScale
     && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateRotate
+    && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateViewRotate
     ) || !this->WidgetRep)
     {
     return false;
@@ -324,6 +361,10 @@ bool vtkSlicerMarkupsWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* ev
   else if (activeComponentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle)
     {
     this->SetWidgetState(WidgetStateOnScaleHandle);
+    }
+  else if (activeComponentType == vtkMRMLMarkupsDisplayNode::ComponentViewRotationHandle)
+    {
+    this->SetWidgetState(WidgetStateOnViewRotationHandle);
     }
   else
     {
@@ -425,7 +466,8 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetJumpCursor(vtkMRMLInteractionEventData
   if (this->WidgetState != WidgetStateOnWidget &&
     this->WidgetState != WidgetStateOnTranslationHandle &&
     this->WidgetState != WidgetStateOnRotationHandle &&
-    this->WidgetState != WidgetStateOnScaleHandle)
+    this->WidgetState != WidgetStateOnScaleHandle &&
+    this->WidgetState != WidgetStateOnViewRotationHandle)
     {
     return false;
     }
@@ -466,7 +508,8 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetJumpCursor(vtkMRMLInteractionEventData
 
   if (componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle
     || componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle
-    || componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle)
+    || componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle
+    || componentType == vtkMRMLMarkupsDisplayNode::ComponentViewRotationHandle)
     {
     // For interaction handle, send the position of the handle as well.
     // The position of the handle may be different in each view, so we need to get the position from the representation.
@@ -684,7 +727,8 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
     || this->WidgetState == WidgetStateTranslateControlPoint
     || this->WidgetState == WidgetStateTranslate
     || this->WidgetState == WidgetStateRotate
-    || this->WidgetState == WidgetStateScale)
+    || this->WidgetState == WidgetStateScale
+    || this->WidgetState == WidgetStateViewRotate)
     {
     distance2 = 0.0;
     return true;
@@ -708,6 +752,7 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* even
   if (this->WidgetState != WidgetStateOnWidget &&
        this->WidgetState != WidgetStateOnTranslationHandle &&
        this->WidgetState != WidgetStateOnRotationHandle &&
+       this->WidgetState != WidgetStateOnViewRotationHandle &&
        this->WidgetState != WidgetStateOnScaleHandle)
     {
     return false;
@@ -880,6 +925,12 @@ bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData
     case WidgetEventRotateEnd:
       processedEvent = ProcessEndMouseDrag(eventData);
       break;
+    case WidgetEventViewRotateStart:
+      processedEvent = ProcessWidgetViewRotateStart(eventData);
+      break;
+    case WidgetEventViewRotateEnd:
+      processedEvent = ProcessEndMouseDrag(eventData);
+      break;
     case WidgetEventScaleStart:
       processedEvent = ProcessWidgetScaleStart(eventData);
       break;
@@ -916,7 +967,8 @@ void vtkSlicerMarkupsWidget::Leave(vtkMRMLInteractionEventData* eventData)
   if (this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateTranslateControlPoint
     || this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateTranslate
     || this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateScale
-    || this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateRotate)
+    || this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateRotate
+    || this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateViewRotate)
     {
     this->EndWidgetInteraction();
     }
@@ -1446,6 +1498,137 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
 }
 
 //----------------------------------------------------------------------
+void vtkSlicerMarkupsWidget::ViewRotateWidget(double eventPos[2])
+{
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode)
+    {
+    return;
+    }
+
+  double eventPos_World[3] = { 0. };
+  double lastEventPos_World[3] = { 0. };
+  double orientation_World[9] = { 0. };
+  double eventPos_Display[2] = { 0. };
+
+  vtkSlicerMarkupsWidgetRepresentation* rep = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  vtkSlicerMarkupsWidgetRepresentation2D* rep2d = vtkSlicerMarkupsWidgetRepresentation2D::SafeDownCast(this->WidgetRep);
+  vtkSlicerMarkupsWidgetRepresentation3D* rep3d = vtkSlicerMarkupsWidgetRepresentation3D::SafeDownCast(this->WidgetRep);
+  if (rep2d)
+    {
+    double eventPos_Slice[3] = { 0. };
+    eventPos_Slice[0] = this->LastEventPosition[0];
+    eventPos_Slice[1] = this->LastEventPosition[1];
+    rep2d->GetSliceToWorldCoordinates(eventPos_Slice, lastEventPos_World);
+
+    eventPos_Slice[0] = eventPos[0];
+    eventPos_Slice[1] = eventPos[1];
+    rep2d->GetSliceToWorldCoordinates(eventPos_Slice, eventPos_World);
+
+    eventPos_Display[0] = eventPos_Slice[0];
+    eventPos_Display[1] = eventPos_Slice[1];
+    }
+  else if (rep3d)
+    {
+    eventPos_Display[0] = this->LastEventPosition[0];
+    eventPos_Display[1] = this->LastEventPosition[1];
+
+    if (rep3d->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
+      eventPos_Display, eventPos_World, lastEventPos_World,
+      orientation_World))
+      {
+      for (int i = 0; i < 3; i++)
+        {
+        eventPos_World[i] = lastEventPos_World[i];
+        }
+      }
+    else
+      {
+      return;
+      }
+    eventPos_Display[0] = eventPos[0];
+    eventPos_Display[1] = eventPos[1];
+
+    if (!rep3d->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
+      eventPos_Display, eventPos_World, eventPos_World,
+      orientation_World))
+      {
+      return;
+      }
+    }
+
+  double origin_World[3] = { 0.0 };
+  rep->GetInteractionHandleOriginWorld(origin_World);
+
+  double epsilon = 1e-5;
+  double d2 = vtkMath::Distance2BetweenPoints(eventPos_World, origin_World);
+  if (d2 < epsilon)
+    {
+    return;
+    }
+
+  for (int i = 0; i < 3; i++)
+    {
+    lastEventPos_World[i] -= origin_World[i];
+    eventPos_World[i] -= origin_World[i];
+    }
+
+  double angle = vtkMath::DegreesFromRadians(
+    vtkMath::AngleBetweenVectors(lastEventPos_World, eventPos_World));
+  double rotationNormal_World[3] = { 0.0 };
+  vtkMath::Cross(lastEventPos_World, eventPos_World, rotationNormal_World);
+  double rotationAxis_World[3] = { 0.0, 1.0, 0.0 };
+  int type = this->GetActiveComponentType();
+  if (type == vtkMRMLMarkupsDisplayNode::ComponentViewRotationHandle)
+    {
+    rep->GetInteractionHandleAxisWorld(type, 0, rotationAxis_World); // Axis of rotation
+    double origin_World[3] = { 0.0, 0.0, 0.0 };
+    rep->GetInteractionHandleOriginWorld(origin_World);
+    }
+  else
+    {
+    rotationAxis_World[0] = rotationNormal_World[0];
+    rotationAxis_World[1] = rotationNormal_World[1];
+    rotationAxis_World[2] = rotationNormal_World[2];
+    }
+
+  if (vtkMath::Dot(rotationNormal_World, rotationAxis_World) < 0.0)
+    {
+    angle *= -1.0;
+    }
+
+  vtkNew<vtkTransform> rotateTransform;
+  rotateTransform->Translate(origin_World);
+  rotateTransform->RotateWXYZ(angle, rotationAxis_World);
+  rotateTransform->Translate(-origin_World[0], -origin_World[1], -origin_World[2]);
+
+  MRMLNodeModifyBlocker blocker(markupsNode);
+
+  // The orientation of some markup types are not fully defined by their control points (line, etc.).
+  // For these cases, we need to manually apply a rotation to the interaction handles.
+  vtkNew<vtkTransform> handleToWorldTransform;
+  handleToWorldTransform->PostMultiply();
+  handleToWorldTransform->Concatenate(markupsNode->GetInteractionHandleToWorldMatrix());
+  handleToWorldTransform->Translate(-origin_World[0], -origin_World[1], -origin_World[2]);
+  handleToWorldTransform->RotateWXYZ(angle, rotationAxis_World);
+  handleToWorldTransform->Translate(origin_World[0], origin_World[1], origin_World[2]);
+  markupsNode->GetInteractionHandleToWorldMatrix()->DeepCopy(handleToWorldTransform->GetMatrix());
+
+  vtkNew<vtkPoints> transformedPoints_World;
+  transformedPoints_World->SetNumberOfPoints(markupsNode->GetNumberOfControlPoints());
+  for (int i = 0; i < markupsNode->GetNumberOfControlPoints(); i++)
+    {
+    double currentControlPointPosition_World[3] = { 0.0 };
+    markupsNode->GetNthControlPointPositionWorld(i, currentControlPointPosition_World);
+
+    double newControlPointPosition_World[3] = { 0.0 };
+    rotateTransform->TransformPoint(currentControlPointPosition_World, newControlPointPosition_World);
+    transformedPoints_World->SetPoint(i, newControlPointPosition_World);
+    }
+  markupsNode->SetControlPointPositionsWorld(transformedPoints_World);
+}
+
+//----------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::GetIntersectionOnAxisPlane(int type, int index, const double input_Display[2], double outputIntersection_World[3])
 {
   vtkSlicerMarkupsWidgetRepresentation* rep = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->WidgetRep);
@@ -1780,6 +1963,7 @@ bool vtkSlicerMarkupsWidget::GetInteractive()
     case WidgetStateTranslate:
     case WidgetStateScale:
     case WidgetStateRotate:
+    case WidgetStateViewRotate:
       return true;
     default:
       return false;

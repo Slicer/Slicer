@@ -125,6 +125,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->TranslationHandleVisibility = true;
   this->RotationHandleVisibility = true;
   this->ScaleHandleVisibility = true;
+  this->ViewRotationHandleVisibility = true;
   this->InteractionHandleScale = 3.0; // size of the handles as percent in screen size
 
   // By default, all interaction handle axes are visible
@@ -181,6 +182,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(handlesInteractive, HandlesInteractive);
   vtkMRMLWriteXMLBooleanMacro(translationHandleVisibility, TranslationHandleVisibility);
   vtkMRMLWriteXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
+  vtkMRMLWriteXMLBooleanMacro(viewRotationHandleVisibility, ViewRotationHandleVisibility);
   vtkMRMLWriteXMLBooleanMacro(scaleHandleVisibility, ScaleHandleVisibility);
   vtkMRMLWriteXMLFloatMacro(interactionHandleScale, InteractionHandleScale);
   vtkMRMLWriteXMLBooleanMacro(fillVisibility, FillVisibility);
@@ -249,6 +251,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(handlesInteractive, HandlesInteractive);
   vtkMRMLReadXMLBooleanMacro(translationHandleVisibility, TranslationHandleVisibility);
   vtkMRMLReadXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
+  vtkMRMLReadXMLBooleanMacro(viewRotationHandleVisibility, ViewRotationHandleVisibility);
   vtkMRMLReadXMLBooleanMacro(scaleHandleVisibility, ScaleHandleVisibility);
   vtkMRMLReadXMLFloatMacro(interactionHandleScale, InteractionHandleScale);
   vtkMRMLReadXMLBooleanMacro(fillVisibility, FillVisibility);
@@ -331,6 +334,7 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyBooleanMacro(HandlesInteractive);
   vtkMRMLCopyBooleanMacro(TranslationHandleVisibility);
   vtkMRMLCopyBooleanMacro(RotationHandleVisibility);
+  vtkMRMLCopyBooleanMacro(ViewRotationHandleVisibility);
   vtkMRMLCopyBooleanMacro(ScaleHandleVisibility);
   vtkMRMLCopyFloatMacro(InteractionHandleScale);
   vtkMRMLCopyBooleanMacro(FillVisibility);
@@ -530,6 +534,7 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(HandlesInteractive);
   vtkMRMLPrintBooleanMacro(TranslationHandleVisibility);
   vtkMRMLPrintBooleanMacro(RotationHandleVisibility);
+  vtkMRMLPrintBooleanMacro(ViewRotationHandleVisibility);
   vtkMRMLPrintBooleanMacro(ScaleHandleVisibility);
   vtkMRMLPrintFloatMacro(InteractionHandleScale);
   vtkMRMLPrintBooleanMacro(FillVisibility);
@@ -945,6 +950,9 @@ void vtkMRMLMarkupsDisplayNode::SetHandleVisibility(int componentType, bool visi
     case vtkMRMLMarkupsDisplayNode::ComponentScaleHandle:
       this->SetScaleHandleVisibility(visibility);
       break;
+    case vtkMRMLMarkupsDisplayNode::ComponentViewRotationHandle:
+      this->SetViewRotationHandleVisibility(visibility);
+      break;
     default:
       vtkErrorMacro("Unknown handle type");
       break;
@@ -962,6 +970,8 @@ bool vtkMRMLMarkupsDisplayNode::GetHandleVisibility(int componentType)
       return this->GetRotationHandleVisibility();
     case vtkMRMLMarkupsDisplayNode::ComponentScaleHandle:
       return this->GetScaleHandleVisibility();
+    case vtkMRMLMarkupsDisplayNode::ComponentViewRotationHandle:
+      return this->GetViewRotationHandleVisibility();
     default:
       vtkErrorMacro("Unknown handle type");
     }

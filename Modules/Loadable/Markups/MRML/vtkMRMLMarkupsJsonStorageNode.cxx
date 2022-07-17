@@ -818,6 +818,10 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsDisplayNodeFromJso
     {
     displayNode->SetRotationHandleVisibility(displayItem["rotationHandleVisibility"].GetBool());
     }
+  if (displayItem.HasMember("viewRotationHandleVisibility"))
+    {
+    displayNode->SetViewRotationHandleVisibility(displayItem["viewRotationHandleVisibility"].GetBool());
+    }
   if (displayItem.HasMember("scaleHandleVisibility"))
     {
     displayNode->SetScaleHandleVisibility(displayItem["scaleHandleVisibility"].GetBool());
@@ -1113,6 +1117,7 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteDisplayProperties(
   writer.Key("handlesInteractive"); writer.Bool(markupsDisplayNode->GetHandlesInteractive());
   writer.Key("translationHandleVisibility"); writer.Bool(markupsDisplayNode->GetTranslationHandleVisibility());
   writer.Key("rotationHandleVisibility"); writer.Bool(markupsDisplayNode->GetRotationHandleVisibility());
+  writer.Key("viewRotationHandleVisibility"); writer.Bool(markupsDisplayNode->GetViewRotationHandleVisibility());
   writer.Key("scaleHandleVisibility"); writer.Bool(markupsDisplayNode->GetScaleHandleVisibility());
   writer.Key("interactionHandleScale"); writer.Double(markupsDisplayNode->GetInteractionHandleScale());
 

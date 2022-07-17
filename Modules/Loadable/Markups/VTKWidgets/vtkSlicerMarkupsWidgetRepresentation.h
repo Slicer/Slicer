@@ -66,6 +66,7 @@
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTubeFilter.h"
+#include "vtkCamera.h"
 
 class vtkMRMLInteractionEventData;
 
@@ -161,6 +162,8 @@ protected:
   // Convert glyph types from display node enums to 2D glyph source enums
   static int GetGlyphTypeSourceFromDisplay(int glyphTypeDisplay);
 
+  static void OnViewModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+
   class ControlPointsPipeline
   {
   public:
@@ -203,6 +206,15 @@ protected:
     vtkSmartPointer<vtkAppendPolyData>                  AxisRotationGlyphSource;
     vtkSmartPointer<vtkTensorGlyph>                     AxisRotationGlypher;
 
+    vtkSmartPointer<vtkArcSource>                       FullAxisRotationArcSource;
+    vtkSmartPointer<vtkTubeFilter>                      FullAxisRotationTubeFilter;
+    vtkSmartPointer<vtkPolyData>                        ViewPoint;
+    vtkSmartPointer<vtkTransform>                       ViewTransform;
+    vtkSmartPointer<vtkTransformPolyDataFilter>         ViewTransformer;
+    vtkSmartPointer<vtkAppendPolyData>                  AxisRotationGlyphSource2;
+    vtkSmartPointer<vtkTensorGlyph>                     ViewAxisRotationGlypher;
+    vtkSmartPointer<vtkTransformPolyDataFilter>         ViewRotationScaleTransform;
+
     vtkSmartPointer<vtkArrowSource>                     AxisTranslationGlyphSource;
     vtkSmartPointer<vtkTransformPolyDataFilter>         AxisTranslationGlyphTransformer;
     vtkSmartPointer<vtkPolyData>                        TranslationHandlePoints;
@@ -215,6 +227,7 @@ protected:
     vtkSmartPointer<vtkGlyph3D>                         AxisScaleGlypher;
 
     vtkSmartPointer<vtkAppendPolyData>                  Append;
+    vtkSmartPointer<vtkAppendPolyData>                  AppendTransformed;
     vtkSmartPointer<vtkTransformPolyDataFilter>         HandleToWorldTransformFilter;
     vtkSmartPointer<vtkTransform>                       HandleToWorldTransform;
     vtkSmartPointer<vtkLookupTable>                     ColorTable;
@@ -225,6 +238,8 @@ protected:
     double                                              StartFadeAngle{30};
     double                                              EndFadeAngle{20};
     double                                              InteractionHandleSize{1.0};
+
+    int                                                 ViewObserverTag{0};
 
     virtual void InitializePipeline();
     virtual void CreateRotationHandles();

@@ -230,6 +230,7 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject *caller,
         }
       else if (callData != nullptr && (componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle
         || componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle
+        || componentType == vtkMRMLMarkupsDisplayNode::ComponentViewRotationHandle
         || componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle))
         {
         // Jump to the location of the current handle position.

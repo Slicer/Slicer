@@ -97,6 +97,7 @@ public:
     ComponentRotationHandle,
     ComponentTranslationHandle,
     ComponentScaleHandle,
+    ComponentViewRotationHandle,
     Component_Last
     };
   struct ComponentInfo
@@ -437,6 +438,9 @@ public:
   vtkGetMacro(RotationHandleVisibility, bool);
   vtkSetMacro(RotationHandleVisibility, bool);
   vtkBooleanMacro(RotationHandleVisibility, bool);
+  vtkGetMacro(ViewRotationHandleVisibility, bool);
+  vtkSetMacro(ViewRotationHandleVisibility, bool);
+  vtkBooleanMacro(ViewRotationHandleVisibility, bool);
   vtkGetMacro(ScaleHandleVisibility, bool);
   vtkSetMacro(ScaleHandleVisibility, bool);
   vtkBooleanMacro(ScaleHandleVisibility, bool);
@@ -540,6 +544,7 @@ protected:
   bool HandlesInteractive;
   bool TranslationHandleVisibility;
   bool RotationHandleVisibility;
+  bool ViewRotationHandleVisibility;
   bool ScaleHandleVisibility;
   double InteractionHandleScale;
 

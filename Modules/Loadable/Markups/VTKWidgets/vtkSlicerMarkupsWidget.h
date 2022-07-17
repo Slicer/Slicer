@@ -63,6 +63,7 @@ public:
     WidgetStateOnTranslationHandle, // hovering over a translation interaction handle
     WidgetStateOnRotationHandle, // hovering over a rotation interaction handle
     WidgetStateOnScaleHandle, // hovering over a scale interaction handle
+    WidgetStateOnViewRotationHandle, // hovering over a view rotation interaction handle
     WidgetStateMarkups_Last
   };
 

@@ -115,6 +115,7 @@ public:
   QAction* HandleVisibilityAction{nullptr};
   QAction* ToggleTranslateHandleVisible{nullptr};
   QAction* ToggleRotateHandleVisible{nullptr};
+  QAction* ToggleViewRotateHandleVisible{nullptr};
   QAction* ToggleScaleHandleVisible{nullptr};
 
   QList< vtkWeakPointer<vtkMRMLMarkupsNode> > NodesToDelete;
@@ -205,6 +206,11 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->ToggleRotateHandleVisible->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, vtkMRMLMarkupsDisplayNode::ComponentRotationHandle);
   QObject::connect(this->ToggleRotateHandleVisible, SIGNAL(triggered()), q, SLOT(toggleHandleTypeVisibility()));
 
+  this->ToggleViewRotateHandleVisible = new QAction("ViewRotate");
+  this->ToggleViewRotateHandleVisible->setCheckable(true);
+  this->ToggleViewRotateHandleVisible->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, vtkMRMLMarkupsDisplayNode::ComponentViewRotationHandle);
+  QObject::connect(this->ToggleViewRotateHandleVisible, SIGNAL(triggered()), q, SLOT(toggleHandleTypeVisibility()));
+
   this->ToggleScaleHandleVisible = new QAction("Scale");
   this->ToggleScaleHandleVisible->setCheckable(true);
   this->ToggleScaleHandleVisible->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, vtkMRMLMarkupsDisplayNode::ComponentScaleHandle);
@@ -213,6 +219,7 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->HandleVisibilityMenu = new QMenu();
   this->HandleVisibilityMenu->addAction(this->ToggleTranslateHandleVisible);
   this->HandleVisibilityMenu->addAction(this->ToggleRotateHandleVisible);
+  this->HandleVisibilityMenu->addAction(this->ToggleViewRotateHandleVisible);
   this->HandleVisibilityMenu->addAction(this->ToggleScaleHandleVisible);
 
   this->HandleVisibilityAction = new QAction("Interaction options");
@@ -727,6 +734,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     d->ToggleHandleInteractive->setChecked(displayNode->GetHandlesInteractive());
     d->ToggleTranslateHandleVisible->setChecked(displayNode->GetTranslationHandleVisibility());
     d->ToggleRotateHandleVisible->setChecked(displayNode->GetRotationHandleVisibility());
+    d->ToggleViewRotateHandleVisible->setChecked(displayNode->GetViewRotationHandleVisibility());
     d->ToggleScaleHandleVisible->setChecked(displayNode->GetScaleHandleVisibility());
     }
 }
@@ -773,6 +781,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showVisibilityContextMenuActionsForIt
       d->ToggleCurrentItemHandleInteractive->setChecked(displayNode->GetHandlesInteractive());
       d->ToggleCurrentItemTranslateHandleVisible->setChecked(displayNode->GetTranslationHandleVisibility());
       d->ToggleCurrentItemRotateHandleVisible->setChecked(displayNode->GetRotationHandleVisibility());
+      d->ToggleCurrentItemViewRotateHandleVisible->setChecked(displayNode->GetViewRotationHandleVisibility());
       d->ToggleCurrentItemScaleHandleVisible->setChecked(displayNode->GetScaleHandleVisibility());
       }
     }

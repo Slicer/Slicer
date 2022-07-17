@@ -539,6 +539,13 @@
                                             "description": "Visibility of the rotation interaction handles",
                                             "default": false
                                         },
+                                        "viewRotationHandleVisibility": {
+                                            "$id": "#display/viewRotationHandleVisibility",
+                                            "type": "boolean",
+                                            "title": "View rotation handle visibility",
+                                            "description": "Visibility of the view rotation interaction handles",
+                                            "default": false
+                                        },
                                         "scaleHandleVisibility": {
                                             "$id": "#display/scaleHandleVisibility",
                                             "type": "boolean",

@@ -196,6 +196,10 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   d->rotateVisibilityCheckBox->setChecked(d->DisplayNode->GetRotationHandleVisibility());
   d->rotateVisibilityCheckBox->blockSignals(wasBlocking);
 
+  wasBlocking = d->rotateViewPlaneCheckBox->blockSignals(true);
+  d->rotateViewPlaneCheckBox->setChecked(d->DisplayNode->GetViewRotationHandleVisibility());
+  d->rotateViewPlaneCheckBox->blockSignals(wasBlocking);
+
   bool* rotationHandleAxes = d->DisplayNode->GetRotationHandleComponentVisibility();
   wasBlocking = d->rotateXCheckBox->blockSignals(true);
   d->rotateXCheckBox->setChecked(rotationHandleAxes[0]);
@@ -265,6 +269,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateMRMLFromWidget()
                                  d->rotateZCheckBox->isChecked(), true };
   d->DisplayNode->SetRotationHandleComponentVisibility(rotationHandleAxes);
   d->DisplayNode->SetRotationHandleVisibility(d->rotateVisibilityCheckBox->isChecked());
+  d->DisplayNode->SetViewRotationHandleVisibility(d->rotateViewPlaneCheckBox->isChecked());
 
   bool scaleHandleAxes[4] = { d->scaleXCheckBox->isChecked(),
                               d->scaleYCheckBox->isChecked(),
