@@ -29,6 +29,7 @@ vtkMRMLNodeNewMacro(vtkMRMLViewNode);
 vtkMRMLViewNode::vtkMRMLViewNode()
 {
   this->BoxVisible = 1;
+  this->GetDefaultBoxColor(this->BoxColor);
   this->AxisLabelsVisible = 1;
   this->AxisLabelsCameraDependent = 1;
   this->FiducialsVisible = 1;
@@ -86,6 +87,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(fieldOfView, FieldOfView);
   vtkMRMLWriteXMLFloatMacro(letterSize, LetterSize);
   vtkMRMLWriteXMLBooleanMacro(boxVisible, BoxVisible);
+  vtkMRMLWriteXMLVectorMacro(boxColor, BoxColor, double, 3);
   vtkMRMLWriteXMLBooleanMacro(fiducialsVisible, FiducialsVisible);
   vtkMRMLWriteXMLBooleanMacro(fiducialLabelsVisible, FiducialLabelsVisible);
   vtkMRMLWriteXMLBooleanMacro(axisLabelsVisible, AxisLabelsVisible);
@@ -123,6 +125,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(fieldOfView, FieldOfView);
   vtkMRMLReadXMLFloatMacro(letterSize, LetterSize);
   vtkMRMLReadXMLBooleanMacro(boxVisible, BoxVisible);
+  vtkMRMLReadXMLVectorMacro(boxColor, BoxColor, double, 3);
   vtkMRMLReadXMLBooleanMacro(fiducialsVisible, FiducialsVisible);
   vtkMRMLReadXMLBooleanMacro(fiducialLabelsVisible, FiducialLabelsVisible);
   vtkMRMLReadXMLBooleanMacro(axisLabelsVisible, AxisLabelsVisible);
@@ -161,6 +164,7 @@ void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   vtkMRMLCopyFloatMacro(FieldOfView);
   vtkMRMLCopyFloatMacro(LetterSize);
   vtkMRMLCopyBooleanMacro(BoxVisible);
+  vtkMRMLCopyVectorMacro(BoxColor, double, 3);
   vtkMRMLCopyBooleanMacro(FiducialsVisible);
   vtkMRMLCopyBooleanMacro(FiducialLabelsVisible);
   vtkMRMLCopyBooleanMacro(AxisLabelsVisible);
@@ -196,6 +200,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(FieldOfView);
   vtkMRMLPrintFloatMacro(LetterSize);
   vtkMRMLPrintBooleanMacro(BoxVisible);
+  vtkMRMLPrintVectorMacro(BoxColor, double, 3);
   vtkMRMLPrintBooleanMacro(FiducialsVisible);
   vtkMRMLPrintBooleanMacro(FiducialLabelsVisible);
   vtkMRMLPrintBooleanMacro(AxisLabelsVisible);
@@ -240,6 +245,14 @@ double* vtkMRMLViewNode::defaultBackgroundColor2()
                                        0.4705882352941176,
                                        0.7450980392156863};
   return backgroundColor2;
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLViewNode::GetDefaultBoxColor(double color[3])
+{
+  color[0] = 1.0;
+  color[1] = 0.0;
+  color[2] = 1.0;
 }
 
 //---------------------------------------------------------------------------

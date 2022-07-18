@@ -52,9 +52,16 @@ public:
   static double* defaultBackgroundColor();
   static double* defaultBackgroundColor2();
 
+  /// Return default box color
+  static void GetDefaultBoxColor(double color[3]);
+
   /// Indicates if the box is visible
   vtkGetMacro(BoxVisible, int);
   vtkSetMacro(BoxVisible, int);
+
+  /// Box color as RGB
+  vtkSetVector3Macro(BoxColor, double);
+  vtkGetVector3Macro(BoxColor, double);
 
   /// Indicates if the axis labels are visible
   vtkGetMacro(AxisLabelsVisible, int);
@@ -282,6 +289,7 @@ public:
     AnimationModeFlag,
     RenderModeFlag,
     BoxVisibleFlag,
+    BoxColorFlag,
     BoxLabelVisibileFlag,
     BackgroundColorFlag,
     StereoTypeFlag,
@@ -316,6 +324,7 @@ protected:
   int FiducialsVisible;
   int FiducialLabelsVisible;
   int BoxVisible;
+  double BoxColor[3];
   int AxisLabelsVisible;
   int AxisLabelsCameraDependent;
   double FieldOfView;

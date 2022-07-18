@@ -69,6 +69,7 @@ public:
   void UpdateRASBounds(double bounds[6]);
 
   void UpdateAxisVisibility();
+  void UpdateAxisColor();
   void UpdateAxisLabelVisibility();
   void UpdateAxisLabelText();
   void SetAxisLabelColor(double newAxisLabelColor[3]);
@@ -116,7 +117,17 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
   this->BoxAxisActor = vtkSmartPointer<vtkActor>::New();
   this->BoxAxisActor->SetMapper(boxMapper.GetPointer());
   this->BoxAxisActor->SetScale(1.0, 1.0, 1.0);
-  this->BoxAxisActor->GetProperty()->SetColor(1.0, 0.0, 1.0);
+
+  double boxColor[3];
+  if (this->External->GetMRMLViewNode())
+    {
+    this->External->GetMRMLViewNode()->GetBoxColor(boxColor);
+    }
+  else
+    {
+    vtkMRMLViewNode::GetDefaultBoxColor(boxColor);
+    }
+  this->BoxAxisActor->GetProperty()->SetColor(boxColor);
   this->BoxAxisActor->SetPickable(0);
 
   this->AxisLabelActors.clear();
@@ -244,6 +255,9 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     {
     return;
     }
+
+  // Update box color
+  this->BoxAxisActor->GetProperty()->SetColor(this->External->GetMRMLViewNode()->GetBoxColor());
 
   // Turn off box and axis labels to compute bounds
   int boxVisibility = this->BoxAxisActor->GetVisibility();
@@ -391,6 +405,17 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisVisibility()
   int visible = this->External->GetMRMLViewNode()->GetBoxVisible();
   vtkDebugWithObjectMacro(this->External, << "UpdateAxisVisibility:" << visible);
   this->BoxAxisActor->SetVisibility(visible);
+  this->External->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisColor()
+{
+  double boxColor[3] = {1.0, 0.0, 1.0};
+  vtkMRMLViewNode::GetDefaultBoxColor(boxColor);
+  this->External->GetMRMLViewNode()->GetBoxColor(boxColor);
+  vtkDebugWithObjectMacro(this->External, << "UpdateAxisColor:" << boxColor[0] << "\t" << boxColor[1] << "\t" << boxColor[2]);
+  this->BoxAxisActor->GetProperty()->SetColor(boxColor);
   this->External->RequestRender();
 }
 
@@ -645,6 +670,7 @@ void vtkMRMLViewDisplayableManager::UpdateFromViewNode()
   this->Internal->UpdateRenderMode();
   this->Internal->UpdateAxisLabelVisibility();
   this->Internal->UpdateAxisVisibility();
+  this->Internal->UpdateAxisColor();
   this->Internal->UpdateAxisLabelText();
   this->Internal->UpdateStereoType();
   this->Internal->UpdateBackgroundColor();
