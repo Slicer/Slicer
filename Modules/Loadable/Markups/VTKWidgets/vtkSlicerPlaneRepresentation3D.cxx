@@ -74,6 +74,7 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
   this->ArrowGlypher->SetScaleModeToDataScalingOff();
   this->ArrowGlypher->SetInputArrayToProcess(1, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
 
+  this->PlaneOutlineFilter->SetInputData(this->PlaneOutlineInputPolyData);
   this->PlaneOutlineFilter->CappingOff();
 
   // Color filters
@@ -245,10 +246,8 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
   vtkNew<vtkCellArray> lines;
   lines->InsertNextCell(line);
 
-  vtkNew<vtkPolyData> outlinePolyData;
-  outlinePolyData->SetPoints(planeBorderPoints_World);
-  outlinePolyData->SetLines(lines);
-  this->PlaneOutlineFilter->SetInputDataObject(outlinePolyData);
+  this->PlaneOutlineInputPolyData->SetPoints(planeBorderPoints_World);
+  this->PlaneOutlineInputPolyData->SetLines(lines);
 
   // Update the plane fill
   this->PlaneFillFilter->SetOrigin(planeCornerPoints_World->GetPoint(0));
@@ -491,40 +490,37 @@ void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(
     double dist2Display = VTK_DOUBLE_MAX;
     double closestPointDisplay[3] = { 0.0, 0.0, 0.0 };
 
-    vtkPolyData* planeOutline = vtkPolyData::SafeDownCast(this->PlaneOutlineFilter->GetInputDataObject(0, 0));
-    if (planeOutline)
+    vtkPolyData* planeOutline = this->PlaneOutlineInputPolyData;
+    for (int pointIndex = 0; pointIndex < planeOutline->GetNumberOfPoints(); ++pointIndex)
       {
-      for (int pointIndex = 0; pointIndex < planeOutline->GetNumberOfPoints(); ++pointIndex)
+      double edgePoint0Display[3] = { 0.0, 0.0, 0.0 };
+      planeOutline->GetPoints()->GetPoint(pointIndex, edgePoint0Display);
+      this->Renderer->SetWorldPoint(edgePoint0Display);
+      this->Renderer->WorldToDisplay();
+      this->Renderer->GetDisplayPoint(edgePoint0Display);
+
+      double edgePoint1Display[3] = { 0.0, 0.0, 0.0 };
+      if (pointIndex < planeOutline->GetNumberOfPoints() - 1)
         {
-        double edgePoint0Display[3] = { 0.0, 0.0, 0.0 };
-        planeOutline->GetPoints()->GetPoint(pointIndex, edgePoint0Display);
-        this->Renderer->SetWorldPoint(edgePoint0Display);
-        this->Renderer->WorldToDisplay();
-        this->Renderer->GetDisplayPoint(edgePoint0Display);
+        planeOutline->GetPoints()->GetPoint(pointIndex + 1, edgePoint1Display);
+        }
+      else
+        {
+        planeOutline->GetPoints()->GetPoint(0, edgePoint1Display);
+        }
+      this->Renderer->SetWorldPoint(edgePoint1Display);
+      this->Renderer->WorldToDisplay();
+      this->Renderer->GetDisplayPoint(edgePoint1Display);
 
-        double edgePoint1Display[3] = { 0.0, 0.0, 0.0 };
-        if (pointIndex < planeOutline->GetNumberOfPoints() - 1)
-          {
-          planeOutline->GetPoints()->GetPoint(pointIndex + 1, edgePoint1Display);
-          }
-        else
-          {
-          planeOutline->GetPoints()->GetPoint(0, edgePoint1Display);
-          }
-        this->Renderer->SetWorldPoint(edgePoint1Display);
-        this->Renderer->WorldToDisplay();
-        this->Renderer->GetDisplayPoint(edgePoint1Display);
-
-        double t;
-        double currentClosestPointDisplay[3] = { 0.0, 0.0, 0.0 };
-        double currentDistDisplay = vtkLine::DistanceToLine(displayPosition3, edgePoint0Display, edgePoint1Display, t, currentClosestPointDisplay);
-        if (currentDistDisplay < dist2Display)
-          {
-          dist2Display = currentDistDisplay;
-          closestPointDisplay[0] = currentClosestPointDisplay[0];
-          closestPointDisplay[1] = currentClosestPointDisplay[1];
-          closestPointDisplay[2] = currentClosestPointDisplay[2];
-          }
+      double t;
+      double currentClosestPointDisplay[3] = { 0.0, 0.0, 0.0 };
+      double currentDistDisplay = vtkLine::DistanceToLine(displayPosition3, edgePoint0Display, edgePoint1Display, t, currentClosestPointDisplay);
+      if (currentDistDisplay < dist2Display)
+        {
+        dist2Display = currentDistDisplay;
+        closestPointDisplay[0] = currentClosestPointDisplay[0];
+        closestPointDisplay[1] = currentClosestPointDisplay[1];
+        closestPointDisplay[2] = currentClosestPointDisplay[2];
         }
       }
 
