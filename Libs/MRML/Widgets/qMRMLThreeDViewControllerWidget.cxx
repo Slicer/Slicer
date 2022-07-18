@@ -828,6 +828,26 @@ void qMRMLThreeDViewControllerWidget::setBackgroundColor(
 }
 
 // --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setBoxColor(
+  const QColor& newColor)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!this->mrmlThreeDViewNode())
+    {
+    return;
+    }
+
+  d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::BoxColorFlag);
+
+  int wasModifying = this->mrmlThreeDViewNode()->StartModify();
+  // The ThreeDView displayable manager will change the color of BoxAxisActor
+  this->mrmlThreeDViewNode()->SetBoxColor(newColor.redF(), newColor.greenF(), newColor.blueF());
+  this->mrmlThreeDViewNode()->EndModify(wasModifying);
+
+  d->ViewLogic->EndViewNodeInteraction();
+}
+
+// --------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidget::setStereoType(int newStereoType)
 {
   Q_D(qMRMLThreeDViewControllerWidget);

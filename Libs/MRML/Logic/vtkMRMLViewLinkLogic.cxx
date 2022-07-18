@@ -403,6 +403,13 @@ void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode)
       {
       vNode->SetBoxVisible(viewNode->GetBoxVisible());
       }
+    // Box color
+    else if (viewNode->GetInteractionFlags() == vtkMRMLViewNode::BoxColorFlag)
+      {
+      int wasModifying = vNode->StartModify();
+      vNode->SetBoxColor(viewNode->GetBoxColor());
+      vNode->EndModify(wasModifying);
+      }
     // Box labels visibility
     else if (viewNode->GetInteractionFlags() == vtkMRMLViewNode::BoxLabelVisibileFlag)
       {

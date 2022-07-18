@@ -114,6 +114,9 @@ public slots:
   void setBackgroundColor(const QColor& color,
                           QColor color2 = QColor());
 
+  /// Utility function to change color of the box
+  void setBoxColor(const QColor& color);
+
   void setStereoType(int newStereoType);
   void setOrientationMarkerType(int type);
   void setOrientationMarkerSize(int size);
