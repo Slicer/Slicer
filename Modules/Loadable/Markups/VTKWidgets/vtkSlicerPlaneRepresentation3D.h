@@ -89,6 +89,7 @@ protected:
   vtkNew<vtkPlaneSource>     PlaneFillFilter;
   vtkNew<vtkArrowSource>     ArrowFilter;
   vtkNew<vtkGlyph3D>         ArrowGlypher;
+  vtkNew<vtkPolyData>        PlaneOutlineInputPolyData;
   vtkNew<vtkTubeFilter>      PlaneOutlineFilter;
   vtkNew<vtkArrayCalculator> ArrowColorFilter;
   vtkNew<vtkArrayCalculator> PlaneOutlineColorFilter;
