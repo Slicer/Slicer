@@ -802,6 +802,13 @@ viewNode.SetBackgroundColor(1,0,0)
 viewNode.SetBackgroundColor2(1,0,0)
 ```
 
+### Change box color in 3D view
+
+```python
+viewNode = slicer.app.layoutManager().threeDWidget(0).mrmlViewNode()
+viewNode.SetBoxColor(1,0,0)
+```
+
 ### Show a slice view outside the view layout
 
 ```python
