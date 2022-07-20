@@ -1,8 +1,8 @@
 __version_info__ = (
-  @Slicer_VERSION_MAJOR@,
-  @Slicer_VERSION_MINOR@,
-  @Slicer_VERSION_PATCH@,
-  @Slicer_VERSION_TWEAK_OR_DEV@
+    @Slicer_VERSION_MAJOR@,
+    @Slicer_VERSION_MINOR@,
+    @Slicer_VERSION_PATCH@,
+    @Slicer_VERSION_TWEAK_OR_DEV@
 )
 
 __version__ = ".".join(map(str, __version_info__))
