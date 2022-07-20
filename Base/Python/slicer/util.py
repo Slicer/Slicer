@@ -3399,6 +3399,14 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
     :param updateEnvironment: map containing optional additional environment variables (existing variables are overwritten)
     :param cwd: current working directory
     :return: process object.
+
+    This method is typically used together with :py:meth:`logProcessOutput` to wait for the execution to complete and display the process output in the application log:
+
+    .. code-block:: python
+
+      proc = slicer.util.launchConsoleProcess(args)
+      slicer.util.logProcessOutput(proc)
+
     """
     import subprocess
     import os
