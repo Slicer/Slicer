@@ -5,6 +5,7 @@ myst-parser
 pygments
 sphinx
 sphinx-issues
-sphinx-markdown-tables
+# Workaround for https://github.com/ryanfox/sphinx-markdown-tables/issues/36
+git+https://github.com/Dzordzu/sphinx-markdown-tables.git@3bc0849cf6dc0e1b7fe52aafadc2e2ccca698a01
 sphinx-notfound-page
 sphinx_rtd_theme>=0.5.2
