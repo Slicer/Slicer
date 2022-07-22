@@ -43,6 +43,12 @@ NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 # qSlicerPythonModuleExampleWidget
 #
 
+class FrameOrientationTypes:
+    ByNormalPlaneOfCurve = 0
+    BishopFrames = 1
+    RotationMinimizingFrames = 2
+
+
 class EndoscopyWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -109,6 +115,15 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         outputPathNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
         pathFormLayout.addRow("Output Path:", outputPathNodeSelector)
 
+        # Orientation selection combobox
+        orientationComboBox = qt.QComboBox()
+        outputPathNodeSelector.objectName = "orientationComboBox"
+        orientationComboBox.addItem('ByNormalPlaneOfCurve')
+        orientationComboBox.addItem('BishopFrames')
+        orientationComboBox.addItem('RotationMinimizingFrames')
+        orientationComboBox.currentIndexChanged.connect(self.disableFlythroughCollapsibleButton)
+        pathFormLayout.addRow("Frames orientation:", orientationComboBox)
+
         # CreatePath button
         createPathButton = qt.QPushButton("Create path")
         createPathButton.toolTip = "Create the path."
@@ -171,6 +186,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.cameraNodeSelector = cameraNodeSelector
         self.inputFiducialsNodeSelector = inputFiducialsNodeSelector
         self.outputPathNodeSelector = outputPathNodeSelector
+        self.orientationComboBox = orientationComboBox
         self.createPathButton = createPathButton
         self.flythroughCollapsibleButton = flythroughCollapsibleButton
         self.frameSlider = frameSlider
@@ -180,6 +196,9 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
         inputFiducialsNodeSelector.setMRMLScene(slicer.mrmlScene)
         outputPathNodeSelector.setMRMLScene(slicer.mrmlScene)
+
+    def disableFlythroughCollapsibleButton(self):
+        self.flythroughCollapsibleButton.enabled = False
 
     def setCameraNode(self, newCameraNode):
         """Allow to set the current camera node.
@@ -231,12 +250,13 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         fiducialsNode = self.inputFiducialsNodeSelector.currentNode()
         outputPathNode = self.outputPathNodeSelector.currentNode()
+        rotationMinimizingFrameFlag = self.orientationComboBox.currentIndex == FrameOrientationTypes.RotationMinimizingFrames
         print("Calculating Path...")
         result = EndoscopyComputePath(fiducialsNode)
         print("-> Computed path contains %d elements" % len(result.path))
 
         print("Create Model...")
-        model = EndoscopyPathModel(result.path, fiducialsNode, outputPathNode)
+        model = EndoscopyPathModel(result.path, fiducialsNode, outputPathNode=outputPathNode, rotationMinimizingFrameFlag=rotationMinimizingFrameFlag)
         print("-> Model created")
 
         # Update frame slider range
@@ -246,6 +266,16 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.camera = self.camera
         self.transform = model.transform
         self.pathPlaneNormal = model.planeNormal
+        self.pathModelWithOrientations = outputPathNode
+        self.xVectors = vtk.util.numpy_support.vtk_to_numpy(
+            self.pathModelWithOrientations.GetMesh().GetPointData().GetArray("Binormals")
+        )
+        self.yVectors = vtk.util.numpy_support.vtk_to_numpy(
+            self.pathModelWithOrientations.GetMesh().GetPointData().GetArray("Normals")
+        )
+        self.zVectors = vtk.util.numpy_support.vtk_to_numpy(
+            self.pathModelWithOrientations.GetMesh().GetPointData().GetArray("Tangents")
+        )
         self.path = result.path
 
         # Enable / Disable flythrough button
@@ -311,11 +341,21 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         # This can be used for example to show a reformatted slice
         # using with SlicerIGT extension's VolumeResliceDriver module.
         import numpy as np
-        zVec = (focalPointPosition - cameraPosition) / np.linalg.norm(focalPointPosition - cameraPosition)
-        yVec = self.pathPlaneNormal
-        xVec = np.cross(yVec, zVec)
-        xVec /= np.linalg.norm(xVec)
-        yVec = np.cross(zVec, xVec)
+
+        if self.orientationComboBox.currentIndex == FrameOrientationTypes.ByNormalPlaneOfCurve:
+            zVec = (focalPointPosition - cameraPosition) / np.linalg.norm(focalPointPosition - cameraPosition)
+            yVec = self.pathPlaneNormal
+            xVec = np.cross(yVec, zVec)
+            xVec /= np.linalg.norm(xVec)
+            yVec = np.cross(zVec, xVec)
+        elif (
+            self.orientationComboBox.currentIndex == FrameOrientationTypes.BishopFrames or
+            self.orientationComboBox.currentIndex == FrameOrientationTypes.RotationMinimizingFrames
+        ):
+            xVec = self.xVectors[pathPointIndex]
+            yVec = self.yVectors[pathPointIndex]
+            zVec = self.zVectors[pathPointIndex]
+
         toParent.SetElement(0, 0, xVec[0])
         toParent.SetElement(1, 0, xVec[1])
         toParent.SetElement(2, 0, xVec[2])
@@ -497,7 +537,7 @@ class EndoscopyPathModel:
          - Add a single polyline
     """
 
-    def __init__(self, path, fiducialListNode, outputPathNode=None, cursorType=None):
+    def __init__(self, path, fiducialListNode, outputPathNode=None, cursorType=None, rotationMinimizingFrameFlag=False):
         """
           :param path: path points as numpy array.
           :param fiducialListNode: input node, just used for naming the output node.
@@ -537,6 +577,13 @@ class EndoscopyPathModel:
         pointsArray = vtk.util.numpy_support.vtk_to_numpy(points.GetData())
         self.planePosition, self.planeNormal = self.planeFit(pointsArray.T)
 
+        parallelTransportFrameFilter = slicer.vtkParallelTransportFrame()
+        parallelTransportFrameFilter.SetRotationMinimizingFrames(
+            rotationMinimizingFrameFlag
+        )
+        parallelTransportFrameFilter.SetInputData(polyData)
+        parallelTransportFrameFilter.Update()
+
         # Create model node
         model = outputPathNode
         if not model:
@@ -544,7 +591,7 @@ class EndoscopyPathModel:
             model.CreateDefaultDisplayNodes()
             model.GetDisplayNode().SetColor(1, 1, 0)  # yellow
 
-        model.SetAndObservePolyData(polyData)
+        model.SetAndObservePolyData(parallelTransportFrameFilter.GetOutput())
 
         # Camera cursor
         cursor = model.GetNodeReference("CameraCursor")
