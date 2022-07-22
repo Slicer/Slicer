@@ -413,9 +413,19 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
 
   archive_write_set_format_zip(zipArchive);
 
-  archive_write_set_format_option(zipArchive, "zip", "compression", compression_type.c_str());
+  if (archive_write_set_format_option(zipArchive, "zip", "compression", compression_type.c_str()) != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Zip: set format:", archive_error_string(zipArchive));
+    archive_write_free(zipArchive);
+    return false;
+    }
 
-  archive_write_open_filename(zipArchive, zipFileName);
+  if (archive_write_open_filename(zipArchive, zipFileName) != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Zip: open output file:", archive_error_string(zipArchive));
+    archive_write_free(zipArchive);
+    return false;
+    }
 
   // add the data directory
   struct archive_entry* dirEntry = archive_entry_new();
@@ -423,14 +433,20 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
   archive_entry_copy_pathname(dirEntry, directoryName.c_str());
   archive_entry_set_mode(dirEntry, S_IFDIR | 0755);
   archive_entry_set_size(dirEntry, 512);
-  archive_write_header(zipArchive, dirEntry);
+  if (archive_write_header(zipArchive, dirEntry) != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Zip: write file header:", archive_error_string(zipArchive));
+    archive_write_free(zipArchive);
+    return false;
+    }
   archive_entry_free(dirEntry);
 
   // add the files
+  bool success = true;
   char buff[BUFSIZ];
   std::vector<std::string>::const_iterator sit;
   sit = files.begin();
-  while (sit != files.end())
+  while (sit != files.end() && success)
     {
     vtkArchiveTools::Message("Zip: adding:", (*sit).c_str());
     const char *fileName = (*sit).c_str();
@@ -453,7 +469,11 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     archive_entry_set_size(entry, fileLength);
     archive_entry_set_filetype(entry, AE_IFREG);
     archive_entry_set_perm(entry, 0644);
-    archive_write_header(zipArchive, entry);
+    if (archive_write_header(zipArchive, entry) != ARCHIVE_OK)
+      {
+      vtkArchiveTools::Error("Zip: write file header:", archive_error_string(zipArchive));
+      return false;
+      }
 
     //
     // add the data for this entry
@@ -461,14 +481,19 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     FILE *fd = fopen(fileName, "rb");
     if (!fd)
       {
-      vtkArchiveTools::Error("Zip: cannot open:", (*sit).c_str());
+      vtkArchiveTools::Error("Zip: cannot open input file:", (*sit).c_str());
+      success = false;
       }
     else
       {
       size_t len = fread(buff, sizeof(char), sizeof(buff), fd);
       while ( len > 0 )
         {
-        archive_write_data(zipArchive, buff, len);
+        if (archive_write_data(zipArchive, buff, len) < 0)
+          {
+          vtkArchiveTools::Error("Zip: cannot write data:", archive_error_string(zipArchive));
+          success = false;
+          }
         len = fread(buff, sizeof(char), sizeof(buff), fd);
         }
       fclose(fd);
@@ -476,14 +501,17 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     archive_entry_free(entry);
     }
 
-  archive_write_close(zipArchive);
-  int retval = archive_write_free(zipArchive);
-  if (retval != ARCHIVE_OK)
+  if (archive_write_close(zipArchive) != ARCHIVE_OK)
     {
-    vtkArchiveTools::Error("Zip:", "error on close!");
-    return false;
+    vtkArchiveTools::Error("Zip: close archive", archive_error_string(zipArchive));
+    success = false;
     }
-  return true;
+  if (archive_write_free(zipArchive) != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Zip: cleanup", archive_error_string(zipArchive));
+    success = false;
+    }
+  return success;
 }
 
 //-----------------------------------------------------------------------------
