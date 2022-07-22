@@ -776,15 +776,26 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
   const QList<qSlicerFileWriter*> writers = d->writers(fileType, parameters, scene);
   if (writers.isEmpty())
     {
-    qWarning() << "No writer found to write file" << fileName
-               << "of type" << fileType;
+    qCritical() << Q_FUNC_INFO << "error: No writer found to write file" << fileName << "of type" << fileType;
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent,
+        (tr("No writer found to write file %1 of type %2.").arg(fileName).arg(fileType)).toStdString());
+      }
     return false;
     }
 
-  // Create the directory that the file will be saved to, if it does not exist
-  if (!QFileInfo(fileName).dir().mkpath(".")) // Note that if the directory already exists, mkpath simply returns true
+  // Create the directory that the file will be saved to, if it does not exist.
+  // Note that if the directory already exists, mkpath simply returns true.
+  if (!QFileInfo(fileName).dir().mkpath("."))
     {
-    qWarning() << Q_FUNC_INFO << ": Unable to create directory" << QFileInfo(fileName).absolutePath();
+    qCritical() << Q_FUNC_INFO << "error: Unable to create directory" << QFileInfo(fileName).absolutePath();
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent,
+        (tr("Unable to create directory '%1'").arg(QFileInfo(fileName).absolutePath())).toStdString());
+      }
+    return false;
     }
 
   QStringList nodes;
@@ -811,6 +822,12 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
   if (!writeSuccess)
     {
     // no appropriate writer was found
+    qCritical() << Q_FUNC_INFO << "error: Saving failed with all writers found for file" << fileName << "of type" << fileType;
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent,
+        (tr("Saving failed with all writers found for file '%1' of type '%2'.").arg(fileName).arg(fileType)).toStdString());
+      }
     return false;
     }
 
@@ -819,6 +836,11 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     {
     // the writer did not report error
     // but did not report any successfully written nodes either
+    qCritical() << Q_FUNC_INFO << "error: No nodes were saved in scene";
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent, tr("No nodes were saved in the scene").toStdString());
+      }
     return false;
     }
 
