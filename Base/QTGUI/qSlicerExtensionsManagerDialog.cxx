@@ -233,3 +233,10 @@ void qSlicerExtensionsManagerDialog::reject()
     Superclass::reject(); // close window
     }
 }
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerDialog::setFocusToSearchBox()
+{
+  Q_D(qSlicerExtensionsManagerDialog);
+  d->ExtensionsManagerWidget->setFocusToSearchBox();
+}
