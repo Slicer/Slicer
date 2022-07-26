@@ -68,8 +68,11 @@ signals:
 public slots:
   void refreshInstallWidget();
 
-  // Request update state of automatic extension update check and install checkbox states
+  /// Request update state of automatic extension update check and install checkbox states
   void updateAutoUpdateWidgetsFromModel();
+
+  /// Set focus to search box (so that user can find a module just by start typing its name)
+  void setFocusToSearchBox();
 
 protected slots:
   void onModelUpdated();

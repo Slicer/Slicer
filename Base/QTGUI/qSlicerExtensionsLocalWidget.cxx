@@ -21,6 +21,7 @@
 // Qt includes
 #include <QAbstractTextDocumentLayout>
 #include <QDebug>
+#include <QDesktopServices>
 #include <QFileInfo>
 #include <QLabel>
 #include <QListWidget>
@@ -61,6 +62,7 @@ public:
     InstalledExtensionSlicerVersionRole,
     InstalledExtensionUpdatedRole,
     OnServerExtensionRevisionRole,
+    ChangeLogUrlRole,
     OnServerExtensionMissingRole,  // confirmed that the extension is missing from the server
     OnServerExtensionUpdatedRole,
     UpdateAvailableRole,
@@ -338,7 +340,7 @@ public:
     QTextOption textOption = this->Text.defaultTextOption();
     textOption.setWrapMode(QTextOption::NoWrap);
     this->Text.setDefaultTextOption(textOption);
-    this->MoreLinkText = tr("More");
+    this->MoreLinkText = tr("More...");
     }
 
   // --------------------------------------------------------------------------
@@ -436,13 +438,20 @@ protected:
         this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionRevisionRole).toString(),
         this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionUpdatedRole).toString());
 
+      QString changeLogText;
+      QString changeLogUrl = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ChangeLogUrlRole).toString();
+      if (!changeLogUrl.isEmpty())
+        {
+        changeLogText = tr(" <a href=\"%1\">Change log...</a>").arg(changeLogUrl);
+        }
       statusText += QString("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
         "<img style=\"float: left\""
         " src=\":/Icons/ExtensionUpdateAvailable.svg\"/> "
-        "An update is available. Installed version: %2. Available version: %3 </p>")
+        "An update is available. Installed: %2. Available: %3.%4</p>")
         .arg(this->InfoColor)
         .arg(installedVersion)
-        .arg(onServerVersion);
+        .arg(onServerVersion)
+        .arg(changeLogText);
       }
     if (statusText.isEmpty())
       {
@@ -701,15 +710,43 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::updateExtensionItem(const 
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
     }
 
+  QString installedRevision = metadata["installed"].toBool() ? metadata["revision"].toString() : QString();
+  QString onServerRevision = metadataFromServer["revision"].toString();
+
+  // Generate change log URL - only if repository is hosted on github or gitlab
+  QUrl scmUrl = QUrl(metadataFromServer["scmurl"].toString());
+  QString changeLogUrl;
+  if (!installedRevision.isEmpty() && !onServerRevision.isEmpty())
+    {
+    QString scmUrlPath = scmUrl.path();
+    // Path is usually like this: https://github.com/SlicerIGT/SlicerIGT.git
+    // We need to remove the .git suffix to get the repository URL path.
+    if (scmUrlPath.endsWith(".git"))
+      {
+      scmUrlPath.chop(4);
+      }
+    if (scmUrl.host().toLower() == "github.com")
+      {
+      scmUrl.setPath(QString("%1/compare/%2...%3").arg(scmUrlPath).arg(installedRevision).arg(onServerRevision));
+      changeLogUrl = scmUrl.toString();
+      }
+    else if (scmUrl.host().toLower() == "gitlab.com")
+      {
+      scmUrl.setPath(QString("%1/-/compare/%2...%3").arg(scmUrlPath).arg(installedRevision).arg(onServerRevision));
+      changeLogUrl = scmUrl.toString();
+      }
+    }
+
   // Save some metadata fields into the item to allow filtering and search
 
   item->setData(Self::NameRole, extensionName);
-  item->setData(Self::InstalledExtensionRevisionRole, metadata["installed"].toBool() ? metadata["revision"].toString() : QString());
+  item->setData(Self::InstalledExtensionRevisionRole, installedRevision);
   item->setData(Self::InstalledExtensionUpdatedRole, metadata["installed"].toBool() ? metadata["updated"].toString() : QString());
   item->setData(Self::InstalledExtensionSlicerVersionRole, metadata["installed"].toBool() ? metadata["slicer_revision"].toString() : QString());
-  item->setData(Self::OnServerExtensionRevisionRole, metadataFromServer["revision"].toString());
+  item->setData(Self::OnServerExtensionRevisionRole, onServerRevision);
   item->setData(Self::OnServerExtensionMissingRole, metadataFromServer["revision"].toString().isEmpty()
     && this->ExtensionsManagerModel->lastUpdateTimeExtensionsMetadataFromServer().isValid());
+  item->setData(Self::ChangeLogUrlRole, changeLogUrl);
   item->setData(Self::OnServerExtensionUpdatedRole, metadataFromServer["updated"].toString());
   item->setData(Self::UpdateAvailableRole, q->extensionsManagerModel()->isExtensionUpdateAvailable(extensionName));
   item->setData(Self::MoreLinkRole, moreLinkTarget);
@@ -1125,24 +1162,34 @@ void qSlicerExtensionsLocalWidget::onModelUpdated()
 void qSlicerExtensionsLocalWidget::onLinkActivated(const QString& link)
 {
   Q_D(qSlicerExtensionsLocalWidget);
-
-  QUrl url = d->ExtensionsManagerModel->frontendServerUrl();
-  int serverAPI = this->extensionsManagerModel()->serverAPI();
-  if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+  if (link.startsWith("slicer:"))
     {
-    QString extensionName = link.mid(7); // remove leading "slicer:"
-    url.setPath(url.path() + QString("/view/%1/%2/%3")
-                .arg(extensionName)
-                .arg(this->extensionsManagerModel()->slicerRevision())
-                .arg(this->extensionsManagerModel()->slicerOs()));
+    // internal link (extension description page on the frontend server)
+    QUrl url(d->ExtensionsManagerModel->frontendServerUrl());
+    int serverAPI = this->extensionsManagerModel()->serverAPI();
+    if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
+      {
+        {
+        QString extensionName = link.mid(7); // remove leading "slicer:"
+        url.setPath(url.path() + QString("/view/%1/%2/%3")
+                    .arg(extensionName)
+                    .arg(this->extensionsManagerModel()->slicerRevision())
+                    .arg(this->extensionsManagerModel()->slicerOs()));
+        }
+      }
+    else
+      {
+      qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
+      return;
+      }
+    emit this->linkActivated(url);
     }
   else
     {
-    qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
-    return;
+    // external link (e.g., change log), open in external browser
+    QUrl url(link);
+    QDesktopServices::openUrl(url);
     }
-
-  emit this->linkActivated(url);
 }
 
 // --------------------------------------------------------------------------

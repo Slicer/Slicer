@@ -817,6 +817,9 @@ void qSlicerApplication::openExtensionsManagerDialog()
   // This call takes most of the startup time
   d->ExtensionsManagerDialog->setExtensionsManagerModel(this->extensionsManagerModel());
 
+  // Allow user to start typing immediately to locate an extension.
+  d->ExtensionsManagerDialog->setFocusToSearchBox();
+
   QApplication::restoreOverrideCursor();
 
   bool accepted = (d->ExtensionsManagerDialog->exec() == QDialog::Accepted);

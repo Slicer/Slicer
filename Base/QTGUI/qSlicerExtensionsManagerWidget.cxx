@@ -860,3 +860,10 @@ void qSlicerExtensionsManagerWidget::onMessagesAcknowledged()
   d->Messages.clear();
   d->MessageWidget->setIcon(QMessageBox::NoIcon);
 }
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::setFocusToSearchBox()
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  d->ToolsWidget->SearchBox->setFocus();
+}
