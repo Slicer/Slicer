@@ -1,7 +1,5 @@
 # Welcome to 3D Slicer's documentation!
 
-This is documentation is a work in progress, in preparation for the new Slicer-5.0 release.
-
 For Slicer-4.10 documentation, refer to the [3D Slicer wiki](https://www.slicer.org/wiki/Documentation/4.10).
 
 ```{toctree}
