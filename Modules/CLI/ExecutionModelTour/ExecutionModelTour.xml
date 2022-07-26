@@ -127,6 +127,12 @@
       <label>Input image</label>
       <channel>input</channel>
     </image>
+    <image type="dynamic-contrast-enhanced">
+      <longflag>image4d</longflag>
+      <label>Input 4D Image</label>
+      <channel>input</channel>
+      <description><![CDATA[Input 4D Image (txyz)]]></description>
+    </image>
     <image reference="image1">
       <longflag>image2</longflag>
       <description><![CDATA[An output image]]></description>

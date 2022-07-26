@@ -39,6 +39,10 @@
 ///
 /// If an index is numeric then it is sorted differently and equality determined using
 /// a numerical tolerance instead of exact string matching.
+///
+/// Class name of data nodes stored in the sequence is set into the `DataNodeClassName`
+/// node attribute, which may be used for attribute-based filters (for example,
+/// to show only certain type of sequence node in a node selector).
 
 class VTK_MRML_EXPORT vtkMRMLSequenceNode : public vtkMRMLStorableNode
 {
