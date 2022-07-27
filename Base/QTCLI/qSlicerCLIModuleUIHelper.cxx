@@ -689,8 +689,19 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   else
     {
     QString nodeType = Self::nodeTypeFromMap(Self::ImageTypeAttributeToNodeType, type, "vtkMRMLScalarVolumeNode");
-    widget->setNodeTypes(QStringList(nodeType));
-    }
+    // If node type is vtkMRMLMultiVolumeNode then allow selecting volume sequences, too
+    if (nodeType == "vtkMRMLMultiVolumeNode")
+      {
+      QStringList nodeTypes;
+      nodeTypes << nodeType << "vtkMRMLSequenceNode";
+      widget->setNodeTypes(nodeTypes);
+      widget->addAttribute("vtkMRMLSequenceNode", "DataNodeClassName", "vtkMRMLScalarVolumeNode");
+      }
+    else
+      {
+      widget->setNodeTypes(QStringList(nodeType));
+      }
+  }
 
   // TODO - title + " Volume"
 

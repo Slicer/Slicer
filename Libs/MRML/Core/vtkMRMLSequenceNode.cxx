@@ -403,6 +403,7 @@ vtkMRMLNode* vtkMRMLSequenceNode::SetDataNodeAtValue(vtkMRMLNode* node, const st
     vtkErrorMacro("vtkMRMLSequenceNode::SetDataNodeAtValue failed, invalid node");
     return nullptr;
     }
+  MRMLNodeModifyBlocker blocker(this);
   // Make sure the sequence scene is created
   this->GetSequenceScene();
   // Add a copy of the node to the sequence's scene
@@ -419,6 +420,12 @@ vtkMRMLNode* vtkMRMLSequenceNode::SetDataNodeAtValue(vtkMRMLNode* node, const st
     }
   this->IndexEntries[seqItemIndex].DataNode = newNode;
   this->IndexEntries[seqItemIndex].DataNodeID.clear();
+  // Save the sequence data node class namein a node attribute to allow easy access
+  // (e.g., for filtering on the GUI).
+  if (this->GetNumberOfDataNodes() <= 1)
+    {
+    this->SetAttribute("DataNodeClassName", this->GetDataNodeClassName().c_str());
+    }
   this->Modified();
   this->StorableModifiedTime.Modified();
   return newNode;
