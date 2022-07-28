@@ -203,7 +203,7 @@ function(slicer_extension_description_spec_defaults_test)
     ENABLED
     STATUS
     )
-  foreach(name IN LISTS required optonal)
+  foreach(name IN LISTS required optional)
     foreach(varsuffix IN ITEMS "REQUIRED" "DEFAULT" "DESCRIPTION")
       set(expected_defined_varname "Slicer_EXT_METADATA_${name}_${varsuffix}")
       if(NOT DEFINED "${expected_defined_varname}")
