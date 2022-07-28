@@ -1220,7 +1220,7 @@ vtkOrientedImageData* qSlicerSegmentEditorAbstractEffect::defaultModifierLabelma
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
   bool success = false;
-  emit d->updateVolumeSignal(d->ModifierLabelmap.GetPointer(), success); // this resets the labelmap and cleares it
+  emit d->updateVolumeSignal(d->ModifierLabelmap.GetPointer(), success); // this resets the labelmap and clears it
   if (!success)
     {
     return nullptr;

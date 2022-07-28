@@ -753,7 +753,7 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
     flags.setFlag(itemSelectionFlag);
     flags.setFlag(QItemSelectionModel::Rows);
     d->SegmentsTable->selectionModel()->select(index, flags);
-    // Afther the first segment, we append to the current selection
+    // After the first segment, we append to the current selection
     itemSelectionFlag = QItemSelectionModel::Select;
     }
 
