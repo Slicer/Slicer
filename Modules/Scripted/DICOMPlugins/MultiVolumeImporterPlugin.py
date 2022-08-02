@@ -596,6 +596,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         slicer.mrmlScene.GenerateUniqueName(baseName))
       volumeSequenceNode.SetIndexName("")
       volumeSequenceNode.SetIndexUnit("")
+      # Transfer all attributes from multivolume node to volume sequence node
+      for attrName in mvNode.GetAttributeNames():
+        volumeSequenceNode.SetAttribute(attrName, mvNode.GetAttribute(attrName))
     else:
       mvImage = vtk.vtkImageData()
       mvImageArray = None
