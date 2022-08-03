@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+message: "Please cite this software using the metadata from 'preferred-citation'."
+title: "3D Slicer"
+repository-code: https://github.com/Slicer/Slicer
+website: https://www.slicer.org/
+preferred-citation:
+  type: article
+  title: "3D Slicer as an Image Computing Platform for the Quantitative Imaging Network"
+  scope: "Cite this paper if you want to reference the general concepts of the software."
+  authors:
+    - family-names: Fedorov
+      given-names: Andriy
+    - family-names: Beichel
+      given-names: Reinhard
+    - family-names: Kalpathy-Cramer
+      given-names: Jayashree
+    - family-names: Finet
+      given-names: Julien
+    - family-names: Fillion-Robin
+      given-names: Jean-Christophe
+      orcid: 0000-0002-9688-8950
+    - family-names: Pujol
+      given-names: Sonia
+    - family-names: Bauer
+      given-names: Christian
+    - family-names: Jennings
+      given-names: Dominique
+    - family-names: Fennessy
+      given-names: Fiona
+    - family-names: Sonka
+      given-names: Milan
+    - family-names: Buatti
+      given-names: John
+    - family-names: Aylward
+      given-names: Stephen
+      orcid: 0000-0002-7862-8856
+    - family-names: Miller
+      given-names: James
+    - family-names: Pieper
+      given-names: Steve
+    - family-names: Kikinis
+      given-names: Ron
+      orcid:
+  journal: "Magnetic Resonance Imaging"
+  year: 2012
+  month: 11
+  volume: 30
+  issue: 9
+  start: 1323
+  end: 1341
+  doi: 10.1016/j.mri.2012.05.001
