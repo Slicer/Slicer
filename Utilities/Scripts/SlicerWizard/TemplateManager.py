@@ -397,6 +397,6 @@ class TemplateManager:
             for tk in args.templateKey:
                 tkParts = tk.split("=")
                 if len(tkParts) != 2:
-                    die("template key '%s' malformatted: expected 'NAME=KEY'" % tk)
+                    die("template key '%s' malformed: expected 'NAME=KEY'" % tk)
 
                 self.setKey(tkParts[0].lower(), tkParts[1])
