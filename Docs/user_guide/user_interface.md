@@ -152,7 +152,7 @@ Default orientation axes: A = anterior, P = posterior, R = right, L = left, S = 
 
 ### Slice View
 
-Three default slice views are provided (with Red, Yellow and Green colored bars) in which Axial, Saggital, Coronal or Oblique 2D slices of volume images can be displayed. Additional generic slice views have a grey colored bar and an identifying number in their upper left corner.
+Three default slice views are provided (with Red, Yellow and Green colored bars) in which Axial, Sagittal, Coronal or Oblique 2D slices of volume images can be displayed. Additional generic slice views have a grey colored bar and an identifying number in their upper left corner.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_slice_view_controls.png)
 

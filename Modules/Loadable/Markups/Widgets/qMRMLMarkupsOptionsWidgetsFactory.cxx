@@ -153,7 +153,7 @@ bool qMRMLMarkupsOptionsWidgetsFactory::unregisterOptionsWidget(const QString& c
   // Check for empty type name
   if (className.isEmpty())
     {
-    qCritical() << Q_FUNC_INFO << ":  options widget has no tpye name.";
+    qCritical() << Q_FUNC_INFO << ":  options widget has no type name.";
     return false;
     }
 

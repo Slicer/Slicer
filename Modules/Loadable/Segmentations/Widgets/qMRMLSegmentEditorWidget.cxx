@@ -2167,7 +2167,7 @@ void qMRMLSegmentEditorWidget::onRemoveSegment()
   d->SegmentationHistory->SaveState();
 
   // Switch to a new valid segment now (to avoid transient state when no segments are selected
-  // as it could inactivate current effect).
+  // as it could deactivate current effect).
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
   std::vector< std::string > segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);

@@ -3590,7 +3590,7 @@ def longPath(path):
     sysInfo = qt.QSysInfo()
     if sysInfo.productType() != 'windows':
         return path
-    # Skip prefixing relative paths as UNC prefix wors only on absolute paths
+    # Skip prefixing relative paths as UNC prefix works only on absolute paths
     if not qt.QDir.isAbsolutePath(path):
         return path
     # Return path as is if UNC prefix is already applied

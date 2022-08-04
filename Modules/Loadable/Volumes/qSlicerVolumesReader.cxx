@@ -218,7 +218,7 @@ bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList &fileInfoList, QFil
 {
 
   //
-  // Check each file to see if it's recognzied as part of a series.  If so,
+  // Check each file to see if it's recognized as part of a series.  If so,
   // keep it as the archetype and remove all the others from the list
   //
   foreach(QFileInfo fileInfo, fileInfoList)

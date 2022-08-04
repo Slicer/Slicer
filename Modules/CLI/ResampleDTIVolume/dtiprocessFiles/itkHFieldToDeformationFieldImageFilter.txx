@@ -31,7 +31,7 @@ template <typename TInputImage, typename TOutputImage>
 void HFieldToDeformationFieldImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
 //  Superclass::GenerateInputRequestedRegion();
-//  outputImage->SetRequrestedRegion(inputImage
+//  outputImage->SetRequestedRegion(inputImage
   this->AllocateOutputs();
 
   const typename InputImageType::ConstPointer input(this->GetInput() );

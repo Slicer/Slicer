@@ -158,7 +158,7 @@ int DoIt( int argc, char * argv[])
     }
   else if (modality == "SC")
     {
-    // Scondary capture, converted from non-DICOM (scanned drawings, screenshots, etc.)
+    // Secondary capture, converted from non-DICOM (scanned drawings, screenshots, etc.)
     sopClassUID = "1.2.840.10008.5.1.4.1.1.7";
     // Value 3 shall identify any Image IOD specific specialization (optional), may be encoded with zero-length
     imageType = "ORIGINAL\\PRIMARY\\";

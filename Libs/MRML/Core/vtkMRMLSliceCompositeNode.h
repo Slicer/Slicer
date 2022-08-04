@@ -211,7 +211,7 @@ public:
   /// Get/Set a flag indicating what parameters are being manipulated
   /// within calls to InteractingOn() and InteractingOff(). These
   /// fields are used to propagate linked behaviors. This flag is a
-  /// bitfield, with multiple parameters OR'd to composte the
+  /// bitfield, with multiple parameters OR'd to compose the
   /// flag. Does not mark the node as Modified.
   void SetInteractionFlags(unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);

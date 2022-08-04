@@ -820,7 +820,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
         def createAcquisitionTransform(self, volumeNode, addAcquisitionTransformIfNeeded=True):
             """Creates the actual transform if needed.
-            Slice corners are cached for inpection by tests
+            Slice corners are cached for inspection by tests
             """
             self.originalCorners = self.sliceCornersFromIJKToRAS(volumeNode)
             self.targetCorners = self.sliceCornersFromDICOM(volumeNode)

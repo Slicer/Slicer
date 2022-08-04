@@ -54,7 +54,7 @@ public:
   explicit qMRMLTableWidget(QWidget* parent = nullptr);
   ~qMRMLTableWidget() override;
 
-  /// Get the tabl node observed by view.
+  /// Get the table node observed by view.
   vtkMRMLTableViewNode* mrmlTableViewNode()const;
 
   /// Get a reference to the underlying Table View

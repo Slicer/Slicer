@@ -61,7 +61,7 @@ public slots:
   void setCurrentColorNodeToDefault();
 
 signals:
-  /// Fired wen the current color table node is selected
+  /// Fired when the current color table node is selected
   void currentColorNodeChanged(vtkMRMLNode* node);
 
   /// Fired when the user selects a color in the list. index is the selected

@@ -50,7 +50,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   TIndex origin = {{0, 0, 0}};
   if( start != origin )
     {
-    std::cout << "Warrning: Force mask start to be (0, 0, 0)\n";
+    std::cout << "Warning: Force mask start to be (0, 0, 0)\n";
 
     TRegion region = m_inputLabelImage->GetLargestPossibleRegion();
     region.SetIndex(origin);

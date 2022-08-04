@@ -470,7 +470,7 @@ class DICOMFileDialog:
         """If DICOM database is invalid then try to create a default one. If fails then show an error message.
         This method should only be used when user initiates DICOM import on the GUI, because the error message is
         shown in a popup, which would block execution of auomated processing scripts.
-        Returns True if a valid DICOM database is available (has been created succussfully or it was already available).
+        Returns True if a valid DICOM database is available (has been created successfully or it was already available).
         """
         if slicer.dicomDatabase and slicer.dicomDatabase.isOpen:
             # Valid DICOM database already exists

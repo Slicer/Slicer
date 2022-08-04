@@ -108,7 +108,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->OccludedVisibility = false;
   this->OccludedOpacity = 0.3;
 
-  // Text apperarance
+  // Text appearance
   this->TextProperty = nullptr;
   vtkNew<vtkTextProperty> textProperty;
   textProperty->SetBackgroundOpacity(0.0);
