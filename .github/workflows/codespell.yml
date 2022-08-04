@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: codespell-project/actions-codespell@master
+      - uses: Slicer/actions-codespell@da9d7dca859f5c302f7fec47b3b2a4267a6891fd
         with:
           check_filenames: true
           skip: ".git,*.crt,*.svg,*.vtp,*DICOM-Master.json,*SlicerGeneralAnatomy.json,./CMakeLists.txt.user,./CMake/CTestCustom.cmake.in,./License.txt,./COPYRIGHT.txt,./Resources/*.h,./Base/Logic/vtkSlicerApplicationLogicRequests.h,./Base/QTCLI/vtkSlicerCLIModuleLogic.cxx,./Base/QTCore/Resources/Certs/README,./Libs/MRML/Core/vtkMRMLCoreTestingUtilities.cxx,./Libs/vtkITK/vtkITKGrowCutSegmentationImageFilter.cxx,./Libs/vtkITK/itkConstrainedValueMultiplicationImageFilter.h,./Libs/vtkITK/itkLevelTracingImageFilter.h,./Modules/CLI/ExtractSkeleton/tilg_iso_3D.cxx,./Modules/CLI/ResampleDTIVolume/itkDiffusionTensor3D*,./Modules/Loadable/Reformat/Resources/UI/qSlicerReformatModuleWidget.ui,./Utilities/Scripts/runCodespell.sh"
