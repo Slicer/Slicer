@@ -73,7 +73,7 @@ CSFLSSegmentor3D<TPixel>
   TIndex origin = {{0, 0, 0}};
   if( start != origin )
     {
-    std::cout << "Warrning: Force image start to be (0, 0, 0)\n";
+    std::cout << "Warning: Force image start to be (0, 0, 0)\n";
 
     TRegion region = mp_img->GetLargestPossibleRegion();
     region.SetIndex(origin);
@@ -171,7 +171,7 @@ CSFLSSegmentor3D<TPixel>
   TIndex origin = {{0, 0, 0}};
   if( start != origin )
     {
-    std::cout << "Warrning: Force mask start to be (0, 0, 0)\n";
+    std::cout << "Warning: Force mask start to be (0, 0, 0)\n";
 
     TRegion region = mp_mask->GetLargestPossibleRegion();
     region.SetIndex(origin);

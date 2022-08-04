@@ -1456,14 +1456,14 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
 
   d->ColorSmudgeCheckbox = new QCheckBox("Color smudge");
   d->ColorSmudgeCheckbox->setToolTip("Select segment by sampling the pixel location"
-    "where the brush stroke starts. If brush stroke starts in an empty area then the brush erases highighted region from the selected segment.");
+    "where the brush stroke starts. If brush stroke starts in an empty area then the brush erases highlighted region from the selected segment.");
   if (!this->m_AlwaysErase)
     {
     hbox->addWidget(d->ColorSmudgeCheckbox);
     }
 
   d->EraseAllSegmentsCheckbox = new QCheckBox("Erase all segments");
-  d->EraseAllSegmentsCheckbox->setToolTip("If not checked then highighted area is erased"
+  d->EraseAllSegmentsCheckbox->setToolTip("If not checked then highlighted area is erased"
     " from all segments. If unchecked then only area is only erased from selected segment.");
   if (this->m_AlwaysErase)
     {
