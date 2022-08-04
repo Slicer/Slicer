@@ -96,7 +96,7 @@ Extensions can be downloaded from the Extensions Catalog website and can be inst
 #### Install downloaded extension packages
 
 - Open Extensions manager using menu: View / Extensions manager.
-- Click the "Install fom file..." button.
+- Click the "Install from file..." button.
 - Select the the previously downloaded extension package(s). Multiple extension packages can be selected at once.
 - Wait for the installations to complete.
 - Click "Restart" button to restart the application.

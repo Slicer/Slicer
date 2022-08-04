@@ -42,7 +42,7 @@ public:
   /// Return true if the object is handled by the writer.
   bool canWriteObject(vtkObject* object)const override;
 
-  /// Return  a list of the supported extensions for a particuliar object.
+  /// Return  a list of the supported extensions for a particular object.
   /// Please read QFileDialog::nameFilters for the allowed formats
   /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
   QStringList extensions(vtkObject* object)const override;

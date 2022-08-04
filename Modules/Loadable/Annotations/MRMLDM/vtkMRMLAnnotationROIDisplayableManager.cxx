@@ -245,7 +245,7 @@ void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode*
 
     if (rep)
       {
-      // update actor's visbility from mrml
+      // update actor's visibility from mrml
       vtkNew<vtkPropCollection> actors;
       rep->GetActors2D(actors.GetPointer());
       for (int i=0; i<actors->GetNumberOfItems(); i++)

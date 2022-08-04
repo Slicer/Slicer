@@ -12,7 +12,7 @@
 
 ==========================================================================*/
 /*
- * misc.cc -- miscellaneous utitlity functions
+ * misc.cc -- miscellaneous utility functions
  *
  * author:  msturm
  * created: 27 Mar 1997

@@ -224,7 +224,7 @@ const char* vtkMRMLUnitNode::GetDisplayStringFormat()
   strstream << "%";
   strstream << "-"; // left justify
   strstream << "#"; // force decimal point
-  strstream << floor(log10(1. + fabs(this->GetMaximumValue()))); // padd
+  strstream << floor(log10(1. + fabs(this->GetMaximumValue()))); // pad
   strstream << "." << this->GetPrecision(); // decimals
   strstream << "g";
   strstream << this->Suffix;

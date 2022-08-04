@@ -670,7 +670,7 @@ onSliderRotationChanged(double rotation)
     d->resetSlider(d->PASlider);
     d->resetSlider(d->ISSlider);
 
-    // Rotate on LR given the angle with the last value reccorded
+    // Rotate on LR given the angle with the last value recorded
     transform->RotateX(rotation-d->LastRotationValues[axisX]);
 
     // Update last value and apply the transform
@@ -682,7 +682,7 @@ onSliderRotationChanged(double rotation)
     d->resetSlider(d->LRSlider);
     d->resetSlider(d->ISSlider);
 
-    // Rotate on PA given the angle with the last value reccorded
+    // Rotate on PA given the angle with the last value recorded
     transform->RotateY(rotation-d->LastRotationValues[axisY]);
 
     // Update last value and apply the transform
@@ -694,7 +694,7 @@ onSliderRotationChanged(double rotation)
       d->resetSlider(d->LRSlider);
       d->resetSlider(d->PASlider);
 
-      // Rotate on PA given the angle with the last value reccorded
+      // Rotate on PA given the angle with the last value recorded
       transform->RotateZ(rotation-d->LastRotationValues[axisZ]);
 
       // Update last value and apply the transform

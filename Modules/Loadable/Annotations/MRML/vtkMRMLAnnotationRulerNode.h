@@ -135,7 +135,7 @@ public:
   void SetDistanceAnnotationScale(double init);
 
   // Description:
-  // get/set the distance annotation visbility
+  // get/set the distance annotation visibility
   int GetDistanceAnnotationVisibility();
   void SetDistanceAnnotationVisibility(int flag);
 

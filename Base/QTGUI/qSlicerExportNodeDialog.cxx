@@ -701,7 +701,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
       nodeTypeWidgetSet->setFrameStyle(NodeTypeWidgetSet::FrameStyle::Frame);
       // Check if a type display name is shared with any other NodeTypeWidgetSet currently in the dialog.
       // Hopefully not, so we can use type display names in the label text.
-      // If there's a collsion, resort to using node type identifier (i.e. class name) in the label text.
+      // If there's a collision, resort to using node type identifier (i.e. class name) in the label text.
       bool typeDisplayNameCollison = false;
       for (const auto& otherNodeType : this->NodeTypesInDialog)
         {
