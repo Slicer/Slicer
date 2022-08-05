@@ -692,6 +692,10 @@ public:
   /// Returns true if no additional control points can be added to this node.
   virtual bool GetControlPointPlacementComplete();
 
+  /// Allows removing nodes if all control points are deleted (if set to False)
+  vtkGetMacro(AllowEmptyListOfControlPointsInMarkups, bool);
+  vtkSetMacro(AllowEmptyListOfControlPointsInMarkups, bool);
+
   ///@{
   /// Set the index of the control point that will be placed next.
   ///
@@ -1019,6 +1023,9 @@ protected:
 
   /// Flag set from SetControlPointPositionsWorld that pauses update of measurements until the update is complete.
   bool IsUpdatingPoints{false};
+
+  /// Flag set to be able to remove nodes if all control points are deleted (if set to False)
+  bool AllowEmptyListOfControlPointsInMarkups{true};
 
   friend class qSlicerMarkupsModuleWidget; // To directly access measurements
 };

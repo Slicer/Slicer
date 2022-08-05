@@ -399,23 +399,41 @@ bool vtkSlicerMarkupsWidget::ProcessControlPointDelete(vtkMRMLInteractionEventDa
     {
     markupsDisplayNode->GetActiveControlPoints(controlPointsToDelete);
     }
-  if (controlPointsToDelete.empty())
-    {
-    return false;
-    }
 
   markupsNode->GetScene()->SaveStateForUndo();
 
-  for (std::vector<int>::iterator cpIt = controlPointsToDelete.begin(); cpIt != controlPointsToDelete.end(); ++cpIt)
+  if (controlPointsToDelete.empty())
     {
-    int controlPointToDelete = (*cpIt);
-    if (controlPointToDelete < 0 || controlPointToDelete >= markupsNode->GetNumberOfControlPoints())
+    // When the user highlights the whole line and press delete, controlPointsToDelete list is empty
+    // The following allows to erase the node with its associated control points in one click
+    if (!markupsNode->GetAllowEmptyListOfControlPointsInMarkups())
       {
-      continue;
+      markupsNode->GetScene()->RemoveNode(markupsNode);
+      return true;
       }
-    markupsNode->RemoveNthControlPoint(controlPointToDelete);
+    else
+      {
+      return false;
+      }
     }
 
+  // To avoid having line or curve with only one control point, the node is erased if the number of control point is strictly below 3
+  if (markupsNode->GetNumberOfControlPoints() < 3 && !markupsNode->GetAllowEmptyListOfControlPointsInMarkups())
+    {
+    markupsNode->GetScene()->RemoveNode(markupsNode);
+    }
+  else
+    {
+      for (std::vector<int>::iterator cpIt = controlPointsToDelete.begin(); cpIt != controlPointsToDelete.end(); ++cpIt)
+        {
+        int controlPointToDelete = (*cpIt);
+        if (controlPointToDelete < 0 || controlPointToDelete >= markupsNode->GetNumberOfControlPoints())
+          {
+          continue;
+          }
+        markupsNode->RemoveNthControlPoint(controlPointToDelete);
+        }
+    }
   return true;
 }
 
