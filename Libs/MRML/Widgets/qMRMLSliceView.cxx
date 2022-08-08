@@ -155,7 +155,7 @@ void qMRMLSliceViewPrivate::init()
 {
   Q_Q(qMRMLSliceView);
 
-  // Highligh first RenderWindowItem
+  // Highlight first RenderWindowItem
   q->setHighlightedBoxColor(this->InactiveBoxColor);
 
   q->setRenderEnabled(this->MRMLScene != nullptr);
