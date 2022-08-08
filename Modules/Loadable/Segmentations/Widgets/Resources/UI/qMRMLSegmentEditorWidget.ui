@@ -240,7 +240,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="ctkExpandableWidget" name="Form">
+        <widget class="ctkExpandableWidget" name="SegmentsTableResizableFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -492,6 +492,11 @@
    <class>ctkFittedTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>ctkFittedTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkMenuButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkMenuButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkRangeWidget</class>
