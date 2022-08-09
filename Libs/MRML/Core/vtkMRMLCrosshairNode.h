@@ -68,6 +68,9 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   void SetCrosshairToThick() { this->SetCrosshairThickness(3); }
   static const char* GetCrosshairThicknessAsString(int id);
   static int GetCrosshairThicknessFromString(const char* name);
+
+  vtkGetVector3Macro(CrosshairColor, float);
+  vtkSetVector3Macro(CrosshairColor, float);
   ///@}
 
   ///@{
@@ -182,6 +185,7 @@ protected:
   int CrosshairMode{NoCrosshair};
   int CrosshairThickness{Fine};
   int CrosshairBehavior{OffsetJumpSlice};
+  float CrosshairColor[3]{1.0f, 0.8f, 0.1f}; // Light yellow
 
   double CrosshairRAS[3]{0.0, 0.0, 0.0};
   int LightBoxPane{0};
