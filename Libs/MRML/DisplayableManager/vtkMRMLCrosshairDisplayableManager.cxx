@@ -104,6 +104,7 @@ public:
   int CrosshairMode;
   int CrosshairThickness;
   double CrosshairPosition[3];
+  float CrosshairColor[3];
 
   vtkSmartPointer<vtkMRMLSliceIntersectionWidget> SliceIntersectionWidget;
 };
@@ -125,6 +126,9 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal
   this->CrosshairPosition[0] = 0.0;
   this->CrosshairPosition[1] = 0.0;
   this->CrosshairPosition[2] = 0.0;
+  this->CrosshairColor[0] = 1.0f;
+  this->CrosshairColor[1] = 0.8f;
+  this->CrosshairColor[2] = 0.1f;
   this->SliceIntersectionWidget = vtkSmartPointer<vtkMRMLSliceIntersectionWidget>::New();
 }
 
@@ -190,7 +194,10 @@ bool vtkMRMLCrosshairDisplayableManager::vtkInternal::HasCrosshairPropertyChange
     }
 
   if (this->CrosshairMode != this->CrosshairNode->GetCrosshairMode()
-    || this->CrosshairThickness != this->CrosshairNode->GetCrosshairThickness())
+      || this->CrosshairThickness != this->CrosshairNode->GetCrosshairThickness()
+      || this->CrosshairColor[0] != this->CrosshairNode->GetCrosshairColor()[0]
+      || this->CrosshairColor[1] != this->CrosshairNode->GetCrosshairColor()[1]
+      || this->CrosshairColor[2] != this->CrosshairNode->GetCrosshairColor()[2])
     {
     return true;
     }
@@ -393,10 +400,12 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
     actor->GetProperty()->SetLineWidth(5);
     }
 
-  // Color
-  actor->GetProperty()->SetColor(1.0, 0.8, 0.1);
-  actor->GetProperty()->SetOpacity(1.0);
+  // Set the color
+  auto color = this->CrosshairNode->GetCrosshairColor();
+  actor->GetProperty()->SetColor(color[0], color[1], color[2]);
 
+  // Set the opacity
+  actor->GetProperty()->SetOpacity(1.0);
 
   // Set the visibility
   if (this->CrosshairNode->GetCrosshairMode() == vtkMRMLCrosshairNode::NoCrosshair)
@@ -410,6 +419,10 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
 
   this->CrosshairMode = this->CrosshairNode->GetCrosshairMode();
   this->CrosshairThickness = this->CrosshairNode->GetCrosshairThickness();
+  this->CrosshairColor[0] = color[0];
+  this->CrosshairColor[1] = color[1];
+  this->CrosshairColor[2] = color[2];
+
 }
 
 //---------------------------------------------------------------------------
