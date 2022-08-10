@@ -37,6 +37,8 @@ def parse_pip_list_output(packages_to_update):
     """
     packages = {}
     for i in range(2, len(packages_to_update) - 1):  # First two lines are headings, so skip parsing these. Last line is empty
+        if packages_to_update[i].strip() == "":
+            break
         details = packages_to_update[i].split()  # ['asn1crypto', '0.24.0', '1.4.0', 'wheel']
         package_name = details[0]
         current_version = details[1]
