@@ -86,6 +86,7 @@ public:
     WidgetStateTranslateSlice, ///< Pan (translate in-plane) the current slice (using shift+left-click-and-drag or middle-click-and-drag)
     WidgetStateRotateIntersectingSlices, ///< Rotate all intersecting slices (ctrl+alt+left-click-and-drag)
     WidgetStateZoomSlice, ///< Zoom slice (using right-button or mouse wheel)
+    WidgetStateIncDecSlice,///< Shift slice (Mouse left-click-drag to shift between 2D)
     WidgetStateTouchGesture, ///< Pinch/zoom/pan using touch gestures
 
     // Interactions with slice intersection handles
@@ -131,6 +132,8 @@ public:
     WidgetEventTranslateSliceEnd,
     WidgetEventZoomSliceStart,
     WidgetEventZoomSliceEnd,
+    WidgetStateIncDecSliceStart,
+    WidgetStateIncDecSliceEnd, 
     WidgetEventSetCrosshairPosition,
     WidgetEventSetCrosshairPositionBackground, //< set crosshair position without consuming the event (so that other widgets can process the event)
     WidgetEventMaximizeView,
@@ -208,6 +211,8 @@ protected:
   bool ProcessTranslateSlice(vtkMRMLInteractionEventData* eventData);
 
   bool ProcessZoomSlice(vtkMRMLInteractionEventData* eventData);
+
+  bool ProcessIncDecSlice(vtkMRMLInteractionEventData* eventData);
 
   bool ProcessTouchGestureStart(vtkMRMLInteractionEventData* eventData);
   bool ProcessTouchGestureEnd(vtkMRMLInteractionEventData* eventData);

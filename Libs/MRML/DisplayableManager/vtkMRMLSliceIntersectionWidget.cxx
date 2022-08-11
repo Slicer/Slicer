@@ -154,6 +154,8 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
     }
   if (this->GetActionEnabled(ActionBrowseSlice))
     {
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent,
+          vtkEvent::NoModifier, WidgetStateIncDecSlice, WidgetStateIncDecSliceStart, WidgetStateIncDecSliceEnd);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Right", WidgetEventIncrementSlice);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Left", WidgetEventDecrementSlice);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Up", WidgetEventIncrementSlice);
@@ -465,6 +467,20 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       processedEvent = this->ProcessEndMouseDrag(eventData);
       this->SliceLogic->EndSliceNodeInteraction();
       break;
+
+    case WidgetStateIncDecSliceStart: 
+        this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
+        this->SetWidgetState(WidgetStateIncDecSlice);
+        this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::FieldOfViewFlag);
+        this->SliceLogic->GetSliceNode()->GetFieldOfView(this->StartActionFOV);
+        processedEvent = this->ProcessStartMouseDrag(eventData);
+        break;
+
+    case WidgetStateIncDecSliceEnd:
+        processedEvent = this->ProcessEndMouseDrag(eventData);
+        this->SliceLogic->EndSliceNodeInteraction();
+        break;
+
     case WidgetEventBlendStart:
       {
       this->SetWidgetState(WidgetStateBlend);
@@ -666,6 +682,9 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
       break;
     case WidgetStateZoomSlice:
       this->ProcessZoomSlice(eventData);
+      break;
+    case WidgetStateIncDecSlice:
+        this->ProcessIncDecSlice(eventData);
       break;
     case WidgetStateIdle: // if moving over an intersection in idle mode then this will change the widget state to WidgetStateOn...
     case WidgetStateOnWidget:
@@ -1391,6 +1410,28 @@ bool vtkMRMLSliceIntersectionWidget::ProcessZoomSlice(vtkMRMLInteractionEventDat
     }
   return true;
 }
+
+
+// TODO: by simzhangbest mail:dg20330034@smail.nju.edu.cn 
+// mouse left-click-drag shit between pics not smooth enough, may someone modify this
+bool vtkMRMLSliceIntersectionWidget::ProcessIncDecSlice(vtkMRMLInteractionEventData* eventData)
+{
+    // Please adjust this parameter to tune the Inc&Dec speed.
+    const double CONF = 0.01;
+
+    const int* eventPosition = eventData->GetDisplayPosition();
+    const int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
+
+    // modify by simzhang 0809
+    int deltaY = eventPosition[1] - this->PreviousEventPosition[1];
+
+    this->MoveSlice(deltaY * CONF);
+
+    // if (deltaY > 0) this->IncrementSlice();
+    // else this->DecrementSlice();
+    return true;
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceIntersectionWidget::ScaleZoom(double zoomScaleFactor, vtkMRMLInteractionEventData* eventData)
