@@ -104,6 +104,7 @@ notfound_context = {
 <script type="text/javascript">
   // Workaround https://github.com/readthedocs/readthedocs.org/issues/9507
   const regex = /^https:\/\/slicer\.readthedocs\.io\/\w+\/v\d\.\d$/;
+  console.log("window.location [" + window.location + "]");
   if (regex.test(window.location)) {
     window.location.replace(window.location + "/");
   }
