@@ -138,7 +138,7 @@ void qMRMLSegmentsModelPrivate::init()
   q->horizontalHeaderItem(q->nameColumn())->setToolTip(qMRMLSegmentsModel::tr("Segment name"));
   q->horizontalHeaderItem(q->visibilityColumn())->setToolTip(qMRMLSegmentsModel::tr("Segment visibility"));
   q->horizontalHeaderItem(q->colorColumn())->setToolTip(qMRMLSegmentsModel::tr("Segment color"));
-  q->horizontalHeaderItem(q->opacityColumn())->setToolTip(qMRMLSegmentsModel::tr("Segment opacity (3D views)"));
+  q->horizontalHeaderItem(q->opacityColumn())->setToolTip(qMRMLSegmentsModel::tr("Segment opacity"));
   q->horizontalHeaderItem(q->statusColumn())->setToolTip(qMRMLSegmentsModel::tr("Segment status"));
 
   q->horizontalHeaderItem(q->visibilityColumn())->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
@@ -682,11 +682,23 @@ void qMRMLSegmentsModel::updateSegmentFromItemData(QString segmentID, QStandardI
     else if (item->column() == this->opacityColumn())
       {
       QString opacity = item->data(Qt::EditRole).toString();
-      QString currentOpacity = QString::number(properties.Opacity3D, 'f', 2);
-      if (opacity != currentOpacity)
+      QString current3DOpacity = QString::number(properties.Opacity3D, 'f', 2);
+      if (opacity != current3DOpacity)
         {
         // Set to all kinds of opacities as they are combined on the UI
         properties.Opacity3D = opacity.toDouble();
+        displayPropertyChanged = true;
+        }
+      QString current2DFillOpacity = QString::number(properties.Opacity2DFill, 'f', 2);
+      if (opacity != current2DFillOpacity)
+        {
+        properties.Opacity2DFill = opacity.toDouble();
+        displayPropertyChanged = true;
+        }
+      QString current2DOutlineOpacity = QString::number(properties.Opacity2DOutline, 'f', 2);
+      if (opacity != current2DOutlineOpacity)
+        {
+        properties.Opacity2DOutline = opacity.toDouble();
         displayPropertyChanged = true;
         }
       }
