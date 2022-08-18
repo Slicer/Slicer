@@ -57,19 +57,19 @@ vtkClosedSurfaceToBinaryLabelmapConversionRule::vtkClosedSurfaceToBinaryLabelmap
   this->ReplaceTargetRepresentation = true;
 
   // Reference image geometry parameter
-  this->ConversionParameters[vtkSegmentationConverter::GetReferenceImageGeometryParameterName()] = std::make_pair("",
+  this->ConversionParameters->SetParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), "",
     "Image geometry description string determining the geometry of the labelmap that is created in course of conversion."
     " Can be copied from a volume, using the button.");
   // Oversampling factor parameter
-  this->ConversionParameters[GetOversamplingFactorParameterName()] = std::make_pair("1",
+  this->ConversionParameters->SetParameter(GetOversamplingFactorParameterName(), "1",
     "Determines the oversampling of the reference image geometry. If it's a number, then all segments are oversampled"
     " with the same value (value of 1 means no oversampling). If it has the value \"A\", then automatic oversampling is calculated.");
   // Crop to reference geometry parameter
-  this->ConversionParameters[GetCropToReferenceImageGeometryParameterName()] = std::make_pair("0",
+  this->ConversionParameters->SetParameter(GetCropToReferenceImageGeometryParameterName(), "0",
     "Crop the model to the extent of reference geometry. 0 (default) = created labelmap will contain the entire model."
     " 1 = created labelmap extent will be within reference image extent.");
   // Collapse labelmaps parameter
-  this->ConversionParameters[GetCollapseLabelmapsParameterName()] = std::make_pair("1",
+  this->ConversionParameters->SetParameter(GetCollapseLabelmapsParameterName(), "1",
     "Merge the labelmaps into as few shared labelmaps as possible"
     " 1 = created labelmaps will be shared if possible without overwriting each other.");
 }
@@ -255,7 +255,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
 //----------------------------------------------------------------------------
 bool vtkClosedSurfaceToBinaryLabelmapConversionRule::PostConvert(vtkSegmentation* segmentation)
 {
-  int collapseLabelmaps = vtkVariant(this->ConversionParameters[GetCollapseLabelmapsParameterName()].first).ToInt();
+  int collapseLabelmaps = this->ConversionParameters->GetValueAsInt(GetCollapseLabelmapsParameterName());
   if (collapseLabelmaps > 0)
     {
     segmentation->CollapseBinaryLabelmaps(false);
@@ -278,7 +278,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
     }
 
   // Get reference image geometry from parameters
-  std::string geometryString = this->ConversionParameters[vtkSegmentationConverter::GetReferenceImageGeometryParameterName()].first;
+  std::string geometryString = this->ConversionParameters->GetValue(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
   if (geometryString.empty() || !vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryImageData))
     {
     geometryString = this->GetDefaultImageGeometryStringForPolyData(closedSurfacePolyData);
@@ -299,7 +299,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
     }
 
   // Get oversampling factor
-  std::string oversamplingString = this->ConversionParameters[GetOversamplingFactorParameterName()].first;
+  std::string oversamplingString = this->ConversionParameters->GetValue(GetOversamplingFactorParameterName());
   double oversamplingFactor = 1.0;
   if (!oversamplingString.compare("A"))
     {
@@ -334,7 +334,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
 
   int cropToReferenceImageGeometry = 0;
     {
-    std::string cropToReferenceImageGeometryString = this->ConversionParameters[GetCropToReferenceImageGeometryParameterName()].first;
+    std::string cropToReferenceImageGeometryString = this->ConversionParameters->GetValue(GetCropToReferenceImageGeometryParameterName());
     std::stringstream ss;
     ss << cropToReferenceImageGeometryString;
     ss >> cropToReferenceImageGeometry;

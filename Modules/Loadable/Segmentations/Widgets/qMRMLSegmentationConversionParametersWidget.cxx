@@ -69,7 +69,9 @@ public:
   QString TargetRepresentationName;
 
   /// Possible conversion paths for the current segmentation and target representation
-  std::vector<vtkSegmentationConverter::ConversionPathType> PossiblePaths;
+  vtkNew<vtkSegmentationConversionPaths> PossiblePaths;
+
+  vtkNew<vtkSegmentationConversionParameters> ConversionParameters;
 
 private:
   QStringList PathsColumnLabels;
@@ -206,7 +208,7 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
   d->PathsTable->blockSignals(true);
 
   d->PathsTable->clearContents();
-  d->PossiblePaths.clear();
+  d->PossiblePaths->RemoveAllItems();
 
   if (!d->SegmentationNode || d->TargetRepresentationName.isEmpty())
     {
@@ -223,11 +225,10 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
 
   // Get possible paths
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-  vtkSegmentationConverter::ConversionPathAndCostListType pathsCosts;
-  segmentation->GetPossibleConversions(d->TargetRepresentationName.toUtf8().constData(), pathsCosts);
+  segmentation->GetPossibleConversions(d->TargetRepresentationName.toUtf8().constData(), d->PossiblePaths);
 
-  if (pathsCosts.empty())
-  {
+  if (d->PossiblePaths->GetNumberOfPaths() == 0)
+    {
     d->PathsTable->setRowCount(1);
     QTableWidgetItem* noPathsItem = new QTableWidgetItem("No path available!");
     QFont boldFont;
@@ -238,32 +239,33 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
 
     d->PathsTable->blockSignals(false);
     return;
-  }
+    }
 
-  vtkSegmentationConverter::ConversionPathAndCostListType::iterator pathIt;
-  d->PathsTable->setRowCount(pathsCosts.size());
+  int rowCount = d->PossiblePaths->GetNumberOfPaths();
+  d->PathsTable->setRowCount(rowCount);
   int row = 0;
-  for (pathIt=pathsCosts.begin(); pathIt!=pathsCosts.end(); ++pathIt, ++row)
+  for (int row = 0; row< d->PossiblePaths->GetNumberOfPaths(); ++row)
     {
     // Path cost
-    QString costString = QString::number(pathIt->second);
+    vtkSegmentationConversionPath* path = d->PossiblePaths->GetPath(row);
+    QString costString = QString::number(path->GetCost());
     QTableWidgetItem* costItem = new QTableWidgetItem(costString);
     costItem->setFlags(costItem->flags() & ~Qt::ItemIsEditable);
     costItem->setData(Qt::UserRole, QVariant(row));
     d->PathsTable->setItem(row, d->pathsColumnIndex("Cost"), costItem);
 
     // Path
-    vtkSegmentationConverter::ConversionPathType path = pathIt->first;
-    d->PossiblePaths.push_back(path);
-    vtkSegmentationConverterRule* firstRule = (*path.begin());
-    QString pathString(firstRule->GetSourceRepresentationName()); // Add source (master) representation
-
-    vtkSegmentationConverter::ConversionPathType::iterator ruleIt;
-    for (ruleIt=path.begin(); ruleIt!=path.end(); ++ruleIt)
+    QString pathString;
+    for (int ruleIndex = 0; ruleIndex < path->GetNumberOfRules(); ruleIndex++)
       {
-      vtkSegmentationConverterRule* currentRule = (*ruleIt);
+      vtkSegmentationConverterRule* rule = path->GetRule(ruleIndex);
+      if (ruleIndex == 0)
+        {
+        // Add source (master) representation
+        pathString.append(rule->GetSourceRepresentationName());
+        }
       pathString.append(" -> ");
-      pathString.append(currentRule->GetTargetRepresentationName());
+      pathString.append(rule->GetTargetRepresentationName());
       }
     QTableWidgetItem* pathItem = new QTableWidgetItem(pathString);
     pathItem->setFlags(pathItem->flags() & ~Qt::ItemIsEditable);
@@ -292,9 +294,9 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
     return;
     }
 
-  vtkSegmentationConverter::ConversionPathType selectedPath = this->selectedPath();
-  if (selectedPath.empty())
-  {
+  vtkSegmentationConversionPath* selectedPath = this->selectedPath();
+  if (!selectedPath)
+    {
     d->ParametersTable->setRowCount(1);
     QTableWidgetItem* noParametersItem = new QTableWidgetItem("No path selected");
     QFont boldFont;
@@ -305,14 +307,14 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
 
     d->ParametersTable->blockSignals(false);
     return;
-  }
+    }
 
   // Get parameters for selected path
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-  vtkSegmentationConverterRule::ConversionParameterListType parameters;
+  vtkNew<vtkSegmentationConversionParameters> parameters;
   segmentation->GetConversionParametersForPath(parameters, selectedPath);
 
-  if (parameters.empty())
+  if (parameters->GetNumberOfParameters() == 0)
   {
     d->ParametersTable->setRowCount(1);
     QTableWidgetItem* noParametersItem = new QTableWidgetItem("No parameters for selected path");
@@ -326,21 +328,20 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
     return;
   }
 
-  vtkSegmentationConverterRule::ConversionParameterListType::iterator paramIt;
-  d->ParametersTable->setRowCount(parameters.size());
-  int row = 0;
-  for (paramIt=parameters.begin(); paramIt!=parameters.end(); ++paramIt, ++row)
+  int numberOfParameters = parameters->GetNumberOfParameters();
+  d->ParametersTable->setRowCount(numberOfParameters);
+  for (int row = 0; row < numberOfParameters; ++row)
   {
     // Parameter name
-    QString parameterName(paramIt->first.c_str());
-    QString parameterDescription(paramIt->second.second.c_str());
+    QString parameterName = QString::fromStdString(parameters->GetName(row));
+    QString parameterDescription = QString::fromStdString(parameters->GetDescription(row));
     QTableWidgetItem* nameItem = new QTableWidgetItem(parameterName);
     nameItem->setToolTip(parameterDescription);
     nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
     d->ParametersTable->setItem(row, d->parametersColumnIndex("Name"), nameItem);
 
     // Parameter value
-    QString parameterValue(paramIt->second.first.c_str());
+    QString parameterValue = QString::fromStdString(parameters->GetValue(row));
 
     // Special case: reference image geometry
     if (!parameterName.compare(vtkSegmentationConverter::GetReferenceImageGeometryParameterName().c_str()))
@@ -397,12 +398,12 @@ void qMRMLSegmentationConversionParametersWidget::applyConversion()
 
   // Perform conversion using selected path and chosen conversion parameters
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(
-        this->selectedPath(), this->conversionParameters()))
-  {
+  vtkSegmentationConversionPath* selectedPath = this->selectedPath();
+  if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(selectedPath, this->conversionParameters()))
+    {
     QString message = QString("Failed to convert %1 to %2!").arg(d->SegmentationNode->GetName()).arg(d->TargetRepresentationName);
     QMessageBox::warning(nullptr, tr("Conversion failed"), message);
-  }
+    }
   QApplication::restoreOverrideCursor();
 
   emit conversionDone();
@@ -448,50 +449,53 @@ void qMRMLSegmentationConversionParametersWidget::onSpecifyGeometryButtonClicked
 }
 
 //-----------------------------------------------------------------------------
-vtkSegmentationConverter::ConversionPathType qMRMLSegmentationConversionParametersWidget::selectedPath()
+vtkSegmentationConversionPath* qMRMLSegmentationConversionParametersWidget::selectedPath()
 {
   Q_D(qMRMLSegmentationConversionParametersWidget);
 
-  if (d->PossiblePaths.empty())
-  {
-    vtkSegmentationConverter::ConversionPathType emptyPath;
-    return emptyPath;
-  }
+  if (d->PossiblePaths->GetNumberOfPaths() == 0)
+    {
+    return nullptr;
+    }
 
   QList<QTableWidgetItem*> selectedItems = d->PathsTable->selectedItems();
   if (selectedItems.isEmpty())
-  {
-    vtkSegmentationConverter::ConversionPathType emptyPath;
-    return emptyPath;
-  }
+    {
+    return nullptr;
+    }
 
   QTableWidgetItem* firstItem = (*selectedItems.begin());
   int selectedRow = firstItem->data(Qt::UserRole).toInt();
+  if (selectedRow < 0 || selectedRow >= d->PossiblePaths->GetNumberOfPaths())
+    {
+    return nullptr;
+    }
 
-  return d->PossiblePaths[selectedRow];
+  return d->PossiblePaths->GetPath(selectedRow);
 }
 
 //-----------------------------------------------------------------------------
-vtkSegmentationConverterRule::ConversionParameterListType qMRMLSegmentationConversionParametersWidget::conversionParameters()
+vtkSegmentationConversionParameters* qMRMLSegmentationConversionParametersWidget::conversionParameters()
 {
   Q_D(qMRMLSegmentationConversionParametersWidget);
-
+  d->ConversionParameters->RemoveAllParameters();
   if (!d->SegmentationNode)
     {
-    vtkSegmentationConverterRule::ConversionParameterListType emptyParameters;
-    return emptyParameters;
+    return d->ConversionParameters;
     }
 
-  vtkSegmentationConverter::ConversionPathType selectedPath = this->selectedPath();
-  if (selectedPath.empty())
-  {
-    vtkSegmentationConverterRule::ConversionParameterListType emptyParameters;
-    return emptyParameters;
-  }
+  vtkSegmentationConversionPath* selectedPath = this->selectedPath();
+  if (!selectedPath)
+    {
+    return d->ConversionParameters;
+    }
 
   // Get parameters for selected path
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-  vtkSegmentationConverterRule::ConversionParameterListType parameters;
-  segmentation->GetConversionParametersForPath(parameters, selectedPath);
-  return parameters;
+  if (!segmentation)
+    {
+    return d->ConversionParameters;
+    }
+  segmentation->GetConversionParametersForPath(d->ConversionParameters, selectedPath);
+  return d->ConversionParameters;
 }

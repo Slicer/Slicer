@@ -61,10 +61,11 @@ public:
   QString targetRepresentationName();
 
   /// Return selected path
-  vtkSegmentationConverter::ConversionPathType selectedPath();
+  vtkSegmentationConversionPath* selectedPath();
 
-  /// Return chosen conversion parameters
-  vtkSegmentationConverterRule::ConversionParameterListType conversionParameters();
+  /// Get chosen conversion parameters.
+  /// Always returns a valid object.
+  vtkSegmentationConversionParameters* conversionParameters();
 
 signals:
   /// Emitted when conversion is done

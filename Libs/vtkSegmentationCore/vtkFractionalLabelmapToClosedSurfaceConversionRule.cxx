@@ -47,8 +47,10 @@ vtkSegmentationConverterRuleNewMacro(vtkFractionalLabelmapToClosedSurfaceConvers
 vtkFractionalLabelmapToClosedSurfaceConversionRule::vtkFractionalLabelmapToClosedSurfaceConversionRule()
   : vtkBinaryLabelmapToClosedSurfaceConversionRule()
 {
-  this->ConversionParameters[this->GetFractionalLabelMapOversamplingFactorParameterName()] = std::make_pair("1", "Determines the oversampling of the reference image geometry. All segments are oversampled with the same value (value of 1 means no oversampling).");
-  this->ConversionParameters[this->GetThresholdFractionParameterName()] = std::make_pair("0.5", "Determines the threshold that the closed surface is created at as a fractional value between 0 and 1.");
+  this->ConversionParameters->SetParameter(this->GetFractionalLabelMapOversamplingFactorParameterName(), "1",
+    "Determines the oversampling of the reference image geometry. All segments are oversampled with the same value (value of 1 means no oversampling).");
+  this->ConversionParameters->SetParameter(this->GetThresholdFractionParameterName(), "0.5",
+    "Determines the threshold that the closed surface is created at as a fractional value between 0 and 1.");
 }
 
 //----------------------------------------------------------------------------
@@ -144,11 +146,11 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
     }
 
   // Get conversion parameters
-  double decimationFactor = vtkVariant(this->ConversionParameters[this->GetDecimationFactorParameterName()].first).ToDouble();
-  double smoothingFactor = vtkVariant(this->ConversionParameters[this->GetSmoothingFactorParameterName()].first).ToDouble();
-  int computeSurfaceNormals = vtkVariant(this->ConversionParameters[GetComputeSurfaceNormalsParameterName()].first).ToInt();
-  double fractionalOversamplingFactor = vtkVariant(this->ConversionParameters[this->GetFractionalLabelMapOversamplingFactorParameterName()].first).ToDouble();
-  double fractionalThreshold = vtkVariant(this->ConversionParameters[this->GetThresholdFractionParameterName()].first).ToDouble();
+  double decimationFactor = this->ConversionParameters->GetValueAsDouble(this->GetDecimationFactorParameterName());
+  double smoothingFactor = this->ConversionParameters->GetValueAsDouble(this->GetSmoothingFactorParameterName());
+  int computeSurfaceNormals = this->ConversionParameters->GetValueAsInt(GetComputeSurfaceNormalsParameterName());
+  double fractionalOversamplingFactor = this->ConversionParameters->GetValueAsDouble(this->GetFractionalLabelMapOversamplingFactorParameterName());
+  double fractionalThreshold = this->ConversionParameters->GetValueAsDouble(this->GetThresholdFractionParameterName());
 
   if (fractionalThreshold < 0 || fractionalThreshold > 1)
     {

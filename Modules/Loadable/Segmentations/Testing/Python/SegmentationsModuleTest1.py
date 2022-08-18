@@ -32,6 +32,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
         self.TestSection_RetrieveInputData()
         self.TestSection_LoadInputData()
         self.TestSection_AddRemoveSegment()
+        self.TestSection_ConvertBetweenRepresentations()
         self.TestSection_MergeLabelmapWithDifferentGeometries()
         self.TestSection_ImportExportSegment()
         self.TestSection_ImportExportSegment2()
@@ -170,6 +171,55 @@ class SegmentationsModuleTest1(unittest.TestCase):
         # Remove segment from segmentation
         self.inputSegmentationNode.GetSegmentation().RemoveSegment(self.sphereSegmentName)
         self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
+
+    # ------------------------------------------------------------------------------
+    def TestSection_ConvertBetweenRepresentations(self):
+        # Test conversion between segment representations with custom conversion path
+        logging.info('Test section: Convert between representations')
+
+        segmentation = self.inputSegmentationNode.GetSegmentation()
+
+        # Get all possible conversions
+        conversionPaths = slicer.vtkSegmentationConversionPaths()
+        segmentation.GetPossibleConversions("Binary labelmap", conversionPaths)
+        print(conversionPaths)
+        self.assertEqual(conversionPaths.GetNumberOfPaths(), 1)
+
+        # Choose a conversion path
+        conversionPath = conversionPaths.GetPath(0)
+        self.assertEqual(conversionPath.GetCost(), 500)
+        self.assertEqual(conversionPath.GetNumberOfRules(), 1)
+
+        # Get information about a conversion rule
+        rule = conversionPath.GetRule(0)
+        self.assertEqual(rule.GetName(), 'Closed surface to binary labelmap (simple image stencil)')
+        self.assertEqual(rule.GetSourceRepresentationName(), 'Closed surface')
+        self.assertEqual(rule.GetTargetRepresentationName(), 'Binary labelmap')
+
+        # Adjust conversion parameter
+        conversionParameters = slicer.vtkSegmentationConversionParameters()
+        segmentation.GetConversionParametersForPath(conversionParameters, conversionPath)
+        print(conversionParameters)
+        self.assertEqual(conversionParameters.GetNumberOfParameters(), 4)
+        conversionParameters.SetValue('Oversampling factor', str(2))
+        self.assertEqual(conversionParameters.GetValueAsDouble('Oversampling factor'), 2)
+
+        # Convert
+        segment = segmentation.GetNthSegment(0)
+        self.assertTrue(segmentation.CreateRepresentation(conversionPath, conversionParameters))
+        dim = segment.GetRepresentation(self.binaryLabelmapReprName).GetDimensions()
+        oversampledVoxelCount = dim[0] * dim[1] * dim[2]
+
+        conversionParameters.SetValue('Oversampling factor', str(1))
+        self.assertTrue(segmentation.CreateRepresentation(conversionPath, conversionParameters))
+        dim = segment.GetRepresentation(self.binaryLabelmapReprName).GetDimensions()
+        nonOversampledVoxelCount = dim[0] * dim[1] * dim[2]
+
+        # Oversampling by 2x would increment the voxel count by 2x2x2 = 8x, but the
+        # labelmap extent is very small, so in this case the voxel count is increased
+        # only by about 6x. Therefore, in the test we check if oversampling increases
+        # the voxel count by at least 5x.
+        self.assertGreater(oversampledVoxelCount, nonOversampledVoxelCount * 5)
 
     # ------------------------------------------------------------------------------
     def TestSection_MergeLabelmapWithDifferentGeometries(self):

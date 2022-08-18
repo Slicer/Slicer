@@ -97,11 +97,23 @@ RULE(C, E, 4);
 RULE(D, E, 2);
 RULE(E, D, 1);
 
-void PrintPath(const vtkSegmentationConverter::ConversionPathType& path)
+void PrintPath(vtkSegmentationConversionPath* path)
 {
-  for (vtkSegmentationConverter::ConversionPathType::const_iterator ruleIt = path.begin(); ruleIt != path.end(); ++ruleIt)
+  for (int i=0; i < path->GetNumberOfRules(); i++)
     {
-    std::cout << "      " << (*ruleIt)->GetName() << "(" << (*ruleIt)->GetConversionCost() << ")" << std::endl;
+    vtkSegmentationConverterRule* rule = path->GetRule(i);
+    std::cout << "      " << rule->GetName() << "(" << rule->GetConversionCost() << ")" << std::endl;
+    }
+}
+
+void PrintPaths(vtkSegmentationConversionPaths* paths)
+{
+  vtkSegmentationConversionPath* path = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (paths->InitTraversal(it); (path = paths->GetNextPath(it));)
+    {
+    std::cout << "    Path: (total cost = " << path->GetCost() << ")" << std::endl;
+    PrintPath(path);
     }
 }
 
@@ -145,58 +157,44 @@ int vtkSegmentationConverterTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[]
 
   vtkSmartPointer<vtkSegmentationConverter> converter = vtkSmartPointer<vtkSegmentationConverter>::New();
 
-  vtkSegmentationConverter::ConversionPathAndCostListType pathsCosts;
-  vtkSegmentationConverter::ConversionPathType shortestPath;
-
   // A->E paths: ABCE, ABCDE, ADE
   std::cout << "Conversion from RepA to RepE" << std::endl;
   std::cout << "  All paths:" << std::endl;
-  converter->GetPossibleConversions("RepA", "RepE", pathsCosts);
-  for (vtkSegmentationConverter::ConversionPathAndCostListType::iterator pathsCostsIt = pathsCosts.begin(); pathsCostsIt != pathsCosts.end(); ++pathsCostsIt)
-    {
-    std::cout << "    Path: (total cost = " << pathsCostsIt->second << ")" << std::endl;
-    PrintPath(pathsCostsIt->first);
-    }
-  VERIFY_EQUAL("number of paths from representation A to E", pathsCosts.size(), 3);
+  vtkNew<vtkSegmentationConversionPaths> paths;
+  converter->GetPossibleConversions("RepA", "RepE", paths);
+  PrintPaths(paths);
+  VERIFY_EQUAL("number of paths from representation A to E", paths->GetNumberOfPaths(), 3);
   std::cout << "  Cheapest path:" << std::endl;
-  shortestPath = vtkSegmentationConverter::GetCheapestPath(pathsCosts);
+  vtkSegmentationConversionPath* shortestPath = vtkSegmentationConverter::GetCheapestPath(paths);
   PrintPath(shortestPath);
-  VERIFY_EQUAL("number of paths from representation A to E", shortestPath.size(), 3);
+  VERIFY_EQUAL("minimum number of rules from representation A to E", shortestPath->GetNumberOfRules(), 3);
 
   // E->A paths: none
   std::cout << "Conversion from RepE to RepA" << std::endl;
-  converter->GetPossibleConversions("RepE", "RepA", pathsCosts);
-  VERIFY_EQUAL("number of paths from representation E to A", pathsCosts.size(), 0);
+  converter->GetPossibleConversions("RepE", "RepA", paths);
+  VERIFY_EQUAL("number of paths from representation E to A", paths->GetNumberOfPaths(), 0);
 
   // B->D paths: BAD, BCD, BCED
   std::cout << "Conversion from RepB to RepD" << std::endl;
   std::cout << "  All paths:" << std::endl;
-  converter->GetPossibleConversions("RepB", "RepD", pathsCosts);
-  for (vtkSegmentationConverter::ConversionPathAndCostListType::iterator pathsCostsIt = pathsCosts.begin(); pathsCostsIt != pathsCosts.end(); ++pathsCostsIt)
-    {
-    std::cout << "    Path: (total cost = " << pathsCostsIt->second << ")" << std::endl;
-    PrintPath(pathsCostsIt->first);
-    }
-  VERIFY_EQUAL("number of paths from representation B to D", pathsCosts.size(), 3);
+  converter->GetPossibleConversions("RepB", "RepD", paths);
+  PrintPaths(paths);
+  VERIFY_EQUAL("number of paths from representation B to D", paths->GetNumberOfPaths(), 3);
   std::cout << "  Cheapest path:" << std::endl;
-  shortestPath = vtkSegmentationConverter::GetCheapestPath(pathsCosts);
+  shortestPath = vtkSegmentationConverter::GetCheapestPath(paths);
   PrintPath(shortestPath);
-  VERIFY_EQUAL("number of paths from representation B to D", shortestPath.size(), 2);
+  VERIFY_EQUAL("number of paths from representation B to D", shortestPath->GetNumberOfRules(), 2);
 
   // C->D paths: CD, CED
   std::cout << "Conversion from RepC to RepD" << std::endl;
   std::cout << "  All paths:" << std::endl;
-  converter->GetPossibleConversions("RepC", "RepD", pathsCosts);
-  for (vtkSegmentationConverter::ConversionPathAndCostListType::iterator pathsCostsIt = pathsCosts.begin(); pathsCostsIt != pathsCosts.end(); ++pathsCostsIt)
-    {
-    std::cout << "    Path: (total cost = " << pathsCostsIt->second << ")" << std::endl;
-    PrintPath(pathsCostsIt->first);
-    }
-  VERIFY_EQUAL("number of paths from representation C to D", pathsCosts.size(), 2);
+  converter->GetPossibleConversions("RepC", "RepD", paths);
+  PrintPaths(paths);
+  VERIFY_EQUAL("number of paths from representation C to D", paths->GetNumberOfPaths(), 2);
   std::cout << "  Cheapest path:" << std::endl;
-  shortestPath = vtkSegmentationConverter::GetCheapestPath(pathsCosts);
+  shortestPath = vtkSegmentationConverter::GetCheapestPath(paths);
   PrintPath(shortestPath);
-  VERIFY_EQUAL("number of paths from representation C to D", shortestPath.size(), 1);
+  VERIFY_EQUAL("number of paths from representation C to D", shortestPath->GetNumberOfRules(), 1);
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;

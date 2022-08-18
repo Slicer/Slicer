@@ -60,17 +60,10 @@ vtkSegmentationConverter::~vtkSegmentationConverter() = default;
 void vtkSegmentationConverter::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-
-  ConverterRulesListType::iterator ruleIt;
-  for (ruleIt = this->ConverterRules.begin(); ruleIt != this->ConverterRules.end(); ++ruleIt)
+  for (auto rule : this->ConverterRules)
     {
-    vtkSegmentationConverterRule* rule = (*ruleIt);
-    os << indent << "Rule:   " << (rule->GetSourceRepresentationName() ? rule->GetSourceRepresentationName() : "NULL") << " -> " << (rule->GetTargetRepresentationName() ? rule->GetTargetRepresentationName() : "NULL") << "\n";
-    vtkSegmentationConverterRule::ConversionParameterListType::iterator paramIt;
-    for (paramIt = rule->ConversionParameters.begin(); paramIt != rule->ConversionParameters.end(); ++paramIt)
-      {
-      os << indent << "  Parameter:   " << paramIt->first << " = " << paramIt->second.first << " (" << paramIt->second.second << ")\n";
-      }
+    os << indent << "Rule:";
+    rule->PrintSelf(os, indent.GetNextIndent());
     }
 }
 
@@ -83,13 +76,13 @@ void vtkSegmentationConverter::DeepCopy(vtkSegmentationConverter* aConverter)
     }
 
   // Copy all conversion parameters
-  ConverterRulesListType::iterator ruleIt;
-  for (ruleIt = aConverter->ConverterRules.begin(); ruleIt != aConverter->ConverterRules.end(); ++ruleIt)
+  for (auto& rule : aConverter->ConverterRules)
     {
-    vtkSegmentationConverterRule::ConversionParameterListType::iterator paramIt;
-    for (paramIt = (*ruleIt)->ConversionParameters.begin(); paramIt != (*ruleIt)->ConversionParameters.end(); ++paramIt)
+    int numberOfParameters = rule->ConversionParameters->GetNumberOfParameters();
+    for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
       {
-      this->SetConversionParameter(paramIt->first, paramIt->second.first);
+      this->SetConversionParameter(rule->ConversionParameters->GetName(parameterIndex),
+        rule->ConversionParameters->GetValue(parameterIndex));
       }
     }
 }
@@ -229,12 +222,14 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverter::SetConversionParameters(vtkSegmentationConverterRule::ConversionParameterListType parameters)
+void vtkSegmentationConverter::SetConversionParameters(vtkSegmentationConversionParameters* parameters)
 {
-  vtkSegmentationConverterRule::ConversionParameterListType::iterator paramIt;
-  for (paramIt = parameters.begin(); paramIt != parameters.end(); ++paramIt)
+  int numberOfParameters = parameters->GetNumberOfParameters();
+  for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
     {
-    this->SetConversionParameter(paramIt->first, paramIt->second.first);
+    this->SetConversionParameter(
+      parameters->GetName(parameterIndex),
+      parameters->GetValue(parameterIndex));
     }
 }
 
@@ -301,17 +296,19 @@ std::string vtkSegmentationConverter::GetConversionParameterDescription(const st
 }
 
 //----------------------------------------------------------------------------
-vtkSegmentationConverter::ConversionPathType vtkSegmentationConverter::GetCheapestPath(const ConversionPathAndCostListType &pathsCosts)
+vtkSegmentationConversionPath* vtkSegmentationConverter::GetCheapestPath(vtkSegmentationConversionPaths* paths)
 {
   unsigned int cheapestPathCost = VTK_UNSIGNED_INT_MAX;
   unsigned int cheapestPathNumberOfConversions = 0;
-  ConversionPathType cheapestPath;
-  for (ConversionPathAndCostListType::const_iterator pathIt = pathsCosts.begin(); pathIt != pathsCosts.end(); ++pathIt)
+  vtkSegmentationConversionPath* cheapestPath = nullptr;
+  vtkSegmentationConversionPath* path = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (paths->InitTraversal(it); (path = paths->GetNextPath(it));)
     {
-    if (pathIt->second <= cheapestPathCost)
+    if (path->GetCost() <= cheapestPathCost)
       {
-      size_t numberOfConversions = pathIt->first.size();
-      if (pathIt->second == cheapestPathCost)
+      size_t numberOfConversions = path->GetNumberOfRules();
+      if (path->GetCost() == cheapestPathCost)
         {
         // If the path cost is exactly the same then compare the number of conversions too
         if (numberOfConversions > cheapestPathNumberOfConversions)
@@ -320,129 +317,128 @@ vtkSegmentationConverter::ConversionPathType vtkSegmentationConverter::GetCheape
           continue;
           }
         }
-      cheapestPathCost = pathIt->second;
+      cheapestPathCost = path->GetCost();
       cheapestPathNumberOfConversions = (unsigned int)numberOfConversions;
-      cheapestPath = pathIt->first;
+      cheapestPath = path;
       }
     }
   return cheapestPath;
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverter::GetPossibleConversions(const std::string& sourceRepresentationName, const std::string& targetRepresentationName, ConversionPathAndCostListType &pathsCosts)
+void vtkSegmentationConverter::GetPossibleConversions(const std::string& sourceRepresentationName,
+  const std::string& targetRepresentationName, vtkSegmentationConversionPaths* paths)
 {
-  pathsCosts.clear();
-  std::set<std::string> skipRepresentations;
-  this->FindPath(sourceRepresentationName, targetRepresentationName, pathsCosts, skipRepresentations);
+  paths->RemoveAllItems();
+  vtkNew<vtkStringArray> skipRepresentations;
+  this->FindPath(sourceRepresentationName, targetRepresentationName, paths, skipRepresentations);
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverter::FindPath(const std::string& sourceRepresentationName, const std::string& targetRepresentationName, ConversionPathAndCostListType &pathsCosts, std::set<std::string>& skipRepresentations)
+void vtkSegmentationConverter::FindPath(const std::string& sourceRepresentationName,
+  const std::string& targetRepresentationName, vtkSegmentationConversionPaths* pathsToSource,
+  vtkStringArray* skipRepresentations)
 {
   if (sourceRepresentationName == targetRepresentationName)
     {
-    vtkErrorMacro("FindPath failed: source and target representation names are the same - "<<sourceRepresentationName);
+    vtkErrorMacro("FindPath failed: source and target representation names are the same - " << sourceRepresentationName);
     return;
     }
   // try to find a path through all the available rules from this representation
   RulesListType& rulesFromSourceRepresentation = this->RulesGraph[sourceRepresentationName];
   if (rulesFromSourceRepresentation.empty())
     {
-    // dead end, no more rules from here
+    // dead end, no more rules from source
     return;
     }
 
-  // Get all the paths from here to the target
-  ConversionPathAndCostListType pathsCostsFromHere;
-  skipRepresentations.insert(sourceRepresentationName);
+  // Get all the paths from source to the target
+  vtkNew<vtkSegmentationConversionPaths> pathsFromSource;
+
+  // skipRepresentations is reused, so we don't modify it
+  vtkNew<vtkStringArray> skipRepresentationsNew;
+  skipRepresentationsNew->DeepCopy(skipRepresentations);
+  skipRepresentationsNew->InsertNextValue(sourceRepresentationName);
+
   for (RulesListType::iterator representationRuleIt=rulesFromSourceRepresentation.begin(); representationRuleIt!=rulesFromSourceRepresentation.end(); ++representationRuleIt)
     {
-    if (skipRepresentations.find((*representationRuleIt)->GetTargetRepresentationName()) != skipRepresentations.end())
+    if (skipRepresentationsNew->LookupValue((*representationRuleIt)->GetTargetRepresentationName()) >= 0)
       {
       // representation has to be ignored
       continue;
       }
     const std::string& thisRuleTargetRepresentationName = (*representationRuleIt)->GetTargetRepresentationName();
-    if (thisRuleTargetRepresentationName==targetRepresentationName)
+    if (thisRuleTargetRepresentationName == targetRepresentationName)
       {
       // this rule leads to target directly
-      ConversionPathAndCostType pathCostFromHere;
-      pathCostFromHere.first.push_back(*representationRuleIt); // path
-      pathCostFromHere.second = (*representationRuleIt)->GetConversionCost(); // cost
-      pathsCostsFromHere.push_back(pathCostFromHere);
+      vtkNew<vtkSegmentationConversionPath> pathFromSource;
+      pathFromSource->AddRule(*representationRuleIt);
+      pathsFromSource->AddPath(pathFromSource);
       }
     else
       {
       // this rule may lead to the target indirectly
-      ConversionPathAndCostListType pathsCostsFromNext;
-      this->FindPath(thisRuleTargetRepresentationName, targetRepresentationName, pathsCostsFromNext, skipRepresentations);
-      if (!pathsCostsFromNext.empty())
+      vtkNew<vtkSegmentationConversionPaths> pathsFromNext;
+      this->FindPath(thisRuleTargetRepresentationName, targetRepresentationName, pathsFromNext, skipRepresentationsNew);
+      if (pathsFromNext->GetNumberOfPaths() > 0)
         {
-        for (ConversionPathAndCostListType::iterator pathCostFromNextIt = pathsCostsFromNext.begin(); pathCostFromNextIt != pathsCostsFromNext.end(); ++pathCostFromNextIt)
+        vtkSegmentationConversionPath* pathFromNext = nullptr;
+        vtkCollectionSimpleIterator it;
+        for (pathsFromNext->InitTraversal(it); (pathFromNext = pathsFromNext->GetNextPath(it));)
           {
-          ConversionPathAndCostType pathCostFromHere;
-          pathCostFromHere.first.push_back(*representationRuleIt); // path
-          pathCostFromHere.second = (*representationRuleIt)->GetConversionCost(); // cost
-          pathCostFromHere.first.insert(pathCostFromHere.first.end(), pathCostFromNextIt->first.begin(), pathCostFromNextIt->first.end()); // path append
-          pathCostFromHere.second += pathCostFromNextIt->second; // cost
-          pathsCostsFromHere.push_back(pathCostFromHere);
+          vtkNew<vtkSegmentationConversionPath> pathFromSource;
+          pathFromSource->AddRule(*representationRuleIt);
+          pathFromSource->AddRules(pathFromNext);
+          pathsFromSource->AddPath(pathFromSource);
           }
         }
       }
     }
-  // skipRepresentations is reused, so make sure we restore the original contents
-  skipRepresentations.erase(sourceRepresentationName);
 
-  if (pathsCostsFromHere.empty())
+  if (pathsFromSource->GetNumberOfPaths() == 0)
     {
-    // no paths from here to the target
+    // no paths from source to the target
     return;
     }
 
-  if (pathsCosts.empty())
+  if (pathsToSource->GetNumberOfPaths() == 0)
     {
-    // pathsCosts to here is empty, so we are at the starting point
-    pathsCosts = pathsCostsFromHere;
+    // pathsToSource to source is empty, so we are at the starting point
+    pathsToSource->AddPaths(pathsFromSource);
     return;
     }
 
-  if (pathsCostsFromHere.size()==1)
+  if (pathsFromSource->GetNumberOfPaths() == 1)
     {
-    // Special case: there is just one possible continuation from here
-    // just append the only possible continuation here to all known paths to here and return
-    for (ConversionPathAndCostListType::iterator pathsCostsIt = pathsCosts.begin(); pathsCostsIt != pathsCosts.end(); ++pathsCostsIt)
+    // Special case: there is just one possible continuation from source
+    // just append the only possible continuation here to all known paths to the source and return
+    vtkSegmentationConversionPath* pathToSource = nullptr;
+    vtkCollectionSimpleIterator it;
+    for (pathsToSource->InitTraversal(it); (pathToSource = pathsToSource->GetNextPath(it));)
       {
-      pathsCostsIt->first.insert(pathsCostsIt->first.end(),pathsCostsFromHere[0].first.begin(),pathsCostsFromHere[0].first.end());
-      pathsCostsIt->second += pathsCostsFromHere[0].second;
+      pathToSource->AddRules(pathsFromSource->GetPath(0));
       }
     return;
     }
 
-  // There are multiple possible continuations from here, append that to all known paths to here (we'll have a full combination of all the paths to here and from here)
-  ConversionPathAndCostListType pathsCostsToHere = pathsCosts; // first save all the possible paths to here
-  for (ConversionPathAndCostListType::iterator pathCostsFromHereIt = pathsCostsFromHere.begin(); pathCostsFromHereIt != pathsCostsFromHere.end(); ++pathCostsFromHereIt)
+  // There are multiple possible continuations from source, append that to all known paths
+  // to source (we'll have a full combination of all the paths to source and from source)
+  vtkNew<vtkSegmentationConversionPaths> pathsToSourceOriginal;
+  pathsToSourceOriginal->AddPaths(pathsToSource); // first save all the possible paths to source
+  pathsToSource->RemoveAllItems();
+  vtkSegmentationConversionPath* pathFromSource = nullptr;
+  vtkCollectionSimpleIterator itFromSource;
+  for (pathsFromSource->InitTraversal(itFromSource); (pathFromSource = pathsFromSource->GetNextPath(itFromSource));)
     {
-    if (pathCostsFromHereIt == pathsCostsFromHere.begin())
+    // append each path from source to a copy of the original pathsToSource
+    vtkSegmentationConversionPath* pathToSource = nullptr;
+    vtkCollectionSimpleIterator itToSource;
+    for (pathsToSourceOriginal->InitTraversal(itToSource); (pathToSource = pathsToSourceOriginal->GetNextPath(itToSource));)
       {
-      // first path from here, just append it to the current pathsCosts
-      for (ConversionPathAndCostListType::iterator pathsCostsToHereIt = pathsCosts.begin(); pathsCostsToHereIt != pathsCosts.end(); ++pathsCostsToHereIt)
-        {
-        pathsCostsToHereIt->first.insert(pathsCostsToHereIt->first.end(), pathCostsFromHereIt->first.begin(), pathCostsFromHereIt->first.end());
-        pathsCostsToHereIt->second += pathCostsFromHereIt->second;
-        }
-      }
-    else
-      {
-      // additional path from here, append it to a copy of the original pathsCosts (pathsCosts to here)
-      for (ConversionPathAndCostListType::iterator pathsCostsToHereIt = pathsCostsToHere.begin(); pathsCostsToHereIt != pathsCostsToHere.end(); ++pathsCostsToHereIt)
-        {
-        ConversionPathAndCostType pathCost;
-        pathCost.first = pathsCostsToHereIt->first; // path
-        pathCost.second = pathsCostsToHereIt->second; // cost
-        pathCost.first.insert(pathCost.first.end(), pathCostsFromHereIt->first.begin(), pathCostsFromHereIt->first.end()); // path append
-        pathCost.second += pathCostsFromHereIt->second; // cost
-        pathsCosts.push_back(pathCost);
-        }
+      vtkNew<vtkSegmentationConversionPath> path;
+      path->AddRules(pathToSource);
+      path->AddRules(pathFromSource);
+      pathsToSource->AddPath(path);
       }
     }
 }
@@ -470,21 +466,22 @@ void vtkSegmentationConverter::GetAvailableRepresentationNames(std::set<std::str
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConverter::GetConversionParametersForPath(
-    vtkSegmentationConverterRule::ConversionParameterListType& conversionParameters,
-    const ConversionPathType& path)
+  vtkSegmentationConversionParameters* conversionParameters,
+  vtkSegmentationConversionPath* path)
 {
-  conversionParameters.clear();
-  ConversionPathType::const_iterator ruleIt;
-  for (ruleIt = path.begin(); ruleIt != path.end(); ++ruleIt)
+  conversionParameters->RemoveAllParameters();
+  int numberOfRules = path->GetNumberOfRules();
+  for (int ruleIndex = 0; ruleIndex < numberOfRules; ++ruleIndex)
     {
-    (*ruleIt)->GetRuleConversionParameters(conversionParameters);
+    path->GetRule(ruleIndex)->GetRuleConversionParameters(conversionParameters);
     }
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverter::GetAllConversionParameters(vtkSegmentationConverterRule::ConversionParameterListType& conversionParameters)
+void vtkSegmentationConverter::GetAllConversionParameters(
+  vtkSegmentationConversionParameters* conversionParameters)
 {
-  conversionParameters.clear();
+  conversionParameters->RemoveAllParameters();
   for (ConverterRulesListType::iterator ruleIt = this->ConverterRules.begin(); ruleIt != this->ConverterRules.end(); ++ruleIt)
     {
     (*ruleIt)->GetRuleConversionParameters(conversionParameters);
@@ -495,13 +492,15 @@ void vtkSegmentationConverter::GetAllConversionParameters(vtkSegmentationConvert
 std::string vtkSegmentationConverter::SerializeAllConversionParameters()
 {
   std::stringstream ssParameters;
-  vtkSegmentationConverterRule::ConversionParameterListType parameters;
+  vtkNew<vtkSegmentationConversionParameters> parameters;
   this->GetAllConversionParameters(parameters);
 
-  vtkSegmentationConverterRule::ConversionParameterListType::iterator paramIt;
-  for (paramIt = parameters.begin(); paramIt != parameters.end(); ++paramIt)
+  int numberOfParameters = parameters->GetNumberOfParameters();
+  for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
     {
-    ssParameters << paramIt->first << SERIALIZATION_SEPARATOR_INNER << paramIt->second.first << SERIALIZATION_SEPARATOR_INNER << paramIt->second.second << SERIALIZATION_SEPARATOR;
+    ssParameters << parameters->GetName(parameterIndex) << SERIALIZATION_SEPARATOR_INNER
+      << parameters->GetValue(parameterIndex) << SERIALIZATION_SEPARATOR_INNER
+      << parameters->GetDescription(parameterIndex) << SERIALIZATION_SEPARATOR;
     }
 
   return ssParameters.str();
