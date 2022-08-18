@@ -41,6 +41,7 @@ class vtkAbstractTransform;
 class vtkCallbackCommand;
 class vtkCollection;
 class vtkIntArray;
+class vtkSegmentationConversionPath;
 class vtkStringArray;
 
 /// \ingroup SegmentationCore
@@ -422,8 +423,8 @@ public:
   /// Conversion starts from the master representation, and all representations along the
   /// path get overwritten.
   /// \return true on success
-  bool CreateRepresentation(vtkSegmentationConverter::ConversionPathType path,
-                            vtkSegmentationConverterRule::ConversionParameterListType parameters);
+  bool CreateRepresentation(vtkSegmentationConversionPath* path,
+    vtkSegmentationConversionParameters* parameters);
 
   /// Removes a representation from all segments if present
   void RemoveRepresentation(const std::string& representationName);
@@ -447,7 +448,7 @@ public:
 
   /// Get all possible conversions between the master representation and a specified target representation
   void GetPossibleConversions(const std::string& targetRepresentationName,
-    vtkSegmentationConverter::ConversionPathAndCostListType &pathsCosts);
+    vtkSegmentationConversionPaths* paths);
 
   /// Set a conversion parameter to all rules having this parameter
   void SetConversionParameter(const std::string& name, const std::string& value) { this->Converter->SetConversionParameter(name, value); };
@@ -457,8 +458,8 @@ public:
   std::string GetConversionParameter(const std::string& name) { return this->Converter->GetConversionParameter(name); };
 
   /// Get names of all conversion parameters used by the selected conversion path
-  void GetConversionParametersForPath(vtkSegmentationConverterRule::ConversionParameterListType& conversionParameters,
-    const vtkSegmentationConverter::ConversionPathType& path) { this->Converter->GetConversionParametersForPath(conversionParameters, path); };
+  void GetConversionParametersForPath(vtkSegmentationConversionParameters* conversionParameters,
+    vtkSegmentationConversionPath* path) { this->Converter->GetConversionParametersForPath(conversionParameters, path); };
 
   /// Serialize all conversion parameters.
   /// The resulting string can be parsed in a segmentation object using /sa DeserializeConversionParameters
@@ -483,7 +484,7 @@ public:
     std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations);
 
 protected:
-  bool ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting = false);
+  bool ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs, vtkSegmentationConversionPath* path, bool overwriteExisting = false);
 
   /// Convert given segment along a specified path
   /// \param segment Segment to convert
@@ -491,7 +492,7 @@ protected:
   /// \param overwriteExisting If true then do each conversion step regardless the target representation
   ///   exists. If false then skip those conversion steps that would overwrite existing representation
   /// \return Success flag
-  bool ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting = false);
+  bool ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentationConversionPath* path, bool overwriteExisting = false);
 
   /// Converts a single segment to a representation.
   bool ConvertSingleSegment(std::string segmentId, std::string targetRepresentationName);

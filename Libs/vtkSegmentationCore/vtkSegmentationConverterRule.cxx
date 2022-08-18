@@ -34,14 +34,29 @@ vtkSegmentationConverterRule::vtkSegmentationConverterRule() = default;
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRule::~vtkSegmentationConverterRule()
 {
-  this->ConversionParameters.clear();
+}
+
+//----------------------------------------------------------------------------
+void vtkSegmentationConverterRule::PrintSelf(ostream& os, vtkIndent indent)
+{
+  Superclass::PrintSelf(os, indent);
+  os << indent <<
+    (this->GetSourceRepresentationName() ? this->GetSourceRepresentationName() : "NULL")
+    << " -> "
+    << (this->GetTargetRepresentationName() ? this->GetTargetRepresentationName() : "NULL")
+    << "\n";
+  if (this->ConversionParameters->GetNumberOfParameters() > 0)
+    {
+    os << indent << "ConversionParameters:\n";
+    this->ConversionParameters->PrintSelf(os, indent.GetNextIndent());
+    }
 }
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRule* vtkSegmentationConverterRule::Clone()
 {
   vtkSegmentationConverterRule* clone = this->CreateRuleInstance();
-  clone->ConversionParameters = this->ConversionParameters;
+  clone->ConversionParameters->DeepCopy(this->ConversionParameters);
   return clone;
 }
 
@@ -63,41 +78,45 @@ bool vtkSegmentationConverterRule::CreateTargetRepresentation(vtkSegment* segmen
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverterRule::GetRuleConversionParameters(ConversionParameterListType& conversionParameters)
+void vtkSegmentationConverterRule::GetRuleConversionParameters(vtkSegmentationConversionParameters* conversionParameters)
 {
   // Copy rule conversion parameters into aggregated path parameters
-  ConversionParameterListType::iterator paramIt;
-  for (paramIt = this->ConversionParameters.begin(); paramIt != this->ConversionParameters.end(); ++paramIt)
+  if (!conversionParameters)
     {
-    conversionParameters[paramIt->first] = paramIt->second;
+    vtkErrorMacro("GetRuleConversionParameters failed: invalid conversionParameters");
+    return;
+    }
+  int numberOfParameters = this->ConversionParameters->GetNumberOfParameters();
+  for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
+    {
+    conversionParameters->CopyParameter(this->ConversionParameters, parameterIndex);
     }
 }
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConverterRule::SetConversionParameter(const std::string& name, const std::string& value, const std::string& description/*=""*/)
 {
-  this->ConversionParameters[name].first = value;
-
+  this->ConversionParameters->SetValue(name, value);
   if (!description.empty())
     {
-    this->ConversionParameters[name].second = description;
+    this->ConversionParameters->SetDescription(name, description);
     }
 }
 
 //----------------------------------------------------------------------------
 std::string vtkSegmentationConverterRule::GetConversionParameter(const std::string& name)
 {
-  return this->ConversionParameters[name].first;
+  return this->ConversionParameters->GetValue(name);
 }
 
 //----------------------------------------------------------------------------
 std::string vtkSegmentationConverterRule::GetConversionParameterDescription(const std::string& name)
 {
-  return this->ConversionParameters[name].second;
+  return this->ConversionParameters->GetDescription(name);
 }
 
 //----------------------------------------------------------------------------
 bool vtkSegmentationConverterRule::HasConversionParameter(const std::string& name)
 {
-  return (this->ConversionParameters.count(name) > 0);
+  return (this->ConversionParameters->GetIndexFromName(name) >= 0);
 }

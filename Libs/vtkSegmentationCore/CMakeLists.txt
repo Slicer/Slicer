@@ -39,6 +39,10 @@ set(vtkSegmentationCore_SRCS
   vtkSegment.h
   vtkSegmentation.cxx
   vtkSegmentation.h
+  vtkSegmentationConversionParameters.cxx
+  vtkSegmentationConversionParameters.h
+  vtkSegmentationConversionPath.cxx
+  vtkSegmentationConversionPath.h
   vtkSegmentationConverter.cxx
   vtkSegmentationConverter.h
   vtkSegmentationConverterFactory.cxx

@@ -24,6 +24,7 @@
 // VTK includes
 #include <vtkObject.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 
 // STD includes
 #include <map>
@@ -35,6 +36,7 @@
 #include "vtkSegmentationCoreConfigure.h"
 
 #include "vtkSegmentationConverterRule.h"
+#include "vtkSegmentationConversionPath.h"
 
 class vtkAbstractTransform;
 class vtkSegment;
@@ -47,11 +49,6 @@ class vtkOrientedImageData;
 class vtkSegmentationCore_EXPORT vtkSegmentationConverter : public vtkObject
 {
 public:
-  typedef std::vector< vtkSmartPointer<vtkSegmentationConverterRule> > ConverterRulesListType;
-
-  typedef std::vector<vtkSegmentationConverterRule*> ConversionPathType; // Contains a list of converter rule names
-  typedef std::pair<ConversionPathType, unsigned int> ConversionPathAndCostType;
-  typedef std::vector<ConversionPathAndCostType> ConversionPathAndCostListType;
 
   /// Default representation types
   /// In binary and fractional labelmaps values <=0 are considered background voxels (outside), values>0 are foreground (inside).
@@ -87,16 +84,17 @@ public:
   void GetAvailableRepresentationNames(std::set<std::string>& representationNames);
 
   /// Get all possible conversions between two representations
-  void GetPossibleConversions(const std::string& sourceRepresentationName, const std::string& targetRepresentationName, ConversionPathAndCostListType &pathsCosts);
+  void GetPossibleConversions(const std::string& sourceRepresentationName,
+    const std::string& targetRepresentationName, vtkSegmentationConversionPaths* paths);
 
   /// Get all conversion parameters used by the selected conversion path
-  void GetConversionParametersForPath(vtkSegmentationConverterRule::ConversionParameterListType& conversionParameters, const ConversionPathType& path);
+  void GetConversionParametersForPath(vtkSegmentationConversionParameters* conversionParameters, vtkSegmentationConversionPath* path);
 
   /// Get all conversion parameters in this converter. Aggregates all parameters from all rules
-  void GetAllConversionParameters(vtkSegmentationConverterRule::ConversionParameterListType& conversionParameters);
+  void GetAllConversionParameters(vtkSegmentationConversionParameters* conversionParameters);
 
   /// Set a list of conversion parameters to all rules (cannot change the description, only the value)
-  void SetConversionParameters(vtkSegmentationConverterRule::ConversionParameterListType parameters);
+  void SetConversionParameters(vtkSegmentationConversionParameters* parameters);
 
   /// Set a conversion parameter to all rules having this parameter
   void SetConversionParameter(const std::string& name, const std::string& value, const std::string& description="");
@@ -125,7 +123,7 @@ public:
 // Utility functions
 public:
   /// Return cheapest path from a list of paths with costs
-  static ConversionPathType GetCheapestPath(const ConversionPathAndCostListType &pathsCosts);
+  static vtkSegmentationConversionPath* GetCheapestPath(vtkSegmentationConversionPaths* paths);
 
   /// Utility function for serializing geometry of oriented image data
   static std::string SerializeImageGeometry(vtkOrientedImageData* orientedImageData);
@@ -165,13 +163,16 @@ protected:
   /// \param skipRepresentations Representations that should be ignored (e.g., because they are
   ///   used already). The caller should pass an empty set (when the method is called recursively
   ///   the set is not empty).
-  void FindPath(const std::string& sourceRepresentationName, const std::string& targetRepresentationName, ConversionPathAndCostListType &pathsCosts, std::set<std::string>& skipRepresentations);
+  void FindPath(const std::string& sourceRepresentationName, const std::string& targetRepresentationName,
+    vtkSegmentationConversionPaths* paths, vtkStringArray* skipRepresentations);
 
 protected:
   vtkSegmentationConverter();
   ~vtkSegmentationConverter() override;
 
 protected:
+  typedef std::vector< vtkSmartPointer<vtkSegmentationConverterRule> > ConverterRulesListType;
+
   /// Converter rules. When the class is created it contains just the default converter rules but then
   /// rules may be customized with parameters and may store segment-specific information.
   /// Therefore, the rules should not be reused in other segments.

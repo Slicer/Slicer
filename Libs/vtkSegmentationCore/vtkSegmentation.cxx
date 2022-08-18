@@ -385,20 +385,19 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
     if (!segment->GetRepresentation(this->MasterRepresentationName))
       {
       // Collect all available paths to master representation
-      vtkSegmentationConverter::ConversionPathAndCostListType allPathsToMaster;
+      vtkNew<vtkSegmentationConversionPaths> allPathsToMaster;
       for (std::vector<std::string>::iterator reprIt = containedRepresentationNamesInAddedSegment.begin();
         reprIt != containedRepresentationNamesInAddedSegment.end(); ++reprIt)
         {
-        vtkSegmentationConverter::ConversionPathAndCostListType pathsFromCurrentRepresentationToMaster;
+        vtkNew<vtkSegmentationConversionPaths> pathsFromCurrentRepresentationToMaster;
         this->Converter->GetPossibleConversions((*reprIt), this->MasterRepresentationName, pathsFromCurrentRepresentationToMaster);
         // Append paths from current representation to master to all found paths to master
-        allPathsToMaster.insert(allPathsToMaster.end(),
-          pathsFromCurrentRepresentationToMaster.begin(), pathsFromCurrentRepresentationToMaster.end());
+        allPathsToMaster->AddPaths(pathsFromCurrentRepresentationToMaster);
         }
       // Get cheapest path from any representation to master and try to convert
-      vtkSegmentationConverter::ConversionPathType cheapestPath =
+      vtkSegmentationConversionPath* cheapestPath =
         vtkSegmentationConverter::GetCheapestPath(allPathsToMaster);
-      if (cheapestPath.empty() || !this->ConvertSegmentUsingPath(segment, cheapestPath))
+      if (!cheapestPath || !this->ConvertSegmentUsingPath(segment, cheapestPath))
         {
         // Return if cannot convert to master representation
         vtkErrorMacro("AddSegment: Unable to create master representation!");
@@ -428,11 +427,11 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
             }
 
           // Convert using the cheapest available path
-          vtkSegmentationConverter::ConversionPathAndCostListType pathsToCurrentRepresentation;
+          vtkNew<vtkSegmentationConversionPaths> pathsToCurrentRepresentation;
           this->Converter->GetPossibleConversions(this->MasterRepresentationName, (*reprIt), pathsToCurrentRepresentation);
-          vtkSegmentationConverter::ConversionPathType cheapestPath =
+          vtkSegmentationConversionPath* cheapestPath =
             vtkSegmentationConverter::GetCheapestPath(pathsToCurrentRepresentation);
-          if (cheapestPath.empty())
+          if (!cheapestPath)
             {
             vtkErrorMacro("AddSegment: Unable to perform conversion"); // Sanity check, it should never happen
             representationsCreated = false;
@@ -1015,7 +1014,7 @@ void vtkSegmentation::ApplyNonLinearTransform(vtkAbstractTransform* transform)
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting)
+bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs, vtkSegmentationConversionPath* path, bool overwriteExisting)
 {
   if (segmentIDs.empty())
     {
@@ -1023,10 +1022,10 @@ bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentI
     }
 
   // Execute each conversion step in the selected path
-  vtkSegmentationConverter::ConversionPathType::iterator pathIt;
-  for (pathIt = path.begin(); pathIt != path.end(); ++pathIt)
+  int numberOfRules = (path == nullptr ? 0 : path->GetNumberOfRules());
+  for (int ruleIndex = 0; ruleIndex < numberOfRules; ++ruleIndex)
     {
-    vtkSegmentationConverterRule* currentConversionRule = (*pathIt);
+    vtkSegmentationConverterRule* currentConversionRule = path->GetRule(ruleIndex);
     if (!currentConversionRule)
       {
       vtkErrorMacro("ConvertSegmentsUsingPath: Invalid converter rule!");
@@ -1067,13 +1066,13 @@ bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentI
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSegmentation::ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting/*=false*/)
+bool vtkSegmentation::ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentationConversionPath* path, bool overwriteExisting/*=false*/)
 {
   // Execute each conversion step in the selected path
-  vtkSegmentationConverter::ConversionPathType::iterator pathIt;
-  for (pathIt = path.begin(); pathIt != path.end(); ++pathIt)
+  int numberOfRules = (path == nullptr ? 0 : path->GetNumberOfRules());
+  for (int ruleIndex = 0; ruleIndex < numberOfRules; ++ruleIndex)
     {
-    vtkSegmentationConverterRule* currentConversionRule = (*pathIt);
+    vtkSegmentationConverterRule* currentConversionRule = path->GetRule(ruleIndex);
     if (!currentConversionRule)
       {
       vtkErrorMacro("ConvertSegmentUsingPath: Invalid converter rule!");
@@ -1139,14 +1138,14 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
 
   // Get conversion path with lowest cost.
   // If always convert, then only consider conversions from master, otherwise consider all available representations
-  vtkSegmentationConverter::ConversionPathAndCostListType pathCosts;
+  vtkNew<vtkSegmentationConversionPaths> paths;
   if (alwaysConvert)
     {
-    this->Converter->GetPossibleConversions(this->MasterRepresentationName, targetRepresentationName, pathCosts);
+    this->Converter->GetPossibleConversions(this->MasterRepresentationName, targetRepresentationName, paths);
     }
   else
     {
-    vtkSegmentationConverter::ConversionPathAndCostListType currentPathCosts;
+    vtkNew<vtkSegmentationConversionPaths> currentPaths;
     std::vector<std::string> representationNames;
     this->GetContainedRepresentationNames(representationNames);
     for (std::vector<std::string>::iterator reprIt=representationNames.begin(); reprIt!=representationNames.end(); ++reprIt)
@@ -1155,16 +1154,13 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
         {
         continue; // No paths if source and target representations are the same
         }
-      this->Converter->GetPossibleConversions((*reprIt), targetRepresentationName, currentPathCosts);
-      for (vtkSegmentationConverter::ConversionPathAndCostListType::const_iterator pathIt = currentPathCosts.begin(); pathIt != currentPathCosts.end(); ++pathIt)
-        {
-        pathCosts.push_back(*pathIt);
-        }
+      this->Converter->GetPossibleConversions((*reprIt), targetRepresentationName, currentPaths);
+      paths->AddPaths(currentPaths);
       }
     }
   // Get cheapest path from found conversion paths
-  vtkSegmentationConverter::ConversionPathType cheapestPath = vtkSegmentationConverter::GetCheapestPath(pathCosts);
-  if (cheapestPath.empty())
+  vtkSegmentationConversionPath* cheapestPath = vtkSegmentationConverter::GetCheapestPath(paths);
+  if (!cheapestPath)
     {
     return false;
     }
@@ -1220,16 +1216,17 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegmentation::CreateRepresentation(vtkSegmentationConverter::ConversionPathType path,
-                                           vtkSegmentationConverterRule::ConversionParameterListType parameters)
+bool vtkSegmentation::CreateRepresentation(vtkSegmentationConversionPath* path,
+  vtkSegmentationConversionParameters* parameters)
 {
   if (!this->Converter)
     {
-    vtkErrorMacro("CreateRepresentation: Invalid converter!");
+    vtkErrorMacro("CreateRepresentation: Invalid converter");
     return false;
     }
-  if (path.empty())
+  if (!path)
     {
+    vtkErrorMacro("CreateRepresentation: Invalid path");
     return false;
     }
 
@@ -1746,9 +1743,9 @@ bool vtkSegmentation::CanAcceptRepresentation(std::string representationName)
 
   // Otherwise if the representation can be converted to the master representation, then
   // it can be accepted, if cannot be converted then not.
-  vtkSegmentationConverter::ConversionPathAndCostListType pathCosts;
-  this->Converter->GetPossibleConversions(representationName, this->MasterRepresentationName, pathCosts);
-  return !pathCosts.empty();
+  vtkNew<vtkSegmentationConversionPaths> paths;
+  this->Converter->GetPossibleConversions(representationName, this->MasterRepresentationName, paths);
+  return (paths->GetNumberOfPaths() > 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1838,10 +1835,10 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
 
 //-----------------------------------------------------------------------------
 void vtkSegmentation::GetPossibleConversions(const std::string& targetRepresentationName,
-  vtkSegmentationConverter::ConversionPathAndCostListType &pathsCosts)
+  vtkSegmentationConversionPaths* paths)
 {
-  pathsCosts.clear();
-  this->Converter->GetPossibleConversions(this->MasterRepresentationName, targetRepresentationName, pathsCosts);
+  paths->RemoveAllItems();
+  this->Converter->GetPossibleConversions(this->MasterRepresentationName, targetRepresentationName, paths);
 };
 
 //-----------------------------------------------------------------------------
@@ -2154,11 +2151,11 @@ bool vtkSegmentation::ConvertSingleSegment(std::string segmentId, std::string ta
     }
 
   // Get possible conversion paths from master to the requested target representation
-  vtkSegmentationConverter::ConversionPathAndCostListType pathCosts;
-  this->Converter->GetPossibleConversions(this->MasterRepresentationName, targetRepresentationName, pathCosts);
+  vtkNew<vtkSegmentationConversionPaths> paths;
+  this->Converter->GetPossibleConversions(this->MasterRepresentationName, targetRepresentationName, paths);
   // Get cheapest path from found conversion paths
-  vtkSegmentationConverter::ConversionPathType cheapestPath = vtkSegmentationConverter::GetCheapestPath(pathCosts);
-  if (cheapestPath.empty())
+  vtkSegmentationConversionPath* cheapestPath = vtkSegmentationConverter::GetCheapestPath(paths);
+  if (!cheapestPath)
     {
     return false;
     }

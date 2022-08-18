@@ -166,7 +166,9 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
       }
     }
   Q_ASSERT(d->Logic);
-  vtkMRMLVolumeNode* node = d->Logic->AddArchetypeVolume(
+  // Weak pointer is used because the node may be deleted if the scene is closed
+  // right after reading.
+  vtkWeakPointer<vtkMRMLVolumeNode> node = d->Logic->AddArchetypeVolume(
     fileName.toUtf8(),
     name.toUtf8(),
     options,
