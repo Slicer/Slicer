@@ -19,7 +19,7 @@ for patient in patients:
       print(f"Series {series}")
       temporaryDir = qt.QTemporaryDir()
       for instanceUID in db.instancesForSeries(series):
-        qt.QFile.copy(db.fileForInstance(instanceUID), temporaryDir.path()+f"/{instanceUID}.dcm")
+        qt.QFile.copy(db.fileForInstance(instanceUID), f"{temporaryDir.path()}/{instanceUID}.dcm")
       patientID = slicer.dicomDatabase.instanceValue(instanceUID, '0010,0020')
       outputPath = os.path.join(convertedPath, patientID, study, series, "BatchResult")
       if not os.path.exists(outputPath):
