@@ -103,6 +103,7 @@ protected slots:
   void onGlyphSizeSliderWidgetChanged(double value);
   void onCurveLineThicknessSliderWidgetChanged(double percentValue);
   void onCurveLineDiameterSliderWidgetChanged(double value);
+  void onLineDiameterModeComboBoxChanged(QString text);
   void onTextScaleSliderWidgetChanged(double value);
   void onOpacitySliderWidgetChanged(double value);
   void onSnapModeWidgetChanged();

@@ -103,6 +103,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
     this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
   this->TubeFilter->SetRadius(diameter * 0.5);
+  this->TubeFilter->SetVaryRadius(this->MarkupsDisplayNode->GetLineDiameterMode());
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
 

@@ -98,6 +98,9 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
     q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
   QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
+  QObject::connect(this->lineDiameterModeComboBox, SIGNAL(currentIndexChanged(QString)),
+    q, SLOT(onLineDiameterModeComboBoxChanged(QString)));
+
   QObject::connect(this->PropertiesLabelVisibilityCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setPropertiesLabelVisibility(bool)));
   QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)),
@@ -605,6 +608,29 @@ void qMRMLMarkupsDisplayNodeWidget::onCurveLineDiameterSliderWidgetChanged(doubl
     return;
     }
   d->MarkupsDisplayNode->SetLineDiameter(value);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onLineDiameterModeComboBoxChanged(QString text)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+
+  if (text == "Constant")
+    {
+    d->MarkupsDisplayNode->SetLineDiameterMode(vtkMRMLMarkupsDisplayNode::Constant);
+    }
+  else if (text == "From Scalars")
+    {
+    d->MarkupsDisplayNode->SetLineDiameterMode(vtkMRMLMarkupsDisplayNode::FromScalars);
+    }
+  else if (text == "Absolute From Scalars")
+    {
+    d->MarkupsDisplayNode->SetLineDiameterMode(vtkMRMLMarkupsDisplayNode::AbsoluteFromScalars);
+    }
 }
 
 //-----------------------------------------------------------------------------
