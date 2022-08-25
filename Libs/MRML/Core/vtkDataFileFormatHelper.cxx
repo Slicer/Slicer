@@ -160,7 +160,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
         // Once we have the GetSupportedWriteGenericNames() ready, we will used that.
         // For now, just use the class name.
         ITKImageFileFormat structFileFormat =
-          {io->GetNameOfClass(), io->GetNameOfClass(), io->GetNameOfClass(),(*writeItr).c_str()};
+          {io->GetNameOfClass(), io->GetNameOfClass(), io->GetNameOfClass(), writeItr->c_str()};
         this->AddSupportedWriterFileFormat(structFileFormat);
         ++writeItr;
         }

@@ -351,7 +351,7 @@ vtkMRMLModelDisplayableManager::~vtkMRMLModelDisplayableManager()
   for (tit = this->Internal->DisplayNodeTransformFilters.begin();
        tit != this->Internal->DisplayNodeTransformFilters.end(); tit++ )
     {
-    vtkTransformFilter  *transformFilter = (*tit).second;
+    vtkTransformFilter  *transformFilter = tit->second;
     transformFilter->SetInputConnection(nullptr);
     transformFilter->SetTransform(nullptr);
     transformFilter->Delete();
@@ -1065,7 +1065,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
         }
       else
         {
-        transformFilter = (*tit).second;
+        transformFilter = tit->second;
         }
       }
 
@@ -1093,7 +1093,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
       }
     else
       {
-      prop = (*ait).second;
+      prop = ait->second;
       std::map<std::string, int>::iterator cit = this->Internal->DisplayedClipState.end();
       if (modelDisplayNode)
         {

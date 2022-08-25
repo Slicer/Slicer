@@ -309,7 +309,7 @@ std::vector<vtkMRMLSubjectHierarchyLegacyNode*> vtkMRMLSubjectHierarchyLegacyNod
     if (referencedNodes.empty())
       {
       vtkMRMLSubjectHierarchyLegacyNode* node = vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUIDList(
-        scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), (*uidIt).c_str() );
+        scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), uidIt->c_str() );
       if (node)
         {
         referencedNodes.push_back(node);
@@ -335,7 +335,7 @@ std::vector<vtkMRMLSubjectHierarchyLegacyNode*> vtkMRMLSubjectHierarchyLegacyNod
       if (!foundUidInFoundReferencedNodes)
         {
         vtkMRMLSubjectHierarchyLegacyNode* node = vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUIDList(
-          scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), (*uidIt).c_str() );
+          scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), uidIt->c_str() );
         if (node)
           {
           referencedNodes.push_back(node);

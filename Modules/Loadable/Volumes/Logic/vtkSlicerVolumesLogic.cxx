@@ -1607,7 +1607,7 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
   std::string errorPrefix = "vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error reading '" + displayPresetsFilename + "'.";
 
   // Verify schema
-  if (!(*jsonRoot).HasMember("@schema"))
+  if (!jsonRoot->HasMember("@schema"))
     {
     vtkErrorMacro(<< errorPrefix << " File does not contain schema information.");
     return;

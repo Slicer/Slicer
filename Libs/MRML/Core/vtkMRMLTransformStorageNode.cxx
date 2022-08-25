@@ -172,7 +172,7 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
     {
     vtkWarningMacro(<< "More than two transform in the file: "<< fullName.c_str()<< ". Using only the first two transforms.");
     }
-  TransformListType::iterator it = (*transforms).begin();
+  TransformListType::iterator it = transforms->begin();
   TransformType::Pointer transform = (*it);
   if (!transform)
     {
@@ -181,7 +181,7 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
     }
   ++it;
   TransformType::Pointer transform2=nullptr;
-  if( it != (*transforms).end() )
+  if( it != transforms->end() )
     {
     transform2 = (*it);
     if (!transform2)
@@ -371,7 +371,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
       for( typename ConstTransformListType::const_iterator it = transformList.begin();
         it != end; ++it )
         {
-        typename TransformType::Pointer transformComponentItk = const_cast< TransformType* >((*it).GetPointer());
+        typename TransformType::Pointer transformComponentItk = const_cast< TransformType* >(it->GetPointer());
         vtkAbstractTransform* transformComponent = vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, transformComponentItk);
         if (transformComponent!=nullptr)
           {

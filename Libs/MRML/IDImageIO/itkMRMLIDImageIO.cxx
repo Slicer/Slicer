@@ -894,7 +894,7 @@ MRMLIDImageIO
   for (std::vector<std::string>::iterator it = keys.begin();
        it != keys.end(); ++it)
     {
-    if ((*it).find(diffusionGradientKey) != std::string::npos)
+    if (it->find(diffusionGradientKey) != std::string::npos)
       {
       // found a gradient
       std::string gradientString;

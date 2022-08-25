@@ -301,8 +301,8 @@ public:
 
     while (sit != m_SourceNodes.end())
       {
-      vtkMRMLNode *source = miniscene->GetNodeByID((*sit).c_str());
-      vtkMRMLNode *target = appLogic->GetMRMLScene()->GetNodeByID( (*tit).c_str() );
+      vtkMRMLNode *source = miniscene->GetNodeByID(sit->c_str());
+      vtkMRMLNode *target = appLogic->GetMRMLScene()->GetNodeByID( tit->c_str() );
 
       if (source && target)
         {

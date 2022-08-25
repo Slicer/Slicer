@@ -143,9 +143,9 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
     {
     // iterate over each parameter in this group
     std::vector<ModuleParameter>::const_iterator pbeginit
-      = (*pgit).GetParameters().begin();
+      = pgit->GetParameters().begin();
     std::vector<ModuleParameter>::const_iterator pendit
-      = (*pgit).GetParameters().end();
+      = pgit->GetParameters().end();
     std::vector<ModuleParameter>::const_iterator pit;
 
     for (pit = pbeginit; pit != pendit; ++pit)
@@ -153,8 +153,8 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
       // two calls, as the mrml node method saves the new string in a member
       // variable and it was getting over written when used twice before the
       // buffer was flushed.
-      of << " " << this->URLEncodeString ( (*pit).GetName().c_str() );
-      of  << "=\"" << this->URLEncodeString ( (*pit).GetValue().c_str() ) << "\"";
+      of << " " << this->URLEncodeString ( pit->GetName().c_str() );
+      of  << "=\"" << this->URLEncodeString ( pit->GetValue().c_str() ) << "\"";
       }
     }
 
@@ -287,11 +287,11 @@ void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
   std::vector<ModuleParameterGroup>::const_iterator pgendit = this->GetModuleDescription().GetParameterGroups().end();
   for (std::vector<ModuleParameterGroup>::const_iterator pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
-    std::vector<ModuleParameter>::const_iterator pbeginit = (*pgit).GetParameters().begin();
-    std::vector<ModuleParameter>::const_iterator pendit = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pbeginit = pgit->GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit = pgit->GetParameters().end();
     for (std::vector<ModuleParameter>::const_iterator pit = pbeginit; pit != pendit; ++pit)
       {
-      os << indent << " " << (*pit).GetName() << " = " << (*pit).GetValue() << "\n";
+      os << indent << " " << pit->GetName() << " = " << pit->GetValue() << "\n";
       }
     }
 }
@@ -699,7 +699,7 @@ const char* vtkMRMLCommandLineModuleNode::GetRegisteredModuleNameByIndex( int id
   int count = 0;
   while ( mit != vtkInternal::RegisteredModules.end() )
     {
-    if ( count == idx ) { return (*mit).first.c_str(); }
+    if ( count == idx ) { return mit->first.c_str(); }
     ++mit;
     ++count;
     }
@@ -715,7 +715,7 @@ ModuleDescription vtkMRMLCommandLineModuleNode
 
   if (mit != vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.end())
     {
-    return (*mit).second;
+    return mit->second;
     }
 
   return ModuleDescription();

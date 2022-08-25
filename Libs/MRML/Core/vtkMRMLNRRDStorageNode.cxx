@@ -288,7 +288,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   for ( std::vector<std::string>::iterator kit = keys.begin();
         kit != keys.end(); ++kit)
     {
-    volNode->SetAttribute((*kit).c_str(), reader->GetHeaderValue((*kit).c_str()));
+    volNode->SetAttribute(kit->c_str(), reader->GetHeaderValue(kit->c_str()));
     }
 
 
@@ -392,7 +392,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   std::vector<std::string>::iterator ait = attributeNames.begin();
   for (; ait != attributeNames.end(); ++ait)
     {
-    writer->SetAttribute((*ait), volNode->GetAttribute((*ait).c_str()));
+    writer->SetAttribute((*ait), volNode->GetAttribute(ait->c_str()));
     }
 
   writer->Write();
