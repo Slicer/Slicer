@@ -84,6 +84,8 @@ protected slots:
 
 signals:
   void modulesToAlwaysIgnoreChanged(const QStringList& modulesNames);
+  /// Emitted when list of favorite modules have changed
+  void favoriteModulesChanged();
 
 protected:
   QScopedPointer<qSlicerSettingsModulesPanelPrivate> d_ptr;

@@ -126,6 +126,8 @@ void qSlicerSettingsModulesPanelPrivate::init()
 
   this->ModulesMenu->setCurrentModule(Slicer_DEFAULT_HOME_MODULE);
 
+  // Allow reordering of favorite modules by drag-and-drop within the favorite modules list
+  this->FavoritesModulesListView->filterModel()->setDynamicSortFilter(false);
   // Slicer_DEFAULT_FAVORITE_MODULES contains module names in a comma-separated list
   // (chosen this format because the same format is used for storing the favorites list in the .ini file).
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
@@ -160,6 +162,11 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "currentModule", SIGNAL(currentModuleChanged(QString)));
   q->registerProperty("Modules/FavoriteModules", this->FavoritesModulesListView->filterModel(),
                       "showModules", SIGNAL(showModulesChanged(QStringList)));
+  // Emit signal when favorite modules are updated to allow immediate update of the application GUI
+  // (e.g., favorite module toolbar)
+  QObject::connect(this->FavoritesModulesListView->filterModel(), SIGNAL(showModulesChanged(QStringList)),
+    q, SIGNAL(favoriteModulesChanged()));
+
   qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(
     this->TemporaryDirectoryButton, "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("TemporaryPath", relativePathMapper,

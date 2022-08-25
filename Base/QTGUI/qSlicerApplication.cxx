@@ -752,6 +752,16 @@ void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QStri
     Qt::WindowFlags windowFlags = d->SettingsDialog->windowFlags();
     d->SettingsDialog->setParent(this->mainWindow());
     d->SettingsDialog->setWindowFlags(windowFlags);
+
+    // Make favorite module list changes update the module toolbar immediately
+    // (without application restart).
+    ctkSettingsPanel* settingsModulesPanel = d->SettingsDialog->panel(qSlicerApplication::tr("Modules"));
+    if (settingsModulesPanel)
+      {
+      QObject::connect(settingsModulesPanel, SIGNAL(favoriteModulesChanged()),
+        this->mainWindow(), SLOT(on_FavoriteModulesChanged()));
+      }
+
     }
 
   // Reload settings to apply any changes that have been made outside of the

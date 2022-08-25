@@ -235,7 +235,11 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Additional module paths:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;(drag-and-drop&lt;br/&gt;files or folders)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;Additional module paths:&lt;/p&gt;
+&lt;p style=&quot;margin-left: 10px;&quot;&gt;&lt;span style=&quot; font-size:small; font-style:italic;&quot;&gt;Drag &amp;amp; drop files or folders&lt;br/&gt;from File Explorer&lt;/span&gt;&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -672,7 +676,7 @@
       <string>Add to the list by dragging modules from the above &quot;Modules&quot; list. Note: modules with no icons will not appear in the toolbar.</string>
      </property>
      <property name="text">
-      <string>Favorite Modules:&lt;br&gt;&lt;small&gt;&lt;i&gt;Drag &amp;amp; drop from &lt;/i&gt;Modules&lt;i&gt; list&lt;/i&gt;&lt;/small&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Favorite Modules:&lt;/p&gt;&lt;p style=&quot;margin-left: 10px;&quot;&gt;&lt;span style=&quot; font-size:small; font-style:italic;&quot;&gt;Drag &amp;amp; drop modules&lt;br/&gt;from &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Modules&lt;/span&gt;&lt;span style=&quot; font-size:small; font-style:italic;&quot;&gt; list&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -791,7 +795,7 @@
       <item>
        <widget class="ctkExpandButton" name="FavoritesMoreButton">
         <property name="checked">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="mirrorOnExpand">
          <bool>true</bool>
@@ -856,8 +860,8 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>451</x>
-     <y>217</y>
+     <x>525</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel">
      <x>438</x>
@@ -872,12 +876,28 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>449</x>
-     <y>261</y>
+     <x>525</x>
+     <y>482</y>
     </hint>
     <hint type="destinationlabel">
-     <x>391</x>
-     <y>229</y>
+     <x>507</x>
+     <y>482</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>FavoritesMoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>FavoritesMoreGroupBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>520</x>
+     <y>545</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>389</x>
+     <y>527</y>
     </hint>
    </hints>
   </connection>
