@@ -741,6 +741,51 @@ void qSlicerMainWindowPrivate::setErrorLogIconHighlighted(bool highlighted)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
+{
+  Q_Q(qSlicerMainWindow);
+  int index = this->FavoriteModules.indexOf(moduleName);
+  if (index < 0)
+    {
+    return;
+    }
+
+  qSlicerAbstractCoreModule* coreModule =
+    qSlicerApplication::application()->moduleManager()->module(moduleName);
+  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(coreModule);
+  if (!module)
+    {
+    return;
+    }
+
+  QAction * action = module->action();
+  if (!action || action->icon().isNull())
+    {
+    return;
+    }
+
+  Q_ASSERT(action->data().toString() == module->name());
+  Q_ASSERT(action->text() == module->title());
+
+  // find the location of where to add the action.
+  // Note: FavoriteModules is sorted
+  QAction* beforeAction = nullptr; // 0 means insert at end
+  foreach(QAction* toolBarAction, this->ModuleToolBar->actions())
+    {
+    bool isActionAFavoriteModule =
+      (this->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
+    if (isActionAFavoriteModule &&
+      this->FavoriteModules.indexOf(toolBarAction->data().toString()) > index)
+      {
+      beforeAction = toolBarAction;
+      break;
+      }
+    }
+  this->ModuleToolBar->insertAction(beforeAction, action);
+  action->setParent(this->ModuleToolBar);
+}
+
+//-----------------------------------------------------------------------------
 // qSlicerMainWindow methods
 
 //-----------------------------------------------------------------------------
@@ -1453,45 +1498,10 @@ void qSlicerMainWindow::on_ViewExtensionsManagerAction_triggered()
 void qSlicerMainWindow::onModuleLoaded(const QString& moduleName)
 {
   Q_D(qSlicerMainWindow);
-
-  qSlicerAbstractCoreModule* coreModule =
-    qSlicerApplication::application()->moduleManager()->module(moduleName);
-  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(coreModule);
-  if (!module)
+  // Add action to favorite module toolbar (if it is a favorite module)
+  if (d->FavoriteModules.contains(moduleName))
     {
-    return;
-    }
-
-  // Module ToolBar
-  QAction * action = module->action();
-  if (!action || action->icon().isNull())
-    {
-    return;
-    }
-
-  Q_ASSERT(action->data().toString() == module->name());
-  Q_ASSERT(action->text() == module->title());
-
-  // Add action to ToolBar if it's an "allowed" action
-  int index = d->FavoriteModules.indexOf(module->name());
-  if (index != -1)
-    {
-    // find the location of where to add the action.
-    // Note: FavoriteModules is sorted
-    QAction* beforeAction = nullptr; // 0 means insert at end
-    foreach(QAction* toolBarAction, d->ModuleToolBar->actions())
-      {
-      bool isActionAFavoriteModule =
-        (d->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
-      if ( isActionAFavoriteModule &&
-          d->FavoriteModules.indexOf(toolBarAction->data().toString()) > index)
-        {
-        beforeAction = toolBarAction;
-        break;
-        }
-      }
-    d->ModuleToolBar->insertAction(beforeAction, action);
-    action->setParent(d->ModuleToolBar);
+    d->addFavoriteModule(moduleName);
     }
 }
 
@@ -1755,4 +1765,23 @@ void qSlicerMainWindow::setExtensionUpdatesAvailable(bool updateAvailable)
     d->ViewExtensionsManagerAction->setIcon(QIcon(":/Icons/ExtensionDefaultIcon.png"));
     }
 #endif
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::on_FavoriteModulesChanged()
+{
+  Q_D(qSlicerMainWindow);
+
+  // Update favorite module name list
+  d->FavoriteModules = QSettings().value("Modules/FavoriteModules").toStringList();
+
+  // Update favorite module toolbar
+  d->ModuleToolBar->clear();
+  foreach(QString moduleName, d->FavoriteModules)
+    {
+    if (d->FavoriteModules.contains(moduleName))
+      {
+      d->addFavoriteModule(moduleName);
+      }
+    }
 }

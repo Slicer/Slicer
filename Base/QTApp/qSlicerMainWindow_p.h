@@ -66,6 +66,9 @@ public:
 
   void updatePythonConsolePalette();
 
+  // Add module action to the favorite modules toolbar
+  void addFavoriteModule(const QString& moduleName);
+
 #ifdef Slicer_USE_PYTHONQT
   QDockWidget*                    PythonConsoleDockWidget;
   QAction*                        PythonConsoleToggleViewAction;

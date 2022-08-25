@@ -367,14 +367,9 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData *data, Qt::Dr
   // check if the format is supported
   QString format = QLatin1String("application/x-qstandarditemmodeldatalist");
   if (!data->hasFormat(format))
+    {
     return QAbstractItemModel::dropMimeData(data, action, row, column, parent);
-
-  if (row > rowCount(parent))
-    row = rowCount(parent);
-  if (row == -1)
-    row = rowCount(parent);
-  if (column == -1)
-    column = 0;
+    }
 
   // decode and insert
   QByteArray encoded = data->data(format);
@@ -405,11 +400,29 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData *data, Qt::Dr
     bottom = qMax(r, bottom);
     right = qMax(c, right);
     }
+
   QStringList newShowModules = this->showModules();
+
+  // Determine where to insert
+  int insertionPosition = parent.row();
+  if (insertionPosition > newShowModules.size())
+    {
+    insertionPosition = newShowModules.size();
+    }
+  else if (insertionPosition < 0)
+    {
+    insertionPosition = 0;
+    }
+
+  // Insert new items
   foreach(QStandardItem* item, items)
     {
-    newShowModules << item->data(Qt::UserRole).toString();
+    QString moduleName = item->data(Qt::UserRole).toString();
+    newShowModules.removeAll(moduleName);
+    newShowModules.insert(insertionPosition, moduleName);
+    insertionPosition++;
     }
+
   newShowModules.removeDuplicates();
   this->setShowModules(newShowModules);
   return true;

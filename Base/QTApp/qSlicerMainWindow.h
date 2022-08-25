@@ -138,6 +138,9 @@ public slots:
 
   virtual void addFileToRecentFiles(const qSlicerIO::IOProperties& fileProperties);
 
+  /// Refresh favorite modules toolbar from application settings
+  virtual void on_FavoriteModulesChanged();
+
 signals:
   /// Emitted when the window is first shown to the user.
   /// \sa showEvent(QShowEvent *)
