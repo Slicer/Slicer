@@ -109,18 +109,18 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 #ifdef NRRD_CHUNK_IO_AVAILABLE
     if (*kit == "axis 0 index type")
       {
-      volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue((*kit).c_str()));
+      volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue(kit->c_str()));
       frameAxis = 0;
       }
     else if (*kit == "axis 3 index type")
       {
-      volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue((*kit).c_str()));
+      volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue(kit->c_str()));
       frameAxis = 3;
       }
     else if (*kit == "axis 0 index values" || *kit == "axis 3 index values")
       {
       std::string indexValue;
-      for (std::istringstream indexValueList(reader->GetHeaderValue((*kit).c_str()));
+      for (std::istringstream indexValueList(reader->GetHeaderValue(kit->c_str()));
         indexValueList >> indexValue;)
         {
         // Encode string to make sure there are no spaces in the serialized index value (space is used as separator)
@@ -129,12 +129,12 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 #else
     if (*kit == "axis 0 index type")
       {
-      volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue((*kit).c_str()));
+      volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue(kit->c_str()));
       }
     else if (*kit == "axis 0 index values")
       {
       std::string indexValue;
-      for (std::istringstream indexValueList(reader->GetHeaderValue((*kit).c_str()));
+      for (std::istringstream indexValueList(reader->GetHeaderValue(kit->c_str()));
         indexValueList >> indexValue;)
         {
         // Encode string to make sure there are no spaces in the serialized index value (space is used as separator)
@@ -144,7 +144,7 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       }
     else
       {
-      volSequenceNode->SetAttribute((*kit).c_str(), reader->GetHeaderValue((*kit).c_str()));
+      volSequenceNode->SetAttribute(kit->c_str(), reader->GetHeaderValue(kit->c_str()));
       }
     }
 
@@ -491,7 +491,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   std::vector<std::string>::iterator ait = attributeNames.begin();
   for (; ait != attributeNames.end(); ++ait)
     {
-    writer->SetAttribute((*ait), volSequenceNode->GetAttribute((*ait).c_str()));
+    writer->SetAttribute((*ait), volSequenceNode->GetAttribute(ait->c_str()));
     }
 
 #ifdef NRRD_CHUNK_IO_AVAILABLE

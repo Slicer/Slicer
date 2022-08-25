@@ -222,7 +222,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
     it != plotSeriesNodesIDs.end(); ++it)
     {
     vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast
-      (q->mrmlScene()->GetNodeByID((*it).c_str()));
+      (q->mrmlScene()->GetNodeByID(it->c_str()));
     if (plotSeriesNode == nullptr)
       {
       continue;
@@ -311,13 +311,13 @@ void qMRMLPlotChartPropertiesWidgetPrivate::onPlotSeriesNodesSelected()
     std::vector<std::string>::iterator it = plotSeriesNodesIDs.begin();
     for (; it != plotSeriesNodesIDs.end(); ++it)
       {
-      if (!strcmp(dn->GetID(), (*it).c_str()))
+      if (!strcmp(dn->GetID(), it->c_str()))
         {
         if (!checked)
           {
           // plot is not checked but currently in the LayoutPlot, remove it
           // (might want to cache the old name in case user adds it back)
-          this->PlotChartNode->RemovePlotSeriesNodeID((*it).c_str());
+          this->PlotChartNode->RemovePlotSeriesNodeID(it->c_str());
           }
         found = true;
         break;

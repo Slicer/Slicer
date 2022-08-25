@@ -183,23 +183,23 @@ qSlicerViewControllersModuleWidgetPrivate::removeController(vtkMRMLNode *n)
   vtkMRMLSliceNode *sn = vtkMRMLSliceNode::SafeDownCast(n);
   if (sn)
     {
-    SliceControllersLayout->removeWidget((*cit).second);
+    SliceControllersLayout->removeWidget(cit->second);
     }
 
   vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(n);
   if (vn)
     {
-    ThreeDViewControllersLayout->removeWidget((*cit).second);
+    ThreeDViewControllersLayout->removeWidget(cit->second);
     }
 
   vtkMRMLPlotViewNode *pn = vtkMRMLPlotViewNode::SafeDownCast(n);
   if (pn)
     {
-    PlotViewControllersLayout->removeWidget((*cit).second);
+    PlotViewControllersLayout->removeWidget(cit->second);
     }
 
   // delete the widget
-  delete (*cit).second;
+  delete cit->second;
 
   // remove entry from the map
   this->ControllerMap.erase(cit);
@@ -426,10 +426,10 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
   for (cit = d->ControllerMap.begin(); cit != d->ControllerMap.end(); ++cit)
     {
     // is mananaged Node not currently displayed in the layout?
-    if (!visibleViews->IsItemPresent((*cit).first))
+    if (!visibleViews->IsItemPresent(cit->first))
       {
       // hide it
-      (*cit).second->hide();
+      cit->second->hide();
       }
     }
 
@@ -448,7 +448,7 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
       if (cit != d->ControllerMap.end())
         {
         // show it
-        (*cit).second->show();
+        cit->second->show();
         }
       }
     }

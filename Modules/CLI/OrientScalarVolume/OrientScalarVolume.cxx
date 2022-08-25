@@ -128,7 +128,7 @@ int DoIt( int argc, char * argv[], T )
 
   filter->SetInput( reader1->GetOutput() );
   filter->UseImageDirectionOn();
-  filter->SetDesiredCoordinateOrientation( (*o).second);
+  filter->SetDesiredCoordinateOrientation( o->second);
   filter->Update();
 
   // Compute a new origin for the volume such that the output aligns

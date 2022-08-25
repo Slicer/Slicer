@@ -1194,7 +1194,7 @@ void qSlicerSequencesModuleWidget::onRemoveSequenceNodesButtonClicked()
   std::vector<std::string> selectedSequenceIDs;
   for (QModelIndexList::iterator index = modelIndexList.begin(); index!=modelIndexList.end(); index++)
     {
-    QWidget* proxyNodeComboBox = d->tableWidget_SynchronizedSequenceNodes->cellWidget((*index).row(), SYNCH_NODES_PROXY_COLUMN);
+    QWidget* proxyNodeComboBox = d->tableWidget_SynchronizedSequenceNodes->cellWidget(index->row(), SYNCH_NODES_PROXY_COLUMN);
     std::string currSelectedSequenceID = proxyNodeComboBox->property("MRMLNodeID").toString().toLatin1().constData();
     selectedSequenceIDs.push_back(currSelectedSequenceID);
     disconnect(proxyNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this,
@@ -1204,7 +1204,7 @@ void qSlicerSequencesModuleWidget::onRemoveSequenceNodesButtonClicked()
   std::vector<std::string>::iterator sequenceIDItr;
   for (sequenceIDItr = selectedSequenceIDs.begin(); sequenceIDItr != selectedSequenceIDs.end(); sequenceIDItr++)
     {
-    d->ActiveBrowserNode->RemoveSynchronizedSequenceNode((*sequenceIDItr).c_str());
+    d->ActiveBrowserNode->RemoveSynchronizedSequenceNode(sequenceIDItr->c_str());
     }
 }
 

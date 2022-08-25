@@ -124,7 +124,7 @@ std::unique_ptr<rapidjson::Document> vtkMRMLMarkupsJsonStorageNode::vtkInternal:
   fclose(fp);
 
   // Verify schema
-  if (!(*jsonRoot).HasMember("@schema"))
+  if (!jsonRoot->HasMember("@schema"))
     {
     vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
       "File reading failed. File '" << filePath << "' does not contain schema information");

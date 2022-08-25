@@ -82,7 +82,7 @@ int vtkMRMLVolumeNodeTest1(int , char * [])
     {
     ijkToRAS->Identity();
     vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(
-          (*it).c_str(), spacing, dimensions, /* centerImage= */ false,
+          it->c_str(), spacing, dimensions, /* centerImage= */ false,
           ijkToRAS.GetPointer());
 
     const char* computedScanOrder =

@@ -740,7 +740,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
   std::vector<std::string>::iterator fit;
   for (fit = filesToLoad.begin(); fit != filesToLoad.end(); ++fit)
     {
-    scene->SetURL( (*fit).c_str() );
+    scene->SetURL( fit->c_str() );
     scene->Import();
     }
 

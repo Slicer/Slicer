@@ -448,8 +448,8 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
   sit = files.begin();
   while (sit != files.end() && success)
     {
-    vtkArchiveTools::Message("Zip: adding:", (*sit).c_str());
-    const char *fileName = (*sit).c_str();
+    vtkArchiveTools::Message("Zip: adding:", sit->c_str());
+    const char *fileName = sit->c_str();
     ++sit;
 
     //
@@ -481,7 +481,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     FILE *fd = fopen(fileName, "rb");
     if (!fd)
       {
-      vtkArchiveTools::Error("Zip: cannot open input file:", (*sit).c_str());
+      vtkArchiveTools::Error("Zip: cannot open input file:", sit->c_str());
       success = false;
       }
     else

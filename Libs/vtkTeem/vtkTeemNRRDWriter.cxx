@@ -324,7 +324,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
     // Don't set `space` as k-v. it is handled above, and needs to be a nrrd *field*.
     if (ait->first == "space") { continue; }
 
-    nrrdKeyValueAdd(nrrd, (*ait).first.c_str(), (*ait).second.c_str());
+    nrrdKeyValueAdd(nrrd, ait->first.c_str(), ait->second.c_str());
     }
 
   // 1. Measurement Frame
