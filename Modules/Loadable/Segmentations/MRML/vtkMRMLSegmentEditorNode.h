@@ -155,6 +155,7 @@ public:
   /// Deprecated. Use Get/SetSourceVolumeIntensityMask method instead.
   virtual void MasterVolumeIntensityMaskOn() { this->SourceVolumeIntensityMaskOn(); }
   virtual void MasterVolumeIntensityMaskOff() { this->SourceVolumeIntensityMaskOff(); }
+  virtual void SetMasterVolumeIntensityMask(bool enable) { this->SetSourceVolumeIntensityMask(enable); }
   virtual bool GetMasterVolumeIntensityMask() { return this->GetSourceVolumeIntensityMask(); }
   //@}
 
