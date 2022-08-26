@@ -42,6 +42,7 @@
 #include "vtkTextProperty.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
+#include "vtkQuaternion.h"
 
 // MRML includes
 #include <vtkMRMLFolderDisplayNode.h>
@@ -55,7 +56,14 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->GlyphOrientationArray = vtkSmartPointer<vtkDoubleArray>::New();
   this->GlyphOrientationArray->SetName("direction");
   this->GlyphOrientationArray->SetNumberOfComponents(4);
+  this->GlyphOrientationArray->SetNumberOfTuples(1);
   this->ControlPointsPolyData->GetPointData()->AddArray(this->GlyphOrientationArray);
+
+  this->GlyphScaleArray = vtkSmartPointer<vtkDoubleArray>::New();
+  this->GlyphScaleArray->SetName("scale");
+  this->GlyphScaleArray->SetNumberOfComponents(3);
+  this->GlyphScaleArray->SetNumberOfTuples(1);
+  this->ControlPointsPolyData->GetPointData()->AddArray(this->GlyphScaleArray);
 
   // This turns on resolve coincident topology for everything
   // as it is a class static on the mapper
@@ -67,7 +75,8 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->GlyphMapper->SetOrientationModeToQuaternion();
   this->GlyphMapper->SetOrientationArray("direction");
   this->GlyphMapper->ScalingOn();
-  this->GlyphMapper->SetScaleModeToNoDataScaling();
+  this->GlyphMapper->SetScaleModeToScaleByVectorComponents();
+  this->GlyphMapper->SetScaleArray("scale");
   this->GlyphMapper->SetScaleFactor(1.0);
   this->GlyphMapper->ScalarVisibilityOff();
   // By default the Points are rendered as spheres
@@ -128,7 +137,8 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->OccludedGlyphMapper->SetOrientationModeToQuaternion();
   this->OccludedGlyphMapper->SetOrientationArray("direction");
   this->OccludedGlyphMapper->ScalingOn();
-  this->OccludedGlyphMapper->SetScaleModeToNoDataScaling();
+  this->OccludedGlyphMapper->SetScaleModeToScaleByVectorComponents();
+  this->OccludedGlyphMapper->SetScaleArray("scale");
   this->OccludedGlyphMapper->SetScaleFactor(1.0);
   this->OccludedGlyphMapper->ScalarVisibilityOff();
   // By default the Points are rendered as spheres
@@ -974,6 +984,61 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointGlyphOrientation(
 }
 
 //-----------------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointGlyphScale()
+{
+  vtkCamera* cam = this->Renderer->GetActiveCamera();
+  if (!cam)
+    {
+    return;
+    }
+
+  vtkTransform* camTransform = cam->GetModelViewTransformObject();
+  if (!camTransform)
+    {
+    return;
+    }
+
+  double camScale[3] = {1.0, 1.0, 1.0};
+  camTransform->GetScale(camScale);
+
+  for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; controlPointType++)
+    {
+    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
+    if (!controlPoints->Actor->GetVisibility())
+      {
+      continue;
+      }
+
+    int numPoints = controlPoints->ControlPoints->GetNumberOfPoints();
+
+    controlPoints->GlyphScaleArray->SetNumberOfTuples(numPoints);
+    if (controlPoints->GlyphOrientationArray->GetNumberOfTuples() != numPoints)
+      {
+      return;
+      }
+
+    for (int pointIndex = 0; pointIndex < numPoints; ++pointIndex)
+      {
+      // GlypthScaleArray is applied to the local markups coordinates
+      // (markups always oriented away from the camera: X-to the left, Y-up, Z-away from camera)
+      // Thus camera scaling array must be projected on the markups point coordinate system.
+      vtkQuaterniond orientationQuaternion = vtkQuaterniond(controlPoints->GlyphOrientationArray->GetTuple4(pointIndex));
+      // Invert quaternion so that projection was from world coordinates to the markups point coords.
+      orientationQuaternion.Invert();
+
+      double camScaleRot[3] = { 0.0 };
+      vtkMath::RotateVectorByNormalizedQuaternion(camScale, orientationQuaternion.GetData(), camScaleRot);
+
+      controlPoints->GlyphScaleArray->SetTuple3(pointIndex,
+       std::abs(1/camScaleRot[0]),
+       std::abs(1/camScaleRot[1]),
+       std::abs(1/camScaleRot[2]));
+      }
+    controlPoints->GlyphScaleArray->Modified();
+    }
+}
+
+//-----------------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
   vtkViewport *viewport)
 {
@@ -1001,6 +1066,8 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
     }
 
   this->UpdateControlPointGlyphOrientation();
+  // Update scale after orientation (scale depends on orientation)
+  this->UpdateControlPointGlyphScale();
 
   int count = Superclass::RenderOpaqueGeometry(viewport);
 
