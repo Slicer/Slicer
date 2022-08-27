@@ -31,7 +31,7 @@ for patient in patients:
 
 It can be helpful for debugging to include a comment with python commands
 that can be pasted into the console to run the script.  With this approach
-any global variables, such as vtk class instances, defined in the script will exists after the script runs
+any global variables, such as vtk class instances, defined in the script will exist after the script runs
 and you can easily inspect them or call methods on them.
 
 ```python
