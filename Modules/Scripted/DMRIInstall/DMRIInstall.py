@@ -96,7 +96,7 @@ class DMRIInstallWidget(ScriptedLoadableModuleWidget):
         #
         self.applyButton = qt.QPushButton("Install SlicerDMRI")
         self.applyButton.toolTip = 'Installs the "SlicerDMRI" extension from the Diffusion category.'
-        self.applyButton.icon = qt.QIcon(":/Icons/ExtensionDefaultIcon.png")
+        self.applyButton.icon = qt.QIcon(":/Icons/Scalable/Extension.svg")
         self.applyButton.enabled = True
         self.applyButton.connect('clicked()', self.onApply)
         self.parent.layout().addWidget(self.applyButton)

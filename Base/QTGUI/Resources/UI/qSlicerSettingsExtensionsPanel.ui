@@ -144,7 +144,7 @@
        </property>
        <property name="icon">
         <iconset resource="../qSlicerBaseQTGUI.qrc">
-         <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
+         <normaloff>:/Icons/Scalable/Extension.svg</normaloff>:/Icons/Scalable/Extension.svg</iconset>
        </property>
       </widget>
      </item>

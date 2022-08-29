@@ -66,6 +66,7 @@ public:
   void setErrorLogIconHighlighted(bool);
 
   void updatePythonConsolePalette();
+  void updateIconPalette();
 
   // Add module action to the favorite modules toolbar
   void addFavoriteModule(const QString& moduleName);

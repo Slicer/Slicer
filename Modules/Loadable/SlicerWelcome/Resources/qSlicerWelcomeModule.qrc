@@ -5,7 +5,9 @@
   </qresource>
   <qresource>
     <file>Images/SlicerWWW-Original.png</file>
-    <file>Images/SlicerAdvancedGear-Original.png</file>
     <file>Images/WelcomeSubjectHierarchy.png</file>
+  </qresource>
+  <qresource prefix="/Icons/Scalable">
+    <file alias="ApplicationSettings.svg">../../../../Base/QTGUI/Resources/Icons/Scalable/settings_FILL0_wght400_GRAD0_opsz24.svg</file>
   </qresource>
 </RCC>

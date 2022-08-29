@@ -5,7 +5,6 @@
         <file alias="BookmarkAdd.svg">Icons/BookmarkAdd.svg</file>
         <file alias="Install.svg">Icons/Install.svg</file>
         <file alias="Update.svg">Icons/Update.svg</file>
-        <file alias="ExtensionDefaultIcon.png">Icons/ExtensionDefaultIcon.png</file>
         <file alias="ExtensionNotificationIcon.png">Icons/ExtensionNotificationIcon.png</file>
         <file alias="Go.png">Icons/Go.png</file>
         <file alias="ExtensionUpdateAvailable.svg">Icons/ExtensionUpdateAvailable.svg</file>
@@ -100,6 +99,18 @@
     </qresource>
     <qresource prefix="/Icons/Scalable">
         <file alias="SlicerConfigure.svg">Icons/Scalable/SlicerConfigure.svg</file>
+        <file alias="ApplicationSettings.svg">Icons/Scalable/settings_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Search.svg">Icons/Scalable/search_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Home.svg">Icons/Scalable/home_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Cut.svg">Icons/Scalable/content_cut_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Copy.svg">Icons/Scalable/content_copy_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Paste.svg">Icons/Scalable/content_paste_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="OpenExternal.svg">Icons/Scalable/open_in_new_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Forum.svg">Icons/Scalable/forum_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Info.svg">Icons/Scalable/info_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Report.svg">Icons/Scalable/report_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Extension.svg">Icons/Scalable/extension_FILL1_wght400_GRAD0_opsz24.svg</file>
+        <file alias="Keyboard.svg">Icons/Scalable/keyboard_FILL0_wght400_GRAD0_opsz24.svg</file>
     </qresource>
     <qresource prefix="/Icons/XLarge">
         <file alias="SlicerVisible.png">Icons/XLarge/SlicerVisible.png</file>

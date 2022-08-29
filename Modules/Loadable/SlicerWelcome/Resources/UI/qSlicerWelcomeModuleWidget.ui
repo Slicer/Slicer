@@ -63,7 +63,7 @@
           </property>
           <property name="icon">
            <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-            <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
+            <normaloff>:/Icons/Scalable/Extension.svg</normaloff>:/Icons/Scalable/Extension.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -122,16 +122,6 @@
        <widget class="QPushButton" name="EditApplicationSettingsButton">
         <property name="text">
          <string>Customize Slicer</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../qSlicerWelcomeModule.qrc">
-          <normaloff>:/Images/SlicerAdvancedGear-Original.png</normaloff>:/Images/SlicerAdvancedGear-Original.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
         </property>
        </widget>
       </item>

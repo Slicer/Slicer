@@ -25,6 +25,8 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSignalMapper>
+#include <QStyle>
+#include <QStyleFactory>
 #include <QTextStream>
 
 // Slicer includes
@@ -50,6 +52,7 @@
 
 // CTK includes
 #include "ctkButtonGroup.h"
+#include "ctkWidgetsUtils.h"
 
 // qMRML includes
 #include "qMRMLWidget.h"
@@ -80,6 +83,8 @@ public:
 
   QString CheckingForUpdatesText;
   QString NoUpdatesWereFoundText;
+
+  void updateIconPalette();
 };
 
 //-----------------------------------------------------------------------------
@@ -136,6 +141,28 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
       QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
     textBrowser->setHtml(html);
     }
+
+  this->updateIconPalette();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidgetPrivate::updateIconPalette()
+{
+  QPalette palette = qSlicerApplication::application()->palette();
+  QStyle* lightStyle = QStyleFactory::create("Light Slicer");
+  QString hexColor;
+  if (palette == lightStyle->standardPalette())
+  {
+    hexColor = lightStyle->standardPalette().color(QPalette::Text).name();
+  }
+  else
+  {
+    QStyle* darkStyle = QStyleFactory::create("Dark Slicer");
+    hexColor = darkStyle->standardPalette().color(QPalette::Text).name();
+  }
+  this->EditApplicationSettingsButton->setIcon(ctk::getColorizedIcon(hexColor, ":/Icons/Scalable/ApplicationSettings.svg"));
+  this->OpenExtensionsManagerButton->setIcon(ctk::getColorizedIcon(hexColor, ":/Icons/Scalable/Extension.svg"));
+
 }
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
@@ -535,5 +562,21 @@ void qSlicerWelcomeModuleWidget::onAutoUpdateSettingsChanged()
   else
     {
     d->CheckForUpdatesAutomaticallyCheckBox->setCheckState(Qt::PartiallyChecked);
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::changeEvent(QEvent* event)
+{
+  Q_D(qSlicerWelcomeModuleWidget);
+  switch (event->type())
+    {
+    case QEvent::PaletteChange:
+      {
+      d->updateIconPalette();
+      break;
+      }
+    default:
+      break;
     }
 }

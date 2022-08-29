@@ -306,7 +306,7 @@ QIcon qSlicerExtensionsLocalWidgetPrivate::extensionIcon(
 
     }
 
-  return QIcon(":/Icons/ExtensionDefaultIcon.png");
+  return QIcon(":/Icons/Scalable/Extension.svg");
 }
 
 // --------------------------------------------------------------------------

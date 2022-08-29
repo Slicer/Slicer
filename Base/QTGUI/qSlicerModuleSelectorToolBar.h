@@ -90,6 +90,7 @@ protected slots:
 
 protected:
   QScopedPointer<qSlicerModuleSelectorToolBarPrivate> d_ptr;
+  void changeEvent(QEvent* event) override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleSelectorToolBar);
