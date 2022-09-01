@@ -101,6 +101,8 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                    q, SLOT(onCurrentMRMLROINodeChanged(vtkMRMLNode*)));
   QObject::connect(this->VolumePropertyNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode*)));
+  QObject::connect(this->VolumePropertyNodeComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
+    q, SLOT(onNewVolumePropertyAdded(vtkMRMLNode*)));
 
   // Rendering
   QObject::connect(this->ROICropCheckBox, SIGNAL(toggled(bool)),
@@ -621,6 +623,17 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumePropertyNodeChanged(
     {
     displayNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode ? volumePropertyNode->GetID() : nullptr);
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onNewVolumePropertyAdded(vtkMRMLNode* node)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  // If the user adds a new volume property node via the node selector
+  // then it has to be synchronized to the display node by default,
+  // to set the effective range based on the image intensities
+  // (otherwise the user may need to move the transfer function sliders a lot.
+  this->synchronizeScalarDisplayNode();
 }
 
 // --------------------------------------------------------------------------

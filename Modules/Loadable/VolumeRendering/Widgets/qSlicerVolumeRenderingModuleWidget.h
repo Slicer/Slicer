@@ -77,6 +77,7 @@ protected slots:
 
   void onCurrentMRMLROINodeChanged(vtkMRMLNode* node);
   void onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode* node);
+  void onNewVolumePropertyAdded(vtkMRMLNode* node);
 
   void onCurrentRenderingMethodChanged(int index);
   void onCurrentMemorySizeChanged();
