@@ -2111,23 +2111,26 @@ def updateMarkupsControlPointsFromArray(markupsNode, narray, world=False):
     numberOfControlPoints = narrayshape[0]
     oldNumberOfControlPoints = markupsNode.GetNumberOfControlPoints()
     # Update existing control points
-    for controlPointIndex in range(min(numberOfControlPoints, oldNumberOfControlPoints)):
-        if world:
-            markupsNode.SetNthControlPointPositionWorldFromArray(controlPointIndex, narray[controlPointIndex, :])
-        else:
-            markupsNode.SetNthControlPointPositionFromArray(controlPointIndex, narray[controlPointIndex, :])
-    if numberOfControlPoints >= oldNumberOfControlPoints:
-        # Add new points to the markup node
-        from vtk import vtkVector3d
-        for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints):
+    wasModify = markupsNode.StartModify()
+    try:
+        for controlPointIndex in range(min(numberOfControlPoints, oldNumberOfControlPoints)):
             if world:
-                markupsNode.AddControlPointWorld(vtkVector3d(narray[controlPointIndex, :]))
+                markupsNode.SetNthControlPointPositionWorld(controlPointIndex, narray[controlPointIndex, :])
             else:
-                markupsNode.AddControlPoint(vtkVector3d(narray[controlPointIndex, :]))
-    else:
-        # Remove extra point from the markup node
-        for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints, -1):
-            markupsNode.RemoveNthControlPoint(controlPointIndex - 1)
+                markupsNode.SetNthControlPointPosition(controlPointIndex, narray[controlPointIndex, :])
+        if numberOfControlPoints >= oldNumberOfControlPoints:
+            # Add new points to the markup node
+            for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints):
+                if world:
+                    markupsNode.AddControlPointWorld(narray[controlPointIndex, :])
+                else:
+                    markupsNode.AddControlPoint(narray[controlPointIndex, :])
+        else:
+            # Remove extra point from the markup node
+            for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints, -1):
+                markupsNode.RemoveNthControlPoint(controlPointIndex - 1)
+    finally:
+        markupsNode.EndModify(wasModify)
 
 
 def arrayFromMarkupsCurvePoints(markupsNode, world=False):
