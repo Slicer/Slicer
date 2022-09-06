@@ -25,7 +25,6 @@
         <file alias="CheckModified.png">Icons/CheckModified.png</file>
         <file alias="ExtensionError.svg">Icons/ExtensionError.svg</file>
         <file alias="MousePickMode.png">Icons/MousePickMode.png</file>
-        <file alias="ModuleHistory.png">Icons/ModuleHistory.png</file>
         <file alias="MarkupsGenericMouseModePlace.png">Icons/MarkupsGenericMouseModePlace.png</file>
     </qresource>
     <qresource prefix="/Icons/Large">
@@ -111,6 +110,9 @@
         <file alias="Report.svg">Icons/Scalable/report_FILL0_wght400_GRAD0_opsz24.svg</file>
         <file alias="Extension.svg">Icons/Scalable/extension_FILL1_wght400_GRAD0_opsz24.svg</file>
         <file alias="Keyboard.svg">Icons/Scalable/keyboard_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="ModuleHistory.svg">Icons/Scalable/history_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="NavigateBefore.svg">Icons/Scalable/navigate_before_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="NavigateNext.svg">Icons/Scalable/navigate_next_FILL0_wght400_GRAD0_opsz24.svg</file>
     </qresource>
     <qresource prefix="/Icons/XLarge">
         <file alias="SlicerVisible.png">Icons/XLarge/SlicerVisible.png</file>

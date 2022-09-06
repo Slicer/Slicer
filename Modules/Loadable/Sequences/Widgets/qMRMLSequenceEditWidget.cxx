@@ -95,7 +95,7 @@ void qMRMLSequenceEditWidgetPrivate::init()
   this->TableWidget_DataNodes->setColumnWidth(DATA_NODE_VALUE_COLUMN, 30);
   this->TableWidget_DataNodes->setColumnWidth(DATA_NODE_NAME_COLUMN, 100);
 
-  this->PushButton_AddCandidateNode->setIcon(QApplication::style()->standardIcon(QStyle::SP_ArrowLeft));
+  this->PushButton_AddCandidateNode->setIcon(QIcon(":/Icons/Scalable/NavigateBefore.png"));
   this->PushButton_RemoveDataNode->setIcon(QIcon(":/Icons/DataNodeDelete.png"));
 
   QObject::connect(this->ExpandButton_DataNodes, SIGNAL(toggled(bool)), q, SLOT(setCandidateNodesSectionVisible(bool)));

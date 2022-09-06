@@ -207,13 +207,8 @@ void qSlicerTransformsModuleWidget::setup()
                 SLOT(pasteTransform()));
 
   // Icons
-  QIcon rightIcon =
-    QApplication::style()->standardIcon(QStyle::SP_ArrowRight);
-  d->TransformToolButton->setIcon(rightIcon);
-
-  QIcon leftIcon =
-    QApplication::style()->standardIcon(QStyle::SP_ArrowLeft);
-  d->UntransformToolButton->setIcon(leftIcon);
+  d->TransformToolButton->setIcon(QIcon(":/Icons/Scalable/NavigateNext.png"));
+  d->UntransformToolButton->setIcon(QIcon(":/Icons/Scalable/NavigateBefore.png"));
 
   // Connect convert button
   this->connect(d->ConvertPushButton,

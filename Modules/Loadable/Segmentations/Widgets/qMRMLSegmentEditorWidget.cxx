@@ -409,7 +409,7 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Overwrite visible"), vtkMRMLSegmentEditorNode::OverwriteVisibleSegments);
   this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Allow overlap"), vtkMRMLSegmentEditorNode::OverwriteNone);
 
-  this->SwitchToSegmentationsButton->setIcon(q->style()->standardIcon(QStyle::SP_ArrowRight));
+  this->SwitchToSegmentationsButton->setIcon(QIcon(":/Icons/Scalable/NavigateNext.png"));
 
   QMenu* segmentationsButtonMenu = new QMenu(qMRMLSegmentEditorWidget::tr("Segmentations"), this->SwitchToSegmentationsButton);
 
