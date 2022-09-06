@@ -1,6 +1,5 @@
 <RCC>
   <qresource>
-    <file>Icons/Chat.png</file> <!-- Adapted from https://openclipart.org/detail/170274/chat-button-by-scyg -->
     <file>Icons/SlicerWelcome.png</file>
   </qresource>
   <qresource>
@@ -8,6 +7,8 @@
     <file>Images/WelcomeSubjectHierarchy.png</file>
   </qresource>
   <qresource prefix="/Icons/Scalable">
+    <file alias="Chat.svg">Icons/Scalable/chat_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file alias="CloudDownload.svg">Icons/Scalable/cloud_download_FILL0_wght400_GRAD0_opsz24.svg</file>
     <file alias="ApplicationSettings.svg">../../../../Base/QTGUI/Resources/Icons/Scalable/settings_FILL0_wght400_GRAD0_opsz24.svg</file>
   </qresource>
 </RCC>

@@ -160,8 +160,9 @@ void qSlicerWelcomeModuleWidgetPrivate::updateIconPalette()
     QStyle* darkStyle = QStyleFactory::create("Dark Slicer");
     hexColor = darkStyle->standardPalette().color(QPalette::Text).name();
   }
-  this->EditApplicationSettingsButton->setIcon(ctk::getColorizedIcon(hexColor, ":/Icons/Scalable/ApplicationSettings.svg"));
-  this->OpenExtensionsManagerButton->setIcon(ctk::getColorizedIcon(hexColor, ":/Icons/Scalable/Extension.svg"));
+  this->EditApplicationSettingsButton->setIcon(ctk::getColorizedIcon(":/Icons/Scalable/ApplicationSettings.svg", QColor(hexColor)));
+  this->OpenExtensionsManagerButton->setIcon(ctk::getColorizedIcon(":/Icons/Scalable/Extension.svg", QColor(hexColor)));
+  this->LoadSampleDataButton->setIcon(ctk::getColorizedIcon(":/Icons/Scalable/CloudDownload.svg", QColor(hexColor)));
 
 }
 
