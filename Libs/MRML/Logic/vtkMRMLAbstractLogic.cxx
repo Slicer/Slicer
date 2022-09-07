@@ -182,10 +182,24 @@ void vtkMRMLAbstractLogic::MRMLSceneCallback(vtkObject*caller, unsigned long eid
 void vtkMRMLAbstractLogic::MRMLNodesCallback(vtkObject* caller, unsigned long eid,
                                              void* clientData, void* callData)
 {
-  vtkMRMLAbstractLogic *self = reinterpret_cast<vtkMRMLAbstractLogic *>(clientData);
-  assert("Observed object is not a node" && vtkMRMLNode::SafeDownCast(caller));
+  if (!vtkMRMLNode::SafeDownCast(caller))
+    {
+#ifdef _DEBUG
+    vtkGenericWarningMacro("vtkMRMLAbstractLogic::MRMLNodesCallback: Observed object is not a node");
+#endif
+    return;
+    }
 
-  if (self && !self->EnterMRMLNodesCallback())
+  vtkMRMLAbstractLogic *self = reinterpret_cast<vtkMRMLAbstractLogic *>(clientData);
+  if (!self)
+    {
+#ifdef _DEBUG
+    vtkGenericWarningMacro("vtkMRMLAbstractLogic::MRMLNodesCallback: ClientData is invalid");
+#endif
+    return;
+    }
+
+  if (!self->EnterMRMLNodesCallback())
     {
 #ifdef _DEBUG
     vtkWarningWithObjectMacro(self, "vtkMRMLAbstractLogic ******* MRMLNodesCallback called recursively?");
