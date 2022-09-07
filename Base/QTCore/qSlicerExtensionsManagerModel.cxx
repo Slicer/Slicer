@@ -233,7 +233,12 @@ public:
 
   bool NewExtensionEnabledByDefault{true};
   bool Interactive{true};
-  bool AutoUpdateCheck{false};
+  // By default enable checking of the extension server for updates.
+  // This is according to common practices in all operating systems
+  // most software (including venerable open source apps like vim).
+  // Anyone who is particularly concerned is expected to look
+  // for ways to disable automatic updates.
+  bool AutoUpdateCheck{true};
   bool AutoUpdateInstall{false};
   bool AutoInstallDependencies{true};
 
@@ -2180,8 +2185,8 @@ void qSlicerExtensionsManagerModel::checkForExtensionsUpdates()
     {
     QSettings extensionSettings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
     extensionSettings.setValue("Extensions/UpdatesAvailable", true);
-    emit extensionUpdatesAvailable(true);
     }
+  emit extensionUpdatesAvailable(updatedExtensionsFound);
 }
 
 // --------------------------------------------------------------------------
