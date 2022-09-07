@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>614</width>
-    <height>910</height>
+    <width>382</width>
+    <height>818</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -96,7 +96,7 @@
            <string>Raise the &quot;Extensions Manager&quot; wizard that allows to find, download and install Slicer extensions.&lt;br&gt;&lt;br&gt;An extension is a delivery package bundling together one or more Slicer modules.&lt;br&gt;&lt;br&gt;After installing an extension, the associated modules will be available in the module selector.</string>
           </property>
           <property name="text">
-           <string> Install Slicer Extensions</string>
+           <string> Install Extensions</string>
           </property>
           <property name="icon">
            <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
@@ -223,7 +223,7 @@
       <string>About</string>
      </property>
      <property name="collapsed">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
@@ -304,6 +304,103 @@
     </widget>
    </item>
    <item>
+    <widget class="ctkCollapsibleButton" name="AutomaticUpdatesCollapsibleWidget">
+     <property name="text">
+      <string>Automatic Updates</string>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>12</number>
+      </property>
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Check the checkbox on the button to automatically check for updates.
+Note that anonymized usage statistics will be recorded.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCheckablePushButton" name="CheckForUpdatesButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Click the button to check for updates once. Enable the checkbox for automatic update checks.</string>
+        </property>
+        <property name="text">
+         <string>Check for updates</string>
+        </property>
+        <property name="checkBoxControlsButtonToggleState">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="UpdatesStatusLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="UpdatesFoundOpenExtensionsManagerButton">
+        <property name="toolTip">
+         <string>Raise the &quot;Extensions Manager&quot; wizard that allows to find, download and install Slicer extensions.&lt;br&gt;&lt;br&gt;An extension is a delivery package bundling together one or more Slicer modules.&lt;br&gt;&lt;br&gt;After installing an extension, the associated modules will be available in the module selector.</string>
+        </property>
+        <property name="text">
+         <string> Install Extensions</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+          <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>358</width>
+          <height>8</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="ctkCollapsibleButton" name="AcknowledgmentCollapsibleWidget">
      <property name="text">
       <string>Acknowledgment</string>
@@ -373,6 +470,11 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>ctkPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
@@ -382,6 +484,11 @@
    <class>ctkFittedTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>ctkFittedTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

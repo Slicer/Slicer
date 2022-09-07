@@ -51,12 +51,15 @@ public slots:
   void editApplicationSettings();
   bool exploreLoadedData();
   void setExtensionUpdatesAvailable(bool updateAvailable);
+  void checkForUpdates();
 
 protected:
   void setup() override;
 
 protected slots:
   void loadSource(QWidget*);
+  void onAutoUpdateCheckToggled(bool);
+  void onAutoUpdateSettingsChanged();
 
 protected:
   QScopedPointer<qSlicerWelcomeModuleWidgetPrivate> d_ptr;
