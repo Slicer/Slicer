@@ -100,7 +100,7 @@
            </sizepolicy>
           </property>
           <property name="nodeTypes">
-           <stringlist>
+           <stringlist notr="true">
             <string>vtkMRMLScalarVolumeNode</string>
             <string>vtkMRMLModelNode</string>
            </stringlist>

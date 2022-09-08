@@ -45,7 +45,7 @@
       <string/>
      </property>
      <property name="nodeTypes">
-      <stringlist>
+      <stringlist notr="true">
        <string>vtkMRMLTableNode</string>
       </stringlist>
      </property>

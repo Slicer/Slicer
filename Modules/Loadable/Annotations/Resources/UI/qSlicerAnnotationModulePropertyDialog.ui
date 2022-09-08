@@ -236,7 +236,7 @@
      <item row="2" column="4">
       <widget class="qMRMLCoordinatesWidget" name="RASCoordinatesWidget">
        <property name="quantity">
-        <string>length</string>
+        <string notr="true">length</string>
        </property>
        <property name="unitAwareProperties">
         <set>qMRMLCoordinatesWidget::MaximumValue|qMRMLCoordinatesWidget::MinimumValue|qMRMLCoordinatesWidget::Precision|qMRMLCoordinatesWidget::Prefix|qMRMLCoordinatesWidget::Scaling|qMRMLCoordinatesWidget::Suffix</set>
@@ -920,7 +920,7 @@
             <item row="3" column="2">
              <widget class="qMRMLSliderWidget" name="lineTickSpacingSlider">
               <property name="quantity">
-               <string>length</string>
+               <string notr="true">length</string>
               </property>
               <property name="unitAwareProperties">
                <set>qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix|qMRMLSliderWidget::Scaling</set>

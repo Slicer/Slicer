@@ -110,7 +110,7 @@
          <bool>true</bool>
         </property>
         <property name="hideChildNodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLAnnotationNode</string>
          </stringlist>
         </property>
@@ -186,7 +186,7 @@
    <item>
     <widget class="qMRMLNodeComboBox" name="ClipModelsNodeComboBox">
      <property name="nodeTypes">
-      <stringlist>
+      <stringlist notr="true">
        <string>vtkMRMLClipModelsNode</string>
       </stringlist>
      </property>

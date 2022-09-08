@@ -67,7 +67,7 @@
          <item>
           <widget class="qMRMLNodeComboBox" name="PlotChartNodeSelector">
            <property name="nodeTypes">
-            <stringlist>
+            <stringlist notr="true">
              <string>vtkMRMLPlotChartNode</string>
             </stringlist>
            </property>
@@ -124,7 +124,7 @@
        <item row="0" column="1">
         <widget class="qMRMLNodeComboBox" name="PlotSeriesNodeSelector">
          <property name="nodeTypes">
-          <stringlist>
+          <stringlist notr="true">
            <string>vtkMRMLPlotSeriesNode</string>
           </stringlist>
          </property>

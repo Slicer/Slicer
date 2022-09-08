@@ -45,7 +45,7 @@
      <item>
       <widget class="qMRMLNodeComboBox" name="ActiveVolumeNodeSelector">
        <property name="nodeTypes">
-        <stringlist>
+        <stringlist notr="true">
          <string>vtkMRMLVolumeNode</string>
         </stringlist>
        </property>
@@ -118,7 +118,7 @@
          <item>
           <widget class="qMRMLNodeComboBox" name="ConvertVolumeTargetSelector">
            <property name="nodeTypes">
-            <stringlist>
+            <stringlist notr="true">
              <string>vtkMRMLLabelMapVolumeNode</string>
             </stringlist>
            </property>

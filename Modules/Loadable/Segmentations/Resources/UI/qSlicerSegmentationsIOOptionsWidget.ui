@@ -61,7 +61,7 @@
       </sizepolicy>
      </property>
      <property name="nodeTypes">
-      <stringlist>
+      <stringlist notr="true">
        <string>vtkMRMLColorTableNode</string>
       </stringlist>
      </property>

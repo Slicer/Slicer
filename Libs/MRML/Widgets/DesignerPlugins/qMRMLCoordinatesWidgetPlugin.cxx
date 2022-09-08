@@ -34,13 +34,14 @@ QWidget *qMRMLCoordinatesWidgetPlugin::createWidget(QWidget *_parent)
   return _widget;
 }
 
-
 // --------------------------------------------------------------------------
 QString qMRMLCoordinatesWidgetPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLCoordinatesWidget\" \
-                  name=\"MRMLCoordinatesWidget\">\n"
-          "</widget>\n";
+  return  "<ui language=\"c++\">\n"
+    "<widget class=\"qMRMLCoordinatesWidget\" name=\"MRMLCoordinatesWidget\">\n"
+    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+    "</widget>\n"
+    "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

@@ -75,7 +75,7 @@
          </sizepolicy>
         </property>
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLCropVolumeParametersNode</string>
          </stringlist>
         </property>
@@ -145,7 +145,7 @@
          </sizepolicy>
         </property>
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLScalarVolumeNode</string>
          </stringlist>
         </property>
@@ -176,7 +176,7 @@
          </sizepolicy>
         </property>
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLMarkupsROINode</string>
           <string>vtkMRMLAnnotationROINode</string>
          </stringlist>
@@ -259,7 +259,7 @@
          </sizepolicy>
         </property>
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLScalarVolumeNode</string>
           <string>vtkMRMLVectorVolumeNode</string>
          </stringlist>
@@ -557,7 +557,7 @@
             <string>0,0,0</string>
            </property>
            <property name="quantity">
-            <string>length</string>
+            <string notr="true">length</string>
            </property>
            <property name="unitAwareProperties">
             <set>qMRMLCoordinatesWidget::Precision|qMRMLCoordinatesWidget::Prefix|qMRMLCoordinatesWidget::Scaling|qMRMLCoordinatesWidget::Suffix</set>
@@ -636,7 +636,7 @@
             <string>0,0,0</string>
            </property>
            <property name="quantity">
-            <string>length</string>
+            <string notr="true">length</string>
            </property>
            <property name="unitAwareProperties">
             <set>qMRMLCoordinatesWidget::Precision|qMRMLCoordinatesWidget::Prefix|qMRMLCoordinatesWidget::Scaling|qMRMLCoordinatesWidget::Suffix</set>

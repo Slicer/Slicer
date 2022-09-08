@@ -105,7 +105,7 @@
    <item row="0" column="0">
     <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_Segmentation">
      <property name="nodeTypes">
-      <stringlist>
+      <stringlist notr="true">
        <string>vtkMRMLSegmentationNode</string>
       </stringlist>
      </property>

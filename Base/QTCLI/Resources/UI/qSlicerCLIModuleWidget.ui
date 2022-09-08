@@ -55,7 +55,7 @@
             <item row="0" column="1">
              <widget class="qMRMLNodeComboBox" name="MRMLCommandLineModuleNodeSelector" native="true">
               <property name="nodeTypes" stdset="0">
-               <stringlist>
+               <stringlist notr="true">
                 <string>vtkMRMLCommandLineModuleNode</string>
                </stringlist>
               </property>

@@ -25,7 +25,7 @@
      <item>
       <widget class="qMRMLNodeComboBox" name="tableComboBox">
        <property name="nodeTypes">
-        <stringlist>
+        <stringlist notr="true">
          <string>vtkMRMLTableNode</string>
         </stringlist>
        </property>

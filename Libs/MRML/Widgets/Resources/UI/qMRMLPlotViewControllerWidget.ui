@@ -24,7 +24,7 @@
             <string>Select the PlotChartNode which handles the general Properties of the Plot and allow to select multiple PlotSeriesNodes.</string>
            </property>
            <property name="nodeTypes">
-            <stringlist>
+            <stringlist notr="true">
              <string>vtkMRMLPlotChartNode</string>
             </stringlist>
            </property>
@@ -63,7 +63,7 @@
         <string>Add/Remove plots data series to/from the current chart.</string>
        </property>
        <property name="nodeTypes">
-        <stringlist>
+        <stringlist notr="true">
          <string>vtkMRMLPlotSeriesNode</string>
         </stringlist>
        </property>

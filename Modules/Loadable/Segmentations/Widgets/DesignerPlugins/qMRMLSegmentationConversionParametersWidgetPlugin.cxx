@@ -38,9 +38,11 @@ QWidget *qMRMLSegmentationConversionParametersWidgetPlugin::createWidget(QWidget
 //-----------------------------------------------------------------------------
 QString qMRMLSegmentationConversionParametersWidgetPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLSegmentationConversionParametersWidget\" \
-          name=\"SegmentationConversionParametersWidget\">\n"
-          "</widget>\n";
+  return  "<ui language=\"c++\">\n"
+    "<widget class=\"qMRMLSegmentationConversionParametersWidget\" name=\"SegmentationConversionParametersWidget\">\n"
+    "  <property name=\"targetRepresentationName\"> <string notr=\"true\"/> </property>\n"
+    "</widget>\n"
+    "</ui>\n";
 }
 
 //-----------------------------------------------------------------------------

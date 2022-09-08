@@ -341,7 +341,7 @@ If unchecked, the exported dataset will be added to the DICOM database.</string>
          <set>ctkPathLineEdit::ShowDirsOnly</set>
         </property>
         <property name="settingKey">
-         <string>DICOM/ExportFolder</string>
+         <string notr="true">DICOM/ExportFolder</string>
         </property>
        </widget>
       </item>

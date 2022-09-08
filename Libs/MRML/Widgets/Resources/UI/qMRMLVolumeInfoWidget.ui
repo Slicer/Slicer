@@ -77,7 +77,7 @@
       <string>0,0,0</string>
      </property>
      <property name="quantity">
-      <string>length</string>
+      <string notr="true">length</string>
      </property>
      <property name="unitAwareProperties">
       <set>qMRMLCoordinatesWidget::Precision|qMRMLCoordinatesWidget::Prefix|qMRMLCoordinatesWidget::Scaling|qMRMLCoordinatesWidget::Suffix</set>
@@ -106,7 +106,7 @@
       <double>1000000000.000000000000000</double>
      </property>
      <property name="quantity">
-      <string>length</string>
+      <string notr="true">length</string>
      </property>
      <property name="unitAwareProperties">
       <set>qMRMLCoordinatesWidget::Precision|qMRMLCoordinatesWidget::Prefix|qMRMLCoordinatesWidget::Scaling|qMRMLCoordinatesWidget::Suffix</set>

@@ -44,7 +44,7 @@
      <item>
       <widget class="qMRMLNodeComboBox" name="TableNodeSelector" native="true">
        <property name="nodeTypes" stdset="0">
-        <stringlist>
+        <stringlist notr="true">
          <string>vtkMRMLTableNode</string>
         </stringlist>
        </property>

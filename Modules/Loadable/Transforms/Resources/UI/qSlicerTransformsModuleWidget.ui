@@ -39,7 +39,7 @@
      <item>
       <widget class="qMRMLNodeComboBox" name="TransformNodeSelector">
        <property name="nodeTypes">
-        <stringlist>
+        <stringlist notr="true">
          <string>vtkMRMLLinearTransformNode</string>
          <string>vtkMRMLBSplineTransformNode</string>
          <string>vtkMRMLGridTransformNode</string>
@@ -342,7 +342,7 @@
            <bool>true</bool>
           </property>
           <property name="nodeTypes">
-           <stringlist>
+           <stringlist notr="true">
             <string>vtkMRMLTransformableNode</string>
            </stringlist>
           </property>
@@ -470,7 +470,7 @@
          <string>Volume that defines origin, spacing, and axis directions of the exported displacement field. If the reference volume is under a non-linear transform then the non-transformed geometry is used as reference.</string>
         </property>
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLVolumeNode</string>
          </stringlist>
         </property>
@@ -516,7 +516,7 @@
          <string>Volume or transform node that will store the displacement field. If scalar volume node is chosen then only displacement magnitude is saved. In vector volume or transform node 3D displacement vector is saved.</string>
         </property>
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLTransformNode</string>
           <string>vtkMRMLScalarVolumeNode</string>
           <string>vtkMRMLVectorVolumeNode</string>

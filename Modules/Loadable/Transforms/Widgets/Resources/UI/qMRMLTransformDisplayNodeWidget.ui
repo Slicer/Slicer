@@ -470,7 +470,7 @@
            <string>Region for visualizing transform nodes (will only use size, orientation and position)</string>
           </property>
           <property name="nodeTypes">
-           <stringlist>
+           <stringlist notr="true">
             <string>vtkMRMLSliceNode</string>
             <string>vtkMRMLModelNode</string>
             <string>vtkMRMLVolumeNode</string>
@@ -609,7 +609,7 @@
                <double>10.000000000000000</double>
               </property>
               <property name="quantity">
-               <string>length</string>
+               <string notr="true">length</string>
               </property>
               <property name="unitAwareProperties">
                <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
@@ -780,7 +780,7 @@
                   <double>5.000000000000000</double>
                  </property>
                  <property name="quantity">
-                  <string>length</string>
+                  <string notr="true">length</string>
                  </property>
                  <property name="unitAwareProperties">
                   <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
@@ -905,7 +905,7 @@
                <string>Markups node that defines glyph starting positions. If specified then 3D view 'Region' is ignored.</string>
               </property>
               <property name="nodeTypes">
-               <stringlist>
+               <stringlist notr="true">
                 <string>vtkMRMLMarkupsNode</string>
                </stringlist>
               </property>
@@ -975,7 +975,7 @@
                <double>10.000000000000000</double>
               </property>
               <property name="quantity">
-               <string>length</string>
+               <string notr="true">length</string>
               </property>
               <property name="unitAwareProperties">
                <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
@@ -1057,7 +1057,7 @@
                <double>1.000000000000000</double>
               </property>
               <property name="quantity">
-               <string>length</string>
+               <string notr="true">length</string>
               </property>
               <property name="unitAwareProperties">
                <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
@@ -1098,7 +1098,7 @@
                <double>5.000000000000000</double>
               </property>
               <property name="quantity">
-               <string>length</string>
+               <string notr="true">length</string>
               </property>
               <property name="unitAwareProperties">
                <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
@@ -1206,7 +1206,7 @@
                <double>5.000000000000000</double>
               </property>
               <property name="quantity">
-               <string>length</string>
+               <string notr="true">length</string>
               </property>
               <property name="unitAwareProperties">
                <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>

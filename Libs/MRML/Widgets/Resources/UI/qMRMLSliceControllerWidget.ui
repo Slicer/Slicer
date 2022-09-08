@@ -51,7 +51,7 @@
       <string>Select the label map</string>
      </property>
      <property name="nodeTypes">
-      <stringlist>
+      <stringlist notr="true">
        <string>vtkMRMLLabelMapVolumeNode</string>
       </stringlist>
      </property>
@@ -179,7 +179,7 @@
       <string>Select the foreground</string>
      </property>
      <property name="nodeTypes">
-      <stringlist>
+      <stringlist notr="true">
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
@@ -319,7 +319,7 @@
       <string>Select the background</string>
      </property>
      <property name="nodeTypes">
-      <stringlist>
+      <stringlist notr="true">
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>

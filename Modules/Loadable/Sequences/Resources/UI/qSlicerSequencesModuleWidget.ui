@@ -36,7 +36,7 @@
          <item>
           <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_ActiveBrowser">
            <property name="nodeTypes">
-            <stringlist>
+            <stringlist notr="true">
              <string>vtkMRMLSequenceBrowserNode</string>
             </stringlist>
            </property>
@@ -79,7 +79,7 @@
             <item>
              <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_SynchronizeSequenceNode">
               <property name="nodeTypes">
-               <stringlist>
+               <stringlist notr="true">
                 <string>vtkMRMLSequenceNode</string>
                </stringlist>
               </property>
@@ -318,7 +318,7 @@
           <item row="2" column="1">
            <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_MasterSequence">
             <property name="nodeTypes">
-             <stringlist>
+             <stringlist notr="true">
               <string>vtkMRMLSequenceNode</string>
              </stringlist>
             </property>
@@ -410,7 +410,7 @@
          <item row="0" column="1">
           <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_Sequence">
            <property name="nodeTypes">
-            <stringlist>
+            <stringlist notr="true">
              <string>vtkMRMLSequenceNode</string>
             </stringlist>
            </property>

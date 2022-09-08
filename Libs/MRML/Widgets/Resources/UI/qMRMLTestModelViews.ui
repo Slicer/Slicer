@@ -20,7 +20,7 @@
    <item>
     <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox">
      <property name="nodeTypes">
-      <stringlist>
+      <stringlist notr="true">
        <string>vtkMRMLCameraNode</string>
       </stringlist>
      </property>

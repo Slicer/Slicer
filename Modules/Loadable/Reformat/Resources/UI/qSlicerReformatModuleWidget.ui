@@ -46,7 +46,7 @@
         <bool>false</bool>
        </property>
        <property name="nodeTypes" stdset="0">
-        <stringlist>
+        <stringlist notr="true">
          <string>vtkMRMLSliceNode</string>
         </stringlist>
        </property>

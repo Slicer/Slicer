@@ -37,9 +37,11 @@ QWidget *qMRMLSliderWidgetPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString qMRMLSliderWidgetPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLSliderWidget\" \
-                  name=\"MRMLSliderWidget\">\n"
-          "</widget>\n";
+  return  "<ui language=\"c++\">\n"
+    "<widget class=\"qMRMLSliderWidget\" name=\"MRMLSliderWidget\">\n"
+    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+    "</widget>\n"
+    "</ui>\n";
 }
 
 // --------------------------------------------------------------------------
