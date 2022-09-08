@@ -54,7 +54,7 @@
      <item row="0" column="1">
       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_Segmentation">
        <property name="nodeTypes">
-        <stringlist>
+        <stringlist notr="true">
          <string>vtkMRMLSegmentationNode</string>
         </stringlist>
        </property>
@@ -416,7 +416,7 @@
              <string>Select Segmentation node to copy/move segments to/from.</string>
             </property>
             <property name="nodeTypes">
-             <stringlist>
+             <stringlist notr="true">
               <string>vtkMRMLSegmentationNode</string>
              </stringlist>
             </property>
@@ -625,7 +625,7 @@
             <string>Exported labelmap geometry will match this volume's geometry</string>
            </property>
            <property name="nodeTypes">
-            <stringlist>
+            <stringlist notr="true">
              <string>vtkMRMLVolumeNode</string>
             </stringlist>
            </property>
@@ -659,7 +659,7 @@
            <item>
             <widget class="qMRMLNodeComboBox" name="ColorTableNodeSelector">
              <property name="nodeTypes">
-              <stringlist>
+              <stringlist notr="true">
                <string>vtkMRMLColorTableNode</string>
               </stringlist>
              </property>

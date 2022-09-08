@@ -63,7 +63,7 @@
       <item row="0" column="1">
        <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_SourceGeometryNode">
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLScalarVolumeNode</string>
           <string>vtkMRMLSegmentationNode</string>
           <string>vtkMRMLModelNode</string>
@@ -207,7 +207,7 @@
          <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals|ctkDoubleSpinBox::ReplaceDecimals</set>
         </property>
         <property name="quantity">
-         <string>length</string>
+         <string notr="true">length</string>
         </property>
        </widget>
       </item>
@@ -313,7 +313,7 @@
          <number>2</number>
         </property>
         <property name="quantity">
-         <string>length</string>
+         <string notr="true">length</string>
         </property>
        </widget>
       </item>

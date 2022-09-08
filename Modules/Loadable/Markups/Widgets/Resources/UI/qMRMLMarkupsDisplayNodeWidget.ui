@@ -104,7 +104,7 @@
         <double>5.000000000000000</double>
        </property>
        <property name="quantity">
-        <string>length</string>
+        <string notr="true">length</string>
        </property>
       </widget>
      </item>
@@ -389,7 +389,7 @@
            <double>5.000000000000000</double>
           </property>
           <property name="quantity">
-           <string>length</string>
+           <string notr="true">length</string>
           </property>
          </widget>
         </item>

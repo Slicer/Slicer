@@ -76,7 +76,7 @@
      <item>
       <widget class="qMRMLNodeComboBox" name="ColorTableNodeSelector">
        <property name="nodeTypes">
-        <stringlist>
+        <stringlist notr="true">
          <string>vtkMRMLColorTableNode</string>
         </stringlist>
        </property>
@@ -319,7 +319,7 @@
    <item row="4" column="1">
     <widget class="qMRMLNodeComboBox" name="ReferenceVolumeComboBox">
      <property name="nodeTypes">
-      <stringlist>
+      <stringlist notr="true">
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>

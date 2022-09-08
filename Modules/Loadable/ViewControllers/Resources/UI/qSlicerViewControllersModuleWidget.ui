@@ -64,7 +64,7 @@
            <string>Select a view from the current scene. Each element corresponds to a specific widget. View nodes are connected with 3D rendering widgets. PlotView with Plotting widgets. Slices (Red, Green, Yellow) with 2D rendering widgets.</string>
           </property>
           <property name="nodeTypes">
-           <stringlist>
+           <stringlist notr="true">
             <string>vtkMRMLSliceNode</string>
             <string>vtkMRMLViewNode</string>
             <string>vtkMRMLPlotViewNode</string>

@@ -38,9 +38,11 @@ QWidget *qMRMLSegmentationFileExportWidgetPlugin::createWidget(QWidget* parentWi
 //-----------------------------------------------------------------------------
 QString qMRMLSegmentationFileExportWidgetPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLSegmentationFileExportWidget\" \
-          name=\"SegmentationDisplayNodeWidget\">\n"
-          "</widget>\n";
+  return  "<ui language=\"c++\">\n"
+    "<widget class=\"qMRMLSegmentationFileExportWidget\" name=\"SegmentationDisplayNodeWidget\">\n"
+    "  <property name=\"settingsKey\"> <string notr=\"true\"/> </property>\n"
+    "</widget>\n"
+    "</ui>\n";
 }
 
 //-----------------------------------------------------------------------------

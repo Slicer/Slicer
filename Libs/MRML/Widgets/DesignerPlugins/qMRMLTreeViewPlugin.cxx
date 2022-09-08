@@ -37,9 +37,12 @@ QWidget *qMRMLTreeViewPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString qMRMLTreeViewPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLTreeView\" \
-          name=\"MRMLTreeView\">\n"
-          "</widget>\n";
+  return  "<ui language=\"c++\">\n"
+    "<widget class=\"qMRMLTreeView\" name=\"MRMLTreeView\">\n"
+    "  <property name=\"nodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
+    "  <property name=\"sceneModelType\"> <string notr=\"true\"/> </property>\n"
+    "</widget>\n"
+    "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

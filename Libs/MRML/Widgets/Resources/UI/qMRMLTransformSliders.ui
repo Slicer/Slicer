@@ -186,7 +186,7 @@
               <double>-200.000000000000000</double>
              </property>
              <property name="quantity">
-              <string>length</string>
+              <string notr="true">length</string>
              </property>
              <property name="unitAwareProperties">
               <set>qMRMLSpinBox::Precision|qMRMLSpinBox::Prefix|qMRMLSpinBox::Scaling|qMRMLSpinBox::Suffix</set>
@@ -241,7 +241,7 @@
               <double>200.000000000000000</double>
              </property>
              <property name="quantity">
-              <string>length</string>
+              <string notr="true">length</string>
              </property>
              <property name="unitAwareProperties">
               <set>qMRMLSpinBox::Precision|qMRMLSpinBox::Prefix|qMRMLSpinBox::Scaling|qMRMLSpinBox::Suffix</set>

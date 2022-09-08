@@ -96,7 +96,7 @@ public:
 
   /// Set slice view name
   /// \note SliceViewName should be set before setMRMLSliceNode() is called
-  /// "Red" by default.
+  /// "Red" by default. This is an identifier, not to be translated.
   void setSliceViewName(const QString& newSliceViewName);
 
   /// Get slice view name
@@ -169,6 +169,7 @@ public slots:
 
   /// Set slice orientation.
   /// \note Orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".
+  /// This is an identifier, not to be translated.
   void setSliceOrientation(const QString& orientation);
 
   /// Set slice \a offset. Used to set a single value.

@@ -37,9 +37,11 @@ QWidget *qMRMLSpinBoxPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString qMRMLSpinBoxPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLSpinBox\" \
-                  name=\"MRMLSpinBox\">\n"
-          "</widget>\n";
+  return  "<ui language=\"c++\">\n"
+    "<widget class=\"qMRMLSpinBox\" name=\"MRMLSpinBox\">\n"
+    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+    "</widget>\n"
+    "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

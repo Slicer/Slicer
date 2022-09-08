@@ -270,7 +270,7 @@
           <number>10</number>
          </property>
          <property name="nodeTypes">
-          <stringlist>
+          <stringlist notr="true">
            <string>vtkMRMLTransformableNode</string>
           </stringlist>
          </property>

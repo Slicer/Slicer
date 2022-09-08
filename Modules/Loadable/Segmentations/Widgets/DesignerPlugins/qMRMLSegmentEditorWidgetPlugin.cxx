@@ -38,9 +38,11 @@ QWidget *qMRMLSegmentEditorWidgetPlugin::createWidget(QWidget* parentWidget)
 //-----------------------------------------------------------------------------
 QString qMRMLSegmentEditorWidgetPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLSegmentEditorWidget\" \
-          name=\"SegmentEditorWidget\">\n"
-          "</widget>\n";
+  return  "<ui language=\"c++\">\n"
+    "<widget class=\"qMRMLSegmentEditorWidget\" name=\"SegmentEditorWidget\">\n"
+    "  <property name=\"defaultTerminologyEntrySettingsKey\"> <string notr=\"true\"/> </property>\n"
+    "</widget>\n"
+    "</ui>\n";
 }
 
 //-----------------------------------------------------------------------------

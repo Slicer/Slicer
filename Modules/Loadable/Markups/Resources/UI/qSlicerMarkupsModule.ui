@@ -871,7 +871,7 @@
         <item row="1" column="1">
          <widget class="qMRMLNodeComboBox" name="exportedImportedNodeComboBox">
           <property name="nodeTypes">
-           <stringlist>
+           <stringlist notr="true">
             <string>vtkMRMLTableNode</string>
            </stringlist>
           </property>

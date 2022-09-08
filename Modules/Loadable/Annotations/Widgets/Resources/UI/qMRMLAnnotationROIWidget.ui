@@ -669,7 +669,7 @@
                 </palette>
               </property>
               <property name="quantity">
-                <string>length</string>
+                <string notr="true">length</string>
               </property>
             </widget>
           </item>
@@ -1316,7 +1316,7 @@
                 </palette>
               </property>
               <property name="quantity">
-                <string>length</string>
+                <string notr="true">length</string>
               </property>
             </widget>
           </item>
@@ -1962,7 +1962,7 @@
                 </palette>
               </property>
               <property name="quantity">
-                <string>length</string>
+                <string notr="true">length</string>
               </property>
             </widget>
           </item>

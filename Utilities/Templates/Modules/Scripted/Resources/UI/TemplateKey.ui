@@ -30,7 +30,7 @@
          <string>Pick the input to the algorithm.</string>
         </property>
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLScalarVolumeNode</string>
          </stringlist>
         </property>
@@ -93,7 +93,7 @@
          <string>Pick the output to the algorithm.</string>
         </property>
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLScalarVolumeNode</string>
          </stringlist>
         </property>
@@ -124,7 +124,7 @@
          <string>Result with inverted threshold will be written into this volume</string>
         </property>
         <property name="nodeTypes">
-         <stringlist>
+         <stringlist notr="true">
           <string>vtkMRMLScalarVolumeNode</string>
          </stringlist>
         </property>
