@@ -186,6 +186,10 @@ public:
   /// ROIs but deletes the 1:1 hierarchy nodes.
   void ConvertAnnotationFiducialsToMarkups();
 
+  void ConvertAnnotationLinesROIsToMarkups();
+
+  void ConvertAnnotationHierarchyToSubjectHierarchy(vtkMRMLScene* scene);
+
   /// Iterate over the control points in the list and reset the control point labels using
   /// the current ControlPointLabelFormat setting. Try to keep current numbering.
   /// Will work if there's a %d, %g or %f in the format string, but precision
@@ -406,6 +410,7 @@ protected:
   void UpdateFromMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void OnMRMLSceneEndImport() override;
 
 private:
 
