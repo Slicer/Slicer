@@ -211,6 +211,10 @@ void vtkMRMLSceneViewNode::ProcessChildNode(vtkMRMLNode *node)
   if (this->SnapshotScene == nullptr)
     {
     this->SnapshotScene = vtkMRMLScene::New();
+    if (this->GetScene())
+      {
+      this->GetScene()->CopyRegisteredNodesToScene(this->SnapshotScene);
+      }
     }
   this->SnapshotScene->GetNodes()->vtkCollection::AddItem((vtkObject *)node);
 
@@ -871,4 +875,13 @@ void vtkMRMLSceneViewNode::SetSceneViewRootDir( const char* name)
     return;
     }
   this->SnapshotScene->SetRootDirectory(name);
+}
+
+void vtkMRMLSceneViewNode::SetScene(vtkMRMLScene* scene)
+{
+  Superclass::SetScene(scene);
+  if (this->GetScene())
+    {
+    this->GetScene()->CopyRegisteredNodesToScene(this->SnapshotScene);
+    }
 }

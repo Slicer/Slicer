@@ -29,7 +29,6 @@
 #include "vtkMRMLMultiVolumeRenderingDisplayNode.h"
 
 // MRML includes
-#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLFolderDisplayNode.h"
 #include "vtkMRMLScene.h"
@@ -1054,20 +1053,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
     }
 
   vtkMRMLMarkupsROINode* markupsROINode = displayNode->GetMarkupsROINode();
-  vtkMRMLAnnotationROINode* annotationRoiNode = displayNode->GetAnnotationROINode();
   vtkNew<vtkPlanes> planes;
   if (markupsROINode)
     {
     // Calculate and set clipping planes
     markupsROINode->GetTransformedPlanes(planes.GetPointer(), true);
-    }
-  else if (annotationRoiNode)
-    {
-    // Make sure the ROI node's inside out flag is on
-    annotationRoiNode->InsideOutOn();
-
-    // Calculate and set clipping planes
-    annotationRoiNode->GetTransformedPlanes(planes.GetPointer());
     }
   volumeMapper->SetClippingPlanes(planes.GetPointer());
 }

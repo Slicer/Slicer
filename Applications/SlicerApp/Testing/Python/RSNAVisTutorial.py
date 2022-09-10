@@ -268,22 +268,22 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
             self.takeScreenshot('VolumeRendering-TurnOffVolumeRendering', 'Turn off volume rendered image', -1)
 
             volumeRenderingNode.SetCroppingEnabled(1)
-            annotationROI = slicer.mrmlScene.GetFirstNodeByName('AnnotationROI')
-            annotationROI.SetDisplayVisibility(1)
+            markupsROI = slicer.modules.volumerendering.logic().CreateROINode(volumeRenderingNode)
+            markupsROI.GetDisplayNode().SetVisibility(1)
             self.takeScreenshot('VolumeRendering-DisplayROI', 'Enable cropping and display ROI', -1)
 
             redWidget.sliceController().setSliceVisible(True)
             self.takeScreenshot('VolumeRendering-SlicesOn', 'Turn on visibility of slices in 3D', -1)
 
-            annotationROI.SetXYZ(-79.61, 154.16, -232.591)
-            annotationROI.SetRadiusXYZ(43.4, 65.19, 70.5)
+            markupsROI.SetXYZ(-79.61, 154.16, -232.591)
+            markupsROI.SetRadiusXYZ(43.4, 65.19, 70.5)
             self.takeScreenshot('VolumeRendering-SizedROI', 'Position the ROI over a kidney', -1)
 
             volumeRenderingNode.SetVisibility(1)
             self.takeScreenshot('VolumeRendering-ROIRendering', 'ROI volume rendered', -1)
 
-            annotationROI.SetXYZ(15, 146, -186)
-            annotationROI.SetRadiusXYZ(138, 57, 61)
+            markupsROI.SetXYZ(15, 146, -186)
+            markupsROI.SetRadiusXYZ(138, 57, 61)
             self.takeScreenshot('VolumeRendering-BothKidneys', 'Rendered both kidneys', -1)
 
             self.delayDisplay('Test passed!')

@@ -54,7 +54,6 @@
 #include <vtkMRMLWindowLevelWidget.h>
 #include <qSlicerMarkupsPlaceWidget.h>
 #include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLAnnotationNode.h>
 
 // SlicerLogic includes
 #include <vtkSlicerApplicationLogic.h>
@@ -449,7 +448,6 @@ void qMRMLMarkupsToolBar::initializeToolBarLayout()
   // Module shortcuts
   this->addSeparator();
   d->addSetModuleButton(markupsLogic, "Markups");
-  d->addSetModuleButton(markupsLogic, "Annotations");
 
   // Add event observers for registration/unregistration of markups
   this->qvtkConnect(markupsLogic, vtkSlicerMarkupsLogic::MarkupRegistered,
@@ -560,20 +558,6 @@ void qMRMLMarkupsToolBar::onAddNewMarkupsNodeByClass(const QString& className)
     {
     d->MarkupsPlaceWidget->setPlaceModeEnabled(true);
     }
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLMarkupsToolBar::onAddNewAnnotationNodeByClass(const QString& className)
-{
-  Q_D(qMRMLMarkupsToolBar);
-  if (!this->selectionNode() || !this->interactionNode())
-    {
-    qCritical() << Q_FUNC_INFO << " failed: invalid selection or interaction node";
-    return;
-    }
-  d->updateWidgetFromMRML();
-  this->selectionNode()->SetReferenceActivePlaceNodeClassName(className.toUtf8());
-  this->interactionNode()->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
 }
 
 //-----------------------------------------------------------------------------

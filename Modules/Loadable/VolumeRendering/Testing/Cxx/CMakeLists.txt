@@ -51,7 +51,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 slicerMacroConfigureModuleCxxTestDriver(
   NAME ${KIT}
   SOURCES ${KIT_TEST_SRCS}
-  TARGET_LIBRARIES vtkSlicerVolumesModuleLogic
+  TARGET_LIBRARIES vtkSlicerVolumesModuleLogic vtkSlicerMarkupsModuleLogic
   WITH_VTK_DEBUG_LEAKS_CHECK
   WITH_VTK_ERROR_OUTPUT_CHECK
   )

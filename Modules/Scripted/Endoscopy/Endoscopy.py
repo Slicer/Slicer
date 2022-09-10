@@ -89,8 +89,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
         inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
         inputFiducialsNodeSelector.toolTip = "Select a fiducial list to define control points for the path."
-        inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLMarkupsCurveNode',
-                                                'vtkMRMLAnnotationHierarchyNode']
+        inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLMarkupsCurveNode']
         inputFiducialsNodeSelector.noneEnabled = False
         inputFiducialsNodeSelector.addEnabled = False
         inputFiducialsNodeSelector.removeEnabled = False
@@ -376,20 +375,7 @@ class EndoscopyComputePath:
 
         # n is the number of control points in the piecewise curve
 
-        if self.fids.GetClassName() == "vtkMRMLAnnotationHierarchyNode":
-            # slicer4 style hierarchy nodes
-            collection = vtk.vtkCollection()
-            self.fids.GetChildrenDisplayableNodes(collection)
-            self.n = collection.GetNumberOfItems()
-            if self.n == 0:
-                return
-            self.p = numpy.zeros((self.n, 3))
-            for i in range(self.n):
-                f = collection.GetItemAsObject(i)
-                coords = [0, 0, 0]
-                f.GetFiducialCoordinates(coords)
-                self.p[i] = coords
-        elif self.fids.GetClassName() == "vtkMRMLMarkupsFiducialNode":
+        if self.fids.GetClassName() == "vtkMRMLMarkupsFiducialNode":
             # slicer4 Markups node
             self.n = self.fids.GetNumberOfControlPoints()
             n = self.n

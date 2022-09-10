@@ -558,7 +558,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
         # self.delayDisplay("Starting test_3D_boundsUpdateROI")
         # Setup
-        roiNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLAnnotationROINode())
+        roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode")
         roiNode.SetXYZ(100, 300, -0.689)
         roiNode.SetRadiusXYZ(700, 8, 45)
 

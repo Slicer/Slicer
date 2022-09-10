@@ -60,7 +60,7 @@ public:
   /// method GetRenderer(int) that returns the renderer for the Nth
   /// lightbox pane. The DisplayableManagers use this method to map
   /// coordinates to the proper lightbox pane, e.g. in placing
-  /// crosshairs or annotations in the proper renderer.
+  /// crosshairs or markups in the proper renderer.
   virtual void SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy *);
 
   /// Get the LightBoxRendererManagerProxy if one has been provided
@@ -137,7 +137,7 @@ protected:
 
   /// Subclass can overload this method to specify under which InteractionNode modes
   /// this Displayable Manager InteractorStyle events.
-  /// By default events only arrive when in Place mode (good for annotations)
+  /// By default events only arrive when in Place mode (good for markups)
   /// but if you want a continuous read out of, for example, slice positions while
   /// the mouse moves set this to include Place and ViewTransform
   virtual int ActiveInteractionModes();

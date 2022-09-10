@@ -101,7 +101,7 @@ void qMRMLCaptureToolBarPrivate::init()
   this->ScreenshotAction->setIcon(QIcon(":/Icons/ViewCapture.png"));
   this->ScreenshotAction->setText(qMRMLCaptureToolBar::tr("Screenshot"));
   this->ScreenshotAction->setToolTip(qMRMLCaptureToolBar::tr(
-    "Capture a screenshot of the full layout, 3D view or slice views. Use File, Save to save the image. Edit in the Annotations module."));
+    "Capture a screenshot of the full layout, 3D view or slice views. Use File, Save to save the image."));
   QObject::connect(this->ScreenshotAction, SIGNAL(triggered()),
                    q, SIGNAL(screenshotButtonClicked()));
   q->addAction(this->ScreenshotAction);

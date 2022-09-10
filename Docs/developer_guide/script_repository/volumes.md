@@ -351,6 +351,40 @@ Origin and spacing must be set on the volume node instead of the image data.
 
 :::
 
+### Create a new volume from ROI
+
+This example shows how to create a new empty volume with a specified voxel size, with axis directions and extents set from a markups ROI node.
+
+```python
+def createVolumeFromRoi(exportRoi, spacingMm, fillValue=0, numberOfComponents=1):
+    import math
+    roiDiameter = exportRoi.GetSize()
+    roiOrigin_Roi = [-roiDiameter[0]/2, -roiDiameter[1]/2, -roiDiameter[2]/2, 1]
+    roiToRas = exportRoi.GetObjectToWorldMatrix()
+    exportVolumeSize = [int(math.ceil(diameterComponent/spacingMm)) for diameterComponent in roiDiameter]
+    # Create image data
+    exportImageData = vtk.vtkImageData()
+    exportImageData.SetExtent(0, exportVolumeSize[0]-1, 0, exportVolumeSize[1]-1, 0, exportVolumeSize[2]-1)
+    exportImageData.AllocateScalars(vtk.VTK_DOUBLE, numberOfComponents)
+    exportImageData.GetPointData().GetScalars().Fill(fillValue)
+    # Create volume node
+    exportVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode" if numberOfComponents==1 else "vtkMRMLVectorVolumeNode")
+    exportVolume.SetAndObserveImageData(exportImageData)
+    exportVolume.SetIJKToRASDirections(roiToRas.GetElement(0,0), roiToRas.GetElement(0,1), roiToRas.GetElement(0,2), roiToRas.GetElement(1,0), roiToRas.GetElement(1,1), roiToRas.GetElement(1,2), roiToRas.GetElement(2,0), roiToRas.GetElement(2,1), roiToRas.GetElement(2,2))
+    exportVolume.SetSpacing(spacingMm, spacingMm, spacingMm)
+    roiOrigin_Ras = roiToRas.MultiplyPoint(roiOrigin_Roi)
+    exportVolume.SetOrigin(roiOrigin_Ras[0:3])
+    return exportVolume
+
+# Create volume node from ROI node "R"
+roiNode = getNode('R')
+volumeNode = createVolumeFromRoi(roiNode, 0.5, 120)
+# Show in slice views and set its window/level
+slicer.util.setSliceViewerLayers(background=volumeNode)
+volumeNode.GetScalarVolumeDisplayNode().AutoWindowLevelOff()
+volumeNode.GetScalarVolumeDisplayNode().SetWindowLevel(110,130)
+```
+
 ### Get value of a volume at specific voxel coordinates
 
 This example shows how to get voxel value of "volumeNode" at "ijk" volume voxel coordinates.

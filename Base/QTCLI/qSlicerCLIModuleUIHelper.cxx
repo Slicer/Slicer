@@ -633,7 +633,6 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
   QStringList nodeTypes;
   nodeTypes += "vtkMRMLMarkupsROINode";
   nodeTypes += "vtkMRMLROIListNode";
-  nodeTypes += "vtkMRMLAnnotationROINode";
   widget->setNodeTypes(QStringList(nodeTypes));
   //TODO - title + " RegionList"
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));

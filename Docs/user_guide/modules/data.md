@@ -54,12 +54,12 @@ Contains all the objects in the Subject hierarchy in a tree representation.
 Folder structure:
 
 - Nodes can be drag&dropped under other nodes, thus re-arranging the tree
-- New folder or subject can be added by right-clicking the empty area in the subject hierarchy box
-- Data loaded from **DICOM** are automatically added to the tree in the right structure (patient, study, series)
+- New folder or subject can be added by right-clicking the `Scene` item at the top
+- Data loaded from **DICOM** are automatically added to the tree of patient, study, series
 - **Non-DICOM** data also appears automatically in Subject hierarchy. There are multiple ways to organize them in hierarchy:
   - Use `Create hierarchy from loaded directory structure` action in the context menu of the scene (right-click on empty area, see screenshot below). This organizes the nodes according to the local file structure they have been loaded from.
   - Drag&drop manually under a hierarchy node
-  - Create model or other (e.g. annotation) hierarchies, and see the same structure in subject hierarchy
+  - Legacy model and annotation hierarchies from old scenes are imported as subject hierarchy
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_data_create_hierarchy_from_directory.png)
 
@@ -121,7 +121,7 @@ List of all nodes in the scene. Supports Edit properties, Rename, Delete.
 To create a C++ plugin, implement a child class of qSlicerSubjectHierarchyAbstractPlugin, for Python plugin see below. Many examples can be found in Slicer core and in the SlicerRT extension, look for folders named SubjectHierarchyPlugins.
     - Writing plugins in **Python**:
         - Child class of AbstractScriptedSubjectHierarchyPlugin which is a Python adaptor of the C++ qSlicerSubjectHierarchyScriptedPlugin class
-        - Example: [Annotations](https://github.com/Slicer/Slicer/blob/main/Modules/Loadable/Annotations/SubjectHierarchyPlugins/AnnotationsSubjectHierarchyPlugin.py) role plugin, [function plugin](https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/SegmentEditor/SubjectHierarchyPlugins/SegmentEditorSubjectHierarchyPlugin.py)
+        - Example: [role plugin](https://github.com/SlicerHeart/SlicerHeart/blob/master/ValveAnnulusAnalysis/HeartValveLib/HeartValvesSubjectHierarchyPlugin.py) in SlicerHeart extension, [function plugin](https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/SegmentEditor/SubjectHierarchyPlugins/SegmentEditorSubjectHierarchyPlugin.py) in Segment Editor module
     - **Role** plugins: add support for new data node types
         - Defines: ownership, icon, tooltip, edit properties, help text (in the yellow question mark popup), visibility icon, set/get display visibility, displayed node name (if different than name of the node object)
         - Existing plugins in Slicer core: Markups, Models, SceneViews, Charts, Folder, Tables, Transforms, LabelMaps, Volumes

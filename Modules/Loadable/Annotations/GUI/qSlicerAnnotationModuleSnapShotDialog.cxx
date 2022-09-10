@@ -62,7 +62,13 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
   this->setData(QVariant(nodeId));
 
   // get the name..
-  vtkStdString name = this->m_Logic->GetAnnotationName(nodeId);
+  vtkStdString name;
+  if (this->m_Logic->GetMRMLScene()
+    && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)
+    && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName())
+    {
+    name = this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName();
+    }
 
   // ..and set it in the GUI
   this->setNameEdit(QString::fromStdString(name));

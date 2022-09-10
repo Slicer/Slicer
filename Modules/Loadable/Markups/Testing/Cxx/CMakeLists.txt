@@ -26,12 +26,22 @@ set(KIT_TEST_SRCS
   vtkMRMLMarkupsNodeEventsTest.cxx
   )
 
+# --------------------------------------------------------------------------
+# Include dirs
+# --------------------------------------------------------------------------
+set(KIT_TEST_INCLUDE_DIRS
+  ${vtkSlicerSceneViewsModuleLogic_SOURCE_DIR}
+  ${vtkSlicerSceneViewsModuleLogic_BINARY_DIR}
+  )
+
 #-----------------------------------------------------------------------------
 slicerMacroConfigureModuleCxxTestDriver(
   NAME ${KIT}
   SOURCES ${KIT_TEST_SRCS}
   TARGET_LIBRARIES
     vtkSlicerAnnotationsModuleLogic
+    vtkSlicerSceneViewsModuleLogic
+  INCLUDE_DIRECTORIES ${KIT_TEST_INCLUDE_DIRS}
   WITH_VTK_DEBUG_LEAKS_CHECK
   WITH_VTK_ERROR_OUTPUT_CHECK
   )
@@ -62,5 +72,4 @@ SIMPLE_TEST( vtkSlicerMarkupsLogicTest3 )
 SIMPLE_TEST( vtkSlicerMarkupsLogicTest4 )
 
 # test Slicer4 annotation fiducials in a mrml file
-# TODO: remove this after annotation fiducials have been removed
 SIMPLE_TEST( vtkMarkupsAnnotationSceneTest ${INPUT}/AnnotationTest/AnnotationFiducialsTest.mrml )

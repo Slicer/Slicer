@@ -202,7 +202,6 @@ The application has a large and very friendly and helpful user community. We hav
 
 Terms used in various fields of medical and biomedical image computing and clinical images are not always consistent. This section defines terms that are commonly used in 3D Slicer, especially those that may have different meaning in other contexts.
 
-- **Annotation**: Simple geometric objects and measurements that the user can place in viewers. Annotations module can be used to create such objects, but it is deprecated - being replaced by Markups module.
 - **Bounds**: Describes bounding box of a spatial object along 3 axes. Defined in VTK by 6 floating-point values: `X_min`, `X_max`, `Y_min`, `Y_max`, `Z_min`, `Z_max`.
 -** Brightness/contras**t: Specifies linear mapping of voxel values to brightness of a displayed pixel. Brightness is the linear offset, contrast is the multiplier. In medical imaging, this linear mapping is more commonly specified by window/level values.
 - **Cell**: Data cells are simple topological elements of meshes, such as lines, polygons, tetrahedra, etc.
@@ -232,7 +231,7 @@ Terms used in various fields of medical and biomedical image computing and clini
 - **Region of interest (ROI)**: Specifies a box-shaped region in 3D. Can be used for cropping volumes, clipping models, etc.
 - **Registration**: The process of aligning objects in space. Result of the registration is a transform, which transforms the "moving" object to the "fixed" object.
 - **Resolution**: Voxel size of a volume, typically specified in mm/pixel. It is rarely used in the user interface because its meaning is slightly misleading: high resolution value means large spacing, which means coarse (low) image resolution.
-- **Ruler**: It may refer to: 1. View ruler: The line that is displayed as an overlay in viewers to serve as a size reference. 2. Annotation ruler: deprecated distance measurement tool (use "Markups line" instead).
+- **Ruler**: It may refer to: 1. View ruler: The line that is displayed as an overlay in viewers to serve as a size reference. 2. Markups line: distance measurement tool.
 - **Scalar component**: One element of a vector. Number of scalar components means the length of the vector.
 - **Scalar value**: A simple number. Typically floating-point.
 - **Scene** (or MRML scene): This is the data structure that contains all the data that is currently loaded into the application and additional information about how they should be displayed or used. The term originates [computer graphics](https://en.wikipedia.org/wiki/Rendering_(computer_graphics)).

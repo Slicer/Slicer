@@ -35,17 +35,17 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
   TEST_SET_GET_STRING( node1.GetPointer(), ActiveViewID);
   TEST_SET_GET_STRING( node1.GetPointer(), ActiveLayoutID);
 
-  // annotations
+  // markups
   node1->AddNewPlaceNodeClassNameToList(nullptr, nullptr);
   node1->AddNewPlaceNodeClassNameToList("invalid string", nullptr);
-  node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", nullptr);
-  node1->AddNewPlaceNodeClassNameToList(nullptr, ":/Icons/AnnotationROI.png");
-  node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROI.png");
-  node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
+  node1->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsLineNode", nullptr);
+  node1->AddNewPlaceNodeClassNameToList(nullptr, ":/Icons/MarkupsROI.png");
+  node1->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsROINode", ":/Icons/MarkupsROI.png");
+  node1->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsLineNode", ":/Icons/MarkupsLine.png");
 
   std::string className;
   std::cout << "Checking for className '" << className.c_str() << "' in list, got index: " << node1->PlaceNodeClassNameInList(className) << std::endl;
-  className = std::string("vtkMRMLAnnotationFiducialNode");
+  className = std::string("vtkMRMLMarkupsLineNode");
   int index = node1->PlaceNodeClassNameInList(className);
   std::cout << "Checking for className '" << className.c_str() << "' in list, got index: " << index << std::endl;
   if (index != -1)
@@ -60,18 +60,18 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
       return EXIT_FAILURE;
       }
     std::string resource = node1->GetPlaceNodeResourceByIndex(index);
-    if (resource.compare(":/Icons/AnnotationPoint.png") != 0)
+    if (resource.compare(":/Icons/MarkupsLine.png") != 0)
       {
-      std::cerr << "ERROR! Got resource for index " << index << ": '" << resource.c_str() << "', but expected ':/Icons/AnnotationPoint.png'" << std::endl;
+      std::cerr << "ERROR! Got resource for index " << index << ": '" << resource.c_str() << "', but expected ':/Icons/MarkupsLine.png'" << std::endl;
       node1->Print(std::cout);
       return EXIT_FAILURE;
       }
     std::cout << "Got resource for index " << index << ": " << resource.c_str() << std::endl;
     }
   std::string resource = node1->GetPlaceNodeResourceByClassName(className);
-  if (resource.compare(":/Icons/AnnotationPoint.png") != 0)
+  if (resource.compare(":/Icons/MarkupsLine.png") != 0)
     {
-    std::cerr << "ERROR! Got resource for className " << className << ": '" << resource.c_str() << "', but expected ':/Icons/AnnotationPoint.png'" << std::endl;
+    std::cerr << "ERROR! Got resource for className " << className << ": '" << resource.c_str() << "', but expected ':/Icons/MarkupsLine.png'" << std::endl;
     node1->Print(std::cout);
     return EXIT_FAILURE;
     }

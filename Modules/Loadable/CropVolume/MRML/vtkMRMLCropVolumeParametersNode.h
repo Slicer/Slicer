@@ -68,7 +68,7 @@ public:
   vtkMRMLVolumeNode* GetOutputVolumeNode();
 
   /// Set cropping region of interest.
-  /// It can be either vtkMRMLAnnotationROINode or vtkMRMLMarkupsROINode.
+  /// It must be vtkMRMLMarkupsROINode.
   void SetROINodeID(const char *nodeID);
   /// Get cropping region of interest
   const char* GetROINodeID();
@@ -113,4 +113,3 @@ protected:
 };
 
 #endif
-

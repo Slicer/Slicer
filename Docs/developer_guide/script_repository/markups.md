@@ -538,18 +538,18 @@ with open(outputFileName, "w") as outfile:
   json.dump(data, outfile)
 ```
 
-### Write annotation ROI to JSON file
+### Write markup ROI to JSON file
 
 ```python
 roiNode = getNode("R")
 outputFileName = "c:/tmp/test.json"
 
-# Get annotation ROI data
+# Get ROI data
 center = [0,0,0]
-radius = [0,0,0]
-roiNode.GetControlPointWorldCoordinates(0, center)
-roiNode.GetControlPointWorldCoordinates(1, radius)
-data = {"center": radius, "radius": radius}
+size = [0,0,0]
+roiNode.GetCenterWorld(center)
+roiNode.GetSizeWorld(size)
+data = {"center": center, "size": size}
 
 # Write to json file
 import json

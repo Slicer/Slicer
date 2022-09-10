@@ -1,19 +1,24 @@
 
 include(${Slicer_CMAKE_DIR}/SlicerMacroBuildLoadableModule.cmake)
 
+# "A depends on B" comment in the module list means that
+# module B must be in the module list before module A
+# (so that include directories provided by B are available
+# when configuring module A).
+
 set(qtmodules
   Cameras
   Units
   Terminologies
   SubjectHierarchy
-  Colors # Colors depends of SubjectHierarchy
+  Colors # Colors depends on SubjectHierarchy
   Annotations
-  Markups
+  SceneViews
+  Markups # Markups depends on SceneViews (for testing) and Annotations
   Transforms
   Data
   Models
   Plots
-  SceneViews
   Segmentations
   Sequences
   SlicerWelcome

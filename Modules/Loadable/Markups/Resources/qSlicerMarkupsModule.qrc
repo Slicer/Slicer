@@ -41,7 +41,6 @@
     <file>Icons/MarkupsROIMouseModePlaceAdd.png</file>
     <file>Icons/MarkupsUnset.png</file>
     <file>Icons/MarkupsUnsetAll.png</file>
-    <file>Icons/Annotations.png</file>
     <file>Icons/MarkupsDisplayToolBar.png</file>
   </qresource>
 </RCC>

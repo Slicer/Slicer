@@ -57,7 +57,9 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
   vtkNew<vtkSlicerAnnotationModuleLogic> annotLogic;
   annotLogic->SetMRMLScene(scene.GetPointer());
 
+
   // add some annotations
+  vtkMRMLAnnotationHierarchyNode* fid1Parent = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLAnnotationHierarchyNode"));
   for (int n = 0; n < 10; n++)
     {
     vtkNew<vtkMRMLAnnotationFiducialNode> annotFid;
@@ -65,12 +67,13 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
     p1[0] = static_cast<double>(n);
     annotFid->SetFiducialCoordinates(p1);
     annotFid->Initialize(scene.GetPointer());
+    vtkMRMLAnnotationHierarchyNode* fid1 = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLAnnotationHierarchyNode"));
+    fid1->SetAssociatedNodeID(annotFid->GetID());
+    fid1->SetParentNodeID(fid1Parent->GetID());
     }
-  std::cout << "After one list, active hierarchy = " << annotLogic->GetActiveHierarchyNode()->GetID() << std::endl;
-  // and another hierarchy and make it active
-  annotLogic->AddHierarchy();
-  std::cout << "After adding a new hierarchy, active hierarchy = " << annotLogic->GetActiveHierarchyNode()->GetID() << std::endl;
+
   // add some more annotations
+  vtkMRMLAnnotationHierarchyNode* fid2Parent = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLAnnotationHierarchyNode"));
   for (int n = 0; n < 5; n++)
     {
     vtkNew<vtkMRMLAnnotationFiducialNode> annotFid;
@@ -86,6 +89,9 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
       {
       annotFid->SetAttribute("AssociatedNodeID", "vtkMRMLScalarVolumeNode4");
       }
+    vtkMRMLAnnotationHierarchyNode* fid2 = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLAnnotationHierarchyNode"));
+    fid2->SetAssociatedNodeID(annotFid->GetID());
+    fid2->SetParentNodeID(fid2Parent->GetID());
     }
 
   // convert and test

@@ -108,11 +108,9 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
     scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   CHECK_NOT_NULL(selectionNode);
 
-  // add markups/annotation
+  // add markups
   selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsFiducialNode", ":/Icons/MarkupsFiducialMouseModePlace.png", "Point List");
   selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsCurveNode", ":/Icons/MarkupsCurveMouseModePlace.png", "Curve");
-  selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png", "ROI");
-  selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
 
   selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
   selectionNode->SetActivePlaceNodeID("vtkMRMLMarkupsFiducialNode1");
@@ -123,16 +121,6 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
   selectionNode->SetActivePlaceNodeID("vtkMRMLMarkupsCurveNode1");
   selectionNode->SetActivePlaceNodePlacementValid(true);
   CHECK_PLACE_ACTION_TEXT("Curve", mouseToolBar);
-
-  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationROINode");
-  selectionNode->SetActivePlaceNodeID("vtkMRMLAnnotationROINode1");
-  selectionNode->SetActivePlaceNodePlacementValid(true);
-  CHECK_PLACE_ACTION_TEXT("ROI", mouseToolBar);
-
-  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationRulerNode");
-  selectionNode->SetActivePlaceNodeID("vtkMRMLAnnotationRulerNode1");
-  selectionNode->SetActivePlaceNodePlacementValid(true);
-  CHECK_PLACE_ACTION_TEXT("Ruler", mouseToolBar);
 
   selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
   selectionNode->SetActivePlaceNodeID("vtkMRMLMarkupsFiducialNode1");
@@ -157,4 +145,3 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

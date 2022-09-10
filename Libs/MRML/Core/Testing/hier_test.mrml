@@ -10,15 +10,15 @@
 <Slice
  id="filevtkMRMLSliceNode3" name="redCoronal"  hideFromEditors="true"  selectable="true" fieldOfView="291.992 269.531 250" dimensions="299 276 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Red" orientation="Axial"  sliceVisibility="false"></Slice>
 <SliceComposite
- id="vtkMRMLSliceCompositeNode1" name="fileCompred"  hideFromEditors="true"  selectable="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0"  hotLinkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Red" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
+ id="vtkMRMLSliceCompositeNode1" name="fileCompred"  hideFromEditors="true"  selectable="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0"  hotLinkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Red" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
 <Slice
  id="filevtkMRMLSliceNode1" name="yellowAxial"  hideFromEditors="true"  selectable="true" fieldOfView="291.992 269.531 250" dimensions="299 276 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Yellow" orientation="Axial"  sliceVisibility="false"></Slice>
 <SliceComposite
- id="vtkMRMLSliceCompositeNode2" name="fileCompyellow"  hideFromEditors="true"  selectable="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0"  hotLinkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Yellow" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
+ id="vtkMRMLSliceCompositeNode2" name="fileCompyellow"  hideFromEditors="true"  selectable="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0"  hotLinkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Yellow" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
 <Slice
  id="filevtkMRMLSliceNode2" name="greenSagittal"  hideFromEditors="true"  selectable="true" fieldOfView="292.969 269.531 250" dimensions="300 276 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Green" orientation="Axial"  sliceVisibility="false"></Slice>
 <SliceComposite
- id="vtkMRMLSliceCompositeNode3" name="fileCompgreen"  hideFromEditors="true"  selectable="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0"  hotLinkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Green" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
+ id="vtkMRMLSliceCompositeNode3" name="fileCompgreen"  hideFromEditors="true"  selectable="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0"  hotLinkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Green" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
 <ClipModels
  id="vtkMRMLClipModelsNode1" name="vtkMRMLClipModelsNode1"  hideFromEditors="true"  selectable="true"  clipType="0" redSliceClipState="0" yellowSliceClipState="0" greenSliceClipState="0"></ClipModels>
 <ModelStorage

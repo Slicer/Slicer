@@ -39,6 +39,7 @@
 #include "qSlicerSubjectHierarchyMarkupsPlugin.h"
 
 // Markups module includes
+#include "qSlicerAnnotationsReader.h"
 #include "qSlicerMarkupsModule.h"
 #include "qSlicerMarkupsModuleWidget.h"
 #include "qSlicerMarkupsReader.h"
@@ -201,7 +202,7 @@ QString qSlicerMarkupsModule::helpText()const
 {
   QString help =
     "A module to create and manage markups in 2D and 3D."
-    " Replaces the Annotations module for fiducials.";
+    " This module replaced the former Annotations module.";
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -245,8 +246,8 @@ void qSlicerMarkupsModule::setup()
 
   // Register IO
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  qSlicerMarkupsReader *markupsReader = new qSlicerMarkupsReader(logic, this);
-  ioManager->registerIO(markupsReader);
+  ioManager->registerIO(new qSlicerMarkupsReader(logic, this));
+  ioManager->registerIO(new qSlicerAnnotationsReader(logic, this));
   ioManager->registerIO(new qSlicerMarkupsWriter(this));
 
   // Add toolbar

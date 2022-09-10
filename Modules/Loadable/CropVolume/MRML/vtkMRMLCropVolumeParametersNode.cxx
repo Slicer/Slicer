@@ -16,12 +16,10 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 // MRML includes
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLTransformNode.h"
+#include "vtkMRMLDisplayableNode.h"
 
 // CropModuleMRML includes
 #include "vtkMRMLCropVolumeParametersNode.h"
-
-// AnnotationModuleMRML includes
-#include "vtkMRMLDisplayableNode.h"
 
 // STD includes
 

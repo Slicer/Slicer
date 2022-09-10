@@ -89,7 +89,6 @@ public slots:
 
     /// Create markup by class.
   void onAddNewMarkupsNodeByClass(const QString& className);
-  void onAddNewAnnotationNodeByClass(const QString& className);
 
   // Keyboard shortcuts for Markups node interactions
   void onCreateNodeShortcut();

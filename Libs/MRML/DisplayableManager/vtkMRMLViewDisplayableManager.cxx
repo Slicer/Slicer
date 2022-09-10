@@ -512,7 +512,10 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRenderMode()
   vtkDebugWithObjectMacro(this->External, << "UpdateRenderMode:" <<
                 this->External->GetMRMLViewNode()->GetRenderMode());
 
-  assert(this->External->GetRenderer()->IsActiveCameraCreated());
+  if (!this->External->GetRenderer()->IsActiveCameraCreated())
+    {
+    return;
+    }
 
   vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
   if (this->External->GetMRMLViewNode()->GetRenderMode() == vtkMRMLViewNode::Perspective)

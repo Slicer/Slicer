@@ -172,7 +172,6 @@ Deprecated modules are not recommended to be used anymore, typically because oth
 
 ```{toctree}
 :maxdepth: 1
-annotations.md
 resamplescalarvolume.md
 robuststatisticssegmenter.md
 simpleregiongrowingsegmentation.md

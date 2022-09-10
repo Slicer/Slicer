@@ -394,24 +394,6 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
     return;
     }
 
-/*
-  // if the node is an annotation node and in a hierarchy, the hierarchy will
-  // take care of writing it out
-  if (node->IsA("vtkMRMLAnnotationNode"))
-    {
-    // not supporting rulers just yet
-    if (!node->IsA("vtkMRMLAnnotationRulerNode"))
-      {
-      vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(node->GetScene(), node->GetID());
-      if (hnode &&
-          hnode->GetParentNodeID())
-        {
-        // std::cout << "Skipping node in a hierarchy: " << node->GetName() << std::endl;
-        return;
-        }
-      }
-    }
-*/
   // Get absolute filename and create storage node if needed
   QFileInfo fileInfo = this->nodeFileInfo(storableNode);
   if (fileInfo.filePath().isEmpty())

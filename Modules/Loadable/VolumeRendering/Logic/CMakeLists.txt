@@ -16,7 +16,6 @@ set(${KIT}_SRCS
 
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
-  vtkSlicerAnnotationsModuleMRML
   )
 
 if(Slicer_VTK_RENDERING_USE_OpenGL_BACKEND)

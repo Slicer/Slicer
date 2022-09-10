@@ -22,9 +22,6 @@
 #include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLMultiVolumeRenderingDisplayNode.h"
 
-// Annotations includes
-#include <vtkMRMLAnnotationROINode.h>
-
 // Markups includes
 #include <vtkMRMLMarkupsROINode.h>
 
@@ -799,7 +796,6 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
     return;
     }
 
-  vtkMRMLAnnotationROINode* roiNode = vspNode->GetAnnotationROINode();
   vtkMRMLMarkupsROINode* markupsROINode = vspNode->GetMarkupsROINode();
   if (markupsROINode)
     {
@@ -817,22 +813,6 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
     markupsROINode->GetObjectToNodeMatrix()->Identity();
     markupsROINode->SetXYZ(center);
     markupsROINode->SetRadiusXYZ(xyz);
-    }
-  else if (roiNode)
-    {
-    MRMLNodeModifyBlocker blocker(roiNode);
-
-    double xyz[3] = {0.0};
-    double center[3] = {0.0};
-
-    vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, xyz, center);
-    for (int i = 0; i < 3; i++)
-      {
-      xyz[i] *= 0.5;
-      }
-
-    roiNode->SetXYZ(center);
-    roiNode->SetRadiusXYZ(xyz);
     }
 }
 
@@ -1127,15 +1107,8 @@ vtkMRMLDisplayableNode* vtkSlicerVolumeRenderingLogic::CreateROINode(vtkMRMLVolu
     }
 
   vtkMRMLNode* roiNode = this->GetMRMLScene()->AddNewNodeByClass(this->DefaultROIClassName, "Volume rendering ROI");
-  vtkMRMLAnnotationROINode* annotationROINode = vtkMRMLAnnotationROINode::SafeDownCast(roiNode);
   vtkMRMLMarkupsROINode* markupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(roiNode);
-  if (annotationROINode)
-    {
-    annotationROINode->CreateDefaultDisplayNodes();
-    annotationROINode->SetInteractiveMode(1);
-    annotationROINode->SetDisplayVisibility(displayNode->GetCroppingEnabled());
-    }
-  else if (markupsROINode)
+  if (markupsROINode)
     {
     vtkMRMLMarkupsDisplayNode* markupsDisplayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsROINode->GetDisplayNode());
     if (markupsDisplayNode)

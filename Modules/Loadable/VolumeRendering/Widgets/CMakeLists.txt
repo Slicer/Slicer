@@ -59,7 +59,6 @@ set(${KIT}_RESOURCES
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleLogic
   vtkSlicer${MODULE_NAME}ModuleMRML
-  qSlicerAnnotationsModuleWidgets
   qSlicerMarkupsModuleWidgets
   )
 

@@ -33,7 +33,6 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-class vtkMRMLAnnotationPlaneNode;
 class vtkMRMLNode;
 class vtkMRMLMarkupsPlaneNode;
 class qMRMLMarkupsPlaneWidgetPrivate;
