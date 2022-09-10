@@ -19,7 +19,7 @@
 #include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLScene.h>
 
-#include "vtkSlicerAnnotationModuleLogic.h"
+#include "vtkSlicerMarkupsLogic.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
 
 // VTK includes
@@ -57,8 +57,8 @@ int vtkMRMLVolumePropertyNodeTest1(int argc, char *[] )
   applicationLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
   vtkNew<vtkSlicerVolumeRenderingLogic> vrLogic;
   vrLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
-  vtkNew<vtkSlicerAnnotationModuleLogic> annLogic;
-  annLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
+  vtkNew<vtkSlicerMarkupsLogic> markupsLogic;
+  markupsLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
   vtkNew<vtkMRMLLayoutLogic> layLogic;
   layLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
 

@@ -65,8 +65,8 @@
         <string>Specify geometry of the edited labelmap representation</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../Annotations/Resources/qSlicerAnnotationModule.qrc">
-         <normaloff>:/Icons/AnnotationROI.png</normaloff>:/Icons/AnnotationROI.png</iconset>
+        <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
+         <normaloff>:/Icons/SegmentGeometry.png</normaloff>:/Icons/SegmentGeometry.png</iconset>
        </property>
       </widget>
      </item>
@@ -506,7 +506,6 @@
  </customwidgets>
  <resources>
   <include location="../qSlicerSegmentationsModuleWidgets.qrc"/>
-  <include location="../../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
   <include location="../../../Resources/qSlicerSegmentationsModule.qrc"/>
   <include location="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
  </resources>

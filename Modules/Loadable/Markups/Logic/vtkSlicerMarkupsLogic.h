@@ -59,7 +59,8 @@ class VTK_SLICER_MARKUPS_MODULE_LOGIC_EXPORT vtkSlicerMarkupsLogic :
 {
 public:
 
-  enum Events{
+  enum Events
+  {
     MarkupRegistered = vtkCommand::UserEvent + 1,
     MarkupUnregistered
   };
@@ -142,6 +143,20 @@ public:
 
   char* LoadMarkupsFromFcsv(const char* fileName, const char* nodeName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
   char* LoadMarkupsFromJson(const char* fileName, const char* nodeName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
+
+  /// Load a legacy annotation file, return nullptr on error, node ID string
+  /// otherwise. Adds the appropriate storage and display nodes to the scene
+  /// as well. fileType is from this class's enum
+  char* LoadAnnotation(const char *filename, const char *name, int annotationFileType);
+
+  /// Enumeration listing valid annotation file types to load using LoadAnnotation
+  enum
+    {
+    AnnotationNone = 0,
+    AnnotationFiducial,
+    AnnotationRuler,
+    AnnotationROI,
+    };
 
   /// Utility methods to operate on all control points in a markups node
   /// @{

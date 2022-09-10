@@ -1,0 +1,37 @@
+# Annotation file C:/Users/andra/OneDrive/Projects/Markups/20220908-AnnotationsAutoConvert/scene3/R.acsv
+# Name = R
+# textVisibility = 0
+# textColor = 0.7373,0.2549,0.1098
+# textSelectedColor = 0.2667,0.6745,0.3922
+# textOpacity = 1
+# textAmbient = 0
+# textDiffuse = 1
+# textSpecular = 0
+# textPower = 1
+# textScale = 4.5
+# textColumns = type|annotation|sel|vis
+# pointNumberingScheme = 0
+# pointVisibility = 0
+# pointColor = 0.7373,0.2549,0.1098
+# pointSelectedColor = 0.2667,0.6745,0.3922
+# pointOpacity = 1
+# pointAmbient = 0
+# pointDiffuse = 1
+# pointSpecular = 0
+# pointPower = 1
+# pointGlyphScale = 5
+# pointGlyphType = 13
+# pointColumns = type|x|y|z|sel|vis
+point|164.232|-48.7013|0|1|1
+point|12.4459|18.3983|12.4459|1|1
+# lineVisibility = 0
+# lineColor = 0.7373,0.2549,0.1098
+# lineSelectedColor = 0.2667,0.6745,0.3922
+# lineOpacity = 1
+# lineAmbient = 0
+# lineDiffuse = 1
+# lineSpecular = 0
+# linePower = 1
+# lineLineThickness = 1
+# lineColumns = type|startPointID|endPointID|sel|vis
+line|0|1|1|1

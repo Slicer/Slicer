@@ -1,56 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>Icons/AnnotationLock.png</file>
-        <file>Icons/AnnotationUnlock.png</file>
-        <file>Icons/AnnotationEditAngle.png</file>
-        <file>Icons/AnnotationEditDistance.png</file>
-        <file>Icons/AnnotationEditNote.png</file>
-        <file>Icons/AnnotationEditPoint.png</file>
-        <file>Icons/AnnotationEditPolyline.png</file>
-        <file>Icons/AnnotationEditROI.png</file>
-        <file>Icons/AnnotationEditSpline.png</file>
-        <file>Icons/AnnotationEditText.png</file>
-        <file>Icons/AnnotationPolyline.png</file>
-        <file>Icons/AnnotationInformation.png</file>
-        <file>Icons/AnnotationCancel.png</file>
-        <file>Icons/AnnotationNote.png</file>
-        <file>Icons/AnnotationOkDone.png</file>
-        <file>Icons/AnnotationPause.png</file>
-        <file>Icons/AnnotationPlayForward.png</file>
-        <file>Icons/AnnotationMouseModePick.png</file>
-        <file>Icons/AnnotationMouseModePlace.png</file>
-        <file>Icons/AnnotationMoveDown.png</file>
-        <file>Icons/AnnotationMoveUp.png</file>
-        <file>Icons/AnnotationDelete.png</file>
-        <file>Icons/AnnotationLine.png</file>
-        <file>Icons/AnnotationText.png</file>
-        <file>Icons/AnnotationTextWithArrow.png</file>
-        <file>Icons/AnnotationReport.png</file>
-        <file>Icons/AnnotationInvisible.png</file>
-        <file>Icons/AnnotationDistance.png</file>
-        <file>Icons/AnnotationDistanceWithArrow.png</file>
-        <file>Icons/AnnotationMouseModeTransform.png</file>
-        <file>Icons/AnnotationROI.png</file>
-        <file>Icons/AnnotationROIWithArrow.png</file>
-        <file>Icons/AnnotationSaveAnnotations.png</file>
-        <file>Icons/AnnotationScreenShot.png</file>
-        <file>Icons/AnnotationSaveScene.png</file>
-        <file>Icons/AnnotationResetView.png</file>
-        <file>Icons/AnnotationPoint.png</file>
-        <file>Icons/AnnotationPointWithArrow.png</file>
-        <file>Icons/AnnotationSelectAll.png</file>
-        <file>Icons/AnnotationDeselectAll.png</file>
-        <file>Icons/AnnotationLayout.png</file>
-        <file>Icons/AnnotationVisibility.png</file>
-        <file>Icons/AnnotationVolumesModule.png</file>
         <file>Icons/Annotation.png</file>
-        <file>Icons/ViewCamera.png</file>
-        <file>Icons/SnapshotRestore.png</file>
-        <file>Icons/LayoutOneUpYellowSliceView.png</file>
-        <file>Icons/LayoutOneUpRedSliceView.png</file>
-        <file>Icons/LayoutOneUpGreenSliceView.png</file>
-        <file>Icons/LayoutOneUp3DView.png</file>
-        <file>Icons/AnnotationPrint.png</file>
         <file>Icons/UPenn_logo.png</file>
     </qresource>
 </RCC>

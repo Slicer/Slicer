@@ -596,7 +596,7 @@ endif()
   set(Slicer_REQUIRED_QT_MODULES
     Core Widgets
     Network OpenGL
-    PrintSupport # Required by "Annotations" module
+    PrintSupport
     UiTools #no dll
     Xml XmlPatterns
     Svg Sql

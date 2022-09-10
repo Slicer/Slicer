@@ -72,7 +72,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 
   /// Get the classname of the active placeNode type.
   /// The active placeNode is used to control what placeNode is being
-  /// dropped by the user. This replaces ActiveAnnotationID.
+  /// dropped by the user.
   /// \sa SetActivePlaceNodeClassName, SetReferenceActivePlaceNodeClassName
   vtkGetStringMacro (ActivePlaceNodeClassName);
   /// Set the classname of the active placeNode type.
@@ -86,17 +86,14 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// \sa GetActivePlaceNodeClassName, SetActivePlaceNodeClassName
   void SetReferenceActivePlaceNodeClassName (const char *className);
 
-  /// Get the ID of the currently active placeNode. This replaces
-  /// GetActiveAnnotationID.
+  /// Get the ID of the currently active placeNode.
   /// \sa SetActivePlaceNodeID, SetReferenceActivePlaceNodeID
   const char* GetActivePlaceNodeID();
-  /// Set the ID of the currently active placeNode.  This replaces
-  /// SetActiveAnnotationID.
+  /// Set the ID of the currently active placeNode.
   /// \sa GetActivePlaceNodeID, SetReferenceActivePlaceNodeID
   void SetActivePlaceNodeID(const char* id);
   /// Set the ID of the currently active placeNode and fire the
-  /// ActivePlaceNodeIDChangedEvent event.  This replaces
-  /// SetActiveAnnotationID.
+  /// ActivePlaceNodeIDChangedEvent event.
   /// \sa GetActivePlaceNodeID, SetActivePlaceNodeID
   void SetReferenceActivePlaceNodeID (const char *id)
   { this->SetActivePlaceNodeID(id);

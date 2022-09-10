@@ -42,8 +42,6 @@ set(${KIT}_SRCS
   vtkMRMLAnnotationFiducialNode.h
   vtkMRMLAnnotationFiducialsStorageNode.cxx
   vtkMRMLAnnotationFiducialsStorageNode.h
-  vtkMRMLAnnotationTextNode.cxx
-  vtkMRMLAnnotationTextNode.h
   vtkMRMLAnnotationROINode.cxx
   vtkMRMLAnnotationROINode.h
   )

@@ -115,7 +115,7 @@ On Windows, Screen Capture model can automatically download and install ffmpeg w
 
 - [Animator](https://github.com/SlicerMorph/SlicerMorph/tree/master/Docs/Animator#readme) module in [SlicerMorph extension](https://slicermorph.github.io/) allows creating more complex animations, such as cutting through a volume (by changing region of interest), adjusting volume rendering transfer functions, or exploding view of complex model assembly.
 - [Scene Views](sceneviews.md) module can create snapshot of the entire scene content along with a screenshot, which are all saved in the scene.
-- [Annotations](annotations.md) module can create simple screenshots that are saved in the scene. Annotations module is being phased out and Screen Capture module's "Output volume node" feature can be used for saving screenshots in the scene.
+- Capture Toolbar allows creation simple screenshots that are saved in the scene. The feature may be removed in the future. Screen Capture module's "Output volume node" feature can be used for saving screenshots in the scene.
 
 ## Information for developers
 

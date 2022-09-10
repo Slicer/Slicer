@@ -65,80 +65,8 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLIntMacro(fiducialVisibility, FiducialVisibility);
   vtkMRMLWriteXMLIntMacro(fiducialLabelVisibility, FiducialLabelVisibility);
   vtkMRMLWriteXMLStringMacro(layoutName, LayoutName);
-  vtkMRMLWriteXMLEnumMacro(annotationSpace, AnnotationSpace);
-  vtkMRMLWriteXMLEnumMacro(annotationMode, AnnotationMode);
   vtkMRMLWriteXMLIntMacro(doPropagateVolumeSelection, DoPropagateVolumeSelection);
   vtkMRMLWriteXMLEndMacro();
-}
-
-//-----------------------------------------------------------
-const char* vtkMRMLSliceCompositeNode::GetAnnotationSpaceAsString(int id)
-    {
-  switch (id)
-  {
-  case vtkMRMLSliceCompositeNode::XYZ: return "xyz";
-  case vtkMRMLSliceCompositeNode::IJK: return "ijk";
-  case vtkMRMLSliceCompositeNode::RAS: return "RAS";
-  case vtkMRMLSliceCompositeNode::IJKAndRAS: return "IJKAndRAS";
-  default:
-    // invalid id
-    return "";
-  }
-    }
-
-//-----------------------------------------------------------
-int vtkMRMLSliceCompositeNode::GetAnnotationSpaceFromString(const char* name)
-{
-  if (name == nullptr)
-    {
-    // invalid name
-    return -1;
-    }
-  for (int i = 0; i < AnnotationSpace_Last; i++)
-    {
-    if (strcmp(name, this->GetAnnotationSpaceAsString(i)) == 0)
-      {
-      // found a matching name
-      return i;
-      }
-    }
-  // unknown name
-  return -1;
-}
-
-//-----------------------------------------------------------
-const char* vtkMRMLSliceCompositeNode::GetAnnotationModeAsString(int id)
-{
-  switch (id)
-    {
-    case vtkMRMLSliceCompositeNode::NoAnnotation: return "NoAnnotation";
-    case vtkMRMLSliceCompositeNode::All: return "All";
-    case vtkMRMLSliceCompositeNode::LabelValuesOnly: return "LabelValuesOnly";
-    case vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly: return "LabelAndVoxelValuesOnly";
-    default:
-      // invalid id
-      return "";
-    }
-}
-
-//-----------------------------------------------------------
-int vtkMRMLSliceCompositeNode::GetAnnotationModeFromString(const char* name)
-{
-  if (name == nullptr)
-    {
-    // invalid name
-    return -1;
-    }
-  for (int i = 0; i < AnnotationMode_Last; i++)
-    {
-    if (strcmp(name, this->GetAnnotationModeAsString(i)) == 0)
-      {
-      // found a matching name
-      return i;
-      }
-    }
-  // unknown name
-  return -1;
 }
 
 //-----------------------------------------------------------
@@ -185,8 +113,6 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLIntMacro(fiducialVisibility, FiducialVisibility);
   vtkMRMLReadXMLIntMacro(fiducialLabelVisibility, FiducialLabelVisibility);
   vtkMRMLReadXMLStringMacro(layoutName, LayoutName);
-  vtkMRMLReadXMLEnumMacro(annotationSpace, AnnotationSpace);
-  vtkMRMLReadXMLEnumMacro(annotationMode, AnnotationMode);
   vtkMRMLReadXMLIntMacro(doPropagateVolumeSelection, DoPropagateVolumeSelection);
   vtkMRMLReadXMLEndMacro();
 
@@ -212,8 +138,6 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   // To avoid breaking current implementation, copy of the "LayoutName" attribute
   // will be enabled after revisiting the view initialization pipeline.
   //vtkMRMLCopyStringMacro(LayoutName);
-  vtkMRMLCopyEnumMacro(AnnotationSpace);
-  vtkMRMLCopyEnumMacro(AnnotationMode);
   vtkMRMLCopyIntMacro(DoPropagateVolumeSelection);
   vtkMRMLCopyEndMacro();
 }
@@ -235,8 +159,6 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(FiducialVisibility);
   vtkMRMLPrintIntMacro(FiducialLabelVisibility);
   vtkMRMLPrintStringMacro(LayoutName);
-  vtkMRMLPrintEnumMacro(AnnotationSpace);
-  vtkMRMLPrintEnumMacro(AnnotationMode);
   vtkMRMLPrintIntMacro(DoPropagateVolumeSelection);
   vtkMRMLPrintEndMacro();
 

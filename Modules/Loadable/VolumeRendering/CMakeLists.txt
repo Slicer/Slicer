@@ -25,8 +25,6 @@ set(MODULE_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${CMAKE_CURRENT_SOURCE_DIR}/SubjectHierarchyPlugins
   ${CMAKE_CURRENT_BINARY_DIR}/SubjectHierarchyPlugins
-  ${qSlicerAnnotationsModuleWidgets_SOURCE_DIR}
-  ${qSlicerAnnotationsModuleWidgets_BINARY_DIR}
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
   )
 
@@ -58,9 +56,6 @@ set(MODULE_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager
   qSlicer${MODULE_NAME}ModuleWidgets
   qSlicer${MODULE_NAME}SubjectHierarchyPlugins
-
-  vtkSlicerAnnotationsModuleMRML
-  qSlicerAnnotationsModuleWidgets
   )
 
 set(MODULE_RESOURCES

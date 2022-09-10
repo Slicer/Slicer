@@ -129,21 +129,6 @@ public:
 
   virtual void Initialize(vtkMRMLScene* mrmlScene);
 
-  // Functionality for backups of this node
-  /// Creates a backup of the current MRML state of this node and keeps a reference
-  void CreateBackup();
-  void ClearBackup();
-  /// Returns the associated backup of this node
-  vtkMRMLAnnotationNode * GetBackup();
-  /// Restore an attached backup of this node.
-  void RestoreBackup();
-
-  // Functionality to save the current view
-  /// Saves the current view.
-  void SaveView();
-  /// Restores a previously saved view.
-  void RestoreView();
-
 protected:
   vtkMRMLAnnotationNode();
   ~vtkMRMLAnnotationNode() override;

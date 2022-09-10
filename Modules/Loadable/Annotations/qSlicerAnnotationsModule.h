@@ -41,6 +41,9 @@ public:
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
+  /// Open the screen capture dialog
+  void grabSnapShot();
+
 protected:
 
   /// All initialization code should be done in the setup

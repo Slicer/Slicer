@@ -27,7 +27,6 @@
 #include <qMRMLSliceWidget.h>
 
 // MRML includes
-#include <vtkMRMLAnnotationROINode.h>
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLCropVolumeParametersNode.h>
 #include <vtkMRMLMarkupsROINode.h>
@@ -332,24 +331,6 @@ void qSlicerCropVolumeModuleWidget::enter()
         }
       }
 
-    if (!foundROINodeVisible)
-      {
-      roiNodes.clear();
-      scene->GetNodesByClass("vtkMRMLAnnotationROINode", roiNodes);
-      for (unsigned int i = 0; i < roiNodes.size(); ++i)
-        {
-        vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(roiNodes[i]);
-        if (!roiNode)
-          {
-          continue;
-          }
-        foundROINode = roiNode;
-        if (foundROINode->GetDisplayVisibility())
-          {
-          break;
-          }
-        }
-      }
     if (foundROINode)
       {
       parametersNode->SetROINodeID(foundROINode->GetID());
@@ -487,7 +468,7 @@ void qSlicerCropVolumeModuleWidget::setInputROI(vtkMRMLNode* node)
     return;
     }
   vtkMRMLTransformableNode* roiNode = nullptr;
-  if (vtkMRMLAnnotationROINode::SafeDownCast(node) || vtkMRMLMarkupsROINode::SafeDownCast(node))
+  if (vtkMRMLMarkupsROINode::SafeDownCast(node))
     {
     roiNode = vtkMRMLTransformableNode::SafeDownCast(node);
     }

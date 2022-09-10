@@ -6,7 +6,6 @@
 - [vtkMRMLScalarVolumeNode](https://apidocs.slicer.org/main/classvtkMRMLScalarVolumeNode.html) contains the volume itself
 - [vtkMRMLVolumePropertyNode](https://apidocs.slicer.org/main/classvtkMRMLVolumePropertyNode.html) points to the transfer functions
 - [vtkMRMLMarkupsROINode](https://apidocs.slicer.org/main/classvtkMRMLMarkupsROINode.html) controls the clipping planes
-- [vtkMRMLAnnotationROINode](https://apidocs.slicer.org/main/classvtkMRMLAnnotationROINode.html) controls the clipping planes (legacy, use vtkMRMLMarkupsROINode instead)
 - [vtkMRMLVolumeRenderingDisplayableManager](https://apidocs.slicer.org/main/classvtkMRMLVolumeRenderingDisplayableManager.html) responsible for adding VTK actors to the renderers
 
 ## Format of Volume Property (.vp) file

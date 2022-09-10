@@ -29,7 +29,6 @@
 #include "vtkCalculateOversamplingFactor.h"
 
 // MRML includes
-#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLNodePropertyMacros.h"
@@ -125,7 +124,6 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
 
   // Determine source type
   vtkMRMLScalarVolumeNode* sourceVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->SourceGeometryNode);
-  vtkMRMLAnnotationROINode* sourceRoiNode = vtkMRMLAnnotationROINode::SafeDownCast(this->SourceGeometryNode);
   vtkMRMLMarkupsROINode* sourceMarkupsRoiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->SourceGeometryNode);
   vtkMRMLSegmentationNode* sourceSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->SourceGeometryNode);
 
@@ -135,7 +133,7 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
     //TODO: Fractional labelmaps cannot be used yet as source, as DetermineCommonLabelmapGeometry only supports binary labelmaps
     return this->CalculateOutputGeometryFromImage();
     }
-  else if (sourceRoiNode || sourceMarkupsRoiNode)
+  else if (sourceMarkupsRoiNode)
     {
     return this->CalculateOutputGeometryFromBounds(false); // use source axes
     }

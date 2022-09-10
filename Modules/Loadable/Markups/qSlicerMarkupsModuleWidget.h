@@ -125,14 +125,6 @@ public slots:
   /// Respond to the p key being pressed
   void onPKeyActivated();
 
-  /// Called from enter and on import/add mrml events to ask if the user
-  /// wishes to convert annotation fiducial hierarchies into markups list nodes.
-  /// \sa enter(), onMRMLSceneEndImportEvent(), onMRMLSceneEndBatchProcessEvent()
-  void checkForAnnotationFiducialConversion();
-  /// Uses the Logic to do the conversion from annotation fiducials, moving
-  /// them from hierarchies to Markups list nodes
-  void convertAnnotationFiducialsToMarkups();
-
   /// Display property button slots
   void onResetToDefaultDisplayPropertiesPushButtonClicked();
   void onSaveToDefaultDisplayPropertiesPushButtonClicked();

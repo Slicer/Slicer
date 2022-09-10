@@ -437,7 +437,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
   <include location="../../../SubjectHierarchy/Resources/qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerDataModule.qrc"/>
  </resources>

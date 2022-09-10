@@ -1532,7 +1532,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                 }
               }
             }
-          else if (roi && (roi->IsA("vtkMRMLMarkupsROINode") || roi->IsA("vtkMRMLAnnotationROINode")))
+          else if (roi && roi->IsA("vtkMRMLMarkupsROINode"))
             {
             roi->WriteCLI(commandLineAsString, prefix+flag, coordinateSystem, multipleFlag);
             }

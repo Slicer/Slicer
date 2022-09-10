@@ -189,7 +189,7 @@ vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::~vtkInternal()
 //---------------------------------------------------------------------------
 bool vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::UseDisplayNode(vtkMRMLTransformDisplayNode* displayNode)
 {
-   // allow annotations to appear only in designated viewers
+   // allow nodes to appear only in designated viewers
   if (displayNode && !displayNode->IsDisplayableInView(this->External->GetMRMLViewNode()->GetID()))
     {
     return false;

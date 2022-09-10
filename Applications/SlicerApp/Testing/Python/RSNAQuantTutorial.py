@@ -171,29 +171,27 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
             layoutManager = slicer.app.layoutManager()
             layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpView)
 
-            # annotations module
+            # markups module
             m = slicer.util.mainWindow()
-            m.moduleSelector().selectModule('Annotations')
+            m.moduleSelector().selectModule('Markups')
 
             # add ruler 1
-            rulerNode1 = slicer.vtkMRMLAnnotationRulerNode()
+            rulerNode1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsLineNode")
             rulerNode1.SetName("d1")
-            rulerNode1.SetPosition1(-7.59519, 43.544, 28.6)
-            rulerNode1.SetPosition2(-5.56987, 14.177, 28.6)
-            rulerNode1.Initialize(slicer.mrmlScene)
+            rulerNode1.AddControlPoint(-7.59519, 43.544, 28.6)
+            rulerNode1.AddControlPoint(-5.56987, 14.177, 28.6)
             self.delayDisplay("Ruler 1")
 
             # add ruler 2
-            rulerNode2 = slicer.vtkMRMLAnnotationRulerNode()
+            rulerNode1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsLineNode")
             rulerNode2.SetName("d2")
-            rulerNode2.SetPosition1(-3.54455, 27.656, 13.1646)
-            rulerNode2.SetPosition2(-2.5319, 27.656, 47.5949)
-            rulerNode2.Initialize(slicer.mrmlScene)
+            rulerNode2.AddControlPoint(-3.54455, 27.656, 13.1646)
+            rulerNode2.AddControlPoint(-2.5319, 27.656, 47.5949)
             self.delayDisplay("Ruler 2")
 
             # scroll
-            annotLogic = slicer.modules.annotations.logic()
-            annotLogic.JumpSlicesToAnnotationCoordinate(rulerNode1.GetID())
+            markupsLogic = slicer.modules.markups.logic()
+            markupsLogic.JumpSlicesToNthPointInMarkup(rulerNode1.GetID(), 0)
 
             # show slices
             redWidget = layoutManager.sliceWidget('Red')

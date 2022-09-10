@@ -114,22 +114,6 @@ public:
   int GetSliceIntersectionVisibility();
   void SetSliceIntersectionVisibility(int visibility);
 
-  /// Get annotation space.
-  vtkGetMacro ( AnnotationSpace, int );
-
-  /// Set annotation space.
-  /// Space could be either XYZ, IJK or RAS
-  /// \sa GetAnnotationSpace, AnnotationSpace
-  vtkSetMacro ( AnnotationSpace, int );
-
-  /// Get annotation mode
-  vtkGetMacro ( AnnotationMode, int );
-
-  /// Set annotation mode
-  /// Mode could be either NoAnnotation, All, LabelValuesOnly or LabelAndVoxelValuesOnly
-  /// \sa GetAnnotationMode, AnnotationMode
-  vtkSetMacro ( AnnotationMode, int );
-
   ///
   /// configures the behavior of PropagateVolumeSelection():
   /// if set to false, the background/label for slice views
@@ -150,26 +134,6 @@ public:
   char *GetLayoutName() {
     return this->GetSingletonTag();
   }
-
-  /// Annotation space
-  enum AnnotationSpace
-    {
-      XYZ = 0,
-      IJK,
-      RAS,
-      IJKAndRAS,
-      AnnotationSpace_Last // insert values above this line
-    };
-
-  /// Annotation mode
-  enum AnnotationMode
-    {
-      NoAnnotation = 0,
-      All,
-      LabelValuesOnly,
-      LabelAndVoxelValuesOnly,
-      AnnotationMode_Last // insert values above this line
-    };
 
   /// Modes for compositing
   enum
@@ -229,14 +193,6 @@ public:
   /// broadcast when composite slice nodes are linked).
   void ResetInteractionFlagsModifier();
 
-  /// Convert between annotation space ID and name
-  const char* GetAnnotationSpaceAsString(int id);
-  int GetAnnotationSpaceFromString(const char* name);
-
-  /// Convert between annotation mode ID and name
-  const char* GetAnnotationModeAsString(int id);
-  int GetAnnotationModeFromString(const char* name);
-
 protected:
 
   vtkMRMLSliceCompositeNode();
@@ -263,9 +219,6 @@ protected:
 
   int FiducialVisibility{ 1 };
   int FiducialLabelVisibility{ 1 };
-
-  int AnnotationSpace{ IJKAndRAS };
-  int AnnotationMode{ All };
 
   bool DoPropagateVolumeSelection{ true };
 

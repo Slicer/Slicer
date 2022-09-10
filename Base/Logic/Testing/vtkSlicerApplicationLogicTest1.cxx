@@ -157,7 +157,7 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
     }
     {
       TestRowType row;
-      row.push_back("/home/jchris/Projects/Slicer.app/Contents/lib/Slicer-4.1/qt-loadable-modules/libqSlicerAnnotationsModule.dylib");
+      row.push_back("/home/jchris/Projects/Slicer.app/Contents/lib/Slicer-4.1/qt-loadable-modules/libqSlicerMarkupsModule.dylib");
       row.push_back("/home/jchris/Projects/Slicer.app/Contents");
       row.push_back("4810");
       row.push_back("1");
@@ -165,7 +165,7 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
     }
     {
       TestRowType row;
-      row.push_back("/home/jchris/Projects/Something.app/Contents/lib/Slicer-4.1/qt-loadable-modules/libqSlicerAnnotationsModule.dylib");
+      row.push_back("/home/jchris/Projects/Something.app/Contents/lib/Slicer-4.1/qt-loadable-modules/libqSlicerMarkupsModule.dylib");
       row.push_back("/home/jchris/Projects/Something.app/Contents");
       row.push_back("4810");
       row.push_back("1");
@@ -173,7 +173,7 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
     }
     {
       TestRowType row;
-      row.push_back("/home/jchris/Projects/" Slicer_BUNDLE_LOCATION "/lib/Slicer-4.1/qt-loadable-modules/libqSlicerAnnotationsModule.dylib");
+      row.push_back("/home/jchris/Projects/" Slicer_BUNDLE_LOCATION "/lib/Slicer-4.1/qt-loadable-modules/libqSlicerMarkupsModule.dylib");
       row.push_back("/home/jchris/Projects/" Slicer_BUNDLE_LOCATION);
       row.push_back("4810");
       row.push_back("1");
@@ -345,4 +345,3 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
 
   return EXIT_SUCCESS;
 }
-

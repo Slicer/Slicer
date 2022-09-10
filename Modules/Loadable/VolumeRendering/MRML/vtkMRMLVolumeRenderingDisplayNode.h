@@ -62,7 +62,8 @@ public:
   const char* GetROINodeID();
   void SetAndObserveROINodeID(const char *roiNodeID);
   vtkMRMLDisplayableNode* GetROINode();
-  vtkMRMLAnnotationROINode* GetAnnotationROINode();
+  /// Deprecated. Use GetROINode() instead for retrieving the markups ROI node.
+  vtkMRMLAnnotationROINode* GetAnnotationROINode() { return nullptr; };
   vtkMRMLMarkupsROINode* GetMarkupsROINode();
 
   vtkMRMLViewNode* GetFirstViewNode();

@@ -32,6 +32,8 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
   vtkMRMLNode* CreateNodeInstance() override;
 
+  void SetScene(vtkMRMLScene* scene) override;
+
   ///
   /// Read node attributes from XML file
   void ReadXMLAttributes( const char** atts) override;

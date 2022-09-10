@@ -664,7 +664,7 @@ for segmentId in stats["SegmentIDs"]:
 
 #### Get size, position, and orientation of each segment
 
-Get oriented bounding box and display them using markups ROI node or legacy annotation ROI node.
+Get oriented bounding box and display them using markups ROI node.
 
 ##### Markups ROI
 
@@ -703,47 +703,6 @@ for segmentId in stats["SegmentIDs"]:
   boundingBoxToRasTransform = np.row_stack((np.column_stack((obb_direction_ras_x, obb_direction_ras_y, obb_direction_ras_z, obb_center_ras)), (0, 0, 0, 1)))
   boundingBoxToRasTransformMatrix = slicer.util.vtkMatrixFromArray(boundingBoxToRasTransform)
   roi.SetAndObserveObjectToNodeMatrix(boundingBoxToRasTransformMatrix)
-```
-
-##### Annotation ROI (legacy)
-
-```python
-segmentationNode = getNode("Segmentation")
-
-# Compute bounding boxes
-import SegmentStatistics
-segStatLogic = SegmentStatistics.SegmentStatisticsLogic()
-segStatLogic.getParameterNode().SetParameter("Segmentation", segmentationNode.GetID())
-segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.obb_origin_ras.enabled",str(True))
-segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.obb_diameter_mm.enabled",str(True))
-segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.obb_direction_ras_x.enabled",str(True))
-segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.obb_direction_ras_y.enabled",str(True))
-segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.obb_direction_ras_z.enabled",str(True))
-segStatLogic.computeStatistics()
-stats = segStatLogic.getStatistics()
-
-# Draw ROI for each oriented bounding box
-import numpy as np
-for segmentId in stats["SegmentIDs"]:
-  # Get bounding box
-  obb_origin_ras = np.array(stats[segmentId,"LabelmapSegmentStatisticsPlugin.obb_origin_ras"])
-  obb_diameter_mm = np.array(stats[segmentId,"LabelmapSegmentStatisticsPlugin.obb_diameter_mm"])
-  obb_direction_ras_x = np.array(stats[segmentId,"LabelmapSegmentStatisticsPlugin.obb_direction_ras_x"])
-  obb_direction_ras_y = np.array(stats[segmentId,"LabelmapSegmentStatisticsPlugin.obb_direction_ras_y"])
-  obb_direction_ras_z = np.array(stats[segmentId,"LabelmapSegmentStatisticsPlugin.obb_direction_ras_z"])
-  # Create ROI
-  segment = segmentationNode.GetSegmentation().GetSegment(segmentId)
-  roi=slicer.mrmlScene.AddNewNodeByClass("vtkMRMLAnnotationROINode")
-  roi.SetName(segment.GetName() + " bounding box")
-  roi.SetXYZ(0.0, 0.0, 0.0)
-  roi.SetRadiusXYZ(*(0.5*obb_diameter_mm))
-  # Position and orient ROI using a transform
-  obb_center_ras = obb_origin_ras+0.5*(obb_diameter_mm[0] * obb_direction_ras_x + obb_diameter_mm[1] * obb_direction_ras_y + obb_diameter_mm[2] * obb_direction_ras_z)
-  boundingBoxToRasTransform = np.row_stack((np.column_stack((obb_direction_ras_x, obb_direction_ras_y, obb_direction_ras_z, obb_center_ras)), (0, 0, 0, 1)))
-  boundingBoxToRasTransformMatrix = slicer.util.vtkMatrixFromArray(boundingBoxToRasTransform)
-  transformNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTransformNode")
-  transformNode.SetAndObserveMatrixTransformToParent(boundingBoxToRasTransformMatrix)
-  roi.SetAndObserveTransformNodeID(transformNode.GetID())
 ```
 
 :::{note}

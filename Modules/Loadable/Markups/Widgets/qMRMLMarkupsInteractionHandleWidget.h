@@ -25,7 +25,7 @@
 // Qt includes
 #include <QWidget>
 
-// AnnotationWidgets includes
+// MarkupsWidgets includes
 #include "qSlicerMarkupsModuleWidgetsExport.h"
 
 // CTK includes

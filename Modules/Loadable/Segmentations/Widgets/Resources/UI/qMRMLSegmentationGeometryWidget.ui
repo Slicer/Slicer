@@ -68,7 +68,6 @@
           <string>vtkMRMLSegmentationNode</string>
           <string>vtkMRMLModelNode</string>
           <string>vtkMRMLMarkupsROINode</string>
-          <string>vtkMRMLAnnotationROINode</string>
          </stringlist>
         </property>
         <property name="noneEnabled">

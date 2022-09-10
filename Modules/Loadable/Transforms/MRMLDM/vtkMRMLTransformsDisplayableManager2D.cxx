@@ -133,7 +133,7 @@ vtkMRMLTransformsDisplayableManager2D::vtkInternal::~vtkInternal()
 //---------------------------------------------------------------------------
 bool vtkMRMLTransformsDisplayableManager2D::vtkInternal::UseDisplayNode(vtkMRMLTransformDisplayNode* displayNode)
 {
-   // allow annotations to appear only in designated viewers
+   // allow nodes to appear only in designated viewers
   if (displayNode && !displayNode->IsDisplayableInView(this->SliceNode->GetID()))
     {
     return false;

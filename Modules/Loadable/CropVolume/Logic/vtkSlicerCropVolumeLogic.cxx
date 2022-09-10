@@ -23,7 +23,6 @@
 // CropMRML includes
 
 // MRML includes
-#include <vtkMRMLAnnotationROINode.h>
 #include <vtkMRMLCropVolumeParametersNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeNode.h>
@@ -63,13 +62,8 @@ public:
   vtkInternal();
   static void GetROIXYZ(vtkMRMLDisplayableNode* roi, double* xyz)
     {
-    vtkMRMLAnnotationROINode* annotationROI = vtkMRMLAnnotationROINode::SafeDownCast(roi);
     vtkMRMLMarkupsROINode* markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(roi);
-    if (annotationROI)
-      {
-      annotationROI->GetXYZ(xyz);
-      }
-    else if (markupsROI)
+    if (markupsROI)
       {
       // We don't call markupsROI->GetXYZ(xyz) here because where
       // GetROIXYZ method is called, the ROI (not the local) coordinate
@@ -87,13 +81,8 @@ public:
 
   static void SetROIXYZ(vtkMRMLDisplayableNode* roi, double* xyz)
     {
-    vtkMRMLAnnotationROINode* annotationROI = vtkMRMLAnnotationROINode::SafeDownCast(roi);
     vtkMRMLMarkupsROINode* markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(roi);
-    if (annotationROI)
-      {
-      annotationROI->SetXYZ(xyz);
-      }
-    else if (markupsROI)
+    if (markupsROI)
       {
       markupsROI->SetXYZ(xyz);
       }
@@ -105,13 +94,8 @@ public:
 
   static void GetROIRadius(vtkMRMLDisplayableNode* roi, double* radius)
     {
-    vtkMRMLAnnotationROINode* annotationROI = vtkMRMLAnnotationROINode::SafeDownCast(roi);
     vtkMRMLMarkupsROINode* markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(roi);
-    if (annotationROI)
-      {
-      annotationROI->GetRadiusXYZ(radius);
-      }
-    else if (markupsROI)
+    if (markupsROI)
       {
       markupsROI->GetRadiusXYZ(radius);
       }
@@ -123,13 +107,8 @@ public:
 
   static void SetROIRadius(vtkMRMLDisplayableNode* roi, double* radius)
     {
-    vtkMRMLAnnotationROINode* annotationROI = vtkMRMLAnnotationROINode::SafeDownCast(roi);
     vtkMRMLMarkupsROINode* markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(roi);
-    if (annotationROI)
-      {
-      annotationROI->SetRadiusXYZ(radius);
-      }
-    else if (markupsROI)
+    if (markupsROI)
       {
       markupsROI->SetRadiusXYZ(radius);
       }
@@ -214,9 +193,8 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     }
   vtkMRMLVolumeNode* inputVolume = vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(pnode->GetInputVolumeNodeID()));
   vtkMRMLDisplayableNode* inputROI = vtkMRMLDisplayableNode::SafeDownCast(scene->GetNodeByID(pnode->GetROINodeID()));
-  vtkMRMLAnnotationROINode* inputAnnotationROI = vtkMRMLAnnotationROINode::SafeDownCast(inputROI);
   vtkMRMLMarkupsROINode* inputMarkupsROI = vtkMRMLMarkupsROINode::SafeDownCast(inputROI);
-  if (!inputVolume || (!inputAnnotationROI && !inputMarkupsROI))
+  if (!inputVolume || !inputMarkupsROI)
     {
     vtkErrorMacro("CropVolume: Invalid input volume or ROI");
     return -1;

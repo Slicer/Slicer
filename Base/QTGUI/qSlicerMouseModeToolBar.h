@@ -42,7 +42,7 @@ class vtkSlicerApplicationLogic;
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerMouseModeToolBar: public QToolBar
 {
   Q_OBJECT
-  /// "vtkMRMLAnnotationFiducialNode" by default.
+  /// "vtkMRMLMarkupsFiducialNode" by default.
   Q_PROPERTY(QString defaultPlaceClassName READ defaultPlaceClassName WRITE setDefaultPlaceClassName)
 public:
   typedef QToolBar Superclass;
@@ -73,7 +73,7 @@ public slots:
 
   void changeCursorTo(QCursor cursor);
 
-  /// Switch to placing items of annotationID type
+  /// Switch to placing items, such as markups
   void switchPlaceMode();
 
   /// Update the interaction node's persistent place mode from the UI

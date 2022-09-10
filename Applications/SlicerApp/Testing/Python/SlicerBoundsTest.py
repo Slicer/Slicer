@@ -238,7 +238,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
         """ Test the GetRASBounds & GetBounds method on a ROI.
         """
         # self.delayDisplay("Starting test_ROI")
-        roiNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLAnnotationROINode())
+        roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode")
         roiNode.SetXYZ(100, 300, -0.689)
         roiNode.SetRadiusXYZ(700, 8, 45)
 

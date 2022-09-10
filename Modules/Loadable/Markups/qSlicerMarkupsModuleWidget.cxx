@@ -436,11 +436,6 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   //
   QObject::connect(this->renameAllWithCurrentNameFormatPushButton, SIGNAL(clicked()),
                    q, SLOT(onRenameAllWithCurrentNameFormatPushButtonClicked()));
-  //
-  // set up the convert annotations button
-  //
-  QObject::connect(this->convertAnnotationFiducialsPushButton, SIGNAL(clicked()),
-                   q, SLOT(convertAnnotationFiducialsToMarkups()));
 
   //
   // set up the table
@@ -873,8 +868,6 @@ void qSlicerMarkupsModuleWidget::enter()
 
   this->Superclass::enter();
 
-  this->checkForAnnotationFiducialConversion();
-
   d->setMRMLMarkupsNodeFromSelectionNode();
 
   // set up mrml scene observations so that the GUI gets updated
@@ -923,56 +916,6 @@ void qSlicerMarkupsModuleWidget::enter()
   this->updateMaximumScaleFromVolumes();
   this->enableMarkupTableButtons(d->MarkupsNode ? 1 : 0);
 
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::checkForAnnotationFiducialConversion()
-{
-  // check to see if there are any annotation fiducial list nodes
-  // and offer to import them as markups
-  int numFids = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode");
-  int numSceneViews = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
-  if (numFids > 0)
-    {
-    ctkMessageBox convertMsgBox;
-    convertMsgBox.setWindowTitle("Convert Annotation hierarchies to Markups point list nodes?");
-    QString labelText = QString("Convert ")
-      + QString::number(numFids)
-      + QString(" Annotation fiducial lists to Markups point list nodes?")
-      + QString(" Moves all Annotation fiducial lists out of hierarchies (deletes")
-      + QString(" the nodes, but leaves the hierarchies in case rulers or")
-      + QString(" ROIs are mixed in) and into Markups point list nodes.");
-    if (numSceneViews > 0)
-      {
-      labelText += QString(" Iterates through ")
-        + QString::number(numSceneViews)
-        + QString(" Scene Views and converts any fiducial lists saved in those")
-        + QString(" scenes into Markups point list nodes as well.");
-      }
-    // don't show again check box conflicts with informative text, so use
-    // a long text
-    convertMsgBox.setText(labelText);
-    QPushButton *convertButton =
-      convertMsgBox.addButton(tr("Convert"), QMessageBox::AcceptRole);
-    convertMsgBox.addButton(QMessageBox::Cancel);
-    convertMsgBox.setDefaultButton(convertButton);
-    convertMsgBox.setDontShowAgainVisible(true);
-    convertMsgBox.setDontShowAgainSettingsKey("Markups/AlwaysConvertAnnotationFiducials");
-    convertMsgBox.exec();
-    if (convertMsgBox.clickedButton() == convertButton)
-      {
-      this->convertAnnotationFiducialsToMarkups();
-      }
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::convertAnnotationFiducialsToMarkups()
-{
-  if (this->markupsLogic())
-    {
-    this->markupsLogic()->ConvertAnnotationFiducialsToMarkups();
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1401,14 +1344,12 @@ void qSlicerMarkupsModuleWidget::onNodeRemovedEvent(vtkObject* scene, vtkObject*
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onMRMLSceneEndImportEvent()
 {
-  this->checkForAnnotationFiducialConversion();
   this->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onMRMLSceneEndRestoreEvent()
 {
-  this->checkForAnnotationFiducialConversion();
   this->updateWidgetFromMRML();
 }
 
@@ -1420,7 +1361,6 @@ void qSlicerMarkupsModuleWidget::onMRMLSceneEndBatchProcessEvent()
     {
     return;
     }
-  this->checkForAnnotationFiducialConversion();
   d->setMRMLMarkupsNodeFromSelectionNode();
   // force update (clear GUI if no node is selected anymore)
   this->updateWidgetFromMRML();
@@ -3097,11 +3037,6 @@ double qSlicerMarkupsModuleWidget::nodeEditable(vtkMRMLNode* node)
     || vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
     {
     return 0.5;
-    }
-  else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
-    {
-    // The module cannot directly edit this type of node but can convert it
-    return 0.1;
     }
   else
     {

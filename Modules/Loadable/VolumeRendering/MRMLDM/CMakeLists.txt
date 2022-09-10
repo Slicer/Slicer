@@ -34,7 +34,6 @@ set(${KIT}_VTK_LIBRARIES
   )
 
 set(${KIT}_TARGET_LIBRARIES
-  vtkSlicerAnnotationsModuleMRML
   vtkSlicer${MODULE_NAME}ModuleLogic
   vtkSlicer${MODULE_NAME}ModuleMRML
   ${MRML_LIBRARIES}
