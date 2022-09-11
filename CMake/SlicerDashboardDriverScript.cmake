@@ -546,7 +546,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Package and upload
     #-----------------------------------------------------------------------------
-    if(WITH_PACKAGES AND (run_ctest_with_packages OR run_ctest_with_upload))
+    if(WITH_PACKAGES AND run_ctest_with_packages)
       message(STATUS "----------- [ WITH_PACKAGES and UPLOAD ] -----------")
 
       if(build_errors GREATER "0")
@@ -566,26 +566,29 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
             BUILD ${slicer_build_dir}
             APPEND
             )
-          ctest_submit(PARTS Build)
+          if(run_ctest_submit)
+            ctest_submit(PARTS Build)
+          endif()
         endif()
 
         if(run_ctest_with_upload)
           message(STATUS "Uploading Slicer package URL ...")
 
           file(STRINGS ${slicer_build_dir}/PACKAGES.txt package_list)
-
-          foreach(p ${package_list})
-            get_filename_component(package_name "${p}" NAME)
-            message(STATUS "Uploading URL to [${package_name}] on CDash")
-            slicer_ctest_upload_url(
-              ALGO "SHA512"
-              DOWNLOAD_URL_TEMPLATE "${SLICER_PACKAGE_MANAGER_URL}/api/v1/file/hashsum/%(algo)/%(hash)/download"
-              FILEPATH ${p}
-              )
-            if(run_ctest_submit)
-              ctest_submit(PARTS Upload)
-            endif()
-          endforeach()
+          if(run_ctest_with_upload)
+            foreach(p ${package_list})
+              get_filename_component(package_name "${p}" NAME)
+              message(STATUS "Uploading URL to [${package_name}] on CDash")
+              slicer_ctest_upload_url(
+                ALGO "SHA512"
+                DOWNLOAD_URL_TEMPLATE "${SLICER_PACKAGE_MANAGER_URL}/api/v1/file/hashsum/%(algo)/%(hash)/download"
+                FILEPATH ${p}
+                )
+              if(run_ctest_submit)
+                ctest_submit(PARTS Upload)
+              endif()
+            endforeach()
+          endif()
         endif()
 
       endif()
