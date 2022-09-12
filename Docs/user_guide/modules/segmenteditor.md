@@ -157,19 +157,19 @@ Notes:
 
 Grows or shrinks the selected segment by the specified margin.
 
-By enabling `Apply to all segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
+By enabling `Apply to visible segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_hollow.png) Hollow
 
 Makes the selected visible segment hollow by replacing the segment with a uniform-thickness shell defined by the segment boundary.
 
-By enabling `Apply to all segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
+By enabling `Apply to visible segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_smoothing.png) Smoothing
 
 Smoothes segments by filling in holes and/or removing extrusions.
 
-By default, the current segment will be smoothed. By enabling `Apply to all segments`, all visible segments of the segmentation will be smoothed (in the order of the segment list). This operation may be time-consuming for complex segmentations. The `Joint smoothing` method always smoothes all visible segments.
+By default, the current segment will be smoothed. By enabling `Apply to visible segments`, all visible segments of the segmentation will be smoothed (in the order of the segment list). This operation may be time-consuming for complex segmentations. The `Joint smoothing` method always smoothes all visible segments.
 
 By clicking `Apply` button, the entire segmentation is smoothed. To smooth a specific region, left click and drag in any slice or 3D view. Same smoothing method and strength is used as for the whole-segmentation mode (size of the brush does not affect smoothing strength, just makes it easier to designate a larger region).
 
@@ -187,7 +187,7 @@ Clip segments to the specified region or fill regions of a segment (typically us
 - Left click to start drawing (free-form or rubber band circle or rectangle)
 - Release button to apply
 
-By enabling `Apply to all segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
+By enabling `Apply to visible segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_islands.png) Islands
 

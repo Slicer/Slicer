@@ -1240,7 +1240,7 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->gridLayout->addWidget(d->symmetricRadioButton, 4, 2);
   d->gridLayout->addWidget(d->sliceCutDepthSpinBox, 5, 2);
 
-  QLabel* applyToAllVisibleSegmentsLabel = new QLabel(tr("Apply to all segments:"));
+  QLabel* applyToAllVisibleSegmentsLabel = new QLabel(tr("Apply to visible segments:"));
   applyToAllVisibleSegmentsLabel->setToolTip(tr("Apply scissor effect to all visible segments from top to bottom. \
                                           After pressing 'Apply': Please be patient - this may be time-consuming. \
                                           Progress will be shown as status message. "));

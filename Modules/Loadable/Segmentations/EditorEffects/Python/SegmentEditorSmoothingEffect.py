@@ -89,7 +89,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
         self.applyToAllVisibleSegmentsCheckBox.setToolTip("Apply smoothing effect to all visible segments in this segmentation node. \
                                                       This operation may take a while.")
         self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
-        self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget("Apply to all segments:", self.applyToAllVisibleSegmentsCheckBox)
+        self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget("Apply to visible segments:", self.applyToAllVisibleSegmentsCheckBox)
 
         self.applyButton = qt.QPushButton("Apply")
         self.applyButton.objectName = self.__class__.__name__ + 'Apply'
