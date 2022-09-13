@@ -546,7 +546,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Package and upload
     #-----------------------------------------------------------------------------
-    if(WITH_PACKAGES AND (run_ctest_with_packages OR run_ctest_with_upload))
+    if(WITH_PACKAGES AND run_ctest_with_packages)
       message(STATUS "----------- [ WITH_PACKAGES and UPLOAD ] -----------")
 
       if(build_errors GREATER "0")
@@ -566,7 +566,9 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
             BUILD ${slicer_build_dir}
             APPEND
             )
-          ctest_submit(PARTS Build)
+          if(run_ctest_submit)
+            ctest_submit(PARTS Build)
+          endif()
         endif()
 
         if(run_ctest_with_upload)
