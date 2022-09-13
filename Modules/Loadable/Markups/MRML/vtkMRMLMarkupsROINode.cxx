@@ -234,15 +234,17 @@ void vtkMRMLMarkupsROINode::GetRASBounds(double bounds[6])
 
   if (this->ROIType == ROITypeBox || this->ROIType == ROITypeBoundingBox)
     {
-    double xAxisWorld[3] = { 0.0, 0.0, 0.0 };
-    this->GetXAxisWorld(xAxisWorld);
-    double yAxisWorld[3] = { 0.0, 0.0, 0.0 };
-    this->GetYAxisWorld(yAxisWorld);
-    double zAxisWorld[3] = { 0.0, 0.0, 0.0 };
-    this->GetZAxisWorld(zAxisWorld);
-    double centerWorld[3] = { 0.0, 0.0, 0.0 };
-    this->GetCenterWorld(centerWorld);
-    this->GenerateBoxBounds(bounds, xAxisWorld, yAxisWorld, zAxisWorld, centerWorld, this->Size);
+    double xAxis_World[3] = { 0.0, 0.0, 0.0 };
+    this->GetXAxisWorld(xAxis_World);
+    double yAxis_World[3] = { 0.0, 0.0, 0.0 };
+    this->GetYAxisWorld(yAxis_World);
+    double zAxis_World[3] = { 0.0, 0.0, 0.0 };
+    this->GetZAxisWorld(zAxis_World);
+    double center_World[3] = { 0.0, 0.0, 0.0 };
+    this->GetCenterWorld(center_World);
+    double size_World[3] = { 0.0, 0.0, 0.0 };
+    this->GetSizeWorld(size_World);
+    this->GenerateBoxBounds(bounds, xAxis_World, yAxis_World, zAxis_World, center_World, size_World);
     }
 }
 
