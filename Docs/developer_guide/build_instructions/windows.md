@@ -1,5 +1,11 @@
 # Windows
 
+:::{note}
+
+Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK), which take a long time to build and use a lot of disk space. Currently, build requires disk space of 15GB (for release mode) or 60GB (for debug mode). Build time on a desktop computer is typically 3-4 hours, on a laptop it may take 8-12 hours.
+
+:::
+
 ## Install prerequisites
 
 - [CMake](https://www.cmake.org/cmake/resources/software.html) version that meets at least the minimum required CMake version >= 3.21.1 (or 3.16.3 <= version < 3.20.4)
@@ -30,6 +36,9 @@
   - While it is not enforced, we strongly recommend you to avoid the use of spaces for both the source directory and the build directory.
 - Create build folder. This folder will be referred to as `<Slicer_BUILD>` in the following. Recommended path: `C:\D\S4R` for release-mode build, `C:\D\S4D` for debug-mode build.
   - You cannot use the same build tree for both release or debug mode builds. If both build types are needed, then the same source directory can be used, but a separate build directory must be created and configured for each build type.
+  - How to decide between Debug and Release mode?
+    - Release mode build: runs at same speed as official build, requires less disk space (about 15GB); but step-by-step debugging is not available
+    - Debug mode build: allows debugging (adding breakpoints, step through the code line by line during execution, watch variables); but it may run 5x slower, requires more space (about 60GB), and user interface editing in Qt designer is not available
 - Download source code into _Slicer source_ folder from GitHub: https://github.com/Slicer/Slicer.git
   - The following command can be executed in _Slicer source_ folder to achieve this: `git clone https://github.com/Slicer/Slicer.git .` (note the dot at the end of the command; the `.` is needed because without that git would create a `Slicer` subfolder in the current directory)
 - Configure the repository for developers (optional): Needed if changes need to be contributed to Slicer repository.
@@ -38,6 +47,8 @@
   - Note: more information about how to use git in Slicer can be found on [this page](https://www.slicer.org/wiki/Documentation/Nightly/Developers/DevelopmentWithGit)
 
 ## Configure and build Slicer
+
+Build takes several hours. Warnings will appear during the build (it is practically not feasible to have warning-free builds in large multi-platform projects that rely on third-party libraries), but there must not be any errors. If any problems occur, read the [Common errors](#common-errors) section.
 
 ### Using command-line (recommended)
 
@@ -110,6 +121,14 @@ Slicer.exe --VisualStudioProject
 ### Errors related to Python
 
 Errors due to missing Python libraries (or other Python related errors, such as building a `python-...-requirements` project or Python-wrapping SimpleITK) may be caused by the build system detecting Python installations somewhere on the system, instead of Slicer's own Python environment. To resolve such issues, remove all references to Python in the environment variables (PATH, PYTHONPATH, PYTHONHOME). Alternatively, temporarily rename or remove other Python installations before starting to build Slicer; they can be restored after Slicer build is completed.
+
+### Custom Slicer and CTK widgets do not show up in Qt designer
+
+Qt Designer can only use designer plugins (in `c:\D\S4R\Slicer-build\bin\designer` and `c:\D\S4R\CTK-build\CTK-build\bin\designer`) that are built in the same mode.
+
+In pre-built Qt packages (downloaded from Qt website) Qt Designer is only provided in `Release` mode. If Qt is built from source in `Release` mode (default) or `Release and Debug` mode then Qt designer will be in `Release` mode. In all these cases, Qt Designer can be used only if Slicer is built in `Release` mode.
+
+If Qt is built from source in `Debug` mode mode then Qt designer will be in `Debug` mode. In this case, Qt Designer can be used only if Slicer is built in `Debug` mode.
 
 ### Other problems
 
