@@ -38,7 +38,7 @@ Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK),
   - You cannot use the same build tree for both release or debug mode builds. If both build types are needed, then the same source directory can be used, but a separate build directory must be created and configured for each build type.
   - How to decide between Debug and Release mode?
     - Release mode build: runs at same speed as official build, requires less disk space (about 15GB); but step-by-step debugging is not available
-    - Debug mode build: allows debugging (adding breakpoints, step through the code line by line during execution, watch variables); but it may run 5x slower, requires more space (about 60GB), and user interface editing in Qt designer is not available
+    - Debug mode build: allows debugging (adding breakpoints, step through the code line by line during execution, watch variables); but it may run 5x or more slower, requires more space (about 60GB), and user interface editing in Qt designer is not available
 - Download source code into _Slicer source_ folder from GitHub: https://github.com/Slicer/Slicer.git
   - The following command can be executed in _Slicer source_ folder to achieve this: `git clone https://github.com/Slicer/Slicer.git .` (note the dot at the end of the command; the `.` is needed because without that git would create a `Slicer` subfolder in the current directory)
 - Configure the repository for developers (optional): Needed if changes need to be contributed to Slicer repository.
@@ -124,7 +124,7 @@ Errors due to missing Python libraries (or other Python related errors, such as 
 
 ### Custom Slicer and CTK widgets do not show up in Qt designer
 
-Qt Designer can only use designer plugins (in `c:\D\S4R\Slicer-build\bin\designer` and `c:\D\S4R\CTK-build\CTK-build\bin\designer`) that are built in the same mode.
+Qt Designer can only use designer plugins (in `c:\D\S4R\Slicer-build\bin\designer` and `c:\D\S4R\CTK-build\CTK-build\bin\designer`) that are built in the same mode (e.g. `Debug` or `Release`).
 
 In pre-built Qt packages (downloaded from Qt website) Qt Designer is only provided in `Release` mode. If Qt is built from source in `Release` mode (default) or `Release and Debug` mode then Qt designer will be in `Release` mode. In all these cases, Qt Designer can be used only if Slicer is built in `Release` mode.
 
