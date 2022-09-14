@@ -190,7 +190,8 @@ See more information in Python documentation: https://docs.python.org/3/tutorial
 
 ## How to include Python modules in an extension
 
-Sometimes, it is convenient to add Python modules to the Slicer scripted loadable modules.
+Sometimes a Python scripted module grows big and it becomes inconvenient to have all the source code in a single .py file. Since all the .py files in a folder that is listed among "additional module paths" are expected to be Slicer modules, these additional files cannot be simply placed in the same folder as in the Slicer module. Instead, all additional .py files can be put in a subfolder, as a regular Python module.
+
 For example, the files associated with a Slicer module could look like this:
 
     .
@@ -207,8 +208,8 @@ So that the following code can run within `MySlicerModule.py`:
 from MySlicerModuleLib import utils, cool_maths
 ```
 
-By default, only the Slicer module (`MySlicerModule.py`) will be downloaded when installing the extension using the [Extensions Manager](https://www.slicer.org/wiki/Documentation/4.10/SlicerApplication/ExtensionsManager) (see [a related issue on GitHub](https://github.com/Slicer/ExtensionsIndex/issues/1749)).
-To make sure all the necessary files are downloaded, the `CMakeLists.txt` file associated with the Slicer module needs to be modified.
+By default, only the Slicer module (`MySlicerModule.py`) will be included in the package distributed via the [Extensions Manager](../user_guide/extensions_manager) (see [a related issue on GitHub](https://github.com/Slicer/ExtensionsIndex/issues/1749)).
+To make sure all the necessary files are included in the package, the `CMakeLists.txt` file associated with the Slicer module needs to be modified.
 Initially, the second section of `CMakeLists.txt` will look like this:
 
     set(MODULE_PYTHON_SCRIPTS
@@ -220,9 +221,7 @@ In our example:
 
     set(MODULE_PYTHON_SCRIPTS
       ${MODULE_NAME}.py
-      ${MODULE_NAME}Lib/__init__
-      ${MODULE_NAME}Lib/utils
-      ${MODULE_NAME}Lib/cool_maths
+      ${MODULE_NAME}Lib/__init__.py
+      ${MODULE_NAME}Lib/cool_maths.py
+      ${MODULE_NAME}Lib/utils.py
       )
-
-Note that the `.py` extension is not necessary.
