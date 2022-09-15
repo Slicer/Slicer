@@ -291,6 +291,14 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddDisplayNode(vtkMRMLMarkupsDispla
     return;
     }
 
+  int wasModified = 0;
+  if (markupsDisplayNode->GetDisplayableNode())
+    {
+    // Prevent potential recursive calls during UpdateFromMRML call before the new widget is stored
+    // in MarkupsDisplayNodesToWidgets.
+    wasModified = markupsDisplayNode->GetDisplayableNode()->StartModify();
+    }
+
   vtkSlicerMarkupsWidget* newWidget = this->DisplayableManager->CreateWidget(markupsDisplayNode);
   if (!newWidget)
     {
@@ -304,10 +312,12 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddDisplayNode(vtkMRMLMarkupsDispla
   // Build representation
   newWidget->UpdateFromMRML(markupsDisplayNode, 0); // no specific event triggers full rebuild
 
-  this->DisplayableManager->RequestRender();
+  if (markupsDisplayNode->GetDisplayableNode())
+    {
+    markupsDisplayNode->GetDisplayableNode()->EndModify(wasModified);
+    }
 
-  // Update cached matrices. Calls UpdateWidget
-  //this->UpdateDisplayableTransforms(mNode);
+  this->DisplayableManager->RequestRender();
 }
 
 //---------------------------------------------------------------------------
