@@ -248,7 +248,10 @@ dicomQuery.calledAETitle = "ANYAE"
 dicomQuery.host = "dicomserver.co.uk"
 dicomQuery.port = 11112
 dicomQuery.preferCGET = True
-dicomQuery.filters = {"Name":"Anon", "Modalities":"MR"}
+# Change filter parameters in the next line if
+# query does not find any series (try to use a different letter for "Name", such as "E")
+# or there are too many hits (try to make "Name" more specific, such as "An").
+dicomQuery.filters = {"Name":"A", "Modalities":"MR"}
 # temporary in-memory database for storing query results
 tempDb = ctk.ctkDICOMDatabase()
 tempDb.openDatabase("")
@@ -260,16 +263,17 @@ dicomRetrieve.callingAETitle = dicomQuery.callingAETitle
 dicomRetrieve.calledAETitle = dicomQuery.calledAETitle
 dicomRetrieve.host = dicomQuery.host
 dicomRetrieve.port = dicomQuery.port
-dicomRetrieve.setMoveDestinationAETitle("SLICER");
+dicomRetrieve.setMoveDestinationAETitle("SLICER")
 dicomRetrieve.setDatabase(slicer.dicomDatabase)
-for study in dicomQuery.studyInstanceUIDQueried:
-  print(f"ctkDICOMRetrieveTest2: Retrieving {study}")
+for study, series in dicomQuery.studyAndSeriesInstanceUIDQueried:
+  print(f"ctkDICOMRetrieveTest: Retrieving {study} - {series}")
   slicer.app.processEvents()
   if dicomQuery.preferCGET:
-    success = dicomRetrieve.getStudy(study)
+    success = dicomRetrieve.getSeries(study, series)
   else:
-    success = dicomRetrieve.moveStudy(study)
+    success = dicomRetrieve.moveSeries(study, series)
   print(f"  - {'success' if success else 'failed'}")
+
 slicer.dicomDatabase.updateDisplayedFields()
 ```
 
