@@ -22,6 +22,7 @@
 #define __qSlicerMainWindow_p_h
 
 // Qt includes
+#include <QPointer>
 #include <QQueue>
 class QToolButton;
 
@@ -78,7 +79,9 @@ public:
   QToolButton*                    LayoutButton;
   qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar;
   QStringList                     FavoriteModules;
-  qSlicerLayoutManager*           LayoutManager;
+  // In case of a custom CentralWidget is used, the layout manager may get deleted.
+  // Use QPointer to detect if the underlying object is deleted.
+  QPointer<qSlicerLayoutManager>  LayoutManager;
   QQueue<qSlicerIO::IOProperties> RecentlyLoadedFileProperties;
 
   QByteArray                      StartupState;

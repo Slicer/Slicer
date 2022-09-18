@@ -817,17 +817,21 @@ qSlicerMainWindow::~qSlicerMainWindow()
   // There is no need to render anything so remove the volumes from the views.
   // It is maybe not the best place to do that but I couldn't think of anywhere
   // else.
-  vtkCollection* sliceLogics = d->LayoutManager ? d->LayoutManager->mrmlSliceLogics() : nullptr;
-  for (int i = 0; i < sliceLogics->GetNumberOfItems(); ++i)
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  vtkCollection* sliceLogics = layoutManager ? layoutManager->mrmlSliceLogics() : nullptr;
+  if (sliceLogics)
     {
-    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetItemAsObject(i));
-    if (!sliceLogic)
+    for (int i = 0; i < sliceLogics->GetNumberOfItems(); ++i)
       {
-      continue;
+      vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetItemAsObject(i));
+      if (!sliceLogic)
+        {
+        continue;
+        }
+      sliceLogic->GetSliceCompositeNode()->SetReferenceBackgroundVolumeID(nullptr);
+      sliceLogic->GetSliceCompositeNode()->SetReferenceForegroundVolumeID(nullptr);
+      sliceLogic->GetSliceCompositeNode()->SetReferenceLabelVolumeID(nullptr);
       }
-    sliceLogic->GetSliceCompositeNode()->SetReferenceBackgroundVolumeID(nullptr);
-    sliceLogic->GetSliceCompositeNode()->SetReferenceForegroundVolumeID(nullptr);
-    sliceLogic->GetSliceCompositeNode()->SetReferenceLabelVolumeID(nullptr);
     }
 }
 
@@ -936,12 +940,19 @@ void qSlicerMainWindow::on_SDBSaveToDirectoryAction_triggered()
     std::cout << "No directory name chosen!" << std::endl;
     return;
     }
-  // pass in a screen shot
-  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
-  QImage screenShot = ctk::grabVTKWidget(widget);
+
   qSlicerIO::IOProperties properties;
+
+  // pass in a screen shot
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (layoutManager)
+    {
+    QWidget* widget = layoutManager->viewport();
+    QImage screenShot = ctk::grabVTKWidget(widget);
+    properties["screenShot"] = screenShot;
+    }
+
   properties["fileName"] = saveDirName;
-  properties["screenShot"] = screenShot;
   qSlicerCoreApplication::application()->coreIOManager()
     ->saveNodes(QString("SceneFile"), properties);
 }
@@ -1027,31 +1038,56 @@ void qSlicerMainWindow::on_ModuleHomeAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::setLayout(int layout)
 {
-  qSlicerApplication::application()->layoutManager()->setLayout(layout);
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    return;
+    }
+  layoutManager->setLayout(layout);
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLAbstractViewNode* qSlicerMainWindow::layoutMaximizedViewNode()
 {
-  return qSlicerApplication::application()->layoutManager()->maximizedViewNode();
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    return nullptr;
+    }
+  layoutManager->maximizedViewNode();
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::setLayoutMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
-  qSlicerApplication::application()->layoutManager()->setMaximizedViewNode(viewNode);
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    return;
+    }
+  layoutManager->setMaximizedViewNode(viewNode);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::setLayoutNumberOfCompareViewRows(int num)
 {
-  qSlicerApplication::application()->layoutManager()->setLayoutNumberOfCompareViewRows(num);
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    return;
+    }
+  layoutManager->setLayoutNumberOfCompareViewRows(num);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::setLayoutNumberOfCompareViewColumns(int num)
 {
-  qSlicerApplication::application()->layoutManager()->setLayoutNumberOfCompareViewColumns(num);
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    return;
+    }
+  layoutManager->setLayoutNumberOfCompareViewColumns(num);
 }
 
 //-----------------------------------------------------------------------------
@@ -1346,7 +1382,6 @@ void qSlicerMainWindow::setupMenuActions()
 void qSlicerMainWindow::on_LoadDICOMAction_triggered()
 {
   qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
-
   if (!layoutManager)
     {
     return;
@@ -1648,7 +1683,11 @@ void qSlicerMainWindow::restoreGUIState(bool force/*=false*/)
     {
     this->restoreGeometry(settings.value("geometry").toByteArray());
     this->restoreState(settings.value("windowState").toByteArray());
-    d->LayoutManager->setLayout(settings.value("layout").toInt());
+    qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+    if (layoutManager)
+      {
+      layoutManager->setLayout(settings.value("layout").toInt());
+      }
     }
   settings.endGroup();
   d->FavoriteModules << settings.value("Modules/FavoriteModules").toStringList();
@@ -1672,7 +1711,11 @@ void qSlicerMainWindow::saveGUIState(bool force/*=false*/)
     {
     settings.setValue("geometry", this->saveGeometry());
     settings.setValue("windowState", this->saveState());
-    settings.setValue("layout", d->LayoutManager->layout());
+    qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+    if (layoutManager)
+      {
+      settings.setValue("layout", layoutManager->layout());
+      }
     }
   settings.endGroup();
   qSlicerMainWindowPrivate::writeRecentlyLoadedFiles(d->RecentlyLoadedFileProperties);
