@@ -71,6 +71,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerExtensionsManagerModel : public QObject
   Q_PROPERTY(bool autoUpdateInstall READ autoUpdateInstall WRITE setAutoUpdateInstall NOTIFY autoUpdateSettingsChanged)
   /// Automatically install all dependencies (other extensions that the installed extension requires) when installing an extension.
   Q_PROPERTY(bool autoInstallDependencies READ autoInstallDependencies WRITE setAutoInstallDependencies NOTIFY autoUpdateSettingsChanged)
+  Q_PROPERTY(QStringList activeTasks READ activeTasks NOTIFY activeTasksChanged DESIGNABLE false)
 
 public:
   /// Superclass typedef
@@ -206,11 +207,11 @@ public:
   /// \return \c true if a previous check for updates has determined that an
   ///         update is available for the specified extension.
   ///
-  /// \sa checkForUpdates
+  /// \sa checkForExtensionsUpdates
   Q_INVOKABLE bool isExtensionUpdateAvailable(const QString& extensionName)const;
 
   /// Get list of extension names that has available updates.
-  /// \sa checkForUpdates
+  /// \sa checkForExtensionsUpdates
   QStringList availableUpdateExtensions()const;
 
   /// Test if extension is scheduled to be updated.
@@ -294,7 +295,7 @@ public:
   /// determine the extension name.
   ///
   /// \sa installExtension(const QString&,ExtensionMetadataType,const QString&)
-  Q_INVOKABLE bool installExtension(const QString &archiveFile, bool installDependencies = true);
+  Q_INVOKABLE bool installExtension(const QString &archiveFile, bool installDependencies = true, bool waitForCompletion = false);
 
   /// Install extension.
   ///
@@ -305,7 +306,8 @@ public:
   /// \sa isExtensionScheduledForUninstall, extensionScheduledForUninstall
   Q_INVOKABLE bool installExtension(const QString& extensionName,
                                     ExtensionMetadataType extensionMetadata,
-                                    const QString &archiveFile, bool installDependencies = true);
+                                    const QString &archiveFile, bool installDependencies = true,
+                                    bool waitForCompletion = false);
 
   /// \brief Uninstall \a extensionName
   /// It is only allowed if the extension is not loaded already.
@@ -370,13 +372,13 @@ public slots:
   /// \brief Download and install \a extensionId
   /// The \a extensionId corresponds to the identifier used on the extension server itself.
   /// \sa installExtension, scheduleExtensionForUninstall, uninstallScheduledExtensions
-  bool downloadAndInstallExtension(const QString& extensionId, bool installDependencies=true);
+  bool downloadAndInstallExtension(const QString& extensionId, bool installDependencies = true, bool waitForCompletion = false);
 
   /// \brief Download and install \a extensionId
   /// The \a extensionId corresponds to the identifier used on the extension server itself.
   /// This method is used by the extensions.slicer.org extension installer.
   /// \sa installExtension, scheduleExtensionForUninstall, uninstallScheduledExtensions
-  bool downloadAndInstallExtensionByName(const QString& extensionId, bool installDependencies=true);
+  bool downloadAndInstallExtensionByName(const QString& extensionName, bool installDependencies = true, bool waitForCompletion = false);
 
   /// \brief Schedule \a extensionName of uninstall
   /// Tell the application to uninstall \a extensionName when it will restart
@@ -397,7 +399,7 @@ public slots:
   /// then this cached information is used.
   /// Set waitForCompletion to true to make sure all metadata is up-to-date when the method returns.
   /// Returns false if waitForCompletion is set to true and metadata cannot be retrieved.
-  bool updateExtensionsMetadataFromServer(bool force=false, bool waitForCompletion=false);
+  bool updateExtensionsMetadataFromServer(bool force = false, bool waitForCompletion = false);
 
   /// Compares current extensions versions with versions available on the server.
   /// Emits extensionMetadataUpdated(QString extensionName) and emit extensionUpdatesAvailable(bool found) signals.
@@ -471,6 +473,11 @@ public slots:
   void setAutoInstallDependencies(bool enable);
   void setInteractive(bool value);
 
+  /// Wait for all active tasks to complete.
+  /// Set timeoutMsec to specify maximum time to wait for completion (set negative value to wait indefinitely).
+  /// Returns true if all tasks are completed.
+  Q_INVOKABLE bool waitForAllTasksCompletion(int timeoutMsec = -1)const;
+
 signals:
 
   void downloadStarted(QNetworkReply * reply);
@@ -533,6 +540,9 @@ signals:
 
   /// Emitted when autoUpdateCheck, autoUpdateInstall, or autoInstallDependencies properties are changed
   void autoUpdateSettingsChanged();
+
+  /// Emitted when background tasks are started or completed
+  void activeTasksChanged();
 
 protected slots:
 
