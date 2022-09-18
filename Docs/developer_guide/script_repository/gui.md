@@ -1126,14 +1126,9 @@ extensionName = 'SlicerIGT'
 em = slicer.app.extensionsManagerModel()
 if not em.isExtensionInstalled(extensionName):
   em.interactive = False  # prevent display of popups
-  em.updateExtensionsMetadataFromServer(True, True)
-  if not em.downloadAndInstallExtensionByName(extensionName, True):
+  em.updateExtensionsMetadataFromServer(True, True)  # update extension metadata from server now
+  if not em.downloadAndInstallExtensionByName(extensionName, True, True):  # install dependencies, wait for installation to finish
     raise ValueError(f"Failed to install {extensionName} extension")
-  # Wait for installation to complete (workaround until better API is available)
-  import time
-  while not em.isExtensionInstalled(extensionName):
-    slicer.app.processEvents()
-    time.sleep(0.1)
   slicer.util.restart()
 ```
 

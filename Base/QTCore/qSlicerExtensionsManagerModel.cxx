@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDir>
+#include <QElapsedTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
@@ -32,6 +33,7 @@
 #include <QStandardItemModel>
 #include <QTemporaryFile>
 #include <QTextStream>
+#include <QThread>
 #include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
@@ -1640,12 +1642,13 @@ qSlicerExtensionsManagerModelPrivate::downloadExtensionByName(const QString& ext
 
   task->setMetadata(extensionMetadata);
   emit q->downloadStarted(reply);
+  emit q->activeTasksChanged();
 
   return task;
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& extensionId, bool installDependencies/*=true*/)
+bool qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& extensionId, bool installDependencies/*=true*/, bool waitForCompletion/*=false*/)
 {
   Q_D(qSlicerExtensionsManagerModel);
   // Installing an extension requires metadata of all other extensions to be able to track down dependencies,
@@ -1670,7 +1673,7 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
     if (d->ExtensionsMetadataFromServer[extensionName].value("extension_id") == extensionId)
       {
       // found it
-      return this->downloadAndInstallExtensionByName(extensionName, installDependencies);
+      return this->downloadAndInstallExtensionByName(extensionName, installDependencies, waitForCompletion);
       }
     }
 
@@ -1680,7 +1683,7 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::downloadAndInstallExtensionByName(const QString& extensionName, bool installDependencies)
+bool qSlicerExtensionsManagerModel::downloadAndInstallExtensionByName(const QString& extensionName, bool installDependencies, bool waitForCompletion/*=false*/)
 {
   Q_D(qSlicerExtensionsManagerModel);
   QString error;
@@ -1700,6 +1703,10 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtensionByName(const QStr
           this, SLOT(onInstallDownloadFinished(qSlicerExtensionDownloadTask*)));
   connect(task, SIGNAL(progress(qSlicerExtensionDownloadTask*, qint64, qint64)),
           this, SLOT(onInstallDownloadProgress(qSlicerExtensionDownloadTask*, qint64, qint64)));
+  if (waitForCompletion)
+    {
+    this->waitForAllTasksCompletion();
+    }
   return true;
 }
 
@@ -1732,6 +1739,7 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
     {
     d->critical(tr("Failed downloading: %1").arg(downloadUrl.toString()));
     d->ActiveTasks.remove(task);
+    emit activeTasksChanged();
     return;
     }
 
@@ -1742,17 +1750,19 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
     {
     d->critical(tr("Could not create temporary file for writing: %1").arg(file.errorString()));
     d->ActiveTasks.remove(task);
+    emit activeTasksChanged();
     return;
     }
   file.write(reply->readAll());
   file.close();
   this->installExtension(extensionName, task->metadata(), file.fileName(), task->installDependencies());
   d->ActiveTasks.remove(task);
+  emit activeTasksChanged();
 }
 
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::installExtension(
-  const QString& archiveFile, bool installDependencies/*=true*/)
+  const QString& archiveFile, bool installDependencies/*=true*/, bool waitForCompletion/*=false*/)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
@@ -1772,7 +1782,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
       {
       const QFileInfo fi(fileName);
       return this->installExtension(fi.completeBaseName(),
-        ExtensionMetadataType(), archiveFile, installDependencies);
+        ExtensionMetadataType(), archiveFile, installDependencies, waitForCompletion);
       }
     }
 
@@ -1783,7 +1793,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::installExtension(
   const QString& extensionName, ExtensionMetadataType extensionMetadata,
-  const QString& archiveFile, bool withDependencies/*=true*/)
+  const QString& archiveFile, bool withDependencies/*=true*/, bool waitForCompletion/*=false*/)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
@@ -1976,6 +1986,12 @@ bool qSlicerExtensionsManagerModel::installExtension(
     msg += QString(" revision %1").arg(extensionRevision);
     }
   d->info(msg);
+
+  if (waitForCompletion)
+    {
+    // wait for pending downloadAndInstallExtensionByName() completions
+    this->waitForAllTasksCompletion();
+    }
 
   return success;
 }
@@ -2235,6 +2251,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
     {
     d->critical(tr("Failed downloading %1 extension from %2").arg(extensionName).arg(downloadUrl.toString()));
     d->ActiveTasks.remove(task);
+    emit activeTasksChanged();
     return;
     }
 
@@ -2250,6 +2267,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
       {
       d->critical(tr("Could not create .updates directory for update archive in %1").arg(this->extensionsInstallPath()));
       d->ActiveTasks.remove(task);
+      emit activeTasksChanged();
       return;
       }
 
@@ -2269,6 +2287,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
       {
       d->critical(tr("Could not write file: '%1' (%2)").arg(archivePath).arg(file.errorString()));
       d->ActiveTasks.remove(task);
+      emit activeTasksChanged();
       return;
       }
 
@@ -2280,6 +2299,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
     this->scheduleExtensionForUpdate(extensionName);
     }
   d->ActiveTasks.remove(task);
+  emit activeTasksChanged();
 }
 
 // --------------------------------------------------------------------------
@@ -3294,4 +3314,32 @@ QUrl qSlicerExtensionsManagerModel::extensionsListUrl()const
     }
 
   return url;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::waitForAllTasksCompletion(int timeoutMsec/*=-1*/)const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+
+  QElapsedTimer timer;
+
+  // busy wait loop - it should be fine, as it shuold not take long and
+  // and only rarely used (e.g., when a module installs some required extensions)
+  while (true)
+    {
+    if (d->ActiveTasks.empty())
+      {
+      return true;
+      }
+    if (timeoutMsec >= 0 && timer.elapsed() > timeoutMsec)
+      {
+      return false;
+      }
+    // Wait a bit to reduce CPU burden
+    if (QApplication::instance())
+      {
+      QApplication::instance()->processEvents(QEventLoop::ExcludeUserInputEvents);
+      QThread::msleep(10);
+      }
+    }
 }
