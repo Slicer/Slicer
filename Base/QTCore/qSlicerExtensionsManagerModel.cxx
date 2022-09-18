@@ -1570,8 +1570,10 @@ qSlicerExtensionsManagerModelPrivate::downloadExtensionByName(const QString& ext
   ExtensionMetadataType extensionMetadata = this->ExtensionsMetadataFromServer.value(extensionName);
   if (extensionMetadata.count() == 0 || !extensionMetadata.contains("extension_id"))
     {
-    // ensure extension metadata has been downloaded from the server and try again
-    q->updateExtensionsMetadataFromServer(false, true);
+    // Ensure extension metadata has been downloaded from the server and try again.
+    // We need to force the update because the extension might have been added a few hours ago
+    // (so the cached version of the extension metadata may not contain it).
+    q->updateExtensionsMetadataFromServer(true, true);
     extensionMetadata = this->ExtensionsMetadataFromServer.value(extensionName);
     }
   if (extensionMetadata.count() == 0)

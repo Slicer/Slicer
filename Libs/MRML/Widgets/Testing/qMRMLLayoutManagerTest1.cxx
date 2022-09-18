@@ -106,8 +106,6 @@ bool testLayoutManagerViewWidgetForThreeD(int line, qMRMLLayoutManager* layoutMa
 //------------------------------------------------------------------------------
 int qMRMLLayoutManagerTest1(int argc, char * argv[] )
 {
-  (void)checkViewArrangement; // Fix -Wunused-function warning
-
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();

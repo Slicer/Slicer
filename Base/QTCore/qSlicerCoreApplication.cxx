@@ -41,6 +41,7 @@
 //  - Slicer_SHARE_DIR
 //  - Slicer_USE_PYTHONQT
 //  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+//  - Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
 //  - Slicer_BUILD_WIN32_CONSOLE
 //  - Slicer_BUILD_CLI_SUPPORT
 //  - Slicer_BUILD_I18N_SUPPORT
@@ -70,6 +71,9 @@
 #endif
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 # include "qSlicerExtensionsManagerModel.h"
+#endif
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+# include "qSlicerApplicationUpdateManager.h"
 #endif
 #include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerModuleFactoryManager.h"
@@ -472,8 +476,9 @@ void qSlicerCoreApplicationPrivate::init()
 
   if (model->autoUpdateCheck())
     {
-    // The latest metadata updates will not be available yet, but next time the application
-    // is started.
+    // The latest metadata updates may not be available yet (because
+    // model->updateExtensionsMetadataFromServer() has just been called)
+    // but next time the application is started the metadata will be up-to-date.
     model->checkForExtensionsUpdates();
     }
 
@@ -488,6 +493,16 @@ void qSlicerCoreApplicationPrivate::init()
   QString extensionList = model->installedExtensions().join(";");
   scene->SetExtensions(extensionList.toStdString().c_str());
 
+#endif
+
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+  qSlicerApplicationUpdateManager* applicationUpdateManager = new qSlicerApplicationUpdateManager(q);
+  applicationUpdateManager->setSlicerRequirements(q->revision(), q->os(), q->arch());
+  q->setapplicationUpdateManager(applicationUpdateManager);
+  if (applicationUpdateManager->autoUpdateCheck())
+    {
+    applicationUpdateManager->checkForUpdate();
+    }
 #endif
 
   if (q->userSettings()->value("Internationalization/Enabled").toBool())
@@ -1580,6 +1595,24 @@ qSlicerExtensionsManagerModel* qSlicerCoreApplication::extensionsManagerModel()c
 {
   Q_D(const qSlicerCoreApplication);
   return d->ExtensionsManagerModel.data();
+}
+
+#endif
+
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setapplicationUpdateManager(qSlicerApplicationUpdateManager* updateManager)
+{
+  Q_D(qSlicerCoreApplication);
+  d->ApplicationUpdateManager = QSharedPointer<qSlicerApplicationUpdateManager>(updateManager);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerApplicationUpdateManager* qSlicerCoreApplication::applicationUpdateManager()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->ApplicationUpdateManager.data();
 }
 
 #endif

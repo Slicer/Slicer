@@ -66,6 +66,8 @@
 #  define Slicer_EXTENSIONS_DIRNAME "@Slicer_EXTENSIONS_DIRNAME@"
 #endif
 
+#cmakedefine Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+
 #cmakedefine Slicer_BUILD_DICOM_SUPPORT
 #cmakedefine Slicer_BUILD_DIFFUSION_SUPPORT
 #cmakedefine Slicer_BUILD_I18N_SUPPORT
