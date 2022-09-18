@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>382</width>
+    <width>463</width>
     <height>818</height>
    </rect>
   </property>
@@ -54,41 +54,7 @@
       <property name="spacing">
        <number>4</number>
       </property>
-      <item row="3" column="0">
-       <widget class="QPushButton" name="EditApplicationSettingsButton">
-        <property name="text">
-         <string>Customize Slicer</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../qSlicerWelcomeModule.qrc">
-          <normaloff>:/Images/SlicerAdvancedGear-Original.png</normaloff>:/Images/SlicerAdvancedGear-Original.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QPushButton" name="ExploreLoadedDataPushButton">
-        <property name="text">
-         <string>Explore Added Data</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../qSlicerWelcomeModule.qrc">
-          <normaloff>:/Images/WelcomeSubjectHierarchy.png</normaloff>:/Images/WelcomeSubjectHierarchy.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>21</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
+      <item row="3" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QPushButton" name="OpenExtensionsManagerButton">
@@ -129,7 +95,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0" colspan="2">
+      <item row="2" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QPushButton" name="LoadNonDicomDataButton">
@@ -154,6 +120,50 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item row="4" column="0">
+       <widget class="QPushButton" name="EditApplicationSettingsButton">
+        <property name="text">
+         <string>Customize Slicer</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerWelcomeModule.qrc">
+          <normaloff>:/Images/SlicerAdvancedGear-Original.png</normaloff>:/Images/SlicerAdvancedGear-Original.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="ExploreLoadedDataPushButton">
+        <property name="text">
+         <string>Explore Added Data</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerWelcomeModule.qrc">
+          <normaloff>:/Images/WelcomeSubjectHierarchy.png</normaloff>:/Images/WelcomeSubjectHierarchy.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>21</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QPushButton" name="ApplicationUpdateAvailableButton">
+        <property name="toolTip">
+         <string>A new version of the application is available. Click the button to go to the download page.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -305,17 +315,20 @@
    </item>
    <item>
     <widget class="ctkCollapsibleButton" name="AutomaticUpdatesCollapsibleWidget">
+     <property name="toolTip">
+      <string>Click the button to check for updates now. Note that anonymized usage statistics will be recorded.</string>
+     </property>
      <property name="text">
-      <string>Automatic Updates</string>
+      <string>Updates</string>
      </property>
      <property name="collapsed">
       <bool>false</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <property name="spacing">
-       <number>12</number>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="horizontalSpacing">
+       <number>6</number>
       </property>
-      <property name="leftMargin">
+      <property name="verticalSpacing">
        <number>6</number>
       </property>
       <property name="topMargin">
@@ -327,51 +340,69 @@
       <property name="bottomMargin">
        <number>6</number>
       </property>
-      <item>
-       <widget class="QLabel" name="label_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Check the checkbox on the button to automatically check for updates.
-Note that anonymized usage statistics will be recorded.</string>
+         <string>Check for updates: </string>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="ctkCheckablePushButton" name="CheckForUpdatesButton">
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="CheckForUpdatesAutomaticallyCheckBox">
+          <property name="toolTip">
+           <string>Periodically check for updates. Note that anonymized usage statistics will be recorded.</string>
+          </property>
+          <property name="text">
+           <string>Automatically</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="CheckForUpdatesNowButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Click the button to check for updates now. Note that anonymized usage statistics will be recorded.</string>
+          </property>
+          <property name="text">
+           <string>Check now</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Application update: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="ApplicationUpdateStatusButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>Click the button to check for updates once. Enable the checkbox for automatic update checks.</string>
-        </property>
-        <property name="text">
-         <string>Check for updates</string>
-        </property>
-        <property name="checkBoxControlsButtonToggleState">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="UpdatesStatusLabel">
-        <property name="text">
          <string/>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="UpdatesFoundOpenExtensionsManagerButton">
-        <property name="toolTip">
-         <string>Raise the &quot;Extensions Manager&quot; wizard that allows to find, download and install Slicer extensions.&lt;br&gt;&lt;br&gt;An extension is a delivery package bundling together one or more Slicer modules.&lt;br&gt;&lt;br&gt;After installing an extension, the associated modules will be available in the module selector.</string>
-        </property>
         <property name="text">
-         <string> Install Extensions</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-          <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
+         <string>No information is available.</string>
         </property>
         <property name="iconSize">
          <size>
@@ -381,7 +412,33 @@ Note that anonymized usage statistics will be recorded.</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Extension updates: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="ExtensionUpdatesStatusButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Raise the &quot;Extensions Manager&quot; wizard that allows to find, download and install Slicer extensions.&lt;br&gt;&lt;br&gt;An extension is a delivery package bundling together one or more Slicer modules.&lt;br&gt;&lt;br&gt;After installing an extension, the associated modules will be available in the module selector.</string>
+        </property>
+        <property name="text">
+         <string>No information is available.</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
        <spacer name="verticalSpacer_4">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -470,11 +527,6 @@ Note that anonymized usage statistics will be recorded.</string>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkCheckablePushButton</class>
-   <extends>ctkPushButton</extends>
-   <header>ctkCheckablePushButton.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
@@ -484,11 +536,6 @@ Note that anonymized usage statistics will be recorded.</string>
    <class>ctkFittedTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>ctkFittedTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkPushButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkPushButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

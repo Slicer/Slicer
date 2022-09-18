@@ -282,6 +282,9 @@ mark_as_superbuild(Slicer_BUILD_QT_DESIGNER_PLUGINS)
 option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extensions manager" ON)
 mark_as_superbuild(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
 
+option(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT "Build Slicer with application update support" ON)
+mark_as_superbuild(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
+
 option(Slicer_BUILD_MULTIMEDIA_SUPPORT "Build Slicer with Multimedia support" ON)
 mark_as_superbuild(Slicer_BUILD_MULTIMEDIA_SUPPORT)
 

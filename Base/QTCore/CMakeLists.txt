@@ -40,7 +40,7 @@ endif()
 #
 # qRestAPI
 #
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT OR Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
   find_package(qRestAPI REQUIRED)
   include(${qRestAPI_USE_FILE})
 endif()
@@ -120,6 +120,13 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     )
 endif()
 
+if(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
+  list(APPEND KIT_SRCS
+    qSlicerApplicationUpdateManager.cxx
+    qSlicerApplicationUpdateManager.h
+    )
+endif()
+
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_SRCS
     qSlicerScriptedFileReader.cxx
@@ -162,6 +169,12 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     )
 endif()
 
+if(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
+  list(APPEND KIT_MOC_SRCS
+    qSlicerApplicationUpdateManager.h
+    )
+endif()
+
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_MOC_SRCS
     qSlicerScriptedFileReader.h
@@ -188,7 +201,7 @@ if(Slicer_BUILD_DICOM_SUPPORT)
     )
 endif()
 
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT OR Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
   list(APPEND KIT_target_libraries
     qRestAPI
     )

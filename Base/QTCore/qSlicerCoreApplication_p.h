@@ -184,6 +184,10 @@ public:
   QSharedPointer<qSlicerExtensionsManagerModel> ExtensionsManagerModel;
 #endif
 
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+  QSharedPointer<qSlicerApplicationUpdateManager> ApplicationUpdateManager;
+#endif
+
   QProcessEnvironment                         Environment;
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT

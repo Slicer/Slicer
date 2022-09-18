@@ -51,6 +51,9 @@ class ctkPythonConsole;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 class qSlicerExtensionsManagerModel;
 #endif
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+class qSlicerApplicationUpdateManager;
+#endif
 class vtkDataIOManagerLogic;
 class vtkSlicerApplicationLogic;
 class vtkMRMLAbstractLogic;
@@ -356,6 +359,15 @@ public:
   /// Set the extensions manager model
   /// \note qSlicerCoreApplication takes ownership of the object
   void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
+#endif
+
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+  /// Get extensions manager model
+  Q_INVOKABLE qSlicerApplicationUpdateManager* applicationUpdateManager()const;
+
+  /// Set the application updates model
+  /// \note qSlicerCoreApplication takes ownership of the object
+  void setapplicationUpdateManager(qSlicerApplicationUpdateManager* model);
 #endif
 
   /// Get errorLogModel
