@@ -1,6 +1,7 @@
 set(modules
   CropVolumeSequence
   DataProbe
+  ImportItkSnapLabel
   PerformanceTests
   SampleData
   ScreenCapture

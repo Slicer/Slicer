@@ -140,7 +140,9 @@ Surface or volumetric meshes.
 
 - **Text** (.txt, .xml., json)
 - **Table** (.csv, .tsv)
-- [**Color table**](https://www.slicer.org/wiki/Documentation/Nightly/Modules/Colors#File_format) (.ctbl, .txt)
+- Color tables:
+  - [**Slicer color table**](https://www.slicer.org/wiki/Documentation/Nightly/Modules/Colors#File_format) (.ctbl, .txt)
+  - ITK-Snap label description file (.txt, .label) (reading only) This can be used for loading segmentations that were created in ITK-Snap. The color table must be loaded in the scene first. Then, when the label image file is loaded then in `Add Data` window select `Segmentation` in the `Description` column and select the loaded color table in the `Color node` column.
 - [**Volume rendering properties**](../developer_guide/modules/volumerendering.md) (.vp)
 - [**Volume rendering shader properties**](../developer_guide/modules/volumerendering.md) (.sp)
 - **Terminology** (.term.json, .json): dictionary of standard DICOM or other terms

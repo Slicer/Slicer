@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>322</width>
-    <height>20</height>
+    <width>394</width>
+    <height>22</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,15 +53,15 @@
     </widget>
    </item>
    <item>
-    <widget class="qMRMLNodeComboBox" name="ColorNodeSelector">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <widget class="qMRMLColorTableComboBox" name="ColorNodeSelector">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="toolTip">
+      <string>Color table node used to display this volume.</string>
      </property>
      <property name="nodeTypes">
-      <stringlist notr="true">
+      <stringlist>
        <string>vtkMRMLColorTableNode</string>
       </stringlist>
      </property>
@@ -80,9 +80,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLColorTableComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLColorTableComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -104,8 +110,8 @@
      <y>9</y>
     </hint>
     <hint type="destinationlabel">
-     <x>276</x>
-     <y>9</y>
+     <x>242</x>
+     <y>10</y>
     </hint>
    </hints>
   </connection>
