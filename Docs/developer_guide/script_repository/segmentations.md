@@ -3,8 +3,14 @@
 ### Load a 3D image or model file as segmentation
 
 ```python
+# Load segmentation from .seg.nrrd file (includes segment names and colors)
 slicer.util.loadSegmentation("c:/tmp/tmp/Segmentation.nrrd")
-slicer.util.loadSegmentation("c:/tmp/tmp/Segmentation.nii")
+
+# Create segmentation from a NIFIT + color table file
+colorNode = slicer.util.loadColorTable('c:/tmp/tmp/Segmentation-label_ColorTable.ctbl')
+slicer.util.loadSegmentation("c:/tmp/tmp/Segmentation.nii", {'colorNodeID': colorNode.GetID()})
+
+# Create segmentation from a STL file
 slicer.util.loadSegmentation("c:/tmp/Segment_1.stl")
 ```
 

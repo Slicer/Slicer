@@ -831,15 +831,21 @@ def loadScalarOverlay(filename, modelNodeID, returnNode=False):
     return loadNodeFromFile(filename, 'ScalarOverlayFile', {'modelNodeId': modelNodeID}, returnNode)
 
 
-def loadSegmentation(filename, returnNode=False):
+def loadSegmentation(filename, properties={}, returnNode=False):
     """Load node from file.
 
     :param filename: full path of the file to load.
+    :param properties: dict object with any of the following keys
+      - name: this name will be used as node name for the loaded volume
+      - autoOpacities: automatically make large segments semi-transparent to make segments inside more visible
+        (only used when loading segmentation from image file)
+      - colorNodeID: use a color node (that already in the scene) to display the image
+        (only used when loading segmentation from image file)
     :param returnNode: Deprecated.
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'SegmentationFile', {}, returnNode)
+    return loadNodeFromFile(filename, 'SegmentationFile', properties, returnNode)
 
 
 def loadTransform(filename, returnNode=False):
@@ -898,7 +904,7 @@ def loadVolume(filename, properties={}, returnNode=False):
     """Load node from file.
 
     :param filename: full path of the file to load.
-    :param properties:
+    :param properties: dict object with any of the following keys
       - name: this name will be used as node name for the loaded volume
       - labelmap: interpret volume as labelmap
       - singleFile: ignore all other files in the directory
@@ -906,6 +912,7 @@ def loadVolume(filename, properties={}, returnNode=False):
       - discardOrientation: ignore image axis directions
       - autoWindowLevel: compute window/level automatically
       - show: display volume in slice viewers after loading is completed
+      - colorNodeID: use a color node (that already in the scene) to display the image
       - fileNames: list of filenames to load the volume from
     :param returnNode: Deprecated.
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -919,7 +926,7 @@ def loadSequence(filename, properties={}):
     """Load sequence (4D data set) from file.
 
     :param filename: full path of the file to load.
-    :param properties:
+    :param properties: dict object with any of the following keys
       - name: this name will be used as node name for the loaded volume
       - show: display volume in slice viewers after loading is completed
       - colorNodeID: color node to set in the proxy nodes's display node
