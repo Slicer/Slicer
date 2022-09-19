@@ -788,8 +788,12 @@ void vtkSlicerVolumeRenderingLogic::CopyLabelMapDisplayToVolumeRenderingDisplayN
 void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   // Resize the ROI to fit the volume
+  if (!vspNode)
+    {
+    vtkErrorMacro("vtkSlicerVolumeRenderingLogic::FitROIToVolume failed: invalid input displat node");
+    return;
+    }
   vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
-
   if (!volumeNode)
     {
     return;
