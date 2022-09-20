@@ -178,14 +178,8 @@ void qSlicerApplicationUpdateManagerTester::testUpdateCheck()
   updateManager.checkForUpdate(/* force= */ true, /* waitForCompletion= */ true);
 
   QCOMPARE(spyUpdateCheckCompleted.count(), 1);
-  if (expectedIsUpdateAvailable)
-    {
-    QCOMPARE(spyUpdateAvailable.count(), 1);
-    }
-  else
-    {
-    QCOMPARE(spyUpdateAvailable.count(), 0);
-    }
+  QCOMPARE(spyUpdateAvailable.count(), 1);
+  QCOMPARE(updateManager.isUpdateAvailable(), expectedIsUpdateAvailable);
   QCOMPARE(updateManager.isUpdateAvailable(), expectedIsUpdateAvailable);
   QCOMPARE(updateManager.latestReleaseVersion(), expectedLatestReleaseVersion);
   QCOMPARE(updateManager.latestReleaseRevision(), expectedLatestReleaseRevision);
