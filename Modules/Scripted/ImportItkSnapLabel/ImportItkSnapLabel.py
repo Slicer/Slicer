@@ -1,8 +1,8 @@
 import os
-import unittest
 import logging
-import vtk, qt, ctk, slicer
+import slicer
 from slicer.ScriptedLoadableModule import *
+
 
 #
 # ImportItkSnapLabel
@@ -19,6 +19,7 @@ class ImportItkSnapLabel(ScriptedLoadableModule):
         self.parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab."""
         # don't show this module - it is only for registering a reader
         parent.hidden = True
+
 
 #
 # Reader plugin
@@ -64,27 +65,26 @@ class ImportItkSnapLabelFileReader(object):
             colorNode.SetName(name)
             colorNode.SetAttribute("Category", "Segmentation")
             colorNode.SetTypeToUser()
-            colorNode.SetNumberOfColors(maxColorIndex+1)
+            colorNode.SetNumberOfColors(maxColorIndex + 1)
             # The color node is a procedural color node, which is saved using a storage node.
             # Hidden nodes are not saved if they use a storage node, therefore
             # the color node must be visible.
             colorNode.SetHideFromEditors(False)
 
-            colorNode.SetNamesInitialised(True) # prevent automatic color name generation
+            colorNode.SetNamesInitialised(True)  # prevent automatic color name generation
             for color in colors:
                 colorNode.SetColor(color['index'], color['name'], color['r'], color['g'], color['b'], color['a'])
 
             slicer.mrmlScene.AddNode(colorNode)
 
         except Exception as e:
-            logging.error('Failed to load file: '+str(e))
+            logging.error('Failed to load file: ' + str(e))
             import traceback
             traceback.print_exc()
             return False
 
         self.parent.loadedNodes = [colorNode.GetID()]
         return True
-
 
     @staticmethod
     def parseLabelFile(filename):
@@ -125,9 +125,9 @@ class ImportItkSnapLabelFileReader(object):
                 if colorLine:
                     fields = colorLine.groups()
                     color = {'index': int(fields[0]),
-                        'r': int(fields[1])/255.0, 'g': int(fields[2])/255.0, 'b': int(fields[3])/255.0, 'a': float(fields[4]),
-                        'labelVis': int(fields[5]) != 0, 'meshVis': int(fields[6]) != 0,
-                        'name': fields[7]}
+                             'r': int(fields[1]) / 255.0, 'g': int(fields[2]) / 255.0, 'b': int(fields[3]) / 255.0, 'a': float(fields[4]),
+                             'labelVis': int(fields[5]) != 0, 'meshVis': int(fields[6]) != 0,
+                             'name': fields[7]}
                     colors.append(color)
                     continue
                 raise ValueError(f"Syntax error in line {lineIndex}")
