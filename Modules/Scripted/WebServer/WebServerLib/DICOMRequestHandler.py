@@ -104,7 +104,7 @@ class DICOMRequestHandler(object):
                     studyDataset.SpecificCharacterSet = [u'ISO_IR 100']
                     studyDataset.StudyDate = dataset.StudyDate
                     studyDataset.StudyTime = dataset.StudyTime
-                    studyDataset.StudyDescription = dataset.StudyDescription
+                    studyDataset.StudyDescription = dataset.StudyDescription if hasattr(studyDataset, 'StudyDescription') else None
                     studyDataset.StudyInstanceUID = dataset.StudyInstanceUID
                     studyDataset.AccessionNumber = dataset.AccessionNumber
                     studyDataset.InstanceAvailability = u'ONLINE'
@@ -116,7 +116,7 @@ class DICOMRequestHandler(object):
                     studyDataset.PatientID = dataset.PatientID
                     studyDataset.PatientBirthDate = dataset.PatientBirthDate
                     studyDataset.PatientSex = dataset.PatientSex
-                    studyDataset.StudyID = dataset.StudyID
+                    studyDataset.StudyID = dataset.StudyID if hasattr(studyDataset, 'StudyID') else None
                     studyDataset[self.numberOfStudyRelatedSeriesTag] = pydicom.dataelem.DataElement(
                         self.numberOfStudyRelatedSeriesTag, "IS", str(numberOfStudyRelatedSeries))
                     studyDataset[self.numberOfStudyRelatedInstancesTag] = pydicom.dataelem.DataElement(
