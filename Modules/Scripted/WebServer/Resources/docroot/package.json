@@ -1,0 +1,16 @@
+{
+    "name": "viewer-script-tag",
+    "version": "1.0.0",
+    "description": "",
+    "main": "db.html",
+    "scripts": {
+      "start": "parcel db.html --open",
+      "build": "parcel build db.html"
+    },
+    "dependencies": {},
+    "devDependencies": {
+      "@babel/core": "7.2.0",
+      "parcel-bundler": "^1.6.1"
+    },
+    "keywords": []
+  }
