@@ -49,13 +49,6 @@ qMRMLViewControllerBarPrivate::qMRMLViewControllerBarPrivate(
   : QObject(nullptr)
   , q_ptr(&object)
 {
-  this->PinButton = nullptr;
-  this->ViewLabel = nullptr;
-  this->PopupWidget = nullptr;
-  this->BarLayout = nullptr;
-  this->BarWidget = nullptr;
-  this->ControllerLayout = nullptr;
-  this->LayoutBehavior = qMRMLViewControllerBar::Popup;
 }
 
 //---------------------------------------------------------------------------
@@ -371,8 +364,8 @@ void qMRMLViewControllerBar::updateWidgetFromMRMLView()
     d->ViewNode->GetMaximizedState(isMaximized, canBeMaximized);
     }
 
-  d->MaximizeViewButton->setVisible(canBeMaximized);
-  if (canBeMaximized)
+  d->MaximizeViewButton->setVisible(canBeMaximized && d->ShowMaximizeViewButton);
+  if (canBeMaximized && d->ShowMaximizeViewButton)
     {
     if (isMaximized)
       {
@@ -385,4 +378,19 @@ void qMRMLViewControllerBar::updateWidgetFromMRMLView()
       d->MaximizeViewButton->setIcon(d->ViewMaximizeIcon);
       }
     }
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLViewControllerBar::showMaximizeViewButton()const
+{
+  Q_D(const qMRMLViewControllerBar);
+  return d->ShowMaximizeViewButton;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLViewControllerBar::setShowMaximizeViewButton(bool show)
+{
+  Q_D(qMRMLViewControllerBar);
+  d->ShowMaximizeViewButton = show;
+  this->updateWidgetFromMRMLView();
 }

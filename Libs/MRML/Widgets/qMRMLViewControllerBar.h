@@ -57,6 +57,7 @@ class QMRML_WIDGETS_EXPORT qMRMLViewControllerBar
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_PROPERTY(bool showMaximizeViewButton READ showMaximizeViewButton WRITE setShowMaximizeViewButton)
 
 public:
   /// Superclass typedef
@@ -92,8 +93,12 @@ public:
   /// Label that displays the view's name.
   Q_INVOKABLE QLabel* viewLabel();
 
+  bool showMaximizeViewButton()const;
+
 public slots:
   void maximizeView();
+
+  void setShowMaximizeViewButton(bool show);
 
 protected slots:
   virtual void updateWidgetFromMRMLView();
