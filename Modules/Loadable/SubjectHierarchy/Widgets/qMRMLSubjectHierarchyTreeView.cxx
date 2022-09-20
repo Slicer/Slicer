@@ -250,22 +250,22 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
 
   this->TransformInteractionInViewAction = new QAction("Interaction in 3D view", this->TransformMenu);
   this->TransformInteractionInViewAction->setCheckable(true);
-  this->TransformInteractionInViewAction->setToolTip(q->tr("Allow interactively modify the transform in 3D views"));
+  this->TransformInteractionInViewAction->setToolTip(qMRMLSubjectHierarchyTreeView::tr("Allow interactively modify the transform in 3D views"));
   this->TransformMenu->addAction(this->TransformInteractionInViewAction);
   QObject::connect(this->TransformInteractionInViewAction, SIGNAL(toggled(bool)), q, SLOT(onTransformInteractionInViewToggled(bool)));
 
   this->TransformEditPropertiesAction = new QAction("Edit transform properties...", this->TransformMenu);
-  this->TransformEditPropertiesAction->setToolTip(q->tr("Edit properties of the current transform"));
+  this->TransformEditPropertiesAction->setToolTip(qMRMLSubjectHierarchyTreeView::tr("Edit properties of the current transform"));
   this->TransformMenu->addAction(this->TransformEditPropertiesAction);
   QObject::connect(this->TransformEditPropertiesAction, SIGNAL(triggered()), q, SLOT(onTransformEditProperties()));
 
   this->TransformHardenAction = new QAction("Harden transform", this->TransformMenu);
-  this->TransformHardenAction->setToolTip(q->tr("Harden current transform on this node and all children nodes"));
+  this->TransformHardenAction->setToolTip(qMRMLSubjectHierarchyTreeView::tr("Harden current transform on this node and all children nodes"));
   this->TransformMenu->addAction(this->TransformHardenAction);
   QObject::connect(this->TransformHardenAction, SIGNAL(triggered()), this->Model, SLOT(onHardenTransformOnBranchOfCurrentItem()));
 
   this->CreateNewTransformAction = new QAction("Create new transform", this->TransformMenu);
-  this->CreateNewTransformAction->setToolTip(q->tr("Create and apply new transform"));
+  this->CreateNewTransformAction->setToolTip(qMRMLSubjectHierarchyTreeView::tr("Create and apply new transform"));
   this->TransformMenu->addAction(this->CreateNewTransformAction);
   QObject::connect(this->CreateNewTransformAction, SIGNAL(triggered()), q, SLOT(onCreateNewTransform()));
 
@@ -273,7 +273,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
 
   this->NoTransformAction = new QAction("None", this->TransformMenu);
   this->NoTransformAction->setCheckable(true);
-  this->NoTransformAction->setToolTip(q->tr("Remove parent transform from all the nodes in this branch"));
+  this->NoTransformAction->setToolTip(qMRMLSubjectHierarchyTreeView::tr("Remove parent transform from all the nodes in this branch"));
   this->TransformMenu->addAction(this->NoTransformAction);
   QObject::connect(this->NoTransformAction, SIGNAL(triggered()), this->Model, SLOT(onRemoveTransformsFromBranchOfCurrentItem()));
 

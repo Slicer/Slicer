@@ -198,8 +198,9 @@ qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMark
 {
   Q_Q(qSlicerMarkupsModuleWidget);
 
-  this->columnLabels << q->tr("Selected") << q->tr("Locked") << q->tr("Visible")
-    << q->tr("Name") << q->tr("Description") << q->tr("R") << q->tr("A") << q->tr("S") << q->tr("Position");
+  this->columnLabels << qSlicerMarkupsModuleWidget::tr("Selected") << qSlicerMarkupsModuleWidget::tr("Locked") << qSlicerMarkupsModuleWidget::tr("Visible")
+    << qSlicerMarkupsModuleWidget::tr("Name") << qSlicerMarkupsModuleWidget::tr("Description") << qSlicerMarkupsModuleWidget::tr("R")
+    << qSlicerMarkupsModuleWidget::tr("A") << qSlicerMarkupsModuleWidget::tr("S") << qSlicerMarkupsModuleWidget::tr("Position");
 
   this->newMarkupWithCurrentDisplayPropertiesAction = nullptr;
   this->visibilityMenu = nullptr;

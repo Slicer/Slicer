@@ -110,10 +110,11 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
       {
       vtkSlicerVolumesLogic::VolumeDisplayPreset preset = volumesModuleLogic->GetVolumeDisplayPreset(presetId);
       QString presetIdStr = QString::fromStdString(presetId);
-      QString presetName = q->tr(preset.name.c_str());
+      QString presetName = qSlicerScalarVolumeDisplayWidget::tr(preset.name.c_str());
       QToolButton* presetButton = new QToolButton();
       presetButton->setObjectName(presetIdStr);
-      presetButton->setToolTip(q->tr(preset.name.c_str()) + "\n" + q->tr(preset.description.c_str()));
+      presetButton->setToolTip(qSlicerScalarVolumeDisplayWidget::tr(preset.name.c_str()) + "\n"
+        + qSlicerScalarVolumeDisplayWidget::tr(preset.description.c_str()));
       if (!preset.icon.empty())
         {
         presetButton->setIcon(QIcon(QString::fromStdString(preset.icon)));
