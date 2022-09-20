@@ -93,7 +93,7 @@ void qSlicerModuleFinderDialogPrivate::init()
   this->ModuleListView->viewport()->installEventFilter(q);
 
   QPushButton* okButton = this->ButtonBox->button(QDialogButtonBox::Ok);
-  okButton->setText(q->tr("Switch to module"));
+  okButton->setText(qSlicerModuleFinderDialog::tr("Switch to module"));
 
   if (filterModel->rowCount() > 0)
     {
