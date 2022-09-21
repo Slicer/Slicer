@@ -36,7 +36,7 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "05adf2d1f617c2c4b206cb119f72cbb0904158e4" # post-v5.3rc04 2022-08-30
+    "62eb5ca265c56a5fb447e1e167b44411a9c38992" # post-v5.3rc04 2022-09-19
     QUIET
     )
 
