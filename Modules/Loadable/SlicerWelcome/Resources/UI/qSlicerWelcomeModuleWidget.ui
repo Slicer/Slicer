@@ -322,7 +322,7 @@
       <string>Updates</string>
      </property>
      <property name="collapsed">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <layout class="QFormLayout" name="formLayout">
       <property name="horizontalSpacing">
@@ -355,7 +355,7 @@
         <item>
          <widget class="QCheckBox" name="CheckForUpdatesAutomaticallyCheckBox">
           <property name="toolTip">
-           <string>Periodically check for updates. Note that anonymized usage statistics will be recorded.</string>
+           <string>Periodically check for updates. Note that anonymized usage statistics will be recorded. If the box appears as partially checked it means that automatic updates are only checked for the application or for extensions, but not both - click the checkbox to enable/disable all automatic update checks.</string>
           </property>
           <property name="text">
            <string>Automatically</string>
