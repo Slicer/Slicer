@@ -25,6 +25,10 @@
 #include "qSlicerApplication.h"
 #include "ui_qSlicerAboutDialog.h"
 
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+#include "qSlicerApplicationUpdateManager.h"
+#endif
+
 //-----------------------------------------------------------------------------
 class qSlicerAboutDialogPrivate: public Ui_qSlicerAboutDialog
 {
@@ -54,8 +58,23 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
     d->CreditsTextBrowser->append(slicer->applicationVersion() + " " + "r" + slicer->revision()
       + " / " + slicer->repositoryRevision());
     d->CreditsTextBrowser->append("");
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+    if (qSlicerApplicationUpdateManager::isApplicationUpdateEnabled())
+      {
+      qSlicerApplicationUpdateManager* applicationUpdateManager = slicer->applicationUpdateManager();
+      if (applicationUpdateManager && applicationUpdateManager->isUpdateAvailable())
+        {
+        QString appUpdateText = tr("New application version is available: %1").arg(applicationUpdateManager->latestReleaseVersion());
+        d->CreditsTextBrowser->insertHtml(QString("<b><a href=\"%1\"><font color=\"orange\">%2</font></a></b>")
+          .arg(applicationUpdateManager->applicationDownloadPageUrl().toString())
+          .arg(appUpdateText));
+        d->CreditsTextBrowser->append("");
+        }
+      }
+#else
+    d->CreditsTextBrowser->insertHtml("Visit the <a href=\"https://download.slicer.org/\">download site</a> to check if a new version is available.");
     d->CreditsTextBrowser->append("");
-    d->CreditsTextBrowser->insertHtml("<a href=\"https://download.slicer.org/\">Download</a> a newer version<br />");
+#endif
     d->CreditsTextBrowser->append("");
     }
   else

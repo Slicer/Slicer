@@ -366,13 +366,12 @@ bool qSlicerApplicationUpdateManager::onReleaseInfoQueryFinished(const QUuid& re
       success = true;
       }
 
-    //releaseInfo = qRestAPI::qVariantMapFlattened(restResult.data()->response);
     success = success && qSlicerApplicationUpdateManagerPrivate::validateReleaseInfo(releaseInfo);
     }
   if (!success)
     {
-    // Query failed
-    qWarning() << Q_FUNC_INFO << "Failed to download application update information from server";
+    // Query failed, probably no network connection.
+    // Do not pollute the application output with a warning or error message.
     d->ReleaseInfoQueryUID = QUuid();
     this->refreshUpdateAvailable();
     emit updateCheckCompleted(false);
