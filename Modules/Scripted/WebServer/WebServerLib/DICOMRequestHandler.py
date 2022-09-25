@@ -37,7 +37,10 @@ class DICOMRequestHandler(object):
         contentType = b'text/plain'
         responseBody = None
         splitPath = parsedURL.path.split(b'/')
-        if len(splitPath) > 4 and splitPath[4].startswith(b"series"):
+        if len(splitPath) > 6 and splitPath[6].startswith(b"instances"):
+            self.logMessage("handling instances")
+            contentType, responseBody = self.handleInstances(parsedURL, requestBody)
+        elif len(splitPath) > 4 and splitPath[4].startswith(b"series"):
             self.logMessage("handling series")
             contentType, responseBody = self.handleSeries(parsedURL, requestBody)
         elif len(splitPath) > 2 and splitPath[2].startswith(b"studies"):
@@ -142,6 +145,59 @@ class DICOMRequestHandler(object):
             if responseBody.endswith(b','):
                 responseBody = responseBody[:-1]
             responseBody += b']'
+        return contentType, responseBody
+
+    def handleInstances(self, parsedURL, requestBody):
+        """
+        Handle series requests by returning json
+        :param parsedURL: the REST path and arguments
+        :param requestBody: the binary that came with the request
+        """
+        contentType = b'application/json'
+        splitPath = parsedURL.path.split(b'/')
+        responseBody = b"[{}]"
+        if len(splitPath) == 7:  # .../instances
+            # instance qido search
+            seriesUID = splitPath[5].decode()
+            instancesResponseString = b"["
+            instances = slicer.dicomDatabase.instancesForSeries(seriesUID)
+            for instance in instances:
+                dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(instance), stop_before_pixels=True)
+                instanceDataset = pydicom.dataset.Dataset()
+                instanceDataset.SpecificCharacterSet = [u'ISO_IR 100']
+                instanceDataset.SOPClassUID = dataset.SOPClassUID
+                instanceDataset.SOPInstanceUID = dataset.SOPInstanceUID
+                instanceDataset.InstanceAvailability = u'ONLINE'
+                instanceDataset[self.retrieveURLTag] = pydicom.dataelem.DataElement(
+                    0x00080190, "UR", "http://example.com")  # TODO: provide WADO-RS RetrieveURL
+                instanceDataset.StudyInstanceUID = dataset.StudyInstanceUID
+                instanceDataset.SeriesInstanceUID = dataset.SeriesInstanceUID
+                instanceDataset.InstanceNumber = dataset.InstanceNumber
+                instanceDataset.Rows = dataset.Rows
+                instanceDataset.Columns = dataset.Columns
+                instanceDataset.BitsAllocated = dataset.BitsAllocated
+                instanceDataset.BitsStored = dataset.BitsStored
+                instanceDataset.HighBit = dataset.HighBit
+                jsonDataset = instanceDataset.to_json(instanceDataset)
+                instancesResponseString += jsonDataset.encode() + b","
+            if instancesResponseString.endswith(b','):
+                instancesResponseString = instancesResponseString[:-1]
+            instancesResponseString += b']'
+            responseBody = instancesResponseString
+        elif len(splitPath) == 8:  # .../instances/NNN (download)
+            instanceUID = splitPath[7].decode()
+            contentType = b'application/dicom'
+            path = slicer.dicomDatabase.fileForInstance(instanceUID)
+            fp = open(path, 'rb')
+            responseBody = fp.read()
+            fp.close()
+        elif len(splitPath) == 9 and splitPath[8] == b'metadata':  # .../instances/NNN/metadata
+            self.logMessage('returning instance metadata')
+            contentType = b'application/json'
+            instanceUID = splitPath[7].decode()
+            dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(instanceUID), stop_before_pixels=True)
+            jsonDataset = dataset.to_json()
+            responseBody = b'[' + jsonDataset.encode() + b']'
         return contentType, responseBody
 
     def handleSeries(self, parsedURL, requestBody):
