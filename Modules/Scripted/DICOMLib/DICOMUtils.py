@@ -819,7 +819,7 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
     return loadedNodeIDs
 
 
-def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=None, accessToken=None):
+def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=None, accessToken=None, bulkRetrieve=True):
     """
     Downloads and imports DICOM series from a DICOMweb instance.
     Progress is displayed and if errors occur then they are displayed in a popup window in the end.
@@ -829,6 +829,8 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
     :param studyInstanceUID: UID for the study to be downloaded
     :param seriesInstanceUID: UID for the series to be downloaded. If not specified, all series will be downloaded from the study
     :param accessToken: Optional access token for the query
+    :param bulkRetrieve: If enabled then all instances of a series is retrieved with one query. Some servers (including Slicer
+        DICOMweb server) may not support bulk retrieve and require query of each instance.
     :return: List of imported study UIDs
 
     Example: calling from PythonSlicer console
@@ -889,8 +891,8 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
                 # Skip retrieve and import of this series if it is already imported
                 alreadyImportedInstances = slicer.dicomDatabase.instancesForSeries(currentSeriesInstanceUID)
                 seriesAlreadyImported = True
-                for serieInfo in seriesInfo:
-                    sopInstanceUID = serieInfo['00080018']['Value'][0]
+                for instanceInfo in seriesInfo:
+                    sopInstanceUID = instanceInfo['00080018']['Value'][0]
                     if sopInstanceUID not in alreadyImportedInstances:
                         seriesAlreadyImported = False
                         break
@@ -898,9 +900,10 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
                     seriesImported.append(currentSeriesInstanceUID)
                     continue
 
-                instances = client.iter_series(
-                    study_instance_uid=studyInstanceUID,
-                    series_instance_uid=currentSeriesInstanceUID)
+                if bulkRetrieve:
+                    instances = client.iter_series(
+                        study_instance_uid=studyInstanceUID,
+                        series_instance_uid=currentSeriesInstanceUID)
 
                 slicer.app.processEvents()
                 cancelled = progressDialog.wasCanceled
@@ -915,7 +918,11 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
                 outputDirectory.setAutoRemove(False)
                 outputDirectoryPath = outputDirectory.path()
 
-                for instanceIndex, instance in enumerate(instances):
+                for instanceIndex, instance in enumerate(instances if bulkRetrieve else seriesInfo):
+                    if not bulkRetrieve:
+                        # instance is just metadata, retrieve the dataset now
+                        sopInstanceUID = instance['00080018']['Value'][0]
+                        instance = client.retrieve_instance(studyInstanceUID, currentSeriesInstanceUID, sopInstanceUID)
                     progressDialog.setValue(int(100 * instanceIndex / numberOfInstances))
                     slicer.app.processEvents()
                     cancelled = progressDialog.wasCanceled
