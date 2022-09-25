@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 
-	<meta name="description" content="Open Health Imaging Foundation DICOM Viewer" />
+	<meta name="description" content="3D Slicer DICOM Database displayed using OHIF Viewer" />
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 	<meta name="theme-color" content="#000000" />
 	<meta http-equiv="cleartype" content="on" />
@@ -15,7 +15,7 @@
 	<!-- WEB FONTS -->
 	<link href="https://fonts.googleapis.com/css?family=Sanchez" rel="stylesheet" />
 
-	<title>OHIF Standalone Viewer</title>
+	<title>3D Slicer DICOM Database</title>
 </head>
 
 <body>
@@ -31,14 +31,14 @@
     }
     window.OHIFViewer.installViewer(
       {
-      routerBasename: '/db.html',
+      routerBasename: '/browse',
       servers: {
         dicomWeb: [
           {
-            name: 'DCM4CHEE',
-            wadoUriRoot: 'http://localhost:2016/dicom',
-            qidoRoot: 'http://localhost:2016/dicom',
-            wadoRoot: 'http://localhost:2016/dicom',
+            name: 'Slicer',
+            wadoUriRoot: '/dicom',
+            qidoRoot: '/dicom',
+            wadoRoot: '/dicom',
             qidoSupportsIncludeField: true,
             imageRendering: 'wadouri',
             thumbnailRendering: 'wadouri',

@@ -574,7 +574,12 @@ class WebServerLogic:
             self.requestHandlers.append(DICOMRequestHandler())
         if enableStaticPages:
             from WebServerLib import StaticPagesRequestHandler
-            self.requestHandlers.append(StaticPagesRequestHandler(self.docroot))
+            staticHandler = StaticPagesRequestHandler(self.docroot)
+            # Rewrite all OHIF viewer URLs
+            # Simplify so that the user does not have to provide .html (/browse will be /browse.html)
+            # and remove any path so that browseany path after that (so that the OHIF viewer displays all subpaths).
+            staticHandler.uriRewriteRules.append(("([\\/\\\\])browse.*", "{0}browse.html"))
+            self.requestHandlers.append(staticHandler)
 
     def logMessage(self, *args):
         logging.debug(args)

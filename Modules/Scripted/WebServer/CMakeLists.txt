@@ -14,7 +14,7 @@ set(MODULE_PYTHON_SCRIPTS
 set(MODULE_PYTHON_RESOURCES
   Resources/Icons/WebServer.svg  # source: Google Material Icon set (api_black_24dp.svg)
   Resources/docroot/index.html
-  Resources/docroot/db.html
+  Resources/docroot/browse.html
   Resources/docroot/favicon.ico
   Resources/docroot/package.json
   Resources/docroot/images/3DSlicer-DesktopIcon.png
