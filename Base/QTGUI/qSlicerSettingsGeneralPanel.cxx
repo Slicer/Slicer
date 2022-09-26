@@ -32,6 +32,7 @@
 
 // QtGUI includes
 #include "qSlicerApplication.h"
+#include "qSlicerApplicationUpdateManager.h"
 #include "qSlicerRelativePathMapper.h"
 #include "qSlicerSettingsGeneralPanel.h"
 #include "ui_qSlicerSettingsGeneralPanel.h"
@@ -92,6 +93,37 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   this->LanguageLabel->setVisible(false);
   this->LanguageComboBox->setVisible(false);
 #endif
+
+  bool applicationUpdateEnabled = false;
+#ifdef Slicer_BUILD_I18N_SUPPORT
+  applicationUpdateEnabled = qSlicerApplicationUpdateManager::isApplicationUpdateEnabled();
+  if (applicationUpdateEnabled)
+    {
+    this->ApplicationUpdateServerURLLineEdit->setText("https://download.slicer.org");
+
+    q->registerProperty("ApplicationUpdate/AutoUpdateCheck", this->ApplicationAutoUpdateCheckCheckBox, "checked",
+      SIGNAL(toggled(bool)));
+
+    q->registerProperty("ApplicationUpdate/ServerUrl", this->ApplicationUpdateServerURLLineEdit, "text",
+      SIGNAL(textChanged(QString)),
+      "Application update server URL");
+
+    qSlicerApplication* app = qSlicerApplication::application();
+    if (app && app->applicationUpdateManager())
+      {
+      QObject::connect(app->applicationUpdateManager(), SIGNAL(autoUpdateCheckChanged()),
+        q, SLOT(updateAutoUpdateApplicationFromManager()));
+
+      QObject::connect(this->ApplicationAutoUpdateCheckCheckBox, SIGNAL(toggled(bool)),
+        app->applicationUpdateManager(), SLOT(setAutoUpdateCheck(bool)));
+      }
+
+    }
+#endif
+  this->ApplicationAutoUpdateCheckLabel->setVisible(applicationUpdateEnabled);
+  this->ApplicationAutoUpdateCheckCheckBox->setVisible(applicationUpdateEnabled);
+  this->ApplicationUpdateServerURLLabel->setVisible(applicationUpdateEnabled);
+  this->ApplicationUpdateServerURLLineEdit->setVisible(applicationUpdateEnabled);
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
@@ -217,4 +249,17 @@ void qSlicerSettingsGeneralPanel::openSlicerRCFile()
       }
     }
   QDesktopServices::openUrl(QUrl("file:///" + slicerRcFileName, QUrl::TolerantMode));
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsGeneralPanel::updateAutoUpdateApplicationFromManager()
+{
+  Q_D(qSlicerSettingsGeneralPanel);
+  qSlicerApplication* app = qSlicerApplication::application();
+  if (!app->applicationUpdateManager())
+    {
+    return;
+    }
+  QSignalBlocker blocker1(d->ApplicationAutoUpdateCheckCheckBox);
+  d->ApplicationAutoUpdateCheckCheckBox->setChecked(app->applicationUpdateManager()->autoUpdateCheck());
 }

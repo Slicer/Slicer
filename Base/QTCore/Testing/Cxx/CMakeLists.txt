@@ -34,6 +34,9 @@ if(BUILD_TESTING)
       "30987_markupstomodel_macosx_amd64_835453f.json"
       "30987_curvemaker_macosx_amd64_5619cf5.json"
       "30338_slicerheart_win_amd64_1db3627.json"
+      "application_30893_slicer_linux_amd64.json"
+      "application_30893_slicer_macosx_amd64.json"
+      "application_30893_slicer_win_amd64.json"
       )
     configure_file(
       ../Data/Input/${filename}
@@ -64,6 +67,11 @@ if(BUILD_TESTING)
       qSlicerPersistentCookieJarTest.cxx
       )
   endif()
+  if(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
+    list(APPEND KIT_TEST_SRCS
+      qSlicerApplicationUpdateManagerTest.cxx
+      )
+  endif()
   if(Slicer_USE_PYTHONQT)
     list(APPEND KIT_TEST_SRCS
       qSlicerCorePythonManagerWithoutApplicationTest.cxx
@@ -89,6 +97,12 @@ if(BUILD_TESTING)
       qSlicerExtensionsManagerModelTest.cxx
       qSlicerPersistentCookieJarTest.cxx
       )
+  endif()
+
+  if(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
+  list(APPEND KIT_TEST_GENERATE_MOC_SRCS
+    qSlicerApplicationUpdateManagerTest.cxx
+    )
   endif()
 
   if(Slicer_USE_PYTHONQT)
@@ -130,6 +144,10 @@ if(BUILD_TESTING)
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     simple_test( qSlicerExtensionsManagerModelTest )
     simple_test( qSlicerPersistentCookieJarTest )
+  endif()
+
+  if(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
+    simple_test( qSlicerApplicationUpdateManagerTest )
   endif()
 
   if(Slicer_USE_PYTHONQT)

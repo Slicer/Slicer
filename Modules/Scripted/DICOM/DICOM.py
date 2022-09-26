@@ -109,11 +109,27 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
                 'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
 
     def onURLReceived(self, urlString):
-        """Process DICOM view requests. Example:
+        """Process DICOM view requests.
+
+        Required query path: viewer/
+        Query parameters:
+          - studyUID: study instance UID (required)
+          - dicomweb_endpoint: DICOMweb server address (required)
+          - access_token: token for accessing the server (optional)
+          - bulk_retrieve: set to 0 for slower retrieve but better compatibility
+            with simple servers (optional, valid values are 0 and 1, default 1)
+
+        Example 1 (server supports bulk retrieve):
+
         slicer://viewer/?studyUID=2.16.840.1.113669.632.20.121711.10000158860
           &access_token=k0zR6WAPpNbVguQ8gGUHp6
           &dicomweb_endpoint=http%3A%2F%2Fdemo.kheops.online%2Fapi
           &dicomweb_uri_endpoint=%20http%3A%2F%2Fdemo.kheops.online%2Fapi%2Fwado
+
+        Example 2 (server does not support bulk retrieve):
+
+        slicer://viewer/?studyUID=1.2.826.0.1.3680043.8.498.77209180964150541470378654317482622226&dicomweb_endpoint=http%3A%2F%2F130.15.7.119:2016%2Fdicom&bulk_retrieve=0
+
         """
 
         url = qt.QUrl(urlString)
@@ -132,6 +148,10 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
             logging.debug("DICOM module ignores URL without studyUID query parameter: " + urlString)
             return
 
+        bulkRetrieve = True
+        if "bulk_retrieve" in queryMap:
+            bulkRetrieve = int(queryMap["bulk_retrieve"]) > 0
+
         logging.info("DICOM module received URL: " + urlString)
 
         accessToken = None
@@ -144,7 +164,8 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
         importedSeriesInstanceUIDs = DICOMUtils.importFromDICOMWeb(
             dicomWebEndpoint=queryMap["dicomweb_endpoint"],
             studyInstanceUID=queryMap["studyUID"],
-            accessToken=accessToken)
+            accessToken=accessToken,
+            bulkRetrieve=bulkRetrieve)
 
         # Select newly loaded items to make it easier to load them
         self.browserWidget.dicomBrowser.setSelectedItems(ctk.ctkDICOMModel.SeriesType, importedSeriesInstanceUIDs)

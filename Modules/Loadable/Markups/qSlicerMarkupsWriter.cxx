@@ -128,7 +128,7 @@ bool qSlicerMarkupsWriter::write(const qSlicerIO::IOProperties& properties)
   else
     {
     // json file needs to be written
-    this->setStorageNodeClass(node, "vtkMRMLMarkupsJsonStorageNode");
+    this->setStorageNodeClass(node, QString::fromStdString(node->GetDefaultStorageNodeClassName()));
     }
 
   return Superclass::write(properties);

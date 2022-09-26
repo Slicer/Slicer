@@ -50,12 +50,12 @@ Background: Funding for Slicer is provided through competitive mechanisms primar
 
     **Setting up software renderer on Windows:**
 
-    - Download Mesa OpenGL driver from <https://github.com/pal1000/mesa-dist-win/releases> (MSVC version - mesa3d-X.Y.Z-release-msvc.7z).
+    - Download Mesa OpenGL driver from <https://github.com/pal1000/mesa-dist-win/releases> (MSVC version - mesa3d-X.Y.Z-release-msvc.7z). Last tested with release https://github.com/pal1000/mesa-dist-win/releases/tag/22.2.0
     - Extract the archive and copy files from the x64 folder into the bin subfolder in the Slicer install tree.
     - Configure the rendere by setting environment variables then launch Slicer:
 
         ```txt
-        set GALLIUM_DRIVER=swr
+        set GALLIUM_DRIVER=llvmpipe
         set MESA_GL_VERSION_OVERRIDE=3.3COMPAT
         Slicer.exe
         ```

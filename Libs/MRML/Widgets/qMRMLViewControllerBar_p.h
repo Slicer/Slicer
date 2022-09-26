@@ -75,17 +75,18 @@ public:
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
   vtkWeakPointer<vtkMRMLLayoutNode> LayoutNode;
 
-  QToolButton*                     PinButton;
-  QLabel*                          ViewLabel;
-  QToolButton*                     MaximizeViewButton;
-  ctkPopupWidget*                  PopupWidget;
-  QWidget*                         BarWidget;
-  QHBoxLayout*                     BarLayout;
-  QVBoxLayout*                     ControllerLayout;
-  qMRMLViewControllerBar::LayoutBehavior  LayoutBehavior;
+  QToolButton*                     PinButton{nullptr};
+  QLabel*                          ViewLabel{nullptr};
+  QToolButton*                     MaximizeViewButton{nullptr};
+  ctkPopupWidget*                  PopupWidget{nullptr};
+  QWidget*                         BarWidget{nullptr};
+  QHBoxLayout*                     BarLayout{nullptr};
+  QVBoxLayout*                     ControllerLayout{nullptr};
+  qMRMLViewControllerBar::LayoutBehavior  LayoutBehavior{qMRMLViewControllerBar::Popup};
   QColor                           BarColor;
   QIcon                            ViewMaximizeIcon;
   QIcon                            ViewRestoreIcon;
+  bool                             ShowMaximizeViewButton{true};
 
   bool eventFilter(QObject* object, QEvent* event) override;
 

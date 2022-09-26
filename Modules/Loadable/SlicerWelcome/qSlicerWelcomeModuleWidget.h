@@ -51,6 +51,7 @@ public slots:
   void editApplicationSettings();
   bool exploreLoadedData();
   void setExtensionUpdatesAvailable(bool updateAvailable);
+  void setApplicationUpdateAvailable(bool updateAvailable);
   void checkForUpdates();
 
 protected:

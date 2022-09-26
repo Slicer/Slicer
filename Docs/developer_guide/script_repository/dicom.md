@@ -203,6 +203,39 @@ for exp in exportables:
 exporter.export(exportables)
 ```
 
+### Export DICOM series from the database to research file format
+
+You can export the entire Slicer DICOM database content to nrrd (or nifti, etc.) file format with filtering of data type and naming of the output file based on DICOM tags like this:
+
+```python
+outputFolder = "c:/tmp/exptest/"
+
+from DICOMLib import DICOMUtils
+patientUIDs = slicer.dicomDatabase.patients()
+for patientUID in patientUIDs:
+    loadedNodeIDs = DICOMUtils.loadPatientByUID(patientUID)
+    for loadedNodeID in loadedNodeIDs:
+        # Check if we want to save this node
+        node = slicer.mrmlScene.GetNodeByID(loadedNodeID)
+        # Only export images
+        if not node or not node.IsA('vtkMRMLScalarVolumeNode'):
+            continue
+        # Construct filename
+        shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
+        seriesItem = shNode.GetItemByDataNode(node)
+        studyItem = shNode.GetItemParent(seriesItem)
+        patientItem = shNode.GetItemParent(studyItem)
+        filename = shNode.GetItemAttribute(patientItem, 'DICOM.PatientID')
+        filename += '_' + shNode.GetItemAttribute(studyItem, 'DICOM.StudyDate')
+        filename += '_' + shNode.GetItemAttribute(seriesItem, 'DICOM.SeriesNumber')
+        filename += '_' + shNode.GetItemAttribute(seriesItem, 'DICOM.Modality')
+        filename = slicer.app.ioManager().forceFileNameValidCharacters(filename) + ".nrrd"
+        # Save node
+        print(f'Write {node.GetName()} to {filename}')
+        success = slicer.util.saveNode(node, outputFolder+filename)
+    slicer.mrmlScene.Clear()
+```
+
 ### Customize table columns in DICOM browser
 
 Documentation of methods for changing DICOM browser columns: https://github.com/commontk/CTK/blob/master/Libs/DICOM/Core/ctkDICOMDatabase.h#L354-L375

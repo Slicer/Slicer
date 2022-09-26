@@ -81,6 +81,9 @@
 # include "qSlicerExtensionsManagerModel.h"
 # include "qSlicerSettingsExtensionsPanel.h"
 #endif
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+# include "qSlicerApplicationUpdateManager.h"
+#endif
 #include "qSlicerSettingsCachePanel.h"
 #include "qSlicerSettingsGeneralPanel.h"
 #ifdef Slicer_BUILD_I18N_SUPPORT
@@ -839,6 +842,20 @@ void qSlicerApplication::openExtensionsCatalogWebsite()
     return;
     }
   QUrl url = this->extensionsManagerModel()->extensionsListUrl();
+  QDesktopServices::openUrl(url);
+}
+#endif
+
+// --------------------------------------------------------------------------
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+void qSlicerApplication::openApplicationDownloadWebsite()
+{
+  Q_D(qSlicerApplication);
+  if (!this->applicationUpdateManager())
+    {
+    return;
+    }
+  QUrl url = this->applicationUpdateManager()->applicationDownloadPageUrl();
   QDesktopServices::openUrl(url);
 }
 #endif

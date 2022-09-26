@@ -15,5 +15,9 @@
     <file alias="extension-macosx-2.tar.gz">30987-macosx-amd64-CurveMaker-git5619cf5-2019-09-09.tar.gz</file>
 
     <file alias="extension-win-0.json">30338_slicerheart_win_amd64_1db3627.json</file>
+
+    <file>application_30893_slicer_linux_amd64.json</file>
+    <file>application_30893_slicer_macosx_amd64.json</file>
+    <file>application_30893_slicer_win_amd64.json</file>
   </qresource>
 </RCC>

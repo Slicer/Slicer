@@ -184,6 +184,11 @@ public slots:
   void openExtensionsCatalogWebsite();
 #endif
 
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+  /// Opens the Application Download website in the systems default web browser.
+  void openApplicationDownloadWebsite();
+#endif
+
   /// Number of recent log files to keep. Older log files are deleted automatically.
   int numberOfRecentLogFilesToKeep();
 

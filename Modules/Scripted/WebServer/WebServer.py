@@ -10,6 +10,7 @@ import qt
 
 import slicer
 from slicer.ScriptedLoadableModule import *
+from slicer.util import settingsValue, toBool
 
 #
 # WebServer
@@ -163,15 +164,15 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         self.updateGUIFromLogic()
 
     def updateGUIFromSettings(self):
-        self.logToConsole.checked = slicer.app.userSettings().value("WebServer/logToConsole", False)
-        self.logToGUI.checked = slicer.app.userSettings().value("WebServer/logToGUI", True)
-        self.enableSlicerHandler.checked = slicer.app.userSettings().value("WebServer/enableSlicerHandler", True)
-        self.enableSlicerHandlerExec.checked = slicer.app.userSettings().value("WebServer/enableSlicerHandlerExec", False)
+        self.logToConsole.checked = settingsValue('WebServer/logToConsole', False, converter=toBool)
+        self.logToGUI.checked = settingsValue("WebServer/logToGUI", False, converter=toBool)
+        self.enableSlicerHandler.checked = settingsValue("WebServer/enableSlicerHandler", True, converter=toBool)
+        self.enableSlicerHandlerExec.checked = settingsValue("WebServer/enableSlicerHandlerExec", False, converter=toBool)
         if hasattr(slicer.modules, "dicom"):
-            self.enableDICOMHandler.checked = slicer.app.userSettings().value("WebServer/enableDICOMHandler", True)
+            self.enableDICOMHandler.checked = settingsValue("WebServer/enableDICOMHandler", True, converter=toBool)
         else:
             self.enableDICOMHandler.checked = False
-        self.enableStaticPagesHandler.checked = slicer.app.userSettings().value("WebServer/enableStaticPagesHandler", True)
+        self.enableStaticPagesHandler.checked = settingsValue("WebServer/enableStaticPagesHandler", True, converter=toBool)
 
     def updateGUIFromLogic(self):
         self.startServerButton.setEnabled(not self.logic.serverStarted)
@@ -573,7 +574,12 @@ class WebServerLogic:
             self.requestHandlers.append(DICOMRequestHandler())
         if enableStaticPages:
             from WebServerLib import StaticPagesRequestHandler
-            self.requestHandlers.append(StaticPagesRequestHandler(self.docroot))
+            staticHandler = StaticPagesRequestHandler(self.docroot)
+            # Rewrite all OHIF viewer URLs
+            # Simplify so that the user does not have to provide .html (/browse will be /browse.html)
+            # and remove any path so that browseany path after that (so that the OHIF viewer displays all subpaths).
+            staticHandler.uriRewriteRules.append(("([\\/\\\\])browse.*", "{0}browse.html"))
+            self.requestHandlers.append(staticHandler)
 
     def logMessage(self, *args):
         logging.debug(args)
