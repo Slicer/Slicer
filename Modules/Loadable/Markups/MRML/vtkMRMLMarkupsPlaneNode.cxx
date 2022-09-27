@@ -913,6 +913,8 @@ double* vtkMRMLMarkupsPlaneNode::GetSize()
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::SetSize(double x, double y)
 {
+  MRMLNodeModifyBlocker blocker(this);
+
   if (this->Size[0] == x && this->Size[1] == y)
     {
     return;
@@ -948,6 +950,7 @@ void vtkMRMLMarkupsPlaneNode::SetSize(double x, double y)
   this->PlaneBounds[2] *= this->Size[1];
   this->PlaneBounds[3] *= this->Size[1];
 
+  this->UpdateAllMeasurements();
   this->Modified();
 }
 
@@ -1012,6 +1015,8 @@ void vtkMRMLMarkupsPlaneNode::SetPlaneBounds(double x0, double x1, double y0, do
     return;
     }
 
+  MRMLNodeModifyBlocker blocker(this);
+
   this->PlaneBounds[0] = std::min(x0, x1);
   this->PlaneBounds[1] = std::max(x0, x1);
   this->PlaneBounds[2] = std::min(y0, y1);
@@ -1020,6 +1025,7 @@ void vtkMRMLMarkupsPlaneNode::SetPlaneBounds(double x0, double x1, double y0, do
   this->Size[0] = std::max(0.0, this->PlaneBounds[1] - this->PlaneBounds[0]);
   this->Size[1] = std::max(0.0, this->PlaneBounds[3] - this->PlaneBounds[2]);
 
+  this->UpdateAllMeasurements();
   this->Modified();
 }
 
