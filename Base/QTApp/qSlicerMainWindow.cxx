@@ -1054,7 +1054,7 @@ vtkMRMLAbstractViewNode* qSlicerMainWindow::layoutMaximizedViewNode()
     {
     return nullptr;
     }
-  layoutManager->maximizedViewNode();
+  return layoutManager->maximizedViewNode();
 }
 
 //---------------------------------------------------------------------------
