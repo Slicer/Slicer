@@ -402,6 +402,14 @@ Crosshair node stores two positions: Cursor position is the current position of 
 
 :::
 
+### Change the crosshair color
+
+```python
+# Get the crosshair node
+crosshairNode = slicer.util.getNode("Crosshair")
+# Set the crosshair color to Red
+crosshairNode.SetCrosshairColor(1.0, 0.0, 0.0)
+```
 ### Display mouse pointer coordinates in alternative coordinate system
 
 The Data probe only shows coordinate values in the world coordinate system. You can make the world coordinate system mean anything you want (e.g., MNI) by applying a transform to the volume that transforms it into that space. See more details in [here ](https://discourse.slicer.org/t/setting-an-mni-origo-to-a-volume/16164/4).
