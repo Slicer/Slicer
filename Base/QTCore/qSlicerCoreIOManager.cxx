@@ -786,8 +786,10 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     }
 
   // Create the directory that the file will be saved to, if it does not exist.
-  // Note that if the directory already exists, mkpath simply returns true.
-  if (!QFileInfo(fileName).dir().mkpath("."))
+  // Note: We must check if the directory exist and if it does then we don't call mkpath, because
+  // mkpath incorrectly returns false (meaning: failed to create folder) if the directory
+  // is the root folder (for example "D:\").
+  if (!QFileInfo(fileName).dir().exists() && !QFileInfo(fileName).dir().mkpath("."))
     {
     qCritical() << Q_FUNC_INFO << "error: Unable to create directory" << QFileInfo(fileName).absolutePath();
     if (userMessages)
