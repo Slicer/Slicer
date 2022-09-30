@@ -319,13 +319,12 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
     }
 
   // Set up output segmentation
-  if (!segmentationNode || segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0)
+  if (!segmentationNode)
     {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial",
-      "Output segmentation must exist and must be empty.");
+      "Output segmentation must exist.");
     return 0;
     }
-  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
 
   // Read 4D NRRD image file
   typedef itk::ImageFileReader<BinaryLabelmap4DImageType> FileReaderType;
@@ -343,7 +342,26 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
     }
   BinaryLabelmap4DImageType::Pointer allSegmentLabelmapsImage = reader->GetOutput();
 
-  // Read succeeded, set master representation
+  // Read succeeded
+
+  // Make sure there is a valid segmentation object in the node
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  if (!segmentation)
+    {
+    vtkNew<vtkSegmentation> newSegmentation;
+    segmentation = newSegmentation;
+    segmentationNode->SetAndObserveSegmentation(newSegmentation);
+    }
+
+  MRMLNodeModifyBlocker blocker(segmentationNode);
+
+  // Clean out the segmentation before adding the new segments
+  if (segmentation->GetNumberOfSegments() > 0)
+    {
+    segmentation->RemoveAllSegments();
+    }
+
+  // Set master representation
   segmentation->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
 
   // Get metadata dictionary from image
@@ -518,15 +536,21 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
       "Input file " << path << " does not exist.");
     return 0;
     }
-
-  // Set up output segmentation
-  if (!segmentationNode || segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0)
+  if (!segmentationNode)
     {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
-      "Output segmentation must exist and must be empty.");
+      "Output segmentation must exist.");
     return 0;
     }
+
+  // Make sure there is a valid segmentation object in the node
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  if (!segmentation)
+    {
+    vtkNew<vtkSegmentation> newSegmentation;
+    segmentation = newSegmentation;
+    segmentationNode->SetAndObserveSegmentation(newSegmentation);
+    }
 
   vtkSmartPointer<vtkImageData> imageData = nullptr;
 
@@ -639,12 +663,21 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
       "Error reading image: invalid image data.");
     return 0;
     }
+
+  // Read succeeded
+
   int numberOfFrames = imageData->GetNumberOfScalarComponents();
 
-  // Read succeeded, set master representation
-  segmentation->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
-
   MRMLNodeModifyBlocker blocker(segmentationNode);
+
+  // Clean out the segmentation before adding the new segments
+  if (segmentation->GetNumberOfSegments() > 0)
+    {
+    segmentation->RemoveAllSegments();
+    }
+
+  // Set master representation
+  segmentation->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
 
   // Compensate for the extent shift in the image origin.
   // We change the origin so that if a reader ignores private fields, such as
@@ -920,16 +953,12 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
     }
 
   // Set up output segmentation
-  if (!segmentationNode || segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0)
+  if (!segmentationNode)
     {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation",
-      "Output segmentation must exist and must be empty.");
+      "Output segmentation must exist.");
     return 0;
     }
-  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-
-  // Add all files to storage node (multiblock dataset writes segments to individual files in a separate folder)
-  this->AddPolyDataFileNames(path, segmentation);
 
   // Read multiblock dataset from disk
   vtkSmartPointer<vtkXMLMultiBlockDataReader> reader = vtkSmartPointer<vtkXMLMultiBlockDataReader>::New();
@@ -944,6 +973,26 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
     }
 
   MRMLNodeModifyBlocker blocker(segmentationNode);
+
+  // Make sure there is a valid segmentation object in the node
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  if (!segmentation)
+    {
+    vtkNew<vtkSegmentation> newSegmentation;
+    segmentation = newSegmentation;
+    segmentationNode->SetAndObserveSegmentation(newSegmentation);
+    }
+
+  // Clean out the segmentation before adding the new segments
+  std::set<std::string> originalRepresentationNames;
+  if (segmentation->GetNumberOfSegments() > 0)
+    {
+    segmentation->GetAvailableRepresentationNames(originalRepresentationNames);
+    segmentation->RemoveAllSegments();
+    }
+
+  // Add all files to storage node (multiblock dataset writes segments to individual files in a separate folder)
+  this->AddPolyDataFileNames(path, segmentation);
 
   // Read segment poly data
   std::string masterRepresentationName;

@@ -672,7 +672,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
     // and add all nodes that are derived from vtkMRMLVolumeNode.
     widget->setNodeTypes(QStringList()
       << "vtkMRMLScalarVolumeNode"
-      << "vtkMRMLLabelMapVolumeNode"
+      << "vtkMRMLLabelMapVolumeNode" << "vtkMRMLSegmentationNode"
       << "vtkMRMLVectorVolumeNode"
       << "vtkMRMLDiffusionTensorVolumeNode"
       << "vtkMRMLDiffusionWeightedVolumeNode"
@@ -697,11 +697,17 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
       widget->setNodeTypes(nodeTypes);
       widget->addAttribute("vtkMRMLSequenceNode", "DataNodeClassName", "vtkMRMLScalarVolumeNode");
       }
+    if (nodeType == "vtkMRMLLabelMapVolumeNode")
+      {
+      QStringList nodeTypes;
+      nodeTypes << nodeType << "vtkMRMLSegmentationNode";
+      widget->setNodeTypes(nodeTypes);
+      }
     else
       {
       widget->setNodeTypes(QStringList(nodeType));
       }
-  }
+    }
 
   // TODO - title + " Volume"
 
