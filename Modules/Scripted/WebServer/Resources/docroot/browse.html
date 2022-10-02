@@ -23,13 +23,28 @@
 
 	<div id="root"></div>
 
+  <!--
   <script src="https://unpkg.com/@ohif/viewer@1.0.3/dist/index.umd.js" crossorigin></script>
+  -->
+  <script
+    src="https://unpkg.com/@ohif/viewer@3.3.3/dist/index.umd.js"
+    crossorigin
+  ></script>
+
   <script>
     var containerId = "root";
     var componentRenderedOrUpdatedCallback = function(){
       console.log('OHIF Viewer rendered/updated');
     }
-    window.OHIFViewer.installViewer(
+    var getAbsoluteUrl = (function() {
+      var a;
+      return function(url) {
+        if(!a) a = document.createElement('a');
+        a.href = url;
+        return a.href;
+      };
+    })();
+    window.viewer = window.OHIFViewer.installViewer(
       {
       routerBasename: '/browse',
       servers: {
@@ -47,7 +62,55 @@
           },
         ],
       },
+      extensions: [
+        {
+          id: "slicerExtension",
+          getToolbarModule() {
+            return {
+              definitions: [
+                {
+                  id: "slicer",
+                  label: "3D Slicer",
+                  icon: "cube",
+                  type: "command",
+                  commandName: "launchSlicer"
+                }
+              ],
+              defaultContext: "VIEWER"
+            };
+          },
+          getCommandsModule({ servicesManager }) {
+            const { UINotificationService } = servicesManager.services;
+            return {
+              definitions: {
+                launchSlicer: {
+                  commandFn: function() {
+                    function launchSlicer() {
+                      const hrefParts = window.location.href.split('/');
+                      const studyUID = hrefParts[hrefParts.length-1];
+                      let wadoRoot = window.viewer._appConfig.servers.dicomWeb[0].wadoRoot;
+                      wadoRoot = window.encodeURIComponent(getAbsoluteUrl(wadoRoot));
+                      let url = `slicer://viewer/?studyUID=${studyUID}&dicomweb_endpoint=${wadoRoot}&bulk_retrieve=0`; // test comment
+                      window.open(url);
+                      return(`launched ${url}!`);
+                    }
+                    launchSlicer();
+                    UINotificationService.show({
+                      title: "Launching 3D Slicer",
+                      message: "This study will now be opened in 3D Slicer application."
+                    });
+                  },
+                  storeContexts: [],
+                  options: {}
+                }
+              },
+              defaultContext: ["VIEWER"]
+            };
+          }
+        }
+      ]
     }, containerId, componentRenderedOrUpdatedCallback);
+
 	</script>
 </body>
 
