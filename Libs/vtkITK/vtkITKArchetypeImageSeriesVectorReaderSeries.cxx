@@ -169,9 +169,14 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
 }
 
 
-void vtkITKArchetypeImageSeriesVectorReaderSeries::ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&,void* data)
+void vtkITKArchetypeImageSeriesVectorReaderSeries::ReadProgressCallback(itk::Object* obj, const itk::EventObject &, void* data)
 {
+  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject *>(obj));
+  if (p.IsNull())
+  {
+    return;
+  }
   vtkITKArchetypeImageSeriesVectorReaderSeries* me=reinterpret_cast<vtkITKArchetypeImageSeriesVectorReaderSeries*>(data);
-  me->Progress=obj->GetProgress();
+  me->Progress = p->GetProgress();
   me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
 }

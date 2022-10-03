@@ -188,11 +188,15 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
 
 //----------------------------------------------------------------------------
 void vtkITKArchetypeDiffusionTensorImageReaderFile
-::ReadProgressCallback(itk::ProcessObject* obj,
-                       const itk::ProgressEvent&,void* data)
+::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
+  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject *>(obj));
+  if (p.IsNull())
+  {
+    return;
+  }
   vtkITKArchetypeDiffusionTensorImageReaderFile* me =
     reinterpret_cast<vtkITKArchetypeDiffusionTensorImageReaderFile*>(data);
-  me->Progress=obj->GetProgress();
+  me->Progress = p->GetProgress();
   me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
 }

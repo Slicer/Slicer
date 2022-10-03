@@ -32,7 +32,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesScalarReader : public vtkITKArche
   ~vtkITKArchetypeImageSeriesScalarReader() override;
 
   int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
-  static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
+  static void ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data);
   /// private:
 
 private:
