@@ -265,9 +265,14 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
 }
 
 
-void vtkITKArchetypeImageSeriesScalarReader::ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&,void* data)
+void vtkITKArchetypeImageSeriesScalarReader::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
+  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject *>(obj));
+  if (p.IsNull())
+  {
+    return;
+  }
   vtkITKArchetypeImageSeriesScalarReader* me=reinterpret_cast<vtkITKArchetypeImageSeriesScalarReader*>(data);
-  me->Progress=obj->GetProgress();
+  me->Progress = p->GetProgress();
   me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
 }

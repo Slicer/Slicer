@@ -14,7 +14,7 @@
 #include <vtkVersion.h>
 namespace itk
 {
-  class ProcessObject;
+  class Object;
   class ProgressEvent;
 };
 
@@ -25,8 +25,8 @@ public:
   vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderSeries,vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  static void ReadProgressCallback(itk::ProcessObject* obj,
-                                   const itk::ProgressEvent&,
+  static void ReadProgressCallback(itk::Object* obj,
+                                   const itk::EventObject &,
                                    void* data);
 protected:
   vtkITKArchetypeImageSeriesVectorReaderSeries();

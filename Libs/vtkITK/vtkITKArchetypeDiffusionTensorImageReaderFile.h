@@ -28,7 +28,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile
   ~vtkITKArchetypeDiffusionTensorImageReaderFile() override;
 
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
+  static void ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data);
   /// private:
 
 private:
