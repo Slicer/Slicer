@@ -4,6 +4,7 @@
 #define itkFactoryRegistration_h
 
 #include "itkFactoryRegistrationConfigure.h"
+#include "itkNamespace.h"
 
 namespace itk {
 
