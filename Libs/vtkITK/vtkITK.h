@@ -15,6 +15,7 @@
 #ifndef __vtkITK_h
 #define __vtkITK_h
 
+#include "itkNamespace.h"
 #include "vtkITKExport.h"
 #include "vtkITKNumericTraits.h"
 
