@@ -1,8 +1,393 @@
+"""
+Slicer REST API Documentation
+*****************************
+
+
+Remote control (exec)
+=====================
+
+
+GET /exec
+---------
+
+Run script in Slicer's Python interpreter, as if it was run in the application's Python console.
+It can be used to implement a Read Eval Print Loop (REPL).
+
+Parameters:
+- `source`: Python code to run
+
+Return:
+- 200 (application/json): Result of code running as json string. The result must be set in a `__execResult` variable (`dict` object)
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+Example:
+
+    curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)"
+
+
+MRML data access
+================
+
+Get information on MRML nodes in the scene or load/save nodes.
+
+Common parameters for data selection for all methods:
+- `id`: select node that has this id.
+- `class`: select nodes of this class (select nodes of this class (e.g., vtkMRMLVolumeNode, vtkMRMLSegmentationNode)
+- `name`: select nodes of this name
+
+If `id` is specified then `class` and `name` parameters are ignored.
+If both `class` and `name` are specified then those nodes will be selected that have fulfill both selection criteria.
+
+
+GET /mrml and GET/mrml/names
+----------------------------
+
+Get names of the selected nodes.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+
+Return:
+- 200 (application/json): list of node names.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /mrml/ids
+-------------
+
+Get ids of the selected nodes.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+
+Return:
+- 200 (application/json): list of node ids.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /mrml/properties
+--------------------
+
+Get properties of the selected nodes as a json object.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+
+Return:
+- 200 (application/json): dictionary object, key is the node id, value is the node properties object.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /mrml/file
+--------------
+
+Save node to local file. Query parameters must be specified so that only a single node is selected.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+- `localfile`: filename to save the node to
+- `useCompression`: specifies if the file should be saved using compression (`true` or `false`)
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+POST /mrml/file
+---------------
+
+Load node from URL or local file into a node.
+
+Parameters:
+- `localfile`: Local filename to load the node from. If specified then `url` is ignored.
+- `url`: Local or remote URL to load the file from.
+- `filetype`: Specifies how to interpret the selected file. For example `VolumeFile`, `SegmentationFile`, `ModelFile`, `MarkupsFile`, `TransformFile`, `SceneFile`.
+
+Return:
+- 200 (application/json): JSON object, "success" property is set true and `loadedNodeIDs` property contains a list of loaded node ids.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /mrml/file
+--------------
+
+Remove nodes from the scene. If no query parameters are specified then the whole scene is cleared.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+- `localfile`: filename to save the node to
+- `useCompression`: specifies if the file should be saved using compression (`true` or `false`)
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+User interface
+==============
+
+
+PUT /gui
+-------------------
+
+Shutdown the application.
+
+Parameters:
+- `contents`: show full application GUI (`full`) or viewers only (`viewers`)
+- `viewersLayout`: set view layout, such as `fourup`, `oneup3d` (names derived from slicer.vtkMRMLLayoutNode constants - SlicerLayout...View)
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /screenshot
+---------------
+
+Get screenshot of the application main window.
+
+Return:
+- 200 (image/png): screenshot image
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /slice
+----------
+
+Get screenshot of a slice view after applying parameters.
+
+Parameters:
+- `view`: `red`, `yellow`, or `green`
+- `scrollTo`: 0 to 1 for slice position within volume
+- `offset`: mm offset relative to slice origin (position of slice slider)
+- `size`: pixel size of output png
+- `copySliceGeometryFrom`: view name of other slice to copy from
+- `orientation`: `axial`, `sagittal`, `coronal`
+
+Return:
+- 200 (image/png): screenshot image
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /threeD
+---------------
+
+Get screenshot of the first 3D view after applying parameters.
+
+Parameters:
+- `lookFromAxis`: `L`, `R`, `A`, `P`, `I`, `S`
+
+Return:
+- 200 (image/png): screenshot image
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /timeimage
+---------------
+
+For timing and debugging - return an image with the current time rendered as text down to the hundredth of a second.
+
+Parameters:
+- `color`: hex encoded RGB of dashed border (default 333 for dark gray)
+
+Return:
+- 200 (image/png): rendered image
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+Other functions
+===============
+
+
+GET /system/version
+-------------------
+
+Get application version information as a json object.
+
+Return:
+- 200 (application/json): version information object.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+DELETE /system
+-------------------
+
+Shutdown the application.
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /tracking
+-------------
+
+Display/update position of a cursor (position marker cube) in the 3D view.
+This can be used to display position of a tracked object.
+
+Parameters:
+- `m`: 4x4 transformation matrix in column major order (position is last row).
+  Matrix is overwritten if position or quaternion are provided
+- `q`: quaternion in WXYZ order
+- `p`: position (last column of transform)
+
+Return:
+- 200 (text/plain): plain text message for the user
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /sampledata
+---------------
+
+Load a sample data set into the scene.
+
+Parameters:
+- `name`: name of the sample data set (such as `MRHead`)
+
+Return:
+- 200 (text/plain): plain text message for the user
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /volumeSelection
+--------------------
+
+Cycles through loaded volumes in the scene.
+
+Parameters:
+- `cmd`: either `next` or `previous` to indicate direction
+
+Return:
+- 200 (text/plain): plain text message for the user
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /volumes, GET /gridtransforms
+---------------------------------
+
+Get a list of mrml volume or grid transform node names and ids.
+
+Parameters:
+- `cmd`: either `next` or `previous` to indicate direction
+
+Return:
+- 200 (application/json): list of json objects, with `name` and `id` attributes.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+Example of successful output:
+
+    [
+        {"name": "Volume1", "id": "vtkMRMLScalarVolumeNode1"},
+        {"name": "Volume2", "id": "vtkMRMLScalarVolumeNode2"},
+    ]
+
+
+GET /volume, GET /griddtransform
+--------------------------------
+
+Retrieve the specified volume or grid transform as a .nrrd file.
+
+Parameters:
+- `id`: id of the node to get
+
+Return:
+- 200 (application/octet-stream): data stream of a nrrd file
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+POST /volume
+------------
+
+Create or update a volume from a .nrrd file.
+Only uncompressed 3D volumes are accepted, in LPS coordinate system, with little endian short pixel type.
+
+Parameters:
+- `id`: id of the volume to create or update.
+
+Return:
+- 200 (application/json): data stream of a nrrd file
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+GET /fiducials
+--------------
+
+Retrieve basic information about all markup point lists (formerly called fiducial lists) in the scene.
+
+Return:
+- 200 (application/json): Basic information about all markup point lists.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+Example of successful output:
+
+    {
+        "vtkMRMLMarkupsFiducialNode1": {
+            "name": "F",
+            "color": [1.0, 0.5000076295109483, 0.5000076295109483],
+            "scale": 3.0,
+            "markups": [
+                {"label": "F-1", "position": [-35.422643698898014, 13.121414583492907, -10.214302062988281]},
+                {"label": "F-2", "position": [43.217879176918984, 41.565859027937364, -10.214302062988281]},
+                {"label": "F-3", "position": [39.8714739481608, -32.05505600474238, -10.214302062988281]}]},
+        "vtkMRMLMarkupsFiducialNode2": {
+            "name": "F_1",
+            "color": [1.0, 0.5000076295109483, 0.5000076295109483],
+            "scale": 3.0,
+            "markups": [
+                {"label": "F_1-1", "position": [82.53814061482748, 13.121414583492907, -23.599922978020956]},
+                {"label": "F_1-2", "position": [-4.468395332884938, 13.121414583492907, 65.07981558407056]}]}
+    }
+
+
+PUT /fiducial
+-------------
+
+Set the location of a control point in a markups point list (formerly called fiducial list).
+
+Parameters:
+- `id`: id of the node to update.
+- `r`: Right coordinate
+- `a`: Anterior coordinate
+- `s`: Superior coordinate
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+POST /accessDICOMwebStudy
+-------------------------
+
+Access DICOMweb server to download requested study, add it to Slicer's dicom database, and load it into the scene.
+
+Request body: json string with the following properties
+- 'dicomWEBPrefix': is the start of the url
+- 'dicomWEBStore': is the middle of the url
+- 'studyUID': is the end of the url
+- 'accessToken': is the authorization bearer token for the DICOMweb server
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+
+"""
+
+
 import json
 import logging
 import numpy
 import os
-import sys
 import time
 import urllib
 
@@ -17,17 +402,18 @@ class SlicerRequestHandler(object):
 
     def __init__(self, enableExec=False):
         self.enableExec = enableExec
+        self.sampleDataLogic = None  # used for progress reporting during download
 
     def logMessage(self, *args):
         logging.debug(args)
 
-    def canHandleRequest(self, uri, requestBody):
+    def canHandleRequest(self, method, uri, requestBody):
         parsedURL = urllib.parse.urlparse(uri)
         pathParts = os.path.split(parsedURL.path)  # path is like /slicer/timeimage
         route = pathParts[0]
         return 0.5 if route.startswith(b'/slicer') else 0.0
 
-    def handleRequest(self, uri, requestBody):
+    def handleRequest(self, method, uri, requestBody):
         """Handle a slicer api request.
         TODO: better routing (add routing plugins)
         :param request: request portion of the URL
@@ -43,64 +429,50 @@ class SlicerRequestHandler(object):
 
         responseBody = None
         contentType = b'text/plain'
-        try:
-            if self.enableExec and request.find(b'/exec') == 0:
-                responseBody, contentType = self.exec(request, requestBody)
-            elif request.find(b'/timeimage') == 0:
-                responseBody, contentType = self.timeimage(request)
-            elif request.find(b'/gui') == 0:
-                responseBody, contentType = self.gui(request)
-            elif request.find(b'/screenshot') == 0:
-                responseBody, contentType = self.screenshot(request)
-            elif request.find(b'/slice') == 0:
-                responseBody, contentType = self.slice(request)
-            elif request.find(b'/threeD') == 0:
-                responseBody, contentType = self.threeD(request)
-            elif request.find(b'/mrml') == 0:
-                responseBody, contentType = self.mrml(request)
-            elif request.find(b'/tracking') == 0:
-                responseBody, contentType = self.tracking(request)
-            elif request.find(b'/sampledata') == 0:
-                responseBody, contentType = self.sampleData(request)
-            elif request.find(b'/volumeSelection') == 0:
-                responseBody, contentType = self.volumeSelection(request)
-            elif request.find(b'/volumes') == 0:
-                responseBody, contentType = self.volumes(request, requestBody)
-            elif request.find(b'/volume') == 0:
-                responseBody, contentType = self.volume(request, requestBody)
-            elif request.find(b'/gridTransforms') == 0:
-                responseBody, contentType = self.gridTransforms(request, requestBody)
-            elif request.find(b'/gridTransform') == 0:
-                responseBody, contentType = self.gridTransform(request, requestBody)
-                print("responseBody", len(responseBody))
-            elif request.find(b'/fiducials') == 0:
-                responseBody, contentType = self.fiducials(request, requestBody)
-            elif request.find(b'/fiducial') == 0:
-                responseBody, contentType = self.fiducial(request, requestBody)
-            elif request.find(b'/accessDICOMwebStudy') == 0:
-                responseBody, contentType = self.accessDICOMwebStudy(request, requestBody)
-            else:
-                responseBody = b"unknown command \"" + request + b"\""
-        except:
-            self.logMessage("Could not handle slicer command: %s" % request)
-            etype, value, tb = sys.exc_info()
-            import traceback
-            self.logMessage(etype, value)
-            self.logMessage(traceback.format_tb(tb))
-            print(etype, value)
-            print(traceback.format_tb(tb))
-            for frame in traceback.format_tb(tb):
-                print(frame)
+        if self.enableExec and request.find(b'/exec') == 0:
+            responseBody, contentType = self.exec(request, requestBody)
+        elif request.find(b'/timeimage') == 0:
+            responseBody, contentType = self.timeimage(request)
+        elif request.find(b'/system') == 0:
+            responseBody, contentType = self.system(method, request)
+        elif request.find(b'/gui') == 0:
+            responseBody, contentType = self.gui(method, request)
+        elif request.find(b'/screenshot') == 0:
+            responseBody, contentType = self.screenshot(request)
+        elif request.find(b'/slice') == 0:
+            responseBody, contentType = self.slice(request)
+        elif request.find(b'/threeD') == 0:
+            responseBody, contentType = self.threeD(request)
+        elif request.find(b'/mrml') == 0:
+            responseBody, contentType = self.mrml(method, request)
+        elif request.find(b'/tracking') == 0:
+            responseBody, contentType = self.tracking(request)
+        elif request.find(b'/sampledata') == 0:
+            responseBody, contentType = self.sampleData(request)
+        elif request.find(b'/volumeSelection') == 0:
+            responseBody, contentType = self.volumeSelection(request)
+        elif request.find(b'/volumes') == 0:
+            responseBody, contentType = self.volumes(request, requestBody)
+        elif request.find(b'/volume') == 0:
+            responseBody, contentType = self.volume(request, requestBody)
+        elif request.find(b'/gridTransforms') == 0:
+            responseBody, contentType = self.gridTransforms(request, requestBody)
+        elif request.find(b'/gridTransform') == 0:
+            responseBody, contentType = self.gridTransform(request, requestBody)
+            print("responseBody", len(responseBody))
+        elif request.find(b'/fiducials') == 0:
+            responseBody, contentType = self.fiducials(request, requestBody)
+        elif request.find(b'/fiducial') == 0:
+            responseBody, contentType = self.fiducial(request, requestBody)
+        elif request.find(b'/accessDICOMwebStudy') == 0:
+            responseBody, contentType = self.accessDICOMwebStudy(request, requestBody)
+        else:
+            raise RuntimeError(f'unknown command "{request}"')
         return contentType, responseBody
 
     def exec(self, request, requestBody):
         """
-        Implements the Read Eval Print Loop for python code.
-        :param source: python code to run
-        :return: result of code running as json string (from the content of the
-          `dict` object set into the `__execResult` variable)
-        example:
-    curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)"
+        Handle requests with path: /exec
         """
         self.logMessage('exec with body %s' % requestBody)
         p = urllib.parse.urlparse(request.decode())
@@ -159,11 +531,7 @@ class SlicerRequestHandler(object):
 
     def tracking(self, request):
         """
-        Send the matrix for a tracked object in the scene
-        :param m: 4x4 tracker matrix in column major order (position is last row)
-        :param q: quaternion in WXYZ order
-        :param p: position (last column of transform)
-        Matrix is overwritten if position or quaternion are provided
+        Handle requests with path: /tracking
         """
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
@@ -214,6 +582,9 @@ class SlicerRequestHandler(object):
         return (f"Set matrix".encode()), b'text/plain'
 
     def sampleData(self, request):
+        """
+        Handle requests with path: /sampledata
+        """
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         self.logMessage(f"SampleData request: {repr(request)}")
@@ -222,18 +593,18 @@ class SlicerRequestHandler(object):
         except KeyError:
             name = None
         if not name:
-            return (b"sampledata name was not specifiedXYZ"), b'text/plain'
+            raise RuntimeError("sampledata name was not specified")
         import SampleData
         try:
             SampleData.downloadSample(name)
         except IndexError:
-            return (f"sampledata {name} was not found".encode()), b'text/plain'
+            raise RuntimeError(f"sampledata {name} was not found")
         return (f"Sample data {name} loaded".encode()), b'text/plain'
 
     def volumeSelection(self, request):
         """
-        Cycles through loaded volumes in the scene
-        :param cmd: either "next" or "previous" to indicate direction
+        Handle requests with path: /volumeSelection
+        Cycles through loaded volumes in the scene.
         """
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
@@ -272,7 +643,8 @@ class SlicerRequestHandler(object):
 
     def volumes(self, request, requestBody):
         """
-        Returns a json list of mrml volume names and ids
+        Handle requests with path: /volumes
+        Returns a json list of mrml volume names and ids.
         """
         volumes = []
         mrmlVolumes = slicer.util.getNodes('vtkMRMLScalarVolumeNode*')
@@ -284,10 +656,12 @@ class SlicerRequestHandler(object):
 
     def volume(self, request, requestBody):
         """
+        Handle requests with path: /volume
+
         If there is a request body, this tries to parse the binary as nrrd
         and put it in the scene, either in an existing node or a new one.
+
         If there is no request body then the binary of the nrrd is returned for the given id.
-        :param id: is the mrml id of the volume to get or put
         """
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
@@ -297,13 +671,14 @@ class SlicerRequestHandler(object):
             volumeID = 'vtkMRMLScalarVolumeNode*'
 
         if requestBody:
-            return self.postNRRD(volumeID, requestBody), b'application/octet-stream'
+            return self.postNRRD(volumeID, requestBody)
         else:
-            return self.getNRRD(volumeID), b'application/octet-stream'
+            return self.getNRRD(volumeID)
 
     def gridTransforms(self, request, requestBody):
         """
-        Returns a list of names and ids of grid transforms in the scene
+        Handle requests with path: /gridtransforms
+        Returns a list of names and ids of grid transforms in the scene.
         """
         gridTransforms = []
         mrmlGridTransforms = slicer.util.getNodes('vtkMRMLGridTransformNode*')
@@ -314,10 +689,10 @@ class SlicerRequestHandler(object):
 
     def gridTransform(self, request, requestBody):
         """
+        Handle requests with path: /gridtransform
         If there is a request body, this tries to parse the binary as nrrd grid transform
         and put it in the scene, either in an existing node or a new one.
         If there is no request body then the binary of the nrrd is returned for the given id.
-        :param id: is the mrml id of the volume to get or put
         """
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
@@ -327,9 +702,11 @@ class SlicerRequestHandler(object):
             transformID = 'vtkMRMLGridTransformNode*'
 
         if requestBody:
-            return self.postTransformNRRD(transformID, requestBody), b'application/octet-stream'
+            # TODO: implement this method:
+            # return self.postTransformNRRD(transformID, requestBody)
+            raise RuntimeError("POST griddtransform is not implemented")
         else:
-            return self.getTransformNRRD(transformID), b'application/octet-stream'
+            return self.getTransformNRRD(transformID)
 
     def postNRRD(self, volumeID, requestBody):
         """Convert a binary blob of nrrd data into a node in the scene.
@@ -340,8 +717,7 @@ class SlicerRequestHandler(object):
         """
 
         if requestBody[:4] != b"NRRD":
-            self.logMessage('Cannot load non-nrrd file (magic is %s)' % requestBody[:4])
-            return
+            raise RuntimeError('Cannot load non-nrrd file (magic is %s)' % requestBody[:4])
 
         fields = {}
         endOfHeader = requestBody.find(b'\n\n')  # TODO: could be \r\n
@@ -355,20 +731,15 @@ class SlicerRequestHandler(object):
                 fields[key] = value
 
         if fields[b'type'] != b'short':
-            self.logMessage('Can only read short volumes')
-            return b"{'status': 'failed'}"
+            raise RuntimeError('Can only read short volumes')
         if fields[b'dimension'] != b'3':
-            self.logMessage('Can only read 3D, 1 component volumes')
-            return b"{'status': 'failed'}"
+            raise RuntimeError('Can only read 3D, 1 component volumes')
         if fields[b'endian'] != b'little':
-            self.logMessage('Can only read little endian')
-            return b"{'status': 'failed'}"
+            raise RuntimeError('Can only read little endian')
         if fields[b'encoding'] != b'raw':
-            self.logMessage('Can only read raw encoding')
-            return b"{'status': 'failed'}"
+            raise RuntimeError('Can only read raw encoding')
         if fields[b'space'] != b'left-posterior-superior':
-            self.logMessage('Can only read space in LPS')
-            return b"{'status': 'failed'}"
+            raise RuntimeError('Can only read space in LPS')
 
         imageData = vtk.vtkImageData()
         imageData.SetDimensions(list(map(int, fields[b'sizes'].split(b' '))))
@@ -417,7 +788,7 @@ class SlicerRequestHandler(object):
         slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveVolumeID(node.GetID())
         slicer.app.applicationLogic().PropagateVolumeSelection()
 
-        return b"{'status': 'success'}"
+        return b"{'status': 'success'}", b'application/json'
 
     def getNRRD(self, volumeID):
         """Return a nrrd binary blob with contents of the volume node
@@ -487,7 +858,7 @@ space origin: %%origin%%
 """.replace("%%scalarType%%", scalarType).replace("%%sizes%%", sizes).replace("%%directions%%", directions).replace("%%origin%%", origin)
 
         nrrdData = nrrdHeader.encode() + volumeArray.tobytes()
-        return nrrdData
+        return nrrdData, b'application/octet-stream'
 
     def getTransformNRRD(self, transformID):
         """Return a nrrd binary blob with contents of the transform node
@@ -548,11 +919,12 @@ space origin: %%origin%%
 """.replace("%%sizes%%", sizes).replace("%%directions%%", directions).replace("%%origin%%", origin)
 
         nrrdData = nrrdHeader.encode() + lpsArray.tobytes()
-        return nrrdData
+        return nrrdData, b'application/octet-stream'
 
     def fiducials(self, request, requestBody):
-        """return fiducials list in ad hoc json structure
-        TODO: should use the markups json version
+        """
+        Handle requests with path: /fiducials
+        Return basic properties of fiducials in an ad hoc json structure.
         """
         fiducials = {}
         for markupsNode in slicer.util.getNodesByClass('vtkMRMLMarkupsFiducialNode'):
@@ -575,11 +947,8 @@ space origin: %%origin%%
 
     def fiducial(self, request, requestBody):
         """
+        Handle requests with path: /fiducials
         Set the location of a control point in a markups fiducial
-        :param id: mrml id of the fiducial list
-        :param r: Right coordinate
-        :param a: Anterior coordinate
-        :param s: Superior coordinate
         """
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
@@ -605,18 +974,14 @@ space origin: %%origin%%
             s = 0
 
         fiducialNode = slicer.util.getNode(fiducialID)
-        fiducialNode.SetNthFiducialPosition(index, float(r), float(a), float(s))
-        return "{'result': 'ok'}", b'application/json'
+        fiducialNode.SetNthControlPointPosition(index, float(r), float(a), float(s))
+        return b'{"success": true}', b'application/json'
 
     def accessDICOMwebStudy(self, request, requestBody):
         """
+        Handle requests with path: /accessDICOMwebStudy
         Access DICOMweb server to download requested study, add it to
         Slicer's dicom database, and load it into the scene.
-        :param requestBody: is a json string
-        :param requestBody['dicomWEBPrefix']: is the start of the url
-        :param requestBody['dicomWEBStore']: is the middle of the url
-        :param requestBody['studyUID']: is the end of the url
-        :param requestBody['accessToken']: is the authorization bearer token for the DICOMweb server
         """
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
@@ -642,15 +1007,113 @@ space origin: %%origin%%
 
         print(f"Loaded {loadedUIDs}, and {loadedNodes}")
 
-        return b'{"result": "ok"}'
+        return b'{"success": true}', b'application/json'
 
-    def mrml(self, request):
+    def getNodesFilteredByQuery(self, queryParams):
+        q = queryParams
+
+        # Get by node ID
+        if "id" in q:
+            id = q['id'][0].strip()
+            node = slicer.mrmlScene.GetNodeByID(id)
+            if not node:
+                return []
+            return [node]
+
+        # Filter by node class
+        className = 'vtkMRMLNode'
+        if "class" in q:
+            className = q['class'][0].strip()
+        nodes = slicer.util.getNodesByClass(className)
+
+        # Filter by node name
+        if "name" in q:
+            nodeName = q['name'][0].strip()
+            nodes = list(filter(lambda node, requiredName=nodeName: node.GetName() == requiredName, nodes))
+
+        return nodes
+
+    def mrml(self, method, request):
         """
-        Returns a json list of all the mrml nodes
+        Handle requests with path: /mrml
+        """
+        import json
+        p = urllib.parse.urlparse(request.decode())
+        q = urllib.parse.parse_qs(p.query)
+
+        if method == "GET":
+            nodes = self.getNodesFilteredByQuery(q)
+            if p.path == '/mrml' or p.path == '/mrml/names':
+                # return node names
+                return (json.dumps([node.GetName() for node in nodes]).encode()), b'application/json'
+            elif p.path == "/mrml/ids":
+                return (json.dumps([node.GetID() for node in nodes]).encode()), b'application/json'
+            elif p.path == "/mrml/properties":
+                nodesProperties = {}
+                if len(nodes) == 0:
+                    raise RuntimeError("No nodes matched the filter criteria")
+                for node in nodes:
+                    nodesProperties[node.GetID()] = self.nodeProperties(node)
+                return (json.dumps(nodesProperties).encode()), b'application/json'
+            elif p.path == "/mrml/file":
+                if len(nodes) == 0:
+                    raise RuntimeError("No nodes matched the filter criteria")
+                if len(nodes) > 1:
+                    raise RuntimeError('/mrml/file can only be used for a single node')
+                return self.saveFromScene(nodes[0], q)
+            else:
+                raise RuntimeError(f"Invalid path: {p.path}")
+
+        elif method == "POST":
+            return self.loadIntoScene(request)
+
+        elif method == "DELETE":
+            if "class" in q or "name" in q:
+                nodes = self.getNodesFilteredByQuery(q)
+                if len(nodes) == 0:
+                    raise RuntimeError("No nodes matched the filter criteria")
+                for node in nodes:
+                    slicer.mrmlScene.RemoveNode(node)
+            else:
+                slicer.mrmlScene.Clear()
+            return b'{"success": true}', b'application/json'
+
+    def system(self, method, request):
+        """
+        Handle requests with path: /system
         """
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
-        return (json.dumps(list(slicer.util.getNodes('*').keys())).encode()), b'application/json'
+
+        if method == "DELETE":
+            # exit the application 1 second after submitting the response
+            qt.QTimer.singleShot(1000, slicer.util.exit)
+            return b'{"success": true}', b'application/json'
+
+        if p.path == '/system/version':
+            response = {
+                'applicationName': slicer.app.applicationName,
+                'applicationDisplayName': slicer.app.applicationDisplayName,
+                'applicationVersion': slicer.app.applicationVersion,
+                'releaseType': slicer.app.releaseType,
+                'repositoryUrl': slicer.app.repositoryUrl,
+                'repositoryBranch': slicer.app.repositoryBranch,
+                'revision': slicer.app.revision,
+                'majorVersion': slicer.app.majorVersion,
+                'minorVersion': slicer.app.minorVersion,
+                'arch': slicer.app.arch,
+                'os': slicer.app.os,
+                'isCustomMainApplication': slicer.app.isCustomMainApplication,
+                'mainApplicationName': slicer.app.mainApplicationName,
+                'mainApplicationRepositoryUrl': slicer.app.mainApplicationRepositoryUrl,
+                'mainApplicationRepositoryRevision': slicer.app.mainApplicationRepositoryRevision,
+                'mainApplicationRevision': slicer.app.mainApplicationRevision,
+                'mainApplicationMajorVersion': slicer.app.mainApplicationMajorVersion,
+                'mainApplicationMinorVersion': slicer.app.mainApplicationMinorVersion,
+                'mainApplicationPatchVersion': slicer.app.mainApplicationPatchVersion,
+            }
+            import json
+            return json.dumps(response).encode(), b'application/json'
 
     def screenshot(self, request):
         """
@@ -676,13 +1139,11 @@ space origin: %%origin%%
                     layoutId = eval(f"slicer.vtkMRMLLayoutNode.{att}")
                     slicer.app.layoutManager().setLayout(layoutId)
                     return
-        raise ValueError("Unknown layout name: " + layoutName)
+        raise RuntimeError("Unknown layout name: " + layoutName)
 
-    def gui(self, request):
-        """return a png of the application GUI.
-        :param contents: {full, viewers}
-        :param viewersLayout: {fourup, oneup3d, ...} slicer.vtkMRMLLayoutNode constants (SlicerLayout...View)
-        :return: png encoded screenshot after applying params
+    def gui(self, method, request):
+        """
+        Handle requests with path: /gui
         """
 
         p = urllib.parse.urlparse(request.decode())
@@ -704,7 +1165,7 @@ space origin: %%origin%%
             slicer.util.setToolbarsVisible(True)
         else:
             if contents:
-                raise ValueError("contents must be 'viewers' or 'full'")
+                raise RuntimeError("contents must be 'viewers' or 'full'")
 
         try:
             viewersLayout = q['viewersLayout'][0].strip().lower()
@@ -713,17 +1174,12 @@ space origin: %%origin%%
         if viewersLayout is not None:
             SlicerRequestHandler.setViewersLayout(viewersLayout)
 
-        return (f"Switched {contents} to {viewersLayout}".encode()), b'text/plain'
+        return b'{"success": true}', b'application/json'
 
     def slice(self, request):
-        """return a png for a slice view.
-        :param view: {red, yellow, green}
-        :param scrollTo: 0 to 1 for slice position within volume
-        :param offset: mm offset relative to slice origin (position of slice slider)
-        :param size: pixel size of output png
-        :param copySliceGeometryFrom: view name of other slice to copy from
-        :param orientation: {axial, sagittal, coronal}
-        :return: png encoded slice screenshot after applying params
+        """
+        Handle requests with path: /slice
+        Return png of a slice view.
         """
 
         p = urllib.parse.urlparse(request.decode())
@@ -807,9 +1263,9 @@ space origin: %%origin%%
         return pngData, b'image/png'
 
     def threeD(self, request):
-        """return a png for a threeD view
-        :param lookFromAxis: {L, R, A, P, I, S}
-        :return: png binary buffer
+        """
+        Handle requests with path: /threeD
+        Return a png for a threeD view.
         """
 
         p = urllib.parse.urlparse(request.decode())
@@ -878,10 +1334,9 @@ space origin: %%origin%%
 
     def timeimage(self, request=''):
         """
+        Handle requests with path: /timeimage
         For timing and debugging - return an image with the current time
         rendered as text down to the hundredth of a second
-        :param color: hex encoded RGB of dashed border (default 333 for dark gray)
-        :return: png image
         """
 
         # check arguments
@@ -945,3 +1400,227 @@ space origin: %%origin%%
         pngData = pngArray.tobytes()
 
         return pngData
+
+    def reportProgress(self, message):
+        # Abort download if cancel is clicked in progress bar
+        if self.progressWindow.wasCanceled:
+            raise Exception("download aborted")
+        # Update progress window
+        self.progressWindow.show()
+        self.progressWindow.activateWindow()
+        self.progressWindow.setValue(int(self.sampleDataLogic.downloadPercent))
+        self.progressWindow.setLabelText("Downloading...")
+        # Process events to allow screen to refresh
+        slicer.app.processEvents()
+
+    def downloadFromUrl(self, downloadUrl):
+        """Download and open file from URL.
+        Returns list of downloaded filenames.
+        """
+        # Get the download link and node name from URL
+        p = urllib.parse.urlparse(downloadUrl)
+        nodeName, ext = os.path.splitext(os.path.basename(p.path))
+
+        # Generate random filename to avoid reusing/overwriting older downloaded files that may have the same name
+        import uuid
+        filename = f"{nodeName}-{uuid.uuid4().hex}{ext}"
+
+        # Ensure sampleData logic is created
+        if not self.sampleDataLogic:
+            import SampleData
+            self.sampleDataLogic = SampleData.SampleDataLogic()
+
+        try:
+            self.progressWindow = slicer.util.createProgressDialog()
+            self.sampleDataLogic.logMessage = self.reportProgress
+            filenames = self.sampleDataLogic.downloadFromURL(nodeNames=nodeName, fileNames=filename, uris=downloadUrl, loadFiles=False)
+        finally:
+            self.progressWindow.close()
+
+        return filenames
+
+    def loadIntoScene(self, request):
+        """
+        Open (download and load into Slicer) a file or URL.
+        Either `url` or `localfile` has to be specified as query parameter.
+        """
+        p = urllib.parse.urlparse(request.decode())
+        q = urllib.parse.parse_qs(p.query)
+
+        # Write all extra query parameters into file open properties
+        loadFileProperties = {}
+        for queryParam in q:
+            if queryParam == 'url' or queryParam == 'localfile':
+                continue
+            loadFileProperties[queryParam] = q[queryParam][0].strip()
+        if 'url' in q:
+            # Open from URL
+            downloadUrl = q['url'][0].strip()
+            p = urllib.parse.urlparse(downloadUrl)
+            if p.scheme == 'slicer':
+                # `slicer` URL - pass it to the application as is
+                slicer.app.openUrl(downloadUrl)
+                return b'{"status": "success"}', b'application/json'
+            elif p.scheme == 'file':
+                # Open from local file
+                localFile = urllib.request.url2pathname(p.path)
+            else:
+                # Open from remote location
+                localFile = self.downloadFromUrl(downloadUrl)[0]
+        elif 'localfile' in q:
+            # Open from local file
+            localFile = q['localfile'][0].strip()
+        else:
+            raise RuntimeError("Required `url` or `localfile` query parameter is missing in `mrml` request")
+
+        fileType = loadFileProperties['filetype']
+
+        loadedNodes = slicer.util.loadNodeFromFile(localFile, fileType, loadFileProperties)
+        if type(loadedNodes) != list:
+            loadedNodes = [loadedNodes]
+
+        import json
+        responseJson = json.dumps({"success": True, "loadedNodeIDs": [node.GetID() for node in loadedNodes]})
+        return responseJson.encode(), b'application/json'
+
+    def saveFromScene(self, node, parsedQuery):
+        """
+        Save node from scene to local file.
+        Either `url` or `localfile` has to be specified as query parameter.
+        :param parsedQuery: contains urllib.parse.parse_qs(p.query) result
+        """
+        q = parsedQuery
+
+        saveFileProperties = {}
+        applyTransforms = False
+        for queryParam in q:
+            if queryParam == 'url' or queryParam == 'localfile':
+                continue
+            if queryParam == 'applytransforms':
+                applyTransforms = slicer.util.toBool(q[queryParam][0].strip())
+                continue
+            saveFileProperties[queryParam] = q[queryParam][0].strip()
+
+        if 'url' in q:
+            # Open from URL
+            downloadUrl = q['url'][0].strip()
+            p = urllib.parse.urlparse(downloadUrl)
+            # Open from local file
+            localFile = urllib.request.url2pathname(p.path)
+        elif 'localfile' in q:
+            # Open from local file
+            localFile = q['localfile'][0].strip()
+        else:
+            raise RuntimeError("Required `url` or `localfile` query parameter is missing in `mrml` request")
+
+        success = slicer.util.exportNode(node, localFile, saveFileProperties, applyTransforms)
+
+        import json
+        responseJson = json.dumps({"success": success})
+        return responseJson.encode(), b'application/json'
+
+    def nodeProperties(self, node):
+        """Get properties of the node as a dict."""
+        import re
+
+        def stringToData(s):
+            """Helper function to convert string value to Python data value."""
+            if s.lower() == "(none)":
+                return None
+            if s.lower() == "true":
+                return True
+            if s.lower() == "false":
+                return False
+            if s.lower() == "on":
+                return True
+            if s.lower() == "off":
+                return False
+            # Numeric vector in parentheses
+            # [1, 2, 3] and (1, 2, 3)
+            m = re.match("\\(([0-9,\\.\\- ]+)\\)", s)
+            if not m:
+                m = re.match("\\[([0-9,\\.\\- ]+)\\]", s)
+            if m:
+                strSplit = re.split(",[ ]*| +", m[1].strip())
+                if "." in s:
+                    # float vector
+                    return [float(val) for val in strSplit]
+                else:
+                    # int vector
+                    return [int(val) for val in strSplit]
+            # Numeric vector without parentheses
+            # 1, 2, 3
+            m = re.match("^([0-9,\\.\\- ]+)$", s)
+            if m:
+                # Numeric vector without braces or parentheses
+                strSplit = re.split(",[ ]*| +", m[1].strip())
+                if len(strSplit) > 1:
+                    if "." in s:
+                        # float vector
+                        return [float(val) for val in strSplit]
+                    else:
+                        # int vector
+                        return [int(val) for val in strSplit]
+            # Simple numeric value
+            m = re.match("^([0-9\\.\\-]+)$", s)
+            if m:
+                if "." in s:
+                    # float
+                    return float(s)
+                else:
+                    # int
+                    return int(s)
+            # Other
+            return s
+
+        lines = node.__str__().split('\n')
+        keys = []
+        key = ''
+        value = ''
+        content = {}
+        previousIndentLevel = 2  # level 0 is the object pointer
+        indentLevels = [0, 2]
+        for line in lines:
+            try:
+                if line.lstrip() == '':
+                    continue
+                currentIndentLevel = len(line) - len(line.lstrip())  # how many leading spaces
+                if currentIndentLevel == 0:
+                    # first line (contains class name and pointer, not interesting)
+                    continue
+                if currentIndentLevel < 2:
+                    currentIndentLevel = 2  # Error in print implementation of the node
+                if currentIndentLevel > previousIndentLevel:
+                    # new indentation
+                    keys.append(key)
+                    indentLevels.append(currentIndentLevel)
+                    previousIndentLevel = currentIndentLevel
+                elif currentIndentLevel < previousIndentLevel:
+                    # indentation finished
+                    while currentIndentLevel != indentLevels[-1]:
+                        indentLevels.pop()
+                        keys.pop()
+                    previousIndentLevel = currentIndentLevel
+                if ":" in line:
+                    [key, value] = line.split(':', maxsplit=1)
+                    key = key.lstrip()
+                    value = value.lstrip()
+                    currentObject = content
+                    for k in keys:
+                        if k not in currentObject:
+                            currentObject[k] = {}
+                        elif type(currentObject[k]) != dict:
+                            # this was considered as a value, but it turns out it is a group
+                            currentObject[k] = {}
+                        currentObject = currentObject[k]
+                    parsedValue = stringToData(value)
+                    if parsedValue is not None:
+                        currentObject[key] = parsedValue
+                else:
+                    # Group
+                    key = line.strip()
+            except:
+                import traceback
+                traceback.print_exc()
+
+        return content
