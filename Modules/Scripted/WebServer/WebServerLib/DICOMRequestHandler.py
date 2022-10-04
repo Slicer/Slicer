@@ -23,11 +23,11 @@ class DICOMRequestHandler(object):
     def logMessage(self, *args):
         logging.debug(args)
 
-    def canHandleRequest(self, uri, requestBody):
+    def canHandleRequest(self, method, uri, requestBody):
         parsedURL = urllib.parse.urlparse(uri)
         return 0.5 if parsedURL.path.startswith(b'/dicom') else 0.0
 
-    def handleRequest(self, uri, requestBody):
+    def handleRequest(self, method, uri, requestBody):
         """
         Dispatches various dicom requests
         :param parsedURL: the REST path and arguments

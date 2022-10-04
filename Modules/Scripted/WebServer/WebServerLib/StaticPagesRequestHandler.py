@@ -26,10 +26,10 @@ class StaticPagesRequestHandler(object):
     def logMessage(self, *args):
         logging.debug(args)
 
-    def canHandleRequest(self, uri, requestBody):
+    def canHandleRequest(self, method, uri, requestBody):
         return 0.1
 
-    def handleRequest(self, uri, requestBody):
+    def handleRequest(self, method, uri, requestBody):
         """Return directory listing or binary contents of files
         TODO: other header fields like modified time
 
