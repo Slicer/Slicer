@@ -494,9 +494,10 @@
   printOutputStream << printOutputIndent << #propertyName ": " << this->Get##propertyName() << "\n";
 
 /// Macro for printing floating-point (float or double) vector node property value.
+/// Follow VTK's PrintSelf convention of using parentheses for multiple values.
 #define vtkMRMLPrintVectorMacro(propertyName, vectorType, vectorSize) \
   { \
-  printOutputStream << printOutputIndent << #propertyName ": ["; \
+  printOutputStream << printOutputIndent << #propertyName ": ("; \
   vectorType* vectorValue = this->Get##propertyName(); \
   if (vectorValue) \
     { \
@@ -508,14 +509,15 @@
         } \
       printOutputStream << vectorValue[i]; \
       } \
-    printOutputStream << "]\n"; \
+    printOutputStream << ")\n"; \
     } \
   }
 
 /// Macro for printing an iterable container (float or double) node property value.
+/// Follow VTK's PrintSelf convention of using parentheses for multiple values.
 #define vtkMRMLPrintStdFloatVectorMacro(propertyName, vectorType) \
   { \
-    printOutputStream << printOutputIndent << #propertyName " : ["; \
+    printOutputStream << printOutputIndent << #propertyName " : ("; \
     vectorType vector = this->Get##propertyName(); \
     for (vectorType::iterator it=vector.begin(); it!=vector.end(); it++) \
       { \
@@ -525,13 +527,14 @@
         } \
       printOutputStream << *it; \
       } \
-    printOutputStream << "]\n"; \
+    printOutputStream << ")\n"; \
   }
 
 /// Macro for printing an iterable container (int) node property value.
+/// Follow VTK's PrintSelf convention of using parentheses for multiple values.
 #define vtkMRMLPrintStdIntVectorMacro(propertyName, vectorType) \
   { \
-    printOutputStream << printOutputIndent << #propertyName " : ["; \
+    printOutputStream << printOutputIndent << #propertyName " : ("; \
     vectorType vector = this->Get##propertyName(); \
     for (vectorType::iterator it=vector.begin(); it!=vector.end(); it++) \
       { \
@@ -541,23 +544,23 @@
         } \
       printOutputStream << *it; \
       } \
-    printOutputStream << "]\n"; \
+    printOutputStream << ")\n"; \
   }
 
 /// Macro for printing iterable container (of std::string) node property value.
 #define vtkMRMLPrintStdStringVectorMacro(propertyName, vectorType) \
   { \
-    printOutputStream << printOutputIndent << #propertyName " : ["; \
+    printOutputStream << printOutputIndent << #propertyName " : (\""; \
     vectorType<std::string> vector = this->Get##propertyName(); \
     for (vectorType<std::string>::iterator it=vector.begin(); it!=vector.end(); it++) \
       { \
       if (it != vector.begin()) \
         { \
-        printOutputStream << ", "; \
+        printOutputStream << "\", \""; \
         } \
       printOutputStream << *it; \
       } \
-    printOutputStream << "]\n"; \
+    printOutputStream << "\")\n"; \
   }
 
 #define vtkMRMLPrintMatrix4x4Macro(propertyName) \

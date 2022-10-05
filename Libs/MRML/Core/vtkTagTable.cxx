@@ -38,29 +38,28 @@ void vtkTagTable::PrintSelf(ostream& os, vtkIndent indent)
 
   Superclass::PrintSelf ( os, indent );
 
-  os << indent << "Name = " << (this->GetName() == nullptr ? "(none)" : this->GetName()) << "\n";
+  os << indent << "Name: " << (this->GetName() == nullptr ? "(none)" : this->GetName()) << "\n";
+  os << indent << "RestoreSelectionState: " << this->GetRestoreSelectionState() << "\n";
 
-  os << indent << "RestoreSelectionState = " << this->GetRestoreSelectionState() << "\n";
-
-  iter = this->TagTable.begin();
-
-  for ( iter = this->TagTable.begin();
-          iter != this->TagTable.end();
-          iter++)
+  if (!this->TagTable.empty())
+    {
+    os << indent << "TagTable:\n";
+    for (iter = this->TagTable.begin(); iter != this->TagTable.end(); iter++)
       {
       iter2 = this->TagSelectionTable.find( iter->first );
-      if (iter2 != this->TagSelectionTable.end() )
+      os << indent.GetNextIndent() << "Attribute[" << iter->first << "]: Value: " << iter->second << " Selected: ";
+      if (iter2 != this->TagSelectionTable.end())
         {
-        os << indent << "TagTable:\n";
-        os << indent << "Attribute = " << iter->first << " Value = " << iter->second << " Selected = " << iter2->second << "\n";
+        os << iter2->second;
         }
       else
         {
-        os << indent << "TagTable:\n";
-        os << indent << "Attribute = " << iter->first << " Value = " << iter->second << " Selected = " << "??" << "\n";
+        os << "??";
         vtkErrorMacro ( "vtkTagTable::PrintSelf -- TagTable and TagSelectionTable are out of sync." );
         }
+      os << "\n";
       }
+    }
 }
 
 

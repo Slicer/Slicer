@@ -54,18 +54,14 @@ void vtkOrientedImageData::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << "Directions:\n";
-
-  int i=0,j=0;
-  for(i=0; i<3; i++)
+  os << indent << "Directions:\n";
+  for (int i = 0; i < 3; i++)
     {
-    for(j=0; j<3; j++)
-      {
-      os << indent << " " << this->Directions[i][j];
-      }
-      os << indent << "\n";
+    os << indent.GetNextIndent()
+      << this->Directions[i][0] << " "
+      << this->Directions[i][1] << " "
+      << this->Directions[i][2] << "\n";
     }
-  os << "\n";
 }
 
 //----------------------------------------------------------------------------
