@@ -203,16 +203,14 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintVectorMacro(Origin, double, 3);
   vtkMRMLPrintEnumMacro(VoxelVectorType);
 
-  os << "IJKToRASDirections:\n";
+  os << indent << "IJKToRASDirections:\n";
   for (int i = 0; i < 3; i++)
     {
-    for (int j = 0; j < 3; j++)
-      {
-      os << indent << " " << this->IJKToRASDirections[i][j];
-      }
-    os << indent << "\n";
+    os << indent.GetNextIndent()
+      << this->IJKToRASDirections[i][0] << " "
+      << this->IJKToRASDirections[i][1] << " "
+      << this->IJKToRASDirections[i][2] << "\n";
     }
-  os << "\n";
 
   if (this->GetImageData() != nullptr)
     {

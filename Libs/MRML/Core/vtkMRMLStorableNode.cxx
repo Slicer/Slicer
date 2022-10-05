@@ -269,7 +269,11 @@ void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
   Superclass::PrintSelf(os,indent);
-  this->UserTagTable->PrintSelf(os, indent);
+  if (this->UserTagTable->GetNumberOfTags() > 0)
+    {
+    os << indent << "UserTagTable:\n";
+    this->UserTagTable->PrintSelf(os, indent.GetNextIndent());
+    }
 
   int numStorageNodes = this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
 

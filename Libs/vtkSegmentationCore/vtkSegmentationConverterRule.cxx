@@ -39,17 +39,15 @@ vtkSegmentationConverterRule::~vtkSegmentationConverterRule()
 //----------------------------------------------------------------------------
 void vtkSegmentationConverterRule::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os, indent);
-  os << indent <<
-    (this->GetSourceRepresentationName() ? this->GetSourceRepresentationName() : "NULL")
-    << " -> "
-    << (this->GetTargetRepresentationName() ? this->GetTargetRepresentationName() : "NULL")
-    << "\n";
+  os << indent << "Name: " << this->GetName() << "\n";
+  os << indent << "SourceRepresentationName: " << (this->GetSourceRepresentationName() ? this->GetSourceRepresentationName() : "(none)") << "\n";
+  os << indent << "TargetRepresentationName: " << (this->GetTargetRepresentationName() ? this->GetTargetRepresentationName() : "(none)") << "\n";
   if (this->ConversionParameters->GetNumberOfParameters() > 0)
     {
     os << indent << "ConversionParameters:\n";
     this->ConversionParameters->PrintSelf(os, indent.GetNextIndent());
     }
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------

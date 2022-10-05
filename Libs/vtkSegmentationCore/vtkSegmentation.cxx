@@ -166,14 +166,14 @@ void vtkSegmentation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Modified Time: " << this->GetMTime() << "\n";
 
   os << indent << "MasterRepresentationName:  " << this->MasterRepresentationName << "\n";
-  os << indent << "Number of segments:  " << this->Segments.size() << "\n";
-
+  os << indent << "Number of segments: " << this->Segments.size() << "\n";
+  os << indent << "Segments:\n";
   for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin();
     segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
-  {
-    os << indent << "Segment: " << (*segmentIdIt) << "\n";
+    {
+    os << indent.GetNextIndent() << (*segmentIdIt) << ":\n";
     vtkSegment* segment = this->Segments[*segmentIdIt];
-    segment->PrintSelf(os, indent.GetNextIndent());
+    segment->PrintSelf(os, indent.GetNextIndent().GetNextIndent());
     }
   os << indent << "Segment converter:\n";
   this->Converter->PrintSelf(os, indent.GetNextIndent());
