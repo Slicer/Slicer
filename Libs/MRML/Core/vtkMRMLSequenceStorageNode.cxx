@@ -131,6 +131,7 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         sequenceNode->CopySequenceIndex(embeddedSequenceNode);
         // Convert node IDs to node pointers
         sequenceNode->UpdateSequenceIndex();
+        // It is important to remove the embeddedSequenceNode from the scene to avoid node copy errors when saving this sequence node.
         sequenceScene->RemoveNode(embeddedSequenceNode);
         }
       }
@@ -183,11 +184,15 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     embeddedSequenceNode->CopySequenceIndex(sequenceNode);
     embeddedSequenceNode->SetSingletonTag("SequenceIndex");
 
-    // We add a singleton node to the scene.
-    // If there was a SequenceIndex node in the scene already then it will be overwritten.
     sequenceScene->AddNode(embeddedSequenceNode.GetPointer());
 
-    success = sequenceScene->WriteToMRB(fullName.c_str());
+    success = sequenceScene->WriteToMRB(fullName.c_str(), nullptr, this->GetUserMessages());
+
+    // It is important to remove the embeddedSequenceNode from the scene, because if
+    // an embeddedSequenceNode already exists in the sequenceScene then calling AddNode()
+    // would call Copy(). Copy may not work correctly or may log warnings/errors,
+    // because embeddedSequenceNode is incomplete (does not contain any data nodes, only index values and node IDs).
+    sequenceScene->RemoveNode(embeddedSequenceNode.GetPointer());
     }
   else
     {
