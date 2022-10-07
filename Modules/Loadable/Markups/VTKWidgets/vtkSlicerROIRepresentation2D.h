@@ -96,7 +96,7 @@ protected:
 
   vtkSmartPointer<vtkPolyDataAlgorithm>       ROISource;
 
-  vtkSmartPointer<vtkPassThroughFilter>       ROIPipelineInputFilter;
+  vtkSmartPointer<vtkPassThrough>       ROIPipelineInputFilter;
   vtkSmartPointer<vtkTransform>               ROIToWorldTransform;
   vtkSmartPointer<vtkTransformPolyDataFilter> ROIToWorldTransformFilter;
   vtkSmartPointer<vtkCutter>                  ROIOutlineCutter;

@@ -44,7 +44,7 @@ class vtkLookupTable;
 class vtkMRMLInteractionEventData;
 class vtkMRMLMarkupsROINode;
 class vtkOutlineFilter;
-class vtkPassThroughFilter;
+class vtkPassThrough;
 class vtkPlaneSource;
 class vtkPolyDataAlgorithm;
 class vtkPolyDataMapper;
@@ -101,7 +101,7 @@ protected:
 
   vtkSmartPointer<vtkPolyDataAlgorithm> ROISource;
 
-  vtkSmartPointer<vtkPassThroughFilter> ROIPipelineInputFilter;
+  vtkSmartPointer<vtkPassThrough> ROIPipelineInputFilter;
 
   vtkSmartPointer<vtkTransformPolyDataFilter>    ROITransformFilter;
   vtkSmartPointer<vtkTransform>                  ROIToWorldTransform;

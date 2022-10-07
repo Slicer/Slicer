@@ -38,7 +38,7 @@ class vtkAssignAttribute;
 class vtkCallbackCommand;
 class vtkCleanPolyData;
 class vtkCurveMeasurementsCalculator;
-class vtkPassThroughFilter;
+class vtkPassThrough;
 class vtkPlane;
 class vtkProjectMarkupsCurvePointsFilter;
 class vtkTransformPolyDataFilter;
@@ -306,9 +306,9 @@ protected:
   vtkSmartPointer<vtkTriangleFilter> TriangleFilter;
   vtkSmartPointer<vtkTransformPolyDataFilter> SurfaceToLocalTransformer;
   vtkSmartPointer<vtkArrayCalculator> SurfaceScalarCalculator;
-  vtkSmartPointer<vtkPassThroughFilter> SurfaceScalarPassThroughFilter;
+  vtkSmartPointer<vtkPassThrough> SurfaceScalarPassThroughFilter;
   vtkSmartPointer<vtkCurveMeasurementsCalculator> CurveMeasurementsCalculator;
-  vtkSmartPointer<vtkPassThroughFilter> WorldOutput;
+  vtkSmartPointer<vtkPassThrough> WorldOutput;
   const char* ShortestDistanceSurfaceActiveScalar;
 
   /// Filter that changes the active scalar of the input mesh using the ActiveScalarName

@@ -30,7 +30,7 @@
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkOutlineFilter.h>
-#include <vtkPassThroughFilter.h>
+#include <vtkPassThrough.h>
 #include <vtkPlane.h>
 #include <vtkPoints.h>
 #include <vtkPointData.h>
@@ -56,7 +56,7 @@ vtkSlicerROIRepresentation2D::vtkSlicerROIRepresentation2D()
 {
   this->ROISource = nullptr;
 
-  this->ROIPipelineInputFilter = vtkSmartPointer<vtkPassThroughFilter>::New();
+  this->ROIPipelineInputFilter = vtkSmartPointer<vtkPassThrough>::New();
 
   this->ROIToWorldTransform = vtkSmartPointer<vtkTransform>::New();
   this->ROIToWorldTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
