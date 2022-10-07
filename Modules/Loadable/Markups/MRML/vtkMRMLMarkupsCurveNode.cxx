@@ -48,7 +48,7 @@
 #include <vtkOBBTree.h>
 #include <vtkObjectFactory.h>
 #include <vtkParallelTransportFrame.h>
-#include <vtkPassThroughFilter.h>
+#include <vtkPassThrough.h>
 #include <vtkPlane.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
@@ -89,7 +89,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->SurfaceScalarCalculator->SetResultArrayType(VTK_FLOAT);
   this->SetSurfaceDistanceWeightingFunction("activeScalar");
 
-  this->SurfaceScalarPassThroughFilter = vtkSmartPointer<vtkPassThroughFilter>::New();
+  this->SurfaceScalarPassThroughFilter = vtkSmartPointer<vtkPassThrough>::New();
   this->SurfaceScalarPassThroughFilter->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
 
   this->CurveGenerator->SetCurveTypeToCardinalSpline();
@@ -113,7 +113,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->CurveMeasurementsCalculator->SetInputConnection(this->ProjectPointsFilter->GetOutputPort());
   this->CurveMeasurementsCalculator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 
-  this->WorldOutput = vtkSmartPointer<vtkPassThroughFilter>::New();
+  this->WorldOutput = vtkSmartPointer<vtkPassThrough>::New();
   this->WorldOutput->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
 
   this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->WorldOutput->GetOutputPort());

@@ -27,7 +27,7 @@
 #include <vtkGlyph3D.h>
 #include <vtkLine.h>
 #include <vtkOutlineFilter.h>
-#include <vtkPassThroughFilter.h>
+#include <vtkPassThrough.h>
 #include <vtkPointData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
@@ -53,7 +53,7 @@ vtkSlicerROIRepresentation3D::vtkSlicerROIRepresentation3D()
 {
   this->ROISource = nullptr;
 
-  this->ROIPipelineInputFilter = vtkSmartPointer<vtkPassThroughFilter>::New();
+  this->ROIPipelineInputFilter = vtkSmartPointer<vtkPassThrough>::New();
 
   this->ROIToWorldTransform = vtkSmartPointer<vtkTransform>::New();
   this->ROITransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
