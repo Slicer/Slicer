@@ -40,7 +40,7 @@ void vtkSegmentationConversionParameters::PrintSelf(ostream& os, vtkIndent inden
   for (const ConversionParameterType& parameter : this->ParameterList)
     {
     os << indent << parameter.Name << ": " << parameter.Value
-      << "  (" << parameter.Description << ")\n";
+      << " [" << parameter.Description << "]\n";
     }
 }
 

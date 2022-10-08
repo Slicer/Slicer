@@ -466,7 +466,7 @@ slicer.mrmlScene.AddNode(invertedocean)
 
 ### Show color legend for a volume node
 
-Display color legend for a volume node in slice views:
+Display color legend for a volume node in slice views (and in 3D views, if the slice is displayed in 3D):
 
 ```python
 volumeNode = getNode('MRHead')

@@ -11,12 +11,12 @@ There are three types of endpoints:
 | Type | Description | Path | Handler |
 |--|--|--|--|
 | [Static](#static-endpoints) | Hosts files out of the module's `docroot` like any standard http server. | `/` | [StaticPagesRequestHandler][StaticPagesRequestHandler] |
-| [Slicer](#slicer-endpoints) | Give read/write access to features in Slicer's MRML scene and GUI.</br>This interface also exposes the Python interpreter so that arbitrary python code may be executed in the Slicer application. | `/slicer` | [SlicerRequestHandler][SlicerRequestHandler] |
 | [DICOMweb](#dicom-endpoints) | Exposes the Slicer dicom database as a DICOMweb services | `/dicom` | [DICOMRequestHandler][DICOMRequestHandler] |
+| [Slicer](#slicer-endpoints) | Give read/write access to features in Slicer's MRML scene and GUI.</br>This interface also exposes the Python interpreter so that arbitrary python code may be executed in the Slicer application. | `/slicer` | [SlicerRequestHandler][SlicerRequestHandler] |
 
 [StaticPagesRequestHandler]: https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/WebServer/WebServerLib/StaticPagesRequestHandler.py
-[SlicerRequestHandler]: https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/WebServer/WebServerLib/SlicerRequestHandler.py
 [DICOMRequestHandler]: https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/WebServer/WebServerLib/DICOMRequestHandler.py
+[SlicerRequestHandler]: https://github.com/Slicer/Slicer/blob/main/Modules/Scripted/WebServer/WebServerLib/SlicerRequestHandler.py
 
 :::{note}
 The web server is integrated with the Qt event loop so it can be used together with the interactive session.
@@ -74,42 +74,8 @@ Hosts files out of the module's `docroot` like any standard http server.
 
 Currently this is used just for examples, but note that this server can be used to host [web applications](https://en.wikipedia.org/wiki/Single-page_application) of significant complexity with the option of interacting with the Slicer API.
 
-## Slicer endpoints
+OHIF DICOM viewer is included as an example (available at <http://localhost:2016/browse>). If the DICOMweb endpoint is enabled then this viewer can be used to quickly share content of the Slicer DICOM database with other computers on the same network. All users that can access the computer are assumed to be trusted - if the server is accessible to non-trusted people then it is recommended to restrict access by setting up a firewall or proxy server.
 
-### Remote Control
-
-The web server can also be accessed via other commands such as `curl`. A `dict` can be returned as a json object by setting it in the `__execResult` variable and enabling the `Slicer API exec` feature in the `Advanced` section.
-
-For example, these commands may be used to download the MRHead sample data, change the screen layout and return a dictionary including the ID of the loaded volume:
-
-```
-curl -X POST localhost:2016/slicer/exec --data "import SampleData; volumeNode = SampleData.SampleDataLogic().downloadMRHead(); slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView); __execResult = {'volumeNodeID': volumeNode.GetID()}"
-```
-
-:::{note}
-
-See the [Script Repository](../../developer_guide/script_repository.md) for other examples of python code you could remotely execute.
-
-:::
-
-### Remote Rendering
-
-There are several endpoints to get png images from slice views and 3D views. These endpoints allow control of slice offset or 3D camera view (see method doc strings in the source code for options since there is currently no auto-generated api documentation).  These endpoints can be used as the `src` or `href` for html `img` or `a` tags or as WebGL textures as shown in the demo scripts.
-
-### Data Access
-
-Give read/write access to features in Slicer's MRML scene and GUI.
-
-`http` `GET` and `POST` operations can be used to access volume data in nrrd format.
-
-For example, to save a nrrd version of a volume in Slicer, you can use:
-```
-curl -v http://localhost:2016/slicer/volume\&id='MRHead' -o /tmp/local.nrrd
-```
-
-Currently only limited forms are supported (scalar volumes and grid transforms).
-
-Other endpoints allow get/set of transforms and fiducials.
 
 ## DICOMweb endpoints
 
@@ -136,6 +102,403 @@ For OHIF version 2, change the `platform/viewer/public/config/default.js`, set t
     ],
   },
 ```
+
+## Slicer endpoints
+
+Full specification of the Slicer API is available at the bottom of this page. The API is subject to change.
+
+### Remote Control
+
+The web server can also be accessed via other commands such as `curl`. A `dict` can be returned as a json object by setting it in the `__execResult` variable and enabling the `Slicer API exec` feature in the `Advanced` section.
+
+For example, these commands may be used to download the MRHead sample data, change the screen layout and return a dictionary including the ID of the loaded volume:
+
+```
+curl -X POST localhost:2016/slicer/exec --data "import SampleData; volumeNode = SampleData.SampleDataLogic().downloadMRHead(); slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView); __execResult = {'volumeNodeID': volumeNode.GetID()}"
+```
+
+:::{note}
+
+See the [Script Repository](../../developer_guide/script_repository.md) for other examples of python code you could remotely execute.
+
+:::
+
+### Remote Rendering
+
+There are several endpoints to get png images from slice views and 3D views. These endpoints allow control of slice offset or 3D camera view (see method doc strings in the source code for options since there is currently no auto-generated api documentation).  These endpoints can be used as the `src` or `href` for html `img` or `a` tags or as WebGL textures as shown in the demo scripts.
+
+### Data Access
+
+Give read/write access to features in Slicer's MRML scene and GUI.
+
+`http` `GET`, `POST`, `DELETE` operations can be used to query, load, save, delete data in the scene.
+
+#### Usage via slicerio Python package
+
+The API can be conveniently used via the [slicerio Python package](https://pypi.org/project/slicerio/) **in any Python environment**. For example, to open an image file and a segmentation file in a single Slicer instance (without restarting a new instance for each file), run this code snippet:
+
+```python
+import slicerio.server
+slicerio.server.file_load("c:/tmp/MRHead.nrrd")
+slicerio.server.file_load("c:/tmp/Segmentation.nrrd", "SegmentationFile")
+```
+
+note: If Slicer application is not running (or the server API is disabled) then `slicerio.server.file_load` will start a new Slicer instance by launching the Slicer executable specified either in the `slicer_executable` function argument or in the `SLICER_EXECUTABLE` environment variable.
+
+Data nodes can be retrieved from Slicer by saving into local file:
+
+```python
+slicerio.server.file_save("c:/tmp/MRHeadOutput.nrrd", name="MRHead", properties={'useCompression': False})
+```
+
+Properties of nodes can be queried using `slicerio.server.node_properties`:
+
+```python
+properties = slicerio.server.node_properties(name="Segmentation")[0]
+segments = properties["Segmentation"]["Segments"]
+for segmentId in segments:
+    segment = segments[segmentId]
+    print(f"{segment['Name']} color: {segment['Color']}")
+```
+
+Full specification and more examples are available in the `slicerio` package documentation.
+
+#### Usage via curl
+
+For example, to save a nrrd version of a volume in Slicer, you can use:
+```
+curl -v http://localhost:2016/slicer/volume\&id='MRHead' -o /tmp/local.nrrd
+```
+
+Currently only limited forms are supported (scalar volumes and grid transforms).
+
+Other endpoints allow get/set of transforms and fiducials.
+
+## Slicer REST API
+
+### Remote control (exec)
+
+#### GET /exec
+
+Run script in Slicer's Python interpreter, as if it was run in the application's Python console.
+It can be used to implement a Read Eval Print Loop (REPL).
+
+Parameters:
+- `source`: Python code to run
+
+Return:
+- 200 (application/json): Result of code running as json string. The result must be set in a `__execResult` variable (`dict` object)
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+Example:
+
+    curl -X POST localhost:2016/slicer/exec --data "slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)"
+
+### MRML data access
+
+Get information on MRML nodes in the scene or load/save nodes.
+
+Common parameters for data selection for all methods:
+- `id`: select node that has this id.
+- `class`: select nodes of this class (select nodes of this class (e.g., vtkMRMLVolumeNode, vtkMRMLSegmentationNode)
+- `name`: select nodes of this name
+
+If `id` is specified then `class` and `name` parameters are ignored.
+If both `class` and `name` are specified then those nodes will be selected that have fulfill both selection criteria.
+
+#### GET /mrml and GET/mrml/names
+
+Get names of the selected nodes.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+
+Return:
+- 200 (application/json): list of node names.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /mrml/ids
+
+Get ids of the selected nodes.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+
+Return:
+- 200 (application/json): list of node ids.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /mrml/properties
+
+Get properties of the selected nodes as a json object.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+
+Return:
+- 200 (application/json): dictionary object, key is the node id, value is the node properties object.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /mrml/file
+
+Save node to local file. Query parameters must be specified so that only a single node is selected.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+- `localfile`: filename to save the node to
+- `useCompression`: specifies if the file should be saved using compression (`true` or `false`)
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### POST /mrml/file
+
+Load node from URL or local file into a node.
+
+Parameters:
+- `localfile`: Local filename to load the node from. If specified then `url` is ignored.
+- `url`: Local or remote URL to load the file from.
+- `filetype`: Specifies how to interpret the selected file. For example `VolumeFile`, `SegmentationFile`, `ModelFile`, `MarkupsFile`, `TransformFile`, `SceneFile`.
+
+Return:
+- 200 (application/json): JSON object, "success" property is set true and `loadedNodeIDs` property contains a list of loaded node ids.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /mrml/file
+
+Remove nodes from the scene. If no query parameters are specified then the whole scene is cleared.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+- `localfile`: filename to save the node to
+- `useCompression`: specifies if the file should be saved using compression (`true` or `false`)
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+### User interface
+
+#### PUT /gui
+
+Shutdown the application.
+
+Parameters:
+- `contents`: show full application GUI (`full`) or viewers only (`viewers`)
+- `viewersLayout`: set view layout, such as `fourup`, `oneup3d` (names derived from slicer.vtkMRMLLayoutNode constants - SlicerLayout...View)
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /screenshot
+
+Get screenshot of the application main window.
+
+Return:
+- 200 (image/png): screenshot image
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /slice
+
+Get screenshot of a slice view after applying parameters.
+
+Parameters:
+- `view`: `red`, `yellow`, or `green`
+- `scrollTo`: 0 to 1 for slice position within volume
+- `offset`: mm offset relative to slice origin (position of slice slider)
+- `size`: pixel size of output png
+- `copySliceGeometryFrom`: view name of other slice to copy from
+- `orientation`: `axial`, `sagittal`, `coronal`
+
+Return:
+- 200 (image/png): screenshot image
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /threeD
+
+Get screenshot of the first 3D view after applying parameters.
+
+Parameters:
+- `lookFromAxis`: `L`, `R`, `A`, `P`, `I`, `S`
+
+Return:
+- 200 (image/png): screenshot image
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /timeimage
+
+For timing and debugging - return an image with the current time rendered as text down to the hundredth of a second.
+
+Parameters:
+- `color`: hex encoded RGB of dashed border (default 333 for dark gray)
+
+Return:
+- 200 (image/png): rendered image
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+### Other functions
+
+#### GET /system/version
+
+Get application version information as a json object.
+
+Return:
+- 200 (application/json): version information object.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### DELETE /system
+
+Shutdown the application.
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /tracking
+
+Display/update position of a cursor (position marker cube) in the 3D view.
+This can be used to display position of a tracked object.
+
+Parameters:
+- `m`: 4x4 transformation matrix in column major order (position is last row).
+  Matrix is overwritten if position or quaternion are provided
+- `q`: quaternion in WXYZ order
+- `p`: position (last column of transform)
+
+Return:
+- 200 (text/plain): plain text message for the user
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /sampledata
+
+Load a sample data set into the scene.
+
+Parameters:
+- `name`: name of the sample data set (such as `MRHead`)
+
+Return:
+- 200 (text/plain): plain text message for the user
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /volumeSelection
+
+Cycles through loaded volumes in the scene.
+
+Parameters:
+- `cmd`: either `next` or `previous` to indicate direction
+
+Return:
+- 200 (text/plain): plain text message for the user
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /volumes, GET /gridtransforms
+
+Get a list of mrml volume or grid transform node names and ids.
+
+Parameters:
+- `cmd`: either `next` or `previous` to indicate direction
+
+Return:
+- 200 (application/json): list of json objects, with `name` and `id` attributes.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+Example of successful output:
+
+    [
+        {"name": "Volume1", "id": "vtkMRMLScalarVolumeNode1"},
+        {"name": "Volume2", "id": "vtkMRMLScalarVolumeNode2"},
+    ]
+
+#### GET /volume, GET /griddtransform
+
+Retrieve the specified volume or grid transform as a .nrrd file.
+
+Parameters:
+- `id`: id of the node to get
+
+Return:
+- 200 (application/octet-stream): data stream of a nrrd file
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### POST /volume
+
+Create or update a volume from a .nrrd file.
+Only uncompressed 3D volumes are accepted, in LPS coordinate system, with little endian short pixel type.
+
+Parameters:
+- `id`: id of the volume to create or update.
+
+Return:
+- 200 (application/json): data stream of a nrrd file
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### GET /fiducials
+
+Retrieve basic information about all markup point lists (formerly called fiducial lists) in the scene.
+
+Return:
+- 200 (application/json): Basic information about all markup point lists.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+Example of successful output:
+
+    {
+        "vtkMRMLMarkupsFiducialNode1": {
+            "name": "F",
+            "color": [1.0, 0.5000076295109483, 0.5000076295109483],
+            "scale": 3.0,
+            "markups": [
+                {"label": "F-1", "position": [-35.422643698898014, 13.121414583492907, -10.214302062988281]},
+                {"label": "F-2", "position": [43.217879176918984, 41.565859027937364, -10.214302062988281]},
+                {"label": "F-3", "position": [39.8714739481608, -32.05505600474238, -10.214302062988281]}]},
+        "vtkMRMLMarkupsFiducialNode2": {
+            "name": "F_1",
+            "color": [1.0, 0.5000076295109483, 0.5000076295109483],
+            "scale": 3.0,
+            "markups": [
+                {"label": "F_1-1", "position": [82.53814061482748, 13.121414583492907, -23.599922978020956]},
+                {"label": "F_1-2", "position": [-4.468395332884938, 13.121414583492907, 65.07981558407056]}]}
+    }
+
+#### PUT /fiducial
+
+Set the location of a control point in a markups point list (formerly called fiducial list).
+
+Parameters:
+- `id`: id of the node to update.
+- `r`: Right coordinate
+- `a`: Anterior coordinate
+- `s`: Superior coordinate
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
+#### POST /accessDICOMwebStudy
+
+Access DICOMweb server to download requested study, add it to Slicer's dicom database, and load it into the scene.
+
+Request body: json string with the following properties
+- 'dicomWEBPrefix': is the start of the url
+- 'dicomWEBStore': is the middle of the url
+- 'studyUID': is the end of the url
+- 'accessToken': is the authorization bearer token for the DICOMweb server
+
+Return:
+- 200 (application/json): JSON object, with `success` property set to true.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
 
 ## Related modules
 

@@ -394,6 +394,7 @@ class SlicerHTTPServer(HTTPServer):
                 self.logMessage(requestLines[0])
                 try:
                     method, uri, version = requestLines[0].split(b' ')
+                    method = method.decode()
                 except ValueError as e:
                     self.logMessage("Could not interpret first request lines: ", requestLines)
 
@@ -404,8 +405,7 @@ class SlicerHTTPServer(HTTPServer):
                     self.logMessage("Warning, we don't speak %s", version)
                     return
 
-                # TODO: methods = ["GET", "POST", "PUT", "DELETE"]
-                methods = [b"GET", b"POST", b"PUT"]
+                methods = ["GET", "POST", "PUT", "DELETE"]
                 if method not in methods:
                     self.logMessage("Warning, we only handle %s" % methods)
                     return
@@ -420,28 +420,31 @@ class SlicerHTTPServer(HTTPServer):
                 highestConfidenceHandler = None
                 highestConfidence = 0.0
                 for handler in self.requestHandlers:
-                    confidence = handler.canHandleRequest(uri, requestBody)
+                    confidence = handler.canHandleRequest(method, uri, requestBody)
                     if confidence > highestConfidence:
                         highestConfidenceHandler = handler
                         highestConfidence = confidence
 
+                httpStatus = "200 OK"
                 if highestConfidenceHandler is not None and highestConfidence > 0.0:
                     try:
-                        contentType, responseBody = highestConfidenceHandler.handleRequest(uri, requestBody)
-                    except:
+                        contentType, responseBody = highestConfidenceHandler.handleRequest(method, uri, requestBody)
+                    except Exception as e:
                         etype, value, tb = sys.exc_info()
                         import traceback
                         for frame in traceback.format_tb(tb):
                             self.logMessage(frame)
                         self.logMessage(etype, value)
-                        contentType = b'text/plain'
-                        responseBody = b'Server error'  # TODO: send correct error code in response
+                        import json
+                        contentType = b'application/json'
+                        responseBody = json.dumps({"success": False, "message": "Server error: " + str(e)}).encode()
+                        httpStatus = "500 Internal Server Error"
                 else:
                     contentType = b'text/plain'
                     responseBody = b''
 
                 if responseBody:
-                    self.response = b"HTTP/1.1 200 OK\r\n"
+                    self.response = f"HTTP/1.1 {httpStatus}\r\n".encode()
                     if self.enableCORS:
                         self.response += b"Access-Control-Allow-Origin: *\r\n"
                     self.response += b"Content-Type: %s\r\n" % contentType

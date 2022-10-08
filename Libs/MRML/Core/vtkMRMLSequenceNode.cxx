@@ -263,6 +263,11 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode *anode)
       }
     }
 
+  // If the source internal scene only contains node IDs (and not the actual nodes)
+  // then we allow verbatim copying of the node IDs, without any mapping.
+  // This allows copying of a sequence node that only contains indices, not any data nodes.
+  bool mapDataNodeIds = !sourceToTargetDataNodeID.empty();
+
   this->IndexEntries.clear();
   for(std::deque< IndexEntryType >::iterator sourceIndexIt=snode->IndexEntries.begin(); sourceIndexIt!=snode->IndexEntries.end(); ++sourceIndexIt)
     {
@@ -278,7 +283,7 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode *anode)
     if (seqItem.DataNode==nullptr)
       {
       // data node was not found, at least copy its ID
-      std::string targetDataNodeID = sourceToTargetDataNodeID[sourceIndexIt->DataNodeID];
+      std::string targetDataNodeID = (mapDataNodeIds ? sourceToTargetDataNodeID[sourceIndexIt->DataNodeID] : sourceIndexIt->DataNodeID);
       seqItem.DataNodeID = targetDataNodeID;
       if (seqItem.DataNodeID.empty())
         {

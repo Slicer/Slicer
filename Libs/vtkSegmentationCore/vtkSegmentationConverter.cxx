@@ -60,10 +60,12 @@ vtkSegmentationConverter::~vtkSegmentationConverter() = default;
 void vtkSegmentationConverter::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+  os << indent << "Rules:\n";
+  int ruleIndex = 0;
   for (auto rule : this->ConverterRules)
     {
-    os << indent << "Rule:";
-    rule->PrintSelf(os, indent.GetNextIndent());
+    os << indent.GetNextIndent() << "Rule[" << ruleIndex++ << "]:\n";
+    rule->PrintSelf(os, indent.GetNextIndent().GetNextIndent());
     }
 }
 

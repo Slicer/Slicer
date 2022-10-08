@@ -1154,7 +1154,22 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection * userMessage
     if(indent<=0)
       indent = 1;
 
+    vtkNew<vtkMRMLMessageCollection> nodeWritingMessages;
+    nodeWritingMessages->SetObservedObject(node);
     node->WriteXML(*os, indent);
+    nodeWritingMessages->SetObservedObject(nullptr);
+    if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
+      {
+      vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::Commit", "Error writing "
+        << (node->GetName() ? node->GetName() : "(unknown)") << " (" << (node->GetID() ? node->GetID() : "unknown") << ")"
+        << " node to XML");
+      }
+    else if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
+      {
+      vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::Commit", "Warnings encountered while writing "
+        << (node->GetName() ? node->GetName() : "(unknown)") << " (" << (node->GetID() ? node->GetID() : "unknown") << ")"
+        << " node to XML - see application log for details");
+      }
 
     *os << vindent << ">";
     node->WriteNodeBodyXML(*os, indent);
