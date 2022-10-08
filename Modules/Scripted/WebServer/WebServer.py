@@ -103,6 +103,10 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
 
         # handlers
 
+        self.enableCORSCheck = qt.QCheckBox()
+        self.enableCORSCheck.toolTip = "Enable Cross Origin Resource Sharing (stop server to change option).  Warning: this option allows any web page to access the server."
+        advancedFormLayout.addRow('Enable CORS: ', self.enableCORSCheck)
+
         self.enableSlicerHandler = qt.QCheckBox()
         self.enableSlicerHandler.toolTip = "Enable remote control of Slicer application (stop server to change option)"
         advancedFormLayout.addRow('Slicer API: ', self.enableSlicerHandler)
@@ -144,10 +148,11 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         self.localConnectionButton.connect('clicked()', self.openLocalConnection)
         self.localQtConnectionButton.connect('clicked()', self.openQtLocalConnection)
         self.clearLogButton.connect('clicked()', self.log.clear)
-        self.logToConsole.connect('clicked()', self.updateLoggingFromGUI)
-        self.logToGUI.connect('clicked()', self.updateLoggingFromGUI)
+        self.enableCORSCheck.connect('clicked()', self.updateCORSandLoggingFromGUI)
+        self.logToConsole.connect('clicked()', self.updateCORSandLoggingFromGUI)
+        self.logToGUI.connect('clicked()', self.updateCORSandLoggingFromGUI)
 
-        self.updateLoggingFromGUI()
+        self.updateCORSandLoggingFromGUI()
 
     def startServer(self):
         self.logic.requestHandlers = []
@@ -156,6 +161,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
             enableExec=self.enableSlicerHandlerExec.checked,
             enableDICOM=self.enableDICOMHandler.checked,
             enableStaticPages=self.enableStaticPagesHandler.checked)
+        self.logic.enableCORS = self.enableCORS
         self.logic.start()
         self.updateGUIFromLogic()
 
@@ -164,9 +170,11 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         self.updateGUIFromLogic()
 
     def updateGUIFromSettings(self):
+        self.enableCORSCheck.checked = settingsValue("WebServer/enableCORS", False, converter=toBool)
         self.logToConsole.checked = settingsValue('WebServer/logToConsole', False, converter=toBool)
         self.logToGUI.checked = settingsValue("WebServer/logToGUI", False, converter=toBool)
         self.enableSlicerHandler.checked = settingsValue("WebServer/enableSlicerHandler", True, converter=toBool)
+        self.enableSlicerHandlerExec.checked = settingsValue("WebServer/enableSlicerHandlerExec", False, converter=toBool)
         self.enableSlicerHandlerExec.checked = settingsValue("WebServer/enableSlicerHandlerExec", False, converter=toBool)
         if hasattr(slicer.modules, "dicom"):
             self.enableDICOMHandler.checked = settingsValue("WebServer/enableDICOMHandler", True, converter=toBool)
@@ -178,14 +186,17 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         self.startServerButton.setEnabled(not self.logic.serverStarted)
         self.stopServerButton.setEnabled(self.logic.serverStarted)
 
+        self.enableCORSCheck.setEnabled(not self.logic.serverStarted)
         self.enableSlicerHandler.setEnabled(not self.logic.serverStarted)
         self.enableSlicerHandlerExec.setEnabled(not self.logic.serverStarted)
         self.enableDICOMHandler.setEnabled(not self.logic.serverStarted)
         self.enableStaticPagesHandler.setEnabled(not self.logic.serverStarted)
 
-    def updateLoggingFromGUI(self):
+    def updateCORSandLoggingFromGUI(self):
+        self.enableCORS = self.enableCORSCheck.checked
         self.consoleMessages = self.logToConsole.checked
         self.guiMessages = self.logToGUI.checked
+        slicer.app.userSettings().setValue("WebServer/enableCORS", self.enableCORSCheck.checked)
         slicer.app.userSettings().setValue("WebServer/logToConsole", self.logToConsole.checked)
         slicer.app.userSettings().setValue("WebServer/logToGUI", self.logToGUI.checked)
 
@@ -255,7 +266,7 @@ class SlicerHTTPServer(HTTPServer):
     """
     # TODO: set header so client knows that image refreshes are needed (avoid
     # using the &time=xxx trick)
-    def __init__(self, server_address=("", 2016), requestHandlers=None, docroot='.', logMessage=None, certfile=None):
+    def __init__(self, server_address=("", 2016), requestHandlers=None, docroot='.', logMessage=None, certfile=None, enableCORS=False):
         """
         :param server_address: passed to parent class (default ("", 8070))
         :param requestHandlers: request handler objects; if not specified then Slicer, DICOM, and StaticPages handlers are registered
@@ -286,6 +297,7 @@ class SlicerHTTPServer(HTTPServer):
         self.notifiers = {}
         self.connections = {}
         self.requestCommunicators = {}
+        self.enableCORS = enableCORS
 
     class DummyRequestHandler(object):
         pass
@@ -297,7 +309,7 @@ class SlicerHTTPServer(HTTPServer):
         This class handles event driven chunking of the communication.
         .. note:: this is an internal class of the web server
         """
-        def __init__(self, connectionSocket, requestHandlers, docroot, logMessage):
+        def __init__(self, connectionSocket, requestHandlers, docroot, logMessage, enableCORS):
             """
             :param connectionSocket: socket for this request
             :param docroot: for handling static pages content
@@ -306,6 +318,7 @@ class SlicerHTTPServer(HTTPServer):
             self.connectionSocket = connectionSocket
             self.docroot = docroot
             self.logMessage = logMessage
+            self.enableCORS = enableCORS
             self.bufferSize = 1024 * 1024
             self.requestHandlers = []
             for requestHandler in requestHandlers:
@@ -432,7 +445,8 @@ class SlicerHTTPServer(HTTPServer):
 
                 if responseBody:
                     self.response = f"HTTP/1.1 {httpStatus}\r\n".encode()
-                    self.response += b"Access-Control-Allow-Origin: *\r\n"
+                    if self.enableCORS:
+                        self.response += b"Access-Control-Allow-Origin: *\r\n"
                     self.response += b"Content-Type: %s\r\n" % contentType
                     self.response += b"Content-Length: %d\r\n" % len(responseBody)
                     self.response += b"Cache-Control: no-cache\r\n"
@@ -477,7 +491,7 @@ class SlicerHTTPServer(HTTPServer):
         try:
             (connectionSocket, clientAddress) = self.socket.accept()
             fileno = connectionSocket.fileno()
-            self.requestCommunicators[fileno] = self.SlicerRequestCommunicator(connectionSocket, self.requestHandlers, self.docroot, self.logMessage)
+            self.requestCommunicators[fileno] = self.SlicerRequestCommunicator(connectionSocket, self.requestHandlers, self.docroot, self.logMessage, self.enableCORS)
             self.logMessage('Connected on %s fileno %d' % (connectionSocket, connectionSocket.fileno()))
         except socket.error as e:
             self.logMessage('Socket Error', socket.error, e)
@@ -599,7 +613,8 @@ class WebServerLogic:
                                        docroot=self.docroot,
                                        server_address=("", self.port),
                                        logMessage=self.logMessage,
-                                       certfile=certfile)
+                                       certfile=certfile,
+                                       enableCORS=self.enableCORS)
         self.server.start()
         self.serverStarted = True
 
