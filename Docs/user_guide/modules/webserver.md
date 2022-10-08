@@ -37,6 +37,7 @@ Because the web server uses standard http, there are many off-the-shelf security
 - Log output: If `Log to GUI` is enabled, access log and execution results are logged. Logs are cleared periodically.
 - Clear Log: Clear log output displayed in the module panel.
 - Advanced:
+  - CORS: Enable/disable [Cross-Origin Resource Sharing](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing).
   - Slicer API: Enable/disable use of [Slicer endpoints](#slicer-endpoints) associated with the `/slicer` path.
   - Slicer API exec: Enable/disable remote execution of python code through `/slicer/exec` endpoint. See [Remote Control][#remote-control].
   - DICOMweb API: Enable/disable support of [DICOMWeb endpoints](#dicomweb-endpoints) associated with the `/dicom` path.
@@ -53,6 +54,19 @@ The `Slicer API exec` option exposes the full python interface of Slicer running
 
 Note also that even with the `Slicer API exec` disabled, it is possible that other endpoints expose vulnerabilities such as buffer overruns that could lead to server exploits.  It is suggested that only trusted users be granted access to any of the API endpoints.
 :::
+
+:::{warning}
+Cross-Origin Resource Sharing allows browser-based code
+hosted from any origin to access the Slicer API.  That is,
+any javascript in a site opened in a browser on the machine
+running the server would have access to the API.  While this
+feature is useful for some development or specific scenarios
+it should be used with caution.  Note that CORS is enforced
+by the user's web browser, so even with CORS turned off it's possible
+for other software running with access to the port to access
+the API even if CORS is turned off.
+:::
+
 
 ## Static endpoints
 
