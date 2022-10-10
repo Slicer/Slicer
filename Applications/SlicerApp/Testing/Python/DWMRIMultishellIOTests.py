@@ -30,7 +30,7 @@ def parse_nhdr(path):
 
     with open(path) as f:
         magic = f.readline().strip()
-        assert(magic == "NRRD0005")
+        assert magic == "NRRD0005"
 
         while True:
             line = f.readline()
@@ -40,13 +40,13 @@ def parse_nhdr(path):
 
             # careful about precedence -- ":=" must match first
             key, val = (x.strip() for x in re.split(":=|=|:", line))
-            assert(key not in kvdict)
+            assert key not in kvdict
             kvdict[key] = val
 
             if key.startswith(dwmri_grad_keybase):
                 _gn = int(key[len(dwmri_grad_keybase):None])
                 # monotonic keys
-                assert(_gn == grad_count)  # offset
+                assert _gn == grad_count  # offset
                 grad_count += 1
 
         bvalue = float(kvdict[dwmri_bval_key])
@@ -94,7 +94,7 @@ def test_nrrd_dwi_load(first_file, second_file=None):
     ##################################
     # 1) check the number of gradients
 
-    assert(len(parsed_nrrd.gradients) == slicer_numgrads)
+    assert len(parsed_nrrd.gradients) == slicer_numgrads
 
     ##################################
     # 2) check the node b values and gradients are correct

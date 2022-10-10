@@ -353,7 +353,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         # SINGLE_COMPONENT: Check that input has enough components for the given componentToExtract
         if conversionMethod == VectorToScalarVolumeLogic.SINGLE_COMPONENT:
             # componentToExtract is an index with valid values in the range: [0, numberOfComponents-1]
-            if not(0 <= componentToExtract < numberOfComponents):
+            if not 0 <= componentToExtract < numberOfComponents:
                 msg = 'componentToExtract %d is invalid. Image has only %d components.' % (componentToExtract, numberOfComponents)
                 logging.debug("isValidInputOutputData failed: %s" % msg)
                 return False, msg

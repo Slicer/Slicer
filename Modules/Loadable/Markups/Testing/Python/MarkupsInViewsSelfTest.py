@@ -196,8 +196,8 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
         nose = [4.61944, 114.526, -33.2143]
         controlPointIndex = fidNode.AddControlPoint(eye1)
         slicer.nodeEvents = self.nodeEvents
-        assert(len(self.nodeEvents) == 1)
-        assert(self.nodeEvents[0] == slicer.vtkMRMLMarkupsNode.PointPositionDefinedEvent)
+        assert len(self.nodeEvents) == 1
+        assert self.nodeEvents[0] == slicer.vtkMRMLMarkupsNode.PointPositionDefinedEvent
         fidNode.SetNthControlPointLabel(controlPointIndex, "eye-1")
         controlPointIndex = fidNode.AddControlPoint(eye2)
         fidNode.SetNthControlPointLabel(controlPointIndex, "eye-2")

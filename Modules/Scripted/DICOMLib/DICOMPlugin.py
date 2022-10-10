@@ -123,7 +123,7 @@ class DICOMPlugin:
         for f in files:
             # Unicode-objects must be encoded before hashing
             m.update(f.encode('UTF-8', 'ignore'))
-        return(m.digest())
+        return m.digest()
 
     def getCachedLoadables(self, files):
         """ Helper method to access the results of a previous
