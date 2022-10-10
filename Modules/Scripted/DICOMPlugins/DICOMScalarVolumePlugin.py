@@ -365,7 +365,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         for f in files:
             fileList.InsertNextValue(f)
         volumesLogic = slicer.modules.volumes.logic()
-        return(volumesLogic.AddArchetypeScalarVolume(files[0], name, 0, fileList))
+        return volumesLogic.AddArchetypeScalarVolume(files[0], name, 0, fileList)
 
     def loadFilesWithSeriesReader(self, imageIOName, files, name, grayscale=True):
         """ Explicitly use the named imageIO to perform the loading
@@ -416,7 +416,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         slicer.modules.DICOMInstance.reader = reader
         slicer.modules.DICOMInstance.imageChangeInformation = imageChangeInformation
 
-        return(volumeNode)
+        return volumeNode
 
     def setVolumeNodeProperties(self, volumeNode, loadable):
         """After the scalar volume has been loaded, populate the node

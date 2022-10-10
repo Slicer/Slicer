@@ -72,17 +72,17 @@ if __name__ == '__main__':
         # Test startupCompleted with main window
         args = list(common_args)
         (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, args)
-        assert(os.path.isfile(test_output_file))
+        assert os.path.isfile(test_output_file)
         os.remove(test_output_file)
-        assert(returnCode == EXIT_SUCCESS)
+        assert returnCode == EXIT_SUCCESS
         print("Test startupCompleted with main window - passed\n")
 
         # Test startupCompleted without main window
         args = list(common_args)
         args.extend(['--no-main-window'])
         (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, args)
-        assert(os.path.isfile(test_output_file))
-        assert(returnCode == EXIT_SUCCESS)
+        assert os.path.isfile(test_output_file)
+        assert returnCode == EXIT_SUCCESS
         print("Test startupCompleted without main window - passed\n")
 
     finally:
