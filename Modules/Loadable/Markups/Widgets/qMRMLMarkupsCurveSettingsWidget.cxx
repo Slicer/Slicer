@@ -318,7 +318,7 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
     {
     return;
     }
-  bool isClosed = (vtkMRMLMarkupsClosedCurveNode::SafeDownCast(inputNode) != nullptr);
+  bool isClosed = inputNode->GetCurveClosed();
   vtkMRMLMarkupsCurveNode* outputNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->resampleCurveOutputNodeSelector->currentNode());
   if (!outputNode)
     {
