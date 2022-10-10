@@ -698,6 +698,11 @@ void qSlicerMouseModeToolBar::setAdjustWindowLevelMode(int adjustWindowLevelMode
     }
   interactionNode->SetAttribute(vtkMRMLWindowLevelWidget::GetInteractionNodeAdjustWindowLevelModeAttributeName(),
     vtkMRMLWindowLevelWidget::GetAdjustWindowLevelModeAsString(adjustWindowLevelMode));
+
+   // Activate window/level action when setting its mode.
+   // This is done to save a button click and reduce user confusion, similarly how it is done elsewhere in Slicer
+   // and other software, where adjusting an option of a feature activates that feature.
+   d->AdjustWindowLevelAction->trigger();
 }
 
 //-----------------------------------------------------------------------------
