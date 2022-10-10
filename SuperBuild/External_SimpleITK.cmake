@@ -2,7 +2,13 @@
 set(proj SimpleITK)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES ITK Swig python python-setuptools)
+set(${proj}_DEPENDENCIES
+  ITK
+  python
+  python-pip
+  python-setuptools
+  Swig
+  )
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
