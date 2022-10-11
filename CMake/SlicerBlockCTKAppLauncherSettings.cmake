@@ -142,6 +142,13 @@ if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
     "SSL_CERT_FILE=<APPLAUNCHER_SETTINGS_DIR>/${Slicer_SHARE_DIR}/Slicer.crt"
     )
 endif()
+if(UNIX AND NOT APPLE)
+  # Disable Chromium Sandboxing on Linux because not all systems support it
+  # (see https://github.com/Slicer/Slicer/issues/6577)
+  list(APPEND SLICER_ENVVARS_BUILD
+    "QTWEBENGINE_DISABLE_SANDBOX=1"
+    )
+endif()
 
 # External projects - environment variables
 foreach(varname IN LISTS Slicer_EP_LABEL_ENVVARS_LAUNCHER_BUILD)
