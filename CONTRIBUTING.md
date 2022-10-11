@@ -15,7 +15,7 @@ documentation, all the way down to half-baked ideas that launch discussions.
 The PR Process, Circle CI, and Related Gotchas
 ----------------------------------------------
 
-#### How to submit a PR ?
+### How to submit a PR ?
 
 If you are new to Slicer development and you don't have push access to the Slicer
 repository, here are the steps:
@@ -35,7 +35,7 @@ them of your awesome contributions.
 Based on the comments posted by the reviewers, you may have to revisit your patches.
 
 
-#### How to efficiently contribute ?
+### How to efficiently contribute ?
 
 We encourage all developers to:
 
@@ -48,7 +48,7 @@ We encourage all developers to:
   core functionality, should be carefully reviewed and integrated. Ideally, several
   developers would test that the changes don't break extensions.
 
-#### How to write commit messages ?
+### How to write commit messages ?
 
 Write your commit messages using the standard prefixes for Slicer commit
 messages:
@@ -101,7 +101,7 @@ Examples:
   - Good: `COMP: Fix compilation error with Numpy on Visual Studio`
 
 
-#### How to integrate a PR ?
+### How to integrate a PR ?
 
 Getting your contributions integrated is relatively straightforward, here
 is the checklist:
@@ -118,7 +118,7 @@ is the checklist:
   the [Slicer forum][slicer-forum].
 
 
-#### Automatic testing of pull requests
+### Automatic testing of pull requests
 
 Every pull request is tested automatically using CircleCI each time you push a
 commit to it. The Github UI will restrict users from merging pull requests until
@@ -130,7 +130,7 @@ The testing infrastructure is described in details in the
 blog post.
 
 
-#### Nightly tests
+### Nightly tests
 
 After changes are integrated, every evening at 10pm EST (3am UTC), Slicer build bots (aka factories)
 will build, test and package the Slicer application and all its extensions on Linux, macOS
@@ -139,7 +139,7 @@ and developers that introduced changes resulting in build or test failures are n
 email.
 
 
-#### Decision-making process
+### Decision-making process
 
 1. Given the topic of interest, initiate discussion on the [Slicer forum][slicer-forum].
 
