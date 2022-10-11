@@ -318,6 +318,7 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
     {
     return;
     }
+  bool isClosed = inputNode->GetCurveClosed();
   vtkMRMLMarkupsCurveNode* outputNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->resampleCurveOutputNodeSelector->currentNode());
   if (!outputNode)
     {
@@ -338,7 +339,8 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
     outputNode->SetSurfaceCostFunctionType(inputNode->GetSurfaceCostFunctionType());
     outputNode->SetSurfaceDistanceWeightingFunction(inputNode->GetSurfaceDistanceWeightingFunction());
     }
-  double sampleDist = outputNode->GetCurveLengthWorld() / (resampleNumberOfPoints - 1);
+  unsigned int numberOfSegments = (isClosed ? resampleNumberOfPoints : resampleNumberOfPoints - 1);
+  double sampleDist = outputNode->GetCurveLengthWorld() / numberOfSegments;
   outputNode->ResampleCurveWorld(sampleDist);
 }
 
