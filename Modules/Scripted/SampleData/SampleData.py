@@ -74,11 +74,11 @@ class SampleData(ScriptedLoadableModule):
         self.parent.dependencies = []
         self.parent.contributors = ["Steve Pieper (Isomics), Benjamin Long (Kitware), Jean-Christophe Fillion-Robin (Kitware)"]
         self.parent.helpText = """
-The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.
+This module provides data sets that can be used for testing 3D Slicer.
 """
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
         self.parent.acknowledgementText = """
-<p>This work was was funded by Cancer Care Ontario
+<p>This work was was funded in part by Cancer Care Ontario
 and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)</p>
 
 <p>MRHead, CBCT-MR Head, and CT-MR Brain data sets were donated to 3D Slicer project by the persons visible in the images, to be used without any restrictions.</p>

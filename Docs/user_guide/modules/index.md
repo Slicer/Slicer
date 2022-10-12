@@ -17,11 +17,11 @@ models.md
 sceneviews.md
 segmentations.md
 segmenteditor.md
+slicerwelcome.md
 transforms.md
 viewcontrollers.md
 volumerendering.md
 volumes.md
-welcome.md
 ```
 
 ## Informatics
