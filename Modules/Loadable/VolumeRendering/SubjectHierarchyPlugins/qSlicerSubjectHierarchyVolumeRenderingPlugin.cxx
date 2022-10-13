@@ -96,7 +96,8 @@ void qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::init()
   this->ToggleVolumeRenderingAction->setChecked(false);
 
   this->VolumeRenderingOptionsAction = new QAction("Volume rendering options...",q);
-  this->VolumeRenderingOptionsAction->setToolTip(tr("Switch to Volume Rendering module to manage display options"));
+  this->VolumeRenderingOptionsAction->setToolTip(qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Switch to Volume Rendering "
+                                                  "module to manage display options"));
   QObject::connect(this->VolumeRenderingOptionsAction, SIGNAL(triggered()), q, SLOT(showVolumeRenderingOptionsForCurrentItem()));
 }
 

@@ -153,17 +153,17 @@ public:
     if (installed && !loaded)
       {
       this->StatusLabel->setVisible(true);
-      this->StatusLabel->setText(tr("Install pending restart"));
+      this->StatusLabel->setText(qSlicerExtensionsLocalWidget::tr("Install pending restart"));
       }
     else if (scheduledForUpdate)
       {
       this->StatusLabel->setVisible(true);
-      this->StatusLabel->setText(tr("Update pending restart"));
+      this->StatusLabel->setText(qSlicerExtensionsLocalWidget::tr("Update pending restart"));
       }
     else if (scheduledForUninstall)
       {
       this->StatusLabel->setVisible(true);
-      this->StatusLabel->setText(tr("Uninstall pending restart"));
+      this->StatusLabel->setText(qSlicerExtensionsLocalWidget::tr("Uninstall pending restart"));
       }
     else
       {
@@ -340,7 +340,7 @@ public:
     QTextOption textOption = this->Text.defaultTextOption();
     textOption.setWrapMode(QTextOption::NoWrap);
     this->Text.setDefaultTextOption(textOption);
-    this->MoreLinkText = tr("More...");
+    this->MoreLinkText = qSlicerExtensionsLocalWidget::tr("More...");
     }
 
   // --------------------------------------------------------------------------
@@ -382,7 +382,7 @@ protected:
       }
     else if (revision.isEmpty() && formattedDate.isEmpty())
       {
-      return tr("unknown");
+      return qSlicerExtensionsLocalWidget::tr("unknown");
       }
     else
       {
@@ -442,16 +442,17 @@ protected:
       QString changeLogUrl = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ChangeLogUrlRole).toString();
       if (!changeLogUrl.isEmpty())
         {
-        changeLogText = tr(" <a href=\"%1\">Change log...</a>").arg(changeLogUrl);
+        changeLogText = QString(" <a href=\"%1\">%2</a>")
+          .arg(changeLogUrl)
+          .arg(qSlicerExtensionsLocalWidget::tr("Change log..."));
         }
       statusText += QString("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
         "<img style=\"float: left\""
-        " src=\":/Icons/ExtensionUpdateAvailable.svg\"/> "
-        "An update is available. Installed: %2. Available: %3.%4</p>")
-        .arg(this->InfoColor)
+        " src=\":/Icons/ExtensionUpdateAvailable.svg\"/> ").arg(this->InfoColor);
+      statusText += qSlicerExtensionsLocalWidget::tr("An update is available. Installed: %1. Available: %2.")
         .arg(installedVersion)
-        .arg(onServerVersion)
-        .arg(changeLogText);
+        .arg(onServerVersion);
+      statusText += changeLogText + QLatin1Literal("/p>");
       }
     if (statusText.isEmpty())
       {
@@ -462,17 +463,25 @@ protected:
 
         if (!enabled || !compatible)
           {
-          statusText += tr("<p>Version: %1. Disabled.</p>").arg(installedVersion);
+          statusText +=
+            QLatin1Literal("<p>")+
+            qSlicerExtensionsLocalWidget::tr("Version: %1. Disabled.").arg(installedVersion)
+            + QLatin1Literal("</p>");
           }
         else
           {
-          statusText += tr("<p>Version: %1</p>").arg(installedVersion);
+          statusText +=
+            QLatin1Literal("<p>") +
+            qSlicerExtensionsLocalWidget::tr("Version: %1").arg(installedVersion)
+            + QLatin1Literal("</p>");
           }
         }
       else
         {
-        //labelText += "<p>&nbsp;</p>";
-        statusText += "<p>Not installed.</p>";
+        statusText +=
+          QLatin1Literal("<p>") +
+          qSlicerExtensionsLocalWidget::tr("Not installed.")
+          + QLatin1Literal("</p>");
         }
       }
     labelText += statusText;

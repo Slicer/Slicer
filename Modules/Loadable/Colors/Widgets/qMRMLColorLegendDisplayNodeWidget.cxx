@@ -78,7 +78,7 @@ void qMRMLColorLegendDisplayNodeWidgetPrivate::init()
   Q_Q(qMRMLColorLegendDisplayNodeWidget);
 
   // Set tooltip in label format widget
-  this->LabelTextPropertyWidget->textEditWidget()->setToolTip(tr(
+  this->LabelTextPropertyWidget->textEditWidget()->setToolTip(qMRMLColorLegendDisplayNodeWidget::tr(
     "<html><head><body>Format field uses printf function syntax. Example formats:<br>\
     - display with 1 fractional digits: <b>%.1f</b><br>\
     - display integer: <b>%.0f</b><br>\

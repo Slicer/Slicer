@@ -92,7 +92,7 @@ void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
 
   // Initial action
   this->RegisterThisAction = new QAction("Register this...",q);
-  this->RegisterThisAction->setToolTip(tr("Select volume as moving image for registration. "
+  this->RegisterThisAction->setToolTip(qSlicerSubjectHierarchyRegisterPlugin::tr("Select volume as moving image for registration. "
                                           "Second volume can be selected from context menu after the first one has been set."));
   QObject::connect(this->RegisterThisAction, SIGNAL(triggered()), q, SLOT(registerCurrentItemTo()));
 
@@ -116,7 +116,7 @@ void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
 
   // Cancel action
   this->CancelAction = new QAction("Cancel registration (or right-click another volume to start registration)",q);
-  this->CancelAction->setToolTip(tr("Right-click another volume to select second volume and start registration"));
+  this->CancelAction->setToolTip(qSlicerSubjectHierarchyRegisterPlugin::tr("Right-click another volume to select second volume and start registration"));
   QObject::connect(this->CancelAction, SIGNAL(triggered()), q, SLOT(cancel()));
 }
 
