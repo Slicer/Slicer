@@ -1,5 +1,4 @@
 import logging
-import sys
 
 import ctk
 import qt
@@ -48,6 +47,7 @@ class SlicerApplicationLogHandler(logging.Handler):
 
     def emit(self, record):
         try:
+            # Add application log entry
             msg = self.format(record)
             context = ctk.ctkErrorLogContext()
             context.setCategory(self.category)
@@ -56,8 +56,8 @@ class SlicerApplicationLogHandler(logging.Handler):
             context.setFunction(record.funcName)
             context.setMessage(msg)
             threadId = f"{record.threadName}({record.thread})"
-            slicer.app.errorLogModel().addEntry(qt.QDateTime.currentDateTime(), threadId,
-                                                self.pythonToCtkLevelConverter[record.levelno], self.origin, context, msg)
+            slicer.app.errorLogModel().postEntry(qt.QDateTime.currentDateTime(), threadId,
+                                                 self.pythonToCtkLevelConverter[record.levelno], self.origin, context, msg)
         except:
             self.handleError(record)
 
@@ -71,25 +71,13 @@ def initLogging(logger):
     # Prints debug messages to Slicer application log.
     # Only debug level messages are logged this way, as higher level messages are printed on console
     # and all console outputs are sent automatically to the application log anyway.
-    applicationLogHandler = SlicerApplicationLogHandler()
-    applicationLogHandler.setLevel(logging.DEBUG)
+    slicer.pythonApplicationLogHandler = SlicerApplicationLogHandler()
+    slicer.pythonApplicationLogHandler.setLevel(logging.DEBUG)
     # We could filter out messages at INFO level or above (as they will be printed on the console anyway) by adding
     # applicationLogHandler.addFilter(_LogReverseLevelFilter(logging.INFO))
     # but then we would not log file name and line number of info, warning, and error level messages.
-    applicationLogHandler.setFormatter(logging.Formatter('%(message)s'))
-    logger.addHandler(applicationLogHandler)
-
-    # Prints info message to stdout (anything on stdout will also show up in the application log)
-    consoleInfoHandler = logging.StreamHandler(sys.stdout)
-    consoleInfoHandler.setLevel(logging.INFO)
-    # Filter messages at WARNING level or above (they will be printed on stderr)
-    consoleInfoHandler.addFilter(_LogReverseLevelFilter(logging.WARNING))
-    logger.addHandler(consoleInfoHandler)
-
-    # Prints error and warning messages to stderr (anything on stderr will also show it in the application log)
-    consoleErrorHandler = logging.StreamHandler(sys.stderr)
-    consoleErrorHandler.setLevel(logging.WARNING)
-    logger.addHandler(consoleErrorHandler)
+    slicer.pythonApplicationLogHandler.setFormatter(logging.Formatter('%(message)s'))
+    logger.addHandler(slicer.pythonApplicationLogHandler)
 
     # Log debug messages from scripts by default, as they are useful for troubleshooting with users
     logger.setLevel(logging.DEBUG)
