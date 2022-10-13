@@ -47,6 +47,7 @@
 #include <ctkErrorLogStreamMessageHandler.h>
 #include <ctkITKErrorLogMessageHandler.h>
 #include <ctkMessageBox.h>
+#include <ctkPimpl.h>
 #ifdef Slicer_USE_PYTHONQT
 # include "ctkPythonConsole.h"
 #endif
@@ -156,6 +157,9 @@ public:
 #ifdef Slicer_USE_QtTesting
   ctkQtTestingUtility*    TestingUtility;
 #endif
+#ifdef Slicer_USE_PYTHONQT
+  ctkErrorLogLevel::LogLevel PythonConsoleLogLevel;
+#endif
 };
 
 
@@ -177,6 +181,9 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 #endif
 #ifdef Slicer_USE_QtTesting
   this->TestingUtility = nullptr;
+#endif
+#ifdef Slicer_USE_PYTHONQT
+  this->PythonConsoleLogLevel = ctkErrorLogLevel::Warning;
 #endif
 }
 
@@ -274,6 +281,18 @@ void qSlicerApplicationPrivate::init()
   this->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
   this->ErrorLogModel->registerMsgHandler(new ctkVTKErrorLogMessageHandler);
   this->ErrorLogModel->setAllMsgHandlerEnabled(true);
+
+#ifdef Slicer_USE_PYTHONQT
+  // Make ITK, VTK, Qt error messages show up in the Python console
+  QSettings* userSettings = q->userSettings();
+  ctkErrorLogLevel::LogLevel level = ctkErrorLogLevel::logLevelFromString(userSettings->value("Python/ConsoleLogLevel").toString());
+  if (level >= 0)
+    {
+    q->setPythonConsoleLogLevel(level);
+    }
+  QObject::connect(this->ErrorLogModel.data(), SIGNAL(entryAdded(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+    q, SLOT(logToPythonConsole(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)));
+#endif
 
   q->setupFileLogging();
   q->logApplicationInformation();
@@ -382,6 +401,11 @@ QSettings* qSlicerApplicationPrivate::newSettings()
 
 //-----------------------------------------------------------------------------
 // qSlicerApplication methods
+
+#ifdef Slicer_USE_PYTHONQT
+CTK_GET_CPP(qSlicerApplication, ctkErrorLogLevel::LogLevel, pythonConsoleLogLevel, PythonConsoleLogLevel);
+CTK_SET_CPP(qSlicerApplication, ctkErrorLogLevel::LogLevel, setPythonConsoleLogLevel, PythonConsoleLogLevel);
+#endif
 
 //-----------------------------------------------------------------------------
 qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
@@ -1349,3 +1373,46 @@ bool qSlicerApplication::loadFiles(const QStringList& filePaths, vtkMRMLMessageC
   qSlicerIOManager::showLoadNodesResultDialog(success, userMessages);
   return success;
 }
+
+#ifdef Slicer_USE_PYTHONQT
+//---------------------------------------------------------------------------
+void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime, const QString& threadId,
+  ctkErrorLogLevel::LogLevel logLevel, const QString& origin, const ctkErrorLogContext& context, const QString& text)
+{
+  Q_D(qSlicerApplication);
+  Q_UNUSED(currentDateTime);
+  Q_UNUSED(threadId);
+  Q_UNUSED(context);
+
+  if (d->PythonConsoleLogLevel == ctkErrorLogLevel::None  // console logging disabled
+    || logLevel < d->PythonConsoleLogLevel  // these levels are not displayed
+    || origin == "Stream")  // Python stream output is already displayed in the console, other output streams should not appear
+    {
+    return;
+    }
+
+  ctkPythonConsole* pythonConsole = this->pythonConsole();
+  if (!pythonConsole)
+    {
+    return;
+    }
+  QString prefixedText;
+  QStringList lines = text.split('\n');
+  foreach(const QString & line, lines)
+    {
+    if (line.isEmpty())
+      {
+      continue;
+      }
+    prefixedText += "^ " + line + "\n";
+    }
+  if (logLevel < ctkErrorLogLevel::Warning)
+    {
+    pythonConsole->printOutputMessage(prefixedText);
+    }
+  else
+    {
+    pythonConsole->printErrorMessage(prefixedText);
+    }
+}
+#endif

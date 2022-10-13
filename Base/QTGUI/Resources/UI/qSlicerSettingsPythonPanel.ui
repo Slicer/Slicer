@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="ShellDisplayGroupBox">
      <property name="title">
-      <string>Shell Display</string>
+      <string>Python Interactor</string>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -46,14 +46,28 @@
       <item row="1" column="0">
        <widget class="QLabel" name="PromptFontLabel">
         <property name="text">
-         <string>Shell font:</string>
+         <string>Font:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="ctkFontButton" name="pythonFontButton">
+       <widget class="ctkFontButton" name="ConsoleFontButton">
         <property name="text">
          <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="LogLevelLabel">
+        <property name="text">
+         <string>Log level:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="ConsoleLogLevelComboBox">
+        <property name="toolTip">
+         <string>Log messages at this level and above are displayed in the Python interactor.</string>
         </property>
        </widget>
       </item>

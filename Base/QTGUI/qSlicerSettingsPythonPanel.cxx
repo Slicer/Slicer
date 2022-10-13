@@ -72,25 +72,41 @@ void qSlicerSettingsPythonPanelPrivate::init()
 
   // Set default properties
 
-  this->pythonFontButton->setCurrentFont(this->PythonConsole->shellFont());
+  this->ConsoleFontButton->setCurrentFont(this->PythonConsole->shellFont());
+
+  this->ConsoleLogLevelComboBox->addItem(ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::None));
+  this->ConsoleLogLevelComboBox->addItem(ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::Error));
+  this->ConsoleLogLevelComboBox->addItem(ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::Warning));
+  this->ConsoleLogLevelComboBox->addItem(ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::Info));
+  this->ConsoleLogLevelComboBox->addItem(ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::Debug));
+  this->ConsoleLogLevelComboBox->setCurrentText(ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::Warning));
 
   //
   // Connect panel widgets with associated slots
   //
 
-  QObject::connect(this->pythonFontButton, SIGNAL(currentFontChanged(QFont)),
+  QObject::connect(this->ConsoleFontButton, SIGNAL(currentFontChanged(QFont)),
                    q, SLOT(onFontChanged(QFont)));
+  QObject::connect(this->ConsoleLogLevelComboBox, SIGNAL(currentIndexChanged(QString)),
+    q, SLOT(onConsoleLogLevelChanged(QString)));
 
   //
   // Register settings with their corresponding widgets
   //
+
   q->registerProperty("Python/DockableWindow", this->DockableWindowCheckBox,
     "checked", SIGNAL(toggled(bool)),
     "Display Python interactor in a window that can be placed inside the main window.",
     ctkSettingsPanel::OptionRequireRestart);
 
-  q->registerProperty("Python/Font", this->pythonFontButton, "currentFont",
+  q->registerProperty("Python/Font", this->ConsoleFontButton, "currentFont",
                       SIGNAL(currentFontChanged(QFont)));
+
+  q->registerProperty("Python/ConsoleLogLevel", q,
+    "consoleLogLevel", SIGNAL(consoleLogLevelChanged(QString)));
+  QObject::connect(this->ConsoleLogLevelComboBox, SIGNAL(currentIndexChanged(QString)),
+    q, SIGNAL(consoleLogLevelChanged(QString)));
+
 }
 
 // --------------------------------------------------------------------------
@@ -113,4 +129,35 @@ void qSlicerSettingsPythonPanel::onFontChanged(const QFont& font)
 {
   Q_D(qSlicerSettingsPythonPanel);
   d->PythonConsole->setShellFont(font);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsPythonPanel::onConsoleLogLevelChanged(const QString& levelStr)
+{
+  Q_D(const qSlicerSettingsPythonPanel);
+  if (qSlicerApplication::application())
+    {
+    qSlicerApplication::application()->setPythonConsoleLogLevel(ctkErrorLogLevel::logLevelFromString(levelStr));
+    }
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerSettingsPythonPanel::consoleLogLevel() const
+{
+  Q_D(const qSlicerSettingsPythonPanel);
+  return d->ConsoleLogLevelComboBox->currentText();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsPythonPanel::setConsoleLogLevel(const QString& text)
+{
+  Q_D(qSlicerSettingsPythonPanel);
+  int selectedIndex = d->ConsoleLogLevelComboBox->findText(text);
+  if (selectedIndex < 0)
+    {
+    // this text is for developers and so it is not translated
+    selectedIndex = d->ConsoleLogLevelComboBox->findText(ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::Warning));
+    }
+  // default to first item if conversion fails
+  d->ConsoleLogLevelComboBox->setCurrentIndex(selectedIndex);
 }
