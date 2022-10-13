@@ -151,7 +151,7 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
 
   // Add color legend action
 
-  this->ShowColorLegendAction = new QAction(tr("Show color legend"), q);
+  this->ShowColorLegendAction = new QAction(qSlicerSubjectHierarchyVolumesPlugin::tr("Show color legend"), q);
   this->ShowColorLegendAction->setObjectName("ShowColorLegendAction");
   q->setActionPosition(this->ShowColorLegendAction, qSlicerSubjectHierarchyAbstractPlugin::SectionBottom);
   QObject::connect(this->ShowColorLegendAction, SIGNAL(toggled(bool)), q, SLOT(toggleVisibilityForCurrentItem(bool)));
@@ -184,7 +184,7 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
     QString presetIdStr = QString("%1%2").arg(QString::fromStdString(DISPLAY_NODE_PRESET_PREFIX)).arg(displayNodePresetIndex);
     QAction* presetAction = new QAction();
     presetAction->setObjectName(presetIdStr);
-    presetAction->setToolTip(tr("Default preset for the selected volume"));
+    presetAction->setToolTip(qSlicerSubjectHierarchyVolumesPlugin::tr("Default preset for the selected volume"));
     presetAction->setCheckable(true);
     this->PresetSubmenu->addAction(presetAction);
     presetModeActions->addAction(presetAction);
@@ -192,9 +192,9 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
     }
 
   // Add Automatic preset
-  QAction* autoAction = new QAction(tr("Automatic"));
+  QAction* autoAction = new QAction(qSlicerSubjectHierarchyVolumesPlugin::tr("Automatic"));
   autoAction->setObjectName(QString::fromStdString(PRESET_AUTO));
-  autoAction->setToolTip(tr("Display the full intensity range of the volume."));
+  autoAction->setToolTip(qSlicerSubjectHierarchyVolumesPlugin::tr("Display the full intensity range of the volume."));
   autoAction->setCheckable(true);
   this->PresetSubmenu->addAction(autoAction);
   presetModeActions->addAction(autoAction);
@@ -204,11 +204,11 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
   for (const auto& presetId : presetIds)
     {
     vtkSlicerVolumesLogic::VolumeDisplayPreset preset = volumesModuleLogic->GetVolumeDisplayPreset(presetId);
-    QString presetName = tr(preset.name.c_str());
+    QString presetName = qSlicerSubjectHierarchyVolumesPlugin::tr(preset.name.c_str());
     QString presetIdStr = QString::fromStdString(presetId);
     QAction* presetAction = new QAction(presetName);
     presetAction->setObjectName(presetIdStr);
-    presetAction->setToolTip(tr(preset.description.c_str()));
+    presetAction->setToolTip(qSlicerSubjectHierarchyVolumesPlugin::tr(preset.description.c_str()));
     if (!preset.icon.empty())
       {
       presetAction->setIcon(QIcon(QString::fromStdString(preset.icon)));

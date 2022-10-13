@@ -142,54 +142,58 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
 
   // Other
 
-  this->CenterThreeDViewAction = new QAction(tr("Center view"), q);
+  this->CenterThreeDViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Center view"), q);
   this->CenterThreeDViewAction->setObjectName("CenterViewAction");
-  this->CenterThreeDViewAction->setToolTip(tr("Center the slice on the currently visible 3D view content and all loaded volumes."));
+  this->CenterThreeDViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Center the slice on "
+                                            "the currently visible 3D view content and all loaded volumes."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CenterThreeDViewAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
   QObject::connect(this->CenterThreeDViewAction, SIGNAL(triggered()), q, SLOT(centerThreeDView()));
 
-  this->FitSliceViewAction = new QAction(tr("Reset field of view"), q);
+  this->FitSliceViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Reset field of view"), q);
   this->FitSliceViewAction->setObjectName("FitViewAction");
-  this->FitSliceViewAction->setToolTip(tr("Center the slice view on the currently displayed volume."));
+  this->FitSliceViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Center the slice view on the currently displayed volume."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FitSliceViewAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
   QObject::connect(this->FitSliceViewAction, SIGNAL(triggered()), q, SLOT(fitSliceView()));
 
-  this->MaximizeViewAction = new QAction(tr("Maximize view"), q);
+  this->MaximizeViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Maximize view"), q);
   this->MaximizeViewAction->setObjectName("MaximizeViewAction");
-  this->MaximizeViewAction->setToolTip(tr("Show this view maximized in the view layout"));
+  this->MaximizeViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show this view maximized in the view layout"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->MaximizeViewAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
   QObject::connect(this->MaximizeViewAction, SIGNAL(triggered()), q, SLOT(maximizeView()));
 
-  this->ToggleTiltLockAction = new QAction(tr("Tilt lock"), q);
+  this->ToggleTiltLockAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Tilt lock"), q);
   this->ToggleTiltLockAction->setObjectName("TiltLockAction");
-  this->ToggleTiltLockAction->setToolTip(tr("Prevent rotation around the horizontal axis when rotating this view."));
-  this->ToggleTiltLockAction->setShortcut(QKeySequence(tr("Ctrl+b")));
+  this->ToggleTiltLockAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Prevent rotation "
+                                          "around the horizontal axis when rotating this view."));
+  this->ToggleTiltLockAction->setShortcut(QKeySequence(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Ctrl+b")));
   this->ToggleTiltLockAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ToggleTiltLockAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
   QObject::connect(this->ToggleTiltLockAction, SIGNAL(triggered()), q, SLOT(toggleTiltLock()));
 
-  this->ConfigureSliceViewAnnotationsAction = new QAction(tr("Configure slice view annotations..."), q);
+  this->ConfigureSliceViewAnnotationsAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Configure slice view annotations..."), q);
   this->ConfigureSliceViewAnnotationsAction->setObjectName("ConfigureSliceViewAnnotationsAction");
-  this->ConfigureSliceViewAnnotationsAction->setToolTip(tr("Configures display of corner annotations and color legend."));
+  this->ConfigureSliceViewAnnotationsAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Configures display of corner annotations"
+                                                        " and color legend."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
   QObject::connect(this->ConfigureSliceViewAnnotationsAction, SIGNAL(triggered()), q, SLOT(configureSliceViewAnnotationsAction()));
 
-  this->CopyImageAction = new QAction(tr("Copy image"), q);
+  this->CopyImageAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Copy image"), q);
   this->CopyImageAction->setObjectName("CopyImageAction");
-  this->CopyImageAction->setToolTip(tr("Copy a screenshot of this view to the clipboard"));
+  this->CopyImageAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Copy a screenshot of this view to the clipboard"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CopyImageAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 20); // set to 20 to make it the last item in the action group
   QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
 
   // Slice intersections
-  this->IntersectingSlicesVisibilityAction = new QAction(tr("Slice intersections"), q);
+  this->IntersectingSlicesVisibilityAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Slice intersections"), q);
   this->IntersectingSlicesVisibilityAction->setObjectName("IntersectingSlicesAction");
-  this->IntersectingSlicesVisibilityAction->setToolTip(tr("Show how the other slice planes intersect each slice plane."));
+  this->IntersectingSlicesVisibilityAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show how the "
+                                                        "other slice planes intersect each slice plane."));
   this->IntersectingSlicesVisibilityAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->IntersectingSlicesVisibilityAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 5); // set section to +5 to allow placing other sections above
@@ -197,9 +201,9 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
     q, SLOT(setIntersectingSlicesVisible(bool)));
 
   // Interactive slice intersections
-  this->IntersectingSlicesInteractiveAction = new QAction(tr("Interaction"), q);
+  this->IntersectingSlicesInteractiveAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Interaction"), q);
   this->IntersectingSlicesInteractiveAction->setObjectName("IntersectingSlicesHandlesAction");
-  this->IntersectingSlicesInteractiveAction->setToolTip(tr("Show handles for slice interaction."));
+  this->IntersectingSlicesInteractiveAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show handles for slice interaction."));
   this->IntersectingSlicesInteractiveAction->setCheckable(true);
   this->IntersectingSlicesInteractiveAction->setEnabled(false);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->IntersectingSlicesInteractiveAction,
@@ -306,11 +310,11 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
     d->MaximizeViewAction->setProperty("maximize", QVariant(!isMaximized));
     if (isMaximized)
       {
-      d->MaximizeViewAction->setText(tr("Restore view layout"));
+      d->MaximizeViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Restore view layout"));
       }
     else
       {
-      d->MaximizeViewAction->setText(tr("Maximize view"));
+      d->MaximizeViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Maximize view"));
       }
     }
 

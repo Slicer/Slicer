@@ -115,8 +115,8 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->OutlineOpacitySliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onOutlineOpacitySliderWidgetChanged(double)));
 
-  this->SnapModeComboBox->addItem(tr("unconstrained"), vtkMRMLMarkupsDisplayNode::SnapModeUnconstrained);
-  this->SnapModeComboBox->addItem(tr("snap to visible surface"), vtkMRMLMarkupsDisplayNode::SnapModeToVisibleSurface);
+  this->SnapModeComboBox->addItem(qMRMLMarkupsDisplayNodeWidget::tr("unconstrained"), vtkMRMLMarkupsDisplayNode::SnapModeUnconstrained);
+  this->SnapModeComboBox->addItem(qMRMLMarkupsDisplayNodeWidget::tr("snap to visible surface"), vtkMRMLMarkupsDisplayNode::SnapModeToVisibleSurface);
   QObject::connect(this->SnapModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onSnapModeWidgetChanged()));
 
   QObject::connect(this->OccludedVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setOccludedVisibility(bool)));

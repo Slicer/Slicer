@@ -79,7 +79,7 @@ void qSlicerSubjectHierarchyOpacityPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyOpacityPlugin);
 
-  this->OpacityMenu = new QMenu(tr("Opacity"));
+  this->OpacityMenu = new QMenu(qSlicerSubjectHierarchyOpacityPlugin::tr("Opacity"));
   this->OpacitySlider = new ctkDoubleSlider(this->OpacityMenu);
   this->OpacitySlider->setOrientation(Qt::Horizontal);
   this->OpacitySlider->setRange(0.0, 1.0);
