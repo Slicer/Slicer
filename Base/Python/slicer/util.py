@@ -2198,12 +2198,21 @@ def updateVolumeFromArray(volumeNode, narray):
 
     Voxels values are deep-copied, therefore if the numpy array
     is modified after calling this method, voxel values in the volume node will not change.
-    Dimensions and data size of the source numpy array does not have to match the current
+    Dimensions and voxel type of the source numpy array does not have to match the current
     content of the volume node.
     """
 
     vshape = tuple(reversed(narray.shape))
-    if len(vshape) == 3:
+    if len(vshape) == 2:
+        # Scalar 2D volume
+        vcomponents = 1
+        # Put the slice into a single-slice 3D volume
+        import numpy as np
+        narray3d = np.zeros([1, narray.shape[0], narray.shape[1]])
+        narray3d[0] = narray
+        narray = narray3d
+        vshape = tuple(reversed(narray.shape))
+    elif len(vshape) == 3:
         # Scalar volume
         vcomponents = 1
     elif len(vshape) == 4:
