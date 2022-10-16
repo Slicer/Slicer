@@ -96,6 +96,14 @@ public:
   /// \param itemID Subject Hierarchy item to show the context menu items for
   void showContextMenuActionsForItem(vtkIdType itemID) override;
 
+  /// Create a default patient item in the subject hierarchy
+  /// (with anonymous patient name and random patient ID).
+  Q_INVOKABLE vtkIdType createDefaultPatientItem();
+
+  /// Create a default study item in the subject hierarchy
+  /// (with no study description and random study instance UID).
+  Q_INVOKABLE vtkIdType createDefaultStudyItem();
+
 protected slots:
   /// Create patient item
   void createSubjectItem();
