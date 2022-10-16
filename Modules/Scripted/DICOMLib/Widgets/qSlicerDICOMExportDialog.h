@@ -68,9 +68,6 @@ protected slots:
   /// passed with \sa exec() in subject hierarchy tree
   void makeDialogSelections();
 
-  /// Handles change of export series or entire scene radio button selection
-  void onExportSeriesRadioButtonToggled(bool);
-
   /// Triggers examining item when selection changes
   void onCurrentItemChanged(vtkIdType itemID);
 

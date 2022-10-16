@@ -126,8 +126,6 @@ void qSlicerDICOMExportDialogPrivate::init()
     q, SLOT(onTagEdited()));
   connect(this->ExportButton, SIGNAL(clicked()),
     q, SLOT(onExport()));
-  connect(this->ExportSeriesRadioButton, SIGNAL(toggled(bool)),
-    q, SLOT(onExportSeriesRadioButtonToggled(bool)) );
   connect(this->SaveTagsCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(onSaveTagsCheckBoxToggled(bool)) );
   connect(this->ExportToFolderCheckBox, SIGNAL(toggled(bool)),
@@ -401,33 +399,6 @@ void qSlicerDICOMExportDialog::onTagEdited()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::onExportSeriesRadioButtonToggled(bool seriesOn)
-{
-  Q_D(qSlicerDICOMExportDialog);
-
-  // Export series
-  if (seriesOn)
-    {
-    d->groupBox_1SelectNode->setEnabled(true);
-    d->groupBox_2SelectExportType->setEnabled(true);
-    d->groupBox_3EditDICOMTags->setEnabled(true);
-    d->SaveTagsCheckBox->setEnabled(true);
-    d->ExportFrame->setEnabled(true);
-    d->ErrorLabel->setText(QString());
-    }
-  // Export entire scene
-  else
-    {
-    d->groupBox_1SelectNode->setEnabled(false);
-    d->groupBox_2SelectExportType->setEnabled(false);
-    d->groupBox_3EditDICOMTags->setEnabled(false);
-    d->SaveTagsCheckBox->setEnabled(false);
-    d->ExportFrame->setEnabled(false);
-    d->ErrorLabel->setText(QString());
-    }
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerDICOMExportDialog::onExport()
 {
   Q_D(qSlicerDICOMExportDialog);
@@ -459,15 +430,7 @@ void qSlicerDICOMExportDialog::onExport()
     }
 
   // Call export function based on radio button choice
-  bool exportSuccess = false;
-  if (d->ExportSeriesRadioButton->isChecked())
-    {
-    exportSuccess = this->exportSeries(outputFolder);
-    }
-  else
-    {
-    exportSuccess = this->exportEntireScene(outputFolder);
-    }
+  bool exportSuccess = this->exportSeries(outputFolder);
 
   if (exportToDatabase)
     {
@@ -623,18 +586,4 @@ bool qSlicerDICOMExportDialog::exportSeries(const QDir& outputFolder)
     }
 
   return true;
-}
-
-//-----------------------------------------------------------------------------
-bool qSlicerDICOMExportDialog::exportEntireScene(const QDir& outputFolder)
-{
-  Q_D(qSlicerDICOMExportDialog);
-  PythonQt::init();
-  PythonQtObjectPtr exportContext = PythonQt::self()->getMainModule();
-  exportContext.evalScript( QString(
-    "import DICOMLib\n"
-    "exporter = DICOMLib.DICOMExportScene(saveDirectoryPath=%1)\n"
-    "success = exporter.export()\n").arg(qSlicerCorePythonManager::toPythonStringLiteral(outputFolder.absolutePath())) );
-  bool success = exportContext.getVariable("success").toBool();
-  return success;
 }
