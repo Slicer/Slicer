@@ -998,8 +998,7 @@ bool vtkSubjectHierarchyItem::Move(vtkSubjectHierarchyItem* beforeItem)
     }
   if (beforeItem == this)
     {
-    vtkErrorMacro("Move: Item cannot be moved before itself");
-    return false;
+    return true;
     }
 
   // Remove item from parent
@@ -1078,17 +1077,12 @@ int vtkSubjectHierarchyItem::GetPositionUnderParent()
 vtkIdType vtkSubjectHierarchyItem::GetChildByPositionUnderParent(int position)
 {
   int currentPosition = 0;
-  ChildVector::iterator childIt;
-  for (childIt=this->Children.begin(); childIt!=this->Children.end(); ++childIt, ++currentPosition)
+  if (position < 0 || position >= this->Children.size())
     {
-    if (currentPosition == position)
-      {
-      return childIt->GetPointer()->ID;
-      }
+    vtkErrorMacro("GetChildByPositionUnderParent: Failed to find subject hierarchy item under parent " << this->Name << " at position " << position);
+    return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
-  // Failed to find item
-  vtkErrorMacro("GetChildByPositionUnderParent: Failed to find subject hierarchy item under parent " << this->Name << " at position " << position);
-  return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  return this->Children[position].GetPointer()->ID;
 }
 
 //---------------------------------------------------------------------------
