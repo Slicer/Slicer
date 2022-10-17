@@ -200,10 +200,6 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
             if not dicomFiles:
                 continue
             break
-        if not dicomFiles:
-            error = "Slicer data bundle export failed. No file is found for any of the selected items."
-            logging.error(error)
-            return error
 
         # Assemble tags dictionary for volume export
         tags = {}
@@ -220,8 +216,19 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
         tags['StudyDescription'] = exportable.tag(
             slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
 
+        if dicomFiles:
+            referenceFile = dicomFiles[0]
+        else:
+            referenceFile = None
+            # No DICOM file exists that could be used as reference, therefore we need to pass on the ID fields.
+            tags['StudyInstanceUID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDTagName())
+            tags['StudyID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName())
+            tags['SeriesInstanceUID'] = exportable.tag('SeriesInstanceUID')
+            tags['SeriesNumber'] = exportable.tag('SeriesNumber')
+            tags['ContentDate'] = exportable.tag('ContentDate')
+
         # Perform export
-        exporter = DICOMExportScene(dicomFiles[0], exportable.directory)
+        exporter = DICOMExportScene(referenceFile, exportable.directory)
         exporter.optionalTags = tags
         exporter.export()
 
