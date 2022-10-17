@@ -28,25 +28,32 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 
 class DICOMExportScene:
     """Export slicer scene to dicom database
+
+    referenceFile used as a basis for creating the secondary capture information object.
+    If it is set to None, then a generic template is created from contents of `optionalTags`.
+
+    saveDirectoryPath specifies a directory where all the intermediate files are saved.
+
     """
 
-    def __init__(self, referenceFile, saveDirectoryPath=None):
-        # File used as reference for DICOM export. Provides most of the DICOM tags.
-        #   If not specified, the first file in the DICOM database is used.
+    def __init__(self, referenceFile=None, saveDirectoryPath=None):
         self.referenceFile = referenceFile
-        # Directory where all the intermediate files are saved.
         self.saveDirectoryPath = saveDirectoryPath
-        # Path and filename of the Slicer Data Bundle DICOM file
+
+        # The value is set to the path of the created Slicer Data Bundle DICOM file
+        # when the export is completed.
         self.sdbFile = None
+
         # Path to the screenshot image file that is saved with the scene and in the Secondary Capture.
-        #   If not specified, then the default scene saving method is used to generate the image.
+        # If not specified, then the default scene saving method is used to generate the image.
         self.imageFile = None
-        # Study description string to save in the tags. Default is "Slicer Scene Export"
-        self.studyDescription = None
-        # Series description string to save in the tags. Default is "Slicer Data Bundle"
+
+        # Series description string to save in the output DICOM file.
+        # Default is "Slicer Data Bundle"
         self.seriesDescription = None
-        # Optional tags.
-        # Dictionary where the keys are the tag names (such as StudyInstanceUID), and the values are the tag values
+
+        # Additional DICOM tags to save in the output DICOM file.
+        # Dictionary where the keys are the tag names (such as StudyInstanceUID), and the values are the tag values.
         self.optionalTags = {}
 
     def progress(self, string):
@@ -73,96 +80,201 @@ class DICOMExportScene:
 
         # set up temp directories and files
         if self.saveDirectoryPath is None:
-            self.saveDirectoryPath = tempfile.mkdtemp('', 'dicomExport', slicer.app.temporaryPath)
-        self.zipFile = os.path.join(self.saveDirectoryPath, "scene.zip")
-        self.dumpFile = os.path.join(self.saveDirectoryPath, "dump.dcm")
-        self.templateFile = os.path.join(self.saveDirectoryPath, "template.dcm")
-        self.sdbFile = os.path.join(self.saveDirectoryPath, "SlicerDataBundle.dcm")
-        if self.studyDescription is None:
-            self.studyDescription = 'Slicer Scene Export'
-        if self.seriesDescription is None:
-            self.seriesDescription = 'Slicer Data Bundle'
+            saveDirectoryPath = tempfile.mkdtemp('', 'dicomExport', slicer.app.temporaryPath)
+        else:
+            saveDirectoryPath = self.saveDirectoryPath
+        saveDirectoryPath = saveDirectoryPath.replace('\\', '/')
+        zipFile = os.path.join(saveDirectoryPath, "scene.zip")
+        dumpFile = os.path.join(saveDirectoryPath, "dump.dcm")
+        templateFile = os.path.join(saveDirectoryPath, "template.dcm")
+        self.sdbFile = os.path.join(saveDirectoryPath, "SlicerDataBundle.dcm")
 
         # get the screen image if not specified
         if self.imageFile is None:
             self.progress('Saving Image...')
-            self.imageFile = os.path.join(self.saveDirectoryPath, "scene.jpg")
+            imageFile = os.path.join(saveDirectoryPath, "scene.jpg")
             image = ctk.ctkWidgetsUtils.grabWidget(slicer.util.mainWindow())
-            image.save(self.imageFile)
+            image.save(imageFile)
+        else:
+            imageFile = self.imageFile
+        imageFile = imageFile.replace('\\', '/')
         imageReader = vtk.vtkJPEGReader()
-        imageReader.SetFileName(self.imageFile)
+        imageReader.SetFileName(imageFile)
         imageReader.Update()
-
-        # Clean up paths on Windows (some commands and operations are not performed properly with mixed slash and backslash)
-        self.saveDirectoryPath = self.saveDirectoryPath.replace('\\', '/')
-        self.imageFile = self.imageFile.replace('\\', '/')
-        self.zipFile = self.zipFile.replace('\\', '/')
-        self.dumpFile = self.dumpFile.replace('\\', '/')
-        self.templateFile = self.templateFile.replace('\\', '/')
-        self.sdbFile = self.sdbFile.replace('\\', '/')
 
         # save the scene to the temp dir
         self.progress('Saving scene into MRB...')
-        if not slicer.mrmlScene.WriteToMRB(self.zipFile, imageReader.GetOutput()):
-            logging.error('Failed to save scene into MRB file: ' + self.zipFile)
+        if not slicer.mrmlScene.WriteToMRB(zipFile, imageReader.GetOutput()):
+            logging.error('Failed to save scene into MRB file: ' + zipFile)
             return False
 
-        zipSize = os.path.getsize(self.zipFile)
+        zipSize = os.path.getsize(zipFile)
 
-        # now create the dicom file
-        # - create the dump (capture stdout)
-        # cmd = "dcmdump --print-all --write-pixel %s %s" % (self.saveDirectoryPath, self.referenceFile)
+        # Get or create template DICOM dump
         self.progress('Making dicom reference file...')
-        logging.info('Using reference file ' + str(self.referenceFile))
-        args = ['--print-all', '--write-pixel', self.saveDirectoryPath, self.referenceFile]
-        dumpByteArray = DICOMLib.DICOMCommand('dcmdump', args).start()
-        dump = str(dumpByteArray.data(), encoding='utf-8')
+        if self.referenceFile:
+            # A reference file is created, use that as template
+            logging.info('Using reference file ' + str(self.referenceFile))
+            args = ['--print-all', '--write-pixel', saveDirectoryPath, self.referenceFile]
+            dumpByteArray = DICOMLib.DICOMCommand('dcmdump', args).start()
+            dump = str(dumpByteArray.data(), encoding='utf-8')
+        else:
+            # Create a new template from the specified tags
+            dump = self.dumpFromTags(self.optionalTags)
 
-        # append this to the dumped output and save the result as self.saveDirectoryPath/dcm.dump
-        # with %s as self.zipFile and %d being its size in bytes
-        zipSizeString = "%d" % zipSize
-
+        # Append some more fields this to the dumped output and save the result as saveDirectoryPath/dcm.dump
         # hack: encode the file zip file size as part of the creator string
         # because none of the normal types (UL, DS, LO) seem to survive
         # the dump2dcm step (possibly due to the Unknown nature of the private tag)
-        creatorString = "3D Slicer %s" % zipSizeString
-        candygram = """(cadb,0010) LO [%s]           #  %d, 1 PrivateCreator
-(cadb,1008) LO [%s]                                   #   4, 1 Unknown Tag & Data
-(cadb,1010) OB =%s                                      #  %d, 1 Unknown Tag & Data
-""" % (creatorString, len(creatorString), zipSizeString, self.zipFile, zipSize)
-
+        creatorString = f"3D Slicer {zipSize}"
+        candygram = f"""(cadb,0010) LO [{creatorString}]           #  {len(creatorString)}, 1 PrivateCreator
+(cadb,1008) LO [{zipSize}]                                         #   4, 1 Unknown Tag & Data
+(cadb,1010) OB ={zipFile}                                          #  {zipSize}, 1 Unknown Tag & Data
+"""
         dump = dump + candygram
 
-        logging.debug('dumping to: %s' % self.dumpFile)
-        fp = open(self.dumpFile, 'w')
+        # Write dump to file
+        logging.debug('dumping to: %s' % dumpFile)
+        fp = open(dumpFile, 'w')
         fp.write(dump)
         fp.close()
 
+        # Create DICOM template file from dump, embedding the scene mrb file
         self.progress('Encapsulating scene in DICOM dump...')
-        args = [self.dumpFile, self.templateFile, '--generate-new-uids', '--overwrite-uids', '--ignore-errors']
+        args = [dumpFile, templateFile, '--generate-new-uids', '--overwrite-uids', '--ignore-errors']
         DICOMLib.DICOMCommand('dump2dcm', args).start()
 
-        # now create the Secondary Capture data set
-        # cmd = "img2dcm -k 'InstanceNumber=1' -k 'SeriesDescription=Slicer Data Bundle' -df %s/template.dcm %s %s" % (self.saveDirectoryPath, self.imageFile, self.sdbFile)
+        # Create the Secondary Capture data set by adding a screenshot and some more custom fields
+        # cmd = "img2dcm -k 'SeriesDescription=Slicer Data Bundle' -df %s/template.dcm %s %s" % (saveDirectoryPath, imageFile, self.sdbFile)
+        seriesDescription = 'Slicer Data Bundle' if self.seriesDescription is None else str(self.seriesDescription)
         args = [
-            '-k', 'InstanceNumber=1',
-            '-k', 'StudyDescription=%s' % str(self.studyDescription),
-            '-k', 'SeriesDescription=%s' % str(self.seriesDescription),
-            '--dataset-from', self.templateFile,
-            self.imageFile, self.sdbFile]
-        argIndex = 6
+            '-k', f'SeriesDescription={seriesDescription}']
         for key, value in self.optionalTags.items():
-            args.insert(argIndex, '-k')
-            tagNameValue = f'{str(key)}={str(value)}'
-            args.insert(argIndex + 1, tagNameValue)
-            argIndex += 2
+            # series description comes from this class, not from the additional tags
+            if key == 'SeriesDescription':
+                continue
+            # ignore undefined fields
+            if str(value) == '':
+                continue
+            args += ['-k', f'{str(key)}={str(value)}']
+        args += [
+            '--dataset-from', templateFile,  # input DICOM file (generated by dump2dcm, already contains the MRB)
+            imageFile,  # thumbnail
+            self.sdbFile]  # output file
         self.progress('Creating DICOM binary file...')
         DICOMLib.DICOMCommand('img2dcm', args).start()
 
         self.progress('Deleting temporary files...')
-        os.remove(self.zipFile)
-        os.remove(self.dumpFile)
-        os.remove(self.templateFile)
+        os.remove(zipFile)
+        os.remove(dumpFile)
+        os.remove(templateFile)
+        if not self.imageFile:
+            # Temporary imageFile was created automatically
+            os.remove(imageFile)
 
         self.progress('Done')
         return True
+
+    def dumpFromTags(self, tags):
+        # Template is originally from dcmtk (dcmdata\data\SC.dump),
+        # modified with getting values from `tags` argument
+        # and use UTF8 encoding (ISO_IR 192) instead of Latin1 (ISO_IR 100).
+        return f"""
+################################################################################
+# IMG2DCM TEMPLATE FOR WRITING SECONDARY CAPTURE OBJECTS                       #
+# SOP Class: 1.2.840.10008.5.1.4.1.1.7 (SC)                                    #
+################################################################################
+# Type 1:  Value MUST be filled in                                             #
+# Type 1C: Value MUST be filled in if known, if certain condition (see         #
+#          standard) is fulfilled, otherwise DO NOT insert                     #
+# Type 2:  Value MUST be filled in if known, MUST be left empty otherwise      #
+# Type 2C: Same as 2, if a certain condition (see standard) is met. If the     #
+#          condition is not met, DO NOT insert                                 #
+# Type 3:  User optional, CAN be written (if it should not, delete line).      #
+#          The value written can be chosen freely, but has to conform to       #
+#          element's VR (see standard)                                         #
+################################################################################
+
+########################### Patient Module #####################################
+
+# Patient's Name, Type 2
+(0010,0010) PN [{tags.get('PatientName','')}]
+
+# Patient ID, Type 2
+(0010,0020) LO [{tags.get('PatientID','')}]
+
+# Patient's Birth Date, Type 2
+(0010,0030) DA [{tags.get('PatientBirthDate','')}]
+
+# Patient's Sex, Type 2
+(0010,0040) CS [{tags.get('PatientSex','')}]
+
+# Responsible Organization, Type 2C (only included if patient is animal...)
+# (0010,2299) LO []
+
+########################### General Study Module ##############################
+#    All attributes from the General Study Module are overwritten by the      #
+#    --study-from and series-from options                                     #
+###############################################################################
+
+# Study Date, Type 2
+(0008,0020) DA [{tags.get('StudyDate','')}]
+
+# Study Time, Type 2
+(0008,0030) TM [{tags.get('StudyTime','')}]
+
+# Accession Number, Type 2
+(0008,0050) SH []
+
+# Referring Physician's Name, Type 2
+(0008,0090) PN []
+
+# Study ID, Type 2
+(0020,0010) SH [{tags.get('StudyID','')}]
+
+# Study Instance UID, Type 1, usually provided automatically (newly created)
+#(0020,000d) UI [{tags.get('StudyInstanceUID','')}]
+
+########################### General Series Module ##############################
+#    All attributes from the General Series Module are overwritten by the      #
+#    --series-from option                                                      #
+################################################################################
+
+# Patient Position, Type 2C
+(0018,5100) CS (no value available)
+
+# Series Instance UID, Type 1, usually provided automatically (newly created)
+# (0020,000e) UI [{tags.get('SeriesInstanceUID','')}]
+
+# Series Number, Type 2
+(0020,0011) IS [{tags.get('SeriesNumber','')}]
+
+# Laterality, Type 2C
+# (0020,0060) CS (no value available)
+
+###################### SC Equipment Module #####################################
+
+# Conversion Type, Type 1, Defined Terms, see Standard (SI=Scanned Image)
+(0008,0064) CS [SI]
+
+###################### General Image Module ####################################
+
+# Content Date, Type 2C
+#(0008,0023) DA [{tags.get('ContentDate','')}]
+
+# Instance Number, Type 2
+(0020,0013) IS []
+
+# Patient Orientation, Type 2C
+(0020,0020) CS (no value available)
+
+###################### Image Pixel Module ######################################
+#         The Image Pixel Module is written by the img2dcm application         #
+################################################################################
+
+########################### SOP Common Module ##################################
+
+# Specific Character Set, Type 1C.
+# "ISO_IR 192" Corresponds to UTF-8 (https://dicom.nema.org/medical/dicom/current/output/chtml/part05/chapter_6.html#sect_6.1)
+(0008,0005) CS [ISO_IR 192]
+"""
