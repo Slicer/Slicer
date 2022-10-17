@@ -95,7 +95,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 #endif
 
   bool applicationUpdateEnabled = false;
-#ifdef Slicer_BUILD_I18N_SUPPORT
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
   applicationUpdateEnabled = qSlicerApplicationUpdateManager::isApplicationUpdateEnabled();
   if (applicationUpdateEnabled)
     {
@@ -254,6 +254,7 @@ void qSlicerSettingsGeneralPanel::openSlicerRCFile()
 // --------------------------------------------------------------------------
 void qSlicerSettingsGeneralPanel::updateAutoUpdateApplicationFromManager()
 {
+#ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
   Q_D(qSlicerSettingsGeneralPanel);
   qSlicerApplication* app = qSlicerApplication::application();
   if (!app->applicationUpdateManager())
@@ -262,4 +263,5 @@ void qSlicerSettingsGeneralPanel::updateAutoUpdateApplicationFromManager()
     }
   QSignalBlocker blocker1(d->ApplicationAutoUpdateCheckCheckBox);
   d->ApplicationAutoUpdateCheckCheckBox->setChecked(app->applicationUpdateManager()->autoUpdateCheck());
+#endif
 }
