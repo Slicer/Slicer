@@ -643,6 +643,10 @@ bool qMRMLSubjectHierarchyModel::moveToRow(vtkIdType itemID, int newRow)
 
   // Get item currently next to desired position
   vtkIdType beforeItemID = d->SubjectHierarchyNode->GetItemByPositionUnderParent(parentItemID, newRow);
+  if (itemID == beforeItemID)
+    {
+    return true;
+    }
 
   // Move item to position
   return d->SubjectHierarchyNode->MoveItem(itemID, beforeItemID);
@@ -1167,9 +1171,15 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItem(vtkIdType shItemID, QStandardItem* item)
 {
+  Q_D(qMRMLSubjectHierarchyModel);
   if (!item)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid item";
+    return;
+    }
+  if (!d->SubjectHierarchyNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
     }
 
@@ -1220,7 +1230,13 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItem(vtkIdType sh
     int oldRow = this->subjectHierarchyItemIndex(shItemID);
     int newRow = item->row();
     // When moving down, the item before which this item needs to be inserted was one row down
-    if (!this->moveToRow(shItemID, (newRow>oldRow ? newRow+1 : newRow) ))
+    int insertBeforeRow = (newRow > oldRow ? newRow + 1 : newRow);
+    const int numberOfChildren = d->SubjectHierarchyNode->GetNumberOfItemChildren(parentItemID);
+    if (insertBeforeRow >= numberOfChildren)
+      {
+      insertBeforeRow = numberOfChildren - 1;
+      }
+    if (!this->moveToRow(shItemID, insertBeforeRow))
       {
       this->updateItemFromSubjectHierarchyItem(item, shItemID, item->column());
       }
