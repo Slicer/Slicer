@@ -125,7 +125,13 @@ void qMRMLWindowLevelWidgetPrivate::setDecimals(int decimals)
 void qMRMLWindowLevelWidgetPrivate::setSingleStep(double singleStep)
 {
   this->Superclass::setSingleStep(singleStep);
-  this->WindowLevelRangeSlider->setSingleStep(singleStep);
+
+  // Use the same minimum step as in ctkDoubleRangeSlider::isValidStep
+  // to avoid attempting to set too small step size.
+  double sliderMinimumStep = qMax(this->WindowLevelRangeSlider->maximum() / std::numeric_limits<double>::max(),
+    std::numeric_limits<double>::epsilon());
+  this->WindowLevelRangeSlider->setSingleStep(qMax(singleStep, sliderMinimumStep));
+
   this->WindowSpinBox->setSingleStep(singleStep);
   this->LevelSpinBox->setSingleStep(singleStep);
   this->MinSpinBox->setSingleStep(singleStep);
