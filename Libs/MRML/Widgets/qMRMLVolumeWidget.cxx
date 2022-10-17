@@ -114,10 +114,17 @@ void qMRMLVolumeWidgetPrivate::updateSingleStep(double min, double max)
 {
   double interval = max - min;
   int order = ctk::orderOfMagnitude(interval);
+  double minRangeSliderMinimumStep = 0.0;
+  double maxRangeSliderMinimumStep = 0.0;
   if (order == std::numeric_limits<int>::min())
     {
     // the order of magnitude can't be computed (e.g. 0, inf, Nan, denorm)...
     order = -2;
+    // Use the same minimum step as in ctkDoubleRangeSlider::isValidStep
+    minRangeSliderMinimumStep = qMax(this->MinRangeSpinBox->maximum() / std::numeric_limits<double>::max(),
+      std::numeric_limits<double>::epsilon());
+    maxRangeSliderMinimumStep = qMax(this->MaxRangeSpinBox->maximum() / std::numeric_limits<double>::max(),
+      std::numeric_limits<double>::epsilon());
     }
 
   int ratio = 2;
@@ -132,8 +139,8 @@ void qMRMLVolumeWidgetPrivate::updateSingleStep(double min, double max)
   singleStep = pow(10., order - ratio);
   decimals = qMax(0, -order + ratio);
 
-  this->MinRangeSpinBox->setSingleStep(singleStep);
-  this->MaxRangeSpinBox->setSingleStep(singleStep);
+  this->MinRangeSpinBox->setSingleStep(qMax(singleStep, minRangeSliderMinimumStep));
+  this->MaxRangeSpinBox->setSingleStep(qMax(singleStep, maxRangeSliderMinimumStep));
 }
 
 // --------------------------------------------------------------------------
