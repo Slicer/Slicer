@@ -120,6 +120,6 @@ class DMRIInstallWidget(ScriptedLoadableModuleWidget):
         emm.interactive = False  # prevent display of popups
         emm.updateExtensionsMetadataFromServer(True, True)  # update extension metadata from server now
         if not emm.downloadAndInstallExtensionByName(extensionName, True, True):  # install dependencies, wait for installation to finish
-          return self.onError()
+            return self.onError()
 
         slicer.app.confirmRestart("Restart to complete SlicerDMRI installation?")
