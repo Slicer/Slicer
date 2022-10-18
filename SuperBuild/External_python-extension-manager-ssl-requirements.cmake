@@ -33,7 +33,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [PyJWT]
-  PyJWT==2.4.0 --hash=sha256:72d1d253f32dbd4f5c88eaf1fdc62f3a19f676ccbadb9dbc5d07e951b2b26daf
+  PyJWT==2.5.0 --hash=sha256:8d82e7087868e94dd8d7d418e5088ce64f7daab4b36db654cbaedb46f9d1ca80
   # [/PyJWT]
   # [wrapt]
   # Hashes correspond to the following packages:
@@ -93,7 +93,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                 --hash=sha256:20f42270d27e1b6a29f54032090b972d97f0a1b0948cc52392041ef7831fee93
   # [/PyNaCl]
   # [PyGithub]
-  PyGithub==1.55 --hash=sha256:2caf0054ea079b71e539741ae56c5a95e073b81fa472ce222e81667381b9601b
+  PyGithub==1.56 --hash=sha256:d15f13d82165306da8a68aefc0f848a6f6432d5febbff13b60a94758ce3ef8b5
   # [/PyGithub]
   ]===])
 
