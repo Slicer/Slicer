@@ -288,6 +288,13 @@ void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* 
     return;
     }
 
+  QStringList currentExtraItems = d->extraItems(parent, "preItem");
+  if (currentExtraItems == extraItems)
+    {
+    // no change
+    return;
+    }
+
   d->removeAllExtraItems(parent, "preItem");
 
   int row = 0;
@@ -311,6 +318,13 @@ void qMRMLSceneModel::setPostItems(const QStringList& extraItems, QStandardItem*
 
   if (parent == nullptr)
     {
+    return;
+    }
+
+  QStringList currentExtraItems = d->extraItems(parent, "postItem");
+  if (currentExtraItems == extraItems)
+    {
+    // no change
     return;
     }
 
