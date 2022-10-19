@@ -85,7 +85,7 @@ if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
     # Launcher settings specific to build tree
     APPLICATION_EXECUTABLE ${build_designer_executable}
     DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR}
-    ADDITIONAL_SETTINGS_FILEPATH_BUILD "${Slicer_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}/SlicerLauncherSettings.ini"
+    ADDITIONAL_SETTINGS_FILEPATH_BUILD "${Slicer_BINARY_DIR}/SlicerLauncherSettings.ini"
     # Launcher settings specific to install tree
     APPLICATION_INSTALL_EXECUTABLE_NAME "${installed_designer_executable}"
     APPLICATION_INSTALL_SUBDIR "${installed_designer_subdir}"
