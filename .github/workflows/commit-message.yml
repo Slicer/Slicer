@@ -1,0 +1,27 @@
+name: 'Commit Message Check'
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+  push:
+    branches:
+      - main
+
+jobs:
+  check-commit-message:
+    name: Check Commit Message
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Commit Prefix
+        uses: gsactions/commit-message-checker@v2
+        with:
+          pattern: '^(ENH|PERF|BUG|STYLE|DOC|COMP): ([A-Z])+'
+          flags: 'gm'
+          excludeDescription: 'true' # optional: this excludes the description body of a pull request
+          excludeTitle: 'true' # optional: this excludes the title of a pull request
+          error: 'The first line has to start with the type (e.g "ENH: Add support for awesome feature"). For more details, see https://slicer.readthedocs.io/en/latest/developer_guide/style_guide.html#commits'
+          checkAllCommitMessages: 'true' # optional: this checks all commits associated with a pull request
+          accessToken: ${{ secrets.GITHUB_TOKEN }} # github access token is only required if checkAllCommitMessages is true
