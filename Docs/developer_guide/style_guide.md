@@ -280,7 +280,7 @@ vtkDebugMacro("This variable has the value: "<< value);
 ## Commits
 
 - Separate the subject from body with a blank line
-- Limit the subject line to 50 characters
+- Limit the subject line to 78 characters
 - Capitalize the subject line
 - Do not end the subject line with a period
 - Use the imperative mood in the subject line
@@ -291,7 +291,7 @@ vtkDebugMacro("This variable has the value: "<< value);
 
 ### Commit message prefix
 
-Subversion Commits to Slicer require commit type in the comment.
+Commits to the Slicer repository require commit type in the comment.
 
 Valid commit types are:
 
