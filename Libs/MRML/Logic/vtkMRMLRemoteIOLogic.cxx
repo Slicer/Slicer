@@ -91,8 +91,9 @@ void vtkMRMLRemoteIOLogic::AddDataIOToScene()
 #if !defined(REMOTEIO_DEBUG)
   // register all existing uri handlers (add to collection)
   vtkHTTPHandler *httpHandler = vtkHTTPHandler::New();
-  httpHandler->SetPrefix ( "http://" );
-  httpHandler->SetName ( "HTTPHandler");
+  httpHandler->SetPrefix("http://");
+  httpHandler->SetName("HTTPHandler");
+  httpHandler->SetCaCertificatesPath(this->GetCaCertificatesPath());
   this->GetMRMLScene()->AddURIHandler(httpHandler);
   httpHandler->Delete();
 

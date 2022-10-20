@@ -524,11 +524,16 @@ public:
   /// \sa translationFolders(), loadTranslations
   Q_INVOKABLE static void loadLanguage();
 
-  /// Load certificates bundled into '<slicerHome>/<SLICER_SHARE_DIR>/Slicer.crt'.
+  /// Load SSL certificates bundle.
+  /// Path to the certificates bundle file can be retrieved using caCertificatesPath() method.
   /// For more details, see Slicer/Base/QTCore/Resources/Certs/README
-  /// Returns \a False if 'Slicer.crt' failed to be loaded.
+  /// Returns \a False if the certificate failed to be loaded.
   /// \sa QSslSocket::defaultCaCertificates()
   Q_INVOKABLE static bool loadCaCertificates(const QString& slicerHome);
+
+  /// Return path of certificates bundle.
+  /// The path is '<slicerHome>/<SLICER_SHARE_DIR>/Slicer.crt'.
+  Q_INVOKABLE static QString caCertificatesPath(const QString& slicerHome);
 
   Q_INVOKABLE int registerResource(const QByteArray& data);
 

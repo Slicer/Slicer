@@ -294,7 +294,7 @@ void qSlicerCoreApplicationPrivate::init()
     {
     qWarning() << "[SSL] SSL support disabled - Failed to load SSL library !";
     }
-  if (!qSlicerCoreApplication::loadCaCertificates(this->SlicerHome))
+  if (!qSlicerCoreApplication::loadCaCertificates(qSlicerCoreApplication::caCertificatesPath(this->SlicerHome)))
     {
     qWarning() << "[SSL] Failed to load Slicer.crt";
     }
@@ -545,6 +545,8 @@ void qSlicerCoreApplicationPrivate::initDataIO()
 
   // Create MRMLRemoteIOLogic
   this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
+
+  this->MRMLRemoteIOLogic->SetCaCertificatesPath(q->caCertificatesPath(this->SlicerHome).toStdString().c_str());
 
   // Ensure cache folder is writable
   {
@@ -2052,20 +2054,24 @@ void qSlicerCoreApplication::loadLanguage()
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerCoreApplication::loadCaCertificates(const QString& slicerHome)
+bool qSlicerCoreApplication::loadCaCertificates(const QString& caCertificatesPath)
 {
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
   if (QSslSocket::supportsSsl())
     {
-    QSslSocket::setDefaultCaCertificates(
-          QSslCertificate::fromPath(
-            slicerHome + "/" Slicer_SHARE_DIR "/Slicer.crt"));
+    QSslSocket::setDefaultCaCertificates(QSslCertificate::fromPath(caCertificatesPath));
     }
   return !QSslSocket::defaultCaCertificates().empty();
 #else
   Q_UNUSED(slicerHome);
   return false;
 #endif
+}
+
+//----------------------------------------------------------------------------
+QString qSlicerCoreApplication::caCertificatesPath(const QString& slicerHome)
+{
+  return QString("%1/%2/Slicer.crt").arg(slicerHome).arg(Slicer_SHARE_DIR);
 }
 
 //----------------------------------------------------------------------------

@@ -40,6 +40,10 @@ public:
   void InitTransfer () override;
   int CloseTransfer () override;
 
+  /// CA Certificates path for https protocol.
+  vtkSetStringMacro(CaCertificatesPath);
+  vtkGetStringMacro(CaCertificatesPath);
+
 protected:
   vtkHTTPHandler();
   ~vtkHTTPHandler() override;
@@ -49,6 +53,7 @@ protected:
 private:
   class vtkInternal;
   vtkInternal* Internal;
+  char* CaCertificatesPath{nullptr};
 };
 
 #endif

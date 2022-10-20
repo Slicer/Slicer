@@ -53,6 +53,10 @@ public:
   vtkGetObjectMacro (DataIOManager, vtkDataIOManager);
   virtual void SetDataIOManager(vtkDataIOManager*);
 
+  /// CA Certificates path for https protocol.
+  vtkSetStringMacro(CaCertificatesPath);
+  vtkGetStringMacro(CaCertificatesPath);
+
 protected:
   vtkMRMLRemoteIOLogic();
   ~vtkMRMLRemoteIOLogic() override;
@@ -60,8 +64,9 @@ protected:
   vtkMRMLRemoteIOLogic(const vtkMRMLRemoteIOLogic&);
   void operator=(const vtkMRMLRemoteIOLogic&);
 
-  vtkCacheManager *          CacheManager;
-  vtkDataIOManager *         DataIOManager;
+  vtkCacheManager* CacheManager{nullptr};
+  vtkDataIOManager* DataIOManager{nullptr};
+  char* CaCertificatesPath{nullptr};
 };
 
 #endif
