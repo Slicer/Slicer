@@ -132,7 +132,7 @@ int vtkHTTPHandler::CanHandleURI ( const char *uri )
       //--- we adopt the gwe "[filename.ext]:" prefix.
       prefix = prefix.substr ( index+2 );
       }
-    if ( !strcmp(prefix.c_str(), "http"))
+    if ( !strcmp(prefix.c_str(), "http") || !strcmp(prefix.c_str(), "https"))
       {
       vtkDebugMacro("vtkHTTPHandler: CanHandleURI: can handle this file: " << uriString.c_str());
       return (1);
@@ -218,6 +218,16 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
 //  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSDATA, nullptr);
 //  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
 
+  if (this->CaCertificatesPath)
+    {
+    curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_CAINFO, this->CaCertificatesPath);
+    }
+  else
+    {
+    curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_SSL_VERIFYHOST, 0);
+    }
+
   // quick timeout during connection phase if URL is not accessible (e.g. blocked by a firewall)
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_CONNECTTIMEOUT, 3); // in seconds (type long)
 
@@ -288,6 +298,15 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_READDATA, this->LocalFile);
 //  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSDATA, nullptr);
   //curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
+  if (this->CaCertificatesPath)
+    {
+    curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_CAINFO, this->CaCertificatesPath);
+    }
+  else
+    {
+    curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_SSL_VERIFYHOST, 0);
+    }
   CURLcode retval = curl_easy_perform(this->Internal->CurlHandle);
 
    if (retval == CURLE_OK)
