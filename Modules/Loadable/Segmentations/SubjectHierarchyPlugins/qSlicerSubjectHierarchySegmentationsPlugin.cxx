@@ -1073,9 +1073,9 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToClosedSurface()
   std::string newFolderName = std::string(segmentationNode->GetName()) + "-models";
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   // Since segmentationNode is not nullptr, we can be sure that shNode is valid.
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  vtkIdType segmentationItemID = shNode->GetItemByDataNode(segmentationNode);
   vtkIdType folderItemID = shNode->CreateFolderItem(
-    shNode->GetItemParent(currentItemID),
+    shNode->GetItemParent(segmentationItemID),
     shNode->GenerateUniqueItemName(newFolderName) );
 
   // Export visible segments into a models
