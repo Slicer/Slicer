@@ -464,7 +464,8 @@ int TestDisplayModifiedEvent()
 
   displayNode1->Modified();
 
-  CHECK_INT(spy->GetTotalNumberOfEvents(), 1);
+  CHECK_INT(spy->GetTotalNumberOfEvents(), 2);
+  CHECK_INT(spy->GetNumberOfEvents(vtkMRMLNode::ReferencedNodeModifiedEvent), 1);
   CHECK_INT(spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent), 1);
   spy->ResetNumberOfEvents();
 
