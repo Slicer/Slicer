@@ -3,13 +3,12 @@ import logging
 import os
 
 import ctk
-import qt
-
-import slicer
-from slicer.util import settingsValue, toBool
-from slicer.ScriptedLoadableModule import *
-
 import DICOMLib
+import qt
+import slicer
+from slicer.ScriptedLoadableModule import *
+from slicer.util import settingsValue
+from slicer.util import toBool
 
 
 #

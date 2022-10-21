@@ -1,6 +1,7 @@
-import Slicer
-import time
 import random
+import time
+
+import Slicer
 
 
 def newSphere(name=''):

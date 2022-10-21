@@ -1,7 +1,6 @@
 import re
 
 import qt
-
 import slicer
 
 from .EditableTreeWidget import EditableTreeWidget

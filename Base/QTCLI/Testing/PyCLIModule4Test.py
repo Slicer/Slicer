@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import argparse
 
 # TODO: would be good to set up test driver so `import slicer, vtk` works,

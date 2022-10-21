@@ -1,6 +1,6 @@
-import slicer
-
 import unittest
+
+import slicer
 
 
 class PythonManagerTests(unittest.TestCase):

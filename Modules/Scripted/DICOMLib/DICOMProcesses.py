@@ -5,7 +5,6 @@ import time
 
 import ctk
 import qt
-
 import slicer
 
 #########################################################

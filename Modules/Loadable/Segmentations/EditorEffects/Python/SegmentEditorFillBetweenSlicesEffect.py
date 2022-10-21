@@ -2,7 +2,6 @@ import os
 
 import qt
 import vtk
-
 from SegmentEditorEffects import *
 
 

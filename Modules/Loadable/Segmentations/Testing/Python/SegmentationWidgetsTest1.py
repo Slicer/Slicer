@@ -1,9 +1,8 @@
 import logging
 
 import qt
-import vtk
-
 import slicer
+import vtk
 from slicer.ScriptedLoadableModule import *
 
 

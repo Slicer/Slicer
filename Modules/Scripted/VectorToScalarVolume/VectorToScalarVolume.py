@@ -1,9 +1,9 @@
-from contextlib import contextmanager
 import logging
-import qt
-import vtk
+from contextlib import contextmanager
 
+import qt
 import slicer
+import vtk
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 

@@ -1,8 +1,7 @@
 import qt
-
 import slicer
-from slicer.util import VTKObservationMixin
 from slicer.ScriptedLoadableModule import *
+from slicer.util import VTKObservationMixin
 
 
 #

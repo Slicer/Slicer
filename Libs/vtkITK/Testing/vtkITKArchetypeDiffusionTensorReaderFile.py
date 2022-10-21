@@ -2,10 +2,8 @@
 import unittest
 
 import numpy
-
 import vtkITK
 import vtkTeem
-
 from vtk.util import numpy_support as ns
 
 """

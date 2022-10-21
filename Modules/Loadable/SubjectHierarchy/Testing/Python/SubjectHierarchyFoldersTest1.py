@@ -2,9 +2,8 @@ import logging
 import unittest
 
 import qt
-import vtk
-
 import slicer
+import vtk
 from slicer.util import DATA_STORE_URL
 
 

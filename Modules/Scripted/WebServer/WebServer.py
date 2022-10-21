@@ -1,16 +1,16 @@
 import logging
 import os
-import sys
 import socket
+import sys
 import urllib
 from http.server import HTTPServer
 
 import ctk
 import qt
-
 import slicer
 from slicer.ScriptedLoadableModule import *
-from slicer.util import settingsValue, toBool
+from slicer.util import settingsValue
+from slicer.util import toBool
 
 #
 # WebServer

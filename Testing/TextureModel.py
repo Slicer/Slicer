@@ -1,5 +1,6 @@
-import Slicer
 import time
+
+import Slicer
 
 
 def newPlane():

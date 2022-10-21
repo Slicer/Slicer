@@ -1,7 +1,7 @@
-import slicer
-import sitkUtils as su
-
 import unittest
+
+import sitkUtils as su
+import slicer
 
 
 class SitkUtilsTests(unittest.TestCase):

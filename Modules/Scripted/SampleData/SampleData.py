@@ -4,11 +4,12 @@ import textwrap
 
 import ctk
 import qt
-import vtk
-
 import slicer
+import vtk
 from slicer.ScriptedLoadableModule import *
-from slicer.util import computeChecksum, extractAlgoAndDigest, TESTING_DATA_URL
+from slicer.util import computeChecksum
+from slicer.util import extractAlgoAndDigest
+from slicer.util import TESTING_DATA_URL
 
 
 #

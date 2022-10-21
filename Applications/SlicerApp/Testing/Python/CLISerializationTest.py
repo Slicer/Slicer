@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 #
 #  Program: 3D Slicer
 #
@@ -16,7 +15,6 @@
 #
 #  This file was originally developed by Johan Andruejol, Kitware Inc.
 #
-
 import argparse
 import csv
 import json

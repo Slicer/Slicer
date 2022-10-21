@@ -1,13 +1,11 @@
 """Helpers for interacting with github."""
-
-import git
 import os
 import subprocess
+from urllib.parse import urlparse
 
+import git
 from github import Github
 from github.GithubObject import NotSet  # noqa: F401
-
-from urllib.parse import urlparse
 
 __all__ = [
     'logIn',

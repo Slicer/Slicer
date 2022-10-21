@@ -4,19 +4,16 @@ Handler for processing Slicer REST API requests.
 Full specification of the Slicer REST API is available in
 Docs/user_guide/modules/webserver.md
 """
-
-
 import json
 import logging
-import numpy
 import os
 import time
 import urllib
 
+import numpy
 import qt
-import vtk.util.numpy_support
-
 import slicer
+import vtk.util.numpy_support
 
 
 class SlicerRequestHandler:

@@ -1,9 +1,7 @@
 import logging
 
 import qt
-
 import slicer
-
 from AbstractScriptedSubjectHierarchyPlugin import *
 
 

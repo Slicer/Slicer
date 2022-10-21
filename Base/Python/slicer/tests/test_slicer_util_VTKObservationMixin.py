@@ -1,8 +1,6 @@
-import unittest
 import unittest.mock
 
 import vtk
-
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 

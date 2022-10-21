@@ -15,7 +15,6 @@
 #  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
 #  and was partially funded by NIH grant 1U24CA194354-01
 #
-
 """
 This script allows to generate the markdown table displayed in doxygen
 documentation of vtkMRMLColorLogic::AddDefaultColorNodes()

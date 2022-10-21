@@ -2,9 +2,8 @@ import logging
 
 import ctk
 import qt
-import vtk  # noqa: F401
-
 import slicer
+import vtk  # noqa: F401
 from slicer.util import *
 
 # HACK Ideally constant from vtkSlicerConfigure should be wrapped,

@@ -4,7 +4,6 @@ import os
 import re
 import sys
 import textwrap
-
 from urllib.parse import urlparse
 
 

@@ -15,7 +15,6 @@
 #  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
 #  and was partially funded by NIH grant 1U24CA194354-01
 #
-
 #
 #  W A R N I N G
 #  -------------
@@ -26,8 +25,6 @@
 #
 # We mean it.
 #
-
-
 import os
 import pipes
 import subprocess

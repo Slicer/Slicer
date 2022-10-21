@@ -1,9 +1,10 @@
-import vtk
-import slicer
-import vtkITK
 import logging
-from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
 from functools import reduce
+
+import slicer
+import vtk
+import vtkITK
+from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
 
 
 class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):

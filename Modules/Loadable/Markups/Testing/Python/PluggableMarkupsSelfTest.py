@@ -2,7 +2,6 @@ import logging
 
 import ctk
 import qt
-
 import slicer
 from slicer.ScriptedLoadableModule import *
 

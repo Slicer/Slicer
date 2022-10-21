@@ -1,5 +1,4 @@
 import SimpleITK as sitk
-
 import slicer
 
 __sitk__MRMLIDImageIO_Registered__ = False

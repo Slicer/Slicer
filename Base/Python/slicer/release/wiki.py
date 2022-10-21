@@ -102,12 +102,12 @@ Example of update
   skipping Template:Documentation/acknowledgments-versionlist: version is 4.6
   skipping Documentation: version 4.6 already added
 """
-
 import argparse
 import logging
-import mwdoc
 import os
 import re
+
+import mwdoc
 
 log = logging.getLogger(__name__)
 

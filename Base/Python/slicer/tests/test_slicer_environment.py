@@ -1,6 +1,7 @@
+import unittest
+
 import qt
 import slicer
-import unittest
 
 
 class SlicerEnvironmentTests(unittest.TestCase):

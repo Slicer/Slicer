@@ -1,6 +1,5 @@
 import ctk
 import qt
-
 import SlicerWizard.TemplateManager
 
 from .DirectoryListWidget import DirectoryListWidget

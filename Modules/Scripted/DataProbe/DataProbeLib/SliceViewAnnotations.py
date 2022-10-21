@@ -1,9 +1,8 @@
 import os
 
 import qt
-import vtk
-
 import slicer
+import vtk
 from slicer.util import settingsValue
 from slicer.util import VTKObservationMixin
 

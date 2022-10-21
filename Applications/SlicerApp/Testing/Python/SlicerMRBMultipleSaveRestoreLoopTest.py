@@ -1,5 +1,4 @@
 import ctk
-
 import slicer
 from slicer.ScriptedLoadableModule import *
 

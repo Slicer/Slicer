@@ -1,9 +1,7 @@
 import ctk
 import qt
-import vtk
-import vtk.util.numpy_support
-
 import slicer
+import vtk.util.numpy_support
 from slicer.ScriptedLoadableModule import *
 
 

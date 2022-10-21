@@ -18,7 +18,6 @@ should be used, however, when creating or manipulating scripts, as there are
 effectively no safeguards against producing a script that is syntactically
 invalid.
 """
-
 import re
 import string
 

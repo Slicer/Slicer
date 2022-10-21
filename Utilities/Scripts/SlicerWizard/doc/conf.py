@@ -9,14 +9,13 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
-
 import argparse
 import os
 import sys
 
-from docutils import nodes, utils
+from docutils import nodes
+from docutils import utils
 from docutils.parsers.rst import roles
-
 from sphinx.ext import autodoc
 
 # If extensions (or modules to document with autodoc) are in another directory,

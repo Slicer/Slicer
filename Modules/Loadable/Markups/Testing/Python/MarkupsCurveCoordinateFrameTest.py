@@ -1,6 +1,7 @@
-from slicer.util import TESTING_DATA_URL
 import os
+
 import numpy as np
+from slicer.util import TESTING_DATA_URL
 
 #
 # Test computation of coordinate system (normal, binormal, and tangent vector) along the curve.

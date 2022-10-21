@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 #
 #  Program: 3D Slicer
 #
@@ -17,16 +16,13 @@
 #  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
 #  and was partially funded by NIH grant 1R01EB021391
 #
-
 import argparse
 import os
 import tempfile
 
-from SlicerAppTesting import (
-    EXIT_FAILURE,
-    EXIT_SUCCESS,
-    run,
-)
+from SlicerAppTesting import EXIT_FAILURE
+from SlicerAppTesting import EXIT_SUCCESS
+from SlicerAppTesting import run
 
 """
 This test verifies that an exception raised in scripted module widget cleanup

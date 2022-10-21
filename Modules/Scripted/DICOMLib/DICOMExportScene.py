@@ -3,11 +3,9 @@ import os
 import tempfile
 
 import ctk
-import vtk
-
-import slicer
-
 import DICOMLib
+import slicer
+import vtk
 
 #########################################################
 #

@@ -3,10 +3,9 @@ import os
 import tempfile
 
 import slicer
-
-from DICOMLib import DICOMPlugin
-from DICOMLib import DICOMLoadable
 from DICOMLib import DICOMExportScene
+from DICOMLib import DICOMLoadable
+from DICOMLib import DICOMPlugin
 
 
 #

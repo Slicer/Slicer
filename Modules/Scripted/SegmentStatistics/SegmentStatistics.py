@@ -2,12 +2,10 @@ import logging
 
 import ctk
 import qt
-import vtk
-
 import slicer
-from slicer.ScriptedLoadableModule import *
-
+import vtk
 from SegmentStatisticsPlugins import *
+from slicer.ScriptedLoadableModule import *
 
 
 class SegmentStatistics(ScriptedLoadableModule):

@@ -1,7 +1,6 @@
 """ This module sets up root logging and loads the Slicer library modules into its namespace."""
 
 
-# -----------------------------------------------------------------------------
 def _createModule(name, globals, docstring):
     import imp
     import sys

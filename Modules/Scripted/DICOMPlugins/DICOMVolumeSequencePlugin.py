@@ -2,11 +2,9 @@ import logging
 
 import pydicom
 import qt
-
 import slicer
-
-from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMExportScalarVolume
+from DICOMLib import DICOMPlugin
 
 
 #

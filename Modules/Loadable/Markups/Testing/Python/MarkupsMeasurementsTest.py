@@ -1,12 +1,10 @@
 # markups measurements test
-
 import json
 import os
 
 import numpy as np
-import vtk
-
 import slicer
+import vtk
 
 #
 # Test markups measurements (except curves, which are tested in MarkupsCurveMeasurementsTest.py)

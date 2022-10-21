@@ -5,9 +5,8 @@ from collections import namedtuple
 
 import nose
 import numpy as np
-from vtk.util import numpy_support
-
 import slicer
+from vtk.util import numpy_support
 
 # ===============================================================================
 

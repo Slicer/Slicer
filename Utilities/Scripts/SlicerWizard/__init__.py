@@ -36,9 +36,8 @@ often performed when developing code and extensions for Slicer.
 * :class:`.WizardHelpFormatter`:
   Custom formatter for |CLI| arguments.
 """
-
-from .__version__ import __version__, __version_info__
-
+from .__version__ import __version__
+from .__version__ import __version_info__
 from .ExtensionDescription import ExtensionDescription
 from .ExtensionProject import ExtensionProject
 from .ExtensionWizard import ExtensionWizard

@@ -1,6 +1,6 @@
-import vtk
 import qt
 import slicer
+import vtk
 
 
 class SegmentStatisticsPluginBase:

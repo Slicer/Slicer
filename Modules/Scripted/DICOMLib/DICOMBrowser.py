@@ -2,13 +2,12 @@ import copy
 import logging
 import os
 
-import qt
-
-import slicer
-from slicer.util import VTKObservationMixin
-from slicer.util import settingsValue, toBool
-
 import DICOMLib
+import qt
+import slicer
+from slicer.util import settingsValue
+from slicer.util import toBool
+from slicer.util import VTKObservationMixin
 
 
 #########################################################

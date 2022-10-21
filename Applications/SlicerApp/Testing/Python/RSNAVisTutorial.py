@@ -1,6 +1,5 @@
 import ctk
 import qt
-
 import slicer
 from DICOMLib import DICOMUtils
 from slicer.ScriptedLoadableModule import *

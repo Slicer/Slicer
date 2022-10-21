@@ -2,9 +2,8 @@ import logging
 import os
 
 import qt
-import vtk
-
 import slicer
+import vtk
 from DICOMLib import DICOMUtils
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL

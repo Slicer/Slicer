@@ -1,7 +1,6 @@
 #
 # ScriptedExampleDisplayableManager
 #
-
 #
 # Since it's not possible to derive a VTK class in python, all scripted DisplayableManager
 # should expose the following methods:

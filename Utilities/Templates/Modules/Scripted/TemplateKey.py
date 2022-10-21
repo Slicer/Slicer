@@ -1,9 +1,8 @@
 import logging
 import os
 
-import vtk
-
 import slicer
+import vtk
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 

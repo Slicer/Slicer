@@ -1,9 +1,7 @@
-import vtk
-
 import slicer
-
-from DICOMLib import DICOMPlugin
+import vtk
 from DICOMLib import DICOMLoadable
+from DICOMLib import DICOMPlugin
 
 
 #

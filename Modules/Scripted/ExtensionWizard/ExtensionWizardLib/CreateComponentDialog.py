@@ -2,7 +2,6 @@ import os
 
 import ctk
 import qt
-
 import slicer
 
 

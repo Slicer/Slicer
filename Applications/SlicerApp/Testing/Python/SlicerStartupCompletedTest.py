@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 #
 #  Program: 3D Slicer
 #
@@ -17,7 +16,6 @@
 #  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
 #  and was partially funded by NIH grant 1U24CA194354-01
 #
-
 import os
 import sys
 import tempfile

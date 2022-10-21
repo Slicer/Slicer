@@ -1,5 +1,4 @@
 # Test restoring a scene with multiple lists with different number control points
-
 import slicer
 
 # first control point list

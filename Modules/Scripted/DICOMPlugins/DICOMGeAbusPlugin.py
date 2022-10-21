@@ -2,13 +2,10 @@ import logging
 
 import numpy
 import pydicom as dicom
-import vtk
-import vtk.util.numpy_support
-
 import slicer
-
-from DICOMLib import DICOMPlugin
+import vtk.util.numpy_support
 from DICOMLib import DICOMLoadable
+from DICOMLib import DICOMPlugin
 
 
 #

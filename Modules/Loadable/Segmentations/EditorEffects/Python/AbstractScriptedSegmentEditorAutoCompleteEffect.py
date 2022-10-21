@@ -2,9 +2,8 @@ import logging
 
 import ctk
 import qt
-import vtk
-
 import slicer
+import vtk
 
 from .AbstractScriptedSegmentEditorEffect import *
 

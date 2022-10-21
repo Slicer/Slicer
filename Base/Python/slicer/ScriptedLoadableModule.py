@@ -5,9 +5,8 @@ import unittest
 
 import ctk
 import qt
-import vtk
-
 import slicer
+import vtk
 
 
 __all__ = ['ScriptedLoadableModule', 'ScriptedLoadableModuleWidget', 'ScriptedLoadableModuleLogic', 'ScriptedLoadableModuleTest']

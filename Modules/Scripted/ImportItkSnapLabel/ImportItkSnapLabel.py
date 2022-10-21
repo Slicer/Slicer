@@ -1,5 +1,6 @@
-import os
 import logging
+import os
+
 import slicer
 from slicer.ScriptedLoadableModule import *
 

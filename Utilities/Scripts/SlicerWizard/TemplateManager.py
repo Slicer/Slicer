@@ -2,7 +2,8 @@ import fnmatch
 import logging
 import os
 
-from .Utilities import die, detectEncoding
+from .Utilities import detectEncoding
+from .Utilities import die
 
 _sourcePatterns = [
     "*.h",

@@ -1,5 +1,4 @@
 """Helpers for interacting with |CLI| users and |VCS| tools."""
-
 import argparse
 import logging
 import os

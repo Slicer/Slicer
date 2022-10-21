@@ -1,5 +1,5 @@
-import vtk
 import slicer
+import vtk
 from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
 
 

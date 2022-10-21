@@ -2,10 +2,9 @@ import logging
 import os
 
 import ctk
-import vtk
 import qt
-
 import slicer
+import vtk
 from SegmentEditorEffects import *
 
 

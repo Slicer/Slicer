@@ -3,10 +3,8 @@ import os
 import time
 
 import qt
-import vtk
-
 import slicer
-
+import vtk
 from SegmentEditorEffects import *
 
 

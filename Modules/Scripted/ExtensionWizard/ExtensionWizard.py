@@ -3,14 +3,11 @@ import traceback
 
 import ctk
 import qt
-
 import slicer
-
 import SlicerWizard.ExtensionDescription
 import SlicerWizard.ExtensionProject
 import SlicerWizard.TemplateManager
 import SlicerWizard.Utilities
-
 from ExtensionWizardLib import *
 
 

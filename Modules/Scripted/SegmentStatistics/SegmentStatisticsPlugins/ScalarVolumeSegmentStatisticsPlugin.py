@@ -1,6 +1,8 @@
-import vtk, slicer
-from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
 from functools import reduce
+
+import slicer
+import vtk
+from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
 
 
 class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):

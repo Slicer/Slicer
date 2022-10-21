@@ -1,7 +1,7 @@
 import logging
-import pydicom
 import urllib
 
+import pydicom
 import slicer
 
 
