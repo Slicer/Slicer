@@ -6,7 +6,7 @@
 # Load segmentation from .seg.nrrd file (includes segment names and colors)
 slicer.util.loadSegmentation("c:/tmp/tmp/Segmentation.nrrd")
 
-# Create segmentation from a NIFIT + color table file
+# Create segmentation from a NIFTI + color table file
 colorNode = slicer.util.loadColorTable('c:/tmp/tmp/Segmentation-label_ColorTable.ctbl')
 slicer.util.loadSegmentation("c:/tmp/tmp/Segmentation.nii", {'colorNodeID': colorNode.GetID()})
 
