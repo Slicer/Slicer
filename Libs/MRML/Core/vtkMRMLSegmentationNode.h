@@ -222,17 +222,17 @@ public:
   /// Remove binary labelmap representation for all segments.
   virtual void RemoveBinaryLabelmapRepresentation();
 
-  /// Get a segment as binary labelmap.
-  /// If representation does not exist yet then call CreateBinaryLabelmapRepresentation() before.
+  /// Get a segment as a binary labelmap.
+  /// If representation does not exist yet then CreateBinaryLabelmapRepresentation() must be called before this method.
   /// This function returns a copy of the segment binary labelmap in outputBinaryLabelmap.
   /// Returns true on success.
   virtual bool GetBinaryLabelmapRepresentation(const std::string segmentId, vtkOrientedImageData* outputBinaryLabelmap);
 
-  /// Get a segment as binary labelmap.
-  /// If representation does not exist yet then call CreateBinaryLabelmapRepresentation() before.
+  /// Get low-level access to the image data of a segment's binary labelmap representation.
+  /// If representation does not exist yet then CreateBinaryLabelmapRepresentation() must be called before this method.
   /// This function returns a pointer to the original labelmap representation in the segment.
   /// The binary labelmap can be a shared labelmap containing multiple segments.
-  /// To get a list of all segments in a shared labelmap, call vtkSegmentation::GetSegmentIDsSharingRepresentation()
+  /// To get a list of all segments in a shared labelmap, call vtkSegmentation::GetSegmentIDsSharingRepresentation().
   /// The label value used for each segment can be retrieved using vtkSegment::GetLabelValue().
   virtual vtkOrientedImageData* GetBinaryLabelmapInternalRepresentation(const std::string segmentId);
 
@@ -243,15 +243,18 @@ public:
   /// Remove closed surface representation for all segments.
   virtual void RemoveClosedSurfaceRepresentation();
 
-  /// Get a segment as binary labelmap.
-  /// If representation does not exist yet then call CreateClosedSurfaceRepresentation() before.
+  /// Get a segment as a surface mesh.
+  /// If representation does not exist yet then CreateClosedSurfaceRepresentation() must be called before this method.
   /// This function returns a copy of the segment closed surface in outputClosedSurface.
   /// Returns true on success.
   virtual bool GetClosedSurfaceRepresentation(const std::string segmentId, vtkPolyData* outputClosedSurface);
 
-  /// Get a segment as binary labelmap.
-  /// If representation does not exist yet then call CreateClosedSurfaceRepresentation() before.
-  /// This function returns a copy of the segment closed surface.
+  /// Get low-level access to the vtkPolyData object that stores a segment's closed surface representation.
+  /// If representation does not exist yet then CreateClosedSurfaceRepresentation() must be called before this method.
+  /// This function gives direct access to the internal data object, therefore modifications to this object will change the segmentation.
+  /// Internal representation of the data object may change in the future (for example it may be possible that one vtkPolyData
+  /// will be shared between multiple segments), therefore to get closed surface representation of a segment for read-only access,
+  /// GetClosedSurfaceRepresentation() method is recommended.
   virtual vtkPolyData* GetClosedSurfaceInternalRepresentation(const std::string segmentId);
 
   /// Add new segment from a closed surface.
