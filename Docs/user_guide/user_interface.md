@@ -260,3 +260,17 @@ view will not activate the view.
 > **Note:** Simulation if shortcuts not available on your device:
 > - One-button mouse: instead of `right-click` do `Ctrl` + `click`
 > - Trackpad: instead of `right-click` do `two-finger click`
+
+### Python interactor
+
+The following shortcuts are available in the Python console.
+
+| Shortcut | Operation |
+| -------- | --------- |
+| `Tab` | auto-complete |
+| `up arrow` / `down arrow` | command history |
+| `Esc` | clear selection, return to current command line, clear current command line |
+| `Ctrl` + `r` | run Python script from a file |
+| `Ctrl` + `v` | paste Python script from clipboard and run it |
+
+Note that when code is pasted into an empty line then all the code in the clipboard is executed *at once*. If the current command line is not empty then the code from the clipboard is pasted into the console and executed *line by line*. When code is executed line by line, the behavior is different in that an empty input line immediately closes the current block, and output is printed after executing each line.
