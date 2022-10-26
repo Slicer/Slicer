@@ -1,4 +1,6 @@
-# vtkITK module
+# vtkITK
+
+This module corresponds to the Python wrapped ``vtkITK`` C++ classes.
 
 ```{eval-rst}
 .. automodule:: vtkITK

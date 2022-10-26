@@ -1,4 +1,6 @@
-# vtkTeem module
+# vtkTeem
+
+This module corresponds to the Python wrapped ``vtkTeem`` C++ classes.
 
 ```{eval-rst}
 .. automodule:: vtkTeemPython

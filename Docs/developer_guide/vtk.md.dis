@@ -1,4 +1,6 @@
-# vtk module
+# vtk
+
+This module corresponds to the Python wrapped ``VTK`` C++ classes.
 
 ```{automodule} vtk
 :members:
