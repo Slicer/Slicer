@@ -40,6 +40,12 @@ extensions = [
     'notfound.extension',  # Show a better 404 page when an invalid address is entered
 ]
 
+autodoc_mock_imports = [
+    "ctk",
+    "qt",
+    "vtk",
+]
+
 myst_enable_extensions = [
     "colon_fence",  # Allow code fence using ::: (see https://myst-parser.readthedocs.io/en/latest/using/syntax-optional.html#syntax-colon-fence)
     "linkify",  # Allow automatic creation of links from URLs (it is sufficient to write https://google.com instead of <https://google.com>)
