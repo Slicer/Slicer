@@ -88,7 +88,7 @@ vtkMRMLWindowLevelWidget::vtkMRMLWindowLevelWidget()
   this->SetEventTranslation(WidgetStateAdjustWindowLevelAlternative, vtkCommand::RightButtonPressEvent, vtkEvent::AnyModifier,
     WidgetEventAdjustWindowLevelAlternativeCancel);
 
-  this->SetEventTranslation(WidgetStateIdle, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventResetWindowLevel);
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::ControlModifier, WidgetEventResetWindowLevel);
 }
 
 //----------------------------------------------------------------------------------
