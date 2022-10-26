@@ -90,7 +90,9 @@ Extensions can be downloaded from the Extensions Catalog website and can be inst
 #### Download extension packages
 
 - Opening the Extension Catalog in the default web browser on your system by clicking on "Open Extensions Catalog website" in the "Settings" button's menu
-  - Alternatively, open the website in any web browser using a link like this: `https://extensions.slicer.org/catalog/All/<revision>/<os>`, for example <https://extensions.slicer.org/catalog/All/30117/win>. `revision` refers to the application revision number that can be obtained from menu: Help / About 3D Slicer (the revision is a number preceded by r character, for example: if the complete version string is 4.13.0-2021-03-05 r29749 / 121ffbd the application revision number is 29749). `os` refers to the operating system, use `win`, `linux`, or `macosx`.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extensions_manager_open_in_browser.png)
+
 - Click "Download" button of the selected extension(s) to download the extension package.
 
 #### Install downloaded extension packages
