@@ -1,4 +1,6 @@
-# vtkAddon module
+# vtkAddon
+
+This module corresponds to the Python wrapped ``vtkAddon`` C++ classes.
 
 ```{eval-rst}
 .. automodule:: vtkAddonPython
