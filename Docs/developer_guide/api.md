@@ -16,7 +16,7 @@ Documentation of these classes are available at: https://apidocs.slicer.org/main
 Python-style documentation is available for the following packages:
 
 ```{toctree}
-:maxdepth: 4
+:maxdepth: 2
 
 mrml
 slicer
