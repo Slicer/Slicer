@@ -1267,10 +1267,8 @@ def getModuleLogic(module):
 
 
 def modulePath(moduleName):
-    """Get module logic object.
+    """Return the path where the module was discovered and loaded from.
 
-    Module logic allows a module to use features offered by another module.
-    Throws a RuntimeError exception if the module does not have widget.
     :param moduleName: module name
     :return: file path of the module
     """

@@ -105,6 +105,8 @@ class ScriptedLoadableModuleWidget:
             'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
 
     def resourcePath(self, filename):
+        """Return the absolute path of the module ``Resources`` directory.
+        """
         scriptedModulesPath = os.path.dirname(slicer.util.modulePath(self.moduleName))
         return os.path.join(scriptedModulesPath, 'Resources', filename)
 
