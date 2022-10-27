@@ -49,6 +49,12 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
             slicer.selfTests = {}
         slicer.selfTests[self.moduleName] = self.runTest
 
+    def resourcePath(self, filename):
+        """Return the absolute path of the module ``Resources`` directory.
+        """
+        scriptedModulesPath = os.path.dirname(slicer.util.modulePath(self.moduleName))
+        return os.path.join(scriptedModulesPath, 'Resources', filename)
+
     def getDefaultModuleDocumentationLink(self, docPage=None):
         """Return string that can be inserted into the application help text that contains
         link to the module's documentation in current Slicer version's documentation.
