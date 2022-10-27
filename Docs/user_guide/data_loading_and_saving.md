@@ -20,12 +20,41 @@ More details are provided in the [DICOM module documentation](modules/dicom.md).
 
 ## Non-DICOM data
 
-Non-DICOM data, covering all types of data ranging from images (nrrd, nii.gz, ...) and models (stl, ply, obj, ...) to tables (csv, txt) and point lists (json).
+Non-DICOM data, covering all types of data ranging from images (nrrd, nii.gz, ...) and models (stl, ply, obj, ...) to tables (csv, txt), point lists (json), etc.
 
-  - Loading can happen in two ways: drag&drop file on the application window, or by using the Load Data button on the toolbar ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerLoadData.png).
-  - Saving happens with the Save Data toolbar button ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerSave.png).
+### Load data
+
+To load data:
+- drag&drop file on the application window, or
+- in application menu: `File` -> `Add Data` (or `Add Data` toolbar button) ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerLoadData.png)
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/data_loading_and_saving_load_dialog.png)
+
+### Save data
+
+To save the entire scene (all data, visualization and processing settings, etc.):
+- in application menu `File` -> `Save Data`, or
+- `Save Data` toolbar button ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerSave.png)
+
+:::{tip}
+
+The entire workspace, including all data and settings can be saved into a single, independent, self-contained `.mrb` file by clicking on the small package icon at the top-left corner. A new copy of all files is written and zipped into a single file, therefore saving takes longer time than an incremental saving of only the modified files.
+
+:::
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/data_loading_and_saving_save_dialog.png)
+
+### Export data
+
+To export selected data sets - for sharing with others or for loading into other applications: go to `Data` module, right-click on an item, and choose `Export to file...`. Settings used for exporting (file format, filename, options) do not modify settings used for saving.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/data_loading_and_saving_export_dialog.png)
+
+:::{tip}
+
+Multiple nodes can be exported at once by placing them into a folder and then by exporting the folder. When exporting an entire folder hierarchy the `Export folder structure` option can be enabled to have the directory structure in the output directory match the subject hierarchy folder structure.
+
+:::
 
 ## Supported Data Formats
 

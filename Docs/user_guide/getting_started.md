@@ -163,7 +163,7 @@ You can customize views (show orientation marker, ruler, change orientation, tra
 
 #### Save data
 
-Data sets loaded into the application can be saved using Save data dialog or exported to DICOM format using DICOM module. Detailes are described in [Data loading and saving section](data_loading_and_saving.md).
+All data in the scene can be saved at once using `File` menu -> `Save data`, or selected data sets can be exported from the `Data` module by right-clicking and selecting `Export to file...` or `Export to DICOM...` . Details are described in the [Data loading and saving section](data_loading_and_saving.md).
 
 #### Extensions
 
