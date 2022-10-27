@@ -45,7 +45,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="FilenameLabel">
      <property name="text">
-      <string>Filename</string>
+      <string>Filename:</string>
      </property>
     </widget>
    </item>
@@ -59,12 +59,12 @@
    <item row="1" column="0">
     <widget class="QLabel" name="DirectoryLabel">
      <property name="text">
-      <string>Directory</string>
+      <string>Directory:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="ctkPathLineEdit" name="DirectoryPathLineEdit" native="true">
+    <widget class="ctkPathLineEdit" name="DirectoryPathLineEdit">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -79,14 +79,14 @@
    <item row="2" column="0">
     <widget class="QLabel" name="ExportFormatsLabel">
      <property name="text">
-      <string>Export Formats</string>
+      <string>Export formats:</string>
      </property>
     </widget>
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="GeneralOptionsLabel">
      <property name="text">
-      <string>Options</string>
+      <string>Options:</string>
      </property>
     </widget>
    </item>
@@ -111,7 +111,7 @@
       <item>
        <widget class="QCheckBox" name="IncludeChildrenCheckBox">
         <property name="toolTip">
-         <string>Uncheck this to include only the node you selected</string>
+         <string>Include nodes directly under the selected item in the hierarchy.</string>
         </property>
         <property name="text">
          <string>Include children</string>
@@ -121,7 +121,7 @@
       <item>
        <widget class="QCheckBox" name="RecursiveChildrenCheckBox">
         <property name="toolTip">
-         <string>Uncheck this to include only direct children of the selected item</string>
+         <string>Include all nodes in the selected item in the hierarchy, including in subfolders.</string>
         </property>
         <property name="text">
          <string>Recursively include children</string>
@@ -131,10 +131,10 @@
       <item>
        <widget class="QCheckBox" name="PreserveHierarchyCheckBox">
         <property name="toolTip">
-         <string>Create subdirectory structure based on node hierarchy. Uncheck this to simply export all nodes into the target directory.</string>
+         <string>Create subdirectory structure based on node hierarchy. Uncheck this to export all nodes directly into the target directory.</string>
         </property>
         <property name="text">
-         <string>Preserve Hierarchy</string>
+         <string>Export folder structure</string>
         </property>
        </widget>
       </item>

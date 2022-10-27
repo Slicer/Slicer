@@ -168,7 +168,7 @@ void NodeTypeWidgetSet::setLabelText(QString nodeTypeDisplayName)
 {
   if (nodeTypeDisplayName.isEmpty())
     {
-    this->label->setText("Export Format");
+    this->label->setText(qSlicerExportNodeDialog::tr("Export format:"));
     this->label->setIndent(0);
     }
   else
@@ -406,7 +406,7 @@ qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWi
   connect(this->IncludeChildrenCheckBox, &QCheckBox::stateChanged, this, &qSlicerExportNodeDialogPrivate::onIncludeChildrenCheckBoxStateChanged);
 
   // Set up DirectoryPathLineEdit widget to be a directory selector
-  this->DirectoryPathLineEdit->setLabel("Output folder");
+  this->DirectoryPathLineEdit->setLabel(qSlicerExportNodeDialog::tr("Output folder:"));
   this->DirectoryPathLineEdit->setFilters(ctkPathLineEdit::Dirs);
   this->DirectoryPathLineEdit->setMinimumSize(this->DirectoryPathLineEdit->sizeHint());
   this->DirectoryPathLineEdit->setFocusPolicy(Qt::StrongFocus); // (ctkPathLineEdit has a default focus policy of NoFocus)
@@ -423,6 +423,7 @@ qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWi
     qCritical() << Q_FUNC_INFO << "error: Could not find the expected placeholder widget for building the UI.";
     }
 
+  this->ButtonBox->button(QDialogButtonBox::Save)->setText(qSlicerExportNodeDialog::tr("&Export"));
 }
 
 //-----------------------------------------------------------------------------
@@ -733,18 +734,17 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
 
   // If there is more than one node to export, we disable the filename text entry box.
   // If there is exactly one node to export, we allow filename entry and initialize a default filename.
-  if (this->nodeList().size()>1)
+  this->setWindowTitle(qSlicerExportNodeDialog::tr("Export %n node(s)", "", this->nodeList().size()));
+  if (this->nodeList().size() > 1)
     {
     this->FilenameLineEdit->setEnabled(false);
-    this->FilenameLineEdit->setToolTip("When exporting multiple nodes, filenames are automatically set");
+    this->FilenameLineEdit->setToolTip(qSlicerExportNodeDialog::tr("When exporting multiple nodes, filenames are automatically set"));
 
-    this->FilenameLineEdit->setText("<automatic>");
+    this->FilenameLineEdit->setText(qSlicerExportNodeDialog::tr("<automatic>"));
 
     this->ButtonBox->setFocus(Qt::ActiveWindowFocusReason);
-
-    this->setWindowTitle(QString("Export ") + QString::number(this->nodeList().size()) + QString(" Nodes"));
     }
-  else if (this->nodeList().size()==1)
+  else if (this->nodeList().size() == 1)
     {
     this->FilenameLineEdit->setEnabled(true);
     this->FilenameLineEdit->setToolTip("");
@@ -753,11 +753,11 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
 
     this->FilenameLineEdit->setFocus(Qt::ActiveWindowFocusReason);
 
-    this->setWindowTitle(QString("Export ")+QString(this->theOnlyNode()->GetName()));
+    // Use a more specific title when exporting a single node
+    this->setWindowTitle(qSlicerExportNodeDialog::tr("Export ")+QString(this->theOnlyNode()->GetName()));
     }
   else
     {
-    this->setWindowTitle(QString("Export 0 Nodes")); // This hopefully never happens, but we want a correct title in case it does.
     qCritical() << Q_FUNC_INFO << "failed: There is nothing to export.";
     return false;
     }
@@ -802,25 +802,25 @@ void qSlicerExportNodeDialogPrivate::adjustTabbingOrder()
       qWarning() << Q_FUNC_INFO << "error: could not find widgets while setting tabbing order.";
       return;
       }
-    if (i==0)
+    if (i == 0)
       {
       setTabOrder(this->DirectoryPathLineEdit, nodeTypeWidgetSet->exportFormatComboBox);
       }
     else
       {
-      NodeTypeWidgetSet* previousNodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->NodeTypesInDialog[i-1], true);
+      NodeTypeWidgetSet* previousNodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->NodeTypesInDialog[i - 1], true);
       setTabOrder(previousNodeTypeWidgetSet->optionsStackedWidget, nodeTypeWidgetSet->exportFormatComboBox);
       }
     setTabOrder(nodeTypeWidgetSet->exportFormatComboBox, nodeTypeWidgetSet->optionsStackedWidget);
-    if (i == this->NodeTypesInDialog.size()-1)
+    if (i == this->NodeTypesInDialog.size() - 1)
       {
-    setTabOrder(nodeTypeWidgetSet->optionsStackedWidget, this->IncludeChildrenCheckBox);
+      setTabOrder(nodeTypeWidgetSet->optionsStackedWidget, this->IncludeChildrenCheckBox);
       }
     }
   setTabOrder(this->IncludeChildrenCheckBox,this->RecursiveChildrenCheckBox);
   setTabOrder(this->RecursiveChildrenCheckBox, this->PreserveHierarchyCheckBox);
   setTabOrder(this->PreserveHierarchyCheckBox, this->HardenTransformCheckBox);
-  setTabOrder(this->HardenTransformCheckBox,ButtonBox);
+  setTabOrder(this->HardenTransformCheckBox, this->ButtonBox);
 }
 
 //-----------------------------------------------------------------------------
@@ -865,7 +865,7 @@ void qSlicerExportNodeDialogPrivate::saveWidgetStates()
 bool qSlicerExportNodeDialogPrivate::exportNodes()
 {
   // Validate user-chosen filename in the single node case
-  if (this->nodeList().size()==1 && this->FilenameLineEdit->isEnabled())
+  if (this->nodeList().size() == 1 && this->FilenameLineEdit->isEnabled())
     {
     // If the current filename isn't the suggested one, give a prompt that suggests changing it
     // The user can either proceed without change
@@ -876,13 +876,13 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
       {
       QMessageBox messageBox(
         QMessageBox::Warning, // icon
-        tr("Filename not standard"), // title
-        tr("The following filename is recommended:\n")+betterFilename, // message text
+        qSlicerExportNodeDialog::tr("Filename not standard"), // title
+        qSlicerExportNodeDialog::tr("The following filename is recommended:") + QStringLiteral("\n") + betterFilename, // message text
         QMessageBox::NoButton, // buttons; they will be added after
         this // parent
       );
-      QAbstractButton* acceptButton = messageBox.addButton("Accept recommended", QMessageBox::YesRole);
-      messageBox.addButton("Keep my filename", QMessageBox::NoRole);
+      QAbstractButton* acceptButton = messageBox.addButton(qSlicerExportNodeDialog::tr("Accept recommended"), QMessageBox::YesRole);
+      messageBox.addButton(qSlicerExportNodeDialog::tr("Keep my filename"), QMessageBox::NoRole);
       QAbstractButton* cancelButton = messageBox.addButton(QMessageBox::Cancel);
       messageBox.exec();
 
@@ -922,7 +922,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     QString filename;
     if (this->FilenameLineEdit->isEnabled())
       {
-      if (this->nodeList().size()==1)
+      if (this->nodeList().size() == 1)
         {
         filename = this->FilenameLineEdit->text();
         }
@@ -945,7 +945,8 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
       {
       if (this->FilenameLineEdit->isEnabled()) // user error
         {
-        QMessageBox::critical(this, tr("Export Error"), tr("Failed to export node %1; filename is empty.").arg(node->GetName()));
+        QMessageBox::critical(this, qSlicerExportNodeDialog::tr("Export Error"),
+          qSlicerExportNodeDialog::tr("Failed to export node %1; filename is empty.").arg(node->GetName()));
         return false;
         }
       else // program error
@@ -963,8 +964,8 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
         continue;
         }
       QMessageBox::StandardButtons replaceQuestionButtons;
-      QMessageBox::StandardButton answer = QMessageBox::question(this, tr("File Exists"),
-        tr("The file %1 already exists. Do you want to replace it?").arg(fileInfo.absoluteFilePath()),
+      QMessageBox::StandardButton answer = QMessageBox::question(this, qSlicerExportNodeDialog::tr("File Exists"),
+        qSlicerExportNodeDialog::tr("The file %1 already exists. Do you want to replace it?").arg(fileInfo.absoluteFilePath()),
         this->nodeList().size()>1
           ? QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel
           : QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
@@ -1013,7 +1014,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
 
   if (savingParameterMaps.isEmpty())
     {
-    QMessageBox::information(this, tr("Export Information"), tr("Nothing was exported."));
+    QMessageBox::information(this, qSlicerExportNodeDialog::tr("Export Information"), qSlicerExportNodeDialog::tr("Nothing was exported."));
     return false;
     }
 
@@ -1040,13 +1041,13 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     // Make sure at least one error message is in userMessages if saving returns with error
     if (userMessages->GetNumberOfMessages() == 0)
       {
-      userMessages->AddMessage(vtkCommand::ErrorEvent, tr("Error encountered while exporting.").toStdString());
+      userMessages->AddMessage(vtkCommand::ErrorEvent, qSlicerExportNodeDialog::tr("Error encountered while exporting.").toStdString());
       }
 
     qCritical() << Q_FUNC_INFO << "Data export error:" << messagesStr;
 
     // display messagesStr as an error message
-    QMessageBox::critical(this, tr("Export Error"), messagesStr);
+    QMessageBox::critical(this, qSlicerExportNodeDialog::tr("Export Error"), messagesStr);
     }
   // In case there are any errors or warnings in storage node, make sure to alert even in case of success:
   else if (userMessages->GetNumberOfMessages() > 0)
@@ -1054,19 +1055,19 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     if (errorFound)
       {
       qWarning() << Q_FUNC_INFO << "Data export warning: node write returned success, but there were error messages during write." << messagesStr;
-      QMessageBox::critical(this, tr("Export Error"), messagesStr);
+      QMessageBox::critical(this, qSlicerExportNodeDialog::tr("Export Error"), messagesStr);
       // If there was an error, this should never have been considered a success.
       success = false;
       }
     else if (warningFound)
       {
       qWarning() << Q_FUNC_INFO << "Data export warning: node write returned success, but there were warning messages during write." << messagesStr;
-      QMessageBox::warning(this, tr("Export Warning"), messagesStr);
+      QMessageBox::warning(this, qSlicerExportNodeDialog::tr("Export Warning"), messagesStr);
       }
     else
       {
       qDebug() << Q_FUNC_INFO << "Data export information:" << messagesStr;
-      QMessageBox::information(this, tr("Export Information"), messagesStr);
+      QMessageBox::information(this, qSlicerExportNodeDialog::tr("Export Information"), messagesStr);
       }
     }
 
@@ -1076,7 +1077,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
 //-----------------------------------------------------------------------------
 void qSlicerExportNodeDialogPrivate::formatChangedSlot()
 {
-  if (this->nodeList().size()==1 && !this->ProtectFilenameLineEdit)
+  if (this->nodeList().size() == 1 && !this->ProtectFilenameLineEdit)
     {
     this->FilenameLineEdit->setText(this->recommendedFilename(this->theOnlyNode()));
     }
@@ -1117,7 +1118,7 @@ QDir qSlicerExportNodeDialogPrivate::getSubjectHierarchyBasedDirectory(vtkMRMLSt
   QStringList pathList = this->NodeIdToSubjectHierarchyPath[nodeID].toStringList();
   QStringList pathListSanitizedReversed;
 
-  for (int i = pathList.size()-1; i >=0; --i)
+  for (int i = pathList.size() - 1; i >= 0; --i)
     {
     pathListSanitizedReversed.push_back(qSlicerCoreIOManager::forceFileNameValidCharacters(pathList[i]));
     }
@@ -1129,7 +1130,7 @@ QDir qSlicerExportNodeDialogPrivate::getSubjectHierarchyBasedDirectory(vtkMRMLSt
 //-----------------------------------------------------------------------------
 vtkMRMLStorableNode* qSlicerExportNodeDialogPrivate::theOnlyNode() const
 {
-  if (this->nodeList().size()!=1)
+  if (this->nodeList().size() != 1)
     {
     qCritical() << Q_FUNC_INFO << "failed: Expected there to be exactly one node to be exported.";
     return nullptr;
@@ -1150,7 +1151,7 @@ NodeTypeWidgetSet* qSlicerExportNodeDialogPrivate::getNodeTypeWidgetSetSafe(Node
 //-----------------------------------------------------------------------------
 NodeTypeWidgetSet* qSlicerExportNodeDialogPrivate::theOnlyNodeTypeWidgetSet() const
 {
-  if (this->NodeTypesInDialog.size()!=1)
+  if (this->NodeTypesInDialog.size() != 1)
     {
     qCritical() << Q_FUNC_INFO << "failed: Expected exactly one node type.";
     return nullptr;
@@ -1161,7 +1162,7 @@ NodeTypeWidgetSet* qSlicerExportNodeDialogPrivate::theOnlyNodeTypeWidgetSet() co
 //-----------------------------------------------------------------------------
 QComboBox* qSlicerExportNodeDialogPrivate::theOnlyExportFormatComboBox() const
 {
-  if (this->NodeTypesInDialog.size()!=1)
+  if (this->NodeTypesInDialog.size() != 1)
     {
     qCritical() << Q_FUNC_INFO << "failed: Expected exactly one node type.";
     return nullptr;
@@ -1173,7 +1174,7 @@ QComboBox* qSlicerExportNodeDialogPrivate::theOnlyExportFormatComboBox() const
 void qSlicerExportNodeDialogPrivate::onFilenameEditingFinished()
 {
   // This slot should only be activated when there is one node to export, because otherwise the filename entry box should be disabled
-  if (this->nodeList().size()!=1 || this->NodeTypesInDialog.size()!=1)
+  if (this->nodeList().size() != 1 || this->NodeTypesInDialog.size() != 1)
     {
     qCritical() << Q_FUNC_INFO << "detected an error: This should not be called when there are multiple nodes to export.";
     return;
