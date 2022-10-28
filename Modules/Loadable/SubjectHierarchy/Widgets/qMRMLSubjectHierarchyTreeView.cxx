@@ -2558,11 +2558,16 @@ void qMRMLSubjectHierarchyTreeView::onCustomContextMenu(const QPoint& point)
         vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(index);
         if (itemID) // Valid item is needed for transform actions
           {
-          if (d->SelectedItems.size() > 0)
+          bool isTransformPluginActivated = false;
+          foreach (qSlicerSubjectHierarchyAbstractPlugin *plugin, d->enabledPlugins())
             {
-            this->populateTransformContextMenuForItem(itemID);
-            d->TransformMenu->exec(globalPoint);
-            return;
+            QString pluginName = plugin->name();
+            if (d->SelectedItems.size() > 0 && pluginName == "Transforms")
+              {
+              this->populateTransformContextMenuForItem(itemID);
+              d->TransformMenu->exec(globalPoint);
+              return;
+              }
             }
           }
         }
