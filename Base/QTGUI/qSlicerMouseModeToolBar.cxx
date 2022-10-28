@@ -542,10 +542,11 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
   for (int i=0; i < layoutManager->threeDViewCount(); ++i)
     {
     qMRMLThreeDView* threeDView = layoutManager->threeDWidget(i)->threeDView();
-    if (!threeDView->mrmlViewNode()->IsMappedInLayout())
-      {
-      continue;
-      }
+
+    // The cursor should be updated in all views, not only ones that are in the current layout.
+    // If it is only updated for views that are mapped in the current layout, then the cursor will be incorrect
+    // if we switch to a layout with different views.
+
     // Update cursor only if view interaction node corresponds to the one associated with the mouse toolbar
     if (threeDView->mrmlViewNode()->GetInteractionNode() != this->interactionNode())
       {
@@ -559,10 +560,11 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
   foreach(const QString& viewerName, layoutManager->sliceViewNames())
     {
     qMRMLSliceView* sliceView = layoutManager->sliceWidget(viewerName)->sliceView();
-    if (!sliceView->mrmlSliceNode()->IsMappedInLayout())
-      {
-      continue;
-      }
+
+    // The cursor should be updated in all views, not only ones that are in the current layout.
+    // If it is only updated for views that are mapped in the current layout, then the cursor will be incorrect
+    // if we switch to a layout with different views.
+
     // Update cursor only if view interaction node corresponds to the one associated with the mouse toolbar
     if (sliceView->mrmlSliceNode()->GetInteractionNode() != this->interactionNode())
       {
