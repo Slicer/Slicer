@@ -190,13 +190,13 @@ int qSlicerApplicationHelper::postInitializeApplication(
     {
     window.reset(new SlicerMainWindowType);
     }
-  else if (app.commandOptions()->showPythonInteractor()
+  else if (app.commandOptions()->showPythonConsole()
     && !app.commandOptions()->runPythonAndExit())
     {
-    // there is no main window but we need to show Python interactor
+    // there is no main window but we need to show Python console
 #ifdef Slicer_USE_PYTHONQT
     ctkPythonConsole* pythonConsole = app.pythonConsole();
-    pythonConsole->setWindowTitle("Slicer Python Interactor");
+    pythonConsole->setWindowTitle("Slicer Python Console");
     pythonConsole->resize(600, 280);
     pythonConsole->show();
     pythonConsole->activateWindow();

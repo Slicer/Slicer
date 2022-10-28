@@ -941,7 +941,7 @@ class Slicelet:
         self.parent = qt.QFrame()
         self.parent.setLayout(qt.QVBoxLayout())
 
-        # TODO: should have way to pop up python interactor
+        # TODO: should have way to pop up python console
         self.buttons = qt.QFrame()
         self.buttons.setLayout(qt.QHBoxLayout())
         self.parent.layout().addWidget(self.buttons)

@@ -40,7 +40,7 @@ The Layout Toolbar provides a drop-down menu of layouts useful for many types of
 
 - **File**: Functions for loading a previously saved scene or individual datasets of various types, and for downloading sample datasets from the internet. An option for saving scenes and data is also provided here. **Add Data** allows loading data from files. **DICOM** module is recommended to import data from DICOM files and loading of imported DICOM data. **Save** opens the "Save Data" window, which offers a variety of options for saving all data or selected datasets.
 - **Edit**: Contains an option for showing Application Settings, which allows users to customize appearance and behavior of Slicer, such as modules displayed in the toolbar, application font size, temporary directory location, location of additional Slicer modules to include.
-- **View**: Functions for showing/hiding additional windows and widgets, such as **Extensions Manager** for installing extensions from Slicer app store, **Error Log** for checking if the application encountered any potential errors, **Python Interactor** for getting a Python console to interact with the loaded data or modules, **show/hide toolbars**, or **switch view layout**.
+- **View**: Functions for showing/hiding additional windows and widgets, such as **Extensions Manager** for installing extensions from Slicer app store, **Error Log** for checking if the application encountered any potential errors, **Python Console** for getting a Python console to interact with the loaded data or modules, **show/hide toolbars**, or **switch view layout**.
 
 ### Toolbar
 
@@ -194,7 +194,7 @@ View Controllers module provides an alternate way of displaying these controller
 | `Ctrl` + `0` | show Error Log |
 | `Ctrl` + `1` | show Application Help |
 | `Ctrl` + `2` | show Application Settings |
-| `Ctrl` + `3` / `Ctrl` + `` ` `` | show/hide Python Interactor |
+| `Ctrl` + `3` / `Ctrl` + `` ` `` | show/hide Python Console |
 | `Ctrl` + `4` | show Extensions Manager |
 | `Ctrl` + `5` | show/hide Module Panel |
 | `Ctrl` + `h` | open default startup module (configurable in Application Settings) |
@@ -262,7 +262,7 @@ view will not activate the view.
 > - One-button mouse: instead of `right-click` do `Ctrl` + `click`
 > - Trackpad: instead of `right-click` do `two-finger click`
 
-### Python interactor
+### Python console
 
 The following shortcuts are available in the Python console.
 

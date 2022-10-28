@@ -478,7 +478,7 @@ This example shows how to access individual tensors at the voxel level.
 
 First load your DWI volume and estimate tensors to produce a DTI volume called ‘Output DTI Volume’.
 
-Then open the python window: View->Python interactor.
+Then open the python window: View->Python console.
 
 Use this command to access tensors through numpy:
 
@@ -631,7 +631,7 @@ You can place this code snippet in your [.slicerrc.py file](../user_guide/settin
 
 ### Running an ITK filter in Python using SimpleITK
 
-Open the "Sample Data" module and download "MR Head", then paste the following snippet in Python interactor:
+Open the "Sample Data" module and download "MR Head", then paste the following snippet in Python console:
 
 ```python
 import SampleData

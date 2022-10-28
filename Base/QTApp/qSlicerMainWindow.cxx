@@ -440,7 +440,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     {
     if (QSettings().value("Python/DockableWindow").toBool())
       {
-      this->PythonConsoleDockWidget = new QDockWidget(qSlicerMainWindow::tr("Python Interactor"));
+      this->PythonConsoleDockWidget = new QDockWidget(qSlicerMainWindow::tr("Python Console"));
       this->PythonConsoleDockWidget->setObjectName("PythonConsoleDockWidget");
       this->PythonConsoleDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
       this->PythonConsoleDockWidget->setWidget(q->pythonConsole());
@@ -452,7 +452,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     else
       {
       ctkPythonConsole* pythonConsole = q->pythonConsole();
-      pythonConsole->setWindowTitle("Slicer Python Interactor");
+      pythonConsole->setWindowTitle("Slicer Python Console");
       pythonConsole->resize(600, 280);
       pythonConsole->hide();
       this->PythonConsoleToggleViewAction = new QAction("", this->ViewMenu);
@@ -463,9 +463,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)),
       q, SLOT(onPythonConsoleUserInput(const QString&)));
     // Set up show/hide action
-    this->PythonConsoleToggleViewAction->setText(qSlicerMainWindow::tr("&Python Interactor"));
+    this->PythonConsoleToggleViewAction->setText(qSlicerMainWindow::tr("&Python Console"));
     this->PythonConsoleToggleViewAction->setToolTip(qSlicerMainWindow::tr(
-      "Show Python Interactor window for controlling the application's data, user interface, and internals"));
+      "Show Python Console window for controlling the application's data, user interface, and internals"));
     this->PythonConsoleToggleViewAction->setShortcuts({qSlicerMainWindow::tr("Ctrl+3"), qSlicerMainWindow::tr("Ctrl+`")});
     QObject::connect(this->PythonConsoleToggleViewAction, SIGNAL(toggled(bool)),
       q, SLOT(onPythonConsoleToggled(bool)));
@@ -485,9 +485,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // Setting the left and right dock widget area to occupy the bottom corners
   // means the module panel is able to have more vertical space since it is the
   // usual left/right dockable widget. Since the module panel is typically not a
-  // majority of the width dimension, this means the python interactor in the
+  // majority of the width dimension, this means the python console in the
   // bottom widget area still has a wide aspect ratio.
-  // If application window is narrow then the Python interactor can be docked to the top
+  // If application window is narrow then the Python console can be docked to the top
   // to use the full width of the application window.
   q->setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   q->setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
@@ -1250,7 +1250,7 @@ void qSlicerMainWindow::pythonConsoleInitialDisplay()
     {
     return;
     }
-  if (app->commandOptions()->showPythonInteractor() && d->PythonConsoleDockWidget)
+  if (app->commandOptions()->showPythonConsole() && d->PythonConsoleDockWidget)
     {
     d->PythonConsoleDockWidget->show();
     }
