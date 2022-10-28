@@ -96,7 +96,7 @@ void qSlicerSettingsPythonPanelPrivate::init()
 
   q->registerProperty("Python/DockableWindow", this->DockableWindowCheckBox,
     "checked", SIGNAL(toggled(bool)),
-    "Display Python interactor in a window that can be placed inside the main window.",
+    "Display Python console in a window that can be placed inside the main window.",
     ctkSettingsPanel::OptionRequireRestart);
 
   q->registerProperty("Python/Font", this->ConsoleFontButton, "currentFont",

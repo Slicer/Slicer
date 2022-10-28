@@ -21,6 +21,8 @@
 #include "qSlicerCommandOptions.h"
 #include "qSlicerCoreApplication.h"
 
+#include <QDebug>
+
 // Slicer includes
 
 //-----------------------------------------------------------------------------
@@ -50,9 +52,23 @@ bool qSlicerCommandOptions::noMainWindow() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCommandOptions::showPythonConsole() const
+{
+  bool show = this->parsedArgs().value("show-python-console").toBool();
+  // Handle the deprecated argument name for a while, for backward compatibility:
+  if (this->parsedArgs().value("show-python-interactor").toBool())
+      {
+      qWarning() << "show-python-interactor command-line argument is deprecated, use show-python-console instead";
+      show = true;
+      }
+  return show;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCommandOptions::showPythonInteractor() const
 {
-  return this->parsedArgs().value("show-python-interactor").toBool();
+  qWarning() << "qSlicerCommandOptions::showPythonInteractor() method is deprecated, use qSlicerCommandOptions::showPythonInteractor() instead";
+  return showPythonConsole();
 }
 
 //-----------------------------------------------------------------------------
@@ -88,8 +104,10 @@ void qSlicerCommandOptions::addArguments()
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
+    this->addArgument("show-python-console", "", QVariant::Bool,
+                      "Show Python console at startup.");
     this->addArgument("show-python-interactor", "", QVariant::Bool,
-                      "Show Python interactor at startup.");
+                      "Show Python console at startup (deprecated, use show-python-console instead).");
     }
 #endif
 

@@ -167,7 +167,7 @@ protected:
   /// Connect MainWindow action with slots defined in MainWindowCore
   virtual void setupMenuActions();
 
-  /// Open Python interactor if it was requested
+  /// Open Python console if it was requested
   virtual void pythonConsoleInitialDisplay();
 
   /// Open a popup to warn the user Slicer is not for clinical use.

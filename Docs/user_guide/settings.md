@@ -103,7 +103,7 @@ On Windows:
 
     Slicer.exe --settings-path | more
 
-or enter the following in the Python interactor:
+or enter the following in the Python console:
 
     slicer.app.slicerUserSettingsFilePath
 
@@ -111,7 +111,7 @@ or enter the following in the Python interactor:
 
 This file is named like `Slicer-<REVISION>.ini` and it stores settings applying to a *specific revision* of Slicer installed by the *current user*.
 
-To display the exact location of this settings file, enter the following in the Python interactor:
+To display the exact location of this settings file, enter the following in the Python console:
 
     slicer.app.slicerRevisionUserSettingsFilePath
 

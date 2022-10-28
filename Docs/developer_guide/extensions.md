@@ -661,7 +661,7 @@ Consider publishing a paper describing your extension. [This page](https://www.s
 
 ### How to force Slicer to download extensions corresponding to a different Slicer revision?
 
-Since extensions available from the Extensions Manager are associated with a particular Slicer revision, for development versions, typically no extension builds will appear in the Extensions Manager. For testing purposes, the current revision can be overridden in the Python interactor in Slicer:
+Since extensions available from the Extensions Manager are associated with a particular Slicer revision, for development versions, typically no extension builds will appear in the Extensions Manager. For testing purposes, the current revision can be overridden in the Python console in Slicer:
 
 ```python
 >>> extensionManagerModel = slicer.app.extensionsManagerModel()
