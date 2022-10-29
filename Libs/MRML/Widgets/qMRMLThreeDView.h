@@ -107,8 +107,12 @@ public slots:
   /// Set the current \a viewNode to observe
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
 
-  /// Look from a given axis, need a mrml view node to be set
-  void lookFromViewAxis(const ctkAxesWidget::Axis& axis);
+  /// \deprecated Use lookFromAxis instead.
+  void lookFromViewAxis(const ctkAxesWidget::Axis& axis)
+  {
+    qWarning("This function is deprecated. Use lookFromAxis(const ctkAxesWidget::Axis& axis) instead.");
+    this->lookFromAxis(axis);
+  };
 
   /// Reimplemented to hide items to not take into
   /// account when computing the boundaries

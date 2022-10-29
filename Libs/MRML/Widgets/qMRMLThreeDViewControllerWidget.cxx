@@ -615,7 +615,7 @@ void qMRMLThreeDViewControllerWidget::lookFromAxis(const ctkAxesWidget::Axis& ax
     }
 
   d->ViewLogic->StartCameraNodeInteraction(vtkMRMLCameraNode::LookFromAxis);
-  d->ThreeDView->lookFromViewAxis(axis);
+  d->ThreeDView->lookFromAxis(axis);
   d->ViewLogic->EndCameraNodeInteraction();
 }
 
