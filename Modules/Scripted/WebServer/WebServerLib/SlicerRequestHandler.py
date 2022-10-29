@@ -937,7 +937,7 @@ space origin: %%origin%%
             axes = ['None', 'r', 'l', 's', 'i', 'a', 'p']
             try:
                 axis = axes.index(lookFromAxis[0].lower())
-                view.lookFromViewAxis(axis)
+                view.lookFromAxis(axis)
             except ValueError:
                 pass
 

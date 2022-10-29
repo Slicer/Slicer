@@ -431,20 +431,6 @@ vtkMRMLViewNode* qMRMLThreeDView::mrmlViewNode()const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDView::lookFromViewAxis(const ctkAxesWidget::Axis& axis)
-{
-  Q_D(qMRMLThreeDView);
-  if (!d->MRMLViewNode)
-    {
-    qCritical() << "qMRMLThreeDView::lookFromViewAxis: no valid view node.";
-    return;
-    }
-  double fov = d->MRMLViewNode->GetFieldOfView();
-  Q_ASSERT(fov >= 0.0);
-  this->lookFromAxis(axis, fov);
-}
-
-// --------------------------------------------------------------------------
 void qMRMLThreeDView::resetFocalPoint()
 {
   Q_D(qMRMLThreeDView);
