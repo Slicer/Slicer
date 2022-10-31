@@ -71,7 +71,6 @@ class DICOMRequestHandler:
         responseBody = b"[{}]"
         if len(splitPath) == 3:
             # studies qido search
-            representativeSeries = None
             studyResponseString = b"["
             for patient in slicer.dicomDatabase.patients():
                 if studyCount > offset + limit:
@@ -82,6 +81,8 @@ class DICOMRequestHandler:
                         continue
                     if studyCount > offset + limit:
                         break
+                    # Get summary information of all the series (number of instances, modalities) and a representative series
+                    representativeSeriesDataset = None
                     series = slicer.dicomDatabase.seriesForStudy(study)
                     numberOfStudyRelatedSeries = len(series)
                     numberOfStudyRelatedInstances = 0
@@ -89,20 +90,29 @@ class DICOMRequestHandler:
                     for serie in series:
                         seriesInstances = slicer.dicomDatabase.instancesForSeries(serie)
                         numberOfStudyRelatedInstances += len(seriesInstances)
-                        if len(seriesInstances) > 0:
-                            representativeSeries = serie
+                        if len(seriesInstances) == 0:
+                            continue
+                        try:
+                            filename = slicer.dicomDatabase.fileForInstance(seriesInstances[0])
+                            dataset = pydicom.dcmread(filename, stop_before_pixels=True)
+                            if representativeSeriesDataset is None:
+                                # Use the first valid data set as representative series data
+                                representativeSeriesDataset = dataset
+                        except Exception as e:
+                            self.logMessage(f'Error while attempting to read instance {seriesInstances[0]} from file "{filename}": {e}')
+                            dataset = None
+                        if dataset is not None:
                             try:
-                                dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(seriesInstances[0]), stop_before_pixels=True)
                                 modalitiesInStudy.add(dataset.Modality)
                             except AttributeError as e:
-                                print('Could not get instance information for %s' % seriesInstances[0])
-                                print(e)
-                    if representativeSeries is None:
-                        print('Could not find any instances for study %s' % study)
+                                self.logMessage(f'Modality information was not found in {filename} ({seriesInstances[0]})')
+                    if representativeSeriesDataset is None:
+                        self.logMessage('Could not find any instances for study %s' % study)
                         continue
-                    instances = slicer.dicomDatabase.instancesForSeries(representativeSeries)
-                    firstInstance = instances[0]
-                    dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(firstInstance), stop_before_pixels=True)
+                    if not modalitiesInStudy:
+                        modalitiesInStudy = ['OT']
+                    # Assemble study response from representative series
+                    dataset = representativeSeriesDataset
                     studyDataset = pydicom.dataset.Dataset()
                     studyDataset.SpecificCharacterSet = ['ISO_IR 100']
                     studyDataset.StudyDate = dataset.StudyDate
@@ -139,7 +149,12 @@ class DICOMRequestHandler:
             for serie in series:
                 seriesInstances = slicer.dicomDatabase.instancesForSeries(serie)
                 for instance in seriesInstances:
-                    dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(instance), stop_before_pixels=True)
+                    try:
+                        filename = slicer.dicomDatabase.fileForInstance(instance)
+                        dataset = pydicom.dcmread(filename, stop_before_pixels=True)
+                    except Exception as e:
+                        self.logMessage(f'Error while attempting to read instance {instance} from file "{filename}": {e}')
+                        continue
                     jsonDataset = dataset.to_json()
                     responseBody += jsonDataset.encode() + b","
             if responseBody.endswith(b','):
@@ -162,7 +177,12 @@ class DICOMRequestHandler:
             instancesResponseString = b"["
             instances = slicer.dicomDatabase.instancesForSeries(seriesUID)
             for instance in instances:
-                dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(instance), stop_before_pixels=True)
+                try:
+                    filename = slicer.dicomDatabase.fileForInstance(instance)
+                    dataset = pydicom.dcmread(filename, stop_before_pixels=True)
+                except Exception as e:
+                    self.logMessage(f'Error while attempting to read instance {instance} from file "{filename}": {e}')
+                    continue
                 instanceDataset = pydicom.dataset.Dataset()
                 instanceDataset.SpecificCharacterSet = ['ISO_IR 100']
                 instanceDataset.SOPClassUID = dataset.SOPClassUID
@@ -217,12 +237,27 @@ class DICOMRequestHandler:
             for serie in series:
                 instances = slicer.dicomDatabase.instancesForSeries(serie, 1)
                 firstInstance = instances[0]
-                dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(firstInstance), stop_before_pixels=True)
+                try:
+                    filename = slicer.dicomDatabase.fileForInstance(firstInstance)
+                    dataset = pydicom.dcmread(filename, stop_before_pixels=True)
+                except Exception as e:
+                    self.logMessage(f'Error while attempting to read instance {firstInstance} from file "{filename}": {e}')
+                    continue
                 seriesDataset = pydicom.dataset.Dataset()
                 seriesDataset.SpecificCharacterSet = ['ISO_IR 100']
-                seriesDataset.Modality = dataset.Modality
                 seriesDataset.SeriesInstanceUID = dataset.SeriesInstanceUID
-                seriesDataset.SeriesNumber = dataset.SeriesNumber
+                try:
+                    # Required (type 1) field, but we don't disqualify the series if it does not have it
+                    seriesDataset.Modality = dataset.Modality
+                except AttributeError as e:
+                    self.logMessage(f'Modality information was not found in {filename} ({firstInstance})')
+                    seriesDataset.Modality = 'OT'
+                try:
+                    # Required (type 2) field, but we don't disqualify the series if it does not have it
+                    seriesDataset.SeriesNumber = dataset.SeriesNumber
+                except AttributeError as e:
+                    self.logMessage(f'Series number was not found in {filename} ({firstInstance})')
+                    seriesDataset.SeriesNumber = ''
                 if hasattr(dataset, "PerformedProcedureStepStartDate"):
                     seriesDataset.PerformedProcedureStepStartDate = dataset.PerformedProcedureStepStartDate
                 if hasattr(dataset, "PerformedProcedureStepStartTime"):
@@ -240,7 +275,12 @@ class DICOMRequestHandler:
             seriesUID = splitPath[5].decode()
             seriesInstances = slicer.dicomDatabase.instancesForSeries(seriesUID)
             for instance in seriesInstances:
-                dataset = pydicom.dcmread(slicer.dicomDatabase.fileForInstance(instance), stop_before_pixels=True)
+                try:
+                    filename = slicer.dicomDatabase.fileForInstance(instance)
+                    dataset = pydicom.dcmread(filename, stop_before_pixels=True)
+                except Exception as e:
+                    self.logMessage(f'Error while attempting to read instance {instance} from file "{filename}": {e}')
+                    continue
                 jsonDataset = dataset.to_json()
                 responseBody += jsonDataset.encode() + b","
             if responseBody.endswith(b','):
