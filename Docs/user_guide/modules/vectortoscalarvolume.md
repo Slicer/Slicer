@@ -23,6 +23,10 @@ While vector volumes can be visualized in the slice viewers, many slicer operati
 |--|
 | Volume of JPG files from the [visible human project](https://www.nlm.nih.gov/research/visible/visible_human.html) converted to a scalar volume using the **Luminance** method. |
 
+## Related extensions and modules
+
+- The [SlicerMorph extension's ImageStacks module](https://github.com/SlicerMorph/SlicerMorph#module-descriptions) supports reading and other operations on volumetric vector (color) image formats.
+
 ## Contributors
 
 - Steve Pieper (Isomics)
