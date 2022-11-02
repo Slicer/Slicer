@@ -392,7 +392,7 @@ void qMRMLThreeDViewControllerWidget::setViewLabel(const QString& newViewLabel)
 QString qMRMLThreeDViewControllerWidget::viewLabel()const
 {
   Q_D(const qMRMLThreeDViewControllerWidget);
-  if (this->mrmlThreeDViewNode())
+  if (!this->mrmlThreeDViewNode())
     {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return QString();
@@ -594,7 +594,7 @@ void qMRMLThreeDViewControllerWidget::setOrthographicModeEnabled(bool enabled)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
 
-  if (!d->ViewLogic)
+  if (!d->ViewLogic || !this->mrmlThreeDViewNode())
     {
     return;
     }
