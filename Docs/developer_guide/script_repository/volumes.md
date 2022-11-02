@@ -407,13 +407,13 @@ pointListNode = getNode("F")
 markupsIndex = 0
 
 # Get point coordinate in RAS
-point_Ras = [0, 0, 0, 1]
-pointListNode.GetNthFiducialWorldCoordinates(markupsIndex, point_Ras)
+point_Ras = [0, 0, 0]
+pointListNode.GetNthControlPointPositionWorld(markupsIndex, point_Ras)
 
 # If volume node is transformed, apply that transform to get volume's RAS coordinates
 transformRasToVolumeRas = vtk.vtkGeneralTransform()
 slicer.vtkMRMLTransformNode.GetTransformBetweenNodes(None, volumeNode.GetParentTransformNode(), transformRasToVolumeRas)
-point_VolumeRas = transformRasToVolumeRas.TransformPoint(point_Ras[0:3])
+point_VolumeRas = transformRasToVolumeRas.TransformPoint(point_Ras)
 
 # Get voxel coordinates from physical coordinates
 volumeRasToIjk = vtk.vtkMatrix4x4()

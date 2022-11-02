@@ -561,7 +561,7 @@ space origin: %%origin%%
                 markupsNode.GetNthControlPointPosition(markupIndex, position)
                 position
                 node['markups'].append({
-                    'label': markupsNode.GetNthFiducialLabel(markupIndex),
+                    'label': markupsNode.GetNthControlPointLabel(markupIndex),
                     'position': position
                 })
             fiducials[markupsNode.GetID()] = node
