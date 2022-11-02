@@ -402,17 +402,6 @@ class EndoscopyComputePath:
                 coord = [0.0, 0.0, 0.0]
                 self.fids.GetNthControlPointPositionWorld(i, coord)
                 self.p[i] = coord
-        else:
-            # slicer3 style fiducial lists
-            self.n = self.fids.GetNumberOfFiducials()
-            n = self.n
-            if n == 0:
-                return
-            # get control point data
-            # sets self.p
-            self.p = numpy.zeros((n, 3))
-            for i in range(n):
-                self.p[i] = self.fids.GetNthFiducialXYZ(i)
 
         # calculate the tangent vectors
         # - fm is forward difference
