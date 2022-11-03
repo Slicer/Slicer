@@ -62,8 +62,6 @@
 #include "vtkSphereSource.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
-#include "vtkTextMapper.h"
-#include "vtkTextProperty.h"
 #include "vtkTubeFilter.h"
 #include "vtkWindow.h"
 

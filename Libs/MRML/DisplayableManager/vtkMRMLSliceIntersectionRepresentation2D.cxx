@@ -35,7 +35,6 @@
 #include "vtkActor2D.h"
 #include "vtkObjectFactory.h"
 #include "vtkProperty2D.h"
-#include "vtkTextProperty.h"
 #include "vtkAssemblyPath.h"
 #include "vtkMath.h"
 #include "vtkInteractorObserver.h"
@@ -49,7 +48,6 @@
 #include "vtkCellArray.h"
 #include "vtkLeaderActor2D.h"
 #include "vtkTransform.h"
-#include "vtkTextMapper.h"
 #include "vtkActor2D.h"
 #include "vtkWindow.h"
 

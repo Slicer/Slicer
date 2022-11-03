@@ -511,6 +511,25 @@ void qSlicerCoreApplicationPrivate::init()
     qSlicerCoreApplication::loadLanguage();
     }
 
+  // Default VTK fonts do not support Chinese characters. Allow setting custom font files from application settings.
+  // Slicer core does not provide GUI to set these fonts yet, but extensions (e.g, LanguagePacks) can provide modules
+  // to edit these settings and/or set font files automatically based on the chosen language.
+  QString viewsFontFileSansSerif = q->userSettings()->value("Views/FontFile/SansSerif").toString();
+  QString viewsFontFileMonospaced = q->userSettings()->value("Views/FontFile/Monospaced").toString();
+  QString viewsFontFileSerif = q->userSettings()->value("Views/FontFile/Serif").toString();
+  if (!viewsFontFileSansSerif.isEmpty())
+    {
+    this->AppLogic->SetFontFileName(VTK_ARIAL, viewsFontFileSansSerif.toStdString());
+    }
+  if (!viewsFontFileMonospaced.isEmpty())
+    {
+    this->AppLogic->SetFontFileName(VTK_COURIER, viewsFontFileMonospaced.toStdString());
+    }
+  if (!viewsFontFileSerif.isEmpty())
+    {
+    this->AppLogic->SetFontFileName(VTK_TIMES, viewsFontFileSerif.toStdString());
+    }
+
   q->connect(q, SIGNAL(aboutToQuit()), q, SLOT(onAboutToQuit()));
 }
 

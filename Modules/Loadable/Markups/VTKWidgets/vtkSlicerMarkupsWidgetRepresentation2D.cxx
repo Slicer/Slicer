@@ -437,6 +437,10 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
     controlPoints->Property->SetOpacity(opacity);
 
     controlPoints->TextProperty->ShallowCopy(this->MarkupsDisplayNode->GetTextProperty());
+    if (this->GetApplicationLogic())
+      {
+      this->GetApplicationLogic()->UseCustomFontFile(controlPoints->TextProperty);
+      }
     controlPoints->TextProperty->SetColor(color);
     controlPoints->TextProperty->SetOpacity(opacity);
     controlPoints->TextProperty->SetFontSize(static_cast<int>(this->MarkupsDisplayNode->GetTextProperty()->GetFontSize()
