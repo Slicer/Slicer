@@ -358,6 +358,7 @@ class SliceAnnotations(VTKObservationMixin):
                 textProperty.SetFontFamilyToTimes()
             else:
                 textProperty.SetFontFamilyToArial()
+            slicer.app.applicationLogic().UseCustomFontFile(textProperty)
             # Text
             self.makeAnnotationText(sliceLogic)
         else:
@@ -604,8 +605,6 @@ class SliceAnnotations(VTKObservationMixin):
                         if (cornerText[key]['category'] == 'A'):
                             cornerAnnotation = cornerAnnotation + text + '\n'
             sliceCornerAnnotation = self.sliceViews[sliceViewName].cornerAnnotation()
-            # encode to avoid 'unicode conversion error' for patient names containing international characters
-            cornerAnnotation = cornerAnnotation
             sliceCornerAnnotation.SetText(i, cornerAnnotation)
             textProperty = sliceCornerAnnotation.GetTextProperty()
             textProperty.SetShadow(1)

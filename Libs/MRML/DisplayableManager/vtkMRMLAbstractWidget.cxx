@@ -154,11 +154,16 @@ void vtkMRMLAbstractWidget::SetRepresentation(vtkMRMLAbstractWidgetRepresentatio
 
   this->WidgetRep = rep;
 
-  if (this->Renderer != nullptr && this->WidgetRep != nullptr)
+  if (this->WidgetRep)
     {
-    this->WidgetRep->SetRenderer(this->Renderer);
-    this->Renderer->AddViewProp(this->WidgetRep);
+    if (this->Renderer)
+      {
+      this->WidgetRep->SetRenderer(this->Renderer);
+      this->Renderer->AddViewProp(this->WidgetRep);
+      }
+    this->WidgetRep->SetApplicationLogic(this->ApplicationLogic);
     }
+
 }
 
 //-------------------------------------------------------------------------
@@ -434,6 +439,10 @@ const char* vtkMRMLAbstractWidget::GetAssociatedNodeID(vtkMRMLInteractionEventDa
 void vtkMRMLAbstractWidget::SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic)
 {
   this->ApplicationLogic = applicationLogic;
+  if (this->GetRepresentation())
+    {
+    this->GetRepresentation()->SetApplicationLogic(applicationLogic);
+    }
 }
 
 //---------------------------------------------------------------------------

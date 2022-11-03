@@ -309,8 +309,21 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
   std::string title = colorLegendDisplayNode->GetTitleText();
   actor->SetTitle(title.c_str());
 
-  actor->SetTitleTextProperty(colorLegendDisplayNode->GetTitleTextProperty());
-  actor->SetLabelTextProperty(colorLegendDisplayNode->GetLabelTextProperty());
+  vtkNew<vtkTextProperty> titleTextProperty;
+  titleTextProperty->ShallowCopy(colorLegendDisplayNode->GetTitleTextProperty());
+  if (this->External->GetMRMLApplicationLogic())
+    {
+    this->External->GetMRMLApplicationLogic()->UseCustomFontFile(titleTextProperty);
+    }
+  actor->SetTitleTextProperty(titleTextProperty);
+
+  vtkNew<vtkTextProperty> labelTextProperty;
+  labelTextProperty->ShallowCopy(colorLegendDisplayNode->GetLabelTextProperty());
+  if (this->External->GetMRMLApplicationLogic())
+    {
+    this->External->GetMRMLApplicationLogic()->UseCustomFontFile(labelTextProperty);
+    }
+  actor->SetLabelTextProperty(labelTextProperty);
 
   std::string format = colorLegendDisplayNode->GetLabelFormat();
   actor->SetLabelFormat(format.c_str());

@@ -24,6 +24,7 @@
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLColorLogic.h"
+#include "vtkMRMLLogic.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceLinkLogic.h"
 #include "vtkMRMLViewLogic.h"
@@ -50,6 +51,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkTextProperty.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
@@ -67,6 +69,11 @@
 # include <dirent.h>
 # include <errno.h>
 #endif
+
+namespace
+{
+  const char FONTS_DIR[] = "Fonts";
+}
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLApplicationLogic);
@@ -89,6 +96,7 @@ public:
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
   std::string TemporaryPath;
   std::map<std::string, vtkWeakPointer<vtkMRMLAbstractLogic> > ModuleLogicMap;
+  std::map<int, std::string> FontFileNames;
 };
 
 //----------------------------------------------------------------------------
@@ -1164,4 +1172,69 @@ int vtkMRMLApplicationLogic::GetIntersectingSlicesLineThicknessMode()
     }
 
   return sliceDisplayNode->GetIntersectingSlicesLineThicknessMode();
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLApplicationLogic::GetFontFileName(int fontFamily)
+{
+  std::map<int, std::string>::iterator foundFontFileIt = this->Internal->FontFileNames.find(fontFamily);
+  if (foundFontFileIt == this->Internal->FontFileNames.end())
+    {
+    return "";
+    }
+  return foundFontFileIt->second;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetFontFileName(int fontFamily, const std::string& fontFileName)
+{
+  const std::string fullPath = this->GetFontFilePath(fontFileName);
+  // File existence is checked in this method so that we don't need to
+  this->Internal->FontFileNames[fontFamily] = fontFileName;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::UseCustomFontFile(vtkTextProperty* textProperty)
+{
+  if (!textProperty)
+    {
+    return;
+    }
+  std::string fontFileName = vtkMRMLApplicationLogic::GetFontFileName(textProperty->GetFontFamily());
+  if (fontFileName.empty())
+    {
+    return;
+    }
+  std::string fullPath = this->GetFontFilePath(fontFileName);
+  if (!vtksys::SystemTools::FileExists(fullPath, true))
+    {
+    return;
+    }
+  textProperty->SetFontFile(fullPath.c_str());
+  textProperty->SetFontFamily(VTK_FONT_FILE);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLApplicationLogic::GetFontFilePath(const std::string& fontFileName)
+{
+  std::vector<std::string> filesVector;
+  // Add an empty component because JoinPath does not add a slash for the first two components.
+  filesVector.emplace_back("");
+  filesVector.push_back(vtkMRMLLogic::GetApplicationShareDirectory());
+  filesVector.emplace_back(FONTS_DIR);
+  filesVector.emplace_back(fontFileName);
+  std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
+  return fullPath;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLApplicationLogic::GetFontsDirectory()
+{
+  std::vector<std::string> filesVector;
+  // Add an empty component because JoinPath does not add a slash for the first two components.
+  filesVector.emplace_back("");
+  filesVector.push_back(vtkMRMLLogic::GetApplicationShareDirectory());
+  filesVector.emplace_back(FONTS_DIR);
+  std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
+  return fullPath;
 }

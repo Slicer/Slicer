@@ -75,6 +75,23 @@ vtkRenderer* vtkMRMLAbstractWidgetRepresentation::GetRenderer()
 }
 
 //-----------------------------------------------------------------------------
+void vtkMRMLAbstractWidgetRepresentation::SetApplicationLogic(vtkMRMLApplicationLogic* appLogic)
+{
+  if (appLogic == this->ApplicationLogic)
+    {
+    return;
+    }
+  this->ApplicationLogic = appLogic;
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLApplicationLogic* vtkMRMLAbstractWidgetRepresentation::GetApplicationLogic()
+{
+  return this->ApplicationLogic;
+}
+
+//-----------------------------------------------------------------------------
 void vtkMRMLAbstractWidgetRepresentation::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (viewNode == this->ViewNode)

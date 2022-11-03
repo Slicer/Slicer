@@ -22,6 +22,7 @@
 
 // MRML includes
 #include <vtkMRMLAbstractViewNode.h>
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLLogic.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
@@ -231,6 +232,10 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::SetupRuler()
   vtkTextProperty* textProperty = this->RulerTextActor->GetTextProperty();
   textProperty->SetFontSize(RULER_BASE_FONT_SIZE);
   textProperty->SetFontFamilyToArial();
+  if (this->External->GetMRMLApplicationLogic())
+    {
+    this->External->GetMRMLApplicationLogic()->UseCustomFontFile(textProperty);
+    }
 }
 
 //---------------------------------------------------------------------------
