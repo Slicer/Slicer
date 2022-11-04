@@ -43,6 +43,7 @@ public:
 
 protected slots:
   void onLogFileOpen();
+  void onLogFileLocationOpen();
   void onLogCopy();
   void onLogFileSelectionChanged();
   void onLogFileEditClicked(bool editable);
