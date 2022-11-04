@@ -70,7 +70,7 @@
      <item>
       <widget class="ctkPushButton" name="LogCopyToClipboardPushButton">
        <property name="text">
-        <string>Copy log messages to clipboard</string>
+        <string>Copy log to clipboard</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>
@@ -80,7 +80,17 @@
      <item>
       <widget class="ctkPushButton" name="LogFileOpenPushButton">
        <property name="text">
-        <string>Open log file in editor</string>
+        <string>Open log in editor</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkPushButton" name="LogOpenFileLocationPushButton">
+       <property name="text">
+        <string>Open log location</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>

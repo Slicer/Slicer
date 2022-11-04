@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QUrl>
+#include <QFileInfo>
 
 // SlicerApp includes
 #include "qSlicerErrorReportDialog.h"
@@ -67,6 +68,7 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
   //QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onLogFileSelectionChanged()));
   QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentPathChanged(QString,QString)), this, SLOT(onLogFileSelectionChanged()));
   QObject::connect(d->LogCopyToClipboardPushButton, SIGNAL(clicked()), this, SLOT(onLogCopy()));
+  QObject::connect(d->LogOpenFileLocationPushButton, SIGNAL(clicked()), this, SLOT(onLogFileLocationOpen()));
   QObject::connect(d->LogFileOpenPushButton, SIGNAL(clicked()), this, SLOT(onLogFileOpen()));
   QObject::connect(d->LogFileEditCheckBox, SIGNAL(clicked(bool)), this, SLOT(onLogFileEditClicked(bool)));
 
@@ -101,6 +103,14 @@ void qSlicerErrorReportDialog::onLogFileSelectionChanged()
     {
     d->LogText->clear();
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerErrorReportDialog::onLogFileLocationOpen()
+{
+  Q_D(qSlicerErrorReportDialog);
+  QFileInfo fileInfo(d->RecentLogFilesComboBox->currentPath());
+  QDesktopServices::openUrl(QUrl(fileInfo.absolutePath(), QUrl::TolerantMode));
 }
 
 // --------------------------------------------------------------------------
