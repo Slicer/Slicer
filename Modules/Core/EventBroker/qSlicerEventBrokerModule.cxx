@@ -53,13 +53,13 @@ vtkMRMLAbstractLogic* qSlicerEventBrokerModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerEventBrokerModule::categories()const
 {
-  return QStringList() << "Developer Tools";
+  return QStringList() << qSlicerAbstractCoreModule::tr("Developer Tools");
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerEventBrokerModule::helpText()const
 {
-  QString help = "Profiling tool for the developers.";
+  QString help = tr("Profiling tool for the developers.");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -67,9 +67,9 @@ QString qSlicerEventBrokerModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerEventBrokerModule::acknowledgementText()const
 {
-  QString acknowledgement = "This module was developed by Julien Finet, Kitware Inc. "
+  QString acknowledgement = tr("This module was developed by Julien Finet, Kitware Inc. "
       "This work was supported by NIH grant 3P41RR013218-12S1, "
-      "NA-MIC, NAC and Slicer community.";
+      "NA-MIC, NAC and Slicer community.");
   return acknowledgement;
 }
 

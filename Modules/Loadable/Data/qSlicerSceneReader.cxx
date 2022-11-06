@@ -62,13 +62,13 @@ qSlicerSceneReader::~qSlicerSceneReader() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerSceneReader::description()const
 {
-  return "MRML Scene";
+  return tr("MRML Scene");
 }
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerSceneReader::fileType()const
 {
-  return QString("SceneFile");
+  return QString(/*no tr*/"SceneFile");
 }
 
 //-----------------------------------------------------------------------------
@@ -100,7 +100,7 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
       {
       // Set default scene file format to .mrml
       qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-      coreIOManager->setDefaultSceneFileType("MRML Scene (.mrml)");
+      coreIOManager->setDefaultSceneFileType(tr("MRML Scene") + " (.mrml)");
       }
     }
   else
