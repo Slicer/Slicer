@@ -44,7 +44,7 @@ public:
   QStringList categories()const override;
 
   /// Display name for the module
-  qSlicerGetTitleMacro("Event Broker");
+  qSlicerGetTitleMacro(tr("Event Broker"));
 
   QString helpText()const override;
   QString acknowledgementText()const override;

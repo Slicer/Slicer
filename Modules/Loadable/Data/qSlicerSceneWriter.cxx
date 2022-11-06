@@ -66,7 +66,7 @@ QString qSlicerSceneWriter::description()const
 //----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerSceneWriter::fileType()const
 {
-  return QString("SceneFile");
+  return QString(/*no tr*/"SceneFile");
 }
 
 //----------------------------------------------------------------------------
@@ -80,9 +80,9 @@ QStringList qSlicerSceneWriter::extensions(vtkObject* object)const
 {
   Q_UNUSED(object);
   return QStringList()
-    << tr("MRML Scene (.mrml)")
-    << tr("Medical Reality Bundle (.mrb)")
-    << tr("Slicer Data Bundle (*)");
+    << tr("MRML Scene") + " (.mrml)"
+    << tr("Medical Reality Bundle") + " (.mrb)"
+    << tr("Slicer Data Bundle") +" (*)";
 }
 
 //----------------------------------------------------------------------------

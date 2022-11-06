@@ -197,7 +197,7 @@ void qSlicerDataModuleWidget::setup()
   // Transform hierarchy tab
 
   d->TransformMRMLTreeView->sceneModel()->setIDColumn(1);
-  d->TransformMRMLTreeView->sceneModel()->setHorizontalHeaderLabels(QStringList() << "Nodes" << "IDs");
+  d->TransformMRMLTreeView->sceneModel()->setHorizontalHeaderLabels(QStringList() << tr("Nodes") << tr("IDs"));
   d->TransformMRMLTreeView->header()->setStretchLastSection(false);
   d->TransformMRMLTreeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
   d->TransformMRMLTreeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
@@ -237,7 +237,7 @@ void qSlicerDataModuleWidget::setup()
   // All nodes tab
 
   d->AllNodesMRMLTreeView->sceneModel()->setIDColumn(1);
-  d->AllNodesMRMLTreeView->sceneModel()->setHorizontalHeaderLabels(QStringList() << "Nodes" << "IDs");
+  d->AllNodesMRMLTreeView->sceneModel()->setHorizontalHeaderLabels(QStringList() << tr("Nodes") << tr("IDs"));
   d->AllNodesMRMLTreeView->header()->setStretchLastSection(false);
   d->AllNodesMRMLTreeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
   d->AllNodesMRMLTreeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
@@ -459,7 +459,7 @@ void qSlicerDataModuleWidget::setInfoLabelFromSubjectHierarchyItem(vtkIdType ite
     }
   else
     {
-    d->SubjectHierarchyItemInfoLabel->setText("No item selected");
+    d->SubjectHierarchyItemInfoLabel->setText(tr("No item selected"));
     }
 
   // Store item ID in the label object
