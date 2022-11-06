@@ -2806,6 +2806,11 @@ void qMRMLSegmentEditorWidget::processEvents(vtkObject* caller,
     {
     return;
     }
+  // If the segment editor node is no longer valid then ignore all events
+  if (!self->mrmlSegmentEditorNode())
+    {
+    return;
+    }
 
   vtkMatrix4x4* sliceToRAS = vtkMatrix4x4::SafeDownCast(caller);
   if (sliceToRAS)
