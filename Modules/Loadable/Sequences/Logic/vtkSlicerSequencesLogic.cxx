@@ -430,20 +430,26 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
       std::string unit = synchronizedSequenceNode->GetIndexUnit();
       // Save the base name (without the index name and value)
       targetProxyNode->SetAttribute("Sequences.BaseName", synchronizedSequenceNode->GetName());
-      std::string targetProxyNodeName = synchronizedSequenceNode->GetName();
-      targetProxyNodeName+=" [";
-      if (!indexName.empty())
+      std::ostringstream targetProxyNodeNameStr;
+      targetProxyNodeNameStr << synchronizedSequenceNode->GetName() << " [";
+      if (browserNode->GetIndexDisplayMode() == vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue)
         {
-        targetProxyNodeName+=indexName;
-        targetProxyNodeName+="=";
+        if (!indexName.empty())
+          {
+          targetProxyNodeNameStr << indexName << "=";
+          }
+        targetProxyNodeNameStr << indexValue;
+        if (!unit.empty())
+          {
+          targetProxyNodeNameStr << unit;
+          }
         }
-      targetProxyNodeName+=indexValue;
-      if (!unit.empty())
+      else
         {
-        targetProxyNodeName+=unit;
+        targetProxyNodeNameStr << (selectedItemNumber + 1) << "/" << (synchronizedSequenceNode->GetNumberOfDataNodes());
         }
-      targetProxyNodeName+="]";
-      targetProxyNode->SetName(targetProxyNodeName.c_str());
+      targetProxyNodeNameStr << "]";
+      targetProxyNode->SetName(targetProxyNodeNameStr.str().c_str());
       }
 
     if (newTargetProxyNodeWasCreated)
