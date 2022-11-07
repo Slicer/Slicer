@@ -85,10 +85,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         importFormatsComboBox.toolTip = ("Enable adding non-linear transform to regularize images acquired irregular geometry:"
                                          " non-rectilinear grid (such as tilted gantry CT acquisitions) and non-uniform slice spacing."
                                          " If no regularization is applied then image may appear distorted if it was acquired with irregular geometry.")
-        importFormatsComboBox.addItem("default (none)", "default")
+
+        importFormatsComboBox.addItem("default (apply regularization transform)", "default")
         importFormatsComboBox.addItem("none", "none")
         importFormatsComboBox.addItem("apply regularization transform", "transform")
-        # in the future additional option, such as "resample" may be added
+        # In the future additional option, such as "resample" (harden the applied transform) may be added.
+
         importFormatsComboBox.currentIndex = 0
         formLayout.addRow("Acquisition geometry regularization:", importFormatsComboBox)
         panel.registerProperty(
@@ -131,7 +133,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     def acquisitionGeometryRegularizationEnabled(self):
         settings = qt.QSettings()
-        return (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") == "transform")
+        return (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") != "none")
 
     def allowLoadingByTime(self):
         settings = qt.QSettings()

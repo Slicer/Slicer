@@ -664,7 +664,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
 
     # Get acquisition geometry regularization setting value
     settings = qt.QSettings()
-    acquisitionGeometryRegularizationEnabled = (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") == "transform")
+    acquisitionGeometryRegularizationEnabled = (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") != "none")
 
     # Confirm equal spacing between slices
     # - use variable 'epsilon' to determine the tolerance
