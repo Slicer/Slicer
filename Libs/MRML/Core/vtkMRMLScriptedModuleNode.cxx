@@ -109,7 +109,11 @@ void vtkMRMLScriptedModuleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
     }
 
   this->SetModuleName(node->GetModuleName());
-  this->Parameters = node->Parameters;
+  if (this->Parameters != node->Parameters)
+    {
+    this->Parameters = node->Parameters;
+    this->Modified();
+    }
 }
 
 //----------------------------------------------------------------------------
