@@ -42,7 +42,7 @@ qSlicerCamerasModule::~qSlicerCamerasModule() = default;
 //-----------------------------------------------------------------------------
 QStringList qSlicerCamerasModule::categories()const
 {
-  return QStringList() << "Developer Tools";
+  return QStringList() << qSlicerAbstractCoreModule::tr("Developer Tools");
 }
 
 //-----------------------------------------------------------------------------

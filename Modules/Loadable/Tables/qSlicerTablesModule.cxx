@@ -95,7 +95,7 @@ QStringList qSlicerTablesModule::contributors()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerTablesModule::categories() const
 {
-  return QStringList() << "Informatics";
+  return QStringList() << qSlicerAbstractCoreModule::tr("Informatics");
 }
 
 

@@ -191,7 +191,7 @@ QIcon qSlicerSequencesModule::icon()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerSequencesModule::categories() const
 {
-  return QStringList() << "Sequences";
+  return QStringList() << qSlicerAbstractCoreModule::tr("Sequences");
 }
 
 //-----------------------------------------------------------------------------

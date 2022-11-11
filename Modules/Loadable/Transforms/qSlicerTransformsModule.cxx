@@ -69,7 +69,7 @@ QIcon qSlicerTransformsModule::icon()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerTransformsModule::categories() const
 {
-  return QStringList() << "" << "Registration";
+  return QStringList() << "" << qSlicerAbstractCoreModule::tr("Registration");
 }
 
 //-----------------------------------------------------------------------------

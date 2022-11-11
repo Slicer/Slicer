@@ -88,7 +88,7 @@ QStringList qSlicerTerminologiesModule::contributors()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerTerminologiesModule::categories()const
 {
-  return QStringList() << "Informatics";
+  return QStringList() << qSlicerAbstractCoreModule::tr("Informatics");
 }
 
 //-----------------------------------------------------------------------------

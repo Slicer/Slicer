@@ -62,7 +62,7 @@ QIcon qSlicerTextsModule::icon()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerTextsModule::categories() const
 {
-  return QStringList() << "Informatics";
+  return QStringList() << qSlicerAbstractCoreModule::tr("Informatics");
 }
 
 //-----------------------------------------------------------------------------

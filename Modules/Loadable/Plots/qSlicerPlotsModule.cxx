@@ -92,7 +92,7 @@ QStringList qSlicerPlotsModule::contributors()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerPlotsModule::categories() const
 {
-  return QStringList() << "Informatics";
+  return QStringList() << qSlicerAbstractCoreModule::tr("Informatics");
 }
 
 //-----------------------------------------------------------------------------

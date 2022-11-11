@@ -69,10 +69,22 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
   this->NoModuleAction = nullptr;
   this->DuplicateActions = false;
   this->ShowHiddenModules = false;
-  this->TopLevelCategoryOrder << "Wizards" << "Informatics" << "Registration"
-    << "Segmentation" << "Quantification" << "Diffusion" << "IGT"
-    << "Filtering" << "Surface Models" << "Converters" << "Endoscopy"
-    << "Utilities" << "Developer Tools" << "Legacy" << "Testing";
+  this->TopLevelCategoryOrder
+    << qSlicerAbstractCoreModule::tr("Wizards")
+    << qSlicerAbstractCoreModule::tr("Informatics")
+    << qSlicerAbstractCoreModule::tr("Registration")
+    << qSlicerAbstractCoreModule::tr("Segmentation")
+    << qSlicerAbstractCoreModule::tr("Quantification")
+    << qSlicerAbstractCoreModule::tr("Diffusion")
+    << qSlicerAbstractCoreModule::tr("IGT")
+    << qSlicerAbstractCoreModule::tr("Filtering")
+    << qSlicerAbstractCoreModule::tr("Surface Models")
+    << qSlicerAbstractCoreModule::tr("Converters")
+    << qSlicerAbstractCoreModule::tr("Endoscopy")
+    << qSlicerAbstractCoreModule::tr("Utilities")
+    << qSlicerAbstractCoreModule::tr("Developer Tools")
+    << qSlicerAbstractCoreModule::tr("Legacy")
+    << qSlicerAbstractCoreModule::tr("Testing");
 }
 
 //---------------------------------------------------------------------------

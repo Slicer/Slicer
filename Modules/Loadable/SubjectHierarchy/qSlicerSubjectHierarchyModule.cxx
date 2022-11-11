@@ -95,7 +95,7 @@ QString qSlicerSubjectHierarchyModule::acknowledgementText()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerSubjectHierarchyModule::categories() const
 {
-  return QStringList() << "" << "Informatics";
+  return QStringList() << "" << qSlicerAbstractCoreModule::tr("Informatics");
 }
 
 //-----------------------------------------------------------------------------

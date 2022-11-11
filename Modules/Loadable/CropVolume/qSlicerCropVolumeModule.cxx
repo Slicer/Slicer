@@ -75,7 +75,7 @@ QIcon qSlicerCropVolumeModule::icon()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerCropVolumeModule::categories()const
 {
-  return QStringList() << "Converters";
+  return QStringList() << qSlicerAbstractCoreModule::tr("Converters");
 }
 
 //-----------------------------------------------------------------------------
