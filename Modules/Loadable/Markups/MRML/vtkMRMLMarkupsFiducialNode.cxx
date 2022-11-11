@@ -73,13 +73,7 @@ void vtkMRMLMarkupsFiducialNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
-
-  vtkMRMLCopyBeginMacro(anode);
-  vtkMRMLCopyIntMacro(MaximumNumberOfControlPoints);
-  vtkMRMLCopyIntMacro(RequiredNumberOfControlPoints);
-  vtkMRMLCopyEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -87,7 +81,6 @@ void vtkMRMLMarkupsFiducialNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 }
-
 
 //-------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()

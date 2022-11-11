@@ -632,7 +632,7 @@ public:
   vtkGetMacro(RequiredNumberOfControlPoints, int);
 
   /// Maximum number of control points limits the number of markups allowed in the node.
-  /// If maximum number of control points is set to 0 then no it means there
+  /// If maximum number of control points is set to -1 then no it means there
   /// is no limit (this is the default value).
   /// The value is an indication to the user interface and does not affect
   /// prevent adding markups to a node programmatically.
