@@ -175,9 +175,14 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy/*=true*
 
   vtkMRMLCopyBeginMacro(aSource);
   vtkMRMLCopyBooleanMacro(Locked);
+  vtkMRMLCopyBooleanMacro(FixedNumberOfControlPoints);
   vtkMRMLCopyStdStringMacro(ControlPointLabelFormat);
   vtkMRMLCopyOwnedMatrix4x4Macro(InteractionHandleToWorldMatrix);
   vtkMRMLCopyEndMacro();
+
+  // No public set macros, therefore cannot use copy macros
+  this->RequiredNumberOfControlPoints = source->RequiredNumberOfControlPoints;
+  this->MaximumNumberOfControlPoints = source->MaximumNumberOfControlPoints;
 
   this->TextList->DeepCopy(source->TextList);
 
@@ -206,6 +211,10 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy/*=true*
     }
 
   // Copy control points
+  // Disable wasFixedNumberOfControlPoints while copying points
+  // (it would prevent removing and recreating points).
+  int wasFixedNumberOfControlPoints = this->FixedNumberOfControlPoints;
+  this->FixedNumberOfControlPoints = false;
   this->CurveInputPoly->GetPoints()->Reset();
   this->RemoveAllControlPoints();
   int numMarkups = source->GetNumberOfControlPoints();
@@ -216,6 +225,7 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy/*=true*
     (*controlPointCopy) = (*controlPoint);
     this->AddControlPoint(controlPointCopy, false);
     }
+  this->FixedNumberOfControlPoints = wasFixedNumberOfControlPoints;
 
   // Copy measurements
   this->RemoveAllMeasurements();
@@ -607,10 +617,10 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint, bool autoLab
     }
 
   if (this->GetFixedNumberOfControlPoints())
-      {
-      vtkErrorMacro("AddNControlPoints: Markup node control point number is locked.");
-      return -1;
-      }
+    {
+    vtkErrorMacro("AddNControlPoints: Markup node control point number is locked.");
+    return -1;
+    }
   // generate a unique id based on list policy
   if (controlPoint->ID.empty())
     {
@@ -2945,13 +2955,6 @@ void vtkMRMLMarkupsNode::SetFixedNumberOfControlPoints(bool fixed)
     return;
     }
   this->FixedNumberOfControlPoints = fixed;
-
-  // Update MaximumNumberOfControlPoints
-  int fixedPointNumber = fixed ? this->GetNumberOfControlPoints() : this->GetRequiredNumberOfControlPoints();
-  if (fixedPointNumber >= 0)
-    {
-    this->MaximumNumberOfControlPoints = fixedPointNumber;
-    }
 
   this->Modified();
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::FixedNumberOfControlPointsModifiedEvent);

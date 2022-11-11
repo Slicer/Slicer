@@ -562,6 +562,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
 
   MRMLNodeModifyBlocker blocker(markupsNode);
 
+  // Need to disable control point lock (the actual value will be set in the end of the method)
+  markupsNode->SetFixedNumberOfControlPoints(false);
+
   // clear out the list
   markupsNode->RemoveAllControlPoints();
 
@@ -668,6 +671,7 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
       }
     }
 
+  // SetFixedNumberOfControlPoints() must be called after control points are already set
   if (markupObject.HasMember("fixedNumberOfControlPoints"))
     {
     markupsNode->SetFixedNumberOfControlPoints(markupObject["fixedNumberOfControlPoints"].GetBool());

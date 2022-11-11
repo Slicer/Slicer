@@ -1566,12 +1566,18 @@ void qSlicerMarkupsModuleWidget::onAddControlPointPushButtonClicked()
     {
     return;
     }
-  // get the active node
-  if ((d->MarkupsNode->GetNumberOfControlPoints() >= d->MarkupsNode->GetMaximumNumberOfControlPoints()) &&
-       d->MarkupsNode->GetMaximumNumberOfControlPoints() >= 0)
+
+  if (d->MarkupsNode->GetFixedNumberOfControlPoints())
     {
     return;
     }
+
+  if (d->MarkupsNode->GetMaximumNumberOfControlPoints() >= 0
+    && (d->MarkupsNode->GetNumberOfControlPoints() >= d->MarkupsNode->GetMaximumNumberOfControlPoints()) )
+    {
+    return;
+    }
+
   int index = d->MarkupsNode->AddControlPoint(vtkVector3d(0,0,0));
   d->MarkupsNode->UnsetNthControlPointPosition(index);
   d->setPlaceModeEnabled(false);
