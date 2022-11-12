@@ -70,7 +70,7 @@ segmentstatistics.md
 ```{toctree}
 :maxdepth: 1
 sequences.md
-cropvolumesequences.md
+cropvolumesequence.md
 multivolumeimporter.md
 multivolumeexplorer.md
 ```
