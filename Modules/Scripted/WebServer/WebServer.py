@@ -558,7 +558,7 @@ class WebServerLogic:
     Exec interface is enabled it enableExec and enableSlicer are both set to True
     (enableExec is set to False by default for improved security).
     """
-    def __init__(self, port=None, enableSlicer=True, enableExec=False, enableDICOM=True, enableStaticPages=True, requestHandlers=None, logMessage=None):
+    def __init__(self, port=None, enableSlicer=True, enableExec=False, enableDICOM=True, enableStaticPages=True, requestHandlers=None, logMessage=None, enableCORS=False):
         if logMessage:
             self.logMessage = logMessage
 
@@ -566,6 +566,8 @@ class WebServerLogic:
             self.port = port
         else:
             self.port = 2016
+
+        self.enableCORS = enableCORS
 
         self.server = None
         self.serverStarted = False
