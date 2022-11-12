@@ -1653,11 +1653,11 @@ void qSlicerMarkupsModuleWidget::onDeleteControlPointPushButtonClicked(bool conf
   // selected indices for each column in a row, so jump by the number of
   // columns), so can delete without relying on the table
   QList<int> rows;
-  for (int i = 0; i < selectedItems.size(); i += d->numberOfColumns())
+  QModelIndexList selectedIndexes = d->activeMarkupTableWidget->selectionModel()->selectedRows();
+  for (int i = 0; i < selectedIndexes.size(); i++)
     {
     // get the row
-    int row = selectedItems.at(i)->row();
-    // qDebug() << "Saving: i = " << i << ", row = " << row;
+    int row = selectedIndexes[i].row();
     rows << row;
     }
   // sort the list
@@ -1721,10 +1721,11 @@ void qSlicerMarkupsModuleWidget::onResetControlPointPushButtonClicked()
   // selected indices for each column in a row, so jump by the number of
   // columns), so can delete without relying on the table
   QList<int> rows;
-  for (int i = 0; i < selectedItems.size(); i += d->numberOfColumns())
+  QModelIndexList selectedIndexes = d->activeMarkupTableWidget->selectionModel()->selectedRows();
+  for (int i = 0; i < selectedIndexes.size(); i++)
     {
     // get the row
-    int row = selectedItems.at(i)->row();
+    int row = selectedIndexes[i].row();
     rows << row;
     }
   // sort the list
@@ -1761,10 +1762,11 @@ void qSlicerMarkupsModuleWidget::onRestoreControlPointPushButtonClicked()
   // selected indices for each column in a row, so jump by the number of
   // columns), so can delete without relying on the table
   QList<int> rows;
-  for (int i = 0; i < selectedItems.size(); i += d->numberOfColumns())
+  QModelIndexList selectedIndexes = d->activeMarkupTableWidget->selectionModel()->selectedRows();
+  for (int i = 0; i < selectedIndexes.size(); i++)
     {
     // get the row
-    int row = selectedItems.at(i)->row();
+    int row = selectedIndexes[i].row();
     rows << row;
     }
   // sort the list
@@ -1778,7 +1780,7 @@ void qSlicerMarkupsModuleWidget::onRestoreControlPointPushButtonClicked()
     }
 }
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onUnsetControlPointPushButtonClicked()
+void qSlicerMarkupsModuleWidget::onUnsetControlPointPushButtonClicked()  /// HERE
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -1799,10 +1801,11 @@ void qSlicerMarkupsModuleWidget::onUnsetControlPointPushButtonClicked()
   // selected indices for each column in a row, so jump by the number of
   // columns), so can delete without relying on the table
   QList<int> rows;
-  for (int i = 0; i < selectedItems.size(); i += d->numberOfColumns())
+  QModelIndexList selectedIndexes = d->activeMarkupTableWidget->selectionModel()->selectedRows();
+  for (int i = 0; i < selectedIndexes.size(); i++)
     {
     // get the row
-    int row = selectedItems.at(i)->row();
+    int row = selectedIndexes[i].row();
     rows << row;
     }
   // sort the list
@@ -1837,10 +1840,11 @@ void qSlicerMarkupsModuleWidget::onMissingControlPointPushButtonClicked()
   // selected indices for each column in a row, so jump by the number of
   // columns), so can delete without relying on the table
   QList<int> rows;
-  for (int i = 0; i < selectedItems.size(); i += d->numberOfColumns())
+  QModelIndexList selectedIndexes = d->activeMarkupTableWidget->selectionModel()->selectedRows();
+  for (int i = 0; i < selectedIndexes.size(); i++)
     {
     // get the row
-    int row = selectedItems.at(i)->row();
+    int row = selectedIndexes[i].row();
     rows << row;
     }
   // sort the list
@@ -2648,11 +2652,11 @@ void qSlicerMarkupsModuleWidget::copySelectedToClipboard()
   // selected indices for each column in a row, so jump by the number of
   // columns), so can delete without relying on the table
   QList<int> rows;
-  for (int i = 0; i < selectedItems.size(); i += d->numberOfColumns())
+  QModelIndexList selectedIndexes = d->activeMarkupTableWidget->selectionModel()->selectedRows();
+  for (int i = 0; i < selectedIndexes.size(); i++)
     {
     // get the row
-    int row = selectedItems.at(i)->row();
-    // qDebug() << "Saving: i = " << i << ", row = " << row;
+    int row = selectedIndexes[i].row();
     rows << row;
     }
   // sort the list
