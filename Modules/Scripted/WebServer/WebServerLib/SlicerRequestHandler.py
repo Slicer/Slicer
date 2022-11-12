@@ -689,6 +689,31 @@ space origin: %%origin%%
         elif method == "POST":
             return self.loadIntoScene(request)
 
+        elif method == "PUT":
+            # Reload storable nodes from file
+            nodes = self.getNodesFilteredByQuery(q)
+            if len(nodes) == 0:
+                raise RuntimeError("No nodes matched the filter criteria")
+            reloadedNodeIds = []
+            for node in nodes:
+                if not hasattr(node, 'GetStorageNode'):
+                    # Only storable nodes can be updated
+                    continue
+                storageNode = node.GetStorageNode()
+                if not storageNode:
+                    # Only nodes that have storage node (loaded from file) can be reloaded
+                    continue
+                success = storageNode.ReadData(node)
+                if success:
+                    reloadedNodeIds.append(node.GetID())
+
+            if not reloadedNodeIds:
+                return b'{"success": false}', b'application/json'
+
+            response = {'success': True, 'reloadedNodeIDs': reloadedNodeIds}
+            import json
+            return json.dumps(response).encode(), b'application/json'
+
         elif method == "DELETE":
             if "class" in q or "name" in q or "id" in q:
                 nodes = self.getNodesFilteredByQuery(q)
@@ -851,7 +876,8 @@ space origin: %%origin%%
             sliceLogic.SetSliceOffset(bounds[4] + (scrollTo * (bounds[5] - bounds[4])))
         if offset:
             # startOffset = self.interactionState[offsetKey]
-            sliceLogic.SetSliceOffset(startOffset + offset)
+            # sliceLogic.SetSliceOffset(startOffset + offset)
+            sliceLogic.SetSliceOffset(offset)
         if copySliceGeometryFrom:
             otherSliceLogic = layoutManager.sliceWidget(copySliceGeometryFrom.capitalize()).sliceLogic()
             otherSliceNode = otherSliceLogic.GetSliceNode()

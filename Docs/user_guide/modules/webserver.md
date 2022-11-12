@@ -288,6 +288,21 @@ Return:
 - 200 (application/json): JSON object, with `success` property set to true.
 - 500 (application/json): In case of unexpected error. `message` attribute contains error message.
 
+#### PUT /mrml
+
+Reload node that was originally loaded from a file, from the same file.
+This is useful if the input file is changed since it was last loaded into Slicer.
+
+Parameters:
+- `id`: as described above
+- `class`: as described above
+- `name`: as described above
+
+Return:
+- 200 (application/json): JSON object, "success" property is set true and `reloadedNodeIDs` property contains a list of reloaded node ids.
+  "success" property is set to false if it was not possible to reload any nodes.
+- 500 (application/json): In case of unexpected error. `message` attribute contains error message.
+
 ### User interface
 
 #### PUT /gui
