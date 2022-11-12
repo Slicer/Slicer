@@ -690,7 +690,7 @@ space origin: %%origin%%
             return self.loadIntoScene(request)
 
         elif method == "DELETE":
-            if "class" in q or "name" in q:
+            if "class" in q or "name" in q or "id" in q:
                 nodes = self.getNodesFilteredByQuery(q)
                 if len(nodes) == 0:
                     raise RuntimeError("No nodes matched the filter criteria")
