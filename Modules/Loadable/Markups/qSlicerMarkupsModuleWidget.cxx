@@ -1780,7 +1780,7 @@ void qSlicerMarkupsModuleWidget::onRestoreControlPointPushButtonClicked()
     }
 }
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onUnsetControlPointPushButtonClicked()  /// HERE
+void qSlicerMarkupsModuleWidget::onUnsetControlPointPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
