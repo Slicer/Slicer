@@ -27,6 +27,8 @@ Many filters only work on `float` pixel type. When an `integer` image is used as
 
 :::
 
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_simplefilters.png)
+
 ## Filters
 
 | Filter name                                                                                                                                       | Description                                                                                                                                                    |
@@ -289,3 +291,8 @@ Source code of the module is available at <https://github.com/SimpleITK/SlicerSi
 ## Acknowledgements
 
 This work is supported by NLM, and the Slicer Community.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_nlm.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_itk.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_namic.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_kitware.png)
