@@ -26,7 +26,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="importButton">
+      <widget class="ctkMenuButton" name="importButton">
        <property name="toolTip">
         <string>Import files into DICOM database</string>
        </property>
@@ -282,6 +282,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLSubjectHierarchyTreeView</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLSubjectHierarchyTreeView.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
@@ -293,9 +298,9 @@
    <header>ctkDirectoryButton.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLSubjectHierarchyTreeView</class>
-   <extends>QTreeView</extends>
-   <header>qMRMLSubjectHierarchyTreeView.h</header>
+   <class>ctkMenuButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkMenuButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

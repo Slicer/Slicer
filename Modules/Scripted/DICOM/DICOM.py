@@ -622,16 +622,23 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
             viewArrangement = slicer.app.layoutManager().layoutLogic().GetLayoutNode().GetViewArrangement()
             self.ui.showBrowserButton.checked = (viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
 
-        # connect to the 'Show DICOM Browser' button
+        # connect 'Import DICOM files' and 'Show DICOM Browser' button
         self.ui.showBrowserButton.connect('clicked()', self.toggleBrowserWidget)
-
         self.ui.importButton.connect('clicked()', self.importFolder)
 
-        self.ui.subjectHierarchyTree.setMRMLScene(slicer.mrmlScene)
-        self.ui.subjectHierarchyTree.currentItemChanged.connect(self.onCurrentItemChanged)
-        self.ui.subjectHierarchyTree.currentItemModified.connect(self.onCurrentItemModified)
-        self.subjectHierarchyCurrentVisibility = False
-        self.ui.subjectHierarchyTree.setColumnHidden(self.ui.subjectHierarchyTree.model().idColumn, True)
+        # Add import options menu to import button
+
+        importButtonMenu = qt.QMenu("Import options", self.ui.importButton)
+        importButtonMenu.toolTipsVisible = True
+        self.ui.importButton.setMenu(importButtonMenu)
+        importButtonMenu.connect('aboutToShow()', self.aboutToShowImportOptionsMenu)
+
+        self.copyOnImportAction = qt.QAction("Copy imported files to DICOM database", importButtonMenu)
+        self.copyOnImportAction.setToolTip("If enabled, all imported files are copied into the DICOM database."
+            " This is useful when importing from removable drives.")
+        self.copyOnImportAction.setCheckable(True)
+        importButtonMenu.addAction(self.copyOnImportAction)
+        self.copyOnImportAction.connect('toggled(bool)', self.copyOnImportToggled)
 
         #
         # DICOM networking
@@ -790,6 +797,15 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         else:
             if self.browserWidget:
                 self.browserWidget.close()
+
+    def aboutToShowImportOptionsMenu(self):
+        self.copyOnImportAction.checked = (self.browserWidget.dicomBrowser.ImportDirectoryMode == ctk.ctkDICOMBrowser.ImportDirectoryCopy)
+
+    def copyOnImportToggled(self, copyOnImport):
+        if self.copyOnImportAction.checked:
+            self.browserWidget.dicomBrowser.ImportDirectoryMode = ctk.ctkDICOMBrowser.ImportDirectoryCopy
+        else:
+            self.browserWidget.dicomBrowser.ImportDirectoryMode = ctk.ctkDICOMBrowser.ImportDirectoryAddLink
 
     def importFolder(self):
         if not DICOMFileDialog.createDefaultDatabase():

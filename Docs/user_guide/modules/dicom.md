@@ -57,9 +57,14 @@ Since DICOM files are often located in several folders, they can cross-reference
 2. Go to DICOM module
 3. Select folders that contain DICOM files
     - Option A: Drag-and-drop the folder that contains DICOM files to the Slicer application window.
-    - Option B: Click "Import" button in the top-left corner of the DICOM browser. Select folder that contains DICOM files. Optionally select the "Copy" option so that the files are copied into the database directory. Otherwise they will only be referenced in their original location. It is recommended to copy data if importing files from removable media (CD/DVD/USB drives) to be able to load the data set even after media is ejected.
+    - Option B: Click "Import" button in the top-left corner of the DICOM browser. Select folder that contains DICOM files.
+        - The import button has a drop-down menu, which can be displayed by clicking the small down-arrow button at the right side. Currently the only item in the menu is the "Copy imported files to DICOM database" option. Enable this option to copy all the imported DICOM files from their original location into the Slicer DICOM database. This is useful when loading data from removable media (CD/DVD/USB drives or remote drives), to be able to load the data set even after media is ejected. If the copy option is disabled then only the path of the imported files will be stored in the DICOM database (along with values of most commonly used DICOM tags).
 
-*Note:* When a folder is drag-and-dropped to the Slicer application while not the DICOM module is active, Slicer displays a popup, asking what to do - click OK ("Load directory in DICOM database"). After import is completed, go to DICOM module.
+:::{note}
+
+When a folder is drag-and-dropped to the Slicer application while not the DICOM module is active, Slicer displays a popup, asking what to do - click OK ("Load directory in DICOM database"). After import is completed, go to DICOM module.
+
+:::
 
 #### DICOM loading
 
