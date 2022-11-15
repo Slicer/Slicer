@@ -635,7 +635,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
 
         self.copyOnImportAction = qt.QAction("Copy imported files to DICOM database", importButtonMenu)
         self.copyOnImportAction.setToolTip("If enabled, all imported files are copied into the DICOM database."
-            " This is useful when importing from removable drives.")
+                                           " This is useful when importing from removable drives.")
         self.copyOnImportAction.setCheckable(True)
         importButtonMenu.addAction(self.copyOnImportAction)
         self.copyOnImportAction.connect('toggled(bool)', self.copyOnImportToggled)
