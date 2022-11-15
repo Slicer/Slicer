@@ -35,8 +35,6 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
             ('Get Sample Data', self.downloadMRHead),
             ('Reslicing', self.reslicing),
             ('Crosshair Jump', self.crosshairJump),
-            ('Web View Test', self.webViewTest),
-            ('Fill Out Web Form Test', self.webViewFormTest),
             ('Memory Check', self.memoryCheck),
         )
 
