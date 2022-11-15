@@ -1404,7 +1404,7 @@ void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime, co
       {
       continue;
       }
-    prefixedText += "^ " + line + "\n";
+    prefixedText += "[" + origin + "] " + line + "\n";
     }
   if (logLevel < ctkErrorLogLevel::Warning)
     {
