@@ -15,6 +15,7 @@ Click apply to activate the pipeline and then click the Toggle button to compare
 The module includes tools for:
 
 - [Surface model cleaning](#clean)
+- [Surface model uniform remeshing](#uniform-remeshing)
 - [Surface model decimation](#decimate) (reduction of the number of triangles).
 - [Surface model smoothing](#smooth)
 - [Surface model holes filling](#fill-holes)
@@ -30,6 +31,19 @@ These tools can be combined for multiple surface model processing effects.
 
 This tool can merge coincident points, remove unused points (i.e. not used by
 any cell) and treat degenerate cells.
+
+### Uniform remeshing
+
+Uniformly remesh the surface using [ACVD algorithm](https://github.com/pyvista/pyacvd).
+
+This resampling typically provides higher quality meshes than decimation, with similar computation time.
+
+- **Number of points:** Number of desired points in the output mesh. Use higher number to preserve more details.
+- **Subdivide:** Number of subdivision to perform before remeshing. Each subdivision creates 4 triangles for each input triangle. This is needed if the required number of desired points is higher than the number of points in the input mesh, or there are some too large cells in the input mesh.
+
+:::{note}
+It requires `pyacvd` Python package for which the user is required to confirm the installation.
+:::
 
 ### Decimate
 
