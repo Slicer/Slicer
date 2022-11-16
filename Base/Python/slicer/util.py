@@ -836,11 +836,12 @@ def loadSegmentation(filename, properties={}, returnNode=False):
 
     :param filename: full path of the file to load.
     :param properties: dict object with any of the following keys
-      - name: this name will be used as node name for the loaded volume
-      - autoOpacities: automatically make large segments semi-transparent to make segments inside more visible
-        (only used when loading segmentation from image file)
-      - colorNodeID: use a color node (that already in the scene) to display the image
-        (only used when loading segmentation from image file)
+
+        - name: this name will be used as node name for the loaded volume
+        - autoOpacities: automatically make large segments semi-transparent to make segments inside more visible
+          (only used when loading segmentation from image file)
+        - colorNodeID: use a color node (that already in the scene) to display the image
+          (only used when loading segmentation from image file)
     :param returnNode: Deprecated.
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
@@ -2036,6 +2037,7 @@ def arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, referenceVolumeN
 
 def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, referenceVolumeNode=None):
     """Sets binary labelmap representation of a segment from a numpy array.
+
     :param narray: voxel array, containing 0 outside the segment, 1 inside the segment.
     :param segmentationNode: segmentation node that will be updated.
     :param segmentId: ID of the segment that will be updated.
@@ -3521,6 +3523,7 @@ def pip_install(requirements):
     Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
     user confirmation may be implemented, therefore it is recommended to use this method call instead of a plain
     pip install.
+
     :param requirements: requirement specifier in the same format as used by pip (https://docs.python.org/3/installing/index.html).
       It can be either a single string or a list of command-line arguments. It may be simpler to pass command-line arguments as a list
       if the arguments may contain spaces (because no escaping of the strings with quotes is necessary).
