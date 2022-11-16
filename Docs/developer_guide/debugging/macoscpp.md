@@ -25,7 +25,7 @@ Steps:
 
 To set a breakpoint in code that is not crashing, you can set it via the command line interface.  For the lldb debugger, first attach to the process and break the program.  Then at the (lldb) prompt, stop at a method as follows:
 
-```txt
+```text
 breakpoint set -M vtkMRMLScene::Clear
 ```
 

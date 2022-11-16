@@ -54,7 +54,7 @@ Background: Funding for Slicer is provided through competitive mechanisms primar
     - Extract the archive and copy files from the x64 folder into the bin subfolder in the Slicer install tree.
     - Configure the rendere by setting environment variables then launch Slicer:
 
-        ```txt
+        ```bat
         set GALLIUM_DRIVER=llvmpipe
         set MESA_GL_VERSION_OVERRIDE=3.3COMPAT
         Slicer.exe

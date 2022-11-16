@@ -29,7 +29,7 @@ Under Settings->Debugger
 
 - "Enter here any commands passed to debugger on startup:"
 
-    ```txt
+    ```text
     set exec-wrapper `~/Slicer-SuperBuild-Debug/Slicer-build/WrapSlicer`
     exec-file `~/Slicer-SuperBuild-Debug/Slicer-build/bin/SlicerApp-real`
     ```

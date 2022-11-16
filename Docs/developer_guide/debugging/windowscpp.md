@@ -7,7 +7,7 @@ Prerequisites:
 
 1. To run Slicer, the launcher needs to set certain environment variables. The easiest is to use the launcher to set these and start Visual Studio in this environment. All these can be accomplished by running the following command in `<Slicer_BUILD>/Slicer-build` folder:
 
-    ```txt
+    ```bat
     Slicer.exe --VisualStudioProject
     ```
 
@@ -17,7 +17,7 @@ Prerequisites:
     - To debug an extension that builds third-party DLLs, also specify `--launcher-additional-settings` option.
     - While you can launch debugger using Slicer's solution file, it is usually more convenient to load your extension's solution file (because your extension solution is smaller and most likely you want to have that solution open anyway for making changes in your code). For example, you can launch Visual Studio to debug your extension like this:
 
-        ```txt
+        ```bat
         .\S4D\Slicer-build\Slicer.exe --VisualStudio --launcher-no-splash --launcher-additional-settings ./SlicerRT_D/inner-build/AdditionalLauncherSettings.ini c:\d\_Extensions\SlicerRT_D\inner-build\SlicerRT.sln
         ```
 

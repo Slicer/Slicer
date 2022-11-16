@@ -821,7 +821,7 @@ qSlicerAbstractCoreModule* volumeRenderingModule =
   qSlicerCoreApplication::application()->moduleManager()->module("VolumeRendering");
 vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
   volumeRenderingModule ? vtkSlicerVolumeRenderingLogic::SafeDownCast(volumeRenderingModule->logic()) : 0;
-vtkMRMLVolumeNode* volumeNode = mrmlScene->GetNodeByID('vtkMRMLScalarVolumeNode1');
+vtkMRMLVolumeNode* volumeNode = mrmlScene->GetNodeByID("vtkMRMLScalarVolumeNode1");
 if (volumeRenderingLogic)
   {
   vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode> displayNode =
