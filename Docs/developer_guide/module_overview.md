@@ -100,3 +100,68 @@ Modules can be associated with MRML nodes, which for example allows determining 
 Multiple modules can be associated with the same MRML node type. The best module for editing a specific node instance is determined run-time. The application framework calls [qSlicerAbstractModuleWidget::nodeEditable()](https://apidocs.slicer.org/main/classqSlicerAbstractModuleWidget.html#a8e1bdbc248688677af5cd91f0849d44e) for each associated module candidate and will activate the one that has the highest confidence in handling the node.
 
 To select a MRML node as the "active" or "edited" node in a module the module widget's [qSlicerAbstractModuleWidget::setEditedNode()](https://apidocs.slicer.org/main/classqSlicerAbstractModuleRepresentation.html#adfd05c2484d8cab8e3e9cda09e45d227) method is called.
+
+## Remote Module
+
+### Purpose of Remote Modules
+
+* Keep the Slicer core lean.
+* Allow individuals or organizations to work on their own private modules and optionally make these modules available to the Slicer users without the need to use the extensions manager. 
+
+### Policy for Adding Remote Modules
+
+* Module is known to compile on Linux, MacOSX and Windows.
+* Module is tested.
+* Module is documented on the wiki.
+* Module names must be unique.
+* At no time in the future should a module in the main Slicer repository depend on Remote module.
+* Remote modules MUST define a specific **unique** revision (i.e. git hash). It is important for debugging and scientific reproducibility that there be a unique set of code associated with each slicer revision. 
+
+### Procedure for Adding a Remote Module
+
+1. Discuss with Slicer core Developers
+
+2. Add an entry into `SuperBuild.cmake` using [Slicer_Remote_Add()](https://github.com/Slicer/Slicer/blob/main/CMake/ExternalProjectAddSource.cmake#L143-L257) macro. For example:
+
+    ```cmake
+    Slicer_Remote_Add(Foo
+      GIT_REPOSITORY ${git_protocol}://github.com/awesome/foo
+      GIT_TAG abcdef
+      OPTION_NAME Slicer_BUILD_Foo
+      LABELS REMOTE_MODULE
+      )
+    list_conditional_append(Slicer_BUILD_Foo Slicer_REMOTE_DEPENDENCIES Foo)
+    ```
+
+3. Corresponding commit message should be similar to:
+
+    ```text
+    ENH: Add Foo remote module
+
+    The Foo module provide the user with ...
+    ```
+
+..note::
+
+  As a side effect of calling `Slicer_Remote_Add`, (1) the option `Slicer_BUILD_Foo` will automatically be added as an advanced option and (2) the CMake variables `Slicer_BUILD_Foo` and `Foo_SOURCE_DIR` will be passed to Slicer inner build.
+
+  Additionally, by specifying the `REMOTE_MODULE` label, within `Slicer/Modules/Remote/CMakeLists.txt`, the corresponding source directory will automatically be added using a call to `add_directory`.
+
+  `Slicer_Remote_Add` creates an in-source module target within `Slicer/Modules/Remote`. The SuperBuild target for a remote module only runs the source update step; there is no separate build step.
+
+### Procedure for Updating a Remote Module
+
+1. Update the entry into `SuperBuild.cmake`
+
+2. Commit with a message similar to:
+
+    ```text
+    ENH: Update Foo remote module
+
+    List of changes:
+
+    $ git shortlog abc123..efg456
+    John Doe (2):
+      Add support for ZZZ spacing
+      Refactor space handler to support multi-dimension
+    ```
