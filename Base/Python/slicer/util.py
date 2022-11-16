@@ -32,8 +32,11 @@ def exit(status=EXIT_SUCCESS):
     the error code will be overwritten.
 
     To make the application exit immediately, this code can be used.
-    Note that forcing the application to exit may result in
-    improperly released files and other resources.
+
+    ..warning::
+
+      Forcing the application to exit may result in
+      improperly released files and other resources.
 
     .. code-block:: python
 
@@ -97,12 +100,16 @@ def startupEnvironment():
     will not contain values found in the launcher settings.
 
     Similarly `key=value` environment variables also found in the launcher
-    settings are excluded. Note that if a value was associated with a key prior
-    starting Slicer, it will not be set in the environment returned by this
-    function.
+    settings are excluded.
 
     The function excludes both the Slicer launcher settings and the revision
     specific launcher settings.
+
+    .. warning::
+
+      If a value was associated with a key prior
+      starting Slicer, it will not be set in the environment returned by this
+      function.
     """
     import slicer
     startupEnv = slicer.app.startupEnvironment()
@@ -449,9 +456,12 @@ def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
 
     The function is useful for implementing updateGUIFromParameterNode.
 
-    Note: Only a few widget classes are supported now. More will be added later. Report any missing classes at discourse.slicer.org.
-
     See example in :py:meth:`addParameterEditWidgetConnections` documentation.
+
+    .. note::
+
+      Only a few widget classes are supported now. More will be added later.
+      Report any missing classes at https://discourse.slicer.org.
     """
 
     for (widget, parameterName) in parameterEditWidgets:
@@ -480,7 +490,10 @@ def updateNodeFromParameterEditWidgets(parameterEditWidgets, parameterNode):
 
     The function is useful for implementing updateParameterNodeFromGUI.
 
-    Note: Only a few widget classes are supported now. More will be added later. Report any missing classes at discourse.slicer.org.
+    .. note::
+
+      Only a few widget classes are supported now. More will be added later.
+      Report any missing classes at https://discourse.slicer.org.
 
     See example in :py:meth:`addParameterEditWidgetConnections` documentation.
     """
@@ -2047,7 +2060,8 @@ def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, re
 
     :raises RuntimeError: in case of failure
 
-    Voxels values are deep-copied, therefore if the numpy array is modified after calling this method, segmentation node will not change.
+    .. warning::
+      Voxels values are deep-copied, therefore if the numpy array is modified after calling this method, segmentation node will not change.
     """
 
     # Export segment as vtkImageData (via temporary labelmap volume node)
@@ -2166,11 +2180,13 @@ def arrayFromMarkupsCurveData(markupsNode, arrayName, world=False):
       (effect of parent transform to the node is applied).
     :raises ValueError: in case of failure
 
-    Note that not all array may be available in both node and world coordinate systems.
-    For example, `Curvature` is only computed for the curve in world coordinate system.
+    .. warning::
 
-    The returned array is not intended to be modified, as arrays are expected to be written only
-    by measurement objects.
+      - Not all array may be available in both node and world coordinate systems.
+        For example, `Curvature` is only computed for the curve in world coordinate system.
+
+      - The returned array is not intended to be modified, as arrays are expected to be written only
+        by measurement objects.
     """
     import vtk.util.numpy_support
     if world:
@@ -2558,7 +2574,7 @@ def toLatin1String(text):
 def tempDirectory(key='__SlicerTemp__', tempDir=None, includeDateTime=True):
     """Come up with a unique directory name in the temp dir and make it and return it
 
-    Note: this directory is not automatically cleaned up
+    .. note:: This directory is not automatically cleaned up.
     """
     # TODO: switch to QTemporaryDir in Qt5.
     import qt, slicer
