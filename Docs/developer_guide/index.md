@@ -5,6 +5,7 @@
 
 api
 mrml_overview
+module_overview
 modules/index
 extensions
 python_faq
