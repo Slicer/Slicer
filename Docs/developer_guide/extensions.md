@@ -43,17 +43,17 @@ On macOS, the extension must be configured specifying `CMAKE_OSX_*` variables ma
 
 Instead of manually setting these variables, within your extension, including the <code>ConfigurePrerequisites</code> component before the project statement should ensure it uses the same CMAKE_OSX_* variables as Slicer:
 
-```txt
+```cmake
 find_package(Slicer COMPONENTS ConfigurePrerequisites REQUIRED)
 
 project(Foo)
 
-[...]
+# [...]
 
 find_package(Slicer REQUIRED)
 include(${Slicer_USE_FILE})
 
-[...]
+# [...]
 ```
 
 For more details, see [here](https://github.com/Slicer/Slicer/blob/6f4e2946bb129d317dfdb1116f06f5308b449044/CMake/SlicerConfig.cmake.in#L10-L38).
@@ -106,7 +106,7 @@ $ ctest -j<NUMBEROFCORES>
 
 Open a command prompt.
 
-```text
+```bat
 cd C:\path\to\MyExtension-debug
 "c:\Program Files\CMake\bin\ctest.exe" -C Release -V
 ```
@@ -467,7 +467,7 @@ If you have `ModuleA`, `ModuleB` and `ModuleC` and `ModuleA` can be used as stan
 
 Add the following variable to `Extension2/CMakeLists.txt`:
 
-```txt
+```cmake
 set(EXTENSION_DEPENDS Extension1)
 ```
 
@@ -580,7 +580,7 @@ Following [Slicer r22063](https://github.com/Slicer/Slicer/commit/d1d0699aeaff85
 
 Before:
 
-```text
+```cmake
 cmake_minimum_required(VERSION 2.8.9)
 
 if(NOT Slicer_SOURCE_DIR)
@@ -610,7 +610,7 @@ endif()
 
 After:
 
-```text
+```cmake
 cmake_minimum_required(VERSION 2.8.9)
 
 find_package(Slicer COMPONENTS ConfigurePrerequisites)

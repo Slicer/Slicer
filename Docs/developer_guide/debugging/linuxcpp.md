@@ -9,11 +9,11 @@
       $ echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
       ```
     - To permanently allow it to edit `/etc/sysctl.d/10-ptrace.conf` and change the line:
-      ```txt
+      ```text
       kernel.yama.ptrace_scope = 1
       ```
       to read:
-      ```txt
+      ```text
       kernel.yama.ptrace_scope = 0
       ```
 
@@ -33,7 +33,7 @@
 
 4. Finally type the following gdb command
 
-    ```txt
+    ```text
     (gdb) continue
     ```
 
@@ -66,7 +66,7 @@ gdb Slicer
 
 gdb should warn you that there are no debug symbols for Slicer, which is true because Slicer is the launcher. Now we need to set gdb to follow the forked process SlicerApp-real and run the launcher:
 
-```txt
+```text
 (gdb) set follow-fork-mode child
 (gdb) run
 ```
@@ -84,7 +84,7 @@ The general idea of the wrapper is to set all of the appropriate environment var
 
 Now, start gdb and do the following:
 
-```txt
+```text
 (gdb) set exec-wrapper ./WrapSlicer
 (gdb) exec-file ./bin/SlicerQT-real
 (gdb) run
@@ -92,14 +92,14 @@ Now, start gdb and do the following:
 
 Since VTK and ITK include many multithreaded filters, by default you will see lots of messages like the following from gdb during rendering and processing:
 
-```txt
+```text
 [New Thread 0x7fff8378f700 (LWP 20510)]
 [Thread 0x7fff8b0aa700 (LWP 20506) exited]
 ```
 
 These can be turned off with this command:
 
-```txt
+```text
 set print thread-events off
 ```
 
@@ -123,7 +123,7 @@ See the examples below.
 
 SlicerLaunchSettings.ini
 
-```txt
+```ini
 [General]
 launcherSplashImagePath=/cmn/git/Slicer4/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png
 launcherSplashScreenHideDelayMs=3000
@@ -294,7 +294,7 @@ cp _sysconfigdata_m_linux2_.py _sysconfigdata__linux_x86_64-linux-gnu.py
 In linux distros with systemd, coredumps are managed by the systemd daemon.
 And stored, in a compressed format (.lz4), in
 
-```txt
+```text
 /var/lib/systemd/coredump/core.SlicerApp-real.xxxx.lz4
 ```
 
@@ -310,7 +310,7 @@ Mon 2018-05-28 11:35:43 EDT   17249  1000  1000   6 present   /path/Slicer-build
 
 You can modify systemd coredump to increase the default max file size in `/etc/systemd/coredump.conf`:
 
-```txt
+```ini
 [Coredump]
 #Storage=external
 #Compress=yes

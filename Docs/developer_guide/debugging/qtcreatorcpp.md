@@ -23,7 +23,7 @@ For debugging on Windows, Visual Studio is recommended as it has much better per
       ./Slicer --launch /path/to/qtcreator
       ```
     - Windows:
-      ```txt
+      ```bat
       cd c:\path\to\Slicer-Superbuild\Slicer-build
       .\Slicer.exe --launch /path/to/qtcreator.exe
       ```
