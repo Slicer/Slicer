@@ -35,7 +35,7 @@ Prerequisites:
 
 ### Debugging tests
 
-Once VisualStudio is open with the Slicer environment loaded, it is possible to run and debug tests. See general information about running tests [here](overview.md#debugging-tests). Specific instructions for Visual Studio:
+Once VisualStudio is open with the Slicer environment loaded, it is possible to run and debug tests. See general information about running tests [here](tips.md#debugging-tests). Specific instructions for Visual Studio:
 
 - To debug a test, find its project in the Solution explorer tree.
 - Make the project the startup project (right-click -> Set As Startup Project).

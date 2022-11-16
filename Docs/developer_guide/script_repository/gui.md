@@ -107,7 +107,7 @@ volumeNode.GetDisplayNode().SetWindowLevelMinMax(100, 200)
   -  its input is intentionally defined vaguely (it can be either node ID or name and you can use wildcards such as `*`), which is good because it make it simpler to use, but the uncertain behavior is not good for general-purpose use in a module
   -  throws an exception so that the developer knows immediately that there was a typo or other unexpected error
 - `slicer.mrmlScene.GetNodeByID()` is more appropriate when a module needs to access a MRML node:
-  - its behavior is more predictable: it only accepts node ID as input. `slicer.mrmlScene.GetFirstNodeByName()` can be used to get a node by its name, but since multiple nodes in the scene can have the same name, it is not recommended to keep reference to a node by its name. Since node IDs may change when a scene is saved and reloaded, node ID should not be stored persistently, but [node references](mrml_overview.md#mrml-node-references) must be used instead
+  - its behavior is more predictable: it only accepts node ID as input. `slicer.mrmlScene.GetFirstNodeByName()` can be used to get a node by its name, but since multiple nodes in the scene can have the same name, it is not recommended to keep reference to a node by its name. Since node IDs may change when a scene is saved and reloaded, node ID should not be stored persistently, but [node references](developer_guide/mrml_overview.md#mrml-node-references) must be used instead
   - if node is not found it returns `None` (instead of throwing an exception), because this is often not considered an error in module code (it is just used to check existence of a node) and using return value for not-found nodes allows simpler syntax
 
 :::
@@ -257,7 +257,7 @@ for volumeNode in volumeNodes:
     volumeStorageNode.SetFileName(volumeStorageNode.GetFileName().replace(originalFileExtension, requiredFileExtension))
 ```
 
-To set all volume nodes to save uncompressed by default (add this to [.slicerrc.py file ](../user_guide/settings.md#application-startup-file) so it takes effect for the whole session):
+To set all volume nodes to save uncompressed by default (add this to [.slicerrc.py file ](user_guide/settings.md#application-startup-file) so it takes effect for the whole session):
 
 ```python
 #set the default volume storage to not compress by default
@@ -704,7 +704,7 @@ for sliceViewName in layoutManager.sliceViewNames():
 
 ### Change default slice view orientation
 
-You can left-right "flip" slice view orientation presets (show patient left side on left/right side of the screen) by copy-pasting the script below to your [.slicerrc.py file](../user_guide/settings.md#application-startup-file).
+You can left-right "flip" slice view orientation presets (show patient left side on left/right side of the screen) by copy-pasting the script below to your [.slicerrc.py file](user_guide/settings.md#application-startup-file).
 
 ```python
 # Axial slice axes:
@@ -737,7 +737,7 @@ for sliceNode in sliceNodes:
 
 ### Set all slice views linked by default
 
-You can make slice views linked by default (when application starts or the scene is cleared) by copy-pasting the script below to your [.slicerrc.py file ](../user_guide/settings.md#application-startup-file).
+You can make slice views linked by default (when application starts or the scene is cleared) by copy-pasting the script below to your [.slicerrc.py file](user_guide/settings.md#application-startup-file).
 
 ```python
 # Set linked slice views  in all existing slice composite nodes and in the default node
@@ -754,7 +754,7 @@ for sliceCompositeNode in sliceCompositeNodes:
 
 ### Set crosshair jump mode to centered by default
 
-You can change default slice jump mode (when application starts or the scene is cleared) by copy-pasting the script below to your [.slicerrc.py file ](../user_guide/settings.md#application-startup-file).
+You can change default slice jump mode (when application starts or the scene is cleared) by copy-pasting the script below to your [.slicerrc.py file](user_guide/settings.md#application-startup-file).
 
 ```python
 crosshair=slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLCrosshairNode")
@@ -951,7 +951,7 @@ See more information on physically based rendering in VTK here: https://blog.kit
 
 ### Customize keyboard shortcuts
 
-Keyboard shortcuts can be specified for activating any Slicer feature by adding a couple of lines to your [.slicerrc.py file](../user_guide/settings.md#application-startup-file).
+Keyboard shortcuts can be specified for activating any Slicer feature by adding a couple of lines to your [.slicerrc.py file](user_guide/settings.md#application-startup-file).
 
 For example, this script registers <kbd>Ctrl+b</kbd>, <kbd>Ctrl+n</kbd>, <kbd>Ctrl+m</kbd>, <kbd>Ctrl+,</kbd> keyboard shortcuts to switch between red, yellow, green, and 4-up view layouts.
 
