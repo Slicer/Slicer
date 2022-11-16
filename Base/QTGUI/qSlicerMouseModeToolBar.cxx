@@ -169,6 +169,8 @@ void qSlicerMouseModeToolBarPrivate::init()
 
   connect(this->PlaceWidgetAction, SIGNAL(triggered()), q, SLOT(switchPlaceMode()));
   this->InteractionModesActionGroup->addAction(this->PlaceWidgetAction);
+  this->PlaceWidgetAction->setVisible(false);
+  q->addAction(this->PlaceWidgetAction);
 
 }
 
@@ -327,16 +329,16 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidget()
   bool validNodeForPlacement = selectionNode->GetActivePlaceNodePlacementValid();
   if (!validNodeForPlacement || activePlaceNodeClassName.isEmpty())
     {
-    q->removeAction(this->PlaceWidgetAction);
-    q->addAction(this->ToolBarAction);
+    this->PlaceWidgetAction->setVisible(false);
+    this->ToolBarAction->setVisible(true);
     return;
     }
 
   QString activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
   if (activePlaceNodeID.isEmpty())
     {
-    q->removeAction(this->PlaceWidgetAction);
-    q->addAction(this->ToolBarAction);
+    this->PlaceWidgetAction->setVisible(false);
+    this->ToolBarAction->setVisible(true);
     return;
     }
 
@@ -352,7 +354,7 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidget()
       break;
       }
     }
-  q->removeAction(this->ToolBarAction);
+  this->ToolBarAction->setVisible(false);
 
   QIcon icon(placeNodeResource);
   if (icon.availableSizes().empty())
@@ -367,7 +369,7 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidget()
   this->PlaceWidgetAction->setCheckable(true);
 
   connect(this->PlaceWidgetAction, SIGNAL(triggered()), q, SLOT(switchPlaceMode()));
-  q->addAction(this->PlaceWidgetAction);
+  this->PlaceWidgetAction->setVisible(true);
 }
 
 //---------------------------------------------------------------------------
