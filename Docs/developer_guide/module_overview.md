@@ -5,22 +5,21 @@ Slicer supports multiple types of modules:
 * [Loadable](#loadable-modules)
 * [Scripted](#scripted-modules)
 
-While the developer has to choose between one of the types to implement its module, the end user will NOT notice the difference as they all share the same look & feel.
-
 The choice for a given type of module is usually based on the type of inputs/parameters for a given module.
-
-The [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) module provides a graphical interface within Slicer to aid in the creation of Slicer extensions and associate modules.
 
 ## Command Line Interface (CLI)
 
 CLIs are standalone executables with a limited input/output arguments complexity (simple argument types, no user interactions...).
+
+:::{hint}
+Recommended for implementing computational algorithms.
+:::
 
 Specifications:
 * CLI = Command-line interface
 * Slicer can run any command-line application from the GUI (by providing an interface description `.xml` file).
 * Can be implemented in any language (C++, Python, ...).
 * Inputs and outputs specified in XML file, GUI is generated automatically.
-* Good for implementing computational algorithms.
 * Parameters passed through command line and files.
 * Run in a separate processing thread, can report progress and be aborted.
 
@@ -30,8 +29,10 @@ Not supported (anti-patterns):
 * Accept input while running to steer the module.
 * Request input while running.
 
-Getting started:
-* Create initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding module of type `cli` or `scriptedcli`.
+:::{admonition} Getting started
+* For CLI, [build Slicer](build_instructions/index.md) and create an initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `cli`.
+* For Scripted CLI, create an initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `scriptedcli`.
+:::
 
 More information:
 * [Developing and contributing extensions for 3D Slicer](developer_guide/extensions.md#extensions)
@@ -43,35 +44,40 @@ More information:
 
 Loadable modules are [C++](http://en.wikipedia.org/wiki/C%2B%2B) plugins that are built against Slicer. They define custom GUIs for their specific behavior as they have full control over the application.
 
-Specifications:
-* Written in C++.
-* Shared library
-* Full Slicer API is accessible.
-* Full control over the UI (based on [Qt](https://doc.qt.io/)) and Slicer internals ([MRML](mrml.md), logics, display managers...).
-* Useful for implementing complex, performance-critical, interactive components, application infrastructure (e.g., reusable low-level GUI widgets).
+:::{hint}
+Recommended for implementing complex, performance-critical, interactive components, application infrastructure (e.g., reusable of low-level GUI widgets).
+:::
 
-Getting started:
-* Create initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding module of type `loadable`.
+Specifications:
+* Written in C++ and distributed as shared libraries.
+* Full [Slicer API](api.md#c) is accessible.
+* Full control over the Slicer UI (based on [Qt](https://doc.qt.io/)) and Slicer internals ([MRML](mrml.md), logics, display managers...).
+
+:::{admonition} Getting started
+[Build Slicer](build_instructions/index.md) and create an initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `loadable`.
+:::
 
 More information:
 * [Developing and contributing extensions for 3D Slicer](developer_guide/extensions.md#extensions)
 * [Tutorials for software developers](https://www.slicer.org/wiki/Documentation/Nightly/Training#Tutorials_for_software_developers)
-* [How to write a loadable module](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Tutorials/CreateLoadableModule)
 * Learn from existing Slicer [loadable modules](https://github.com/Slicer/Slicer/tree/main/Modules/Loadable).
 
 ## Scripted Modules
 
-Scripted modules are written in [Python](http://www.python.org/).
+Scripted modules are [Python](http://www.python.org/) scripts that uses Slicer API. They define custom GUIs for their specific behavior as they have full control over the application.
+
+:::{hint}
+Recommended for fast prototyping and custom workflow development.
+:::
 
 Specifications:
 * Written in Python.
-* Full Slicer API is accessible.
-* Full access to the API: [VTK](http://www.vtk.org), [Qt](https://doc.qt.io/), [MRML and Slicer](https://apidocs.slicer.org/main/annotated.html), [ITK](https://itkpythonpackage.readthedocs.io) and [SimpleITK](http://www.itk.org/SimpleITKDoxygen/html/classes.html) are fully wrapped.
-* Simplest way to extend/customize Slicer.
-* Recommended for fast prototyping and custom workflow development.
+* Full [Slicer API](api.md#python) is accessible.
+* Full access to the API of [MRML](mrml.md), [VTK](http://www.vtk.org), [Qt](https://doc.qt.io/), [ITK](https://itkpythonpackage.readthedocs.io) and [SimpleITK](http://www.itk.org/SimpleITKDoxygen/html/classes.html) since are Python wrapped.
 
-Getting started:
-* Create initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding module of type `scripted`.
+:::{admonition} Getting started
+Download Slicer and create an initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `scripted`.
+:::
 
 More information:
 * [Developing and contributing extensions for 3D Slicer](developer_guide/extensions.md#extensions)
