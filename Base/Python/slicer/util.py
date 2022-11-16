@@ -264,6 +264,7 @@ def findChildren(widget=None, name="", text="", title="", className=""):
 
     If no criteria are provided, the function will return all widgets descendants.
     If no widget is provided, slicer.util.mainWindow() is used.
+
     :param widget: parent widget where the widgets will be searched
     :param name: name attribute of the widget
     :param text: text attribute of the widget
@@ -1145,6 +1146,7 @@ def selectModule(module):
     """Set currently active module.
 
     Throws a RuntimeError exception in case of failure (no such module or the application runs without a main window).
+
     :param module: module name or object
     :raises RuntimeError: in case of failure
     """
