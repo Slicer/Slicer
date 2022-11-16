@@ -17,6 +17,7 @@
 
 // MRML includes
 #include "vtkMRMLMarkupsJsonStorageNode_Private.h"
+#include "vtkMRMLMarkupsROIJsonStorageNode.h"
 
 //---------------------------------------------------------------------------
 class vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI : public vtkMRMLMarkupsJsonStorageNode::vtkInternal
