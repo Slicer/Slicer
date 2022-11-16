@@ -8,7 +8,7 @@ If you have developed a script or module that you would like to share with other
 
 - Scan through the [user](../user_guide/extensions_manager.md) and [developer](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ/Extensions) extension FAQs
 - Inform a community about your plans on the [Slicer forum](https://discourse.slicer.org) to get information about potential parallel efforts (other developers may already work on a similar idea and you could join or build on each other's work), past efforts (related tools might have been available in earlier Slicer versions or in other software that you may reuse), and get early feedback from prospective users. You may also seek advice on the name of your extension and how to organize features into modules. All these can save you a lot of time in the long term.
-- If you have not done already, use the [Extension Wizard module](https://www.slicer.org/wiki/Documentation/Nightly/Developers/ExtensionWizard) in Slicer to create an extension that will contain your module(s).
+- If you have not done already, use the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) module in Slicer to create an extension that will contain your module(s).
 - If developing [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python):
   - [build Slicer application](build_instructions/index.md).
   - [build your extension](#build-an-extension)
@@ -442,7 +442,7 @@ We suggest to use the `Slicer` prefix in the extension name, too, when the exten
 
 The module and extension templates are available in the Slicer source tree: <https://github.com/Slicer/Slicer/tree/main/Utilities/Templates/>
 
-Using the [Extension Wizard module](https://www.slicer.org/wiki/Documentation/Nightly/Developers/ExtensionWizard), developers can easily create a new extension without having to copy, rename and update manually every files.
+Using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) module, developers can easily create a new extension without having to copy, rename and update manually every files.
 
 ### How are Superbuild extension packaged?
 
