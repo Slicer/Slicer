@@ -53,7 +53,7 @@ extracting out subsets of data.  This example shows how to iterate through
 a directory of segmentations, compute their bounding boxes, and save out
 new volumes and segmentations centered around the segmentation.
 
-Here the ROI is aligned with the volume.  See [Segmentations](script_repository.md#segmentations) for
+Here the ROI is aligned with the volume.  See [Segmentations](developer_guide/script_repository.md#segmentations) for
 examples using oriented bounding boxes and other options.
 
 ```python

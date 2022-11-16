@@ -22,7 +22,7 @@ Most frequently used for these scenarios:
 
 * **Registration of two objects that occupy smaller portions of the image**. In this scenario, cropping will allow you to focus the processing at the region of interest, and simplify registration initialization.
 
-* **Definition of new axis directions** for your image: [Interpolated cropping options](#interpolated-cropping-options) allows the output volume to have different axis directions that the original volume. The output volume's axis directions will be aligned with the ROI widget's axes. ROI widget axes can be rotated using the [Transforms](#transforms.md) module.
+* **Definition of new axis directions** for your image: [Interpolated cropping options](#interpolated-cropping-options) allows the output volume to have different axis directions that the original volume. The output volume's axis directions will be aligned with the ROI widget's axes. ROI widget axes can be rotated using the [Transforms](transforms.md) module.
 
 * **Cropping of oblique sub-volumes**: This can be done by placing either or both of input volume and ROI under transform(s). These transforms will be taken into account while preparing the output.
 
