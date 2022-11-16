@@ -40,6 +40,12 @@ extensions = [
     'notfound.extension',  # Show a better 404 page when an invalid address is entered
 ]
 
+suppress_warnings = [
+    # Since we split the "script_repository.md" into smaller documents combined using
+    # the "include" directive, we ignore warnings like "Document headings start at H2, not H1"
+    "myst.header",
+]
+
 autodoc_mock_imports = [
     "ctk",
     "qt",
