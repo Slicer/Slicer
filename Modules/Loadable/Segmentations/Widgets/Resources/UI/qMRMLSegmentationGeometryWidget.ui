@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>490</width>
-    <height>363</height>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -283,7 +283,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Error message</string>
+         <string notr="true" extracomment="Placeholder only">Error message</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

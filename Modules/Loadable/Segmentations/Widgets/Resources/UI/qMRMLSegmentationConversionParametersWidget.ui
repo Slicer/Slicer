@@ -14,7 +14,16 @@
    <string>Segmentation conversion parameters</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
     <number>4</number>
    </property>
    <property name="spacing">
@@ -38,7 +47,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Closed surface model</string>
+        <string notr="true" extracomment="just a placeholder">Closed surface model</string>
        </property>
       </widget>
      </item>
@@ -58,7 +67,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Segmentation</string>
+        <string notr="true" extracomment="just a placeholder">Segmentation</string>
        </property>
       </widget>
      </item>
@@ -83,7 +92,16 @@
       <string>1. Conversion path</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
        <number>4</number>
       </property>
       <property name="spacing">
@@ -127,7 +145,16 @@
       <string>2. Conversion parameters</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
        <number>4</number>
       </property>
       <property name="spacing">

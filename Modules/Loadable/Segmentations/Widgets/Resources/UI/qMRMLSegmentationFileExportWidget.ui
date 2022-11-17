@@ -194,14 +194,14 @@
      </property>
      <item>
       <widget class="ctkDirectoryButton" name="DestinationFolderButton">
-       <property name="focusPolicy">
-        <enum>Qt::TabFocus</enum>
-       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::TabFocus</enum>
        </property>
       </widget>
      </item>
@@ -211,7 +211,7 @@
         <string>Browse to destination folder</string>
        </property>
        <property name="text">
-        <string>...</string>
+        <string/>
        </property>
        <property name="icon">
         <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
