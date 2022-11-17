@@ -324,6 +324,9 @@ void vtkMRMLCommandLineModuleNode::SetModuleDescription(const ModuleDescription&
 
   // Set an attribute on the node so that we can select nodes that
   // have the same command line module (program)
+  // The title is intentionally not translated, to allow using the scene regardless of the chosen
+  // application GUI language. It would be more appropriate to use the module name, but we
+  // use the module title for compatibility with existing scenes.
   this->SetAttribute("CommandLineModule", description.GetTitle().c_str());
 
   this->Modified();

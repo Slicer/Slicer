@@ -28,3 +28,7 @@ tags
 # Documentation
 Docs/_build
 Docs/_moduledescriptions
+
+# CLI module translation files
+Docs/_extraCLI/*_tr.h
+Modules/CLI/*/*_tr.h
