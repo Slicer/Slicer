@@ -1,3 +1,5 @@
+import os
+
 from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = 'A'
@@ -15,6 +17,7 @@ class ModuleA(ScriptedLoadableModule):
     Developed by Jean-Christophe Fillion-Robin, Kitware Inc.,
     partially funded by NIH grant 3P41RR013218-12S1.
     """
+        assert os.path.exists(self.resourcePath("resource.txt"))
 
     def somevar(self):
         return SOMEVAR
@@ -23,6 +26,7 @@ class ModuleA(ScriptedLoadableModule):
 class ModuleAWidget(ScriptedLoadableModuleWidget):
     def __init__(self, parent=None):
         ScriptedLoadableModuleWidget.__init__(self, parent)
+        assert os.path.exists(self.resourcePath("resource.txt"))
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
