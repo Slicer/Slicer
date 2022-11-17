@@ -100,6 +100,9 @@ public:
   /// the module properties.
   ModuleDescription& moduleDescription();
 
+  /// Translate string from source language to current application language
+  QString translate(const std::string& sourceText)const;
+
 protected:
   ///
   void setup() override;

@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QAction>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QFormLayout>
 #include <QMenu>
@@ -77,15 +78,17 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->Ui_qSlicerCLIModuleWidget::setupUi(widget);
 
-  QString title = QString::fromStdString(
+  QString title = q->translate(
     this->logic()->GetDefaultModuleDescription().GetTitle());
   this->ModuleCollapsibleButton->setText(title);
 
   this->MRMLCommandLineModuleNodeSelector->setBaseName(title);
-  /// Use the title of the CLI to filter all the command line module node
+  /// Use the non-translated title of the CLI to filter all the command line module node
   /// It is not very robust but there shouldn't be twice the same title.
+  QString sourceLanguageTitle = QString(
+    this->logic()->GetDefaultModuleDescription().GetTitle().c_str());
   this->MRMLCommandLineModuleNodeSelector->addAttribute(
-    "vtkMRMLCommandLineModuleNode", "CommandLineModule", title);
+    "vtkMRMLCommandLineModuleNode", "CommandLineModule", sourceLanguageTitle);
 
   this->MRMLCommandLineModuleNodeSelector->setNodeTypeLabel("Parameter set", "vtkMRMLCommandLineModuleNode");
 
@@ -255,10 +258,11 @@ void qSlicerCLIModuleWidgetPrivate::addParameterGroups()
 void qSlicerCLIModuleWidgetPrivate::addParameterGroup(QBoxLayout* _layout,
                                                      const ModuleParameterGroup& parameterGroup)
 {
+  Q_Q(qSlicerCLIModuleWidget);
   Q_ASSERT(_layout);
 
   ctkCollapsibleButton * collapsibleWidget = new ctkCollapsibleButton();
-  collapsibleWidget->setText(QString::fromStdString(parameterGroup.GetLabel()));
+  collapsibleWidget->setText(q->translate(parameterGroup.GetLabel()));
   collapsibleWidget->setCollapsed(parameterGroup.GetAdvanced() == "true");
 
   // Create a vertical layout and add parameter to it
@@ -290,6 +294,7 @@ void qSlicerCLIModuleWidgetPrivate::addParameters(QFormLayout* _layout,
 void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
                                                const ModuleParameter& moduleParameter)
 {
+  Q_Q(qSlicerCLIModuleWidget);
   Q_ASSERT(_layout);
 
   if (moduleParameter.GetHidden() == "true")
@@ -297,8 +302,8 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
     return;
     }
 
-  QString _label = QString::fromStdString(moduleParameter.GetLabel());
-  QString description = QString::fromStdString(moduleParameter.GetDescription());
+  QString _label = q->translate(moduleParameter.GetLabel());
+  QString description = q->translate(moduleParameter.GetDescription());
 
   // TODO Parameters with flags can support the None node because they are optional
   //int noneEnabled = 0;
@@ -609,4 +614,11 @@ double qSlicerCLIModuleWidget::nodeEditable(vtkMRMLNode* node)
     {
     return 0.0;
     }
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLIModuleWidget::translate(const std::string& sourceText)const
+{
+  QString contextName = QStringLiteral("CLI_") + this->moduleName();
+  return QCoreApplication::translate(contextName.toStdString().c_str(), sourceText.c_str());
 }

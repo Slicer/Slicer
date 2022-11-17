@@ -161,7 +161,7 @@
       <longflag>allowLossyConversion</longflag>
       <label>Allow lossy image conversion</label>
       <default>false</default>
-      <description><![CDATA[The only supported output type is 'short'. Conversion from images of a different type may cause data loss due to rounding or truncation. Use with caution!"]]></description>
+      <description><![CDATA[The only supported output type is 'short'. Conversion from images of a different type may cause data loss due to rounding or truncation. Use with caution!]]></description>
     </boolean>
   </parameters>
   <parameters advanced="true">
