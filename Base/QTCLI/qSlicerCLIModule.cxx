@@ -21,6 +21,7 @@
 #include "qSlicerCLIModule.h"
 
 // Qt includes
+#include <QCoreApplication>
 #include <QDebug>
 #include <QSettings>
 
@@ -107,17 +108,39 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCLIModule::translate(const std::string& sourceText)const
+{
+  Q_D(const qSlicerCLIModule);
+  QString contextName = QStringLiteral("CLI_") + this->name();
+  return QCoreApplication::translate(contextName.toStdString().c_str(), sourceText.c_str());
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCLIModule::title()const
 {
   Q_D(const qSlicerCLIModule);
-  return QString::fromStdString(d->Desc.GetTitle());
+  return this->translate(d->Desc.GetTitle());
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerCLIModule::categories()const
 {
   Q_D(const qSlicerCLIModule);
-  return QString::fromStdString(d->Desc.GetCategory()).split(';');
+  // Category names are translated by component (instead of translating
+  // "Registration.Specialized", we translate "Registration" and "Specialized").
+  QStringList translatedCategoryList;
+  QStringList categoryList = QString::fromStdString(d->Desc.GetCategory()).split(';');
+  foreach(const QString & category, categoryList)
+    {
+    QStringList translatedCategoryComponentList;
+    QStringList categoryComponentList = category.split('.');
+    foreach(const QString & categoryComponent, categoryComponentList)
+      {
+      translatedCategoryComponentList << QCoreApplication::translate("qSlicerAbstractCoreModule", categoryComponent.toStdString().c_str());
+      }
+    translatedCategoryList << translatedCategoryComponentList.join('.');
+    }
+  return translatedCategoryList;
 }
 
 //-----------------------------------------------------------------------------
@@ -140,7 +163,7 @@ int qSlicerCLIModule::index()const
 QString qSlicerCLIModule::acknowledgementText()const
 {
   Q_D(const qSlicerCLIModule);
-  return QString::fromStdString(d->Desc.GetAcknowledgements());
+  return this->translate(d->Desc.GetAcknowledgements());
 }
 
 //-----------------------------------------------------------------------------
@@ -154,11 +177,16 @@ QImage qSlicerCLIModule::logo()const
 QString qSlicerCLIModule::helpText()const
 {
   Q_D(const qSlicerCLIModule);
-  QString help = QString::fromStdString(d->Desc.GetDescription());
+  QString help = this->translate(d->Desc.GetDescription());
   if (!d->Desc.GetDocumentationURL().empty())
     {
-    help += QString("<p>For more information see the <a href=\"%1\">online documentation</a>.</p>")
-      .arg(QString::fromStdString(d->Desc.GetDocumentationURL()));
+    // Translate "For more information, see the online documentation" text
+    // so that translators don't need to deal with any HTML tags.
+    QString onlineDocLink = QString("<a href=\"%1\">%2</a>")
+      .arg(QString::fromStdString(d->Desc.GetDocumentationURL()))
+      .arg(tr("online documentation"));
+    help += QString("<p>%1</p>")
+      .arg(tr("For more information see the %1.").arg(onlineDocLink));
     }
   return help;
 }

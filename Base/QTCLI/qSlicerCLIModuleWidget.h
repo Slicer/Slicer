@@ -52,6 +52,9 @@ public:
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
   double nodeEditable(vtkMRMLNode* node) override;
 
+  /// Translate string from source language to current application language
+  QString translate(const std::string& sourceText)const;
+
 public slots:
   /// Set the current \a commandLineModuleNode
   void setCurrentCommandLineModuleNode(vtkMRMLNode* commandLineModuleNode);
