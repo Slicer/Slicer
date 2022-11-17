@@ -52,7 +52,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     def resourcePath(self, filename):
         """Return the absolute path of the module ``Resources`` directory.
         """
-        scriptedModulesPath = os.path.dirname(slicer.util.modulePath(self.moduleName))
+        scriptedModulesPath = os.path.dirname(self.parent.path)
         return os.path.join(scriptedModulesPath, 'Resources', filename)
 
     def getDefaultModuleDocumentationLink(self, docPage=None):
