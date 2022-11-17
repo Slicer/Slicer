@@ -50,8 +50,11 @@ def _generate_translation_header_from_cli_xml(cli_xml_filename):
 
     def to_translation_header(translation_context, text):
         """Takes a single or a list of strings or XML elements and creates a line for each item
-        that can be placed in the .h file that lupdate will parse for translations. Example line:
-        `QT_TRANSLATE_NOOP("CLI_ACPCTransform", "ACPC Transform")`
+        that can be placed in the .h file that lupdate will parse for translations.
+
+        Example line::
+     
+            QT_TRANSLATE_NOOP("CLI_ACPCTransform", "ACPC Transform")
         """
         if type(text) != list:
             text_list = [text]
