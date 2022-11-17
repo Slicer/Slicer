@@ -3405,6 +3405,10 @@ def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes
         seriesNode.SetYColumnName(yColumnName)
         if title:
             seriesNode.SetName(title + " " + yColumnName)
+        else:
+            # When only columnNames are set (no `title` parameter), the user should see
+            # the name of the column as the name of the series.
+            seriesNode.SetName(yColumnName)
         if not chartNode.HasPlotSeriesNodeID(seriesNode.GetID()):
             chartNode.AddAndObservePlotSeriesNodeID(seriesNode.GetID())
 
