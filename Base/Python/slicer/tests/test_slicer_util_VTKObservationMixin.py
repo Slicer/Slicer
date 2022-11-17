@@ -163,6 +163,47 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
         foo.removeObserver(object2, event, callback2)
         self.assertEqual(len(foo.Observations), 0)
 
+    @unittest.expectedFailure
+    def test_removeObserver_issue6610(self):
+        """test_removeObserver_issue6610
+
+        If an observer is attached to a VTK object through :class:`slicer.util.VTKObservationMixin`,
+        and if that object is itself referenced by another VTK object (e.g `vtkCollection`), removing the
+        observation using :func:`slicer.util.VTKObservationMixin.removeObserver()` is expected to remove
+        the observer even if there was no reference to the object kept in Python.
+
+        See https://github.com/Slicer/Slicer/issues/6610
+        """
+        # Case 1: A reference to the object is kept in Python
+        callback = unittest.mock.Mock()
+        collection = vtk.vtkCollection()
+        collection.AddItem(vtk.vtkObject())
+
+        obj = collection.GetItemAsObject(0)
+        mixin = VTKObservationMixin()
+        mixin.addObserver(obj, vtk.vtkCommand.ModifiedEvent, callback)
+
+        callback.assert_not_called()
+        obj.Modified()
+        callback.assert_called_once()
+        mixin.removeObservers()
+        obj.Modified()
+        callback.assert_called_once()
+
+        # Case 2: There is no object reference kept in Python
+        callback = unittest.mock.Mock()
+        collection = vtk.vtkCollection()
+        collection.AddItem(vtk.vtkObject())
+        mixin = VTKObservationMixin()
+        mixin.addObserver(collection.GetItemAsObject(0), vtk.vtkCommand.ModifiedEvent, callback)
+
+        callback.assert_not_called()
+        collection.GetItemAsObject(0).Modified()
+        callback.assert_called_once()
+        mixin.removeObservers()
+        collection.GetItemAsObject(0).Modified()
+        callback.assert_called_once()
+
     def test_removeObservers(self):
         foo = Foo()
         object = vtk.vtkObject()
