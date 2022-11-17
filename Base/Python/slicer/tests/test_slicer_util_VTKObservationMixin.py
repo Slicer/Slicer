@@ -123,7 +123,21 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
         self.assertEqual(group, group_)
         self.assertEqual(priority, priority_)
 
+    @unittest.expectedFailure
     def test_releaseNodes(self):
+        """test_releaseNodes
+
+        This test was originally added following the introduction of :class:`weakref.WeakKeyDictionary`
+        ensuring the observed vtkObjects are garbage collected if all other references have been lost.
+        See https://github.com/Slicer/Slicer/issues/6406
+
+        The problem is that if an observer is attached to an object through :class:`slicer.util.VTKObservationMixin`,
+        and if a reference to the object is not kept in Python, then the observer was automatically garbage collected
+        from the :class:`weakref.WeakKeyDictionary` even if the VTK object still exists.
+        See https://github.com/Slicer/Slicer/issues/6610
+
+        Approaches for fixing this test are discussed in https://github.com/Slicer/Slicer/issues/6679
+        """
         foo = Foo()
         node = vtk.vtkObject()
         callback = unittest.mock.Mock()
@@ -163,7 +177,6 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
         foo.removeObserver(object2, event, callback2)
         self.assertEqual(len(foo.Observations), 0)
 
-    @unittest.expectedFailure
     def test_removeObserver_issue6610(self):
         """test_removeObserver_issue6610
 

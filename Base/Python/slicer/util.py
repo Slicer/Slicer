@@ -2470,11 +2470,9 @@ def dataframeFromMarkups(markupsNode):
 
 class VTKObservationMixin:
     def __init__(self):
-        from weakref import WeakKeyDictionary
-
         super().__init__()
 
-        self.__observations = WeakKeyDictionary()
+        self.__observations = {}
         # {obj: {event: {method: (group, tag, priority)}}}
 
     @property
