@@ -51,6 +51,11 @@ public:
   vtkGetStringMacro (ModuleName);
   vtkSetStringMacro (ModuleName);
 
+  /// Whether the parameter has been set.
+  ///
+  /// If the parameter has been set and then unset, this will return false.
+  bool HasParameter(const std::string& name) const;
+
   /// Set module parameter
   void SetParameter(const std::string& name, const std::string& value);
 

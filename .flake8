@@ -19,6 +19,7 @@ per-file-ignores = \
   # Module imported but unused
   Base/Python/mrml.py:F401 \
   Base/Python/slicer/logic.py:F401 \
+  Base/Python/slicer/parameterNodeWrapper/__init__.py:F401 \
   Base/Python/vtkAddon.py:F401 \
   Base/Python/vtkITK.py:F401 \
   Base/Python/vtkSegmentationCore.py:F401 \
