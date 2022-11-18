@@ -2,6 +2,12 @@
 set(Slicer_PYTHON_SCRIPTS
   slicer/__init__
   slicer/logic
+  slicer/parameterNodeWrapper/__init__
+  slicer/parameterNodeWrapper/default
+  slicer/parameterNodeWrapper/serializers
+  slicer/parameterNodeWrapper/util
+  slicer/parameterNodeWrapper/validators
+  slicer/parameterNodeWrapper/wrapper
   slicer/ScriptedLoadableModule
   slicer/slicerqt
   slicer/testing
