@@ -76,6 +76,10 @@ For more details, see [this page](https://www.slicer.org/wiki/Documentation/Nigh
 
 ## Advanced topics
 
+### Parameter Nodes
+
+Parameter nodes are a specific use of MRML nodes to store parameters for a given function/module. For more info see [Parameter Nodes](parameter_nodes.md#parameter-nodes).
+
 ### Scene undo/redo
 
 MRML Scene provides Undo/Redo mechanism that restores a previous state of the scene and individual nodes. By default, undo/redo is disabled and not displayed on the user interface, as it increased memory usage and was not tested thoroughly.
