@@ -240,12 +240,12 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
     if (lockedWindowLevel)
       {
       d->LockWindowLevelButton->setIcon(QIcon(":Icons/Medium/SlicerLock.png"));
-      d->LockWindowLevelButton->setToolTip(QString("Click to enable modification of Window/Level values"));
+      d->LockWindowLevelButton->setToolTip(tr("Click to enable modification of Window/Level values"));
       }
     else
       {
       d->LockWindowLevelButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
-      d->LockWindowLevelButton->setToolTip(QString("Click to prevent modification of Window/Level values"));
+      d->LockWindowLevelButton->setToolTip(tr("Click to prevent modification of Window/Level values"));
       }
     d->PresetsWidget->setEnabled(!lockedWindowLevel);
     d->MRMLWindowLevelWidget->setEnabled(!lockedWindowLevel);
