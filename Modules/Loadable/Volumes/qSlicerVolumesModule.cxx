@@ -65,10 +65,10 @@ qSlicerVolumesModule::~qSlicerVolumesModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerVolumesModule::helpText()const
 {
-  QString help = QString(
+  QString help = tr(
     "The Volumes Module is the interface for adjusting Window, Level, Threshold, "
     "Color LUT and other parameters that control the display of volume image data "
-    "in the scene.<br>");
+    "in the scene.") + "<br>";
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -83,8 +83,8 @@ QString qSlicerVolumesModule::acknowledgementText()const
     "</tr><tr>"
     "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
     "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
-    "</tr></table></center>"
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
+    "</tr></table></center>" +
+    tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community."));
   return acknowledgement;
 }
 

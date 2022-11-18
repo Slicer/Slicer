@@ -90,9 +90,9 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 
-  this->TractographyLabelMapSeedingAction = new QAction("Tractography labelmap seeding...",q);
+  this->TractographyLabelMapSeedingAction = new QAction(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tr("Tractography labelmap seeding..."),q);
   QObject::connect(this->TractographyLabelMapSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyLabelMapSeeding()));
-  this->TractographyInteractiveSeedingAction = new QAction("Tractography interactive seeding...",q);
+  this->TractographyInteractiveSeedingAction = new QAction(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tr("Tractography interactive seeding..."),q);
   QObject::connect(this->TractographyInteractiveSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyInteractiveSeeding()));
 }
 
@@ -171,13 +171,13 @@ QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tooltip(vtkIdType i
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return QString("Invalid!");
+    return tr("Invalid!");
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return QString("Error!");
+    return tr("Error!");
     }
 
   // Get basic tooltip from volumes plugin
