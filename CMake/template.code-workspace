@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "path": "@Slicer_SOURCE_DIR@"
+    },
+    {
+      "path": "@Slicer_BINARY_DIR@"
+    },
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "@PYTHON_EXECUTABLE@",
+  },
+}

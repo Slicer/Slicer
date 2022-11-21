@@ -41,4 +41,11 @@ include(${Slicer_SOURCE_DIR}/CMake/SlicerGenerateSlicerConfig.cmake)
 include(SlicerPackageAndUploadTarget)
 
 #-----------------------------------------------------------------------------
+configure_file(
+  ${Slicer_SOURCE_DIR}/CMake/template.code-workspace
+  ${Slicer_BINARY_DIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}.code-workspace
+  @ONLY
+)
+
+#-----------------------------------------------------------------------------
 include(${Slicer_SOURCE_DIR}/CMake/SlicerCPack.cmake)
