@@ -319,10 +319,11 @@ function(fixup_bundle_with_plugins app)
     # Since BundleUtilities function do not copy the "Helpers" directory found
     # in frameworks. The following will explicitly copy and fixup
     # QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app
+    set(Slicer_BUILD_WEBENGINE_SUPPORT "@Slicer_BUILD_WEBENGINE_SUPPORT@")
     set(qtwebenginecore_app_subdir "Helpers/QtWebEngineProcess.app")
     set(qtwebenginecore_src_dir "${qt_root_dir}/QtWebEngineCore.framework/${qtwebenginecore_app_subdir}")
     set(qtwebenginecore_dest_dir "${app_dir}/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/${qtwebenginecore_app_subdir}")
-    if(EXISTS ${qtwebenginecore_src_dir})
+    if(Slicer_BUILD_WEBENGINE_SUPPORT AND EXISTS ${qtwebenginecore_src_dir})
       file(COPY "${qtwebenginecore_src_dir}/Contents" DESTINATION "${qtwebenginecore_dest_dir}/" USE_SOURCE_PERMISSIONS)
       set(qtwebengineprocess_executable "${qtwebenginecore_dest_dir}/Contents/MacOS/QtWebEngineProcess")
       # Collect list of Qt framework dependencies
