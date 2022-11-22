@@ -112,14 +112,7 @@ if os.environ.get('EXCLUDE_API_REFERENCE', False) == 'True':
 # https://github.com/readthedocs/sphinx-notfound-page
 notfound_context = {
     'title': 'Page Not Found',
-    'body': r'''
-<script type="text/javascript">
-  // Workaround https://github.com/readthedocs/readthedocs.org/issues/9507
-  const regex = /^https:\/\/slicer\.readthedocs\.io\/\w+\/v\d\.\d$/;
-  if (regex.test(window.location)) {
-    window.location.replace(window.location + "/");
-  }
-</script>
+    'body': '''
 <h1>Page Not Found</h1>
 <p>Sorry, we couldn't find that page.</p>
 <p>Try using the search box or go to the homepage.</p>

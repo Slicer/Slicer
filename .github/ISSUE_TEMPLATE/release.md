@@ -21,7 +21,7 @@ Checklist **Installers Release**:
 * [ ] `CMakeLists.txt`: [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#cmakeliststxt-update-the-slicer-version-information-for-the-development) the Slicer version information for the development.
 * [ ] [Tag and publish](https://github.com/Slicer/Slicer/wiki/Release-Process#tag-and-publish-slicerbuildenvironment-docker-image) SlicerBuildEnvironment docker image.
 * [ ] Create maintenance branch called `X.Y` (e.g `5.0`) based of the first tag of the `X.Y` series.
-* [ ] Update readthedocs: [Activate](https://readthedocs.org/projects/slicer/versions/) the build of the `X.Y` maintenance branch in readthedocs, and add a [redirect](https://readthedocs.org/dashboard/slicer/redirects/) of type _Exact Redirects_ from `/en/vX.Y/$rest` to `/en/X.Y/` (for example `/en/v5.0/$rest` to `/en/5.0/`).
+* [ ] Update readthedocs: [Activate](https://readthedocs.org/projects/slicer/versions/) the build of the `X.Y` maintenance branch in readthedocs, and add a [redirect](https://readthedocs.org/dashboard/slicer/redirects/) of type _Exact Redirects_ from `/en/vX.Y$rest` to `/en/X.Y`.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-release-scripts) release scripts.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-extensionsindex) ExtensionsIndex: Create `5.0` branch
 * [ ] Update CDash: Add `Extensions-X.Y-Nightly` group (e.g `Extensions-5.0-Nightly`) to https://slicer.cdash.org/index.php?project=SlicerStable
