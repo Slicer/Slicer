@@ -43,7 +43,7 @@ if(NOT DEFINED Slicer_VERSION_MAJOR)
   set(Slicer_VERSION_MAJOR "5")
 endif()
 if(NOT DEFINED Slicer_VERSION_MINOR)
-  set(Slicer_VERSION_MINOR "2")
+  set(Slicer_VERSION_MINOR "3")
 endif()
 if(NOT DEFINED Slicer_VERSION_PATCH)
   set(Slicer_VERSION_PATCH "0")
@@ -316,6 +316,8 @@ set(_commit_count_offsets
   # (https://github.com/Slicer/Slicer.git).
   "3037"
   # Allocate revisions for patch releases between v5.0.0 and v5.1.0
+  "100"
+  # Allocate revisions for patch releases between v5.2.0 and v5.3.0
   "100"
   )
 list(JOIN _commit_count_offsets "+" _commit_count_offsets_expr)
