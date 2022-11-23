@@ -456,7 +456,9 @@ If segments overlap, segment higher in the segments table will have priority. <b
         oldOverwriteMode = self.scriptedEffect.parameterSetNode().GetOverwriteMode()
         self.scriptedEffect.parameterSetNode().SetOverwriteMode(slicer.vtkMRMLSegmentEditorNode.OverwriteVisibleSegments)
         for segmentId, labelValue in segmentLabelValues:
-            threshold.ThresholdBetween(labelValue, labelValue)
+            threshold.SetLowerThreshold(labelValue)
+            threshold.SetUpperThreshold(labelValue)
+            threshold.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_BETWEEN)
             stencil.Update()
             smoothedBinaryLabelMap = slicer.vtkOrientedImageData()
             smoothedBinaryLabelMap.ShallowCopy(stencil.GetOutput())
