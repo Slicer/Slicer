@@ -266,6 +266,12 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
+add_test(
+  NAME py_doctest_slicer_util
+  COMMAND ${PYTHON_EXECUTABLE}
+    -m doctest -v ${Slicer_SOURCE_DIR}/Base/Python/slicer/util.py
+  )
+
 slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_util_without_modules.py
   SLICER_ARGS --no-main-window  --disable-modules
