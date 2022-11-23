@@ -2990,6 +2990,8 @@ def toBool(value):
     [True, True, False, True]
     >>> [toBool(x) for x in ['-2', '-1', '0', '1', '2', 'Hello']]
     [True, True, False, True, True, False]
+    >>> [toBool(x) for x in ['true', 'false', 'True', 'False', 'tRue', 'fAlse']]
+    [True, False, True, False, True, False]
     >>> toBool(object())
     True
     >>> toBool(None)
