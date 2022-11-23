@@ -11,7 +11,7 @@ Slicer can also run on virtual machines and docker containers. For example, [3D 
 ### Operating system versions
 
 - Windows: Windows 10 or 11, with all recommended updates installed. Windows 10 Version 1903 (May 2019 Update) version or later is required for support of international characters (UTF-8) in filenames and text. Microsoft does not support Windows 8.1 and Windows 7 anymore and Slicer is not tested on these legacy operating system versions, but may still work.
-- macOS: macOS Catalina (10.15) or later (both Intel and ARM based systems). Latest public release is recommended.
+- macOS: macOS Big Sur (11) or later (both Intel and ARM based systems). Latest public release is recommended.
 - Linux: Ubuntu 18.04 or later<br>CentOS 7 or later. Latest LTS (Long-term-support) version is recommended.
 
 ### Recommended hardware configuration
