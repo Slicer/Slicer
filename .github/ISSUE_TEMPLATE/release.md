@@ -21,7 +21,7 @@ Checklist **Installers Release**:
 * [ ] [Tag](https://github.com/Slicer/Slicer/wiki/Release-Process#tag-the-repository) the repository with `vX.Y.0`.
 * [ ] `CMakeLists.txt`: [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#cmakeliststxt-update-the-slicer-version-information-for-the-development) the Slicer version information for the development.
 * [ ] [Tag and publish](https://github.com/Slicer/Slicer/wiki/Release-Process#tag-and-publish-slicerbuildenvironment-docker-image) SlicerBuildEnvironment docker image.
-* [ ] [Create](https://github.com/Slicer/Slicer/wiki/Release-Process#create-maintenance-branch) maintenance branch called `X.Y` based of the first tag of the `X.Y` series.
+* [ ] [Create](https://github.com/Slicer/Slicer/wiki/Release-Process#create-maintenance-branch) maintenance branch called `X.Y` based on the first tag of the `X.Y` series.
 * [ ] Update readthedocs: [Activate](https://readthedocs.org/projects/slicer/versions/) the build of the `X.Y` maintenance branch in readthedocs, and add a [redirect](https://readthedocs.org/dashboard/slicer/redirects/) of type _Exact Redirects_ from `/en/vX.Y$rest` to `/en/X.Y`.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-release-scripts) release scripts.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-extensionsindex) ExtensionsIndex: Create `X.Y` branch
