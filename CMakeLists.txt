@@ -46,7 +46,7 @@ if(NOT DEFINED Slicer_VERSION_MINOR)
   set(Slicer_VERSION_MINOR "2")
 endif()
 if(NOT DEFINED Slicer_VERSION_PATCH)
-  set(Slicer_VERSION_PATCH "0")
+  set(Slicer_VERSION_PATCH "1")
 endif()
 project(Slicer VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}")
 
