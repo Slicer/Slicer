@@ -30,7 +30,10 @@
 
 class vtkCallbackCommand;
 
-/// Filter that generates curves between points of an input polydata
+/// Filter that calculates per-point measurements for markups curves.
+/// - Interpolate control point measurements into curve point data
+/// - Calculate per-point curvature (disabled by default)
+/// - Calculate per-point torsion (disabled by default)
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkCurveMeasurementsCalculator : public vtkPolyDataAlgorithm
 {
 public:
@@ -66,10 +69,25 @@ public:
   /// Get name of max curvature measurement
   static const char* GetMaxCurvatureName() { return "curvature max"; };
 
-  vtkMTimeType GetMTime() override;
-
   vtkGetMacro(CurvatureUnits, std::string);
   vtkSetMacro(CurvatureUnits, std::string);
+
+  //@{
+  /// Set/Get flag determining whether to calculate torsion
+  vtkSetMacro(CalculateTorsion, bool);
+  vtkGetMacro(CalculateTorsion, bool);
+  vtkBooleanMacro(CalculateTorsion, bool);
+  //@}
+
+  /// Get name of average torsion measurement
+  static const char* GetAverageTorsionName() { return "torsion avg"; };
+  /// Get name of max torsion measurement
+  static const char* GetMaxTorsionName() { return "torsion max"; };
+
+  vtkGetMacro(TorsionUnits, std::string);
+  vtkSetMacro(TorsionUnits, std::string);
+
+  vtkMTimeType GetMTime() override;
 
   /// Store interpolated values of inputValues in interpolatedValues,
   /// using indices pedigreeIdsArray.
@@ -80,6 +98,7 @@ public:
 
 protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
+  bool CalculatePolyDataTorsion(vtkPolyData* polyData);
   bool InterpolateControlPointMeasurementToPolyData(vtkPolyData* outputPolyData);
 
   /// Callback function observing data array modified events.
@@ -96,12 +115,16 @@ protected:
   /// Flag determining whether the filter should calculate curvature
   bool CalculateCurvature{false};
 
+  /// Flag determining whether the filter should calculate torsion
+  bool CalculateTorsion{false};
+
   /// Command handling data array modified events
   vtkCallbackCommand* ControlPointArrayModifiedCallbackCommand;
   /// List of observed control point arrays (for removal of observations)
   vtkCollection* ObservedControlPointArrays;
 
-  std::string CurvatureUnits;
+  std::string CurvatureUnits{"mm-1"};
+  std::string TorsionUnits{"Pa"};
 
 protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;

@@ -48,8 +48,6 @@ vtkCurveMeasurementsCalculator::vtkCurveMeasurementsCalculator()
 
   this->ObservedControlPointArrays = vtkCollection::New();
 
-  this->CurvatureUnits = "mm-1";
-
   // timestamps for input and output are the same, initially
   this->Modified();
 }
@@ -156,6 +154,18 @@ int vtkCurveMeasurementsCalculator::RequestData(
   else
     {
     outputPolyData->GetPointData()->RemoveArray("Curvature");
+    }
+
+  if (this->CalculateTorsion)
+    {
+    if (!this->CalculatePolyDataTorsion(outputPolyData))
+      {
+      return 0;
+      }
+    }
+  else
+    {
+    outputPolyData->GetPointData()->RemoveArray("Torsion");
     }
 
   // Go through measurements, and interpolate those that contain control point data and are enabled
@@ -310,6 +320,202 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
 
   // Set curvature array to output
   polyData->GetPointData()->AddArray(curvatureValues);
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyData)
+{
+  if (polyData == nullptr)
+    {
+    return false;
+    }
+  if (polyData->GetNumberOfPoints() == 0 || polyData->GetNumberOfLines() == 0)
+    {
+    return false;
+    }
+
+  // Note: This algorithm has been adapted from VMTK (vtkvmtkCenterlineGeometry::ComputeLineTorsion)
+
+  vtkPoints* points = polyData->GetPoints();
+  vtkCellArray* lines = polyData->GetLines();
+  vtkNew<vtkIdList> linePoints;
+
+  lines->GetCell(0, linePoints);
+  vtkIdType numberOfPoints = // Last point in closed curve line is the first point
+    (this->CurveIsClosed ? linePoints->GetNumberOfIds()-1 : linePoints->GetNumberOfIds());
+
+  // Initialize torsion array
+  vtkNew<vtkDoubleArray> torsionArray;
+  torsionArray->Initialize();
+  torsionArray->SetName("Torsion");
+  torsionArray->SetNumberOfComponents(1);
+  torsionArray->SetNumberOfTuples(numberOfPoints);
+
+  double point0[3] = {0.0};
+  double point1[3] = {0.0};
+  double point2[3] = {0.0};
+  double vector0[3] = {0.0};
+  double vector1[3] = {0.0};
+
+  double averageTorsion = 0.0;
+  double weightSum = 0.0;
+
+  double* xps = new double[3 * numberOfPoints];
+  double* xpps = new double[3 * numberOfPoints];
+
+  int j = 0;
+  for (j=0; j<numberOfPoints; j++)
+    {
+    xps[3*j+0] = xps[3*j+1] = xps[3*j+2] = 0.0;
+    xpps[3*j+0] = xpps[3*j+1] = xpps[3*j+2] = 0.0;
+    }
+
+  for (j=1; j<numberOfPoints-1; j++)
+    {
+    points->GetPoint(linePoints->GetId(j-1), point0);
+    points->GetPoint(linePoints->GetId(j), point1);
+    points->GetPoint(linePoints->GetId(j+1), point2);
+
+    vector0[0] = point1[0] - point0[0];
+    vector0[1] = point1[1] - point0[1];
+    vector0[2] = point1[2] - point0[2];
+
+    vector1[0] = point2[0] - point1[0];
+    vector1[1] = point2[1] - point1[1];
+    vector1[2] = point2[2] - point1[2];
+
+    double norm0 = vtkMath::Norm(vector0);
+    double norm1 = vtkMath::Norm(vector1);
+
+    if (norm0 < 1.0E-12 || norm1 < 1.0E-12)
+      {
+      continue;
+      }
+
+    xps[3*j+0] = point2[0] - point0[0];
+    xps[3*j+1] = point2[1] - point0[1];
+    xps[3*j+2] = point2[2] - point0[2];
+    xps[3*j+0] /= norm0 + norm1;
+    xps[3*j+1] /= norm0 + norm1;
+    xps[3*j+2] /= norm0 + norm1;
+
+    xpps[3*j+0] = (point2[0] - point1[0]) / norm1 - (point1[0] - point0[0]) / norm0;
+    xpps[3*j+1] = (point2[1] - point1[1]) / norm1 - (point1[1] - point0[1]) / norm0;
+    xpps[3*j+2] = (point2[2] - point1[2]) / norm1 - (point1[2] - point0[2]) / norm0;
+    xpps[3*j+0] /= (norm0 + norm1) / 2.0;
+    xpps[3*j+1] /= (norm0 + norm1) / 2.0;
+    xpps[3*j+2] /= (norm0 + norm1) / 2.0;
+    }
+
+  double maxTorsion = 0.0;
+  for (j=2; j<numberOfPoints-2; j++)
+    {
+    points->GetPoint(linePoints->GetId(j-1), point0);
+    points->GetPoint(linePoints->GetId(j), point1);
+    points->GetPoint(linePoints->GetId(j+1), point2);
+
+    vector0[0] = point1[0] - point0[0];
+    vector0[1] = point1[1] - point0[1];
+    vector0[2] = point1[2] - point0[2];
+
+    vector1[0] = point2[0] - point1[0];
+    vector1[1] = point2[1] - point1[1];
+    vector1[2] = point2[2] - point1[2];
+
+    double norm0 = vtkMath::Norm(vector0);
+    double norm1 = vtkMath::Norm(vector1);
+
+    if (norm0 < 1.0E-12 || norm1 < 1.0E-12)
+      {
+      continue;
+      }
+
+    double xp[3] = {0.0};
+    xp[0] = xps[3*j+0];
+    xp[1] = xps[3*j+1];
+    xp[2] = xps[3*j+2];
+
+    double xpp[3] = {0.0};
+    xpp[0] = xpps[3*j+0];
+    xpp[1] = xpps[3*j+1];
+    xpp[2] = xpps[3*j+2];
+
+    double xpxppcross[3] = {0.0};
+    vtkMath::Cross(xp,xpp,xpxppcross);
+
+    double xppp[3] = {0.0};
+    xppp[0] = xpps[3*(j+1)+0] - xpps[3*(j-1)+0];
+    xppp[1] = xpps[3*(j+1)+1] - xpps[3*(j-1)+1];
+    xppp[2] = xpps[3*(j+1)+2] - xpps[3*(j-1)+2];
+
+    xppp[0] /= norm0 + norm1;
+    xppp[1] /= norm0 + norm1;
+    xppp[2] /= norm0 + norm1;
+
+    double torsion = vtkMath::Dot(xpxppcross,xppp) / pow(vtkMath::Norm(xpxppcross),2.0);
+    torsionArray->SetComponent(j, 0, torsion);
+    double weight = (norm0 + norm1) / 2.0;
+    averageTorsion += torsion * weight;
+    if (torsion > maxTorsion)
+      {
+      maxTorsion = torsion;
+      }
+
+    weightSum += weight;
+    }
+
+  delete[] xps;
+  delete[] xpps;
+
+  if (weightSum > 0.0)
+    {
+    averageTorsion /= weightSum;
+    }
+
+  // Use the adjacent values for points second from end
+  torsionArray->SetComponent(linePoints->GetId(1), 0,
+    torsionArray->GetValue(linePoints->GetId(2)));
+  torsionArray->SetComponent(linePoints->GetId(numberOfPoints-2), 0,
+    torsionArray->GetValue(linePoints->GetId(numberOfPoints-3)));
+  if (this->CurveIsClosed)
+    {
+    // Use the adjacent values for closed curve instead of the singular values
+    torsionArray->SetComponent(linePoints->GetId(0), 0,
+      torsionArray->GetValue(linePoints->GetId(1)));
+    torsionArray->SetComponent(linePoints->GetId(numberOfPoints-1), 0,
+      torsionArray->GetValue(linePoints->GetId(numberOfPoints-2)));
+    }
+  else
+    {
+    torsionArray->SetComponent(linePoints->GetId(0), 0, 0.0);
+    torsionArray->SetComponent(linePoints->GetId(numberOfPoints-1), 0, 0.0);
+    }
+
+  // Set mean and max torsion to measurements
+  // Calculate and set interpolated control point measurements in poly data
+  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+    if (!currentMeasurement || currentMeasurement->GetName().empty() || !currentMeasurement->GetEnabled())
+      {
+      continue;
+      }
+    if (currentMeasurement->GetName() == this->GetAverageTorsionName())
+      {
+      currentMeasurement->SetDisplayValue(averageTorsion, this->TorsionUnits.c_str());
+      currentMeasurement->Compute(); // Have the measurement set the computation result to OK
+      }
+    else if (currentMeasurement->GetName() == this->GetMaxTorsionName())
+      {
+      currentMeasurement->SetDisplayValue(maxTorsion, this->TorsionUnits.c_str());
+      currentMeasurement->Compute(); // Have the measurement set the computation result to OK
+      }
+    }
+
+  // Set torsion array to output
+  polyData->GetPointData()->AddArray(torsionArray);
 
   return true;
 }
