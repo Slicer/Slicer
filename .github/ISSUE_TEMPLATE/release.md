@@ -22,6 +22,7 @@ Checklist **Installers Release**:
 * [ ] `CMakeLists.txt`: [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#cmakeliststxt-update-the-slicer-version-information-for-the-release) the Slicer version information for the release.
 * [ ] [Tag](https://github.com/Slicer/Slicer/wiki/Release-Process#tag-the-repository) the repository with `vX.Y.0`.
 * [ ] `CMakeLists.txt`: [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#cmakeliststxt-update-the-slicer-version-information-for-the-development) the Slicer version information for the development.
+* [ ] [Create](https://github.com/Slicer/Slicer/wiki/Release-Process#create-release-or-patch-release-on-slicer-packageskitwarecom) release `X.Y.0` on [slicer-packages.kitware.com](https://slicer-packages.kitware.com/#folder/5f4474d0e1d8c75dfc705482).
 * [ ] [Tag and publish](https://github.com/Slicer/Slicer/wiki/Release-Process#tag-and-publish-slicerbuildenvironment-docker-image) SlicerBuildEnvironment docker image.
 * [ ] [Create](https://github.com/Slicer/Slicer/wiki/Release-Process#create-maintenance-branch) maintenance branch called `X.Y` based on the first tag of the `X.Y` series.
 * [ ] Update readthedocs.
@@ -47,12 +48,11 @@ _These steps will take place in the week following **Installers Release** steps_
   * Linux: NA
   * macOS: signed :question:, notarized :question:
   * Windows: :question:
-* [ ] [Create](https://github.com/Slicer/Slicer/wiki/Release-Process#create-release-or-patch-release-on-slicer-packageskitwarecom) release `X.Y.0` on [slicer-packages.kitware.com](https://slicer-packages.kitware.com/#folder/5f4474d0e1d8c75dfc705482).
-* [ ] [Copy](https://github.com/Slicer/Slicer/wiki/Release-Process#copy-draft-application--extension-packages-into-the-new-release-folder) application & extension packages from `draft` into the new release created on `slicer-packages.kitware.com`.
 * [ ] [Upload](https://github.com/Slicer/Slicer/wiki/Release-Process#upload-signed-release-packages) signed release packages in the release folder.
   * Linux: NA
   * macOS: :question:
   * Windows: :question:
+* [ ] In the `X.Y.0` release folder, update each `Slicer_<os>_<arch>_<revision>` items changing the `pre_release` metadata from `true` to `false`.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-external-websites) external websites.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-extensionstats-module) `ExtensionStats` module.
 * [ ] Finalize Slicer Announcement.
