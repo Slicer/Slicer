@@ -66,6 +66,12 @@ public:
   /// Perform actions to deactivate the effect (such as destroy actors, etc.)
   Q_INVOKABLE void deactivate() override;
 
+  // TODO: temporary code, only for debugging
+  /// This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
+  /// Folder where debug output will be saved when using this effect.
+  Q_INVOKABLE void setDebugOutputFolder(QString folder) { DebugOutputFolder = folder;  };
+  static QString DebugOutputFolder;
+
 public slots:
   /// Update user interface from parameter set node
   void updateGUIFromMRML() override;
