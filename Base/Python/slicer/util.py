@@ -3491,11 +3491,9 @@ def logProcessOutput(proc):
             line = proc.stdout.readline()
             if not line:
                 break
+            print(line.rstrip())
             if guiApp:
-                logging.info(line.rstrip())
                 guiApp.processEvents()  # give a chance the application to refresh GUI
-            else:
-                print(line.rstrip())
         except UnicodeDecodeError as e:
             # Code page conversion happens because `universal_newlines=True` sets process output to text mode,
             # and it fails because probably system locale is not UTF8. We just ignore the error and discard the string,
