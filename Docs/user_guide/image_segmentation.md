@@ -29,33 +29,35 @@ Binary labelmap representation is probably the most commonly used representation
 
 There are many modules in 3D Slicer for manipulating segmentations. Overview of the most important is provided below.
 
-## Segmentations module overview
+## Segmentation modules
 
-Adjust display properties of segmentations, manage segment representations and layers, copy/move segments between segmentation nodes, convert between segmentation and models and labelmap volumes, export to files.
+Segmentation modules in Slicer core:
+- [Segmentations](modules/segmentations.md): Adjust display options, manage segment representations and layers, copy/move segments between segmentations, convert between segmentation and models and labelmap volumes, export to files.
+- [Segment Editor](modules/segmenteditor.md): Create and edit segmentations from images using manual (paint, draw, ...), semi-automatic (thresholding, region growing, interpolation, ...) and automatic tools. A number of editor effects are built into the Segment Editor module and many more are provided by extensions (in "Segmentations" category in the Extensions Manager).
+- [Segment statistics](modules/segmentstatistics.md): Computes intensity and geometric properties for each segment, such as volume, surface, minimum/maximum/mean intensity, oriented bounding box, sphericity, etc. See more information in.
 
-See more information in [Segmentations module documentation](modules/segmentations.md).
+Extensions for creating/editing segmentations:
+- [SegmentEditorExtraEffects](https://github.com/lassoan/SlicerSegmentEditorExtraEffects): Adds 8 more effects to Segment Editor.
+- [SurfaceWrapSolidify](https://github.com/sebastianandress/Slicer-SurfaceWrapSolidify): fill in internal holes in a segmented image region or retrieve the largest cavity inside a segmentation.
+- [MONAILabel](https://github.com/Project-MONAI/MONAILabel/tree/main/plugins/slicer/MONAILabel): AI-based segmentation of various organs using MONAILabel.
+- [TotalSegmentator](https://github.com/lassoan/SlicerTotalSegmentator): AI-based fully automatic segmentation of 104 structures in whole-body CT images.
+- [DensityLungSegmentation](https://github.com/pzaffino/SlicerDensityLungSegmentation): AI-based fully automatic lung segmentation.
+- [HDBrainExtraction](https://github.com/lassoan/SlicerHDBrainExtraction): AI-based fully automatic skull stripping in brain MRI images.
+- [NVIDIA-AIAA](https://github.com/NVIDIA/ai-assisted-annotation-client/tree/master/slicer-plugin): AI-based fully automatic segmentation of several organs. Segmentation is performed on a remote server.
+- [RVesselX](https://github.com/R-Vessel-X/SlicerRVXLiverSegmentation): Semi-automatic liver parenchyma and vessels segmentation.
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segmentations_module.png)
+Extensions for analyzing and processing segmentations:
+- [Segment comparison](https://www.slicer.org/wiki/Documentation/Nightly/Modules/SegmentComparison): Compute similarity between two segments based on metrics such as Hausdorff distance and Dice coefficient.
+- [Segment registration](https://github.com/SlicerRt/SegmentRegistration) (provided by SegmentRegistration extension): 
+Compute rigid or deformable transform that aligns two selected segments.
+- [SegmentMesher](https://github.com/lassoan/SlicerSegmentMesher): Creating volumetric (tetrahedral) meshes from segmentations.
+- [OpenAnatomy](https://github.com/PerkLab/SlicerOpenAnatomy): Export segmentations or model hierarchies for external viewers in glTF or OBJ format.
+- [Sandbox](https://github.com/PerkLab/SlicerSandbox): provides importer for Osirix ROI and SliceOmatic segmentation files.
 
-## Segment editor module overview
+For more extensions related to segmentations, open the ["Segmentations" category in the Extensions Catalog](https://extensions.slicer.org/catalog/Segmentation/30893/win).
 
-Create and edit segmentations from volumes using manual (paint, draw, ...), semi-automatic (thresholding, region growing, interpolation, ...) and automatic (NVidia AIAA,...) tools. A number of editor effects are built into the Segment Editor module and many more are provided by extensions (in Segmentations category in the Extensions Manager).
+## Tutorials
 
 To get started, check out these pages:
 - [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation): step by step slide and video tutorials
 - [Segment Editor module documentation](modules/segmenteditor.md): detailed description of Segment Editor user interface and effects
-
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segment_editor_module.png)
-
-## Segment statistics module overview
-
-Computes intensity and geometric properties for each segment, such as volume, surface, minimum/maximum/mean intensity, oriented boudning box, sphericity, etc. See more information in [Segment statistics module documentation](modules/segmentstatistics.md).
-
-## Segment comparison module overview
-
-Compute similarity between two segments based on metrics such as Hausdorff distance and Dice coefficient. Provided by SlicerRT extension. See more information in [Segment comparison module documentation](https://www.slicer.org/wiki/Documentation/Nightly/Modules/SegmentComparison).
-
-## Segment registration module overview
-
-Compute rigid or deformable transform that aligns two selected segments. Provided by SegmentRegistration extension.
-See more information in [Segment registration module documentation](https://github.com/SlicerRt/SegmentRegistration).

@@ -11,6 +11,8 @@ The Segmentations module manages segmentations. Each segmentation can contain mu
 
 Motivation, features, and details of the infrastructure are explained in paper *Cs. Pinter, A. Lasso, G. Fichtinger, "Polymorph segmentation representation for medical image computing", Computer Methods and Programs in Biomedicine, Volume 171, p19-26, 2019* ([pdf](http://perk.cs.queensu.ca/sites/perkd7.cs.queensu.ca/files/Pinter2019_Manuscript.pdf), [DOI](https://doi.org/10.1016/j.cmpb.2019.02.011)) and in presentation slides ([pdf](https://www.slicer.org/wiki/File:20160526_Segmentations.pdf), [pptx](https://www.slicer.org/wiki/File:20160526_Segmentations.pptx)).
 
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segmentations_module.png)
+
 ## Use cases
 
 ### Edit segmentation
