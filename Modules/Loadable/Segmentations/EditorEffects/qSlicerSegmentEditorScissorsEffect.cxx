@@ -491,14 +491,11 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     return false;
     }
 
-  vtkNew<vtkPoints> closedSurfacePoints; // p0Top, p0Bottom, p1Top, p1Bottom, ...
-  vtkNew<vtkCellArray> closedSurfaceStrips;
-  vtkNew<vtkCellArray> closedSurfacePolys;
-
   vtkPoints* pointsXY = pipeline->PolyData->GetPoints();
   int numberOfPoints = pointsXY ? pointsXY->GetNumberOfPoints() : 0;
-  if (numberOfPoints <= 1)
+  if (numberOfPoints < 3)
     {
+    // at least a triangle is needed
     return false;
     }
 
@@ -524,6 +521,8 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
   // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
   // TODO: show a meaningful error message to the user if attempted
   vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(segmentationNode->GetParentTransformNode(), nullptr, segmentationToWorldMatrix.GetPointer());
+
+  vtkNew<vtkPoints> closedSurfacePoints; // p0Top, p0Bottom, p1Top, p1Bottom, ...
 
   // Used for excluding one side of the slice plane from being modified when
   // filling or erasing outside in slice cut mode.
@@ -793,13 +792,9 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     return false;
     }
 
-  // Construct polydata
-  vtkNew<vtkPolyData> closedSurfacePolyData;
-  closedSurfacePolyData->SetPoints(closedSurfacePoints.GetPointer());
-  closedSurfacePolyData->SetStrips(closedSurfaceStrips.GetPointer());
-  closedSurfacePolyData->SetPolys(closedSurfacePolys.GetPointer());
-
   // Skirt
+  vtkNew<vtkCellArray> closedSurfacePolys;
+  vtkNew<vtkCellArray> closedSurfaceStrips;
   closedSurfaceStrips->InsertNextCell(numberOfPoints * 2 + 2);
   for (int i = 0; i < numberOfPoints * 2; i++)
     {
@@ -819,6 +814,12 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     {
     closedSurfacePolys->InsertCellPoint(i * 2 + 1);
     }
+
+  // Construct polydata
+  vtkNew<vtkPolyData> closedSurfacePolyData;
+  closedSurfacePolyData->SetPoints(closedSurfacePoints.GetPointer());
+  closedSurfacePolyData->SetStrips(closedSurfaceStrips.GetPointer());
+  closedSurfacePolyData->SetPolys(closedSurfacePolys.GetPointer());
 
   if (additionalBrushRegion)
     {
