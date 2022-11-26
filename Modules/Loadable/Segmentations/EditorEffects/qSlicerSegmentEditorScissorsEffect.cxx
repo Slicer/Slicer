@@ -78,6 +78,25 @@
 #include "vtkMRMLSliceLayerLogic.h"
 #include "vtkMRMLSliceLogic.h"
 
+// TODO: temporary code, only for debugging
+// This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
+#include "vtkXMLPolyDataWriter.h"
+QString qSlicerSegmentEditorScissorsEffect::DebugOutputFolder;
+void DebugWritePolyData(vtkPolyData* poly)
+{
+  if (qSlicerSegmentEditorScissorsEffect::DebugOutputFolder.isEmpty())
+    {
+    return;
+    }
+  vtkNew<vtkXMLPolyDataWriter> writer;
+  writer->SetInputData(poly);
+  QString filepath = qSlicerSegmentEditorScissorsEffect::DebugOutputFolder + "/DebugScissorBrush.vtp";
+  writer->SetFileName(filepath.toStdString().c_str());
+  writer->SetCompressorTypeToNone();
+  writer->SetDataModeToAscii();
+  writer->Write();
+}
+
 //-----------------------------------------------------------------------------
 /// Visualization objects and pipeline for each slice view for drawing cutting outline
 class ScissorsPipeline: public QObject
@@ -827,10 +846,21 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     append->AddInputData(closedSurfacePolyData.GetPointer());
     append->AddInputData(additionalBrushRegion);
     this->BrushPolyDataNormals->SetInputConnection(append->GetOutputPort());
+
+    // TODO: temporary code, only for debugging
+    // This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
+    append->Update();
+    DebugWritePolyData(append->GetOutput());
+
     }
   else
     {
     this->BrushPolyDataNormals->SetInputData(closedSurfacePolyData.GetPointer());
+
+    // TODO: temporary code, only for debugging
+    // This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
+    DebugWritePolyData(closedSurfacePolyData);
+
     }
 
   return true;
