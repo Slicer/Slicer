@@ -46,6 +46,7 @@
 #include <cassert>
 
 // DCMTK includes
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
 #include <dcmtk/dcmdata/dcmetinf.h>
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcuid.h>
@@ -56,6 +57,7 @@
 #include <dcmtk/ofstd/ofdatime.h>
 #include <dcmtk/dcmdata/dcuid.h>         /* for dcmtk version name */
 #include <dcmtk/dcmdata/dcdeftag.h>      /* for DCM_StudyInstanceUID */
+#endif
 
 // STD includes
 #include <sys/types.h>
@@ -159,6 +161,7 @@ void vtkSlicerMultiVolumeExplorerLogic::RegisterNodes()
   this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLMultiVolumeStorageNode>().GetPointer());
 }
 
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
 //----------------------------------------------------------------------------
 int vtkSlicerMultiVolumeExplorerLogic
 ::ProcessDICOMSeries(std::string dir, std::string outputDir,
@@ -260,6 +263,7 @@ int vtkSlicerMultiVolumeExplorerLogic
 
   return tagVal2fileList.size();
 }
+#endif
 
 //----------------------------------------------------------------------------
 void vtkSlicerMultiVolumeExplorerLogic
