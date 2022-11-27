@@ -54,8 +54,10 @@ public:
 
   /// Initialize listening to MRML events
   void InitializeEventListeners();
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
   int ProcessDICOMSeries(std::string inputDir, std::string outputDir,
                          std::string dcmTag, vtkDoubleArray*);
+#endif
 
   /// Register the factory that the MultiVolume needs to manage nrrd
   /// file with the specified volumes logic
