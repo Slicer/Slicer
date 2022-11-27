@@ -3476,7 +3476,6 @@ def logProcessOutput(proc):
     :param proc: process object.
     """
     from subprocess import CalledProcessError
-    import logging
     try:
         from slicer import app
         guiApp = app
