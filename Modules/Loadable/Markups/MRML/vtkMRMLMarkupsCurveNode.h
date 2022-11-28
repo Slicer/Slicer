@@ -191,11 +191,26 @@ public:
   /// \param closestPosWorld: output found closest position
   vtkIdType GetClosestPointPositionAlongCurveWorld(const double posWorld[3], double closestPosWorld[3]);
 
-  /// Get index of the farthest curve point from the specified reference point.
+  /// Get position of the closest point along the curve in any coordinate system.
+  /// The found position may be between two curve points.
+  /// Returns index of the found line segment. -1 if failed.
+  /// \param points: curve points
+  /// \param posWorld: input position
+  /// \param closestPosWorld: output found closest position
+  /// \param pointLocator: point locator for points. Optional, if not specified then closest point is found by a slow method (iterating through all the points).
+  static vtkIdType GetClosestPointPositionAlongCurve(vtkPoints* points, const double pos[3], double closestPos[3], vtkPointLocator* pointLocator=nullptr);
+
+  /// Get index of the farthest curve point from the specified reference point in world coordinates.
   /// Distance is Euclidean distance, not distance along the curve.
   /// \param posWorld Reference point position in world coordinate system
   /// \return index of the farthest curve point from refPoint, -1 in case of error
   vtkIdType GetFarthestCurvePointIndexToPositionWorld(const double posWorld[3]);
+
+  /// Get index of the farthest curve point from the specified reference point in any coordinate system.
+  /// Distance is Euclidean distance, not distance along the curve.
+  /// \param posWorld Reference point position in world coordinate system
+  /// \return index of the farthest curve point from refPoint, -1 in case of error
+  static vtkIdType GetFarthestCurvePointIndexToPosition(vtkPoints* points, const double posWorld[3]);
 
   /// Get curve point index corresponding to a control point.
   /// It is useful for calling methods that require curve point index as input.
@@ -205,11 +220,17 @@ public:
   static bool GetPositionAndClosestPointIndexAlongCurve(double foundCurvePosition[3], vtkIdType& foundClosestPointIndex,
     vtkIdType startCurvePointId, double distanceFromStartPoint, vtkPoints* curvePoints, bool closedCurve);
 
-  /// Get position of a curve point along the curve relative to the specified start point index.
+  /// Get position of a curve point along the curve relative to the specified start point index in world coordinate system.
   /// \param startCurvePointId index of the curve point to start the distance measurement from
   /// \param distanceFromStartPoint distance from the start point
   /// \return found point index, -1 in case of an error
   vtkIdType GetCurvePointIndexAlongCurveWorld(vtkIdType startCurvePointId, double distanceFromStartPoint);
+
+  /// Get position of a curve point along the curve relative to the specified start point index in any coordinate system.
+  /// \param startCurvePointId index of the curve point to start the distance measurement from
+  /// \param distanceFromStartPoint distance from the start point
+  /// \return found point index, -1 in case of an error
+  static vtkIdType GetCurvePointIndexAlongCurve(vtkPoints* points, vtkIdType startCurvePointId, double distanceFromStartPoint, bool curveClosed);
 
   /// Get position of a point along the curve relative to the specified start point index.
   /// The returned position can be between curve points (to match the requested distance as accurately as possible).

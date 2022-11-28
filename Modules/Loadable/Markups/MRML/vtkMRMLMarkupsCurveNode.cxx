@@ -299,14 +299,14 @@ double vtkMRMLMarkupsCurveNode::GetCurveLengthWorld(
 double vtkMRMLMarkupsCurveNode::GetCurveLengthBetweenStartEndPointsWorld(vtkIdType startCurvePointIndex, vtkIdType endCurvePointIndex)
 {
   if (startCurvePointIndex <= endCurvePointIndex)
-  {
+    {
     return this->GetCurveLengthWorld(startCurvePointIndex, endCurvePointIndex - startCurvePointIndex + 1);
-  }
+    }
   else
-  {
+    {
     // wrap around
     return this->GetCurveLengthWorld(0, endCurvePointIndex + 1) + this->GetCurveLengthWorld(startCurvePointIndex, -1);
-  }
+    }
 }
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsCurveNode::SetControlPointLabels(vtkStringArray* labels, vtkPoints* points)
@@ -768,7 +768,12 @@ bool vtkMRMLMarkupsCurveNode::GetCurveDirectionAtPointIndexWorld(vtkIdType curve
 //---------------------------------------------------------------------------
 vtkIdType vtkMRMLMarkupsCurveNode::GetFarthestCurvePointIndexToPositionWorld(const double posWorld[3])
 {
-  vtkPoints* points = this->GetCurvePointsWorld();
+  return vtkMRMLMarkupsCurveNode::GetFarthestCurvePointIndexToPosition(this->GetCurvePointsWorld(), posWorld);
+}
+
+//---------------------------------------------------------------------------
+vtkIdType vtkMRMLMarkupsCurveNode::GetFarthestCurvePointIndexToPosition(vtkPoints* points, const double pos[3])
+{
   if (!points || points->GetNumberOfPoints()<1)
     {
     return false;
@@ -776,14 +781,14 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetFarthestCurvePointIndexToPositionWorld(con
 
   double farthestPoint[3] = { 0.0 };
   points->GetPoint(0, farthestPoint);
-  double farthestPointDistance2 = vtkMath::Distance2BetweenPoints(posWorld, farthestPoint);
+  double farthestPointDistance2 = vtkMath::Distance2BetweenPoints(pos, farthestPoint);
   vtkIdType farthestPointId = 0;
 
   vtkIdType numberOfPoints = points->GetNumberOfPoints();
   for (vtkIdType pointIndex = 1; pointIndex < numberOfPoints; pointIndex++)
     {
     double* nextPoint = points->GetPoint(pointIndex);
-    double nextPointDistance2 = vtkMath::Distance2BetweenPoints(posWorld, nextPoint);
+    double nextPointDistance2 = vtkMath::Distance2BetweenPoints(pos, nextPoint);
     if (nextPointDistance2 > farthestPointDistance2)
       {
       farthestPoint[0] = nextPoint[0];
@@ -800,11 +805,16 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetFarthestCurvePointIndexToPositionWorld(con
 //---------------------------------------------------------------------------
 vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurveWorld(vtkIdType startCurvePointId, double distanceFromStartPoint)
 {
-  vtkPoints* points = this->GetCurvePointsWorld();
+  return vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurve(this->GetCurvePointsWorld(), startCurvePointId, distanceFromStartPoint, this->CurveClosed);
+}
+
+//---------------------------------------------------------------------------
+vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurve(vtkPoints* points, vtkIdType startCurvePointId, double distanceFromStartPoint, bool curveClosed)
+{
   double foundCurvePosition[3] = { 0.0 };
   vtkIdType foundClosestPointIndex = -1;
   vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(foundCurvePosition, foundClosestPointIndex,
-    startCurvePointId, distanceFromStartPoint, points, this->CurveClosed);
+    startCurvePointId, distanceFromStartPoint, points, curveClosed);
   return foundClosestPointIndex;
 }
 
@@ -984,31 +994,57 @@ void vtkMRMLMarkupsCurveNode::SetNumberOfPointsPerInterpolatingSegment(int point
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const double posWorld[3], double closestPosWorld[3])
+vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const double posWorld[3], double closestPos[3])
 {
-  vtkPoints* points = this->GetCurvePointsWorld();
+  return vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(this->GetCurvePointsWorld(), posWorld, closestPos, this->TransformedCurvePolyLocator);
+}
+
+//---------------------------------------------------------------------------
+vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(vtkPoints* points,
+  const double pos[3], double closestPos[3], vtkPointLocator* pointLocator/*=nullptr*/)
+{
   if (!points || points->GetNumberOfPoints() < 1)
     {
     return -1;
     }
   if (points->GetNumberOfPoints() == 1)
     {
-    points->GetPoint(0, closestPosWorld);
+    points->GetPoint(0, closestPos);
     return -1;
     }
 
   // Find closest curve point
-  vtkIdType closestCurvePointIndex = this->GetClosestCurvePointIndexToPositionWorld(posWorld);
-  if (closestCurvePointIndex < 0)
-    {
-    return -1;
-    }
+  vtkIdType closestCurvePointIndex = 0;
   double closestCurvePoint[3] = { 0.0 };
-  points->GetPoint(closestCurvePointIndex, closestCurvePoint);
-  double closestDistance2 = vtkMath::Distance2BetweenPoints(posWorld, closestPosWorld);
-  closestPosWorld[0] = closestCurvePoint[0];
-  closestPosWorld[1] = closestCurvePoint[1];
-  closestPosWorld[2] = closestCurvePoint[2];
+  double closestDistance2 = -1.0;
+  if (pointLocator)
+    {
+    closestCurvePointIndex = pointLocator->FindClosestPoint(pos);
+    if (closestCurvePointIndex < 0)
+      {
+      return -1;
+      }
+    points->GetPoint(closestCurvePointIndex, closestCurvePoint);
+    closestDistance2 = vtkMath::Distance2BetweenPoints(pos, closestPos);
+    }
+  else
+    {
+    closestDistance2 = vtkMath::Distance2BetweenPoints(pos, points->GetPoint(0));
+    vtkIdType numberOfPoints = points->GetNumberOfPoints();
+    for (vtkIdType pointId = 1; pointId < numberOfPoints; pointId++)
+      {
+      double distance2 = vtkMath::Distance2BetweenPoints(pos, points->GetPoint(pointId));
+      if (distance2 < closestDistance2)
+        {
+        closestCurvePointIndex = pointId;
+        closestDistance2 = distance2;
+        }
+      }
+    points->GetPoint(closestCurvePointIndex, closestCurvePoint);
+    }
+  closestPos[0] = closestCurvePoint[0];
+  closestPos[1] = closestCurvePoint[1];
+  closestPos[2] = closestCurvePoint[2];
   vtkIdType lineIndex = closestCurvePointIndex;
 
   // See if we can find any points closer along the curve
@@ -1018,26 +1054,26 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const 
   if (closestCurvePointIndex - 1 >= 0)
     {
     points->GetPoint(closestCurvePointIndex - 1, otherPoint);
-    double distance2 = vtkLine::DistanceToLine(posWorld, closestCurvePoint, otherPoint, relativePositionAlongLine, closestPointOnLine);
+    double distance2 = vtkLine::DistanceToLine(pos, closestCurvePoint, otherPoint, relativePositionAlongLine, closestPointOnLine);
     if (distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
       {
       closestDistance2 = distance2;
-      closestPosWorld[0] = closestPointOnLine[0];
-      closestPosWorld[1] = closestPointOnLine[1];
-      closestPosWorld[2] = closestPointOnLine[2];
+      closestPos[0] = closestPointOnLine[0];
+      closestPos[1] = closestPointOnLine[1];
+      closestPos[2] = closestPointOnLine[2];
       lineIndex = closestCurvePointIndex - 1;
       }
     }
   if (closestCurvePointIndex + 1 < points->GetNumberOfPoints())
     {
     points->GetPoint(closestCurvePointIndex + 1, otherPoint);
-    double distance2 = vtkLine::DistanceToLine(posWorld, closestCurvePoint, otherPoint, relativePositionAlongLine, closestPointOnLine);
+    double distance2 = vtkLine::DistanceToLine(pos, closestCurvePoint, otherPoint, relativePositionAlongLine, closestPointOnLine);
     if (distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
       {
       closestDistance2 = distance2;
-      closestPosWorld[0] = closestPointOnLine[0];
-      closestPosWorld[1] = closestPointOnLine[1];
-      closestPosWorld[2] = closestPointOnLine[2];
+      closestPos[0] = closestPointOnLine[0];
+      closestPos[1] = closestPointOnLine[1];
+      closestPos[2] = closestPointOnLine[2];
       lineIndex = closestCurvePointIndex;
       }
     }
