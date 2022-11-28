@@ -13,6 +13,7 @@ The example below shows how to export a tractography "FiberBundleNode" to a PLY 
 ```python
 lineDisplayNode = getNode("*LineDisplay*")
 plyFilePath = "/tmp/fibers.ply"
+outputCoordinateSystem = "RAS"  # can be "RAS" (still used in neuroimaging) or "LPS" (most commonly used coordinate system in medical image computing)
 
 tuber = vtk.vtkTubeFilter()
 tuber.SetInputData(lineDisplayNode.GetOutputPolyData())
@@ -31,7 +32,19 @@ lookupTable.DeepCopy(colorNode.GetLookupTable())
 lookupTable.SetTableRange(0,1)
 
 plyWriter = vtk.vtkPLYWriter()
-plyWriter.SetInputData(triangles.GetOutput())
+
+if outputCoordinateSystem == "RAS":
+    plyWriter.SetInputData(triangles.GetOutput())
+elif outputCoordinateSystem == "LPS":
+    transformRasToLps = vtk.vtkTransformPolyDataFilter()
+    rasToLps = vtk.vtkTransform()
+    rasToLps.Scale(-1, -1, 1)
+    transformRasToLps.SetTransform(rasToLps)
+    transformRasToLps.SetInputData(triangles.GetOutput())
+    plyWriter.SetInputConnection(transformRasToLps.GetOutputPort())
+else:
+    raise RuntimeError("Invalid output coordinate system")
+
 plyWriter.SetLookupTable(lookupTable)
 plyWriter.SetArrayName("scalars")
 
