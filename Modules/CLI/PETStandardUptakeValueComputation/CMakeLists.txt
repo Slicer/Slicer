@@ -43,6 +43,12 @@ set(${MODULE_NAME}_TARGET_LIBRARIES
   ${VTK_LIBRARIES}
   ${DCMTK_LIBRARIES}
   )
+foreach(lib IN LISTS DCMTK_LIBRARIES)
+  if(TARGET DCMTK::${lib})
+    list(REMOVE_ITEM ${MODULE_NAME}_TARGET_LIBRARIES ${lib})
+    list(APPEND ${MODULE_NAME}_TARGET_LIBRARIES DCMTK::${lib})
+  endif()
+endforeach()
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
