@@ -192,6 +192,14 @@ def createSerializer(type_, annotations):
     return (ValidatedSerializer(serializer, validators), annotations)
 
 
+def createSerializerFromAnnotatedType(annotatedType):
+    type_, annotations = splitAnnotations(annotatedType)
+    serializer, annotations = createSerializer(type_, annotations)
+    if annotations:
+        print(f"Warning: Unused annotations: {annotations}")
+    return serializer
+
+
 @parameterNodeSerializer
 class NumberSerializer(Serializer):
     """
@@ -511,11 +519,7 @@ class ListSerializer(Serializer):
                 print("Unexpected list[] type arg length")
             if len(args) == 0:
                 Exception("Unsure how to handle a typed list with no discernible type")
-            elementType, elementAnnotations = splitAnnotations(args[0])
-            serializer, annotations = createSerializer(elementType, elementAnnotations)
-            if annotations:
-                print(f"Warning: Unused annotations: {annotations}")
-            return ListSerializer(serializer)
+            return ListSerializer(createSerializerFromAnnotatedType(args[0]))
         return None
 
     def __init__(self, elementTypeSerializer):
@@ -599,3 +603,65 @@ class ListSerializer(Serializer):
         write to the parameterNode, but modifying the _element_ will not, which can be confusing.
         """
         return self._elementSerializer.supportsCaching()
+
+
+@parameterNodeSerializer
+class TupleSerializer(Serializer):
+    @staticmethod
+    def canSerialize(type_) -> bool:
+        return typing.get_origin(type_) == tuple
+
+    @staticmethod
+    def create(type_):
+        if TupleSerializer.canSerialize(type_):
+            args = typing.get_args(type_)
+            if len(args) == 0:
+                raise Exception("Unsure how to handle a typed tuple with no discernible type")
+            serializers = [createSerializerFromAnnotatedType(arg) for arg in args]
+            return TupleSerializer(serializers)
+        return None
+
+    def __init__(self, serializers):
+        self._len = len(serializers)
+        self._serializers = serializers
+
+    def default(self):
+        return (s.default() for s in self._serializers)
+
+    @staticmethod
+    def _paramName(name, index):
+        return f"{name}_{index}"
+
+    def isIn(self, parameterNode, name: str) -> bool:
+        return self._serializers[0].isIn(parameterNode, self._paramName(name, 0))
+
+    def write(self, parameterNode, name: str, values) -> None:
+        values = tuple(values)
+        if len(values) != len(self._serializers):
+            # this should probably never raise due to validators but better to be safe
+            raise ValueError("Unexpected number of tuple values")
+
+        with slicer.util.NodeModify(parameterNode):
+            for index, (value, serializer) in enumerate(zip(values, self._serializers)):
+                serializer.write(parameterNode, self._paramName(name, index), value)
+
+    def read(self, parameterNode, name: str) -> None:
+        return tuple(serializer.read(parameterNode, self._paramName(name, index))
+                     for index, serializer in enumerate(self._serializers))
+
+    def remove(self, parameterNode, name: str) -> None:
+        with slicer.util.NodeModify(parameterNode):
+            for index, serializer in enumerate(self._serializers):
+                serializer.remove(parameterNode, self._paramName(name, index))
+
+    def supportsCaching(self):
+        """
+        Whether this TupleSerializer support caching depends on if all of its delegate serializers
+        support caching.
+
+        Caching is preferred for tuples, it makes reads faster for tuples.
+        However, if the element itself does not support caching we shouldn't cache by default
+        because it might lead to unexpected behavior. In this case modifying the element of the
+        tuple will not update the underlying parameter node, which can be confusing.
+        """
+        return all([s.supportsCaching() for s in self._serializers])

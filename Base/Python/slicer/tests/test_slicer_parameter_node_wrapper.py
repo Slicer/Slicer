@@ -39,7 +39,7 @@ class CustomClassSerializer(Serializer):
         return None
 
     def default(self):
-        return None
+        return CustomClass(0, 0, 0)
 
     def isIn(self, parameterNode, name: str) -> bool:
         return parameterNode.HasParameter(name)
@@ -64,7 +64,7 @@ class AnotherCustomClass:
 
 
 # the big difference between this and CustomClassSerializer, is that the
-# default for this is not None
+# this supports writing None
 @parameterNodeSerializer
 class AnotherCustomClassSerializer(Serializer):
     @staticmethod
@@ -144,6 +144,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         pathSerializer = PathSerializer(pathlib.Path)
         boolSerializer = BoolSerializer()
         listSerializer = ListSerializer(NumberSerializer(float))
+        tupleSerializer = TupleSerializer([NumberSerializer(float), BoolSerializer()])
 
         parameterNode = newParameterNode()
 
@@ -152,12 +153,14 @@ class TypedParameterNodeTest(unittest.TestCase):
         pathSerializer.write(parameterNode, "path", pathlib.Path("."))
         boolSerializer.write(parameterNode, "bool", True)
         listSerializer.write(parameterNode, "list", [1])
+        tupleSerializer.write(parameterNode, "tuple", (3.3, True))
 
         numberSerializer.remove(parameterNode, "number")
         stringSerializer.remove(parameterNode, "string")
         pathSerializer.remove(parameterNode, "path")
         boolSerializer.remove(parameterNode, "bool")
         listSerializer.remove(parameterNode, "list")
+        tupleSerializer.remove(parameterNode, "tuple")
 
         self.assertFalse(parameterNode.GetParameterNames())
 
@@ -524,6 +527,55 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         param2 = ParameterNodeType(param.parameterNode)
         self.assertEqual(param2.p, [[4, 5, 0, 7]])
+
+    def test_tuple(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            a: tuple[Annotated[int, Minimum(0)], str]
+            b: Annotated[tuple[Annotated[float, Minimum(4)], bool], Default((44.0, False))]
+            c: tuple[list[int]]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertTrue(param.isCached("a"))
+        self.assertTrue(param.isCached("b"))
+        self.assertTrue(param.isCached("c"))
+
+        self.assertEqual(param.a, (0, ""))
+        self.assertEqual(param.b, (44.0, False))
+        self.assertEqual(param.c, ([], ))
+
+        param.a = (1, "a")
+        param.b = (4.4, False)
+        param.c = ([1, 4], )
+        param.c[0].append(7)
+        c0 = param.c[0]
+        c0.pop(0)
+
+        self.assertEqual(param.a, (1, "a"))
+        self.assertEqual(param.b, (4.4, False))
+        self.assertEqual(param.c, ([4, 7], ))
+
+        with self.assertRaises(ValueError):
+            param.a = (-2, "hi")
+        with self.assertRaises(ValueError):
+            param.b = (3.9, True)
+
+        self.assertEqual(param.a, (1, "a"))
+        self.assertEqual(param.b, (4.4, False))
+        self.assertEqual(param.c, ([4, 7], ))
+
+    def test_tuple_of_custom(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            a: tuple[CustomClass, int]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertFalse(param.isCached("a"))
+
+        self.assertEqual(param.a, (CustomClass(0, 0, 0), 0))
+
+        param.a = (CustomClass(7, 6, 5), 9)
+        self.assertEqual(param.a, (CustomClass(7, 6, 5), 9))
 
     def test_node(self):
         @parameterNodeWrapper
