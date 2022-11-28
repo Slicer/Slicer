@@ -62,6 +62,7 @@ The classes that are recognized by default are
 - `bool`
 - `vtkMRMLNode` (including subclasses)
 - `list` (hinted as `list[int]`, `list[str]`, etc)
+- `tuple` (hinted as `tuple[int, bool]`, `tuple[str, vtkMRMLNode, float]`, etc)
 - `pathlib.Path`
 - `pathlib.PosixPath`
 - `pathlib.WindowsPath`
@@ -110,20 +111,23 @@ This will make the default value of the `numIterations` parameter 500. If the `n
 
 If a default is not set explicitly, the following values will be used:
 
-| Type                                             | Implicit default                                             |
-|--------------------------------------------------|--------------------------------------------------------------|
-| `int`                                            | `0`                                                          |
-| `float`                                          | `0.0`                                                        |
-| `str`                                            | `""`                                                         |
-| `bool`                                           | `False`                                                      |
-| `vtkMRMLNode` (including subclasses)             | `None`                                                       |
-| `list` (hinted as `list[int]`, `list[str]`, etc) | `[]` (empty list)                                            |
-| `pathlib.Path`                                   | `pathlib.Path()` (which is the current directory)            |
-| `pathlib.PosixPath`                              | `pathlib.PosixPath()` (which is the current directory)       |
-| `pathlib.WindowsPath`                            | `pathlib.WindowsPath()` (which is the current directory)     |
-| `pathlib.PurePath`                               | `pathlib.PurePath()` (which is the current directory)        |
-| `pathlib.PurePosixPath`                          | `pathlib.PurePosixPath()` (which is the current directory)   |
-| `pathlib.PureWindowsPath`                        | `pathlib.PureWindowsPath()` (which is the current directory) |
+| Type                                             | Implicit default                                                                       |
+|--------------------------------------------------|----------------------------------------------------------------------------------------|
+| `int`                                            | `0`                                                                                    |
+| `float`                                          | `0.0`                                                                                  |
+| `str`                                            | `""`                                                                                   |
+| `bool`                                           | `False`                                                                                |
+| `vtkMRMLNode` (including subclasses)             | `None`                                                                                 |
+| `list` (hinted as `list[int]`, `list[str]`, etc) | `[]` (empty list)                                                                      |
+| `tuple` (hinted as `tuple[int, bool]`, etc)      |  A tuple of the defaults of all the elements (e.g. `tuple[int, bool]` -> `(0, False)`) |
+| `pathlib.Path`                                   | `pathlib.Path()` (which is the current directory)                                      |
+| `pathlib.PosixPath`                              | `pathlib.PosixPath()` (which is the current directory)                                 |
+| `pathlib.WindowsPath`                            | `pathlib.WindowsPath()` (which is the current directory)                               |
+| `pathlib.PurePath`                               | `pathlib.PurePath()` (which is the current directory)                                  |
+| `pathlib.PurePosixPath`                          | `pathlib.PurePosixPath()` (which is the current directory)                             |
+| `pathlib.PureWindowsPath`                        | `pathlib.PureWindowsPath()` (which is the current directory)                           |
+
+Note: For specifying the default of a tuple, use `Annotated[tuple[int, bool], Default((4, True))]`, not `tuple[Annotated[int, Default(4)], Annotated[bool, Default(True)]]`. This is mainly to keep consistency between setting default values for `tuple` and all the other classes (including other containers like `list`).
 
 #### Validators
 
