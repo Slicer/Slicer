@@ -27,13 +27,13 @@ if(NOT DEFINED ZLIB_ROOT AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/zlib.git"
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/zlib-ng.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "66a753054b356da85e1838a081aa94287226823e"
+    "de0aca6040339aad56d96ab1c29850b00ec36a9b"  # slicer-2.2.4-2025-02-10-860e4cf
     QUIET
     )
 
@@ -45,11 +45,17 @@ if(NOT DEFINED ZLIB_ROOT AND NOT Slicer_USE_SYSTEM_${proj})
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
     CMAKE_CACHE_ARGS
+      # Compiler settings
       ## CXX should not be needed, but it a cmake default test
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
+      # Options
+      -DBUILD_SHARED_LIBS:BOOL=OFF
+      -DZLIB_SYMBOL_PREFIX:STRING=slicer_zlib_
+      -DZLIB_COMPAT:BOOL=ON
+      -DZLIB_ENABLE_TESTS:BOOL=OFF
+      # Install directories
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS
       ${${proj}_DEPENDENCIES}
@@ -63,7 +69,7 @@ if(NOT DEFINED ZLIB_ROOT AND NOT Slicer_USE_SYSTEM_${proj})
   if(WIN32)
     set(ZLIB_LIBRARY ${zlib_DIR}/lib/zlib.lib)
   else()
-    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libzlib.a)
+    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libz.a)
   endif()
 else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,
