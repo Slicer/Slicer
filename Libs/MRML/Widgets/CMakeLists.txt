@@ -170,6 +170,8 @@ set(MRMLWidgets_SRCS
   qMRMLSliceInformationWidget.cxx
   qMRMLSliceInformationWidget.h
   qMRMLSliceInformationWidget_p.h
+  qMRMLSliceVerticalControllerWidget.cxx
+  qMRMLSliceVerticalControllerWidget.h
   qMRMLSliceView.cxx
   qMRMLSliceView.h
   qMRMLSliceView_p.h
@@ -294,6 +296,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLSliceControllerWidget_p.h
   qMRMLSliceInformationWidget.h
   qMRMLSliceInformationWidget_p.h
+  qMRMLSliceVerticalControllerWidget.h
   qMRMLSliceView.h
   qMRMLSliceView_p.h
   qMRMLSliceWidget.h
@@ -351,6 +354,7 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLSegmentSelectorWidget.ui
   Resources/UI/qMRMLSliceControllerWidget.ui
   Resources/UI/qMRMLSliceInformationWidget.ui
+  Resources/UI/qMRMLSliceVerticalControllerWidget.ui
   Resources/UI/qMRMLSliceWidget.ui
   Resources/UI/qMRMLTableViewControllerWidget.ui
   Resources/UI/qMRMLThreeDViewControllerWidget.ui

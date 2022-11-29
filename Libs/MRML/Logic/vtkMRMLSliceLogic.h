@@ -382,6 +382,10 @@ public:
   /// a volume is not editable (even if it is visible at the given position).
   int GetEditableLayerAtWorldPosition(double worldPos[3], bool backgroundVolumeEditable = true, bool foregroundVolumeEditable = true);
 
+  /// Get range and resolution for slice offset sliders.
+  /// Returns false if the information cannot be determined.
+  bool GetSliceOffsetRangeResolution(double range[2], double& resolution);
+
 protected:
 
   vtkMRMLSliceLogic();

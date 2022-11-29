@@ -61,6 +61,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget
   Q_PROPERTY(double sliceOffsetResolution READ sliceOffsetResolution WRITE setSliceOffsetResolution)
   Q_PROPERTY(bool moreButtonVisibility READ isMoreButtonVisible WRITE setMoreButtonVisible)
   Q_PROPERTY(QString sliceOrientation READ sliceOrientation WRITE setSliceOrientation)
+  Q_PROPERTY(bool showSliceOffsetSlider READ showSliceOffsetSlider WRITE setShowSliceOffsetSlider)
 public:
   /// Superclass typedef
   typedef qMRMLViewControllerBar Superclass;
@@ -150,6 +151,9 @@ public:
   /// Get the fit to window button (shown in the controller bar).
   Q_INVOKABLE QToolButton* fitToWindowToolButton();
 
+  /// Get the slice offset slider visibility.
+  bool showSliceOffsetSlider()const;
+
 public slots:
 
   void setMRMLScene(vtkMRMLScene* newScene) override;
@@ -171,6 +175,9 @@ public slots:
   /// \note Orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".
   /// This is an identifier, not to be translated.
   void setSliceOrientation(const QString& orientation);
+
+  /// Set slice offset slider visibility.
+  void setShowSliceOffsetSlider(bool show);
 
   /// Set slice \a offset. Used to set a single value.
   void setSliceOffsetValue(double offset);

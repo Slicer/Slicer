@@ -23,6 +23,7 @@
 // CTK includes
 #include <ctkLinearValueProxy.h>
 #include <ctkUtils.h>
+#include <ctkDoubleSlider.h>
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -60,12 +61,14 @@ public:
 qMRMLSliderWidgetPrivate::qMRMLSliderWidgetPrivate(qMRMLSliderWidget& object)
   : q_ptr(&object)
 {
+  Q_Q(qMRMLSliderWidget);
   this->Quantity = "";
   this->MRMLScene = nullptr;
   this->SelectionNode = nullptr;
   this->Flags = qMRMLSliderWidget::Prefix | qMRMLSliderWidget::Suffix
     | qMRMLSliderWidget::Precision | qMRMLSliderWidget::Scaling;
   this->Proxy = new ctkLinearValueProxy;
+  q->setOrientation(Qt::Horizontal);
 }
 
 // --------------------------------------------------------------------------
@@ -276,4 +279,20 @@ void qMRMLSliderWidget::setRange(double newMinimumValue, double newMaximumValue)
     {
     this->updateWidgetFromUnitNode();
     }
+}
+
+// --------------------------------------------------------------------------
+Qt::Orientation qMRMLSliderWidget::orientation()
+{
+  return this->slider()->orientation();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliderWidget::setOrientation(Qt::Orientation newOrientation)
+{
+  if (this->slider()->orientation() == newOrientation)
+    {
+    return;
+    }
+  this->slider()->setOrientation(newOrientation);
 }
