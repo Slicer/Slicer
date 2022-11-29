@@ -665,3 +665,137 @@ class TupleSerializer(Serializer):
         tuple will not update the underlying parameter node, which can be confusing.
         """
         return all([s.supportsCaching() for s in self._serializers])
+
+
+class ObservedDict(collections.abc.MutableMapping):
+    """
+    A dict-like class that will write values to a parameter node on change.
+    """
+
+    def __init__(self, parameterNode, dictSerializer, name, startingValue):
+        self._parameterNode = parameterNode
+        self._serializer = dictSerializer
+        self._name = name
+        self._dict = startingValue
+
+    def __repr__(self) -> str:
+        return str(self)
+
+    def __str__(self) -> str:
+        return f"ObservedDict({str(self._dict)})"
+
+    def _saveDict(self) -> None:
+        try:
+            self._serializer.write(self._parameterNode, self._name, self._dict)
+        finally:
+            self._dict = self._serializer.read(self._parameterNode, self._name)
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, ObservedDict):
+            return self._dict == other._dict
+        else:
+            return self._dict == other
+
+    def __ne__(self, other) -> bool:
+        return not self == other
+
+    def __len__(self):
+        return len(self._dict)
+
+    def __getitem__(self, key):
+        return self._dict[key]
+
+    def __delitem__(self, key):
+        del self._dict[key]
+        self._saveDict()
+
+    def __setitem__(self, key, value):
+        self._dict[key] = value
+        self._saveDict()
+
+    def __contains__(self, key):
+        return key in self._dict
+
+    def __iter__(self):
+        return iter(self._dict)
+
+    def keys(self):
+        return self._dict.keys()
+
+    def values(self):
+        return self._dict.values()
+
+    def items(self):
+        return self._dict.items()
+
+    def get(self, key):
+        return self._dict.get(key)
+
+    def pop(self, key):
+        ret = self._dict.pop(key)
+        self._saveDict()
+        return ret
+
+    def popitem(self):
+        ret = self._dict.popitem()
+        self._saveDict()
+        return ret
+
+    def clear(self):
+        self._dict.clear()
+        self._saveDict()
+
+
+@parameterNodeSerializer
+class DictSerializer(Serializer):
+    """
+    Serializer for dict types. Maintains dictionary order.
+
+    Currently stored as a list of tuples to maintain ordering.
+    """
+
+    @staticmethod
+    def canSerialize(type_) -> bool:
+        return typing.get_origin(type_) == dict
+
+    @staticmethod
+    def create(type_):
+        if DictSerializer.canSerialize(type_):
+            args = typing.get_args(type_)
+            if len(args) != 2:
+                raise Exception("Unsure how to handle a typed dictionary without exactly 2 types.")
+            serializers = [createSerializerFromAnnotatedType(arg) for arg in args]
+            return DictSerializer(serializers[0], serializers[1])
+        return None
+
+    def default(self):
+        return dict()
+
+    def __init__(self, keySerializer, valueSerializer) -> None:
+        self._serializer = ListSerializer(
+            TupleSerializer([keySerializer, valueSerializer]))
+
+    def isIn(self, parameterNode, name: str) -> bool:
+        return self._serializer.isIn(parameterNode, name)
+
+    def write(self, parameterNode, name: str, dictionary) -> None:
+        self._serializer.write(parameterNode, name, dictionary.items())
+
+    def read(self, parameterNode, name: str):
+        tuples = self._serializer.read(parameterNode, name)
+        return ObservedDict(parameterNode, self, name, dict(tuples))
+
+    def remove(self, parameterNode, name: str) -> None:
+        self._serializer.remove(parameterNode, name)
+
+    def supportsCaching(self):
+        """
+        Whether this DictSerializer support caching depends on if all of its delegate serializers
+        support caching.
+
+        Caching is preferred for dicts, it makes reads faster for dicts.
+        However, if the element (key or value) itself does not support caching we shouldn't cache by default
+        because it might lead to unexpected behavior. In this case modifying the key or value object of the
+        dict will not update the underlying parameter node, which can be confusing.
+        """
+        return self._serializer.supportsCaching()

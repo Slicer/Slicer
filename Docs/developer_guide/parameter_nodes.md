@@ -63,6 +63,7 @@ The classes that are recognized by default are
 - `vtkMRMLNode` (including subclasses)
 - `list` (hinted as `list[int]`, `list[str]`, etc)
 - `tuple` (hinted as `tuple[int, bool]`, `tuple[str, vtkMRMLNode, float]`, etc)
+- `dict` (hinted as `dict[keyType, valueType]`)
 - `pathlib.Path`
 - `pathlib.PosixPath`
 - `pathlib.WindowsPath`
@@ -120,6 +121,7 @@ If a default is not set explicitly, the following values will be used:
 | `vtkMRMLNode` (including subclasses)             | `None`                                                                                 |
 | `list` (hinted as `list[int]`, `list[str]`, etc) | `[]` (empty list)                                                                      |
 | `tuple` (hinted as `tuple[int, bool]`, etc)      |  A tuple of the defaults of all the elements (e.g. `tuple[int, bool]` -> `(0, False)`) |
+| `dict` (hinted as `dict[keyType, valueType]`)    | `{}` (empty dictionary)                                                                |
 | `pathlib.Path`                                   | `pathlib.Path()` (which is the current directory)                                      |
 | `pathlib.PosixPath`                              | `pathlib.PosixPath()` (which is the current directory)                                 |
 | `pathlib.WindowsPath`                            | `pathlib.WindowsPath()` (which is the current directory)                               |
@@ -297,7 +299,7 @@ This is the chosen behavior for the following reasons:
 
 Because Python objects are returned by reference, when a cached value is returned and then modified, the modification needs to be written back to the parameter node. Otherwise, the cached value and the parameter node will get out of sync.
 
-This write-on-change behavior has been implemented for the ListSerializer. The ListSerializer does not actually return a `list`, it returns an `ObservedList` that updates the parameter node whenever it is modified. `ObservedList` implements most `list` functions. This allows the following to work seamlessly:
+This write-on-change behavior has been implemented for the serializers for `list`, `tuple`, and `dict`. The ListSerializer does not actually return a `list`, it returns an `ObservedList` that updates the parameter node whenever it is modified. `ObservedList` implements most `list` functions. This allows the following to work seamlessly:
 
 ```py
 @parameterNodeWrapper
@@ -334,6 +336,8 @@ The following methods are available for `ObservedList`:
 
 Similarly for a parameter of `list[list[type]]`, an `ObservedList[ObservedList[type]]` is returned.
 When calling `param.values.append`, `param.values[index] = object` or `+=` in these cases, a normal `list` can be passed in and it will be converted to an `ObservedList`.
+
+There are similar mechanisms in place for `tuple` and `dict`.
 
 #### Caching for custom classes
 

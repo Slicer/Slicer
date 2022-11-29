@@ -145,6 +145,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         boolSerializer = BoolSerializer()
         listSerializer = ListSerializer(NumberSerializer(float))
         tupleSerializer = TupleSerializer([NumberSerializer(float), BoolSerializer()])
+        dictSerializer = DictSerializer(StringSerializer(), NumberSerializer(float))
 
         parameterNode = newParameterNode()
 
@@ -154,6 +155,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         boolSerializer.write(parameterNode, "bool", True)
         listSerializer.write(parameterNode, "list", [1])
         tupleSerializer.write(parameterNode, "tuple", (3.3, True))
+        dictSerializer.write(parameterNode, "dict", {"a": 1, "b": 2})
 
         numberSerializer.remove(parameterNode, "number")
         stringSerializer.remove(parameterNode, "string")
@@ -161,6 +163,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         boolSerializer.remove(parameterNode, "bool")
         listSerializer.remove(parameterNode, "list")
         tupleSerializer.remove(parameterNode, "tuple")
+        dictSerializer.remove(parameterNode, "dict")
 
         self.assertFalse(parameterNode.GetParameterNames())
 
@@ -576,6 +579,89 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         param.a = (CustomClass(7, 6, 5), 9)
         self.assertEqual(param.a, (CustomClass(7, 6, 5), 9))
+
+    def test_dict(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            a: dict[str, int]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertTrue(param.isCached("a"))
+
+        self.assertEqual(len(param.a), 0)
+
+        with self.assertRaises(KeyError):
+            param.a["x"]
+
+        param.a["x"] = 1
+        self.assertEqual(param.a["x"], 1)
+
+        param.a["q"] = 7
+        self.assertEqual(param.a["q"], 7)
+
+        self.assertTrue("q" in param.a)
+        self.assertEqual(param.a, {"x": 1, "q": 7})
+        self.assertEqual(list(param.a.items()), [("x", 1), ("q", 7)])
+        self.assertEqual(list(param.a.keys()), ["x", "q"])
+        self.assertEqual(list(param.a.values()), [1, 7])
+
+        self.assertEqual(len(param.a), 2)
+
+        del param.a["q"]
+        self.assertEqual(len(param.a), 1)
+        self.assertEqual(param.a, {"x": 1})
+
+        self.assertEqual(1, param.a.pop("x"))
+        self.assertEqual(param.a, {})
+
+        param.a = {"w": 4, "c": 3}
+        self.assertEqual(param.a, {"w": 4, "c": 3})
+
+        self.assertEqual(("c", 3), param.a.popitem())
+        self.assertEqual(param.a, {"w": 4})
+
+        param.a.clear()
+        self.assertEqual(param.a, {})
+
+        param.a["z"] = 101
+        param.a["aa"] = 102
+
+        # comparing the dict as a list ensures the ordering is correct
+        self.assertEqual(list(param.a.items()), [("z", 101), ("aa", 102)])
+
+        param2 = ParameterNodeType(param.parameterNode)
+        self.assertEqual(len(param2.a), 2)
+        self.assertEqual(param2.a["z"], 101)
+        self.assertEqual(param2.a["aa"], 102)
+        self.assertEqual(list(param2.a.items()), [("z", 101), ("aa", 102)])
+
+        # ensure we aren't accidentally cheating and using the same object
+        self.assertIsNot(param, param2)
+        self.assertIsNot(param.a, param2.a)
+
+        param2.a["aa"] = 103
+        self.assertEqual(param.a["aa"], 103)
+
+    def test_dict_of_list(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            a: dict[int, list[str]]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertTrue(param.isCached("a"))
+
+        self.assertEqual(len(param.a), 0)
+
+        param.a[0] = ["a", "b"]
+        param.a[1] = ["c", "d"]
+
+        param.a[0] += ["q", "r"]
+        a1 = param.a[1]
+        a1.pop(1)
+
+        self.assertEqual(param.a[0], ["a", "b", "q", "r"])
+        self.assertEqual(param.a[1], ["c"])
+        self.assertEqual(list(param.a.items()), [(0, ["a", "b", "q", "r"]), (1, ["c"])])
 
     def test_node(self):
         @parameterNodeWrapper
