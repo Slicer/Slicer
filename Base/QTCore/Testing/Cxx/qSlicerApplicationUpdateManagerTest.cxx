@@ -17,7 +17,6 @@
 
 // Qt includes
 #include <qSlicerCoreApplication.h>
-#include <QScriptEngine>
 
 // CTK includes
 #include <ctkTest.h>

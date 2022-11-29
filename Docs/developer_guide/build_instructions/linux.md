@@ -35,7 +35,7 @@ part of the *superbuild*:
   - Private
 - libXt
 
-### Debian 11 Stable (Bullseye) and Testing (Bookworm) 
+### Debian 11 Stable (Bullseye) and Testing (Bookworm)
 
 Install the development tools and the support libraries:
 
@@ -109,7 +109,7 @@ sudo yum install patch mesa-libGL-devel libuuid-devel
 This section describes how to install Qt as distributed by *The QT Company*, which can be used for any GNU/Linux distribution.
 
 :::{important}
-This process requires an account in [qt.io](https://qt.io) 
+This process requires an account in [qt.io](https://qt.io)
 
 :::
 
@@ -119,7 +119,7 @@ Download the Qt linux online installer and make it executable:
  curl -LO http://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run
  chmod +x qt-unified-linux-x64-online.run
 ```
-You can run the installer and follow the instructions in the GUI. Keep in mind that the components needed by 3D Slicer are: `qt.qt5.5152.gcc_64`, `qt.qt5.5152.qtscript` `qt.qt5.5152.qtscript.gcc_64`, `qt.qt5.5152.qtwebengine` and `qt.qt5.5152.qtwebengine.gcc_64`.
+You can run the installer and follow the instructions in the GUI. Keep in mind that the components needed by 3D Slicer are: `qt.qt5.5152.gcc_64`, `qt.qt5.5152.qtwebengine` and `qt.qt5.5152.qtwebengine.gcc_64`.
 
 Alternatively, you can request the installation of the components with the following command (you will be prompted for license agreements and permissions):
 
@@ -129,8 +129,6 @@ export QT_ACCOUNT_PASSWORD=<set your password here>
 ./qt-unified-linux-x64-online.run \
   install \
     qt.qt5.5152.gcc_64 \
-    qt.qt5.5152.qtscript \
-    qt.qt5.5152.qtscript.gcc_64 \
     qt.qt5.5152.qtwebengine \
     qt.qt5.5152.qtwebengine.gcc_64 \
   --root /opt/qt \
@@ -241,7 +239,7 @@ be built by running this command in the **build** folder
 make
 ```
 
-:::{admonition} Tip -- Parallel build 
+:::{admonition} Tip -- Parallel build
 
 Building Slicer will generally take long time, particularly on the first build or upon code/configuration changes. To help speeding up the process one can use `make -j<N>`, where `<N>` is the number of parallel builds. As a rule of thumb, many uses the `number of CPU threads + 1` as the number of parallel builds.
 

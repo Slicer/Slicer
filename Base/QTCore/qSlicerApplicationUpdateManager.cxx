@@ -19,9 +19,8 @@
 #include <QDebug>
 #include <QNetworkAccessManager>
 #include <QScopedPointer>
-#include <QScriptEngine>
-#include <QScriptValue>
-#include <QScriptValueList>
+#include <QJSEngine>
+#include <QJSValue>
 #include <QSettings>
 #include <QUrl>
 
@@ -334,17 +333,17 @@ bool qSlicerApplicationUpdateManager::onReleaseInfoQueryFinished(const QUuid& re
   if (!restResult.isNull())
     {
     QString responseString = QString(restResult->response());
-    QScriptEngine scriptEngine;
-    QScriptValue scriptValue = scriptEngine
+    QJSEngine scriptEngine;
+    QJSValue scriptValue = scriptEngine
       .evaluate("JSON.parse")
-      .call(QScriptValue(),
-        QScriptValueList() << responseString);
+      .callWithInstance(QJSValue(),
+        QJSValueList() << responseString);
 
     QList<QVariantMap> response;
     // e.g. {["key1": "value1", ...]} or {"key1": "value1", ...}
     if (scriptValue.isArray())
       {
-      quint32 length = scriptValue.property("length").toUInt32();
+      quint32 length = scriptValue.property("length").toUInt();
       for (quint32 i = 0; i < length; ++i)
         {
         qRestAPI::appendScriptValueToVariantMapList(response, scriptValue.property(i));
