@@ -148,7 +148,7 @@ void vtkMRMLScriptedModuleNode
 ::SetParameter(const std::string& name, const std::string& value)
 {
   const std::string currentValue = this->GetParameter(name);
-  if (value != currentValue)
+  if (value != currentValue || !this->HasParameter(name))
     {
     this->Parameters[name] = value;
     this->Modified();
