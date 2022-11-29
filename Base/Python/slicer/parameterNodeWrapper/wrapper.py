@@ -31,10 +31,9 @@ class _Parameter:
         self.serializer.write(parameterNode, self.name, value)
 
     def read(self, parameterNode):
-        if self.serializer.isIn(parameterNode, self.name):
-            return self.serializer.read(parameterNode, self.name)
-        else:
-            return self.default
+        if not self.serializer.isIn(parameterNode, self.name):
+            self.serializer.write(parameterNode, self.name, self.default)
+        return self.serializer.read(parameterNode, self.name)
 
     def remove(self, parameterNode):
         self.serializer.remove(parameterNode, self.name)
