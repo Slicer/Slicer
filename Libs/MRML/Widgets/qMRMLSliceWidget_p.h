@@ -56,11 +56,15 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceWidgetPrivate
   Q_DECLARE_PUBLIC(qMRMLSliceWidget);
 protected:
   qMRMLSliceWidget* const q_ptr;
+
+  Qt::Orientation SliceOffsetSliderOrientation{Qt::Horizontal};
+
 public:
   qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object);
   ~qMRMLSliceWidgetPrivate() override;
 
   void init();
+  void updateSliceOffsetSliderOrientation();
 
 public slots:
   void setSliceViewSize(const QSize& size);
@@ -68,8 +72,6 @@ public slots:
   void endProcessing();
   /// Set the image data to the slice view
   void setImageDataConnection(vtkAlgorithmOutput * imageDataConnection);
-
-
 };
 
 #endif

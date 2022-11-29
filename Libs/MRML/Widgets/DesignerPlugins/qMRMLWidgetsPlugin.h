@@ -62,6 +62,7 @@
 #include "qMRMLScalarsDisplayWidgetPlugin.h"
 #include "qMRMLSliceControllerWidgetPlugin.h"
 #include "qMRMLSliceInformationWidgetPlugin.h"
+#include "qMRMLSliceVerticalControllerWidgetPlugin.h"
 #include "qMRMLSliceWidgetPlugin.h"
 #include "qMRMLSliderWidgetPlugin.h"
 #include "qMRMLSpinBoxPlugin.h"
@@ -124,6 +125,7 @@ public:
             << new qMRMLSceneFactoryWidgetPlugin
             << new qMRMLSliceControllerWidgetPlugin
             << new qMRMLSliceInformationWidgetPlugin
+            << new qMRMLSliceVerticalControllerWidgetPlugin
             << new qMRMLSliceWidgetPlugin
             << new qMRMLSliderWidgetPlugin
             << new qMRMLSpinBoxPlugin

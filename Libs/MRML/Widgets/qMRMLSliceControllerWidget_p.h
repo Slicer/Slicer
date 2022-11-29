@@ -51,6 +51,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 
+class ctkDynamicSpacer;
 class ctkSignalMapper;
 class ctkDoubleSpinBox;
 class ctkVTKSliceView;
@@ -164,6 +165,8 @@ public slots:
 
   void applyCustomLightbox();
 
+  void updateSliceOffsetSliderVisibility();
+
 protected:
   void setupPopupUi() override;
   void setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite);
@@ -180,6 +183,7 @@ public:
 
   QToolButton*                        FitToWindowToolButton;
   qMRMLSliderWidget*                  SliceOffsetSlider;
+  ctkDynamicSpacer*                   SliderSpacer;
   /// Slicer offset resolution without applying display scaling.
   double                              SliceOffsetResolution{1.0};
   double                              LastLabelMapOpacity;
@@ -216,6 +220,8 @@ public:
 
   ctkSignalMapper*                    RulerTypesMapper;
   ctkSignalMapper*                    RulerColorMapper;
+
+  bool                                ShowSliceOffsetSlider{true};
 };
 
 #endif

@@ -72,7 +72,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliderWidget : public ctkSliderWidget
   // \sa setUnitAwareProperties(), unitAwareProperties()
   Q_FLAGS(UnitAwareProperty UnitAwareProperties)
   Q_PROPERTY(UnitAwareProperties unitAwareProperties READ unitAwareProperties WRITE setUnitAwareProperties)
-
+  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
 public:
   typedef ctkSliderWidget Superclass;
 
@@ -112,6 +112,10 @@ public:
   void setMaximum(double) override;
   void setRange(double, double) override;
 
+  /// This property holds the orientation of the slider.
+  /// The orientation must be Qt::Horizontal (the default) or Qt::Vertical.
+  Qt::Orientation orientation();
+
 public slots:
   void setQuantity(const QString& baseName);
 
@@ -120,6 +124,10 @@ public slots:
   virtual void setMRMLScene(vtkMRMLScene* scene);
 
   void setUnitAwareProperties(UnitAwareProperties flags);
+
+  /// This property holds the orientation of the slider.
+  /// The orientation must be Qt::Horizontal (the default) or Qt::Vertical.
+  void setOrientation(Qt::Orientation orientation);
 
 protected slots:
   void updateWidgetFromUnitNode();

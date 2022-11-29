@@ -33,6 +33,7 @@
 class qMRMLSliceView;
 class qMRMLSliceWidgetPrivate;
 class qMRMLSliceControllerWidget;
+class qMRMLSliceVerticalControllerWidget;
 class vtkCollection;
 class vtkMRMLScene;
 class vtkMRMLNode;
@@ -53,6 +54,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
   Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
   Q_PROPERTY(QString sliceViewLabel READ sliceViewLabel WRITE setSliceViewLabel)
   Q_PROPERTY(QColor sliceViewColor READ sliceViewColor WRITE setSliceViewColor)
+  Q_PROPERTY(Qt::Orientation sliceOffsetSliderOrientation READ sliceOffsetSliderOrientation WRITE setSliceOffsetSliderOrientation)
 
 public:
   /// Superclass typedef
@@ -64,6 +66,9 @@ public:
 
   /// Get slice controller
   Q_INVOKABLE qMRMLSliceControllerWidget* sliceController()const;
+
+  /// Get vertical slice controller
+  Q_INVOKABLE qMRMLSliceVerticalControllerWidget* sliceVerticalController()const;
 
   /// \sa qMRMLSliceControllerWidget::mrmlSliceNode()
   /// \sa setMRMLSliceNode()
@@ -124,6 +129,10 @@ public:
   /// \sa sliceController()
   Q_INVOKABLE qMRMLSliceView* sliceView()const;
 
+  /// This property holds the orientation of the slice offset slider.
+  /// The orientation must be Qt::Horizontal (the default) or Qt::Vertical.
+  Qt::Orientation sliceOffsetSliderOrientation() const;
+
 public slots:
   void setMRMLScene(vtkMRMLScene * newScene) override;
 
@@ -141,6 +150,10 @@ public slots:
 
   /// Fit slices to background
   void fitSliceToBackground();
+
+  /// This property holds the orientation of the slice offset slider.
+  /// The orientation must be Qt::Horizontal (the default) or Qt::Vertical.
+  void setSliceOffsetSliderOrientation(Qt::Orientation orientation);
 
 signals:
   /// Signal emitted when editing of a node is requested from within the slice widget

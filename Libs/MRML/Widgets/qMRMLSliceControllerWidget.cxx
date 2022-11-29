@@ -32,9 +32,11 @@
 
 // CTK includes
 #include <ctkDoubleSlider.h>
+#include <ctkDynamicSpacer.h>
 #include <ctkMessageBox.h>
 #include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
+#include <ctkSliderWidget.h>
 #include <ctkDoubleSpinBox.h>
 
 // qMRML includes
@@ -395,7 +397,13 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->FitToWindowToolButton->setFixedSize(15, 15);
   this->BarLayout->insertWidget(2, this->FitToWindowToolButton);
 
+  this->SliderSpacer = new ctkDynamicSpacer(q);
+  this->SliderSpacer->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Ignored);
+  this->BarLayout->addWidget(this->SliderSpacer);
+
   this->SliceOffsetSlider = new qMRMLSliderWidget(q);
+  this->SliceOffsetSlider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+
   this->SliceOffsetSlider->setObjectName("SliceOffsetSlider");
   this->SliceOffsetSlider->setTracking(false);
   this->SliceOffsetSlider->setToolTip(qMRMLSliceControllerWidget::tr("Slice distance from RAS origin"));
@@ -412,6 +420,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
   spinBox->setFrame(false);
   spinBox->spinBox()->setButtonSymbols(QAbstractSpinBox::NoButtons);
   spinBox->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
+
   int targetHeight = spinBox->parentWidget()->layout()->sizeHint().height();//setSizeConstraint(QLayout::SetMinimumSize);
   int fontHeight = spinBox->fontMetrics().height();
   qreal heightRatio = static_cast<qreal>(targetHeight - 2) / fontHeight;
@@ -421,6 +430,8 @@ void qMRMLSliceControllerWidgetPrivate::init()
     stretchedFont.setPointSizeF(stretchedFont.pointSizeF() * heightRatio);
     spinBox->setFont(stretchedFont);
     }
+
+  this->updateSliceOffsetSliderVisibility();
 
   // Connect Slice offset slider
   this->connect(this->SliceOffsetSlider, SIGNAL(valueChanged(double)),
@@ -443,6 +454,13 @@ void qMRMLSliceControllerWidgetPrivate::init()
   defaultLogic->SetMRMLApplicationLogic(vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic());
 
   q->setSliceLogic(defaultLogic.GetPointer());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::updateSliceOffsetSliderVisibility()
+{
+  this->SliderSpacer->setVisible(!this->ShowSliceOffsetSlider);
+  this->SliceOffsetSlider->slider()->setVisible(this->ShowSliceOffsetSlider);
 }
 
 // --------------------------------------------------------------------------
@@ -1274,40 +1292,16 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
   q->setImageDataConnection(
     this->SliceLogic ? this->SliceLogic->GetImageDataConnection() : nullptr);
 
-  if (!this->SliceLogic)
+  double offsetRange[2] = { -1.0, 1.0 };
+  double offsetResolution = 1.0;
+  if (!this->SliceLogic || !this->SliceLogic->GetSliceOffsetRangeResolution(offsetRange, offsetResolution))
     {
     return;
     }
+
   bool wasBlocking = this->SliceOffsetSlider->blockSignals(true);
-
-  // Set slice offset range to match the field of view
-  // Calculate the number of slices in the current range.
-  // Extent is between the farthest voxel centers (not voxel sides).
-  double sliceBounds[6] = {0, -1, 0, -1, 0, -1};
-  this->SliceLogic->GetLowestVolumeSliceBounds(sliceBounds, true);
-
-  const double * sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
-  Q_ASSERT(sliceSpacing);
-  double offsetResolution = sliceSpacing ? sliceSpacing[2] : 1.0;
-
-  bool singleSlice = ((sliceBounds[5] - sliceBounds[4]) < offsetResolution);
-  if (singleSlice)
-    {
-    // add one blank slice before and after the current slice to make the slider appear in the center when
-    // we are centered on the slice
-    double centerPos = (sliceBounds[4] + sliceBounds[5]) / 2.0;
-    q->setSliceOffsetRange(centerPos - offsetResolution, centerPos + offsetResolution);
-    }
-  else
-    {
-    // there are at least two slices in the range
-    q->setSliceOffsetRange(sliceBounds[4], sliceBounds[5]);
-    }
-
-  // Set the scale increments to match the z spacing (rotated into slice space)
+  q->setSliceOffsetRange(offsetRange[0], offsetRange[1]);
   q->setSliceOffsetResolution(offsetResolution);
-
-  // Update slider position
   this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
   this->SliceOffsetSlider->blockSignals(wasBlocking);
 
@@ -2863,4 +2857,19 @@ void qMRMLSliceControllerWidget::updateWidgetFromMRMLView()
   Q_D(qMRMLSliceControllerWidget);
   Superclass::updateWidgetFromMRMLView();
   d->updateWidgetFromMRMLSliceNode();
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLSliceControllerWidget::showSliceOffsetSlider()const
+{
+  Q_D(const qMRMLSliceControllerWidget);
+  return d->ShowSliceOffsetSlider;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setShowSliceOffsetSlider(bool show)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  d->ShowSliceOffsetSlider = show;
+  d->updateSliceOffsetSliderVisibility();
 }

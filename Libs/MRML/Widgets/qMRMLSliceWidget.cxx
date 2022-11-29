@@ -69,6 +69,18 @@ void qMRMLSliceWidgetPrivate::init()
           this, SLOT(setImageDataConnection(vtkAlgorithmOutput*)));
   connect(this->SliceController, SIGNAL(renderRequested()),
           this->SliceView, SLOT(scheduleRender()), Qt::QueuedConnection);
+  connect(this->SliceVerticalController, SIGNAL(renderRequested()),
+          this->SliceView, SLOT(scheduleRender()), Qt::QueuedConnection);
+
+  this->updateSliceOffsetSliderOrientation();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceWidgetPrivate::updateSliceOffsetSliderOrientation()
+{
+  bool horizontal = (this->SliceOffsetSliderOrientation == Qt::Horizontal);
+  this->SliceController->setShowSliceOffsetSlider(horizontal);
+  this->SliceVerticalController->setShowSliceOffsetSlider(!horizontal);
 }
 
 // --------------------------------------------------------------------------
@@ -139,6 +151,7 @@ void qMRMLSliceWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
   Q_D(qMRMLSliceWidget);
   d->SliceController->setMRMLSliceNode(newSliceNode);
+  d->SliceVerticalController->setMRMLSliceNode(newSliceNode);
   d->SliceView->setMRMLSliceNode(newSliceNode);
 }
 
@@ -253,6 +266,14 @@ void qMRMLSliceWidget::fitSliceToBackground()
 }
 
 // --------------------------------------------------------------------------
+void qMRMLSliceWidget::setSliceOffsetSliderOrientation(Qt::Orientation orientation)
+{
+  Q_D(qMRMLSliceWidget);
+  d->SliceOffsetSliderOrientation = orientation;
+  d->updateSliceOffsetSliderOrientation();
+}
+
+// --------------------------------------------------------------------------
 qMRMLSliceView* qMRMLSliceWidget::sliceView()const
 {
   Q_D(const qMRMLSliceWidget);
@@ -260,10 +281,24 @@ qMRMLSliceView* qMRMLSliceWidget::sliceView()const
 }
 
 // --------------------------------------------------------------------------
+Qt::Orientation qMRMLSliceWidget::sliceOffsetSliderOrientation()const
+{
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceOffsetSliderOrientation;
+}
+
+// --------------------------------------------------------------------------
 qMRMLSliceControllerWidget* qMRMLSliceWidget::sliceController()const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController;
+}
+
+// --------------------------------------------------------------------------
+qMRMLSliceVerticalControllerWidget *qMRMLSliceWidget::sliceVerticalController() const
+{
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceVerticalController;
 }
 
 // --------------------------------------------------------------------------
