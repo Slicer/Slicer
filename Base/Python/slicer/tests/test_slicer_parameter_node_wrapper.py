@@ -161,6 +161,16 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         self.assertFalse(parameterNode.GetParameterNames())
 
+    def test_stringIsIn(self):
+        stringSerializer = StringSerializer()
+        parameterNode = newParameterNode()
+        name = "key"
+
+        stringSerializer.write(parameterNode, name, "")
+
+        self.assertEqual(stringSerializer.read(parameterNode, name), "")
+        self.assertTrue(stringSerializer.isIn(parameterNode, name))
+
     def test_isCached(self):
         @parameterNodeWrapper
         class ParameterNodeType:
