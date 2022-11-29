@@ -75,6 +75,8 @@ set(${KIT}_SRCS
   qMRMLSliceControllerWidgetPlugin.h
   qMRMLSliceInformationWidgetPlugin.cxx
   qMRMLSliceInformationWidgetPlugin.h
+  qMRMLSliceVerticalControllerWidgetPlugin.cxx
+  qMRMLSliceVerticalControllerWidgetPlugin.h
   qMRMLSliceWidgetPlugin.cxx
   qMRMLSliceWidgetPlugin.h
   qMRMLSliderWidgetPlugin.cxx
@@ -142,6 +144,7 @@ set(${KIT}_MOC_SRCS
   qMRMLSceneFactoryWidgetPlugin.h
   qMRMLSliceControllerWidgetPlugin.h
   qMRMLSliceInformationWidgetPlugin.h
+  qMRMLSliceVerticalControllerWidgetPlugin.h
   qMRMLSliceWidgetPlugin.h
   qMRMLSliderWidgetPlugin.h
   qMRMLSpinBoxPlugin.h

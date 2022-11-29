@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>595</width>
-    <height>518</height>
+    <height>351</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,39 +17,72 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
-    <widget class="qMRMLSliceControllerWidget" name="SliceController"/>
+    <widget class="qMRMLSliceControllerWidget" name="SliceController">
+     <property name="showSliceOffsetSlider">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="margin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="qMRMLSliceView" name="SliceView">
-        <property name="renderEnabled">
-         <bool>true</bool>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QFrame" name="frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
         </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="qMRMLSliceView" name="SliceView" native="true">
+          <property name="renderEnabled" stdset="0">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="qMRMLSliceVerticalControllerWidget" name="SliceVerticalController">
+       <property name="showSliceOffsetSlider">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -58,6 +91,11 @@
    <class>qMRMLSliceControllerWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLSliceControllerWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSliceVerticalControllerWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLSliceVerticalControllerWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLWidget</class>
