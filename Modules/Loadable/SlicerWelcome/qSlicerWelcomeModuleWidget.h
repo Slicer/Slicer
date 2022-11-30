@@ -59,7 +59,7 @@ protected:
 
 protected slots:
   void loadSource(QWidget*);
-  void onAutoUpdateCheckToggled(bool);
+  void onAutoUpdateCheckStateChanged(int);
   void onAutoUpdateSettingsChanged();
 
 protected:

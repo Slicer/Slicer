@@ -343,8 +343,8 @@ void qSlicerWelcomeModuleWidget::setup()
 
   if (extensionUpdatesEnabled || applicationUpdatesEnabled)
     {
-    QObject::connect(d->CheckForUpdatesAutomaticallyCheckBox, SIGNAL(toggled(bool)),
-      this, SLOT(onAutoUpdateCheckToggled(bool)));
+    QObject::connect(d->CheckForUpdatesAutomaticallyCheckBox, SIGNAL(stateChanged(int)),
+      this, SLOT(onAutoUpdateCheckStateChanged(int)));
 
     QObject::connect(d->CheckForUpdatesNowButton, SIGNAL(clicked()),
       this, SLOT(checkForUpdates()));
@@ -512,9 +512,11 @@ void qSlicerWelcomeModuleWidget::checkForUpdates()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerWelcomeModuleWidget::onAutoUpdateCheckToggled(bool autoUpdate)
+void qSlicerWelcomeModuleWidget::onAutoUpdateCheckStateChanged(int state)
 {
   Q_D(qSlicerWelcomeModuleWidget);
+  bool autoUpdate = (state != Qt::Unchecked);
+
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerExtensionsManagerModel* extensionsManagerModel = d->extensionsManagerModel();
   if (extensionsManagerModel)
