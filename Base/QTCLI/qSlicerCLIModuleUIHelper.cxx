@@ -697,7 +697,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
       widget->setNodeTypes(nodeTypes);
       widget->addAttribute("vtkMRMLSequenceNode", "DataNodeClassName", "vtkMRMLScalarVolumeNode");
       }
-    if (nodeType == "vtkMRMLLabelMapVolumeNode")
+    else if (nodeType == "vtkMRMLLabelMapVolumeNode")
       {
       QStringList nodeTypes;
       nodeTypes << nodeType << "vtkMRMLSegmentationNode";
