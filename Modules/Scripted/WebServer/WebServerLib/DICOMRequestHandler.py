@@ -59,34 +59,36 @@ class DICOMRequestHandler:
         """
         contentType = b'application/json'
         splitPath = parsedURL.path.split(b'/')
+
         offset = 0
         limit = 100
+        patientID = None
         params = parsedURL.query.split(b"&")
         for param in params:
-            if param.split(b"=")[0] == b"offset":
+            paramName = param.split(b"=")[0].decode('UTF-8').lower()
+            if paramName == "offset":
                 offset = int(param.split(b"=")[1])
-            if param.split(b"=")[0] == b"limit":
+            elif paramName == "limit":
                 limit = int(param.split(b"=")[1])
+            elif paramName in ["patientid", b"00100020"]:
+                patientID = param.split(b"=")[1].decode('UTF-8')
+
         studyCount = 0
         responseBody = b"[{}]"
         if len(splitPath) == 3:
             # studies qido search
             studyResponseString = b"["
             for patient in slicer.dicomDatabase.patients():
-                if studyCount > offset + limit:
+                if studyCount >= offset + limit:
                     break
                 for study in slicer.dicomDatabase.studiesForPatient(patient):
-                    studyCount += 1
-                    if studyCount < offset:
-                        continue
-                    if studyCount > offset + limit:
-                        break
                     # Get summary information of all the series (number of instances, modalities) and a representative series
                     representativeSeriesDataset = None
                     series = slicer.dicomDatabase.seriesForStudy(study)
                     numberOfStudyRelatedSeries = len(series)
                     numberOfStudyRelatedInstances = 0
                     modalitiesInStudy = set()
+                    skipThisStudy = False
                     for serie in series:
                         seriesInstances = slicer.dicomDatabase.instancesForSeries(serie)
                         numberOfStudyRelatedInstances += len(seriesInstances)
@@ -98,6 +100,10 @@ class DICOMRequestHandler:
                             if representativeSeriesDataset is None:
                                 # Use the first valid data set as representative series data
                                 representativeSeriesDataset = dataset
+                                # Skip this study if does not match requested patient
+                                if (patientID is not None and dataset.PatientID != patientID):
+                                    skipThisStudy = True
+                                    break
                         except Exception as e:
                             self.logMessage(f'Error while attempting to read instance {seriesInstances[0]} from file "{filename}": {e}')
                             dataset = None
@@ -106,6 +112,8 @@ class DICOMRequestHandler:
                                 modalitiesInStudy.add(dataset.Modality)
                             except AttributeError as e:
                                 self.logMessage(f'Modality information was not found in {filename} ({seriesInstances[0]})')
+                    if skipThisStudy:
+                        continue
                     if representativeSeriesDataset is None:
                         self.logMessage('Could not find any instances for study %s' % study)
                         continue
@@ -135,8 +143,15 @@ class DICOMRequestHandler:
                             self.numberOfStudyRelatedSeriesTag, "IS", str(numberOfStudyRelatedSeries))
                         studyDataset[self.numberOfStudyRelatedInstancesTag] = pydicom.dataelem.DataElement(
                             self.numberOfStudyRelatedInstancesTag, "IS", str(numberOfStudyRelatedInstances))
-                        jsonDataset = studyDataset.to_json(studyDataset)
-                        studyResponseString += jsonDataset.encode() + b","
+
+                        # We got here, which means we have a valid study that matches query criteria and so it could be returned.
+                        studyCount += 1
+                        # If an offset is specified and this study index is smaller than the offset then do not return it
+                        # (the client has probably already already retrieved this study).
+                        if studyCount > offset:
+                            jsonDataset = studyDataset.to_json(studyDataset)
+                            studyResponseString += jsonDataset.encode() + b","
+
                     except AttributeError:
                         self.logMessage(f"Skipping study {study} with missing attribute")
             if studyResponseString.endswith(b','):

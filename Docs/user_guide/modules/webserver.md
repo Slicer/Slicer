@@ -83,6 +83,18 @@ Exposes the Slicer dicom database as a [DICOMweb endpoint](https://www.dicomstan
 
 This version implements a subset of the `QIDO-RS` and `WADO-RS` specifications allowing to host a web app such as the [OHIF Viewer](https://ohif.org/).
 
+Supported QIDO requests:
+- `/dicom/studies`: get list of studies as json, optional query parameters: `offset`, `limit`, `PatientID`
+- `/dicom/studies/<studyuid>/metadata`: get DICOM tags of the specified study as json
+- `/dicom/studies/<studyuid>/series`: get list of series for a study as json
+- `/dicom/studies/<studyuid>/series/<seriesuid>/metadata`: get DICOM tags of the specified series as json
+- `/dicom/studies/<studyuid>/series/<seriesuid>/instances`: get list of instances for a series as json
+- `/dicom/studies/<studyuid>/series/<seriesuid>/instances/<sopinstanceuid>`: download the instance
+- `/dicom/studies/<studyuid>/series/<seriesuid>/instances/<sopinstanceuid>/metadata`: get DICOM tags of the specified instance as json
+
+Supported WADO requests:
+- `/dicom?object=<sopinstanceuid>`: downloads the specified instance
+
 For OHIF version 2, change the `platform/viewer/public/config/default.js`, set the `servers` configuration key as follows.
 
 ```
