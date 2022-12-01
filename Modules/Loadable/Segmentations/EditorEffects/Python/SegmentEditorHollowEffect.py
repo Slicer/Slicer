@@ -234,10 +234,8 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
                 inputSegmentIDs = vtk.vtkStringArray()
                 segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
                 segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(inputSegmentIDs)
-                segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self().editor
-                segmentEditorNode = segmentEditorWidget.mrmlSegmentEditorNode()
                 # store which segment was selected before operation
-                selectedStartSegmentID = segmentEditorNode.GetSelectedSegmentID()
+                selectedStartSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
                 if inputSegmentIDs.GetNumberOfValues() == 0:
                     logging.info("Hollow operation skipped: there are no visible segments.")
                     return
@@ -245,10 +243,10 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
                 for index in range(inputSegmentIDs.GetNumberOfValues()):
                     segmentID = inputSegmentIDs.GetValue(index)
                     self.showStatusMessage(f'Processing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
-                    segmentEditorNode.SetSelectedSegmentID(segmentID)
+                    self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(segmentID)
                     self.processHollowing()
                 # restore segment selection
-                segmentEditorNode.SetSelectedSegmentID(selectedStartSegmentID)
+                self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(selectedStartSegmentID)
             else:
                 self.processHollowing()
 
