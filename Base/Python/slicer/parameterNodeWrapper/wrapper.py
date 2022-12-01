@@ -160,6 +160,7 @@ def _processClass(classtype):
         setattr(classtype, parameter.basename, _makeProperty(parameter.basename))
 
     setattr(classtype, "__allParameters", allParameters)
+    setattr(classtype, "_is_parameter_node_wrapper", True)
 
     setattr(classtype, "__init__", _initMethod)
     setattr(classtype, "default", _default)

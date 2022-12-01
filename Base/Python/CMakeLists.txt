@@ -4,6 +4,7 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/logic
   slicer/parameterNodeWrapper/__init__
   slicer/parameterNodeWrapper/default
+  slicer/parameterNodeWrapper/parameterPack
   slicer/parameterNodeWrapper/serializers
   slicer/parameterNodeWrapper/util
   slicer/parameterNodeWrapper/validators
