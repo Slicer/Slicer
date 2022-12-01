@@ -127,7 +127,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     className = "vtkMRML";
     className += tagName;
     // Append 'Node' prefix only if required
-    if (className.find("Node") != className.size() - 4)
+    if (className.rfind("Node") != className.size() - 4)
       {
       className += "Node";
       }
