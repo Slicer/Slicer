@@ -61,7 +61,7 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             pack.x = None
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             pack.x = "hi"
 
     def test_parameter_pack_validation(self):
@@ -82,7 +82,7 @@ class TypedParameterNodeTest(unittest.TestCase):
             ParameterPack(0, "c")
         with self.assertRaises(ValueError):
             ParameterPack(None, "a")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             ParameterPack(2.2, 4)
 
     def test_parameter_pack_nesting(self):

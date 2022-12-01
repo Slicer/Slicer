@@ -381,7 +381,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         p.append(7)
         self.assertEqual(param.p, [4, 1, 7])
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             p.append("hi")
         self.assertEqual(param.p, [4, 1, 7])
 
@@ -684,7 +684,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertEqual(param.output, output)
 
         # cannot set a model to a markup
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             param.output = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScalarVolumeNode')
 
         param.output = None
@@ -703,7 +703,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         param.node = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScalarVolumeNode')
         self.assertIsInstance(param.node, vtkMRMLScalarVolumeNode)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             param.node = 4
 
     def test_events(self):

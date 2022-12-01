@@ -153,7 +153,7 @@ def _processClass(classtype):
         try:
             serializer.validate(default)
         except Exception as e:
-            raise Exception(f"The default parameter of '{default}' fails the validation checks:\n  {str(e)}")
+            raise ValueError(f"The default parameter of '{default}' fails the validation checks:\n  {str(e)}")
 
         parameter = _ParameterInfo(name, serializer, default)
         allParameters.append(parameter)
