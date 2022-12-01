@@ -217,20 +217,18 @@ If segments overlap, segment higher in the segments table will have priority. <b
                 inputSegmentIDs = vtk.vtkStringArray()
                 segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
                 segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(inputSegmentIDs)
-                segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self().editor
-                segmentEditorNode = segmentEditorWidget.mrmlSegmentEditorNode()
                 # store which segment was selected before operation
-                selectedStartSegmentID = segmentEditorNode.GetSelectedSegmentID()
+                selectedStartSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
                 if inputSegmentIDs.GetNumberOfValues() == 0:
                     logging.info("Smoothing operation skipped: there are no visible segments.")
                     return
                 for index in range(inputSegmentIDs.GetNumberOfValues()):
                     segmentID = inputSegmentIDs.GetValue(index)
                     self.showStatusMessage(f'Smoothing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
-                    segmentEditorNode.SetSelectedSegmentID(segmentID)
+                    self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(segmentID)
                     self.smoothSelectedSegment(maskImage, maskExtent)
                 # restore segment selection
-                segmentEditorNode.SetSelectedSegmentID(selectedStartSegmentID)
+                self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(selectedStartSegmentID)
             else:
                 self.smoothSelectedSegment(maskImage, maskExtent)
         finally:
