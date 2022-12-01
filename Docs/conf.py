@@ -21,7 +21,6 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath('../Base/Python'))
-sys.path.append(os.path.abspath("./_sphinxext"))
 
 
 # -- General configuration ------------------------------------------------
