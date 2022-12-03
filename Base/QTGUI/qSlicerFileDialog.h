@@ -45,6 +45,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileDialog : public QObject
   Q_OBJECT
   Q_ENUMS(IOAction)
   Q_PROPERTY(QString description READ description)
+  Q_PROPERTY(QStringList loadedNodes READ loadedNodes)
 
 public:
   typedef QObject Superclass;
@@ -65,27 +66,27 @@ public:
   virtual qSlicerFileDialog::IOAction action()const = 0;
   /// run the dialog to select the file/files/directory
   /// Properties availables with IOPorperties: fileMode, multipleFiles, fileType.
-  virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
+  Q_INVOKABLE virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
                     qSlicerIO::IOProperties()) = 0;
 
   /// TBD: move in qSlicerCoreIOManager or qSlicerIOManager ?
   /// Return the namefilters of all the readers in IOManager corresponding to
   /// fileType
-  static QStringList nameFilters(qSlicerIO::IOFileType fileType =
+  Q_INVOKABLE static QStringList nameFilters(qSlicerIO::IOFileType fileType =
                                  QString("NoFile"));
 
   /// Accept or ignore mimedata.
   /// Returns false by default.
   /// Can be reimplemented in subclass to support drag&drop.
   /// \sa dropEvent()
-  virtual bool isMimeDataAccepted(const QMimeData*mimeData)const;
+  Q_INVOKABLE virtual bool isMimeDataAccepted(const QMimeData*mimeData)const;
 
   /// Handle drop events: populate the dialog with the dropped mime data.
   /// Can be reimplemented in subclass to support drag&drop.
   /// Do nothing by default.
   /// If it does something, acceptProposedAction() or accept() must be called.
   /// \sa isMimeDataAccepted()
-  virtual void dropEvent(QDropEvent *event);
+  Q_INVOKABLE virtual void dropEvent(QDropEvent *event);
 
   /// Return the list of nodes created by exec().
   /// To be reimplemented.
@@ -137,9 +138,9 @@ public:
                     qSlicerIO::IOProperties()) override;
 
   /// Properties availables with IOPorperties: fileMode, multipleFiles, fileType.
-  static QStringList getOpenFileName(qSlicerIO::IOProperties ioProperties =
+  Q_INVOKABLE static QStringList getOpenFileName(qSlicerIO::IOProperties ioProperties =
                                      qSlicerIO::IOProperties());
-  static QString getExistingDirectory(qSlicerIO::IOProperties ioProperties =
+  Q_INVOKABLE static QString getExistingDirectory(qSlicerIO::IOProperties ioProperties =
                                       qSlicerIO::IOProperties());
 
   /// Return the list of nodes created by exec().

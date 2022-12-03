@@ -1462,6 +1462,9 @@ bool qSlicerSaveDataDialog::exec(const qSlicerIO::IOProperties& readerProperties
   Q_UNUSED(readerProperties);
   Q_ASSERT(!readerProperties.contains("fileName"));
 
+  // There can be many files, show maximize button to allow resizing with a single click
+  d->setWindowFlags(d->windowFlags() | Qt::WindowMaximizeButtonHint);
+
   d->setMRMLScene(qSlicerCoreApplication::application()->mrmlScene());
   if (d->exec() != QDialog::Accepted)
     {

@@ -658,6 +658,8 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
     d->setParent(mainWindow);
     d->setWindowFlags(windowFlags);
     }
+  // There can be many files, show maximize button to allow resizing with a single click
+  d->setWindowFlags(d->windowFlags() | Qt::WindowMaximizeButtonHint);
   int result = d->exec();
   if (mainWindow)
     {
