@@ -125,7 +125,7 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
 - Vector to scalar volume: convert vector volume to scalar volume
 - Extensions:
   -  Image Maker: create a volume from scratch
-  - [Image Stacks](https://github.com/SlicerMorph/S_2020/blob/master/Day_1/ImageStacks/ImageStacks.md) provided by the [SlicerMorph](https://slicermorph.github.io/) extension.
+  - [Image Stacks](https://github.com/SlicerMorph/Tutorials/tree/main/ImageStacks#readme) provided by the [SlicerMorph](https://github.com/SlicerMorph/SlicerMorph/) extension.
 
 ## Contributors
 
