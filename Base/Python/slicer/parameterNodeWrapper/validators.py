@@ -36,6 +36,19 @@ def extractValidators(annotations):
     )
 
 
+class IsNone(Validator):
+    """
+    Validates that the input value is None.
+    """
+
+    def __repr__(self) -> str:
+        return f"IsNone()"
+
+    def validate(self, value) -> None:
+        if value is not None:
+            raise ValueError("Value must be None")
+
+
 class NotNone(Validator):
     """
     Validates that any input value is not None.
