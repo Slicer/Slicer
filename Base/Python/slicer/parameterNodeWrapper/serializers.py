@@ -359,7 +359,7 @@ class NodeSerializer(Serializer):
 
     @staticmethod
     def canSerialize(type_) -> bool:
-        return issubclass(type_, slicer.vtkMRMLNode)
+        return issubclass(type_, slicer.vtkMRMLNode) if type(type_) == type else False
 
     @staticmethod
     def create(type_):
