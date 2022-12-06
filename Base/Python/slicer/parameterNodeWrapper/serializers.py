@@ -9,6 +9,7 @@ import slicer
 from .util import splitAnnotations
 from .validators import (
     extractValidators,
+    IsNone,
     NotNone,
     IsInstance,
 )
@@ -26,6 +27,7 @@ __all__ = [
     "ListSerializer",
     "TupleSerializer",
     "DictSerializer",
+    "UnionSerializer",
 ]
 
 
@@ -819,3 +821,152 @@ class DictSerializer(Serializer):
         dict will not update the underlying parameter node, which can be confusing.
         """
         return self._serializer.supportsCaching()
+
+
+@parameterNodeSerializer
+class NoneSerializer(Serializer):
+    """
+    Serializes exactly one value. None.
+
+    Not useful on its own, but can be used by the UnionSerializer
+    to support things like typing.Optional[int]
+    """
+
+    @staticmethod
+    def canSerialize(type_) -> bool:
+        return isinstance(None, type_) if type == type(type_) else False
+
+    @staticmethod
+    def create(type_):
+        if NoneSerializer.canSerialize(type_):
+            return ValidatedSerializer(NoneSerializer(), [IsNone()])
+        return None
+
+    def default(self):
+        return dict()
+
+    def __init__(self) -> None:
+        # just need to serialize something to show if it is in the parameterNode.
+        self._serializer = BoolSerializer()
+
+    def isIn(self, parameterNode, name: str) -> bool:
+        return self._serializer.isIn(parameterNode, name)
+
+    def write(self, parameterNode, name: str, value) -> None:
+        # the validator from create will ensure that value is None.
+        self._serializer.write(parameterNode, name, True)
+
+    def read(self, parameterNode, name: str):
+        return None
+
+    def remove(self, parameterNode, name: str) -> None:
+        self._serializer.remove(parameterNode, name)
+
+    def supportsCaching(self):
+        return True
+
+
+@parameterNodeSerializer
+class UnionSerializer(Serializer):
+    """
+    Serializer for multiple types. This supports typing.Union[A, B] as well as
+    typing.Optional[A]
+    """
+    @staticmethod
+    def canSerialize(type_) -> bool:
+        return typing.get_origin(type_) == typing.Union
+
+    @staticmethod
+    def create(type_):
+        if UnionSerializer.canSerialize(type_):
+            args = typing.get_args(type_)
+            if len(args) < 2:
+                raise Exception("Should not be able to have a union with less than 2 types.")
+            serializers = [createSerializerFromAnnotatedType(arg) for arg in args]
+            return UnionSerializer(serializers)
+        return None
+
+    def __init__(self, serializers):
+        # This class depends on ValidatedSerializer methods, so we wrap all the serializers in them.
+        # ValidatedSerializers collapse into each other, so it is fine if the serializer is already
+        # a validated serializer.
+        self._serializers = [ValidatedSerializer(s, []) for s in serializers]
+
+    def default(self):
+        if len(self._serializers) == 2 and type(self._serializers[1].serializer) == NoneSerializer:
+            # Special case for if someone does typing.Optional[X] we default to None.
+            # In Python, there is no difference between typing.Optional[X] and typing.Union[X, None],
+            # which is somewhat unfortunate for semantic reasons.
+            return None
+        else:
+            return self._serializers[0].default()
+
+    @staticmethod
+    def _paramName(name, index):
+        return f"{name}_{index}"
+
+    def isIn(self, parameterNode, name: str) -> bool:
+        for index, validatedSerializer in enumerate(self._serializers):
+            if validatedSerializer.isIn(parameterNode, self._paramName(name, index)):
+                return True
+        return False
+
+    def _findBestSerializer(self, value):
+        # canSerialize does a good job most of the time at differentiating between different
+        # types of the union.
+        # The exception is if there are multiple MRML nodes of different types.
+        # The NodeSerializer staticmethod canSerialize doesn't know which particular node type
+        # the instance is ready for. So let's try and if we fail, see if there is another that
+        # succeeds.
+        raisedException = None
+        for index, validatedSerializer in enumerate(self._serializers):
+            if validatedSerializer.serializer.canSerialize(type(value)):
+                try:
+                    validatedSerializer.validate(value)
+                    return index, validatedSerializer
+                except Exception as e:
+                    raisedException = e
+        else:
+            if raisedException is not None:
+                raise raisedException
+            raise TypeError(f"Unable to write value '{value}' of type '{type(value)}'")
+
+    def write(self, parameterNode, name: str, value) -> None:
+        with slicer.util.NodeModify(parameterNode):
+            index, serializer = self._findBestSerializer(value)
+
+            # write to the serializer and rollback if there is some error (not expected at this point)
+            wasIn = self.isIn(parameterNode, name)
+            oldValue = self.read(parameterNode, name) if wasIn else None
+            try:
+                self.remove(parameterNode, name)
+                serializer.write(parameterNode, self._paramName(name, index), value)
+            except Exception:
+                if wasIn:
+                    self.write(parameterNode, name, oldValue)
+                else:
+                    self.remove(parameterNode, name)
+                raise
+
+    def read(self, parameterNode, name: str):
+        for index, validatedSerializer in enumerate(self._serializers):
+            if validatedSerializer.isIn(parameterNode, self._paramName(name, index)):
+                return validatedSerializer.read(parameterNode, self._paramName(name, index))
+        raise KeyError(f"Unable to find value for name: {name}")
+
+    def remove(self, parameterNode, name: str) -> None:
+        with slicer.util.NodeModify(parameterNode):
+            for index, validatedSerializer in enumerate(self._serializers):
+                validatedSerializer.remove(parameterNode, self._paramName(name, index))
+
+    def supportsCaching(self):
+        """
+        Whether this UnionSerializer support caching depends on if all of its delegate serializers
+        support caching.
+
+        Caching is preferred, it makes reads faster.
+        However, if the element itself does not support caching we shouldn't cache by default
+        because it might lead to unexpected behavior. In this case modifying the element will
+        not update the underlying parameter node, which can be confusing.
+        """
+        return all([s.supportsCaching() for s in self._serializers])

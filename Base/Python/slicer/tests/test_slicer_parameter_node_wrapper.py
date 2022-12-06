@@ -1,5 +1,6 @@
 import dataclasses
 import pathlib
+import typing
 from typing import Annotated
 import unittest
 
@@ -10,6 +11,7 @@ from MRMLCorePython import (
     vtkMRMLNode,
     vtkMRMLModelNode,
     vtkMRMLScalarVolumeNode,
+    vtkMRMLLabelMapVolumeNode,
 )
 from slicer.parameterNodeWrapper import *
 
@@ -146,6 +148,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         listSerializer = ListSerializer(NumberSerializer(float))
         tupleSerializer = TupleSerializer([NumberSerializer(float), BoolSerializer()])
         dictSerializer = DictSerializer(StringSerializer(), NumberSerializer(float))
+        unionSerializer = UnionSerializer([StringSerializer(), NumberSerializer(float)])
 
         parameterNode = newParameterNode()
 
@@ -156,6 +159,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         listSerializer.write(parameterNode, "list", [1])
         tupleSerializer.write(parameterNode, "tuple", (3.3, True))
         dictSerializer.write(parameterNode, "dict", {"a": 1, "b": 2})
+        unionSerializer.write(parameterNode, "union", "hello")
 
         numberSerializer.remove(parameterNode, "number")
         stringSerializer.remove(parameterNode, "string")
@@ -164,6 +168,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         listSerializer.remove(parameterNode, "list")
         tupleSerializer.remove(parameterNode, "tuple")
         dictSerializer.remove(parameterNode, "dict")
+        unionSerializer.remove(parameterNode, "union")
 
         self.assertFalse(parameterNode.GetParameterNames())
 
@@ -705,6 +710,111 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             param.node = 4
+
+    def test_union_simple(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            intOrStr: typing.Union[int, str]
+            optBool: typing.Optional[bool]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertTrue(param.isCached("intOrStr"))
+        self.assertTrue(param.isCached("optBool"))
+
+        self.assertEqual(param.intOrStr, 0)
+        self.assertEqual(param.optBool, None)
+
+        param.intOrStr = "hi"
+        self.assertEqual(param.intOrStr, "hi")
+
+        param.intOrStr = 99
+        self.assertEqual(param.intOrStr, 99)
+
+        param.optBool = True
+        self.assertEqual(param.optBool, True)
+        param.optBool = False
+        self.assertEqual(param.optBool, False)
+        param.optBool = None
+        self.assertEqual(param.optBool, None)
+
+        with self.assertRaises(TypeError):
+            param.intOrStr = False
+        self.assertEqual(param.intOrStr, 99)
+        self.assertEqual(param.optBool, None)
+
+    def test_union_many(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            value: typing.Union[bool, str, int, vtkMRMLModelNode]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertTrue(param.isCached("value"))
+
+        self.assertEqual(param.value, False)
+        param.value = 4
+        self.assertEqual(param.value, 4)
+        param.value = True
+        self.assertEqual(param.value, True)
+        param.value = "string"
+        self.assertEqual(param.value, "string")
+        model = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+        param.value = model
+        self.assertEqual(param.value, model)
+
+        with self.assertRaises(TypeError):
+            param.value = 4.0
+        self.assertEqual(param.value, model)
+
+    def test_union_multiple_nodes(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            value: typing.Union[vtkMRMLModelNode, vtkMRMLLabelMapVolumeNode, None]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertTrue(param.isCached("value"))
+
+        self.assertIsNone(param.value)
+
+        model = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+        labelMapVolume = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode')
+        scalarVolume = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScalarVolumeNode')
+
+        param.value = model
+        self.assertIs(param.value, model)
+        param.value = labelMapVolume
+        self.assertIs(param.value, labelMapVolume)
+        with self.assertRaises(TypeError):
+            param.value = scalarVolume
+        self.assertIs(param.value, labelMapVolume)
+
+    def test_validated_union(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            value: Annotated[typing.Union[
+                Annotated[int, Minimum(5)],
+                Annotated[str, Choice(["q", "r", "s"])],
+            ], Default(7)]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertTrue(param.isCached("value"))
+
+        self.assertEqual(param.value, 7)
+        param.value = 99
+        self.assertEqual(param.value, 99)
+        param.value = "q"
+        self.assertEqual(param.value, "q")
+        param.value = 96
+        self.assertEqual(param.value, 96)
+
+        with self.assertRaises(ValueError):
+            param.value = 4
+        self.assertEqual(param.value, 96)
+        with self.assertRaises(ValueError):
+            param.value = "p"
+        self.assertEqual(param.value, 96)
+
+        param.value = "s"
+        self.assertEqual(param.value, "s")
 
     def test_events(self):
         class _Callback:
