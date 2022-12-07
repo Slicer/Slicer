@@ -1079,7 +1079,7 @@ std::string vtkMRMLCommandLineModuleNode::GetOutputText() const
 void vtkMRMLCommandLineModuleNode::SetErrorText(const std::string& text, bool modify)
 {
   {
-    std::lock_guard<std::recursive_mutex> lk(this->Internal->NodeAccessMutex);
+    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
     if (this->Internal->ErrorText == text)
       {
       return;
