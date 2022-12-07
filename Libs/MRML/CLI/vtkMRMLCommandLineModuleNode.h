@@ -140,7 +140,7 @@ public:
   //@}
 
   //@{
-  /// Get/set error messages generated during latest execution.
+  /// Get/set error text generated during latest execution.
   /// This value is not stored persistently in the scene file.
   /// It is safe to call this method from a non-main thread (with modify=false).
   void SetErrorText(const std::string& text, bool modify = true);
