@@ -26,7 +26,7 @@
 #include <QLabel>
 #include <QProgressBar>
 #include <QScrollBar>
-#include <QTextBrowser.h>
+#include <QTextBrowser>
 #include <QTime>
 
 // CTK includes
