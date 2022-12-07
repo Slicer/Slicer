@@ -116,7 +116,7 @@ public:
   const char* GetStatusString() const;
 
   //@{
-  /// Start/stop continuous updating of output text and error text during execution.
+  /// Start/stop continuous updating of output and error texts during execution.
   ///
   /// If ContinuousOutputUpdate is not active then output and error texts are only
   /// updated when execution is completed. If continuous update is active, then
