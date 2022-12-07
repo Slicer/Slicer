@@ -118,7 +118,7 @@ public:
   //@{
   /// Start/stop continuous updating of output text and error text during execution.
   ///
-  /// If ContinuousOutputUpdate is not active then output and error text are only
+  /// If ContinuousOutputUpdate is not active then output and error texts are only
   /// updated when execution is completed. If continuous update is active, then
   /// output and error texts are updated continuously, which may be useful
   /// for close monitoring of the execution, but may impact the performance
