@@ -149,6 +149,10 @@ protected:
   // Communicate progress back to the node
   static void ProgressCallback(void *);
 
+  /// Remove progress reporting information from process output
+  /// (XML data elements, such as filter-progress, filter-stage-progress, filter-name, filter-comment)
+  static void RemoveProgressInfoFromProcessOutput(std::string& text);
+
   /// Return true if the commandlinemodule node can update the
   /// selection node with the outputs of the CLI
   bool IsCommandLineModuleNodeUpdatingDisplay(
