@@ -69,7 +69,9 @@ public:
   /// Flag to trigger or not the StatusModifiedEvent
   mutable bool InvokeStatusModifiedEvent;
 
-  /// Output messages of last execution (progress messages excluded)
+  /// Output text of last execution (without progress info)
+  ///
+  /// \sa vtkSlicerCLIModuleLogic::RemoveProgressInfoFromProcessOutput
   std::string OutputText;
   /// Error messages of last execution (printed to stderr)
   std::string ErrorText;
