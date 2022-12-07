@@ -1069,7 +1069,7 @@ std::string vtkMRMLCommandLineModuleNode::GetOutputText() const
 {
   std::string text;
     {
-    std::lock_guard<std::recursive_mutex> lk(this->Internal->NodeAccessMutex);
+    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
     text = this->Internal->OutputText;
     }
   return text;
