@@ -120,7 +120,7 @@ public:
   ///
   /// If ContinuousOutputUpdate is not active then output and error text are only
   /// updated when execution is completed. If continuous update is active, then
-  /// output and error text are updated continuously, which may be useful
+  /// output and error texts are updated continuously, which may be useful
   /// for close monitoring of the execution, but may impact the performance
   /// if the process output is very long.
   ///
