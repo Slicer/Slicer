@@ -41,7 +41,7 @@ class vtkMRMLCommandLineModuleNode::vtkInternal
 {
 public:
 
-  // This mutex is allows thread-safe reading/writing of node properties.
+  // This mutex allows the thread-safe reading/writing of node properties.
   // This is needed because these process outputa and error may be written
   // in a worker thread.
   std::recursive_mutex NodeAccessMutex;
