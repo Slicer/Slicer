@@ -194,7 +194,7 @@ QString qSlicerCLIProgressBarPrivate::getLastNLines(const std::string& str, int 
     return QString();
     }
   const char lineSeparator = '\n';
-  size_t linesStartPosition = str.size()-1;
+  size_t linesStartPosition = str.size() - 1;
   for (int line = 0; line <= numberOfLines; ++line)
     {
     linesStartPosition = str.find_last_of(lineSeparator, linesStartPosition - 1);
