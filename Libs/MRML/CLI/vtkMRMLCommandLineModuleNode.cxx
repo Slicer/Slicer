@@ -28,6 +28,7 @@ Version:   $Revision: 1.2 $
 #include <vtkObjectFactory.h>
 
 // STD includes
+#include <mutex>
 #include <sstream>
 
 
@@ -39,6 +40,11 @@ class ModuleDescriptionMap : public std::map<std::string, ModuleDescription> {};
 class vtkMRMLCommandLineModuleNode::vtkInternal
 {
 public:
+
+  // This mutex allows the thread-safe reading/writing of node properties.
+  // This is needed because process output and error texts may be written
+  // in a worker thread.
+  std::recursive_mutex NodeAccessMutex;
 
   ModuleDescription ModuleDescriptionObject;
 
@@ -63,7 +69,9 @@ public:
   /// Flag to trigger or not the StatusModifiedEvent
   mutable bool InvokeStatusModifiedEvent;
 
-  /// Output messages of last execution (printed to stdout)
+  /// Output text of last execution (without progress info)
+  ///
+  /// \sa vtkSlicerCLIModuleLogic::RemoveProgressInfoFromProcessOutput
   std::string OutputText;
   /// Error messages of last execution (printed to stderr)
   std::string ErrorText;
@@ -1046,25 +1054,38 @@ void vtkMRMLCommandLineModuleNode::Modified()
 }
 
 //----------------------------------------------------------------------------
-const std::string vtkMRMLCommandLineModuleNode::GetErrorText() const
+std::string vtkMRMLCommandLineModuleNode::GetErrorText() const
 {
-  return this->Internal->ErrorText;
+  std::string text;
+    {
+    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
+    text = this->Internal->ErrorText;
+    }
+  return text;
 }
 
 //----------------------------------------------------------------------------
-const std::string vtkMRMLCommandLineModuleNode::GetOutputText() const
+std::string vtkMRMLCommandLineModuleNode::GetOutputText() const
 {
-  return this->Internal->OutputText;
+  std::string text;
+    {
+    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
+    text = this->Internal->OutputText;
+    }
+  return text;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode::SetErrorText(const std::string& text, bool modify)
 {
-  if (this->Internal->ErrorText == text)
-    {
-    return;
-    }
-  this->Internal->ErrorText = text;
+  {
+    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
+    if (this->Internal->ErrorText == text)
+      {
+      return;
+      }
+    this->Internal->ErrorText = text;
+  }
   if (modify)
     {
     this->Modified();
@@ -1074,13 +1095,39 @@ void vtkMRMLCommandLineModuleNode::SetErrorText(const std::string& text, bool mo
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode::SetOutputText(const std::string& text, bool modify)
 {
-  if (this->Internal->OutputText == text)
-    {
-    return;
-    }
-  this->Internal->OutputText = text;
+  {
+    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
+    if (this->Internal->OutputText == text)
+      {
+      return;
+      }
+    this->Internal->OutputText = text;
+  }
   if (modify)
     {
     this->Modified();
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode::StartContinuousOutputUpdate()
+{
+  this->ContinuousOutputUpdateInProgressCount++;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode::EndContinuousOutputUpdate()
+{
+  this->ContinuousOutputUpdateInProgressCount--;
+  if (this->ContinuousOutputUpdateInProgressCount < 0)
+    {
+    vtkWarningMacro("Unexpected EndContinuousOutputUpdate");
+    this->ContinuousOutputUpdateInProgressCount = 0;
+    }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLCommandLineModuleNode::IsContinuousOutputUpdate()
+{
+  return (this->ContinuousOutputUpdateInProgressCount > 0);
 }

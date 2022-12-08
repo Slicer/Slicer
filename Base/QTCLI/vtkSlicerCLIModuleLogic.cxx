@@ -44,9 +44,6 @@
 #include <itksys/SystemTools.hxx>
 #include <itksys/RegularExpression.hxx>
 
-// Qt includes
-#include <QDebug>
-
 // STL includes
 #include <algorithm>
 #include <cassert>
@@ -870,29 +867,25 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // Assume that the modules correctly report themselves
   if ( node0->GetModuleDescription().GetType() == "CommandLineModule" )
     {
-    // vtkSlicerApplication::GetInstance()->InformationMessage
-    qDebug() << "Found CommandLine Module, target is "
-             << node0->GetModuleDescription().GetTarget().c_str();
+    vtkInfoMacro("Found CommandLine Module, target is " << node0->GetModuleDescription().GetTarget());
     commandType = CommandLineModule;
     if ( entryPoint != nullptr )
       {
-      vtkWarningMacro("Module reports that it is a Command Line Module but has a shared object module target. " << target.c_str());
+      vtkWarningMacro("Module reports that it is a Command Line Module but has a shared object module target. " << target);
       }
     }
   else if ( node0->GetModuleDescription().GetType() == "SharedObjectModule" )
     {
-    // vtkSlicerApplication::GetInstance()->InformationMessage
-    qDebug() << "Found SharedObject Module";
+    vtkInfoMacro("Found SharedObject Module");
 
     commandType = SharedObjectModule;
     if ( entryPoint == nullptr )
       {
-      vtkWarningMacro("Module reports that it is a Shared Object Module but does not have a shared object module target. " << target.c_str());
+      vtkWarningMacro("Module reports that it is a Shared Object Module but does not have a shared object module target. " << target);
       }
     }
 
-  // vtkSlicerApplication::GetInstance()->InformationMessage
-  qDebug() << "ModuleType:" << node0->GetModuleDescription().GetType().c_str();
+  vtkInfoMacro("ModuleType: " << node0->GetModuleDescription().GetType());
 
   // map to keep track of MRML Ids and filenames
   typedef std::map<std::string, std::string> MRMLIDToFileNameMap;
@@ -1235,7 +1228,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       commandType == CommandLineModule &&
       node0->GetModuleDescription().GetLocation() != node0->GetModuleDescription().GetTarget())
     {
-      vtkDebugMacro("Setting a location for a command line module: " << node0->GetModuleDescription().GetLocation().c_str() << ", target is '" << node0->GetModuleDescription().GetTarget().c_str() << "'");
+      vtkDebugMacro("Setting a location for a command line module: " << node0->GetModuleDescription().GetLocation() <<
+        ", target is '" << node0->GetModuleDescription().GetTarget() << "'");
       // it's a command line module that has an executable that is used to run the target
     commandLineAsString.push_back(node0->GetModuleDescription().GetLocation());
     }
@@ -1732,9 +1726,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     {
     information0 << command[i] << " ";
     }
-  information0 << std::endl;
-  // vtkSlicerApplication::GetInstance()->InformationMessage
-  qDebug() << information0.str().c_str();
+  vtkInfoMacro(<< information0.str());
 
   // run the filter
   //
@@ -1801,6 +1793,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     const double timeoutlimit = 0.1;    // tenth of a second
     double timeout = timeoutlimit;
     std::string stdoutbuffer;
+    std::string stdoutbufferWithoutProgressInfo; // stdout, with progress information removed
     std::string stderrbuffer;
     std::string::size_type tagend;
     std::string::size_type tagstart;
@@ -1808,6 +1801,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                                              &length, &timeout)) != 0)
       {
       // increment the elapsed time
+      bool enableUpdateOutputDuringExecution = node0->IsContinuousOutputUpdate();
       node0->GetModuleDescription().GetProcessInformation()->ElapsedTime
         += (timeoutlimit - timeout);
       this->GetApplicationLogic()->RequestModified( node0 );
@@ -1833,7 +1827,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         if (pipe == itksysProcess_Pipe_STDOUT)
           {
           //std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
-          stdoutbuffer = stdoutbuffer.append(tbuffer, length);
+          std::string stdoutNewContent(tbuffer, length);
+          stdoutbuffer.append(stdoutNewContent);
 
           bool foundTag = false;
           // search for the last occurrence of </filter-progress>
@@ -1890,7 +1885,13 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               foundTag = true;
               }
             }
-          if (foundTag)
+          if (enableUpdateOutputDuringExecution)
+            {
+            vtkSlicerCLIModuleLogic::RemoveProgressInfoFromProcessOutput(stdoutNewContent);
+            stdoutbufferWithoutProgressInfo.append(stdoutNewContent);
+            node0->SetOutputText(stdoutbufferWithoutProgressInfo, false);
+            }
+          if (foundTag || enableUpdateOutputDuringExecution)
             {
             this->GetApplicationLogic()->RequestModified( node0 );
             }
@@ -1898,6 +1899,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         else if (pipe == itksysProcess_Pipe_STDERR)
           {
           stderrbuffer = stderrbuffer.append(tbuffer, length);
+          if (enableUpdateOutputDuringExecution)
+            {
+            node0->SetErrorText(stderrbuffer, false);
+            this->GetApplicationLogic()->RequestModified(node0);
+            }
           }
         }
       }
@@ -1905,76 +1911,16 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     itksysProcess_WaitForExit(process, nullptr);
     this->Internal->ProcessesKillLock.unlock();
 
-    // remove the embedded XML from the stdout stream
-    //
-    // Note that itksys::RegularExpression gives begin()/end() as
-    // size_types not iterators. So we need to use the version of
-    // erase that takes a position and length to erase.
-    //
-    itksys::RegularExpression filterProgressRegExp("<filter-progress>[^<]*</filter-progress>[ \t\n\r]*");
-    while (filterProgressRegExp.find(stdoutbuffer))
-      {
-      stdoutbuffer.erase(filterProgressRegExp.start(),
-                         filterProgressRegExp.end()
-                         - filterProgressRegExp.start());
-      }
-    itksys::RegularExpression filterStageProgressRegExp("<filter-stage-progress>[^<]*</filter-stage-progress>[ \t\n\r]*");
-    while (filterStageProgressRegExp.find(stdoutbuffer))
-      {
-      stdoutbuffer.erase(filterStageProgressRegExp.start(),
-                         filterStageProgressRegExp.end()
-                         - filterStageProgressRegExp.start());
-      }
-    itksys::RegularExpression filterNameRegExp("<filter-name>[^<]*</filter-name>[ \t\n\r]*");
-    while (filterNameRegExp.find(stdoutbuffer))
-      {
-      stdoutbuffer.erase(filterNameRegExp.start(),
-                         filterNameRegExp.end()
-                         - filterNameRegExp.start());
-      }
-    itksys::RegularExpression filterCommentRegExp("<filter-comment>[^<]*</filter-comment>[ \t\n\r]*");
-    while (filterCommentRegExp.find(stdoutbuffer))
-      {
-      stdoutbuffer.erase(filterCommentRegExp.start(),
-                         filterCommentRegExp.end()
-                         - filterCommentRegExp.start());
-      }
-    itksys::RegularExpression filterTimeRegExp("<filter-time>[^<]*</filter-time>[ \t\n\r]*");
-    while (filterTimeRegExp.find(stdoutbuffer))
-      {
-      stdoutbuffer.erase(filterTimeRegExp.start(),
-                         filterTimeRegExp.end()
-                         - filterTimeRegExp.start());
-      }
-    itksys::RegularExpression filterStartRegExp("<filter-start>[^<]*</filter-start>[ \t\n\r]*");
-    while (filterStartRegExp.find(stdoutbuffer))
-      {
-      stdoutbuffer.erase(filterStartRegExp.start(),
-                         filterStartRegExp.end()
-                         - filterStartRegExp.start());
-      }
-    itksys::RegularExpression filterEndRegExp("<filter-end>[^<]*</filter-end>[ \t\n\r]*");
-    while (filterEndRegExp.find(stdoutbuffer))
-      {
-      stdoutbuffer.erase(filterEndRegExp.start(),
-                         filterEndRegExp.end()
-                         - filterEndRegExp.start());
-      }
-
+    vtkSlicerCLIModuleLogic::RemoveProgressInfoFromProcessOutput(stdoutbuffer);
     if (stdoutbuffer.size() > 0)
       {
-      std::string tmp(" standard output:\n\n");
-      stdoutbuffer.insert(0, node0->GetModuleDescription().GetTitle()+tmp);
-      // vtkSlicerApplication::GetInstance()->InformationMessage
-      qDebug() << stdoutbuffer.c_str();
+      vtkInfoMacro(<< node0->GetModuleDescription().GetTitle() << " standard output:\n\n" << stdoutbuffer);
       }
     node0->SetOutputText(stdoutbuffer, false);
 
     if (stderrbuffer.size() > 0)
       {
-      std::string tmp(" standard error:\n\n");
-      stderrbuffer.insert(0, node0->GetModuleDescription().GetTitle()+tmp);
-      vtkErrorMacro( << stderrbuffer.c_str() );
+      vtkErrorMacro(<< node0->GetModuleDescription().GetTitle() << " standard error:\n\n" << stderrbuffer);
       }
     node0->SetErrorText(stderrbuffer, false);
 
@@ -1994,71 +1940,60 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         if (itksysProcess_GetExitValue(process) == 0)
           {
           // executable exited without errors,
-          std::stringstream information;
-          information << node0->GetModuleDescription().GetTitle()
-                      << " completed without errors" << std::endl;
-          // vtkSlicerApplication::GetInstance()->InformationMessage
-          qDebug() << information.str().c_str();
+          vtkInfoMacro(<< node0->GetModuleDescription().GetTitle() << " completed without errors");
           }
         else
           {
-          std::stringstream information;
-          information << node0->GetModuleDescription().GetTitle()
-                      << " completed with errors" << std::endl;
-          vtkErrorMacro( << information.str().c_str() );
+          vtkErrorMacro(<< node0->GetModuleDescription().GetTitle() << " completed with errors");
           node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
           this->GetApplicationLogic()->RequestModified( node0 );
           }
         }
       else if (result == itksysProcess_State_Expired)
         {
-        std::stringstream information;
-        information << node0->GetModuleDescription().GetTitle()
-                    << " timed out" << std::endl;
-        vtkErrorMacro( << information.str().c_str() );
+        vtkErrorMacro(<< node0->GetModuleDescription().GetTitle() << " timed out");
         node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
         this->GetApplicationLogic()->RequestModified( node0 );
         }
       else
         {
-        std::stringstream information;
+        std::string message;
         if (result == itksysProcess_State_Exception)
           {
-          information << node0->GetModuleDescription().GetTitle();
           int excResult = itksysProcess_GetExitException(process);
           switch (excResult)
             {
             case itksysProcess_Exception_None:
-              information << " terminated with no exceptions." << std::endl;
+              message = "terminated with no exceptions";
               break;
             case itksysProcess_Exception_Fault:
-              information << " terminated with a fault." << std::endl;
+              message = "terminated with a fault";
               break;
             case itksysProcess_Exception_Illegal:
-              information << " terminated with an illegal instruction." << std::endl;
+              message = "terminated with an illegal instruction";
               break;
             case itksysProcess_Exception_Interrupt:
-              information << " terminated with an interrupt." << std::endl;
+              message = "terminated with an interrupt";
               break;
             case itksysProcess_Exception_Numerical:
-              information << " terminated with a numerical fault." << std::endl;
+              message = "terminated with a numerical fault";
               break;
             case itksysProcess_Exception_Other:
-              information << " terminated with an unknown exception." << std::endl;
+              message = "terminated with an unknown exception";
               break;
             }
           }
         else if (result == itksysProcess_State_Error)
           {
-          information << node0->GetModuleDescription().GetTitle()
-                      << " process was null when state was queried, result (" << result << ") = Error." << std::endl;
+          message = "process was null when state was queried";
           }
         else
           {
-        information << node0->GetModuleDescription().GetTitle()
-                  << " unknown termination. Result = " << result << std::endl;
+          std::stringstream information;
+          information << "unknown termination (result=" << result << ")";
+          message = information.str();
           }
-        vtkErrorMacro( << information.str().c_str() );
+        vtkErrorMacro( << node0->GetModuleDescription().GetTitle() << " " << message);
         node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
         this->GetApplicationLogic()->RequestModified( node0 );
         }
@@ -2099,19 +2034,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       // report the output
       if (coutstringstream.str().size() > 0)
         {
-        std::string tmp(" standard output:\n\n");
-        tmp = node0->GetModuleDescription().GetTitle()+tmp;
-
-        // vtkSlicerApplication::GetInstance()->InformationMessage
-        qDebug() << (tmp + coutstringstream.str()).c_str();
+        vtkInfoMacro(<< node0->GetModuleDescription().GetTitle() + " standard output:\n\n" + coutstringstream.str());
         }
       node0->SetOutputText(coutstringstream.str(), false);
       if (cerrstringstream.str().size() > 0)
         {
-        std::string tmp(" standard error:\n\n");
-        tmp = node0->GetModuleDescription().GetTitle()+tmp;
-
-        vtkErrorMacro( << (tmp + cerrstringstream.str()).c_str() );
+        vtkErrorMacro(<< node0->GetModuleDescription().GetTitle() + " standard error:\n\n" + cerrstringstream.str());
         }
       node0->SetErrorText(cerrstringstream.str(), false);
 
@@ -2124,19 +2052,13 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
     catch (itk::ExceptionObject& exc)
       {
-      std::stringstream information;
       if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling)
         {
-        information << node0->GetModuleDescription().GetTitle()
-                    << " cancelled.";
-        // vtkSlicerApplication::GetInstance()->InformationMessage
-        qDebug() << information.str().c_str();
+        vtkInfoMacro(<< node0->GetModuleDescription().GetTitle() << " cancelled.");
         }
       else
         {
-        information << node0->GetModuleDescription().GetTitle()
-                    << " terminated with an exception: " << exc;
-        vtkErrorMacro( << information.str().c_str() );
+        vtkErrorMacro(<< node0->GetModuleDescription().GetTitle() << " terminated with an exception: " << exc);
         node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
         this->GetApplicationLogic()->RequestModified( node0 );
         }
@@ -2146,10 +2068,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
     catch (...)
       {
-      std::stringstream information;
-      information << node0->GetModuleDescription().GetTitle()
-                << " terminated with an unknown exception." << std::endl;
-      vtkErrorMacro( << information.str().c_str() );
+      vtkErrorMacro(<< node0->GetModuleDescription().GetTitle() << " terminated with an unknown exception.");
       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
       this->GetApplicationLogic()->RequestModified( node0 );
 
@@ -2164,10 +2083,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     // Check the return status of the module
     if (returnValue)
       {
-      std::stringstream information;
-      information << node0->GetModuleDescription().GetTitle()
-                  << " returned " << returnValue << " which probably indicates an error." << std::endl;
-      vtkErrorMacro( << information.str().c_str() );
+      vtkErrorMacro(<< node0->GetModuleDescription().GetTitle()
+        << " returned " << returnValue << " which probably indicates an error.");
       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
       this->GetApplicationLogic()->RequestModified( node0 );
       std::cout.rdbuf( origcoutrdbuf );
@@ -2432,9 +2349,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         removed = static_cast<bool>(itksys::SystemTools::RemoveFile((*fit).c_str()));
         if (!removed)
           {
-          std::stringstream information;
-          information << "Unable to delete temporary file " << *fit << std::endl;
-          vtkWarningMacro( << information.str().c_str() );
+          vtkWarningMacro("Unable to delete temporary file " << *fit);
           }
         }
       }
@@ -2857,4 +2772,64 @@ int vtkSlicerCLIModuleLogic::GetCoordinateSystemFromString(const char* coordinat
     vtkErrorMacro("Invalid coordinateSystemFlag value: " << coordinateSystem << ", assuming lps");
     }
   return coordinateSystem;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::RemoveProgressInfoFromProcessOutput(std::string& text)
+{
+  // remove the embedded XML from the stdout stream
+  //
+  // Note that itksys::RegularExpression gives begin()/end() as
+  // size_types not iterators. So we need to use the version of
+  // erase that takes a position and length to erase.
+  //
+  itksys::RegularExpression filterProgressRegExp("<filter-progress>[^<]*</filter-progress>[ \t\n\r]*");
+  while (filterProgressRegExp.find(text))
+    {
+    text.erase(filterProgressRegExp.start(),
+                        filterProgressRegExp.end()
+                        - filterProgressRegExp.start());
+    }
+  itksys::RegularExpression filterStageProgressRegExp("<filter-stage-progress>[^<]*</filter-stage-progress>[ \t\n\r]*");
+  while (filterStageProgressRegExp.find(text))
+    {
+    text.erase(filterStageProgressRegExp.start(),
+                        filterStageProgressRegExp.end()
+                        - filterStageProgressRegExp.start());
+    }
+  itksys::RegularExpression filterNameRegExp("<filter-name>[^<]*</filter-name>[ \t\n\r]*");
+  while (filterNameRegExp.find(text))
+    {
+    text.erase(filterNameRegExp.start(),
+                        filterNameRegExp.end()
+                        - filterNameRegExp.start());
+    }
+  itksys::RegularExpression filterCommentRegExp("<filter-comment>[^<]*</filter-comment>[ \t\n\r]*");
+  while (filterCommentRegExp.find(text))
+    {
+    text.erase(filterCommentRegExp.start(),
+                        filterCommentRegExp.end()
+                        - filterCommentRegExp.start());
+    }
+  itksys::RegularExpression filterTimeRegExp("<filter-time>[^<]*</filter-time>[ \t\n\r]*");
+  while (filterTimeRegExp.find(text))
+    {
+    text.erase(filterTimeRegExp.start(),
+                        filterTimeRegExp.end()
+                        - filterTimeRegExp.start());
+    }
+  itksys::RegularExpression filterStartRegExp("<filter-start>[^<]*</filter-start>[ \t\n\r]*");
+  while (filterStartRegExp.find(text))
+    {
+    text.erase(filterStartRegExp.start(),
+                        filterStartRegExp.end()
+                        - filterStartRegExp.start());
+    }
+  itksys::RegularExpression filterEndRegExp("<filter-end>[^<]*</filter-end>[ \t\n\r]*");
+  while (filterEndRegExp.find(text))
+    {
+    text.erase(filterEndRegExp.start(),
+                        filterEndRegExp.end()
+                        - filterEndRegExp.start());
+    }
 }

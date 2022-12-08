@@ -115,15 +115,37 @@ public:
   /// \sa GetStatus(), IsBusy()
   const char* GetStatusString() const;
 
-  /// Set output messages generated during latest execution.
-  void SetOutputText(const std::string& text, bool modify = true);
-  /// Set output messages generated during latest execution.
-  const std::string GetOutputText() const;
+  //@{
+  /// Start/stop continuous updating of output and error texts during execution.
+  ///
+  /// If ContinuousOutputUpdate is not active then output and error texts are only
+  /// updated when execution is completed. If continuous update is active, then
+  /// output and error texts are updated continuously, which may be useful
+  /// for close monitoring of the execution, but may impact the performance
+  /// if the process output is very long.
+  ///
+  /// Modified event is not invoked when the value is changed and
+  /// the value is not stored persistently in the scene file.
+  void StartContinuousOutputUpdate();
+  void EndContinuousOutputUpdate();
+  bool IsContinuousOutputUpdate();
+  //@}
 
-  /// Set error messages generated during latest execution.
+  //@{
+  /// Get/set output text generated during latest execution.
+  /// This value is not stored persistently in the scene file.
+  /// It is safe to call this method from a non-main thread (with modify=false).
+  void SetOutputText(const std::string& text, bool modify = true);
+  std::string GetOutputText() const;
+  //@}
+
+  //@{
+  /// Get/set error text generated during latest execution.
+  /// This value is not stored persistently in the scene file.
+  /// It is safe to call this method from a non-main thread (with modify=false).
   void SetErrorText(const std::string& text, bool modify = true);
-  /// Get error messages generated during latest execution.
-  const std::string GetErrorText() const;
+  std::string GetErrorText() const;
+  //@}
 
   /// Return true if the module is in a busy state: Scheduled, Running,
   /// Cancelling, Completing.
@@ -297,6 +319,8 @@ protected:
   void AbortProcess();
   void ProcessMRMLEvents(vtkObject *caller, unsigned long event,
                                  void *callData) override;
+
+  int ContinuousOutputUpdateInProgressCount{0};
 
 private:
   vtkMRMLCommandLineModuleNode();
