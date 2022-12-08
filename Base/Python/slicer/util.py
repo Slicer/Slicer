@@ -2045,6 +2045,8 @@ def arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, referenceVolumeN
             raise RuntimeError("Export of segment failed.")
         narray = slicer.util.arrayFromVolume(labelmapVolumeNode)
     finally:
+        if labelmapVolumeNode.GetDisplayNode():
+            slicer.mrmlScene.RemoveNode(labelmapVolumeNode.GetDisplayNode().GetColorNode())
         slicer.mrmlScene.RemoveNode(labelmapVolumeNode)
 
     return narray
