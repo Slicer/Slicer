@@ -599,9 +599,20 @@ class TypedParameterNodeTest(unittest.TestCase):
         param.n = None
         self.assertEqual(5, callback.called)
 
+        with slicer.util.NodeModify(param):
+            param.i = 9
+            self.assertEqual(param.i, 9)
+            param.s = []
+            self.assertEqual(param.s, [])
+            node = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+            param.n = node
+            self.assertEqual(param.n, node)
+
+        self.assertEqual(6, callback.called)
+
         param.RemoveObserver(tag)
         param.i = 7
-        self.assertEqual(5, callback.called)
+        self.assertEqual(6, callback.called)
 
     def test_validators(self):
         @parameterNodeWrapper
