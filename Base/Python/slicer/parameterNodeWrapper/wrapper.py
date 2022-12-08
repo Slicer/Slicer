@@ -79,9 +79,19 @@ class _CachedParameterWrapper(_ParameterWrapper):
         super().__init__(parameter, parameterNode)
         self._value = self.parameter.read(self.parameterNode)
         self._observerTag = parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self._onModified)
+        self._currentlyWriting = False
 
     def _onModified(self, caller, event):
-        self._value = self.parameter.read(self.parameterNode)
+        if not self._currentlyWriting:
+            self._value = self.parameter.read(self.parameterNode)
+
+    def write(self, value):
+        self._currentlyWriting = True
+        try:
+            super().write(value)
+            self._value = self.parameter.read(self.parameterNode)
+        finally:
+            self._currentlyWriting = False
 
     def read(self):
         """
