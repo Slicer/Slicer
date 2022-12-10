@@ -2555,6 +2555,11 @@
             "paired": "U"
           },
           {
+            "recommendedDisplayRGBValue": [
+              212,
+              188,
+              102
+            ],
             "CodeMeaning": "Sacrum",
             "CodingSchemeDesignator": "SCT",
             "cid": "4031",
@@ -2565,6 +2570,11 @@
             "paired": "U"
           },
           {
+            "recommendedDisplayRGBValue": [
+              212,
+              188,
+              102
+            ],
             "CodeMeaning": "Coccyx",
             "CodingSchemeDesignator": "SCT",
             "cid": "4031",
@@ -2585,8 +2595,14 @@
             "paired": "Y",
             "Modifier": [
               {
+                "recommendedDisplayRGBValue": [
+                  212,
+                  188,
+                  102
+                ],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "right scapula",
                 "cid": "244",
                 "UMLSConceptUID": "C0205090",
                 "CodeValue": "24028007",
@@ -2594,8 +2610,14 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
+                "recommendedDisplayRGBValue": [
+                  212,
+                  188,
+                  102
+                ],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "left scapula",
                 "cid": "244",
                 "UMLSConceptUID": "C0205091",
                 "CodeValue": "7771000",
@@ -2603,6 +2625,11 @@
                 "SNOMEDCTConceptID": "7771000"
               },
               {
+                "recommendedDisplayRGBValue": [
+                  212,
+                  188,
+                  102
+                ],
                 "CodeMeaning": "Right and left",
                 "CodingSchemeDesignator": "SCT",
                 "cid": "244",
@@ -2716,8 +2743,14 @@
             "paired": "Y",
             "Modifier": [
               {
+                "recommendedDisplayRGBValue": [
+                  205,
+                  179,
+                  108
+                ],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "right humerus",
                 "cid": "244",
                 "UMLSConceptUID": "C0205090",
                 "CodeValue": "24028007",
@@ -2725,8 +2758,14 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
+                "recommendedDisplayRGBValue": [
+                  205,
+                  179,
+                  108
+                ],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "left humerus",
                 "cid": "244",
                 "UMLSConceptUID": "C0205091",
                 "CodeValue": "7771000",
@@ -2734,6 +2773,11 @@
                 "SNOMEDCTConceptID": "7771000"
               },
               {
+                "recommendedDisplayRGBValue": [
+                  205,
+                  179,
+                  108
+                ],
                 "CodeMeaning": "Right and left",
                 "CodingSchemeDesignator": "SCT",
                 "cid": "244",
@@ -2771,8 +2815,14 @@
             "paired": "Y",
             "Modifier": [
               {
+                "recommendedDisplayRGBValue": [
+                  255,
+                  238,
+                  170
+                ],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "right femur",
                 "cid": "244",
                 "UMLSConceptUID": "C0205090",
                 "CodeValue": "24028007",
@@ -2780,8 +2830,14 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
+                "recommendedDisplayRGBValue": [
+                  255,
+                  238,
+                  170
+                ],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "left femur",
                 "cid": "244",
                 "UMLSConceptUID": "C0205091",
                 "CodeValue": "7771000",
@@ -3402,17 +3458,29 @@
             "paired": "Y",
             "Modifier": [
               {
+                "recommendedDisplayRGBValue": [
+                  171,
+                  85,
+                  68
+                ],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "cid": "244",
+                "3dSlicerLabel": "right erector spinae muscle",
                 "UMLSConceptUID": "C0205090",
                 "CodeValue": "24028007",
                 "contextGroupName": "Laterality",
                 "SNOMEDCTConceptID": "24028007"
               },
               {
+                "recommendedDisplayRGBValue": [
+                  171,
+                  85,
+                  68
+                ],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "left erector spinae muscle",
                 "cid": "244",
                 "UMLSConceptUID": "C0205091",
                 "CodeValue": "7771000",
@@ -6116,7 +6184,7 @@
             ],
             "CodeMeaning": "Pulmonary artery",
             "CodingSchemeDesignator": "SCT",
-            "3dSlicerLabel": "pulmonary arterial system",
+            "3dSlicerLabel": "pulmonary artery",
             "3dSlicerIntegerLabel": 288,
             "cid": "3010,4030,6117",
             "UMLSConceptUID": "C0034052",
@@ -7244,8 +7312,14 @@
             "paired": "Y",
             "Modifier": [
               {
+                "recommendedDisplayRGBValue": [
+                  216,
+                  101,
+                  79
+                ],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "right common iliac artery",
                 "cid": "244",
                 "UMLSConceptUID": "C0205090",
                 "CodeValue": "24028007",
@@ -7253,8 +7327,14 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
+                "recommendedDisplayRGBValue": [
+                  216,
+                  101,
+                  79
+                ],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "left common iliac artery",
                 "cid": "244",
                 "UMLSConceptUID": "C0205091",
                 "CodeValue": "7771000",
@@ -8250,8 +8330,14 @@
             ]
           },
           {
+            "recommendedDisplayRGBValue": [
+              0,
+              151,
+              206
+            ],
             "CodeMeaning": "Inferior vena cava",
             "CodingSchemeDesignator": "SCT",
+            "3dSlicerLabel": "inferior vena cava",
             "cid": "3010,6117,7154",
             "UMLSConceptUID": "C0042458",
             "CodeValue": "64131007",
@@ -8338,8 +8424,14 @@
             ]
           },
           {
+            "recommendedDisplayRGBValue": [
+              0,
+              151,
+              206
+            ],
             "CodeMeaning": "Portal vein",
             "CodingSchemeDesignator": "SCT",
+            "3dSlicerLabel": "portal vein",
             "cid": "3010",
             "UMLSConceptUID": "C0032718",
             "CodeValue": "32764006",
@@ -8424,8 +8516,14 @@
             "paired": "Y",
             "Modifier": [
               {
+                "recommendedDisplayRGBValue": [
+                  0,
+                  151,
+                  206
+                ],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
+                "3dSlicerLabel": "right common iliac vein",
                 "cid": "244",
                 "UMLSConceptUID": "C0205090",
                 "CodeValue": "24028007",
@@ -8433,9 +8531,15 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
+                "recommendedDisplayRGBValue": [
+                  0,
+                  151,
+                  206
+                ],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "cid": "244",
+                "3dSlicerLabel": "left common iliac vein",
                 "UMLSConceptUID": "C0205091",
                 "CodeValue": "7771000",
                 "contextGroupName": "Laterality",
