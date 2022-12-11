@@ -452,7 +452,7 @@ protected:
       statusText += qSlicerExtensionsLocalWidget::tr("An update is available. Installed: %1. Available: %2.")
         .arg(installedVersion)
         .arg(onServerVersion);
-      statusText += changeLogText + QLatin1Literal("/p>");
+      statusText += changeLogText + QLatin1Literal("</p>");
       }
     if (statusText.isEmpty())
       {
