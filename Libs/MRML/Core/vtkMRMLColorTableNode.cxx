@@ -1447,7 +1447,7 @@ bool vtkMRMLColorTableNode::GetColor(int entry, double color[4])
 {
   if (entry < 0 || entry >= this->GetNumberOfColors())
     {
-    vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
+    vtkErrorMacro( "vtkMRMLColorTableNode::GetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
     return false;
     }
   this->GetLookupTable()->GetTableValue(entry, color);
