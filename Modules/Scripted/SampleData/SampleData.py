@@ -300,7 +300,11 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         iconPath = os.path.join(os.path.dirname(__file__).replace('\\', '/'), 'Resources', 'Icons')
         mainWindow = slicer.util.mainWindow()
         if mainWindow:
-            iconSize = qt.QSize(int(mainWindow.width / 8), int(mainWindow.height / 6))
+            # Set thumbnail size from default icon size. This results in toolbutton size that makes
+            # two columns of buttons fit into the size of the Welcome module's minimum width
+            # on screens with a various resolution and scaling (see qt.QDesktopWidget().size,
+            # desktop.devicePixelRatioF(), qt.QDesktopWidget().physicalDpiX())
+            iconSize = qt.QSize(int(mainWindow.iconSize.width() * 6), int(mainWindow.iconSize.height() * 4))
         else:
             # There is no main window in the automated tests
             desktop = qt.QDesktopWidget()
