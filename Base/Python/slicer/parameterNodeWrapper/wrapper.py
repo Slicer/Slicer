@@ -1,5 +1,6 @@
 import logging
 import typing
+from typing import Optional
 
 import vtk
 
@@ -12,21 +13,21 @@ __all__ = ["parameterNodeWrapper"]
 
 class _ParameterInfo:
     def __init__(self, basename: str, serializer: Serializer, default):
-        self.basename = basename
-        self.serializer = serializer
+        self.basename: str = basename
+        self.serializer: Serializer = serializer
         self.default = default
 
 
 class _Parameter:
-    def __init__(self, parameterInfo, prefix=None):
-        self.name = f"{prefix or ''}{parameterInfo.basename}"
-        self.serializer = parameterInfo.serializer
+    def __init__(self, parameterInfo: _ParameterInfo, prefix: Optional[str] = None):
+        self.name: str = f"{prefix or ''}{parameterInfo.basename}"
+        self.serializer: Serializer = parameterInfo.serializer
         self.default = parameterInfo.default
 
-    def isIn(self, parameterNode):
+    def isIn(self, parameterNode) -> bool:
         return self.serializer.isIn(parameterNode, self.name)
 
-    def write(self, parameterNode, value):
+    def write(self, parameterNode, value) -> None:
         self.serializer.write(parameterNode, self.name, value)
 
     def read(self, parameterNode):
@@ -34,7 +35,7 @@ class _Parameter:
             self.serializer.write(parameterNode, self.name, self.default)
         return self.serializer.read(parameterNode, self.name)
 
-    def remove(self, parameterNode):
+    def remove(self, parameterNode) -> None:
         self.serializer.remove(parameterNode, self.name)
 
     def supportsCaching(self) -> bool:
@@ -42,15 +43,15 @@ class _Parameter:
 
 
 class _ParameterWrapper:
-    def __init__(self, parameter, parameterNode):
+    def __init__(self, parameter: _Parameter, parameterNode):
         assert parameterNode is not None
-        self.parameter = parameter
+        self.parameter: _Parameter = parameter
         self.parameterNode = parameterNode
 
     def default(self):
         return self.parameter.default
 
-    def isIn(self):
+    def isIn(self) -> bool:
         """Whether this parameter has a value in the parameter node given to the constructor."""
         return self.parameter.isIn(self.parameterNode)
 
@@ -60,11 +61,11 @@ class _ParameterWrapper:
         """
         return self.parameter.read(self.parameterNode)
 
-    def write(self, value):
+    def write(self, value) -> None:
         """Sets the value of this parameter in the parameter node given to the constructor."""
         self.parameter.write(self.parameterNode, value)
 
-    def remove(self):
+    def remove(self) -> None:
         """Removes this parameter from the parameter node given to the constructor if it exists."""
         self.parameter.remove(self.parameterNode)
 
@@ -73,17 +74,17 @@ class _ParameterWrapper:
 
 
 class _CachedParameterWrapper(_ParameterWrapper):
-    def __init__(self, parameter, parameterNode):
+    def __init__(self, parameter: _Parameter, parameterNode):
         super().__init__(parameter, parameterNode)
         self._value = self.parameter.read(self.parameterNode)
-        self._observerTag = parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self._onModified)
-        self._currentlyWriting = False
+        self._observerTag: int = parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self._onModified)
+        self._currentlyWriting: bool = False
 
     def _onModified(self, caller, event):
         if not self._currentlyWriting:
             self._value = self.parameter.read(self.parameterNode)
 
-    def write(self, value):
+    def write(self, value) -> None:
         self._currentlyWriting = True
         try:
             super().write(value)
@@ -99,14 +100,14 @@ class _CachedParameterWrapper(_ParameterWrapper):
         return self._value
 
 
-def _makeProperty(name):
+def _makeProperty(name: str):
     return property(
         lambda self: getattr(self, f"_{name}_impl").read(),
         lambda self, value: getattr(self, f"_{name}_impl").write(value)
     )
 
 
-def _initMethod(self, parameterNode, prefix=None):
+def _initMethod(self, parameterNode, prefix: Optional[str] = None):
     self.parameterNode = parameterNode
     for parameterInfo in self.__allParameters:
         parameter = _Parameter(parameterInfo, prefix)
