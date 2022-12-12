@@ -1,3 +1,6 @@
+__all__ = ["Default"]
+
+
 class Default:
     """
     Annotation to denote the default value for a parameter.
