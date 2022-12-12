@@ -1,5 +1,6 @@
 import abc
 import collections
+import logging
 import pathlib
 import typing
 
@@ -215,7 +216,7 @@ def createSerializerFromAnnotatedType(annotatedType):
     type_, annotations = splitAnnotations(annotatedType)
     serializer, annotations = createSerializer(type_, annotations)
     if annotations:
-        print(f"Warning: Unused annotations: {annotations}")
+        logging.warning(f"Unused annotations: {annotations}")
     return serializer
 
 
@@ -535,7 +536,7 @@ class ListSerializer(Serializer):
         if ListSerializer.canSerialize(type_):
             args = typing.get_args(type_)
             if len(args) != 1:
-                print("Unexpected list[] type arg length")
+                logging.warning("Unexpected list[] type arg length")
             if len(args) == 0:
                 Exception("Unsure how to handle a typed list with no discernible type")
             return ListSerializer(createSerializerFromAnnotatedType(args[0]))
