@@ -1,6 +1,8 @@
 import typing
 from typing import Annotated
 
+__all__ = ["splitAnnotations"]
+
 
 def splitAnnotations(possiblyAnnotatedType):
     # Annotated types flatten, so
