@@ -269,7 +269,7 @@ Segment Editor allows editing of segmentation on slices of arbitrary orientation
 
 ## Information for Developers
 
-See examples for creating and modifying segmentation nodes and using segment editor effects from your own modules in [Slicer script repository](../../developer_guide/script_repository.md#segmentations)
+See examples for creating and modifying segmentation nodes and using segment editor effects from your own modules in [Developer guide](../../developer_guide/modules/segmenteditor) and [Slicer script repository](../../developer_guide/script_repository.md#segmentations)
 
 ## Contributors
 

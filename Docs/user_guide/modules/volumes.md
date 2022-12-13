@@ -127,6 +127,10 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
   -  Image Maker: create a volume from scratch
   - [Image Stacks](https://github.com/SlicerMorph/Tutorials/tree/main/ImageStacks#readme) provided by the [SlicerMorph](https://github.com/SlicerMorph/SlicerMorph/) extension.
 
+## Information for developers
+
+See examples and other developer information in [Developer guide](../../developer_guide/modules/volumes) and [Script repository](../../developer_guide/script_repository.md#volumes).
+
 ## Contributors
 
 - Steve Piper (Isomics)

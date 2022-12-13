@@ -244,6 +244,10 @@ Scanners may create image volumes with varying image slice spacing. Slicer can r
 
 Note that if Slicer displays a warning about non-uniform slice spacing then it may be due to missing or corrupted DICOM files. There is no reliable mechanism to distinguish between slices that are missing because they had not been acquired (for example, to reduce patient dose) or they were acquired but later they were lost.
 
+## Information for developers
+
+See examples and other developer information in [Developer guide](../../developer_guide/modules/dicom) and [Script repository](../../developer_guide/script_repository.md#dicom).
+
 ## Related extensions and modules
 
 - [Add data](../data_loading_and_saving) dialog can be used to load some DICOM images directly, with bypassing the DICOM database. This may be faster in some cases, but it is not recommended, as it only supports certain kind of images and consistency and correctness of the data is not verified.
