@@ -130,6 +130,10 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
   - Option D: Use CPU volume rendering.
   - Option E: Upgrade your computer with a stronger graphics card.
 
+## Information for developers
+
+See examples and other developer information in [Developer guide](../../developer_guide/modules/volumerendering) and [Script repository](../../developer_guide/script_repository.md#volumes).
+
 ## Contributors
 
 - Julien Finet (Kitware)
