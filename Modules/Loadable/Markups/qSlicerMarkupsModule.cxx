@@ -450,7 +450,7 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     {
     QVariant variant = settings.value("Markups/ActiveColor");
     QColor qcolor = variant.value<QColor>();
-    markupsDisplayNode->SetColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
+    markupsDisplayNode->SetActiveColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
     }
   if (settings.contains("Markups/Opacity"))
     {
