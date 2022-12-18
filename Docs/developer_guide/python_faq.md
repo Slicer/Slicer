@@ -164,6 +164,27 @@ sliceNode = slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed')
 sliceNode.SetSliceResolutionMode(slicer.vtkMRMLSliceNode.SliceResolutionMatchVolumes)
 ```
 
+## How to connect GUI widget events to Python code
+
+Slicer uses [Qt](https://www.qt.io/) toolkit for providing graphical user interface (GUI). Qt is made available in Python via [PythonQt](https://mevislab.github.io/pythonqt/). Using this Python wrapper, a GUI widget event - it is called a `signal` in Qt - can be connected to a Python function using the syntax: *someQtWidgetObject*.*signalName*.connect(*slotName*).
+
+For example, a QProgressBar will have [these signals](https://doc.qt.io/qt-5/qprogressbar.html#signals) such as valueChanged. Therefore a Python function can be connected like this:
+
+```python
+def printMyNewValue(value):
+  print("The progress bar value is now: {}".format(value))
+
+import qt
+progress_bar = qt.QProgressBar()
+progress_bar.setMaximum(10)
+progress_bar.valueChanged.connect(printMyNewValue)
+progress_bar.setValue(4)  # will then print "The progress bar value is now: 4"
+```
+
+Where to get a list of signals for a widget object? You can find the specification of signals in the header files or the generated documentation. Typically, the first hit on Google search for the class name brings up the documentation page or header file of the class.
+
+Where to get examples? Since Slicer is open-source and there are about 200 extensions to it, mostly developed in Python, hosted on github, there is a very high chance that there are already examples for using the signal you need. You can search in all Python code in entire GitHub for a usage example by typing the name of the class and signal. For example you can [search for `ctkPathLineEdit currentPathChanged` in Python code](https://github.com/search?l=Python&q=ctkPathLineEdit+currentPathChanged&type=Code).
+
 ## How to run an external Python script as a CLI module
 
 A standalone Python script (that does not use any Slicer application features) can run from Slicer as a CLI module. Slicer generates a graphical user interface from the parameter definition XML file. See a complete example [here](https://github.com/lassoan/SlicerPythonCLIExample).
