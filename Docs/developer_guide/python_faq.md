@@ -166,7 +166,7 @@ sliceNode.SetSliceResolutionMode(slicer.vtkMRMLSliceNode.SliceResolutionMatchVol
 
 ## How to connect GUI widget events to Python code
 
-Slicer uses [Qt](https://www.qt.io/) toolkit for providing graphical user interface (GUI). Qt is made avaialable in Python via [PythonQt](https://mevislab.github.io/pythonqt/). Using this Python wrapper, a GUI widget event - it is called `signal` in Qt - can be connected to Python function using the syntax: *someQtWidgetObject*.*signalName*.connect(*slotName*).
+Slicer uses [Qt](https://www.qt.io/) toolkit for providing graphical user interface (GUI). Qt is made avaialable in Python via [PythonQt](https://mevislab.github.io/pythonqt/). Using this Python wrapper, a GUI widget event - it is called a `signal` in Qt - can be connected to a Python function using the syntax: *someQtWidgetObject*.*signalName*.connect(*slotName*).
 
 For example, a QProgressBar will have [these signals](https://doc.qt.io/qt-5/qprogressbar.html#signals) such as valueChanged. Therefore a Python function can be connected like this:
 
