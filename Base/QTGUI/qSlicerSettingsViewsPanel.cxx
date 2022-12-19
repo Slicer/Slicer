@@ -83,6 +83,11 @@ void qSlicerSettingsViewsPanelPrivate::init()
                       qSlicerSettingsViewsPanel::tr("Multisampling (MSAA)"),
                       ctkSettingsPanel::OptionRequireRestart);
 
+  this->SliceOrientationMarkerTypeComboBox->addItem(qSlicerSettingsViewsPanel::tr("none"), QString(/*no tr*/"none"));
+  this->SliceOrientationMarkerTypeComboBox->addItem(qSlicerSettingsViewsPanel::tr("cube"), QString(/*no tr*/"cube"));
+  this->SliceOrientationMarkerTypeComboBox->addItem(qSlicerSettingsViewsPanel::tr("human"), QString(/*no tr*/"human"));
+  this->SliceOrientationMarkerTypeComboBox->addItem(qSlicerSettingsViewsPanel::tr("axes"), QString(/*no tr*/"axes"));
+
   QObject::connect(this->SliceOrientationMarkerTypeComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SIGNAL(currentSliceOrientationMarkerTypeChanged(QString)));
   q->registerProperty("DefaultSliceView/OrientationMarkerType", q,
@@ -292,11 +297,12 @@ void qSlicerSettingsViewsPanel::sliceViewOrientationChangedByUser()
   Q_D(qSlicerSettingsViewsPanel);
   if (d->SliceViewOrientationComboBox->currentUserDataAsString() == "PatientRightIsScreenRight")
     {
-    if (d->SliceOrientationMarkerTypeComboBox->currentText() == tr("none"))
+    if (d->SliceOrientationMarkerTypeComboBox->currentData() == /*no tr*/"none")
       {
       // Non-default orientation is chosen and no orientation marker is displayed.
       // To ensure that there is no accidental mixup of orientations, show the orientation marker.
-      d->SliceOrientationMarkerTypeComboBox->setCurrentText(tr("axes"));
+      int index = d->SliceOrientationMarkerTypeComboBox->findData(/*no tr*/"axes");
+      d->SliceOrientationMarkerTypeComboBox->setCurrentIndex(index);
       }
     }
 }

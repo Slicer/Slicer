@@ -54,28 +54,7 @@
           <item row="0" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="ctkComboBox" name="SliceOrientationMarkerTypeComboBox">
-              <item>
-               <property name="text">
-                <string>none</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cube</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>human</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>axes</string>
-               </property>
-              </item>
-             </widget>
+             <widget class="ctkComboBox" name="SliceOrientationMarkerTypeComboBox"/>
             </item>
             <item>
              <widget class="ctkComboBox" name="SliceOrientationMarkerSizeComboBox">
