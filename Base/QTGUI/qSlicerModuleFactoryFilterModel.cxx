@@ -242,7 +242,7 @@ void qSlicerModuleFactoryFilterModel::setShowModules(const QStringList& modules)
   this->setFilterRole(Qt::UserRole);
   if (d->HideAllWhenShowModulesIsEmpty && modules.isEmpty())
     {
-    this->setFilterWildcard("hide all modules");
+    this->setFilterWildcard(/*no tr*/"hide all modules");
     }
   else
     {

@@ -157,7 +157,9 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
       }
     if (coreModule->dependencies().count() > 0)
       {
-      tooltip += QString("<br><br>Requires: %1").arg(coreModule->dependencies().join(", "));
+      tooltip += QString("<br><br>%1 %2")
+        .arg(qSlicerModulesListView::tr("Requires:"))
+        .arg(coreModule->dependencies().join(", "));
       }
     item->setToolTip(tooltip);
 

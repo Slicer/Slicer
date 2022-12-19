@@ -259,7 +259,7 @@ void qSlicerSaveDataDialogPrivate::populateItems()
     {
     vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
     // skip "Master Scene View" since it contains the same nodes as the scene
-    if (svNode->GetName() && std::string("Master Scene View") == std::string(svNode->GetName()))
+    if (svNode->GetName() && std::string(/*no tr*/"Master Scene View") == std::string(svNode->GetName()))
       {
       continue;
       }
@@ -610,7 +610,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
   */
   QTableWidgetItem *nodeModifiedItem =
     new QTableWidgetItem(node->GetModifiedSinceRead() ?
-                         tr("Modified") : tr("Not Modified"));
+                         qSlicerSaveDataDialog::tr("Modified") : qSlicerSaveDataDialog::tr("Not Modified"));
   nodeModifiedItem->setFlags( nodeModifiedItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsEnabled);
   return nodeModifiedItem;
 }
@@ -663,7 +663,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
     // edit the combobox line.
     fileFormats->setEditable(true);
     fileFormats->lineEdit()->setReadOnly(true);
-    fileFormats->setEditText("Select a format");
+    fileFormats->setEditText(qSlicerSaveDataDialog::tr("Select a format"));
     }
 
   // TODO: use QSignalMapper
@@ -689,7 +689,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
 //-----------------------------------------------------------------------------
 ctkPathLineEdit* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(const QFileInfo& fileInfo)
 {
-  ctkPathLineEdit* directoryEdit = new ctkPathLineEdit("Output folder", QStringList(), ctkPathLineEdit::Dirs, this->FileWidget);
+  ctkPathLineEdit* directoryEdit = new ctkPathLineEdit(qSlicerSaveDataDialog::tr("Output folder"), QStringList(), ctkPathLineEdit::Dirs, this->FileWidget);
   directoryEdit->setCurrentPath(fileInfo.absolutePath());
   directoryEdit->setShowHistoryButton(false);
   return directoryEdit;
@@ -740,7 +740,8 @@ bool qSlicerSaveDataDialogPrivate::save()
       saveSceneFile = this->confirmOverwrite(sceneFile.absoluteFilePath());
       if (!saveSceneFile)
         {
-        this->setStatusIcon(sceneRow, this->ErrorIcon, tr("Scene file was not saved because user chose not to overwrite existing file: %1.")
+        this->setStatusIcon(sceneRow, this->ErrorIcon, qSlicerSaveDataDialog::tr(
+          "Scene file was not saved because user chose not to overwrite existing file: %1.")
           .arg(sceneFile.absoluteFilePath()));
         success = false;
         }
@@ -828,7 +829,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
 
     if (file.fileName().isEmpty())
       {
-      this->setStatusIcon(row, this->ErrorIcon, tr("Node %1 not saved, file name is empty.").arg(nodeNameItem->text()));
+      this->setStatusIcon(row, this->ErrorIcon, qSlicerSaveDataDialog::tr("Node %1 not saved, file name is empty.").arg(nodeNameItem->text()));
       doneWithSaveDataDialog = false;
       continue;
       }
@@ -838,7 +839,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       {
       if (!this->confirmOverwrite(file.absoluteFilePath()))
         {
-        this->setStatusIcon(row, this->ErrorIcon, tr("Node %1 was not saved because user chose not to overwrite existing file: %2.")
+        this->setStatusIcon(row, this->ErrorIcon, qSlicerSaveDataDialog::tr("Node %1 was not saved because user chose not to overwrite existing file: %2.")
           .arg(nodeNameItem->text())
           .arg(file.absoluteFilePath()) );
         doneWithSaveDataDialog = false;
@@ -876,12 +877,12 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
         {
         // Make sure an error message is added if saving returns with error
         snode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent,
-          (tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
+          (qSlicerSaveDataDialog::tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
         this->updateStatusIconFromStorageNode(row, success);
         }
       else
         {
-        this->setStatusIcon(row, this->ErrorIcon, tr("Failed to save node %1 to file %2.")
+        this->setStatusIcon(row, this->ErrorIcon, qSlicerSaveDataDialog::tr("Failed to save node %1 to file %2.")
           .arg(nodeNameItem->text())
           .arg(file.absoluteFilePath()));
         }
@@ -903,7 +904,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       storableNode->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
 
     selectItem->setCheckState(Qt::Unchecked);
-    nodeStatusItem->setText("Not Modified");
+    nodeStatusItem->setText(qSlicerSaveDataDialog::tr("Not Modified"));
     }
   this->updateSize();
 
@@ -930,7 +931,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::file(int row)const
 //-----------------------------------------------------------------------------
 vtkObject* qSlicerSaveDataDialogPrivate::object(int row)const
 {
-  if (this->type(row) == tr("Scene"))
+  if (this->type(row) == qSlicerSaveDataDialog::tr("Scene"))
     {
     return this->MRMLScene;
     }
@@ -965,7 +966,7 @@ vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id, vtkMRMLScene* s
       {
       vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
       // skip "Master Scene View" since it contains the same nodes as the scene
-      if (svNode->GetName() && std::string("Master Scene View") == std::string(svNode->GetName()))
+      if (svNode->GetName() && std::string(/*no tr*/"Master Scene View") == std::string(svNode->GetName()))
         {
         continue;
         }
@@ -1133,8 +1134,8 @@ void qSlicerSaveDataDialogPrivate::selectModifiedData()
     QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
     Q_ASSERT(selectItem);
     selectItem->setCheckState(
-      statusItem->text() == tr("Modified") &&
-      typeItem->data(Self::SceneTypeRole).toString() != tr("Scene") ? Qt::Checked : Qt::Unchecked);
+      statusItem->text() == qSlicerSaveDataDialog::tr("Modified") &&
+      typeItem->data(Self::SceneTypeRole).toString() != qSlicerSaveDataDialog::tr("Scene") ? Qt::Checked : Qt::Unchecked);
     }
 }
 
@@ -1147,14 +1148,14 @@ void qSlicerSaveDataDialogPrivate::selectModifiedSceneData()
     {
     QTableWidgetItem* statusItem = this->FileWidget->item(row, NodeStatusColumn);
     Q_ASSERT(statusItem);
-    if (statusItem->text() != tr("Modified"))
+    if (statusItem->text() != qSlicerSaveDataDialog::tr("Modified"))
       {
       continue;
       }
     QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
     Q_ASSERT(selectItem);
     selectItem->setCheckState(
-      statusItem->text() == tr("Modified") ? Qt::Checked : Qt::Unchecked);
+      statusItem->text() == qSlicerSaveDataDialog::tr("Modified") ? Qt::Checked : Qt::Unchecked);
     }
 }
 
@@ -1446,7 +1447,7 @@ qSlicerIO::IOFileType qSlicerSaveDataDialog::fileType()const
 //-----------------------------------------------------------------------------
 QString qSlicerSaveDataDialog::description()const
 {
-  return tr("Any Data");
+  return qSlicerSaveDataDialog::tr("Any Data");
 }
 
 //-----------------------------------------------------------------------------
@@ -1479,8 +1480,8 @@ bool qSlicerSaveDataDialogPrivate::confirmOverwrite(const QString& filepath)
   QMessageBox::StandardButton answer = this->ConfirmOverwriteAnswer;
   if (answer != QMessageBox::NoToAll && answer != QMessageBox::YesToAll)
   {
-    answer = QMessageBox::question(this, tr("Saving file..."),
-      tr("The file: %1 already exists. Do you want to replace it ?").arg(filepath),
+    answer = QMessageBox::question(this, qSlicerSaveDataDialog::tr("Saving file..."),
+      qSlicerSaveDataDialog::tr("The file: %1 already exists. Do you want to replace it ?").arg(filepath),
       QMessageBox::Yes | QMessageBox::No |
       QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel,
       QMessageBox::Yes);

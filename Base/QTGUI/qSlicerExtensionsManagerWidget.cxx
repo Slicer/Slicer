@@ -453,7 +453,8 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
     }
 
   d->tabWidget->setTabText(manageExtensionsTabIndex,
-                           QString("Manage Extensions (%1)").arg(managedExtensionsCount));
+                           //: %1 represents the number of managed extensions
+                           tr("Manage Extensions (%1)").arg(managedExtensionsCount));
 
   if (managedExtensionsCount == 0)
     {
@@ -714,9 +715,9 @@ void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
   Q_D(qSlicerExtensionsManagerWidget);
   const QStringList& archiveNames =
     QFileDialog::getOpenFileNames(
-      this, "Select extension archive file(s)...", QString(),
-      "Archives (*.zip *.7z *.tar *.tar.gz *.tgz *.tar.bz2 *.tar.xz);;"
-      "All files (*)");
+      this, tr("Select extension archive file(s)..."), QString(),
+      tr("Archives") + " (*.zip *.7z *.tar *.tar.gz *.tgz *.tar.bz2 *.tar.xz);;" +
+      tr("All files") + " (*)");
   if (archiveNames.empty())
     {
     return;

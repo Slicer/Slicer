@@ -133,7 +133,7 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
     this->exportFormatComboBox->setCurrentIndex(-1);
     this->exportFormatComboBox->setEditable(true); // so we can set custom text below
     this->exportFormatComboBox->lineEdit()->setReadOnly(true);
-    this->exportFormatComboBox->setEditText("Select a format");
+    this->exportFormatComboBox->setEditText(qSlicerExportNodeDialog::tr("Select a format"));
     }
 
   // We make this connection now, not earlier, so that we don't trigger the signal with the above initialization.

@@ -79,13 +79,13 @@ void qSlicerSettingsStylesPanelPrivate::init()
   QObject::connect(this->ShowToolButtonTextCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(onShowToolButtonTextToggled(bool)));
 
-  q->registerProperty("no-tooltip", this->ShowToolTipsCheckBox, "checked",
+  q->registerProperty("no-tooltip", this->ShowToolTipsCheckBox, /*no tr*/"checked",
                       SIGNAL(toggled(bool)));
   q->registerProperty("font", this->FontButton, "currentFont",
                       SIGNAL(currentFontChanged(QFont)));
   q->registerProperty("MainWindow/ShowToolButtonText", this->ShowToolButtonTextCheckBox,
-                      "checked", SIGNAL(toggled(bool)));
-  q->registerProperty("MainWindow/RestoreGeometry", this->RestoreUICheckBox, "checked",
+                      /*no tr*/"checked", SIGNAL(toggled(bool)));
+  q->registerProperty("MainWindow/RestoreGeometry", this->RestoreUICheckBox, /*no tr*/"checked",
                       SIGNAL(toggled(bool)));
 
   // Additional Style paths
@@ -99,7 +99,7 @@ void qSlicerSettingsStylesPanelPrivate::init()
   q->registerProperty("Styles/AdditionalPaths",
                       relativePathMapper,
                       "relativePaths", SIGNAL(relativePathsChanged(QStringList)),
-                      "Additional style paths",
+                      qSlicerSettingsStylesPanel::tr("Additional style paths"),
                       ctkSettingsPanel::OptionRequireRestart);
 
   // Style setting
@@ -109,7 +109,7 @@ void qSlicerSettingsStylesPanelPrivate::init()
                    q, SLOT(onStyleChanged(QString)));
   q->registerProperty("Styles/Style", q,
                       "currentStyle", SIGNAL(currentStyleChanged(QString)),
-                      "Current style");
+                      qSlicerSettingsStylesPanel::tr("Current style"));
 
   // Connect AdditionalStylePaths buttons
   QObject::connect(this->AddAdditionalStylePathButton, SIGNAL(clicked()),

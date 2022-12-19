@@ -386,16 +386,16 @@ void qSlicerWebWidget::onDownloadProgress(qint64 bytesReceived, qint64 bytesTota
   QString unit;
   if (speed < 1024)
     {
-    unit = "bytes/sec";
+    unit = tr("bytes/sec");
     }
   else if (speed < 1024*1024) {
     speed /= 1024;
-    unit = "kB/s";
+    unit = tr("kB/s");
     }
   else
     {
     speed /= 1024*1024;
-    unit = "MB/s";
+    unit = tr("MB/s");
     }
 
   d->ProgressBar->setFormat(QString("%p% (%1 %2)").arg(speed, 3, 'f', 1).arg(unit));

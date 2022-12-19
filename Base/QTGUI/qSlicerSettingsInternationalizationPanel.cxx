@@ -64,8 +64,8 @@ void qSlicerSettingsInternationalizationPanelPrivate::init()
   // Register settings
   q->registerProperty("Internationalization/Enabled",
                       this->InternationalizationEnabledCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "Enable/Disable Internationalization",
+                      /*no tr*/"checked", SIGNAL(toggled(bool)),
+                      qSlicerSettingsInternationalizationPanel::tr("Enable/Disable Internationalization"),
                       ctkSettingsPanel::OptionRequireRestart);
 
   // Actions to propagate to the application when settings are changed

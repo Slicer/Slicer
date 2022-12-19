@@ -71,20 +71,20 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
 
   // Register settings
   q->registerProperty("Developer/DeveloperMode", this->DeveloperModeEnabledCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "Enable/Disable developer mode", ctkSettingsPanel::OptionRequireRestart);
+    /*no tr*/"checked", SIGNAL(toggled(bool)),
+    qSlicerSettingsDeveloperPanel::tr("Enable/Disable developer mode"), ctkSettingsPanel::OptionRequireRestart);
 
   q->registerProperty("Developer/PreserveCLIModuleDataFiles", this->PreserveCLIModuleDataFilesCheckBox,
-    "checked", SIGNAL(toggled(bool)),
-    "Preserve CLI module input/output files", ctkSettingsPanel::OptionRequireRestart);
+    /*no tr*/"checked", SIGNAL(toggled(bool)),
+    qSlicerSettingsDeveloperPanel::tr("Preserve CLI module input/output files"), ctkSettingsPanel::OptionRequireRestart);
 
   q->registerProperty("Developer/SelfTestDisplayMessageDelay", this->SelfTestMessageDelaySlider,
-                      "value", SIGNAL(valueChanged(double)),
-                      "Time to wait before resuming self-test execution and hiding messages displayed to the user");
+    /*no tr*/"value", SIGNAL(valueChanged(double)),
+    qSlicerSettingsDeveloperPanel::tr("Time to wait before resuming self-test execution and hiding messages displayed to the user"));
 
   q->registerProperty("QtTesting/Enabled", this->QtTestingEnabledCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "Enable/Disable QtTesting", ctkSettingsPanel::OptionRequireRestart);
+    /*no tr*/"checked", SIGNAL(toggled(bool)),
+    qSlicerSettingsDeveloperPanel::tr("Enable/Disable QtTesting"), ctkSettingsPanel::OptionRequireRestart);
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->DeveloperModeEnabledCheckBox, SIGNAL(toggled(bool)),
