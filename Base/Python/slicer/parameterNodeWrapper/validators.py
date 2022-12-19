@@ -75,7 +75,7 @@ class IsInstance(Validator):
 
     def validate(self, value) -> None:
         if value is not None and not isinstance(value, self.classtype):
-            raise TypeError(f"Value must be of type '{self.classtype}', is type '{type({value})}'")
+            raise TypeError(f"Value must be of type '{self.classtype}', is type '{type(value)}' value '{value}'")
 
 
 class WithinRange(Validator):
