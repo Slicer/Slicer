@@ -96,7 +96,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
   this->setLayout(layout);
 
   QLabel *label = new QLabel();
-  label->setText(QString("Downloading %1").arg(QFileInfo(download->path()).fileName()));
+  label->setText(tr("Downloading %1").arg(QFileInfo(download->path()).fileName()));
   layout->addWidget(label);
 
   QProgressBar *progressBar = new QProgressBar();
@@ -107,7 +107,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
   buttons->setLayout(buttonLayout);
   layout->addWidget(buttons);
 
-  QPushButton *cancelButton = new QPushButton("Cancel");
+  QPushButton *cancelButton = new QPushButton(tr("Cancel"));
   buttonLayout->addWidget(cancelButton);
 
   // Progress

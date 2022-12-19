@@ -94,8 +94,8 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
     return false;
     }
   int max = (steps != 1 ? steps : 100);
-  this->ProgressDialog = new QProgressDialog("Loading file... ", "Cancel", 0, max);
-  this->ProgressDialog->setWindowTitle(QString("Loading ..."));
+  this->ProgressDialog = new QProgressDialog(qSlicerIOManager::tr("Loading file... "), qSlicerIOManager::tr("Cancel"), 0, max);
+  this->ProgressDialog->setWindowTitle(qSlicerIOManager::tr("Loading ..."));
   if (steps == 1)
     {
     // We only support cancelling a load action if we can have control over it
@@ -177,10 +177,10 @@ createUniqueDialogName(qSlicerIO::IOFileType fileType,
 {
   QString objectName;
 
-  objectName += action == qSlicerFileDialog::Read ? "Add" : "Save";
+  objectName += action == qSlicerFileDialog::Read ?/*no tr*/"Add" : /*no tr*/"Save";
   objectName += fileType;
   objectName += ioProperties["multipleFiles"].toBool() ? "s" : "";
-  objectName += "Dialog";
+  objectName += /*no tr*/"Dialog";
 
   return objectName;
 }
@@ -437,7 +437,7 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   SlicerRenderBlocker renderBlocker;
   bool needStop = d->startProgressDialog(1);
   d->ProgressDialog->setLabelText(
-    "Loading file " + parameters.value("fileName").toString() + " ...");
+    qSlicerIOManager::tr("Loading file ") + parameters.value("fileName").toString() + " ...");
   if (needStop)
     {
     d->ProgressDialog->setValue(25);

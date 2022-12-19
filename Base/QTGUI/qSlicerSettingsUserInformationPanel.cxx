@@ -166,7 +166,7 @@ void qSlicerSettingsUserInformationPanel::onEmailChanged(const QString& value)
   Q_D(qSlicerSettingsUserInformationPanel);
   if(!d->UserInformation->SetEmail(value.toStdString().c_str()))
     {
-    d->EmailValidationLabel->setText("Invalid format");
+    d->EmailValidationLabel->setText(tr("Invalid format"));
     }
   else
     {

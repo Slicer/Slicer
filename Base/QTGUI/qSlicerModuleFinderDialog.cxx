@@ -189,7 +189,7 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
         }
       filteredCategories << category;
       }
-    html.append(QString("<p><b>Category:</b> %1</p>").arg(filteredCategories.join(", ")));
+    html.append(QString("<p><b>" + tr("Category:") + "</b> %1</p>").arg(filteredCategories.join(", ")));
 
     // Help
     QString help = module->helpText();
@@ -228,45 +228,45 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     if (!module->contributors().isEmpty())
       {
       QString contributors = module->contributors().join(", ");
-      QString contributorsText = QString("<p><b>Contributors:</b> ") + contributors + "</p>";
+      QString contributorsText = "<p><b>" + tr("Contributors:") + "</b> " + contributors + "</p>";
       html.append(contributorsText);
       }
 
     // Internal name
     if (module->name() != module->title())
       {
-      html.append(QString("<p><b>Internal name:</b> %1</p>").arg(module->name()));
+      html.append(QString("<p><b>" + tr("Internal name:") + "</b> %1</p>").arg(module->name()));
       }
 
     // Type
-    QString type = QLatin1String("Core");
+    QString type = tr("Core");
     // Use "inherits" instead of "qobject_cast" because "qSlicerBaseQTCLI" depends on "qSlicerQTGUI"
     if (module->inherits("qSlicerScriptedLoadableModule"))
       {
-      type = QLatin1String("Python Scripted Loadable");
+      type = tr("Python Scripted Loadable");
       }
     else if (module->inherits("qSlicerLoadableModule"))
       {
-      type = QLatin1String("C++ Loadable");
+      type = tr("C++ Loadable");
       }
     else if (module->inherits("qSlicerCLIModule"))
       {
-      type = QLatin1String("Command-Line Interface (CLI)");
+      type = tr("Command-Line Interface (CLI)");
       }
     if (module->isBuiltIn())
       {
-      type += QLatin1String(", built-in");
+      type += ", " + tr("built-in");
       }
-    html.append(QString("<p><b>Type:</b> %1</p>").arg(type));
+    html.append(QString("<p><b>" + tr("Type:") + "</b> %1</p>").arg(type));
 
     // Dependencies
     if (!module->dependencies().empty())
       {
-      html.append(QString("<p><b>Require:</b> %1</p>").arg(module->dependencies().join(", ")));
+      html.append(QString("<p><b>" + tr("Require:") + "</b> %1</p>").arg(module->dependencies().join(", ")));
       }
 
     // Location
-    html.append(QString("<p><b>Location:</b> %1</p>").arg(module->path()));
+    html.append(QString("<p><b>" + tr("Location:") + "</b> %1</p>").arg(module->path()));
 
     d->ModuleDescriptionBrowser->setHtml(html);
     }
@@ -275,7 +275,7 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     d->ModuleDescriptionBrowser->clear();
     if (!moduleName.isEmpty())
       {
-      d->ModuleDescriptionBrowser->setText(QString("%1 module is not loaded").arg(moduleName));
+      d->ModuleDescriptionBrowser->setText(tr("%1 module is not loaded").arg(moduleName));
       }
     }
 

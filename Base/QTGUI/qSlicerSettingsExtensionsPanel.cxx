@@ -87,24 +87,24 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 
   // Register settings
   q->registerProperty("Extensions/ManagerEnabled", this->ExtensionsManagerEnabledCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "Enable/Disable extensions manager", ctkSettingsPanel::OptionRequireRestart,
+                      /*no tr*/"checked", SIGNAL(toggled(bool)),
+                      qSlicerSettingsExtensionsPanel::tr("Enable/Disable extensions manager"), ctkSettingsPanel::OptionRequireRestart,
                       app->revisionUserSettings());
   q->registerProperty("Extensions/ServerUrl", this->ExtensionsServerUrlLineEdit,
-                      "text", SIGNAL(textChanged(QString)),
+                      /*no tr*/"text", SIGNAL(textChanged(QString)),
                       QString(), ctkSettingsPanel::OptionNone,
                       app->revisionUserSettings());
   q->registerProperty("Extensions/FrontendServerUrl", this->ExtensionsFrontendServerUrlLineEdit,
-                      "text", SIGNAL(textChanged(QString)),
+                      /*no tr*/"text", SIGNAL(textChanged(QString)),
                       QString(), ctkSettingsPanel::OptionNone,
                       app->revisionUserSettings());
 
-  q->registerProperty("Extensions/AutoUpdateCheck", this->AutoUpdateCheckCheckBox, "checked",
-    SIGNAL(toggled(bool)), "Automatic update check");
-  q->registerProperty("Extensions/AutoUpdateInstall", this->AutoUpdateInstallCheckBox, "checked",
-    SIGNAL(toggled(bool)), "Automatic update install");
-  q->registerProperty("Extensions/AutoInstallDependencies", this->AutoInstallDependenciesCheckBox, "checked",
-    SIGNAL(toggled(bool)), "Automatic install of dependencies");
+  q->registerProperty("Extensions/AutoUpdateCheck", this->AutoUpdateCheckCheckBox, /*no tr*/"checked",
+    SIGNAL(toggled(bool)), qSlicerSettingsExtensionsPanel::tr("Automatic update check"));
+  q->registerProperty("Extensions/AutoUpdateInstall", this->AutoUpdateInstallCheckBox, /*no tr*/"checked",
+    SIGNAL(toggled(bool)), qSlicerSettingsExtensionsPanel::tr("Automatic update install"));
+  q->registerProperty("Extensions/AutoInstallDependencies", this->AutoInstallDependenciesCheckBox, /*no tr*/"checked",
+    SIGNAL(toggled(bool)), qSlicerSettingsExtensionsPanel::tr("Automatic install of dependencies"));
 
   qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(
     this->ExtensionsInstallPathButton, "directory", SIGNAL(directoryChanged(QString)));

@@ -117,11 +117,11 @@ void qSlicerSettingsCachePanel::setCacheManager(vtkCacheManager* cacheManager)
   qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(d->CachePathButton, "directory", SIGNAL(directoryChanged(QString)));
   this->registerProperty("Cache/Path", relativePathMapper, "relativePath",
                          SIGNAL(relativePathChanged(QString)));
-  this->registerProperty("Cache/Size", d->CacheSizeSpinBox, "value",
+  this->registerProperty("Cache/Size", d->CacheSizeSpinBox, /*no tr*/"value",
                          SIGNAL(valueChanged(int)));
-  this->registerProperty("Cache/FreeBufferSize", d->CacheFreeBufferSpinBox, "value",
+  this->registerProperty("Cache/FreeBufferSize", d->CacheFreeBufferSpinBox, /*no tr*/"value",
                          SIGNAL(valueChanged(int)));
-  this->registerProperty("Cache/ForceRedownload", d->ForceRedownloadCheckBox, "checked",
+  this->registerProperty("Cache/ForceRedownload", d->ForceRedownloadCheckBox, /*no tr*/"checked",
                          SIGNAL(toggled(bool)));
 }
 

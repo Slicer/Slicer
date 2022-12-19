@@ -188,7 +188,7 @@ vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char *id)const
       {
       vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
       // skip "Master Scene View" since it contains the same nodes as the scene
-      if (svNode->GetName() && std::string("Master Scene View") == std::string(svNode->GetName()))
+      if (svNode->GetName() && std::string(/*no tr*/"Master Scene View") == std::string(svNode->GetName()))
         {
         continue;
         }

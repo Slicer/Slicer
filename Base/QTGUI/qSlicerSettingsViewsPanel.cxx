@@ -80,67 +80,67 @@ void qSlicerSettingsViewsPanelPrivate::init()
                    q, SIGNAL(currentMSAAChanged(QString)));
   q->registerProperty("Views/MSAA", q,
                       "currentMSAA", SIGNAL(currentMSAAChanged(QString)),
-                      "Multisampling (MSAA)",
+                      qSlicerSettingsViewsPanel::tr("Multisampling (MSAA)"),
                       ctkSettingsPanel::OptionRequireRestart);
 
   QObject::connect(this->SliceOrientationMarkerTypeComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SIGNAL(currentSliceOrientationMarkerTypeChanged(QString)));
   q->registerProperty("DefaultSliceView/OrientationMarkerType", q,
                       "sliceOrientationMarkerType", SIGNAL(currentSliceOrientationMarkerTypeChanged(QString)),
-                      "Slice view orientation marker type",
+                      qSlicerSettingsViewsPanel::tr("Slice view orientation marker type"),
                       ctkSettingsPanel::OptionRequireRestart);
   QObject::connect(this->SliceOrientationMarkerSizeComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SIGNAL(currentSliceOrientationMarkerSizeChanged(QString)));
   q->registerProperty("DefaultSliceView/OrientationMarkerSize", q,
                       "sliceOrientationMarkerSize", SIGNAL(currentSliceOrientationMarkerSizeChanged(QString)),
-                      "Slice view orientation marker size",
+                      qSlicerSettingsViewsPanel::tr("Slice view orientation marker size"),
                       ctkSettingsPanel::OptionRequireRestart);
   QObject::connect(this->SliceRulerTypeComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SIGNAL(currentSliceRulerTypeChanged(QString)));
   q->registerProperty("DefaultSliceView/RulerType", q,
                       "sliceRulerType", SIGNAL(currentSliceRulerTypeChanged(QString)),
-                      "Slice view ruler type",
+                      qSlicerSettingsViewsPanel::tr("Slice view ruler type"),
                       ctkSettingsPanel::OptionRequireRestart);
 
-  this->SliceViewOrientationComboBox->addItem(QWidget::tr("patient right is screen left (default)"), QString("PatientRightIsScreenLeft"));
-  this->SliceViewOrientationComboBox->addItem(QWidget::tr("patient right is screen right"), QString("PatientRightIsScreenRight"));
+  this->SliceViewOrientationComboBox->addItem(qSlicerSettingsViewsPanel::tr("patient right is screen left (default)"), QString("PatientRightIsScreenLeft"));
+  this->SliceViewOrientationComboBox->addItem(qSlicerSettingsViewsPanel::tr("patient right is screen right"), QString("PatientRightIsScreenRight"));
   q->registerProperty("DefaultSliceView/Orientation", this->SliceViewOrientationComboBox,
     "currentUserDataAsString", SIGNAL(currentIndexChanged(int)),
-    "Default slice view orientation",
+    qSlicerSettingsViewsPanel::tr("Default slice view orientation"),
     ctkSettingsPanel::OptionRequireRestart);
   QObject::connect(this->SliceViewOrientationComboBox, SIGNAL(activated(int)),
     q, SLOT(sliceViewOrientationChangedByUser()));
 
   q->registerProperty("Default3DView/BoxVisibility", this->ThreeDBoxVisibilityCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "3D view cube visibility");
+                      /*no tr*/"checked", SIGNAL(toggled(bool)),
+                      qSlicerSettingsViewsPanel::tr("3D view cube visibility"));
   q->registerProperty("Default3DView/AxisLabelsVisibility", this->ThreeDAxisLabelsVisibilityCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "3D view axis label visibility");
+                      /*no tr*/"checked", SIGNAL(toggled(bool)),
+                      qSlicerSettingsViewsPanel::tr("3D view axis label visibility"));
   QObject::connect(this->ThreeDOrientationMarkerTypeComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SIGNAL(currentThreeDOrientationMarkerTypeChanged(QString)));
   q->registerProperty("Default3DView/OrientationMarkerType", q,
                       "threeDOrientationMarkerType", SIGNAL(currentThreeDOrientationMarkerTypeChanged(QString)),
-                      "3D view orientation marker type",
+                      qSlicerSettingsViewsPanel::tr("3D view orientation marker type"),
                       ctkSettingsPanel::OptionRequireRestart);
   QObject::connect(this->ThreeDOrientationMarkerSizeComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SIGNAL(currentThreeDOrientationMarkerSizeChanged(QString)));
   q->registerProperty("Default3DView/OrientationMarkerSize", q,
                       "threeDOrientationMarkerSize", SIGNAL(currentThreeDOrientationMarkerSizeChanged(QString)),
-                      "3D view orientation marker size",
+                      qSlicerSettingsViewsPanel::tr("3D view orientation marker size"),
                       ctkSettingsPanel::OptionRequireRestart);
   QObject::connect(this->ThreeDRulerTypeComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SIGNAL(currentThreeDRulerTypeChanged(QString)));
   q->registerProperty("Default3DView/RulerType", q,
                       "threeDRulerType", SIGNAL(currentThreeDRulerTypeChanged(QString)),
-                      "3D view ruler type",
+                      qSlicerSettingsViewsPanel::tr("3D view ruler type"),
                       ctkSettingsPanel::OptionRequireRestart);
   q->registerProperty("Default3DView/UseDepthPeeling", this->ThreeDUseDepthPeelingCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "3D depth peeling");
+                      /*no tr*/"checked", SIGNAL(toggled(bool)),
+                      qSlicerSettingsViewsPanel::tr("3D depth peeling"));
   q->registerProperty("Default3DView/UseOrthographicProjection", this->ThreeDUseOrthographicProjectionCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "Orthographic projection");
+                      /*no tr*/"checked", SIGNAL(toggled(bool)),
+                      qSlicerSettingsViewsPanel::tr("Orthographic projection"));
 
 }
 
@@ -292,11 +292,11 @@ void qSlicerSettingsViewsPanel::sliceViewOrientationChangedByUser()
   Q_D(qSlicerSettingsViewsPanel);
   if (d->SliceViewOrientationComboBox->currentUserDataAsString() == "PatientRightIsScreenRight")
     {
-    if (d->SliceOrientationMarkerTypeComboBox->currentText() == "none")
+    if (d->SliceOrientationMarkerTypeComboBox->currentText() == tr("none"))
       {
       // Non-default orientation is chosen and no orientation marker is displayed.
       // To ensure that there is no accidental mixup of orientations, show the orientation marker.
-      d->SliceOrientationMarkerTypeComboBox->setCurrentText("axes");
+      d->SliceOrientationMarkerTypeComboBox->setCurrentText(tr("axes"));
       }
     }
 }

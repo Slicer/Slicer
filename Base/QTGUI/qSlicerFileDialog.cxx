@@ -75,7 +75,7 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
       extensions << ctk::nameFilterToExtensions(nameFilter);
       }
     }
-  filters.insert(0, QString("All (") + extensions.join(" ") + QString(")"));
+  filters.insert(0, tr("All") + " (" + extensions.join(" ") + ")");
   return filters;
 }
 

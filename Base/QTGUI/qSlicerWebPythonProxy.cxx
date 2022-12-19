@@ -57,7 +57,7 @@ bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
   ctkMessageBox* confirmationBox = new ctkMessageBox(qSlicerApplication::application()->mainWindow());
   confirmationBox->setAttribute(Qt::WA_DeleteOnClose);
   confirmationBox->setWindowTitle(tr("Allow Python execution?"));
-  confirmationBox->setText("Allow the web page has asked to execute code using Slicer's python?");
+  confirmationBox->setText(tr("Allow the web page to execute code using Slicer's python?"));
 
   confirmationBox->addButton(tr("Allow"), QMessageBox::AcceptRole);
   confirmationBox->addButton(tr("Reject"), QMessageBox::RejectRole);

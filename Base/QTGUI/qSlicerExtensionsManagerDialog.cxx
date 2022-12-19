@@ -66,7 +66,7 @@ void qSlicerExtensionsManagerDialogPrivate::init()
     q, SLOT(onBatchProcessingChanged()));
 
   QPushButton * restartButton = this->ButtonBox->button(QDialogButtonBox::Ok);
-  restartButton->setText("Restart");
+  restartButton->setText(qSlicerExtensionsManagerDialog::tr("Restart"));
 
   q->setRestartRequested(false);
 

@@ -417,17 +417,17 @@ protected:
     QString statusText;
     if (!available && missing) // "missing" is checked so that we don't display this message when there have been no update checks before
       {
-      statusText += QString("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
-        "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> "
-        "Not found for this version of the application (r%2)</p>")
+      statusText += QLatin1Literal("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
+        "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ") +
+        qSlicerExtensionsLocalWidget::tr("Not found for this version of the application (r%2)") + QLatin1Literal("</p>")
         .arg(this->WarningColor)
         .arg(this->SlicerRevision);
       }
     if (!compatible)
       {
-      statusText += QString("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
-        "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> "
-        "Incompatible with Slicer r%2 [built for r%3]</p>")
+      statusText += QLatin1Literal("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
+        "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ") +
+        qSlicerExtensionsLocalWidget::tr("Incompatible with Slicer r%2 [built for r%3]") + QLatin1Literal("</p>")
         .arg(this->WarningColor)
         .arg(this->SlicerRevision)
         .arg(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionSlicerVersionRole).toString());

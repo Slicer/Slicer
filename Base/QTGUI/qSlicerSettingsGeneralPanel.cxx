@@ -101,12 +101,12 @@ void qSlicerSettingsGeneralPanelPrivate::init()
     {
     this->ApplicationUpdateServerURLLineEdit->setText("https://download.slicer.org");
 
-    q->registerProperty("ApplicationUpdate/AutoUpdateCheck", this->ApplicationAutoUpdateCheckCheckBox, "checked",
+    q->registerProperty("ApplicationUpdate/AutoUpdateCheck", this->ApplicationAutoUpdateCheckCheckBox, /*no tr*/"checked",
       SIGNAL(toggled(bool)));
 
-    q->registerProperty("ApplicationUpdate/ServerUrl", this->ApplicationUpdateServerURLLineEdit, "text",
+    q->registerProperty("ApplicationUpdate/ServerUrl", this->ApplicationUpdateServerURLLineEdit, /*no tr*/"text",
       SIGNAL(textChanged(QString)),
-      "Application update server URL");
+      qSlicerSettingsGeneralPanel::tr("Application update server URL"));
 
     qSlicerApplication* app = qSlicerApplication::application();
     if (app && app->applicationUpdateManager())
@@ -150,10 +150,11 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   // Default values
 
   this->DefaultScenePathButton->setDirectory(qSlicerCoreApplication::application()->defaultScenePath());
-  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(this->DefaultScenePathButton, "directory", SIGNAL(directoryChanged(QString)));
+  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(this->DefaultScenePathButton,
+                      /*no tr*/"directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("DefaultScenePath", relativePathMapper, "relativePath",
                       SIGNAL(relativePathChanged(QString)),
-                      "Default scene path");
+                      qSlicerSettingsGeneralPanel::tr("Default scene path"));
   QObject::connect(this->DefaultScenePathButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(setDefaultScenePath(QString)));
 
@@ -161,42 +162,42 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   this->DocumentationBaseURLLineEdit->setText("https://slicer.readthedocs.io/en/{version}");
   this->ModuleDocumentationURLLineEdit->setText("{documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html");
 
-  q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
+  q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, /*no tr*/"checked",
                       SIGNAL(toggled(bool)));
 
-  ctkBooleanMapper* restartMapper = new ctkBooleanMapper(this->ConfirmRestartCheckBox, "checked", SIGNAL(toggled(bool)));
+  ctkBooleanMapper* restartMapper = new ctkBooleanMapper(this->ConfirmRestartCheckBox, /*no tr*/"checked", SIGNAL(toggled(bool)));
   restartMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
   restartMapper->setFalseValue(static_cast<int>(QMessageBox::Ok));
   q->registerProperty("MainWindow/DontConfirmRestart",
                       restartMapper,"valueAsInt", SIGNAL(valueAsIntChanged(int)));
 
-  ctkBooleanMapper* exitMapper = new ctkBooleanMapper(this->ConfirmExitCheckBox, "checked", SIGNAL(toggled(bool)));
+  ctkBooleanMapper* exitMapper = new ctkBooleanMapper(this->ConfirmExitCheckBox, /*no tr*/"checked", SIGNAL(toggled(bool)));
   exitMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
   exitMapper->setFalseValue(static_cast<int>(QMessageBox::Ok));
   q->registerProperty("MainWindow/DontConfirmExit",
                       exitMapper, "valueAsInt", SIGNAL(valueAsIntChanged(int)));
 
-  ctkBooleanMapper* sceneCloseMapper = new ctkBooleanMapper(this->ConfirmSceneCloseCheckBox, "checked", SIGNAL(toggled(bool)));
+  ctkBooleanMapper* sceneCloseMapper = new ctkBooleanMapper(this->ConfirmSceneCloseCheckBox, /*no tr*/"checked", SIGNAL(toggled(bool)));
   sceneCloseMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
   sceneCloseMapper->setFalseValue(static_cast<int>(QMessageBox::AcceptRole));
   q->registerProperty("MainWindow/DontConfirmSceneClose",
                       sceneCloseMapper, "valueAsInt", SIGNAL(valueAsIntChanged(int)));
 
-  q->registerProperty("DocumentationBaseURL", this->DocumentationBaseURLLineEdit, "text",
+  q->registerProperty("DocumentationBaseURL", this->DocumentationBaseURLLineEdit, /*no tr*/"text",
                       SIGNAL(textChanged(QString)),
-                      "Documentation location",
+                      qSlicerSettingsGeneralPanel::tr("Documentation location"),
                       ctkSettingsPanel::OptionRequireRestart);
-  q->registerProperty("ModuleDocumentationURL", this->ModuleDocumentationURLLineEdit, "text",
+  q->registerProperty("ModuleDocumentationURL", this->ModuleDocumentationURLLineEdit, /*no tr*/"text",
                       SIGNAL(textChanged(QString)),
-                      "Documentation location",
+                      qSlicerSettingsGeneralPanel::tr("Documentation location"),
                       ctkSettingsPanel::OptionRequireRestart);
   q->registerProperty("language", this->LanguageComboBox, "currentLanguage",
                       SIGNAL(currentLanguageNameChanged(const QString&)),
-                      "Enable/Disable languages",
+                      qSlicerSettingsGeneralPanel::tr("Enable/Disable languages"),
                       ctkSettingsPanel::OptionRequireRestart);
-  q->registerProperty("RecentlyLoadedFiles/NumberToKeep", this->NumOfRecentlyLoadedFiles, "value",
+  q->registerProperty("RecentlyLoadedFiles/NumberToKeep", this->NumOfRecentlyLoadedFiles, /*no tr*/"value",
                       SIGNAL(valueChanged(int)),
-                      "Max. number of 'Recent' menu items",
+                      qSlicerSettingsGeneralPanel::tr("Max. number of 'Recent' menu items"),
                       ctkSettingsPanel::OptionRequireRestart);
 }
 
