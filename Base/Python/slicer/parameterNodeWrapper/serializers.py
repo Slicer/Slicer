@@ -182,7 +182,7 @@ def parameterNodeSerializer(classtype=None):
     def wrap(cls):
         return _processSerializer(cls)
 
-    # See if we're being called as @parameterNode or @parameterNode().
+    # See if we're being called as @parameterNodeSerializer or @parameterNodeSerializer().
     if classtype is None:
         return wrap
     return wrap(classtype)
