@@ -206,7 +206,7 @@ Common parameters for data selection for all methods:
 If `id` is specified then `class` and `name` parameters are ignored.
 If both `class` and `name` are specified then those nodes will be selected that have fulfill both selection criteria.
 
-#### GET /mrml and GET/mrml/names
+#### GET /mrml and GET /mrml/names
 
 Get names of the selected nodes.
 
@@ -273,7 +273,7 @@ Return:
 - 200 (application/json): JSON object, "success" property is set true and `loadedNodeIDs` property contains a list of loaded node ids.
 - 500 (application/json): In case of unexpected error. `message` attribute contains error message.
 
-#### GET /mrml/file
+#### DELETE /mrml/file
 
 Remove nodes from the scene. If no query parameters are specified then the whole scene is cleared.
 
