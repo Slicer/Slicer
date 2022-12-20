@@ -18,6 +18,10 @@ The self-test framework can be used in a number of ways:
 
 * Any type of module or extension can also include self tests (and should!).
 
+## Information for developers
+
+See examples and other developer information in [Developer guide](../../developer_guide/modules/selftests).
+
 ## Contributors
 
 - Steve Pieper (Isomics)

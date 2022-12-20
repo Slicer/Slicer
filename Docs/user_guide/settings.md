@@ -75,6 +75,19 @@ The overall theme of Slicer is controlled by the selected Style:
 - Light Slicer: application window background is bright, regardless of operating system settings.
 - Dark Slicer: application window background is dark, regardless of operating system settings.
 
+### Developer
+
+#### Developer mode
+
+Enable the following features:
+
+* [Module selection toolbar](user_interface.md#toolbar): Modules associated with the _Testing_ category are visible by default.
+* [WebServer module](modules/webserver.md): Javascript logging is enabled by default.
+* [Module panel](user_interface.md#module-panel): `Reload & Test` module panel section is displayed for scripted modules. It includes controls for reloading, testing and editing scripted modules as well as restarting the application.
+
+modules/webserver.html
+
+
 ## Information for Advanced Users
 
 ### Settings file location

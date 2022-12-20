@@ -9,6 +9,7 @@ colors
 dicom
 markups
 plots
+selftests
 segmentations
 segmenteditor
 transforms
