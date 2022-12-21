@@ -677,7 +677,9 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
     """
     from slicer import app, vtkMRMLMessageCollection
     from vtk import vtkCollection
-    properties['fileName'] = filename
+
+    # We need to convert the path to string now, because Qt cannot convert a pathlib.Path object to string.
+    properties['fileName'] = str(filename)
 
     loadedNodesCollection = vtkCollection()
     userMessages = vtkMRMLMessageCollection()
@@ -714,7 +716,9 @@ def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
     """
     from slicer import app, vtkMRMLMessageCollection
     from vtk import vtkCollection
-    properties['fileName'] = filename
+
+    # We need to convert the path to string now, because Qt cannot convert a pathlib.Path object to string.
+    properties['fileName'] = str(filename)
 
     loadedNodesCollection = vtkCollection()
     userMessages = vtkMRMLMessageCollection()
