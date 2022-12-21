@@ -1,5 +1,5 @@
 import unittest
-from typing import Annotated
+from typing import Annotated, Union
 
 from MRMLCorePython import vtkMRMLModelNode
 
@@ -300,3 +300,86 @@ class TypedParameterNodeTest(unittest.TestCase):
         serializer.remove(parameterNode, "pack")
 
         self.assertFalse(parameterNode.GetParameterNames())
+
+    def test_isParameterPack(self):
+        @parameterPack
+        class LocalPack:
+            i: int
+
+        self.assertTrue(isParameterPack(LocalPack))  # class
+        self.assertTrue(isParameterPack(LocalPack()))  # object
+        self.assertTrue(isParameterPack(BoundingBox))  # class
+        self.assertTrue(isParameterPack(BoundingBox()))  # object
+        self.assertFalse(isParameterPack(int))  # class
+        self.assertFalse(isParameterPack(int()))  # object
+        self.assertFalse(isParameterPack(str))  # class
+        self.assertFalse(isParameterPack(''))  # object
+
+    def test_parameter_pack_getSetValue(self):
+        @parameterPack
+        class ParameterPack:
+            box: BoundingBox
+            value: int
+
+        pack = ParameterPack(box=BoundingBox(Point(-20, 3), Point(2, -30)), value=778)
+        self.assertEqual(pack.getValue("box"), BoundingBox(Point(-20, 3), Point(2, -30)))
+        self.assertEqual(pack.getValue("box.topLeft"), Point(-20, 3))
+        self.assertEqual(pack.getValue("box.bottomRight.y"), -30)
+        self.assertEqual(pack.getValue("value"), 778)
+
+        with self.assertRaises(ValueError):
+            pack.getValue("invalid")
+        with self.assertRaises(ValueError):
+            pack.getValue("box.invalid")
+        with self.assertRaises(ValueError):
+            pack.getValue("box.topLeft.invalid")
+        with self.assertRaises(ValueError):
+            pack.getValue("value.invalid")
+
+        pack.setValue("box", BoundingBox(Point(9, 8), Point(7, 6)))
+        self.assertEqual(pack.getValue("box"), BoundingBox(Point(9, 8), Point(7, 6)))
+        pack.setValue("box.bottomRight", Point(11, 10))
+        self.assertEqual(pack.getValue("box"), BoundingBox(Point(9, 8), Point(11, 10)))
+        self.assertEqual(pack.getValue("box.bottomRight"), Point(11, 10))
+        pack.setValue("box.topLeft.x", -99)
+        self.assertEqual(pack.getValue("box"), BoundingBox(Point(-99, 8), Point(11, 10)))
+        self.assertEqual(pack.getValue("box.topLeft.x"), -99)
+
+    def test_parameter_pack_dataType(self):
+        @parameterPack
+        class AnnotatedSub:
+            iterations: Annotated[int, Default(44)]
+
+        @parameterPack
+        class ParameterPack:
+            box: BoundingBox
+            value: int
+            union: Union[int, str]
+            annotated: Annotated[bool, Default(True)]
+            annotatedBox: Annotated[BoundingBox, Default(BoundingBox(Point(-99, 8), Point(11, 10)))]
+            annotatedSub: AnnotatedSub
+
+        self.assertEqual(ParameterPack.dataType("box"), BoundingBox)
+        self.assertEqual(ParameterPack.dataType("box.topLeft"), Point)
+        self.assertEqual(ParameterPack.dataType("box.topLeft.x"), float)
+        self.assertEqual(ParameterPack.dataType("value"), int)
+        self.assertEqual(ParameterPack.dataType("union"), Union[int, str])
+        self.assertEqual(ParameterPack.dataType("annotated"), Annotated[bool, Default(True)])
+        self.assertEqual(ParameterPack.dataType("annotatedBox"),
+                         Annotated[BoundingBox, Default(BoundingBox(Point(-99, 8), Point(11, 10)))])
+        self.assertEqual(ParameterPack.dataType("annotatedBox.topLeft"), Point)
+        self.assertEqual(ParameterPack.dataType("annotatedSub"), AnnotatedSub)
+        self.assertEqual(ParameterPack.dataType("annotatedSub.iterations"), Annotated[int, Default(44)])
+
+        param = ParameterPack()
+        self.assertEqual(param.dataType("box"), BoundingBox)
+        self.assertEqual(param.dataType("box.topLeft"), Point)
+        self.assertEqual(param.dataType("box.topLeft.x"), float)
+        self.assertEqual(param.dataType("value"), int)
+        self.assertEqual(param.dataType("union"), Union[int, str])
+        self.assertEqual(param.dataType("annotated"), Annotated[bool, Default(True)])
+        self.assertEqual(param.dataType("annotatedBox"),
+                         Annotated[BoundingBox, Default(BoundingBox(Point(-99, 8), Point(11, 10)))])
+        self.assertEqual(param.dataType("annotatedBox.topLeft"), Point)
+        self.assertEqual(param.dataType("annotatedSub"), AnnotatedSub)
+        self.assertEqual(param.dataType("annotatedSub.iterations"), Annotated[int, Default(44)])

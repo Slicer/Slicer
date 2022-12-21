@@ -8,12 +8,16 @@ from .serializers import (
     ValidatedSerializer,
 )
 from .default import extractDefault
+from .parameterInfo import ParameterInfo
 from .validators import Validator, NotNone
-from .util import splitAnnotations
+from .util import (
+    splitAnnotations,
+    splitPossiblyDottedName,
+    unannotatedType,
+)
 
-from .wrapper import _ParameterInfo
 
-__all__ = ["parameterPack"]
+__all__ = ["parameterPack", "isParameterPack"]
 
 
 def _implName(name: str) -> str:
@@ -93,6 +97,69 @@ def _strMethod(self) -> str:
     return f"{self.__class__.__name__}({', '.join(strParams)})"
 
 
+def isParameterPack(obj):
+    """
+    Returns true if the given object is a parameterPack, false otherwise.
+    """
+    return hasattr(obj, "_is_parameterPack") and getattr(obj, "_is_parameterPack")
+
+
+def _checkTopMember(packObject, membername):
+    # split something like "x.y.z" -> "x", "y.z"
+    topname, _ = splitPossiblyDottedName(membername)
+    if not hasattr(packObject, topname):
+        raise ValueError(f"{packObject} has no member '{topname}'")
+
+
+def _checkMember(packObjectOrClass, membername):
+    # split something like "x.y.z" -> "x", "y.z"
+    topname, subname = splitPossiblyDottedName(membername)
+    if not hasattr(packObjectOrClass, topname):
+        raise ValueError(f"{packObjectOrClass} has no member '{topname}'")
+    if subname is None:
+        return True  # if we had the topname and there is no subpart, we are done
+
+    topnameType = unannotatedType(packObjectOrClass._parameterPack_allParameters[topname].unalteredType)
+
+    if isParameterPack(topnameType):
+        return _checkMember(topnameType, subname)
+    # if not parameter pack but we have more pieces, that is bad
+    raise ValueError(f"{topnameType} is not a parameter pack but expects to have '{subname}'")
+
+
+def _getValue(self, membername):
+    _checkTopMember(self, membername)
+    topname, subname = splitPossiblyDottedName(membername)
+    topnameValue = getattr(self, topname)
+    if subname is None:
+        return topnameValue
+    else:
+        return _getValue(topnameValue, subname)
+
+
+def _setValue(self, membername, value):
+    _checkTopMember(self, membername)
+    topname, subname = splitPossiblyDottedName(membername)
+    if subname is None:
+        setattr(self, topname, value)
+    else:
+        topnameValue = getattr(self, topname)
+        _setValue(topnameValue, subname, value)
+
+
+def _makeDataTypeFunc(classvar):
+    @staticmethod
+    def dataType(membername):
+        _checkTopMember(classvar, membername)
+        topname, subname = splitPossiblyDottedName(membername)
+        datatype = classvar._parameterPack_allParameters[topname].unalteredType
+        if subname is None:
+            return datatype
+        else:
+            return unannotatedType(datatype).dataType(subname)
+    return dataType
+
+
 def _processParameterPack(classtype):
     members = typing.get_type_hints(classtype, include_extras=True)
     if len(members) == 0:
@@ -112,7 +179,7 @@ def _processParameterPack(classtype):
         except Exception as e:
             raise ValueError(f"The default parameter of '{default}' fails the validation checks:\n  {str(e)}")
 
-        parameter = _ParameterInfo(name, serializer, default)
+        parameter = ParameterInfo(name, serializer, default, nametype)
         # note: heavily relying on the fact that dict is ordered
         allParameters[name] = parameter
 
@@ -134,11 +201,14 @@ def _processParameterPack(classtype):
         setattr(classtype, "__repr__", _strMethod)
 
     # required to make this class work, these names are reserved
-    for reserved in ["_parameterPack_allParameters", "_is_parameterPack"]:
+    for reserved in ["_parameterPack_allParameters", "_is_parameterPack", "getValue", "setValue"]:
         if reserved in classtype.__dict__:
             raise ValueError(f"Cannot use reserved name '{reserved}' in a parameterPack")
     setattr(classtype, "_parameterPack_allParameters", allParameters)
     setattr(classtype, "_is_parameterPack", True)
+    setattr(classtype, "getValue", _getValue)
+    setattr(classtype, "setValue", _setValue)
+    setattr(classtype, "dataType", _makeDataTypeFunc(classtype))
     return classtype
 
 
@@ -246,10 +316,10 @@ class ParameterPackSerializer(Serializer):
     def default(self):
         return self.type()
 
-    def _serializer(self, parameterInfo: _ParameterInfo) -> Serializer:
+    def _serializer(self, parameterInfo: ParameterInfo) -> Serializer:
         return _getSerializer(self.type, parameterInfo.basename)
 
-    def _mangleName(self, parameterInfo: _ParameterInfo, name: str) -> str:
+    def _mangleName(self, parameterInfo: ParameterInfo, name: str) -> str:
         return f"{name}.{parameterInfo.basename}"
 
     @property

@@ -1,7 +1,7 @@
 import typing
 from typing import Annotated
 
-__all__ = ["splitAnnotations"]
+__all__ = ["splitAnnotations", "unannotatedType", "findFirstAnnotation"]
 
 
 def splitAnnotations(possiblyAnnotatedType):
@@ -18,3 +18,30 @@ def splitAnnotations(possiblyAnnotatedType):
     actualtype = args[0]
     annotations = args[1:-1]
     return (actualtype, annotations)
+
+
+def unannotatedType(possiblyAnnotatedType):
+    return splitAnnotations(possiblyAnnotatedType)[0]
+
+
+def findFirstAnnotation(annotationsList, annotationType):
+    """
+    Given a list of annotations, returns the first one of the given type
+    """
+    extracted = [annotation for annotation in annotationsList if isinstance(annotation, annotationType)]
+    return extracted[0] if extracted else None
+
+
+def splitPossiblyDottedName(possiblyDottedName):
+    """
+    Splits apart the name into a top level name, then the rest.
+
+    E.g.
+      "x" -> ("x", None)
+      "x.y.z" -> ("x", "y.z")
+    """
+    if '.' in possiblyDottedName:
+        split = possiblyDottedName.split('.', maxsplit=1)
+        return split[0], split[1]
+    else:
+        return possiblyDottedName, None
