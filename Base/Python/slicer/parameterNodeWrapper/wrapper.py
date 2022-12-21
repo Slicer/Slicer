@@ -7,8 +7,9 @@ import vtk
 
 from .default import extractDefault
 from .parameterInfo import ParameterInfo
+from .parameterPack import _checkMember as checkPackMember
 from .serializers import Serializer, createSerializer
-from .util import splitAnnotations
+from .util import splitAnnotations, splitPossiblyDottedName, unannotatedType
 
 __all__ = ["parameterNodeWrapper"]
 
@@ -119,12 +120,20 @@ def _initMethod(self, parameterNode, prefix: Optional[str] = None):
             setattr(self, f"_{parameterInfo.basename}_impl", _ParameterWrapper(parameter, parameterNode))
 
 
-def _checkParamName(paramNameInstance, paramName: str):
-    if not hasattr(paramNameInstance, f"_{paramName}_impl"):
-        raise ValueError(f"Cannot find a param with the given name: {paramName}"
-                         + "\n  Found parameters ["
-                         + "".join([f"\n    {p.basename}," for p in paramNameInstance.__allParameters])
-                         + "\n  ]")
+def _checkParamName(paramNodeWrapInstanceOrClass, paramName: str):
+    topname, subname = splitPossiblyDottedName(paramName)
+
+    for paramInfo in paramNodeWrapInstanceOrClass.__allParameters:
+        if paramInfo.basename == topname:
+            if subname is None:
+                return
+            else:
+                checkPackMember(unannotatedType(paramInfo.unalteredType), subname)
+                return
+    raise ValueError(f"Cannot find a param with the given name: {topname}"
+                     + "\n  Found parameters ["
+                     + "".join([f"\n    {p.basename}," for p in paramNodeWrapInstanceOrClass.__allParameters])
+                     + "\n  ]")
 
 
 def _isCached(self, paramName: str):
@@ -135,6 +144,41 @@ def _isCached(self, paramName: str):
 def _default(self, paramName: str):
     _checkParamName(self, paramName)
     return getattr(self, f"_{paramName}_impl").parameter.default
+
+
+def _getValue(self, name):
+    _checkParamName(self, name)
+    topname, subname = splitPossiblyDottedName(name)
+    topnameValue = getattr(self, f"_{topname}_impl").read()
+    if subname is None:
+        return topnameValue
+    else:
+        return topnameValue.getValue(subname)
+
+
+def _setValue(self, name, value):
+    _checkParamName(self, name)
+    topname, subname = splitPossiblyDottedName(name)
+    if subname is None:
+        return getattr(self, f"_{topname}_impl").write(value)
+    else:
+        topnameValue = getattr(self, f"_{topname}_impl").read()
+        topnameValue.setValue(subname, value)
+
+
+def _makeDataTypeFunc(classvar):
+    @staticmethod
+    def dataType(membername):
+        _checkParamName(classvar, membername)
+        topname, subname = splitPossiblyDottedName(membername)
+        for param in classvar.__allParameters:
+            if param.basename == topname:
+                if subname is None:
+                    return param.unalteredType
+                else:
+                    return unannotatedType(param.unalteredType).dataType(subname)
+        raise RuntimeError(f"Name '{membername}' appeared to exist but can't find it in allParameters")
+    return dataType
 
 
 def _processClass(classtype):
@@ -164,6 +208,9 @@ def _processClass(classtype):
     setattr(classtype, "__init__", _initMethod)
     setattr(classtype, "default", _default)
     setattr(classtype, "isCached", _isCached)
+    setattr(classtype, "dataType", _makeDataTypeFunc(classtype))
+    setattr(classtype, "getValue", _getValue)
+    setattr(classtype, "setValue", _setValue)
     setattr(classtype, "StartModify", lambda self: self.parameterNode.StartModify())
     setattr(classtype, "EndModify", lambda self, wasModified: self.parameterNode.EndModify(wasModified))
     setattr(classtype, "AddObserver", lambda self, event, callback, priority=0.0: self.parameterNode.AddObserver(event, callback, priority))
