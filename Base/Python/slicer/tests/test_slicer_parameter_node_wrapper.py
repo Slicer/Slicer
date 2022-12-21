@@ -248,6 +248,49 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertIsNone(param.noneDefault)
         self.assertEqual(param.nonNoneDefault, AnotherCustomClass(1, 2, 3))
 
+    def test_getSetValue(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            float_: float
+            bool_: bool
+            int_: Annotated[int, Default(4), Maximum(37)]
+            string_: Annotated[str, Default("TypedParam")]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertEqual(param.getValue("float_"), 0.0)
+        self.assertFalse(param.getValue("bool_"))
+        self.assertEqual(param.getValue("int_"), 4)
+        self.assertEqual(param.getValue("string_"), "TypedParam")
+
+        param.setValue("float_", 9.9)
+        self.assertEqual(param.getValue("float_"), 9.9)
+        param.setValue("bool_", True)
+        self.assertTrue(param.getValue("bool_"))
+        param.setValue("int_", 36)
+        self.assertEqual(param.getValue("int_"), 36)
+        param.setValue("string_", "Another string")
+        self.assertEqual(param.getValue("string_"), "Another string")
+
+        with self.assertRaises(TypeError):
+            param.setValue("float_", "this is not a float")
+        self.assertEqual(param.getValue("float_"), 9.9)
+        with self.assertRaises(ValueError):
+            param.setValue("int_", 38)
+        self.assertEqual(param.getValue("int_"), 36)
+
+    def test_dataType(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            float_: float
+            bool_: bool
+            int_: Annotated[int, Default(4)]
+            string_: Annotated[str, Default("TypedParam")]
+
+        self.assertEqual(ParameterNodeType.dataType("float_"), float)
+        self.assertEqual(ParameterNodeType.dataType("bool_"), bool)
+        self.assertEqual(ParameterNodeType.dataType("int_"), Annotated[int, Default(4)])
+        self.assertEqual(ParameterNodeType.dataType("string_"), Annotated[str, Default("TypedParam")])
+
     def test_primitives(self):
         @parameterNodeWrapper
         class ParameterNodeType:
