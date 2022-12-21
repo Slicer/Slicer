@@ -2,6 +2,7 @@ import logging
 import typing
 from typing import Optional
 
+import slicer
 import vtk
 
 from .default import extractDefault
@@ -87,8 +88,12 @@ class _CachedParameterWrapper(_ParameterWrapper):
     def write(self, value) -> None:
         self._currentlyWriting = True
         try:
-            super().write(value)
-            self._value = self.parameter.read(self.parameterNode)
+            # Important: need to read the value back before calling any observers.
+            # If we call the observers first, they might query the new value, so it
+            # needs to be updated before then.
+            with slicer.util.NodeModify(self.parameterNode):
+                super().write(value)
+                self._value = self.parameter.read(self.parameterNode)
         finally:
             self._currentlyWriting = False
 
