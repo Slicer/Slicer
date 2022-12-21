@@ -6,21 +6,15 @@ import slicer
 import vtk
 
 from .default import extractDefault
+from .parameterInfo import ParameterInfo
 from .serializers import Serializer, createSerializer
 from .util import splitAnnotations
 
 __all__ = ["parameterNodeWrapper"]
 
 
-class _ParameterInfo:
-    def __init__(self, basename: str, serializer: Serializer, default):
-        self.basename: str = basename
-        self.serializer: Serializer = serializer
-        self.default = default
-
-
 class _Parameter:
-    def __init__(self, parameterInfo: _ParameterInfo, prefix: Optional[str] = None):
+    def __init__(self, parameterInfo: ParameterInfo, prefix: Optional[str] = None):
         self.name: str = f"{prefix or ''}{parameterInfo.basename}"
         self.serializer: Serializer = parameterInfo.serializer
         self.default = parameterInfo.default
@@ -160,7 +154,7 @@ def _processClass(classtype):
         except Exception as e:
             raise ValueError(f"The default parameter of '{default}' fails the validation checks:\n  {str(e)}")
 
-        parameter = _ParameterInfo(name, serializer, default)
+        parameter = ParameterInfo(name, serializer, default, nametype)
         allParameters.append(parameter)
         setattr(classtype, parameter.basename, _makeProperty(parameter.basename))
 
