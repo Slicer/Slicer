@@ -12,6 +12,12 @@ class Default:
     def __repr__(self) -> str:
         return f"Default({self.value})"
 
+    def __eq__(self, other):
+        if isinstance(other, Default):
+            return self.value == other.value
+        else:
+            return False
+
 
 def extractDefault(annotations):
     """
