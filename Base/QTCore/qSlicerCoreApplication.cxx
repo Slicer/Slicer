@@ -2082,7 +2082,7 @@ bool qSlicerCoreApplication::loadCaCertificates(const QString& caCertificatesPat
     }
   return !QSslSocket::defaultCaCertificates().empty();
 #else
-  Q_UNUSED(slicerHome);
+  Q_UNUSED(caCertificatesPath);
   return false;
 #endif
 }
