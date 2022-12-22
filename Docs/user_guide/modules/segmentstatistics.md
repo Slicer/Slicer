@@ -9,8 +9,8 @@ This is a module for the calculation of statistics related to the structure of s
 The values are computed from the binary labelmap representation of the segment.
 
 - Voxel count: the number of voxels in the segment
-- Volume mm3 the volume of the segment in mm3
-- Volume cm3 the volume of the segment in cm3
+- Volume mm3: the volume of the segment in mm3
+- Volume cm3: the volume of the segment in cm3
 - Centroid: the center of mass of the segment in RAS coordinates
 - Feret diameter: the diameter of a sphere that can encompass the entire segment
 - Surface area mm2: the surface area of the segment in mm2
