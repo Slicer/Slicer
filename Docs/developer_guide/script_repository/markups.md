@@ -599,7 +599,6 @@ How to use this:
 5. For each measurement: select it in the data tree, click on the place button on the toolbar then click in slice or 3D views
 
 ```python
-sliceNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSliceNodeRed")
 def createMeasurements():
   for nodeName in ['A', 'B', 'C', 'D']:
     lineNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsLineNode", nodeName)
@@ -632,12 +631,15 @@ def copyLineMeasurementsToClipboard():
   # Collect all line measurements from the scene
   lineNodes = getNodesByClass('vtkMRMLMarkupsLineNode')
   for lineNode in lineNodes:
+    if lineNode.GetNumberOfDefinedControlPoints() < 2:
+      # incomplete line, skip it
+      continue
     # Get node filename that the length was measured on
     try:
       volumeNode = slicer.mrmlScene.GetNodeByID(lineNode.GetNthControlPointAssociatedNodeID(0))
       imagePath = volumeNode.GetStorageNode().GetFileName()
     except:
-      imagePath = ''
+      imagePath = '(unknown)'
     # Get line node n
     measurementName = lineNode.GetName()
     # Get length measurement
@@ -646,12 +648,20 @@ def copyLineMeasurementsToClipboard():
     # Add fields to results
     measurements.append('\t'.join([imagePath, measurementName, length]))
   # Copy all measurements to clipboard (to be pasted into Excel)
-  slicer.app.clipboard().setText("\n".join(measurements))
+  outputText = "\n".join(measurements) + "\n"
+  slicer.app.clipboard().setText(outputText)
   slicer.util.delayDisplay(f"Copied {len(measurements)} length measurements to the clipboard.")
 
 shortcut2 = qt.QShortcut(slicer.util.mainWindow())
 shortcut2.setKey(qt.QKeySequence("Ctrl+m"))
 shortcut2.connect( 'activated()', copyLineMeasurementsToClipboard)
+```
+
+To copy all measurement results to a file instead of copying it to the clipboard, replace `slicer.app.clipboard...` line by these lines:
+
+```python
+with open("c:/tmp/results.csv", "a") as f:
+  f.write(outputText)
 ```
 
 ### Use markups json files in Python - outside Slicer
