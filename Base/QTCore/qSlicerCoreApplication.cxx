@@ -1414,9 +1414,9 @@ QString qSlicerCoreApplication::defaultCachePath() const
   // The returned path is never empty.
   //
   // Examples:
-  // - Windows: C:/Users/username/AppData/Local/NA-MIC/Slicer/cache
-  // - Linux: /home/username/.cache/NA-MIC/Slicer
-  // - macOS: /Users/username/Library/Caches/NA-MIC/Slicer
+  // - Windows: C:/Users/username/AppData/Local/Slicer/Slicer/cache
+  // - Linux: /home/username/.cache/Slicer/Slicer
+  // - macOS: /Users/username/Library/Caches/Slicer/Slicer
   //
   // This is already a user and application specific folder, but various software components
   // may place files there (e.g., QWebEngine), therefore we create a subfolder (SlicerIO)
