@@ -1124,7 +1124,10 @@ space origin: %%origin%%
         fileType = loadFileProperties['filetype']
 
         loadedNodes = slicer.util.loadNodeFromFile(localFile, fileType, loadFileProperties)
-        if type(loadedNodes) != list:
+
+        if loadedNodes is None:
+            loadedNodes = []
+        elif type(loadedNodes) != list:
             loadedNodes = [loadedNodes]
 
         import json
@@ -1150,13 +1153,11 @@ space origin: %%origin%%
             saveFileProperties[queryParam] = q[queryParam][0].strip()
 
         if 'url' in q:
-            # Open from URL
+            # Get localpath from URL
             downloadUrl = q['url'][0].strip()
             p = urllib.parse.urlparse(downloadUrl)
-            # Open from local file
             localFile = urllib.request.url2pathname(p.path)
         elif 'localfile' in q:
-            # Open from local file
             localFile = q['localfile'][0].strip()
         else:
             raise RuntimeError("Required `url` or `localfile` query parameter is missing in `mrml` request")
