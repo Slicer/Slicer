@@ -199,6 +199,12 @@ if(Slicer_BUILD_DICOM_SUPPORT)
     ${DCMTK_LIBRARIES}
     CTKDICOMCore
     )
+  foreach(lib IN LISTS DCMTK_LIBRARIES)
+    if(TARGET DCMTK::${lib})
+      list(REMOVE_ITEM KIT_target_libraries ${lib})
+      list(APPEND KIT_target_libraries DCMTK::${lib})
+    endif()
+  endforeach()
 endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT OR Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
