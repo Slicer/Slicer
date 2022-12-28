@@ -162,6 +162,9 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
       {
       QStringList extensionsList = QString::fromStdString(extensions).split(";");
       QStringList lastLoadedExtensionsList = QString::fromStdString(lastLoadedExtensions).split(";");
+      // If extensions string is empty then it appears as a single empty item in the list. Remove the empty item.
+      extensionsList.removeAll("");
+      lastLoadedExtensionsList.removeAll("");
       QSet<QString> notInstalledExtensions = ctk::qStringListToQSet(lastLoadedExtensionsList).subtract(ctk::qStringListToQSet(extensionsList));
       if (!notInstalledExtensions.isEmpty())
         {
