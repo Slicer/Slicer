@@ -59,8 +59,10 @@ void qMRMLSliceWidgetPrivate::init()
   Q_Q(qMRMLSliceWidget);
   this->setupUi(q);
 
-  this->SliceView->sliceViewInteractorStyle()
-    ->SetSliceLogic(this->SliceController->sliceLogic());
+  vtkMRMLSliceLogic* sliceLogic = this->SliceController->sliceLogic();
+
+  this->SliceVerticalController->setSliceLogic(sliceLogic);
+  this->SliceView->sliceViewInteractorStyle()->SetSliceLogic(sliceLogic);
 
   connect(this->SliceView, SIGNAL(resized(QSize)),
           this, SLOT(setSliceViewSize(QSize)));
