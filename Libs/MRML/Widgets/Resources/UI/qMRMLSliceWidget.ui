@@ -123,7 +123,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>297</x>
-     <y>59</y>
+     <y>14</y>
     </hint>
    </hints>
   </connection>
@@ -140,6 +140,22 @@
     <hint type="destinationlabel">
      <x>297</x>
      <y>59</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLSliceWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>SliceVerticalController</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>297</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>174</y>
     </hint>
    </hints>
   </connection>
