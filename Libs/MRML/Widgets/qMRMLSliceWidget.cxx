@@ -141,6 +141,9 @@ void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
 
   this->Superclass::setMRMLScene(newScene);
 
+  // In SliceController and  SliceVerticalController widgets
+  // the scene is set by signals defined in the .ui file.
+
   d->qvtkReconnect(
     this->mrmlScene(), newScene,
     vtkMRMLScene::EndBatchProcessEvent, d, SLOT(endProcessing()));
