@@ -31,12 +31,16 @@ pos2 = pos1 + direction / np.linalg.norm(direction) * length
 markupsNode.AddControlPoint(vtk.vtkVector3d(pos1))
 markupsNode.AddControlPoint(vtk.vtkVector3d(pos2))
 
+# Test length measurement
+
 measurement = markupsNode.GetMeasurement("length")
 if abs(measurement.GetValue() - length) > 1e-4:
     raise Exception("Unexpected length value: " + str(measurement.GetValue()))
 
 if measurement.GetValueWithUnitsAsPrintableString() != '34.12mm':
     raise Exception("Unexpected length measurement result: " + measurement.GetValueWithUnitsAsPrintableString())
+
+# Test measurement saving
 
 markupsFilename = markupsMeasurementsTestDir + '/line.mkp.json'
 slicer.util.saveNode(markupsNode, markupsFilename)
@@ -47,6 +51,50 @@ with open(markupsFilename) as f:
 result = [{'name': 'length', 'enabled': True, 'value': 34.12, 'units': 'mm', 'printFormat': '%-#4.4gmm'}]
 if markupsJson['markups'][0]['measurements'] != result:
     raise Exception("Unexpected length measurement result in file: " + str(markupsJson['markups'][0]['measurements']))
+
+# Test measurement loading
+
+loadedMarkupsNode = slicer.util.loadMarkups(markupsFilename)
+if not loadedMarkupsNode:
+    raise Exception(f"Failed to load markup from file: {markupsFilename}")
+loadedMeasurement = loadedMarkupsNode.GetMeasurement("length")
+
+if abs(loadedMeasurement.GetValue() - length) > 1e-4:
+    raise Exception("Unexpected length value: " + str(loadedMeasurement.GetValue()))
+
+if loadedMeasurement.GetValueWithUnitsAsPrintableString() != '34.12mm':
+    raise Exception("Unexpected length measurement in loaded result: " + loadedMeasurement.GetValueWithUnitsAsPrintableString())
+
+# Test measurement saving with unit coded with UCUM
+
+lengthUnitsCode = slicer.vtkCodedEntry()
+lengthUnitsCode.SetValueSchemeMeaning('mm', 'UCUM', 'millimeter')
+measurement.SetUnitsCode(lengthUnitsCode)
+
+slicer.util.saveNode(markupsNode, markupsFilename)
+with open(markupsFilename) as f:
+    markupsJson = json.load(f)
+
+result = [{'name': 'length', 'enabled': True, 'value': 34.12, 'units': ['mm', 'UCUM', 'millimeter'], 'printFormat': '%-#4.4gmm'}]
+if markupsJson['markups'][0]['measurements'] != result:
+    raise Exception("Unexpected length measurement result in file: " + str(markupsJson['markups'][0]['measurements']))
+
+# Test measurement loading with unit coded with UCUM
+
+loadedMarkupsNode = slicer.util.loadMarkups(markupsFilename)
+if not loadedMarkupsNode:
+    raise Exception(f"Failed to load markup from file: {markupsFilename}")
+loadedMeasurement = loadedMarkupsNode.GetMeasurement("length")
+
+if not loadedMeasurement.GetUnitsCode():
+    raise Exception("Units code not found")
+
+if loadedMeasurement.GetUnitsCode().GetCodeValue() != 'mm':
+    raise Exception(f"Unexpected code value: {loadedMeasurement.GetUnitsCode().GetCodeValue()}")
+if loadedMeasurement.GetUnitsCode().GetCodingSchemeDesignator() != 'UCUM':
+    raise Exception(f"Unexpected coding scheme designator: {loadedMeasurement.GetUnitsCode().GetCodingSchemeDesignator()}")
+if loadedMeasurement.GetUnitsCode().GetCodeMeaning() != 'millimeter':
+    raise Exception(f"Unexpected code meaning: {loadedMeasurement.GetUnitsCode().GetCodeMeaning()}")
 
 if not preserveFiles:
     os.remove(markupsFilename)

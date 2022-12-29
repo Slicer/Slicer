@@ -16,6 +16,9 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 // VTK includes
 #include <vtkObject.h>
 
+// STL includes
+#include <vector>
+
 /// \brief Simple class for storing standard coded entries (coding scheme, value, meaning triplets)
 ///
 /// vtkCodedEntry is a lightweight class that stores standard coded entries consisting of
@@ -61,6 +64,12 @@ public:
 
   /// Convenience function for setting code value, coding scheme, and code meaning with a single method call
   virtual void SetValueSchemeMeaning(const std::string& value, const std::string& scheme, const std::string& meaning);
+
+  /// Convenience function for setting code value, coding scheme, and code meaning with a single method call from a string vector
+  virtual bool SetValueSchemeMeaning(const std::vector<std::string>& valueSchemeMeaning);
+
+  /// Convenience function for getting code value, coding scheme, and code meaning as a string vector
+  virtual std::vector<std::string> GetValueSchemeMeaning();
 
   ///
   /// Get content of the object as a single human-readable string.
