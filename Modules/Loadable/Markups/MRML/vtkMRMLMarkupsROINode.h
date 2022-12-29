@@ -197,6 +197,10 @@ public:
   void GetBounds(double bounds[6]) override;
   //@}
 
+  /// Get ROI bounds in Object coordinate system. The difference compared to GetBounds() is that
+  /// the center of the ROI is the origin in the Object coordinate system.
+  void GetObjectBounds(double bounds[6]);
+
   //@{
   /// Returns the planes that define each of the 6 faces of the ROI.
   /// If InsideOut property of the node is true the normals of the plane will face inward,
