@@ -130,10 +130,40 @@
     </widget>
    </item>
    <item row="4" column="0" colspan="2">
-    <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item row="5" column="0" colspan="2">
-    <widget class="qMRMLVolumeThresholdWidget" name="MRMLVolumeThresholdWidget"/>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="qMRMLVolumeThresholdWidget" name="MRMLVolumeThresholdWidget"/>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item row="6" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="HistogramGroupBox">
