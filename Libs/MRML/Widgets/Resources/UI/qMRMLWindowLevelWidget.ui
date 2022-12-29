@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>517</width>
-    <height>55</height>
+    <width>300</width>
+    <height>61</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,46 +19,27 @@
   <property name="windowTitle">
    <string>Window Level</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,0">
+  <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="ctkDoubleSpinBox" name="WindowSpinBox">
-     <property name="prefix">
-      <string>W: </string>
-     </property>
-     <property name="decimals">
-      <number>2</number>
-     </property>
-     <property name="decimalsOption">
-      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Window/Level:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="ctkDoubleSpinBox" name="MinSpinBox">
-     <property name="prefix">
-      <string>Min:</string>
-     </property>
-     <property name="decimals">
-      <number>2</number>
-     </property>
-     <property name="decimalsOption">
-      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
     <widget class="QComboBox" name="AutoManualComboBox">
      <item>
       <property name="text">
-       <string>Auto W/L</string>
+       <string>Auto</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Manual W/L</string>
+       <string>Manual</string>
       </property>
      </item>
      <item>
@@ -68,38 +49,58 @@
      </item>
     </widget>
    </item>
-   <item row="0" column="3">
-    <widget class="ctkDoubleSpinBox" name="MaxSpinBox">
-     <property name="prefix">
-      <string>Max:</string>
-     </property>
-     <property name="decimals">
-      <number>2</number>
-     </property>
-     <property name="decimalsOption">
-      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="4">
-    <widget class="ctkDoubleSpinBox" name="LevelSpinBox">
-     <property name="prefix">
-      <string>L: </string>
-     </property>
-     <property name="decimals">
-      <number>2</number>
-     </property>
-     <property name="decimalsOption">
-      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="5">
+   <item row="1" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="ctkDoubleSpinBox" name="WindowSpinBox">
+       <property name="prefix">
+        <string>W: </string>
+       </property>
+       <property name="decimals">
+        <number>2</number>
+       </property>
+       <property name="decimalsOption">
+        <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkDoubleSpinBox" name="MinSpinBox">
+       <property name="decimals">
+        <number>2</number>
+       </property>
+       <property name="decimalsOption">
+        <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="ctkDoubleRangeSlider" name="WindowLevelRangeSlider">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkDoubleSpinBox" name="MaxSpinBox">
+       <property name="decimals">
+        <number>2</number>
+       </property>
+       <property name="decimalsOption">
+        <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkDoubleSpinBox" name="LevelSpinBox">
+       <property name="prefix">
+        <string>L: </string>
+       </property>
+       <property name="decimals">
+        <number>2</number>
+       </property>
+       <property name="decimalsOption">
+        <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
        </property>
       </widget>
      </item>
