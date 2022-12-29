@@ -98,9 +98,9 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
   - Window/Level Presets: Loaded from DICOM headers defined by scanner or by technician.
   - Convert to label map / Convert to scalar volume: Convert the active volume between labelmap and scalar volume.
 - Display: Set of visualization controls appropriate for the currently selected volume. Not all controls are available for all volume types.
+  - Presets: Predefined volume display presets that set window/level and the lookup table for common visualization requirements.
   - Lookup Table: Select the color mapping for scalar volumes to colors.
   - Interpolate: When checked, slice views will display linearly interpolated slices through input volumes. Unchecked indicates nearest neighbor resampling
-  - Window Level Presets: Predefinied shortcuts to window/level and color table combinations for common visualization requirements.
   - Window/Level Controls: Double slider with text input to define the range of input volume data that should be mapped to the display grayscale. Auto window level tries to estimate the intensity range of the foreground image data. On mouse over, a popup slides down to add support for large dynamic range by giving control over the range of the window level double slider.
   - Threshold: Controls the range of the image that should be considered transparent when used in the foreground layer of the slice display. Same parameters also control transparency of slice models displayed in the 3D viewers.
   - Histogram: Shows the number of pixels (y axis) vs the image intensity (x axis) over a background of the current window/level and threshold mapping.

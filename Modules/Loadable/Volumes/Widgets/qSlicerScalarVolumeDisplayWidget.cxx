@@ -99,11 +99,11 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
     qSlicerCoreApplication::application()->moduleLogic("Volumes")) : nullptr);
   if (volumesModuleLogic)
   {
-    QLayout* volumeDisplayPresetsLayout = this->PresetsWidget->layout();
+    QLayout* volumeDisplayPresetsLayout = this->PresetsGroupBox->layout();
     if (!volumeDisplayPresetsLayout)
       {
       volumeDisplayPresetsLayout = new QHBoxLayout;
-      this->PresetsWidget->setLayout(volumeDisplayPresetsLayout);
+      this->PresetsGroupBox->setLayout(volumeDisplayPresetsLayout);
       }
     std::vector<std::string> presetIds = volumesModuleLogic->GetVolumeDisplayPresetIDs();
     for (const auto& presetId : presetIds)
@@ -247,7 +247,7 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
       d->LockWindowLevelButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
       d->LockWindowLevelButton->setToolTip(tr("Click to prevent modification of Window/Level values"));
       }
-    d->PresetsWidget->setEnabled(!lockedWindowLevel);
+    d->PresetsGroupBox->setEnabled(!lockedWindowLevel);
     d->MRMLWindowLevelWidget->setEnabled(!lockedWindowLevel);
     }
   this->updateHistogram();
