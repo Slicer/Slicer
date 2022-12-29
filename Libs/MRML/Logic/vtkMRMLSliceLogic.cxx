@@ -2471,7 +2471,8 @@ bool vtkMRMLSliceLogic::VolumeWindowLevelEditable(const char* volumeNodeID)
     {
     return false;
     }
-  return !scalarVolumeDisplayNode->GetWindowLevelLocked();
+  vtkWarningMacro("vtkMRMLSliceLogic::VolumeWindowLevelEditable method is deprecated. Volume window level can always be set programmatically.");
+  return true;
 }
 
 //----------------------------------------------------------------------------
