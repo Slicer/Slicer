@@ -101,7 +101,7 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
   - Presets: Predefined volume display presets that set window/level and the lookup table for common visualization requirements.
   - Lookup Table: Select the color mapping for scalar volumes to colors.
   - Interpolate: When checked, slice views will display linearly interpolated slices through input volumes. Unchecked indicates nearest neighbor resampling
-  - Window/Level Controls: Double slider with text input to define the range of input volume data that should be mapped to the display grayscale. Auto window level tries to estimate the intensity range of the foreground image data. On mouse over, a popup slides down to add support for large dynamic range by giving control over the range of the window level double slider.
+  - Window/Level Controls: Double slider with text input to define the range of input volume data that should be mapped to the display grayscale. Auto window level tries to estimate the intensity range of the foreground image data. An advanced options button can be clicked to display controls to add support for large dynamic range by giving control over the range of the window level double slider.
   - Threshold: Controls the range of the image that should be considered transparent when used in the foreground layer of the slice display. Same parameters also control transparency of slice models displayed in the 3D viewers.
   - Histogram: Shows the number of pixels (y axis) vs the image intensity (x axis) over a background of the current window/level and threshold mapping.
 - Diffusion Weighted Volumes: The following controls show up when a DWI volume is selected
