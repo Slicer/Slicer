@@ -296,8 +296,7 @@ void vtkMRMLMarkupsROINode::GenerateBoxBounds(double bounds[6], double xAxis[3],
       {
       for (int i = 0; i < 2; ++i)
         {
-        double cornerPoint[3] = { 0.0, 0.0, 0.0 };
-        vtkMath::Add(cornerPoint, center, cornerPoint);
+        double cornerPoint[3] = { center[0], center[1], center[2] };
         if (i == 0)
           {
           vtkMath::Subtract(cornerPoint, xFaceVector, cornerPoint);
@@ -1466,7 +1465,6 @@ void vtkMRMLMarkupsROINode::WriteCLI(std::vector<std::string>& commandLine, std:
   commandLine.push_back(ss.str());
 }
 
-
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsROINode::GetObjectToNodeMatrixRotated()
 {
@@ -1486,4 +1484,17 @@ bool vtkMRMLMarkupsROINode::GetObjectToNodeMatrixRotated()
     }
   // not rotated
   return false;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::GetObjectBounds(double bounds[6])
+{
+  double diameter[3] = { 0.0, 0.0, 0.0 };
+  this->GetSize(diameter);
+  bounds[0] = -diameter[0] / 2.0;
+  bounds[1] = diameter[0] / 2.0;
+  bounds[2] = -diameter[1] / 2.0;
+  bounds[3] = diameter[1] / 2.0;
+  bounds[4] = -diameter[2] / 2.0;
+  bounds[5] = diameter[2] / 2.0;
 }
