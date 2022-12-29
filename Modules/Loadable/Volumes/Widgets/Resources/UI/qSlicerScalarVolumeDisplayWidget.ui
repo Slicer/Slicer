@@ -59,6 +59,9 @@
    </item>
    <item row="1" column="1">
     <widget class="qMRMLColorTableComboBox" name="ColorTableComboBox">
+     <property name="toolTip">
+      <string>Select the color mapping for scalar volumes to colors.</string>
+     </property>
      <property name="showChildNodeTypes">
       <bool>true</bool>
      </property>
@@ -79,6 +82,9 @@
    </item>
    <item row="2" column="1">
     <widget class="QCheckBox" name="InterpolateCheckbox">
+     <property name="toolTip">
+      <string>When checked, slice views will display linearly interpolated slices through input volumes. Unchecked indicates nearest neighbor resampling.</string>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -122,6 +128,9 @@
    </item>
    <item row="5" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="HistogramGroupBox">
+     <property name="toolTip">
+      <string>Shows the number of pixels (y axis) vs the image intensity (x axis) over a background of the current window/level and threshold mapping.</string>
+     </property>
      <property name="title">
       <string>Histogram</string>
      </property>
