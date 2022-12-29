@@ -65,6 +65,36 @@ void vtkCodedEntry::SetValueSchemeMeaning(const std::string& value,
 }
 
 //----------------------------------------------------------------------------
+bool vtkCodedEntry::SetValueSchemeMeaning(const std::vector<std::string>& codeValueSchemeMeaning)
+{
+  if (codeValueSchemeMeaning.size() < 2 || codeValueSchemeMeaning.size() > 3)
+    {
+    vtkErrorMacro("SetValueSchemeMeaning failed: codeValueSchemeMeaning must contain 2 or 3 strings");
+    return false;
+    }
+  this->SetCodeValue(codeValueSchemeMeaning[0].c_str());
+  this->SetCodingSchemeDesignator(codeValueSchemeMeaning[1].c_str());
+  if (codeValueSchemeMeaning.size() > 2)
+    {
+    this->SetCodeMeaning(codeValueSchemeMeaning[3].c_str());
+    }
+  else
+    {
+    this->SetCodeMeaning(codeValueSchemeMeaning[0].c_str());
+    }
+}
+
+//----------------------------------------------------------------------------
+std::vector<std::string> vtkCodedEntry::GetValueSchemeMeaning()
+{
+  std::vector<std::string> code;
+  code.push_back(this->GetCodeValue() ? this->GetCodeValue() : "");
+  code.push_back(this->GetCodingSchemeDesignator() ? this->GetCodingSchemeDesignator() : "");
+  code.push_back(this->GetCodeMeaning() ? this->GetCodeMeaning() : "");
+  return code;
+}
+
+//----------------------------------------------------------------------------
 std::string vtkCodedEntry::GetAsPrintableString()
 {
   std::string printable = std::string("(")

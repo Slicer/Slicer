@@ -31,8 +31,9 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsJsonStorageNode.h"
 
+class vtkMRMLMarkupsJsonElement;
+class vtkMRMLMarkupsJsonWriter;
 class vtkMRMLMarkupsNode;
-class vtkMRMLMarkupsDisplayNode;
 
 /// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsROIJsonStorageNode : public vtkMRMLMarkupsJsonStorageNode
@@ -42,11 +43,7 @@ public:
   vtkTypeMacro(vtkMRMLMarkupsROIJsonStorageNode, vtkMRMLMarkupsJsonStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
-
-  ///
-  /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override { return "MarkupsROIJsonStorage"; };
-
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:
@@ -55,8 +52,8 @@ protected:
   vtkMRMLMarkupsROIJsonStorageNode(const vtkMRMLMarkupsROIJsonStorageNode&);
   void operator=(const vtkMRMLMarkupsROIJsonStorageNode&);
 
-  class vtkInternalROI;
-  friend class vtkInternalROI;
+  bool WriteBasicProperties(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode) override;
+  bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupObject) override;
 };
 
 #endif

@@ -27,8 +27,11 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
-class vtkMRMLMarkupsNode;
+
+class vtkMRMLMarkupsJsonElement;
+class vtkMRMLMarkupsJsonWriter;
 class vtkMRMLMarkupsDisplayNode;
+class vtkMRMLMarkupsNode;
 
 /// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonStorageNode : public vtkMRMLMarkupsStorageNode
@@ -80,9 +83,24 @@ protected:
   /// Write data from a  referenced node.
   int WriteDataInternal(vtkMRMLNode *refNode) override;
 
-  class vtkInternal;
-  vtkInternal* Internal;
-  friend class vtkInternal;
+  VTK_NEWINSTANCE
+  vtkMRMLMarkupsJsonElement* ReadMarkupsFile(const char* filePath);
+
+  std::string GetMarkupsClassNameFromMarkupsType(std::string markupsType);
+
+  virtual bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupObject);
+  virtual bool UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLMarkupsJsonElement* markupObject);
+
+  virtual bool ReadControlPoints(vtkMRMLMarkupsJsonElement* controlPointsArray, int coordinateSystem, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool ReadMeasurements(vtkMRMLMarkupsJsonElement* measurementsArray, vtkMRMLMarkupsNode* markupsNode);
+
+  virtual bool WriteMarkup(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool WriteBasicProperties(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool WriteControlPoints(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool WriteMeasurements(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool WriteDisplayProperties(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
+
+  std::string GetCoordinateUnitsFromSceneAsString(vtkMRMLMarkupsNode* markupsNode);
 };
 
 #endif

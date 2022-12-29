@@ -21,9 +21,8 @@
 
 #include <vtkCodedEntry.h>
 #include "vtkMRMLMarkupsROIJsonStorageNode.h"
-#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsJsonElement.h"
 #include "vtkMRMLMarkupsROINode.h"
-
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #include "vtkSlicerVersionConfigure.h"
@@ -33,53 +32,43 @@
 #include "vtkStringArray.h"
 #include <vtksys/SystemTools.hxx>
 
-#include <vtkMRMLMarkupsROIJsonStorageNode_Private.h>
+//------------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLMarkupsROIJsonStorageNode);
 
-//---------------------------------------------------------------------------
-// vtkInternal methods
-
-//---------------------------------------------------------------------------
-vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::vtkInternalROI(vtkMRMLMarkupsROIJsonStorageNode* external)
-  : vtkMRMLMarkupsJsonStorageNode::vtkInternal(external)
+//----------------------------------------------------------------------------
+vtkMRMLMarkupsROIJsonStorageNode::vtkMRMLMarkupsROIJsonStorageNode()
 {
 }
 
-//---------------------------------------------------------------------------
-vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::~vtkInternalROI() = default;
+//----------------------------------------------------------------------------
+vtkMRMLMarkupsROIJsonStorageNode::~vtkMRMLMarkupsROIJsonStorageNode() = default;
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::WriteMarkup(
-  rapidjson::PrettyWriter<rapidjson::FileWriteStream>& writer, vtkMRMLMarkupsNode* markupsNode)
+bool vtkMRMLMarkupsROIJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  bool success = true;
-  success = success && this->WriteBasicProperties(writer, markupsNode);
-  success = success && this->WriteROIProperties(writer, vtkMRMLMarkupsROINode::SafeDownCast(markupsNode));
-  success = success && this->WriteControlPoints(writer, markupsNode);
-  success = success && this->WriteMeasurements(writer, markupsNode);
-  if (success)
-    {
-    vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsNode->GetDisplayNode());
-    if (displayNode)
-      {
-      success = success && this->WriteDisplayProperties(writer, displayNode);
-      }
-    }
-  return success;
+  return refNode->IsA("vtkMRMLMarkupsROINode");
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::WriteROIProperties(
-  rapidjson::PrettyWriter<rapidjson::FileWriteStream>& writer, vtkMRMLMarkupsROINode* roiNode)
+bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
+  vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
 {
-  if (!roiNode)
+  if (!vtkMRMLMarkupsJsonStorageNode::WriteBasicProperties(writer, markupsNode))
     {
     return false;
     }
 
-  writer.Key("roiType");
-  writer.String(roiNode->GetROITypeAsString(roiNode->GetROIType()));
+  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
+  if (!roiNode)
+    {
+    vtkErrorWithObjectMacro(this, "vtkMRMLMarkupsROINode::WriteBasicProperties failed: invalid markupsNode");
+    return false;
+    }
 
-  int coordinateSystem = this->External->GetCoordinateSystem();
+  writer->WriteStringProperty("roiType", roiNode->GetROITypeAsString(roiNode->GetROIType()));
+
+  int coordinateSystem = this->GetCoordinateSystem();
+
   double center_Node[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetCenter(center_Node);
   if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
@@ -87,8 +76,7 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::WriteROIProperties(
     center_Node[0] = -center_Node[0];
     center_Node[1] = -center_Node[1];
     }
-  writer.Key("center");
-  this->WriteVector(writer, center_Node);
+  writer->WriteVectorProperty("center", center_Node);
 
   double orientationMatrix[9] = { 0.0 };
   vtkMatrix4x4* objectToNodeMatrix = roiNode->GetObjectToNodeMatrix();
@@ -105,50 +93,39 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::WriteROIProperties(
       orientationMatrix[i] = -orientationMatrix[i];
       }
     }
-  writer.Key("orientation");
-  this->WriteVector(writer, orientationMatrix, 9);
+  writer->WriteVectorProperty("orientation", orientationMatrix, 9);
 
-  double size[3] = { 0.0, 0.0, 0.0 };
-  roiNode->GetSize(size);
-  writer.Key("size");
-  this->WriteVector(writer, size);
-
-  writer.Key("insideOut");
-  writer.Bool(roiNode->GetInsideOut());
+  writer->WriteVectorProperty("size", roiNode->GetSize());
+  writer->WriteBoolProperty("insideOut", roiNode->GetInsideOut());
 
   return true;
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, rapidjson::Value& markupsObject)
+bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupsObject)
 {
-  if (!markupsNode)
+  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
+  if (!roiNode)
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternalROI::UpdateMarkupsNodeFromJsonDocument failed: invalid markupsNode");
+    vtkErrorWithObjectMacro(this, "vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue failed: invalid markupsNode");
     return false;
     }
 
   MRMLNodeModifyBlocker blocker(markupsNode);
 
-  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
-
-  bool success = true;
-
-  if (markupsObject.HasMember("roiType"))
+  if (markupsObject->HasMember("roiType"))
     {
-    rapidjson::Value& roiTypeItem = markupsObject["roiType"];
-    std::string roiType = roiTypeItem.GetString();
-    roiNode->SetROIType(roiNode->GetROITypeFromString(roiType.c_str()));
+    roiNode->SetROIType(roiNode->GetROITypeFromString(markupsObject->GetStringProperty("roiType").c_str()));
     }
 
-  int coordinateSystem = this->External->GetCoordinateSystem();
+  int coordinateSystem = this->GetCoordinateSystem();
+
   double center_Node[3] = { 0.0, 0.0, 0.0 };
-  if (markupsObject.HasMember("center"))
+  if (markupsObject->HasMember("center"))
     {
-    rapidjson::Value& centerItem = markupsObject["center"];
-    if (!this->ReadVector(centerItem, center_Node))
+    if (!markupsObject->GetVectorProperty("center", center_Node))
       {
-      vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
         "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
         "File reading failed: center position must be a 3-element numeric array.");
       return false;
@@ -160,21 +137,19 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::UpdateMarkupsNodeFromJson
       }
     }
 
-  if (markupsObject.HasMember("size"))
+  if (markupsObject->HasMember("size"))
     {
-    rapidjson::Value& sizeItem = markupsObject["size"];
     double size[3] = { 0.0, 0.0, 0.0 };
-    success &= this->ReadVector(sizeItem, size);
+    markupsObject->GetVectorProperty("size", size);
     roiNode->SetSize(size);
     }
 
   double orientationMatrix[9] = { 0.0 };
-  if (markupsObject.HasMember("orientation"))
+  if (markupsObject->HasMember("orientation"))
     {
-    rapidjson::Value& orientationItem = markupsObject["orientation"];
-    if (!this->ReadVector(orientationItem, orientationMatrix, 9))
+    if (!markupsObject->GetVectorProperty("orientation", orientationMatrix, 9))
       {
-      vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
         "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
         "File reading failed: orientation 9-element numeric array.");
       return false;
@@ -187,6 +162,7 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::UpdateMarkupsNodeFromJson
         }
       }
     }
+
   vtkNew<vtkMatrix4x4> objectToNodeMatrix;
   for (int i = 0; i < 3; ++i)
     {
@@ -197,31 +173,10 @@ bool vtkMRMLMarkupsROIJsonStorageNode::vtkInternalROI::UpdateMarkupsNodeFromJson
     }
   roiNode->GetObjectToNodeMatrix()->DeepCopy(objectToNodeMatrix);
 
-  if (markupsObject.HasMember("insideOut"))
+  if (markupsObject->HasMember("insideOut"))
     {
-    rapidjson::Value& insideOutItem = markupsObject["insideOut"];
-    bool insideOut = insideOutItem.GetBool();
-    roiNode->SetInsideOut(insideOut);
+    roiNode->SetInsideOut(markupsObject->GetBoolProperty("insideOut"));
     }
 
-  return vtkInternal::UpdateMarkupsNodeFromJsonValue(markupsNode, markupsObject);
-}
-
-
-//------------------------------------------------------------------------------
-vtkMRMLNodeNewMacro(vtkMRMLMarkupsROIJsonStorageNode);
-
-//----------------------------------------------------------------------------
-vtkMRMLMarkupsROIJsonStorageNode::vtkMRMLMarkupsROIJsonStorageNode()
-{
-  this->Internal = new vtkInternalROI(this);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLMarkupsROIJsonStorageNode::~vtkMRMLMarkupsROIJsonStorageNode() = default;
-
-//----------------------------------------------------------------------------
-bool vtkMRMLMarkupsROIJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
-{
-  return refNode->IsA("vtkMRMLMarkupsROINode");
+  return Superclass::UpdateMarkupsNodeFromJsonValue(markupsNode, markupsObject);
 }
