@@ -84,52 +84,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="WindowLevelPresetsLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Window/Level:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QPushButton" name="LockWindowLevelButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>30</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string/>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>:/Icons/Medium/SlicerUnlock.png</normaloff>:/Icons/Medium/SlicerUnlock.png</iconset>
-     </property>
-     <property name="checkable">
-      <bool>false</bool>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string/>
@@ -147,7 +102,7 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string/>
@@ -165,7 +120,7 @@
      </layout>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="5" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="HistogramGroupBox">
      <property name="title">
       <string>Histogram</string>

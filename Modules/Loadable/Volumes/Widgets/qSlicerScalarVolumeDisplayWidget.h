@@ -55,7 +55,6 @@ protected slots:
   void updateWidgetFromMRML();
   void updateHistogram();
   void onPresetButtonClicked();
-  void onLockWindowLevelButtonClicked();
   void onHistogramSectionExpanded(bool);
 
 protected:
