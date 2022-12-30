@@ -35,6 +35,8 @@
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
+#include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLTransformableNode.h>
@@ -992,6 +994,25 @@ bool qSlicerCoreIOManager::exportNodes(
         }
       success = false;
       continue;
+      }
+
+    // Some data files store display properties (for example: markups), therefore we need to copy the display node as well.
+    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(storableNode);
+    vtkMRMLDisplayableNode* temporaryDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(temporaryStorableNode);
+    if (displayableNode && temporaryDisplayableNode && displayableNode->GetDisplayNode())
+      {
+      vtkMRMLDisplayNode* temporaryDisplayNode = vtkMRMLDisplayNode::SafeDownCast(
+        temporaryScene->AddNewNodeByClass(displayableNode->GetDisplayNode()->GetClassName()));
+      if (temporaryDisplayNode)
+        {
+        temporaryDisplayNode->CopyContent(displayableNode->GetDisplayNode(), false);
+        temporaryDisplayableNode->SetAndObserveDisplayNodeID(temporaryDisplayNode->GetID());
+        }
+      else
+        {
+        userMessages->AddMessage(vtkCommand::WarningEvent,
+          (tr("Unable to save display properties for %1 in temporary scene.").arg(storableNode->GetName())).toStdString());
+        }
       }
 
     // Finally, applying saving logic to the the temporary scene
