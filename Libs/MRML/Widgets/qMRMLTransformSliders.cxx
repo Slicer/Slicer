@@ -22,7 +22,7 @@
 #include "ui_qMRMLTransformSliders.h"
 
 // Qt includes
-#include <QStack>
+#include <QSet>
 
 // qMRML includes
 #include <qMRMLUtils.h>
@@ -47,7 +47,7 @@ public:
 
   int                                    TypeOfTransform;
   vtkMRMLTransformNode*                  MRMLTransformNode;
-  QStack<qMRMLLinearTransformSlider*>    ActiveSliders;
+  QSet<qMRMLLinearTransformSlider*>    ActiveSliders;
 };
 
 // --------------------------------------------------------------------------
@@ -485,7 +485,6 @@ void qMRMLTransformSliders::onSliderPositionChanged(double position)
   qMRMLLinearTransformSlider* slider =
     qobject_cast<qMRMLLinearTransformSlider*>(this->sender());
   Q_ASSERT(slider);
-  d->ActiveSliders.push(slider);
   QWidget* focusWidget = this->focusWidget();
 
   // If update initiated from spinbox, consider it active, too
@@ -495,17 +494,18 @@ void qMRMLTransformSliders::onSliderPositionChanged(double position)
     {
     if (focusWidget->parent() == d->LRSlider->spinBox())
       {
-      d->ActiveSliders.push(d->LRSlider);
+      slider = d->LRSlider;
       }
-    if (focusWidget->parent() == d->PASlider->spinBox())
+    else if (focusWidget->parent() == d->PASlider->spinBox())
       {
-      d->ActiveSliders.push(d->PASlider);
+      slider = d->PASlider;
       }
-    if (focusWidget->parent() == d->ISSlider->spinBox())
+    else if (focusWidget->parent() == d->ISSlider->spinBox())
       {
-      d->ActiveSliders.push(d->ISSlider);
+      slider = d->ISSlider;
       }
     }
+  d->ActiveSliders.insert(slider);
 
   if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
     || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION && coordinateReference() == LOCAL) )
@@ -517,7 +517,7 @@ void qMRMLTransformSliders::onSliderPositionChanged(double position)
   slider->applyTransformation(position);
   emit this->valuesChanged();
 
-  d->ActiveSliders.pop();
+  d->ActiveSliders.remove(slider);
 }
 
 //-----------------------------------------------------------------------------
