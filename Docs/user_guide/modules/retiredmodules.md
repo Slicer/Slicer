@@ -6,7 +6,7 @@ Retiring modules reduces burden on Slicer developers. Most common reason for ret
 A module may also be retired if it no longer works properly (for example due to changes in Slicer core or third-party libraries) and it is not worth investing time into fixing the issue, because the module is not widely used or alternatives exist.
 
 - **Annotations**
-  - Retired: 2023-01-02, [commit TBD](https://github.com/Slicer/Slicer/commit/TBD)
+  - Retired: 2023-01-02, [commit f44849b](https://github.com/Slicer/Slicer/commit/f44849b014ecf9a245901239db64037556110970)
   - Reason: Superseded by the [Markups](markups.md) module.
 - **Editor**
   - Retired: 2021-11-05, [commit 39283db](https://github.com/Slicer/Slicer/commit/39283db420baf502fa99865c9d5d58d0e5295a6e)
