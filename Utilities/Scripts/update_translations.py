@@ -17,7 +17,7 @@ import subprocess
 import sys
 
 
-def update_translations(source_code_dir, translations_dir, lupdate_path, language=None):
+def update_translations(source_code_dir, translations_dir, lupdate_path, language=None, remove_obsolete_strings=False):
 
     if language is None:
         ts_filename_filter = "*.ts"
@@ -37,6 +37,10 @@ def update_translations(source_code_dir, translations_dir, lupdate_path, languag
         shutil.copy(ts_file_path, ts_file_path_in_source_tree)
 
         command = [lupdate_path, source_code_dir, "-locations", "absolute", "-ts", ts_file_path_in_source_tree]
+
+        if remove_obsolete_strings:
+            command.append("-noobsolete")
+
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=sys.stderr)
         data, err = proc.communicate()
         if proc.returncode != 0:
@@ -53,7 +57,7 @@ def _generate_translation_header_from_cli_xml(cli_xml_filename):
         that can be placed in the .h file that lupdate will parse for translations.
 
         Example line::
-     
+
             QT_TRANSLATE_NOOP("CLI_ACPCTransform", "ACPC Transform")
         """
         if type(text) != list:
@@ -147,10 +151,12 @@ def main(argv):
                         help="folder containing .ts translation files that will be updated (translations folder of https://github.com/Slicer/SlicerLanguageTranslations)")
     parser.add_argument("-l", "--language", default=None, dest="language",
                         help="choose specific ts file to update by language (e.g., use en-US to update only US English translation file)")
+    parser.add_argument("-r", "--remove-obsolete-strings", default=False, dest="remove_obsolete_strings", action='store_true',
+                        help="removes obsolete source strings (by calling lupdate with -noobsolete argument)")
     args = parser.parse_args(argv)
 
     extract_translatable_from_cli_modules(args.source_code_dir)
-    update_translations(args.source_code_dir, args.translations_dir, args.lupdate_path, args.language)
+    update_translations(args.source_code_dir, args.translations_dir, args.lupdate_path, args.language, args.remove_obsolete_strings)
 
 
 if __name__ == "__main__":
