@@ -525,6 +525,10 @@ Function DownloadFile
 FunctionEnd
 !endif
 
+Function finishpageaction
+    CreateShortCut '$DESKTOP\\\\@CPACK_NSIS_DISPLAY_NAME@.lnk' '$INSTDIR\\\\@CPACK_PACKAGE_NAME@.exe'
+FunctionEnd
+
 ;--------------------------------
 ; Define some macro setting for the gui
 @CPACK_NSIS_INSTALLER_MUI_ICON_CODE@
@@ -554,6 +558,11 @@ FunctionEnd
   !insertmacro MUI_PAGE_INSTFILES
   @CPACK_NSIS_INSTALLER_FINISH_TITLE_CODE@
   @CPACK_NSIS_INSTALLER_FINISH_TITLE_3LINES_CODE@
+
+  !define MUI_FINISHPAGE_SHOWREADME ""
+  !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+  !define MUI_FINISHPAGE_SHOWREADME_TEXT "Create Desktop Shortcut"
+  !define MUI_FINISHPAGE_SHOWREADME_FUNCTION finishpageaction
   !insertmacro MUI_PAGE_FINISH
 
   !insertmacro MUI_UNPAGE_CONFIRM
@@ -888,6 +897,9 @@ Section "Uninstall"
 
   ;Delete empty start menu parent directories
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
+
+  ;Delete any Desktop shortcuts
+  Delete "$DESKTOP\\\\@CPACK_NSIS_DISPLAY_NAME@.lnk"
 
   secondStartMenuDeleteLoop:
     ClearErrors
