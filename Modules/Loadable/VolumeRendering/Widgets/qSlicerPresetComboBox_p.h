@@ -37,9 +37,12 @@ protected:
 public:
   qSlicerPresetComboBoxPrivate(qSlicerPresetComboBox& object);
   void init();
+  void updateLabelsIconsVisibility();
 
 public:
   bool ShowIcons;
+  bool ShowLabelsInPopup;
+  QSize IconSizeInPopup;
 };
 
 //-----------------------------------------------------------------------------
