@@ -34,7 +34,12 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerPresetComboBox
   : public qMRMLNodeComboBox
 {
   Q_OBJECT
+  /// Show icons in the comobox and popup window.
   Q_PROPERTY(bool showIcons READ showIcons WRITE setShowIcons)
+  /// Show label in the popup window.
+  Q_PROPERTY(bool showLabelsInPopup READ showLabelsInPopup WRITE setShowLabelsInPopup)
+  /// Icon size in popup.
+  Q_PROPERTY(QSize iconSizeInPopup READ iconSizeInPopup WRITE setIconSizeInPopup)
 
 public:
   /// Constructors
@@ -43,10 +48,14 @@ public:
   ~qSlicerPresetComboBox() override;
 
   bool showIcons()const;
-  void setShowIcons(bool show);
+  bool showLabelsInPopup()const;
+  QSize iconSizeInPopup()const;
 
 public slots:
   void setIconToPreset(vtkMRMLNode* presetNode);
+  void setShowIcons(bool show);
+  void setShowLabelsInPopup(bool show);
+  void setIconSizeInPopup(const QSize& size);
 
 protected slots:
   void updateComboBoxTitleAndIcon(vtkMRMLNode* presetNode);
