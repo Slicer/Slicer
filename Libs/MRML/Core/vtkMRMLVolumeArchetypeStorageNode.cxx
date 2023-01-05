@@ -507,10 +507,10 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
 
   // Log volume size to the application log. It helps to identify potential out-of-memory issues.
-  vtkInfoMacro(<<"Loaded volume from file: "<<fullName \
-    <<". Dimensions: "<<outputImage->GetDimensions()[0]<<"x"<<outputImage->GetDimensions()[1]<<"x"<<outputImage->GetDimensions()[2] \
-    <<". Number of components: "<<outputImage->GetNumberOfScalarComponents() \
-    <<". Pixel type: "<<vtkImageScalarTypeNameMacro(outputImage->GetScalarType())<<".");
+  vtkDebugMacro(<< "Loaded volume from file: " << fullName
+    << ". Dimensions: " << outputImage->GetDimensions()[0] << "x" << outputImage->GetDimensions()[1] << "x" << outputImage->GetDimensions()[2]
+    << ". Number of components: " << outputImage->GetNumberOfScalarComponents()
+    << ". Pixel type: " << vtkImageScalarTypeNameMacro(outputImage->GetScalarType()) << ".");
 
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
   if ( mat == nullptr )
