@@ -82,6 +82,7 @@ bool vtkCodedEntry::SetValueSchemeMeaning(const std::vector<std::string>& codeVa
     {
     this->SetCodeMeaning(codeValueSchemeMeaning[0].c_str());
     }
+  return true;
 }
 
 //----------------------------------------------------------------------------
