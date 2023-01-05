@@ -31,5 +31,8 @@
     <file alias="MR-MIP">Icons/MR-MIP.png</file>
     <file alias="MR-T2-Brain">Icons/MR-T2-Brain.png</file>
     <file alias="US-Fetal">Icons/US-Fetal.png</file>
+    <file alias="uCT-Bone-8bit">Icons/uCT-Bone-8bit.png</file>
+    <file alias="uCT-Bone-16bit">Icons/uCT-Bone-16bit.png</file>
+    <file alias="uCT-Skull">Icons/uCT-Skull.png</file>
   </qresource>
 </RCC>
