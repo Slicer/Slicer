@@ -89,7 +89,7 @@ public:
   const char* GetPickedNodeID() override;
 
   /// Get the picked RAS point, returns 0,0,0 if no pick
-  double* GetPickedRAS();
+  double* GetPickedRAS() VTK_SIZEHINT(3);
   /// Set the picked RAS point, returns 0,0,0 if no pick
   void SetPickedRAS(double* newPickedRAS);
 

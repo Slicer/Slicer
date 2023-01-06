@@ -63,7 +63,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
   ///
   void SetDiffusionGradient(int val, const double g[3]);
   void SetDiffusionGradients(vtkDoubleArray *grad);
-  double *GetDiffusionGradient(int val);
+  double* GetDiffusionGradient(int val) VTK_SIZEHINT(3);
   void GetDiffusionGradient(int val, double g[3]);
   vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
 

@@ -121,7 +121,7 @@ public:
   ///
   /// Get the position of the camera in world coordinates.
   /// \sa SetPosition(), GetFocalPoint(), GetViewUp()
-  double *GetPosition();
+  double* GetPosition() VTK_SIZEHINT(3);
   void GetPosition(double position[3]);
 
   ///
@@ -134,7 +134,7 @@ public:
   ///
   /// Get the focal point of the camera in world coordinates.
   /// \sa SetFocalPoint(), GetPosition(), GetViewUp()
-  double *GetFocalPoint();
+  double* GetFocalPoint() VTK_SIZEHINT(3);
   void GetFocalPoint(double focalPoint[3]);
 
   ///
@@ -146,7 +146,7 @@ public:
   ///
   /// Get camera Up vector
   /// \sa SetViewUp(), GetPosition(), GetFocalPoint()
-  double *GetViewUp();
+  double* GetViewUp() VTK_SIZEHINT(3);
   void GetViewUp(double viewUp[3]);
 
   ///

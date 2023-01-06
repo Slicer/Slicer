@@ -130,7 +130,7 @@ public:
   /// Get the threshold range of the model display node.
   /// \sa SetThresholdRange()
   void GetThresholdRange(double range[2]);
-  double* GetThresholdRange();
+  double* GetThresholdRange() VTK_SIZEHINT(2);
   double GetThresholdMin();
   double GetThresholdMax();
 

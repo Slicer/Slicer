@@ -84,7 +84,7 @@ public:
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic*);
   vtkGetObjectMacro(MRMLApplicationLogic, vtkMRMLApplicationLogic);
 
-  double* GetSliceIntersectionPoint();
+  double* GetSliceIntersectionPoint() VTK_SIZEHINT(3);
 
   void TransformIntersectingSlices(vtkMatrix4x4* rotatedSliceToSliceTransformMatrix);
 
