@@ -97,7 +97,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
     void ComputeSliceIntersectionPoint();
 
     /// Get slice intersection point between red, green and yellow slice nodes
-    double* GetSliceIntersectionPoint();
+    double* GetSliceIntersectionPoint() VTK_SIZEHINT(3);
 
     /// Check whether the mouse cursor is within the slice view or not
     bool IsMouseCursorInSliceView(double cursorPosition[2]);

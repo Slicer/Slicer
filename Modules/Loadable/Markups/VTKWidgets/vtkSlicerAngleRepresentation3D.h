@@ -65,7 +65,7 @@ public:
   vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
-  double *GetBounds() override;
+  double* GetBounds() VTK_SIZEHINT(6) override;
 
   bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
 

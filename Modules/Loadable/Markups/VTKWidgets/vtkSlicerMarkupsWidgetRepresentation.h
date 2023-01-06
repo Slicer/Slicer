@@ -335,7 +335,7 @@ protected:
 
   vtkTimeStamp MarkupsTransformModifiedTime;
 
-  double* GetWidgetColor(int controlPointType);
+  double* GetWidgetColor(int controlPointType) VTK_SIZEHINT(3);
 
   ControlPointsPipeline* ControlPoints[NumberOfControlPointTypes]; // Unselected, Selected, Active, Project, ProjectBehind
 

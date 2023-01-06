@@ -64,7 +64,7 @@ public:
   //@}
 
   void GetDisplayPosition(int v[2]) const;
-  const int *GetDisplayPosition() const;
+  const int* GetDisplayPosition() const VTK_SIZEHINT(2);
   void SetDisplayPosition(const int p[2]);
   bool IsDisplayPositionValid();
   void SetDisplayPositionInvalid();
@@ -97,9 +97,9 @@ public:
   void SetLastScale(double scale);
   double GetLastScale() const;
   void SetTranslation(const double translation[2]);
-  const double *GetTranslation() const;
+  const double* GetTranslation() const VTK_SIZEHINT(2);
   void SetLastTranslation(const double translation[2]);
-  const double* GetLastTranslation() const;
+  const double* GetLastTranslation() const VTK_SIZEHINT(2);
   void SetWorldToPhysicalScale(double v);
   double GetWorldToPhysicalScale() const;
 
