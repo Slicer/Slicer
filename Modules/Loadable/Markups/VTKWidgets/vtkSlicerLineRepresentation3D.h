@@ -67,7 +67,7 @@ public:
   vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
-  double *GetBounds() override;
+  double* GetBounds() VTK_SIZEHINT(6) override;
 
 protected:
   vtkSlicerLineRepresentation3D();

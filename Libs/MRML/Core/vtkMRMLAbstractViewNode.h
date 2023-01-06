@@ -174,12 +174,12 @@ public:
   vtkSetVector3Macro(LayoutColor, double);
   vtkGetVector3Macro(LayoutColor, double);
 
-  static double* GetRedColor();
-  static double* GetYellowColor();
-  static double* GetGreenColor();
-  static double* GetCompareColor();
-  static double* GetGrayColor();
-  static double* GetThreeDViewBlueColor();
+  static double* GetRedColor() VTK_SIZEHINT(3);
+  static double* GetYellowColor() VTK_SIZEHINT(3);
+  static double* GetGreenColor() VTK_SIZEHINT(3);
+  static double* GetCompareColor() VTK_SIZEHINT(3);
+  static double* GetGrayColor() VTK_SIZEHINT(3);
+  static double* GetThreeDViewBlueColor() VTK_SIZEHINT(3);
 
   /// Tells if it is meaningful to display orientation marker in this view.
   /// It is set statically in each specific view node class and cannot be changed dynamically.

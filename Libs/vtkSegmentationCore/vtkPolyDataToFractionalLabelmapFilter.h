@@ -86,7 +86,7 @@ public:
   void GetOutputImageToWorldMatrix(vtkMatrix4x4* imageToWorldMatrix);
 
   using Superclass::GetOutputOrigin;
-  double* GetOutputOrigin() override;
+  double* GetOutputOrigin() VTK_SIZEHINT(3) override;
   void GetOutputOrigin(double origin[3]) override;
 
   using Superclass::SetOutputOrigin;
@@ -94,13 +94,12 @@ public:
   void SetOutputOrigin(double x, double y, double z) override;
 
   using Superclass::GetOutputSpacing;
-  double* GetOutputSpacing() override;
+  double* GetOutputSpacing() VTK_SIZEHINT(3) override;
   void GetOutputSpacing(double spacing[3]) override;
 
   using Superclass::SetOutputSpacing;
   void SetOutputSpacing(const double spacing[3]) override;
   void SetOutputSpacing(double x, double y, double z) override;
-
 
   /// This method deletes the currently stored cache variables
   void DeleteCache();
