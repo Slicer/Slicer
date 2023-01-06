@@ -29,3 +29,14 @@ Example:
 ## Examples
 
 Examples for common operations on transform are provided in the [script repository](../script_repository.md#volumes).
+
+## Volume rendering presets
+
+Volume rendering presets that are bundled in Slicer core are specified in a preset file and corresponding icon is stored as an application resource.
+
+To add a new volume rendering preset:
+- Add a new entry to [presets.xml](https://github.com/Slicer/Slicer/blob/main/Modules/Loadable/VolumeRendering/Resources/presets.xml)
+- Add a corresponding icon of 128x100 pixels into [presets icons folder]([url](https://github.com/Slicer/Slicer/tree/main/Modules/Loadable/VolumeRendering/Resources/Icons)).
+- Add the icon to [qSlicerVolumeRenderingModule.qrc](https://github.com/Slicer/Slicer/blob/main/Modules/Loadable/VolumeRendering/Resources/qSlicerVolumeRenderingModule.qrc)
+
+Presets can be also added at runtime - see [example in the script repository](../script_repository.md##register-custom-volume-rendering-presets). In this case, icons are loaded from the preset scene file.
