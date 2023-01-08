@@ -56,7 +56,7 @@ qSlicerSceneBundleReader::qSlicerSceneBundleReader(QObject* _parent)
 //-----------------------------------------------------------------------------
 QString qSlicerSceneBundleReader::description()const
 {
-  return "MRB Slicer Data Bundle";
+  return tr("MRB Slicer Data Bundle");
 }
 
 //-----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
     {
     // Set default scene file format to mrb
     qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-    coreIOManager->setDefaultSceneFileType("Medical Reality Bundle (.mrb)");
+    coreIOManager->setDefaultSceneFileType(tr("Medical Reality Bundle") + " (.mrb)");
     }
 
   return success;

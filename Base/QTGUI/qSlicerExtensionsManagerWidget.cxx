@@ -208,7 +208,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   this->ExtensionsManageBrowser->setObjectName("ExtensionsManageBrowser");
   this->ManageExtensionsPager->addWidget(this->ExtensionsManageBrowser);
   this->ExtensionsManageBrowser->setBrowsingEnabled(false);
-  this->ExtensionsManageBrowser->webView()->load(QUrl("about:"));
+  this->ExtensionsManageBrowser->webView()->load(QUrl(/*no tr*/"about:"));
 #endif
 
   qSlicerExtensionsActionsWidget * actionsWidget = new qSlicerExtensionsActionsWidget;
@@ -502,7 +502,7 @@ void qSlicerExtensionsManagerWidget::onEditBookmarksTriggered()
 
   // Update bookmarks
   QSettings settings;
-  settings.setValue("Extensions/Bookmarked", newList);
+  settings.setValue(/*no tr*/"Extensions/Bookmarked", newList);
   this->extensionsManagerModel()->updateModel();
 }
 
@@ -574,7 +574,7 @@ void qSlicerExtensionsManagerWidget::onManageLinkActivated(const QUrl& link)
 void qSlicerExtensionsManagerWidget::onManageUrlChanged(const QUrl& newUrl)
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  d->ManageExtensionsPager->setCurrentIndex(newUrl.scheme() == "about" ? 0 : 1);
+  d->ManageExtensionsPager->setCurrentIndex(newUrl.scheme() == /*no tr*/"about" ? 0 : 1);
 }
 
 // --------------------------------------------------------------------------

@@ -1026,21 +1026,22 @@ QStringList qSlicerExtensionsManagerModelPrivate::isExtensionCompatible(
 {
   if (slicerRevision.isEmpty())
     {
-    return QStringList() << qSlicerExtensionsManagerModel::tr("slicerRevision is not specified");
+    return QStringList() << qSlicerExtensionsManagerModel::tr("'slicerRevision' parameter is not specified");
     }
   if (slicerOs.isEmpty())
     {
-    return QStringList() << qSlicerExtensionsManagerModel::tr("slicerOs is not specified");
+    return QStringList() << qSlicerExtensionsManagerModel::tr("'slicerOs' parameter is not specified");
     }
   if (slicerArch.isEmpty())
     {
-    return QStringList() << qSlicerExtensionsManagerModel::tr("slicerArch is not specified");
+    return QStringList() << qSlicerExtensionsManagerModel::tr("'slicerArch' parameter is not specified");
     }
   QStringList reasons;
   QString extensionSlicerRevision = metadata.value("slicer_revision").toString();
   if (!extensionSlicerRevision.isEmpty() && slicerRevision != extensionSlicerRevision)
     {
-    reasons << qSlicerExtensionsManagerModel::tr("extensionSlicerRevision [%1] is different from slicerRevision [%2]").arg(extensionSlicerRevision).arg(slicerRevision);
+    reasons << qSlicerExtensionsManagerModel::tr("extensionSlicerRevision [%1] is different from slicerRevision [%2]")
+      .arg(extensionSlicerRevision).arg(slicerRevision);
     }
   QString extensionArch = metadata.value("arch").toString();
   if (!extensionArch.isEmpty() && slicerArch != extensionArch)
@@ -1851,8 +1852,8 @@ bool qSlicerExtensionsManagerModel::installExtension(
 
     // Copy expected keys from archive description
     QStringList expectedKeys;
-    expectedKeys << "category" << "contributors" << "description" << "homepage"
-      << "iconurl" << "screenshots" << "status" << "updated";
+    expectedKeys << /*no tr*/"category" << /*no tr*/"contributors" << /*no tr*/"description" << /*no tr*/"homepage"
+      << /*no tr*/"iconurl" << /*no tr*/"screenshots" << /*no tr*/"status" << /*no tr*/"updated";
 
     const ExtensionMetadataType::const_iterator notFound =
       extensionIndexMetadata.constEnd();
@@ -1943,18 +1944,19 @@ bool qSlicerExtensionsManagerModel::installExtension(
     if (!unresolvedDependencies.isEmpty())
       {
       success = false;
-      qWarning() << tr("%1 extension depends on the following extensions, which could not be found: %2")
+      qWarning() << QString(/*no tr*/"%1 extension depends on the following extensions, which could not be found: %2")
         .arg(extensionName)
         .arg(unresolvedDependencies.join(", "));
       if (d->Interactive)
         {
-        QString msg = QString("<p>%1 depends on the following extensions, which could not be found:</p><ul>").arg(extensionName);
+        //: %1 is the extension name
+        QString msg = QString("<p>%1</p><ul>").arg(tr("%1 depends on the following extensions, which could not be found:")).arg(extensionName);
         foreach(const QString & dependencyName, unresolvedDependencies)
           {
           msg += QString("<li>%1</li>").arg(dependencyName);
           }
-        msg += "</ul><p>The extension may not function properly.</p>";
-        QMessageBox::warning(nullptr, "Unresolved dependencies", msg);
+        msg += QString("</ul><p>%1</p>").arg(tr("The extension may not function properly."));
+        QMessageBox::warning(nullptr, tr("Unresolved dependencies"), msg);
         }
       }
     }
@@ -2287,6 +2289,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
     QFile file(archivePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
       {
+      //: %1 is the path name, %2 is the error message
       d->critical(tr("Could not write file: '%1' (%2)").arg(archivePath).arg(file.errorString()));
       d->ActiveTasks.remove(task);
       emit activeTasksChanged();
@@ -2350,6 +2353,7 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
     {
     if (updateInfo.ExtensionId.isEmpty())
       {
+      //: %1 is extension name
       d->critical(tr("Missing download information for %1 extension").arg(extensionName));
       return false;
       }
@@ -2363,6 +2367,7 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
     qSlicerExtensionDownloadTask* const task = d->downloadExtensionByName(extensionName);
     if (!task)
       {
+      //: %1 is extension name
       d->critical(tr("Failed to retrieve metadata for %1 extension").arg(extensionName));
       return false;
       }
@@ -2380,6 +2385,7 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
   scheduled[extensionName] = updateInfo.ArchiveName;
   settings.setValue("Extensions/ScheduledForUpdate", scheduled);
 
+  //: %1 is extension name
   d->info(tr("%1 extension scheduled for update").arg(extensionName));
   emit this->extensionScheduledForUpdate(extensionName);
 
@@ -2425,12 +2431,14 @@ bool qSlicerExtensionsManagerModelPrivate::updateExtension(
   QStandardItem * item = this->extensionItem(extensionName);
   if (!item)
     {
+    //: %1 is extension name
     critical(qSlicerExtensionsManagerModel::tr("Failed to update %1 extension").arg(extensionName));
     return false;
     }
 
   if (!q->isExtensionScheduledForUpdate(extensionName))
     {
+    //: %1 is extension name
     critical(qSlicerExtensionsManagerModel::tr("Failed to update %1 extension: it is not scheduled for update").arg(extensionName));
     return false;
     }
@@ -2554,12 +2562,14 @@ bool qSlicerExtensionsManagerModel::uninstallExtension(const QString& extensionN
   QStandardItem* item = d->extensionItem(extensionName);
   if (!item)
     {
+    //: %1 is extension name
     d->critical(tr("Failed to uninstall %1 extension").arg(extensionName));
     return false;
     }
 
   if (this->isExtensionLoaded(extensionName))
     {
+    //: %1 is extension name
     d->critical(tr("Failed to uninstall %1 extension: extension is already loaded").arg(extensionName));
     return false;
     }
@@ -2834,6 +2844,7 @@ void qSlicerExtensionsManagerModel::identifyIncompatibleExtensions()
     QStringList reasons = this->isExtensionCompatible(extensionName, d->SlicerRevision, d->SlicerOs, d->SlicerArch);
     if (!reasons.isEmpty())
       {
+      //: %1 is extension name
       reasons.prepend(tr("Extension %1 is incompatible").arg(extensionName));
       qCritical() << reasons.join("\n  ");
       this->setExtensionEnabled(extensionName, false);
@@ -2864,7 +2875,7 @@ QStringList qSlicerExtensionsManagerModel::isExtensionCompatible(
 {
   if (extensionName.isEmpty())
     {
-    return QStringList() << tr("extensionName is not specified");
+    return QStringList() << tr("'extensionName' parameter is not specified");
     }
   ExtensionMetadataType metadata = this->extensionMetadata(extensionName);
   return qSlicerExtensionsManagerModelPrivate::isExtensionCompatible(
@@ -3057,6 +3068,7 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
 
   if (extensionName.isEmpty())
     {
+    //: %1 is extension name
     d->critical(tr("Corrupted %1 extension package").arg(extensionName));
     return false;
     }
@@ -3064,6 +3076,7 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
   QString error;
   if (!d->checkExtensionsInstallDestinationPath(destinationPath, error))
     {
+    //: %1 is extension name, %2 is extension package file path, %3 is destination path
     d->critical(tr("Failed to extract %1 extension archive %2 into directory %3")
       .arg(extensionName).arg(archiveFile).arg(destinationPath));
     d->critical(error);
