@@ -248,7 +248,7 @@
           </sizepolicy>
          </property>
          <property name="windowTitle">
-          <string>Form</string>
+          <string>Segments Table</string>
          </property>
          <property name="orientations">
           <set>Qt::Vertical</set>

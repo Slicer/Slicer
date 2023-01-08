@@ -223,7 +223,7 @@
         <string>Horizontal position of the color legend</string>
        </property>
        <property name="text">
-        <string>H:</string>
+        <string extracomment="abbreviation of &quot;horizontal&quot;">H:</string>
        </property>
       </widget>
      </item>
@@ -252,7 +252,7 @@
         <string>Vertical position of the color legend</string>
        </property>
        <property name="text">
-        <string>V:</string>
+        <string extracomment="abbreviation of &quot;vertical&quot;">V:</string>
        </property>
       </widget>
      </item>
@@ -289,17 +289,17 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="toolTip">
-        <string>Short side length of the color legend, as percentage of view size</string>
+        <string>Short side length of the color legend, relative to view size</string>
        </property>
        <property name="text">
-        <string>S:</string>
+        <string extracomment="abbreviation of &quot;short&quot;">S:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="ctkDoubleSlider" name="ShortSideSizeSlider">
        <property name="toolTip">
-        <string>Short side length of the color legend, as fraction of view size</string>
+        <string>Short side length of the color legend, relative to view size</string>
        </property>
        <property name="singleStep">
         <double>0.010000000000000</double>
@@ -318,17 +318,17 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="toolTip">
-        <string>Long side length of the color legend, as percentage of view size</string>
+        <string>Long side length of the color legend, relative to view size</string>
        </property>
        <property name="text">
-        <string>L:</string>
+        <string extracomment="abbreviation of &quot;long&quot;">L:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="ctkDoubleSlider" name="LongSideSizeSlider">
        <property name="toolTip">
-        <string>Long side length of the color legend, as fraction of view size</string>
+        <string>Long side length of the color legend, relative to view size</string>
        </property>
        <property name="singleStep">
         <double>0.010000000000000</double>
