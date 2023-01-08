@@ -2765,6 +2765,11 @@ def messageBox(text, parent=None, **kwargs):
         slicer.util.delayDisplay(text, autoCloseMsec=3000, parent=parent, **kwargs)
         return testingReturnValue
 
+    # if there is detailed text, make the dialog wider by making a long title
+    if "detailedText" in kwargs:
+        windowTitle = kwargs['windowTitle'] if 'windowTitle' in kwargs else ""
+        kwargs['windowTitle'] = windowTitle + " "*(200-len(windowTitle))
+
     import ctk
     mbox = ctk.ctkMessageBox(parent if parent else mainWindow())
     mbox.text = text
