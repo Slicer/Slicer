@@ -222,9 +222,10 @@ void qSlicerCoreApplicationPrivate::init()
   // allow a debugger to be attached during startup
   if(qApp->arguments().contains("--attach-process"))
     {
-    QString msg("This message box is here to give you time to attach "
+    // Message for developers - do not translate.
+    QString msg(/*no tr*/"This message box is here to give you time to attach "
                 "your debugger to process [PID %1]");
-    QMessageBox::information(nullptr, "Attach process", msg.arg(QCoreApplication::applicationPid()));
+    QMessageBox::information(nullptr, /*no tr*/"Attach process", msg.arg(QCoreApplication::applicationPid()));
     }
 
   QCoreApplication::setOrganizationDomain(Slicer_ORGANIZATION_DOMAIN);
@@ -1299,7 +1300,7 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 
     // First scene needs a crosshair to be added manually
     vtkNew<vtkMRMLCrosshairNode> crosshair;
-    crosshair->SetCrosshairName("default");
+    crosshair->SetCrosshairName(/*no tr*/"default");
     newMRMLScene->AddNode(crosshair.GetPointer());
     }
 
@@ -1732,8 +1733,8 @@ int qSlicerCoreApplication::mainApplicationPatchVersion()const
 QString qSlicerCoreApplication::libraries()const
 {
   QString librariesText(
-    "Built on top of: "
-    "<a href=\"https://www.vtk.org/\">VTK</a>, "
+    tr("Built on top of:") +
+    " <a href=\"https://www.vtk.org/\">VTK</a>, "
     "<a href=\"https://www.itk.org/\">ITK</a>, "
     "<a href=\"https://www.commontk.org/index.php/Main_Page\">CTK</a>, "
     "<a href=\"https://www.qt.io/\">Qt</a>, "
@@ -1746,26 +1747,29 @@ QString qSlicerCoreApplication::libraries()const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::copyrights()const
 {
-  QString copyrightsText(
+  QString copyrightsText(QString(
     "<table align=\"center\" border=\"0\" width=\"80%\"><tr>"
-    "<td align=\"center\"><a href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#license\">Licensing Information</a></td>"
-    "<td align=\"center\"><a href=\"https://slicer.org/\">Website</a></td>"
-    "<td align=\"center\"><a href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#acknowledgments\">Acknowledgments</a></td>"
-    "</tr></table>");
+    "<td align=\"center\"><a href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#license\">%1</a></td>"
+    "<td align=\"center\"><a href=\"https://slicer.org/\">%2</a></td>"
+    "<td align=\"center\"><a href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#acknowledgments\">%3</a></td>"
+    "</tr></table>")
+    .arg(tr("Licensing Information"))
+    .arg(tr("Website"))
+    .arg(tr("Acknowledgments")));
   return copyrightsText;
 }
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::acknowledgment()const
 {
   QString acknowledgmentText(
-    "Slicer is NOT an FDA approved medical device.<br /><br />"
-    "Supported by: NA-MIC, NAC, BIRN, NCIGT and the Slicer Community.<br /><br />"
-    "Special thanks to the NIH and our other supporters.<br /><br />"
+    tr("Slicer is NOT an FDA approved medical device.<br><br>"
+    "Supported by: NA-MIC, NAC, BIRN, NCIGT and the Slicer Community.<br><br>"
+    "Special thanks to the NIH and our other supporters.<br><br>"
     "This work is part of the National Alliance for Medical Image Computing "
     "(NA-MIC), funded by the National Institutes of Health through the NIH "
     "Roadmap for Medical Research, Grant U54 EB005149. Information on the "
-    "National Centers for Biomedical Computing can be obtained from "
-    "<a href=\"https://commonfund.nih.gov/bioinformatics\">https://commonfund.nih.gov/bioinformatics</a>.<br /><br />");
+    "National Centers for Biomedical Computing can be obtained from"
+    "<a href=\"https://commonfund.nih.gov/bioinformatics\">https://commonfund.nih.gov/bioinformatics</a>.<br><br>"));
   return acknowledgmentText;
 }
 
@@ -2246,8 +2250,8 @@ QString qSlicerCoreApplication::documentationBaseUrl() const
 // --------------------------------------------------------------------------
 QString qSlicerCoreApplication::documentationVersion() const
 {
-  QString version = "latest";
-  if (this->releaseType() == "Stable")
+  QString version = /*no tr*/"latest";
+  if (this->releaseType() == /*no tr*/"Stable")
     {
     version = QString("v%1.%2").arg(this->mainApplicationMajorVersion()).arg(this->mainApplicationMinorVersion());
     }

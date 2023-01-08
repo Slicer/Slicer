@@ -577,7 +577,8 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   // If no readers were able to read and load the file(s), success will remain false
   bool success = false;
   int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
-  QString userMessagePrefix = QString("Loading %1 - ").arg(parameters["fileName"].toString());
+  //: %1 is the filename
+  QString userMessagePrefix = tr("Loading %1").arg(parameters["fileName"].toString()) + " - ";
 
   QStringList nodes;
   foreach (qSlicerFileReader* reader, readers)
@@ -612,7 +613,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   if (!success && userMessages != nullptr && userMessages->GetNumberOfMessages() == numberOfUserMessagesBefore)
     {
     // Make sure that at least one message is logged if reading failed.
-    userMessages->AddMessage(vtkCommand::ErrorEvent, (QString(tr("%1 load failed.")).arg(userMessagePrefix)).toStdString());
+    userMessages->AddMessage(vtkCommand::ErrorEvent, (tr("%1 load failed.").arg(userMessagePrefix)).toStdString());
     }
 
   loadedFileParameters.insert("nodeIDs", nodes);
