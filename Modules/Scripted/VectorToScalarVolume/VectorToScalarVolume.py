@@ -1,17 +1,14 @@
 from contextlib import contextmanager
 import logging
-from typing import Annotated
+from typing import Optional
 import qt
 import vtk
+import enum
 
 import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
-from slicer.parameterNodeWrapper import (
-    parameterNodeWrapper,
-    Choice,
-    Default,
-)
+from slicer.parameterNodeWrapper import parameterNodeWrapper
 
 
 @contextmanager
@@ -82,18 +79,27 @@ NIH Roadmap for Medical Research, Grant U54 EB005149."""
 #
 # VectorToScalarVolumeParameterNode
 #
-_LUMINANCE = 'LUMINANCE'
-_AVERAGE = 'AVERAGE'
-_SINGLE_COMPONENT = 'SINGLE_COMPONENT'
 
-_CONVERSION_METHODS = (_LUMINANCE, _AVERAGE, _SINGLE_COMPONENT)
+class ConversionMethods(enum.Enum):
+    LUMINANCE = (
+        "Luminance",
+        "(RGB,RGBA) Luminance from first three components: 0.30*R + 0.59*G + 0.11*B + 0.0*A)",
+    )
+    AVERAGE = (
+        "Average",
+        "Average all the components.",
+    )
+    SINGLE_COMPONENT = (
+        "Single Component Extraction",
+        "Extract single component",
+    )
 
 
 @parameterNodeWrapper
 class VectorToScalarVolumeParameterNode:
     InputVolume: slicer.vtkMRMLVectorVolumeNode
     OutputVolume: slicer.vtkMRMLScalarVolumeNode
-    ConversionMethod: Annotated[str, Choice(_CONVERSION_METHODS), Default(_LUMINANCE)]
+    ConversionMethod: ConversionMethods
     ComponentToExtract: int
 
 
@@ -104,6 +110,8 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
+
+    _parameterNode: Optional[VectorToScalarVolumeParameterNode]
 
     def __init__(self, parent=None):
         """
@@ -127,12 +135,11 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
         self.layout.addWidget(uiWidget)
         self.ui = slicer.util.childWidgetVariables(uiWidget)
 
-        self.ui.methodSelectorComboBox.addItem("Luminance", VectorToScalarVolumeLogic.LUMINANCE)
-        self.ui.methodSelectorComboBox.setItemData(0, '(RGB,RGBA) Luminance from first three components: 0.30*R + 0.59*G + 0.11*B + 0.0*A)', qt.Qt.ToolTipRole)
-        self.ui.methodSelectorComboBox.addItem("Average", VectorToScalarVolumeLogic.AVERAGE)
-        self.ui.methodSelectorComboBox.setItemData(1, 'Average all the components.', qt.Qt.ToolTipRole)
-        self.ui.methodSelectorComboBox.addItem("Single Component Extraction", VectorToScalarVolumeLogic.SINGLE_COMPONENT)
-        self.ui.methodSelectorComboBox.setItemData(2, 'Extract single component', qt.Qt.ToolTipRole)
+        for i, method in enumerate(ConversionMethods):
+            title, tooltip = method.value
+
+            self.ui.methodSelectorComboBox.addItem(title, method)
+            self.ui.methodSelectorComboBox.setItemData(i, tooltip, qt.Qt.ToolTipRole)
 
         # Set scene in MRML widgets. Make sure that in Qt designer the top-level qMRMLWidget's
         # "mrmlSceneChanged(vtkMRMLScene*)" signal in is connected to each MRML widget's.
@@ -252,7 +259,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
             self.ui.methodSelectorComboBox.findData(self._parameterNode.ConversionMethod))
         self.ui.componentsSpinBox.value = self._parameterNode.ComponentToExtract
 
-        isMethodSingleComponent = self._parameterNode.ConversionMethod == VectorToScalarVolumeLogic.SINGLE_COMPONENT
+        isMethodSingleComponent = self._parameterNode.ConversionMethod is ConversionMethods.SINGLE_COMPONENT
         self.ui.componentsSpinBox.visible = isMethodSingleComponent
 
         # Update apply button state and tooltip
@@ -310,12 +317,6 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
     It is stateless, with the run function getting inputs and setting outputs.
     """
 
-    LUMINANCE = _LUMINANCE
-    AVERAGE = _AVERAGE
-    SINGLE_COMPONENT = _SINGLE_COMPONENT
-
-    CONVERSION_METHODS = _CONVERSION_METHODS
-
     def __init__(self):
         """
         Called when the logic class is instantiated. Can be used for initializing member variables.
@@ -348,9 +349,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         #
         # Checking based on method selected
         #
-        if conversionMethod not in (VectorToScalarVolumeLogic.SINGLE_COMPONENT,
-                                    VectorToScalarVolumeLogic.LUMINANCE,
-                                    VectorToScalarVolumeLogic.AVERAGE):
+        if not isinstance(conversionMethod, ConversionMethods):
             msg = 'conversionMethod %s unrecognized.' % conversionMethod
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
@@ -359,15 +358,16 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         numberOfComponents = inputImage.GetNumberOfScalarComponents()
 
         # SINGLE_COMPONENT: Check that input has enough components for the given componentToExtract
-        if conversionMethod == VectorToScalarVolumeLogic.SINGLE_COMPONENT:
+        if conversionMethod is ConversionMethods.SINGLE_COMPONENT:
             # componentToExtract is an index with valid values in the range: [0, numberOfComponents-1]
             if not 0 <= componentToExtract < numberOfComponents:
-                msg = 'componentToExtract %d is invalid. Image has only %d components.' % (componentToExtract, numberOfComponents)
+                msg = 'componentToExtract %d is invalid. Image has only %d components.' % (
+                    componentToExtract, numberOfComponents)
                 logging.debug("isValidInputOutputData failed: %s" % msg)
                 return False, msg
 
         # LUMINANCE: Check that input vector has at least three components.
-        if conversionMethod == VectorToScalarVolumeLogic.LUMINANCE:
+        if conversionMethod is ConversionMethods.LUMINANCE:
             if numberOfComponents < 3:
                 msg = 'input has only %d components but requires ' \
                       'at least 3 components for luminance conversion.' % numberOfComponents
@@ -392,20 +392,22 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         conversionMethod = parameterNode.ConversionMethod
         componentToExtract = parameterNode.ComponentToExtract
 
-        valid, msg = self.isValidInputOutputData(inputVolumeNode, outputVolumeNode, conversionMethod, componentToExtract)
+        valid, msg = self.isValidInputOutputData(inputVolumeNode, outputVolumeNode,
+                                                 conversionMethod, componentToExtract)
         if not valid:
             raise ValueError(msg)
 
         logging.debug('Conversion mode is %s' % conversionMethod)
         logging.debug('ComponentToExtract is %s' % componentToExtract)
 
-        if conversionMethod == VectorToScalarVolumeLogic.SINGLE_COMPONENT:
-            self.runConversionMethodSingleComponent(inputVolumeNode, outputVolumeNode, componentToExtract)
+        if conversionMethod is ConversionMethods.SINGLE_COMPONENT:
+            self.runConversionMethodSingleComponent(inputVolumeNode, outputVolumeNode,
+                                                    componentToExtract)
 
-        if conversionMethod == VectorToScalarVolumeLogic.LUMINANCE:
+        if conversionMethod is ConversionMethods.LUMINANCE:
             self.runConversionMethodLuminance(inputVolumeNode, outputVolumeNode)
 
-        if conversionMethod == VectorToScalarVolumeLogic.AVERAGE:
+        if conversionMethod is ConversionMethods.AVERAGE:
             self.runConversionMethodAverage(inputVolumeNode, outputVolumeNode)
 
     def runWithVariables(self, inputVolumeNode, outputVolumeNode, conversionMethod, componentToExtract=0):
@@ -547,26 +549,26 @@ class VectorToScalarVolumeTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Test SINGLE_COMPONENT")
 
-        logic.runWithVariables(inputVolume, outputVolume, VectorToScalarVolumeLogic.SINGLE_COMPONENT, 0)
+        logic.runWithVariables(inputVolume, outputVolume, ConversionMethods.SINGLE_COMPONENT, 0)
         outputScalarRange = outputVolume.GetImageData().GetScalarRange()
         self.assertEqual(outputScalarRange[0], 30)
         self.assertEqual(outputScalarRange[1], 30)
 
-        logic.runWithVariables(inputVolume, outputVolume, VectorToScalarVolumeLogic.SINGLE_COMPONENT, 1)
+        logic.runWithVariables(inputVolume, outputVolume, ConversionMethods.SINGLE_COMPONENT, 1)
         outputScalarRange = outputVolume.GetImageData().GetScalarRange()
         self.assertEqual(outputScalarRange[0], 50)
         self.assertEqual(outputScalarRange[1], 50)
 
         self.delayDisplay("Test LUMINANCE")
 
-        logic.runWithVariables(inputVolume, outputVolume, VectorToScalarVolumeLogic.LUMINANCE)
+        logic.runWithVariables(inputVolume, outputVolume, ConversionMethods.LUMINANCE)
         outputScalarRange = outputVolume.GetImageData().GetScalarRange()
         self.assertEqual(outputScalarRange[0], 49)
         self.assertEqual(outputScalarRange[1], 49)
 
         self.delayDisplay("Test AVERAGE")
 
-        logic.runWithVariables(inputVolume, outputVolume, VectorToScalarVolumeLogic.AVERAGE)
+        logic.runWithVariables(inputVolume, outputVolume, ConversionMethods.AVERAGE)
         outputScalarRange = outputVolume.GetImageData().GetScalarRange()
         self.assertEqual(outputScalarRange[0], 60)
         self.assertEqual(outputScalarRange[1], 60)
