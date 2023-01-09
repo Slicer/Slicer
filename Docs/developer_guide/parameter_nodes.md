@@ -64,6 +64,7 @@ The classes that are recognized by default are
 - `list` (hinted as `list[int]`, `list[str]`, etc)
 - `tuple` (hinted as `tuple[int, bool]`, `tuple[str, vtkMRMLNode, float]`, etc)
 - `dict` (hinted as `dict[keyType, valueType]`)
+- `enum.Enum`
 - `pathlib.Path`
 - `pathlib.PosixPath`
 - `pathlib.WindowsPath`
@@ -93,6 +94,24 @@ class CustomParameterNode:
 
 It is possible to use core MRML classes like `vtkMRMLModelNode` from the `slicer` namespace, but in these examples we've elected to get it from `MRMLCorePython` for consistency.
 
+#### Enum
+
+Instances of [`enum.Enum`](https://docs.python.org/3/library/enum.html) are serialized by their _name_, not their value. This allows enums to hold unserialized metadata, accessible via [`Enum.value`](https://docs.python.org/3/library/enum.html#enum.Enum.value).
+
+```py
+from slicer.parameterNodeWrapper import *
+from enum import Enum
+
+class Color(Enum):
+    RED = '#FF0000'
+    GREEN = '#00FF00'
+    BLUE = '#0000FF'
+
+@parameterNodeWrapper
+class CustomParameterNode:
+    color: Color
+```
+
 #### Default values
 
 More information can be given to the `@parameterNodeWrapper` decorator by using Annotated types.
@@ -114,24 +133,25 @@ This will make the default value of the `numIterations` parameter 500. If the `n
 
 If a default is not set explicitly, the following values will be used:
 
-| Type                                                     | Implicit default                                                                       |
-|----------------------------------------------------------|----------------------------------------------------------------------------------------|
-| `int`                                                    | `0`                                                                                    |
-| `float`                                                  | `0.0`                                                                                  |
-| `str`                                                    | `""`                                                                                   |
-| `bool`                                                   | `False`                                                                                |
-| `vtkMRMLNode` (including subclasses)                     | `None`                                                                                 |
-| `list` (hinted as `list[int]`, `list[str]`, etc)         | `[]` (empty list)                                                                      |
-| `tuple` (hinted as `tuple[int, bool]`, etc)              |  A tuple of the defaults of all the elements (e.g. `tuple[int, bool]` -> `(0, False)`) |
-| `dict` (hinted as `dict[keyType, valueType]`)            | `{}` (empty dictionary)                                                                |
-| `pathlib.Path`                                           | `pathlib.Path()` (which is the current directory)                                      |
-| `pathlib.PosixPath`                                      | `pathlib.PosixPath()` (which is the current directory)                                 |
-| `pathlib.WindowsPath`                                    | `pathlib.WindowsPath()` (which is the current directory)                               |
-| `pathlib.PurePath`                                       | `pathlib.PurePath()` (which is the current directory)                                  |
-| `pathlib.PurePosixPath`                                  | `pathlib.PurePosixPath()` (which is the current directory)                             |
-| `pathlib.PureWindowsPath`                                | `pathlib.PureWindowsPath()` (which is the current directory)                           |
-| `typing.Union` (hinted as `typing.Union[int, str]`, etc) | The default value of the first item in the union.                                      |
-| `typing.Optional` (hinted as `typing.Optional[int]`, `typing.Optional[float]`, etc) | `None`                                                      |
+| Type                                                                                | Implicit default                                                                      |
+|-------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| `int`                                                                               | `0`                                                                                   |
+| `float`                                                                             | `0.0`                                                                                 |
+| `str`                                                                               | `""`                                                                                  |
+| `bool`                                                                              | `False`                                                                               |
+| `vtkMRMLNode` (including subclasses)                                                | `None`                                                                                |
+| `list` (hinted as `list[int]`, `list[str]`, etc)                                    | `[]` (empty list)                                                                     |
+| `tuple` (hinted as `tuple[int, bool]`, etc)                                         | A tuple of the defaults of all the elements (e.g. `tuple[int, bool]` -> `(0, False)`) |
+| `dict` (hinted as `dict[keyType, valueType]`)                                       | `{}` (empty dictionary)                                                               |
+| `enum.Enum`                                                                         | The first value in the enum                                                           |
+| `pathlib.Path`                                                                      | `pathlib.Path()` (which is the current directory)                                     |
+| `pathlib.PosixPath`                                                                 | `pathlib.PosixPath()` (which is the current directory)                                |
+| `pathlib.WindowsPath`                                                               | `pathlib.WindowsPath()` (which is the current directory)                              |
+| `pathlib.PurePath`                                                                  | `pathlib.PurePath()` (which is the current directory)                                 |
+| `pathlib.PurePosixPath`                                                             | `pathlib.PurePosixPath()` (which is the current directory)                            |
+| `pathlib.PureWindowsPath`                                                           | `pathlib.PureWindowsPath()` (which is the current directory)                          |
+| `typing.Union` (hinted as `typing.Union[int, str]`, etc)                            | The default value of the first item in the union.                                     |
+| `typing.Optional` (hinted as `typing.Optional[int]`, `typing.Optional[float]`, etc) | `None`                                                                                |
 
 :::{warning}
 If `typing.Union[SomeType, None]` is used, the default will be `None`. This will only happen if there are exactly 2 options in the union and the last one is `None`. In Python (not just the parameter node wrappers), writing `typing.Union[SomeType, None]` is equivalent to writing `typing.Optional[SomeType]`.

@@ -1,5 +1,6 @@
 import abc
 import collections
+import enum
 import logging
 import pathlib
 import typing
@@ -970,3 +971,51 @@ class UnionSerializer(Serializer):
         not update the underlying parameter node, which can be confusing.
         """
         return all([s.supportsCaching() for s in self._serializers])
+
+
+@parameterNodeSerializer
+class EnumSerializer(Serializer):
+    @staticmethod
+    def canSerialize(type_) -> bool:
+        return issubclass(type_, enum.Enum)
+
+    @staticmethod
+    def create(type_):
+        if EnumSerializer.canSerialize(type_):
+            return ValidatedSerializer(EnumSerializer(type_), [IsInstance(type_)])
+        return None
+
+    def __init__(self, enum_):
+        self.enum = enum_
+
+        if len(self.enum) == 0:
+            raise ValueError('Cannot serialize empty Enum.')
+
+    def default(self):
+        # There is no idiomatic way to get a default value of an arbitrary enum,
+        # so just take the first item in iteration order.
+        return next(iter(self.enum))
+
+    def isIn(self, parameterNode, name: str) -> bool:
+        return parameterNode.HasParameter(name)
+
+    def write(self, parameterNode, name: str, value) -> None:
+        key = value.name
+        parameterNode.SetParameter(name, key)
+
+    def read(self, parameterNode, name: str):
+        key = parameterNode.GetParameter(name)
+
+        try:
+            return self.enum[key]
+        except KeyError as ex:
+            raise ValueError(
+                f'Found {key!r} in parameter node but it is not a name in {self.enum!r}'
+            ) from ex
+
+    def remove(self, parameterNode, name: str) -> None:
+        parameterNode.UnsetParameter(name)
+
+    @staticmethod
+    def supportsCaching() -> bool:
+        return True

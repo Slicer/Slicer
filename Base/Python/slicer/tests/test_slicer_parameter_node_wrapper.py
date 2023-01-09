@@ -3,6 +3,7 @@ import pathlib
 import typing
 from typing import Annotated
 import unittest
+import enum
 
 import vtk
 import slicer
@@ -815,6 +816,49 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         param.value = "s"
         self.assertEqual(param.value, "s")
+
+    def test_enum(self):
+        class Color(enum.Enum):
+            RED = enum.auto()
+            GREEN = enum.auto()
+            BLUE = enum.auto()
+
+            red = RED
+            green = GREEN
+            blue = BLUE
+
+        class Other(enum.Enum):
+            BAD = enum.auto()
+
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            fg: Color
+            bg: Annotated[Color, Default(Color.BLUE)]
+
+        # test default content
+        param = ParameterNodeType(newParameterNode())
+        self.assertTrue(param.isCached("fg"))
+        self.assertTrue(param.isCached("bg"))
+
+        self.assertIs(param.fg, Color.RED)
+        self.assertIs(param.bg, Color.BLUE)
+
+        param.fg = Color.GREEN
+        self.assertIs(param.fg, Color.GREEN)
+
+        # test cannot set non-Color value
+        with self.assertRaises(TypeError):
+            param.fg = "RED"
+        with self.assertRaises(TypeError):
+            param.fg = 0
+        self.assertIs(param.fg, Color.GREEN)
+        with self.assertRaises(TypeError):
+            param.fg = Other.BAD
+        self.assertIs(param.fg, Color.GREEN)
+
+        # test alias
+        param.bg = Color.blue
+        self.assertIs(param.bg, Color.BLUE)
 
     def test_events(self):
         class _Callback:
