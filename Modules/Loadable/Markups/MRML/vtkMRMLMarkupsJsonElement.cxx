@@ -354,6 +354,10 @@ std::string vtkMRMLMarkupsJsonElement::GetSchema()
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsJsonElement::GetVectorProperty(const char* propertyName, double* v, int numberOfComponents/*=3*/)
 {
+  if (!this->Internal->JsonValue.HasMember(propertyName))
+    {
+    return false;
+    }
   rapidjson::Value& item = this->Internal->JsonValue[propertyName];
   return this->Internal->ReadVector(item, v, numberOfComponents);
 }
