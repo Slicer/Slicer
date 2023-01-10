@@ -419,18 +419,18 @@ protected:
       {
       statusText += QLatin1Literal("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
         "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ") +
-        qSlicerExtensionsLocalWidget::tr("Not found for this version of the application (r%2)") + QLatin1Literal("</p>")
+        qSlicerExtensionsLocalWidget::tr("Not found for this version of the application (r%2)")
         .arg(this->WarningColor)
-        .arg(this->SlicerRevision);
+        .arg(this->SlicerRevision) + QLatin1Literal("</p>");
       }
     if (!compatible)
       {
       statusText += QLatin1Literal("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
         "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ") +
-        qSlicerExtensionsLocalWidget::tr("Incompatible with Slicer r%2 [built for r%3]") + QLatin1Literal("</p>")
+        qSlicerExtensionsLocalWidget::tr("Incompatible with Slicer r%2 [built for r%3]")
         .arg(this->WarningColor)
         .arg(this->SlicerRevision)
-        .arg(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionSlicerVersionRole).toString());
+        .arg(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionSlicerVersionRole).toString()) + QLatin1Literal("</p>");
       }
     if (this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::UpdateAvailableRole).toBool() && !scheduledForUpdate)
       {
