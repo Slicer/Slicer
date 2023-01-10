@@ -659,7 +659,7 @@ mark_as_superbuild(Slicer_USE_SYSTEM_QT:BOOL)
 #-----------------------------------------------------------------------------
 # Qt plugins (designer, imageformats, ...) relative directories
 #-----------------------------------------------------------------------------
-set(Slicer_QtPlugins_DIR "lib/QtPlugins")
+set(Slicer_QtPlugins_DIR "${CMAKE_INSTALL_LIBDIR}/QtPlugins")
 set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}")
 
 #-----------------------------------------------------------------------------
