@@ -20,6 +20,7 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLMeasurement.h>
 
 // VTK includes
@@ -30,6 +31,7 @@
 #include <vtkFieldData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
+#include <vtkParallelTransportFrame.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkTriangleFilter.h>
@@ -336,9 +338,47 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
     return false;
     }
 
-  // Note: This algorithm has been adapted from VMTK (vtkvmtkCenterlineGeometry::ComputeLineTorsion)
+  if (this->Measurements->GetNumberOfItems() == 0)
+    {
+    vtkErrorMacro("No measurements found");
+    return false;
+    }
+  vtkMRMLMeasurement* firstMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(0));
+  vtkMRMLMarkupsNode* inputMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(firstMeasurement->GetInputMRMLNode());
+  if (inputMarkupsNode == nullptr)
+    {
+    vtkErrorMacro("Failed to find input markups node");
+    return false;
+    }
 
-  vtkPoints* points = polyData->GetPoints();
+  // Get binormals and tangents arrays
+  vtkParallelTransportFrame* curveCoordinateSystemGenerator = inputMarkupsNode->GetCurveCoordinateSystemGeneratorWorld();
+  if (!curveCoordinateSystemGenerator)
+    {
+    vtkErrorMacro("Failed to access coordinate system generator");
+    return false;
+    }
+  vtkPointData* pointData = polyData->GetPointData();
+  vtkDoubleArray* tangents = vtkDoubleArray::SafeDownCast(
+    pointData->GetAbstractArray(curveCoordinateSystemGenerator->GetTangentsArrayName()));
+  vtkDoubleArray* binormals = vtkDoubleArray::SafeDownCast(
+    pointData->GetAbstractArray(curveCoordinateSystemGenerator->GetBinormalsArrayName()));
+  // Sanity checks
+  vtkPolyData* curvePoly = curveCoordinateSystemGenerator->GetOutput();
+  if (curvePoly->GetNumberOfPoints() != polyData->GetNumberOfPoints())
+    {
+    // Sanity check
+    vtkErrorMacro("Number of points does not match between given poly data and the coordinate system generator poly data ("
+      << curvePoly->GetNumberOfPoints() << " != " <<  polyData->GetNumberOfPoints() << ")");
+    return false;
+    }
+  if (binormals->GetNumberOfTuples() != pointData->GetNumberOfTuples())
+    {
+    vtkErrorMacro("Number of data points does not match between coordinate system generator ("
+      << binormals->GetNumberOfTuples() << ") and poly data point data (" << pointData->GetNumberOfTuples() << ")");
+    return false;
+    }
+
   vtkCellArray* lines = polyData->GetLines();
   vtkNew<vtkIdList> linePoints;
 
@@ -352,146 +392,82 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   torsionArray->SetName("Torsion");
   torsionArray->SetNumberOfComponents(1);
   torsionArray->SetNumberOfTuples(numberOfPoints);
+  torsionArray->Reset();
+  torsionArray->FillComponent(0,0.0);
 
-  double point0[3] = {0.0};
-  double point1[3] = {0.0};
-  double point2[3] = {0.0};
-  double vector0[3] = {0.0};
-  double vector1[3] = {0.0};
-
-  double averageTorsion = 0.0;
-  double weightSum = 0.0;
-
-  double* xps = new double[3 * numberOfPoints];
-  double* xpps = new double[3 * numberOfPoints];
-
-  int j = 0;
-  for (j=0; j<numberOfPoints; j++)
-    {
-    xps[3*j+0] = xps[3*j+1] = xps[3*j+2] = 0.0;
-    xpps[3*j+0] = xpps[3*j+1] = xpps[3*j+2] = 0.0;
-    }
-
-  for (j=1; j<numberOfPoints-1; j++)
-    {
-    points->GetPoint(linePoints->GetId(j-1), point0);
-    points->GetPoint(linePoints->GetId(j), point1);
-    points->GetPoint(linePoints->GetId(j+1), point2);
-
-    vector0[0] = point1[0] - point0[0];
-    vector0[1] = point1[1] - point0[1];
-    vector0[2] = point1[2] - point0[2];
-
-    vector1[0] = point2[0] - point1[0];
-    vector1[1] = point2[1] - point1[1];
-    vector1[2] = point2[2] - point1[2];
-
-    double norm0 = vtkMath::Norm(vector0);
-    double norm1 = vtkMath::Norm(vector1);
-
-    if (norm0 < 1.0E-12 || norm1 < 1.0E-12)
-      {
-      continue;
-      }
-
-    xps[3*j+0] = point2[0] - point0[0];
-    xps[3*j+1] = point2[1] - point0[1];
-    xps[3*j+2] = point2[2] - point0[2];
-    xps[3*j+0] /= norm0 + norm1;
-    xps[3*j+1] /= norm0 + norm1;
-    xps[3*j+2] /= norm0 + norm1;
-
-    xpps[3*j+0] = (point2[0] - point1[0]) / norm1 - (point1[0] - point0[0]) / norm0;
-    xpps[3*j+1] = (point2[1] - point1[1]) / norm1 - (point1[1] - point0[1]) / norm0;
-    xpps[3*j+2] = (point2[2] - point1[2]) / norm1 - (point1[2] - point0[2]) / norm0;
-    xpps[3*j+0] /= (norm0 + norm1) / 2.0;
-    xpps[3*j+1] /= (norm0 + norm1) / 2.0;
-    xpps[3*j+2] /= (norm0 + norm1) / 2.0;
-    }
-
+  // Initialize curvature variables
+  double minTorsion= 0.0;
   double maxTorsion = 0.0;
-  for (j=2; j<numberOfPoints-2; j++)
+  double meanTorsion = 0.0;
+
+  // Get values for first point
+  double* binormal = binormals->GetTuple3(linePoints->GetId(1));
+  double binormalNorm = sqrt(binormal[0]*binormal[0] + binormal[1]*binormal[1] + binormal[2]*binormal[2]);
+  double normBinormal[3] = {0.0, 0.0, 0.0};
+  double prevNormBinormal[3] = {binormal[0]/binormalNorm, binormal[1]/binormalNorm, binormal[2]/binormalNorm};
+  double torsion = 0.0;
+  double *tangent = nullptr;
+  double currentLength = 0.0;
+  double length = 0.0;
+
+  // The torsion for the first cell is 0.0 for open curves
+  torsionArray->InsertValue(linePoints->GetId(0), 0.0);
+
+  for (vtkIdType idx=1; idx<numberOfPoints-1; ++idx)
     {
-    points->GetPoint(linePoints->GetId(j-1), point0);
-    points->GetPoint(linePoints->GetId(j), point1);
-    points->GetPoint(linePoints->GetId(j+1), point2);
+    binormal = binormals->GetTuple3(linePoints->GetId(idx+1));
+    binormalNorm = sqrt(binormal[0]*binormal[0] + binormal[1]*binormal[1] + binormal[2]*binormal[2]);
 
-    vector0[0] = point1[0] - point0[0];
-    vector0[1] = point1[1] - point0[1];
-    vector0[2] = point1[2] - point0[2];
+    normBinormal[0] = binormal[0] / binormalNorm;
+    normBinormal[1] = binormal[1] / binormalNorm;
+    normBinormal[2] = binormal[2] / binormalNorm;
 
-    vector1[0] = point2[0] - point1[0];
-    vector1[1] = point2[1] - point1[1];
-    vector1[2] = point2[2] - point1[2];
+    // Local torsion
+    torsion = sqrt( (normBinormal[0]-prevNormBinormal[0])*(normBinormal[0]-prevNormBinormal[0])
+                  + (normBinormal[1]-prevNormBinormal[1])*(normBinormal[1]-prevNormBinormal[1])
+                  + (normBinormal[2]-prevNormBinormal[2])*(normBinormal[2]-prevNormBinormal[2]) )
+              / binormalNorm;
+    torsionArray->InsertValue(linePoints->GetId(idx), torsion);
 
-    double norm0 = vtkMath::Norm(vector0);
-    double norm1 = vtkMath::Norm(vector1);
-
-    if (norm0 < 1.0E-12 || norm1 < 1.0E-12)
+    // Statistics
+    tangent = tangents->GetTuple3(linePoints->GetId(idx));
+    currentLength = sqrt( tangent[0]*tangent[0] + tangent[1]*tangent[1] + tangent[2]*tangent[2] );
+    if (torsion < minTorsion)
       {
-      continue;
+      minTorsion = torsion;
       }
-
-    double xp[3] = {0.0};
-    xp[0] = xps[3*j+0];
-    xp[1] = xps[3*j+1];
-    xp[2] = xps[3*j+2];
-
-    double xpp[3] = {0.0};
-    xpp[0] = xpps[3*j+0];
-    xpp[1] = xpps[3*j+1];
-    xpp[2] = xpps[3*j+2];
-
-    double xpxppcross[3] = {0.0};
-    vtkMath::Cross(xp,xpp,xpxppcross);
-
-    double xppp[3] = {0.0};
-    xppp[0] = xpps[3*(j+1)+0] - xpps[3*(j-1)+0];
-    xppp[1] = xpps[3*(j+1)+1] - xpps[3*(j-1)+1];
-    xppp[2] = xpps[3*(j+1)+2] - xpps[3*(j-1)+2];
-
-    xppp[0] /= norm0 + norm1;
-    xppp[1] /= norm0 + norm1;
-    xppp[2] /= norm0 + norm1;
-
-    double torsion = vtkMath::Dot(xpxppcross,xppp) / pow(vtkMath::Norm(xpxppcross),2.0);
-    torsionArray->SetComponent(j, 0, torsion);
-    double weight = (norm0 + norm1) / 2.0;
-    averageTorsion += torsion * weight;
-    if (torsion > maxTorsion)
+    else if (torsion > maxTorsion)
       {
       maxTorsion = torsion;
       }
+    meanTorsion += torsion * currentLength; // weighted mean
+    length += currentLength;
 
-    weightSum += weight;
-    }
+    // Propagate current values to previous
+    for (int i=0; i<3; ++i)
+      {
+      prevNormBinormal[i] = normBinormal[i];
+      }
+    } // For each line point
 
-  delete[] xps;
-  delete[] xpps;
-
-  if (weightSum > 0.0)
+  if (!this->CurveIsClosed)
     {
-    averageTorsion /= weightSum;
+    // The torsion for the last cell by definition is 0.0 for open curves
+    torsionArray->InsertValue(linePoints->GetId(numberOfPoints-1), 0.0);
     }
-
-  // Use the adjacent values for points second from end
-  torsionArray->SetComponent(linePoints->GetId(1), 0,
-    torsionArray->GetValue(linePoints->GetId(2)));
-  torsionArray->SetComponent(linePoints->GetId(numberOfPoints-2), 0,
-    torsionArray->GetValue(linePoints->GetId(numberOfPoints-3)));
-  if (this->CurveIsClosed)
+  else
     {
     // Use the adjacent values for closed curve instead of the singular values
     torsionArray->SetComponent(linePoints->GetId(0), 0,
       torsionArray->GetValue(linePoints->GetId(1)));
-    torsionArray->SetComponent(linePoints->GetId(numberOfPoints-1), 0,
+    torsionArray->InsertValue(linePoints->GetId(numberOfPoints-1),
       torsionArray->GetValue(linePoints->GetId(numberOfPoints-2)));
     }
-  else
-    {
-    torsionArray->SetComponent(linePoints->GetId(0), 0, 0.0);
-    torsionArray->SetComponent(linePoints->GetId(numberOfPoints-1), 0, 0.0);
-    }
+
+  tangent = tangents->GetTuple3(linePoints->GetId(numberOfPoints-1));
+  currentLength = sqrt( tangent[0]*tangent[0] + tangent[1]*tangent[1] + tangent[2]*tangent[2] );
+  length += currentLength;
+  meanTorsion = meanTorsion / length;
 
   // Set mean and max torsion to measurements
   // Calculate and set interpolated control point measurements in poly data
@@ -504,7 +480,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
       }
     if (currentMeasurement->GetName() == this->GetAverageTorsionName())
       {
-      currentMeasurement->SetDisplayValue(averageTorsion, this->TorsionUnits.c_str());
+      currentMeasurement->SetDisplayValue(meanTorsion, this->TorsionUnits.c_str());
       currentMeasurement->Compute(); // Have the measurement set the computation result to OK
       }
     else if (currentMeasurement->GetName() == this->GetMaxTorsionName())

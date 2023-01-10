@@ -108,15 +108,16 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   events->InsertNextTuple1(vtkMRMLTransformableNode::TransformModifiedEvent);
   this->AddNodeReferenceRole(this->GetSurfaceConstraintNodeReferenceRole(), this->GetSurfaceConstraintNodeReferenceMRMLAttributeName(), events);
 
+  this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->ProjectPointsFilter->GetOutputPort());
+
   this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
   this->CurveMeasurementsCalculator->SetMeasurements(this->Measurements);
-  this->CurveMeasurementsCalculator->SetInputConnection(this->ProjectPointsFilter->GetOutputPort());
+  this->CurveMeasurementsCalculator->SetInputConnection(this->CurveCoordinateSystemGeneratorWorld->GetOutputPort());
   this->CurveMeasurementsCalculator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 
   this->WorldOutput = vtkSmartPointer<vtkPassThrough>::New();
   this->WorldOutput->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
 
-  this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->WorldOutput->GetOutputPort());
 
   this->ScalarDisplayAssignAttribute = vtkSmartPointer<vtkAssignAttribute>::New();
 

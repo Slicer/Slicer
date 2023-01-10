@@ -28,13 +28,13 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
 // VTK includes
+#include <vtkParallelTransportFrame.h>
 #include <vtkPointLocator.h>
 #include <vtkSmartPointer.h>
 #include <vtkVector.h>
 
 class vtkMatrix3x3;
 class vtkMRMLUnitNode;
-class vtkParallelTransportFrame;
 
 /// \brief Abstract base class to represent an interactive widget.
 ///
@@ -667,6 +667,10 @@ public:
   /// use of the curve for other computations.
   /// Any custom overrides of the interpolation modes are not persisted in MRML.
   vtkCurveGenerator* GetCurveGenerator() { return this->CurveGenerator.GetPointer(); };
+
+  /// The internal instance of the curve coordinate system generator to allow
+  /// use of the coordinate systems computed for curve point for other computations.
+  vtkParallelTransportFrame* GetCurveCoordinateSystemGeneratorWorld() { return this->CurveCoordinateSystemGeneratorWorld.GetPointer(); };
 
   void GetRASBounds(double bounds[6]) override;
   void GetBounds(double bounds[6]) override;

@@ -124,7 +124,7 @@ protected:
   vtkCollection* ObservedControlPointArrays;
 
   std::string CurvatureUnits{"mm-1"};
-  std::string TorsionUnits{"Pa"};
+  std::string TorsionUnits{"mm-1"};
 
 protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
