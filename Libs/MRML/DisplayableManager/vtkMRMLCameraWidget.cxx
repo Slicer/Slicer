@@ -1128,11 +1128,11 @@ bool vtkMRMLCameraWidget::ProcessMaximizeView(vtkMRMLInteractionEventData* event
     }
   if (isMaximized)
     {
-    layoutNode->SetMaximizedViewNode(nullptr);
+    layoutNode->RemoveMaximizedViewNode(viewNode);
     }
   else
     {
-    layoutNode->SetMaximizedViewNode(viewNode);
+    layoutNode->AddMaximizedViewNode(viewNode);
     }
 
   // Maximize/restore takes away the focus without resetting

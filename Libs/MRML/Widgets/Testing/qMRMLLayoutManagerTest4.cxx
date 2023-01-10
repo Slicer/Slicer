@@ -66,7 +66,7 @@ int qMRMLLayoutManagerTest4(int argc, char * argv[] )
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
 
   for (int i = vtkMRMLLayoutNode::SlicerLayoutInitialView;
-    i < vtkMRMLLayoutNode::SlicerLayoutFinalView-1; ++i)
+    i < vtkMRMLLayoutNode::SlicerLayoutFinalView; ++i)
     {
     layoutManager.setLayout(i);
     if (!checkViewArrangement(__LINE__, &layoutManager, layoutNode.GetPointer(), i))

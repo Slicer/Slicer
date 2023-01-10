@@ -292,6 +292,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // Instantiate and assign the layout manager to the slicer application
   this->LayoutManager = new qSlicerLayoutManager(layoutFrame);
+  // Prevent updates until the main window is shown to avoid detached viewports appear too early.
+  this->LayoutManager->setEnabled(false);
   this->LayoutManager->setScriptedDisplayableManagerDirectory(
       qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
   qSlicerApplication::application()->setLayoutManager(this->LayoutManager);
@@ -1047,25 +1049,14 @@ void qSlicerMainWindow::setLayout(int layout)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qSlicerMainWindow::layoutMaximizedViewNode()
-{
-  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
-  if (!layoutManager)
-    {
-    return nullptr;
-    }
-  return layoutManager->maximizedViewNode();
-}
-
-//---------------------------------------------------------------------------
-void qSlicerMainWindow::setLayoutMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
+void qSlicerMainWindow::removeAllMaximizedViewNodes()
 {
   qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
     {
     return;
     }
-  layoutManager->setMaximizedViewNode(viewNode);
+  layoutManager->removeAllMaximizedViewNodes();
 }
 
 //---------------------------------------------------------------------------
@@ -1223,6 +1214,16 @@ void qSlicerMainWindow::showEvent(QShowEvent *event)
   if (!d->WindowInitialShowCompleted)
     {
     d->WindowInitialShowCompleted = true;
+
+    // Show layout (updates were disabled until now to prevent detached viewports
+    // appear before the main window appears).
+    qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+    if (layoutManager)
+      {
+      layoutManager->setEnabled(true);
+      layoutManager->refresh();
+      }
+
     this->disclaimer();
     this->pythonConsoleInitialDisplay();
 
@@ -1320,6 +1321,7 @@ void qSlicerMainWindow::setupMenuActions()
   d->ViewLayoutFourByTwoSliceAction->setData(vtkMRMLLayoutNode::SlicerLayoutFourByTwoSliceView);
   d->ViewLayoutFiveByTwoSliceAction->setData(vtkMRMLLayoutNode::SlicerLayoutFiveByTwoSliceView);
   d->ViewLayoutThreeByThreeSliceAction->setData(vtkMRMLLayoutNode::SlicerLayoutThreeByThreeSliceView);
+  d->ViewLayoutDualMonitorFourUpViewAction->setData(vtkMRMLLayoutNode::SlicerLayoutDualMonitorFourUpView);
 
   d->ViewLayoutCompare_2_viewersAction->setData(2);
   d->ViewLayoutCompare_3_viewersAction->setData(3);
@@ -1593,7 +1595,7 @@ void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
   if (found && !action->data().isNull())
     {
     this->setLayout(action->data().toInt());
-    this->setLayoutMaximizedViewNode(nullptr);
+    this->removeAllMaximizedViewNodes();
     }
 }
 
@@ -1606,7 +1608,7 @@ void qSlicerMainWindow::onLayoutCompareActionTriggered(QAction* action)
 
   // we need to communicate both the layout change and the number of viewers.
   this->setLayout(d->ViewLayoutCompareAction->data().toInt());
-  this->setLayoutMaximizedViewNode(nullptr);
+  this->removeAllMaximizedViewNodes();
   this->setLayoutNumberOfCompareViewRows(action->data().toInt());
 }
 
@@ -1619,7 +1621,7 @@ void qSlicerMainWindow::onLayoutCompareWidescreenActionTriggered(QAction* action
 
   // we need to communicate both the layout change and the number of viewers.
   this->setLayout(d->ViewLayoutCompareWidescreenAction->data().toInt());
-  this->setLayoutMaximizedViewNode(nullptr);
+  this->removeAllMaximizedViewNodes();
   this->setLayoutNumberOfCompareViewColumns(action->data().toInt());
 }
 
@@ -1632,7 +1634,7 @@ void qSlicerMainWindow::onLayoutCompareGridActionTriggered(QAction* action)
 
   // we need to communicate both the layout change and the number of viewers.
   this->setLayout(d->ViewLayoutCompareGridAction->data().toInt());
-  this->setLayoutMaximizedViewNode(nullptr);
+  this->removeAllMaximizedViewNodes();
   this->setLayoutNumberOfCompareViewRows(action->data().toInt());
   this->setLayoutNumberOfCompareViewColumns(action->data().toInt());
 }

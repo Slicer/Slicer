@@ -1595,11 +1595,11 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMaximizeView(vtkMRMLInteractionEvent
 
   if (isMaximized)
     {
-    layoutNode->SetMaximizedViewNode(nullptr);
+    layoutNode->RemoveMaximizedViewNode(this->SliceNode);
     }
   else
     {
-    layoutNode->SetMaximizedViewNode(this->SliceNode);
+    layoutNode->AddMaximizedViewNode(this->SliceNode);
     }
 
   // Maximize/restore takes away the focus without resetting

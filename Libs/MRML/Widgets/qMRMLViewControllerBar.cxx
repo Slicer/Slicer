@@ -304,32 +304,22 @@ void qMRMLViewControllerBar::maximizeView()
     qCritical() << Q_FUNC_INFO << ": Invalid view node.";
     return;
     }
-  vtkMRMLLayoutNode* layoutNode = nullptr;
-  if (this->mrmlViewNode()->GetParentLayoutNode())
+
+  bool isMaximized = false;
+  bool canBeMaximized = false;
+  vtkMRMLLayoutNode* layoutNode = this->mrmlViewNode()->GetMaximizedState(isMaximized, canBeMaximized);
+  if (!layoutNode || !canBeMaximized)
     {
-    layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->mrmlViewNode()->GetParentLayoutNode());
-    if (!layoutNode)
-      {
-      // the owner is not a real layout node, it means it is a standalone view, cannot be maximized
-      return;
-      }
-    }
-  if (!layoutNode)
-    {
-    layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->mrmlScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
-    }
-  if (!layoutNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Unable to get layout node.";
     return;
     }
-  if (layoutNode->GetMaximizedViewNode() == this->mrmlViewNode())
+
+  if (isMaximized)
     {
-    layoutNode->SetMaximizedViewNode(nullptr);
+    layoutNode->RemoveMaximizedViewNode(this->mrmlViewNode());
     }
   else
     {
-    layoutNode->SetMaximizedViewNode(this->mrmlViewNode());
+    layoutNode->AddMaximizedViewNode(this->mrmlViewNode());
     }
 }
 
