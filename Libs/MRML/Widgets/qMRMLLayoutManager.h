@@ -166,9 +166,6 @@ public:
   /// \sa vtkMRMLLayoutNode::SlicerLayout, layoutLogic()
   int layout()const;
 
-  /// Return the view node that is temporarily shown maximized in the view layout.
-  Q_INVOKABLE vtkMRMLAbstractViewNode* maximizedViewNode();
-
   /// Return the layout logic instantiated and used by the manager.
   /// \sa setLayout(), layout()
   Q_INVOKABLE vtkMRMLLayoutLogic* layoutLogic()const;
@@ -218,9 +215,15 @@ public slots:
   /// It creates views if needed.
   void setLayout(int newLayout);
 
-  /// Makes a view displayed maximized (taking the entire area) of the view layout.
-  /// Setting the value to nullptr restores the original view layout.
-  void setMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode);
+  /// Makes a view displayed maximized (taking the entire area) of its viewport.
+  /// Calling removeMaximizedViewNode() with the same view node restores the original view layout.
+  void addMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode);
+
+  /// Restores the original (non-maximized) layout of the viewport.
+  void removeMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode);
+
+  /// Restore original (non-maximized) view layouts in all viewports.
+  void removeAllMaximizedViewNodes();
 
   /// Change the number of viewers in comparison modes
   /// It creates views if needed.
@@ -265,7 +268,9 @@ protected:
   QScopedPointer<qMRMLLayoutManagerPrivate> d_ptr;
   qMRMLLayoutManager(qMRMLLayoutManagerPrivate* obj, QWidget* viewport, QObject* parent);
 
+  QWidget* createViewport(const QDomElement& layoutElement, const QString& viewportName) override;
   void onViewportChanged() override;
+  void onViewportUsageChanged(const QString& viewportName) override;
 
   using ctkLayoutManager::setLayout;
 private:

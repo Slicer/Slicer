@@ -63,9 +63,6 @@ public:
   /// \sa moduleSelector(), pythonConsole()
   Q_INVOKABLE ctkErrorLogWidget* errorLogWidget()const;
 
-  /// Return the view node that is temporarily shown maximized in the view layout.
-  Q_INVOKABLE vtkMRMLAbstractViewNode* layoutMaximizedViewNode();
-
 public slots:
   virtual void setHomeModuleCurrent();
   virtual void restoreToolbars();
@@ -100,9 +97,8 @@ public slots:
   /// Set the view layout.
   virtual void setLayout(int);
 
-  /// Makes a view displayed maximized (taking the entire area) of the view layout.
-  /// Setting the value to nullptr restores the original view layout.
-  virtual void setLayoutMaximizedViewNode(vtkMRMLAbstractViewNode*);
+  /// Restores the original (non-maximized) layout in all viewports.
+  virtual void removeAllMaximizedViewNodes();
 
   virtual void setLayoutNumberOfCompareViewRows(int);
   virtual void setLayoutNumberOfCompareViewColumns(int);

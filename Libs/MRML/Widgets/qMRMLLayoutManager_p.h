@@ -137,6 +137,14 @@ public slots:
   void updateSegmentationControls();
 
 public:
+
+  struct ViewportInfo
+  {
+    QWidget* Window{nullptr};
+    QWidget* Viewport{nullptr};
+    QByteArray LastSavedWindowGeometry;
+  };
+
   bool                    Enabled;
   vtkMRMLScene*           MRMLScene;
   vtkMRMLLayoutNode*      MRMLLayoutNode;
@@ -144,8 +152,9 @@ public:
   vtkMRMLViewNode*        ActiveMRMLThreeDViewNode;
   vtkMRMLTableViewNode*   ActiveMRMLTableViewNode;
   vtkMRMLPlotViewNode*    ActiveMRMLPlotViewNode;
-protected:
-  void showWidget(QWidget* widget);
+  /// Top-level windows created and managed by this class that host additional viewports
+  /// (outside the main application window).
+  QMap<QString, ViewportInfo>  DetachedViewports;
 };
 
 //------------------------------------------------------------------------------

@@ -117,3 +117,89 @@ In C++:
 ```cpp
 qSlicerCoreApplication::startupWorkingPath()
 ```
+
+## View layout definition
+
+View layout definition describes what views (3D, slice, plot, table, etc.) should be displayed and where.
+It is specified by an XML string.
+
+A layout may contain multiple _viewports_, each viewport is a separate window, which may be displayed in the main application window or separately, for example on a second screen.
+
+XML elements and their attributes:
+- `viewports`: optional, if specified then it must be the root element. It can be used for specifying multiple viewports. It contains nested `layout` elements.
+- `layout`: The layout elements describe widget containers that embed one or multiple items. Arrangement of items are specified by type attribute of the layout element. It may be root element or it may be nested in `viewports` or `item` element.
+  - `type`: `vertical`, `horizontal`, `grid`, `tab`.
+  - `split`: `true` or `false` (default), if `true` then the user can resize the views in it by dragging the splitter between the views. Default size can be set using `splitSize` attribute of child items. Only for `vertical` and `horizontal` layout type.
+  - `name`: unique name of the layout, required if there are multiple viewports. If name is not specified then the empty string will be used as name. The empty string is a valid name, which refers to the default viewport, i.e., that is displayed in the application's main window.
+  - `label`: optional, if specified then this will be used as
+  - `dockable`: `true` (default) or `false` display the viewport as a dockable widget.
+  - `dockPosition`: If dockable, this can make the widget be docked by default. Valid choices are `floating` (default), `top`, `bottom`, `left`, `right`, `bottom-left`, `bottom-right`, `top-left`, `top-right`.
+- `item`: container for view(s) or layouts, nested in `layout` element.
+  - `splitSize`: default size if split is enabled in the layout
+- `view`: view widget, nested in `item` element.
+  - `name`: this name is displayed in the view's title bar
+  - `horizontalStretch` or `verticalStretch`: Relative size of views can be adjusted by specifying these stretch factors. The stretch factor must be an integer in the range of [0, 255].
+  - `row` and `column`: row and column index. Only for `grid` layout type.
+  - `class`: class of the view node, such as `vtkMRMLSliceNode`, `vtkMRMLViewNode`, `vtkMRMLTableViewNode`, `vtkMRMLPlotViewNode`.
+  - `singletontag`: layout name of the view node (`1`, `2`, ... for 3D views; `Red`, `Yellow`, ... for slice views)
+- `property`: contains view properties
+  - `name`: property name, such as `viewlabel` (displayed in the view's title bar), `orientation` (for slice views),
+  - element text: property value
+
+### Example: Simple 4-up view layout
+
+```xml
+<layout type="vertical" split="true">
+  <item>
+  <view class="vtkMRMLViewNode" singletontag="1">
+    <property name="viewlabel" action="default">1</property>
+  </view>
+  </item>
+  <item>
+  <view class="vtkMRMLSliceNode" singletontag="Red">
+    <property name="orientation" action="default">Axial</property>
+    <property name="viewlabel" action="default">R</property>
+    <property name="viewcolor" action="default">#F34A33</property>
+  </view>
+  </item>
+</layout>
+```
+
+### Example: Layout containing two viewports
+
+```xml
+<viewports>
+ <!--default viewport-->
+ <layout type="horizontal">
+  <item>
+   <view class="vtkMRMLSliceNode" singletontag="Red">
+    <property name="orientation" action="default">Axial</property>
+    <property name="viewlabel" action="default">R</property>
+    <property name="viewcolor" action="default">#F34A33</property>
+   </view>
+  </item>
+  <item>
+   <view class="vtkMRMLViewNode" singletontag="1">
+    <property name="viewlabel" action="default">1</property>
+   </view>
+  </item>
+ </layout>
+ <!--second dockable viewport-->
+ <layout type="horizontal"  label="Views+" dockable="true" dockPosition="bottom">>
+  <item>
+   <view class="vtkMRMLSliceNode" singletontag="Red+">
+    <property name="orientation" action="default">Axial</property>
+    <property name="viewlabel" action="default">R+</property>
+    <property name="viewcolor" action="default">#f9a99f</property>
+    <property name="viewgroup" action="default">1</property>
+   </view>
+  </item>
+  <item>
+   <view class="vtkMRMLViewNode" singletontag="1+" type="secondary">
+    <property name="viewlabel" action="default">1+</property>
+    <property name="viewgroup" action="default">1</property>
+   </view>
+  </item>
+ </layout>
+</viewports>
+```

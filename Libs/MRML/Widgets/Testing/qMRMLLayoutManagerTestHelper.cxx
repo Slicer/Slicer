@@ -13,7 +13,7 @@ namespace
 bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
                           vtkMRMLLayoutNode * layoutNode, int expectedViewArrangement)
 {
-  // Ignore deprecated arrangements
+  // Ignore deprecated arrangements (that are not expected to be available)
   if (expectedViewArrangement == 5     // SlicerLayoutOneUpSliceView
       || expectedViewArrangement == 11 // SlicerLayoutLightboxView
       || expectedViewArrangement == 13 // SlicerLayoutSideBySideLightboxView
@@ -23,6 +23,7 @@ bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
       || expectedViewArrangement == 25 // SlicerLayoutFourUpQuantitativeView
       || expectedViewArrangement == 26 // SlicerLayoutOneUpQuantitativeView
       || expectedViewArrangement == 28 // SlicerLayoutThreeOverThreeQuantitativeView
+      || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutDicomBrowserView // registered by DICOM module
       )
     {
     return true;

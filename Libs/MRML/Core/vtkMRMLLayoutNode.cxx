@@ -183,7 +183,7 @@ void vtkMRMLLayoutNode::Reset(vtkMRMLNode* defaultNode)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::Reset(defaultNode);
-  this->SetMaximizedViewNode(nullptr);
+  this->RemoveAllMaximizedViewNodes();
 }
 
 //----------------------------------------------------------------------------
@@ -385,13 +385,59 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* vtkMRMLLayoutNode::GetMaximizedViewNode()
+vtkMRMLAbstractViewNode* vtkMRMLLayoutNode::GetMaximizedViewNode(int maximizedViewNodeIndex)
 {
-  return vtkMRMLAbstractViewNode::SafeDownCast(this->GetNodeReference("MaximizedView"));
+  return vtkMRMLAbstractViewNode::SafeDownCast(this->GetNthNodeReference("MaximizedView", maximizedViewNodeIndex));
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLLayoutNode::SetMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedViewNode)
+int vtkMRMLLayoutNode::GetNumberOfMaximizedViewNodes()
 {
-  this->SetNodeReferenceID("MaximizedView", maximizedViewNode ? maximizedViewNode->GetID() : nullptr);
+  return this->GetNumberOfNodeReferences("MaximizedView");
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutNode::AddMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedViewNode)
+{
+  if (!maximizedViewNode || !maximizedViewNode->GetID())
+    {
+    // nothing to add
+    return;
+    }
+  if (this->HasNodeReferenceID("MaximizedView", maximizedViewNode->GetID()))
+    {
+    // already added
+    return;
+    }
+  this->AddNodeReferenceID("MaximizedView", maximizedViewNode->GetID());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutNode::RemoveMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedViewNode)
+{
+  for (int nodeReferenceIndex = 0; nodeReferenceIndex < this->GetNumberOfMaximizedViewNodes(); ++nodeReferenceIndex)
+    {
+    vtkMRMLAbstractViewNode* viewNode = this->GetMaximizedViewNode(nodeReferenceIndex);
+    if (viewNode == maximizedViewNode)
+      {
+      this->RemoveNthNodeReferenceID("MaximizedView", nodeReferenceIndex);
+      return;
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLLayoutNode::IsMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
+{
+  if (!viewNode || !viewNode->GetID())
+    {
+    return false;
+    }
+  return this->HasNodeReferenceID("MaximizedView", viewNode->GetID());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutNode::RemoveAllMaximizedViewNodes()
+{
+  this->RemoveNodeReferenceIDs("MaximizedView");
 }

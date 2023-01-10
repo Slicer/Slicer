@@ -661,7 +661,7 @@ vtkMRMLLayoutNode* vtkMRMLAbstractViewNode::GetMaximizedState(bool& maximized, b
     }
   if (layoutNode)
     {
-    maximized = (layoutNode->GetMaximizedViewNode() == this);
+    maximized = (layoutNode->IsMaximizedViewNode(this));
     }
   return layoutNode;
 }

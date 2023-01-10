@@ -1036,6 +1036,89 @@ const char* threeByThreeSliceView =
   " </item>"
   "</layout>";
 
+const char* dualMonitorFourUpView =
+"<viewports>"
+
+" <layout type=\"vertical\">"
+"  <item>"
+"   <layout type=\"horizontal\">"
+"    <item>"
+"     <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
+"      <property name=\"orientation\" action=\"default\">Axial</property>"
+"      <property name=\"viewlabel\" action=\"default\">R</property>"
+"      <property name=\"viewcolor\" action=\"default\">#F34A33</property>"
+"     </view>"
+"    </item>"
+"    <item>"
+"     <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
+"      <property name=\"viewlabel\" action=\"default\">1</property>"
+"     </view>"
+"    </item>"
+"   </layout>"
+"  </item>"
+"  <item>"
+"   <layout type=\"horizontal\">"
+"    <item>"
+"     <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\">"
+"      <property name=\"orientation\" action=\"default\">Coronal</property>"
+"      <property name=\"viewlabel\" action=\"default\">G</property>"
+"      <property name=\"viewcolor\" action=\"default\">#6EB04B</property>"
+"     </view>"
+"    </item>"
+"    <item>"
+"     <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\">"
+"      <property name=\"orientation\" action=\"default\">Sagittal</property>"
+"      <property name=\"viewlabel\" action=\"default\">Y</property>"
+"      <property name=\"viewcolor\" action=\"default\">#EDD54C</property>"
+"     </view>"
+"    </item>"
+"   </layout>"
+"  </item>"
+" </layout>"
+
+" <layout name=\"views+\" type=\"vertical\" label=\"Views+\" dockable=\"true\" dockPosition=\"floating\">"
+"  <item>"
+"   <layout type=\"horizontal\">"
+"    <item>"
+"     <view class=\"vtkMRMLSliceNode\" singletontag=\"Red+\">"
+"      <property name=\"orientation\" action=\"default\">Axial</property>"
+"      <property name=\"viewlabel\" action=\"default\">R+</property>"
+"      <property name=\"viewcolor\" action=\"default\">#f9a99f</property>"
+"      <property name=\"viewgroup\" action=\"default\">1</property>"
+"     </view>"
+"    </item>"
+"    <item>"
+"     <view class=\"vtkMRMLViewNode\" singletontag=\"1+\" type=\"secondary\">"
+"      <property name=\"viewlabel\" action=\"default\">1+</property>"
+"      <property name=\"viewgroup\" action=\"default\">1</property>"
+"     </view>"
+"    </item>"
+"   </layout>"
+"  </item>"
+"  <item>"
+"   <layout type=\"horizontal\">"
+"    <item>"
+"     <view class=\"vtkMRMLSliceNode\" singletontag=\"Green+\">"
+"      <property name=\"orientation\" action=\"default\">Coronal</property>"
+"      <property name=\"viewlabel\" action=\"default\">G+</property>"
+"      <property name=\"viewcolor\" action=\"default\">#c6e0b8</property>"
+"      <property name=\"viewgroup\" action=\"default\">1</property>"
+"     </view>"
+"    </item>"
+"    <item>"
+"     <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow+\">"
+"      <property name=\"orientation\" action=\"default\">Sagittal</property>"
+"      <property name=\"viewlabel\" action=\"default\">Y+</property>"
+"      <property name=\"viewcolor\" action=\"default\">#f6e9a2</property>"
+"      <property name=\"viewgroup\" action=\"default\">1</property>"
+"     </view>"
+"    </item>"
+"   </layout>"
+"  </item>"
+" </layout>"
+
+"</viewports>";
+
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayoutLogic);
@@ -1481,6 +1564,9 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          fiveByTwoSliceView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutThreeByThreeSliceView,
                                          threeByThreeSliceView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutDualMonitorFourUpView,
+                                         dualMonitorFourUpView);
+
   // add the CompareView modes which are defined programmatically
   this->UpdateCompareViewLayoutDefinitions();
   this->LayoutNode->EndModify(wasModifying);
@@ -1668,7 +1754,7 @@ void vtkMRMLLayoutLogic
     {
     vtkErrorMacro( << "No layout node");
     }
-  std::string layoutDescription = this->GetMaximizedViewLayoutDescription(viewToMaximize);
+  std::string layoutDescription = this->GetMaximizedViewLayoutDescription(viewToMaximize, layoutNode->GetCurrentLayoutDescription());
   if (layoutNode->IsLayoutDescription(layout))
     {
     layoutNode->SetLayoutDescription(layout, layoutDescription.c_str());
@@ -1679,18 +1765,79 @@ void vtkMRMLLayoutLogic
     }
 }
 
+
 //----------------------------------------------------------------------------
-std::string vtkMRMLLayoutLogic::GetMaximizedViewLayoutDescription(vtkMRMLAbstractViewNode* viewToMaximize)
+vtkXMLDataElement* vtkMRMLLayoutLogic::GetViewportElementForView(vtkXMLDataElement* layoutRootElement, vtkMRMLAbstractViewNode* viewNode)
 {
+  if (!layoutRootElement || !layoutRootElement->GetName() || strcmp(layoutRootElement->GetName(), "viewports") != 0)
+    {
+    return nullptr;
+    }
+  // multiple viewports
+  vtkXMLDataElement* viewElement = layoutRootElement;
+  while ((viewElement = this->GetNextViewElement(viewElement)))
+    {
+    vtkMRMLNode* foundViewNode = this->GetViewFromElement(viewElement);
+    if (viewNode == foundViewNode)
+      {
+      // we have found the view node in the tree, now look up the viewport element,
+      // which is the layout node right below the "viewports" root
+      vtkXMLDataElement* viewportElement = viewElement->GetParent();
+      while (viewportElement)
+        {
+        if (viewportElement->GetParent() == layoutRootElement)
+          {
+          return viewportElement;
+          }
+        viewportElement = viewportElement->GetParent();
+        }
+      }
+    }
+  return nullptr;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLLayoutLogic::GetMaximizedViewLayoutDescription(vtkMRMLAbstractViewNode* viewToMaximize, const char* currentLayoutDescription)
+{
+  if (!currentLayoutDescription || !viewToMaximize)
+    {
+    return "";
+    }
+  vtkSmartPointer<vtkXMLDataElement> layoutRootElement = vtkSmartPointer<vtkXMLDataElement>::Take(vtkMRMLLayoutNode::ParseLayout(currentLayoutDescription));
+  if (!layoutRootElement.GetPointer())
+    {
+    return "";
+    }
+  vtkXMLDataElement* viewportElement = this->GetViewportElementForView(layoutRootElement, viewToMaximize);
+  std::string viewportName;
+  if (viewportElement)
+    {
+    // multiple viewports
+    viewportName = viewportElement->GetAttribute("name") ? viewportElement->GetAttribute("name") : "";
+    }
+  else
+    {
+    // single viewport
+    layoutRootElement = vtkSmartPointer<vtkXMLDataElement>::New();
+    viewportElement = layoutRootElement;
+    }
+
+  viewportElement->RemoveAllNestedElements();
+  viewportElement->RemoveAllAttributes();
+  viewportElement->SetName("layout");
+  viewportElement->SetAttribute("name", viewportName.c_str());
+  viewportElement->SetAttribute("type", "horizontal");
+  vtkNew<vtkXMLDataElement> itemElement;
+  itemElement->SetName("item");
+  viewportElement->AddNestedElement(itemElement);
+  vtkNew< vtkXMLDataElement> viewElement;
+  viewElement->SetName("view");
+  viewElement->SetAttribute("class", viewToMaximize->GetClassName());
+  viewElement->SetAttribute("singletontag", viewToMaximize->GetSingletonTag());
+  itemElement->AddNestedElement(viewElement);
+
   std::stringstream layoutDescription;
-  layoutDescription <<
-    "<layout type=\"horizontal\">"
-    " <item>"
-    "  <view class=\"" << viewToMaximize->GetClassName() << "\" "
-    "singletontag=\"" << viewToMaximize->GetSingletonTag() << "\">"
-    "  </view>"
-    " </item>"
-    "</layout>";
+  layoutRootElement->PrintXML(layoutDescription, vtkIndent());
   return layoutDescription.str();
 }
 

@@ -121,7 +121,7 @@ public:
                                             vtkMRMLAbstractViewNode* viewToMaximize);
 
   /// Returns layout description that shows the specified view maximized.
-  std::string GetMaximizedViewLayoutDescription(vtkMRMLAbstractViewNode* viewToMaximize);
+  std::string GetMaximizedViewLayoutDescription(vtkMRMLAbstractViewNode* viewToMaximize, const char* currentLayoutDescription);
 
 protected:
   /// Logic constructor
@@ -174,6 +174,8 @@ protected:
   ViewAttributes     GetViewElementAttributes(vtkXMLDataElement* viewElement)const;
   ViewProperties     GetViewElementProperties(vtkXMLDataElement* viewElement)const;
   ViewProperty       GetViewElementProperty(vtkXMLDataElement* viewProperty)const;
+
+  vtkXMLDataElement* GetViewportElementForView(vtkXMLDataElement* layoutRootElement, vtkMRMLAbstractViewNode* viewNode);
 
   /// Pointer on the unique Layout node of the mrml node.
   vtkMRMLLayoutNode* LayoutNode;

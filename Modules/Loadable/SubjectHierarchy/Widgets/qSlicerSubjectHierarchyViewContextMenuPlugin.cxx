@@ -454,11 +454,11 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::maximizeView()
   bool maximizeView = d->MaximizeViewAction->property("maximize").toBool();
   if (maximizeView)
     {
-    d->LayoutNode->SetMaximizedViewNode(d->ViewNode);
+    d->LayoutNode->AddMaximizedViewNode(d->ViewNode);
     }
   else
     {
-    d->LayoutNode->SetMaximizedViewNode(nullptr);
+    d->LayoutNode->RemoveMaximizedViewNode(nullptr);
     }
 }
 //---------------------------------------------------------------------------

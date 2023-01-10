@@ -76,9 +76,14 @@ public:
   vtkGetStringMacro(SelectedModule);
   vtkSetStringMacro(SelectedModule);
 
-  /// Set/Get the layout name of the view that is temporarily shown maximized.
-  vtkMRMLAbstractViewNode* GetMaximizedViewNode();
-  void SetMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedViewNode);
+  /// Set/Get the N-th view that are temporarily shown maximized.
+  /// Only one view can be maximized in each viewport.
+  vtkMRMLAbstractViewNode* GetMaximizedViewNode(int maximizedViewNodeIndex);
+  int GetNumberOfMaximizedViewNodes();
+  void AddMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedViewNode);
+  void RemoveMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedViewNode);
+  void RemoveAllMaximizedViewNodes();
+  bool IsMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode);
 
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Layout";}
@@ -118,6 +123,7 @@ public:
     SlicerLayoutOneUpPlotView = 39,
     SlicerLayoutThreeOverThreePlotView = 40,
     SlicerLayoutDicomBrowserView = 41,
+    SlicerLayoutDualMonitorFourUpView = 42,
     SlicerLayoutFinalView, // special value, must be placed after the last standard view (used for iterating through all the views)
 
     SlicerLayoutMaximizedView = 98,

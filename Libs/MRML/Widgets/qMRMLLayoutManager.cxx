@@ -20,7 +20,11 @@
 
 // Qt includes
 #include <QButtonGroup>
+#include <QApplication>
 #include <QDebug>
+#include <QDockWidget>
+#include <QMainWindow>
+#include <QVBoxLayout>
 
 // MRMLWidgets includes
 #include <qMRMLWidgetsConfigure.h> // For MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
@@ -292,6 +296,7 @@ qMRMLLayoutManagerPrivate::qMRMLLayoutManagerPrivate(qMRMLLayoutManager& object)
 //------------------------------------------------------------------------------
 qMRMLLayoutManagerPrivate::~qMRMLLayoutManagerPrivate()
 {
+  Q_Q(qMRMLLayoutManager);
   this->MRMLLayoutLogic->Delete();
   this->MRMLLayoutLogic = nullptr;
 }
@@ -664,11 +669,20 @@ void qMRMLLayoutManagerPrivate::updateLayoutInternal()
 
   QDomDocument newLayout;
 
-  vtkMRMLAbstractViewNode* maximizedViewNode = (this->MRMLLayoutNode ? this->MRMLLayoutNode->GetMaximizedViewNode() : nullptr);
-  if (maximizedViewNode)
+  int numberOfMaximizedViewNodes = (this->MRMLLayoutNode ? this->MRMLLayoutNode->GetNumberOfMaximizedViewNodes() : 0);
+  if (numberOfMaximizedViewNodes)
     {
-    // Maximized view
-    std::string maximizedLayoutDescription = this->MRMLLayoutLogic->GetMaximizedViewLayoutDescription(maximizedViewNode);
+    std::string maximizedLayoutDescription = this->MRMLLayoutNode->GetCurrentLayoutDescription();
+    // Rewrite each viewport that has maximized view node.
+    for (int maximizedViewNodeIndex = 0; maximizedViewNodeIndex < numberOfMaximizedViewNodes; maximizedViewNodeIndex++)
+      {
+      vtkMRMLAbstractViewNode* maximizedViewNode = this->MRMLLayoutNode->GetMaximizedViewNode(maximizedViewNodeIndex);
+      if (!maximizedViewNode)
+        {
+        continue;
+        }
+      maximizedLayoutDescription = this->MRMLLayoutLogic->GetMaximizedViewLayoutDescription(maximizedViewNode, maximizedLayoutDescription.c_str());
+      }
     newLayout.setContent(QString::fromStdString(maximizedLayoutDescription));
     }
   else
@@ -756,7 +770,30 @@ qMRMLLayoutManager::qMRMLLayoutManager(qMRMLLayoutManagerPrivate* pimpl,
 }
 
 // --------------------------------------------------------------------------
-qMRMLLayoutManager::~qMRMLLayoutManager() = default;
+qMRMLLayoutManager::~qMRMLLayoutManager()
+{
+  Q_D(qMRMLLayoutManager);
+
+  // Erase all views (must happen before deleting viewports)
+  foreach(ctkLayoutViewFactory * viewFactory, this->registeredViewFactories())
+    {
+    qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
+    if (mrmlViewFactory)
+      {
+      mrmlViewFactory->setMRMLScene(nullptr);
+      }
+    }
+
+  // Delete detached viewports if they are not owned by the application mainWindow
+  foreach(qMRMLLayoutManagerPrivate::ViewportInfo viewport, d->DetachedViewports)
+    {
+    if (viewport.Window && !viewport.Window->parent())
+      {
+      delete viewport.Window;
+      }
+    }
+  d->DetachedViewports.clear();
+}
 
 // --------------------------------------------------------------------------
 bool qMRMLLayoutManager::isEnabled()const
@@ -1092,31 +1129,42 @@ void qMRMLLayoutManager::setLayout(int layout)
       {
       layout = vtkMRMLLayoutNode::SlicerLayoutConventionalView;
       }
-    d->MRMLLayoutNode->SetMaximizedViewNode(nullptr);
+    d->MRMLLayoutNode->RemoveAllMaximizedViewNodes();
     d->MRMLLayoutNode->SetViewArrangement(layout);
     }
 }
 
 //------------------------------------------------------------------------------
-void qMRMLLayoutManager::setMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
+void qMRMLLayoutManager::addMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   Q_D(qMRMLLayoutManager);
   if (!d->MRMLLayoutNode)
     {
     return;
     }
-  d->MRMLLayoutNode->SetMaximizedViewNode(viewNode);
+  d->MRMLLayoutNode->AddMaximizedViewNode(viewNode);
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLLayoutManager::maximizedViewNode()
+void qMRMLLayoutManager::removeMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   Q_D(qMRMLLayoutManager);
   if (!d->MRMLLayoutNode)
     {
-    return nullptr;
+    return;
     }
-  return d->MRMLLayoutNode->GetMaximizedViewNode();
+  d->MRMLLayoutNode->RemoveMaximizedViewNode(viewNode);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManager::removeAllMaximizedViewNodes()
+{
+  Q_D(qMRMLLayoutManager);
+  if (!d->MRMLLayoutNode)
+    {
+    return;
+    }
+  d->MRMLLayoutNode->RemoveAllMaximizedViewNodes();
 }
 
 //------------------------------------------------------------------------------
@@ -1208,4 +1256,117 @@ void qMRMLLayoutManager::pauseRender()
 void qMRMLLayoutManager::resumeRender()
 {
   this->setRenderPaused(false);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLLayoutManager::onViewportUsageChanged(const QString& viewportName)
+{
+  Q_D(qMRMLLayoutManager);
+  QWidget* viewport = this->viewport(viewportName);
+  if (!viewport)
+    {
+    return;
+    }
+  QWidget* viewportWindow = qobject_cast<QWidget*>(viewport->parent());
+  if (!viewportWindow)
+    {
+    return;
+    }
+  // Show/hide and save/restore geometry if it is detached viewport managed by this class
+  if (d->DetachedViewports.contains(viewportName))
+    {
+    bool used = this->isViewportUsedInLayout(viewportName);
+    QByteArray& geometry = d->DetachedViewports[viewportName].LastSavedWindowGeometry;
+    if (used)
+      {
+      viewportWindow->setVisible(true);
+      if (!geometry.isEmpty())
+        {
+        viewportWindow->restoreGeometry(geometry);
+        }
+      }
+    else
+      {
+      // save geometry and hide if detached window
+      geometry = viewportWindow->saveGeometry();
+      viewportWindow->setVisible(false);
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+QWidget* qMRMLLayoutManager::createViewport(const QDomElement& layoutElement, const QString& viewportName)
+{
+  Q_D(qMRMLLayoutManager);
+  // This method is called by the ctkLayoutManager when a viewport widget is needed by a layout and the
+  // viewport is not available yet.
+  if (!d->DetachedViewports.contains(viewportName))
+    {
+    qMRMLLayoutManagerPrivate::ViewportInfo viewportInfo;
+
+    // Get application mainwindow
+    QMainWindow* mainWindow = nullptr;
+    foreach(QWidget * widget, qApp->topLevelWidgets())
+      {
+      mainWindow = qobject_cast<QMainWindow*>(widget);
+      if (mainWindow)
+        {
+        break;
+        }
+      }
+
+    // Use mainWindow as parent to link the viewport to the mainWindow: bring to the top and minimize
+    // along with the viewport (and also copy application name and icon by default).
+    bool dockable = (layoutElement.attribute("dockable", "true").toLower() == "true");
+    if (mainWindow && dockable)
+      {
+      QDockWidget* dockWidget = new QDockWidget(mainWindow);
+      dockWidget->setObjectName(viewportName);
+      dockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+      viewportInfo.Window = dockWidget;
+      QFrame* frame = new QFrame(dockWidget);
+      frame->setFrameStyle(QFrame::Box);
+      viewportInfo.Viewport = frame;
+      dockWidget->setWidget(frame);
+      QString dockPosition = layoutElement.attribute("dockPosition", "floating").toLower();
+      if (dockPosition == "floating") { dockWidget->setFloating(true); }
+      else if (dockPosition == "top") { mainWindow->addDockWidget(Qt::TopDockWidgetArea, dockWidget); }
+      else if (dockPosition == "bottom") { mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dockWidget); }
+      else if (dockPosition == "left") { mainWindow->addDockWidget(Qt::LeftDockWidgetArea, dockWidget); }
+      else if (dockPosition == "right") { mainWindow->addDockWidget(Qt::RightDockWidgetArea, dockWidget); }
+      else if (dockPosition == "bottom-left") { mainWindow->addDockWidget(mainWindow->corner(Qt::BottomLeftCorner), dockWidget); }
+      else if (dockPosition == "bottom-right") { mainWindow->addDockWidget(mainWindow->corner(Qt::BottomRightCorner), dockWidget); }
+      else if (dockPosition == "top-left") { mainWindow->addDockWidget(mainWindow->corner(Qt::TopLeftCorner), dockWidget); }
+      else if (dockPosition == "top-right") { mainWindow->addDockWidget(mainWindow->corner(Qt::TopRightCorner), dockWidget); }
+      else
+        {
+        qWarning() << "Unknown dockPosition in layout XML:" << dockPosition
+          << " - valid values are floating, top, bottom, left, right, bottom-left, bottom-right, top-left, top-right";
+        dockWidget->setFloating(true);
+        }
+      }
+    else
+      {
+      viewportInfo.Window = new QWidget(mainWindow, Qt::Window | Qt::WindowMaximizeButtonHint);
+      viewportInfo.Window->setObjectName(viewportName);
+      if (!mainWindow)
+        {
+        viewportInfo.Window->setWindowIcon(QIcon(":/Icons/Medium/DesktopIcon.png"));
+        }
+      QVBoxLayout* layout = new QVBoxLayout(viewportInfo.Window);
+      viewportInfo.Viewport = new QWidget(viewportInfo.Window);
+      layout->addWidget(viewportInfo.Viewport);
+      }
+
+
+    QString label = layoutElement.attribute("label");
+    if (!label.isEmpty())
+      {
+      // TODO: Translate label (see https://github.com/Slicer/Slicer/issues/6647)
+      viewportInfo.Window->setWindowTitle(QCoreApplication::translate("vtkMRMLLayoutLogic", label.toStdString().c_str()));
+      }
+
+    d->DetachedViewports.insert(viewportName, viewportInfo);
+    }
+  return d->DetachedViewports.value(viewportName).Viewport;
 }
