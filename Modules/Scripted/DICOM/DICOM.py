@@ -640,6 +640,12 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         importButtonMenu.addAction(self.copyOnImportAction)
         self.copyOnImportAction.connect('toggled(bool)', self.copyOnImportToggled)
 
+        self.ui.subjectHierarchyTree.setMRMLScene(slicer.mrmlScene)
+        self.ui.subjectHierarchyTree.currentItemChanged.connect(self.onCurrentItemChanged)
+        self.ui.subjectHierarchyTree.currentItemModified.connect(self.onCurrentItemModified)
+        self.subjectHierarchyCurrentVisibility = False
+        self.ui.subjectHierarchyTree.setColumnHidden(self.ui.subjectHierarchyTree.model().idColumn, True)
+
         #
         # DICOM networking
         #
