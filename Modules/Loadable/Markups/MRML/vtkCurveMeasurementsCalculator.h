@@ -25,15 +25,18 @@
 #include <vtkSetGet.h>
 #include <vtkWeakPointer.h>
 
+// Markups MRML includes
+#include <vtkMRMLMarkupsNode.h>
+
 // Export
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
 class vtkCallbackCommand;
 
-/// Filter that calculates per-point measurements for markups curves.
+/// Filter that calculates per-curve-point measurements for markups curves.
 /// - Interpolate control point measurements into curve point data
-/// - Calculate per-point curvature (disabled by default)
-/// - Calculate per-point torsion (disabled by default)
+/// - Calculate per-curve-point curvature (disabled by default)
+/// - Calculate per-curve-point torsion (disabled by default)
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkCurveMeasurementsCalculator : public vtkPolyDataAlgorithm
 {
 public:
@@ -45,8 +48,8 @@ public:
   //@{
   /// Set/Get measurement collection.
   /// The measurements that are enabled and contain control point data are used for interpolation
-  void SetMeasurements(vtkCollection* measurements);
-  vtkCollection* GetMeasurements();
+  void SetInputMarkupsMRMLNode(vtkMRMLMarkupsNode* node);
+  vtkMRMLMarkupsNode* GetInputMarkupsMRMLNode();
   //@}
 
   //@{
@@ -68,6 +71,8 @@ public:
   static const char* GetMeanCurvatureName() { return "curvature mean"; };
   /// Get name of max curvature measurement
   static const char* GetMaxCurvatureName() { return "curvature max"; };
+  /// Get name of curvature values array (on the curve points)
+  static const char* GetCurvatureArrayName() { return "Curvature"; };
 
   vtkGetMacro(CurvatureUnits, std::string);
   vtkSetMacro(CurvatureUnits, std::string);
@@ -79,10 +84,12 @@ public:
   vtkBooleanMacro(CalculateTorsion, bool);
   //@}
 
-  /// Get name of average torsion measurement
-  static const char* GetAverageTorsionName() { return "torsion avg"; };
+  /// Get name of mean torsion measurement
+  static const char* GetMeanTorsionName() { return "torsion mean"; };
   /// Get name of max torsion measurement
   static const char* GetMaxTorsionName() { return "torsion max"; };
+  /// Get name of torsion array (on the curve points)
+  static const char* GetTorsionArrayName() { return "Torsion"; };
 
   vtkGetMacro(TorsionUnits, std::string);
   vtkSetMacro(TorsionUnits, std::string);
@@ -106,8 +113,8 @@ protected:
   static void OnControlPointArrayModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
 protected:
-  /// Measurement list from the markups node for derived measurements (such as interpolation)
-  vtkWeakPointer<vtkCollection> Measurements;
+  /// Input markups node containing the measurement list for derived measurements (such as interpolation)
+  vtkWeakPointer<vtkMRMLMarkupsNode> InputMarkupsMRMLNode;
 
   /// Flag indicating whether the current curve is closed
   bool CurveIsClosed{false};

@@ -111,7 +111,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->ProjectPointsFilter->GetOutputPort());
 
   this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
-  this->CurveMeasurementsCalculator->SetMeasurements(this->Measurements);
+  this->CurveMeasurementsCalculator->SetInputMarkupsMRMLNode(this);
   this->CurveMeasurementsCalculator->SetInputConnection(this->CurveCoordinateSystemGeneratorWorld->GetOutputPort());
   this->CurveMeasurementsCalculator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 
@@ -142,12 +142,12 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
 
   this->CurvatureMeasurementModifiedCallbackCommand = vtkCallbackCommand::New();
   this->CurvatureMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->CurvatureMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified );
+  this->CurvatureMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified );
   curvatureMeanMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->CurvatureMeasurementModifiedCallbackCommand);
   curvatureMaxMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->CurvatureMeasurementModifiedCallbackCommand);
 
   vtkNew<vtkMRMLStaticMeasurement> torsionMeanMeasurement;
-  torsionMeanMeasurement->SetName(this->CurveMeasurementsCalculator->GetAverageTorsionName());
+  torsionMeanMeasurement->SetName(this->CurveMeasurementsCalculator->GetMeanTorsionName());
   torsionMeanMeasurement->SetEnabled(false); // Torsion calculation is off by default
   this->Measurements->AddItem(torsionMeanMeasurement);
 
@@ -158,7 +158,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
 
   this->TorsionMeasurementModifiedCallbackCommand = vtkCallbackCommand::New();
   this->TorsionMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->TorsionMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnTorsionMeasurementModified );
+  this->TorsionMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnTorsionMeasurementEnabledModified );
   torsionMeanMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->TorsionMeasurementModifiedCallbackCommand);
   torsionMaxMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->TorsionMeasurementModifiedCallbackCommand);
 }
@@ -1113,7 +1113,7 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
     // Update curvature unit (only do it if a curve measurement is enabled)
     vtkMRMLMeasurement* curvatureMeanMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMeanCurvatureName());
     vtkMRMLMeasurement* curvatureMaxMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMaxCurvatureName());
-    vtkMRMLMeasurement* torsionAvgMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetAverageTorsionName());
+    vtkMRMLMeasurement* torsionAvgMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMeanTorsionName());
     vtkMRMLMeasurement* torsionMaxMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMaxTorsionName());
     if ( (curvatureMeanMeasurement && curvatureMeanMeasurement->GetEnabled())
       || (curvatureMaxMeasurement && curvatureMaxMeasurement->GetEnabled())
@@ -1127,6 +1127,7 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
         inverseLengthUnit = std::string(lengthUnitNode->GetSuffix()) + "-1";
         }
       this->CurveMeasurementsCalculator->SetCurvatureUnits(inverseLengthUnit);
+      this->CurveMeasurementsCalculator->SetTorsionUnits(inverseLengthUnit);
       }
     this->CurveMeasurementsCalculator->Update();
     }
@@ -1421,7 +1422,7 @@ void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified(
+void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified(
   vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkMRMLMarkupsCurveNode* self = reinterpret_cast<vtkMRMLMarkupsCurveNode*>(clientData);
@@ -1474,7 +1475,7 @@ void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::OnTorsionMeasurementModified(
+void vtkMRMLMarkupsCurveNode::OnTorsionMeasurementEnabledModified(
   vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkMRMLMarkupsCurveNode* self = reinterpret_cast<vtkMRMLMarkupsCurveNode*>(clientData);
@@ -1499,7 +1500,7 @@ void vtkMRMLMarkupsCurveNode::OnTorsionMeasurementModified(
       {
       vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(self->Measurements->GetItemAsObject(index));
       if (currentMeasurement->GetEnabled()
-        && (currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetAverageTorsionName()
+        && (currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMeanTorsionName()
           || currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMaxTorsionName()))
         {
         isTorsionComputationNeeded = true;

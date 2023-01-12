@@ -89,25 +89,24 @@ void vtkCurveMeasurementsCalculator::PrintSelf(std::ostream &os, vtkIndent inden
 }
 
 //----------------------------------------------------------------------------------
-void vtkCurveMeasurementsCalculator::SetMeasurements(vtkCollection* measurements)
+void vtkCurveMeasurementsCalculator::SetInputMarkupsMRMLNode(vtkMRMLMarkupsNode* node)
 {
-  if (this->Measurements == measurements)
+  if (this->InputMarkupsMRMLNode == node)
     {
     return;
     }
-  this->Measurements = measurements;
+  this->InputMarkupsMRMLNode = node;
   this->Modified();
 }
 
 //----------------------------------------------------------------------------------
-vtkCollection* vtkCurveMeasurementsCalculator::GetMeasurements()
+vtkMRMLMarkupsNode* vtkCurveMeasurementsCalculator::GetInputMarkupsMRMLNode()
 {
-  return this->Measurements.GetPointer();
+  return this->InputMarkupsMRMLNode.GetPointer();
 }
 
 //----------------------------------------------------------------------------
-int vtkCurveMeasurementsCalculator::FillInputPortInformation(
-  int port, vtkInformation* info)
+int vtkCurveMeasurementsCalculator::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
     {
@@ -124,13 +123,10 @@ int vtkCurveMeasurementsCalculator::FillInputPortInformation(
 
 //------------------------------------------------------------------------------
 int vtkCurveMeasurementsCalculator::RequestData(
-  vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** inputVector,
-  vtkInformationVector* outputVector)
+  vtkInformation* vtkNotUsed(request), vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
-  vtkPolyData* inputPolyData = vtkPolyData::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData* inputPolyData = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   if (!inputPolyData)
     {
@@ -138,43 +134,45 @@ int vtkCurveMeasurementsCalculator::RequestData(
     }
 
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
-  vtkPolyData* outputPolyData = vtkPolyData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData* outputPolyData = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   outputPolyData->CopyStructure(inputPolyData);
   outputPolyData->GetPointData()->PassData(inputPolyData->GetPointData());
   outputPolyData->GetCellData()->PassData(inputPolyData->GetCellData());
   outputPolyData->GetFieldData()->PassData(inputPolyData->GetFieldData());
 
+  int returnValue = 1;
   if (this->CalculateCurvature)
     {
     if (!this->CalculatePolyDataCurvature(outputPolyData))
       {
-      return 0;
+      vtkErrorMacro("Failed to calculate curve markup curvature");
+      returnValue = 0;
       }
     }
   else
     {
-    outputPolyData->GetPointData()->RemoveArray("Curvature");
+    outputPolyData->GetPointData()->RemoveArray(this->GetCurvatureArrayName());
     }
 
   if (this->CalculateTorsion)
     {
     if (!this->CalculatePolyDataTorsion(outputPolyData))
       {
-      return 0;
+      vtkErrorMacro("Failed to calculate curve markup torsion");
+      returnValue = 0;
       }
     }
   else
     {
-    outputPolyData->GetPointData()->RemoveArray("Torsion");
+    outputPolyData->GetPointData()->RemoveArray(this->GetTorsionArrayName());
     }
 
   // Go through measurements, and interpolate those that contain control point data and are enabled
   this->InterpolateControlPointMeasurementToPolyData(outputPolyData);
 
   outputPolyData->Squeeze();
-  return 1;
+  return returnValue;
 }
 
 //------------------------------------------------------------------------------
@@ -199,11 +197,21 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   lines->GetCell(0, linePoints);
   vtkIdType numberOfPoints = // Last point in closed curve line is the first point
     (this->CurveIsClosed ? linePoints->GetNumberOfIds()-1 : linePoints->GetNumberOfIds());
+  if (numberOfPoints < 3)
+    {
+    vtkErrorMacro("Number of curve points too low for curvature calculation (" << numberOfPoints << "), at least 3 needed");
+    return false;
+    }
 
   // Initialize curvature array
-  vtkNew<vtkDoubleArray> curvatureValues;
+  vtkSmartPointer<vtkDoubleArray> curvatureValues = vtkDoubleArray::SafeDownCast(
+    polyData->GetPointData()->GetArray(this->GetCurvatureArrayName()));
+  if (curvatureValues == nullptr)
+    {
+    curvatureValues = vtkSmartPointer<vtkDoubleArray>::New();
+    }
   curvatureValues->Initialize();
-  curvatureValues->SetName("Curvature");
+  curvatureValues->SetName(this->GetCurvatureArrayName());
   curvatureValues->SetNumberOfComponents(1);
   curvatureValues->SetNumberOfTuples(numberOfPoints);
   curvatureValues->Reset();
@@ -297,13 +305,20 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
                       + (prevPoint[1]-prevMeanPoint[1])*(prevPoint[1]-prevMeanPoint[1])
                       + (prevPoint[2]-prevMeanPoint[2])*(prevPoint[2]-prevMeanPoint[2]) );
   length += currentLength;
-  meanKappa = meanKappa / length;
+  if (length > 0.0)
+    {
+    meanKappa = meanKappa / length;
+    }
+  else
+    {
+    meanKappa = 0.0;
+    }
 
   // Set mean and max curvature to measurements
   // Calculate and set interpolated control point measurements in poly data
-  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+  for (int index=0; index<this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
     {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+    vtkMRMLMeasurement* currentMeasurement = this->InputMarkupsMRMLNode->GetNthMeasurement(index);
     if (!currentMeasurement || currentMeasurement->GetName().empty() || !currentMeasurement->GetEnabled())
       {
       continue;
@@ -337,22 +352,17 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
     {
     return false;
     }
-
-  if (this->Measurements->GetNumberOfItems() == 0)
-    {
-    vtkErrorMacro("No measurements found");
-    return false;
-    }
-  vtkMRMLMeasurement* firstMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(0));
-  vtkMRMLMarkupsNode* inputMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(firstMeasurement->GetInputMRMLNode());
-  if (inputMarkupsNode == nullptr)
+  if (this->InputMarkupsMRMLNode == nullptr)
     {
     vtkErrorMacro("Failed to find input markups node");
     return false;
     }
 
+  // Note: This algorithm has been implemented based on the information at https://mathworld.wolfram.com/Torsion.html
+  //       and based on the implementation of CalculatePolyDataCurvature
+
   // Get binormals and tangents arrays
-  vtkParallelTransportFrame* curveCoordinateSystemGenerator = inputMarkupsNode->GetCurveCoordinateSystemGeneratorWorld();
+  vtkParallelTransportFrame* curveCoordinateSystemGenerator = this->InputMarkupsMRMLNode->GetCurveCoordinateSystemGeneratorWorld();
   if (!curveCoordinateSystemGenerator)
     {
     vtkErrorMacro("Failed to access coordinate system generator");
@@ -385,11 +395,21 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   lines->GetCell(0, linePoints);
   vtkIdType numberOfPoints = // Last point in closed curve line is the first point
     (this->CurveIsClosed ? linePoints->GetNumberOfIds()-1 : linePoints->GetNumberOfIds());
+  if (numberOfPoints < 3)
+    {
+    vtkErrorMacro("Number of curve points too low for torsion calculation (" << numberOfPoints << "), at least 3 needed");
+    return false;
+    }
 
   // Initialize torsion array
-  vtkNew<vtkDoubleArray> torsionArray;
+  vtkSmartPointer<vtkDoubleArray> torsionArray = vtkDoubleArray::SafeDownCast(
+    polyData->GetPointData()->GetArray(this->GetTorsionArrayName()));
+  if (torsionArray == nullptr)
+    {
+    torsionArray = vtkSmartPointer<vtkDoubleArray>::New();
+    }
   torsionArray->Initialize();
-  torsionArray->SetName("Torsion");
+  torsionArray->SetName(this->GetTorsionArrayName());
   torsionArray->SetNumberOfComponents(1);
   torsionArray->SetNumberOfTuples(numberOfPoints);
   torsionArray->Reset();
@@ -450,14 +470,14 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
       }
     } // For each line point
 
+  // Use the adjacent values for instead of the singular values
   if (!this->CurveIsClosed)
     {
-    // The torsion for the last cell by definition is 0.0 for open curves
-    torsionArray->InsertValue(linePoints->GetId(numberOfPoints-1), 0.0);
+    torsionArray->InsertValue(linePoints->GetId(numberOfPoints-1),
+      torsionArray->GetValue(linePoints->GetId(numberOfPoints-2)));
     }
   else
     {
-    // Use the adjacent values for closed curve instead of the singular values
     torsionArray->SetComponent(linePoints->GetId(0), 0,
       torsionArray->GetValue(linePoints->GetId(1)));
     torsionArray->InsertValue(linePoints->GetId(numberOfPoints-1),
@@ -467,18 +487,25 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   tangent = tangents->GetTuple3(linePoints->GetId(numberOfPoints-1));
   currentLength = sqrt( tangent[0]*tangent[0] + tangent[1]*tangent[1] + tangent[2]*tangent[2] );
   length += currentLength;
-  meanTorsion = meanTorsion / length;
+  if (length > 0.0)
+    {
+    meanTorsion = meanTorsion / length;
+    }
+  else
+    {
+    meanTorsion = 0.0;
+    }
 
   // Set mean and max torsion to measurements
   // Calculate and set interpolated control point measurements in poly data
-  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+  for (int index=0; index<this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
     {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+    vtkMRMLMeasurement* currentMeasurement = this->InputMarkupsMRMLNode->GetNthMeasurement(index);
     if (!currentMeasurement || currentMeasurement->GetName().empty() || !currentMeasurement->GetEnabled())
       {
       continue;
       }
-    if (currentMeasurement->GetName() == this->GetAverageTorsionName())
+    if (currentMeasurement->GetName() == this->GetMeanTorsionName())
       {
       currentMeasurement->SetDisplayValue(meanTorsion, this->TorsionUnits.c_str());
       currentMeasurement->Compute(); // Have the measurement set the computation result to OK
@@ -499,7 +526,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
 //------------------------------------------------------------------------------
 bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyData(vtkPolyData* outputPolyData)
 {
-  if (!this->Measurements)
+  if (!this->InputMarkupsMRMLNode)
     {
     return false;
     }
@@ -526,9 +553,9 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
     }
 
   // Calculate and set interpolated control point measurements in poly data
-  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+  for (int index=0; index<this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
     {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+    vtkMRMLMeasurement* currentMeasurement = this->InputMarkupsMRMLNode->GetNthMeasurement(index);
     if (!currentMeasurement || !currentMeasurement->GetEnabled())
       {
       continue;
@@ -639,20 +666,15 @@ vtkMTimeType vtkCurveMeasurementsCalculator::GetMTime()
 {
   vtkMTimeType mTime = this->Superclass::GetMTime();
   // Modified time is the latest modified time of all measurements
-  if (this->Measurements)
+  if (this->InputMarkupsMRMLNode)
     {
-    vtkMTimeType collectionMTime = this->Measurements->GetMTime();
-    if (collectionMTime > mTime)
+    for (int index=0; index<this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
       {
-      mTime = collectionMTime;
-      }
-    vtkObject* obj = nullptr;
-    for (this->Measurements->InitTraversal(); (obj = this->Measurements->GetNextItemAsObject());)
-      {
-      vtkMTimeType objMTime = obj->GetMTime();
-      if (objMTime > mTime)
+      vtkMRMLMeasurement* currentMeasurement = this->InputMarkupsMRMLNode->GetNthMeasurement(index);
+      vtkMTimeType measurementMTime = currentMeasurement->GetMTime();
+      if (measurementMTime > mTime)
         {
-        mTime = objMTime;
+        mTime = measurementMTime;
         }
       }
     }
