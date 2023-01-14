@@ -63,13 +63,6 @@ class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSelectionNode;
 
 //-----------------------------------------------------------------------------
-struct QMRML_WIDGETS_EXPORT qMRMLOrientation
-{
-  QString Prefix;
-  QString ToolTip;
-};
-
-//-----------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidgetPrivate
   : public qMRMLViewControllerBarPrivate
   , public Ui_qMRMLSliceControllerWidget
@@ -98,8 +91,6 @@ public:
   void setupMoreOptionsMenu();
   void setupOrientationMarkerMenu();
   void setupRulerMenu();
-
-  qMRMLOrientation mrmlOrientation(const QString& name);
 
   vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);
 
@@ -178,7 +169,6 @@ public:
   vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;
   vtkCollection*                      SliceLogics;
   vtkWeakPointer<vtkAlgorithmOutput>  ImageDataConnection;
-  QHash<QString, qMRMLOrientation>    SliceOrientationToDescription;
   QButtonGroup*                       ControllerButtonGroup;
 
   QToolButton*                        FitToWindowToolButton;

@@ -166,7 +166,7 @@ View Controllers module provides an alternate way of displaying these controller
 - **Slice orientation** displays allows you to choose the orientation for this slice view.
 - **Lightbox** to select a mosiac (a.k.a. contact sheet) view.  Not all operations work in this mode and it may be removed in the future.
 - **Reformat** allows interactive manipulation of the slice orientation.
-- **Slice offset slider** allows slicing through the volume. Step size is set to the background volume's spacing by default but can be modified by clicking on "Spacing and field of view" button.
+- **Slice offset slider** allows slicing through the volume. Step size is set to the background volume's spacing by default but can be modified by clicking on "Spacing and field of view" button. The label next to the offset value (e.g., `S`, `L`, `A`, `IL`, `IRP`) reflects the slice normal direction. If the offset slider moved to the right then the slice moves in this normal direction. If the slice normal direction is not aligned with an axis then the label contains a combination of directions, with the order of axes reflecting the dominance of the axis. For example, if the plane normal points to anterior and slightly left then the label is `AL`, while if the plane normal mostly left and slightly anterior then the label is `LA`.
 - **Blending mode** specifies how foreground and background layers are mixed.
 - **Spacing and field of view** Spacing defines the increment for the slice offset slider. Field of view sets the zoom level for the slice.
 - **Rotate to volume plane** changes the orientation of the slice to match the closest acquisition orientation of the displayed volume.
