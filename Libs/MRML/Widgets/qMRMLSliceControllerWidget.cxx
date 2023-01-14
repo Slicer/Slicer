@@ -60,6 +60,7 @@
 #include <vtkMRMLUnitNode.h>
 
 // VTK includes
+#include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkStringArray.h>
 
@@ -75,16 +76,6 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->SliceLogics = nullptr;
 
   this->ControllerButtonGroup = nullptr;
-
-  qMRMLOrientation axialOrientation = {qMRMLSliceControllerWidget::tr("S: "), qMRMLSliceControllerWidget::tr("I <-----> S")};
-  qMRMLOrientation sagittalOrientation = {qMRMLSliceControllerWidget::tr("R: "), qMRMLSliceControllerWidget::tr("L <-----> R")};
-  qMRMLOrientation coronalOrientation = {qMRMLSliceControllerWidget::tr("A: "), qMRMLSliceControllerWidget::tr("P <-----> A")};
-  qMRMLOrientation obliqueOrientation = {"", qMRMLSliceControllerWidget::tr("Oblique")};
-
-  this->SliceOrientationToDescription["Axial"] = axialOrientation;
-  this->SliceOrientationToDescription["Sagittal"] = sagittalOrientation;
-  this->SliceOrientationToDescription["Coronal"] = coronalOrientation;
-  this->SliceOrientationToDescription["Reformat"] = obliqueOrientation;
 
   this->LastLabelMapOpacity = 1.;
   this->LastForegroundOpacity = 1.;
@@ -892,10 +883,14 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   Self::updateSliceOrientationSelector(sliceNode, this->SliceOrientationSelector);
 
   // Update slice offset slider tooltip
-  qMRMLOrientation orientation = this->mrmlOrientation(
-      QString::fromStdString(sliceNode->GetOrientation().c_str()));
-  this->SliceOffsetSlider->setToolTip(orientation.ToolTip);
-  this->SliceOffsetSlider->setPrefix(orientation.Prefix);
+  vtkMatrix4x4* sliceToRas = sliceNode->GetSliceToRAS();
+  double planeNormal[3] = { sliceToRas->GetElement(0, 2), sliceToRas->GetElement(1, 2), sliceToRas->GetElement(2, 2) };
+  std::string positiveAxisLabel = sliceNode->GetDirectionLabel(planeNormal, true);
+  std::string negativeAxisLabel = sliceNode->GetDirectionLabel(planeNormal, false);
+  this->SliceOffsetSlider->setToolTip(QString("%1 <-----> %2")
+    .arg(QString::fromStdString(positiveAxisLabel))
+    .arg(QString::fromStdString(negativeAxisLabel)));
+  this->SliceOffsetSlider->setPrefix(QString("%1: ").arg(QString::fromStdString(positiveAxisLabel)));
 
   // Update slice visibility toggle
   this->actionShow_in_3D->setChecked(sliceNode->GetSliceVisible());
@@ -1551,18 +1546,6 @@ void qMRMLSliceControllerWidgetPrivate::setupRulerMenu()
   rulerMenu->addActions(rulerTypesActions->actions());
   rulerMenu->addSeparator();
   rulerMenu->addActions(rulerColorActions->actions());
-}
-
-// --------------------------------------------------------------------------
-qMRMLOrientation qMRMLSliceControllerWidgetPrivate::mrmlOrientation(const QString &name)
-{
-  QHash<QString, qMRMLOrientation>::iterator it = this->SliceOrientationToDescription.find(name);
-  if (it != this->SliceOrientationToDescription.end())
-    {
-    return it.value();
-    }
-  qMRMLOrientation obliqueOrientation = {"", qMRMLSliceControllerWidget::tr("Oblique")};
-  return obliqueOrientation;
 }
 
 // --------------------------------------------------------------------------

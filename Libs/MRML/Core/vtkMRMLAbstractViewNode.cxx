@@ -665,3 +665,62 @@ vtkMRMLLayoutNode* vtkMRMLAbstractViewNode::GetMaximizedState(bool& maximized, b
     }
   return layoutNode;
 }
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLAbstractViewNode::GetDirectionLabel(double direction[3], bool positive/*=true*/, double toleranceDeg/*=1.0*/)
+{
+  if (vtkMath::Norm(direction) == 0.0)
+    {
+    return "?";
+    }
+  if (this->AxisLabels->GetNumberOfValues() < 6)
+    {
+    return "?";
+    }
+  double toleranceRad = vtkMath::RadiansFromDegrees(toleranceDeg);
+
+  // Compute labels and angles
+  std::string axisLabels[3];
+  double absoluteNormalAngleDiffsRad[3] = { 0.0, 0.0, 0.0 };
+  double axisSign = positive ? 1.0 : -1.0;
+  for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
+    {
+    double axisDirection[3] = { axisIndex == 0 ? axisSign : 0.0, axisIndex == 1 ? axisSign : 0.0, axisIndex == 2 ? axisSign : 0.0 };
+    double normalAngleDiffRad = (vtkMath::AngleBetweenVectors(direction, axisDirection) - vtkMath::Pi() / 2.0);
+    double absoluteNormalAngleDiffRad = fabs(normalAngleDiffRad);
+    if (absoluteNormalAngleDiffRad < toleranceRad)
+      {
+      // orthogonal to this axis, do not add its label
+      continue;
+      }
+    absoluteNormalAngleDiffsRad[axisIndex] = absoluteNormalAngleDiffRad;
+    axisLabels[axisIndex] = this->AxisLabels->GetValue(axisIndex * 2 + ((positive == (normalAngleDiffRad > 0)) ? 0 : 1));
+    }
+
+  // Concatenate labels, ordered by angle difference
+  std::string label;
+  for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
+    {
+    int axisA = axisIndex;
+    int axisB = (axisIndex + 1) % 3;
+    int axisC = (axisIndex + 2) % 3;
+    if (absoluteNormalAngleDiffsRad[axisA] >= absoluteNormalAngleDiffsRad[axisB] && absoluteNormalAngleDiffsRad[axisA] >= absoluteNormalAngleDiffsRad[axisC])
+      {
+      label += axisLabels[axisA];
+      if (absoluteNormalAngleDiffsRad[axisB] >= absoluteNormalAngleDiffsRad[axisC])
+        {
+        label += axisLabels[axisB];
+        label += axisLabels[axisC];
+        }
+      else
+        {
+        label += axisLabels[axisC];
+        label += axisLabels[axisB];
+        }
+      return label;
+      }
+    }
+
+  // should not happen, but the compiler may complain if this case is not handled
+  return "?";
+}
