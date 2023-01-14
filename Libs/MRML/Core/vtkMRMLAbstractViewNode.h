@@ -275,6 +275,12 @@ public:
   const char* GetAxisLabel(int labelIndex);
   void SetAxisLabel(int labelIndex, const char* label);
 
+  /// Returns label for the specified direction. For example, (1,0,0) direction returns
+  /// the positive x axis label "R".
+  /// toleranceDeg specifies the tolerance when when determining if the direction
+  /// is parallel with an axis.
+  std::string GetDirectionLabel(double direction[3], bool positive=true, double toleranceDeg=1.0);
+
   /// Total number of coordinate system axis labels
   static const int AxisLabelsCount;
 
