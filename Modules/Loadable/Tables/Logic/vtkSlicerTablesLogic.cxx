@@ -25,6 +25,7 @@
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLTableNode.h>
 #include <vtkMRMLTableStorageNode.h>
 #include <vtkMRMLScene.h>
@@ -56,7 +57,8 @@ void vtkSlicerTablesLogic::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 vtkMRMLTableNode* vtkSlicerTablesLogic
-::AddTable(const char* fileName, const char* name /*=nullptr*/, bool findSchema /*=true*/, const char* password /*=0*/)
+::AddTable(const char* fileName, const char* name /*=nullptr*/, bool findSchema /*=true*/, const char* password /*=0*/,
+  vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   if (!this->GetMRMLScene())
     {
@@ -76,7 +78,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
   if( extension.empty() )
     {
-    vtkErrorMacro("ReadData: no file extension specified: " << fileName);
+    vtkErrorMacro("AddTable: no file extension specified: " << fileName);
     return nullptr;
     }
   if (   !extension.compare(".db")
@@ -118,6 +120,10 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
         vtkErrorMacro("Failed to read tables from " << fileName);
         this->GetMRMLScene()->RemoveNode(tableStorageNode.GetPointer());
         this->GetMRMLScene()->RemoveNode(tableNode1.GetPointer());
+        if (userMessages)
+          {
+          userMessages->AddMessages(tableStorageNode->GetUserMessages());
+          }
         return nullptr;
         }
       tableNode = tableNode1.GetPointer();
@@ -140,6 +146,10 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
 
     // Read
     int res = tableStorageNode->ReadData(tableNode1.GetPointer());
+    if (userMessages)
+      {
+      userMessages->AddMessages(tableStorageNode->GetUserMessages());
+      }
     if (res == 0) // failed to read
       {
       vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: failed to read data from file: "<<fileName);

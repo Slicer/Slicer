@@ -32,6 +32,7 @@
 #include "vtkSlicerTablesModuleLogicExport.h"
 
 class vtkAbstractArray;
+class vtkMRMLMessageCollection;
 class vtkMRMLTableNode;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
@@ -50,7 +51,10 @@ public:
   /// Loads a table from filename.
   /// If findSchema is true then the method looks for a schema file (for example, basefilename.schema.csv)
   /// and if a schema file is found then it is used.
-  vtkMRMLTableNode* AddTable(const char* fileName, const char* name = nullptr, bool findSchema = true, const char* password = nullptr);
+  /// \param userMessages User-displayable warning or error messages can be received if userMessages object is
+  ///   specified.
+  vtkMRMLTableNode* AddTable(const char* fileName, const char* name = nullptr, bool findSchema = true, const char* password = nullptr,
+    vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Returns ID of the layout that is similar to current layout but also contains a table view
   static int GetLayoutWithTable(int currentLayout);
