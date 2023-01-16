@@ -2768,7 +2768,7 @@ def messageBox(text, parent=None, **kwargs):
     # if there is detailed text, make the dialog wider by making a long title
     if "detailedText" in kwargs:
         windowTitle = kwargs['windowTitle'] if 'windowTitle' in kwargs else slicer.app.applicationName
-        padding = " "*((150 - len(windowTitle)) // 2) # to center the title
+        padding = " " * ((150 - len(windowTitle)) // 2)  # to center the title
         kwargs['windowTitle'] = padding + windowTitle + padding
 
     import ctk
