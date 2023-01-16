@@ -21,6 +21,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLTableStorageNode.h"
 #include "vtkMRMLTableNode.h"
 #include "vtkMRMLScene.h"
@@ -35,6 +36,9 @@
 #include <vtkBitArray.h>
 #include <vtkNew.h>
 #include <vtksys/SystemTools.hxx>
+
+// STL includes
+#include <set>
 
 //------------------------------------------------------------------------------
 // Helper class to be able to read tables that have "\" characters in them.
@@ -312,11 +316,14 @@ std::vector<vtkMRMLTableStorageNode::ColumnInfo> vtkMRMLTableStorageNode::GetCol
     schemaComponentNamesArray = vtkStringArray::SafeDownCast(schema->GetColumnByName("componentNames"));
     }
 
+  // First we add columns by schema (using type information and component names specified in the schema)
+  // and then all the additional columns that were not mentioned in the schema (with default settings).
+  std::set<std::string> columnNamesAddedBySchema;
+
   // Populate the output table column details.
   // If the schema exists, read the contents and determine column data type/component names/component arrays
-  if (schema != nullptr &&
-      schemaColumnNameArray != nullptr &&
-      schemaComponentNamesArray != nullptr)
+  bool schemaSpecified = schema != nullptr && schemaColumnNameArray != nullptr && schemaComponentNamesArray != nullptr;
+  if (schemaSpecified)
     {
     for (int schemaRowIndex = 0; schemaRowIndex < schema->GetNumberOfRows(); ++schemaRowIndex)
       {
@@ -332,55 +339,91 @@ std::vector<vtkMRMLTableStorageNode::ColumnInfo> vtkMRMLTableStorageNode::GetCol
         vtkAbstractArray* rawColumn = rawTable->GetColumnByName(columnInfo.ColumnName.c_str());
         if (rawColumn == nullptr)
           {
-          /// We still add the invalid column to the info so that it can be replace with default values later
-          vtkWarningMacro("vtkMRMLTableStorageNode::GetColumnInfo: invalid column " << columnInfo.ColumnName);
+          // a column is specified in the schema but not found in the table, we can ignore this column description
+          continue;
           }
         componentArrays.push_back(rawColumn);
+        columnNamesAddedBySchema.insert(columnInfo.ColumnName);
         }
       else
         {
-        std::stringstream ss(componentNamesStr);
+        bool componentsFound = false;
+        std::stringstream ss1(componentNamesStr);
         std::string componentName;
+
+        // Check if any component of the column is found
+        while (std::getline(ss1, componentName, '|'))
+          {
+          std::string componentColumnName = columnInfo.ColumnName + COMPONENT_SEPERATOR + componentName;
+          vtkAbstractArray* rawColumn = rawTable->GetColumnByName(componentColumnName.c_str());
+          if (rawColumn != nullptr)
+            {
+            componentsFound = true;
+            break;
+            }
+          }
+        if (!componentsFound)
+          {
+          // a multi-component column is specified in the schema
+          // but none of its component columns were found in the table, we can ignore this column description
+          continue;
+          }
+
+        std::stringstream ss(componentNamesStr);
         while (std::getline(ss, componentName, '|'))
           {
           std::string componentColumnName = columnInfo.ColumnName + COMPONENT_SEPERATOR + componentName;
           vtkAbstractArray* rawColumn = rawTable->GetColumnByName(componentColumnName.c_str());
           if (rawColumn == nullptr)
             {
-            /// We still add the invalid column to the info so that it can be replace with default values later
-            vtkWarningMacro("vtkMRMLTableStorageNode::GetColumnInfo: invalid column - " << columnInfo.ColumnName
-              << " component - " << componentName);
+            // We still add the invalid column to the info so that it can be replaced with default values later
+            vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::GetColumnInfo",
+              "Not found column '" << columnInfo.ColumnName << "'"
+              << " component '" << componentName << "', the column will be filled with default values.");
             }
           componentArrays.push_back(rawColumn);
           columnInfo.ComponentNames.push_back(componentName);
+          columnNamesAddedBySchema.insert(componentColumnName);
           }
         }
       columnInfo.RawComponentArrays = componentArrays;
       columnDetails.push_back(columnInfo);
       }
     }
-  else
+
+  // Add all the columns that have not been added based on schema information
+  for (int col = 0; col < rawTable->GetNumberOfColumns(); ++col)
     {
-    for (int col = 0; col < rawTable->GetNumberOfColumns(); ++col)
+    vtkMRMLTableStorageNode::ColumnInfo columnInfo;
+    vtkStringArray* column = vtkStringArray::SafeDownCast(rawTable->GetColumn(col));
+    if (column == nullptr)
       {
-      vtkMRMLTableStorageNode::ColumnInfo columnInfo;
-      vtkStringArray* column = vtkStringArray::SafeDownCast(rawTable->GetColumn(col));
-      if (column == nullptr)
-        {
-        vtkWarningMacro("vtkMRMLTableStorageNode::GetColumnInfo: invalid column - " << col);
-        continue;
-        }
-      if (!column->GetName())
-        {
-        vtkWarningMacro("vtkMRMLTableStorageNode::GetColumnDetails: empty column name, skipping column");
-        continue;
-        }
-      columnInfo.ColumnName = column->GetName();
-      columnInfo.ScalarType = tableNode->GetColumnValueTypeFromSchema(columnInfo.ColumnName);
-      columnInfo.RawComponentArrays.push_back(column);
-      columnInfo.NullValueString = tableNode->GetColumnProperty(columnInfo.ColumnName, "nullValue");
-      columnDetails.push_back(columnInfo);
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::GetColumnInfo",
+        "Failed to read column: '" << col << "'.");
+      continue;
       }
+    if (!column->GetName())
+      {
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::GetColumnInfo",
+        "Empty column name found while reading table from file. The column will be skipped.");
+      continue;
+      }
+    if (columnNamesAddedBySchema.find(column->GetName()) != columnNamesAddedBySchema.end())
+      {
+      // column was already added by schema information
+      continue;
+      }
+    if (schemaSpecified)
+      {
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::GetColumnInfo",
+        "Column '" << column->GetName() << "' was not found in table schema,"
+        << " the column will be appended to the end of the table and will use the default value type");
+      }
+    columnInfo.ColumnName = column->GetName();
+    columnInfo.ScalarType = tableNode->GetColumnValueTypeFromSchema(columnInfo.ColumnName);
+    columnInfo.RawComponentArrays.push_back(column);
+    columnInfo.NullValueString = tableNode->GetColumnProperty(columnInfo.ColumnName, "nullValue");
+    columnDetails.push_back(columnInfo);
     }
   return columnDetails;
 }
