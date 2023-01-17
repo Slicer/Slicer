@@ -17,7 +17,12 @@ from .util import (
 )
 
 
-__all__ = ["parameterPack", "isParameterPack"]
+__all__ = [
+    "allParameters",
+    "isParameterPack",
+    "nestedParameterNames",
+    "parameterPack",
+]
 
 
 def _implName(name: str) -> str:
@@ -210,6 +215,25 @@ def _processParameterPack(classtype):
     setattr(classtype, "setValue", _setValue)
     setattr(classtype, "dataType", _makeDataTypeFunc(classtype))
     return classtype
+
+
+def allParameters(parameterPackClassOrInstance) -> dict[str, ParameterInfo]:
+    return parameterPackClassOrInstance._parameterPack_allParameters
+
+
+def nestedParameterNames(parameterPackClassOrInstance) -> list[str]:
+    if not isParameterPack(parameterPackClassOrInstance):
+        parameterPackClassOrInstance = unannotatedType(parameterPackClassOrInstance)
+
+    names = []
+    for paramName, info in allParameters(parameterPackClassOrInstance).items():
+        rawDatatype = unannotatedType(info.unalteredType)
+        if isParameterPack(rawDatatype):
+            subNames = nestedParameterNames(rawDatatype)
+            names += [f"{paramName}.{s}" for s in subNames]
+        else:
+            names.append(paramName)
+    return names
 
 
 def parameterPack(classtype=None):
