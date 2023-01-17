@@ -6,12 +6,16 @@ import slicer
 import vtk
 
 from .default import extractDefault
+from .guiConnectors import GuiConnector, createGuiConnector
 from .parameterInfo import ParameterInfo
 from .parameterPack import _checkMember as checkPackMember
 from .serializers import Serializer, createSerializer
 from .util import splitAnnotations, splitPossiblyDottedName, unannotatedType
 
-__all__ = ["parameterNodeWrapper"]
+__all__ = ["parameterNodeWrapper", "SlicerParameterNamePropertyName"]
+
+
+SlicerParameterNamePropertyName = "SlicerParameterName"
 
 
 class _Parameter:
@@ -109,6 +113,9 @@ def _makeProperty(name: str):
 
 def _initMethod(self, parameterNode, prefix: Optional[str] = None):
     self.parameterNode = parameterNode
+    self._parameterGUIs = dict()
+    self._nextParameterGUIsTag = 0
+    self._updatingGUIFromParameterNode = False
     for parameterInfo in self.__allParameters:
         parameter = _Parameter(parameterInfo, prefix)
         if not parameter.isIn(self.parameterNode):
@@ -144,6 +151,65 @@ def _isCached(self, paramName: str):
 def _default(self, paramName: str):
     _checkParamName(self, paramName)
     return getattr(self, f"_{paramName}_impl").parameter.default
+
+
+def _makeGuiToParamCallback(self, paramName, connector):
+    def callback():
+        with slicer.util.NodeModify(self):
+            if not self._updatingGUIFromParameterNode:
+                self.setValue(paramName, connector.read())
+    return callback
+
+
+def _updateGUIFromParameterNode(self):
+    if self._updatingGUIFromParameterNode:
+        return
+    try:
+        self._updatingGUIFromParameterNode = True
+        for guiMapping in self._parameterGUIs.values():
+            for paramName, connector in guiMapping.items():
+                connector.write(self.getValue(paramName))
+    finally:
+        self._updatingGUIFromParameterNode = False
+
+
+def _connectParametersToGui(self, mapping):
+    # error checking up front
+    for paramName in mapping.keys():
+        _checkParamName(self, paramName)
+
+    mappingToConnector = {
+        paramName: value if isinstance(value, GuiConnector) else createGuiConnector(value, self.dataType(paramName))
+        for paramName, value in mapping.items()
+    }
+
+    tag = self._nextParameterGUIsTag
+    self._nextParameterGUIsTag += 1
+    self._parameterGUIs[tag] = mappingToConnector
+
+    for paramName, connector in mappingToConnector.items():
+        connector.write(self.getValue(paramName))
+        connector.onChanged(_makeGuiToParamCallback(self, paramName, connector))
+
+    self.AddObserver(vtk.vtkCommand.ModifiedEvent, lambda caller, event: _updateGUIFromParameterNode(self))
+    return tag
+
+
+def _connectGui(self, gui):
+    # go through each widget in the gui and check for our special property
+    paramNameToWidget = {}
+    for widget in gui.__dict__.values():
+        if widget.property(SlicerParameterNamePropertyName):
+            paramNameToWidget[widget.property(SlicerParameterNamePropertyName)] = widget
+
+    _connectParametersToGui(self, paramNameToWidget)
+
+
+def _disconnectGui(self, guiTag):
+    if guiTag in self._parameterGUIs:
+        for _, connector in self._parameterGUIs[guiTag].items():
+            connector.onChanged(None)  # remove callback
+        del self._parameterGUIs[guiTag]
 
 
 def _getValue(self, name):
@@ -211,6 +277,9 @@ def _processClass(classtype):
     setattr(classtype, "dataType", _makeDataTypeFunc(classtype))
     setattr(classtype, "getValue", _getValue)
     setattr(classtype, "setValue", _setValue)
+    setattr(classtype, "connectGui", _connectGui)
+    setattr(classtype, "connectParametersToGui", _connectParametersToGui)
+    setattr(classtype, "disconnectGui", _disconnectGui)
     setattr(classtype, "StartModify", lambda self: self.parameterNode.StartModify())
     setattr(classtype, "EndModify", lambda self, wasModified: self.parameterNode.EndModify(wasModified))
     setattr(classtype, "AddObserver", lambda self, event, callback, priority=0.0: self.parameterNode.AddObserver(event, callback, priority))

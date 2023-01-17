@@ -1,6 +1,8 @@
 import typing
 from typing import Annotated
 
+import slicer
+
 __all__ = ["splitAnnotations", "unannotatedType", "findFirstAnnotation"]
 
 
@@ -45,3 +47,44 @@ def splitPossiblyDottedName(possiblyDottedName):
         return split[0], split[1]
     else:
         return possiblyDottedName, None
+
+
+def isNodeOrUnionOfNodes(datatype) -> bool:
+    # Can handle a single node type, or a Union[NodeType1, NodeType2, ..., None]
+    # Note the None is necessary for the parameterNodeWrapper
+    underlyingDataType = unannotatedType(datatype)
+
+    # check single type node case
+    dataIsNode = issubclass(underlyingDataType, slicer.vtkMRMLNode) if type(underlyingDataType) == type else False
+    if dataIsNode:
+        return True
+
+    # check union node case
+    elif typing.get_origin(underlyingDataType) == typing.Union:
+        underlyingArgTypes = [unannotatedType(arg) for arg in typing.get_args(underlyingDataType)]
+
+        def validType(type_):
+            return isinstance(None, type_) or issubclass(type_, slicer.vtkMRMLNode) if type(type_) == type else False
+        return all([validType(t) for t in underlyingArgTypes])
+    else:
+        return False
+
+
+def getNodeTypes(datatype):
+    # datatype should be a node type or Union[NodeType1, NodeType2, ..., None]
+    underlyingDataType = unannotatedType(datatype)
+
+    # single node type case
+    dataIsNode = issubclass(underlyingDataType, slicer.vtkMRMLNode) if type(underlyingDataType) == type else False
+    if dataIsNode:
+        return (underlyingDataType().GetClassName(), )
+    # union case
+    elif typing.get_origin(underlyingDataType) == typing.Union:
+        nodeTypes = []
+        for arg in typing.get_args(underlyingDataType):
+            underlyingArgType = unannotatedType(arg)
+            if type(underlyingArgType) == type and issubclass(underlyingArgType, slicer.vtkMRMLNode):
+                nodeTypes.append(underlyingArgType)
+        return tuple(nodeType().GetClassName() for nodeType in nodeTypes)
+    else:
+        raise TypeError(f"Cannot handle type {datatype}")

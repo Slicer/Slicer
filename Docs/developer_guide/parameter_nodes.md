@@ -519,6 +519,228 @@ class CustomClassSerializer(Serializer):
     return True
 ```
 
+## Connecting ParameterNodeWrappers to QWidgets
+
+The parameter nodes have the ability to connect pieces of the parameter node to particular GUI elements. There are two ways to declare which GUI elements connect to which parameters.
+
+### First Way: Explicit Mapping
+
+A map between parameter names and GUI elements can be used to create the connections. These connections can even access piecewise members of a `parameterPack`.
+
+
+```py
+from typing import Annotated
+from slicer.parameterNodeWrapper import (
+  parameterNodeWrapper,
+  parameterPack,
+  Validator,
+)
+
+@parameterPack
+class Point:
+  x: float
+  y: float
+
+@parameterPack
+class BoundingBox:
+  topLeft: Point
+  bottomRight: Point
+
+@parameterNodeWrapper
+class CustomParameterNode:
+  iterations: int
+  box: BoundingBox
+
+param = CustomParameterNode(slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScriptedModuleNode'))
+
+topLeftXSpinbox = qt.QDoubleSpinBox()
+topLeftYSpinbox = qt.QDoubleSpinBox()
+bottomRightXSpinbox = qt.QDoubleSpinBox()
+bottomRightYSpinbox = qt.QDoubleSpinBox()
+iterationsSlider = qt.QSlider()
+
+mapping = {
+  # Key is parameter name, value is widget object
+  "iterations", iterationsSlider,
+
+  # For parameterPacks, can access nested parameter items through dot syntax
+  "box.topLeft.x": topLeftXSpinbox,
+  "box.topLeft.y": topLeftYSpinbox,
+  "box.bottomRight.x": bottomRightXSpinbox,
+  "box.bottomRight.y": bottomRightYSpinbox,
+}
+
+# The connectParametersToGui method takes the mapping and
+# returns a tag that can be used to disconnect the GUI from the
+# parameter node wrapper.
+connectionTag = param.connectParametersToGui(mapping)
+
+# When the GUI items are updated, it will automatically update the value
+# in the parameter node wrapper.
+# Also, when the parameter node wrapper is updated, it will automatically
+# update the GUI.
+param.box.topLeft.x = 4.2
+# Now topLeftXSpinbox.value == 4.2 because of the connections
+
+# can use the disconnectGui method to break the connection
+param.disconnectGui(connectionTag)
+```
+
+See [Available Connectors](#available-connectors) for a list of all the supported mappings.
+
+### Second way: Qt Dynamic Properties
+
+The second, preferred way, is to set a dynamic string property called "SlicerParameterName" on the appropriate widgets in the Qt Designer. The dynamic property can also be set in code.
+
+```py
+topLeftXSpinbox = qt.QDoubleSpinBox()
+topLeftXSpinbox.setProperty("SlicerParameterName", "box.topLeft.x")
+```
+
+If using a .ui file for a module where SlicerParameterName has been set on the appropriate widgets, the following (simplified) code can be used to connect the GUI.
+
+```py
+
+class MyModuleWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
+  def setup(self):
+    ...
+
+    uiWidget = slicer.util.loadUI(self.resourcePath('UI/MyModule.ui'))
+    self.layout.addWidget(uiWidget)
+    self.ui = slicer.util.childWidgetVariables(uiWidget)
+
+    ...
+
+  def enter(self):
+    self.initializeParameterNode()
+    self._parameterNodeConnectionTag = self._parameterNode.connectGui(self.ui)
+
+  def exit(self):
+    # Do not react to parameter node changes (GUI will be updated when the user enters into the module)
+    self._parameterNode.disconnectGui(self._parameterNodeConnectionTag)
+
+```
+
+### Available connectors
+
+It is not possible to convert from all widget types to all data types. For instance, converting from a `QCheckBox` to a `vtkMRMLModelNode` is not possible.
+The following connections are supported:
+
+| Widget | Data type(s) | Notes |
+|---     | ---       |---    |
+| QCheckBox | bool | |
+| QPushButton | bool | The push button must be checkable. The bool is whether the button is checked. |
+| QSlider | int | |
+| QSpinBox | int | |
+| QDoubleSpinBox | float | |
+| ctkSliderWidget | float | |
+| QComboBox | int, float, str, bool | The Choice validator must be in use for the parameter. The choices will be used to fill the combo box automatically. |
+| QComboBox | enum.Enum | If a `def label(self):` function is present on the enum class, it will be used for generating the text in the combo box |
+| QLineEdit | str | |
+| QTextEdit | str | The value of the parameter will be the plaintext version of what is in the text edit |
+| ctkPathLineEdit | pathlib.\[Path, PosixPath, WindowsPath, PurePath, PurePosixPath, PureWindowsPath] | |
+| ctkDirectoryButton | pathlib.\[Path, PosixPath, WindowsPath, PurePath, PurePosixPath, PureWindowsPath] | Only directories can be represented |
+| qMRMLNodeComboBox | vtkMRMLNode (including subclasses and a typing.Union of nodes) | To do a Union, need to do something like `typing.Union[vtkMRMLModelNode, vtkMRMLScalarVolumeNode, None]`.<br/>The `None` is necessary for the parameter node wrapper default node of None to work correctly. |
+| qMRMLSubjectHierarchyTreeView | vtkMRMLNode (including subclasses and a typing.Union of nodes) | See notes for qMRMLNodeComboBox. |
+
+### Supporting custom widgets or custom conversions
+
+It is possible to support conversion from a custom widget (or even a built-in widget that is not current supported) to a data type. This involves writing a short adapter class that handles connection to the widget signals and conversion to/from the data type.
+
+```py
+from slicer.parameterNodeWrapper import (
+  GuiConnector,
+  parameterNodeGuiConnector,
+  unannotatedType,
+)
+
+
+class CustomWidget(qt.QWidget):
+  # implementation.
+  # assume a valueChanged signal exists
+  # assume a value property that get/sets a str exists
+
+
+# The @parameterNodeGuiConnector decorator will register the GuiConnector
+# so it can be found when connecting to a parameter node wrapper.
+@parameterNodeGuiConnector
+class CustomWidgetToStrConnector(GuiConnector):
+  """
+  Example connector from some custom widget to a string.
+  """
+
+  @staticmethod
+  def canRepresent(widgettype, datatype) -> bool:
+    """
+    Whether this type can represent the given datatype using the given widgettype.
+    The datatype may be annotated.
+    """
+    return widgettype == CustomWidget and unannotatedType(datatype) == str
+
+  @staticmethod
+  def create(widget, datatype):
+    """
+    Creates a new connector adapting the given widget object to the given (possibly annotated) datatype.
+    """
+    if CustomWidgetToStrConnector.canRepresent(type(widget), datatype):
+      return CustomWidgetToStrConnector(widget)
+    return None
+
+  def __init__(self, widget: CustomWidget):
+    super().__init__()
+    self._widget: CustomWidget = widget
+
+  def _connect(self):
+    """
+    Make the necessary connection(s) to the widget.
+    """
+    self._widget.valueChanged.connect(self.changed)
+
+  def _disconnect(self):
+    """
+    Make the necessary disconnection(s) to the widget.
+    """
+    self._widget.valueChanged.disconnect(self.changed)
+
+  def widget(self) -> CustomWidget:
+    """
+    Returns the underlying widget.
+    """
+    return self._widget
+
+  def read(self) -> str:
+    """
+    Returns the value from the widget as the given datatype.
+    """
+    return self._widget.value
+
+  def write(self, value: str) -> None:
+    """
+    Writes the given value to the widget.
+    """
+    self._widget.value = value
+
+
+@parameterNodeWrapper
+class CustomParameterNodeType:
+  value: str
+
+
+param = CustomParameterNodeType(slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScriptedModuleNode'))
+customWidget = CustomWidget()
+
+mapping = {
+  "value": customWidget,
+}
+
+# connectParametersToGui can access and will use the CustomWidgetToStrConnector
+# to make the connection because it was registered via the
+# @parameterNodeGuiConnector decorator
+connectionTag = param.connectParametersToGui(mapping)
+
+param.value = "hello, world"  # gui gets updated too
+```
+
 ## Troubleshooting
 
 ### 'slicer' has no attribute '\<MRML node name\>'
