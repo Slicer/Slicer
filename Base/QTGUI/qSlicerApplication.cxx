@@ -121,6 +121,59 @@
 #include <vtkNew.h>
 #include <vtkSMP.h> // For VTK_SMP_BACKEND
 
+#ifdef Slicer_USE_PYTHONQT
+
+// Custom Python completer that temporarily disables logging when reading list of attributes.
+// Disabling logging is needed because when Python enumerates all the methods then it executes
+// the getter function of every property, which may log error/warning messages (because
+// some properties are not set yet or the property is deprecated).
+
+//-----------------------------------------------------------------------------
+class ctkSlicerPythonConsoleCompleter : public ctkPythonConsoleCompleter
+{
+public:
+  ctkSlicerPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager, qSlicerApplication* app)
+  : ctkPythonConsoleCompleter(pythonManager)
+  , Application(app)
+    {
+    }
+
+  void updateCompletionModel(const QString& completion) override
+    {
+    bool wasLoggingEnabled = this->setLoggingEnabled(false);
+    ctkPythonConsoleCompleter::updateCompletionModel(completion);
+    this->setLoggingEnabled(wasLoggingEnabled);
+    }
+
+  int cursorOffset(const QString& completion) override
+    {
+    bool wasLoggingEnabled = this->setLoggingEnabled(false);
+    int result = ctkPythonConsoleCompleter::cursorOffset(completion);
+    this->setLoggingEnabled(wasLoggingEnabled);
+    return result;
+    }
+
+protected:
+
+  bool setLoggingEnabled(bool enable)
+    {
+    if (!this->Application || !this->Application->errorLogModel())
+      {
+      return false;
+      }
+    ctkErrorLogAbstractMessageHandler* qtMessageHandler = this->Application->errorLogModel()->msgHandler("Qt");
+    if (!qtMessageHandler)
+      {
+      return false;
+      }
+    return !qtMessageHandler->blockSignals(!enable);
+    }
+
+  qSlicerApplication* Application{nullptr};
+};
+#endif
+
+
 //-----------------------------------------------------------------------------
 class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
 {
@@ -246,6 +299,8 @@ void qSlicerApplicationPrivate::init()
     q->pythonConsole()->setWelcomeTextColor(palette.color(QPalette::Disabled, QPalette::WindowText));
     q->pythonConsole()->setPromptColor(palette.color(QPalette::Highlight));
     q->pythonConsole()->initialize(q->pythonManager());
+    ctkSlicerPythonConsoleCompleter* completer = new ctkSlicerPythonConsoleCompleter(*q->pythonManager(), q);
+    q->pythonConsole()->setCompleter(completer);
     QStringList autocompletePreferenceList;
     autocompletePreferenceList
       << "slicer"
