@@ -13,8 +13,7 @@ set(qtmodules
   SubjectHierarchy
   Colors # Colors depends on SubjectHierarchy
   Annotations
-  SceneViews
-  Markups # Markups depends on SceneViews (for testing) and Annotations
+  Markups # Markups depends on Annotations
   Transforms
   Data
   Models
@@ -25,6 +24,7 @@ set(qtmodules
   Tables
   Texts
   Reformat
+  SceneViews
   ViewControllers
   Volumes
   VolumeRendering # Volume Rendering depends of Volumes

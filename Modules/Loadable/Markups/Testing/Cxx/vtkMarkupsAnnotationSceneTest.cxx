@@ -21,7 +21,6 @@
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
 #include "vtkSlicerMarkupsLogic.h"
-#include "vtkSlicerSceneViewsModuleLogic.h"
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
@@ -77,8 +76,6 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   markupsLogic->SetMRMLScene(scene.GetPointer());
   vtkNew<vtkSlicerAnnotationModuleLogic> annotationLogic;
   annotationLogic->SetMRMLScene(scene.GetPointer());
-  vtkNew<vtkSlicerSceneViewsModuleLogic> sceneViewsModuleLogic;
-  sceneViewsModuleLogic->SetMRMLScene(scene.GetPointer());
 
   // read in the scene
   std::cerr << "Reading scene from file: " << fileName.c_str() << std::endl;
