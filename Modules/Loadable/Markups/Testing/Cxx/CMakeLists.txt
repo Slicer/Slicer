@@ -5,6 +5,9 @@ set(TEMP ${Slicer_BINARY_DIR}/Testing/Temporary)
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
 
 #-----------------------------------------------------------------------------
+slicer_is_loadable_builtin_module_enabled("SceneViews" _build_scene_views_module)
+
+#-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
   vtkMRMLMarkupsDisplayNodeTest1.cxx
   vtkMRMLMarkupsFiducialNodeTest1.cxx
@@ -22,9 +25,13 @@ set(KIT_TEST_SRCS
   vtkSlicerMarkupsLogicTest2.cxx
   vtkSlicerMarkupsLogicTest3.cxx
   vtkSlicerMarkupsLogicTest4.cxx
-  vtkMarkupsAnnotationSceneTest.cxx
   vtkMRMLMarkupsNodeEventsTest.cxx
   )
+if(_build_scene_views_module)
+  list(APPEND KIT_TEST_SRCS
+    vtkMarkupsAnnotationSceneTest.cxx
+    )
+endif()
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -72,4 +79,6 @@ SIMPLE_TEST( vtkSlicerMarkupsLogicTest3 )
 SIMPLE_TEST( vtkSlicerMarkupsLogicTest4 )
 
 # test Slicer4 annotation fiducials in a mrml file
-SIMPLE_TEST( vtkMarkupsAnnotationSceneTest ${INPUT}/AnnotationTest/AnnotationFiducialsTest.mrml )
+if(_build_scene_views_module)
+  SIMPLE_TEST( vtkMarkupsAnnotationSceneTest ${INPUT}/AnnotationTest/AnnotationFiducialsTest.mrml )
+endif()
