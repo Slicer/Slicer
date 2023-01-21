@@ -69,9 +69,9 @@ public:
   /// Create an ITK transform from a VTK transform.
   /// secondaryTransformItk: Only for backward compatibility. For BSpline transforms that have an additive bulk component, the bulk component is saved
   ///   in the secondary transform.
-  /// preferITKv3CompatibleTransforms: If true then BSpline transform will created as BSplineDeformableTransform and additive bulk transform component
-  //    is always written in the secondary transform. If false then BSpline transform will be written as BSplineTransform (multiplicative bulk component
-  //    is saved in a composite transform).
+  /// preferITKv3CompatibleTransforms: If true then the BSpline transform will be created as a BSplineDeformableTransform and additive bulk transform component
+  ///  is always written in the secondary transform. If false then the BSpline transform is written as a BSplineTransform (multiplicative bulk component
+  ///  is saved in a composite transform).
   /// If initialize is set to true then the transform is initialized to be readily usable.
   /// Initialization takes a long time for kernel transforms with many points,
   /// If a transform is created only to write it to file, initialization can be turned off to improve performance.
