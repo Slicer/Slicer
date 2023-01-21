@@ -1006,7 +1006,7 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(vtkObject
     {
     while (!inputIt.IsAtEnd())
       {
-        // vectors are in LPS, convert them to LPS
+        // vectors are in LPS, convert them to RAS
         typename GridImageType::PixelType displacementVector = inputIt.Get();
         *(displacementVectors_Ras++) = -displacementVector[0];
         *(displacementVectors_Ras++) = -displacementVector[1];
