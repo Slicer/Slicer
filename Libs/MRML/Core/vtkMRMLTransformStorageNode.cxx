@@ -258,9 +258,20 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
       return 0;
     }
 
+  // ITK reads all images into LPS coordinate system (except special cases)
+  int displacementVectorCoordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS;
+
+  // NIFTI is a special case: it uses RAS coordinate system for the displacement vectors and ITK does not reorient them
+  // into LPS direction, therefore they are still in RAS.
+  std::string IOType = reader->GetImageIO()->GetNameOfClass();
+  if (IOType.find("NiftiImageIO") != std::string::npos)
+    {
+    displacementVectorCoordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS;
+    }
+
   vtkNew<vtkOrientedGridTransform> gridTransform_Ras;
   vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage<double>(
-        this, gridTransform_Ras.GetPointer(), gridImage_Lps);
+    this, gridTransform_Ras.GetPointer(), gridImage_Lps, displacementVectorCoordinateSystem);
 
   // Backward compatibility
   if (tn->GetReadAsTransformToParent())
