@@ -1950,7 +1950,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
       if (d->Interactive)
         {
         //: %1 is the extension name
-        QString msg = QString("<p>%1</p><ul>").arg(tr("%1 depends on the following extensions, which could not be found:")).arg(extensionName);
+        QString msg = QString("<p>%1</p><ul>").arg(tr("%1 depends on the following extensions, which could not be found:").arg(extensionName));
         foreach(const QString & dependencyName, unresolvedDependencies)
           {
           msg += QString("<li>%1</li>").arg(dependencyName);
