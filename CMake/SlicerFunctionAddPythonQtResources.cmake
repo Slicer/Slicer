@@ -42,19 +42,26 @@ function(slicerFunctionAddPythonQtResources RESOURCE_NAMES)
       get_target_property(QT_RCC_EXECUTABLE Qt5::rcc IMPORTED_LOCATION)
     endif()
 
+    if(NOT DEFINED Slicer_QRCC_SCRIPT)
+      message(FATAL_ERROR "Slicer_QRCC_SCRIPT is expected to be set to /path/to/qrcc.py")
+    endif()
+    if(NOT EXISTS ${Slicer_QRCC_SCRIPT})
+      message(FATAL_ERROR "Slicer_QRCC_SCRIPT set to ${Slicer_QRCC_SCRIPT} corresponds to an nonexistent file.")
+    endif()
+
     # Create command to generate the compiled resource script
     add_custom_command(
       OUTPUT ${out_path}
       COMMAND ${CMAKE_COMMAND} -E make_directory ${out_dir}
       COMMAND ${PYTHON_EXECUTABLE}
-        ${Slicer_SOURCE_DIR}/Utilities/Scripts/qrcc.py
+        ${Slicer_QRCC_SCRIPT}
         --rcc ${QT_RCC_EXECUTABLE}
         -o ${out_path}
         ${in_path}
       VERBATIM
       WORKING_DIRECTORY ${rc_path}
       MAIN_DEPENDENCY ${in_path}
-      DEPENDS ${Slicer_SOURCE_DIR}/Utilities/Scripts/qrcc.py ${rc_depends}
+      DEPENDS ${Slicer_QRCC_SCRIPT} ${rc_depends}
       )
 
     list(APPEND out_paths ${out_path})

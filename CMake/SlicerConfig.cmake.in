@@ -172,6 +172,9 @@ set(Slicer_MAIN_PROJECT_APPLICATION_NAME "@Slicer_MAIN_PROJECT_APPLICATION_NAME@
 set(Slicer_LICENSE_FILE "@Slicer_LICENSE_FILE_CONFIG@")
 set(Slicer_README_FILE "@Slicer_README_FILE_CONFIG@")
 
+# Path to qrcc.py script used in slicerFunctionAddPythonQtResources  CMake function
+set(Slicer_QRCC_SCRIPT "@Slicer_QRCC_SCRIPT@")
+
 # Test templates directory
 set(Slicer_CXX_MODULE_TEST_TEMPLATES_DIR "@Slicer_CXX_MODULE_TEST_TEMPLATES_DIR_CONFIG@")
 set(Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR "@Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR_CONFIG@")
