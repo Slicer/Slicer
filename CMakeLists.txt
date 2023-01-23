@@ -465,6 +465,8 @@ endif()
 include(SlicerFunctionInstallLibrary)
 include(SlicerFunctionAddPythonQtResources)
 
+set(Slicer_QRCC_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/Utilities/Scripts/qrcc.py" CACHE INTERNAL "Path to qrcc.py script used in slicerFunctionAddPythonQtResources() CMake function")
+
 #-----------------------------------------------------------------------------
 # Internationalization
 #-----------------------------------------------------------------------------
