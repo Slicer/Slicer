@@ -89,6 +89,12 @@ protected:
   void PrepareTitleText() override;
   void ConfigureTitle() override;
 
+  /// Parses the requestedFormat string to find a validated format for the types contained in typeString.
+  /// validatedFormat is set to the first matching sprintf for the input types
+  /// prefix and suffix are set to the non-matching components of requestedFormat
+  static bool ValidateFormatString(std::string& validatedFormat, std::string& prefix, std::string& suffix,
+    const std::string& requestedFormat, const std::string& typeString);
+
   /// flag for setting color name as label
   int UseAnnotationAsLabel;
 
