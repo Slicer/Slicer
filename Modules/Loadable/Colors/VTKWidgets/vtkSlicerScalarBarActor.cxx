@@ -184,21 +184,24 @@ void vtkSlicerScalarBarActor::LayoutTicks()
       }
     else
       {
-      // try to make sure the label format supports a floating point number
-      // TODO issue 3802: replace with more strict regular expression
-      vtksys::RegularExpression regExForDouble("%.*[fFgGeE]");
-      if (regExForDouble.find(this->LabelFormat))
+      std::string sprintfSpecifier;
+      std::string prefix;
+      std::string suffix;
+      if (vtkSlicerScalarBarActor::ValidateFormatString(
+          sprintfSpecifier, prefix, suffix, this->LabelFormat, "fFgGeE"))
+        {
+        SNPRINTF(labelString, 511, sprintfSpecifier.c_str(), val);
+        std::string labelStdString = prefix + labelString + suffix;
+        strcpy(labelString, labelStdString.c_str());
+        }
+      else
+        {
+        if (!formatWarningPrinted)
           {
-          SNPRINTF(labelString, 511, this->LabelFormat, val);
+          vtkWarningMacro("LabelFormat doesn't contain a floating point specifier!" << this->LabelFormat);
+          formatWarningPrinted = true;
           }
-        else
-          {
-          if (!formatWarningPrinted)
-            {
-            vtkWarningMacro("LabelFormat doesn't contain a floating point specifier!" << this->LabelFormat);
-            formatWarningPrinted = true;
-            }
-          }
+        }
       }
     this->P->TextActors[i]->SetInput(labelString);
 
@@ -421,4 +424,24 @@ void vtkSlicerScalarBarActor::ConfigureTitle()
     this->TitleActor->GetTextProperty()->GetVerticalJustification() == VTK_TEXT_BOTTOM
     ? this->P->TitleBox.Posn[1]
     : this->P->TitleBox.Posn[1] + this->P->TitleBox.Size[this->P->TL[1]]);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerScalarBarActor::ValidateFormatString(std::string& validatedFormat, std::string& prefix, std::string& suffix,
+  const std::string& requestedFormat, const std::string& typeString)
+{
+  // This regex finds sprintf specifications. Only the first is used to format the value
+  // Regex from: https://stackoverflow.com/a/8915445
+  std::string regexString = "%([0-9]\\$)?[+-]?([ 0]|'.{1})?-?[0-9]*(\\.[0-9]+)?[" + typeString + "]";
+  vtksys::RegularExpression specifierRegex = vtksys::RegularExpression(regexString);
+  vtksys::RegularExpressionMatch specifierMatch;
+  if (!specifierRegex.find(requestedFormat.c_str(), specifierMatch))
+    {
+    return false;
+    }
+
+  validatedFormat = specifierMatch.match(0);
+  prefix = requestedFormat.substr(0, specifierMatch.start());
+  suffix = requestedFormat.substr(specifierMatch.end(), requestedFormat.length() - specifierMatch.end());
+  return true;
 }
