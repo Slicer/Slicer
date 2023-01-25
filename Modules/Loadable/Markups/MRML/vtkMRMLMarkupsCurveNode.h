@@ -339,6 +339,8 @@ protected:
 
   /// Command handling curvature measurement modified events to propagate enabled state
   vtkCallbackCommand* CurvatureMeasurementModifiedCallbackCommand;
+  /// Command handling torsion measurement modified events to propagate enabled state
+  vtkCallbackCommand* TorsionMeasurementModifiedCallbackCommand;
 
 protected:
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
@@ -358,7 +360,9 @@ protected:
   void UpdateMeasurementsInternal() override;
 
   /// Callback function observing curvature measurement modified events to propagate enabled state
-  static void OnCurvatureMeasurementModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  static void OnCurvatureMeasurementEnabledModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  /// Callback function observing torsion measurement modified events to propagate enabled state
+  static void OnTorsionMeasurementEnabledModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
 private:
   vtkSmartPointer<vtkProjectMarkupsCurvePointsFilter> ProjectPointsFilter;
