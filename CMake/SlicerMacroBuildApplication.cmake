@@ -556,6 +556,45 @@ macro(slicerMacroBuildApplication)
           OUTPUTVAR extraApplicationToLaunchListForBuildTree
           )
       endif()
+
+      # Make available Qt language tools conveniently on the command line, for example:
+      # Slicer.exe --lconvert ...
+      if(Slicer_BUILD_I18N_SUPPORT)
+        if(NOT QT_LCONVERT_EXECUTABLE)
+          find_program(QT_LCONVERT_EXECUTABLE lconvert HINTS "${QT_BINARY_DIR}" NO_DEFAULT_PATH)
+        endif()
+        if(EXISTS ${QT_LCONVERT_EXECUTABLE})
+          ctkAppLauncherAppendExtraAppToLaunchToList(
+            LONG_ARG lconvert
+            HELP "Start Qt lconvert language utility"
+            PATH ${QT_LCONVERT_EXECUTABLE}
+            OUTPUTVAR extraApplicationToLaunchListForBuildTree
+            )
+        endif()
+        if(NOT QT_LRELEASE_EXECUTABLE)
+          find_program(QT_LRELEASE_EXECUTABLE lrelease HINTS "${QT_BINARY_DIR}" NO_DEFAULT_PATH)
+        endif()
+        if(EXISTS ${QT_LRELEASE_EXECUTABLE})
+          ctkAppLauncherAppendExtraAppToLaunchToList(
+            LONG_ARG lrelease
+            HELP "Start Qt lrelease language utility"
+            PATH ${QT_LRELEASE_EXECUTABLE}
+            OUTPUTVAR extraApplicationToLaunchListForBuildTree
+            )
+        endif()
+        if(NOT QT_LUPDATE_EXECUTABLE)
+          find_program(QT_LUPDATE_EXECUTABLE lupdate HINTS "${QT_BINARY_DIR}" NO_DEFAULT_PATH)
+        endif()
+        if(EXISTS ${QT_LUPDATE_EXECUTABLE})
+          ctkAppLauncherAppendExtraAppToLaunchToList(
+            LONG_ARG lupdate
+            HELP "Start Qt lupdate language utility"
+            PATH ${QT_LUPDATE_EXECUTABLE}
+            OUTPUTVAR extraApplicationToLaunchListForBuildTree
+            )
+        endif()
+      endif()
+
       set(executables)
       if(UNIX)
         list(APPEND executables gnome-terminal xterm)
@@ -613,6 +652,35 @@ macro(slicerMacroBuildApplication)
           PATH "<APPLAUNCHER_SETTINGS_DIR>/../bin/designer-real${CMAKE_EXECUTABLE_SUFFIX}"
           OUTPUTVAR extraApplicationToLaunchListForInstallTree
           )
+      endif()
+
+      # Make available Qt language tools conveniently on the command line, for example:
+      # Slicer.exe --lconvert ...
+      if(Slicer_BUILD_I18N_SUPPORT)
+        if(EXISTS ${QT_LCONVERT_EXECUTABLE} AND NOT APPLE)
+          ctkAppLauncherAppendExtraAppToLaunchToList(
+            LONG_ARG lconvert
+            HELP "Start Qt lconvert language utility"
+            PATH "<APPLAUNCHER_SETTINGS_DIR>/../bin/lconvert${CMAKE_EXECUTABLE_SUFFIX}"
+            OUTPUTVAR extraApplicationToLaunchListForInstallTree
+            )
+        endif()
+        if(EXISTS ${QT_LRELEASE_EXECUTABLE} AND NOT APPLE)
+          ctkAppLauncherAppendExtraAppToLaunchToList(
+            LONG_ARG lrelease
+            HELP "Start Qt lrelease language utility"
+            PATH "<APPLAUNCHER_SETTINGS_DIR>/../bin/lrelease${CMAKE_EXECUTABLE_SUFFIX}"
+            OUTPUTVAR extraApplicationToLaunchListForInstallTree
+            )
+        endif()
+        if(EXISTS ${QT_LUPDATE_EXECUTABLE} AND NOT APPLE)
+          ctkAppLauncherAppendExtraAppToLaunchToList(
+            LONG_ARG lupdate
+            HELP "Start Qt lupdate language utility"
+            PATH "<APPLAUNCHER_SETTINGS_DIR>/../bin/lupdate${CMAKE_EXECUTABLE_SUFFIX}"
+            OUTPUTVAR extraApplicationToLaunchListForInstallTree
+            )
+        endif()
       endif()
 
       include(SlicerBlockCTKAppLauncherSettings)
