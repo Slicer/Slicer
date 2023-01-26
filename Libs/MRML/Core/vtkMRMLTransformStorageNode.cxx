@@ -13,6 +13,7 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkOrientedBSplineTransform.h"
@@ -258,20 +259,23 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
       return 0;
     }
 
-  // ITK reads all images into LPS coordinate system (except special cases)
-  int displacementVectorCoordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS;
-
-  // NIFTI is a special case: it uses RAS coordinate system for the displacement vectors and ITK does not reorient them
-  // into LPS direction, therefore they are still in RAS.
-  std::string IOType = reader->GetImageIO()->GetNameOfClass();
-  if (IOType.find("NiftiImageIO") != std::string::npos)
+  const itk::MetaDataDictionary & metadata = gridImage_Lps->GetMetaDataDictionary();
+  std::string niftiIntentCode;
+  if (itk::ExposeMetaData<std::string>(metadata, "intent_code", niftiIntentCode))
     {
-    displacementVectorCoordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS;
+    // This is a NIFTI file.
+    // Verify if the intent code corresponds to displacement field (1006).
+    if (niftiIntentCode != "1006")
+      {
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromImageFile",
+        "NIFTI file does not contain valid displacement field, the transform may be incorrect."
+        << " Intent code is expected to be '1006' (displacement vector), but the file contained : '" << niftiIntentCode << "'."
+        << " Filename: '" << fullName << "'.");
+      }
     }
 
   vtkNew<vtkOrientedGridTransform> gridTransform_Ras;
-  vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage<double>(
-    this, gridTransform_Ras.GetPointer(), gridImage_Lps, displacementVectorCoordinateSystem);
+  vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage<double>(this, gridTransform_Ras.GetPointer(), gridImage_Lps);
 
   // Backward compatibility
   if (tn->GetReadAsTransformToParent())
@@ -578,6 +582,10 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
   writer->SetInput( gridImage_Lps );
   std::string fullName =  this->GetFullNameFromFileName();
   writer->SetFileName( fullName );
+
+  itk::MetaDataDictionary& dictionary = gridImage_Lps->GetMetaDataDictionary();
+  itk::EncapsulateMetaData<std::string>(dictionary, "intent_code", "1006"); // NIFTI_INTENT_DISPVECT = 1006
+
   try
     {
     writer->Update();

@@ -81,11 +81,9 @@ public:
   template <typename T> static bool SetVTKBSplineFromITKv3Generic(vtkObject* loggerObject, vtkOrientedBSplineTransform* bsplineVtk,
     typename itk::TransformBaseTemplate<T>::Pointer warpTransformItk, typename itk::TransformBaseTemplate<T>::Pointer bulkTransformItk);
 
-  /// Image grid is always in LPS but vectors may be in LPS (default) or RAS (when reading displacement field from NIFTI)
   template<typename T>
   static bool SetVTKOrientedGridTransformFromITKImage(vtkObject* loggerObject, vtkOrientedGridTransform* grid_Ras,
-    typename itk::DisplacementFieldTransform< T, 3 >::DisplacementFieldType::Pointer gridImage_Lps,
-    int displacementVectorCoordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS);
+    typename itk::DisplacementFieldTransform< T, 3 >::DisplacementFieldType::Pointer gridImage_Lps);
   static bool SetITKImageFromVTKOrientedGridTransform(vtkObject* loggerObject, GridImageDoubleType::Pointer &gridImage_Lps,
     vtkOrientedGridTransform* grid_Ras);
 
@@ -96,11 +94,9 @@ protected:
     typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS);
   static bool SetITKLinearTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS, vtkMatrix4x4* transformVtk_RAS);
 
-  /// Image grid is always in LPS but vectors may be in LPS (default) or RAS (when reading displacement field from NIFTI)
   template<typename T>
   static bool SetVTKOrientedGridTransformFromITK(vtkObject* loggerObject, vtkOrientedGridTransform* transformVtk_RAS,
-    typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS,
-    int displacementVectorCoordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS);
+    typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS);
   static bool SetITKOrientedGridTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS, vtkOrientedGridTransform* transformVtk_RAS);
 
   static bool SetITKv3BSplineFromVTK(vtkObject* loggerObject, itk::Object::Pointer& warpTransformItk, itk::Object::Pointer& bulkTransformItk,
@@ -875,8 +871,7 @@ bool vtkITKTransformConverter::SetITKv4BSplineFromVTK(vtkObject* loggerObject,
 //----------------------------------------------------------------------------
 template<typename T>
 bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITK(vtkObject* loggerObject,
-  vtkOrientedGridTransform* transformVtk_RAS, typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS,
-  int displacementVectorCoordinateSystem/*=vtkMRMLStorageNode::CoordinateSystemLPS*/)
+  vtkOrientedGridTransform* transformVtk_RAS, typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS)
 {
   typedef itk::DisplacementFieldTransform< T, 3 > DisplacementFieldTransformType;
   typedef itk::InverseDisplacementFieldTransform< T, 3 > InverseDisplacementFieldTransformType;
@@ -914,8 +909,7 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITK(vtkObject* log
     vtkDebugWithObjectMacro(loggerObject, "Not a grid transform");
     return false;
     }
-  if (!SetVTKOrientedGridTransformFromITKImage<T>(loggerObject, transformVtk_RAS, gridImageItk_Lps,
-    displacementVectorCoordinateSystem))
+  if (!SetVTKOrientedGridTransformFromITKImage<T>(loggerObject, transformVtk_RAS, gridImageItk_Lps))
     {
     return false;
     }
@@ -956,8 +950,7 @@ bool vtkITKTransformConverter::SetITKOrientedGridTransformFromVTK(vtkObject* log
 //----------------------------------------------------------------------------
 template<typename T>
 bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(vtkObject* loggerObject, vtkOrientedGridTransform* grid_Ras,
-  typename itk::DisplacementFieldTransform< T, 3 >::DisplacementFieldType::Pointer gridImage_Lps,
-  int displacementVectorCoordinateSystem/*=vtkMRMLStorageNode::CoordinateSystemLPS*/)
+  typename itk::DisplacementFieldTransform< T, 3 >::DisplacementFieldType::Pointer gridImage_Lps)
 {
   typedef itk::DisplacementFieldTransform< T, 3 > DisplacementFieldTransformType;
   typedef typename DisplacementFieldTransformType::DisplacementFieldType GridImageType;
@@ -1001,37 +994,15 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(vtkObject
   double* displacementVectors_Ras = reinterpret_cast<double*>(gridImage_Ras->GetScalarPointer());
   itk::ImageRegionConstIterator<GridImageType> inputIt(gridImage_Lps, gridImage_Lps->GetRequestedRegion());
   inputIt.GoToBegin();
+  while( !inputIt.IsAtEnd() )
+    {
+    typename GridImageType::PixelType displacementVectorLps=inputIt.Get();
+    *(displacementVectors_Ras++) = -displacementVectorLps[0];
+    *(displacementVectors_Ras++) = -displacementVectorLps[1];
+    *(displacementVectors_Ras++) =  displacementVectorLps[2];
+    ++inputIt;
+    }
 
-  if (displacementVectorCoordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
-    {
-    while (!inputIt.IsAtEnd())
-      {
-        // vectors are in LPS, convert them to RAS
-        typename GridImageType::PixelType displacementVector = inputIt.Get();
-        *(displacementVectors_Ras++) = -displacementVector[0];
-        *(displacementVectors_Ras++) = -displacementVector[1];
-        *(displacementVectors_Ras++) = displacementVector[2];
-        ++inputIt;
-      }
-    }
-  else if (displacementVectorCoordinateSystem == vtkMRMLStorageNode::CoordinateSystemRAS)
-    {
-    // vectors are already RAS
-    while( !inputIt.IsAtEnd() )
-      {
-      typename GridImageType::PixelType displacementVector=inputIt.Get();
-      *(displacementVectors_Ras++) = displacementVector[0];
-      *(displacementVectors_Ras++) = displacementVector[1];
-      *(displacementVectors_Ras++) = displacementVector[2];
-      ++inputIt;
-      }
-    }
-  else
-    {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot load grid transform: the input displacement field vector coordinate system ID ("
-      << displacementVectorCoordinateSystem << ") is invalid.");
-    return false;
-    }
   grid_Ras->SetDisplacementGridData( gridImage_Ras.GetPointer() );
 
   // Set the interpolation to cubic to have smooth derivatives
