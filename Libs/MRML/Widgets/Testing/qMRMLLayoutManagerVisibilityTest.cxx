@@ -388,6 +388,8 @@ int qMRMLLayoutManagerVisibilityTest(int argc, char * argv[] )
   applicationLogic->SetMRMLScene(scene.GetPointer());
   layoutManager.setMRMLScene(scene.GetPointer());
 
+  qApp->processEvents();
+
   if (!runTests(scene.GetPointer(), layoutNode.GetPointer(), &layoutManager))
     {
     return EXIT_FAILURE;
