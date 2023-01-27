@@ -1,6 +1,8 @@
 import copy
 import typing
 
+import slicer
+
 from .serializers import (
     createSerializer,
     parameterNodeSerializer,
@@ -289,13 +291,14 @@ class ObservedParameterPack:
         parameterNode = super().__getattribute__('_parameterNode')
         name = super().__getattribute__('_name')
         value = super().__getattribute__('_value')
-        try:
-            serializer.write(parameterNode, name, value)
-        finally:
-            # resetting the _value here helps if there are nested observed items (lists, dicts,
-            # parameterPacks, etc)
-            readValue = serializer.read(parameterNode, name)
-            super().__setattr__('_value', super(ObservedParameterPack, readValue).__getattribute__('_value'))
+        with slicer.util.NodeModify(parameterNode):
+            try:
+                serializer.write(parameterNode, name, value)
+            finally:
+                # resetting the _value here helps if there are nested observed items (lists, dicts,
+                # parameterPacks, etc)
+                readValue = serializer.read(parameterNode, name)
+                super().__setattr__('_value', super(ObservedParameterPack, readValue).__getattribute__('_value'))
 
     def __eq__(self, other) -> bool:
         if isinstance(other, ObservedParameterPack) and self._serializer.type == other._serializer.type:
@@ -363,10 +366,11 @@ class ParameterPackSerializer(Serializer):
     def write(self, parameterNode, name: str, value) -> None:
         if isinstance(value, ObservedParameterPack):
             value = super(ObservedParameterPack, value).__getattribute__('_value')
-        for parameter in self._allParameters.values():
-            mangledName = self._mangleName(parameter, name)
-            parameterValue = _readValue(value, parameter.basename)
-            parameter.serializer.write(parameterNode, mangledName, parameterValue)
+        with slicer.util.NodeModify(parameterNode):
+            for parameter in self._allParameters.values():
+                mangledName = self._mangleName(parameter, name)
+                parameterValue = _readValue(value, parameter.basename)
+                parameter.serializer.write(parameterNode, mangledName, parameterValue)
 
     def read(self, parameterNode, name: str):
         result = self.type()
