@@ -81,7 +81,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         extra widgets
         """
 
-        self.setWindowTitle('DICOM Browser')
+        self.setWindowTitle(self.tr('DICOM Browser'))
         self.setLayout(qt.QVBoxLayout())
 
         self.dicomBrowser.databaseDirectorySelectorVisible = False
@@ -130,19 +130,19 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.actionButtonLayout = qt.QHBoxLayout()
         self.actionButtonsFrame.setLayout(self.actionButtonLayout)
 
-        self.uncheckAllButton = qt.QPushButton('Uncheck All')
+        self.uncheckAllButton = qt.QPushButton(self.tr('Uncheck All'))
         self.actionButtonLayout.addWidget(self.uncheckAllButton)
         self.uncheckAllButton.connect('clicked()', self.uncheckAllLoadables)
 
         self.actionButtonLayout.addStretch(0.05)
 
-        self.examineButton = qt.QPushButton('Examine')
+        self.examineButton = qt.QPushButton(self.tr('Examine'))
         self.examineButton.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
         self.actionButtonLayout.addWidget(self.examineButton)
         self.examineButton.enabled = False
         self.examineButton.connect('clicked()', self.examineForLoading)
 
-        self.loadButton = qt.QPushButton('Load')
+        self.loadButton = qt.QPushButton(self.tr('Load'))
         self.loadButton.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
         self.loadButton.toolTip = 'Load selected items into the scene'
         self.actionButtonLayout.addWidget(self.loadButton)
@@ -150,7 +150,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         self.actionButtonLayout.addStretch(0.05)
 
-        self.advancedViewButton = qt.QCheckBox('Advanced')
+        self.advancedViewButton = qt.QCheckBox(self.tr('Advanced'))
         self.advancedViewButton.objectName = 'AdvancedViewCheckBox'
         self.actionButtonLayout.addWidget(self.advancedViewButton)
         self.advancedViewButton.checked = self.advancedView
