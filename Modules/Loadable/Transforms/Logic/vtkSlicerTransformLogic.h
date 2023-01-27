@@ -33,6 +33,7 @@
 // MRML includes
 class vtkMRMLDisplayableNode;
 class vtkMRMLMarkupsNode;
+class vtkMRMLMessageCollection;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScene;
 class vtkMRMLSliceNode;
@@ -66,11 +67,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
 
   ///
   /// Read transform from file
-  vtkMRMLTransformNode* AddTransform (const char* filename, vtkMRMLScene *scene);
-
-  ///
-  /// Write transform's data to a specified file
-  int SaveTransform (const char* filename, vtkMRMLTransformNode *transformNode);
+  vtkMRMLTransformNode* AddTransform(const char* filename, vtkMRMLScene *scene, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Generate polydata for 2D transform visualization
   /// Return true on success.

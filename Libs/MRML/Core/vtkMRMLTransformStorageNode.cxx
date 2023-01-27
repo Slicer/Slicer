@@ -153,12 +153,14 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
     }
   catch (itk::ExceptionObject &exc)
     {
-    vtkErrorMacro("ITK exception caught reading transform file: "<< fullName.c_str() << "\n" << exc);
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile",
+      "Error while reading transform file '" << fullName << "'. ITK exception:\n" << exc);
     return 0;
     }
   catch (...)
     {
-    vtkErrorMacro("Unknown exception caught while reading transform file: "<< fullName.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile",
+      "Error while reading transform file '" << fullName << "'.");
     return 0;
     }
 
@@ -166,18 +168,21 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
   TransformListType *transforms = reader->GetTransformList();
   if (transforms->size() == 0)
     {
-    vtkErrorMacro("Could not find a transform in file: " << fullName.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile",
+      "Could not find a transform in file: '" << fullName << "'");
     return 0;
     }
   if (transforms->size() > 2)
     {
-    vtkWarningMacro(<< "More than two transform in the file: "<< fullName.c_str()<< ". Using only the first two transforms.");
+    vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile",
+      "More than two transform in the file: '" << fullName << "'. Using only the first two transforms.");
     }
   TransformListType::iterator it = transforms->begin();
   TransformType::Pointer transform = (*it);
   if (!transform)
     {
-    vtkErrorMacro(<< "Invalid transform in the file: "<< fullName.c_str()<< ", (" << transforms->size() << ")");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile",
+      "Invalid transform in the file: '" << fullName << "'. Transform list size: " << transforms->size() << ".");
     return 0;
     }
   ++it;
@@ -187,7 +192,8 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
     transform2 = (*it);
     if (!transform2)
       {
-      vtkErrorMacro(<< "Invalid transform (2) in the file: "<< fullName.c_str()<< ", (" << transforms->size() << ")");
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile",
+        "Invalid transform (2) in the file: '" << fullName << "'. Transform list size: " << transforms->size() << ".");
       return 0;
       }
     }
@@ -249,13 +255,15 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
     }
   catch (...)
     {
-    vtkErrorMacro("Unknown exception caught while reading grid transform image file: " << fullName.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromImageFile",
+      "Error while reading image file as grid transform '" << fullName << "'.");
     return 0;
     }
 
   if (!gridImage_Lps)
     {
-      vtkErrorMacro("Failed to read image as a grid transform from file: " << fullName.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromImageFile",
+      "Error while reading image file as grid transform '" << fullName << "'.");
       return 0;
     }
 
@@ -263,13 +271,13 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
   std::string niftiIntentCode;
   if (itk::ExposeMetaData<std::string>(metadata, "intent_code", niftiIntentCode))
     {
-    // This is a NIFTI file.
-    // Verify if the intent code corresponds to displacement field (1006).
+    // This is a NIFTI file. Verify that it contains a displacement vector image
+    // by checking that the "intent code" metadata field equals 1006 (NIFTI_INTENT_DISPVECT).
     if (niftiIntentCode != "1006")
       {
       vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromImageFile",
-        "NIFTI file does not contain valid displacement field, the transform may be incorrect."
-        << " Intent code is expected to be '1006' (displacement vector), but the file contained : '" << niftiIntentCode << "'."
+        "NIFTI file may not contain valid displacement field, the transform may be incorrect."
+        << " Intent code is expected to be '1006' (displacement vector), but the file contained: '" << niftiIntentCode << "'."
         << " Filename: '" << fullName << "'.");
       }
     }
@@ -293,7 +301,8 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
 
 //----------------------------------------------------------------------------
 template<typename T>
-vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::string& fullName)
+vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::string& fullName,
+  vtkMRMLMessageCollection* userMessages)
 {
   typedef itk::TransformFileReaderTemplate<T> TransformReaderType;
   typedef typename TransformReaderType::TransformListType TransformListType;
@@ -307,19 +316,22 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
     }
   catch (itk::ExceptionObject &exc)
     {
-    vtkErrorWithObjectMacro(loggerObject, "ITK exception caught reading transform file: "<< fullName.c_str() << "\n" << exc);
+    vtkErrorToMessageCollectionWithObjectMacro(loggerObject, userMessages, "vtkMRMLTransformStorageNode::ReadFromTransformFile",
+      "Error while reading transform file '" << fullName << "'. ITK exception:\n" << exc);
     return nullptr;
     }
   catch (...)
     {
-    vtkErrorWithObjectMacro(loggerObject, "Unknown exception caught while reading transform file: "<< fullName.c_str());
+    vtkErrorToMessageCollectionWithObjectMacro(loggerObject, userMessages, "vtkMRMLTransformStorageNode::ReadFromTransformFile",
+      "Error while reading transform file '" << fullName << "'.");
     return nullptr;
     }
 
   TransformListType *transforms = reader->GetTransformList();
   if (transforms==nullptr || transforms->empty())
     {
-    vtkErrorWithObjectMacro(loggerObject, "Transforms not found in transform file: "<< fullName.c_str());
+    vtkErrorToMessageCollectionWithObjectMacro(loggerObject, userMessages, "vtkMRMLTransformStorageNode::ReadFromTransformFile",
+      "Transforms not found in transform file: " << fullName);
     return nullptr;
     }
   if (transforms->size()>1)
@@ -328,13 +340,17 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
     // It is not necessarily a compositing, for example: in ITKv3 the list was used to store additive
     // bulk transform for BSpline deformable transform. Therefore, if the file contains a transform list
     // then we do not interpret it as a composite/ transform.
-    vtkErrorWithObjectMacro(loggerObject, "Multiple transforms are defined in the transform file but only one is allowed (composite transforms has to be stored as a single CompositeTransform). In file: "<< fullName.c_str());
+    vtkErrorToMessageCollectionWithObjectMacro(loggerObject, userMessages, "vtkMRMLTransformStorageNode::ReadFromTransformFile",
+      "Multiple transforms are defined in the transform file but only one is allowed"
+      " (composite transforms has to be stored as a single CompositeTransform). In file: "
+      << fullName);
     return nullptr;
     }
   TransformType *firstTransform = transforms->front();
   if (firstTransform==nullptr)
     {
-    vtkErrorWithObjectMacro(loggerObject, "Transforms not found in transform file: "<< fullName.c_str());
+    vtkErrorToMessageCollectionWithObjectMacro(loggerObject, userMessages, "vtkMRMLTransformStorageNode::ReadFromTransformFile",
+      "Transforms not found in transform file: " << fullName);
     return nullptr;
     }
 
@@ -420,17 +436,18 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode *refNode)
   vtkSmartPointer<vtkAbstractTransform> transformVtk;
 
   transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(
-        ::ReadFromTransformFile<double>(this, fullName));
+        ::ReadFromTransformFile<double>(this, fullName, this->GetUserMessages()));
 
   if (transformVtk.GetPointer()==nullptr)
     {
     transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(
-          ::ReadFromTransformFile<float>(this, fullName));
+          ::ReadFromTransformFile<float>(this, fullName, this->GetUserMessages()));
     }
 
   if (transformVtk.GetPointer()==nullptr)
       {
-      vtkErrorMacro("Failed to read transform from file: "<< fullName.c_str());
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromTransformFile",
+        "Failed to read transform from file: '" << fullName << "'");
       return 0;
       }
 
@@ -469,7 +486,8 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   // Check that the file exists
   if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
     {
-    vtkErrorMacro("ReadDataInternal: transform file '" << fullName.c_str() << "' not found.");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadDataInternal",
+      "Failed to read transform. Transform from file not found: '" << fullName << "'.");
     return 0;
     }
 
@@ -515,7 +533,7 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
     this, transformVtk, secondaryTransformItk, this->PreferITKv3CompatibleTransforms, false);
   if (transformItk.IsNull())
     {
-    vtkErrorMacro("WriteTransform failed: cannot to convert VTK transform to ITK transform");
+    vtkErrorMacro("WriteTransform failed: cannot convert VTK transform to ITK transform");
     return 0;
     }
 
@@ -536,14 +554,14 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
     }
   catch (itk::ExceptionObject &exc)
     {
-    vtkErrorMacro("ITK exception caught writing transform file: "
-                  << fullName.c_str() << "\n" << exc);
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::WriteToTransformFile",
+      "Error while reading transform file '" << fullName << "'. ITK exception:\n" << exc);
     return 0;
     }
   catch (...)
     {
-    vtkErrorMacro("Unknown exception caught while writing transform file: "
-                  << fullName.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::WriteToTransformFile",
+      "Error while reading transform file '" << fullName << "'");
     return 0;
     }
 
@@ -563,7 +581,8 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
   vtkOrientedGridTransform* gridTransform_Ras =  vtkOrientedGridTransform::SafeDownCast(transformNode->GetTransformFromParentAs("vtkOrientedGridTransform"));
   if (gridTransform_Ras==nullptr)
     {
-    vtkErrorMacro("Cannot retrieve grid transform from node");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::WriteToImageFile",
+      "Cannot retrieve grid transform from node " << (transformNode->GetID() ? transformNode->GetID() : "(unknown)"));
     return 0;
     }
 
@@ -571,7 +590,9 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
   gridTransform_Ras->Update();
   if (gridTransform_Ras->GetInverseFlag())
     {
-    vtkErrorMacro("Cannot write inverse grid transform to image file. Either save the transform in a transform file (.h5) or invert the transform before saving it into an image file.");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::WriteToImageFile",
+      "Cannot write inverse grid transform " << (transformNode->GetID() ? transformNode->GetID() : "(unknown)") << " to file."
+      << " Either save the transform in a transform file (.h5) or invert the transform before saving it into an image file.");
     return 0;
     }
 
@@ -583,8 +604,10 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
   std::string fullName =  this->GetFullNameFromFileName();
   writer->SetFileName( fullName );
 
+  // If this image is saved as a NIFTI then setting intent code to 1006 (NIFTI_INTENT_DISPVECT)
+  // will save the image as a displacement vector image.
   itk::MetaDataDictionary& dictionary = gridImage_Lps->GetMetaDataDictionary();
-  itk::EncapsulateMetaData<std::string>(dictionary, "intent_code", "1006"); // NIFTI_INTENT_DISPVECT = 1006
+  itk::EncapsulateMetaData<std::string>(dictionary, "intent_code", "1006");
 
   try
     {
@@ -592,15 +615,16 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
     }
   catch (itk::ExceptionObject &exc)
     {
-    vtkErrorMacro("Failed to save grid transform to file: " << fullName.c_str()
-      << ". Make sure a 'Displacement field' format is selected for saving."
-      << "ITK exception caught writing transform file: \n" << exc);
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::WriteToImageFile",
+      "Failed to save grid transform to file: '" << fullName << "'."
+      << " Make sure a 'Displacement field' format is selected for saving."
+      << " ITK exception caught writing transform file:\n" << exc);
     return 0;
     }
   catch (...)
     {
-    vtkErrorMacro("Unknown exception caught while writing transform file: "
-                  << fullName.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::WriteToImageFile",
+      "Failed to save grid transform to file: '" << fullName << "'");
     return 0;
     }
 
@@ -653,9 +677,10 @@ bool vtkMRMLTransformStorageNode::IsImageFile(const std::string &filename)
 {
   // determine file type
   std::string extension = this->GetSupportedFileExtension(filename.c_str());
-  if( extension.empty() )
+  if (extension.empty())
     {
-    vtkErrorMacro("ReadData: no file extension specified: " << filename.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::IsImageFile",
+      "Filename does not contain extension: '" << filename.c_str() << "'");
     return false;
     }
   if ( !extension.compare(".nrrd")
