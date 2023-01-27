@@ -337,7 +337,25 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
     newColumn = vtkSmartPointer<vtkAbstractArray>::Take(vtkAbstractArray::CreateArray(valueTypeId));
     newColumn->SetNumberOfTuples(numberOfRows);
 
-    vtkVariant emptyCell(this->GetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_NULL_VALUE));
+    if (valueTypeId == VTK_BIT)
+      {
+      // vtkVariant does not support VTK_BIT, use VTK_INT instead, as vtkBitArray uses int type on its interface
+      // for getting/setting data.
+      valueTypeId = VTK_INT;
+      }
+    else if (valueTypeId == VTK_ID_TYPE)
+      {
+      // vtkVariant does not support VTK_ID_TYPE, use VTK_LONG_LONG instead, as it should be able to store an ID.
+      valueTypeId = VTK_LONG_LONG;
+      }
+
+    std::string nullValue(this->GetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_NULL_VALUE));
+    vtkVariant emptyCell(vtkVariant(nullValue), valueTypeId);
+    if (!emptyCell.IsValid())
+      {
+      // This will create a valid variant for char types, numeric types, and bit
+      emptyCell = vtkVariant(0);
+      }
     for (int i=0; i<numberOfRows; i++)
       {
       newColumn->SetVariantValue(i, emptyCell);
@@ -954,9 +972,8 @@ int vtkMRMLTableNode::GetColumnValueTypeFromSchema(const std::string& columnName
   int valueType = this->GetValueTypeFromString(valueTypeStr);
   if (valueType == VTK_VOID)
     {
-    vtkErrorMacro("Unknown column value type: " << valueTypeStr << " using string instead. Supported types: string, double, float, int, unsigned int, bit,"
-      ", short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long"
-      ", __int64, unsigned __int64, idtype");
+    vtkErrorMacro("Unknown column value type: " << valueTypeStr << " using string instead. Supported types: string, double, float, int, unsigned int, bit"
+      ", short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long, idtype");
     }
   return valueType;
 }
@@ -1069,9 +1086,8 @@ bool vtkMRMLTableNode::SetDefaultColumnType(const std::string& type, const std::
   if (valueType == VTK_VOID)
     {
     vtkErrorMacro("vtkMRMLTableNode::SetDefaultColumnType failed: Unknown column value type: " << type
-      << ". Supported types: string, double, float, int, unsigned int, bit,"
-      ", short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long"
-      ", __int64, unsigned __int64, idtype");
+      << ". Supported types: string, double, float, int, unsigned int, bit"
+      ", short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long, idtype");
     return false;
     }
   this->SetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_TYPE, type);
