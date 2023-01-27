@@ -120,11 +120,6 @@
        </item>
        <item>
         <property name="text">
-         <string>idtype</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>unsigned char</string>
         </property>
        </item>

@@ -968,7 +968,7 @@ int vtkMRMLTableNode::GetColumnValueTypeFromSchema(const std::string& columnName
     {
     vtkErrorMacro("Unknown column value type: " << valueTypeStr << " using string instead. Supported types: string, double, float, int, unsigned int, bit,"
       ", short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long"
-      ", __int64, unsigned __int64, idtype");
+      ", __int64, unsigned __int64");
     }
   return valueType;
 }
@@ -1083,7 +1083,7 @@ bool vtkMRMLTableNode::SetDefaultColumnType(const std::string& type, const std::
     vtkErrorMacro("vtkMRMLTableNode::SetDefaultColumnType failed: Unknown column value type: " << type
       << ". Supported types: string, double, float, int, unsigned int, bit,"
       ", short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long"
-      ", __int64, unsigned __int64, idtype");
+      ", __int64, unsigned __int64");
     return false;
     }
   this->SetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_TYPE, type);
