@@ -337,7 +337,19 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
     newColumn = vtkSmartPointer<vtkAbstractArray>::Take(vtkAbstractArray::CreateArray(valueTypeId));
     newColumn->SetNumberOfTuples(numberOfRows);
 
-    vtkVariant emptyCell(this->GetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_NULL_VALUE));
+    std::string nullValue(this->GetColumnProperty(SCHEMA_DEFAULT_COLUMN_NAME, SCHEMA_COLUMN_NULL_VALUE));
+    int columnType = this->GetColumnType(SCHEMA_DEFAULT_COLUMN_NAME);
+    vtkVariant emptyCell(vtkVariant(nullValue), columnType);
+    if (!emptyCell.IsValid())
+      {
+      // This will create a valid variant for char types
+      emptyCell = vtkVariant('\0', columnType);
+      }
+    if (!emptyCell.IsValid())
+      {
+      // This will create a valid variant for the remaining numeric types
+      emptyCell = vtkVariant("0", columnType);
+      }
     for (int i=0; i<numberOfRows; i++)
       {
       newColumn->SetVariantValue(i, emptyCell);
