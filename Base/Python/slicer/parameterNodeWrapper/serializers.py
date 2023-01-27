@@ -403,16 +403,20 @@ class NodeSerializer(Serializer):
         return None
 
     def isIn(self, parameterNode, name: str) -> bool:
-        return parameterNode.GetNodeReferenceID(name) is not None
+        return parameterNode.HasParameter(name)
 
     def write(self, parameterNode, name: str, value: slicer.vtkMRMLNode) -> None:
-        return parameterNode.SetNodeReferenceID(name, value.GetID() if value is not None else None)
+        # Because None is a valid value we need a separate identifiable parameter
+        # that we can search for in isIn(). We know it is safe to reuse the exact same name.
+        parameterNode.SetParameter(name, "")
+        parameterNode.SetNodeReferenceID(name, value.GetID() if value is not None else None)
 
     def read(self, parameterNode, name) -> slicer.vtkMRMLNode:
         return parameterNode.GetNodeReference(name)
 
     def remove(self, parameterNode, name) -> None:
         """Removes this parameter from the node if it exists."""
+        parameterNode.UnsetParameter(name)
         parameterNode.RemoveNodeReferenceIDs(name)
 
     def supportsCaching(self) -> bool:

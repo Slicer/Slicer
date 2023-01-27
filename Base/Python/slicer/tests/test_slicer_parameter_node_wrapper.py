@@ -139,6 +139,18 @@ class TypedParameterNodeTest(unittest.TestCase):
     def setUp(self):
         slicer.mrmlScene.Clear(0)
 
+    def test_node_serialier_has_parameter(self):
+        nodeSerializer = NodeSerializer()
+
+        parameterNode = newParameterNode()
+
+        # a bug was caused by this, which is why it is explicitly tested
+        self.assertFalse(nodeSerializer.isIn(parameterNode, "node"))
+        nodeSerializer.write(parameterNode, "node", None)
+        self.assertTrue(nodeSerializer.isIn(parameterNode, "node"))
+        nodeSerializer.remove(parameterNode, "node")
+        self.assertFalse(nodeSerializer.isIn(parameterNode, "node"))
+
     def test_removes(self):
         # for each serializer, make sure that calling remove from it
         # erases all trace of it in the parameterNode
@@ -146,6 +158,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         stringSerializer = StringSerializer()
         pathSerializer = PathSerializer(pathlib.Path)
         boolSerializer = BoolSerializer()
+        nodeSerializer = NodeSerializer()
         listSerializer = ListSerializer(NumberSerializer(float))
         tupleSerializer = TupleSerializer([NumberSerializer(float), BoolSerializer()])
         dictSerializer = DictSerializer(StringSerializer(), NumberSerializer(float))
@@ -157,6 +170,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         stringSerializer.write(parameterNode, "string", "1")
         pathSerializer.write(parameterNode, "path", pathlib.Path("."))
         boolSerializer.write(parameterNode, "bool", True)
+        nodeSerializer.write(parameterNode, "node", slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode"))
         listSerializer.write(parameterNode, "list", [1])
         tupleSerializer.write(parameterNode, "tuple", (3.3, True))
         dictSerializer.write(parameterNode, "dict", {"a": 1, "b": 2})
@@ -166,6 +180,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         stringSerializer.remove(parameterNode, "string")
         pathSerializer.remove(parameterNode, "path")
         boolSerializer.remove(parameterNode, "bool")
+        nodeSerializer.remove(parameterNode, "node")
         listSerializer.remove(parameterNode, "list")
         tupleSerializer.remove(parameterNode, "tuple")
         dictSerializer.remove(parameterNode, "dict")
