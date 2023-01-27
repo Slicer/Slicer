@@ -108,7 +108,7 @@ def isParameterPack(obj):
     """
     Returns true if the given object is a parameterPack, false otherwise.
     """
-    return hasattr(obj, "_is_parameterPack") and getattr(obj, "_is_parameterPack")
+    return getattr(obj, "_is_parameterPack", False)
 
 
 def _checkTopMember(packObject, membername):

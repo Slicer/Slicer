@@ -704,6 +704,5 @@ class WidgetChildrenToParameterPackConnector(GuiConnector):
         return pack
 
     def write(self, value: str) -> None:
-        # self._widget.text = value
         for name, connector in self._nameToConnectorMap.items():
             connector.write(value.getValue(name))
