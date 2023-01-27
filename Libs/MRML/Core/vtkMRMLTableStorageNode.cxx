@@ -874,6 +874,20 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
       std::string componentNamesStr = vtkMRMLTableNode::GetComponentNamesAsString(componentNames);
       componentNamesArray->SetValue(schemaRowIndex, componentNamesStr.c_str());
       }
+    vtkNew<vtkTable> orderedSchemaTable;
+    // Copy contents to match size
+    orderedSchemaTable->DeepCopy(schemaTable);
+
+    // Preserve the <default> row, which is the first row
+    int offset = 1;
+    // Rows in schema table should preserve the order of the table's columns
+    for (int col = 0; col < table->GetNumberOfColumns(); ++col)
+    {
+        std::string columnName = table->GetColumnName(col);
+        vtkIdType schemaRowIndex = columnNameArray->LookupValue(columnName);
+        orderedSchemaTable->SetRow(offset + col, schemaTable->GetRow(schemaRowIndex));
+    }
+    schemaTable->DeepCopy(orderedSchemaTable);
     }
 
   vtkNew<vtkDelimitedTextWriter> writer;
