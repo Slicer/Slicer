@@ -166,9 +166,10 @@ def _updateGUIFromParameterNode(self):
         return
     try:
         self._updatingGUIFromParameterNode = True
-        for guiMapping in self._parameterGUIs.values():
-            for paramName, connector in guiMapping.items():
-                connector.write(self.getValue(paramName))
+        with slicer.util.NodeModify(self):
+            for guiMapping in self._parameterGUIs.values():
+                for paramName, connector in guiMapping.items():
+                    connector.write(self.getValue(paramName))
     finally:
         self._updatingGUIFromParameterNode = False
 
