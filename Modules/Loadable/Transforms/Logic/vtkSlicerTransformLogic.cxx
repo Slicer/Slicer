@@ -20,6 +20,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
 #include "vtkMRMLMarkupsROINode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -98,36 +99,37 @@ bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transfor
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename, vtkMRMLScene *scene)
+vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename, vtkMRMLScene *scene,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   vtkNew<vtkMRMLTransformStorageNode> storageNode;
 
   if (scene == nullptr)
-  {
+    {
     vtkErrorMacro("scene == nullptr in vtkSlicerTransformLogic::AddTransform");
     return nullptr;
-  }
+    }
 
   // check for local or remote files
   int useURI = 0; // false;
   if (scene->GetCacheManager() != nullptr)
-  {
+    {
     useURI = scene->GetCacheManager()->IsRemoteReference(filename);
-  }
+    }
 
   const char *localFile;
   if (useURI)
-  {
+    {
     vtkDebugMacro("AddTransforn: file name is remote: " << filename);
     storageNode->SetURI(filename);
     // reset filename to the local file name
     localFile = ((scene)->GetCacheManager())->GetFilenameFromURI(filename);
-  }
+    }
   else
-  {
+    {
     storageNode->SetFileName(filename);
     localFile = filename;
-  }
+    }
 
   const std::string fname(localFile);
   // the model name is based on the file name (itksys call should work even if
@@ -135,10 +137,11 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
   const std::string name = itksys::SystemTools::GetFilenameName(fname);
 
   if (!storageNode->SupportedFileType(name.c_str()))
-  {
-    vtkErrorMacro("Unsupported transform file format: " << filename);
+    {
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerTransformLogic::AddTransform",
+      "Unsupported transform file format: " << filename);
     return nullptr;
-  }
+    }
 
   // check to see which node can read this type of file
   vtkSmartPointer<vtkMRMLTransformNode> tnode;
@@ -149,7 +152,12 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
   generalTransform->SetScene(scene);
   if (!storageNode->ReadData(generalTransform.GetPointer()))
   {
-    vtkErrorMacro("Failed to read transform from file: " << filename);
+    if (userMessages)
+      {
+      userMessages->AddMessages(storageNode->GetUserMessages());
+      }
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerTransformLogic::AddTransform",
+      "Failed to read transform from file: " << filename);
     return nullptr;
   }
 
@@ -160,6 +168,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
   // term we should get rid of specialized transform node classes and just use
   // vtkMRMLTransformNode (anyway, transform classes are not meaningful when transforms
   // are composited by hardening and we have mixed transforms).
+  storageNode->GetUserMessages()->ClearMessages();
   switch (GetTransformKind(generalTransform.GetPointer()))
   {
   case TRANSFORM_LINEAR:
@@ -179,6 +188,11 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
     tnode = generalTransform.GetPointer();
   }
 
+  if (userMessages)
+    {
+    userMessages->AddMessages(storageNode->GetUserMessages());
+    }
+
   const std::string basename(storageNode->GetFileNameWithoutExtension(fname.c_str()));
   const std::string uname(scene->GetUniqueNameByString(basename.c_str()));
   tnode->SetName(uname.c_str());
@@ -188,12 +202,6 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
   tnode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   return tnode;
-}
-
-int vtkSlicerTransformLogic::SaveTransform(const char* vtkNotUsed(filename),
-  vtkMRMLTransformNode *vtkNotUsed(transformNode))
-{
-  return 1;
 }
 
 //----------------------------------------------------------------------------

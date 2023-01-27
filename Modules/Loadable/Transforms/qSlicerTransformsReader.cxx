@@ -27,6 +27,7 @@
 #include "vtkSlicerTransformLogic.h"
 
 // MRML includes
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes
@@ -95,8 +96,10 @@ bool qSlicerTransformsReader::load(const IOProperties& properties)
     {
     return false;
     }
+
+  this->userMessages()->ClearMessages();
   vtkMRMLTransformNode* node = d->TransformLogic->AddTransform(
-    fileName.toUtf8(), this->mrmlScene());
+    fileName.toUtf8(), this->mrmlScene(), this->userMessages());
   if (node)
     {
     this->setLoadedNodes(QStringList(QString(node->GetID())));
@@ -107,5 +110,3 @@ bool qSlicerTransformsReader::load(const IOProperties& properties)
     }
   return node != nullptr;
 }
-
-// TODO: add the save() method. Use vtkSlicerTransformLogic::SaveTransform()
