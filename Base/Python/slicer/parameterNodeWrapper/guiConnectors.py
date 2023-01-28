@@ -547,6 +547,7 @@ class qMRMLNodeComboBoxToNodeConnector(GuiConnector):
         return None
 
     def __init__(self, widget: slicer.qMRMLNodeComboBox, datatype):
+        super().__init__()
         self._widget: slicer.qMRMLNodeComboBox = widget
         self._widget.nodeTypes = getNodeTypes(datatype)
 
@@ -579,6 +580,7 @@ class qMRMLSubjectHierarchyTreeViewToNodeConnector(GuiConnector):
         return None
 
     def __init__(self, widget: qMRMLSubjectHierarchyTreeView, datatype):
+        super().__init__()
         self._widget: qMRMLSubjectHierarchyTreeView = widget
         self._widget.nodeTypes = getNodeTypes(datatype)
 
