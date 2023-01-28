@@ -152,7 +152,6 @@ void qSlicerMouseModeToolBarPrivate::init()
 
   QObject::connect(this->ToolBarAction, SIGNAL(triggered()),
     q, SLOT(toggleMarkupsToolBar()));
-  q->addAction(this->ToolBarAction);
 
   this->PlaceWidgetMenu = new QMenu(qSlicerMouseModeToolBar::tr("Place Menu"), q);
   this->PlaceWidgetMenu->setObjectName("PlaceWidgetMenu");
@@ -172,6 +171,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->PlaceWidgetAction->setVisible(false);
   q->addAction(this->PlaceWidgetAction);
 
+  q->addAction(this->ToolBarAction);  // add Toggle Markups ToolBar action last
 }
 
 //---------------------------------------------------------------------------

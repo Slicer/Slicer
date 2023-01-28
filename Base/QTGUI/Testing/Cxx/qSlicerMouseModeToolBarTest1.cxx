@@ -36,24 +36,15 @@
 
 QString activePlaceActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 {
-  QAction* placeAction = mouseModeToolBar.actions()[2];
-  if (!placeAction->isEnabled())
-    {
-    return QString();
-    }
-  return placeAction->text();
-  /*
-  return mouseModeToolBar.actions()[2]->text();
   foreach(QAction* action, mouseModeToolBar.actions())
     {
-    if (action->objectName() == QString("ToolBarAction"))
+    if (action->objectName() == QString("PlaceWidgetAction"))
       {
       return action->text();
       break;
       }
     }
   return QString();
-  */
 }
 
 QString getActiveActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
@@ -100,7 +91,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
   // without a qSlicerApplication, setting the cursor is a noop
   mouseToolBar.changeCursorTo(QCursor(Qt::BusyCursor));
 
-  CHECK_PLACE_ACTION_TEXT("Toggle Markups Toolbar", mouseToolBar);
+  CHECK_PLACE_ACTION_TEXT("Place", mouseToolBar);
 
   // get the selection and interaction nodes that the mouse mode tool bar
   // listens to
