@@ -1,5 +1,5 @@
 import unittest
-from typing import Annotated, Union
+from typing import Annotated, Any, Union
 
 from MRMLCorePython import vtkMRMLModelNode
 
@@ -383,3 +383,20 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertEqual(param.dataType("annotatedBox.topLeft"), Point)
         self.assertEqual(param.dataType("annotatedSub"), AnnotatedSub)
         self.assertEqual(param.dataType("annotatedSub.iterations"), Annotated[int, Default(44)])
+
+    def test_parameter_pack_any(self):
+        @parameterPack
+        class AnyPack:
+            any: Any
+
+        param = AnyPack()
+        self.assertIsNone(param.any)
+
+        param.any = 1
+        self.assertEqual(param.any, 1)
+        param.any = "some string"
+        self.assertEqual(param.any, "some string")
+
+        # add weird recursive use
+        param.any = AnyPack(Point(3, 4))
+        self.assertEqual(param.any.any, Point(3, 4))
