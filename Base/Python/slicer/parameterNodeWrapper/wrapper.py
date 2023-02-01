@@ -254,7 +254,10 @@ def _processClass(classtype):
     for name, nametype in members.items():
         membertype, annotations = splitAnnotations(nametype)
 
-        serializer, annotations = createSerializer(membertype, annotations)
+        try:
+            serializer, annotations = createSerializer(membertype, annotations)
+        except Exception as e:
+            raise Exception(f"Unable to create serializer for {classtype} member {name}") from e
         default, annotations = extractDefault(annotations)
         default = default.value if default is not None else serializer.default()
 
