@@ -29,6 +29,11 @@ class CustomClass:
     z: int
 
 
+class EnumClass(enum.Enum):
+    A = 0
+    B = 1
+
+
 @parameterNodeSerializer
 class CustomClassSerializer(Serializer):
     @staticmethod
@@ -917,6 +922,38 @@ class TypedParameterNodeTest(unittest.TestCase):
         # test alias
         param.bg = Color.blue
         self.assertIs(param.bg, Color.BLUE)
+
+    def test_any(self):
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            any: typing.Any
+            anyDefaulted: Annotated[typing.Any, Default(7.7)]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertIsNone(param.any)
+        self.assertEqual(param.anyDefaulted, 7.7)
+
+        param.any = 1
+        self.assertEqual(param.any, 1)
+        param.any = "some string"
+        self.assertEqual(param.any, "some string")
+        param.any = EnumClass.B
+        self.assertEqual(param.any, EnumClass.B)
+        param.any = CustomClass(2, 3, 4)
+        self.assertEqual(param.any, CustomClass(2, 3, 4))
+        param.any = None
+        self.assertEqual(param.any, None)
+        param.any = [1, 2, 3]
+        self.assertEqual(param.any, [1, 2, 3])
+        param.any = [1, "multiple types", True]
+        self.assertEqual(param.any, [1, "multiple types", True])
+        param.any = {1: "a", "b": 2}
+        self.assertEqual(param.any, {1: "a", "b": 2})
+
+        param.anyDefaulted = 1
+        self.assertEqual(param.anyDefaulted, 1)
+        param.anyDefaulted = "some string"
+        self.assertEqual(param.anyDefaulted, "some string")
 
     def test_events(self):
         class _Callback:

@@ -1,6 +1,7 @@
 import abc
 import collections
 import enum
+import importlib
 import logging
 import pathlib
 import typing
@@ -29,6 +30,7 @@ __all__ = [
     "TupleSerializer",
     "DictSerializer",
     "UnionSerializer",
+    "AnySerializer",
 ]
 
 
@@ -536,7 +538,7 @@ class ListSerializer(Serializer):
 
     @staticmethod
     def canSerialize(type_) -> bool:
-        return typing.get_origin(type_) == list
+        return typing.get_origin(type_) == list or type_ == list
 
     @staticmethod
     def create(type_):
@@ -545,7 +547,7 @@ class ListSerializer(Serializer):
             if len(args) != 1:
                 logging.warning("Unexpected list[] type arg length")
             if len(args) == 0:
-                Exception("Unsure how to handle a typed list with no discernible type")
+                args = [typing.Any]
             return ListSerializer(createSerializerFromAnnotatedType(args[0]))
         return None
 
@@ -783,14 +785,17 @@ class DictSerializer(Serializer):
 
     @staticmethod
     def canSerialize(type_) -> bool:
-        return typing.get_origin(type_) == dict
+        return typing.get_origin(type_) == dict or type_ == dict
 
     @staticmethod
     def create(type_):
         if DictSerializer.canSerialize(type_):
             args = typing.get_args(type_)
-            if len(args) != 2:
-                raise Exception("Unsure how to handle a typed dictionary without exactly 2 types.")
+            if len(args) not in (0, 2):
+                raise Exception("Unsure how to handle a typed dictionary without exactly 0 or 2 types."
+                                " Note that zero types will be dict[typing.Any, typing.Any]")
+            if len(args) == 0:
+                args = [typing.Any, typing.Any]
             serializers = [createSerializerFromAnnotatedType(arg) for arg in args]
             return DictSerializer(serializers[0], serializers[1])
         return None
@@ -1023,3 +1028,76 @@ class EnumSerializer(Serializer):
     @staticmethod
     def supportsCaching() -> bool:
         return True
+
+
+@parameterNodeSerializer
+class AnySerializer(Serializer):
+    """
+    Serializes the typing.Any annotation.
+
+    This is flexible, but has some downsides:
+    - Chooses the serializer to use each time a write is called. As such it can only actually
+      serialize types that have a serializer.
+    - It can only serialize classes that exist at the module level, i.e. it cannot serialize
+      classes that were created in functions.
+    - Can never cache.
+    - Needs to recreate the serializer each read.
+    - Can't set to tuples of values (but can set to lists of values instead)
+    """
+
+    @staticmethod
+    def canSerialize(type_) -> bool:
+        return type_ == typing.Any
+
+    @staticmethod
+    def create(type_):
+        if AnySerializer.canSerialize(type_):
+            return AnySerializer()
+        return None
+
+    @staticmethod
+    def _typeName(name: str) -> str:
+        return f"{name}.type"
+
+    @staticmethod
+    def _valueName(name: str) -> str:
+        return f"{name}.value"
+
+    def _getValueSerializer(self, parameterNode, name: str) -> Serializer:
+        modulename, classname = self._typeSerializer.read(parameterNode, self._typeName(name))
+        if (modulename, classname) == ("builtins", "NoneType"):
+            # "from builtins import NoneType" doesn't work
+            return createSerializerFromAnnotatedType(type(None))
+        else:
+            mod = importlib.import_module(modulename)
+            type_ = getattr(mod, classname)
+            return createSerializerFromAnnotatedType(type_)
+
+    def __init__(self):
+        # type is (modulename, classname)
+        self._typeSerializer = TupleSerializer([StringSerializer(), StringSerializer()])
+
+    def default(self):
+        return None
+
+    def isIn(self, parameterNode, name: str) -> bool:
+        return self._typeSerializer.isIn(parameterNode, self._typeName(name))
+
+    def write(self, parameterNode, name: str, value) -> None:
+        self.remove(parameterNode, name)
+        valueSerializer = createSerializerFromAnnotatedType(type(value))
+        valueSerializer.write(parameterNode, self._valueName(name), value)
+        self._typeSerializer.write(parameterNode, self._typeName(name), (type(value).__module__, type(value).__name__))
+
+    def read(self, parameterNode, name: str) -> typing.Any:
+        valueSerializer = self._getValueSerializer(parameterNode, name)
+        return valueSerializer.read(parameterNode, self._valueName(name))
+
+    def remove(self, parameterNode, name: str) -> None:
+        if self.isIn(parameterNode, name):
+            valueSerializer = self._getValueSerializer(parameterNode, name)
+            valueSerializer.remove(parameterNode, self._valueName(name))
+            self._typeSerializer.remove(parameterNode, self._typeName(name))
+
+    def supportsCaching(self) -> bool:
+        return False
