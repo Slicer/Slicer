@@ -561,10 +561,10 @@ class ListSerializer(Serializer):
         return []
 
     def _lenName(self, name):
-        return f"{name}_len"
+        return f"{name}.len"
 
     def _paramName(self, name, index):
-        return f"{name}_{index}"
+        return f"{name}.{index}"
 
     def _len(self, parameterNode, name) -> int:
         if self.isIn(parameterNode, name):
@@ -657,7 +657,7 @@ class TupleSerializer(Serializer):
 
     @staticmethod
     def _paramName(name, index):
-        return f"{name}_{index}"
+        return f"{name}.{index}"
 
     def isIn(self, parameterNode, name: str) -> bool:
         return self._serializers[0].isIn(parameterNode, self._paramName(name, 0))
@@ -908,7 +908,7 @@ class UnionSerializer(Serializer):
 
     @staticmethod
     def _paramName(name, index):
-        return f"{name}_{index}"
+        return f"{name}.{index}"
 
     def isIn(self, parameterNode, name: str) -> bool:
         for index, validatedSerializer in enumerate(self._serializers):
