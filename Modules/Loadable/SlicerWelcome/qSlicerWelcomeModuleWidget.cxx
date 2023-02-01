@@ -99,10 +99,6 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->Ui_qSlicerWelcomeModuleWidget::setupUi(widget);
 
-  // QLabel's pixmap property loads the base image (ignores high-resolution @2x versions),
-  // therefore we need to retrieve and set the best icon version manually.
-  this->label->setPixmap(qMRMLWidget::pixmapFromIcon(QIcon(":/Images/WelcomeLogo.png")));
-
   // Make the "application update available" button at the top orange to make it stand out more.
   QPalette palette = q->palette();
   palette.setColor(this->ApplicationUpdateAvailableButton->foregroundRole(), QColor("orange"));
@@ -122,13 +118,8 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     group->addButton(collapsible);
     }
 
-  // Lazily set the fitted browser source to avoid overhead when the module
-  // is loaded.
-  this->FeedbackCollapsibleWidget->setProperty("source", ":HTML/Feedback.html");
-  this->WelcomeAndAboutCollapsibleWidget->setProperty("source", ":HTML/About.html");
-  this->OtherUsefulHintsCollapsibleWidget->setProperty("source", ":HTML/OtherUsefulHints.html");
-  this->AcknowledgmentCollapsibleWidget->setProperty("source", ":HTML/Acknowledgment.html");
-
+  // Update occurrences of documentation URLs
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   foreach(QWidget* widget, QWidgetList()
           << this->FeedbackCollapsibleWidget
           << this->WelcomeAndAboutCollapsibleWidget
@@ -136,13 +127,16 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
           << this->AcknowledgmentCollapsibleWidget
           )
     {
-    this->CollapsibleButtonMapper.setMapping(widget, widget);
-    QObject::connect(widget, SIGNAL(contentsCollapsed(bool)),
-                     &this->CollapsibleButtonMapper, SLOT(map()));
+    QTextBrowser* textBrowser = widget->findChild<QTextBrowser*>();
+    if (!textBrowser)
+      {
+      continue;
+      }
+    QString html = textBrowser->toHtml();
+    qSlicerUtils::replaceDocumentationUrlVersion(html,
+      QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
+    textBrowser->setHtml(html);
     }
-
-  QObject::connect(&this->CollapsibleButtonMapper, SIGNAL(mapped(QWidget*)),
-                   q, SLOT(loadSource(QWidget*)));
 }
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
@@ -170,37 +164,6 @@ qSlicerApplicationUpdateManager* qSlicerWelcomeModuleWidgetPrivate::applicationU
   return app->applicationUpdateManager();
 }
 #endif
-
-//-----------------------------------------------------------------------------
-void qSlicerWelcomeModuleWidget::loadSource(QWidget* widget)
-{
-  // Lookup fitted browser
-  ctkFittedTextBrowser* fittedTextBrowser =
-      widget->findChild<ctkFittedTextBrowser*>();
-  Q_ASSERT(fittedTextBrowser);
-  if (fittedTextBrowser->source().isEmpty())
-    {
-    // Read content
-    QString url = widget->property("source").toString();
-    QFile source(url);
-    if(!source.open(QIODevice::ReadOnly))
-      {
-      qWarning() << Q_FUNC_INFO << ": Failed to read" << url;
-      return;
-      }
-    QTextStream in(&source);
-    QString html = in.readAll();
-    source.close();
-
-    qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-
-    // Update occurrences of documentation URLs
-    html = qSlicerUtils::replaceDocumentationUrlVersion(html,
-      QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
-
-    fittedTextBrowser->setHtml(html);
-    }
-}
 
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidgetPrivate::selectModule(const QString& moduleName)

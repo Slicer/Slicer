@@ -58,7 +58,6 @@ protected:
   void setup() override;
 
 protected slots:
-  void loadSource(QWidget*);
   void onAutoUpdateCheckStateChanged(int);
   void onAutoUpdateSettingsChanged();
 
