@@ -390,7 +390,7 @@ class NodeSerializer(Serializer):
 
     @staticmethod
     def canSerialize(type_) -> bool:
-        return issubclass(type_, slicer.vtkMRMLNode) if type(type_) == type else False
+        return issubclass(type_, slicer.vtkMRMLNode) if isinstance(type_, type) else False
 
     @staticmethod
     def create(type_):
@@ -981,7 +981,7 @@ class UnionSerializer(Serializer):
 class EnumSerializer(Serializer):
     @staticmethod
     def canSerialize(type_) -> bool:
-        return issubclass(type_, enum.Enum)
+        return issubclass(type_, enum.Enum) if isinstance(type_, type) else False
 
     @staticmethod
     def create(type_):
