@@ -1325,7 +1325,7 @@ bool vtkSlicerMarkupsLogic::CopyNthControlPointToNewList(int n, vtkMRMLMarkupsNo
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
+void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups(vtkStringArray* addedNodeIds/*=nullptr*/, vtkStringArray* removedNodeIds/*=nullptr*/)
 {
   if (!this->GetMRMLScene())
     {
@@ -1357,7 +1357,9 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
   // annotation fiducials that need to be converted
   for (vtkMRMLScene* scene : scenes)
     {
+    bool isMainScene = (scene == this->GetMRMLScene());
     vtkNew<vtkStringArray> hierarchyNodeIDs;
+    vtkNew<vtkCollection> orphanAnnotationFiducials; // annotation fiducials outside annotation hierarchy
     // go through all the annotation fiducials and collect their hierarchies
       {
       vtkSmartPointer<vtkCollection> annotationFiducials = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLAnnotationFiducialNode"));
@@ -1373,12 +1375,16 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
           {
           continue;
           }
+        std::string parentNodeID;
         vtkMRMLHierarchyNode *oneToOneHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(mrmlNode->GetScene(), mrmlNode->GetID());
-        if (!oneToOneHierarchyNode)
+        if (oneToOneHierarchyNode)
           {
-          continue;
+          parentNodeID = oneToOneHierarchyNode->GetParentNodeID();
           }
-        char* parentNodeID = oneToOneHierarchyNode->GetParentNodeID();
+        if (parentNodeID.empty())
+          {
+          orphanAnnotationFiducials->AddItem(mrmlNode);
+          }
         // is it not already in the list of annotation hierarchy node ids?
         vtkIdType id = hierarchyNodeIDs->LookupValue(parentNodeID);
         if (id == -1)
@@ -1401,27 +1407,47 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
     // them to markups lists
     for (int i = 0; i < hierarchyNodeIDs->GetNumberOfValues(); ++i)
       {
-      vtkMRMLNode* mrmlNode = scene->GetNodeByID(hierarchyNodeIDs->GetValue(i));
-      if (!mrmlNode)
+      std::string hierarchyNodeID = hierarchyNodeIDs->GetValue(i);
+      vtkMRMLHierarchyNode* hierarchyNode = nullptr;
+      vtkNew<vtkCollection> children;
+      std::string markupsListID;
+      if (hierarchyNodeID.empty())
         {
-        continue;
+        // Orphan annotation fiducial nodes
+        for (int i = 0; i < orphanAnnotationFiducials->GetNumberOfItems(); i++)
+          {
+          vtkObject* item = orphanAnnotationFiducials->GetItemAsObject(i);
+          children->AddItem(item);
+          }
+        // If there is only a single fiducial then use it as node name
+        std::string nodeName = "Fiducials";
+        if (orphanAnnotationFiducials->GetNumberOfItems() == 1)
+          {
+          vtkMRMLAnnotationFiducialNode* annotNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(orphanAnnotationFiducials->GetItemAsObject(0));
+          if (annotNode->GetName())
+            {
+            nodeName = annotNode->GetName();
+            }
+          }
+        markupsListID = this->AddNewFiducialNode(nodeName.c_str(), scene);
         }
-      vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(mrmlNode);
-      if (!hierarchyNode)
+      else
         {
-        continue;
+        // Annotation fiducial nodes are under a hierarchy node
+        hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(scene->GetNodeByID(hierarchyNodeID));
+        hierarchyNode->GetAssociatedChildrenNodes(children, "vtkMRMLAnnotationFiducialNode");
+        markupsListID = this->AddNewFiducialNode(hierarchyNode->GetName(), scene);
+        hierarchyNode->SetAssociatedNodeID(markupsListID.c_str());
         }
-
-      // create a markups fiducial list with this name
-      std::string markupsListID = this->AddNewFiducialNode(hierarchyNode->GetName(), scene);
       vtkMRMLMarkupsFiducialNode *markupsNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(scene->GetNodeByID(markupsListID.c_str()));
       if (!markupsNode)
         {
         continue;
         }
-      // now get the fiducials in this annotation hierarchy
-      vtkNew<vtkCollection> children;
-      hierarchyNode->GetAssociatedChildrenNodes(children, "vtkMRMLAnnotationFiducialNode");
+      if (isMainScene && addedNodeIds)
+        {
+        addedNodeIds->InsertNextValue(markupsNode->GetID());
+        }
       vtkDebugMacro("Found " << children->GetNumberOfItems() << " annotation fiducials in this hierarchy");
       for (int c = 0; c < children->GetNumberOfItems(); ++c)
         {
@@ -1482,6 +1508,10 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
           vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(annotNode->GetScene(), annotNode->GetID());
         if (oneToOneHierarchyNode)
           {
+          if (isMainScene && removedNodeIds)
+            {
+            removedNodeIds->InsertNextValue(oneToOneHierarchyNode->GetID());
+            }
           scene->RemoveNode(oneToOneHierarchyNode);
           }
 
@@ -1501,16 +1531,19 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
           scene->RemoveNode(storageNode);
           }
         // now remove the annotation node
+        if (isMainScene && removedNodeIds)
+          {
+          removedNodeIds->InsertNextValue(annotNode->GetID());
+          }
         scene->RemoveNode(annotNode);
         }
       children->RemoveAllItems();
-      hierarchyNode->SetAssociatedNodeID(markupsListID.c_str());
       }
     } // end of looping over the scene
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::ConvertAnnotationLinesROIsToMarkups()
+void vtkSlicerMarkupsLogic::ConvertAnnotationLinesROIsToMarkups(vtkStringArray* addedNodeIds/*=nullptr*/, vtkStringArray* removedNodeIds/*=nullptr*/)
 {
   if (!this->GetMRMLScene())
     {
@@ -1536,6 +1569,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationLinesROIsToMarkups()
 
   for (vtkMRMLScene* scene : scenes)
     {
+    bool isMainScene = (scene == this->GetMRMLScene());
     vtkSmartPointer<vtkCollection> annotationNodes = vtkSmartPointer<vtkCollection>::Take(
       this->GetMRMLScene()->GetNodesByClass("vtkMRMLAnnotationNode"));
     for (int annotationIndex = 0; annotationIndex < annotationNodes->GetNumberOfItems(); ++annotationIndex)
@@ -1591,6 +1625,10 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationLinesROIsToMarkups()
 
       scene->AddNode(markupsNode);
       markupsNode->CreateDefaultDisplayNodes();
+      if (isMainScene && addedNodeIds)
+        {
+        addedNodeIds->InsertNextValue(markupsNode->GetID());
+        }
 
       // Points must be specified after the markup is added to the scene because measurements require
       // unit nodes, which are retrieved from the scene.
@@ -1693,6 +1731,10 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationLinesROIsToMarkups()
       vtkSmartPointer<vtkMRMLStorageNode> storageNode = annotationNode->GetStorageNode();
 
       // Remove annotation nodes
+      if (isMainScene && removedNodeIds)
+        {
+        removedNodeIds->InsertNextValue(annotationNode->GetID());
+        }
       scene->RemoveNode(annotationNode);
       if (annotationPointDisplayNode && scene->IsNodePresent(annotationPointDisplayNode))
         {
@@ -2612,9 +2654,22 @@ char* vtkSlicerMarkupsLogic::LoadAnnotation(const char *filename, const char *na
   // turn off batch processing
   this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
 
-  this->ConvertAnnotationFiducialsToMarkups();
-  this->ConvertAnnotationLinesROIsToMarkups();
+  // Convert from legacy annotation node to markup node
+  vtkNew<vtkStringArray> addedNodeIds;
+  this->ConvertAnnotationFiducialsToMarkups(addedNodeIds);
+  this->ConvertAnnotationLinesROIsToMarkups(addedNodeIds);
   this->ConvertAnnotationHierarchyToSubjectHierarchy(this->GetMRMLScene());
+  // Return the converted node, not the old annotation node ID (that is no longer in the scene)
+  if (addedNodeIds->GetNumberOfValues() > 0)
+    {
+    // addedNodeIds is a local variable, we cannot return a string from it. Instead, we look up the node
+    // and return the pointer to its ID (that pointer remains valid after we return from this method).
+    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(addedNodeIds->GetValue(0));
+    if (node)
+      {
+      nodeID = node->GetID();
+      }
+    }
 
   return nodeID;
 }
