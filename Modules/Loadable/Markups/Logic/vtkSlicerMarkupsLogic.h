@@ -194,14 +194,20 @@ public:
   bool MoveNthControlPointToNewListAtIndex(int n, vtkMRMLMarkupsNode *markupsNode,
                                    vtkMRMLMarkupsNode *newMarkupsNode, int newIndex);
 
-  /// Searches the scene for annotation fidicual nodes, collecting a list
+  /// Searches the scene for annotation fiducial nodes, collecting a list
   /// of annotation hierarchy nodes. Then iterates through those hierarchy nodes
   /// and moves the fiducials that are under them into new markups nodes. Leaves
   /// the top level hierarchy nodes intact as they may be parents to ruler or
   /// ROIs but deletes the 1:1 hierarchy nodes.
-  void ConvertAnnotationFiducialsToMarkups();
+  /// If addedNodeIds or removedNodeIds are specified then IDs of data and hierarchy nodes
+  /// added or removed during conversion in the main scene are added to these arrays.
+  void ConvertAnnotationFiducialsToMarkups(vtkStringArray* addedNodeIds=nullptr, vtkStringArray* removedNodeIds=nullptr);
 
-  void ConvertAnnotationLinesROIsToMarkups();
+  /// Searches the scene for annotation ruler and ROI nodes and converts each to
+  /// markup line or ROI node.
+  /// If addedNodeIds or removedNodeIds are specified then IDs of data and hierarchy nodes
+  /// added or removed during conversion in the main scene are added to these arrays.
+  void ConvertAnnotationLinesROIsToMarkups(vtkStringArray* addedNodeIds=nullptr, vtkStringArray* removedNodeIds=nullptr);
 
   void ConvertAnnotationHierarchyToSubjectHierarchy(vtkMRMLScene* scene);
 

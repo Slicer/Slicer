@@ -90,8 +90,7 @@ QStringList qSlicerMarkupsReader::extensions()const
   return QStringList()
     << "Markups (*.mrk.json)"
     << "Markups (*.json)"
-    << "Markups Fiducials (*.fcsv)"
-    << "Annotation Fiducial (*.acsv)";
+    << "Markups Fiducials (*.fcsv)";
 }
 
 //-----------------------------------------------------------------------------
