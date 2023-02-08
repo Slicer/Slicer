@@ -2,21 +2,22 @@ from slicer.util import TESTING_DATA_URL
 import os
 import numpy as np
 
+
 def verifyArrays(pointData, arrayNames):
-  """
-  Utility function that verify arrays in a point data object. The array names are given as a list of strings.
-  Return True if arrays match, otherwise throw exception.
-  """
-  if not pointData:
-    raise Exception("Invalid point data given for verifying scalar arrays")
-  if pointData.GetNumberOfArrays() != len(arrayNames):
-    raise Exception(f"Unexpected number of data arrays: {pointData.GetNumberOfArrays()} (expected {arrayNames})")
-  elif pointData.GetNumberOfArrays() == 0 and len(arrayNames) == 0:
-    return True
-  for arrIdx in range(pointData.GetNumberOfArrays()):
-    if pointData.GetArrayName(arrIdx) != arrayNames[arrIdx]:
-      raise Exception(f"Unexpected data array name at index {arrIdx}: {pointData.GetArrayName(arrIdx)} (expected {arrayNames})")
-  return True
+    """
+    Utility function that verify arrays in a point data object. The array names are given as a list of strings.
+    If there is a mismatch then a RuntimeError exception is raised.
+    """
+    if not pointData:
+        raise RuntimeError("Invalid point data given for verifying scalar arrays")
+    if pointData.GetNumberOfArrays() != len(arrayNames):
+        raise RuntimeError(f"Unexpected number of data arrays: {pointData.GetNumberOfArrays()} (expected {arrayNames})")
+    elif pointData.GetNumberOfArrays() == 0 and len(arrayNames) == 0:
+        return
+    for arrIdx in range(pointData.GetNumberOfArrays()):
+        if pointData.GetArrayName(arrIdx) != arrayNames[arrIdx]:
+            raise RuntimeError(f"Unexpected data array name at index {arrIdx}: {pointData.GetArrayName(arrIdx)} (expected {arrayNames})")
+
 
 #
 # Test curvature computation for curve markups
