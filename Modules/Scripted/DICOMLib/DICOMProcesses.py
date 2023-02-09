@@ -418,8 +418,10 @@ class DICOMSender(DICOMProcess):
     def __del__(self):
         super().__del__()
 
-    def defaultProgressCallback(self, s):
+    @staticmethod
+    def defaultProgressCallback(s):
         logging.debug(s)
+        return True
 
     def send(self):
         self.progressCallback("Starting send to %s using self.protocol" % self.destinationUrl.toString())
