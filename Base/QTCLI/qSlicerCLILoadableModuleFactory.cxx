@@ -108,8 +108,8 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
       }
     else
       {
-      this->appendInstantiateErrorString(QString("CLI description: %1").arg(xmlFilePath));
-      this->appendInstantiateErrorString("Failed to read Xml Description");
+      this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI description: %1").arg(xmlFilePath));
+      this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to read XML Description"));
       return nullptr;
       }
     // Set callback to allow lazy loading of target symbols.
@@ -154,8 +154,8 @@ QString qSlicerCLILoadableModuleFactoryItem::resolveXMLModuleDescriptionSymbol()
 
   if (!xmlDescription)
     {
-    this->appendInstantiateErrorString(QString("CLI loadable: %1").arg(this->path()));
-    this->appendInstantiateErrorString("Failed to retrieve Xml Description");
+    this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI loadable: %1").arg(this->path()));
+    this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to retrieve XML Description"));
     return QString();
     }
   return QString(xmlDescription);
@@ -172,8 +172,8 @@ bool qSlicerCLILoadableModuleFactoryItem::resolveSymbols(ModuleDescription& desc
 
   if (!moduleEntryPoint)
     {
-    this->appendInstantiateErrorString(QString("CLI loadable: %1").arg(this->path()));
-    this->appendInstantiateErrorString("Failed to retrieve Module Entry Point");
+    this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI loadable: %1").arg(this->path()));
+    this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to retrieve Module Entry Point"));
     return false;
     }
 
@@ -233,7 +233,7 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
         }
       else
         {
-        item->appendLoadErrorString(QString("Failed to resolve expected symbol '%1'").arg(symbol));
+        item->appendLoadErrorString(qSlicerCLIModule::tr("Failed to resolve expected symbol '%1'").arg(symbol));
         }
       }
     if (resolvedSymbols.count() == 4)

@@ -85,7 +85,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
       if (python_path.isEmpty())
         {
         this->appendInstantiateErrorString(
-          QString("Failed to find python interpreter for CLI: %1").arg(this->path()));
+          qSlicerCLIModule::tr("Failed to find python interpreter for CLI: %1").arg(this->path()));
         return nullptr;
         }
 
@@ -110,8 +110,8 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
       }
     else
       {
-      this->appendInstantiateErrorString(QString("CLI description: %1").arg(xmlFilePath));
-      this->appendInstantiateErrorString("Failed to read Xml Description");
+      this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI description: %1").arg(xmlFilePath));
+      this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to read XML Description"));
       }
     }
   else
@@ -148,35 +148,35 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
   bool res = cli.waitForFinished(cliProcessTimeoutInMs);
   if (!res)
     {
-    this->appendInstantiateErrorString(QString("CLI executable: %1").arg(this->path()));
+    this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
     QString errorString;
     switch(cli.error())
       {
       case QProcess::FailedToStart:
-        errorString = QLatin1String(
+        errorString = qSlicerCLIModule::tr(
               "The process failed to start. Either the invoked program is missing, or "
               "you may have insufficient permissions to invoke the program.");
         break;
       case QProcess::Crashed:
-        errorString = QLatin1String(
+        errorString = qSlicerCLIModule::tr(
               "The process crashed some time after starting successfully.");
         break;
       case QProcess::Timedout:
-        errorString = QString(
+        errorString = qSlicerCLIModule::tr(
               "The process timed out after %1 msecs.").arg(cliProcessTimeoutInMs);
         break;
       case QProcess::WriteError:
-        errorString = QLatin1String(
+        errorString = qSlicerCLIModule::tr(
               "An error occurred when attempting to read from the process. "
               "For example, the process may not be running.");
         break;
       case QProcess::ReadError:
-        errorString = QLatin1String(
+        errorString = qSlicerCLIModule::tr(
               "An error occurred when attempting to read from the process. "
               "For example, the process may not be running.");
         break;
       case QProcess::UnknownError:
-        errorString = QLatin1String(
+        errorString = qSlicerCLIModule::tr(
               "Failed to execute process. An unknown error occurred.");
         break;
       }
@@ -186,7 +186,7 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
   QString errors = cli.readAllStandardError();
   if (!errors.isEmpty())
     {
-    this->appendInstantiateErrorString(QString("CLI executable: %1").arg(this->path()));
+    this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
     this->appendInstantiateErrorString(errors);
     // TODO: More investigation for the following behavior:
     // on my machine (Ubuntu 10.04 with ITKv4), having standard error trims the
@@ -198,15 +198,15 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
   QString xmlDescription = cli.readAllStandardOutput();
   if (xmlDescription.isEmpty())
     {
-    this->appendInstantiateErrorString(QString("CLI executable: %1").arg(this->path()));
-    this->appendInstantiateErrorString("Failed to retrieve Xml Description");
+    this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
+    this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to retrieve XML Description"));
     return QString();
     }
   if (!xmlDescription.startsWith("<?xml"))
     {
-    this->appendInstantiateWarningString(QString("CLI executable: %1").arg(this->path()));
-    this->appendInstantiateWarningString(QLatin1String("XML description doesn't start right away."));
-    this->appendInstantiateWarningString(QString("Output before '<?xml' is [%1]").arg(
+    this->appendInstantiateWarningString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
+    this->appendInstantiateWarningString(qSlicerCLIModule::tr("XML description doesn't start right away."));
+    this->appendInstantiateWarningString(qSlicerCLIModule::tr("Output before '<?xml' is [%1]").arg(
                                            xmlDescription.mid(0, xmlDescription.indexOf("<?xml"))));
     xmlDescription.remove(0, xmlDescription.indexOf("<?xml"));
     }
