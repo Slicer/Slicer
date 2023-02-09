@@ -94,7 +94,7 @@ public:
   void setMaximum(double max);
   ///
   /// Utility function that set min/max in once
-  void setRange(double min, double max);
+  Q_INVOKABLE void setRange(double min, double max);
 
   ///
   /// Set the visibility property of the minimum QSpinBox and maximum QSpinBox.
@@ -119,7 +119,7 @@ public:
 
   ///
   /// Return the current MRML node of interest
-  vtkMRMLTransformNode* mrmlTransformNode()const;
+  Q_INVOKABLE vtkMRMLTransformNode* mrmlTransformNode()const;
 
 signals:
   ///
