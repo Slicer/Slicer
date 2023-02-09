@@ -483,13 +483,10 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
     }
   if (!validSelection)
     {
-    QString message = tr("Data to export need to be under a study item with a parent patient.\n"
-                              "Default patient and study will be created and the selected data and its related datasets "
-                              "will be moved in it for export.\n\n"
-                              "If you'd like to create the hierarchy manually, please click Cancel, "
-                              "then create a patient by right-clicking the empty area in Subject hierarchy in the Data module "
-                              "and choosing 'Create new subject'. Study can be similarly created under the patient. The data "
-                              "to export can be drag&dropped under the study.");
+    QString message = tr("Data to export need to be under a study item, placed under a patient item in the subject hierarchy.\n"
+      "Default patient and study will be created and the selected data and its related datasets "
+      "will be moved in it for export.\n\n"
+      "Click Cancel, to create the patient/study hierarchy manually and drag-and-drop the exportable data under the study.");
     QMessageBox::StandardButton answer =
       QMessageBox::question(nullptr, tr("Create new patient and study for DICOM export?"), message,
       QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);

@@ -239,7 +239,7 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
       }
 
     // Type
-    QString type = tr("Core");
+    QString type = tr("Unknown type");
     // Use "inherits" instead of "qobject_cast" because "qSlicerBaseQTCLI" depends on "qSlicerQTGUI"
     if (module->inherits("qSlicerScriptedLoadableModule"))
       {

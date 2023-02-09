@@ -3276,7 +3276,7 @@ void qSlicerMarkupsModuleWidget::updateImportExportWidgets()
     d->exportImportPushButton->setText("Import");
     d->exportImportPushButton->setToolTip(
       tr("Import control points coordinates and properties from table node.\n"
-      "Table column names : label, r, a, s, (or l, p, s), defined, selected, visible, locked, description."));
+      "Table column names: label, r, a, s, (or l, p, s), defined, selected, visible, locked, description."));
     }
   d->lpsExportRadioButton->setEnabled(isExport);
   d->rasExportRadioButton->setEnabled(isExport);
