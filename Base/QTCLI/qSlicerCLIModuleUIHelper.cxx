@@ -929,7 +929,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
   const std::vector< std::string > fileExtensionsStd = moduleParameter.GetFileExtensions();
   if (!fileExtensionsStd.empty())
     {
-    QString customFilter("Compatible Files (");
+    QString customFilter(qSlicerCLIModuleUIHelper::tr("Compatible Files") + " (");
     for (std::vector< std::string >::const_iterator it = fileExtensionsStd.begin();
       it != fileExtensionsStd.end(); ++it)
       {
@@ -942,7 +942,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
     customFilter.append(")");
     fileExtensions << customFilter;
     }
-  fileExtensions << QString("All Files (*.*)");
+  fileExtensions << QString(qSlicerCLIModuleUIHelper::tr("All Files") + " (*.*)");
 
   QWidget* widget = new QWidget;
   ctkPathLineEdit* pathLineEdit =
