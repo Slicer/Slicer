@@ -20,6 +20,7 @@
 // MRML includes
 #include "vtkCurveGenerator.h"
 #include "vtkCurveMeasurementsCalculator.h"
+#include "vtkEventBroker.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMeasurementLength.h"
 #include "vtkMRMLStaticMeasurement.h"
@@ -130,6 +131,8 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   lengthMeasurement->SetInputMRMLNode(this);
   this->Measurements->AddItem(lengthMeasurement);
 
+  vtkEventBroker* broker = vtkEventBroker::GetInstance();
+
   vtkNew<vtkMRMLStaticMeasurement> curvatureMeanMeasurement;
   curvatureMeanMeasurement->SetName(this->CurveMeasurementsCalculator->GetMeanCurvatureName());
   curvatureMeanMeasurement->SetEnabled(false); // Curvature calculation is off by default
@@ -143,8 +146,8 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->CurvatureMeasurementModifiedCallbackCommand = vtkCallbackCommand::New();
   this->CurvatureMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
   this->CurvatureMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified );
-  curvatureMeanMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->CurvatureMeasurementModifiedCallbackCommand);
-  curvatureMaxMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->CurvatureMeasurementModifiedCallbackCommand);
+  broker->AddObservation(curvatureMeanMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
+  broker->AddObservation(curvatureMaxMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
 
   vtkNew<vtkMRMLStaticMeasurement> torsionMeanMeasurement;
   torsionMeanMeasurement->SetName(this->CurveMeasurementsCalculator->GetMeanTorsionName());
@@ -159,8 +162,8 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->TorsionMeasurementModifiedCallbackCommand = vtkCallbackCommand::New();
   this->TorsionMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
   this->TorsionMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnTorsionMeasurementEnabledModified );
-  torsionMeanMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->TorsionMeasurementModifiedCallbackCommand);
-  torsionMaxMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->TorsionMeasurementModifiedCallbackCommand);
+  broker->AddObservation(torsionMeanMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
+  broker->AddObservation(torsionMaxMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
 }
 
 //----------------------------------------------------------------------------
@@ -223,6 +226,31 @@ void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   vtkMRMLCopyStringMacro(SurfaceDistanceWeightingFunction);
   vtkMRMLCopyFloatMacro(SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLCopyEndMacro();
+
+  // Add observers on the measurements computed by the curve measurement calculator. The measurements
+  // that were observed were removed in the base class call and need to re-add them in order to work properly.
+  vtkEventBroker* broker = vtkEventBroker::GetInstance();
+
+  for (int index = 0; index < this->Measurements->GetNumberOfItems(); ++index)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+    if ( currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanCurvatureName()
+      || currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMaxCurvatureName() )
+      {
+      if (!broker->GetObservationExist(currentMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand))
+        {
+        broker->AddObservation(currentMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
+        }
+      }
+    if ( currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanTorsionName()
+      || currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMaxTorsionName() )
+      {
+      if (!broker->GetObservationExist(currentMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand))
+        {
+        broker->AddObservation(currentMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
+        }
+      }
+    }
 }
 
 //----------------------------------------------------------------------------

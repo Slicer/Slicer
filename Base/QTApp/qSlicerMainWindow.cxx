@@ -190,7 +190,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // ModuleSelector ToolBar
   //----------------------------------------------------------------------------
   // Create a Module selector
-  this->ModuleSelectorToolBar = new qSlicerModuleSelectorToolBar("Module Selection",q);
+  this->ModuleSelectorToolBar = new qSlicerModuleSelectorToolBar(qSlicerMainWindow::tr("Module Selection"),q);
   this->ModuleSelectorToolBar->setObjectName(QString::fromUtf8("ModuleSelectorToolBar"));
   this->ModuleSelectorToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
   this->ModuleSelectorToolBar->setModuleManager(moduleManager);
@@ -300,7 +300,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 #ifdef Slicer_USE_QtTesting
   // we store this layout manager to the Object state property for QtTesting
   qSlicerApplication::application()->testingUtility()->addObjectStateProperty(
-      qSlicerApplication::application()->layoutManager(), QString("layout"));
+      qSlicerApplication::application()->layoutManager(), QString(/*no tr*/"layout"));
   qSlicerApplication::application()->testingUtility()->addObjectStateProperty(
       this->ModuleSelectorToolBar->modulesMenu(), QString("currentModule"));
 #endif
@@ -454,7 +454,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     else
       {
       ctkPythonConsole* pythonConsole = q->pythonConsole();
-      pythonConsole->setWindowTitle("Slicer Python Console");
+      pythonConsole->setWindowTitle(qSlicerMainWindow::tr("Slicer Python Console"));
       pythonConsole->resize(600, 280);
       pythonConsole->hide();
       this->PythonConsoleToggleViewAction = new QAction("", this->ViewMenu);
@@ -568,7 +568,7 @@ void qSlicerMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IO
   // Add separator and clear action
   this->RecentlyLoadedMenu->addSeparator();
   QAction * clearAction = this->RecentlyLoadedMenu->addAction(
-    "Clear History", q, SLOT(onFileRecentLoadedActionTriggered()));
+    qSlicerMainWindow::tr("Clear History"), q, SLOT(onFileRecentLoadedActionTriggered()));
   clearAction->setProperty("clearMenu", QVariant(true));
 }
 
@@ -877,7 +877,7 @@ void qSlicerMainWindow::on_ShowStatusBarAction_triggered(bool toggled)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::on_FileFavoriteModulesAction_triggered()
 {
-  qSlicerApplication::application()->openSettingsDialog("Modules");
+  qSlicerApplication::application()->openSettingsDialog(qSlicerApplication::tr("Modules"));
 }
 
 //---------------------------------------------------------------------------
@@ -999,7 +999,7 @@ void qSlicerMainWindow::on_FileCloseSceneAction_triggered()
     qSlicerCoreApplication::application()->mrmlScene()->SetURL("");
     // Set default scene file format to .mrml
     qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-    coreIOManager->setDefaultSceneFileType("MRML Scene (.mrml)");
+    coreIOManager->setDefaultSceneFileType(tr("MRML Scene") + " (.mrml)");
     }
 }
 
@@ -1388,7 +1388,7 @@ void qSlicerMainWindow::on_LoadDICOMAction_triggered()
     {
     return;
     }
-  layoutManager->setCurrentModule("DICOM");
+  layoutManager->setCurrentModule(/*no tr*/"DICOM");
 }
 
 //---------------------------------------------------------------------------

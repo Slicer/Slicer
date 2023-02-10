@@ -72,7 +72,8 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
         }
       }
 #else
-    d->CreditsTextBrowser->insertHtml("Visit the <a href=\"https://download.slicer.org/\">download site</a> to check if a new version is available.");
+    QString downloadSiteLink = QString("<a href=\"https://download.slicer.org/\">%1</a>").arg(tr("download site"));
+    d->CreditsTextBrowser->insertHtml(tr("Visit the %1 to check if a new version is available.").arg(downloadSiteLink));
     d->CreditsTextBrowser->append("");
 #endif
     d->CreditsTextBrowser->append("");
