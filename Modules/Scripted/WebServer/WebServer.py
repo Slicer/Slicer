@@ -294,8 +294,6 @@ class SlicerHTTPServer(HTTPServer):
         self.socket.settimeout(5.)
         if logMessage:
             self.logMessage = logMessage
-        self.notifiers = {}
-        self.connections = {}
         self.requestCommunicators = {}
         self.enableCORS = enableCORS
 
@@ -333,10 +331,6 @@ class SlicerHTTPServer(HTTPServer):
         def registerRequestHandler(self, handler):
             self.requestHandlers.append(handler)
             handler.logMessage = self.logMessage
-
-        def onReadableComplete(self):
-            self.logMessage("reading complete, freeing notifier")
-            self.readNotifier = None
 
         def onReadable(self, fileno):
             self.logMessage('Reading...')
@@ -461,15 +455,6 @@ class SlicerHTTPServer(HTTPServer):
                 self.writeNotifier = qt.QSocketNotifier(fileno, qt.QSocketNotifier.Write)
                 self.writeNotifier.connect('activated(int)', self.onWritable)
 
-                # free notifier after handling request
-                # https://github.com/Slicer/Slicer/issues/6823
-                qt.QTimer.singleShot(0, self.onReadableComplete)
-
-        def onWriteableComplete(self):
-            self.logMessage("writing complete, freeing notifier")
-            self.writeNotifier = None
-            self.connectionSocket = None
-
         def onWritable(self, fileno):
             self.logMessage('Sending on %d...' % (fileno))
             sendError = False
@@ -485,7 +470,6 @@ class SlicerHTTPServer(HTTPServer):
             if self.sentSoFar >= self.toSend or sendError:
                 self.writeNotifier.disconnect('activated(int)', self.onWritable)
                 self.writeNotifier.setEnabled(False)
-                qt.QTimer.singleShot(0, self.onWriteableComplete)
                 self.connectionSocket.close()
                 self.logMessage('closed fileno %d' % (fileno))
 
