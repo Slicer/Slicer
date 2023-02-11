@@ -383,7 +383,6 @@ class SlicerHTTPServer(HTTPServer):
                 self.logMessage('Got complete message of header size %d, body size %d' % (len(requestHeader), len(requestBody)))
                 self.readNotifier.disconnect('activated(int)', self.onReadable)
                 self.readNotifier.setEnabled(False)
-                qt.QTimer.singleShot(0, self.onReadableComplete)
 
                 if len(self.requestSoFar) == 0:
                     self.logMessage("Ignoring empty request")
@@ -461,6 +460,10 @@ class SlicerHTTPServer(HTTPServer):
                 fileno = self.connectionSocket.fileno()
                 self.writeNotifier = qt.QSocketNotifier(fileno, qt.QSocketNotifier.Write)
                 self.writeNotifier.connect('activated(int)', self.onWritable)
+
+                # free notifier after handling request
+                # https://github.com/Slicer/Slicer/issues/6823
+                qt.QTimer.singleShot(0, self.onReadableComplete)
 
         def onWriteableComplete(self):
             self.logMessage("writing complete, freeing notifier")
