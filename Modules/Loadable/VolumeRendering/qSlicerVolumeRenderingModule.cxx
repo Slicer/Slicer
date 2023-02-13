@@ -70,6 +70,12 @@ qSlicerVolumeRenderingModule::qSlicerVolumeRenderingModule(QObject* _parent)
 qSlicerVolumeRenderingModule::~qSlicerVolumeRenderingModule() = default;
 
 //-----------------------------------------------------------------------------
+QString qSlicerVolumeRenderingModule::title()const
+{
+  return tr("Volume Rendering");
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerVolumeRenderingModule::helpText()const
 {
   QString help = QString(

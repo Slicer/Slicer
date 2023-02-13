@@ -63,6 +63,12 @@ qSlicerVolumesModule::qSlicerVolumesModule(QObject* _parent)
 qSlicerVolumesModule::~qSlicerVolumesModule() = default;
 
 //-----------------------------------------------------------------------------
+QString qSlicerVolumesModule::title()const
+{
+  return tr("Volumes");
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerVolumesModule::helpText()const
 {
   QString help = tr(

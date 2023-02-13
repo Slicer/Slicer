@@ -58,7 +58,7 @@ public:
   explicit qSlicerSequencesModule(QObject *parent=0);
   ~qSlicerSequencesModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Sequences"));
 
   QString helpText()const override;
   QString acknowledgementText()const override;

@@ -1,7 +1,6 @@
 
 #-----------------------------------------------------------------------------
 set(MODULE_NAME Welcome)
-set(MODULE_TITLE "Welcome to Slicer")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
@@ -40,7 +39,6 @@ set(MODULE_TARGET_LIBRARIES
 #-----------------------------------------------------------------------------
 slicerMacroBuildLoadableModule(
   NAME ${MODULE_NAME}
-  TITLE ${MODULE_TITLE}
   EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
   SRCS ${MODULE_SRCS}

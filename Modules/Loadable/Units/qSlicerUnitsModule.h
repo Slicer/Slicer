@@ -44,7 +44,7 @@ public:
   explicit qSlicerUnitsModule(QObject *parent=nullptr);
   ~qSlicerUnitsModule() override;
 
-  qSlicerGetTitleMacro("Units");
+  qSlicerGetTitleMacro(tr("Units"));
 
   QString helpText()const override;
   QString acknowledgementText()const override;

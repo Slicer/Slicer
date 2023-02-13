@@ -47,7 +47,7 @@ public:
   qSlicerViewControllersModule(QObject *parent=nullptr);
   ~qSlicerViewControllersModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("View Controllers"));
 
   QStringList categories()const override;
   QIcon icon()const override;

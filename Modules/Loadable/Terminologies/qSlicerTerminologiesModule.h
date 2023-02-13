@@ -44,7 +44,7 @@ public:
   explicit qSlicerTerminologiesModule(QObject *parent=nullptr);
   ~qSlicerTerminologiesModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Terminologies"));
 
   /// Help to use the module
   QString helpText()const override;

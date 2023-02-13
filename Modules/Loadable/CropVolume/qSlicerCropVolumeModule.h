@@ -22,7 +22,7 @@ public:
   explicit qSlicerCropVolumeModule(QObject *parent=nullptr);
   ~qSlicerCropVolumeModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Crop Volume"));
 
   /// Return a custom icon for the module
   QIcon icon()const override;

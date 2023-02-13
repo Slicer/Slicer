@@ -48,7 +48,7 @@ public:
   explicit qSlicerSubjectHierarchyModule(QObject *parent=nullptr);
   ~qSlicerSubjectHierarchyModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Subject Hierarchy"));
 
   /// Help to use the module
   QString helpText()const override;

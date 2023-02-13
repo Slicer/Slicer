@@ -40,7 +40,7 @@ public:
   explicit qSlicerLoadableModuleTemplateModule(QObject *parent=0);
   ~qSlicerLoadableModuleTemplateModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("qSlicerLoadableModuleTemplateModule"));
 
   QString helpText()const override;
   QString acknowledgementText()const override;

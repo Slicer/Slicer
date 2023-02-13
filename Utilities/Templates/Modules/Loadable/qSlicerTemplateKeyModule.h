@@ -40,7 +40,7 @@ public:
   explicit qSlicerTemplateKeyModule(QObject *parent=nullptr);
   ~qSlicerTemplateKeyModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("TemplateKey"));
 
   QString helpText()const override;
   QString acknowledgementText()const override;

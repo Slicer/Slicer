@@ -45,7 +45,7 @@ public:
   qSlicerWelcomeModule(QObject *parent=nullptr);
   ~qSlicerWelcomeModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Welcome to Slicer"));
 
   QStringList categories()const override;
   QIcon icon()const override;

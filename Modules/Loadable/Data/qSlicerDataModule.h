@@ -47,7 +47,7 @@ public:
   QStringList categories()const override;
   QStringList dependencies()const override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Data"));
 
   /// Return help/acknowledgement text
   QString helpText()const override;

@@ -49,7 +49,7 @@ public:
   QIcon icon()const override;
   QStringList categories()const override;
   QStringList dependencies()const override;
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  QString title()const override;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer

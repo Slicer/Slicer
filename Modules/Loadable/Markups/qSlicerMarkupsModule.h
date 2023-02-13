@@ -53,7 +53,7 @@ public:
   explicit qSlicerMarkupsModule(QObject *parent=nullptr);
   ~qSlicerMarkupsModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Markups"));
 
   /// Help to use the module
   QString helpText()const override;
