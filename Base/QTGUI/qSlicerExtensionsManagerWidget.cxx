@@ -747,9 +747,9 @@ bool qSlicerExtensionsManagerWidget::confirmClose()
     }
 
   ctkMessageBox confirmDialog;
-  confirmDialog.setText(tr("Install/uninstall/update operations are still in progress:\n- ")
-    + pendingOperations.join("\n- ")
-    + tr("\n\nClick OK to wait for them to complete, or choose Ignore to close the Extensions Manager now."));
+  confirmDialog.setText(tr("Install/uninstall/update operations are still in progress:")
+    + "\n- " + pendingOperations.join("\n- ")
+    + "\n\n" + tr("Click OK to wait for them to complete, or choose Ignore to close the Extensions Manager now."));
   confirmDialog.setIcon(QMessageBox::Question);
   confirmDialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
   bool closeConfirmed = (confirmDialog.exec() == QMessageBox::Ignore);
