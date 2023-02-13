@@ -44,7 +44,7 @@ public:
   explicit qSlicerTablesModule(QObject *parent=nullptr);
   ~qSlicerTablesModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Tables"));
 
   QIcon icon()const override;
   QString helpText()const override;

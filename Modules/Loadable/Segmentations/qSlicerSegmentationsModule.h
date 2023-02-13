@@ -45,7 +45,7 @@ public:
   explicit qSlicerSegmentationsModule(QObject *parent=nullptr);
   ~qSlicerSegmentationsModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Segmentations"));
 
   /// Help to use the module
   QString helpText()const override;

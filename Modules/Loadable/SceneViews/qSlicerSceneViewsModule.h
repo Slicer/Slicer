@@ -37,7 +37,7 @@ public:
   /// Specify editable node types
   QStringList associatedNodeTypes()const override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Views"));
 
 public slots:
     /// a public slot to open up the scene view capture

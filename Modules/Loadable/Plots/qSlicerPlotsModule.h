@@ -44,7 +44,7 @@ public:
   explicit qSlicerPlotsModule(QObject *parent=nullptr);
   ~qSlicerPlotsModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Plots"));
 
   QIcon icon()const override;
   QString helpText()const override;

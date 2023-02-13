@@ -45,7 +45,7 @@ public:
   QStringList categories()const override;
   QIcon icon()const override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Colors"));
 
   /// Return help/acknowledgement text
   QString helpText()const override;

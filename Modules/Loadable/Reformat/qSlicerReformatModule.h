@@ -42,7 +42,7 @@ public:
   explicit qSlicerReformatModule(QObject *parent=nullptr);
   ~qSlicerReformatModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(tr("Reformat"));
 
   /// Help to use the module
   QString helpText()const override;

@@ -45,8 +45,8 @@ public:
   explicit qSlicerVolumeRenderingModule(QObject *parent=nullptr);
   ~qSlicerVolumeRenderingModule() override;
 
-  qSlicerGetTitleMacro(QTMODULE_TITLE);
-
+  /// Title of the module
+  QString title()const override;
   /// Help of the module
   QString helpText()const override;
   /// Acknowledgement for the module
