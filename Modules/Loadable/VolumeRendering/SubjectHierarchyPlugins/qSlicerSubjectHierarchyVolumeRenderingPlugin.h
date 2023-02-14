@@ -46,7 +46,7 @@ public:
 
 public:
   /// Set volume rendering module logic. Required for accessing display nodes and setting up volume rendering related nodes.
-  void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* volumeRenderingLogic);
+  Q_INVOKABLE void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* volumeRenderingLogic);
 
   /// Get visibility context menu item actions to add to tree view.
   /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
@@ -64,7 +64,7 @@ public:
 
   /// Show/hide volume rendering in a view.
   /// If viewNode is nullptr then it is displayed in all 3D views in the current layout.
-  bool showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode=nullptr);
+  Q_INVOKABLE bool showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode=nullptr);
 
 protected slots:
   /// Toggle volume rendering option for current volume item

@@ -71,6 +71,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyAbs
   /// Cannot be empty.
   /// \sa name()
   Q_PROPERTY(QString name READ name WRITE setName)
+  Q_PROPERTY(QString helpText READ helpText)
 
 public:
   typedef QObject Superclass;
@@ -97,7 +98,7 @@ public:
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, empty icon if nothing to set
-  virtual QIcon icon(vtkIdType itemID);
+  Q_INVOKABLE virtual QIcon icon(vtkIdType itemID);
 
   /// Get visibility icon for a visibility state
   Q_INVOKABLE virtual QIcon visibilityIcon(int visible);
@@ -110,7 +111,7 @@ public:
 
   /// Generate displayed name for the owned subject hierarchy item corresponding to its role.
   /// The default implementation returns the associated data node's name if any, otherwise the item name
-  virtual QString displayedItemName(vtkIdType itemID)const;
+  Q_INVOKABLE virtual QString displayedItemName(vtkIdType itemID)const;
 
   /// Generate tooltip for a owned subject hierarchy item
   Q_INVOKABLE virtual QString tooltip(vtkIdType itemID)const;
@@ -184,7 +185,7 @@ public:
   ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  virtual double canAddNodeToSubjectHierarchy(
+  Q_INVOKABLE virtual double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node, vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
   /// Add a node to subject hierarchy under a specified parent. This is basically a convenience function to
@@ -192,7 +193,7 @@ public:
   /// \param node Node to add to subject hierarchy
   /// \param parentItemID Parent item of the added node
   /// \return True if added successfully, false otherwise
-  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID);
+  Q_INVOKABLE virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID);
 
   /// Determines if a subject hierarchy item can be reparented in the hierarchy using the current plugin,
   /// and gets a confidence value for the reparented item.
@@ -202,17 +203,17 @@ public:
   /// \param parentItemID Prospective parent of the item to reparent.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item
-  virtual double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const;
+  Q_INVOKABLE virtual double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const;
 
   /// Reparent an item that was already in the subject hierarchy under a new parent.
   /// \return True if reparented successfully, false otherwise
-  virtual bool reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID);
+  Q_INVOKABLE virtual bool reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID);
 
   /// Show an item in a selected view.
   /// List of all other item IDs that will be shown in this request is also provided, as it may help
   /// in determining the optimal view setup. For example, if multiple volume nodes will be shown
   /// then the first node may be displayed as background and the second as foreground.
-  virtual bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow);
+  Q_INVOKABLE virtual bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow);
 
 // Utility functions
 public:
