@@ -56,7 +56,8 @@ public:
     IsBuiltInRole = Qt::UserRole + 1,
     IsTestingRole = Qt::UserRole + 2,
     IsHiddenRole = Qt::UserRole + 3,
-    FullTextSearchRole = Qt::UserRole + 4
+    SearchRole = Qt::UserRole + 4,
+    FullTextSearchRole = Qt::UserRole + 5
     };
 
   qSlicerModulesListViewPrivate(qSlicerModulesListView& object);
@@ -171,18 +172,25 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     QTextDocument acknowledgementTextDoc;
     acknowledgementTextDoc.setHtml(coreModule->acknowledgementText());
     QString contributors = coreModule->contributors().join(",");
-    QString searchText = QString("%1 %2 %3 %4 %5")
+    // Search text includes module name and title. Including module title is important to allow
+    // easier finding modules when using non-English GUI.
+    QString searchText = QString("%1 %2")
+      .arg(coreModule->title())
+      .arg(moduleName);
+    item->setData(searchText, qSlicerModulesListViewPrivate::SearchRole);
+    QString fullTextSearchText = QString("%1 %2 %3 %4 %5")
       .arg(coreModule->title())
       .arg(moduleName)
       .arg(helpTextDoc.toPlainText())
       .arg(acknowledgementTextDoc.toPlainText())
       .arg(contributors);
-    item->setData(searchText, qSlicerModulesListViewPrivate::FullTextSearchRole);
+    item->setData(fullTextSearchText, qSlicerModulesListViewPrivate::FullTextSearchRole);
     }
   else
     {
     item->setText(moduleName);
     item->setToolTip("");
+    item->setData(moduleName, qSlicerModulesListViewPrivate::SearchRole);
     item->setData(moduleName, qSlicerModulesListViewPrivate::FullTextSearchRole);
     }
 

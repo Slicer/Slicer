@@ -77,6 +77,9 @@ void qSlicerModuleFinderDialogPrivate::init()
   // Hide testing modules by default
   filterModel->setShowTesting(false);
 
+  // Set default search role (not full text)
+  q->setSearchInAllText(false);
+
   QObject::connect(this->SearchInAllTextCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setSearchInAllText(bool)));
   QObject::connect(this->ShowBuiltInCheckBox, SIGNAL(toggled(bool)),
@@ -382,13 +385,13 @@ void qSlicerModuleFinderDialog::setSearchInAllText(bool searchAll)
   qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
   if (searchAll)
     {
-    // qModuleListViewPrivate::FullTextSearchRole = Qt::UserRole + 4
-    filterModel->setFilterRole(Qt::UserRole + 4);
+    // qModuleListViewPrivate::FullTextSearchRole = Qt::UserRole + 5
+    filterModel->setFilterRole(Qt::UserRole + 5);
     }
   else
     {
-    // search in displayed module title
-    filterModel->setFilterRole(Qt::DisplayRole);
+    // qModuleListViewPrivate::SearchRole = Qt::UserRole + 4
+    filterModel->setFilterRole(Qt::UserRole + 4);
     }
   d->makeSelectedItemVisible();
 }
