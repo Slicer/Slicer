@@ -452,6 +452,22 @@ void qSlicerCoreApplicationPrivate::init()
 
   this->createDirectory(q->extensionsInstallPath(), "extensions"); // Make sure the path exists
 
+  this->ApplicationLocaleName = "en_US";
+  this->ApplicationLocale = QLocale(ApplicationLocale);
+#ifdef Slicer_BUILD_I18N_SUPPORT
+  if (q->userSettings()->value("Internationalization/Enabled").toBool())
+    {
+    QString localeName = q->userSettings()->value("language", this->ApplicationLocaleName).toString();
+    if (!localeName.isEmpty())
+      {
+      this->ApplicationLocaleName = localeName;
+      this->ApplicationLocale = QLocale(ApplicationLocale);
+      }
+    // We load the language selected for the application
+    qSlicerCoreApplication::loadLanguage();
+    }
+#endif
+
   // Prevent extensions manager model from displaying popups during startup (don't ask for confirmation)
   bool wasInteractive = model->interactive();
   model->setInteractive(false);
@@ -505,12 +521,6 @@ void qSlicerCoreApplicationPrivate::init()
     applicationUpdateManager->checkForUpdate();
     }
 #endif
-
-  if (q->userSettings()->value("Internationalization/Enabled").toBool())
-    {
-    // We load the language selected for the application
-    qSlicerCoreApplication::loadLanguage();
-    }
 
   // Default VTK fonts do not support Chinese characters. Allow setting custom font files from application settings.
   // Slicer core does not provide GUI to set these fonts yet, but extensions (e.g, LanguagePacks) can provide modules
@@ -2015,7 +2025,7 @@ void qSlicerCoreApplication::loadTranslations(const QString& dir)
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   Q_ASSERT(app);
 
-  QStringList qmFiles = qSlicerCoreApplicationPrivate::findTranslationFiles(dir, app->settings()->value("language").toString());
+  QStringList qmFiles = qSlicerCoreApplicationPrivate::findTranslationFiles(dir, app->applicationLocaleName());
 
   foreach(QString qmFile, qmFiles)
     {
@@ -2261,12 +2271,21 @@ QString qSlicerCoreApplication::documentationVersion() const
 // --------------------------------------------------------------------------
 QString qSlicerCoreApplication::documentationLanguage() const
 {
-  QString language = "en";
-  if (this->userSettings()->value("Internationalization/Enabled", false).toBool())
-    {
-    language = this->userSettings()->value("language", language).toString();
-    }
-  return language;
+  return this->applicationLocaleName();
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerCoreApplication::applicationLocaleName() const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->ApplicationLocaleName;
+}
+
+// --------------------------------------------------------------------------
+QLocale qSlicerCoreApplication::applicationLocale() const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->ApplicationLocale;
 }
 
 // --------------------------------------------------------------------------

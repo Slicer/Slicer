@@ -93,9 +93,11 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString revision READ revision CONSTANT)
   Q_PROPERTY(int majorVersion READ majorVersion CONSTANT)
   Q_PROPERTY(int minorVersion READ minorVersion CONSTANT)
+  Q_PROPERTY(QLocale applicationLocale READ applicationLocale CONSTANT)
+  Q_PROPERTY(QString applicationLocaleName READ applicationLocaleName CONSTANT)
   Q_PROPERTY(QString documentationBaseUrl READ documentationBaseUrl)
   Q_PROPERTY(QString documentationVersion READ documentationVersion CONSTANT)
-  Q_PROPERTY(QString documentationLanguage READ documentationLanguage)
+  Q_PROPERTY(QString documentationLanguage READ documentationLanguage CONSTANT)
   Q_PROPERTY(QString platform READ platform CONSTANT)
   Q_PROPERTY(QString arch READ arch CONSTANT)
   Q_PROPERTY(QString os READ os CONSTANT)
@@ -455,7 +457,21 @@ public:
 
   /// Return the documentation language that can be used in URLs.
   /// Returns "en" if internationalization is disabled.
+  /// Currently, it is always the same as the name of the application locale name.
+  /// \sa applicationLocaleName
   QString documentationLanguage()const;
+
+  /// Return the locale that is used for displaying localized content to users.
+  /// en_US locale is used if internationalization is disabled.
+  /// \sa applicationLocaleName, QLocale
+  QLocale applicationLocale()const;
+
+  /// Return the locale name that is used for displaying localized content to users.
+  /// en_US locale is used if internationalization is disabled.
+  /// It is different from applicationLocale in that this is just a string (so it cannot be readily
+  /// used for string formatting) and it may specify just a country code without a region.
+  /// \sa applicationLocale, QLocale
+  QString applicationLocaleName()const;
 
   /// Return the documentation base URL.
   /// By default, {documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html
