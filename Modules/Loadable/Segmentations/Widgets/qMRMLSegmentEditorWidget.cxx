@@ -1795,14 +1795,17 @@ void qMRMLSegmentEditorWidget::onMRMLSceneEndBatchProcessEvent()
     {
     return;
     }
-  if (d->ParameterSetNode->GetSegmentationNode() != d->SegmentationNodeComboBox->currentNode())
-    {
-    this->setSegmentationNode(d->SegmentationNodeComboBox->currentNode());
-    }
 
-  if (d->ParameterSetNode->GetSourceVolumeNode() != d->SourceVolumeNodeComboBox->currentNode())
+  if (d->ParameterSetNode)
     {
-    this->setSourceVolumeNode(d->SourceVolumeNodeComboBox->currentNode());
+    if (d->ParameterSetNode->GetSegmentationNode() != d->SegmentationNodeComboBox->currentNode())
+      {
+      this->setSegmentationNode(d->SegmentationNodeComboBox->currentNode());
+      }
+    if (d->ParameterSetNode->GetSourceVolumeNode() != d->SourceVolumeNodeComboBox->currentNode())
+      {
+      this->setSourceVolumeNode(d->SourceVolumeNodeComboBox->currentNode());
+      }
     }
 
   // force update (clear GUI if no node is selected anymore)
@@ -2264,7 +2267,7 @@ void qMRMLSegmentEditorWidget::onSwitchToSegmentations()
 {
   Q_D(qMRMLSegmentEditorWidget);
 
-  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
+  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode ? d->ParameterSetNode->GetSegmentationNode() : nullptr;
   if (!segmentationNode)
     {
     return;
@@ -3434,7 +3437,7 @@ void qMRMLSegmentEditorWidget::onImportExportActionClicked()
 {
   Q_D(qMRMLSegmentEditorWidget);
 
-  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
+  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode ? d->ParameterSetNode->GetSegmentationNode() : nullptr;
   if (!segmentationNode)
     {
     return;
@@ -3472,7 +3475,7 @@ void qMRMLSegmentEditorWidget::onExportToFilesActionClicked()
 {
   Q_D(qMRMLSegmentEditorWidget);
 
-  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
+  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode ? d->ParameterSetNode->GetSegmentationNode() : nullptr;
   if (!segmentationNode)
     {
     return;
