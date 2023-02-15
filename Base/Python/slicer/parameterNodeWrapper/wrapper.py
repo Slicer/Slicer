@@ -116,7 +116,7 @@ def _initMethod(self, parameterNode, prefix: Optional[str] = None):
     self._parameterGUIs = dict()
     self._nextParameterGUIsTag = 0
     self._updatingGUIFromParameterNode = False
-    for parameterInfo in self.__allParameters:
+    for parameterInfo in self.allParameters.values():
         parameter = _Parameter(parameterInfo, prefix)
         if not parameter.isIn(self.parameterNode):
             parameter.write(self.parameterNode, parameter.default.value)
@@ -130,17 +130,17 @@ def _initMethod(self, parameterNode, prefix: Optional[str] = None):
 def _checkParamName(paramNodeWrapInstanceOrClass, paramName: str):
     topname, subname = splitPossiblyDottedName(paramName)
 
-    for paramInfo in paramNodeWrapInstanceOrClass.__allParameters:
-        if paramInfo.basename == topname:
-            if subname is None:
-                return
-            else:
-                checkPackMember(unannotatedType(paramInfo.unalteredType), subname)
-                return
-    raise ValueError(f"Cannot find a param with the given name: {topname}"
-                     + "\n  Found parameters ["
-                     + "".join([f"\n    {p.basename}," for p in paramNodeWrapInstanceOrClass.__allParameters])
-                     + "\n  ]")
+    if topname in paramNodeWrapInstanceOrClass.allParameters:
+        if subname is None:
+            return
+        else:
+            checkPackMember(unannotatedType(paramNodeWrapInstanceOrClass.allParameters[topname].unalteredType),
+                            subname)
+    else:
+        raise ValueError(f"Cannot find a param with the given name: {topname}"
+                         + "\n  Found parameters ["
+                         + "".join([f"\n    {name}," for name in paramNodeWrapInstanceOrClass.allParameters.keys()])
+                         + "\n  ]")
 
 
 def _isCached(self, paramName: str):
@@ -238,19 +238,20 @@ def _makeDataTypeFunc(classvar):
     def dataType(membername):
         _checkParamName(classvar, membername)
         topname, subname = splitPossiblyDottedName(membername)
-        for param in classvar.__allParameters:
-            if param.basename == topname:
-                if subname is None:
-                    return param.unalteredType
-                else:
-                    return unannotatedType(param.unalteredType).dataType(subname)
-        raise RuntimeError(f"Name '{membername}' appeared to exist but can't find it in allParameters")
+        if topname in classvar.allParameters:
+            param = classvar.allParameters[topname]
+            if subname is None:
+                return param.unalteredType
+            else:
+                return unannotatedType(param.unalteredType).dataType(subname)
+        else:
+            raise RuntimeError(f"Name '{membername}' appeared to exist but can't find it in allParameters")
     return dataType
 
 
 def _processClass(classtype):
     members = typing.get_type_hints(classtype, include_extras=True)
-    allParameters = []
+    allParameters: dict[str, ParameterInfo] = dict()
     for name, nametype in members.items():
         membertype, annotations = splitAnnotations(nametype)
 
@@ -265,26 +266,33 @@ def _processClass(classtype):
             logging.warning(f"Unused annotations: {annotations}")
 
         parameter = ParameterInfo(name, serializer, default, nametype)
-        allParameters.append(parameter)
+        allParameters[name] = parameter
         setattr(classtype, parameter.basename, _makeProperty(parameter.basename))
 
-    setattr(classtype, "__allParameters", allParameters)
-    setattr(classtype, "_is_parameter_node_wrapper", True)
+    # don't allow them use names we are using
+    def checkedSetAttr(class_, attr, value):
+        if hasattr(class_, attr):
+            raise ValueError(f"Cannot use reserved name '{attr}' in a parameterNodeWrapper")
+        setattr(class_, attr, value)
 
+    checkedSetAttr(classtype, "allParameters", allParameters)
+    checkedSetAttr(classtype, "_is_parameter_node_wrapper", True)
+
+    # __init__ will already exist, so don't run it through the checked
     setattr(classtype, "__init__", _initMethod)
-    setattr(classtype, "default", _default)
-    setattr(classtype, "isCached", _isCached)
-    setattr(classtype, "dataType", _makeDataTypeFunc(classtype))
-    setattr(classtype, "getValue", _getValue)
-    setattr(classtype, "setValue", _setValue)
-    setattr(classtype, "connectGui", _connectGui)
-    setattr(classtype, "connectParametersToGui", _connectParametersToGui)
-    setattr(classtype, "disconnectGui", _disconnectGui)
-    setattr(classtype, "StartModify", lambda self: self.parameterNode.StartModify())
-    setattr(classtype, "EndModify", lambda self, wasModified: self.parameterNode.EndModify(wasModified))
-    setattr(classtype, "AddObserver", lambda self, event, callback, priority=0.0: self.parameterNode.AddObserver(event, callback, priority))
-    setattr(classtype, "RemoveObserver", lambda self, tag: self.parameterNode.RemoveObserver(tag))
-    setattr(classtype, "Modified", lambda self: self.parameterNode.Modified())
+    checkedSetAttr(classtype, "default", _default)
+    checkedSetAttr(classtype, "isCached", _isCached)
+    checkedSetAttr(classtype, "dataType", _makeDataTypeFunc(classtype))
+    checkedSetAttr(classtype, "getValue", _getValue)
+    checkedSetAttr(classtype, "setValue", _setValue)
+    checkedSetAttr(classtype, "connectGui", _connectGui)
+    checkedSetAttr(classtype, "connectParametersToGui", _connectParametersToGui)
+    checkedSetAttr(classtype, "disconnectGui", _disconnectGui)
+    checkedSetAttr(classtype, "StartModify", lambda self: self.parameterNode.StartModify())
+    checkedSetAttr(classtype, "EndModify", lambda self, wasModified: self.parameterNode.EndModify(wasModified))
+    checkedSetAttr(classtype, "AddObserver", lambda self, event, callback, priority=0.0: self.parameterNode.AddObserver(event, callback, priority))
+    checkedSetAttr(classtype, "RemoveObserver", lambda self, tag: self.parameterNode.RemoveObserver(tag))
+    checkedSetAttr(classtype, "Modified", lambda self: self.parameterNode.Modified())
     return classtype
 
 

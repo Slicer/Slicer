@@ -20,7 +20,6 @@ from .util import (
 
 
 __all__ = [
-    "allParameters",
     "isParameterPack",
     "nestedParameterNames",
     "parameterPack",
@@ -56,7 +55,7 @@ def _makeConcreteProperty(name: str):
 
 
 def _initMethod(self, *args, **kwargs) -> None:
-    parameters = copy.copy(self._parameterPack_allParameters)
+    parameters = copy.copy(self.allParameters)
 
     def setImpl(name, value):
         _writeValue(self, name, value)
@@ -83,7 +82,7 @@ def _eqMethod(self, other) -> bool:
     if type(self) == type(other):
         return all([
             _readValue(self, parameter.basename) == _readValue(other, parameter.basename)
-            for parameter in self._parameterPack_allParameters.values()
+            for parameter in self.allParameters.values()
         ])
     else:
         return False
@@ -99,7 +98,7 @@ def _quoteIfStr(value):
 def _strMethod(self) -> str:
     strParams = [
         f"{parameter.basename}={_quoteIfStr(_readValue(self, parameter.basename))}"
-        for parameter in self._parameterPack_allParameters.values()
+        for parameter in self.allParameters.values()
     ]
     return f"{self.__class__.__name__}({', '.join(strParams)})"
 
@@ -126,7 +125,7 @@ def _checkMember(packObjectOrClass, membername):
     if subname is None:
         return True  # if we had the topname and there is no subpart, we are done
 
-    topnameType = unannotatedType(packObjectOrClass._parameterPack_allParameters[topname].unalteredType)
+    topnameType = unannotatedType(packObjectOrClass.allParameters[topname].unalteredType)
 
     if isParameterPack(topnameType):
         return _checkMember(topnameType, subname)
@@ -159,7 +158,7 @@ def _makeDataTypeFunc(classvar):
     def dataType(membername):
         _checkTopMember(classvar, membername)
         topname, subname = splitPossiblyDottedName(membername)
-        datatype = classvar._parameterPack_allParameters[topname].unalteredType
+        datatype = classvar.allParameters[topname].unalteredType
         if subname is None:
             return datatype
         else:
@@ -171,7 +170,7 @@ def _processParameterPack(classtype):
     members = typing.get_type_hints(classtype, include_extras=True)
     if len(members) == 0:
         raise ValueError("Unable to find any members in parameterPack")
-    allParameters = dict()
+    allParameters: dict[str, ParameterInfo] = dict()
     for name, nametype in members.items():
         membertype, annotations = splitAnnotations(nametype)
 
@@ -207,20 +206,18 @@ def _processParameterPack(classtype):
     if "__repr__" not in classtype.__dict__:
         setattr(classtype, "__repr__", _strMethod)
 
-    # required to make this class work, these names are reserved
-    for reserved in ["_parameterPack_allParameters", "_is_parameterPack", "getValue", "setValue"]:
-        if reserved in classtype.__dict__:
-            raise ValueError(f"Cannot use reserved name '{reserved}' in a parameterPack")
-    setattr(classtype, "_parameterPack_allParameters", allParameters)
-    setattr(classtype, "_is_parameterPack", True)
-    setattr(classtype, "getValue", _getValue)
-    setattr(classtype, "setValue", _setValue)
-    setattr(classtype, "dataType", _makeDataTypeFunc(classtype))
+    # don't allow them use names we are using
+    def checkedSetAttr(class_, attr, value):
+        if hasattr(class_, attr):
+            raise ValueError(f"Cannot use reserved name '{attr}' in a parameterPack")
+        setattr(class_, attr, value)
+
+    checkedSetAttr(classtype, "allParameters", allParameters)
+    checkedSetAttr(classtype, "_is_parameterPack", True)
+    checkedSetAttr(classtype, "getValue", _getValue)
+    checkedSetAttr(classtype, "setValue", _setValue)
+    checkedSetAttr(classtype, "dataType", _makeDataTypeFunc(classtype))
     return classtype
-
-
-def allParameters(parameterPackClassOrInstance) -> dict[str, ParameterInfo]:
-    return parameterPackClassOrInstance._parameterPack_allParameters
 
 
 def nestedParameterNames(parameterPackClassOrInstance) -> list[str]:
@@ -228,7 +225,7 @@ def nestedParameterNames(parameterPackClassOrInstance) -> list[str]:
         parameterPackClassOrInstance = unannotatedType(parameterPackClassOrInstance)
 
     names = []
-    for paramName, info in allParameters(parameterPackClassOrInstance).items():
+    for paramName, info in parameterPackClassOrInstance.allParameters.items():
         rawDatatype = unannotatedType(info.unalteredType)
         if isParameterPack(rawDatatype):
             subNames = nestedParameterNames(rawDatatype)
@@ -351,7 +348,7 @@ class ParameterPackSerializer(Serializer):
 
     @property
     def _allParameters(self):
-        return self.type._parameterPack_allParameters
+        return self.type.allParameters
 
     def isIn(self, parameterNode, name: str) -> bool:
         parameterToCheck = next(iter(self._allParameters.values()))
