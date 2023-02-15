@@ -8,13 +8,18 @@ import slicer
 import vtk
 
 from .default import Default, extractDefault
-from .guiConnectors import GuiConnector, createGuiConnector
+from .guiConnectors import GuiConnector, createGuiConnector, _getPackNameToWidgetMap
 from .parameterInfo import ParameterInfo
 from .parameterPack import _checkMember as checkPackMember
 from .serializers import Serializer, createSerializer
 from .util import splitAnnotations, splitPossiblyDottedName, unannotatedType
 
-__all__ = ["parameterNodeWrapper", "SlicerParameterNamePropertyName"]
+__all__ = [
+    "parameterNodeWrapper",
+    "SlicerParameterNamePropertyName",
+    "findChildWidgetForParameter",
+    "isParameterNodeWrapper",
+]
 
 
 SlicerParameterNamePropertyName = "SlicerParameterName"
@@ -198,6 +203,22 @@ def _connectParametersToGui(self, mapping):
     return tag
 
 
+def findChildWidgetForParameter(widget, parameter):
+    # see if we have the full name
+    for w in widget.findChildren(qt.QWidget):
+        if w.property(SlicerParameterNamePropertyName) == parameter:
+            return w
+
+    # see if it is in a parameterPack
+    topname, subname = splitPossiblyDottedName(parameter)
+    w = findChildWidgetForParameter(widget, topname)
+    if w:
+        packNameToWidgetMap = _getPackNameToWidgetMap(w)
+        if subname in packNameToWidgetMap:
+            return packNameToWidgetMap[subname]
+    return None
+
+
 def _isWidget(obj):
     """
     For some reason (likely to do with the python wrapping)
@@ -310,6 +331,10 @@ def _processClass(classtype):
     checkedSetAttr(classtype, "RemoveObserver", lambda self, tag: self.parameterNode.RemoveObserver(tag))
     checkedSetAttr(classtype, "Modified", lambda self: self.parameterNode.Modified())
     return classtype
+
+
+def isParameterNodeWrapper(classOrObj):
+    return getattr(classOrObj, "_is_parameter_node_wrapper", False)
 
 
 def parameterNodeWrapper(classtype=None):
