@@ -415,6 +415,23 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertEqual(param2.purePosixPath, pathlib.PurePosixPath("relativePath/folder"))
         self.assertEqual(param2.pureWindowsPath, pathlib.PureWindowsPath("relativePath/folder"))
 
+    def test_default_generator(self):
+        count = 0
+
+        def nextCount():
+            nonlocal count
+            count += 1
+            return count - 1
+        
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            x: Annotated[int, Default(generator=nextCount)]
+
+        param = ParameterNodeType(newParameterNode())
+        self.assertEqual(param.x, 0)
+        param1 = ParameterNodeType(newParameterNode())
+        self.assertEqual(param1.x, 1)
+
     def test_multiple_instances_are_independent(self):
         @parameterNodeWrapper
         class ParameterNodeType:

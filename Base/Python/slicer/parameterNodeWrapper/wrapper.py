@@ -5,7 +5,7 @@ from typing import Optional
 import slicer
 import vtk
 
-from .default import extractDefault
+from .default import Default, extractDefault
 from .guiConnectors import GuiConnector, createGuiConnector
 from .parameterInfo import ParameterInfo
 from .parameterPack import _checkMember as checkPackMember
@@ -32,7 +32,7 @@ class _Parameter:
 
     def read(self, parameterNode):
         if not self.serializer.isIn(parameterNode, self.name):
-            self.serializer.write(parameterNode, self.name, self.default)
+            self.serializer.write(parameterNode, self.name, self.default.value)
         return self.serializer.read(parameterNode, self.name)
 
     def remove(self, parameterNode) -> None:
@@ -49,7 +49,7 @@ class _ParameterWrapper:
         self.parameterNode = parameterNode
 
     def default(self):
-        return self.parameter.default
+        return self.parameter.default.value
 
     def isIn(self) -> bool:
         """Whether this parameter has a value in the parameter node given to the constructor."""
@@ -119,7 +119,7 @@ def _initMethod(self, parameterNode, prefix: Optional[str] = None):
     for parameterInfo in self.__allParameters:
         parameter = _Parameter(parameterInfo, prefix)
         if not parameter.isIn(self.parameterNode):
-            parameter.write(self.parameterNode, parameter.default)
+            parameter.write(self.parameterNode, parameter.default.value)
 
         if parameter.supportsCaching():
             setattr(self, f"_{parameterInfo.basename}_impl", _CachedParameterWrapper(parameter, parameterNode))
@@ -259,14 +259,10 @@ def _processClass(classtype):
         except Exception as e:
             raise Exception(f"Unable to create serializer for {classtype} member {name}") from e
         default, annotations = extractDefault(annotations)
-        default = default.value if default is not None else serializer.default()
+        default = default if default is not None else Default(serializer.default())
 
         if annotations:
             logging.warning(f"Unused annotations: {annotations}")
-        try:
-            serializer.validate(default)
-        except Exception as e:
-            raise ValueError(f"The default parameter of '{default}' fails the validation checks:\n  {str(e)}")
 
         parameter = ParameterInfo(name, serializer, default, nametype)
         allParameters.append(parameter)
