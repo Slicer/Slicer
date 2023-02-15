@@ -257,7 +257,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             @parameterPack
             class ParameterPack:
-                _parameterPack_allParameters: int
+                allParameters: int
         with self.assertRaises(ValueError):
             @parameterPack
             class ParameterPack:
