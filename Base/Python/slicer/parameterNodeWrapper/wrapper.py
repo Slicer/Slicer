@@ -2,6 +2,8 @@ import logging
 import typing
 from typing import Optional
 
+import qt
+
 import slicer
 import vtk
 
@@ -196,12 +198,26 @@ def _connectParametersToGui(self, mapping):
     return tag
 
 
+def _isWidget(obj):
+    """
+    For some reason (likely to do with the python wrapping)
+    `isinstance(slicer.qSlicerWidget(), qt.Widget)` returns False.
+    So this is a poor replacement.
+    """
+    return getattr(obj, "isWidgetType", lambda: False)()
+
+
 def _connectGui(self, gui):
-    # go through each widget in the gui and check for our special property
     paramNameToWidget = {}
-    for widget in gui.__dict__.values():
-        if widget.property(SlicerParameterNamePropertyName):
-            paramNameToWidget[widget.property(SlicerParameterNamePropertyName)] = widget
+    if _isWidget(gui):
+        for widget in gui.findChildren(qt.QWidget):
+            if widget.property(SlicerParameterNamePropertyName):
+                paramNameToWidget[widget.property(SlicerParameterNamePropertyName)] = widget
+    else:
+        # go through each widget in the gui and check for our special property
+        for widget in gui.__dict__.values():
+            if widget.property(SlicerParameterNamePropertyName):
+                paramNameToWidget[widget.property(SlicerParameterNamePropertyName)] = widget
 
     _connectParametersToGui(self, paramNameToWidget)
 
