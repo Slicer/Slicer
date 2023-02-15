@@ -6,15 +6,28 @@ class Default:
     Annotation to denote the default value for a parameter.
     """
 
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, value=None, *, generator=None):
+        """
+        If generator is not None, it will be called each time the default is requested via the self.value
+        property.
+        Otherwise, value will be returned.
+        """
+        self._value = value
+        self._generator = generator
+
+    @property
+    def value(self):
+        if self._generator:
+            return self._generator()
+        else:
+            return self._value
 
     def __repr__(self) -> str:
-        return f"Default({self.value})"
+        return f"Default(value={self._value}, generator={self._generator})"
 
     def __eq__(self, other):
         if isinstance(other, Default):
-            return self.value == other.value
+            return self._value == other._value and self._generator == other._generator
         else:
             return False
 
