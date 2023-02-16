@@ -6,7 +6,7 @@
 api
 mrml_overview
 module_overview
-parameter_nodes
+parameter_nodes/index
 modules/index
 extensions
 python_faq
