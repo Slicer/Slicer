@@ -226,7 +226,7 @@ def _calculate_residual_sphere(parameters, x_values, y_values, z_values):
   return distance_from_centre - radius
 
 # Fit a sphere to the markups fidicual points
-markupsPositions = slicer.util.arrayFromMarkupsControlPoints(markups)
+markupsPositions = slicer.util.arrayFromMarkupsControlPoints(pointListNode)
 import numpy as np
 # initial guess
 center0 = np.mean(markupsPositions, 0)
