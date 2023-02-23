@@ -1625,7 +1625,15 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
     vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(segmentId);
     if (!segment)
       {
-      continue;
+      vtkNew<vtkSegment> newSegment;
+      newSegment->SetName(segmentId.c_str());
+      segment = newSegment;
+      if (!segmentationNode->GetSegmentation()->AddSegment(newSegment, segmentId))
+        {
+        vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: "
+          "Could not add segment");
+        return false;
+        }
       }
 
     // Clear current content of the segment (before setting new label)
