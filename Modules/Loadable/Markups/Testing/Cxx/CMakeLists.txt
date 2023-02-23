@@ -37,17 +37,31 @@ endif()
 # Include dirs
 # --------------------------------------------------------------------------
 set(KIT_TEST_INCLUDE_DIRS
-  ${vtkSlicerSceneViewsModuleLogic_SOURCE_DIR}
-  ${vtkSlicerSceneViewsModuleLogic_BINARY_DIR}
   )
+
+if(_build_scene_views_module)
+  list(APPEND KIT_TEST_INCLUDE_DIRS
+    ${vtkSlicerSceneViewsModuleLogic_SOURCE_DIR}
+    ${vtkSlicerSceneViewsModuleLogic_BINARY_DIR}
+    )
+endif()
+
+#-----------------------------------------------------------------------------
+set(KIT_TEST_TARGET_LIBRARIES
+  vtkSlicerAnnotationsModuleLogic
+  )
+
+if(_build_scene_views_module)
+  list(APPEND KIT_TEST_TARGET_LIBRARIES
+    vtkSlicerSceneViewsModuleLogic
+    )
+endif()
 
 #-----------------------------------------------------------------------------
 slicerMacroConfigureModuleCxxTestDriver(
   NAME ${KIT}
   SOURCES ${KIT_TEST_SRCS}
-  TARGET_LIBRARIES
-    vtkSlicerAnnotationsModuleLogic
-    vtkSlicerSceneViewsModuleLogic
+  TARGET_LIBRARIES ${KIT_TEST_TARGET_LIBRARIES}
   INCLUDE_DIRECTORIES ${KIT_TEST_INCLUDE_DIRS}
   WITH_VTK_DEBUG_LEAKS_CHECK
   WITH_VTK_ERROR_OUTPUT_CHECK
