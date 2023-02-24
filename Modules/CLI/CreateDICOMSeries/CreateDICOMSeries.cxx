@@ -178,6 +178,10 @@ int DoIt( int argc, char * argv[])
       rescaleType = "HU";
       }
   }
+
+  // All strings are UTF8-encoded, set the SpecificCharacterSet accordingly.
+  itk::EncapsulateMetaData<std::string>(dictionary, "0008|0005", "ISO_IR 192");
+
   itk::EncapsulateMetaData<std::string>(dictionary, "0008|0016", sopClassUID);
   itk::EncapsulateMetaData<std::string>(dictionary, "0008|0008", imageType);
   itk::EncapsulateMetaData<std::string>(dictionary, "0028|1054", rescaleType);
