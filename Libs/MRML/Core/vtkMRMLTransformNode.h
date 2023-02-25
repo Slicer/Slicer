@@ -120,22 +120,26 @@ public:
 
   ///
   /// Get concatenated transforms to world.
+  /// The method may change the PreMultiply/PostMultiply flag of the transform.
   /// \sa GetTransformBetweenNodes
   void GetTransformToWorld(vtkGeneralTransform* transformToWorld);
 
   ///
   /// Get concatenated transforms from world.
+  /// The method may change the PreMultiply/PostMultiply flag of the transform.
   /// \sa GetTransformBetweenNodes
-  void GetTransformFromWorld(vtkGeneralTransform* transformToWorld);
+  void GetTransformFromWorld(vtkGeneralTransform* transformFromWorld);
 
   ///
   /// Get concatenated transforms to the specified node.
+  /// The method may change the PreMultiply/PostMultiply flag of the transform.
   /// \sa GetTransformBetweenNodes
   void GetTransformToNode(vtkMRMLTransformNode* node,
                           vtkGeneralTransform* transformToNode);
 
   ///
   /// Get concatenated transforms from the specified node.
+  /// The method may change the PreMultiply/PostMultiply flag of the transform.
   /// \sa GetTransformBetweenNodes
   void GetTransformFromNode(vtkMRMLTransformNode* node,
                           vtkGeneralTransform* transformFromNode);
@@ -143,6 +147,7 @@ public:
   ///
   /// Get concatenated transforms from source to target node
   /// Source and target nodes are allowed to be nullptr, which means that transform is the world transform.
+  /// The method may change the PreMultiply/PostMultiply flag of the transform.
   static void GetTransformBetweenNodes(vtkMRMLTransformNode* sourceNode,
     vtkMRMLTransformNode* targetNode, vtkGeneralTransform* transformSourceToTarget);
 
