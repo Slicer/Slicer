@@ -21,6 +21,7 @@
 // Qt includes
 #include <QKeyEvent>
 #include <QPushButton>
+#include <QSettings>
 
 // Slicer includes
 #include "qSlicerAbstractCoreModule.h"
@@ -76,6 +77,15 @@ void qSlicerModuleFinderDialogPrivate::init()
   filterModel->setShowHidden(false);
   // Hide testing modules by default
   filterModel->setShowTesting(false);
+
+  // Only allow to show modules in Testing category if developer mode is enabled
+  // to not clutter the module list for regular users with tests
+  QSettings settings;
+  bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
+  if (!developerModeEnabled)
+    {
+    this->ShowTestingCheckBox->hide();
+    }
 
   // Set default search role (not full text)
   q->setSearchInAllText(false);
