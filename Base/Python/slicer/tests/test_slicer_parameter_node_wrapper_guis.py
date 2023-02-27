@@ -92,18 +92,18 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
     def test_QPushButtonToBool(self):
         self.impl_ButtonToBool(qt.QPushButton)
 
-    def impl_QSliderOrSpinBoxToIntConnector(self, widgettype):
+    def impl_QSliderOrSpinBoxToIntConnector(self, unboundedWidgetType, boundedWidgetType):
         @parameterNodeWrapper
         class ParameterNodeWrapper:
             alpha: int
             bravo: Annotated[int, Default(4), Minimum(2), Maximum(5)]
             charlie: Annotated[int, WithinRange(0, 9)]
 
-        widgetAlpha = widgettype()
+        widgetAlpha = unboundedWidgetType()
         widgetAlpha.deleteLater()
-        widgetBravo = widgettype()
+        widgetBravo = boundedWidgetType()
         widgetBravo.deleteLater()
-        widgetCharlie = widgettype()
+        widgetCharlie = boundedWidgetType()
         widgetCharlie.deleteLater()
         param = ParameterNodeWrapper(newParameterNode())
 
@@ -160,23 +160,26 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(widgetCharlie.value, 0)
 
     def test_QSliderToInt(self):
-        self.impl_QSliderOrSpinBoxToIntConnector(qt.QSlider)
+        self.impl_QSliderOrSpinBoxToIntConnector(qt.QSpinBox, qt.QSlider)
+
+        with self.assertRaises(RuntimeError):
+            self.impl_QSliderOrSpinBoxToIntConnector(qt.QSlider, qt.QSlider)
 
     def test_QSpinBoxToInt(self):
-        self.impl_QSliderOrSpinBoxToIntConnector(qt.QSpinBox)
+        self.impl_QSliderOrSpinBoxToIntConnector(qt.QSpinBox, qt.QSpinBox)
 
-    def impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(self, widgettype):
+    def impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(self, unboundedWidgetType, boundedWidgetType):
         @parameterNodeWrapper
         class ParameterNodeWrapper:
             alpha: float
             bravo: Annotated[float, Default(4.2), Minimum(2.1), Maximum(5.8)]
             charlie: Annotated[float, WithinRange(0.1, 9.5), Default(0.2)]
 
-        widgetAlpha = widgettype()
+        widgetAlpha = unboundedWidgetType()
         widgetAlpha.deleteLater()
-        widgetBravo = widgettype()
+        widgetBravo = boundedWidgetType()
         widgetBravo.deleteLater()
-        widgetCharlie = widgettype()
+        widgetCharlie = boundedWidgetType()
         widgetCharlie.deleteLater()
         param = ParameterNodeWrapper(newParameterNode())
 
@@ -233,10 +236,13 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(widgetCharlie.value, 0.1)
 
     def test_QDoubleSpinBoxToFloat(self):
-        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(qt.QDoubleSpinBox)
+        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(qt.QDoubleSpinBox, qt.QDoubleSpinBox)
 
     def test_ctkSliderWidgetToFloat(self):
-        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(ctk.ctkSliderWidget)
+        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(qt.QDoubleSpinBox, ctk.ctkSliderWidget)
+
+        with self.assertRaises(RuntimeError):
+            self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(ctk.ctkSliderWidget, ctk.ctkSliderWidget)
 
     def test_QComboBoxToStringable(self):
         @parameterNodeWrapper
@@ -721,7 +727,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         widgetDoPreprocessing.deleteLater()
         widgetStyle = qt.QComboBox()
         widgetStyle.deleteLater()
-        widgetOtherNumber = ctk.ctkSliderWidget()
+        widgetOtherNumber = qt.QDoubleSpinBox()
         widgetOtherNumber.deleteLater()
 
         # Phase 0 - connect parameterNode to GUI
