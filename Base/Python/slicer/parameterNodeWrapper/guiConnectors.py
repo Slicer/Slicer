@@ -20,6 +20,7 @@ from .util import (
 
 
 __all__ = [
+    "createGuiConnector",
     "parameterNodeGuiConnector",
     "GuiConnector",
     "SlicerPackParameterNamePropertyName",
