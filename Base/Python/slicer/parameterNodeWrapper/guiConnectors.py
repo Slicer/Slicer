@@ -222,21 +222,28 @@ class QSliderOrSpinBoxToIntConnector(GuiConnector):
         super().__init__()
         self._widget = widget
 
-        minimum = findFirstAnnotation(annotations, validators.Minimum)
-        if minimum is not None:
-            self._widget.setMinimum(minimum.minimum)
-        else:
-            # was unable to set lower than this
-            self._widget.setMinimum(-2**31)
-        maximum = findFirstAnnotation(annotations, validators.Maximum)
-        if maximum is not None:
-            self._widget.setMaximum(maximum.maximum)
-        else:
-            # was unable to set higher than this
-            self._widget.setMaximum(2**31 - 1)
         withinRange = findFirstAnnotation(annotations, validators.WithinRange)
+        minimum = findFirstAnnotation(annotations, validators.Minimum)
+        maximum = findFirstAnnotation(annotations, validators.Maximum)
+
+        isBounded = withinRange is not None or minimum is not None and maximum is not None
+
+        if isinstance(widget, qt.QSlider) and not isBounded:
+            raise RuntimeError("Cannot have a connection to ctkSliderWidget where the float types is unbounded.")
+
         if withinRange is not None:
             self._widget.setRange(withinRange.minimum, withinRange.maximum)
+        else:
+            if minimum is not None:
+                self._widget.setMinimum(minimum.minimum)
+            else:
+                # was unable to set lower than this
+                self._widget.setMinimum(-2**31)
+            if maximum is not None:
+                self._widget.setMaximum(maximum.maximum)
+            else:
+                # was unable to set higher than this
+                self._widget.setMaximum(2**31 - 1)
 
     def _connect(self):
         self._widget.valueChanged.connect(self.changed)
@@ -273,20 +280,27 @@ class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
         super().__init__()
         self._widget = widget
 
-        minimum = findFirstAnnotation(annotations, validators.Minimum)
-        if minimum is not None:
-            self._widget.minimum = minimum.minimum
-        else:
-            self._widget.minimum = float("-inf")
-        maximum = findFirstAnnotation(annotations, validators.Maximum)
-        if maximum is not None:
-            self._widget.maximum = maximum.maximum
-        else:
-            self._widget.maximum = float("inf")
         withinRange = findFirstAnnotation(annotations, validators.WithinRange)
+        minimum = findFirstAnnotation(annotations, validators.Minimum)
+        maximum = findFirstAnnotation(annotations, validators.Maximum)
+
+        isBounded = withinRange is not None or minimum is not None and maximum is not None
+
+        if isinstance(widget, ctk.ctkSliderWidget) and not isBounded:
+            raise RuntimeError("Cannot have a connection to ctkSliderWidget where the float types is unbounded.")
+
         if withinRange is not None:
             self._widget.minimum = withinRange.minimum
             self._widget.maximum = withinRange.maximum
+        else:
+            if minimum is not None:
+                self._widget.minimum = minimum.minimum
+            else:
+                self._widget.minimum = float("-inf")
+            if maximum is not None:
+                self._widget.maximum = maximum.maximum
+            else:
+                self._widget.maximum = float("inf")
 
     def _connect(self):
         self._widget.valueChanged.connect(self.changed)
