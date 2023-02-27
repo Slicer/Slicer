@@ -211,10 +211,8 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->TubeFilter->SetRadius(diameter * 0.5);
   this->ArcTubeFilter->SetRadius(diameter * 0.5);
 
-  bool lineVisibility = this->GetAllControlPointsVisible();
-
-  this->LineActor->SetVisibility(lineVisibility);
-  this->ArcActor->SetVisibility(lineVisibility && markupsNode->GetNumberOfDefinedControlPoints(true) == 3);
+  this->LineActor->SetVisibility(true);
+  this->ArcActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 3);
   this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode && this->LineActor->GetVisibility() && this->MarkupsDisplayNode->GetOccludedVisibility());
   this->ArcOccludedActor->SetVisibility(this->MarkupsDisplayNode && this->ArcActor->GetVisibility() && this->MarkupsDisplayNode->GetOccludedVisibility());
 
