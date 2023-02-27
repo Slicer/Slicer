@@ -385,13 +385,11 @@ void qSlicerModuleFinderDialog::setSearchInAllText(bool searchAll)
   qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
   if (searchAll)
     {
-    // qModuleListViewPrivate::FullTextSearchRole = Qt::UserRole + 5
-    filterModel->setFilterRole(Qt::UserRole + 5);
+    filterModel->setFilterRole(qSlicerModuleFactoryFilterModel::FullTextSearchRole);
     }
   else
     {
-    // qModuleListViewPrivate::SearchRole = Qt::UserRole + 4
-    filterModel->setFilterRole(Qt::UserRole + 4);
+    filterModel->setFilterRole(qSlicerModuleFactoryFilterModel::SearchRole);
     }
   d->makeSelectedItemVisible();
 }
