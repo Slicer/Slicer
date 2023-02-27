@@ -59,6 +59,16 @@ public:
   /// Superclass typedef
   typedef QSortFilterProxyModel Superclass;
 
+  enum ModuleFactoryUserRoles
+    {
+    ModuleNameRole = Qt::UserRole,
+    IsBuiltInRole = Qt::UserRole + 1,
+    IsTestingRole = Qt::UserRole + 2,
+    IsHiddenRole = Qt::UserRole + 3,
+    SearchRole = Qt::UserRole + 4,
+    FullTextSearchRole = Qt::UserRole + 5
+    };
+
   /// Constructor
   explicit qSlicerModuleFactoryFilterModel(QObject* parent = nullptr);
 

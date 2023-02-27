@@ -74,7 +74,7 @@ void qSlicerModuleFactoryFilterModelPrivate::decodeDataRecursive(QDataStream &st
 }
 
 // --------------------------------------------------------------------------
-// qSlicerModulesListViewPrivate methods
+// qSlicerModuleFactoryFilterModelPrivate methods
 
 // --------------------------------------------------------------------------
 qSlicerModuleFactoryFilterModelPrivate::qSlicerModuleFactoryFilterModelPrivate(qSlicerModuleFactoryFilterModel& object)
@@ -324,24 +324,21 @@ bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QMod
     }
   if (!d->ShowBuiltIn)
     {
-    // qSlicerModulesListViewPrivate::IsBuiltInRole = Qt::UserRole+1
-    if (this->sourceModel()->data(sourceIndex, Qt::UserRole+1).toBool())
+    if (this->sourceModel()->data(sourceIndex, qSlicerModuleFactoryFilterModel::IsBuiltInRole).toBool())
       {
       return false;
       }
     }
   if (!d->ShowTesting)
     {
-    // qSlicerModulesListViewPrivate::IsTestingRole = Qt::UserRole+2
-    if (this->sourceModel()->data(sourceIndex, Qt::UserRole+2).toBool())
+    if (this->sourceModel()->data(sourceIndex, qSlicerModuleFactoryFilterModel::IsTestingRole).toBool())
       {
       return false;
       }
     }
   if (!d->ShowHidden)
     {
-    // qSlicerModulesListViewPrivate::IsHiddenRole = Qt::UserRole+3
-    if (this->sourceModel()->data(sourceIndex, Qt::UserRole+3).toBool())
+    if (this->sourceModel()->data(sourceIndex, qSlicerModuleFactoryFilterModel::IsHiddenRole).toBool())
       {
       return false;
       }
