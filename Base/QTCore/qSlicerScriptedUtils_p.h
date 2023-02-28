@@ -47,6 +47,9 @@ struct _object;
 typedef _object PyObject;
 #endif
 
+// Slicer includes
+class qSlicerCorePythonManager;
+
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedUtils
 {
 
@@ -64,6 +67,12 @@ public:
   static bool setModuleAttribute(const QString& moduleName,
                                  const QString& attributeName,
                                  PyObject* attributeValue);
+
+  /// \sa qSlicerLoadableModule::importModulePythonExtensions
+  static bool importModulePythonExtensions(qSlicerCorePythonManager * pythonManager,
+                                           const QString& intDir,
+                                           const QString& modulePath,
+                                           bool isEmbedded=false);
 
 private:
   /// Not implemented

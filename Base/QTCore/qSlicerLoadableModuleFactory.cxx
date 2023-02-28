@@ -37,6 +37,59 @@
 //-----------------------------------------------------------------------------
 qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem() = default;
 
+#include "qSlicerCorePythonManager.h"
+namespace
+{
+
+//-----------------------------------------------------------------------------
+bool importModulePythonExtensions(
+    qSlicerCorePythonManager * pythonManager,
+    const QString& intDir,const QString& modulePath,
+    bool isEmbedded)
+{
+  Q_UNUSED(intDir);
+#ifdef Slicer_USE_PYTHONQT
+  if(!pythonManager)
+    {
+    return false;
+    }
+
+  QString pythonModuleDir = QFileInfo(modulePath).absoluteFilePath();
+  if (!QFileInfo(pythonModuleDir).isDir())
+    {
+    pythonModuleDir = QFileInfo(pythonModuleDir).absolutePath();
+    }
+
+  // Update current application directory, so that *PythonD modules can be loaded
+  ctkScopedCurrentDir scopedCurrentDir(pythonModuleDir);
+
+  if (!isEmbedded)
+    {
+    QStringList paths; paths << scopedCurrentDir.currentPath();
+    pythonManager->appendPythonPaths(paths);
+    }
+
+  pythonManager->executeString(QString(
+        "from slicer.util import importVTKClassesFromDirectory;"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLPython.*');"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManagerPython.*');"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleVTKWidgetsPython.*');"
+        ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
+  pythonManager->executeString(QString(
+        "from slicer.util import importQtClassesFromDirectory;"
+        "importQtClassesFromDirectory(%1, 'slicer', filematch='qSlicer*PythonQt.*');"
+        ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
+  return !pythonManager->pythonErrorOccured();
+#else
+  Q_UNUSED(isEmbedded);
+  Q_UNUSED(modulePath);
+  Q_UNUSED(pythonManager);
+  return false;
+#endif
+}
+}
+
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
 {
@@ -45,6 +98,21 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
   module->setPath(this->path());
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+
+#ifdef Slicer_USE_PYTHONQT
+  if (app && !qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    // By convention, if the module is not embedded,
+    // "<MODULEPATH>/Python" will be appended to PYTHONPATH
+    if (!importModulePythonExtensions(
+          app->corePythonManager(), app->intDir(), this->path(),
+          app->isEmbeddedModule(this->path())))
+      {
+      qWarning() << "qSlicerLoadableModule::setup - Failed to instantiate module" << module->name() << "python extensions";
+      }
+    }
+#endif
+
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
   module->setBuiltIn(qSlicerUtils::isPluginBuiltIn(this->path(), app->slicerHome(), app->revision()));
 
