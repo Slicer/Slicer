@@ -97,7 +97,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         class ParameterNodeWrapper:
             alpha: int
             bravo: Annotated[int, Default(4), Minimum(2), Maximum(5)]
-            charlie: Annotated[int, WithinRange(0, 9)]
+            charlie: Annotated[int, WithinRange(0, 9), SingleStep(9)]
 
         widgetAlpha = unboundedWidgetType()
         widgetAlpha.deleteLater()
@@ -130,6 +130,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(widgetCharlie.value, 0)
         self.assertEqual(widgetCharlie.minimum, 0)
         self.assertEqual(widgetCharlie.maximum, 9)
+        self.assertEqual(widgetCharlie.singleStep, 9)
 
         # Phase 1 - write to GUI
         widgetAlpha.value = 292
@@ -173,7 +174,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         class ParameterNodeWrapper:
             alpha: float
             bravo: Annotated[float, Default(4.2), Minimum(2.1), Maximum(5.8)]
-            charlie: Annotated[float, WithinRange(0.1, 9.5), Default(0.2)]
+            charlie: Annotated[float, WithinRange(0.1, 9.5), Default(0.2), Decimals(2), SingleStep(0.1)]
 
         widgetAlpha = unboundedWidgetType()
         widgetAlpha.deleteLater()
@@ -206,6 +207,8 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(widgetCharlie.value, 0.2)
         self.assertEqual(widgetCharlie.minimum, 0.1)
         self.assertEqual(widgetCharlie.maximum, 9.5)
+        self.assertEqual(widgetCharlie.decimals, 2)
+        self.assertEqual(widgetCharlie.singleStep, 0.1)
 
         # Phase 1 - write to GUI
         widgetAlpha.value = 2.3e565
