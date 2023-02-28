@@ -26,6 +26,9 @@
 // PythonQt includes
 #include <PythonQt.h>
 
+// CTK includes
+#include <ctkScopedCurrentDir.h>
+
 // Slicer includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCorePythonManager.h"
@@ -94,6 +97,48 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
     return false;
     }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerScriptedUtils::importModulePythonExtensions(
+    qSlicerCorePythonManager * pythonManager,
+    const QString& intDir,const QString& modulePath,
+    bool isEmbedded)
+{
+  Q_UNUSED(intDir);
+
+  if(!pythonManager)
+    {
+    return false;
+    }
+
+  QString pythonModuleDir = QFileInfo(modulePath).absoluteFilePath();
+  if (!QFileInfo(pythonModuleDir).isDir())
+    {
+    pythonModuleDir = QFileInfo(pythonModuleDir).absolutePath();
+    }
+
+  // Update current application directory, so that *PythonD modules can be loaded
+  ctkScopedCurrentDir scopedCurrentDir(pythonModuleDir);
+
+  if (!isEmbedded)
+    {
+    QStringList paths; paths << scopedCurrentDir.currentPath();
+    pythonManager->appendPythonPaths(paths);
+    }
+
+  pythonManager->executeString(QString(
+        "from slicer.util import importVTKClassesFromDirectory;"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLPython.*');"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManagerPython.*');"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleVTKWidgetsPython.*');"
+        ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
+  pythonManager->executeString(QString(
+        "from slicer.util import importQtClassesFromDirectory;"
+        "importQtClassesFromDirectory(%1, 'slicer', filematch='qSlicer*PythonQt.*');"
+        ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
+  return !pythonManager->pythonErrorOccured();
 }
 
 //-----------------------------------------------------------------------------
