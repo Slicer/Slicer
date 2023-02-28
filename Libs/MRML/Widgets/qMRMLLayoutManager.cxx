@@ -253,13 +253,19 @@ QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
   Q_ASSERT(!this->viewWidget(viewNode));
 
   qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
+
+  // Set slice logic before setting the slice node in the widget
+  // to allow displayable managers to use the slice logic during initialization
+  // For example, without this the color legend displayable manager would not be able to correctly
+  // initialize new views when switching to a new view layout that has more slice views.
+  sliceWidget->setSliceLogics(this->sliceLogics());
+  this->sliceLogics()->AddItem(sliceWidget->sliceLogic());
+
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   sliceWidget->setObjectName(QString("qMRMLSliceWidget%1").arg(viewNode->GetLayoutName()));
   // set slice node before setting the scene to allow using slice node names in the slice transform, display, and model nodes
   sliceWidget->setMRMLSliceNode(vtkMRMLSliceNode::SafeDownCast(viewNode));
   sliceWidget->setMRMLScene(this->mrmlScene());
-  sliceWidget->setSliceLogics(this->sliceLogics());
-  this->sliceLogics()->AddItem(sliceWidget->sliceLogic());
 
   return sliceWidget;
 }
