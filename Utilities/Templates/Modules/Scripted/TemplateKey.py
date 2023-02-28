@@ -13,7 +13,7 @@ from slicer.parameterNodeWrapper import (
     WithinRange,
 )
 
-from MRMLCorePython import vtkMRMLScalarVolumeNode
+from slicer import vtkMRMLScalarVolumeNode
 
 
 #

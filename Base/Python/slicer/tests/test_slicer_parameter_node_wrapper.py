@@ -8,7 +8,7 @@ import enum
 import vtk
 import slicer
 
-from MRMLCorePython import (
+from slicer import (
     vtkMRMLNode,
     vtkMRMLModelNode,
     vtkMRMLScalarVolumeNode,

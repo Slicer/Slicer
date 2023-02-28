@@ -9,7 +9,7 @@ import ctk
 import qt
 
 import slicer
-from qSlicerSubjectHierarchyModuleWidgetsPythonQt import qMRMLSubjectHierarchyTreeView
+from slicer import qMRMLSubjectHierarchyTreeView
 from . import parameterPack as pack
 from . import validators
 from .util import (

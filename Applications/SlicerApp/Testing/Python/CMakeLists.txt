@@ -298,13 +298,13 @@ slicer_add_python_unittest(
 
 slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_parameter_node_wrapper.py
-  SLICER_ARGS --no-main-window --disable-modules
+  SLICER_ARGS --no-main-window --disable-cli-modules --disable-scripted-loadable-modules
   TESTNAME_PREFIX nomainwindow_
   )
 
 slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_parameter_pack.py
-  SLICER_ARGS --no-main-window --disable-modules
+  SLICER_ARGS --no-main-window --disable-cli-modules --disable-scripted-loadable-modules
   TESTNAME_PREFIX nomainwindow_
   )
 

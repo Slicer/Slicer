@@ -35,9 +35,7 @@ MRML nodes from non-core modules are supported, but to define a `parameterNodeWr
 
 ```py
 from slicer.parameterNodeWrapper import *
-
-# Import from actual package instead of importing from "slicer"
-from vtkSlicerMarkupsModuleMRMLPython import vtkMRMLMarkupsFiducialNode
+from slicer import vtkMRMLMarkupsFiducialNode
 
 @parameterNodeWrapper
 class CustomParameterNode:
@@ -45,12 +43,8 @@ class CustomParameterNode:
   markups: list[vtkMRMLMarkupsFiducialNode]
 ```
 
-It is possible to use core MRML classes like `vtkMRMLModelNode` from the `slicer` namespace, but in these examples we've elected to get it from `MRMLCorePython` for consistency.
-
 :::{warning}
-For most uses of MRML nodes in Python code outside the `parameterNodeWrapper`, it is preferred to use `slicer.<node>` rather than `from <specific-mrml-package> import <node>` as this is more robust if MRML nodes change packages (e.g. from an extension to the core). However, as of this writing, the node classes are not guaranteed to be in the `slicer` namespace until after the application has finished loading, which is too late in the load process for type annotations at the Python module level.
-
-Changes to Slicer to allow the MRML nodes to be in the `slicer` namespace earlier are being investigated. If such changes are made, the recommendation will be to only ever get MRML nodes from the `slicer` namespace, and to not directly use packages like `MRMLCorePython` and `vtkSlicerMarkupsModuleMRMLPython`.
+For uses of MRML nodes in Python code, it is preferred to use `slicer.<node>` rather than `from <specific-mrml-package> import <node>` as this is more robust if MRML nodes change packages (e.g. from an extension to the core).
 :::
 
 ## Enum
