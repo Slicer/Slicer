@@ -1,9 +1,8 @@
 import unittest
 from typing import Annotated, Any, Union
 
-from MRMLCorePython import vtkMRMLModelNode
-
 import slicer
+from slicer import vtkMRMLModelNode
 from slicer.parameterNodeWrapper import *
 from slicer.parameterNodeWrapper.parameterPack import ParameterPackSerializer
 

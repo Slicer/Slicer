@@ -7,10 +7,13 @@ import ctk
 import qt
 
 import slicer
-from slicer.parameterNodeWrapper import *
 
-from MRMLCorePython import vtkMRMLModelNode, vtkMRMLScalarVolumeNode
-from qSlicerSubjectHierarchyModuleWidgetsPythonQt import qMRMLSubjectHierarchyTreeView
+from slicer import (
+    qMRMLSubjectHierarchyTreeView,
+    vtkMRMLModelNode,
+    vtkMRMLScalarVolumeNode,
+)
+from slicer.parameterNodeWrapper import *
 
 
 # This is a copy-paste of what is in wrapper.py on purpose.
