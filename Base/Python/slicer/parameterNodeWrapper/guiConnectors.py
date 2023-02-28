@@ -1,7 +1,9 @@
 import abc
+import dataclasses
 import enum
 import pathlib
 import logging
+from typing import Union
 
 import ctk
 import qt
@@ -24,7 +26,28 @@ __all__ = [
     "parameterNodeGuiConnector",
     "GuiConnector",
     "SlicerPackParameterNamePropertyName",
+
+    "Decimals",
+    "SingleStep",
 ]
+
+
+# Extra annotations for use
+
+@dataclasses.dataclass
+class Decimals:
+    """
+    Annotation for Qt's setDecimals methods for spinboxes and sliders.
+    """
+    value: int
+
+
+@dataclasses.dataclass
+class SingleStep:
+    """
+    Annotation for Qt's setSingleStep methods for spinboxes and sliders.
+    """
+    value: Union[float, int]
 
 
 class GuiConnector(abc.ABC):
@@ -223,6 +246,14 @@ class QSliderOrSpinBoxToIntConnector(GuiConnector):
         super().__init__()
         self._widget = widget
 
+        decimals = findFirstAnnotation(annotations, Decimals)
+        if decimals is not None:
+            self._widget.decimals = decimals.value
+
+        singleStep = findFirstAnnotation(annotations, SingleStep)
+        if singleStep is not None:
+            self._widget.singleStep = singleStep.value
+
         withinRange = findFirstAnnotation(annotations, validators.WithinRange)
         minimum = findFirstAnnotation(annotations, validators.Minimum)
         maximum = findFirstAnnotation(annotations, validators.Maximum)
@@ -280,6 +311,14 @@ class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
     def __init__(self, widget, annotations):
         super().__init__()
         self._widget = widget
+
+        decimals = findFirstAnnotation(annotations, Decimals)
+        if decimals is not None:
+            self._widget.decimals = decimals.value
+
+        singleStep = findFirstAnnotation(annotations, SingleStep)
+        if singleStep is not None:
+            self._widget.singleStep = singleStep.value
 
         withinRange = findFirstAnnotation(annotations, validators.WithinRange)
         minimum = findFirstAnnotation(annotations, validators.Minimum)
