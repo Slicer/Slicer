@@ -331,11 +331,16 @@ std::vector<vtkMRMLTableStorageNode::ColumnInfo> vtkMRMLTableStorageNode::GetCol
   // and then all the additional columns that were not mentioned in the schema (with default settings).
   std::set<std::string> columnNamesAddedBySchema;
 
+  // Maps name of column to column index.
+  // It is used for preserving the order of columns in the table.
+  std::map < std::string, int > columnOrder;
+
   // Populate the output table column details.
   // If the schema exists, read the contents and determine column data type/component names/component arrays
   bool schemaSpecified = schema != nullptr && schemaColumnNameArray != nullptr && schemaComponentNamesArray != nullptr;
   if (schemaSpecified)
     {
+    int columnIndex = -1;
     for (int schemaRowIndex = 0; schemaRowIndex < schema->GetNumberOfRows(); ++schemaRowIndex)
       {
       vtkMRMLTableStorageNode::ColumnInfo columnInfo;
@@ -355,6 +360,7 @@ std::vector<vtkMRMLTableStorageNode::ColumnInfo> vtkMRMLTableStorageNode::GetCol
           }
         componentArrays.push_back(rawColumn);
         columnNamesAddedBySchema.insert(columnInfo.ColumnName);
+        columnIndex = rawTable->GetColumnIndex(rawColumn->GetName());
         }
       else
         {
@@ -393,12 +399,22 @@ std::vector<vtkMRMLTableStorageNode::ColumnInfo> vtkMRMLTableStorageNode::GetCol
               << " component '" << componentName << "', the column is filled with default values.");
             }
           componentArrays.push_back(rawColumn);
+          int componentColumnIndex = rawTable->GetColumnIndex(rawColumn->GetName());
+          if (columnIndex < 0 || componentColumnIndex < columnIndex)
+            {
+            columnIndex = componentColumnIndex;
+            }
           columnInfo.ComponentNames.push_back(componentName);
           columnNamesAddedBySchema.insert(componentColumnName);
           }
+        columnOrder[columnInfo.ColumnName] = columnIndex;
         }
       columnInfo.RawComponentArrays = componentArrays;
       columnDetails.push_back(columnInfo);
+      if (columnIndex >= 0)
+        {
+        columnOrder[columnInfo.ColumnName] = columnIndex;
+        }
       }
     }
 
@@ -428,14 +444,20 @@ std::vector<vtkMRMLTableStorageNode::ColumnInfo> vtkMRMLTableStorageNode::GetCol
       {
       vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::GetColumnInfo",
         "Column '" << column->GetName() << "' was not found in table schema."
-        << " The column is set to default value type and appended to the end of the table.");
+        << " The column is set to default value type.");
       }
     columnInfo.ColumnName = column->GetName();
     columnInfo.ScalarType = tableNode->GetColumnValueTypeFromSchema(columnInfo.ColumnName);
     columnInfo.RawComponentArrays.push_back(column);
     columnInfo.NullValueString = tableNode->GetColumnProperty(columnInfo.ColumnName, "nullValue");
     columnDetails.push_back(columnInfo);
+    columnOrder[columnInfo.ColumnName] = rawTable->GetColumnIndex(column->GetName());
     }
+
+  std::sort(columnDetails.begin(), columnDetails.end(),
+    [&columnOrder](vtkMRMLTableStorageNode::ColumnInfo& a, vtkMRMLTableStorageNode::ColumnInfo& b)
+      { return columnOrder[a.ColumnName] < columnOrder[b.ColumnName]; });
+
   return columnDetails;
 }
 
