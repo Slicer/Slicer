@@ -209,9 +209,13 @@ Apply basic copy, clear, fill, and Boolean operations to the selected segment(s)
 Blank out inside/outside of a segment in a volume or create a binary mask. Result can be saved into a new volume or overwrite the input volume.
 This is useful for removing irrelevant details from an image (for example remove patient table; or crop the volume to arbitrary shape for volume rendering) or create masks for image processing operations (such as registration or intensity correction).
 
-- Fill inside: set all voxels of the selected volume to the specified value inside the selected segment
-- Fill outside: set all voxels of the selected volume to the specified value outside the selected segment
-- Fill inside and outside: create a binary labelmap volume as output. Most image processing operations require background (outside, ignored) region to be filled with 0 value.
+- `Operation`:
+  - `Fill inside`: set all voxels of the selected volume to the specified `Fill value` inside the selected segment
+  - `Fill outside`: set all voxels of the selected volume to the specified `Fill value` outside the selected segment
+  - `Fill inside and outside`: create a binary labelmap volume as output, filled with `Outside fill value` and `Intside fill value`. Most image processing operations require background (outside, ignored) region to be filled with 0 value.
+- `Soft edge`: if set to >0 then transition between the inside/outside the mask is gradual. The value specifies the standard deviation of the Gaussian blurring function. Larger value results in softer transition.
+- `Input volume`: voxels of this volume will be used as input for the masking. Geometry and voxel type of the output volume will be the same as this volume's.
+- `Output volume`: this volume will store the result of the masking. While it can be the same as the input volume, generally it is better to use a different output volume, because then the options can be adjusted and mask can be recomputed multiple times.
 
 ## Tips
 
