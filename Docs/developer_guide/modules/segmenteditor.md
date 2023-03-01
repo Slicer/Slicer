@@ -49,6 +49,18 @@ Common parameters must be set using `setCommonParameter` method (others can be s
 | ApplyToAllVisibleSegments | int   | no     | 0       | 0 or 1                     |
 | MarginSizeMm              | float | no     | 3.0     | <0.0 (shrink), >0.0 (grow) |
 
+### Mask volume
+
+| Parameter                  | Type    | Common | Default | Values                     |
+|----------------------------|---------|--------|---------|----------------------------|
+| FillValue                  | float   | no     | 0       | any                        |
+| BinaryMaskFillValueOutside | float   | no     | 0       | any                        |
+| BinaryMaskFillValueInside  | float   | no     | 1       | any                        |
+| Operation                  | enum    | no     | FILL_OUTSIDE | FILL_INSIDE, FILL_OUTSIDE, FILL_INSIDE_AND_OUTSIDE |
+| SoftEdgeMm                 | float   | no     | 0.0     | >=0.0                      |
+| Mask volume.InputVolume    | noderef | no     | none    | reference to volume node   |
+| Mask volume.OutputVolume   | noderef | no     | none    | reference to volume node   |
+
 ### Paint effect and Erase effect
 
 | Parameter                    | Type  | Common | Default | Values |
