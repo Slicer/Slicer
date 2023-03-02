@@ -266,12 +266,20 @@ class ObservedParameterPack:
     def __repr__(self) -> str:
         return str(self)
 
-    def __getattr__(self, name: str):
+    def _setValue(self, name: str, value):
         myValue = super().__getattribute__('_value')
-        if hasattr(myValue, name):
-            return getattr(myValue, name)
+        myValue.setValue(name, value)
+        self._save()
+
+    def __getattr__(self, name: str):
+        if name == "setValue":
+            return super().__getattribute__('_setValue')
         else:
-            raise AttributeError(f"'{str(self._serializer.type)}' has no attribute '{name}'")
+            myValue = super().__getattribute__('_value')
+            if hasattr(myValue, name):
+                return getattr(myValue, name)
+            else:
+                raise AttributeError(f"'{str(self._serializer.type)}' has no attribute '{name}'")
 
     def __setattr__(self, name: str, value) -> None:
         myValue = super().__getattribute__('_value')
