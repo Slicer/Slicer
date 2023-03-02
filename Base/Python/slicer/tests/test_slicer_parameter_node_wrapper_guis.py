@@ -230,7 +230,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         # Phase 2 - write to parameterNode
         param.alpha = -4444.4
         param.bravo = 2.1
-        param.charlie = 0.1
+        param.setValue("charlie", 0.1)
         # alpha
         self.assertEqual(param.alpha, -4444.4)
         self.assertEqual(widgetAlpha.value, -4444.4)
@@ -861,7 +861,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(ui.sub1Iterations.value, 33)
         self.assertEqual(param.pack.sub2.iterations, 4)
         self.assertEqual(ui.sub2Iterations.value, 4)
-        param.pack.sub1.description = "airplane"
+        param.pack.sub1.setValue("description", "airplane")
         self.assertEqual(param.pack.sub1.description, "airplane")
         self.assertEqual(ui.sub1Description.text, "airplane")
         self.assertEqual(param.pack.sub2.description, "hello, world")

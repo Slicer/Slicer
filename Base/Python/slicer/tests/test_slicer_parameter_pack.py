@@ -344,6 +344,26 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertEqual(pack.getValue("box"), BoundingBox(Point(-99, 8), Point(11, 10)))
         self.assertEqual(pack.getValue("box.topLeft.x"), -99)
 
+    def test_parameter_pack_getSetValue_updates(self):
+        @parameterPack
+        class ParameterPack:
+            box: BoundingBox
+            value: int
+
+        @parameterNodeWrapper
+        class ParameterNodeType:
+            pack: ParameterPack
+
+        param = ParameterNodeType(newParameterNode())
+
+        param.pack.setValue("value", 123)
+
+        self.assertEqual(param.pack.value, 123)
+
+        param.pack.setValue("box.bottomRight.x", 33)
+
+        self.assertEqual(param.pack.box.bottomRight.x, 33)
+
     def test_parameter_pack_dataType(self):
         @parameterPack
         class AnnotatedSub:
