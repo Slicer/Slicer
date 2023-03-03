@@ -83,7 +83,7 @@ for sequenceNode in sequenceNodes:
 # Create a sequence browser node for the new merged sequence
 mergedSequenceBrowserNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceBrowserNode", "Merged")
 mergedSequenceBrowserNode.AddSynchronizedSequenceNode(mergedSequenceNode)
-slicer.modules.sequencebrowser.setToolBarActiveBrowserNode(mergedSequenceBrowserNode)
+slicer.modules.sequences.toolBar().setActiveBrowserNode(mergedSequenceBrowserNode)
 # Show proxy node in slice viewers
 mergedProxyNode = mergedSequenceBrowserNode.GetProxyNode(mergedSequenceNode)
 slicer.util.setSliceViewerLayers(background=mergedProxyNode)
