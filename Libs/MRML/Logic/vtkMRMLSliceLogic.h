@@ -430,8 +430,13 @@ protected:
   /// Use background flag to choose between foreground/background layer.
   bool IsEventInsideVolume(bool background, double worldPos[3]);
 
-  /// Returns true if the volume's window/level values are editable on the GUI.
-  bool VolumeWindowLevelEditable(const char* volumeNodeID);
+  /// Deprecated. Returns true if the volume's window/level values are editable on the GUI.
+  bool VolumeWindowLevelEditable(const char* volumeNodeID)
+  {
+    vtkWarningMacro("vtkMRMLSliceLogic::VolumeWindowLevelEditable method is deprecated. Volume Window Level is always editable. Use the interaction node to check if in editing mode. "
+                    "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
+    return true;
+  };
 
   bool                        AddingSliceModelNodes;
 

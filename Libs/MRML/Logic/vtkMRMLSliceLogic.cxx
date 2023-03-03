@@ -2405,57 +2405,28 @@ int vtkMRMLSliceLogic::GetEditableLayerAtWorldPosition(double worldPos[3],
     return vtkMRMLSliceLogic::LayerNone;
     }
 
-  bool foregroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetForegroundVolumeID())
-    && foregroundVolumeEditable;
-  bool backgroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetBackgroundVolumeID())
-    && backgroundVolumeEditable;
-
-  if (!foregroundEditable && !backgroundEditable)
+  if (!foregroundVolumeEditable && !backgroundVolumeEditable)
     {
     // window/level editing is disabled on both volumes
     return vtkMRMLSliceLogic::LayerNone;
     }
   // By default adjust background volume, if available
-  bool adjustForeground = !backgroundEditable;
+  bool adjustForeground = !backgroundVolumeEditable;
 
   // If both foreground and background volumes are visible then choose adjustment of
   // foreground volume, if foreground volume is visible in current mouse position
-  if (foregroundEditable && backgroundEditable)
+  if (foregroundVolumeEditable && backgroundVolumeEditable)
     {
     adjustForeground = (sliceCompositeNode->GetForegroundOpacity() >= 0.01)
       && this->IsEventInsideVolume(true, worldPos)   // inside background (used as mask for displaying foreground)
       && this->vtkMRMLSliceLogic::IsEventInsideVolume(false, worldPos); // inside foreground
     }
 
-  return (adjustForeground ? vtkMRMLSliceLogic::LayerForeground : vtkMRMLSliceLogic::LayerBackground);
-}
+  adjustForeground = (sliceCompositeNode->GetForegroundOpacity() >= 0.01)
+    && this->IsEventInsideVolume(true, worldPos)   // inside background (used as mask for displaying foreground)
+    && this->vtkMRMLSliceLogic::IsEventInsideVolume(false, worldPos); // inside foreground
 
-//----------------------------------------------------------------------------
-bool vtkMRMLSliceLogic::VolumeWindowLevelEditable(const char* volumeNodeID)
-{
-  if (!volumeNodeID)
-    {
-    return false;
-    }
-  vtkMRMLScene *scene = this->GetMRMLScene();
-  if (!scene)
-    {
-    return false;
-    }
-  vtkMRMLVolumeNode* volumeNode =
-    vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeNodeID));
-  if (volumeNode == nullptr)
-    {
-    return false;
-    }
-  vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode =
-    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(volumeNode->GetVolumeDisplayNode());
-  if (!scalarVolumeDisplayNode)
-    {
-    return false;
-    }
-  vtkWarningMacro("vtkMRMLSliceLogic::VolumeWindowLevelEditable method is deprecated. Volume window level can always be set programmatically.");
-  return true;
+  return (adjustForeground ? vtkMRMLSliceLogic::LayerForeground : vtkMRMLSliceLogic::LayerBackground);
 }
 
 //----------------------------------------------------------------------------
