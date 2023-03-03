@@ -6,6 +6,8 @@ from .serializers import *
 from .validators import *
 from .util import (
     findFirstAnnotation,
+    getNodeTypes,
+    isNodeOrUnionOfNodes,
     splitAnnotations,
     unannotatedType,
 )

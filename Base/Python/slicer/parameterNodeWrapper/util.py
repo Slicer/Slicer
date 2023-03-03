@@ -3,7 +3,13 @@ from typing import Annotated
 
 import slicer
 
-__all__ = ["splitAnnotations", "unannotatedType", "findFirstAnnotation"]
+__all__ = [
+    "findFirstAnnotation",
+    "getNodeTypes",
+    "isNodeOrUnionOfNodes",
+    "splitAnnotations",
+    "unannotatedType",
+]
 
 
 def splitAnnotations(possiblyAnnotatedType):

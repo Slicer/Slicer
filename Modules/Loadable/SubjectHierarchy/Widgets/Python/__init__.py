@@ -3,6 +3,8 @@ import traceback
 import logging
 import sys
 
+from . import parameterNodeWrapper  # Required to ensure parameterNodeWrapper plugins are registered
+
 currentDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(currentDir)
 for fileName in os.listdir(currentDir):
