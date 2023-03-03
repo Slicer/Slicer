@@ -168,7 +168,7 @@ slicer.mrmlScene.RemoveNode(segmentModelNode)
 
 ### Create a 4D volume in Python - outside Slicer
 
-You can write a seq.nrrd file (that Slicer can load as a volume sequence) from an img numpy array of with dimensions `t`, `i`, `j`, `k` (volume index, followed by voxel coordinates). `space origin` specifies the image origin. `space directions` specify the image axis directions and spacing (spacing is the Euclidean norm of the axis vector). 
+You can write a seq.nrrd file (that Slicer can load as a volume sequence) from an img numpy array of with dimensions `t`, `i`, `j`, `k` (volume index, followed by voxel coordinates). `space origin` specifies the image origin. `space directions` specify the image axis directions and spacing (spacing is the Euclidean norm of the axis vector).
 
 Prerequisite: install [pynrrd](https://pypi.org/project/pynrrd/).
 
@@ -180,7 +180,7 @@ header = {
     'space': 'right-anterior-superior',
     'space directions': [[float('nan'), float('nan'), float('nan')], [1.953125, 0., 0.], [0., 1.953125, 0.], [0., 0., 1.953125]],
     'kinds': ['list', 'domain', 'domain', 'domain'],
-    'labels': ['frame', '', '', ''], 
+    'labels': ['frame', '', '', ''],
     'endian': 'little',
     'encoding': 'raw',
     'space origin': [-137.16099548,  -36.80649948, -309.71899414],
