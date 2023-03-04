@@ -100,7 +100,12 @@ public:
   QAction* AdjustViewAction;
   QAction* AdjustWindowLevelAction;
   QAction* PlaceWidgetAction;
+
+  /// Action represented by a QToolButton in the Markups Toolbar for toggling visibility of the advanced Markups toolbar.
   QAction* ToolBarAction;
+
+  /// Action added to the place widget menu for toggling visibility of the advanced Markups toolbar.
+  QAction* PlaceWidgetToolBarAction;
 
   QMenu* PlaceWidgetMenu;
 
