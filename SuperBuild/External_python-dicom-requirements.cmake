@@ -75,7 +75,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   retrying==1.3.4 --hash=sha256:8cc4d43cb8e1125e0ff3344e9de678fefd85db3b750b81b2240dc0183af37b35
   # [/retrying]
   # [dicomweb-client]
-  dicomweb-client==0.59.0 --hash=sha256:70a3cdae97f2ce8288e5b61baa75aa68b39da7b2712da9e248eb7b6f7f269651
+  dicomweb-client==0.59.1 --hash=sha256:ad4af95e1bdeb3691841cf8b28894fc6d9ba7ac5b7892bff70a506eedbd20d79
   # [/dicomweb-client]
   ]===])
 

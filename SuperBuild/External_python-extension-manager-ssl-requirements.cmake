@@ -37,20 +37,22 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/PyJWT]
   # [wrapt]
   # Hashes correspond to the following packages:
-  #  - wrapt-1.14.1-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - wrapt-1.14.1-cp39-cp39-macosx_11_0_arm64.whl
-  #  - wrapt-1.14.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - wrapt-1.14.1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - wrapt-1.14.1-cp39-cp39-musllinux_1_1_aarch64.whl
-  #  - wrapt-1.14.1-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - wrapt-1.14.1-cp39-cp39-win_amd64.whl
-  wrapt==1.14.1 --hash=sha256:3232822c7d98d23895ccc443bbdf57c7412c5a65996c30442ebe6ed3df335383 \
-                --hash=sha256:988635d122aaf2bdcef9e795435662bcd65b02f4f4c1ae37fbee7401c440b3a7 \
-                --hash=sha256:9cca3c2cdadb362116235fdbd411735de4328c61425b0aa9f872fd76d02c4e86 \
-                --hash=sha256:40e7bc81c9e2b2734ea4bc1aceb8a8f0ceaac7c5299bc5d69e37c44d9081d43b \
-                --hash=sha256:b9b7a708dd92306328117d8c4b62e2194d00c365f18eff11a9b53c6f923b01e3 \
-                --hash=sha256:34aa51c45f28ba7f12accd624225e2b1e5a3a45206aa191f6f9aac931d9d56fe \
-                --hash=sha256:dee60e1de1898bde3b238f18340eec6148986da0455d8ba7848d50470a7a32fb
+  #  - wrapt-1.15.0-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - wrapt-1.15.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - wrapt-1.15.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - wrapt-1.15.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - wrapt-1.15.0-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - wrapt-1.15.0-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - wrapt-1.15.0-cp39-cp39-win_amd64.whl
+  #  - wrapt-1.15.0-py3-none-any.whl
+  wrapt==1.15.0 --hash=sha256:2e51de54d4fb8fb50d6ee8327f9828306a959ae394d3e01a1ba8b2f937747d86 \
+                --hash=sha256:0970ddb69bba00670e58955f8019bec4a42d1785db3faa043c33d81de2bf843c \
+                --hash=sha256:76407ab327158c510f44ded207e2f76b657303e17cb7a572ffe2f5a8a48aa04d \
+                --hash=sha256:9d37ac69edc5614b90516807de32d08cb8e7b12260a285ee330955604ed9dd29 \
+                --hash=sha256:078e2a1a86544e644a68422f881c48b84fef6d18f8c7a957ffd3f2e0a74a0d4a \
+                --hash=sha256:7dc0713bf81287a00516ef43137273b23ee414fe41a3c14be10dd95ed98a2df9 \
+                --hash=sha256:eef4d64c650f33347c1f9266fa5ae001440b232ad9b98f1f43dfe7a79435c0a6 \
+                --hash=sha256:64b1df0f83706b4ef4cfb4fb0e4c2669100fd7ecacfb59e091fad300d4e04640
   # [/wrapt]
   # [Deprecated]
   Deprecated==1.2.13 --hash=sha256:64756e3e14c8c5eea9795d93c524551432a0be75629f8f29e67ab8caf076c76d
@@ -93,7 +95,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                 --hash=sha256:20f42270d27e1b6a29f54032090b972d97f0a1b0948cc52392041ef7831fee93
   # [/PyNaCl]
   # [PyGithub]
-  PyGithub==1.57 --hash=sha256:5822febeac2391f1306c55a99af2bc8f86c8bf82ded000030cd02c18f31b731f
+  PyGithub==1.58.0 --hash=sha256:b7bac601492a2b6c876ef326e4ffa3c1923e32707e415da76bfb8307ee8ffb7e
   # [/PyGithub]
   ]===])
 
