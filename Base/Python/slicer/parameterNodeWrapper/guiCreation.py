@@ -1,5 +1,6 @@
 import abc
 import dataclasses
+import enum
 import pathlib
 
 import ctk
@@ -108,6 +109,20 @@ class ChoiceGuiCreator(GuiCreator):
     def representationValue(datatype) -> int:
         choice = findFirstAnnotation(splitAnnotations(datatype)[1], Choice)
         if choice is not None and unannotatedType(datatype) in (int, float, str, bool):
+            return CanRepresentWithChoice
+        return CannotRepresent
+
+    @staticmethod
+    def create(datatype):
+        return qt.QComboBox()
+
+
+@parameterNodeGuiCreator
+class EnumGuiCreator(GuiCreator):
+    @staticmethod
+    def representationValue(datatype) -> int:
+        unannotated = unannotatedType(datatype)
+        if isinstance(unannotated, type) and issubclass(unannotatedType(datatype), enum.Enum):
             return CanRepresentWithChoice
         return CannotRepresent
 
