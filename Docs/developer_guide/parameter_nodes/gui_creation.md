@@ -45,6 +45,7 @@ The `createGui` methods takes a (possibly annotated) type as input and returns a
 | float |  | QDoubleSpinBox |
 | bool | | QCheckBox |
 | str | | QLineEdit |
+| enum.Enum | | QComboBox |
 | pathlib.\[Path, PosixPath, WindowsPath,<br>&emsp;PurePath, PurePosixPath, PureWindowsPath] | | ctkPathLineEdit |
 | vtkMRMLNode<br>&emsp;(including subclasses and a typing.Union of nodes) | | qMRMLComboBox |
 | parameterPack | | qSlicerWidget* that is a QFormLayout with the name and appropriate GUI for each parameter in the pack |
