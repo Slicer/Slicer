@@ -34,16 +34,16 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/nose]
   # [numpy]
   # Hashes correspond to the following packages:
-  #  - numpy-1.24.1-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - numpy-1.24.1-cp39-cp39-macosx_11_0_arm64.whl
-  #  - numpy-1.24.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - numpy-1.24.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - numpy-1.24.1-cp39-cp39-win_amd64.whl
-  numpy==1.24.1 --hash=sha256:28bc9750ae1f75264ee0f10561709b1462d450a4808cd97c013046073ae64ab6 \
-                --hash=sha256:84e789a085aabef2f36c0515f45e459f02f570c4b4c4c108ac1179c34d475ed7 \
-                --hash=sha256:8e669fbdcdd1e945691079c2cae335f3e3a56554e06bbd45d7609a6cf568c700 \
-                --hash=sha256:ef85cf1f693c88c1fd229ccd1055570cb41cdf4875873b7728b6301f12cd05bf \
-                --hash=sha256:ddc7ab52b322eb1e40521eb422c4e0a20716c271a306860979d450decbb51b8e
+  #  - numpy-1.24.2-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - numpy-1.24.2-cp39-cp39-macosx_11_0_arm64.whl
+  #  - numpy-1.24.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - numpy-1.24.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - numpy-1.24.2-cp39-cp39-win_amd64.whl
+  numpy==1.24.2 --hash=sha256:4199e7cfc307a778f72d293372736223e39ec9ac096ff0a2e64853b866a8e18a \
+                --hash=sha256:adbdce121896fd3a17a77ab0b0b5eedf05a9834a18699db6829a64e1dfccca7f \
+                --hash=sha256:889b2cc88b837d86eda1b17008ebeb679d82875022200c6e8e4ce6cf549b7acb \
+                --hash=sha256:f64bb98ac59b3ea3bf74b02f13836eb2e24e48e0ab0145bbda646295769bd780 \
+                --hash=sha256:a77d3e1163a7770164404607b7ba3967fb49b24782a6ef85d9b5f54126cc39e5
   # [/numpy]
   ]===])
 
