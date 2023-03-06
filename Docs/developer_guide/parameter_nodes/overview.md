@@ -11,8 +11,8 @@ The parameter node wrapper allows wrapping around a `vtkMRMLScriptedModuleNode` 
 
 ```py
 import slicer
+from slicer import vtkMRMLModelNode
 from slicer.parameterNodeWrapper import *
-from MRMLCorePython import vtkMRMLModelNode
 
 @parameterNodeWrapper
 class CustomParameterNode:

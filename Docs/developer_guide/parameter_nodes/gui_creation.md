@@ -57,7 +57,7 @@ You can use the `Label` annotation to give a nicer user facing label to a parame
 
 ```py
 from typing import Annotated
-from MRMLCorePython import vtkMRMLScalarVolumeNode
+from slicer import vtkMRMLScalarVolumeNode
 from slicer.parameterNodeWrapper import (
   createGui,
   parameterNodeWrapper,
