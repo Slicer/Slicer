@@ -411,6 +411,10 @@ void qSlicerColorsModuleWidget::createColorLegend()
     }
   vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode =
     vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(d->DisplayableNode);
+  if (!colorLegendDisplayNode)
+    {
+    qWarning() << "createColorLegend: failed to add display node to scene";
+    }
 }
 
 //-----------------------------------------------------------
