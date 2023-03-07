@@ -255,7 +255,7 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
     }
 
   // Get exportables from DICOM plugins for selection
-  QMap<QString,QList<qSlicerDICOMExportable*> > exportablesByPlugin;
+  QMultiMap<QString,qSlicerDICOMExportable*> exportablesByPlugin;
   foreach (vtkIdType selectedSeriesItemID, selectedSeriesItemIDs)
     {
     PythonQt::init();
@@ -289,24 +289,16 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
         }
       exportable->setParent(this); // Take ownership to prevent destruction
       QString plugin = exportable->pluginClass();
-      if (!exportablesByPlugin.contains(plugin))
-        {
-        QList<qSlicerDICOMExportable*> firstExportableForPlugin;
-        firstExportableForPlugin.append(exportable);
-        exportablesByPlugin[plugin] = firstExportableForPlugin;
-        }
-      else
-        {
-        exportablesByPlugin[plugin].append(exportable);
-        }
+      exportablesByPlugin.insert(plugin, exportable);
     }
   }
   // Map the grouped exportables by confidence values so that the highest confidence is on top
-  QMap<double,QList<qSlicerDICOMExportable*> > exportablesByConfidence;
-  foreach(QList<qSlicerDICOMExportable*> exportablesForPlugin, exportablesByPlugin)
+  QMultiMap<double,QList<qSlicerDICOMExportable*> > exportablesByConfidence;
+  foreach(const QString& plugin, exportablesByPlugin.uniqueKeys())
     {
     // Geometric mean to emphasize larger values
     double meanConfidenceForPlugin = 0.0;
+    QList<qSlicerDICOMExportable*> exportablesForPlugin = exportablesByPlugin.values(plugin);
     foreach (qSlicerDICOMExportable* exportable, exportablesForPlugin)
       {
       meanConfidenceForPlugin += exportable->confidence();
@@ -315,11 +307,11 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
 
     // Add exportable to map with confidence as key. Confidence value is subtracted
     // from 1 so that iterating through the map automatically orders the exportables.
-    exportablesByConfidence[1.0 - meanConfidenceForPlugin] = exportablesForPlugin;
+    exportablesByConfidence.insert(1.0 - meanConfidenceForPlugin, exportablesForPlugin);
     }
 
   // Populate the exportables list widget
-  foreach (double inverseConfidence, exportablesByConfidence.keys())
+  foreach (double inverseConfidence, exportablesByConfidence.uniqueKeys())
     {
     // Get exportable lists for the confidence number (there might be equality!)
     QList<QList<qSlicerDICOMExportable*> > exportableLists = exportablesByConfidence.values(inverseConfidence);
