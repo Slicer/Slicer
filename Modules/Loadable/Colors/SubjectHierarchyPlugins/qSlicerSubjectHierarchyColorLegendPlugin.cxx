@@ -205,9 +205,7 @@ void qSlicerSubjectHierarchyColorLegendPlugin::toggleVisibilityForCurrentItem(bo
 //-----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyColorLegendPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
 {
-  Q_D(qSlicerSubjectHierarchyColorLegendPlugin);
-
-  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
+  Q_UNUSED(allItemsToShow);
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
