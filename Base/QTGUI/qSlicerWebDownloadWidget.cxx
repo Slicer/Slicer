@@ -64,28 +64,52 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
     {
     // start the download into Slicer's temp directory
     qDebug() << "Load...";
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QString fileName  = download->downloadFileName();
+#else
     QString fileName = QFileInfo(download->path()).fileName();
+#endif
     QDir directory = QDir(qSlicerCoreApplication::application()->temporaryPath());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    download->setDownloadFileName(fileName);
+    download->setDownloadDirectory(directory.absolutePath());
+#else
     download->setPath(QFileInfo(directory, fileName).absoluteFilePath());
+#endif
     }
   else if (messageBox->clickedButton() == saveButton)
     {
     qDebug() << "Save...";
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), download->path());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QString filePath = QFileInfo(download->downloadDirectory(), download->downloadFileName()).absoluteFilePath();
+#else
+    QString filePath = download->path();
+#endif
+    filePath = QFileDialog::getSaveFileName(this, tr("Save File"), filePath);
     if (filePath.isEmpty())
       {
       download->cancel();
       return;
       }
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    download->setDownloadFileName(QFileInfo(filePath).fileName());
+    download->setDownloadDirectory(QFileInfo(filePath).absoluteDir().absolutePath());
+#else
     download->setPath(filePath);
+#endif
     this->show();
   } else if (messageBox->clickedButton() == abortlButton) {
       qDebug() << "Cancel download...";
       download->cancel();
       return;
   }
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  qDebug() << "Saving to "
+           << QFileInfo(download->downloadDirectory(), download->downloadFileName()).absoluteFilePath();
+#else
 
   qDebug() << "Saving to " << download->path();
+#endif
   download->accept();
   this->show();
 
@@ -96,7 +120,11 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
   this->setLayout(layout);
 
   QLabel *label = new QLabel();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  label->setText(tr("Downloading %1").arg(download->downloadFileName()));
+#else
   label->setText(tr("Downloading %1").arg(QFileInfo(download->path()).fileName()));
+#endif
   layout->addWidget(label);
 
   QProgressBar *progressBar = new QProgressBar();
@@ -129,7 +157,11 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
     if (messageBox->clickedButton() == loadButton)
       {
       qSlicerDataDialog *dataDialog = new qSlicerDataDialog(this->parent());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+      dataDialog->addFile(QFileInfo(download->downloadDirectory(), download->downloadFileName()).absoluteFilePath());
+#else
       dataDialog->addFile(download->path());
+#endif
       dataDialog->exec();
       }
     else
