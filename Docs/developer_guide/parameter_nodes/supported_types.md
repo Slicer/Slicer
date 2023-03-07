@@ -172,3 +172,150 @@ class ParameterPack:
 
     # default __eq__, __str__, and __repr__ are generated
 ```
+
+### Parameter Packs with invariants
+
+Invariants can be added to `parameterPack`s via validators as described above. However this is only good for invariants on independent parameters (you can do something like `x: Annotated[int, Minimum(0)]`, but you can't do something like make sure parameter `x` is less than another parameter `y` with validators).
+
+More complex invariants can be enforced by making the `parameterPack` parameters private (via leading underscore convention) and then offering public accessors that enforce the invariants. While this is a little bit more work, most of the time it is still less work than making a non-`parameterPack` custom class work with the `parameterNodeWrapper`.
+
+E.g.
+
+```py
+from typing import Annotated
+from slicer.parameterNodeWrapper import (
+    parameterPack,
+    Default,
+)
+
+
+class BadDateException(ValueError):
+    pass
+
+
+@parameterPack
+class Date:
+    # Private parameters that will be written to the scene.
+    # Can still set defaults on the private parameters.
+    _month: Annotated[int, Default(1)]
+    _day: Annotated[int, Default(1)]
+    _year: Annotated[int, Default(1970)]
+
+    # A checker for the multi-parameter invariant
+    @staticmethod
+    def checkDate(month, day, year):
+        # note: this is assuming leap years don't exist and negative years are allowable
+        if month < 1 or month > 12 or day < 1 or day > 31:
+            raise BadDateException(f"Bad date: {month}/{day}/{year}")
+        if month == 2 and day > 28:
+            raise BadDateException(f"Bad date: {month}/{day}/{year}")
+        if month in (4, 6, 9, 11) and day > 30:
+            raise BadDateException(f"Bad date: {month}/{day}/{year}")
+
+    # override the __init__ function to enforce the invariant
+    def __init__(self, month=None, day=None, year=None) -> None:
+        if month is not None:
+            self._month = month
+        if day is not None:
+            self._day = day
+        if year is not None:
+            self._year = year
+        self.checkDate(self._month, self._day, self._year)
+
+    def __str__(self) -> str:
+        return f"Date(month={self.month}, day={self.day}, year={self.year})"
+
+    # Add properties that access the private parameters and enforces the invariant.
+    @property
+    def month(self):
+        return self._month
+
+    @month.setter
+    def month(self, value):
+        self.checkDate(value, self.day, self.year)
+        self._month = value
+
+    @property
+    def day(self):
+        return self._day
+
+    @day.setter
+    def day(self, value):
+        self.checkDate(self.month, value, self.year)
+        self._day = value
+
+    @property
+    def year(self):
+        return self._year
+
+    @year.setter
+    def year(self, value):
+        self._year = value
+
+    # Can even add helper functions for a nicer interface.
+    def setDate(self, month: int, day: int, year: int) -> None:
+        self.checkDate(month, day, year)
+        self._month = month
+        self._day = day
+        self._year = year
+```
+
+:::{warning}
+When trying to enforce invariants over complex classes, care needs to be taken to not allow the user to accidentally break the invariant. Consider the following code:
+
+```py
+from slicer.parameterNodeWrapper import (
+    parameterPack,
+)
+
+
+@parameterPack
+class InvariantTestPack:
+    _listA: list[int]
+    _listB: list[int]
+
+    @staticmethod
+    def checkInvariant(listA, listB):
+        if not len(listA) <= len(listB):
+            raise ValueError("Invariant failed")
+
+    def __init__(self, listA=None, listB=None) -> None:
+        if listA is not None:
+            self._listA = listA
+        if listB is not None:
+            self._listB = listB
+        self.checkInvariant(self._listA, self._listB)
+
+    @property
+    def listA(self):
+        return self._listA
+
+    @listA.setter
+    def listA(self, value):
+        self.checkInvariant(value, self.listB)
+        self._listA = value
+
+    @property
+    def listB(self):
+        return self._listB
+
+    @listB.setter
+    def listB(self, value):
+        self.checkInvariant(self.listA, value)
+        self._listB = value
+```
+
+It is very easy for the user to accidentally break the invariant
+
+```py
+pack = InvariantTestPack(listA=[], listB=[])
+
+pack.listA = [1]  # raises ValueError
+
+pack.listA.append(1)  # BAD: does not raise ValueError
+```
+
+The problem comes from the fact that giving direct access to `listA` and `listB` allows the user to change them without `InvariantTestPack`'s knowledge. This is just how Python works.
+
+This can be worked around a couple of ways. One way is to essentially flatten the methods of `list` into the `parameterPack` (e.g. `def appendListA(value) -> None`, `def getListA(index) -> int`, `def setListB(index, value) -> None`). Or if the object you are returning has observation capabilities (similar to signals from Qt or `AddObserver` from VTK) you can try to hook into those.
+:::

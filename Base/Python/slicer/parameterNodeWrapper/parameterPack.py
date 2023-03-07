@@ -1,4 +1,5 @@
 import copy
+import dataclasses
 import typing
 
 import slicer
@@ -199,6 +200,15 @@ def _processParameterPack(classtype):
     # give default methods if not already specified
     if "__init__" not in classtype.__dict__:
         setattr(classtype, "__init__", _initMethod)
+    else:
+        setattr(classtype, "_init_specified", classtype.__dict__["__init__"])
+
+        def initit(self, *args, **kwargs):
+            # start by defaulting all the items
+            _initMethod(self)
+            self._init_specified(*args, **kwargs)
+        setattr(classtype, "__init__", initit)
+
     if "__eq__" not in classtype.__dict__:
         setattr(classtype, "__eq__", _eqMethod)
     if "__str__" not in classtype.__dict__:
@@ -248,68 +258,101 @@ def parameterPack(classtype=None):
     return wrap(classtype)
 
 
-class ObservedParameterPack:
-    """
-    Class with the ability to observe any parameterPack and write on change.
-    """
-    def __init__(self, parameterNode, serializer: Serializer, name: str, startingValue):
-        # Because we are overriding __getattr__ and __setattr__ to pass through to _value
-        # we need to access this class's members directly through the super methods
-        super().__setattr__('_parameterNode', parameterNode)
-        super().__setattr__('_serializer', serializer)
-        super().__setattr__('_name', name)
-        super().__setattr__('_value', startingValue)
+@dataclasses.dataclass
+class _ObservedParameterPackValues:
+    parameterNode: slicer.vtkMRMLScriptedModuleNode
+    serializer: Serializer
+    name: str
+    saving: bool = False
+    frozen: bool = False
 
-    def __str__(self) -> str:
-        return f"Observed({str(super().__getattribute__('_value'))})"
 
-    def __repr__(self) -> str:
-        return str(self)
-
-    def _setValue(self, name: str, value):
-        myValue = super().__getattribute__('_value')
-        myValue.setValue(name, value)
+def _makeObservedProperty(superType, name: str):
+    def setter(self, value):
+        getattr(superType, name).fset(self, value)
         self._save()
 
-    def __getattr__(self, name: str):
-        if name == "setValue":
-            return super().__getattribute__('_setValue')
-        else:
-            myValue = super().__getattribute__('_value')
-            if hasattr(myValue, name):
-                return getattr(myValue, name)
-            else:
-                raise AttributeError(f"'{str(self._serializer.type)}' has no attribute '{name}'")
+    return property(
+        lambda self: getattr(superType, name).fget(self),
+        setter,
+    )
 
-    def __setattr__(self, name: str, value) -> None:
-        myValue = super().__getattribute__('_value')
-        if hasattr(myValue, name):
-            setattr(myValue, name, value)
+
+def createObservedParameterPackImpl(packType):
+    class ObservedParameterPack(packType):
+        def __init__(self,
+                     parameterNode: slicer.vtkMRMLScriptedModuleNode,
+                     serializer: Serializer,
+                     name: str,
+                     args: dict[str, typing.Any]):
+            super().__setattr__("_observedPackValues", _ObservedParameterPackValues(parameterNode, serializer, name))
+            # always want to go through the well known init interface, even if a custom init is in use
+            _initMethod(self, **args)
+            self._observedPackValues.frozen = True
+
+        # prevent new attributes from being added dynamically
+        def __setattr__(self, key, value):
+            if self._observedPackValues.frozen and not hasattr(self, key):
+                raise AttributeError(f"'ObservedParameterPack({packType.__name__})' has no attribute '{key}'"
+                                     " and attributes cannot be added dynamcially")
+            super().__setattr__(key, value)
+
+        def __str__(self) -> str:
+            strParams = [
+                f"{parameter.basename}={_quoteIfStr(_readValue(self, parameter.basename))}"
+                for parameter in self.allParameters.values()
+            ]
+            return f"Observed({packType.__name__}({', '.join(strParams)}))"
+
+        def __repr__(self) -> str:
+            return str(self)
+
+        def _save(self) -> None:
+            if not self._observedPackValues.saving:
+                try:
+                    wasSaving = self._observedPackValues.saving
+                    self._observedPackValues.saving = True
+                    serializer = self._observedPackValues.serializer
+                    parameterNode = self._observedPackValues.parameterNode
+                    name = self._observedPackValues.name
+                    with slicer.util.NodeModify(parameterNode):
+                        try:
+                            serializer.write(parameterNode, name, self)
+                        finally:
+                            # resetting the _value here helps if there are nested observed items (lists, dicts,
+                            # parameterPacks, etc)
+                            serializer.readInto(parameterNode, name, super())
+                finally:
+                    self._observedPackValues.saving = wasSaving
+
+        def setValue(self, name: str, value: typing.Any):
+            super().setValue(name, value)
             self._save()
-        else:
-            serializer = super().__getattribute__('_serializer')
-            raise AttributeError(f"'{str(serializer.type)}' has no attribute '{name}'"
-                                 " and attributes cannot be added dynamcially")
 
-    def _save(self) -> None:
-        serializer = super().__getattribute__('_serializer')
-        parameterNode = super().__getattribute__('_parameterNode')
-        name = super().__getattribute__('_name')
-        value = super().__getattribute__('_value')
-        with slicer.util.NodeModify(parameterNode):
-            try:
-                serializer.write(parameterNode, name, value)
-            finally:
-                # resetting the _value here helps if there are nested observed items (lists, dicts,
-                # parameterPacks, etc)
-                readValue = serializer.read(parameterNode, name)
-                super().__setattr__('_value', super(ObservedParameterPack, readValue).__getattribute__('_value'))
+        def __eq__(self, other) -> bool:
+            if type(self) == type(other):
+                return packType.__eq__(self, other)
+            elif packType == type(other):
+                return all([
+                    self.getValue(name) == other.getValue(name)
+                    for name in self.allParameters.keys()
+                ])
+            else:
+                return False
 
-    def __eq__(self, other) -> bool:
-        if isinstance(other, ObservedParameterPack) and self._serializer.type == other._serializer.type:
-            return super().__getattribute__('_value') == super(ObservedParameterPack, other).__getattribute__('_value')
-        else:
-            return super().__getattribute__('_value') == other
+    for paramName in packType.allParameters.keys():
+        setattr(ObservedParameterPack, paramName, _makeObservedProperty(packType, paramName))
+    return ObservedParameterPack
+
+
+_observedParameterPacks = dict()
+
+
+def createObservedParameterPack(packType, parameterNode, serializer, name, args: dict[str, typing.Any]):
+    global _observedParameterPacks
+    if packType not in _observedParameterPacks:
+        _observedParameterPacks[packType] = createObservedParameterPackImpl(packType)
+    return _observedParameterPacks[packType](parameterNode, serializer, name, args)
 
 
 class _ParameterPackInstanceValidator(Validator):
@@ -321,9 +364,8 @@ class _ParameterPackInstanceValidator(Validator):
         self.type = type_
 
     def validate(self, value) -> None:
-        checkValue = super(ObservedParameterPack, value).__getattribute__('_value') if isinstance(value, ObservedParameterPack) else value
-        if not isinstance(checkValue, self.type):
-            raise ValueError(f"Value must be of type '{self.classtype}', is type 'type({checkValue})'")
+        if not isinstance(value, self.type):
+            raise ValueError(f"Value must be of type '{self.classtype}', is type 'type({value})'")
 
 
 @parameterNodeSerializer
@@ -369,21 +411,25 @@ class ParameterPackSerializer(Serializer):
             parameter.serializer.remove(parameterNode, mangledName)
 
     def write(self, parameterNode, name: str, value) -> None:
-        if isinstance(value, ObservedParameterPack):
-            value = super(ObservedParameterPack, value).__getattribute__('_value')
         with slicer.util.NodeModify(parameterNode):
             for parameter in self._allParameters.values():
                 mangledName = self._mangleName(parameter, name)
                 parameterValue = _readValue(value, parameter.basename)
                 parameter.serializer.write(parameterNode, mangledName, parameterValue)
 
-    def read(self, parameterNode, name: str):
-        result = self.type()
+    def readInto(self, parameterNode, name: str, value):
         for parameter in self._allParameters.values():
             mangledName = self._mangleName(parameter, name)
             parameterValue = parameter.serializer.read(parameterNode, mangledName)
-            _writeValue(result, parameter.basename, parameterValue)
-        return ObservedParameterPack(parameterNode, self, name, result)
+            value.setValue(parameter.basename, parameterValue)
+
+    def read(self, parameterNode, name: str):
+        args = dict()
+        for parameter in self._allParameters.values():
+            mangledName = self._mangleName(parameter, name)
+            parameterValue = parameter.serializer.read(parameterNode, mangledName)
+            args[parameter.basename] = parameterValue
+        return createObservedParameterPack(self.type, parameterNode, self, name, args)
 
     def supportsCaching(self) -> bool:
         return all([parameter.serializer.supportsCaching() for parameter in self._allParameters.values()])
