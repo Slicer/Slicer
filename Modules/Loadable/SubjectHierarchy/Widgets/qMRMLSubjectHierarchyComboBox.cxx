@@ -28,6 +28,7 @@
 #include <QDesktopWidget>
 #include <QMouseEvent>
 #include <QLabel>
+#include <QScreen>
 
 // SubjectHierarchy includes
 #include "qMRMLSubjectHierarchyComboBox.h"
@@ -560,7 +561,11 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
 
   QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt,
                                                QStyle::SC_ComboBoxListBoxPopup, this));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QRect screen = this->screen()->availableGeometry();
+#else
   QRect screen = QApplication::desktop()->availableGeometry(QApplication::desktop()->screenNumber(this));
+#endif
   QPoint below = mapToGlobal(listRect.bottomLeft());
   QPoint above = mapToGlobal(listRect.topLeft());
 
