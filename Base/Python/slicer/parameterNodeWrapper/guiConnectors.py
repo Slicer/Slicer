@@ -10,6 +10,7 @@ import qt
 
 import slicer
 from . import parameterPack as pack
+from .types import FloatRange
 from . import validators
 from .util import (
     findFirstAnnotation,
@@ -513,6 +514,55 @@ class QTextEditPlainTextToStrConnector(GuiConnector):
 
     def write(self, value: str) -> None:
         self._widget.setPlainText(value)
+
+
+@parameterNodeGuiConnector
+class ctkRangeWidgetToRangeConnector(GuiConnector):
+    @staticmethod
+    def canRepresent(widget, datatype) -> bool:
+        return type(widget) == ctk.ctkRangeWidget and unannotatedType(datatype) == FloatRange
+
+    @staticmethod
+    def create(widget, datatype):
+        if ctkRangeWidgetToRangeConnector.canRepresent(widget, datatype):
+            return ctkRangeWidgetToRangeConnector(widget, datatype)
+        return None
+
+    def __init__(self, widget: ctk.ctkRangeWidget, type_) -> None:
+        super().__init__()
+        self._widget: ctk.ctkRangeWidget = widget
+        self._type = type_
+        annotations = splitAnnotations(self._type)[1]
+
+        decimals = findFirstAnnotation(annotations, Decimals)
+        if decimals is not None:
+            self._widget.decimals = decimals.value
+
+        singleStep = findFirstAnnotation(annotations, SingleStep)
+        if singleStep is not None:
+            self._widget.singleStep = singleStep.value
+
+        rangeBounds = findFirstAnnotation(annotations, validators.RangeBounds)
+
+        if rangeBounds is None:
+            raise RuntimeError("Cannot have a connection to ctkRangeWidget where the float is unbounded. Add a RangeBounds annotation.")
+
+        self._widget.setRange(rangeBounds.minimum, rangeBounds.maximum)
+
+    def _connect(self):
+        self._widget.valuesChanged.connect(self.changed)
+
+    def _disconnect(self):
+        self._widget.valuesChanged.disconnect(self.changed)
+
+    def widget(self) -> ctk.ctkRangeWidget:
+        return self._widget
+
+    def read(self):
+        return self._type(self._widget.minimumValue, self._widget.maximumValue)
+
+    def write(self, value) -> None:
+        self._widget.setValues(value.minimum, value.maximum)
 
 
 @parameterNodeGuiConnector

@@ -10,6 +10,7 @@ import slicer
 
 from .guiConnectors import SlicerPackParameterNamePropertyName
 from . import parameterPack as pack
+from .types import FloatRange
 from .validators import Choice, Maximum, Minimum, WithinRange
 from .util import (
     findFirstAnnotation,
@@ -193,6 +194,19 @@ class StrGuiCreator(GuiCreator):
     @staticmethod
     def create(datatype):
         return qt.QLineEdit()
+
+
+@parameterNodeGuiCreator
+class FloatRangeGuiCreator(GuiCreator):
+    @staticmethod
+    def representationValue(datatype) -> int:
+        if unannotatedType(datatype) == FloatRange:
+            return CanRepresentWithMinMax
+        return CannotRepresent
+    
+    @staticmethod
+    def create(datatype):
+        return ctk.ctkRangeWidget()
 
 
 @parameterNodeGuiCreator

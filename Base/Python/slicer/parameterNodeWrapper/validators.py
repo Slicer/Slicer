@@ -9,6 +9,7 @@ __all__ = [
     "Maximum",
     "Choice",
     "Exclude",
+    "RangeBounds",
 ]
 
 
@@ -157,3 +158,20 @@ class Exclude(Validator):
     def validate(self, value) -> None:
         if value in self.excludedValues:
             raise ValueError(f"Value is {value}, but must not be an excluded value: excluded values {self.excludedValues}")
+
+
+class RangeBounds(Validator):
+    """
+    Validates that the values in a range are within the given overall bounds.
+    """
+
+    def __init__(self, minimum, maximum):
+        self.minimum = minimum
+        self.maximum = maximum
+
+    def __repr__(self) -> str:
+        return f"RangeBounds({self.minimum}, {self.maximum})"
+
+    def validate(self, value) -> None:
+        if not self.minimum <= value.minimum and value.maximum <= self.maximum:
+            raise ValueError(f"Range must be within the bound of [{self.minimum}, {self.maximum}], is [{value.minimum}, {value.maximum}]")
