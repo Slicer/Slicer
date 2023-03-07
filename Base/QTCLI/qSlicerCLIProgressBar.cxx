@@ -21,13 +21,13 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
+#include <QElapsedTimer>
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QLabel>
 #include <QProgressBar>
 #include <QScrollBar>
 #include <QTextBrowser>
-#include <QTime>
 
 // CTK includes
 #include <ctkExpandButton.h>
@@ -69,7 +69,7 @@ private:
   QLabel *       StatusLabel;
   ctkExpandButton * DetailsTextExpandButton;
   QTextBrowser * DetailsTextBrowser;
-  QTime DetailsLastUpdateTime;
+  QElapsedTimer DetailsLastUpdateTime;
   QProgressBar * ProgressBar;
   QProgressBar * StageProgressBar;
 
@@ -359,7 +359,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
     d->ProgressBar->setMaximum(0);
     d->StageProgressBar->setMaximum(0);
     d->DetailsTextBrowser->setVisible(d->DetailsTextExpandButton->isChecked());
-    d->DetailsLastUpdateTime = QTime();
+    d->DetailsLastUpdateTime.invalidate();
     return;
     }
 
