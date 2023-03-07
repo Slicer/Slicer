@@ -31,6 +31,7 @@
 // VTK includes
 
 // STD includes
+#include <algorithm>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
@@ -132,10 +133,18 @@ QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> qSlicerDiffusionTensorVolumeDispl
     {
     return QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>();
     }
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> res;
+  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> displayNodes =
+      displayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
+  res.reserve(displayNodes.size());
+  std::copy(displayNodes.begin(), displayNodes.end(), std::back_inserter(res));
+#else
   QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> res
     = QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromVector(
       QVector<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromStdVector(
         displayNode->GetSliceGlyphDisplayNodes(d->VolumeNode)));
+#endif
   return res;
 }
 
