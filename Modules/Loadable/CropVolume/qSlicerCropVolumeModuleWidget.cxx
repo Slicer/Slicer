@@ -312,7 +312,6 @@ void qSlicerCropVolumeModuleWidget::enter()
 
     // Use first visible ROI node (or last ROI node, if all are invisible)
     vtkMRMLDisplayableNode* foundROINode = nullptr;
-    bool foundROINodeVisible = false;
     std::vector<vtkMRMLNode *> roiNodes;
 
     scene->GetNodesByClass("vtkMRMLMarkupsROINode", roiNodes);
@@ -326,7 +325,6 @@ void qSlicerCropVolumeModuleWidget::enter()
       foundROINode = roiNode;
       if (foundROINode->GetDisplayVisibility())
         {
-        foundROINodeVisible = true;
         break;
         }
       }
