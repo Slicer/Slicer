@@ -586,6 +586,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumePropertyNodeChanged(
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::onNewVolumePropertyAdded(vtkMRMLNode* node)
 {
+  Q_UNUSED(node);
   Q_D(qSlicerVolumeRenderingModuleWidget);
   // If the user adds a new volume property node via the node selector
   // then it has to be synchronized to the display node by default,
