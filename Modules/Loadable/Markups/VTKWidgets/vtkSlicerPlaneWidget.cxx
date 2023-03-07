@@ -496,7 +496,6 @@ void vtkSlicerPlaneWidget::RotateWidget(double eventPos[2])
   double eventPos_World[3] = { 0. };
   double lastEventPos_World[3] = { 0. };
   double orientation_World[9] = { 0. };
-  double eventPos_Display[2] = { 0. };
 
   vtkSlicerMarkupsWidgetRepresentation* rep = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->WidgetRep);
   vtkSlicerMarkupsWidgetRepresentation2D* rep2d = vtkSlicerMarkupsWidgetRepresentation2D::SafeDownCast(this->WidgetRep);
@@ -511,9 +510,6 @@ void vtkSlicerPlaneWidget::RotateWidget(double eventPos[2])
     eventPos_Slice[0] = eventPos[0];
     eventPos_Slice[1] = eventPos[1];
     rep2d->GetSliceToWorldCoordinates(eventPos_Slice, eventPos_World);
-
-    eventPos_Display[0] = eventPos_Slice[0];
-    eventPos_Display[1] = eventPos_Slice[1];
     }
   else if (rep3d)
     {
