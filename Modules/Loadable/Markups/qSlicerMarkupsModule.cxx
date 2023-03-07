@@ -557,6 +557,7 @@ void qSlicerMarkupsModule::setAutoShowToolBar(bool autoShow)
 //-----------------------------------------------------------------------------
 bool qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
 {
+  Q_UNUSED(markupsNode);
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app
       || !app->moduleManager()
