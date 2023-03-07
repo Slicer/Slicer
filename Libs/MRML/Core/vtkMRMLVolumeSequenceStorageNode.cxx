@@ -393,8 +393,8 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       currentFrameVolumeScalarType = frameVolume->GetImageData()->GetScalarType();
       }
     if (currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
-    || currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
-    || currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
+    || currentFrameVolumeDimensions[1] != frameVolumeDimensions[1]
+    || currentFrameVolumeDimensions[2] != frameVolumeDimensions[2]
     || currentFrameVolumeScalarType != frameVolumeScalarType)
       {
       vtkDebugMacro(<< "vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: Data node "<<frameIndex<<" size or scalar type mismatch ("
