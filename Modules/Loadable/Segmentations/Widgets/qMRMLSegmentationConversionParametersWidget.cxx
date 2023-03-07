@@ -243,7 +243,6 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
 
   int rowCount = d->PossiblePaths->GetNumberOfPaths();
   d->PathsTable->setRowCount(rowCount);
-  int row = 0;
   for (int row = 0; row< d->PossiblePaths->GetNumberOfPaths(); ++row)
     {
     // Path cost
