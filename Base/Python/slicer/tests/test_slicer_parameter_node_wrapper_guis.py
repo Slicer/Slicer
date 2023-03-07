@@ -535,6 +535,45 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(param.bravo, "someval\nsomeval2")
         self.assertEqual(lineEditBravo.toPlainText(), "someval\nsomeval2")
 
+    def test_ctkRangeWidgetToRange(self):
+        @parameterNodeWrapper
+        class ParameterNodeWrapper:
+            alpha: Annotated[FloatRange, RangeBounds(-10, 10)]
+            bravo: Annotated[FloatRange, RangeBounds(0, 20), Default(FloatRange(5, 10.5))]
+
+        rangeWidgetAlpha = ctk.ctkRangeWidget()
+        rangeWidgetAlpha.deleteLater()
+        rangeWidgetBravo = ctk.ctkRangeWidget()
+        rangeWidgetBravo.deleteLater()
+        param = ParameterNodeWrapper(newParameterNode())
+
+        # Phase 0 - connect parameterNode to GUI
+        mapping = {
+            "alpha": rangeWidgetAlpha,
+            "bravo": rangeWidgetBravo,
+        }
+        param.connectParametersToGui(mapping)
+        self.assertEqual(param.alpha, FloatRange(0, 0))
+        self.assertEqual(param.bravo, FloatRange(5, 10.5))
+
+        # Phase 1 - write to GUI
+        rangeWidgetAlpha.minimumValue = -1
+        self.assertEqual(rangeWidgetAlpha.minimumValue, -1)
+        self.assertEqual(param.alpha, FloatRange(-1, 0))
+        rangeWidgetBravo.maximumValue = 19
+        self.assertEqual(rangeWidgetBravo.maximumValue, 19)
+        self.assertEqual(param.bravo, FloatRange(5, 19))
+
+        # Phase 2 - write to parameterNode
+        param.alpha = FloatRange(-9, 9)
+        self.assertEqual(param.alpha, FloatRange(-9, 9))
+        self.assertEqual(rangeWidgetAlpha.minimumValue, -9)
+        self.assertEqual(rangeWidgetAlpha.maximumValue, 9)
+        param.bravo.maximum = 6
+        self.assertEqual(param.bravo, FloatRange(5, 6))
+        self.assertEqual(rangeWidgetBravo.minimumValue, 5)
+        self.assertEqual(rangeWidgetBravo.maximumValue, 6)
+
     def test_ctkPathLineEditToPath(self):
         @parameterNodeWrapper
         class ParameterNodeWrapper:

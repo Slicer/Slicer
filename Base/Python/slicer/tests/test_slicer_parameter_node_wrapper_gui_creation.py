@@ -54,6 +54,10 @@ class ParameterNodeWrapperGuiCreationTest(unittest.TestCase):
         self.assertIsInstance(createGui(Annotated[str, Default("hello")]), qt.QLineEdit)
         self.assertIsInstance(createGui(Annotated[str, Choice(["a", "b", "c"]), Default("a")]), qt.QComboBox)
 
+    def test_guiCreations_floatRange(self):
+        self.assertIsInstance(createGui(FloatRange), ctk.ctkRangeWidget)
+        self.assertIsInstance(createGui(Annotated[FloatRange, RangeBounds(0, 10)]), ctk.ctkRangeWidget)
+
     def test_guiCreations_paths(self):
         for pathtype in (pathlib.Path, pathlib.PosixPath, pathlib.WindowsPath,
                          pathlib.PurePath, pathlib.PurePosixPath, pathlib.PureWindowsPath):

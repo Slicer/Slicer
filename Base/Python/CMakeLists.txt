@@ -9,6 +9,7 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/parameterNodeWrapper/parameterInfo
   slicer/parameterNodeWrapper/parameterPack
   slicer/parameterNodeWrapper/serializers
+  slicer/parameterNodeWrapper/types
   slicer/parameterNodeWrapper/util
   slicer/parameterNodeWrapper/validators
   slicer/parameterNodeWrapper/wrapper
