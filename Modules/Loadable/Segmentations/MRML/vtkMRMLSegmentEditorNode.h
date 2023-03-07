@@ -191,7 +191,7 @@ public:
   virtual void GetMasterVolumeIntensityMaskRange(double& _arg1, double& _arg2)
     {
     vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
-    this->GetSourceVolumeIntensityMaskRange(_arg2, _arg2);
+    this->GetSourceVolumeIntensityMaskRange(_arg1, _arg2);
     }
 
   VTK_WRAPEXCLUDE
