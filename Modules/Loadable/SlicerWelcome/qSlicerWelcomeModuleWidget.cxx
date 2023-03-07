@@ -230,8 +230,6 @@ void qSlicerWelcomeModuleWidget::setup()
 
   bool extensionUpdatesEnabled = false;
   bool applicationUpdatesEnabled = false;
-  bool extensionAutoUpdateCheckEnabled = false;
-  bool applicationAutoUpdateCheckEnabled = false;
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   if (app && app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool())
@@ -248,11 +246,6 @@ void qSlicerWelcomeModuleWidget::setup()
       if (!extensionsManagerModel->availableUpdateExtensions().empty())
         {
         this->setExtensionUpdatesAvailable(true);
-        }
-
-      if (extensionsManagerModel->autoUpdateCheck())
-        {
-        extensionAutoUpdateCheckEnabled = true;
         }
 
       QObject::connect(extensionsManagerModel, SIGNAL(autoUpdateSettingsChanged()),
@@ -283,11 +276,6 @@ void qSlicerWelcomeModuleWidget::setup()
       if (applicationUpdateManager->isUpdateAvailable())
         {
         this->setApplicationUpdateAvailable(true);
-        }
-
-      if (applicationUpdateManager->autoUpdateCheck())
-        {
-        applicationAutoUpdateCheckEnabled = true;
         }
 
       QObject::connect(applicationUpdateManager, SIGNAL(autoUpdateCheckChanged()),
@@ -501,8 +489,6 @@ void qSlicerWelcomeModuleWidget::onAutoUpdateCheckStateChanged(int state)
 void qSlicerWelcomeModuleWidget::onAutoUpdateSettingsChanged()
 {
   Q_D(qSlicerWelcomeModuleWidget);
-  bool extensionUpdatesEnabled = false;
-  bool applicationUpdatesEnabled = false;
   bool extensionAutoUpdateCheckEnabled = false;
   bool applicationAutoUpdateCheckEnabled = false;
 
@@ -514,7 +500,6 @@ void qSlicerWelcomeModuleWidget::onAutoUpdateSettingsChanged()
     qSlicerExtensionsManagerModel* extensionsManagerModel = d->extensionsManagerModel();
     if (extensionsManagerModel)
       {
-      extensionUpdatesEnabled = true;
       if (extensionsManagerModel->autoUpdateCheck())
         {
         extensionAutoUpdateCheckEnabled = true;
@@ -529,7 +514,6 @@ void qSlicerWelcomeModuleWidget::onAutoUpdateSettingsChanged()
     qSlicerApplicationUpdateManager* applicationUpdateManager = d->applicationUpdateManager();
     if (applicationUpdateManager)
       {
-      applicationUpdatesEnabled = true;
       if (applicationUpdateManager->autoUpdateCheck())
         {
         applicationAutoUpdateCheckEnabled = true;
