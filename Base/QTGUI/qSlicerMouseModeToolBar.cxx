@@ -281,9 +281,6 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
   // Update place widget action
   this->updatePlaceWidget();
 
-  // Update persistence checkbox
-  int persistence = interactionNode->GetPlaceModePersistence();
-
   // find the active place node class name and set it's corresponding action to be checked
   QString activePlaceNodeClassName;
   vtkMRMLSelectionNode *selectionNode = (this->MRMLAppLogic ? this->MRMLAppLogic->GetSelectionNode() : nullptr);
