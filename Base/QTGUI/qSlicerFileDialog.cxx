@@ -213,7 +213,7 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
   if (ioProperties["fileMode"].toBool())
     {
     fileDialog->setOption(QFileDialog::ShowDirsOnly);
-    fileDialog->setFileMode(QFileDialog::DirectoryOnly);
+    fileDialog->setFileMode(QFileDialog::Directory);
     }
 
   fileDialog->setObjectName(ioProperties["objectName"].toString());
