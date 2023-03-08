@@ -196,7 +196,7 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
         if (IDPtr != nullptr)
           {
           // replace the space with a carriage return
-          IDPtr = strncpy(IDPtr, "\nROINodeID", 1);
+          IDPtr = strncpy(IDPtr, "\n", 1);
           }
         }
       // now parse the string into tokens by the newline
