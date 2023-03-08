@@ -1076,8 +1076,7 @@ int vtkSubjectHierarchyItem::GetPositionUnderParent()
 //---------------------------------------------------------------------------
 vtkIdType vtkSubjectHierarchyItem::GetChildByPositionUnderParent(int position)
 {
-  int currentPosition = 0;
-  if (position < 0 || position >= this->Children.size())
+  if (position < 0 || position >= static_cast<int>(this->Children.size()))
     {
     vtkErrorMacro("GetChildByPositionUnderParent: Failed to find subject hierarchy item under parent " << this->Name << " at position " << position);
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
