@@ -145,9 +145,6 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
   QString fileName = properties["fileName"].toString();
   snode->SetFileName(fileName.toUtf8());
 
-  qSlicerCoreIOManager* coreIOManager =
-    qSlicerCoreApplication::application()->coreIOManager();
-
   QString fileFormat = properties.value("fileFormat").toString();
   if (!fileFormat.isEmpty())
     {
