@@ -906,7 +906,7 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     {
     vtkNew<vtkStringArray> segmentIDsArray;
     segmentIDsArray->SetNumberOfValues(segmentIDs.size());
-    for (int i = 0; i < segmentIDs.size(); ++i)
+    for (unsigned int i = 0; i < segmentIDs.size(); ++i)
       {
       segmentIDsArray->SetValue(i, segmentIDs[i]);
       }
