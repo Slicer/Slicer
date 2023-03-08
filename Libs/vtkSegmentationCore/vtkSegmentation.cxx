@@ -1393,7 +1393,7 @@ bool vtkSegmentation::GenerateMergedLabelmap(
     sharedSegmentIDs = segmentIDs;
     }
 
-  if (labelValues && labelValues->GetNumberOfValues() != sharedSegmentIDs.size())
+  if (labelValues && labelValues->GetNumberOfValues() != static_cast<vtkIdType>(sharedSegmentIDs.size()))
     {
     vtkErrorMacro("GenerateSharedLabelmap: Number of label values does not equal the number of segment IDs");
     return false;
