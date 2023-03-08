@@ -2092,9 +2092,11 @@ bool qSlicerCoreApplication::loadCaCertificates(const QString& caCertificatesPat
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
   if (QSslSocket::supportsSsl())
     {
-    QSslSocket::setDefaultCaCertificates(QSslCertificate::fromPath(caCertificatesPath));
+    QSslConfiguration sslConfiguration = QSslConfiguration::defaultConfiguration();
+    sslConfiguration.setCaCertificates(QSslCertificate::fromPath(caCertificatesPath));
+    QSslConfiguration::setDefaultConfiguration(sslConfiguration);
     }
-  return !QSslSocket::defaultCaCertificates().empty();
+  return !QSslConfiguration::defaultConfiguration().caCertificates().empty();
 #else
   Q_UNUSED(caCertificatesPath);
   return false;
