@@ -303,12 +303,12 @@ class TypedParameterNodeTest(unittest.TestCase):
         class ParameterNodeType:
             float_: float
             bool_: bool
-            int_: Annotated[int, Default(4)]
+            int_: int = 4
             string_: Annotated[str, Default("TypedParam")]
 
         self.assertEqual(ParameterNodeType.dataType("float_"), float)
         self.assertEqual(ParameterNodeType.dataType("bool_"), bool)
-        self.assertEqual(ParameterNodeType.dataType("int_"), Annotated[int, Default(4)])
+        self.assertEqual(ParameterNodeType.dataType("int_"), int)
         self.assertEqual(ParameterNodeType.dataType("string_"), Annotated[str, Default("TypedParam")])
 
     def test_primitives(self):
@@ -318,10 +318,10 @@ class TypedParameterNodeTest(unittest.TestCase):
             float1: float
             bool1: bool
             string1: str
-            int2: Annotated[int, Default(4)]
+            int2: int = 4
             float2: Annotated[float, Default(9.9)]
             bool2: Annotated[bool, Default(True)]
-            string2: Annotated[str, Default("TypedParam")]
+            string2: str = "TypedParam"
 
         param = ParameterNodeType(newParameterNode())
         self.assertTrue(param.isCached("int1"))
@@ -621,7 +621,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         @parameterNodeWrapper
         class ParameterNodeType:
             a: tuple[Annotated[int, Minimum(0)], str]
-            b: Annotated[tuple[Annotated[float, Minimum(4)], bool], Default((44.0, False))]
+            b: tuple[Annotated[float, Minimum(4)], bool] = (44.0, False)
             c: tuple[list[int]]
 
         param = ParameterNodeType(newParameterNode())

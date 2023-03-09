@@ -296,8 +296,14 @@ def _processClass(classtype):
             serializer, annotations = createSerializer(membertype, annotations)
         except Exception as e:
             raise Exception(f"Unable to create serializer for {classtype} member {name}") from e
-        default, annotations = extractDefault(annotations)
-        default = default if default is not None else Default(serializer.default())
+
+        if hasattr(classtype, name):
+            # default via equals
+            default = Default(getattr(classtype, name))
+        else:
+            # default via "Default" class, or default default
+            default, annotations = extractDefault(annotations)
+            default = default if default is not None else Default(serializer.default())
 
         if annotations:
             logging.warning(f"Unused annotations: {annotations}")
