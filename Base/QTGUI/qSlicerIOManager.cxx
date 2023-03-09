@@ -318,11 +318,13 @@ void qSlicerIOManager::dropEvent(QDropEvent *event)
   if (supportedReaders.size() > 1)
     {
     QString title = tr("Select a reader");
-    QString label = tr("Select a reader to use for your data?");
+    QString label = tr("Select a reader to use for your data:");
     int current = 0;
     bool editable = false;
     bool ok = false;
-    selectedReader = QInputDialog::getItem(nullptr, title, label, supportedReaders, current, editable, &ok);
+    qSlicerApplication* app = qSlicerApplication::application();
+    QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+    selectedReader = QInputDialog::getItem(mainWindow, title, label, supportedReaders, current, editable, &ok);
     if (!ok)
       {
       selectedReader = QString();

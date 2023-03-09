@@ -80,7 +80,9 @@ Run `CMake (cmake-gui)` from the Windows Start menu.
 
 To test an extension, you need to specify location(s) where Slicer should look for additional modules.
 
-- If the extension is not built: add all source code folders that contain module .py files to "additional module paths" in modules section in application settings.
+- If the extension is not built: append all source code folders that contain module `.py` files to "additional module paths".
+  - Option A (recommended): Drag-and-drop the `.py` files (or the parent folder, or that folder's parent) to the application window, select `Add Python scripted modules to the application` in the popup window, click OK. Select which modules to add to load immediately and click `Yes`. The selected modules will be immediately loaded and made available in the module list. If you want to load the modules only in the current session, then uncheck `Add selected modules to 'Additional module paths'` option before clicking `Yes`.
+  - Option B: In menu: Edit / Application settings / Modules panel, drag-and-drop files to the `Additional module paths` list.
 - If the extension is built:
   - Option A: start the application using the `SlicerWithMyExtension` executable in your build directory. This starts Slicer, specifying additional module paths via command-line arguments.
   - Option B: specify additional module paths manually in application settings. Assuming your extension has been built into folder `MyExtension-debug`, add these module folders (if they exist) to the additional module paths in Slicer's application settings:
