@@ -4,7 +4,8 @@
 
 Example use:
 
-    python.exe c:/D/S5/Utilities/Scripts/update_translations.py -s c:/D/S5 -t c:/D/SlicerLanguageTranslations/translations --lupdate c:/Qt/5.15.2/msvc2019_64/bin/lupdate.exe
+    python.exe c:/D/S5/Utilities/Scripts/update_translations.py -c Slicer -s c:/D/S5 -t c:/D/SlicerLanguageTranslations/translations
+      --lupdate c:/Qt/5.15.2/msvc2019_64/bin/lupdate.exe
 
 """
 
@@ -17,12 +18,12 @@ import subprocess
 import sys
 
 
-def update_translations(source_code_dir, translations_dir, lupdate_path, language=None, remove_obsolete_strings=False):
+def update_translations(component, source_code_dir, translations_dir, lupdate_path, language=None, remove_obsolete_strings=False):
 
     if language is None:
-        ts_filename_filter = "*.ts"
+        ts_filename_filter = f"{component}*.ts"
     else:
-        ts_filename_filter = f"*_{language}.ts"
+        ts_filename_filter = f"{component}*_{language}.ts"
 
     ts_file_filter = f"{translations_dir}/{ts_filename_filter}"
     ts_file_paths = glob.glob(ts_file_filter)
@@ -148,7 +149,9 @@ def main(argv):
     parser.add_argument("--lupdate", default="lupdate", dest="lupdate_path",
                         help="location of the Qt lupdate executable")
     parser.add_argument("-s", "--source-code", metavar="DIR", dest="source_code_dir",
-                        help="folder of application source code (root of https://github.com/Slicer/Slicer)")
+                        help="folder of application source code (root of repository, such as https://github.com/Slicer/Slicer)")
+    parser.add_argument("-c", "--component", dest="component", default="Slicer",
+                        help="translation component name (Slicer, CTK, ...)")
     parser.add_argument("-t", "--translations", dest="translations_dir", metavar="DIR",
                         default="-",
                         help="folder containing .ts translation files that will be updated (translations folder of https://github.com/Slicer/SlicerLanguageTranslations)")
@@ -163,8 +166,9 @@ def main(argv):
     if args.verbose:
         logging.basicConfig(format='%(message)s', level=logging.DEBUG)
 
-    extract_translatable_from_cli_modules(args.source_code_dir)
-    update_translations(args.source_code_dir, args.translations_dir, args.lupdate_path, args.language, args.remove_obsolete_strings)
+    if args.component == "Slicer":
+        extract_translatable_from_cli_modules(args.source_code_dir)
+    update_translations(args.component, args.source_code_dir, args.translations_dir, args.lupdate_path, args.language, args.remove_obsolete_strings)
 
 
 if __name__ == "__main__":
