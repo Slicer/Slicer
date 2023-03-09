@@ -1,3 +1,4 @@
+import ast
 import os
 
 
@@ -34,7 +35,10 @@ class ModuleInfo:
     @staticmethod
     def findModules(path, depth):
         result = []
-        entries = [os.path.join(path, entry) for entry in os.listdir(path)]
+        if os.path.isfile(path):
+            entries = [path]
+        else:
+            entries = [os.path.join(path, entry) for entry in os.listdir(path)]
 
         if depth > 0:
             for entry in filter(os.path.isdir, entries):
@@ -44,6 +48,25 @@ class ModuleInfo:
             # __init__.py is not a module but an embedded Python library
             # that a module will load.
             if entry.endswith(".py") and not entry.endswith("__init__.py"):
-                result.append(ModuleInfo(entry))
+
+                # Criteria for a Slicer module to have a module class
+                # that has the same name as the filename.
+
+                try:
+                    # Find all class definitions
+                    with open(entry) as entry_file:
+                        tree = ast.parse(entry_file.read())
+                    classes = [node for node in tree.body if isinstance(node, ast.ClassDef)]
+
+                    # Add file if module class is found
+                    filename = os.path.basename(entry)
+                    expectedClassName = os.path.splitext(filename)[0]
+                    for cls in classes:
+                        if cls.name == expectedClassName:
+                            result.append(ModuleInfo(entry))
+                except:
+                    # Error while processing the file (e.g., syntax error),
+                    # it cannot be a Slicer module.
+                    pass
 
         return result

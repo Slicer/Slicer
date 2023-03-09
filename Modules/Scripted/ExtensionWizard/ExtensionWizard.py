@@ -320,7 +320,7 @@ class ExtensionWizardWidget:
         self.extensionContentsView.setColumnWidth(0, int((w * 4) / 9))
 
         # Prompt to load scripted modules from extension
-        self.loadModules(path)
+        ExtensionWizardWidget.loadModules(path, parent=self.parent.window())
 
         # Store extension location, project and description for later use
         self.extensionProject = xp
@@ -329,9 +329,15 @@ class ExtensionWizardWidget:
         return True
 
     # ---------------------------------------------------------------------------
-    def loadModules(self, path, depth=1):
-        # Get list of modules in specified path
-        modules = ModuleInfo.findModules(path, depth)
+    @staticmethod
+    def loadModules(path=None, depth=1, modules=None, parent=None):
+        if parent is None:
+            parent = slicer.util.mainWindow()
+        if path is not None:
+            # Get list of modules in specified path
+            modules = ModuleInfo.findModules(path, depth)
+        elif modules is None:
+            raise RuntimeError("loadModules require 'path' or 'modules' input")
 
         # Determine which modules in above are not already loaded
         factory = slicer.app.moduleManager().factoryManager()
@@ -341,7 +347,7 @@ class ExtensionWizardWidget:
 
         # Prompt to load additional module(s)
         if len(candidates):
-            dlg = LoadModulesDialog(self.parent.window())
+            dlg = LoadModulesDialog(parent)
             dlg.setModules(candidates)
 
             if dlg.exec_() == qt.QDialog.Accepted:
@@ -388,7 +394,7 @@ class ExtensionWizardWidget:
                     detailedInformation = "".join(
                         [failedFormat % m.__dict__ for m in failed])
 
-                    slicer.util.errorDisplay(text, parent=self.parent.window(), windowTitle="Module loading failed",
+                    slicer.util.errorDisplay(text, parent=parent, windowTitle="Module loading failed",
                                              standardButtons=qt.QMessageBox.Close, informativeText=detailedInformation)
 
                     return
@@ -398,7 +404,7 @@ class ExtensionWizardWidget:
                     text = ("The module factory manager reported an error. "
                             "One or more of the requested module(s) and/or "
                             "dependencies thereof may not have been loaded.")
-                    slicer.util.errorDisplay(text, parent=self.parent.window(), windowTitle="Error loading module(s)",
+                    slicer.util.errorDisplay(text, parent, windowTitle="Error loading module(s)",
                                              standardButtons=qt.QMessageBox.Close)
 
     # ---------------------------------------------------------------------------
@@ -442,7 +448,7 @@ class ExtensionWizardWidget:
                 slicer.util.errorDisplay(text, parent=self.parent.window(), detailedText=traceback.format_exc(),
                                          standardButtons=qt.QMessageBox.Close, informativeText=detailedInformation)
 
-            self.loadModules(os.path.join(self.extensionLocation, name), depth=0)
+            ExtensionWizardWidget.loadModules(os.path.join(self.extensionLocation, name), depth=0, parent=self.parent.window())
             return
 
     # ---------------------------------------------------------------------------
@@ -471,3 +477,43 @@ class ExtensionWizardWidget:
 
             # Update the displayed extension name
             self.extensionNameField.text = xp.project
+
+
+#
+# ExtentsionWizardFileDialog
+#
+class ExtensionWizardFileDialog:
+    """This specially named class is detected by the scripted loadable
+    module and is the target for optional drag and drop operations.
+    See: Base/QTGUI/qSlicerScriptedFileDialog.h
+    and commit http://svn.slicer.org/Slicer4/trunk@21951 and issue #3081
+
+    This class offers to load Python scripted modules from a folder
+    and append them to the "additional module paths".
+    """
+
+    def __init__(self, qSlicerFileDialog):
+        self.qSlicerFileDialog = qSlicerFileDialog
+        qSlicerFileDialog.fileType = "Python scripted modules"
+        qSlicerFileDialog.description = "Add Python scripted modules to the application"
+        qSlicerFileDialog.action = slicer.qSlicerFileDialog.Read
+        self.foundModules = []
+
+    def isMimeDataAccepted(self):
+        """Checks the dropped data and returns true if they contain Slicer Python scripted modules"""
+        self.foundModules = ExtensionWizardFileDialog.findModulesFromMimeData(self.qSlicerFileDialog.mimeData())
+        self.qSlicerFileDialog.acceptMimeData(len(self.foundModules) != 0)
+
+    @staticmethod
+    def findModulesFromMimeData(mimeData):
+        allFoundModules = []
+        if mimeData.hasFormat('text/uri-list'):
+            urls = mimeData.urls()
+            for url in urls:
+                localPath = url.toLocalFile()  # convert QUrl to local path
+                allFoundModules.extend(ModuleInfo.findModules(localPath, depth=1))
+        return allFoundModules
+
+    def dropEvent(self):
+        ExtensionWizardWidget.loadModules(modules=self.foundModules)
+        self.foundModules = []
