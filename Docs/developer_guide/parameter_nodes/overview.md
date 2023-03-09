@@ -7,7 +7,9 @@ great for scene saving, treating all data as strings is not ideal, so a paramete
 
 ## Parameter Node Wrapper
 
-The parameter node wrapper allows wrapping around a `vtkMRMLScriptedModuleNode` parameter node with typed member access. A simple example is as follows.
+The parameter node wrapper allows wrapping around a `vtkMRMLScriptedModuleNode` parameter node with typed member access. The wrapper will serialize values into an underlying `vtkMRMLScriptedModuleNode`, and has a [caching mechanism](./advanced/caching.md) so multiple reads of a parameter without a write won't convert from string every time.
+
+ A simple example is as follows.
 
 ```py
 import slicer
@@ -47,3 +49,18 @@ for iteration in range(param.numIterations):
 
 param.output.SetAndObserveMesh(...)
 ```
+
+Much more complex wrappers can be written:
+
+For the full list of supported types, including how to make custom types with invariants, see [Supported types](./supported_types.md)
+
+For restricting valid values for a parameter, see [Validators](./validators.md).
+
+### GUI binding and creation
+
+Qt widgets can automatically be created for and bound to `parameterNodeWrapper`s.
+
+See [GUI Connection](./gui_connection.md) for how to bind a `parameterNodeWrapper` to existing widgets (including directly in a `.ui` file).
+
+See [GUI Creation](./gui_creation.md) for how to generate widgets for `parameterNodeWrapper`s.
+

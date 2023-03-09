@@ -1,3 +1,6 @@
+"""The parameterPack module allows creation of aggregate objects that can be used in a
+parameterNodeWrapper."""
+
 import copy
 import dataclasses
 import typing
@@ -111,14 +114,14 @@ def isParameterPack(obj):
     return getattr(obj, "_is_parameterPack", False)
 
 
-def _checkTopMember(packObject, membername):
+def _checkTopMember(packObject, membername: str):
     # split something like "x.y.z" -> "x", "y.z"
     topname, _ = splitPossiblyDottedName(membername)
     if not hasattr(packObject, topname):
         raise ValueError(f"{packObject} has no member '{topname}'")
 
 
-def _checkMember(packObjectOrClass, membername):
+def _checkMember(packObjectOrClass, membername: str):
     # split something like "x.y.z" -> "x", "y.z"
     topname, subname = splitPossiblyDottedName(membername)
     if not hasattr(packObjectOrClass, topname):
@@ -134,7 +137,10 @@ def _checkMember(packObjectOrClass, membername):
     raise ValueError(f"{topnameType} is not a parameter pack but expects to have '{subname}'")
 
 
-def _getValue(self, membername):
+def _getValue(self, membername: str):
+    """
+    Gets a value in a parameterPack from the parameter's name, as a string.
+    """
     _checkTopMember(self, membername)
     topname, subname = splitPossiblyDottedName(membername)
     topnameValue = getattr(self, topname)
@@ -144,7 +150,10 @@ def _getValue(self, membername):
         return _getValue(topnameValue, subname)
 
 
-def _setValue(self, membername, value):
+def _setValue(self, membername: str, value):
+    """
+    Sets a value in a parameterPack given the parameter's name, as a string.
+    """
     _checkTopMember(self, membername)
     topname, subname = splitPossiblyDottedName(membername)
     if subname is None:
@@ -157,6 +166,9 @@ def _setValue(self, membername, value):
 def _makeDataTypeFunc(classvar):
     @staticmethod
     def dataType(membername):
+        """
+        Returns the annotated data type of a parameter in a parameterPack, given the parameter's name as a string.
+        """
         _checkTopMember(classvar, membername)
         topname, subname = splitPossiblyDottedName(membername)
         datatype = classvar.allParameters[topname].unalteredType
@@ -168,6 +180,9 @@ def _makeDataTypeFunc(classvar):
 
 
 def _processParameterPack(classtype):
+    """
+    Takes a parameterPack class description and creates the full parameterPack class.
+    """
     members = typing.get_type_hints(classtype, include_extras=True)
     if len(members) == 0:
         raise ValueError("Unable to find any members in parameterPack")

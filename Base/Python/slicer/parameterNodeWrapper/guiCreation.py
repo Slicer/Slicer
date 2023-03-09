@@ -1,3 +1,7 @@
+"""The guiCreation module is responsible for creating widgets for given datatypes.
+This module is extensible such that users can add new widgets and datatypes from within
+other slicer modules."""
+
 import abc
 import dataclasses
 import enum
@@ -37,6 +41,13 @@ class Label:
 
 
 class GuiCreator(abc.ABC):
+    """
+    GuiCreator is an interface to allow taking a type and creating an appropriate qt.QWidget.
+
+    Concrete GuiCreators are registered for use by the createGui method by using the
+    @parameterNodeGuiCreator decorator.
+    """
+
     @staticmethod
     @abc.abstractmethod
     def representationValue(datatype) -> int:
@@ -63,6 +74,9 @@ _registeredGuiCreators = []
 
 
 def _processGuiCreator(classtype):
+    """
+    Registers a GuiCreator so it can be used by createGui.
+    """
     if not issubclass(classtype, GuiCreator):
         raise TypeError("Must be a GuiCreator subclass")
     global _registeredGuiCreators

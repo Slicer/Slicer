@@ -1,3 +1,7 @@
+"""The guiConnection module is responsible for adapting different input widget types (widgets that represent a value
+of some kind) to a common interface. This is then used by the parameterNodeWrapper to bind parameters to widgets.
+This module is extensible such that users can add new widgets and datatypes from within other slicer modules."""
+
 import abc
 import dataclasses
 import enum
@@ -129,6 +133,9 @@ _registeredGuiConnectors = []
 
 
 def _processGuiConnector(classtype):
+    """
+    Registers a GuiConnector for use by createGuiConnector.
+    """
     if not issubclass(classtype, GuiConnector):
         raise TypeError("Must be a GuiConnector subclass")
     global _registeredGuiConnectors
