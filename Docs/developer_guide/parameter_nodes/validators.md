@@ -10,7 +10,7 @@ from slicer.parameterNodeWrapper import parameterNodeWrapper, Minimum, Default
 
 @parameterNodeWrapper
 class CustomParameterNode:
-  numIterations: Annotated[int, Minimum(0), Default(500)]
+  numIterations: Annotated[int, Minimum(0)] = 500
 
   # To have a list where the values in the list need to be validated
   chosenFeatures: list[Annotated[str, Choice(["feat1", "feat2", "feat3"])]]
@@ -64,7 +64,7 @@ class MatchesRegex(Validator):
 
 @parameterNodeWrapper
 class CustomParameterNode:
-  value: Annotated[str, MatchesRegex("[abc]+"), Default("abcba")]
+  value: Annotated[str, MatchesRegex("[abc]+")] = "abcba"
 
 
 param = CustomParameterNode(slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScriptedModuleNode'))

@@ -24,7 +24,6 @@ Here is an example of a custom class serializer.
 
 ```py
 import dataclasses
-from typing import Annotated
 import slicer
 from slicer.parameterNodeWrapper import parameterNodeWrapper, Serializer, ValidatedSerializer
 
@@ -101,7 +100,7 @@ class CustomClassSerializer(Serializer):
 @parameterNodeWrapper
 class CustomClassParameterNode(object):
     # can now use CustomClass like any other type for building parameterNodeWrappers
-    custom: Annotated[CustomClass, Default(CustomClass(1,2,3))]
+    custom: CustomClass = CustomClass(1,2,3)
     listOfCustom: list[CustomClass]
 ```
 

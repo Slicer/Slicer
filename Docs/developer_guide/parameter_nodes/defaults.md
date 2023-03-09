@@ -2,43 +2,26 @@
 
 ## Default values
 
-Default values can easily be used when creating `parameterNodeWrapper`s and `parameterPack`s. This is done using Python `typing.Annotated` functionality and some Slicer specific annotations.
+Default values can easily be used when creating `parameterNodeWrapper`s and `parameterPack`s by simply assigning a value to the parameter.
 
 E.g.
 
 ```py
 from typing import Annotated
-from slicer.parameterNodeWrapper import (
-  parameterNodeWrapper,
-  Default,
-)
+from slicer.parameterNodeWrapper import parameterNodeWrapper
 
 
 @parameterNodeWrapper
 class ParameterNodeWrapper:
-    iterations: Annotated[int, Default(50)]
-    text: Annotated[str, Default("abc")]
+    iterations: int = 50
+    text: str = "abc"
+    tup: tuple[int, bool] = (7, True)
 ```
 
 :::{note}
 When constructing a `parameterNodeWrapper` using a parameter node that already has values set (e.g. when loading a .mrb or a .mrml scene file), those values will be maintained. The default will only come into play if parameter node does not have a value for the parameter.
 :::
 
-:::{note}
-For specifying the default of a nested-type type like `tuple[int, bool]` or `typing.Union[int, bool]`, specify the default on the outer level. Not allowing something like `tuple[Annotated[int, Default(4)], Annotated[bool, Default(True)]]` is mainly to keep consistency between setting default values for `tuple` and all the other classes (including other containers like `list`, `dict`, and `Union`).
-
-E.g.
-
-```py
-@parameterNodeWrapper
-class ParameterNodeType:
-  validTuple: Annotated[tuple[int, bool], Default((4, True))] # good
-  invalidTuple: tuple[Annotated[int, Default(4)], Annotated[bool, Default(True)]] # bad
-
-  validUnion: Annotated[typing.Union[int, bool], Default(True)] # good
-  invalidUnion: typing.Union[int, Annotated[bool, Default(True)]] # bad
-```
-:::
 
 ## Unspecified defaults
 

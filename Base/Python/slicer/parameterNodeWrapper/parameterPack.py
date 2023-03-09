@@ -176,8 +176,13 @@ def _processParameterPack(classtype):
         membertype, annotations = splitAnnotations(nametype)
 
         serializer, annotations = createSerializer(membertype, annotations)
-        default, annotations = extractDefault(annotations)
-        default = default.value if default is not None else serializer.default()
+        if hasattr(classtype, name):
+            # default via equals
+            default = getattr(classtype, name)
+        else:
+            # default via "Default" class, or default default
+            default, annotations = extractDefault(annotations)
+            default = default.value if default is not None else serializer.default()
 
         if annotations:
             print("Warning: unused annotations", annotations)

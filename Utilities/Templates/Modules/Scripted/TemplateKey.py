@@ -9,7 +9,6 @@ from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 from slicer.parameterNodeWrapper import (
     parameterNodeWrapper,
-    Default,
     WithinRange,
 )
 
@@ -112,8 +111,8 @@ class TemplateKeyParameterNode:
     invertedVolume - The output volume that will contain the inverted thresholded volume.
     """
     inputVolume: vtkMRMLScalarVolumeNode
-    imageThreshold: Annotated[float, WithinRange(-100, 500), Default(100)]
-    invertThreshold: Annotated[bool, Default(False)]
+    imageThreshold: Annotated[float, WithinRange(-100, 500)] = 100
+    invertThreshold: bool = False
     thresholdedVolume: vtkMRMLScalarVolumeNode
     invertedVolume: vtkMRMLScalarVolumeNode
 

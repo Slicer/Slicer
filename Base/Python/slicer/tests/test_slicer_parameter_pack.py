@@ -30,9 +30,9 @@ class BadDateException(ValueError):
 
 @parameterPack
 class Date:
-    _month: Annotated[int, Default(1)]
-    _day: Annotated[int, Default(1)]
-    _year: Annotated[int, Default(1970)]
+    _month: int = 1
+    _day: int = 1
+    _year: int = 1970
 
     @staticmethod
     def checkDate(month, day, year):
@@ -234,8 +234,7 @@ class TypedParameterNodeTest(unittest.TestCase):
     def test_serialization_of_nested(self):
         @parameterNodeWrapper
         class ParameterNodeType:
-            box: Annotated[BoundingBox,
-                           Default(BoundingBox(Point(0, 1), Point(1, 0)))]
+            box: BoundingBox = BoundingBox(Point(0, 1), Point(1, 0))
 
         param = ParameterNodeType(newParameterNode())
 
@@ -439,7 +438,7 @@ class TypedParameterNodeTest(unittest.TestCase):
             value: int
             union: Union[int, str]
             annotated: Annotated[bool, Default(True)]
-            annotatedBox: Annotated[BoundingBox, Default(BoundingBox(Point(-99, 8), Point(11, 10)))]
+            annotatedBox: BoundingBox = BoundingBox(Point(-99, 8), Point(11, 10))
             annotatedSub: AnnotatedSub
 
         self.assertEqual(ParameterPack.dataType("box"), BoundingBox)
@@ -448,8 +447,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertEqual(ParameterPack.dataType("value"), int)
         self.assertEqual(ParameterPack.dataType("union"), Union[int, str])
         self.assertEqual(ParameterPack.dataType("annotated"), Annotated[bool, Default(True)])
-        self.assertEqual(ParameterPack.dataType("annotatedBox"),
-                         Annotated[BoundingBox, Default(BoundingBox(Point(-99, 8), Point(11, 10)))])
+        self.assertEqual(ParameterPack.dataType("annotatedBox"), BoundingBox)
         self.assertEqual(ParameterPack.dataType("annotatedBox.topLeft"), Point)
         self.assertEqual(ParameterPack.dataType("annotatedSub"), AnnotatedSub)
         self.assertEqual(ParameterPack.dataType("annotatedSub.iterations"), Annotated[int, Default(44)])
@@ -461,8 +459,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertEqual(param.dataType("value"), int)
         self.assertEqual(param.dataType("union"), Union[int, str])
         self.assertEqual(param.dataType("annotated"), Annotated[bool, Default(True)])
-        self.assertEqual(param.dataType("annotatedBox"),
-                         Annotated[BoundingBox, Default(BoundingBox(Point(-99, 8), Point(11, 10)))])
+        self.assertEqual(param.dataType("annotatedBox"), BoundingBox)
         self.assertEqual(param.dataType("annotatedBox.topLeft"), Point)
         self.assertEqual(param.dataType("annotatedSub"), AnnotatedSub)
         self.assertEqual(param.dataType("annotatedSub.iterations"), Annotated[int, Default(44)])
@@ -523,7 +520,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         @parameterNodeWrapper
         class ParameterNodeType:
             date: Date
-            date2: Annotated[Date, Default(Date(2, 28, 2028))]
+            date2: Date = Date(2, 28, 2028)
 
         param = ParameterNodeType(newParameterNode())
         self.assertEqual(param.date, Date())
@@ -551,3 +548,13 @@ class TypedParameterNodeTest(unittest.TestCase):
         param2 = ParameterNodeType(param.parameterNode)
         self.assertEqual(param2.date, Date(1, 31, 1980))
         self.assertEqual(param2.date2, Date(2, 28, 2028))
+
+    def test_equals_default(self):
+        @parameterPack
+        class Pack:
+            i: int = 50
+            j: Annotated[int, Default(60)]
+
+        pack = Pack()
+        self.assertEqual(pack.i, 50)
+        self.assertEqual(pack.j, 60)

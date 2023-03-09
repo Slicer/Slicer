@@ -96,8 +96,7 @@ class ParameterNodeType:
     #  - box.topLeft.y (default value is 1)
     #  - box.bottomRight.x (default value is 1)
     #  - box.bottomRight.y (default value is 0)
-    box: Annotated[BoundingBox,
-        Default(BoundingBox(Point(0, 1), Point(1, 0)))]
+    box: BoundingBox = BoundingBox(Point(0, 1), Point(1, 0))
 
 
 parameterNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScriptedModuleNode')
@@ -121,7 +120,7 @@ The created `parameterPack` will have the following attributes:
 >>> class ParameterPack:
 >>>     # if the type is Annotated, it will treat the annotations the same as @parameterNodeWrapper
 >>>     x: Annotated[float, WithinRange(0, 10)]
->>>     option: Annotated[str, Choice(["a","b"]), Default("b")]
+>>>     option: Annotated[str, Choice(["a","b"])] = "b"
 >>> 
 >>> # with no arguments the constructor will use the given (or implied) defaults.
 >>> p1 = ParameterPack()  # == ParameterPack(x=0.0, option="b")
@@ -197,9 +196,9 @@ class BadDateException(ValueError):
 class Date:
     # Private parameters that will be written to the scene.
     # Can still set defaults on the private parameters.
-    _month: Annotated[int, Default(1)]
-    _day: Annotated[int, Default(1)]
-    _year: Annotated[int, Default(1970)]
+    _month: int = 1
+    _day: int = 1
+    _year: int = 1970
 
     # A checker for the multi-parameter invariant
     @staticmethod
