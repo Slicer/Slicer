@@ -78,7 +78,7 @@ For more details, see [this page](https://www.slicer.org/wiki/Documentation/Nigh
 
 ### Parameter Nodes
 
-Parameter nodes are a specific use of MRML nodes to store parameters for a given function/module. For more info see [Parameter Nodes](parameter_nodes.md#parameter-nodes).
+Parameter nodes are a specific use of MRML nodes to store parameters for a given function/module. For more info see [Parameter Nodes](parameter_nodes/overview.md).
 
 ### Scene undo/redo
 
