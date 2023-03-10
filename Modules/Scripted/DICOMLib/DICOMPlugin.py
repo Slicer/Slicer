@@ -202,6 +202,14 @@ class DICOMPlugin:
         tags['seriesInstanceUID'] = "0020,000E"
         tags['seriesModality'] = "0008,0060"
         tags['seriesNumber'] = "0020,0011"
+        tags['seriesDescription'] = "0008,103E"
+        tags['seriesDate'] = "0008,0021"
+        tags['seriesTime'] = "0008,0031"
+        tags['contentDate'] = "0008,0023"
+        tags['contentTime'] = "0008,0033"
+        tags['manufacturer'] = "0008,0070"
+        tags['model'] = "0008,1090"
+
         tags['frameOfReferenceUID'] = "0020,0052"
         tags['studyInstanceUID'] = "0020,000D"
         tags['studyID'] = "0020,0010"
@@ -242,12 +250,22 @@ class DICOMPlugin:
         # Specify details of series item
         seriesInstanceUid = slicer.dicomDatabase.fileValue(firstFile, tags['seriesInstanceUID'])
         shn.SetItemUID(seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), seriesInstanceUid)
-        shn.SetItemAttribute(seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesModalityAttributeName(),
-                             slicer.dicomDatabase.fileValue(firstFile, tags['seriesModality']))
-        shn.SetItemAttribute(seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(),
-                             slicer.dicomDatabase.fileValue(firstFile, tags['seriesNumber']))
-        shn.SetItemAttribute(seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMFrameOfReferenceUIDAttributeName(),
-                             slicer.dicomDatabase.fileValue(firstFile, tags['frameOfReferenceUID']))
+        # These series attributes are specified in DICOM export
+        seriesAttributes = [
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesModalityAttributeName(), tags['seriesModality']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(), tags['seriesNumber']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMFrameOfReferenceUIDAttributeName(), tags['frameOfReferenceUID']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "SeriesDescription", tags['seriesDescription']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "SeriesDate", tags['seriesDate']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "SeriesTime", tags['seriesTime']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "ContentDate", tags['contentDate']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "ContentTime", tags['contentTime']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "Manufacturer", tags['manufacturer']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "Model", tags['model']],
+        ]
+        for attributeName, tag in seriesAttributes:
+            shn.SetItemAttribute(seriesItemID, attributeName, slicer.dicomDatabase.fileValue(firstFile, tag))
+
         # Set instance UIDs
         instanceUIDs = ""
         for file in loadable.files:

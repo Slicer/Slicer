@@ -102,7 +102,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         exportable.setTag('Manufacturer', 'Unknown manufacturer')
         exportable.setTag('Model', 'Unknown model')
         exportable.setTag('StudyID', '1')
-        exportable.setTag('SeriesNumber', '1')
+        exportable.setTag('SeriesNumber', '301')
         exportable.setTag('SeriesDate', '')
         exportable.setTag('SeriesTime', '')
 

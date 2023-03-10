@@ -567,7 +567,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         exportable.setTag('SeriesTime', '')
         exportable.setTag('ContentDate', '')
         exportable.setTag('ContentTime', '')
-        exportable.setTag('SeriesNumber', '1')
+        exportable.setTag('SeriesNumber', '301')
         exportable.setTag('SeriesInstanceUID', '')
         exportable.setTag('FrameOfReferenceUID', '')
 
