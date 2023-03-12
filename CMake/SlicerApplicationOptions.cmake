@@ -57,7 +57,7 @@ mark_as_superbuild(Slicer_BUILD_WIN32_CONSOLE_LAUNCHER:BOOL)
 # Organization name
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_ORGANIZATION_DOMAIN)
-  set(Slicer_ORGANIZATION_DOMAIN "www.slicer.org" CACHE STRING "Organization domain")
+  set(Slicer_ORGANIZATION_DOMAIN "slicer.org" CACHE STRING "Organization domain")
   mark_as_advanced(Slicer_ORGANIZATION_DOMAIN)
 endif()
 mark_as_superbuild(Slicer_ORGANIZATION_DOMAIN)

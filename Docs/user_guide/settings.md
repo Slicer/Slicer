@@ -100,7 +100,7 @@ If .ini file is not found in the the application home directory then it is searc
 
 -  Windows: `%USERPROFILE%\AppData\Roaming\slicer.org\` (typically `C:\Users\<your_user_name>\AppData\Roaming\slicer.org\`)
 -  Linux: `~/.config/slicer.org/`
--  Mac: `~/.config/www.slicer.org/`
+-  Mac: `~/.config/slicer.org/`
 
 Deleting the *.ini files restores all the settings to default.
 
