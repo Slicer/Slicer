@@ -98,8 +98,8 @@ Settings are stored in *.ini files. If the settings file is found in application
 
 If .ini file is not found in the the application home directory then it is searched in user profile:
 
--  Windows: `%USERPROFILE%\AppData\Roaming\Slicer\` (typically `C:\Users\<your_user_name>\AppData\Roaming\Slicer\`)
--  Linux: `~/.config/Slicer/`
+-  Windows: `%USERPROFILE%\AppData\Roaming\slicer.org\` (typically `C:\Users\<your_user_name>\AppData\Roaming\slicer.org\`)
+-  Linux: `~/.config/slicer.org/`
 -  Mac: `~/.config/www.slicer.org/`
 
 Deleting the *.ini files restores all the settings to default.
