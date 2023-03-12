@@ -64,7 +64,7 @@ mark_as_superbuild(Slicer_ORGANIZATION_DOMAIN)
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} organization domain [${Slicer_ORGANIZATION_DOMAIN}]")
 
 if(NOT DEFINED Slicer_ORGANIZATION_NAME)
-  set(Slicer_ORGANIZATION_NAME "Slicer" CACHE STRING "Organization name")
+  set(Slicer_ORGANIZATION_NAME "slicer.org" CACHE STRING "Organization name")
   mark_as_advanced(Slicer_ORGANIZATION_NAME)
 endif()
 mark_as_superbuild(Slicer_ORGANIZATION_NAME)
