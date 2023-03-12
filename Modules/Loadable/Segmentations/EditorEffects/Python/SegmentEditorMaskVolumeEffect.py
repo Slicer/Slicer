@@ -109,6 +109,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
                                           " Higher value makes the edge softer.")
         self.softEdgeMmSpinBox.quantity = "length"
         self.softEdgeMmSpinBox.value = 0
+        self.softEdgeMmSpinBox.minimum = 0
         self.softEdgeMmSpinBox.singleStep = 0.5
         self.softEdgeMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Soft edge:", self.softEdgeMmSpinBox)
         self.softEdgeMmSpinBox.connect("valueChanged(double)", self.softEdgeMmChanged)
@@ -294,39 +295,38 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         self.updateMRMLFromGUI()
 
     def onApply(self):
-        inputVolume = self.getInputVolume()
-        outputVolume = self.outputVolumeSelector.currentNode()
-        operationMode = self.scriptedEffect.parameter("Operation")
-        if not outputVolume:
-            # Create new node for output
-            volumesLogic = slicer.modules.volumes.logic()
-            scene = inputVolume.GetScene()
-            if operationMode == "FILL_INSIDE_AND_OUTSIDE":
-                outputVolumeName = inputVolume.GetName() + " label"
-                outputVolume = volumesLogic.CreateAndAddLabelVolume(inputVolume, outputVolumeName)
+        with slicer.util.tryWithErrorDisplay("Failed to apply mask to volume.", waitCursor=True):
+            inputVolume = self.getInputVolume()
+            outputVolume = self.outputVolumeSelector.currentNode()
+            operationMode = self.scriptedEffect.parameter("Operation")
+            if not outputVolume:
+                # Create new node for output
+                volumesLogic = slicer.modules.volumes.logic()
+                scene = inputVolume.GetScene()
+                if operationMode == "FILL_INSIDE_AND_OUTSIDE":
+                    outputVolumeName = inputVolume.GetName() + " label"
+                    outputVolume = volumesLogic.CreateAndAddLabelVolume(inputVolume, outputVolumeName)
+                else:
+                    outputVolumeName = inputVolume.GetName() + " masked"
+                    outputVolume = volumesLogic.CloneVolumeGeneric(scene, inputVolume, outputVolumeName, False)
+                self.outputVolumeSelector.setCurrentNode(outputVolume)
+
+            if operationMode in ["FILL_INSIDE", "FILL_OUTSIDE"]:
+                fillValues = [self.fillValueEdit.value]
             else:
-                outputVolumeName = inputVolume.GetName() + " masked"
-                outputVolume = volumesLogic.CloneVolumeGeneric(scene, inputVolume, outputVolumeName, False)
-            self.outputVolumeSelector.setCurrentNode(outputVolume)
+                fillValues = [self.binaryMaskFillInsideEdit.value, self.binaryMaskFillOutsideEdit.value]
 
-        if operationMode in ["FILL_INSIDE", "FILL_OUTSIDE"]:
-            fillValues = [self.fillValueEdit.value]
-        else:
-            fillValues = [self.binaryMaskFillInsideEdit.value, self.binaryMaskFillOutsideEdit.value]
+            segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
+            segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
 
-        segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
-        segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+            softEdgeMm = self.scriptedEffect.doubleParameter("SoftEdgeMm")
 
-        softEdgeMm = self.scriptedEffect.doubleParameter("SoftEdgeMm")
+            SegmentEditorMaskVolumeEffect.maskVolumeWithSegment(segmentationNode, segmentID, operationMode, fillValues, inputVolume, outputVolume,
+                                                                softEdgeMm=softEdgeMm)
 
-        slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
-        SegmentEditorMaskVolumeEffect.maskVolumeWithSegment(segmentationNode, segmentID, operationMode, fillValues, inputVolume, outputVolume,
-                                                            softEdgeMm=softEdgeMm)
+            slicer.util.setSliceViewerLayers(background=outputVolume)
 
-        slicer.util.setSliceViewerLayers(background=outputVolume)
-        qt.QApplication.restoreOverrideCursor()
-
-        self.updateGUIFromMRML()
+            self.updateGUIFromMRML()
 
     @staticmethod
     def maskVolumeWithSegment(segmentationNode, segmentID, operationMode, fillValues, inputVolumeNode, outputVolumeNode, maskExtent=None, softEdgeMm=0.0):
@@ -432,7 +432,6 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
                     mask = 1.0 - mask
                 resultArray = inputArray[:] * mask[:] + float(fillValues[0]) * (1.0 - mask[:])
 
-            outputArray = slicer.util.arrayFromVolume(outputVolumeNode)
             slicer.util.updateVolumeFromArray(outputVolumeNode, resultArray.astype(inputArray.dtype))
 
         # Set the same geometry and parent transform as the input volume
