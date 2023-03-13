@@ -31,7 +31,7 @@ parameterNodeWidget = createGui(ParameterNodeWrapper)
 
 The `createGui` methods takes a (possibly annotated) type as input and returns an appropriate widget.
 
-:::{warn}
+:::{warning}
 `createGui` is intended to work with the [GUI connection](./gui_connection.md), so it won't call things like `setMinimum/setMaximum` on the created widgets, as it expects `<parameterNodeWrapper>.connectGui` to do that.
 :::
 
