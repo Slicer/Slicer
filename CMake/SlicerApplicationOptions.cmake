@@ -57,14 +57,14 @@ mark_as_superbuild(Slicer_BUILD_WIN32_CONSOLE_LAUNCHER:BOOL)
 # Organization name
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_ORGANIZATION_DOMAIN)
-  set(Slicer_ORGANIZATION_DOMAIN "slicer.org" CACHE STRING "Organization domain")
+  set(Slicer_ORGANIZATION_DOMAIN "slicer.org" CACHE STRING "Organization domain associated with Qt settings")
   mark_as_advanced(Slicer_ORGANIZATION_DOMAIN)
 endif()
 mark_as_superbuild(Slicer_ORGANIZATION_DOMAIN)
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} organization domain [${Slicer_ORGANIZATION_DOMAIN}]")
 
 if(NOT DEFINED Slicer_ORGANIZATION_NAME)
-  set(Slicer_ORGANIZATION_NAME "slicer.org" CACHE STRING "Organization name")
+  set(Slicer_ORGANIZATION_NAME "slicer.org" CACHE STRING "Organization name associated with Qt settings")
   mark_as_advanced(Slicer_ORGANIZATION_NAME)
 endif()
 mark_as_superbuild(Slicer_ORGANIZATION_NAME)
