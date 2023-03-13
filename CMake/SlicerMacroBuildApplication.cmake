@@ -344,6 +344,18 @@ macro(slicerMacroBuildApplication)
     message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} ${varname} to '${SLICERAPP_${varname}}'")
   endmacro()
 
+  # To avoid conflict between the revision specific settings folder name and the application name,
+  # the following checks that both are different.
+  #
+  # Note that while the name conflict is specific to Linux and happens only if
+  # Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR is ON (the default), the check
+  # is done unconditionally of the platform.
+  #
+  # See https://github.com/Slicer/Slicer/issues/6878
+  if(SLICERAPP_APPLICATION_NAME STREQUAL Slicer_ORGANIZATION_NAME)
+    message(FATAL_ERROR "Application name [${SLICERAPP_APPLICATION_NAME}] must be different from the organization name")
+  endif()
+
   _set_app_property("APPLICATION_NAME")
 
   macro(_set_path_var varname)
