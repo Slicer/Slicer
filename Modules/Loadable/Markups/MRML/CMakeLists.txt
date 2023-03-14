@@ -47,12 +47,8 @@ set(${KIT}_SRCS
   vtkMRML${MODULE_NAME}ROIJsonStorageNode.cxx
   vtkMRML${MODULE_NAME}ROINode.cxx
   vtkMRML${MODULE_NAME}ROINode.h
-  vtkCurveGenerator.cxx
-  vtkCurveGenerator.h
   vtkCurveMeasurementsCalculator.cxx
   vtkCurveMeasurementsCalculator.h
-  vtkLinearSpline.cxx
-  vtkLinearSpline.h
   vtkMRMLMeasurementAngle.cxx
   vtkMRMLMeasurementAngle.h
   vtkMRMLMeasurementArea.cxx
@@ -61,12 +57,8 @@ set(${KIT}_SRCS
   vtkMRMLMeasurementLength.h
   vtkMRMLMeasurementVolume.cxx
   vtkMRMLMeasurementVolume.h
-  vtkParametricPolynomialApproximation.cxx
-  vtkParametricPolynomialApproximation.h
   vtkProjectMarkupsCurvePointsFilter.cxx
   vtkProjectMarkupsCurvePointsFilter.h
-  vtkSlicerDijkstraGraphGeodesicPath.cxx
-  vtkSlicerDijkstraGraphGeodesicPath.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
