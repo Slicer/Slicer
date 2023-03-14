@@ -30,6 +30,7 @@
 #include <QNetworkProxyFactory>
 #include <QResource>
 #include <QSettings>
+#include <QSslConfiguration>
 #include <QTranslator>
 #include <QStandardPaths>
 #include <QTemporaryFile>
