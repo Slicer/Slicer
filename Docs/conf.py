@@ -21,7 +21,10 @@ import os
 import sys
 from datetime import date
 
-sys.path.insert(0, os.path.abspath("../Base/Python"))
+try:
+    import slicer.kits
+except ImportError:
+    sys.path.insert(0, os.path.abspath("../Base/Python"))
 
 
 # -- General configuration ------------------------------------------------
