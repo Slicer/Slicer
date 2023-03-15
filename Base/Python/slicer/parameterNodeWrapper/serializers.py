@@ -1050,6 +1050,7 @@ class AnySerializer(Serializer):
     Serializes the typing.Any annotation.
 
     This is flexible, but has some downsides:
+
     - Chooses the serializer to use each time a write is called. As such it can only actually
       serialize types that have a serializer.
     - It can only serialize classes that exist at the module level, i.e. it cannot serialize
