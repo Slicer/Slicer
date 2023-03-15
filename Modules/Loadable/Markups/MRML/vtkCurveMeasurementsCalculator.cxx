@@ -581,7 +581,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
     std::string arrayName = !currentMeasurement->GetName().empty() ? currentMeasurement->GetName() : "Unnamed";
     interpolatedMeasurement->SetName(arrayName.c_str());
 
-    if (!vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues, interpolatedMeasurement, pedigreeIdsArray))
+    if (!vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues, this->CurveIsClosed, interpolatedMeasurement, pedigreeIdsArray, 1.0))
       {
       vtkErrorMacro("Failed to add " + arrayName + " measurement array to curve");
       continue;
@@ -594,7 +594,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
 }
 
 //------------------------------------------------------------------------------
-bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValues, vtkDoubleArray* interpolatedValues,
+bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValues, bool closedCurve, vtkDoubleArray* interpolatedValues,
   vtkDoubleArray* pedigreeIdsArray, double pedigreeIdsValueScale/*=1.0*/)
 {
   if (!inputValues || !interpolatedValues || !pedigreeIdsArray)
@@ -614,10 +614,12 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
     {
     return true;
     }
+  // Pedigree IDs wrap around if curve is closed. IDs of the last segment are between go up to the number of control points.
+  vtkIdType lastValidControlPointIndex = (closedCurve ? inputValues->GetNumberOfTuples() : inputValues->GetNumberOfTuples() - 1);
   double pedigreeRange[2] = { 0.0, 0.0 };
   pedigreeIdsArray->GetValueRange(pedigreeRange);
   if (pedigreeRange[0] * pedigreeIdsValueScale < -VTK_DBL_EPSILON
-    || pedigreeRange[1] * pedigreeIdsValueScale > inputValues->GetNumberOfTuples() - 1 + VTK_DBL_EPSILON)
+    || pedigreeRange[1] * pedigreeIdsValueScale > lastValidControlPointIndex + VTK_DBL_EPSILON)
     {
     vtkGenericWarningMacro("vtkCurveMeasurementsCalculator::InterpolateArray: pedigreeIdsArray contain values between "
       << pedigreeRange[0] * pedigreeIdsValueScale << " and " << pedigreeRange[1] * pedigreeIdsValueScale << ", but there are only "
@@ -636,7 +638,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
     double pedigreeID = pedigreeIdsArray->GetValue(pointIdx) * pedigreeIdsValueScale;
     vtkIdType controlPointIndex = vtkIdType(pedigreeID);
     double fractionValue = pedigreeID - controlPointIndex;
-    double currentControlPointValue = inputValues->GetValue(controlPointIndex);
+    double currentControlPointValue = inputValues->GetValue(controlPointIndex % inputValues->GetNumberOfTuples());
     if (fractionValue < VTK_DBL_EPSILON)
       {
       // Point corresponds to a control point
@@ -645,7 +647,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
     else
       {
       // Need to interpolate
-      double nextControlPointValue = inputValues->GetValue(controlPointIndex+1);
+      double nextControlPointValue = inputValues->GetValue((controlPointIndex + 1) % inputValues->GetNumberOfTuples());
       double interpolatedValue = currentControlPointValue + fractionValue * (nextControlPointValue-currentControlPointValue);
       interpolatedValues->InsertValue(pointIdx, interpolatedValue);
       }

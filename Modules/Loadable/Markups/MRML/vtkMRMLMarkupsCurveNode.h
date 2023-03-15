@@ -174,7 +174,8 @@ public:
     double samplingDistance, bool closedCurve, vtkDoubleArray* pedigreeIdsArray=nullptr);
 
   /// Resample static control point measurements using linear interpolation, based on fractional pedigreeIds.
-  static bool ResampleStaticControlPointMeasurements(vtkCollection* measurements, vtkDoubleArray* curvePointsPedigreeIdsArray, int curvePointsPerControlPoint);
+  static bool ResampleStaticControlPointMeasurements(vtkCollection* measurements, vtkDoubleArray* curvePointsPedigreeIdsArray,
+    int curvePointsPerControlPoint, bool closedCurve);
 
   /// Samples points along the curve at equal distances.
   /// If endPointIndex < startPointIndex then after the last point, the curve is assumed to continue at the first point.

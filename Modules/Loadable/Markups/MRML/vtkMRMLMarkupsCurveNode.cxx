@@ -394,7 +394,7 @@ void vtkMRMLMarkupsCurveNode::ResampleCurveWorld(double controlPointDistance)
   vtkNew<vtkDoubleArray> pedigreeIdsArray;
   vtkMRMLMarkupsCurveNode::ResamplePoints(points, interpolatedPoints, controlPointDistance, this->CurveClosed, pedigreeIdsArray);
   vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(this->Measurements, pedigreeIdsArray,
-    this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment());
+    this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment(), this->CurveClosed);
 
   vtkNew<vtkPoints> originalPoints;
   this->GetControlPointPositionsWorld(originalPoints);
@@ -407,7 +407,7 @@ void vtkMRMLMarkupsCurveNode::ResampleCurveWorld(double controlPointDistance)
 
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(vtkCollection* measurements,
-  vtkDoubleArray* curvePointsPedigreeIdsArray, int curvePointsPerControlPoint)
+  vtkDoubleArray* curvePointsPedigreeIdsArray, int curvePointsPerControlPoint, bool closedCurve)
 {
   if (!measurements || !curvePointsPedigreeIdsArray)
     {
@@ -438,7 +438,8 @@ bool vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(vtkCollecti
       }
     vtkNew<vtkDoubleArray> interpolatedMeasurement;
     interpolatedMeasurement->SetName(controlPointValues->GetName());
-    vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues, interpolatedMeasurement, curvePointsPedigreeIdsArray, 1.0/curvePointsPerControlPoint);
+    vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues, closedCurve,
+      interpolatedMeasurement, curvePointsPedigreeIdsArray, 1.0/curvePointsPerControlPoint);
     controlPointValues->DeepCopy(interpolatedMeasurement);
     }
 
