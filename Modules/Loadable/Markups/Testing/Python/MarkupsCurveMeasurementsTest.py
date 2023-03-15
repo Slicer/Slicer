@@ -178,6 +178,22 @@ for controlPointIndex in range(numberOfControlPoints):
     angle = 2.0 * math.pi * controlPointIndex / numberOfControlPoints
     closedCurveNode.AddControlPoint(vtk.vtkVector3d(radius * math.sin(angle), radius * math.cos(angle), 0.0))
 
+# Test static measurements for closed curve (differs from open curve in interpolation of the last curve segment)
+
+customStaticMeasurementArray = vtk.vtkDoubleArray()
+for controlPointIndex in range(numberOfControlPoints):
+    customStaticMeasurementArray.InsertNextValue(1 if controlPointIndex % 3 else 0)
+
+customStaticMeasurement = slicer.vtkMRMLStaticMeasurement()
+customStaticMeasurement.SetName('CustomStaticMeasurement')
+customStaticMeasurement.SetUnits('')
+customStaticMeasurement.SetPrintFormat("")
+customStaticMeasurement.SetControlPointValues(customStaticMeasurementArray)
+closedCurveNode.AddMeasurement(customStaticMeasurement)
+
+closedCurvePointData = closedCurveNode.GetCurveWorld().GetPointData()
+verifyArrays(closedCurvePointData, ["PedigreeIDs", "Tangents", "Normals", "Binormals", "CustomStaticMeasurement"])
+
 # Turn on curvature calculation in curve node
 closedCurveNode.GetMeasurement("curvature mean").SetEnabled(True)
 closedCurveNode.GetMeasurement("curvature max").SetEnabled(True)
