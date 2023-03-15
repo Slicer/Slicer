@@ -15,7 +15,7 @@ jobs:
       CERTDATA_REPO: gecko-dev
       CERTDATA_PATH: security/nss/lib/ckfw/builtins/certdata.txt
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - name: Get sha and canonical download url for latest version of certdata.txt file
         id: latest_certdata
@@ -49,7 +49,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@18f7dc018cc2cd597073088f7c7591b9d1c02672 # v3.14.0
         with:
           token: ${{ secrets.SLICERBOT_GITHUB_TOKEN }}
           commit-message: |
