@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check Commit Prefix
-        uses: gsactions/commit-message-checker@v2
+        uses: gsactions/commit-message-checker@16fa2d5de096ae0d35626443bcd24f1e756cafee # v2.0.0
         with:
           pattern: '^(ENH|PERF|BUG|STYLE|DOC|COMP): ([A-Z])+'
           flags: 'gm'
@@ -26,7 +26,7 @@ jobs:
           checkAllCommitMessages: 'true' # optional: this checks all commits associated with a pull request
           accessToken: ${{ secrets.GITHUB_TOKEN }} # github access token is only required if checkAllCommitMessages is true
       - name: Check Line Length
-        uses: gsactions/commit-message-checker@v2
+        uses: gsactions/commit-message-checker@16fa2d5de096ae0d35626443bcd24f1e756cafee # v2.0.0
         with:
           pattern: '^[^#].{1,78}$'
           error: 'The maximum line length of 78 characters is exceeded. For more details, see https://slicer.readthedocs.io/en/latest/developer_guide/style_guide.html#commits'
