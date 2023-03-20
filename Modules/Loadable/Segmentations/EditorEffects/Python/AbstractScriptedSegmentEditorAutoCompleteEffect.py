@@ -221,7 +221,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
                 vtkSegmentationCore.vtkSegmentation.SegmentAdded,
                 vtkSegmentationCore.vtkSegmentation.SegmentRemoved,
                 vtkSegmentationCore.vtkSegmentation.SegmentModified,
-                vtkSegmentationCore.vtkSegmentation.MasterRepresentationModified]
+                vtkSegmentationCore.vtkSegmentation.SourceRepresentationModified]
             for eventId in observedEvents:
                 self.segmentationNodeObserverTags.append(self.observedSegmentation.AddObserver(eventId, self.onSegmentationModified))
 

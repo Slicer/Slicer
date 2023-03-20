@@ -169,7 +169,7 @@ void qMRMLSegmentationShow3DButton::updateWidgetFromMRML()
     // Enable button if there is at least one segment in the segmentation
     this->setEnabled(!d->Locked
       && d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() > 0
-      && d->SegmentationNode->GetSegmentation()->GetMasterRepresentationName() !=
+      && d->SegmentationNode->GetSegmentation()->GetSourceRepresentationName() !=
         vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
 
     // Change button state based on whether it contains closed surface representation
@@ -251,8 +251,8 @@ void qMRMLSegmentationShow3DButton::onToggled(bool on)
   else
     {
     // Button is released, remove the closed surface representation
-    // (but only if it's not the master representation).
-    if (d->SegmentationNode->GetSegmentation()->GetMasterRepresentationName() !=
+    // (but only if it's not the source representation).
+    if (d->SegmentationNode->GetSegmentation()->GetSourceRepresentationName() !=
       vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName())
       {
       d->SegmentationNode->GetSegmentation()->RemoveRepresentation(

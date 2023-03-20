@@ -67,8 +67,8 @@ protected slots:
   /// Remove selected representation
   void removeRepresentation();
 
-  /// Make selected representation the master representation in segmentation
-  void makeMaster();
+  /// Make selected representation the source representation in segmentation
+  void makeSource();
 
 protected:
   QScopedPointer<qMRMLSegmentationRepresentationsListViewPrivate> d_ptr;

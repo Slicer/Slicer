@@ -354,7 +354,7 @@ public:
     std::string segmentID, vtkPolyData* polyData, bool applyParentTransform = true);
 
   /// Set a labelmap image as binary labelmap representation into the segment defined by the segmentation node and segment ID.
-  /// Master representation must be binary labelmap! Master representation changed event is disabled to prevent deletion of all
+  /// Source representation must be binary labelmap! Source representation changed event is disabled to prevent deletion of all
   /// other representation in all segments. The other representations in the given segment are re-converted. The extent of the
   /// segment binary labelmap is shrunk to the effective extent. Display update is triggered.
   /// \param mergeMode Determines if the labelmap should replace the segment, combined with a maximum or minimum operation, or set under the mask.
@@ -418,7 +418,7 @@ public:
   static bool GetSharedSegmentIDsInMask(vtkMRMLSegmentationNode* segmentationNode, std::string sharedSegmentID, vtkOrientedImageData* mask, const int extent[6],
     std::vector<std::string>& segmentIDs, int maskThreshold = 0.0, bool includeInputSharedSegmentID = false);
 
-  /// Reconvert all representations in the segmentation from the master representation
+  /// Reconvert all representations in the segmentation from the source representation
   /// \param segmentationNode Node containing the segmentation
   /// \param sharedSegmentID Segment IDs to be converted. If empty, all segments will be converted.
   /// \return True if the representation was created, False otherwise

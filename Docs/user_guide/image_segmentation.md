@@ -21,7 +21,7 @@ A region can be represented in different ways, for example as a binary labelmap 
 | easy 2D viewing and editing, <br>always valid (even if<br>transformed or edited)     | easy 3D visualization                                                                                   | quite easy 2D viewing<br>and editing,<br>always valid,<br>quite accurate | accurate 2D viewing and editing                |
 | inaccurate (finite resolution)<br>requires lots of memory<br>if overlap is allowed | difficult to edit,<br>can be invalid<br>(e.g., self-intersecting),<br>especially after non-linear<br>transformation | requires lots of memory                                         | ambiguous in 3D,<br>poor quality<br>3D visualization |
 
-Each segment stored in multiple `representations`. One representation is designated as the `master representation` (marked with a "gold star" on the user interface). The master representation is the only editable representation, it is the only one that is stored when saving to file, and all other representations are computed from it automatically.
+Each segment stored in multiple `representations`. One representation is designated as the `source representation` (marked with a "gold star" on the user interface). The source representation is the only editable representation, it is the only one that is stored when saving to file, and all other representations are computed from it automatically.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_representations.png)
 
@@ -48,7 +48,7 @@ Extensions for creating/editing segmentations:
 
 Extensions for analyzing and processing segmentations:
 - [Segment comparison](https://www.slicer.org/wiki/Documentation/Nightly/Modules/SegmentComparison): Compute similarity between two segments based on metrics such as Hausdorff distance and Dice coefficient.
-- [Segment registration](https://github.com/SlicerRt/SegmentRegistration) (provided by SegmentRegistration extension): 
+- [Segment registration](https://github.com/SlicerRt/SegmentRegistration) (provided by SegmentRegistration extension):
 Compute rigid or deformable transform that aligns two selected segments.
 - [SegmentMesher](https://github.com/lassoan/SlicerSegmentMesher): Creating volumetric (tetrahedral) meshes from segmentations.
 - [OpenAnatomy](https://github.com/PerkLab/SlicerOpenAnatomy): Export segmentations or model hierarchies for external viewers in glTF or OBJ format.

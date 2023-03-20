@@ -45,7 +45,7 @@ vtkSegmentationModifier::~vtkSegmentationModifier() = default;
 //-----------------------------------------------------------------------------
 bool vtkSegmentationModifier::ModifyBinaryLabelmap(
   vtkOrientedImageData* labelmap, vtkSegmentation* segmentation, std::string segmentID, int mergeMode/*=MODE_REPLACE*/, const int extent[6]/*=0*/,
-  bool minimumOfAllSegments/*=false*/, bool masterRepresentationModifiedEnabled/*=false*/, std::vector<std::string> segmentIDsToOverwrite/*={}*/,
+  bool minimumOfAllSegments/*=false*/, bool sourceRepresentationModifiedEnabled/*=false*/, std::vector<std::string> segmentIDsToOverwrite/*={}*/,
   std::vector<std::string>* modifiedSegmentIDs/*=nullptr*/)
 {
   if (!segmentation || segmentID.empty() || !labelmap)
@@ -87,25 +87,25 @@ bool vtkSegmentationModifier::ModifyBinaryLabelmap(
     return false;
     }
 
-  bool wasMasterRepresentationModifiedEnabled = segmentation->SetMasterRepresentationModifiedEnabled(masterRepresentationModifiedEnabled);
+  bool wasSourceRepresentationModifiedEnabled = segmentation->SetSourceRepresentationModifiedEnabled(sourceRepresentationModifiedEnabled);
 
   bool segmentLabelmapModified = true;
   if (!vtkSegmentationModifier::AppendLabelmapToSegment(labelmap, segmentation, segmentID, mergeMode, extent, minimumOfAllSegments, modifiedSegmentIDs,
     segmentLabelmapModified))
     {
-    segmentation->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
+    segmentation->SetSourceRepresentationModifiedEnabled(wasSourceRepresentationModifiedEnabled);
     return false;
     }
 
   // Shrink the image data extent to only contain the effective data (extent of non-zero voxels)
   vtkSegmentationModifier::ShrinkSegmentToEffectiveExtent(segmentLabelmap);
 
-  // Re-enable master representation modified event
-  segmentation->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
+  // Re-enable source representation modified event
+  segmentation->SetSourceRepresentationModifiedEnabled(wasSourceRepresentationModifiedEnabled);
   if (segmentLabelmapModified)
     {
     const char* segmentIdChar = segmentID.c_str();
-    segmentation->InvokeEvent(vtkSegmentation::MasterRepresentationModified, (void*)segmentIdChar);
+    segmentation->InvokeEvent(vtkSegmentation::SourceRepresentationModified, (void*)segmentIdChar);
     segmentation->InvokeEvent(vtkSegmentation::RepresentationModified, (void*)segmentIdChar);
     }
 

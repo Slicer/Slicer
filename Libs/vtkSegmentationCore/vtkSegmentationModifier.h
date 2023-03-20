@@ -43,7 +43,7 @@ public:
 
 public:
   /// Set a labelmap image as binary labelmap representation into the segment defined by the segmentation node and segment ID.
-  /// Master representation must be binary labelmap! Master representation changed event is disabled to prevent deletion of all
+  /// Source representation must be binary labelmap! Source representation changed event is disabled to prevent deletion of all
   /// other representation in all segments. The other representations in the given segment are re-converted. The extent of the
   /// segment binary labelmap is shrunk to the effective extent. Display update is triggered.
   /// \param mergeMode Determines if the labelmap should replace the segment, combined with a maximum or minimum operation, or set under the mask.
@@ -56,7 +56,7 @@ public:
     MODE_MERGE_MASK
   };
   static bool ModifyBinaryLabelmap(vtkOrientedImageData* labelmap, vtkSegmentation* segmentation, std::string segmentID,
-    int mergeMode = MODE_REPLACE, const int extent[6] = nullptr, bool minimumOfAllSegments = false, bool masterRepresentationModifiedEnabled = false,
+    int mergeMode = MODE_REPLACE, const int extent[6] = nullptr, bool minimumOfAllSegments = false, bool sourceRepresentationModifiedEnabled = false,
     const std::vector<std::string> segmentIdsToOverwrite = {}, std::vector<std::string>* modifiedSegmentIDs = nullptr);
 
   /// Get the list of segment IDs in the same shared labelmap that are contained within the mask

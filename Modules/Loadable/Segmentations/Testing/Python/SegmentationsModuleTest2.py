@@ -105,7 +105,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
         self.segmentEditorNode.SetAndObserveSourceVolumeNode(self.sourceVolumeNode)
 
         self.segmentation = self.segmentationNode.GetSegmentation()
-        self.segmentation.SetMasterRepresentationName(self.binaryLabelmapReprName)
+        self.segmentation.SetSourceRepresentationName(self.binaryLabelmapReprName)
         self.assertIsNotNone(self.segmentation)
 
     # ------------------------------------------------------------------------------

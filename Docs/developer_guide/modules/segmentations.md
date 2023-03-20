@@ -18,7 +18,7 @@ Additional metadata is stored in custom data fields (starting with `Segmentation
 
 - `Segmentation_ContainedRepresentationNames`: names of segmentation representations (separated by `|` character) that should be displayed. Common representation names include `Binary labelmap`, `Closed surface`, `Planar contours`, `Fractional labelmap`.
 - `Segmentation_ConversionParameters`: parameters for algorithms that compute requested representations. Each parameter definition is separated by the `&` character. A parameter definition consists of parameter name, value, and description text, separated by `|` character.
-- `Segmentation_MasterRepresentation`: defines what representation is stored in the file. It is most commonly `Binary labelmap`, but there are other representations, too, which are stored in an image volume - such as `Fractional labelmap`.
+- `Segmentation_SourceRepresentation`: defines what representation is stored in the file. It is most commonly `Binary labelmap`, but there are other representations, too, which are stored in an image volume - such as `Fractional labelmap`.
 - `Segmentation_ReferenceImageExtentOffset`: This field allows storing an image with arbitrary extent in a NRRD file. NRRD file only stores size of the volume. This field stores voxel coordinates (separated by spaces), therefore the extent can be computed as `[ReferenceImageExtentOffsetI, ReferenceImageExtentOffsetI+sizeI-1, ReferenceImageExtentOffsetJ, ReferenceImageExtentOffsetJ+sizeJ-1, ReferenceImageExtentOffsetK, ReferenceImageExtentOffsetk+sizeK-1]`.
 
 #### Segment custom fields
@@ -74,7 +74,7 @@ Segmentation is stored in a standard VTK multiblock data set file format. Multib
 
 Metadata fields are stored in the polydata files (.vtp) as arrays in `FieldData`:
 
-- `Segmentation_MasterRepresentation`: type: `String`, definition: see in "Common custom fields" section above
+- `Segmentation_SourceRepresentation`: type: `String`, definition: see in "Common custom fields" section above
 - `Segmentation_ConversionParameters`: type: `String`, definition: see in "Common custom fields" section above
 - `Segmentation_ContainedRepresentationNames`: type: `String`, definition: see in "Common custom fields" section above
 - `Segment_ID`: type = `String`, definition: see in "Segment custom fields" section above

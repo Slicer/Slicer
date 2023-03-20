@@ -83,7 +83,7 @@ void vtkSegmentationHistory::SetSegmentation(vtkSegmentation* segmentation)
     this->Segmentation->AddObserver(vtkSegmentation::SegmentAdded, this->SegmentationModifiedCallbackCommand);
     this->Segmentation->AddObserver(vtkSegmentation::SegmentRemoved, this->SegmentationModifiedCallbackCommand);
     this->Segmentation->AddObserver(vtkSegmentation::SegmentModified, this->SegmentationModifiedCallbackCommand);
-    this->Segmentation->AddObserver(vtkSegmentation::MasterRepresentationModified, this->SegmentationModifiedCallbackCommand);
+    this->Segmentation->AddObserver(vtkSegmentation::SourceRepresentationModified, this->SegmentationModifiedCallbackCommand);
     //this->Segmentation->AddObserver(vtkSegmentation::ContainedRepresentationNamesModified, this->SegmentationModifiedCallbackCommand);
     }
 }

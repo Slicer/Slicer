@@ -52,7 +52,7 @@ public:
   /// Get segmentation that the states will be stored of.
   vtkGetMacro(Segmentation, vtkSegmentation*);
 
-  /// Saves all master representations of the segmentation in its current state.
+  /// Saves all source representations of the segmentation in its current state.
   /// States more recent than the last restored state are removed.
   /// \return Success flag
   bool SaveState();

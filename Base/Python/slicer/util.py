@@ -1998,7 +1998,7 @@ def arrayFromSegmentInternalBinaryLabelmap(segmentationNode, segmentId):
 
       segmentationNode->GetSegmentation()->CollapseBinaryLabelmaps()
 
-    If binary labelmap is the master representation then voxel values in the volume node can be modified
+    If binary labelmap is the source representation then voxel values in the volume node can be modified
     by changing values in the numpy array. After all modifications has been completed, call::
 
       segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()

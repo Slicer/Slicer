@@ -29,7 +29,7 @@
 /// \brief Display segmentations in 3D views
 ///
 /// Displays poly data representations of segmentations in 3D viewers
-/// If master representation is a poly data then show master representation.
+/// If source representation is a poly data then show source representation.
 /// Otherwise show first poly data representation if any.
 /// Otherwise try converting to closed surface representation
 ///
