@@ -528,9 +528,9 @@ protected:
   void updateWidgetFromSourceVolumeNode();
   void updateEffectsSectionFromMRML();
 
-  /// Switches the master representation to binary labelmap. If the master representation
+  /// Switches the source representation to binary labelmap. If the source representation
   /// cannot be set to binary labelmap (e.g., the user does not allow it) then false is returned.
-  bool setMasterRepresentationToBinaryLabelmap();
+  bool setSourceRepresentationToBinaryLabelmap();
 
   /// Switches to Segmentations module and returns the module widget
   qSlicerAbstractModuleWidget* switchToSegmentationsModule();

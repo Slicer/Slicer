@@ -123,7 +123,7 @@ protected:
 protected:
 
   /// Calculate output geometry into \sa GeometryImageData with current options from image
-  /// or segmentation that uses labelmap as master representation.
+  /// or segmentation that uses labelmap as source representation.
   /// \return Error message. Empty when successful
   std::string CalculateOutputGeometryFromImage();
 

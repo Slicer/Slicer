@@ -45,14 +45,14 @@ class vtkInformationIntegerVectorKey;
 
 /// \brief MRML node for segmentation storage on disk.
 ///
-/// Only the master representation of the segmentation is stored on disk.
+/// Only the source representation of the segmentation is stored on disk.
 ///
-/// If master representation is labelmap then it is stored as a NRRD image file (.seg.nrrd file).
+/// If source representation is labelmap then it is stored as a NRRD image file (.seg.nrrd file).
 /// Upon saving, segments are automatically collapsed to as few 3D volumes as possible.
 /// If no segments overlap, then the segmentation will be saved as a 3D volume.
 /// If segments overlap (same voxel position is included in multiple segments) then a 4D volume is saved.
 ///
-/// If master representation is polygonal mesh, such as closed
+/// If source representation is polygonal mesh, such as closed
 /// surface, then the segmentation is stored as a VTK multiblock data set
 /// (.vtm file accompanied by a number of .vtk polydata files).
 ///
@@ -91,13 +91,13 @@ public:
 
   /// Return a default file extension for writing
   /// File write extension is determined dynamically
-  /// from master representation type.
+  /// from source representation type.
   const char* GetDefaultWriteFileExtension() override;
 
   /// Return true if the reference node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
-  /// Reset supported write file types. Called when master representation is changed
+  /// Reset supported write file types. Called when source representation is changed
   void ResetSupportedWriteFileTypes();
 
   /// Controls if segmentation labelmap representation is written using minimum necessary extent

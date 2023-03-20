@@ -77,7 +77,7 @@ bool TestSharedLabelmapConversion()
     vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), spherePolyData3.GetPointer());
 
   vtkNew<vtkSegmentation> segmentation;
-  segmentation->SetMasterRepresentationName(vtkSegmentationConverter::GetClosedSurfaceRepresentationName());
+  segmentation->SetSourceRepresentationName(vtkSegmentationConverter::GetClosedSurfaceRepresentationName());
   segmentation->AddSegment(sphereSegment1);
   segmentation->AddSegment(sphereSegment2);
   segmentation->AddSegment(sphereSegment3);
@@ -164,7 +164,7 @@ bool TestSharedLabelmapCollapse()
     };
 
   vtkNew<vtkSegmentation> segmentation;
-  segmentation->SetMasterRepresentationName(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+  segmentation->SetSourceRepresentationName(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
   segmentation->AddSegment(segment1);
   segmentation->AddSegment(segment2);
   segmentation->AddSegment(segment3);

@@ -209,12 +209,25 @@ public:
 
   // Convenience functions for commonly needed features
 
-  /// Change master representation. All other representations are automatically computed
-  /// from the master representation.
-  virtual bool SetMasterRepresentationToBinaryLabelmap();
-  /// Change master representation. All other representations are automatically computed
-  /// from the master representation.
-  virtual bool SetMasterRepresentationToClosedSurface();
+  /// Change source representation. All other representations are automatically computed
+  /// from the source representation.
+  virtual bool SetSourceRepresentationToBinaryLabelmap();
+  /// Change source representation. All other representations are automatically computed
+  /// from the source representation.
+  virtual bool SetSourceRepresentationToClosedSurface();
+
+  /// \deprecated Use SetSourceRepresentationToBinaryLabelmap instead.
+  virtual bool SetMasterRepresentationToBinaryLabelmap()
+    {
+    vtkWarningMacro("vtkSegmentation::SetMasterRepresentationToBinaryLabelmap() method is deprecated, please use SetSourceRepresentationToBinaryLabelmap method instead");
+    return this->SetSourceRepresentationToClosedSurface();
+    };
+  /// \deprecated Use SetSourceRepresentationToClosedSurface instead.
+  virtual bool SetMasterRepresentationToClosedSurface()
+    {
+    vtkWarningMacro("vtkSegmentation::SetMasterRepresentationToClosedSurface() method is deprecated, please use SetSourceRepresentationToClosedSurface method instead");
+    return this->SetSourceRepresentationToClosedSurface();
+    };
 
   /// Generate binary labelmap representation for all segments.
   virtual bool CreateBinaryLabelmapRepresentation();
@@ -314,9 +327,9 @@ protected:
   /// Callback function for all events from the segmentation object.
   static void SegmentationModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
-  /// Callback function observing the master representation of the segmentation (and each segment within)
+  /// Callback function observing the source representation of the segmentation (and each segment within)
   /// Invalidates all representations other than the master. These representations will be automatically converted later on demand.
-  void OnMasterRepresentationModified();
+  void OnSourceRepresentationModified();
 
   /// Callback function observing segment added events.
   /// Triggers update of display properties

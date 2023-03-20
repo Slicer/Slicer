@@ -66,10 +66,10 @@ class vtkStringArray;
 ///       cost is used (rules have a cost field that gives a ballpark value for the conversion cost)
 ///     * Representation types can be defined by registering conversion algorithms (rules) that specify their source and target
 ///       representations, and an estimated cost metric
-///   * Master representation
+///   * Source representation
 ///     * Privileged representation type. Can be any of the available representations, but usually it's the original representation
 ///       of the data (binary labelmap for editing, binary or fractional labelmap for DICOM SEG, planar contour for DICOM RT, etc.)
-///       * Using the proper master representation ensures that no information is lost, which is crucial to avoid discrepancies that can
+///       * Using the proper source representation ensures that no information is lost, which is crucial to avoid discrepancies that can
 ///         never be solved when data is permanently lost in conversion
 ///     * Properties
 ///       * All conversions use it as source (up-to-date representations along conversion path are used if available)
@@ -95,9 +95,9 @@ class vtkSegmentationCore_EXPORT vtkSegmentation : public vtkObject
 public:
   enum
     {
-    /// Invoked when content of the master representation in a segment is changed.
-    MasterRepresentationModified = 62100,
-    /// Invoked when content of any representation (including the master representation) in a segment is changed.
+    /// Invoked when content of the source representation in a segment is changed.
+    SourceRepresentationModified = 62100,
+    /// Invoked when content of any representation (including the source representation) in a segment is changed.
     RepresentationModified,
     /// Invoked if new segment is added
     SegmentAdded,
@@ -151,11 +151,11 @@ public:
   /// Get bounding box in global RAS in the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetBounds(double bounds[6]);
 
-  /// Apply a linear transform on the master representation of the segments. The others will be invalidated
+  /// Apply a linear transform on the source representation of the segments. The others will be invalidated
   /// Harden transform if poly data, apply to directions if oriented image data.
   virtual void ApplyLinearTransform(vtkAbstractTransform* transform);
 
-  /// Apply a non-linear transform on the master representation of the segments. The others will be invalidated
+  /// Apply a non-linear transform on the source representation of the segments. The others will be invalidated
   /// Harden transform both if oriented image data and poly data.
   virtual void ApplyNonLinearTransform(vtkAbstractTransform* transform);
 
@@ -197,7 +197,7 @@ public:
   /// data for changes.
   /// Necessary conversions:
   ///   1. If the segment can be added (\sa CanAcceptSegment), and it does
-  ///   not contain the master representation, then the master representation is converted
+  ///   not contain the source representation, then the source representation is converted
   ///   using the cheapest available path.
   ///   2. Make sure that the segment contains the same types of representations that are
   ///   present in the existing segments of the segmentation (because we expect all segments
@@ -299,17 +299,38 @@ public:
   ///       all segments (this should be the case by design)
   bool ContainsRepresentation(std::string representationName);
 
-  /// Determine if master representation is poly data type
-  bool IsMasterRepresentationPolyData();
+  /// Determine if source representation is poly data type
+  bool IsSourceRepresentationPolyData();
 
-  /// Determine if master representation is (oriented) image data type
-  bool IsMasterRepresentationImageData();
+  /// \deprecated Use IsSourceRepresentationPolyData instead.
+  bool IsMasterRepresentationPolyData()
+    {
+    vtkWarningMacro("vtkSegmentation::IsMasterRepresentationPolyData() method is deprecated, please use IsSourceRepresentationPolyData method instead");
+    return this->IsSourceRepresentationPolyData();
+    };
+
+  /// Determine if source representation is (oriented) image data type
+  bool IsSourceRepresentationImageData();
+
+  /// \deprecated Use IsSourceRepresentationImageData instead.
+  bool IsMasterRepresentationImageData()
+    {
+    vtkWarningMacro("vtkSegmentation::IsMasterRepresentationImageData() method is deprecated, please use IsSourceRepresentationImageData method instead");
+    return this->IsSourceRepresentationImageData();
+    };
 
   /// Get all representations supported by the converter
   void GetAvailableRepresentationNames(std::set<std::string>& representationNames) { this->Converter->GetAvailableRepresentationNames(representationNames); };
 
-  /// Invalidate (remove) non-master representations in all the segments if this segmentation node
-  void InvalidateNonMasterRepresentations();
+  /// Invalidate (remove) non-source representations in all the segments if this segmentation node
+  void InvalidateNonSourceRepresentations();
+
+  /// \deprecated Use InvalidateNonSourceRepresentations instead.
+  void InvalidateNonMasterRepresentations()
+    {
+    vtkWarningMacro("vtkSegmentation::InvalidateNonMasterRepresentations() method is deprecated, please use InvalidateNonSourceRepresentations method instead");
+    this->InvalidateNonSourceRepresentations();
+    };
 
   /// Merged labelmap functions
 
@@ -376,27 +397,27 @@ public:
   /// Shared representation layer functions
 
   /// Get the number of unique vtkDataObject that are used for a particular representation type
-  /// If representationName is not specified, it will be set to the master representation name
+  /// If representationName is not specified, it will be set to the source representation name
   int GetNumberOfLayers(std::string representationName="");
 
   /// Get the layer index for a particular segment
-  /// If representationName is not specified, it will be set to the master representation name
+  /// If representationName is not specified, it will be set to the source representation name
   int GetLayerIndex(std::string segmentId, std::string representationName="");
 
   /// Get the data object for a particular layer index
-  /// If representationName is not specified, it will be set to the master representation name
+  /// If representationName is not specified, it will be set to the source representation name
   vtkDataObject* GetLayerDataObject(int layer, std::string representationName="");
 
   /// Get a collection of all of the data objects in the segmentation
-  /// If representationName is not specified, it will be set to the master representation name
+  /// If representationName is not specified, it will be set to the source representation name
   void GetLayerObjects(vtkCollection* layerObjects, std::string representationName = "");
 
   /// Get the segmentIDs contained in the specified layer
-  /// If representationName is not specified, it will be set to the master representation name
+  /// If representationName is not specified, it will be set to the source representation name
   std::vector<std::string> GetSegmentIDsForLayer(int layer, std::string representationName = "");
 
   /// Get the segmentIDs that use a specific data object
-  /// If representationName is not specified, it will be set to the master representation name
+  /// If representationName is not specified, it will be set to the source representation name
   std::vector<std::string> GetSegmentIDsForDataObject(vtkDataObject* dataObject, std::string representationName = "");
 
   /// Reduce the binary labelmap representation to as few layers as possible.
@@ -408,10 +429,10 @@ public:
 
   /// Create a representation in all segments, using the conversion path with the
   /// lowest cost. The stored conversion parameters are used (which are the defaults if not changed by the user).
-  /// Conversion starts from the master representation. If a representation along
+  /// Conversion starts from the source representation. If a representation along
   /// the path already exists then no conversion is performed.
   /// Note: The conversion functions are not in vtkSegmentationConverter, because
-  ///       they need to know about the master representation which is segmentation-
+  ///       they need to know about the source representation which is segmentation-
   ///       specific, and also to allow optimizations (steps before per-segment conversion).
   /// \param targetRepresentationName Name of the representation to create
   /// \param alwaysConvert If true, then conversion takes place even if target representation exists. False by default.
@@ -420,7 +441,7 @@ public:
 
   /// Generate or update a representation in all segments, using the specified conversion
   /// path and parameters.
-  /// Conversion starts from the master representation, and all representations along the
+  /// Conversion starts from the source representation, and all representations along the
   /// path get overwritten.
   /// \return true on success
   bool CreateRepresentation(vtkSegmentationConversionPath* path,
@@ -430,8 +451,8 @@ public:
   void RemoveRepresentation(const std::string& representationName);
 
   /// Determine if the segmentation is ready to accept a certain type of representation
-  /// by copy/move or import. It can accept a representation if it is the master representation
-  /// of this segment or it is possible to convert to master representation (or the segmentation
+  /// by copy/move or import. It can accept a representation if it is the source representation
+  /// of this segment or it is possible to convert to source representation (or the segmentation
   /// is empty).
   bool CanAcceptRepresentation(std::string representationName);
 
@@ -446,7 +467,7 @@ public:
   /// \return ID of the added segment. Empty on failure
   std::string AddEmptySegment(std::string segmentId="", std::string segmentName="", double color[3]=nullptr);
 
-  /// Get all possible conversions between the master representation and a specified target representation
+  /// Get all possible conversions between the source representation and a specified target representation
   void GetPossibleConversions(const std::string& targetRepresentationName,
     vtkSegmentationConversionPaths* paths);
 
@@ -471,12 +492,19 @@ public:
 
 // Get/set methods
 
-  /// Get master representation name
-  vtkGetMacro(MasterRepresentationName, std::string);
-  /// Set master representation name.
-  /// Need to make sure before setting the name that the newly set master representation exists in
+  /// Get source representation name
+  vtkGetMacro(SourceRepresentationName, std::string);
+  /// Set source representation name.
+  /// Need to make sure before setting the name that the newly set source representation exists in
   /// the segmentation! Use \sa CreateRepresentation for that.
-  virtual void SetMasterRepresentationName(const std::string& representationName);
+  virtual void SetSourceRepresentationName(const std::string& representationName);
+
+  /// \deprecated Use SetSourceRepresentationName instead.
+  virtual void SetMasterRepresentationName(const std::string& representationName)
+    {
+    vtkWarningMacro("vtkSegmentation::SetMasterRepresentationName() method is deprecated, please use SetSourceRepresentationName method instead");
+    this->SetSourceRepresentationName(representationName);
+    };
 
   /// Deep copies source segment to destination segment. If the same representation is found in baseline
   /// with up-to-date timestamp then the representation is reused from baseline.
@@ -501,11 +529,11 @@ protected:
   /// finding the iterator based on their different input arguments.
   void RemoveSegment(SegmentMap::iterator segmentIt);
 
-  /// Temporarily enable/disable master representation modified event.
-  /// \return Old value of MasterRepresentationModifiedEnabled.
+  /// Temporarily enable/disable source representation modified event.
+  /// \return Old value of SourceRepresentationModifiedEnabled.
   /// In general, the old value should be restored after modified is temporarily disabled to ensure proper
-  /// state when calling SetMasterRepresentationModifiedEnabled in nested functions.
-  bool SetMasterRepresentationModifiedEnabled(bool enabled);
+  /// state when calling SetSourceRepresentationModifiedEnabled in nested functions.
+  bool SetSourceRepresentationModifiedEnabled(bool enabled);
 
   /// Temporarily enable/disable segment modified event.
   /// \return Old value of SegmentModifiedEnabled.
@@ -515,16 +543,16 @@ protected:
 
 protected:
   /// Callback function invoked when segment is modified.
-  /// It calls Modified on the segmentation and rebuilds observations on the master representation of each segment
+  /// It calls Modified on the segmentation and rebuilds observations on the source representation of each segment
   static void OnSegmentModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
-  /// Callback function observing the master representation of each segment
-  /// It fires a \sa MasterRepresentationModifiedEvent if master representation is changed in ANY segment
-  static void OnMasterRepresentationModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  /// Callback function observing the source representation of each segment
+  /// It fires a \sa SourceRepresentationModifiedEvent if source representation is changed in ANY segment
+  static void OnSourceRepresentationModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
-  /// Check to ensure that all master representations are being observed, and observers on master representations that
+  /// Check to ensure that all source representations are being observed, and observers on source representations that
   /// are no longer in the segmentation are removed
-  void UpdateMasterRepresentationObservers();
+  void UpdateSourceRepresentationObservers();
 
 protected:
   vtkSegmentation();
@@ -534,11 +562,11 @@ protected:
   /// Container of segments that belong to this segmentation
   SegmentMap Segments;
 
-  /// Master representation type name.
+  /// Source representation type name.
   /// 1. This representation is saved on disk
   /// 2. If this representation is modified, the others are invalidated
   /// This value must be set by the creator of the segmentation object!
-  std::string MasterRepresentationName;
+  std::string SourceRepresentationName;
 
   /// Converter instance
   vtkSegmentationConverter* Converter;
@@ -546,11 +574,11 @@ protected:
   /// Command handling segment modified events
   vtkCallbackCommand* SegmentCallbackCommand;
 
-  /// Command handling master representation modified events
-  vtkCallbackCommand* MasterRepresentationCallbackCommand;
+  /// Command handling source representation modified events
+  vtkCallbackCommand* SourceRepresentationCallbackCommand;
 
-  /// Modified events of  master representations are observed
-  bool MasterRepresentationModifiedEnabled;
+  /// Modified events of  source representations are observed
+  bool SourceRepresentationModifiedEnabled;
 
   /// Modified events of segments are observed
   bool SegmentModifiedEnabled;
@@ -564,7 +592,7 @@ protected:
   /// alphabetical order)
   std::deque< std::string > SegmentIds;
 
-  std::set<vtkSmartPointer<vtkDataObject> > MasterRepresentationCache;
+  std::set<vtkSmartPointer<vtkDataObject> > SourceRepresentationCache;
 
   friend class vtkMRMLSegmentationNode;
   friend class vtkSlicerSegmentationsModuleLogic;

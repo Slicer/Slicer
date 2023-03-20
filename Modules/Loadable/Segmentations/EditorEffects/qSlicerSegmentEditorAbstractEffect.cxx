@@ -356,7 +356,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       }
 
     vtkSmartPointer<vtkOrientedImageData> segmentLayerLabelmap =
-      vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetMasterRepresentationName()));
+      vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetSourceRepresentationName()));
     if (segmentLayerLabelmap
       && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
       && modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove)
@@ -474,7 +474,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet)
     {
     vtkSmartPointer<vtkImageThreshold> segmentInverter = vtkSmartPointer<vtkImageThreshold>::New();
-    segmentInverter->SetInputData(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetMasterRepresentationName()));
+    segmentInverter->SetInputData(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetSourceRepresentationName()));
     segmentInverter->SetInValue(m_EraseValue);
     segmentInverter->SetOutValue(VTK_UNSIGNED_CHAR_MAX);
     segmentInverter->ReplaceInOn();
