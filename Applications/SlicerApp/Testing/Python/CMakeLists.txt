@@ -436,6 +436,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT DICOMReaders.py)
   slicer_add_python_unittest(SCRIPT KneeAtlasTest.py)
   slicer_add_python_unittest(SCRIPT sceneImport2428.py)
+  slicer_add_python_unittest(SCRIPT SlicerDisplayNodeSequenceTest.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBMultipleSaveRestoreLoopTest.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBMultipleSaveRestoreTest.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBSaveRestoreCheckPathsTest.py)
@@ -463,6 +464,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   set(KIT_PYTHON_SCRIPTS
     AtlasTests.py
     sceneImport2428.py
+    SlicerDisplayNodeSequenceTest.py
     SlicerMRBMultipleSaveRestoreLoopTest.py
     SlicerMRBMultipleSaveRestoreTest.py
     SlicerMRBSaveRestoreCheckPathsTest.py

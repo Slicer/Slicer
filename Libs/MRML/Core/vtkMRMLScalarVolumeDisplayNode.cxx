@@ -352,14 +352,15 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node\"s attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLScalarVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
-
-  Superclass::Copy(anode);
-  vtkMRMLScalarVolumeDisplayNode *node = (vtkMRMLScalarVolumeDisplayNode *) anode;
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+  vtkMRMLScalarVolumeDisplayNode *node = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(anode);
+  if (!node)
+    {
+    return;
+    }
 
   this->SetAutoWindowLevel( node->GetAutoWindowLevel() );
   this->SetWindowLevel(node->GetWindow(), node->GetLevel());
@@ -371,8 +372,6 @@ void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
     {
     this->AddWindowLevelPreset(node->GetWindowPreset(p), node->GetLevelPreset(p));
     }
-
-  this->EndModify(disabledModify);
 
 }
 
