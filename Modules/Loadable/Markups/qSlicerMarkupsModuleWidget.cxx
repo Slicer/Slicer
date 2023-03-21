@@ -790,7 +790,7 @@ void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
 
   unsigned int i=0;
 
-  for(const auto markupName: q->markupsLogic()->GetRegisteredMarkupsTypes())
+  for(const auto& markupName: q->markupsLogic()->GetRegisteredMarkupsTypes())
     {
     vtkMRMLMarkupsNode* markupsNode =
       markupsLogic->GetNodeByMarkupsType(markupName.c_str());
