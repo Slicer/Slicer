@@ -28,6 +28,8 @@ if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
 endif()
 
 if(NOT Slicer_USE_SYSTEM_QT)
+  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtTools.cmake)
+
   set(SlicerBlockInstallQtPlugins_subdirectories
     audio
     imageformats
