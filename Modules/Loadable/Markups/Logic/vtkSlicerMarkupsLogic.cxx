@@ -1710,7 +1710,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationLinesROIsToMarkups(vtkStringArray* 
         {
         std::vector<std::string> roles;
         referencingNode->GetNodeReferenceRoles(roles);
-        for (const std::string role : roles)
+        for (const std::string& role : roles)
           {
           std::vector<const char*> referencedNodeIds;
           referencingNode->GetNodeReferenceIDs(role.c_str(), referencedNodeIds);

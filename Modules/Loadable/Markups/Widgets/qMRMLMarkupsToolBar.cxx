@@ -472,7 +472,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
     return;
     }
 
-  for (const auto markupName : markupsLogic->GetRegisteredMarkupsTypes())
+  for (const auto& markupName : markupsLogic->GetRegisteredMarkupsTypes())
     {
     vtkMRMLMarkupsNode* markupsNode = markupsLogic->GetNodeByMarkupsType(markupName.c_str());
     if (markupsNode && markupsLogic->GetCreateMarkupsPushButton(markupName.c_str()))
@@ -514,7 +514,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
       continue;
       }
     bool markupExists = false;
-    for (const auto markupName : markupsLogic->GetRegisteredMarkupsTypes())
+    for (const auto& markupName : markupsLogic->GetRegisteredMarkupsTypes())
       {
       //QString markupButtonName = QString("Create%1PushButton").arg(QString::fromStdString(markupName));
       if (QString::fromStdString("Create"+markupName+"PushButton") == buttonName)
