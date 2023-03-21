@@ -202,7 +202,7 @@ endmacro()
 
 Slicer_Remote_Add(vtkAddon
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/vtkAddon"
-  GIT_TAG 4413fde380b744ab221f7beb4410e11a5158b496
+  GIT_TAG 4714c544f7912fa740e515ccfe2c8fee8e19570b # update-vtk-wrapping-to-support-pypi-generation
   OPTION_NAME Slicer_BUILD_vtkAddon
   )
 list_conditional_append(Slicer_BUILD_vtkAddon Slicer_REMOTE_DEPENDENCIES vtkAddon)
