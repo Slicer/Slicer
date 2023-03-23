@@ -25,7 +25,10 @@
 // Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
+#include "qMRMLLayoutManager.h"
 #include "qMRMLSliceWidget.h"
+#include "qMRMLThreeDView.h"
+#include "qMRMLThreeDWidget.h"
 #include "qSlicerViewersToolBar_p.h"
 
 // SlicerLogic includes
@@ -169,13 +172,28 @@ void qSlicerViewersToolBarPrivate::init()
   QObject::connect(this->CrosshairThicknessMapper, SIGNAL(mapped(int)),
                    this, SLOT(setCrosshairThickness(int)));
 
+  // Crosshair options
+  QActionGroup *crosshairOptionsActions = new QActionGroup(q);
+  crosshairOptionsActions->setExclusive(false);
+
+  this->TrackCursorAction = new QAction(q);
+  this->TrackCursorAction->setText(tr("Track cursor"));
+  this->TrackCursorAction->setToolTip(tr("The crosshair follows the mouse cursor."));
+  this->TrackCursorAction->setCheckable(true);
+  QObject::connect(this->TrackCursorAction, SIGNAL(toggled(bool)), this,
+                   SLOT(setCrosshairTrackCursor(bool)));
+  crosshairOptionsActions->addAction(this->TrackCursorAction);
+
   // Crosshair Menu
   this->CrosshairMenu = new QMenu(tr("Crosshair"), q);
+  this->CrosshairMenu->setToolTipsVisible(true);
   this->CrosshairMenu->addActions(crosshairJumpSlicesActions->actions());
   this->CrosshairMenu->addSeparator();
   this->CrosshairMenu->addActions(crosshairActions->actions());
   this->CrosshairMenu->addSeparator();
   this->CrosshairMenu->addActions(crosshairThicknessActions->actions());
+  this->CrosshairMenu->addSeparator();
+  this->CrosshairMenu->addActions(crosshairOptionsActions->actions());
 
   // Crosshair ToolButton
   this->CrosshairToolButton = new QToolButton();
@@ -407,6 +425,31 @@ void qSlicerViewersToolBarPrivate::setCrosshairMode(int mode)
 }
 
 //---------------------------------------------------------------------------
+void qSlicerViewersToolBarPrivate::setCrosshairTrackCursor(bool track) {
+  //  Q_Q(qSlicerViewersToolBar);
+
+  vtkSmartPointer<vtkCollection> nodes;
+  nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLCrosshairNode *node = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLCrosshairNode *>(
+                                      nodes->GetNextItemAsObject(it)));)
+    {
+
+    // The mouse cursor is hidden when track cursor is on, so make sure that the crosshair is visible
+    if (track && node->GetCrosshairMode() == vtkMRMLCrosshairNode::NoCrosshair)
+      {
+      node->SetCrosshairMode(vtkMRMLCrosshairNode::ShowBasic);
+      }
+    node->SetTrackCursor(track);
+    }
+}
+
+//---------------------------------------------------------------------------
 void qSlicerViewersToolBarPrivate::setCrosshairThickness(int thickness)
 {
   vtkSmartPointer<vtkCollection> nodes;
@@ -544,6 +587,7 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
 {
   Q_ASSERT(this->MRMLScene);
+  Q_Q(qSlicerViewersToolBar);
 
   vtkMRMLNode *node;
   vtkCollectionSimpleIterator it;
@@ -629,6 +673,8 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
     this->IntersectingSlicesRotationEnabledAction->setChecked(
       this->MRMLAppLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesRotation));
     }
+
+  q->change3DViewsCursorTo(crosshairNode->GetTrackCursor() ? Qt::BlankCursor : Qt::ArrowCursor);
 }
 
 //---------------------------------------------------------------------------
@@ -711,4 +757,33 @@ void qSlicerViewersToolBar::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qSlicerViewersToolBar);
   d->setMRMLScene(newScene);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerViewersToolBar::change3DViewsCursorTo(QCursor cursor)
+{
+  if (!qSlicerApplication::application())
+    {
+    qWarning() << "changeCursorTo: can't get a qSlicerApplication";
+    return;
+    }
+  qMRMLLayoutManager *layoutManager = qSlicerApplication::application()->layoutManager();
+
+  if (!layoutManager)
+    {
+    return;
+    }
+
+  // Updated all mapped 3D viewers
+  for (int i = 0; i < layoutManager->threeDViewCount(); ++i)
+    {
+    qMRMLThreeDView *threeDView = layoutManager->threeDWidget(i)->threeDView();
+
+    // The cursor is updated in all views, not only the ones that are in the
+    // current layout.
+    // This is required to ensure the cursor is also set when switching to a
+    // layout with views different from the ones already mapped in the current layout.
+    threeDView->setViewCursor(cursor);
+    threeDView->setDefaultViewCursor(cursor);
+    }
 }

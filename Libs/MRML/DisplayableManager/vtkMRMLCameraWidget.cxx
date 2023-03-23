@@ -151,6 +151,7 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
 
   // Set cursor position
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::ShiftModifier, WidgetEventSetCrosshairPositionBackground);
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventSetCrosshairPositionBackground);
 
   // Context menu
   this->SetEventTranslation(WidgetStateIdle, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
@@ -197,6 +198,7 @@ bool vtkMRMLCameraWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData
     return this->CanProcessButtonClickEvent(eventData, distance2);
     }
 
+
   // If we are currently dragging a point then we interact everywhere
   if (this->WidgetState == WidgetStateTranslate
     || this->WidgetState == WidgetStateRotate
@@ -214,7 +216,30 @@ bool vtkMRMLCameraWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData
   // with shift + mouse-move.
   if (widgetEvent == WidgetEventSetCrosshairPositionBackground)
     {
-    this->ProcessSetCrosshairBackground(eventData);
+    if (!this->GetCameraNode() || !this->GetCameraNode()->GetScene())
+      {
+      return false;
+      }
+
+    vtkMRMLScene *scene = this->GetCameraNode()->GetScene();
+    vtkMRMLCrosshairNode *crosshairNode =
+        vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
+    if (!crosshairNode)
+      {
+      return false;
+      }
+
+    if (crosshairNode->GetTrackCursor())
+      {
+      bool savedFastPick = crosshairNode->GetFastPick3D();
+      crosshairNode->SetFastPick3D(crosshairNode->GetTrackCursor());
+      this->ProcessSetCrosshair(eventData);
+      crosshairNode->SetFastPick3D(savedFastPick);
+      }
+    else if (eventData->GetModifiers() != 0)
+      {
+      this->ProcessSetCrosshairBackground(eventData);
+      }
     }
 
   distance2 = 1e10; // we can process this event but we let more specific widgets to claim it (if they are closer)

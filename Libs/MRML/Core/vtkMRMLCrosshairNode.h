@@ -81,6 +81,13 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   static int GetCrosshairBehaviorFromString(const char* name);
   ///@}
 
+  ///@{
+  /// If trackCursor is enabled, the crosshair is mouse tracked.
+  vtkGetMacro(TrackCursor, bool);
+  vtkSetMacro(TrackCursor, bool);
+  vtkBooleanMacro(TrackCursor, bool);
+  ///@}
+
   ///
   /// Set cursor position in 3D.
   /// This should be called whenever the cursor is moved by using a 3D positioning device
@@ -185,6 +192,7 @@ protected:
   int CrosshairMode{NoCrosshair};
   int CrosshairThickness{Fine};
   int CrosshairBehavior{OffsetJumpSlice};
+  bool TrackCursor{false};
   float CrosshairColor[3]{1.0f, 0.8f, 0.1f}; // Light yellow
 
   double CrosshairRAS[3]{0.0, 0.0, 0.0};

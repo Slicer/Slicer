@@ -55,6 +55,8 @@ public slots:
 
   void setMRMLScene(vtkMRMLScene* newScene);
 
+  void change3DViewsCursorTo(QCursor cursor);
+
 protected:
   QScopedPointer<qSlicerViewersToolBarPrivate> d_ptr;
 
