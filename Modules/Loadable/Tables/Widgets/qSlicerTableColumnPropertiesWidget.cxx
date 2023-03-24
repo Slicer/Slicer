@@ -20,6 +20,7 @@
 
 // Tables Widgets includes
 #include "qSlicerTableColumnPropertiesWidget.h"
+#include "ui_qSlicerTableColumnPropertiesWidget.h"
 
 // Markups includes
 //#include <vtkSlicerTablesLogic.h>

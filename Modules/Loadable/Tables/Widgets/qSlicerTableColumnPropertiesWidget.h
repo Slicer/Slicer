@@ -28,8 +28,6 @@
 
 // Tables Widgets includes
 #include "qSlicerTablesModuleWidgetsExport.h"
-#include "ui_qSlicerTableColumnPropertiesWidget.h"
-
 
 class qSlicerTableColumnPropertiesWidgetPrivate;
 class vtkMRMLTableNode;

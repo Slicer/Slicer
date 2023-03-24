@@ -20,6 +20,7 @@
 
 // Markups Widgets includes
 #include "qSlicerSimpleMarkupsWidget.h"
+#include "ui_qSlicerSimpleMarkupsWidget.h"
 
 // Markups includes
 #include <vtkSlicerMarkupsLogic.h>

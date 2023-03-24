@@ -28,10 +28,12 @@
 
 // Markups Widgets includes
 #include "qSlicerMarkupsModuleWidgetsExport.h"
-#include "ui_qSlicerSimpleMarkupsWidget.h"
-
 
 class qSlicerSimpleMarkupsWidgetPrivate;
+class vtkMRMLInteractionNode;
+class QTableWidget;
+class qSlicerMarkupsPlaceWidget;
+class qMRMLNodeComboBox;
 
 /// \ingroup Slicer_QtModules_CreateModels
 class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
