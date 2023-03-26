@@ -345,3 +345,11 @@ In our example:
       ${MODULE_NAME}Lib/cool_maths.py
       ${MODULE_NAME}Lib/utils.py
       )
+
+## Can I use any Python package in a Slicer module
+
+Any Python packages can be installed in Slicer's built-in Python environment. A convenience function `slicer.util.pip_install` can be used as shown in the [example in the Script Repository](script_repository.md#install-a-python-package).
+
+Important: Do not install any packages in the global scope (outside of all classes and functions) or in the module class constructor, as it can very significantly slow down the application startup and it may even prevent the module from loading.
+
+In addition, since installing packages can have side effects to other extensions or to the main application, always include a confirmation dialog indicating that the installation will happen.
