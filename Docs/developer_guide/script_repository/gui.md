@@ -317,6 +317,73 @@ To display text in slice views, replace the first line by this line (and conside
 view=slicer.app.layoutManager().sliceWidget("Red").sliceView()
 ```
 
+### Activate hanging protocol by keyboard shortcut
+
+This code snippet shows how to specify a hanging protocol for PET/CT with the following properties:
+- window/level and colormap is set to standardized values
+- any acquisition transforms hardened on the images (these transforms are created for example when the image is acquired with varying slice spacing)
+- show PET/CT images fused in slice views
+- show PET image and fused image slices in 3D view
+
+The hanging protocol can be activated using the Ctrl+9 keyboard shortcut.
+
+```python
+def useHangingProtocolPetCt():
+    ctImage = None
+    petImage = None
+
+    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    petColor = slicer.mrmlScene.GetFirstNodeByName('PET-Heat')
+    for imageNode in slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode'):
+        # Harden any transform (in case the image is stored non-uniform spacing, etc.
+        # hardening the acquisition transforms creates a single Cartesian volume)
+        imageNode.HardenTransform()
+
+        # Set window/level and colormap for recognized image types
+        imageItem = shNode.GetItemByDataNode(imageNode)
+        modality = shNode.GetItemAttribute(imageItem, 'DICOM.Modality')
+        if modality == "CT":
+            ctImage = imageNode
+            ctImage.GetVolumeDisplayNode().SetAndObserveColorNodeID(petColor.GetID())
+            slicer.modules.volumes.logic().ApplyVolumeDisplayPreset(ctImage.GetVolumeDisplayNode(), "CT_ABDOMEN")
+        elif modality == "PT":
+            petImage = imageNode
+            petImage.GetVolumeDisplayNode().SetAndObserveColorNodeID(petColor.GetID())
+            petImage.GetVolumeDisplayNode().SetWindowLevelMinMax(0, 20)
+
+    # Set up view layout and content
+    slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpView)
+    slicer.util.setSliceViewerLayers(background=ctImage, foreground=petImage, foregroundOpacity=0.3, fit=True)
+
+    # Show the PET image in 3D view using volume rendering
+    vrLogic = slicer.modules.volumerendering.logic()
+    vrDisplayNode = vrLogic.CreateDefaultVolumeRenderingNodes(petImage)
+    vrDisplayNode.SetVisibility(True)
+    # Use the same window/level and colormap settings for volume rendering as for slice display
+    vrDisplayNode.SetFollowVolumeDisplayNode(True)
+
+    # Show slice views in 3D view
+    layoutManager = slicer.app.layoutManager()
+    for sliceViewName in layoutManager.sliceViewNames():
+        controller = layoutManager.sliceWidget(sliceViewName).sliceController()
+        controller.setSliceVisible(True)
+
+    # Center and fit displayed content in 3D view
+    layoutManager = slicer.app.layoutManager()
+    threeDWidget = layoutManager.threeDWidget(0)
+    threeDView = threeDWidget.threeDView()
+    threeDView.rotateToViewAxis(3)  # look from anterior direction
+    threeDView.resetFocalPoint()  # reset the 3D view cube size and center it
+    threeDView.resetCamera()  # reset camera zoom
+
+    return [ctImage, petImage]
+
+# Register keyboard shortcut
+shortcut = qt.QShortcut(slicer.util.mainWindow())
+shortcut.setKey(qt.QKeySequence("Ctrl+9"))
+shortcut.connect( "activated()", useHangingProtocolPetCt)
+```
+
 ### Show orientation marker in all views
 
 ```python
