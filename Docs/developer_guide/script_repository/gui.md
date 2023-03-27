@@ -321,14 +321,13 @@ view=slicer.app.layoutManager().sliceWidget("Red").sliceView()
 
 This code snippet shows how to specify a hanging protocol for PET/CT with the following properties:
 - window/level and colormap is set to standardized values
-- any acquisition transforms hardened on the images (these transforms are created for example when the image is acuired with varying slice spacing)
+- any acquisition transforms hardened on the images (these transforms are created for example when the image is acquired with varying slice spacing)
 - show PET/CT images fused in slice views
 - show PET image and fused image slices in 3D view
 
 The hanging protocol can be activated using the Ctrl+9 keyboard shortcut.
 
 ```python
-
 def useHangingProtocolPetCt():
     ctImage = None
     petImage = None
