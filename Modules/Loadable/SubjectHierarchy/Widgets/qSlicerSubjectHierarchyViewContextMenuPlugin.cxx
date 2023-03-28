@@ -78,7 +78,9 @@ public:
 
   QAction* MaximizeViewAction = nullptr;
   QAction* FitSliceViewAction = nullptr;
+  QAction* RefocusAllCamerasAction = nullptr;
   QAction* CenterThreeDViewAction = nullptr;
+  QAction* RefocusCameraAction = nullptr;
   QAction* CopyImageAction = nullptr;
   QAction* ConfigureSliceViewAnnotationsAction = nullptr;
   QAction* ToggleTiltLockAction = nullptr;
@@ -90,6 +92,8 @@ public:
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
   vtkWeakPointer<vtkMRMLLayoutNode> LayoutNode;
   vtkWeakPointer<vtkMRMLCameraWidget> CameraWidget;
+
+  QVariantMap ViewContextMenuEventData;
 };
 
 //-----------------------------------------------------------------------------
@@ -150,6 +154,13 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
   QObject::connect(this->CenterThreeDViewAction, SIGNAL(triggered()), q, SLOT(centerThreeDView()));
 
+  this->RefocusCameraAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Refocus camera on this point"), q);
+  this->RefocusCameraAction->setObjectName("RefocusCameraAction");
+  this->RefocusCameraAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Set the camera focus to rotate around this point."));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->RefocusCameraAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
+  QObject::connect(this->RefocusCameraAction, SIGNAL(triggered()), q, SLOT(refocusCamera()));
+
   this->FitSliceViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Reset field of view"), q);
   this->FitSliceViewAction->setObjectName("FitViewAction");
   this->FitSliceViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Center the slice view on the currently displayed volume."));
@@ -157,11 +168,19 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
   QObject::connect(this->FitSliceViewAction, SIGNAL(triggered()), q, SLOT(fitSliceView()));
 
+  this->RefocusAllCamerasAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Refocus cameras on this point"), q);
+  this->RefocusAllCamerasAction->setObjectName("RefocusAllCamerasAction");
+  this->RefocusAllCamerasAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Set the focus of all cameras to rotate around this point."));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->RefocusAllCamerasAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
+  QObject::connect(this->RefocusAllCamerasAction, SIGNAL(triggered()), q, SLOT(refocusAllCameras()));
+
+
   this->MaximizeViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Maximize view"), q);
   this->MaximizeViewAction->setObjectName("MaximizeViewAction");
   this->MaximizeViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show this view maximized in the view layout"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->MaximizeViewAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
   QObject::connect(this->MaximizeViewAction, SIGNAL(triggered()), q, SLOT(maximizeView()));
 
   this->ToggleTiltLockAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Tilt lock"), q);
@@ -171,7 +190,7 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->ToggleTiltLockAction->setShortcut(QKeySequence(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Ctrl+b")));
   this->ToggleTiltLockAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ToggleTiltLockAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
   QObject::connect(this->ToggleTiltLockAction, SIGNAL(triggered()), q, SLOT(toggleTiltLock()));
 
   this->ConfigureSliceViewAnnotationsAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Configure slice view annotations..."), q);
@@ -179,7 +198,7 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->ConfigureSliceViewAnnotationsAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Configures display of corner annotations"
                                                         " and color legend."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 5);
   QObject::connect(this->ConfigureSliceViewAnnotationsAction, SIGNAL(triggered()), q, SLOT(configureSliceViewAnnotationsAction()));
 
   this->CopyImageAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Copy image"), q);
@@ -242,7 +261,9 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
     << d->InteractionModePlaceAction
     << d->MaximizeViewAction
     << d->FitSliceViewAction
+    << d->RefocusAllCamerasAction
     << d->CenterThreeDViewAction
+    << d->RefocusCameraAction
     << d->CopyImageAction
     << d->ToggleTiltLockAction
     << d->ConfigureSliceViewAnnotationsAction
@@ -255,6 +276,8 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
 void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
 {
   Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+  // make sure we don't use metadata from some previous view context menu calls
+  d->ViewContextMenuEventData.clear();
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode || !shNode->GetScene())
@@ -281,6 +304,8 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
     {
     return;
     }
+
+  d->ViewContextMenuEventData = eventData;
 
   d->InteractionModeViewTransformAction->setVisible(true);
   d->InteractionModeAdjustWindowLevelAction->setVisible(true);
@@ -328,7 +353,9 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   bool isSliceViewNode = (vtkMRMLSliceNode::SafeDownCast(viewNode) != nullptr);
   d->ConfigureSliceViewAnnotationsAction->setVisible(isSliceViewNode);
   d->FitSliceViewAction->setVisible(isSliceViewNode);
+  d->RefocusAllCamerasAction->setVisible(isSliceViewNode);
   d->CenterThreeDViewAction->setVisible(!isSliceViewNode);
+  d->RefocusCameraAction->setVisible(!isSliceViewNode);
 
   vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
   if (isSliceViewNode && appLogic)
@@ -509,6 +536,72 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::centerThreeDView()
     {
     qWarning() << Q_FUNC_INFO << " failed: threeDWidget not found";
     return;
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::refocusCamera()
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+  if (!d->CameraWidget)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: camera widget not found.";
+    return;
+    }
+  vtkMRMLCameraNode* cameraNode = d->CameraWidget->GetCameraNode();
+  if (!cameraNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: camera not found.";
+    return;
+    }
+  if (d->ViewContextMenuEventData.find("WorldPosition") == d->ViewContextMenuEventData.end())
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get world position";
+    return;
+    }
+  QVariantList worldPosVector = d->ViewContextMenuEventData["WorldPosition"].toList();
+  if (worldPosVector.size() != 3)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid world position";
+    return;
+    }
+  double worldPos[3] = { worldPosVector[0].toDouble(), worldPosVector[1].toDouble(), worldPosVector[2].toDouble() };
+  cameraNode->SetFocalPoint(worldPos);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::refocusAllCameras()
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode || !shNode->GetScene())
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  if (d->ViewContextMenuEventData.find("WorldPosition") == d->ViewContextMenuEventData.end())
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get world position";
+    return;
+    }
+  QVariantList worldPosVector = d->ViewContextMenuEventData["WorldPosition"].toList();
+  if (worldPosVector.size() != 3)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid world position";
+    return;
+    }
+  double worldPos[3] = { worldPosVector[0].toDouble(), worldPosVector[1].toDouble(), worldPosVector[2].toDouble() };
+
+  std::vector<vtkMRMLNode*> cameraNodes;
+  shNode->GetScene()->GetNodesByClass("vtkMRMLCameraNode", cameraNodes);
+  for (unsigned int i = 0; i < cameraNodes.size(); ++i)
+    {
+    vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(cameraNodes[i]);
+    if (!cameraNode)
+      {
+      continue;
+      }
+    cameraNode->SetFocalPoint(worldPos);
     }
 }
 
