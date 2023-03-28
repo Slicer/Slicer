@@ -66,6 +66,8 @@ protected slots:
   void maximizeView();
   void fitSliceView();
   void centerThreeDView();
+  void refocusCamera();
+  void refocusAllCameras();
   void toggleTiltLock();
   void setIntersectingSlicesVisible(bool);
   void setIntersectingSlicesHandlesVisible(bool);

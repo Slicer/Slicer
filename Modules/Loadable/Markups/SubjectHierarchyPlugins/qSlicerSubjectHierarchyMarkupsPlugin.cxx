@@ -144,7 +144,7 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   QObject::connect(this->RenamePointAction, SIGNAL(triggered()), q, SLOT(renamePoint()));
 
   this->RefocusCameraAction = new QAction("Refocus camera on this point", q);
-  this->RefocusCameraAction->setObjectName("RefocusCameraAction");
+  this->RefocusCameraAction->setObjectName("RefocusPointCameraAction");
   q->setActionPosition(this->RefocusCameraAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->RefocusCameraAction, SIGNAL(triggered()), q, SLOT(refocusCamera()));
 
