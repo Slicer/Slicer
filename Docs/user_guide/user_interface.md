@@ -209,10 +209,10 @@ view will not activate the view.
 
 | Shortcut | Operation |
 | -------- | --------- |
-| `right-click` + `drag up/down` | zoom image in/out |
+| `right-click` + `drag up/down` | zoom image in/out (`Alt` optional, useful during point placement) |
 | `Ctrl` + `mouse wheel` | zoom image in/out |
-| `middle-click` + `drag` | pan (translate) view |
-| `Shift` + `left-click` + `drag` | pan (translate) view |
+| `middle-click` + `drag` | pan (translate) view (`Alt` optional, useful during point placement) |
+| `Shift` + `left-click` + `drag` | pan (translate) view (`Alt` optional, useful during point placement) |
 | `left arrow` / `right arrow` | move to previous/next slice |
 | `b` / `f` | move to previous/next slice |
 | `Shift` + `mouse move` | move crosshair in all views |
@@ -236,7 +236,7 @@ view will not activate the view.
 | Shortcut | Operation |
 | -------- | --------- |
 | `Shift` + `mouse move` | move crosshair in all views |
-| `left-click` + `drag` | rotate view |
+| `left-click` + `drag` | rotate view (`Alt` optional, useful during point placement) |
 | `left arrow` / `right arrow`  | rotate view |
 | `up arrow` / `down arrow` | rotate view |
 | `End` or `Keypad 1` | rotate to view from anterior |
@@ -245,12 +245,12 @@ view will not activate the view.
 | `Shift` + `Page Down` or `Shift` + `Keypad 3` | rotate to view from right side |
 | `Home` or `Keypad 7` | rotate to view from superior |
 | `Shift` + `Home` or `Shift` + `Keypad 7`| rotate to view from inferior |
-| `right-click` + `drag up/down` | zoom view in/out |
+| `right-click` + `drag up/down` | zoom view in/out (`Alt` optional, useful during point placement) |
 | `Ctrl` + `mouse wheel` | zoom view in/out |
 | `Ctrl` + `b` | toggle tilt lock |
 | `+` / `-` | zoom view in/out |
-| `middle-click` + `drag` | pan (translate) view |
-| `Shift` + `left-click` + `drag` | pan (translate) view |
+| `middle-click` + `drag` | pan (translate) view (`Alt` optional, useful during point placement) |
+| `Shift` + `left-click` + `drag` | pan (translate) view (`Alt` optional, useful during point placement) |
 | `Shift` + `left arrow` / `Shift` + `right arrow` | pan (translate) view |
 | `Shift` + `up arrow` / `Shift` + `down arrow` | pan (translate) view |
 | `Shift` + `Keypad 2` / `Shift` + `Keypad 4` | pan (translate) view |

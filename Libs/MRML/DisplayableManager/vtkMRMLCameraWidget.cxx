@@ -113,11 +113,19 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
   // Rotate
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
+  // Alt modifier to allow action during markup placement
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
+    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
 
   // Pan
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier,
     WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::NoModifier,
+    WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
+  // Alt modifier to allow action during markup placement
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier + vtkEvent::ShiftModifier,
+    WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::AltModifier,
     WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
   // Touch translate
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
@@ -128,6 +136,9 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier + vtkEvent::ControlModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier,
+    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  // Alt modifier to allow action during markup placement
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
   // Mousewheel zooms direction is chosen to be consistent with other applications (Ctrl-MouseWheelForward zooms in in PowerPoint),
   // and with Windows touchpad pinch-to-zoom (pinch to zoom in generates MouseWheelForward event).
@@ -1098,9 +1109,13 @@ bool vtkMRMLCameraWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* eventDa
   vtkNew<vtkMRMLInteractionEventData> pickEventData;
   pickEventData->SetType(vtkMRMLInteractionNode::ShowViewContextMenuEvent);
   pickEventData->SetViewNode(viewNode);
-  if (pickEventData->IsDisplayPositionValid())
+  if (eventData->IsDisplayPositionValid())
     {
     pickEventData->SetDisplayPosition(eventData->GetDisplayPosition());
+    }
+  if (eventData->IsWorldPositionValid())
+    {
+    pickEventData->SetWorldPosition(eventData->GetWorldPosition(), eventData->IsWorldPositionAccurate());
     }
   interactionNode->ShowViewContextMenu(pickEventData);
   return true;
