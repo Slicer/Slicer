@@ -21,7 +21,6 @@
 #include "vtkCurveGenerator.h"
 #include <vtkEventBroker.h>
 #include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLMarkupsStorageNode.h"
 #include "vtkMRMLStaticMeasurement.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLTransformNode.h"
@@ -38,6 +37,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkCellLocator.h>
 #include <vtkCollection.h>
+#include <vtkCollectionIterator.h>
 #include <vtkParallelTransportFrame.h>
 #include <vtkGeneralTransform.h>
 #include <vtkMatrix3x3.h>
@@ -91,6 +91,8 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
 
   this->Measurements = vtkCollection::New();
   this->Measurements->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+
+  this->DefaultMeasurements = vtkSmartPointer<vtkStringArray>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -231,14 +233,17 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy/*=true*
   this->RemoveAllMeasurements();
   for (int index = 0; index < source->Measurements->GetNumberOfItems(); ++index)
     {
-    vtkMRMLMeasurement* sourceMeasurement = vtkMRMLMeasurement::SafeDownCast(source->Measurements->GetItemAsObject(index));
+    vtkMRMLMeasurement* sourceMeasurement = vtkMRMLMeasurement::SafeDownCast
+      (source->Measurements->GetItemAsObject(index));
     if (!sourceMeasurement)
       {
       continue;
       }
-    vtkSmartPointer<vtkMRMLMeasurement> measurement = this->GetMeasurement(sourceMeasurement->GetName().c_str());
-    measurement = vtkSmartPointer<vtkMRMLMeasurement>::Take(sourceMeasurement->CreateInstance());
+
+    vtkSmartPointer<vtkMRMLMeasurement> measurement =
+      vtkSmartPointer<vtkMRMLMeasurement>::Take(sourceMeasurement->CreateInstance());
     measurement->Copy(sourceMeasurement);
+    measurement->SetInputMRMLNode(this);
     this->AddMeasurement(measurement);
     }
 }
@@ -314,7 +319,7 @@ int vtkMRMLMarkupsNode::EndModify(int previousDisableModifiedEventState)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(Locked);
@@ -377,6 +382,7 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
       os << "]\n";
       }
     }
+
 
   if  (this->GetNumberOfMeasurements()>0)
     {
@@ -2545,6 +2551,24 @@ int vtkMRMLMarkupsNode::GetNumberOfEnabledMeasurements()
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetNumberOfEnabledAndDefinedMeasurements()
+{
+  int numberOfEnabledAndDefinedMeasurements = 0;
+  vtkMRMLMeasurement* currentMeasurement = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (this->Measurements->InitTraversal(it);
+      (currentMeasurement=vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetNextItemAsObject(it)));)
+    {
+    if (currentMeasurement->GetEnabled() && currentMeasurement->GetValueDefined())
+      {
+      numberOfEnabledAndDefinedMeasurements++;
+      }
+    }
+
+  return numberOfEnabledAndDefinedMeasurements;
+}
+
+//---------------------------------------------------------------------------
 vtkMRMLMeasurement* vtkMRMLMarkupsNode::GetNthMeasurement(int id)
 {
   if (id < 0 || id >= this->GetNumberOfMeasurements())
@@ -2589,12 +2613,63 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id, vtkMRMLMeasurement* measureme
     {
     this->Measurements->ReplaceItem(id, measurement);
     }
+
+  this->UpdateMeasurementsInternal();
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MeasurementsCollectionModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::AddMeasurement(vtkMRMLMeasurement* measurement)
 {
   this->Measurements->AddItem(measurement);
+  this->UpdateMeasurementsInternal();
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MeasurementsCollectionModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLMarkupsNode::GetMeasurementNameFromIndex(int id)
+{
+  vtkMRMLMeasurement* measurement = this->GetNthMeasurement(id);
+  if (!measurement)
+    {
+    return "";
+    }
+
+  return measurement->GetName();
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetMeasurementIndexFromName(const char *name)
+{
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+
+  vtkMRMLMeasurement* selectedMeasurement = this->GetMeasurement(name);
+  if (!selectedMeasurement)
+    {
+    return -1;
+    }
+
+  int index = -1;
+  for(int measurementIndex = 0; measurementIndex < this->Measurements->GetNumberOfItems(); ++measurementIndex)
+    {
+    vtkMRMLMeasurement* measurement = vtkMRMLMeasurement::SafeDownCast
+      (this->Measurements->GetItemAsObject(measurementIndex));
+    if (!measurement)
+      {
+      continue;
+      }
+
+    if (measurement == selectedMeasurement)
+      {
+      return index;
+      }
+    }
+
+  return index;
 }
 
 //---------------------------------------------------------------------------
@@ -2635,6 +2710,22 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
   measurement->SetDerivationCode(derivationCode);
   measurement->SetUnitsCode(unitsCode);
   measurement->SetMethodCode(methodCode);
+
+  this->UpdateMeasurementsInternal();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::RemoveMeasurement(const char *name)
+{
+  vtkMRMLMeasurement* measurement = this->GetMeasurement(name);
+  if (!measurement)
+    {
+    return;
+    }
+
+  this->Measurements->RemoveItem(measurement);
+  this->UpdateMeasurementsInternal();
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MeasurementsCollectionModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -2644,13 +2735,73 @@ void vtkMRMLMarkupsNode::RemoveNthMeasurement(int id)
     {
     vtkErrorMacro("vtkMRMLMarkupsNode::RemoveNthMeasurement failed: id out of range");
     }
-  this->Measurements->RemoveItem(id);
+  std::string name = this->GetMeasurementNameFromIndex(id);
+  this->RemoveMeasurement(name.c_str());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::EnableAllMeasurements()
+{
+  vtkCollectionIterator* iter = this->Measurements->NewIterator();
+  for(iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
+    {
+    vtkMRMLMeasurement* measurement = vtkMRMLMeasurement::SafeDownCast(iter->GetCurrentObject());
+    if (!measurement)
+      {
+      continue;
+      }
+
+    measurement->EnabledOn();
+    }
+  iter->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::EnableMeasurement(const char *name)
+{
+  vtkMRMLMeasurement* measurement = this->GetMeasurement(name);
+  if (!measurement)
+    {
+    return;
+    }
+
+  measurement->EnabledOn();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::DisableAllMeasurements()
+{
+  vtkCollectionIterator* iter = this->Measurements->NewIterator();
+  for(iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
+    {
+    vtkMRMLMeasurement* measurement = vtkMRMLMeasurement::SafeDownCast(iter->GetCurrentObject());
+    if (!measurement)
+      {
+      continue;
+      }
+
+    measurement->EnabledOff();
+    }
+  iter->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::DisableMeasurement(const char *name)
+{
+  vtkMRMLMeasurement* measurement = this->GetMeasurement(name);
+  if (!measurement)
+    {
+    return;
+    }
+
+  measurement->EnabledOff();
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::RemoveAllMeasurements()
 {
   this->Measurements->RemoveAllItems();
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MeasurementsCollectionModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -2665,6 +2816,20 @@ void vtkMRMLMarkupsNode::ClearValueForAllMeasurements()
       currentMeasurement->ClearValue();
       }
     }
+
+  this->WriteMeasurementsToDescription();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::SetDefaultMeasurements(vtkStringArray *defaultMeasurements)
+{
+  this->DefaultMeasurements->DeepCopy(defaultMeasurements);
+}
+
+//---------------------------------------------------------------------------
+vtkStringArray *vtkMRMLMarkupsNode::GetDefaultMeasurements()
+{
+  return this->DefaultMeasurements;
 }
 
 //---------------------------------------------------------------------------
@@ -2695,34 +2860,6 @@ void vtkMRMLMarkupsNode::UpdateMeasurementsInternal()
 
   this->WriteMeasurementsToDescription();
   this->EndModify(wasModify);
-}
-
-//---------------------------------------------------------------------------
-vtkMRMLUnitNode* vtkMRMLMarkupsNode::GetUnitNode(const char* quantity)
-{
-  if (!quantity)
-    {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetUnitNode failed: invalid quantity");
-    return nullptr;
-    }
-  if (!this->GetScene())
-    {
-    return nullptr;
-    }
-
-  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-    this->GetScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-  if (!selectionNode)
-    {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetUnitNode failed: selection node not found");
-    return nullptr;
-    }
-  vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(this->GetScene()->GetNodeByID(
-    selectionNode->GetUnitNodeID(quantity)));
-
-  // Do not log warning if null, because for example there is no 'angle' unit node, and in
-  // that case hundreds of warnings would be thrown in a non erroneous situation.
-  return unitNode;
 }
 
 //---------------------------------------------------------------------------
@@ -2782,14 +2919,39 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
       }
     }
 
-  bool wasModify = this->StartModify();
-  this->SetDescription(description.c_str());
   if (properties != this->PropertiesLabelText)
     {
     this->PropertiesLabelText = properties;
     this->Modified();
     }
-  this->EndModify(wasModify);
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLUnitNode* vtkMRMLMarkupsNode::GetUnitNode(const char* quantity)
+{
+  if (!quantity)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsNode::GetUnitNode failed: invalid quantity");
+    return nullptr;
+    }
+  if (!this->GetScene())
+    {
+    return nullptr;
+    }
+
+  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+    this->GetScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  if (!selectionNode)
+    {
+    vtkWarningMacro("vtkMRMLMarkupsNode::GetUnitNode failed: selection node not found");
+    return nullptr;
+    }
+  vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(this->GetScene()->GetNodeByID(
+    selectionNode->GetUnitNodeID(quantity)));
+
+  // Do not log warning if null, because for example there is no 'angle' unit node, and in
+  // that case hundreds of warnings would be thrown in a non erroneous situation.
+  return unitNode;
 }
 
 //---------------------------------------------------------------------------

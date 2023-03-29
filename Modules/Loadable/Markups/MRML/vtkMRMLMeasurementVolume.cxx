@@ -63,6 +63,12 @@ void vtkMRMLMeasurementVolume::Compute()
   double size[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetSizeWorld(size);
   double volume = size[0] * size[1] * size[2];
+  double eps = 1.e-6;
+  if (volume < eps)
+    {
+    this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
+    return;
+    }
 
   this->SetValue(volume, "volume");
 }

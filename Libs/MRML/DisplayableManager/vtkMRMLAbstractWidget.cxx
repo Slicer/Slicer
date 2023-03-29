@@ -477,13 +477,13 @@ bool vtkMRMLAbstractWidget::CanProcessButtonClickEvent(vtkMRMLInteractionEventDa
   int clickEvent = 0;
   switch (eventData->GetType())
     {
-    case vtkCommand::LeftButtonReleaseEvent:
+    case vtkCommand::LeftButtonPressEvent:
       clickEvent = vtkMRMLInteractionEventData::LeftButtonClickEvent;
       break;
-    case vtkCommand::MiddleButtonReleaseEvent:
+    case vtkCommand::MiddleButtonPressEvent:
       clickEvent = vtkMRMLInteractionEventData::MiddleButtonClickEvent;
       break;
-    case vtkCommand::RightButtonReleaseEvent:
+    case vtkCommand::RightButtonPressEvent:
       clickEvent = vtkMRMLInteractionEventData::RightButtonClickEvent;
       break;
     default:

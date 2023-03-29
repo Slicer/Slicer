@@ -24,11 +24,6 @@
 // Markups includes
 #include <vtkSlicerMarkupsLogic.h>
 
-// Slicer includes
-#include "qSlicerApplication.h"
-#include "qSlicerModuleManager.h"
-#include "qSlicerAbstractCoreModule.h"
-
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>

@@ -17,6 +17,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDockWidget>
 #include <QSettings>
 #include <QMainWindow>
 #include <QMenu>
@@ -40,20 +41,15 @@
 
 // Markups module includes
 #include "qSlicerAnnotationsReader.h"
+#include "qSlicerMainWindow.h"
 #include "qSlicerMarkupsModule.h"
 #include "qSlicerMarkupsModuleWidget.h"
 #include "qSlicerMarkupsReader.h"
 #include "qSlicerMarkupsWriter.h"
+#include <qSlicerMarkupsMeasurementsWidget.h>
 
 // Markups nodes includes
-#include "vtkMRMLMarkupsAngleNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLMarkupsClosedCurveNode.h"
-#include "vtkMRMLMarkupsCurveNode.h"
-#include "vtkMRMLMarkupsFiducialNode.h"
-#include "vtkMRMLMarkupsLineNode.h"
-#include "vtkMRMLMarkupsPlaneNode.h"
-#include "vtkMRMLMarkupsROINode.h"
 
 // Markups logic includes
 #include "vtkSlicerMarkupsLogic.h"
@@ -65,14 +61,11 @@
 #include "qMRMLMarkupsROIWidget.h"
 #include "qMRMLMarkupsToolBar.h"
 #include "qMRMLMarkupsOptionsWidgetsFactory.h"
-#include "qMRMLNodeComboBox.h"
 
 // DisplayableManager initialization
 #include <vtkAutoInit.h>
 
 VTK_MODULE_INIT(vtkSlicerMarkupsModuleMRMLDisplayableManager);
-
-static const double UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC = 0.020; // refresh output with a maximum of 50FPS
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Markups
@@ -93,7 +86,9 @@ public:
   bool MarkupsModuleOwnsToolBar{ true };
   bool AutoShowToolBar{ true };
   vtkWeakPointer<vtkMRMLMarkupsNode> MarkupsToShow;
-
+  QDockWidget* MeasurementPanelDockWidget;
+  QAction* MeasurementPanelDockWidgetViewAction;
+  qSlicerMarkupsMeasurementsWidget* MeasurementPanelWidget;
 };
 
 //-----------------------------------------------------------------------------
@@ -133,7 +128,7 @@ void qSlicerMarkupsModulePrivate::addToolBar()
 {
   Q_Q(qSlicerMarkupsModule);
 
-  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  qSlicerMainWindow* mainWindow = qobject_cast<qSlicerMainWindow*>(qSlicerApplication::application()->mainWindow());
   if (mainWindow == nullptr)
     {
     qDebug("qSlicerMarkupsModulePrivate::addToolBar: no main window is available, toolbar is not added");
@@ -168,6 +163,35 @@ void qSlicerMarkupsModulePrivate::addToolBar()
     mainWindow->restoreState(settings.value("windowState").toByteArray());
     }
   this->ToolBar->initializeToolBarLayout();
+
+  vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+  if (scene)
+    {
+    this->MeasurementPanelDockWidget = new QDockWidget;
+    this->MeasurementPanelDockWidget->setWindowTitle(QObject::tr("Markups Measurement Panel"));
+    this->MeasurementPanelDockWidget->setObjectName("MeasurementPanelDockWidget");
+    this->MeasurementPanelDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+    this->MeasurementPanelDockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+
+    this->MeasurementPanelDockWidgetViewAction = this->MeasurementPanelDockWidget->toggleViewAction();
+    this->MeasurementPanelDockWidgetViewAction->setText(qSlicerMainWindow::tr("&Markups Measurement Panel"));
+    this->MeasurementPanelDockWidgetViewAction->setToolTip(qSlicerMainWindow::tr("Show Markups Measurement Panel"));
+    this->MeasurementPanelDockWidgetViewAction->setShortcuts({qSlicerMainWindow::tr("Ctrl+7"),});
+    QObject::connect(this->MeasurementPanelDockWidgetViewAction, SIGNAL(toggled(bool)),
+        q, SLOT(onMarkupsMeasurementsPanelToggled(bool)));
+    this->MeasurementPanelDockWidgetViewAction->setIcon(QIcon(":/Icons/Measurements.svg"));
+
+    // Set up show/hide action
+    this->ToolBar->addAction(this->MeasurementPanelDockWidgetViewAction);
+
+    this->MeasurementPanelWidget = new qSlicerMarkupsMeasurementsWidget();
+    this->MeasurementPanelWidget->setObjectName("MeasurementPanelWidget");
+    this->MeasurementPanelWidget->setMRMLScene(scene);
+
+    this->MeasurementPanelDockWidget->setWidget(this->MeasurementPanelWidget);
+
+    mainWindow->addDockWidget(Qt::RightDockWidgetArea, this->MeasurementPanelDockWidget);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -177,8 +201,8 @@ void qSlicerMarkupsModulePrivate::addToolBar()
 qSlicerMarkupsModule::qSlicerMarkupsModule(QObject* _parent)
   : Superclass(_parent), d_ptr(new qSlicerMarkupsModulePrivate(*this))
 {
-  Q_D(qSlicerMarkupsModule);
-  /*
+  /*Q_D(qSlicerMarkupsModule);
+
   vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
   if (scene)
     {
@@ -293,7 +317,6 @@ QStringList qSlicerMarkupsModule::associatedNodeTypes() const
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModule::setMRMLScene(vtkMRMLScene* scene)
 {
-  Q_D(qSlicerMarkupsModule);
   this->Superclass::setMRMLScene(scene);
   vtkSlicerMarkupsLogic* logic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
   if (!logic)
@@ -528,6 +551,20 @@ qMRMLMarkupsToolBar* qSlicerMarkupsModule::toolBar()
 }
 
 //-----------------------------------------------------------------------------
+QDockWidget *qSlicerMarkupsModule::measurementPanelDockWidget()
+{
+  Q_D(qSlicerMarkupsModule);
+  return d->MeasurementPanelDockWidget;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerMarkupsMeasurementsWidget *qSlicerMarkupsModule::measurementPanelWidget()
+{
+  Q_D(qSlicerMarkupsModule);
+  return d->MeasurementPanelWidget;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerMarkupsModule::setToolBarVisible(bool visible)
 {
   Q_D(qSlicerMarkupsModule);
@@ -554,10 +591,20 @@ void qSlicerMarkupsModule::setAutoShowToolBar(bool autoShow)
   Q_D(qSlicerMarkupsModule);
   d->AutoShowToolBar = autoShow;
 }
+
 //-----------------------------------------------------------------------------
-bool qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
+void qSlicerMarkupsModule::onMarkupsMeasurementsPanelToggled(bool toggled)
 {
-  Q_UNUSED(markupsNode);
+  Q_D(qSlicerMarkupsModule);
+  if (toggled)
+    {
+    d->MeasurementPanelDockWidget->activateWindow();
+    }
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* vtkNotUsed(markupsNode))
+{
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app
       || !app->moduleManager()

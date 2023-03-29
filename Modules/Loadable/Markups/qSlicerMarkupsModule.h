@@ -28,6 +28,8 @@
 
 #include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
 
+class QDockWidget;
+class qSlicerMarkupsMeasurementsWidget;
 class qMRMLMarkupsToolBar;
 class vtkMRMLScene;
 class vtkMRMLMarkupsNode;
@@ -84,6 +86,8 @@ public:
   Q_INVOKABLE bool autoShowToolBar();
   Q_INVOKABLE bool isToolBarVisible();
   Q_INVOKABLE qMRMLMarkupsToolBar* toolBar();
+  Q_INVOKABLE QDockWidget* measurementPanelDockWidget();
+  Q_INVOKABLE qSlicerMarkupsMeasurementsWidget* measurementPanelWidget();
 
   /// Utility function for showing the markupsNode in the application user interface (toolbar)
   /// if autoShowToolBar is enabled.
@@ -104,6 +108,7 @@ public slots:
   void setToolBarVisible(bool visible);
   /// Enables automatic showing markups toolbar when a new markups node is loaded
   void setAutoShowToolBar(bool autoShow);
+  void onMarkupsMeasurementsPanelToggled(bool);
   //void onNodeAddedEvent(vtkObject*, vtkObject*);
 
 protected:
