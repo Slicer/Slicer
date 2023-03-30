@@ -12,6 +12,7 @@ from slicer.ScriptedLoadableModule import *
 import DICOMLib
 from slicer.i18n import translate
 
+
 #
 # DICOM
 #
@@ -26,15 +27,12 @@ class DICOM(ScriptedLoadableModule):
         ScriptedLoadableModule.__init__(self, parent)
 
         self.parent.title = translate("DICOM", "DICOM")
-        self.parent.categories = ["", _("Informatics")]  # top level module
+        self.parent.categories = ["", translate("DICOM", "Informatics")]  # top level module
         self.parent.contributors = ["Steve Pieper (Isomics)", "Andras Lasso (PerkLab)"]
-        self.parent.helpText = translate("DICOM", """
-This module allows importing, loading, and exporting DICOM files, and sending receiving data using DICOM networking.
-""")
+        self.parent.helpText = translate("DICOM", "This module allows importing, loading, and exporting DICOM files,"
+                                                  " and sending receiving data using DICOM networking.")
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
-        self.parent.acknowledgementText = translate("DICOM", """
-This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
-""")
+        self.parent.acknowledgementText = translate("DICOM", """This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.""")
         self.parent.icon = qt.QIcon(':Icons/Medium/SlicerLoadDICOM.png')
         self.parent.dependencies = ["SubjectHierarchy"]
 
@@ -362,7 +360,8 @@ class _ui_DICOMSettingsPanel:
         # mechanism.
 
         loadReferencesComboBox = ctk.ctkComboBox()
-        loadReferencesComboBox.toolTip = translate("DICOM", "Determines whether referenced DICOM series are " \
+        loadReferencesComboBox.toolTip = translate(
+            "DICOM", "Determines whether referenced DICOM series are " \
             "offered when loading DICOM, or the automatic behavior if interaction is disabled. " \
             "Interactive selection of referenced series is the default selection")
         loadReferencesComboBox.addItem(translate("DICOM", "Ask user"), qt.QMessageBox.InvalidRole)
@@ -375,8 +374,9 @@ class _ui_DICOMSettingsPanel:
             "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
 
         detailedLoggingCheckBox = qt.QCheckBox()
-        detailedLoggingCheckBox.toolTip = translate("DICOM", "Log more details during DICOM operations."
-                                           " Useful for investigating DICOM loading issues but may impact performance.")
+        detailedLoggingCheckBox.toolTip = translate(
+            "DICOM", "Log more details during DICOM operations."
+            " Useful for investigating DICOM loading issues but may impact performance.")
         genericGroupBoxFormLayout.addRow(translate("DICOM", "Detailed logging:"), detailedLoggingCheckBox)
         detailedLoggingMapper = ctk.ctkBooleanMapper(detailedLoggingCheckBox, "checked", str(qt.SIGNAL("toggled(bool)")))
         parent.registerProperty(
@@ -569,9 +569,11 @@ class DICOMLoadingByDragAndDropEventFilter(qt.QWidget):
             return
 
         if not DICOMFileDialog.validDirectories(self.directoriesToAdd) or not DICOMFileDialog.validDirectories(self.filesToAdd):
-            if not slicer.util.confirmYesNoDisplay(translate("DICOM", "Import from folders with special (non-ASCII) characters in the name is not supported."
-                                                   " It is recommended to move files into a different folder and retry."
-                                                   " Try to import from current location anyway?")):
+            confirmMessage = translate(
+                "DICOM", "Import from folders with special (non-ASCII) characters in the name is not supported."
+                " It is recommended to move files into a different folder and retry."
+                " Try to import from current location anyway?")
+            if not slicer.util.confirmYesNoDisplay(confirmMessage):
                 self.directoriesToAdd = []
                 return
 
@@ -664,11 +666,11 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
 
         # Testing server - not exposed (used for development)
 
-        self.toggleServer = qt.QPushButton("Start Testing Server")  ## no tr (testing code)
+        self.toggleServer = qt.QPushButton("Start Testing Server")  # no tr (testing code)
         self.ui.networkingFrame.layout().addWidget(self.toggleServer)
         self.toggleServer.connect('clicked()', self.onToggleServer)
 
-        self.verboseServer = qt.QCheckBox("Verbose")  ## no tr (testing code)
+        self.verboseServer = qt.QCheckBox("Verbose")  # no tr (testing code)
         self.ui.networkingFrame.layout().addWidget(self.verboseServer)
 
         # advanced options - not exposed to end users
@@ -937,9 +939,9 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         if len(patientIds) == 0:
             slicer.util.infoDisplay(translate("DICOM", "DICOM database is already empty."))
         else:
-            title = translate("DICOM", 'Clear entire DICOM database')
-            message = translate("DICOM", 'Are you sure you want to delete all data and files copied into the database ({count} patients)?')
-                .format(count=len(patientIds))
+            title = translate("DICOM", "Clear entire DICOM database")
+            message = translate(
+                "DICOM", "Are you sure you want to delete all data and files copied into the database ({count} patients)?").format(count=len(patientIds))
             if not slicer.util.confirmYesNoDisplay(message, windowTitle=title):
                 return
         slicer.app.setOverrideCursor(qt.Qt.WaitCursor)

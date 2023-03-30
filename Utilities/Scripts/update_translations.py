@@ -5,7 +5,7 @@
 Example use:
 
     python.exe c:/D/S5/Utilities/Scripts/update_translations.py -c Slicer -s c:/D/S5 -t c:/D/SlicerLanguageTranslations/translations
-      --lupdate c:/Qt/5.15.2/msvc2019_64/bin/lupdate.exe
+      --lupdate c:/Qt/6.3.0/msvc2019_64/bin/lupdate.exe
 
 """
 
@@ -13,9 +13,18 @@ import argparse
 import glob
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
+
+
+def get_lupdate_version(lupdate_path):
+    """Get version of lupdate. There are significant differences between lupdate capabilities in Qt5 and Qt6.
+    """
+    output = subprocess.check_output([lupdate_path, "-version"]).decode()  # returns 'lupdate version 5.15.2\r'
+    m = re.match(r"lupdate version ([0-9]+)\.([0-9]+)\.([0-9]+).*", output)
+    return [int(m.groups()[0]), int(m.groups()[1]), int(m.groups()[2])]
 
 
 def update_translations(component, source_code_dir, translations_dir, lupdate_path, language=None, remove_obsolete_strings=False):
@@ -30,6 +39,45 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
     if not ts_file_paths:
         raise ValueError(f"No .ts files were found at {ts_file_filter}")
 
+    # Get list of translatable files based on file extension
+
+    translatableFilesListPath = source_code_dir + '/TranslatableFilesList.txt'
+    logging.debug(f"Discovering translatable files, writing to {translatableFilesListPath}")
+
+    extensions = ["java", "jui", "ui", "c", "c++", "cc", "cpp", "cxx", "ch", "h", "h++", "hh", "hpp", "hxx", "js", "qs", "qml", "qrc"]  # defaults from Qt-6.3
+
+    # Only add py to extensions if lupdate version supports it
+    lupdate_version = get_lupdate_version(lupdate_path)
+    if lupdate_version[0] * 100 + lupdate_version[1] >= 603:
+        extensions.append("py")
+    else:
+        lupdate_version_str = f"{lupdate_version[0]}.{lupdate_version[1]}.{lupdate_version[2]}"
+        logging.warning(f"lupdate version {lupdate_version_str} does not support Python, therefore .py files will be ignored")
+
+    # Traverse the source code directory and collect all translatable files
+    from pathlib import Path
+    source_files = []
+    for ext in extensions:
+        source_files.extend(Path(source_code_dir).rglob('*.' + ext))
+
+    # Remove grouping based on file extension (sort based on folder structure)
+    source_files.sort()
+
+    # Filter out Python files that are not in Modules folder. This is necessary because lupdate crashes when it tries to parse some complex Python files.
+    from pathlib import fnmatch
+    source_files = [source_file for source_file in source_files if (not str(source_file).endswith('.py')) or (fnmatch.fnmatch(source_file, "**/Modules/**"))]
+
+    with open(translatableFilesListPath, 'w') as f:
+        for source_file in source_files:
+            f.write(str(source_file.relative_to(Path(source_code_dir))) + "\n")
+
+    ts_file_filter = f"{translations_dir}/{ts_filename_filter}"
+    ts_file_paths = glob.glob(ts_file_filter)
+    if not ts_file_paths:
+        raise ValueError(f"No .ts files were found at {ts_file_filter}")
+
+    # Run lupdate for each language
+
     for ts_file_index, ts_file_path in enumerate(ts_file_paths):
         logging.debug(f"Updating {ts_file_path} ({ts_file_index+1}/{len(ts_file_paths)})")
 
@@ -40,7 +88,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
         # Use "." as lupdate source path (and set the current working directory to source_code_dir),
         # because if we use an absolute path then lupdate misses tr() functions in some .h files
         # (for example, loadable module names that are specified in the module file header were not found).
-        command = [lupdate_path, ".", "-tr-function-alias", "QT_TRANSLATE_NOOP+=vtkMRMLTr", "-ts", ts_file_path_in_source_tree]
+        command = [lupdate_path, "@" + translatableFilesListPath, "-tr-function-alias", "QT_TRANSLATE_NOOP+=vtkMRMLTr", "-ts", ts_file_path_in_source_tree]
 
         if remove_obsolete_strings:
             command.append("-noobsolete")
@@ -48,7 +96,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=sys.stderr, cwd=source_code_dir)
         data, err = proc.communicate()
         if proc.returncode != 0:
-            sys.exit(proc.returncode)
+            raise RuntimeError(f"lupdate failed with exit code {proc.returncode}:\n\nCommand: {' '.join(command)}\n\n{data}\n\n{err}\n")
 
         shutil.move(ts_file_path_in_source_tree, ts_file_path)
 
@@ -147,7 +195,7 @@ def extract_translatable_from_cli_modules(source_code_dir):
 def main(argv):
     parser = argparse.ArgumentParser(description="Update Qt translation files")
     parser.add_argument("--lupdate", default="lupdate", dest="lupdate_path",
-                        help="location of the Qt lupdate executable")
+                        help="location of the Qt lupdate executable. Qt-6.3 is required for Python translation")
     parser.add_argument("-s", "--source-code", metavar="DIR", dest="source_code_dir",
                         help="folder of application source code (root of repository, such as https://github.com/Slicer/Slicer)")
     parser.add_argument("-c", "--component", dest="component", default="Slicer",
