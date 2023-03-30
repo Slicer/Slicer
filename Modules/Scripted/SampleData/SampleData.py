@@ -13,7 +13,6 @@ from slicer.util import computeChecksum, extractAlgoAndDigest, TESTING_DATA_URL
 
 #
 # SampleData methods
-#
 
 def downloadFromURL(uris=None, fileNames=None, nodeNames=None, checksums=None, loadFiles=None,
                     customDownloader=None, loadFileTypes=None, loadFileProperties={}):
