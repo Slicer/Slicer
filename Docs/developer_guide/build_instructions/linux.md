@@ -57,8 +57,7 @@ sudo apt update && sudo apt install git subversion build-essential cmake cmake-c
 
 ### Ubuntu 20.04 (Focal Fossa)
 
-:::{note} Warning
-:class: warning
+:::{warning}
 Since the default Qt5 packages available on Ubuntu 20.04 correspond to version 5.12.8 and version 5.15.2 is used to build and test the packages available for download. Compiling Slicer against version 5.12.8 may not succeed, and if it does, the compiled Slicer application may behave differently.
 
 To use Qt 5.15.2, we recommend you download and install following [these instructions](./linux.md#any-distribution)
@@ -74,8 +73,7 @@ sudo apt update && sudo apt install git subversion build-essential cmake cmake-c
 
 ### ArchLinux
 
-:::{note} Warning
-:class: warning
+:::{cautious}
 ArchLinux uses a rolling-release package distribution approach. This means that the versions of the packages will change over time and the following instructions might not be actual. **Last time tested: 2022-03-08.**
 :::
 
@@ -110,9 +108,7 @@ sudo yum install patch mesa-libGL-devel libuuid-devel
 
 This section describes how to install Qt as distributed by *The QT Company*, which can be used for any GNU/Linux distribution.
 
-:::{note} Warning
-:class: warning
-
+:::{important}
 This process requires an account in [qt.io](https://qt.io) 
 
 :::
@@ -141,9 +137,7 @@ export QT_ACCOUNT_PASSWORD=<set your password here>
   --email $QT_ACCOUNT_LOGIN \
   --pw $QT_ACCOUNT_PASSWORD
 ```
-:::{note} Warning
-:class: warning
-
+:::{hint}
 When configuring the Slicer build project, the CMake variable `Qt5_DIR` need to be set using the full path to the Qt5 installation directory ending with `5.15.2/gcc_64/lib/cmake/Qt5`. For example, assuming you installed Qt in `/opt/qt`, you may use `cmake -DCMAKE_BUILD_TYPE:STRING=Release -DQt5_DIR:PATH=/opt/qt/5.15.2/gcc_64/lib/cmake/Qt5 ../Slicer`.
 
 :::
@@ -159,9 +153,7 @@ git clone https://github.com/Slicer/Slicer.git
 This will create a `Slicer` directory containing the source code of Slicer.
 Hereafter we will call this directory the `source directory`.
 
-:::{note} Warning
-:class: warning
-
+:::{tip}
 It is highly recommended to **avoid** the use of the **space** character in the name of the `source directory` or any of its parent directories.
 
 :::
