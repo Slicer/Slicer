@@ -91,8 +91,7 @@ The following may be needed on fresh debian or ubuntu:
     sudo apt-get install libpulse-dev libnss3 libglu1-mesa
     sudo apt-get install --reinstall libxcb-xinerama0
 
-:::{note} Warning
-:class: warning
+:::{warning}
 
 Debian 10.12 users may encounter an error when launching Slicer:
 
