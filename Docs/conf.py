@@ -19,6 +19,7 @@
 import lxml.etree as ET
 import os
 import sys
+from datetime import date
 
 sys.path.insert(0, os.path.abspath('../Base/Python'))
 
@@ -73,7 +74,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = '3D Slicer'
-copyright = '2020, Slicer Community'
+copyright = f'{date.today().year}, Slicer Community'
 author = 'Slicer Community'
 
 # The version info for the project you're documenting, acts as replacement for
