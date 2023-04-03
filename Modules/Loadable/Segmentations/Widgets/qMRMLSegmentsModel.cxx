@@ -118,15 +118,15 @@ void qMRMLSegmentsModelPrivate::init()
       }
     else if (i == q->opacityColumn())
       {
-      columnLabels << "Opacity";
+      columnLabels << qMRMLSegmentsModel::tr("Opacity");
       }
     else if (i == q->nameColumn())
       {
-      columnLabels << "Name";
+      columnLabels << qMRMLSegmentsModel::tr("Name");
       }
     else if (i == q->layerColumn())
       {
-      columnLabels << "Layer";
+      columnLabels << qMRMLSegmentsModel::tr("Layer");
       }
     else if (i == q->statusColumn())
       {

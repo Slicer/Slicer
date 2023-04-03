@@ -89,19 +89,19 @@ void qSlicerSubjectHierarchySegmentsPluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchySegmentsPlugin);
 
   // Show only current segment action
-  this->ShowOnlyCurrentSegmentAction = new QAction("Show only this segment",q);
+  this->ShowOnlyCurrentSegmentAction = new QAction(qSlicerSubjectHierarchySegmentsPlugin::tr("Show only this segment"), q);
   QObject::connect(this->ShowOnlyCurrentSegmentAction, SIGNAL(triggered()), q, SLOT(showOnlyCurrentSegment()));
 
   // Show all segments action
-  this->ShowAllSegmentsAction = new QAction("Show all segments",q);
+  this->ShowAllSegmentsAction = new QAction(qSlicerSubjectHierarchySegmentsPlugin::tr("Show all segments"), q);
   QObject::connect(this->ShowAllSegmentsAction, SIGNAL(triggered()), q, SLOT(showAllSegments()));
 
   // Jump slices action
-  this->JumpSlicesAction = new QAction("Jump slices",q);
+  this->JumpSlicesAction = new QAction(qSlicerSubjectHierarchySegmentsPlugin::tr("Jump slices"),q);
   QObject::connect(this->JumpSlicesAction, SIGNAL(triggered()), q, SLOT(jumpSlices()));
 
   // Clone segment action
-  this->CloneSegmentAction = new QAction("Clone", q);
+  this->CloneSegmentAction = new QAction(qSlicerSubjectHierarchySegmentsPlugin::tr("Clone"), q);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CloneSegmentAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 0.5); // put it right after "Rename" action
   QObject::connect(this->CloneSegmentAction, SIGNAL(triggered()), q, SLOT(cloneSegment()));
@@ -206,7 +206,7 @@ bool qSlicerSubjectHierarchySegmentsPlugin::reparentItemInsideSubjectHierarchy(v
     // If the two master representations are the same, then probably the segment IDs were duplicate
     if (fromSegmentationNode->GetSegmentation()->GetMasterRepresentationName() == toSegmentationNode->GetSegmentation()->GetMasterRepresentationName())
       {
-      QString message = QString("Segment ID of the moved segment (%1) might exist in the target segmentation.\n"
+      QString message = tr("Segment ID of the moved segment (%1) might exist in the target segmentation.\n"
         "Please check the error window for details.").arg(segmentId.c_str());
       QMessageBox::warning(nullptr, tr("Failed to move segment between segmentations"), message);
       return false;
@@ -334,46 +334,52 @@ QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkIdType itemID)const
   // Representations
   std::vector<std::string> containedRepresentationNames;
   segment->GetContainedRepresentationNames(containedRepresentationNames);
-  tooltipString.append( QString("Segment (Representations: ") );
+  QString representations;
   if (containedRepresentationNames.empty())
     {
-    tooltipString.append( QString("None!)") );
+    representations = tr("None");
     }
   else
     {
     for (std::vector<std::string>::iterator reprIt = containedRepresentationNames.begin();
       reprIt != containedRepresentationNames.end(); ++reprIt)
       {
-      tooltipString.append( reprIt->c_str() );
-      tooltipString.append( ", " );
+      if (!representations.isEmpty())
+        {
+        representations.append(", ");
+        }
+      representations.append(reprIt->c_str());
       }
-    tooltipString = tooltipString.left(tooltipString.length()-2).append(")");
     }
+  tooltipString.append(tr("Segment (Representations: %1)").arg(representations));
 
   // Color
   double color[3] = {0.0,0.0,0.0};
   segment->GetColor(color);
-  tooltipString.append( QString(" (Color: %1,%2,%3)").arg(
-    (int)(color[0]*255)).arg((int)(color[1]*255)).arg((int)(color[2]*255)) );
+  tooltipString.append(tr(" (Color: %1, %2, %3)")
+    .arg((int)(color[0]*255)).arg((int)(color[1]*255)).arg((int)(color[2]*255)));
 
   // Tags
-  std::map<std::string,std::string> tags;
-  segment->GetTags(tags);
+  std::map<std::string,std::string> tagsMap;
+  segment->GetTags(tagsMap);
+  QString tags;
   tooltipString.append( QString(" (Tags: ") );
-  if (tags.empty())
+  if (tagsMap.empty())
     {
-    tooltipString.append( QString("None)") );
+    tags = tr("None");
     }
   else
     {
-    for (std::map<std::string,std::string>::iterator tagIt=tags.begin(); tagIt!=tags.end(); ++tagIt)
+    for (std::map<std::string,std::string>::iterator tagIt = tagsMap.begin(); tagIt != tagsMap.end(); ++tagIt)
       {
-      std::string tagString = tagIt->first + ": " + tagIt->second + ", ";
-      tooltipString.append( tagString.c_str() );
+      if (tags.isEmpty())
+        {
+        tags.append(", ");
+        }
+      tags.append(QString::fromStdString(tagIt->first) + ": " + QString::fromStdString(tagIt->second));
       }
-    tooltipString = tooltipString.left(tooltipString.length()-2).append(")");
     }
-
+  tooltipString.append(tr(" (Tags: %1)").arg(tags));
   return tooltipString;
 }
 

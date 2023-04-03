@@ -59,18 +59,20 @@ void qSlicerViewersToolBarPrivate::init()
   crosshairJumpSlicesActions->setExclusive(true);
 
   this->CrosshairJumpSlicesDisabledAction = new QAction(q);
-  this->CrosshairJumpSlicesDisabledAction->setText(tr("No jump slices"));
-  this->CrosshairJumpSlicesDisabledAction->setToolTip(tr("Slice views are not repositioned when crosshair is moved."));
+  this->CrosshairJumpSlicesDisabledAction->setText(qSlicerViewersToolBar::tr("No jump slices"));
+  this->CrosshairJumpSlicesDisabledAction->setToolTip(qSlicerViewersToolBar::tr("Slice views are not repositioned when crosshair is moved."));
   this->CrosshairJumpSlicesDisabledAction->setCheckable(true);
 
   this->CrosshairJumpSlicesOffsetAction = new QAction(q);
-  this->CrosshairJumpSlicesOffsetAction->setText(tr("Jump slices - offset"));
-  this->CrosshairJumpSlicesOffsetAction->setToolTip(tr("Slice view planes are shifted to match crosshair position (even if crosshair is not displayed)."));
+  this->CrosshairJumpSlicesOffsetAction->setText(qSlicerViewersToolBar::tr("Jump slices - offset"));
+  this->CrosshairJumpSlicesOffsetAction->setToolTip(qSlicerViewersToolBar::tr(
+    "Slice view planes are shifted to match crosshair position (even if crosshair is not displayed)."));
   this->CrosshairJumpSlicesOffsetAction->setCheckable(true);
 
   this->CrosshairJumpSlicesCenteredAction = new QAction(q);
-  this->CrosshairJumpSlicesCenteredAction->setText(tr("Jump slices - centered"));
-  this->CrosshairJumpSlicesCenteredAction->setToolTip(tr("Slice views are centered on crosshair position (even if crosshair is not displayed)."));
+  this->CrosshairJumpSlicesCenteredAction->setText(qSlicerViewersToolBar::tr("Jump slices - centered"));
+  this->CrosshairJumpSlicesCenteredAction->setToolTip(qSlicerViewersToolBar::tr(
+    "Slice views are centered on crosshair position (even if crosshair is not displayed)."));
   this->CrosshairJumpSlicesCenteredAction->setCheckable(true);
 
   crosshairJumpSlicesActions->addAction(this->CrosshairJumpSlicesDisabledAction);
@@ -89,28 +91,29 @@ void qSlicerViewersToolBarPrivate::init()
   crosshairActions->setExclusive(true);
 
   this->CrosshairNoAction = new QAction(q);
-  this->CrosshairNoAction->setText(tr("No crosshair"));
-  this->CrosshairNoAction->setToolTip(tr("No crosshair displayed."));
+  this->CrosshairNoAction->setText(qSlicerViewersToolBar::tr("No crosshair"));
+  this->CrosshairNoAction->setToolTip(qSlicerViewersToolBar::tr("No crosshair displayed."));
   this->CrosshairNoAction->setCheckable(true);
 
   this->CrosshairBasicAction = new QAction(q);
-  this->CrosshairBasicAction->setText(tr("Basic crosshair"));
-  this->CrosshairBasicAction->setToolTip(tr("Basic crosshair extending across the field of view with a small gap at the crosshair position."));
+  this->CrosshairBasicAction->setText(qSlicerViewersToolBar::tr("Basic crosshair"));
+  this->CrosshairBasicAction->setToolTip(qSlicerViewersToolBar::tr(
+    "Basic crosshair extending across the field of view with a small gap at the crosshair position."));
   this->CrosshairBasicAction->setCheckable(true);
 
   this->CrosshairBasicIntersectionAction = new QAction(q);
-  this->CrosshairBasicIntersectionAction->setText(tr("Basic + intersection"));
-  this->CrosshairBasicIntersectionAction->setToolTip(tr("Basic crosshair extending across the field of view."));
+  this->CrosshairBasicIntersectionAction->setText(qSlicerViewersToolBar::tr("Basic + intersection"));
+  this->CrosshairBasicIntersectionAction->setToolTip(qSlicerViewersToolBar::tr("Basic crosshair extending across the field of view."));
   this->CrosshairBasicIntersectionAction->setCheckable(true);
 
   this->CrosshairSmallBasicAction = new QAction(q);
-  this->CrosshairSmallBasicAction->setText(tr("Small basic crosshair"));
-  this->CrosshairSmallBasicAction->setToolTip(tr("Small crosshair with a small gap at the crosshair position."));
+  this->CrosshairSmallBasicAction->setText(qSlicerViewersToolBar::tr("Small basic crosshair"));
+  this->CrosshairSmallBasicAction->setToolTip(qSlicerViewersToolBar::tr("Small crosshair with a small gap at the crosshair position."));
   this->CrosshairSmallBasicAction->setCheckable(true);
 
   this->CrosshairSmallBasicIntersectionAction = new QAction(q);
-  this->CrosshairSmallBasicIntersectionAction->setText(tr("Small basic + intersection"));
-  this->CrosshairSmallBasicIntersectionAction->setToolTip(tr("Small crosshair."));
+  this->CrosshairSmallBasicIntersectionAction->setText(qSlicerViewersToolBar::tr("Small basic + intersection"));
+  this->CrosshairSmallBasicIntersectionAction->setToolTip(qSlicerViewersToolBar::tr("Small crosshair."));
   this->CrosshairSmallBasicIntersectionAction->setCheckable(true);
 
   crosshairActions->addAction(this->CrosshairNoAction);
@@ -140,18 +143,18 @@ void qSlicerViewersToolBarPrivate::init()
   crosshairThicknessActions->setExclusive(true);
 
   this->CrosshairFineAction = new QAction(q);
-  this->CrosshairFineAction->setText(tr("Fine crosshair"));
-  this->CrosshairFineAction->setToolTip(tr("Fine crosshair."));
+  this->CrosshairFineAction->setText(qSlicerViewersToolBar::tr("Fine crosshair"));
+  this->CrosshairFineAction->setToolTip(qSlicerViewersToolBar::tr("Fine crosshair."));
   this->CrosshairFineAction->setCheckable(true);
 
   this->CrosshairMediumAction = new QAction(q);
-  this->CrosshairMediumAction->setText(tr("Medium crosshair"));
-  this->CrosshairMediumAction->setToolTip(tr("Medium crosshair."));
+  this->CrosshairMediumAction->setText(qSlicerViewersToolBar::tr("Medium crosshair"));
+  this->CrosshairMediumAction->setToolTip(qSlicerViewersToolBar::tr("Medium crosshair."));
   this->CrosshairMediumAction->setCheckable(true);
 
   this->CrosshairThickAction = new QAction(q);
-  this->CrosshairThickAction->setText(tr("Thick crosshair"));
-  this->CrosshairThickAction->setToolTip(tr("Thick crosshair."));
+  this->CrosshairThickAction->setText(qSlicerViewersToolBar::tr("Thick crosshair"));
+  this->CrosshairThickAction->setToolTip(qSlicerViewersToolBar::tr("Thick crosshair."));
   this->CrosshairThickAction->setCheckable(true);
 
   crosshairThicknessActions->addAction(this->CrosshairFineAction);
@@ -170,7 +173,7 @@ void qSlicerViewersToolBarPrivate::init()
                    this, SLOT(setCrosshairThickness(int)));
 
   // Crosshair Menu
-  this->CrosshairMenu = new QMenu(tr("Crosshair"), q);
+  this->CrosshairMenu = new QMenu(qSlicerViewersToolBar::tr("Crosshair"), q);
   this->CrosshairMenu->addActions(crosshairJumpSlicesActions->actions());
   this->CrosshairMenu->addSeparator();
   this->CrosshairMenu->addActions(crosshairActions->actions());
@@ -180,8 +183,8 @@ void qSlicerViewersToolBarPrivate::init()
   // Crosshair ToolButton
   this->CrosshairToolButton = new QToolButton();
   this->CrosshairToolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-  this->CrosshairToolButton->setToolTip(tr("Crosshair"));
-  this->CrosshairToolButton->setText(tr("Crosshair"));
+  this->CrosshairToolButton->setToolTip(qSlicerViewersToolBar::tr("Crosshair"));
+  this->CrosshairToolButton->setText(qSlicerViewersToolBar::tr("Crosshair"));
   this->CrosshairToolButton->setMenu(this->CrosshairMenu);
   this->CrosshairToolButton->setPopupMode(QToolButton::MenuButtonPopup);
 
@@ -189,9 +192,9 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairToggleAction = new QAction(q);
   this->CrosshairToggleAction->setIcon(QIcon(":/Icons/SlicesCrosshair.png"));
   this->CrosshairToggleAction->setCheckable(true);
-  this->CrosshairToggleAction->setToolTip(tr(
+  this->CrosshairToggleAction->setToolTip(qSlicerViewersToolBar::tr(
     "Toggle crosshair visibility. Hold Shift key and move mouse in a view to set crosshair position."));
-  this->CrosshairToggleAction->setText(tr("Crosshair"));
+  this->CrosshairToggleAction->setText(qSlicerViewersToolBar::tr("Crosshair"));
   this->CrosshairToolButton->setDefaultAction(this->CrosshairToggleAction);
   QObject::connect(this->CrosshairToggleAction, SIGNAL(toggled(bool)),
                    this, SLOT(setCrosshairEnabled(bool)));
@@ -207,14 +210,16 @@ void qSlicerViewersToolBarPrivate::init()
   sliceIntersectionsActions->setExclusive(true);
 
   this->SliceIntersectionsFullIntersectionAction = new QAction(q);
-  this->SliceIntersectionsFullIntersectionAction->setText(tr("Full lines"));
-  this->SliceIntersectionsFullIntersectionAction->setToolTip(tr("Full slice intersection lines extending across the field of view."));
+  this->SliceIntersectionsFullIntersectionAction->setText(qSlicerViewersToolBar::tr("Full lines"));
+  this->SliceIntersectionsFullIntersectionAction->setToolTip(
+    qSlicerViewersToolBar::tr("Full slice intersection lines extending across the field of view."));
   this->SliceIntersectionsFullIntersectionAction->setCheckable(true);
   this->SliceIntersectionsFullIntersectionAction->setChecked(true);
 
   this->SliceIntersectionsSkipIntersectionAction = new QAction(q);
-  this->SliceIntersectionsSkipIntersectionAction->setText(tr("Skip line crossings"));
-  this->SliceIntersectionsSkipIntersectionAction->setToolTip(tr("Slice intersection lines extending across the field of view with a gap at the intersection."));
+  this->SliceIntersectionsSkipIntersectionAction->setText(qSlicerViewersToolBar::tr("Skip line crossings"));
+  this->SliceIntersectionsSkipIntersectionAction->setToolTip(
+    qSlicerViewersToolBar::tr("Slice intersection lines extending across the field of view with a gap at the intersection."));
   this->SliceIntersectionsSkipIntersectionAction->setCheckable(true);
 
   sliceIntersectionsActions->addAction(this->SliceIntersectionsFullIntersectionAction);
@@ -235,19 +240,19 @@ void qSlicerViewersToolBarPrivate::init()
   sliceIntersectionsThicknessActions->setExclusive(true);
 
   this->SliceIntersectionsFineAction = new QAction(q);
-  this->SliceIntersectionsFineAction->setText(tr("Fine lines"));
-  this->SliceIntersectionsFineAction->setToolTip(tr("Fine lines."));
+  this->SliceIntersectionsFineAction->setText(qSlicerViewersToolBar::tr("Fine lines"));
+  this->SliceIntersectionsFineAction->setToolTip(qSlicerViewersToolBar::tr("Fine lines."));
   this->SliceIntersectionsFineAction->setCheckable(true);
   this->SliceIntersectionsFineAction->setChecked(true);
 
   this->SliceIntersectionsMediumAction = new QAction(q);
-  this->SliceIntersectionsMediumAction->setText(tr("Medium lines"));
-  this->SliceIntersectionsMediumAction->setToolTip(tr("Medium lines."));
+  this->SliceIntersectionsMediumAction->setText(qSlicerViewersToolBar::tr("Medium lines"));
+  this->SliceIntersectionsMediumAction->setToolTip(qSlicerViewersToolBar::tr("Medium lines."));
   this->SliceIntersectionsMediumAction->setCheckable(true);
 
   this->SliceIntersectionsThickAction = new QAction(q);
-  this->SliceIntersectionsThickAction->setText(tr("Thick lines"));
-  this->SliceIntersectionsThickAction->setToolTip(tr("Thick lines."));
+  this->SliceIntersectionsThickAction->setText(qSlicerViewersToolBar::tr("Thick lines"));
+  this->SliceIntersectionsThickAction->setToolTip(qSlicerViewersToolBar::tr("Thick lines."));
   this->SliceIntersectionsThickAction->setCheckable(true);
 
   sliceIntersectionsThicknessActions->addAction(this->SliceIntersectionsFineAction);
@@ -267,34 +272,36 @@ void qSlicerViewersToolBarPrivate::init()
 
   // Interactive slice intersections
   this->IntersectingSlicesInteractiveAction = new QAction(q);
-  this->IntersectingSlicesInteractiveAction->setText(tr("Interaction"));
-  this->IntersectingSlicesInteractiveAction->setToolTip(tr("Show handles for slice interaction."));
+  this->IntersectingSlicesInteractiveAction->setText(qSlicerViewersToolBar::tr("Interaction"));
+  this->IntersectingSlicesInteractiveAction->setToolTip(qSlicerViewersToolBar::tr("Show handles for slice interaction."));
   this->IntersectingSlicesInteractiveAction->setCheckable(true);
   QObject::connect(this->IntersectingSlicesInteractiveAction, SIGNAL(triggered(bool)),
     this, SLOT(setIntersectingSlicesInteractive(bool)));
 
   // Interaction options
   this->IntersectingSlicesTranslationEnabledAction = new QAction(q);
-  this->IntersectingSlicesTranslationEnabledAction->setText(tr("Translate"));
-  this->IntersectingSlicesTranslationEnabledAction->setToolTip(tr("Control visibility of translation handles for slice intersection."));
+  this->IntersectingSlicesTranslationEnabledAction->setText(qSlicerViewersToolBar::tr("Translate"));
+  this->IntersectingSlicesTranslationEnabledAction->setToolTip(qSlicerViewersToolBar::tr(
+    "Control visibility of translation handles for slice intersection."));
   this->IntersectingSlicesTranslationEnabledAction->setCheckable(true);
   QObject::connect(this->IntersectingSlicesTranslationEnabledAction, SIGNAL(triggered(bool)),
     this, SLOT(setIntersectingSlicesTranslationEnabled(bool)));
 
   this->IntersectingSlicesRotationEnabledAction = new QAction(q);
-  this->IntersectingSlicesRotationEnabledAction->setText(tr("Rotate"));
-  this->IntersectingSlicesRotationEnabledAction->setToolTip(tr("Control visibility of rotation handles for slice intersection."));
+  this->IntersectingSlicesRotationEnabledAction->setText(qSlicerViewersToolBar::tr("Rotate"));
+  this->IntersectingSlicesRotationEnabledAction->setToolTip(
+    qSlicerViewersToolBar::tr("Control visibility of rotation handles for slice intersection."));
   this->IntersectingSlicesRotationEnabledAction->setCheckable(true);
   QObject::connect(this->IntersectingSlicesRotationEnabledAction, SIGNAL(triggered(bool)),
     this, SLOT(setIntersectingSlicesRotationEnabled(bool)));
 
   this->IntersectingSlicesInteractionModesMenu = new QMenu();
-  this->IntersectingSlicesInteractionModesMenu->setTitle(tr("Interaction options"));
+  this->IntersectingSlicesInteractionModesMenu->setTitle(qSlicerViewersToolBar::tr("Interaction options"));
   this->IntersectingSlicesInteractionModesMenu->addAction(this->IntersectingSlicesTranslationEnabledAction);
   this->IntersectingSlicesInteractionModesMenu->addAction(this->IntersectingSlicesRotationEnabledAction);
 
   // Slice Intersections Menu
-  this->SliceIntersectionsMenu = new QMenu(tr("Slice intersections"), q);
+  this->SliceIntersectionsMenu = new QMenu(qSlicerViewersToolBar::tr("Slice intersections"), q);
   this->SliceIntersectionsMenu->addAction(this->IntersectingSlicesInteractiveAction);
   this->SliceIntersectionsMenu->addMenu(this->IntersectingSlicesInteractionModesMenu);
   this->SliceIntersectionsMenu->addSeparator();
@@ -309,16 +316,17 @@ void qSlicerViewersToolBarPrivate::init()
   // Slice Intersections ToolButton
   this->SliceIntersectionsToolButton = new QToolButton();
   this->SliceIntersectionsToolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-  this->SliceIntersectionsToolButton->setToolTip(tr("Slice intersections"));
-  this->SliceIntersectionsToolButton->setText(tr("Slice intersections"));
+  this->SliceIntersectionsToolButton->setToolTip(qSlicerViewersToolBar::tr("Slice intersections"));
+  this->SliceIntersectionsToolButton->setText(qSlicerViewersToolBar::tr("Slice intersections"));
   this->SliceIntersectionsToolButton->setMenu(this->SliceIntersectionsMenu);
   this->SliceIntersectionsToolButton->setPopupMode(QToolButton::MenuButtonPopup);
 
   // Default Slice intersections action
   this->IntersectingSlicesVisibleAction = new QAction(q);
   this->IntersectingSlicesVisibleAction->setIcon(QIcon(":/Icons/SliceIntersections.png"));
-  this->IntersectingSlicesVisibleAction->setText(tr("Slice intersections"));
-  this->IntersectingSlicesVisibleAction->setToolTip(tr("Show how the other slice planes intersect each slice plane."));
+  this->IntersectingSlicesVisibleAction->setText(qSlicerViewersToolBar::tr("Slice intersections"));
+  this->IntersectingSlicesVisibleAction->setToolTip(
+    qSlicerViewersToolBar::tr("Show how the other slice planes intersect each slice plane."));
   this->IntersectingSlicesVisibleAction->setCheckable(true);
   this->SliceIntersectionsToolButton->setDefaultAction(this->IntersectingSlicesVisibleAction);
   QObject::connect(this->IntersectingSlicesVisibleAction, SIGNAL(triggered(bool)),

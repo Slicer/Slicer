@@ -90,13 +90,13 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyTransformsPlugin);
 
-  this->InvertAction = new QAction("Invert transform",q);
+  this->InvertAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Invert transform"), q);
   QObject::connect(this->InvertAction, SIGNAL(triggered()), q, SLOT(invert()));
 
-  this->IdentityAction = new QAction("Reset transform to identity",q);
+  this->IdentityAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Reset transform to identity"), q);
   QObject::connect(this->IdentityAction, SIGNAL(triggered()), q, SLOT(identity()));
 
-  this->ToggleInteractionBoxAction = new QAction("Interaction in 3D view",q);
+  this->ToggleInteractionBoxAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Interaction in 3D view"), q);
   QObject::connect(this->ToggleInteractionBoxAction, SIGNAL(toggled(bool)), q, SLOT(toggleInteractionBox(bool)));
   this->ToggleInteractionBoxAction->setCheckable(true);
   this->ToggleInteractionBoxAction->setChecked(false);
@@ -266,8 +266,11 @@ QString qSlicerSubjectHierarchyTransformsPlugin::tooltip(vtkIdType itemID)const
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (transformNode)
     {
-    QString transformInfo = QString("\nTransform to parent:\n%1\nTransform from parent:\n%2").arg(
-      transformNode->GetTransformToParentInfo()).arg(transformNode->GetTransformFromParentInfo());
+    QString transformInfo = QString("\n")
+      + tr("Transform to parent:")
+      + QString(" %1\n").arg(transformNode->GetTransformToParentInfo())
+      + tr("Transform from parent:")
+      + QString(" %1").arg(transformNode->GetTransformFromParentInfo());
     tooltipString.append(transformInfo);
     }
 

@@ -138,50 +138,50 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
 
   // View context menu
 
-  this->RenamePointAction = new QAction("Rename control point...", q);
+  this->RenamePointAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Rename control point..."), q);
   this->RenamePointAction->setObjectName("RenamePointAction");
   q->setActionPosition(this->RenamePointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->RenamePointAction, SIGNAL(triggered()), q, SLOT(renamePoint()));
 
-  this->RefocusCameraAction = new QAction("Refocus camera on this point", q);
+  this->RefocusCameraAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Refocus camera on this point"), q);
   this->RefocusCameraAction->setObjectName("RefocusPointCameraAction");
   q->setActionPosition(this->RefocusCameraAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->RefocusCameraAction, SIGNAL(triggered()), q, SLOT(refocusCamera()));
 
-  this->ToggleSelectPointAction = new QAction("Toggle select control point", q);
+  this->ToggleSelectPointAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Toggle select control point"), q);
   this->ToggleSelectPointAction->setObjectName("ToggleSelectPointAction");
   q->setActionPosition(this->ToggleSelectPointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->ToggleSelectPointAction, SIGNAL(triggered()), q, SLOT(toggleSelectPoint()));
 
-  this->JumpToPreviousPointAction = new QAction("Jump to previous control point", q);
-  this->JumpToPreviousPointAction->setToolTip("Jump slice views to the previous control point");
+  this->JumpToPreviousPointAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Jump to previous control point"), q);
+  this->JumpToPreviousPointAction->setToolTip(qSlicerSubjectHierarchyMarkupsPlugin::tr("Jump slice views to the previous control point"));
   this->JumpToPreviousPointAction->setObjectName("JumpToPreviousPointAction");
   q->setActionPosition(this->JumpToPreviousPointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->JumpToPreviousPointAction, SIGNAL(triggered()), q, SLOT(jumpToPreviousPoint()));
 
-  this->JumpToNextPointAction = new QAction("Jump to next control point", q);
-  this->JumpToNextPointAction->setToolTip("Jump slice views to the next control point");
+  this->JumpToNextPointAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Jump to next control point"), q);
+  this->JumpToNextPointAction->setToolTip(qSlicerSubjectHierarchyMarkupsPlugin::tr("Jump slice views to the next control point"));
   this->JumpToNextPointAction->setObjectName("JumpToNextPointAction");
   q->setActionPosition(this->JumpToNextPointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->JumpToNextPointAction, SIGNAL(triggered()), q, SLOT(jumpToNextPoint()));
 
-  this->JumpToClosestPointAction = new QAction("Jump to closest control point", q);
-  this->JumpToClosestPointAction->setToolTip("Jump slice views to the closest control point");
+  this->JumpToClosestPointAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Jump to closest control point"), q);
+  this->JumpToClosestPointAction->setToolTip(qSlicerSubjectHierarchyMarkupsPlugin::tr("Jump slice views to the closest control point"));
   this->JumpToClosestPointAction->setObjectName("JumpToClosestPointAction");
   q->setActionPosition(this->JumpToClosestPointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->JumpToClosestPointAction, SIGNAL(triggered()), q, SLOT(jumpToClosestPoint()));
 
-  this->DeletePointAction = new QAction("Delete control point", q);
+  this->DeletePointAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Delete control point"), q);
   this->DeletePointAction->setObjectName("DeletePointAction");
   q->setActionPosition(this->DeletePointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->DeletePointAction, SIGNAL(triggered()), q, SLOT(deletePoint()));
 
-  this->DeleteNodeAction = new QAction("Delete markup", q);
+  this->DeleteNodeAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Delete markup"), q);
   this->DeleteNodeAction->setObjectName("DeleteNodeAction");
   q->setActionPosition(this->DeleteNodeAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode);
   QObject::connect(this->DeleteNodeAction, SIGNAL(triggered()), q, SLOT(requestDeleteNode()));
 
-  this->EditNodeTerminologyAction = new QAction("Edit markup terminology...", q);
+  this->EditNodeTerminologyAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Edit markup terminology..."), q);
   this->EditNodeTerminologyAction->setObjectName("editNodeTerminologyAction");
   q->setActionPosition(this->EditNodeTerminologyAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode);
   QObject::connect(this->EditNodeTerminologyAction, SIGNAL(triggered()), q, SLOT(editNodeTerminology()));
@@ -189,23 +189,23 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   int interactionHandlesSection = qSlicerSubjectHierarchyAbstractPlugin::SectionNode + 20;
 
 
-  this->ToggleHandleInteractive = new QAction("Interaction");
+  this->ToggleHandleInteractive = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Interaction"));
   this->ToggleHandleInteractive->setObjectName("ToggleHandleInteractive");
   this->ToggleHandleInteractive->setCheckable(true);
   q->setActionPosition(this->ToggleHandleInteractive, interactionHandlesSection);
   QObject::connect(this->ToggleHandleInteractive, SIGNAL(triggered()), q, SLOT(toggleHandleInteractive()));
 
-  this->ToggleTranslateHandleVisible = new QAction("Translate");
+  this->ToggleTranslateHandleVisible = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Translate"));
   this->ToggleTranslateHandleVisible->setCheckable(true);
   this->ToggleTranslateHandleVisible->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle);
   QObject::connect(this->ToggleTranslateHandleVisible, SIGNAL(triggered()), q, SLOT(toggleHandleTypeVisibility()));
 
-  this->ToggleRotateHandleVisible = new QAction("Rotate");
+  this->ToggleRotateHandleVisible = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Rotate"));
   this->ToggleRotateHandleVisible->setCheckable(true);
   this->ToggleRotateHandleVisible->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, vtkMRMLMarkupsDisplayNode::ComponentRotationHandle);
   QObject::connect(this->ToggleRotateHandleVisible, SIGNAL(triggered()), q, SLOT(toggleHandleTypeVisibility()));
 
-  this->ToggleScaleHandleVisible = new QAction("Scale");
+  this->ToggleScaleHandleVisible = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Scale"));
   this->ToggleScaleHandleVisible->setCheckable(true);
   this->ToggleScaleHandleVisible->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, vtkMRMLMarkupsDisplayNode::ComponentScaleHandle);
   QObject::connect(this->ToggleScaleHandleVisible, SIGNAL(triggered()), q, SLOT(toggleHandleTypeVisibility()));
@@ -215,29 +215,29 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->HandleVisibilityMenu->addAction(this->ToggleRotateHandleVisible);
   this->HandleVisibilityMenu->addAction(this->ToggleScaleHandleVisible);
 
-  this->HandleVisibilityAction = new QAction("Interaction options");
+  this->HandleVisibilityAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Interaction options"));
   this->HandleVisibilityAction->setObjectName("HandleInteractionOptions");
   q->setActionPosition(this->HandleVisibilityAction, interactionHandlesSection);
   this->HandleVisibilityAction->setMenu(this->HandleVisibilityMenu);
 
   // Visibility menu
 
-  this->ToggleCurrentItemHandleInteractive = new QAction("Interaction");
+  this->ToggleCurrentItemHandleInteractive = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Interaction"));
   this->ToggleCurrentItemHandleInteractive->setObjectName("ToggleCurrentItemHandleInteractive");
   this->ToggleCurrentItemHandleInteractive->setCheckable(true);
   QObject::connect(this->ToggleCurrentItemHandleInteractive, SIGNAL(triggered()), q, SLOT(toggleCurrentItemHandleInteractive()));
 
-  this->ToggleCurrentItemTranslateHandleVisible = new QAction("Translate");
+  this->ToggleCurrentItemTranslateHandleVisible = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Translate"));
   this->ToggleCurrentItemTranslateHandleVisible->setCheckable(true);
   this->ToggleCurrentItemTranslateHandleVisible->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle);
   QObject::connect(this->ToggleCurrentItemTranslateHandleVisible, SIGNAL(triggered()), q, SLOT(toggleCurrentItemHandleTypeVisibility()));
 
-  this->ToggleCurrentItemRotateHandleVisible = new QAction("Rotate");
+  this->ToggleCurrentItemRotateHandleVisible = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Rotate"));
   this->ToggleCurrentItemRotateHandleVisible->setCheckable(true);
   this->ToggleCurrentItemRotateHandleVisible->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, vtkMRMLMarkupsDisplayNode::ComponentRotationHandle);
   QObject::connect(this->ToggleCurrentItemRotateHandleVisible, SIGNAL(triggered()), q, SLOT(toggleCurrentItemHandleTypeVisibility()));
 
-  this->ToggleCurrentItemScaleHandleVisible = new QAction("Scale");
+  this->ToggleCurrentItemScaleHandleVisible = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Scale"));
   this->ToggleCurrentItemScaleHandleVisible->setCheckable(true);
   this->ToggleCurrentItemScaleHandleVisible->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, vtkMRMLMarkupsDisplayNode::ComponentScaleHandle);
   QObject::connect(this->ToggleCurrentItemScaleHandleVisible, SIGNAL(triggered()), q, SLOT(toggleCurrentItemHandleTypeVisibility()));
@@ -247,7 +247,7 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->CurrentItemHandleVisibilityMenu->addAction(this->ToggleCurrentItemRotateHandleVisible);
   this->CurrentItemHandleVisibilityMenu->addAction(this->ToggleCurrentItemScaleHandleVisible);
 
-  this->CurrentItemHandleVisibilityAction = new QAction("Interaction options");
+  this->CurrentItemHandleVisibilityAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Interaction options"));
   this->CurrentItemHandleVisibilityAction->setMenu(this->CurrentItemHandleVisibilityMenu);
 }
 

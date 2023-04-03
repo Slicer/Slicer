@@ -78,15 +78,15 @@ void qSlicerSubjectHierarchyVisibilityPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyVisibilityPlugin);
 
-  this->ShowInAllViewsAction = new QAction("Show in all views", q);
+  this->ShowInAllViewsAction = new QAction(qSlicerSubjectHierarchyVisibilityPlugin::tr("Show in all views"), q);
   QObject::connect(this->ShowInAllViewsAction, SIGNAL(triggered()), q, SLOT(showInAllViews()));
 
-  this->ToggleVisibility2DAction = new QAction("2D visibility",q);
+  this->ToggleVisibility2DAction = new QAction(qSlicerSubjectHierarchyVisibilityPlugin::tr("2D visibility"), q);
   QObject::connect(this->ToggleVisibility2DAction, SIGNAL(toggled(bool)), q, SLOT(toggleCurrentItemVisibility2D(bool)));
   this->ToggleVisibility2DAction->setCheckable(true);
   this->ToggleVisibility2DAction->setChecked(false);
 
-  this->ToggleVisibility3DAction = new QAction("3D visibility",q);
+  this->ToggleVisibility3DAction = new QAction(qSlicerSubjectHierarchyVisibilityPlugin::tr("3D visibility"),q);
   QObject::connect(this->ToggleVisibility3DAction, SIGNAL(toggled(bool)), q, SLOT(toggleCurrentItemVisibility3D(bool)));
   this->ToggleVisibility3DAction->setCheckable(true);
   this->ToggleVisibility3DAction->setChecked(false);

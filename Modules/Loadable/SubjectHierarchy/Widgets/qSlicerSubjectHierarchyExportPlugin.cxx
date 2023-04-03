@@ -81,8 +81,8 @@ void qSlicerSubjectHierarchyExportPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyExportPlugin);
 
-  this->ExportItemAction = new QAction("Export to file...",q);
-  this->ExportItemAction->setToolTip("Export this node to a file");
+  this->ExportItemAction = new QAction(qSlicerSubjectHierarchyExportPlugin::tr("Export to file..."), q);
+  this->ExportItemAction->setToolTip(qSlicerSubjectHierarchyExportPlugin::tr("Export this node to a file"));
   // Put towards end of the list, where export features typically would go
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ExportItemAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);

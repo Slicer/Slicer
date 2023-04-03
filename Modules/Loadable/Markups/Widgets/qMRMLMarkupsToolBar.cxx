@@ -34,6 +34,7 @@
 #include "qSlicerLayoutManager.h"
 
 // MRML includes
+#include "qMRMLMarkupsToolBar.h"
 #include "qMRMLMarkupsToolBar_p.h"
 #include "qMRMLNodeComboBox.h"
 #include "qMRMLThreeDView.h"
@@ -481,7 +482,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
       for (int index=0; index< this->layout()->count(); index++)
         {
         std::string buttonName = this->layout()->itemAt(index)->widget()->objectName().toStdString();
-        if (buttonName == "Create" + markupName + "PushButton")
+        if (buttonName == /*no tr*/ "Create" + markupName + "PushButton")
           {
           buttonExists = true;
           break;
@@ -493,8 +494,8 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
         QSignalMapper* mapper = new QSignalMapper(markupCreateButton);
         std::string markupType = markupsNode->GetMarkupType() ? markupsNode->GetMarkupType() : "";
         std::string markupDisplayName = markupsNode->GetTypeDisplayName() ? markupsNode->GetTypeDisplayName() : "";
-        markupCreateButton->setObjectName(QString::fromStdString("Create"+markupType+"PushButton"));
-        markupCreateButton->setToolTip("Create new " + QString::fromStdString(markupDisplayName));
+        markupCreateButton->setObjectName(QString::fromStdString(/*no tr*/"Create"+markupType+"PushButton"));
+        markupCreateButton->setToolTip(tr("Create new %1").arg(QString::fromStdString(markupDisplayName)));
         markupCreateButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
         markupCreateButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         this->insertWidget(d->NodeSelectorAction, markupCreateButton);
@@ -516,8 +517,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
     bool markupExists = false;
     for (const auto& markupName : markupsLogic->GetRegisteredMarkupsTypes())
       {
-      //QString markupButtonName = QString("Create%1PushButton").arg(QString::fromStdString(markupName));
-      if (QString::fromStdString("Create"+markupName+"PushButton") == buttonName)
+      if (QString::fromStdString(/*no tr*/"Create" + markupName + "PushButton") == buttonName)
         {
         markupExists = true;
         break;

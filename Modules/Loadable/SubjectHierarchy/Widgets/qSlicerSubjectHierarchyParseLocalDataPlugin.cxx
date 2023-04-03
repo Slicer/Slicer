@@ -74,7 +74,8 @@ void qSlicerSubjectHierarchyParseLocalDataPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyParseLocalDataPlugin);
 
-  this->CreateHierarchyFromLoadedLocalDirectoriesAction = new QAction("Create hierarchy from loaded directory structure",q);
+  this->CreateHierarchyFromLoadedLocalDirectoriesAction = new QAction(
+    qSlicerSubjectHierarchyParseLocalDataPlugin::tr("Create hierarchy from loaded directory structure"), q);
   QObject::connect(this->CreateHierarchyFromLoadedLocalDirectoriesAction, SIGNAL(triggered()), q, SLOT(createHierarchyFromLoadedDirectoryStructure()));
 }
 

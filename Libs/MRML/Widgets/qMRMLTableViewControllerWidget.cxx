@@ -82,22 +82,22 @@ void qMRMLTableViewControllerWidgetPrivate::setupPopupUi()
   this->CopyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   // set CTRL+C shortcut
   this->CopyAction->setShortcuts(QKeySequence::Copy);
-  this->CopyAction->setToolTip(tr("Copy"));
+  this->CopyAction->setToolTip(qMRMLTableViewControllerWidget::tr("Copy"));
   q->addAction(this->CopyAction);
   this->PasteAction = new QAction(this);
   this->PasteAction->setIcon(QIcon(":Icons/Medium/SlicerEditPaste.png"));
   this->PasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   // set CTRL+V shortcut
   this->PasteAction->setShortcuts(QKeySequence::Paste);
-  this->PasteAction->setToolTip(tr("Paste"));
+  this->PasteAction->setToolTip(qMRMLTableViewControllerWidget::tr("Paste"));
   q->addAction(this->PasteAction);
   this->PlotAction = new QAction(this);
   this->PlotAction->setIcon(QIcon(":Icons/Medium/SlicerInteractivePlotting.png"));
   this->PlotAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   // set CTRL+P shortcut
   this->PlotAction->setShortcuts(QKeySequence::Print);
-  this->PlotAction->setToolTip(tr("Generate an Interactive Plot based on user-selection"
-                               " of the columns of the table."));
+  this->PlotAction->setToolTip(qMRMLTableViewControllerWidget::tr(
+    "Generate an Interactive Plot based on user-selection of the columns of the table."));
   q->addAction(this->PlotAction);
 
   // Connect Table selector
@@ -132,7 +132,7 @@ void qMRMLTableViewControllerWidgetPrivate::setupPopupUi()
 void qMRMLTableViewControllerWidgetPrivate::init()
 {
   this->Superclass::init();
-  this->ViewLabel->setText(qMRMLTableViewControllerWidget::tr("1"));
+  this->ViewLabel->setText("1");
   this->BarLayout->addStretch(1);
   this->setColor(QColor("#e1ba3c"));
 }
@@ -374,12 +374,12 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
   if (tableNode->GetLocked())
     {
     d->LockTableButton->setIcon(QIcon(":Icons/Medium/SlicerLock.png"));
-    d->LockTableButton->setToolTip(QString("Click to unlock this table so that values can be modified"));
+    d->LockTableButton->setToolTip(tr("Click to unlock this table so that values can be modified"));
     }
   else
     {
     d->LockTableButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
-    d->LockTableButton->setToolTip(QString("Click to lock this table to prevent modification of the values in the user interface"));
+    d->LockTableButton->setToolTip(tr("Click to lock this table to prevent modification of the values in the user interface"));
     }
 
   if (tableNode->GetUseColumnNameAsColumnHeader() != d->LockFirstRowButton->isChecked())

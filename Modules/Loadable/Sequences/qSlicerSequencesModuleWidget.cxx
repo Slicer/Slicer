@@ -916,7 +916,7 @@ void qSlicerSequencesModuleWidget::updateSequenceItemWidgetFromMRML()
   QStringList SequenceNodesTableHeader;
   //SequenceNodesTableHeader.insert( DATA_NODE_VIS_COLUMN, "Vis" );
   SequenceNodesTableHeader.insert( DATA_NODE_VALUE_COLUMN, valueHeader.str().c_str() );
-  SequenceNodesTableHeader.insert( DATA_NODE_NAME_COLUMN, "Name" );
+  SequenceNodesTableHeader.insert( DATA_NODE_NAME_COLUMN, tr("Name"));
   d->TableWidget_DataNodes->setHorizontalHeaderLabels( SequenceNodesTableHeader );
 
   int numberOfDataNodes=currentSequence->GetNumberOfDataNodes();

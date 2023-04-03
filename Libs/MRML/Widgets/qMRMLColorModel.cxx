@@ -66,15 +66,15 @@ void qMRMLColorModelPrivate::init()
     }
   if (q->colorColumn() != -1)
     {
-    headerLabels[q->colorColumn()] = "Color";
+    headerLabels[q->colorColumn()] = qMRMLColorModel::tr("Color");
     }
   if (q->labelColumn() != -1)
     {
-    headerLabels[q->labelColumn()] = "Label";
+    headerLabels[q->labelColumn()] = qMRMLColorModel::tr("Label");
     }
   if (q->opacityColumn() != -1)
     {
-    headerLabels[q->opacityColumn()] = "Opacity";
+    headerLabels[q->opacityColumn()] = qMRMLColorModel::tr("Opacity");
     }
   q->setHorizontalHeaderLabels(headerLabels);
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),

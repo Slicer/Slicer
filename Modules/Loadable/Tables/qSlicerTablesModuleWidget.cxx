@@ -130,8 +130,8 @@ void qSlicerTablesModuleWidget::setup()
   d->PlotAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   // set CTRL+P shortcut
   d->PlotAction->setShortcuts(QKeySequence::Print);
-  d->PlotAction->setToolTip(tr("Generate an Interactive Plot based on user-selection"
-                               " of the columns of the table."));
+  d->PlotAction->setToolTip(
+    tr("Generate an Interactive Plot based on user-selection of the columns of the table."));
   this->addAction(d->PlotAction);
 
   // Connect node selector with module itself
@@ -204,12 +204,12 @@ void qSlicerTablesModuleWidget::onMRMLTableNodeModified(vtkObject* caller)
   if (d->MRMLTableNode->GetLocked())
     {
     d->LockTableButton->setIcon(QIcon(":Icons/Medium/SlicerLock.png"));
-    d->LockTableButton->setToolTip(QString("Click to unlock this table so that values can be modified"));
+    d->LockTableButton->setToolTip(tr("Click to unlock this table so that values can be modified"));
     }
   else
     {
     d->LockTableButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
-    d->LockTableButton->setToolTip(QString("Click to lock this table to prevent modification of the values in the user interface"));
+    d->LockTableButton->setToolTip(tr("Click to lock this table to prevent modification of the values in the user interface"));
     }
 
   if (d->MRMLTableNode->GetUseColumnNameAsColumnHeader() != d->LockFirstRowButton->isChecked())

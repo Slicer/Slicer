@@ -91,18 +91,19 @@ void qSlicerSubjectHierarchyFolderPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyFolderPlugin);
 
-  this->CreateFolderUnderSceneAction = new QAction("Create new folder",q);
+  this->CreateFolderUnderSceneAction = new QAction(qSlicerSubjectHierarchyFolderPlugin::tr("Create new folder"), q);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreateFolderUnderSceneAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 5);
   QObject::connect(this->CreateFolderUnderSceneAction, SIGNAL(triggered()), q, SLOT(createFolderUnderScene()));
 
-  this->CreateFolderUnderNodeAction = new QAction("Create child folder",q);
+  this->CreateFolderUnderNodeAction = new QAction(qSlicerSubjectHierarchyFolderPlugin::tr("Create child folder"), q);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreateFolderUnderNodeAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 6);
   QObject::connect(this->CreateFolderUnderNodeAction, SIGNAL(triggered()), q, SLOT(createFolderUnderCurrentNode()));
 
-  this->ApplyColorToBranchAction = new QAction("Apply color to all children",q);
-  this->ApplyColorToBranchAction->setToolTip("If on, then children items will inherit the display properties (e.g. color or opacity) set to the folder");
+  this->ApplyColorToBranchAction = new QAction(qSlicerSubjectHierarchyFolderPlugin::tr("Apply color to all children"), q);
+  this->ApplyColorToBranchAction->setToolTip(
+    qSlicerSubjectHierarchyFolderPlugin::tr("If on, then children items will inherit the display properties (e.g. color or opacity) set to the folder"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ApplyColorToBranchAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 7);
   QObject::connect(this->ApplyColorToBranchAction, SIGNAL(toggled(bool)), q, SLOT(onApplyColorToBranchToggled(bool)));
