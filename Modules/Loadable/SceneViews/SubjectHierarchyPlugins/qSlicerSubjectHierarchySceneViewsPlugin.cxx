@@ -76,7 +76,7 @@ void qSlicerSubjectHierarchySceneViewsPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchySceneViewsPlugin);
 
-  this->RestoreSceneViewAction = new QAction("Restore scene view",q);
+  this->RestoreSceneViewAction = new QAction(qSlicerSubjectHierarchySceneViewsPlugin::tr("Restore scene view"), q);
   QObject::connect(this->RestoreSceneViewAction, SIGNAL(triggered()), q, SLOT(restoreCurrentSceneView()));
 }
 

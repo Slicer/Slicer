@@ -123,7 +123,7 @@ void qMRMLNodeAttributeTableView::populateAttributeTable()
   d->NodeAttributesTable->clearContents();
 
   QStringList headerLabels;
-  headerLabels << "Attribute name" << "Attribute value";
+  headerLabels << tr("Attribute name") << tr("Attribute value");
   d->NodeAttributesTable->setHorizontalHeaderLabels(headerLabels);
   d->NodeAttributesTable->setColumnWidth(0, d->NodeAttributesTable->width() / 2 - 10);
   d->NodeAttributesTable->setColumnWidth(1, d->NodeAttributesTable->width() / 2 - 10);

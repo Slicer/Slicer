@@ -112,19 +112,19 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
 
   // Interaction mode
 
-  this->InteractionModeViewTransformAction = new QAction("View transform",q);
+  this->InteractionModeViewTransformAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("View transform"), q);
   this->InteractionModeViewTransformAction->setObjectName("MouseModeViewTransformAction");
   this->InteractionModeViewTransformAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeViewTransformAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 0);
 
-  this->InteractionModeAdjustWindowLevelAction = new QAction("Adjust window/level",q);
+  this->InteractionModeAdjustWindowLevelAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Adjust window/level"), q);
   this->InteractionModeAdjustWindowLevelAction->setObjectName("MouseModeAdjustWindowLevelAction");
   this->InteractionModeAdjustWindowLevelAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeAdjustWindowLevelAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 1);
 
-  this->InteractionModePlaceAction = new QAction("Place", q);
+  this->InteractionModePlaceAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Place"), q);
   this->InteractionModePlaceAction->setObjectName("MouseModePlaceAction");
   this->InteractionModePlaceAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModePlaceAction,

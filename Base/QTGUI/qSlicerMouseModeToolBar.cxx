@@ -94,20 +94,20 @@ void qSlicerMouseModeToolBarPrivate::init()
   windowLevelModeActions->setExclusive(true);
 
   this->AdjustWindowLevelAdjustModeAction = new QAction(q);
-  this->AdjustWindowLevelAdjustModeAction->setText(tr("Adjust"));
-  this->AdjustWindowLevelAdjustModeAction->setToolTip(tr("Adjust window/level by click-and-drag in a slice viewer."));
+  this->AdjustWindowLevelAdjustModeAction->setText(qSlicerMouseModeToolBar::tr("Adjust"));
+  this->AdjustWindowLevelAdjustModeAction->setToolTip(qSlicerMouseModeToolBar::tr("Adjust window/level by click-and-drag in a slice viewer."));
   this->AdjustWindowLevelAdjustModeAction->setCheckable(true);
 
   this->AdjustWindowLevelRegionModeAction = new QAction(q);
-  this->AdjustWindowLevelRegionModeAction->setText(tr("Select region"));
-  this->AdjustWindowLevelRegionModeAction->setToolTip(
-    tr("Set window level based on a rectangular region, specified by click-and-drag in a slice viewer. Click position is used as region corner."));
+  this->AdjustWindowLevelRegionModeAction->setText(qSlicerMouseModeToolBar::tr("Select region"));
+  this->AdjustWindowLevelRegionModeAction->setToolTip(qSlicerMouseModeToolBar::tr(
+    "Set window level based on a rectangular region, specified by click-and-drag in a slice viewer. Click position is used as region corner."));
   this->AdjustWindowLevelRegionModeAction->setCheckable(true);
 
   this->AdjustWindowLevelCenteredRegionModeAction = new QAction(q);
-  this->AdjustWindowLevelCenteredRegionModeAction->setText(tr("Select region - centered"));
-  this->AdjustWindowLevelCenteredRegionModeAction->setToolTip(
-    tr("Set window level based on a rectangular region, specified by click-and-drag in a slice viewer. Click position is used as region center."));
+  this->AdjustWindowLevelCenteredRegionModeAction->setText(qSlicerMouseModeToolBar::tr("Select region - centered"));
+  this->AdjustWindowLevelCenteredRegionModeAction->setToolTip(qSlicerMouseModeToolBar::tr(
+    "Set window level based on a rectangular region, specified by click-and-drag in a slice viewer. Click position is used as region center."));
   this->AdjustWindowLevelCenteredRegionModeAction->setCheckable(true);
 
   windowLevelModeActions->addAction(this->AdjustWindowLevelAdjustModeAction);
@@ -122,7 +122,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   QObject::connect(this->AdjustWindowLevelModeMapper, SIGNAL(mapped(int)), q, SLOT(setAdjustWindowLevelMode(int)));
 
   // Menu
-  this->AdjustWindowLevelMenu = new QMenu(tr("Adjust window/level"), q);
+  this->AdjustWindowLevelMenu = new QMenu(qSlicerMouseModeToolBar::tr("Adjust window/level"), q);
   this->AdjustWindowLevelMenu->addActions(windowLevelModeActions->actions());
 
   this->AdjustWindowLevelAction = new QAction(this);

@@ -91,31 +91,31 @@ void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchyRegisterPlugin);
 
   // Initial action
-  this->RegisterThisAction = new QAction("Register this...",q);
+  this->RegisterThisAction = new QAction(qSlicerSubjectHierarchyRegisterPlugin::tr("Register this..."), q);
   this->RegisterThisAction->setToolTip(qSlicerSubjectHierarchyRegisterPlugin::tr("Select volume as moving image for registration. "
                                           "Second volume can be selected from context menu after the first one has been set."));
   QObject::connect(this->RegisterThisAction, SIGNAL(triggered()), q, SLOT(registerCurrentItemTo()));
 
   // Actions for the registration methods
-  this->RegisterToAction = new QAction("Register * to this using...",q);
+  this->RegisterToAction = new QAction(qSlicerSubjectHierarchyRegisterPlugin::tr("Register * to this using..."), q);
 
   this->RegistrationMethodsSubMenu = QSharedPointer<QMenu>(new QMenu());
   this->RegisterToAction->setMenu(this->RegistrationMethodsSubMenu.data());
 
-  QAction* imageBasedRigidAction = new QAction("Rigid image-based registration",q);
+  QAction* imageBasedRigidAction = new QAction(qSlicerSubjectHierarchyRegisterPlugin::tr("Rigid image-based registration"), q);
   QObject::connect(imageBasedRigidAction, SIGNAL(triggered()), q, SLOT(registerImageBasedRigid()));
   this->RegistrationMethodsSubMenu->addAction(imageBasedRigidAction);
 
-  QAction* imageBasedBSplineAction = new QAction("BSpline image-based registration",q);
+  QAction* imageBasedBSplineAction = new QAction(qSlicerSubjectHierarchyRegisterPlugin::tr("BSpline image-based registration"),q);
   QObject::connect(imageBasedBSplineAction, SIGNAL(triggered()), q, SLOT(registerImageBasedBSpline()));
   this->RegistrationMethodsSubMenu->addAction(imageBasedBSplineAction);
 
-  QAction* interactiveLandmarkAction = new QAction("Interactive landmark registration",q);
+  QAction* interactiveLandmarkAction = new QAction(qSlicerSubjectHierarchyRegisterPlugin::tr("Interactive landmark registration"), q);
   QObject::connect(interactiveLandmarkAction, SIGNAL(triggered()), q, SLOT(registerInteractiveLandmark()));
   this->RegistrationMethodsSubMenu->addAction(interactiveLandmarkAction);
 
   // Cancel action
-  this->CancelAction = new QAction("Cancel registration (or right-click another volume to start registration)",q);
+  this->CancelAction = new QAction(qSlicerSubjectHierarchyRegisterPlugin::tr("Cancel registration (or right-click another volume to start registration)"), q);
   this->CancelAction->setToolTip(qSlicerSubjectHierarchyRegisterPlugin::tr("Right-click another volume to select second volume and start registration"));
   QObject::connect(this->CancelAction, SIGNAL(triggered()), q, SLOT(cancel()));
 }
@@ -214,7 +214,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerCurrentItemTo()
   // Save selected item as 'from' item
   this->m_RegisterFromItem = currentItemID;
 
-  d->RegisterToAction->setText( QString("Register %1 to this using...").arg(shNode->GetItemName(currentItemID).c_str()) );
+  d->RegisterToAction->setText(tr("Register %1 to this using...").arg(shNode->GetItemName(currentItemID).c_str()));
 }
 
 //---------------------------------------------------------------------------
@@ -258,8 +258,10 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
     // Create parameter set node
     vtkSmartPointer<vtkMRMLCommandLineModuleNode> registrationParameterSetNode =
       vtkSmartPointer<vtkMRMLCommandLineModuleNode>::New();
-    std::string parameterSetNodeName = std::string("BRAINSRegistration_") +
-      registerFromVolumeNode->GetName() + "_To_" + registerToVolumeNode->GetName();
+    std::string parameterSetNodeName = tr("BRAINSRegistration_%1_To_%2")
+      .arg(registerFromVolumeNode->GetName())
+      .arg(registerToVolumeNode->GetName())
+      .toStdString();
     registrationParameterSetNode->SetName(parameterSetNodeName.c_str());
     registrationParameterSetNode->SetAttribute("CommandLineModule","General Registration (BRAINS)");
     registrationParameterSetNode->SetModuleDescription("General Registration (BRAINS)");
@@ -272,8 +274,10 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
     // Set output transform
     vtkSmartPointer<vtkMRMLLinearTransformNode> outputTransform =
       vtkSmartPointer<vtkMRMLLinearTransformNode>::New();
-    std::string outputTransformName = std::string("LinearTransform_") +
-      registerFromVolumeNode->GetName() + "_To_" + registerToVolumeNode->GetName();
+    std::string outputTransformName = tr("LinearTransform_%1_To_%2")
+      .arg(registerFromVolumeNode->GetName())
+      .arg(registerToVolumeNode->GetName())
+      .toStdString();
     outputTransform->SetName(outputTransformName.c_str());
     scene->AddNode(outputTransform);
     registrationParameterSetNode->SetParameterAsString("linearTransform", outputTransform->GetID());
@@ -340,8 +344,10 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
     // Create parameter set node
     vtkSmartPointer<vtkMRMLCommandLineModuleNode> registrationParameterSetNode =
       vtkSmartPointer<vtkMRMLCommandLineModuleNode>::New();
-    std::string parameterSetNodeName = std::string("BRAINSRegistration_") +
-      registerFromVolumeNode->GetName() + "_To_" + registerToVolumeNode->GetName();
+    std::string parameterSetNodeName = tr("BRAINSRegistration_%1_To_%2")
+      .arg(registerFromVolumeNode->GetName())
+      .arg(registerToVolumeNode->GetName())
+      .toStdString();
     registrationParameterSetNode->SetName(parameterSetNodeName.c_str());
     registrationParameterSetNode->SetAttribute("CommandLineModule","General Registration (BRAINS)");
     registrationParameterSetNode->SetModuleDescription("General Registration (BRAINS)");
@@ -354,8 +360,10 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
     // Set output transform
     vtkSmartPointer<vtkMRMLBSplineTransformNode> outputTransform =
       vtkSmartPointer<vtkMRMLBSplineTransformNode>::New();
-    std::string outputTransformName = std::string("BSplineTransform_") +
-      registerFromVolumeNode->GetName() + "_To_" + registerToVolumeNode->GetName();
+    std::string outputTransformName = tr("BSplineTransform_%1_To_%2")
+      .arg(registerFromVolumeNode->GetName())
+      .arg(registerToVolumeNode->GetName())
+      .toStdString();
     outputTransform->SetName(outputTransformName.c_str());
     scene->AddNode(outputTransform);
     registrationParameterSetNode->SetParameterAsString("bsplineTransform", outputTransform->GetID());

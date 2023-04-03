@@ -94,7 +94,7 @@ qSlicerSubjectHierarchyPluginLogicPrivate::qSlicerSubjectHierarchyPluginLogicPri
 
   this->ViewContextMenu = new QMenu();
 
-  this->EditPropertiesAction = new QAction("Edit properties...");
+  this->EditPropertiesAction = new QAction(qSlicerSubjectHierarchyPluginLogic::tr("Edit properties..."));
   this->EditPropertiesAction->setObjectName("EditPropertiesAction");
   // weight=30 will place it towards the end of node actions section
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->EditPropertiesAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 30);
@@ -260,7 +260,8 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
     if (foundPlugins.size() > 1)
       {
       // Let the user choose a plugin if more than one returned the same non-zero confidence value
-      QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin for adding new node to subject hierarchy.\n\nSelect plugin to add node named\n'%1'\n(type %2)").arg(node->GetName()).arg(node->GetNodeTagName());
+      QString textToDisplay = tr("Equal confidence number found for more than one subject hierarchy plugin for adding new node to subject hierarchy.\n\n"
+        "Select plugin to add node named\n'%1'\n(type %2)").arg(node->GetName()).arg(node->GetNodeTagName());
       selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->selectPluginFromDialog(textToDisplay, foundPlugins);
       }
      else if (foundPlugins.size() == 1)

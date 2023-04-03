@@ -412,10 +412,10 @@ void qMRMLSegmentEditorWidgetPrivate::init()
 
   QMenu* segmentationsButtonMenu = new QMenu(qMRMLSegmentEditorWidget::tr("Segmentations"), this->SwitchToSegmentationsButton);
 
-  QAction* importExportAction = new QAction("Import/export nodes...", segmentationsButtonMenu);
+  QAction* importExportAction = new QAction(qMRMLSegmentEditorWidget::tr("Import/export nodes..."), segmentationsButtonMenu);
   segmentationsButtonMenu->addAction(importExportAction);
   QObject::connect(importExportAction, SIGNAL(triggered()), q, SLOT(onImportExportActionClicked()));
-  QAction* exportToFileAction = new QAction("Export to files...", segmentationsButtonMenu);
+  QAction* exportToFileAction = new QAction(qMRMLSegmentEditorWidget::tr("Export to files..."), segmentationsButtonMenu);
   segmentationsButtonMenu->addAction(exportToFileAction);
   QObject::connect(exportToFileAction, SIGNAL(triggered()), q, SLOT(onExportToFilesActionClicked()));
 

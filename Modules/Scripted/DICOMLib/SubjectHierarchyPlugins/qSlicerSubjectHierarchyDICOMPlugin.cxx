@@ -99,27 +99,27 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::init()
   // Place DICOM folder actions after core folder actions
   const int folderActionsBaseWeight = 20;
 
-  this->CreatePatientAction = new QAction("Create new subject",q);
+  this->CreatePatientAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Create new subject"), q);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreatePatientAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight);
   QObject::connect(this->CreatePatientAction, SIGNAL(triggered()), q, SLOT(createSubjectItem()));
 
-  this->CreateStudyAction = new QAction("Create child study",q);
+  this->CreateStudyAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Create child study"), q);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreateStudyAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight+1);
   QObject::connect(this->CreateStudyAction, SIGNAL(triggered()), q, SLOT(createChildStudyUnderCurrentItem()));
 
-  this->ConvertFolderToPatientAction = new QAction("Convert folder to subject",q);
+  this->ConvertFolderToPatientAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Convert folder to subject"), q);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConvertFolderToPatientAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight+2);
   QObject::connect(this->ConvertFolderToPatientAction, SIGNAL(triggered()), q, SLOT(convertCurrentItemToPatient()));
 
-  this->ConvertFolderToStudyAction = new QAction("Convert folder to study",q);
+  this->ConvertFolderToStudyAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Convert folder to study"), q);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConvertFolderToStudyAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight+3);
   QObject::connect(this->ConvertFolderToStudyAction, SIGNAL(triggered()), q, SLOT(convertCurrentItemToStudy()));
 
-  this->OpenDICOMExportDialogAction = new QAction("Export to DICOM...",q);
+  this->OpenDICOMExportDialogAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Export to DICOM..."), q);
   // Place DICOM export action lower in the default actions section because it is
   // better to have export features towards the end (after editing and importing actions).
   const int dicomExportActionWeight = 30;

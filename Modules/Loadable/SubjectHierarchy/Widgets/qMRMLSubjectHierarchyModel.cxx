@@ -124,8 +124,13 @@ void qMRMLSubjectHierarchyModelPrivate::init()
   q->setTransformColumn(4);
   q->setIDColumn(5);
 
-  q->setHorizontalHeaderLabels(
-    QStringList() << "Node" << "Description" << "" /*visibility*/ << "" /*color*/ << "" /*transform*/ << "IDs" );
+  q->setHorizontalHeaderLabels(QStringList()
+    << qMRMLSubjectHierarchyModel::tr("Node")
+    << qMRMLSubjectHierarchyModel::tr("Description")
+    << "" /*visibility*/
+    << "" /*color*/
+    << "" /*transform*/
+    << qMRMLSubjectHierarchyModel::tr("IDs"));
 
   q->horizontalHeaderItem(q->nameColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node name and type"));
   q->horizontalHeaderItem(q->descriptionColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node description"));

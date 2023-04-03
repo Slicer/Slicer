@@ -123,7 +123,12 @@ void qSlicerSimpleMarkupsWidget::setup()
   connect( d->MarkupsPlaceWidget, SIGNAL( activeMarkupsPlaceModeChanged(bool) ), this, SIGNAL( activeMarkupsPlaceModeChanged(bool) ) );
 
   d->MarkupsControlPointsTableWidget->setColumnCount( CONTROL_POINT_COLUMNS );
-  d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "R" << "A" << "S" );
+  d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList()
+    << tr("Label")
+    << tr("R")  //: right
+    << tr("A")  //: anterior
+    << tr("S")  //: superior
+    );
   d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
   d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
   d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
@@ -402,10 +407,10 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
   QPoint globalPosition = d->MarkupsControlPointsTableWidget->viewport()->mapToGlobal( position );
 
   QMenu* controlPointsMenu = new QMenu( d->MarkupsControlPointsTableWidget );
-  QAction* deleteAction = new QAction( "Delete highlighted control points", controlPointsMenu );
-  QAction* upAction = new QAction( "Move current control point up", controlPointsMenu );
-  QAction* downAction = new QAction( "Move current control point down", controlPointsMenu );
-  QAction* jumpAction = new QAction( "Jump slices to control point", controlPointsMenu );
+  QAction* deleteAction = new QAction(tr("Delete highlighted control points"), controlPointsMenu);
+  QAction* upAction = new QAction(tr("Move current control point up"), controlPointsMenu);
+  QAction* downAction = new QAction(tr("Move current control point down"), controlPointsMenu);
+  QAction* jumpAction = new QAction(tr("Jump slices to control point"), controlPointsMenu);
 
   controlPointsMenu->addAction( deleteAction );
   controlPointsMenu->addAction( upAction );
@@ -592,7 +597,12 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->MarkupsControlPointsTableWidget->clear();
     d->MarkupsControlPointsTableWidget->setRowCount( currentMarkupsNode->GetNumberOfControlPoints() );
     d->MarkupsControlPointsTableWidget->setColumnCount( CONTROL_POINT_COLUMNS );
-    d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "R" << "A" << "S" );
+    d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList()
+      << tr("Label")
+      << tr("R")  //: right
+      << tr("A")  //: anterior
+      << tr("S")  //: superior
+    );
     d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);

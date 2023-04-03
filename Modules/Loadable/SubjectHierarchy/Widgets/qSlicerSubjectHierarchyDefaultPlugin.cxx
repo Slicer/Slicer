@@ -79,10 +79,10 @@ void qSlicerSubjectHierarchyDefaultPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyAbstractPlugin);
 
-  this->ShowAllChildrenAction = new QAction("Show all children",q);
+  this->ShowAllChildrenAction = new QAction(qSlicerSubjectHierarchyDefaultPlugin::tr("Show all children"), q);
   QObject::connect(this->ShowAllChildrenAction, SIGNAL(triggered()), q, SLOT(showAllChildren()));
 
-  this->HideAllChildrenAction = new QAction("Hide all children",q);
+  this->HideAllChildrenAction = new QAction(qSlicerSubjectHierarchyDefaultPlugin::tr("Hide all children"), q);
   QObject::connect(this->HideAllChildrenAction, SIGNAL(triggered()), q, SLOT(hideAllChildren()));
   }
 
@@ -131,7 +131,7 @@ const QString qSlicerSubjectHierarchyDefaultPlugin::roleForPlugin()const
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
 {
-  return QString(
+  return tr(
     "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
     "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
     "Rename item"

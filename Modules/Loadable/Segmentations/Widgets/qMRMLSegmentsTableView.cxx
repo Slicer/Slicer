@@ -1012,36 +1012,36 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 
   if (selectedSegmentIDs.size() > 0)
     {
-    QAction* showOnlySelectedAction = new QAction("Show only selected segments", this);
+    QAction* showOnlySelectedAction = new QAction(tr("Show only selected segments"), this);
     QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
     contextMenu->addAction(showOnlySelectedAction);
 
     contextMenu->addSeparator();
 
-    QAction* jumpSlicesAction = new QAction("Jump slices", this);
+    QAction* jumpSlicesAction = new QAction(tr("Jump slices"), this);
     QObject::connect(jumpSlicesAction, SIGNAL(triggered()), this, SLOT(jumpSlices()));
     contextMenu->addAction(jumpSlicesAction);
 
     contextMenu->addSeparator();
 
-    QAction* moveUpAction = new QAction("Move selected segments up", this);
+    QAction* moveUpAction = new QAction(tr("Move selected segments up"), this);
     QObject::connect(moveUpAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsUp()));
     contextMenu->addAction(moveUpAction);
 
-    QAction* moveDownAction = new QAction("Move selected segments down", this);
+    QAction* moveDownAction = new QAction(tr("Move selected segments down"), this);
     QObject::connect(moveDownAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsDown()));
     contextMenu->addAction(moveDownAction);
     }
 
   contextMenu->addSeparator();
 
-  QAction* showFilterAction = new QAction("Show filter bar", this);
+  QAction* showFilterAction = new QAction(tr("Show filter bar"), this);
   showFilterAction->setCheckable(true);
   showFilterAction->setChecked(d->FilterBar->isVisible());
   QObject::connect(showFilterAction, SIGNAL(triggered(bool)), this, SLOT(setFilterBarVisible(bool)));
   contextMenu->addAction(showFilterAction);
 
-  QAction* showLayerColumnAction = new QAction("Show layer column", this);
+  QAction* showLayerColumnAction = new QAction(tr("Show layer column"), this);
   showLayerColumnAction->setCheckable(true);
   showLayerColumnAction->setChecked(this->layerColumnVisible());
   QObject::connect(showLayerColumnAction, SIGNAL(triggered(bool)), this, SLOT(setLayerColumnVisible(bool)));
@@ -1062,21 +1062,21 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 
     contextMenu->addSeparator();
 
-    QAction* visibility3DAction = new QAction("Show in 3D", this);
+    QAction* visibility3DAction = new QAction(tr("Show in 3D"), this);
     visibility3DAction->setCheckable(true);
     visibility3DAction->setChecked(properties.Visible3D);
     visibility3DAction->setProperty(ID_PROPERTY, segmentID);
     QObject::connect(visibility3DAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility3DActionToggled(bool)));
     contextMenu->addAction(visibility3DAction);
 
-    QAction* visibility2DFillAction = new QAction("Show in 2D as fill", this);
+    QAction* visibility2DFillAction = new QAction(tr("Show in 2D as fill"), this);
     visibility2DFillAction->setCheckable(true);
     visibility2DFillAction->setChecked(properties.Visible2DFill);
     visibility2DFillAction->setProperty(ID_PROPERTY, segmentID);
     connect(visibility2DFillAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DFillActionToggled(bool)));
     contextMenu->addAction(visibility2DFillAction);
 
-    QAction* visibility2DOutlineAction = new QAction("Show in 2D as outline", this);
+    QAction* visibility2DOutlineAction = new QAction(tr("Show in 2D as outline"), this);
     visibility2DOutlineAction->setCheckable(true);
     visibility2DOutlineAction->setChecked(properties.Visible2DOutline);
     visibility2DOutlineAction->setProperty(ID_PROPERTY, segmentID);
@@ -1100,7 +1100,7 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
       }
 
     contextMenu->addSeparator();
-    QAction* clearSelectedSegmentAction = new QAction("Clear selected segments", this);
+    QAction* clearSelectedSegmentAction = new QAction(tr("Clear selected segments"), this);
     QObject::connect(clearSelectedSegmentAction, SIGNAL(triggered()), this, SLOT(clearSelectedSegments()));
     contextMenu->addAction(clearSelectedSegmentAction);
     }
@@ -1170,10 +1170,10 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
     }
 
   QMessageBox messageBox;
-  messageBox.addButton("Clear", QMessageBox::ButtonRole::AcceptRole);
+  messageBox.addButton(tr("Clear"), QMessageBox::ButtonRole::AcceptRole);
   QPushButton* cancelButton = messageBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
   messageBox.setDefaultButton(cancelButton);
-  messageBox.setText("Are you sure you want to clear the contents of the selected segments?");
+  messageBox.setText(tr("Are you sure you want to clear the contents of the selected segments?"));
   if (messageBox.exec() == QMessageBox::ButtonRole::RejectRole)
     {
     return;
