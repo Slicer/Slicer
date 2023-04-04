@@ -2411,20 +2411,19 @@ int vtkMRMLSliceLogic::GetEditableLayerAtWorldPosition(double worldPos[3],
     return vtkMRMLSliceLogic::LayerNone;
     }
   // By default adjust background volume, if available
-  bool adjustForeground = !backgroundVolumeEditable;
+  bool adjustForeground = !backgroundVolumeEditable || !sliceCompositeNode->GetBackgroundVolumeID();
 
   // If both foreground and background volumes are visible then choose adjustment of
   // foreground volume, if foreground volume is visible in current mouse position
-  if (foregroundVolumeEditable && backgroundVolumeEditable)
+  if (sliceCompositeNode->GetBackgroundVolumeID() && sliceCompositeNode->GetForegroundVolumeID())
+  {
+    if (foregroundVolumeEditable && backgroundVolumeEditable)
     {
     adjustForeground = (sliceCompositeNode->GetForegroundOpacity() >= 0.01)
       && this->IsEventInsideVolume(true, worldPos)   // inside background (used as mask for displaying foreground)
       && this->vtkMRMLSliceLogic::IsEventInsideVolume(false, worldPos); // inside foreground
     }
-
-  adjustForeground = (sliceCompositeNode->GetForegroundOpacity() >= 0.01)
-    && this->IsEventInsideVolume(true, worldPos)   // inside background (used as mask for displaying foreground)
-    && this->vtkMRMLSliceLogic::IsEventInsideVolume(false, worldPos); // inside foreground
+  }
 
   return (adjustForeground ? vtkMRMLSliceLogic::LayerForeground : vtkMRMLSliceLogic::LayerBackground);
 }
