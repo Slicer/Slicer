@@ -189,6 +189,8 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->PlaneFillActor->SetVisibility(visible && this->MarkupsDisplayNode->GetFillVisibility());
   this->PlaneOutlineActor->SetVisibility(visible && this->MarkupsDisplayNode->GetOutlineVisibility());
 
+  this->UpdateInteractionPipeline();
+
   vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(this->MarkupsDisplayNode);
   if (planeDisplayNode)
     {
