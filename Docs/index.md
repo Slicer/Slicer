@@ -1,6 +1,6 @@
 # Welcome to 3D Slicer's documentation!
 
-For Slicer-4.10 documentation, refer to the [3D Slicer wiki](https://www.slicer.org/wiki/Documentation/4.10).
+For older Slicer documentation (4.10 and earlier), refer to the [3D Slicer wiki](https://www.slicer.org/wiki/Documentation/4.10).
 
 ```{toctree}
 :maxdepth: 2
