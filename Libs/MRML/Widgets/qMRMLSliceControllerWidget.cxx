@@ -888,8 +888,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   std::string positiveAxisLabel = sliceNode->GetDirectionLabel(planeNormal, true);
   std::string negativeAxisLabel = sliceNode->GetDirectionLabel(planeNormal, false);
   this->SliceOffsetSlider->setToolTip(QString("%1 <-----> %2")
-    .arg(QString::fromStdString(positiveAxisLabel))
-    .arg(QString::fromStdString(negativeAxisLabel)));
+    .arg(QString::fromStdString(negativeAxisLabel))
+    .arg(QString::fromStdString(positiveAxisLabel)));
   this->SliceOffsetSlider->setPrefix(QString("%1: ").arg(QString::fromStdString(positiveAxisLabel)));
 
   // Update slice visibility toggle
