@@ -685,7 +685,7 @@ std::string vtkMRMLAbstractViewNode::GetDirectionLabel(double direction[3], bool
   double axisSign = positive ? 1.0 : -1.0;
   for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
     {
-    double axisDirection[3] = { axisIndex == 0 ? axisSign : 0.0, axisIndex == 1 ? axisSign : 0.0, axisIndex == 2 ? axisSign : 0.0 };
+    double axisDirection[3] = { axisIndex == 0 ? 1.0 : 0.0, axisIndex == 1 ? 1.0 : 0.0, axisIndex == 2 ? 1.0 : 0.0 };
     double normalAngleDiffRad = (vtkMath::AngleBetweenVectors(direction, axisDirection) - vtkMath::Pi() / 2.0);
     double absoluteNormalAngleDiffRad = fabs(normalAngleDiffRad);
     if (absoluteNormalAngleDiffRad < toleranceRad)
@@ -694,7 +694,7 @@ std::string vtkMRMLAbstractViewNode::GetDirectionLabel(double direction[3], bool
       continue;
       }
     absoluteNormalAngleDiffsRad[axisIndex] = absoluteNormalAngleDiffRad;
-    axisLabels[axisIndex] = this->AxisLabels->GetValue(axisIndex * 2 + ((positive == (normalAngleDiffRad > 0)) ? 0 : 1));
+    axisLabels[axisIndex] = this->AxisLabels->GetValue(axisIndex * 2 + ((positive == (normalAngleDiffRad < 0)) ? 1 : 0));
     }
 
   // Concatenate labels, ordered by angle difference
