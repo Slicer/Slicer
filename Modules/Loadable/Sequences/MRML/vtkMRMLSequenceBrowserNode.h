@@ -170,9 +170,9 @@ public:
   vtkGetMacro(IndexDisplayMode, int);
   virtual std::string GetIndexDisplayModeAsString();
 
-  /// Set format of index value display
+  /// Set format of index value display (used if index type is numeric)
   void SetIndexDisplayFormat(std::string displayFormat);
-  /// Get format of index value display
+  /// Get format of index value display (used if index type is numeric)
   vtkGetMacro(IndexDisplayFormat, std::string);
 
   /// Helper functions for converting between string and code representation of index display modes

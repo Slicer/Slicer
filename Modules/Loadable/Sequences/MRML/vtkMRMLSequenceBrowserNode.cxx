@@ -1496,7 +1496,6 @@ int vtkMRMLSequenceBrowserNode::GetIndexDisplayModeFromString(const std::string&
 //-----------------------------------------------------------------------------
 std::string vtkMRMLSequenceBrowserNode::GetFormattedIndexValue(int index)
 {
-
   vtkMRMLSequenceNode* sequenceNode = this->GetMasterSequenceNode();
   if (!sequenceNode)
     {
@@ -1509,6 +1508,12 @@ std::string vtkMRMLSequenceBrowserNode::GetFormattedIndexValue(int index)
     }
 
   std::string indexValue = sequenceNode->GetNthIndexValue(index);
+
+  if (sequenceNode->GetIndexType() != vtkMRMLSequenceNode::NumericIndex)
+    {
+    return indexValue;
+    }
+
   std::string formatString = this->GetIndexDisplayFormat();
 
   std::string sprintfSpecifier;

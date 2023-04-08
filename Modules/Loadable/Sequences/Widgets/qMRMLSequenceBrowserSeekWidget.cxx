@@ -177,7 +177,7 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
       indexUnit = QString::fromStdString(sequenceNode->GetIndexUnit());
       if (indexValue.length() == 0)
         {
-        qWarning() << "Item " << selectedItemNumber << " has no index value defined";
+        qWarning() << "Item" << selectedItemNumber << "has no index value defined";
         }
       }
     else
