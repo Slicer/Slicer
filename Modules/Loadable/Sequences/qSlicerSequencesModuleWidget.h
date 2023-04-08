@@ -55,17 +55,11 @@ public:
 public slots:
 
   void setActiveSequenceNode(vtkMRMLSequenceNode* newActiveSequenceNode);
+
+protected slots:
+
   void onSequenceNodeSelectionChanged();
-  void onSequenceNodeModified();
-
-  void onIndexNameEdited();
-  void onIndexUnitEdited();
-  void onIndexTypeEdited(QString indexTypeString);
-
-  void onDataNodeEdited( int row, int column );
-
-  void onAddDataNodeButtonClicked();
-  void onRemoveDataNodeButtonClicked();
+  void onCurrentTabChanged();
 
   /// Respond to the scene events
   void onNodeAddedEvent(vtkObject* scene, vtkObject* node);
@@ -76,6 +70,7 @@ public slots:
   void onMRMLSceneEndCloseEvent();
 
 protected:
+
   void updateWidgetFromMRML();
 
   /// Refresh synchronized sequence nodes table from MRML
@@ -84,8 +79,6 @@ protected:
   QScopedPointer<qSlicerSequencesModuleWidgetPrivate> d_ptr;
 
   void setup() override;
-
-  void setEnableWidgets(bool enable);
 
 public slots:
   void setMRMLScene(vtkMRMLScene* scene) override;
@@ -113,9 +106,6 @@ protected slots:
   void synchronizedSequenceNodeSaveChangesStateChanged(int aState);
 
   void onProxyNodeChanged(vtkMRMLNode* newProxyNode);
-
-  void updateSequenceItemWidgetFromMRML();
-  void updateCandidateNodesWidgetFromMRML(bool forceUpdate = false);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSequencesModuleWidget);

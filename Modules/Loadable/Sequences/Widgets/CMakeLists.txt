@@ -16,17 +16,21 @@ set(${KIT}_SRCS
   qMRMLSequenceBrowserSeekWidget.h
   qMRMLSequenceBrowserToolBar.cxx
   qMRMLSequenceBrowserToolBar.h
+  qMRMLSequenceEditWidget.cxx
+  qMRMLSequenceEditWidget.h
   )
 
 set(${KIT}_MOC_SRCS
   qMRMLSequenceBrowserPlayWidget.h
   qMRMLSequenceBrowserSeekWidget.h
   qMRMLSequenceBrowserToolBar.h
+  qMRMLSequenceEditWidget.h
   )
 
 set(${KIT}_UI_SRCS
   Resources/UI/qMRMLSequenceBrowserPlayWidget.ui
   Resources/UI/qMRMLSequenceBrowserSeekWidget.ui
+  Resources/UI/qMRMLSequenceEditWidget.ui
   )
 
 set(${KIT}_RESOURCES

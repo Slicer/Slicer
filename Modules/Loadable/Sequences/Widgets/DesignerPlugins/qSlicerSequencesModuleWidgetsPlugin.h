@@ -33,6 +33,7 @@
 #include "qMRMLSequenceBrowserPlayWidgetPlugin.h"
 #include "qMRMLSequenceBrowserSeekWidgetPlugin.h"
 #include "qMRMLSequenceBrowserToolBarPlugin.h"
+#include "qMRMLSequenceEditWidgetPlugin.h"
 
 // \class Group the plugins in one library
 class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT qSlicerSequenceBrowserModuleWidgetsPlugin
@@ -52,6 +53,7 @@ public:
     plugins << new qMRMLSequenceBrowserPlayWidgetPlugin;
     plugins << new qMRMLSequenceBrowserSeekWidgetPlugin;
     plugins << new qMRMLSequenceBrowserToolBarPlugin;
+    plugins << new qMRMLSequenceEditWidgetPlugin;
     return plugins;
     }
 };

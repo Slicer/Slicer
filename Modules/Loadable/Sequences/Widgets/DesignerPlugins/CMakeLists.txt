@@ -15,6 +15,8 @@ set(${KIT}_SRCS
   qMRMLSequenceBrowserSeekWidgetPlugin.h
   qMRMLSequenceBrowserToolBarPlugin.cxx
   qMRMLSequenceBrowserToolBarPlugin.h
+  qMRMLSequenceEditWidgetPlugin.cxx
+  qMRMLSequenceEditWidgetPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -23,6 +25,7 @@ set(${KIT}_MOC_SRCS
   qMRMLSequenceBrowserPlayWidgetPlugin.h
   qMRMLSequenceBrowserSeekWidgetPlugin.h
   qMRMLSequenceBrowserToolBarPlugin.h
+  qMRMLSequenceEditWidgetPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
