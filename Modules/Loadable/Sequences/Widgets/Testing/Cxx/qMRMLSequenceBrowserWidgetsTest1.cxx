@@ -57,9 +57,6 @@ int qMRMLSequenceBrowserWidgetsTest1( int argc, char * argv [] )
   scene->AddNode(browserNode.GetPointer());
   browserNode->SetAndObserveMasterSequenceNodeID(sequenceNode->GetID());
 
-  //
-  // Create a simple gui with non-tranposed and transposed table view
-  //
   QWidget parentWidget;
   parentWidget.setWindowTitle("qMRMLSequenceBrowserWidgetsTest1");
   QVBoxLayout vbox;

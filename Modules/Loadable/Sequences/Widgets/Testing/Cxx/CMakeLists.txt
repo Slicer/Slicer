@@ -6,6 +6,7 @@ set(INPUT ${MRMLCore_SOURCE_DIR}/Testing)
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
   qMRMLSequenceBrowserWidgetsTest1.cxx
+  qMRMLSequenceEditWidgetTest1.cxx
   )
 
 #-----------------------------------------------------------------------------
@@ -17,3 +18,4 @@ slicerMacroConfigureModuleCxxTestDriver(
 
 #-----------------------------------------------------------------------------
 simple_test( qMRMLSequenceBrowserWidgetsTest1 )
+simple_test( qMRMLSequenceEditWidgetTest1 )
