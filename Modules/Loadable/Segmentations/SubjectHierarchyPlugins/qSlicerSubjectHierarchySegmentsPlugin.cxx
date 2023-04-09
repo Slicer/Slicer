@@ -39,11 +39,12 @@
 #include "vtkMRMLSubjectHierarchyNode.h"
 
 // Qt includes
+#include <QAction>
 #include <QDebug>
 #include <QIcon>
-#include <QMessageBox>
-#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QWidgetAction>
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -52,6 +53,9 @@
 
 // MRML widgets includes
 #include "qMRMLNodeComboBox.h"
+
+// CTK includes
+#include "ctkDoubleSlider.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup SlicerRt_QtModules_Segmentations
@@ -71,6 +75,9 @@ public:
   QAction* ShowAllSegmentsAction{nullptr};
   QAction* JumpSlicesAction{nullptr};
   QAction* CloneSegmentAction{nullptr};
+  QAction* OpacityAction{nullptr};
+  QMenu* OpacityMenu{nullptr};
+  ctkDoubleSlider* OpacitySlider{nullptr};
 };
 
 //-----------------------------------------------------------------------------
@@ -105,6 +112,20 @@ void qSlicerSubjectHierarchySegmentsPluginPrivate::init()
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CloneSegmentAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 0.5); // put it right after "Rename" action
   QObject::connect(this->CloneSegmentAction, SIGNAL(triggered()), q, SLOT(cloneSegment()));
+
+  this->OpacityMenu = new QMenu(qSlicerSubjectHierarchySegmentsPlugin::tr("Opacity"));
+  this->OpacitySlider = new ctkDoubleSlider(this->OpacityMenu);
+  this->OpacitySlider->setOrientation(Qt::Horizontal);
+  this->OpacitySlider->setRange(0.0, 1.0);
+  this->OpacitySlider->setSingleStep(0.1);
+  QObject::connect(this->OpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(setOpacityForCurrentItem(double)));
+  QWidgetAction* opacityAction = new QWidgetAction(this->OpacityMenu);
+  opacityAction->setDefaultWidget(this->OpacitySlider);
+  this->OpacityMenu->addAction(opacityAction);
+
+  this->OpacityAction = new QAction(qSlicerSubjectHierarchySegmentsPlugin::tr("Opacity"), q);
+  this->OpacityAction->setToolTip(qSlicerSubjectHierarchySegmentsPlugin::tr("Set segment opacity in the sub-menu"));
+  this->OpacityAction->setMenu(this->OpacityMenu);
 }
 
 //-----------------------------------------------------------------------------
@@ -677,7 +698,7 @@ QList<QAction*> qSlicerSubjectHierarchySegmentsPlugin::visibilityContextMenuActi
   Q_D(const qSlicerSubjectHierarchySegmentsPlugin);
 
   QList<QAction*> actions;
-  actions << d->ShowOnlyCurrentSegmentAction << d->ShowAllSegmentsAction << d->JumpSlicesAction;
+  actions << d->OpacityAction << d->ShowOnlyCurrentSegmentAction << d->ShowAllSegmentsAction << d->JumpSlicesAction;
   return actions;
 }
 
@@ -698,6 +719,33 @@ void qSlicerSubjectHierarchySegmentsPlugin::showVisibilityContextMenuActionsForI
     d->ShowOnlyCurrentSegmentAction->setVisible(true);
     d->ShowAllSegmentsAction->setVisible(true);
     d->JumpSlicesAction->setVisible(true);
+    d->OpacityAction->setVisible(true);
+
+    // Set current segment opacity to the opacity slider
+    vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+    vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+    if (!scene)
+      {
+      qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
+      return;
+      }
+    vtkMRMLSegmentationNode* segmentationNode =
+      vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(itemID, shNode->GetScene());
+    if (!segmentationNode)
+      {
+      qCritical() << Q_FUNC_INFO << ": Unable to find segmentation node for segment subject hierarchy item " << shNode->GetItemName(itemID).c_str();
+      return;
+      }
+    std::string segmentId = shNode->GetItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+    if (!displayNode)
+      {
+      qCritical() << Q_FUNC_INFO << ": Unable to find segmentation display node for segment subject hierarchy item "
+        << shNode->GetItemName(itemID).c_str();
+      return;
+      }
+
+    d->OpacitySlider->setValue(displayNode->GetSegmentOpacity3D(segmentId));
     }
 }
 
@@ -993,4 +1041,46 @@ bool qSlicerSubjectHierarchySegmentsPlugin::showItemInView(
   qSlicerSubjectHierarchySegmentationsPlugin* segmentationsPlugin = qobject_cast<qSlicerSubjectHierarchySegmentationsPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Segmentations") );
   return segmentationsPlugin->showItemInView(segmentationItemId, viewNode, allItemsToShow);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentsPlugin::setOpacityForCurrentItem(double opacity)
+{
+  // Get currently selected node and scene
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (!currentItemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item!";
+    return;
+    }
+
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
+    return;
+    }
+  vtkMRMLSegmentationNode* segmentationNode =
+    vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(currentItemID, shNode->GetScene());
+  if (!segmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to find segmentation node for segment subject hierarchy item " << shNode->GetItemName(currentItemID).c_str();
+    return;
+    }
+  std::string segmentId = shNode->GetItemAttribute(currentItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+  if (!displayNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to find segmentation display node for segment subject hierarchy item "
+      << shNode->GetItemName(currentItemID).c_str();
+    return;
+    }
+
+  displayNode->SetSegmentOpacity(segmentId, opacity);
 }

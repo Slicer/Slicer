@@ -142,6 +142,9 @@ protected slots:
   /// Clone the selected segment
   void cloneSegment();
 
+  /// Set opacity for current subject hierarchy item
+  void setOpacityForCurrentItem(double opacity);
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchySegmentsPluginPrivate> d_ptr;
 
