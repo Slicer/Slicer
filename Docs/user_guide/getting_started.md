@@ -101,9 +101,13 @@ Debian 10.12 users may encounter an error when launching Slicer:
 
     Available platform plugins are: xcb.
 
-[The solution](https://forum.qt.io/topic/93247/qt-qpa-plugin-could-not-load-the-qt-platform-plugin-xcb-in-even-though-it-was-found/81) is to create symlink:
+[The solution](https://forum.qt.io/topic/93247/qt-qpa-plugin-could-not-load-the-qt-platform-plugin-xcb-in-even-though-it-was-found/81) is to create symlink to either `libxcb-util.so` or `libxcb-util.so.0.0.0` depending on which library is present. Thus the command should be:
 
     sudo ln -s /usr/lib/x86_64-linux-gnu/libxcb-util.so /usr/lib/x86_64-linux-gnu/libxcb-util.so.1
+
+or:
+
+    sudo ln -s /usr/lib/x86_64-linux-gnu/libxcb-util.so.0.0.0 /usr/lib/x86_64-linux-gnu/libxcb-util.so.1
 
 :::
 
