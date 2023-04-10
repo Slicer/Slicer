@@ -84,20 +84,20 @@ public:
 
   enum
     {
-      ClipOff = 0,
-      ClipPositiveSpace = 1,
-      ClipNegativeSpace = 2,
+    ClipOff = 0,
+    ClipPositiveSpace = 1,
+    ClipNegativeSpace = 2,
     };
 
   ///
   ///Indicates what clipping method should be used
   ///Straight cut, whole cell extraction, or whole cell extraction with boundary cells
-  typedef enum
-  {
+  enum ClippingMethodType
+    {
     Straight = 0,
     WholeCells,
     WholeCellsWithBoundary,
-  } ClippingMethodType;
+    };
 
   vtkGetMacro(ClippingMethod, ClippingMethodType);
   vtkSetMacro(ClippingMethod, ClippingMethodType);
