@@ -114,10 +114,11 @@ public:
 
   /// Mesh Type hint
   /// \sa GetMeshType()
-  typedef enum {
+  enum MeshTypeHint
+    {
     PolyDataMeshType = 0,
     UnstructuredGridMeshType
-  } MeshTypeHint;
+    };
 
   /// Get the mesh type of that model. The safest way
   /// to know if the mesh is unstructuredGrid is to check

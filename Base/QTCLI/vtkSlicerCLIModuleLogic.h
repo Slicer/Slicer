@@ -31,8 +31,6 @@ class MRMLIDMap;
 
 #include "qSlicerBaseQTCLIExport.h"
 
-typedef enum { CommandLineModule, SharedObjectModule, PythonModule } CommandLineModuleType;
-
 /// \brief Logic for running CLI
 ///
 /// vtkSlicerCLIModuleLogic logic allows to run a either synchronously or asynchronously CLI
@@ -43,6 +41,13 @@ class Q_SLICER_BASE_QTCLI_EXPORT vtkSlicerCLIModuleLogic :
   public vtkSlicerModuleLogic
 {
 public:
+  enum CommandLineModuleType
+    {
+    CommandLineModule,
+    SharedObjectModule,
+    PythonModule
+    };
+
   static vtkSlicerCLIModuleLogic *New();
   vtkTypeMacro(vtkSlicerCLIModuleLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -162,9 +167,10 @@ protected:
   void AutoRun(vtkMRMLCommandLineModuleNode* cliNode);
 
     /// List of custom events fired by the class.
-  enum Events{
+  enum Events
+    {
     RequestHierarchyEditEvent = vtkCommand::UserEvent + 1
-  };
+    };
 
   // Add a model hierarchy node and all its descendents to a scene (miniscene to sent to a CLI).
   // The mapping of ids from the original scene to the mini scene is put in (added to) sceneToMiniSceneMap.
