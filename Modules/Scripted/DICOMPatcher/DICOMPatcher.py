@@ -95,6 +95,28 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
                                                                         " multi-frame files that only have 'SliceThickness' field. Fixes error in Dolphin 3D CBCT scanners.")
         parametersFormLayout.addRow("Generate slice position for multi-frame volumes", self.generateImagePositionFromSliceThicknessCheckBox)
 
+        self.fixExposureFiascoCheckBox = qt.QCheckBox()
+        self.fixExposureFiascoCheckBox.checked = True
+        self.fixExposureFiascoCheckBox.setToolTip("If checked, then some invalid exposure tags are converted to valid tags"
+                                                  " (see the 'exposure fiasco' - http://dclunie.blogspot.com/2008/11/dicom-exposure-attribute-fiasco.html).")
+        parametersFormLayout.addRow("Fix invalid exposure tags", self.fixExposureFiascoCheckBox)
+
+        characterSetLayout = qt.QHBoxLayout()
+
+        self.specifyCharacterSetCheckBox = qt.QCheckBox()
+        self.specifyCharacterSetCheckBox.checked = False
+        self.specifyCharacterSetCheckBox.setToolTip(
+            "If checked, then SpecificCharacterSet is set to the specified value in all DICOM files"
+            " where the character set is not specified already. It is recommended to enable this if patient name does not show up correctly.")
+        characterSetLayout.addWidget(self.specifyCharacterSetCheckBox)
+
+        self.specifyCharacterSetLineEdit = qt.QLineEdit()
+        self.specifyCharacterSetLineEdit.setToolTip("For example set 'ISO_IR 192' for UTF8 or 'cp1251' for Cyrillic.")
+        characterSetLayout.addWidget(self.specifyCharacterSetLineEdit)
+        self.specifyCharacterSetLineEdit.text = qt.QSettings().value("DICOMPatcher/CharacterSet", "")
+
+        parametersFormLayout.addRow("Specify character set", characterSetLayout)
+
         self.anonymizeDicomCheckBox = qt.QCheckBox()
         self.anonymizeDicomCheckBox.checked = False
         self.anonymizeDicomCheckBox.setToolTip("If checked, then some patient identifiable information will be removed"
@@ -144,6 +166,8 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
             self.statusLabel.plainText = ''
 
             self.logic.clearRules()
+            if self.fixExposureFiascoCheckBox.checked:
+                self.logic.addRule("FixExposureFiasco")
             if self.forceSamePatientNameIdInEachDirectoryCheckBox.checked:
                 self.logic.addRule("ForceSamePatientNameIdInEachDirectory")
             if self.forceSameSeriesInstanceUidInEachDirectoryCheckBox.checked:
@@ -154,6 +178,9 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
             self.logic.addRule("FixPrivateMediaStorageSOPClassUID")
             if self.generateImagePositionFromSliceThicknessCheckBox.checked:
                 self.logic.addRule("AddMissingSliceSpacingToMultiframe")
+            if self.specifyCharacterSetCheckBox.checked:
+                self.logic.addRule("UseCharacterSet", {"CharacterSet": self.specifyCharacterSetLineEdit.text})
+                qt.QSettings().setValue("DICOMPatcher/CharacterSet", self.specifyCharacterSetLineEdit.text)
             if self.anonymizeDicomCheckBox.checked:
                 self.logic.addRule("Anonymize")
             if self.normalizeFileNamesCheckBox.checked:
@@ -175,8 +202,9 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
 #
 
 class DICOMPatcherRule:
-    def __init__(self):
+    def __init__(self, parameters=None):
         self.logCallback = None
+        self.parameters = parameters
 
     def addLog(self, text):
         logging.info(text)
@@ -204,7 +232,8 @@ class DICOMPatcherRule:
 #
 
 class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
-    def __init__(self):
+    def __init__(self, parameters):
+        super().__init__(parameters)
         self.requiredTags = ['PatientName', 'PatientID']
         self.eachFileIsSeparateSeries = False
 
@@ -234,7 +263,8 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
 
 
 class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
-    def __init__(self):
+    def __init__(self, parameters):
+        super().__init__(parameters)
         self.requiredTags = ['SeriesInstanceUID']
 
     def processStart(self, inputRootDir, outputRootDir):
@@ -255,7 +285,8 @@ class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
 
 
 class GenerateMissingIDs(DICOMPatcherRule):
-    def __init__(self):
+    def __init__(self, parameters):
+        super().__init__(parameters)
         self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
         self.eachFileIsSeparateSeries = False
 
@@ -425,6 +456,44 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
 #
 #
 
+class FixExposureFiasco(DICOMPatcherRule):
+    """Partial fix the exposure fiasco.
+    See more information at http://dclunie.blogspot.com/2008/11/dicom-exposure-attribute-fiasco.html
+    and discussion at https://github.com/pydicom/pydicom/issues/1661
+    """
+
+    def processDataSet(self, ds):
+        import pydicom
+        if ds.get_item('XRayTubeCurrent'):
+            val = ds.get_item('XRayTubeCurrent').value.decode()
+            if '.' in val:
+                del ds['XRayTubeCurrent']
+                ds['00188151'] = pydicom.DataElement(tag='00188151', VR='DS', value=str(float(val) * 1000))
+
+
+#
+#
+#
+
+class UseCharacterSet(DICOMPatcherRule):
+    """Fix data sets that use non-ASCII character set but not storing that encoding information
+    in CharacterSet DICOM tag. This rule decodes the data set using the specified character set
+    and then sets encoding to UTF8 (ISO_IR 192).
+    """
+
+    def processDataSet(self, ds):
+        if not self.parameters["CharacterSet"]:
+            raise RuntimeError("'CharacterSet' parameter must be specified")
+        if not hasattr(ds, 'SpecificCharacterSet'):
+            ds.SpecificCharacterSet = self.parameters["CharacterSet"]
+            ds.decode()
+            ds.SpecificCharacterSet = "ISO_IR 192"
+
+
+#
+#
+#
+
 class Anonymize(DICOMPatcherRule):
     def __init__(self):
         self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
@@ -529,11 +598,11 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     def clearRules(self):
         self.patchingRules = []
 
-    def addRule(self, ruleName):
+    def addRule(self, ruleName, parameters=None):
         import importlib
         ruleModule = importlib.import_module("DICOMPatcher")
         ruleClass = getattr(ruleModule, ruleName)
-        ruleInstance = ruleClass()
+        ruleInstance = ruleClass(parameters)
         self.patchingRules.append(ruleInstance)
 
     def addLog(self, text):
