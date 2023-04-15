@@ -3,6 +3,7 @@ import logging
 import qt
 
 import slicer
+from slicer.i18n import tr as _
 
 from AbstractScriptedSubjectHierarchyPlugin import *
 
@@ -23,7 +24,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
         scriptedPlugin.name = 'SegmentEditor'
         AbstractScriptedSubjectHierarchyPlugin.__init__(self, scriptedPlugin)
 
-        self.segmentEditorAction = qt.QAction("Segment this...", scriptedPlugin)
+        self.segmentEditorAction = qt.QAction(_("Segment this..."), scriptedPlugin)
         self.segmentEditorAction.connect("triggered()", self.onSegment)
 
     def canAddNodeToSubjectHierarchy(self, node, parentItemID):
