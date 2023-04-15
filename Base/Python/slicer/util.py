@@ -19,6 +19,9 @@ Datasets can be downloaded using URL of the form ``DATA_STORE_URL + "SHA256/" + 
 """
 
 
+from slicer.i18n import tr as _
+
+
 def quit():
     exit(EXIT_SUCCESS)
 
@@ -2492,7 +2495,7 @@ class VTKObservationMixin:
 
     def removeObservers(self, method=None):
         if method is None:
-            for obj, _, _, _, tag, _ in self.Observations:
+            for obj, __, __, __, tag, __ in self.Observations:
                 obj.RemoveObserver(tag)
             self.__observations.clear()
         else:
@@ -2622,7 +2625,7 @@ def delayDisplay(message, autoCloseMsec=1000, parent=None, **kwargs):
     if autoCloseMsec >= 0:
         qt.QTimer.singleShot(autoCloseMsec, messagePopup.close)
     else:
-        okButton = qt.QPushButton("OK")
+        okButton = qt.QPushButton(_("OK"))
         layout.addWidget(okButton)
         okButton.connect('clicked()', messagePopup.close)
     # Windows 10 peek feature in taskbar shows all hidden but not destroyed windows
@@ -2679,7 +2682,7 @@ def confirmOkCancelDisplay(text, windowTitle=None, parent=None, **kwargs):
     """
     import qt, slicer, logging
     if not windowTitle:
-        windowTitle = slicer.app.applicationName + " confirmation"
+        windowTitle = _("{application_name} confirmation").format(application_name=slicer.app.applicationName)
     result = _messageDisplay(logging.INFO, text, True, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
                              standardButtons=qt.QMessageBox.Ok | qt.QMessageBox.Cancel, **kwargs)
     return result == qt.QMessageBox.Ok
@@ -2693,7 +2696,7 @@ def confirmYesNoDisplay(text, windowTitle=None, parent=None, **kwargs):
     """
     import qt, slicer, logging
     if not windowTitle:
-        windowTitle = slicer.app.applicationName + " confirmation"
+        windowTitle = _("{application_name} confirmation").format(application_name=slicer.app.applicationName)
     result = _messageDisplay(logging.INFO, text, True, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
                              standardButtons=qt.QMessageBox.Yes | qt.QMessageBox.No, **kwargs)
     return result == qt.QMessageBox.Yes
