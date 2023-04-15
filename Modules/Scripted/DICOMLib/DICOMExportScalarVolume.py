@@ -107,7 +107,7 @@ class DICOMExportScalarVolume:
         """
         cliparameters = {}
         # Patient
-        cliparameters['patientName'] = self.tags['Patient Name']
+        cliparameters['patientName'] = self.tags['Patient Name']    # no translation for tags keys
         cliparameters['patientID'] = self.tags['Patient ID']
         cliparameters['patientBirthDate'] = self.tags['Patient Birth Date']
         cliparameters['patientSex'] = self.tags['Patient Sex'] if self.tags['Patient Sex'] else "[unknown]"

@@ -4,6 +4,7 @@ from functools import cmp_to_key
 import qt
 
 import slicer
+from slicer.i18n import tr as _
 
 
 class DICOMRecentActivityWidget(qt.QWidget):
@@ -45,7 +46,7 @@ class DICOMRecentActivityWidget(qt.QWidget):
 
         self.refreshButton = qt.QPushButton()
         self.layout().addWidget(self.refreshButton)
-        self.refreshButton.text = 'Refresh'
+        self.refreshButton.text = _('Refresh')
         self.refreshButton.connect('clicked()', self.update)
 
         self.tags = {}
@@ -95,13 +96,14 @@ class DICOMRecentActivityWidget(qt.QWidget):
                         secondsPerDay = secondsPerHour * 24
                         timeNote = None
                         if elapsed < secondsPerDay:
-                            timeNote = 'Today'
+                            timeNote = _('Today')
                         elif elapsed < 7 * secondsPerDay:
-                            timeNote = 'Past Week'
+                            timeNote = _('Past Week')
                         elif elapsed < 30 * 7 * secondsPerDay:
-                            timeNote = 'Past Month'
+                            timeNote = _('Past Month')
                         if timeNote:
-                            text = f"{timeNote}: {seriesDescription} for {patientName}"
+                            text = _("{timeNote}: {seriesDescription} for {patientName}").format(
+                                timeNote=timeNote, seriesDescription=seriesDescription, patientName=patientName)
                             recentSeries.append(self.seriesWithTime(series, elapsed, seriesTime, text))
         recentSeries.sort(key=cmp_to_key(self.compareSeriesTimes))
         return recentSeries
@@ -117,9 +119,9 @@ class DICOMRecentActivityWidget(qt.QWidget):
             self.listWidget.addItem(series.text)
             if series.elapsedSinceInsert < secondsPerHour:
                 insertsPastHour += 1
-        self.statusLabel.text = '%d series added to database in the past hour' % insertsPastHour
+        self.statusLabel.text = _('%d series added to database in the past hour') % insertsPastHour
         if len(self.recentSeries) > 0:
-            statusMessage = "Most recent DICOM Database addition: %s" % self.recentSeries[0].insertDateTime.toString()
+            statusMessage = _("Most recent DICOM Database addition: %s") % self.recentSeries[0].insertDateTime.toString()
             slicer.util.showStatusMessage(statusMessage, 10000)
 
     def onActivated(self, modelIndex):

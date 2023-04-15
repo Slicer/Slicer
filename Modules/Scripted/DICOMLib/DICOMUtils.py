@@ -6,6 +6,7 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 
 #########################################################
 #
@@ -617,14 +618,14 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
     seriesUID = slicer.dicomDatabase.fileValue(filePaths[0], tags['seriesUID'])
 
     if slicer.dicomDatabase.fileValue(filePaths[0], tags['numberOfFrames']) not in ["", "1"]:
-        warningText += "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution.\n"
+        warningText += _("Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution.\n")
 
     # Make sure first file contains valid geometry
     ref = {}
     for tag in [tags['position'], tags['orientation']]:
         value = slicer.dicomDatabase.fileValue(filePaths[0], tag)
         if not value or value == "":
-            warningText += "Reference image in series does not contain geometry information. Please use caution.\n"
+            warningText += _("Reference image in series does not contain geometry information. Please use caution.\n")
             return filePaths, [], warningText
         ref[tag] = value
 
@@ -651,7 +652,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
         sortList.append((file, dist))
 
     if missingGeometry:
-        warningText += "One or more images is missing geometry information in series. Please use caution.\n"
+        warningText += _("One or more images is missing geometry information in series. Please use caution.\n")
         return filePaths, [], warningText
 
     # Sort files names by distance from reference slice
@@ -684,12 +685,13 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
             spaceError = spacingN - spacing0
             if abs(spaceError) > epsilon:
                 spaceWarnings += 1
-                warningText += f"Images are not equally spaced (a difference of {spaceError:g} vs {spacing0:g} in spacings was detected)."
+                warningText += _("Images are not equally spaced (a difference of {spaceError:g} vs {spacing:g} in spacings was detected).") \
+                    .format(spaceError=spaceError, spacing=spacing0)
                 if acquisitionGeometryRegularizationEnabled:
-                    warningText += "  Slicer will apply a transform to this series trying to regularize the volume. Please use caution.\n"
+                    warningText += _("  Slicer will apply a transform to this series trying to regularize the volume. Please use caution.\n")
                 else:
-                    warningText += ("  If loaded image appears distorted, enable 'Acquisition geometry regularization'"
-                                    " in Application settings / DICOM / DICOMScalarVolumePlugin. Please use caution.\n")
+                    warningText += _("  If loaded image appears distorted, enable 'Acquisition geometry regularization'"
+                                     " in Application settings / DICOM / DICOMScalarVolumePlugin. Please use caution.\n")
                 break
             n += 1
 
@@ -795,7 +797,9 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
                           + loadable.name + "' as a '" + plugin.loadType + "'.\n"
                           + traceback.format_exc())
         if (not loadSuccess) and (messages is not None):
-            messages.append(f'Could not load: {loadable.name} as a {plugin.loadType}')
+            messages.append(
+                _('Could not load: {loadableName} as a {loadableType}')
+                .format(loadableName=loadable.name, loadableType=plugin.loadType))
 
         cancelled = False
         try:
@@ -853,7 +857,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
 
     progressDialog = slicer.util.createProgressDialog(parent=slicer.util.mainWindow(), value=0, maximum=100)
     try:
-        progressDialog.labelText = f'Retrieving series list...'
+        progressDialog.labelText = _('Retrieving series list...')
         slicer.app.processEvents()
 
         if accessToken is None:
@@ -879,7 +883,8 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
         fileNumber = 0
         cancelled = False
         for seriesIndex, currentSeriesInstanceUID in enumerate(seriesInstanceUIDs):
-            progressDialog.labelText = f'Retrieving series {seriesIndex+1} of {len(seriesInstanceUIDs)}...'
+            progressDialog.labelText = _('Retrieving series {seriesIndex} of {seriesCount}...').format(
+                seriesIndex=seriesIndex + 1, seriesCount=len(seriesInstanceUIDs))
             slicer.app.processEvents()
 
             try:
@@ -942,7 +947,8 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
 
             except Exception as e:
                 import traceback
-                errors.append(f"Error importing series {currentSeriesInstanceUID}: {str(e)} ({traceback.format_exc()})")
+                errors.append(_("Error importing series {seriesUID}: {errorMessage}").format(
+                    seriesUID=currentSeriesInstanceUID, errorMessage=f"{str(e)} ({traceback.format_exc()})"))
 
     except Exception as e:
         import traceback
@@ -953,9 +959,13 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
         clientLogger.setLevel(originalClientLogLevel)
 
     if errors:
-        slicer.util.errorDisplay(f"Errors occurred during DICOMweb import of {len(errors)} series.", detailedText="\n\n".join(errors))
+        slicer.util.errorDisplay(
+            _("Errors occurred during DICOMweb import of {seriesCount} series.").format(seriesCount=len(errors)),
+            detailedText="\n\n".join(errors))
     elif cancelled and (len(seriesImported) < len(seriesInstanceUIDs)):
-        slicer.util.infoDisplay(f"DICOMweb import has been interrupted after completing {len(seriesImported)} out of {len(seriesInstanceUIDs)} series.")
+        slicer.util.infoDisplay(
+            _("DICOMweb import has been interrupted after completing {importedSeriesCount} out of {seriesCount} series.")
+            .format(importedSeriesCount=len(seriesImported), seriesCount=len(seriesInstanceUIDs)))
 
     return seriesImported
 
@@ -970,7 +980,8 @@ def registerSlicerURLHandler():
     if os.name == 'nt':
         launcherPath = qt.QDir.toNativeSeparators(qt.QFileInfo(slicer.app.launcherExecutableFilePath).absoluteFilePath())
         reg = qt.QSettings(f"HKEY_CURRENT_USER\\Software\\Classes", qt.QSettings.NativeFormat)
-        reg.setValue(f"{slicer.app.applicationName}/.", f"{slicer.app.applicationName} supported file")
+        reg.setValue(f"{slicer.app.applicationName}/.",
+                     _("{slicerAppName} supported file").format(slicerAppName=slicer.app.applicationName))
         reg.setValue(f"{slicer.app.applicationName}/URL protocol", "")
         reg.setValue(f"{slicer.app.applicationName}/shell/open/command/.", f"\"{launcherPath}\" \"%1\"")
         reg.setValue(f"{slicer.app.applicationName}/DefaultIcon/.", f"{slicer.app.applicationName}.exe,0")

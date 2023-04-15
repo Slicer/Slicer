@@ -2,6 +2,7 @@ import logging
 import qt
 
 import slicer
+from slicer.i18n import tr as _
 
 import DICOMLib
 
@@ -12,7 +13,7 @@ class DICOMSendDialog(qt.QDialog):
 
     def __init__(self, files, parent="mainWindow"):
         super().__init__(slicer.util.mainWindow() if parent == "mainWindow" else parent)
-        self.setWindowTitle('Send DICOM Study')
+        self.setWindowTitle(_('Send DICOM Study'))
         self.setWindowModality(1)
         self.setLayout(qt.QVBoxLayout())
         self.files = files
@@ -22,7 +23,7 @@ class DICOMSendDialog(qt.QDialog):
         self.open()
 
     def open(self):
-        self.studyLabel = qt.QLabel('Send %d items to destination' % len(self.files))
+        self.studyLabel = qt.QLabel(_('Send %d items to destination') % len(self.files))
         self.layout().addWidget(self.studyLabel)
 
         # Send Parameters
@@ -36,19 +37,19 @@ class DICOMSendDialog(qt.QDialog):
         self.protocolSelectorCombobox.addItems(["DIMSE", "DICOMweb"])
         self.protocolSelectorCombobox.setCurrentText(self.settings.value('DICOM/Send/Protocol', 'DIMSE'))
         self.protocolSelectorCombobox.currentIndexChanged.connect(self.onProtocolSelectorChange)
-        self.dicomFormLayout.addRow("Protocol: ", self.protocolSelectorCombobox)
+        self.dicomFormLayout.addRow(_("Protocol: "), self.protocolSelectorCombobox)
 
         self.serverAETitleEdit = qt.QLineEdit()
-        self.serverAETitleEdit.setToolTip("AE Title")
+        self.serverAETitleEdit.setToolTip(_("AE Title"))
         self.serverAETitleEdit.text = self.settings.value('DICOM/Send/AETitle', 'CTK')
-        self.dicomFormLayout.addRow("AE Title: ", self.serverAETitleEdit)
+        self.dicomFormLayout.addRow(_("AE Title: "), self.serverAETitleEdit)
         # Enable AET only for DIMSE
         self.serverAETitleEdit.enabled = self.protocolSelectorCombobox.currentText == 'DIMSE'
 
         self.serverAddressLineEdit = qt.QLineEdit()
-        self.serverAddressLineEdit.setToolTip("Address includes hostname and port number in standard URL format (hostname:port).")
+        self.serverAddressLineEdit.setToolTip(_("Address includes hostname and port number in standard URL format (hostname:port)."))
         self.serverAddressLineEdit.text = self.settings.value('DICOM/Send/URL', '')
-        self.dicomFormLayout.addRow("Destination Address: ", self.serverAddressLineEdit)
+        self.dicomFormLayout.addRow(_("Destination Address: "), self.serverAddressLineEdit)
 
         self.layout().addWidget(self.dicomFrame)
 
@@ -84,7 +85,7 @@ class DICOMSendDialog(qt.QDialog):
         self.cancelRequested = False
         okButton = self.bbox.button(self.bbox.Ok)
 
-        with slicer.util.tryWithErrorDisplay("DICOM sending failed."):
+        with slicer.util.tryWithErrorDisplay(_("DICOM sending failed.")):
             okButton.enabled = False
             DICOMLib.DICOMSender(self.files, address, protocol, aeTitle=aeTitle, progressCallback=self.onProgress)
             logging.debug("DICOM sending of %s files succeeded" % len(self.files))

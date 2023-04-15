@@ -7,6 +7,7 @@ import ctk
 import qt
 
 import slicer
+from slicer.i18n import tr as _
 
 #########################################################
 #
@@ -165,7 +166,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
     def onStateChanged(self, newState):
         stdout, stderr = super().onStateChanged(newState)
         if stderr and stderr.size():
-            slicer.util.errorDisplay("An error occurred. For further information click 'Show Details...'",
+            slicer.util.errorDisplay(_("An error occurred. For further information click 'Show Details...'"),
                                      windowTitle=self.__class__.__name__, detailedText=str(stderr))
         return stdout, stderr
 
@@ -289,7 +290,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
             logging.debug(f"Error output from {self.__class__.__name__}: {stdErr}")
 
     def notifyUserAboutRunningStoreSCP(self, pid=None):
-        if slicer.util.confirmYesNoDisplay('There are other DICOM listeners running.\n Do you want to end them?'):
+        if slicer.util.confirmYesNoDisplay(_('There are other DICOM listeners running.\n Do you want to end them?')):
             if os.name == 'nt':
                 self.findAndKillProcessNT(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension, True)
                 # Killing processes can take a while, so we retry a couple of times until we confirm that there
@@ -423,7 +424,7 @@ class DICOMSender(DICOMProcess):
         return True
 
     def send(self):
-        self.progressCallback("Starting send to %s using self.protocol" % self.destinationUrl.toString())
+        self.progressCallback(_("Starting send to %s using self.protocol") % self.destinationUrl.toString())
 
         if self.protocol == "DICOMweb":
             # DICOMweb
@@ -435,7 +436,9 @@ class DICOMSender(DICOMProcess):
                 import dicomweb_client
                 from packaging import version
                 if version.parse(dicomweb_client.__version__) < version.parse(minimumDicomwebClientVersion):
-                    if not slicer.util.confirmOkCancelDisplay(f"DICOMweb sending requires installation of dicomweb-client (version {minimumDicomwebClientVersion} or later).\nClick OK to upgrade dicomweb-client and restart the application."):
+                    if not slicer.util.confirmOkCancelDisplay(
+                        _("DICOMweb sending requires installation of dicomweb-client (version {minVersion} or later).\n"
+                          "Click OK to upgrade dicomweb-client and restart the application.").format(minVersion=minimumDicomwebClientVersion)):
                         self.showBrowserOnEnter = False
                         return
                     needRestart = True
@@ -445,7 +448,7 @@ class DICOMSender(DICOMProcess):
 
             if needInstall:
                 # pythonweb-client 0.50 was broken (https://github.com/MGHComputationalPathology/dicomweb-client/issues/41)
-                progressDialog = slicer.util.createProgressDialog(labelText='Upgrading dicomweb-client. This may take a minute...', maximum=0)
+                progressDialog = slicer.util.createProgressDialog(labelText=_('Upgrading dicomweb-client. This may take a minute...'), maximum=0)
                 slicer.app.processEvents()
                 slicer.util.pip_install(f'dicomweb-client>={minimumDicomwebClientVersion}')
                 import dicomweb_client
@@ -483,7 +486,8 @@ class DICOMSender(DICOMProcess):
 
             try:
                 for file in self.files:
-                    if not self.progressCallback(f"Sending {file} to {self.destinationUrl.toString()} using {self.protocol}"):
+                    if not self.progressCallback(_("Sending {file} to {url} using {protocol}")
+                                                 .format(file=file, url=self.destinationUrl.toString(), protocol=self.protocol)):
                         raise UserWarning("Sending was cancelled, upload is incomplete.")
                     import pydicom
                     dataset = pydicom.dcmread(file)
@@ -495,7 +499,8 @@ class DICOMSender(DICOMProcess):
             # DIMSE (traditional DICOM networking)
             for file in self.files:
                 self.start(file)
-                if not self.progressCallback(f"Sent {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"):
+                if not self.progressCallback(_("Sent {file} to {host}:{port}")
+                                             .format(file=file, host=self.destinationUrl.host(), port=self.destinationUrl.port())):
                     raise UserWarning("Sending was cancelled, upload is incomplete.")
 
     def dicomSend(self, file, config=None, config_profile='Default'):
