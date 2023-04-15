@@ -1,6 +1,7 @@
 import vtk
 import qt
 import slicer
+from slicer.i18n import tr as _
 
 
 class SegmentStatisticsPluginBase:
@@ -118,7 +119,7 @@ class SegmentStatisticsPluginBase:
         form = qt.QFormLayout(self.optionsWidget)
 
         # checkbox to enable/disable plugin
-        self.pluginCheckbox = qt.QCheckBox(self.name + " plugin enabled")
+        self.pluginCheckbox = qt.QCheckBox(_("{pluginName} plugin enabled").format(pluginName=self.name))
         self.pluginCheckbox.checked = True
         self.pluginCheckbox.connect('stateChanged(int)', self.updateParameterNodeFromGui)
         form.addRow(self.pluginCheckbox)
@@ -128,14 +129,14 @@ class SegmentStatisticsPluginBase:
         selectAllNoneFrame.setLayout(qt.QHBoxLayout())
         selectAllNoneFrame.layout().setSpacing(0)
         selectAllNoneFrame.layout().setMargin(0)
-        selectAllNoneFrame.layout().addWidget(qt.QLabel("Select measurements: ", self.optionsWidget))
-        selectAllButton = qt.QPushButton('all', self.optionsWidget)
+        selectAllNoneFrame.layout().addWidget(qt.QLabel(_("Select measurements: "), self.optionsWidget))
+        selectAllButton = qt.QPushButton(_('all'), self.optionsWidget)
         selectAllNoneFrame.layout().addWidget(selectAllButton)
         selectAllButton.connect('clicked()', self.requestAll)
-        selectNoneButton = qt.QPushButton('none', self.optionsWidget)
+        selectNoneButton = qt.QPushButton(_('none'), self.optionsWidget)
         selectAllNoneFrame.layout().addWidget(selectNoneButton)
         selectNoneButton.connect('clicked()', self.requestNone)
-        selectDefaultButton = qt.QPushButton('default', self.optionsWidget)
+        selectDefaultButton = qt.QPushButton(_('default'), self.optionsWidget)
         selectAllNoneFrame.layout().addWidget(selectDefaultButton)
         selectDefaultButton.connect('clicked()', self.requestDefault)
         form.addRow(selectAllNoneFrame)

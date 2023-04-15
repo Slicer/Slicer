@@ -6,6 +6,8 @@ import vtk
 
 import slicer
 from slicer.ScriptedLoadableModule import *
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 
 from SegmentStatisticsPlugins import *
 
@@ -17,11 +19,11 @@ class SegmentStatistics(ScriptedLoadableModule):
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Segment Statistics"
-        self.parent.categories = ["Quantification"]
+        self.parent.title = _("Segment Statistics")
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Quantification")]
         self.parent.dependencies = ["SubjectHierarchy"]
         self.parent.contributors = ["Andras Lasso (PerkLab), Christian Bauer (University of Iowa), Steve Pieper (Isomics)"]
-        self.parent.helpText = """
+        self.parent.helpText = _("""
 Use this module to calculate counts and volumes for segments plus statistics on the grayscale background volume.
 Computed fields:
 Segment labelmap statistics (LM): voxel count, volume mm3, volume cm3.
@@ -31,11 +33,11 @@ min, max, mean, stdev (intensity statistics).
 Requires segment labelmap representation and selection of a scalar volume
 Closed surface statistics (CS): surface mm2, volume mm3, volume cm3 (computed from closed surface).
 Requires segment closed surface representation.
-"""
+""")
         self.parent.helpText += parent.defaultDocumentationLink
-        self.parent.acknowledgementText = """
+        self.parent.acknowledgementText = _("""
 Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www.slicer.org for details.
-"""
+""")
 
     def setup(self):
         # Register subject hierarchy plugin
@@ -74,12 +76,12 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         self.parameterNodeSelector.showChildNodeTypes = False
         self.parameterNodeSelector.baseName = "SegmentStatistics"
         self.parameterNodeSelector.setMRMLScene(slicer.mrmlScene)
-        self.parameterNodeSelector.setToolTip("Pick parameter set")
+        self.parameterNodeSelector.setToolTip(_("Pick parameter set"))
         self.layout.addWidget(self.parameterNodeSelector)
 
         # Inputs
         inputsCollapsibleButton = ctk.ctkCollapsibleButton()
-        inputsCollapsibleButton.text = "Inputs"
+        inputsCollapsibleButton.text = _("Inputs")
         self.layout.addWidget(inputsCollapsibleButton)
         inputsFormLayout = qt.QFormLayout(inputsCollapsibleButton)
 
@@ -90,8 +92,8 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         self.segmentationSelector.removeEnabled = True
         self.segmentationSelector.renameEnabled = True
         self.segmentationSelector.setMRMLScene(slicer.mrmlScene)
-        self.segmentationSelector.setToolTip("Pick the segmentation to compute statistics for")
-        inputsFormLayout.addRow("Segmentation:", self.segmentationSelector)
+        self.segmentationSelector.setToolTip(_("Pick the segmentation to compute statistics for"))
+        inputsFormLayout.addRow(_("Segmentation:"), self.segmentationSelector)
 
         # Scalar volume selector
         self.scalarSelector = slicer.qMRMLNodeComboBox()
@@ -102,17 +104,17 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         self.scalarSelector.noneEnabled = True
         self.scalarSelector.showChildNodeTypes = False
         self.scalarSelector.setMRMLScene(slicer.mrmlScene)
-        self.scalarSelector.setToolTip("Select the scalar volume for intensity statistics calculations")
-        inputsFormLayout.addRow("Scalar volume:", self.scalarSelector)
+        self.scalarSelector.setToolTip(_("Select the scalar volume for intensity statistics calculations"))
+        inputsFormLayout.addRow(_("Scalar volume:"), self.scalarSelector)
 
         # Output table selector
         outputCollapsibleButton = ctk.ctkCollapsibleButton()
-        outputCollapsibleButton.text = "Output"
+        outputCollapsibleButton.text = _("Output")
         self.layout.addWidget(outputCollapsibleButton)
         outputFormLayout = qt.QFormLayout(outputCollapsibleButton)
 
         self.outputTableSelector = slicer.qMRMLNodeComboBox()
-        self.outputTableSelector.noneDisplay = "Create new table"
+        self.outputTableSelector.noneDisplay = _("Create new table")
         self.outputTableSelector.setMRMLScene(slicer.mrmlScene)
         self.outputTableSelector.nodeTypes = ["vtkMRMLTableNode"]
         self.outputTableSelector.addEnabled = True
@@ -120,14 +122,14 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         self.outputTableSelector.renameEnabled = True
         self.outputTableSelector.removeEnabled = True
         self.outputTableSelector.noneEnabled = True
-        self.outputTableSelector.setToolTip("Select the table where statistics will be saved into")
+        self.outputTableSelector.setToolTip(_("Select the table where statistics will be saved into"))
         self.outputTableSelector.setCurrentNode(None)
 
-        outputFormLayout.addRow("Output table:", self.outputTableSelector)
+        outputFormLayout.addRow(_("Output table:"), self.outputTableSelector)
 
         # Parameter set
         parametersCollapsibleButton = ctk.ctkCollapsibleButton()
-        parametersCollapsibleButton.text = "Advanced"
+        parametersCollapsibleButton.text = _("Advanced")
         parametersCollapsibleButton.collapsed = True
         self.layout.addWidget(parametersCollapsibleButton)
         self.parametersLayout = qt.QFormLayout(parametersCollapsibleButton)
@@ -142,8 +144,8 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         self.addPluginOptionWidgets()
 
         # Apply Button
-        self.applyButton = qt.QPushButton("Apply")
-        self.applyButton.toolTip = "Calculate Statistics."
+        self.applyButton = qt.QPushButton(_("Apply"))
+        self.applyButton.toolTip = _("Calculate Statistics.")
         self.applyButton.enabled = False
         self.parent.layout().addWidget(self.applyButton)
 
@@ -187,12 +189,12 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         """Calculate the label statistics
         """
 
-        with slicer.util.tryWithErrorDisplay("Failed to compute results.", waitCursor=True):
+        with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
             if not self.outputTableSelector.currentNode():
                 newTable = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
                 self.outputTableSelector.setCurrentNode(newTable)
             # Lock GUI
-            self.applyButton.text = "Working..."
+            self.applyButton.text = _("Working...")
             self.applyButton.setEnabled(False)
             slicer.app.processEvents()
             # set up parameters for computation
@@ -209,7 +211,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
 
         # Unlock GUI
         self.applyButton.setEnabled(True)
-        self.applyButton.text = "Apply"
+        self.applyButton.text = _("Apply")
 
     def onEditParameters(self, pluginName=None):
         """Open dialog box to edit plugin's parameters"""
@@ -218,12 +220,12 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
 
     def addPluginOptionWidgets(self):
         self.pluginEnabledCheckboxes = {}
-        self.parametersLayout.addRow(qt.QLabel("Enabled segment statistics plugins:"))
+        self.parametersLayout.addRow(qt.QLabel(_("Enabled segment statistics plugins:")))
         for plugin in self.logic.plugins:
-            checkbox = qt.QCheckBox(plugin.name + " Statistics")
+            checkbox = qt.QCheckBox(_("{pluginName} Statistics").format(pluginName=plugin.name))
             checkbox.checked = True
             checkbox.connect('stateChanged(int)', self.updateParameterNodeFromGui)
-            optionButton = qt.QPushButton("Options")
+            optionButton = qt.QPushButton(_("Options"))
             from functools import partial
             optionButton.connect('clicked()', partial(self.onEditParameters, plugin.name))
             editWidget = qt.QWidget()
@@ -291,7 +293,7 @@ class SegmentStatisticsParameterEditorDialog(qt.QDialog):
 
     def __init__(self, parent=None, parameterNode=None, pluginName=None):
         super(qt.QDialog, self).__init__(parent)
-        self.title = "Edit Segment Statistics Parameters"
+        self.title = _("Edit Segment Statistics Parameters")
         self.parameterNode = parameterNode
         self.pluginName = pluginName
         self.logic = SegmentStatisticsLogic()  # for access to plugins and editor widgets
@@ -308,10 +310,10 @@ class SegmentStatisticsParameterEditorDialog(qt.QDialog):
     def setup(self):
         self.setLayout(qt.QVBoxLayout())
 
-        self.descriptionLabel = qt.QLabel("Edit segment statistics plugin parameters:", 0)
+        self.descriptionLabel = qt.QLabel(_("Edit segment statistics plugin parameters:"), 0)
 
-        self.doneButton = qt.QPushButton("Done")
-        self.doneButton.toolTip = "Finish editing."
+        self.doneButton = qt.QPushButton(_("Done"))
+        self.doneButton.toolTip = _("Finish editing.")
         doneWidget = qt.QWidget(self)
         doneWidget.setLayout(qt.QHBoxLayout())
         doneWidget.layout().addStretch(1)
@@ -332,9 +334,9 @@ class SegmentStatisticsParameterEditorDialog(qt.QDialog):
         self.doneButton.connect('clicked()', lambda: self.done(1))
 
     def _addPluginOptionWidgets(self):
-        description = "Edit segment statistics plugin parameters:"
+        description = _("Edit segment statistics plugin parameters:")
         if self.pluginName:
-            description = "Edit " + self.pluginName + " plugin parameters:"
+            description = _("Edit {pluginName} plugin parameters:").format(pluginName=self.pluginName)
         self.descriptionLabel.text = description
         if self.pluginName:
             for plugin in self.logic.plugins:
@@ -614,7 +616,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
             col.SetName(columnName)
             if plugin:
                 table.SetColumnProperty(columnName, "Plugin", plugin.name)
-                longColumnName += '<br>Computed by ' + plugin.name + ' Statistics plugin'
+                longColumnName += '<br>' + _('Computed by {pluginName} Statistics plugin').format(pluginName=plugin.name)
             table.SetColumnLongName(columnName, longColumnName)
             measurementInfo = statistics["MeasurementInfo"][key] if key in statistics["MeasurementInfo"] else {}
             if measurementInfo:
@@ -945,10 +947,10 @@ class Slicelet:
         self.buttons = qt.QFrame()
         self.buttons.setLayout(qt.QHBoxLayout())
         self.parent.layout().addWidget(self.buttons)
-        self.addDataButton = qt.QPushButton("Add Data")
+        self.addDataButton = qt.QPushButton(_("Add Data"))
         self.buttons.layout().addWidget(self.addDataButton)
         self.addDataButton.connect("clicked()", slicer.app.ioManager().openAddDataDialog)
-        self.loadSceneButton = qt.QPushButton("Load Scene")
+        self.loadSceneButton = qt.QPushButton(_("Load Scene"))
         self.buttons.layout().addWidget(self.loadSceneButton)
         self.loadSceneButton.connect("clicked()", slicer.app.ioManager().openLoadSceneDialog)
 

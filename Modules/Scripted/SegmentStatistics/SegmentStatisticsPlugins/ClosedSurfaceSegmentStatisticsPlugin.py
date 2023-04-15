@@ -1,5 +1,6 @@
 import vtk
 import slicer
+from slicer.i18n import tr as _
 from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
 
 
@@ -54,18 +55,18 @@ class ClosedSurfaceSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         # See https://bioportal.bioontology.org/ontologies/CHEMINF?p=classes&conceptid=http%3A%2F%2Fsemanticscience.org%2Fresource%2FCHEMINF_000247
         #
         info["surface_mm2"] = \
-            self.createMeasurementInfo(name="Surface mm2", description="Surface area in mm2", units="mm2",
-                                       quantityDicomCode=self.createCodedEntry("000247", "99CHEMINF", "Surface area", True),
-                                       unitsDicomCode=self.createCodedEntry("mm2", "UCUM", "squared millimeters", True))
+            self.createMeasurementInfo(name="Surface mm2", description=_("Surface area in mm2"), units="mm2",
+                                       quantityDicomCode=self.createCodedEntry("000247", "99CHEMINF", _("Surface area"), True),
+                                       unitsDicomCode=self.createCodedEntry("mm2", "UCUM", _("square millimeter"), True))
 
         info["volume_mm3"] = \
-            self.createMeasurementInfo(name="Volume mm3", description="Volume in mm3", units="mm3",
-                                       quantityDicomCode=self.createCodedEntry("118565006", "SCT", "Volume", True),
-                                       unitsDicomCode=self.createCodedEntry("mm3", "UCUM", "cubic millimeter", True))
+            self.createMeasurementInfo(name="Volume mm3", description=_("Volume in mm3"), units="mm3",
+                                       quantityDicomCode=self.createCodedEntry("118565006", "SCT", _("Volume"), True),
+                                       unitsDicomCode=self.createCodedEntry("mm3", "UCUM", _("cubic millimeter"), True))
 
         info["volume_cm3"] = \
-            self.createMeasurementInfo(name="Volume cm3", description="Volume in cm3", units="cm3",
-                                       quantityDicomCode=self.createCodedEntry("118565006", "SCT", "Volume", True),
-                                       unitsDicomCode=self.createCodedEntry("cm3", "UCUM", "cubic centimeter", True))
+            self.createMeasurementInfo(name="Volume cm3", description=_("Volume in cm3"), units="cm3",
+                                       quantityDicomCode=self.createCodedEntry("118565006", "SCT", _("Volume"), True),
+                                       unitsDicomCode=self.createCodedEntry("cm3", "UCUM", _("cubic centimeter"), True))
 
         return info[key] if key in info else None
