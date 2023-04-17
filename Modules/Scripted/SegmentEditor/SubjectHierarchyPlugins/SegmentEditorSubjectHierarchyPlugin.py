@@ -4,6 +4,8 @@ import qt
 
 import slicer
 
+from slicer.i18n import tr as _
+
 from AbstractScriptedSubjectHierarchyPlugin import *
 
 
@@ -23,7 +25,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
         scriptedPlugin.name = 'SegmentEditor'
         AbstractScriptedSubjectHierarchyPlugin.__init__(self, scriptedPlugin)
 
-        self.segmentEditorAction = qt.QAction("Segment this...", scriptedPlugin)
+        self.segmentEditorAction = qt.QAction(_("Segment this..."), scriptedPlugin)
         self.segmentEditorAction.connect("triggered()", self.onSegment)
 
     def canAddNodeToSubjectHierarchy(self, node, parentItemID):
@@ -101,7 +103,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
             segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
             editorWidget.parameterSetNode.SetAndObserveSegmentationNode(segmentationNode)
         # Name segmentation node based on the volume
-        segmentationNode.SetName(volumeNode.GetName() + '_Segmentation')
+        segmentationNode.SetName(volumeNode.GetName() + _('_Segmentation'))
 
         # Set source volume
         editorWidget.parameterSetNode.SetAndObserveSourceVolumeNode(volumeNode)

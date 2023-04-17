@@ -4,7 +4,8 @@ import slicer
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
-
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 
 #
 # This is the plugin for DICOM module
@@ -19,7 +20,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
 
     def __init__(self):
         super().__init__()
-        self.loadType = "Enhanced US volume"
+        self.loadType = _("Enhanced US volume")
 
         self.tags['sopClassUID'] = "0008,0016"
         self.tags['seriesNumber'] = "0020,0011"
@@ -87,8 +88,8 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
             loadable.singleSequence = False  # put each instance in a separate sequence
             loadable.files = [filePath]
             loadable.name = name.strip()  # remove leading and trailing spaces, if any
-            loadable.warning = "Loading of this image type is experimental. Please verify image geometry and report any problem is found."
-            loadable.tooltip = f"Ultrasound volume"
+            loadable.warning = _("Loading of this image type is experimental. Please verify image geometry and report any problem is found.")
+            loadable.tooltip = _("Ultrasound volume")
             loadable.selected = True
             # Confidence is slightly larger than default scalar volume plugin's (0.5)
             # and DICOMVolumeSequencePlugin (0.7)
@@ -158,6 +159,8 @@ class DICOMEnhancedUSVolumePlugin:
     """
 
     def __init__(self, parent):
+
+        # no tr (these strings are not translated because they are only visible for developers)
         parent.title = "DICOM Enhanced US volume Plugin"
         parent.categories = ["Developer Tools.DICOM Plugins"]
         parent.contributors = ["Andras Lasso (PerkLab)"]

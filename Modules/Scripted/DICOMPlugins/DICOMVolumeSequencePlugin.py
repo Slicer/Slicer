@@ -4,6 +4,8 @@ import pydicom
 import qt
 
 import slicer
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMExportScalarVolume
@@ -20,7 +22,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
 
     def __init__(self):
         super().__init__()
-        self.loadType = "Volume Sequence"
+        self.loadType = _("Volume Sequence")
 
         self.tags['studyID'] = '0020,0010'
         self.tags['seriesDescription'] = "0008,103e"
@@ -91,16 +93,16 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         # Define basic properties of the exportable
         exportable = slicer.qSlicerDICOMExportable()
         exportable.name = self.loadType
-        exportable.tooltip = "Creates a series of DICOM files from volume sequences"
+        exportable.tooltip = _("Creates a series of DICOM files from volume sequences")
         exportable.subjectHierarchyItemID = subjectHierarchyItemID
         exportable.pluginClass = self.__module__
         exportable.confidence = 0.6  # Simple volume has confidence of 0.5, use a slightly higher value here
 
         # Define required tags and default values
-        exportable.setTag('SeriesDescription', f'Volume sequence of {sequenceItemCount} frames')
-        exportable.setTag('Modality', 'CT')
-        exportable.setTag('Manufacturer', 'Unknown manufacturer')
-        exportable.setTag('Model', 'Unknown model')
+        exportable.setTag('SeriesDescription', _('Volume sequence of {count} frames').format(count=sequenceItemCount))
+        exportable.setTag('Modality', _('CT'))
+        exportable.setTag('Manufacturer', _('Unknown manufacturer'))
+        exportable.setTag('Model', _('Unknown model'))
         exportable.setTag('StudyID', '1')
         exportable.setTag('SeriesNumber', '301')
         exportable.setTag('SeriesDate', '')
@@ -152,36 +154,36 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
             # Get volume node to export
             shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
             if shNode is None:
-                error = "Invalid subject hierarchy"
+                error = _("Invalid subject hierarchy")
                 logging.error(error)
                 return error
             volumeNode = shNode.GetItemDataNode(exportable.subjectHierarchyItemID)
             if volumeNode is None or not volumeNode.IsA('vtkMRMLScalarVolumeNode'):
-                error = "Series '" + shNode.GetItemName(exportable.subjectHierarchyItemID) + "' cannot be exported  as volume sequence"
+                error = _("Series '{itemName}' cannot be exported as volume sequence").format(itemName=shNode.GetItemName(exportable.subjectHierarchyItemID))
                 logging.error(error)
                 return error
 
             sequenceBrowserNode = self.getSequenceBrowserNodeForMasterOutputNode(volumeNode)
             if not sequenceBrowserNode:
-                error = "Series '" + shNode.GetItemName(exportable.subjectHierarchyItemID) + "' cannot be exported as volume sequence"
+                error = _("Series '{itemName}' cannot be exported as volume sequence").format(itemName=shNode.GetItemName(exportable.subjectHierarchyItemID))
                 logging.error(error)
                 return error
 
             volumeSequenceNode = sequenceBrowserNode.GetSequenceNode(volumeNode)
             if not volumeSequenceNode:
-                error = "Series '" + shNode.GetItemName(exportable.subjectHierarchyItemID) + "' cannot be exported as volume sequence"
+                error = _("Series '{itemName}' cannot be exported as volume sequence").format(itemName=shNode.GetItemName(exportable.subjectHierarchyItemID))
                 logging.error(error)
                 return error
 
             # Get study and patient items
             studyItemID = shNode.GetItemParent(exportable.subjectHierarchyItemID)
             if not studyItemID:
-                error = "Unable to get study for series '" + volumeNode.GetName() + "'"
+                error = _("Unable to get study for series '{volumeName}'").format(volumeName=volumeNode.GetName())
                 logging.error(error)
                 return error
             patientItemID = shNode.GetItemParent(studyItemID)
             if not patientItemID:
-                error = "Unable to get patient for series '" + volumeNode.GetName() + "'"
+                error = _("Unable to get patient for series '{volumeName}'").format(volumeName=volumeNode.GetName())
                 logging.error(error)
                 return error
 
@@ -210,7 +212,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
 
             # Validate tags
             if tags['Modality'] == "":
-                error = "Empty modality for series '" + volumeNode.GetName() + "'"
+                error = _("Empty modality for series '{volumeName}'").format(volumeName=volumeNode.GetName())
                 logging.error(error)
                 return error
             # TODO: more tag checks
@@ -271,6 +273,7 @@ class DICOMVolumeSequencePlugin:
     """
 
     def __init__(self, parent):
+        # no tr (these strings are not translated because they are only visible for developers)
         parent.title = "DICOM Volume Sequence Export Plugin"
         parent.categories = ["Developer Tools.DICOM Plugins"]
         parent.contributors = ["Andras Lasso (PerkLab)"]

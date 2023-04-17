@@ -8,6 +8,8 @@ import slicer
 from slicer.util import VTKObservationMixin
 from slicer.util import settingsValue, toBool
 
+from slicer.i18n import tr as _
+
 import DICOMLib
 
 
@@ -81,7 +83,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         extra widgets
         """
 
-        self.setWindowTitle('DICOM Browser')
+        self.setWindowTitle(_('DICOM Browser'))
         self.setLayout(qt.QVBoxLayout())
 
         self.dicomBrowser.databaseDirectorySelectorVisible = False
@@ -130,27 +132,27 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.actionButtonLayout = qt.QHBoxLayout()
         self.actionButtonsFrame.setLayout(self.actionButtonLayout)
 
-        self.uncheckAllButton = qt.QPushButton('Uncheck All')
+        self.uncheckAllButton = qt.QPushButton(_('Uncheck All'))
         self.actionButtonLayout.addWidget(self.uncheckAllButton)
         self.uncheckAllButton.connect('clicked()', self.uncheckAllLoadables)
 
         self.actionButtonLayout.addStretch(0.05)
 
-        self.examineButton = qt.QPushButton('Examine')
+        self.examineButton = qt.QPushButton(_('Examine'))
         self.examineButton.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
         self.actionButtonLayout.addWidget(self.examineButton)
         self.examineButton.enabled = False
         self.examineButton.connect('clicked()', self.examineForLoading)
 
-        self.loadButton = qt.QPushButton('Load')
+        self.loadButton = qt.QPushButton(_('Load'))
         self.loadButton.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
-        self.loadButton.toolTip = 'Load selected items into the scene'
+        self.loadButton.toolTip = _('Load selected items into the scene')
         self.actionButtonLayout.addWidget(self.loadButton)
         self.loadButton.connect('clicked()', self.loadCheckedLoadables)
 
         self.actionButtonLayout.addStretch(0.05)
 
-        self.advancedViewButton = qt.QCheckBox('Advanced')
+        self.advancedViewButton = qt.QCheckBox(_('Advanced'))
         self.advancedViewButton.objectName = 'AdvancedViewCheckBox'
         self.actionButtonLayout.addWidget(self.advancedViewButton)
         self.advancedViewButton.checked = self.advancedView
@@ -209,28 +211,35 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     def promptForExtensions(self):
         extensionsToOffer = self.checkForExtensions()
         if len(extensionsToOffer) != 0:
-            if len(extensionsToOffer) == 1:
-                pluralOrNot = " is"
-            else:
-                pluralOrNot = "s are"
-            message = "The following data type%s in your database:\n\n" % pluralOrNot
             displayedTypeDescriptions = []
             for extension in extensionsToOffer:
                 typeDescription = extension['typeDescription']
                 if typeDescription not in displayedTypeDescriptions:
-                    # only display each data type only once
-                    message += '  ' + typeDescription + '\n'
                     displayedTypeDescriptions.append(typeDescription)
-            message += "\nThe following extension%s not installed, but may help you work with this data:\n\n" % pluralOrNot
             displayedExtensionNames = []
             for extension in extensionsToOffer:
                 extensionName = extension['name']
                 if extensionName not in displayedExtensionNames:
                     # only display each extension name only once
-                    message += '  ' + extensionName + '\n'
                     displayedExtensionNames.append(extensionName)
-            message += "\nYou can install extensions using the Extensions Manager option from the View menu."
-            slicer.util.infoDisplay(message, parent=self, windowTitle='DICOM')
+
+            message = ""
+            if len(displayedTypeDescriptions) == 1:
+                message += _("The following data type is in your database:")
+            else:
+                message += _("The following data types are in your database:")
+            message += " <b>" + ", ".join(displayedTypeDescriptions) + "</b>."
+
+            message += "<p><p>"
+            if len(displayedExtensionNames) == 1:
+                message += _("The following extension is not installed, but may help you work with this data:")
+            else:
+                message += _("The following extensions are not installed, but may help you work with this data:")
+            message += " <b>" + ", ".join(displayedExtensionNames) + "</b>."
+
+            message += "<p><p>"
+            message += _("You can install extensions using the Extensions Manager option from the View menu.")
+            slicer.util.infoDisplay(message, parent=self, windowTitle=_('DICOM'))
 
     def checkForExtensions(self):
         """Check to see if there
@@ -390,13 +399,15 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         messages = []
         if missingFileCount > 0:
-            messages.append("Warning: %d of %d selected files listed in the database cannot be found on disk." % (missingFileCount, allFileCount))
+            messages.append(
+                _("Warning: {missing_file_count} of {total_file_count} selected files listed in the database cannot be found on disk.").format(
+                    missing_file_count=missingFileCount, total_file_count=allFileCount))
 
         if missingFileCount < allFileCount:
             progressDialog = slicer.util.createProgressDialog(parent=self, value=0, maximum=100)
 
             def progressCallback(progressDialog, progressLabel, progressValue):
-                progressDialog.labelText = '\nChecking %s' % progressLabel
+                progressDialog.labelText = '\n' + _("Checking {what}").format(what=progressLabel)
                 slicer.app.processEvents()
                 progressDialog.setValue(progressValue)
                 slicer.app.processEvents()
@@ -410,8 +421,10 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             progressDialog.close()
 
         if messages:
-            slicer.util.warningDisplay("Warning: %s\n\nSee python console for error message." % ' '.join(messages),
-                                       windowTitle="DICOM", parent=self)
+            slicer.util.warningDisplay(
+                _("Warning: {messages}").format(messages=' '.join(messages))
+                 + "\n\n" + _("See python console for error message."),
+                windowTitle=_("DICOM"), parent=self)
 
         return loadablesByPlugin, loadEnabled
 
@@ -519,7 +532,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         progressDialog = slicer.util.createProgressDialog(parent=self, value=0, maximum=100)
 
         def progressCallback(progressDialog, progressLabel, progressValue):
-            progressDialog.labelText = '\nLoading %s' % progressLabel
+            progressDialog.labelText = '\n' + _("Loading {what}").format(what=progressLabel)
             slicer.app.processEvents()
             progressDialog.setValue(progressValue)
             slicer.app.processEvents()
@@ -541,7 +554,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         progressDialog.close()
 
         if messages:
-            slicer.util.warningDisplay('\n'.join(messages), windowTitle='DICOM loading')
+            slicer.util.warningDisplay('\n'.join(messages), windowTitle=_('DICOM loading'))
 
         self.onLoadingFinished()
 
@@ -552,11 +565,11 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             for loadable in self.loadablesByPlugin[plugin]:
                 if loadable.selected and loadable.warning != "":
                     warningsInSelectedLoadables = True
-                    logging.warning('Warning in DICOM plugin ' + plugin.loadType + ' when examining loadable ' + loadable.name +
-                                    ': ' + loadable.warning)
+                    logging.warning(_('Warning in DICOM plugin {load_type} when examining loadable {name}: {messsage}').format(
+                        load_type=plugin.loadType, name=loadable.name, message=loadable.warning))
                     details += loadable.name + " [" + plugin.loadType + "]: " + loadable.warning + "\n"
         if warningsInSelectedLoadables:
-            warning = "Warnings detected during load.  Examine data in Advanced mode for details.  Load anyway?"
+            warning = _("Warnings detected during load.  Examine data in Advanced mode for details.  Load anyway?")
             if not slicer.util.confirmOkCancelDisplay(warning, parent=self, detailedText=details):
                 return False
         return True
@@ -568,10 +581,10 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
 class DICOMReferencesDialog(qt.QMessageBox):
 
-    WINDOW_TITLE = "Referenced datasets found"
-    WINDOW_TEXT = "The loaded DICOM objects contain references to other datasets you did not select for loading. Please " \
-                  "select Yes if you would like to load the following referenced datasets, No if you only want to load the " \
-                  "originally selected series, or Cancel to abort loading."
+    WINDOW_TITLE = _("Referenced datasets found")
+    WINDOW_TEXT = _("The loaded DICOM objects contain references to other datasets you did not select for loading."
+                    " Please select Yes if you would like to load the following referenced datasets, No if you only want to load the"
+                    " originally selected series, or Cancel to abort loading.")
 
     def __init__(self, parent, loadables):
         super().__init__(parent)
@@ -583,8 +596,8 @@ class DICOMReferencesDialog(qt.QMessageBox):
         self._setBasicProperties()
         self._addTextLabel()
         self._addLoadableCheckboxes()
-        self.rememberChoiceAndStopAskingCheckbox = qt.QCheckBox('Remember choice and stop asking')
-        self.rememberChoiceAndStopAskingCheckbox.toolTip = 'Can be changed later in Application Settings / DICOM'
+        self.rememberChoiceAndStopAskingCheckbox = qt.QCheckBox(_('Remember choice and stop asking'))
+        self.rememberChoiceAndStopAskingCheckbox.toolTip = _('Can be changed later in Application Settings / DICOM')
         self.yesButton = self.addButton(self.Yes)
         self.yesButton.setSizePolicy(qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred))
         self.noButton = self.addButton(self.No)
@@ -612,7 +625,7 @@ class DICOMReferencesDialog(qt.QMessageBox):
         self.layout().addWidget(label, 0, 0, 1, 3)
 
     def _addLoadableCheckboxes(self):
-        self.checkBoxGroupBox = qt.QGroupBox("References")
+        self.checkBoxGroupBox = qt.QGroupBox(_("References"))
         self.checkBoxGroupBox.setLayout(qt.QFormLayout())
         for plugin in self.loadables:
             for loadable in [loadable_item for loadable_item in self.loadables[plugin] if loadable_item.selected]:
@@ -645,7 +658,7 @@ class DICOMLoadableTable(qt.QTableWidget):
 
     def configure(self):
         self.setColumnCount(3)
-        self.setHorizontalHeaderLabels(['DICOM Data', 'Reader', 'Warnings'])
+        self.setHorizontalHeaderLabels([_('DICOM Data'), _('Reader'), _('Warnings')])
         self.setSelectionBehavior(qt.QTableView.SelectRows)
         self.horizontalHeader().setSectionResizeMode(qt.QHeaderView.Stretch)
         self.horizontalHeader().setSectionResizeMode(0, qt.QHeaderView.Interactive)
