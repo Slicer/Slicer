@@ -4,6 +4,7 @@ import pydicom as dicom
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
@@ -29,7 +30,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
     def __init__(self):
         super().__init__()
-        self.loadType = "Image sequence"
+        self.loadType = _("Image sequence")
 
         self.tags['sopClassUID'] = "0008,0016"
         self.tags['seriesNumber'] = "0020,0011"
@@ -148,8 +149,8 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                     loadable.singleSequence = False  # put each instance in a separate sequence
                     loadable.files = [filePath]
                     loadable.name = name.strip()  # remove leading and trailing spaces, if any
-                    loadable.warning = "Image spacing may need to be calibrated for accurate size measurements."
-                    loadable.tooltip = f"{modality} image sequence"
+                    loadable.warning = _("Image spacing may need to be calibrated for accurate size measurements.")
+                    loadable.tooltip = _("{modality} image sequence").format(modality=modality)
                     loadable.selected = True
                     # Confidence is slightly larger than default scalar volume plugin's (0.5)
                     # but still leaving room for more specialized plugins.
@@ -163,7 +164,8 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                     # existing instance number, add this file
                     loadableIndex = instanceNumberToLoadableIndex[instanceNumber]
                     loadables[loadableIndex].files.append(filePath)
-                    loadable.tooltip = f"{modality} image sequence ({len(loadables[loadableIndex].files)} planes)"
+                    loadable.tooltip = _("{modality} image sequence ({count} planes)").format(
+                        modality=modality, count=len(loadables[loadableIndex].files))
 
         if canBeCineMri and len(cineMriInstanceNumberToFilenameIndex) > 1:
             # Get description from first
@@ -181,7 +183,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
             loadable.instanceNumbers = sorted(cineMriInstanceNumberToFilenameIndex)
             loadable.files = [cineMriInstanceNumberToFilenameIndex[instanceNumber] for instanceNumber in loadable.instanceNumbers]
             loadable.name = name.strip()  # remove leading and trailing spaces, if any
-            loadable.tooltip = f"{ds.Modality} image sequence"
+            loadable.tooltip = _("{modality} image sequence").format(modality=ds.Modality)
             loadable.selected = True
             if len(cineMriTriggerTimes) > 3:
                 if self.detailedLogging:
@@ -393,16 +395,16 @@ class DICOMImageSequencePlugin:
     """
 
     def __init__(self, parent):
-        parent.title = "DICOM Image Sequence Import Plugin"
-        parent.categories = ["Developer Tools.DICOM Plugins"]
+        parent.title = _("DICOM Image Sequence Import Plugin")
+        parent.categories = [_("Developer Tools.DICOM Plugins")]
         parent.contributors = ["Andras Lasso (PerkLab)"]
-        parent.helpText = """
+        parent.helpText = _("""
     Plugin to the DICOM Module to parse and load 2D image sequences.
     No module interface here, only in the DICOM module.
-    """
-        parent.acknowledgementText = """
+    """)
+        parent.acknowledgementText = _("""
     The file was originally developed by Andras Lasso (PerkLab).
-    """
+    """)
 
         # don't show this module - it only appears in the DICOM module
         parent.hidden = True

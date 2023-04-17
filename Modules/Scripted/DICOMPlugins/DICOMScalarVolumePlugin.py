@@ -6,6 +6,7 @@ import numpy
 import qt
 import vtk
 import vtkITK
+from slicer.i18n import tr as _
 
 import slicer
 
@@ -27,7 +28,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     def __init__(self, epsilon=0.01):
         super().__init__()
-        self.loadType = "Scalar Volume"
+        self.loadType = _("Scalar Volume")
         self.epsilon = epsilon
         self.acquisitionModeling = None
         self.defaultStudyID = 'SLICER10001'  # TODO: What should be the new study ID?
@@ -74,41 +75,42 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         readersComboBox = qt.QComboBox()
         for approach in DICOMScalarVolumePluginClass.readerApproaches():
             readersComboBox.addItem(approach)
-        readersComboBox.toolTip = ("Preferred back end.  Archetype was used by default in Slicer before June of 2017."
-                                   "Change this setting if data that previously loaded stops working (and report an issue).")
-        formLayout.addRow("DICOM reader approach:", readersComboBox)
+        readersComboBox.toolTip = _("Preferred back end.  Archetype was used by default in Slicer before June of 2017."
+                                    "Change this setting if data that previously loaded stops working (and report an issue).")
+        formLayout.addRow(_("DICOM reader approach:"), readersComboBox)
         panel.registerProperty(
             "DICOM/ScalarVolume/ReaderApproach", readersComboBox,
             "currentIndex", str(qt.SIGNAL("currentIndexChanged(int)")))
 
         importFormatsComboBox = ctk.ctkComboBox()
-        importFormatsComboBox.toolTip = ("Enable adding non-linear transform to regularize images acquired irregular geometry:"
-                                         " non-rectilinear grid (such as tilted gantry CT acquisitions) and non-uniform slice spacing."
-                                         " If no regularization is applied then image may appear distorted if it was acquired with irregular geometry.")
+        importFormatsComboBox.toolTip = _("Enable adding non-linear transform to regularize images acquired irregular geometry:"
+                                          " non-rectilinear grid (such as tilted gantry CT acquisitions) and non-uniform slice spacing."
+                                          " If no regularization is applied then image may appear distorted if it was acquired with irregular geometry.")
 
-        importFormatsComboBox.addItem("default (apply regularization transform)", "default")
-        importFormatsComboBox.addItem("none", "none")
-        importFormatsComboBox.addItem("apply regularization transform", "transform")
+        importFormatsComboBox.addItem(_("default (apply regularization transform)"), "default")
+        importFormatsComboBox.addItem(_("none"), "none")
+        importFormatsComboBox.addItem(_("apply regularization transform"), "transform")
         # In the future additional option, such as "resample" (harden the applied transform) may be added.
 
         importFormatsComboBox.currentIndex = 0
-        formLayout.addRow("Acquisition geometry regularization:", importFormatsComboBox)
+        formLayout.addRow(_("Acquisition geometry regularization:"), importFormatsComboBox)
         panel.registerProperty(
             "DICOM/ScalarVolume/AcquisitionGeometryRegularization", importFormatsComboBox,
             "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")),
-            "DICOM examination settings", ctk.ctkSettingsPanel.OptionRequireRestart)
+            _("DICOM examination settings"), ctk.ctkSettingsPanel.OptionRequireRestart)
         # DICOM examination settings are cached so we need to restart to make sure changes take effect
 
         allowLoadingByTimeCheckBox = qt.QCheckBox()
-        allowLoadingByTimeCheckBox.toolTip = ("Offer loading of individual slices or group of slices"
-                                              " that were acquired at a specific time (content or trigger time)."
-                                              " If this option is enabled then a large number of loadable items may be displayed in the Advanced section of DICOM browser.")
-        formLayout.addRow("Allow loading subseries by time:", allowLoadingByTimeCheckBox)
+        allowLoadingByTimeCheckBox.toolTip = _("Offer loading of individual slices or group of slices"
+                                               " that were acquired at a specific time (content or trigger time)."
+                                               " If this option is enabled then a large number of loadable items may be"
+                                               " displayed in the Advanced section of DICOM browser.")
+        formLayout.addRow(_("Allow loading subseries by time:"), allowLoadingByTimeCheckBox)
         allowLoadingByTimeMapper = ctk.ctkBooleanMapper(allowLoadingByTimeCheckBox, "checked", str(qt.SIGNAL("toggled(bool)")))
         panel.registerProperty(
             "DICOM/ScalarVolume/AllowLoadingByTime", allowLoadingByTimeMapper,
             "valueAsInt", str(qt.SIGNAL("valueAsIntChanged(int)")),
-            "DICOM examination settings", ctk.ctkSettingsPanel.OptionRequireRestart)
+            _("DICOM examination settings"), ctk.ctkSettingsPanel.OptionRequireRestart)
         # DICOM examination settings are cached so we need to restart to make sure changes take effect
 
     @staticmethod
@@ -124,11 +126,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         image1 = volumeNode1.GetImageData()
         image2 = volumeNode2.GetImageData()
         if image1.GetScalarType() != image2.GetScalarType():
-            comparison += f"First volume is {image1.GetScalarTypeAsString()}, but second is {image2.GetScalarTypeAsString()}"
+            comparison += _("First volume is {imageScalarType1}, but second is {imageScalarType2}").format(
+                imageScalarType1=image1.GetScalarTypeAsString(), imageScalarType2=image2.GetScalarTypeAsString())
         array1 = slicer.util.array(volumeNode1.GetID())
         array2 = slicer.util.array(volumeNode2.GetID())
         if not numpy.all(array1 == array2):
-            comparison += "Pixel data mismatch\n"
+            comparison += _("Pixel data mismatch\n")
         return comparison
 
     def acquisitionGeometryRegularizationEnabled(self):
@@ -181,7 +184,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         allFilesLoadable = DICOMLoadable()
         allFilesLoadable.files = files
         allFilesLoadable.name = self.cleanNodeName(seriesName)
-        allFilesLoadable.tooltip = "%d files, first file: %s" % (len(allFilesLoadable.files), allFilesLoadable.files[0])
+        allFilesLoadable.tooltip = _("%d files, first file: %s") % (len(allFilesLoadable.files), allFilesLoadable.files[0])
         allFilesLoadable.selected = True
         # add it to the list of loadables later, if pixel data is available in at least one file
 
@@ -255,7 +258,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                     else:
                         loadable.name = seriesName + f" - {tag} {value}"
                     loadable.name = self.cleanNodeName(loadable.name)
-                    loadable.tooltip = "%d files, grouped by %s = %s. First file: %s. %s = %s" % (len(loadable.files), tag, value, loadable.files[0], tag, value)
+                    loadable.tooltip = _("%d files, grouped by %s = %s. First file: %s. %s = %s") % (len(loadable.files), tag, value,
+                                                                                                     loadable.files[0], tag, value)
                     loadable.selected = False
                     loadables.append(loadable)
                     if len(subseriesValues[tag]) == 2:
@@ -291,7 +295,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 # here all files in have no pixel data, so they might be
                 # secondary capture images which will read, so let's pass
                 # them through with a warning and low confidence
-                loadable.warning += "There is no pixel data attribute for the DICOM objects, but they might be readable as secondary capture images.  "
+                loadable.warning += _("There is no pixel data attribute for the DICOM objects, but they might be readable as secondary capture images.  ")
                 loadable.confidence = 0.2
                 loadable.grayscale = ('MONOCHROME' in slicer.dicomDatabase.fileValue(loadable.files[0], self.tags['photometricInterpretation']))
                 newLoadables.append(loadable)
@@ -550,13 +554,13 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         # Define basic properties of the exportable
         exportable = slicer.qSlicerDICOMExportable()
         exportable.name = self.loadType
-        exportable.tooltip = "Creates a series of DICOM files from scalar volumes"
+        exportable.tooltip = _("Creates a series of DICOM files from scalar volumes")
         exportable.subjectHierarchyItemID = subjectHierarchyItemID
         exportable.pluginClass = self.__module__
         exportable.confidence = 0.5  # There could be more specialized volume types
 
         # Define required tags and default values
-        exportable.setTag('SeriesDescription', 'No series description')
+        exportable.setTag('SeriesDescription', 'No series description')  # no_tr
         exportable.setTag('Modality', 'CT')
         exportable.setTag('Manufacturer', 'Unknown manufacturer')
         exportable.setTag('Model', 'Unknown model')
@@ -578,12 +582,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # Get volume node to export
             shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
             if shNode is None:
-                error = "Invalid subject hierarchy"
+                error = _("Invalid subject hierarchy")
                 logging.error(error)
                 return error
             volumeNode = shNode.GetItemDataNode(exportable.subjectHierarchyItemID)
             if volumeNode is None or not volumeNode.IsA('vtkMRMLScalarVolumeNode'):
-                error = "Series '" + shNode.GetItemName(exportable.subjectHierarchyItemID) + "' cannot be exported"
+                error = _("Series '{itemName}' cannot be exported").format(itemName=shNode.GetItemName(exportable.subjectHierarchyItemID))
                 logging.error(error)
                 return error
 
@@ -600,12 +604,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # Get study and patient items
             studyItemID = shNode.GetItemParent(exportable.subjectHierarchyItemID)
             if not studyItemID:
-                error = "Unable to get study for series '" + volumeNode.GetName() + "'"
+                error = _("Unable to get study for series '{volumeName}'").format(volumeName=volumeNode.GetName())
                 logging.error(error)
                 return error
             patientItemID = shNode.GetItemParent(studyItemID)
             if not patientItemID:
-                error = "Unable to get patient for series '" + volumeNode.GetName() + "'"
+                error = _("Unable to get patient for series '{volumeName}'").format(volumeName=volumeNode.GetName())
                 logging.error(error)
                 return error
 
@@ -651,7 +655,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
             # Validate tags
             if tags['Modality'] == "":
-                error = "Empty modality for series '" + volumeNode.GetName() + "'"
+                error = _("Empty modality for series '{volumeName}'").format(volumeNode.GetName())
                 logging.error(error)
                 return error
 
@@ -665,7 +669,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                     # This seriesInstanceUID is already found in the database
                     if len(seriesInstanceUID) > 25:
                         seriesInstanceUID = seriesInstanceUID[:20] + "..."
-                    error = f"A series already exists in the database by SeriesInstanceUID {seriesInstanceUID}."
+                    error = _("A series already exists in the database by SeriesInstanceUID {seriesInstanceUID}.").format(seriesInstanceUID=seriesInstanceUID)
                     logging.error(error)
                     return error
 
@@ -674,7 +678,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # Perform export
             exporter = DICOMExportScalarVolume(tags['Study ID'], volumeNode, tags, directory)
             if not exporter.export():
-                return "Creating DICOM files from scalar volume failed. See the application log for details."
+                return _("Creating DICOM files from scalar volume failed. See the application log for details.")
 
         # Success
         return ""
@@ -857,19 +861,19 @@ class DICOMScalarVolumePlugin:
     """
 
     def __init__(self, parent):
-        parent.title = "DICOM Scalar Volume Plugin"
-        parent.categories = ["Developer Tools.DICOM Plugins"]
+        parent.title = _("DICOM Scalar Volume Plugin")
+        parent.categories = [_("Developer Tools.DICOM Plugins")]
         parent.contributors = ["Steve Pieper (Isomics Inc.), Csaba Pinter (Queen's)"]
-        parent.helpText = """
+        parent.helpText = _("""
     Plugin to the DICOM Module to parse and load scalar volumes
     from DICOM files.
     No module interface here, only in the DICOM module
-    """
-        parent.acknowledgementText = """
+    """)
+        parent.acknowledgementText = _("""
     This DICOM Plugin was developed by
     Steve Pieper, Isomics, Inc.
     and was partially funded by NIH grant 3P41RR013218.
-    """
+    """)
 
         # don't show this module - it only appears in the DICOM module
         parent.hidden = True
