@@ -25,6 +25,7 @@
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLColorLogic.h"
 #include "vtkMRMLLogic.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceLinkLogic.h"
 #include "vtkMRMLViewLogic.h"
@@ -577,27 +578,41 @@ std::string vtkMRMLApplicationLogic::UnpackSlicerDataBundle(const char *sdbFileP
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory)
+bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("no scene");
+    vtkErrorMacro("Scene file has not been set in the application logic");
+    return false;
+    }
+  if (!sdbFilePath)
+    {
+    vtkErrorMacro("Data bundle file path is invalid");
+    return false;
+    }
+  if (!temporaryDirectory)
+    {
+    vtkErrorMacro("Temporary file path is invalid");
     return false;
     }
 
   std::string mrmlFile = this->UnpackSlicerDataBundle(sdbFilePath, temporaryDirectory);
-
   if ( mrmlFile.empty() )
     {
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent, "Could not unpack file '" + std::string(sdbFilePath)
+       + "' into '" + std::string(temporaryDirectory) + "'");
+      }
     vtkErrorMacro("Could not unpack mrml scene");
     return false;
     }
 
   this->GetMRMLScene()->SetURL( mrmlFile.c_str() );
-  int success = this->GetMRMLScene()->Connect();
+  int success = this->GetMRMLScene()->Connect(userMessages);
   if ( !success )
     {
-    vtkErrorMacro("Could not connect to scene");
+    vtkErrorMacro("Failed to read the scene");
     return false;
     }
   return true;
@@ -610,7 +625,8 @@ std::string vtkMRMLApplicationLogic::PercentEncode(std::string s)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot)
+bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   // Overview:
   // - confirm the arguments are valid and create directories if needed
@@ -628,7 +644,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
     vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: invalid scene");
     return false;
     }
-  return this->GetMRMLScene()->SaveSceneToSlicerDataBundleDirectory(sdbDir, screenShot);
+  return this->GetMRMLScene()->SaveSceneToSlicerDataBundleDirectory(sdbDir, screenShot, userMessages);
 }
 
 //----------------------------------------------------------------------------

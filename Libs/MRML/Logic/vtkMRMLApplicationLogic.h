@@ -35,6 +35,7 @@ class vtkMRMLSelectionNode;
 class vtkMRMLStorableNode;
 class vtkMRMLStorageNode;
 class vtkMRMLInteractionNode;
+class vtkMRMLMessageCollection;
 class vtkMRMLViewLogic;
 class vtkMRMLViewNode;
 class vtkTextProperty;
@@ -162,12 +163,12 @@ public:
   /// \sa qSlicerCoreIOManager::saveScene
   /// If screenShot is not null, use it as the screen shot for a scene view
   /// Returns false if the save failed
-  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot = nullptr);
+  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot = nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Open the file into a temp directory and load the scene file
   /// inside.  Note that the first mrml file found in the extracted
   /// directory will be used.
-  bool OpenSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory);
+  bool OpenSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Unpack the file into a temp directory and return the scene file
   /// inside.  Note that the first mrml file found in the extracted
