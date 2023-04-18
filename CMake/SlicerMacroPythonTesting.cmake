@@ -34,13 +34,15 @@ macro(slicer_add_python_test)
   if(NOT IS_ABSOLUTE ${MY_SCRIPT})
     set(MY_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT}")
   endif()
+  if(NOT Slicer_SOURCE_DIR)
+    list(APPEND MY_SLICER_ARGS ${UNITTEST_LIB_PATHS})
+  endif()
   ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash
     --testing
     ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS}
-    ${UNITTEST_LIB_PATHS}
     ${MY_SLICER_ARGS}
     --python-script ${MY_SCRIPT} ${MY_SCRIPT_ARGS}
     )
@@ -57,6 +59,9 @@ macro(slicer_add_python_unittest)
   if("${_script_source_dir}" STREQUAL "")
     set(_script_source_dir ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
+  if(NOT Slicer_SOURCE_DIR)
+    list(APPEND MY_SLICER_ARGS ${UNITTEST_LIB_PATHS})
+  endif()
   ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
@@ -64,7 +69,6 @@ macro(slicer_add_python_unittest)
     --testing
     ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS}
     ${MY_SLICER_ARGS}
-    ${UNITTEST_LIB_PATHS}
     --python-code "import slicer.testing\\; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${_script_source_dir}'], '${test_name}')"
     )
   set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
