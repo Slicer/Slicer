@@ -631,17 +631,17 @@ void qSlicerSegmentationsModuleWidget::updateImportExportWidgets()
   // Operation: export/import
   if (d->radioButton_Export->isChecked())
     {
-    d->label_ImportExportType->setText("Output type:");
-    d->label_ImportExportNode->setText("Output node:");
-    d->PushButton_ImportExport->setText("Export");
+    d->label_ImportExportType->setText(tr("Output type:"));
+    d->label_ImportExportNode->setText(tr("Output node:"));
+    d->PushButton_ImportExport->setText(tr("Export"));
     d->label_TerminologyContext->setVisible(false);
     d->ComboBox_TerminologyContext->setVisible(false);
     }
   else // Import
     {
-    d->label_ImportExportType->setText("Input type:");
-    d->label_ImportExportNode->setText("Input node:");
-    d->PushButton_ImportExport->setText("Import");
+    d->label_ImportExportType->setText(tr("Input type:"));
+    d->label_ImportExportNode->setText(tr("Input node:"));
+    d->PushButton_ImportExport->setText(tr("Import"));
     d->label_TerminologyContext->setVisible(d->radioButton_Labelmap->isChecked());
     d->ComboBox_TerminologyContext->setVisible(d->radioButton_Labelmap->isChecked());
     }
@@ -658,7 +658,7 @@ void qSlicerSegmentationsModuleWidget::updateImportExportWidgets()
     nodeTypes << "vtkMRMLLabelMapVolumeNode";
     if (d->radioButton_Export->isChecked())
       {
-      d->SubjectHierarchyComboBox_ImportExport->setDefaultText("Export to new labelmap");
+      d->SubjectHierarchyComboBox_ImportExport->setDefaultText(tr("Export to new labelmap"));
       }
     }
   else // Model
@@ -666,7 +666,7 @@ void qSlicerSegmentationsModuleWidget::updateImportExportWidgets()
     if (d->radioButton_Export->isChecked())
       {
       nodeTypes << "vtkMRMLFolderDisplayNode"; // Do not show any data nodes (folder display node belongs to folders)
-      d->SubjectHierarchyComboBox_ImportExport->setDefaultText("Export models to new folder");
+      d->SubjectHierarchyComboBox_ImportExport->setDefaultText(tr("Export models to new folder"));
       // Show only hierarchy items (folder, study, patient)
       levelFilter << vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()
         << vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy().c_str()
@@ -777,7 +777,7 @@ bool qSlicerSegmentationsModuleWidget::copySegmentBetweenSegmentations(
       return false;
       }
 
-    QString message = QString("Cannot convert source master representation '%1' into target master '%2', "
+    QString message = tr("Cannot convert source master representation '%1' into target master '%2', "
       "thus unable to copy segment '%3' from segmentation '%4' to '%5'.\n\nWould you like to change the master representation of '%5' to '%1'?\n\n"
       "Note: This may result in unwanted data loss in %5.")
       .arg(fromSegmentation->GetMasterRepresentationName().c_str())
@@ -791,7 +791,7 @@ bool qSlicerSegmentationsModuleWidget::copySegmentBetweenSegmentations(
       bool successfulConversion = toSegmentation->CreateRepresentation(fromSegmentation->GetMasterRepresentationName());
       if (!successfulConversion)
         {
-        QString message = QString("Failed to convert %1 to %2!").arg(toNode->GetName()).arg(fromSegmentation->GetMasterRepresentationName().c_str());
+        QString message = tr("Failed to convert %1 to %2!").arg(toNode->GetName()).arg(fromSegmentation->GetMasterRepresentationName().c_str());
         QMessageBox::warning(nullptr, tr("Conversion failed"), message);
         return false;
         }
@@ -916,14 +916,14 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
       {
       ctkMessageBox* exportWarningMesssgeBox = new ctkMessageBox(this);
       exportWarningMesssgeBox->setAttribute(Qt::WA_DeleteOnClose);
-      exportWarningMesssgeBox->setWindowTitle("Export may erase data");
+      exportWarningMesssgeBox->setWindowTitle(tr("Export may erase data"));
       exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Ok);
       exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Cancel);
       exportWarningMesssgeBox->setDontShowAgainVisible(true);
       exportWarningMesssgeBox->setIcon(QMessageBox::Warning);
-      exportWarningMesssgeBox->setDontShowAgainSettingsKey("Segmentations/AlwaysCropDuringSegmentationNodeExport");
-      exportWarningMesssgeBox->setText("The current segmentation does not completely fit into the new geometry.\n"
-                                       "Do you want to crop the segmentation?\n");
+      exportWarningMesssgeBox->setDontShowAgainSettingsKey(tr("Segmentations/AlwaysCropDuringSegmentationNodeExport"));
+      exportWarningMesssgeBox->setText(tr("The current segmentation does not completely fit into the new geometry.\n"
+                                       "Do you want to crop the segmentation?\n"));
       if (exportWarningMesssgeBox->exec() != QMessageBox::StandardButton::Ok)
         {
         return false;
@@ -998,7 +998,7 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     QApplication::restoreOverrideCursor();
     if (!success)
       {
-      QString message = QString("Failed to export segments from segmentation %1 to labelmap node %2!\n\n"
+      QString message = tr("Failed to export segments from segmentation %1 to labelmap node %2!\n\n"
         "Most probably the segment cannot be converted into binary labelmap representation.").
         arg(currentSegmentationNode->GetName()).arg(labelmapNode->GetName());
       qCritical() << Q_FUNC_INFO << ": " << message;
@@ -1014,7 +1014,7 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     QApplication::restoreOverrideCursor();
     if (!success)
       {
-      QString message = QString("Failed to export segments from segmentation %1 to models in folder %2!\n\n"
+      QString message = tr("Failed to export segments from segmentation %1 to models in folder %2!\n\n"
         "Most probably the segment cannot be converted into closed surface representation.").
         arg(currentSegmentationNode->GetName()).arg(shNode->GetItemName(folderItem).c_str());
       qCritical() << Q_FUNC_INFO << ": " << message;
@@ -1075,7 +1075,7 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
     QApplication::restoreOverrideCursor();
     if (!success)
       {
-      QString message = QString("Failed to copy labels from labelmap volume node %1!").arg(labelmapNode->GetName());
+      QString message = tr("Failed to copy labels from labelmap volume node %1!").arg(labelmapNode->GetName());
       qCritical() << Q_FUNC_INFO << ": " << message;
       QMessageBox::warning(nullptr, tr("Failed to import labelmap volume"), message);
       QApplication::restoreOverrideCursor();
@@ -1086,7 +1086,7 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
     {
     if (!vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, currentSegmentationNode))
       {
-      QString message = QString("Failed to copy polydata from model node %1!").arg(modelNode->GetName());
+      QString message = tr("Failed to copy polydata from model node %1!").arg(modelNode->GetName());
       qCritical() << Q_FUNC_INFO << ": " << message;
       QMessageBox::warning(nullptr, tr("Failed to import model node"), message);
       QApplication::restoreOverrideCursor();
@@ -1097,7 +1097,7 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
     {
     if (!vtkSlicerSegmentationsModuleLogic::ImportModelsToSegmentationNode(folderItem, currentSegmentationNode))
       {
-      QString message = QString("Failed to copy polydata from models under folder %1!").arg(shNode->GetItemName(folderItem).c_str());
+      QString message = tr("Failed to copy polydata from models under folder %1!").arg(shNode->GetItemName(folderItem).c_str());
       qCritical() << Q_FUNC_INFO << ": " << message;
       QMessageBox::warning(nullptr, tr("Failed to import models"), message);
       QApplication::restoreOverrideCursor();

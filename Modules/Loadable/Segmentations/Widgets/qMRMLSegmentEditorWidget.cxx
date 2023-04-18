@@ -328,15 +328,16 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   this->EffectNameOrder
     // Thresholding is the the starting point for most segmentations
     // (it can often create usable segmentation by itself, or used to define intensity range for painting)
-    << "Threshold"
+    // These strings are effect names that must not be translated.
+    << /*no tr*/ "Threshold"
     // Local painting
-    << "Paint" << "Draw" << "Erase" << "Level tracing" << "Grow from seeds" << "Fill between slices"
+    << /*no tr*/ "Paint" << "Draw" << "Erase" << "Level tracing" << "Grow from seeds" << "Fill between slices"
     // Global processing
-    << "Margin" << "Hollow" << "Smoothing"
+    << /*no tr*/ "Margin" << "Hollow" << "Smoothing"
     // Global splitting, merging
-    << "Scissors" << "Islands" << "Logical operators"
+    << /*no tr*/ "Scissors" << "Islands" << "Logical operators"
     // Operating on volumes
-    << "Mask volume";
+    << /*no tr*/ "Mask volume";
   this->UnorderedEffectsVisible = true;
   this->DefaultTerminologyEntrySettingsKey = "Segmentations/DefaultTerminologyEntry";
   this->EffectColumnCount = 2;
@@ -1037,8 +1038,8 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setObjectName(NULL_EFFECT_NAME);
     effectButton->setCheckable(true);
     effectButton->setIcon(QIcon(":Icons/NullEffect.png"));
-    effectButton->setText("None");
-    effectButton->setToolTip("No editing");
+    effectButton->setText(tr("None"));
+    effectButton->setToolTip(tr("No editing"));
     effectButton->setToolButtonStyle(d->EffectButtonStyle);
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(nullptr));
     effectButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred); // make all effect buttons the same width
@@ -1366,7 +1367,7 @@ bool qMRMLSegmentEditorWidget::setMasterRepresentationToBinaryLabelmap()
 
   // Editing is only possible if binary labelmap is the master representation
   // If master is not binary labelmap, then ask the user if they wants to make it master
-  QString message = QString("Editing requires binary labelmap master representation, but currently the master representation is %1. "
+  QString message = tr("Editing requires binary labelmap master representation, but currently the master representation is %1. "
     "Changing the master representation requires conversion. Some details may be lost during conversion process.\n\n"
     "Change master representation to binary labelmap?").
     arg(d->SegmentationNode->GetSegmentation()->GetMasterRepresentationName().c_str());
@@ -1392,7 +1393,7 @@ bool qMRMLSegmentEditorWidget::setMasterRepresentationToBinaryLabelmap()
   QApplication::restoreOverrideCursor();
   if (!createBinaryLabelmapRepresentationSuccess)
     {
-    QString message = QString("Failed to create binary labelmap representation in segmentation %1 for editing!\nPlease see Segmentations module for details.").
+    QString message = tr("Failed to create binary labelmap representation in segmentation %1 for editing!\nPlease see Segmentations module for details.").
       arg(d->SegmentationNode->GetName());
     QMessageBox::critical(nullptr, tr("Failed to create binary labelmap for editing"), message);
     qCritical() << Q_FUNC_INFO << ": " << message;
@@ -3484,7 +3485,7 @@ void qMRMLSegmentEditorWidget::onExportToFilesActionClicked()
   // Create dialog to show the parameters widget in a popup window
   QDialog* exportDialog = new QDialog(this, Qt::Dialog);
   exportDialog->setObjectName("SegmentationExportToFileWindow");
-  exportDialog->setWindowTitle("Export segments to files");
+  exportDialog->setWindowTitle(tr("Export segments to files"));
 
   QVBoxLayout* layout = new QVBoxLayout(exportDialog);
   layout->setContentsMargins(4, 4, 4, 4);

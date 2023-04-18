@@ -1171,7 +1171,7 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
 
   QMessageBox messageBox;
   messageBox.addButton(tr("Clear"), QMessageBox::ButtonRole::AcceptRole);
-  QPushButton* cancelButton = messageBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
+  QPushButton* cancelButton = messageBox.addButton(tr("Cancel"), QMessageBox::ButtonRole::RejectRole);
   messageBox.setDefaultButton(cancelButton);
   messageBox.setText(tr("Are you sure you want to clear the contents of the selected segments?"));
   if (messageBox.exec() == QMessageBox::ButtonRole::RejectRole)

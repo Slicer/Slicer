@@ -1159,7 +1159,7 @@ qSlicerSegmentEditorScissorsEffect::qSlicerSegmentEditorScissorsEffect(QObject* 
  : Superclass(parent)
  , d_ptr( new qSlicerSegmentEditorScissorsEffectPrivate(*this) )
 {
-  this->m_Name = QString("Scissors");
+  this->m_Name = QString(/*no tr*/"Scissors");
   this->m_ShowEffectCursorInThreeDView = true;
 }
 
@@ -1177,13 +1177,13 @@ QIcon qSlicerSegmentEditorScissorsEffect::icon()
 //---------------------------------------------------------------------------
 QString const qSlicerSegmentEditorScissorsEffect::helpText()const
 {
-  return "<html>Cut through the entire segment from the current viewpoint<br>."
+  return tr("<html>Cut through the entire segment from the current viewpoint<br>."
     "<p><ul style=\"margin: 0\">"
     "<li><b>Left-button drag-and-drop:</b> sweep out an outline.</li>"
     "<li><b>Esc:</b> cancel.</li>"
     "</ul><p>"
     "Editing is available both in slice and 3D views. In slice view cutting will be applied to all slices."
-    "<p></html>";
+    "<p></html>");
 }
 
 //-----------------------------------------------------------------------------
@@ -1199,12 +1199,12 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->gridLayout = new QGridLayout();
   d->gridLayout->setAlignment(Qt::AlignLeft);
 
-  d->eraseInsideRadioButton = new QRadioButton("Erase inside");
-  d->eraseOutsideRadioButton = new QRadioButton("Erase outside");
-  d->fillInsideRadioButton = new QRadioButton("Fill inside");
-  d->fillOutsideRadioButton = new QRadioButton("Fill outside");
+  d->eraseInsideRadioButton = new QRadioButton(tr("Erase inside"));
+  d->eraseOutsideRadioButton = new QRadioButton(tr("Erase outside"));
+  d->fillInsideRadioButton = new QRadioButton(tr("Fill inside"));
+  d->fillOutsideRadioButton = new QRadioButton(tr("Fill outside"));
 
-  d->gridLayout->addWidget(new QLabel("Operation:"), 0, 0);
+  d->gridLayout->addWidget(new QLabel(tr("Operation:")), 0, 0);
   d->gridLayout->addWidget(d->eraseInsideRadioButton, 1, 0);
   d->gridLayout->addWidget(d->eraseOutsideRadioButton, 2, 0);
   d->gridLayout->addWidget(d->fillInsideRadioButton, 3, 0);
@@ -1221,14 +1221,14 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
 
   // Shape
 
-  d->freeFormRadioButton = new QRadioButton("Free-form");
-  d->circleRadioButton= new QRadioButton("Circle");
-  d->rectangleRadioButton= new QRadioButton("Rectangle");
-  d->shapeDrawCenteredCheckBox = new QCheckBox("Centered");
+  d->freeFormRadioButton = new QRadioButton(tr("Free-form"));
+  d->circleRadioButton= new QRadioButton(tr("Circle"));
+  d->rectangleRadioButton= new QRadioButton(tr("Rectangle"));
+  d->shapeDrawCenteredCheckBox = new QCheckBox(tr("Centered"));
   d->shapeDrawCenteredCheckBox->setToolTip(
     tr("If checked, click position sets the circle or rectangle center, otherwise click position is at the shape boundary."));
 
-  d->gridLayout->addWidget(new QLabel("Shape:"), 0, 1);
+  d->gridLayout->addWidget(new QLabel(tr("Shape:")), 0, 1);
   d->gridLayout->addWidget(d->freeFormRadioButton, 1, 1);
   d->gridLayout->addWidget(d->circleRadioButton, 2, 1);
   d->gridLayout->addWidget(d->rectangleRadioButton, 3, 1);

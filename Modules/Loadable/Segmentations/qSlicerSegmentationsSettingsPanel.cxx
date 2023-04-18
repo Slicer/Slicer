@@ -86,19 +86,20 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   this->SurfaceSmoothingCheckBox->setChecked(true);
 
   // Register settings
-  q->registerProperty("Segmentations/AutoOpacities", this->AutoOpacitiesCheckBox,
+  q->registerProperty(/*no tr*/"Segmentations/AutoOpacities", this->AutoOpacitiesCheckBox,
                       "checked", SIGNAL(toggled(bool)),
-                      "Automatically set opacities of the segments based on which contains which, so that no segment obscures another", ctkSettingsPanel::OptionNone);
-  q->registerProperty("Segmentations/DefaultSurfaceSmoothing", this->SurfaceSmoothingCheckBox,
+                      qSlicerSegmentationsSettingsPanel::tr("Automatically set opacities of the segments based on which contains which, "
+                                                            "so that no segment obscures another"), ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/"Segmentations/DefaultSurfaceSmoothing", this->SurfaceSmoothingCheckBox,
                       "checked", SIGNAL(toggled(bool)),
-                      "Enable closed surface representation smoothing by default", ctkSettingsPanel::OptionNone);
-  q->registerProperty("Segmentations/DefaultTerminologyEntry", q,
+                      qSlicerSegmentationsSettingsPanel::tr("Enable closed surface representation smoothing by default"), ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/"Segmentations/DefaultTerminologyEntry", q,
                       "defaultTerminologyEntry", SIGNAL(defaultTerminologyEntryChanged(QString)),
-                      "Default terminology entry", ctkSettingsPanel::OptionNone);
+                      qSlicerSegmentationsSettingsPanel::tr("Default terminology entry"), ctkSettingsPanel::OptionNone);
 
-  this->AllowEditingHiddenSegmentComboBox->addItem("Ask user", QMessageBox::InvalidRole);
-  this->AllowEditingHiddenSegmentComboBox->addItem("Always make visible", QMessageBox::Yes);
-  this->AllowEditingHiddenSegmentComboBox->addItem("Always allow", QMessageBox::No);
+  this->AllowEditingHiddenSegmentComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Ask user"), QMessageBox::InvalidRole);
+  this->AllowEditingHiddenSegmentComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Always make visible"), QMessageBox::Yes);
+  this->AllowEditingHiddenSegmentComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Always allow"), QMessageBox::No);
   q->registerProperty("Segmentations/ConfirmEditHiddenSegment", this->AllowEditingHiddenSegmentComboBox,
     "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
 

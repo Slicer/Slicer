@@ -133,7 +133,7 @@ QString qSlicerDataModule::helpText()const
 {
   QString help = QString(
     tr("The Data module is the central data-organizing point where all loaded data is "
-    "presented for access and manipulation is the Data module. It allows organizing "
+    "presented for access and manipulation. It allows organizing "
     "the data in folders or patient/study trees (automatically done for DICOM), "
     "visualizing any displayable data, transformation of whole branches, and a "
     "multitude of data type specific features."));

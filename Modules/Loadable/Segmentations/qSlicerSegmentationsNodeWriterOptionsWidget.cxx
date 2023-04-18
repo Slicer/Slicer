@@ -43,10 +43,11 @@ void qSlicerSegmentationsNodeWriterOptionsWidgetPrivate::setupUi(QWidget* widget
   this->qSlicerNodeWriterOptionsWidgetPrivate::setupUi(widget);
   this->CropToMinimumExtentCheckbox = new QCheckBox(widget);
   this->CropToMinimumExtentCheckbox->setObjectName(QStringLiteral("CropToMinimumExtentCheckBox"));
-  this->CropToMinimumExtentCheckbox->setText("Crop to minimum extent");
-  this->CropToMinimumExtentCheckbox->setToolTip("If enabled then segmentation labelmap representation is"
+  this->CropToMinimumExtentCheckbox->setText(qSlicerSegmentationsNodeWriterOptionsWidget::tr("Crop to minimum extent"));
+  this->CropToMinimumExtentCheckbox->setToolTip(
+    qSlicerSegmentationsNodeWriterOptionsWidget::tr("If enabled then segmentation labelmap representation is"
     " cropped to the minimum necessary size. This saves storage space but changes voxel coordinate system"
-    " (physical coordinate system is not affected).");
+    " (physical coordinate system is not affected)."));
   horizontalLayout->addWidget(CropToMinimumExtentCheckbox);
   QObject::connect(this->CropToMinimumExtentCheckbox, SIGNAL(toggled(bool)),
     widget, SLOT(setCropToMinimumExtent(bool)));

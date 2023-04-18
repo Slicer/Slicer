@@ -969,7 +969,7 @@ qSlicerSegmentEditorPaintEffect::qSlicerSegmentEditorPaintEffect(QObject* parent
  : Superclass(parent)
  , d_ptr( new qSlicerSegmentEditorPaintEffectPrivate(*this) )
 {
-  this->m_Name = QString("Paint");
+  this->m_Name = QString(/*no tr*/"Paint");
   this->m_AlwaysErase = false;
   this->m_Erase = false;
   this->m_ShowEffectCursorInThreeDView = true;
@@ -989,14 +989,14 @@ QIcon qSlicerSegmentEditorPaintEffect::icon()
 //---------------------------------------------------------------------------
 QString const qSlicerSegmentEditorPaintEffect::helpText()const
 {
-  return "<html>Paint with a round brush<br>."
+  return tr("<html>Paint with a round brush<br>."
     "<p><ul style=\"margin: 0\">"
     "<li><b>Left-button drag-and-drop:</b> paint strokes.</li>"
     "<li><b>Shift + mouse wheel</b> or <b>+/- keys:</b> adjust brush size.</li>"
     "<li><b>Ctrl + mouse wheel:</b> slice view zoom in/out.</li>"
     "</ul><p>"
     "Editing is available both in slice and 3D views."
-    "<p></html>";
+    "<p></html>");
 }
 
 //-----------------------------------------------------------------------------
@@ -1412,12 +1412,12 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
   d->BrushDiameterFrame->setLayout(new QHBoxLayout());
   paintOptionsLayout->addWidget(d->BrushDiameterFrame);
 
-  QLabel* diameterLabel = new QLabel("Diameter:", d->BrushDiameterFrame);
-  diameterLabel->setToolTip("Set the paint brush size as percentage of screen size or as fixed length");
+  QLabel* diameterLabel = new QLabel(tr("Diameter:"), d->BrushDiameterFrame);
+  diameterLabel->setToolTip(tr("Set the paint brush size as percentage of screen size or as fixed length"));
   d->BrushDiameterFrame->layout()->addWidget(diameterLabel);
 
   d->BrushDiameterSpinBox = new qMRMLSpinBox(d->BrushDiameterFrame);
-  d->BrushDiameterSpinBox->setToolTip("Set the paint brush size as percentage of screen size or as fixed length");
+  d->BrushDiameterSpinBox->setToolTip(tr("Set the paint brush size as percentage of screen size or as fixed length"));
   d->BrushDiameterFrame->layout()->addWidget(d->BrushDiameterSpinBox);
 
   QList<int> quickDiameters;
@@ -1428,7 +1428,7 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
     QToolButton* quickDiameterButton = new QToolButton();
     quickDiameterButton->setText(QString::number(diameter));
     quickDiameterButton->setProperty("BrushDiameter", QVariant(diameter));
-    quickDiameterButton->setToolTip("Set the paint brush size as percentage of screen size or as fixed length");
+    quickDiameterButton->setToolTip(tr("Set the paint brush size as percentage of screen size or as fixed length"));
 
     d->BrushDiameterFrame->layout()->addWidget(quickDiameterButton);
     QObject::connect(quickDiameterButton, SIGNAL(clicked()), d, SLOT(onQuickDiameterButtonClicked()));
@@ -1436,7 +1436,7 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
 
   d->BrushDiameterRelativeToggle = new QToolButton();
   d->BrushDiameterRelativeToggle->setText("%");
-  d->BrushDiameterRelativeToggle->setToolTip("Toggle diameter quick set buttons between percentage of window size / absolute size in millimeters");
+  d->BrushDiameterRelativeToggle->setToolTip(tr("Toggle diameter quick set buttons between percentage of window size / absolute size in millimeters"));
   d->BrushDiameterFrame->layout()->addWidget(d->BrushDiameterRelativeToggle);
 
   d->BrushDiameterSlider = new ctkDoubleSlider();
@@ -1446,32 +1446,33 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
   // Create options frame for this effect
   QHBoxLayout* hbox = new QHBoxLayout();
 
-  d->BrushSphereCheckbox = new QCheckBox("Sphere brush");
-  d->BrushSphereCheckbox->setToolTip("Use a 3D spherical brush rather than a 2D circular brush.");
+  d->BrushSphereCheckbox = new QCheckBox(tr("Sphere brush"));
+  d->BrushSphereCheckbox->setToolTip(tr("Use a 3D spherical brush rather than a 2D circular brush."));
   hbox->addWidget(d->BrushSphereCheckbox);
 
-  d->EditIn3DViewsCheckbox = new QCheckBox("Edit in 3D views");
-  d->EditIn3DViewsCheckbox->setToolTip("Allow painting in 3D views. If enabled, click-and-drag in a 3D view paints in the view instead of rotating the view.");
+  d->EditIn3DViewsCheckbox = new QCheckBox(tr("Edit in 3D views"));
+  d->EditIn3DViewsCheckbox->setToolTip(tr("Allow painting in 3D views. If enabled, click-and-drag in a 3D view paints in the view "
+                                          "instead of rotating the view."));
   hbox->addWidget(d->EditIn3DViewsCheckbox);
 
-  d->ColorSmudgeCheckbox = new QCheckBox("Color smudge");
-  d->ColorSmudgeCheckbox->setToolTip("Select segment by sampling the pixel location"
-    "where the brush stroke starts. If brush stroke starts in an empty area then the brush erases highlighted region from the selected segment.");
+  d->ColorSmudgeCheckbox = new QCheckBox(tr("Color smudge"));
+  d->ColorSmudgeCheckbox->setToolTip(tr("Select segment by sampling the pixel location"
+    "where the brush stroke starts. If brush stroke starts in an empty area then the brush erases highlighted region from the selected segment."));
   if (!this->m_AlwaysErase)
     {
     hbox->addWidget(d->ColorSmudgeCheckbox);
     }
 
-  d->EraseAllSegmentsCheckbox = new QCheckBox("Erase all segments");
-  d->EraseAllSegmentsCheckbox->setToolTip("If not checked then highlighted area is erased"
-    " from all segments. If unchecked then only area is only erased from selected segment.");
+  d->EraseAllSegmentsCheckbox = new QCheckBox(tr("Erase all segments"));
+  d->EraseAllSegmentsCheckbox->setToolTip(tr("If not checked then highlighted area is erased"
+    " from all segments. If unchecked then only area is only erased from selected segment."));
   if (this->m_AlwaysErase)
     {
     hbox->addWidget(d->EraseAllSegmentsCheckbox);
     }
 
-  d->BrushPixelModeCheckbox = new QCheckBox("Pixel mode");
-  d->BrushPixelModeCheckbox->setToolTip("Paint exactly the pixel under the cursor, ignoring the diameter, threshold, and paint over.");
+  d->BrushPixelModeCheckbox = new QCheckBox(tr("Pixel mode"));
+  d->BrushPixelModeCheckbox->setToolTip(tr("Paint exactly the pixel under the cursor, ignoring the diameter, threshold, and paint over."));
   //TODO: Implement this effect option
   //hbox->addWidget(d->BrushPixelModeCheckbox);
 
@@ -1550,7 +1551,7 @@ void qSlicerSegmentEditorPaintEffect::updateGUIFromMRML()
   bool brushDiameterIsRelative = this->integerParameter("BrushDiameterIsRelative");
 
   d->BrushDiameterRelativeToggle->blockSignals(true);
-  d->BrushDiameterRelativeToggle->setText(brushDiameterIsRelative ? "%" : "mm");
+  d->BrushDiameterRelativeToggle->setText(brushDiameterIsRelative ? "%" : tr("mm"));
   d->BrushDiameterRelativeToggle->blockSignals(false);
 
   d->BrushDiameterSlider->blockSignals(true);

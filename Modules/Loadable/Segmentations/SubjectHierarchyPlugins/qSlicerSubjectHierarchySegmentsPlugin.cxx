@@ -234,7 +234,7 @@ bool qSlicerSubjectHierarchySegmentsPlugin::reparentItemInsideSubjectHierarchy(v
       }
 
     // Otherwise master representation has to be changed
-    QString message = QString("Cannot convert source master representation '%1' into target master '%2',"
+    QString message = tr("Cannot convert source master representation '%1' into target master '%2',"
       "thus unable to move segment '%3' from segmentation '%4' to '%5'.\n\n"
       "Would you like to change the master representation of '%5' to '%1'?\n\n"
       "Note: This may result in unwanted data loss in %5.")
@@ -251,7 +251,7 @@ bool qSlicerSubjectHierarchySegmentsPlugin::reparentItemInsideSubjectHierarchy(v
         fromSegmentationNode->GetSegmentation()->GetMasterRepresentationName() );
       if (!successfulConversion)
         {
-        QString message = QString("Failed to convert %1 to %2").arg(toSegmentationNode->GetName())
+        QString message = tr("Failed to convert %1 to %2").arg(toSegmentationNode->GetName())
           .arg(fromSegmentationNode->GetSegmentation()->GetMasterRepresentationName().c_str());
         QMessageBox::warning(nullptr, tr("Conversion failed"), message);
         return false;
@@ -320,19 +320,19 @@ QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkIdType itemID)const
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return QString("Invalid");
+    return tr("Invalid");
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return QString("Invalid");
+    return tr("Invalid");
     }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
-    return QString("Invalid");
+    return tr("Invalid");
     }
 
   // Get basic tooltip from abstract plugin
@@ -372,19 +372,14 @@ QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkIdType itemID)const
       representations.append(reprIt->c_str());
       }
     }
-  tooltipString.append(tr("Segment (Representations: %1)").arg(representations));
 
   // Color
   double color[3] = {0.0,0.0,0.0};
   segment->GetColor(color);
-  tooltipString.append(tr(" (Color: %1, %2, %3)")
-    .arg((int)(color[0]*255)).arg((int)(color[1]*255)).arg((int)(color[2]*255)));
-
   // Tags
   std::map<std::string,std::string> tagsMap;
   segment->GetTags(tagsMap);
   QString tags;
-  tooltipString.append( QString(" (Tags: ") );
   if (tagsMap.empty())
     {
     tags = tr("None");
@@ -393,14 +388,17 @@ QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkIdType itemID)const
     {
     for (std::map<std::string,std::string>::iterator tagIt = tagsMap.begin(); tagIt != tagsMap.end(); ++tagIt)
       {
-      if (tags.isEmpty())
+      if (!tags.isEmpty())
         {
         tags.append(", ");
         }
       tags.append(QString::fromStdString(tagIt->first) + ": " + QString::fromStdString(tagIt->second));
       }
     }
-  tooltipString.append(tr(" (Tags: %1)").arg(tags));
+  tooltipString.append(tr("Segment - Representations: %1, Color: (%2, %3, %4)\nTags: %5")
+    .arg(representations)
+    .arg((int)(color[0]*255)).arg((int)(color[1]*255)).arg((int)(color[2]*255))
+    .arg(tags));
   return tooltipString;
 }
 
