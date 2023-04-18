@@ -279,7 +279,7 @@ bool qSlicerSubjectHierarchySegmentationsPlugin::reparentItemInsideSubjectHierar
   if (!success)
     {
     // Probably master representation has to be changed
-    QString message = QString("Cannot convert source master representation '%1' into target master '%2',"
+    QString message = tr("Cannot convert source master representation '%1' into target master '%2',"
       "thus unable to import node '%3' to segmentation '%4'.\n\n"
       "Would you like to change the master representation of '%4' to '%1'?\n\n"
       "Note: This may result in unwanted data loss in %4.")
@@ -295,7 +295,7 @@ bool qSlicerSubjectHierarchySegmentationsPlugin::reparentItemInsideSubjectHierar
       bool successfulConversion = segmentationNode->GetSegmentation()->CreateRepresentation(importedRepresentationName);
       if (!successfulConversion)
         {
-        QString message = QString("Failed to convert %1 to %2").arg(segmentationNode->GetName()).arg(importedRepresentationName.c_str());
+        QString message = tr("Failed to convert %1 to %2").arg(segmentationNode->GetName()).arg(importedRepresentationName.c_str());
         QMessageBox::warning(nullptr, tr("Conversion failed"), message);
         return false;
         }
@@ -352,13 +352,13 @@ QString qSlicerSubjectHierarchySegmentationsPlugin::tooltip(vtkIdType itemID)con
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return QString("Invalid");
+    return tr("Invalid");
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return QString("Invalid");
+    return tr("Invalid");
     }
 
   // Get basic tooltip from abstract plugin

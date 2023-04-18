@@ -97,12 +97,12 @@ qSlicerSegmentationsModule::~qSlicerSegmentationsModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentationsModule::helpText()const
 {
-  QString help =
+  QString help = tr(
     "Segmentations module manages segmentations. Each segmentation can contain"
     " multiple segments, which correspond to one structure or ROI. Each segment"
     " can contain multiple data representations for the same structure, and the"
     " module supports automatic conversion between these representations"
-    " as well as advanced display settings and import/export features.";
+    " as well as advanced display settings and import/export features.");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -110,7 +110,8 @@ QString qSlicerSegmentationsModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentationsModule::acknowledgementText()const
 {
-  return "This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).";
+  return tr("This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s "
+            "ACRU program and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).");
 }
 
 //-----------------------------------------------------------------------------
@@ -177,7 +178,7 @@ void qSlicerSegmentationsModule::setup()
   if (qSlicerApplication::application())
     {
     qSlicerSegmentationsSettingsPanel* panel = new qSlicerSegmentationsSettingsPanel();
-    qSlicerApplication::application()->settingsDialog()->addPanel("Segmentations", panel);
+    qSlicerApplication::application()->settingsDialog()->addPanel(tr("Segmentations"), panel);
     panel->setSegmentationsLogic(segmentationsLogic);
     }
 

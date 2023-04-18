@@ -83,7 +83,7 @@ void qMRMLSegmentationGeometryDialogPrivate::init()
   Q_Q(qMRMLSegmentationGeometryDialog);
 
   // Set up UI
-  this->setWindowTitle("Segmentation geometry");
+  this->setWindowTitle(qMRMLSegmentationGeometryDialog::tr("Segmentation geometry"));
 
   QVBoxLayout* layout = new QVBoxLayout(this);
   layout->setSpacing(4);
@@ -99,10 +99,10 @@ void qMRMLSegmentationGeometryDialogPrivate::init()
   buttonsLayout->setSpacing(4);
   buttonsLayout->setContentsMargins(4, 0, 4, 0);
 
-  this->OKButton = new QPushButton("OK");
+  this->OKButton = new QPushButton(qMRMLSegmentationGeometryDialog::tr("OK"));
   buttonsLayout->addWidget(this->OKButton);
 
-  this->CancelButton = new QPushButton("Cancel");
+  this->CancelButton = new QPushButton(qMRMLSegmentationGeometryDialog::tr("Cancel"));
   buttonsLayout->addWidget(this->CancelButton);
   this->CancelButton->setVisible(this->GeometryWidget->editEnabled());
 
@@ -159,11 +159,11 @@ void qMRMLSegmentationGeometryDialog::setResampleLabelmaps(bool aResampleLabelma
   d->ResampleLabelmaps = aResampleLabelmaps;
   if (aResampleLabelmaps)
     {
-    d->OKButton->setToolTip("Set reference image geometry and resample all segment labelmaps");
+    d->OKButton->setToolTip(tr("Set reference image geometry and resample all segment labelmaps"));
     }
   else
     {
-    d->OKButton->setToolTip("Set reference image geometry (do not resample)");
+    d->OKButton->setToolTip(tr("Set reference image geometry (do not resample)"));
     }
 }
 

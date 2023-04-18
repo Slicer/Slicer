@@ -104,12 +104,12 @@ void qMRMLSegmentationConversionParametersWidgetPrivate::init()
   this->PathsTable->horizontalHeader()->setStretchLastSection(true);
   this->PathsTable->setSelectionMode(QAbstractItemView::SingleSelection);
   this->PathsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-  this->PathsColumnLabels << "Cost" << "Path";
+  this->PathsColumnLabels << qMRMLSegmentationConversionParametersWidget::tr("Cost") << qMRMLSegmentationConversionParametersWidget::tr("Path");
   this->PathsTable->setColumnCount(this->PathsColumnLabels.size());
 
   this->ParametersTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
   this->ParametersTable->horizontalHeader()->setStretchLastSection(true);
-  this->ParametersColumnLabels << "Name" << "Value";
+  this->ParametersColumnLabels << qMRMLSegmentationConversionParametersWidget::tr("Name") << qMRMLSegmentationConversionParametersWidget::tr("Value");
   this->ParametersTable->setColumnCount(this->ParametersColumnLabels.size());
   this->ParametersTable->setSelectionMode(QAbstractItemView::NoSelection);
 }
@@ -156,7 +156,7 @@ void qMRMLSegmentationConversionParametersWidget::setSegmentationNode(vtkMRMLNod
     }
   else
     {
-    d->label_SegmentationName->setText("Invalid segmentation");
+    d->label_SegmentationName->setText(tr("Invalid segmentation"));
     }
 
   this->populatePathsTable();
@@ -184,7 +184,7 @@ void qMRMLSegmentationConversionParametersWidget::setTargetRepresentationName(QS
     }
   else
     {
-    d->label_RepresentationName->setText("Invalid representation");
+    d->label_RepresentationName->setText(tr("Invalid representation"));
     }
 
   this->populatePathsTable();
@@ -230,12 +230,12 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
   if (d->PossiblePaths->GetNumberOfPaths() == 0)
     {
     d->PathsTable->setRowCount(1);
-    QTableWidgetItem* noPathsItem = new QTableWidgetItem("No path available!");
+    QTableWidgetItem* noPathsItem = new QTableWidgetItem(tr("No path available!"));
     QFont boldFont;
     boldFont.setWeight(QFont::Bold);
     noPathsItem->setFont(boldFont);
     noPathsItem->setFlags(noPathsItem->flags() & ~Qt::ItemIsEditable);
-    d->PathsTable->setItem(0, d->pathsColumnIndex("Path"), noPathsItem);
+    d->PathsTable->setItem(0, d->pathsColumnIndex(tr("Path")), noPathsItem);
 
     d->PathsTable->blockSignals(false);
     return;
@@ -251,7 +251,7 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
     QTableWidgetItem* costItem = new QTableWidgetItem(costString);
     costItem->setFlags(costItem->flags() & ~Qt::ItemIsEditable);
     costItem->setData(Qt::UserRole, QVariant(row));
-    d->PathsTable->setItem(row, d->pathsColumnIndex("Cost"), costItem);
+    d->PathsTable->setItem(row, d->pathsColumnIndex(tr("Cost")), costItem);
 
     // Path
     QString pathString;
@@ -269,7 +269,7 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
     QTableWidgetItem* pathItem = new QTableWidgetItem(pathString);
     pathItem->setFlags(pathItem->flags() & ~Qt::ItemIsEditable);
     pathItem->setData(Qt::UserRole, QVariant(row));
-    d->PathsTable->setItem(row, d->pathsColumnIndex("Path"), pathItem);
+    d->PathsTable->setItem(row, d->pathsColumnIndex(tr("Path")), pathItem);
     }
 
   // Unblock signals
@@ -297,12 +297,12 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
   if (!selectedPath)
     {
     d->ParametersTable->setRowCount(1);
-    QTableWidgetItem* noParametersItem = new QTableWidgetItem("No path selected");
+    QTableWidgetItem* noParametersItem = new QTableWidgetItem(tr("No path selected"));
     QFont boldFont;
     boldFont.setWeight(QFont::Bold);
     noParametersItem->setFont(boldFont);
     noParametersItem->setFlags(noParametersItem->flags() & ~Qt::ItemIsEditable);
-    d->ParametersTable->setItem(0, d->parametersColumnIndex("Value"), noParametersItem);
+    d->ParametersTable->setItem(0, d->parametersColumnIndex(tr("Value")), noParametersItem);
 
     d->ParametersTable->blockSignals(false);
     return;
@@ -316,12 +316,12 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
   if (parameters->GetNumberOfParameters() == 0)
   {
     d->ParametersTable->setRowCount(1);
-    QTableWidgetItem* noParametersItem = new QTableWidgetItem("No parameters for selected path");
+    QTableWidgetItem* noParametersItem = new QTableWidgetItem(tr("No parameters for selected path"));
     QFont boldFont;
     boldFont.setWeight(QFont::Bold);
     noParametersItem->setFont(boldFont);
     noParametersItem->setFlags(noParametersItem->flags() & ~Qt::ItemIsEditable);
-    d->ParametersTable->setItem(0, d->parametersColumnIndex("Value"), noParametersItem);
+    d->ParametersTable->setItem(0, d->parametersColumnIndex(tr("Value")), noParametersItem);
 
     d->ParametersTable->blockSignals(false);
     return;
@@ -337,7 +337,7 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
     QTableWidgetItem* nameItem = new QTableWidgetItem(parameterName);
     nameItem->setToolTip(parameterDescription);
     nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
-    d->ParametersTable->setItem(row, d->parametersColumnIndex("Name"), nameItem);
+    d->ParametersTable->setItem(row, d->parametersColumnIndex(tr("Name")), nameItem);
 
     // Parameter value
     QString parameterValue = QString::fromStdString(parameters->GetValue(row));
@@ -362,14 +362,14 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
       //QTableWidgetItem* geometryItem = new QTableWidgetItem();
       //geometryItem->setFlags(geometryItem->flags() & ~Qt::ItemIsEditable);
       geometryWidget->setToolTip(parameterDescription);
-      d->ParametersTable->setCellWidget(row, d->parametersColumnIndex("Value"), geometryWidget);
+      d->ParametersTable->setCellWidget(row, d->parametersColumnIndex(tr("Value")), geometryWidget);
     }
     // Generic parameter
     else
     {
       QTableWidgetItem* valueItem = new QTableWidgetItem(parameterValue);
       valueItem->setToolTip(parameterDescription);
-      d->ParametersTable->setItem(row, d->parametersColumnIndex("Value"), valueItem);
+      d->ParametersTable->setItem(row, d->parametersColumnIndex(tr("Value")), valueItem);
     }
   }
 
@@ -400,7 +400,7 @@ void qMRMLSegmentationConversionParametersWidget::applyConversion()
   vtkSegmentationConversionPath* selectedPath = this->selectedPath();
   if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(selectedPath, this->conversionParameters()))
     {
-    QString message = QString("Failed to convert %1 to %2!").arg(d->SegmentationNode->GetName()).arg(d->TargetRepresentationName);
+    QString message = tr("Failed to convert %1 to %2!").arg(d->SegmentationNode->GetName()).arg(d->TargetRepresentationName);
     QMessageBox::warning(nullptr, tr("Conversion failed"), message);
     }
   QApplication::restoreOverrideCursor();
@@ -421,7 +421,7 @@ void qMRMLSegmentationConversionParametersWidget::onParameterChanged(QTableWidge
 
   // Get name item (safe to assume that changed item is the value, as it is the only editable one)
   int row = changedItem->row();
-  QTableWidgetItem* nameItem = d->ParametersTable->item(row, d->parametersColumnIndex("Name"));
+  QTableWidgetItem* nameItem = d->ParametersTable->item(row, d->parametersColumnIndex(tr("Name")));
 
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   segmentation->SetConversionParameter(nameItem->text().toUtf8().constData(), changedItem->text().toUtf8().constData());

@@ -1028,8 +1028,8 @@ int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
 
   ctkMessageBox* confirmCurrentSegmentVisibleMsgBox = new ctkMessageBox(mainWindow);
   confirmCurrentSegmentVisibleMsgBox->setAttribute(Qt::WA_DeleteOnClose);
-  confirmCurrentSegmentVisibleMsgBox->setWindowTitle("Operate on invisible segment?");
-  confirmCurrentSegmentVisibleMsgBox->setText("The currently selected segment is hidden. Would you like to make it visible?");
+  confirmCurrentSegmentVisibleMsgBox->setWindowTitle(tr("Operate on invisible segment?"));
+  confirmCurrentSegmentVisibleMsgBox->setText(tr("The currently selected segment is hidden. Would you like to make it visible?"));
 
   confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::Yes);
   confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::No);

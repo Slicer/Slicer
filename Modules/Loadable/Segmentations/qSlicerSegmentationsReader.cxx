@@ -78,23 +78,24 @@ vtkSlicerSegmentationsModuleLogic* qSlicerSegmentationsReader::segmentationsLogi
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentationsReader::description()const
 {
-  return "Segmentation";
+  return tr("Segmentation");
 }
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerSegmentationsReader::fileType()const
 {
-  return QString("SegmentationFile");
+  return QString(/*no tr*/"SegmentationFile");
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerSegmentationsReader::extensions()const
 {
+  QString extensionText = tr("Segmentation");
   return QStringList()
-    << "Segmentation (*.seg.nrrd)" << "Segmentation (*.seg.nhdr)" << "Segmentation (*.seg.vtm)"
-    << "Segmentation (*.nrrd)" << "Segmentation (*.nhdr)" << "Segmentation (*.vtm)"
-    << "Segmentation (*.nii.gz)" << "Segmentation (*.nii)" << "Segmentation (*.hdr)"
-    << "Segmentation (*.stl)" << "Segmentation (*.obj)";
+    << extensionText + " (*.seg.nrrd)" << extensionText + " (*.seg.nhdr)" << extensionText + " (*.seg.vtm)"
+    << extensionText + " (*.nrrd)" << extensionText + " (*.nhdr)" << extensionText + " (*.vtm)"
+    << extensionText + " (*.nii.gz)" << extensionText + " (*.nii)" << extensionText + " (*.hdr)"
+    << extensionText + " (*.stl)" << extensionText + " (*.obj)";
 }
 
 //-----------------------------------------------------------------------------

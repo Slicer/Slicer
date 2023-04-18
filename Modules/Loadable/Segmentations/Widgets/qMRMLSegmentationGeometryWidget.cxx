@@ -174,7 +174,7 @@ void qMRMLSegmentationGeometryWidgetPrivate::updateGeometryWidgets()
       {
       QIcon warningIcon = q->style()->standardIcon(QStyle::SP_MessageBoxWarning);
       this->CheckBox_PadSegmentation->setIcon(warningIcon);
-      this->CheckBox_PadSegmentation->setText("The current segmentation may not fit into the new geometry.");
+      this->CheckBox_PadSegmentation->setText(qMRMLSegmentationGeometryWidget::tr("The current segmentation may not fit into the new geometry."));
       }
     }
 }
@@ -408,7 +408,7 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
     d->frame_SourceGeometry->setVisible(false);
     d->groupBox_VolumeSpacingOptions->setVisible(false);
     d->MRMLCoordinatesWidget_Spacing->setEnabled(false);
-    d->label_Error->setText("No segmentation node specified!");
+    d->label_Error->setText(tr("No segmentation node specified!"));
     d->label_Error->setVisible(true);
     d->updateGeometryWidgets();
     return;

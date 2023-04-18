@@ -294,14 +294,14 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
       {
       ctkMessageBox* exportWarningMesssgeBox = new ctkMessageBox(this);
       exportWarningMesssgeBox->setAttribute(Qt::WA_DeleteOnClose);
-      exportWarningMesssgeBox->setWindowTitle("Exporting may erase data");
+      exportWarningMesssgeBox->setWindowTitle(tr("Exporting may erase data"));
       exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Ok);
       exportWarningMesssgeBox->addButton(QMessageBox::StandardButton::Cancel);
       exportWarningMesssgeBox->setDontShowAgainVisible(true);
       exportWarningMesssgeBox->setIcon(QMessageBox::Warning);
       exportWarningMesssgeBox->setDontShowAgainSettingsKey("Segmentations/AlwaysCropDuringSegmentationFileExport");
-      exportWarningMesssgeBox->setText("The current segmentation does not completely fit into the new geometry.\n"
-                                       "Do you want to crop the segmentation?\n");
+      exportWarningMesssgeBox->setText(tr("The current segmentation does not completely fit into the new geometry.\n"
+                                       "Do you want to crop the segmentation?\n"));
       if (exportWarningMesssgeBox->exec() != QMessageBox::StandardButton::Ok)
         {
         return;

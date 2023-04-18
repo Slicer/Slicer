@@ -232,7 +232,7 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
           {
           // Existing representations get an update button
           ctkMenuButton* updateButton = new ctkMenuButton(representationWidget);
-          updateButton->setText("Update");
+          updateButton->setText(tr("Update"));
           QString updateButtonTooltip = tr("Update %1 representation using custom conversion parameters.\n\n"
             "Click the down-arrow button for additional operations.").arg(name);
           updateButton->setToolTip(updateButtonTooltip);

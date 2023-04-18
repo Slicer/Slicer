@@ -468,20 +468,20 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
     {
     int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment);
     QIcon statusIcon = d->NotStartedIcon;
-    QString statusTooltip = "Not started";
+    QString statusTooltip = tr("Not started");
     switch (status)
       {
       case vtkSlicerSegmentationsModuleLogic::InProgress:
         statusIcon = d->InProgressIcon;
-        statusTooltip = "In progress";
+        statusTooltip = tr("In progress");
         break;
       case vtkSlicerSegmentationsModuleLogic::Completed:
         statusIcon = d->CompletedIcon;
-        statusTooltip = "Completed";
+        statusTooltip = tr("Completed");
         break;
       case vtkSlicerSegmentationsModuleLogic::Flagged:
         statusIcon = d->FlaggedIcon;
-        statusTooltip = "Flagged";
+        statusTooltip = tr("Flagged");
         break;
       }
 
@@ -1052,12 +1052,12 @@ QString qMRMLSegmentsModel::terminologyTooltipForSegment(vtkSegment* segment)
   std::string serializedTerminology("");
   if (!segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), serializedTerminology))
     {
-    return QString("No terminology information");
+    return tr("No terminology information");
     }
   vtkSmartPointer<vtkSlicerTerminologyEntry> terminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
   if (!terminologiesLogic->DeserializeTerminologyEntry(serializedTerminology, terminologyEntry))
     {
-    return QString("Invalid terminology information");
+    return tr("Invalid terminology information");
     }
 
   return QString(terminologiesLogic->GetInfoStringFromTerminologyEntry(terminologyEntry).c_str());

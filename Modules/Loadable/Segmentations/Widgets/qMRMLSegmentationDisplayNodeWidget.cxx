@@ -205,7 +205,7 @@ void qMRMLSegmentationDisplayNodeWidget::updateSelectedSegmentSection()
   d->groupBox_SelectedSegment->setEnabled(!d->SelectedSegmentID.isEmpty());
   if (!d->SegmentationDisplayNode || d->SelectedSegmentID.isEmpty())
     {
-    d->groupBox_SelectedSegment->setTitle("Selected segment: none");
+    d->groupBox_SelectedSegment->setTitle(tr("Selected segment: none"));
     return;
     }
 
@@ -257,7 +257,7 @@ void qMRMLSegmentationDisplayNodeWidget::updateSelectedSegmentSection()
     qCritical() << Q_FUNC_INFO << ": Unable to access segment " << d->SelectedSegmentID << " in segmentation " << segmentationNode->GetName();
     return;
     }
-  QString newTitle = QString("Selected segment: %1").arg(selectedSegment->GetName());
+  QString newTitle = tr("Selected segment: %1").arg(selectedSegment->GetName());
   d->groupBox_SelectedSegment->setTitle(newTitle);
 }
 
