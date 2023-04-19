@@ -423,7 +423,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         if messages:
             slicer.util.warningDisplay(
                 _("Warning: {messages}").format(messages=' '.join(messages))
-                 + "\n\n" + _("See python console for error message."),
+                + "\n\n" + _("See python console for error message."),
                 windowTitle=_("DICOM"), parent=self)
 
         return loadablesByPlugin, loadEnabled
@@ -565,7 +565,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             for loadable in self.loadablesByPlugin[plugin]:
                 if loadable.selected and loadable.warning != "":
                     warningsInSelectedLoadables = True
-                    logging.warning(_('Warning in DICOM plugin {load_type} when examining loadable {name}: {messsage}').format(
+                    logging.warning(_('Warning in DICOM plugin {load_type} when examining loadable {name}: {message}').format(
                         load_type=plugin.loadType, name=loadable.name, message=loadable.warning))
                     details += loadable.name + " [" + plugin.loadType + "]: " + loadable.warning + "\n"
         if warningsInSelectedLoadables:

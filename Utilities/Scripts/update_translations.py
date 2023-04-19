@@ -117,6 +117,7 @@ def patch_python_files(source_files, root_dir):
             with open(source_file, 'wb') as file_object:
                 file_object.write(patched_source_code)
 
+
 def restore_patched_python_files(source_files, root_dir):
     """Restore Python files patched by patch_python_files()
     from the saved *.pyTrSource files.
@@ -194,7 +195,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
         for source_file in source_files:
             relative_path = str(source_file.relative_to(Path(source_code_dir)))
 
-            # Apply filname filter if specified. For example, some files may need to be excluded
+            # Apply filename filter if specified. For example, some files may need to be excluded
             # because lupdate crashes when it tries to parse some complex Python files.
             if source_file_regex:
                 if not re.match(source_file_regex, relative_path):
@@ -202,7 +203,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
 
             # Skip Python file if internationalization is explicitly disabled in it
             if str(source_file).endswith('.py'):
-                with open(source_file, 'r') as file_object:
+                with open(source_file) as file_object:
                     source_code = file_object.read()
                 if "-*- i18n: disabled -*-" in source_code:
                     # Translation of the file is explicitly disabled

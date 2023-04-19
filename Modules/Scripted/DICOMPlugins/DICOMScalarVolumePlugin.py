@@ -7,7 +7,6 @@ import qt
 import vtk
 import vtkITK
 from slicer.i18n import tr as _
-from slicer.i18n import translate
 
 import slicer
 

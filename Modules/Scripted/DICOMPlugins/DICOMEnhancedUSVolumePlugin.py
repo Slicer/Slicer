@@ -5,7 +5,7 @@ import slicer
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 from slicer.i18n import tr as _
-from slicer.i18n import translate
+
 
 #
 # This is the plugin for DICOM module

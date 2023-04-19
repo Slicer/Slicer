@@ -4,7 +4,6 @@ import tempfile
 
 import slicer
 from slicer.i18n import tr as _
-from slicer.i18n import translate
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
