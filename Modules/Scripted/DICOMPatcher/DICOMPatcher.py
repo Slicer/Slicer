@@ -236,7 +236,7 @@ class DICOMPatcherRule:
 #
 
 class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
-    def __init__(self, parameters):
+    def __init__(self, parameters=None):
         super().__init__(parameters)
         self.requiredTags = ['PatientName', 'PatientID']
         self.eachFileIsSeparateSeries = False
@@ -267,7 +267,7 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
 
 
 class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
-    def __init__(self, parameters):
+    def __init__(self, parameters=None):
         super().__init__(parameters)
         self.requiredTags = ['SeriesInstanceUID']
 
@@ -289,7 +289,7 @@ class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
 
 
 class GenerateMissingIDs(DICOMPatcherRule):
-    def __init__(self, parameters):
+    def __init__(self, parameters=None):
         super().__init__(parameters)
         self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
         self.eachFileIsSeparateSeries = False
@@ -499,7 +499,8 @@ class UseCharacterSet(DICOMPatcherRule):
 #
 
 class Anonymize(DICOMPatcherRule):
-    def __init__(self):
+    def __init__(self, parameters=None):
+        super().__init__(parameters)
         self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
 
     def processStart(self, inputRootDir, outputRootDir):
@@ -771,6 +772,8 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
         logic.addRule("RemoveDICOMDIR")
         logic.addRule("FixPrivateMediaStorageSOPClassUID")
         logic.addRule("AddMissingSliceSpacingToMultiframe")
+        logic.addRule("FixExposureFiasco")
+        logic.addRule("UseCharacterSet", {"CharacterSet": "cp1251"})
         logic.addRule("Anonymize")
         logic.addRule("NormalizeFileNames")
         logic.patchDicomDir(inputTestDir, outputTestDir)
