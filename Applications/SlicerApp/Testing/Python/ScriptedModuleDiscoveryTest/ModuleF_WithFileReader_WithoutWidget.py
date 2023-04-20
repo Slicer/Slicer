@@ -1,12 +1,12 @@
 from slicer.ScriptedLoadableModule import *
 
-SOMEVAR = 'E'
+SOMEVAR = 'F'
 
 
-class ModuleE_WithFileWriter_WithoutWidget(ScriptedLoadableModule):
+class ModuleF_WithFileReader_WithoutWidget(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Module E"
+        self.parent.title = "Module F"
         self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)", ]
         self.parent.helpText = """
     This module allows to test the scripted module import.
@@ -20,23 +20,24 @@ class ModuleE_WithFileWriter_WithoutWidget(ScriptedLoadableModule):
         return SOMEVAR
 
 
-class ModuleE_WithFileWriter_WithoutWidgetFileWriter:
+class ModuleF_WithFileReader_WithoutWidgetFileReader:
 
     def __init__(self, parent):
         self.parent = parent
 
     def description(self):
-        return 'My writer file type'
+        return 'My reader file type'
 
     def fileType(self):
-        return 'MyWriterFileType'
+        return 'MyReaderFileType'
 
-    def extensions(self, obj):
-        print(obj)
-        return ['My writer file type (*.mwft)']
+    def extensions(self):
+        return ['My reader file type (*.mrft)']
 
-    def canWriteObject(self, obj):
+    def canLoadFile(self, filePath):
+        print(filePath)
         return False
 
-    def write(self, properties):
+    def load(self, properties):
+        print(properties)
         return True

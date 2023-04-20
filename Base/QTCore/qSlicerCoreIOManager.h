@@ -214,6 +214,17 @@ public:
   /// Note also that the IOManager takes ownership of \a io
   void registerIO(qSlicerIO* io);
 
+  /// @{
+  /// Return the number of registered \a qSlicerIO associated with \a fileType.
+  ///
+  /// \a registerIO()
+  /// \a qSlicerScriptedLoadableModule::registerIO()
+  /// \a qSlicerScriptedLoadableModule::readers()
+  /// \a qSlicerScriptedLoadableModule::writers()
+  Q_INVOKABLE int registeredFileReaderCount(const qSlicerIO::IOFileType& fileType) const;
+  Q_INVOKABLE int registeredFileWriterCount(const qSlicerIO::IOFileType& fileType) const;
+  /// }@
+
   /// Create and add default storage node
   Q_INVOKABLE static vtkMRMLStorageNode* createAndAddDefaultStorageNode(vtkMRMLStorableNode* node);
 
