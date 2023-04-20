@@ -751,7 +751,10 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
     }
   else
     {
-    qCritical() << Q_FUNC_INFO << ": No owner plugin for subject hierarchy item " << shNode->GetItemName(selectedShItemID).c_str();
+    if (selectedShItemID != shNode->GetSceneItemID())
+      {
+      qCritical() << Q_FUNC_INFO << ": No owner plugin for subject hierarchy item " << shNode->GetItemName(selectedShItemID).c_str();
+      }
     this->setDefaultIcon(QIcon());
     }
 }
