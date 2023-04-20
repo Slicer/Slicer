@@ -1,7 +1,9 @@
 import __main__
 
+# Loaded module top-level variables should not be in the global scope
 assert not hasattr(__main__, 'SOMEVAR')
 
+# Loaded module classes should not be in the global scope
 assert not hasattr(__main__, 'ModuleA')
 assert not hasattr(__main__, 'ModuleB')
 assert not hasattr(__main__, 'ModuleC_WithoutWidget')
@@ -13,7 +15,7 @@ import slicer
 
 assert isinstance(slicer.modules, ModuleType)
 
-# Global variable
+# Module top-level variables
 assert slicer.modules.ModuleAInstance.somevar() == 'A'
 assert slicer.modules.ModuleBInstance.somevar() == 'B'
 assert slicer.modules.ModuleC_WithoutWidgetInstance.somevar() == 'C'
@@ -40,19 +42,21 @@ assert isinstance(ModuleC_WithoutWidget, ModuleType)
 assert isinstance(ModuleD_WithFileDialog_WithoutWidget, ModuleType)
 assert isinstance(ModuleE_WithFileWriter_WithoutWidget, ModuleType)
 
-# Check class type
+# Check module class type
 assert isinstance(ModuleA.ModuleA, type)
 assert isinstance(ModuleB.ModuleB, type)
 assert isinstance(ModuleC_WithoutWidget.ModuleC_WithoutWidget, type)
 assert isinstance(ModuleD_WithFileDialog_WithoutWidget.ModuleD_WithFileDialog_WithoutWidget, type)
 assert isinstance(ModuleE_WithFileWriter_WithoutWidget.ModuleE_WithFileWriter_WithoutWidget, type)
 
+# Check module widget class type
 assert isinstance(ModuleA.ModuleAWidget, type)
 assert isinstance(ModuleB.ModuleBWidget, type)
+
+# Check that module do not clobber each others. See issue #3549
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleC_WithoutWidgetWidget')
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleD_WithFileDialog_WithoutWidget')
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleE_WithFileWriter_WithoutWidget')
-
 
 # Plugins
 # XXX Will need to extend module API to list registered plugins
