@@ -429,6 +429,14 @@ void qSlicerIOManager::registerDialog(qSlicerFileDialog* dialog)
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerIOManager::isDialogRegistered(qSlicerIO::IOFileType fileType, qSlicerFileDialog::IOAction action) const
+{
+  Q_D(const qSlicerIOManager);
+  qSlicerFileDialog* existingDialog = d->findDialog(fileType, action);
+  return existingDialog != nullptr;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   const qSlicerIO::IOProperties& parameters, vtkCollection* loadedNodes,
   vtkMRMLMessageCollection* userMessages/*=nullptr*/)

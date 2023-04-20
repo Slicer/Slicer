@@ -1,3 +1,4 @@
+import slicer
 from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = 'D'
@@ -6,7 +7,7 @@ SOMEVAR = 'D'
 class ModuleD_WithFileDialog_WithoutWidget(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Module A"
+        self.parent.title = "Module D"
         self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)", ]
         self.parent.helpText = """
     This module allows to test the scripted module import.
@@ -20,7 +21,7 @@ class ModuleD_WithFileDialog_WithoutWidget(ScriptedLoadableModule):
         return SOMEVAR
 
 
-class DICOMFileDialog:
+class ModuleD_WithFileDialog_WithoutWidgetFileDialog:
 
     def __init__(self, qSlicerFileDialog):
         self.qSlicerFileDialog = qSlicerFileDialog
