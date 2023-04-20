@@ -29,6 +29,10 @@ assert slicer.modules.modulec_withoutwidget.widgetRepresentation() is None
 assert slicer.modules.moduled_withfiledialog_withoutwidget.widgetRepresentation() is None
 assert slicer.modules.modulee_withfilewriter_withoutwidget.widgetRepresentation() is None
 
+# Check scripted file dialog registration
+assert slicer.app.ioManager().isDialogRegistered('Foo Directory', slicer.qSlicerFileDialog.Read)
+assert not slicer.app.ioManager().isDialogRegistered('Foo Directory', slicer.qSlicerFileDialog.Write)
+
 import ModuleA
 import ModuleB
 import ModuleC_WithoutWidget
@@ -52,6 +56,9 @@ assert isinstance(ModuleE_WithFileWriter_WithoutWidget.ModuleE_WithFileWriter_Wi
 # Check module widget class type
 assert isinstance(ModuleA.ModuleAWidget, type)
 assert isinstance(ModuleB.ModuleBWidget, type)
+
+# Check file dialog class type
+assert isinstance(ModuleD_WithFileDialog_WithoutWidget.ModuleD_WithFileDialog_WithoutWidgetFileDialog, type)
 
 # Check that module do not clobber each others. See issue #3549
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleC_WithoutWidgetWidget')

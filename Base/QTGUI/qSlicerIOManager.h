@@ -57,6 +57,13 @@ public:
   /// fileType (only 1 dialog per filetype) is overridden.
   void registerDialog(qSlicerFileDialog* dialog);
 
+  /// Return True if a custom file dialog was registered.
+  ///
+  /// \sa registerDialog()
+  /// \sa qSlicerScriptedLoadableModule::registerFileDialog()
+  /// \sa qSlicerScriptedFileDialog
+  Q_INVOKABLE bool isDialogRegistered(qSlicerIO::IOFileType fileType, qSlicerFileDialog::IOAction action) const;
+
   /// Displays a progress dialog if it takes too long to load
   /// There is no way to know in advance how long the loading will take, so the
   /// progress dialog listens to the scene and increment the progress anytime
