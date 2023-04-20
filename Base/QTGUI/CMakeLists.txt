@@ -156,6 +156,8 @@ if(Slicer_USE_PYTHONQT)
     qSlicerScriptedLoadableModule.h
     qSlicerScriptedFileDialog.cxx
     qSlicerScriptedFileDialog.h
+    qSlicerScriptedFileReader.cxx
+    qSlicerScriptedFileReader.h
     )
 endif()
 
@@ -265,6 +267,7 @@ if(Slicer_USE_PYTHONQT)
     qSlicerScriptedLoadableModule.h
     qSlicerScriptedLoadableModuleWidget.h
     qSlicerScriptedFileDialog.h
+    qSlicerScriptedFileReader.h
     )
 endif()
 

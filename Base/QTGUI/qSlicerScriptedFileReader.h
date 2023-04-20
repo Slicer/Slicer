@@ -23,7 +23,7 @@
 
 // Slicer includes
 #include "qSlicerFileReader.h"
-#include "qSlicerBaseQTCoreExport.h"
+#include "qSlicerBaseQTGUIExport.h"
 
 // Forward Declare PyObject*
 #ifndef PyObject_HEAD
@@ -33,7 +33,7 @@ typedef _object PyObject;
 class qSlicerScriptedFileReaderPrivate;
 class vtkObject;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileReader
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedFileReader
   : public qSlicerFileReader
 {
   Q_OBJECT
