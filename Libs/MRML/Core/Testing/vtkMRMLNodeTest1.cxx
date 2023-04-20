@@ -100,12 +100,22 @@ public:
   vtkObject* LastMRMLEventCaller;
   unsigned long LastMRMLEventId;
 
+  enum
+  {
+    ContentModifiedEvent1 = 25000,
+    ContentModifiedEvent2 = 25001,
+    ContentModifiedEvent3 = 25002,
+  };
+
 private:
   vtkMRMLNodeTestHelper1()
     {
     this->OtherNodeID = nullptr;
     this->LastMRMLEventCaller = nullptr;
     this->LastMRMLEventId = 0;
+    this->ContentModifiedEvents->InsertNextValue(ContentModifiedEvent1);
+    this->ContentModifiedEvents->InsertNextValue(ContentModifiedEvent2);
+    this->ContentModifiedEvents->InsertNextValue(ContentModifiedEvent3);
     }
   ~vtkMRMLNodeTestHelper1() override
     {
@@ -1735,9 +1745,9 @@ bool TestReferencesWithEvent()
     }
 
   if (referencingNode->GetInternalReferencedNodes()[role1][0]->GetReferencedNode() == nullptr ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetNumberOfTuples() != 2 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(0) != 777 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(1) != 888)
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetNumberOfTuples() != 2 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(0) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(1) != 888)
     {
     std::cerr << "Line " << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
@@ -1763,9 +1773,9 @@ bool TestReferencesWithEvent()
     return false;
     }
   if (referencingNode->GetInternalReferencedNodes()[role1][0]->GetReferencedNode() == nullptr ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetNumberOfTuples() != 2 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(0) != 777 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(1) != 888)
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetNumberOfTuples() != 2 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(0) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(1) != 888)
     {
     std::cerr << "Line " << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
@@ -1794,9 +1804,9 @@ bool TestReferencesWithEvent()
   referencingNode->AddAndObserveNodeReferenceID(role1.c_str(), referencedNode1->GetID(), events.GetPointer());
 
   if (referencingNode->GetInternalReferencedNodes()[role1][0]->GetReferencedNode() == nullptr ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetNumberOfTuples() != 2 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(0) != 777 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(1) != 888)
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetNumberOfTuples() != 2 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(0) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(1) != 888)
     {
     std::cerr << "Line " << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
@@ -1811,9 +1821,9 @@ bool TestReferencesWithEvent()
   referencingNode->SetAndObserveNthNodeReferenceID(role1.c_str(), 0, referencedNode1->GetID(), events.GetPointer());
 
   if (referencingNode->GetInternalReferencedNodes()[role1][0]->GetReferencedNode() == nullptr ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetNumberOfTuples() != 2 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(0) != 777 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(1) != 888)
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetNumberOfTuples() != 2 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(0) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(1) != 888)
     {
     std::cerr << "Line " << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
@@ -1831,10 +1841,10 @@ bool TestReferencesWithEvent()
   referencingNode->SetAndObserveNthNodeReferenceID(role1.c_str(), 0, referencedNode1->GetID(), events.GetPointer());
 
   if (referencingNode->GetInternalReferencedNodes()[role1][0]->GetReferencedNode() == nullptr ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetNumberOfTuples() != 3 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(0) != 345 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(1) != 777 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(2) != 999)
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetNumberOfTuples() != 3 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(0) != 345 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(1) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(2) != 999)
     {
     std::cerr << "Line " << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
@@ -1876,10 +1886,10 @@ bool TestReferencesWithEvent()
   referencingNode->SetAndObserveNthNodeReferenceID(role1.c_str(), 0, referencedNode1->GetID(), events2.GetPointer());
 
   if (referencingNode->GetInternalReferencedNodes()[role1][0]->GetReferencedNode() == nullptr ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetNumberOfTuples() != 3 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(0) != 345 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(1) != 777 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->GetEvents()->GetValue(2) != 111)
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetNumberOfTuples() != 3 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(0) != 345 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(1) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->GetStaticEvents()->GetValue(2) != 111)
     {
     std::cerr << "Line " << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
@@ -1995,7 +2005,7 @@ bool TestMultipleReferencesToSameNodeWithEvent()
   referencedNode1->InvokeEvent(777);
   if (referencingNode->LastMRMLEventId==777)
     {
-    std::cerr << "Line " << __LINE__ << ": TestMultipleReferencesToSameNodeWithEvent failed: event 777 is not received while it should not have been" << std::endl;
+    std::cerr << "Line " << __LINE__ << ": TestMultipleReferencesToSameNodeWithEvent failed: event 777 is received while it should not have been" << std::endl;
     return false;
     }
 
@@ -2012,6 +2022,45 @@ bool TestMultipleReferencesToSameNodeWithEvent()
   if (referencingNode->LastMRMLEventId!=999)
     {
     std::cerr << "Line " << __LINE__ << ": TestMultipleReferencesToSameNodeWithEvent failed: event 999 is not received" << std::endl;
+    return false;
+    }
+
+  // Check if content modified events are received
+
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN(); // we may get a warning in debug mode
+  events->SetNumberOfTuples(0);
+  referencingNode->SetAndObserveNodeReferenceID(role1, referencedNode2->GetID(), events, vtkMRMLNode::ContentModifiedObserveEnabled);
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
+
+  referencingNode->LastMRMLEventId = 0;
+  referencedNode2->InvokeEvent(333);
+  if (referencingNode->LastMRMLEventId == 333)
+    {
+    std::cerr << "Line " << __LINE__ << ": TestMultipleReferencesToSameNodeWithEvent failed: event 333 is received while it should not have been" << std::endl;
+    return false;
+    }
+
+  referencingNode->LastMRMLEventId=0;
+  referencedNode2->InvokeEvent(vtkMRMLNodeTestHelper1::ContentModifiedEvent1);
+  if (referencingNode->LastMRMLEventId != vtkMRMLNodeTestHelper1::ContentModifiedEvent1)
+    {
+    std::cerr << "Line " << __LINE__ << ": TestMultipleReferencesToSameNodeWithEvent failed: event ContentModifiedEvent1 is not received" << std::endl;
+    return false;
+    }
+
+  referencingNode->LastMRMLEventId=0;
+  referencedNode2->InvokeEvent(vtkMRMLNodeTestHelper1::ContentModifiedEvent2);
+  if (referencingNode->LastMRMLEventId != vtkMRMLNodeTestHelper1::ContentModifiedEvent2)
+    {
+    std::cerr << "Line " << __LINE__ << ": TestMultipleReferencesToSameNodeWithEvent failed: event ContentModifiedEvent2 is not received" << std::endl;
+    return false;
+    }
+
+  referencingNode->LastMRMLEventId=0;
+  referencedNode2->InvokeEvent(vtkMRMLNodeTestHelper1::ContentModifiedEvent3);
+  if (referencingNode->LastMRMLEventId != vtkMRMLNodeTestHelper1::ContentModifiedEvent3)
+    {
+    std::cerr << "Line " << __LINE__ << ": TestMultipleReferencesToSameNodeWithEvent failed: event ContentModifiedEvent3 is not received" << std::endl;
     return false;
     }
 
