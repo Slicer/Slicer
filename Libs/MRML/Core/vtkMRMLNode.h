@@ -175,6 +175,15 @@ public:
   vtkTypeMacro(vtkMRMLNode,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  /// These values are used in methods that specify node references.
+  /// \sa AddNodeReferenceRole, SetAndObserveNodeReferenceID, AddAndObserveNodeReferenceID, SetAndObserveNthNodeReferenceID
+  enum ContentModifiedObserveType
+    {
+    ContentModifiedObserveUndefined = -1, ///< Observe content modified events if it is enabled in the node reference role
+    ContentModifiedObserveDisabled = 0,   ///< Do not observe content modified events (default)
+    ContentModifiedObserveEnabled = 1     ///< Observe content modified events
+    };
+
   /// \brief Create instance of the default node. Like New only virtual.
   ///
   /// \note Subclasses should implement this method
@@ -660,11 +669,17 @@ public:
   /// MRML attribute names for a node reference role of "unit/length" will be "lengthUnitRef".
   /// Use this method to add new reference types to a node.
   /// This method is typically called in the constructors of each subclass.
+  ///
   /// The optional events argument specifies what events should be observed by default (e.g., when loading the scene from file).
   /// If referenceRole ends with '/' character then events are used for all roles names begins with this role name (for example,
   /// events specified for referenceRole='unit/' will be used for referenceRole='unit/length', referenceRole='unit/area', etc).
+  ///
+  /// If observeContentModifiedEvents is enabled then this node will get notifications when any of the
+  /// event in the ContentModifiedEvents list of the observed node is invoked.
+  ///
   /// \sa GetReferenceNodeFromMRMLAttributeName()
-  void AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName=nullptr, vtkIntArray *events=nullptr);
+  void AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName=nullptr,
+    vtkIntArray *events=nullptr, bool observeContentModifiedEvents=false);
 
   /// \brief Set a reference to a node with specified nodeID from this node for a specific \a referenceRole.
   vtkMRMLNode* SetNodeReferenceID(const char* referenceRole, const char* referencedNodeID);
@@ -680,13 +695,25 @@ public:
   /// \a referenceRole.
   ///
   /// Observe Modified event by default, optionally takes array of events
-  vtkMRMLNode* SetAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID, vtkIntArray *events=nullptr);
+  ///
+  /// If observeContentModifiedEvents is set to ContentModifiedObserveEnabled then
+  /// this node will get notifications when any of the event in the ContentModifiedEvents
+  /// list of the observed node is invoked. If observeContentModifiedEvents is set to
+  /// ContentModifiedObserveUndefined then the behavior defined in the node reference role will be used.
+  vtkMRMLNode* SetAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID,
+    vtkIntArray *events=nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
 
   /// \brief Add and observe a reference node from this node for a specific
   /// \a referenceRole.
   ///
   /// Observe Modified event by default, optionally takes array of events.
-  vtkMRMLNode* AddAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID, vtkIntArray *events=nullptr);
+  ///
+  /// If observeContentModifiedEvents is set to ContentModifiedObserveEnabled then
+  /// this node will get notifications when any of the event in the ContentModifiedEvents
+  /// list of the observed node is invoked. If observeContentModifiedEvents is set to
+  /// ContentModifiedObserveUndefined then the behavior defined in the node reference role will be used.
+  vtkMRMLNode* AddAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID,
+    vtkIntArray *events=nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
 
   /// \brief Set and observe the Nth node ID for a specific reference role.
   ///
@@ -700,10 +727,17 @@ public:
   /// later be called to retrieve the nodes from the scene
   /// (automatically done when loading a scene). Get(Nth)NodeReference() also
   /// scan the scene if the node was not yet cached.
+  ///
+  /// If observeContentModifiedEvents is set to ContentModifiedObserveEnabled then
+  /// this node will get notifications when any of the event in the ContentModifiedEvents
+  /// list of the observed node is invoked. If observeContentModifiedEvents is set to
+  /// ContentModifiedObserveUndefined then the behavior defined in the node reference role will be used.
+  ///
   /// \sa SetAndObserveNodeReferenceID(const char*)
   /// \sa AddAndObserveNodeReferenceID(const char*)
   /// \sa RemoveNthNodeReferenceID(int)
-  vtkMRMLNode* SetAndObserveNthNodeReferenceID(const char* referenceRole, int n, const char *referencedNodeID, vtkIntArray *events=nullptr);
+  vtkMRMLNode* SetAndObserveNthNodeReferenceID(const char* referenceRole, int n, const char *referencedNodeID,
+    vtkIntArray *events=nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
 
   /// Convenience method that removes the Nth node ID from the list.
   void RemoveNthNodeReferenceID(const char* referenceRole, int n);
@@ -817,8 +851,12 @@ protected:
     ///
     /// If set to nullptr then the default event list (specified for the role) will be observed.
     /// If set to an empty event list then no events will be observed.
-    void SetEvents(vtkIntArray* events);
-    vtkIntArray* GetEvents() const;
+    void SetStaticEvents(vtkIntArray* events);
+    vtkIntArray* GetStaticEvents() const;
+
+    /// Controls if ContentModifiedEvents should be observed.
+    vtkSetMacro(ObserveContentModifiedEvents, ContentModifiedObserveType);
+    vtkGetMacro(ObserveContentModifiedEvents, ContentModifiedObserveType);
 
     void SetReferencingNode(vtkMRMLNode* node);
     vtkMRMLNode* GetReferencingNode() const;
@@ -844,9 +882,12 @@ protected:
     /// Referenced node that should be observed (may not be the same
     /// as ReferencedNode if the ReferencedNodeID is recently changed)
     char*     ReferencedNodeID;
-    /// Events that should be observed (may not be the same as ReferencedNode
-    /// if the ReferencedNodeID is recently changed)
-    vtkSmartPointer<vtkIntArray> Events;
+    /// Events that should be observed
+    vtkSmartPointer<vtkIntArray> StaticEvents;
+    /// Specifies whether ContentModified events of the referenced node should be observed.
+    /// The undefined state is used to indicate if the value was specified explicitly
+    /// (necessary to distinguish it from being explicitly disabled for implementation of reference groups).
+    ContentModifiedObserveType ObserveContentModifiedEvents{ vtkMRMLNode::ContentModifiedObserveUndefined };
   };
 
   vtkMRMLNode();
@@ -908,7 +949,7 @@ protected:
   /// Updates the event observers on the old and new referenced node.
   /// referenceToIgnore should contain the current reference that is being updated.
   vtkMRMLNode* UpdateNodeReferenceEventObserver(vtkMRMLNode *oldReferencedNode, vtkMRMLNode *newReferencedNode,
-    vtkIntArray *newEvents, vtkMRMLNodeReference* referenceToIgnore);
+    vtkIntArray *newEvents, bool newObserveContentModifiedEvents, vtkMRMLNodeReference* referenceToIgnore);
 
   /// Helper function for SetAndObserveNthNodeReferenceID (through UpdateNodeReferenceEventObserver).
   /// Counts how many times the old and new node is used and what events are observed.
@@ -918,7 +959,7 @@ protected:
   void GetUpdatedReferencedNodeEventList(int& oldReferencedNodeUseCount, int& newReferencedNodeUseCount,
     vtkIntArray* oldConsolidatedEventList, vtkIntArray* newConsolidatedEventList,
     vtkMRMLNode* oldReferencedNode, vtkMRMLNode* newReferencedNode,
-    vtkMRMLNodeReference* referenceToIgnore, vtkIntArray* newEvents);
+    vtkMRMLNodeReference* referenceToIgnore, vtkIntArray* newEvents, bool newObserveContentModifiedEvents);
 
   /// Remove all references and event observers to referenced nodes but leave ID's and events.
   /// References and event observers can be re-added by calling UpdateNodeReferences().
@@ -986,7 +1027,12 @@ protected:
 
   std::map< std::string, std::string> NodeReferenceMRMLAttributeNames;
 
-  typedef std::map< std::string, vtkSmartPointer<vtkIntArray> > NodeReferenceEventsType;
+  struct NodeReferenceEventList
+    {
+    vtkSmartPointer<vtkIntArray> StaticEvents;
+    ContentModifiedObserveType ObserveContentModifiedEvents{ ContentModifiedObserveUndefined };
+    };
+  typedef std::map< std::string, NodeReferenceEventList> NodeReferenceEventsType;
   NodeReferenceEventsType NodeReferenceEvents; // for each role it specifies which referenced node emitted events this node should observe
 
 private:

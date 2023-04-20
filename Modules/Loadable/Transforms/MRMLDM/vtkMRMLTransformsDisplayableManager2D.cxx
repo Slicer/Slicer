@@ -354,6 +354,8 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::UpdateDisplayNodePipeli
 
   if (polyData->GetNumberOfPoints()==0)
     {
+    // Avoid vtkTransformPolyDataFilter logging "No input data" errors
+    pipeline->Actor->SetVisibility(false);
     return;
     }
 

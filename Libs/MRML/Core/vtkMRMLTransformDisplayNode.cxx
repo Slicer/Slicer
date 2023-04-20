@@ -96,11 +96,13 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   this->EditorRotationEnabled = true;
   this->EditorScalingEnabled = false;
 
-  vtkNew<vtkIntArray> events;
-  events->InsertNextValue(vtkCommand::ModifiedEvent);
-  events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-  this->AddNodeReferenceRole(RegionReferenceRole, RegionReferenceRole, events.GetPointer());
-  this->AddNodeReferenceRole(GlyphPointsReferenceRole, GlyphPointsReferenceRole, events.GetPointer());
+  vtkNew<vtkIntArray> regionModifiedEvents;
+  regionModifiedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  regionModifiedEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+  this->AddNodeReferenceRole(RegionReferenceRole, RegionReferenceRole, regionModifiedEvents);
+
+  this->AddNodeReferenceRole(GlyphPointsReferenceRole, GlyphPointsReferenceRole, nullptr,
+    ContentModifiedObserveEnabled /* observe content modified events */);
 }
 
 
@@ -295,8 +297,7 @@ void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject *caller, unsigne
     this->Modified();
     }
   else if (caller!=nullptr
-    && (event==vtkCommand::ModifiedEvent || event==vtkMRMLTransformableNode::TransformModifiedEvent)
-    && caller==GetGlyphPointsNode()
+    && caller==GetGlyphPointsNode() // event can be any content modified event
     && this->VisualizationMode == VIS_MODE_GLYPH
     && (this->Visibility || this->GetVisibility2D()) )
     {
