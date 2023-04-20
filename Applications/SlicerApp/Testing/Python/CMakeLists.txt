@@ -198,6 +198,17 @@ slicer_add_python_test(
 if(UNIX)
 set_tests_properties(py_nomainwindow_${testname} PROPERTIES
   PASS_REGULAR_EXPRESSION "ModuleAWidget finalized"
+  # Workaround the fact using PASS_REGULAR_EXPRESSION ignores return code
+  # by checking for output characteristics of Python exceptions.
+  #
+  # This is needed because the message "ModuleAWidget finalized" is displayed
+  # early on before potential python exceptions.
+  #
+  # Note this is a partial workaround as non-python errors would not cause
+  # the test to fail.
+  #
+  # See https://github.com/jcfr/cmake-add_test-PASS_REGULAR_EXPRESSION
+  FAIL_REGULAR_EXPRESSION "Traceback"
   )
 endif()
 
