@@ -36,24 +36,51 @@ The following keyboard shortcuts are active when you are in the Segment Editor m
 
 ## Panels and their use
 
-- Segmentation: Choose the segmentation to edit
-- Source volume: Choose the volume to segment. The source volume that is selected the very first time after the segmentation is created is used to determine the segmentation's labelmap representation geometry (extent, resolution, axis directions, origin). The source volume is used by all editor effects that uses intensity of the segmented volume (e.g., thresholding, level tracing). The source volume can be changed at any time during the segmentation process. Note: changing the source volume does not affect the segmentation's labelmap representation geometry. To make changes to the geometry (make the extent larger, the resolution finer, etc.) click "Specify geometry" button next to the source volume selector, select a "Source geometry" node that will be used as a basis for the new geometry, adjust parameters, and click OK. To specify an arbitrary extens, an ROI (region of interest) node can be created and selected as source geometry. If the new geometry will crop a region from the existing segments, a warning icon will be displayed beside the "Pad output" checkbox. If the "Pad output" is checked, the extent will be expanded so that it contains both the existing segments and the new reference geometry.
-- Add segment: Add a new segment to the segmentation and select it.
-- Remove segment: Select the segment you would like to delete then click Remove segment to delete from the segmentation.
-- Create Surface: Display your segmentation in the 3D Viewer. This is a toggle button. When turned on the surface is created and updated automatically as the user is segmenting. When turned off, the conversion is not ongoing so the segmentation process is faster. To change surface creation parameters: go to Segmentations module, click Update button in Closed surface row in Representations section, click Binary labelmap -> Closed surface line, double-click on value column to edit a conversion parameter value. Setting Smoothing factor to 0 disables smoothing, making updates much faster. Set Smoothing factor to 0.1 for weak smoothing and 0.5 or larger for stronger smoothing.
-- Segments table: Displays list of all segments.
-  - Eye icon: Toggle segment's visibility. To customize visualization: either open the slice view controls (click on push-pint and double-arrow icons at the top of a slice viewer) or go to Segmentations module.
-  - Color swatch: set color and assign segment to standardized terminology.
-- Effects: Select the desired effect here. See below for more information about each effect.
-- Options: Options for the selected effect will be displayed here.
-- Undo/Redo: The module saves state of segmentation before each effect is applied. This is useful for experimentation and error correction. By default the last 10 states are remembered.
-- Masking: These options allow you to define the editable areas and whether or not certain segments can be overwritten.
-  - Editable area: Changes will be limited to the selected area. This can be used for drawing inside a specific region or split a segment into multiple segments.
-  - Editable intensity range: Changes will be limited to areas where the source volume's voxels are in the selected intensity range. It is useful when locally an intensity threshold separates well between different regions. Intensity range can be previewed by using Threshold effect.
-  - Modify other segments: Select which segments will be overwritten rather than overlapped.
-    - Overwrite all: Segment will not overlap (default).
-    - Overwrite visible: Visible segments will not overlap with each other. Hidden segments will not be overwritten by changes done to visible segments.
-    - Allow overlap: Changing one segment will not change any other.
+### Main options
+
+- **Segmentation**: Choose the segmentation to edit
+- **Source volume**: Choose the volume to segment. The source volume that is selected the very first time after the segmentation is created is used to determine the segmentation's labelmap representation geometry (extent, resolution, axis directions, origin). The source volume is used by all editor effects that uses intensity of the segmented volume (e.g., thresholding, level tracing). The source volume can be changed at any time during the segmentation process. Note: changing the source volume does not affect the segmentation's labelmap representation geometry. To make changes to the geometry (make the extent larger, the resolution finer, etc.) click **Specify geometry** button next to the source volume selector, select a "Source geometry" node that will be used as a basis for the new geometry, adjust parameters, and click OK. To specify an arbitrary extens, an ROI (region of interest) node can be created and selected as source geometry. If the new geometry will crop a region from the existing segments, a warning icon will be displayed beside the "Pad output" checkbox. If the "Pad output" is checked, the extent will be expanded so that it contains both the existing segments and the new reference geometry.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_specify_geometry.png)
+
+- **Add**: Add a new segment to the segmentation and select it.
+- **Remove**: Select the segment you would like to delete then click Remove segment to delete from the segmentation.
+- **Show 3D**: Display your segmentation in the 3D Viewer. This is a toggle button. When turned on the surface is created and updated automatically as the user is segmenting. When turned off, the conversion is not ongoing so the segmentation process is faster. To change surface creation parameters: go to Segmentations module, click Update button in Closed surface row in Representations section, click Binary labelmap -> Closed surface line, double-click on value column to edit a conversion parameter value. Setting Smoothing factor to 0 disables smoothing, making updates much faster. Set Smoothing factor to 0.1 for weak smoothing and 0.5 or larger for stronger smoothing.
+
+### Segments table
+
+This table displays the list of all segments.
+
+Table columns:
+- **Visibility** (eye icon): Toggle segment's visibility. To customize visualization: either open the slice view controls (click on push-pint and double-arrow icons at the top of a slice viewer) or go to Segmentations module.
+- **Color swatch**: set color and assign segment to standardized terminology.
+- **State** (flag icon): This column can be used for setting the editing status of each segment that can be used for filtering the table or mark segments for further processing.
+  - `Not started`: default starting state, indicates that editing has not happened yet.
+  - `In progress`: when a "not started" segment is edited its state is automatically changed to this
+  - `Completed`: user can manually select this state to indicate that the segmentat is complete
+  - `Flagged`: user can manually select this state for any custom purpose, for example to bring the segment into the attention of an expert reviewer
+- **Layer**: advanced information, displays the 3D layer index when there are overlapping segments. Hidden By default, can be shown by right-clicking on the table and enabling `Show layer column`.
+
+**Filter bar**: It can be used for finding segments when editing segmentations that contain a large number of segments. By default the filter bar may not be shown, right-click on the segments table and click `Show filter bar` to show/hide it.
+- Filter: filter by segment name
+- Segment state toggle buttons: only segments of the selected states will be displayed in the segment list
+
+### Effects section
+
+- **Effect toolbar**: Select the desired effect here. See below for more information about each effect.
+- **Options**: Options for the selected effect will be displayed here.
+- **Undo/Redo**: The module saves state of segmentation before each effect is applied. This is useful for experimentation and error correction. By default the last 10 states are remembered.
+
+### Masking options
+
+These options allow you to define the editable areas and whether or not certain segments can be overwritten.
+
+- **Editable area**: Changes will be limited to the selected area. This can be used for drawing inside a specific region or split a segment into multiple segments.
+- **Editable intensity range**: Changes will be limited to areas where the source volume's voxels are in the selected intensity range. It is useful when locally an intensity threshold separates well between different regions. Intensity range can be previewed by using Threshold effect.
+- **Modify other segments**: Select which segments will be overwritten rather than overlapped.
+  - `Overwrite all`: Segment will not overlap (default).
+  - `Overwrite visible`: Visible segments will not overlap with each other. Hidden segments will not be overwritten by changes done to visible segments.
+  - `Allow overlap`: Changing one segment will not change any other.
 
 ## Effects
 
