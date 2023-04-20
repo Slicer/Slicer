@@ -1134,6 +1134,18 @@ void qSlicerCoreIOManager::registerIO(qSlicerIO* io)
 }
 
 //-----------------------------------------------------------------------------
+int qSlicerCoreIOManager::registeredFileReaderCount(const qSlicerIO::IOFileType& fileType) const
+{
+  return this->readers(fileType).count();
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCoreIOManager::registeredFileWriterCount(const qSlicerIO::IOFileType& fileType) const
+{
+  return this->writers(fileType).count();
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreIOManager::defaultSceneFileType()const
 {
   Q_D(const qSlicerCoreIOManager);
