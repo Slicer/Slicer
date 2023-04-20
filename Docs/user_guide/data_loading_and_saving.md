@@ -58,6 +58,18 @@ Multiple nodes can be exported at once by placing them into a folder and then by
 
 ## Supported Data Formats
 
+:::{note}
+
+### On use of LPS/RAS coordinate systems
+
+DICOM and most medical imaging software uses the **LPS coordinate system** for storing all data. Axis directions of this coordinate system are patient left, posterior, and superior. Unit is millimeters. There is no universal standard for choice of origin, but it is often some geometric center of the imaging system or chosen to be near the center of some object of interest.
+
+**RAS coordinate system** is almost the same as the LPS coordinate system, except the axis directions are patient right, anterior, superior, i.e., the sign of the first two coordinates is inverted. This coordinate system was still popular in the early 2000s when development of Slicer was started, especially in neuroimaging software, therefore Slicer developers chose to use the RAS coordinate system.
+
+Slicer still uses RAS coordinate system for storing coordinate values internally for all data types, but for compatibility with other software, it assumes that all data in files are stored in LPS coordinate system (unless the coordinate system in the file is explicitly stated to be RAS). To achieve this, whenever Slicer reads or writes a file, it may need to flip the sign of the first two coordinate axes to convert the data to RAS coordinate system. 
+
+::: 
+
 ### Images
 
 Readers may support 2D, 3D, and 4D images of various types, such as scalar, vector, DWI or DTI, containing images, dose maps, displacement fields, etc.
