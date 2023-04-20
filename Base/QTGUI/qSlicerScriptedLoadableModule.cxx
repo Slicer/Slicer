@@ -30,6 +30,7 @@
 #include "qSlicerScriptedLoadableModule.h"
 #include "qSlicerScriptedLoadableModuleWidget.h"
 #include "qSlicerScriptedFileDialog.h"
+#include "qSlicerScriptedIOOptionsWidget.h"
 #include "qSlicerScriptedFileReader.h"
 #include "qSlicerScriptedFileWriter.h"
 #include "qSlicerScriptedUtils_p.h"
@@ -220,10 +221,23 @@ void qSlicerScriptedLoadableModule::registerIO()
     qSlicerApplication::application()->ioManager()->registerIO(fileWriter.take());
     }
   QScopedPointer<qSlicerScriptedFileReader> fileReader(new qSlicerScriptedFileReader(this));
+  qSlicerScriptedFileReader* registeredFileReaderRegistered = nullptr;
   ret = fileReader->setPythonSource(d->PythonSourceFilePath);
   if (ret)
     {
-    qSlicerApplication::application()->ioManager()->registerIO(fileReader.take());
+    registeredFileReaderRegistered = fileReader.take();
+    qSlicerApplication::application()->ioManager()->registerIO(registeredFileReaderRegistered);
+    }
+
+  if(registeredFileReaderRegistered != nullptr)
+    {
+    QScopedPointer<qSlicerScriptedIOOptionsWidget> options(new qSlicerScriptedIOOptionsWidget());
+    options->setMRMLScene(this->mrmlScene());
+    ret = options->setPythonSource(d->PythonSourceFilePath);
+    if (ret)
+      {
+      registeredFileReaderRegistered->setOptions(options.take());
+      }
     }
 }
 

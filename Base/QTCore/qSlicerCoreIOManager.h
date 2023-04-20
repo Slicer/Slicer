@@ -88,7 +88,7 @@ public:
   Q_INVOKABLE QStringList allReadableFileExtensions()const;
 
   /// Return the file read options for the best reader associated with a \a file type
-  qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
+  Q_INVOKABLE qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
 
   /// Return the file write options of the best file writer for the input VTK \a object.
   qSlicerIOOptions* fileWriterOptions(vtkObject* object, const QString& extension)const;

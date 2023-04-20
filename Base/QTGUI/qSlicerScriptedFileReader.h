@@ -31,6 +31,7 @@ struct _object;
 typedef _object PyObject;
 #endif
 class qSlicerScriptedFileReaderPrivate;
+class qSlicerScriptedIOOptionsWidget;
 class vtkObject;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedFileReader
@@ -66,6 +67,13 @@ public:
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileReader::extensions()
   QStringList extensions()const override;
+
+  /// Reimplemented to return the registered IOIptions if any.
+  /// \sa registerIOOptions(qSlicerIOOptions*)
+  /// \sa qSlicerFileReader::options()
+  qSlicerIOOptions* options()const override;
+
+  void setOptions(qSlicerScriptedIOOptionsWidget* options);
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileReader::canLoadFile()

@@ -20,13 +20,16 @@
 
 // Qt includes
 #include <QFileInfo>
+#include <QPointer>
 
 // PythonQt includes
 #include <PythonQt.h>
 #include <PythonQtConversion.h>
 
 // Slicer includes
+#include "qSlicerIOOptions.h"
 #include "qSlicerScriptedFileReader.h"
+#include "qSlicerScriptedIOOptionsWidget.h"
 #include "qSlicerScriptedUtils_p.h"
 
 // VTK includes
@@ -54,6 +57,8 @@ public:
 
   QString    PythonSource;
   QString    PythonClassName;
+
+  QPointer<qSlicerScriptedIOOptionsWidget> Options;
 };
 
 //-----------------------------------------------------------------------------
@@ -71,7 +76,13 @@ qSlicerScriptedFileReaderPrivate::qSlicerScriptedFileReaderPrivate()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedFileReaderPrivate::~qSlicerScriptedFileReaderPrivate() = default;
+qSlicerScriptedFileReaderPrivate::~qSlicerScriptedFileReaderPrivate()
+{
+  if (this->Options && !this->Options->parent())
+    {
+    delete this->Options;
+    }
+}
 
 //-----------------------------------------------------------------------------
 // qSlicerScriptedFileReader methods
@@ -239,6 +250,21 @@ QStringList qSlicerScriptedFileReader::extensions()const
     }
   Py_DECREF(resultAsTuple);
   return extensionList;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerIOOptions* qSlicerScriptedFileReader::options()const
+{
+  Q_D(const qSlicerScriptedFileReader);
+  // MRML Scene is expected to be set prior calling setOptions()
+  return d->Options;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerScriptedFileReader::setOptions(qSlicerScriptedIOOptionsWidget* options)
+{
+  Q_D(qSlicerScriptedFileReader);
+  d->Options = options;
 }
 
 //-----------------------------------------------------------------------------
