@@ -62,7 +62,7 @@ Multiple nodes can be exported at once by placing them into a folder and then by
 
 ### On use of LPS/RAS coordinate systems
 
-DICOM and most medical imaging software uses the **LPS coordinate system** for storing all data. Axis directions of this coordinate system are patient left, posterior, and superior. Unit is millimeters. The choice of origin is arbitrary because only relative differences have meaning, so there is no universal standard, but it is often some geometric center of the imaging system is chosen to be near the center of some object of interest.
+DICOM and most medical imaging software uses the **LPS coordinate system** for storing all data. Axis directions of this coordinate system are patient left, posterior, and superior. Unit is millimeters. The choice of origin is arbitrary because only relative differences have meaning, so there is no universal standard, but it is often set to some geometric center of the imaging system, or it is chosen to be near the center of an object of interest.
 
 **RAS coordinate system** is almost the same as the LPS coordinate system, except the axis directions are patient right, anterior, superior, i.e., the sign of the first two coordinates is inverted. Both LPS and RAS were in wide use in the early 2000s when development of Slicer was started and Slicer developers chose to use the RAS coordinate system.  Historically scans by GE equipment used RAS while Siemens and others used LPS.  Since several GE researchers were early contributors to Slicer, RAS was adopted for the internal representation.
 
