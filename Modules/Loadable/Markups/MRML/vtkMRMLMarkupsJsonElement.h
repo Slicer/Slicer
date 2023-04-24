@@ -95,13 +95,13 @@ public:
 
   /// Get a coded entry object from a property.
   /// If no such property is found or it is not the right type then nullptr is returned.
-  /// The caller must take ownership of the returned object.
+  /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
   vtkCodedEntry* GetCodedEntryProperty(const char* propertyName);
 
   /// Get a variable-size, potentially multi-component floating-point vector from a property.
   /// If no such property is found or it is not the right type then nullptr is returned.
-  /// The caller must take ownership of the returned object.
+  /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
   vtkDoubleArray* GetDoubleArrayProperty(const char* propertyName);
 
@@ -111,13 +111,13 @@ public:
 
   /// Get an array element from a property.
   /// If no such property is found or it is not the right type then nullptr is returned.
-  /// The caller must take ownership of the returned object.
+  /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
   vtkMRMLMarkupsJsonElement* GetArrayProperty(const char* arrayName);
 
   /// Get an object element from a property.
   /// If no such property is found or it is not the right type then nullptr is returned.
-  /// The caller must take ownership of the returned object.
+  /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
   vtkMRMLMarkupsJsonElement* GetObjectProperty(const char* objectName);
 
@@ -128,7 +128,7 @@ public:
   int GetArraySize();
 
   /// Returns the n-th elements in this array.
-  /// The caller must take ownership of the returned object.
+  /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
   vtkMRMLMarkupsJsonElement* GetArrayItem(int childItemIndex);
 
@@ -165,7 +165,7 @@ public:
 
   /// Read JSON document from file.
   /// \return JSON element on success and nullptr on failure.
-  /// The caller must take ownership of the returned object.
+  /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
   vtkMRMLMarkupsJsonElement* ReadFromFile(const char* filePath);
 

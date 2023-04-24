@@ -241,8 +241,7 @@ public:
   vtkGetObjectMacro(ImplicitFunctionWorld, vtkImplicitFunction);
 
   /// Create ROI box as surface mesh in the world coordinate system as a new vtkPolyData object.
-  /// In C++, the owner must take ownership of the returned object (delete when no longer used).
-  /// In Python, the returned object automatically takes ownership of the returned object (no need to manually delete).
+  /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE vtkPolyData* CreateROIBoxPolyDataWorld();
 
   ///
