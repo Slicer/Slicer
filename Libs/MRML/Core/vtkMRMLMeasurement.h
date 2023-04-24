@@ -85,6 +85,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Create a new instance of this measurement type.
+  /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
   virtual vtkMRMLMeasurement* CreateInstance() const = 0;
 

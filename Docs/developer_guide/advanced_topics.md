@@ -47,7 +47,32 @@ Similarly to VTK, Slicer contains some "factory" methods:
 - `vtkMRMLScene::GetNodesByClass()`
 - ...
 
-Factory methods return a pointer to a VTK object (with a reference count of 1) that the caller "owns", so the caller must take care of releasing the object to avoid memory leak.
+Factory methods return a pointer to a VTK object (with a reference count of 1) that the caller "owns", so the caller must take care of releasing the object to avoid [memory leak](https://en.wikipedia.org/wiki/Memory_leak).
+
+In C++, it is recommended to make a smart pointer take the ownership of the returned raw pointer. For example:
+
+```cpp
+// GetNodesByClass is a factory method, therefore a smart pointer is used to take the ownership of the returned object
+vtkSmartPointer<vtkCollection> nodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLModelNode"));
+```
+
+In Python, the returned Python object maintains a reference to the underlying VTK object, therefore an extra reference is no longer needed and it is recommended to be immediately removed using the `UnRegister` method:
+
+```python
+nodes = scene.GetNodesByClass("vtkMRMLModelNode")
+nodes.UnRegister(None) # GetNodesByClass method is NOT marked with VTK_NEWINSTANCE, manual unregistration is needed
+```
+
+#### VTK_NEWINSTANCE wrapper hint
+
+If a factory method is marked with the `VTK_NEWINSTANCE` hint then the ownership is transferred to Python where garbage collection takes care of deleting the object when it is no longer needed.
+Calling `object.UnRegister(None)` is prohibited, as it would prematurely delete the object and may crash the application.
+In C++, the `VTK_NEWINSTANCE` hint has no effect, the caller of the factory method must still take the ownership of the returned object the same way as without the hint.
+
+```python
+box = roiNode.CreateROIBoxPolyDataWorld()
+# no need to call UnRegister, as CreateROIBoxPolyDataWorld method is marked with VTK_NEWINSTANCE
+```
 
 #### Loadable modules (C++)
 

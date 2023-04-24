@@ -83,6 +83,7 @@ protected:
   /// Write data from a  referenced node.
   int WriteDataInternal(vtkMRMLNode *refNode) override;
 
+  /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
   vtkMRMLMarkupsJsonElement* ReadMarkupsFile(const char* filePath);
 
