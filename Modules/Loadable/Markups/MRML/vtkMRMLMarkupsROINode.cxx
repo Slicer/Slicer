@@ -34,6 +34,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkCommand.h>
+#include <vtkCubeSource.h>
 #include <vtkDoubleArray.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImplicitSum.h>
@@ -1497,4 +1498,29 @@ void vtkMRMLMarkupsROINode::GetObjectBounds(double bounds[6])
   bounds[3] = diameter[1] / 2.0;
   bounds[4] = -diameter[2] / 2.0;
   bounds[5] = diameter[2] / 2.0;
+}
+
+//---------------------------------------------------------------------------
+vtkPolyData* vtkMRMLMarkupsROINode::CreateROIBoxPolyDataWorld()
+{
+  vtkNew<vtkCubeSource> cubeSource;
+  double sideLengths[3] = { 0.0, 0.0, 0.0 };
+  this->GetSize(sideLengths);
+  cubeSource->SetXLength(sideLengths[0]);
+  cubeSource->SetYLength(sideLengths[1]);
+  cubeSource->SetZLength(sideLengths[2]);
+
+  vtkNew<vtkTransform> roiToWorldTransform;
+  roiToWorldTransform->SetMatrix(this->GetObjectToWorldMatrix());
+
+  vtkNew<vtkTransformPolyDataFilter> roiTransformFilter;
+  roiTransformFilter->SetTransform(roiToWorldTransform);
+  roiTransformFilter->SetInputConnection(cubeSource->GetOutputPort());
+  roiTransformFilter->Update();
+
+  vtkPolyData* outputMesh = roiTransformFilter->GetOutput();
+  // Increase reference count of this object to preserve it after we return
+  // from this method and the current owner (roiTransformFilter) is deleted.
+  outputMesh->Register(nullptr);
+  return outputMesh;
 }
