@@ -201,6 +201,11 @@ public:
   /// activeThreeDRenderer()
   Q_INVOKABLE vtkRenderer* activePlotRenderer()const;
 
+  /// Returns the number of global pause render counts that have been called on the layout manager.
+  /// This value does not include pauseRender counts that have been called on each view individually,
+  /// and is used to set the pause render state when new views are created.
+  /// \sa pauseRender(), resumeRender(), setRenderPaused()
+  int allViewsPauseRenderCount();
 
 public slots:
   /// Set the enabled property value

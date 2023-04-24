@@ -155,6 +155,7 @@ public:
   /// Top-level windows created and managed by this class that host additional viewports
   /// (outside the main application window).
   QMap<QString, ViewportInfo>  DetachedViewports;
+  int AllViewsPauseRenderCount{ 0 };
 };
 
 //------------------------------------------------------------------------------

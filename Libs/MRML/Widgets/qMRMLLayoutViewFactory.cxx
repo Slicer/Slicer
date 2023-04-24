@@ -28,6 +28,10 @@
 // MRMLWidgets includes
 #include "qMRMLLayoutManager.h"
 #include "qMRMLLayoutViewFactory.h"
+#include "qMRMLThreeDWidget.h"
+#include "qMRMLThreeDView.h"
+#include "qMRMLSliceWidget.h"
+#include "qMRMLSliceView.h"
 #include "qMRMLWidget.h"
 
 // MRML includes
@@ -383,7 +387,8 @@ void qMRMLLayoutViewFactory::onNodeModified(vtkObject* node)
     this->onViewNodeModified(viewNode);
     }
 }
-
+#include <qMRMLPlotWidget.h>
+#include <qMRMLPlotView.h>
 // --------------------------------------------------------------------------
 void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
 {
@@ -400,6 +405,26 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
   if (!viewWidget)
     { // The factory cannot create such view, do nothing about it
     return;
+    }
+
+  ctkVTKAbstractView* view = nullptr;
+  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
+  if (threeDWidget)
+    {
+    view = threeDWidget->threeDView();
+    }
+  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
+  if (sliceWidget)
+    {
+    view = sliceWidget->sliceView();
+    }
+
+  if (view)
+    {
+    for (int i = 0; i < d->LayoutManager->allViewsPauseRenderCount(); ++i)
+      {
+      view->pauseRender();
+      }
     }
 
   // Do not show until mapped into a view (the widget is shown/hidden only
