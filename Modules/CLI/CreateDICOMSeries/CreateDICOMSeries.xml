@@ -58,9 +58,8 @@
       <default>false</default>
     </boolean>
     <string-enumeration>
-      <label>Filter Settings</label>
-      <name>Type</name>
       <label>Output Type:</label>
+      <name>Type</name>
       <description><![CDATA[Type for the new output volume.]]></description>
       <longflag>--type</longflag>
       <flag>--t</flag>
