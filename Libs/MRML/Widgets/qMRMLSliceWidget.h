@@ -21,33 +21,32 @@
 #ifndef __qMRMLSliceWidget_h
 #define __qMRMLSliceWidget_h
 
+// VTK includes
+class vtkAlgorithmOutput;
+class vtkCollection;
+class vtkCornerAnnotation;
+class vtkInteractorObserver;
+
 // CTK includes
 #include <ctkPimpl.h>
 #include <vtkVersion.h>
 
 // qMRMLWidget includes
-#include "qMRMLWidget.h"
-
+#include "qMRMLAbstractViewWidget.h"
 #include "qMRMLWidgetsExport.h"
-
-class qMRMLSliceView;
-class qMRMLSliceWidgetPrivate;
 class qMRMLSliceControllerWidget;
 class qMRMLSliceVerticalControllerWidget;
-class vtkCollection;
-class vtkMRMLScene;
+class qMRMLSliceView;
+class qMRMLSliceWidgetPrivate;
+
+// MRML includes
 class vtkMRMLNode;
+class vtkMRMLScene;
+class vtkMRMLSliceCompositeNode;
 class vtkMRMLSliceLogic;
 class vtkMRMLSliceNode;
-class vtkMRMLSliceCompositeNode;
 
-class vtkAlgorithmOutput;
-class vtkImageData;
-class vtkInteractorObserver;
-class vtkCornerAnnotation;
-class vtkCollection;
-
-class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
+class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLAbstractViewWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString sliceOrientation READ sliceOrientation WRITE setSliceOrientation)
@@ -58,7 +57,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
 
 public:
   /// Superclass typedef
-  typedef qMRMLWidget Superclass;
+  typedef qMRMLAbstractViewWidget Superclass;
 
   /// Constructors
   explicit qMRMLSliceWidget(QWidget* parent = nullptr);
@@ -66,6 +65,7 @@ public:
 
   /// Get slice controller
   Q_INVOKABLE qMRMLSliceControllerWidget* sliceController()const;
+  Q_INVOKABLE qMRMLViewControllerBar* controllerWidget() const override;
 
   /// Get vertical slice controller
   Q_INVOKABLE qMRMLSliceVerticalControllerWidget* sliceVerticalController()const;
@@ -73,9 +73,11 @@ public:
   /// \sa qMRMLSliceControllerWidget::mrmlSliceNode()
   /// \sa setMRMLSliceNode()
   Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
+  Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode()const override;
 
   /// \sa qMRMLSliceControllerWidget::sliceLogic()
   Q_INVOKABLE vtkMRMLSliceLogic* sliceLogic()const;
+  Q_INVOKABLE vtkMRMLAbstractLogic* logic()const override;
 
   /// \sa qMRMLSliceControllerWidget::sliceOrientation()
   /// \sa setSliceOrientation()
@@ -128,6 +130,7 @@ public:
   /// renders the view (contains vtkRenderWindow).
   /// \sa sliceController()
   Q_INVOKABLE qMRMLSliceView* sliceView()const;
+  Q_INVOKABLE QWidget* viewWidget()const override;
 
   /// This property holds the orientation of the slice offset slider.
   /// The orientation must be Qt::Horizontal (the default) or Qt::Vertical.
@@ -139,6 +142,7 @@ public slots:
   /// \sa qMRMLSliceControllerWidget::setMRMLSliceNode()
   /// \sa mrmlSliceNode()
   void setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode);
+  void setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newSliceNode);
 
   /// \sa qMRMLSliceControllerWidget::setImageData()
   /// \sa imageData()

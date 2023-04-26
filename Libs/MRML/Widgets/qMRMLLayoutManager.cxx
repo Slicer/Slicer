@@ -1212,23 +1212,35 @@ QWidget* qMRMLLayoutManager::viewWidget(vtkMRMLNode* viewNode) const
 }
 
 //------------------------------------------------------------------------------
+QList<QWidget*> qMRMLLayoutManager::viewWidgets() const
+{
+  Q_D(const qMRMLLayoutManager);
+  QList<QWidget*> viewWidgets;
+  for (qMRMLLayoutViewFactory* factory : this->mrmlViewFactories())
+    {
+    for (int i = 0; i < factory->viewCount(); ++i)
+      {
+      viewWidgets.append(factory->viewWidget(i));
+      }
+    }
+  return viewWidgets;
+}
+
+//------------------------------------------------------------------------------
 void qMRMLLayoutManager::setRenderPaused(bool pause)
 {
   // Note: views that are instantiated between pauseRender() calls will not be affected
   // by the specified pause state
   Q_D(qMRMLLayoutManager);
-  qMRMLLayoutViewFactory* sliceViewFactory = this->mrmlViewFactory("vtkMRMLSliceNode");
-  foreach(const QString& viewName, sliceViewFactory->viewNodeNames())
-    {
-    ctkVTKAbstractView* view = this->sliceWidget(viewName)->sliceView();
-    view->setRenderPaused(pause);
-    }
 
-  qMRMLLayoutViewFactory* threeDViewFactory = this->mrmlViewFactory("vtkMRMLViewNode");
-  foreach(const QString& viewName, threeDViewFactory->viewNodeNames())
+  QList<QWidget*> viewWidgets = this->viewWidgets();
+  for (QWidget* widget : viewWidgets)
     {
-    ctkVTKAbstractView* view = this->threeDWidget(viewName)->threeDView();
-    view->setRenderPaused(pause);
+    qMRMLAbstractViewWidget* viewWidget = qobject_cast<qMRMLAbstractViewWidget*>(widget);
+    if (viewWidget)
+      {
+      viewWidget->setRenderPaused(pause);
+      }
     }
 
   if (pause)

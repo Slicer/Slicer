@@ -28,6 +28,9 @@
 // CTK includes
 #include <ctkPopupWidget.h>
 
+// MRML includes
+#include <vtkMRMLPlotViewNode.h>
+
 // qMRML includes
 #include "qMRMLPlotViewControllerWidget.h"
 #include "qMRMLPlotView.h"
@@ -116,21 +119,45 @@ void qMRMLPlotWidget::setMRMLPlotViewNode(vtkMRMLPlotViewNode* newPlotViewNode)
   d->PlotController->setMRMLPlotViewNode(newPlotViewNode);
 }
 
-// --------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+void qMRMLPlotWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode)
+{
+  vtkMRMLPlotViewNode* plotViewNode = vtkMRMLPlotViewNode::SafeDownCast(newViewNode);
+  if (newViewNode && !plotViewNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
+      << ". Expected node type: vtkMRMLPlotViewNode";
+    }
+  this->setMRMLPlotViewNode(plotViewNode);
+}
+
+//--------------------------------------------------------------------------
 vtkMRMLPlotViewNode* qMRMLPlotWidget::mrmlPlotViewNode()const
 {
   Q_D(const qMRMLPlotWidget);
   return d->PlotView->mrmlPlotViewNode();
 }
 
-// --------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+vtkMRMLAbstractViewNode* qMRMLPlotWidget::mrmlAbstractViewNode()const
+{
+  return this->mrmlPlotViewNode();
+}
+
+//--------------------------------------------------------------------------
 qMRMLPlotView* qMRMLPlotWidget::plotView()const
 {
   Q_D(const qMRMLPlotWidget);
   return d->PlotView;
 }
 
-// --------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+QWidget* qMRMLPlotWidget::viewWidget()const
+{
+  return this->plotView();
+}
+
+//--------------------------------------------------------------------------
 qMRMLPlotViewControllerWidget* qMRMLPlotWidget::plotController()const
 {
   Q_D(const qMRMLPlotWidget);
@@ -138,15 +165,7 @@ qMRMLPlotViewControllerWidget* qMRMLPlotWidget::plotController()const
 }
 
 //---------------------------------------------------------------------------
-void qMRMLPlotWidget::setViewLabel(const QString& newPlotViewLabel)
+qMRMLViewControllerBar* qMRMLPlotWidget::controllerWidget()const
 {
-  Q_D(qMRMLPlotWidget);
-  d->PlotController->setViewLabel(newPlotViewLabel);
-}
-
-//---------------------------------------------------------------------------
-QString qMRMLPlotWidget::viewLabel()const
-{
-  Q_D(const qMRMLPlotWidget);
-  return d->PlotController->viewLabel();
+  return this->plotController();
 }
