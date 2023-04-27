@@ -31,6 +31,9 @@
 // CTK includes
 #include <ctkPopupWidget.h>
 
+// MRML includes
+#include <vtkMRMLTableViewNode.h>
+
 // qMRML includes
 #include "qMRMLTableViewControllerWidget.h"
 #include "qMRMLTableView.h"
@@ -109,13 +112,25 @@ qMRMLTableWidget::~qMRMLTableWidget()
   d->TableController->setMRMLScene(nullptr);
 }
 
-
 // --------------------------------------------------------------------------
 void qMRMLTableWidget::setMRMLTableViewNode(vtkMRMLTableViewNode* newTableViewNode)
 {
   Q_D(qMRMLTableWidget);
   d->TableView->setMRMLTableViewNode(newTableViewNode);
   d->TableController->setMRMLTableViewNode(newTableViewNode);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTableWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode)
+{
+  Q_D(qMRMLTableWidget);
+  vtkMRMLTableViewNode* tableViewNode = vtkMRMLTableViewNode::SafeDownCast(newViewNode);
+  if (newViewNode && !tableViewNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
+      << ". Expected node type: vtkMRMLTableViewNode";
+    }
+  this->setMRMLTableViewNode(tableViewNode);
 }
 
 // --------------------------------------------------------------------------
@@ -126,10 +141,24 @@ vtkMRMLTableViewNode* qMRMLTableWidget::mrmlTableViewNode()const
 }
 
 // --------------------------------------------------------------------------
+vtkMRMLAbstractViewNode* qMRMLTableWidget::mrmlAbstractViewNode()const
+{
+  Q_D(const qMRMLTableWidget);
+  return this->mrmlTableViewNode();
+}
+
+// --------------------------------------------------------------------------
 qMRMLTableView* qMRMLTableWidget::tableView()const
 {
   Q_D(const qMRMLTableWidget);
   return d->TableView;
+}
+
+// --------------------------------------------------------------------------
+QWidget* qMRMLTableWidget::viewWidget()const
+{
+  Q_D(const qMRMLTableWidget);
+  return this->tableView();
 }
 
 // --------------------------------------------------------------------------
@@ -139,16 +168,9 @@ qMRMLTableViewControllerWidget* qMRMLTableWidget::tableController()const
   return d->TableController;
 }
 
-//---------------------------------------------------------------------------
-void qMRMLTableWidget::setViewLabel(const QString& newTableViewLabel)
-{
-  Q_D(qMRMLTableWidget);
-  d->TableController->setViewLabel(newTableViewLabel);
-}
-
-//---------------------------------------------------------------------------
-QString qMRMLTableWidget::viewLabel()const
+// --------------------------------------------------------------------------
+qMRMLViewControllerBar* qMRMLTableWidget::controllerWidget()const
 {
   Q_D(const qMRMLTableWidget);
-  return d->TableController->viewLabel();
+  return this->tableController();
 }

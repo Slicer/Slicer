@@ -139,10 +139,30 @@ void qMRMLThreeDWidget::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 }
 
 // --------------------------------------------------------------------------
+void qMRMLThreeDWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode)
+{
+  Q_D(qMRMLThreeDWidget);
+  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(newViewNode);
+  if (newViewNode && !threeDViewNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
+      << ". Expected node type: vtkMRMLViewNode";
+    }
+  this->setMRMLViewNode(threeDViewNode);
+}
+
+// --------------------------------------------------------------------------
 vtkMRMLViewNode* qMRMLThreeDWidget::mrmlViewNode()const
 {
   Q_D(const qMRMLThreeDWidget);
   return d->ThreeDView->mrmlViewNode();
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLAbstractViewNode* qMRMLThreeDWidget::mrmlAbstractViewNode()const
+{
+  Q_D(const qMRMLThreeDWidget);
+  return this->mrmlViewNode();
 }
 
 // --------------------------------------------------------------------------
@@ -154,10 +174,24 @@ vtkMRMLViewLogic* qMRMLThreeDWidget::viewLogic() const
 }
 
 // --------------------------------------------------------------------------
+vtkMRMLAbstractLogic* qMRMLThreeDWidget::logic() const
+{
+  Q_D(const qMRMLThreeDWidget);
+  return this->viewLogic();
+}
+
+// --------------------------------------------------------------------------
 qMRMLThreeDView* qMRMLThreeDWidget::threeDView()const
 {
   Q_D(const qMRMLThreeDWidget);
   return d->ThreeDView;
+}
+
+// --------------------------------------------------------------------------
+QWidget* qMRMLThreeDWidget::viewWidget()const
+{
+  Q_D(const qMRMLThreeDWidget);
+  return this->threeDView();
 }
 
 // --------------------------------------------------------------------------
@@ -168,17 +202,10 @@ qMRMLThreeDViewControllerWidget* qMRMLThreeDWidget::threeDController() const
 }
 
 //---------------------------------------------------------------------------
-void qMRMLThreeDWidget::setViewLabel(const QString& newViewLabel)
-{
-  Q_D(qMRMLThreeDWidget);
-  d->ThreeDController->setViewLabel(newViewLabel);
-}
-
-//---------------------------------------------------------------------------
-QString qMRMLThreeDWidget::viewLabel()const
+qMRMLViewControllerBar* qMRMLThreeDWidget::controllerWidget() const
 {
   Q_D(const qMRMLThreeDWidget);
-  return d->ThreeDController->viewLabel();
+  return this->threeDController();
 }
 
 //---------------------------------------------------------------------------
@@ -186,42 +213,6 @@ void qMRMLThreeDWidget::setQuadBufferStereoSupportEnabled(bool value)
 {
   Q_D(qMRMLThreeDWidget);
   d->ThreeDController->setQuadBufferStereoSupportEnabled(value);
-}
-
-//---------------------------------------------------------------------------
-void qMRMLThreeDWidget::setViewColor(const QColor& newViewColor)
-{
-  Q_D(qMRMLThreeDWidget);
-  if (!this->viewLogic() || !this->viewLogic()->GetViewNode())
-    {
-    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
-    return;
-    }
-
-  double layoutColor[3] = { newViewColor.redF(), newViewColor.greenF(), newViewColor.blueF() };
-  this->viewLogic()->GetViewNode()->SetLayoutColor(layoutColor);
-}
-
-//---------------------------------------------------------------------------
-QColor qMRMLThreeDWidget::viewColor()const
-{
-  Q_D(const qMRMLThreeDWidget);
-  if (!this->viewLogic() || !this->viewLogic()->GetViewNode())
-    {
-    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
-    return QColor(127, 127, 127);
-    }
-  double* layoutColorVtk = this->viewLogic()->GetViewNode()->GetLayoutColor();
-  QColor layoutColor = QColor::fromRgbF(layoutColorVtk[0], layoutColorVtk[1], layoutColorVtk[2]);
-  return layoutColor;
-}
-
-//---------------------------------------------------------------------------
-void qMRMLThreeDWidget::setMRMLScene(vtkMRMLScene* newScene)
-{
-  Q_D(qMRMLThreeDWidget);
-
-  this->Superclass::setMRMLScene(newScene);
 }
 
 //------------------------------------------------------------------------------

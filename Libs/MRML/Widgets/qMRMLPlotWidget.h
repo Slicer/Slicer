@@ -25,7 +25,7 @@
 class QResizeEvent;
 
 // qMRMLWidget includes
-#include "qMRMLWidget.h"
+#include "qMRMLAbstractViewWidget.h"
 class qMRMLPlotViewControllerWidget;
 class qMRMLPlotView;
 class qMRMLPlotWidgetPrivate;
@@ -40,13 +40,13 @@ class vtkMRMLScene;
 /// qMRMLPlotWidget provides plotting capabilities with a display
 /// canvas for the plot and a controller widget to control the
 /// content and properties of the plot.
-class QMRML_WIDGETS_EXPORT qMRMLPlotWidget : public qMRMLWidget
+class QMRML_WIDGETS_EXPORT qMRMLPlotWidget : public qMRMLAbstractViewWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString viewLabel READ viewLabel WRITE setViewLabel)
+
 public:
   /// Superclass typedef
-  typedef qMRMLWidget Superclass;
+  typedef qMRMLAbstractViewWidget Superclass;
 
   /// Constructors
   explicit qMRMLPlotWidget(QWidget* parent = nullptr);
@@ -54,28 +54,22 @@ public:
 
   /// Get the Plot node observed by view.
   Q_INVOKABLE vtkMRMLPlotViewNode* mrmlPlotViewNode()const;
+  Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode() const override;
 
   /// Get a reference to the underlying Plot View
   /// Becareful if you change the PlotView, you might
   /// unsynchronize the view from the nodes/logics.
   Q_INVOKABLE qMRMLPlotView* plotView()const;
+  Q_INVOKABLE QWidget* viewWidget()const override;
 
-    /// Get plot view controller widget
+  /// Get plot view controller widget
   Q_INVOKABLE qMRMLPlotViewControllerWidget* plotController()const;
-
-  /// Get the view label for the Plot.
-  /// \sa qMRMLPlotControllerWidget::PlotViewLabel()
-  /// \sa setPlotViewLabel()
-  QString viewLabel()const;
-
-  /// Set the view label for the Plot.
-  /// \sa qMRMLPlotControllerWidget::PlotViewLabel()
-  /// \sa PlotViewLabel()
-  void setViewLabel(const QString& newPlotViewLabel);
+  Q_INVOKABLE qMRMLViewControllerBar* controllerWidget()const override;
 
 public slots:
   /// Set the current \a viewNode to observe
   void setMRMLPlotViewNode(vtkMRMLPlotViewNode* newPlotViewNode);
+  void setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode) override;
 
 protected:
   QScopedPointer<qMRMLPlotWidgetPrivate> d_ptr;

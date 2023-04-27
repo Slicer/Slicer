@@ -28,6 +28,10 @@
 // MRMLWidgets includes
 #include "qMRMLLayoutManager.h"
 #include "qMRMLLayoutViewFactory.h"
+#include "qMRMLThreeDWidget.h"
+#include "qMRMLThreeDView.h"
+#include "qMRMLSliceWidget.h"
+#include "qMRMLSliceView.h"
 #include "qMRMLWidget.h"
 
 // MRML includes
@@ -396,18 +400,28 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
     { // The view already exists, no need to create it again.
     return;
     }
-  QWidget* viewWidget = this->createViewFromNode(node);
-  if (!viewWidget)
+  QWidget* widget = this->createViewFromNode(node);
+  if (!widget)
     { // The factory cannot create such view, do nothing about it
     return;
+    }
+
+  qMRMLAbstractViewWidget* viewWidget = qobject_cast<qMRMLAbstractViewWidget*>(widget);
+  if (viewWidget)
+    {
+    // Initialize the pause render state to match the current pause render count on all views.
+    for (int i = 0; i < d->LayoutManager->allViewsPauseRenderCount(); ++i)
+      {
+      viewWidget->pauseRender();
+      }
     }
 
   // Do not show until mapped into a view (the widget is shown/hidden only
   // if it is part of the layout, but if the widget was not yet part of any layout
   // then it would show up in the top-left corner of the viewport)
-  viewWidget->setVisible(false);
+  widget->setVisible(false);
 
-  d->Views[node] = viewWidget;
+  d->Views[node] = widget;
 
   // For now, the active view is the first one
   if (this->viewCount() == 1)
@@ -416,7 +430,7 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
     }
   this->qvtkConnect(node, vtkCommand::ModifiedEvent,
                     this, SLOT(onNodeModified(vtkObject*)));
-  emit viewCreated(viewWidget);
+  emit viewCreated(widget);
 }
 
 // --------------------------------------------------------------------------

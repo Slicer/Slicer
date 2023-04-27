@@ -59,6 +59,8 @@ configure_file(
 # Sources
 #
 set(MRMLWidgets_SRCS
+  qMRMLAbstractViewWidget.cxx
+  qMRMLAbstractViewWidget.h
   qMRMLCaptureToolBar.cxx
   qMRMLCaptureToolBar.h
   qMRMLCheckableNodeComboBox.cxx
@@ -239,6 +241,7 @@ endif()
 
 # Headers that should run through moc
 set(MRMLWidgets_MOC_SRCS
+  qMRMLAbstractViewWidget.h
   qMRMLCaptureToolBar.h
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h

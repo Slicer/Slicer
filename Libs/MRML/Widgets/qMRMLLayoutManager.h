@@ -126,6 +126,9 @@ public:
   /// qMRMLThreeDWidget respectively).
   Q_INVOKABLE QWidget* viewWidget(vtkMRMLNode* n) const;
 
+  /// Get a list of all QWidgets for all views in the layout manager.
+  Q_INVOKABLE QList<QWidget*> viewWidgets() const;
+
   /// Get slice view widget identified by \a name
   Q_INVOKABLE qMRMLSliceWidget* sliceWidget(const QString& name)const;
 
@@ -139,8 +142,12 @@ public:
 
   /// Return the number of instantiated ThreeDRenderView
   int threeDViewCount()const;
+  /// Return the number of plot views
   int tableViewCount()const;
+  /// Return the number of table views
   int plotViewCount()const;
+  /// Return the total number of views
+  int viewCount() const;
 
   /// Get ThreeDWidget identified by \a id
   /// where \a id is an integer ranging from 0 to N-1 with N being the number
@@ -201,6 +208,11 @@ public:
   /// activeThreeDRenderer()
   Q_INVOKABLE vtkRenderer* activePlotRenderer()const;
 
+  /// Returns the number of global pause render counts that have been called on the layout manager.
+  /// This value does not include pauseRender counts that have been called on each view individually,
+  /// and is used to set the pause render state when new views are created.
+  /// \sa pauseRender(), resumeRender(), setRenderPaused()
+  int allViewsPauseRenderCount();
 
 public slots:
   /// Set the enabled property value

@@ -26,6 +26,7 @@
 
 // qMRML includes
 #include "qMRMLSliceWidget_p.h"
+#include "qMRMLSliceView.h"
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLSliceViewInteractorStyle.h>
@@ -33,6 +34,9 @@
 // MRML includes
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLScene.h>
+
+// MRML logic includes
+#include <vtkMRMLSliceLogic.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -161,6 +165,19 @@ void qMRMLSliceWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 }
 
 //---------------------------------------------------------------------------
+void qMRMLSliceWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode)
+{
+  Q_D(qMRMLSliceWidget);
+  vtkMRMLSliceNode* sliceViewNode = vtkMRMLSliceNode::SafeDownCast(newViewNode);
+  if (newViewNode && !sliceViewNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
+      << ". Expected node type: vtkMRMLSliceNode";
+    }
+  this->setMRMLSliceNode(sliceViewNode);
+}
+
+//---------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode* qMRMLSliceWidget::mrmlSliceCompositeNode()const
 {
   Q_D(const qMRMLSliceWidget);
@@ -185,28 +202,28 @@ QString qMRMLSliceWidget::sliceViewName()const
 void qMRMLSliceWidget::setSliceViewLabel(const QString& newSliceViewLabel)
 {
   Q_D(qMRMLSliceWidget);
-  d->SliceController->setSliceViewLabel(newSliceViewLabel);
+  this->setViewLabel(newSliceViewLabel);
 }
 
 //---------------------------------------------------------------------------
 QString qMRMLSliceWidget::sliceViewLabel()const
 {
   Q_D(const qMRMLSliceWidget);
-  return d->SliceController->sliceViewLabel();
+  return this->viewLabel();
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setSliceViewColor(const QColor& newSliceViewColor)
 {
-  Q_D(qMRMLSliceWidget);
-  d->SliceController->setSliceViewColor(newSliceViewColor);
+  Q_D(const qMRMLSliceWidget);
+  this->setViewColor(newSliceViewColor);
 }
 
 //---------------------------------------------------------------------------
 QColor qMRMLSliceWidget::sliceViewColor()const
 {
   Q_D(const qMRMLSliceWidget);
-  return d->SliceController->sliceViewColor();
+  return this->viewColor();
 }
 
 //---------------------------------------------------------------------------
@@ -257,10 +274,24 @@ vtkMRMLSliceNode* qMRMLSliceWidget::mrmlSliceNode()const
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLAbstractViewNode* qMRMLSliceWidget::mrmlAbstractViewNode()const
+{
+  Q_D(const qMRMLSliceWidget);
+  return this->mrmlSliceNode();
+}
+
+//---------------------------------------------------------------------------
 vtkMRMLSliceLogic* qMRMLSliceWidget::sliceLogic()const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->sliceLogic();
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLAbstractLogic* qMRMLSliceWidget::logic()const
+{
+  Q_D(const qMRMLSliceWidget);
+  return this->sliceLogic();
 }
 
 // --------------------------------------------------------------------------
@@ -286,6 +317,13 @@ qMRMLSliceView* qMRMLSliceWidget::sliceView()const
 }
 
 // --------------------------------------------------------------------------
+QWidget* qMRMLSliceWidget::viewWidget()const
+{
+  Q_D(const qMRMLSliceWidget);
+  return this->sliceView();
+}
+
+// --------------------------------------------------------------------------
 Qt::Orientation qMRMLSliceWidget::sliceOffsetSliderOrientation()const
 {
   Q_D(const qMRMLSliceWidget);
@@ -294,6 +332,13 @@ Qt::Orientation qMRMLSliceWidget::sliceOffsetSliderOrientation()const
 
 // --------------------------------------------------------------------------
 qMRMLSliceControllerWidget* qMRMLSliceWidget::sliceController()const
+{
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController;
+}
+
+// --------------------------------------------------------------------------
+qMRMLViewControllerBar* qMRMLSliceWidget::controllerWidget()const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController;
