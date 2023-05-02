@@ -75,11 +75,11 @@ void qSlicerMultiVolumeRenderingPropertiesWidgetPrivate::populateRenderingTechni
 {
   this->RenderingTechniqueComboBox->clear();
   this->RenderingTechniqueComboBox->addItem(
-    "Composite With Shading", vtkMRMLViewNode::Composite);
+    qSlicerMultiVolumeRenderingPropertiesWidget::tr("Composite With Shading"), vtkMRMLViewNode::Composite);
   this->RenderingTechniqueComboBox->addItem(
-    "Maximum Intensity Projection", vtkMRMLViewNode::MaximumIntensityProjection);
+    qSlicerMultiVolumeRenderingPropertiesWidget::tr("Maximum Intensity Projection"), vtkMRMLViewNode::MaximumIntensityProjection);
   this->RenderingTechniqueComboBox->addItem(
-    "Minimum Intensity Projection", vtkMRMLViewNode::MinimumIntensityProjection);
+    qSlicerMultiVolumeRenderingPropertiesWidget::tr("Minimum Intensity Projection"), vtkMRMLViewNode::MinimumIntensityProjection);
 }
 
 //-----------------------------------------------------------------------------

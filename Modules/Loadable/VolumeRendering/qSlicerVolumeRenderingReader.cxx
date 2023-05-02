@@ -80,7 +80,7 @@ vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingReader::volumeRenderingLogi
 //-----------------------------------------------------------------------------
 QString qSlicerVolumeRenderingReader::description()const
 {
-  return "Transfer Function";
+  return tr("Transfer Function");
 }
 
 //-----------------------------------------------------------------------------
@@ -94,7 +94,7 @@ QStringList qSlicerVolumeRenderingReader::extensions()const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
   return QStringList()
-    << "Transfer Function (*.vp)";
+    << tr("Transfer Function") + " (*.vp)";
 }
 
 //-----------------------------------------------------------------------------

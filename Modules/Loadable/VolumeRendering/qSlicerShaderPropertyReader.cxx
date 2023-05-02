@@ -80,7 +80,7 @@ vtkSlicerVolumeRenderingLogic* qSlicerShaderPropertyReader::volumeRenderingLogic
 //-----------------------------------------------------------------------------
 QString qSlicerShaderPropertyReader::description()const
 {
-  return "GPU Shader Property";
+  return tr("GPU Shader Property");
 }
 
 //-----------------------------------------------------------------------------
@@ -93,7 +93,7 @@ qSlicerIO::IOFileType qSlicerShaderPropertyReader::fileType()const
 QStringList qSlicerShaderPropertyReader::extensions()const
 {
   return QStringList()
-    << "Shader Property (*.sp)";
+    << tr("Shader Property") + " (*.sp)";
 }
 
 //-----------------------------------------------------------------------------
