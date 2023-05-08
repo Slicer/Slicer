@@ -540,13 +540,13 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberLock.png"));
     d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsUnset.png"));
-    d->DeleteButton->setToolTip("Unset position of the last control point placed (the control point will not be deleted).");
+    d->DeleteButton->setToolTip(qSlicerMarkupsPlaceWidget::tr("Unset position of the last control point placed (the control point will not be deleted)."));
     }
   else
     {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberUnlock.png"));
     d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsDelete.png"));
-    d->DeleteButton->setToolTip("Delete last added control point");
+    d->DeleteButton->setToolTip(qSlicerMarkupsPlaceWidget::tr("Delete last added control point"));
     }
   d->ActionUnsetLast->setVisible(!fixedNumberControlPoints && d->UnsetLastControlPointOptionVisible); // QToolButton button action does this so don't also have in menu
   d->ActionDeleteAll->setVisible(!fixedNumberControlPoints && d->DeleteAllControlPointsOptionVisible);

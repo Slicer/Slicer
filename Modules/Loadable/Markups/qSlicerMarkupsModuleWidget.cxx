@@ -308,7 +308,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // lock off
   this->unlockAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/Small/SlicerUnlock.png"), qSlicerMarkupsModuleWidget::tr("Unlock"), lockMenu);
-  this->unlockAllControlPointsInListAction->setToolTip("Set lock flag to off for all control points in the active markup");
+  this->unlockAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Set lock flag to off for all control points in the active markup"));
   this->unlockAllControlPointsInListAction->setCheckable(false);
   QObject::connect(this->unlockAllControlPointsInListAction, SIGNAL(triggered()),
                    q, SLOT(onUnlockAllControlPointsInListPushButtonClicked()));
@@ -328,7 +328,8 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // selected on
   this->selectedOnAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/MarkupsSelected.png"), qSlicerMarkupsModuleWidget::tr("Selected On"), selectedMenu);
-  this->selectedOnAllControlPointsInListAction->setToolTip("Set selected flag to on for all control points in the active markup");
+  this->selectedOnAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr(
+    "Set selected flag to on for all control points in the active markup"));
   this->selectedOnAllControlPointsInListAction->setCheckable(false);
   QObject::connect(this->selectedOnAllControlPointsInListAction, SIGNAL(triggered()),
                    q, SLOT(onSelectAllControlPointsInListPushButtonClicked()));
@@ -336,7 +337,8 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // selected off
   this->selectedOffAllControlPointsInListAction =
     new QAction(QIcon(":/Icons/MarkupsUnselected.png"), qSlicerMarkupsModuleWidget::tr("Selected Off"), selectedMenu);
-  this->selectedOffAllControlPointsInListAction->setToolTip("Set selected flag to off for all control points in the active markup");
+  this->selectedOffAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr(
+    "Set selected flag to off for all control points in the active markup"));
   this->selectedOffAllControlPointsInListAction->setCheckable(false);
   QObject::connect(this->selectedOffAllControlPointsInListAction, SIGNAL(triggered()),
                    q, SLOT(onDeselectAllControlPointsInListPushButtonClicked()));
@@ -475,29 +477,30 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QTableWidgetItem *selectedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::SelectedColumn);
   selectedHeader->setText("");
   selectedHeader->setIcon(QIcon(":/Icons/MarkupsSelected.png"));
-  selectedHeader->setToolTip(QString("Click in this column to select/deselect control points for passing to CLI modules"));
+  selectedHeader->setToolTip((qSlicerMarkupsModuleWidget::tr("Click in this column to select/deselect control points for passing to CLI modules")));
   this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::SelectedColumn, 30);
   // locked is an open and closed lock
   QTableWidgetItem *lockedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::LockedColumn);
   lockedHeader->setText("");
   lockedHeader->setIcon(QIcon(":/Icons/Small/SlicerLockUnlock.png"));
-  lockedHeader->setToolTip(QString("Click in this column to lock/unlock control points to prevent them from being moved by mistake"));
+  lockedHeader->setToolTip((qSlicerMarkupsModuleWidget::tr("Click in this column to lock/unlock control points to prevent them from being moved by mistake")));
   this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::LockedColumn, 30);
   // visible is an open and closed eye
   QTableWidgetItem *visibleHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::VisibleColumn);
   visibleHeader->setText("");
   visibleHeader->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
-  visibleHeader->setToolTip(QString("Click in this column to show/hide control points in 2D and 3D"));
+  visibleHeader->setToolTip((qSlicerMarkupsModuleWidget::tr("Click in this column to show/hide control points in 2D and 3D")));
   this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::VisibleColumn, 30);
   // position is a location bubble
   QTableWidgetItem *positionHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::PositionColumn);
   positionHeader->setText("");
   positionHeader->setIcon(QIcon(":/Icons/Large/MarkupsPositionStatus.png"));
-  positionHeader->setToolTip(QString("Click in this column to modify the control point position state.\n\n"
-                                     "- Edit: Enter place mode to modify the control point position in the slice views\n"
-                                     "- Skip: 'Place multiple control points' mode skips over the control point entry\n"
-                                     "- Restore: Set the control point position to its last known set position\n"
-                                     "- Clear: Clear the defined control point position, but do not delete the control point"));
+  positionHeader->setToolTip((qSlicerMarkupsModuleWidget::tr(
+    "Click in this column to modify the control point position state.\n\n"
+    "- Edit: Enter place mode to modify the control point position in the slice views\n"
+    "- Skip: 'Place multiple control points' mode skips over the control point entry\n"
+    "- Restore: Set the control point position to its last known set position\n"
+    "- Clear: Clear the defined control point position, but do not delete the control point")));
   this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::PositionColumn, 10);
 
   // listen for changes so can update mrml node
@@ -1026,7 +1029,7 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
   QString nameFormat = QString(d->MarkupsNode->GetControlPointLabelFormat().c_str());
   d->nameFormatLineEdit->setText(nameFormat);
 
-   // update the table
+  // update the table
   int numberOfPoints = d->MarkupsNode->GetNumberOfControlPoints();
   if (d->activeMarkupTableWidget->rowCount() != numberOfPoints)
     {
@@ -1327,7 +1330,7 @@ void qSlicerMarkupsModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject* node)
   vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
   if (!markupsNode)
     {
-      return;
+    return;
     }
 
   // make it active
@@ -1399,7 +1402,6 @@ void qSlicerMarkupsModuleWidget::onPKeyActivated()
   //qDebug() << "onPKeyActivated: sending event with pos " << widgetPos;
   QCoreApplication::sendEvent(widget, &click);
 }
-
 
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onVisibilityOnAllControlPointsInListPushButtonClicked()
@@ -1609,10 +1611,8 @@ void qSlicerMarkupsModuleWidget::onDeleteControlPointPushButtonClicked(bool conf
   if (confirm)
     {
     ctkMessageBox deleteAllMsgBox;
-    deleteAllMsgBox.setWindowTitle("Delete control points in this list?");
-    QString labelText = QString("Delete ")
-      + QString::number(rows.size())
-        + QString(" control points from this list?");
+    deleteAllMsgBox.setWindowTitle(tr("Confirm control point deletion"));
+    QString labelText = QString(tr("Delete %1 control points from this list?").arg(rows.size()));
     // don't show again check box conflicts with informative text, so use
     // a long text
     deleteAllMsgBox.setText(labelText);
@@ -1819,10 +1819,9 @@ void qSlicerMarkupsModuleWidget::onDeleteAllControlPointsInListPushButtonClicked
     }
 
   ctkMessageBox deleteAllMsgBox;
-  deleteAllMsgBox.setWindowTitle("Delete all control points in this list?");
-  QString labelText = QString("Delete all ")
-    + QString::number(d->MarkupsNode->GetNumberOfControlPoints())
-    + QString(" control points in this list?");
+  deleteAllMsgBox.setWindowTitle(tr("Confirm control point deletion"));
+  QString labelText = QString(tr("Delete all %1 control points from this list?").arg(d->MarkupsNode->GetNumberOfControlPoints()));
+
   // don't show again check box conflicts with informative text, so use
   // a long text
   deleteAllMsgBox.setText(labelText);
@@ -2001,7 +2000,7 @@ void qSlicerMarkupsModuleWidget::onFixedNumberOfControlPointsPushButtonClicked()
     }
   d->MarkupsNode->SetFixedNumberOfControlPoints(!d->MarkupsNode->GetFixedNumberOfControlPoints());
 
-// end point placement for locked node
+  // end point placement for locked node
   d->setPlaceModeEnabled(false);
   this->updateWidgetFromMRML();
 }
@@ -2452,7 +2451,7 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
     }
   if (distance != 0.0)
     {
-    menu->addAction(QString("Summed linear distance: %1").arg(distance));
+    menu->addAction(tr("Summed linear distance: %1").arg(distance));
     }
 }
 
@@ -2954,7 +2953,7 @@ void qSlicerMarkupsModuleWidget::onHideCoordinateColumnsToggled(int index)
   Q_D(qSlicerMarkupsModuleWidget);
   bool hide = bool(index == COORDINATE_COMBOBOX_INDEX_HIDE);
 
-    // back to default column widths
+  // back to default column widths
   d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::RColumn, hide);
   d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::AColumn, hide);
   d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::SColumn, hide);
@@ -3324,5 +3323,4 @@ void qSlicerMarkupsModuleWidget::updateToolBar(vtkMRMLMarkupsNode* node)
     {
     toolBar->setActiveMarkupsNode(node);
     }
-
 }

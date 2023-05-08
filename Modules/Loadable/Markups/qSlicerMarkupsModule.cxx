@@ -140,7 +140,7 @@ void qSlicerMarkupsModulePrivate::addToolBar()
     return;
     }
 
-  this->ToolBar->setWindowTitle("Markups");
+  this->ToolBar->setWindowTitle(qSlicerMarkupsModule::tr("Markups"));
   this->ToolBar->setObjectName("MarkupsToolBar");
   //// Add a toolbar break to make the sequence toolbar appear in a separate row
   //// (it is a long toolbar and would make many toolbar buttons disappear from
@@ -200,9 +200,9 @@ qSlicerMarkupsModule::~qSlicerMarkupsModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerMarkupsModule::helpText()const
 {
-  QString help =
+  QString help = tr(
     "A module to create and manage markups in 2D and 3D."
-    " This module replaced the former Annotations module.";
+    " This module replaced the former Annotations module.");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -210,7 +210,7 @@ QString qSlicerMarkupsModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerMarkupsModule::acknowledgementText()const
 {
-  return "This work was supported by NAMIC, NAC, and the Slicer Community.";
+  return tr("This work was supported by NAMIC, NAC, and the Slicer Community.");
 }
 
 //-----------------------------------------------------------------------------

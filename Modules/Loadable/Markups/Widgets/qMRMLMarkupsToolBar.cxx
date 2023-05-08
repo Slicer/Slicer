@@ -94,7 +94,7 @@ void qMRMLMarkupsToolBarPrivate::init()
   this->MarkupsNodeSelector->setMaximumWidth(165);
   this->MarkupsNodeSelector->setEnabled(true);
   this->MarkupsNodeSelector->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-  this->MarkupsNodeSelector->setToolTip("Select active markup");
+  this->MarkupsNodeSelector->setToolTip(qMRMLMarkupsToolBar::tr("Select active markup"));
   this->MarkupsNodeSelector->setMRMLScene(qSlicerApplication::application()->mrmlScene());
   this->NodeSelectorAction = q->addWidget(this->MarkupsNodeSelector);
 

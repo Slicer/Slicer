@@ -82,7 +82,7 @@ vtkSlicerMarkupsLogic* qSlicerAnnotationsReader::markupsLogic()const
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationsReader::description()const
 {
-  return "Annotation";
+  return qSlicerAnnotationsReader::tr("Annotation");
 }
 
 //-----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ qSlicerIO::IOFileType qSlicerAnnotationsReader::fileType()const
 QStringList qSlicerAnnotationsReader::extensions()const
 {
   return QStringList()
-    << "Annotations (*.acsv)";
+    << qSlicerAnnotationsReader::tr("Annotations") + " (*.acsv)";
 }
 
 //-----------------------------------------------------------------------------
