@@ -75,22 +75,22 @@ vtkSlicerMarkupsLogic* qSlicerMarkupsReader::markupsLogic()const
 //-----------------------------------------------------------------------------
 QString qSlicerMarkupsReader::description()const
 {
-  return "Markups";
+  return tr("Markups");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerMarkupsReader::fileType()const
+qSlicerIO::IOFileType qSlicerMarkupsReader::fileType() const
 {
   return QString("MarkupsFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerMarkupsReader::extensions()const
+QStringList qSlicerMarkupsReader::extensions() const
 {
   return QStringList()
-    << "Markups (*.mrk.json)"
-    << "Markups (*.json)"
-    << "Markups Fiducials (*.fcsv)";
+         << tr("Markups") + " (*.mrk.json)"
+         << tr("Markups") + " (*.json)"
+         << tr("Markups Fiducials") + " (*.fcsv)";
 }
 
 //-----------------------------------------------------------------------------

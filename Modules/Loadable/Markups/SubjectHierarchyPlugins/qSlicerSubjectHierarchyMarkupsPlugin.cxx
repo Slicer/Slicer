@@ -52,7 +52,7 @@
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLScene.h>
 
-//Logic includes
+// Logic includes
 #include <vtkSlicerMarkupsLogic.h>
 
 // vtkSegmentationCore includes
@@ -79,7 +79,7 @@ const char* INTERACTION_HANDLE_TYPE_PROPERTY = "InteractionHandleType";
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
-class qSlicerSubjectHierarchyMarkupsPluginPrivate: public QObject
+class qSlicerSubjectHierarchyMarkupsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyMarkupsPlugin);
 protected:
@@ -187,7 +187,6 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   QObject::connect(this->EditNodeTerminologyAction, SIGNAL(triggered()), q, SLOT(editNodeTerminology()));
 
   int interactionHandlesSection = qSlicerSubjectHierarchyAbstractPlugin::SectionNode + 20;
-
 
   this->ToggleHandleInteractive = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Interaction"));
   this->ToggleHandleInteractive->setObjectName("ToggleHandleInteractive");
@@ -660,11 +659,11 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     {
     if (associatedNode->GetFixedNumberOfControlPoints())
       {
-      d->DeletePointAction->setText("Clear control point position");
+      d->DeletePointAction->setText(tr("Clear control point position"));
       }
     else
       {
-      d->DeletePointAction->setText("Delete control point");
+      d->DeletePointAction->setText(tr("Delete control point"));
       }
     }
   d->DeleteNodeAction->setVisible(true);
@@ -713,8 +712,8 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
 
   // Update action text with relevant markup type
   QString markup_type = associatedNode->GetTypeDisplayName();
-  d->DeleteNodeAction->setText("Delete " + markup_type);
-  d->EditNodeTerminologyAction->setText("Edit " + markup_type + " terminology...");
+  d->DeleteNodeAction->setText(tr("Delete %1").arg(markup_type));
+  d->EditNodeTerminologyAction->setText(tr("Edit %1 terminology...").arg(markup_type));
 
   vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
   d->ToggleHandleInteractive->setVisible(displayNode != nullptr);
