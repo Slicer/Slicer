@@ -245,25 +245,34 @@
 
 				const geometry = new THREE.IcosahedronGeometry( 1, 15 );
 
-				for ( let i = 0; i < 50; i ++ ) {
+                const xhr = new XMLHttpRequest();
 
-					const color = new THREE.Color();
-					color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
+                const url = "/slicer/fiducials";
+                xhr.open('GET', url, true);
+                xhr.responseType = 'json';
 
-					const material = new THREE.MeshBasicMaterial( { color: color } );
-					const sphere = new THREE.Mesh( geometry, material );
-					sphere.position.x = Math.random() * 10 - 5;
-					sphere.position.y = Math.random() * 10 - 5;
-					sphere.position.z = Math.random() * 10 - 5;
-					sphere.position.normalize().multiplyScalar( Math.random() * 4.0 + 2.0 );
-					sphere.scale.setScalar( Math.random() * Math.random() + 0.5 );
-					scene.add( sphere );
+                xhr.onload = function() {
+                    let node;
+                    for (node in this.response) {
+                        let markupIndex;
+                        for (markupIndex in this.response[node].markups) {
+                            const markup = this.response[node].markups[markupIndex];
+                            const color = new THREE.Color();
+                            color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
+                            const material = new THREE.MeshBasicMaterial( { color: color } );
+                            const sphere = new THREE.Mesh( geometry, material );
+                            sphere.position.x = markup.position[0] / 10.;
+                            sphere.position.y = markup.position[1] / 10.;
+                            sphere.position.z = markup.position[2] / 10.;
+                            scene.add( sphere );
 
-					if ( Math.random() < 0.25 ) sphere.layers.enable( BLOOM_SCENE );
+                            if ( Math.random() < 0.25 ) sphere.layers.enable( BLOOM_SCENE );
+                        }
+                    }
+                    render();
+                };
 
-				}
-
-				render();
+                xhr.send();
 
 			}
 
