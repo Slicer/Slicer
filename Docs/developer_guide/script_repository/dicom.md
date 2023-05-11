@@ -147,7 +147,7 @@ print("DICOM path=%s" % path)
 ### Convert DICOM to NRRD on the command line
 
 ```console
-/Applications/Slicer-4.6.2.app/Contents/MacOS/Slicer --no-main-window --python-code "node=slicer.util.loadVolume('/tmp/series/im0.dcm'); slicer.util.saveNode(node, "/tmp/output.nrrd"); exit()"
+/Applications/Slicer-4.6.2.app/Contents/MacOS/Slicer --no-main-window --python-code "node=slicer.util.loadVolume('/tmp/series/im0.dcm'); slicer.util.saveNode(node, '/tmp/output.nrrd'); exit()"
 ```
 
 The same can be done on windows by using the top level Slicer.exe. Be sure to use forward slashes in the pathnames within quotes on the command line.
