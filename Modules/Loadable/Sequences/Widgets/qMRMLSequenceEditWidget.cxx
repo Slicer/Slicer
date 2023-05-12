@@ -291,7 +291,7 @@ void qMRMLSequenceEditWidget::setMRMLSequenceNode(vtkMRMLSequenceNode* sequenceN
     this, SLOT(onSequenceNodeModified()));
   d->SequenceNode = sequenceNode;
 
-  if (d->SequenceNode->GetIndexType() == vtkMRMLSequenceNode::NumericIndex)
+  if (d->SequenceNode && d->SequenceNode->GetIndexType() == vtkMRMLSequenceNode::NumericIndex)
     {
     d->LineEdit_NewCandidateNodeIndexValue->setText("0");
     }
