@@ -37,6 +37,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool ignoreSlicerRC READ ignoreSlicerRC CONSTANT)
   Q_PROPERTY(QString pythonScript READ pythonScript CONSTANT)
   Q_PROPERTY(QString extraPythonScript READ extraPythonScript CONSTANT)
+  Q_PROPERTY(QString extraPythonScriptProcessedArgumentsCount READ extraPythonScriptProcessedArgumentsCount CONSTANT)
   Q_PROPERTY(QString pythonCode READ pythonCode CONSTANT)
   Q_PROPERTY(bool runPythonAndExit READ runPythonAndExit WRITE setRunPythonAndExit)
   Q_PROPERTY(bool disableCLIModules READ disableCLIModules CONSTANT)
@@ -86,6 +87,12 @@ public:
   /// Set extra python script to be executed after slicer is loaded
   void setExtraPythonScript(const QString& newExtraPythonScript);
 
+  ///@{
+  /// Set/Get the number of arguments that are already processed and that will not be
+  /// passed as additional arguments when executing extraPythonScript file.
+  int extraPythonScriptProcessedArgumentsCount()const;
+  void setExtraPythonScriptProcessedArgumentsCount(int argumentCount);
+  ///}@
   /// Return python code snippet to execute after slicer is loaded
   QString pythonCode()const;
 

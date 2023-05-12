@@ -1139,7 +1139,8 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     scriptArgs.removeAll("--attach-process");
     if(!extraPythonScript.isEmpty())
       {
-      scriptArgs.removeFirst();
+      // Remove extra Python script processed arguments  (e.g -I /path/to/script.py)
+      scriptArgs.erase(scriptArgs.begin(), scriptArgs.begin() + options->extraPythonScriptProcessedArgumentsCount());
       pythonScript = extraPythonScript;
       }
 
