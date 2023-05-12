@@ -926,9 +926,20 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
           segmentName = colorName;
           }
 
-        double color[4] = { 0.0, 0.0, 0.0 };
+        double color[4] = { 0.0, 0.0, 0.0, 1.0 };
         exportColorTableNode->GetColor(currentSegment->GetLabelValue(), color);
         currentSegment->SetColor(color);
+        }
+      else
+        {
+        vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
+          segmentationNode->GetDisplayNode());
+        if (displayNode)
+          {
+          double color[4] = { 0.0, 0.0, 0.0, 1.0 };
+          displayNode->GenerateSegmentColor(color);
+          currentSegment->SetColor(color);
+          }
         }
       currentSegmentID = segmentation->GenerateUniqueSegmentID(segmentName);
       currentSegment->SetName(currentSegmentID.c_str());
