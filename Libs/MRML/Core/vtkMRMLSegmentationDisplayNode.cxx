@@ -947,6 +947,7 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int c
   // Default is to use NumberOfGeneratedColors
   if (colorNumber == 0)
     {
+    this->NumberOfGeneratedColors++;
     colorNumber = this->NumberOfGeneratedColors;
     }
 
