@@ -519,7 +519,8 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     {
     int *dims1=nullptr;
     int dims[3];
-    vtkMatrix4x4 *textureToRAS = nullptr;
+    vtkSmartPointer<vtkMatrix4x4> textureToRAS;
+    // If the slice resolution mode is not set to match the 2D view, use UVW dimensions
     if (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
       {
       textureToRAS = this->SliceNode->GetUVWToRAS();
@@ -527,9 +528,25 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
       dims[0] = dims1[0]-1;
       dims[1] = dims1[1]-1;
       }
-    else
+    else // If the slice resolution mode is set to match the 2D view, use texture computed by slice view
       {
-      textureToRAS = this->SliceNode->GetXYToRAS();
+      // Create a new textureToRAS matrix with translation to correct texture pixel origin
+      //
+      // Since the OpenGL texture pixel origin is in the pixel corner and the
+      // VTK pixel origin is in the pixel center, we need to shift the coordinate
+      // by half voxel.
+      //
+      // Considering that the translation matrix is almost an identity matrix, the
+      // computation easily and efficiently performed by elementary operations on
+      // the matrix elements.
+      textureToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+      textureToRAS->DeepCopy(this->SliceNode->GetXYToRAS());
+      textureToRAS->SetElement(0, 3, textureToRAS->GetElement(0, 3)
+        - 0.5 * textureToRAS->GetElement(0, 0) - 0.5 * textureToRAS->GetElement(0, 1)); // Shift by half voxel
+      textureToRAS->SetElement(1, 3, textureToRAS->GetElement(1, 3)
+        - 0.5 * textureToRAS->GetElement(1, 0) - 0.5 * textureToRAS->GetElement(1, 1)); // Shift by half voxel
+
+      // Use XY dimensions for slice node if resolution mode is set to match 2D view
       dims1 = this->SliceNode->GetDimensions();
       dims[0] = dims1[0];
       dims[1] = dims1[1];
