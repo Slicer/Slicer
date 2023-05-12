@@ -41,6 +41,7 @@ public:
 
   QHash<QString, QVariant> ParsedArgs;
   QString                  ExtraPythonScript;
+  int                      ExtraPythonScriptProcessedArgumentsCount;
   bool                     RunPythonAndExit;
 };
 
@@ -50,6 +51,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate(qSlicerCoreCommandOptions& object)
   : q_ptr(&object)
+  , ExtraPythonScriptProcessedArgumentsCount(0)
   , RunPythonAndExit(false)
 {
 }
@@ -90,15 +92,37 @@ bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
     return false;
     }
 
-  // If first unparsed argument is python script, enable 'shebang' mode
+  // If the first argument is a Python script, enable the 'shebang' mode.
+  //
+  // If there is a -I argument before a Python script (.py), enable running the script.
+  //
+  // This a commonly used command-line switch of Python.exe to "isolate Python from the user's environment".
+  // For example, VS Code runs Slicer using these arguments to query its Python interpreter version:
+  //   .../Slicer.exe -I \
+  //     ...\.vscode\extensions\ms-python.python-2023.6.1\pythonFiles\get_output_via_markers.py \
+  //     ...\.vscode\extensions\ms-python.python-2023.6.1\pythonFiles\interpreterInfo.py
+
   QStringList unparsedArguments = this->unparsedArguments();
+  QString extraPythonScript;
+  int extraPythonScriptProcessedArgumentsCount = 0;
   if (unparsedArguments.size() > 0 && unparsedArguments.at(0).endsWith(".py"))
+    {
+    extraPythonScript = unparsedArguments.at(0);
+    extraPythonScriptProcessedArgumentsCount = 1;
+    }
+  else if (unparsedArguments.size() > 1 && unparsedArguments.at(0) == "-I" && unparsedArguments.at(1).endsWith(".py"))
+    {
+    extraPythonScript = unparsedArguments.at(1);
+    extraPythonScriptProcessedArgumentsCount = 2;
+    }
+  if (!extraPythonScript.isEmpty())
     {
     if(!this->pythonScript().isEmpty())
       {
       qWarning() << "Ignore script specified using '--python-script'";
       }
-    this->setExtraPythonScript(unparsedArguments.at(0));
+    this->setExtraPythonScript(extraPythonScript);
+    this->setExtraPythonScriptProcessedArgumentsCount(extraPythonScriptProcessedArgumentsCount);
     this->setRunPythonAndExit(true);
     }
 
@@ -227,6 +251,8 @@ QString qSlicerCoreCommandOptions::pythonScript() const
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerCoreCommandOptions, QString, extraPythonScript, ExtraPythonScript);
 CTK_SET_CPP(qSlicerCoreCommandOptions, const QString&, setExtraPythonScript, ExtraPythonScript);
+CTK_GET_CPP(qSlicerCoreCommandOptions, int, extraPythonScriptProcessedArgumentsCount, ExtraPythonScriptProcessedArgumentsCount);
+CTK_SET_CPP(qSlicerCoreCommandOptions, int, setExtraPythonScriptProcessedArgumentsCount, ExtraPythonScriptProcessedArgumentsCount);
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreCommandOptions::pythonCode() const
