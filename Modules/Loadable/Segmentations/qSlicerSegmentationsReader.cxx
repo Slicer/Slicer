@@ -134,21 +134,21 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     modelStorageNode->SetFileName(fileName.toStdString().c_str());
     vtkNew<vtkMRMLModelNode> modelNode;
     if (!modelStorageNode->ReadData(modelNode))
-    {
+      {
       return false;
-    }
+      }
     closedSurfaceRepresentation = modelNode->GetPolyData();
 
     // Remove all arrays, because they could slow down all further processing
-      // and consume significant amount of memory.
+    // and consume significant amount of memory.
     if (closedSurfaceRepresentation != nullptr && closedSurfaceRepresentation->GetPointData() != nullptr)
-    {
+      {
       vtkPointData* pointData = closedSurfaceRepresentation->GetPointData();
       while (pointData->GetNumberOfArrays() > 0)
-      {
+        {
         pointData->RemoveArray(0);
+        }
       }
-    }
 
     if (closedSurfaceRepresentation == nullptr)
       {
