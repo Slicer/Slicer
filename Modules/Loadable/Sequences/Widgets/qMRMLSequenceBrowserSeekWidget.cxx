@@ -165,7 +165,7 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
   d->slider_IndexValue->blockSignals(sliderBlockSignals);
 
   int selectedItemNumber = d->SequenceBrowserNode->GetSelectedItemNumber();
-  if (selectedItemNumber >= 0)
+  if (selectedItemNumber > 0 && selectedItemNumber < numberOfDataNodes)
     {
     QString indexValue;
     QString indexUnit;
@@ -177,7 +177,7 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
       indexUnit = QString::fromStdString(sequenceNode->GetIndexUnit());
       if (indexValue.length() == 0)
         {
-        qWarning() << "Item" << selectedItemNumber << "has no index value defined";
+        qWarning() << Q_FUNC_INFO << "Item" << selectedItemNumber << "has no index value defined";
         }
       }
     else
