@@ -1553,7 +1553,14 @@ std::string vtkMRMLMarkupsNode::GetNthControlPointID(int n)
 //-------------------------------------------------------------------------
 int vtkMRMLMarkupsNode::GetNthControlPointIndexByID(const char* controlPointID)
 {
-  if (!controlPointID)
+  // this method is deprecated, call the current implementation
+  return this->GetControlPointIndexByID(controlPointID);
+}
+
+//-------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetControlPointIndexByID(const char* id)
+{
+  if (!id)
     {
     return -1;
     }
@@ -1561,7 +1568,45 @@ int vtkMRMLMarkupsNode::GetNthControlPointIndexByID(const char* controlPointID)
     {
     ControlPoint *compareControlPoint = this->ControlPoints[controlPointIndex];
     if (compareControlPoint &&
-        strcmp(compareControlPoint->ID.c_str(), controlPointID) == 0)
+        strcmp(compareControlPoint->ID.c_str(), id) == 0)
+      {
+      return controlPointIndex;
+      }
+    }
+  return -1;
+}
+
+//-------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetControlPointIndexByLabel(const char* label)
+{
+  if (!label)
+    {
+    return -1;
+    }
+  for (int controlPointIndex = 0; controlPointIndex < this->GetNumberOfControlPoints(); controlPointIndex++)
+    {
+    ControlPoint *compareControlPoint = this->ControlPoints[controlPointIndex];
+    if (compareControlPoint &&
+        strcmp(compareControlPoint->Label.c_str(), label) == 0)
+      {
+      return controlPointIndex;
+      }
+    }
+  return -1;
+}
+
+//-------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetControlPointIndexByDescription(const char* description)
+{
+  if (!description)
+    {
+    return -1;
+    }
+  for (int controlPointIndex = 0; controlPointIndex < this->GetNumberOfControlPoints(); controlPointIndex++)
+    {
+    ControlPoint *compareControlPoint = this->ControlPoints[controlPointIndex];
+    if (compareControlPoint &&
+        strcmp(compareControlPoint->Description.c_str(), description) == 0)
       {
       return controlPointIndex;
       }

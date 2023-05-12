@@ -521,10 +521,19 @@ public:
   /// Get the id for the Nth control point
   std::string GetNthControlPointID(int n);
 
-  /// Get the Nth control point index based on it's ID
+  /// Get the Nth control point index based on it's ID.
+  /// Deprecated. Use GetControlPointIndexByID instead.
   int GetNthControlPointIndexByID(const char* controlPointID);
   /// Get the Nth control point based on it's ID
   ControlPoint* GetNthControlPointByID(const char* controlPointID);
+
+  /// @{
+  /// Find the first control point index by the specified id, label, or description.
+  /// Returns -1 if no such control point was found.
+  int GetControlPointIndexByID(const char* id);
+  int GetControlPointIndexByLabel(const char* label);
+  int GetControlPointIndexByDescription(const char* description);
+  /// @}
 
   /// Get the Selected flag on the Nth control point,
   /// returns false if control point doesn't exist
