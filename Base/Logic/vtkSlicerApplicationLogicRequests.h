@@ -123,6 +123,10 @@ public:
           {
           vtkDebugWithObjectMacro(appLogic, "ProcessReadNodeData: about to call read data, " \
             "storage node's read state is " << storageNode->GetReadStateAsString());
+          // If the node was previously empty then the write state may still be
+          // "SkipNoData", which would prevent the file from loading.
+          // Change the write state back to "Idle" to make sure the file is loaded.
+          storageNode->SetWriteStateIdle();
           if (useURI)
             {
             storageNode->SetURI(m_Filename.c_str());
