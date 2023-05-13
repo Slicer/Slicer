@@ -9,7 +9,13 @@
 // Slicer includes
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkMRMLColorLogic.h"
-#include "vtkSlicerConfigure.h" // For Slicer_BUILD_CLI_SUPPORT
+// For:
+//  - Slicer_BUILD_CLI_SUPPORT
+//  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+//  - Slicer_EXTENSIONS_DIRBASENAME
+//  - Slicer_ORGANIZATION_DOMAIN
+//  - Slicer_ORGANIZATION_NAME
+#include "vtkSlicerConfigure.h"
 #include "vtkSlicerTask.h"
 
 // MRML includes
@@ -737,15 +743,46 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
     return false;
     }
 
+  // If the plugin is found in the application build directory (or one of its descendent), it is not
+  // considered to be installed. This is generally true unless the plugin is found in the extension
+  // install directory (or one of its descendent).
   std::string path = itksys::SystemTools::GetFilenamePath(filePath);
   std::string canonicalPath = itksys::SystemTools::GetRealPath(path.c_str());
-
   if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), applicationHomeDir.c_str()))
     {
-    return !itksys::SystemTools::FileExists(
+    bool isAppBuildTree = itksys::SystemTools::FileExists(
           std::string(applicationHomeDir).append("/CMakeCache.txt").c_str(), true);
+    if (isAppBuildTree)
+      {
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+      // Check if plugin is installed as an extension
+      {
+      std::string extensionInstallDir = itksys::SystemTools::GetRealPath(
+            applicationHomeDir + "/" Slicer_ORGANIZATION_DOMAIN "/" Slicer_EXTENSIONS_DIRBASENAME);
+      if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
+        {
+        return true;
+        }
+      }
+      {
+      std::string extensionInstallDir = itksys::SystemTools::GetRealPath(
+            applicationHomeDir + "/" Slicer_ORGANIZATION_NAME "/" Slicer_EXTENSIONS_DIRBASENAME);
+      if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
+        {
+        return true;
+        }
+      }
+#endif
+      return false;
+      }
+    else
+      {
+      // Application directory corresponds to an install tree and the plugin is packaged along side it.
+      return true;
+      }
     }
 
+  // If the plugin filePath is in a build directory, it is is not installed.
   std::string root;
   std::string canonicalPathWithoutRoot =
       itksys::SystemTools::SplitPathRootComponent(canonicalPath.c_str(), &root);

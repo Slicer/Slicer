@@ -385,6 +385,43 @@ int isLoadableModuleTest()
 
     directoriesToRemove << tmp4.path();
 
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+    //
+    // Case 5: Application is in its own build tree, plugins are installed in a sub-directory
+    //         of the application build tree corresponding to the default extension install path.
+    //
+    //         This happens when the application is built with Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
+    //         set to ON.
+    //
+    //         In this case, the extension install directory is derived from the
+    //         qSlicerCoreApplication::slicerRevisionUserSettingsFilePath() and the default extension install
+    //         directory matches this pattern:
+    //
+    //           /path/to/Slicer-build/<organization_domain_or_name>/<Slicer_EXTENSIONS_DIRBASENAME>-<Slicer_REVISION>
+    //
+
+    // 'tmp5' is considered to be the application build tree (e.g "D:/D/P/S-0-build/Slicer-build")
+
+    temporaryDirName =
+        QString("qSlicerUtilsTest1-tmp5.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+    QDir tmp5 = QDir::temp();
+    tmp5.mkdir(temporaryDirName);
+    tmp5.cd(temporaryDirName);
+
+    createFile(__LINE__, tmp5, ".", "CMakeCache.txt");
+
+    {
+      QString extensionInstallDir = QString(Slicer_ORGANIZATION_DOMAIN "/%1-%2").arg(Slicer_EXTENSIONS_DIRBASENAME, Slicer_REVISION);
+      isPluginInstalledTest(__LINE__, true, tmp5.path() + "/" + extensionInstallDir + "/" + foo + "/plugin.txt", tmp5.path());
+    }
+    {
+      QString extensionInstallDir = QString(Slicer_ORGANIZATION_NAME "/%1-%2").arg(Slicer_EXTENSIONS_DIRBASENAME, Slicer_REVISION);
+      isPluginInstalledTest(__LINE__, true, tmp5.path() + "/" + extensionInstallDir + "/" + foo + "/plugin.txt", tmp5.path());
+    }
+
+    directoriesToRemove << tmp5.path();
+#endif
+
     // Clean temporary directories
     foreach(const QString& dir, directoriesToRemove)
       {
@@ -392,7 +429,7 @@ int isLoadableModuleTest()
       }
 
     //
-    // Case 5: Platform is MacOS, application is installed
+    // Case 6: Platform is macOS, application is installed
     //
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
