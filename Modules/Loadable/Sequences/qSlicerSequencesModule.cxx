@@ -104,7 +104,7 @@ void qSlicerSequencesModulePrivate::addToolBar()
     return;
     }
 
-  this->ToolBar->setWindowTitle("Sequence browser");
+  this->ToolBar->setWindowTitle(qSlicerSequencesModule::tr("Sequence browser"));
   this->ToolBar->setObjectName("SequenceBrowserToolBar");
   // Add a toolbar break to make the sequence toolbar appear in a separate row
   // (it is a long toolbar and would make many toolbar buttons disappear from
@@ -165,13 +165,13 @@ qSlicerSequencesModule::~qSlicerSequencesModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerSequencesModule::helpText()const
 {
-  return "This is a module for creating, recording, and replaying node sequences.";
+  return tr("This is a module for creating, recording, and replaying node sequences.");
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerSequencesModule::acknowledgementText()const
 {
-  return "This work was funded by CCO ACRU and OCAIRO grants.";
+  return tr("This work was funded by CCO ACRU and OCAIRO grants.");
 }
 
 //-----------------------------------------------------------------------------

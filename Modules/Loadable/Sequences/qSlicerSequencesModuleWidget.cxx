@@ -299,8 +299,8 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
 
     if (numberOfValidPoints>0)
       {
-      this->ChartXY->GetAxis(0)->SetTitle("Signal Intensity");
-      this->ChartXY->GetAxis(1)->SetTitle("Time");
+      this->ChartXY->GetAxis(0)->SetTitle(qSlicerSequencesModuleWidget::tr("Signal Intensity").toStdString());
+      this->ChartXY->GetAxis(1)->SetTitle(qSlicerSequencesModuleWidget::tr("Time").toStdString());
       for (int c = 0; c<numOfScalarComponents; c++)
         {
         vtkPlot* line = this->ChartXY->AddPlot(vtkChart::LINE);
@@ -330,8 +330,8 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
     this->ChartXY->RemovePlot(0);
     this->ChartXY->RemovePlot(0);
 
-    this->ChartXY->GetAxis(0)->SetTitle("Displacement");
-    this->ChartXY->GetAxis(1)->SetTitle("Time");
+    this->ChartXY->GetAxis(0)->SetTitle(qSlicerSequencesModuleWidget::tr("Displacement").toStdString());
+    this->ChartXY->GetAxis(1)->SetTitle(qSlicerSequencesModuleWidget::tr("Time").toStdString());
     vtkPlot* line_X = this->ChartXY->AddPlot(vtkChart::LINE);
     vtkPlot* line_Y = this->ChartXY->AddPlot(vtkChart::LINE);
     vtkPlot* line_Z = this->ChartXY->AddPlot(vtkChart::LINE);
@@ -880,13 +880,13 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
     QTableWidgetItem* verticalHeaderItem = new QTableWidgetItem();
     if (!strcmp(syncedNode->GetID(), d->ActiveBrowserNode->GetMasterSequenceNode()->GetID()))
       {
-      verticalHeaderItem->setText("M");
-      verticalHeaderItem->setToolTip("Master sequence");
+      verticalHeaderItem->setText(tr("M"));
+      verticalHeaderItem->setToolTip(tr("Master sequence"));
       }
     else
       {
       verticalHeaderItem->setText(QString::number(i));
-      verticalHeaderItem->setToolTip("Synchronized sequence");
+      verticalHeaderItem->setToolTip(tr("Synchronized sequence"));
       }
     d->tableWidget_SynchronizedSequenceNodes->setVerticalHeaderItem(i, verticalHeaderItem);
 
