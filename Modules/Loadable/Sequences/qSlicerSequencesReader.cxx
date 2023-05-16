@@ -78,7 +78,7 @@ vtkSlicerSequencesLogic* qSlicerSequencesReader::sequencesLogic()const
 //-----------------------------------------------------------------------------
 QString qSlicerSequencesReader::description()const
 {
-  return "Sequence";
+  return tr("Sequence");
 }
 
 //-----------------------------------------------------------------------------
@@ -91,8 +91,9 @@ qSlicerIO::IOFileType qSlicerSequencesReader::fileType()const
 QStringList qSlicerSequencesReader::extensions()const
 {
   return QStringList()
-    << "Sequence (*.seq.mrb *.mrb)"
-    << "Volume Sequence (*.seq.nrrd *.seq.nhdr)" << "Volume Sequence (*.nrrd *.nhdr)";
+    << tr("Sequence") + " (*.seq.mrb *.mrb)"
+    << tr("Volume Sequence") + " (*.seq.nrrd *.seq.nhdr)"
+    << tr("Volume `Sequence") + " (*.nrrd *.nhdr)";
 }
 
 //-----------------------------------------------------------------------------
