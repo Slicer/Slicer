@@ -186,8 +186,11 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
 
 - [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation)
 
-## Information for developers
+## Limitations
 
+- When segmentation is displayed in 2D views using `Closed surface` representation (either because this is the only available representation or because this representation is chosen to be shown in `Segmentations` module: `Display` / `Advanced` / `Representation in 2D views` -> `Closed surface`) then filling of the contours may be incomplete and/or inverted. To avoid this, create `Binary labelmap` representation and choose `Representation in 2D views` -> `Binary labelmap`.
+
+## Information for developers
 
 - [vtkSegmentationCore on GitHub](https://github.com/Slicer/Slicer/tree/main/Libs/vtkSegmentationCore) (within Slicer)
 - [Segmentations Slicer module on GitHub](https://github.com/Slicer/Slicer/tree/main/Modules/Loadable/Segmentations)
