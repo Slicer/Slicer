@@ -7,7 +7,6 @@ Example use:
 
     python.exe c:/D/S5/Utilities/Scripts/update_translations.py -c Slicer -s c:/D/S5 -t c:/D/SlicerLanguageTranslations/translations
       --lupdate c:/Qt/6.3.0/msvc2019_64/bin/lupdate.exe
-      -p c:/D/S5/Utilities/Scripts/lupdate_preprocess.py
       -f "/modules/,/Base/Python/slicer/util.py,/Base/Python/slicer/ScriptedLoadableModule.py"
 
 If a Python source file contains a `-*- i18n: disabled -*-` string then the file will not be patched.
