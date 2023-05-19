@@ -9,7 +9,8 @@
     <body>
 
         <div id="info">
-            <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> Click on a sphere to toggle bloom<br>By <a href="http://github.com/Temdog007" target="_blank" rel="noopener">Temdog007</a>
+            <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> Click on an object to toggle bloom<br>By pieper based on example from <a href="http://github.com/Temdog007" target="_blank" rel="noopener">Temdog007</a>
+            <p> Please wait while content is generated and loaded...</p>
         </div>
 
         <script type="x-shader/x-vertex" id="vertexshader">
@@ -69,6 +70,7 @@
             import * as THREE from 'three';
 
             import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+            import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
             import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
             import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -103,14 +105,14 @@
 
             const scene = new THREE.Scene();
 
-            const camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 200 );
-            camera.position.set( 0, 0, 20 );
+            const camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1500 );
+            camera.position.set( 0, 0, 500 );
             camera.lookAt( 0, 0, 0 );
 
             const controls = new OrbitControls( camera, renderer.domElement );
             controls.maxPolarAngle = Math.PI * 0.5;
             controls.minDistance = 1;
-            controls.maxDistance = 100;
+            controls.maxDistance = 1000;
             controls.addEventListener( 'change', render );
 
             scene.add( new THREE.AmbientLight( 0x404040 ) );
@@ -238,41 +240,135 @@
 
             };
 
-            function setupScene() {
+            function loadThreeScene() {
 
                 scene.traverse( disposeMaterial );
                 scene.children.length = 0;
 
-                const geometry = new THREE.IcosahedronGeometry( 1, 15 );
-
-                const xhr = new XMLHttpRequest();
-
-                const url = "/slicer/fiducials";
-                xhr.open('GET', url, true);
-                xhr.responseType = 'json';
-
-                xhr.onload = function() {
-                    let node;
-                    for (node in this.response) {
+                /* fiducials as spheres
+                */
+                const geometry = new THREE.IcosahedronGeometry( 10, 15 );
+                const fiducialsXRH = new XMLHttpRequest();
+                const fiducialsURL = "/slicer/fiducials";
+                fiducialsXRH.open('GET', fiducialsURL, true);
+                fiducialsXRH.responseType = 'json';
+                fiducialsXRH.onload = function() {
+                    let nodeID;
+                    for (nodeID in this.response) {
                         let markupIndex;
-                        for (markupIndex in this.response[node].markups) {
-                            const markup = this.response[node].markups[markupIndex];
+                        for (markupIndex in this.response[nodeID].markups) {
+                            const markup = this.response[nodeID].markups[markupIndex];
                             const color = new THREE.Color();
                             color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
                             const material = new THREE.MeshBasicMaterial( { color: color } );
                             const sphere = new THREE.Mesh( geometry, material );
-                            sphere.position.x = markup.position[0] / 10.;
-                            sphere.position.y = markup.position[1] / 10.;
-                            sphere.position.z = markup.position[2] / 10.;
+                            sphere.position.x = markup.position[0];
+                            sphere.position.y = markup.position[1];
+                            sphere.position.z = markup.position[2];
+                            sphere.rotateX(-1 * Math.PI/2.);
+                            sphere.rotateZ(Math.PI);
                             scene.add( sphere );
-
                             if ( Math.random() < 0.25 ) sphere.layers.enable( BLOOM_SCENE );
                         }
                     }
                     render();
                 };
+                fiducialsXRH.send();
 
-                xhr.send();
+                /* graphics
+                */
+                const graphicsXRH = new XMLHttpRequest();
+                const graphicsURL = "/slicer/threeDGraphics";
+                graphicsXRH.open('GET', graphicsURL, true);
+                graphicsXRH.responseType = 'json';
+
+                graphicsXRH.onload = function() {
+                    const loader = new GLTFLoader();
+                    loader.parse(this.response,
+                      ".",
+                      function (gltf) {
+                        window.gltf = gltf;
+                        let object3D = gltf.scene.children[0];
+                        for (let child in object3D.children) {
+                            const color = new THREE.Color();
+                            color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
+                            const material = new THREE.MeshBasicMaterial( { color: color } );
+                            if (object3D.children[child].geometry) {
+                              const piece = new THREE.Mesh( object3D.children[child].geometry, material );
+                              piece.rotateX(-1 * Math.PI/2.);
+                              piece.rotateZ(Math.PI);
+                              scene.add( piece );
+                              if ( Math.random() < 0.25 ) piece.layers.enable( BLOOM_SCENE );
+                              render();
+                            }
+                        }
+                      }
+                    );
+                };
+                graphicsXRH.send();
+            }
+
+            function loadSlicerScene(onLoadFn) {
+
+                const execXHR = new XMLHttpRequest();
+                const url = "/slicer/exec";
+                execXHR.open('POST', url, true);
+                execXHR.responseType = 'json';
+                execXHR.onload = onLoadFn;
+                execXHR.send(`#python
+needData = False
+try:
+  slicer.util.getNode('vtkMRMLSegmentationNode*')
+except slicer.util.MRMLNodeNotFoundException:
+  needData = True
+try:
+  slicer.util.getNode('vtkMRMLModelNode*')
+except slicer.util.MRMLNodeNotFoundException:
+  needData = True
+
+if needData:
+  import SampleData
+  #volumeNode = SampleData.SampleDataLogic().downloadCTACardio() # takes longer to load
+  volumeNode = SampleData.SampleDataLogic().downloadCTChest()
+  slicer.modules.volumes.logic().CenterVolume(volumeNode)
+  slicer.util.setSliceViewerLayers(background=volumeNode, fit=True)
+
+  segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
+  segmentationNode.CreateDefaultDisplayNodes()
+  segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(volumeNode)
+  segmentationNode.GetSegmentation().AddEmptySegment("Bright things")
+
+  segmentEditorWidget = slicer.qMRMLSegmentEditorWidget()
+  segmentEditorWidget.setMRMLScene(slicer.mrmlScene)
+
+  segmentEditorNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentEditorNode")
+  segmentEditorWidget.setMRMLSegmentEditorNode(segmentEditorNode)
+  segmentEditorWidget.setSegmentationNode(segmentationNode)
+  segmentEditorWidget.setSourceVolumeNode(volumeNode)
+
+  segmentEditorWidget.setActiveEffectByName("Threshold")
+  effect = segmentEditorWidget.activeEffect()
+  effect.setParameter("MinimumThreshold", 400)
+  effect.self().onApply()
+
+  segmentEditorWidget.setActiveEffectByName("Islands")
+  effect = segmentEditorWidget.activeEffect()
+  effect.setParameter("Operation", 'SPLIT_ISLANDS_TO_SEGMENTS')
+  effect.self().onApply()
+
+  segmentationNode.CreateClosedSurfaceRepresentation()
+
+  import random
+  for index in range(20):
+    coord = lambda : -100. + 200 * random.random()
+    point = [coord(), coord(), coord()]
+    slicer.modules.markups.logic().AddControlPoint(*point)
+`);
+            }
+
+            function setupScene() {
+
+                loadSlicerScene(loadThreeScene);
 
             }
 
