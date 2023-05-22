@@ -316,53 +316,26 @@
                 execXHR.responseType = 'json';
                 execXHR.onload = onLoadFn;
                 execXHR.send(`#python
-needData = False
-try:
-  slicer.util.getNode('vtkMRMLSegmentationNode*')
-except slicer.util.MRMLNodeNotFoundException:
-  needData = True
-try:
-  slicer.util.getNode('vtkMRMLModelNode*')
-except slicer.util.MRMLNodeNotFoundException:
-  needData = True
+nodePatterns = ["vtkMRMLSegmentationNode*", "vtkMRMLMarkups*Node*"]
+needDemoData = True
+for nodePattern in nodePatterns:
+  try:
+    slicer.util.getNode(nodePattern)
+    needDemoData = False
+    print(f"Found some {nodePattern}")
+  except slicer.util.MRMLNodeNotFoundException:
+    pass
 
-if needData:
-  import SampleData
-  #volumeNode = SampleData.SampleDataLogic().downloadCTACardio() # takes longer to load
-  volumeNode = SampleData.SampleDataLogic().downloadCTChest()
-  slicer.modules.volumes.logic().CenterVolume(volumeNode)
-  slicer.util.setSliceViewerLayers(background=volumeNode, fit=True)
-
-  segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
-  segmentationNode.CreateDefaultDisplayNodes()
-  segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(volumeNode)
-  segmentationNode.GetSegmentation().AddEmptySegment("Bright things")
-
-  segmentEditorWidget = slicer.qMRMLSegmentEditorWidget()
-  segmentEditorWidget.setMRMLScene(slicer.mrmlScene)
-
-  segmentEditorNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentEditorNode")
-  segmentEditorWidget.setMRMLSegmentEditorNode(segmentEditorNode)
-  segmentEditorWidget.setSegmentationNode(segmentationNode)
-  segmentEditorWidget.setSourceVolumeNode(volumeNode)
-
-  segmentEditorWidget.setActiveEffectByName("Threshold")
-  effect = segmentEditorWidget.activeEffect()
-  effect.setParameter("MinimumThreshold", 400)
-  effect.self().onApply()
-
-  segmentEditorWidget.setActiveEffectByName("Islands")
-  effect = segmentEditorWidget.activeEffect()
-  effect.setParameter("Operation", 'SPLIT_ISLANDS_TO_SEGMENTS')
-  effect.self().onApply()
-
-  segmentationNode.CreateClosedSurfaceRepresentation()
-
-  import random
-  for index in range(20):
-    coord = lambda : -100. + 200 * random.random()
-    point = [coord(), coord(), coord()]
-    slicer.modules.markups.logic().AddControlPoint(*point)
+if needDemoData:
+  filePath = f"{slicer.util.tempDirectory()}/ctacardio-totalseg-models-2023-05-22-Scene.mrb"
+  print(f"Downloading to {filePath}")
+  demoDataURL = "https://github.com/pieper/SlicerWeb/releases/download/v0.1/ctacardio-totalseg-models-2023-05-22-Scene.mrb"
+  slicer.util.downloadFile(demoDataURL, filePath)
+  slicer.util.loadScene(filePath)
+  import os
+  os.remove(filePath)
+else:
+  print("Showing existing data from scene")
 `);
             }
 
