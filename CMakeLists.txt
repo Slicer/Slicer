@@ -19,6 +19,30 @@ if(NOT CMAKE_CXX_STANDARD MATCHES "^(17|20)$")
   message(FATAL_ERROR "CMAKE_CXX_STANDARD must be set to 17 or 20")
 endif()
 
+# Prevent unnecessary re-linking on Linux
+#
+# See https://discourse.slicer.org/t/build-when-git-commit-is-changed/29607/12
+#
+# For example, on Linux, after modifying one implementation file
+#
+# $ touch ../../Slicer/Libs/MRML/Core/vtkMRMLScene.cxx
+#
+# We can observe that beside the rebuilding of libMRMLCore.so no relinking
+# happen for any of the dependencies:
+#
+# $ make -j10
+# [...]
+# [ 24%] Building CXX object Libs/MRML/Core/CMakeFiles/MRMLCore.dir/vtkMRMLScene.cxx.o
+# [ 24%] Linking CXX shared library ../../../bin/libMRMLCore.so
+# [ 26%] Built target MRMLCore
+# [ 26%] Built target MRMLCLI
+# [...]
+# [100%] Built target qSlicerVolumeRenderingModuleCxxTests
+#
+if(NOT DEFINED CMAKE_LINK_DEPENDS_NO_SHARED AND UNIX AND NOT APPLE)
+  set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
+endif()
+
 #-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 set(SUPERBUILD_TOPLEVEL_PROJECT Slicer)
