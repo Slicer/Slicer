@@ -379,12 +379,11 @@ segmentId = "Segment_2"
 position = segmentationNode.GetSegmentCenterRAS(segmentId)
 print(position)
 
-# Center slice views on this position
-slicer.modules.markups.logic().JumpSlicesToLocation(*position, True)
-
-# Center all cameras on this position
+# Center slice views and cameras on this position
+for sliceNode in slicer.util.getNodesByClass('vtkMRMLSliceNode'):
+    sliceNode.JumpSliceByCentering(*position)
 for camera in slicer.util.getNodesByClass('vtkMRMLCameraNode'):
-  camera.SetFocalPoint(position)
+    camera.SetFocalPoint(position)
 ```
 
 ### Read and write a segment as a numpy array
