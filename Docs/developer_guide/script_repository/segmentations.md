@@ -368,6 +368,25 @@ segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self()
 print(segmentEditorWidget.availableEffectNames())
 ```
 
+### Center all views on a segment
+
+This example shows how to center all slice views and 3D views on a segment. The segment's center is not the segment's centroid, but the centroid of the largest island in the effect, because the centroid can be in an empty region if the segment is made up of multiple islands.
+
+```python
+segmentationNode = getNode("Segmentation")
+segmentId = "Segment_2"
+
+position = segmentationNode.GetSegmentCenterRAS(segmentId)
+print(position)
+
+# Center slice views on this position
+slicer.modules.markups.logic().JumpSlicesToLocation(*position, True)
+
+# Center all cameras on this position
+for camera in slicer.util.getNodesByClass('vtkMRMLCameraNode'):
+  camera.SetFocalPoint(position)
+```
+
 ### Read and write a segment as a numpy array
 
 This example shows how to read and write voxels of binary labelmap representation of a segment as a numpy array.
