@@ -58,6 +58,8 @@ public:
     double Opacity3D{1.0};
     double Opacity2DFill{1.0}; // This one is used for labelmap volume related operations (color table, merged labelmap)
     double Opacity2DOutline{1.0};
+    /// Pickable by interactions flag. If true, then the point under the mouse on the segment surfaces in the 3D views is computed, otherwise skipped.
+    bool Pickable{true};
 
     // Initialize with default values
     SegmentDisplayProperties()
@@ -257,6 +259,13 @@ public:
   /// Set all three types of segment opacity by segment ID
   void SetSegmentOpacity(std::string segmentID, double opacity);
   void SetAllSegmentsOpacity(double opacity, bool changeVisibleSegmentsOnly = false);
+
+  /// Get segment pickability by segment ID. Convenience function for python compatibility.
+  /// \return Segment 2D pickability if segment found, otherwise false
+  bool GetSegmentPickable(std::string segmentID);
+  /// Set segment 2D pickability by segment ID. Convenience function for python compatibility.
+  void SetSegmentPickable(std::string segmentID, bool pickable);
+  void SetAllSegmentsPickable(bool pickable, bool changeVisibleSegmentsOnly = false);
 
   /// Get all visible segment IDs.
   void GetVisibleSegmentIDs(vtkStringArray* segmentIDs);
