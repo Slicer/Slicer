@@ -35,7 +35,6 @@
 #include "qSlicerApplication.h"
 #include "qSlicerErrorReportDialog.h"
 #include "qSlicerModuleManager.h"
-#include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_MAJOR,Slicer_VERSION_MINOR
 
 namespace
 {

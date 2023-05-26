@@ -29,7 +29,6 @@
 
 // Slicer includes
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_DICOM_SUPPORT
-#include "vtkSlicerVersionConfigure.h"
 
 // Slicer includes
 #include "qSlicerWelcomeModuleWidget.h"

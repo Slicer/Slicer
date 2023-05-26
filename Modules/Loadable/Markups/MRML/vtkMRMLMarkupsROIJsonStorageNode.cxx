@@ -25,7 +25,6 @@
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
-#include "vtkSlicerVersionConfigure.h"
 
 #include "vtkDoubleArray.h"
 #include "vtkObjectFactory.h"

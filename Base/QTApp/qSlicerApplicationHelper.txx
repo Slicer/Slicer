@@ -20,7 +20,6 @@
 
 // Slicer includes
 #include "vtkSlicerConfigure.h" // For Slicer_* macros
-#include "vtkSlicerVersionConfigure.h" // For Slicer_* version macros
 
 // Slicer includes
 #include <qSlicerApplication.h>

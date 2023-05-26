@@ -31,7 +31,6 @@
 #include "qSlicerActionsDialog.h"
 #include "qSlicerCoreApplication.h"
 #include "ui_qSlicerActionsDialog.h"
-#include "vtkSlicerVersionConfigure.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerActionsDialogPrivate: public Ui_qSlicerActionsDialog

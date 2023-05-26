@@ -37,7 +37,6 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerApplicationUpdateManager.h"
 #include "vtkSlicerConfigure.h"
-#include "vtkSlicerVersionConfigure.h"
 
 // MRML includes
 #include "vtkArchive.h"
