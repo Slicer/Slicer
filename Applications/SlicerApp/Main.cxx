@@ -22,6 +22,7 @@
 #include "qSlicerApplication.h"
 #include "qSlicerApplicationHelper.h"
 #include "qSlicerStyle.h"
+#include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_FULL
 
 // SlicerApp includes
 #include "qSlicerAppMainWindow.h"

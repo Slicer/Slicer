@@ -38,6 +38,7 @@
 #endif
 
 #include "vtkSlicerConfigure.h" // For Slicer_USE_*, Slicer_BUILD_*_SUPPORT
+#include <vtkSlicerVersionConfigure.h> // For Slicer_VERSION_FULL
 
 // CTK includes
 #include <ctkColorDialog.h>
