@@ -26,7 +26,6 @@
 
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
-#include "vtkSlicerVersionConfigure.h"
 #include "vtkMRMLMarkupsJsonElement.h"
 
 #include "vtkDoubleArray.h"

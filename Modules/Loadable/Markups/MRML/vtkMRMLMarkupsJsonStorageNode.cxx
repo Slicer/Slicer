@@ -26,7 +26,6 @@
 #include "vtkMRMLUnitNode.h"
 
 #include "vtkMRMLScene.h"
-#include "vtkSlicerVersionConfigure.h"
 
 #include "vtkDoubleArray.h"
 #include "vtkObjectFactory.h"
