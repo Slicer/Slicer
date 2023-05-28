@@ -982,6 +982,7 @@ space origin: %%origin%%
             renderWindow = lm.threeDWidget(widgetIndex).threeDView().renderWindow()
             exporter = vtk.vtkGLTFExporter()
             exporter.SetInlineData(True)
+            exporter.SetSaveNormal(True)
             exporter.SetRenderWindow(renderWindow)
             result = exporter.WriteToString()
             lm.threeDWidget(widgetIndex).mrmlViewNode().SetBoxVisible(boxWasVisible)

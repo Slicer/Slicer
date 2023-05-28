@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>3D Slicer &lt;model-viewer&gt; example</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head> 
+
+  <body>
+
+    <div id="info">
+      <a href="https://modelviewer.dev" target="_blank" rel="noopener">3D Slicer modelviewer</a>
+      <p> Please wait while content is generated and loaded... (be sure Slicer's exec API is enabled)</p>
+    </div>
+
+    <model-viewer
+      style="width:512px; height:512px"
+      src="/slicer/threeDGraphics"
+      alt="A 3D model from Slicer"
+      shadow-intensity="1"
+      auto-rotate ar
+      camera-controls>
+    </model-viewer>
+
+  <footer>
+    <span>This page is a basic demo of the <a href="https://github.com/GoogleWebComponents/model-viewer" target="_blank">&lt;model-viewer&gt;</a> web component.</span>
+  </footer>
+  
+  </body>
+
+  <script type="module" 
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js">
+  </script>
+
+</html>

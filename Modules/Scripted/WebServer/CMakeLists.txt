@@ -24,6 +24,7 @@ set(MODULE_PYTHON_RESOURCES
   Resources/docroot/ServerTests/timecube.html
   Resources/docroot/ServerTests/threejs.html
   Resources/docroot/ServerTests/threejs.css
+  Resources/docroot/ServerTests/modelviewer.html
   Resources/docroot/ServerTests/webgl-utils.js
   Resources/docroot/stylesheets/application.css
   )
