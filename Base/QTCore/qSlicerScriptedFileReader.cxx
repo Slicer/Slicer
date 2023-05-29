@@ -46,6 +46,7 @@ public:
     FileTypeMethod,
     ExtensionsMethod,
     CanLoadFileMethod,
+    CanLoadFileConfidenceMethod,
     LoadMethod,
     };
 
@@ -65,6 +66,7 @@ qSlicerScriptedFileReaderPrivate::qSlicerScriptedFileReaderPrivate()
   this->PythonCppAPI.declareMethod(Self::FileTypeMethod, "fileType");
   this->PythonCppAPI.declareMethod(Self::ExtensionsMethod, "extensions");
   this->PythonCppAPI.declareMethod(Self::CanLoadFileMethod, "canLoadFile");
+  this->PythonCppAPI.declareMethod(Self::CanLoadFileConfidenceMethod, "canLoadFileConfidence");
   this->PythonCppAPI.declareMethod(Self::LoadMethod, "load");
 }
 
@@ -260,6 +262,30 @@ bool qSlicerScriptedFileReader::canLoadFile(const QString& file)const
     return false;
     }
   return result == Py_True;
+}
+
+//-----------------------------------------------------------------------------
+double qSlicerScriptedFileReader::canLoadFileConfidence(const QString& file)const
+{
+  Q_D(const qSlicerScriptedFileReader);
+  PyObject* arguments = PyTuple_New(1);
+  PyTuple_SET_ITEM(arguments, 0, PyString_FromString(file.toUtf8()));
+  PyObject* result = d->PythonCppAPI.callMethod(d->CanLoadFileConfidenceMethod, arguments);
+  Py_DECREF(arguments);
+  if (!result)
+    {
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::canLoadFileConfidence(file);
+    }
+
+  if (PyFloat_Check(result))
+    {
+    qWarning() << d->PythonSource
+               << " - In" << d->PythonClassName << "class, function 'canLoadFileConfidence' "
+               << "is expected to return a float!";
+    return 0.0;
+    }
+  return PyFloat_AsDouble(result);
 }
 
 //-----------------------------------------------------------------------------

@@ -46,6 +46,16 @@ bool qSlicerFileWriter::canWriteObject(vtkObject* object)const
 }
 
 //----------------------------------------------------------------------------
+double qSlicerFileWriter::canWriteObjectConfidence(vtkObject* object)const
+{
+  if (!this->canWriteObject(object))
+    {
+    return 0.0;
+    }
+  return 0.5;
+}
+
+//----------------------------------------------------------------------------
 bool qSlicerFileWriter::write(const qSlicerIO::IOProperties& properties)
 {
   Q_D(qSlicerFileWriter);

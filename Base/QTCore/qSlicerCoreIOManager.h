@@ -66,8 +66,11 @@ public:
   Q_INVOKABLE QStringList fileDescriptions(const QString& file)const;
   QStringList fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const;
 
-  /// Return the file type associated with an VTK \a object.
-  Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object, const QString& format=QString())const;
+  /// Return best file writer for this object
+  qSlicerFileWriter* writer(vtkObject* object, const QString& extension = QString())const;
+
+  /// Return the file type of the best file writer for the input VTK \a object.
+  Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object, const QString& extension=QString())const;
 
   Q_INVOKABLE QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
   Q_INVOKABLE QStringList fileWriterExtensions(vtkObject* object)const;
@@ -78,8 +81,10 @@ public:
   /// registered types of storage nodes. Includes the leading dot.
   Q_INVOKABLE QStringList allReadableFileExtensions()const;
 
-  /// Return the file option associated with a \a file type
+  /// Return the file read options for the best reader associated with a \a file type
   qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
+
+  /// Return the file write options of the best file writer for the input VTK \a object.
   qSlicerIOOptions* fileWriterOptions(vtkObject* object, const QString& extension)const;
 
   /// Returns a full extension for this storable node that is recognised by Slicer IO.
