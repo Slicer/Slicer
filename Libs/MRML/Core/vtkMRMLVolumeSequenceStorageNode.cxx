@@ -18,7 +18,6 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 
-#include "vtkSlicerVersionConfigure.h"
 #include "vtkTeemNRRDReader.h"
 #include "vtkTeemNRRDWriter.h"
 #include "vtkObjectFactory.h"
@@ -423,16 +422,12 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
   // Use here the NRRD Writer
-#if Slicer_VERSION_MAJOR > 4 || (Slicer_VERSION_MAJOR == 4 && Slicer_VERSION_MINOR >= 9)
   vtkNew<vtkTeemNRRDWriter> writer;
   // ForceRangeAxis needs to be emabled for the writer to correctly write image sequences that contain only a single frame.
   // Without this option the range axis would be omitted for single frame sequences, causing the first axis to be a spatial dimension, rather than range.
   // This would cause an error when attempting to set units on the first axis.
   writer->SetForceRangeAxis(true);
   writer->SetVectorAxisKind(nrrdKindList);
-#else
-  vtkNew<vtkNRRDWriter> writer;
-#endif
   writer->SetFileName(fullName.c_str());
 
 #ifdef NRRD_CHUNK_IO_AVAILABLE
