@@ -45,6 +45,7 @@ public:
     DescriptionMethod = 0,
     FileTypeMethod,
     CanWriteObjectMethod,
+    CanWriteObjectConfidenceMethod,
     ExtensionsMethod,
     WriteMethod,
     };
@@ -64,6 +65,7 @@ qSlicerScriptedFileWriterPrivate::qSlicerScriptedFileWriterPrivate()
   this->PythonCppAPI.declareMethod(Self::DescriptionMethod, "description");
   this->PythonCppAPI.declareMethod(Self::FileTypeMethod, "fileType");
   this->PythonCppAPI.declareMethod(Self::CanWriteObjectMethod, "canWriteObject");
+  this->PythonCppAPI.declareMethod(Self::CanWriteObjectConfidenceMethod, "canWriteObjectConfidence");
   this->PythonCppAPI.declareMethod(Self::ExtensionsMethod, "extensions");
   this->PythonCppAPI.declareMethod(Self::WriteMethod, "write");
 }
@@ -216,7 +218,8 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
   Py_DECREF(arguments);
   if (!result)
     {
-    return false;
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::canWriteObject(object);
     }
   if (!PyBool_Check(result))
     {
@@ -226,6 +229,30 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
     return false;
     }
   return result == Py_True;
+}
+
+//-----------------------------------------------------------------------------
+double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object)const
+{
+  Q_D(const qSlicerScriptedFileWriter);
+
+  PyObject * arguments = PyTuple_New(1);
+  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
+  PyObject * result = d->PythonCppAPI.callMethod(d->CanWriteObjectConfidenceMethod, arguments);
+  Py_DECREF(arguments);
+  if (!result)
+    {
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::canWriteObjectConfidence(object);
+    }
+  if (!PyFloat_Check(result))
+    {
+    qWarning() << d->PythonSource
+               << " - In" << d->PythonClassName << "class, function 'canWriteObjectConfidence' "
+               << "is expected to return a float!";
+    return 0.0;
+    }
+  return PyFloat_AsDouble(result);
 }
 
 //-----------------------------------------------------------------------------

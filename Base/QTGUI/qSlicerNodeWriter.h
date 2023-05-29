@@ -50,7 +50,7 @@ public:
   QString description()const override;
   IOFileType fileType()const override;
 
-  /// Return true if the object is handled by the writer.
+  /// Return true if this class can write the input object.
   bool canWriteObject(vtkObject* object)const override;
 
   /// Return a list of the supported extensions for a particular object.

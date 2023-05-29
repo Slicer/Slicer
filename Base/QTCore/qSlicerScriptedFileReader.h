@@ -72,6 +72,9 @@ public:
   bool canLoadFile(const QString& file)const override;
 
   /// Reimplemented to propagate to python methods
+  /// \sa qSlicerFileReader::canLoadFileConfidence()
+  double canLoadFileConfidence(const QString& file)const override;
+
   /// \sa qSlicerFileReader::write()
   bool load(const qSlicerIO::IOProperties& properties) override;
 

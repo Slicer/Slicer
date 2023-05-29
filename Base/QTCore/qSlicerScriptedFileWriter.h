@@ -67,6 +67,10 @@ public:
   bool canWriteObject(vtkObject* object)const override;
 
   /// Reimplemented to propagate to python methods
+  /// \sa qSlicerFileWriter::canWriteObjectConfidence()
+  double canWriteObjectConfidence(vtkObject* object)const override;
+
+  /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileWriter::extensions()
   QStringList extensions(vtkObject* object)const override;
 
