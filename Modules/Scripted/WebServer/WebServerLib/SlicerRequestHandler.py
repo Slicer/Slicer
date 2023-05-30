@@ -1,6 +1,4 @@
 """
-Handler for processing Slicer REST API requests.
-
 Full specification of the Slicer REST API is available in
 Docs/user_guide/modules/webserver.md
 """
@@ -63,6 +61,8 @@ class SlicerRequestHandler:
             responseBody, contentType = self.screenshot(request)
         elif request.find(b'/slice') == 0:
             responseBody, contentType = self.slice(request)
+        elif request.find(b'/threeDGraphics') == 0:
+            responseBody, contentType = self.threeDGraphics(request)
         elif request.find(b'/threeD') == 0:
             responseBody, contentType = self.threeD(request)
         elif request.find(b'/mrml') == 0:
@@ -86,6 +86,11 @@ class SlicerRequestHandler:
             responseBody, contentType = self.fiducials(request, requestBody)
         elif request.find(b'/fiducial') == 0:
             responseBody, contentType = self.fiducial(request, requestBody)
+        elif request.find(b'/segmentations') == 0:
+            responseBody, contentType = self.segmentations(request, requestBody)
+        elif request.find(b'/segmentation') == 0:
+            responseBody, contentType = self.segmentation(request, requestBody)
+            print("responseBody", len(responseBody))
         elif request.find(b'/accessDICOMwebStudy') == 0:
             responseBody, contentType = self.accessDICOMwebStudy(request, requestBody)
         else:
@@ -556,7 +561,7 @@ space origin: %%origin%%
             node['color'] = displayNode.GetSelectedColor()
             node['scale'] = displayNode.GetGlyphScale()
             node['markups'] = []
-            for markupIndex in range(markupsNode.GetNumberOfMarkups()):
+            for markupIndex in range(markupsNode.GetNumberOfControlPoints()):
                 position = [0, ] * 3
                 markupsNode.GetNthControlPointPosition(markupIndex, position)
                 position
@@ -598,6 +603,44 @@ space origin: %%origin%%
         fiducialNode = slicer.util.getNode(fiducialID)
         fiducialNode.SetNthControlPointPosition(index, float(r), float(a), float(s))
         return b'{"success": true}', b'application/json'
+
+    def segmentations(self, request, requestBody):
+        """
+        Handle requests with path: /segmentations
+        Return basic properties of segmentations in an ad hoc json structure.
+        """
+        segmentations = {}
+        for segmentationNode in slicer.util.getNodesByClass('vtkMRMLSegmentationNode'):
+            displayNode = segmentationNode.GetDisplayNode()
+            node = {}
+            node['name'] = segmentationNode.GetName()
+            node['segmentIDs'] = segmentationNode.GetSegmentation().GetSegmentIDs()
+            segmentations[segmentationNode.GetID()] = node
+        return (json.dumps(segmentations).encode()), b'application/json'
+
+    def segmentation(self, request, requestBody):
+        """
+        Handle requests with path: /segmentation
+        Return the segmentation geometry
+        """
+        p = urllib.parse.urlparse(request.decode())
+        q = urllib.parse.parse_qs(p.query)
+        try:
+            segmentationID = q['segmentationID'][0].strip()
+        except KeyError:
+            segmentationID = 'vtkMRMLSegmentationNode*'
+        try:
+            segmentID = q['segmentationID'][0].strip()
+        except KeyError:
+            segmentID = 'Segment_1'
+        try:
+            format = q['format'][0].strip()
+        except KeyError:
+            format = "glTF"
+
+        segmentationNode = slicer.util.getNode(segmentationID)
+
+        return b'{"result": "not implemented yet"}', b'application/json'
 
     def accessDICOMwebStudy(self, request, requestBody):
         """
@@ -909,6 +952,44 @@ space origin: %%origin%%
             pngData = self.vtkImageDataToPNG(imageData)
         self.logMessage('returning an image of %d length' % len(pngData))
         return pngData, b'image/png'
+
+    def threeDGraphics(self, request):
+        """
+        Handle requests with path: /threeDGraphics
+        Return a graphics content for a threeD view.
+        Defaults to glTF.
+        """
+
+        p = urllib.parse.urlparse(request.decode())
+        q = urllib.parse.parse_qs(p.query)
+        try:
+            widgetIndex = int(q['widgetIndex'][0].strip().lower())
+        except KeyError:
+            widgetIndex = 0
+        try:
+            boxVisible = q['boxVisible'][0].strip().lower()
+        except KeyError:
+            boxVisible = 'false'
+        try:
+            format = q['format'][0].strip().lower()
+        except KeyError:
+            format = 'glTF'
+
+        if format == 'glTF':
+            lm = slicer.app.layoutManager()
+            boxWasVisible = lm.threeDWidget(widgetIndex).mrmlViewNode().GetBoxVisible()
+            lm.threeDWidget(widgetIndex).mrmlViewNode().SetBoxVisible(boxVisible != 'false')
+            renderWindow = lm.threeDWidget(widgetIndex).threeDView().renderWindow()
+            exporter = vtk.vtkGLTFExporter()
+            exporter.SetInlineData(True)
+            exporter.SetSaveNormal(True)
+            exporter.SetRenderWindow(renderWindow)
+            result = exporter.WriteToString()
+            lm.threeDWidget(widgetIndex).mrmlViewNode().SetBoxVisible(boxWasVisible)
+        else:
+            raise RuntimeError(f"format {format} not supported")
+
+        return result.encode(), b'application/json'
 
     def threeD(self, request):
         """
