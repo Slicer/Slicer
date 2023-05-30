@@ -680,12 +680,12 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
 {
   this->UpdateViewScaleFactor();
   this->UpdateControlPointSize();
 
-  Superclass::UpdateFromMRML(caller, event, callData);
+  Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || !this->IsDisplayable())

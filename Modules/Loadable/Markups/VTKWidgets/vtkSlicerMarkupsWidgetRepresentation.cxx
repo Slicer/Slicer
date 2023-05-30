@@ -524,13 +524,24 @@ void vtkSlicerMarkupsWidgetRepresentation::BuildLine(vtkPolyData* linePolyData, 
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRML(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
+  vtkMRMLNode* caller, unsigned long event, void* callData)
 {
+  this->UpdateFromMRMLInternal(caller, event, callData);
+
   if (!this->InteractionPipeline)
     {
     this->SetupInteractionPipeline();
     }
+  if (this->InteractionPipeline)
+    {
+    this->UpdateInteractionPipeline();
+    }
+}
 
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRMLInternal(
+    vtkMRMLNode* vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
+{
   if (!event || event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
     this->MarkupsTransformModifiedTime.Modified();
@@ -568,11 +579,6 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRML(
 
 
   this->NeedToRenderOn(); // TODO: to improve performance, call this only if it is actually needed
-
-  if (this->InteractionPipeline)
-    {
-    this->UpdateInteractionPipeline();
-    }
 }
 
 //----------------------------------------------------------------------

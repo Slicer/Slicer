@@ -171,9 +171,9 @@ double *vtkSlicerLineRepresentation3D::GetBounds()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
 {
-  Superclass::UpdateFromMRML(caller, event, callData);
+  Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
   this->NeedToRenderOn();
 
