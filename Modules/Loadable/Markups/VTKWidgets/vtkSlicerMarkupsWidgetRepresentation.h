@@ -88,6 +88,7 @@ public:
 
   /// Update the representation from markups node
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+  virtual void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;

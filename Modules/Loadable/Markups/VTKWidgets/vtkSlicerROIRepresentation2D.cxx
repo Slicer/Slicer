@@ -49,6 +49,7 @@
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsROIDisplayNode.h"
 #include "vtkMRMLMarkupsROINode.h"
+#include <vtkMRMLSliceLogic.h>
 
 vtkStandardNewMacro(vtkSlicerROIRepresentation2D);
 //----------------------------------------------------------------------
@@ -95,9 +96,9 @@ vtkSlicerROIRepresentation2D::vtkSlicerROIRepresentation2D()
 vtkSlicerROIRepresentation2D::~vtkSlicerROIRepresentation2D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerROIRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerROIRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
 {
-  Superclass::UpdateFromMRML(caller, event, callData);
+  Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
   if (!roiNode)
@@ -174,7 +175,6 @@ void vtkSlicerROIRepresentation2D::SetROISource(vtkPolyDataAlgorithm* roiSource)
     }
 }
 
-
 //----------------------------------------------------------------------
 void vtkSlicerROIRepresentation2D::UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINode* roiNode)
 {
@@ -190,13 +190,25 @@ void vtkSlicerROIRepresentation2D::UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINod
     this->SetROISource(cubeSource);
     }
 
+  // Add a small amount to each axis so that the ROI is still visible when the slice view is parallel to
+  // and intersecting with one of the faces.
+  double epsilon = 1e-6;
+
+  vtkMRMLApplicationLogic* applicationLogic = this->GetApplicationLogic();
+  vtkMRMLSliceLogic* sliceLogic = applicationLogic ? applicationLogic->GetSliceLogic(this->GetSliceNode()) : nullptr;
+  if (sliceLogic)
+    {
+    // Set the value of epsilon relative to the slice thickness.
+    double sliceThicknessMm = sliceLogic->GetLowestVolumeSliceSpacing()[2];
+    epsilon = sliceThicknessMm / 10000.0;
+    }
+
   double sideLengths[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetSizeWorld(sideLengths);
-  cubeSource->SetXLength(sideLengths[0]);
-  cubeSource->SetYLength(sideLengths[1]);
-  cubeSource->SetZLength(sideLengths[2]);
-
-  this->ROIOutlineActor->SetVisibility(vtkMath::Norm(sideLengths) >= 1e-6);
+  cubeSource->SetXLength(sideLengths[0] + epsilon);
+  cubeSource->SetYLength(sideLengths[1] + epsilon);
+  cubeSource->SetZLength(sideLengths[2] + epsilon);
+  this->ROIOutlineActor->SetVisibility(vtkMath::Norm(sideLengths) >= epsilon);
 }
 
 //----------------------------------------------------------------------

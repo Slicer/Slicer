@@ -65,7 +65,7 @@ public:
   /// Subclasses of vtkMRMLAbstractWidgetRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData=nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData=nullptr) override;
 
   /// Updates the dimensions of the cube source filter
   virtual void UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINode* roiNode);

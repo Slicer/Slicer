@@ -106,9 +106,9 @@ vtkSlicerROIRepresentation3D::vtkSlicerROIRepresentation3D()
 vtkSlicerROIRepresentation3D::~vtkSlicerROIRepresentation3D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerROIRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
 {
-  Superclass::UpdateFromMRML(caller, event, callData);
+  Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
