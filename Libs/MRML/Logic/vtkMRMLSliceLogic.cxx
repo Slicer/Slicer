@@ -2483,7 +2483,9 @@ bool vtkMRMLSliceLogic::IsEventInsideVolume(bool background, double worldPos[3])
   volumeNode->GetImageData()->GetExtent(volumeExtent);
   for (int i = 0; i < 3; i++)
     {
-    if (ijkPos[i]<volumeExtent[i * 2] || ijkPos[i]>volumeExtent[i * 2 + 1])
+    // In VTK, the voxel coordinate refers to the center of the voxel and so the image bounds
+    // go beyond the position of the first and last voxels by half voxel. Therefore include 0.5 shift.
+    if (ijkPos[i] < volumeExtent[i * 2] - 0.5 || ijkPos[i] > volumeExtent[i * 2 + 1] + 0.5)
       {
       return false;
       }
