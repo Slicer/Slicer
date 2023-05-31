@@ -137,6 +137,10 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
             if pipeline.activeSliceOffset:
                 offset = abs(currentSliceOffset - pipeline.activeSliceOffset)
                 if offset > 0.01:
+                    if pipeline.rasPoints.GetNumberOfPoints() == 1:
+                        # One placed point is not visible to the user so clear the state upon changing slice offset
+                        pipeline.resetPolyData()
+                        return
                     lineMode = "dashed"
             pipeline.setLineMode(lineMode)
             pipeline.positionActors()
