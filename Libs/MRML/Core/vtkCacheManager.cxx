@@ -219,28 +219,27 @@ int vtkCacheManager::LocalFileExists ( const char *uri )
 {
   int index;
   std::string uriString (uri);
-  std::string prefix;
   std::string filename;
 
   //--- get all characters up to (and not including) the '://'
   if ( ( index = (int)(uriString.find ( "://", 0 )) ) != (int)(std::string::npos) )
-    {
+  {
     //--- is this the correct index???
-    filename = uriString.substr ( index+3 );
-    }
+    filename = uriString.substr ( index + 3 );
+  }
   else
-    {
+  {
     filename = uri;
-    }
+  }
 
   if ( vtksys::SystemTools::FileExists ( filename.c_str() ) )
-    {
+  {
     return ( 1 );
-    }
+  }
   else
-    {
+  {
     return (0);
-    }
+  }
 }
 
 
