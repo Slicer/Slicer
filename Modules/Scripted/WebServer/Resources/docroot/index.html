@@ -152,6 +152,21 @@
     </li>
   </ul>
 
+  <ul>
+    <li>
+      <h3>VolView examples</h3>
+      <p>Load a volume in Slicer to see it in VolView.</p>
+      <p>Be sure the slicer api and cors are enabled.</p>
+      <p><a href='https://kitware.github.io/volview/'>volview from kitware</a> can load data from slicer directly using a <a href='https://kitware.github.io/volview/doc/loading_data.html#loading-remote-data-via-urls'>url parameter<a>.</p>
+      <a href='https://volview.netlify.app/?names=%5bSlicerVolume.nrrd%5d&urls=%5bhttp://localhost:2016/slicer/volume%5d'>https://volview.netlify.app/?names=%5bmrhead.nrrd%5d&urls=%5bhttp://localhost:2016/slicer/volume%5d</a><br>
+      <!--
+        todo: not all features of dicomweb are currently supported so this link doesn't work yet.
+          https://volview.netlify.app/?dicomweb=http://localhost:2016/dicom
+      -->
+    </li>
+  </ul>
+
+
 </body>
 
 </html>
