@@ -138,7 +138,7 @@ class DICOMRequestHandler:
                         jsonDataset = studyDataset.to_json(studyDataset)
                         studyResponseString += jsonDataset.encode() + b","
                     except AttributeError:
-                        self.logMessage(f"Skipping study {study} with missing atribute")
+                        self.logMessage(f"Skipping study {study} with missing attribute")
             if studyResponseString.endswith(b','):
                 studyResponseString = studyResponseString[:-1]
             studyResponseString += b']'
