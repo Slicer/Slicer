@@ -126,6 +126,9 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
             lineMode = "solid"
             currentSliceOffset = sliceLogic.GetSliceOffset()
             if pipeline.activeSliceOffset:
+                if pipeline.rasPoints.GetNumberOfPoints() == 1:
+                    pipeline.resetPolyData()
+                    return
                 offset = abs(currentSliceOffset - pipeline.activeSliceOffset)
                 if offset > 0.01:
                     lineMode = "dashed"
