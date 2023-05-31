@@ -113,29 +113,32 @@ class DICOMRequestHandler:
                         modalitiesInStudy = ['OT']
                     # Assemble study response from representative series
                     dataset = representativeSeriesDataset
-                    studyDataset = pydicom.dataset.Dataset()
-                    studyDataset.SpecificCharacterSet = ['ISO_IR 100']
-                    studyDataset.StudyDate = dataset.StudyDate
-                    studyDataset.StudyTime = dataset.StudyTime
-                    studyDataset.StudyDescription = dataset.StudyDescription if hasattr(studyDataset, 'StudyDescription') else None
-                    studyDataset.StudyInstanceUID = dataset.StudyInstanceUID
-                    studyDataset.AccessionNumber = dataset.AccessionNumber
-                    studyDataset.InstanceAvailability = 'ONLINE'
-                    studyDataset.ModalitiesInStudy = list(modalitiesInStudy)
-                    studyDataset.ReferringPhysicianName = dataset.ReferringPhysicianName
-                    studyDataset[self.retrieveURLTag] = pydicom.dataelem.DataElement(
-                        0x00080190, "UR", "http://example.com")  # TODO: provide WADO-RS RetrieveURL
-                    studyDataset.PatientName = dataset.PatientName
-                    studyDataset.PatientID = dataset.PatientID
-                    studyDataset.PatientBirthDate = dataset.PatientBirthDate
-                    studyDataset.PatientSex = dataset.PatientSex
-                    studyDataset.StudyID = dataset.StudyID if hasattr(studyDataset, 'StudyID') else None
-                    studyDataset[self.numberOfStudyRelatedSeriesTag] = pydicom.dataelem.DataElement(
-                        self.numberOfStudyRelatedSeriesTag, "IS", str(numberOfStudyRelatedSeries))
-                    studyDataset[self.numberOfStudyRelatedInstancesTag] = pydicom.dataelem.DataElement(
-                        self.numberOfStudyRelatedInstancesTag, "IS", str(numberOfStudyRelatedInstances))
-                    jsonDataset = studyDataset.to_json(studyDataset)
-                    studyResponseString += jsonDataset.encode() + b","
+                    try:
+                        studyDataset = pydicom.dataset.Dataset()
+                        studyDataset.SpecificCharacterSet = ['ISO_IR 100']
+                        studyDataset.StudyDate = dataset.StudyDate
+                        studyDataset.StudyTime = dataset.StudyTime
+                        studyDataset.StudyDescription = dataset.StudyDescription if hasattr(studyDataset, 'StudyDescription') else None
+                        studyDataset.StudyInstanceUID = dataset.StudyInstanceUID
+                        studyDataset.AccessionNumber = dataset.AccessionNumber
+                        studyDataset.InstanceAvailability = 'ONLINE'
+                        studyDataset.ModalitiesInStudy = list(modalitiesInStudy)
+                        studyDataset.ReferringPhysicianName = dataset.ReferringPhysicianName
+                        studyDataset[self.retrieveURLTag] = pydicom.dataelem.DataElement(
+                            0x00080190, "UR", "http://example.com")  # TODO: provide WADO-RS RetrieveURL
+                        studyDataset.PatientName = dataset.PatientName
+                        studyDataset.PatientID = dataset.PatientID
+                        studyDataset.PatientBirthDate = dataset.PatientBirthDate
+                        studyDataset.PatientSex = dataset.PatientSex
+                        studyDataset.StudyID = dataset.StudyID if hasattr(studyDataset, 'StudyID') else None
+                        studyDataset[self.numberOfStudyRelatedSeriesTag] = pydicom.dataelem.DataElement(
+                            self.numberOfStudyRelatedSeriesTag, "IS", str(numberOfStudyRelatedSeries))
+                        studyDataset[self.numberOfStudyRelatedInstancesTag] = pydicom.dataelem.DataElement(
+                            self.numberOfStudyRelatedInstancesTag, "IS", str(numberOfStudyRelatedInstances))
+                        jsonDataset = studyDataset.to_json(studyDataset)
+                        studyResponseString += jsonDataset.encode() + b","
+                    except AttributeError:
+                        self.logMessage(f"Skipping study {study} with missing atribute")
             if studyResponseString.endswith(b','):
                 studyResponseString = studyResponseString[:-1]
             studyResponseString += b']'
