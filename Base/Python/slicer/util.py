@@ -663,11 +663,12 @@ def forceRenderAllViews():
 # IO
 #
 
-def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
+def loadNodeFromFile(filename, filetype=None, properties={}, returnNode=False):
     """Load node into the scene from a file.
 
     :param filename: full path of the file to load.
     :param filetype: specifies the file type, which determines which IO class will load the file.
+                     If not specified then the reader with the highest confidence is used.
     :param properties: map containing additional parameters for the loading.
     :param returnNode: Deprecated. If set to true then the method returns status flag and node
       instead of signalling error by throwing an exception.
@@ -680,6 +681,9 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
 
     # We need to convert the path to string now, because Qt cannot convert a pathlib.Path object to string.
     properties['fileName'] = str(filename)
+
+    if filetype is None:
+        filetype = app.coreIOManager().fileType(filename)
 
     loadedNodesCollection = vtkCollection()
     userMessages = vtkMRMLMessageCollection()
@@ -703,13 +707,14 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
     return loadedNode
 
 
-def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
+def loadNodesFromFile(filename, filetype=None, properties={}, returnNode=False):
     """Load nodes into the scene from a file.
 
     It differs from `loadNodeFromFile` in that it returns loaded node(s) in an iterator.
 
     :param filename: full path of the file to load.
     :param filetype: specifies the file type, which determines which IO class will load the file.
+                     If not specified then the reader with the highest confidence is used.
     :param properties: map containing additional parameters for the loading.
     :return: loaded node(s) in an iterator object.
     :raises RuntimeError: in case of failure
@@ -722,6 +727,8 @@ def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
 
     loadedNodesCollection = vtkCollection()
     userMessages = vtkMRMLMessageCollection()
+    if filetype is None:
+        filetype = app.coreIOManager().fileType(filename)
     success = app.coreIOManager().loadNodes(filetype, properties, loadedNodesCollection, userMessages)
     if not success:
         errorMessage = f"Failed to load node from file: {filename}"

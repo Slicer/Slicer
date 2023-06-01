@@ -109,6 +109,19 @@ QStringList qSlicerTablesReader::extensions()const
     ;
 }
 
+//----------------------------------------------------------------------------
+double qSlicerTablesReader::canLoadFileConfidence(const QString& fileName)const
+{
+  double confidence = Superclass::canLoadFileConfidence(fileName);
+
+  // .txt file is more likely a simple text file than a table
+  if (confidence > 0 && fileName.toUpper().endsWith("TXT"))
+    {
+    confidence = 0.4;
+    }
+  return confidence;
+}
+
 //-----------------------------------------------------------------------------
 bool qSlicerTablesReader::load(const IOProperties& properties)
 {

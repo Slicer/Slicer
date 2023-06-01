@@ -55,15 +55,21 @@ public:
   qSlicerCoreIOManager(QObject* parent = nullptr);
   ~qSlicerCoreIOManager() override;
 
-  /// Return the file type associated with a \a file
+  /// Return the most likely file type (SegmentationFile, TextFile, ...) for reading a \a file
   Q_INVOKABLE qSlicerIO::IOFileType fileType(const QString& file)const;
+  /// Return all supported file types for reading a \a file
   Q_INVOKABLE QList<qSlicerIO::IOFileType> fileTypes(const QString& file)const;
+
+  /// Return the most likely file description (SegmentationFile, TextFile, ...) for reading a \a file
   Q_INVOKABLE qSlicerIO::IOFileType fileTypeFromDescription(const QString& fileDescription)const;
 
-  /// Return the file description associated with a \a file
+  /// Return the file description ("Volume", "Transform", etc.) associated with a \a file
   /// Usually the description is a short text of one or two words
   /// e.g. Volume, Model, ...
   Q_INVOKABLE QStringList fileDescriptions(const QString& file)const;
+
+  /// Returns descriptions for a file type available across all readers.
+  /// Usually there is only one reader for a file type.
   QStringList fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const;
 
   /// Return best file writer for this object
