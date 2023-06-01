@@ -47,6 +47,12 @@ public:
   QStringList extensions()const override;
   qSlicerIOOptions* options()const override;
 
+  /// Returns a positive number (>0) if the reader can load this file.
+  /// In case the file uses a generic file extension (such as .nrrd) then the confidence value is adjusted based on
+  /// the file content: if the file contains segmentation information then confidence is increased to 0.6,
+  /// otherwise the confidence is decreased to 0.4.
+  double canLoadFileConfidence(const QString& file)const override;
+
   bool load(const IOProperties& properties) override;
 
 protected:

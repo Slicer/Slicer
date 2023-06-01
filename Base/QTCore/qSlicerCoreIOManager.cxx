@@ -135,10 +135,15 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(
     scene = this->currentScene();
     }
 
-  vtkObject * object = scene->GetNodeByID(nodeID.toUtf8());
-  if (!object)
+  vtkObject* object = nullptr;
+  // empty nodeID means saving the scene
+  if (!nodeID.isEmpty())
     {
-    qWarning() << Q_FUNC_INFO << "warning: Unable to find node with ID" << nodeID << "in the given scene.";
+    object = scene->GetNodeByID(nodeID.toUtf8());
+    if (!object)
+      {
+      qWarning() << Q_FUNC_INFO << "warning: Unable to find node with ID" << nodeID << "in the given scene.";
+      }
     }
   QFileInfo file(fileName);
 
