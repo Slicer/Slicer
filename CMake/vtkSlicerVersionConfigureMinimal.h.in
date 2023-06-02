@@ -10,19 +10,23 @@
 
 =========================================================================auto=*/
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Slicer API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef __vtkSlicerVersionConfigureMinimal_h
+#define __vtkSlicerVersionConfigureMinimal_h
 
-#ifndef __vtkSlicerVersionConfigureInternal_h
-#define __vtkSlicerVersionConfigureInternal_h
+/// \file vtkSlicerVersionConfigureMinimal.h
+/// \brief Defines macros identifying the operating system, architecture and version of this project.
+///
+/// The macros provided in this file identify the operating system, architecture, and
+/// version of this project.
+///
+/// The file is prefixed with "Minimal" because it provides a subset of the version
+/// information that rarely changes. Indeed, these macros are occasionally modified
+/// by updating the `Slicer_VERSION_*` or `Slicer_RELEASE_TYPE` CMake options
+/// (e.g., when creating a release).
+///
+/// If you need version information specific to the current revision of this project
+/// source code, consider including `vtkSlicerVersionConfigure.h` instead of this header.
+///
 
 //-----------------------------------------------------------------------------
 /// \def Slicer_VERSION_MAJOR
@@ -68,4 +72,4 @@
 /// \brief String describing the operating system associated with this project binaries.
 #define Slicer_OS "@Slicer_OS@"
 
-#endif // __vtkSlicerVersionConfigureInternal_h
+#endif // __vtkSlicerVersionConfigureMinimal_h

@@ -1180,7 +1180,7 @@ get_property(Slicer_QM_OUTPUT_DIRS GLOBAL PROPERTY Slicer_QM_OUTPUT_DIRS)
 # --------------------------------------------------------------------------
 set(files
   vtkSlicerConfigure.h
-  vtkSlicerVersionConfigureInternal.h
+  vtkSlicerVersionConfigureMinimal.h
   )
 foreach(f ${files})
   configure_file(

@@ -17,14 +17,15 @@
 /// \brief Defines macros identifying the version and revision of this project.
 ///
 /// The macros defined in this file are specific to the current revision of the source code,
-/// and they augment the version details provided by vtkSlicerVersionConfigureInternal.h.
-/// Note that this header internally includes `vtkSlicerVersionConfigureInternal.h`.
+/// and they augment the version details provided by vtkSlicerVersionConfigureMinimal.h.
+/// Note that this header internally includes `vtkSlicerVersionConfigureMinimal.h`.
 ///
 /// Since this header file is regenerated each time the current revision (i.e., Git commit)
-/// of the source code changes, it should be included carefully.
+/// of the source code changes, it should be included carefully. to maintain incremental build
+/// speed. Consider including `vtkSlicerVersionConfigureMinimal.h` before including this header.
 ///
 
-#include "vtkSlicerVersionConfigureInternal.h"
+#include "vtkSlicerVersionConfigureMinimal.h"
 
 /// \def Slicer_RELEASE_TYPE
 /// \brief Type of Slicer release: `Experimental`, `Nightly` or `Stable`.

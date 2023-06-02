@@ -34,7 +34,7 @@ int vtkSlicerVersionConfigureTest1(int /*argc*/, char * /*argv*/ [])
   CHECK_STRING_DIFFERENT(Slicer_WC_REVISION, "");
   CHECK_STRING_DIFFERENT(Slicer_REVISION, "");
 
-  // From vtkSlicerVersionConfigureInternal
+  // From vtkSlicerVersionConfigureMinimal
   CHECK_STRING(Slicer_OS_LINUX_NAME, "linux");
   CHECK_STRING(Slicer_OS_MAC_NAME, "macosx");
   CHECK_STRING(Slicer_OS_WIN_NAME, "win");
