@@ -211,7 +211,11 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
             else if (propertyName=="Visible3D") { props.Visible3D = booleanValue; }
             else if (propertyName=="Visible2DFill") { props.Visible2DFill = booleanValue; }
             else if (propertyName=="Visible2DOutline") { props.Visible2DOutline = booleanValue; }
-            else if (propertyName=="Pickable") { props.Pickable = booleanValue; }
+            else if (propertyName=="Pickable")
+              {
+              // Pickable property needs to be set to true if not specified
+              props.Pickable = booleanValueString.compare("false") ? true : false;
+              }
             }
           }
         this->SetSegmentDisplayProperties(vtkMRMLNode::URLDecodeString(id.c_str()), props);
