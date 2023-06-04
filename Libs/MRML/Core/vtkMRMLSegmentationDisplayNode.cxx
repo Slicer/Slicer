@@ -109,7 +109,7 @@ void vtkMRMLSegmentationDisplayNode::WriteXML(ostream& of, int nIndent)
       << " Opacity3D:" << propIt->second.Opacity3D
       << " Opacity2DFill:" << propIt->second.Opacity2DFill
       << " Opacity2DOutline:" << propIt->second.Opacity2DOutline
-      << " Pickable:" << propIt->second.Pickable << "|";
+      << " Pickable:" << (propIt->second.Pickable ? "true" : "false") << "|";
     }
   of << "\"";
 }
@@ -211,7 +211,11 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
             else if (propertyName=="Visible3D") { props.Visible3D = booleanValue; }
             else if (propertyName=="Visible2DFill") { props.Visible2DFill = booleanValue; }
             else if (propertyName=="Visible2DOutline") { props.Visible2DOutline = booleanValue; }
-            else if (propertyName=="Pickable") { props.Pickable = booleanValue; }
+            else if (propertyName=="Pickable")
+              {
+              // Pickable property needs to be set to true if not specified
+              props.Pickable = booleanValueString.compare("false") ? true : false;
+              }
             }
           }
         this->SetSegmentDisplayProperties(vtkMRMLNode::URLDecodeString(id.c_str()), props);
@@ -276,7 +280,7 @@ void vtkMRMLSegmentationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
        << ", Visible2DFill=" << (propIt->second.Visible2DFill ? "true" : "false") << ", Visible2DOutline="
        << (propIt->second.Visible2DOutline ? "true" : "false")
        << ", Opacity3D=" << propIt->second.Opacity3D << ", Opacity2DFill=" << propIt->second.Opacity2DFill
-       << ", Opacity2DOutline=" << propIt->second.Opacity2DOutline << ", Pickable=" << propIt->second.Pickable << "\n";
+       << ", Opacity2DOutline=" << propIt->second.Opacity2DOutline << ", Pickable=" << (propIt->second.Pickable ? "true" : "false") << "\n";
     }
 }
 
