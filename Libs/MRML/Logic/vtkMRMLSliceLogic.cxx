@@ -111,9 +111,12 @@ struct BlendPipeline
 
     this->AddSubForegroundCast->SetOutputScalarTypeToShort();
     this->AddSubBackgroundCast->SetOutputScalarTypeToShort();
+    this->ForegroundFractionMath->SetConstantK(1.0);
+    this->ForegroundFractionMath->SetOperationToMultiplyByK();
+    this->ForegroundFractionMath->SetInputConnection(0, this->AddSubForegroundCast->GetOutputPort());
     this->AddSubMath->SetOperationToAdd();
     this->AddSubMath->SetInputConnection(0, this->AddSubBackgroundCast->GetOutputPort());
-    this->AddSubMath->SetInputConnection(1, this->AddSubForegroundCast->GetOutputPort());
+    this->AddSubMath->SetInputConnection(1, this->ForegroundFractionMath->GetOutputPort());
     this->AddSubOutputCast->SetInputConnection(this->AddSubMath->GetOutputPort());
 
     this->AddSubExtractRGB->SetInputConnection(this->AddSubOutputCast->GetOutputPort());
@@ -188,6 +191,7 @@ struct BlendPipeline
   vtkNew<vtkImageCast> AddSubForegroundCast;
   vtkNew<vtkImageCast> AddSubBackgroundCast;
   vtkNew<vtkImageMathematics> AddSubMath;
+  vtkNew<vtkImageMathematics> ForegroundFractionMath;
   vtkNew<vtkImageExtractComponents> AddSubExtractRGB;
   vtkNew<vtkImageExtractComponents> AddSubExtractAlpha;
   vtkNew<vtkImageAppendComponents> AddSubAppendRGBA;
@@ -956,6 +960,16 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::UpdateFractions(vtkImageMathematics* fraction, double opacity)
+{
+  vtkMTimeType oldMTime = fraction->GetMTime();
+  fraction->SetConstantK(opacity);
+  bool modified = (fraction->GetMTime() > oldMTime);
+  return modified;
+}
+
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdatePipeline()
 {
   int modified = 0;
@@ -1050,6 +1064,16 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     this->PipelineUVW->AddLayers(layersUVW, this->SliceCompositeNode->GetCompositing(),
       backgroundImagePortUVW, foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity(),
       labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity());
+
+    // Check fraction changes for add/subtract pipeline
+    if (this->UpdateFractions(this->Pipeline->ForegroundFractionMath.GetPointer(), this->SliceCompositeNode->GetForegroundOpacity()))
+    {
+      modified = 1;
+    }
+    if (this->UpdateFractions(this->PipelineUVW->ForegroundFractionMath.GetPointer(), this->SliceCompositeNode->GetForegroundOpacity()))
+    {
+      modified = 1;
+    }
 
     if (this->UpdateBlendLayers(this->Pipeline->Blend.GetPointer(), layers))
       {
