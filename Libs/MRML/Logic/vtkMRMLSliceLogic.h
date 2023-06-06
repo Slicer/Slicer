@@ -37,6 +37,7 @@ class vtkCollection;
 class vtkImageBlend;
 class vtkTransform;
 class vtkImageData;
+class vtkImageMathematics;
 class vtkImageReslice;
 class vtkTransform;
 
@@ -425,6 +426,9 @@ protected:
   /// re-add an input if it is not changed) because rebuilding of the pipeline
   /// is a relatively expensive operation.
   bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers);
+
+  /// Helper to update foreground opacity when adding/subtracting the background layer
+  bool UpdateFractions(vtkImageMathematics* fraction, double opacity);
 
   /// Returns true if position is inside the selected layer volume.
   /// Use background flag to choose between foreground/background layer.
