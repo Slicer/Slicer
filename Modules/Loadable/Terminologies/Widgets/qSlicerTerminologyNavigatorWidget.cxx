@@ -399,9 +399,8 @@ void qSlicerTerminologyNavigatorWidgetPrivate::setNameFromCurrentTerminology()
 //-----------------------------------------------------------------------------
 QColor qSlicerTerminologyNavigatorWidgetPrivate::terminologyRecommendedColor()
 {
-  // Return 'invalid' color if type is not selected or the selected type has modifiers but no modifier is selected
-  if ( !this->CurrentTypeObject ||
-       (this->CurrentTypeObject->GetHasModifiers() && !this->CurrentTypeModifierObject) )
+  // Return 'invalid' color if type is not selected
+  if (!this->CurrentTypeObject)
     {
     return QColor();
     }
@@ -411,7 +410,7 @@ QColor qSlicerTerminologyNavigatorWidgetPrivate::terminologyRecommendedColor()
   unsigned char r = vtkSlicerTerminologyType::INVALID_COLOR[0];
   unsigned char g = vtkSlicerTerminologyType::INVALID_COLOR[1];
   unsigned char b = vtkSlicerTerminologyType::INVALID_COLOR[2];
-  if (!this->CurrentTypeObject->GetHasModifiers())
+  if (!this->CurrentTypeObject->GetHasModifiers() || this->CurrentTypeModifierObject->GetCodeValue() == nullptr)
     {
     this->CurrentTypeObject->GetRecommendedDisplayRGBValue(r,g,b);
     }
