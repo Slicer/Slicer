@@ -40,7 +40,6 @@ dataprobe.md
 ## Registration
 ```{toctree}
 :maxdepth: 1
-acpctransform.md
 brainsfit.md
 brainsresample.md
 brainsresize.md
