@@ -3,7 +3,6 @@
 # WARNING: CLI modules should be topologically ordered.
 #-----------------------------------------------------------------------------
 set(cli_modules
-  ACPCTransform
   AddScalarVolumes
   CastScalarVolume
   CheckerBoardFilter

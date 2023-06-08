@@ -267,7 +267,7 @@ def _generate_translation_header_from_cli_xml(cli_xml_filename):
 
         Example line::
 
-            QT_TRANSLATE_NOOP("CLI_ACPCTransform", "ACPC Transform")
+            QT_TRANSLATE_NOOP("CLI_AddScalarVolumes", "Add Scalar Volumes")
         """
         if type(text) != list:
             text_list = [text]
