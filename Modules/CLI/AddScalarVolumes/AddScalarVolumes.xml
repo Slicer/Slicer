@@ -33,9 +33,9 @@
       <description><![CDATA[Volume1 + Volume2]]></description>
     </image>
   </parameters>
-  <parameters>
-    <label>Controls</label>
-    <description><![CDATA[Control how the module operates]]></description>
+  <parameters advanced = "true">
+    <label>Advanced</label>
+    <description><![CDATA[Advanced parameters for fine-tune the computation.]]></description>
     <integer-enumeration>
       <name>order</name>
       <label>Interpolation order</label>
@@ -45,7 +45,7 @@
       <element>2</element>
       <element>3</element>
       <longflag>order</longflag>
-      <description><![CDATA[Interpolation order if two images are in different coordinate frames or have different sampling.]]></description>
+      <description><![CDATA[Order of the polynomial interpolation that is used if two images have different geometry (origin, spacing, axis directions, or extents): 0 = nearest neighbor, 1 = linear, 2 = quadratic, 3 = cubic interpolation.]]></description>
     </integer-enumeration>
   </parameters>
 </executable>
