@@ -36,6 +36,7 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkNew.h>
 #include <vtkPolyDataNormals.h>
+#include <vtkSMPThreadLocalObject.h>
 #include <vtkTriangleFilter.h>
 #include <vtkStripper.h>
 #include <vtkImageStencil.h>
@@ -598,7 +599,12 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
       else
         {
         // if no polys, select polylines instead
+#if (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 2, 20230212))
+        vtkSMPThreadLocalObject<vtkIdList> storage;
+        this->PolyDataSelector(input, slice, storage.Local(), z, spacing[2]);
+#else
         this->PolyDataSelector(input, slice, z, spacing[2]);
+#endif
         }
 
       if (!slice->GetNumberOfLines())
