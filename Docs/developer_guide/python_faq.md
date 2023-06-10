@@ -2,7 +2,63 @@
 
 Frequently asked questions about how to write Python scripts for Slicer.
 
-## How to access Slicers Python API via an external program while Slicer is running?
+## What is the Slicer Python environment?
+
+You can consider each Slicer installation as a virtual Python environment - the same way
+as you create virtual environments using python or conda.
+
+## What is the PythonSlicer executable?
+
+`PythonSlicer` is an executable provided in the `bin` directory of the Slicer installation.
+It is a Python interpreter that allows access to all of the packages installed in Slicer.
+This makes it possible to use the Slicer Python environment from outside the application, such
+as for batch processing, command-line operations, terminal-based interactive session and
+integration with IDEs.
+
+This means you can use `PythonSlicer` as a replacement for the regular Python interpreter
+(`python` or `python3`) to take advantage of the installed packages in the Slicer environment.
+
+:::{warning}
+Please note that the running Python context is **not** available when using `PythonSlicer`.
+As a result, many objects, including the application instance, the MRML scene and the loaded
+modules, are not available.
+:::
+
+:::{tip}
+To install additional packages, you can use the {func}`slicer.util.pip_install()` function.
+:::
+
+## What is the Python Console?
+
+This describes the [](/user_guide/user_interface.md#python-console) available through
+the [user interface](/user_guide/user_interface.md).
+
+It allows to access the running Python context including the application instance,
+the MRML scene and all the loaded modules through these :mod:`slicer` attributes:
+* {attr}`slicer.app`
+* {attr}`slicer.mrmlScene`
+* {attr}`slicer.modules`
+* {attr}`slicer.moduleNames`
+
+:::{hint}
+Running scripts (or code) using the command-line option `--python-script` (or `python-code`)
+is equivalent to running code in the Python Console.
+
+Combined with the use of `--no-main-window`, this is useful for implementing batch processing
+pipelines leveraging capabilities only available in the context of a running Slicer application.
+For example, this applies to the [Segment Editor effects](/user_guide/modules/segmenteditor.md#effects).
+:::
+
+:::{tip}
+To install additional packages, you can use the {func}`slicer.util.pip_install()` function.
+:::
+
+:::{versionchanged} 5.2.0
+The `Python interactor` was renamed to `Python Console`.
+See [related discussion](https://discourse.slicer.org/t/rename-python-interactor-to-python-console/25897).
+:::
+
+## How to access Slicer's Python API via an external program while Slicer is running?
 
 There are several ways to access Slicer's Python API from an external program while Slicer is running:
 
@@ -13,9 +69,12 @@ There are several ways to access Slicer's Python API from an external program wh
 - [SlicerOpenIGTLink](https://github.com/openigtlink/SlicerOpenIGTLink): A lightweight socket-based
   protocol for real-time data transfer. This is useful for applications that need to send many
   requests per second (e.g., continuous data streaming) or for clients that only have access to
-  sockets and don't want to reimplement complex protocols like http. In most cases, it performs well
-  for sending requests in the range of 10 to 100 requests per second.
-  There is a native Python implementation: [pyigtl](https://pypi.org/project/pyigtl/).
+  sockets and prefer to avoid the complexity of protocols like HTTP. In most cases, it performs well
+  for sending requests at a rate of 10 to 100 requests per second.
+
+  A native Python implementation, [pyigtl](https://pypi.org/project/pyigtl/), is available for
+  use outside the Slicer application. It can be used to both stream data from Slicer and stream
+  data to Slicer.
 
 - [SlicerJupyter](https://github.com/Slicer/SlicerJupyter#readme): A protocol for interacting with
   Slicer using standard Jupyter kernel protocol (simple protocol built on top of ZeroMQ middleware).
