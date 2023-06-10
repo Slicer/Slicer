@@ -1,5 +1,12 @@
 # slicer
 
+```{eval-rst}
+.. automodule:: slicer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+```
+
 ## slicer.cli
 
 ```{eval-rst}
