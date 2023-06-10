@@ -73,7 +73,7 @@ sudo apt update && sudo apt install git subversion build-essential cmake cmake-c
 
 ### ArchLinux
 
-:::{cautious}
+:::{warning}
 ArchLinux uses a rolling-release package distribution approach. This means that the versions of the packages will change over time and the following instructions might not be actual. **Last time tested: 2022-03-08.**
 :::
 
