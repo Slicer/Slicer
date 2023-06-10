@@ -108,7 +108,7 @@ Slicer can import a labelmap volume into segmentation, visualize/edit the segmen
 
 #### Create color table node
 
-A color table node can be loaded from a [color table file](developer_guide/modules/colors.md#color-table-file-format-txt-ctbl) or created from scratch like this:
+A color table node can be loaded from a [color table file](/developer_guide/modules/colors.md#color-table-file-format-txt-ctbl) or created from scratch like this:
 
 ```python
 segment_names_to_labels = [("ribs", 10), ("right lung", 12), ("left lung", 6)]
@@ -538,7 +538,7 @@ defaultSegmentEditorNode.SetOverwriteMode(slicer.vtkMRMLSegmentEditorNode.Overwr
 slicer.mrmlScene.AddDefaultNode(defaultSegmentEditorNode)
 ```
 
-To always make this the default, add the lines above to your [.slicerrc.py file](user_guide/settings.md#application-startup-file).
+To always make this the default, add the lines above to your [.slicerrc.py file](/user_guide/settings.md#application-startup-file).
 
 ### How to run segment editor effects from a script
 
@@ -557,7 +557,7 @@ Examples:
 - [remove patient table from CT image](https://gist.github.com/lassoan/84d1f9a093dbb6a46c0fcc89279d8088)
 - [fill holes inside bones](https://gist.github.com/lassoan/0f45db8bae792ea19ccad36ceefbf52d)
 
-Description of effect parameters are available [here](developer_guide/modules/segmenteditor.md#effect-parameters).
+Description of effect parameters are available [here](/developer_guide/modules/segmenteditor.md#effect-parameters).
 
 #### Use logic of effect from a script
 

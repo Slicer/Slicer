@@ -463,7 +463,7 @@ Key Points:
 
 If you have used 3D Slicer for any length of time, you have probably noticed that for each type of node (or set of types as in something like markups) there is a dedicated module that is used solely for interacting with the single node type (or set of types). Examples would be the Models, Volumes, and Markups modules. These modules are useful from a user perspective and also necessary to get your new node registered everywhere it needs to be.
 
-As these are normal 3D Slicer modules, they come in three main parts, the module, the logic, and the module widget. The recommended way to create a new module is through the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard).
+As these are normal 3D Slicer modules, they come in three main parts, the module, the logic, and the module widget. The recommended way to create a new module is through the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard).
 
 Files:
 
