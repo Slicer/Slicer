@@ -1,4 +1,129 @@
-""" This module sets up root logging and loads the Slicer library modules into its namespace."""
+""" This module sets up root logging and loads the Slicer library modules into its namespace.
+
+
+.. warning::
+
+  These following attributes are only set in the Python environment embedded
+  in the Slicer main application ``SlicerApp-real`` (launched by the Slicer executable):
+
+  * :attr:`app`
+  * :attr:`mrmlScene`
+  * :attr:`modules`
+  * :attr:`moduleNames`
+
+  This means that they are not set in the Python environment of ``python-real``
+  (launched by the ``PythonSlicer`` executable).
+
+.. py:attribute:: app
+
+  This is set to the singleton instance of ``qSlicerApplication``::
+
+    >>> slicer.app
+    qSlicerApplication (qSlicerApplication at: 0x7ffd066a07a0)
+
+  .. warning::
+
+    This attribute is only set in the Python environment embedded in the Slicer
+    main application.
+
+
+.. py:attribute:: mrmlScene
+
+  This is set to the instance of the MRML Scene::
+
+      >>> slicer.mrmlScene
+      <MRMLCore.vtkMRMLScene(0x2797cb0) at 0x7fbfedb82520>
+
+      >>> slicer.mrmlScene == slicer.app.mrmlScene()
+      True
+
+  .. warning::
+
+    This attribute is only set in the Python environment embedded in the Slicer
+    main application.
+
+
+.. py:attribute:: modules
+
+  This object provides access to all instantiated Slicer modules.
+
+  For each instantiated Slicer module, an attribute named after the lower-cased
+  Slicer module name (``slicer.module.<modulename>``) is associated with the
+  corresponding instance of ``qSlicerAbstractCoreModule``.
+
+  For example::
+
+    >>> slicer.modules.volumes
+    qSlicerVolumesModule (qSlicerVolumesModule at: 0x4869000)
+
+    >>> slicer.modules.volumes.inherits("qSlicerAbstractModule")
+    True
+
+    >>> slicer.modules.volumes.inherits("qSlicerLoadableModule")
+    True
+
+  .. warning::
+
+    These attributes are only set in the Python environment embedded in the Slicer
+    main application.
+
+  Additionally for all scripted modules (`qSlicerScriptedLoadableModule`), these
+  additional attributes are also set:
+
+  * the attribute ``<moduleName>Instance`` is set to the corresponding instance
+    of :class:`~slicer.ScriptedLoadableModule.ScriptedLoadableModule`.
+
+    For example::
+
+      >>> slicer.modules.VectorToScalarVolumeInstance
+      <VectorToScalarVolume.VectorToScalarVolume object at 0x7fbfc1d1aa60>
+
+      >>> isinstance(slicer.modules.VectorToScalarVolumeInstance, slicer.ScriptedLoadableModule.ScriptedLoadableModule)
+      True
+
+  * the attribute ``<moduleName>Widget`` is set to the corresponding instance
+    of :class:`~slicer.ScriptedLoadableModule.ScriptedLoadableModuleWidget`.
+
+    For example::
+
+      >>> slicer.util.selectModule(slicer.modules.vectortoscalarvolume)
+
+      >>> slicer.modules.VectorToScalarVolumeWidget
+      <VectorToScalarVolume.VectorToScalarVolumeWidget object at 0x7fbfbc055cd0>
+
+      >>> isinstance(slicer.modules.VectorToScalarVolumeWidget, slicer.ScriptedLoadableModule.ScriptedLoadableModuleWidget)
+      True
+
+    .. note::
+
+      The ``<moduleName>Widget`` attribute is:
+
+      * Only set after the module has been displayed at least once.
+
+      * Updated when reloading the module using :func:`slicer.util.reloadScriptedModule`.
+
+
+.. py:attribute:: moduleNames
+
+  This object provides access to all instantiated Slicer module names.
+
+  The object attributes are the Slicer modules names, the associated
+  value is the module name.
+
+  For example:
+
+    >>> slicer.moduleNames.Volumes
+    'Volumes'
+
+    >>> slicer.moduleNames.VectorToScalarVolume
+    'VectorToScalarVolume'
+
+  .. warning::
+
+    These attributes are only set in the Python environment embedded in the Slicer
+    main application.
+
+"""
 
 
 # -----------------------------------------------------------------------------
@@ -17,17 +142,15 @@ def _createModule(name, globals, docstring):
 # Create slicer.modules and slicer.moduleNames
 
 _createModule('slicer.modules', globals(),
-              """This module provides an access to all instantiated Slicer modules.
+              """This object provides an access to all instantiated Slicer modules.
 
-The module attributes are the lower-cased Slicer module names, the
-associated value is an instance of ``qSlicerAbstractCoreModule``.
+For more details, see the generated Slicer API documentation.
 """)
 
 _createModule('slicer.moduleNames', globals(),
-              """This module provides an access to all instantiated Slicer module names.
+              """This object provides an access to all instantiated Slicer module names.
 
-The module attributes are the Slicer modules names, the associated
-value is the module name.
+For more details, see the generated Slicer API documentation.
 """)
 
 # -----------------------------------------------------------------------------
