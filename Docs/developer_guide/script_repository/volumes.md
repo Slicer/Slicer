@@ -130,7 +130,7 @@ finally:
 
 ### Show volume rendering automatically when a volume is loaded
 
-To show volume rendering of a volume automatically when it is loaded, add the lines below to your [.slicerrc.py file](user_guide/settings.md#application-startup-file).
+To show volume rendering of a volume automatically when it is loaded, add the lines below to your [.slicerrc.py file](/user_guide/settings.md#application-startup-file).
 
 ```python
 @vtk.calldata_type(vtk.VTK_OBJECT)
@@ -661,7 +661,7 @@ def NoInterpolate(caller,event):
 slicer.mrmlScene.AddObserver(slicer.mrmlScene.NodeAddedEvent, NoInterpolate)
 ```
 
-You can place this code snippet in your [.slicerrc.py file](user_guide/settings.md#application-startup-file) to always disable interpolation by default.
+You can place this code snippet in your [.slicerrc.py file](/user_guide/settings.md#application-startup-file) to always disable interpolation by default.
 
 ### Running an ITK filter in Python using SimpleITK
 

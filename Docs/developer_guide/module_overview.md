@@ -25,17 +25,17 @@ Specifications:
 
 Not supported (anti-patterns):
 * Pass back intermediate results.
-* Update the [views](user_guide/user_interface.md#views) while executing.
+* Update the [views](/user_guide/user_interface.md#views) while executing.
 * Accept input while running to steer the module.
 * Request input while running.
 
 :::{admonition} Getting started
-* For CLI, [build Slicer](build_instructions/index.md) and create an initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `cli`.
-* For Scripted CLI, create an initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `scriptedcli`.
+* For CLI, [build Slicer](build_instructions/index.md) and create an initial skeleton using the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `cli`.
+* For Scripted CLI, create an initial skeleton using the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `scriptedcli`.
 :::
 
 More information:
-* [Developing and contributing extensions for 3D Slicer](developer_guide/extensions.md#extensions)
+* [Developing and contributing extensions for 3D Slicer](/developer_guide/extensions.md#extensions)
 * [Tutorials for software developers](https://www.slicer.org/wiki/Documentation/Nightly/Training#Tutorials_for_software_developers)
 * [Slicer execution model](https://www.slicer.org/wiki/Documentation/Nightly/Developers/SlicerExecutionModel): Describe the mechanism for incorporating command line programs as Slicer modules.
 * Learn from existing Slicer [CLI modules](https://github.com/Slicer/Slicer/tree/main/Modules/CLI).
@@ -54,11 +54,11 @@ Specifications:
 * Full control over the Slicer UI (based on [Qt](https://doc.qt.io/)) and Slicer internals ([MRML](mrml.md), logics, display managers...).
 
 :::{admonition} Getting started
-[Build Slicer](build_instructions/index.md) and create an initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `loadable`.
+[Build Slicer](build_instructions/index.md) and create an initial skeleton using the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `loadable`.
 :::
 
 More information:
-* [Developing and contributing extensions for 3D Slicer](developer_guide/extensions.md#extensions)
+* [Developing and contributing extensions for 3D Slicer](/developer_guide/extensions.md#extensions)
 * [Tutorials for software developers](https://www.slicer.org/wiki/Documentation/Nightly/Training#Tutorials_for_software_developers)
 * Learn from existing Slicer [loadable modules](https://github.com/Slicer/Slicer/tree/main/Modules/Loadable).
 
@@ -76,11 +76,11 @@ Specifications:
 * Full access to the API of [MRML](mrml.md), [VTK](http://www.vtk.org), [Qt](https://doc.qt.io/), [ITK](https://itkpythonpackage.readthedocs.io) and [SimpleITK](http://www.itk.org/SimpleITKDoxygen/html/classes.html) since are Python wrapped.
 
 :::{admonition} Getting started
-Download Slicer and create an initial skeleton using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `scripted`.
+Download Slicer and create an initial skeleton using the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `scripted`.
 :::
 
 More information:
-* [Developing and contributing extensions for 3D Slicer](developer_guide/extensions.md#extensions)
+* [Developing and contributing extensions for 3D Slicer](/developer_guide/extensions.md#extensions)
 * [Tutorials for software developers](https://www.slicer.org/wiki/Documentation/Nightly/Training#Tutorials_for_software_developers)
 * [Python FAQ](python_faq.md)
 * [Script repository](script_repository.md)
