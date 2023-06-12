@@ -1076,11 +1076,13 @@ void vtkMRMLCameraWidget::CameraModifyEnd(bool wasModified, bool updateClippingR
 //----------------------------------------------------------------------------
 void vtkMRMLCameraWidget::SaveStateForUndo()
 {
-  if (!this->GetCameraNode() || !this->GetCameraNode()->GetScene())
+  vtkMRMLCameraNode* cameraNode = this->GetCameraNode();
+  vtkMRMLScene* mrmlScene = cameraNode ? cameraNode->GetScene() : nullptr;
+  if (!mrmlScene || !cameraNode || !cameraNode->GetUndoEnabled())
     {
     return;
     }
-  this->GetCameraNode()->GetScene()->SaveStateForUndo();
+  mrmlScene->SaveStateForUndo();
 }
 
 //-------------------------------------------------------------------------
