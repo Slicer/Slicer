@@ -41,7 +41,7 @@ class SlicerUtilSaveTests(unittest.TestCase):
         tumorSeed.Update()
         segmentationNode.AddSegmentFromClosedSurfaceRepresentation(tumorSeed.GetOutput(), "Tumor", [1.0, 0.0, 0.0])
         segmentationNode.CreateBinaryLabelmapRepresentation()
-        segmentationNode.SetMasterRepresentationToBinaryLabelmap()
+        segmentationNode.SetSourceRepresentationToBinaryLabelmap()
         # Save
         filename = slicer.app.temporaryPath + '/SlicerUtilSaveTestsSegmentation.nrrd'
         self.assertTrue(slicer.util.saveNode(segmentationNode, filename))
