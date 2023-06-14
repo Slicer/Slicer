@@ -52,7 +52,7 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerExtensionsManagerModel.h"
 #include "vtkSlicerConfigure.h"
-#include "vtkSlicerVersionConfigure.h"
+#include "vtkSlicerVersionConfigureMinimal.h"
 
 // MRML includes
 #include "vtkArchive.h"
