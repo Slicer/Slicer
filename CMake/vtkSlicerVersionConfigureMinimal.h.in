@@ -52,6 +52,20 @@
 #define Slicer_MAIN_PROJECT_VERSION_PATCH @Slicer_MAIN_PROJECT_VERSION_PATCH@
 
 //-----------------------------------------------------------------------------
+/// \def Slicer_VERSION
+/// \brief Slicer version string.
+///
+/// Format is `<Slicer_VERSION_MAJOR>.<Slicer_VERSION_MINOR>`.
+#define Slicer_VERSION "@Slicer_VERSION@"
+
+//-----------------------------------------------------------------------------
+/// \def Slicer_MAIN_PROJECT_VERSION
+/// \brief Slicer main project version string.
+///
+/// Format is `<Slicer_MAIN_PROJECT_VERSION_MAJOR>.<Slicer_MAIN_PROJECT_VERSION_MINOR>`.
+#define Slicer_MAIN_PROJECT_VERSION "@Slicer_MAIN_PROJECT_VERSION@"
+
+//-----------------------------------------------------------------------------
 /// \def Slicer_OS_LINUX_NAME
 /// String describing Linux operating system.
 #define Slicer_OS_LINUX_NAME "@Slicer_OS_LINUX_NAME@"
@@ -71,5 +85,9 @@
 /// \def Slicer_OS
 /// \brief String describing the operating system associated with this project binaries.
 #define Slicer_OS "@Slicer_OS@"
+
+/// \def Slicer_RELEASE_TYPE
+/// \brief Type of Slicer release: `Experimental`, `Nightly` or `Stable`.
+#define Slicer_RELEASE_TYPE "@Slicer_RELEASE_TYPE@"
 
 #endif // __vtkSlicerVersionConfigureMinimal_h
