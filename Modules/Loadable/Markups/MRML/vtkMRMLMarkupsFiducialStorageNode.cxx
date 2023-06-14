@@ -20,7 +20,7 @@
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLMessageCollection.h"
-#include "vtkSlicerVersionConfigure.h"
+#include "vtkSlicerVersionConfigureMinimal.h"
 
 #include "vtkObjectFactory.h"
 #include "vtkStringArray.h"
