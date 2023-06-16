@@ -501,6 +501,26 @@ observationId = crosshairNode.AddObserver(slicer.vtkMRMLCrosshairNode.CursorPosi
 # crosshairNode.RemoveObserver(observationId)
 ```
 
+### Get 3D coordinates from 2D display coordinates
+
+If 2D display position (in pixels) of a model's surface point is known then this code snippet can compute its position in 3D (in world coordinate system).
+
+```python
+# Display position is in pixels, origin is top-left corner
+displayPosition = [10, 12]
+
+# Get model displayable manager
+threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
+modelDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLModelDisplayableManager")
+
+# Use model displayable manager's point picker
+if modelDisplayableManager.Pick(displayPosition[0], displayPosition[1]) and modelDisplayableManager.GetPickedNodeID():
+    rasPosition = modelDisplayableManager.GetPickedRAS()
+    print(rasPosition)
+else:
+    print(f"No model is visible at {displayPosition}")
+```
+
 ### Get DataProbe text
 
 You can get the mouse location in pixel coordinates along with the pixel value at the mouse by hitting the `.` (period) key in a slice view after pasting in the following code.
