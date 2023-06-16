@@ -157,8 +157,7 @@ bool vtkSlicerMarkupsWidget::ProcessControlPointInsert(vtkMRMLInteractionEventDa
 //----------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessWidgetRotateStart(vtkMRMLInteractionEventData* eventData)
 {
-  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnRotationHandle)
-    || this->IsAnyControlPointLocked())
+  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnRotationHandle))
     {
     return false;
     }
@@ -171,8 +170,7 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetRotateStart(vtkMRMLInteractionEventDat
 //-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessWidgetScaleStart(vtkMRMLInteractionEventData* eventData)
 {
-  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnScaleHandle)
-    || this->IsAnyControlPointLocked())
+  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnScaleHandle))
     {
     return false;
     }
@@ -185,8 +183,7 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetScaleStart(vtkMRMLInteractionEventData
 //-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessWidgetTranslateStart(vtkMRMLInteractionEventData* eventData)
 {
-  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnTranslationHandle)
-    || this->IsAnyControlPointLocked())
+  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnTranslationHandle))
     {
     return false;
     }
@@ -1179,12 +1176,19 @@ void vtkSlicerMarkupsWidget::TranslateWidget(double eventPos[2])
     {
     double currentControlPointPosition_World[3] = { 0.0 };
     markupsNode->GetNthControlPointPositionWorld(i, currentControlPointPosition_World);
-
-    double newControlPointPosition_World[3] = { 0.0 };
-    translationTransform->TransformPoint(currentControlPointPosition_World, newControlPointPosition_World);
-    transformedPoints_World->SetPoint(i, newControlPointPosition_World);
+    if (markupsNode->GetNthControlPointLocked(i))
+      {
+      transformedPoints_World->SetPoint(i, currentControlPointPosition_World);
+      }
+    else
+      {
+      double newControlPointPosition_World[3] = { 0.0 };
+      translationTransform->TransformPoint(currentControlPointPosition_World, newControlPointPosition_World);
+      transformedPoints_World->SetPoint(i, newControlPointPosition_World);
+      }
     }
-  markupsNode->SetControlPointPositionsWorld(transformedPoints_World);
+  bool setUndefinedPoints = false;
+  markupsNode->SetControlPointPositionsWorld(transformedPoints_World, setUndefinedPoints);
 
   if (transformedPoints_World->GetNumberOfPoints() == 0)
     {
@@ -1266,13 +1270,21 @@ void vtkSlicerMarkupsWidget::ScaleWidget(double eventPos[2])
   for (int i = 0; i < markupsNode->GetNumberOfControlPoints(); i++)
     {
     markupsNode->GetNthControlPointPositionWorld(i, ref);
-    for (int j = 0; j < 3; j++)
+    if (markupsNode->GetNthControlPointLocked(i))
       {
-      worldPos[j] = center[j] + ratio * (ref[j] - center[j]);
+      transformedPoints_World->SetPoint(i, ref);
       }
-    transformedPoints_World->SetPoint(i, worldPos);
+    else
+      {
+      for (int j = 0; j < 3; j++)
+        {
+        worldPos[j] = center[j] + ratio * (ref[j] - center[j]);
+        }
+      transformedPoints_World->SetPoint(i, worldPos);
+      }
     }
-  markupsNode->SetControlPointPositionsWorld(transformedPoints_World);
+  bool setUndefinedPoints = false;
+  markupsNode->SetControlPointPositionsWorld(transformedPoints_World, setUndefinedPoints);
 }
 
 //----------------------------------------------------------------------
@@ -1417,12 +1429,19 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
     {
     double currentControlPointPosition_World[3] = { 0.0 };
     markupsNode->GetNthControlPointPositionWorld(i, currentControlPointPosition_World);
-
-    double newControlPointPosition_World[3] = { 0.0 };
-    rotateTransform->TransformPoint(currentControlPointPosition_World, newControlPointPosition_World);
-    transformedPoints_World->SetPoint(i, newControlPointPosition_World);
+    if (markupsNode->GetNthControlPointLocked(i))
+      {
+      transformedPoints_World->SetPoint(i, currentControlPointPosition_World);
+      }
+    else
+      {
+      double newControlPointPosition_World[3] = { 0.0 };
+      rotateTransform->TransformPoint(currentControlPointPosition_World, newControlPointPosition_World);
+      transformedPoints_World->SetPoint(i, newControlPointPosition_World);
+      }
     }
-  markupsNode->SetControlPointPositionsWorld(transformedPoints_World);
+  bool setUndefinedPoints = false;
+  markupsNode->SetControlPointPositionsWorld(transformedPoints_World, setUndefinedPoints);
 }
 
 //----------------------------------------------------------------------
