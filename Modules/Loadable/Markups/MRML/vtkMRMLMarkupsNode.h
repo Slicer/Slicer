@@ -286,6 +286,8 @@ public:
 
   /// Return the number of control points that are stored in this node
   int GetNumberOfControlPoints();
+  /// Return the number of unlocked control points with defined position in this node
+  int GetNumberOfMovableControlPoints();
   /// Return the number of control points that are already placed (not being previewed or undefined).
   int GetNumberOfDefinedControlPoints(bool includePreview=false);
   /// Return the number of control points that have not been placed (not being previewed or skipped).
@@ -312,7 +314,7 @@ public:
   /// New control points are added if needed.
   /// Existing control points are updated with the new positions.
   /// Any extra existing control points are removed.
-  void SetControlPointPositionsWorld(vtkPoints* points);
+  void SetControlPointPositionsWorld(vtkPoints* points, bool setUndefinedPoints=true);
 
   /// Get a copy of all control point positions in world coordinate system
   void GetControlPointPositionsWorld(vtkPoints* points);
