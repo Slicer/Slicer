@@ -1,30 +1,30 @@
 # GNU/Linux systems
 
 The instructions to build Slicer for GNU/Linux systems are slightly different
-depending on the linux distribution and the specific configuration of the
-system. In the following sections you can find instructions that will work for
-some of the most common linux distributions in their standard configuration. If
-you are using a different distribution you can use [these instructions](./linux.md#any-distribution)
+depending on the Linux distribution and the specific configuration of the
+system. In the following sections, you can find instructions that will work for
+some of the most common Linux distributions in their standard configuration. If
+you are using a different distribution, you can use [these instructions](./linux.md#any-distribution)
 to adapt the process to your system. You can also ask questions
 related to the building process in the [Slicer forum](https://discourse.slicer.org).
 
-## Pre-requisites
+## Prerequisites
 
 First, you need to install the tools that will be used for fetching the source
-code of slicer, generating the project files and build the project.
+code of Slicer, generating the project files, and building the project.
 
 - Git and Subversion for fetching the code and version control.
 - GNU Compiler Collection (GCC) for code compilation.
 - CMake for configuration/generation of the project.
-  - (Optional) CMake curses gui to configure the project from the command line.
-  - (Optional) CMake Qt gui to configure the project through a GUI.
+  - (Optional) CMake curses GUI to configure the project from the command line.
+  - (Optional) CMake Qt GUI to configure the project through a GUI.
 - GNU Make
 - GNU Patch
 
-In addition, Slicer requires a set of support libraries that are not includes as
+In addition, Slicer requires a set of support libraries that are not included as
 part of the *superbuild*:
 
-- Qt5 with the components listed below. Qt version 5.15.2 is recommended, other Qt versions are not tested and may cause build errors or may cause problems when running the application.
+- Qt5 with the components listed below. Qt version 5.15.2 is recommended; other Qt versions are not tested and may cause build errors or may cause problems when running the application.
   - Multimedia
   - UiTools
   - XMLPatterns
@@ -113,7 +113,7 @@ This process requires an account in [qt.io](https://qt.io)
 
 :::
 
-Download the Qt linux online installer and make it executable:
+Download the Qt Linux online installer and make it executable:
 
 ```console
  curl -LO http://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run
@@ -144,7 +144,7 @@ When configuring the Slicer build project, the CMake variable `Qt5_DIR` need to 
 
 ## Checkout Slicer source files
 
-The recommended way to obtain the source code of SLicer is cloning the repository using `git`:
+The recommended way to obtain the source code of Slicer is cloning the repository using `git`:
 
 ```console
 git clone https://github.com/Slicer/Slicer.git
@@ -203,15 +203,15 @@ cmake -DCMAKE_BUILD_TYPE:STRING=Release ../Slicer
 
 :::{admonition} Tip -- Interfaces to change 3D Slicer configuration variables
 
-Instead of `cmake`, one can use `ccmake`, which provides a text-based interface or `cmake-gui`, which provides a graphical user interface. These applications will also provide a list of variables that can be changed.
+Instead of `cmake`, one can use `ccmake`, which provides a text-based interface, or `cmake-gui`, which provides a graphical user interface. These applications will also provide a list of variables that can be changed.
 
 :::
 
 :::{admonition} Tip -- Speed up 3D Slicer build with `ccache`
 
-`ccache` is a compiler cache that can speed up subsequent build of 3D Slicer. This can be useful if 3D Slicer is built often and there are no large divergences between subsequent builds. This requires `ccache` installed on the system (e.g., `sudo apt install ccache`).
+`ccache` is a compiler cache that can speed up subsequent builds of 3D Slicer. This can be useful if 3D Slicer is built often and there are no large divergences between subsequent builds. This requires `ccache` installed on the system (e.g., `sudo apt install ccache`).
 
-The first time `ccache` is used, the compilation time can marginally increased as it includes the first caching. After the first build, subsequent build times will decrease significantly.
+The first time `ccache` is used, the compilation time can marginally increase as it includes the first caching. After the first build, subsequent build times will decrease significantly.
 
 `ccache` is not detected as a valid compiler by the 3D Slicer building process. You can generate local symbolic links to disguise the use of `ccache` as valid compilers:
 
@@ -243,19 +243,19 @@ make
 
 :::{admonition} Tip -- Parallel build 
 
-Building Slicer will generally take long time, particularly on the first build or upon code/configuration changes. To help speeding up the process one can use `make -j<N>`, where `<N>` is the number of parallel builds. As a rule of thumb, many uses the `number of CPU threads + 1` as the number of parallel builds.
+Building Slicer will generally take a long time, particularly on the first build or upon code/configuration changes. To help speed up the process, one can use `make -j<N>`, where `<N>` is the number of parallel builds. As a rule of thumb, many use the `number of CPU threads + 1` as the number of parallel builds.
 
 :::
 
 :::{warning}
 
-Increasing the number of parallel builds generally increases the memory required for the build process. In the event that the required memory exceeds the available memory, the process will either fail or start using swap memory, which will make in practice the system to freeze.
+Increasing the number of parallel builds generally increases the memory required for the build process. In the event that the required memory exceeds the available memory, the process will either fail or start using swap memory, which may make the system freeze.
 
 :::
 
 :::{admonition} Tip -- Error detection during parallel build
 
-Using parallel builds makes finding compilation errors difficult due to the fact that all parallel build processes use the same screen output, as opposed to sequential builds, where the compilation process will stop at the error. A common technique to have parallel builds and easily find errors is launch a parallel build followed by a sequential build. For the parallel build, it is advised to run `make -j<N> -k` to have the parallel build keep going as far as possible before doing the sequential build with `make`.
+Using parallel builds makes finding compilation errors difficult due to the fact that all parallel build processes use the same screen output, as opposed to sequential builds, where the compilation process will stop at the error. A common technique to have parallel builds and easily find errors is to launch a parallel build followed by a sequential build. For the parallel build, it is advised to run `make -j<N> -k` to have the parallel build keep going as far as possible before doing the sequential build with `make`.
 
 :::
 
@@ -275,7 +275,7 @@ cd Slicer-build
 
 After building, run the tests in the **inner-build** folder.
 
-Type the following (you can replace 4 by the number of processor cores in the computer):
+Type the following (you can replace 4 with the number of processor cores in the computer):
 
 ```console
 ctest -j4
@@ -291,4 +291,4 @@ make package
 
 ## Common errors
 
-See list of issues common to all operating systems on [Common errors](common_errors.md) page.
+See a list of issues common to all operating systems on the [Common errors](common_errors.md) page.
