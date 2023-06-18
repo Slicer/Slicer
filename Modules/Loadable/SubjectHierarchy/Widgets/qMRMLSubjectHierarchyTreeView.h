@@ -237,6 +237,10 @@ public slots:
   void renameCurrentItem();
   /// Delete selected subject hierarchy items and associated data nodes
   void deleteSelectedItems();
+  /// Hide selected subject hierarchy items
+  void hideSelectedItems();
+  /// Show selected subject hierarchy items
+  void showSelectedItems();
   /// Toggle visibility of selected subject hierarchy items
   void toggleVisibilityOfSelectedItems();
   /// Edit properties of current item
@@ -350,9 +354,6 @@ protected slots:
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
-
-  /// Toggle visibility for given subject hierarchy item
-  void toggleSubjectHierarchyItemVisibility(vtkIdType itemID);
 
   /// Populate general context menu for given subject hierarchy item
   /// \param itemID Subject hierarchy item ID of the item to show context menu for. It is only used
