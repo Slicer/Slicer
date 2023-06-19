@@ -32,8 +32,29 @@ endif()
 if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
+  # [cryptography]
+  # Hashes correspond to the following packages:
+  #  - cryptography-41.0.1-cp37-abi3-macosx_10_12_universal2.whl
+  #  - cryptography-41.0.1-cp37-abi3-macosx_10_12_x86_64.whl
+  #  - cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cryptography-41.0.1-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cryptography-41.0.1-cp37-abi3-manylinux_2_28_aarch64.whl
+  #  - cryptography-41.0.1-cp37-abi3-manylinux_2_28_x86_64.whl
+  #  - cryptography-41.0.1-cp37-abi3-musllinux_1_1_aarch64.whl
+  #  - cryptography-41.0.1-cp37-abi3-musllinux_1_1_x86_64.whl
+  #  - cryptography-41.0.1-cp37-abi3-win_amd64.whl
+  cryptography==41.0.1 --hash=sha256:f73bff05db2a3e5974a6fd248af2566134d8981fd7ab012e5dd4ddb1d9a70699 \
+                       --hash=sha256:1a5472d40c8f8e91ff7a3d8ac6dfa363d8e3138b961529c996f3e2df0c7a411a \
+                       --hash=sha256:7fa01527046ca5facdf973eef2535a27fec4cb651e4daec4d043ef63f6ecd4ca \
+                       --hash=sha256:b46e37db3cc267b4dea1f56da7346c9727e1209aa98487179ee8ebed09d21e43 \
+                       --hash=sha256:d198820aba55660b4d74f7b5fd1f17db3aa5eb3e6893b0a41b75e84e4f9e0e4b \
+                       --hash=sha256:948224d76c4b6457349d47c0c98657557f429b4e93057cf5a2f71d603e2fc3a3 \
+                       --hash=sha256:059e348f9a3c1950937e1b5d7ba1f8e968508ab181e75fc32b879452f08356db \
+                       --hash=sha256:b4ceb5324b998ce2003bc17d519080b4ec8d5b7b70794cbd2836101406a9be31 \
+                       --hash=sha256:1fee5aacc7367487b4e22484d3c7e547992ed726d14864ee33c0176ae43b0d7c
+  # [/cryptography]
   # [PyJWT]
-  PyJWT==2.6.0 --hash=sha256:d83c3d892a77bbb74d3e1a2cfa90afaadb60945205d1095d9221f04466f64c14
+  PyJWT==2.7.0 --hash=sha256:ba2b425b15ad5ef12f200dc67dd56af4e26de2331f965c5439994dad075876e1
   # [/PyJWT]
   # [wrapt]
   # Hashes correspond to the following packages:
@@ -55,7 +76,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                 --hash=sha256:64b1df0f83706b4ef4cfb4fb0e4c2669100fd7ecacfb59e091fad300d4e04640
   # [/wrapt]
   # [Deprecated]
-  Deprecated==1.2.13 --hash=sha256:64756e3e14c8c5eea9795d93c524551432a0be75629f8f29e67ab8caf076c76d
+  Deprecated==1.2.14 --hash=sha256:6fac8b097794a90302bdbb17b9b815e732d3c4720583ff1b198499d78470466c
   # [/Deprecated]
   # [pycparser]
   pycparser==2.21 --hash=sha256:8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9
@@ -95,7 +116,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                 --hash=sha256:20f42270d27e1b6a29f54032090b972d97f0a1b0948cc52392041ef7831fee93
   # [/PyNaCl]
   # [PyGithub]
-  PyGithub==1.58.0 --hash=sha256:b7bac601492a2b6c876ef326e4ffa3c1923e32707e415da76bfb8307ee8ffb7e
+  PyGithub==1.59.0 --hash=sha256:126bdbae72087d8d038b113aab6b059b4553cb59348e3024bb1a1cae406ace9e
   # [/PyGithub]
   ]===])
 
