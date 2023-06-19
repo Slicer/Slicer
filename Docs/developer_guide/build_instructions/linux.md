@@ -201,6 +201,20 @@ change the built type (Debug as default) to Release:
 cmake -DCMAKE_BUILD_TYPE:STRING=Release ../Slicer
 ```
 
+:::{warning}
+On Debian 12 Bookworm (Stable), the included OpenSSL version (3.0.9) is not compatible with the OpenSSL versions (1.0 - 1.1) used in Slicer, and attempting to run Slicer will emit the following warning, indicating that SSL support is disabled:
+```
+qt.network.ssl: Incompatible version of OpenSSL (built with OpenSSL >= 3.x, runtime version is < 3.x)
+[SSL] SSL support disabled - Failed to load SSL library !
+[SSL] Failed to load Slicer.crt
+QSslSocket::connectToHostEncrypted: TLS initialization failed
+```
+To enable SSL, one can use the system OpenSSL as follows:
+```console
+cmake -DSlicer_USE_SYSTEM_OpenSSL=ON ../Slicer
+```
+:::
+
 :::{admonition} Tip -- Interfaces to change 3D Slicer configuration variables
 
 Instead of `cmake`, one can use `ccmake`, which provides a text-based interface, or `cmake-gui`, which provides a graphical user interface. These applications will also provide a list of variables that can be changed.
