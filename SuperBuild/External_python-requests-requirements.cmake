@@ -27,37 +27,37 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [certifi]
-  certifi==2022.12.7 --hash=sha256:4ad3232f5e926d6718ec31cfc1fcadfde020920e278684144551c91769c7bc18
+  certifi==2023.5.7 --hash=sha256:c6c2e98f5c7869efca1f8916fed228dd91539f9f1b444c314c06eef02980c716
   # [/certifi]
   # [idna]
   idna==3.4 --hash=sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2
   # [/idna]
   # [charset-normalizer]
   # Hashes correspond to the following packages:
-  #  - charset_normalizer-3.1.0-cp39-cp39-macosx_10_9_universal2.whl
-  #  - charset_normalizer-3.1.0-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - charset_normalizer-3.1.0-cp39-cp39-macosx_11_0_arm64.whl
-  #  - charset_normalizer-3.1.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - charset_normalizer-3.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - charset_normalizer-3.1.0-cp39-cp39-musllinux_1_1_aarch64.whl
-  #  - charset_normalizer-3.1.0-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - charset_normalizer-3.1.0-cp39-cp39-win_amd64.whl
-  #  - charset_normalizer-3.1.0-py3-none-any.whl
-  charset-normalizer==3.1.0 --hash=sha256:38e812a197bf8e71a59fe55b757a84c1f946d0ac114acafaafaf21667a7e169e \
-                            --hash=sha256:6baf0baf0d5d265fa7944feb9f7451cc316bfe30e8df1a61b1bb08577c554f31 \
-                            --hash=sha256:8f25e17ab3039b05f762b0a55ae0b3632b2e073d9c8fc88e89aca31a6198e88f \
-                            --hash=sha256:3747443b6a904001473370d7810aa19c3a180ccd52a7157aacc264a5ac79265e \
-                            --hash=sha256:21fa558996782fc226b529fdd2ed7866c2c6ec91cee82735c98a197fae39f706 \
-                            --hash=sha256:ac3775e3311661d4adace3697a52ac0bab17edd166087d493b52d4f4f553f9f0 \
-                            --hash=sha256:53d0a3fa5f8af98a1e261de6a3943ca631c526635eb5817a87a59d9a57ebf48f \
-                            --hash=sha256:830d2948a5ec37c386d3170c483063798d7879037492540f10a475e3fd6f244b \
-                            --hash=sha256:3d9098b479e78c85080c98e1e35ff40b4a31d8953102bb0fd7d1b6f8a2111a3d
+  #  - charset_normalizer-3.2.0-cp39-cp39-macosx_10_9_universal2.whl
+  #  - charset_normalizer-3.2.0-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - charset_normalizer-3.2.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - charset_normalizer-3.2.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - charset_normalizer-3.2.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - charset_normalizer-3.2.0-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - charset_normalizer-3.2.0-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - charset_normalizer-3.2.0-cp39-cp39-win_amd64.whl
+  #  - charset_normalizer-3.2.0-py3-none-any.whl
+  charset-normalizer==3.2.0 --hash=sha256:855eafa5d5a2034b4621c74925d89c5efef61418570e5ef9b37717d9c796419c \
+                            --hash=sha256:203f0c8871d5a7987be20c72442488a0b8cfd0f43b7973771640fc593f56321f \
+                            --hash=sha256:e857a2232ba53ae940d3456f7533ce6ca98b81917d47adc3c7fd55dad8fab858 \
+                            --hash=sha256:5e86d77b090dbddbe78867a0275cb4df08ea195e660f1f7f13435a4649e954e5 \
+                            --hash=sha256:8700f06d0ce6f128de3ccdbc1acaea1ee264d2caa9ca05daaf492fde7c2a7200 \
+                            --hash=sha256:c1c76a1743432b4b60ab3358c937a3fe1341c828ae6194108a94c69028247f22 \
+                            --hash=sha256:1249cbbf3d3b04902ff081ffbb33ce3377fa6e4c7356f759f3cd076cc138d020 \
+                            --hash=sha256:7095f6fbfaa55defb6b733cfeb14efaae7a29f0b59d8cf213be4e7ca0b857b80 \
+                            --hash=sha256:8e098148dd37b4ce3baca71fb394c81dc5d9c7728c95df695d2dca218edf40e6
   # [/charset-normalizer]
   # [urllib3]
-  urllib3==1.26.14 --hash=sha256:75edcdc2f7d85b137124a6c3c9fc3933cdeaa12ecb9a6a959f22797a0feca7e1
+  urllib3==2.0.3 --hash=sha256:48e7fafa40319d358848e1bc6809b208340fafe2096f1725d05d67443d0483d1
   # [/urllib3]
   # [requests]
-  requests==2.28.2 --hash=sha256:64299f4909223da747622c030b781c0d7811e359c37124b4bd368fb8c6518baa
+  requests==2.31.0 --hash=sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f
   # [/requests]
   ]===])
 
