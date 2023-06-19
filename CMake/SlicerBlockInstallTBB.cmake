@@ -19,7 +19,7 @@ if(WIN32)
       ${TBB_BIN_DIR}/tbbmalloc_proxy.dll
     DESTINATION bin COMPONENT Runtime)
 elseif(APPLE)
-  message(FATAL_ERROR "This CMake module does NOT suppot macOS")
+  message(FATAL_ERROR "This CMake module does NOT support macOS")
 elseif(UNIX)
   foreach(file IN ITEMS
     ${TBB_LIB_DIR}/libtbb.so.12
