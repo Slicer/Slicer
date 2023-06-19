@@ -69,7 +69,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
   //--------------------------------------------------------------------------
 
   ///
-  /// Set/Get interpolate reformated slices
+  /// Set/Get interpolate reformatted slices
   vtkGetMacro(DiffusionComponent, int);
   vtkSetMacro(DiffusionComponent, int);
 

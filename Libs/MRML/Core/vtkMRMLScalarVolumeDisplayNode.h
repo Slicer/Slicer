@@ -136,7 +136,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   virtual void SetThreshold(double lower, double upper);
 
   ///
-  /// Set/Get interpolate reformated slices
+  /// Set/Get interpolate reformatted slices
   vtkGetMacro(Interpolate, int);
   vtkSetMacro(Interpolate, int);
   vtkBooleanMacro(Interpolate, int);

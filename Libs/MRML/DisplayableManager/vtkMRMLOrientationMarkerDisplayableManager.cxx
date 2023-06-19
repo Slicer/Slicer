@@ -172,7 +172,7 @@ vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::vtkInternal(vtkMRMLOrie
   this->HumanPolyData = vtkSmartPointer<vtkPolyData>::New();
   this->HumanPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->AxesActorFontViewportSize = 0.0;
-  // Orientation marker actors are not created here to converve resources
+  // Orientation marker actors are not created here to conserve resources
   // (especially the human marker may be expensive). These actors are created
   // when they are first needed.
 }
