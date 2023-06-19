@@ -45,6 +45,11 @@ sudo apt update && sudo apt install git subversion build-essential cmake cmake-c
   qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
 
+:::{note}
+The CMake version currently included in Debian 12 Bookworm (Stable) is not compatible with the current development version of Slicer.
+For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slicer/blob/98c092edb8f5a274277d2e486a4f7e584f58605e/CMakeLists.txt#L3-L5) file. On Debian 12 Bookworm (Stable), you will need to upgrade CMake manually by downloading CMake 3.25.3 or higher from the [CMake website](https://cmake.org/download/) and following the CMake installation instructions.
+:::
+
 ### Ubuntu 21.10 (Impish Indri)
 
 Install the development tools and the support libraries:
