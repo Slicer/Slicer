@@ -59,20 +59,28 @@ Specify source, build, and Qt location and compiler version and start the build 
 
 Release mode:
 
-```
-mkdir C:\D\S4R
-cd /d C:\D\S4R
-"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 17 2022" -A x64 -DQt5_DIR:PATH=C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5 C:\D\S4
-"C:\Program Files\CMake\bin\cmake.exe" --build . --config Release
+```bat
+cd C:\D
+
+"C:\Program Files\CMake\bin\cmake.exe" ^
+  -G "Visual Studio 17 2022" -A x64 ^
+  -DQt5_DIR:PATH=C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5 ^
+  -S C:\D\S4 -B C:\D\S4R
+
+"C:\Program Files\CMake\bin\cmake.exe" --build C:\D\S4R --config Release
 ```
 
 Debug mode:
 
-```
-mkdir C:\D\S4D
-cd /d C:\D\S4D
-"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 17 2022" -A x64 -DQt5_DIR:PATH=C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5 C:\D\S4
-"C:\Program Files\CMake\bin\cmake.exe" --build . --config Debug
+```bat
+cd C:\D
+
+"C:\Program Files\CMake\bin\cmake.exe" ^
+  -G "Visual Studio 17 2022" -A x64 ^
+  -DQt5_DIR:PATH=C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5 ^
+  -S C:\D\S4 -B C:\D\S4D
+
+"C:\Program Files\CMake\bin\cmake.exe" --build C:\D\S4D --config Debug
 ```
 
 ### Using graphical user interface (alternative solution)
