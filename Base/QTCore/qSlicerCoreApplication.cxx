@@ -473,7 +473,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->createDirectory(q->extensionsInstallPath(), "extensions"); // Make sure the path exists
 
   this->ApplicationLocaleName = "en_US";
-  this->ApplicationLocale = QLocale(ApplicationLocale);
+  this->ApplicationLocale = QLocale(this->ApplicationLocaleName);
 #ifdef Slicer_BUILD_I18N_SUPPORT
   if (q->userSettings()->value("Internationalization/Enabled").toBool())
     {
@@ -481,7 +481,7 @@ void qSlicerCoreApplicationPrivate::init()
     if (!localeName.isEmpty())
       {
       this->ApplicationLocaleName = localeName;
-      this->ApplicationLocale = QLocale(ApplicationLocale);
+      this->ApplicationLocale = QLocale(this->ApplicationLocaleName);
       }
     // We load the language selected for the application
     qSlicerCoreApplication::loadLanguage();
