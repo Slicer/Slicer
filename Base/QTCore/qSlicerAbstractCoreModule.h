@@ -186,8 +186,6 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// nodeEditable() methods are implemented in the module's widget then
   /// "Edit properties" function in node selector widgets will activate this
   /// module and select the chosen node.
-  /// Any module can associate nodes with any module, by calling
-  /// qSlicerApplication::application()->registerNodeModule() method.
   Q_PROPERTY(QStringList associatedNodeTypes READ associatedNodeTypes)
 
 public:
