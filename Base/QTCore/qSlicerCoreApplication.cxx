@@ -45,7 +45,7 @@
 //  - Slicer_BUILD_WIN32_CONSOLE
 //  - Slicer_BUNDLE_LOCATION
 //  - Slicer_CLIMODULES_BIN_DIR
-//  - Slicer_EXTENSIONS_DIRNAME
+//  - Slicer_EXTENSIONS_DIRBASENAME
 //  - Slicer_MAIN_PROJECT_APPLICATION_NAME
 //  - Slicer_ORGANIZATION_DOMAIN
 //  - Slicer_ORGANIZATION_NAME
@@ -791,11 +791,11 @@ QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()co
     {
     QDir slicerHomeDir(q->slicerHome());
     slicerHomeDir.cdUp();
-    return slicerHomeDir.absolutePath() + "/Contents/" Slicer_EXTENSIONS_DIRNAME;
+    return slicerHomeDir.absolutePath() + "/Contents/" Slicer_EXTENSIONS_DIRBASENAME "-" Slicer_REVISION;
     }
   else
     {
-    return q->slicerHome() + "/bin/" Slicer_BUNDLE_LOCATION "/" Slicer_EXTENSIONS_DIRNAME;
+    return q->slicerHome() + "/bin/" Slicer_BUNDLE_LOCATION "/" Slicer_EXTENSIONS_DIRBASENAME "-" Slicer_REVISION;
     }
 }
 #endif
@@ -1572,7 +1572,7 @@ void qSlicerCoreApplication::setTemporaryPath(const QString& path)
 QString qSlicerCoreApplication::defaultExtensionsInstallPath() const
 {
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  return QFileInfo(this->slicerRevisionUserSettingsFilePath()).dir().filePath(Slicer_EXTENSIONS_DIRNAME);
+  return QFileInfo(this->slicerRevisionUserSettingsFilePath()).dir().filePath(Slicer_EXTENSIONS_DIRBASENAME "-" Slicer_REVISION);
 #else
   return QString();
 #endif

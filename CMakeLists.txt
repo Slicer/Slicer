@@ -540,9 +540,8 @@ endif()
 # Extension directories
 #-----------------------------------------------------------------------------
 # NOTE: Make sure to update vtkSlicerApplicationLogic::IsEmbeddedModule if
-#       the following variables are changed.
+#       the following variable is changed.
 set(Slicer_EXTENSIONS_DIRBASENAME "Extensions")
-set(Slicer_EXTENSIONS_DIRNAME "${Slicer_EXTENSIONS_DIRBASENAME}-${Slicer_REVISION}")
 
 #-----------------------------------------------------------------------------
 # Slicer OpenGL Options
