@@ -256,17 +256,21 @@ public:
   /// Size of the slice plane in millimeters
   vtkGetVector3Macro(FieldOfView, double);
   void SetFieldOfView(double x, double y, double z);
+  void SetFieldOfView(double xyz[3]) { SetFieldOfView(xyz[0], xyz[1], xyz[2]); }
 
   ///
   /// Origin of XYZ window
   vtkGetVector3Macro(XYZOrigin, double);
   void SetXYZOrigin(double x, double y, double z);
+  void SetXYZOrigin(double xyz[3]) { SetXYZOrigin(xyz[0], xyz[1], xyz[2]); }
+
 
   ///
   /// Number of samples in each direction
   /// -- note that the spacing is implicitly FieldOfView / Dimensions
   vtkGetVectorMacro(Dimensions,int,3)
   void SetDimensions(int x, int y, int z);
+  void SetDimensions(int xyz[3]) { SetDimensions(xyz[0], xyz[1], xyz[2]); }
 
   ///
   /// Number of samples in each direction for the reslice operation
