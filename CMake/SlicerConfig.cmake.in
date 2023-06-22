@@ -185,7 +185,8 @@ set(Slicer_EXTENSION_GENERATE_CONFIG "@Slicer_EXTENSION_GENERATE_CONFIG@")
 # Path to extension CPack script
 set(Slicer_EXTENSION_CPACK "@Slicer_EXTENSION_CPACK_CONFIG@")
 set(Slicer_EXTENSION_CPACK_BUNDLE_FIXUP "@Slicer_EXTENSION_CPACK_BUNDLE_FIXUP_CONFIG@")
-set(Slicer_EXTENSIONS_DIRNAME "@Slicer_EXTENSIONS_DIRNAME@")
+set(Slicer_EXTENSIONS_DIRBASENAME "@Slicer_EXTENSIONS_DIRBASENAME@")
+set(Slicer_EXTENSIONS_DIRNAME "${Slicer_EXTENSIONS_DIRBASENAME}-${Slicer_REVISION}") # Deprecated - Remove in Slicer 5.5
 
 # Whether Slicer was built with modules and CLI support.
 set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")

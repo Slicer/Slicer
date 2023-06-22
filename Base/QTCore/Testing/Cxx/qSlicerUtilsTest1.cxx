@@ -434,8 +434,6 @@ int isLoadableModuleTest()
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
     QString macSlicerAppDir("/Applications/Slicer.app");
-    // Note: {Slicer_EXTENSIONS_DIRBASENAME}.{Slicer_REVISION} may temporarily differ from Slicer_EXTENSIONS_DIRNAME
-    // because they are defined in separate files (vtkSlicerConfigure.h and vtkSlicerVersionConfigure.h).
     // In this test we use the former method to get the extensions folder, as this is how
     // vtkSlicerApplicationLogic::IsPluginBuiltIn method determines the extension folder.
     QString macSlicerExtensionsPostfix = QString("/Contents/%1-%2/plugin.txt").arg(Slicer_EXTENSIONS_DIRBASENAME).arg(Slicer_REVISION);
