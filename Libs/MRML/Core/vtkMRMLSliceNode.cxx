@@ -854,76 +854,31 @@ void vtkMRMLSliceNode::UpdateMatrices()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
 {
-  int i;
-
   Superclass::WriteXML(of, nIndent);
 
-  of << " fieldOfView=\"" <<
-        this->FieldOfView[0] << " " <<
-        this->FieldOfView[1] << " " <<
-        this->FieldOfView[2] << "\"";
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLVectorMacro(fieldOfView, FieldOfView, double, 3);
+  vtkMRMLWriteXMLVectorMacro(dimensions, Dimensions, int, 3);
+  vtkMRMLWriteXMLVectorMacro(xyzOrigin, XYZOrigin, double, 3);
+  vtkMRMLWriteXMLIntMacro(sliceResolutionMode, SliceResolutionMode);
+  vtkMRMLWriteXMLVectorMacro(uvwExtents, UVWExtents, double, 3);
+  vtkMRMLWriteXMLVectorMacro(uvwDimensions, UVWDimensions, int, 3);
+  vtkMRMLWriteXMLVectorMacro(uvwOrigin, UVWOrigin, double, 3);
+  vtkMRMLWriteXMLIntMacro(activeSlice, ActiveSlice);
+  vtkMRMLWriteXMLIntMacro(layoutGridRows, LayoutGridRows);
+  vtkMRMLWriteXMLIntMacro(layoutGridColumns, LayoutGridColumns);
+  vtkMRMLWriteXMLMatrix4x4Macro(sliceToRAS, SliceToRAS);
 
-  of << " dimensions=\"" <<
-        this->Dimensions[0] << " " <<
-        this->Dimensions[1] << " " <<
-        this->Dimensions[2] << "\"";
-
-  of << " xyzOrigin=\"" <<
-        this->XYZOrigin[0] << " " <<
-        this->XYZOrigin[1] << " " <<
-        this->XYZOrigin[2] << "\"";
-
-  of << " sliceResolutionMode=\"" << this->SliceResolutionMode << "\"";
-
-  of << " uvwExtents=\"" <<
-        this->UVWExtents[0] << " " <<
-        this->UVWExtents[1] << " " <<
-        this->UVWExtents[2] << "\"";
-
-  of << " uvwDimensions=\"" <<
-        this->UVWDimensions[0] << " " <<
-        this->UVWDimensions[1] << " " <<
-        this->UVWDimensions[2] << "\"";
-
-  of << " uvwOrigin=\"" <<
-        this->UVWOrigin[0] << " " <<
-        this->UVWOrigin[1] << " " <<
-        this->UVWOrigin[2] << "\"";
-
-
-  of << " activeSlice=\"" << this->ActiveSlice << "\"";
-
-  of << " layoutGridRows=\"" <<
-        this->LayoutGridRows << "\"";
-
-  of << " layoutGridColumns=\"" <<
-        this->LayoutGridColumns << "\"";
-
-  std::stringstream ss;
-  int j;
-  for (i=0; i<4; i++)
-    {
-    for (j=0; j<4; j++)
-      {
-      ss << this->SliceToRAS->GetElement(i,j);
-      if ( !( i==3 && j==3) )
-        {
-        ss << " ";
-        }
-      }
-    }
-  of << " sliceToRAS=\"" << ss.str().c_str() << "\"";
-
+  // orientationMatrix
   std::vector< OrientationPresetType >::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
     {
     std::stringstream ss;
-    int j;
-    for (i=0; i<3; i++)
+    for (int i=0; i<3; i++)
       {
-      for (j=0; j<3; j++)
+      for (int j=0; j<3; j++)
         {
-        ss << it->second->GetElement(i,j);
+        ss << it->second->GetElement(i, j);
         if ( !( i==2 && j==2) )
           {
           ss << " ";
@@ -933,36 +888,24 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
       of << " orientationMatrix"<< this->URLEncodeString(it->first.c_str()) <<"=\"" << ss.str().c_str() << "\"";
     }
 
-  of << " orientation=\"" << this->GetOrientation() << "\"";
-  of << " defaultOrientation=\"" << (this->GetDefaultOrientation() ? this->GetDefaultOrientation() : "") << "\"";
-  if (this->OrientationReference)
-    {
-    of << " orientationReference=\"" << this->OrientationReference << "\"";
-    }
-  of << " jumpMode=\"" << this->JumpMode << "\"";
-  of << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
-  of << " widgetVisibility=\"" << (this->WidgetVisible ? "true" : "false") << "\"";
-  of << " widgetOutlineVisibility=\"" << (this->WidgetOutlineVisible ? "true" : "false") << "\"";
-  of << " useLabelOutline=\"" << (this->UseLabelOutline ? "true" : "false") << "\"";
-  of << " sliceSpacingMode=\"" << this->SliceSpacingMode << "\"";
-  of << " prescribedSliceSpacing=\""
-     << this->PrescribedSliceSpacing[0] << " "
-     << this->PrescribedSliceSpacing[1] << " "
-     << this->PrescribedSliceSpacing[2] << "\"";
+  vtkMRMLWriteXMLStdStringMacro(orientation, Orientation);
+  vtkMRMLWriteXMLStringMacro(defaultOrientation, DefaultOrientation);
+  vtkMRMLWriteXMLStringMacro(orientationReference, OrientationReference);
+  vtkMRMLWriteXMLIntMacro(jumpMode, JumpMode);
+  vtkMRMLWriteXMLBooleanMacro(sliceVisibility, SliceVisible);
+  vtkMRMLWriteXMLBooleanMacro(widgetVisibility, WidgetVisible);
+  vtkMRMLWriteXMLBooleanMacro(widgetOutlineVisibility, WidgetOutlineVisible);
+  vtkMRMLWriteXMLBooleanMacro(useLabelOutline, UseLabelOutline);
+  vtkMRMLWriteXMLIntMacro(sliceSpacingMode, SliceSpacingMode);
+  vtkMRMLWriteXMLVectorMacro(prescribedSliceSpacing, PrescribedSliceSpacing, double, 3);
 
-  ss.clear();
-  for (unsigned int n = 0; n < this->ThreeDViewIDs.size(); ++n)
-    {
-    ss << this->ThreeDViewIDs[n];
-    if (n < this->ThreeDViewIDs.size()-1)
-      {
-      ss << " ";
-      }
-    }
+  // threeDViewNodeRef
   if (this->ThreeDViewIDs.size() > 0)
     {
-    of << " threeDViewNodeRef=\"" << ss.str().c_str() << "\"";
+    vtkMRMLWriteXMLStdStringVectorMacro(threeDViewNodeRef, ThreeDViewIDs, std::vector);
     }
+
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -972,283 +915,84 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
   bool layoutColorFound = false;
   bool layoutLabelFound = false;
-  while (*atts != nullptr)
+
+  vtkMRMLReadXMLBeginMacro(atts);
+  if (!strcmp(xmlReadAttName, "layoutLabel"))
     {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "layoutLabel"))
-      {
-      // Layout label is set in Superclass
-      layoutLabelFound = true;
-      }
-    else if (!strcmp(attName, "layoutColor"))
-      {
-      // Layout color is set in Superclass
-      layoutColorFound = true;
-      }
-    else if (!strcmp(attName, "fieldOfView"))
-      {
-      std::stringstream ss;
-      double val;
-      ss << attValue;
-      int i;
-      for (i=0; i<3; i++)
-        {
-        ss >> val;
-        this->FieldOfView[i] = val;
-        }
-      }
-    else if (!strcmp(attName, "xyzOrigin"))
-      {
-      std::stringstream ss;
-      double val;
-      ss << attValue;
-      int i;
-      for (i=0; i<3; i++)
-        {
-        ss >> val;
-        this->XYZOrigin[i] = val;
-        }
-      }
-    else if (!strcmp(attName, "uvwOrigin"))
-      {
-      std::stringstream ss;
-      double val;
-      ss << attValue;
-      int i;
-      for (i=0; i<3; i++)
-        {
-        ss >> val;
-        this->UVWOrigin[i] = val;
-        }
-      }
-    else if (!strcmp(attName, "uvwExtents"))
-      {
-      std::stringstream ss;
-      double val;
-      ss << attValue;
-      int i;
-      for (i=0; i<3; i++)
-        {
-        ss >> val;
-        this->UVWExtents[i] = val;
-        }
-      }
-    else if (!strcmp(attName, "uvwDimensions"))
-      {
-      std::stringstream ss;
-      double val;
-      ss << attValue;
-      int i;
-      for (i=0; i<3; i++)
-        {
-        ss >> val;
-        this->UVWDimensions[i] = val;
-        }
-      }
-    else if (!strcmp(attName, "sliceResolutionMode"))
-      {
-      std::stringstream ss;
-      int val;
-      ss << attValue;
-      ss >> val;
+    // Layout label is set in Superclass
+    layoutLabelFound = true;
+    }
+  if (!strcmp(xmlReadAttName, "layoutColor"))
+    {
+    // Layout color is set in Superclass
+    layoutColorFound = true;
+    }
+  vtkMRMLReadXMLVectorMacro(fieldOfView, FieldOfView, double, 3);
+  vtkMRMLReadXMLVectorMacro(xyzOrigin, XYZOrigin, double, 3);
+  vtkMRMLReadXMLVectorMacro(uvwOrigin, UVWOrigin, double, 3);
+  vtkMRMLReadXMLVectorMacro(uvwExtents, UVWExtents, double, 3);
+  vtkMRMLReadXMLVectorMacro(uvwDimensions, UVWDimensions, int, 3);
+  vtkMRMLReadXMLIntMacro(sliceResolutionMode, SliceResolutionMode);
+  vtkMRMLReadXMLIntMacro(activeSlice, ActiveSlice);
+  vtkMRMLReadXMLIntMacro(layoutGridRows, LayoutGridRows);
+  vtkMRMLReadXMLIntMacro(layoutGridColumns, LayoutGridColumns);
+  vtkMRMLReadXMLIntMacro(jumpMode, JumpMode);
+  vtkMRMLReadXMLBooleanMacro(sliceVisibility, SliceVisible);
+  vtkMRMLReadXMLBooleanMacro(widgetVisibility, WidgetVisible);
+  vtkMRMLReadXMLBooleanMacro(widgetOutlineVisibility, WidgetOutlineVisible);
+  vtkMRMLReadXMLBooleanMacro(useLabelOutline, UseLabelOutline);
+  vtkMRMLReadXMLStdStringMacro(orientation, Orientation);
+  vtkMRMLReadXMLStringMacro(defaultOrientation, DefaultOrientation);
+  vtkMRMLReadXMLStringMacro(orientationReference, OrientationReference);
+  vtkMRMLReadXMLStringMacro(layoutName, LayoutName);
+  vtkMRMLReadXMLVectorMacro(dimensions, Dimensions, int, 3);
 
-      this->SliceResolutionMode = val;
-      }
-    else if (!strcmp(attName, "activeSlice"))
-      {
-      std::stringstream ss;
-      int val;
-      ss << attValue;
-      ss >> val;
+  // resliceDimensions: Setting of UVWDimensions based of the "resliceDimensions" attribute
+  // was originally introduced in 2012 through commit Slicer@01ffcb5326 (ENH 9124. Added
+  // new options for displaying slice models in 3d views)
+  vtkMRMLReadXMLVectorMacro(resliceDimensions, UVWDimensions, int, 3);
 
-      this->ActiveSlice = val;
-      }
-    else if (!strcmp(attName, "layoutGridRows"))
-      {
-      std::stringstream ss;
-      int val;
-      ss << attValue;
-      ss >> val;
+  vtkMRMLReadXMLOwnedMatrix4x4Macro(sliceToRAS, SliceToRAS);
 
-      this->LayoutGridRows = val;
-      }
-    else if (!strcmp(attName, "layoutGridColumns"))
+  // orientationMatrix
+  if (!strncmp(this->URLDecodeString(xmlReadAttName), "orientationMatrix", 17))
+    {
+    std::string name = std::string(this->URLDecodeString(xmlReadAttName));
+    std::stringstream ss;
+    double val;
+    vtkNew<vtkMatrix3x3> orientationMatrix;
+    orientationMatrix->Identity();
+    ss << xmlReadAttValue;
+    for (int i=0; i<3; i++)
       {
-      std::stringstream ss;
-      int val;
-      ss << attValue;
-      ss >> val;
-
-      this->LayoutGridColumns = val;
-      }
-    else if (!strcmp(attName, "jumpMode"))
-      {
-      std::stringstream ss;
-      int val;
-      ss << attValue;
-      ss >> val;
-
-      this->JumpMode = val;
-      }
-    else if (!strcmp(attName, "sliceVisibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->SliceVisible = 1;
-        }
-      else
-        {
-        this->SliceVisible = 0;
-        }
-      }
-    else if (!strcmp(attName, "widgetVisibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->WidgetVisible = 1;
-        }
-      else
-        {
-        this->WidgetVisible = 0;
-        }
-      }
-    else if (!strcmp(attName, "widgetOutlineVisibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->WidgetOutlineVisible = 1;
-        }
-      else
-        {
-        this->WidgetOutlineVisible = 0;
-        }
-      }
-    else if (!strcmp(attName, "useLabelOutline"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->UseLabelOutline = 1;
-        }
-      else
-        {
-        this->UseLabelOutline = 0;
-        }
-      }
-    else if (!strcmp(attName, "orientation"))
-      {
-      if (strcmp( attValue, vtkMRMLSliceNode::GetReformatOrientationName()))
-        {
-        this->SetOrientation( attValue );
-        }
-      }
-    else if (!strcmp(attName, "defaultOrientation"))
-      {
-      this->SetDefaultOrientation( attValue );
-      }
-    else if (!strcmp(attName, "orientationReference"))
-      {
-      this->SetOrientationReference( attValue );
-      }
-    else if (!strcmp(attName, "layoutName"))
-      {
-      this->SetLayoutName( attValue );
-      }
-    else if (!strcmp(attName, "dimensions"))
-      {
-      std::stringstream ss;
-      unsigned int val;
-      ss << attValue;
-      int i;
-      for (i=0; i<3; i++)
+      for (int j=0; j<3; j++)
         {
         ss >> val;
-        this->Dimensions[i] = val;
+        orientationMatrix->SetElement(i, j, val);
         }
       }
-    else if (!strcmp(attName, "resliceDimensions"))
-      {
-      std::stringstream ss;
-      unsigned int val;
-      ss << attValue;
-      int i;
-      for (i=0; i<3; i++)
-        {
-        ss >> val;
-        this->UVWDimensions[i] = val;
-        }
-      }
-    else if (!strcmp(attName, "sliceToRAS"))
-      {
-      std::stringstream ss;
-      double val;
-      ss << attValue;
-      int i, j;
-      for (i=0; i<4; i++)
-        {
-        for (j=0; j<4; j++)
-          {
-          ss >> val;
-          this->SliceToRAS->SetElement(i,j,val);
-          }
-        }
-      }
-    else if (!strncmp(this->URLDecodeString(attName), "orientationMatrix", 17))
-      {
-      std::string name = std::string(this->URLDecodeString(attName));
-      std::stringstream ss;
-      double val;
-      vtkNew<vtkMatrix3x3> orientationMatrix;
-      orientationMatrix->Identity();
-      ss << attValue;
-      int i, j;
-      for (i=0; i<3; i++)
-        {
-        for (j=0; j<3; j++)
-          {
-          ss >> val;
-          orientationMatrix->SetElement(i,j,val);
-          }
-        }
-      name.erase(0,17);
-      this->AddSliceOrientationPreset(name, orientationMatrix.GetPointer());
-      }
-    else if (!strcmp(attName, "prescribedSliceSpacing"))
-      {
-      std::stringstream ss;
-      double val;
-      ss << attValue;
-      int i;
-      for (i=0; i<3; i++)
-        {
-        ss >> val;
-        this->PrescribedSliceSpacing[i] = val;
-        }
-      }
-    else if (!strcmp(attName, "sliceSpacingMode"))
-      {
-      std::stringstream ss;
-      int val;
-      ss << attValue;
-      ss >> val;
+    name.erase(0, 17);
+    this->AddSliceOrientationPreset(name, orientationMatrix.GetPointer());
+    }
 
-      this->SetSliceSpacingMode( val );
-      }
-    else if (!strcmp(attName, "threeDViewNodeRef"))
+  vtkMRMLReadXMLVectorMacro(prescribedSliceSpacing, PrescribedSliceSpacing, double, 3);
+  vtkMRMLReadXMLIntMacro(sliceSpacingMode, SliceSpacingMode);
+
+  // threeDViewNodeRef
+  if (!strcmp(xmlReadAttName, "threeDViewNodeRef"))
+    {
+    std::stringstream ss(xmlReadAttValue);
+    while (!ss.eof())
       {
-      std::stringstream ss(attValue);
-      while (!ss.eof())
-        {
-        std::string id;
-        ss >> id;
-        this->AddThreeDViewID(id.c_str());
-        }
+      std::string id;
+      ss >> id;
+      this->AddThreeDViewID(id.c_str());
       }
     }
+
+  vtkMRMLReadXMLEndMacro();
 
   if (!layoutColorFound)
     {
@@ -1316,12 +1060,13 @@ void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
     return;
     }
 
-  this->SetSliceVisible(node->GetSliceVisible());
-  this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
+  vtkMRMLCopyBeginMacro(anode);
+
+  vtkMRMLCopyBooleanMacro(SliceVisible);
+  vtkMRMLCopyOwnedMatrix4x4Macro(SliceToRAS);
 
   vtkNew<vtkStringArray> namedOrientations;
   node->GetSliceOrientationPresetNames(namedOrientations.GetPointer());
-
   for (int i = 0; i < namedOrientations->GetNumberOfValues(); i++)
     {
     this->AddSliceOrientationPreset(namedOrientations->GetValue(i),
@@ -1333,35 +1078,35 @@ void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
     {
     this->SetOrientation(orientation.c_str());
     }
-  this->SetDefaultOrientation(node->GetDefaultOrientation());
-  this->SetOrientationReference(node->GetOrientationReference());
 
-  this->JumpMode = node->JumpMode;
-  this->ActiveSlice = node->ActiveSlice;
+  vtkMRMLCopyStringMacro(DefaultOrientation);
+  vtkMRMLCopyStringMacro(OrientationReference);
 
-  this->LayoutGridColumns = node->LayoutGridColumns;
-  this->LayoutGridRows = node->LayoutGridRows;
+  vtkMRMLCopyIntMacro(JumpMode);
+  vtkMRMLCopyIntMacro(ActiveSlice);
 
-  this->SliceSpacingMode = node->SliceSpacingMode;
+  vtkMRMLCopyIntMacro(LayoutGridRows);
+  vtkMRMLCopyIntMacro(LayoutGridColumns);
 
-  this->WidgetVisible = node->WidgetVisible;
-  this->WidgetOutlineVisible = node->WidgetOutlineVisible;
-  this->UseLabelOutline = node->UseLabelOutline;
+  vtkMRMLCopyIntMacro(SliceSpacingMode);
 
-  this->SliceResolutionMode = node->SliceResolutionMode;
+  vtkMRMLCopyBooleanMacro(WidgetVisible);
+  vtkMRMLCopyBooleanMacro(WidgetOutlineVisible);
+  vtkMRMLCopyBooleanMacro(UseLabelOutline);
 
-  int i;
-  for(i=0; i<3; i++)
-    {
-    this->FieldOfView[i] = node->FieldOfView[i];
-    this->Dimensions[i] = node->Dimensions[i];
-    this->XYZOrigin[i] = node->XYZOrigin[i];
-    this->UVWDimensions[i] = node->UVWDimensions[i];
-    this->UVWExtents[i] = node->UVWExtents[i];
-    this->UVWOrigin[i] = node->UVWOrigin[i];
-    this->UVWMaximumDimensions[i] = node->UVWMaximumDimensions[i];
-    this->PrescribedSliceSpacing[i] = node->PrescribedSliceSpacing[i];
-    }
+  vtkMRMLCopyIntMacro(SliceResolutionMode);
+
+  vtkMRMLCopyVectorMacro(FieldOfView, double, 3);
+  vtkMRMLCopyVectorMacro(Dimensions, int, 3);
+  vtkMRMLCopyVectorMacro(XYZOrigin, double, 3);
+  vtkMRMLCopyVectorMacro(UVWDimensions, int, 3);
+  vtkMRMLCopyVectorMacro(UVWExtents, double, 3);
+  vtkMRMLCopyVectorMacro(UVWOrigin, double, 3);
+  vtkMRMLCopyVectorMacro(UVWMaximumDimensions, int, 3);
+  vtkMRMLCopyVectorMacro(PrescribedSliceSpacing, double, 3);
+
+  vtkMRMLCopyEndMacro();
+
   this->UpdateMatrices();
 }
 
@@ -1399,59 +1144,25 @@ vtkMatrix4x4 *vtkMRMLSliceNode::GetSliceToRAS()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  int idx;
-
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "FieldOfView:\n ";
-  for (idx = 0; idx < 3; ++idx) {
-    os << indent << indent << " " << this->FieldOfView[idx];
-  }
-  os << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintVectorMacro(FieldOfView, double, 3);
+  vtkMRMLPrintVectorMacro(Dimensions, int, 3);
+  vtkMRMLPrintVectorMacro(XYZOrigin, double, 3);
+  vtkMRMLPrintVectorMacro(UVWDimensions, int, 3);
+  vtkMRMLPrintVectorMacro(UVWExtents, double, 3);
+  vtkMRMLPrintVectorMacro(UVWOrigin, double, 3);
 
-  os << indent << "Dimensions:\n ";
-  for (idx = 0; idx < 3; ++idx) {
-    os << indent << indent << " " << this->Dimensions[idx];
-  }
-  os << "\n";
-
-  os << indent << "XYZOrigin:\n ";
-  for (idx = 0; idx < 3; ++idx) {
-    os << indent << indent << " " << this->XYZOrigin[idx];
-  }
-  os << "\n";
-
-  os << indent << "UVWDimensions:\n ";
-  for (idx = 0; idx < 3; ++idx) {
-    os << indent << indent << " " << this->UVWDimensions[idx];
-  }
-  os << "\n";
-
-  os << indent << "UVWExtents:\n ";
-  for (idx = 0; idx < 3; ++idx) {
-    os << indent << indent << " " << this->UVWExtents[idx];
-  }
-  os << "\n";
-
-  os << indent << "UVWOrigin:\n ";
-  for (idx = 0; idx < 3; ++idx) {
-    os << indent << indent << " " << this->UVWOrigin[idx];
-  }
-  os << "\n";
-
-  os << indent << "SliceResolutionMode: " << this->SliceResolutionMode << "\n";
+  vtkMRMLPrintIntMacro(SliceResolutionMode);
 
   os << indent << "Layout grid: " << this->LayoutGridRows << "x" << this->LayoutGridColumns << "\n";
-  os << indent << "Active slice: " << this->ActiveSlice << "\n";
+  vtkMRMLPrintIntMacro(ActiveSlice);
 
-  os << indent << "SliceVisible: " <<
-    (this->SliceVisible ? "true" : "false") << "\n";
-  os << indent << "WidgetVisible: " <<
-    (this->WidgetVisible ? "true" : "false") << "\n";
-  os << indent << "WidgetOutlineVisible: " <<
-    (this->WidgetOutlineVisible ? "true" : "false") << "\n";
-  os << indent << "UseLabelOutline: " <<
-    (this->UseLabelOutline ? "true" : "false") << "\n";
+  vtkMRMLPrintBooleanMacro(SliceVisible);
+  vtkMRMLPrintBooleanMacro(WidgetVisible);
+  vtkMRMLPrintBooleanMacro(WidgetOutlineVisible);
+  vtkMRMLPrintBooleanMacro(UseLabelOutline);
 
   os << indent << "Jump mode: ";
   if (this->JumpMode == CenteredJumpSlice)
@@ -1462,8 +1173,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "Offset\n";
     }
-  os << indent << "SliceToRAS: \n";
-  this->SliceToRAS->PrintSelf(os, indent.GetNextIndent());
+
+  vtkMRMLPrintMatrix4x4Macro(SliceToRAS);
 
   std::vector< OrientationPresetType >::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
@@ -1475,19 +1186,20 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "XYToRAS: \n";
   this->XYToRAS->PrintSelf(os, indent.GetNextIndent());
 
-  os << indent << "Slice spacing mode: " << (this->SliceSpacingMode == AutomaticSliceSpacingMode ? "Automatic" : "Prescribed") << "\n";
-  os << indent << "Prescribed slice spacing: (" << this->PrescribedSliceSpacing[0] << ", "
-                               << this->PrescribedSliceSpacing[1] << ", "
-                               << this->PrescribedSliceSpacing[2] << ")\n";
-  os << indent << "Interacting: " <<
-    (this->Interacting ? "on" : "off") << "\n";
-  for (unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
+  os << indent << "SliceSpacingMode: " << (this->SliceSpacingMode == AutomaticSliceSpacingMode ? "Automatic" : "Prescribed") << "\n";
+
+  vtkMRMLPrintVectorMacro(PrescribedSliceSpacing, double, 3);
+
+  os << indent << "Interacting: " << (this->Interacting ? "on" : "off") << "\n";
+
+  if (this->ThreeDViewIDs.size() > 0)
     {
-    os << indent << "ThreeDViewIDs[" << i << "]: " <<
-      this->ThreeDViewIDs[i] << "\n";
+    vtkMRMLPrintStdStringVectorMacro(ThreeDViewIDs, std::vector);
     }
 
-  os << indent << "DefaultOrientation: " << (this->GetDefaultOrientation() ? this->GetDefaultOrientation() : "") << "\n";
+  vtkMRMLPrintStringMacro(DefaultOrientation);
+
+  vtkMRMLPrintEndMacro();
 }
 
 //----------------------------------------------------------------------------
