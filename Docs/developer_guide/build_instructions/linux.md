@@ -262,7 +262,7 @@ make
 
 :::{admonition} Tip -- Parallel build 
 
-Building Slicer will generally take a long time, particularly on the first build or upon code/configuration changes. To help speed up the process, one can use `make -j<N>`, where `<N>` is the number of parallel builds. As a rule of thumb, many use the `number of CPU threads + 1` as the number of parallel builds.
+Building Slicer will generally take a long time, particularly on the first build or upon code/configuration changes. To help speed up the process, one can use `make -j<N>`, where `<N>` is the number of parallel builds. As a rule of thumb, many use the `number of CPU threads - 1` as the number of parallel builds.
 
 :::
 
