@@ -14,6 +14,7 @@ Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK),
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/): any edition can be used (including the free Community edition), when configuring the installer:
   - Enable `Desktop development with C++` and in installation details
   - Enable the `MSVC v143 - VS2022 C++ x64...` (Visual Studio 2022 v143 toolset with 64-bit support) component - in some distributions, this option is not enabled by default.
+    - **UPDATE (2023-06-23):** Do not install the latest 14.36 build toolset, as the compiler in this version is broken, it cannot build VTK. A fix is coming soon, until then make sure that 14.34 or earlier version of the build toolset is used or reconfigure the VTK build as described [here](https://discourse.slicer.org/t/c1001-internal-compiler-error/29604).
   - Enable the latest Windows10 SDK component - without this CMake might not find a compiler during configuration step.
 - [Qt5](https://www.qt.io/download-open-source): Download Qt universal installer and install Qt 5.15.2 components: `MSVC2019 64-bit`, `Qt Script`, `Qt WebEngine`. Installing Sources and Qt Debug Information Files are recommended for debugging (they allow stepping into Qt files with the debugger in debug-mode builds).
   - Note: These are all free, open-source components with LGPL license which allow free usage for any purpose, for any individuals or companies.
