@@ -36,20 +36,25 @@
 #include <QTemporaryFile>
 
 // For:
-//  - Slicer_QTLOADABLEMODULES_LIB_DIR
-//  - Slicer_CLIMODULES_BIN_DIR
-//  - Slicer_LIB_DIR
-//  - Slicer_SHARE_DIR
-//  - Slicer_USE_PYTHONQT
-//  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+//  - Slicer_BIN_DIR
 //  - Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
-//  - Slicer_BUILD_WIN32_CONSOLE
 //  - Slicer_BUILD_CLI_SUPPORT
+//  - Slicer_BUILD_DICOM_SUPPORT
+//  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //  - Slicer_BUILD_I18N_SUPPORT
+//  - Slicer_BUILD_WIN32_CONSOLE
+//  - Slicer_BUNDLE_LOCATION
+//  - Slicer_CLIMODULES_BIN_DIR
+//  - Slicer_EXTENSIONS_DIRNAME
+//  - Slicer_MAIN_PROJECT_APPLICATION_NAME
 //  - Slicer_ORGANIZATION_DOMAIN
 //  - Slicer_ORGANIZATION_NAME
-//  - SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME
+//  - Slicer_QM_DIR
+//  - Slicer_QM_OUTPUT_DIRS
+//  - Slicer_SHARE_DIR
 //  - Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
+//  - Slicer_USE_PYTHONQT
+//  - Slicer_USE_PYTHONQT_WITH_OPENSSL
 #include "vtkSlicerConfigure.h"
 
 #ifdef Slicer_USE_PYTHONQT
@@ -115,8 +120,22 @@
 // VTKAddon includes
 #include <vtkPersonInformation.h>
 
-// Slicer includes
-#include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_{MINOR, MAJOR}, Slicer_VERSION_FULL
+// For:
+//  - Slicer_ARCHITECTURE
+//  - Slicer_MAIN_PROJECT_REVISION
+//  - Slicer_MAIN_PROJECT_VERSION_MAJOR
+//  - Slicer_MAIN_PROJECT_VERSION_MINOR
+//  - Slicer_MAIN_PROJECT_VERSION_PATCH
+//  - Slicer_MAIN_PROJECT_WC_REVISION
+//  - Slicer_MAIN_PROJECT_WC_URL
+//  - Slicer_OS
+//  - Slicer_RELEASE_TYPE
+//  - Slicer_REVISION
+//  - Slicer_VERSION_MAJOR
+//  - Slicer_VERSION_MINOR
+//  - Slicer_WC_REVISION
+//  - Slicer_WC_URL
+#include "vtkSlicerVersionConfigure.h"
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT
 // XXX Avoid  warning: "HAVE_XXXX" redefined
