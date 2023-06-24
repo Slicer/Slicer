@@ -63,16 +63,16 @@ int qSlicerScriptedUtilsTest1(int, char * [] )
   PyImport_AddModule("moduleA.moduleB");
 
   PythonQtObjectPtr attrMain;
-  attrMain.setNewRef(PyInt_FromLong(1));
+  attrMain.setNewRef(PyLong_FromLong(1));
 
   PythonQtObjectPtr attrMain2;
-  attrMain2.setNewRef(PyInt_FromLong(2));
+  attrMain2.setNewRef(PyLong_FromLong(2));
 
   PythonQtObjectPtr attrA;
-  attrA.setNewRef(PyInt_FromLong(10));
+  attrA.setNewRef(PyLong_FromLong(10));
 
   PythonQtObjectPtr attrB;
-  attrB.setNewRef(PyInt_FromLong(20));
+  attrB.setNewRef(PyLong_FromLong(20));
 
   if (!setModuleAttribute(__LINE__, "moduleX", "attrX", attrA, false))
     {

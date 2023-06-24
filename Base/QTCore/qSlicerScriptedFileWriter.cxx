@@ -176,14 +176,14 @@ QString qSlicerScriptedFileWriter::description()const
     {
     return QString();
     }
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'description' "
                << "is expected to return a string !";
     return QString();
     }
-  QString fileType = QString(PyString_AsString(result));
+  QString fileType = QString(PyUnicode_AsUTF8(result));
   return fileType;
 }
 
@@ -197,14 +197,14 @@ qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType()const
     {
     return IOFileType();
     }
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'fileType' "
                << "is expected to return a string !";
     return IOFileType();
     }
-  return IOFileType(PyString_AsString(result));
+  return IOFileType(PyUnicode_AsUTF8(result));
 }
 
 //-----------------------------------------------------------------------------
@@ -280,14 +280,14 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
   Py_ssize_t size = PyTuple_Size(resultAsTuple);
   for (Py_ssize_t i = 0; i < size; ++i)
     {
-    if (!PyString_Check(PyTuple_GetItem(resultAsTuple, i)))
+    if (!PyUnicode_Check(PyTuple_GetItem(resultAsTuple, i)))
       {
       qWarning() << d->PythonSource
                  << " - In" << d->PythonClassName << "class, function 'extensions' "
                  << "is expected to return a string list !";
       break;
       }
-    extensionList << PyString_AsString(PyTuple_GetItem(resultAsTuple, i));
+    extensionList << PyUnicode_AsUTF8(PyTuple_GetItem(resultAsTuple, i));
     }
   Py_DECREF(resultAsTuple);
   return extensionList;

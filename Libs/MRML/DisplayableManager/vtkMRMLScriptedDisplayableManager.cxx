@@ -178,7 +178,7 @@ void vtkMRMLScriptedDisplayableManager
 
   PyObject * arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
-  PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(event));
+  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(event));
   PyTuple_SET_ITEM(arguments, 2,
                    vtkPythonUtil::GetObjectFromPointer(reinterpret_cast<vtkMRMLNode*>(callData)));
 
@@ -201,7 +201,7 @@ void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller
 
   PyObject * arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
-  PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(event));
+  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(event));
   PyTuple_SET_ITEM(arguments, 2, vtkPythonUtil::GetObjectFromPointer(nullptr));
 
   PyObject_CallObject(method, arguments);
@@ -246,7 +246,7 @@ void vtkMRMLScriptedDisplayableManager::OnInteractorStyleEvent(int eventid)
     }
 
   PyObject * arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, PyInt_FromLong(eventid));
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLong(eventid));
 
   PyObject_CallObject(method, arguments);
   PyErr_Print();

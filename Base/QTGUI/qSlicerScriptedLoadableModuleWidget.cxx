@@ -215,8 +215,8 @@ bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node,
   Q_D(qSlicerScriptedLoadableModuleWidget);
   PyObject* arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
-  PyTuple_SET_ITEM(arguments, 1, PyString_FromString(role.toUtf8()));
-  PyTuple_SET_ITEM(arguments, 2, PyString_FromString(context.toUtf8()));
+  PyTuple_SET_ITEM(arguments, 1, PyUnicode_FromString(role.toUtf8()));
+  PyTuple_SET_ITEM(arguments, 2, PyUnicode_FromString(context.toUtf8()));
   PyObject* result = d->PythonCppAPI.callMethod(d->SetEditedNodeMethod, arguments);
   Py_DECREF(arguments);
   if (!result)

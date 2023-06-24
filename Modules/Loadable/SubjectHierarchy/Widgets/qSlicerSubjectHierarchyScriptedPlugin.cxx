@@ -258,14 +258,14 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::roleForPlugin()const
     }
 
   // Parse result
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'roleForPlugin' is expected to return a string!";
     return this->Superclass::roleForPlugin();
     }
 
-  const char* role = PyString_AsString(result);
-  return QString::fromLocal8Bit(role);
+  const char* role = PyUnicode_AsUTF8(result);
+  return QString::fromUtf8(role);
 }
 
 //---------------------------------------------------------------------------
@@ -280,14 +280,14 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::helpText()const
     }
 
   // Parse result
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'helpText' is expected to return a string!";
     return this->Superclass::helpText();
     }
 
-  const char* role = PyString_AsString(result);
-  return QString::fromLocal8Bit(role);
+  const char* role = PyUnicode_AsUTF8(result);
+  return QString::fromUtf8(role);
 }
 
 //---------------------------------------------------------------------------
@@ -318,7 +318,7 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::visibilityIcon(int visible)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, PyInt_FromLong(visible));
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLong(visible));
   PyObject* result = d->PythonCppAPI.callMethod(d->VisibilityIconMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
@@ -559,13 +559,13 @@ QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(vtkIdType itemI
     }
 
   // Parse result
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'displayedItemName' is expected to return a string!";
     return this->Superclass::displayedItemName(itemID);
     }
 
-  return PyString_AsString(result);
+  return PyUnicode_AsUTF8(result);
 }
 
 //-----------------------------------------------------------------------------
@@ -583,13 +583,13 @@ QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkIdType itemID)const
     }
 
   // Parse result
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'tooltip' is expected to return a string!";
     return this->Superclass::tooltip(itemID);
     }
 
-  return PyString_AsString(result);
+  return PyUnicode_AsUTF8(result);
 }
 
 //-----------------------------------------------------------------------------
@@ -598,7 +598,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(vtkIdType itemI
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
-  PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(visible));
+  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(visible));
   PyObject* result = d->PythonCppAPI.callMethod(d->SetDisplayVisibilityMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
@@ -623,11 +623,11 @@ int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(vtkIdType itemID
     }
 
   // Parse result
-  if (!PyInt_Check(result))
+  if (!PyLong_Check(result))
     {
     qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'getDisplayVisibility' is expected to return an integer!";
     return this->Superclass::getDisplayVisibility(itemID);
     }
 
-  return (int)PyInt_AsLong(result);
+  return (int)PyLong_AsLong(result);
 }
