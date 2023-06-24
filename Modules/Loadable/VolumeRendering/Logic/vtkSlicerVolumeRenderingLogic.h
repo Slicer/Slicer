@@ -36,7 +36,6 @@ class vtkMRMLVolumePropertyNode;
 
 // VTK includes
 class vtkColorTransferFunction;
-class vtkLookupTable;
 class vtkPiecewiseFunction;
 class vtkScalarsToColors;
 class vtkVolumeProperty;
@@ -217,7 +216,7 @@ public:
   /// \sa SetThresholdToVolumeProp
   void SetWindowLevelToVolumeProp(
     double scalarRange[2], double windowLevel[2],
-    vtkLookupTable* lut, vtkVolumeProperty* node);
+    vtkScalarsToColors* lut, vtkVolumeProperty* node);
 
   /// Create an opacity transfer function for gradient opacity.
   /// It ranges from 0 to scalarRange[1] - scalarRange[0].
@@ -229,7 +228,7 @@ public:
   /// transfer function from the labelmap LUT \a colors.
   /// \sa SetWindowLevelToVolumeProp, SetThresholdToVolumeProp
   void SetLabelMapToVolumeProp(
-    vtkScalarsToColors* lut, vtkVolumeProperty* node);
+    vtkScalarsToColors* colors, vtkVolumeProperty* node);
 
   /// Update DisplayNode from VolumeNode,
   /// Can pass a VolumePropertyNode and an ROI node to be the display node.
