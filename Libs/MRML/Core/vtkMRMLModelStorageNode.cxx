@@ -303,7 +303,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       vtkStringArray* comments = reader->GetComments();
       for (int commentIndex = 0; commentIndex < comments->GetNumberOfValues(); commentIndex++)
         {
-        coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(comments->GetValue(commentIndex));
+        coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(comments->GetValue(commentIndex).c_str());
         if (coordinateSystemInFileHeader >= 0)
           {
           // found a comment that contains coordinate system information

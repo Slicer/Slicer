@@ -304,7 +304,7 @@ void qMRMLTableModel::updateModelFromMRML()
             }
           else
             {
-            item->setText(QString(variant.ToString()));
+            item->setText(QString(variant.ToString().c_str()));
             }
           item->setData(QVariant(), UserRoleValueType);
           item->setCheckable(false);
@@ -372,7 +372,7 @@ void qMRMLTableModel::updateModelFromMRML()
       {
       if (tableRow>=0)
         {
-        rowLabel = QString(table->GetValue(tableRow, 0).ToString());
+        rowLabel = QString(table->GetValue(tableRow, 0).ToString().c_str());
         }
       else
         {
@@ -506,7 +506,7 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
           // The value is not changed then it means it is invalid,
           // restore previous value
           this->blockSignals(true);
-          item->setText(QString(valueInTableBefore.ToString()));
+          item->setText(QString(valueInTableBefore.ToString().c_str()));
           this->blockSignals(false);
           }
         else
@@ -670,7 +670,7 @@ int qMRMLTableModel::removeSelectionFromMRML(QModelIndexList selection, bool rem
                 qCritical("qMRMLTableModel::updateMRMLFromModel failed: column %d is invalid", columnIndex);
                 continue;
                 }
-              d->MRMLTableNode->RenameColumn(columnIndex, table->GetValue(0,columnIndex).ToString());
+              d->MRMLTableNode->RenameColumn(columnIndex, table->GetValue(0, columnIndex).ToString().c_str());
             }
           d->MRMLTableNode->RemoveRow(0);
           }

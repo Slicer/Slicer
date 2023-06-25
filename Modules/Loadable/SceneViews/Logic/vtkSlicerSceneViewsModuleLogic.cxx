@@ -116,14 +116,12 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
     return;
     }
 
-  vtkStdString nameString = vtkStdString(name);
-
   vtkNew<vtkMRMLSceneViewNode> newSceneViewNode;
   newSceneViewNode->SetScene(this->GetMRMLScene());
-  if (strcmp(nameString,""))
+  if (std::string(name) != "")
     {
     // a name was specified
-    newSceneViewNode->SetName(nameString.c_str());
+    newSceneViewNode->SetName(name);
     }
   else
     {
@@ -175,11 +173,10 @@ void vtkSlicerSceneViewsModuleLogic::
     return;
     }
 
-  vtkStdString nameString = vtkStdString(name);
-  if (strcmp(nameString,""))
+  if (std::string(name) != "")
     {
     // a name was specified
-    viewNode->SetName(nameString.c_str());
+    viewNode->SetName(name);
     }
   else
     {

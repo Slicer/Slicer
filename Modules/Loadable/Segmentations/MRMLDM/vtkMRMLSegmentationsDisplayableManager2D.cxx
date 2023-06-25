@@ -1521,7 +1521,7 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
     std::string segmentsInfoStr;
     for (int segmentIdIndex = 0; segmentIdIndex < segmentIDs->GetNumberOfValues(); ++segmentIdIndex)
       {
-      const char* segmentId = segmentIDs->GetValue(segmentIdIndex);
+      const char* segmentId = segmentIDs->GetValue(segmentIdIndex).c_str();
       vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(segmentId);
       if (segment)
         {

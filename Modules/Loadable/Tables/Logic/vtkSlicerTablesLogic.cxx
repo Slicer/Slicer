@@ -104,7 +104,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
       // Storage node
       vtkNew<vtkMRMLTableSQLiteStorageNode> tableStorageNode;
       tableStorageNode->SetFileName(fileName);
-      tableStorageNode->SetTableName(table);
+      tableStorageNode->SetTableName(table.c_str());
       this->GetMRMLScene()->AddNode(tableStorageNode.GetPointer());
 
       // Storable node

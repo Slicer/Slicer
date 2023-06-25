@@ -525,7 +525,7 @@ const char* vtkMRMLAbstractViewNode::GetAxisLabel(int labelIndex)
       << vtkMRMLAbstractViewNode::AxisLabelsCount);
     return "";
     }
-  return this->AxisLabels->GetValue(labelIndex);
+  return this->AxisLabels->GetValue(labelIndex).c_str();
 }
 
 //-----------------------------------------------------------
