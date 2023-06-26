@@ -1425,9 +1425,12 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
       {
       std::stringstream ss;
       ss << "Label_" << label;
-      labelName = ss.str().c_str();
+      segment->SetName(ss.str().c_str());
       }
-    segment->SetName(labelName);
+    else
+      {
+      segment->SetName(labelName);
+      }
 
     // Clip to effective extent
     int labelOrientedImageDataEffectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };
