@@ -310,7 +310,7 @@ vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkM
   // Common properties
   newPlot->SetWidth(plotSeriesNode->GetLineWidth());
   double* color = plotSeriesNode->GetColor();
-  newPlot->SetColor(color[0], color[1], color[2]);
+  newPlot->SetColorF(color[0], color[1], color[2]);
   newPlot->SetOpacity(plotSeriesNode->GetOpacity());
   if (newPlot->GetPen())
     {
