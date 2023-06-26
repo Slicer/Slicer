@@ -53,7 +53,7 @@ public:
   vtkMRMLSliceIntersectionWidget* GetSliceIntersectionWidget();
 
   /// Displayable manager returns ID of the mouse cursor shape that should be displayed
-  virtual int GetMouseCursor();
+  int GetMouseCursor() override;
 
   // Called to notify the displayable manager that it has got or lost the focus.
   void SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData) override;
