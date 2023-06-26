@@ -219,7 +219,6 @@ int vtkCacheManager::LocalFileExists ( const char *uri )
 {
   int index;
   std::string uriString (uri);
-  std::string prefix;
   std::string filename;
 
   //--- get all characters up to (and not including) the '://'
