@@ -393,13 +393,6 @@ mark_as_superbuild(Slicer_USE_QtTesting)
 option(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" ON)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
-option(Slicer_BUILD_ITKPython "Build Python wrapping for ITK" OFF)
-mark_as_superbuild(Slicer_BUILD_ITKPython)
-CMAKE_DEPENDENT_OPTION(
-  Slicer_INSTALL_ITKPython "Install Slicer with Python wrapping for ITK" OFF
-  "Slicer_BUILD_ITKPython" OFF)
-mark_as_superbuild(Slicer_INSTALL_ITKPython)
-
 option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter serializer support" OFF)
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
