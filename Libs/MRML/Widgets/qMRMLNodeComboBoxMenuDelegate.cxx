@@ -43,7 +43,7 @@ void qMRMLNodeComboBoxMenuDelegate::paint(QPainter *painter,
 {
     QStyleOptionMenuItem opt = this->getStyleOption(option, index);
 #ifndef Q_WS_S60
-    painter->fillRect(option.rect, opt.palette.background());
+    painter->fillRect(option.rect, opt.palette.window());
 #endif
     this->mCombo->style()->drawControl(QStyle::CE_MenuItem, &opt, painter,
                                        this->mCombo);
@@ -58,6 +58,7 @@ QSize qMRMLNodeComboBoxMenuDelegate::sizeHint(const QStyleOptionViewItem &option
         QStyle::CT_MenuItem, &opt, option.rect.size(), this->mCombo);
 }
 
+// --------------------------------------------------------------------------
 QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
     const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -142,7 +143,7 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
       }
     if (index.data(Qt::BackgroundRole).canConvert(QMetaType::QBrush))
       {
-      menuOption.palette.setBrush(QPalette::All, QPalette::Background,
+      menuOption.palette.setBrush(QPalette::All, QPalette::Window,
                              qvariant_cast<QBrush>(index.data(Qt::BackgroundRole)));
       }
     menuOption.text = index.model()->data(index, Qt::DisplayRole).toString()
