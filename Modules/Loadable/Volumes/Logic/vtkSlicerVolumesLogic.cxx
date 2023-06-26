@@ -1602,14 +1602,16 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
     {
     vtkErrorMacro("vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error parsing the file '" << displayPresetsFilename << "'.");
     fclose(fp);
+    return;
     }
-  fclose(fp);
+
   std::string errorPrefix = "vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error reading '" + displayPresetsFilename + "'.";
 
   // Verify schema
   if (!jsonRoot->HasMember("@schema"))
     {
     vtkErrorMacro(<< errorPrefix << " File does not contain schema information.");
+    fclose(fp);
     return;
     }
   rapidjson::Value& schema = (*jsonRoot)["@schema"];
@@ -1618,12 +1620,14 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
     {
     vtkErrorMacro(<< errorPrefix << " File is expected to contain @schema: "
       << MARKUPS_SCHEMA << " (different minor and patch version numbers are accepted).");
+    fclose(fp);
     return;
     }
 
   if (!jsonRoot->IsObject())
     {
     vtkErrorMacro(<< errorPrefix << " Syntax error in root element.");
+    fclose(fp);
     return;
     }
 
@@ -1631,6 +1635,7 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
   if (!volumeDisplayPresets.IsArray())
     {
     vtkErrorMacro(<< errorPrefix << " volumeDisplayPresets element is not found or not an array.");
+    fclose(fp);
     return;
     }
 
@@ -1702,6 +1707,7 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
 
     this->VolumeDisplayPresets.push_back(presetObj);
     }
+  fclose(fp);
 }
 
 // --------------------------------------------------------------------------
