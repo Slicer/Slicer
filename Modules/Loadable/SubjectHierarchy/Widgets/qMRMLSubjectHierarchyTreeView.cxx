@@ -525,7 +525,6 @@ vtkMRMLTransformNode* qMRMLSubjectHierarchyTreeViewPrivate::appliedTransformToIt
 //------------------------------------------------------------------------------
 vtkMRMLTransformNode* qMRMLSubjectHierarchyTreeViewPrivate::firstAppliedTransformToSelectedItems()
 {
-  vtkMRMLTransformNode* firstSelectedTransform();
   QList<vtkIdType> currentItemIDs = this->SelectedItems;
   foreach (vtkIdType itemID, currentItemIDs)
     {
