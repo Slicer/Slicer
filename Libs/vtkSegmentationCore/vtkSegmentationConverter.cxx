@@ -131,7 +131,7 @@ std::string vtkSegmentationConverter::SerializeImageGeometry(vtkMatrix4x4* geome
     {
     for (int j=0; j<4; j++)
       {
-      geometryStream << numberToString(geometryMatrix->GetElement(i, j)) << SERIALIZED_GEOMETRY_SEPARATOR;
+      geometryStream << numberToString.Convert(geometryMatrix->GetElement(i, j)) << SERIALIZED_GEOMETRY_SEPARATOR;
       }
     }
 
