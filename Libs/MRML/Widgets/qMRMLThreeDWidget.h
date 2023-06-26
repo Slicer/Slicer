@@ -77,7 +77,7 @@ public:
 public slots:
   /// Set the current \a viewNode to observe
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
-  virtual void setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode);
+  void setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode) override;
 
 protected:
   QScopedPointer<qMRMLThreeDWidgetPrivate> d_ptr;
