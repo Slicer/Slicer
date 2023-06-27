@@ -8,7 +8,10 @@ Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK),
 
 ## Install prerequisites
 
-- [CMake](https://www.cmake.org/cmake/resources/software.html) version that meets at least the minimum required CMake 3.21.1 <= version [< 3.25.0](https://gitlab.kitware.com/cmake/cmake/-/issues/24180) (or 3.16.3 <= version < 3.20.4)
+- [CMake](https://www.cmake.org/cmake/resources/software.html) version >= 3.16.3.
+  - Avoid versions with known Slicer build issues:
+    - 3.21.0 (CMake issue [22476](https://gitlab.kitware.com/cmake/cmake/-/issues/22476))
+    - 3.25.0 to 3.25.2 (CMake issues [24180](https://gitlab.kitware.com/cmake/cmake/-/issues/24180), [24567](https://gitlab.kitware.com/cmake/cmake/-/issues/24567))
 - [Git](https://git-scm.com/download/win) >= 1.7.10
   - Note: CMake must be able to find `git.exe` and `patch.exe`. If git is installed in the default location then they may be found there, but if they are not found then either add the folder that contains them to `PATH` environment variable; or set `GIT_EXECUTABLE` and `Patch_EXECUTABLE` as environment variables or as CMake variables at configure time.
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/): any edition can be used (including the free Community edition), when configuring the installer:
