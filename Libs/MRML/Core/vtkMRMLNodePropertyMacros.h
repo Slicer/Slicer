@@ -150,10 +150,6 @@
           of << " "; \
           } \
         } \
-      if (row != 3) \
-        { \
-        of << " "; \
-        } \
       } \
     xmlWriteOutputStream << "\""; \
   }
