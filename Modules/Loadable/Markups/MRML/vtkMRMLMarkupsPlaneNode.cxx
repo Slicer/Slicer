@@ -165,7 +165,7 @@ void vtkMRMLMarkupsPlaneNode::ApplyTransform(vtkAbstractTransform* transform)
   this->GetAxes(newXAxis_Node, newYAxis_Node, newZAxis_Node);
   this->GetCenter(newCenter_Node);
 
-  // Update size by calculating diffference in scaling between transformed/untransformed axes
+  // Update size by calculating difference in scaling between transformed/untransformed axes
   vtkAbstractTransform* transformInverse = transform->GetInverse();
   this->Size[0] /= vtkMath::Norm(transformInverse->TransformVectorAtPoint(newCenter_Node, newXAxis_Node));
   this->Size[1] /= vtkMath::Norm(transformInverse->TransformVectorAtPoint(newCenter_Node, newYAxis_Node));

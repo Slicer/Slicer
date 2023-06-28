@@ -3338,7 +3338,7 @@ bool qSlicerExtensionsManagerModel::waitForAllTasksCompletion(int timeoutMsec/*=
 
   QElapsedTimer timer;
 
-  // busy wait loop - it should be fine, as it shuold not take long and
+  // busy wait loop - it should be fine, as it should not take long and
   // and only rarely used (e.g., when a module installs some required extensions)
   while (true)
     {
