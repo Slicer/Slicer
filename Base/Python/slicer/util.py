@@ -620,6 +620,17 @@ def setPythonConsoleVisible(visible):
     mw.pythonConsole().parent().setVisible(visible)
 
 
+def setErrorLogVisible(visible):
+    """Show/hide Error log window.
+
+    If there is no main window then the function has no effect.
+    """
+    mw = mainWindow()
+    if not mw:
+        return
+    mw.errorLogDockWidget().setVisible(visible)
+
+
 def setStatusBarVisible(visible):
     """Show/hide status bar
 
