@@ -504,7 +504,7 @@
   <action name="ViewExtensionsManagerAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
+     <normaloff>:/Icons/Scalable/Extension.svg</normaloff>:/Icons/Scalable/Extension.svg</iconset>
    </property>
    <property name="text">
     <string>Extensions Manager</string>
@@ -533,10 +533,6 @@
    </property>
   </action>
   <action name="EditApplicationSettingsAction">
-   <property name="icon">
-    <iconset resource="../../../../Modules/Loadable/SlicerWelcome/Resources/UI/qSlicerWelcomeModule.qrc">
-    <normaloff>:/Images/SlicerAdvancedGear-Original.png</normaloff>:/Images/SlicerAdvancedGear-Original.png</iconset>
-   </property>
    <property name="text">
     <string>Application Settings</string>
    </property>
@@ -548,10 +544,6 @@
    </property>
   </action>
   <action name="CutAction">
-   <property name="icon">
-    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerEditCut.png</normaloff>:/Icons/Small/SlicerEditCut.png</iconset>
-   </property>
    <property name="text">
     <string>Cut</string>
    </property>
@@ -563,10 +555,6 @@
    </property>
   </action>
   <action name="CopyAction">
-   <property name="icon">
-    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerEditCopy.png</normaloff>:/Icons/Small/SlicerEditCopy.png</iconset>
-   </property>
    <property name="text">
     <string>Copy</string>
    </property>
@@ -578,10 +566,6 @@
    </property>
   </action>
   <action name="PasteAction">
-   <property name="icon">
-    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerEditPaste.png</normaloff>:/Icons/Small/SlicerEditPaste.png</iconset>
-   </property>
    <property name="text">
     <string>Paste</string>
    </property>
@@ -804,10 +788,6 @@
    </property>
   </action>
   <action name="ModuleHomeAction">
-   <property name="icon">
-    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Medium/SlicerHome.png</normaloff>:/Icons/Medium/SlicerHome.png</iconset>
-   </property>
    <property name="text">
     <string>Home</string>
    </property>

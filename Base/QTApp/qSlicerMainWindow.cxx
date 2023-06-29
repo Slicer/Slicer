@@ -36,6 +36,7 @@
 #include <QShowEvent>
 #include <QSignalMapper>
 #include <QStyle>
+#include <QStyleFactory>
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolButton>
@@ -49,6 +50,7 @@
 #ifdef Slicer_USE_QtTesting
 #include <ctkQtTestingUtility.h>
 #endif
+#include <ctkWidgetsUtils.h>
 #include <ctkVTKSliceView.h>
 #include <ctkVTKWidgetsUtils.h>
 
@@ -417,6 +419,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->CutAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->CopyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->PasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  this->updateIconPalette();
 
   setThemeIcon(this->FileExitAction, "application-exit");
   setThemeIcon(this->EditUndoAction, "edit-undo");
@@ -493,6 +496,29 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // to use the full width of the application window.
   q->setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   q->setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindowPrivate::updateIconPalette()
+{
+  QPalette palette = qSlicerApplication::application()->palette();
+  QStyle* lightStyle = QStyleFactory::create("Light Slicer");
+  QString hexColor;
+  if (palette == lightStyle->standardPalette())
+  {
+    hexColor = lightStyle->standardPalette().color(QPalette::Text).name();
+  }
+  else
+  {
+    QStyle* darkStyle = QStyleFactory::create("Dark Slicer");
+    hexColor = darkStyle->standardPalette().color(QPalette::Text).name();
+  }
+  this->CutAction->setIcon(ctk::getColorizedIcon(":/Icons/Scalable/Cut.svg", QColor(hexColor)));
+  this->CopyAction->setIcon(ctk::getColorizedIcon(":/Icons/Scalable/Copy.svg", QColor(hexColor)));
+  this->PasteAction->setIcon(ctk::getColorizedIcon(":/Icons/Scalable/Paste.svg", QColor(hexColor)));
+  this->EditApplicationSettingsAction->setIcon(ctk::getColorizedIcon(":/Icons/Scalable/ApplicationSettings.svg", QColor(hexColor)));
+  this->ModuleHomeAction->setIcon(ctk::getColorizedIcon(":/Icons/Scalable/Home.svg", QColor(hexColor)));
+  this->ViewExtensionsManagerAction->setIcon(ctk::getColorizedIcon(":/Icons/Scalable/Extension.svg", QColor(hexColor)));
 }
 
 //-----------------------------------------------------------------------------
@@ -1774,6 +1800,7 @@ void qSlicerMainWindow::changeEvent(QEvent* event)
     case QEvent::PaletteChange:
       {
       d->updatePythonConsolePalette();
+      d->updateIconPalette();
       break;
       }
     default:
@@ -1807,7 +1834,7 @@ void qSlicerMainWindow::setExtensionUpdatesAvailable(bool updateAvailable)
     }
   else
     {
-    d->ViewExtensionsManagerAction->setIcon(QIcon(":/Icons/ExtensionDefaultIcon.png"));
+    d->ViewExtensionsManagerAction->setIcon(QIcon(":/Icons/Scalable/Extension.svg"));
     }
 #endif
 }

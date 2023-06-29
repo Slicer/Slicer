@@ -107,8 +107,8 @@ void qSlicerSettingsModulesPanelPrivate::init()
 
   // Favorites
   this->FavoritesModulesListView->filterModel()->setHideAllWhenShowModulesIsEmpty(true);
-  this->FavoritesMoveLeftButton->setIcon(q->style()->standardIcon(QStyle::SP_ArrowLeft));
-  this->FavoritesMoveRightButton->setIcon(q->style()->standardIcon(QStyle::SP_ArrowRight));
+  this->FavoritesMoveLeftButton->setIcon(QIcon(":Icons/Scalable/NavigateBefore.svg"));
+  this->FavoritesMoveRightButton->setIcon(QIcon(":Icons/Scalable/NavigateNext.svg"));
   QObject::connect(this->FavoritesRemoveButton, SIGNAL(clicked()),
                    this->FavoritesModulesListView, SLOT(hideSelectedModules()));
   QObject::connect(this->FavoritesMoveLeftButton, SIGNAL(clicked()),

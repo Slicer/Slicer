@@ -26,12 +26,15 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QStyle>
+#include <QStyleFactory>
 #include <QStyleOptionButton>
 #include <QToolButton>
 
 // CTK includes
 #include "ctkComboBox.h"
 #include "ctkMenuComboBox.h"
+#include "ctkWidgetsUtils.h"
 
 // Slicer includes
 #include "qSlicerAbstractModule.h"
@@ -53,6 +56,8 @@ public:
 
   void insertActionOnTop(QAction* action, QMenu* menu);
   QAction* lastSelectedAction()const;
+
+  void updateIconPalette();
 
   qSlicerModuleFinderDialog* ModuleFinder;
 #ifdef Q_OS_WIN32
@@ -91,10 +96,6 @@ qSlicerModuleSelectorToolBarPrivate::qSlicerModuleSelectorToolBarPrivate(qSlicer
 void qSlicerModuleSelectorToolBarPrivate::init()
 {
   Q_Q(qSlicerModuleSelectorToolBar);
-  QIcon previousIcon = q->style()->standardIcon(QStyle::SP_ArrowLeft);
-  QIcon nextIcon = q->style()->standardIcon(QStyle::SP_ArrowRight);
-  QIcon historyIcon(":Icons/ModuleHistory.png");
-
   // Modules Label
   q->addWidget(new QLabel(qSlicerModuleSelectorToolBar::tr("Modules:"), q));
 
@@ -152,7 +153,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->HistoryMenu = new QMenu(qSlicerModuleSelectorToolBar::tr("Modules history"), q);
   this->HistoryButton = new QToolButton;
   this->HistoryButton->setText(qSlicerModuleSelectorToolBar::tr("History"));
-  this->HistoryButton->setIcon(historyIcon);
+  this->HistoryButton->setIcon(QIcon(":Icons/Scalable/ModuleHistory.svg"));
   this->HistoryButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Modules history"));
   this->HistoryButton->setMenu(this->HistoryMenu);
   this->HistoryButton->setPopupMode(QToolButton::InstantPopup);
@@ -163,7 +164,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   // Previous button
   this->PreviousHistoryMenu = new QMenu(qSlicerModuleSelectorToolBar::tr("Modules Previous History"), q);
   this->PreviousButton = new QToolButton(q);
-  this->PreviousButton->setIcon(previousIcon);
+  this->PreviousButton->setIcon(QIcon(":Icons/Scalable/NavigateBefore.svg"));
   this->PreviousButton->setText(qSlicerModuleSelectorToolBar::tr("Previous"));
   this->PreviousButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Previous modules"));
   this->PreviousButton->setMenu(this->PreviousHistoryMenu);
@@ -180,7 +181,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   // Next button
   this->NextHistoryMenu = new QMenu(qSlicerModuleSelectorToolBar::tr("Modules Next History"), q);
   this->NextButton = new QToolButton(q);
-  this->NextButton->setIcon(nextIcon);
+  this->NextButton->setIcon(QIcon(":Icons/Scalable/NavigateNext.svg"));
   this->NextButton->setText(qSlicerModuleSelectorToolBar::tr("Next"));
   this->NextButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Next modules"));
   this->NextButton->setMenu(this->NextHistoryMenu);
@@ -193,6 +194,27 @@ void qSlicerModuleSelectorToolBarPrivate::init()
                    this->NextButton,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
   this->NextButton->setEnabled(this->NextHistoryMenu->actions().size() > 0);
   this->NextButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Right));
+
+  this->updateIconPalette();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleSelectorToolBarPrivate::updateIconPalette()
+{
+  QPalette palette = qSlicerApplication::application()->palette();
+  QStyle* lightStyle = QStyleFactory::create("Light Slicer");
+  QString hexColor;
+  if (palette == lightStyle->standardPalette())
+  {
+    hexColor = lightStyle->standardPalette().color(QPalette::Text).name();
+  }
+  else
+  {
+    QStyle* darkStyle = QStyleFactory::create("Dark Slicer");
+    hexColor = darkStyle->standardPalette().color(QPalette::Text).name();
+  }
+  QAction* ViewFindModuleAction = this->ModuleFinderButton->defaultAction();
+  ViewFindModuleAction->setIcon(QIcon::fromTheme("edit-find", ctk::getColorizedIcon(":/Icons/Scalable/Search.svg", QColor(hexColor))));
 }
 
 //---------------------------------------------------------------------------
@@ -447,5 +469,21 @@ void qSlicerModuleSelectorToolBar::selectPreviousModule()
       }
     // triggering the action will eventually call actionSelected()
     previousAction->trigger();
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorToolBar::changeEvent(QEvent* event)
+{
+  Q_D(qSlicerModuleSelectorToolBar);
+  switch (event->type())
+    {
+    case QEvent::PaletteChange:
+      {
+      d->updateIconPalette();
+      break;
+      }
+    default:
+      break;
     }
 }
