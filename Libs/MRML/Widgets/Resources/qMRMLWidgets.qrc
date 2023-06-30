@@ -161,5 +161,6 @@
         <file>Icons/LayoutFourUpQuantitativeTableView.png</file>
         <file>Icons/ViewMaximize.png</file>
         <file>Icons/ViewRestore.png</file>
+        <file>Icons/SlabReconstruction.png</file>
     </qresource>
 </RCC>

@@ -233,6 +233,8 @@ public slots:
   /// Reformat widget
   void showReformatWidget(bool show);
   void lockReformatWidgetToCamera(bool lock);
+  /// Reconstruction widget
+  void showSlabReconstructionWidget(bool show);
   /// Compositing
   void setCompositing(int mode);
   void setCompositingToAlphaBlend();
@@ -272,6 +274,10 @@ public slots:
   void setRulerType(int type);
   void setRulerColor(int color);
 
+  // Slab Reconstruction
+  void setSlabReconstructionType(int type);
+  void setSlabReconstructionThickness(double thickness);
+
   // Lightbox
   void setLightbox(int rows, int columns);
   void setLightboxTo1x1();
@@ -306,6 +312,10 @@ protected:
   /// instantiated in case virtual method are called within init() itself.
   qMRMLSliceControllerWidget(qMRMLSliceControllerWidgetPrivate* obj,
                              QWidget* parent);
+
+  /// Default number of slices in a slab
+  /// Normal Slice view has thickness of 1 slice
+  const double DefaultSlabReconstructionThickness = 1;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSliceControllerWidget);

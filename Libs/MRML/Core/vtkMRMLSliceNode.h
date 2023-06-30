@@ -523,6 +523,33 @@ public:
   virtual void SetSliceResolutionMode(int mode);
   vtkGetMacro(SliceResolutionMode, int);
 
+  /// @{
+  /// Get/set the slab reconstruction visibility.
+  vtkGetMacro(SlabReconstructionEnabled, bool);
+  vtkSetMacro(SlabReconstructionEnabled, bool);
+  vtkBooleanMacro(SlabReconstructionEnabled, bool);
+  /// @}
+
+  /// @{
+  /// Get/set the slab reconstruction type.
+  vtkGetMacro(SlabReconstructionType, int);
+  vtkSetMacro(SlabReconstructionType, int);
+  static const char* GetSlabReconstructionTypeAsString(int slabReconstructionType);
+  static int GetSlabReconstructionTypeFromString(const char* name);
+  /// @}
+
+  /// @{
+  /// Get/set the slab reconstruction thickness in physical unit.
+  vtkGetMacro(SlabReconstructionThickness, double);
+  vtkSetMacro(SlabReconstructionThickness, double);
+  /// @}
+
+  /// @{
+  /// Get/set the slab reconstruction oversampling factor.
+  vtkGetMacro(SlabReconstructionOversamplingFactor, double);
+  vtkSetMacro(SlabReconstructionOversamplingFactor, double);
+  /// @}
+
 protected:
   vtkMRMLSliceNode();
   ~vtkMRMLSliceNode() override;
@@ -557,6 +584,11 @@ protected:
   double UVWExtents[3];
   int UVWDimensions[3];
   int UVWMaximumDimensions[3];
+
+  bool SlabReconstructionEnabled;
+  int SlabReconstructionType;
+  double SlabReconstructionThickness;
+  double SlabReconstructionOversamplingFactor;
 
   // Hold the string returned by GetOrientationString
   std::string OrientationString;

@@ -84,6 +84,11 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->SliceResolutionMode = vtkMRMLSliceNode::SliceResolutionMatch2DView;
 
+  this->SlabReconstructionEnabled = false;
+  this->SlabReconstructionType = VTK_IMAGE_SLAB_MAX;
+  this->SlabReconstructionThickness = 1.;
+  this->SlabReconstructionOversamplingFactor = 2.0;
+
   this->XYZOrigin[0] = 0;
   this->XYZOrigin[1] = 0;
   this->XYZOrigin[2] = 0;
@@ -905,6 +910,11 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
     vtkMRMLWriteXMLStdStringVectorMacro(threeDViewNodeRef, ThreeDViewIDs, std::vector);
     }
 
+  vtkMRMLWriteXMLBooleanMacro(slabReconstructionEnabled, SlabReconstructionEnabled);
+  vtkMRMLWriteXMLEnumMacro(slabReconstructionType, SlabReconstructionType);
+  vtkMRMLWriteXMLFloatMacro(slabReconstructionThickness, SlabReconstructionThickness);
+  vtkMRMLWriteXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
+
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -991,6 +1001,11 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       this->AddThreeDViewID(id.c_str());
       }
     }
+
+  vtkMRMLReadXMLBooleanMacro(slabReconstructionEnabled, SlabReconstructionEnabled);
+  vtkMRMLReadXMLEnumMacro(slabReconstructionType, SlabReconstructionType);
+  vtkMRMLReadXMLFloatMacro(slabReconstructionThickness, SlabReconstructionThickness);
+  vtkMRMLReadXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
 
   vtkMRMLReadXMLEndMacro();
 
@@ -1105,6 +1120,11 @@ void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   vtkMRMLCopyVectorMacro(UVWMaximumDimensions, int, 3);
   vtkMRMLCopyVectorMacro(PrescribedSliceSpacing, double, 3);
 
+  vtkMRMLCopyBooleanMacro(SlabReconstructionEnabled);
+  vtkMRMLCopyEnumMacro(SlabReconstructionType);
+  vtkMRMLCopyFloatMacro(SlabReconstructionThickness);
+  vtkMRMLCopyFloatMacro(SlabReconstructionOversamplingFactor);
+
   vtkMRMLCopyEndMacro();
 
   this->UpdateMatrices();
@@ -1198,6 +1218,11 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     }
 
   vtkMRMLPrintStringMacro(DefaultOrientation);
+
+  vtkMRMLPrintBooleanMacro(SlabReconstructionEnabled);
+  vtkMRMLPrintEnumMacro(SlabReconstructionType);
+  vtkMRMLPrintFloatMacro(SlabReconstructionThickness);
+  vtkMRMLPrintFloatMacro(SlabReconstructionOversamplingFactor);
 
   vtkMRMLPrintEndMacro();
 }
@@ -2023,4 +2048,40 @@ bool vtkMRMLSliceNode::SetOrientationToDefault()
     return false;
     }
   return this->SetOrientation(this->GetDefaultOrientation());
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLSliceNode::GetSlabReconstructionTypeAsString(int slabReconstructionType)
+{
+  switch (slabReconstructionType)
+    {
+    case VTK_IMAGE_SLAB_MAX: return "Max";
+    case VTK_IMAGE_SLAB_MIN: return "Min";
+    case VTK_IMAGE_SLAB_MEAN: return "Mean";
+    case VTK_IMAGE_SLAB_SUM: return "Sum";
+    default:
+      vtkGenericWarningMacro("Unknown reconstruction type: " << slabReconstructionType);
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLSliceNode::GetSlabReconstructionTypeFromString(const char* name)
+{
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+  // VTK_IMAGE_SLAB enum doesn't use last
+  for (int ii = 0; ii < 4; ii++)
+    {
+    if (strcmp(name, GetSlabReconstructionTypeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
 }
