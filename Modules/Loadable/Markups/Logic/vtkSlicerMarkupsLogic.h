@@ -307,7 +307,7 @@ public:
 
   /// This returns an instance to a corresponding vtkMRMLMarkupsNode associated
   /// to the indicated markups name.
-  /// \param makrupsType registered class to retrieve the associated widget.
+  /// \param markupsType registered class to retrieve the associated widget.
   /// \return pointer to associated vtkSLicerMarkupsWidget or nullptr if the MRML node
   /// class is not registered.
   vtkMRMLMarkupsNode* GetNodeByMarkupsType(const char* markupsType) const;

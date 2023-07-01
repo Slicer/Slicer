@@ -58,7 +58,7 @@ public:
   /// The list of valid types
   /// PETheat to display PET overlay with red to orange to yellow to white.
   /// PETrainbow to display PET overlay with cool to warm to white.
-  /// PETrainbow2 is absed on the PET lookup-table of Fiji PET-CT plugin (https://sourceforge.net/projects/bifijiplugins/files/extraLUT/).
+  /// PETrainbow2 is based on the PET lookup-table of Fiji PET-CT plugin (https://sourceforge.net/projects/bifijiplugins/files/extraLUT/).
   /// PETDICOM is based on the DICOM standard PET color palette
   /// (https://dicom.nema.org/medical/dicom/current/output/html/part06.html#sect_B.1.2).
   /// PEThotMetalBlue is based on the DICOM standard Hot Metal Blue color palette

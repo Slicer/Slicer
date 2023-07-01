@@ -125,7 +125,7 @@ protected:
   /// Note: The ROI Position is the center of the ROI
   double XYZ[3];
   ///
-  /// The raidus of  of the ROI box in RAS space
+  /// The radius of the ROI box in RAS space
   double RadiusXYZ[3];
   ///
   /// The location of the ROI centroid in IJK space

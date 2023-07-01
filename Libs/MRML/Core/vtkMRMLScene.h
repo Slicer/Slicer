@@ -476,7 +476,7 @@ public:
   /// \param recursive All referenced nodes recursively if true,
   ///   only directly referenced nodes if false. Default is true.
   ///
-  /// The node itself is in first place in the collection. No doublon in the
+  /// The node itself is in first place in the collection. No duplicate in the
   /// list.
   /// For a node to be referenced by another node, the latter must call
   /// AddReferencedNodeID().

@@ -31,7 +31,7 @@ class vtkCallbackCommand;
 /// The Observation is a record of
 /// - a subject  (vtkObject)
 /// - an event type (unsigned long)
-/// - an objserver (vtkObject)
+/// - an observer (vtkObject)
 /// - a callback (vtkCallbackCommand)
 /// - optional comment strings
 /// This class can be used by the vtkEventBroker to keep track of the registered observers
@@ -83,7 +83,7 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   vtkSetMacro (ObserverDeleteEventTag, unsigned long);
 
   /// Description
-  /// Elapsed time of last invocation and total elaspsed time
+  /// Elapsed time of last invocation and total elapsed time
   /// (in synchronous mode, elapsed time include children)
   vtkGetMacro (LastElapsedTime, double);
   vtkSetMacro (LastElapsedTime, double);

@@ -61,7 +61,7 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
   void AddSceneSnapshotNode(vtkMRMLSceneViewNode * node);
 
   ///
-  /// Get Numbre of SceneSnapshot nodes
+  /// Get number of SceneSnapshot nodes
   int GetNumberOfSceneSnapshotNodes();
   ///
   /// Get SceneSnapshot node

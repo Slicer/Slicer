@@ -55,7 +55,7 @@ public:
 
   /// Write the node identified by nodeID into the fileName file.
   /// Returns true on success
-  /// Properties availables:
+  /// Properties available:
   /// * QString nodeID
   /// * QString fileName
   /// * QString fileFormat

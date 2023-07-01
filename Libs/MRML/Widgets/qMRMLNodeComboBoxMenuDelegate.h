@@ -34,11 +34,11 @@ class QComboBox;
 ///
 /// This is used in qMRMLNodeComboBox for the extra items:
 /// e.g. "Add/Remove/Edit node" actions
-/// The highlight color is slightly more treansparent than the style palette
+/// The highlight color is slightly more transparent than the style palette
 /// highlight color to indicates that the item is not really selectable
 /// but correspond to an action.
 ///
-/// We reimplemente the code from Qt "QComboMenuDelegate" used in the class QComboBox.
+/// We reimplement the code from Qt "QComboMenuDelegate" used in the class QComboBox.
 class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxMenuDelegate: public QAbstractItemDelegate
 {
   Q_OBJECT

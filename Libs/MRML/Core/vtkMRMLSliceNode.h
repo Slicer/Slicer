@@ -349,12 +349,12 @@ public:
   void SetLayoutGrid( int rows, int columns );
 
   ///
-  /// Set/Get the number of rows to use ina LightBox display
+  /// Set/Get the number of rows to use in a LightBox display
   vtkGetMacro(LayoutGridRows, int);
   virtual void SetLayoutGridRows(int rows);
 
   ///
-  /// Set/Get the number of columns to use ina LightBox display
+  /// Set/Get the number of columns to use in a LightBox display
   vtkGetMacro(LayoutGridColumns, int);
   virtual void SetLayoutGridColumns(int cols);
 

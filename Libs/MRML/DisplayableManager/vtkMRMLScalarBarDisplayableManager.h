@@ -29,7 +29,7 @@ class vtkMRMLWindowLevelWidget;
 /// \brief Displayable manager for window/level adjustment of volumes.
 ///
 /// This displayable manager only manages window/level adjustment events, does not display
-/// "scalar bar" (color legend). Its name was given because orinally it was intended for
+/// "scalar bar" (color legend). Its name was given because originally it was intended for
 /// displaying color legend as well, but later a dedicated displayable manager was added for that purpose
 /// (that can be used in any view types, for any displayable node types).
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLScalarBarDisplayableManager :

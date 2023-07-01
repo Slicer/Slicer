@@ -67,7 +67,7 @@ public:
   void UpdateReferenceID(const char *oldID, const char *newID) override;
 
   ///
-  /// Associated prent MRML node
+  /// Associated parent MRML node
   vtkMRMLHierarchyNode* GetParentNode();
 
   ///
@@ -125,7 +125,7 @@ public:
       ChildNodeRemovedEvent = 15551
     };
 
-  //// Assocailted node methods ////////////////
+  //// Associated node methods ////////////////
 
   ///
   /// String ID of the corresponding displayable MRML node

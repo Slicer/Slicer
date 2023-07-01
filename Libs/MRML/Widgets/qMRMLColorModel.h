@@ -74,7 +74,7 @@ public:
   qMRMLColorModel(QObject *parent=nullptr);
   ~qMRMLColorModel() override;
 
-  /// ColorRole is an invivisble role that contains the true color (QColor) when
+  /// ColorRole is an invisible role that contains the true color (QColor) when
   /// Qt::DecorationRole contains a pixmap of the color.
   enum ItemDataRole{
     ColorEntryRole = Qt::UserRole,

@@ -63,7 +63,7 @@ public:
     };
 
   ///
-  /// Returns 1 if transform is a non-composite linear tansform, 0 otherwise (if composite transform or non-linear transform)
+  /// Returns 1 if transform is a non-composite linear transform, 0 otherwise (if composite transform or non-linear transform)
   virtual int IsLinear();
 
   ///
@@ -185,12 +185,12 @@ public:
     vtkMRMLTransformNode* targetNode, vtkMatrix4x4* transformSourceToTarget);
 
   ///
-  /// Returns 1 if this node is one of the node's descendents
+  /// Returns 1 if this node is one of the node's descendants
   /// nullptr designates the world transform node and so always returns with 1.
   int IsTransformNodeMyParent(vtkMRMLTransformNode* node);
 
   ///
-  /// Returns 1 if the node is one of the this node's descendents
+  /// Returns 1 if the node is one of the this node's descendants
   int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
 
   ///

@@ -19,7 +19,7 @@
 class vtkMRMLModelDisplayNode;
 class vtkMRMLModelNode;
 
-/// \brief MRML node to represent a hierarchyu of models.
+/// \brief MRML node to represent a hierarchy of models.
 class VTK_MRML_EXPORT vtkMRMLModelHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {
 public:

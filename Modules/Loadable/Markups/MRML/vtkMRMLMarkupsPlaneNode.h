@@ -112,7 +112,7 @@ public:
 
   //@{
   /// Method for calculating the size of the plane along the direction vectors.
-  /// With size mode auto, the size of the plane is automatically calculated so that it ecompasses all of the points.
+  /// With size mode auto, the size of the plane is automatically calculated so that it encompasses all of the points.
   /// Size mode absolute will never be recalculated.
   /// Default is SizeModeAuto.
   void SetSizeMode(int sizeMode);
