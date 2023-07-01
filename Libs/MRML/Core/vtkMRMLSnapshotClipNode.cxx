@@ -146,7 +146,7 @@ void vtkMRMLSnapshotClipNode::AddSceneSnapshotNode(vtkMRMLSceneViewNode * node)
 }
 
 ///
-/// Get Numbre of SceneSnapshot nodes
+/// Get number of SceneSnapshot nodes
 int vtkMRMLSnapshotClipNode::GetNumberOfSceneSnapshotNodes()
 {
   return this->SceneSnapshotNodes->GetNumberOfItems();

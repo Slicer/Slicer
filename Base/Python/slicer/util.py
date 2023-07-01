@@ -26,7 +26,7 @@ def quit():
 def exit(status=EXIT_SUCCESS):
     """Exits the application with the specified exit code.
 
-    The method does not stops the process immediately but lets
+    The method does not stop the process immediately but lets
     pending events to be processed.
     If exit() is called again while processing pending events,
     the error code will be overwritten.
@@ -316,7 +316,7 @@ def findChild(widget, name):
 
     :raises RuntimeError: if the widget with the given ``name`` does not exist.
     """
-    errorMessage = "Widget named " + str(name) + " does not exists."
+    errorMessage = "Widget named " + str(name) + " does not exist."
     child = None
     try:
         child = findChildren(widget, name=name)[0]

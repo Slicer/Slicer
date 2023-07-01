@@ -92,7 +92,7 @@ public:
 
   ///
   /// When reading files which have regular, but non contiguous slices
-  /// (eg filename.1,filename.3,filename.5)
+  /// (e.g. filename.1,filename.3,filename.5)
   /// a spacing can be specified to skip missing files (default = 1)
   vtkSetMacro(FileNameSliceSpacing,int);
   vtkGetMacro(FileNameSliceSpacing,int);

@@ -74,7 +74,7 @@ public:
   const char* GetNodeTagName() override {return "Color";};
 
   ///
-  /// Reset node attributes to the initilal state as defined in the constructor.
+  /// Reset node attributes to the initial state as defined in the constructor.
   /// NOTE:   it preserves values several dynamic attributes that may be set by an application: type, name
   void Reset(vtkMRMLNode* defaultNode) override;
 

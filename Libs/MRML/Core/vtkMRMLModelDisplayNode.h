@@ -123,7 +123,7 @@ public:
   vtkGetMacro(ThresholdEnabled,bool);
 
   /// Set the threshold range of the model display node.
-  /// \sa GetThresholdMin(), GetTresholdMax()
+  /// \sa GetThresholdMin(), GetThresholdMax()
   void SetThresholdRange(double min, double max);
   void SetThresholdRange(double range[2]);
 

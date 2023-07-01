@@ -59,7 +59,7 @@ public:
   Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode()const override;
 
   /// Get a reference to the underlying Table View
-  /// Becareful if you change the TableView, you might
+  /// Be careful if you change the TableView, you might
   /// unsynchronize the view from the nodes/logics.
   Q_INVOKABLE qMRMLTableView* tableView()const;
   Q_INVOKABLE QWidget* viewWidget()const override;

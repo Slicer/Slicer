@@ -137,7 +137,7 @@ public:
 
   /// Set volume rendering properties that seems well suited for the volume.
   /// The function uses heuristics to detect what kind of volume it is (CT, MRI, other),
-  /// based on its intensity range and choses preset accordingly.
+  /// based on its intensity range and chooses preset accordingly.
   /// Returns false is volume type could not be detected and so properties are not changed.
   bool SetRecommendedVolumeRenderingProperties(vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode);
 

@@ -103,7 +103,7 @@ protected:
   using ColumnInfo = struct StructColumnInfo;
 
   /// Determines information about the columns in the table, including column name,
-  /// The raw components that should be includeded in the table, the scalar type,
+  /// The raw components that should be included in the table, the scalar type,
   /// and the names of the components.
   std::vector<ColumnInfo> GetColumnInfo(vtkMRMLTableNode* tableNode, vtkTable* rawTable);
 

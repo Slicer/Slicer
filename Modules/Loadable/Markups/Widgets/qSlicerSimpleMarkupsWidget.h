@@ -73,7 +73,7 @@ public:
   /// Accessors to control place mode behavior
   bool enterPlaceModeOnNodeChange() const;
 
-  /// If enabled then the control point will be shown in all slice views when a caontrol point is selected
+  /// If enabled then the control point will be shown in all slice views when a control point is selected
   /// /sa setViewGroup
   bool jumpToSliceEnabled() const;
 

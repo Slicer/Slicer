@@ -312,7 +312,7 @@ protected:
   /// \sa ProcessMRMLNodesEvents
   virtual void OnMRMLNodeModified(vtkMRMLNode* /*node*/){}
 
-  /// Called each time a new scene is set. Can be reimplemented in derivated classes.
+  /// Called each time a new scene is set. Can be reimplemented in derived classes.
   /// Doesn't observe the scene by default, that means that
   /// UpdateFromMRMLScene() won't be called by default when a scene is imported,
   /// closed or restored, only when a new scene is set.
@@ -343,7 +343,7 @@ protected:
                                             vtkFloatArray *priorities=nullptr);
 
   /// Register node classes into the MRML scene. Called each time a new scene
-  /// is set. Do nothing by default. Can be reimplemented in derivated classes.
+  /// is set. Do nothing by default. Can be reimplemented in derived classes.
   virtual void RegisterNodes(){}
 
   /// Set MRMLSceneCallback flag

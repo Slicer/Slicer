@@ -62,7 +62,7 @@ public:
   Q_INVOKABLE vtkMRMLAbstractLogic* logic()const override;
 
   /// Get a reference to the underlying ThreeD View
-  /// Becareful if you change the threeDView, you might
+  /// Be careful if you change the threeDView, you might
   /// unsynchronize the view from the nodes/logics.
   Q_INVOKABLE qMRMLThreeDView* threeDView()const;
   Q_INVOKABLE QWidget* viewWidget()const override;

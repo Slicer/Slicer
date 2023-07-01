@@ -72,7 +72,7 @@ public:
   /// It can be used to determine how specifically extension matched.
   QStringList supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr = nullptr)const;
 
-  /// Properties availables : fileMode, multipleFiles, fileType.
+  /// Properties available : fileMode, multipleFiles, fileType.
   virtual bool load(const IOProperties& properties);
 
   /// Return the list of generated nodes from loading the file(s) in load().

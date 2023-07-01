@@ -198,7 +198,7 @@ protected:
 
   vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 
-  /// used for main scalar invarant (can be 1 or 3 component)
+  /// used for main scalar invariant (can be 1 or 3 component)
   vtkDiffusionTensorMathematics *DTIMathematics;
   /// used for calculating single component magnitude for color images
   vtkDiffusionTensorMathematics *DTIMathematicsAlpha;

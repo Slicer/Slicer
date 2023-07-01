@@ -119,7 +119,7 @@ public:
   ObservationVector GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
 
   /// Description
-  /// Accessors for intropsection
+  /// Accessors for introspection
   /// Note: vtkCollection object is allocated internally
   /// and must be freed by the caller
   vtkCollection *GetObservationsForSubject (vtkObject *subject);
