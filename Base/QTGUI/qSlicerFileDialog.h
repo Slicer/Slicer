@@ -137,7 +137,7 @@ public:
   bool exec(const qSlicerIO::IOProperties& ioProperties =
                     qSlicerIO::IOProperties()) override;
 
-  /// Properties available with IOPorperties: fileMode, multipleFiles, fileType.
+  /// Properties available with IOProperties: fileMode, multipleFiles, fileType.
   Q_INVOKABLE static QStringList getOpenFileName(qSlicerIO::IOProperties ioProperties =
                                      qSlicerIO::IOProperties());
   Q_INVOKABLE static QString getExistingDirectory(qSlicerIO::IOProperties ioProperties =

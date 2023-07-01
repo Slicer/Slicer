@@ -209,7 +209,7 @@ public:
   /// \sa AutoRunMode, SetAutoRunMode(), GetAutoRun(), GetAutoRunDelay()
   int GetAutoRunMode()const;
 
-  /// Set the delay (in ms) to wait before automatically running
+  /// Set the delay (in milliseconds) to wait before automatically running
   /// the module. 1000 ms by default.
   /// \sa GetAutoRunDelay(), SetAutoRun(), SetAutoRunMode()
   void SetAutoRunDelay(unsigned int delayInMs);
