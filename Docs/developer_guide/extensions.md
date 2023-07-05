@@ -82,7 +82,7 @@ Run `CMake (cmake-gui)` from the Windows Start menu.
 - Select generator (just accept the default if you only have one compiler toolset installed)
 - Choose to create build directory if asked
 - The configuration is expected to display an error message due to `Slicer_DIR` variable not specified yet.
-- Specify `Slicer_DIR` by replacing `Slicer_DIR-NOTFOUND` by the Slicer inner-build folder (for example `c:/D/S4D/Slicer-build`).
+- Specify `Slicer_DIR` by replacing `Slicer_DIR-NOTFOUND` by the Slicer inner-build folder (for example `c:/D/SD/Slicer-build`).
 - Click `Configure`. No errors should be displayed.
 - Click `Generate` button.
 - Click `Open project` button to open `MyExtension.sln` in Visual Studio.
@@ -132,7 +132,7 @@ Replace `Release` with the build mode of your extension build (`Debug`, `Release
 
 ##### To debug a test
 
-- Launch Visual Studio from the Command Line Prompt: `C:\D\S4D\Slicer-build\Slicer.exe --VisualStudio --launcher-no-splash --launcher-additional-settings C:\path\to\MyExtension-debug\AdditionalLauncherSettings.ini C:\path\to\MyExtension-debug\MyExtension.sln`
+- Launch Visual Studio from the Command Line Prompt: `C:\D\SD\Slicer-build\Slicer.exe --VisualStudio --launcher-no-splash --launcher-additional-settings C:\path\to\MyExtension-debug\AdditionalLauncherSettings.ini C:\path\to\MyExtension-debug\MyExtension.sln`
 - Find the project of the test you want to debug (e.g., `qSlicerMODULE_NAMEModuleGenericCxxTests`).
 - Go to the project debugging properties (right-click -> Properties, then Configuration Properties / Debugging).
 - In `Command Arguments`, type the name of the test you want to run (e.g., `qSlicerMODULE_NAMEModuleGenericTest`).
@@ -362,8 +362,8 @@ The following folders will be used in the examples below:
 
 | Folder                                                                               | Linux/macOS                                      | Windows  |
 |--------------------------------------------------------------------------------------|--------------------------------------------------|----------|
-| Slicer source code tree (checked out from https://github.com/Slicer/Slicer.git)      | `~/Slicer`                                       | `C:\D\S4`               |
-| Slicer build tree (built by following Slicer build instructions)                     |  `~/Slicer-SuperBuild-Release`                   | `C:\D\S4R`              |
+| Slicer source code tree (checked out from https://github.com/Slicer/Slicer.git)      | `~/Slicer`                                       | `C:\D\S`               |
+| Slicer build tree (built by following Slicer build instructions)                     |  `~/Slicer-SuperBuild-Release`                   | `C:\D\SR`              |
 | List of extension description files (for example checked out from https://github.com/Slicer/ExtensionsIndex.git) |  `~/ExtensionsIndex` | `C:\D\ExtensionsIndex`  |
 | Folder to store built extensions (new empty folder)                                  |  `~/ExtensionsIndex-Release`                     | `C:\D\ExtensionsIndexR` |
 
@@ -387,10 +387,10 @@ Windows:
 ```
 cd /d C:\D\ExtensionsIndexR
 
-"c:\Program Files\CMake\bin\cmake.exe" -DSlicer_DIR:PATH=C:/D/S4R/Slicer-build ^
+"c:\Program Files\CMake\bin\cmake.exe" -DSlicer_DIR:PATH=C:/D/SR/Slicer-build ^
  -DSlicer_EXTENSION_DESCRIPTION_DIR:PATH=C:/D/ExtensionsIndex ^
  -DCMAKE_BUILD_TYPE:STRING=Release ^
- C:/D/S4/Extensions/CMake
+ C:/D/S/Extensions/CMake
 
 "c:\Program Files\CMake\bin\cmake.exe" --build . --config Release
 ```
@@ -432,7 +432,7 @@ cd /d C:\D\ExtensionsIndexR
  -DCMAKE_BUILD_TYPE:STRING=Release ^
  -DCTEST_MODEL:STRING=Experimental ^
  -DSlicer_UPLOAD_EXTENSIONS:BOOL=ON ^
- C:/D/S4/Extensions/CMake
+ C:/D/S/Extensions/CMake
 
 make
 ```
