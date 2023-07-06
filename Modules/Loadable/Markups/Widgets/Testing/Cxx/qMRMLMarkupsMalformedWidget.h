@@ -53,4 +53,4 @@ public:
   { return new qMRMLMarkupsMalformedWidget(); }
 };
 
-#endif // __qMRMLMalformedWidget_h_
+#endif

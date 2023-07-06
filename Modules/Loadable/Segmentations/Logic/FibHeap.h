@@ -259,6 +259,6 @@ private:
 
 };
 
-#endif /* FIBHEAP_H */
+#endif
 
 #endif //__VTK_WRAP__

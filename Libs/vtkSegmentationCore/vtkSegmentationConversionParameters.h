@@ -105,4 +105,4 @@ private:
   void operator=(const vtkSegmentationConversionParameters&) = delete;
 };
 
-#endif // __vtkSegment_h
+#endif

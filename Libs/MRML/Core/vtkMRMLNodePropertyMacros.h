@@ -592,4 +592,4 @@
 
 /// @}
 
-#endif // __vtkMRMLNodePropertyMacros_h
+#endif

@@ -320,4 +320,4 @@ typedef itk::InverseDisplacementFieldTransform< double, 3 > InverseDisplacementF
 typedef itk::InverseThinPlateSplineKernelTransform< float, 3 > InverseThinPlateSplineTransformFloatType;
 typedef itk::InverseThinPlateSplineKernelTransform< double, 3 > InverseThinPlateSplineTransformDoubleType;
 
-#endif // __vtkITKTransformInverse_h
+#endif

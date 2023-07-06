@@ -48,4 +48,4 @@ private:
   void operator=(const vtkSlicerTestLineWidget) = delete;
 };
 
-#endif // __vtkslicerslicingcontourwidget_h_
+#endif

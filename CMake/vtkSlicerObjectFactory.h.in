@@ -39,4 +39,4 @@ private:
   void operator=(const @vtk-module@ObjectFactory&) = delete;
 };
 
-#endif // __@vtk-module@ObjectFactory_h
+#endif

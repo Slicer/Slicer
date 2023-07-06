@@ -158,4 +158,4 @@ private:
   void operator=(const vtkSegment&) = delete;
 };
 
-#endif // __vtkSegment_h
+#endif

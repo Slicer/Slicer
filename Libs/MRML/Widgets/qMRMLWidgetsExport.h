@@ -12,4 +12,4 @@
  #define QMRML_WIDGETS_EXPORT
 #endif
 
-#endif //__qMRMLWidgetsExport_h
+#endif

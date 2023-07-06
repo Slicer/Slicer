@@ -129,4 +129,4 @@ private:
   void operator=(const vtkSegmentationHistory&) = delete;
 };
 
-#endif // __vtkSegmentation_h
+#endif
