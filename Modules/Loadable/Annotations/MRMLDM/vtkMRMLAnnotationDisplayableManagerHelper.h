@@ -158,4 +158,4 @@ private:
   typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleWidgetListIt;
 };
 
-#endif /* VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_ */
+#endif

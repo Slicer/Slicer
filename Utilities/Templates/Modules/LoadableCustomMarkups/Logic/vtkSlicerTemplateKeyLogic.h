@@ -44,4 +44,4 @@ private:
   void operator=(const vtkSlicerTemplateKeyLogic&) = delete;
 };
 
-#endif // __vtkSlicerTemplateKeyMarkupslogic_h_
+#endif

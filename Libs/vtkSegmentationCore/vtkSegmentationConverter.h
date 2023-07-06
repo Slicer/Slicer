@@ -191,4 +191,4 @@ private:
   void operator=(const vtkSegmentationConverter&) = delete;
 };
 
-#endif // __vtkSegmentationConverter_h
+#endif

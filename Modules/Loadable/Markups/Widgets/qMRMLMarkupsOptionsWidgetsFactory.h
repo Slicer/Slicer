@@ -96,4 +96,4 @@ private:
   static qMRMLMarkupsOptionsWidgetsFactory* Instance;
 };
 
-#endif // __qslicermarkupsfactory_h_
+#endif

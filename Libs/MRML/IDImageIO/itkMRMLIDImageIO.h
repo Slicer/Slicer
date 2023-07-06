@@ -140,4 +140,4 @@ private:
 
 
 } /// end namespace itk
-#endif /// itkMRMLIDImageIO_h
+#endif

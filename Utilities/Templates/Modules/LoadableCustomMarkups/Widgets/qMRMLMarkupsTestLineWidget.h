@@ -69,4 +69,4 @@ private:
   Q_DISABLE_COPY(qMRMLMarkupsTestLineWidget);
 };
 
-#endif // __qSlicerTestLineWidget_h_
+#endif

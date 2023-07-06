@@ -91,4 +91,4 @@ private:
   Q_DISABLE_COPY(qMRMLMarkupsAbstractOptionsWidget);
 };
 
-#endif // __qMRMLMarkupsAbstractOptionsWidget_h_
+#endif

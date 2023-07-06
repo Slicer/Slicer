@@ -106,4 +106,4 @@ private:
   void operator=(const vtkBinaryLabelmapToClosedSurfaceConversionRule&) = delete;
 };
 
-#endif // __vtkBinaryLabelmapToClosedSurfaceConversionRule_h
+#endif

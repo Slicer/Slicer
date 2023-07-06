@@ -78,4 +78,4 @@ private:
   Q_DISABLE_COPY(qMRMLMarkupsAngleMeasurementsWidget);
 };
 
-#endif // __qMRMLMarkupsAngleMeasurementsWidget_h_
+#endif

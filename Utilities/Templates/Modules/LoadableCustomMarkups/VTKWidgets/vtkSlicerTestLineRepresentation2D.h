@@ -94,4 +94,4 @@ private:
   void operator=(const vtkSlicerTestLineRepresentation2D&) = delete;
 };
 
-#endif // __vtkslicertestlinerepresentation3d_h_
+#endif

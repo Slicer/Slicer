@@ -63,4 +63,4 @@ private:
   Q_DISABLE_COPY(qMRMLNodeComboBoxMenuDelegate);
 };
 
-#endif // __qMRMLNodeComboBoxMenuDelegate_h
+#endif

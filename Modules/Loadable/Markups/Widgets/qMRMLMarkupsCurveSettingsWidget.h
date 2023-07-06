@@ -76,4 +76,4 @@ private:
   Q_DISABLE_COPY(qMRMLMarkupsCurveSettingsWidget);
 };
 
-#endif // __qSlicerCurveSettingsWidget_h_
+#endif

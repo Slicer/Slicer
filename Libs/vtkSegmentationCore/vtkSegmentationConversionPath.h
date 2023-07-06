@@ -147,4 +147,4 @@ inline vtkSegmentationConversionPath* vtkSegmentationConversionPaths::GetNextPat
   return static_cast<vtkSegmentationConversionPath*>(this->GetNextItemAsObject());
 }
 
-#endif // __vtkSegment_h
+#endif

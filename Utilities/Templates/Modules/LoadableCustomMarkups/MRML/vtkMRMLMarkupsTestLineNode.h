@@ -71,4 +71,4 @@ private:
   vtkPolyData *TargetOrgan = nullptr;
 };
 
-#endif //vtkmrmlmarkupstestlinenode_h_
+#endif

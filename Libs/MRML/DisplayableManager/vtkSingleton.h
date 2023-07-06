@@ -142,4 +142,4 @@ VTK_SINGLETON_INITIALIZER_CXX(NAME)
 
 /// @}
 
-#endif //__vtkSingleton_h
+#endif

@@ -375,4 +375,4 @@ protected:
   std::string SegmentListFilterOptions;
 };
 
-#endif // __vtkMRMLSegmentationNode_h
+#endif

@@ -90,4 +90,4 @@
 /// \brief Type of Slicer release: `Experimental`, `Nightly` or `Stable`.
 #define Slicer_RELEASE_TYPE "@Slicer_RELEASE_TYPE@"
 
-#endif // __vtkSlicerVersionConfigureMinimal_h
+#endif

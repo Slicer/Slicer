@@ -111,4 +111,4 @@ private:
   vtkMRMLMarkupsDisplayableManager* DisplayableManager;
 };
 
-#endif /* VTKMRMLMARKUPSDISPLAYABLEMANAGERHELPER_H_ */
+#endif

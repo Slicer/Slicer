@@ -105,4 +105,4 @@
 /// \sa Slicer_MAIN_PROJECT_REVISION
 #define Slicer_MAIN_PROJECT_COMMIT_COUNT "@Slicer_MAIN_PROJECT_COMMIT_COUNT@"
 
-#endif // __vtkSlicerVersionConfigure_h
+#endif

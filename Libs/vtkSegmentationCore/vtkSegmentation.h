@@ -604,4 +604,4 @@ private:
   void operator=(const vtkSegmentation&) = delete;
 };
 
-#endif // __vtkSegmentation_h
+#endif
