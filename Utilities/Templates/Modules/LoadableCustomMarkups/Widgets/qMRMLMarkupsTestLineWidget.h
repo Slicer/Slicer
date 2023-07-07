@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerTestLineWidget_h_
-#define __qSlicerTestLineWidget_h_
+#ifndef __qMRMLMarkupsTestLineWidget_h
+#define __qMRMLMarkupsTestLineWidget_h
 
 // Markups widgets includes
 #include "qMRMLMarkupsAbstractOptionsWidget.h"

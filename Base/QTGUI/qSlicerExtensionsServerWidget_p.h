@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerExtensionsServerWidgetPrivate_p_h
-#define __qSlicerExtensionsServerWidgetPrivate_p_h
+#ifndef qSlicerExtensionsServerWidget_p_h
+#define qSlicerExtensionsServerWidget_p_h
 
 // Qt includes
 #include <QObject>

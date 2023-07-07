@@ -19,8 +19,8 @@
 
   ==============================================================================*/
 
-#ifndef __qslicermarkupsfactory_h_
-#define __qslicermarkupsfactory_h_
+#ifndef qMRMLMarkupsOptionsWidgetsFactory_h
+#define qMRMLMarkupsOptionsWidgetsFactory_h
 
 // Markups widgets includes
 #include "qMRMLMarkupsAbstractOptionsWidget.h"

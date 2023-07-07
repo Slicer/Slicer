@@ -38,8 +38,8 @@
  * vtkSlicerMarkupsWidgetRepresentation vtkMRMLAbstractWidget vtkPointPlacer
 */
 
-#ifndef vtkSlicerMarkupsRepresentation_h
-#define vtkSlicerMarkupsRepresentation_h
+#ifndef vtkSlicerMarkupsWidgetRepresentation_h
+#define vtkSlicerMarkupsWidgetRepresentation_h
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 

@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerUnitModuleWidgetsAbstractPlugin_h
-#define __qSlicerUnitModuleWidgetsAbstractPlugin_h
+#ifndef qSlicerUnitsModuleWidgetsAbstractPlugin_h
+#define qSlicerUnitsModuleWidgetsAbstractPlugin_h
 
 #include <QtGlobal>
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>

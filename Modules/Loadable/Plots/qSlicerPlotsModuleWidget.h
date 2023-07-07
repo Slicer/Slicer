@@ -20,8 +20,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerTransformsModuleWidget_h
-#define __qSlicerTransformsModuleWidget_h
+#ifndef qSlicerPlotsModuleWidget_h
+#define qSlicerPlotsModuleWidget_h
 
 // Slicer includes
 #include "qSlicerAbstractModuleWidget.h"

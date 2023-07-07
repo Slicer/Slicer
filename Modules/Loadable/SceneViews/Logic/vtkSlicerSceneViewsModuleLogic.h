@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLSceneViewsModuleLogic_h
-#define __vtkMRMLSceneViewsModuleLogic_h
+#ifndef vtkSlicerSceneViewsModuleLogic_h
+#define vtkSlicerSceneViewsModuleLogic_h
 
 // SlicerLogic includes
 #include "vtkSlicerBaseLogic.h"

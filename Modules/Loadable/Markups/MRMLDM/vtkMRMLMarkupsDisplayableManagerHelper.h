@@ -24,8 +24,8 @@
 ///
 
 
-#ifndef VTKMRMLMARKUPSDISPLAYABLEMANAGERHELPER_H_
-#define VTKMRMLMARKUPSDISPLAYABLEMANAGERHELPER_H_
+#ifndef vtkMRMLMarkupsDisplayableManagerHelper_h
+#define vtkMRMLMarkupsDisplayableManagerHelper_h
 
 // MarkupsModule includes
 #include "vtkSlicerMarkupsModuleMRMLDisplayableManagerExport.h"

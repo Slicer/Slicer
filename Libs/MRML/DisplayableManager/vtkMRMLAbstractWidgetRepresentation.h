@@ -38,8 +38,8 @@
  * vtkMRMLAbstractWidgetRepresentation vtkMRMLAbstractWidget
 */
 
-#ifndef vtkMRMLAbstractRepresentation_h
-#define vtkMRMLAbstractRepresentation_h
+#ifndef vtkMRMLAbstractWidgetRepresentation_h
+#define vtkMRMLAbstractWidgetRepresentation_h
 
 #include "vtkMRMLDisplayableManagerExport.h"
 #include "vtkWidgetRepresentation.h"

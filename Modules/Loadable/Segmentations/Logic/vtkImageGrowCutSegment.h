@@ -1,5 +1,5 @@
-#ifndef FASTGROWCUT_H
-#define FASTGROWCUT_H
+#ifndef vtkImageGrowCutSegment_h
+#define vtkImageGrowCutSegment_h
 
 #include "vtkSlicerSegmentationsModuleLogicExport.h"
 

@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkslicerslicingcontourwidget_h_
-#define __vtkslicerslicingcontourwidget_h_
+#ifndef __vtkSlicerTestLineWidget_h
+#define __vtkSlicerTestLineWidget_h
 
 #include "vtkSlicerTemplateKeyModuleVTKWidgetsExport.h"
 

@@ -20,8 +20,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLTableSQLightStorageNode_h
-#define __vtkMRMLTableSQLightStorageNode_h
+#ifndef vtkMRMLTableSQLiteStorageNode_h
+#define vtkMRMLTableSQLiteStorageNode_h
 
 #include "vtkMRMLStorageNode.h"
 
