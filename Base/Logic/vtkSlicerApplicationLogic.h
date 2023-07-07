@@ -81,7 +81,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
       RequestWriteDataEvent,
       /// Event fired when a readData, writeData or readScene request
       /// has been processed.
-      /// The uid of the request is passed as callData.
+      /// The UID of the request is passed as callData.
       /// \todo Add support for "modified" request.
       RequestProcessedEvent
     };

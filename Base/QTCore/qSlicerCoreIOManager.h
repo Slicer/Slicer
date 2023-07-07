@@ -123,7 +123,7 @@ public:
 
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.
-  /// A map of qvariant allows to specify which \a parameters should be passed to the reader.
+  /// A map of QVariant allows to specify which \a parameters should be passed to the reader.
   /// The function return 0 if it fails.
   /// The map associated with most of the \a fileType should contains either
   /// fileName (QString or QStringList) or fileNames (QStringList).

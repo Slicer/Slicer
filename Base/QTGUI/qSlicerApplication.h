@@ -240,7 +240,7 @@ signals:
   /// Startup is complete when all the modules have been
   /// initialized and the main window is shown to the user.
   ///
-  /// \note If the application is started without the mainwindow,
+  /// \note If the application is started without the mainWindow,
   /// the signal is emitted after the modules are initialized.
   ///
   /// \sa qSlicerAppMainWindow::initialWindowShown()

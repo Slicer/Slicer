@@ -205,7 +205,7 @@ protected:
   void CalculateAutoLevels();
 
   /// Return the image data with scalar type, it can be in the middle of the
-  /// pipeline, it's typically the input of the threshold/windowlevel filters
+  /// pipeline, it's typically the input of the Threshold/WindowLevel filters
   vtkImageData* GetScalarImageData();
   virtual vtkAlgorithmOutput* GetScalarImageDataConnection();
 

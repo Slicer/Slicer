@@ -77,7 +77,7 @@ public slots:
   void setColumnNameVisible(bool);
 
   /// If enabled then column type change is not performed immediately but user
-  /// must to confirmit  by pressing "Convert" button.
+  /// must to confirm it by pressing "Convert" button.
   void setConfirmTypeChange(bool);
 
 protected slots:

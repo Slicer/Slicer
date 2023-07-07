@@ -149,7 +149,7 @@ public:
   vtkGetMacro (EventNestingLevel, int);
 
   ///
-  /// File to write event logs to when EventLoging is turned on
+  /// File to write event logs to when EventLogging is turned on
   vtkSetStringMacro (LogFileName);
   vtkGetStringMacro (LogFileName);
 

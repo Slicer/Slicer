@@ -79,7 +79,7 @@ public:
   bool write(const qSlicerIO::IOProperties& properties) override;
 
   /// Added so node writers can report back written nodes
-  /// \sa qSlicerFileWriter::writtenNodex()
+  /// \sa qSlicerFileWriter::writtenNodes()
   void addWrittenNode(const QString& writtenNode);
 
   /// Reimplemented to support python methods and q_property

@@ -34,7 +34,7 @@ class qMRMLPlotWidgetPrivate;
 class vtkMRMLPlotViewNode;
 class vtkMRMLScene;
 
-/// \brief qMRMLPlotWidget is the toplevel Plotting widget that can be
+/// \brief qMRMLPlotWidget is the top-level Plotting widget that can be
 /// packed in a layout.
 ///
 /// qMRMLPlotWidget provides plotting capabilities with a display

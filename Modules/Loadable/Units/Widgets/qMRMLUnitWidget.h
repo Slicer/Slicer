@@ -140,7 +140,7 @@ public:
   /// \sa editableProperties
   UnitProperties editableProperties() const;
 
-  /// Set the units logic scene for the preset comboxes
+  /// Set the units logic scene for the preset comboboxes
   void setMRMLScene(vtkMRMLScene* unitsLogicScene) override;
 
   Q_INVOKABLE vtkMRMLNode* currentNode() const;

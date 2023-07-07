@@ -34,7 +34,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerPresetComboBox
   : public qMRMLNodeComboBox
 {
   Q_OBJECT
-  /// Show icons in the comobox and popup window.
+  /// Show icons in the combobox and popup window.
   Q_PROPERTY(bool showIcons READ showIcons WRITE setShowIcons)
   /// Show label in the popup window.
   Q_PROPERTY(bool showLabelsInPopup READ showLabelsInPopup WRITE setShowLabelsInPopup)

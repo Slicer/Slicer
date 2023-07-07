@@ -24,7 +24,7 @@
 
 /// \brief Add, subtract, multiply, divide, invert, sin, cos, exp, log.
 ///
-/// vtkImageLabelCombine implements basic mathematic operations SetOperation is
+/// vtkImageLabelCombine implements basic mathematical operations. SetOperation is
 /// used to select the filters behavior.  The filter can take two or one
 /// input.
 class VTK_Teem_EXPORT vtkImageLabelCombine : public vtkThreadedImageAlgorithm

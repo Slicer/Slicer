@@ -22,12 +22,12 @@ int Env_Code_3_img(int loc[3], unsigned char *img, int dim[3]);
 
 int Tilg_Test_3(int c, int d, int type);
 
-/* Calculation of Tilg-criterion, c is the Neighor-code of */
+/* Calculation of Tilg-criterion, c is the Neighbor-code of */
 /* 3x3x3-Region, including the center                      */
 // returns 0 if cannot be 'tilged'
 // if type == 1 -> sheet preserving tilg
 // if type == 0 -> full tilg
-// d = for parrel tilg -> 0,1,2,3,4,5   N,S,E,W,T,D
+// d = for parallel tilg -> 0,1,2,3,4,5   N,S,E,W,T,D
 
 void tilg_iso_3D(int dx, int dy, int dz, unsigned char *data, unsigned char *res, int type);
 

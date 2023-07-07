@@ -318,7 +318,7 @@ protected:
   /// nodeFlags
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
 
-  /// Update the items associated with the node and uid.
+  /// Update the items associated with the node and UID.
   void updateNodeItems(vtkMRMLNode* node, const QString& uid);
 
   static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,

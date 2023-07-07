@@ -42,7 +42,7 @@ class qSlicerAbstractModuleWidget;
 class vtkMRMLAbstractViewNode;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
-///    In Widgets, not Plugins because the paths and libs need to be exported to extensions
+///    In Widgets, not Plugins because the paths and library paths need to be exported to extensions
 /// \brief Abstract plugin for handling Subject Hierarchy items
 ///
 /// This class provides an interface and some default implementations for the common operations on

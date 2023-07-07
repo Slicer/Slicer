@@ -162,7 +162,7 @@ public:
 
   ///
   /// Get the file's absolute path from the file name and the mrml scene root
-  /// dir. GetFullnameFromFileName calls GetFullNameFromNthFileName with -1.
+  /// dir. GetFullNameFromFileName calls GetFullNameFromNthFileName with -1.
   std::string GetFullNameFromFileName();
   std::string GetFullNameFromNthFileName(int n);
 
@@ -233,7 +233,7 @@ public:
   void ResetURIList();
 
   ///
-  /// Return how many uri names this storage node holds in it's list
+  /// Return how many URI names this storage node holds in it's list
   int GetNumberOfURIs()
   {
     return (int)this->URIList.size();
@@ -260,7 +260,7 @@ public:
   /// Set the nth file in FileNameList, checks that it is already defined
   void ResetNthFileName(int n, const char *fileName);
   ///
-  /// Set the nth uri in URIList, checks that it is already defined
+  /// Set the nth URI in URIList, checks that it is already defined
   void ResetNthURI(int n, const char *uri);
 
   ///

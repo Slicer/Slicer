@@ -51,7 +51,7 @@ class qMRMLCoordinatesWidgetPrivate;
 /// it listens to the changes made upon the selection node to extract the
 /// unit properties related to its quantity and update accordingly.
 //
-/// To allow even more customisation, one can set which properties of the
+/// To allow even more customization, one can set which properties of the
 /// widget are updated by units and which aren't.
 ///
 /// \sa qMRMLSliderWidget, qMRMLSpinBox

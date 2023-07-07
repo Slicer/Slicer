@@ -108,17 +108,17 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// If empty, display in all views
   /// \sa ThreeDViewIDs, GetNthThreeDViewID(), AddThreeDViewID()
   inline std::vector< std::string > GetThreeDViewIDs()const;
-  /// True if the view node id is present in the ThreeDViewid list
+  /// True if the view node id is present in the ThreeDViewID list
   /// false if not found
   /// \sa ThreeDViewIDs, IsDisplayableInView(), AddThreeDViewID()
   bool IsThreeDViewIDPresent(const char* ThreeDViewID)const;
-  /// Returns true if the ThreeDViewID is present in the ThreeDViewId list
-  /// or there is no ThreeDViewId in the list (meaning all the views display the
+  /// Returns true if the ThreeDViewID is present in the ThreeDViewID list
+  /// or there is no ThreeDViewID in the list (meaning all the views display the
   /// node)
   /// \sa ThreeDViewIDs, IsThreeDViewIDPresent(), AddThreeDViewID()
   bool IsDisplayableInThreeDView(const char* viewNodeID)const;
 
-  /// The ImpplicitePlane widget mode
+  /// The ImplicitPlane widget mode
   /// this lock the normal of the plane to the camera's one
   vtkGetMacro(WidgetNormalLockedToCamera, int);
   vtkSetMacro(WidgetNormalLockedToCamera, int);
@@ -440,7 +440,7 @@ public:
   /// axes of the provided reference coordinate system
   /// so that no oblique resampling
   /// occurs when rendering (helps to see original acquisition data
-  /// and for obluique volumes with few slices).
+  /// and for oblique volumes with few slices).
   /// If sliceNormalAxisIndex is >=0 then slice plane normal will
   /// be aligned with that axis.
   void RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNormalAxisIndex=-1);

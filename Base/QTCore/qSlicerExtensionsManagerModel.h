@@ -569,7 +569,7 @@ private:
 
 Q_DECLARE_METATYPE(qSlicerExtensionsManagerModel::ServerAPI);
 
-// Metatype already declared in qSlicerIO.h
+// MetaType already declared in qSlicerIO.h
 //Q_DECLARE_METATYPE(qSlicerExtensionsManagerModel::ExtensionMetadataType)
 
 #endif

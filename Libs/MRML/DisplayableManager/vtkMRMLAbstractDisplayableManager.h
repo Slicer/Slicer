@@ -207,7 +207,7 @@ protected:
   /// Remove MRML observers
   virtual void RemoveMRMLObservers();
 
-  /// Specify if UodateFromMRML() should be called
+  /// Specify if UpdateFromMRML() should be called
   /// \sa UpdateFromMRML()
   void SetUpdateFromMRMLRequested(bool requested);
 

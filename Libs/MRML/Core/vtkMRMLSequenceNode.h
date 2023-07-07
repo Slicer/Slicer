@@ -152,7 +152,7 @@ public:
   /// requests a more specific storage node class.
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
-  /// Returns the most specific storage node possible (such as stvtkMRMLVolumeSequenceStorageNode
+  /// Returns the most specific storage node possible (such as vtkMRMLVolumeSequenceStorageNode
   /// if sequence contains volumes with the same type and geometry, or vtkMRMLLinearTransformSequenceStorageNode
   /// if sequence contains a list of linear transforms) and generic vtkMRMLSequenceStorageNode otherwise.
   std::string GetDefaultStorageNodeClassName(const char* filename = nullptr) override;

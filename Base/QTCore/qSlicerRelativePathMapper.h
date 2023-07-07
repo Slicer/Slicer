@@ -35,7 +35,7 @@ class qSlicerRelativePathMapperPrivate;
 ///   qSlicerRelativePathMapper* makeRelative =
 ///     new qSlicerRelativePathMapper("directory", SIGNAL("directoryChanged(QString)"), directorySelector);
 ///   makeRelative->setPath("some/folder");
-///   // -> directorySelector->directory() == "applicationhome/some/folder"
+///   // -> directorySelector->directory() == "applicationHome/some/folder"
 ///   makeRelative->setPath("/some/absolute/folder");
 ///   // -> directorySelector->directory() == "/some/absolute/folder"
 ///

@@ -95,7 +95,7 @@ public:
   vtkLookupTable * GetLookupTable() override;
 
   /// Reimplemented vtkMRMLColorNode::GetScalarsToColors() to return the
-  /// transfer function instead of the empty lookuptable
+  /// transfer function instead of the empty lookup table
   /// \sa ColorTransferFunction, GetColorTransferFunction()
   vtkScalarsToColors* GetScalarsToColors() override;
 

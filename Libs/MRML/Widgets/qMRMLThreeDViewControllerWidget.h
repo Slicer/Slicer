@@ -75,7 +75,7 @@ public slots:
 
   void setThreeDView(qMRMLThreeDView* threeDView);
 
-  /// Link/Unlink the view controls and the cameras across all viewes
+  /// Link/Unlink the view controls and the cameras across all views
   void setViewLink(bool linked);
 
   void setOrthographicModeEnabled(bool enabled);

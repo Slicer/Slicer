@@ -68,7 +68,7 @@ public:
                                   unsigned long /*event*/,
                                   void * /*callData*/ ) override;
 
-  /// TransformModifiedEvent is send when the parent transform is modidied
+  /// TransformModifiedEvent is send when the parent transform is modified
   enum
     {
       TransformModifiedEvent = 15000
