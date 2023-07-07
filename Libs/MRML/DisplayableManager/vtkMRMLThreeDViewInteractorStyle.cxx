@@ -98,6 +98,19 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
     {
     // set "inaccurate" world position
     ed->SetWorldPosition(worldPosition, false);
+
+    // update the cursor position on mouse move
+    if (this->GetCameraNode() != nullptr
+      && this->GetCameraNode()->GetScene() != nullptr
+      && inputEventData->GetType() == vtkCommand::MouseMoveEvent)
+      {
+      vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
+      vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
+      if (crosshairNode)
+        {
+        crosshairNode->SetCursorPositionRAS(worldPosition);
+        }
+      }
     }
   ed->SetMouseMovedSinceButtonDown(this->MouseMovedSinceButtonDown);
   ed->SetAccuratePicker(this->AccuratePicker);
