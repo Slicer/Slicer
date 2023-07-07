@@ -310,7 +310,7 @@ public:
   /// is visible or not in 2D viewers on slices on which it is normally
   /// not visible.
   /// Off by default
-  /// \sa SliceIntersectionVisibilty, SliceProjectionColor
+  /// \sa SliceIntersectionVisibility, SliceProjectionColor
   vtkSetMacro(SliceProjection, bool);
   vtkGetMacro(SliceProjection, bool);
   vtkBooleanMacro(SliceProjection, bool);

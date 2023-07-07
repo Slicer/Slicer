@@ -60,7 +60,7 @@ public:
   /// If empty, return true.
   Q_INVOKABLE bool noneChecked()const;
 
-  /// Return the checkstate of the node.
+  /// Return the CheckState of the node.
   /// If \a node is invalid (null or not in the scene),
   /// Qt::Unchecked is returned.
   Q_INVOKABLE Qt::CheckState checkState(vtkMRMLNode* node)const;

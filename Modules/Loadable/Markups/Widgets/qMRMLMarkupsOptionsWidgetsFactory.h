@@ -49,16 +49,16 @@ public:
   Q_INVOKABLE static qMRMLMarkupsOptionsWidgetsFactory* instance();
 
 public:
-  /// Registers an additional options widget.
+  /// Register an additional options widget.
   /// This factory object takes ownership of the widget (even if it fails to register it
   /// due to for example a widget already existing for that markup type), therefore the
   /// caller must NOT delete the widget.
   Q_INVOKABLE bool registerOptionsWidget(qMRMLMarkupsAbstractOptionsWidget* widget);
 
-  /// Unregisters an additional options widget.
+  /// Unregister an additional options widget.
   Q_INVOKABLE bool unregisterOptionsWidget(const QString& className);
 
-  /// Unregisters an additional options widget.
+  /// Unregister an additional options widget.
   Q_INVOKABLE bool unregisterOptionsWidget(qMRMLMarkupsAbstractOptionsWidget* widget);
 
   /// Unregister all widgets

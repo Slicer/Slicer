@@ -48,7 +48,7 @@ struct BlendPipeline;
 ///
 /// This class manages the logic associated with display of slice windows
 /// (but not the GUI).  Features of the class include:
-///  -- a back-to-front list of MrmlVolumes to be displayed
+///  -- a back-to-front list of MRML volumes to be displayed
 ///  -- a compositing mode for each volume layer (opacity, outline, glyph, checkerboard, etc)
 ///  -- each layer is required to provide an RGBA image in the space defined by the vtkMRMLSliceNode
 ///
@@ -178,12 +178,12 @@ public:
   /// Internally used by UpdatePipeline
   void UpdateImageData();
 
-  /// Reimplemented to avoir calling ProcessMRMLSceneEvents when we are added the
+  /// Reimplemented to avoid calling ProcessMRMLSceneEvents when we are adding the
   /// MRMLModelNode into the scene
   virtual bool EnterMRMLCallback()const;
 
   ///
-  /// Manage and synchronise the SliceNode
+  /// Manage and synchronize the SliceNode
   void UpdateSliceNode();
 
   ///
@@ -191,7 +191,7 @@ public:
   void UpdateSliceNodeFromLayout();
 
   ///
-  /// Manage and synchronise the SliceCompositeNode
+  /// Manage and synchronize the SliceCompositeNode
   void UpdateSliceCompositeNode();
 
   ///
@@ -372,7 +372,7 @@ public:
   /// \sa SLICE_MODEL_NODE_NAME_SUFFIX
   static bool IsSliceModelNode(vtkMRMLNode *mrmlNode);
   /// Return true if the display node is a volume slice node display node
-  /// by checking the attribute SliceLogic.IsSliceModelDiplayNode
+  /// by checking the attribute SliceLogic.IsSliceModelDisplayNode
   /// Returns false if the attribute is not present, true if the attribute
   /// is present and not equal to zero
   static bool IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayNode);

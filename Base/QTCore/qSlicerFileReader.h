@@ -63,7 +63,7 @@ public:
   /// "*.nrrd" is more specific than "*.*".
   virtual double canLoadFileConfidence(const QString& file)const;
 
-  /// Return the matching name filters -> if the fileName is "myimage.nrrd"
+  /// Return the matching name filters -> if the fileName is "my_image.nrrd"
   /// and the supported extensions are "Volumes (*.mha *.nrrd *.raw)",
   /// "Images (*.png" *.jpg")", "DICOM (*)" then it returns
   /// "Volumes (*.mha *.nrrd *.raw), DICOM (*)"

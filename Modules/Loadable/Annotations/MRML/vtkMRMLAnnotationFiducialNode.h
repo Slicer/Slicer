@@ -15,7 +15,7 @@ class vtkMRMLStorageNode;
 /// that MRML will manage/read/write. Each control point has accompanying data.
 /// Visualization parameters for these nodes are controlled by the
 /// vtkMRMLAnnotationPointDisplayNode class.
-/// \deprecated Use vtkMRMLMarkupsFiduicalNode
+/// \deprecated Use vtkMRMLMarkupsFiducialNode
 /// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialNode : public vtkMRMLAnnotationControlPointsNode
 {

@@ -65,7 +65,7 @@ public:
   /// Return the dragEnterEvent when dragEnterEvent() is being called.
   /// \sa dragEnterEvent()
   Q_INVOKABLE const QMimeData* mimeData()const;
-  /// Return the dropEvent when dropEvent() is bebing called.
+  /// Return the dropEvent when dropEvent() is being called.
   /// \sa dropEvent()
   Q_INVOKABLE QDropEvent* dropEvent()const;
 

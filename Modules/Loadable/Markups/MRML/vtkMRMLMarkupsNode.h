@@ -550,7 +550,7 @@ public:
   /// determine if it is locked. If the locked flag is set to false on the node
   /// as a whole, all control point are locked but keep this value for when the
   /// list as a whole is turned unlocked.
-  /// \sa vtMRMLMarkupsNode::SetLocked
+  /// \sa vtkMRMLMarkupsNode::SetLocked
   void SetNthControlPointLocked(int n, bool flag);
 
   /// Get the Visibility flag on the Nth control point,
@@ -602,7 +602,7 @@ public:
   /// %d will resolve to the highest not yet used list index integer.
   /// Character strings will otherwise pass through
   /// Defaults to %N-%d which will yield control point names of Name-0, Name-1, Name-2.
-  /// If format string is changed then LabelFormatModifedEvent event is invoked.
+  /// If format string is changed then LabelFormatModifiedEvent event is invoked.
   std::string GetControlPointLabelFormat();
   void SetControlPointLabelFormat(std::string format);
   ///@}
@@ -623,7 +623,7 @@ public:
   bool GetModifiedSinceRead() override;
 
   /// Reset the id of the Nth control point according to the local policy
-  /// Called after an already initialised markup has been added to the
+  /// Called after an already initialized markup has been added to the
   /// scene. Returns false if n out of bounds, true on success.
   bool ResetNthControlPointID(int n);
 

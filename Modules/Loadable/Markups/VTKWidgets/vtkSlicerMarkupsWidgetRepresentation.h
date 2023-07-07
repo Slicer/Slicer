@@ -109,7 +109,7 @@ public:
   /// Get the nth control point.
   virtual vtkMRMLMarkupsNode::ControlPoint *GetNthControlPoint(int n);
 
-  /// Set/Get the vtkMRMLMarkipsNode connected with this representation
+  /// Set/Get the vtkMRMLMarkupsNode connected with this representation
   virtual void SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode *markupsDisplayNode);
   virtual vtkMRMLMarkupsDisplayNode* GetMarkupsDisplayNode();
   virtual vtkMRMLMarkupsNode* GetMarkupsNode();

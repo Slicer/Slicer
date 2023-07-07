@@ -28,7 +28,7 @@
 /// \brief MRML node for handling Table node storage
 ///
 /// vtkMRMLTableSQLiteStorageNode allows reading/writing of table node from
-/// SQLight database.
+/// SQLite database.
 ///
 ///
 
@@ -49,11 +49,11 @@ public:
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
-  /// SQLight Database password
+  /// SQLite Database password
   vtkSetStringMacro(Password);
   vtkGetStringMacro(Password);
 
-  /// SQLight Database table name
+  /// SQLite Database table name
   vtkSetStringMacro(TableName);
   vtkGetStringMacro(TableName);
 

@@ -56,7 +56,7 @@ class vtkMRMLCropVolumeParametersNode;
 /// of the volume can be changed.
 ///
 /// Limitations:
-/// * Region of interes (ROI) node cannot be under non-linear transform
+/// * Region of interest (ROI) node cannot be under non-linear transform
 /// * Cropped output volume node cannot be under non-linear transform
 /// * If interpolation is disabled: input volume node cannot be under non-linear transform
 ///   and ROI node must be aligned with the input volume

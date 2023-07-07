@@ -96,7 +96,7 @@ public:
 
   /// Return the path without the intermediate directory or return \a path if there is no
   /// expected "IntDir".
-  /// \a subDirWithoutIntDir corresponds to N last compononent of the path excluding
+  /// \a subDirWithoutIntDir corresponds to N last component of the path excluding
   /// the "IntDir".
   ///
   /// <table border="1">

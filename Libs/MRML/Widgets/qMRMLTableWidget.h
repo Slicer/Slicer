@@ -37,7 +37,7 @@ class qMRMLTableWidgetPrivate;
 class vtkMRMLTableViewNode;
 class vtkMRMLScene;
 
-/// \brief qMRMLTableWidget is the toplevel table widget that can be
+/// \brief qMRMLTableWidget is the top-level table widget that can be
 /// packed in a layout.
 ///
 /// qMRMLTableWidget provides tabling capabilities with a display

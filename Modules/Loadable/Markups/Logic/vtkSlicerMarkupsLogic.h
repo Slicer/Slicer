@@ -238,7 +238,7 @@ public:
   /// If projectWarp option is enabled then FitSurfaceProjectWarp method is used
   /// otherwise FitSurfaceDiskWarp is used. FitSurfaceProjectWarp produces accurate results
   /// for all quasi-planar curves (while FitSurfaceDiskWarp may significantly overestimate surface area for
-  /// planar convex curves). FitSurfaceDiskWarp is kept for compatison only and may be removed in the future.
+  /// planar convex curves). FitSurfaceDiskWarp is kept for comparison only and may be removed in the future.
   /// \param curveNode points to fit the surface to
   /// \param surface if not nullptr then the generated surface is saved into that
   static double GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode, vtkPolyData* surface = nullptr, bool projectWarp = true);
@@ -279,7 +279,7 @@ public:
   void RegisterJsonStorageNodeForMarkupsType(std::string markupsType, std::string storageNodeClassName);
   vtkMRMLMarkupsJsonStorageNode* AddNewJsonStorageNodeForMarkupsType(std::string markupsType);
 
-  /// Registers a markup and its corresponding widget to be handled by the Markups module.
+  /// Register a markup and its corresponding widget to be handled by the Markups module.
   /// For a markup to be handled by this module (processed by the displayable
   /// manager, UI and subject hierarchy) it needs to be registered using this method.
   /// The method also registers the markupsNode class in the scene.
@@ -289,26 +289,26 @@ public:
                            vtkSlicerMarkupsWidget* markupsWidget,
                            bool createPushButton=true);
 
-  /// Unregisters a markup and its corresponding widget. This will trigger the
+  /// Unregister a markup and its corresponding widget. This will trigger the
   /// vtkSlicerMarkupsLogic::MarkupUnregistered event.
   /// \param markupsNode MRMLMarkups node to be unregistered.
   void UnregisterMarkupsNode(vtkMRMLMarkupsNode*  markupsNode);
 
   /// Returns true if the provided class name is a known markups class
-  /// (it has ben registered in the logic using RegisterMarkupsNode).
+  /// (it has been registered in the logic using RegisterMarkupsNode).
   bool IsMarkupsNodeRegistered(const char* nodeType) const;
 
   /// This returns an instance to a corresponding vtkSlicerMarkupsWidget associated
   /// to the indicated markups name.
   /// \param markupsType registered class to retrieve the associated widget.
-  /// \return pointer to associated vtkSLicerMarkupsWidget or nullptr if the MRML node
+  /// \return pointer to associated vtkSlicerMarkupsWidget or nullptr if the MRML node
   /// class is not registered.
   vtkSlicerMarkupsWidget* GetWidgetByMarkupsType(const char* markupsType) const;
 
   /// This returns an instance to a corresponding vtkMRMLMarkupsNode associated
   /// to the indicated markups name.
   /// \param markupsType registered class to retrieve the associated widget.
-  /// \return pointer to associated vtkSLicerMarkupsWidget or nullptr if the MRML node
+  /// \return pointer to associated vtkSlicerMarkupsWidget or nullptr if the MRML node
   /// class is not registered.
   vtkMRMLMarkupsNode* GetNodeByMarkupsType(const char* markupsType) const;
 

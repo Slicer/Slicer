@@ -194,7 +194,7 @@ public:
   /// Constructor
   /// Warning: If there is no parent given, make sure you delete the object.
   /// The modules can typically be instantiated before the application
-  /// is initialized (module manager, iomanager...). Most of the
+  /// is initialized (module manager, IO manager...). Most of the
   /// initialization must be done in qSlicerAbstractCoreModule::setup()
   qSlicerAbstractCoreModule(QObject *parent=nullptr);
   ~qSlicerAbstractCoreModule() override;

@@ -58,7 +58,7 @@ public:
 
   //@{
   /// Get/Set color legend orientation
-  /// Possible values: vtkMRMLColorLegendDisplayNode::Horizontal, vtkMRMLColorLegendDisplayNode::Vectical
+  /// Possible values: vtkMRMLColorLegendDisplayNode::Horizontal, vtkMRMLColorLegendDisplayNode::Vertical
   vtkGetMacro(Orientation, OrientationType);
   vtkSetMacro(Orientation, OrientationType);
   //@}

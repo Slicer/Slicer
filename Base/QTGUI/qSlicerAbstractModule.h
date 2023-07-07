@@ -55,7 +55,7 @@ public:
   /// as well as in the frequently used module toolbar (if any).
   virtual QIcon icon()const;
 
-  /// The logo of the module, the credits given by the grants or instution
+  /// The logo of the module, the credits given by the grants or institution
   virtual QImage logo()const;
 
   /// Returns then associated QAction of the module. It contains all the
