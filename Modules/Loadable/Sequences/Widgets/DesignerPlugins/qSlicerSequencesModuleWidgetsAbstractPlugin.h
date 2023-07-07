@@ -18,8 +18,8 @@
 
 ==============================================================================*/\
 
-#ifndef __qSlicerMarkupsModuleWidgetsAbstractPlugin_h
-#define __qSlicerMarkupsModuleWidgetsAbstractPlugin_h
+#ifndef qSlicerSequencesModuleWidgetsAbstractPlugin_h
+#define qSlicerSequencesModuleWidgetsAbstractPlugin_h
 
 #include <QtGlobal>
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))

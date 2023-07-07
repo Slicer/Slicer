@@ -20,8 +20,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerTablesReader
-#define __qSlicerTablesReader
+#ifndef qSlicerTablesReader_h
+#define qSlicerTablesReader_h
 
 // Slicer includes
 #include "qSlicerFileReader.h"

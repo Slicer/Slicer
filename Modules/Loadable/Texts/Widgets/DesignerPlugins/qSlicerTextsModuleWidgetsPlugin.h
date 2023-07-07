@@ -19,8 +19,8 @@
 ==============================================================================*/
 
 
-#ifndef __qSlicerTextModuleWidgetsPlugin_h
-#define __qSlicerTextModuleWidgetsPlugin_h
+#ifndef qSlicerTextsModuleWidgetsPlugin_h
+#define qSlicerTextsModuleWidgetsPlugin_h
 
 // Qt includes
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>

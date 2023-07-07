@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkSlicerTemplateKeyMarkupslogic_h_
-#define __vtkSlicerTemplateKeyMarkupslogic_h_
+#ifndef __vtkSlicerTemplateKeyLogic_h
+#define __vtkSlicerTemplateKeyLogic_h
 
 #include <vtkSlicerMarkupsLogic.h>
 

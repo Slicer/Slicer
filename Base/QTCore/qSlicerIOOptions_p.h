@@ -20,8 +20,8 @@
 
 #include "qSlicerIO.h"
 
-#ifndef __qSlicerIOOptionsWidget_p_h
-#define __qSlicerIOOptionsWidget_p_h
+#ifndef qSlicerIOOptions_p_h
+#define qSlicerIOOptions_p_h
 
 //
 //  W A R N I N G

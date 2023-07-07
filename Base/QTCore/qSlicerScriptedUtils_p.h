@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerScriptedUtils_h
-#define __qSlicerScriptedUtils_h
+#ifndef qSlicerScriptedUtils_p_h
+#define qSlicerScriptedUtils_p_h
 
 //
 //  W A R N I N G

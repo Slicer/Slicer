@@ -12,8 +12,8 @@
 
  =========================================================================auto=*/
 
-#ifndef VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_
-#define VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_
+#ifndef vtkMRMLAnnotationDisplayableManagerHelper_h
+#define vtkMRMLAnnotationDisplayableManagerHelper_h
 
 // Annotations includes
 #include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"

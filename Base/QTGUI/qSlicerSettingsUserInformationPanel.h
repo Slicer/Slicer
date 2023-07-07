@@ -7,8 +7,8 @@
 
 =========================================================================auto=*/
 
-#ifndef __qqSlicerSettingsUserInformationPanel_h
-#define __qqSlicerSettingsUserInformationPanel_h
+#ifndef qSlicerSettingsUserInformationPanel_h
+#define qSlicerSettingsUserInformationPanel_h
 
 // Qt includes
 #include <QWidget>

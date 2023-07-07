@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkmrmlmarkupstestlinenode_h_
-#define __vtkmrmlmarkupstestlinenode_h_
+#ifndef __vtkMRMLMarkupsTestLineNode_h
+#define __vtkMRMLMarkupsTestLineNode_h
 
 #include <vtkMRMLMarkupsLineNode.h>
 

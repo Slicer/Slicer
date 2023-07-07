@@ -7,8 +7,8 @@
 
 ==========================================================================*/
 
-#ifndef __vtkITKImageToImageFilterUSF
-#define __vtkITKImageToImageFilterUSF
+#ifndef vtkITKImageToImageFilterUSF_h
+#define vtkITKImageToImageFilterUSF_h
 
 #include "vtkITKImageToImageFilter.h"
 #include "vtkImageAlgorithm.h"

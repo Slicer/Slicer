@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerMarkupsReader
-#define __qSlicerMarkupsReader
+#ifndef qSlicerMarkupsReader_h
+#define qSlicerMarkupsReader_h
 
 // Slicer includes
 #include "qSlicerFileReader.h"

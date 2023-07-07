@@ -20,8 +20,8 @@
 // Helper objects for reading/writing markups from/to JSON file
 //
 
-#ifndef __vtkMRMLMarkupsJsonIO_h
-#define __vtkMRMLMarkupsJsonIO_h
+#ifndef vtkMRMLMarkupsJsonElement_h
+#define vtkMRMLMarkupsJsonElement_h
 
 // Markups includes
 #include "vtkSlicerMarkupsModuleMRMLExport.h"

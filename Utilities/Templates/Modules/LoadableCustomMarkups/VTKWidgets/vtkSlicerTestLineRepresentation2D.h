@@ -37,8 +37,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkslicertestlinerepresentation2d_h_
-#define __vtkslicertestlinerepresentation2d_h_
+#ifndef __vtkSlicerTestLineRepresentation2D_h
+#define __vtkSlicerTestLineRepresentation2D_h
 
 #include "vtkSlicerTemplateKeyModuleVTKWidgetsExport.h"
 
