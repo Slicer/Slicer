@@ -15,6 +15,9 @@
 
 ==============================================================================*/
 
+#ifndef vtkMRMLMarkupsJsonElement_Private_h
+#define vtkMRMLMarkupsJsonElement_Private_h
+
 // STD includes
 #include <memory>
 
@@ -91,3 +94,5 @@ public:
 protected:
   vtkMRMLMarkupsJsonWriter* External;
 };
+
+#endif
