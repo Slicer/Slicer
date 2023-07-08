@@ -461,7 +461,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     def openURL(self, URL):
         qt.QDesktopServices().openUrl(qt.QUrl(URL))
-        QDesktopServices
 
     def onShowCreatedOutputFile(self):
         if not self.createdOutputFile:

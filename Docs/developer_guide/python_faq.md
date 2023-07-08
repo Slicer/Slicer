@@ -296,6 +296,16 @@ In most places, unix-type separators can be used instead of backslash. This is c
 
 See more information in Python documentation: https://docs.python.org/3/tutorial/introduction.html?#strings
 
+## How to modify a Python scripted module
+
+If `Developer mode` is enabled in application settings then `Reload and Test` section is displayed at the top of user interface of Python scripted modules. This section contains buttons for convenient editing of the module source code (`.py` file) and user interface (`.ui` file). Clicking the `Edit` button opens the module source code in the program associated with `.py` files, as defined in operating system settings. This behavior can be overridden by specifying a text editor (such as VS Code, Sublime Text, ...) in application settings: `Editor for .py files` in `Python` section.
+
+On Windows, VS Code text editor is installed by default at:
+
+```txt
+C:/Users/YourUserName/AppData/Local/Programs/Microsoft VS Code/Code.exe
+```
+
 ## How to include Python modules in an extension
 
 Sometimes a Python scripted module grows big and it becomes inconvenient to have all the source code in a single .py file. Since all the .py files in a folder that is listed among "additional module paths" are expected to be Slicer modules, these additional files cannot be simply placed in the same folder as in the Slicer module. Instead, all additional .py files can be put in a subfolder, as a regular Python module.
