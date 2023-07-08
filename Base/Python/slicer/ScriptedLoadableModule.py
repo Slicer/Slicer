@@ -167,7 +167,8 @@ class ScriptedLoadableModuleWidget:
 
         # edit python source code
         self.editSourceButton = qt.QPushButton("Edit")
-        self.editSourceButton.toolTip = "Edit the module's source code."
+        self.editSourceButton.toolTip = ("Edit the module's source code. Shift+Click to copy the source code path to the clipboard."
+                                         " Default editor can be changed in Python section of Application Settings.")
         self.editSourceButton.connect('clicked()', self.onEditSource)
 
         self.editModuleUiButton = None
@@ -225,7 +226,26 @@ class ScriptedLoadableModuleWidget:
 
     def onEditSource(self):
         filePath = slicer.util.modulePath(self.moduleName)
-        qt.QDesktopServices.openUrl(qt.QUrl("file:///" + filePath, qt.QUrl.TolerantMode))
+
+        # On Shift+Click copy the module path instead of opening in editor
+        if slicer.app.keyboardModifiers() == qt.Qt.ShiftModifier:
+            absFilePath = os.path.abspath(filePath)
+            slicer.app.clipboard().setText(absFilePath)
+            slicer.util.delayDisplay(f"Module file path '{absFilePath}' is copied to clipboard")
+            return
+
+        editor = slicer.app.settings().value("Python/Editor")
+        if editor:
+            # User specified custom editor for .py files
+            import subprocess
+            try:
+                # Use startup environment to avoid Python environment issues with text editors implemented in Python
+                subprocess.Popen([editor, filePath], env=slicer.util.startupEnvironment())
+            except:
+                slicer.util.errorDisplay(f"Failed to open file:\n\n{filePath}\n\nusing editor: {editor}")
+        else:
+            # User default file association for opening .py file in editor
+            qt.QDesktopServices.openUrl(qt.QUrl("file:///" + filePath, qt.QUrl.TolerantMode))
 
 
 class ScriptedLoadableModuleLogic:

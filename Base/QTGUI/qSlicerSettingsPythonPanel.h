@@ -52,6 +52,7 @@ public:
 
 public slots:
   void setConsoleLogLevel(const QString& levelStr);
+  void applySettings() override;
 
 protected slots:
   void onFontChanged(const QFont& font);
