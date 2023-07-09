@@ -257,7 +257,7 @@ void qSlicerSettingsGeneralPanel::openSlicerRCFile()
   else
     {
     QProcess process;
-    // Use startup environment to avoid Python environment issues with text editors implemented in Python
+    // Use the startup environment to avoid Python environment issues with text editors implemented in Python
     process.setProcessEnvironment(qSlicerApplication::application()->startupEnvironment());
     process.setProgram(editor);
     process.setArguments(QStringList() << slicerRcFileName);
