@@ -1713,6 +1713,105 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtensionByName(const QStr
   return true;
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& extensionName, bool confirm, bool restart)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  if (this->isExtensionInstalled(extensionName))
+    {
+    return;
+    }
+
+  // Save & restore extension manager model "interactive" property when exiting
+  struct InteractivePropertyContextManager
+  {
+    InteractivePropertyContextManager(qSlicerExtensionsManagerModel* model) : Model(model)
+    {
+      this->WasInteractive = this->Model->interactive();
+    }
+    ~InteractivePropertyContextManager()
+    {
+      this->Model->setInteractive(this->WasInteractive);
+    }
+    qSlicerExtensionsManagerModel* Model{nullptr};
+    bool WasInteractive{false};
+  } interactvePropertyContextManager(this);
+
+  bool isTestingEnabled = qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
+
+  // Prevent extensions manager model from displaying popups during startup (don't ask for confirmation)
+  if (isTestingEnabled)
+    {
+    this->setInteractive(false);
+    }
+
+  // Handle installation confirmation
+  bool installationConfirmed = false;
+  if (isTestingEnabled)
+    {
+    installationConfirmed = true;
+    qDebug() << "Installing the extension(s) without asking for confirmation (testing mode is enabled)";
+    }
+  else if (!confirm)
+    {
+    installationConfirmed = true;
+    qDebug() << "Installing the extension(s) without asking for confirmation";
+    }
+  else
+    {
+    QString message = tr("Do you want to install '%1' now?").arg(extensionName);
+    QMessageBox::StandardButton answer = QMessageBox::question(nullptr, tr("Install extension ?"), message);
+    installationConfirmed = (answer == QMessageBox::StandardButton::Yes);
+    }
+  if (!installationConfirmed)
+    {
+    return;
+    }
+
+  // Ensure extension metadata is retrieved from the server or cache.
+  if (!this->updateExtensionsMetadataFromServer(/* force= */ true, /* waitForCompletion= */ true))
+    {
+    return;
+    }
+
+  if (!this->downloadAndInstallExtensionByName(extensionName, /* installDependencies= */ true, /* waitForCompletion= */ true))
+    {
+    d->critical(tr("Failed to install %1 extension").arg(extensionName));
+    return;
+    }
+
+  if (!restart)
+    {
+    return;
+    }
+
+  // Handle restart confirmation
+  bool restartConfirmed = false;
+  if (isTestingEnabled)
+    {
+    restartConfirmed = false;
+    qDebug() << "Skipping application restart (testing mode is enabled)";
+    }
+  else if (!confirm)
+    {
+    restartConfirmed = true;
+    qDebug() << "Restarting the application without asking for confirmation";
+    }
+  else
+    {
+    QString message = tr("Extension %1 has been installed from server.").arg(extensionName);
+    message + "\n\n";
+    message += tr("Slicer must be restarted. Do you want to restart now ?");
+    QMessageBox::StandardButton answer = QMessageBox::question(nullptr, tr("Restart slicer ?"), message);
+    restartConfirmed = (answer == QMessageBox::StandardButton::Yes);
+    }
+  if (restartConfirmed)
+    {
+    qSlicerCoreApplication::application()->restart();
+    }
+}
+
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModel::onInstallDownloadProgress(
   qSlicerExtensionDownloadTask* task, qint64 received, qint64 total)
