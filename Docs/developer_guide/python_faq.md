@@ -298,13 +298,15 @@ See more information in Python documentation: https://docs.python.org/3/tutorial
 
 ## How to modify a Python scripted module
 
-If `Developer mode` is enabled in application settings then `Reload and Test` section is displayed at the top of user interface of Python scripted modules. This section contains buttons for convenient editing of the module source code (`.py` file) and user interface (`.ui` file). Clicking the `Edit` button opens the module source code in the program associated with `.py` files, as defined in operating system settings. This behavior can be overridden by specifying a text editor (such as VS Code, Sublime Text, ...) in application settings: `Editor for .py files` in `Python` section.
+If `Developer mode` is enabled in the application settings then the `Reload and Test` section is displayed at the top of the user interface of Python scripted modules. This section contains buttons for convenient editing of the module source code (`.py` file) and user interface (`.ui` file). By default, clicking on the `Edit` button opens the module source code in the program associated with `.py` files, as defined in the operating system settings. This behavior can be overridden by specifying a text editor (such as VS Code, Sublime Text, ...) in the application settings: `Editor for .py files` in the `Python` section.
 
+:::{tip}
 On Windows, VS Code text editor is installed by default at:
 
 ```txt
 C:/Users/YourUserName/AppData/Local/Programs/Microsoft VS Code/Code.exe
 ```
+:::
 
 ## How to include Python modules in an extension
 
