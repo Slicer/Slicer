@@ -116,7 +116,7 @@ double qSlicerSegmentationsReader::canLoadFileConfidence(const QString& fileName
   // .vtm is 0.54; for composite file extensions (.seg.nrrd, .seg.vtm) it would be >0.58.
   // Therefore, confidence below 0.56 means that we got a generic file extension
   // that we need to inspect further.
-  if (confidence > 0 || confidence < 0.56)
+  if (confidence > 0 && confidence < 0.56)
     {
     // Not a composite file extension, inspect the content (for now, only nrrd).
     QString upperCaseFileName = fileName.toUpper();

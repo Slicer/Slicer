@@ -106,7 +106,7 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName)con
   // for composite file extensions (.mrk.json) it would be 0.59.
   // Therefore, confidence below 0.56 means that we got a generic file extension
   // that we need to inspect further.
-  if (confidence > 0 || confidence < 0.56)
+  if (confidence > 0 && confidence < 0.56)
     {
     // Not a composite file extension, inspect the content
     // Unzipping the mrb file to inspect if it looks like a sequence would be too time-consuming,
