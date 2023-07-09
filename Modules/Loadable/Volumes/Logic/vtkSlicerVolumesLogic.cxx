@@ -1602,6 +1602,7 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
     {
     vtkErrorMacro("vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error parsing the file '" << displayPresetsFilename << "'.");
     fclose(fp);
+    return;
     }
   fclose(fp);
   std::string errorPrefix = "vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error reading '" + displayPresetsFilename + "'.";
