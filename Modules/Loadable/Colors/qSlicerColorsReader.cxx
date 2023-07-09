@@ -93,7 +93,7 @@ double qSlicerColorsReader::canLoadFileConfidence(const QString& fileName)const
   // for more specific file extensions (.ctbl, .cxml) it would be 0.55.
   // Therefore, confidence below 0.55 means that we got a generic file extension
   // that we need to inspect further.
-  if (confidence > 0 || confidence < 0.55)
+  if (confidence > 0 && confidence < 0.55)
     {
     // Generic file extension, inspect the content
     QString upperCaseFileName = fileName.toUpper();

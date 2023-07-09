@@ -93,7 +93,7 @@ double qSlicerTerminologiesReader::canLoadFileConfidence(const QString& fileName
   // for composite file extensions (.term.json) it would be 0.6.
   // Therefore, confidence below 0.56 means that we got a generic file extension
   // that we need to inspect further.
-  if (confidence > 0 || confidence < 0.56)
+  if (confidence > 0 && confidence < 0.56)
     {
     // Not a composite file extension, inspect the content
     QString upperCaseFileName = fileName.toUpper();
