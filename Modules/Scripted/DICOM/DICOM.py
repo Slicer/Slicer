@@ -531,57 +531,6 @@ class DICOMFileDialog:
         self.directoriesToAdd = []
 
 
-class DICOMLoadingByDragAndDropEventFilter(qt.QWidget):
-    """This event filter is used for overriding drag-and-drop behavior while
-    the DICOM module is active. To simplify DICOM import, while DICOM module is active
-    then files or folders that are drag-and-dropped to the application window
-    are always interpreted as DICOM data.
-    """
-
-    def eventFilter(self, object, event):
-        """
-        Custom event filter for Slicer Main Window.
-
-        Inputs: Object (QObject), Event (QEvent)
-        """
-        if event.type() == qt.QEvent.DragEnter:
-            self.dragEnterEvent(event)
-            return True
-        if event.type() == qt.QEvent.Drop:
-            self.dropEvent(event)
-            return True
-        return False
-
-    def dragEnterEvent(self, event):
-        """
-        Actions to do when a drag enter event occurs in the Main Window.
-
-        Read up on https://doc.qt.io/qt-5.12/dnd.html#dropping
-        Input: Event (QEvent)
-        """
-        self.directoriesToAdd, self.filesToAdd = DICOMFileDialog.pathsFromMimeData(event.mimeData())
-        if self.directoriesToAdd or self.filesToAdd:
-            event.acceptProposedAction()  # allows drop event to proceed
-        else:
-            event.ignore()
-
-    def dropEvent(self, event):
-        if not DICOMFileDialog.createDefaultDatabase():
-            return
-
-        if not DICOMFileDialog.validDirectories(self.directoriesToAdd) or not DICOMFileDialog.validDirectories(self.filesToAdd):
-            confirmMessage = _(
-                "Import from folders with special (non-ASCII) characters in the name is not supported."
-                " It is recommended to move files into a different folder and retry."
-                " Try to import from current location anyway?")
-            if not slicer.util.confirmYesNoDisplay(confirmMessage):
-                self.directoriesToAdd = []
-                return
-
-        slicer.modules.DICOMInstance.browserWidget.dicomBrowser.importDirectories(self.directoriesToAdd)
-        slicer.modules.DICOMInstance.browserWidget.dicomBrowser.importFiles(self.filesToAdd)
-
-
 #
 # DICOM widget
 #
@@ -604,8 +553,6 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         # collapse reload & test section by default.
         if hasattr(self, "reloadCollapsibleButton"):
             self.reloadCollapsibleButton.collapsed = True
-
-        self.dragAndDropEventFilter = DICOMLoadingByDragAndDropEventFilter()
 
         globals()['d'] = self
 
@@ -746,15 +693,8 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         self.onOpenBrowserWidget()
         self.addListenerObservers()
         self.onListenerStateChanged()
-        # While DICOM module is active, drag-and-drop always performs DICOM import
-        mw = slicer.util.mainWindow()
-        if mw:
-            mw.installEventFilter(self.dragAndDropEventFilter)
 
     def exit(self):
-        mw = slicer.util.mainWindow()
-        if mw:
-            mw.removeEventFilter(self.dragAndDropEventFilter)
         self.removeListenerObservers()
         self.browserWidget.close()
 
@@ -948,3 +888,41 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
         DICOMLib.clearDatabase(slicer.dicomDatabase)
         slicer.app.restoreOverrideCursor()
+
+
+class DICOMFileReader:
+    """This reader claims DICOM files with higher-than default confidence
+    """
+
+    def __init__(self, parent):
+        self.parent = parent
+
+    def description(self):
+        return 'DICOM import'
+
+    def fileType(self):
+        return 'DICOMFileImport'
+
+    def extensions(self):
+        return ['DICOM (*.dcm)', 'DICOM (*)']
+
+    def canLoadFileConfidence(self, filePath):
+        import pydicom
+        if pydicom.misc.is_dicom(filePath):
+            # This is a DICOM file, so we return higher confidence than the default 0.5
+            # to import DICOM files using DICOM module.
+            return 0.6
+        else:
+            return 0.0
+
+    def load(self, properties):
+
+        filePath = properties['fileName']
+        dicomFilesDirectory = os.path.dirname(os.path.abspath(filePath))
+
+        # instantiate a new DICOM browser (and create DICOM database if not created yet)
+        slicer.util.selectModule("DICOM")
+        dicomBrowser = slicer.modules.DICOMWidget.browserWidget.dicomBrowser
+        dicomBrowser.importDirectory(dicomFilesDirectory, dicomBrowser.ImportDirectoryMode)
+
+        return True
