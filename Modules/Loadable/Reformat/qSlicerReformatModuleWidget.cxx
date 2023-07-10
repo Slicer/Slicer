@@ -285,15 +285,15 @@ resetSlider(qMRMLLinearTransformSlider* slider)
   bool wasSliderBlocking = slider->blockSignals(true);
   slider->reset();
 
-  if (slider == this->LRSlider)
+  if (slider == this->RotateXSlider)
     {
     this->LastRotationValues[qSlicerReformatModuleWidget::axisX] = slider->value();
     }
-  else if (slider == this->PASlider)
+  else if (slider == this->RotateYSlider)
     {
     this->LastRotationValues[qSlicerReformatModuleWidget::axisY] = slider->value();
     }
-  else if (slider == this->ISSlider)
+  else if (slider == this->RotateZSlider)
     {
     this->LastRotationValues[qSlicerReformatModuleWidget::axisZ] = slider->value();
     }
@@ -376,13 +376,27 @@ void qSlicerReformatModuleWidget::setup()
   this->connect(d->NormalCoordinatesWidget, SIGNAL(coordinatesChanged(double*)),
                 this, SLOT(setSliceNormal(double*)));
 
+
+  this->connect(d->RotateToVolumePlanePushButton, SIGNAL(pressed()),
+    this, SLOT(rotateToVolumePlane()));
+
+  // Connect slice rotate/flip pushButtons
+  this->connect(d->FlipHorizontalPushButton, SIGNAL(pressed()),
+    this, SLOT(flipHorizontal()));
+  this->connect(d->FlipVerticalPushButton, SIGNAL(pressed()),
+    this, SLOT(flipVertical()));
+  this->connect(d->RotateClockwisePushButton, SIGNAL(pressed()),
+    this, SLOT(rotateClockwise()));
+  this->connect(d->RotateCounterClockwisePushButton, SIGNAL(pressed()),
+    this, SLOT(rotateCounterClockwise()));
+
   // Connect slice normal pushButtons
-  this->connect(d->NormalXPushButton, SIGNAL(pressed()),
-                this, SLOT(setNormalToAxisX()));
-  this->connect(d->NormalYPushButton, SIGNAL(pressed()),
-                this, SLOT(setNormalToAxisY()));
-  this->connect(d->NormalZPushButton, SIGNAL(pressed()),
-                this, SLOT(setNormalToAxisZ()));
+  this->connect(d->NormalToLRPushButton, SIGNAL(pressed()),
+                this, SLOT(setNormalToAxisLR()));
+  this->connect(d->NormalToPAPushButton, SIGNAL(pressed()),
+                this, SLOT(setNormalToAxisPA()));
+  this->connect(d->NormalToISPushButton, SIGNAL(pressed()),
+                this, SLOT(setNormalToAxisIS()));
 
   QObject::connect(d->NormalToCameraCheckablePushButton, SIGNAL(clicked()),
                    this, SLOT(setNormalToCamera()));
@@ -391,11 +405,11 @@ void qSlicerReformatModuleWidget::setup()
                    this, SLOT(onLockReformatWidgetToCamera(bool)));
 
   // Connect Slice rotation sliders
-  this->connect(d->LRSlider, SIGNAL(valueChanged(double)),
+  this->connect(d->RotateXSlider, SIGNAL(valueChanged(double)),
                 this, SLOT(onSliderRotationChanged(double)));
-  this->connect(d->PASlider, SIGNAL(valueChanged(double)),
+  this->connect(d->RotateYSlider, SIGNAL(valueChanged(double)),
                 this, SLOT(onSliderRotationChanged(double)));
-  this->connect(d->ISSlider, SIGNAL(valueChanged(double)),
+  this->connect(d->RotateZSlider, SIGNAL(valueChanged(double)),
                 this, SLOT(onSliderRotationChanged(double)));
 }
 
@@ -581,19 +595,19 @@ void qSlicerReformatModuleWidget::setNormalToCamera()
 }
 
 //------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::setNormalToAxisX()
+void qSlicerReformatModuleWidget::setNormalToAxisLR()
 {
   this->onSliceNormalToAxisChanged(axisX);
 }
 
 //------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::setNormalToAxisY()
+void qSlicerReformatModuleWidget::setNormalToAxisPA()
 {
   this->onSliceNormalToAxisChanged(axisY);
 }
 
 //------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::setNormalToAxisZ()
+void qSlicerReformatModuleWidget::setNormalToAxisIS()
 {
   this->onSliceNormalToAxisChanged(axisZ);
 }
@@ -625,9 +639,9 @@ void qSlicerReformatModuleWidget::setSliceNormal(double* sliceNormal)
     }
 
   // Reset rotation sliders
-  d->resetSlider(d->LRSlider);
-  d->resetSlider(d->PASlider);
-  d->resetSlider(d->ISSlider);
+  d->resetSlider(d->RotateXSlider);
+  d->resetSlider(d->RotateYSlider);
+  d->resetSlider(d->RotateZSlider);
 
   double normalizedSliceNormal[3] = {sliceNormal[0], sliceNormal[1], sliceNormal[2]};
   vtkMath::Normalize(normalizedSliceNormal);
@@ -648,9 +662,9 @@ onSliceOrientationChanged(const QString& orientation)
     }
 
   // Reset the Rotation Sliders
-  d->resetSlider(d->LRSlider);
-  d->resetSlider(d->PASlider);
-  d->resetSlider(d->ISSlider);
+  d->resetSlider(d->RotateXSlider);
+  d->resetSlider(d->RotateYSlider);
+  d->resetSlider(d->RotateZSlider);
 
   d->MRMLSliceNode->SetOrientation(orientation.toUtf8());
 }
@@ -661,49 +675,42 @@ onSliderRotationChanged(double rotation)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkNew<vtkTransform> transform;
-  transform->SetMatrix(d->MRMLSliceNode->GetSliceToRAS());
-
-  if (this->sender() == d->LRSlider)
+  if (this->sender() == d->RotateXSlider)
     {
     // Reset PA & IS sliders
-    d->resetSlider(d->PASlider);
-    d->resetSlider(d->ISSlider);
+    d->resetSlider(d->RotateYSlider);
+    d->resetSlider(d->RotateZSlider);
 
     // Rotate on LR given the angle with the last value recorded
-    transform->RotateX(rotation-d->LastRotationValues[axisX]);
+    vtkSlicerReformatLogic::RotateSlice(d->MRMLSliceNode, 0, rotation-d->LastRotationValues[axisX]);
 
     // Update last value and apply the transform
     d->LastRotationValues[axisX] = rotation;
     }
-  else if (this->sender() == d->PASlider)
+  else if (this->sender() == d->RotateYSlider)
     {
     // Reset LR & IS sliders
-    d->resetSlider(d->LRSlider);
-    d->resetSlider(d->ISSlider);
+    d->resetSlider(d->RotateXSlider);
+    d->resetSlider(d->RotateZSlider);
 
     // Rotate on PA given the angle with the last value recorded
-    transform->RotateY(rotation-d->LastRotationValues[axisY]);
+    vtkSlicerReformatLogic::RotateSlice(d->MRMLSliceNode, 1, rotation-d->LastRotationValues[axisY]);
 
     // Update last value and apply the transform
     d->LastRotationValues[axisY] = rotation;
     }
-  else if (this->sender() == d->ISSlider)
+  else if (this->sender() == d->RotateZSlider)
     {
-      // Reset LR & PA sliders
-      d->resetSlider(d->LRSlider);
-      d->resetSlider(d->PASlider);
+    // Reset LR & PA sliders
+    d->resetSlider(d->RotateXSlider);
+    d->resetSlider(d->RotateYSlider);
 
-      // Rotate on PA given the angle with the last value recorded
-      transform->RotateZ(rotation-d->LastRotationValues[axisZ]);
+    // Rotate on PA given the angle with the last value recorded
+    vtkSlicerReformatLogic::RotateSlice(d->MRMLSliceNode, 2, rotation-d->LastRotationValues[axisZ]);
 
-      // Update last value and apply the transform
-      d->LastRotationValues[axisZ] = rotation;
+    // Update last value and apply the transform
+    d->LastRotationValues[axisZ] = rotation;
     }
-
-  // Apply the transform
-  d->MRMLSliceNode->GetSliceToRAS()->DeepCopy(transform->GetMatrix());
-  d->MRMLSliceNode->UpdateMatrices();
 }
 
 //------------------------------------------------------------------------------
@@ -758,4 +765,45 @@ bool qSlicerReformatModuleWidget::setEditedNode(vtkMRMLNode* node,
     }
 
   return false;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::flipHorizontal()
+{
+  Q_D(qSlicerReformatModuleWidget);
+  vtkSlicerReformatLogic::RotateSlice(d->MRMLSliceNode, 1 /* slice vertical axis */, 180.0);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::flipVertical()
+{
+  Q_D(qSlicerReformatModuleWidget);
+  vtkSlicerReformatLogic::RotateSlice(d->MRMLSliceNode, 0 /* slice horizontal axis */, 180.0);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::rotateClockwise()
+{
+  Q_D(qSlicerReformatModuleWidget);
+  vtkSlicerReformatLogic::RotateSlice(d->MRMLSliceNode, /* slice normal */ 2, 90.0);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::rotateCounterClockwise()
+{
+  Q_D(qSlicerReformatModuleWidget);
+  vtkSlicerReformatLogic::RotateSlice(d->MRMLSliceNode, /* slice normal */ 2, -90.0);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::rotateToVolumePlane()
+{
+  Q_D(qSlicerReformatModuleWidget);
+  if (!d->MRMLSliceNode || !d->MRMLSliceLogic)
+    {
+    return;
+    }
+  d->MRMLSliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::RotateToBackgroundVolumePlaneFlag);
+  d->MRMLSliceLogic->RotateSliceToLowestVolumeAxes();
+  d->MRMLSliceLogic->EndSliceNodeInteraction();
 }

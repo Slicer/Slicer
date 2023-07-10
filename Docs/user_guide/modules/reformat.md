@@ -11,16 +11,21 @@ This module is used for changing the slice properties.
 - **Display - Edit**: Information about the selected slice. Fields can be edited to precisely set values to the slice.
   - **Offset**: See and Set the current distance from the origin to the slice plane
   - **Origin**: The location of the center of the slice. It is also related to the reformat widget origin associated to the selected slice.
-  - **Center**: This button will adjust the slice Origin so that the entire slice is centered around 0,0,0 in the volume space.
-  - **Normal**: Allow to set accurately the normal of the active slice.
-  - **Reset**: Reset the slice to transformation to the corresponding orientation -- The orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".
-  - **Normal X**: Set the normal to a x axis.
-  - **Normal Y**: Set the normal to a y axis.
-  - **Normal Z**: Set the normal to a z axis.
-  - **Normal to camera**: Set slice normal to the camera.
-  - **LR**: Rotate the slice on the X axis
-  - **PA**: Rotate the slice on the Y axis
-  - **IS**: Rotate the slice on the Z axis
+    - **Center**: This button will adjust the slice Origin so that the entire slice is centered around 0,0,0 in the volume space.
+  - **Orientation**
+    - **Reset to**: Reset the slice to transformation to the corresponding orientation preset, such as "Axial, "Sagittal", "Coronal" or "Reformat".
+    - **Rotate to volume plane**: Rotates the slice view to be aligned with the axes of the displayed volume.
+    - **Flip H** and **Flip V**: Flip the image slice horizontally or vertically.
+    - **Rotate CW** and **Rotate CCW**: Rotate the slice in-plane by 90 degrees in clockwise or counterclockwise direction.
+    - **Normal**: Allow to set the slice plane normal direction.
+      - **Normal to LR**: Set the normal to left-right anatomical direction.
+      - **Normal to PA**: Set the normal to posterior-anterior anatomical direction.
+      - **Normal to IS**: Set the normal to inferior-superior anatomical direction.
+    - **Normal to camera**: Align the slice normal to the camera view direction.
+    - **Rotation**
+      - **Horizontal**: Free rotation of the slice around its horizontal axis.
+      - **Vertical**: Free rotation of the slice around its vertical axis.
+      - **In-Plane**: Free in-plane rotation of the slice (around its normal).
 
 ## Contributors
 
