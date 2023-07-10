@@ -208,3 +208,38 @@ void vtkSlicerReformatLogic::GetCenterFromBounds(double bounds[6],
   center[1] = (bounds[2] + bounds[3]) / 2;
   center[2] = (bounds[4] + bounds[5]) / 2;
 }
+
+//------------------------------------------------------------------------------
+void vtkSlicerReformatLogic::RotateSlice(vtkMRMLSliceNode* sliceNode, int axisIndex, double rotationAngleDeg)
+{
+  if (!sliceNode)
+    {
+    vtkGenericWarningMacro("vtkSlicerReformatLogic::RotateSliceView: node is invalid");
+    return;
+    }
+
+  vtkNew<vtkTransform> transform;
+  transform->SetMatrix(sliceNode->GetSliceToRAS());
+
+  if (axisIndex == 0)
+    {
+    transform->RotateX(rotationAngleDeg);
+    }
+  else if (axisIndex == 1)
+    {
+    transform->RotateY(rotationAngleDeg);
+    }
+  else if (axisIndex == 2)
+    {
+    transform->RotateZ(rotationAngleDeg);
+    }
+  else
+    {
+    vtkWarningWithObjectMacro(sliceNode, "vtkSlicerReformatLogic::RotateSliceView: axisIndex must be 0, 1, or 2");
+    return;
+    }
+
+  // Apply the transform
+  sliceNode->GetSliceToRAS()->DeepCopy(transform->GetMatrix());
+  sliceNode->UpdateMatrices();
+}
