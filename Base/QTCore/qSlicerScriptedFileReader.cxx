@@ -278,7 +278,7 @@ double qSlicerScriptedFileReader::canLoadFileConfidence(const QString& file)cons
     return this->Superclass::canLoadFileConfidence(file);
     }
 
-  if (PyFloat_Check(result))
+  if (!PyFloat_Check(result))
     {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'canLoadFileConfidence' "
