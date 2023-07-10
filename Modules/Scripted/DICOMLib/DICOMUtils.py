@@ -912,6 +912,12 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
 
     slicer.mrmlScene.RemoveObserver(sceneObserverTag)
 
+    # Filter out temporary node(s)
+    loadedNodeIDs = [
+        loadedNodeID for loadedNodeID in loadedNodeIDs
+        if slicer.mrmlScene.GetNodeByID(loadedNodeID) is not None
+    ]
+
     return loadedNodeIDs
 
 
