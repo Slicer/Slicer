@@ -2385,15 +2385,19 @@ void qMRMLSliceControllerWidget::showSlabReconstructionWidget(bool show)
     {
     return;
     }
-  vtkMRMLSliceNode* node = nullptr;
+
   vtkMRMLSliceLogic* sliceLogic = nullptr;
-  for (int i = 0; i < nodes->GetNumberOfItems(); i++)
+  vtkCollectionSimpleIterator it;
+
+  for (d->SliceLogics->InitTraversal(it);(sliceLogic = static_cast<vtkMRMLSliceLogic*>(
+                                               d->SliceLogics->GetNextItemAsObject(it)));)
     {
-    node = static_cast<vtkMRMLSliceNode*>(nodes->GetItemAsObject(i));
-    sliceLogic = static_cast<vtkMRMLSliceLogic*>(d->SliceLogics->GetItemAsObject(i));
-    if (node == this->mrmlSliceNode() || this->isLinked())
+    if (sliceLogic == d->SliceLogic || this->isLinked())
       {
+      vtkMRMLSliceNode* node = sliceLogic->GetSliceNode();
+
       node->SetSlabReconstructionEnabled(show);
+
       vtkImageReslice* resliceBG = sliceLogic->GetBackgroundLayer()->GetReslice();
       vtkImageReslice* resliceFG = sliceLogic->GetForegroundLayer()->GetReslice();
 
@@ -2413,10 +2417,9 @@ void qMRMLSliceControllerWidget::showSlabReconstructionWidget(bool show)
         resliceBG->SetSlabMode(slabType);
         resliceFG->SetSlabMode(slabType);
 
-        resliceBG->SetSlabNumberOfSlices(int(node->GetSlabReconstructionThickness() / (sliceSpacing ?
-          sliceSpacing : this->DefaultSlabReconstructionThickness)));
-        resliceFG->SetSlabNumberOfSlices(int(node->GetSlabReconstructionThickness() / (sliceSpacing ?
-          sliceSpacing : this->DefaultSlabReconstructionThickness)));
+        int slabNumberOfSlices = int(node->GetSlabReconstructionThickness() / (sliceSpacing ? sliceSpacing : this->DefaultSlabReconstructionThickness));
+        resliceBG->SetSlabNumberOfSlices(slabNumberOfSlices);
+        resliceFG->SetSlabNumberOfSlices(slabNumberOfSlices);
         }
       else
         {
@@ -2424,8 +2427,9 @@ void qMRMLSliceControllerWidget::showSlabReconstructionWidget(bool show)
         resliceFG->SetSlabNumberOfSlices(this->DefaultSlabReconstructionThickness);
         }
 
-      resliceBG->SetSlabSliceSpacingFraction(sliceSpacing / node->GetSlabReconstructionOversamplingFactor());
-      resliceFG->SetSlabSliceSpacingFraction(sliceSpacing / node->GetSlabReconstructionOversamplingFactor());
+      double slabSliceSpacingFraction = sliceSpacing / node->GetSlabReconstructionOversamplingFactor();
+      resliceBG->SetSlabSliceSpacingFraction(slabSliceSpacingFraction);
+      resliceFG->SetSlabSliceSpacingFraction(slabSliceSpacingFraction);
       }
     }
 }
