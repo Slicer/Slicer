@@ -63,13 +63,19 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
         anyModifierKeyPressed = callerInteractor.GetShiftKey() or callerInteractor.GetControlKey() or callerInteractor.GetAltKey()
 
         if eventId == vtk.vtkCommand.LeftButtonPressEvent and not anyModifierKeyPressed:
+
             # Make sure the user wants to do the operation, even if the segment is not visible
             confirmedEditingAllowed = self.scriptedEffect.confirmCurrentSegmentVisible()
             if confirmedEditingAllowed == self.scriptedEffect.NotConfirmed or confirmedEditingAllowed == self.scriptedEffect.ConfirmedWithDialog:
-                # If user had to move the mouse to click on the popup, so we cannot continue with painting
-                # from the current mouse position. User will need to click again.
-                # The dialog is not displayed again for the same segment.
+                # ConfirmedWithDialog cancels the operation because the user had to move the mouse to click on the popup,
+                # which would interfere with the drawn shape. The dialog is not displayed again for the same segment.
+
+                # The event has to be aborted, because otherwise there would be a LeftButtonPressEvent without a matching
+                # LeftButtonReleaseEvent (as the popup window received the release button event).
+                abortEvent = True
+
                 return abortEvent
+
             pipeline.actionState = "drawing"
             self.scriptedEffect.cursorOff(viewWidget)
             xy = callerInteractor.GetEventPosition()
