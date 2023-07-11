@@ -113,9 +113,9 @@ class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
         sliceNodeSelector = slicer.util.findChildren(widget, "SliceNodeSelector")[0]
         sliceNodeSelector.setCurrentNodeID("vtkMRMLSliceNodeRed")
 
-        # Set LR value using Reformat module
-        lrslider = slicer.util.findChildren(widget, "LRSlider")[0]
-        lrslider.value = 1
+        # Set RotateZ slider value using Reformat module
+        rotateZSlider = slicer.util.findChildren(widget, "RotateZSlider")[0]
+        rotateZSlider.value = 1
 
         # Get reference to the Red slice controller
         lm = slicer.app.layoutManager()
