@@ -386,10 +386,6 @@ class SliceAnnotations(VTKObservationMixin):
         foregroundVolume = foregroundLayer.GetVolumeNode()
         labelVolume = labelLayer.GetVolumeNode()
 
-        # Get unit node
-        unitNodeID = slicer.app.applicationLogic().GetSelectionNode().GetUnitNodeID("length")
-        sliceUnitNode = slicer.app.applicationLogic().GetMRMLScene().GetNodeByID(unitNodeID)
-
         # Get slice view name
         sliceNode = backgroundLayer.GetSliceNode()
         if not sliceNode:
@@ -425,14 +421,6 @@ class SliceAnnotations(VTKObservationMixin):
                     for key in self.cornerTexts[2]:
                         self.cornerTexts[2][key]['text'] = ''
                     self.dicomVolumeNode = 0
-                if sliceNode.GetSlabReconstructionEnabled():
-                    self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = 'Thickness: ' + str(
-                        sliceNode.GetSlabReconstructionThickness()) + ' ' + sliceUnitNode.GetSuffix()
-                    self.cornerTexts[3]['9-SlabReconstructionType']['text'] = 'Type: ' + sliceNode.GetSlabReconstructionTypeAsString(
-                        sliceNode.GetSlabReconstructionType())
-                else:
-                    self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = ''
-                    self.cornerTexts[3]['9-SlabReconstructionType']['text'] = ''
 
             # Case II: Only background
             elif (backgroundVolume is not None):
@@ -447,14 +435,6 @@ class SliceAnnotations(VTKObservationMixin):
                     self.dicomVolumeNode = 1
                 else:
                     self.dicomVolumeNode = 0
-                if sliceNode.GetSlabReconstructionEnabled():
-                    self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = 'Thickness: ' + str(
-                        sliceNode.GetSlabReconstructionThickness()) + ' ' + sliceUnitNode.GetSuffix()
-                    self.cornerTexts[3]['9-SlabReconstructionType']['text'] = 'Type: ' + sliceNode.GetSlabReconstructionTypeAsString(
-                        sliceNode.GetSlabReconstructionType())
-                else:
-                    self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = ''
-                    self.cornerTexts[3]['9-SlabReconstructionType']['text'] = ''
 
             # Case III: Only foreground
             elif (foregroundVolume is not None):
@@ -470,14 +450,17 @@ class SliceAnnotations(VTKObservationMixin):
                     self.dicomVolumeNode = 1
                 else:
                     self.dicomVolumeNode = 0
-                if sliceNode.GetSlabReconstructionEnabled():
-                    self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = 'Thickness: ' + str(
-                        sliceNode.GetSlabReconstructionThickness()) + ' ' + sliceUnitNode.GetSuffix()
-                    self.cornerTexts[3]['9-SlabReconstructionType']['text'] = 'Type: ' + sliceNode.GetSlabReconstructionTypeAsString(
-                        sliceNode.GetSlabReconstructionType())
-                else:
-                    self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = ''
-                    self.cornerTexts[3]['9-SlabReconstructionType']['text'] = ''
+
+            # Slab reconstruction is applied to both foreground and background
+            if sliceNode.GetSlabReconstructionEnabled():
+                unitNode = slicer.app.applicationLogic().GetSelectionNode().GetUnitNode("length")
+                self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = 'Thickness: ' + str(
+                    sliceNode.GetSlabReconstructionThickness()) + ' ' + unitNode.GetSuffix()
+                self.cornerTexts[3]['9-SlabReconstructionType']['text'] = 'Type: ' + sliceNode.GetSlabReconstructionTypeAsString(
+                    sliceNode.GetSlabReconstructionType())
+            else:
+                self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = ''
+                self.cornerTexts[3]['9-SlabReconstructionType']['text'] = ''
 
             if (labelVolume is not None) and self.bottomLeft:
                 labelOpacity = sliceCompositeNode.GetLabelOpacity()
