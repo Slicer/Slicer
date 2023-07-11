@@ -262,7 +262,15 @@ about each operation, hover the mouse over the option and wait for the tooltip t
             return abortEvent
 
         # Make sure the user wants to do the operation, even if the segment is not visible
-        if not self.scriptedEffect.confirmCurrentSegmentVisible():
+        confirmedEditingAllowed = self.scriptedEffect.confirmCurrentSegmentVisible()
+        if confirmedEditingAllowed == self.scriptedEffect.NotConfirmed or confirmedEditingAllowed == self.scriptedEffect.ConfirmedWithDialog:
+            # ConfirmedWithDialog cancels the operation because without seeing the segment, the island may have looked different
+            # than what the user remembered/expected. The dialog is not displayed again for the same segment.
+
+            # The event has to be aborted, because otherwise there would be a LeftButtonPressEvent without a matching
+            # LeftButtonReleaseEvent (as the popup window received the release button event).
+            abortEvent = True
+
             return abortEvent
 
         abortEvent = True

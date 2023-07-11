@@ -1472,7 +1472,13 @@ bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(
       // If user had to move the mouse to click on the popup, so we cannot continue with painting
       // from the current mouse position. User will need to click again.
       // The dialog is not displayed again for the same segment.
-      return false;
+
+      // The event has to be aborted, because otherwise there would be a LeftButtonPressEvent without a matching
+      // LeftButtonReleaseEvent (as the popup window got the release button event) and so the view would be stuck
+      // in view rotation mode.
+      abortEvent = true;
+
+      return abortEvent;
       }
 
     pipeline->IsDragging = true;

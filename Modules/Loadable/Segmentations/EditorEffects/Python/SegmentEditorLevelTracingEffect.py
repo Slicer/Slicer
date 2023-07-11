@@ -73,8 +73,14 @@ follows the same intensity value back to the starting point within the current s
         anyModifierKeyPressed = callerInteractor.GetShiftKey() or callerInteractor.GetControlKey() or callerInteractor.GetAltKey()
 
         if eventId == vtk.vtkCommand.LeftButtonPressEvent and not anyModifierKeyPressed:
+            abortEvent = True
+
             # Make sure the user wants to do the operation, even if the segment is not visible
             if not self.scriptedEffect.confirmCurrentSegmentVisible():
+                self.sliceRotatedErrorLabel.text = ""
+                pipeline.actor.VisibilityOff()
+                self.lastXY = None
+                pipeline.sliceWidget.sliceView().scheduleRender()
                 return abortEvent
 
             self.scriptedEffect.saveStateForUndo()
@@ -86,7 +92,7 @@ follows the same intensity value back to the starting point within the current s
             pipeline.appendPolyMask(modifierLabelmap)
             # TODO: it would be nice to reduce extent
             self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd)
-            abortEvent = True
+
         elif eventId == vtk.vtkCommand.MouseMoveEvent:
             if pipeline.actionState == '':
                 xy = callerInteractor.GetEventPosition()

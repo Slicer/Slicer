@@ -76,6 +76,10 @@ To segment a single object, create a segment and paint inside and create another
 
     def onApply(self):
 
+        # Make sure the user wants to do the operation, even if the segment is not visible
+        if not self.scriptedEffect.confirmCurrentSegmentVisible():
+            return
+
         # Get list of visible segment IDs, as the effect ignores hidden segments.
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
         visibleSegmentIds = vtk.vtkStringArray()
