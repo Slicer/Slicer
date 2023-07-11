@@ -452,7 +452,7 @@ class SliceAnnotations(VTKObservationMixin):
                     self.dicomVolumeNode = 0
 
             # Slab reconstruction is applied to both foreground and background
-            if sliceNode.GetSlabReconstructionEnabled():
+            if self.topRight and sliceNode.GetSlabReconstructionEnabled():
                 unitNode = slicer.app.applicationLogic().GetSelectionNode().GetUnitNode("length")
                 self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = 'Thickness: ' + str(
                     sliceNode.GetSlabReconstructionThickness()) + ' ' + unitNode.GetSuffix()
