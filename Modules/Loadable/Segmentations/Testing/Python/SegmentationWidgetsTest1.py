@@ -186,7 +186,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
         # Create segmentation node with binary labelmap master and one segment with MRHead geometry
         segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
-        segmentationNode.GetSegmentation().SetMasterRepresentationName(binaryLabelmapReprName)
+        segmentationNode.GetSegmentation().SetSourceRepresentationName(binaryLabelmapReprName)
         geometryStr = slicer.vtkSegmentationConverter.SerializeImageGeometry(mrOrientedImageData)
         segmentationNode.GetSegmentation().SetConversionParameter(
             slicer.vtkSegmentationConverter.GetReferenceImageGeometryParameterName(), geometryStr)
@@ -281,7 +281,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
         # Segmentation source with closed surface master
         tinySegmentationNode.GetSegmentation().SetConversionParameter('Smoothing factor', '0.0')
         self.assertTrue(tinySegmentationNode.GetSegmentation().CreateRepresentation(closedSurfaceReprName))
-        tinySegmentationNode.GetSegmentation().SetMasterRepresentationName(closedSurfaceReprName)
+        tinySegmentationNode.GetSegmentation().SetSourceRepresentationName(closedSurfaceReprName)
         tinySegmentationNode.Modified()  # Trigger re-calculation of geometry (only generic Modified event is observed)
         geometryWidget.geometryImageData(geometryImageData)
         self.assertTrue(self.compareOutputGeometry(geometryImageData,

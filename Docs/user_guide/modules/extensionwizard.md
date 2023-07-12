@@ -20,7 +20,7 @@ The Extension Wizard modules provides a graphical interface within Slicer to aid
 
 ## Settings
 
-The Extension Wizard module provides a settings page, which is accessible via the [Application Settings](user_guide/settings.md#application-settings).
+The Extension Wizard module provides a settings page, which is accessible via the [Application Settings](/user_guide/settings.md#application-settings).
 
 * **Built-in template path**: If found, displays the location of the built-in templates.
 * **Additional template paths**: A list of additional locations containing categorized templates.

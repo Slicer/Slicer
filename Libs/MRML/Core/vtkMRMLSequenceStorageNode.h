@@ -44,8 +44,8 @@ public:
   /// Return true if the reference node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
-  // filename: fCal_Test_Validation_3NWires_fCal2.0-ProbeToTracker-Seq.seq.mha
-  // itemname: ProbeToTracker
+  // fileName: fCal_Test_Validation_3NWires_fCal2.0-ProbeToTracker-Seq.seq.mha
+  // itemName: ProbeToTracker
   // return: fCal_Test_Validation_3NWires_fCal2.0
   static std::string GetSequenceBaseName(const std::string& fileNameName, const std::string& itemName);
 

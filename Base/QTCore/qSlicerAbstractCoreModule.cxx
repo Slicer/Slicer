@@ -255,7 +255,7 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::createNewWidgetR
 
   // Since 'logic()' should have been called in 'initialize(), let's make
   // sure the 'logic()' method call is consistent and won't create a
-  // diffent logic object
+  // different logic object
 #ifndef QT_NO_DEBUG // Required to avoid undefined variable warning
   vtkMRMLAbstractLogic* currentLogic = d->Logic;
   Q_ASSERT(currentLogic == this->logic());

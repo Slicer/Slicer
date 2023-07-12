@@ -593,7 +593,7 @@ public:
   /// If empty, display in all views
   /// \sa ViewNodeIDs, GetNthViewNodeID(), AddViewNodeID()
   inline std::vector< std::string > GetViewNodeIDs()const;
-  /// True if the view node id is present in the viewnodeid list
+  /// True if the view node id is present in the viewNodeID list
   /// false if not found
   /// \sa ViewNodeIDs, IsDisplayableInView(), AddViewNodeID()
   bool IsViewNodeIDPresent(const char* viewNodeID)const;

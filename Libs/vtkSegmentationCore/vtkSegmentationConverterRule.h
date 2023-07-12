@@ -156,4 +156,4 @@ protected:
   friend class vtkSegmentationConverter;
 };
 
-#endif // __vtkSegmentationConverterRule_h
+#endif

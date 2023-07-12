@@ -89,7 +89,7 @@ public:
   virtual bool DecodeFrame();
 
   /// Returns true if the current frame is a keyframe
-  /// Keyframes are not interpolated and don't require any additional frames in order to be decoded to an uncompressed image
+  /// KeyFrames are not interpolated and don't require any additional frames in order to be decoded to an uncompressed image
   virtual bool IsKeyFrame();
 
   /// Callback that is called if the current frame is modified

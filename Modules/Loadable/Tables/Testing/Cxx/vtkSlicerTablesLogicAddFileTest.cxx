@@ -124,7 +124,7 @@ int testAddFile(const char * filePath)
 
   // Verify that files that contain backslsh are read correctly
   vtkStringArray* stringArray = vtkStringArray::SafeDownCast(table->GetColumnByName("TestString"));
-  CHECK_STRING(stringArray->GetValue(4), "some\\escape\\characters\\n\\t");
+  CHECK_STRING(stringArray->GetValue(4).c_str(), "some\\escape\\characters\\n\\t");
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;

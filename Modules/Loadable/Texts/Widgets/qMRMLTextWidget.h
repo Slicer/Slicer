@@ -26,7 +26,6 @@
 
 // Text widgets includes
 #include "qSlicerTextsModuleWidgetsExport.h"
-#include "ui_qMRMLTextWidget.h"
 
 class vtkMRMLNode;
 class vtkMRMLTextNode;

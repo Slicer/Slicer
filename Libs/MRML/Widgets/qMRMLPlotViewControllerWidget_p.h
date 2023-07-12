@@ -85,7 +85,7 @@ public slots:
   /// Changes type of all associated plots.
   void onPlotTypeChanged(int);
 
-  /// Called after interactino mode is changed by using the qComboBox.
+  /// Called after interaction mode is changed by using the qComboBox.
   void onInteractionModeChanged(int);
 
 protected:

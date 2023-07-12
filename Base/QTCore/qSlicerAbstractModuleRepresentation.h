@@ -54,17 +54,26 @@ public:
   /// The module is set right before setup() is called.
   qSlicerAbstractCoreModule* module()const;
 
-  /// Allows other modules to select input and output nodes in the module's GUI.
-  /// There may be multiple node selectors in a module widget, you can select between them
-  /// using the role argument.
-  /// Context can be specified to make a selection within that node (for example, a markup list
-  /// node may contain multiple markups; context can be used to select a specific item).
-  /// Returns true if the selection was successful.
-  /// This node has to be overridden in child classes that support editing certain node types.
-  /// Preferably each module that defines a new MRML node class should also make sure there
-  /// is a module widget that can edit that node.
-  /// If setEditedNode method is overridden then nodeEditable method can be overridden to
-  /// specify a non-default confidence value that the module can handle a specific node instance.
+  /// \brief Select input or output nodes in the module's GUI.
+  ///
+  /// \param node The node to be selected.
+  /// \param role Specifies the intended usage of the selected node.
+  /// \param context can be specified to make a selection within that node (for example, a markup list
+  ///     node may contain multiple markups; context can be used to select a specific item).
+
+  /// \return true if the selection was successful.
+  ///
+  /// This function is intended only for use in modules that support editing certain types of nodes.
+  /// The available roles and associated context description are specific to each module.
+  ///
+  /// To enable editing of specific node types, the module must override the qSlicerAbstractCoreModule::associatedNodeTypes()
+  /// method and the module's widget class should override setEditedNode() method.
+  ///
+  /// Optionally the nodeEditable() method can be overridden to specify a non-default
+  /// confidence value. The confidence value should be specified as a decimal number
+  /// between 0.0 and 1.0.
+  ///
+  /// \sa nodeEditable, qSlicerAbstractCoreModule::associatedNodeTypes
   virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
 
   /// Returns a confidence value (between 0.0 and 1.0) that defines how much this widget is
@@ -73,6 +82,8 @@ public:
   /// This node has to be overridden in child classes that want to use a non-default confidence value
   /// (for example, they look into the node contents and decide based on that if the node belongs to
   /// this module).
+
+ /// \sa setEditedNode
   virtual double nodeEditable(vtkMRMLNode* node);
 
 protected:

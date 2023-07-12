@@ -24,8 +24,8 @@ class vtkMRMLScene;
 
 /// \brief Class that manages adding and deleting of observers with events.
 ///
-/// Class that manages adding and deleting of obserevers with events
-/// This class keeps track of obserevers and events added to each vtk object.
+/// Class that manages adding and deleting of observers with events
+/// This class keeps track of observers and events added to each vtk object.
 /// It caches tags returned by AddObserver method so that observers can be removed properly.
 class VTK_MRML_EXPORT vtkMRMLLogic : public vtkObject
 {

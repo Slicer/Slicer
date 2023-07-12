@@ -383,7 +383,6 @@ void vtkSlicerUnitsLogic::RestoreDefaultUnits()
   this->RestoringDefaultUnits = true;
   vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
     this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-  std::vector<vtkMRMLUnitNode*> units;
   int wasModifying = 0;
   if (selectionNode)
     {

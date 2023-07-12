@@ -24,6 +24,7 @@
 #include <QDesktopServices>
 #include <QFileInfo>
 #include <QLabel>
+#include <QLatin1String>
 #include <QListWidget>
 #include <QMouseEvent>
 #include <QNetworkAccessManager>
@@ -286,9 +287,11 @@ QIcon qSlicerExtensionsLocalWidgetPrivate::extensionIcon(
       {
       // Try to download icon
       QNetworkRequest req(extensionIconUrl);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
       // Icons are hosted on random servers, which often use redirects (301 redirect) to get the actual download URL.
       // In Qt6, redirects are followed by default, but it has to be manually enabled in Qt5.
-      req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+      req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+#endif
       QNetworkReply* const reply = this->IconDownloadManager.get(req);
 
       this->IconDownloads.insert(extensionName, reply);
@@ -417,20 +420,20 @@ protected:
     QString statusText;
     if (!available && missing) // "missing" is checked so that we don't display this message when there have been no update checks before
       {
-      statusText += QLatin1Literal("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
+      statusText += QLatin1String("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
         "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ") +
         qSlicerExtensionsLocalWidget::tr("Not found for this version of the application (r%2)")
         .arg(this->WarningColor)
-        .arg(this->SlicerRevision) + QLatin1Literal("</p>");
+        .arg(this->SlicerRevision) + QLatin1String("</p>");
       }
     if (!compatible)
       {
-      statusText += QLatin1Literal("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
+      statusText += QLatin1String("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
         "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ") +
         qSlicerExtensionsLocalWidget::tr("Incompatible with Slicer r%2 [built for r%3]")
         .arg(this->WarningColor)
         .arg(this->SlicerRevision)
-        .arg(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionSlicerVersionRole).toString()) + QLatin1Literal("</p>");
+        .arg(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionSlicerVersionRole).toString()) + QLatin1String("</p>");
       }
     if (this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::UpdateAvailableRole).toBool() && !scheduledForUpdate)
       {
@@ -452,7 +455,7 @@ protected:
       statusText += qSlicerExtensionsLocalWidget::tr("An update is available. Installed: %1. Available: %2.")
         .arg(installedVersion)
         .arg(onServerVersion);
-      statusText += changeLogText + QLatin1Literal("</p>");
+      statusText += changeLogText + QLatin1String("</p>");
       }
     if (statusText.isEmpty())
       {
@@ -464,24 +467,24 @@ protected:
         if (!enabled || !compatible)
           {
           statusText +=
-            QLatin1Literal("<p>")+
+            QLatin1String("<p>")+
             qSlicerExtensionsLocalWidget::tr("Version: %1. Disabled.").arg(installedVersion)
-            + QLatin1Literal("</p>");
+            + QLatin1String("</p>");
           }
         else
           {
           statusText +=
-            QLatin1Literal("<p>") +
+            QLatin1String("<p>") +
             qSlicerExtensionsLocalWidget::tr("Version: %1").arg(installedVersion)
-            + QLatin1Literal("</p>");
+            + QLatin1String("</p>");
           }
         }
       else
         {
         statusText +=
-          QLatin1Literal("<p>") +
+          QLatin1String("<p>") +
           qSlicerExtensionsLocalWidget::tr("Not installed.")
-          + QLatin1Literal("</p>");
+          + QLatin1String("</p>");
         }
       }
     labelText += statusText;

@@ -119,7 +119,7 @@ public:
 
   /* Set the nodes being exported and fill out the dialog widgets with a reasonable initial state.
   Two lists of node pointers must be given, one based on recursively including the storable node child items of the selected node in the
-  subject hierarchy tree, and one based on nonrecursively doing so.
+  subject hierarchy tree, and one based on non-recursively doing so.
   selectedNode is the single storable node that was selected in the subject hierarchy to trigger this export, if there is one;
   can be null if there isn't. nodeIdToSubjectHierarchyPath is a mapping from node IDs to lists of subject hierarchy item names, where
   each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID;

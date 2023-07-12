@@ -121,7 +121,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
       pixmap.setDevicePixelRatio(guiApp->devicePixelRatio());
       }
 
-    splashScreen.reset(new QSplashScreen(pixmap));
+    splashScreen.reset(new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint));
     splashMessage(splashScreen, "Initializing...");
     splashScreen->show();
     }

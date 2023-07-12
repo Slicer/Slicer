@@ -28,10 +28,12 @@
 
 // Markups Widgets includes
 #include "qSlicerMarkupsModuleWidgetsExport.h"
-#include "ui_qSlicerSimpleMarkupsWidget.h"
-
 
 class qSlicerSimpleMarkupsWidgetPrivate;
+class vtkMRMLInteractionNode;
+class QTableWidget;
+class qSlicerMarkupsPlaceWidget;
+class qMRMLNodeComboBox;
 
 /// \ingroup Slicer_QtModules_CreateModels
 class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
@@ -73,7 +75,7 @@ public:
   /// Accessors to control place mode behavior
   bool enterPlaceModeOnNodeChange() const;
 
-  /// If enabled then the control point will be shown in all slice views when a caontrol point is selected
+  /// If enabled then the control point will be shown in all slice views when a control point is selected
   /// /sa setViewGroup
   bool jumpToSliceEnabled() const;
 

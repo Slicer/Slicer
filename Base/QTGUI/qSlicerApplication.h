@@ -240,7 +240,7 @@ signals:
   /// Startup is complete when all the modules have been
   /// initialized and the main window is shown to the user.
   ///
-  /// \note If the application is started without the mainwindow,
+  /// \note If the application is started without the mainWindow,
   /// the signal is emitted after the modules are initialized.
   ///
   /// \sa qSlicerAppMainWindow::initialWindowShown()
@@ -280,7 +280,7 @@ private:
 
 /// Apply the Slicer palette to the \c palette
 /// Note also that the palette parameter is passed by reference and will be
-/// updated using the native paletter and applying Slicer specific properties.
+/// updated using the native palette and applying Slicer specific properties.
 void  Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplyPalette(QPalette& palette);
 
 #endif

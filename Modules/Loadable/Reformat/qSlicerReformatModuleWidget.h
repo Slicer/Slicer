@@ -73,13 +73,28 @@ public slots:
   void setNormalToCamera();
 
   /// Set the normal to a x axis
-  void setNormalToAxisX();
+  void setNormalToAxisLR();
 
   /// Set the normal to a y axis
-  void setNormalToAxisY();
+  void setNormalToAxisPA();
 
   /// Set the normal to a z axis
-  void setNormalToAxisZ();
+  void setNormalToAxisIS();
+
+  /// Align slice axes with the displayed volume axes
+  void rotateToVolumePlane();
+
+  /// Flip the image slice horizontally
+  void flipHorizontal();
+
+  /// Flip the image slice vertically
+  void flipVertical();
+
+  /// Rotate the image slice by 90 degrees in clockwise direction
+  void rotateClockwise();
+
+  /// Rotate the image slice by 90 degrees in counterclockwise direction
+  void rotateCounterClockwise();
 
 protected slots:
   /// Triggered upon MRML transform node updates

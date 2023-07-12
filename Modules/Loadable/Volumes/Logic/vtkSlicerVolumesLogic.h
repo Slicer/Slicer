@@ -346,7 +346,7 @@ protected:
   /// Defaults to 1 to the power of 10 to the minus 6
   double CompareVolumeGeometryEpsilon;
 
-  /// Error print out precision, paried with CompareVolumeGeometryEpsilon.
+  /// Error print out precision, paired with CompareVolumeGeometryEpsilon.
   /// defaults to 6
   int CompareVolumeGeometryPrecision;
 };

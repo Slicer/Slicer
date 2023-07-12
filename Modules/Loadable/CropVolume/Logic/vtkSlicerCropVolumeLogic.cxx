@@ -284,7 +284,7 @@ bool vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(vtkMRMLDisplayableN
   if (inputVolume->GetParentTransformNode() && !inputVolume->GetParentTransformNode()->IsTransformToWorldLinear())
     {
     vtkGenericWarningMacro("vtkSlicerCropVolumeLogic::CropVoxelBased: voxel-based cropping of non-linearly transformed input volume is not supported");
-    return -1;
+    return false;
     }
 
   vtkNew<vtkMatrix4x4> objectToVolumeIJKTransformMatrix;

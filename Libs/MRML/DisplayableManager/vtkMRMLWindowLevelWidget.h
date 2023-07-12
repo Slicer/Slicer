@@ -155,7 +155,7 @@ protected:
 
   bool SetVolumeWindowLevel(double window, double level, bool isAutoWindowLevel);
 
-  /// Rubberband is centered around the click position
+  /// RubberBand is centered around the click position
   vtkGetMacro(CenteredRubberBand, bool);
   vtkSetMacro(CenteredRubberBand, bool);
   vtkBooleanMacro(CenteredRubberBand, bool);

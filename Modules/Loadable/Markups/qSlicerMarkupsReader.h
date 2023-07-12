@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerMarkupsReader
-#define __qSlicerMarkupsReader
+#ifndef qSlicerMarkupsReader_h
+#define qSlicerMarkupsReader_h
 
 // Slicer includes
 #include "qSlicerFileReader.h"
@@ -42,6 +42,12 @@ public:
   QString description()const override;
   IOFileType fileType()const override;
   QStringList extensions()const override;
+
+  /// Returns a positive number (>0) if the reader can load this file.
+  /// In case the file uses a generic file extension (such as .json) then the confidence value is adjusted based on
+  /// the file content: if the file contains markups information then confidence is increased to 0.6,
+  /// otherwise the confidence is decreased to 0.4.
+  double canLoadFileConfidence(const QString& file)const override;
 
   bool load(const IOProperties& properties) override;
 

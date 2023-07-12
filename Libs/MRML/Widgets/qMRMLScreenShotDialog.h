@@ -67,7 +67,7 @@ public:
   QString description()const;
 
   /// Setting the data prevent the dialog from automatically taking a screenshot
-  /// each time the widgettype or scaleFactor is changed.
+  /// each time the widgetType or scaleFactor is changed.
   void setData(const QVariant& newData);
   QVariant data()const;
 

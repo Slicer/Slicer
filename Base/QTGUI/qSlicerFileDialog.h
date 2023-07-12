@@ -65,12 +65,12 @@ public:
   };
   virtual qSlicerFileDialog::IOAction action()const = 0;
   /// run the dialog to select the file/files/directory
-  /// Properties availables with IOPorperties: fileMode, multipleFiles, fileType.
+  /// Properties available with IOProperties: fileMode, multipleFiles, fileType.
   Q_INVOKABLE virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
                     qSlicerIO::IOProperties()) = 0;
 
   /// TBD: move in qSlicerCoreIOManager or qSlicerIOManager ?
-  /// Return the namefilters of all the readers in IOManager corresponding to
+  /// Return the nameFilters of all the readers in IOManager corresponding to
   /// fileType
   Q_INVOKABLE static QStringList nameFilters(qSlicerIO::IOFileType fileType =
                                  QString("NoFile"));
@@ -137,7 +137,7 @@ public:
   bool exec(const qSlicerIO::IOProperties& ioProperties =
                     qSlicerIO::IOProperties()) override;
 
-  /// Properties availables with IOPorperties: fileMode, multipleFiles, fileType.
+  /// Properties available with IOProperties: fileMode, multipleFiles, fileType.
   Q_INVOKABLE static QStringList getOpenFileName(qSlicerIO::IOProperties ioProperties =
                                      qSlicerIO::IOProperties());
   Q_INVOKABLE static QString getExistingDirectory(qSlicerIO::IOProperties ioProperties =

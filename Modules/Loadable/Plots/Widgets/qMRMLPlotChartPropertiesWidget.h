@@ -26,9 +26,11 @@
 // CTK includes
 #include <ctkPimpl.h>
 
+// qMRMLWidgets includes
+#include <qMRMLWidget.h>
+
 // Plots Widgets includes
 #include "qSlicerPlotsModuleWidgetsExport.h"
-#include "ui_qMRMLPlotChartPropertiesWidget.h"
 
 class qMRMLPlotChartPropertiesWidgetPrivate;
 class vtkMRMLNode;

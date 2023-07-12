@@ -32,7 +32,7 @@
 // QtCore includes
 #include "qSlicerExtensionsManagerModel.h"
 #include "vtkSlicerConfigure.h"
-#include "vtkSlicerVersionConfigure.h"
+#include "vtkSlicerVersionConfigureMinimal.h"
 
 // STD includes
 #include <iostream>

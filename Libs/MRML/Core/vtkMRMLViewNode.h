@@ -170,7 +170,7 @@ public:
   static const char* GetVolumeRenderingQualityAsString(int id);
   static int GetVolumeRenderingQualityFromString(const char* name);
 
-  /// Rycasting technique for volume rendering
+  /// Raycasting technique for volume rendering
   vtkGetMacro(RaycastTechnique, int);
   vtkSetMacro(RaycastTechnique, int);
   static const char* GetRaycastTechniqueAsString(int id);

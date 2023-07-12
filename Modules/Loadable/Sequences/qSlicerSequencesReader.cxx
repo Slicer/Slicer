@@ -19,8 +19,9 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QFileInfo>
 #include <QDebug>
+#include <QFileInfo>
+#include <QTextStream>
 
 // Slicer includes
 #include "qSlicerSequencesReader.h"
@@ -93,7 +94,40 @@ QStringList qSlicerSequencesReader::extensions()const
   return QStringList()
     << tr("Sequence") + " (*.seq.mrb *.mrb)"
     << tr("Volume Sequence") + " (*.seq.nrrd *.seq.nhdr)"
-    << tr("Volume `Sequence") + " (*.nrrd *.nhdr)";
+    << tr("Volume Sequence") + " (*.nrrd *.nhdr)";
+}
+
+//----------------------------------------------------------------------------
+double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName)const
+{
+  double confidence = Superclass::canLoadFileConfidence(fileName);
+
+  // Confidence for .json file is 0.55 (5 characters in the file extension matched),
+  // for composite file extensions (.mrk.json) it would be 0.59.
+  // Therefore, confidence below 0.56 means that we got a generic file extension
+  // that we need to inspect further.
+  if (confidence > 0 && confidence < 0.56)
+    {
+    // Not a composite file extension, inspect the content
+    // Unzipping the mrb file to inspect if it looks like a sequence would be too time-consuming,
+    // therefore we only check NRRD files for now.
+    QString upperCaseFileName = fileName.toUpper();
+    if (upperCaseFileName.endsWith("NRRD") || upperCaseFileName.endsWith("NHDR"))
+      {
+      QFile file(fileName);
+      if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+        QTextStream in(&file);
+        // Markups json files contain a custom field specifying the index type as
+        // "axis 0 index type:=" or "axis 3 index type:=" around position 500,
+        // read a bit further to account for slight variations in the header.
+        QString line = in.read(800);
+        bool looksLikeSequence = line.contains("axis 0 index type:=") || line.contains("axis 3 index type:=");
+        confidence = (looksLikeSequence ? 0.6 : 0.4);
+        }
+      }
+    }
+  return confidence;
 }
 
 //-----------------------------------------------------------------------------

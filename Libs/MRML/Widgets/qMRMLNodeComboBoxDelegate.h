@@ -35,7 +35,7 @@
 /// highlight color to indicates that the item is not really selectable
 /// but correspond to an action.
 
-/// We reimplemente the code form Qt "QComboBoxDelegate" used in the class QComboBox.
+/// We reimplement the code form Qt "QComboBoxDelegate" used in the class QComboBox.
 
 class QComboBox;
 
@@ -74,4 +74,4 @@ private:
   Q_DISABLE_COPY(qMRMLNodeComboBoxDelegate);
 };
 
-#endif // __qMRMLNodeComboBoxDelegate_h
+#endif

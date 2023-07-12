@@ -62,6 +62,8 @@ public:
   /// Return a pointer to the error log widget.
   /// \sa moduleSelector(), pythonConsole()
   Q_INVOKABLE ctkErrorLogWidget* errorLogWidget()const;
+  /// Return a pointer to the dock widget that shows the Error Log.
+  Q_INVOKABLE QDockWidget* errorLogDockWidget()const;
 
 public slots:
   virtual void setHomeModuleCurrent();
@@ -104,8 +106,8 @@ public slots:
   virtual void setLayoutNumberOfCompareViewColumns(int);
 
   virtual void onPythonConsoleToggled(bool);
+  virtual void onErrorLogToggled(bool);
 
-  virtual void on_WindowErrorLogAction_triggered();
   virtual void on_WindowToolbarsResetToDefaultAction_triggered();
 
   virtual void on_EditApplicationSettingsAction_triggered();
@@ -158,6 +160,14 @@ protected slots:
 #ifdef Slicer_USE_PYTHONQT
   virtual void onPythonConsoleUserInput(const QString&);
 #endif
+
+  /// The Error Log widget was docked into a different screen region,
+  /// adjust its orientation as needed.
+  virtual void onErrorLogDockWidgetAreaChanged(Qt::DockWidgetArea);
+
+  /// User interacted with the Error Log window,
+  /// hide the new error notification.
+  void onUserViewedErrorLog();
 
 protected:
   /// Connect MainWindow action with slots defined in MainWindowCore

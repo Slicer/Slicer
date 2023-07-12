@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkslicertestlinerepresentation3d_h_
-#define __vtkslicertestlinerepresentation3d_h_
+#ifndef __vtkSlicerTestLineRepresentation3D_h
+#define __vtkSlicerTestLineRepresentation3D_h
 
 #include "vtkSlicerTemplateKeyModuleVTKWidgetsExport.h"
 
@@ -84,4 +84,4 @@ private:
   void operator=(const vtkSlicerTestLineRepresentation3D&) = delete;
 };
 
-#endif // __vtkslicertestlinerepresentation3d_h_
+#endif

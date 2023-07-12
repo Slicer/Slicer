@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
 
+if("${CMAKE_VERSION}" VERSION_EQUAL "3.21.0")
+  message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake==3.21.0 is not supported.\nSee https://gitlab.kitware.com/cmake/cmake/-/issues/22476")
+endif()
+
 if("${CMAKE_VERSION}" VERSION_GREATER_EQUAL "3.25.0" AND "${CMAKE_VERSION}" VERSION_LESS_EQUAL "3.25.2")
   message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake >=3.25.0,<=3.25.2 is not supported.\nSee https://gitlab.kitware.com/cmake/cmake/-/issues/24567")
 endif()
@@ -393,13 +397,6 @@ mark_as_superbuild(Slicer_USE_QtTesting)
 option(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" ON)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
-option(Slicer_BUILD_ITKPython "Build Python wrapping for ITK" OFF)
-mark_as_superbuild(Slicer_BUILD_ITKPython)
-CMAKE_DEPENDENT_OPTION(
-  Slicer_INSTALL_ITKPython "Install Slicer with Python wrapping for ITK" OFF
-  "Slicer_BUILD_ITKPython" OFF)
-mark_as_superbuild(Slicer_INSTALL_ITKPython)
-
 option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter serializer support" OFF)
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
@@ -540,9 +537,8 @@ endif()
 # Extension directories
 #-----------------------------------------------------------------------------
 # NOTE: Make sure to update vtkSlicerApplicationLogic::IsEmbeddedModule if
-#       the following variables are changed.
+#       the following variable is changed.
 set(Slicer_EXTENSIONS_DIRBASENAME "Extensions")
-set(Slicer_EXTENSIONS_DIRNAME "${Slicer_EXTENSIONS_DIRBASENAME}-${Slicer_REVISION}")
 
 #-----------------------------------------------------------------------------
 # Slicer OpenGL Options
@@ -1180,7 +1176,7 @@ get_property(Slicer_QM_OUTPUT_DIRS GLOBAL PROPERTY Slicer_QM_OUTPUT_DIRS)
 # --------------------------------------------------------------------------
 set(files
   vtkSlicerConfigure.h
-  vtkSlicerVersionConfigureInternal.h
+  vtkSlicerVersionConfigureMinimal.h
   )
 foreach(f ${files})
   configure_file(

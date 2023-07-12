@@ -36,7 +36,6 @@ class vtkMRMLVolumePropertyNode;
 
 // VTK includes
 class vtkColorTransferFunction;
-class vtkLookupTable;
 class vtkPiecewiseFunction;
 class vtkScalarsToColors;
 class vtkVolumeProperty;
@@ -138,7 +137,7 @@ public:
 
   /// Set volume rendering properties that seems well suited for the volume.
   /// The function uses heuristics to detect what kind of volume it is (CT, MRI, other),
-  /// based on its intensity range and choses preset accordingly.
+  /// based on its intensity range and chooses preset accordingly.
   /// Returns false is volume type could not be detected and so properties are not changed.
   bool SetRecommendedVolumeRenderingProperties(vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode);
 
@@ -217,7 +216,7 @@ public:
   /// \sa SetThresholdToVolumeProp
   void SetWindowLevelToVolumeProp(
     double scalarRange[2], double windowLevel[2],
-    vtkLookupTable* lut, vtkVolumeProperty* node);
+    vtkScalarsToColors* lut, vtkVolumeProperty* node);
 
   /// Create an opacity transfer function for gradient opacity.
   /// It ranges from 0 to scalarRange[1] - scalarRange[0].
@@ -229,7 +228,7 @@ public:
   /// transfer function from the labelmap LUT \a colors.
   /// \sa SetWindowLevelToVolumeProp, SetThresholdToVolumeProp
   void SetLabelMapToVolumeProp(
-    vtkScalarsToColors* lut, vtkVolumeProperty* node);
+    vtkScalarsToColors* colors, vtkVolumeProperty* node);
 
   /// Update DisplayNode from VolumeNode,
   /// Can pass a VolumePropertyNode and an ROI node to be the display node.

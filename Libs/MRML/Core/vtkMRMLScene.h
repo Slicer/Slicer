@@ -476,7 +476,7 @@ public:
   /// \param recursive All referenced nodes recursively if true,
   ///   only directly referenced nodes if false. Default is true.
   ///
-  /// The node itself is in first place in the collection. No doublon in the
+  /// The node itself is in first place in the collection. No duplicate in the
   /// list.
   /// For a node to be referenced by another node, the latter must call
   /// AddReferencedNodeID().
@@ -548,9 +548,9 @@ public:
   ///
   /// Returns nullptr on failure
   vtkURIHandler *FindURIHandler(const char *URI);
-  /// Returns a URIhandler of a specific type if its name is known.
+  /// Returns a URIHandler of a specific type if its name is known.
   vtkURIHandler *FindURIHandlerByName (const char *name);
-  /// Add a uri handler to the collection.
+  /// Add a URI handler to the collection.
   void AddURIHandler(vtkURIHandler *handler);
 
   /// The state of the scene reflects what the scene is doing.

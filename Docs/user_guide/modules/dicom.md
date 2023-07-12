@@ -62,7 +62,7 @@ Since DICOM files are often located in several folders, they can cross-reference
 
 :::{note}
 
-When a folder is drag-and-dropped to the Slicer application while not the DICOM module is active, Slicer displays a popup, asking what to do - click OK ("Load directory in DICOM database"). After import is completed, go to DICOM module.
+When a folder is drag-and-dropped to the Slicer application, Slicer displays a popup, asking what to do - click OK ("Load directory in DICOM database"). After import is completed, go to DICOM module.
 
 :::
 

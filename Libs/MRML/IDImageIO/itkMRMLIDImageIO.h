@@ -29,7 +29,7 @@ class vtkMRMLNode;
 namespace itk
 {
 /** \class MRMLIDImageIO
- * \brief ImageIO object for reading and writing imaegs from a MRML scene
+ * \brief ImageIO object for reading and writing images from a MRML scene
  *
  * MRMLIDImageIO is an ImageIO object that allows you to
  * retrieve/store an image in a MRML node using a standard ITK
@@ -140,4 +140,4 @@ private:
 
 
 } /// end namespace itk
-#endif /// itkMRMLIDImageIO_h
+#endif

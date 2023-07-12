@@ -230,4 +230,4 @@ protected:
   double SourceVolumeIntensityMaskRange[2];
 };
 
-#endif // __vtkMRMLSegmentEditorNode_h
+#endif

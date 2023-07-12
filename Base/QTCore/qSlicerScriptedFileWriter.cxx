@@ -45,6 +45,7 @@ public:
     DescriptionMethod = 0,
     FileTypeMethod,
     CanWriteObjectMethod,
+    CanWriteObjectConfidenceMethod,
     ExtensionsMethod,
     WriteMethod,
     };
@@ -64,6 +65,7 @@ qSlicerScriptedFileWriterPrivate::qSlicerScriptedFileWriterPrivate()
   this->PythonCppAPI.declareMethod(Self::DescriptionMethod, "description");
   this->PythonCppAPI.declareMethod(Self::FileTypeMethod, "fileType");
   this->PythonCppAPI.declareMethod(Self::CanWriteObjectMethod, "canWriteObject");
+  this->PythonCppAPI.declareMethod(Self::CanWriteObjectConfidenceMethod, "canWriteObjectConfidence");
   this->PythonCppAPI.declareMethod(Self::ExtensionsMethod, "extensions");
   this->PythonCppAPI.declareMethod(Self::WriteMethod, "write");
 }
@@ -174,14 +176,14 @@ QString qSlicerScriptedFileWriter::description()const
     {
     return QString();
     }
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'description' "
                << "is expected to return a string !";
     return QString();
     }
-  QString fileType = QString(PyString_AsString(result));
+  QString fileType = QString(PyUnicode_AsUTF8(result));
   return fileType;
 }
 
@@ -195,14 +197,14 @@ qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType()const
     {
     return IOFileType();
     }
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'fileType' "
                << "is expected to return a string !";
     return IOFileType();
     }
-  return IOFileType(PyString_AsString(result));
+  return IOFileType(PyUnicode_AsUTF8(result));
 }
 
 //-----------------------------------------------------------------------------
@@ -216,7 +218,8 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
   Py_DECREF(arguments);
   if (!result)
     {
-    return false;
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::canWriteObject(object);
     }
   if (!PyBool_Check(result))
     {
@@ -226,6 +229,30 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
     return false;
     }
   return result == Py_True;
+}
+
+//-----------------------------------------------------------------------------
+double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object)const
+{
+  Q_D(const qSlicerScriptedFileWriter);
+
+  PyObject * arguments = PyTuple_New(1);
+  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
+  PyObject * result = d->PythonCppAPI.callMethod(d->CanWriteObjectConfidenceMethod, arguments);
+  Py_DECREF(arguments);
+  if (!result)
+    {
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::canWriteObjectConfidence(object);
+    }
+  if (!PyFloat_Check(result))
+    {
+    qWarning() << d->PythonSource
+               << " - In" << d->PythonClassName << "class, function 'canWriteObjectConfidence' "
+               << "is expected to return a float!";
+    return 0.0;
+    }
+  return PyFloat_AsDouble(result);
 }
 
 //-----------------------------------------------------------------------------
@@ -253,14 +280,14 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
   Py_ssize_t size = PyTuple_Size(resultAsTuple);
   for (Py_ssize_t i = 0; i < size; ++i)
     {
-    if (!PyString_Check(PyTuple_GetItem(resultAsTuple, i)))
+    if (!PyUnicode_Check(PyTuple_GetItem(resultAsTuple, i)))
       {
       qWarning() << d->PythonSource
                  << " - In" << d->PythonClassName << "class, function 'extensions' "
                  << "is expected to return a string list !";
       break;
       }
-    extensionList << PyString_AsString(PyTuple_GetItem(resultAsTuple, i));
+    extensionList << PyUnicode_AsUTF8(PyTuple_GetItem(resultAsTuple, i));
     }
   Py_DECREF(resultAsTuple);
   return extensionList;

@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSequenceBrowserModuleWidgetsPlugin_h
-#define __qSlicerSequenceBrowserModuleWidgetsPlugin_h
+#ifndef qSlicerSequencesModuleWidgetsPlugin_h
+#define qSlicerSequencesModuleWidgetsPlugin_h
 
 // Qt includes
 #include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5

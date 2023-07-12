@@ -1473,4 +1473,4 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
   return nullptr;
 }
 
-#endif // __vtkITKTransformConverter_h
+#endif

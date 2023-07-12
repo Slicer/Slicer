@@ -25,6 +25,7 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDesktopServices>
+#include <QDockWidget>
 #include <QFile>
 #include <QFileDialog>
 #include <QKeySequence>
@@ -36,6 +37,7 @@
 #include <QShowEvent>
 #include <QSignalMapper>
 #include <QStyle>
+#include <QTableView>
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolButton>
@@ -105,22 +107,11 @@ void setThemeIcon(QAction* action, const QString& name)
 qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
   : q_ptr(&object)
 {
-#ifdef Slicer_USE_PYTHONQT
-  this->PythonConsoleDockWidget = nullptr;
-  this->PythonConsoleToggleViewAction = nullptr;
-#endif
-  this->ErrorLogWidget = nullptr;
-  this->ErrorLogToolButton = nullptr;
-  this->ModuleSelectorToolBar = nullptr;
-  this->LayoutManager = nullptr;
-  this->WindowInitialShowCompleted = false;
-  this->IsClosing = false;
 }
 
 //-----------------------------------------------------------------------------
 qSlicerMainWindowPrivate::~qSlicerMainWindowPrivate()
 {
-  delete this->ErrorLogWidget;
 }
 
 //-----------------------------------------------------------------------------
@@ -430,9 +421,36 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // Error log widget
   //----------------------------------------------------------------------------
+
   this->ErrorLogWidget = new ctkErrorLogWidget;
   this->ErrorLogWidget->setErrorLogModel(
     qSlicerApplication::application()->errorLogModel());
+
+  this->ErrorLogDockWidget = new QDockWidget(qSlicerMainWindow::tr("Error Log"));
+  this->ErrorLogDockWidget->setObjectName("ErrorLogDockWidget");
+  this->ErrorLogDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+  this->ErrorLogDockWidget->setWidget(this->ErrorLogWidget);
+  // Set default state
+  mainWindow->addDockWidget(Qt::RightDockWidgetArea, this->ErrorLogDockWidget);
+  this->ErrorLogDockWidget->hide();
+
+  this->ErrorLogToggleViewAction = this->ErrorLogDockWidget->toggleViewAction();
+  this->ErrorLogToggleViewAction->setText(qSlicerMainWindow::tr("&Error Log"));
+  this->ErrorLogToggleViewAction->setToolTip(qSlicerMainWindow::tr("Show/hide Error Log window"));
+  this->ErrorLogToggleViewAction->setShortcuts({qSlicerMainWindow::tr("Ctrl+0")});
+
+  QObject::connect(this->ErrorLogToggleViewAction, SIGNAL(toggled(bool)),
+    q, SLOT(onErrorLogToggled(bool)));
+
+  this->ViewMenu->insertAction(this->ModuleHomeAction, this->ErrorLogToggleViewAction);
+
+  // Change orientation depending on where the widget is docked
+  QObject::connect(this->ErrorLogDockWidget, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
+    q, SLOT(onErrorLogDockWidgetAreaChanged(Qt::DockWidgetArea)));
+
+  // Dismiss the error message notification if the user interacted with the error log.
+  QObject::connect(this->ErrorLogWidget, SIGNAL(userViewed()),
+    q, SLOT(onUserViewedErrorLog()));
 
   //----------------------------------------------------------------------------
   // Python console
@@ -718,7 +736,7 @@ void qSlicerMainWindowPrivate::setupStatusBar()
 {
   Q_Q(qSlicerMainWindow);
   this->ErrorLogToolButton = new QToolButton();
-  this->ErrorLogToolButton->setDefaultAction(this->WindowErrorLogAction);
+  this->ErrorLogToolButton->setDefaultAction(this->ErrorLogToggleViewAction);
   q->statusBar()->addPermanentWidget(this->ErrorLogToolButton);
 
   QObject::connect(qSlicerApplication::application()->errorLogModel(),
@@ -739,7 +757,7 @@ void qSlicerMainWindowPrivate::setErrorLogIconHighlighted(bool highlighted)
           defaultIcon.pixmap(QSize(32, 32), QIcon::Disabled, QIcon::On), QIcon::Active, QIcon::On);
     icon = disabledIcon;
     }
-  this->WindowErrorLogAction->setIcon(icon);
+  this->ErrorLogToggleViewAction->setIcon(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -862,10 +880,39 @@ void qSlicerMainWindow::onPythonConsoleUserInput(const QString& cmd)
 #endif
 
 //---------------------------------------------------------------------------
+void qSlicerMainWindow::onErrorLogDockWidgetAreaChanged(Qt::DockWidgetArea dockArea)
+{
+  Q_D(const qSlicerMainWindow);
+
+  if (dockArea == Qt::DockWidgetArea::BottomDockWidgetArea || dockArea == Qt::DockWidgetArea::TopDockWidgetArea)
+    {
+    d->ErrorLogWidget->setLayoutOrientation(Qt::Horizontal);
+    }
+  else if (dockArea == Qt::DockWidgetArea::LeftDockWidgetArea || dockArea == Qt::DockWidgetArea::RightDockWidgetArea)
+    {
+    d->ErrorLogWidget->setLayoutOrientation(Qt::Vertical);
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onUserViewedErrorLog()
+{
+  Q_D(qSlicerMainWindow);
+  d->setErrorLogIconHighlighted(false);
+}
+
+//---------------------------------------------------------------------------
 ctkErrorLogWidget* qSlicerMainWindow::errorLogWidget()const
 {
   Q_D(const qSlicerMainWindow);
   return d->ErrorLogWidget;
+}
+
+//---------------------------------------------------------------------------
+QDockWidget *qSlicerMainWindow::errorLogDockWidget() const
+{
+  Q_D(const qSlicerMainWindow);
+  return d->ErrorLogDockWidget;
 }
 
 //---------------------------------------------------------------------------
@@ -1081,13 +1128,27 @@ void qSlicerMainWindow::setLayoutNumberOfCompareViewColumns(int num)
   layoutManager->setLayoutNumberOfCompareViewColumns(num);
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerMainWindow::on_WindowErrorLogAction_triggered()
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onErrorLogToggled(bool toggled)
 {
   Q_D(qSlicerMainWindow);
-  d->ErrorLogWidget->show();
-  d->ErrorLogWidget->activateWindow();
-  d->ErrorLogWidget->raise();
+  if (toggled)
+    {
+    // Show & raise to make the error log appear if it was stacked below other docking widgets.
+    d->ErrorLogDockWidget->show();
+    d->ErrorLogDockWidget->activateWindow();
+    d->ErrorLogDockWidget->raise();
+
+    // Set focus to the message list to allow immediate interaction
+    // (e.g., make the End key to jump to last message)
+    QTableView* tableView = d->ErrorLogDockWidget->findChild<QTableView*>();
+    if (tableView)
+      {
+      tableView->setFocus();
+      }
+
+    d->setErrorLogIconHighlighted(false);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1106,7 +1167,10 @@ void qSlicerMainWindow::onPythonConsoleToggled(bool toggled)
     // Dockable Python console
     if (toggled)
       {
+      // Show & raise to make the console appear if it was stacked below other docking widgets.
+      d->PythonConsoleDockWidget->show();
       d->PythonConsoleDockWidget->activateWindow();
+      d->PythonConsoleDockWidget->raise();
       QTextEdit* textEditWidget = pythonConsole->findChild<QTextEdit*>();
       if (textEditWidget)
         {
@@ -1343,14 +1407,8 @@ void qSlicerMainWindow::setupMenuActions()
   d->ViewLayoutCompareGrid_3x3_viewersAction->setData(3);
   d->ViewLayoutCompareGrid_4x4_viewersAction->setData(4);
 
-  d->WindowErrorLogAction->setIcon(
-    this->style()->standardIcon(QStyle::SP_MessageBoxCritical));
+  d->setErrorLogIconHighlighted(false);
 
-  if (this->errorLogWidget())
-    {
-    d->setErrorLogIconHighlighted(false);
-    this->errorLogWidget()->installEventFilter(this);
-    }
 #ifdef Slicer_USE_PYTHONQT
   if (this->pythonConsole())
     {
@@ -1743,14 +1801,6 @@ void qSlicerMainWindow::restoreToolbars()
 bool qSlicerMainWindow::eventFilter(QObject* object, QEvent* event)
 {
   Q_D(qSlicerMainWindow);
-  if (object == this->errorLogWidget())
-    {
-    if (event->type() == QEvent::ActivationChange
-        && this->errorLogWidget()->isActiveWindow())
-      {
-      d->setErrorLogIconHighlighted(false);
-      }
-    }
 #ifdef Slicer_USE_PYTHONQT
   if (object == this->pythonConsole())
     {

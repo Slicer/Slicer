@@ -18,6 +18,9 @@
 
 ==============================================================================*/
 
+#ifndef qMRMLNodeObject_h
+#define qMRMLNodeObject_h
+
 #include <QObject>
 #include <vtkMRMLNode.h>
 
@@ -41,3 +44,5 @@ protected:
   bool         ProcessEvents;
   QString      Message;
 };
+
+#endif

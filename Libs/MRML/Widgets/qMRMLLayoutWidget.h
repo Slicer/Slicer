@@ -59,7 +59,7 @@ public slots:
   /// Set the MRML \a scene to the layout manager
   void setMRMLScene(vtkMRMLScene* scene);
 
-  /// Propagate to the layoutmanager
+  /// Propagate to the layoutManager
   void setLayout(int);
 
 protected:

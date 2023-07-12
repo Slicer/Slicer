@@ -111,6 +111,7 @@ public:
     vtkWeakPointer<vtkMRMLVolumeRenderingDisplayNode> DisplayNode;
     vtkSmartPointer<vtkVolume> VolumeActor;
     vtkSmartPointer<vtkMatrix4x4> IJKToWorldMatrix;
+    bool IJKToWorldLinear{ true };
     vtkSmartPointer<vtkImageLuminance> ComputeAlphaChannel;
     vtkSmartPointer<vtkImageAppendComponents> MergeAlphaChannelToRGB;
   };
@@ -166,7 +167,7 @@ public:
   // Return with true if pipelines may have changed.
   // If node==nullptr then all pipelines are updated.
   bool UpdatePipelineTransforms(vtkMRMLVolumeNode *node);
-  bool GetVolumeTransformToWorld(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToWorldMatrix);
+  bool GetVolumeTransformToWorld(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToWorldMatrix, bool& ijkToWorldLinear);
 
   // ROIs
   void UpdatePipelineROIs(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline);
@@ -696,7 +697,7 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
     this->UpdateDisplayNodePipeline(pipeline->DisplayNode, pipeline);
 
     // Calculate and apply transform matrix
-    this->GetVolumeTransformToWorld(currentVolumeNode, pipeline->IJKToWorldMatrix);
+    this->GetVolumeTransformToWorld(currentVolumeNode, pipeline->IJKToWorldMatrix, pipeline->IJKToWorldLinear);
     if (pipeline->DisplayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
       {
       const PipelineCPU* pipelineCpu = dynamic_cast<const PipelineCPU*>(pipeline);
@@ -721,11 +722,12 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
 
 //---------------------------------------------------------------------------
 bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformToWorld(
-  vtkMRMLVolumeNode* volumeNode, vtkMatrix4x4* outputIjkToWorldMatrix)
+  vtkMRMLVolumeNode* volumeNode, vtkMatrix4x4* outputIjkToWorldMatrix, bool& ijkToWorldLinear)
 {
   if (volumeNode == nullptr)
     {
     vtkErrorWithObjectMacro(this->External, "GetVolumeTransformToWorld: Invalid volume node");
+    ijkToWorldLinear = false;
     return false;
     }
 
@@ -734,6 +736,7 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformTo
   if (transformNode == nullptr)
     {
     volumeNode->GetIJKToRASMatrix(outputIjkToWorldMatrix);
+    ijkToWorldLinear = true;
     return true;
     }
 
@@ -746,14 +749,17 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformTo
   int success = transformNode->GetMatrixTransformToWorld(nodeToWorldMatrix);
   if (!success)
     {
-    vtkWarningWithObjectMacro(this->External, "GetVolumeTransformToWorld: Non-linear parent transform found for volume node " << volumeNode->GetName());
+    vtkWarningWithObjectMacro(this->External, "GetVolumeTransformToWorld: Non-linear parent transform found for volume node ("
+      << volumeNode->GetName() << "). Volume rendering will not be displayed. See https://github.com/Slicer/Slicer/issues/6648 for details.");
     outputIjkToWorldMatrix->Identity();
+    ijkToWorldLinear = false;
     return false;
     }
 
   // Transform world to RAS
   vtkMatrix4x4::Multiply4x4(nodeToWorldMatrix, ijkToRasMatrix, outputIjkToWorldMatrix);
   outputIjkToWorldMatrix->Modified(); // Needed because Multiply4x4 does not invoke Modified
+  ijkToWorldLinear = true;
 
   ijkToRasMatrix->Delete();
   nodeToWorldMatrix->Delete();
@@ -803,6 +809,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     }
 
   bool displayNodeVisible = this->IsVisible(displayNode);
+
+  if (!pipeline->IJKToWorldLinear)
+    {
+    // Currently, volumes that are under a non-linear transform cannot be displayed.
+    // See details at https://github.com/Slicer/Slicer/issues/6648
+    displayNodeVisible = false;
+    }
 
   vtkAlgorithmOutput* imageConnection = volumeNode->GetImageDataConnection();
   vtkImageData* imageData = volumeNode->GetImageData();

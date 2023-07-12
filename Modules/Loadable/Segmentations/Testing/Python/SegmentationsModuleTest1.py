@@ -91,9 +91,9 @@ class SegmentationsModuleTest1(unittest.TestCase):
         slicer.util.loadVolume(self.dataDir + '/TinyPatient_CT.nrrd')
         slicer.util.loadNodeFromFile(self.dataDir + '/TinyPatient_Structures.seg.vtm', "SegmentationFile", {})
 
-        # Change master representation to closed surface (so that conversion is possible when adding segment)
+        # Change source representation to closed surface (so that conversion is possible when adding segment)
         self.inputSegmentationNode = slicer.util.getNode('vtkMRMLSegmentationNode1')
-        self.inputSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
+        self.inputSegmentationNode.GetSegmentation().SetSourceRepresentationName(self.closedSurfaceReprName)
 
     # ------------------------------------------------------------------------------
     def TestSection_AddRemoveSegment(self):
@@ -232,7 +232,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
         # Create new segmentation with sphere segment
         self.secondSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'Second')
-        self.secondSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.binaryLabelmapReprName)
+        self.secondSegmentationNode.GetSegmentation().SetSourceRepresentationName(self.binaryLabelmapReprName)
 
         self.secondSegmentationNode.GetSegmentation().AddSegment(self.sphereSegment)
 
@@ -338,7 +338,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
         self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3, 0, 0, 0), 7545940)
         # Import model to segment
         modelImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'ModelImport')
-        modelImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
+        modelImportSegmentationNode.GetSegmentation().SetSourceRepresentationName(self.closedSurfaceReprName)
         modelSegment = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromModelNode(bodyModelNode)
         modelSegment.UnRegister(None)  # Need to release ownership
         self.assertIsNotNone(modelSegment)
@@ -346,14 +346,14 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
         # Import multi-label labelmap to segmentation
         multiLabelImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'MultiLabelImport')
-        multiLabelImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.binaryLabelmapReprName)
+        multiLabelImportSegmentationNode.GetSegmentation().SetSourceRepresentationName(self.binaryLabelmapReprName)
         result = slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode(allSegmentsLabelmapNode, multiLabelImportSegmentationNode)
         self.assertTrue(result)
         self.assertEqual(multiLabelImportSegmentationNode.GetSegmentation().GetNumberOfSegments(), 3)
 
         # Import labelmap into single segment
         singleLabelImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'SingleLabelImport')
-        singleLabelImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.binaryLabelmapReprName)
+        singleLabelImportSegmentationNode.GetSegmentation().SetSourceRepresentationName(self.binaryLabelmapReprName)
         # Should not import multi-label labelmap to segment
         nullSegment = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromLabelmapVolumeNode(allSegmentsLabelmapNode)
         self.assertIsNone(nullSegment)
@@ -412,7 +412,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
         # Import transformed model to segment in transformed segmentation
         modelTransformedImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'ModelImportTransformed')
-        modelTransformedImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
+        modelTransformedImportSegmentationNode.GetSegmentation().SetSourceRepresentationName(self.closedSurfaceReprName)
         modelTransformedImportSegmentationNode.SetAndObserveTransformNodeID(modelTransformedImportSegmentationTransformNode.GetID())
         modelSegmentTranformed = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromModelNode(bodyModelNodeTransformed, modelTransformedImportSegmentationNode)
         modelSegmentTranformed.UnRegister(None)  # Need to release ownership
@@ -468,7 +468,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
         # Import single-label labelmap to segmentation
         singleLabelImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'SingleLabelImport')
-        singleLabelImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.binaryLabelmapReprName)
+        singleLabelImportSegmentationNode.GetSegmentation().SetSourceRepresentationName(self.binaryLabelmapReprName)
 
         bodySegmentID = singleLabelImportSegmentationNode.GetSegmentation().AddEmptySegment('BodyLabelmap')
         bodySegmentIDArray = vtk.vtkStringArray()

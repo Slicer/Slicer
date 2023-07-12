@@ -33,11 +33,11 @@ class vtkUnsignedLongArray;
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
 #endif
 
-/// \brief Manages adding and deleting of obserevers with events.
+/// \brief Manages adding and deleting of observers with events.
 ///
-/// Class that manages adding and deleting of obserevers with events
-/// This class keeps track of obserevers and events added to each vtk object
-/// it caches tags returned by AddObserver method so that obserevers can be removed properly.
+/// Class that manages adding and deleting of observers with events
+/// This class keeps track of observers and events added to each vtk object
+/// it caches tags returned by AddObserver method so that observers can be removed properly.
 class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
 {
   public:

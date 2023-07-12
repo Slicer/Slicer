@@ -26,7 +26,7 @@ namespace itk
 /** \class ConstrainedValueMultiplicationImageFilter
  * \brief Implements pixel-wise the computation of constrained value addition.
  *
- * This filter is parametrized over the types of the two
+ * This filter is parameterized over the types of the two
  * input images and the type of the output image.
  *
  * Numeric conversions (castings) are done by the C++ defaults.

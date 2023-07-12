@@ -63,7 +63,7 @@
 #cmakedefine Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 #  define Slicer_EXTENSIONS_DIRBASENAME "@Slicer_EXTENSIONS_DIRBASENAME@"
-#  define Slicer_EXTENSIONS_DIRNAME "@Slicer_EXTENSIONS_DIRNAME@"
+#  define Slicer_EXTENSIONS_DIRNAME "@Slicer_EXTENSIONS_DIRNAME@" // Deprecated - Remove in Slicer 5.5
 #endif
 
 #cmakedefine Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
@@ -128,4 +128,4 @@
 #define Slicer_QM_OUTPUT_DIRS "@Slicer_QM_OUTPUT_DIRS@"
 #define Slicer_LANGUAGES "@Slicer_LANGUAGES@"
 
-#endif //__vtkSlicerConfigure_h
+#endif

@@ -28,7 +28,7 @@
 // QtCore includes
 #include "qSlicerApplicationUpdateManager.h"
 #include "vtkSlicerConfigure.h"
-#include "vtkSlicerVersionConfigure.h"
+#include "vtkSlicerVersionConfigureMinimal.h"
 
 // STD includes
 #include <iostream>

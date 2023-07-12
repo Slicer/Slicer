@@ -163,7 +163,7 @@ void qSlicerDICOMLoadable::copyFromVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadab
     {
     for (int fileIndex = 0; fileIndex < filesArray->GetNumberOfValues(); ++fileIndex)
       {
-      d->Files.append(QString(filesArray->GetValue(fileIndex)));
+      d->Files.append(QString(filesArray->GetValue(fileIndex).c_str()));
       }
     }
 
@@ -172,7 +172,7 @@ void qSlicerDICOMLoadable::copyFromVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadab
     {
     for (int fileIndex = 0; fileIndex < referencedInstanceUIDsArray->GetNumberOfValues(); ++fileIndex)
       {
-      d->ReferencedInstanceUIDs.append(QString(referencedInstanceUIDsArray->GetValue(fileIndex)));
+      d->ReferencedInstanceUIDs.append(QString(referencedInstanceUIDsArray->GetValue(fileIndex).c_str()));
       }
     }
 }

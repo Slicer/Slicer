@@ -12,8 +12,8 @@
 
  =========================================================================auto=*/
 
-#ifndef VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_
-#define VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_
+#ifndef vtkMRMLAnnotationDisplayableManagerHelper_h
+#define vtkMRMLAnnotationDisplayableManagerHelper_h
 
 // Annotations includes
 #include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"
@@ -158,4 +158,4 @@ private:
   typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleWidgetListIt;
 };
 
-#endif /* VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_ */
+#endif

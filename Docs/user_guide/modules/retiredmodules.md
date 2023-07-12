@@ -8,6 +8,10 @@ A module may also be retired if it no longer works properly (for example due to 
 - **Annotations**
   - Retired: 2023-01-02, [commit f44849b](https://github.com/Slicer/Slicer/commit/f44849b014ecf9a245901239db64037556110970)
   - Reason: Superseded by the [Markups](markups.md) module.
+- **ACPC Transform**
+  - Retired: 2023-06-07, [commit TBD](https://github.com/Slicer/Slicer/commit/TBD)
+  - Reason: This was not a general-purpose module, but one highly specific to neuroimaging. Therefore it was moved to [SlicerNeuro extension](https://github.com/Slicer/SlicerNeuro).
+
 - **Editor**
   - Retired: 2021-11-05, [commit 39283db](https://github.com/Slicer/Slicer/commit/39283db420baf502fa99865c9d5d58d0e5295a6e)
   - Reason: [No longer running properly](https://github.com/Slicer/Slicer/issues/5962) and superseded by the [Segment Editor](segmenteditor.md) module.

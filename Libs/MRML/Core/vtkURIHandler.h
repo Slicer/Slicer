@@ -90,7 +90,7 @@ public:
   void operator=(const vtkURIHandler&);
 
   ///
-  /// local file, it gets passed to C functions in libcurl
+  /// local file, it gets passed to C functions in the CURL library
   //std::ofstream* LocalFile;
   FILE *LocalFile;
   char *Prefix;

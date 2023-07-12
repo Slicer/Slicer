@@ -50,7 +50,7 @@ public:
   qMRMLSettingsUnitWidget(QWidget *parent=nullptr);
   ~qMRMLSettingsUnitWidget() override;
 
-  /// Set the units logic scene for the preset comboxes
+  /// Set the units logic scene for the preset comboboxes
   virtual void setUnitsLogic(vtkSlicerUnitsLogic* logic);
 
   qMRMLNodeComboBox* unitComboBox();

@@ -62,6 +62,11 @@ public:
   /// Compute the center from a bounds
   static void GetCenterFromBounds(double bounds[6], double center[3]);
 
+  /// Rotate slice along an axis (0 = horizontal, 1 = vertical, 2 = slice normal)
+  /// Flip: axisIndex = 0 (vertical) or 1 (horizontal), rotationAngleDeg = 180.
+  /// In-plane rotation: axisIndex = 2, rotationAngleDeg > 0 for clockwise.
+  static void RotateSlice(vtkMRMLSliceNode* node, int axisIndex, double rotationAngleDeg);
+
 protected:
   vtkSlicerReformatLogic();
   ~vtkSlicerReformatLogic() override;

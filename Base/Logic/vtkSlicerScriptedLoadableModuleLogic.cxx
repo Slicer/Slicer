@@ -145,7 +145,7 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 
 //  PyObject * arguments = PyTuple_New(3);
 //  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
-//  PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(event));
+//  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(event));
 //  PyTuple_SET_ITEM(arguments, 2,
 //                   vtkPythonUtil::GetObjectFromPointer(reinterpret_cast<vtkMRMLNode*>(callData)));
 
@@ -167,7 +167,7 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 
 //  PyObject * arguments = PyTuple_New(3);
 //  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
-//  PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(event));
+//  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(event));
 //  PyTuple_SET_ITEM(arguments, 2,
 //                   vtkPythonUtil::GetObjectFromPointer(reinterpret_cast<vtkMRMLNode*>(callData)));
 

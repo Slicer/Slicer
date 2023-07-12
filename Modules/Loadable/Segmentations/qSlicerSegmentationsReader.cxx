@@ -24,6 +24,7 @@
 
 // Qt includes
 #include <QFileInfo>
+#include <QTextStream>
 
 // Logic includes
 #include "vtkSlicerSegmentationsModuleLogic.h"
@@ -106,6 +107,36 @@ qSlicerIOOptions* qSlicerSegmentationsReader::options()const
   return options;
 }
 
+//----------------------------------------------------------------------------
+double qSlicerSegmentationsReader::canLoadFileConfidence(const QString& fileName)const
+{
+  double confidence = Superclass::canLoadFileConfidence(fileName);
+
+  // Confidence for .nrrd file is 0.55 (5 characters in the file extension matched),
+  // .vtm is 0.54; for composite file extensions (.seg.nrrd, .seg.vtm) it would be >0.58.
+  // Therefore, confidence below 0.56 means that we got a generic file extension
+  // that we need to inspect further.
+  if (confidence > 0 && confidence < 0.56)
+    {
+    // Not a composite file extension, inspect the content (for now, only nrrd).
+    QString upperCaseFileName = fileName.toUpper();
+    if (upperCaseFileName.endsWith("NRRD") || upperCaseFileName.endsWith("NHDR"))
+      {
+      QFile file(fileName);
+      if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+        QTextStream in(&file);
+        // Segmentation NRRD files contain ID for each segment (such as Segment0_ID:=...)
+        // around position 500, read a bit further to account for slight variations in the header.
+        QString line = in.read(800);
+        // If this appears in the file header then declare higher confidence value.
+        confidence = (line.contains("Segment0_ID:=") ? 0.6 : 0.4);
+        }
+      }
+    }
+  return confidence;
+}
+
 //-----------------------------------------------------------------------------
 bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 {
@@ -166,7 +197,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 
     vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
       this->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode", this->mrmlScene()->GetUniqueNameByString(name.toUtf8())));
-    segmentationNode->SetMasterRepresentationToClosedSurface();
+    segmentationNode->SetSourceRepresentationToClosedSurface();
     segmentationNode->CreateDefaultDisplayNodes();
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
     if (displayNode)

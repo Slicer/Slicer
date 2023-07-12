@@ -423,7 +423,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
   // Use here the NRRD Writer
   vtkNew<vtkTeemNRRDWriter> writer;
-  // ForceRangeAxis needs to be emabled for the writer to correctly write image sequences that contain only a single frame.
+  // ForceRangeAxis needs to be enabled for the writer to correctly write image sequences that contain only a single frame.
   // Without this option the range axis would be omitted for single frame sequences, causing the first axis to be a spatial dimension, rather than range.
   // This would cause an error when attempting to set units on the first axis.
   writer->SetForceRangeAxis(true);
@@ -521,8 +521,8 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       currentFrameVolumeScalarType = frameVolume->GetImageData()->GetScalarType();
       }
     if (currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
-    || currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
-    || currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
+    || currentFrameVolumeDimensions[1] != frameVolumeDimensions[1]
+    || currentFrameVolumeDimensions[2] != frameVolumeDimensions[2]
     || currentFrameVolumeScalarType != frameVolumeScalarType)
       {
       vtkDebugMacro(<< "vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: Data node "<<frameIndex<<" size or scalar type mismatch ("

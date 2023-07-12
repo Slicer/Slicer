@@ -63,22 +63,22 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 
   ///
   /// Before a file or directory is deleted,
-  /// Marks any nodes that hold the uri as
+  /// Marks any nodes that hold the URI as
   /// a reference as modified since read.
   void MarkNodesBeforeDeletingDataFromCache (const char *);
 
   ///
-  /// Checks to see if a uri appears to point to remote location
+  /// Checks to see if a URI appears to point to remote location
   /// and returns true if so. Looks for a '://' and if present,
   /// checks to see if the prefix is 'file'. If not 'file' but the
   /// thing:/// pattern exists, then returns true.
   virtual int IsRemoteReference ( const char *uri );
   ///
-  /// Looks for a 'file://' in the uri and if present, returns true.
+  /// Looks for a 'file://' in the URI and if present, returns true.
   virtual int IsLocalReference ( const char *uri );
 
   ///
-  /// Checks to see if a uri is a file on disk and returns
+  /// Checks to see if a URI is a file on disk and returns
   /// true if so. Strips off a file:/// prefix if present, and
   /// expects an absolute path.
   virtual int LocalFileExists ( const char *uri );
@@ -90,7 +90,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   const char* FindCachedFile ( const char * target, const char *dirname );
 
   ///
-  /// Checks to see if the The uri provided exists on disk.
+  /// Checks to see if the The URI provided exists on disk.
   /// If not, it appends the Remote Cache Directory path
   /// and checks again, in case no path was provided.
   /// If neither exists, returns 0. If one exists, returns 1.

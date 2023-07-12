@@ -98,7 +98,7 @@ public:
   int CanReadFile(const char* filename) override;
 
   ///
-  /// Valid extentsions
+  /// Valid extensions
   const char* GetFileExtensions() override
     {
       return ".nhdr .nrrd";

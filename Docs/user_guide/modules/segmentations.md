@@ -31,7 +31,7 @@ Segmentation can be edited using [Segment Editor](segmenteditor.md) module.
 
 To avoid the need to always manually select `Segmentation`, save the `.nrrd` file using the `.seg.nrrd` file extension. It makes Slicer load the image as a segmentation by default.
 
-::: 
+:::
 
 Other image file formats can be loaded as labelmap volume and then converted to segmentation:
 - Drag-and-drop the volume file to the application window (or use menu: `File` / `Add Data`, then select the file)
@@ -45,7 +45,7 @@ Other image file formats can be loaded as labelmap volume and then converted to 
 
 To show the segmentation in 3D, go to `Segmentations` module and click `Show 3D`. Alternatively, go to `Data` module and drag-and-drop the segmentation into each view where you want to see them - if the segmentation is dragged into a 3D view then it will be shown there in 3D.
 
-::: 
+:::
 
 ### Import an existing segmentation from model (surface mesh) file
 
@@ -78,7 +78,7 @@ If no volume is available then it can be created by the following steps:
 - For `Source geometry` choose the segmentation (this specifies the extents, i.e., the bounding box so that the complete object is included)
 - Adjust `Spacing` values as needed. It is recommended to set the same value for all three axes. Using smaller values preserve more details but at the cost of increased memory usage and computation time.
 - Click `OK`
-- When an editing operation is started then the Segment Editor will ask if the master representation should be changed to binary labelmap. Answer `Yes`, because binary labelmap representation is required for editing.
+- When an editing operation is started then the Segment Editor will ask if the source representation should be changed to binary labelmap. Answer `Yes`, because binary labelmap representation is required for editing.
 
 :::{note}
 
@@ -111,7 +111,7 @@ For advanced export options, `Segmentations` module's `Export/import models and 
 
 ### Export segmentation to labelmap volume file
 
-If master representation of a a segmentation node is binary labelmap then the segmentation will be saved in standard NRRD file format. This is the recommended way of saving segmentation volumes, as it saves additional metadata (segment names, colors, DICOM terminology) in the image file in custom fields and allows saving of overlapping segments.
+If source representation of a a segmentation node is binary labelmap then the segmentation will be saved in standard NRRD file format. This is the recommended way of saving segmentation volumes, as it saves additional metadata (segment names, colors, DICOM terminology) in the image file in custom fields and allows saving of overlapping segments.
 
 For exporting segmentation as NRRD or NIFTI file for external software that uses 3D labelmap volume file + color table file for segmentation storage:
 
@@ -128,10 +128,10 @@ Using a reference volume for labelmap export may result in the segmentation bein
 
 ### Create new representation in segmentation (conversion)
 
-The supported representations are listed in the Representations section. Existing representations are marked with a green tick, the master representation is marked with a gold star. The master representation is the editable (for example, in Segment Editor module) and it is the source of all conversions.
+The supported representations are listed in the Representations section. Existing representations are marked with a green tick, the source representation is marked with a gold star. The source representation is the editable (for example, in Segment Editor module) and it is the source of all conversions.
 
 - To create a representation, click on the Create button in the corresponding row. To specify a custom conversion path or parameters (reference geometry for labelmaps, smoothing for surfaces, etc.), click the down-arrow button in the "Create" button and choose "Advanced create...", then choose a conversion path from the list at the top, and adjust the conversion parameters in the section at the bottom.
-- To update a representation (re-create from the master representation) using custom conversion path or parameters, click the "Update" button in the corresponding row.
+- To update a representation (re-create from the source representation) using custom conversion path or parameters, click the "Update" button in the corresponding row.
 - To remove a representation, click the down-arrow button in the "Update" button then choose "Remove".
 
 ### Adjust how segments are displayed
@@ -144,7 +144,7 @@ The supported representations are listed in the Representations section. Existin
 See Script repository's [Segmentations section](../../developer_guide/script_repository.md#segmentations) for examples.
 
 ### DICOM export
-- The master representation is used when exporting into DICOM, therefore you need to select a source volume, create binary labelmap representation and set it as master
+- The source representation is used when exporting into DICOM, therefore you need to select a source volume, create binary labelmap representation and set it as master
 - DICOM Segmentation Object export if `QuantitativeReporting` extension is installed
 - Legacy DICOM RT structure set export is available if `SlicerRT` extension is installed. RT structure sets are not recommended for storing segmentations, as they cannot store arbitrarily complex 3D shapes.
 - Follow [these instructions](dicom.md#export-data-from-the-scene-to-dicom-database) for exporting data in DICOM format.
@@ -162,10 +162,10 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
     - Representation in 3D/2D views: The representation to be shown in the 3D and 2D views. Useful if there are multiple representations available, for example if we want to show the closed surface in the 3D view but the labelmap in the slice views
 - Representations
     - List of supported representations and related operations
-    - The already existing representations have a green tick, the master representation (that is the source of all conversions and the representation that can be edited) a gold star
+    - The already existing representations have a green tick, the source representation (that is the source of all conversions and the representation that can be edited) a gold star
     - The buttons in each row can be used to create, remove, update a representation
         - Advanced conversion is possible (to use the non-default path or conversion parameters) by long-pressing the Create or Update button
-        - Existing representations can be made master by clicking Make master. The master representation is used as source for conversions, it is the one that can be edited, and saved to disk
+        - Existing representations can be made master by clicking Make source. The source representation is used as source for conversions, it is the one that can be edited, and saved to disk
 - Copy/move (import/export)
     - Left panel lists the segments in the active segmentation
     - Right panel shows the external data container

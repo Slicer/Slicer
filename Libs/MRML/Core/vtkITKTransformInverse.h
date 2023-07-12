@@ -15,7 +15,7 @@
 
 /// \brief Simplified inverse ITK transforms
 ///
-/// These are simple implementatations of ITK inverse transforms that
+/// These are simple implementations of ITK inverse transforms that
 /// cannot actually compute any transformations, but only store all transform
 /// parameters. This is used for reading/writing transformToParent
 /// (resampling transform), even if only if its inverse (transformFromParent)
@@ -320,4 +320,4 @@ typedef itk::InverseDisplacementFieldTransform< double, 3 > InverseDisplacementF
 typedef itk::InverseThinPlateSplineKernelTransform< float, 3 > InverseThinPlateSplineTransformFloatType;
 typedef itk::InverseThinPlateSplineKernelTransform< double, 3 > InverseThinPlateSplineTransformDoubleType;
 
-#endif // __vtkITKTransformInverse_h
+#endif

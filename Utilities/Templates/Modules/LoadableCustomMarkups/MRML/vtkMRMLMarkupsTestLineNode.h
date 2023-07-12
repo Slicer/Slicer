@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkmrmlmarkupstestlinenode_h_
-#define __vtkmrmlmarkupstestlinenode_h_
+#ifndef __vtkMRMLMarkupsTestLineNode_h
+#define __vtkMRMLMarkupsTestLineNode_h
 
 #include <vtkMRMLMarkupsLineNode.h>
 
@@ -71,4 +71,4 @@ private:
   vtkPolyData *TargetOrgan = nullptr;
 };
 
-#endif //vtkmrmlmarkupstestlinenode_h_
+#endif

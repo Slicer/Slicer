@@ -19,6 +19,9 @@
    <property name="allowedAreas">
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
+   <property name="windowTitle">
+    <string>Module Panel</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
@@ -210,7 +213,7 @@
      <x>0</x>
      <y>0</y>
      <width>835</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="FileMenu">
@@ -305,8 +308,6 @@
     <addaction name="separator"/>
     <addaction name="ViewExtensionsManagerAction"/>
     <addaction name="ModuleHomeAction"/>
-    <addaction name="separator"/>
-    <addaction name="WindowErrorLogAction"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="HelpMenu">
@@ -534,8 +535,8 @@
   </action>
   <action name="EditApplicationSettingsAction">
    <property name="icon">
-    <iconset resource="../../../../Modules/Loadable/SlicerWelcome/Resources/UI/qSlicerWelcomeModule.qrc">
-    <normaloff>:/Images/SlicerAdvancedGear-Original.png</normaloff>:/Images/SlicerAdvancedGear-Original.png</iconset>
+    <iconset>
+     <normaloff>:/Images/SlicerAdvancedGear-Original.png</normaloff>:/Images/SlicerAdvancedGear-Original.png</iconset>
    </property>
    <property name="text">
     <string>Application Settings</string>
@@ -607,17 +608,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+6</string>
-   </property>
-  </action>
-  <action name="WindowErrorLogAction">
-   <property name="text">
-    <string>&amp;Error Log</string>
-   </property>
-   <property name="toolTip">
-    <string>Raise the error log display.</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+0</string>
    </property>
   </action>
   <action name="FeedbackReportUsabilityIssueAction">

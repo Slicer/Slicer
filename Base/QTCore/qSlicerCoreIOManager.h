@@ -55,19 +55,28 @@ public:
   qSlicerCoreIOManager(QObject* parent = nullptr);
   ~qSlicerCoreIOManager() override;
 
-  /// Return the file type associated with a \a file
+  /// Return the most likely file type (SegmentationFile, TextFile, ...) for reading a \a file
   Q_INVOKABLE qSlicerIO::IOFileType fileType(const QString& file)const;
+  /// Return all supported file types for reading a \a file
   Q_INVOKABLE QList<qSlicerIO::IOFileType> fileTypes(const QString& file)const;
+
+  /// Return the most likely file description (SegmentationFile, TextFile, ...) for reading a \a file
   Q_INVOKABLE qSlicerIO::IOFileType fileTypeFromDescription(const QString& fileDescription)const;
 
-  /// Return the file description associated with a \a file
+  /// Return the file description ("Volume", "Transform", etc.) associated with a \a file
   /// Usually the description is a short text of one or two words
   /// e.g. Volume, Model, ...
   Q_INVOKABLE QStringList fileDescriptions(const QString& file)const;
+
+  /// Returns descriptions for a file type available across all readers.
+  /// Usually there is only one reader for a file type.
   QStringList fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const;
 
-  /// Return the file type associated with an VTK \a object.
-  Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object, const QString& format=QString())const;
+  /// Return best file writer for this object
+  qSlicerFileWriter* writer(vtkObject* object, const QString& extension = QString())const;
+
+  /// Return the file type of the best file writer for the input VTK \a object.
+  Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object, const QString& extension=QString())const;
 
   Q_INVOKABLE QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
   Q_INVOKABLE QStringList fileWriterExtensions(vtkObject* object)const;
@@ -78,8 +87,10 @@ public:
   /// registered types of storage nodes. Includes the leading dot.
   Q_INVOKABLE QStringList allReadableFileExtensions()const;
 
-  /// Return the file option associated with a \a file type
+  /// Return the file read options for the best reader associated with a \a file type
   qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
+
+  /// Return the file write options of the best file writer for the input VTK \a object.
   qSlicerIOOptions* fileWriterOptions(vtkObject* object, const QString& extension)const;
 
   /// Returns a full extension for this storable node that is recognised by Slicer IO.
@@ -112,7 +123,7 @@ public:
 
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.
-  /// A map of qvariant allows to specify which \a parameters should be passed to the reader.
+  /// A map of QVariant allows to specify which \a parameters should be passed to the reader.
   /// The function return 0 if it fails.
   /// The map associated with most of the \a fileType should contains either
   /// fileName (QString or QStringList) or fileNames (QStringList).

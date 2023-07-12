@@ -210,7 +210,7 @@ void vtkMRMLMarkupsROINode::ApplyTransform(vtkAbstractTransform* transform)
   this->GetZAxis(zAxis_Node_New);
   this->GetCenter(center_Node_New);
 
-  // Update size by calculating diffference in scaling between transformed/untransformed axes
+  // Update size by calculating difference in scaling between transformed/untransformed axes
   vtkAbstractTransform* transformInverse = transform->GetInverse();
   this->Size[0] /= vtkMath::Norm(transformInverse->TransformVectorAtPoint(center_Node_New, xAxis_Node_New));
   this->Size[1] /= vtkMath::Norm(transformInverse->TransformVectorAtPoint(center_Node_New, yAxis_Node_New));

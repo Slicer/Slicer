@@ -20,6 +20,7 @@
 
 // Texts widgets includes
 #include "qMRMLTextWidget.h"
+#include "ui_qMRMLTextWidget.h"
 
 // MRML includes
 #include <vtkMRMLTextNode.h>

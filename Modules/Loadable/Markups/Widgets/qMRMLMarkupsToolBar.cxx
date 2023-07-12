@@ -19,14 +19,16 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QToolButton>
-#include <QMenu>
 #include <QCheckBox>
+#include <QDebug>
+#include <QKeySequence>
+#include <QLayout>
+#include <QMenu>
+#include <QPushButton>
+#include <QShortcut>
 #include <QSignalMapper>
 #include <QSplitter>
-#include <QShortcut>
-#include <QKeySequence>
+#include <QToolButton>
 
 // Slicer includes
 #include "qSlicerCoreApplication.h"

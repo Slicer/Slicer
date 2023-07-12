@@ -95,7 +95,7 @@ endif()
 if(DEFINED Slicer_SKIP_SlicerBlockSetCMakeOSXVariables)
   message(AUTHOR_WARNING
     "Setting Slicer_SKIP_SlicerBlockSetCMakeOSXVariables is not required anymore."
-    "Calling 'find_package(Slicer)' does NOT implies the inclusion of "
+    "Calling 'find_package(Slicer)' does NOT imply the inclusion of "
     "'SlicerBlockSetCMakeOSXVariables'."
     "For convenience, if the developer would like to have the CMAKE_OSX_* variable "
     "automatically set, component 'ConfigurePrerequisites' should be used."
@@ -301,7 +301,7 @@ endif()
 #-----------------------------------------------------------------------------
 set(Slicer_BUNDLE_EXTENSIONS_LOCATION "")
 if(APPLE)
-  set(Slicer_BUNDLE_EXTENSIONS_LOCATION "${Slicer_EXTENSIONS_DIRNAME}/${EXTENSION_NAME}/")
+  set(Slicer_BUNDLE_EXTENSIONS_LOCATION "${Slicer_EXTENSIONS_DIRBASENAME}-${Slicer_REVISION}/${EXTENSION_NAME}/")
   set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE) # XXX Probably not needed anymore
   set(CMAKE_MACOSX_RPATH 0 CACHE BOOL "" FORCE)
   mark_as_superbuild(VARS CMAKE_MACOSX_RPATH:BOOL ALL_PROJECTS)

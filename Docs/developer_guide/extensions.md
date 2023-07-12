@@ -8,7 +8,7 @@ If you have developed a script or module that you would like to share with other
 
 - Scan through the [user](../user_guide/extensions_manager.md) and [developer](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ/Extensions) extension FAQs
 - Inform a community about your plans on the [Slicer forum](https://discourse.slicer.org) to get information about potential parallel efforts (other developers may already work on a similar idea and you could join or build on each other's work), past efforts (related tools might have been available in earlier Slicer versions or in other software that you may reuse), and get early feedback from prospective users. You may also seek advice on the name of your extension and how to organize features into modules. All these can save you a lot of time in the long term.
-- If you have not done already, use the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) module in Slicer to create an extension that will contain your module(s).
+- If you have not done already, use the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard) module in Slicer to create an extension that will contain your module(s).
 - If developing [C++ loadable or CLI modules](module_overview.md) (not needed if developing in Python):
   - [build Slicer application](build_instructions/index.md).
   - [build your extension](#build-an-extension)
@@ -25,6 +25,21 @@ If developing modules in Python only, then it is not necessary to build the exte
 Similarly to the building of Slicer core, multi-configuration builds are not supported: one build tree can be only used for one build mode (Release or Debug or RelWithDebInfo or MinSizeRel). If a release and debug mode build are needed then the same source code folder can be used (e.g., `C:\D\SlicerHeart`) but a separate binary folder must be created for each build mode (e.g., `C:\D\SlicerHeart-R` and `C:\D\SlicerHeart-D` for release and debug modes).
 
 Assuming that the source code of your extension is located in folder `MyExtension`, an extension can be built by the following steps.
+
+:::{tip}
+For testing purpose, it is possible to force the Slicer revision associated with the extension build by setting the `Slicer_REVISION`
+environment variable before configuring the project::
+
+  $ cd MyExtension-debug
+  $ export Slicer_REVISION=31806
+  $ cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DSlicer_DIR:PATH=/path/to/Slicer-SuperBuild-Debug/Slicer-build ../MyExtension
+  [...]
+  -- SlicerConfig: Forcing Slicer_REVISION to '31806'
+  [...]
+  -- Configuring done
+  -- Generating done
+  -- Build files have been written to: /path/to/MyExtension-debug
+:::
 
 ### Linux and macOS
 
@@ -67,7 +82,7 @@ Run `CMake (cmake-gui)` from the Windows Start menu.
 - Select generator (just accept the default if you only have one compiler toolset installed)
 - Choose to create build directory if asked
 - The configuration is expected to display an error message due to `Slicer_DIR` variable not specified yet.
-- Specify `Slicer_DIR` by replacing `Slicer_DIR-NOTFOUND` by the Slicer inner-build folder (for example `c:/D/S4D/Slicer-build`).
+- Specify `Slicer_DIR` by replacing `Slicer_DIR-NOTFOUND` by the Slicer inner-build folder (for example `c:/D/SD/Slicer-build`).
 - Click `Configure`. No errors should be displayed.
 - Click `Generate` button.
 - Click `Open project` button to open `MyExtension.sln` in Visual Studio.
@@ -117,7 +132,7 @@ Replace `Release` with the build mode of your extension build (`Debug`, `Release
 
 ##### To debug a test
 
-- Launch Visual Studio from the Command Line Prompt: `C:\D\S4D\Slicer-build\Slicer.exe --VisualStudio --launcher-no-splash --launcher-additional-settings C:\path\to\MyExtension-debug\AdditionalLauncherSettings.ini C:\path\to\MyExtension-debug\MyExtension.sln`
+- Launch Visual Studio from the Command Line Prompt: `C:\D\SD\Slicer-build\Slicer.exe --VisualStudio --launcher-no-splash --launcher-additional-settings C:\path\to\MyExtension-debug\AdditionalLauncherSettings.ini C:\path\to\MyExtension-debug\MyExtension.sln`
 - Find the project of the test you want to debug (e.g., `qSlicerMODULE_NAMEModuleGenericCxxTests`).
 - Go to the project debugging properties (right-click -> Properties, then Configuration Properties / Debugging).
 - In `Command Arguments`, type the name of the test you want to run (e.g., `qSlicerMODULE_NAMEModuleGenericTest`).
@@ -347,8 +362,8 @@ The following folders will be used in the examples below:
 
 | Folder                                                                               | Linux/macOS                                      | Windows  |
 |--------------------------------------------------------------------------------------|--------------------------------------------------|----------|
-| Slicer source code tree (checked out from https://github.com/Slicer/Slicer.git)      | `~/Slicer`                                       | `C:\D\S4`               |
-| Slicer build tree (built by following Slicer build instructions)                     |  `~/Slicer-SuperBuild-Release`                   | `C:\D\S4R`              |
+| Slicer source code tree (checked out from https://github.com/Slicer/Slicer.git)      | `~/Slicer`                                       | `C:\D\S`               |
+| Slicer build tree (built by following Slicer build instructions)                     |  `~/Slicer-SuperBuild-Release`                   | `C:\D\SR`              |
 | List of extension description files (for example checked out from https://github.com/Slicer/ExtensionsIndex.git) |  `~/ExtensionsIndex` | `C:\D\ExtensionsIndex`  |
 | Folder to store built extensions (new empty folder)                                  |  `~/ExtensionsIndex-Release`                     | `C:\D\ExtensionsIndexR` |
 
@@ -372,10 +387,10 @@ Windows:
 ```
 cd /d C:\D\ExtensionsIndexR
 
-"c:\Program Files\CMake\bin\cmake.exe" -DSlicer_DIR:PATH=C:/D/S4R/Slicer-build ^
+"c:\Program Files\CMake\bin\cmake.exe" -DSlicer_DIR:PATH=C:/D/SR/Slicer-build ^
  -DSlicer_EXTENSION_DESCRIPTION_DIR:PATH=C:/D/ExtensionsIndex ^
  -DCMAKE_BUILD_TYPE:STRING=Release ^
- C:/D/S4/Extensions/CMake
+ C:/D/S/Extensions/CMake
 
 "c:\Program Files\CMake\bin\cmake.exe" --build . --config Release
 ```
@@ -417,7 +432,7 @@ cd /d C:\D\ExtensionsIndexR
  -DCMAKE_BUILD_TYPE:STRING=Release ^
  -DCTEST_MODEL:STRING=Experimental ^
  -DSlicer_UPLOAD_EXTENSIONS:BOOL=ON ^
- C:/D/S4/Extensions/CMake
+ C:/D/S/Extensions/CMake
 
 make
 ```
@@ -444,7 +459,7 @@ We suggest to use the `Slicer` prefix in the extension name, too, when the exten
 
 The module and extension templates are available in the Slicer source tree: <https://github.com/Slicer/Slicer/tree/main/Utilities/Templates/>
 
-Using the [Extension Wizard](user_guide/modules/extensionwizard.md#extension-wizard) module, developers can easily create a new extension without having to copy, rename and update manually every files.
+Using the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard) module, developers can easily create a new extension without having to copy, rename and update manually every files.
 
 ### How are Superbuild extension packaged?
 

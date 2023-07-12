@@ -81,7 +81,7 @@ public:
   /// to the nearest integer) is the pane in the LightBox
   Q_INVOKABLE QList<double> convertDeviceToXYZ(const QList<int>&xy)const;
 
-  /// Convert RAS to XYZ coordinates. parameters ras and return value
+  /// Convert RAS to XYZ coordinates. Parameter ras and return value
   /// are of length 3. Z component of the return value is the pane in
   /// the LightBox.
   Q_INVOKABLE QList<double> convertRASToXYZ(const QList<double>& ras)const;

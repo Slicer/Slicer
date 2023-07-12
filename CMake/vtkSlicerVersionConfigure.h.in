@@ -14,19 +14,18 @@
 #define __vtkSlicerVersionConfigure_h
 
 /// \file vtkSlicerVersionConfigure.h
-
-#include "vtkSlicerVersionConfigureInternal.h"
-
-/// \def Slicer_RELEASE_TYPE
-/// \brief Type of Slicer release: `Experimental`, `Nightly` or `Stable`.
-#define Slicer_RELEASE_TYPE "@Slicer_RELEASE_TYPE@"
-
-//-----------------------------------------------------------------------------
-/// \def Slicer_VERSION
-/// \brief Slicer version string.
+/// \brief Defines macros identifying the version and revision of this project.
 ///
-/// Format is `<Slicer_VERSION_MAJOR>.<Slicer_VERSION_MINOR>`.
-#define Slicer_VERSION "@Slicer_VERSION@"
+/// The macros defined in this file are specific to the current revision of the source code,
+/// and they augment the version details provided by vtkSlicerVersionConfigureMinimal.h.
+/// Note that this header internally includes `vtkSlicerVersionConfigureMinimal.h`.
+///
+/// Since this header file is regenerated each time the current revision (i.e., Git commit)
+/// of the source code changes, it should be included carefully. to maintain incremental build
+/// speed. Consider including `vtkSlicerVersionConfigureMinimal.h` before including this header.
+///
+
+#include "vtkSlicerVersionConfigureMinimal.h"
 
 /// \def Slicer_VERSION_FULL
 /// \brief Slicer long version string.
@@ -67,13 +66,6 @@
 /// \sa Slicer_REVISION
 #define Slicer_COMMIT_COUNT "@Slicer_COMMIT_COUNT@"
 
-//-----------------------------------------------------------------------------
-/// \def Slicer_MAIN_PROJECT_VERSION
-/// \brief Slicer main project version string.
-///
-/// Format is `<Slicer_MAIN_PROJECT_VERSION_MAJOR>.<Slicer_MAIN_PROJECT_VERSION_MINOR>`.
-#define Slicer_MAIN_PROJECT_VERSION "@Slicer_MAIN_PROJECT_VERSION@"
-
 /// \def Slicer_MAIN_PROJECT_VERSION_FULL
 /// \brief Slicer main project long version string.
 ///
@@ -113,4 +105,4 @@
 /// \sa Slicer_MAIN_PROJECT_REVISION
 #define Slicer_MAIN_PROJECT_COMMIT_COUNT "@Slicer_MAIN_PROJECT_COMMIT_COUNT@"
 
-#endif // __vtkSlicerVersionConfigure_h
+#endif

@@ -32,7 +32,7 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
    const char* fileformat);
 
   ///
-  /// Get the itkimageio supported file formats.
+  /// Get the itkImageIO supported file formats.
   //vtkGetObjectMacro ( ITKSupportedWriteFileFormats, vtkStringArray);
   virtual vtkStringArray* GetITKSupportedWriteFileFormats();
   virtual vtkStringArray* GetITKSupportedReadFileFormats()

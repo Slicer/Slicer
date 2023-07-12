@@ -91,10 +91,10 @@ public:
   vtkGetMacro(IndexType, int);
   virtual std::string GetIndexTypeAsString();
 
-  /// Get tolerance value for comparing numerix index values. If index values differ by less than the tolerance
+  /// Get tolerance value for comparing numeric index values. If index values differ by less than the tolerance
   /// then the index values considered to be equal.
   vtkGetMacro(NumericIndexValueTolerance, double);
-  /// Set tolerance value for comparing numerix index values.
+  /// Set tolerance value for comparing numeric index values.
   void SetNumericIndexValueTolerance(double tolerance);
 
   /// Helper functions for converting between string and code representation of the index type
@@ -152,7 +152,7 @@ public:
   /// requests a more specific storage node class.
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
-  /// Returns the most specific storage node possible (such as stvtkMRMLVolumeSequenceStorageNode
+  /// Returns the most specific storage node possible (such as vtkMRMLVolumeSequenceStorageNode
   /// if sequence contains volumes with the same type and geometry, or vtkMRMLLinearTransformSequenceStorageNode
   /// if sequence contains a list of linear transforms) and generic vtkMRMLSequenceStorageNode otherwise.
   std::string GetDefaultStorageNodeClassName(const char* filename = nullptr) override;

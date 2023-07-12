@@ -58,6 +58,22 @@ bool qSlicerFileReader::canLoadFile(const QString& fileName)const
 }
 
 //----------------------------------------------------------------------------
+double qSlicerFileReader::canLoadFileConfidence(const QString& fileName)const
+{
+  if (!this->canLoadFile(fileName))
+    {
+    return 0.0;
+    }
+  int longestExtensionMatch = 0;
+  QStringList res = this->supportedNameFilters(fileName, &longestExtensionMatch);
+  // If longer extension is matched then the confidence that this is a good reader is
+  // slightly higher. For example, for "somefile.seg.nrrd", a reader that is specifically
+  // for ".seg.nrrd" files get slightly higher confidence than readers that of generic ".nrrd" files.
+  double confidence = 0.5 + 0.01 * longestExtensionMatch;
+  return confidence;
+}
+
+//----------------------------------------------------------------------------
 QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr /* =nullptr */)const
 {
   if (longestExtensionMatchPtr)

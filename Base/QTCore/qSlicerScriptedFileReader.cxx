@@ -46,6 +46,7 @@ public:
     FileTypeMethod,
     ExtensionsMethod,
     CanLoadFileMethod,
+    CanLoadFileConfidenceMethod,
     LoadMethod,
     };
 
@@ -65,6 +66,7 @@ qSlicerScriptedFileReaderPrivate::qSlicerScriptedFileReaderPrivate()
   this->PythonCppAPI.declareMethod(Self::FileTypeMethod, "fileType");
   this->PythonCppAPI.declareMethod(Self::ExtensionsMethod, "extensions");
   this->PythonCppAPI.declareMethod(Self::CanLoadFileMethod, "canLoadFile");
+  this->PythonCppAPI.declareMethod(Self::CanLoadFileConfidenceMethod, "canLoadFileConfidence");
   this->PythonCppAPI.declareMethod(Self::LoadMethod, "load");
 }
 
@@ -174,14 +176,14 @@ QString qSlicerScriptedFileReader::description()const
     {
     return QString();
     }
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'description' "
                << "is expected to return a string !";
     return QString();
     }
-  QString fileType = QString(PyString_AsString(result));
+  QString fileType = QString(PyUnicode_AsUTF8(result));
   return fileType;
 }
 
@@ -195,14 +197,14 @@ qSlicerIO::IOFileType qSlicerScriptedFileReader::fileType()const
     {
     return IOFileType();
     }
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'fileType' "
                << "is expected to return a string !";
     return IOFileType();
     }
-  return IOFileType(PyString_AsString(result));
+  return IOFileType(PyUnicode_AsUTF8(result));
 }
 
 //-----------------------------------------------------------------------------
@@ -226,14 +228,14 @@ QStringList qSlicerScriptedFileReader::extensions()const
   Py_ssize_t size = PyTuple_Size(resultAsTuple);
   for (Py_ssize_t i = 0; i < size; ++i)
     {
-    if (!PyString_Check(PyTuple_GetItem(resultAsTuple, i)))
+    if (!PyUnicode_Check(PyTuple_GetItem(resultAsTuple, i)))
       {
       qWarning() << d->PythonSource
                  << " - In" << d->PythonClassName << "class, function 'extensions' "
                  << "is expected to return a string list !";
       break;
       }
-    extensionList << PyString_AsString(PyTuple_GetItem(resultAsTuple, i));
+    extensionList << PyUnicode_AsUTF8(PyTuple_GetItem(resultAsTuple, i));
     }
   Py_DECREF(resultAsTuple);
   return extensionList;
@@ -244,7 +246,7 @@ bool qSlicerScriptedFileReader::canLoadFile(const QString& file)const
 {
   Q_D(const qSlicerScriptedFileReader);
   PyObject* arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, PyString_FromString(file.toUtf8()));
+  PyTuple_SET_ITEM(arguments, 0, PyUnicode_FromString(file.toUtf8()));
   PyObject* result = d->PythonCppAPI.callMethod(d->CanLoadFileMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
@@ -260,6 +262,30 @@ bool qSlicerScriptedFileReader::canLoadFile(const QString& file)const
     return false;
     }
   return result == Py_True;
+}
+
+//-----------------------------------------------------------------------------
+double qSlicerScriptedFileReader::canLoadFileConfidence(const QString& file)const
+{
+  Q_D(const qSlicerScriptedFileReader);
+  PyObject* arguments = PyTuple_New(1);
+  PyTuple_SET_ITEM(arguments, 0, PyUnicode_FromString(file.toUtf8()));
+  PyObject* result = d->PythonCppAPI.callMethod(d->CanLoadFileConfidenceMethod, arguments);
+  Py_DECREF(arguments);
+  if (!result)
+    {
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::canLoadFileConfidence(file);
+    }
+
+  if (!PyFloat_Check(result))
+    {
+    qWarning() << d->PythonSource
+               << " - In" << d->PythonClassName << "class, function 'canLoadFileConfidence' "
+               << "is expected to return a float!";
+    return 0.0;
+    }
+  return PyFloat_AsDouble(result);
 }
 
 //-----------------------------------------------------------------------------

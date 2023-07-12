@@ -2,14 +2,14 @@
 
 ### Save markups to file
 
-Any markup node can be saved as a [markups json file](developer_guide/modules/markups.md#markups):
+Any markup node can be saved as a [markups json file](/developer_guide/modules/markups.md#markups):
 
 ```python
 markupsNode = slicer.util.getNode('F')
 slicer.util.saveNode(markupsNode, "/path/to/MyMarkups.mkp.json")
 ```
 
-Generally the markups json file format is recommended for saving all properties of a markups node, but for exporting only control point information (name, position, and basic state) a [control points table can be exported in standard csv file format](developer_guide/modules/markups.md#markups-control-points-table-file-format-csv-tsv):
+Generally the markups json file format is recommended for saving all properties of a markups node, but for exporting only control point information (name, position, and basic state) a [control points table can be exported in standard csv file format](/developer_guide/modules/markups.md#markups-control-points-table-file-format-csv-tsv):
 
 ```python
 slicer.modules.markups.logic().ExportControlPointsToCSV(markupsNode, "/path/to/MyControlPoints.csv")
@@ -17,13 +17,13 @@ slicer.modules.markups.logic().ExportControlPointsToCSV(markupsNode, "/path/to/M
 
 ### Load markups from file
 
-Any markup node can be loaded from a [markups json file](developer_guide/modules/markups.md#markups):
+Any markup node can be loaded from a [markups json file](/developer_guide/modules/markups.md#markups):
 
 ```python
 markupsNode = slicer.util.loadMarkups("/path/to/MyMarkups.mkp.json")
 ```
 
-Control points can be loaded from [control points table csv file](developer_guide/modules/markups.md#markups-control-points-table-file-format-csv-tsv):
+Control points can be loaded from [control points table csv file](/developer_guide/modules/markups.md#markups-control-points-table-file-format-csv-tsv):
 
 ```python
 markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsCurveNode")
@@ -32,7 +32,7 @@ slicer.modules.markups.logic().ImportControlPointsFromCSV(markupsNode, "/path/to
 
 ### Load markups point list from file
 
-Markups point list can be loaded from legacy [fcsv file format](developer_guide/modules/markups.md#markups-fiducial-point-list-file-format-fcsv). Note that this file format is no longer recommended, as it is not a standard csv file format and can only store a small fraction of information that is in a markups node.
+Markups point list can be loaded from legacy [fcsv file format](/developer_guide/modules/markups.md#markups-fiducial-point-list-file-format-fcsv). Note that this file format is no longer recommended, as it is not a standard csv file format and can only store a small fraction of information that is in a markups node.
 
 ```python
 slicer.util.loadMarkupsFiducialList("/path/to/list/F.fcsv")
@@ -592,7 +592,7 @@ The [qSlicerSimpleMarkupsWidget](https://apidocs.slicer.org/main/classqSlicerSim
 This code snippet creates a set of predefined line markups (named A, B, C, D) in the scene when the user hits <kbd>Ctrl+N</kbd>.
 How to use this:
 
-1. Customize the code (replace A, B, C, D with your measurement names) and copy-paste the code into the Python console. This has to be done only once after Slicer is started. Add it to [.slicerrc.py file](user_guide/settings.md#application-startup-file) so that it persists even if Slicer is restarted.
+1. Customize the code (replace A, B, C, D with your measurement names) and copy-paste the code into the Python console. This has to be done only once after Slicer is started. Add it to [.slicerrc.py file](/user_guide/settings.md#application-startup-file) so that it persists even if Slicer is restarted.
 2. Load the data set that has to be measured
 3. Hit Ctrl+N to create all the measurements
 4. Go to Markups module to see the list of measurements
@@ -619,7 +619,7 @@ shortcut1.connect( 'activated()', createMeasurements)
 This code snippet creates a set of predefined line markups (named A, B, C, D) in the scene when the user hits Ctrl+N.
 How to use this:
 
-1. Copy-paste the code into the Python console. This has to be done only once after Slicer is started. Add it to [.slicerrc.py file](user_guide/settings.md#application-startup-file) so that it persists even if Slicer is restarted.
+1. Copy-paste the code into the Python console. This has to be done only once after Slicer is started. Add it to [.slicerrc.py file](/user_guide/settings.md#application-startup-file) so that it persists even if Slicer is restarted.
 2. Load the data set that has to be measured and place line markups (you can use the "Pre-populate the scene with measurements" script above to help with this)
 3. Hit Ctrl+M to copy all line measurents to the clipboard
 4. Switch to Excel and hit Ctrl+V to paste the results there

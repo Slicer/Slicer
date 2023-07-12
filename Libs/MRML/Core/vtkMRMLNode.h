@@ -360,7 +360,7 @@ public:
 
   /// \brief Get value of a name value pair attribute.
   ///
-  /// Return nullptr if the name does not exists.
+  /// Return nullptr if the name does not exist.
   const char* GetAttribute(const char* name);
 
   /// Get all attribute names.
@@ -776,7 +776,7 @@ public:
   /// Can be 0 in temporary states; e.g. if
   /// the referenced node has no scene, or if the referenced is not
   /// yet into the scene.
-  /// If not cached, it tnternally scans (slow) the scene to search for the
+  /// If not cached, it internally scans (slow) the scene to search for the
   /// associated referenced node ID.
   /// If the referencing node is no longer in the scene (GetScene() == 0), it
   /// happens after the node is removed from the scene (scene->RemoveNode(dn),

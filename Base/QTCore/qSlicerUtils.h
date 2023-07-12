@@ -61,12 +61,12 @@ public:
   static bool isTestingModule(qSlicerAbstractCoreModule* module);
 
   /// Look for target file in build intermediate directory.
-  /// On windows, the intermediate directory includes: . Debug RelWithDebInfo Release MinSizeRel
+  /// On Windows, the intermediate directory includes: . Debug RelWithDebInfo Release MinSizeRel
   /// And it return the first matched directory
-  /// On the other plateform, this function just return the directory passed as a first argument
+  /// On other platforms, this function just returns the directory passed as a first argument
   static QString searchTargetInIntDir(const QString& directory, const QString& target);
 
-  /// This function returns an empty string on all plateform expected windows
+  /// This function returns an empty string on all platforms except Windows,
   /// where it returns ".exe"
   static QString executableExtension();
 
@@ -80,7 +80,7 @@ public:
   ///  on windows, ThresholdLib.dll -> Threshold
   static QString extractModuleNameFromLibraryName(const QString& libraryName);
 
-  /// Extract module name givew a \a className
+  /// Extract module name given a \a className
   /// For example:
   ///  qSlicerThresholdModule -> Threshold
   static QString extractModuleNameFromClassName(const QString& className);
@@ -96,7 +96,7 @@ public:
 
   /// Return the path without the intermediate directory or return \a path if there is no
   /// expected "IntDir".
-  /// \a subDirWithoutIntDir corresponds to N last compononent of the path excluding
+  /// \a subDirWithoutIntDir corresponds to N last component of the path excluding
   /// the "IntDir".
   ///
   /// <table border="1">

@@ -62,7 +62,7 @@ int vtkClosedSurfaceToFractionalLabelMapConversionTest1(int vtkNotUsed(argc), ch
   // Create segmentation with segment
   vtkNew<vtkSegmentation> sphereSegmentation;
   sphereSegmentation->SetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), serializedImageGeometry);
-  sphereSegmentation->SetMasterRepresentationName(
+  sphereSegmentation->SetSourceRepresentationName(
     vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   sphereSegmentation->AddSegment(sphereSegment.GetPointer());
 

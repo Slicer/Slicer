@@ -180,10 +180,10 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         self.assertIsNotNone(label, qt.QLabel)
         self.assertEqual(label.text, 'My custom UI')
 
-        # Try to get a widget that does not exists
+        # Try to get a widget that does not exist
         caughtException = False
         try:
-            slicer.util.findChild(utilWidget.Widget, 'Unexistant_Label')
+            slicer.util.findChild(utilWidget.Widget, 'Nonexisting_Label')
         except RuntimeError:
             caughtException = True
         self.assertTrue(caughtException)

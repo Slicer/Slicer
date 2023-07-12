@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLMalformedWidget_h_
-#define __qMRMLMalformedWidget_h_
+#ifndef qMRMLMarkupsMalformedWidget_h_
+#define qMRMLMarkupsMalformedWidget_h_
 
 // Markups widgets includes
 #include "qMRMLMarkupsAbstractOptionsWidget.h"
@@ -53,4 +53,4 @@ public:
   { return new qMRMLMarkupsMalformedWidget(); }
 };
 
-#endif // __qMRMLMalformedWidget_h_
+#endif

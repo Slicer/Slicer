@@ -16,6 +16,9 @@
  * This is needed for loading mrml code as module.
  */
 
+#ifndef vtkMRML_h
+#define vtkMRML_h
+
 #include "vtkMRMLExport.h"
 
 // Macro for MRML application version comparison in preprocessor macros.
@@ -24,3 +27,5 @@
 // ...
 // #endif
 #define MRML_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
+
+#endif

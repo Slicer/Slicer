@@ -618,7 +618,7 @@ protected:
 
 protected slots:
 
-  /// Process command line arguments **atfer** the application event loop is started.
+  /// Process command line arguments **after** the application event loop is started.
   /// \sa handlePreApplicationCommandLineArguments()
   /// \sa qSlicerApplication::startupCompleted()
   virtual void handleCommandLineArguments();

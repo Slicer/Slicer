@@ -63,4 +63,4 @@ private:
   vtkInternal* Internal;
 };
 
-#endif // vtkMRMLThreeDReformatDisplayableManager_h
+#endif

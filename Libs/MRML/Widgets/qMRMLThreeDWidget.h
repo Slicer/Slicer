@@ -62,7 +62,7 @@ public:
   Q_INVOKABLE vtkMRMLAbstractLogic* logic()const override;
 
   /// Get a reference to the underlying ThreeD View
-  /// Becareful if you change the threeDView, you might
+  /// Be careful if you change the threeDView, you might
   /// unsynchronize the view from the nodes/logics.
   Q_INVOKABLE qMRMLThreeDView* threeDView()const;
   Q_INVOKABLE QWidget* viewWidget()const override;
@@ -77,7 +77,7 @@ public:
 public slots:
   /// Set the current \a viewNode to observe
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
-  virtual void setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode);
+  void setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode) override;
 
 protected:
   QScopedPointer<qMRMLThreeDWidgetPrivate> d_ptr;

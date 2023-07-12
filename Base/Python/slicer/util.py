@@ -26,7 +26,7 @@ def quit():
 def exit(status=EXIT_SUCCESS):
     """Exits the application with the specified exit code.
 
-    The method does not stops the process immediately but lets
+    The method does not stop the process immediately but lets
     pending events to be processed.
     If exit() is called again while processing pending events,
     the error code will be overwritten.
@@ -316,7 +316,7 @@ def findChild(widget, name):
 
     :raises RuntimeError: if the widget with the given ``name`` does not exist.
     """
-    errorMessage = "Widget named " + str(name) + " does not exists."
+    errorMessage = "Widget named " + str(name) + " does not exist."
     child = None
     try:
         child = findChildren(widget, name=name)[0]
@@ -620,6 +620,17 @@ def setPythonConsoleVisible(visible):
     mw.pythonConsole().parent().setVisible(visible)
 
 
+def setErrorLogVisible(visible):
+    """Show/hide Error log window.
+
+    If there is no main window then the function has no effect.
+    """
+    mw = mainWindow()
+    if not mw:
+        return
+    mw.errorLogDockWidget().setVisible(visible)
+
+
 def setStatusBarVisible(visible):
     """Show/hide status bar
 
@@ -663,11 +674,12 @@ def forceRenderAllViews():
 # IO
 #
 
-def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
+def loadNodeFromFile(filename, filetype=None, properties={}, returnNode=False):
     """Load node into the scene from a file.
 
     :param filename: full path of the file to load.
     :param filetype: specifies the file type, which determines which IO class will load the file.
+                     If not specified then the reader with the highest confidence is used.
     :param properties: map containing additional parameters for the loading.
     :param returnNode: Deprecated. If set to true then the method returns status flag and node
       instead of signalling error by throwing an exception.
@@ -680,6 +692,9 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
 
     # We need to convert the path to string now, because Qt cannot convert a pathlib.Path object to string.
     properties['fileName'] = str(filename)
+
+    if filetype is None:
+        filetype = app.coreIOManager().fileType(filename)
 
     loadedNodesCollection = vtkCollection()
     userMessages = vtkMRMLMessageCollection()
@@ -703,13 +718,14 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
     return loadedNode
 
 
-def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
+def loadNodesFromFile(filename, filetype=None, properties={}, returnNode=False):
     """Load nodes into the scene from a file.
 
     It differs from `loadNodeFromFile` in that it returns loaded node(s) in an iterator.
 
     :param filename: full path of the file to load.
     :param filetype: specifies the file type, which determines which IO class will load the file.
+                     If not specified then the reader with the highest confidence is used.
     :param properties: map containing additional parameters for the loading.
     :return: loaded node(s) in an iterator object.
     :raises RuntimeError: in case of failure
@@ -722,6 +738,8 @@ def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
 
     loadedNodesCollection = vtkCollection()
     userMessages = vtkMRMLMessageCollection()
+    if filetype is None:
+        filetype = app.coreIOManager().fileType(filename)
     success = app.coreIOManager().loadNodes(filetype, properties, loadedNodesCollection, userMessages)
     if not success:
         errorMessage = f"Failed to load node from file: {filename}"
@@ -1998,7 +2016,7 @@ def arrayFromSegmentInternalBinaryLabelmap(segmentationNode, segmentId):
 
       segmentationNode->GetSegmentation()->CollapseBinaryLabelmaps()
 
-    If binary labelmap is the master representation then voxel values in the volume node can be modified
+    If binary labelmap is the source representation then voxel values in the volume node can be modified
     by changing values in the numpy array. After all modifications has been completed, call::
 
       segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()

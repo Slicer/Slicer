@@ -160,7 +160,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : 
   /// Off by default
   /// Not all subclasses have projection behavior
   /// Please refer to subclasses for more information
-  /// \sa SliceIntersectionVisibilty, ProjectedColor
+  /// \sa SliceIntersectionVisibility, ProjectedColor
   vtkSetMacro(SliceProjection, int);
   vtkGetMacro(SliceProjection, int);
 

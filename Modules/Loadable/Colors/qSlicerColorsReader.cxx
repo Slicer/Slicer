@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QTextStream>
 
 // Slicer includes
 #include "qSlicerColorsReader.h"
@@ -81,6 +82,34 @@ qSlicerIO::IOFileType qSlicerColorsReader::fileType()const
 QStringList qSlicerColorsReader::extensions()const
 {
   return QStringList() << "Color (*.txt *.ctbl *.cxml)";
+}
+
+//----------------------------------------------------------------------------
+double qSlicerColorsReader::canLoadFileConfidence(const QString& fileName)const
+{
+  double confidence = Superclass::canLoadFileConfidence(fileName);
+
+  // Confidence for .txt file is 0.54 (4 characters in the file extension matched),
+  // for more specific file extensions (.ctbl, .cxml) it would be 0.55.
+  // Therefore, confidence below 0.55 means that we got a generic file extension
+  // that we need to inspect further.
+  if (confidence > 0 && confidence < 0.55)
+    {
+    // Generic file extension, inspect the content
+    QString upperCaseFileName = fileName.toUpper();
+    if (upperCaseFileName.endsWith("TXT"))
+      {
+      QFile file(fileName);
+      if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+        QTextStream in(&file);
+        // Color table text files start with "# Color table file"
+        QString line = in.read(100);
+        confidence = (line.contains("# Color table file") ? 0.6 : 0.4);
+        }
+      }
+    }
+  return confidence;
 }
 
 //-----------------------------------------------------------------------------

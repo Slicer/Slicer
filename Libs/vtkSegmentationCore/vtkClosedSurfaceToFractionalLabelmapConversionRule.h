@@ -90,4 +90,4 @@ private:
   void operator=(const vtkClosedSurfaceToFractionalLabelmapConversionRule&) = delete;
 };
 
-#endif // __vtkClosedSurfaceToFractionalLabelmapConversionRule_h
+#endif

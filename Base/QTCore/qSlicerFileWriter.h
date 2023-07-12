@@ -36,7 +36,17 @@ public:
   ~qSlicerFileWriter() override;
 
   /// Return true if the object is handled by the writer.
+  /// This method is kept for backward compatibility, writers should override
+  /// canWriteObjectConfidence method instead of this method to indicate if they can
+  /// write the object.
   virtual bool canWriteObject(vtkObject* object)const;
+
+  /// Returns a positive number (>0) if the writer can write the object to file.
+  /// The higher the returned value is the more confident the writer it is
+  /// the most suitable class to write the object.
+  /// By default, the method calls canWriteObject and if it returns true then
+  /// it returns confidence value of 0.5.
+  virtual double canWriteObjectConfidence(vtkObject* object)const;
 
   /// Return a list of the supported extensions for a particular object.
   /// Please read QFileDialog::nameFilters for the allowed formats
@@ -45,7 +55,7 @@ public:
 
   /// Write the node identified by nodeID into the fileName file.
   /// Returns true on success
-  /// Properties availables:
+  /// Properties available:
   /// * QString nodeID
   /// * QString fileName
   /// * QString fileFormat

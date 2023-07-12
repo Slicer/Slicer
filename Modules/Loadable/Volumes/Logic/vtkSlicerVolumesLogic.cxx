@@ -492,7 +492,7 @@ void vtkSlicerVolumesLogic::InitializeStorageNode(
       for (int n = 0; n < numURIs; n++)
         {
         thisURI = fileList->GetValue(n);
-        storageNode->AddURI(thisURI);
+        storageNode->AddURI(thisURI.c_str());
         }
       }
     }
@@ -509,7 +509,7 @@ void vtkSlicerVolumesLogic::InitializeStorageNode(
         {
         thisFileName = fileList->GetValue(n);
         //vtkDebugMacro("\tfile " << n << " =  " << thisFileName);
-        storageNode->AddFileName(thisFileName);
+        storageNode->AddFileName(thisFileName.c_str());
         }
       }
     }
@@ -1602,6 +1602,7 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
     {
     vtkErrorMacro("vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error parsing the file '" << displayPresetsFilename << "'.");
     fclose(fp);
+    return;
     }
   fclose(fp);
   std::string errorPrefix = "vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error reading '" + displayPresetsFilename + "'.";

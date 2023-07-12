@@ -150,10 +150,6 @@
           of << " "; \
           } \
         } \
-      if (row != 3) \
-        { \
-        of << " "; \
-        } \
       } \
     xmlWriteOutputStream << "\""; \
   }
@@ -596,4 +592,4 @@
 
 /// @}
 
-#endif // __vtkMRMLNodePropertyMacros_h
+#endif

@@ -242,14 +242,14 @@ const QString qSlicerSegmentEditorScriptedPaintEffect::helpText()const
     }
 
   // Parse result
-  if (!PyString_Check(result))
+  if (!PyUnicode_Check(result))
     {
     qWarning() << d->PythonSource << ": qSlicerSegmentEditorScriptedPaintEffect: Function 'helpText' is expected to return a string!";
     return this->Superclass::helpText();
     }
 
-  const char* role = PyString_AsString(result);
-  return QString::fromLocal8Bit(role);
+  const char* role = PyUnicode_AsUTF8(result);
+  return QString::fromUtf8(role);
 }
 
 //-----------------------------------------------------------------------------

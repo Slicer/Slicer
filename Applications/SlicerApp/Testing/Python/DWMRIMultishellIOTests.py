@@ -3,7 +3,6 @@ import re
 import sys
 from collections import namedtuple
 
-import nose
 import numpy as np
 from vtk.util import numpy_support
 
@@ -101,7 +100,7 @@ def test_nrrd_dwi_load(first_file, second_file=None):
 
     # Note: vtkDataArray.GetMaxNorm gives max for scalar array.
     # max b value from the node
-    nose.tools.assert_equal(parsed_nrrd.bvalue, dw_node.GetBValues().GetMaxNorm())
+    assert parsed_nrrd.bvalue == dw_node.GetBValues().GetMaxNorm()
 
     max_parsed_grad_norm = np.max(np.apply_along_axis(np.linalg.norm, 1, parsed_nrrd.gradients))
 

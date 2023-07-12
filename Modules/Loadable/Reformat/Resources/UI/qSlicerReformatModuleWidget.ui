@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
+    <width>411</width>
     <height>780</height>
    </rect>
   </property>
@@ -41,28 +41,28 @@
       </widget>
      </item>
      <item>
-      <widget class="qMRMLNodeComboBox" name="SliceNodeSelector" native="true">
+      <widget class="qMRMLNodeComboBox" name="SliceNodeSelector">
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
-       <property name="nodeTypes" stdset="0">
+       <property name="nodeTypes">
         <stringlist notr="true">
          <string>vtkMRMLSliceNode</string>
         </stringlist>
        </property>
-       <property name="showHidden" stdset="0">
+       <property name="showHidden">
         <bool>true</bool>
        </property>
-       <property name="noneEnabled" stdset="0">
+       <property name="noneEnabled">
         <bool>true</bool>
        </property>
-       <property name="addEnabled" stdset="0">
+       <property name="addEnabled">
         <bool>false</bool>
        </property>
-       <property name="removeEnabled" stdset="0">
+       <property name="removeEnabled">
         <bool>false</bool>
        </property>
-       <property name="renameEnabled" stdset="0">
+       <property name="renameEnabled">
         <bool>false</bool>
        </property>
       </widget>
@@ -117,7 +117,16 @@
          <string>Offset</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item row="0" column="1">
@@ -148,7 +157,16 @@
             <property name="spacing">
              <number>0</number>
             </property>
-            <property name="margin">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
              <number>0</number>
             </property>
            </layout>
@@ -179,7 +197,16 @@
          <string>Origin</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item row="0" column="0">
@@ -211,7 +238,16 @@
          <item row="1" column="0">
           <widget class="QGroupBox" name="OnPlaneGroupBox">
            <layout class="QHBoxLayout" name="OnPlaneLayout">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
              <number>0</number>
             </property>
             <item>
@@ -239,29 +275,31 @@
       <item>
        <widget class="ctkCollapsibleGroupBox" name="RotationSlidersGroupBox">
         <property name="title">
-         <string>Rotation</string>
+         <string>Orientation</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <property name="margin">
+         <property name="leftMargin">
           <number>0</number>
          </property>
-         <item row="4" column="0">
-          <widget class="QLabel" name="LRLabel">
-           <property name="text">
-            <string>LR</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="qMRMLLinearTransformSlider" name="LRSlider">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="11" column="1">
+          <widget class="qMRMLLinearTransformSlider" name="RotateZSlider">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="decimals">
-            <number>2</number>
+           <property name="toolTip">
+            <string>Rotate the slice in the current slice plane, around the slice normal</string>
            </property>
            <property name="minimum">
             <double>-200.000000000000000</double>
@@ -271,20 +309,78 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
+         <item row="10" column="0">
           <widget class="QLabel" name="PALabel">
            <property name="text">
-            <string>PA</string>
+            <string>Vertical:</string>
+           </property>
+           <property name="indent">
+            <number>12</number>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="QLabel" name="ISLabel">
+           <property name="text">
+            <string>In-Plane:</string>
+           </property>
+           <property name="indent">
+            <number>12</number>
            </property>
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="qMRMLLinearTransformSlider" name="PASlider">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QPushButton" name="NormalToLRPushButton">
+             <property name="text">
+              <string>Normal to LR</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="NormalToPAPushButton">
+             <property name="text">
+              <string>Normal to PA</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="NormalToISPushButton">
+             <property name="text">
+              <string>Normal to IS</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="RotateToVolumePlanePushButton">
+           <property name="toolTip">
+            <string>Flip slice view horizontally (left-right)</string>
+           </property>
+           <property name="text">
+            <string>Rotate to volume plane</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="Normal_2">
+           <property name="text">
+            <string>Rotation:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="qMRMLLinearTransformSlider" name="RotateYSlider">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Rotate around the slice vertical axis</string>
            </property>
            <property name="decimals">
             <number>2</number>
@@ -297,20 +393,19 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="ISLabel">
-           <property name="text">
-            <string>IS</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="qMRMLLinearTransformSlider" name="ISSlider">
+         <item row="9" column="1">
+          <widget class="qMRMLLinearTransformSlider" name="RotateXSlider">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Rotate around the slice horizontal axis</string>
+           </property>
+           <property name="decimals">
+            <number>2</number>
            </property>
            <property name="minimum">
             <double>-200.000000000000000</double>
@@ -320,7 +415,31 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="0" colspan="2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="Resetlabel">
+           <property name="text">
+            <string>Reset to:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="Normal">
+           <property name="text">
+            <string>Normal:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="LRLabel">
+           <property name="text">
+            <string>Horizontal:</string>
+           </property>
+           <property name="indent">
+            <number>12</number>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0" colspan="2">
           <widget class="QWidget" name="MinMaxWidget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -332,27 +451,20 @@
             <property name="spacing">
              <number>0</number>
             </property>
-            <property name="margin">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
              <number>0</number>
             </property>
            </layout>
           </widget>
-         </item>
-         <item row="8" column="0" colspan="2">
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item row="0" column="1">
           <widget class="ctkComboBox" name="SliceOrientationSelector">
@@ -384,49 +496,26 @@
            </item>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="Resetlabel">
-           <property name="text">
-            <string>Reset</string>
+         <item row="13" column="0" colspan="2">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="Normal">
-           <property name="text">
-            <string>Normal</string>
+           <property name="sizeType">
+            <enum>QSizePolicy::Preferred</enum>
            </property>
-          </widget>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
          </item>
-         <item row="2" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QPushButton" name="NormalXPushButton">
-             <property name="text">
-              <string>NormalX</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="NormalYPushButton">
-             <property name="text">
-              <string>NormalY</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="NormalZPushButton">
-             <property name="text">
-              <string>NormalZ</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="3" column="1">
+         <item row="6" column="1">
           <widget class="ctkCheckablePushButton" name="NormalToCameraCheckablePushButton">
            <property name="text">
-            <string>Normal To Camera</string>
+            <string>Normal to Camera</string>
            </property>
            <property name="checkable">
             <bool>false</bool>
@@ -448,15 +537,56 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="4" column="1">
           <widget class="ctkCoordinatesWidget" name="NormalCoordinatesWidget">
            <property name="normalized">
             <bool>true</bool>
            </property>
-           <property name="singleStep">
-            <double>0.1</double>
-           </property>
           </widget>
+         </item>
+         <item row="2" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QPushButton" name="FlipHorizontalPushButton">
+             <property name="toolTip">
+              <string>Flip slice view horizontally (left-right)</string>
+             </property>
+             <property name="text">
+              <string>Flip H</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="FlipVerticalPushButton">
+             <property name="toolTip">
+              <string>Flip slice view vertically (upside-down)</string>
+             </property>
+             <property name="text">
+              <string>Flip V</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="RotateClockwisePushButton">
+             <property name="toolTip">
+              <string>Rotate slice view clockwise by 90 degrees</string>
+             </property>
+             <property name="text">
+              <string>Rotate CW</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="RotateCounterClockwisePushButton">
+             <property name="toolTip">
+              <string>Rotate slice view counterclockwise by 90 degrees</string>
+             </property>
+             <property name="text">
+              <string>Rotate CCW</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -493,7 +623,7 @@
  <customwidgets>
   <customwidget>
    <class>ctkCheckablePushButton</class>
-   <extends>QPushButton</extends>
+   <extends>ctkPushButton</extends>
    <header>ctkCheckablePushButton.h</header>
   </customwidget>
   <customwidget>
@@ -524,13 +654,23 @@
    <header>ctkCoordinatesWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLLinearTransformSlider</class>
-   <extends>ctkSliderWidget</extends>
+   <extends>qMRMLSliderWidget</extends>
    <header>qMRMLLinearTransformSlider.h</header>
    <container>1</container>
   </customwidget>
@@ -540,15 +680,15 @@
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLSliderWidget</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDoubleSpinBox</class>
-   <extends>QWidget</extends>
-   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

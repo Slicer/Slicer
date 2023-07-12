@@ -657,4 +657,4 @@ protected:
 };
 
 
-#endif // __vtkSlicerApplicationLogicRequests_h
+#endif

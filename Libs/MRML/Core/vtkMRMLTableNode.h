@@ -202,7 +202,7 @@ public:
 
   ///
   /// Set a full human-readable name of a column.
-  /// When there is no space constraings, the full name of the column may` displayed
+  /// When there is no space constraints, the full name of the column may` displayed
   /// instead/in addition to columnName to identify a column.
   void SetColumnLongName(const std::string& columnName, const std::string& description);
   std::string GetColumnLongName(const std::string& columnName);

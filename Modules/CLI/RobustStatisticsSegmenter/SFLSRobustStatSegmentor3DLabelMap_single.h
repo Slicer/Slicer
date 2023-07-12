@@ -6,7 +6,6 @@
 #include <list>
 #include <vector>
 
-// #include "boost/shared_ptr.hpp"
 
 template <typename TPixel>
 class CSFLSRobustStatSegmentor3DLabelMap : public CSFLSSegmentor3D<TPixel>
@@ -17,7 +16,6 @@ public:
   typedef CSFLSSegmentor3D<TPixel> SuperClassType;
 
   typedef CSFLSRobustStatSegmentor3DLabelMap<TPixel> Self;
-  // typedef boost::shared_ptr< Self > Pointer;
 
   typedef typename SuperClassType::NodeType   NodeType;
   typedef typename SuperClassType::CSFLSLayer CSFLSLayer;
@@ -82,7 +80,7 @@ protected:
 
   const static long m_numberOfFeature = 3;
   /* Store the robust stat as the feature at each point
-     0: Meadian
+     0: median
      1: interquartile range (IRQ)
      2. median absolute deviation (MAD)
   */

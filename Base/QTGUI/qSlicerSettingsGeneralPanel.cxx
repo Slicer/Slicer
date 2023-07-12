@@ -133,8 +133,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
     context.evalScript(QString("slicerrcfilename = getSlicerRCFileName()\n"));
     QVariant slicerrcFileNameVar = context.getVariable("slicerrcfilename");
     this->SlicerRCFileValueLabel->setText(slicerrcFileNameVar.toString());
-    QIcon openFileIcon = QApplication::style()->standardIcon(QStyle::SP_DialogOpenButton);
-    this->SlicerRCFileOpenButton->setIcon(openFileIcon);
+    this->SlicerRCFileOpenButton->setIcon(QIcon(":Icons/Go.png"));
     QObject::connect(this->SlicerRCFileOpenButton, SIGNAL(clicked()), q, SLOT(openSlicerRCFile()));
     }
   else
@@ -249,7 +248,22 @@ void qSlicerSettingsGeneralPanel::openSlicerRCFile()
       outputFile.close();
       }
     }
-  QDesktopServices::openUrl(QUrl("file:///" + slicerRcFileName, QUrl::TolerantMode));
+
+  QString editor = qSlicerApplication::application()->userSettings()->value("Python/Editor").toString();
+  if (editor.isEmpty())
+    {
+    QDesktopServices::openUrl(QUrl("file:///" + slicerRcFileName, QUrl::TolerantMode));
+    }
+  else
+    {
+    QProcess process;
+    // Use the startup environment to avoid Python environment issues with text editors implemented in Python
+    process.setProcessEnvironment(qSlicerApplication::application()->startupEnvironment());
+    process.setProgram(editor);
+    process.setArguments(QStringList() << slicerRcFileName);
+    process.startDetached();
+    }
+
 }
 
 // --------------------------------------------------------------------------

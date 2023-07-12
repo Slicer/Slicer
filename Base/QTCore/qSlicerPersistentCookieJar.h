@@ -32,7 +32,7 @@ class qSlicerPersistentCookieJarPrivate;
 /// qSlicerPersistentCookieJar provides a mechanism allowing to store persistently cookies
 /// when associated with an instance of QNetworkAccessManager.
 ///
-/// The cookies will be storted in a INI config file. By default, the config file will
+/// The cookies will be stored in a INI config file. By default, the config file will
 /// be located in the directory associated with the current application settings and will be
 /// named cookies.ini. This could be overwritten using qSlicerPersistentCookieJar::setFilePath
 ///

@@ -119,7 +119,7 @@ public:
   ObservationVector GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
 
   /// Description
-  /// Accessors for intropsection
+  /// Accessors for introspection
   /// Note: vtkCollection object is allocated internally
   /// and must be freed by the caller
   vtkCollection *GetObservationsForSubject (vtkObject *subject);
@@ -149,7 +149,7 @@ public:
   vtkGetMacro (EventNestingLevel, int);
 
   ///
-  /// File to write event logs to when EventLoging is turned on
+  /// File to write event logs to when EventLogging is turned on
   vtkSetStringMacro (LogFileName);
   vtkGetStringMacro (LogFileName);
 

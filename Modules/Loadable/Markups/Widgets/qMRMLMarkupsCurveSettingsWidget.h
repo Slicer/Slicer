@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerCurveSettingsWidget_h_
-#define __qSlicerCurveSettingsWidget_h_
+#ifndef qMRMLMarkupsCurveSettingsWidget_h
+#define qMRMLMarkupsCurveSettingsWidget_h
 
 // Markups widgets includes
 #include "qMRMLMarkupsAbstractOptionsWidget.h"
@@ -76,4 +76,4 @@ private:
   Q_DISABLE_COPY(qMRMLMarkupsCurveSettingsWidget);
 };
 
-#endif // __qSlicerCurveSettingsWidget_h_
+#endif

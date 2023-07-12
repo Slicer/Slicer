@@ -40,7 +40,7 @@ class vtkStringArray;
 ///
 /// qMRMLPlotView supports only 2D plots.
 /// For extending this class to 3DPlots it is needed to expand the mother class
-/// cktVTKChartView to use also vtkChartXYZ (currently exploiting only vtkChartXY).
+/// ctkVTKChartView to use also vtkChartXYZ (currently exploiting only vtkChartXY).
 
 class QMRML_WIDGETS_EXPORT qMRMLPlotView : public ctkVTKChartView
 {
@@ -89,7 +89,7 @@ signals:
   void mrmlSceneChanged(vtkMRMLScene*);
 
   /// Signal emitted when a data point or more has been selected. Returns
-  /// the MRMLPlotSeriesNodes IDs and the correspective arrays with
+  /// the MRMLPlotSeriesNodes IDs and the corresponding arrays with
   /// the data points ids (vtkIdTypeArray).
   void dataSelected(vtkStringArray* mrmlPlotSeriesIDs, vtkCollection* selectionCol);
 

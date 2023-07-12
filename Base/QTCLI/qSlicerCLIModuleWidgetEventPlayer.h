@@ -43,4 +43,4 @@ private:
   qSlicerCLIModuleWidgetEventPlayer& operator=(const qSlicerCLIModuleWidgetEventPlayer&); // NOT implemented
 };
 
-#endif // __qSlicerCLIModuleWidgetEventPlayer_h
+#endif

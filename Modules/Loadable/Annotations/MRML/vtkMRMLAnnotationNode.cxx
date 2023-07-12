@@ -248,7 +248,7 @@ void vtkMRMLAnnotationNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, i
     os << endl;
     for (int i = 0 ; i < this->GetNumberOfTexts() ; i++)
       {
-      os << indent << "  " << i <<": " <<  (TextList->GetValue(i) ? TextList->GetValue(i) : "(none)") << endl;
+      os << indent << "  " << i <<": " <<  (TextList->GetValue(i).empty() ? "(none)" : TextList->GetValue(i).c_str()) << endl;
     }
     }
 

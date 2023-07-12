@@ -88,7 +88,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
   /// Set line color unchanged when parallel to slice plane
   inline void SliceProjectionColoredWhenParallelOff();
 
-  /// Set line thicker when on top of the plane, thiner when under
+  /// Set line thicker when on top of the plane, thinner when under
   inline void SliceProjectionThickerOnTopOn();
 
   /// Set line thickness uniform
@@ -106,7 +106,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
   /// ProjectionColoredWhenParallel : Set projected line
   /// colored when parallel to slice plane
   /// ProjectionThickerOnTop : Set projected line thicker
-  /// on top of the plane, thiner when under
+  /// on top of the plane, thinner when under
   /// Projection Off, Dashed, ColoredWhenParallel,
   /// ThickerOnTop and UseRulerColor by default
   /// \enum ProjectionFlag

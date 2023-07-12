@@ -18,6 +18,9 @@
 
 ==============================================================================*/
 
+#ifndef vtkMRMLSceneEventRecorder_h
+#define vtkMRMLSceneEventRecorder_h
+
 // VTK includes
 #include <vtkCommand.h>
 
@@ -50,3 +53,5 @@ protected:
   vtkMRMLSceneEventRecorder();
   ~vtkMRMLSceneEventRecorder() override;
 };
+
+#endif

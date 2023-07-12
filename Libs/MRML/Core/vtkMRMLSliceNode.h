@@ -108,17 +108,17 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// If empty, display in all views
   /// \sa ThreeDViewIDs, GetNthThreeDViewID(), AddThreeDViewID()
   inline std::vector< std::string > GetThreeDViewIDs()const;
-  /// True if the view node id is present in the ThreeDViewid list
+  /// True if the view node id is present in the ThreeDViewID list
   /// false if not found
   /// \sa ThreeDViewIDs, IsDisplayableInView(), AddThreeDViewID()
   bool IsThreeDViewIDPresent(const char* ThreeDViewID)const;
-  /// Returns true if the ThreeDViewID is present in the ThreeDViewId list
-  /// or there is no ThreeDViewId in the list (meaning all the views display the
+  /// Returns true if the ThreeDViewID is present in the ThreeDViewID list
+  /// or there is no ThreeDViewID in the list (meaning all the views display the
   /// node)
   /// \sa ThreeDViewIDs, IsThreeDViewIDPresent(), AddThreeDViewID()
   bool IsDisplayableInThreeDView(const char* viewNodeID)const;
 
-  /// The ImpplicitePlane widget mode
+  /// The ImplicitPlane widget mode
   /// this lock the normal of the plane to the camera's one
   vtkGetMacro(WidgetNormalLockedToCamera, int);
   vtkSetMacro(WidgetNormalLockedToCamera, int);
@@ -256,17 +256,21 @@ public:
   /// Size of the slice plane in millimeters
   vtkGetVector3Macro(FieldOfView, double);
   void SetFieldOfView(double x, double y, double z);
+  void SetFieldOfView(double xyz[3]) { SetFieldOfView(xyz[0], xyz[1], xyz[2]); }
 
   ///
   /// Origin of XYZ window
   vtkGetVector3Macro(XYZOrigin, double);
   void SetXYZOrigin(double x, double y, double z);
+  void SetXYZOrigin(double xyz[3]) { SetXYZOrigin(xyz[0], xyz[1], xyz[2]); }
+
 
   ///
   /// Number of samples in each direction
   /// -- note that the spacing is implicitly FieldOfView / Dimensions
   vtkGetVectorMacro(Dimensions,int,3)
   void SetDimensions(int x, int y, int z);
+  void SetDimensions(int xyz[3]) { SetDimensions(xyz[0], xyz[1], xyz[2]); }
 
   ///
   /// Number of samples in each direction for the reslice operation
@@ -345,12 +349,12 @@ public:
   void SetLayoutGrid( int rows, int columns );
 
   ///
-  /// Set/Get the number of rows to use ina LightBox display
+  /// Set/Get the number of rows to use in a LightBox display
   vtkGetMacro(LayoutGridRows, int);
   virtual void SetLayoutGridRows(int rows);
 
   ///
-  /// Set/Get the number of columns to use ina LightBox display
+  /// Set/Get the number of columns to use in a LightBox display
   vtkGetMacro(LayoutGridColumns, int);
   virtual void SetLayoutGridColumns(int cols);
 
@@ -436,7 +440,7 @@ public:
   /// axes of the provided reference coordinate system
   /// so that no oblique resampling
   /// occurs when rendering (helps to see original acquisition data
-  /// and for obluique volumes with few slices).
+  /// and for oblique volumes with few slices).
   /// If sliceNormalAxisIndex is >=0 then slice plane normal will
   /// be aligned with that axis.
   void RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNormalAxisIndex=-1);

@@ -525,7 +525,7 @@ const char* vtkMRMLAbstractViewNode::GetAxisLabel(int labelIndex)
       << vtkMRMLAbstractViewNode::AxisLabelsCount);
     return "";
     }
-  return this->AxisLabels->GetValue(labelIndex);
+  return this->AxisLabels->GetValue(labelIndex).c_str();
 }
 
 //-----------------------------------------------------------
@@ -682,7 +682,6 @@ std::string vtkMRMLAbstractViewNode::GetDirectionLabel(double direction[3], bool
   // Compute labels and angles
   std::string axisLabels[3];
   double absoluteNormalAngleDiffsRad[3] = { 0.0, 0.0, 0.0 };
-  double axisSign = positive ? 1.0 : -1.0;
   for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
     {
     double axisDirection[3] = { axisIndex == 0 ? 1.0 : 0.0, axisIndex == 1 ? 1.0 : 0.0, axisIndex == 2 ? 1.0 : 0.0 };

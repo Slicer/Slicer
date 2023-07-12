@@ -136,7 +136,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   virtual void SetThreshold(double lower, double upper);
 
   ///
-  /// Set/Get interpolate reformated slices
+  /// Set/Get interpolate reformatted slices
   vtkGetMacro(Interpolate, int);
   vtkSetMacro(Interpolate, int);
   vtkBooleanMacro(Interpolate, int);
@@ -205,7 +205,7 @@ protected:
   void CalculateAutoLevels();
 
   /// Return the image data with scalar type, it can be in the middle of the
-  /// pipeline, it's typically the input of the threshold/windowlevel filters
+  /// pipeline, it's typically the input of the Threshold/WindowLevel filters
   vtkImageData* GetScalarImageData();
   virtual vtkAlgorithmOutput* GetScalarImageDataConnection();
 

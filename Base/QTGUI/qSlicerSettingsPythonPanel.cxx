@@ -94,6 +94,10 @@ void qSlicerSettingsPythonPanelPrivate::init()
   // Register settings with their corresponding widgets
   //
 
+  q->registerProperty("Python/Editor", this->EditorPathLineEdit,
+    /*no tr*/"currentPath", SIGNAL(currentPathChanged(QString)),
+    qSlicerSettingsPythonPanel::tr("Python editor."));
+
   q->registerProperty("Python/DockableWindow", this->DockableWindowCheckBox,
     /*no tr*/"checked", SIGNAL(toggled(bool)),
     qSlicerSettingsPythonPanel::tr("Display Python console in a window that can be placed inside the main window."),
@@ -160,4 +164,15 @@ void qSlicerSettingsPythonPanel::setConsoleLogLevel(const QString& text)
     }
   // default to first item if conversion fails
   d->ConsoleLogLevelComboBox->setCurrentIndex(selectedIndex);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsPythonPanel::applySettings()
+{
+  Q_D(qSlicerSettingsPythonPanel);
+  if (!d->EditorPathLineEdit->currentPath().isEmpty())
+    {
+    d->EditorPathLineEdit->addCurrentPathToHistory();
+    }
+  Superclass::applySettings();
 }

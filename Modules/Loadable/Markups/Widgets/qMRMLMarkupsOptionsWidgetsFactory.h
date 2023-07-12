@@ -19,8 +19,8 @@
 
   ==============================================================================*/
 
-#ifndef __qslicermarkupsfactory_h_
-#define __qslicermarkupsfactory_h_
+#ifndef qMRMLMarkupsOptionsWidgetsFactory_h
+#define qMRMLMarkupsOptionsWidgetsFactory_h
 
 // Markups widgets includes
 #include "qMRMLMarkupsAbstractOptionsWidget.h"
@@ -49,16 +49,16 @@ public:
   Q_INVOKABLE static qMRMLMarkupsOptionsWidgetsFactory* instance();
 
 public:
-  /// Registers an additional options widget.
+  /// Register an additional options widget.
   /// This factory object takes ownership of the widget (even if it fails to register it
   /// due to for example a widget already existing for that markup type), therefore the
   /// caller must NOT delete the widget.
   Q_INVOKABLE bool registerOptionsWidget(qMRMLMarkupsAbstractOptionsWidget* widget);
 
-  /// Unregisters an additional options widget.
+  /// Unregister an additional options widget.
   Q_INVOKABLE bool unregisterOptionsWidget(const QString& className);
 
-  /// Unregisters an additional options widget.
+  /// Unregister an additional options widget.
   Q_INVOKABLE bool unregisterOptionsWidget(qMRMLMarkupsAbstractOptionsWidget* widget);
 
   /// Unregister all widgets
@@ -96,4 +96,4 @@ private:
   static qMRMLMarkupsOptionsWidgetsFactory* Instance;
 };
 
-#endif // __qslicermarkupsfactory_h_
+#endif

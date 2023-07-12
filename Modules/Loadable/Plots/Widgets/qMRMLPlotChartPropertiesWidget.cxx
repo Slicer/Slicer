@@ -26,6 +26,7 @@
 // qMRML includes
 #include "qMRMLPlotChartPropertiesWidget.h"
 #include "qMRMLPlotChartPropertiesWidget_p.h"
+#include "ui_qMRMLPlotChartPropertiesWidget.h"
 
 // MRML includes
 #include <vtkMRMLColorNode.h>

@@ -8,7 +8,10 @@ Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK),
 
 ## Install prerequisites
 
-- [CMake](https://www.cmake.org/cmake/resources/software.html) version that meets at least the minimum required CMake 3.21.1 <= version [< 3.25.0](https://gitlab.kitware.com/cmake/cmake/-/issues/24180) (or 3.16.3 <= version < 3.20.4)
+- [CMake](https://www.cmake.org/cmake/resources/software.html) version >= 3.16.3.
+  - Avoid versions with known Slicer build issues:
+    - 3.21.0 (CMake issue [22476](https://gitlab.kitware.com/cmake/cmake/-/issues/22476))
+    - 3.25.0 to 3.25.2 (CMake issues [24180](https://gitlab.kitware.com/cmake/cmake/-/issues/24180), [24567](https://gitlab.kitware.com/cmake/cmake/-/issues/24567))
 - [Git](https://git-scm.com/download/win) >= 1.7.10
   - Note: CMake must be able to find `git.exe` and `patch.exe`. If git is installed in the default location then they may be found there, but if they are not found then either add the folder that contains them to `PATH` environment variable; or set `GIT_EXECUTABLE` and `Patch_EXECUTABLE` as environment variables or as CMake variables at configure time.
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/): any edition can be used (including the free Community edition), when configuring the installer:
@@ -31,10 +34,10 @@ Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK),
 
 ## Set up source and build folders
 
-- Create source folder. This folder will be referred to as `<Slicer_SOURCE>` in the following. Recommended path: `C:\D\S4`
+- Create source folder. This folder will be referred to as `<Slicer_SOURCE>` in the following. Recommended path: `C:\D\S`
   - Due to maximum path length limitations during build the build process, source and build folders must be located in a folder with very short (couple of characters) total path length.
   - While it is not enforced, we strongly recommend you to avoid the use of spaces for both the source directory and the build directory.
-- Create build folder. This folder will be referred to as `<Slicer_BUILD>` in the following. Recommended path: `C:\D\S4R` for release-mode build, `C:\D\S4D` for debug-mode build.
+- Create build folder. This folder will be referred to as `<Slicer_BUILD>` in the following. Recommended path: `C:\D\SR` for release-mode build, `C:\D\SD` for debug-mode build.
   - You cannot use the same build tree for both release or debug mode builds. If both build types are needed, then the same source directory can be used, but a separate build directory must be created and configured for each build type.
   - How to decide between Debug and Release mode?
     - Release mode build: runs at same speed as official build, requires less disk space (about 15GB); but step-by-step debugging is not available
@@ -56,20 +59,28 @@ Specify source, build, and Qt location and compiler version and start the build 
 
 Release mode:
 
-```
-mkdir C:\D\S4R
-cd /d C:\D\S4R
-"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 17 2022" -A x64 -DQt5_DIR:PATH=C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5 C:\D\S4
-"C:\Program Files\CMake\bin\cmake.exe" --build . --config Release
+```bat
+cd C:\D
+
+"C:\Program Files\CMake\bin\cmake.exe" ^
+  -G "Visual Studio 17 2022" -A x64 ^
+  -DQt5_DIR:PATH=C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5 ^
+  -S C:\D\S -B C:\D\SR
+
+"C:\Program Files\CMake\bin\cmake.exe" --build C:\D\SR --config Release
 ```
 
 Debug mode:
 
-```
-mkdir C:\D\S4D
-cd /d C:\D\S4D
-"C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 17 2022" -A x64 -DQt5_DIR:PATH=C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5 C:\D\S4
-"C:\Program Files\CMake\bin\cmake.exe" --build . --config Debug
+```bat
+cd C:\D
+
+"C:\Program Files\CMake\bin\cmake.exe" ^
+  -G "Visual Studio 17 2022" -A x64 ^
+  -DQt5_DIR:PATH=C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5 ^
+  -S C:\D\S -B C:\D\SD
+
+"C:\Program Files\CMake\bin\cmake.exe" --build C:\D\SD --config Debug
 ```
 
 ### Using graphical user interface (alternative solution)
@@ -124,7 +135,7 @@ Errors due to missing Python libraries (or other Python related errors, such as 
 
 ### Custom Slicer and CTK widgets do not show up in Qt designer
 
-Qt Designer can only use designer plugins (in `c:\D\S4R\Slicer-build\bin\designer` and `c:\D\S4R\CTK-build\CTK-build\bin\designer`) that are built in the same mode (e.g. `Debug` or `Release`).
+Qt Designer can only use designer plugins (in `c:\D\SR\Slicer-build\bin\designer` and `c:\D\SR\CTK-build\CTK-build\bin\designer`) that are built in the same mode (e.g. `Debug` or `Release`).
 
 In pre-built Qt packages (downloaded from Qt website) Qt Designer is only provided in `Release` mode. If Qt is built from source in `Release` mode (default) or `Release and Debug` mode then Qt designer will be in `Release` mode. In all these cases, Qt Designer can be used only if Slicer is built in `Release` mode.
 

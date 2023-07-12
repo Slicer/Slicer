@@ -174,15 +174,13 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
       return;
       }
 
-    vtkStdString nameString = vtkStdString(name);
-
     vtkMRMLAnnotationSnapshotNode * newSnapshotNode =
         vtkMRMLAnnotationSnapshotNode::New();
     newSnapshotNode->SetScene(this->GetMRMLScene());
-    if (strcmp(nameString, ""))
+    if (std::string(name) != "")
       {
       // a name was specified
-      newSnapshotNode->SetName(nameString.c_str());
+      newSnapshotNode->SetName(name);
       }
     else
       {
@@ -232,12 +230,10 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
       return;
       }
 
-    vtkStdString nameString = vtkStdString(name);
-
-    if (strcmp(nameString, ""))
+    if (std::string(name) != "")
       {
       // a name was specified
-      snapshotNode->SetName(nameString.c_str());
+      snapshotNode->SetName(name);
       }
     else
       {

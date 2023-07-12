@@ -245,6 +245,7 @@ qSlicerIOOptions* qSlicerStandardFileDialog
       }
     QStringList fileDescriptions =
       ioManager->fileWriterDescriptions(this->fileType());
+    // TODO: this seems wrong, a description is provided while the method expects an extension
     options = fileDescriptions.count() ?
       ioManager->fileWriterOptions(nodeToSave, fileDescriptions[0]) : nullptr;
     }

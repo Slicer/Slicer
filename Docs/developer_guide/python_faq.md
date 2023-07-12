@@ -2,6 +2,93 @@
 
 Frequently asked questions about how to write Python scripts for Slicer.
 
+## What is the Slicer Python environment?
+
+You can consider each Slicer installation as a virtual Python environment - the same way
+as you create virtual environments using python or conda.
+
+## What is the PythonSlicer executable?
+
+`PythonSlicer` is an executable provided in the `bin` directory of the Slicer installation.
+It is a Python interpreter that allows access to all of the packages installed in Slicer.
+This makes it possible to use the Slicer Python environment from outside the application, such
+as for batch processing, command-line operations, terminal-based interactive session and
+integration with IDEs.
+
+This means you can use `PythonSlicer` as a replacement for the regular Python interpreter
+(`python` or `python3`) to take advantage of the installed packages in the Slicer environment.
+
+:::{warning}
+Please note that the running Python context is **not** available when using `PythonSlicer`.
+As a result, many objects, including the application instance, the MRML scene and the loaded
+modules, are not available.
+:::
+
+:::{tip}
+To install additional packages, you can use the {func}`slicer.util.pip_install()` function.
+:::
+
+## What is the Python Console?
+
+This describes the [](/user_guide/user_interface.md#python-console) available through
+the [user interface](/user_guide/user_interface.md).
+
+It allows to access the running Python context including the application instance,
+the MRML scene and all the loaded modules through these :mod:`slicer` attributes:
+* {attr}`slicer.app`
+* {attr}`slicer.mrmlScene`
+* {attr}`slicer.modules`
+* {attr}`slicer.moduleNames`
+
+:::{hint}
+Running scripts (or code) using the command-line option `--python-script` (or `python-code`)
+is equivalent to running code in the Python Console.
+
+Combined with the use of `--no-main-window`, this is useful for implementing batch processing
+pipelines leveraging capabilities only available in the context of a running Slicer application.
+For example, this applies to the [Segment Editor effects](/user_guide/modules/segmenteditor.md#effects).
+:::
+
+:::{tip}
+To install additional packages, you can use the {func}`slicer.util.pip_install()` function.
+:::
+
+:::{versionchanged} 5.2.0
+The `Python interactor` was renamed to `Python Console`.
+See [related discussion](https://discourse.slicer.org/t/rename-python-interactor-to-python-console/25897).
+:::
+
+## How to access Slicer's Python API via an external program while Slicer is running?
+
+There are several ways to access Slicer's Python API from an external program while Slicer is running:
+
+- [SlicerWeb](/user_guide/modules/webserver.md): Exposes Slicer's Python environment as a web service
+  that can respond to http(s) requests with data from the current application state or modify the
+  application state. This is well-suited for applications that already use web requests.
+
+- [SlicerOpenIGTLink](https://github.com/openigtlink/SlicerOpenIGTLink): A lightweight socket-based
+  protocol for real-time data transfer. This is useful for applications that need to send many
+  requests per second (e.g., continuous data streaming) or for clients that only have access to
+  sockets and prefer to avoid the complexity of protocols like HTTP. In most cases, it performs well
+  for sending requests at a rate of 10 to 100 requests per second.
+
+  A native Python implementation, [pyigtl](https://pypi.org/project/pyigtl/), is available for
+  use outside the Slicer application. It can be used to both stream data from Slicer and stream
+  data to Slicer.
+
+- [SlicerJupyter](https://github.com/Slicer/SlicerJupyter#readme): A protocol for interacting with
+  Slicer using standard Jupyter kernel protocol (simple protocol built on top of ZeroMQ middleware).
+  This is useful for applications that want to offer embedded Python console to Slicer and don't want
+  to implement a Slicer-specific protocol.
+
+- [Python debuggers](/developer_guide/debugging/python.md): Python debuggers like PyCharm, Visual Studio Code,
+  and Eclipse can be used to visualize and debug Python scripts in Slicer, including setting breakpoints,
+  executing code step-by-step, and viewing variables and the stack.
+
+These approaches offer different trade-offs in terms of complexity, performance, and ease of use, so
+it's important to choose the one that best fits your needs. For more information, see the linked
+documentation for each approach.
+
 ## How to run a CLI module from Python
 
 Here's an example to create a model from a volume using the "Grayscale Model Maker" module:
@@ -208,6 +295,18 @@ In most places, unix-type separators can be used instead of backslash. This is c
     somePath = "F:/someFolder/myfile.nrrd"
 
 See more information in Python documentation: https://docs.python.org/3/tutorial/introduction.html?#strings
+
+## How to modify a Python scripted module
+
+If `Developer mode` is enabled in the application settings then the `Reload and Test` section is displayed at the top of the user interface of Python scripted modules. This section contains buttons for convenient editing of the module source code (`.py` file) and user interface (`.ui` file). By default, clicking on the `Edit` button opens the module source code in the program associated with `.py` files, as defined in the operating system settings. This behavior can be overridden by specifying a text editor (such as VS Code, Sublime Text, ...) in the application settings: `Editor for .py files` in the `Python` section.
+
+:::{tip}
+On Windows, VS Code text editor is installed by default at:
+
+```txt
+C:/Users/YourUserName/AppData/Local/Programs/Microsoft VS Code/Code.exe
+```
+:::
 
 ## How to include Python modules in an extension
 

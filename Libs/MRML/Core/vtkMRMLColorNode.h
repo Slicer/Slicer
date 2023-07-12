@@ -33,7 +33,7 @@ class vtkScalarsToColors;
 /// a user. More than one model or label volume or editor can access the prebuilt
 /// nodes. This is used as a superclass for table based, procedural based, and
 /// implicit function based color nodes.
-/// All the color names are initialised to \a NoName ("(none)") when the table
+/// All the color names are initialized to \a NoName ("(none)") when the table
 /// is created, using the max index of the colors expected to fill the table
 /// to set the size of the names array. If the node is being read in from a
 /// file, not all of the colors might be present from 0-max, so the color
@@ -41,7 +41,7 @@ class vtkScalarsToColors;
 /// But if the color node is being built up from colors without names, there
 /// is a method to init the names from the color RGBA values so that
 /// something would be there rather than the default \a NoName which is used
-/// to determine that it's a unnamed and probably uninitialised color.
+/// to determine that it's a unnamed and probably uninitialized color.
 ///
 /// Subclasses must reimplement GetColor() and GetNumberOfColors().
 class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
@@ -74,7 +74,7 @@ public:
   const char* GetNodeTagName() override {return "Color";};
 
   ///
-  /// Reset node attributes to the initilal state as defined in the constructor.
+  /// Reset node attributes to the initial state as defined in the constructor.
   /// NOTE:   it preserves values several dynamic attributes that may be set by an application: type, name
   void Reset(vtkMRMLNode* defaultNode) override;
 
@@ -177,7 +177,7 @@ public:
   vtkSetStringMacro(NoName);
 
   ///
-  /// Get/Set for the flag on names array having been initialised
+  /// Get/Set for the flag on names array having been initialized
   vtkGetMacro(NamesInitialised, int);
   vtkSetMacro(NamesInitialised, int);
   vtkBooleanMacro(NamesInitialised, int);
@@ -202,7 +202,7 @@ public:
 
   /// Helper function for copying lookup tables
   /// It handles special types of lookup tables and fixes
-  /// error in vtkLoookupTable copy.
+  /// error in vtkLookupTable copy.
   virtual vtkLookupTable* CreateLookupTableCopy();
 
 protected:

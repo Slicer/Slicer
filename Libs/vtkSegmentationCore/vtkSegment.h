@@ -88,7 +88,7 @@ public:
 
   /// Remove all representations except one if specified. Fires only one Modified event
   /// \param exceptionRepresentationName Exception name that will not be removed
-  ///   (e.g. invalidate non-master representations), empty by default
+  ///   (e.g. invalidate non-source representations), empty by default
   void RemoveAllRepresentations(std::string exceptionRepresentationName="");
 
   /// Set/add tag
@@ -158,4 +158,4 @@ private:
   void operator=(const vtkSegment&) = delete;
 };
 
-#endif // __vtkSegment_h
+#endif

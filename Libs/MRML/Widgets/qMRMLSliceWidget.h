@@ -142,7 +142,7 @@ public slots:
   /// \sa qMRMLSliceControllerWidget::setMRMLSliceNode()
   /// \sa mrmlSliceNode()
   void setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode);
-  void setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newSliceNode);
+  void setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newSliceNode) override;
 
   /// \sa qMRMLSliceControllerWidget::setImageData()
   /// \sa imageData()

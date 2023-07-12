@@ -100,24 +100,18 @@ qSlicerFileReader* qSlicerCoreIOManagerPrivate::reader(const QString& fileName)c
 QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fileName)const
 {
   // Use a map so that we can access readers sorted by confidence.
-  // The more specific the filter that was matched, the higher confidence
-  // that the reader is more appropriate (e.g., *.seg.nrrd is more specific than *.nrrd;
-  // *.nrrd is more specific than *.*)
-  QMultiMap<int, qSlicerFileReader*> matchingReadersSortedByConfidence;
+  QMultiMap<double, qSlicerFileReader*> matchingReadersSortedByConfidence;
   foreach(qSlicerFileReader* reader, this->Readers)
     {
-    // reader->supportedNameFilters will return the length of the longest matched file extension
-    // in longestExtensionMatch variable.
-    int longestExtensionMatch = 0;
-    QStringList matchedNameFilters = reader->supportedNameFilters(fileName, &longestExtensionMatch);
-    if (!matchedNameFilters.empty() && reader->canLoadFile(fileName))
+    double confidence = reader->canLoadFileConfidence(fileName);
+    if (confidence > 0.0)
       {
-      matchingReadersSortedByConfidence.insert(longestExtensionMatch, reader);
+      matchingReadersSortedByConfidence.insert(confidence, reader);
       }
     }
   // Put matching readers in a list, with highest confidence readers pushed to the front
   QList<qSlicerFileReader*> matchingReaders;
-  QMapIterator<int, qSlicerFileReader*> i(matchingReadersSortedByConfidence);
+  QMapIterator<double, qSlicerFileReader*> i(matchingReadersSortedByConfidence);
   while (i.hasNext())
     {
     i.next();
@@ -141,10 +135,15 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(
     scene = this->currentScene();
     }
 
-  vtkObject * object = scene->GetNodeByID(nodeID.toUtf8());
-  if (!object)
+  vtkObject* object = nullptr;
+  // empty nodeID means saving the scene
+  if (!nodeID.isEmpty())
     {
-    qWarning() << Q_FUNC_INFO << "warning: Unable to find node with ID" << nodeID << "in the given scene.";
+    object = scene->GetNodeByID(nodeID.toUtf8());
+    if (!object)
+      {
+      qWarning() << Q_FUNC_INFO << "warning: Unable to find node with ID" << nodeID << "in the given scene.";
+      }
     }
   QFileInfo file(fileName);
 
@@ -232,27 +231,69 @@ qSlicerIO::IOFileType qSlicerCoreIOManager
   return reader ? reader->fileType() : QString("NoFile");
 }
 
+qSlicerFileWriter* qSlicerCoreIOManager
+::writer(vtkObject* object, const QString& extension/*=QString()*/)const
+{
+  Q_D(const qSlicerCoreIOManager);
+
+  // best match: the writer that supports the node type and the specific extension
+  // closest match: the writer that supports the node type but not that specific extension
+  //
+  // If there are multiple matches then the one with the highest confidence is returned.
+
+  qSlicerFileWriter* bestMatch = nullptr;
+  double bestMatchConfidence = 0.0;
+  qSlicerFileWriter* closestMatch = nullptr;
+  double closestMatchConfidence = 0.0;
+
+  foreach (qSlicerFileWriter* writer, d->Writers)
+    {
+    double confidence = writer->canWriteObjectConfidence(object);
+    if (confidence > 0.0)
+      {
+      if (confidence > closestMatchConfidence)
+        {
+        closestMatch = writer;
+        closestMatchConfidence = confidence;
+        }
+      if (extension.isEmpty() || writer->extensions(object).contains(extension))
+        {
+        if (confidence > bestMatchConfidence)
+          {
+          bestMatch = writer;
+          bestMatchConfidence = confidence;
+          }
+        }
+      }
+    }
+
+  if (bestMatch)
+    {
+    return bestMatch;
+    }
+  if (closestMatch)
+    {
+    return closestMatch;
+    }
+  // No match
+  return nullptr;
+}
+
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerCoreIOManager
 ::fileWriterFileType(vtkObject* object, const QString& format/*=QString()*/)const
 {
   Q_D(const qSlicerCoreIOManager);
-  QList<qSlicerIO::IOFileType> matchingFileTypes;
-  // closest match is the writer that supports the node type but not
-  // that specific extension
-  QString closestMatch = QString("NoFile");
-  foreach (const qSlicerFileWriter* writer, d->Writers)
+
+  qSlicerFileWriter* writer = this->writer(object, format);
+  if (writer)
     {
-    if (writer->canWriteObject(object))
-      {
-      closestMatch = writer->fileType();
-      if (format.isEmpty() || writer->extensions(object).contains(format))
-        {
-        return writer->fileType();
-        }
-      }
+    return writer->fileType();
     }
-  return closestMatch;
+  else
+    {
+    return QString("NoFile");
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -311,13 +352,23 @@ QStringList qSlicerCoreIOManager::fileWriterExtensions(
   vtkObject* object)const
 {
   Q_D(const qSlicerCoreIOManager);
-  QStringList matchingExtensions;
+  // Use a map so that we can access writers sorted by confidence.
+  QMultiMap<double, qSlicerFileWriter*> matchingWritersSortedByConfidence;
   foreach(qSlicerFileWriter* writer, d->Writers)
     {
-    if (writer->canWriteObject(object))
+    double confidence = writer->canWriteObjectConfidence(object);
+    if (confidence > 0.0)
       {
-      matchingExtensions << writer->extensions(object);
+      matchingWritersSortedByConfidence.insert(confidence, writer);
       }
+    }
+  // Put extensions from matching writers in a list, with highest confidence writer pushed to the front
+  QStringList matchingExtensions;
+  QMapIterator<double, qSlicerFileWriter*> i(matchingWritersSortedByConfidence);
+  while (i.hasNext())
+    {
+    i.next();
+    matchingExtensions = i.value()->extensions(object) + matchingExtensions;
     }
   matchingExtensions.removeDuplicates();
   return matchingExtensions;
@@ -488,19 +539,13 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
   vtkObject* object, const QString& extension)const
 {
   Q_D(const qSlicerCoreIOManager);
-  qSlicerFileWriter* bestWriter = nullptr;
-  foreach(qSlicerFileWriter* writer, d->Writers)
+  qSlicerFileWriter* bestWriter = this->writer(object, extension);
+  if (!bestWriter)
     {
-    if (writer->canWriteObject(object))
-      {
-      if (writer->extensions(object).contains(extension))
-        {
-        writer->setMRMLScene(d->currentScene());
-        bestWriter = writer;
-        }
-      }
+    return nullptr;
     }
-  return bestWriter ? bestWriter->options() : nullptr;
+  bestWriter->setMRMLScene(d->currentScene());
+  return bestWriter->options();
 }
 
 //-----------------------------------------------------------------------------
@@ -587,7 +632,8 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     timeProbe.start();
     reader->userMessages()->ClearMessages();
     reader->setMRMLScene(d->currentScene());
-    if (!reader->canLoadFile(parameters["fileName"].toString()))
+    double confidence = reader->canLoadFileConfidence(parameters["fileName"].toString());
+    if (confidence <= 0.0)
       {
       continue;
       }
