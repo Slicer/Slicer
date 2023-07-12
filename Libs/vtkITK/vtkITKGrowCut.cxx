@@ -251,7 +251,8 @@ void vtkITKGrowCut::SetDistancePenalty(double distancePenalty)
   if (this->DistancePenalty != distancePenalty)
     {
     this->DistancePenalty = distancePenalty;
-    // TODO: Due to a bug in ITK, we currently need to reset the filter when changing the distance penalty.
+    // TODO: Due to a bug in ITK (https://github.com/InsightSoftwareConsortium/ITKGrowCut/issues/18),
+    // we currently need to reset the filter when changing the distance penalty.
     // Otherwise the internal computed distance values will not be recomputed, and the change to distance penalty will not be applied.
     this->Reset();
     this->Modified();
