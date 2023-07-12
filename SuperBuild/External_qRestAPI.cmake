@@ -27,13 +27,13 @@ if(NOT DEFINED qRestAPI_DIR)
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/qRestAPI.git"
+    "${EP_GIT_PROTOCOL}://github.com/MITK/qRestAPI.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "ea5e85a1ecfb05174ab604d66fa3186ae9a45eda"
+    "88c02c5d90169dfe065fa068969e59ada314d3cb"
     QUIET
     )
 

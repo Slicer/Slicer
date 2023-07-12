@@ -20,7 +20,7 @@
 
 // Qt includes
 #include <qSlicerCoreApplication.h>
-#include <QScriptEngine>
+#include <QJSEngine>
 
 // CTK includes
 #include <ctkTest.h>
@@ -357,8 +357,8 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
     return ExtensionMetadataType();
     }
 
-  QScriptEngine scriptEngine;
-  QScriptValue scriptValue = scriptEngine.evaluate("(" + QString(metadataFile.readAll()) + ")");
+  QJSEngine scriptEngine;
+  QJSValue scriptValue = scriptEngine.evaluate("(" + QString(metadataFile.readAll()) + ")");
 
   ExtensionMetadataType allMetadata;
 

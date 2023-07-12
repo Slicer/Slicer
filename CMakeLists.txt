@@ -650,9 +650,9 @@ endif()
       )
   endif()
   # Both "extension manager" and "application update" require qRestApi external
-  # project itself depending on Qt's Script module
+  # project itself depending on Qt's Qml module
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT OR Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
-    list(APPEND Slicer_REQUIRED_QT_MODULES Script)
+    list(APPEND Slicer_REQUIRED_QT_MODULES Qml)
   endif()
   if(Slicer_BUILD_I18N_SUPPORT)
     list(APPEND Slicer_REQUIRED_QT_MODULES LinguistTools) # no dll
