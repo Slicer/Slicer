@@ -466,6 +466,10 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
       sliceDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       sliceDisplayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
       }
+
+    vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetBackgroundLayer());
+    vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetForegroundLayer());
+
     }
   else if (node == this->SliceCompositeNode)
     {
@@ -968,6 +972,42 @@ bool vtkMRMLSliceLogic::UpdateFractions(vtkImageMathematics* fraction, double op
   return modified;
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, vtkMRMLSliceLayerLogic* sliceLayerLogic)
+{
+  if (!sliceLogic || !sliceLayerLogic || !sliceLogic->GetSliceNode())
+    {
+    return;
+    }
+
+  vtkImageReslice* reslice = sliceLayerLogic->GetReslice();
+  vtkMRMLSliceNode* sliceNode = sliceLayerLogic->GetSliceNode();
+
+  double sliceSpacing;
+  if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode)
+    {
+    sliceSpacing = *sliceLogic->GetLowestVolumeSliceSpacing();
+    }
+  else
+    {
+    sliceSpacing = sliceNode->GetPrescribedSliceSpacing()[2];
+    }
+
+  if (sliceNode->GetSlabReconstructionEnabled())
+    {
+    reslice->SetSlabMode(sliceNode->GetSlabReconstructionType());
+
+    int slabNumberOfSlices = int(sliceNode->GetSlabReconstructionThickness() / (sliceSpacing ? sliceSpacing : sliceLogic->DefaultSlabReconstructionThickness));
+    reslice->SetSlabNumberOfSlices(slabNumberOfSlices);
+    }
+  else
+    {
+    reslice->SetSlabNumberOfSlices(sliceLogic->DefaultSlabReconstructionThickness);
+    }
+
+  double slabSliceSpacingFraction = sliceSpacing / sliceNode->GetSlabReconstructionOversamplingFactor();
+  reslice->SetSlabSliceSpacingFraction(slabSliceSpacingFraction);
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdatePipeline()

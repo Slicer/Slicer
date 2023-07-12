@@ -313,10 +313,6 @@ protected:
   qMRMLSliceControllerWidget(qMRMLSliceControllerWidgetPrivate* obj,
                              QWidget* parent);
 
-  /// Default number of slices in a slab
-  /// Normal Slice view has thickness of 1 slice
-  const double DefaultSlabReconstructionThickness = 1;
-
 private:
   Q_DECLARE_PRIVATE(qMRMLSliceControllerWidget);
   Q_DISABLE_COPY(qMRMLSliceControllerWidget);

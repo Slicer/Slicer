@@ -2385,51 +2385,13 @@ void qMRMLSliceControllerWidget::showSlabReconstructionWidget(bool show)
     {
     return;
     }
-
-  vtkMRMLSliceLogic* sliceLogic = nullptr;
+  vtkMRMLSliceNode* node = nullptr;
   vtkCollectionSimpleIterator it;
-
-  for (d->SliceLogics->InitTraversal(it);(sliceLogic = static_cast<vtkMRMLSliceLogic*>(
-                                               d->SliceLogics->GetNextItemAsObject(it)));)
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
     {
-    if (sliceLogic == d->SliceLogic || this->isLinked())
+    if (node == this->mrmlSliceNode() || this->isLinked())
       {
-      vtkMRMLSliceNode* node = sliceLogic->GetSliceNode();
-
       node->SetSlabReconstructionEnabled(show);
-
-      vtkImageReslice* resliceBG = sliceLogic->GetBackgroundLayer()->GetReslice();
-      vtkImageReslice* resliceFG = sliceLogic->GetForegroundLayer()->GetReslice();
-
-      double sliceSpacing;
-      if (node->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode)
-        {
-        sliceSpacing = *sliceLogic->GetLowestVolumeSliceSpacing();
-        }
-      else
-        {
-        sliceSpacing = node->GetPrescribedSliceSpacing()[2];
-        }
-
-      if (show)
-        {
-        int slabType = node->GetSlabReconstructionType();
-        resliceBG->SetSlabMode(slabType);
-        resliceFG->SetSlabMode(slabType);
-
-        int slabNumberOfSlices = int(node->GetSlabReconstructionThickness() / (sliceSpacing ? sliceSpacing : this->DefaultSlabReconstructionThickness));
-        resliceBG->SetSlabNumberOfSlices(slabNumberOfSlices);
-        resliceFG->SetSlabNumberOfSlices(slabNumberOfSlices);
-        }
-      else
-        {
-        resliceBG->SetSlabNumberOfSlices(this->DefaultSlabReconstructionThickness);
-        resliceFG->SetSlabNumberOfSlices(this->DefaultSlabReconstructionThickness);
-        }
-
-      double slabSliceSpacingFraction = sliceSpacing / node->GetSlabReconstructionOversamplingFactor();
-      resliceBG->SetSlabSliceSpacingFraction(slabSliceSpacingFraction);
-      resliceFG->SetSlabSliceSpacingFraction(slabSliceSpacingFraction);
       }
     }
 }
@@ -2930,10 +2892,7 @@ void qMRMLSliceControllerWidget::setSlabReconstructionType(int newSlabReconstruc
     {
     if (node == this->mrmlSliceNode() || this->isLinked())
       {
-      int wasModified = node->StartModify();
       node->SetSlabReconstructionType(newSlabReconstructionType);
-      this->showSlabReconstructionWidget(node->GetSlabReconstructionEnabled());
-      node->EndModify(wasModified);
       }
     }
 }
@@ -2953,10 +2912,7 @@ void qMRMLSliceControllerWidget::setSlabReconstructionThickness(double thickness
     {
     if (node == this->mrmlSliceNode() || this->isLinked())
       {
-      int wasModified = node->StartModify();
       node->SetSlabReconstructionThickness(thickness);
-      this->showSlabReconstructionWidget(node->GetSlabReconstructionEnabled());
-      node->EndModify(wasModified);
       }
     }
 }
