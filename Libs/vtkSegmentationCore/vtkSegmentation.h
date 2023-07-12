@@ -506,6 +506,13 @@ public:
     this->SetSourceRepresentationName(representationName);
     };
 
+  /// \deprecated Use SetSourceRepresentationName instead.
+  virtual std::string GetMasterRepresentationName()
+    {
+    vtkWarningMacro("vtkSegmentation::GetMasterRepresentationName() method is deprecated, please use GetSourceRepresentationName method instead");
+    return this->GetSourceRepresentationName();
+    };
+
   /// Deep copies source segment to destination segment. If the same representation is found in baseline
   /// with up-to-date timestamp then the representation is reused from baseline.
   static void CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
