@@ -45,6 +45,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
         self.TestSection_IslandEffects()
         self.TestSection_MarginEffects()
         self.TestSection_MaskingSettings()
+        self.TestSection_GrowFromSeedsEffect()
         logging.info('Test finished')
 
     # ------------------------------------------------------------------------------
@@ -256,8 +257,6 @@ class SegmentationsModuleTest2(unittest.TestCase):
     # ------------------------------------------------------------------------------
     def TestSection_MarginEffects(self):
         logging.info("Running test on margin effect")
-
-        slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Margin")
 
         self.segmentation.RemoveAllSegments()
         segment1Id = self.segmentation.AddEmptySegment("Segment_1")
@@ -516,3 +515,55 @@ class SegmentationsModuleTest2(unittest.TestCase):
         # Restore old overwrite setting
         self.segmentEditorNode.SetOverwriteMode(oldOverwriteMode)
         self.segmentEditorNode.SourceVolumeIntensityMaskOff()
+
+    # ------------------------------------------------------------------------------
+    def TestSection_GrowFromSeedsEffect(self):
+        logging.info("Running test on grow from seeds effect")
+
+        self.segmentation.RemoveAllSegments()
+        segment1Id = self.segmentation.AddEmptySegment("Segment_1")
+        segment1 = self.segmentation.GetSegment(segment1Id)
+        segment1.SetLabelValue(1)
+        self.segmentEditorNode.SetSelectedSegmentID("Segment_1")
+
+        segment2Id = self.segmentation.AddEmptySegment("Segment_2")
+        segment2 = self.segmentation.GetSegment(segment2Id)
+        segment2.SetLabelValue(2)
+
+        # -------------------
+        # Add paint to segment 1.
+        paintModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+        paintModifierLabelmap.SetImageToWorldMatrix(self.ijkToRas)
+        paintModifierLabelmap.SetExtent(3, 5, 4, 5, 3, 5)
+        paintModifierLabelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+        paintModifierLabelmap.GetPointData().GetScalars().Fill(1)
+        self.segmentEditorNode.SetOverwriteMode(self.segmentEditorNode.OverwriteAllSegments)
+        self.segmentEditorNode.SetSelectedSegmentID(segment1Id)
+        self.paintEffect.modifySelectedSegmentByLabelmap(paintModifierLabelmap, self.paintEffect.ModificationModeAdd)
+
+        # -------------------
+        # Add paint to segment 2.
+        paintModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+        paintModifierLabelmap.SetImageToWorldMatrix(self.ijkToRas)
+        paintModifierLabelmap.SetExtent(0, 2, 0, 2, 0, 5)
+        paintModifierLabelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+        paintModifierLabelmap.GetPointData().GetScalars().Fill(1)
+        self.segmentEditorNode.SetOverwriteMode(self.segmentEditorNode.OverwriteAllSegments)
+        self.segmentEditorNode.SetSelectedSegmentID(segment2Id)
+        self.paintEffect.modifySelectedSegmentByLabelmap(paintModifierLabelmap, self.paintEffect.ModificationModeAdd)
+
+        paintModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+        paintModifierLabelmap.SetImageToWorldMatrix(self.ijkToRas)
+        paintModifierLabelmap.SetExtent(9, 9, 9, 9, 0, 9)
+        paintModifierLabelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+        paintModifierLabelmap.GetPointData().GetScalars().Fill(1)
+        self.segmentEditorNode.SetOverwriteMode(self.segmentEditorNode.OverwriteAllSegments)
+        self.segmentEditorNode.SetSelectedSegmentID(segment2Id)
+        self.paintEffect.modifySelectedSegmentByLabelmap(paintModifierLabelmap, self.paintEffect.ModificationModeAdd)
+
+        growFromSeedsEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Grow from seeds")
+        growFromSeedsEffect.self().onPreview()
+        growFromSeedsEffect.self().onApply()
+
+        self.checkSegmentVoxelCount(0, 215)  # Segment 1
+        self.checkSegmentVoxelCount(1, 785)  # Segment 2
