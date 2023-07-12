@@ -139,6 +139,8 @@ protected:
     vtkSmartPointer<vtkActor2D> LabelsActor;
     vtkSmartPointer<vtkActor2D> LabelsOccludedActor;
 
+    vtkSmartPointer<vtkPoints> LabelsLinePoints;
+    vtkSmartPointer<vtkCellArray> LabelsLineCells;
     vtkSmartPointer<vtkPolyData> LabelsLinePolyData;
     vtkSmartPointer<vtkTubeFilter> LabelsLineTubeFilter;
 
