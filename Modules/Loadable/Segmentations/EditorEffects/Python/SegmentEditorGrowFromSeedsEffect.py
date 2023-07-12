@@ -102,10 +102,10 @@ The effect uses <a href="http://interactivemedical.org/imic2014/CameraReadyPaper
             self.delayedAutoUpdateTimer.start()
 
     def computePreviewLabelmap(self, mergedImage, outputLabelmap):
-        import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
+        import vtkITK
 
         if not self.growCutFilter:
-            self.growCutFilter = vtkSlicerSegmentationsModuleLogic.vtkImageGrowCutSegment()
+            self.growCutFilter = vtkITK.vtkITKGrowCut()
             self.growCutFilter.SetIntensityVolume(self.clippedMasterImageData)
             self.growCutFilter.SetMaskVolume(self.clippedMaskImageData)
             maskExtent = self.clippedMaskImageData.GetExtent() if self.clippedMaskImageData else None

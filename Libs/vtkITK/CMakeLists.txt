@@ -29,6 +29,7 @@ endif()
 # ITK
 #
 set(${PROJECT_NAME}_ITK_COMPONENTS
+  GrowCut
   ITKAnisotropicSmoothing
   ITKCommon
   ITKConnectedComponents
@@ -117,6 +118,7 @@ set(vtkITK_SRCS
   vtkITKImageToImageFilter.h
   vtkITKImageToImageFilterFF.h
   vtkITKGradientAnisotropicDiffusionImageFilter.cxx
+  vtkITKGrowCut.cxx
   vtkITKDistanceTransform.cxx
   vtkITKLabelShapeStatistics.cxx
   vtkITKLevelTracingImageFilter.cxx
