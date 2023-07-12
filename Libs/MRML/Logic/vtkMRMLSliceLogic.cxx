@@ -995,7 +995,10 @@ void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, 
   sliceSpacing = sliceSpacing ? sliceSpacing : sliceLogic->DefaultSlabReconstructionThickness;
 
   int slabNumberOfSlices = 1;
-  if (sliceNode->GetSlabReconstructionEnabled())
+  if (sliceNode->GetSlabReconstructionEnabled()
+      && sliceSpacing > 0
+      && sliceNode->GetSlabReconstructionThickness() > sliceSpacing
+      )
     {
     slabNumberOfSlices = static_cast<int>(sliceNode->GetSlabReconstructionThickness() / sliceSpacing);
     }
