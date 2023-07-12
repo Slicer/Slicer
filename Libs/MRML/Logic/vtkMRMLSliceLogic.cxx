@@ -992,18 +992,16 @@ void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, 
     {
     sliceSpacing = sliceNode->GetPrescribedSliceSpacing()[2];
     }
+  sliceSpacing = sliceSpacing ? sliceSpacing : sliceLogic->DefaultSlabReconstructionThickness;
 
+  int slabNumberOfSlices = 1;
   if (sliceNode->GetSlabReconstructionEnabled())
     {
-    reslice->SetSlabMode(sliceNode->GetSlabReconstructionType());
+    slabNumberOfSlices = static_cast<int>(sliceNode->GetSlabReconstructionThickness() / sliceSpacing);
+    }
+  reslice->SetSlabNumberOfSlices(slabNumberOfSlices);
 
-    int slabNumberOfSlices = int(sliceNode->GetSlabReconstructionThickness() / (sliceSpacing ? sliceSpacing : sliceLogic->DefaultSlabReconstructionThickness));
-    reslice->SetSlabNumberOfSlices(slabNumberOfSlices);
-    }
-  else
-    {
-    reslice->SetSlabNumberOfSlices(sliceLogic->DefaultSlabReconstructionThickness);
-    }
+  reslice->SetSlabMode(sliceNode->GetSlabReconstructionType());
 
   double slabSliceSpacingFraction = sliceSpacing / sliceNode->GetSlabReconstructionOversamplingFactor();
   reslice->SetSlabSliceSpacingFraction(slabSliceSpacingFraction);
