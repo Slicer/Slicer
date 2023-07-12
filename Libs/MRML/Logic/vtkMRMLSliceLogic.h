@@ -463,10 +463,6 @@ protected:
   vtkMRMLLinearTransformNode *  SliceModelTransformNode;
   double                        SliceSpacing[3];
 
-  /// Default number of slices in a slab
-  /// Normal Slice view has thickness of 1 slice
-  const double DefaultSlabReconstructionThickness = 1;
-
 private:
 
   vtkMRMLSliceLogic(const vtkMRMLSliceLogic&) = delete;

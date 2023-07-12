@@ -984,15 +984,14 @@ void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, 
   vtkMRMLSliceNode* sliceNode = sliceLayerLogic->GetSliceNode();
 
   double sliceSpacing;
-  if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode)
-    {
-    sliceSpacing = *sliceLogic->GetLowestVolumeSliceSpacing();
-    }
-  else
+  if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
     {
     sliceSpacing = sliceNode->GetPrescribedSliceSpacing()[2];
     }
-  sliceSpacing = sliceSpacing ? sliceSpacing : sliceLogic->DefaultSlabReconstructionThickness;
+  else
+    {
+    sliceSpacing = sliceLogic->GetLowestVolumeSliceSpacing()[2];
+    }
 
   int slabNumberOfSlices = 1;
   if (sliceNode->GetSlabReconstructionEnabled()
